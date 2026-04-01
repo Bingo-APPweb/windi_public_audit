@@ -437,6 +437,9 @@ app.mount("/maria-ui", StaticFiles(directory="/opt/windi/windi-travel/static/mar
 # ═══ Tesoura Soberana Static Files (P3-B) ═══
 app.mount("/tesoura-ui", StaticFiles(directory="/opt/windi/windi-travel/static/tesoura", html=True), name="tesoura-ui")
 
+# ═══ Pitch Deck (§103 Presentation) ═══
+app.mount("/pitch", StaticFiles(directory="/opt/windi/windi-travel/static/pitch", html=True), name="pitch")
+
 # Mount static files and templates
 templates = Jinja2Templates(directory="/opt/windi/windi-travel/identity-gate/templates")
 # Disable Jinja2 cache to avoid unhashable type error with dict globals
@@ -2046,6 +2049,150 @@ async def check_collage_opportunity(request: Request, place: str = None):
     except Exception as e:
         print(f"[CHECK COLLAGE] Error: {e}")
         return JSONResponse({"suggest": False, "error": str(e)})
+
+
+# ═══════════════════════════════════════════════════════════════
+# §112 THREAD VISUAL — Memória Geográfica da Viagem
+# ═══════════════════════════════════════════════════════════════
+
+@app.get("/workspace/thread")
+async def get_thread(request: Request):
+    """
+    §112 Thread Visual: Retorna momentos agrupados por dia + lugar.
+    Fonte: Ledger receipts reais do utilizador autenticado.
+    """
+    user = require_auth(request)
+    if isinstance(user, RedirectResponse):
+        return JSONResponse({"status": "error", "message": "unauthorized", "groups": []})
+
+    wallet_id = user["wallet_id"]
+
+    try:
+        import requests as req
+        from collections import defaultdict
+
+        # Busca seals reais do Ledger
+        ledger_response = req.get(
+            "http://localhost:8101/api/receipts",
+            timeout=5
+        )
+
+        moments = []
+        if ledger_response.status_code == 200:
+            all_receipts = ledger_response.json()
+            if isinstance(all_receipts, dict):
+                all_receipts = all_receipts.get("receipts", [])
+
+            for rec in all_receipts:
+                if rec.get("actor") != wallet_id:
+                    continue
+
+                # Extract metadata
+                doc_type = rec.get("doc_type", "")
+                media_type = rec.get("media_type", "")
+
+                # Only include media types
+                if doc_type not in ("photo", "video", "doc", "image") and media_type not in ("image", "video"):
+                    continue
+
+                moments.append({
+                    "id": rec.get("id", ""),
+                    "type": media_type or doc_type or "photo",
+                    "place_name": rec.get("place_name") or rec.get("note", "").split("·")[-1].strip() or "Localização desconhecida",
+                    "timestamp": rec.get("sealed_at") or rec.get("created_at", ""),
+                    "hash": rec.get("content_hash", ""),
+                    "receipt_id": rec.get("id", ""),
+                    "doc_name": rec.get("doc_name", ""),
+                    "governance_level": rec.get("governance_level", "MEDIUM"),
+                    "source": "ledger"
+                })
+
+        # Agrupa por dia + lugar
+        groups = defaultdict(list)
+        for m in moments:
+            ts = m.get("timestamp", "")
+            day = ts[:10] if ts else "Sem data"
+            place = m.get("place_name", "Desconhecido")
+            # Simplify place to city only
+            city = place.split(",")[0].strip() if place else "Desconhecido"
+            key = f"{day}||{city}"
+            groups[key].append(m)
+
+        grouped = []
+        for key, items in sorted(groups.items(), reverse=True):
+            parts = key.split("||")
+            day = parts[0] if len(parts) > 0 else "Sem data"
+            place = parts[1] if len(parts) > 1 else "Desconhecido"
+            grouped.append({
+                "day": day,
+                "place_name": place,
+                "count": len(items),
+                "moments": items,
+                "has_ledger": True
+            })
+
+        return JSONResponse({
+            "status": "ok",
+            "wallet_id": wallet_id,
+            "total": len(moments),
+            "groups": grouped
+        })
+
+    except Exception as e:
+        print(f"[THREAD] Error: {e}")
+        return JSONResponse({"status": "error", "message": str(e), "groups": []})
+
+
+@app.get("/workspace/moment/{receipt_id}")
+async def get_moment_detail(receipt_id: str, request: Request):
+    """
+    §112 Thread Visual: Detalhe completo de um momento selado.
+    """
+    user = require_auth(request)
+    if isinstance(user, RedirectResponse):
+        return JSONResponse({"status": "error", "message": "unauthorized"})
+
+    try:
+        import requests as req
+
+        # Try direct receipt lookup
+        ledger_response = req.get(
+            "http://localhost:8101/api/receipts",
+            timeout=5
+        )
+
+        if ledger_response.status_code == 200:
+            all_receipts = ledger_response.json()
+            if isinstance(all_receipts, dict):
+                all_receipts = all_receipts.get("receipts", [])
+
+            # Find the specific receipt
+            for rec in all_receipts:
+                if rec.get("id") == receipt_id:
+                    return JSONResponse({
+                        "status": "ok",
+                        "moment": {
+                            "id": rec.get("id"),
+                            "actor": rec.get("actor"),
+                            "doc_name": rec.get("doc_name"),
+                            "doc_type": rec.get("doc_type"),
+                            "media_type": rec.get("media_type"),
+                            "content_hash": rec.get("content_hash"),
+                            "place_name": rec.get("place_name"),
+                            "governance_level": rec.get("governance_level"),
+                            "sealed_at": rec.get("sealed_at") or rec.get("created_at"),
+                            "note": rec.get("note"),
+                            "verify_url": f"https://windi-domain.com/verify-public/?id={receipt_id}"
+                        }
+                    })
+
+            return JSONResponse({"status": "not_found", "message": "Receipt not found"})
+
+        return JSONResponse({"status": "error", "message": "Ledger unavailable"})
+
+    except Exception as e:
+        print(f"[MOMENT DETAIL] Error: {e}")
+        return JSONResponse({"status": "error", "message": str(e)})
 
 
 # ═══════════════════════════════════════════════════════════════

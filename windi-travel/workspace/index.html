@@ -10,6 +10,9 @@
 <!-- Google Fonts disabled for Samsung test
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 -->
+<!-- §112 Leaflet.js for Thread Map -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
 <style>
 /* ═══════════════════════════════════════════════════════════════════════════
    WINDI TRAVEL — Mobile-First Workspace v1.0.0
@@ -979,6 +982,66 @@ body {
   .modal { border-radius: var(--r-lg); margin-bottom: 24px; }
   .modal-overlay { align-items: center; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   §112 THREAD VISUAL — Memória Geográfica
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.thread-header-v2{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;padding:0 4px}
+.th-title{font-size:0.9rem;color:var(--text-2)}
+.th-total{font-size:1.3rem;font-weight:600;color:var(--gold)}
+.th-toggle{display:flex;gap:0.4rem}
+.tt-btn{background:none;border:1px solid var(--border);color:var(--text-3);padding:0.35rem 0.9rem;border-radius:20px;cursor:pointer;font-size:0.75rem;font-weight:500;transition:all 0.2s}
+.tt-btn.active{background:var(--gold-bg);color:var(--gold);border-color:var(--gold)}
+
+.thread-group{margin-bottom:1.75rem}
+.tg-header{display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border)}
+.tg-day{font-size:0.85rem;font-weight:500;color:var(--text)}
+.tg-place{font-size:0.8rem;color:var(--gold)}
+.tg-count{font-size:0.75rem;color:var(--text-3);margin-left:auto}
+.tg-ledger{font-size:0.7rem;color:#4FC594;background:rgba(79,197,148,0.1);padding:2px 8px;border-radius:10px}
+
+.tg-moments{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:0.75rem}
+.moment-card{background:var(--bg-2);border-radius:10px;border:1px solid var(--border);overflow:hidden;cursor:pointer;transition:transform 0.15s,border-color 0.15s}
+.moment-card:hover{transform:translateY(-2px);border-color:var(--gold)}
+.mc-thumb{height:100px;background-size:cover;background-position:center;background-color:var(--bg)}
+.mc-thumb-empty{display:flex;align-items:center;justify-content:center;font-size:1.75rem;color:var(--text-3)}
+.mc-info{padding:0.6rem 0.75rem}
+.mc-place{font-size:0.72rem;color:var(--gold);margin-bottom:0.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mc-time{font-size:0.7rem;color:var(--text-3)}
+.mc-hash{font-size:0.65rem;color:#4FC594;font-family:'JetBrains Mono',monospace;margin-top:0.2rem}
+.mc-local{font-size:0.65rem;color:var(--text-3);margin-top:0.2rem}
+
+/* Modal */
+#moment-modal-overlay{position:fixed;inset:0;background:rgba(10,8,6,0.9);display:flex;align-items:center;justify-content:center;z-index:9999;padding:1.5rem}
+.moment-modal{background:var(--bg);border-radius:14px;border:1px solid var(--border);padding:1.5rem;max-width:420px;width:100%;position:relative;max-height:90vh;overflow-y:auto}
+.mm-close{position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--text-3);font-size:1.2rem;cursor:pointer;line-height:1;padding:4px}
+.mm-header{margin-bottom:1rem}
+.mm-place{font-size:1rem;font-weight:500;color:var(--text)}
+.mm-time{font-size:0.8rem;color:var(--text-2);margin-top:0.2rem}
+.mm-media{width:100%;border-radius:8px;margin-bottom:1rem;max-height:220px;object-fit:cover}
+.mm-media-empty{height:140px;background:var(--bg-2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;margin-bottom:1rem;color:var(--text-3)}
+.mm-details{background:var(--bg-2);border-radius:8px;padding:0.9rem;margin-bottom:1rem}
+.mm-row{display:flex;justify-content:space-between;align-items:flex-start;gap:0.75rem;padding:0.4rem 0;border-bottom:1px solid var(--border);font-size:0.78rem}
+.mm-row:last-child{border-bottom:none}
+.mm-label{color:var(--text-3);flex-shrink:0}
+.mm-val{color:var(--text-2);text-align:right;word-break:break-all}
+.mm-mono{font-family:'JetBrains Mono',monospace;font-size:0.7rem}
+.mm-actions{display:flex;gap:0.5rem;flex-wrap:wrap}
+.mm-btn{background:var(--bg-2);border:1px solid var(--border);color:var(--gold);padding:0.5rem 1rem;border-radius:20px;cursor:pointer;font-size:0.75rem;font-weight:500;transition:opacity 0.2s}
+.mm-btn:hover{opacity:0.75}
+
+.thread-empty-v2{text-align:center;padding:3rem 1rem}
+.te-icon{font-size:2.5rem;margin-bottom:1rem;opacity:0.6}
+.te-title{font-size:1rem;font-weight:500;color:var(--text);margin-bottom:0.5rem}
+.te-sub{font-size:0.85rem;color:var(--text-3);line-height:1.6}
+.mm-loading,.mm-error{padding:2rem;text-align:center;color:var(--text-2)}
+
+/* Map */
+#thread-map-view{margin-top:1rem}
+#travel-map{height:380px;border-radius:12px;overflow:hidden;border:1px solid var(--border)}
+.leaflet-popup-content-wrapper{border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.2)}
+.leaflet-popup-tip{display:none}
 </style>
 </head>
 <body>
@@ -1924,47 +1987,269 @@ function openTesoura(city, receipts) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// THREAD — renderThread SEALED
+// ═══════════════════════════════════════════════════════════════════════════
+// §112 THREAD VISUAL — Memória Geográfica da Viagem
 // ═══════════════════════════════════════════════════════════════════════════
 
-function renderThread() {
-  const list = document.getElementById('thread-list');
+async function renderThread() {
+  const container = document.getElementById('thread-list');
   const empty = document.getElementById('thread-empty');
-  const count = document.getElementById('thread-count');
+  const countEl = document.getElementById('thread-count');
 
-  count.textContent = thread.length;
+  if (!container) return;
 
-  if (thread.length === 0) {
+  // Show loading
+  empty.style.display = 'none';
+  container.innerHTML = '<div class="mm-loading">A carregar momentos...</div>';
+
+  let groups = [];
+  let total = 0;
+
+  try {
+    const res = await fetch('/travel/workspace/thread');
+    const data = await res.json();
+    if (data.status === 'ok') {
+      groups = data.groups || [];
+      total = data.total || 0;
+    }
+  } catch (e) {
+    console.warn('Thread fetch error:', e);
+    // Fallback to localStorage
+    const local = JSON.parse(localStorage.getItem('windi_travel_thread') || '[]');
+    if (local.length > 0) {
+      groups = [{
+        day: 'Local',
+        place_name: LANG === 'de' ? 'Gerät' : LANG === 'pt' ? 'Dispositivo' : 'Device',
+        count: local.length,
+        moments: local.map(m => ({
+          id: m.id,
+          type: m.media_type || 'photo',
+          place_name: m.placeName || (LANG === 'de' ? 'Unbekannt' : LANG === 'pt' ? 'Desconhecido' : 'Unknown'),
+          timestamp: new Date(m.ts).toISOString(),
+          receipt_id: m.receipt,
+          source: m.sealed ? 'ledger' : 'local'
+        })),
+        has_ledger: local.some(m => m.sealed)
+      }];
+      total = local.length;
+    }
+  }
+
+  countEl.textContent = total;
+
+  if (groups.length === 0) {
     empty.style.display = 'block';
-    list.innerHTML = '';
+    container.innerHTML = '';
     return;
   }
 
   empty.style.display = 'none';
-  list.innerHTML = thread.map(m => `
-    <div class="thread-item" onclick="viewMoment('${m.id}')">
-      <div class="thread-item-thumb">
-        ${m.thumbnail ? `<img src="${m.thumbnail}" alt="${m.label}">` : ''}
+
+  // Build header with toggle
+  const headerHtml = `
+    <div class="thread-header-v2">
+      <div class="th-title">
+        <span class="th-total">${total}</span> ${LANG === 'de' ? 'versiegelte Momente' : LANG === 'pt' ? 'momentos selados' : 'sealed moments'}
       </div>
-      <div class="thread-item-info">
-        <div class="thread-item-label">${m.label}</div>
-        <div class="thread-item-meta">${new Date(m.ts).toLocaleDateString(LANG === 'de' ? 'de-DE' : LANG === 'pt' ? 'pt-PT' : 'en-US')}</div>
-        <div class="thread-item-tags">
-          ${m.sealed ? `<span class="tag tag-sealed">${TRAVEL_I18N.thread_sealed_badge[LANG]}</span>` : ''}
-          ${m.source === 'rescue' ? `<span class="tag tag-rescue">${TRAVEL_I18N.thread_rescue_tag[LANG]}</span>` : ''}
-        </div>
+      <div class="th-toggle">
+        <button id="btn-list" class="tt-btn active" onclick="switchThreadView('list')">☰ ${LANG === 'de' ? 'Liste' : LANG === 'pt' ? 'Lista' : 'List'}</button>
+        <button id="btn-map" class="tt-btn" onclick="switchThreadView('map')">🗺 ${LANG === 'de' ? 'Karte' : LANG === 'pt' ? 'Mapa' : 'Map'}</button>
+      </div>
+    </div>
+  `;
+
+  // Build list view
+  const listHtml = buildThreadListView(groups);
+
+  container.innerHTML = `
+    ${headerHtml}
+    <div id="thread-list-view">${listHtml}</div>
+    <div id="thread-map-view" style="display:none">
+      <div id="travel-map"></div>
+    </div>
+  `;
+
+  // Store groups for map
+  window.__threadGroups = groups;
+
+  // Also update rescue recent (legacy)
+  updateRescueRecent();
+}
+
+function buildThreadListView(groups) {
+  return groups.map(g => `
+    <div class="thread-group">
+      <div class="tg-header">
+        <span class="tg-day">${formatThreadDay(g.day)}</span>
+        <span class="tg-place">📍 ${g.place_name}</span>
+        <span class="tg-count">${g.count} ${g.count === 1 ? (LANG === 'de' ? 'Moment' : LANG === 'pt' ? 'momento' : 'moment') : (LANG === 'de' ? 'Momente' : LANG === 'pt' ? 'momentos' : 'moments')}</span>
+        ${g.has_ledger ? '<span class="tg-ledger">🔒 Ledger</span>' : ''}
+      </div>
+      <div class="tg-moments">
+        ${g.moments.map(m => buildMomentCard(m)).join('')}
       </div>
     </div>
   `).join('');
+}
 
-  // Also update rescue recent
-  updateRescueRecent();
+function buildMomentCard(m) {
+  const icon = m.type === 'video' ? '🎬' : '📸';
+  const receiptId = m.receipt_id || m.id || '';
+
+  return `
+    <div class="moment-card" onclick="viewMoment('${receiptId}')">
+      <div class="mc-thumb mc-thumb-empty">${icon}</div>
+      <div class="mc-info">
+        <div class="mc-place">📍 ${m.place_name || (LANG === 'de' ? 'Unbekannt' : LANG === 'pt' ? 'Desconhecido' : 'Unknown')}</div>
+        <div class="mc-time">${formatThreadTime(m.timestamp)}</div>
+        ${m.source === 'ledger'
+          ? `<div class="mc-hash">🔒 ${(m.hash || m.content_hash || '').substring(0, 12)}…</div>`
+          : '<div class="mc-local">💾 Local</div>'}
+      </div>
+    </div>
+  `;
+}
+
+// viewMoment() — modal completo §112
+async function viewMoment(receiptId) {
+  if (!receiptId) return;
+
+  // Create modal overlay
+  const overlay = document.createElement('div');
+  overlay.id = 'moment-modal-overlay';
+  overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+
+  overlay.innerHTML = `
+    <div class="moment-modal">
+      <div class="mm-loading">${LANG === 'de' ? 'Lädt Moment...' : LANG === 'pt' ? 'A carregar momento...' : 'Loading moment...'}</div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  try {
+    const res = await fetch(`/travel/workspace/moment/${receiptId}`);
+    const data = await res.json();
+
+    if (data.status !== 'ok') {
+      throw new Error(data.message || 'Not found');
+    }
+
+    const m = data.moment || {};
+    const modal = overlay.querySelector('.moment-modal');
+
+    modal.innerHTML = `
+      <button class="mm-close" onclick="document.getElementById('moment-modal-overlay').remove()">✕</button>
+      <div class="mm-header">
+        <div class="mm-place">📍 ${m.place_name || (LANG === 'de' ? 'Unbekannt' : LANG === 'pt' ? 'Desconhecido' : 'Unknown')}</div>
+        <div class="mm-time">${formatThreadTime(m.sealed_at || '')}</div>
+      </div>
+      <div class="mm-media-empty">${m.media_type === 'video' ? '🎬' : '📸'}</div>
+      <div class="mm-details">
+        <div class="mm-row"><span class="mm-label">Receipt</span><span class="mm-val mm-mono">${m.id || receiptId}</span></div>
+        <div class="mm-row"><span class="mm-label">Hash</span><span class="mm-val mm-mono">${(m.content_hash || '').replace('sha256:', '').substring(0, 24)}…</span></div>
+        <div class="mm-row"><span class="mm-label">${LANG === 'de' ? 'Dokument' : LANG === 'pt' ? 'Documento' : 'Document'}</span><span class="mm-val">${m.doc_name || '-'}</span></div>
+        <div class="mm-row"><span class="mm-label">${LANG === 'de' ? 'Governance' : 'Governança'}</span><span class="mm-val">${m.governance_level || 'MEDIUM'}</span></div>
+      </div>
+      <div class="mm-actions">
+        <button class="mm-btn" onclick="window.open('${m.verify_url || 'https://windi-domain.com/verify-public/?id=' + receiptId}','_blank')">🔍 ${LANG === 'de' ? 'Im Ledger prüfen' : LANG === 'pt' ? 'Verificar no Ledger' : 'Verify in Ledger'}</button>
+      </div>
+    `;
+  } catch (e) {
+    const modal = overlay.querySelector('.moment-modal');
+    modal.innerHTML = `
+      <button class="mm-close" onclick="document.getElementById('moment-modal-overlay').remove()">✕</button>
+      <div class="mm-error">${LANG === 'de' ? 'Fehler beim Laden' : LANG === 'pt' ? 'Erro ao carregar' : 'Error loading'}<br><small>${e.message}</small></div>
+    `;
+  }
+}
+
+// Toggle List/Map view
+function switchThreadView(view) {
+  const listView = document.getElementById('thread-list-view');
+  const mapView = document.getElementById('thread-map-view');
+  const btnList = document.getElementById('btn-list');
+  const btnMap = document.getElementById('btn-map');
+
+  if (!listView || !mapView) return;
+
+  listView.style.display = view === 'list' ? '' : 'none';
+  mapView.style.display = view === 'map' ? '' : 'none';
+  btnList.classList.toggle('active', view === 'list');
+  btnMap.classList.toggle('active', view === 'map');
+
+  if (view === 'map') {
+    initTravelMap();
+  }
+}
+
+// Leaflet Map
+let _travelMapInstance = null;
+function initTravelMap() {
+  if (_travelMapInstance) return;
+
+  const mapContainer = document.getElementById('travel-map');
+  if (!mapContainer) return;
+
+  const groups = window.__threadGroups || [];
+  const allMoments = groups.flatMap(g => g.moments);
+
+  // For now, show placeholder (no GPS coords in receipts yet)
+  if (allMoments.length === 0) {
+    mapContainer.innerHTML = `
+      <div style="height:100%;display:flex;align-items:center;justify-content:center;color:var(--text-2);text-align:center;padding:2rem">
+        ${LANG === 'de' ? 'Keine Momente mit GPS verfügbar' : LANG === 'pt' ? 'Nenhum momento com GPS disponível' : 'No moments with GPS available'}
+      </div>
+    `;
+    return;
+  }
+
+  // Initialize Leaflet
+  const map = L.map('travel-map').setView([48.77, 10.31], 8);
+  _travelMapInstance = map;
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap',
+    maxZoom: 18
+  }).addTo(map);
+
+  // Gold pin icon
+  const goldIcon = L.divIcon({
+    className: '',
+    html: '<div style="width:14px;height:14px;border-radius:50%;background:#C9A84C;border:2px solid #8B6914;box-shadow:0 2px 6px rgba(0,0,0,0.4)"></div>',
+    iconSize: [14, 14]
+  });
+
+  // Add pins for each group (using place name as label)
+  groups.forEach(g => {
+    // Note: Real coords would come from geo data
+    // For now, this is a placeholder - map shows but no pins without coords
+  });
+}
+
+// Helpers
+function formatThreadDay(dateStr) {
+  if (!dateStr || dateStr === 'Local' || dateStr === 'Sem data') return dateStr;
+  try {
+    const d = new Date(dateStr);
+    const locale = LANG === 'de' ? 'de-DE' : LANG === 'pt' ? 'pt-PT' : 'en-US';
+    return d.toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long' });
+  } catch { return dateStr; }
+}
+
+function formatThreadTime(ts) {
+  if (!ts) return '';
+  try {
+    const locale = LANG === 'de' ? 'de-DE' : LANG === 'pt' ? 'pt-PT' : 'en-US';
+    return new Date(ts).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
+  } catch { return ts; }
 }
 
 function updateRescueRecent() {
   const recent = thread.filter(m => m.source === 'rescue').slice(0, 6);
   const container = document.getElementById('rescue-recent');
   const grid = document.getElementById('rescue-grid');
+
+  if (!container || !grid) return;
 
   if (recent.length === 0) {
     container.style.display = 'none';
@@ -1978,11 +2263,6 @@ function updateRescueRecent() {
       ${m.sealed ? `<span class="sealed-badge">✓</span>` : ''}
     </div>
   `).join('');
-}
-
-function viewMoment(id) {
-  // TODO: Implement moment detail view
-  console.log('View moment:', id);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
