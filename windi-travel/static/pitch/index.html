@@ -149,6 +149,10 @@ body{background:#1A1814;display:flex;align-items:center;justify-content:center;m
 
 /* KEYBOARD HINT */
 .kb-hint{position:fixed;bottom:1.5rem;right:2rem;font-size:11px;color:#5A5550;letter-spacing:.06em}
+
+/* BACK LINK */
+.back-link{position:fixed;top:1.5rem;left:2rem;font-size:11px;color:var(--gold-light);text-decoration:none;letter-spacing:.08em;display:flex;align-items:center;gap:6px;z-index:100;transition:opacity .2s}
+.back-link:hover{opacity:.7}
 h2{font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:500;color:var(--ink);line-height:1.15;margin-bottom:1.5rem;max-width:640px}
 
 @media(max-width:600px){
@@ -158,10 +162,14 @@ h2{font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:500;color:var(--ink);line-he
   .transform-grid>div:nth-child(2){transform:rotate(90deg)}
   .market-stats{grid-template-columns:1fr}
   .lang-toggle{top:auto;bottom:4.5rem;right:1rem}
+  .back-link{top:auto;bottom:4.5rem;left:1rem}
 }
 </style>
 </head>
 <body>
+
+<!-- Back to Travel -->
+<a href="/travel/gate/" class="back-link" data-i18n="back_travel">← WINDI Travel</a>
 
 <!-- §11.2 Constitutional Language Toggle: DE | EN | PT -->
 <div class="lang-toggle">
@@ -369,6 +377,7 @@ h2{font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:500;color:var(--ink);line-he
 const I18N = {
   de: {
     // Navigation
+    back_travel: "← WINDI Travel",
     nav_prev: "← zurück",
     nav_next: "weiter →",
     kb_hint: "← → oder Pfeiltasten zum Navigieren",
@@ -448,6 +457,7 @@ const I18N = {
 
   en: {
     // Navigation
+    back_travel: "← WINDI Travel",
     nav_prev: "← previous",
     nav_next: "next →",
     kb_hint: "← → or arrow keys to navigate",
@@ -527,6 +537,7 @@ const I18N = {
 
   pt: {
     // Navigation
+    back_travel: "← WINDI Travel",
     nav_prev: "← anterior",
     nav_next: "próximo →",
     kb_hint: "← → ou teclas de seta para navegar",
