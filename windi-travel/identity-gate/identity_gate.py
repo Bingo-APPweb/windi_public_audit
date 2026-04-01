@@ -920,6 +920,19 @@ async def gate_ui(request: Request):
     user = get_session_from_request(request)
     if user:
         return RedirectResponse(url="/travel/workspace/", status_code=302)
+
+    # Fallback: check windi_did cookie (set after registration)
+    windi_did = request.cookies.get("windi_did")
+    if windi_did:
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM admins WHERE did = ?", (windi_did,))
+        user_row = cursor.fetchone()
+        conn.close()
+        if user_row:
+            return RedirectResponse(url="/travel/workspace/", status_code=302)
+
     return templates.TemplateResponse(request, "gate.html")
 
 
