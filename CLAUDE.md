@@ -427,10 +427,30 @@ Qualquer alteração exige:
 2. Justificar por que não os quebra
 3. Aprovação do Human Dragon
 
+### T1 — TRAVEL MOSAIC PROTOCOL (IRREMEDIÁVEL)
+"No Travel, nenhum § toca em código existente sem cirurgia documentada."
+
+**Protocolo MOSAIC — 4 regras permanentes:**
+1. **ADIÇÃO, nunca substituição** — criar endpoint novo → testar → redirecionar
+2. **Feature Flag obrigatória** — todo § novo entra desligado por defeito
+3. **Smoke test obrigatório** — `bash /opt/windi/session/smoke-travel.sh` antes de deploy
+4. **Cookie update obrigatório** — após cada § concluído
+
+**Endpoints LOCKED (não tocar sem cirurgia):**
+```
+🔒 /workspace/media-seals   → §111 depende
+🔒 /workspace/check-collage → §111 depende
+🔒 /workspace/thread        → §112 depende
+🔒 Ledger receipt schema    → todos os §§ dependem
+🔒 wallet_id como param     → threading inteiro depende
+```
+
+**Smoke Test:** `/opt/windi/session/smoke-travel.sh`
+
 ### Hierarquia
 
 ```
-Constitucionais WINDI (I1-I11) > Invariantes Gêmeo (G1-G6)
+Constitucionais WINDI (I1-I11) > Invariantes Gêmeo (G1-G6) > T1 (Travel MOSAIC)
 > Regras de Ouro (11.1-11.10) > Invariantes Frontend (11.2) > Instruções de sessão
 ```
 
