@@ -3897,3 +3897,76 @@ Diagnóstico completo do sistema de email verification WINDI-TRAVEL:
 
 *Sessão: 01 Apr 2026 (Noite) · Liga IA+H · Kempten, Bavaria*
 *"AI processes. Human decides. WINDI guarantees."*
+
+---
+
+## §109 — Magic Link Login · 01 Apr 2026 (Noite)
+
+**Status:** ✅ LIVE · Travel + LAW
+**Commit:** `33d1360`
+
+### Problema Resolvido
+
+Utilizadores já registados não conseguiam entrar se perdessem o sessionStorage.
+O sistema só tinha fluxo de **registo**, não de **login**.
+
+### Solução Implementada
+
+**Magic Link Login** — autenticação sem password via email.
+
+#### Endpoints (Travel + LAW)
+
+```
+POST /login-request     # Recebe email, envia magic link
+GET  /login/{token}     # Valida token, restaura sessão, redirect
+```
+
+#### DB
+
+```sql
+admins.login_token
+admins.login_token_expires
+```
+
+#### i18n (DE/EN/PT)
+
+- already_have_account
+- login_link
+- login_title / login_desc
+- send_login_link
+- login_sent_title / login_sent_desc
+
+### Ficheiros
+
+| Ficheiro | Linhas |
+|----------|--------|
+| windi-travel/identity-gate/identity_gate.py | +294 |
+| windi-travel/identity-gate/templates/gate.html | +130 |
+| windi-law/identity-gate/identity_gate.py | +294 |
+| windi-law/identity-gate/templates/gate.html | +130 |
+
+---
+
+## §109.1 — Verify Public Root Fix · 01 Apr 2026
+
+**Status:** ✅ LIVE
+**URL:** https://windi-domain.com/verify-public/
+
+Adicionada rota nginx para `/verify-public/` (raiz) que estava em falta.
+
+```nginx
+location = /verify-public/ {
+    alias /opt/windi/verify-public/web/;
+    index index.html;
+    try_files /index.html =404;
+}
+```
+
+### Tags
+
+`W-IDENTITY-LOGIN-READY` · `W-VERIFY-PUBLIC-ROOT`
+
+---
+
+*Sessão: 01 Apr 2026 (Noite 2) · Liga IA+H · Kempten, Bavaria*
+*"AI processes. Human decides. WINDI guarantees."*
