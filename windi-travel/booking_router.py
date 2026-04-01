@@ -1062,7 +1062,7 @@ def build_reason(place: dict, intent: IntentPayload, ctx: dict, lang: str) -> st
 
 def build_voice(place_name: str, dist: str, queue_status: str, lang: str) -> MariaVoice:
     templates = {
-        "PT": f"Encontrei {place_name} a {dist}. {queue_status}.",
+        "PT": f"{place_name} está a {dist} de ti. {queue_status}.",
         "DE": f"Ich habe {place_name} in {dist} gefunden. {queue_status}.",
         "EN": f"I found {place_name}, {dist} away. {queue_status}.",
     }
@@ -1765,7 +1765,7 @@ async def demo_super_carta():
         ),
         context={"weather": "☀️ 12°C", "city": "Kempten", "demo": True},
         maria_voice=MariaVoice(
-            PT="Encontrei três cafés perto de ti. O Einstein é o mais tranquilo.",
+            PT="Há bons cafés por aqui. O Einstein é o mais tranquilo.",
             DE="Ich habe drei Cafés in deiner Nähe gefunden. Das Einstein ist am ruhigsten.",
             EN="I found three cafés near you. Einstein is the quietest one.",
         ),
@@ -2022,7 +2022,7 @@ async def maria_think_endpoint(req: ThinkRequest):
             else:
                 # Sem resultados — mas intent permanece flight
                 no_flights_msg = {
-                    "PT": f"Não encontrei voos directos para {fly_to} neste momento. Tenta uma data diferente ou outro destino.",
+                    "PT": f"Não há voos directos para {fly_to} disponíveis agora. Tenta uma data diferente ou outro destino.",
                     "DE": f"Ich habe keine Direktflüge nach {fly_to} gefunden. Versuche ein anderes Datum oder Ziel.",
                     "EN": f"No direct flights to {fly_to} found. Try a different date or destination."
                 }
@@ -2137,7 +2137,7 @@ async def maria_think_endpoint(req: ThinkRequest):
                 # Sem resultados — mas intent permanece hotel
                 dest = details["destination"]
                 no_hotels_msg = {
-                    "PT": f"Não encontrei hotéis disponíveis em {dest} para essas datas. Tenta outras datas.",
+                    "PT": f"Não há hotéis disponíveis em {dest} para essas datas. Tenta outras datas.",
                     "DE": f"Keine verfügbaren Hotels in {dest} für diese Daten gefunden. Versuche andere Daten.",
                     "EN": f"No hotels available in {dest} for these dates. Try different dates."
                 }
@@ -2193,7 +2193,7 @@ async def maria_think_endpoint(req: ThinkRequest):
                 live_context = get_live_context(user_input, req.lat, req.lng)
 
                 voice_templates = {
-                    "PT": f"Encontrei {best['name']} perto de ti. {best.get('rating', '')}★",
+                    "PT": f"{best['name']} está perto de ti. {best.get('rating', '')}★",
                     "DE": f"Ich habe {best['name']} in deiner Nähe gefunden. {best.get('rating', '')}★",
                     "EN": f"I found {best['name']} near you. {best.get('rating', '')}★"
                 }
@@ -2227,7 +2227,7 @@ async def maria_think_endpoint(req: ThinkRequest):
             else:
                 # Sem resultados — mas intent permanece places
                 no_places_msg = {
-                    "PT": f"Não encontrei {place_type} perto de ti. Tenta noutro local.",
+                    "PT": f"Não há {place_type} por perto agora. Tenta noutro local.",
                     "DE": f"Keine {place_type} in deiner Nähe gefunden. Versuche einen anderen Ort.",
                     "EN": f"No {place_type} found near you. Try another location."
                 }
@@ -2242,7 +2242,7 @@ async def maria_think_endpoint(req: ThinkRequest):
             log.error(f"[MARIA §96] Places search error: {e}")
             # ⚠️ Erro não muda a natureza da decisão — NUNCA chamar LLM aqui
             error_msg = {
-                "PT": "Tive um problema a procurar lugares. Tenta novamente.",
+                "PT": "Tive um problema. Tenta novamente.",
                 "DE": "Es gab ein Problem bei der Suche. Versuche es erneut.",
                 "EN": "Had a problem searching places. Try again."
             }
