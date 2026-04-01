@@ -86,9 +86,9 @@ const I18N = {
     live_notice:"Conectado ao servidor real",
     error_notice:"Backend indisponível — modo demonstração",
     scenarios:[], // §89 — Production mode: no demo scenarios
-    // §100.5 — P0.1 Memory Engine UI
-    accept_btn:"✔️ Confirmar",
-    ignore_btn:"Ver alternativas",
+    // §101 — Feedback Loop Real (labels corrigidos)
+    accept_btn:"✔️ Guardar preferência",
+    ignore_btn:"Outras opções",
     alt_label:"ALTERNATIVAS",
     mode_label:"MARIA v1.3 · Memória Ativa",
     personalized_badge:"personalizado",
@@ -96,6 +96,14 @@ const I18N = {
     anticipation_title:"💡 Sugestão da MARIA",
     anticipation_yes:"Preparar",
     anticipation_no:"Agora não",
+    // §101 — Feedback confirmation
+    feedback_learned:"✓ Maria aprendeu esta preferência",
+    feedback_noted:"✓ Notado — a mostrar alternativas",
+    // §103 — I9 Seal Gate
+    seal_confirm_title:"🔒 SELAR NO LEDGER?",
+    seal_confirm_text:"Esta acção é IRREMEDIÁVEL. O documento ficará permanentemente registado.",
+    seal_confirm_yes:"Sim, selar",
+    seal_confirm_no:"Ainda não",
   },
   DE:{
     tagline:"Orchestratorin Verifizierbarer Erlebnisse",
@@ -126,9 +134,9 @@ const I18N = {
     live_notice:"Mit echtem Server verbunden",
     error_notice:"Backend nicht verfügbar — Demo-Modus",
     scenarios:[], // §89 — Production mode: no demo scenarios
-    // §100.5 — P0.1 Memory Engine UI
-    accept_btn:"✔️ Bestätigen",
-    ignore_btn:"Alternativen anzeigen",
+    // §101 — Feedback Loop Real (labels corrigidos)
+    accept_btn:"✔️ Präferenz speichern",
+    ignore_btn:"Andere Optionen",
     alt_label:"ALTERNATIVEN",
     mode_label:"MARIA v1.3 · Aktives Gedächtnis",
     personalized_badge:"personalisiert",
@@ -136,6 +144,14 @@ const I18N = {
     anticipation_title:"💡 Vorschlag von MARIA",
     anticipation_yes:"Vorbereiten",
     anticipation_no:"Jetzt nicht",
+    // §101 — Feedback confirmation
+    feedback_learned:"✓ Maria hat diese Präferenz gelernt",
+    feedback_noted:"✓ Notiert — zeige Alternativen",
+    // §103 — I9 Seal Gate
+    seal_confirm_title:"🔒 IM LEDGER VERSIEGELN?",
+    seal_confirm_text:"Diese Aktion ist UNWIDERRUFLICH. Das Dokument wird dauerhaft registriert.",
+    seal_confirm_yes:"Ja, versiegeln",
+    seal_confirm_no:"Noch nicht",
   },
   EN:{
     tagline:"Orchestrator of Verifiable Experiences",
@@ -166,9 +182,9 @@ const I18N = {
     live_notice:"Connected to live server",
     error_notice:"Backend unavailable — demo mode",
     scenarios:[], // §89 — Production mode: no demo scenarios
-    // §100.5 — P0.1 Memory Engine UI
-    accept_btn:"✔️ Confirm",
-    ignore_btn:"See alternatives",
+    // §101 — Feedback Loop Real (labels corrigidos)
+    accept_btn:"✔️ Save preference",
+    ignore_btn:"Other options",
     alt_label:"ALTERNATIVES",
     mode_label:"MARIA v1.3 · Active Memory",
     personalized_badge:"personalized",
@@ -176,6 +192,14 @@ const I18N = {
     anticipation_title:"💡 MARIA's Suggestion",
     anticipation_yes:"Prepare",
     anticipation_no:"Not now",
+    // §101 — Feedback confirmation
+    feedback_learned:"✓ Maria learned this preference",
+    feedback_noted:"✓ Noted — showing alternatives",
+    // §103 — I9 Seal Gate
+    seal_confirm_title:"🔒 SEAL TO LEDGER?",
+    seal_confirm_text:"This action is IRREVERSIBLE. The document will be permanently recorded.",
+    seal_confirm_yes:"Yes, seal it",
+    seal_confirm_no:"Not yet",
   },
 };
 
@@ -246,9 +270,9 @@ function getGPS(){
   });
 }
 
-// §100.5 — P0.1 Decision Feedback (Memory Engine)
+// §101 — Feedback Loop Real (Memory Engine with visual confirmation)
 async function sendDecisionFeedback(decisionId, accepted, ignored) {
-  if (!decisionId) return;
+  if (!decisionId) return false;
   try {
     const r = await fetch("/travel/maria/decision-feedback", {
       method: "POST",
@@ -261,10 +285,13 @@ async function sendDecisionFeedback(decisionId, accepted, ignored) {
       })
     });
     if (r.ok) {
-      console.log(`[§100.5] Feedback sent: ${decisionId} → ${accepted ? 'accepted' : 'ignored'}`);
+      console.log(`[§101] Feedback sent: ${decisionId} → ${accepted ? 'accepted' : 'ignored'}`);
+      return true; // §101 — Return success for visual confirmation
     }
+    return false;
   } catch (e) {
-    console.warn('[§100.5] Feedback failed:', e.message);
+    console.warn('[§101] Feedback failed:', e.message);
+    return false;
   }
 }
 
@@ -666,6 +693,8 @@ function App(){
   const[userGPS,setUserGPS]=useState({lat:null,lng:null});
   const[navigating,setNavigating]=useState(false); // §85 — Track navigation state
   const[showAlts,setShowAlts]=useState(false); // §100.5 — Track alternatives visibility
+  const[feedbackSent,setFeedbackSent]=useState(null); // §101 — Track feedback ("accepted"|"ignored"|null)
+  const[showSealModal,setShowSealModal]=useState(false); // §103 — I9 Seal Gate modal
   const timers=useRef([]);
 
   // §85 — Expose arrival callback to global
@@ -707,6 +736,7 @@ function App(){
     clearT();
     setTranscript(inputText);setMode("processing");
     setDoneSt([]);setSealed(false);setShowAlts(false);setShowIntent(false);setResult(null);
+    setFeedbackSent(null);setShowSealModal(false); // §101 + §103 — Reset feedback state
     const ids=STAGES.map(s=>s.id);
     ids.forEach((id,i)=>{
       const t0=setTimeout(()=>{
@@ -753,6 +783,7 @@ function App(){
     clearT();window.speechSynthesis&&window.speechSynthesis.cancel();
     setMode("idle");setResult(null);setActiveStage(null);
     setDoneSt([]);setSealed(false);setShowAlts(false);setTranscript("");setApiSource(null);
+    setFeedbackSent(null);setShowSealModal(false); // §101 + §103
   };
 
   const statusBg={idle:"rgba(255,255,255,0.1)",listening:P.vermelho,
@@ -989,8 +1020,8 @@ function App(){
                   <div style={{fontSize:12,color:P.terra,lineHeight:1.5}}>{decision.reason}</div>
                 </div>
 
-                {/* §100.5 — Booking link (if available) */}
-                {(decision.deep_link||decision.booking_url)&&!sealed&&(
+                {/* §102 — Booking link ALWAYS visible (never hidden by feedback/seal) */}
+                {(decision.deep_link||decision.booking_url)&&(
                   <a href={decision.deep_link||decision.booking_url} target="_blank" rel="noopener noreferrer"
                     style={{display:"block",width:"100%",padding:"10px",background:P.verde,color:"white",
                       border:"none",borderRadius:10,fontSize:13,fontWeight:700,cursor:"pointer",marginBottom:8,
@@ -1002,15 +1033,15 @@ function App(){
                 {result&&result.locations&&result.locations[0]&&(<button onClick={()=>{openNavigation(result.locations[0].lat,result.locations[0].lng,result.locations[0].name||decision.text,lang);setNavigating(true);}} style={{width:"100%",padding:"10px",background:"#C8860A",color:"white",border:"none",borderRadius:10,fontSize:13,fontWeight:700,cursor:"pointer",marginBottom:8}}>🧭 {lang==="de"?"Navigieren":lang==="en"?"Navigate":"Navegar"}</button>)}
                 {navigating&&(<button onClick={()=>{confirmArrival(lang);setNavigating(false);}} style={{width:"100%",padding:"10px",background:"#5C7A5A",color:"white",border:"none",borderRadius:10,fontSize:13,fontWeight:700,cursor:"pointer",marginBottom:8}}>✅ {lang==="de"?"Angekommen!":lang==="en"?"I arrived!":"Cheguei!"}</button>)}
 
-                {/* §100.5 — Feedback buttons (before seal) */}
-                {!sealed&&result.decision_id&&(
+                {/* §101 — Feedback buttons with visual confirmation */}
+                {!feedbackSent&&result.decision_id&&(
                   <div style={{display:"flex",gap:8,marginBottom:8}}>
-                    <button onClick={()=>{sendDecisionFeedback(result.decision_id,true,false);setSealed(true);}}
+                    <button onClick={async()=>{const ok=await sendDecisionFeedback(result.decision_id,true,false);if(ok)setFeedbackSent("accepted");}}
                       style={{flex:2,padding:"11px",background:`linear-gradient(135deg,${P.verde},${P.ouro})`,color:"white",
                         border:"none",borderRadius:10,fontSize:13,fontWeight:700,cursor:"pointer"}}>
                       {t.accept_btn}
                     </button>
-                    <button onClick={()=>{sendDecisionFeedback(result.decision_id,false,true);setShowAlts(true);}}
+                    <button onClick={async()=>{const ok=await sendDecisionFeedback(result.decision_id,false,true);if(ok){setFeedbackSent("ignored");setShowAlts(true);}}}
                       style={{flex:1,padding:"11px",background:"transparent",color:P.cinza,
                         border:`1px solid ${P.cinza}`,borderRadius:10,fontSize:12,cursor:"pointer"}}>
                       {t.ignore_btn}
@@ -1018,11 +1049,50 @@ function App(){
                   </div>
                 )}
 
-                {/* Original seal button (for results without decision_id) */}
-                {!sealed&&!result.decision_id&&(
-                  <button onClick={()=>setSealed(true)} style={{width:"100%",padding:"11px",
+                {/* §101 — Visual feedback confirmation (replaces buttons after feedback) */}
+                {feedbackSent&&!sealed&&(
+                  <div style={{background:feedbackSent==="accepted"?"rgba(92,122,90,0.15)":"rgba(201,168,76,0.1)",
+                    border:`1px solid ${feedbackSent==="accepted"?P.verde:P.ouro}`,borderRadius:10,
+                    padding:"10px 12px",marginBottom:8,textAlign:"center",animation:"fadeIn 0.3s ease"}}>
+                    <div style={{fontSize:12,fontWeight:600,color:feedbackSent==="accepted"?P.verde:P.terra}}>
+                      {feedbackSent==="accepted"?t.feedback_learned:t.feedback_noted}
+                    </div>
+                  </div>
+                )}
+
+                {/* §103 — I9 Seal Gate button (only after feedback or if no decision_id) */}
+                {!sealed&&(feedbackSent||!result.decision_id)&&(
+                  <button onClick={()=>setShowSealModal(true)} style={{width:"100%",padding:"11px",
                     background:`linear-gradient(135deg,${P.terra},${P.ouro})`,color:"white",
-                    border:"none",borderRadius:10,fontSize:13,fontWeight:700,cursor:"pointer"}}>{t.seal_btn}</button>
+                    border:"none",borderRadius:10,fontSize:13,fontWeight:700,cursor:"pointer",marginBottom:8}}>{t.seal_btn}</button>
+                )}
+
+                {/* §103 — I9 Seal Confirmation Modal */}
+                {showSealModal&&(
+                  <div style={{position:"fixed",top:0,left:0,right:0,bottom:0,background:"rgba(0,0,0,0.7)",
+                    display:"flex",alignItems:"center",justifyContent:"center",zIndex:1000,animation:"fadeIn 0.2s ease"}}>
+                    <div style={{background:P.pergaminho,borderRadius:16,padding:"24px",maxWidth:320,margin:16,
+                      boxShadow:"0 8px 32px rgba(0,0,0,0.3)"}}>
+                      <div style={{fontSize:18,fontWeight:800,color:P.noite,marginBottom:12,textAlign:"center"}}>
+                        {t.seal_confirm_title}
+                      </div>
+                      <div style={{fontSize:13,color:P.terra,lineHeight:1.5,marginBottom:20,textAlign:"center"}}>
+                        {t.seal_confirm_text}
+                      </div>
+                      <div style={{display:"flex",gap:10}}>
+                        <button onClick={()=>setShowSealModal(false)}
+                          style={{flex:1,padding:"12px",background:"transparent",border:`1px solid ${P.cinza}`,
+                            borderRadius:10,fontSize:13,color:P.cinza,cursor:"pointer"}}>
+                          {t.seal_confirm_no}
+                        </button>
+                        <button onClick={()=>{setShowSealModal(false);setSealed(true);}}
+                          style={{flex:1,padding:"12px",background:`linear-gradient(135deg,${P.verde},${P.ouro})`,
+                            border:"none",borderRadius:10,fontSize:13,fontWeight:700,color:"white",cursor:"pointer"}}>
+                          {t.seal_confirm_yes}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 )}
 
                 {sealed&&(
