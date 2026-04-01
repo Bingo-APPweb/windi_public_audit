@@ -26,7 +26,7 @@ from datetime import datetime, timezone, timedelta
 import httpx
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, List
 
 # ── Logging (no PII — I1) ─────────────────────────────────────────────────────
 log = logging.getLogger("w-maria-001-booking")
@@ -62,14 +62,24 @@ try:
         # §108 — MEMÓRIA VISÍVEL
         get_visible_memory,
         should_show_memory,
+        # §107 — THREAD VISUAL TIMELINE
+        create_thread,
+        get_active_thread,
+        add_thread_entry,
+        get_thread_timeline,
+        get_user_threads,
+        get_thread_with_timeline,
+        close_thread,
     )
     MEMORY_ENABLED = True
     ANTICIPATION_ENABLED = True
     MEMORY_ENGINE_ENABLED = True
+    THREAD_ENABLED = True
 except ImportError:
     MEMORY_ENABLED = False
     ANTICIPATION_ENABLED = False
     MEMORY_ENGINE_ENABLED = False
+    THREAD_ENABLED = False
     def gerar_saudacao(did, lang, weather=None, hour=None): return {"PT": "Bom dia, viajante", "DE": "Guten Tag, Reisender", "EN": "Good day, traveller"}.get(lang, "Good day")
     def get_total_interactions(did): return 0
     def get_travel_preferences(did): return {"avoid_stops": True, "price_sensitivity": 0.5, "prefer_morning": True, "comfort_priority": 0.5}
@@ -82,6 +92,14 @@ except ImportError:
     def get_decision_stats(did): return {}
     def get_visible_memory(prefs, lang="PT"): return []
     def should_show_memory(prefs, session_shown=False): return False
+    # §107 fallbacks
+    def create_thread(*args, **kwargs): return None
+    def get_active_thread(*args, **kwargs): return None
+    def add_thread_entry(*args, **kwargs): return None
+    def get_thread_timeline(*args, **kwargs): return []
+    def get_user_threads(*args, **kwargs): return []
+    def get_thread_with_timeline(*args, **kwargs): return None
+    def close_thread(*args, **kwargs): pass
     log.warning("[MARIA] Memory module not available — running without DID persistence")
 
 # ── Places Sovereignty Gate ───────────────────────────────────────────────────
@@ -2629,6 +2647,18 @@ async def maria_think_endpoint(req: ThinkRequest):
                 # §108 — Memória Visível
                 visible_mem = get_visible_memory(travel_prefs, req.lang) if travel_prefs and should_show_memory(travel_prefs) else None
 
+                # §107 — Thread Visual Timeline
+                thread_id = None
+                if req.did and THREAD_ENABLED:
+                    thread = get_active_thread(req.did, destination)
+                    if thread:
+                        thread_id = thread["id"]
+                        add_thread_entry(thread_id, "request", user_input)
+                        add_thread_entry(thread_id, "decision", voice, {"type": "flight", "price": best_flight.get("price")})
+                        if visible_mem:
+                            for mem in visible_mem[:2]:
+                                add_thread_entry(thread_id, "memory", mem)
+
                 return {
                     "type": "flight",
                     "intent": "flight",
@@ -2648,7 +2678,8 @@ async def maria_think_endpoint(req: ThinkRequest):
                         "time_pressure": live_context.get("time_pressure"),
                         "mode": live_context.get("mode")
                     },
-                    "visible_memory": visible_mem  # §108
+                    "visible_memory": visible_mem,  # §108
+                    "thread_id": thread_id  # §107
                 }
             else:
                 # Sem resultados — mas intent permanece flight
@@ -2758,6 +2789,18 @@ async def maria_think_endpoint(req: ThinkRequest):
                 # §108 — Memória Visível
                 visible_mem = get_visible_memory(travel_prefs, req.lang) if travel_prefs and should_show_memory(travel_prefs) else None
 
+                # §107 — Thread Visual Timeline
+                thread_id = None
+                if req.did and THREAD_ENABLED:
+                    thread = get_active_thread(req.did, destination)
+                    if thread:
+                        thread_id = thread["id"]
+                        add_thread_entry(thread_id, "request", user_input)
+                        add_thread_entry(thread_id, "decision", voice, {"type": "hotel", "price": best_hotel.get("price")})
+                        if visible_mem:
+                            for mem in visible_mem[:2]:
+                                add_thread_entry(thread_id, "memory", mem)
+
                 return {
                     "type": "hotel",
                     "intent": "hotel",
@@ -2776,7 +2819,8 @@ async def maria_think_endpoint(req: ThinkRequest):
                         "time_pressure": live_context.get("time_pressure"),
                         "mode": live_context.get("mode")
                     },
-                    "visible_memory": visible_mem  # §108
+                    "visible_memory": visible_mem,  # §108
+                    "thread_id": thread_id  # §107
                 }
             else:
                 # Sem resultados — mas intent permanece hotel
@@ -2867,10 +2911,23 @@ async def maria_think_endpoint(req: ThinkRequest):
                 # §108 — Memória Visível
                 visible_mem = get_visible_memory(travel_prefs, req.lang) if travel_prefs and should_show_memory(travel_prefs) else None
 
+                # §107 — Thread Visual Timeline
+                thread_id = None
+                voice = voice_templates.get(req.lang, voice_templates["EN"])
+                if req.did and THREAD_ENABLED:
+                    thread = get_active_thread(req.did, best.get("name"))
+                    if thread:
+                        thread_id = thread["id"]
+                        add_thread_entry(thread_id, "request", user_input)
+                        add_thread_entry(thread_id, "decision", voice, {"type": "places", "place_type": place_type})
+                        if visible_mem:
+                            for mem in visible_mem[:2]:
+                                add_thread_entry(thread_id, "memory", mem)
+
                 return {
                     "type": "places",
                     "intent": place_type,
-                    "response": voice_templates.get(req.lang, voice_templates["EN"]),
+                    "response": voice,
                     "decision": best,  # §97: A MELHOR opção
                     "decision_id": decision_id,  # §100.5: Para feedback
                     "data": places[:5],
@@ -2881,7 +2938,8 @@ async def maria_think_endpoint(req: ThinkRequest):
                     "lang": req.lang,
                     "cache_hit": cache_hit,
                     "mode": "nomada_v1.3",  # §100.5: Memory Engine
-                    "visible_memory": visible_mem  # §108
+                    "visible_memory": visible_mem,  # §108
+                    "thread_id": thread_id  # §107
                 }
             else:
                 # Sem resultados — mas intent permanece places
@@ -3292,3 +3350,127 @@ async def get_decision_stats_endpoint(did: str) -> DecisionStatsResponse:
         acceptance_rate=acceptance_rate,
         last_7_days=stats.get("last_7_days", 0)
     )
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# §107 — THREAD VISUAL TIMELINE ENDPOINTS
+# "Mostrar evolução, não histórico"
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class ThreadEntry(BaseModel):
+    """A single entry in the thread timeline."""
+    id: Optional[int] = None
+    type: str  # request | decision | memory | context
+    content: str
+    timestamp: Optional[str] = None
+    meta: Optional[dict] = None
+
+
+class Thread(BaseModel):
+    """A journey thread with timeline."""
+    id: str
+    title: str
+    destination: Optional[str] = None
+    status: str = "active"
+    entry_count: Optional[int] = None
+    entries: Optional[List[ThreadEntry]] = None
+    created_at: Optional[str] = None
+    updated_at: Optional[str] = None
+
+
+class ThreadsResponse(BaseModel):
+    """Response with user's threads."""
+    ok: bool
+    threads: List[Thread] = []
+
+
+class ThreadDetailResponse(BaseModel):
+    """Response with thread detail and timeline."""
+    ok: bool
+    thread: Optional[Thread] = None
+
+
+class AddEntryRequest(BaseModel):
+    """Request to add entry to thread."""
+    thread_id: str
+    entry_type: str  # request | decision | memory | context
+    content: str
+    meta: Optional[dict] = None
+
+
+class AddEntryResponse(BaseModel):
+    """Response after adding entry."""
+    ok: bool
+    entry_id: Optional[int] = None
+
+
+@router.get("/threads/{did}")
+async def get_threads_endpoint(did: str, limit: int = 10) -> ThreadsResponse:
+    """
+    §107 — Get user's recent threads.
+    """
+    if not THREAD_ENABLED:
+        return ThreadsResponse(ok=False, threads=[])
+
+    threads = get_user_threads(did, limit)
+    return ThreadsResponse(
+        ok=True,
+        threads=[Thread(**t) for t in threads]
+    )
+
+
+@router.get("/thread/{thread_id}")
+async def get_thread_endpoint(thread_id: str) -> ThreadDetailResponse:
+    """
+    §107 — Get thread with full timeline.
+    """
+    if not THREAD_ENABLED:
+        return ThreadDetailResponse(ok=False)
+
+    thread = get_thread_with_timeline(thread_id)
+    if not thread:
+        return ThreadDetailResponse(ok=False)
+
+    entries = [ThreadEntry(**e) for e in thread.get("entries", [])]
+    return ThreadDetailResponse(
+        ok=True,
+        thread=Thread(
+            id=thread["id"],
+            title=thread["title"],
+            destination=thread.get("destination"),
+            status=thread["status"],
+            entries=entries,
+            created_at=thread.get("created_at"),
+            updated_at=thread.get("updated_at")
+        )
+    )
+
+
+@router.post("/thread/entry")
+async def add_thread_entry_endpoint(req: AddEntryRequest) -> AddEntryResponse:
+    """
+    §107 — Add entry to a thread.
+    """
+    if not THREAD_ENABLED:
+        return AddEntryResponse(ok=False)
+
+    entry_id = add_thread_entry(
+        thread_id=req.thread_id,
+        entry_type=req.entry_type,
+        content=req.content,
+        meta=req.meta
+    )
+
+    return AddEntryResponse(ok=bool(entry_id), entry_id=entry_id)
+
+
+@router.post("/thread/close/{thread_id}")
+async def close_thread_endpoint(thread_id: str):
+    """
+    §107 — Close a thread.
+    """
+    if not THREAD_ENABLED:
+        return {"ok": False}
+
+    close_thread(thread_id)
+    return {"ok": True}

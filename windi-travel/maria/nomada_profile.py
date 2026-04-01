@@ -111,6 +111,33 @@ def init_db():
     c.execute("CREATE INDEX IF NOT EXISTS idx_decisions_type ON maria_decisions(decision_type)")
     c.execute("CREATE INDEX IF NOT EXISTS idx_decisions_route ON maria_decisions(route)")
 
+    # §107 — Thread Visual Timeline
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS threads (
+            id TEXT PRIMARY KEY,
+            did TEXT NOT NULL,
+            title TEXT,
+            destination TEXT,
+            status TEXT DEFAULT 'active',
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    c.execute("CREATE INDEX IF NOT EXISTS idx_threads_did ON threads(did)")
+
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS thread_entries (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            thread_id TEXT NOT NULL,
+            entry_type TEXT NOT NULL,
+            content TEXT NOT NULL,
+            meta TEXT,
+            timestamp TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (thread_id) REFERENCES threads(id)
+        )
+    """)
+    c.execute("CREATE INDEX IF NOT EXISTS idx_thread_entries_thread ON thread_entries(thread_id)")
+
     conn.commit()
     conn.close()
     log.info(f"[MARIA Memory] Database initialized: {DB_PATH}")
@@ -1525,6 +1552,247 @@ def get_decision_stats(did: str) -> dict:
 
     conn.close()
     return stats
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# §107 — THREAD VISUAL TIMELINE
+# "Mostrar evolução, não histórico"
+# ══════════════════════════════════════════════════════════════════════════════
+
+import uuid
+
+def create_thread(did: str, title: str, destination: str = None) -> str:
+    """
+    §107 — Create a new thread for a journey.
+
+    Returns thread_id.
+    """
+    if not did:
+        return None
+
+    thread_id = f"TH-{uuid.uuid4().hex[:12].upper()}"
+    now = datetime.now(timezone.utc).isoformat()
+
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute("""
+        INSERT INTO threads (id, did, title, destination, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """, (thread_id, did, title, destination, now, now))
+    conn.commit()
+    conn.close()
+
+    log.info(f"[MARIA Thread] Created: {thread_id} — {title}")
+    return thread_id
+
+
+def get_active_thread(did: str, destination: str = None) -> dict:
+    """
+    §107 — Get or create active thread for destination.
+
+    If a recent thread (< 24h) exists for same destination, reuse it.
+    Otherwise create new.
+    """
+    if not did:
+        return None
+
+    conn = get_connection()
+    c = conn.cursor()
+
+    # Look for recent active thread (same destination, < 24h)
+    if destination:
+        c.execute("""
+            SELECT * FROM threads
+            WHERE did = ?
+              AND destination = ?
+              AND status = 'active'
+              AND datetime(updated_at) > datetime('now', '-24 hours')
+            ORDER BY updated_at DESC
+            LIMIT 1
+        """, (did, destination))
+    else:
+        # No destination — get most recent active
+        c.execute("""
+            SELECT * FROM threads
+            WHERE did = ?
+              AND status = 'active'
+              AND datetime(updated_at) > datetime('now', '-24 hours')
+            ORDER BY updated_at DESC
+            LIMIT 1
+        """, (did,))
+
+    row = c.fetchone()
+    conn.close()
+
+    if row:
+        return dict(row)
+
+    # Create new thread
+    title = f"Viagem → {destination}" if destination else "Nova viagem"
+    thread_id = create_thread(did, title, destination)
+
+    return {
+        "id": thread_id,
+        "did": did,
+        "title": title,
+        "destination": destination,
+        "status": "active"
+    }
+
+
+def add_thread_entry(
+    thread_id: str,
+    entry_type: str,
+    content: str,
+    meta: dict = None
+) -> int:
+    """
+    §107 — Add entry to thread.
+
+    entry_type: "request" | "decision" | "memory" | "context"
+    content: human-readable text
+    meta: optional JSON metadata
+    """
+    if not thread_id or not entry_type or not content:
+        return None
+
+    conn = get_connection()
+    c = conn.cursor()
+
+    now = datetime.now(timezone.utc).isoformat()
+    meta_json = json.dumps(meta) if meta else None
+
+    c.execute("""
+        INSERT INTO thread_entries (thread_id, entry_type, content, meta, timestamp)
+        VALUES (?, ?, ?, ?, ?)
+    """, (thread_id, entry_type, content, meta_json, now))
+
+    entry_id = c.lastrowid
+
+    # Update thread timestamp
+    c.execute("UPDATE threads SET updated_at = ? WHERE id = ?", (now, thread_id))
+
+    conn.commit()
+    conn.close()
+
+    return entry_id
+
+
+def get_thread_timeline(thread_id: str) -> list:
+    """
+    §107 — Get all entries for a thread in chronological order.
+
+    Returns list of entry dicts.
+    """
+    if not thread_id:
+        return []
+
+    conn = get_connection()
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT id, entry_type, content, meta, timestamp
+        FROM thread_entries
+        WHERE thread_id = ?
+        ORDER BY timestamp ASC
+    """, (thread_id,))
+
+    entries = []
+    for row in c.fetchall():
+        entry = {
+            "id": row["id"],
+            "type": row["entry_type"],
+            "content": row["content"],
+            "timestamp": row["timestamp"]
+        }
+        if row["meta"]:
+            try:
+                entry["meta"] = json.loads(row["meta"])
+            except:
+                pass
+        entries.append(entry)
+
+    conn.close()
+    return entries
+
+
+def get_user_threads(did: str, limit: int = 10) -> list:
+    """
+    §107 — Get recent threads for a user.
+
+    Returns list of thread dicts with entry count.
+    """
+    if not did:
+        return []
+
+    conn = get_connection()
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT t.*,
+               (SELECT COUNT(*) FROM thread_entries WHERE thread_id = t.id) as entry_count
+        FROM threads t
+        WHERE t.did = ?
+        ORDER BY t.updated_at DESC
+        LIMIT ?
+    """, (did, limit))
+
+    threads = []
+    for row in c.fetchall():
+        threads.append({
+            "id": row["id"],
+            "title": row["title"],
+            "destination": row["destination"],
+            "status": row["status"],
+            "entry_count": row["entry_count"],
+            "created_at": row["created_at"],
+            "updated_at": row["updated_at"]
+        })
+
+    conn.close()
+    return threads
+
+
+def get_thread_with_timeline(thread_id: str) -> dict:
+    """
+    §107 — Get thread with all entries.
+
+    Returns thread dict with 'entries' list.
+    """
+    if not thread_id:
+        return None
+
+    conn = get_connection()
+    c = conn.cursor()
+
+    c.execute("SELECT * FROM threads WHERE id = ?", (thread_id,))
+    row = c.fetchone()
+    conn.close()
+
+    if not row:
+        return None
+
+    thread = dict(row)
+    thread["entries"] = get_thread_timeline(thread_id)
+    return thread
+
+
+def close_thread(thread_id: str):
+    """
+    §107 — Mark thread as closed.
+    """
+    if not thread_id:
+        return
+
+    conn = get_connection()
+    c = conn.cursor()
+    now = datetime.now(timezone.utc).isoformat()
+    c.execute(
+        "UPDATE threads SET status = 'closed', updated_at = ? WHERE id = ?",
+        (now, thread_id)
+    )
+    conn.commit()
+    conn.close()
 
 
 # ── Initialize on import ─────────────────────────────────────────────────────
