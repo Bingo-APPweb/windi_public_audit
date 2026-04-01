@@ -147,6 +147,22 @@ except ImportError as e:
     HOTEL_BRIDGE_ENABLED = False
     log.warning(f"[MARIA] Hotel Bridge not available: {e}")
 
+# ── §103 Deutsche Bahn Bridge (Intermodal Intelligence) ──────────────────────
+try:
+    from maria.db_bridge import (
+        search_trains,
+        should_include_trains,
+        estimate_distance,
+    )
+    DB_BRIDGE_ENABLED = True
+    log.info("[MARIA] Deutsche Bahn Bridge loaded ✓")
+except ImportError as e:
+    DB_BRIDGE_ENABLED = False
+    async def search_trains(*args, **kwargs): return {"trains": []}
+    def should_include_trains(*args, **kwargs): return False
+    def estimate_distance(*args, **kwargs): return 9999
+    log.warning(f"[MARIA] DB Bridge not available: {e}")
+
 # ── §69 Culture/Tips Intent Detection ─────────────────────────────────────────
 CULTURE_KEYWORDS = {
     "pt": [
@@ -626,7 +642,184 @@ def apply_context_modifiers(score: float, entity: dict, entity_type: str, prefs:
         if weather == "cold" and indoor:
             score += 25
 
+    # ─── TRAINS (§103) ───
+    elif entity_type == "train":
+        transfers = entity.get("transfers", 0)
+        duration = entity.get("duration_total", 999)
+        city_center = entity.get("city_center_departure", False) and entity.get("city_center_arrival", False)
+
+        # High time pressure → direct trains get bonus
+        if time_pressure == "high" and transfers == 0:
+            score += 50
+
+        # Business trip → city center arrival is gold
+        if trip_type == "business" and city_center:
+            score += 45
+
+        # Short duration trains (<3h) get bonus in any context
+        if duration < 180:
+            score += 30
+
+    # ─── UNIFIED TRAVEL (§103) ───
+    elif entity_type == "travel":
+        # Route to specific handler
+        modal_type = entity.get("type", "flight")
+        if modal_type == "train":
+            return apply_context_modifiers(score, entity, "train", prefs, context)
+        else:
+            return apply_context_modifiers(score, entity, "flight", prefs, context)
+
     return score
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# §103 — UNIFIED TRAVEL SCORING
+# "Flight e Train são apenas variações de travel_option"
+# ══════════════════════════════════════════════════════════════════════════════
+
+def score_travel_option(opt: dict, prefs: dict = None, context: dict = None) -> float:
+    """
+    §103 — Unified scoring for flights AND trains.
+
+    Core principle: score the JOURNEY, not the modal.
+    Maria decides the BEST way to travel, regardless of type.
+    """
+    if prefs is None:
+        prefs = {
+            "avoid_stops": True, "price_sensitivity": 0.5, "prefer_morning": True,
+            "comfort_priority": 0.5, "direct_bonus": 200, "layover_penalty": 100,
+            "duration_weight": 0.5, "price_weight": 1.5, "morning_bonus": 50,
+            "learned_confidence": 0.0
+        }
+    if context is None:
+        context = {}
+
+    score = 1000  # Base score
+
+    modal_type = opt.get("type", "flight")
+
+    # ─── PRICE (universal) ───
+    price = opt.get("price", 999)
+    price_weight = prefs.get("price_weight", 1.5)
+    score -= price * price_weight
+
+    # ─── DURATION TOTAL (porta-a-porta for trains includes check-in time advantage) ───
+    duration = opt.get("duration_total", opt.get("duration_min", opt.get("duration_minutes", 999)))
+
+    # Trains: city center to city center = no airport time
+    if modal_type == "train":
+        # Flights have ~90min overhead (check-in, security, boarding, taxi)
+        # Trains just show up and go — this is reflected in duration_total
+        pass  # Duration already accurate for trains
+
+    duration_weight = prefs.get("duration_weight", 0.5)
+    score -= duration * duration_weight
+
+    # ─── DIRECT/TRANSFERS ───
+    direct = opt.get("direct", False)
+    transfers = opt.get("transfers", opt.get("stops", 0))
+
+    if direct or transfers == 0:
+        direct_bonus = prefs.get("direct_bonus", 200)
+        score += direct_bonus
+    else:
+        layover_penalty = prefs.get("layover_penalty", 100)
+        score -= transfers * layover_penalty
+
+    # ─── TRAIN-SPECIFIC ADVANTAGES (European context) ───
+    if modal_type == "train":
+        # City center advantage (no taxi/transfer needed)
+        if opt.get("city_center_departure", False) and opt.get("city_center_arrival", False):
+            score += 60  # Significant convenience boost
+
+        # Short trains (<3h) are often better than equivalent flights
+        if duration < 180:
+            score += 80  # European sweet spot
+
+        # Premium train types (ICE, TGV, etc.)
+        train_type = opt.get("train_type", "").upper()
+        if train_type in ("ICE", "TGV", "THALYS", "EUROSTAR"):
+            comfort = prefs.get("comfort_priority", 0.5)
+            if comfort > 0.4:
+                score += 30
+
+    # ─── FLIGHT-SPECIFIC (preserved from score_flight) ───
+    elif modal_type == "flight":
+        # Time preference
+        dep = opt.get("departure", opt.get("departure_time", ""))
+        morning_bonus = prefs.get("morning_bonus", 50)
+        prefer_morning = prefs.get("prefer_morning", True)
+
+        if prefer_morning and any(t in str(dep) for t in ["T06", "T07", "T08", "T09"]):
+            score += morning_bonus
+
+        # Comfort (premium airlines)
+        comfort = prefs.get("comfort_priority", 0.5)
+        premium_airlines = ["TAP", "LH", "BA", "AF", "KLM", "Swiss"]
+        if comfort > 0.6 and opt.get("airline") in premium_airlines:
+            score += 30
+
+    # ─── LEARNED CONFIDENCE (personalization boost) ───
+    learned_confidence = prefs.get("learned_confidence", 0.0)
+    if learned_confidence > 0.5:
+        personal_boost = 20 * learned_confidence
+        if direct and prefs.get("avoid_stops", True):
+            score += personal_boost
+
+    # ─── CONTEXT MODIFIERS (§106) ───
+    score = apply_context_modifiers(score, opt, modal_type, prefs, context)
+
+    return score
+
+
+def explain_train_decision(train: dict, lang: str = "PT") -> str:
+    """§103+§105 — Generate human explanation for why this train was chosen."""
+    price = train.get("price", 0)
+    duration = train.get("duration_total", 0)
+    direct = train.get("direct", False)
+    train_type = train.get("train_type", "")
+    origin = train.get("origin", "")
+    destination = train.get("destination", "")
+
+    # Format duration
+    hours = duration // 60
+    mins = duration % 60
+    duration_str = f"{hours}h{mins:02d}" if hours else f"{mins}min"
+
+    # Price display
+    price_str = f"{price}€" if price else ""
+
+    templates = {
+        "PT": {
+            "direct_fast": f"Este comboio é perfeito: {duration_str} directo de centro a centro. {price_str}",
+            "direct": f"Escolhi este {train_type}: directo, {duration_str}. Chegas ao centro sem stress.",
+            "with_price": f"A melhor opção de comboio: {price_str}, {duration_str}. Sais do centro, chegas ao centro.",
+            "default": f"Este {train_type or 'comboio'} faz mais sentido: {duration_str}, directo e prático."
+        },
+        "DE": {
+            "direct_fast": f"Dieser Zug ist perfekt: {duration_str} direkt von Zentrum zu Zentrum. {price_str}",
+            "direct": f"Meine Wahl {train_type}: Direktverbindung, {duration_str}. Entspannt ins Zentrum.",
+            "with_price": f"Beste Zugoption: {price_str}, {duration_str}. Von Zentrum zu Zentrum.",
+            "default": f"Dieser {train_type or 'Zug'} macht mehr Sinn: {duration_str}, direkt und praktisch."
+        },
+        "EN": {
+            "direct_fast": f"This train is perfect: {duration_str} direct, city center to city center. {price_str}",
+            "direct": f"My pick {train_type}: direct, {duration_str}. Arrive right in the center.",
+            "with_price": f"Best train option: {price_str}, {duration_str}. Center to center.",
+            "default": f"This {train_type or 'train'} makes more sense: {duration_str}, direct and practical."
+        }
+    }
+
+    t = templates.get(lang, templates["EN"])
+
+    if direct and duration < 180:
+        return t["direct_fast"]
+    elif direct:
+        return t["direct"]
+    elif price > 0:
+        return t["with_price"]
+    else:
+        return t["default"]
 
 
 def explain_flight_decision(flight: dict, lang: str = "PT") -> str:
@@ -802,6 +995,7 @@ class PlaceResult(BaseModel):
     open_now: Optional[bool] = None
     lat: Optional[float] = None    # §79 Super Carta
     lng: Optional[float] = None    # §79 Super Carta
+    deep_link: Optional[str] = None  # §103 Intermodal — booking URL
 
 class MariaVoice(BaseModel):
     PT: str
@@ -1269,6 +1463,37 @@ def generate_explanation(entity: dict, entity_type: str, prefs: dict, context: d
                 "EN": "I chose this place because it suits you"
             }
 
+    # §103 — TRAIN EXPLANATIONS
+    elif entity_type == "train":
+        transfers = entity.get("transfers", 0)
+        duration = entity.get("duration_total", 999)
+        city_center = entity.get("city_center_departure", False) and entity.get("city_center_arrival", False)
+
+        if transfers == 0 and duration < 180:
+            base = {
+                "PT": "Este comboio é perfeito: directo e chega mais rápido",
+                "DE": "Dieser Zug ist perfekt: direkt und schneller am Ziel",
+                "EN": "This train is perfect: direct and gets you there faster"
+            }
+        elif transfers == 0:
+            base = {
+                "PT": "Escolhi este comboio porque é directo",
+                "DE": "Ich habe diesen Zug gewählt, weil er direkt ist",
+                "EN": "I chose this train because it's direct"
+            }
+        elif city_center:
+            base = {
+                "PT": "Escolhi este comboio porque chega ao centro",
+                "DE": "Ich habe diesen Zug gewählt, weil er ins Zentrum fährt",
+                "EN": "I chose this train because it arrives in the city center"
+            }
+        else:
+            base = {
+                "PT": "Este comboio faz mais sentido para esta viagem",
+                "DE": "Dieser Zug macht mehr Sinn für diese Reise",
+                "EN": "This train makes more sense for this trip"
+            }
+
     else:
         base = {
             "PT": "Escolhi isto porque faz sentido para ti",
@@ -1527,57 +1752,155 @@ async def maria_plan(req: PlanRequest):
                 timestamp=datetime.now(timezone.utc).isoformat(),
             )
 
-        flights_data = await search_flights(
-            fly_from=flight_details["fly_from"],
-            fly_to=flight_details["fly_to"],
-            date_from=flight_details["date"],
-            currency="EUR",
-            max_results=3,
-        )
+        # §103 — INTERMODAL INTELLIGENCE
+        # Search both flights AND trains, pick the BEST option
+        origin = flight_details["fly_from"]
+        destination = flight_details["fly_to"]
+        travel_date = flight_details["date"]
 
-        maria_text = format_flight_response(flights_data, lang)
-        sovereign_mode = flights_data.get("source") == "demo"
+        # Get user preferences for unified scoring
+        travel_prefs = get_travel_preferences(did) if did and MEMORY_ENABLED else None
+
+        # 1. Always search flights
+        flights_data = await search_flights(
+            fly_from=origin,
+            fly_to=destination,
+            date_from=travel_date,
+            currency="EUR",
+            max_results=5,
+        )
+        flights = flights_data.get("flights", [])
+
+        # Normalize flights to travel_option format
+        travel_options = []
+        for f in flights:
+            travel_options.append({
+                "type": "flight",
+                "origin": origin,
+                "destination": destination,
+                "departure_time": f.get("departure", ""),
+                "arrival_time": f.get("arrival", ""),
+                "duration_total": f.get("duration_min", f.get("duration_minutes", 999)) + 90,  # +90min airport overhead
+                "price": f.get("price", 999),
+                "transfers": f.get("stops", len(f.get("layovers", []))),
+                "direct": f.get("direct", False),
+                "city_center_departure": False,
+                "city_center_arrival": False,
+                "provider": "kiwi",
+                "airline": f.get("airline", ""),
+                "deep_link": f.get("deep_link", ""),
+                "duration_str": f.get("duration_str", ""),
+                "_original": f,  # Keep original for display
+            })
+
+        # 2. Search trains if distance < 800km (European rail sweet spot)
+        if DB_BRIDGE_ENABLED and should_include_trains(origin, destination):
+            log.info(f"[{request_id[:8]}] §103 Intermodal: also searching trains")
+            trains_data = await search_trains(
+                origin=origin,
+                destination=destination,
+                date=travel_date,
+                time="08:00",
+            )
+            trains = trains_data.get("trains", [])
+
+            for t in trains:
+                travel_options.append({
+                    "type": "train",
+                    "origin": t.get("origin", origin),
+                    "destination": t.get("destination", destination),
+                    "departure_time": t.get("departure_time", ""),
+                    "arrival_time": t.get("arrival_time", ""),
+                    "duration_total": t.get("duration_total", 999),
+                    "price": t.get("price", 0),
+                    "transfers": t.get("transfers", 0),
+                    "direct": t.get("direct", True),
+                    "city_center_departure": t.get("city_center_departure", True),
+                    "city_center_arrival": t.get("city_center_arrival", True),
+                    "provider": "db",
+                    "train_type": t.get("train_type", ""),
+                    "booking_url": t.get("booking_url", ""),
+                    "_original": t,
+                })
+
+        # 3. Score all options with unified scoring
+        for opt in travel_options:
+            opt["_score"] = score_travel_option(opt, travel_prefs, ctx)
+
+        # 4. Sort by score (descending) and pick the BEST
+        travel_options.sort(key=lambda x: x.get("_score", 0), reverse=True)
+        best_option = travel_options[0] if travel_options else None
+
+        if not best_option:
+            # No options found — fallback to original flight response
+            maria_text = format_flight_response(flights_data, lang)
+            sovereign_mode = True
+        else:
+            # Generate explanation based on chosen modal
+            if best_option["type"] == "train":
+                maria_text = explain_train_decision(best_option, lang)
+                sovereign_mode = False
+                log.info(f"[{request_id[:8]}] §103 MARIA chose TRAIN over flight (score: {best_option['_score']:.0f})")
+            else:
+                maria_text = explain_flight_decision(best_option.get("_original", best_option), lang)
+                sovereign_mode = flights_data.get("source") == "demo"
 
         # Seal to Ledger
         seal_payload = {
             "request_id": request_id,
-            "origin": flights_data.get("origin"),
-            "destination": flights_data.get("destination"),
-            "date": flight_details["date"],
-            "flights_count": len(flights_data.get("flights", [])),
+            "origin": origin,
+            "destination": destination,
+            "date": travel_date,
+            "modal_type": best_option["type"] if best_option else "unknown",
+            "options_evaluated": len(travel_options),
             "sovereign_mode": sovereign_mode,
-            "source": flights_data.get("source", "kiwi.com"),
+            "source": best_option.get("provider", "unknown") if best_option else "unknown",
             "timestamp": datetime.now(timezone.utc).isoformat(),
         }
         receipt_id = await seal_decision(request_id, seal_payload, req.wallet_id)
 
-        # Return flight results in PlanResponse format
-        best_flight = flights_data.get("flights", [{}])[0] if flights_data.get("flights") else {}
+        # Build response based on best option
+        if best_option:
+            decision_name = f"{'Comboio' if lang == 'PT' else 'Zug' if lang == 'DE' else 'Train'} {origin} → {destination}" if best_option["type"] == "train" else f"{'Voo' if lang == 'PT' else 'Flug' if lang == 'DE' else 'Flight'} {origin} → {destination}"
+            duration_str = best_option.get("duration_str", "")
+            if not duration_str and best_option.get("duration_total"):
+                h = best_option["duration_total"] // 60
+                m = best_option["duration_total"] % 60
+                duration_str = f"{h}h{m:02d}" if h else f"{m}min"
+            price_str = f"{best_option.get('price', '?')}€"
+            booking_link = best_option.get("deep_link") or best_option.get("booking_url", "")
+        else:
+            decision_name = f"Voo {origin} → {destination}"
+            duration_str = "?"
+            price_str = "?"
+            booking_link = ""
 
         return PlanResponse(
             request_id=request_id,
             decision=PlaceResult(
-                name=f"Voo {flights_data.get('origin', '?')} → {flights_data.get('destination', '?')}",
-                type="flight",
-                distance_text=best_flight.get("duration_str", "?"),
-                queue_status=f"{best_flight.get('price', '?')}€" if best_flight else "?",
+                name=decision_name,
+                type=best_option["type"] if best_option else "flight",
+                distance_text=duration_str,
+                queue_status=price_str,
                 reason=maria_text[:200],
                 rating=None,
                 open_now=None,
+                deep_link=booking_link,  # §103 — booking link
             ),
             context={
                 "weather": ctx.get("weather", ""),
-                "flights": flights_data.get("flights", []),
-                "origin": flights_data.get("origin"),
-                "destination": flights_data.get("destination"),
-                "source": flights_data.get("source", "kiwi.com"),
+                "travel_options": [{"type": o["type"], "price": o["price"], "duration": o["duration_total"], "direct": o["direct"]} for o in travel_options[:5]],
+                "origin": origin,
+                "destination": destination,
+                "source": best_option.get("provider", "unknown") if best_option else "unknown",
+                "intermodal": len([o for o in travel_options if o["type"] == "train"]) > 0,
             },
             maria_voice=MariaVoice(
                 PT=maria_text if lang == "PT" else "",
                 DE=maria_text if lang == "DE" else "",
                 EN=maria_text if lang == "EN" else "",
             ),
-            intent_parsed={"type": "flight", "detected_from_query": True},
+            intent_parsed={"type": best_option["type"] if best_option else "flight", "intermodal": True},
             ledger_receipt_id=receipt_id,
             cost_eur=0.0,
             sovereign_mode=sovereign_mode,
