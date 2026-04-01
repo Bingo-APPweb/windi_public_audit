@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI TRAVEL — Pitch Deck 2026</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#1A1814;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:'Segoe UI',system-ui,sans-serif;padding:2rem}
+:root{
+  --ink:#1A1814;
+  --perg:#F5F0E0;
+  --perg2:#EDE8D6;
+  --gold:#8B6914;
+  --gold-light:#C9A84C;
+  --muted:#6B6458;
+  --accent:#2B4A8B;
+  --radius:12px;
+  --radius-sm:8px;
+}
+.deck{
+  width:100%;
+  max-width:860px;
+  background:var(--perg);
+  border-radius:var(--radius);
+  overflow:hidden;
+  position:relative;
+  box-shadow:0 24px 80px rgba(0,0,0,.6);
+  min-height:540px;
+}
+.slides{display:flex;transition:transform .45s cubic-bezier(.77,0,.18,1);will-change:transform}
+.slide{min-width:100%;padding:3rem 3.5rem 5.5rem;display:flex;flex-direction:column;justify-content:center;min-height:540px;position:relative}
+
+.slide-num{position:absolute;top:1.5rem;right:2rem;font-size:11px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+.lang-tag{position:absolute;top:1.5rem;left:2rem;font-size:10px;letter-spacing:.15em;color:var(--gold);text-transform:uppercase;border:0.5px solid var(--gold-light);padding:3px 10px;border-radius:20px}
+.label{font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem}
+
+/* LANG TOGGLE - §11.2 Constitutional */
+.lang-toggle{position:fixed;top:1.5rem;right:2rem;display:flex;gap:4px;z-index:100}
+.lang-btn{background:rgba(26,24,20,0.8);border:1px solid var(--gold);color:var(--gold-light);padding:6px 12px;font-size:11px;letter-spacing:.1em;cursor:pointer;transition:all .2s;font-family:inherit;border-radius:4px}
+.lang-btn:first-child{border-radius:4px 0 0 4px}
+.lang-btn:last-child{border-radius:0 4px 4px 0}
+.lang-btn:not(:first-child):not(:last-child){border-radius:0}
+.lang-btn.active{background:var(--gold);color:#1A1814;font-weight:600}
+.lang-btn:hover:not(.active){background:rgba(201,168,76,0.2)}
+
+/* HERO */
+.s-hero{background:var(--ink)}
+.s-hero .lang-tag{color:var(--gold-light);border-color:var(--gold)}
+.s-hero .slide-num{color:#5A5550}
+.hero-label{font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--gold-light);margin-bottom:1.5rem}
+.hero-title{font-size:clamp(2.8rem,6vw,4.5rem);font-weight:500;color:#F5F0E0;line-height:1.0;margin-bottom:.5rem}
+.hero-title span{color:var(--gold-light)}
+.hero-sub{font-size:1.05rem;color:#9A9488;max-width:560px;line-height:1.7;margin-top:1.5rem;border-left:2px solid var(--gold);padding-left:1.25rem}
+.hero-quote{margin-top:3rem;font-size:.85rem;letter-spacing:.08em;text-transform:uppercase;color:#5A5550}
+
+/* PROBLEM */
+.friction-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.f-card{background:var(--perg2);border-radius:var(--radius-sm);padding:1.25rem;border:0.5px solid #D4CDB8}
+.f-card .f-num{font-size:1.8rem;font-weight:500;color:var(--gold);line-height:1}
+.f-card .f-label{font-size:.8rem;color:var(--muted);margin-top:.4rem;line-height:1.5}
+
+/* APPS */
+.app-row{display:flex;flex-direction:column;gap:.75rem;margin-top:1.5rem}
+.app-item{display:flex;align-items:center;justify-content:space-between;background:var(--perg2);border-radius:var(--radius-sm);padding:.9rem 1.25rem;border:0.5px solid #D4CDB8}
+.app-name{font-size:.95rem;font-weight:500;color:var(--ink)}
+.app-does{font-size:.8rem;color:var(--muted)}
+.app-missing{font-size:.75rem;color:#C04A2B;background:#FAE8E3;padding:3px 10px;border-radius:20px;letter-spacing:.04em}
+.missing-footer{margin-top:1.5rem;padding:1rem 1.25rem;border-radius:var(--radius-sm);background:#EAF1FB;border:0.5px solid #B5C8E8;font-size:.85rem;color:#185FA5;line-height:1.6}
+
+/* MARIA */
+.s-maria{background:var(--ink)}
+.s-maria .label{color:var(--gold-light)}
+.s-maria .slide-num{color:#5A5550}
+.s-maria h2{font-size:clamp(1.4rem,3vw,2.2rem);font-weight:500;color:#F5F0E0;margin-bottom:.4rem}
+.demo-box{background:#252219;border-radius:var(--radius);padding:1.5rem;margin-top:1.5rem;border:0.5px solid #3A352C}
+.demo-input{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem}
+.demo-avatar{width:32px;height:32px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;color:#fff;flex-shrink:0}
+.demo-msg{font-size:.85rem;color:#C8C2B6;line-height:1.5;background:#1A1814;padding:.75rem 1rem;border-radius:var(--radius-sm);flex:1}
+.demo-thinking{display:flex;gap:4px;align-items:center;margin:.75rem 0;padding-left:44px}
+.dot-anim{width:6px;height:6px;border-radius:50%;background:var(--gold-light);animation:pulse 1.2s infinite}
+.dot-anim:nth-child(2){animation-delay:.2s}
+.dot-anim:nth-child(3){animation-delay:.4s}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+.demo-decision{background:#0F1A2E;border-radius:var(--radius-sm);padding:1.25rem;border-left:3px solid var(--gold-light)}
+.d-label{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#5A7FAA;margin-bottom:.5rem}
+.d-choice{font-size:1.1rem;font-weight:500;color:#F5F0E0;margin-bottom:.3rem}
+.d-reason{font-size:.8rem;color:#7A9ABB;line-height:1.6}
+.demo-badges{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem}
+.badge{font-size:.7rem;padding:3px 10px;border-radius:20px;letter-spacing:.04em}
+.badge-green{background:#0D2A1E;color:#4FC594}
+.badge-gold{background:#2A2010;color:var(--gold-light)}
+
+/* LAYERS */
+.layers-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-top:1.5rem}
+.layer-card{padding:1.25rem;border-radius:var(--radius-sm);border:0.5px solid #D4CDB8}
+.layer-card .l-para{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:.4rem}
+.layer-card .l-title{font-size:1rem;font-weight:500;color:var(--ink);margin-bottom:.3rem}
+.layer-card .l-desc{font-size:.8rem;color:var(--muted);line-height:1.5}
+.layer-card:nth-child(1){background:#EAF3DE}
+.layer-card:nth-child(2){background:#E6F1FB}
+.layer-card:nth-child(3){background:#FFF3E0}
+.layer-card:nth-child(4){background:#F0EBF8}
+
+/* TRANSFORM */
+.transform-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:1.5rem;align-items:center;margin-bottom:2rem}
+.t-card{border-radius:var(--radius-sm);padding:1.5rem;text-align:center}
+.t-before{background:var(--perg2);border:0.5px solid #D4CDB8}
+.t-after{background:#EAF1FB;border:0.5px solid #B5C8E8}
+.t-label{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;margin-bottom:.75rem}
+.t-text-before{font-size:1.3rem;font-weight:500;color:#C04A2B;line-height:1.3}
+.t-text-after{font-size:1.3rem;font-weight:500;color:#185FA5;line-height:1.3}
+.t-sub-before{font-size:.75rem;color:var(--muted);margin-top:.75rem}
+.t-sub-after{font-size:.75rem;color:#5A7FAA;margin-top:.75rem}
+
+/* MARKET */
+.market-stats{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem}
+.market-stat-card{background:var(--perg2);border-radius:var(--radius-sm);padding:1rem 1.25rem;border:0.5px solid #D4CDB8}
+.s-big{font-size:2rem;font-weight:500;color:var(--accent);line-height:1}
+.s-unit{font-size:.78rem;color:var(--muted);margin-top:.3rem}
+.market-bullets{display:flex;flex-direction:column;gap:.75rem}
+.m-bullet{display:flex;align-items:flex-start;gap:.75rem;padding:1rem 1.25rem;border-radius:var(--radius-sm);background:var(--perg2);border:0.5px solid #D4CDB8}
+.m-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:.35rem}
+.m-text{font-size:.85rem;color:var(--ink);line-height:1.5}
+
+/* CLOSE */
+.s-close{background:var(--ink)}
+.s-close .slide-num{color:#5A5550}
+.close-center{text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:420px;gap:1.5rem}
+.close-line1{font-size:clamp(1rem,2vw,1.4rem);color:#9A9488}
+.close-line2{font-size:clamp(1.4rem,3vw,2.4rem);font-weight:500;color:#F5F0E0;line-height:1.2;max-width:600px}
+.close-divider{width:48px;height:2px;background:var(--gold)}
+.close-meta{font-size:.8rem;color:#9A9488}
+.close-tag{font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;color:#5A5550}
+
+/* NAV */
+.nav{position:absolute;bottom:1.75rem;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:1.25rem}
+.nav-dots{display:flex;gap:.4rem}
+.nd{width:6px;height:6px;border-radius:50%;background:#C8C2B6;cursor:pointer;transition:all .25s}
+.nd.active{background:var(--gold);width:18px;border-radius:3px}
+.s-hero .nd,.s-maria .nd,.s-close .nd{background:#5A5550}
+.s-hero .nd.active,.s-maria .nd.active,.s-close .nd.active{background:var(--gold-light)}
+.nav-btn{background:none;border:0.5px solid;padding:.35rem .9rem;border-radius:20px;cursor:pointer;font-size:.75rem;letter-spacing:.06em;transition:opacity .2s;font-family:inherit}
+.nav-prev{border-color:#C8C2B6;color:var(--muted)}
+.nav-next{border-color:var(--gold);color:var(--gold)}
+.s-hero .nav-prev,.s-maria .nav-prev,.s-close .nav-prev{border-color:#5A5550;color:#7A7470}
+.s-hero .nav-next,.s-maria .nav-next,.s-close .nav-next{border-color:var(--gold-light);color:var(--gold-light)}
+.nav-btn:hover{opacity:.7}
+
+/* KEYBOARD HINT */
+.kb-hint{position:fixed;bottom:1.5rem;right:2rem;font-size:11px;color:#5A5550;letter-spacing:.06em}
+h2{font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:500;color:var(--ink);line-height:1.15;margin-bottom:1.5rem;max-width:640px}
+
+@media(max-width:600px){
+  .friction-grid{grid-template-columns:1fr}
+  .layers-grid{grid-template-columns:1fr}
+  .transform-grid{grid-template-columns:1fr;text-align:center}
+  .transform-grid>div:nth-child(2){transform:rotate(90deg)}
+  .market-stats{grid-template-columns:1fr}
+  .lang-toggle{top:auto;bottom:4.5rem;right:1rem}
+}
+</style>
+</head>
+<body>
+
+<!-- §11.2 Constitutional Language Toggle: DE | EN | PT -->
+<div class="lang-toggle">
+  <button class="lang-btn" onclick="setLang('de')">DE</button>
+  <button class="lang-btn" onclick="setLang('en')">EN</button>
+  <button class="lang-btn active" onclick="setLang('pt')">PT</button>
+</div>
+
+<div class="deck" id="deck">
+  <div class="slides" id="slides">
+
+    <!-- 01: HERO -->
+    <div class="slide s-hero">
+      <div class="lang-tag">DE · EN · PT</div>
+      <div class="slide-num">01 / 08</div>
+      <div class="hero-label">WINDI Publishing House · 2026</div>
+      <div class="hero-title">WINDI<span> TRAVEL</span></div>
+      <div class="hero-title" style="color:#5A5550;font-size:clamp(1.2rem,2.5vw,1.8rem);margin-top:.25rem" data-i18n="hero_subtitle"></div>
+      <div class="hero-sub" data-i18n="hero_sub"></div>
+      <div class="hero-quote">Kempten, Bavaria · Germany</div>
+      <div class="nav">
+        <div class="nav-dots"></div>
+        <button class="nav-btn nav-prev" onclick="go(-1)" data-i18n="nav_prev"></button>
+        <button class="nav-btn nav-next" onclick="go(1)" data-i18n="nav_next"></button>
+      </div>
+    </div>
+
+    <!-- 02: PROBLEMA -->
+    <div class="slide s-problem">
+      <div class="lang-tag" data-i18n="tag_problem"></div>
+      <div class="slide-num">02 / 08</div>
+      <div class="label" data-i18n="label_problem"></div>
+      <h2 data-i18n="problem_title"></h2>
+      <div class="friction-grid">
+        <div class="f-card">
+          <div class="f-num">3–5</div>
+          <div class="f-label" data-i18n="problem_apps"></div>
+        </div>
+        <div class="f-card">
+          <div class="f-num">40+</div>
+          <div class="f-label" data-i18n="problem_minutes"></div>
+        </div>
+        <div class="f-card">
+          <div class="f-num">0</div>
+          <div class="f-label" data-i18n="problem_tools"></div>
+        </div>
+      </div>
+      <div class="nav"><div class="nav-dots"></div><button class="nav-btn nav-prev" onclick="go(-1)" data-i18n="nav_prev"></button><button class="nav-btn nav-next" onclick="go(1)" data-i18n="nav_next"></button></div>
+    </div>
+
+    <!-- 03: O QUE EXISTE -->
+    <div class="slide s-problem">
+      <div class="lang-tag" data-i18n="tag_market"></div>
+      <div class="slide-num">03 / 08</div>
+      <div class="label" data-i18n="label_exists"></div>
+      <div class="app-row">
+        <div class="app-item">
+          <div><div class="app-name">Google Flights</div><div class="app-does" data-i18n="app_google"></div></div>
+          <div class="app-missing" data-i18n="missing_decide"></div>
+        </div>
+        <div class="app-item">
+          <div><div class="app-name">Skyscanner</div><div class="app-does" data-i18n="app_sky"></div></div>
+          <div class="app-missing" data-i18n="missing_learn"></div>
+        </div>
+        <div class="app-item">
+          <div><div class="app-name">Booking.com</div><div class="app-does" data-i18n="app_booking"></div></div>
+          <div class="app-missing" data-i18n="missing_adapt"></div>
+        </div>
+      </div>
+      <div class="missing-footer" data-i18n="missing_footer"></div>
+      <div class="nav"><div class="nav-dots"></div><button class="nav-btn nav-prev" onclick="go(-1)" data-i18n="nav_prev"></button><button class="nav-btn nav-next" onclick="go(1)" data-i18n="nav_next"></button></div>
+    </div>
+
+    <!-- 04: MARIA DEMO -->
+    <div class="slide s-maria">
+      <div class="slide-num">04 / 08</div>
+      <div class="label" data-i18n="label_demo"></div>
+      <h2 style="color:#F5F0E0" data-i18n="maria_title"></h2>
+      <div class="demo-box">
+        <div class="demo-input">
+          <div class="demo-avatar" data-i18n="demo_you"></div>
+          <div class="demo-msg" data-i18n="demo_msg"></div>
+        </div>
+        <div class="demo-thinking">
+          <div class="dot-anim"></div><div class="dot-anim"></div><div class="dot-anim"></div>
+          <span style="font-size:.75rem;color:#5A5550;margin-left:.5rem" data-i18n="demo_thinking"></span>
+        </div>
+        <div class="demo-decision">
+          <div class="d-label" data-i18n="demo_decision_label"></div>
+          <div class="d-choice" data-i18n="demo_choice"></div>
+          <div class="d-reason" data-i18n="demo_reason"></div>
+          <div class="demo-badges">
+            <span class="badge badge-green" data-i18n="badge_explained"></span>
+            <span class="badge badge-gold" data-i18n="badge_memory"></span>
+            <span class="badge badge-green" data-i18n="badge_context"></span>
+            <span class="badge badge-gold" data-i18n="badge_sealed"></span>
+          </div>
+        </div>
+      </div>
+      <div class="nav"><div class="nav-dots"></div><button class="nav-btn nav-prev" onclick="go(-1)" data-i18n="nav_prev"></button><button class="nav-btn nav-next" onclick="go(1)" data-i18n="nav_next"></button></div>
+    </div>
+
+    <!-- 05: DIFERENCIAL -->
+    <div class="slide s-problem">
+      <div class="lang-tag" data-i18n="tag_diff"></div>
+      <div class="slide-num">05 / 08</div>
+      <div class="label" data-i18n="label_diff"></div>
+      <div class="layers-grid">
+        <div class="layer-card">
+          <div class="l-para">§ 104</div>
+          <div class="l-title" data-i18n="layer1_title"></div>
+          <div class="l-desc" data-i18n="layer1_desc"></div>
+        </div>
+        <div class="layer-card">
+          <div class="l-para">§ 105</div>
+          <div class="l-title" data-i18n="layer2_title"></div>
+          <div class="l-desc" data-i18n="layer2_desc"></div>
+        </div>
+        <div class="layer-card">
+          <div class="l-para">§ 106</div>
+          <div class="l-title" data-i18n="layer3_title"></div>
+          <div class="l-desc" data-i18n="layer3_desc"></div>
+        </div>
+        <div class="layer-card">
+          <div class="l-para">§ 103</div>
+          <div class="l-title" data-i18n="layer4_title"></div>
+          <div class="l-desc" data-i18n="layer4_desc"></div>
+        </div>
+      </div>
+      <div class="nav"><div class="nav-dots"></div><button class="nav-btn nav-prev" onclick="go(-1)" data-i18n="nav_prev"></button><button class="nav-btn nav-next" onclick="go(1)" data-i18n="nav_next"></button></div>
+    </div>
+
+    <!-- 06: TRANSFORMAÇÃO -->
+    <div class="slide s-problem">
+      <div class="lang-tag" data-i18n="tag_impact"></div>
+      <div class="slide-num">06 / 08</div>
+      <div class="label" data-i18n="label_transform"></div>
+      <div class="transform-grid">
+        <div class="t-card t-before">
+          <div class="t-label" style="color:var(--muted)" data-i18n="before"></div>
+          <div class="t-text-before" data-i18n="before_text"></div>
+          <div class="t-sub-before" data-i18n="before_sub"></div>
+        </div>
+        <div style="font-size:1.5rem;color:var(--gold);text-align:center">→</div>
+        <div class="t-card t-after">
+          <div class="t-label" style="color:#5A7FAA" data-i18n="after"></div>
+          <div class="t-text-after" data-i18n="after_text"></div>
+          <div class="t-sub-after" data-i18n="after_sub"></div>
+        </div>
+      </div>
+      <div style="background:var(--perg2);border-radius:var(--radius-sm);padding:1rem 1.25rem;border:0.5px solid #D4CDB8;font-size:.85rem;color:var(--muted)" data-i18n="ledger_note"></div>
+      <div class="nav"><div class="nav-dots"></div><button class="nav-btn nav-prev" onclick="go(-1)" data-i18n="nav_prev"></button><button class="nav-btn nav-next" onclick="go(1)" data-i18n="nav_next"></button></div>
+    </div>
+
+    <!-- 07: MERCADO -->
+    <div class="slide s-problem">
+      <div class="lang-tag" data-i18n="tag_market2"></div>
+      <div class="slide-num">07 / 08</div>
+      <div class="label" data-i18n="label_market"></div>
+      <div class="market-stats">
+        <div class="market-stat-card">
+          <div class="s-big">41.000+</div>
+          <div class="s-unit" data-i18n="stat_rail"></div>
+        </div>
+        <div class="market-stat-card">
+          <div class="s-big">€ 890B</div>
+          <div class="s-unit" data-i18n="stat_market"></div>
+        </div>
+      </div>
+      <div class="market-bullets">
+        <div class="m-bullet"><div class="m-dot"></div><div class="m-text" data-i18n="bullet1"></div></div>
+        <div class="m-bullet"><div class="m-dot"></div><div class="m-text" data-i18n="bullet2"></div></div>
+        <div class="m-bullet"><div class="m-dot"></div><div class="m-text" data-i18n="bullet3"></div></div>
+      </div>
+      <div class="nav"><div class="nav-dots"></div><button class="nav-btn nav-prev" onclick="go(-1)" data-i18n="nav_prev"></button><button class="nav-btn nav-next" onclick="go(1)" data-i18n="nav_next"></button></div>
+    </div>
+
+    <!-- 08: CLOSE -->
+    <div class="slide s-close">
+      <div class="slide-num">08 / 08</div>
+      <div class="close-center">
+        <div class="close-line1" data-i18n="close_line1"></div>
+        <div class="close-line2">"We don't show options. We take responsibility for the decision."</div>
+        <div class="close-divider"></div>
+        <div style="display:flex;flex-direction:column;gap:.5rem;text-align:center">
+          <div class="close-meta">windi-domain.com · Kempten, Bavaria</div>
+          <div style="font-size:.8rem;color:#5A5550">AI processes. Human decides. WINDI guarantees.</div>
+        </div>
+        <div class="close-tag">WINDI Publishing House · Founded 2026</div>
+      </div>
+      <div class="nav">
+        <div class="nav-dots"></div>
+        <button class="nav-btn nav-prev" onclick="go(-1)" data-i18n="nav_prev"></button>
+        <button class="nav-btn nav-next" style="opacity:.3;pointer-events:none" data-i18n="nav_next"></button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="kb-hint" data-i18n="kb_hint"></div>
+
+<script>
+// §11.2 — Constitutional i18n: DE | EN | PT
+const I18N = {
+  de: {
+    // Navigation
+    nav_prev: "← zurück",
+    nav_next: "weiter →",
+    kb_hint: "← → oder Pfeiltasten zum Navigieren",
+
+    // Slide 1: Hero
+    hero_subtitle: "Die souveräne Entscheidungsebene",
+    hero_sub: "Wir zeigen keine Optionen. Wir übernehmen Verantwortung für die Entscheidung.<br>Gently proves. Silently seals.",
+
+    // Slide 2: Problem
+    tag_problem: "Problem",
+    label_problem: "Das echte Problem",
+    problem_title: "Reisen in Europa erfordert noch immer unnötige manuelle Arbeit",
+    problem_apps: "Apps gleichzeitig geöffnet für eine einfache Reise",
+    problem_minutes: "Minuten verschwendet beim Vergleichen ohne klare Entscheidung",
+    problem_tools: "Tools, die dein Muster lernen und für dich entscheiden",
+
+    // Slide 3: Market
+    tag_market: "Aktueller Markt",
+    label_exists: "Was existiert — und wo es scheitert",
+    app_google: "Zeigt verfügbare Flüge",
+    app_sky: "Vergleicht Flugpreise",
+    app_booking: "Listet Unterkünfte",
+    missing_decide: "entscheidet nicht",
+    missing_learn: "lernt nicht",
+    missing_adapt: "passt sich nicht an",
+    missing_footer: "Kein bestehendes System entscheidet, lernt den Kontext des Nutzers oder passt die Empfehlung an den realen Moment der Reise an.",
+
+    // Slide 4: Maria Demo
+    label_demo: "Demonstration",
+    maria_title: "MARIA — Decision Layer in Aktion",
+    demo_you: "Du",
+    demo_msg: "\"Maria, ich muss morgen früh von München nach Frankfurt, habe ein Meeting um 11 Uhr.\"",
+    demo_thinking: "Analysiere Flug, ICE, Kontext, Historie...",
+    demo_decision_label: "MARIA Entscheidung",
+    demo_choice: "ICE 13 · Abfahrt 07:55 · Ankunft 10:38 Frankfurt Hbf",
+    demo_reason: "Du bevorzugst Direktverbindungen (Historie). Der Flug erfordert Flughafen-Transfer (+45 Min). ICE kommt 22 Min vor dem Meeting mit sicherem Puffer an. Preis: €79 vs €112 Flug.",
+    badge_explained: "Entscheidung erklärt",
+    badge_memory: "Präferenzspeicher",
+    badge_context: "Zeitkontext",
+    badge_sealed: "im Ledger versiegelt",
+
+    // Slide 5: Differential
+    tag_diff: "Differenzierung",
+    label_diff: "Was uns unterscheidet — in 4 Ebenen",
+    layer1_title: "Lernt wer du bist",
+    layer1_desc: "Präferenzprofil über Zeit aufgebaut. Direktverbindungen, Zeiten, Budget, Komfort.",
+    layer2_title: "Erklärt wie jemand",
+    layer2_desc: "Listet keine Optionen. Begründet die Wahl in natürlicher Sprache. Du hast die vollständige Argumentation.",
+    layer3_title: "Passt sich dem Moment an",
+    layer3_desc: "Zeit-, Wetter-, Störungskontext. Die Entscheidung ist immer in der Realität verankert.",
+    layer4_title: "Entscheidet in der vollen Realität",
+    layer4_desc: "Multimodaler Motor: Flug + Zug + Hotel + GPS. Eine kohärente Entscheidung, keine Fragmente.",
+
+    // Slide 6: Transform
+    tag_impact: "Wirkung",
+    label_transform: "Was sich für den Nutzer ändert",
+    before: "Vorher",
+    before_text: "\"Ich habe<br>Optionen\"",
+    before_sub: "Informationsüberflutung · keine Klarheit",
+    after: "Nachher",
+    after_text: "\"Ich habe die<br>beste Entscheidung\"",
+    after_sub: "Klarheit · Kontext · Verantwortung",
+    ledger_note: "Alle MARIA-Entscheidungen werden im <strong style=\"color:var(--ink);font-weight:500\">Forensic Ledger</strong> versiegelt — nachverfolgbar, verifizierbar, souverän.",
+
+    // Slide 7: Market
+    tag_market2: "Markt",
+    label_market: "Europa — der perfekte Markt",
+    stat_rail: "km Hochgeschwindigkeits-Schienennetz",
+    stat_market: "europäischer Travel-Tech-Markt bis 2028",
+    bullet1: "<strong>Hohe Schienendichte</strong> — Zug konkurriert mit Flug auf 80% der Strecken &lt;600km",
+    bullet2: "<strong>Extreme Fragmentierung</strong> — DB, SNCF, Renfe, Trenitalia: kein System entscheidet zwischen allen",
+    bullet3: "<strong>DSGVO-Regulierung</strong> — Datensouveränität als Wettbewerbsvorteil, nicht als Hindernis",
+
+    // Slide 8: Close
+    close_line1: "Die neue Prämisse der Travel Intelligence:"
+  },
+
+  en: {
+    // Navigation
+    nav_prev: "← previous",
+    nav_next: "next →",
+    kb_hint: "← → or arrow keys to navigate",
+
+    // Slide 1: Hero
+    hero_subtitle: "The sovereign decision layer",
+    hero_sub: "We don't show options. We take responsibility for the decision.<br>Gently proves. Silently seals.",
+
+    // Slide 2: Problem
+    tag_problem: "Problem",
+    label_problem: "The real problem",
+    problem_title: "Traveling in Europe still requires unnecessary manual work",
+    problem_apps: "apps open simultaneously for a simple trip",
+    problem_minutes: "minutes wasted comparing options without a clear decision",
+    problem_tools: "tools that learn your pattern and decide for you",
+
+    // Slide 3: Market
+    tag_market: "Current Market",
+    label_exists: "What exists — and where it fails",
+    app_google: "Shows available flights",
+    app_sky: "Compares flight prices",
+    app_booking: "Lists accommodations",
+    missing_decide: "doesn't decide",
+    missing_learn: "doesn't learn",
+    missing_adapt: "doesn't adapt",
+    missing_footer: "No existing system decides, learns the user's context, or adapts the recommendation to the real moment of the trip.",
+
+    // Slide 4: Maria Demo
+    label_demo: "Demonstration",
+    maria_title: "MARIA — decision layer in action",
+    demo_you: "You",
+    demo_msg: "\"Maria, I need to go from Munich to Frankfurt tomorrow morning, I have a meeting at 11am.\"",
+    demo_thinking: "Analyzing flight, ICE, context, history...",
+    demo_decision_label: "MARIA Decision",
+    demo_choice: "ICE 13 · departure 07:55 · arrival 10:38 Frankfurt Hbf",
+    demo_reason: "You prefer direct journeys (history). The flight requires airport transfer (+45 min). ICE arrives 22 min before the meeting with safe margin. Price: €79 vs €112 flight.",
+    badge_explained: "decision explained",
+    badge_memory: "preference memory",
+    badge_context: "temporal context",
+    badge_sealed: "sealed in ledger",
+
+    // Slide 5: Differential
+    tag_diff: "Differential",
+    label_diff: "What distinguishes us — in 4 layers",
+    layer1_title: "Learns who you are",
+    layer1_desc: "Preference profile built over time. Direct journeys, schedules, budget, comfort.",
+    layer2_title: "Explains like someone",
+    layer2_desc: "Doesn't list options. Justifies the choice in natural language. You have the complete reasoning.",
+    layer3_title: "Adapts to the moment",
+    layer3_desc: "Temporal, weather, disruption context. The decision is always situated in reality.",
+    layer4_title: "Decides in full reality",
+    layer4_desc: "Multimodal engine: flight + train + hotel + GPS. One coherent decision, not fragments.",
+
+    // Slide 6: Transform
+    tag_impact: "Impact",
+    label_transform: "What changes for the user",
+    before: "Before",
+    before_text: "\"I have<br>options\"",
+    before_sub: "Information saturation · no clarity",
+    after: "After",
+    after_text: "\"I have the<br>best decision\"",
+    after_sub: "Clarity · context · responsibility",
+    ledger_note: "All MARIA decisions are sealed in the <strong style=\"color:var(--ink);font-weight:500\">Forensic Ledger</strong> — traceable, verifiable, sovereign.",
+
+    // Slide 7: Market
+    tag_market2: "Market",
+    label_market: "Europe — the perfect market",
+    stat_rail: "km of high-speed rail network",
+    stat_market: "European travel tech market by 2028",
+    bullet1: "<strong>High rail density</strong> — train competes with flight on 80% of routes &lt;600km",
+    bullet2: "<strong>Extreme fragmentation</strong> — DB, SNCF, Renfe, Trenitalia: no system decides between all",
+    bullet3: "<strong>GDPR regulation</strong> — data sovereignty as competitive advantage, not obstacle",
+
+    // Slide 8: Close
+    close_line1: "The new premise of travel intelligence:"
+  },
+
+  pt: {
+    // Navigation
+    nav_prev: "← anterior",
+    nav_next: "próximo →",
+    kb_hint: "← → ou teclas de seta para navegar",
+
+    // Slide 1: Hero
+    hero_subtitle: "A camada de decisão soberana",
+    hero_sub: "Não mostramos opções. Tomamos responsabilidade pela decisão.<br>Gently proves. Silently seals.",
+
+    // Slide 2: Problem
+    tag_problem: "Problema",
+    label_problem: "O problema real",
+    problem_title: "Viajar na Europa ainda exige trabalho manual desnecessário",
+    problem_apps: "apps abertas em simultâneo para uma viagem simples",
+    problem_minutes: "minutos perdidos a comparar opções sem decisão clara",
+    problem_tools: "ferramentas que aprendem o teu padrão e decidem por ti",
+
+    // Slide 3: Market
+    tag_market: "Mercado atual",
+    label_exists: "O que existe — e onde falha",
+    app_google: "Mostra voos disponíveis",
+    app_sky: "Compara preços de voos",
+    app_booking: "Lista alojamentos",
+    missing_decide: "não decide",
+    missing_learn: "não aprende",
+    missing_adapt: "não adapta",
+    missing_footer: "Nenhum sistema existente decide, aprende o contexto do utilizador ou adapta a recomendação ao momento real da viagem.",
+
+    // Slide 4: Maria Demo
+    label_demo: "Demonstração",
+    maria_title: "MARIA — decision layer em ação",
+    demo_you: "Tu",
+    demo_msg: "\"Maria, preciso ir de Munique a Frankfurt amanhã de manhã, tenho reunião às 11h.\"",
+    demo_thinking: "A analisar voo, ICE, contexto, historial...",
+    demo_decision_label: "Decisão MARIA",
+    demo_choice: "ICE 13 · partida 07:55 · chegada 10:38 Frankfurt Hbf",
+    demo_reason: "Preferes viagens directas (historial). O voo implica Flughafen transfer (+45 min). ICE chega 22 min antes da reunião com margem segura. Preço: €79 vs €112 voo.",
+    badge_explained: "decisão explicada",
+    badge_memory: "memória de preferências",
+    badge_context: "contexto temporal",
+    badge_sealed: "selado no ledger",
+
+    // Slide 5: Differential
+    tag_diff: "Diferencial",
+    label_diff: "O que nos distingue — em 4 camadas",
+    layer1_title: "Aprende quem tu és",
+    layer1_desc: "Perfil de preferências construído ao longo do tempo. Viagens directas, horários, orçamento, conforto.",
+    layer2_title: "Explica como alguém",
+    layer2_desc: "Não lista opções. Justifica a escolha em linguagem natural. Tens o raciocínio completo.",
+    layer3_title: "Adapta ao momento",
+    layer3_desc: "Contexto temporal, meteorológico, de disrupções. A decisão é sempre situada no real.",
+    layer4_title: "Decide na realidade completa",
+    layer4_desc: "Motor multimodal: voo + comboio + hotel + GPS. Uma decisão coerente, não fragmentos.",
+
+    // Slide 6: Transform
+    tag_impact: "Impacto",
+    label_transform: "O que muda para o utilizador",
+    before: "Antes",
+    before_text: "\"Tenho<br>opções\"",
+    before_sub: "Saturação de informação · sem clareza",
+    after: "Depois",
+    after_text: "\"Tenho a<br>melhor decisão\"",
+    after_sub: "Clareza · contexto · responsabilidade",
+    ledger_note: "Todas as decisões MARIA ficam seladas no <strong style=\"color:var(--ink);font-weight:500\">Forensic Ledger</strong> — rastreáveis, verificáveis, soberanas.",
+
+    // Slide 7: Market
+    tag_market2: "Mercado",
+    label_market: "Europa — o mercado perfeito",
+    stat_rail: "km de rede ferroviária de alta velocidade",
+    stat_market: "mercado travel tech europeu até 2028",
+    bullet1: "<strong>Alta densidade ferroviária</strong> — comboio compete com voo em 80% das rotas &lt;600km",
+    bullet2: "<strong>Fragmentação extrema</strong> — DB, SNCF, Renfe, Trenitalia: nenhum sistema decide entre todos",
+    bullet3: "<strong>Regulação GDPR</strong> — soberania de dados como vantagem competitiva, não obstáculo",
+
+    // Slide 8: Close
+    close_line1: "A nova premissa do travel intelligence:"
+  }
+};
+
+// Current language
+let currentLang = localStorage.getItem('windi-lang') ||
+                  (navigator.language.startsWith('de') ? 'de' :
+                   navigator.language.startsWith('pt') ? 'pt' : 'en');
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('windi-lang', lang);
+  applyLang();
+
+  // Update toggle buttons
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent.toLowerCase() === lang);
+  });
+}
+
+function applyLang() {
+  const t = I18N[currentLang] || I18N.en;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (t[key]) {
+      el.innerHTML = t[key];
+    }
+  });
+  document.documentElement.lang = currentLang;
+}
+
+// Navigation
+const N = 8;
+let cur = 0;
+const slides = document.querySelectorAll('.slide');
+
+function buildDots() {
+  slides.forEach((sl, i) => {
+    const c = sl.querySelector('.nav-dots');
+    if (!c) return;
+    c.innerHTML = '';
+    for (let j = 0; j < N; j++) {
+      const d = document.createElement('div');
+      d.className = 'nd' + (j === i ? ' active' : '');
+      d.onclick = (() => { const k = j; return () => goTo(k) })();
+      c.appendChild(d);
+    }
+  });
+}
+
+function goTo(n) {
+  if (n < 0 || n >= N) return;
+  cur = n;
+  document.getElementById('slides').style.transform = `translateX(-${cur * 100}%)`;
+  buildDots();
+}
+
+function go(d) { goTo(cur + d); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') go(1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') go(-1);
+});
+
+// Initialize
+buildDots();
+setLang(currentLang);
+</script>
+</body>
+</html>
