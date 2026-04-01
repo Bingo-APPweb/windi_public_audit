@@ -1068,6 +1068,155 @@ def build_voice(place_name: str, dist: str, queue_status: str, lang: str) -> Mar
     }
     return MariaVoice(**templates)
 
+
+# ── §105 — Explicação Visível ─────────────────────────────────────────────────
+def generate_explanation(entity: dict, entity_type: str, prefs: dict, context: dict, lang: str = "PT") -> str:
+    """
+    §105 — Generate human-readable explanation for Maria's decision.
+
+    Rules:
+    - 1 base phrase (always)
+    - Max 1 complement (priority: context > high confidence > low confidence)
+    - Zero technical language
+    """
+    if prefs is None:
+        prefs = {}
+    if context is None:
+        context = {}
+
+    learned_conf = prefs.get("learned_confidence", 0.0)
+
+    # ─── BASE EXPLANATION (by entity type) ───
+    if entity_type == "flight":
+        stops = entity.get("stops", entity.get("stopovers", 1))
+        dep_hour = entity.get("departure_hour", 12)
+        # Try to extract hour from departure time string
+        if "departure" in entity and isinstance(entity["departure"], str):
+            try:
+                dep_hour = int(entity["departure"].split("T")[-1].split(":")[0])
+            except:
+                dep_hour = 12
+
+        if stops == 0 and dep_hour < 12:
+            base = {
+                "PT": "Escolhi este voo porque é directo e parte cedo",
+                "DE": "Ich habe diesen Flug gewählt, weil er direkt ist und früh abfliegt",
+                "EN": "I chose this flight because it's direct and departs early"
+            }
+        elif stops == 0:
+            base = {
+                "PT": "Escolhi este voo porque é directo",
+                "DE": "Ich habe diesen Flug gewählt, weil er direkt ist",
+                "EN": "I chose this flight because it's direct"
+            }
+        elif dep_hour < 12:
+            base = {
+                "PT": "Escolhi este voo porque parte cedo",
+                "DE": "Ich habe diesen Flug gewählt, weil er früh abfliegt",
+                "EN": "I chose this flight because it departs early"
+            }
+        else:
+            base = {
+                "PT": "Escolhi este voo pelo melhor equilíbrio para ti",
+                "DE": "Ich habe diesen Flug als beste Option für dich gewählt",
+                "EN": "I chose this flight as the best balance for you"
+            }
+
+    elif entity_type == "hotel":
+        rating = entity.get("rating", entity.get("stars", 0))
+        central = entity.get("central", entity.get("distance_km", 10) < 2)
+
+        if rating >= 4.5:
+            base = {
+                "PT": "Escolhi este hotel porque tem excelente avaliação",
+                "DE": "Ich habe dieses Hotel wegen der ausgezeichneten Bewertung gewählt",
+                "EN": "I chose this hotel because it has excellent reviews"
+            }
+        elif central:
+            base = {
+                "PT": "Escolhi este hotel pela localização",
+                "DE": "Ich habe dieses Hotel wegen der Lage gewählt",
+                "EN": "I chose this hotel for its location"
+            }
+        else:
+            base = {
+                "PT": "Escolhi este hotel pelo melhor equilíbrio para ti",
+                "DE": "Ich habe dieses Hotel als beste Option für dich gewählt",
+                "EN": "I chose this hotel as the best balance for you"
+            }
+
+    elif entity_type == "place":
+        type_group = entity.get("type_group", _classify_place_type_group(entity.get("type", "")))
+
+        if type_group == "food":
+            base = {
+                "PT": "Escolhi este lugar porque encaixa no que costumas procurar para comer",
+                "DE": "Ich habe diesen Ort gewählt, weil er zu deinen Essgewohnheiten passt",
+                "EN": "I chose this place because it fits what you usually look for to eat"
+            }
+        elif type_group == "essential":
+            base = {
+                "PT": "Escolhi este lugar porque é prático e próximo",
+                "DE": "Ich habe diesen Ort gewählt, weil er praktisch und nah ist",
+                "EN": "I chose this place because it's practical and nearby"
+            }
+        else:
+            base = {
+                "PT": "Escolhi este lugar porque combina contigo",
+                "DE": "Ich habe diesen Ort gewählt, weil er zu dir passt",
+                "EN": "I chose this place because it suits you"
+            }
+
+    else:
+        base = {
+            "PT": "Escolhi isto porque faz sentido para ti",
+            "DE": "Ich habe das gewählt, weil es für dich Sinn macht",
+            "EN": "I chose this because it makes sense for you"
+        }
+
+    # ─── COMPLEMENT (max 1, priority order) ───
+    complement = None
+
+    if context.get("time_pressure") == "high":
+        complement = {
+            "PT": "sei que tens pouco tempo",
+            "DE": "ich weiß, dass du wenig Zeit hast",
+            "EN": "I know you're short on time"
+        }
+    elif learned_conf > 0.5:
+        complement = {
+            "PT": "baseado nas tuas escolhas anteriores",
+            "DE": "basierend auf deinen früheren Entscheidungen",
+            "EN": "based on your previous choices"
+        }
+    elif learned_conf < 0.3:
+        complement = {
+            "PT": "ainda estou a aprender contigo",
+            "DE": "ich lerne noch mit dir",
+            "EN": "I'm still learning with you"
+        }
+
+    # ─── OUTPUT ───
+    base_text = base.get(lang, base["EN"])
+    if complement:
+        comp_text = complement.get(lang, complement["EN"])
+        return f"{base_text} — {comp_text}."
+    return f"{base_text}."
+
+
+def _classify_place_type_group(place_type: str) -> str:
+    """§105 helper — classify place type into group for explanation."""
+    food_types = ["restaurant", "cafe", "bar", "bakery", "food"]
+    essential_types = ["pharmacy", "bank", "supermarket", "hospital", "atm", "gas_station"]
+
+    pt = (place_type or "").lower()
+    if any(t in pt for t in food_types):
+        return "food"
+    elif any(t in pt for t in essential_types):
+        return "essential"
+    return "leisure"
+
+
 # ── Ledger Seal ───────────────────────────────────────────────────────────────
 async def seal_decision(request_id: str, payload: dict, wallet_id: str) -> Optional[str]:
     """Seal the decision in WINDI Forensic Ledger (:8101). I11."""
@@ -1675,14 +1824,24 @@ async def maria_plan(req: PlanRequest):
             {"PT": "Verifique horário", "DE": "Öffnungszeiten prüfen", "EN": "Check opening hours"}[lang]
         )
         reason = build_reason(best, req.intent, ctx, lang)
+
+        # §105 — Generate explanation
+        explanation = generate_explanation(
+            entity={"type": req.intent.type, "type_group": _classify_place_type_group(req.intent.type), **best},
+            entity_type="place",
+            prefs=travel_prefs or {},
+            context=ctx,
+            lang=lang
+        )
+
         decision = PlaceResult(
             name=best["name"], type=req.intent.type,
             distance_text=dist_txt, queue_status=queue_txt,
-            reason=reason, google_place_id=best.get("place_id"),
+            reason=f"{reason} {explanation}" if reason else explanation,
+            google_place_id=best.get("place_id"),
             address=best.get("address"), rating=best.get("rating"),
             open_now=best.get("open_now"),
         )
-        voice = build_voice(best["name"], dist_txt, queue_txt, lang)
 
     # 4. Ledger seal (I11) — non-blocking
     seal_payload = {
@@ -1985,6 +2144,16 @@ async def maria_think_endpoint(req: ThinkRequest):
                 if context_reason:
                     voice = f"{context_reason} {voice}"
 
+                # §105 — Explicação unificada (complementa)
+                explanation_105 = generate_explanation(
+                    entity=best_flight,
+                    entity_type="flight",
+                    prefs=travel_prefs or {},
+                    context=live_context,
+                    lang=req.lang
+                )
+                voice = f"{voice} {explanation_105}"
+
                 # §100.5: Save decision to Memory Engine
                 decision_id = None
                 origin = result.get("origin", details.get("fly_from", "MUC"))
@@ -2102,6 +2271,16 @@ async def maria_think_endpoint(req: ThinkRequest):
                     if personal_reason:
                         voice = f"{voice} {personal_reason}"
 
+                # §105 — Explicação unificada (complementa)
+                explanation_105 = generate_explanation(
+                    entity=best_hotel,
+                    entity_type="hotel",
+                    prefs=travel_prefs or {},
+                    context=live_context,
+                    lang=req.lang
+                )
+                voice = f"{voice} {explanation_105}"
+
                 # §100.5: Save decision to Memory Engine
                 decision_id = None
                 destination = result.get("destination", details["destination"])
@@ -2192,10 +2371,20 @@ async def maria_think_endpoint(req: ThinkRequest):
                 # §100.5: Get live context for places too
                 live_context = get_live_context(user_input, req.lat, req.lng)
 
+                # §105 — Generate explanation for places
+                travel_prefs = get_travel_preferences(req.did) if req.did else {}
+                explanation_105 = generate_explanation(
+                    entity={"type": place_type, "type_group": _classify_place_type_group(place_type), **best},
+                    entity_type="place",
+                    prefs=travel_prefs,
+                    context=live_context,
+                    lang=req.lang
+                )
+
                 voice_templates = {
-                    "PT": f"{best['name']} está perto de ti. {best.get('rating', '')}★",
-                    "DE": f"Ich habe {best['name']} in deiner Nähe gefunden. {best.get('rating', '')}★",
-                    "EN": f"I found {best['name']} near you. {best.get('rating', '')}★"
+                    "PT": f"{best['name']} está perto de ti. {best.get('rating', '')}★ {explanation_105}",
+                    "DE": f"{best['name']} ist in deiner Nähe. {best.get('rating', '')}★ {generate_explanation({'type': place_type, 'type_group': _classify_place_type_group(place_type), **best}, 'place', travel_prefs, live_context, 'DE')}",
+                    "EN": f"{best['name']} is near you. {best.get('rating', '')}★ {generate_explanation({'type': place_type, 'type_group': _classify_place_type_group(place_type), **best}, 'place', travel_prefs, live_context, 'EN')}"
                 }
 
                 # §100.5: Save decision to Memory Engine
