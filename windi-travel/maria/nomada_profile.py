@@ -82,6 +82,35 @@ def init_db():
     c.execute("CREATE INDEX IF NOT EXISTS idx_interactions_did ON interactions(did)")
     c.execute("CREATE INDEX IF NOT EXISTS idx_preferences_did ON preferences(did)")
 
+    # §100.5 — MARIA Decisions (Memory Engine)
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS maria_decisions (
+            id TEXT PRIMARY KEY,
+            did TEXT NOT NULL,
+
+            decision_type TEXT,          -- flight | hotel | places
+            route TEXT,                   -- MUC→LIS
+            destination TEXT,             -- LIS
+
+            context_time TEXT,            -- high | normal | low
+            context_mode TEXT,            -- urgent | focus | explore | normal
+
+            decision_json TEXT,           -- full decision object
+            decision_price REAL,          -- for quick queries
+            decision_direct BOOLEAN,      -- for pattern detection
+            decision_morning BOOLEAN,     -- departure before 10:00
+
+            accepted BOOLEAN DEFAULT NULL,  -- user confirmed
+            ignored BOOLEAN DEFAULT NULL,   -- user ignored
+
+            timestamp TEXT DEFAULT CURRENT_TIMESTAMP,
+            score REAL DEFAULT 0.0        -- quality score for learning
+        )
+    """)
+    c.execute("CREATE INDEX IF NOT EXISTS idx_decisions_did ON maria_decisions(did)")
+    c.execute("CREATE INDEX IF NOT EXISTS idx_decisions_type ON maria_decisions(decision_type)")
+    c.execute("CREATE INDEX IF NOT EXISTS idx_decisions_route ON maria_decisions(route)")
+
     conn.commit()
     conn.close()
     log.info(f"[MARIA Memory] Database initialized: {DB_PATH}")
@@ -735,6 +764,452 @@ def log_anticipation(did: str, suggestion_type: str, accepted: bool):
         return
     set_preference(did, f"anticipation_{suggestion_type}_accepted", accepted)
     log.info(f"[MARIA §100] Anticipation {suggestion_type} {'accepted' if accepted else 'rejected'} by {did[:20]}...")
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# §100.5 — MEMORY ENGINE: Estrutura que aprende
+# "A memória não é histórico. É capacidade de reconhecer padrões."
+# ═══════════════════════════════════════════════════════════════════════════════
+
+import uuid
+from datetime import timedelta
+
+
+def time_weight(timestamp_str: str) -> float:
+    """
+    §100.5 — Calculate temporal weight for a decision.
+
+    Recent decisions have more weight than old ones.
+    Formula: max(0.1, 1.0 - (age_days * 0.05))
+
+    - Today: 1.0
+    - 1 week ago: 0.65
+    - 2 weeks ago: 0.3
+    - 3+ weeks ago: 0.1 (minimum floor)
+    """
+    if not timestamp_str:
+        return 0.1
+
+    try:
+        # Parse ISO timestamp
+        ts = datetime.fromisoformat(timestamp_str.replace("Z", "+00:00"))
+        if ts.tzinfo is None:
+            ts = ts.replace(tzinfo=timezone.utc)
+
+        now = datetime.now(timezone.utc)
+        age = now - ts
+        age_days = age.days
+
+        # Decay formula
+        weight = max(0.1, 1.0 - (age_days * 0.05))
+        return round(weight, 2)
+    except Exception as e:
+        log.warning(f"[MARIA §100.5] time_weight parse error: {e}")
+        return 0.1
+
+
+def save_decision(
+    did: str,
+    decision_type: str,
+    decision: dict,
+    context: dict = None,
+    route: str = None,
+    destination: str = None
+) -> str:
+    """
+    §100.5 — Save a decision to the Memory Engine.
+
+    Args:
+        did: User's DID
+        decision_type: 'flight' | 'hotel' | 'places'
+        decision: Full decision object
+        context: Live context (time_pressure, mode)
+        route: e.g., "MUC→LIS"
+        destination: e.g., "LIS"
+
+    Returns:
+        decision_id: UUID of the saved decision
+    """
+    if not did:
+        return None
+
+    conn = get_connection()
+    c = conn.cursor()
+
+    decision_id = f"MD-{uuid.uuid4().hex[:12].upper()}"
+    now = datetime.now(timezone.utc).isoformat()
+
+    context = context or {}
+
+    # Extract searchable fields from decision
+    price = None
+    is_direct = None
+    is_morning = None
+
+    if decision_type == "flight":
+        price = decision.get("price")
+        is_direct = decision.get("direct", False)
+        # Check if morning departure
+        dep = decision.get("departure", "")
+        if "T" in dep:
+            try:
+                hour = int(dep.split("T")[1][:2])
+                is_morning = hour < 10
+            except:
+                pass
+    elif decision_type == "hotel":
+        price = decision.get("price") or decision.get("pricePerNight")
+
+    c.execute("""
+        INSERT INTO maria_decisions (
+            id, did, decision_type, route, destination,
+            context_time, context_mode,
+            decision_json, decision_price, decision_direct, decision_morning,
+            timestamp
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        decision_id,
+        did,
+        decision_type,
+        route,
+        destination,
+        context.get("time_pressure", "normal"),
+        context.get("mode", "normal"),
+        json.dumps(decision),
+        price,
+        is_direct,
+        is_morning,
+        now
+    ))
+
+    conn.commit()
+    conn.close()
+
+    log.info(f"[MARIA §100.5] Saved decision {decision_id} for {did[:20]}...")
+    return decision_id
+
+
+def get_decisions(
+    did: str,
+    decision_type: str = None,
+    route: str = None,
+    limit: int = 20
+) -> list:
+    """
+    §100.5 — Get decisions for a DID with optional filters.
+
+    Returns list of decisions with temporal weight applied.
+    """
+    if not did:
+        return []
+
+    conn = get_connection()
+    c = conn.cursor()
+
+    query = "SELECT * FROM maria_decisions WHERE did = ?"
+    params = [did]
+
+    if decision_type:
+        query += " AND decision_type = ?"
+        params.append(decision_type)
+
+    if route:
+        query += " AND route = ?"
+        params.append(route)
+
+    query += " ORDER BY timestamp DESC LIMIT ?"
+    params.append(limit)
+
+    c.execute(query, params)
+    rows = c.fetchall()
+    conn.close()
+
+    decisions = []
+    for row in rows:
+        d = dict(row)
+        # Add temporal weight
+        d["weight"] = time_weight(d.get("timestamp"))
+        # Parse decision JSON
+        if d.get("decision_json"):
+            try:
+                d["decision"] = json.loads(d["decision_json"])
+            except:
+                d["decision"] = {}
+        decisions.append(d)
+
+    return decisions
+
+
+def mark_decision_feedback(decision_id: str, accepted: bool = None, ignored: bool = None):
+    """
+    §100.5 — Record user feedback on a decision.
+
+    Called when user confirms or ignores a MARIA suggestion.
+    This is the learning signal.
+    """
+    if not decision_id:
+        return
+
+    conn = get_connection()
+    c = conn.cursor()
+
+    if accepted is not None:
+        c.execute(
+            "UPDATE maria_decisions SET accepted = ? WHERE id = ?",
+            (accepted, decision_id)
+        )
+
+    if ignored is not None:
+        c.execute(
+            "UPDATE maria_decisions SET ignored = ? WHERE id = ?",
+            (ignored, decision_id)
+        )
+
+    conn.commit()
+    conn.close()
+
+    status = "accepted" if accepted else "ignored" if ignored else "updated"
+    log.info(f"[MARIA §100.5] Decision {decision_id} marked as {status}")
+
+
+def detect_patterns_from_decisions(did: str) -> dict:
+    """
+    §100.5 — Advanced pattern detection from decision history.
+
+    Applies temporal weighting: recent decisions count more.
+    Returns patterns that can be used for personalization and anticipation.
+    """
+    if not did:
+        return {}
+
+    decisions = get_decisions(did, limit=50)
+
+    if not decisions:
+        return {
+            "has_history": False,
+            "confidence": 0.0,
+        }
+
+    patterns = {
+        "has_history": True,
+        "total_decisions": len(decisions),
+        "confidence": 0.0,
+
+        # Flight patterns
+        "prefers_direct": None,
+        "prefers_morning": None,
+        "avg_price_flight": None,
+        "common_routes": [],
+        "common_destinations": [],
+
+        # Acceptance patterns
+        "acceptance_rate": None,
+        "ignore_rate": None,
+
+        # Context patterns
+        "urgent_mode_frequency": 0.0,
+    }
+
+    # ─── Analyze flights ───
+    flights = [d for d in decisions if d.get("decision_type") == "flight"]
+    if flights:
+        # Weighted direct preference
+        direct_score = 0.0
+        total_weight = 0.0
+        for f in flights:
+            w = f.get("weight", 1.0)
+            total_weight += w
+            if f.get("decision_direct"):
+                direct_score += w
+
+        if total_weight > 0:
+            direct_ratio = direct_score / total_weight
+            patterns["prefers_direct"] = direct_ratio > 0.6
+
+        # Weighted morning preference
+        morning_score = 0.0
+        morning_weight = 0.0
+        for f in flights:
+            if f.get("decision_morning") is not None:
+                w = f.get("weight", 1.0)
+                morning_weight += w
+                if f.get("decision_morning"):
+                    morning_score += w
+
+        if morning_weight > 0:
+            morning_ratio = morning_score / morning_weight
+            patterns["prefers_morning"] = morning_ratio > 0.5
+
+        # Average price (weighted)
+        prices = []
+        for f in flights:
+            if f.get("decision_price"):
+                prices.append(f["decision_price"] * f.get("weight", 1.0))
+        if prices:
+            patterns["avg_price_flight"] = round(sum(prices) / len(prices), 2)
+
+        # Common routes (weighted frequency)
+        route_scores = {}
+        for f in flights:
+            route = f.get("route")
+            if route:
+                w = f.get("weight", 1.0)
+                route_scores[route] = route_scores.get(route, 0) + w
+
+        if route_scores:
+            sorted_routes = sorted(route_scores.items(), key=lambda x: x[1], reverse=True)
+            patterns["common_routes"] = [r[0] for r in sorted_routes[:5]]
+
+        # Common destinations
+        dest_scores = {}
+        for f in flights:
+            dest = f.get("destination")
+            if dest:
+                w = f.get("weight", 1.0)
+                dest_scores[dest] = dest_scores.get(dest, 0) + w
+
+        if dest_scores:
+            sorted_dests = sorted(dest_scores.items(), key=lambda x: x[1], reverse=True)
+            patterns["common_destinations"] = [d[0] for d in sorted_dests[:5]]
+
+    # ─── Acceptance patterns ───
+    accepted_count = sum(1 for d in decisions if d.get("accepted") is True)
+    ignored_count = sum(1 for d in decisions if d.get("ignored") is True)
+    feedback_total = accepted_count + ignored_count
+
+    if feedback_total > 0:
+        patterns["acceptance_rate"] = round(accepted_count / feedback_total, 2)
+        patterns["ignore_rate"] = round(ignored_count / feedback_total, 2)
+
+    # ─── Context patterns ───
+    urgent_count = sum(1 for d in decisions if d.get("context_time") == "high")
+    if decisions:
+        patterns["urgent_mode_frequency"] = round(urgent_count / len(decisions), 2)
+
+    # ─── Confidence score ───
+    # Higher confidence with more data and more feedback
+    data_score = min(1.0, len(decisions) / 20)  # Max at 20 decisions
+    feedback_score = min(1.0, feedback_total / 10) if feedback_total else 0
+    patterns["confidence"] = round((data_score * 0.6) + (feedback_score * 0.4), 2)
+
+    return patterns
+
+
+def get_preference_adjustments(did: str) -> dict:
+    """
+    §100.5 — Get learned preference adjustments from decision history.
+
+    Returns adjustments that should be applied to DEFAULT_TRAVEL_PREFS
+    based on actual user behavior.
+    """
+    patterns = detect_patterns_from_decisions(did)
+
+    adjustments = {}
+
+    if patterns.get("confidence", 0) < 0.3:
+        return adjustments  # Not enough data
+
+    # Direct preference
+    if patterns.get("prefers_direct") is not None:
+        adjustments["avoid_stops"] = patterns["prefers_direct"]
+
+    # Morning preference
+    if patterns.get("prefers_morning") is not None:
+        adjustments["prefer_morning"] = patterns["prefers_morning"]
+
+    # Price sensitivity (if avg_price is low, user is price-sensitive)
+    if patterns.get("avg_price_flight"):
+        avg = patterns["avg_price_flight"]
+        if avg < 100:
+            adjustments["price_sensitivity"] = 0.8
+        elif avg < 200:
+            adjustments["price_sensitivity"] = 0.6
+        elif avg > 400:
+            adjustments["price_sensitivity"] = 0.3
+
+    return adjustments
+
+
+def get_enhanced_travel_preferences(did: str) -> dict:
+    """
+    §100.5 — Get travel preferences with Memory Engine adjustments.
+
+    Combines:
+    1. Default preferences
+    2. Explicitly stored preferences
+    3. Learned adjustments from decision history
+    """
+    # Start with defaults
+    prefs = DEFAULT_TRAVEL_PREFS.copy()
+
+    if not did:
+        return prefs
+
+    # Layer 1: Stored preferences (explicit)
+    stored = get_all_preferences(did)
+    for key in DEFAULT_TRAVEL_PREFS.keys():
+        if f"travel_{key}" in stored:
+            prefs[key] = stored[f"travel_{key}"]
+
+    # Layer 2: Learned adjustments (implicit from behavior)
+    adjustments = get_preference_adjustments(did)
+    for key, value in adjustments.items():
+        # Learned behavior can override defaults but not explicit preferences
+        if f"travel_{key}" not in stored:
+            prefs[key] = value
+
+    return prefs
+
+
+def get_decision_stats(did: str) -> dict:
+    """
+    §100.5 — Get statistics about a user's decisions.
+
+    Useful for debugging and understanding user behavior.
+    """
+    if not did:
+        return {}
+
+    conn = get_connection()
+    c = conn.cursor()
+
+    stats = {}
+
+    # Total decisions
+    c.execute("SELECT COUNT(*) FROM maria_decisions WHERE did = ?", (did,))
+    stats["total"] = c.fetchone()[0]
+
+    # By type
+    c.execute("""
+        SELECT decision_type, COUNT(*) as count
+        FROM maria_decisions
+        WHERE did = ?
+        GROUP BY decision_type
+    """, (did,))
+    stats["by_type"] = {row["decision_type"]: row["count"] for row in c.fetchall()}
+
+    # Acceptance rate
+    c.execute("""
+        SELECT
+            SUM(CASE WHEN accepted = 1 THEN 1 ELSE 0 END) as accepted,
+            SUM(CASE WHEN ignored = 1 THEN 1 ELSE 0 END) as ignored
+        FROM maria_decisions
+        WHERE did = ?
+    """, (did,))
+    row = c.fetchone()
+    stats["accepted"] = row["accepted"] or 0
+    stats["ignored"] = row["ignored"] or 0
+
+    # Recent activity
+    c.execute("""
+        SELECT COUNT(*)
+        FROM maria_decisions
+        WHERE did = ? AND timestamp > datetime('now', '-7 days')
+    """, (did,))
+    stats["last_7_days"] = c.fetchone()[0]
+
+    conn.close()
+    return stats
 
 
 # ── Initialize on import ─────────────────────────────────────────────────────

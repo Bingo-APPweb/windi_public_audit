@@ -52,18 +52,31 @@ try:
         should_anticipate,
         generate_anticipation_message,
         log_anticipation,
+        # §100.5 — MEMORY ENGINE
+        save_decision,
+        get_decisions,
+        mark_decision_feedback,
+        detect_patterns_from_decisions,
+        get_enhanced_travel_preferences,
+        get_decision_stats,
     )
     MEMORY_ENABLED = True
     ANTICIPATION_ENABLED = True
+    MEMORY_ENGINE_ENABLED = True
 except ImportError:
     MEMORY_ENABLED = False
     ANTICIPATION_ENABLED = False
+    MEMORY_ENGINE_ENABLED = False
     def gerar_saudacao(did, lang, weather=None, hour=None): return {"PT": "Bom dia, viajante", "DE": "Guten Tag, Reisender", "EN": "Good day, traveller"}.get(lang, "Good day")
     def get_total_interactions(did): return 0
     def get_travel_preferences(did): return {"avoid_stops": True, "price_sensitivity": 0.5, "prefer_morning": True, "comfort_priority": 0.5}
+    def get_enhanced_travel_preferences(did): return get_travel_preferences(did)
     def explain_personalized_decision(choice_type, prefs, lang): return ""
     def detect_travel_patterns(did): return {}
     def should_anticipate(did, context, patterns): return {"should_suggest": False}
+    def save_decision(*args, **kwargs): return None
+    def mark_decision_feedback(*args, **kwargs): pass
+    def get_decision_stats(did): return {}
     log.warning("[MARIA] Memory module not available — running without DID persistence")
 
 # ── Places Sovereignty Gate ───────────────────────────────────────────────────
@@ -1780,9 +1793,11 @@ async def maria_think_endpoint(req: ThinkRequest):
             flight_list = result.get("flights", [])
 
             if flight_list:
-                # §99 — MODO NÓMADA v1.2: Decisão personalizada + Contexto Vivo
-                # Carregar preferências do DID
-                travel_prefs = get_travel_preferences(req.did) if req.did else None
+                # §100.5 — MODO NÓMADA v1.3: Decisão + Memory Engine
+                # Carregar preferências com learning (§100.5 > §98)
+                travel_prefs = get_enhanced_travel_preferences(req.did) if req.did and MEMORY_ENGINE_ENABLED else (
+                    get_travel_preferences(req.did) if req.did else None
+                )
 
                 # §99: Carregar contexto vivo (estado atual)
                 live_context = get_live_context(user_input, req.lat, req.lng)
@@ -1816,18 +1831,33 @@ async def maria_think_endpoint(req: ThinkRequest):
                 if context_reason:
                     voice = f"{context_reason} {voice}"
 
+                # §100.5: Save decision to Memory Engine
+                decision_id = None
+                origin = result.get("origin", details.get("fly_from", "MUC"))
+                destination = result.get("destination", fly_to)
+                if req.did and MEMORY_ENGINE_ENABLED:
+                    decision_id = save_decision(
+                        did=req.did,
+                        decision_type="flight",
+                        decision=best_flight,
+                        context=live_context,
+                        route=f"{origin}→{destination}",
+                        destination=destination
+                    )
+
                 return {
                     "type": "flight",
                     "intent": "flight",
                     "response": voice,
                     "decision": best_flight,  # §97: A MELHOR opção
+                    "decision_id": decision_id,  # §100.5: Para feedback
                     "alternatives": alternatives,  # Opcionais, não como escolha
                     "data": flight_list[:3],  # Backwards compat
-                    "origin": result.get("origin", details.get("fly_from", "MUC")),
-                    "destination": result.get("destination", fly_to),
+                    "origin": origin,
+                    "destination": destination,
                     "lang": req.lang,
                     "source": "kiwi.com",
-                    "mode": "nomada_v1.2",  # §99: Flag para frontend
+                    "mode": "nomada_v1.3",  # §100.5: Memory Engine
                     "personalized": bool(req.did and travel_prefs),
                     "context_aware": bool(live_context.get("time_pressure") != "normal" or live_context.get("mode") != "normal"),
                     "live_context": {
@@ -1898,8 +1928,13 @@ async def maria_think_endpoint(req: ThinkRequest):
             hotel_list = result.get("hotels", [])
 
             if hotel_list:
-                # §98 — MODO NÓMADA v1.1: Decisão personalizada
-                travel_prefs = get_travel_preferences(req.did) if req.did else None
+                # §100.5 — MODO NÓMADA v1.3: Decisão + Memory Engine
+                travel_prefs = get_enhanced_travel_preferences(req.did) if req.did and MEMORY_ENGINE_ENABLED else (
+                    get_travel_preferences(req.did) if req.did else None
+                )
+
+                # §99: Carregar contexto vivo (estado atual)
+                live_context = get_live_context(user_input, req.lat, req.lng)
 
                 best_hotel = max(hotel_list, key=lambda h: score_hotel(h, travel_prefs))
                 alternatives = [h for h in hotel_list if h != best_hotel][:2]
@@ -1913,18 +1948,36 @@ async def maria_think_endpoint(req: ThinkRequest):
                     if personal_reason:
                         voice = f"{voice} {personal_reason}"
 
+                # §100.5: Save decision to Memory Engine
+                decision_id = None
+                destination = result.get("destination", details["destination"])
+                if req.did and MEMORY_ENGINE_ENABLED:
+                    decision_id = save_decision(
+                        did=req.did,
+                        decision_type="hotel",
+                        decision=best_hotel,
+                        context=live_context,
+                        destination=destination
+                    )
+
                 return {
                     "type": "hotel",
                     "intent": "hotel",
                     "response": voice,
                     "decision": best_hotel,  # §97: A MELHOR opção
+                    "decision_id": decision_id,  # §100.5: Para feedback
                     "alternatives": alternatives,  # Opcionais, não como escolha
                     "data": hotel_list[:3],  # Backwards compat
-                    "destination": result.get("destination", details["destination"]),
+                    "destination": destination,
                     "lang": req.lang,
                     "source": "hotellook.com",
-                    "mode": "nomada_v1.1",  # §98: Flag para frontend
-                    "personalized": bool(req.did and travel_prefs)
+                    "mode": "nomada_v1.3",  # §100.5: Memory Engine
+                    "personalized": bool(req.did and travel_prefs),
+                    "context_aware": bool(live_context.get("time_pressure") != "normal" or live_context.get("mode") != "normal"),
+                    "live_context": {
+                        "time_pressure": live_context.get("time_pressure"),
+                        "mode": live_context.get("mode")
+                    }
                 }
             else:
                 # Sem resultados — mas intent permanece hotel
@@ -1981,22 +2034,41 @@ async def maria_think_endpoint(req: ThinkRequest):
 
             if places:
                 best = places[0]
+
+                # §100.5: Get live context for places too
+                live_context = get_live_context(user_input, req.lat, req.lng)
+
                 voice_templates = {
                     "PT": f"Encontrei {best['name']} perto de ti. {best.get('rating', '')}★",
                     "DE": f"Ich habe {best['name']} in deiner Nähe gefunden. {best.get('rating', '')}★",
                     "EN": f"I found {best['name']} near you. {best.get('rating', '')}★"
                 }
+
+                # §100.5: Save decision to Memory Engine
+                decision_id = None
+                if req.did and MEMORY_ENGINE_ENABLED:
+                    decision_id = save_decision(
+                        did=req.did,
+                        decision_type="places",
+                        decision=best,
+                        context=live_context,
+                        destination=best.get("name")
+                    )
+
                 return {
                     "type": "places",
                     "intent": place_type,
                     "response": voice_templates.get(req.lang, voice_templates["EN"]),
+                    "decision": best,  # §97: A MELHOR opção
+                    "decision_id": decision_id,  # §100.5: Para feedback
                     "data": places[:5],
                     "locations": [
                         {"name": p["name"], "lat": p.get("lat"), "lng": p.get("lng"), "rating": p.get("rating")}
                         for p in places[:5] if p.get("lat")
                     ],
                     "lang": req.lang,
-                    "cache_hit": cache_hit
+                    "cache_hit": cache_hit,
+                    "mode": "nomada_v1.3"  # §100.5: Memory Engine
                 }
             else:
                 # Sem resultados — mas intent permanece places
@@ -2294,4 +2366,116 @@ async def maria_hotel_search(req: HotelSearchRequest):
         sovereign_mode=sovereign_mode,
         source=hotels_data.get("source", "hotellook.com"),
         timestamp=datetime.now(timezone.utc).isoformat(),
+    )
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# §100.5 — MEMORY ENGINE ENDPOINT: Decision Feedback
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class DecisionFeedbackRequest(BaseModel):
+    """Request to mark a decision as accepted or ignored."""
+    decision_id: str = Field(..., description="Decision ID from /think response")
+    accepted: Optional[bool] = Field(None, description="True if user accepted this decision")
+    ignored: Optional[bool] = Field(None, description="True if user ignored/skipped this decision")
+    did: Optional[str] = Field(None, description="User's DID for learning")
+
+
+class DecisionFeedbackResponse(BaseModel):
+    """Response confirming feedback was recorded."""
+    ok: bool
+    decision_id: str
+    status: str  # "accepted" | "ignored" | "updated"
+    learning: bool  # Whether learning was applied
+
+
+@router.post("/decision-feedback")
+async def decision_feedback(req: DecisionFeedbackRequest) -> DecisionFeedbackResponse:
+    """
+    §100.5 — Record user feedback on a MARIA decision.
+
+    Called when user:
+    - Clicks "Book" or confirms → accepted=true
+    - Clicks alternative or ignores → ignored=true
+
+    This feedback trains the Memory Engine to make better decisions.
+    """
+    if not req.decision_id:
+        return DecisionFeedbackResponse(
+            ok=False,
+            decision_id="",
+            status="error",
+            learning=False
+        )
+
+    if not MEMORY_ENGINE_ENABLED:
+        return DecisionFeedbackResponse(
+            ok=True,
+            decision_id=req.decision_id,
+            status="no_engine",
+            learning=False
+        )
+
+    # Record feedback
+    mark_decision_feedback(
+        decision_id=req.decision_id,
+        accepted=req.accepted,
+        ignored=req.ignored
+    )
+
+    # Determine status
+    status = "accepted" if req.accepted else "ignored" if req.ignored else "updated"
+
+    log.info(f"[MARIA §100.5] Feedback recorded: {req.decision_id} → {status}")
+
+    return DecisionFeedbackResponse(
+        ok=True,
+        decision_id=req.decision_id,
+        status=status,
+        learning=True
+    )
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# §100.5 — MEMORY ENGINE ENDPOINT: Decision Stats (Debug)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class DecisionStatsResponse(BaseModel):
+    """Statistics about a user's decisions."""
+    ok: bool
+    did: str
+    total: int = 0
+    by_type: dict = {}
+    accepted: int = 0
+    ignored: int = 0
+    acceptance_rate: Optional[float] = None
+    last_7_days: int = 0
+
+
+@router.get("/decision-stats/{did}")
+async def get_decision_stats_endpoint(did: str) -> DecisionStatsResponse:
+    """
+    §100.5 — Get statistics about a user's decision history.
+
+    Useful for debugging and understanding MARIA's learning.
+    """
+    if not MEMORY_ENGINE_ENABLED:
+        return DecisionStatsResponse(ok=False, did=did)
+
+    stats = get_decision_stats(did)
+
+    total_feedback = stats.get("accepted", 0) + stats.get("ignored", 0)
+    acceptance_rate = None
+    if total_feedback > 0:
+        acceptance_rate = round(stats.get("accepted", 0) / total_feedback, 2)
+
+    return DecisionStatsResponse(
+        ok=True,
+        did=did,
+        total=stats.get("total", 0),
+        by_type=stats.get("by_type", {}),
+        accepted=stats.get("accepted", 0),
+        ignored=stats.get("ignored", 0),
+        acceptance_rate=acceptance_rate,
+        last_7_days=stats.get("last_7_days", 0)
     )
