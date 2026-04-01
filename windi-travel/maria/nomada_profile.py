@@ -464,13 +464,31 @@ DEFAULT_TRAVEL_PREFS = {
     "comfort_priority": 0.5,   # 0 = aceita desconforto, 1 = prioriza conforto
     "time_sensitivity": 0.5,   # 0 = tempo não importa, 1 = quer o mais rápido
 
-    # ─── §104 — Campos evoluíveis (ajustados pelo Memory Engine) ───
-    "direct_bonus": 200,       # Bónus base quando voo é directo
-    "layover_penalty": 100,    # Penalidade base por escala
-    "duration_weight": 0.5,    # Peso da duração no score (0.3 a 0.8)
-    "price_weight": 1.5,       # Multiplicador do preço no score (1.0 a 2.5)
-    "morning_bonus": 50,       # Bónus por voo de manhã
-    "learned_confidence": 0.0, # Confiança na personalização (0 a 1)
+    # ─── §104 VOOS — Campos evoluíveis ───
+    "direct_bonus": 200,       # Bónus quando voo é directo (100 → 300)
+    "layover_penalty": 100,    # Penalidade por escala (50 → 150)
+    "duration_weight": 0.5,    # Peso da duração (0.3 → 0.8)
+    "price_weight": 1.5,       # Multiplicador do preço (1.0 → 2.5)
+    "morning_bonus": 50,       # Bónus por voo de manhã (30 → 80)
+
+    # ─── §104.1 HOTÉIS — Campos evoluíveis ───
+    "hotel_rating_weight": 50,   # Peso do rating (30 → 70)
+    "hotel_price_weight": 0.5,   # Peso do preço (0.3 → 0.7)
+    "hotel_comfort_bonus": 40,   # Bónus por hotel confortável (20 → 60)
+    "hotel_location_bonus": 80,  # Bónus por localização central (40 → 120)
+    "hotel_quietness_bonus": 40, # Bónus por ambiente tranquilo (20 → 60)
+
+    # ─── §104.1 LUGARES — Campos evoluíveis ───
+    "place_distance_weight": 0.5,  # Peso da distância (0.3 → 0.8)
+    "place_rating_bonus": 30,      # Bónus por rating alto (15 → 50)
+    "place_type_boosts": {         # Bónus por categoria (evita explosão)
+        "food": 1.0,               # Restaurantes, cafés, bares
+        "essential": 1.0,          # Farmácias, bancos, supermercados
+        "leisure": 1.0,            # Museus, parques, praias
+    },
+
+    # ─── Confiança global ───
+    "learned_confidence": 0.0, # Confiança na personalização (0 → 1)
 }
 
 
@@ -1029,9 +1047,10 @@ def mark_decision_feedback(decision_id: str, accepted: bool = None, ignored: boo
 
 def _evolve_preferences_from_feedback(did: str, decision: dict, accepted: bool, ignored: bool):
     """
-    §104 — Incremental preference evolution based on feedback.
+    §104 + §104.1 — Incremental preference evolution based on feedback.
 
     Small adjustments over time → real personality emerges.
+    Diferenciado por tipo (voos, hotéis, lugares) para evitar contaminação cruzada.
     """
     if not did:
         return
@@ -1040,29 +1059,24 @@ def _evolve_preferences_from_feedback(did: str, decision: dict, accepted: bool, 
     prefs = get_travel_preferences(did)
     decision_type = decision.get("decision_type")
 
-    # ─── Flight feedback ───
+    # ─── §104 FLIGHT feedback ───
     if decision_type == "flight":
         is_direct = decision.get("decision_direct", False)
         is_morning = decision.get("decision_morning", False)
         price = decision.get("decision_price", 0)
 
         if accepted:
-            # User liked this decision → reinforce similar patterns
             if is_direct:
-                # Increase direct bonus (max 300)
                 new_bonus = min(300, prefs.get("direct_bonus", 200) + 15)
                 update_travel_preference(did, "direct_bonus", new_bonus)
             else:
-                # User accepted a layover → decrease penalty
                 new_penalty = max(50, prefs.get("layover_penalty", 100) - 10)
                 update_travel_preference(did, "layover_penalty", new_penalty)
 
             if is_morning:
-                # Increase morning bonus (max 80)
                 new_morning = min(80, prefs.get("morning_bonus", 50) + 8)
                 update_travel_preference(did, "morning_bonus", new_morning)
 
-            # Price learning: if user accepted low price, increase sensitivity
             if price and price < 150:
                 new_sens = min(0.9, prefs.get("price_sensitivity", 0.5) + 0.05)
                 update_travel_preference(did, "price_sensitivity", new_sens)
@@ -1070,25 +1084,88 @@ def _evolve_preferences_from_feedback(did: str, decision: dict, accepted: bool, 
                 new_sens = max(0.2, prefs.get("price_sensitivity", 0.5) - 0.05)
                 update_travel_preference(did, "price_sensitivity", new_sens)
 
-            # Increase learned confidence
             new_conf = min(1.0, prefs.get("learned_confidence", 0) + 0.1)
             update_travel_preference(did, "learned_confidence", new_conf)
 
         elif ignored:
-            # User rejected this decision → adjust opposite direction
             if is_direct:
-                # User ignored direct → maybe prefers cheaper with layover
                 new_bonus = max(100, prefs.get("direct_bonus", 200) - 10)
                 update_travel_preference(did, "direct_bonus", new_bonus)
-
-            # Slightly decrease confidence when ignored
             new_conf = max(0.0, prefs.get("learned_confidence", 0) - 0.05)
             update_travel_preference(did, "learned_confidence", new_conf)
 
-    log.info(f"[MARIA §104] Preferences evolved for {did[:20]}... (accepted={accepted})")
+    # ─── §104.1 HOTEL feedback ───
+    elif decision_type == "hotel":
+        rating = decision.get("decision_rating", 0)
+        price = decision.get("decision_price", 0)
 
-    status = "accepted" if accepted else "ignored" if ignored else "updated"
-    log.info(f"[MARIA §100.5] Decision {decision_id} marked as {status}")
+        if accepted:
+            # High rating accepted → increase rating weight
+            if rating and rating >= 4:
+                new_weight = min(70, prefs.get("hotel_rating_weight", 50) + 5)
+                update_travel_preference(did, "hotel_rating_weight", new_weight)
+                new_comfort = min(60, prefs.get("hotel_comfort_bonus", 40) + 5)
+                update_travel_preference(did, "hotel_comfort_bonus", new_comfort)
+
+            # Price learning for hotels
+            if price and price < 80:
+                new_weight = min(0.7, prefs.get("hotel_price_weight", 0.5) + 0.05)
+                update_travel_preference(did, "hotel_price_weight", new_weight)
+            elif price and price > 150:
+                new_weight = max(0.3, prefs.get("hotel_price_weight", 0.5) - 0.05)
+                update_travel_preference(did, "hotel_price_weight", new_weight)
+
+            new_conf = min(1.0, prefs.get("learned_confidence", 0) + 0.08)
+            update_travel_preference(did, "learned_confidence", new_conf)
+
+        elif ignored:
+            new_conf = max(0.0, prefs.get("learned_confidence", 0) - 0.04)
+            update_travel_preference(did, "learned_confidence", new_conf)
+
+    # ─── §104.1 PLACE feedback ───
+    elif decision_type in ["place", "places"]:
+        place_type = decision.get("decision_place_type", "")
+        rating = decision.get("decision_rating", 0)
+
+        if accepted:
+            # High rating place → increase rating bonus
+            if rating and rating >= 4:
+                new_bonus = min(50, prefs.get("place_rating_bonus", 30) + 5)
+                update_travel_preference(did, "place_rating_bonus", new_bonus)
+
+            # Category boost evolution
+            type_boosts = prefs.get("place_type_boosts", {"food": 1.0, "essential": 1.0, "leisure": 1.0})
+            category = _classify_place_category(place_type)
+            if category in type_boosts:
+                new_boost = min(1.5, type_boosts[category] + 0.1)
+                type_boosts[category] = new_boost
+                update_travel_preference(did, "place_type_boosts", type_boosts)
+
+            new_conf = min(1.0, prefs.get("learned_confidence", 0) + 0.06)
+            update_travel_preference(did, "learned_confidence", new_conf)
+
+        elif ignored:
+            new_conf = max(0.0, prefs.get("learned_confidence", 0) - 0.03)
+            update_travel_preference(did, "learned_confidence", new_conf)
+
+    log.info(f"[MARIA §104.1] Preferences evolved for {did[:20]}... (type={decision_type}, accepted={accepted})")
+
+
+def _classify_place_category(place_type: str) -> str:
+    """§104.1 — Classify place type into category (evita explosão de dimensões)."""
+    food_types = ["restaurant", "cafe", "bar", "bakery", "food"]
+    essential_types = ["pharmacy", "bank", "supermarket", "hospital", "atm", "gas_station"]
+    leisure_types = ["museum", "park", "beach", "tourist_attraction", "spa", "gym"]
+
+    place_type_lower = (place_type or "").lower()
+
+    if any(t in place_type_lower for t in food_types):
+        return "food"
+    elif any(t in place_type_lower for t in essential_types):
+        return "essential"
+    elif any(t in place_type_lower for t in leisure_types):
+        return "leisure"
+    return "food"  # default
 
 
 def detect_patterns_from_decisions(did: str) -> dict:

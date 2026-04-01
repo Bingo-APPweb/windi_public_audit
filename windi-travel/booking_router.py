@@ -470,33 +470,51 @@ def score_flight(f: dict, preferred_time: str = "morning", prefs: dict = None, c
     return score
 
 
-def score_hotel(h: dict, prefs: dict = None) -> float:
+def score_hotel(h: dict, prefs: dict = None, context: dict = None) -> float:
     """
-    §98 — Score a hotel for Nómada decision-making.
+    §104.1 — Score a hotel for Nómada decision-making (Personalização Real).
 
-    Heurística v1.1 (personalizada):
-    - Rating: peso baseado em comfort_priority
-    - Preço: peso baseado em price_sensitivity
-    - Reviews: confiança extra
+    Heurística v2.0 (evoluída):
+    - Usa campos EVOLUÍVEIS do Memory Engine
+    - Escala comparável com voos (~200 impacto máximo)
     """
     if prefs is None:
-        prefs = {"price_sensitivity": 0.5, "comfort_priority": 0.5}
+        prefs = {
+            "price_sensitivity": 0.5, "comfort_priority": 0.5,
+            "hotel_rating_weight": 50, "hotel_price_weight": 0.5,
+            "hotel_comfort_bonus": 40, "hotel_location_bonus": 80,
+            "hotel_quietness_bonus": 40, "learned_confidence": 0.0
+        }
+    if context is None:
+        context = {}
 
     score = 1000  # Base score
 
-    # Rating (maior = melhor) — peso dinâmico
+    # ─── RATING (campo evoluível: hotel_rating_weight) ───
     rating = h.get("rating", h.get("stars", 3))
-    comfort = prefs.get("comfort_priority", 0.5)
-    rating_weight = 30 + comfort * 40  # 30 a 70
+    rating_weight = prefs.get("hotel_rating_weight", 50)  # 30 → 70
     score += rating * rating_weight
 
-    # Preço (menor = melhor)
+    # ─── PREÇO (campo evoluível: hotel_price_weight) ───
     price = h.get("price", h.get("price_per_night", 100))
-    price_sens = prefs.get("price_sensitivity", 0.5)
-    price_weight = 0.3 + price_sens * 0.4  # 0.3 a 0.7
+    price_weight = prefs.get("hotel_price_weight", 0.5)  # 0.3 → 0.7
     score -= price * price_weight
 
-    # Reviews count (mais reviews = mais confiável)
+    # ─── CONFORTO (campo evoluível: hotel_comfort_bonus) ───
+    comfort_bonus = prefs.get("hotel_comfort_bonus", 40)
+    if rating >= 4:
+        score += comfort_bonus
+
+    # ─── LOCALIZAÇÃO (campo evoluível: hotel_location_bonus) ───
+    location_bonus = prefs.get("hotel_location_bonus", 80)
+    # Assumir central se não tiver info de distância
+    distance = h.get("distance_km", h.get("distance", 0))
+    if distance and distance < 2:
+        score += location_bonus
+    elif distance and distance < 5:
+        score += location_bonus * 0.5
+
+    # ─── REVIEWS (confiança extra) ───
     reviews = h.get("reviews_count", h.get("reviews", 0))
     if reviews > 1000:
         score += 40
@@ -504,6 +522,11 @@ def score_hotel(h: dict, prefs: dict = None) -> float:
         score += 25
     elif reviews > 100:
         score += 15
+
+    # ─── §104.1 CONFIANÇA (amplificador) ───
+    learned_confidence = prefs.get("learned_confidence", 0.0)
+    if learned_confidence > 0.5 and rating >= 4:
+        score += 20 * learned_confidence
 
     return score
 
@@ -947,27 +970,77 @@ async def search_places(intent: IntentPayload, lat: float, lng: float, lang: str
         log.warning(f"Google Places fallback: {e}")
         return [], False
 
-# ── Decision Engine ────────────────────────────────────────────────────────────
-def score_place(place: dict, intent: IntentPayload, ctx: dict) -> float:
-    """Score a candidate place 0–100."""
+# ── §104.1 Decision Engine (Personalização Real) ─────────────────────────────
+def score_place(place: dict, intent: IntentPayload, ctx: dict, prefs: dict = None) -> float:
+    """
+    §104.1 — Score a candidate place (Personalização Real).
+
+    Escala 0-100, comparável em intensidade com voos/hotéis.
+    Usa campos evoluíveis do Memory Engine.
+    """
+    if prefs is None:
+        prefs = {
+            "place_distance_weight": 0.5,
+            "place_rating_bonus": 30,
+            "place_type_boosts": {"food": 1.0, "essential": 1.0, "leisure": 1.0},
+            "learned_confidence": 0.0
+        }
+
     score = 50.0
-    # Rating bonus
-    score += (place.get("rating") or 3.5) * 5
-    # Open now
+
+    # ─── RATING (campo evoluível: place_rating_bonus) ───
+    rating = place.get("rating") or 3.5
+    rating_bonus = prefs.get("place_rating_bonus", 30)
+    if rating >= 4.5:
+        score += rating_bonus
+    elif rating >= 4.0:
+        score += rating_bonus * 0.7
+    elif rating >= 3.5:
+        score += rating_bonus * 0.4
+
+    # ─── OPEN NOW (importante) ───
     if place.get("open_now") is True:
         score += 15
     elif place.get("open_now") is False:
         score -= 40
-    # Rain → indoor preference
+
+    # ─── TYPE BOOST (campo evoluível: place_type_boosts) ───
+    type_boosts = prefs.get("place_type_boosts", {"food": 1.0, "essential": 1.0, "leisure": 1.0})
+    category = _classify_intent_category(intent.type)
+    boost = type_boosts.get(category, 1.0)
+    score *= boost
+
+    # ─── CONTEXT (chuva, família, etc.) ───
     if ctx.get("is_raining") and intent.type in ("restaurant", "cafe", "museum"):
         score += 10
-    # Quiet preference
     if intent.quiet and (place.get("user_ratings_total") or 0) < 500:
         score += 8
-    # Family
     if intent.family and intent.type == "museum":
         score += 10
+
+    # ─── §104.1 CONFIANÇA (amplificador) ───
+    learned_confidence = prefs.get("learned_confidence", 0.0)
+    if learned_confidence > 0.5 and rating >= 4.0:
+        score += 5 * learned_confidence
+
     return round(score, 1)
+
+
+def _classify_intent_category(intent_type: str) -> str:
+    """§104.1 — Classify intent type into category."""
+    food_types = ["restaurant", "cafe", "bar", "bakery", "food"]
+    essential_types = ["pharmacy", "bank", "supermarket", "hospital", "atm", "gas_station"]
+    leisure_types = ["museum", "park", "beach", "tourist_attraction", "spa", "gym"]
+
+    intent_lower = (intent_type or "").lower()
+
+    if intent_lower in food_types:
+        return "food"
+    elif intent_lower in essential_types:
+        return "essential"
+    elif intent_lower in leisure_types:
+        return "leisure"
+    return "food"  # default
 
 def build_reason(place: dict, intent: IntentPayload, ctx: dict, lang: str) -> str:
     parts = []
@@ -1591,7 +1664,9 @@ async def maria_plan(req: PlanRequest):
                 )
     else:
         # 3. Score & pick best
-        scored = sorted(candidates, key=lambda p: score_place(p, req.intent, ctx), reverse=True)
+        # §104.1: Load travel preferences for personalized scoring
+        travel_prefs = get_travel_preferences(did) if did else None
+        scored = sorted(candidates, key=lambda p: score_place(p, req.intent, ctx, travel_prefs), reverse=True)
         best = scored[0]
         dist_txt = {"PT": "próximo", "DE": "in der Nähe", "EN": "nearby"}[lang]
         queue_txt = (
@@ -2015,7 +2090,7 @@ async def maria_think_endpoint(req: ThinkRequest):
                 # §99: Carregar contexto vivo (estado atual)
                 live_context = get_live_context(user_input, req.lat, req.lng)
 
-                best_hotel = max(hotel_list, key=lambda h: score_hotel(h, travel_prefs))
+                best_hotel = max(hotel_list, key=lambda h: score_hotel(h, travel_prefs, live_context))
                 alternatives = [h for h in hotel_list if h != best_hotel][:2]
 
                 # Gerar explicação humana
