@@ -2183,8 +2183,9 @@ async def seal_moment(request: Request):
 
     body = await request.json()
     file_hash = body.get("hash", "")
-    file_name = body.get("name", "memoria")
-    file_type = body.get("type", "image")
+    file_name = body.get("name", body.get("label", "memoria"))
+    # Aceita tanto "type" como "media_type" (frontend envia media_type)
+    file_type = body.get("type") or body.get("media_type", "image")
     note = body.get("note", "")
 
     # Validar hash SHA-256 (64 hex chars)
@@ -2193,19 +2194,23 @@ async def seal_moment(request: Request):
 
     receipt_id = f"WINDI-TRAVEL-{int(time.time())}-{file_hash[:8].upper()}"
 
-    # ✅ Seal no Ledger I11
+    # ✅ Seal no Ledger I11 — §109 Video Forensic Support
+    # doc_type dinâmico: "video" para vídeos, "doc" para imagens
+    doc_type = "video" if file_type == "video" else "doc"
+
     try:
         payload = {
             "id": receipt_id,
             "actor": wallet_id,
             "app": "windi-travel-workspace-v3",
             "doc_name": file_name,
-            "doc_type": "doc",
-            "governance_level": "MEDIUM",
+            "doc_type": doc_type,
+            "governance_level": "HIGH" if file_type == "video" else "MEDIUM",
             "content_hash": f"sha256:{file_hash}",
             "sge_score": 90,
             "invariant": "I11",
-            "note": note or f"Travel memory sealed · {file_type}"
+            "note": note or f"Travel memory sealed · {file_type}",
+            "media_type": file_type  # Metadado adicional
         }
         requests.post(LEDGER_URL, json=payload, timeout=5)
     except Exception as e:

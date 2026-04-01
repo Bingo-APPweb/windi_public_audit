@@ -1577,8 +1577,12 @@ async function handleMedia(file, source) {
     document.getElementById('geo-label').textContent = 'GPS não disponível';
   }
 
-  // Create thumbnail for localStorage (small, ~5KB)
-  const thumbnail = file.type.startsWith('image') ? await createThumbnail(file) : null;
+  // Create thumbnail for localStorage (small, ~5KB) — §109 Video support
+  const thumbnail = file.type.startsWith('video')
+    ? await createVideoThumbnail(file)
+    : file.type.startsWith('image')
+      ? await createThumbnail(file)
+      : null;
 
   // Store current moment
   currentMoment = {
@@ -1631,6 +1635,47 @@ function createThumbnail(file, maxSize = 100) {
     };
     reader.onerror = () => resolve(null);
     reader.readAsDataURL(file);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// VIDEO THUMBNAIL — §109 Video Forensic (extrai frame 0.1s)
+// ═══════════════════════════════════════════════════════════════════════════
+
+function createVideoThumbnail(file, maxSize = 100) {
+  return new Promise((resolve) => {
+    const video = document.createElement('video');
+    video.preload = 'metadata';
+    video.muted = true;
+    video.playsInline = true;
+
+    video.onloadeddata = () => {
+      // Seek to 0.1s para evitar frame preto
+      video.currentTime = 0.1;
+    };
+
+    video.onseeked = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        const scale = Math.min(maxSize / video.videoWidth, maxSize / video.videoHeight);
+        canvas.width = video.videoWidth * scale;
+        canvas.height = video.videoHeight * scale;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        URL.revokeObjectURL(video.src);
+        resolve(canvas.toDataURL('image/jpeg', 0.7));
+      } catch (e) {
+        console.warn('Video thumbnail error:', e);
+        resolve(null);
+      }
+    };
+
+    video.onerror = () => {
+      URL.revokeObjectURL(video.src);
+      resolve(null);
+    };
+
+    video.src = URL.createObjectURL(file);
   });
 }
 
