@@ -21,7 +21,7 @@ Author: Liga IA+H · Kempten 2026
 """
 
 import os, time, uuid, hashlib, json, logging, re
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 import httpx
 from fastapi import APIRouter, HTTPException
@@ -43,12 +43,27 @@ try:
         set_preference,
         gerar_saudacao,
         get_total_interactions,
+        # §98 — MODO NÓMADA v1.1
+        get_travel_preferences,
+        learn_from_choice,
+        explain_personalized_decision,
+        # §100 — ANTECIPAÇÃO
+        detect_travel_patterns,
+        should_anticipate,
+        generate_anticipation_message,
+        log_anticipation,
     )
     MEMORY_ENABLED = True
+    ANTICIPATION_ENABLED = True
 except ImportError:
     MEMORY_ENABLED = False
+    ANTICIPATION_ENABLED = False
     def gerar_saudacao(did, lang, weather=None, hour=None): return {"PT": "Bom dia, viajante", "DE": "Guten Tag, Reisender", "EN": "Good day, traveller"}.get(lang, "Good day")
     def get_total_interactions(did): return 0
+    def get_travel_preferences(did): return {"avoid_stops": True, "price_sensitivity": 0.5, "prefer_morning": True, "comfort_priority": 0.5}
+    def explain_personalized_decision(choice_type, prefs, lang): return ""
+    def detect_travel_patterns(did): return {}
+    def should_anticipate(did, context, patterns): return {"should_suggest": False}
     log.warning("[MARIA] Memory module not available — running without DID persistence")
 
 # ── Places Sovereignty Gate ───────────────────────────────────────────────────
@@ -148,6 +163,374 @@ def detect_culture_intent(text: str) -> bool:
         if any(kw in lower for kw in lang_keywords):
             return True
     return False
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# §99 — CONTEXTO VIVO: Estado atual do humano
+# "A decisão deixa de ser só tua. Passa a ser tua + o momento."
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def get_live_context(user_input: str, lat: float = None, lng: float = None,
+                     current_hour: int = None) -> dict:
+    """
+    §99 — Extract live context from the current moment.
+
+    Pilares:
+    1. TEMPO — urgência, horário atual
+    2. LOCALIZAÇÃO — onde está
+    3. ESTADO — modo (foco, exploração, urgente)
+    """
+    if current_hour is None:
+        current_hour = datetime.now().hour
+
+    context = {
+        "time_pressure": "normal",
+        "mode": "normal",
+        "current_hour": current_hour,
+        "has_location": bool(lat and lng),
+    }
+
+    # ─── Detectar pressão de tempo ───
+    lower = user_input.lower()
+
+    # Urgência explícita
+    urgent_keywords = [
+        "urgente", "rápido", "já", "agora", "hoje", "amanhã",
+        "dringend", "schnell", "jetzt", "sofort", "heute", "morgen",
+        "urgent", "quick", "now", "asap", "today", "tomorrow"
+    ]
+    if any(kw in lower for kw in urgent_keywords):
+        context["time_pressure"] = "high"
+
+    # Relaxado
+    relaxed_keywords = [
+        "quando der", "sem pressa", "qualquer dia", "flexível",
+        "wenn es passt", "keine eile", "flexibel",
+        "whenever", "no rush", "flexible", "any day"
+    ]
+    if any(kw in lower for kw in relaxed_keywords):
+        context["time_pressure"] = "low"
+
+    # ─── Detectar modo ───
+    # Exploração (viagem de lazer, descoberta)
+    explore_keywords = [
+        "descobrir", "explorar", "conhecer", "passear", "turismo",
+        "entdecken", "erkunden", "besichtigen", "tourismus",
+        "discover", "explore", "visit", "sightseeing", "vacation"
+    ]
+    if any(kw in lower for kw in explore_keywords):
+        context["mode"] = "explore"
+
+    # Foco (trabalho, reunião, negócio)
+    focus_keywords = [
+        "trabalho", "reunião", "negócio", "conferência", "cliente",
+        "arbeit", "meeting", "geschäft", "konferenz", "kunde",
+        "work", "meeting", "business", "conference", "client"
+    ]
+    if any(kw in lower for kw in focus_keywords):
+        context["mode"] = "focus"
+
+    # Urgente (combinação de sinais)
+    if context["time_pressure"] == "high" and context["mode"] == "focus":
+        context["mode"] = "urgent"
+
+    # ─── Contexto temporal ───
+    if 5 <= current_hour < 9:
+        context["time_of_day"] = "early_morning"
+    elif 9 <= current_hour < 12:
+        context["time_of_day"] = "morning"
+    elif 12 <= current_hour < 17:
+        context["time_of_day"] = "afternoon"
+    elif 17 <= current_hour < 21:
+        context["time_of_day"] = "evening"
+    else:
+        context["time_of_day"] = "night"
+
+    return context
+
+
+def apply_context_to_score(base_score: float, flight: dict, context: dict) -> float:
+    """
+    §99 — Adjust score based on live context.
+
+    Contexto Vivo modifica a decisão em tempo real.
+    """
+    score = base_score
+
+    # ─── Pressão de tempo ───
+    if context.get("time_pressure") == "high":
+        # Urgente: priorizar directo e rápido
+        if flight.get("direct", False):
+            score += 150
+        else:
+            score -= 100
+        # Penalizar duração longa
+        duration = flight.get("duration_min", 0)
+        if duration > 300:  # > 5h
+            score -= 80
+
+    elif context.get("time_pressure") == "low":
+        # Relaxado: preço importa mais
+        price = flight.get("price", 100)
+        if price < 80:
+            score += 50
+
+    # ─── Modo ───
+    if context.get("mode") == "focus":
+        # Trabalho: conforto e pontualidade
+        if flight.get("airline") in ["TAP", "LH", "BA", "AF", "Swiss"]:
+            score += 40  # Airlines premium
+        if flight.get("direct", False):
+            score += 60  # Sem surpresas
+
+    elif context.get("mode") == "explore":
+        # Exploração: aceitar escalas se mais barato
+        if not flight.get("direct", False) and flight.get("price", 999) < 80:
+            score += 30  # Escala OK se barato
+
+    elif context.get("mode") == "urgent":
+        # Urgente máximo: só o mais rápido
+        if flight.get("direct", False):
+            score += 200
+        duration = flight.get("duration_min", 0)
+        score -= duration * 0.3  # Penalizar cada minuto extra
+
+    return score
+
+
+def explain_context(context: dict, lang: str = "PT") -> str:
+    """
+    §99 — Generate context-aware explanation piece.
+
+    Natural, curto, implícito.
+    """
+    pieces = []
+
+    # Pressão de tempo
+    if context.get("time_pressure") == "high":
+        pieces.append({
+            "PT": "tens pouco tempo",
+            "DE": "du hast wenig Zeit",
+            "EN": "you're short on time"
+        })
+    elif context.get("time_pressure") == "low":
+        pieces.append({
+            "PT": "estás sem pressa",
+            "DE": "du hast keine Eile",
+            "EN": "you're in no rush"
+        })
+
+    # Modo
+    if context.get("mode") == "focus":
+        pieces.append({
+            "PT": "estás em modo trabalho",
+            "DE": "du bist im Arbeitsmodus",
+            "EN": "you're in work mode"
+        })
+    elif context.get("mode") == "explore":
+        pieces.append({
+            "PT": "estás a explorar",
+            "DE": "du erkundest",
+            "EN": "you're exploring"
+        })
+    elif context.get("mode") == "urgent":
+        pieces.append({
+            "PT": "é urgente",
+            "DE": "es ist dringend",
+            "EN": "it's urgent"
+        })
+
+    if not pieces:
+        return ""
+
+    # Juntar (máx 2 razões de contexto)
+    selected = pieces[:2]
+    reason_strs = [p.get(lang, p["EN"]) for p in selected]
+
+    # Não repetir estrutura — variar
+    templates = {
+        "PT": [f"Como {reason_strs[0]}", f"Vejo que {reason_strs[0]}"],
+        "DE": [f"Da {reason_strs[0]}", f"Ich sehe, dass {reason_strs[0]}"],
+        "EN": [f"Since {reason_strs[0]}", f"I see {reason_strs[0]}"]
+    }
+
+    import random
+    template = random.choice(templates.get(lang, templates["EN"]))
+
+    if len(reason_strs) > 1:
+        conj = {"PT": " e ", "DE": " und ", "EN": " and "}
+        template += conj.get(lang, " and ") + reason_strs[1]
+
+    return template + "."
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# §97 — MODO NÓMADA v1: Decision Engine
+# "O sistema não apresenta opções. Apresenta a melhor ação disponível."
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def score_flight(f: dict, preferred_time: str = "morning", prefs: dict = None) -> float:
+    """
+    §98 — Score a flight for Nómada decision-making.
+
+    Heurística v1.1 (personalizada):
+    - Usa preferências do DID quando disponíveis
+    - Voo directo: bónus baseado em avoid_stops
+    - Preço: peso baseado em price_sensitivity
+    - Horário: baseado em prefer_morning
+    """
+    if prefs is None:
+        prefs = {"avoid_stops": True, "price_sensitivity": 0.5, "prefer_morning": True, "comfort_priority": 0.5}
+
+    score = 1000  # Base score
+
+    # Preço (peso dinâmico baseado em price_sensitivity)
+    price = f.get("price", 999)
+    price_weight = 1 + prefs.get("price_sensitivity", 0.5)  # 1.0 a 2.0
+    score -= price * price_weight
+
+    # Duração (peso baseado em time_sensitivity)
+    duration = f.get("duration_min", f.get("duration_minutes", 999))
+    time_weight = 0.3 + prefs.get("time_sensitivity", 0.5) * 0.4  # 0.3 a 0.7
+    score -= duration * time_weight
+
+    # Voo directo: bónus dinâmico baseado em avoid_stops
+    if f.get("direct", False):
+        avoid_stops = prefs.get("avoid_stops", True)
+        if avoid_stops is True or (isinstance(avoid_stops, float) and avoid_stops > 0.5):
+            score += 250  # Forte preferência por directo
+        else:
+            score += 100  # Bónus menor
+    else:
+        # Penalizar escalas
+        stops = f.get("stops", len(f.get("layovers", [])))
+        avoid_stops = prefs.get("avoid_stops", True)
+        penalty = 150 if (avoid_stops is True or (isinstance(avoid_stops, float) and avoid_stops > 0.5)) else 80
+        score -= stops * penalty
+
+    # Horário preferido
+    dep = f.get("departure", "")
+    prefer_morning = prefs.get("prefer_morning", True)
+
+    # Override com input explícito
+    if preferred_time == "morning" or (preferred_time == "morning" and prefer_morning):
+        if "T06" in dep or "T07" in dep or "T08" in dep or "T09" in dep:
+            score += 70
+    elif preferred_time == "afternoon":
+        if "T12" in dep or "T13" in dep or "T14" in dep or "T15" in dep:
+            score += 70
+    elif preferred_time == "evening":
+        if "T18" in dep or "T19" in dep or "T20" in dep:
+            score += 70
+    elif prefer_morning and ("T06" in dep or "T07" in dep or "T08" in dep or "T09" in dep):
+        score += 50  # Bónus implícito por preferência
+
+    # Conforto (companhias premium)
+    comfort = prefs.get("comfort_priority", 0.5)
+    premium_airlines = ["TAP", "LH", "BA", "AF", "KLM", "Swiss"]
+    if comfort > 0.6 and f.get("airline") in premium_airlines:
+        score += 30
+
+    return score
+
+
+def score_hotel(h: dict, prefs: dict = None) -> float:
+    """
+    §98 — Score a hotel for Nómada decision-making.
+
+    Heurística v1.1 (personalizada):
+    - Rating: peso baseado em comfort_priority
+    - Preço: peso baseado em price_sensitivity
+    - Reviews: confiança extra
+    """
+    if prefs is None:
+        prefs = {"price_sensitivity": 0.5, "comfort_priority": 0.5}
+
+    score = 1000  # Base score
+
+    # Rating (maior = melhor) — peso dinâmico
+    rating = h.get("rating", h.get("stars", 3))
+    comfort = prefs.get("comfort_priority", 0.5)
+    rating_weight = 30 + comfort * 40  # 30 a 70
+    score += rating * rating_weight
+
+    # Preço (menor = melhor)
+    price = h.get("price", h.get("price_per_night", 100))
+    price_sens = prefs.get("price_sensitivity", 0.5)
+    price_weight = 0.3 + price_sens * 0.4  # 0.3 a 0.7
+    score -= price * price_weight
+
+    # Reviews count (mais reviews = mais confiável)
+    reviews = h.get("reviews_count", h.get("reviews", 0))
+    if reviews > 1000:
+        score += 40
+    elif reviews > 500:
+        score += 25
+    elif reviews > 100:
+        score += 15
+
+    return score
+
+
+def explain_flight_decision(flight: dict, lang: str = "PT") -> str:
+    """Generate human explanation for why this flight was chosen."""
+    price = flight.get("price", 0)
+    duration = flight.get("duration_str", "")
+    direct = flight.get("direct", False)
+    airline = flight.get("airline", "")
+    dep = flight.get("departure", "")
+
+    # Extract time
+    time_str = ""
+    if "T" in dep:
+        time_str = dep.split("T")[1][:5]
+
+    templates = {
+        "PT": {
+            "direct_cheap": f"Este é o melhor para ti: {price}€, voo directo com {airline}, {duration}. Sais às {time_str} — chegas descansado.",
+            "direct": f"Escolhi este: {price}€, directo com {airline}. {duration} de viagem, sem stress de escalas.",
+            "cheap": f"A melhor opção: apenas {price}€ com {airline}. {duration} de viagem.",
+            "balanced": f"Este equilibra bem: {price}€, {duration}, {airline}. Boa relação qualidade-tempo."
+        },
+        "DE": {
+            "direct_cheap": f"Das Beste für dich: {price}€, Direktflug mit {airline}, {duration}. Abflug {time_str} — entspannt ankommen.",
+            "direct": f"Meine Wahl: {price}€, Direktflug mit {airline}. {duration} Reisezeit, stressfrei.",
+            "cheap": f"Beste Option: nur {price}€ mit {airline}. {duration} Flugzeit.",
+            "balanced": f"Gute Balance: {price}€, {duration}, {airline}. Gutes Preis-Leistungs-Verhältnis."
+        },
+        "EN": {
+            "direct_cheap": f"Best for you: {price}€, direct with {airline}, {duration}. Depart {time_str} — arrive relaxed.",
+            "direct": f"My pick: {price}€, direct with {airline}. {duration} flight, no layover stress.",
+            "cheap": f"Best option: only {price}€ with {airline}. {duration} flight.",
+            "balanced": f"Good balance: {price}€, {duration}, {airline}. Great value."
+        }
+    }
+
+    lang_templates = templates.get(lang, templates["EN"])
+
+    if direct and price < 100:
+        return lang_templates["direct_cheap"]
+    elif direct:
+        return lang_templates["direct"]
+    elif price < 80:
+        return lang_templates["cheap"]
+    else:
+        return lang_templates["balanced"]
+
+
+def explain_hotel_decision(hotel: dict, lang: str = "PT") -> str:
+    """Generate human explanation for why this hotel was chosen."""
+    name = hotel.get("name", "Hotel")
+    price = hotel.get("price", hotel.get("price_per_night", 0))
+    rating = hotel.get("rating", hotel.get("stars", 0))
+
+    templates = {
+        "PT": f"Escolhi o {name}: {rating}★, {price}€/noite. Boa localização e reviews positivas.",
+        "DE": f"Meine Wahl: {name}: {rating}★, {price}€/Nacht. Gute Lage und positive Bewertungen.",
+        "EN": f"My pick: {name}: {rating}★, {price}€/night. Good location and positive reviews."
+    }
+
+    return templates.get(lang, templates["EN"])
 
 
 # ── §69b Place Type Detection from Query ──────────────────────────────────────
@@ -1307,14 +1690,350 @@ class ThinkRequest(BaseModel):
 @router.post("/think")
 async def maria_think_endpoint(req: ThinkRequest):
     """
-    §92 — MARIA Brain: LLM live substitui regex estáticos.
+    §96 — MARIA Decision Router: Decide ANTES de falar.
 
-    "Os regex tentam prever o que o humano vai dizer.
-     O LLM entende o que o humano quis dizer."
+    "MARIA deixou de responder. Começou a agir."
 
-    Pipeline:
-        input + contexto + memória → LLM → resposta genuinamente generativa
+    Pipeline (P5):
+        1. Detectar intent (flight/hotel/places/culture)
+        2. Se actionable → chamar bridge → retornar dados
+        3. Se conversacional → LLM → resposta generativa
+
+    Transforms MARIA from "feature system" to "decision system".
     """
+    user_input = req.message
+
+    # ═══════════════════════════════════════════════════════════════════════════
+    # §100 — ANTECIPAÇÃO (antes do routing normal)
+    # "Eu não decido por ti. Mas não te deixo decidir tarde demais."
+    # ═══════════════════════════════════════════════════════════════════════════
+
+    if ANTICIPATION_ENABLED and req.did:
+        # Carregar contexto e padrões
+        live_context = get_live_context(user_input, req.lat, req.lng)
+        patterns = detect_travel_patterns(req.did)
+
+        # Verificar se devemos antecipar
+        anticipation = should_anticipate(req.did, live_context, patterns)
+
+        if anticipation.get("should_suggest") and anticipation.get("confidence", 0) > 0.5:
+            # Gerar mensagem de antecipação (sem executar — I9)
+            suggestion = generate_anticipation_message(
+                anticipation["suggestion_type"],
+                patterns,
+                live_context,
+                req.lang
+            )
+
+            # Se o input é genérico (saudação, "olá", etc.) e temos sugestão
+            generic_inputs = ["ola", "olá", "hallo", "hello", "hi", "oi", "bom dia", "guten tag", "good morning"]
+            if any(user_input.lower().strip() in g for g in generic_inputs):
+                log.info(f"[MARIA §100] Anticipation triggered: {anticipation['suggestion_type']}")
+                return {
+                    "type": "anticipation",
+                    "mode": "nomada_v2",
+                    "response": suggestion["full_text"],
+                    "suggestion": suggestion,
+                    "patterns": {
+                        "common_routes": patterns.get("common_routes", []),
+                        "trip_frequency": patterns.get("trip_frequency"),
+                    },
+                    "requires_approval": True,  # I9 — sempre
+                    "lang": req.lang
+                }
+
+    # ═══════════════════════════════════════════════════════════════════════════
+    # §96 — DECISION ROUTING (antes do LLM)
+    # "MARIA deve decidir antes de falar."
+    # ═══════════════════════════════════════════════════════════════════════════
+
+    # ✈️ FLIGHT INTENT
+    if KIWI_BRIDGE_ENABLED and detect_flight_intent(user_input):
+        log.info(f"[MARIA §96] Flight intent detected: {user_input[:50]}...")
+        details = extract_flight_details(user_input)
+
+        # Se não tem destino, pedir ao utilizador
+        # Nota: extract_flight_details retorna fly_to, não destination
+        fly_to = details.get("fly_to")
+        if not fly_to or details.get("destination_missing"):
+            ask_dest = MARIA_ASK_DESTINATION["flight"].get(req.lang, MARIA_ASK_DESTINATION["flight"]["EN"])
+            return {
+                "type": "clarification",
+                "intent": "flight",
+                "response": ask_dest,
+                "needs": ["destination"],
+                "lang": req.lang
+            }
+
+        # Buscar voos — NUNCA cair no LLM se intent é flight
+        try:
+            result = await search_flights(
+                fly_from=details.get("fly_from", "MUC"),
+                fly_to=fly_to,
+                date_from=details.get("date", (datetime.now() + timedelta(days=7)).strftime("%d/%m/%Y")),
+                currency="EUR",
+                adults=1,
+                max_results=3
+            )
+
+            # search_flights retorna {"flights": [...], "origin": ..., "destination": ...}
+            flight_list = result.get("flights", [])
+
+            if flight_list:
+                # §99 — MODO NÓMADA v1.2: Decisão personalizada + Contexto Vivo
+                # Carregar preferências do DID
+                travel_prefs = get_travel_preferences(req.did) if req.did else None
+
+                # §99: Carregar contexto vivo (estado atual)
+                live_context = get_live_context(user_input, req.lat, req.lng)
+
+                # Detectar preferência de horário do user input (override explícito)
+                preferred_time = "morning"  # default
+                if any(w in user_input.lower() for w in ["tarde", "nachmittag", "afternoon"]):
+                    preferred_time = "afternoon"
+                elif any(w in user_input.lower() for w in ["noite", "abend", "evening", "night"]):
+                    preferred_time = "evening"
+
+                # Score com preferências + contexto vivo
+                def score_with_context(f):
+                    base = score_flight(f, preferred_time, travel_prefs)
+                    return apply_context_to_score(base, f, live_context)
+
+                best_flight = max(flight_list, key=score_with_context)
+                alternatives = [f for f in flight_list if f != best_flight][:2]
+
+                # Gerar explicação humana
+                voice = explain_flight_decision(best_flight, req.lang)
+
+                # §98: Adicionar explicação personalizada se temos DID
+                if req.did and travel_prefs:
+                    personal_reason = explain_personalized_decision("flight", travel_prefs, req.lang)
+                    if personal_reason:
+                        voice = f"{voice} {personal_reason}"
+
+                # §99: Adicionar contexto vivo à explicação
+                context_reason = explain_context(live_context, req.lang)
+                if context_reason:
+                    voice = f"{context_reason} {voice}"
+
+                return {
+                    "type": "flight",
+                    "intent": "flight",
+                    "response": voice,
+                    "decision": best_flight,  # §97: A MELHOR opção
+                    "alternatives": alternatives,  # Opcionais, não como escolha
+                    "data": flight_list[:3],  # Backwards compat
+                    "origin": result.get("origin", details.get("fly_from", "MUC")),
+                    "destination": result.get("destination", fly_to),
+                    "lang": req.lang,
+                    "source": "kiwi.com",
+                    "mode": "nomada_v1.2",  # §99: Flag para frontend
+                    "personalized": bool(req.did and travel_prefs),
+                    "context_aware": bool(live_context.get("time_pressure") != "normal" or live_context.get("mode") != "normal"),
+                    "live_context": {
+                        "time_pressure": live_context.get("time_pressure"),
+                        "mode": live_context.get("mode")
+                    }
+                }
+            else:
+                # Sem resultados — mas intent permanece flight
+                no_flights_msg = {
+                    "PT": f"Não encontrei voos directos para {fly_to} neste momento. Tenta uma data diferente ou outro destino.",
+                    "DE": f"Ich habe keine Direktflüge nach {fly_to} gefunden. Versuche ein anderes Datum oder Ziel.",
+                    "EN": f"No direct flights to {fly_to} found. Try a different date or destination."
+                }
+                return {
+                    "type": "flight",
+                    "intent": "flight",
+                    "response": no_flights_msg.get(req.lang, no_flights_msg["EN"]),
+                    "data": [],
+                    "destination": fly_to,
+                    "lang": req.lang,
+                    "source": "kiwi.com"
+                }
+        except Exception as e:
+            log.error(f"[MARIA §96] Flight search error: {e}")
+            # ⚠️ Erro não muda a natureza da decisão — NUNCA chamar LLM aqui
+            error_msg = {
+                "PT": "Tive um problema a aceder aos voos. Tenta novamente em alguns segundos.",
+                "DE": "Es gab ein Problem beim Zugriff auf Flüge. Versuche es in einigen Sekunden erneut.",
+                "EN": "Had a problem accessing flights. Try again in a few seconds."
+            }
+            return {
+                "type": "flight_error",
+                "intent": "flight",
+                "response": error_msg.get(req.lang, error_msg["EN"]),
+                "error": str(e),
+                "lang": req.lang
+            }
+
+    # 🏨 HOTEL INTENT
+    if HOTEL_BRIDGE_ENABLED and detect_hotel_intent(user_input):
+        log.info(f"[MARIA §96] Hotel intent detected: {user_input[:50]}...")
+        details = extract_hotel_details(user_input)
+
+        # Se não tem destino, pedir ao utilizador
+        if not details.get("destination"):
+            ask_dest = MARIA_ASK_DESTINATION["hotel"].get(req.lang, MARIA_ASK_DESTINATION["hotel"]["EN"])
+            return {
+                "type": "clarification",
+                "intent": "hotel",
+                "response": ask_dest,
+                "needs": ["destination"],
+                "lang": req.lang
+            }
+
+        # Buscar hotéis — NUNCA cair no LLM se intent é hotel
+        try:
+            result = await search_hotels(
+                destination=details["destination"],
+                check_in=details.get("check_in", (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d")),
+                check_out=details.get("check_out", (datetime.now() + timedelta(days=9)).strftime("%Y-%m-%d")),
+                adults=details.get("adults", 2),
+                currency="EUR",
+                max_results=3
+            )
+
+            # search_hotels retorna {"hotels": [...], "destination": ..., ...}
+            hotel_list = result.get("hotels", [])
+
+            if hotel_list:
+                # §98 — MODO NÓMADA v1.1: Decisão personalizada
+                travel_prefs = get_travel_preferences(req.did) if req.did else None
+
+                best_hotel = max(hotel_list, key=lambda h: score_hotel(h, travel_prefs))
+                alternatives = [h for h in hotel_list if h != best_hotel][:2]
+
+                # Gerar explicação humana
+                voice = explain_hotel_decision(best_hotel, req.lang)
+
+                # §98: Adicionar explicação personalizada se temos DID
+                if req.did and travel_prefs:
+                    personal_reason = explain_personalized_decision("hotel", travel_prefs, req.lang)
+                    if personal_reason:
+                        voice = f"{voice} {personal_reason}"
+
+                return {
+                    "type": "hotel",
+                    "intent": "hotel",
+                    "response": voice,
+                    "decision": best_hotel,  # §97: A MELHOR opção
+                    "alternatives": alternatives,  # Opcionais, não como escolha
+                    "data": hotel_list[:3],  # Backwards compat
+                    "destination": result.get("destination", details["destination"]),
+                    "lang": req.lang,
+                    "source": "hotellook.com",
+                    "mode": "nomada_v1.1",  # §98: Flag para frontend
+                    "personalized": bool(req.did and travel_prefs)
+                }
+            else:
+                # Sem resultados — mas intent permanece hotel
+                dest = details["destination"]
+                no_hotels_msg = {
+                    "PT": f"Não encontrei hotéis disponíveis em {dest} para essas datas. Tenta outras datas.",
+                    "DE": f"Keine verfügbaren Hotels in {dest} für diese Daten gefunden. Versuche andere Daten.",
+                    "EN": f"No hotels available in {dest} for these dates. Try different dates."
+                }
+                return {
+                    "type": "hotel",
+                    "intent": "hotel",
+                    "response": no_hotels_msg.get(req.lang, no_hotels_msg["EN"]),
+                    "data": [],
+                    "destination": dest,
+                    "lang": req.lang,
+                    "source": "hotellook.com"
+                }
+        except Exception as e:
+            log.error(f"[MARIA §96] Hotel search error: {e}")
+            # ⚠️ Erro não muda a natureza da decisão — NUNCA chamar LLM aqui
+            error_msg = {
+                "PT": "Tive um problema a aceder aos hotéis. Tenta novamente em alguns segundos.",
+                "DE": "Es gab ein Problem beim Zugriff auf Hotels. Versuche es in einigen Sekunden erneut.",
+                "EN": "Had a problem accessing hotels. Try again in a few seconds."
+            }
+            return {
+                "type": "hotel_error",
+                "intent": "hotel",
+                "response": error_msg.get(req.lang, error_msg["EN"]),
+                "error": str(e),
+                "lang": req.lang
+            }
+
+    # 🎭 CULTURE/TIPS INTENT (responder com LLM especializado)
+    if detect_culture_intent(user_input):
+        log.info(f"[MARIA §96] Culture intent detected: {user_input[:50]}...")
+        # Cai para o LLM mas com intent marcado
+        pass  # Continua para LLM abaixo, mas com intent="culture"
+
+    # 📍 PLACES INTENT (detectar tipo de lugar) — NUNCA cair no LLM se intent é places
+    place_type = detect_place_type_from_query(user_input)
+    if place_type and req.lat and req.lng and PLACES_GATE_ENABLED:
+        log.info(f"[MARIA §96] Places intent detected: {place_type}")
+        try:
+            places, cache_hit = await search_places(
+                intent=IntentPayload(type=place_type),
+                lat=req.lat,
+                lng=req.lng,
+                lang=req.lang,
+                tier="MED",
+                actor=req.did or "anonymous"
+            )
+
+            if places:
+                best = places[0]
+                voice_templates = {
+                    "PT": f"Encontrei {best['name']} perto de ti. {best.get('rating', '')}★",
+                    "DE": f"Ich habe {best['name']} in deiner Nähe gefunden. {best.get('rating', '')}★",
+                    "EN": f"I found {best['name']} near you. {best.get('rating', '')}★"
+                }
+                return {
+                    "type": "places",
+                    "intent": place_type,
+                    "response": voice_templates.get(req.lang, voice_templates["EN"]),
+                    "data": places[:5],
+                    "locations": [
+                        {"name": p["name"], "lat": p.get("lat"), "lng": p.get("lng"), "rating": p.get("rating")}
+                        for p in places[:5] if p.get("lat")
+                    ],
+                    "lang": req.lang,
+                    "cache_hit": cache_hit
+                }
+            else:
+                # Sem resultados — mas intent permanece places
+                no_places_msg = {
+                    "PT": f"Não encontrei {place_type} perto de ti. Tenta noutro local.",
+                    "DE": f"Keine {place_type} in deiner Nähe gefunden. Versuche einen anderen Ort.",
+                    "EN": f"No {place_type} found near you. Try another location."
+                }
+                return {
+                    "type": "places",
+                    "intent": place_type,
+                    "response": no_places_msg.get(req.lang, no_places_msg["EN"]),
+                    "data": [],
+                    "lang": req.lang
+                }
+        except Exception as e:
+            log.error(f"[MARIA §96] Places search error: {e}")
+            # ⚠️ Erro não muda a natureza da decisão — NUNCA chamar LLM aqui
+            error_msg = {
+                "PT": "Tive um problema a procurar lugares. Tenta novamente.",
+                "DE": "Es gab ein Problem bei der Suche. Versuche es erneut.",
+                "EN": "Had a problem searching places. Try again."
+            }
+            return {
+                "type": "places_error",
+                "intent": place_type,
+                "response": error_msg.get(req.lang, error_msg["EN"]),
+                "error": str(e),
+                "lang": req.lang
+            }
+
+    # ═══════════════════════════════════════════════════════════════════════════
+    # 💬 FALLBACK → LLM (conversação geral)
+    # Só chega aqui se NENHUM intent actionable foi detectado (flight/hotel/places)
+    # Se intent foi detectado mas falhou, NUNCA chega aqui — retorna erro do domínio
+    # ═══════════════════════════════════════════════════════════════════════════
+
     if not BRAIN_ENABLED:
         raise HTTPException(status_code=503, detail="Brain not available — use /plan instead")
 
@@ -1337,7 +2056,7 @@ async def maria_think_endpoint(req: ThinkRequest):
 
     # Think with LLM
     result = await maria_think(
-        user_input=req.message,
+        user_input=user_input,
         lang=req.lang,
         did=req.did,
         weather=req.weather,
@@ -1351,6 +2070,7 @@ async def maria_think_endpoint(req: ThinkRequest):
     log.info(f"[MARIA Brain] Provider: {result['provider']} | Intent: {result.get('intent')} | Soul: {result.get('soul_active')}")
 
     return {
+        "type": "chat",
         "response": result["response"],
         "provider": result["provider"],
         "intent": result.get("intent", "general"),

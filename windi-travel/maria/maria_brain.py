@@ -328,22 +328,70 @@ def _offline_response(lang: str) -> Dict[str, Any]:
 def _enrich_system_prompt(system: str, lang: str, location: str, weather: str,
                           session_count: int, memory: str, hour: int) -> str:
     """Add context to system prompt without overwriting Soul's personality."""
-    hour_str = f"{hour}:00 ({'manhã' if 5 <= hour < 12 else 'tarde' if 12 <= hour < 18 else 'noite'})"
+    # I12 — Language Sovereign Principle: context labels in target language
+    labels = {
+        "PT": {
+            "session": "Contexto da sessão",
+            "hour": "Hora",
+            "weather": "Clima",
+            "sessions": "Sessões",
+            "memory": "Memória",
+            "location_known": "Localização: {loc}. Menciona distâncias reais.",
+            "location_unknown": "Localização desconhecida. Pede cidade naturalmente.",
+            "unknown": "desconhecido",
+            "first": "primeira conversa",
+            "morning": "manhã", "afternoon": "tarde", "night": "noite",
+            "lang_instruction": "RESPONDE SEMPRE EM PORTUGUÊS."
+        },
+        "DE": {
+            "session": "Sitzungskontext",
+            "hour": "Uhrzeit",
+            "weather": "Wetter",
+            "sessions": "Sitzungen",
+            "memory": "Erinnerung",
+            "location_known": "Standort: {loc}. Nenne echte Entfernungen.",
+            "location_unknown": "Standort unbekannt. Frage natürlich nach der Stadt.",
+            "unknown": "unbekannt",
+            "first": "erstes Gespräch",
+            "morning": "Morgen", "afternoon": "Nachmittag", "night": "Nacht",
+            "lang_instruction": "ANTWORTE IMMER AUF DEUTSCH."
+        },
+        "EN": {
+            "session": "Session context",
+            "hour": "Time",
+            "weather": "Weather",
+            "sessions": "Sessions",
+            "memory": "Memory",
+            "location_known": "Location: {loc}. Mention real distances.",
+            "location_unknown": "Location unknown. Ask for city naturally.",
+            "unknown": "unknown",
+            "first": "first conversation",
+            "morning": "morning", "afternoon": "afternoon", "night": "night",
+            "lang_instruction": "ALWAYS RESPOND IN ENGLISH."
+        }
+    }
+    L = labels.get(lang.upper()[:2], labels["EN"])
+
+    # Time of day
+    period = L["morning"] if 5 <= hour < 12 else L["afternoon"] if 12 <= hour < 18 else L["night"]
+    hour_str = f"{hour}:00 ({period})"
 
     # §93 — Location context
-    if location and location != "não especificada":
-        location_context = f"Localização: {location}. Menciona distâncias reais."
+    if location and location not in ("não especificada", "unspecified", "nicht angegeben"):
+        location_context = L["location_known"].format(loc=location)
     else:
-        location_context = "Localização desconhecida. Pede cidade naturalmente."
+        location_context = L["location_unknown"]
 
     context_block = f"""
 
-[Contexto da sessão]
-- Hora: {hour_str}
-- Clima: {weather or 'desconhecido'}
-- Sessões: {session_count}
-- Memória: {memory or 'primeira conversa'}
+[{L["session"]}]
+- {L["hour"]}: {hour_str}
+- {L["weather"]}: {weather or L["unknown"]}
+- {L["sessions"]}: {session_count}
+- {L["memory"]}: {memory or L["first"]}
 - {location_context}
+
+{L["lang_instruction"]}
 """
 
     return system + context_block

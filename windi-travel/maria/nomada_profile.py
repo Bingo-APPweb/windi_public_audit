@@ -421,5 +421,321 @@ def enrich_context_with_memory(did: str, context: dict) -> dict:
     return context
 
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# §98 — MODO NÓMADA v1.1: Travel Preferences
+# "A decisão não parte do pedido. Parte da identidade ao longo do tempo."
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Default preferences for new nomadas
+DEFAULT_TRAVEL_PREFS = {
+    "avoid_stops": True,       # Prefere voos directos
+    "price_sensitivity": 0.5,  # 0 = ignora preço, 1 = muito sensível
+    "prefer_morning": True,    # Prefere voos de manhã
+    "comfort_priority": 0.5,   # 0 = aceita desconforto, 1 = prioriza conforto
+    "time_sensitivity": 0.5,   # 0 = tempo não importa, 1 = quer o mais rápido
+}
+
+
+def get_travel_preferences(did: str) -> dict:
+    """
+    Get travel preferences for a nomada.
+    Returns defaults merged with stored preferences.
+
+    Used by MARIA §97/§98 scoring to personalize flight/hotel decisions.
+    """
+    prefs = DEFAULT_TRAVEL_PREFS.copy()
+
+    if not did:
+        return prefs
+
+    # Load stored preferences
+    stored = get_all_preferences(did)
+
+    # Merge travel-specific preferences
+    for key in DEFAULT_TRAVEL_PREFS.keys():
+        if f"travel_{key}" in stored:
+            prefs[key] = stored[f"travel_{key}"]
+
+    return prefs
+
+
+def update_travel_preference(did: str, key: str, value: Any):
+    """
+    Update a specific travel preference.
+    Called when MARIA learns from user behavior.
+    """
+    if not did or key not in DEFAULT_TRAVEL_PREFS:
+        return
+    set_preference(did, f"travel_{key}", value)
+    log.info(f"[MARIA §98] Updated preference for {did[:20]}...: {key}={value}")
+
+
+def learn_from_choice(did: str, choice_type: str, chosen: dict, alternatives: list):
+    """
+    §98 — Learn preferences from user's actual choices.
+    Called when user confirms a booking decision.
+
+    Example: If user always picks direct flights even when more expensive,
+    increase avoid_stops preference.
+    """
+    if not did:
+        return
+
+    prefs = get_travel_preferences(did)
+
+    if choice_type == "flight":
+        # Learn about stop preference
+        chosen_direct = chosen.get("direct", False)
+        cheaper_with_stops = any(
+            not a.get("direct", False) and a.get("price", 999) < chosen.get("price", 0)
+            for a in alternatives
+        )
+        if chosen_direct and cheaper_with_stops:
+            # User chose direct even though cheaper option had stops
+            new_val = min(1.0, prefs["avoid_stops"] + 0.1 if isinstance(prefs["avoid_stops"], float) else 0.9)
+            update_travel_preference(did, "avoid_stops", True)
+            update_travel_preference(did, "comfort_priority", new_val)
+
+        # Learn about time preference
+        dep_hour = 0
+        if "T" in chosen.get("departure", ""):
+            try:
+                dep_hour = int(chosen["departure"].split("T")[1][:2])
+            except:
+                pass
+        if dep_hour < 10:
+            update_travel_preference(did, "prefer_morning", True)
+        elif dep_hour > 17:
+            update_travel_preference(did, "prefer_morning", False)
+
+        # Learn about price sensitivity
+        if alternatives:
+            chosen_price = chosen.get("price", 0)
+            min_price = min(a.get("price", 999) for a in alternatives)
+            if chosen_price <= min_price * 1.1:  # Chose cheapest or near cheapest
+                new_sens = min(1.0, prefs["price_sensitivity"] + 0.1)
+                update_travel_preference(did, "price_sensitivity", new_sens)
+
+    elif choice_type == "hotel":
+        # Learn about comfort vs price
+        chosen_rating = chosen.get("rating", chosen.get("stars", 3))
+        if chosen_rating >= 4:
+            new_comfort = min(1.0, prefs["comfort_priority"] + 0.1)
+            update_travel_preference(did, "comfort_priority", new_comfort)
+
+
+def explain_personalized_decision(choice_type: str, prefs: dict, lang: str = "PT") -> str:
+    """
+    Generate a brief personalized explanation based on preferences.
+    Never invasive, always natural.
+    """
+    reasons = []
+
+    if choice_type == "flight":
+        if prefs.get("avoid_stops") is True or (isinstance(prefs.get("avoid_stops"), float) and prefs["avoid_stops"] > 0.7):
+            reasons.append({
+                "PT": "evitas escalas",
+                "DE": "du vermeidest Zwischenstopps",
+                "EN": "you avoid layovers"
+            })
+        if prefs.get("prefer_morning"):
+            reasons.append({
+                "PT": "preferes manhã",
+                "DE": "du bevorzugst morgens",
+                "EN": "you prefer mornings"
+            })
+        if prefs.get("price_sensitivity", 0.5) > 0.7:
+            reasons.append({
+                "PT": "valorizas bom preço",
+                "DE": "du schätzt gute Preise",
+                "EN": "you value good prices"
+            })
+
+    if not reasons:
+        return ""
+
+    # Pick 1-2 reasons max
+    selected = reasons[:2]
+    reason_strs = [r.get(lang, r["EN"]) for r in selected]
+
+    templates = {
+        "PT": f"Escolhi porque {' e '.join(reason_strs)}.",
+        "DE": f"Gewählt, weil {' und '.join(reason_strs)}.",
+        "EN": f"Chosen because {' and '.join(reason_strs)}."
+    }
+
+    return templates.get(lang, templates["EN"])
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# §100 — ANTECIPAÇÃO: Sugerir antes do pedido
+# "Eu não decido por ti. Mas não te deixo decidir tarde demais."
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def detect_travel_patterns(did: str) -> dict:
+    """
+    §100 — Detect patterns from user's travel history.
+
+    Patterns detected:
+    - Preferred booking lead time (days before travel)
+    - Common routes
+    - Preferred days of week
+    - Preferred time of day
+    """
+    if not did:
+        return {}
+
+    patterns = {
+        "common_routes": [],
+        "preferred_lead_days": 7,  # default
+        "preferred_weekday": None,
+        "preferred_time": "morning",
+        "trip_frequency": "occasional",
+    }
+
+    # Get recent interactions
+    interactions = get_recent_interactions(did, limit=20)
+    if not interactions:
+        return patterns
+
+    # Analyze routes
+    routes = {}
+    for i in interactions:
+        if i.get("intent_type") == "flight":
+            route = i.get("place_name", "")  # e.g., "MUC → LIS"
+            routes[route] = routes.get(route, 0) + 1
+
+    if routes:
+        # Sort by frequency
+        sorted_routes = sorted(routes.items(), key=lambda x: x[1], reverse=True)
+        patterns["common_routes"] = [r[0] for r in sorted_routes[:3]]
+
+    # Analyze frequency
+    if len(interactions) > 10:
+        patterns["trip_frequency"] = "frequent"
+    elif len(interactions) > 3:
+        patterns["trip_frequency"] = "regular"
+
+    return patterns
+
+
+def should_anticipate(did: str, context: dict, patterns: dict) -> dict:
+    """
+    §100 — Determine if we should proactively suggest something.
+
+    Returns:
+    - should_suggest: bool
+    - suggestion_type: str
+    - reason: str
+    - confidence: float
+    """
+    result = {
+        "should_suggest": False,
+        "suggestion_type": None,
+        "reason": None,
+        "confidence": 0.0,
+    }
+
+    if not did or not patterns:
+        return result
+
+    # ─── Trigger 1: Time pressure + common route ───
+    if context.get("time_pressure") == "high" and patterns.get("common_routes"):
+        result["should_suggest"] = True
+        result["suggestion_type"] = "quick_flight"
+        result["reason"] = "urgent_common_route"
+        result["confidence"] = 0.8
+
+    # ─── Trigger 2: Frequent traveler + regular pattern ───
+    if patterns.get("trip_frequency") == "frequent":
+        result["should_suggest"] = True
+        result["suggestion_type"] = "proactive_search"
+        result["reason"] = "frequent_traveler"
+        result["confidence"] = 0.6
+
+    return result
+
+
+def generate_anticipation_message(
+    suggestion_type: str,
+    patterns: dict,
+    context: dict,
+    lang: str = "PT"
+) -> dict:
+    """
+    §100 — Generate anticipation message with I9 compliance.
+
+    Never executes — always proposes.
+    """
+    messages = {
+        "quick_flight": {
+            "PT": {
+                "intro": "Percebi que tens pressa.",
+                "offer": "Queres que prepare um voo para {route}?",
+                "reason": "Costumas fazer esta rota."
+            },
+            "DE": {
+                "intro": "Ich sehe, dass du es eilig hast.",
+                "offer": "Soll ich einen Flug nach {route} vorbereiten?",
+                "reason": "Das ist eine häufige Route von dir."
+            },
+            "EN": {
+                "intro": "I see you're in a hurry.",
+                "offer": "Want me to prepare a flight to {route}?",
+                "reason": "This is a common route for you."
+            }
+        },
+        "proactive_search": {
+            "PT": {
+                "intro": "Com base nas tuas viagens anteriores,",
+                "offer": "posso começar a procurar opções para {route}?",
+                "reason": "Viajas com frequência."
+            },
+            "DE": {
+                "intro": "Basierend auf deinen früheren Reisen,",
+                "offer": "soll ich nach Optionen für {route} suchen?",
+                "reason": "Du reist häufig."
+            },
+            "EN": {
+                "intro": "Based on your travel history,",
+                "offer": "shall I start looking for options to {route}?",
+                "reason": "You travel frequently."
+            }
+        }
+    }
+
+    template = messages.get(suggestion_type, messages["proactive_search"])
+    lang_template = template.get(lang, template["EN"])
+
+    # Get most common route
+    route = patterns.get("common_routes", [""])[0] if patterns.get("common_routes") else "?"
+    if " → " in route:
+        route = route.split(" → ")[1]  # Destination only
+
+    return {
+        "type": "anticipation",
+        "suggestion_type": suggestion_type,
+        "message": {
+            "intro": lang_template["intro"],
+            "offer": lang_template["offer"].format(route=route),
+            "reason": lang_template["reason"],
+        },
+        "full_text": f"{lang_template['intro']} {lang_template['offer'].format(route=route)}",
+        "requires_approval": True,  # I9 — sempre requer aprovação
+        "route_hint": route,
+        "lang": lang,
+    }
+
+
+def log_anticipation(did: str, suggestion_type: str, accepted: bool):
+    """
+    §100 — Log anticipation outcome for learning.
+    """
+    if not did:
+        return
+    set_preference(did, f"anticipation_{suggestion_type}_accepted", accepted)
+    log.info(f"[MARIA §100] Anticipation {suggestion_type} {'accepted' if accepted else 'rejected'} by {did[:20]}...")
+
+
 # ── Initialize on import ─────────────────────────────────────────────────────
 init_db()
