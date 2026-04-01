@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": "1.0",
-    "updated_at": "2026-04-01T18:22:49.417636+00:00",
+    "updated_at": "2026-04-01T18:23:09.943411+00:00",
     "session_id": "SESSION-20260401-182249",
     "updated_by": "gemeo"
   },
@@ -96,15 +96,17 @@
         "commit": "508d160",
         "sealed": false,
         "done_at": "2026-04-01"
-      }
-    ],
-    "in_progress": [
+      },
       {
         "id": "§114",
         "name": "Session Cookie Protocol",
-        "status": "implementando agora"
+        "status": "implementando agora",
+        "commit": "58247c7",
+        "sealed": false,
+        "done_at": "2026-04-01"
       }
     ],
+    "in_progress": [],
     "next": [
       {
         "id": "§107",
