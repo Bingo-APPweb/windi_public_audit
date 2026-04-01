@@ -1812,6 +1812,11 @@ async function confirmSeal() {
 
       // F9 — Generate QR for receipt
       showQRCode(moment.receipt);
+
+      // §111 — MARIA ↔ Tesoura: verificar oportunidade de colagem
+      if (currentMoment.placeName) {
+        checkCollageOpportunity(currentMoment.placeName);
+      }
     }
   } catch (e) {
     console.warn('Ledger seal failed:', e);
@@ -1839,6 +1844,83 @@ function verifyLastReceipt() {
   if (lastReceipt) {
     window.open(`https://windi-domain.com/verify-public/?id=${lastReceipt}`, '_blank');
   }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// §111 MARIA ↔ TESOURA — Collage Opportunity
+// ═══════════════════════════════════════════════════════════════════════════
+
+async function checkCollageOpportunity(placeName) {
+  if (!placeName) return;
+
+  try {
+    const resp = await fetch(`/travel/workspace/check-collage?place=${encodeURIComponent(placeName)}`);
+    if (!resp.ok) return;
+
+    const data = await resp.json();
+    if (data.suggest && data.count >= 2) {
+      // Get message in current language
+      const msg = data[`message_${LANG}`] || data.message_en ||
+        `${data.count} sealed moments in ${data.city}. Create a collage?`;
+
+      // Show MARIA suggestion
+      showCollageSuggestion(msg, data.seals, data.city);
+    }
+  } catch (e) {
+    console.warn('Collage check error:', e);
+  }
+}
+
+function showCollageSuggestion(message, seals, city) {
+  const container = document.getElementById('maria-response');
+  const textEl = document.getElementById('maria-response-text');
+
+  if (!container || !textEl) return;
+
+  // Build action button
+  const receipts = seals.map(s => s.receipt_id).join(',');
+  const actionBtn = `
+    <div style="margin-top:12px;">
+      <button onclick="openTesoura('${encodeURIComponent(city)}', '${receipts}')"
+              style="background:var(--gold);color:#000;border:none;padding:10px 20px;
+                     border-radius:8px;font-weight:600;cursor:pointer;display:inline-flex;
+                     align-items:center;gap:6px;">
+        ✂️ ${LANG === 'de' ? 'Tesoura öffnen' : LANG === 'pt' ? 'Abrir Tesoura' : 'Open Tesoura'}
+      </button>
+    </div>
+  `;
+
+  // Show container with message + action
+  container.style.display = 'block';
+  textEl.innerHTML = `
+    <div style="display:flex;align-items:flex-start;gap:8px;">
+      <span style="font-size:20px;">✨</span>
+      <div>
+        <div>${message}</div>
+        ${actionBtn}
+      </div>
+    </div>
+  `;
+
+  // Scroll into view
+  container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function openTesoura(city, receipts) {
+  // Decode city if encoded
+  const decodedCity = decodeURIComponent(city);
+
+  // Build URL with context
+  let url = '/travel/tesoura-ui/?context=travel';
+  if (decodedCity) {
+    url += '&place=' + encodeURIComponent(decodedCity);
+  }
+  if (receipts) {
+    url += '&receipts=' + receipts;
+  }
+
+  // Open in new tab
+  window.open(url, '_blank');
 }
 
 // ═══════════════════════════════════════════════════════════════════════════

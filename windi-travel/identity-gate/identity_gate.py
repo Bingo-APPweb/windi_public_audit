@@ -1896,6 +1896,159 @@ async def workspace_seals(request: Request):
 
 
 # ═══════════════════════════════════════════════════════════════
+# §111 MARIA ↔ TESOURA — Media Seals + Collage Opportunity
+# ═══════════════════════════════════════════════════════════════
+
+@app.get("/workspace/media-seals")
+async def workspace_media_seals(request: Request, place: str = None, limit: int = 20):
+    """
+    §111 Sprint C: Lista de fotos/vídeos selados do utilizador.
+    Filtra por doc_type in (photo, video, doc) e opcionalmente por place_name.
+    """
+    user = require_auth(request)
+    if isinstance(user, RedirectResponse):
+        return JSONResponse({"error": "unauthorized", "seals": []}, status_code=401)
+
+    wallet_id = user["wallet_id"]
+
+    try:
+        import requests as req
+        # Query Forensic Ledger
+        ledger_response = req.get(
+            "http://localhost:8101/api/receipts",
+            timeout=5
+        )
+
+        if ledger_response.status_code != 200:
+            return JSONResponse({"seals": [], "count": 0})
+
+        all_receipts = ledger_response.json()
+        if isinstance(all_receipts, dict):
+            all_receipts = all_receipts.get("receipts", [])
+
+        # Filter: actor = wallet_id AND media type
+        media_types = ("photo", "video", "doc", "image")
+        media_seals = []
+
+        for r in all_receipts:
+            if r.get("actor") != wallet_id:
+                continue
+            doc_type = r.get("doc_type", "").lower()
+            media_type = r.get("media_type", "").lower()
+            # Include if doc_type or media_type indicates media
+            if doc_type in media_types or media_type in ("image", "video"):
+                seal = {
+                    "receipt_id": r.get("id", ""),
+                    "place_name": r.get("place_name"),
+                    "timestamp": r.get("sealed_at") or r.get("created_at"),
+                    "media_type": media_type or doc_type,
+                    "doc_name": r.get("doc_name", ""),
+                    "content_hash": r.get("content_hash", "")
+                }
+                # Filter by place if specified
+                if place:
+                    seal_place = (seal["place_name"] or "").lower()
+                    if place.lower() in seal_place or seal_place in place.lower():
+                        media_seals.append(seal)
+                else:
+                    media_seals.append(seal)
+
+        # Sort by timestamp descending, limit
+        media_seals.sort(key=lambda x: x.get("timestamp") or "", reverse=True)
+        media_seals = media_seals[:limit]
+
+        return JSONResponse({
+            "wallet_id": wallet_id,
+            "seals": media_seals,
+            "count": len(media_seals),
+            "place_filter": place
+        })
+
+    except Exception as e:
+        print(f"[MEDIA SEALS] Error: {e}")
+        return JSONResponse({"seals": [], "count": 0, "error": str(e)})
+
+
+@app.get("/workspace/check-collage")
+async def check_collage_opportunity(request: Request, place: str = None):
+    """
+    §111 Sprint C: MARIA verifica se há oportunidade de colagem.
+    Se 2+ seals no mesmo lugar → sugere Tesoura.
+    """
+    user = require_auth(request)
+    if isinstance(user, RedirectResponse):
+        return JSONResponse({"suggest": False})
+
+    wallet_id = user["wallet_id"]
+
+    if not place:
+        return JSONResponse({"suggest": False, "reason": "no_place"})
+
+    try:
+        import requests as req
+        # Query Forensic Ledger
+        ledger_response = req.get(
+            "http://localhost:8101/api/receipts",
+            timeout=5
+        )
+
+        if ledger_response.status_code != 200:
+            return JSONResponse({"suggest": False})
+
+        all_receipts = ledger_response.json()
+        if isinstance(all_receipts, dict):
+            all_receipts = all_receipts.get("receipts", [])
+
+        # Count media seals for this place
+        media_types = ("photo", "video", "doc", "image")
+        place_lower = place.lower()
+        matching_seals = []
+
+        for r in all_receipts:
+            if r.get("actor") != wallet_id:
+                continue
+            doc_type = r.get("doc_type", "").lower()
+            media_type = r.get("media_type", "").lower()
+            seal_place = (r.get("place_name") or "").lower()
+
+            if (doc_type in media_types or media_type in ("image", "video")):
+                # Match place (partial match for flexibility)
+                if place_lower in seal_place or seal_place.split(",")[0] in place_lower:
+                    matching_seals.append({
+                        "receipt_id": r.get("id", ""),
+                        "place_name": r.get("place_name"),
+                        "media_type": media_type or doc_type
+                    })
+
+        count = len(matching_seals)
+
+        if count >= 2:
+            # Extract city name for display
+            city = place.split(",")[0].strip()
+            return JSONResponse({
+                "suggest": True,
+                "count": count,
+                "place": place,
+                "city": city,
+                "seals": matching_seals[:10],  # Limit to 10 for URL
+                "message_de": f"Du hast {count} versiegelte Momente in {city}. Möchtest du eine Collage erstellen?",
+                "message_en": f"You have {count} sealed moments in {city}. Want to create a collage?",
+                "message_pt": f"Tens {count} momentos selados em {city}. Queres montar uma colagem?"
+            })
+
+        return JSONResponse({
+            "suggest": False,
+            "count": count,
+            "place": place,
+            "reason": "not_enough" if count < 2 else "no_match"
+        })
+
+    except Exception as e:
+        print(f"[CHECK COLLAGE] Error: {e}")
+        return JSONResponse({"suggest": False, "error": str(e)})
+
+
+# ═══════════════════════════════════════════════════════════════
 # DASHBOARD ENDPOINTS
 # ═══════════════════════════════════════════════════════════════
 
