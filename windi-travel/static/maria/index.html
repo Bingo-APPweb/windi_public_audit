@@ -109,6 +109,15 @@ const I18N = {
     // §108 — Memória Visível
     memory_title:"🧠 Maria sabe isto sobre ti",
     memory_adjust:"Ajustar preferências",
+    // §107 — Thread Visual Timeline
+    timeline_title:"📜 A tua viagem",
+    timeline_show:"Ver jornada",
+    timeline_hide:"Ocultar",
+    timeline_request:"Pedido",
+    timeline_decision:"Decisão",
+    timeline_memory:"Memória",
+    timeline_context:"Contexto",
+    timeline_empty:"Ainda sem histórico",
   },
   DE:{
     tagline:"Orchestratorin Verifizierbarer Erlebnisse",
@@ -162,6 +171,15 @@ const I18N = {
     // §108 — Memória Visível
     memory_title:"🧠 Maria weiß das über dich",
     memory_adjust:"Präferenzen anpassen",
+    // §107 — Thread Visual Timeline
+    timeline_title:"📜 Deine Reise",
+    timeline_show:"Reise anzeigen",
+    timeline_hide:"Ausblenden",
+    timeline_request:"Anfrage",
+    timeline_decision:"Entscheidung",
+    timeline_memory:"Erinnerung",
+    timeline_context:"Kontext",
+    timeline_empty:"Noch keine Historie",
   },
   EN:{
     tagline:"Orchestrator of Verifiable Experiences",
@@ -215,6 +233,15 @@ const I18N = {
     // §108 — Memória Visível
     memory_title:"🧠 Maria knows this about you",
     memory_adjust:"Adjust preferences",
+    // §107 — Thread Visual Timeline
+    timeline_title:"📜 Your journey",
+    timeline_show:"View journey",
+    timeline_hide:"Hide",
+    timeline_request:"Request",
+    timeline_decision:"Decision",
+    timeline_memory:"Memory",
+    timeline_context:"Context",
+    timeline_empty:"No history yet",
   },
 };
 
@@ -694,6 +721,87 @@ function MicButton({onResult,onListening,lang,disabled}){
   );
 }
 
+// ══════════════════════════════════════════════════���════════════════════════════
+// §107 — THREAD VISUAL TIMELINE COMPONENT
+// "Mostrar evolução, não histórico"
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function Timeline({entries,t,lang}){
+  if(!entries||entries.length===0){
+    return <div style={{padding:16,color:P.cinza,textAlign:"center",fontSize:13}}>{t.timeline_empty}</div>;
+  }
+
+  const typeLabels={
+    request:t.timeline_request,
+    decision:t.timeline_decision,
+    memory:t.timeline_memory,
+    context:t.timeline_context,
+  };
+
+  const typeColors={
+    request:P.terra,
+    decision:P.verde,
+    memory:P.roxo,
+    context:P.agua,
+  };
+
+  return (
+    <div style={{padding:"12px 16px"}}>
+      {entries.map((e,i)=>(
+        <div key={e.id||i} style={{
+          display:"flex",
+          position:"relative",
+          paddingLeft:20,
+          paddingBottom:i<entries.length-1?16:0,
+        }}>
+          {/* Vertical line */}
+          {i<entries.length-1&&(
+            <div style={{
+              position:"absolute",
+              left:6,
+              top:12,
+              bottom:0,
+              width:2,
+              background:P.cinza+"40",
+            }}/>
+          )}
+          {/* Dot */}
+          <div style={{
+            position:"absolute",
+            left:0,
+            top:4,
+            width:14,
+            height:14,
+            borderRadius:"50%",
+            background:typeColors[e.type]||P.cinza,
+            border:"2px solid "+P.pergaminho,
+          }}/>
+          {/* Content */}
+          <div style={{flex:1}}>
+            <div style={{
+              fontSize:10,
+              fontFamily:"'JetBrains Mono',monospace",
+              color:typeColors[e.type]||P.cinza,
+              textTransform:"uppercase",
+              letterSpacing:"0.05em",
+              marginBottom:2,
+            }}>
+              {typeLabels[e.type]||e.type}
+            </div>
+            <div style={{
+              fontSize:13,
+              color:P.noite,
+              lineHeight:1.4,
+            }}>
+              {e.content}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function App(){
   const[lang,setLang]=useState("PT");
   const t=I18N[lang];
@@ -714,6 +822,8 @@ function App(){
   const[showAlts,setShowAlts]=useState(false); // §100.5 — Track alternatives visibility
   const[feedbackSent,setFeedbackSent]=useState(null); // §101 — Track feedback ("accepted"|"ignored"|null)
   const[showSealModal,setShowSealModal]=useState(false); // §103 — I9 Seal Gate modal
+  const[showTimeline,setShowTimeline]=useState(false); // §107 — Thread timeline toggle
+  const[timelineData,setTimelineData]=useState(null); // §107 — Current thread data
   const timers=useRef([]);
 
   // §85 — Expose arrival callback to global
@@ -770,6 +880,13 @@ function App(){
     const t1=setTimeout(()=>{
       setDoneSt(ids.slice(0,-1));setActiveStage(null);
       setResult(data);setMode("speaking");
+      // §107 — Fetch thread timeline if thread_id returned
+      if(data.thread_id){
+        fetch("/travel/maria/thread/"+data.thread_id)
+          .then(r=>r.json())
+          .then(td=>{if(td.ok&&td.thread)setTimelineData(td.thread);})
+          .catch(()=>{});
+      }
       // §71 — No seal suffix for greetings/onboarding (nothing to seal)
       const isGreeting=data.decision&&(data.decision.type==="greeting"||data.decision.type==="onboarding"||data.decision.type==="llm");
       const vt=(data.maria_voice&&(data.maria_voice[lang]||data.maria_voice.PT)||"")+(isGreeting?"":(" "+t.suffix));
@@ -802,7 +919,7 @@ function App(){
     clearT();window.speechSynthesis&&window.speechSynthesis.cancel();
     setMode("idle");setResult(null);setActiveStage(null);
     setDoneSt([]);setSealed(false);setShowAlts(false);setTranscript("");setApiSource(null);
-    setFeedbackSent(null);setShowSealModal(false); // §101 + §103
+    setFeedbackSent(null);setShowSealModal(false);setShowTimeline(false);setTimelineData(null); // §101 + §103 + §107
   };
 
   const statusBg={idle:"rgba(255,255,255,0.1)",listening:P.vermelho,
@@ -1029,6 +1146,31 @@ function App(){
                       </span>
                     ))}
                   </div>
+                </div>
+              )}
+
+              {/* §107 — Thread Visual Timeline (toggle button + collapsible) */}
+              {timelineData&&timelineData.entries&&timelineData.entries.length>0&&(
+                <div style={{marginBottom:10}}>
+                  <button onClick={()=>setShowTimeline(!showTimeline)} style={{
+                    display:"flex",alignItems:"center",gap:6,
+                    background:"transparent",border:`1px solid ${P.cinza}40`,
+                    borderRadius:8,padding:"6px 12px",cursor:"pointer",
+                    fontSize:11,fontFamily:"'JetBrains Mono',monospace",color:P.terra,
+                    width:"100%",justifyContent:"center"
+                  }}>
+                    {showTimeline?t.timeline_hide:t.timeline_show}
+                    <span style={{transform:showTimeline?"rotate(180deg)":"rotate(0deg)",transition:"transform 0.2s"}}>▼</span>
+                  </button>
+                  {showTimeline&&(
+                    <div style={{marginTop:8,background:"rgba(139,94,60,0.04)",
+                      border:`1px solid rgba(139,94,60,0.15)`,borderRadius:10,
+                      animation:"fadeIn 0.2s ease"}}>
+                      <div style={{padding:"10px 12px 0",fontSize:10,fontFamily:"'JetBrains Mono',monospace",
+                        color:P.terra,letterSpacing:"0.5px"}}>{t.timeline_title}</div>
+                      <Timeline entries={timelineData.entries} t={t} lang={lang}/>
+                    </div>
+                  )}
                 </div>
               )}
 
