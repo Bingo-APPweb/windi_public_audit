@@ -86,6 +86,16 @@ const I18N = {
     live_notice:"Conectado ao servidor real",
     error_notice:"Backend indisponível — modo demonstração",
     scenarios:[], // §89 — Production mode: no demo scenarios
+    // §100.5 — P0.1 Memory Engine UI
+    accept_btn:"✔️ Confirmar",
+    ignore_btn:"Ver alternativas",
+    alt_label:"ALTERNATIVAS",
+    mode_label:"MARIA v1.3 · Memória Ativa",
+    personalized_badge:"personalizado",
+    context_badge:"contexto",
+    anticipation_title:"💡 Sugestão da MARIA",
+    anticipation_yes:"Preparar",
+    anticipation_no:"Agora não",
   },
   DE:{
     tagline:"Orchestratorin Verifizierbarer Erlebnisse",
@@ -116,6 +126,16 @@ const I18N = {
     live_notice:"Mit echtem Server verbunden",
     error_notice:"Backend nicht verfügbar — Demo-Modus",
     scenarios:[], // §89 — Production mode: no demo scenarios
+    // §100.5 — P0.1 Memory Engine UI
+    accept_btn:"✔️ Bestätigen",
+    ignore_btn:"Alternativen anzeigen",
+    alt_label:"ALTERNATIVEN",
+    mode_label:"MARIA v1.3 · Aktives Gedächtnis",
+    personalized_badge:"personalisiert",
+    context_badge:"kontextbezogen",
+    anticipation_title:"💡 Vorschlag von MARIA",
+    anticipation_yes:"Vorbereiten",
+    anticipation_no:"Jetzt nicht",
   },
   EN:{
     tagline:"Orchestrator of Verifiable Experiences",
@@ -146,6 +166,16 @@ const I18N = {
     live_notice:"Connected to live server",
     error_notice:"Backend unavailable — demo mode",
     scenarios:[], // §89 — Production mode: no demo scenarios
+    // §100.5 — P0.1 Memory Engine UI
+    accept_btn:"✔️ Confirm",
+    ignore_btn:"See alternatives",
+    alt_label:"ALTERNATIVES",
+    mode_label:"MARIA v1.3 · Active Memory",
+    personalized_badge:"personalized",
+    context_badge:"context-aware",
+    anticipation_title:"💡 MARIA's Suggestion",
+    anticipation_yes:"Prepare",
+    anticipation_no:"Not now",
   },
 };
 
@@ -216,6 +246,28 @@ function getGPS(){
   });
 }
 
+// §100.5 — P0.1 Decision Feedback (Memory Engine)
+async function sendDecisionFeedback(decisionId, accepted, ignored) {
+  if (!decisionId) return;
+  try {
+    const r = await fetch("/travel/maria/decision-feedback", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        decision_id: decisionId,
+        accepted: accepted || null,
+        ignored: ignored || null,
+        did: getWalletId()
+      })
+    });
+    if (r.ok) {
+      console.log(`[§100.5] Feedback sent: ${decisionId} → ${accepted ? 'accepted' : 'ignored'}`);
+    }
+  } catch (e) {
+    console.warn('[§100.5] Feedback failed:', e.message);
+  }
+}
+
 // §65 — Get DID from URL or sessionStorage
 function getWalletId(){
   const params=new URLSearchParams(window.location.search);
@@ -232,7 +284,7 @@ const WALLET_ID=getWalletId();
   }
 })();
 
-// §92 — Brain API: no intent detection, LLM handles everything
+// §92 + §100.5 — Brain API with Memory Engine support
 async function callMariaAPI(intent,lang,fallbackSc,inputText=""){
   const{lat,lng}=await getGPS();if(!window.__audioUnlocked){const u=new Audio();u.play().catch(()=>{});window.__audioUnlocked=true;}
   try{
@@ -240,22 +292,74 @@ async function callMariaAPI(intent,lang,fallbackSc,inputText=""){
     const tid=setTimeout(()=>ctrl.abort(),API_TIMEOUT);
     const r=await fetch(MARIA_API,{
       method:"POST",headers:{"Content-Type":"application/json"},
-      // §92 — Send message directly to LLM brain, no regex intent
       body:JSON.stringify({message:inputText,lang,did:WALLET_ID,lat,lng}),
       signal:ctrl.signal,
     });
     clearTimeout(tid);
     if(!r.ok)throw new Error(`HTTP ${r.status}`);
-    // §92 — Adapt brain response to existing UI format
     const brain=await r.json();
+
+    // §100.5 — Preserve full backend response for actionable intents
+    const actionableTypes = ["flight", "hotel", "places", "anticipation"];
+    const isActionable = actionableTypes.includes(brain.type);
+
+    if (isActionable) {
+      // §97-100.5: Use the backend's decision object directly
+      const decisionObj = brain.decision || {};
+      return{source:"live",data:{
+        request_id: brain.request_id || "BRAIN-"+Date.now().toString(36).toUpperCase(),
+        // §97: The BEST decision from MARIA
+        decision: {
+          name: decisionObj.name || decisionObj.airline || decisionObj.hotelName || "Maria",
+          type: brain.type,
+          reason: brain.response,
+          rating: decisionObj.rating || decisionObj.stars,
+          price: decisionObj.price,
+          direct: decisionObj.direct,
+          departure: decisionObj.departure,
+          arrival: decisionObj.arrival,
+          distance_text: decisionObj.distance_text,
+          queue_status: decisionObj.queue_status || (brain.mode?.includes("nomada") ? "NÓMADA" : "LIVE"),
+          // §100.5: For booking links
+          deep_link: decisionObj.deep_link,
+          booking_url: decisionObj.booking_url,
+        },
+        // §100.5: Decision ID for feedback loop
+        decision_id: brain.decision_id,
+        // §97: Alternatives (discrete, not primary)
+        alternatives: brain.alternatives || [],
+        // §100.5: Mode and personalization flags
+        mode: brain.mode || "live",
+        personalized: brain.personalized || false,
+        context_aware: brain.context_aware || false,
+        live_context: brain.live_context || {},
+        // Locations for map
+        locations: brain.locations || (decisionObj.lat ? [{
+          name: decisionObj.name,
+          lat: decisionObj.lat,
+          lng: decisionObj.lng,
+          rating: decisionObj.rating
+        }] : []),
+        // Standard fields
+        context: {provider: brain.provider || brain.source, confidence: brain.confidence},
+        maria_voice: {[lang]: brain.response},
+        intent_parsed: {type: brain.type || brain.intent || "llm"},
+        ledger_receipt_id: brain.ledger_receipt_id,
+        timestamp: brain.timestamp || new Date().toISOString(),
+        origin: brain.origin,
+        destination: brain.destination,
+      }};
+    }
+
+    // Fallback for greetings, llm responses, etc.
     return{source:"live",data:{
-      request_id:"BRAIN-"+Date.now().toString(36).toUpperCase(),
-      decision:{name:"Maria",type:brain.intent||"llm",reason:brain.response},
-      context:{provider:brain.provider,confidence:brain.confidence},
-      maria_voice:{[lang]:brain.response},
-      intent_parsed:{type:brain.intent||"llm"},
-      ledger_receipt_id:null,
-      timestamp:new Date().toISOString(),
+      request_id: brain.request_id || "BRAIN-"+Date.now().toString(36).toUpperCase(),
+      decision: {name: "Maria", type: brain.type || brain.intent || "llm", reason: brain.response},
+      context: {provider: brain.provider, confidence: brain.confidence},
+      maria_voice: {[lang]: brain.response},
+      intent_parsed: {type: brain.type || brain.intent || "llm"},
+      ledger_receipt_id: null,
+      timestamp: new Date().toISOString(),
     }};
   }catch(e){
     console.error('[§92] Brain error:', e.message);
@@ -561,6 +665,7 @@ function App(){
   const[weather,setWeather]=useState(null);
   const[userGPS,setUserGPS]=useState({lat:null,lng:null});
   const[navigating,setNavigating]=useState(false); // §85 — Track navigation state
+  const[showAlts,setShowAlts]=useState(false); // §100.5 — Track alternatives visibility
   const timers=useRef([]);
 
   // §85 — Expose arrival callback to global
@@ -601,7 +706,7 @@ function App(){
   const runPipeline=useCallback(async(intent,inputText,fallbackSc)=>{
     clearT();
     setTranscript(inputText);setMode("processing");
-    setDoneSt([]);setSealed(false);setShowIntent(false);setResult(null);
+    setDoneSt([]);setSealed(false);setShowAlts(false);setShowIntent(false);setResult(null);
     const ids=STAGES.map(s=>s.id);
     ids.forEach((id,i)=>{
       const t0=setTimeout(()=>{
@@ -647,7 +752,7 @@ function App(){
   const reset=()=>{
     clearT();window.speechSynthesis&&window.speechSynthesis.cancel();
     setMode("idle");setResult(null);setActiveStage(null);
-    setDoneSt([]);setSealed(false);setTranscript("");setApiSource(null);
+    setDoneSt([]);setSealed(false);setShowAlts(false);setTranscript("");setApiSource(null);
   };
 
   const statusBg={idle:"rgba(255,255,255,0.1)",listening:P.vermelho,
@@ -842,36 +947,125 @@ function App(){
             </div>
 
             {/* §71 — Hide decision card + seal for greetings. Ledger is for REAL decisions. */}
-            {decision.type!=="greeting"&&(
+            {decision.type!=="greeting"&&decision.type!=="llm"&&decision.type!=="onboarding"&&(
             <div style={{marginBottom:8}}>
-              <div style={{fontSize:10,fontFamily:"'JetBrains Mono',monospace",color:P.cinza,marginBottom:7,letterSpacing:"0.5px"}}>{t.decision_label}</div>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:7}}>
+                <div style={{fontSize:10,fontFamily:"'JetBrains Mono',monospace",color:P.cinza,letterSpacing:"0.5px"}}>{t.decision_label}</div>
+                {/* §100.5 — Mode indicator badges */}
+                <div style={{display:"flex",gap:4}}>
+                  {result.mode&&result.mode.includes("nomada")&&(
+                    <span style={{background:P.roxo,color:"white",borderRadius:10,padding:"2px 7px",fontSize:8,fontFamily:"'JetBrains Mono',monospace"}}>{t.mode_label}</span>
+                  )}
+                  {result.personalized&&(
+                    <span style={{background:P.ouro,color:"white",borderRadius:10,padding:"2px 7px",fontSize:8,fontFamily:"'JetBrains Mono',monospace"}}>{t.personalized_badge}</span>
+                  )}
+                  {result.context_aware&&(
+                    <span style={{background:P.agua,color:"white",borderRadius:10,padding:"2px 7px",fontSize:8,fontFamily:"'JetBrains Mono',monospace"}}>{t.context_badge}</span>
+                  )}
+                </div>
+              </div>
               <div style={{background:sealed?`linear-gradient(135deg,${P.verde}15,${P.ouro}10)`:`linear-gradient(135deg,${P.pergaminho},white)`,
                 border:`2px solid ${sealed?P.verde:P.ouro}`,borderRadius:14,padding:"14px",marginBottom:11,transition:"all 0.4s"}}>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:10}}>
                   <div>
                     <div style={{fontSize:17,fontWeight:800,color:P.noite}}>{decision.name}</div>
-                    <div style={{fontSize:12,color:P.cinza,marginTop:2}}>{decision.type} · {decision.distance_text}</div>
+                    <div style={{fontSize:12,color:P.cinza,marginTop:2}}>
+                      {decision.type}
+                      {decision.price&&<span style={{marginLeft:6,fontWeight:600,color:P.verde}}>€{decision.price}</span>}
+                      {decision.direct&&<span style={{marginLeft:6,color:P.verde}}>✓ directo</span>}
+                      {decision.distance_text&&<span> · {decision.distance_text}</span>}
+                    </div>
                     {decision.rating&&<div style={{fontSize:11,color:P.ouro,marginTop:2}}>★ {decision.rating}</div>}
+                    {decision.departure&&decision.arrival&&(
+                      <div style={{fontSize:11,color:P.cinza,marginTop:2}}>
+                        {decision.departure.split("T")[1]?.slice(0,5)||decision.departure} → {decision.arrival.split("T")[1]?.slice(0,5)||decision.arrival}
+                      </div>
+                    )}
                   </div>
-                  <div style={{background:P.verde,color:"white",borderRadius:20,padding:"3px 9px",fontSize:10,fontWeight:600,fontFamily:"'JetBrains Mono',monospace"}}>{decision.queue_status}</div>
+                  <div style={{background:P.verde,color:"white",borderRadius:20,padding:"3px 9px",fontSize:10,fontWeight:600,fontFamily:"'JetBrains Mono',monospace"}}>{decision.queue_status||"NÓMADA"}</div>
                 </div>
                 <div style={{background:"rgba(26,26,46,0.04)",borderRadius:8,padding:"9px 11px",marginBottom:11,borderLeft:`3px solid ${P.ouro}`}}>
                   <div style={{fontSize:10,fontFamily:"'JetBrains Mono',monospace",color:P.cinza,marginBottom:3,letterSpacing:"0.5px"}}>{t.reason_label}</div>
                   <div style={{fontSize:12,color:P.terra,lineHeight:1.5}}>{decision.reason}</div>
                 </div>
+
+                {/* §100.5 — Booking link (if available) */}
+                {(decision.deep_link||decision.booking_url)&&!sealed&&(
+                  <a href={decision.deep_link||decision.booking_url} target="_blank" rel="noopener noreferrer"
+                    style={{display:"block",width:"100%",padding:"10px",background:P.verde,color:"white",
+                      border:"none",borderRadius:10,fontSize:13,fontWeight:700,cursor:"pointer",marginBottom:8,
+                      textAlign:"center",textDecoration:"none"}}>
+                    🎫 {lang==="PT"?"Reservar":lang==="DE"?"Buchen":"Book"}
+                  </a>
+                )}
+
                 {result&&result.locations&&result.locations[0]&&(<button onClick={()=>{openNavigation(result.locations[0].lat,result.locations[0].lng,result.locations[0].name||decision.text,lang);setNavigating(true);}} style={{width:"100%",padding:"10px",background:"#C8860A",color:"white",border:"none",borderRadius:10,fontSize:13,fontWeight:700,cursor:"pointer",marginBottom:8}}>🧭 {lang==="de"?"Navigieren":lang==="en"?"Navigate":"Navegar"}</button>)}
                 {navigating&&(<button onClick={()=>{confirmArrival(lang);setNavigating(false);}} style={{width:"100%",padding:"10px",background:"#5C7A5A",color:"white",border:"none",borderRadius:10,fontSize:13,fontWeight:700,cursor:"pointer",marginBottom:8}}>✅ {lang==="de"?"Angekommen!":lang==="en"?"I arrived!":"Cheguei!"}</button>)}
-                {!sealed?(
+
+                {/* §100.5 — Feedback buttons (before seal) */}
+                {!sealed&&result.decision_id&&(
+                  <div style={{display:"flex",gap:8,marginBottom:8}}>
+                    <button onClick={()=>{sendDecisionFeedback(result.decision_id,true,false);setSealed(true);}}
+                      style={{flex:2,padding:"11px",background:`linear-gradient(135deg,${P.verde},${P.ouro})`,color:"white",
+                        border:"none",borderRadius:10,fontSize:13,fontWeight:700,cursor:"pointer"}}>
+                      {t.accept_btn}
+                    </button>
+                    <button onClick={()=>{sendDecisionFeedback(result.decision_id,false,true);setShowAlts(true);}}
+                      style={{flex:1,padding:"11px",background:"transparent",color:P.cinza,
+                        border:`1px solid ${P.cinza}`,borderRadius:10,fontSize:12,cursor:"pointer"}}>
+                      {t.ignore_btn}
+                    </button>
+                  </div>
+                )}
+
+                {/* Original seal button (for results without decision_id) */}
+                {!sealed&&!result.decision_id&&(
                   <button onClick={()=>setSealed(true)} style={{width:"100%",padding:"11px",
                     background:`linear-gradient(135deg,${P.terra},${P.ouro})`,color:"white",
                     border:"none",borderRadius:10,fontSize:13,fontWeight:700,cursor:"pointer"}}>{t.seal_btn}</button>
-                ):(
+                )}
+
+                {sealed&&(
                   <div style={{background:P.verde,color:"white",borderRadius:10,padding:"9px",
                     textAlign:"center",fontSize:11,fontFamily:"'JetBrains Mono',monospace"}}>
                     ✓ SEALED · {result.ledger_receipt_id||"WINDI-TRAVEL-"+Date.now().toString(36).toUpperCase()}
                   </div>
                 )}
               </div>
+
+              {/* §100.5 — Alternatives section (collapsed by default) */}
+              {result.alternatives&&result.alternatives.length>0&&(
+                <details open={showAlts} style={{marginBottom:11}}>
+                  <summary style={{fontSize:10,fontFamily:"'JetBrains Mono',monospace",color:P.cinza,
+                    cursor:"pointer",letterSpacing:"0.5px",padding:"4px 0"}}>
+                    ▶ {t.alt_label} ({result.alternatives.length})
+                  </summary>
+                  <div style={{marginTop:8,display:"flex",flexDirection:"column",gap:8}}>
+                    {result.alternatives.slice(0,3).map((alt,i)=>(
+                      <div key={i} style={{background:"rgba(26,26,46,0.04)",borderRadius:10,padding:"10px 12px",
+                        border:"1px solid rgba(139,94,60,0.15)"}}>
+                        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                          <div>
+                            <div style={{fontSize:13,fontWeight:600,color:P.noite}}>{alt.name||alt.airline||alt.hotelName}</div>
+                            <div style={{fontSize:11,color:P.cinza}}>
+                              {alt.price&&<span>€{alt.price}</span>}
+                              {alt.direct===false&&<span style={{marginLeft:6,color:P.vermelho}}>com escala</span>}
+                              {alt.rating&&<span style={{marginLeft:6}}>★{alt.rating}</span>}
+                            </div>
+                          </div>
+                          {(alt.deep_link||alt.booking_url)&&(
+                            <a href={alt.deep_link||alt.booking_url} target="_blank" rel="noopener noreferrer"
+                              style={{padding:"5px 10px",background:P.ouro,color:"white",borderRadius:8,
+                                fontSize:10,textDecoration:"none",fontWeight:600}}>
+                              →
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </details>
+              )}
             </div>
             )}
 
