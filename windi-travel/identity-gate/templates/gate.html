@@ -583,6 +583,14 @@
             <div class="btn-row">
                 <button class="btn btn-primary" onclick="nextStep(2)" data-i18n="next">Weiter</button>
             </div>
+
+            <!-- Login link for existing users -->
+            <div style="text-align:center;margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border);">
+                <p style="font-size:0.875rem;color:var(--text-secondary);">
+                    <span data-i18n="already_have_account">Bereits registriert?</span>
+                    <a href="#" onclick="openLoginModal();return false;" style="color:var(--gold);text-decoration:none;font-weight:600;" data-i18n="login_link">Mit E-Mail einloggen</a>
+                </p>
+            </div>
         </div>
 
         <!-- STEP 2: Admin -->
@@ -766,6 +774,34 @@
         </div>
     </div>
 
+    <!-- Login Modal -->
+    <div id="login-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:1000;display:none;align-items:center;justify-content:center;">
+        <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:12px;padding:2rem;max-width:400px;width:90%;position:relative;">
+            <button onclick="closeLoginModal()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--text-secondary);font-size:1.5rem;cursor:pointer;">&times;</button>
+
+            <h3 style="color:var(--gold);margin-bottom:0.5rem;" data-i18n="login_title">Einloggen</h3>
+            <p style="color:var(--text-secondary);font-size:0.875rem;margin-bottom:1.5rem;" data-i18n="login_desc">Wir senden dir einen Login-Link per E-Mail.</p>
+
+            <div id="login-form">
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" id="login_email" placeholder="deine@email.de">
+                </div>
+                <button class="btn btn-primary" style="width:100%;margin-top:1rem;" onclick="requestLoginLink()" data-i18n="send_login_link">Login-Link senden</button>
+            </div>
+
+            <div id="login-sent" style="display:none;text-align:center;padding:1rem 0;">
+                <div style="font-size:3rem;margin-bottom:1rem;">✉️</div>
+                <p style="color:var(--success);font-weight:600;" data-i18n="login_sent_title">Link gesendet!</p>
+                <p style="color:var(--text-secondary);font-size:0.875rem;" data-i18n="login_sent_desc">Prüfe deine E-Mail und klicke auf den Link.</p>
+            </div>
+
+            <div id="login-error" style="display:none;background:rgba(231,76,60,0.1);border:1px solid var(--error);border-radius:8px;padding:0.75rem;margin-top:1rem;">
+                <p style="color:var(--error);font-size:0.875rem;margin:0;" id="login-error-msg"></p>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="footer">
         <p data-i18n="footer_tagline">WINDI Travel — Vergangenheit bewahren. Zukunft sichern.</p>
@@ -829,7 +865,14 @@
                 pitch_link: "Präsentation",
                 footer_tagline: "WINDI Travel — Vergangenheit bewahren. Zukunft sichern.",
                 footer_landing: "Landing",
-                footer_verify: "Verify"
+                footer_verify: "Verify",
+                already_have_account: "Bereits registriert?",
+                login_link: "Mit E-Mail einloggen",
+                login_title: "Einloggen",
+                login_desc: "Wir senden dir einen Login-Link per E-Mail.",
+                send_login_link: "Login-Link senden",
+                login_sent_title: "Link gesendet!",
+                login_sent_desc: "Prüfe deine E-Mail und klicke auf den Link."
             },
             en: {
                 step1_title: "Your Account",
@@ -870,7 +913,14 @@
                 pitch_link: "Pitch Deck",
                 footer_tagline: "WINDI Travel — Preserve the past. Protect the future.",
                 footer_landing: "Landing",
-                footer_verify: "Verify"
+                footer_verify: "Verify",
+                already_have_account: "Already registered?",
+                login_link: "Login with email",
+                login_title: "Login",
+                login_desc: "We'll send you a login link via email.",
+                send_login_link: "Send login link",
+                login_sent_title: "Link sent!",
+                login_sent_desc: "Check your email and click the link."
             },
             pt: {
                 step1_title: "A tua conta",
@@ -911,7 +961,14 @@
                 pitch_link: "Libreto",
                 footer_tagline: "WINDI Travel — Guardar o passado. Resguardar o futuro.",
                 footer_landing: "Início",
-                footer_verify: "Verificar"
+                footer_verify: "Verificar",
+                already_have_account: "Já tens conta?",
+                login_link: "Entrar com email",
+                login_title: "Entrar",
+                login_desc: "Enviamos-te um link de acesso por email.",
+                send_login_link: "Enviar link de acesso",
+                login_sent_title: "Link enviado!",
+                login_sent_desc: "Verifica o teu email e clica no link."
             }
         };
 
@@ -1190,6 +1247,73 @@
         // Update workspace link with base path
         var wsLink = document.getElementById('workspace-link');
         if (wsLink) wsLink.href = BASE_PATH + '/workspace/';
+
+        // ═══════════════════════════════════════════════════════════════
+        // §LOGIN — Magic Link Login Modal
+        // ═══════════════════════════════════════════════════════════════
+
+        function openLoginModal() {
+            var modal = document.getElementById('login-modal');
+            modal.style.display = 'flex';
+            document.getElementById('login-form').style.display = 'block';
+            document.getElementById('login-sent').style.display = 'none';
+            document.getElementById('login-error').style.display = 'none';
+            document.getElementById('login_email').value = '';
+            document.getElementById('login_email').focus();
+        }
+
+        function closeLoginModal() {
+            document.getElementById('login-modal').style.display = 'none';
+        }
+
+        // Close modal on click outside
+        document.getElementById('login-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeLoginModal();
+        });
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeLoginModal();
+        });
+
+        async function requestLoginLink() {
+            var email = document.getElementById('login_email').value.trim();
+            if (!email) {
+                showLoginError('Email required');
+                return;
+            }
+
+            try {
+                var response = await fetch(BASE_PATH + '/login-request', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email })
+                });
+
+                var data = await response.json();
+
+                if (response.ok) {
+                    // Always show success (security: don't reveal if email exists)
+                    document.getElementById('login-form').style.display = 'none';
+                    document.getElementById('login-sent').style.display = 'block';
+                    document.getElementById('login-error').style.display = 'none';
+                } else {
+                    showLoginError(data.detail || 'Error sending login link');
+                }
+            } catch (error) {
+                showLoginError('Connection error. Please try again.');
+            }
+        }
+
+        function showLoginError(message) {
+            document.getElementById('login-error').style.display = 'block';
+            document.getElementById('login-error-msg').textContent = message;
+        }
+
+        // Enter key to submit login
+        document.getElementById('login_email').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') requestLoginLink();
+        });
     </script>
 </body>
 </html>

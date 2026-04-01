@@ -14,7 +14,7 @@ from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, field_validator
 import re
 from typing import Optional, List
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import sqlite3
 import uuid
 import secrets
@@ -161,6 +161,16 @@ def init_db():
         pass
     try:
         cursor.execute("ALTER TABLE admins ADD COLUMN email_token_expires TEXT")
+    except sqlite3.OperationalError:
+        pass
+
+    # §LOGIN: Add login token columns for magic link authentication
+    try:
+        cursor.execute("ALTER TABLE admins ADD COLUMN login_token TEXT")
+    except sqlite3.OperationalError:
+        pass
+    try:
+        cursor.execute("ALTER TABLE admins ADD COLUMN login_token_expires TEXT")
     except sqlite3.OperationalError:
         pass
 
@@ -364,6 +374,120 @@ WINDI Publishing House
         print(f"📧 FALLBACK - To: {email} | Subject: {subject}")
         print(f"🔗 Verify URL: {verify_url}")
         return False
+
+
+# ═══════════════════════════════════════════════════════════════
+# §LOGIN — Magic Link Login Email
+# ═══════════════════════════════════════════════════════════════
+
+async def send_login_email(email: str, token: str, full_name: str, lang: str = "en"):
+    """Send magic link login email."""
+    login_url = f"{DOMAIN_URL}/law/login/{token}"
+
+    subjects = {
+        "de": "WINDI-LAW: Dein Login-Link",
+        "en": "WINDI-LAW: Your login link",
+        "pt": "WINDI-LAW: Teu link de acesso"
+    }
+
+    bodies = {
+        "de": f"""
+Hallo {full_name},
+
+Hier ist dein Login-Link für WINDI-LAW:
+
+{login_url}
+
+Dieser Link ist 1 Stunde gültig.
+
+Falls du diese Anfrage nicht gestellt hast, ignoriere diese E-Mail.
+
+Mit freundlichen Grüßen,
+WINDI Publishing House
+        """,
+        "en": f"""
+Hello {full_name},
+
+Here is your login link for WINDI-LAW:
+
+{login_url}
+
+This link is valid for 1 hour.
+
+If you did not request this, please ignore this email.
+
+Best regards,
+WINDI Publishing House
+        """,
+        "pt": f"""
+Olá {full_name},
+
+Aqui está o teu link de acesso ao WINDI-LAW:
+
+{login_url}
+
+Este link é válido por 1 hora.
+
+Se não solicitaste este acesso, ignora este email.
+
+Atenciosamente,
+WINDI Publishing House
+        """
+    }
+
+    subject = subjects.get(lang, subjects["en"])
+    body = bodies.get(lang, bodies["en"])
+
+    if not SMTP_USER or not SMTP_PASS:
+        print(f"⚠️ SMTP not configured - login email logged to console")
+        print(f"📧 To: {email} | Subject: {subject}")
+        print(f"🔗 Login URL: {login_url}")
+        return True
+
+    try:
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = subject
+        msg["From"] = EMAIL_FROM
+        msg["To"] = email
+
+        text_part = MIMEText(body.strip(), "plain", "utf-8")
+        msg.attach(text_part)
+
+        html_body = body.strip().replace("\n", "<br>\n")
+        html_content = f"""
+        <html>
+        <body style="font-family: 'JetBrains Mono', monospace; color: #1A1A1A; max-width: 600px;">
+            <div style="border-bottom: 2px solid #1a3a6b; padding-bottom: 10px; margin-bottom: 20px;">
+                <strong style="color: #1a3a6b;">WINDI-LAW</strong>
+            </div>
+            <p>{html_body}</p>
+            <div style="margin-top: 30px; padding-top: 10px; border-top: 1px solid #E0DED8; font-size: 12px; color: #666;">
+                WINDI Publishing House · Kempten, Bavaria
+            </div>
+        </body>
+        </html>
+        """
+        html_part = MIMEText(html_content, "html", "utf-8")
+        msg.attach(html_part)
+
+        context = ssl.create_default_context()
+        with smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT, context=context) as server:
+            server.login(SMTP_USER, SMTP_PASS)
+            server.sendmail(EMAIL_FROM, email, msg.as_string())
+
+        print(f"✅ Login email sent to {email}")
+        return True
+
+    except Exception as e:
+        print(f"❌ SMTP Error (login): {e}")
+        print(f"📧 FALLBACK - To: {email} | Subject: {subject}")
+        print(f"🔗 Login URL: {login_url}")
+        return False
+
+
+def get_login_token_expiry() -> str:
+    """Return expiry time for login token (1 hour from now)."""
+    return (datetime.now(timezone.utc) + timedelta(hours=1)).isoformat()
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -687,6 +811,174 @@ async def resend_verification(request: Request):
     await send_verification_email(email, new_token, full_name, lang)
 
     return {"success": True, "message": "Verification email resent"}
+
+
+# ═══════════════════════════════════════════════════════════════
+# §LOGIN — Magic Link Login Endpoints
+# ═══════════════════════════════════════════════════════════════
+
+@app.post("/login-request")
+async def login_request(request: Request):
+    """
+    Request magic link login.
+    Sends email with login link if user exists.
+    """
+    body = await request.json()
+    email = body.get("email", "").strip().lower()
+
+    if not email:
+        raise HTTPException(status_code=400, detail="Email required")
+
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT id, full_name, did FROM admins WHERE LOWER(email) = ?
+    """, (email,))
+    admin = cursor.fetchone()
+
+    if not admin:
+        conn.close()
+        # Security: Don't reveal if email exists or not
+        return {"success": True, "message": "If this email is registered, you will receive a login link"}
+
+    admin_id, full_name, did = admin
+
+    # Generate login token
+    login_token = generate_email_token()
+    login_expiry = get_login_token_expiry()
+
+    cursor.execute("""
+        UPDATE admins SET login_token = ?, login_token_expires = ? WHERE id = ?
+    """, (login_token, login_expiry, admin_id))
+    conn.commit()
+    conn.close()
+
+    # Send login email
+    accept_lang = request.headers.get("Accept-Language", "en")
+    lang = "de" if "de" in accept_lang.lower() else ("pt" if "pt" in accept_lang.lower() else "en")
+    await send_login_email(email, login_token, full_name, lang)
+
+    return {"success": True, "message": "If this email is registered, you will receive a login link"}
+
+
+@app.get("/login/{token}", response_class=HTMLResponse)
+async def login_with_token(token: str, request: Request):
+    """
+    Validate login token and redirect to workspace.
+    Sets session cookie and sessionStorage via JavaScript.
+    """
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT id, full_name, email, did, fingerprint, public_key, login_token_expires, state
+        FROM admins WHERE login_token = ?
+    """, (token,))
+    admin = cursor.fetchone()
+
+    if not admin:
+        conn.close()
+        return templates.TemplateResponse(request, "verify-email-result.html", context={
+            "success": False,
+            "error": "invalid_token",
+            "message_de": "Ungültiger oder bereits verwendeter Login-Link.",
+            "message_en": "Invalid or already used login link.",
+            "message_pt": "Link de acesso inválido ou já utilizado."
+        })
+
+    admin_id, full_name, email, did, fingerprint, public_key, token_expires, state = admin
+
+    # Check expiry
+    if token_expires:
+        try:
+            expiry_dt = datetime.fromisoformat(token_expires.replace('Z', '+00:00'))
+            if datetime.now(timezone.utc) > expiry_dt:
+                conn.close()
+                return templates.TemplateResponse(request, "verify-email-result.html", context={
+                    "success": False,
+                    "error": "expired",
+                    "message_de": "Login-Link abgelaufen. Bitte fordere einen neuen an.",
+                    "message_en": "Login link expired. Please request a new one.",
+                    "message_pt": "Link de acesso expirado. Por favor solicita um novo."
+                })
+        except:
+            pass
+
+    # Clear login token (one-time use)
+    cursor.execute("""
+        UPDATE admins SET login_token = NULL, login_token_expires = NULL WHERE id = ?
+    """, (admin_id,))
+    conn.commit()
+    conn.close()
+
+    # Return HTML that sets sessionStorage and redirects to workspace
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>WINDI-LAW Login</title>
+        <style>
+            body {{
+                font-family: 'JetBrains Mono', monospace;
+                background: #0A0A10;
+                color: #E8E6E1;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                margin: 0;
+            }}
+            .card {{
+                background: #12121A;
+                border: 1px solid #1A1A24;
+                border-radius: 12px;
+                padding: 2rem;
+                text-align: center;
+                max-width: 400px;
+            }}
+            .success {{ color: #2EC27E; font-size: 3rem; }}
+            .title {{ color: #1a3a6b; font-size: 1.25rem; margin: 1rem 0; }}
+            .did {{ font-size: 0.75rem; color: #666; word-break: break-all; }}
+        </style>
+    </head>
+    <body>
+        <div class="card">
+            <div class="success">✓</div>
+            <div class="title">Login erfolgreich</div>
+            <p>Willkommen zurück, {full_name}!</p>
+            <p class="did">{did}</p>
+            <p style="color:#666;font-size:0.875rem;">Weiterleitung zum Workspace...</p>
+        </div>
+        <script>
+            // Set session data
+            var walletData = {{
+                did: "{did}",
+                fingerprint: "{fingerprint}",
+                public_key: "{public_key}",
+                state: "{state}",
+                created_at: new Date().toISOString(),
+                pioneer_number: null,
+                tier: "FREE",
+                credits: 0
+            }};
+            sessionStorage.setItem('windi_law_wallet', JSON.stringify(walletData));
+            sessionStorage.setItem('windi_law_did', "{did}");
+            sessionStorage.setItem('windi_law_fingerprint', "{fingerprint}");
+
+            // Set cookie for future visits
+            document.cookie = 'windi_did=' + encodeURIComponent("{did}") + '; path=/; max-age=31536000; SameSite=Lax';
+
+            // Redirect to workspace
+            setTimeout(function() {{
+                window.location.href = '/law/workspace/?did=' + encodeURIComponent("{did}");
+            }}, 1500);
+        </script>
+    </body>
+    </html>
+    """
+    return HTMLResponse(content=html_content)
 
 
 @app.post("/wallet/create")
