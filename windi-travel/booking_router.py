@@ -452,13 +452,6 @@ def score_flight(f: dict, preferred_time: str = "morning", prefs: dict = None, c
     if comfort > 0.6 and f.get("airline") in premium_airlines:
         score += 30
 
-    # ─── §99 CONTEXTO (urgência influencia score) ───
-    if context.get("time_pressure") == "high":
-        if f.get("direct", False):
-            score += 80  # Urgência valoriza directo ainda mais
-        # Duração pesa mais quando há pressa
-        score -= duration * 0.2
-
     # ─── §104 CONFIANÇA (personalização forte quando há histórico) ───
     learned_confidence = prefs.get("learned_confidence", 0.0)
     if learned_confidence > 0.5:
@@ -466,6 +459,9 @@ def score_flight(f: dict, preferred_time: str = "morning", prefs: dict = None, c
         personal_boost = 20 * learned_confidence
         if f.get("direct", False) and prefs.get("avoid_stops", True):
             score += personal_boost
+
+    # ─── §106 CONTEXTO (modulador situacional) ───
+    score = apply_context_modifiers(score, f, "flight", prefs, context)
 
     return score
 
@@ -527,6 +523,103 @@ def score_hotel(h: dict, prefs: dict = None, context: dict = None) -> float:
     learned_confidence = prefs.get("learned_confidence", 0.0)
     if learned_confidence > 0.5 and rating >= 4:
         score += 20 * learned_confidence
+
+    # ─── §106 CONTEXTO (modulador) ───
+    score = apply_context_modifiers(score, h, "hotel", prefs, context)
+
+    return score
+
+
+# ── §106 — Contexto no Scoring ────────────────────────────────────────────────
+def apply_context_modifiers(score: float, entity: dict, entity_type: str, prefs: dict, context: dict) -> float:
+    """
+    §106 — Apply situational context modifiers to score.
+
+    Rules:
+    - Context MODULATES, doesn't override preferences
+    - Impact moderate (20-60 max per modifier)
+    - Always deterministic and predictable
+    - Only 4 context types: time_pressure, weather, trip_type, time_of_day
+    """
+    if context is None:
+        return score
+
+    time_pressure = context.get("time_pressure", "normal")
+    weather = context.get("weather", "clear")
+    trip_type = context.get("trip_type", "leisure")
+    time_of_day = context.get("time_of_day", "afternoon")
+
+    # ─── FLIGHTS ───
+    if entity_type == "flight":
+        stops = entity.get("stops", entity.get("stopovers", 1))
+        dep_hour = entity.get("departure_hour", 12)
+
+        # Extract hour from departure string if needed
+        if "departure" in entity and isinstance(entity["departure"], str):
+            try:
+                dep_hour = int(entity["departure"].split("T")[-1].split(":")[0])
+            except:
+                pass
+
+        # High time pressure → direct flights get bonus
+        if time_pressure == "high" and stops == 0:
+            score += 60
+
+        # Morning preference alignment
+        if time_of_day == "morning" and dep_hour < 12:
+            score += 25
+        elif time_of_day == "night" and dep_hour >= 18:
+            score += 25
+
+        # Business trip → prefer efficiency
+        if trip_type == "business" and stops == 0:
+            score += 30
+
+    # ─── HOTELS ───
+    elif entity_type == "hotel":
+        rating = entity.get("rating", entity.get("stars", 3))
+        distance = entity.get("distance_km", entity.get("distance", 5))
+        quiet = entity.get("quiet", rating >= 4)
+        central = distance < 2 if distance else False
+
+        # Business trip → location and quiet matter more
+        if trip_type == "business":
+            if central:
+                score += 40
+            if quiet:
+                score += 30
+
+        # Leisure trip → experience matters more
+        elif trip_type == "leisure":
+            if rating >= 4.5:
+                score += 35
+
+        # Bad weather → prefer hotels with good amenities
+        if weather in ("rain", "cold"):
+            if rating >= 4:
+                score += 20
+
+    # ─── PLACES ───
+    elif entity_type == "place":
+        type_group = entity.get("type_group", "")
+        indoor = entity.get("indoor", entity.get("type", "") in ["restaurant", "cafe", "museum", "pharmacy", "bank"])
+        open_now = entity.get("open_now", True)
+
+        # Rain → indoor places get bonus
+        if weather == "rain" and indoor:
+            score += 40
+
+        # Night → food places get bonus
+        if time_of_day == "night" and type_group == "food":
+            score += 25
+
+        # High time pressure → open now is critical
+        if time_pressure == "high" and open_now:
+            score += 30
+
+        # Cold weather → warm indoor places
+        if weather == "cold" and indoor:
+            score += 25
 
     return score
 
@@ -1010,9 +1103,7 @@ def score_place(place: dict, intent: IntentPayload, ctx: dict, prefs: dict = Non
     boost = type_boosts.get(category, 1.0)
     score *= boost
 
-    # ─── CONTEXT (chuva, família, etc.) ───
-    if ctx.get("is_raining") and intent.type in ("restaurant", "cafe", "museum"):
-        score += 10
+    # ─── INTENT-SPECIFIC (quiet, family) ───
     if intent.quiet and (place.get("user_ratings_total") or 0) < 500:
         score += 8
     if intent.family and intent.type == "museum":
@@ -1022,6 +1113,11 @@ def score_place(place: dict, intent: IntentPayload, ctx: dict, prefs: dict = Non
     learned_confidence = prefs.get("learned_confidence", 0.0)
     if learned_confidence > 0.5 and rating >= 4.0:
         score += 5 * learned_confidence
+
+    # ─── §106 CONTEXTO (modulador situacional) ───
+    # Enrich place with type_group for context modifiers
+    place_enriched = {**place, "type_group": _classify_intent_category(intent.type)}
+    score = apply_context_modifiers(score, place_enriched, "place", prefs, ctx)
 
     return round(score, 1)
 
@@ -1174,7 +1270,8 @@ def generate_explanation(entity: dict, entity_type: str, prefs: dict, context: d
             "EN": "I chose this because it makes sense for you"
         }
 
-    # ─── COMPLEMENT (max 1, priority order) ───
+    # ─── §106 COMPLEMENT (max 1, priority order) ───
+    # Priority: time_pressure > weather > trip_type > confidence > learning
     complement = None
 
     if context.get("time_pressure") == "high":
@@ -1182,6 +1279,30 @@ def generate_explanation(entity: dict, entity_type: str, prefs: dict, context: d
             "PT": "sei que tens pouco tempo",
             "DE": "ich weiß, dass du wenig Zeit hast",
             "EN": "I know you're short on time"
+        }
+    elif context.get("weather") == "rain":
+        complement = {
+            "PT": "especialmente com esta chuva",
+            "DE": "besonders bei diesem Regen",
+            "EN": "especially with this rain"
+        }
+    elif context.get("weather") == "cold":
+        complement = {
+            "PT": "perfeito para este frio",
+            "DE": "perfekt für diese Kälte",
+            "EN": "perfect for this cold weather"
+        }
+    elif context.get("trip_type") == "business":
+        complement = {
+            "PT": "sei que esta é uma viagem de trabalho",
+            "DE": "ich weiß, dass das eine Geschäftsreise ist",
+            "EN": "I know this is a business trip"
+        }
+    elif context.get("trip_type") == "leisure" and entity_type == "hotel":
+        complement = {
+            "PT": "para que aproveites ao máximo",
+            "DE": "damit du das Beste daraus machst",
+            "EN": "so you can make the most of it"
         }
     elif learned_conf > 0.5:
         complement = {
