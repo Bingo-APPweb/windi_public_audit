@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.67
-**Sealed:** 2026-04-01 · §106 Contexto no Scoring
+**Version:** 1.9.68
+**Sealed:** 2026-04-01 · §108 Memória Visível
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -784,7 +784,7 @@ Não compete com ninguém — muda o eixo do jogo.
 
 ---
 
-## MARIA-UI — Inventário de Atribuições (21 LIVE)
+## MARIA-UI — Inventário de Atribuições (23 LIVE)
 
 **Status:** ✅ PRODUÇÃO · DID Gate activo · Memory Engine activo · Nómada v1.3 · UX 10/10
 
@@ -819,8 +819,10 @@ Não compete com ninguém — muda o eixo do jogo.
 | §104.1 | Hotels & Places Personalization | score_hotel() + score_place() v2.0 · Category boosts · Escala comparável |
 | §105 | Explicação Visível | generate_explanation() unificada · Base + complement · Zero termos técnicos |
 | §106 | Contexto no Scoring | apply_context_modifiers() · 4 tipos: time_pressure, weather, trip_type, time_of_day |
+| §107 | Presence Language | "Tens/Há" vs "Encontrei" · Search → Presence · 7 ocorrências corrigidas |
+| §108 | Memória Visível | get_visible_memory() · UI subtle antes da decisão · Max 3 sinais · Gated por confidence>0.3 |
 
-**Tags:** `W-MARIA-001-NOMADA-V2-READY` · `W-MARIA-001-MEMORY-ENGINE-READY` · `W-MARIA-001-CONTEXT-AWARE`
+**Tags:** `W-MARIA-001-NOMADA-V2-READY` · `W-MARIA-001-MEMORY-ENGINE-READY` · `W-MARIA-001-CONTEXT-AWARE` · `W-MARIA-001-MEMORY-VISIBLE`
 
 **Removidos:** §87 OSRM (dead code) · Demo buttons · Hardcoded scenarios
 
@@ -884,7 +886,9 @@ Query → flight keywords?    → Kiwi Bridge
 - [ ] **windilaw.de** — Sincronizar com windi-domain.com/law/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
-### Completado (ver §37-106)
+### Completado (ver §37-108)
+- [x] §108 **Memória Visível** · get_visible_memory() · UI shows what Maria knows ✅ 01 Apr 2026
+- [x] §107 **Presence Language** · "Tens/Há" vs "Encontrei" · Search → Presence ✅ 01 Apr 2026
 - [x] §106 **Contexto no Scoring** · apply_context_modifiers() · Situational awareness ✅ 01 Apr 2026
 - [x] §105 **Explicação Visível** · generate_explanation() · Maria explains ✅ 01 Apr 2026
 - [x] §104.1 **Hotels & Places Personalization** · score v2.0 · Category boosts ✅ 01 Apr 2026
