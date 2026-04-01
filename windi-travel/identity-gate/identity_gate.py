@@ -262,7 +262,7 @@ async def send_verification_email(email: str, token: str, full_name: str, lang: 
     Send verification email asynchronously.
     For now, logs to console. In production, integrate with SMTP or Dispatch Gateway.
     """
-    verify_url = f"{DOMAIN_URL}/law/verify-email/{token}"
+    verify_url = f"{DOMAIN_URL}/travel/verify-email/{token}"
 
     # Trilingual email subjects and bodies
     subjects = {
