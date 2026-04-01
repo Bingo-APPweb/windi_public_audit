@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.70
-**Sealed:** 2026-04-01 · §103.T Train Intelligence
+**Version:** 1.9.71
+**Sealed:** 2026-04-01 · T1 MOSAIC Protocol + Smoke Test
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -567,6 +567,7 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 01 Apr | **T1 MOSAIC Protocol** · smoke-travel.sh · Email verify confirmed · `67de32f` |
 | 01 Apr | §103.T **Train Intelligence** · MARIA Decision Engine · transport.rest API · `930a2cc` |
 | 01 Apr | §106 **Contexto no Scoring** · apply_context_modifiers() · Situational awareness · `7d88676` |
 | 01 Apr | §105 **Explicação Visível** · Maria explains decisions · generate_explanation() · `668742b` |

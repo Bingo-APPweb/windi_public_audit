@@ -3809,5 +3809,91 @@ WINDI-JOURNAL: "O nascimento de um sistema com memória soberana"
 
 ---
 
-*Sessão: 01 Apr 2026 · Liga IA+H · Kempten, Bavaria*
+## § SESSÃO 01 Apr 2026 (Noite) — T1 MOSAIC Protocol
+
+**Commits:** `930a2cc` · `7a701fc` · `67de32f`
+**Smoke Test:** `/opt/windi/session/smoke-travel.sh`
+
+### §103.T Train Intelligence — SELADO
+
+MARIA Decision Engine para comboios europeus via transport.rest API (soberano, sem auth).
+
+**Endpoints:**
+- `/train/stations?query=X` — autocomplete estações DB
+- `/train/journeys?from_id=X&to_id=Y` — journeys com preços, atrasos, plataformas
+- `/train/maria-decide` — scoring engine para escolha óptima
+
+**Scoring System:**
+```
+Base:      100 pontos
+Directo:   +20 pontos
+Atrasos:   -3 pontos/minuto
+Transbordos: -15 pontos/cada
+Budget:    +10 (dentro) / -20 (acima)
+Meeting:   +15 (margem ≥30min) / -40 (margem <15min)
+```
+
+**Frontend:**
+- `mariaDecide()` — inicia pesquisa com scoring
+- `renderMariaDecision()` — card com recomendação + alternativas
+- `confirmJourney()` — confirmação humana (I9)
+
+**Fix aplicado:** type filter `"station"|"stop"` (era só `"stop"`)
+
+### T1 — Travel MOSAIC Protocol — SELADO
+
+**Invariante Constitucional:**
+> "No Travel, nenhum § toca em código existente sem cirurgia documentada."
+
+**4 Regras Permanentes:**
+1. **ADIÇÃO, nunca substituição** — criar endpoint novo → testar → redirecionar
+2. **Feature Flag obrigatória** — todo § novo entra desligado por defeito
+3. **Smoke test obrigatório** — `bash /opt/windi/session/smoke-travel.sh` antes de deploy
+4. **Cookie update obrigatório** — após cada § concluído
+
+**Endpoints LOCKED:**
+```
+🔒 /workspace/media-seals   → §111 depende
+🔒 /workspace/check-collage → §111 depende
+🔒 /workspace/thread        → §112 depende
+🔒 Ledger receipt schema    → todos os §§ dependem
+🔒 wallet_id como param     → threading inteiro depende
+```
+
+**Smoke Test Coverage (10/10):**
+```
+✅ MARIA UI Root
+✅ Workspace UI (302 redirect expected)
+✅ Nominatim Reverse Geocoding
+✅ Media Seals (401 auth expected)
+✅ Collage Check
+✅ Thread Endpoint
+✅ Email Verification
+✅ Train Stations
+✅ Train Journeys
+✅ MARIA Decide
+```
+
+**Hierarquia actualizada:**
+```
+I1-I11 > G1-G6 > T1 (Travel MOSAIC) > Regras de Ouro > Frontend > Sessão
+```
+
+### Email Verification — Confirmado Funcional
+
+Diagnóstico completo do sistema de email verification WINDI-TRAVEL:
+- Endpoint: `/verify-email/{token}` (linha 601)
+- Nginx: `/travel/verify-email/` → `:8126/verify-email/`
+- Template: `verify-email-result.html`
+- DB: `admins.email_token` + `admins.email_verified`
+
+**Não há bug de routing para LAW.** Sistema isolado e funcional.
+
+### Tags
+
+`W-MARIA-001-TRAIN-READY` · `T1-MOSAIC-PROTOCOL`
+
+---
+
+*Sessão: 01 Apr 2026 (Noite) · Liga IA+H · Kempten, Bavaria*
 *"AI processes. Human decides. WINDI guarantees."*
