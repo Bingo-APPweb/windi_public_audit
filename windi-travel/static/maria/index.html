@@ -1134,14 +1134,20 @@ function App(){
 
               {/* §108 — Memória Visível (before decision, subtle) */}
               {result.visible_memory&&result.visible_memory.length>0&&(
-                <div style={{background:"rgba(107,76,147,0.08)",border:`1px solid rgba(107,76,147,0.2)`,
-                  borderRadius:10,padding:"10px 12px",marginBottom:10,animation:"fadeIn 0.3s ease"}}>
-                  <div style={{fontSize:10,fontFamily:"'JetBrains Mono',monospace",color:P.roxo,
-                    marginBottom:6,letterSpacing:"0.5px"}}>{t.memory_title}</div>
+                <div style={{background:"rgba(107,76,147,0.06)",border:`1px solid rgba(107,76,147,0.15)`,
+                  borderRadius:12,padding:"12px 14px",marginBottom:12,animation:"fadeIn 0.3s ease"}}>
+                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+                    <div style={{fontSize:10,fontFamily:"'JetBrains Mono',monospace",color:P.roxo,
+                      letterSpacing:"0.08em",textTransform:"uppercase"}}>{t.memory_title}</div>
+                    <button onClick={()=>{/* §108 v2: edit preferences modal */}} style={{
+                      background:"none",border:"none",fontSize:10,color:P.ouro,cursor:"pointer",
+                      fontFamily:"'JetBrains Mono',monospace",opacity:0.7
+                    }}>{t.memory_adjust}</button>
+                  </div>
                   <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
                     {result.visible_memory.slice(0,3).map((mem,i)=>(
-                      <span key={i} style={{background:"rgba(107,76,147,0.1)",color:P.noite,
-                        borderRadius:8,padding:"4px 9px",fontSize:11,fontWeight:500}}>
+                      <span key={i} style={{background:"rgba(107,76,147,0.12)",color:P.noite,
+                        borderRadius:999,padding:"5px 11px",fontSize:12,fontWeight:500}}>
                         {mem}
                       </span>
                     ))}
