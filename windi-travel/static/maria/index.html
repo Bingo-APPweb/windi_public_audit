@@ -96,14 +96,16 @@ const I18N = {
     anticipation_title:"💡 Sugestão da MARIA",
     anticipation_yes:"Preparar",
     anticipation_no:"Agora não",
-    // §101 — Feedback confirmation
-    feedback_learned:"✓ Maria aprendeu esta preferência",
-    feedback_noted:"✓ Notado — a mostrar alternativas",
+    // §101 — Feedback confirmation (emocional, não técnico)
+    feedback_learned:"✓ Entendido. Próxima vez será ainda melhor.",
+    feedback_noted:"✓ A mostrar outras opções",
     // §103 — I9 Seal Gate
     seal_confirm_title:"🔒 SELAR NO LEDGER?",
     seal_confirm_text:"Esta acção é IRREMEDIÁVEL. O documento ficará permanentemente registado.",
     seal_confirm_yes:"Sim, selar",
     seal_confirm_no:"Ainda não",
+    // Quick win — Link para verify
+    view_proof:"🔐 Ver prova",
   },
   DE:{
     tagline:"Orchestratorin Verifizierbarer Erlebnisse",
@@ -144,14 +146,16 @@ const I18N = {
     anticipation_title:"💡 Vorschlag von MARIA",
     anticipation_yes:"Vorbereiten",
     anticipation_no:"Jetzt nicht",
-    // §101 — Feedback confirmation
-    feedback_learned:"✓ Maria hat diese Präferenz gelernt",
-    feedback_noted:"✓ Notiert — zeige Alternativen",
+    // §101 — Feedback confirmation (emocional, não técnico)
+    feedback_learned:"✓ Verstanden. Nächstes Mal noch besser.",
+    feedback_noted:"✓ Zeige andere Optionen",
     // §103 — I9 Seal Gate
     seal_confirm_title:"🔒 IM LEDGER VERSIEGELN?",
     seal_confirm_text:"Diese Aktion ist UNWIDERRUFLICH. Das Dokument wird dauerhaft registriert.",
     seal_confirm_yes:"Ja, versiegeln",
     seal_confirm_no:"Noch nicht",
+    // Quick win — Link para verify
+    view_proof:"🔐 Beweis ansehen",
   },
   EN:{
     tagline:"Orchestrator of Verifiable Experiences",
@@ -192,14 +196,16 @@ const I18N = {
     anticipation_title:"💡 MARIA's Suggestion",
     anticipation_yes:"Prepare",
     anticipation_no:"Not now",
-    // §101 — Feedback confirmation
-    feedback_learned:"✓ Maria learned this preference",
-    feedback_noted:"✓ Noted — showing alternatives",
+    // §101 — Feedback confirmation (emocional, não técnico)
+    feedback_learned:"✓ Got it. Next time will be even better.",
+    feedback_noted:"✓ Showing other options",
     // §103 — I9 Seal Gate
     seal_confirm_title:"🔒 SEAL TO LEDGER?",
     seal_confirm_text:"This action is IRREVERSIBLE. The document will be permanently recorded.",
     seal_confirm_yes:"Yes, seal it",
     seal_confirm_no:"Not yet",
+    // Quick win — Link para verify
+    view_proof:"🔐 View proof",
   },
 };
 
@@ -1020,30 +1026,33 @@ function App(){
                   <div style={{fontSize:12,color:P.terra,lineHeight:1.5}}>{decision.reason}</div>
                 </div>
 
-                {/* §102 — Booking link ALWAYS visible (never hidden by feedback/seal) */}
+                {/* §102 — Booking link ALWAYS visible + VISUAL HIERARCHY (dominante) */}
                 {(decision.deep_link||decision.booking_url)&&(
                   <a href={decision.deep_link||decision.booking_url} target="_blank" rel="noopener noreferrer"
-                    style={{display:"block",width:"100%",padding:"10px",background:P.verde,color:"white",
-                      border:"none",borderRadius:10,fontSize:13,fontWeight:700,cursor:"pointer",marginBottom:8,
-                      textAlign:"center",textDecoration:"none"}}>
-                    🎫 {lang==="PT"?"Reservar":lang==="DE"?"Buchen":"Book"}
+                    style={{display:"block",width:"100%",padding:"14px 10px",
+                      background:`linear-gradient(135deg,${P.verde},#3D8B5A)`,color:"white",
+                      border:"none",borderRadius:12,fontSize:15,fontWeight:800,cursor:"pointer",marginBottom:10,
+                      textAlign:"center",textDecoration:"none",
+                      boxShadow:"0 4px 14px rgba(92,122,90,0.4)",
+                      letterSpacing:"0.5px"}}>
+                    🎫 {lang==="PT"?"RESERVAR AGORA":lang==="DE"?"JETZT BUCHEN":"BOOK NOW"}
                   </a>
                 )}
 
                 {result&&result.locations&&result.locations[0]&&(<button onClick={()=>{openNavigation(result.locations[0].lat,result.locations[0].lng,result.locations[0].name||decision.text,lang);setNavigating(true);}} style={{width:"100%",padding:"10px",background:"#C8860A",color:"white",border:"none",borderRadius:10,fontSize:13,fontWeight:700,cursor:"pointer",marginBottom:8}}>🧭 {lang==="de"?"Navigieren":lang==="en"?"Navigate":"Navegar"}</button>)}
                 {navigating&&(<button onClick={()=>{confirmArrival(lang);setNavigating(false);}} style={{width:"100%",padding:"10px",background:"#5C7A5A",color:"white",border:"none",borderRadius:10,fontSize:13,fontWeight:700,cursor:"pointer",marginBottom:8}}>✅ {lang==="de"?"Angekommen!":lang==="en"?"I arrived!":"Cheguei!"}</button>)}
 
-                {/* §101 — Feedback buttons with visual confirmation */}
+                {/* §101 — Feedback buttons (secundários — hierarquia abaixo de Reservar) */}
                 {!feedbackSent&&result.decision_id&&(
                   <div style={{display:"flex",gap:8,marginBottom:8}}>
                     <button onClick={async()=>{const ok=await sendDecisionFeedback(result.decision_id,true,false);if(ok)setFeedbackSent("accepted");}}
-                      style={{flex:2,padding:"11px",background:`linear-gradient(135deg,${P.verde},${P.ouro})`,color:"white",
-                        border:"none",borderRadius:10,fontSize:13,fontWeight:700,cursor:"pointer"}}>
+                      style={{flex:2,padding:"9px",background:"rgba(201,168,76,0.15)",color:P.terra,
+                        border:`1px solid ${P.ouro}`,borderRadius:8,fontSize:12,fontWeight:600,cursor:"pointer"}}>
                       {t.accept_btn}
                     </button>
                     <button onClick={async()=>{const ok=await sendDecisionFeedback(result.decision_id,false,true);if(ok){setFeedbackSent("ignored");setShowAlts(true);}}}
-                      style={{flex:1,padding:"11px",background:"transparent",color:P.cinza,
-                        border:`1px solid ${P.cinza}`,borderRadius:10,fontSize:12,cursor:"pointer"}}>
+                      style={{flex:1,padding:"9px",background:"transparent",color:P.cinza,
+                        border:`1px solid rgba(154,154,154,0.4)`,borderRadius:8,fontSize:11,cursor:"pointer"}}>
                       {t.ignore_btn}
                     </button>
                   </div>
@@ -1096,9 +1105,19 @@ function App(){
                 )}
 
                 {sealed&&(
-                  <div style={{background:P.verde,color:"white",borderRadius:10,padding:"9px",
-                    textAlign:"center",fontSize:11,fontFamily:"'JetBrains Mono',monospace"}}>
-                    ✓ SEALED · {result.ledger_receipt_id||"WINDI-TRAVEL-"+Date.now().toString(36).toUpperCase()}
+                  <div style={{marginBottom:8}}>
+                    <div style={{background:P.verde,color:"white",borderRadius:10,padding:"10px 12px",
+                      textAlign:"center",fontSize:11,fontFamily:"'JetBrains Mono',monospace",marginBottom:6}}>
+                      ✓ SEALED · {result.ledger_receipt_id||"WINDI-TRAVEL-"+Date.now().toString(36).toUpperCase()}
+                    </div>
+                    {/* Quick win — Link para verify (WINDI identity) */}
+                    <a href={`/verify-public/?id=${result.ledger_receipt_id||"WINDI-TRAVEL-"+Date.now().toString(36).toUpperCase()}`}
+                      target="_blank" rel="noopener noreferrer"
+                      style={{display:"block",width:"100%",padding:"8px",background:"rgba(92,122,90,0.1)",
+                        border:`1px solid ${P.verde}`,borderRadius:8,fontSize:11,fontWeight:600,
+                        color:P.verde,textAlign:"center",textDecoration:"none",cursor:"pointer"}}>
+                      {t.view_proof}
+                    </a>
                   </div>
                 )}
               </div>
