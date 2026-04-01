@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.65
-**Sealed:** 2026-04-01 · §104.1 Hotels & Places Personalization
+**Version:** 1.9.66
+**Sealed:** 2026-04-01 · §105 Explicação Visível
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -547,6 +547,7 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 01 Apr | §105 **Explicação Visível** · Maria explains decisions · generate_explanation() · `668742b` |
 | 01 Apr | §104.1 **Hotels & Places Personalization** · Escala comparável · Category boosts · `7053f21` |
 | 01 Apr | §104 **Personalização Real** · Campos evoluíveis · Ajustes incrementais · `d355304` |
 | 01 Apr | §101-103 **Coerência Restaurada** · Feedback Loop + Reserva Contínua + I9 Gate |
@@ -815,8 +816,9 @@ Não compete com ninguém — muda o eixo do jogo.
 | §103 | I9 Seal Gate | Modal confirmação · "IRREMEDIÁVEL" · Human approval obrigatório |
 | §104 | Personalização Real | Campos evoluíveis no scoring · learned_confidence · Ajustes incrementais |
 | §104.1 | Hotels & Places Personalization | score_hotel() + score_place() v2.0 · Category boosts · Escala comparável |
+| §105 | Explicação Visível | generate_explanation() unificada · Base + complement · Zero termos técnicos |
 
-**Tags:** `W-MARIA-001-NOMADA-V2-READY` · `W-MARIA-001-MEMORY-ENGINE-READY` · `W-MARIA-001-PERSONALISATION-COMPLETE`
+**Tags:** `W-MARIA-001-NOMADA-V2-READY` · `W-MARIA-001-MEMORY-ENGINE-READY` · `W-MARIA-001-EXPLANATION-VISIBLE`
 
 **Removidos:** §87 OSRM (dead code) · Demo buttons · Hardcoded scenarios
 
@@ -880,7 +882,8 @@ Query → flight keywords?    → Kiwi Bridge
 - [ ] **windilaw.de** — Sincronizar com windi-domain.com/law/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
-### Completado (ver §37-104.1)
+### Completado (ver §37-105)
+- [x] §105 **Explicação Visível** · generate_explanation() · Maria explains ✅ 01 Apr 2026
 - [x] §104.1 **Hotels & Places Personalization** · score v2.0 · Category boosts ✅ 01 Apr 2026
 - [x] §104 **Personalização Real** · Campos evoluíveis · Ajustes incrementais ✅ 01 Apr 2026
 - [x] §103 **I9 Seal Gate** · Modal confirmação · Human approval obrigatório ✅ 01 Apr 2026
