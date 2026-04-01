@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.69
-**Sealed:** 2026-04-01 · §103 Intermodal Intelligence
+**Version:** 1.9.70
+**Sealed:** 2026-04-01 · §103.T Train Intelligence
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -547,6 +547,7 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 01 Apr | §103.T **Train Intelligence** · MARIA Decision Engine · transport.rest API · `930a2cc` |
 | 01 Apr | §106 **Contexto no Scoring** · apply_context_modifiers() · Situational awareness · `7d88676` |
 | 01 Apr | §105 **Explicação Visível** · Maria explains decisions · generate_explanation() · `668742b` |
 | 01 Apr | §104.1 **Hotels & Places Personalization** · Escala comparável · Category boosts · `7053f21` |
@@ -821,9 +822,9 @@ Não compete com ninguém — muda o eixo do jogo.
 | §106 | Contexto no Scoring | apply_context_modifiers() · 4 tipos: time_pressure, weather, trip_type, time_of_day |
 | §107 | Presence Language | "Tens/Há" vs "Encontrei" · Search → Presence · 7 ocorrências corrigidas |
 | §108 | Memória Visível | get_visible_memory() · UI subtle antes da decisão · Max 3 sinais · Gated por confidence>0.3 |
-| §103 | Intermodal Intelligence | db_bridge.py · v6.db.transport.rest · Unified scoring · Maria decides modal |
+| §103.T | Train Intelligence | `/train/stations` + `/train/journeys` + `/train/maria-decide` · transport.rest API · Scoring: direct +20, delay -3/min, changes -15 |
 
-**Tags:** `W-MARIA-001-NOMADA-V2-READY` · `W-MARIA-001-MEMORY-ENGINE-READY` · `W-MARIA-001-CONTEXT-AWARE` · `W-MARIA-001-MEMORY-VISIBLE` · `W-MARIA-001-INTERMODAL`
+**Tags:** `W-MARIA-001-NOMADA-V2-READY` · `W-MARIA-001-MEMORY-ENGINE-READY` · `W-MARIA-001-CONTEXT-AWARE` · `W-MARIA-001-MEMORY-VISIBLE` · `W-MARIA-001-TRAIN-READY`
 
 **Removidos:** §87 OSRM (dead code) · Demo buttons · Hardcoded scenarios
 
@@ -888,7 +889,7 @@ Query → flight keywords?    → Kiwi Bridge
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
 ### Completado (ver §37-108)
-- [x] §103 **Intermodal Intelligence** · DB API + unified scoring · Maria chooses best modal ✅ 01 Apr 2026
+- [x] §103.T **Train Intelligence** · transport.rest API · MARIA Decision Engine · `930a2cc` ✅ 01 Apr 2026
 - [x] §108 **Memória Visível** · get_visible_memory() · UI shows what Maria knows ✅ 01 Apr 2026
 - [x] §107 **Presence Language** · "Tens/Há" vs "Encontrei" · Search → Presence ✅ 01 Apr 2026
 - [x] §106 **Contexto no Scoring** · apply_context_modifiers() · Situational awareness ✅ 01 Apr 2026
