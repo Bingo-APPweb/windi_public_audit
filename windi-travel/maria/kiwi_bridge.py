@@ -18,6 +18,13 @@ import logging
 from datetime import datetime, timedelta
 from typing import Optional, List, Dict, Any
 
+# Garantir que .env é carregado (fallback se identity_gate não fez)
+try:
+    from dotenv import load_dotenv
+    load_dotenv("/opt/windi/windi-travel/identity-gate/.env")
+except ImportError:
+    pass
+
 log = logging.getLogger("w-kiwi-bridge")
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -27,8 +34,14 @@ log = logging.getLogger("w-kiwi-bridge")
 KIWI_API_URL = "https://api.tequila.kiwi.com/v2/search"
 KIWI_API_KEY = os.getenv("KIWI_API_KEY", "")  # Tequila API key
 
-# Travelpayouts Affiliate — §67 IP1 intacto
-TRAVELPAYOUTS_ID = "513311"
+# Travelpayouts — Motor alternativo quando KIWI não disponível
+# Token: https://travelpayouts.com/developers/api
+TRAVELPAYOUTS_TOKEN = os.getenv("TRAVELPAYOUTS_TOKEN", "")
+TRAVELPAYOUTS_MARKER = os.getenv("TRAVELPAYOUTS_MARKER", "513311")
+TRAVELPAYOUTS_API_URL = "https://api.travelpayouts.com/v1/prices/cheap"
+
+# Legacy affiliate link (mantido para compatibilidade)
+TRAVELPAYOUTS_ID = TRAVELPAYOUTS_MARKER  # alias
 KIWI_AFFILIATE_BASE = f"https://www.kiwi.com/?affilid={TRAVELPAYOUTS_ID}"
 
 
@@ -86,6 +99,123 @@ def normalize_location(location: str) -> str:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+# Travelpayouts Data API (Motor alternativo)
+# ══════════════════════════════════════════════════════════════════════════════
+
+async def _travelpayouts_search(
+    fly_from: str,
+    fly_to: str,
+    date_from: str,
+    currency: str = "EUR",
+    max_results: int = 5,
+) -> Dict[str, Any]:
+    """
+    Motor Travelpayouts Data API.
+    Substitui KIWI Tequila quando KIWI_API_KEY não está disponível.
+    Schema de output IDÊNTICO ao search_flights() — maria_brain.py não muda.
+
+    IP1: Reserva acontece no Aviasales — WINDI recebe comissão via marker.
+    """
+    # Converter data para yyyy-mm (formato TP)
+    depart_month = ""
+    dd = mm = "01"
+    for fmt in ("%d/%m/%Y", "%Y-%m-%d", "%Y-%m"):
+        try:
+            dt = datetime.strptime(date_from, fmt)
+            depart_month = dt.strftime("%Y-%m")
+            dd = dt.strftime("%d")
+            mm = dt.strftime("%m")
+            break
+        except ValueError:
+            continue
+    if not depart_month:
+        depart_month = datetime.now().strftime("%Y-%m")
+
+    # Link afiliado com marker WINDI
+    aff_link = (
+        f"https://www.aviasales.com/search/{fly_from}{dd}{mm}{fly_to}1"
+        f"?marker={TRAVELPAYOUTS_MARKER}"
+    )
+
+    params = {
+        "origin":      fly_from,
+        "destination": fly_to,
+        "depart_date": depart_month,
+        "currency":    currency.lower(),
+        "token":       TRAVELPAYOUTS_TOKEN,
+    }
+
+    try:
+        async with httpx.AsyncClient(timeout=10) as client:
+            resp = await client.get(TRAVELPAYOUTS_API_URL, params=params)
+            resp.raise_for_status()
+            data = resp.json()
+
+        if not data.get("success"):
+            log.warning(f"[Kiwi Bridge] TP API: {data.get('error')} — demo fallback")
+            return _demo_flights(fly_from, fly_to, date_from, currency)
+
+        raw = data.get("data", {})
+        if not raw:
+            log.info("[Kiwi Bridge] TP API: sem resultados — demo fallback")
+            return _demo_flights(fly_from, fly_to, date_from, currency)
+
+        flights = []
+        for dest_key, variants in raw.items():
+            for transfer_key, info in variants.items():
+                try:
+                    price     = info.get("price", 0)
+                    airline   = info.get("airline", "")
+                    dep_at    = info.get("departure_at", "")
+                    transfers = int(transfer_key)
+
+                    # Schema IDÊNTICO ao _parse_flights()
+                    flights.append({
+                        "from":         fly_from,
+                        "from_iata":    fly_from,
+                        "to":           fly_to,
+                        "to_iata":      fly_to,
+                        "departure":    dep_at,
+                        "arrival":      dep_at,
+                        "duration_min": 180,  # Estimativa (TP não fornece duração)
+                        "duration_str": "~3h",
+                        "price":        price,
+                        "currency":     currency.upper(),
+                        "layovers":     [],
+                        "direct":       transfers == 0,
+                        "stops":        transfers,
+                        "deep_link":    aff_link,
+                        "airline":      airline,
+                        "airlines":     [airline] if airline else [],
+                    })
+                except Exception as e:
+                    log.warning(f"[Kiwi Bridge] TP parse error: {e}")
+                    continue
+
+        flights.sort(key=lambda x: x.get("price") or 99999)
+        log.info(f"[Kiwi Bridge] TP: {len(flights)} resultados para {fly_from}→{fly_to}")
+
+        return {
+            "origin": fly_from,
+            "origin_city": fly_from,
+            "destination": fly_to,
+            "destination_city": fly_to,
+            "date": date_from,
+            "flights": flights[:max_results],
+            "source": "travelpayouts",
+            "data_type": "cached_7d",
+            "windi_note": "Preços indicativos (cache 7 dias). Confirma disponibilidade no parceiro."
+        }
+
+    except httpx.TimeoutException:
+        log.error("[Kiwi Bridge] TP timeout — demo fallback")
+        return _demo_flights(fly_from, fly_to, date_from, currency)
+    except Exception as e:
+        log.error(f"[Kiwi Bridge] TP error: {e} — demo fallback")
+        return _demo_flights(fly_from, fly_to, date_from, currency)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
 # Flight Search
 # ══════════════════════════════════════════════════════════════════════════════
 
@@ -120,10 +250,14 @@ async def search_flights(
         except ValueError:
             date_to = date_from
 
-    # Check for API key
+    # Check for API key — cascade: KIWI → Travelpayouts → Demo
     if not KIWI_API_KEY:
-        log.warning("[Kiwi Bridge] No KIWI_API_KEY configured — returning demo data")
-        return _demo_flights(fly_from_iata, fly_to_iata, date_from, currency)
+        if TRAVELPAYOUTS_TOKEN:
+            log.info(f"[Kiwi Bridge] Using Travelpayouts (KIWI_API_KEY not set)")
+            return await _travelpayouts_search(fly_from_iata, fly_to_iata, date_from, currency, max_results)
+        else:
+            log.warning("[Kiwi Bridge] No API keys configured — returning demo data")
+            return _demo_flights(fly_from_iata, fly_to_iata, date_from, currency)
 
     params = {
         "fly_from": fly_from_iata,
