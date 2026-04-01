@@ -59,6 +59,9 @@ try:
         detect_patterns_from_decisions,
         get_enhanced_travel_preferences,
         get_decision_stats,
+        # §108 — MEMÓRIA VISÍVEL
+        get_visible_memory,
+        should_show_memory,
     )
     MEMORY_ENABLED = True
     ANTICIPATION_ENABLED = True
@@ -77,6 +80,8 @@ except ImportError:
     def save_decision(*args, **kwargs): return None
     def mark_decision_feedback(*args, **kwargs): pass
     def get_decision_stats(did): return {}
+    def get_visible_memory(prefs, lang="PT"): return []
+    def should_show_memory(prefs, session_shown=False): return False
     log.warning("[MARIA] Memory module not available — running without DID persistence")
 
 # ── Places Sovereignty Gate ───────────────────────────────────────────────────
@@ -825,6 +830,7 @@ class PlanResponse(BaseModel):
     memory_active: bool = False        # True if DID profile loaded
     timestamp: str
     locations: Optional[list[PlaceLocation]] = None  # §79 Super Carta map pins
+    visible_memory: Optional[list[str]] = None  # §108 Memória Visível
 
 # ── §67 Flight Search Models ────────────────────────────────────────────────────
 class FlightSearchRequest(BaseModel):
@@ -2007,6 +2013,13 @@ async def maria_plan(req: PlanRequest):
         ]
         log.info(f"[{request_id[:8]}] Super Carta: {len(locations)} locations for map")
 
+    # §108 — Memória Visível (mostrar o que Maria sabe)
+    visible_mem = None
+    if MEMORY_ENGINE_ENABLED and did and 'travel_prefs' in dir():
+        travel_prefs_for_memory = get_travel_preferences(did) if did else None
+        if travel_prefs_for_memory and should_show_memory(travel_prefs_for_memory):
+            visible_mem = get_visible_memory(travel_prefs_for_memory, lang)
+
     return PlanResponse(
         request_id=request_id,
         decision=decision,
@@ -2019,6 +2032,7 @@ async def maria_plan(req: PlanRequest):
         memory_active=memory_active,
         timestamp=datetime.now(timezone.utc).isoformat(),
         locations=locations,  # §79 Super Carta map pins
+        visible_memory=visible_mem,  # §108 Memória Visível
     )
 
 
@@ -2289,6 +2303,9 @@ async def maria_think_endpoint(req: ThinkRequest):
                         destination=destination
                     )
 
+                # §108 — Memória Visível
+                visible_mem = get_visible_memory(travel_prefs, req.lang) if travel_prefs and should_show_memory(travel_prefs) else None
+
                 return {
                     "type": "flight",
                     "intent": "flight",
@@ -2307,7 +2324,8 @@ async def maria_think_endpoint(req: ThinkRequest):
                     "live_context": {
                         "time_pressure": live_context.get("time_pressure"),
                         "mode": live_context.get("mode")
-                    }
+                    },
+                    "visible_memory": visible_mem  # §108
                 }
             else:
                 # Sem resultados — mas intent permanece flight
@@ -2414,6 +2432,9 @@ async def maria_think_endpoint(req: ThinkRequest):
                         destination=destination
                     )
 
+                # §108 — Memória Visível
+                visible_mem = get_visible_memory(travel_prefs, req.lang) if travel_prefs and should_show_memory(travel_prefs) else None
+
                 return {
                     "type": "hotel",
                     "intent": "hotel",
@@ -2431,7 +2452,8 @@ async def maria_think_endpoint(req: ThinkRequest):
                     "live_context": {
                         "time_pressure": live_context.get("time_pressure"),
                         "mode": live_context.get("mode")
-                    }
+                    },
+                    "visible_memory": visible_mem  # §108
                 }
             else:
                 # Sem resultados — mas intent permanece hotel
@@ -2519,6 +2541,9 @@ async def maria_think_endpoint(req: ThinkRequest):
                         destination=best.get("name")
                     )
 
+                # §108 — Memória Visível
+                visible_mem = get_visible_memory(travel_prefs, req.lang) if travel_prefs and should_show_memory(travel_prefs) else None
+
                 return {
                     "type": "places",
                     "intent": place_type,
@@ -2532,7 +2557,8 @@ async def maria_think_endpoint(req: ThinkRequest):
                     ],
                     "lang": req.lang,
                     "cache_hit": cache_hit,
-                    "mode": "nomada_v1.3"  # §100.5: Memory Engine
+                    "mode": "nomada_v1.3",  # §100.5: Memory Engine
+                    "visible_memory": visible_mem  # §108
                 }
             else:
                 # Sem resultados — mas intent permanece places

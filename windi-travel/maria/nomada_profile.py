@@ -526,6 +526,125 @@ def update_travel_preference(did: str, key: str, value: Any):
     log.info(f"[MARIA §98] Updated preference for {did[:20]}...: {key}={value}")
 
 
+# ── §108 — Memória Visível ────────────────────────────────────────────────────
+def get_visible_memory(prefs: dict, lang: str = "PT") -> list:
+    """
+    §108 — Get human-readable memory signals for UI display.
+
+    Rules:
+    - Max 3 signals (top patterns only)
+    - Only show when learned_confidence > 0.3
+    - Human language, not technical
+    - Trilingual (PT/DE/EN)
+
+    Returns list of strings to display, or empty if nothing to show.
+    """
+    if prefs is None:
+        return []
+
+    # Gate: only show memory if we have learned something
+    learned_confidence = prefs.get("learned_confidence", 0.0)
+    if learned_confidence < 0.3:
+        return []
+
+    signals = []
+
+    # ─── FLIGHTS ───
+    if prefs.get("direct_bonus", 200) > 240:
+        signals.append({
+            "PT": "Preferes voos directos",
+            "DE": "Du bevorzugst Direktflüge",
+            "EN": "You prefer direct flights"
+        })
+
+    if prefs.get("morning_bonus", 50) > 65:
+        signals.append({
+            "PT": "Gostas de partir de manhã",
+            "DE": "Du fliegst gerne morgens",
+            "EN": "You like to depart in the morning"
+        })
+
+    if prefs.get("price_sensitivity", 0.5) > 0.7:
+        signals.append({
+            "PT": "Valorizas bons preços",
+            "DE": "Du achtest auf gute Preise",
+            "EN": "You value good prices"
+        })
+
+    if prefs.get("layover_penalty", 100) > 130:
+        signals.append({
+            "PT": "Evitas escalas longas",
+            "DE": "Du vermeidest lange Zwischenstopps",
+            "EN": "You avoid long layovers"
+        })
+
+    # ─── HOTELS ───
+    if prefs.get("hotel_location_bonus", 80) > 100:
+        signals.append({
+            "PT": "Valorizas hotéis bem localizados",
+            "DE": "Du schätzt gut gelegene Hotels",
+            "EN": "You value well-located hotels"
+        })
+
+    if prefs.get("hotel_rating_weight", 50) > 60:
+        signals.append({
+            "PT": "Preferes hotéis com boa avaliação",
+            "DE": "Du bevorzugst gut bewertete Hotels",
+            "EN": "You prefer well-rated hotels"
+        })
+
+    if prefs.get("hotel_comfort_bonus", 40) > 50:
+        signals.append({
+            "PT": "O conforto é importante para ti",
+            "DE": "Komfort ist dir wichtig",
+            "EN": "Comfort is important to you"
+        })
+
+    # ─── PLACES ───
+    type_boosts = prefs.get("place_type_boosts", {})
+    if type_boosts.get("food", 1.0) > 1.2:
+        signals.append({
+            "PT": "Costumas procurar bons restaurantes",
+            "DE": "Du suchst oft nach guten Restaurants",
+            "EN": "You often look for good restaurants"
+        })
+
+    if type_boosts.get("essential", 1.0) > 1.2:
+        signals.append({
+            "PT": "Valorizas serviços práticos por perto",
+            "DE": "Du schätzt praktische Dienste in der Nähe",
+            "EN": "You value practical services nearby"
+        })
+
+    # Select top 3 and convert to requested language
+    top_signals = signals[:3]
+    return [s.get(lang, s.get("EN", "")) for s in top_signals]
+
+
+def should_show_memory(prefs: dict, session_memory_shown: bool = False) -> bool:
+    """
+    §108 — Decide if memory should be shown in this interaction.
+
+    Rules:
+    - Only show 1x per session (unless pattern changes)
+    - Only when learned_confidence > 0.3
+    - Only when there's something meaningful to show
+    """
+    if session_memory_shown:
+        return False
+
+    if prefs is None:
+        return False
+
+    learned_confidence = prefs.get("learned_confidence", 0.0)
+    if learned_confidence < 0.3:
+        return False
+
+    # Check if we have any meaningful patterns
+    signals = get_visible_memory(prefs, "EN")
+    return len(signals) > 0
+
+
 def learn_from_choice(did: str, choice_type: str, chosen: dict, alternatives: list):
     """
     §98 — Learn preferences from user's actual choices.
