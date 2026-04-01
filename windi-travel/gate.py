@@ -212,17 +212,19 @@ def send_verify_email(email: str, name: str, wallet_id: str, token: str) -> bool
 
 # ── Routes ────────────────────────────────────────────────────────────────────
 
-@router.get("/gate", response_class=HTMLResponse)
-async def gate_page(request: Request):
-    """Landing do Identity Gate — verifica se já tem sessão válida"""
-    user = get_session_from_request(request)
-    if user:
-        return RedirectResponse(url="/travel/workspace/", status_code=302)
-    return TEMPLATES.TemplateResponse(request, "gate_travel.html", {
-        "step": "register",
-        "error": None,
-        "base_url": BASE_URL
-    })
+# DISABLED — DID Wizard now served by identity_gate.py /gate
+# The full 5-step wizard with DID generation is in identity-gate/templates/gate.html
+# @router.get("/gate", response_class=HTMLResponse)
+# async def gate_page(request: Request):
+#     """Landing do Identity Gate — verifica se já tem sessão válida"""
+#     user = get_session_from_request(request)
+#     if user:
+#         return RedirectResponse(url="/travel/workspace/", status_code=302)
+#     return TEMPLATES.TemplateResponse(request, "gate_travel.html", {
+#         "step": "register",
+#         "error": None,
+#         "base_url": BASE_URL
+#     })
 
 @router.post("/gate/register", response_class=HTMLResponse)
 async def gate_register(
