@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.68
-**Sealed:** 2026-04-01 · §108 Memória Visível
+**Version:** 1.9.69
+**Sealed:** 2026-04-01 · §103 Intermodal Intelligence
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -784,7 +784,7 @@ Não compete com ninguém — muda o eixo do jogo.
 
 ---
 
-## MARIA-UI — Inventário de Atribuições (23 LIVE)
+## MARIA-UI — Inventário de Atribuições (24 LIVE)
 
 **Status:** ✅ PRODUÇÃO · DID Gate activo · Memory Engine activo · Nómada v1.3 · UX 10/10
 
@@ -821,8 +821,9 @@ Não compete com ninguém — muda o eixo do jogo.
 | §106 | Contexto no Scoring | apply_context_modifiers() · 4 tipos: time_pressure, weather, trip_type, time_of_day |
 | §107 | Presence Language | "Tens/Há" vs "Encontrei" · Search → Presence · 7 ocorrências corrigidas |
 | §108 | Memória Visível | get_visible_memory() · UI subtle antes da decisão · Max 3 sinais · Gated por confidence>0.3 |
+| §103 | Intermodal Intelligence | db_bridge.py · v6.db.transport.rest · Unified scoring · Maria decides modal |
 
-**Tags:** `W-MARIA-001-NOMADA-V2-READY` · `W-MARIA-001-MEMORY-ENGINE-READY` · `W-MARIA-001-CONTEXT-AWARE` · `W-MARIA-001-MEMORY-VISIBLE`
+**Tags:** `W-MARIA-001-NOMADA-V2-READY` · `W-MARIA-001-MEMORY-ENGINE-READY` · `W-MARIA-001-CONTEXT-AWARE` · `W-MARIA-001-MEMORY-VISIBLE` · `W-MARIA-001-INTERMODAL`
 
 **Removidos:** §87 OSRM (dead code) · Demo buttons · Hardcoded scenarios
 
@@ -887,6 +888,7 @@ Query → flight keywords?    → Kiwi Bridge
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
 ### Completado (ver §37-108)
+- [x] §103 **Intermodal Intelligence** · DB API + unified scoring · Maria chooses best modal ✅ 01 Apr 2026
 - [x] §108 **Memória Visível** · get_visible_memory() · UI shows what Maria knows ✅ 01 Apr 2026
 - [x] §107 **Presence Language** · "Tens/Há" vs "Encontrei" · Search → Presence ✅ 01 Apr 2026
 - [x] §106 **Contexto no Scoring** · apply_context_modifiers() · Situational awareness ✅ 01 Apr 2026
