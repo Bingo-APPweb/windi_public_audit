@@ -12,7 +12,7 @@ Liga IA+H · Kempten, Bavaria · 2026
 "AI processes. Human decides. WINDI guarantees."
 """
 
-from fastapi import FastAPI, HTTPException, Request, Header
+from fastapi import FastAPI, HTTPException, Request, Header, Query
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
