@@ -2224,7 +2224,8 @@ async def search_train_stations(query: str = Query(..., min_length=2)):
         data = r.json()
         stations = []
         for s in data:
-            if s.get("type") == "stop":
+            # transport.rest returns type="station" for train stations
+            if s.get("type") in ("station", "stop"):
                 stations.append({
                     "id": s.get("id"),
                     "name": s.get("name"),
@@ -2331,12 +2332,65 @@ async def maria_train_decide(request: Request):
     Invariante: MARIA sugere. Humano confirma.
     """
     try:
+        import requests as req
         body = await request.json()
         journeys = body.get("journeys", [])
         context = body.get("context", {})
 
+        # If no journeys provided, fetch them first
         if not journeys:
-            return JSONResponse({"status": "error", "message": "Sem journeys para analisar"})
+            from_id = body.get("from_id")
+            to_id = body.get("to_id")
+            when = body.get("when")
+            results = body.get("results", 5)
+
+            if not from_id or not to_id:
+                return JSONResponse({"status": "error", "message": "from_id e to_id obrigatórios"})
+
+            # Fetch journeys from transport.rest
+            params = {
+                "from": from_id,
+                "to": to_id,
+                "results": min(results, 10),
+                "stopovers": "false",
+                "tickets": "true",
+                "polylines": "false",
+                "remarks": "true",
+                "language": body.get("lang", "de").lower()
+            }
+            if when:
+                params["departure"] = when
+
+            r = req.get(f"{TRANSPORT_BASE}/journeys", params=params, timeout=20)
+            data = r.json()
+
+            for j in data.get("journeys", []):
+                legs = j.get("legs", [])
+                if not legs:
+                    continue
+                dep_leg = legs[0]
+                arr_leg = legs[-1]
+                price_data = j.get("price")
+                journeys.append({
+                    "departure": dep_leg.get("departure"),
+                    "arrival": arr_leg.get("arrival"),
+                    "dep_delay_min": (dep_leg.get("departureDelay") or 0) // 60,
+                    "arr_delay_min": (arr_leg.get("arrivalDelay") or 0) // 60,
+                    "duration_min": int((datetime.fromisoformat(arr_leg.get("arrival", "").replace("Z", "+00:00"))
+                                        - datetime.fromisoformat(dep_leg.get("departure", "").replace("Z", "+00:00"))).total_seconds() / 60) if arr_leg.get("arrival") and dep_leg.get("departure") else 0,
+                    "changes": len([l for l in legs if l.get("walking")]),
+                    "line_name": dep_leg.get("line", {}).get("name", ""),
+                    "dep_platform": dep_leg.get("departurePlatform"),
+                    "arr_platform": arr_leg.get("arrivalPlatform"),
+                    "price": {"amount": price_data.get("amount"), "currency": price_data.get("currency")} if price_data else None,
+                    "is_direct": len([l for l in legs if not l.get("walking")]) == 1,
+                    "origin": dep_leg.get("origin", {}).get("name", ""),
+                    "destination": arr_leg.get("destination", {}).get("name", ""),
+                    "journey_id": j.get("refreshToken", "")
+                })
+
+        if not journeys:
+            return JSONResponse({"status": "error", "message": "Sem journeys encontrados"})
 
         meeting_time = context.get("meeting_time")
         prefer_direct = context.get("prefer_direct", True)
@@ -2417,10 +2471,38 @@ async def maria_train_decide(request: Request):
         if best.get("warnings"):
             explanation += " ⚠️ " + ". ".join(best["warnings"]) + "."
 
+        # Build recommendation with frontend-expected fields
+        recommendation = {
+            "from_name": best.get("origin", ""),
+            "to_name": best.get("destination", ""),
+            "departure": best.get("departure", ""),
+            "arrival": best.get("arrival", ""),
+            "duration_minutes": best.get("duration_min", 0),
+            "changes": best.get("changes", 0),
+            "delay_minutes": best.get("dep_delay_min", 0),
+            "platform": best.get("dep_platform", ""),
+            "price": best.get("price", {}).get("amount") if best.get("price") else None,
+            "score": best.get("score", 0),
+            "journey_id": best.get("journey_id", ""),
+            "line_name": best.get("line_name", "")
+        }
+
+        # Alternatives (rest of scored)
+        alternatives = []
+        for alt in scored[1:4]:  # Max 3 alternatives
+            alternatives.append({
+                "departure": alt.get("departure", ""),
+                "arrival": alt.get("arrival", ""),
+                "duration_minutes": alt.get("duration_min", 0),
+                "changes": alt.get("changes", 0),
+                "score": alt.get("score", 0)
+            })
+
         return JSONResponse({
             "status": "ok",
-            "decision": best,
-            "explanation": explanation,
+            "recommendation": recommendation,
+            "alternatives": alternatives,
+            "reasoning": explanation,
             "all_scored": scored,
             "principle": "MARIA sugere, nunca impõe — soberania até nos gestos pequenos."
         })
