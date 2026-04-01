@@ -457,11 +457,20 @@ def enrich_context_with_memory(did: str, context: dict) -> dict:
 
 # Default preferences for new nomadas
 DEFAULT_TRAVEL_PREFS = {
+    # ─── Preferências base ───
     "avoid_stops": True,       # Prefere voos directos
     "price_sensitivity": 0.5,  # 0 = ignora preço, 1 = muito sensível
     "prefer_morning": True,    # Prefere voos de manhã
     "comfort_priority": 0.5,   # 0 = aceita desconforto, 1 = prioriza conforto
     "time_sensitivity": 0.5,   # 0 = tempo não importa, 1 = quer o mais rápido
+
+    # ─── §104 — Campos evoluíveis (ajustados pelo Memory Engine) ───
+    "direct_bonus": 200,       # Bónus base quando voo é directo
+    "layover_penalty": 100,    # Penalidade base por escala
+    "duration_weight": 0.5,    # Peso da duração no score (0.3 a 0.8)
+    "price_weight": 1.5,       # Multiplicador do preço no score (1.0 a 2.5)
+    "morning_bonus": 50,       # Bónus por voo de manhã
+    "learned_confidence": 0.0, # Confiança na personalização (0 a 1)
 }
 
 
@@ -555,29 +564,63 @@ def learn_from_choice(did: str, choice_type: str, chosen: dict, alternatives: li
 
 def explain_personalized_decision(choice_type: str, prefs: dict, lang: str = "PT") -> str:
     """
-    Generate a brief personalized explanation based on preferences.
-    Never invasive, always natural.
+    §104 — Generate a brief personalized explanation based on learned preferences.
+    Never invasive, always natural. More human when confidence is high.
     """
+    learned_confidence = prefs.get("learned_confidence", 0.0)
+
+    # §104: Se confiança alta, usar linguagem mais humana
+    if learned_confidence > 0.5:
+        templates = {
+            "PT": "Baseado nas tuas decisões anteriores.",
+            "DE": "Basierend auf deinen früheren Entscheidungen.",
+            "EN": "Based on your previous decisions."
+        }
+        return templates.get(lang, templates["EN"])
+
     reasons = []
 
     if choice_type == "flight":
-        if prefs.get("avoid_stops") is True or (isinstance(prefs.get("avoid_stops"), float) and prefs["avoid_stops"] > 0.7):
+        # Usar valores evoluídos para detectar preferências fortes
+        if prefs.get("direct_bonus", 200) > 220:
+            reasons.append({
+                "PT": "priorizas voos directos",
+                "DE": "du priorisierst Direktflüge",
+                "EN": "you prioritize direct flights"
+            })
+        elif prefs.get("avoid_stops") is True:
             reasons.append({
                 "PT": "evitas escalas",
                 "DE": "du vermeidest Zwischenstopps",
                 "EN": "you avoid layovers"
             })
-        if prefs.get("prefer_morning"):
+
+        if prefs.get("morning_bonus", 50) > 60:
+            reasons.append({
+                "PT": "gostas de partir cedo",
+                "DE": "du fliegst gerne früh",
+                "EN": "you like early departures"
+            })
+        elif prefs.get("prefer_morning"):
             reasons.append({
                 "PT": "preferes manhã",
                 "DE": "du bevorzugst morgens",
                 "EN": "you prefer mornings"
             })
+
         if prefs.get("price_sensitivity", 0.5) > 0.7:
             reasons.append({
                 "PT": "valorizas bom preço",
                 "DE": "du schätzt gute Preise",
                 "EN": "you value good prices"
+            })
+
+    if choice_type == "hotel":
+        if prefs.get("comfort_priority", 0.5) > 0.7:
+            reasons.append({
+                "PT": "valorizas conforto",
+                "DE": "du schätzt Komfort",
+                "EN": "you value comfort"
             })
 
     if not reasons:
@@ -942,16 +985,22 @@ def get_decisions(
 
 def mark_decision_feedback(decision_id: str, accepted: bool = None, ignored: bool = None):
     """
-    §100.5 — Record user feedback on a decision.
+    §100.5 + §104 — Record user feedback on a decision and evolve preferences.
 
     Called when user confirms or ignores a MARIA suggestion.
     This is the learning signal.
+
+    §104: Now also applies INCREMENTAL preference adjustments.
     """
     if not decision_id:
         return
 
     conn = get_connection()
     c = conn.cursor()
+
+    # Get the decision details before updating
+    c.execute("SELECT * FROM maria_decisions WHERE id = ?", (decision_id,))
+    decision_row = c.fetchone()
 
     if accepted is not None:
         c.execute(
@@ -967,6 +1016,76 @@ def mark_decision_feedback(decision_id: str, accepted: bool = None, ignored: boo
 
     conn.commit()
     conn.close()
+
+    # ─── §104 — Incremental preference evolution ───
+    if decision_row:
+        did = decision_row["did"] if "did" in decision_row.keys() else None
+        if did and (accepted or ignored):
+            _evolve_preferences_from_feedback(did, dict(decision_row), accepted, ignored)
+
+    status = "accepted" if accepted else "ignored" if ignored else "updated"
+    log.info(f"[MARIA §100.5] Decision {decision_id} marked as {status}")
+
+
+def _evolve_preferences_from_feedback(did: str, decision: dict, accepted: bool, ignored: bool):
+    """
+    §104 — Incremental preference evolution based on feedback.
+
+    Small adjustments over time → real personality emerges.
+    """
+    if not did:
+        return
+
+    # Get current preferences
+    prefs = get_travel_preferences(did)
+    decision_type = decision.get("decision_type")
+
+    # ─── Flight feedback ───
+    if decision_type == "flight":
+        is_direct = decision.get("decision_direct", False)
+        is_morning = decision.get("decision_morning", False)
+        price = decision.get("decision_price", 0)
+
+        if accepted:
+            # User liked this decision → reinforce similar patterns
+            if is_direct:
+                # Increase direct bonus (max 300)
+                new_bonus = min(300, prefs.get("direct_bonus", 200) + 15)
+                update_travel_preference(did, "direct_bonus", new_bonus)
+            else:
+                # User accepted a layover → decrease penalty
+                new_penalty = max(50, prefs.get("layover_penalty", 100) - 10)
+                update_travel_preference(did, "layover_penalty", new_penalty)
+
+            if is_morning:
+                # Increase morning bonus (max 80)
+                new_morning = min(80, prefs.get("morning_bonus", 50) + 8)
+                update_travel_preference(did, "morning_bonus", new_morning)
+
+            # Price learning: if user accepted low price, increase sensitivity
+            if price and price < 150:
+                new_sens = min(0.9, prefs.get("price_sensitivity", 0.5) + 0.05)
+                update_travel_preference(did, "price_sensitivity", new_sens)
+            elif price and price > 300:
+                new_sens = max(0.2, prefs.get("price_sensitivity", 0.5) - 0.05)
+                update_travel_preference(did, "price_sensitivity", new_sens)
+
+            # Increase learned confidence
+            new_conf = min(1.0, prefs.get("learned_confidence", 0) + 0.1)
+            update_travel_preference(did, "learned_confidence", new_conf)
+
+        elif ignored:
+            # User rejected this decision → adjust opposite direction
+            if is_direct:
+                # User ignored direct → maybe prefers cheaper with layover
+                new_bonus = max(100, prefs.get("direct_bonus", 200) - 10)
+                update_travel_preference(did, "direct_bonus", new_bonus)
+
+            # Slightly decrease confidence when ignored
+            new_conf = max(0.0, prefs.get("learned_confidence", 0) - 0.05)
+            update_travel_preference(did, "learned_confidence", new_conf)
+
+    log.info(f"[MARIA §104] Preferences evolved for {did[:20]}... (accepted={accepted})")
 
     status = "accepted" if accepted else "ignored" if ignored else "updated"
     log.info(f"[MARIA §100.5] Decision {decision_id} marked as {status}")

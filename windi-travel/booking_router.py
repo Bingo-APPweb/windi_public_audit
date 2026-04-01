@@ -385,51 +385,55 @@ def explain_context(context: dict, lang: str = "PT") -> str:
 # "O sistema não apresenta opções. Apresenta a melhor ação disponível."
 # ═══════════════════════════════════════════════════════════════════════════════
 
-def score_flight(f: dict, preferred_time: str = "morning", prefs: dict = None) -> float:
+def score_flight(f: dict, preferred_time: str = "morning", prefs: dict = None, context: dict = None) -> float:
     """
-    §98 — Score a flight for Nómada decision-making.
+    §104 — Score a flight for Nómada decision-making (Personalização Real).
 
-    Heurística v1.1 (personalizada):
-    - Usa preferências do DID quando disponíveis
-    - Voo directo: bónus baseado em avoid_stops
-    - Preço: peso baseado em price_sensitivity
-    - Horário: baseado em prefer_morning
+    Heurística v2.0 (evoluída):
+    - Usa campos EVOLUÍVEIS do Memory Engine (direct_bonus, layover_penalty, etc.)
+    - Personalização emerge do comportamento, não de settings
+    - Contexto (urgência) influencia score
     """
     if prefs is None:
-        prefs = {"avoid_stops": True, "price_sensitivity": 0.5, "prefer_morning": True, "comfort_priority": 0.5}
+        prefs = {
+            "avoid_stops": True, "price_sensitivity": 0.5, "prefer_morning": True,
+            "comfort_priority": 0.5, "direct_bonus": 200, "layover_penalty": 100,
+            "duration_weight": 0.5, "price_weight": 1.5, "morning_bonus": 50,
+            "learned_confidence": 0.0
+        }
+    if context is None:
+        context = {}
 
     score = 1000  # Base score
 
-    # Preço (peso dinâmico baseado em price_sensitivity)
+    # ─── PREÇO (campo evoluível: price_weight) ───
     price = f.get("price", 999)
-    price_weight = 1 + prefs.get("price_sensitivity", 0.5)  # 1.0 a 2.0
+    price_weight = prefs.get("price_weight", 1.5)
     score -= price * price_weight
 
-    # Duração (peso baseado em time_sensitivity)
+    # ─── DURAÇÃO (campo evoluível: duration_weight) ───
     duration = f.get("duration_min", f.get("duration_minutes", 999))
-    time_weight = 0.3 + prefs.get("time_sensitivity", 0.5) * 0.4  # 0.3 a 0.7
-    score -= duration * time_weight
+    duration_weight = prefs.get("duration_weight", 0.5)
+    score -= duration * duration_weight
 
-    # Voo directo: bónus dinâmico baseado em avoid_stops
+    # ─── VOO DIRECTO (campos evoluíveis: direct_bonus, layover_penalty) ───
     if f.get("direct", False):
-        avoid_stops = prefs.get("avoid_stops", True)
-        if avoid_stops is True or (isinstance(avoid_stops, float) and avoid_stops > 0.5):
-            score += 250  # Forte preferência por directo
-        else:
-            score += 100  # Bónus menor
+        # Usa bónus aprendido (pode variar de 100 a 300)
+        direct_bonus = prefs.get("direct_bonus", 200)
+        score += direct_bonus
     else:
-        # Penalizar escalas
+        # Penaliza escalas (pode variar de 50 a 150)
         stops = f.get("stops", len(f.get("layovers", [])))
-        avoid_stops = prefs.get("avoid_stops", True)
-        penalty = 150 if (avoid_stops is True or (isinstance(avoid_stops, float) and avoid_stops > 0.5)) else 80
-        score -= stops * penalty
+        layover_penalty = prefs.get("layover_penalty", 100)
+        score -= stops * layover_penalty
 
-    # Horário preferido
+    # ─── HORÁRIO (campo evoluível: morning_bonus) ───
     dep = f.get("departure", "")
+    morning_bonus = prefs.get("morning_bonus", 50)
     prefer_morning = prefs.get("prefer_morning", True)
 
     # Override com input explícito
-    if preferred_time == "morning" or (preferred_time == "morning" and prefer_morning):
+    if preferred_time == "morning":
         if "T06" in dep or "T07" in dep or "T08" in dep or "T09" in dep:
             score += 70
     elif preferred_time == "afternoon":
@@ -439,13 +443,29 @@ def score_flight(f: dict, preferred_time: str = "morning", prefs: dict = None) -
         if "T18" in dep or "T19" in dep or "T20" in dep:
             score += 70
     elif prefer_morning and ("T06" in dep or "T07" in dep or "T08" in dep or "T09" in dep):
-        score += 50  # Bónus implícito por preferência
+        # Usa bónus aprendido
+        score += morning_bonus
 
-    # Conforto (companhias premium)
+    # ─── CONFORTO (companhias premium) ───
     comfort = prefs.get("comfort_priority", 0.5)
     premium_airlines = ["TAP", "LH", "BA", "AF", "KLM", "Swiss"]
     if comfort > 0.6 and f.get("airline") in premium_airlines:
         score += 30
+
+    # ─── §99 CONTEXTO (urgência influencia score) ───
+    if context.get("time_pressure") == "high":
+        if f.get("direct", False):
+            score += 80  # Urgência valoriza directo ainda mais
+        # Duração pesa mais quando há pressa
+        score -= duration * 0.2
+
+    # ─── §104 CONFIANÇA (personalização forte quando há histórico) ───
+    learned_confidence = prefs.get("learned_confidence", 0.0)
+    if learned_confidence > 0.5:
+        # Amplifica os ajustes personalizados quando há confiança
+        personal_boost = 20 * learned_confidence
+        if f.get("direct", False) and prefs.get("avoid_stops", True):
+            score += personal_boost
 
     return score
 
@@ -1868,10 +1888,10 @@ async def maria_think_endpoint(req: ThinkRequest):
                 elif any(w in user_input.lower() for w in ["noite", "abend", "evening", "night"]):
                     preferred_time = "evening"
 
-                # Score com preferências + contexto vivo
+                # §104 — Score com preferências evoluíveis + contexto vivo
                 def score_with_context(f):
-                    base = score_flight(f, preferred_time, travel_prefs)
-                    return apply_context_to_score(base, f, live_context)
+                    # Contexto agora integrado no score_flight
+                    return score_flight(f, preferred_time, travel_prefs, live_context)
 
                 best_flight = max(flight_list, key=score_with_context)
                 alternatives = [f for f in flight_list if f != best_flight][:2]
