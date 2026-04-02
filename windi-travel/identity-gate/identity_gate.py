@@ -2444,6 +2444,7 @@ body.lang-pt [data-lang="pt"] {{ display: inline; }}
             <img id="previewImg" src="" alt="Preview">
             <div class="preview-label" id="previewLabel"></div>
             <div class="hash-preview" id="hashPreview" style="display:none;font-family:'Courier New',monospace;font-size:10px;color:var(--gold);margin:8px 0;"></div>
+            <div class="gps-status" id="gpsStatus" style="font-size:11px;color:var(--gold);margin:8px 0;cursor:pointer;" onclick="captureGPS()">📍 ...</div>
             <button class="seal-btn" id="sealBtn" onclick="sealMoment()">
                 <span data-lang="de">🔒 Im Ledger versiegeln</span><span data-lang="en">🔒 Seal to Ledger</span><span data-lang="pt">🔒 Selar no Ledger</span>
             </button>
@@ -2511,6 +2512,9 @@ var WINDI_USER_NAME = '{user_name}';
 var currentFile = null;
 var currentHash = '';
 var currentLang = 'de';
+// W-PRESENCE-002 — GPS Reverse Geocoding
+var currentLocation = null;  // {{lat, lng, accuracy}}
+var currentPlaceName = '';   // "Kempten (Allgäu) · Bayern · Deutschland"
 
 // ══ i18n Strings (DE|EN|PT) ══
 var I18N = {{
@@ -2539,6 +2543,22 @@ var I18N = {{
         de: 'Keine Verbindung zum Server',
         en: 'No connection to server',
         pt: 'Sem ligação ao servidor'
+    }},
+    // W-PRESENCE-002 — GPS Geocoding
+    gpsCapturing: {{
+        de: '📍 Standort erfassen...',
+        en: '📍 Capturing location...',
+        pt: '📍 A capturar localização...'
+    }},
+    gpsReady: {{
+        de: '📍 Standort erfasst',
+        en: '📍 Location captured',
+        pt: '📍 Localização capturada'
+    }},
+    gpsError: {{
+        de: '📍 Standort nicht verfügbar',
+        en: '📍 Location not available',
+        pt: '📍 Localização não disponível'
     }},
     verify: {{
         de: 'verifizieren',
@@ -2665,6 +2685,71 @@ async function hashFileAsync(file) {{
     }}
 }}
 
+// W-PRESENCE-002 — GPS Reverse Geocoding
+function captureGPS() {{
+    var gpsStatus = document.getElementById('gpsStatus');
+    if (!gpsStatus) return;
+
+    if (!navigator.geolocation) {{
+        gpsStatus.textContent = t('gpsError');
+        gpsStatus.style.color = '#B5360C';
+        return;
+    }}
+
+    gpsStatus.textContent = t('gpsCapturing');
+    gpsStatus.style.color = '#8B6914';
+
+    navigator.geolocation.getCurrentPosition(
+        function(pos) {{
+            currentLocation = {{
+                lat: pos.coords.latitude,
+                lng: pos.coords.longitude,
+                accuracy: pos.coords.accuracy
+            }};
+
+            // Reverse geocoding via Nominatim
+            var url = 'https://nominatim.openstreetmap.org/reverse?lat=' +
+                currentLocation.lat + '&lon=' + currentLocation.lng +
+                '&format=json&accept-language=' + currentLang;
+
+            fetch(url, {{
+                headers: {{ 'User-Agent': 'WINDI-Travel/1.0' }}
+            }})
+            .then(function(r) {{ return r.json(); }})
+            .then(function(data) {{
+                var addr = data.address || {{}};
+                var city = addr.city || addr.town || addr.village || addr.municipality || '';
+                var state = addr.state || '';
+                var country = addr.country || '';
+                var parts = [city, state, country].filter(function(p) {{ return p; }});
+                currentPlaceName = parts.join(' · ');
+
+                gpsStatus.textContent = '📍 ' + (currentPlaceName || currentLocation.lat.toFixed(4) + ', ' + currentLocation.lng.toFixed(4));
+                gpsStatus.style.color = '#2D6A4F';
+                console.log('[W-PRESENCE-002] GPS:', currentPlaceName);
+            }})
+            .catch(function() {{
+                currentPlaceName = currentLocation.lat.toFixed(4) + ', ' + currentLocation.lng.toFixed(4);
+                gpsStatus.textContent = '📍 ' + currentPlaceName;
+                gpsStatus.style.color = '#2D6A4F';
+            }});
+        }},
+        function(err) {{
+            console.warn('[GPS] Error:', err.message);
+            gpsStatus.textContent = t('gpsError');
+            gpsStatus.style.color = '#B5360C';
+            currentLocation = null;
+            currentPlaceName = '';
+        }},
+        {{ enableHighAccuracy: true, timeout: 10000 }}
+    );
+}}
+
+// Auto-capture GPS on page load
+document.addEventListener('DOMContentLoaded', function() {{
+    setTimeout(captureGPS, 500);
+}});
+
 async function sealMoment() {{
     if (!currentFile || !currentHash || currentHash.length !== 64) {{
         showSealError(t('selectFileFirst'));
@@ -2683,7 +2768,8 @@ async function sealMoment() {{
                 hash: currentHash,
                 name: currentFile.name,
                 type: currentFile.type,
-                note: document.getElementById('momentLabel').value || ''
+                note: document.getElementById('momentLabel').value || '',
+                place_name: currentPlaceName || ''  // W-PRESENCE-002
             }})
         }});
 
