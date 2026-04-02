@@ -33,10 +33,20 @@ import uuid
 import sqlite3
 import re
 import requests
+import logging
 from datetime import datetime, timezone
 from dataclasses import dataclass, asdict
 from typing import Optional, Dict, Any, Tuple
 from pathlib import Path
+
+# W-PRESENCE-002 — Reverse Geocoding
+try:
+    from reverse_geocode import reverse_geocode
+    GEOCODE_ENABLED = True
+except ImportError:
+    GEOCODE_ENABLED = False
+
+log = logging.getLogger("w-presence-001")
 
 # ==============================================================================
 # CONFIGURAÇÃO
@@ -239,7 +249,8 @@ def compose_presence_payload(
     session_id: Optional[str] = None,
     title: Optional[str] = None,
     location: Optional[Dict[str, Any]] = None,
-    evidence: Optional[Dict[str, Any]] = None
+    evidence: Optional[Dict[str, Any]] = None,
+    lang: str = "de"  # W-PRESENCE-002: para reverse geocoding
 ) -> PresencePayload:
     """
     Compõe payload de presença para selagem.
@@ -271,12 +282,32 @@ def compose_presence_payload(
     normalized_title = normalize_text(title) if title else ""
 
     # CANONICAL LOCATION (estrutura fixa, mesmo com valores vazios)
+    loc_mode = location.get("mode", "none") if location else "none"
+    loc_lat = location.get("lat") if location else None
+    loc_lng = location.get("lng") if location else None
+    loc_label = normalize_text(location.get("label", "")) if location else ""
+
+    # W-PRESENCE-002 — Reverse Geocoding: enriquecer label automaticamente
+    # Se GPS válido + label vazio → buscar nome do lugar
+    if (GEOCODE_ENABLED and
+        loc_mode == "gps" and
+        loc_lat is not None and
+        loc_lng is not None and
+        not loc_label):
+        try:
+            geo_result = reverse_geocode(loc_lat, loc_lng, lang)
+            if geo_result.get("success") and geo_result.get("label"):
+                loc_label = geo_result["label"]
+                log.info(f"[W-PRESENCE-002] Enriched location: {loc_label}")
+        except Exception as e:
+            log.warning(f"[W-PRESENCE-002] Geocode failed: {e}")
+
     loc = Location(
-        mode=location.get("mode", "none") if location else "none",
-        lat=location.get("lat") if location else None,
-        lng=location.get("lng") if location else None,
+        mode=loc_mode,
+        lat=loc_lat,
+        lng=loc_lng,
         precision_m=location.get("precision_m") if location else None,
-        label=normalize_text(location.get("label", "")) if location else ""
+        label=loc_label
     )
 
     # CANONICAL EVIDENCE (estrutura fixa, NUNCA conteúdo bruto)
@@ -518,7 +549,8 @@ def seal_presence(
     session_id: Optional[str] = None,
     title: Optional[str] = None,
     location: Optional[Dict[str, Any]] = None,
-    evidence: Optional[Dict[str, Any]] = None
+    evidence: Optional[Dict[str, Any]] = None,
+    lang: str = "de"  # W-PRESENCE-002: para reverse geocoding
 ) -> SealResult:
     """
     Função principal: declara e sela um momento de presença.
@@ -564,7 +596,8 @@ def seal_presence(
         session_id=session_id,
         title=title,
         location=location,
-        evidence=evidence
+        evidence=evidence,
+        lang=lang
     )
 
     # 2. Calcular hash
@@ -693,7 +726,7 @@ def get_presence_by_receipt(receipt_id: str) -> Optional[dict]:
 # MODULE INFO
 # ==============================================================================
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"  # +W-PRESENCE-002 Reverse Geocoding
 __module__ = "W-PRESENCE-001"
 __author__ = "WINDI Publishing House"
-__invariants__ = ["I14", "I9", "I11"]
+__invariants__ = ["I14", "I9", "I11", "I12"]  # +I12 Language Sovereign
