@@ -440,6 +440,254 @@ body {
 .tag-live { background: rgba(59,130,246,0.15); color: #3B82F6; }
 
 /* ═══════════════════════════════════════════════════════════════════════════
+   W-PRESENCE-001 — TIMELINE (MEUS MOMENTOS)
+   "A prova mostra um momento. A memória mostra quem você está se tornando."
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Timeline Header */
+.timeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 0 4px;
+}
+.timeline-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.timeline-count {
+  font-size: 12px;
+  color: var(--text-3);
+  font-family: var(--mono);
+  padding: 2px 8px;
+  background: var(--bg-2);
+  border-radius: 10px;
+}
+
+/* Timeline Loading */
+.timeline-loading {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-3);
+  font-size: 14px;
+}
+.timeline-loading::before {
+  content: '◉';
+  display: block;
+  font-size: 24px;
+  margin-bottom: 8px;
+  animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+/* Empty State */
+.timeline-empty {
+  text-align: center;
+  padding: 60px 24px;
+}
+.timeline-empty-icon {
+  font-size: 56px;
+  margin-bottom: 20px;
+  opacity: 0.6;
+}
+.timeline-empty-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-2);
+  margin-bottom: 8px;
+}
+.timeline-empty-sub {
+  font-size: 14px;
+  color: var(--text-3);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* Timeline List */
+.timeline-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Day Group */
+.timeline-day {
+  margin-bottom: 8px;
+}
+.timeline-day-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0 4px;
+  margin-bottom: 10px;
+}
+
+/* Moment Card */
+.moment-card {
+  position: relative;
+  padding: 14px 16px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.moment-card:hover {
+  background: var(--bg-3);
+  border-color: var(--border-2);
+}
+
+/* P1/P2/P3 Visual Differentiation */
+.moment-card.p1 {
+  border-left: 3px solid var(--text-3);
+}
+.moment-card.p2 {
+  border-left: 3px solid #0d6efd;
+  background: linear-gradient(90deg, rgba(13,110,253,0.03) 0%, transparent 30%);
+}
+.moment-card.p3 {
+  border-left: 3px solid #198754;
+  background: linear-gradient(90deg, rgba(25,135,84,0.05) 0%, transparent 30%);
+}
+.moment-card.p3::before {
+  content: '◉';
+  position: absolute;
+  top: 14px;
+  left: -12px;
+  font-size: 8px;
+  color: #198754;
+}
+
+/* Card Header */
+.moment-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.moment-time {
+  font-size: 12px;
+  color: var(--text-3);
+  font-family: var(--mono);
+}
+.moment-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+.moment-badge.p1 { background: rgba(108,117,125,0.15); color: var(--text-3); }
+.moment-badge.p2 { background: rgba(13,110,253,0.15); color: #0d6efd; }
+.moment-badge.p3 { background: rgba(25,135,84,0.15); color: #198754; }
+
+/* Card Content */
+.moment-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+.moment-intent {
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.moment-location {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-3);
+  margin-top: 6px;
+}
+.moment-location-icon { font-size: 11px; }
+
+/* Card Footer */
+.moment-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+.moment-verify-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--gold);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.15s;
+}
+.moment-verify-btn:hover {
+  background: var(--gold-bg);
+}
+.moment-expand-btn {
+  font-size: 11px;
+  color: var(--text-3);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+.moment-expand-btn:hover { color: var(--text); }
+
+/* Expanded Details */
+.moment-details {
+  display: none;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border);
+}
+.moment-card.expanded .moment-details { display: block; }
+.moment-detail-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 10px;
+}
+.moment-detail-row:last-child { margin-bottom: 0; }
+.moment-detail-label {
+  font-size: 10px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.moment-detail-value {
+  font-size: 12px;
+  color: var(--text-2);
+  font-family: var(--mono);
+  word-break: break-all;
+}
+.moment-detail-value a {
+  color: var(--gold);
+  text-decoration: none;
+}
+.moment-detail-value a:hover { text-decoration: underline; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
    MARIA MODE — Travel Companion (P3-B)
    ═══════════════════════════════════════════════════════════════════════════ */
 
@@ -1544,19 +1792,34 @@ body {
     <button class="capture-btn" onclick="triggerCapture('capture')" data-i18n="capture_btn">Moment aufnehmen</button>
   </div>
 
-  <!-- THREAD MODE -->
+  <!-- THREAD MODE — MEUS MOMENTOS (W-PRESENCE-001 Timeline) -->
   <div class="mode-view" id="mode-thread">
-    <div class="thread-header">
-      <h2 class="thread-title" data-i18n="thread_title">Dein Faden</h2>
-      <span class="thread-count" id="thread-count">0</span>
+    <!-- Timeline Header -->
+    <div class="timeline-header">
+      <h2 class="timeline-title">
+        <span>🛡️</span>
+        <span data-i18n="timeline_title">Meine Momente</span>
+      </h2>
+      <span class="timeline-count" id="timeline-count">0</span>
     </div>
 
-    <div class="thread-empty" id="thread-empty">
-      <div class="thread-empty-icon">🧵</div>
-      <p data-i18n="thread_empty">Noch keine Momente. Beginne mit der Rettung.</p>
+    <!-- Empty State (poetic, not technical) -->
+    <div class="timeline-empty" id="timeline-empty" style="display:none;">
+      <div class="timeline-empty-icon">🌅</div>
+      <p class="timeline-empty-title" data-i18n="timeline_empty_title">Noch keine Momente versiegelt.</p>
+      <p class="timeline-empty-sub" data-i18n="timeline_empty_sub">Wenn du bereit bist, beginnt der erste mit dir.</p>
     </div>
 
-    <div class="thread-list" id="thread-list"></div>
+    <!-- Loading State -->
+    <div class="timeline-loading" id="timeline-loading" style="display:none;">
+      <span data-i18n="timeline_loading">Lade Momente…</span>
+    </div>
+
+    <!-- Timeline List (populated by JS) -->
+    <div class="timeline-list" id="timeline-list"></div>
+
+    <!-- Legacy thread list (for rescued media without presence seal) -->
+    <div class="thread-list" id="thread-list" style="margin-top:24px;"></div>
   </div>
 
   <!-- MARIA MODE (P3-B) — Travel Companion -->
@@ -2106,6 +2369,60 @@ const TRAVEL_I18N = {
   presence_p2: { de: "P2 · Kontextuell", pt: "P2 · Contextual", en: "P2 · Contextual" },
   presence_p3: { de: "P3 · Räumlich", pt: "P3 · Espacial", en: "P3 · Spatial" },
 
+  // ── TIMELINE (MEUS MOMENTOS) ──
+  timeline_title: {
+    de: "Meine Momente",
+    pt: "Meus Momentos",
+    en: "My Moments"
+  },
+  timeline_empty_title: {
+    de: "Noch keine Momente versiegelt.",
+    pt: "Ainda não selaste nenhum momento.",
+    en: "No moments sealed yet."
+  },
+  timeline_empty_sub: {
+    de: "Wenn du bereit bist, beginnt der erste mit dir.",
+    pt: "Quando estiveres pronto, o primeiro começa contigo.",
+    en: "When you're ready, the first one starts with you."
+  },
+  timeline_loading: {
+    de: "Lade Momente…",
+    pt: "A carregar momentos…",
+    en: "Loading moments…"
+  },
+  timeline_verify: {
+    de: "Prüfen",
+    pt: "Verificar",
+    en: "Verify"
+  },
+  timeline_expand: {
+    de: "Details",
+    pt: "Detalhes",
+    en: "Details"
+  },
+  timeline_collapse: {
+    de: "Weniger",
+    pt: "Menos",
+    en: "Less"
+  },
+  timeline_content_hash: {
+    de: "Inhalts-Hash",
+    pt: "Hash do Conteúdo",
+    en: "Content Hash"
+  },
+  timeline_evidence: {
+    de: "Beweis",
+    pt: "Evidência",
+    en: "Evidence"
+  },
+  timeline_precision: {
+    de: "Genauigkeit",
+    pt: "Precisão",
+    en: "Precision"
+  },
+  timeline_today: { de: "Heute", pt: "Hoje", en: "Today" },
+  timeline_yesterday: { de: "Gestern", pt: "Ontem", en: "Yesterday" },
+
   // ── THREAD ──
   thread_title: {
     de: "Dein Faden",
@@ -2234,9 +2551,9 @@ function setMode(mode) {
   document.getElementById(`mode-${mode}`)?.classList.add('active');
   document.getElementById(`nav-${mode}`)?.classList.add('active');
 
-  // Update thread on switch
+  // Update timeline + thread on switch
   if (mode === 'thread') {
-    renderThread();
+    renderTimeline();  // W-PRESENCE-001: Presence moments
   }
 }
 
@@ -3356,8 +3673,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // §102 — WhereAmI geo auto-detection
   initWhereAmI();
 
-  // Render thread
-  renderThread();
+  // W-PRESENCE-001 — Render timeline (includes legacy thread)
+  renderTimeline();
 
   // Update forensic whisper with geo
   if (navigator.geolocation) {
@@ -3957,6 +4274,218 @@ function showPresenceResult(result) {
 // closePresenceResult() — Close the result modal
 function closePresenceResult() {
   document.getElementById('presence-result').classList.remove('active');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// W-PRESENCE-001 — PHASE 5: TIMELINE (MEUS MOMENTOS)
+// "A prova mostra um momento. A memória mostra quem você está se tornando."
+// ═══════════════════════════════════════════════════════════════════════════
+
+// renderTimeline() — Fetch and render presence moments
+async function renderTimeline() {
+  const container = document.getElementById('timeline-list');
+  const empty = document.getElementById('timeline-empty');
+  const loading = document.getElementById('timeline-loading');
+  const countEl = document.getElementById('timeline-count');
+
+  if (!container) return;
+
+  // Show loading
+  empty.style.display = 'none';
+  loading.style.display = 'block';
+  container.innerHTML = '';
+
+  try {
+    const res = await fetch('/travel/presence/list');
+
+    if (!res.ok) {
+      if (res.status === 401) {
+        // Not authenticated — show empty state
+        loading.style.display = 'none';
+        empty.style.display = 'block';
+        countEl.textContent = '0';
+        return;
+      }
+      throw new Error(`HTTP ${res.status}`);
+    }
+
+    const data = await res.json();
+    const moments = data.moments || [];
+
+    loading.style.display = 'none';
+    countEl.textContent = moments.length;
+
+    if (moments.length === 0) {
+      empty.style.display = 'block';
+      return;
+    }
+
+    // Group moments by day
+    const grouped = groupMomentsByDay(moments);
+
+    // Render groups
+    let html = '';
+    for (const [dayLabel, dayMoments] of Object.entries(grouped)) {
+      html += `<div class="timeline-day">`;
+      html += `<div class="timeline-day-label">${dayLabel}</div>`;
+      for (const m of dayMoments) {
+        html += renderMomentCard(m);
+      }
+      html += `</div>`;
+    }
+
+    container.innerHTML = html;
+
+    // Also render legacy thread
+    await renderThread();
+
+  } catch (err) {
+    console.error('[W-PRESENCE-001] Timeline error:', err);
+    loading.style.display = 'none';
+    empty.style.display = 'block';
+    countEl.textContent = '0';
+  }
+}
+
+// groupMomentsByDay() — Group moments by calendar day
+function groupMomentsByDay(moments) {
+  const groups = {};
+  const today = new Date().toDateString();
+  const yesterday = new Date(Date.now() - 86400000).toDateString();
+
+  for (const m of moments) {
+    const date = new Date(m.declared_at);
+    const dateStr = date.toDateString();
+
+    let label;
+    if (dateStr === today) {
+      label = TRAVEL_I18N.timeline_today?.[LANG] || 'Today';
+    } else if (dateStr === yesterday) {
+      label = TRAVEL_I18N.timeline_yesterday?.[LANG] || 'Yesterday';
+    } else {
+      label = date.toLocaleDateString(
+        LANG === 'de' ? 'de-DE' : LANG === 'pt' ? 'pt-PT' : 'en-GB',
+        { day: 'numeric', month: 'long', year: 'numeric' }
+      );
+    }
+
+    if (!groups[label]) groups[label] = [];
+    groups[label].push(m);
+  }
+
+  return groups;
+}
+
+// renderMomentCard() — Render a single moment card
+function renderMomentCard(m) {
+  const level = (m.presence_level || 'P1').toLowerCase();
+  const time = new Date(m.declared_at).toLocaleTimeString(
+    LANG === 'de' ? 'de-DE' : LANG === 'pt' ? 'pt-PT' : 'en-GB',
+    { hour: '2-digit', minute: '2-digit' }
+  );
+
+  // Badge text
+  const badgeText = TRAVEL_I18N[`presence_${level}`]?.[LANG] || m.presence_level;
+
+  // Title or fallback
+  const title = m.title || '';
+  const intentPreview = (m.intent || '').substring(0, 100) + (m.intent?.length > 100 ? '…' : '');
+
+  // Location if available
+  let locationHtml = '';
+  if (m.location_lat && m.location_lng) {
+    const locLabel = m.location_label || `${m.location_lat.toFixed(2)}°, ${m.location_lng.toFixed(2)}°`;
+    locationHtml = `
+      <div class="moment-location">
+        <span class="moment-location-icon">📍</span>
+        <span>${locLabel}</span>
+      </div>
+    `;
+  }
+
+  // Verify URL
+  const verifyUrl = m.verify_url || `https://windi-domain.com/verify-public/?id=${m.receipt_id}`;
+  const verifyLabel = TRAVEL_I18N.timeline_verify?.[LANG] || 'Verify';
+  const expandLabel = TRAVEL_I18N.timeline_expand?.[LANG] || 'Details';
+
+  // Details section (hidden by default)
+  let detailsHtml = `
+    <div class="moment-details">
+      <div class="moment-detail-row">
+        <span class="moment-detail-label">${TRAVEL_I18N.timeline_content_hash?.[LANG] || 'Content Hash'}</span>
+        <span class="moment-detail-value">${(m.content_hash || '—').substring(0, 32)}…</span>
+      </div>
+  `;
+
+  if (m.evidence_hash) {
+    detailsHtml += `
+      <div class="moment-detail-row">
+        <span class="moment-detail-label">${TRAVEL_I18N.timeline_evidence?.[LANG] || 'Evidence'}</span>
+        <span class="moment-detail-value">${m.evidence_type || 'file'} · ${m.evidence_hash.substring(0, 16)}…</span>
+      </div>
+    `;
+  }
+
+  if (m.location_precision) {
+    detailsHtml += `
+      <div class="moment-detail-row">
+        <span class="moment-detail-label">${TRAVEL_I18N.timeline_precision?.[LANG] || 'Precision'}</span>
+        <span class="moment-detail-value">±${m.location_precision}m</span>
+      </div>
+    `;
+  }
+
+  detailsHtml += `
+      <div class="moment-detail-row">
+        <span class="moment-detail-label">Verify URL</span>
+        <span class="moment-detail-value"><a href="${verifyUrl}" target="_blank">${verifyUrl}</a></span>
+      </div>
+    </div>
+  `;
+
+  return `
+    <div class="moment-card ${level}" data-receipt="${m.receipt_id}" onclick="toggleMomentDetails(this, event)">
+      <div class="moment-header">
+        <span class="moment-time">◉ ${time}</span>
+        <span class="moment-badge ${level}">${badgeText}</span>
+      </div>
+      ${title ? `<div class="moment-title">${escapeHtml(title)}</div>` : ''}
+      <div class="moment-intent">${escapeHtml(intentPreview)}</div>
+      ${locationHtml}
+      <div class="moment-footer">
+        <a href="${verifyUrl}" target="_blank" class="moment-verify-btn" onclick="event.stopPropagation()">
+          🔗 ${verifyLabel}
+        </a>
+        <button class="moment-expand-btn">${expandLabel}</button>
+      </div>
+      ${detailsHtml}
+    </div>
+  `;
+}
+
+// toggleMomentDetails() — Expand/collapse moment details
+function toggleMomentDetails(card, event) {
+  // Don't toggle if clicking on verify link
+  if (event.target.closest('.moment-verify-btn')) return;
+
+  card.classList.toggle('expanded');
+
+  // Update button text
+  const btn = card.querySelector('.moment-expand-btn');
+  if (btn) {
+    const isExpanded = card.classList.contains('expanded');
+    btn.textContent = isExpanded
+      ? (TRAVEL_I18N.timeline_collapse?.[LANG] || 'Less')
+      : (TRAVEL_I18N.timeline_expand?.[LANG] || 'Details');
+  }
+}
+
+// escapeHtml() — Escape HTML entities for safe rendering
+function escapeHtml(text) {
+  if (!text) return '';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
 }
 </script>
 
