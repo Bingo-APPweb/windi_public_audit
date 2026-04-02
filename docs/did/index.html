@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DID — Decentralized Identity | WINDI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,600;12..96,700;12..96,800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #111111;
+    --bg-card: #161616;
+    --bg-card-hover: #1a1a1a;
+    --border: #222222;
+    --border-accent: #c8a44e;
+    --text-primary: #e8e4dc;
+    --text-secondary: #9a9590;
+    --text-muted: #5a5550;
+    --gold: #c8a44e;
+    --gold-dim: #a88a3e;
+    --gold-glow: rgba(200,164,78,0.15);
+    --green: #3ecf8e;
+    --yellow: #e8c547;
+    --orange: #e8944e;
+    --red: #e85c4e;
+    --blue: #4ea4e8;
+    --purple: #9a6ee8;
+  }
+
+  [data-theme="klar"] {
+    --bg-primary: #f5f2ed;
+    --bg-secondary: #eae6df;
+    --bg-card: #ffffff;
+    --bg-card-hover: #faf8f5;
+    --border: #d6d0c8;
+    --border-accent: #a88a3e;
+    --text-primary: #1a1816;
+    --text-secondary: #5a5550;
+    --text-muted: #9a9590;
+    --gold: #a88a3e;
+    --gold-dim: #8a7030;
+    --gold-glow: rgba(168,138,62,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.7;
+    min-height: 100vh;
+    transition: background 0.4s ease, color 0.4s ease;
+  }
+
+  /* HEADER */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(20px);
+  }
+
+  .header-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo {
+    font-family: 'Bricolage Grotesque', serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: var(--gold);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .logo-sub {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-left: 0.5rem;
+  }
+
+  .header-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .lang-toggle {
+    display: flex;
+    gap: 0.25rem;
+  }
+
+  .lang-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.7rem;
+    font-family: 'JetBrains Mono', monospace;
+    transition: all 0.2s;
+  }
+
+  .lang-btn:hover, .lang-btn.active {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: var(--gold-glow);
+  }
+
+  .theme-toggle {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    padding: 0.4rem 0.7rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  /* HERO */
+  .hero {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 4rem 2rem 3rem;
+    text-align: center;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--gold-glow);
+    border: 1px solid var(--border-accent);
+    padding: 0.4rem 1rem;
+    border-radius: 100px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+  }
+
+  .hero h1 {
+    font-family: 'Bricolage Grotesque', serif;
+    font-size: clamp(2.2rem, 5vw, 3rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+
+  .hero h1 span { color: var(--gold); }
+
+  .hero p {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    max-width: 700px;
+    margin: 0 auto;
+    font-weight: 300;
+  }
+
+  /* FLOW DIAGRAM */
+  .flow-diagram {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 2rem 0;
+    flex-wrap: wrap;
+  }
+
+  .flow-step {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: 0.8rem 1.2rem;
+    border-radius: 8px;
+    text-align: center;
+    min-width: 100px;
+  }
+
+  .flow-step-icon { font-size: 1.5rem; margin-bottom: 0.3rem; }
+  .flow-step-name {
+    font-family: 'Bricolage Grotesque', serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--gold);
+  }
+  .flow-step-desc {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+  }
+
+  .flow-arrow {
+    font-size: 1.2rem;
+    color: var(--gold);
+  }
+
+  /* SECTIONS */
+  .section {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem 2rem;
+  }
+
+  .section-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .section-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-title {
+    font-family: 'Bricolage Grotesque', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+  }
+
+  .section-title span { color: var(--gold); }
+
+  /* CARDS GRID */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--card-accent, var(--gold));
+  }
+
+  .card:hover {
+    border-color: var(--border-accent);
+    transform: translateY(-2px);
+  }
+
+  .card-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+  .card-title {
+    font-family: 'Bricolage Grotesque', serif;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  .card-desc {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 300;
+  }
+  .card-port {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--gold);
+    margin-top: 0.75rem;
+    display: inline-block;
+    background: var(--gold-glow);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  /* LAYERS */
+  .layer-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .layer-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .layer-num {
+    font-family: 'Bricolage Grotesque', serif;
+    font-weight: 800;
+    font-size: 2rem;
+    color: var(--gold);
+    opacity: 0.5;
+  }
+
+  .layer-info h3 {
+    font-family: 'Bricolage Grotesque', serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .layer-info p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .layer-content {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+  }
+
+  .layer-content code {
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--bg-secondary);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: var(--gold);
+  }
+
+  /* TABLE */
+  .table-wrap {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 1rem;
+  }
+
+  table { width: 100%; border-collapse: collapse; }
+
+  thead { background: var(--bg-secondary); }
+
+  th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    padding: 0.8rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 0.7rem 1rem;
+    font-size: 0.85rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--bg-card-hover); }
+
+  td:first-child {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--gold);
+    font-size: 0.8rem;
+  }
+
+  /* TRUST LEVELS */
+  .trust-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  @media (max-width: 700px) {
+    .trust-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .trust-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .trust-level {
+    font-family: 'Bricolage Grotesque', serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    color: var(--gold);
+  }
+
+  .trust-name {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-bottom: 0.3rem;
+  }
+
+  .trust-score {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+  }
+
+  /* CODE BLOCK */
+  .code-block {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    overflow-x: auto;
+    margin: 1rem 0;
+  }
+
+  .code-block .comment { color: var(--text-muted); }
+  .code-block .key { color: var(--gold); }
+  .code-block .value { color: var(--green); }
+
+  /* INVARIANTS */
+  .invariant-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .invariant-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+
+  .invariant-id {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--red);
+    font-weight: 600;
+  }
+
+  .invariant-name {
+    font-family: 'Bricolage Grotesque', serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin: 0.3rem 0;
+  }
+
+  .invariant-desc {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  /* STATS */
+  .stats-grid {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin: 2rem 0;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-value {
+    font-family: 'Bricolage Grotesque', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--gold);
+  }
+
+  .stat-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* QUOTE */
+  .quote {
+    background: var(--gold-glow);
+    border-left: 3px solid var(--gold);
+    padding: 1.5rem;
+    margin: 2rem 0;
+    border-radius: 0 8px 8px 0;
+  }
+
+  .quote-text {
+    font-family: 'Bricolage Grotesque', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-style: italic;
+  }
+
+  .quote-author {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+  }
+
+  /* DIVIDER */
+  .divider {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .divider hr {
+    border: none;
+    border-top: 1px solid var(--border);
+  }
+
+  /* FOOTER */
+  footer {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+
+  .footer-principle {
+    font-family: 'Bricolage Grotesque', serif;
+    font-size: 1rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .footer-principle strong { color: var(--gold); }
+
+  .footer-meta {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .footer-back {
+    display: inline-block;
+    margin-top: 1.5rem;
+    font-size: 0.8rem;
+    color: var(--gold);
+    text-decoration: none;
+    border: 1px solid var(--border);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+
+  .footer-back:hover {
+    background: var(--gold-glow);
+    border-color: var(--gold);
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .header-inner { padding: 0.8rem 1rem; }
+    .hero { padding: 2.5rem 1rem 2rem; }
+    .section { padding: 1.5rem 1rem; }
+    .flow-diagram { gap: 0.3rem; }
+    .flow-step { min-width: 80px; padding: 0.5rem 0.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="logo" href="/docs/">
+      WINDI <span class="logo-sub" data-i18n="header-sub">Identity</span>
+    </a>
+    <div class="header-controls">
+      <div class="lang-toggle">
+        <button class="lang-btn" data-lang="de">DE</button>
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="pt">PT</button>
+      </div>
+      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Noir/Klar">&#9684;</button>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">DID REPORT v1.0 &mdash; 02 Apr 2026</div>
+  <h1><span>DID</span> &mdash; <span data-i18n="hero-title">The Seed of WINDI</span></h1>
+  <p data-i18n="hero-desc">Decentralized Identity is the foundation of all WINDI governance. From lead to wallet, from document to proof, identity is the thread that weaves everything together.</p>
+
+  <div class="flow-diagram">
+    <div class="flow-step">
+      <div class="flow-step-icon">&#9829;</div>
+      <div class="flow-step-name">ALMA</div>
+      <div class="flow-step-desc" data-i18n="flow-alma">Seed</div>
+    </div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="flow-step">
+      <div class="flow-step-icon">&#128273;</div>
+      <div class="flow-step-name">DID</div>
+      <div class="flow-step-desc" data-i18n="flow-did">Identity</div>
+    </div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="flow-step">
+      <div class="flow-step-icon">&#129504;</div>
+      <div class="flow-step-name" data-i18n="flow-cerebro-title">CEREBRO</div>
+      <div class="flow-step-desc" data-i18n="flow-cerebro">Context</div>
+    </div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="flow-step">
+      <div class="flow-step-icon">&#128274;</div>
+      <div class="flow-step-name">LEDGER</div>
+      <div class="flow-step-desc" data-i18n="flow-ledger">Proof</div>
+    </div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="flow-step">
+      <div class="flow-step-icon">&#127758;</div>
+      <div class="flow-step-name">MUNDO</div>
+      <div class="flow-step-desc" data-i18n="flow-mundo">World</div>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat">
+      <div class="stat-value">11</div>
+      <div class="stat-label">Pioneers</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">5</div>
+      <div class="stat-label" data-i18n="stat-layers">Layers</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">T1&ndash;T5</div>
+      <div class="stat-label" data-i18n="stat-trust">Trust Levels</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">Ed25519</div>
+      <div class="stat-label" data-i18n="stat-crypto">Crypto</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><hr></div>
+
+<!-- 5 LAYERS -->
+<section class="section">
+  <div class="section-header">
+    <div class="section-tag" data-i18n="layers-tag">Architecture</div>
+    <div class="section-title" data-i18n="layers-title">The 5 Layers of <span>Identity</span></div>
+  </div>
+
+  <div class="layer-card">
+    <div class="layer-header">
+      <div class="layer-num">0</div>
+      <div class="layer-info">
+        <h3>ALMA &mdash; Lead Inception</h3>
+        <p>Port :8096 &middot; ID Genesis</p>
+      </div>
+    </div>
+    <div class="layer-content" data-i18n="layer0-desc">
+      The entry point. Leads captured from landing pages are stored in an append-only ledger with hash chain integrity. <strong>Never processed without human approval (I1).</strong>
+    </div>
+  </div>
+
+  <div class="layer-card">
+    <div class="layer-header">
+      <div class="layer-num">1</div>
+      <div class="layer-info">
+        <h3>DID &mdash; Wallet Bridge</h3>
+        <p>Lead &rarr; Wallet Conversion</p>
+      </div>
+    </div>
+    <div class="layer-content" data-i18n="layer1-desc">
+      When a lead is <strong>approved by human</strong>, the bridge generates: <code>human_id</code> (UUIDv7), <code>Ed25519</code> keypair, <code>fingerprint</code> (SHA-256), and <code>wallet_id</code> (WALLET-YYYYMMDD-NNNN).
+    </div>
+  </div>
+
+  <div class="layer-card">
+    <div class="layer-header">
+      <div class="layer-num">2</div>
+      <div class="layer-info">
+        <h3 data-i18n="layer2-title">CEREBRO &mdash; Wallet Service</h3>
+        <p>Port :8099</p>
+      </div>
+    </div>
+    <div class="layer-content" data-i18n="layer2-desc">
+      The core service that provisions and manages wallets. 10-step provisioning flow: validate, idempotence check, generate keys, insert immutable record, create context, register in Forensic Ledger, link, store keys.
+    </div>
+  </div>
+
+  <div class="layer-card">
+    <div class="layer-header">
+      <div class="layer-num">3</div>
+      <div class="layer-info">
+        <h3>Identity Gates</h3>
+        <p>LAW :8122 &middot; Travel :8126</p>
+      </div>
+    </div>
+    <div class="layer-content" data-i18n="layer3-desc">
+      Domain-specific identity systems. <strong>LAW Gate</strong> for legal professionals, <strong>Travel Gate</strong> for travelers. Both support Magic Link Login and follow state machine: UNBORN &rarr; PROVISIONAL &rarr; EMAIL_PENDING &rarr; VERIFIED.
+    </div>
+  </div>
+
+  <div class="layer-card">
+    <div class="layer-header">
+      <div class="layer-num">4</div>
+      <div class="layer-info">
+        <h3>LEDGER &mdash; Forensic Proof</h3>
+        <p>Port :8101</p>
+      </div>
+    </div>
+    <div class="layer-content" data-i18n="layer4-desc">
+      Every significant action is sealed: <code>receipt_id</code>, <code>content_hash</code>, <code>actor</code>, <code>verify_url</code>. <strong>Invariant I11: Once sealed = IRREMEDIABLE.</strong>
+    </div>
+  </div>
+
+  <div class="layer-card">
+    <div class="layer-header">
+      <div class="layer-num">5</div>
+      <div class="layer-info">
+        <h3>MUNDO &mdash; Public Verification</h3>
+        <p>/verify-public/</p>
+      </div>
+    </div>
+    <div class="layer-content" data-i18n="layer5-desc">
+      Anyone worldwide can verify: <code>GET /verify-public/?id=RECEIPT-ID</code>. Returns hash, creator wallet_id, timestamp, QR code. <strong>No PII exposed. Mathematical proof of existence.</strong>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><hr></div>
+
+<!-- TRUST SCORE -->
+<section class="section">
+  <div class="section-header">
+    <div class="section-tag" data-i18n="trust-tag">Trust Evolution</div>
+    <div class="section-title" data-i18n="trust-title">Trust <span>Levels</span></div>
+  </div>
+
+  <div class="trust-grid">
+    <div class="trust-card">
+      <div class="trust-level">T1</div>
+      <div class="trust-name">New</div>
+      <div class="trust-score">0&ndash;40</div>
+    </div>
+    <div class="trust-card">
+      <div class="trust-level">T2</div>
+      <div class="trust-name">Trusted</div>
+      <div class="trust-score">40&ndash;70</div>
+    </div>
+    <div class="trust-card">
+      <div class="trust-level">T3</div>
+      <div class="trust-name">Verified</div>
+      <div class="trust-score">70&ndash;85</div>
+    </div>
+    <div class="trust-card">
+      <div class="trust-level">T4</div>
+      <div class="trust-name">Sovereign</div>
+      <div class="trust-score">85&ndash;95</div>
+    </div>
+    <div class="trust-card">
+      <div class="trust-level">T5</div>
+      <div class="trust-name">Oracle</div>
+      <div class="trust-score">95&ndash;100</div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th data-i18n="table-action">Action</th>
+          <th data-i18n="table-weight">Weight</th>
+          <th data-i18n="table-result">Result</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>receipt_sealed</td>
+          <td>+2</td>
+          <td data-i18n="result-up">Score increases</td>
+        </tr>
+        <tr>
+          <td>policy_violation</td>
+          <td>-5</td>
+          <td data-i18n="result-down">Score decreases</td>
+        </tr>
+        <tr>
+          <td>audit_passed</td>
+          <td>+3</td>
+          <td data-i18n="result-up">Score increases</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="divider"><hr></div>
+
+<!-- PORTS -->
+<section class="section">
+  <div class="section-header">
+    <div class="section-tag" data-i18n="ports-tag">Infrastructure</div>
+    <div class="section-title" data-i18n="ports-title">Active <span>Ports</span></div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Port</th>
+          <th data-i18n="table-service">Service</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>:8096</td>
+          <td>Lead Admin (ID Genesis)</td>
+          <td style="color: var(--green);">&#9679; LIVE</td>
+        </tr>
+        <tr>
+          <td>:8099</td>
+          <td>Wallet Service</td>
+          <td style="color: var(--green);">&#9679; LIVE</td>
+        </tr>
+        <tr>
+          <td>:8101</td>
+          <td>Forensic Ledger</td>
+          <td style="color: var(--gold);">&#9679; SEALED</td>
+        </tr>
+        <tr>
+          <td>:8122</td>
+          <td>LAW Identity Gate</td>
+          <td style="color: var(--gold);">&#9679; SEALED</td>
+        </tr>
+        <tr>
+          <td>:8126</td>
+          <td>Travel Identity Gate</td>
+          <td style="color: var(--green);">&#9679; LIVE</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="divider"><hr></div>
+
+<!-- INVARIANTS -->
+<section class="section">
+  <div class="section-header">
+    <div class="section-tag" data-i18n="invariants-tag">Constitution</div>
+    <div class="section-title" data-i18n="invariants-title">Constitutional <span>Invariants</span></div>
+  </div>
+
+  <div class="invariant-grid">
+    <div class="invariant-card">
+      <div class="invariant-id">I1</div>
+      <div class="invariant-name" data-i18n="i1-name">Human Sovereignty</div>
+      <div class="invariant-desc" data-i18n="i1-desc">Lead to Wallet requires human approval</div>
+    </div>
+    <div class="invariant-card">
+      <div class="invariant-id">I9</div>
+      <div class="invariant-name" data-i18n="i9-name">Autonomy Prohibition</div>
+      <div class="invariant-desc" data-i18n="i9-desc">human_approved=true before seal</div>
+    </div>
+    <div class="invariant-card">
+      <div class="invariant-id">I11</div>
+      <div class="invariant-name" data-i18n="i11-name">Cryptographic Permanence</div>
+      <div class="invariant-desc" data-i18n="i11-desc">Ledger = IRREMEDIABLE</div>
+    </div>
+    <div class="invariant-card">
+      <div class="invariant-id">I13</div>
+      <div class="invariant-name" data-i18n="i13-name">Data Sovereignty</div>
+      <div class="invariant-desc" data-i18n="i13-desc">sessionStorage local, not cloud</div>
+    </div>
+    <div class="invariant-card">
+      <div class="invariant-id">I14</div>
+      <div class="invariant-name" data-i18n="i14-name">Presence Integrity</div>
+      <div class="invariant-desc" data-i18n="i14-desc">"Prove I was there" (Travel)</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><hr></div>
+
+<!-- QUOTE -->
+<section class="section">
+  <div class="quote">
+    <div class="quote-text" data-i18n="quote-text">"From lead to wallet, from wallet to document, from document to proof, from proof to world. Identity is the thread that weaves everything together."</div>
+    <div class="quote-author">&mdash; Human Dragon, 02 Apr 2026</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-principle">
+    <strong>AI processes.</strong> Human decides. <strong>WINDI guarantees.</strong>
+  </div>
+  <div class="footer-meta">
+    WINDI Publishing House &middot; Kempten, Bavaria &middot; 02 Apr 2026
+  </div>
+  <a href="/docs/" class="footer-back" data-i18n="back-btn">&larr; Back to Docs</a>
+</footer>
+
+<script>
+const I18N = {
+  de: {
+    'header-sub': 'Identitat',
+    'hero-title': 'Die Saat von WINDI',
+    'hero-desc': 'Dezentrale Identitat ist das Fundament aller WINDI-Governance. Vom Lead zur Wallet, vom Dokument zum Beweis - Identitat ist der Faden, der alles verbindet.',
+    'flow-alma': 'Saat',
+    'flow-did': 'Identitat',
+    'flow-cerebro-title': 'GEHIRN',
+    'flow-cerebro': 'Kontext',
+    'flow-ledger': 'Beweis',
+    'flow-mundo': 'Welt',
+    'stat-layers': 'Schichten',
+    'stat-trust': 'Vertrauensstufen',
+    'stat-crypto': 'Krypto',
+    'layers-tag': 'Architektur',
+    'layers-title': 'Die 5 Schichten der <span>Identitat</span>',
+    'layer0-desc': 'Der Einstiegspunkt. Leads von Landing Pages werden in einem append-only Ledger mit Hash-Chain-Integritat gespeichert. <strong>Niemals ohne menschliche Genehmigung verarbeitet (I1).</strong>',
+    'layer1-desc': 'Wenn ein Lead <strong>vom Menschen genehmigt</strong> wird, generiert die Bridge: <code>human_id</code> (UUIDv7), <code>Ed25519</code> Schlusselpaar, <code>fingerprint</code> (SHA-256) und <code>wallet_id</code> (WALLET-JJJJMMTT-NNNN).',
+    'layer2-title': 'GEHIRN - Wallet Service',
+    'layer2-desc': 'Der Kerndienst fur Wallet-Bereitstellung und -Verwaltung. 10-Schritte-Prozess: Validierung, Idempotenz, Schlusselgenerierung, immutables Einfugen, Kontexterstellung, Ledger-Registrierung, Verknupfung, Speicherung.',
+    'layer3-desc': 'Domanenspezifische Identitatsysteme. <strong>LAW Gate</strong> fur Juristen, <strong>Travel Gate</strong> fur Reisende. Beide unterstutzen Magic Link Login: UNBORN &rarr; PROVISIONAL &rarr; EMAIL_PENDING &rarr; VERIFIED.',
+    'layer4-desc': 'Jede signifikante Aktion wird versiegelt: <code>receipt_id</code>, <code>content_hash</code>, <code>actor</code>, <code>verify_url</code>. <strong>Invariante I11: Einmal versiegelt = UNWIDERRUFLICH.</strong>',
+    'layer5-desc': 'Jeder weltweit kann verifizieren: <code>GET /verify-public/?id=RECEIPT-ID</code>. Gibt Hash, Creator wallet_id, Timestamp, QR-Code zuruck. <strong>Keine PII. Mathematischer Existenzbeweis.</strong>',
+    'trust-tag': 'Vertrauensentwicklung',
+    'trust-title': 'Vertrauens<span>stufen</span>',
+    'table-action': 'Aktion',
+    'table-weight': 'Gewicht',
+    'table-result': 'Ergebnis',
+    'result-up': 'Score steigt',
+    'result-down': 'Score sinkt',
+    'ports-tag': 'Infrastruktur',
+    'ports-title': 'Aktive <span>Ports</span>',
+    'table-service': 'Dienst',
+    'invariants-tag': 'Verfassung',
+    'invariants-title': 'Konstitutionelle <span>Invarianten</span>',
+    'i1-name': 'Menschliche Souveranitat',
+    'i1-desc': 'Lead zu Wallet erfordert menschliche Genehmigung',
+    'i9-name': 'Autonomieverbot',
+    'i9-desc': 'human_approved=true vor Versiegelung',
+    'i11-name': 'Kryptographische Permanenz',
+    'i11-desc': 'Ledger = UNWIDERRUFLICH',
+    'i13-name': 'Datensouveranitat',
+    'i13-desc': 'sessionStorage lokal, nicht Cloud',
+    'i14-name': 'Prasenzintegritat',
+    'i14-desc': '"Beweisen, dass ich dort war" (Travel)',
+    'quote-text': '"Vom Lead zur Wallet, von der Wallet zum Dokument, vom Dokument zum Beweis, vom Beweis zur Welt. Identitat ist der Faden, der alles verbindet."',
+    'back-btn': '&larr; Zuruck zu Docs'
+  },
+  en: {
+    'header-sub': 'Identity',
+    'hero-title': 'The Seed of WINDI',
+    'hero-desc': 'Decentralized Identity is the foundation of all WINDI governance. From lead to wallet, from document to proof, identity is the thread that weaves everything together.',
+    'flow-alma': 'Seed',
+    'flow-did': 'Identity',
+    'flow-cerebro-title': 'BRAIN',
+    'flow-cerebro': 'Context',
+    'flow-ledger': 'Proof',
+    'flow-mundo': 'World',
+    'stat-layers': 'Layers',
+    'stat-trust': 'Trust Levels',
+    'stat-crypto': 'Crypto',
+    'layers-tag': 'Architecture',
+    'layers-title': 'The 5 Layers of <span>Identity</span>',
+    'layer0-desc': 'The entry point. Leads captured from landing pages are stored in an append-only ledger with hash chain integrity. <strong>Never processed without human approval (I1).</strong>',
+    'layer1-desc': 'When a lead is <strong>approved by human</strong>, the bridge generates: <code>human_id</code> (UUIDv7), <code>Ed25519</code> keypair, <code>fingerprint</code> (SHA-256), and <code>wallet_id</code> (WALLET-YYYYMMDD-NNNN).',
+    'layer2-title': 'BRAIN - Wallet Service',
+    'layer2-desc': 'The core service that provisions and manages wallets. 10-step provisioning flow: validate, idempotence check, generate keys, insert immutable record, create context, register in Forensic Ledger, link, store keys.',
+    'layer3-desc': 'Domain-specific identity systems. <strong>LAW Gate</strong> for legal professionals, <strong>Travel Gate</strong> for travelers. Both support Magic Link Login and follow state machine: UNBORN &rarr; PROVISIONAL &rarr; EMAIL_PENDING &rarr; VERIFIED.',
+    'layer4-desc': 'Every significant action is sealed: <code>receipt_id</code>, <code>content_hash</code>, <code>actor</code>, <code>verify_url</code>. <strong>Invariant I11: Once sealed = IRREMEDIABLE.</strong>',
+    'layer5-desc': 'Anyone worldwide can verify: <code>GET /verify-public/?id=RECEIPT-ID</code>. Returns hash, creator wallet_id, timestamp, QR code. <strong>No PII exposed. Mathematical proof of existence.</strong>',
+    'trust-tag': 'Trust Evolution',
+    'trust-title': 'Trust <span>Levels</span>',
+    'table-action': 'Action',
+    'table-weight': 'Weight',
+    'table-result': 'Result',
+    'result-up': 'Score increases',
+    'result-down': 'Score decreases',
+    'ports-tag': 'Infrastructure',
+    'ports-title': 'Active <span>Ports</span>',
+    'table-service': 'Service',
+    'invariants-tag': 'Constitution',
+    'invariants-title': 'Constitutional <span>Invariants</span>',
+    'i1-name': 'Human Sovereignty',
+    'i1-desc': 'Lead to Wallet requires human approval',
+    'i9-name': 'Autonomy Prohibition',
+    'i9-desc': 'human_approved=true before seal',
+    'i11-name': 'Cryptographic Permanence',
+    'i11-desc': 'Ledger = IRREMEDIABLE',
+    'i13-name': 'Data Sovereignty',
+    'i13-desc': 'sessionStorage local, not cloud',
+    'i14-name': 'Presence Integrity',
+    'i14-desc': '"Prove I was there" (Travel)',
+    'quote-text': '"From lead to wallet, from wallet to document, from document to proof, from proof to world. Identity is the thread that weaves everything together."',
+    'back-btn': '&larr; Back to Docs'
+  },
+  pt: {
+    'header-sub': 'Identidade',
+    'hero-title': 'A Semente do WINDI',
+    'hero-desc': 'Identidade Descentralizada e o fundamento de toda governanca WINDI. Do lead a wallet, do documento a prova, identidade e o fio que costura tudo.',
+    'flow-alma': 'Semente',
+    'flow-did': 'Identidade',
+    'flow-cerebro-title': 'CEREBRO',
+    'flow-cerebro': 'Contexto',
+    'flow-ledger': 'Prova',
+    'flow-mundo': 'Mundo',
+    'stat-layers': 'Camadas',
+    'stat-trust': 'Niveis de Confianca',
+    'stat-crypto': 'Cripto',
+    'layers-tag': 'Arquitetura',
+    'layers-title': 'As 5 Camadas da <span>Identidade</span>',
+    'layer0-desc': 'O ponto de entrada. Leads capturados das landing pages sao armazenados em ledger append-only com integridade de hash chain. <strong>Nunca processado sem aprovacao humana (I1).</strong>',
+    'layer1-desc': 'Quando um lead e <strong>aprovado pelo humano</strong>, a bridge gera: <code>human_id</code> (UUIDv7), par de chaves <code>Ed25519</code>, <code>fingerprint</code> (SHA-256) e <code>wallet_id</code> (WALLET-AAAAMMDD-NNNN).',
+    'layer2-title': 'CEREBRO - Wallet Service',
+    'layer2-desc': 'O servico core que provisiona e gere wallets. Fluxo de 10 passos: validar, idempotencia, gerar chaves, inserir registro imutavel, criar contexto, registar no Forensic Ledger, linkar, armazenar chaves.',
+    'layer3-desc': 'Sistemas de identidade especificos por dominio. <strong>LAW Gate</strong> para profissionais juridicos, <strong>Travel Gate</strong> para viajantes. Ambos suportam Magic Link Login: UNBORN &rarr; PROVISIONAL &rarr; EMAIL_PENDING &rarr; VERIFIED.',
+    'layer4-desc': 'Toda acao significativa e selada: <code>receipt_id</code>, <code>content_hash</code>, <code>actor</code>, <code>verify_url</code>. <strong>Invariante I11: Uma vez selado = IRREMEDIAVEL.</strong>',
+    'layer5-desc': 'Qualquer pessoa no mundo pode verificar: <code>GET /verify-public/?id=RECEIPT-ID</code>. Retorna hash, creator wallet_id, timestamp, QR code. <strong>Sem PII exposto. Prova matematica de existencia.</strong>',
+    'trust-tag': 'Evolucao da Confianca',
+    'trust-title': 'Niveis de <span>Confianca</span>',
+    'table-action': 'Acao',
+    'table-weight': 'Peso',
+    'table-result': 'Resultado',
+    'result-up': 'Score aumenta',
+    'result-down': 'Score diminui',
+    'ports-tag': 'Infraestrutura',
+    'ports-title': 'Portas <span>Activas</span>',
+    'table-service': 'Servico',
+    'invariants-tag': 'Constituicao',
+    'invariants-title': 'Invariantes <span>Constitucionais</span>',
+    'i1-name': 'Soberania Humana',
+    'i1-desc': 'Lead para Wallet exige aprovacao humana',
+    'i9-name': 'Proibicao de Autonomia',
+    'i9-desc': 'human_approved=true antes do selo',
+    'i11-name': 'Permanencia Criptografica',
+    'i11-desc': 'Ledger = IRREMEDIAVEL',
+    'i13-name': 'Soberania de Dados',
+    'i13-desc': 'sessionStorage local, nao cloud',
+    'i14-name': 'Integridade de Presenca',
+    'i14-desc': '"Provar que estava la" (Travel)',
+    'quote-text': '"Do lead a wallet, da wallet ao documento, do documento a prova, da prova ao mundo. Identidade e o fio que costura tudo."',
+    'back-btn': '&larr; Voltar a Docs'
+  }
+};
+
+let currentLang = localStorage.getItem('windi-lang') || 'en';
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('windi-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === lang);
+  });
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (I18N[lang] && I18N[lang][key]) {
+      el.innerHTML = I18N[lang][key];
+    }
+  });
+}
+
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => setLang(btn.dataset.lang));
+});
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme');
+  const next = current === 'klar' ? 'noir' : 'klar';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('windi-theme', next);
+}
+
+// Init
+const savedTheme = localStorage.getItem('windi-theme');
+if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+setLang(currentLang);
+</script>
+
+</body>
+</html>
