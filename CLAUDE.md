@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.72
-**Sealed:** 2026-04-02 · §110 DID Report
+**Version:** 1.9.73
+**Sealed:** 2026-04-02 · W-PRESENCE-001 Canonical
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -103,6 +103,26 @@ Verify Public (distribution of trust)
 
 **Regra:** Todas as interacções de domínio DEVEM passar por W-COUNSEL-001.
 Chamadas directas aos agentes de domínio são deprecated.
+
+### W-PRESENCE-001 — Presence Seal Protocol (LIVE 02 Apr 2026)
+
+| Campo | Valor |
+|-------|-------|
+| Status | CANONICAL · ACTIVE |
+| Commits | `60da249` + `1afacdf` |
+| Invariants | I9, I11, I13, I14 |
+
+> **"Presence is not detected. It is declared and sealed."**
+
+**Layer:** `IDENTITY → CONTINUITY → PRESENCE → MEMORY`
+
+**Níveis (calculados):** P1 (Temporal) · P2 (Contextual) · P3 (Spatial)
+
+**Endpoints:** `/travel/presence/preview` · `/presence/create` · `/presence/list`
+
+**Timeline:** Não é feed. É memória verificável — cronológica, P1/P2/P3, verify links.
+
+**Anti-patterns:** Sem feed social · Sem gamificação · Sem logging automático
 
 ---
 
@@ -567,6 +587,7 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 02 Apr | **W-PRESENCE-001** · Presence Seal Protocol · Timeline "Meus Momentos" · `60da249` + `1afacdf` |
 | 02 Apr | §110 **DID Report** · The Seed of WINDI · Public page `/docs/did/` · `b6a7aa5` |
 | 01 Apr | §109 **Magic Link Login** · Travel + LAW · Returning users · `33d1360` |
 | 01 Apr | §109.1 **Verify Public Root** · nginx route fix · `/verify-public/` live |
@@ -756,7 +777,8 @@ Se o Gêmeo inventa um receipt... isso é falsificação."
 - [ ] **windilaw.de** — Sincronizar com windi-domain.com/law/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
-### Completado (ver §37-110)
+### Completado (ver §37-111)
+- [x] §111 **W-PRESENCE-001** · Presence Seal + Timeline · `60da249` + `1afacdf` ✅ 02 Apr 2026
 - [x] §110 **DID Report** · The Seed of WINDI · `/docs/did/` trilíngue · `b6a7aa5` ✅ 02 Apr 2026
 - [x] §109 **Magic Link Login** · Travel + LAW · Returning users · `33d1360` ✅ 01 Apr 2026
 - [x] §103.T **Train Intelligence** · transport.rest API · MARIA Decision Engine · `930a2cc` ✅ 01 Apr 2026
