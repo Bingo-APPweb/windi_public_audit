@@ -1014,10 +1014,43 @@ async def login_with_token(token: str, request: Request):
             // Set cookie for future visits
             document.cookie = 'windi_did=' + encodeURIComponent("{did}") + '; path=/; max-age=31536000; SameSite=Lax';
 
-            // Redirect to workspace
-            setTimeout(function() {{
+            // W-SESSION-001: Create sovereign session
+            async function createSovereignSession() {{
+                // Get or create device seed
+                var DEVICE_SEED_KEY = 'windi_device_seed';
+                var seed = localStorage.getItem(DEVICE_SEED_KEY);
+                if (!seed) {{
+                    var array = new Uint8Array(32);
+                    crypto.getRandomValues(array);
+                    seed = Array.from(array, b => b.toString(16).padStart(2, '0')).join('');
+                    localStorage.setItem(DEVICE_SEED_KEY, seed);
+                }}
+
+                try {{
+                    var response = await fetch('/travel/session/create', {{
+                        method: 'POST',
+                        headers: {{ 'Content-Type': 'application/json' }},
+                        body: JSON.stringify({{
+                            did: "{did}",
+                            device_seed: seed
+                        }}),
+                        credentials: 'include'
+                    }});
+
+                    if (response.ok) {{
+                        var data = await response.json();
+                        console.log('[W-SESSION-001] Sovereign session created:', data.device_name);
+                    }}
+                }} catch (e) {{
+                    console.log('[W-SESSION-001] Session creation error:', e);
+                }}
+
+                // Redirect to workspace
                 window.location.href = '/travel/workspace/?did=' + encodeURIComponent("{did}");
-            }}, 1500);
+            }}
+
+            // Create session then redirect
+            createSovereignSession();
         </script>
     </body>
     </html>
@@ -1144,7 +1177,7 @@ async def session_create(request: Request):
     conn.close()
 
     # Create response with Set-Cookie header (HttpOnly + Secure)
-    expires_dt = datetime.fromtimestamp(payload.exp)
+    expires_dt = datetime.fromtimestamp(payload.exp, tz=timezone.utc)
     response_data = {
         "success": True,
         "session_id": payload.sid,
@@ -1482,6 +1515,7 @@ class PresenceCreate(BaseModel):
     title: Optional[str] = None
     location: Optional[dict] = None
     evidence: Optional[dict] = None
+    lang: str = "de"  # W-PRESENCE-002: para reverse geocoding
 
 
 class PresencePreview(BaseModel):
@@ -1583,14 +1617,15 @@ async def presence_create(data: PresenceCreate, request: Request):
     if not data.intent or not data.intent.strip():
         raise HTTPException(status_code=400, detail="Intent is required")
 
-    # 2. Selar presença
+    # 2. Selar presença (W-PRESENCE-002: lang para reverse geocoding)
     result = seal_presence(
         did=did,
         intent=data.intent,
         session_id=session_id,
         title=data.title,
         location=data.location,
-        evidence=data.evidence
+        evidence=data.evidence,
+        lang=data.lang
     )
 
     if not result.success:
