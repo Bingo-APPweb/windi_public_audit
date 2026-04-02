@@ -1022,6 +1022,189 @@
         }
 
         // ═══════════════════════════════════════════════════════════════
+        // W-SESSION-001 — SOVEREIGN SESSION LAYER
+        // ═══════════════════════════════════════════════════════════════
+
+        const SOVEREIGN_SESSION_COOKIE = 'windi_sovereign_session';
+        const DEVICE_SEED_KEY = 'windi_device_seed';
+
+        /**
+         * Get or create device seed (stored ONLY in localStorage, never sent to server)
+         * Server receives only the HASH (device_id)
+         */
+        function getDeviceSeed() {
+            let seed = localStorage.getItem(DEVICE_SEED_KEY);
+            if (!seed) {
+                // Generate cryptographically secure random seed
+                const array = new Uint8Array(32);
+                crypto.getRandomValues(array);
+                seed = Array.from(array, b => b.toString(16).padStart(2, '0')).join('');
+                localStorage.setItem(DEVICE_SEED_KEY, seed);
+            }
+            return seed;
+        }
+
+        /**
+         * Check if user has valid sovereign session
+         */
+        async function checkSovereignSession() {
+            try {
+                const response = await fetch(BASE_PATH + '/session/verify', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+
+                if (!response.ok) return null;
+
+                const data = await response.json();
+                if (data.valid && data.did) {
+                    return data;
+                }
+            } catch (e) {
+                console.log('[W-SESSION] Session check failed:', e);
+            }
+            return null;
+        }
+
+        /**
+         * Create sovereign session after successful login
+         */
+        async function createSovereignSession(did) {
+            try {
+                const deviceSeed = getDeviceSeed();
+
+                const response = await fetch(BASE_PATH + '/session/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        did: did,
+                        device_seed: deviceSeed
+                    }),
+                    credentials: 'include'
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    console.log('[W-SESSION] Session creation failed:', err);
+                    return null;
+                }
+
+                const data = await response.json();
+
+                if (data.success && data.session_id) {
+                    // Cookie is set by server via Set-Cookie header (HttpOnly + Secure)
+                    // We don't need to set it here - browser handles it automatically
+                    console.log('[W-SESSION] Sovereign session created:', data.device_name);
+                    return data;
+                }
+            } catch (e) {
+                console.log('[W-SESSION] Session creation error:', e);
+            }
+            return null;
+        }
+
+        /**
+         * Show "Continue with this identity" UI for returning users
+         */
+        function showContinueIdentity(sessionData) {
+            // Hide wizard steps
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+
+            // Create continue UI
+            const wizardEl = document.querySelector('.wizard');
+            const continueEl = document.createElement('div');
+            continueEl.className = 'step active';
+            continueEl.id = 'step-continue';
+            continueEl.innerHTML = `
+                <div class="step-header">
+                    <div class="step-number">✓</div>
+                    <div>
+                        <div class="step-title" data-i18n="continue_title">Mit dieser Identität fortfahren</div>
+                        <div class="step-subtitle" data-i18n="continue_subtitle">Deine Sitzung ist noch aktiv</div>
+                    </div>
+                </div>
+
+                <div style="background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                        <div style="width: 48px; height: 48px; background: var(--gold-dim); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <span style="font-size: 1.5rem;">🛡️</span>
+                        </div>
+                        <div>
+                            <div style="font-family: var(--font-mono); font-size: 0.875rem; color: var(--text-tertiary);">DID</div>
+                            <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--gold); word-break: break-all;">${sessionData.did}</div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; font-size: 0.75rem; color: var(--text-secondary);">
+                        <span>🔒 ${sessionData.device_trust || 'NEW'}</span>
+                        <span>⏱️ ${formatExpiry(sessionData.expires_at)}</span>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" style="width: 100%; margin-bottom: 0.75rem;" onclick="continueToWorkspace('${sessionData.did}')">
+                    <span data-i18n="continue_btn">Weiter zum Workspace</span> →
+                </button>
+
+                <button class="btn btn-secondary" style="width: 100%;" onclick="switchIdentity()">
+                    <span data-i18n="switch_identity">Andere Identität verwenden</span>
+                </button>
+            `;
+
+            // Add i18n strings
+            I18N.de.continue_title = 'Mit dieser Identität fortfahren';
+            I18N.de.continue_subtitle = 'Deine Sitzung ist noch aktiv';
+            I18N.de.continue_btn = 'Weiter zum Workspace';
+            I18N.de.switch_identity = 'Andere Identität verwenden';
+
+            I18N.en.continue_title = 'Continue with this identity';
+            I18N.en.continue_subtitle = 'Your session is still active';
+            I18N.en.continue_btn = 'Continue to Workspace';
+            I18N.en.switch_identity = 'Use different identity';
+
+            I18N.pt.continue_title = 'Continuar com esta identidade';
+            I18N.pt.continue_subtitle = 'A tua sessão ainda está activa';
+            I18N.pt.continue_btn = 'Continuar para Workspace';
+            I18N.pt.switch_identity = 'Usar outra identidade';
+
+            wizardEl.insertBefore(continueEl, wizardEl.firstChild);
+            setLang(currentLang);
+        }
+
+        function formatExpiry(expiresAt) {
+            const exp = new Date(expiresAt);
+            const now = new Date();
+            const days = Math.ceil((exp - now) / (1000 * 60 * 60 * 24));
+            if (days > 1) return days + ' ' + (currentLang === 'de' ? 'Tage' : currentLang === 'pt' ? 'dias' : 'days');
+            return currentLang === 'de' ? 'Heute' : currentLang === 'pt' ? 'Hoje' : 'Today';
+        }
+
+        function continueToWorkspace(did) {
+            window.location.href = BASE_PATH + '/workspace/?did=' + encodeURIComponent(did);
+        }
+
+        function switchIdentity() {
+            // Remove continue UI and show wizard
+            const continueEl = document.getElementById('step-continue');
+            if (continueEl) continueEl.remove();
+
+            // Clear sovereign session cookie
+            document.cookie = SOVEREIGN_SESSION_COOKIE + '=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+
+            // Show step 1
+            showStep(1);
+        }
+
+        // Check for existing session on page load
+        async function initSovereignSession() {
+            const session = await checkSovereignSession();
+            if (session) {
+                showContinueIdentity(session);
+                return true;
+            }
+            return false;
+        }
+
+        // ═══════════════════════════════════════════════════════════════
         // WIZARD NAVIGATION
         // ═══════════════════════════════════════════════════════════════
 
@@ -1243,6 +1426,15 @@
         }
         initTheme();
         setLang(currentLang);
+
+        // W-SESSION-001: Check for sovereign session (returning users)
+        (async function() {
+            const hasSession = await initSovereignSession();
+            if (!hasSession) {
+                // No sovereign session, show normal wizard
+                showStep(1);
+            }
+        })();
 
         // Update workspace link with base path
         var wsLink = document.getElementById('workspace-link');

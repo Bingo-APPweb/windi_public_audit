@@ -1,0 +1,19 @@
+# WINDI Travel Identity Gate — Git Ignore
+# ══════════════════════════════════════════════════════════════
+
+# Environment files (CRITICAL - contains secrets)
+.env
+.env.*
+*.env
+
+# Database files (contain user data)
+*.db
+*.db-journal
+*.db.backup-*
+
+# Python
+__pycache__/
+*.pyc
+
+# Backups
+*.backup*

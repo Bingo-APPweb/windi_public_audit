@@ -1,0 +1,5 @@
+# W-SESSION-001 — Git Ignore
+.env
+*.db
+__pycache__/
+*.pyc
