@@ -2568,9 +2568,10 @@ function setCaptureMode(mode) {
 }
 
 // §102 — WhereAmI Geo Auto-Detection
+// §110 FIX: Pass current language to API for I12 compliance
 async function initWhereAmI() {
   try {
-    const resp = await fetch('/travel/maria/location');
+    const resp = await fetch(`/travel/maria/location?lang=${LANG}`);
     if (!resp.ok) throw new Error('WhereAmI API error');
     const loc = await resp.json();
 
@@ -2578,15 +2579,15 @@ async function initWhereAmI() {
     window.__windi_fly_from = loc.fly_from || 'MUC';
     window.__windi_city = loc.city || 'Munique';
 
-    // Update MARIA greeting with detected city
+    // Update MARIA greeting with detected city (now in correct language)
     const helloEl = document.getElementById('maria-hello');
     if (helloEl && loc.greeting) {
       helloEl.textContent = loc.greeting;
     }
 
-    console.log('[MARIA §102] WhereAmI:', loc.city, '(' + loc.fly_from + ')');
+    console.log('[MARIA §102] WhereAmI:', loc.city, '(' + loc.fly_from + ') lang=' + LANG);
   } catch (e) {
-    // Silent fallback — MARIA uses default greeting
+    // Silent fallback — MARIA uses default greeting from i18n
     window.__windi_fly_from = 'MUC';
     window.__windi_city = 'Munique';
     console.log('[MARIA §102] WhereAmI fallback MUC');
