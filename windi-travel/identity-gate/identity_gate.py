@@ -49,13 +49,30 @@ from maria_blueprint import router as maria_seal_router
 from booking_router import router as maria_plan_router
 from gate import router as travel_gate_router, require_auth  # P3-A Identity Gate
 
+# W-SESSION-001 — Sovereign Session Layer
+sys.path.insert(0, "/opt/windi/session")
+from sovereign_session import (
+    create_session_token,
+    verify_session_token,
+    generate_device_id,
+    hash_ip_for_signal,
+    get_device_name_from_ua,
+    is_valid_windi_did,
+    ENABLE_SOVEREIGN_SESSION,
+    SESSION_TTL_DAYS,
+    MAX_DEVICES_PER_DID,
+    REVOKE_REASON_USER,
+    REVOKE_REASON_SECURITY,
+    REVOKE_REASON_ADMIN
+)
+
 # ═══════════════════════════════════════════════════════════════
 # CONSTANTS
 # ═══════════════════════════════════════════════════════════════
 
 DB_PATH = "/opt/windi/windi-travel/identity-gate/windi_travel_identity.db"
 LEDGER_URL = "http://127.0.0.1:8101/api/receipts"
-VERSION = "v1.2.0"
+VERSION = "v1.3.0"  # W-SESSION-001
 
 # Admin secret for verification (from environment)
 ADMIN_SECRET = os.environ.get("WINDI_ADMIN_SECRET", "windi-travel-admin-2026")
@@ -1006,6 +1023,439 @@ async def login_with_token(token: str, request: Request):
     </html>
     """
     return HTMLResponse(content=html_content)
+
+
+# ═══════════════════════════════════════════════════════════════
+# W-SESSION-001 — SOVEREIGN SESSION ENDPOINTS
+# ═══════════════════════════════════════════════════════════════
+
+@app.post("/session/create")
+async def session_create(request: Request):
+    """
+    Create sovereign session for authenticated user.
+
+    Called after successful magic link login.
+    Requires device_seed from client to generate device_id.
+
+    Body:
+        did: str — User's DID (required)
+        device_seed: str — Client-generated seed for device binding (required)
+
+    Returns:
+        session_token: str — Token to store in cookie
+        session_id: str — Session UUID
+        expires_at: str — Expiration timestamp
+        device_name: str — Detected device name
+
+    Security:
+        - device_seed is NEVER stored (only hash)
+        - Full HMAC-SHA256 signature (64 chars)
+        - Feature flagged by ENABLE_SOVEREIGN_SESSION
+    """
+    if not ENABLE_SOVEREIGN_SESSION:
+        return JSONResponse({
+            "success": False,
+            "error": "Sovereign sessions not enabled",
+            "error_code": "feature_disabled"
+        }, status_code=400)
+
+    body = await request.json()
+    did = body.get("did", "").strip()
+    device_seed = body.get("device_seed", "").strip()
+
+    if not did or not device_seed:
+        raise HTTPException(status_code=400, detail="DID and device_seed required")
+
+    if not is_valid_windi_did(did):
+        raise HTTPException(status_code=400, detail="Invalid WINDI DID format")
+
+    # Get user agent and IP
+    user_agent = request.headers.get("User-Agent", "")
+    client_ip = request.client.host if request.client else "unknown"
+
+    # Generate device_id (hash — seed NEVER stored)
+    device_id = generate_device_id(device_seed, user_agent)
+    device_name = get_device_name_from_ua(user_agent)
+    ip_hash = hash_ip_for_signal(client_ip)
+
+    # Check if user exists and is verified
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT id, full_name, email, state, email_verified
+        FROM admins WHERE did = ?
+    """, (did,))
+    admin = cursor.fetchone()
+
+    if not admin:
+        conn.close()
+        raise HTTPException(status_code=404, detail="User not found")
+
+    admin_id, full_name, email, state, email_verified = admin
+
+    if state != "VERIFIED" or not email_verified:
+        conn.close()
+        raise HTTPException(status_code=403, detail="User not verified")
+
+    # Check device limit per DID
+    cursor.execute("""
+        SELECT COUNT(*) FROM device_bindings
+        WHERE wallet_id = ? AND state = 'ACTIVE'
+    """, (did,))
+    device_count = cursor.fetchone()[0]
+
+    if device_count >= MAX_DEVICES_PER_DID:
+        conn.close()
+        raise HTTPException(
+            status_code=400,
+            detail=f"Maximum devices ({MAX_DEVICES_PER_DID}) reached. Revoke an existing device first."
+        )
+
+    # Create session token
+    token, payload = create_session_token(did, device_id)
+
+    # Store session in DB
+    cursor.execute("""
+        INSERT INTO sovereign_sessions
+        (session_id, wallet_id, device_id, device_name, expires_at, ip_hash, user_agent)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, (
+        payload.sid,
+        did,
+        device_id,
+        device_name,
+        datetime.fromtimestamp(payload.exp).isoformat(),
+        ip_hash,
+        user_agent[:200] if user_agent else None  # Truncate UA
+    ))
+
+    # Create or update device binding
+    binding_id = str(uuid.uuid4())
+    cursor.execute("""
+        INSERT INTO device_bindings (binding_id, wallet_id, device_id, device_name)
+        VALUES (?, ?, ?, ?)
+        ON CONFLICT(wallet_id, device_id) DO UPDATE SET
+            last_seen_at = datetime('now'),
+            consecutive_logins = consecutive_logins + 1
+    """, (binding_id, did, device_id, device_name))
+
+    conn.commit()
+    conn.close()
+
+    # Create response with Set-Cookie header (HttpOnly + Secure)
+    expires_dt = datetime.fromtimestamp(payload.exp)
+    response_data = {
+        "success": True,
+        "session_id": payload.sid,
+        "expires_at": expires_dt.isoformat(),
+        "device_name": device_name,
+        "device_id": device_id,
+        "ttl_days": SESSION_TTL_DAYS
+    }
+
+    response = JSONResponse(content=response_data)
+
+    # Set cookie server-side with proper security flags
+    # HttpOnly: JS cannot access (XSS protection)
+    # Secure: HTTPS only
+    # SameSite=Lax: CSRF protection
+    response.set_cookie(
+        key="windi_sovereign_session",
+        value=token,
+        expires=expires_dt,
+        httponly=True,
+        secure=True,
+        samesite="lax",
+        path="/"
+    )
+
+    return response
+
+
+@app.post("/session/revoke")
+async def session_revoke(request: Request):
+    """
+    Revoke a sovereign session.
+
+    Body:
+        session_id: str — Session to revoke (required)
+        did: str — Owner's DID (required for authorization)
+        reason: str — Reason for revocation (optional)
+
+    Returns:
+        success: bool
+    """
+    if not ENABLE_SOVEREIGN_SESSION:
+        return JSONResponse({
+            "success": False,
+            "error": "Sovereign sessions not enabled"
+        }, status_code=400)
+
+    body = await request.json()
+    session_id = body.get("session_id", "").strip()
+    did = body.get("did", "").strip()
+    reason = body.get("reason", REVOKE_REASON_USER)
+
+    if not session_id or not did:
+        raise HTTPException(status_code=400, detail="session_id and did required")
+
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    # Check session exists and belongs to user
+    cursor.execute("""
+        SELECT wallet_id FROM sovereign_sessions
+        WHERE session_id = ? AND revoked = 0
+    """, (session_id,))
+    session = cursor.fetchone()
+
+    if not session:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Session not found or already revoked")
+
+    if session[0] != did:
+        conn.close()
+        raise HTTPException(status_code=403, detail="Not authorized to revoke this session")
+
+    # Revoke session
+    cursor.execute("""
+        UPDATE sovereign_sessions
+        SET revoked = 1, revoked_at = datetime('now'), revoked_reason = ?
+        WHERE session_id = ?
+    """, (reason, session_id))
+
+    conn.commit()
+    conn.close()
+
+    return {"success": True, "session_id": session_id, "revoked": True}
+
+
+@app.get("/sessions")
+async def list_sessions(did: str = Query(...)):
+    """
+    List active sessions for a DID.
+
+    Query:
+        did: str — User's DID
+
+    Returns:
+        sessions: list — Active sessions with device info
+    """
+    if not ENABLE_SOVEREIGN_SESSION:
+        return JSONResponse({
+            "success": False,
+            "error": "Sovereign sessions not enabled"
+        }, status_code=400)
+
+    if not is_valid_windi_did(did):
+        raise HTTPException(status_code=400, detail="Invalid DID format")
+
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT s.session_id, s.device_id, s.device_name, s.created_at,
+               s.last_used_at, s.expires_at, b.trust_level
+        FROM sovereign_sessions s
+        LEFT JOIN device_bindings b ON b.wallet_id = s.wallet_id AND b.device_id = s.device_id
+        WHERE s.wallet_id = ? AND s.revoked = 0 AND s.expires_at > datetime('now')
+        ORDER BY s.last_used_at DESC
+    """, (did,))
+
+    sessions = []
+    for row in cursor.fetchall():
+        sessions.append({
+            "session_id": row[0],
+            "device_id": row[1][:16] + "..." if row[1] else None,  # Truncate for privacy
+            "device_name": row[2],
+            "created_at": row[3],
+            "last_used_at": row[4],
+            "expires_at": row[5],
+            "trust_level": row[6] or "NEW"
+        })
+
+    conn.close()
+
+    return {
+        "success": True,
+        "did": did,
+        "sessions": sessions,
+        "count": len(sessions)
+    }
+
+
+@app.get("/devices")
+async def list_devices(did: str = Query(...)):
+    """
+    List registered devices for a DID.
+
+    Query:
+        did: str — User's DID
+
+    Returns:
+        devices: list — Devices with trust levels
+    """
+    if not ENABLE_SOVEREIGN_SESSION:
+        return JSONResponse({
+            "success": False,
+            "error": "Sovereign sessions not enabled"
+        }, status_code=400)
+
+    if not is_valid_windi_did(did):
+        raise HTTPException(status_code=400, detail="Invalid DID format")
+
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT binding_id, device_id, device_name, created_at, last_seen_at,
+               consecutive_logins, trust_level, state
+        FROM device_bindings
+        WHERE wallet_id = ? AND state = 'ACTIVE'
+        ORDER BY last_seen_at DESC
+    """, (did,))
+
+    devices = []
+    for row in cursor.fetchall():
+        devices.append({
+            "binding_id": row[0],
+            "device_id": row[1][:16] + "...",  # Truncate
+            "device_name": row[2],
+            "created_at": row[3],
+            "last_seen_at": row[4],
+            "consecutive_logins": row[5],
+            "trust_level": row[6],
+            "state": row[7]
+        })
+
+    conn.close()
+
+    return {
+        "success": True,
+        "did": did,
+        "devices": devices,
+        "count": len(devices),
+        "max_devices": MAX_DEVICES_PER_DID
+    }
+
+
+@app.post("/devices/block")
+async def block_device(request: Request):
+    """
+    Block a device (revokes all its sessions).
+
+    Body:
+        binding_id: str — Device binding to block
+        did: str — Owner's DID (for authorization)
+        reason: str — Reason for blocking (optional)
+
+    Returns:
+        success: bool
+    """
+    if not ENABLE_SOVEREIGN_SESSION:
+        return JSONResponse({
+            "success": False,
+            "error": "Sovereign sessions not enabled"
+        }, status_code=400)
+
+    body = await request.json()
+    binding_id = body.get("binding_id", "").strip()
+    did = body.get("did", "").strip()
+    reason = body.get("reason", "user_request")
+
+    if not binding_id or not did:
+        raise HTTPException(status_code=400, detail="binding_id and did required")
+
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    # Check device belongs to user
+    cursor.execute("""
+        SELECT device_id FROM device_bindings
+        WHERE binding_id = ? AND wallet_id = ?
+    """, (binding_id, did))
+    device = cursor.fetchone()
+
+    if not device:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Device not found")
+
+    device_id = device[0]
+
+    # Block device
+    cursor.execute("""
+        UPDATE device_bindings
+        SET state = 'BLOCKED', blocked_at = datetime('now'), blocked_reason = ?
+        WHERE binding_id = ?
+    """, (reason, binding_id))
+
+    # Revoke all sessions for this device
+    cursor.execute("""
+        UPDATE sovereign_sessions
+        SET revoked = 1, revoked_at = datetime('now'), revoked_reason = ?
+        WHERE wallet_id = ? AND device_id = ? AND revoked = 0
+    """, (REVOKE_REASON_SECURITY, did, device_id))
+
+    sessions_revoked = cursor.rowcount
+    conn.commit()
+    conn.close()
+
+    return {
+        "success": True,
+        "binding_id": binding_id,
+        "blocked": True,
+        "sessions_revoked": sessions_revoked
+    }
+
+
+@app.get("/session/verify")
+async def verify_session_endpoint(request: Request):
+    """
+    Verify current session from cookie.
+
+    Headers:
+        Cookie: windi_sovereign_session=...
+
+    Returns:
+        valid: bool
+        did: str (if valid)
+        device_trust: str (if valid)
+    """
+    if not ENABLE_SOVEREIGN_SESSION:
+        return {"valid": False, "error": "Sovereign sessions not enabled"}
+
+    token = request.cookies.get("windi_sovereign_session")
+    if not token:
+        return {"valid": False, "error": "No session cookie"}
+
+    validation = verify_session_token(token)
+    if not validation.valid:
+        return {"valid": False, "error": validation.error, "error_code": validation.error_code}
+
+    # Check revocation in DB
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT s.revoked, b.trust_level
+        FROM sovereign_sessions s
+        LEFT JOIN device_bindings b ON b.wallet_id = s.wallet_id AND b.device_id = s.device_id
+        WHERE s.session_id = ?
+    """, (validation.payload.sid,))
+    session = cursor.fetchone()
+    conn.close()
+
+    if not session or session[0] == 1:
+        return {"valid": False, "error": "Session revoked", "error_code": "revoked"}
+
+    return {
+        "valid": True,
+        "did": validation.payload.did,
+        "session_id": validation.payload.sid,
+        "device_trust": session[1] or "NEW",
+        "expires_at": datetime.fromtimestamp(validation.payload.exp).isoformat()
+    }
 
 
 @app.post("/wallet/create")

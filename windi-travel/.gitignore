@@ -1,0 +1,46 @@
+# WINDI Travel — Git Ignore
+# ══════════════════════════════════════════════════════════════
+
+# Environment files (NEVER commit secrets)
+.env
+.env.local
+.env.*.local
+*.env
+
+# Database files
+*.db
+*.db-journal
+*.db.backup-*
+*.sqlite
+*.sqlite3
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+env/
+
+# Logs
+*.log
+logs/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Keys (CRITICAL - never commit)
+*.pem
+*.key
+*_private*
+wallet_keys/
