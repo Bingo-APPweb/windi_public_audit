@@ -1252,8 +1252,9 @@ body {
 .tg-moments{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:0.75rem}
 .moment-card{background:var(--bg-2);border-radius:10px;border:1px solid var(--border);overflow:hidden;cursor:pointer;transition:transform 0.15s,border-color 0.15s}
 .moment-card:hover{transform:translateY(-2px);border-color:var(--gold)}
-.mc-thumb{height:100px;background-size:cover;background-position:center;background-color:var(--bg)}
-.mc-thumb-empty{display:flex;align-items:center;justify-content:center;font-size:1.75rem;color:var(--text-3)}
+.mc-thumb{height:100px;background-size:cover;background-position:center;background-color:var(--bg);overflow:hidden}
+.mc-thumb img{width:100%;height:100%;object-fit:cover}
+.mc-thumb-empty{display:flex;align-items:center;justify-content:center;font-size:1.75rem;color:var(--text-3);height:100px}
 .mc-info{padding:0.6rem 0.75rem}
 .mc-place{font-size:0.72rem;color:var(--gold);margin-bottom:0.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mc-time{font-size:0.7rem;color:var(--text-3)}
@@ -1267,8 +1268,10 @@ body {
 .mm-header{margin-bottom:1rem}
 .mm-place{font-size:1rem;font-weight:500;color:var(--text)}
 .mm-time{font-size:0.8rem;color:var(--text-2);margin-top:0.2rem}
-.mm-media{width:100%;border-radius:8px;margin-bottom:1rem;max-height:220px;object-fit:cover}
+.mm-media{width:100%;border-radius:8px;margin-bottom:1rem;overflow:hidden;cursor:pointer}
+.mm-media img{width:100%;max-height:320px;object-fit:contain;display:block}
 .mm-media-empty{height:140px;background:var(--bg-2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;margin-bottom:1rem;color:var(--text-3)}
+.mm-btn-download{background:var(--gold);color:var(--bg);border-color:var(--gold)}
 .mm-details{background:var(--bg-2);border-radius:8px;padding:0.9rem;margin-bottom:1rem}
 .mm-row{display:flex;justify-content:space-between;align-items:flex-start;gap:0.75rem;padding:0.4rem 0;border-bottom:1px solid var(--border);font-size:0.78rem}
 .mm-row:last-child{border-bottom:none}
@@ -2487,6 +2490,88 @@ let lastReceipt = null;
 let __conversationHistory = [];
 
 // ═══════════════════════════════════════════════════════════════════════════
+// W-PRESENCE-003 — IndexedDB Media Storage (imagens originais ~50MB)
+// ═══════════════════════════════════════════════════════════════════════════
+
+const MEDIA_DB_NAME = 'windi_travel_media';
+const MEDIA_DB_VERSION = 1;
+const MEDIA_STORE_NAME = 'images';
+let mediaDb = null;
+
+async function initMediaDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(MEDIA_DB_NAME, MEDIA_DB_VERSION);
+
+    request.onerror = () => {
+      console.warn('[W-PRESENCE-003] IndexedDB not available');
+      resolve(null);
+    };
+
+    request.onsuccess = (e) => {
+      mediaDb = e.target.result;
+      console.log('[W-PRESENCE-003] IndexedDB ready');
+      resolve(mediaDb);
+    };
+
+    request.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(MEDIA_STORE_NAME)) {
+        db.createObjectStore(MEDIA_STORE_NAME, { keyPath: 'hash' });
+        console.log('[W-PRESENCE-003] Created images store');
+      }
+    };
+  });
+}
+
+async function saveMediaToIDB(hash, dataUrl, mediaType) {
+  if (!mediaDb) return false;
+
+  return new Promise((resolve) => {
+    try {
+      const tx = mediaDb.transaction([MEDIA_STORE_NAME], 'readwrite');
+      const store = tx.objectStore(MEDIA_STORE_NAME);
+
+      store.put({
+        hash: hash,
+        dataUrl: dataUrl,
+        mediaType: mediaType,
+        savedAt: Date.now()
+      });
+
+      tx.oncomplete = () => {
+        console.log('[W-PRESENCE-003] Saved media:', hash.substring(0, 16));
+        resolve(true);
+      };
+      tx.onerror = () => resolve(false);
+    } catch (e) {
+      console.warn('[W-PRESENCE-003] Save error:', e);
+      resolve(false);
+    }
+  });
+}
+
+async function getMediaFromIDB(hash) {
+  if (!mediaDb) return null;
+
+  return new Promise((resolve) => {
+    try {
+      const tx = mediaDb.transaction([MEDIA_STORE_NAME], 'readonly');
+      const store = tx.objectStore(MEDIA_STORE_NAME);
+      const request = store.get(hash);
+
+      request.onsuccess = () => {
+        const result = request.result;
+        resolve(result ? result.dataUrl : null);
+      };
+      request.onerror = () => resolve(null);
+    } catch (e) {
+      console.warn('[W-PRESENCE-003] Get error:', e);
+      resolve(null);
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // i18n — setLang SEALED
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -2674,10 +2759,13 @@ async function handleMedia(file, source) {
     thumbnail: thumbnail
   };
 
-  // Read data URL for preview (full size, only for display)
+  // Read data URL for preview (full size) + save to IndexedDB
   const previewReader = new FileReader();
-  previewReader.onload = e => {
+  previewReader.onload = async (e) => {
     currentMoment.dataUrl = e.target.result;
+
+    // W-PRESENCE-003 — Save original to IndexedDB
+    await saveMediaToIDB(hash, e.target.result, currentMoment.media_type);
   };
   previewReader.readAsDataURL(file);
 
@@ -2690,10 +2778,10 @@ async function handleMedia(file, source) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// THUMBNAIL — createThumbnail (100x100px para localStorage)
+// THUMBNAIL — createThumbnail (300px para localStorage + thread preview)
 // ═══════════════════════════════════════════════════════════════════════════
 
-function createThumbnail(file, maxSize = 100) {
+function createThumbnail(file, maxSize = 300) {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -2719,7 +2807,7 @@ function createThumbnail(file, maxSize = 100) {
 // VIDEO THUMBNAIL — §109 Video Forensic (extrai frame 0.1s)
 // ═══════════════════════════════════════════════════════════════════════════
 
-function createVideoThumbnail(file, maxSize = 100) {
+function createVideoThumbnail(file, maxSize = 300) {
   return new Promise((resolve) => {
     const video = document.createElement('video');
     video.preload = 'metadata';
@@ -3101,24 +3189,32 @@ function buildThreadListView(groups) {
 function buildMomentCard(m) {
   const icon = m.type === 'video' ? '🎬' : '📸';
   const receiptId = m.receipt_id || m.id || '';
+  const hash = m.hash || m.content_hash || '';
+
+  // W-PRESENCE-003 — Check for thumbnail in local thread or use placeholder
+  const localMoment = thread.find(t => t.hash === hash || t.receipt === receiptId);
+  const thumbnail = localMoment?.thumbnail;
 
   return `
-    <div class="moment-card" onclick="viewMoment('${receiptId}')">
-      <div class="mc-thumb mc-thumb-empty">${icon}</div>
+    <div class="moment-card" onclick="viewMoment('${receiptId}', '${hash}')" data-hash="${hash}">
+      ${thumbnail
+        ? `<div class="mc-thumb"><img src="${thumbnail}" alt="${icon}"></div>`
+        : `<div class="mc-thumb mc-thumb-empty">${icon}</div>`
+      }
       <div class="mc-info">
         <div class="mc-place">📍 ${m.place_name || (LANG === 'de' ? 'Unbekannt' : LANG === 'pt' ? 'Desconhecido' : 'Unknown')}</div>
         <div class="mc-time">${formatThreadTime(m.timestamp)}</div>
         ${m.source === 'ledger'
-          ? `<div class="mc-hash">🔒 ${(m.hash || m.content_hash || '').substring(0, 12)}…</div>`
+          ? `<div class="mc-hash">🔒 ${hash.substring(0, 12)}…</div>`
           : '<div class="mc-local">💾 Local</div>'}
       </div>
     </div>
   `;
 }
 
-// viewMoment() — modal completo §112
-async function viewMoment(receiptId) {
-  if (!receiptId) return;
+// viewMoment() — modal completo §112 + W-PRESENCE-003 (full image)
+async function viewMoment(receiptId, hash) {
+  if (!receiptId && !hash) return;
 
   // Create modal overlay
   const overlay = document.createElement('div');
@@ -3132,6 +3228,15 @@ async function viewMoment(receiptId) {
   `;
   document.body.appendChild(overlay);
 
+  // W-PRESENCE-003 — Try to load full image from IndexedDB
+  let fullImageUrl = null;
+  if (hash) {
+    const cleanHash = hash.replace('sha256:', '');
+    fullImageUrl = await getMediaFromIDB(cleanHash);
+    // Also try with sha256: prefix if not found
+    if (!fullImageUrl) fullImageUrl = await getMediaFromIDB(hash);
+  }
+
   try {
     const res = await fetch(`/travel/workspace/moment/${receiptId}`);
     const data = await res.json();
@@ -3143,13 +3248,25 @@ async function viewMoment(receiptId) {
     const m = data.moment || {};
     const modal = overlay.querySelector('.moment-modal');
 
+    // W-PRESENCE-003 — Build media section with image or placeholder
+    const mediaHtml = fullImageUrl
+      ? `<div class="mm-media"><img src="${fullImageUrl}" alt="Moment" onclick="downloadMomentImage('${m.id || receiptId}', '${hash}')"></div>`
+      : `<div class="mm-media-empty">${m.media_type === 'video' ? '🎬' : '📸'}</div>`;
+
+    // W-PRESENCE-003 — Download button if image exists
+    const downloadBtn = fullImageUrl
+      ? `<button class="mm-btn mm-btn-download" onclick="downloadMomentImage('${m.id || receiptId}', '${hash}')">
+           💾 ${LANG === 'de' ? 'Bild speichern' : LANG === 'pt' ? 'Guardar imagem' : 'Save image'}
+         </button>`
+      : '';
+
     modal.innerHTML = `
       <button class="mm-close" onclick="document.getElementById('moment-modal-overlay').remove()">✕</button>
       <div class="mm-header">
         <div class="mm-place">📍 ${m.place_name || (LANG === 'de' ? 'Unbekannt' : LANG === 'pt' ? 'Desconhecido' : 'Unknown')}</div>
         <div class="mm-time">${formatThreadTime(m.sealed_at || '')}</div>
       </div>
-      <div class="mm-media-empty">${m.media_type === 'video' ? '🎬' : '📸'}</div>
+      ${mediaHtml}
       <div class="mm-details">
         <div class="mm-row"><span class="mm-label">Receipt</span><span class="mm-val mm-mono">${m.id || receiptId}</span></div>
         <div class="mm-row"><span class="mm-label">Hash</span><span class="mm-val mm-mono">${(m.content_hash || '').replace('sha256:', '').substring(0, 24)}…</span></div>
@@ -3157,6 +3274,7 @@ async function viewMoment(receiptId) {
         <div class="mm-row"><span class="mm-label">${LANG === 'de' ? 'Governance' : 'Governança'}</span><span class="mm-val">${m.governance_level || 'MEDIUM'}</span></div>
       </div>
       <div class="mm-actions">
+        ${downloadBtn}
         <button class="mm-btn" onclick="window.open('${m.verify_url || 'https://windi-domain.com/verify-public/?id=' + receiptId}','_blank')">🔍 ${LANG === 'de' ? 'Im Ledger prüfen' : LANG === 'pt' ? 'Verificar no Ledger' : 'Verify in Ledger'}</button>
       </div>
     `;
@@ -3167,6 +3285,30 @@ async function viewMoment(receiptId) {
       <div class="mm-error">${LANG === 'de' ? 'Fehler beim Laden' : LANG === 'pt' ? 'Erro ao carregar' : 'Error loading'}<br><small>${e.message}</small></div>
     `;
   }
+}
+
+// W-PRESENCE-003 — Download full image from IndexedDB
+async function downloadMomentImage(receiptId, hash) {
+  const cleanHash = hash ? hash.replace('sha256:', '') : '';
+  let dataUrl = await getMediaFromIDB(cleanHash);
+  if (!dataUrl && hash) dataUrl = await getMediaFromIDB(hash);
+
+  if (!dataUrl) {
+    alert(LANG === 'de'
+      ? 'Originalbild nicht gefunden. Nur lokal gespeicherte Bilder können heruntergeladen werden.'
+      : LANG === 'pt'
+        ? 'Imagem original não encontrada. Apenas imagens armazenadas localmente podem ser descarregadas.'
+        : 'Original image not found. Only locally stored images can be downloaded.');
+    return;
+  }
+
+  // Create download link
+  const link = document.createElement('a');
+  link.href = dataUrl;
+  link.download = `WINDI-${receiptId || 'moment'}.jpg`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 }
 
 // Toggle List/Map view
@@ -3648,8 +3790,11 @@ function showQRCode(receiptId) {
 // INIT
 // ═══════════════════════════════════════════════════════════════════════════
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   clearPreviousSession();
+
+  // W-PRESENCE-003 — Init IndexedDB for media storage
+  await initMediaDB();
 
   // Check wallet gate
   if (!checkWalletGate()) return;
