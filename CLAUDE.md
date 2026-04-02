@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.74
-**Sealed:** 2026-04-02 · W-SESSION-001 Sovereign Continuity
+**Version:** 1.9.75
+**Sealed:** 2026-04-03 · W-NOMAD-001 Telegram Bot LIVE
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -151,6 +151,35 @@ Browser close → Reopen → Direct workspace access ✅
 **Endpoints:** `/session/create` · `/session/revoke` · `/session/list`
 
 **Módulos:** `sovereign_session.py` · `auth_middleware.py`
+
+### W-NOMAD-001 — Telegram Bot Interface (LIVE 03 Apr 2026)
+
+| Campo | Valor |
+|-------|-------|
+| Status | LIVE · Port :8127 |
+| Handle | @windi_nomad_bot |
+| Commit | `10313ce` |
+| Invariants | I1, I9, I11, I12, I13 |
+
+> **"Travel sovereign. Decide anywhere."**
+
+**Arquitectura:**
+- Webhook mode (nginx proxy)
+- python-telegram-bot v22 + httpx
+- SQLite telegram_users.db (identity linkage)
+- Calls MARIA at localhost:8126
+- Seals to Ledger at localhost:8101
+
+**Features v1:**
+- Auto-create DID on /start (zero friction)
+- Trilingual (DE/EN/PT) — I12 compliant
+- Flight/Hotel/Place search via MARIA
+- I9 Gate with inline confirmation buttons
+- Ledger sealing with verify URL
+
+**Commands:** `/start` · `/lang` · `/profile` · `/help`
+
+**Path:** `/opt/windi/nomad-bot/`
 
 ---
 
@@ -581,7 +610,7 @@ KLAR (light):
 
 ---
 
-## 13. Estado Actual — 31 Março 2026
+## 13. Estado Actual — 03 Abril 2026
 
 ### Mapa de Portas
 
@@ -599,6 +628,7 @@ KLAR (light):
 | :8121 | Dispatch Gateway | 🟢 **.jmpg Hydration Engine** · I5+I6+I9 |
 | :8122 | WINDI-LAW Identity Gate | 🟢 **SEALED** · Isolado · 12 empresas |
 | :8126 | WINDI Travel Identity Gate | 🟢 **LIVE** · v1.3.0 · W-SESSION-001 · Sovereign Sessions |
+| :8127 | W-NOMAD-001 Telegram Bot | 🟢 **LIVE** · @windi_nomad_bot · MARIA + Ledger |
 | :8130 | W-GATEWAY-001 (LLM Bridge) | 🟢 **LIVE** · 5 providers |
 
 ### Sistemas LIVE (30 total)
@@ -615,8 +645,8 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 03 Apr | **W-NOMAD-001 LIVE** · @windi_nomad_bot · Telegram Interface · MARIA + Ledger · `10313ce` |
 | 02 Apr | **W-SESSION-001 LIVE** · Sovereign Sessions · 30-day continuity · Device binding · `dd9077e` |
-| 02 Apr | §110 **i18n Fix** · MARIA greeting trilíngue · I12 compliance · `dd9077e` |
 | 02 Apr | **W-PRESENCE-001** · Presence Seal Protocol · Timeline "Meus Momentos" · `60da249` + `1afacdf` |
 | 01 Apr | §109 **Magic Link Login** · Travel + LAW · Returning users · `33d1360` |
 | 01 Apr | **T1 MOSAIC Protocol** · smoke-travel.sh · Email verify confirmed · `67de32f` |
