@@ -4175,22 +4175,24 @@ async function executePresenceSeal() {
   sealBtn.innerHTML = '<span>⏳</span>';
 
   try {
-    // Build request payload
+    // Build request payload (W-PRESENCE-002: add lang + mode for geocoding)
     const payload = {
       did: did,
       intent: __presenceState.intent,
       session_id: sessionId,
       title: __presenceState.title || null,
       location: __presenceState.location ? {
+        mode: 'gps',  // W-PRESENCE-002: required for reverse geocoding
         lat: __presenceState.location.lat,
         lng: __presenceState.location.lng,
-        accuracy: __presenceState.location.accuracy
+        precision_m: Math.round(__presenceState.location.accuracy || 10)
       } : null,
       evidence: __presenceState.evidence ? {
-        type: __presenceState.evidence.type,
+        kind: __presenceState.evidence.type,  // renamed: type → kind
         hash: __presenceState.evidenceHash,
-        mime_type: __presenceState.evidence.mime
-      } : null
+        mime: __presenceState.evidence.mime   // renamed: mime_type → mime
+      } : null,
+      lang: LANG  // W-PRESENCE-002: for reverse geocoding language
     };
 
     console.log('[W-PRESENCE-001] Sealing presence:', payload);
