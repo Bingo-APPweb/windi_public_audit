@@ -1458,6 +1458,232 @@ async def verify_session_endpoint(request: Request):
     }
 
 
+# ═══════════════════════════════════════════════════════════════
+# W-PRESENCE-001 — PRESENCE SEAL ENDPOINTS
+# ═══════════════════════════════════════════════════════════════
+
+# Import presence module
+sys.path.insert(0, "/opt/windi/presence")
+from presence_seal import (
+    seal_presence,
+    compose_presence_payload,
+    calculate_content_hash,
+    classify_presence_level,
+    get_presence_by_did,
+    get_presence_by_receipt,
+    Location,
+    Evidence
+)
+
+
+class PresenceCreate(BaseModel):
+    """Input para criar presença."""
+    intent: str
+    title: Optional[str] = None
+    location: Optional[dict] = None
+    evidence: Optional[dict] = None
+
+
+class PresencePreview(BaseModel):
+    """Input para preview de presença."""
+    intent: str
+    title: Optional[str] = None
+    location: Optional[dict] = None
+    evidence: Optional[dict] = None
+
+
+@app.post("/presence/preview")
+async def presence_preview(data: PresencePreview, request: Request):
+    """
+    Preview de presença SEM selar.
+
+    Mostra:
+        - Nível que será atribuído (P1/P2/P3)
+        - Hash que será gerado
+        - Estrutura do payload
+
+    Requer:
+        - Sessão soberana válida
+
+    Nota:
+        NÃO sela no Ledger.
+        NÃO salva no índice.
+        Apenas preview.
+    """
+    # Verificar sessão soberana
+    session_result = await verify_session_endpoint(request)
+    if not session_result.get("valid"):
+        raise HTTPException(status_code=401, detail="Valid sovereign session required")
+
+    did = session_result.get("did")
+    session_id = session_result.get("session_id")
+
+    # Compor payload (sem selar)
+    payload = compose_presence_payload(
+        did=did,
+        intent=data.intent,
+        session_id=session_id,
+        title=data.title,
+        location=data.location,
+        evidence=data.evidence
+    )
+
+    # Calcular hash
+    content_hash = calculate_content_hash(payload)
+
+    return {
+        "preview": True,
+        "presence_level": payload.presence_level,
+        "content_hash": content_hash,
+        "declared_at": payload.declared_at,
+        "intent_normalized": payload.intent,
+        "title_normalized": payload.title,
+        "location_mode": payload.location.mode,
+        "evidence_kind": payload.evidence.kind,
+        "note": "This is a preview. Call POST /presence/create to seal."
+    }
+
+
+@app.post("/presence/create")
+async def presence_create(data: PresenceCreate, request: Request):
+    """
+    Cria e sela um momento de presença.
+
+    Fluxo:
+        1. Verificar sessão soberana (W-SESSION-001)
+        2. Compor payload com timestamp do backend
+        3. Verificar idempotência (hash já existe?)
+        4. Selar no Ledger
+        5. Salvar no índice
+
+    Requer:
+        - Sessão soberana válida
+        - intent não vazio
+
+    Retorna:
+        - receipt_id
+        - verify_url
+        - presence_level
+        - content_hash
+
+    Invariantes:
+        - I14: Presence is declared, not detected
+        - I9: Human confirmation required (frontend)
+        - I11: Ledger seal is IRREMEDIÁVEL
+    """
+    # 1. Verificar sessão soberana
+    session_result = await verify_session_endpoint(request)
+    if not session_result.get("valid"):
+        raise HTTPException(status_code=401, detail="Valid sovereign session required")
+
+    did = session_result.get("did")
+    session_id = session_result.get("session_id")
+
+    # Validar intent
+    if not data.intent or not data.intent.strip():
+        raise HTTPException(status_code=400, detail="Intent is required")
+
+    # 2. Selar presença
+    result = seal_presence(
+        did=did,
+        intent=data.intent,
+        session_id=session_id,
+        title=data.title,
+        location=data.location,
+        evidence=data.evidence
+    )
+
+    if not result.success:
+        # Ledger down ou erro
+        return JSONResponse(
+            status_code=503 if "Ledger" in (result.error or "") else 500,
+            content={
+                "success": False,
+                "error": result.error,
+                "state": result.state,
+                "content_hash": result.content_hash,
+                "note": "Presence indexed but not sealed. Retry possible."
+            }
+        )
+
+    return {
+        "success": True,
+        "receipt_id": result.receipt_id,
+        "verify_url": result.verify_url,
+        "presence_level": result.presence_level,
+        "content_hash": result.content_hash,
+        "state": result.state,
+        "local_id": result.local_id
+    }
+
+
+@app.get("/presence/list")
+async def presence_list(request: Request, limit: int = Query(default=50, le=100)):
+    """
+    Lista momentos de presença do DID autenticado.
+
+    Requer:
+        - Sessão soberana válida
+
+    Query:
+        - limit: máximo de resultados (default 50, max 100)
+
+    Retorna:
+        - Lista de momentos selados
+    """
+    # Verificar sessão soberana
+    session_result = await verify_session_endpoint(request)
+    if not session_result.get("valid"):
+        raise HTTPException(status_code=401, detail="Valid sovereign session required")
+
+    did = session_result.get("did")
+
+    # Buscar momentos
+    moments = get_presence_by_did(did, limit=limit)
+
+    return {
+        "success": True,
+        "did": did,
+        "count": len(moments),
+        "moments": moments
+    }
+
+
+@app.get("/presence/{receipt_id}")
+async def presence_get(receipt_id: str, request: Request):
+    """
+    Busca detalhes de um momento por receipt_id.
+
+    Requer:
+        - Sessão soberana válida
+        - Momento deve pertencer ao DID autenticado
+
+    Retorna:
+        - Detalhes completos do momento
+    """
+    # Verificar sessão soberana
+    session_result = await verify_session_endpoint(request)
+    if not session_result.get("valid"):
+        raise HTTPException(status_code=401, detail="Valid sovereign session required")
+
+    did = session_result.get("did")
+
+    # Buscar momento
+    moment = get_presence_by_receipt(receipt_id)
+
+    if not moment:
+        raise HTTPException(status_code=404, detail="Presence moment not found")
+
+    # Verificar ownership
+    if moment.get("did") != did:
+        raise HTTPException(status_code=403, detail="Not authorized to view this moment")
+
+    return {
+        "success": True,
+        "moment": moment
+    }
+
+
 @app.post("/wallet/create")
 async def wallet_create(data: WalletCreate):
     """Generate new wallet for existing admin."""

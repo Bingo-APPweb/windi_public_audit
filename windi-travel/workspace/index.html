@@ -1085,6 +1085,356 @@ body {
 .train-loading-spinner{display:inline-block;width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;margin-right:8px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .train-error{padding:16px;background:rgba(220,53,69,0.1);border:1px solid rgba(220,53,69,0.3);border-radius:10px;color:#dc3545;font-size:0.85rem;text-align:center}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   W-PRESENCE-001 — Presence Seal UI
+   "Presence is not detected. It is declared and sealed."
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Presence Block in Rescue Mode */
+.presence-block {
+  margin-top: 24px;
+  padding: 20px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  text-align: center;
+}
+.presence-block-icon { font-size: 32px; margin-bottom: 12px; opacity: 0.9; }
+.presence-block-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+.presence-block-sub { font-size: 13px; color: var(--text-2); line-height: 1.4; margin-bottom: 16px; }
+.presence-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 24px;
+  background: var(--gold-bg);
+  border: 1px solid var(--gold);
+  border-radius: var(--r);
+  color: var(--gold);
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.presence-btn:hover { background: var(--gold); color: var(--bg); }
+
+/* Presence Modal */
+.presence-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 1000;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
+}
+.presence-modal.active { display: flex; }
+.presence-modal-content {
+  background: var(--bg);
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.3s ease-out;
+}
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+.presence-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.presence-modal-title { font-size: 16px; font-weight: 600; color: var(--text); }
+.presence-modal-close {
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--text-3);
+  cursor: pointer;
+  font-size: 18px;
+}
+.presence-modal-close:hover { border-color: var(--gold); color: var(--gold); }
+
+.presence-modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Form Fields */
+.presence-field { display: flex; flex-direction: column; gap: 6px; }
+.presence-field label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.presence-field input,
+.presence-field textarea {
+  padding: 12px 14px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 15px;
+  resize: none;
+}
+.presence-field input:focus,
+.presence-field textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+.presence-field textarea { min-height: 80px; line-height: 1.5; }
+.presence-field .hint { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+
+/* Location Toggle */
+.presence-location-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+}
+.presence-location-toggle .toggle-info { display: flex; flex-direction: column; gap: 2px; }
+.presence-location-toggle .toggle-label { font-size: 14px; color: var(--text); }
+.presence-location-toggle .toggle-sub { font-size: 11px; color: var(--text-3); }
+.presence-location-toggle .toggle-switch {
+  width: 48px; height: 28px;
+  background: var(--border);
+  border-radius: 14px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.presence-location-toggle .toggle-switch.active { background: var(--success); }
+.presence-location-toggle .toggle-switch::after {
+  content: '';
+  position: absolute;
+  width: 22px; height: 22px;
+  background: white;
+  border-radius: 50%;
+  top: 3px; left: 3px;
+  transition: transform 0.2s;
+}
+.presence-location-toggle .toggle-switch.active::after { transform: translateX(20px); }
+
+/* Evidence Button */
+.presence-evidence-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px;
+  background: var(--bg-2);
+  border: 1px dashed var(--border-2);
+  border-radius: var(--r);
+  color: var(--text-2);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.presence-evidence-btn:hover { border-color: var(--gold); color: var(--gold); }
+.presence-evidence-btn.has-evidence { border-style: solid; border-color: var(--success); color: var(--success); }
+
+/* Preview Box */
+.presence-preview {
+  padding: 16px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+}
+.presence-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.presence-preview-title { font-size: 12px; font-weight: 500; color: var(--text-2); text-transform: uppercase; }
+.presence-preview-level {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  background: var(--gold-bg);
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gold);
+}
+.presence-preview-level.p1 { background: rgba(108,117,125,0.15); color: var(--text-2); }
+.presence-preview-level.p2 { background: rgba(13,110,253,0.15); color: #0d6efd; }
+.presence-preview-level.p3 { background: rgba(25,135,84,0.15); color: #198754; }
+
+.presence-preview-items { display: flex; flex-direction: column; gap: 8px; }
+.presence-preview-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+.presence-preview-item .icon { font-size: 14px; }
+.presence-preview-item.active { color: var(--success); }
+.presence-preview-item.inactive { color: var(--text-3); opacity: 0.6; }
+
+/* Modal Footer */
+.presence-modal-footer {
+  padding: 16px 20px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.presence-seal-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--gold);
+  border: none;
+  border-radius: var(--r);
+  color: var(--bg);
+  font-family: var(--font);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.presence-seal-btn:hover { opacity: 0.9; }
+.presence-seal-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Confirmation Modal */
+.presence-confirm {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  z-index: 1001;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.presence-confirm.active { display: flex; }
+.presence-confirm-box {
+  background: var(--bg);
+  padding: 24px;
+  border-radius: var(--r-lg);
+  max-width: 340px;
+  text-align: center;
+}
+.presence-confirm-icon { font-size: 48px; margin-bottom: 16px; }
+.presence-confirm-title { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.presence-confirm-body { font-size: 14px; color: var(--text-2); line-height: 1.5; margin-bottom: 8px; }
+.presence-confirm-warning { font-size: 12px; color: var(--gold); font-weight: 500; margin-bottom: 20px; }
+.presence-confirm-actions { display: flex; gap: 12px; }
+.presence-confirm-actions button {
+  flex: 1;
+  padding: 12px;
+  border-radius: var(--r);
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.presence-confirm-cancel {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-2);
+}
+.presence-confirm-seal {
+  background: var(--gold);
+  border: none;
+  color: var(--bg);
+}
+
+/* Result Modal */
+.presence-result {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  z-index: 1001;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.presence-result.active { display: flex; }
+.presence-result-box {
+  background: var(--bg);
+  padding: 24px;
+  border-radius: var(--r-lg);
+  max-width: 380px;
+  width: 100%;
+}
+.presence-result-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.presence-result-icon { font-size: 48px; margin-bottom: 12px; }
+.presence-result-title { font-size: 18px; font-weight: 600; color: var(--text); }
+.presence-result-level {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 4px 12px;
+  background: var(--success-bg);
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--success);
+}
+
+.presence-result-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.presence-result-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  background: var(--bg-2);
+  border-radius: var(--r);
+}
+.presence-result-label { font-size: 11px; color: var(--text-3); text-transform: uppercase; }
+.presence-result-value {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text);
+  word-break: break-all;
+}
+.presence-result-value a { color: var(--gold); text-decoration: none; }
+.presence-result-value a:hover { text-decoration: underline; }
+
+.presence-result-close {
+  width: 100%;
+  padding: 12px;
+  background: var(--gold-bg);
+  border: 1px solid var(--gold);
+  border-radius: var(--r);
+  color: var(--gold);
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
 </style>
 </head>
 <body>
@@ -1143,6 +1493,17 @@ body {
     <div class="rescue-recent" id="rescue-recent" style="display:none;">
       <p class="rescue-recent-title" data-i18n="rescue_recent">Zuletzt gerettet</p>
       <div class="rescue-grid" id="rescue-grid"></div>
+    </div>
+
+    <!-- W-PRESENCE-001: Presence Seal Block -->
+    <div class="presence-block" id="presence-block">
+      <div class="presence-block-icon">🛡️</div>
+      <h3 class="presence-block-title" data-i18n="presence_block_title">Diesen Moment bezeugen</h3>
+      <p class="presence-block-sub" data-i18n="presence_block_sub">Erkläre diesen Augenblick als wahr und versiegle ihn für immer.</p>
+      <button class="presence-btn" onclick="openPresenceComposer()">
+        <span>🔏</span>
+        <span data-i18n="presence_btn">Moment versiegeln</span>
+      </button>
     </div>
   </div>
 
@@ -1348,6 +1709,125 @@ body {
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════════════════
+     W-PRESENCE-001 — PRESENCE COMPOSER MODAL
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<div class="presence-modal" id="presence-modal">
+  <div class="presence-modal-content">
+    <div class="presence-modal-header">
+      <span class="presence-modal-title" data-i18n="presence_modal_title">Präsenz bezeugen</span>
+      <button class="presence-modal-close" onclick="closePresenceComposer()">×</button>
+    </div>
+    <div class="presence-modal-body">
+      <!-- Intent Field (required) -->
+      <div class="presence-field">
+        <label data-i18n="presence_intent_label">Was bezeugst du?</label>
+        <textarea id="presence-intent" rows="3" data-i18n-placeholder="presence_intent_placeholder" placeholder="Ich bin hier und jetzt…"></textarea>
+        <span class="hint" data-i18n="presence_intent_hint">Was möchtest du für immer festhalten?</span>
+      </div>
+
+      <!-- Title Field (optional) -->
+      <div class="presence-field">
+        <label data-i18n="presence_title_label">Titel (optional)</label>
+        <input type="text" id="presence-title" data-i18n-placeholder="presence_title_placeholder" placeholder="Ein Name für diesen Moment">
+      </div>
+
+      <!-- Location Toggle (GPS consent) -->
+      <div class="presence-location-toggle" id="presence-location-toggle" onclick="togglePresenceLocation()">
+        <div class="toggle-info">
+          <span class="toggle-label" data-i18n="presence_location_label">Standort hinzufügen</span>
+          <span class="toggle-sub" id="presence-location-sub" data-i18n="presence_location_sub">GPS-Koordinaten für P3-Nachweis</span>
+        </div>
+        <div class="toggle-switch" id="presence-location-switch"></div>
+      </div>
+
+      <!-- Evidence Button (optional via Tesoura) -->
+      <button class="presence-evidence-btn" id="presence-evidence-btn" onclick="addPresenceEvidence()">
+        <span data-i18n="presence_evidence_btn">📷 Beweis hinzufügen (optional)</span>
+      </button>
+
+      <!-- Preview Box -->
+      <div class="presence-preview" id="presence-preview">
+        <div class="presence-preview-header">
+          <span class="presence-preview-title" data-i18n="presence_preview_title">Vorschau</span>
+          <span class="presence-preview-level p1" id="presence-preview-level">P1 · Zeitlich</span>
+        </div>
+        <div class="presence-preview-items">
+          <div class="presence-preview-item active" id="preview-did">
+            <span class="icon">🪪</span>
+            <span id="preview-did-value">did:windi:travel:...</span>
+          </div>
+          <div class="presence-preview-item active" id="preview-time">
+            <span class="icon">⏱️</span>
+            <span id="preview-time-value">—</span>
+          </div>
+          <div class="presence-preview-item active" id="preview-intent">
+            <span class="icon">💭</span>
+            <span id="preview-intent-value">—</span>
+          </div>
+          <div class="presence-preview-item inactive" id="preview-location">
+            <span class="icon">📍</span>
+            <span id="preview-location-value" data-i18n="presence_preview_location">Standort</span>
+          </div>
+          <div class="presence-preview-item inactive" id="preview-evidence">
+            <span class="icon">📷</span>
+            <span id="preview-evidence-value" data-i18n="presence_preview_evidence">Beweis</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="presence-modal-footer">
+      <button class="presence-seal-btn" id="presence-seal-btn" onclick="preparePresenceSeal()" disabled>
+        <span data-i18n="presence_seal_btn">🔏 Für immer versiegeln</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- W-PRESENCE-001 — CONFIRMATION DIALOG (I9 Gate) -->
+<div class="presence-confirm" id="presence-confirm">
+  <div class="presence-confirm-box">
+    <div class="presence-confirm-icon">🔏</div>
+    <div class="presence-confirm-title" data-i18n="presence_confirm_title">Wirklich versiegeln?</div>
+    <div class="presence-confirm-body" data-i18n="presence_confirm_body">
+      Dieser Moment wird unwiderruflich im Ledger versiegelt. Er kann niemals gelöscht oder verändert werden.
+    </div>
+    <div class="presence-confirm-warning" data-i18n="presence_confirm_warning">⚠️ IRREMEDIÁVEL</div>
+    <div class="presence-confirm-actions">
+      <button class="presence-confirm-cancel" onclick="cancelPresenceSeal()" data-i18n="presence_confirm_cancel">Zurück</button>
+      <button class="presence-confirm-seal" onclick="executePresenceSeal()" data-i18n="presence_confirm_seal">Ja, versiegeln</button>
+    </div>
+  </div>
+</div>
+
+<!-- W-PRESENCE-001 — RESULT MODAL -->
+<div class="presence-result" id="presence-result">
+  <div class="presence-result-box">
+    <div class="presence-result-header">
+      <div class="presence-result-icon">✅</div>
+      <div class="presence-result-title" data-i18n="presence_result_title">Moment versiegelt</div>
+      <div class="presence-result-level" id="presence-result-level">P1</div>
+    </div>
+    <div class="presence-result-details">
+      <div class="presence-result-row">
+        <span class="presence-result-label" data-i18n="presence_result_receipt">Receipt ID</span>
+        <span class="presence-result-value" id="presence-result-receipt">—</span>
+      </div>
+      <div class="presence-result-row">
+        <span class="presence-result-label" data-i18n="presence_result_hash">Content Hash</span>
+        <span class="presence-result-value" id="presence-result-hash">—</span>
+      </div>
+      <div class="presence-result-row">
+        <span class="presence-result-label" data-i18n="presence_result_verify">Verifizieren</span>
+        <span class="presence-result-value">
+          <a href="#" id="presence-result-verify-link" target="_blank">verify-public</a>
+        </span>
+      </div>
+    </div>
+    <button class="presence-result-close" onclick="closePresenceResult()" data-i18n="presence_result_close">Schließen</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
      JAVASCRIPT — TRAVEL_I18N + Core Functions
      ═══════════════════════════════════════════════════════════════════════════ -->
 <script>
@@ -1460,6 +1940,171 @@ const TRAVEL_I18N = {
     pt: "Selado. Para sempre.",
     en: "Sealed. Forever."
   },
+
+  // ── W-PRESENCE-001 ──
+  presence_block_title: {
+    de: "Diesen Moment bezeugen",
+    pt: "Testemunhar este momento",
+    en: "Witness this moment"
+  },
+  presence_block_sub: {
+    de: "Erkläre diesen Augenblick als wahr und versiegle ihn für immer.",
+    pt: "Declara este instante como verdadeiro e sela-o para sempre.",
+    en: "Declare this instant as true and seal it forever."
+  },
+  presence_btn: {
+    de: "Moment versiegeln",
+    pt: "Selar momento",
+    en: "Seal moment"
+  },
+  presence_modal_title: {
+    de: "Präsenz bezeugen",
+    pt: "Testemunhar presença",
+    en: "Witness presence"
+  },
+  presence_intent_label: {
+    de: "Was bezeugt du?",
+    pt: "O que testemunhas?",
+    en: "What are you witnessing?"
+  },
+  presence_intent_placeholder: {
+    de: "Ich bin hier und jetzt…",
+    pt: "Estou aqui e agora…",
+    en: "I am here and now…"
+  },
+  presence_intent_hint: {
+    de: "Was möchtest du für immer festhalten?",
+    pt: "O que queres guardar para sempre?",
+    en: "What do you want to keep forever?"
+  },
+  presence_title_label: {
+    de: "Titel (optional)",
+    pt: "Título (opcional)",
+    en: "Title (optional)"
+  },
+  presence_title_placeholder: {
+    de: "Ein Name für diesen Moment",
+    pt: "Um nome para este momento",
+    en: "A name for this moment"
+  },
+  presence_location_label: {
+    de: "Standort hinzufügen",
+    pt: "Adicionar localização",
+    en: "Add location"
+  },
+  presence_location_sub: {
+    de: "GPS-Koordinaten für P3-Nachweis",
+    pt: "Coordenadas GPS para prova P3",
+    en: "GPS coordinates for P3 proof"
+  },
+  presence_location_granted: {
+    de: "Standort erfasst",
+    pt: "Localização capturada",
+    en: "Location captured"
+  },
+  presence_evidence_btn: {
+    de: "📷 Beweis hinzufügen (optional)",
+    pt: "📷 Adicionar evidência (opcional)",
+    en: "📷 Add evidence (optional)"
+  },
+  presence_evidence_added: {
+    de: "✓ Beweis hinzugefügt",
+    pt: "✓ Evidência adicionada",
+    en: "✓ Evidence added"
+  },
+  presence_preview_title: {
+    de: "Vorschau",
+    pt: "Pré-visualização",
+    en: "Preview"
+  },
+  presence_preview_did: {
+    de: "Deine Identität",
+    pt: "A tua identidade",
+    en: "Your identity"
+  },
+  presence_preview_time: {
+    de: "Zeitstempel",
+    pt: "Timestamp",
+    en: "Timestamp"
+  },
+  presence_preview_intent: {
+    de: "Absicht",
+    pt: "Intenção",
+    en: "Intent"
+  },
+  presence_preview_location: {
+    de: "Standort",
+    pt: "Localização",
+    en: "Location"
+  },
+  presence_preview_evidence: {
+    de: "Beweis",
+    pt: "Evidência",
+    en: "Evidence"
+  },
+  presence_seal_btn: {
+    de: "🔏 Für immer versiegeln",
+    pt: "🔏 Selar para sempre",
+    en: "🔏 Seal forever"
+  },
+  presence_confirm_title: {
+    de: "Wirklich versiegeln?",
+    pt: "Selar mesmo?",
+    en: "Really seal?"
+  },
+  presence_confirm_body: {
+    de: "Dieser Moment wird unwiderruflich im Ledger versiegelt. Er kann niemals gelöscht oder verändert werden.",
+    pt: "Este momento será selado de forma irrevogável no Ledger. Nunca poderá ser apagado ou alterado.",
+    en: "This moment will be irrevocably sealed in the Ledger. It can never be deleted or changed."
+  },
+  presence_confirm_warning: {
+    de: "⚠️ IRREMEDIÁVEL",
+    pt: "⚠️ IRREMEDIÁVEL",
+    en: "⚠️ IRREMEDIABLE"
+  },
+  presence_confirm_cancel: {
+    de: "Zurück",
+    pt: "Voltar",
+    en: "Back"
+  },
+  presence_confirm_seal: {
+    de: "Ja, versiegeln",
+    pt: "Sim, selar",
+    en: "Yes, seal"
+  },
+  presence_result_title: {
+    de: "Moment versiegelt",
+    pt: "Momento selado",
+    en: "Moment sealed"
+  },
+  presence_result_receipt: {
+    de: "Receipt ID",
+    pt: "Receipt ID",
+    en: "Receipt ID"
+  },
+  presence_result_hash: {
+    de: "Content Hash",
+    pt: "Content Hash",
+    en: "Content Hash"
+  },
+  presence_result_verify: {
+    de: "Verifizieren",
+    pt: "Verificar",
+    en: "Verify"
+  },
+  presence_result_close: {
+    de: "Schließen",
+    pt: "Fechar",
+    en: "Close"
+  },
+  presence_error: {
+    de: "Fehler beim Versiegeln. Bitte erneut versuchen.",
+    pt: "Erro ao selar. Por favor tenta novamente.",
+    en: "Error sealing. Please try again."
+  },
+  presence_p1: { de: "P1 · Zeitlich", pt: "P1 · Temporal", en: "P1 · Temporal" },
+  presence_p2: { de: "P2 · Kontextuell", pt: "P2 · Contextual", en: "P2 · Contextual" },
+  presence_p3: { de: "P3 · Räumlich", pt: "P3 · Espacial", en: "P3 · Spatial" },
 
   // ── THREAD ──
   thread_title: {
@@ -2970,6 +3615,348 @@ async function searchTrainStations(query) {
     console.warn('[§103] Station search error:', err);
     return [];
   }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// W-PRESENCE-001 — PRESENCE SEAL PROTOCOL
+// "Presence is not detected. It is declared and sealed."
+// ═══════════════════════════════════════════════════════════════════════════
+
+// State for presence composer
+let __presenceState = {
+  intent: '',
+  title: '',
+  locationEnabled: false,
+  location: null,
+  evidence: null,
+  evidenceHash: null
+};
+
+// openPresenceComposer() — Opens the presence composer modal
+function openPresenceComposer() {
+  const did = sessionStorage.getItem('windi_travel_wallet');
+  if (!did) {
+    window.location.href = '/travel/gate/';
+    return;
+  }
+
+  // Reset state
+  __presenceState = {
+    intent: '',
+    title: '',
+    locationEnabled: false,
+    location: null,
+    evidence: null,
+    evidenceHash: null
+  };
+
+  // Reset form
+  document.getElementById('presence-intent').value = '';
+  document.getElementById('presence-title').value = '';
+  document.getElementById('presence-location-switch').classList.remove('active');
+  document.getElementById('presence-location-sub').textContent =
+    TRAVEL_I18N.presence_location_sub?.[LANG] || 'GPS-Koordinaten für P3-Nachweis';
+  document.getElementById('presence-evidence-btn').classList.remove('has-evidence');
+  document.getElementById('presence-evidence-btn').querySelector('span').textContent =
+    TRAVEL_I18N.presence_evidence_btn?.[LANG] || '📷 Beweis hinzufügen (optional)';
+  document.getElementById('presence-seal-btn').disabled = true;
+
+  // Update preview with DID
+  document.getElementById('preview-did-value').textContent =
+    did.length > 24 ? did.substring(0, 22) + '…' : did;
+  document.getElementById('preview-time-value').textContent =
+    new Date().toLocaleString(LANG === 'de' ? 'de-DE' : LANG === 'pt' ? 'pt-PT' : 'en-GB');
+  document.getElementById('preview-intent-value').textContent = '—';
+
+  // Reset preview items
+  document.getElementById('preview-location').classList.remove('active');
+  document.getElementById('preview-location').classList.add('inactive');
+  document.getElementById('preview-evidence').classList.remove('active');
+  document.getElementById('preview-evidence').classList.add('inactive');
+
+  updatePresenceLevel();
+
+  // Show modal
+  document.getElementById('presence-modal').classList.add('active');
+
+  // Listen for intent changes
+  document.getElementById('presence-intent').addEventListener('input', (e) => {
+    __presenceState.intent = e.target.value.trim();
+    document.getElementById('preview-intent-value').textContent =
+      __presenceState.intent || '—';
+    document.getElementById('presence-seal-btn').disabled = !__presenceState.intent;
+    updatePresenceLevel();
+  });
+
+  document.getElementById('presence-title').addEventListener('input', (e) => {
+    __presenceState.title = e.target.value.trim();
+  });
+}
+
+// closePresenceComposer() — Closes the presence composer modal
+function closePresenceComposer() {
+  document.getElementById('presence-modal').classList.remove('active');
+}
+
+// togglePresenceLocation() — Toggle GPS consent and capture location
+async function togglePresenceLocation() {
+  const toggle = document.getElementById('presence-location-switch');
+  const sub = document.getElementById('presence-location-sub');
+  const previewItem = document.getElementById('preview-location');
+  const previewValue = document.getElementById('preview-location-value');
+
+  if (__presenceState.locationEnabled) {
+    // Disable location
+    __presenceState.locationEnabled = false;
+    __presenceState.location = null;
+    toggle.classList.remove('active');
+    sub.textContent = TRAVEL_I18N.presence_location_sub?.[LANG] || 'GPS-Koordinaten für P3-Nachweis';
+    previewItem.classList.remove('active');
+    previewItem.classList.add('inactive');
+    previewValue.textContent = TRAVEL_I18N.presence_preview_location?.[LANG] || 'Standort';
+    updatePresenceLevel();
+    return;
+  }
+
+  // Request GPS permission
+  if (!navigator.geolocation) {
+    console.warn('[W-PRESENCE-001] Geolocation not supported');
+    return;
+  }
+
+  try {
+    const position = await new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resolve, reject, {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      });
+    });
+
+    __presenceState.locationEnabled = true;
+    __presenceState.location = {
+      lat: position.coords.latitude,
+      lng: position.coords.longitude,
+      accuracy: position.coords.accuracy
+    };
+
+    toggle.classList.add('active');
+    sub.textContent = TRAVEL_I18N.presence_location_granted?.[LANG] || 'Standort erfasst';
+    previewItem.classList.add('active');
+    previewItem.classList.remove('inactive');
+    previewValue.textContent = `${position.coords.latitude.toFixed(4)}°, ${position.coords.longitude.toFixed(4)}°`;
+
+    console.log('[W-PRESENCE-001] Location captured:', __presenceState.location);
+    updatePresenceLevel();
+
+  } catch (err) {
+    console.warn('[W-PRESENCE-001] Location error:', err);
+    // User denied or error — stay disabled
+    toggle.classList.remove('active');
+  }
+}
+
+// addPresenceEvidence() — Add evidence via Tesoura (camera/file)
+function addPresenceEvidence() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*,video/*';
+  input.capture = 'environment';
+
+  input.onchange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      // Calculate SHA-256 hash of file
+      const buffer = await file.arrayBuffer();
+      const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+      __presenceState.evidence = {
+        type: file.type.startsWith('video/') ? 'video' : 'photo',
+        mime: file.type,
+        size: file.size,
+        name: file.name
+      };
+      __presenceState.evidenceHash = hashHex;
+
+      // Update UI
+      const btn = document.getElementById('presence-evidence-btn');
+      btn.classList.add('has-evidence');
+      btn.querySelector('span').textContent =
+        TRAVEL_I18N.presence_evidence_added?.[LANG] || '✓ Beweis hinzugefügt';
+
+      const previewItem = document.getElementById('preview-evidence');
+      const previewValue = document.getElementById('preview-evidence-value');
+      previewItem.classList.add('active');
+      previewItem.classList.remove('inactive');
+      previewValue.textContent = `${__presenceState.evidence.type} · ${hashHex.substring(0, 8)}…`;
+
+      console.log('[W-PRESENCE-001] Evidence added:', __presenceState.evidence);
+      updatePresenceLevel();
+
+    } catch (err) {
+      console.error('[W-PRESENCE-001] Evidence hash error:', err);
+    }
+  };
+
+  input.click();
+}
+
+// updatePresenceLevel() — Update P1/P2/P3 preview badge
+function updatePresenceLevel() {
+  const levelEl = document.getElementById('presence-preview-level');
+  let level = 'P1';
+  let levelClass = 'p1';
+
+  // P2 = has evidence (contextual)
+  if (__presenceState.evidence || __presenceState.evidenceHash) {
+    level = 'P2';
+    levelClass = 'p2';
+  }
+
+  // P3 = has GPS location (spatial) — highest level
+  if (__presenceState.locationEnabled && __presenceState.location) {
+    level = 'P3';
+    levelClass = 'p3';
+  }
+
+  levelEl.className = `presence-preview-level ${levelClass}`;
+  levelEl.textContent = TRAVEL_I18N[`presence_${level.toLowerCase()}`]?.[LANG] || level;
+}
+
+// preparePresenceSeal() — Show I9 confirmation dialog
+function preparePresenceSeal() {
+  if (!__presenceState.intent) {
+    console.warn('[W-PRESENCE-001] No intent provided');
+    return;
+  }
+
+  // Show I9 confirmation
+  document.getElementById('presence-confirm').classList.add('active');
+}
+
+// cancelPresenceSeal() — Cancel and go back to composer
+function cancelPresenceSeal() {
+  document.getElementById('presence-confirm').classList.remove('active');
+}
+
+// executePresenceSeal() — Call /presence/create API (I9 approved)
+async function executePresenceSeal() {
+  const did = sessionStorage.getItem('windi_travel_wallet');
+  const sessionId = sessionStorage.getItem('windi_travel_session') || null;
+
+  // Close confirm dialog
+  document.getElementById('presence-confirm').classList.remove('active');
+
+  // Disable seal button and show loading
+  const sealBtn = document.getElementById('presence-seal-btn');
+  sealBtn.disabled = true;
+  sealBtn.innerHTML = '<span>⏳</span>';
+
+  try {
+    // Build request payload
+    const payload = {
+      did: did,
+      intent: __presenceState.intent,
+      session_id: sessionId,
+      title: __presenceState.title || null,
+      location: __presenceState.location ? {
+        lat: __presenceState.location.lat,
+        lng: __presenceState.location.lng,
+        accuracy: __presenceState.location.accuracy
+      } : null,
+      evidence: __presenceState.evidence ? {
+        type: __presenceState.evidence.type,
+        hash: __presenceState.evidenceHash,
+        mime_type: __presenceState.evidence.mime
+      } : null
+    };
+
+    console.log('[W-PRESENCE-001] Sealing presence:', payload);
+
+    const res = await fetch('/travel/presence/create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`);
+    }
+
+    const data = await res.json();
+    console.log('[W-PRESENCE-001] Seal response:', data);
+
+    if (data.success) {
+      // Success — show result
+      closePresenceComposer();
+      showPresenceResult({
+        receipt_id: data.receipt_id,
+        content_hash: data.content_hash,
+        verify_url: data.verify_url,
+        presence_level: data.presence_level
+      });
+    } else {
+      throw new Error(data.error || 'Seal failed');
+    }
+
+  } catch (err) {
+    console.error('[W-PRESENCE-001] Seal error:', err);
+    // Restore button
+    sealBtn.disabled = false;
+    sealBtn.innerHTML = `<span>${TRAVEL_I18N.presence_seal_btn?.[LANG] || '🔏 Für immer versiegeln'}</span>`;
+    // Show error (could use a toast, for now alert)
+    alert(TRAVEL_I18N.presence_error?.[LANG] || 'Error sealing. Please try again.');
+  }
+}
+
+// showPresenceResult() — Display the seal result modal
+function showPresenceResult(result) {
+  document.getElementById('presence-result-receipt').textContent = result.receipt_id || '—';
+  document.getElementById('presence-result-hash').textContent =
+    (result.content_hash || '—').substring(0, 32) + '…';
+  document.getElementById('presence-result-level').textContent = result.presence_level || 'P1';
+
+  const verifyLink = document.getElementById('presence-result-verify-link');
+  if (result.verify_url) {
+    verifyLink.href = result.verify_url;
+    verifyLink.textContent = 'verify-public →';
+  } else {
+    verifyLink.href = `https://windi-domain.com/verify-public/?id=${result.receipt_id}`;
+    verifyLink.textContent = 'verify-public →';
+  }
+
+  // Update level badge color
+  const levelEl = document.getElementById('presence-result-level');
+  const level = (result.presence_level || 'P1').toLowerCase();
+  levelEl.style.background = level === 'p3' ? 'rgba(25,135,84,0.15)' :
+                             level === 'p2' ? 'rgba(13,110,253,0.15)' :
+                             'rgba(108,117,125,0.15)';
+  levelEl.style.color = level === 'p3' ? '#198754' :
+                        level === 'p2' ? '#0d6efd' :
+                        'var(--text-2)';
+
+  document.getElementById('presence-result').classList.add('active');
+
+  // Update SCHLÜSSEL with content hash
+  if (result.content_hash) {
+    updateSchluessel(result.content_hash);
+  }
+
+  // Generate QR for receipt
+  if (result.receipt_id) {
+    generateQRSVG(result.receipt_id);
+  }
+
+  console.log('[W-PRESENCE-001] Presence sealed successfully:', result.receipt_id);
+}
+
+// closePresenceResult() — Close the result modal
+function closePresenceResult() {
+  document.getElementById('presence-result').classList.remove('active');
 }
 </script>
 

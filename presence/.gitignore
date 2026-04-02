@@ -1,0 +1,5 @@
+# W-PRESENCE-001 — Git Ignore
+__pycache__/
+*.pyc
+.env
+*.db
