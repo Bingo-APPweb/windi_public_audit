@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.73
-**Sealed:** 2026-04-02 · W-PRESENCE-001 Canonical
+**Version:** 1.9.74
+**Sealed:** 2026-04-02 · W-SESSION-001 Sovereign Continuity
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -123,6 +123,34 @@ Chamadas directas aos agentes de domínio são deprecated.
 **Timeline:** Não é feed. É memória verificável — cronológica, P1/P2/P3, verify links.
 
 **Anti-patterns:** Sem feed social · Sem gamificação · Sem logging automático
+
+### W-SESSION-001 — Sovereign Session Layer (LIVE 02 Apr 2026)
+
+| Campo | Valor |
+|-------|-------|
+| Status | LIVE · Port :8126 |
+| Commit | `dd9077e` |
+| Invariants | I1, I9, I13 |
+
+> **"A identidade deixou de ser validada. Passou a ser lembrada."**
+
+**Arquitectura:**
+- Token HMAC-SHA256 (assinatura completa 64 chars)
+- Cookie HttpOnly + Secure + SameSite=Lax
+- Device binding via SHA-256 fingerprint
+- 30-day persistence (configurable)
+- Fail-closed: DB down = deny access
+
+**Fluxo:**
+```
+Magic Link → Session Create → Cookie Set → 30 days
+                                    ↓
+Browser close → Reopen → Direct workspace access ✅
+```
+
+**Endpoints:** `/session/create` · `/session/revoke` · `/session/list`
+
+**Módulos:** `sovereign_session.py` · `auth_middleware.py`
 
 ---
 
@@ -570,14 +598,14 @@ KLAR (light):
 | :8120 | Pioneer Landing | 🟢 LIVE |
 | :8121 | Dispatch Gateway | 🟢 **.jmpg Hydration Engine** · I5+I6+I9 |
 | :8122 | WINDI-LAW Identity Gate | 🟢 **SEALED** · Isolado · 12 empresas |
-| :8126 | WINDI Travel Identity Gate | 🟢 **LIVE** · v1.2.0 · Pronto produção |
+| :8126 | WINDI Travel Identity Gate | 🟢 **LIVE** · v1.3.0 · W-SESSION-001 · Sovereign Sessions |
 | :8130 | W-GATEWAY-001 (LLM Bridge) | 🟢 **LIVE** · 5 providers |
 
-### Sistemas LIVE (29 total)
+### Sistemas LIVE (30 total)
 
 **Core:** GEN7 Desktop · Pioneer Program · VPR System · API Keys · Dispatch · Web Hosting · i18n · Wallet · Lead Admin
 
-**Agents (W-*):** CIA-001 · WSG-001 · GATE-001 · NGINX-001 · CANVAS-001 · CANVAS-OBS-001 · CANVAS-LAB-001 · COMM-001 · PROVE-001 · DETECT-MEDIA-001 · VERIFY-MODUS4 · INTENT-001 · COUNSEL-001
+**Agents (W-*):** CIA-001 · WSG-001 · GATE-001 · NGINX-001 · CANVAS-001 · CANVAS-OBS-001 · CANVAS-LAB-001 · COMM-001 · PROVE-001 · DETECT-MEDIA-001 · VERIFY-MODUS4 · INTENT-001 · COUNSEL-001 · SESSION-001
 
 **Products:** Triangle of Power · WINDI FIELD · WINDI TRAVEL · FVE Protocol · RFC-001 DNA
 
@@ -587,12 +615,11 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 02 Apr | **W-SESSION-001 LIVE** · Sovereign Sessions · 30-day continuity · Device binding · `dd9077e` |
+| 02 Apr | §110 **i18n Fix** · MARIA greeting trilíngue · I12 compliance · `dd9077e` |
 | 02 Apr | **W-PRESENCE-001** · Presence Seal Protocol · Timeline "Meus Momentos" · `60da249` + `1afacdf` |
-| 02 Apr | §110 **DID Report** · The Seed of WINDI · Public page `/docs/did/` · `b6a7aa5` |
 | 01 Apr | §109 **Magic Link Login** · Travel + LAW · Returning users · `33d1360` |
-| 01 Apr | §109.1 **Verify Public Root** · nginx route fix · `/verify-public/` live |
 | 01 Apr | **T1 MOSAIC Protocol** · smoke-travel.sh · Email verify confirmed · `67de32f` |
-| 01 Apr | §103.T **Train Intelligence** · MARIA Decision Engine · transport.rest API · `930a2cc` |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -777,7 +804,8 @@ Se o Gêmeo inventa um receipt... isso é falsificação."
 - [ ] **windilaw.de** — Sincronizar com windi-domain.com/law/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
-### Completado (ver §37-111)
+### Completado (ver §37-112)
+- [x] §112 **W-SESSION-001 LIVE** · Sovereign Sessions · 30-day continuity · `dd9077e` ✅ 02 Apr 2026
 - [x] §111 **W-PRESENCE-001** · Presence Seal + Timeline · `60da249` + `1afacdf` ✅ 02 Apr 2026
 - [x] §110 **DID Report** · The Seed of WINDI · `/docs/did/` trilíngue · `b6a7aa5` ✅ 02 Apr 2026
 - [x] §109 **Magic Link Login** · Travel + LAW · Returning users · `33d1360` ✅ 01 Apr 2026
