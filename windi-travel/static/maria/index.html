@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="de">
 <head>
   <!-- Travelpayouts Affiliate — WINDI Travel §67 · ID 513311 -->
   <script data-cfasync="false" data-no-defer="1">
@@ -118,6 +118,7 @@ const I18N = {
     timeline_memory:"Memória",
     timeline_context:"Contexto",
     timeline_empty:"Ainda sem histórico",
+    footer_motto:"IA processa. Humano decide. WINDI garante.",
   },
   DE:{
     tagline:"Orchestratorin Verifizierbarer Erlebnisse",
@@ -180,6 +181,7 @@ const I18N = {
     timeline_memory:"Erinnerung",
     timeline_context:"Kontext",
     timeline_empty:"Noch keine Historie",
+    footer_motto:"KI verarbeitet. Mensch entscheidet. WINDI garantiert.",
   },
   EN:{
     tagline:"Orchestrator of Verifiable Experiences",
@@ -242,6 +244,7 @@ const I18N = {
     timeline_memory:"Memory",
     timeline_context:"Context",
     timeline_empty:"No history yet",
+    footer_motto:"AI processes. Human decides. WINDI guarantees.",
   },
 };
 
@@ -803,7 +806,16 @@ function Timeline({entries,t,lang}){
 }
 
 function App(){
-  const[lang,setLang]=useState("PT");
+  // §112 I12 FIX — Language Sovereign: read from localStorage, default DE
+  const[lang,setLangState]=useState(()=>{
+    const saved = localStorage.getItem('windi_travel_lang');
+    return (saved && ['DE','EN','PT'].includes(saved)) ? saved : 'DE';
+  });
+  const setLang = (l) => {
+    setLangState(l);
+    localStorage.setItem('windi_travel_lang', l);
+    document.documentElement.lang = l.toLowerCase();
+  };
   const t=I18N[lang];
   const[mode,setMode]=useState("idle");
   const[result,setResult]=useState(null);
@@ -832,32 +844,33 @@ function App(){
     return()=>{window._windiShowArrival=null;};
   },[]);
 
+  // Health check + GPS (once)
   useEffect(()=>{
-    // Health check
     fetch(MARIA_HEALTH,{signal:AbortSignal.timeout(3000)})
       .then(r=>setBackendOK(r.ok))
       .catch(()=>setBackendOK(false));
-    // §65 — Personalized greeting on load + save GPS for SuperCarta
     getGPS().then(({lat,lng})=>{
       if(lat&&lng)setUserGPS({lat,lng});
     });
-    if(WALLET_ID){
-      getGPS().then(({lat,lng})=>{
-        if(lat&&lng)setUserGPS({lat,lng});
-        fetch(MARIA_PLAN,{
-          method:"POST",headers:{"Content-Type":"application/json"},
-          body:JSON.stringify({intent:{type:"greeting"},lang,lat,lng,wallet_id:WALLET_ID}),
-          signal:AbortSignal.timeout(API_TIMEOUT)
-        })
-        .then(r=>r.json())
-        .then(d=>{
-          if(d.context&&d.context.greeting)setGreeting(d.context.greeting);
-          if(d.context&&d.context.weather)setWeather(d.context.weather);
-        })
-        .catch(()=>{});
-      });
-    }
   },[]);
+
+  // §112 I12 FIX — Greeting reloads when lang changes (Language Sovereign)
+  useEffect(()=>{
+    if(!WALLET_ID)return;
+    getGPS().then(({lat,lng})=>{
+      fetch(MARIA_PLAN,{
+        method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({intent:{type:"greeting"},lang,lat:lat||null,lng:lng||null,wallet_id:WALLET_ID}),
+        signal:AbortSignal.timeout(API_TIMEOUT)
+      })
+      .then(r=>r.json())
+      .then(d=>{
+        if(d.context&&d.context.greeting)setGreeting(d.context.greeting);
+        if(d.context&&d.context.weather)setWeather(d.context.weather);
+      })
+      .catch(()=>{});
+    });
+  },[lang]);
 
   const clearT=()=>{timers.current.forEach(clearTimeout);timers.current=[];};
 
@@ -1412,7 +1425,7 @@ function App(){
 
         <div style={{textAlign:"center",marginTop:22,fontSize:10,
           fontFamily:"'JetBrains Mono',monospace",color:P.cinza,letterSpacing:"0.5px"}}>
-          AI processes. Human decides. WINDI guarantees. 🐉
+          {t.footer_motto} 🐉
         </div>
       </div>
     </div>
