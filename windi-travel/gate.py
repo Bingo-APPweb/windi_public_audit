@@ -400,18 +400,56 @@ async def gate_status(request: Request):
         return JSONResponse({"status": "RED", "error": str(e)}, status_code=500)
 
 # ── Workspace Guard ────────────────────────────────────────────────────────────
-def require_auth(request: Request) -> sqlite3.Row:
+def require_auth(request: Request):
     """
+    W-SESSION-001 compliant auth guard.
+
     Usar este helper nos routes do workspace:
 
         user = require_auth(request)
         if isinstance(user, RedirectResponse):
             return user
+
+    Fluxo:
+    1. Verifica sessão soberana (windi_sovereign_session) se habilitada
+    2. Fallback para sessão legacy (windi_travel_session)
+    3. Retorna dict com wallet_id ou RedirectResponse
     """
+    # Try sovereign session first
+    try:
+        import sys
+        sys.path.insert(0, str(Path(__file__).parent))
+        from auth_middleware import authenticate_request
+
+        auth = authenticate_request(request)
+        if auth.authenticated:
+            # Return dict compatible with existing code
+            return {
+                "wallet_id": auth.wallet_id,
+                "name": auth.name,
+                "email": auth.email,
+                "tier": auth.tier,
+                "is_sovereign": auth.is_sovereign,
+                "device_trust": auth.device_trust
+            }
+    except Exception as e:
+        # If middleware fails, continue to legacy
+        print(f"[W-SESSION-001] Middleware error, fallback to legacy: {e}")
+
+    # Fallback: Legacy session
     user = get_session_from_request(request)
     if not user:
         return RedirectResponse(url="/travel/gate", status_code=302)
-    return user
+
+    # Convert Row to dict
+    return {
+        "wallet_id": user["wallet_id"],
+        "name": user["name"],
+        "email": user["email"],
+        "tier": user["tier"],
+        "is_sovereign": False,
+        "device_trust": "LEGACY"
+    }
 
 # ── Init DB on module load ────────────────────────────────────────────────────
 init_db()

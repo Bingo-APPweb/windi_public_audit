@@ -292,8 +292,9 @@ def is_valid_windi_did(did: str) -> bool:
     Valida formato de DID WINDI.
 
     Formatos aceites:
-        - did:windi:travel:xxx
-        - did:windi:law:xxx
+        - did:windi:travel:xxx (4 parts)
+        - did:windi:law:xxx (4 parts)
+        - did:windi:xxx (3 parts - generic)
         - WID-TRAVEL-xxx (legacy)
         - WID-LAW-xxx (legacy)
     """
@@ -303,7 +304,12 @@ def is_valid_windi_did(did: str) -> bool:
     # Formato novo
     if did.startswith("did:windi:"):
         parts = did.split(":")
-        return len(parts) >= 4 and parts[2] in ("travel", "law", "wallet")
+        # Accept both 3-part (did:windi:uuid) and 4-part (did:windi:travel:uuid)
+        if len(parts) == 3:
+            return len(parts[2]) > 0  # Just check uuid exists
+        if len(parts) >= 4:
+            return parts[2] in ("travel", "law", "wallet")
+        return False
 
     # Formato legacy
     if did.startswith("WID-TRAVEL-") or did.startswith("WID-LAW-"):

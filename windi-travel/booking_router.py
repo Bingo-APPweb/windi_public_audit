@@ -2423,7 +2423,7 @@ async def demo_super_carta():
 # ══════════════════════════════════════════════════════════════════════════════
 
 @router.get("/location")
-async def maria_location(request: Request):
+async def maria_location(request: Request, lang: str = "en"):
     """
     WhereAmI — detecta cidade do utilizador via IP para pré-popular fly_from.
 
@@ -2431,6 +2431,7 @@ async def maria_location(request: Request):
     Frontend chama ao iniciar → pré-popula fly_from + MARIA greeting contextual.
 
     §102 WINDI-TRAVEL · IP1 intacto (apenas detecção, sem booking).
+    §110 FIX: Usar idioma do frontend, não país do IP (I12 compliance).
     """
     # Extrair IP real (nginx passa via X-Real-IP ou X-Forwarded-For)
     ip = (
@@ -2451,15 +2452,15 @@ async def maria_location(request: Request):
             "source": "fallback_bridge_disabled"
         }
 
-    # Greeting contextual por país
+    # §110 FIX: Greeting trilíngue baseado no idioma do FRONTEND (I12 Language Sovereign)
+    # Não usar país do IP — usar idioma selecionado pelo utilizador
+    lang_upper = lang.upper()
     greetings = {
-        "DE": f"Estás em {loc['name']}. Para onde queres voar?",
-        "AT": f"Estás em {loc['name']}. Para onde queres voar?",
-        "CH": f"Estás em {loc['name']}. Para onde queres voar?",
-        "BR": f"Você está em {loc['name']}. Para onde quer voar?",
+        "DE": f"Du bist in {loc['name']}. Wohin möchtest du fliegen?",
         "PT": f"Estás em {loc['name']}. Para onde queres voar?",
+        "EN": f"You're in {loc['name']}. Where do you want to fly?",
     }
-    greeting = greetings.get(loc.get("country_code", ""), f"You're in {loc['name']}. Where do you want to fly?")
+    greeting = greetings.get(lang_upper, greetings["EN"])
 
     log.info(f"[WhereAmI §102] {loc['iata']} ({loc['name']}) — detected={loc.get('detected', False)}")
 
