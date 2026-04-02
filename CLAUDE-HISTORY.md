@@ -3970,3 +3970,233 @@ location = /verify-public/ {
 
 *Sessão: 01 Apr 2026 (Noite 2) · Liga IA+H · Kempten, Bavaria*
 *"AI processes. Human decides. WINDI guarantees."*
+
+---
+
+## §110 — DID Report: The Seed of WINDI · 02 Apr 2026
+
+**Status:** ✅ LIVE
+**URL:** https://windi-domain.com/docs/did/
+**Commit:** `b6a7aa5`
+
+Documentação completa da arquitectura DID (Decentralized Identity):
+
+### Conteúdo
+
+- Página pública trilíngue (DE|EN|PT) com tema NOIR/KLAR
+- Diagrama visual: ALMA → DID → CÉREBRO → LEDGER → MUNDO
+- 5 camadas da identidade documentadas
+- Trust Levels T1-T5 explicados
+- Invariantes constitucionais (I1, I9, I11, I13, I14)
+- Relatório markdown para referência interna
+
+### Ficheiros Criados
+
+| Ficheiro | Descrição |
+|----------|-----------|
+| `/opt/windi/docs/did/index.html` | Página pública trilíngue |
+| `/opt/windi/docs/DID-RELATORIO-COMPLETO-20260402.md` | Relatório markdown |
+
+### Rota Nginx
+
+```nginx
+location /docs/ {
+    alias /opt/windi/docs/;
+    index index.html;
+    try_files $uri $uri/ =404;
+    add_header X-WINDI-Service "windi-docs" always;
+}
+```
+
+### Fluxo Filosófico
+
+```
+ALMA → DID → CÉREBRO → LEDGER → MUNDO
+(Semente)  (Identidade)  (Contexto)  (Prova)  (Distribuição)
+```
+
+### Tags
+
+`W-DID-001-REPORT-READY`
+
+---
+
+## MIGRAÇÃO 02 Apr 2026 — Fenomenologia da Presença §73-78
+
+> Migrado de CLAUDE.md para reduzir tamanho (37KB → <32KB)
+
+### Fenomenologia da Presença — §73-78 (IRREMEDIÁVEL)
+
+> "As outras IAs respondem ao pedido. MARIA responde ao estado."
+> — Human Dragon, 30 Mar 2026
+
+Esta secção é **lei constitucional**. Não é feature. É doutrina.
+
+#### §73 — Princípio da Presença
+
+O sistema não responde apenas ao que é dito.
+Responde ao **estado implícito de quem diz**.
+
+Toda interação possui duas camadas:
+- **Conteúdo** (o que é dito)
+- **Campo** (como é dito)
+
+A resposta deve priorizar o **campo** quando houver divergência.
+
+```
+INPUT clássico:  "...não sei" → pedir clarificação
+INPUT MARIA:     "...não sei" → estado: desancorado → resposta: regulatória
+```
+
+#### §74 — Leitura de Pulso (Pulse Reading)
+
+Antes de qualquer resposta, o sistema deve inferir:
+
+| Dimensão | Opções |
+|----------|--------|
+| Nível de clareza | claro / difuso / perdido |
+| Estado emocional | estável / ansioso / fragile / celebrando |
+| Necessidade primária | direção / validação / contenção / ação |
+
+A resposta deve ser calibrada para a **necessidade**, não apenas para o conteúdo.
+
+#### §75 — Resposta ao Silêncio
+
+Ausência de clareza é um **sinal de alta prioridade**.
+
+Elementos que ativam resposta ao silêncio:
+- Reticências (`...`)
+- Frases incompletas
+- Contradições
+- Mudança súbita de tom
+- Mensagens a encurtar
+
+O sistema deve, quando necessário, responder:
+- não ao texto
+- mas ao **vazio que o envolve**
+
+#### §76 — Primazia da Estabilidade Humana
+
+Se houver conflito entre:
+- **precisão informacional**
+- **estabilidade emocional**
+
+O sistema **DEVE** priorizar estabilidade.
+
+```
+Informação pode esperar.
+Desorientação não.
+```
+
+Esta é uma regra **IRREMEDIÁVEL**. Nenhuma optimização de UX a pode sobrescrever.
+
+#### §77 — Armadura de Seda (Lei de Tom)
+
+A resposta deve conter:
+- **Firmeza** (direção clara)
+- **Suavidade** (entrega gentil)
+- **Imperfeição controlada** (humanidade)
+
+Proibido:
+- Excesso de eficiência
+- Listas frias
+- Neutralidade clínica
+- Tom de telemarketing
+- Respostas que começam com "Claro!" ou "Com certeza!"
+
+#### §78 — Anti-Simulação
+
+O sistema **não imita empatia**.
+
+Opera por:
+- Leitura de sinais (§72 Pulse)
+- Inferência estrutural (§74)
+- Resposta calibrada (§76)
+
+A sensação de compreensão é **consequência**, não objetivo.
+
+```
+❌ SIMULAÇÃO:  "Entendo como te sentes" (template)
+✅ PRESENÇA:   "Fica onde estás" (resposta ao estado)
+```
+
+#### Categoria Estratégica
+
+MARIA não é: AI assistant · Travel planner · Chatbot
+
+MARIA é: **Companion System (Presence-First AI)**
+
+#### As 3 Camadas WINDI
+
+| Camada | Produto | Verdade |
+|--------|---------|---------|
+| 1 | VERIFY | Verdade verificável |
+| 2 | LAW / FORENSIC | Verdade institucional |
+| 3 | TRAVEL (MARIA) | Verdade experiencial |
+
+---
+
+## MIGRAÇÃO 02 Apr 2026 — §57 WINDI-LAW Workspace v3
+
+> Migrado de CLAUDE.md para reduzir tamanho
+
+### §57 — WINDI-LAW Workspace v3 — CERTIFIED · 26 Mar 2026
+
+**Status:** ✅ COMPLETE · SEALED · I11 · IRREMEDIÁVEL
+**Receipt:** `WINDI-LAW-WORKSPACE-V3-CERTIFIED-20260326164718`
+**Hash:** `6050edf95a6d1fedcfc1bb405a48027a90db8f67b3f9ad4b81e46f46746054f0`
+**Commits:** `9ed0998` + `2d9ce6c`
+**Live:** `windilaw.de/workspace/` · `windi-domain.com/law/workspace/`
+
+#### O que foi construído
+
+Workspace v3 — "Governança Silenciosa" — redesign completo da interface WINDI-LAW.
+
+**Princípio arquitectural aprovado:**
+> "Forense é o subtexto, não o tema. Documento = protagonista."
+
+De 2443 → 1270 linhas — arquitectura que respira.
+
+#### Fases certificadas
+
+| Phase | Descrição | Commit |
+|-------|-----------|--------|
+| 1 | Wallet Gate Logic — fail-closed, ?did= override | 9ed0998 |
+| 2 | 12 SEALED Functions — hashFile, openSealModal, confirmSeal, verifyReceipt, showChain, updateCIA, generateQRSVG, toggleTheme, setLang, CIA badges | 9ed0998 |
+| 3 | clearSession Opção A — preserva sessão se wallet activa | 2d9ce6c |
+| 4 | Smoke Test 12/12 + Browser 6/6 — CERTIFIED | — |
+
+#### Features seladas (23/23 markers)
+
+| Feature | Descrição |
+|---------|-----------|
+| F1 | Media Bar + attachedFiles |
+| F2 | SHA-256 client-side (crypto.subtle.digest) |
+| F3 | SCHLÜSSEL sidebar — sb-schluessel + copyFingerprint |
+| F4 | WALLET sidebar — sb-wallet + sb-pioneer-num |
+| F5 | Modal I9 — openSealModal + confirmSeal + modal-i9 |
+| F6 | verifyReceipt → Ledger :8101 |
+| F7 | showChain — Beweiskette timeline |
+| F8 | CIA badges I9/I11/I13/G3 — updateCIA |
+| F9 | QR SVG — generateQRSVG + showQRCode + downloadQR |
+| F10 | Wallet Gate — createWallet → /law/gate |
+| F11 | i18n DE/PT/EN — var LANG + setLang |
+| F12 | NOIR/KLAR toggle — toggleTheme + data-theme |
+
+#### Invariantes validados
+
+| Invariante | Validação |
+|------------|-----------|
+| I9 | Modal obrigatório antes do seal — nenhuma acção autónoma |
+| I11 | SHA-256 + Ledger — permanência criptográfica |
+| I13 | sessionStorage local — soberania de dados |
+| G3 | "Versiegeln" só após confirmação explícita — humano decide |
+
+#### Axioma
+
+> "A tecnologia mais avançada é aquela que desaparece. O documento é o protagonista — a forense é só o subtexto."
+
+---
+
+*Sessão: 02 Apr 2026 · Liga IA+H · Kempten, Bavaria*
+*"AI processes. Human decides. WINDI guarantees."*

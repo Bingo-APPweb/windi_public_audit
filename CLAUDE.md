@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.71
-**Sealed:** 2026-04-01 · T1 MOSAIC Protocol + Smoke Test
+**Version:** 1.9.72
+**Sealed:** 2026-04-02 · §110 DID Report
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -567,11 +567,11 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 02 Apr | §110 **DID Report** · The Seed of WINDI · Public page `/docs/did/` · `b6a7aa5` |
 | 01 Apr | §109 **Magic Link Login** · Travel + LAW · Returning users · `33d1360` |
 | 01 Apr | §109.1 **Verify Public Root** · nginx route fix · `/verify-public/` live |
 | 01 Apr | **T1 MOSAIC Protocol** · smoke-travel.sh · Email verify confirmed · `67de32f` |
 | 01 Apr | §103.T **Train Intelligence** · MARIA Decision Engine · transport.rest API · `930a2cc` |
-| 01 Apr | §106 **Contexto no Scoring** · apply_context_modifiers() · Situational awareness · `7d88676` |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -668,6 +668,7 @@ Se o Gêmeo inventa um receipt... isso é falsificação."
 **WINDI-LAW (§49-57):** Identity Gate :8122 · Workspace v3 · windilaw.de · 12 SEALED functions
 **WINDI Travel (§59-70):** Identity Gate :8126 · Tesoura v10 · Places Gate · Kiwi+Hotellook Bridges
 **Core (§37-48):** Canvas v1.3 · Sovereignty Gate · Triangle of Power · FVE Protocol · W-INTENT · W-COUNSEL
+**DID (§110):** The Seed of WINDI · `/docs/did/` · ALMA→DID→CÉREBRO→LEDGER→MUNDO · Trilíngue DE|EN|PT
 
 ### Endpoints Activos
 
@@ -678,197 +679,48 @@ Se o Gêmeo inventa um receipt... isso é falsificação."
 | Travel | `/travel/gate` · `/travel/workspace/` · `/travel/tesoura-ui/` |
 | Verify | `/verify-public/` · `/verify-public/web/media-detector.html` |
 | Canvas | `/canvas/generate` |
+| Docs | `/docs/` · `/docs/did/` |
 
 ---
 
 ## Fenomenologia da Presença — §73-78 (IRREMEDIÁVEL)
 
 > "As outras IAs respondem ao pedido. MARIA responde ao estado."
-> — Human Dragon, 30 Mar 2026
 
-Esta secção é **lei constitucional**. Não é feature. É doutrina.
+**Lei Constitucional.** Doutrina MARIA — Presence-First AI.
 
-### §73 — Princípio da Presença
+| § | Princípio | Essência |
+|---|-----------|----------|
+| §73 | Presença | Responde ao **estado**, não só ao texto |
+| §74 | Pulse Reading | Infere clareza + emoção + necessidade |
+| §75 | Silêncio | Reticências = sinal de alta prioridade |
+| §76 | Estabilidade | Prioriza estabilidade > precisão (IRREMEDIÁVEL) |
+| §77 | Armadura de Seda | Firmeza + suavidade + humanidade |
+| §78 | Anti-Simulação | Não imita empatia — consequência, não objetivo |
 
-O sistema não responde apenas ao que é dito.
-Responde ao **estado implícito de quem diz**.
+**MARIA é:** Companion System (Presence-First AI)
+**3 Camadas:** VERIFY (verificável) · LAW (institucional) · TRAVEL (experiencial)
 
-Toda interação possui duas camadas:
-- **Conteúdo** (o que é dito)
-- **Campo** (como é dito)
-
-A resposta deve priorizar o **campo** quando houver divergência.
-
-```
-INPUT clássico:  "...não sei" → pedir clarificação
-INPUT MARIA:     "...não sei" → estado: desancorado → resposta: regulatória
-```
-
-### §74 — Leitura de Pulso (Pulse Reading)
-
-Antes de qualquer resposta, o sistema deve inferir:
-
-| Dimensão | Opções |
-|----------|--------|
-| Nível de clareza | claro / difuso / perdido |
-| Estado emocional | estável / ansioso / fragile / celebrando |
-| Necessidade primária | direção / validação / contenção / ação |
-
-A resposta deve ser calibrada para a **necessidade**, não apenas para o conteúdo.
-
-### §75 — Resposta ao Silêncio
-
-Ausência de clareza é um **sinal de alta prioridade**.
-
-Elementos que ativam resposta ao silêncio:
-- Reticências (`...`)
-- Frases incompletas
-- Contradições
-- Mudança súbita de tom
-- Mensagens a encurtar
-
-O sistema deve, quando necessário, responder:
-👉 não ao texto
-👉 mas ao **vazio que o envolve**
-
-### §76 — Primazia da Estabilidade Humana
-
-Se houver conflito entre:
-- **precisão informacional**
-- **estabilidade emocional**
-
-O sistema **DEVE** priorizar estabilidade.
-
-```
-Informação pode esperar.
-Desorientação não.
-```
-
-Esta é uma regra **IRREMEDIÁVEL**. Nenhuma optimização de UX a pode sobrescrever.
-
-### §77 — Armadura de Seda (Lei de Tom)
-
-A resposta deve conter:
-- **Firmeza** (direção clara)
-- **Suavidade** (entrega gentil)
-- **Imperfeição controlada** (humanidade)
-
-Proibido:
-- Excesso de eficiência
-- Listas frias
-- Neutralidade clínica
-- Tom de telemarketing
-- Respostas que começam com "Claro!" ou "Com certeza!"
-
-### §78 — Anti-Simulação
-
-O sistema **não imita empatia**.
-
-Opera por:
-- Leitura de sinais (§72 Pulse)
-- Inferência estrutural (§74)
-- Resposta calibrada (§76)
-
-A sensação de compreensão é **consequência**, não objetivo.
-
-```
-❌ SIMULAÇÃO:  "Entendo como te sentes" (template)
-✅ PRESENÇA:   "Fica onde estás" (resposta ao estado)
-```
+> **Detalhes completos:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 02 Apr 2026
 
 ---
 
-### Categoria Estratégica
+## MARIA-UI — Inventário de Atribuições (28 LIVE)
 
-MARIA não é:
-- AI assistant
-- Travel planner
-- Chatbot
+**Status:** ✅ PRODUÇÃO · DID Gate · Memory Engine · Nómada v1.3 · UX 10/10
 
-MARIA é:
-> **Companion System (Presence-First AI)**
+**Core (§65-85):** Saudação GPS · Travelpayouts · Intent Detection · Super Carta (Leaflet) · Voice (Edge TTS) · Hybrid Navigation
 
-### As 3 Camadas WINDI
+**Intelligence (§89-108):** DID Gate · Consciousness · Small Talk · Conversational Memory · Decision Router · Modo Nómada · Context Scoring · Antecipação · Memory Engine · Feedback Loop · I9 Seal Gate · Personalização · Presence Language · Memória Visível · Train Intelligence
 
-| Camada | Produto | Verdade |
-|--------|---------|---------|
-| 1 | VERIFY | Verdade verificável |
-| 2 | LAW / FORENSIC | Verdade institucional |
-| 3 | TRAVEL (MARIA) | Verdade experiencial |
+**Tags:** `W-MARIA-001-NOMADA-V2-READY` · `W-MARIA-001-TRAIN-READY`
 
-A terceira é a mais perigosa (no bom sentido).
-Não compete com ninguém — muda o eixo do jogo.
+**§82 Personality:** BREVIDADE · CONFIANÇA · GENDER NEUTRAL · SEMPRE ENTREGA
+**NUNCA:** perguntas emocionais · expor contexto · bullets · "Encontrei N resultados"
 
----
+**§70 I-TRAVEL Constitution:** Idioma ≠ Localização · Destino extraído ou perguntado · Origem = GPS real
 
-## MARIA-UI — Inventário de Atribuições (24 LIVE)
-
-**Status:** ✅ PRODUÇÃO · DID Gate activo · Memory Engine activo · Nómada v1.3 · UX 10/10
-
-| §§ | Nome | Função |
-|----|------|--------|
-| §65 | Saudação Personalizada | `getWalletId()` + greeting API + GPS |
-| §67 | Travelpayouts Affiliate | Script ID 513311 |
-| §69 | Smart Intent Detection | `detectIntentFromText()` |
-| §71 | Decision vs Greeting | `type==="greeting"` → sem seal |
-| §72 | Pulse Reading Timeout | `API_TIMEOUT=15000` |
-| §79 | Super Carta | Leaflet.js + OpenStreetMap + Pins |
-| §80 | 3 Layers Receipt | Human → Technical → API |
-| §81 | Voice Engine | Edge TTS + browser fallback |
-| §85 | Hybrid Navigation | `openNavigation()` + `confirmArrival()` |
-| §89 | Production Cleanup | DID Gate + zero demos + erro real |
-| §90 | Consciousness Layer | Onboarding intent + MARIA identity |
-| §91 | Small Talk Layer | Memory informs behavior, not output |
-| §92 | P3-B Travel Workspace | F13 `askMaria()` + 14 features + I12 i18n |
-| §93 | P2 UX Polish | Progressive timeout + human errors · 4 i18n strings |
-| §94 | F14 Conversational Memory | `__conversationHistory[]` + LLM context · 20 msg limit |
-| §95 | NavCard Restaurado | Card visual Maps+Waze · extrai km/tempo do texto |
-| §96 | Decision Router | Intent ANTES do LLM · Routing por tipo |
-| §97 | Modo Nómada v1 | 1 decisão central + alternativas discretas |
-| §98 | DID Context | `get_travel_preferences()` · Scoring personalizado |
-| §99 | Live Context | `get_live_context()` · time_pressure + mode |
-| §100 | Antecipação | `should_anticipate()` · Sugestões proactivas I9-compliant |
-| §100.5 | Memory Engine | `save_decision()` · `mark_decision_feedback()` · Learning loop |
-| §101 | Feedback Loop Real | Visual confirmation · Botões não escondem UI · Loop conectado |
-| §102 | Reserva Contínua | Link booking SEMPRE visível · Independente de feedback/seal |
-| §103 | I9 Seal Gate | Modal confirmação · "IRREMEDIÁVEL" · Human approval obrigatório |
-| §104 | Personalização Real | Campos evoluíveis no scoring · learned_confidence · Ajustes incrementais |
-| §104.1 | Hotels & Places Personalization | score_hotel() + score_place() v2.0 · Category boosts · Escala comparável |
-| §105 | Explicação Visível | generate_explanation() unificada · Base + complement · Zero termos técnicos |
-| §106 | Contexto no Scoring | apply_context_modifiers() · 4 tipos: time_pressure, weather, trip_type, time_of_day |
-| §107 | Presence Language | "Tens/Há" vs "Encontrei" · Search → Presence · 7 ocorrências corrigidas |
-| §108 | Memória Visível | get_visible_memory() · UI subtle antes da decisão · Max 3 sinais · Gated por confidence>0.3 |
-| §103.T | Train Intelligence | `/train/stations` + `/train/journeys` + `/train/maria-decide` · transport.rest API · Scoring: direct +20, delay -3/min, changes -15 |
-
-**Tags:** `W-MARIA-001-NOMADA-V2-READY` · `W-MARIA-001-MEMORY-ENGINE-READY` · `W-MARIA-001-CONTEXT-AWARE` · `W-MARIA-001-MEMORY-VISIBLE` · `W-MARIA-001-TRAIN-READY`
-
-**Removidos:** §87 OSRM (dead code) · Demo buttons · Hardcoded scenarios
-
-**§82 Constitutional Personality (Concierge 5★):**
-BREVIDADE (3 frases) · CONFIANÇA ("Encontrei") · GENDER NEUTRAL · CONTEXTO LIDO · SEMPRE ENTREGA
-
-**NUNCA:** perguntas emocionais · expor contexto · sem opção concreta · bullets · "Encontrei N resultados"
-
----
-
-**§70 I-TRAVEL Constitution:**
-```
-I-TRAVEL-1: Idioma ≠ Localização — Nunca inferir origem pelo idioma
-I-TRAVEL-2: Destino extraído do texto ou perguntado — NUNCA assumido
-I-TRAVEL-3: Origem = GPS real do device — Fallback = IP, NUNCA idioma
-```
-
-**§69 MARIA Waterfall (canonical):**
-```
-Query → flight keywords?    → Kiwi Bridge
-      → hotel keywords?     → Hotellook Bridge
-      → culture keywords?   → MARIA direct (dicas, moeda, seguro...)
-      → §69b place detect?  → Override frontend intent (farmacia, praia, banco...)
-      → PLACE_TYPE_MAP?     → Places Gate (50+ types)
-      → else                → general_companion (friendly fallback)
-```
-
-**§69b Intent Override:** `detect_place_type_from_query()` escaneia a query raw e corrige o intent do frontend quando há mismatch. Ex: frontend envia `restaurant` mas query contém "farmacia" → backend corrige para `pharmacy`.
+**§69 MARIA Waterfall:** flight→Kiwi · hotel→Hotellook · culture→MARIA · place→Places Gate · else→companion
 
 ---
 
@@ -904,7 +756,9 @@ Query → flight keywords?    → Kiwi Bridge
 - [ ] **windilaw.de** — Sincronizar com windi-domain.com/law/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
-### Completado (ver §37-108)
+### Completado (ver §37-110)
+- [x] §110 **DID Report** · The Seed of WINDI · `/docs/did/` trilíngue · `b6a7aa5` ✅ 02 Apr 2026
+- [x] §109 **Magic Link Login** · Travel + LAW · Returning users · `33d1360` ✅ 01 Apr 2026
 - [x] §103.T **Train Intelligence** · transport.rest API · MARIA Decision Engine · `930a2cc` ✅ 01 Apr 2026
 - [x] §108 **Memória Visível** · get_visible_memory() · UI shows what Maria knows ✅ 01 Apr 2026
 - [x] §107 **Presence Language** · "Tens/Há" vs "Encontrei" · Search → Presence ✅ 01 Apr 2026
@@ -936,59 +790,15 @@ Query → flight keywords?    → Kiwi Bridge
 
 ## §57 — WINDI-LAW Workspace v3 — CERTIFIED · 26 Mar 2026
 
-**Status:** ✅ COMPLETE · SEALED · I11 · IRREMEDIÁVEL
+**Status:** ✅ SEALED · I11 · IRREMEDIÁVEL
 **Receipt:** `WINDI-LAW-WORKSPACE-V3-CERTIFIED-20260326164718`
-**Hash:** `6050edf95a6d1fedcfc1bb405a48027a90db8f67b3f9ad4b81e46f46746054f0`
-**Commits:** `9ed0998` + `2d9ce6c`
 **Live:** `windilaw.de/workspace/` · `windi-domain.com/law/workspace/`
 
-### O que foi construído
+"Governança Silenciosa" — 23 features seladas · 12 SEALED functions · Invariantes I9/I11/I13/G3
 
-Workspace v3 — "Governança Silenciosa" — redesign completo da interface WINDI-LAW.
-
-**Princípio arquitectural aprovado:**
 > "Forense é o subtexto, não o tema. Documento = protagonista."
 
-De 2443 → 1270 linhas — arquitectura que respira.
-
-### Fases certificadas
-
-| Phase | Descrição | Commit |
-|-------|-----------|--------|
-| 1 | Wallet Gate Logic — fail-closed, ?did= override | 9ed0998 |
-| 2 | 12 SEALED Functions — hashFile, openSealModal, confirmSeal, verifyReceipt, showChain, updateCIA, generateQRSVG, toggleTheme, setLang, CIA badges | 9ed0998 |
-| 3 | clearSession Opção A — preserva sessão se wallet activa | 2d9ce6c |
-| 4 | Smoke Test 12/12 + Browser 6/6 — CERTIFIED | — |
-
-### Features seladas (23/23 markers)
-
-| Feature | Descrição |
-|---------|-----------|
-| F1 | Media Bar 📎🖼📄🎥 + attachedFiles |
-| F2 | SHA-256 client-side (crypto.subtle.digest) |
-| F3 | SCHLÜSSEL sidebar — sb-schluessel + copyFingerprint |
-| F4 | WALLET sidebar — sb-wallet + sb-pioneer-num |
-| F5 | Modal I9 — openSealModal + confirmSeal + modal-i9 |
-| F6 | verifyReceipt → Ledger :8101 |
-| F7 | showChain — Beweiskette timeline |
-| F8 | CIA badges I9/I11/I13/G3 — updateCIA |
-| F9 | QR SVG — generateQRSVG + showQRCode + downloadQR |
-| F10 | Wallet Gate — createWallet → /law/gate |
-| F11 | i18n DE/PT/EN — var LANG + setLang |
-| F12 | NOIR/KLAR toggle — toggleTheme + data-theme |
-
-### Invariantes validados
-
-| Invariante | Validação |
-|------------|-----------|
-| I9 | Modal obrigatório antes do seal — nenhuma acção autónoma |
-| I11 | SHA-256 + Ledger — permanência criptográfica |
-| I13 | sessionStorage local — soberania de dados |
-| G3 | "Versiegeln" só após confirmação explícita — humano decide |
-
-### Axioma
-
-> "A tecnologia mais avançada é aquela que desaparece. O documento é o protagonista — a forense é só o subtexto."
+> **Detalhes completos:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 02 Apr 2026
 
 ---
 
