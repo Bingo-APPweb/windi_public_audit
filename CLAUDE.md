@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.75
-**Sealed:** 2026-04-03 · W-NOMAD-001 Telegram Bot LIVE
+**Version:** 1.9.76
+**Sealed:** 2026-04-03 · W-VD-CUT-001 Video Cut Engine LIVE
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -180,6 +180,46 @@ Browser close → Reopen → Direct workspace access ✅
 **Commands:** `/start` · `/lang` · `/profile` · `/help`
 
 **Path:** `/opt/windi/nomad-bot/`
+
+### W-VD-CUT-001 — Video Cut Engine (LIVE 03 Apr 2026)
+
+| Campo | Valor |
+|-------|-------|
+| Status | LIVE · Port :8128 |
+| Commit | `c2e06bd` |
+| Invariants | I9, I11, I12 |
+
+> **"Client handles preview. Server executes EDL."**
+
+**Arquitectura:**
+- FastAPI server on :8128
+- FFmpeg 5.1.8 (libx264 + AAC)
+- Job queue (max 1 concurrent, retry logic)
+- Thumbnail generation
+- Ledger integration (hash only — I11)
+
+**Flow:**
+```
+Telegram Video → NOMAD-BOT → VD-CUT /intake
+                                ↓
+                        FFmpeg encode (story_clean)
+                                ↓
+                        I9 Gate (human approval)
+                                ↓
+                        Ledger Seal → Verify URL
+```
+
+**Endpoints:** `/vd-cut/health` · `/vd-cut/intake` · `/vd-cut/job/{id}` · `/vd-cut/seal`
+
+**Presets:** story_clean (1080x1920, CRF 23) · story_light (720x1280) · bts
+
+**Limits:** Max 2min · Max 250MB · 1 concurrent job
+
+**First Seals:**
+- `WINDI-VDCUT-20260403132852-BB3E3F2F`
+- `WINDI-VDCUT-20260403132931-EEFB9816`
+
+**Path:** `/opt/windi/vd-cut/`
 
 ---
 
@@ -629,13 +669,14 @@ KLAR (light):
 | :8122 | WINDI-LAW Identity Gate | 🟢 **SEALED** · Isolado · 12 empresas |
 | :8126 | WINDI Travel Identity Gate | 🟢 **LIVE** · v1.3.0 · W-SESSION-001 · Sovereign Sessions |
 | :8127 | W-NOMAD-001 Telegram Bot | 🟢 **LIVE** · @windi_nomad_bot · MARIA + Ledger |
+| :8128 | W-VD-CUT-001 Video Cut Engine | 🟢 **LIVE** · FFmpeg · I9+I11 · First video seals |
 | :8130 | W-GATEWAY-001 (LLM Bridge) | 🟢 **LIVE** · 5 providers |
 
-### Sistemas LIVE (30 total)
+### Sistemas LIVE (31 total)
 
 **Core:** GEN7 Desktop · Pioneer Program · VPR System · API Keys · Dispatch · Web Hosting · i18n · Wallet · Lead Admin
 
-**Agents (W-*):** CIA-001 · WSG-001 · GATE-001 · NGINX-001 · CANVAS-001 · CANVAS-OBS-001 · CANVAS-LAB-001 · COMM-001 · PROVE-001 · DETECT-MEDIA-001 · VERIFY-MODUS4 · INTENT-001 · COUNSEL-001 · SESSION-001
+**Agents (W-*):** CIA-001 · WSG-001 · GATE-001 · NGINX-001 · CANVAS-001 · CANVAS-OBS-001 · CANVAS-LAB-001 · COMM-001 · PROVE-001 · DETECT-MEDIA-001 · VERIFY-MODUS4 · INTENT-001 · COUNSEL-001 · SESSION-001 · NOMAD-001 · VD-CUT-001
 
 **Products:** Triangle of Power · WINDI FIELD · WINDI TRAVEL · FVE Protocol · RFC-001 DNA
 
@@ -645,11 +686,11 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 03 Apr | **W-VD-CUT-001 LIVE** · Video Cut Engine · :8128 · First video seals · `c2e06bd` |
 | 03 Apr | **W-NOMAD-001 LIVE** · @windi_nomad_bot · Telegram Interface · MARIA + Ledger · `10313ce` |
 | 02 Apr | **W-SESSION-001 LIVE** · Sovereign Sessions · 30-day continuity · Device binding · `dd9077e` |
 | 02 Apr | **W-PRESENCE-001** · Presence Seal Protocol · Timeline "Meus Momentos" · `60da249` + `1afacdf` |
 | 01 Apr | §109 **Magic Link Login** · Travel + LAW · Returning users · `33d1360` |
-| 01 Apr | **T1 MOSAIC Protocol** · smoke-travel.sh · Email verify confirmed · `67de32f` |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -755,6 +796,7 @@ Se o Gêmeo inventa um receipt... isso é falsificação."
 | MARIA | `/maria/plan` · `/maria/voice` · `/maria/flight-search` · `/maria/hotel-search` |
 | LAW | `/law/gate` · `/law/workspace/` |
 | Travel | `/travel/gate` · `/travel/workspace/` · `/travel/tesoura-ui/` |
+| VD-CUT | `/vd-cut/health` · `/vd-cut/intake` · `/vd-cut/job/{id}` · `/vd-cut/seal` |
 | Verify | `/verify-public/` · `/verify-public/web/media-detector.html` |
 | Canvas | `/canvas/generate` |
 | Docs | `/docs/` · `/docs/did/` |
@@ -819,7 +861,7 @@ Se o Gêmeo inventa um receipt... isso é falsificação."
 - [ ] **HIGH ops gate** — Bloquear operações HIGH se email_verified=0
 
 ### P1.5 — WINDI Travel Phase 2
-- [ ] **Vídeo** — Captura + seal de vídeo
+- [x] **Vídeo** — ✅ W-VD-CUT-001 LIVE · Captura + seal via Telegram · 03 Apr 2026
 - [ ] **Colagem Soberana** — Composição multi-momento
 - [ ] **Thread Visual** — Timeline com thumbnails
 - [ ] **GPS Reverse Geocoding** — Nomes de lugares
@@ -834,7 +876,8 @@ Se o Gêmeo inventa um receipt... isso é falsificação."
 - [ ] **windilaw.de** — Sincronizar com windi-domain.com/law/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
-### Completado (ver §37-112)
+### Completado (ver §37-113)
+- [x] §113 **W-VD-CUT-001 LIVE** · Video Cut Engine · :8128 · FFmpeg · I9+I11 · `c2e06bd` ✅ 03 Apr 2026
 - [x] §112 **W-SESSION-001 LIVE** · Sovereign Sessions · 30-day continuity · `dd9077e` ✅ 02 Apr 2026
 - [x] §111 **W-PRESENCE-001** · Presence Seal + Timeline · `60da249` + `1afacdf` ✅ 02 Apr 2026
 - [x] §110 **DID Report** · The Seed of WINDI · `/docs/did/` trilíngue · `b6a7aa5` ✅ 02 Apr 2026
