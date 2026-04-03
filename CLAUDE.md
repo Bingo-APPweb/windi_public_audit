@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
 **Version:** 1.9.76
-**Sealed:** 2026-04-03 · W-VD-CUT-001 Video Cut Engine LIVE
+**Sealed:** 2026-04-03 · W-JOE-001 Director de Transmissão LIVE
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -220,6 +220,41 @@ Telegram Video → NOMAD-BOT → VD-CUT /intake
 - `WINDI-VDCUT-20260403132931-EEFB9816`
 
 **Path:** `/opt/windi/vd-cut/`
+
+### W-JOE-001 — Director de Transmissão (LIVE 03 Apr 2026)
+
+| Campo | Valor |
+|-------|-------|
+| Status | LIVE · Port :8129 |
+| Commit | `30659c5` |
+| Invariants | I9, I11, I13 |
+
+> **"Quem decide o que vira memória do mundo."**
+
+**Role:** Layer de curadoria narrativa acima do VD-CUT.
+
+**Story Graph Architecture:**
+```
+MUNDO → (captura bruta)
+        ↓
+VD-CUT → (execução técnica, EDL, encode)
+        ↓
+JOE    → (curadoria, narrativa, transmissão)
+        ↓
+LEDGER → (verdade imutável)
+```
+
+**Endpoints:**
+- `POST /joe/session/start` — abre sessão de curadoria
+- `POST /joe/select` — escolhe takes (VD-CUT exports)
+- `POST /joe/sequence` — constrói Story Graph
+- `POST /joe/publish` — I9 Gate → Ledger seal
+- `GET /joe/story/{id}` — história final
+- `GET /joe/audit` — log constitucional
+
+**Schema:** sessions · moments · stories · audit_log
+
+**Path:** `/opt/windi/joe/`
 
 ---
 
@@ -670,13 +705,14 @@ KLAR (light):
 | :8126 | WINDI Travel Identity Gate | 🟢 **LIVE** · v1.3.0 · W-SESSION-001 · Sovereign Sessions |
 | :8127 | W-NOMAD-001 Telegram Bot | 🟢 **LIVE** · @windi_nomad_bot · MARIA + Ledger |
 | :8128 | W-VD-CUT-001 Video Cut Engine | 🟢 **LIVE** · FFmpeg · I9+I11 · First video seals |
+| :8129 | W-JOE-001 Director de Transmissão | 🟢 **LIVE** · Story Graph · I9+I11+I13 |
 | :8130 | W-GATEWAY-001 (LLM Bridge) | 🟢 **LIVE** · 5 providers |
 
-### Sistemas LIVE (31 total)
+### Sistemas LIVE (32 total)
 
 **Core:** GEN7 Desktop · Pioneer Program · VPR System · API Keys · Dispatch · Web Hosting · i18n · Wallet · Lead Admin
 
-**Agents (W-*):** CIA-001 · WSG-001 · GATE-001 · NGINX-001 · CANVAS-001 · CANVAS-OBS-001 · CANVAS-LAB-001 · COMM-001 · PROVE-001 · DETECT-MEDIA-001 · VERIFY-MODUS4 · INTENT-001 · COUNSEL-001 · SESSION-001 · NOMAD-001 · VD-CUT-001
+**Agents (W-*):** CIA-001 · WSG-001 · GATE-001 · NGINX-001 · CANVAS-001 · CANVAS-OBS-001 · CANVAS-LAB-001 · COMM-001 · PROVE-001 · DETECT-MEDIA-001 · VERIFY-MODUS4 · INTENT-001 · COUNSEL-001 · SESSION-001 · NOMAD-001 · VD-CUT-001 · JOE-001
 
 **Products:** Triangle of Power · WINDI FIELD · WINDI TRAVEL · FVE Protocol · RFC-001 DNA
 
@@ -686,6 +722,7 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 03 Apr | **W-JOE-001 LIVE** · Director de Transmissão · :8129 · Story Graph · `30659c5` |
 | 03 Apr | **W-VD-CUT-001 LIVE** · Video Cut Engine · :8128 · First video seals · `c2e06bd` |
 | 03 Apr | **W-NOMAD-001 LIVE** · @windi_nomad_bot · Telegram Interface · MARIA + Ledger · `10313ce` |
 | 02 Apr | **W-SESSION-001 LIVE** · Sovereign Sessions · 30-day continuity · Device binding · `dd9077e` |
@@ -876,7 +913,8 @@ Se o Gêmeo inventa um receipt... isso é falsificação."
 - [ ] **windilaw.de** — Sincronizar com windi-domain.com/law/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
-### Completado (ver §37-113)
+### Completado (ver §37-114)
+- [x] §114 **W-JOE-001 LIVE** · Director de Transmissão · :8129 · Story Graph · I9+I11+I13 · `30659c5` ✅ 03 Apr 2026
 - [x] §113 **W-VD-CUT-001 LIVE** · Video Cut Engine · :8128 · FFmpeg · I9+I11 · `c2e06bd` ✅ 03 Apr 2026
 - [x] §112 **W-SESSION-001 LIVE** · Sovereign Sessions · 30-day continuity · `dd9077e` ✅ 02 Apr 2026
 - [x] §111 **W-PRESENCE-001** · Presence Seal + Timeline · `60da249` + `1afacdf` ✅ 02 Apr 2026
