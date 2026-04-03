@@ -28,6 +28,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
+# ProofStream integration
+from proofstream import (
+    init_proofstream, live_start, live_end,
+    register_fragment, human_decision, verify_chain
+)
+
 # ── Config ────────────────────────────────────────────────────────────────────
 PORT        = int(os.getenv("JOE_PORT", 8129))
 DB_PATH     = os.getenv("JOE_DB", "/opt/windi/joe/joe.db")
@@ -110,7 +116,8 @@ def init_db():
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     init_db()
-    log.info("W-JOE-001 v%s live on :%d", VERSION, PORT)
+    init_proofstream(DB_PATH)
+    log.info("W-JOE-001 v%s live on :%d (ProofStream enabled)", VERSION, PORT)
     yield
     log.info("W-JOE-001 shutdown")
 
@@ -466,6 +473,109 @@ def get_audit(limit: int = 50):
             "SELECT * FROM audit_log ORDER BY ts DESC LIMIT ?", (limit,)
         ).fetchall()
     return {"events": [dict(r) for r in rows]}
+
+
+# ── ProofStream Routes ────────────────────────────────────────────────────────
+
+class LiveStartPayload(BaseModel):
+    telegram_chat: str
+    title: Optional[str] = None
+
+class LiveEndPayload(BaseModel):
+    session_id: str
+
+class FragmentPayload(BaseModel):
+    session_id:    str
+    export_id:     str
+    vdcut_hash:    str
+    thumbnail_b64: Optional[str] = None
+
+class DecisionPayload(BaseModel):
+    fragment_id: str
+    decision:    str
+    note:        Optional[str] = None
+
+
+@app.post("/joe/live/start")
+def route_live_start(body: LiveStartPayload):
+    """Abre uma ProofStream Session."""
+    result = live_start(DB_PATH, body.telegram_chat, body.title)
+    if "error" in result:
+        raise HTTPException(400, result["error"])
+    return result
+
+
+@app.post("/joe/live/end")
+def route_live_end(body: LiveEndPayload):
+    """Fecha a sessao e gera o Manifesto."""
+    result = live_end(DB_PATH, body.session_id, LEDGER_URL)
+    if "error" in result:
+        raise HTTPException(404, result["error"])
+    # Save manifest
+    if result.get("manifest_html"):
+        manifest_path = Path("/opt/windi/joe/manifests") / f"{body.session_id}.html"
+        manifest_path.write_text(result["manifest_html"])
+        result["manifest_url"] = f"/joe/manifest/{body.session_id}"
+    return result
+
+
+@app.post("/joe/live/fragment")
+def route_fragment(body: FragmentPayload):
+    """Regista fragmento do VD-CUT. Devolve prompt Telegram (SIM/NAO)."""
+    result = register_fragment(
+        DB_PATH, body.session_id,
+        body.export_id, body.vdcut_hash, body.thumbnail_b64
+    )
+    if "error" in result:
+        raise HTTPException(400, result["error"])
+    return result
+
+
+@app.post("/joe/live/decide")
+async def route_decide(body: DecisionPayload):
+    """I9 Gate: processa decisao humana SIM/NAO."""
+    if body.decision not in ("seal", "discard"):
+        raise HTTPException(400, "decision must be 'seal' or 'discard'")
+    result = await human_decision(
+        DB_PATH, body.fragment_id,
+        body.decision, body.note, LEDGER_URL
+    )
+    if "error" in result:
+        raise HTTPException(404, result["error"])
+    return result
+
+
+@app.get("/joe/live/chain/{session_id}")
+def route_verify_chain(session_id: str):
+    """Verifica integridade da Video-Chain. Publico."""
+    return verify_chain(DB_PATH, session_id)
+
+
+@app.get("/joe/live/sessions")
+def route_list_sessions(status: str = None, limit: int = 20):
+    """Lista ProofStream sessions."""
+    with get_db() as db:
+        if status:
+            rows = db.execute(
+                "SELECT * FROM ps_sessions WHERE status=? ORDER BY created_at DESC LIMIT ?",
+                (status, limit)
+            ).fetchall()
+        else:
+            rows = db.execute(
+                "SELECT * FROM ps_sessions ORDER BY created_at DESC LIMIT ?",
+                (limit,)
+            ).fetchall()
+    return {"sessions": [dict(r) for r in rows]}
+
+
+@app.get("/joe/manifest/{session_id}")
+def route_get_manifest(session_id: str):
+    """Serve Manifesto HTML."""
+    from fastapi.responses import HTMLResponse
+    manifest_path = Path("/opt/windi/joe/manifests") / f"{session_id}.html"
+    if not manifest_path.exists():
+        raise HTTPException(404, "Manifest not found")
+    return HTMLResponse(manifest_path.read_text())
 
 
 # ── Entrypoint ────────────────────────────────────────────────────────────────
