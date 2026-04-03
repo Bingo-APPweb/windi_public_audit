@@ -278,6 +278,65 @@
         // Theme
         const theme = localStorage.getItem('windi-theme') || 'noir';
         document.documentElement.dataset.theme = theme;
+
+        // §120 AUTO-SESSION: Se email verificado, criar sessão e ir para workspace
+        {% if success and did %}
+        (async function() {
+            const did = "{{ did }}";
+            const statusEl = document.querySelector('.message');
+
+            // Gerar device seed (mesmo método do gate.html)
+            function getDeviceSeed() {
+                const stored = localStorage.getItem('windi_device_seed');
+                if (stored) return stored;
+                const seed = crypto.randomUUID ? crypto.randomUUID() :
+                    'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+                        const r = Math.random() * 16 | 0;
+                        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+                    });
+                localStorage.setItem('windi_device_seed', seed);
+                return seed;
+            }
+
+            try {
+                // Criar sessão para este dispositivo
+                const res = await fetch('/travel/session/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        did: did,
+                        device_seed: getDeviceSeed()
+                    }),
+                    credentials: 'include'
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.success) {
+                        // Guardar DID no sessionStorage
+                        sessionStorage.setItem('windi_travel_wallet', did);
+
+                        // Redirecionar para workspace em 2 segundos
+                        if (statusEl) {
+                            const autoMsg = {
+                                de: 'Sitzung erstellt. Weiterleitung zum Workspace...',
+                                en: 'Session created. Redirecting to workspace...',
+                                pt: 'Sessão criada. A redirecionar para workspace...'
+                            };
+                            statusEl.innerHTML = '<span style="color: var(--success);">' +
+                                (autoMsg[saved] || autoMsg.en) + '</span>';
+                        }
+                        setTimeout(() => {
+                            window.location.href = '/travel/workspace/';
+                        }, 1500);
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.warn('[WINDI] Auto-session failed:', e);
+            }
+        })();
+        {% endif %}
     </script>
 </body>
 </html>
