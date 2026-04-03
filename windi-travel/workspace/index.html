@@ -3988,7 +3988,7 @@ function clearPreviousSession() {
   }
 }
 
-function checkWalletGate() {
+async function checkWalletGate() {
   const urlParams = new URLSearchParams(window.location.search);
   const didParam = urlParams.get('did');
 
@@ -3997,13 +3997,36 @@ function checkWalletGate() {
     walletId = didParam;
   }
 
-  if (!walletId) {
-    // Redirect to gate
-    window.location.href = '/travel/gate';
-    return false;
+  // Se temos walletId no sessionStorage, usar
+  if (walletId) {
+    return true;
   }
 
-  return true;
+  // §120 FIX: Se sessionStorage vazio, verificar cookie de sessão soberana
+  // O cookie pode existir mesmo quando sessionStorage foi limpo
+  try {
+    const res = await fetch('/travel/session/verify', {
+      method: 'GET',
+      credentials: 'include'  // Enviar cookies
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data.valid && data.did) {
+        // Sessão válida! Restaurar sessionStorage
+        walletId = data.did;
+        sessionStorage.setItem('windi_travel_wallet', data.did);
+        console.log('[W-SESSION] Session restored from cookie:', data.did.substring(0, 20) + '…');
+        return true;
+      }
+    }
+  } catch (e) {
+    console.warn('[W-SESSION] Session check failed:', e);
+  }
+
+  // Sem sessão válida — redirecionar para gate
+  window.location.href = '/travel/gate';
+  return false;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -4360,8 +4383,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   // W-PRESENCE-003 — Init IndexedDB for media storage
   await initMediaDB();
 
-  // Check wallet gate
-  if (!checkWalletGate()) return;
+  // §120 FIX: Check wallet gate (now async — verifies cookie if sessionStorage empty)
+  const hasSession = await checkWalletGate();
+  if (!hasSession) return;
 
   // F4 — Init wallet sidebar
   initWalletSidebar();
