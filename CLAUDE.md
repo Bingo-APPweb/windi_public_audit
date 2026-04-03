@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.77
-**Sealed:** 2026-04-03 · W-SGV-001 Truth Illumination Engine LIVE
+**Version:** 1.9.79
+**Sealed:** 2026-04-03 · §118 Travel Stack Auto-Healing CANONICAL
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -316,6 +316,81 @@ fragment[n].prev_hash = sha256(fragment[n-1])
 | I12 | Language Sovereign Principle | Conversa=Universal, Documento=Soberano. Babel Tower=IRREMEDIÁVEL. |
 | I13 | Convergence with Sovereignty | Todo Dragon converge para estrutura/decisão/artefacto. Loop reflexivo proibido. **IRREMEDIÁVEL.** |
 | C6 | Invariante Fiscal | IA prepara. Humano aprova. ELSTER envia. Nunca autónomo. |
+
+### §117 — I9: Human Approval Gate (Operational Doctrine)
+
+**Estado:** CANONICAL · ACTIVE · NON-NEGOTIABLE
+
+> **"I9 não vive na entrada. I9 vive na saída."**
+
+**Definição:** Nenhum conteúdo pode ser publicado, selado ou transmitido sem decisão humana explícita no momento final da saída.
+
+```
+✔ Processamento automático   → permitido
+✔ Classificação automática   → permitido
+✔ Sugestão automática        → permitido
+❌ Execução final sem humano  → PROIBIDO
+```
+
+**Interpretação:** O sistema pode ver 100.000 inputs. Mas apenas o humano decide quais se tornam memória verificável, narrativa pública ou prova selada. I9 não filtra dados — I9 define o momento onde dados se tornam realidade pública.
+
+**Aplicação WINDI:**
+| Sistema | Gate I9 |
+|---------|---------|
+| W-JOE-001 | `/joe/publish` exige `human_approved=true` |
+| ProofStream | `/joe/live/decide` exige `seal` ou `discard` explícito |
+| Story Mode | Sequência sugerida, publicação só com confirmação |
+| SGV | Ilumina, nunca bloqueia — humano decide |
+
+**Anti-Pattern (PROIBIDO):**
+```
+❌ Auto-publish após score alto
+❌ Auto-seal baseado em confiança algorítmica
+❌ "Se score > X então publicar"
+❌ Remover o humano da decisão final
+```
+
+**Forma Correcta:**
+```
+SGV ilumina → Sistema sugere → Humano decide → Ledger sela
+```
+
+**Doutrina Editorial:**
+> "Um director não vê tudo. Um director decide o que importa."
+> WINDI não é um funil de conteúdo. WINDI é uma **destilaria de verdade**.
+
+**Sealed:** 03 Apr 2026 · W-JOE-001 · ProofStream · W-SGV-001
+
+### §118 — Travel Stack Auto-Healing (03 Apr 2026)
+
+**Estado:** CANONICAL · ACTIVE
+
+> **"O sistema mantém a sua integridade sem depender de vigilância humana."**
+
+**Artefactos:**
+
+| Artefacto | Estado |
+|-----------|--------|
+| `windi-travel.service` | 🟢 override + KillMode=mixed |
+| `windi-nomad-bot.service` | 🟢 override + port-cleaner |
+| `windi-vd-cut.service` | 🟢 NEW (migração nohup → systemd) |
+| `windi-joe.service` | 🟢 NEW (migração nohup → systemd) |
+| `windi-watchdog.service` | 🟢 auto-heal loop 15s |
+| `/opt/windi/bin/port-cleaner.sh` | 🟢 limpeza via fuser |
+| `/opt/windi/bin/windi-watchdog.sh` | 🟢 monitor 4 services |
+| `/etc/logrotate.d/windi-travel` | 🟢 daily · 7 rot · 50MB max |
+
+**Portas protegidas:** 8126 (MARIA) · 8127 (NOMAD) · 8128 (VD-CUT) · 8129 (JOE)
+
+**Mecanismo:**
+1. Pre-clean (ExecStartPre) → remove órfãos antes de bind
+2. Systemd resilience → KillMode=mixed + TimeoutStopSec curto
+3. Watchdog contínuo → verificação 15s + restart automático
+4. Log hygiene → rotação diária + retenção controlada
+
+**Commit:** `e7cff50`
+
+**Sealed:** 03 Apr 2026 · Travel Stack · Infra Crítica
 
 ### 3.2 Layer 7 — Communication Semantics
 
@@ -764,7 +839,7 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
-| 03 Apr | **ProofStream v1.0** · Video-Chain hash continuity · Live verification · `30f97e7` |
+| 03 Apr | **§118 Travel Stack Auto-Healing** · Watchdog + Overrides + Logrotate · `e7cff50` |
 | 03 Apr | **W-JOE-001 LIVE** · Director de Transmissão · :8129 · Story Graph · `30659c5` |
 | 03 Apr | **W-VD-CUT-001 LIVE** · Video Cut Engine · :8128 · First video seals · `c2e06bd` |
 | 03 Apr | **W-NOMAD-001 LIVE** · @windi_nomad_bot · Telegram Interface · MARIA + Ledger · `10313ce` |
@@ -951,10 +1026,12 @@ Se o Gêmeo inventa um receipt... isso é falsificação."
 - [ ] **Resend UI** — Botão "Reenviar email" no workspace
 
 ### Infra
+- [x] **§118 Travel Auto-Healing** — Watchdog + Overrides + Logrotate ✅ 03 Apr 2026
 - [ ] **windilaw.de** — Sincronizar com windi-domain.com/law/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
-### Completado (ver §37-115)
+### Completado (ver §37-118)
+- [x] §118 **Travel Stack Auto-Healing** · Watchdog + Overrides + Logrotate · `e7cff50` ✅ 03 Apr 2026
 - [x] §115 **ProofStream v1.0** · Video-Chain · Hash continuity · Live verification · `30f97e7` ✅ 03 Apr 2026
 - [x] §114 **W-JOE-001 LIVE** · Director de Transmissão · :8129 · Story Graph · I9+I11+I13 · `30659c5` ✅ 03 Apr 2026
 - [x] §116 **W-SGV-001 LIVE** · Truth Illumination Engine · JOE integration · I9+I13 ✅ 03 Apr 2026
