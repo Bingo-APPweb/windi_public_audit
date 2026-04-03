@@ -872,7 +872,9 @@
                 login_desc: "Wir senden dir einen Login-Link per E-Mail.",
                 send_login_link: "Login-Link senden",
                 login_sent_title: "Link gesendet!",
-                login_sent_desc: "Prüfe deine E-Mail und klicke auf den Link."
+                login_sent_desc: "Prüfe deine E-Mail und klicke auf den Link.",
+                name_email_required: "Name und E-Mail erforderlich",
+                email_invalid_format: "E-Mail muss vollständig sein (z.B. name@domain.com)"
             },
             en: {
                 step1_title: "Your Account",
@@ -920,7 +922,9 @@
                 login_desc: "We'll send you a login link via email.",
                 send_login_link: "Send login link",
                 login_sent_title: "Link sent!",
-                login_sent_desc: "Check your email and click the link."
+                login_sent_desc: "Check your email and click the link.",
+                name_email_required: "Name and email required",
+                email_invalid_format: "Email must be complete (e.g. name@domain.com)"
             },
             pt: {
                 step1_title: "A tua conta",
@@ -968,7 +972,9 @@
                 login_desc: "Enviamos-te um link de acesso por email.",
                 send_login_link: "Enviar link de acesso",
                 login_sent_title: "Link enviado!",
-                login_sent_desc: "Verifica o teu email e clica no link."
+                login_sent_desc: "Verifica o teu email e clica no link.",
+                name_email_required: "Nome e email obrigatórios",
+                email_invalid_format: "Email deve estar completo (ex: nome@dominio.com)"
             }
         };
 
@@ -1252,7 +1258,14 @@
                 const name = document.getElementById('admin_name').value.trim();
                 const email = document.getElementById('admin_email').value.trim();
                 if (!name || !email) {
-                    alert('Name and email required');
+                    alert(I18N[currentLang].name_email_required || 'Name and email required');
+                    return false;
+                }
+                // Validate email format (must have TLD like .com, .de, etc.)
+                const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                if (!emailPattern.test(email)) {
+                    alert(I18N[currentLang].email_invalid_format || 'Email must be complete (e.g. name@domain.com)');
+                    document.getElementById('admin_email').focus();
                     return false;
                 }
                 registrationData.admin_name = name;
