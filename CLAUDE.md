@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
 **Version:** 1.9.76
-**Sealed:** 2026-04-03 · W-JOE-001 Director de Transmissão LIVE
+**Sealed:** 2026-04-03 · ProofStream v1.0 — Video-Chain LIVE
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -226,7 +226,7 @@ Telegram Video → NOMAD-BOT → VD-CUT /intake
 | Campo | Valor |
 |-------|-------|
 | Status | LIVE · Port :8129 |
-| Commit | `30659c5` |
+| Commit | `30f97e7` (ProofStream) |
 | Invariants | I9, I11, I13 |
 
 > **"Quem decide o que vira memória do mundo."**
@@ -244,15 +244,27 @@ JOE    → (curadoria, narrativa, transmissão)
 LEDGER → (verdade imutável)
 ```
 
-**Endpoints:**
+**Endpoints (Story Mode):**
 - `POST /joe/session/start` — abre sessão de curadoria
 - `POST /joe/select` — escolhe takes (VD-CUT exports)
 - `POST /joe/sequence` — constrói Story Graph
 - `POST /joe/publish` — I9 Gate → Ledger seal
 - `GET /joe/story/{id}` — história final
-- `GET /joe/audit` — log constitucional
 
-**Schema:** sessions · moments · stories · audit_log
+**ProofStream (Live Mode):**
+```
+fragment[n].prev_hash = sha256(fragment[n-1])
+→ Video-Chain: qualquer adulteração quebra a corrente
+```
+
+- `POST /joe/live/start` — abre ProofStream session
+- `POST /joe/live/fragment` — regista clip do VD-CUT
+- `POST /joe/live/decide` — I9 Gate: seal | discard
+- `GET /joe/live/chain/{id}` — verifica integridade
+- `POST /joe/live/end` — fecha + gera Manifesto HTML
+- `GET /joe/manifest/{id}` — serve Manifesto público
+
+**Schema:** sessions · moments · stories · ps_sessions · ps_fragments · audit_log
 
 **Path:** `/opt/windi/joe/`
 
@@ -722,12 +734,11 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 03 Apr | **ProofStream v1.0** · Video-Chain hash continuity · Live verification · `30f97e7` |
 | 03 Apr | **W-JOE-001 LIVE** · Director de Transmissão · :8129 · Story Graph · `30659c5` |
 | 03 Apr | **W-VD-CUT-001 LIVE** · Video Cut Engine · :8128 · First video seals · `c2e06bd` |
 | 03 Apr | **W-NOMAD-001 LIVE** · @windi_nomad_bot · Telegram Interface · MARIA + Ledger · `10313ce` |
 | 02 Apr | **W-SESSION-001 LIVE** · Sovereign Sessions · 30-day continuity · Device binding · `dd9077e` |
-| 02 Apr | **W-PRESENCE-001** · Presence Seal Protocol · Timeline "Meus Momentos" · `60da249` + `1afacdf` |
-| 01 Apr | §109 **Magic Link Login** · Travel + LAW · Returning users · `33d1360` |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -913,7 +924,8 @@ Se o Gêmeo inventa um receipt... isso é falsificação."
 - [ ] **windilaw.de** — Sincronizar com windi-domain.com/law/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
-### Completado (ver §37-114)
+### Completado (ver §37-115)
+- [x] §115 **ProofStream v1.0** · Video-Chain · Hash continuity · Live verification · `30f97e7` ✅ 03 Apr 2026
 - [x] §114 **W-JOE-001 LIVE** · Director de Transmissão · :8129 · Story Graph · I9+I11+I13 · `30659c5` ✅ 03 Apr 2026
 - [x] §113 **W-VD-CUT-001 LIVE** · Video Cut Engine · :8128 · FFmpeg · I9+I11 · `c2e06bd` ✅ 03 Apr 2026
 - [x] §112 **W-SESSION-001 LIVE** · Sovereign Sessions · 30-day continuity · `dd9077e` ✅ 02 Apr 2026
