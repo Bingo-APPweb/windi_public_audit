@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI-VD-CUT · Hybrid Architecture</title>
+<style>
+  :root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f5f4f0;
+    --bg-tertiary: #eeede8;
+    --text-primary: #1a1a18;
+    --text-secondary: #5c5c58;
+    --text-tertiary: #9c9a92;
+    --border-tertiary: rgba(0,0,0,0.12);
+    --border-secondary: rgba(0,0,0,0.22);
+    --bg-success: #eaf3de; --text-success: #3b6d11; --border-success: #97c459;
+    --bg-warning: #faeeda; --text-warning: #854f0b; --border-warning: #ef9f27;
+    --bg-info: #e6f1fb;    --text-info: #185fa5;   --border-info: #378add;
+    --radius-md: 8px; --radius-lg: 12px;
+    --font-mono: 'JetBrains Mono', 'Fira Mono', monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg-primary: #1e1e1c; --bg-secondary: #252522; --bg-tertiary: #2c2c29;
+      --text-primary: #e8e6de; --text-secondary: #a8a69e; --text-tertiary: #6e6c65;
+      --border-tertiary: rgba(255,255,255,0.1); --border-secondary: rgba(255,255,255,0.2);
+      --bg-success: #173404; --text-success: #c0dd97; --border-success: #3b6d11;
+      --bg-warning: #412402; --text-warning: #fac775; --border-warning: #854f0b;
+      --bg-info: #042c53;    --text-info: #85b7eb;   --border-info: #185fa5;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg-tertiary); min-height: 100vh; padding: 24px 16px; }
+  .card { max-width: 760px; margin: 0 auto; background: var(--bg-primary); border-radius: var(--radius-lg); border: 0.5px solid var(--border-tertiary); padding: 24px; }
+  .s { font-size: 13px; color: var(--text-secondary); line-height: 1.65; }
+  .sm { font-family: var(--font-mono); font-size: 11px; }
+  .label { font-size: 11px; font-weight: 500; font-family: var(--font-mono); letter-spacing: .05em; color: var(--text-tertiary); margin-bottom: 8px; }
+  .badge { display: inline-flex; align-items: center; padding: 2px 9px; border-radius: 20px; font-size: 10px; font-weight: 500; font-family: var(--font-mono); }
+  .ok  { background: var(--bg-success);  color: var(--text-success);  border: 0.5px solid var(--border-success); }
+  .warn{ background: var(--bg-warning);  color: var(--text-warning);  border: 0.5px solid var(--border-warning); }
+  .info{ background: var(--bg-info);     color: var(--text-info);     border: 0.5px solid var(--border-info); }
+  .neu { background: var(--bg-secondary);color: var(--text-secondary);border: 0.5px solid var(--border-tertiary); }
+  .tabs { display: flex; gap: 4px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab { padding: 5px 13px; font-size: 12px; font-weight: 500; border-radius: 20px; border: 0.5px solid transparent; cursor: pointer; color: var(--text-secondary); background: var(--bg-secondary); transition: all .12s; }
+  .tab.on { background: var(--bg-primary); border-color: var(--border-tertiary); color: var(--text-primary); }
+  .pane { display: none; } .pane.on { display: block; }
+  .div { height: 0.5px; background: var(--border-tertiary); margin: 14px 0; }
+  .block { border: 0.5px solid var(--border-tertiary); border-radius: 8px; padding: 13px 15px; margin-bottom: 10px; background: var(--bg-secondary); }
+  .bh { font-size: 13px; font-weight: 500; color: var(--text-primary); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .row { display: flex; gap: 8px; margin-bottom: 7px; align-items: flex-start; }
+  .num { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); min-width: 22px; padding-top: 1px; }
+  .code { background: var(--bg-secondary); border: 0.5px solid var(--border-tertiary); border-radius: 6px; padding: 11px 13px; margin: 8px 0; overflow-x: auto; }
+  .code div { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); line-height: 1.85; white-space: pre; }
+  .hl  { color: var(--text-primary) !important; font-weight: 500; }
+  .cm  { color: var(--text-tertiary) !important; }
+  .ok-c{ color: var(--text-success) !important; }
+  .verdict { border-left: 2px solid; padding: 10px 14px; margin: 10px 0; border-radius: 0 6px 6px 0; }
+  .v-ok   { border-color: var(--border-success); background: var(--bg-success); }
+  .v-warn { border-color: var(--border-warning); background: var(--bg-warning); }
+  .v-info { border-color: var(--border-info);    background: var(--bg-info); }
+  .vt { font-size: 11px; font-weight: 500; font-family: var(--font-mono); margin-bottom: 3px; }
+  .vt-ok  { color: var(--text-success); } .vt-warn { color: var(--text-warning); } .vt-info { color: var(--text-info); }
+  .hdr { padding: 0 0 16px; border-bottom: 0.5px solid var(--border-tertiary); margin-bottom: 16px; }
+  .layer { border: 0.5px solid var(--border-tertiary); border-radius: 10px; padding: 14px; margin-bottom: 8px; }
+  .l-client { border-color: var(--border-success); background: var(--bg-success); }
+  .l-server { border-color: var(--border-warning); background: var(--bg-warning); }
+  .l-ledger { border-color: var(--border-info);    background: var(--bg-info); }
+  .lt { font-size: 11px; font-weight: 500; font-family: var(--font-mono); margin-bottom: 8px; }
+  .lt-c { color: var(--text-success); } .lt-s { color: var(--text-warning); } .lt-l { color: var(--text-info); }
+  .pill-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+  .pill { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-family: var(--font-mono); border: 0.5px solid; }
+  .pill-c { background: var(--bg-primary); border-color: var(--border-success); color: var(--text-success); }
+  .pill-s { background: var(--bg-primary); border-color: var(--border-warning); color: var(--text-warning); }
+  .pill-l { background: var(--bg-primary); border-color: var(--border-info);    color: var(--text-info); }
+  .arrow-down { text-align: center; font-size: 16px; color: var(--text-tertiary); margin: 6px 0; }
+  .windi-sig { text-align: center; font-size: 11px; color: var(--text-tertiary); font-family: var(--font-mono); margin-top: 20px; padding-top: 14px; border-top: 0.5px solid var(--border-tertiary); }
+</style>
+</head>
+<body>
+<div class="card">
+
+<div class="hdr">
+  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+    <span class="badge ok">ARQUITECTURA HÍBRIDA</span>
+    <span class="badge info">Thin Server · Fat Client</span>
+    <span class="badge warn">Edit Script Protocol</span>
+  </div>
+  <div style="font-size:19px;font-weight:500;color:var(--text-primary);margin-bottom:4px">W-VD-CUT-001 · Hybrid Architecture</div>
+  <div class="s">Client faz o trabalho criativo · Servidor executa 1 comando · Ledger sela</div>
+</div>
+
+<div class="tabs">
+  <div class="tab on" onclick="st('split')">Divisão</div>
+  <div class="tab" onclick="st('script')">Edit Script</div>
+  <div class="tab" onclick="st('client')">Client Code</div>
+  <div class="tab" onclick="st('server')">Server Code</div>
+  <div class="tab" onclick="st('edge')">Edge AI</div>
+  <div class="tab" onclick="st('load')">Carga Strato</div>
+</div>
+
+<!-- DIVISÃO -->
+<div id="pane-split" class="pane on">
+  <div class="layer l-client">
+    <div class="lt lt-c">LAYER 1 — CLIENT (Mobile/Browser) · Zero carga no Strato</div>
+    <div class="s">Todo o trabalho criativo e interactivo. CPU do utilizador. GPU local via WebGL. NPU do smartphone.</div>
+    <div class="pill-row">
+      <span class="pill pill-c">Timeline UI</span><span class="pill pill-c">Trim handles</span>
+      <span class="pill pill-c">Preview Canvas</span><span class="pill pill-c">WebGL filtros</span>
+      <span class="pill pill-c">LUT preview</span><span class="pill pill-c">SHA-256 local</span>
+      <span class="pill pill-c">GPS → place_name</span><span class="pill pill-c">Silence detect</span>
+      <span class="pill pill-c">Text overlays</span><span class="pill pill-c">Proxy 360p</span>
+    </div>
+  </div>
+  <div class="arrow-down">↓ envia Edit Script JSON (~2KB) + vídeo original</div>
+  <div class="layer l-server">
+    <div class="lt lt-s">LAYER 2 — SERVER :8128 · Pico máx 40s por job</div>
+    <div class="s">Recebe instruções. Executa 1 comando FFmpeg. Sem interactividade. Sem decisões criativas.</div>
+    <div class="pill-row">
+      <span class="pill pill-s">Parse Edit Script</span><span class="pill pill-s">Build FFmpeg cmd</span>
+      <span class="pill pill-s">Execute encode</span><span class="pill pill-s">LUT apply final</span>
+      <span class="pill pill-s">SealBadge render</span><span class="pill pill-s">Thumbnail gen</span>
+      <span class="pill pill-s">Metadata embed</span>
+    </div>
+  </div>
+  <div class="arrow-down">↓ vídeo final processado → hash SHA-256</div>
+  <div class="layer l-ledger">
+    <div class="lt lt-l">LAYER 3 — LEDGER :8101 · Imutável · I11</div>
+    <div class="s">Receipt com hash do vídeo final. QR canónico. Distribuição para Blue Sky + Thread.</div>
+    <div class="pill-row">
+      <span class="pill pill-l">Forensic receipt</span><span class="pill pill-l">SHA-256 seal</span>
+      <span class="pill pill-l">QR verify-public</span><span class="pill pill-l">Blue Sky post</span>
+      <span class="pill pill-l">Travel Thread</span>
+    </div>
+  </div>
+  <div class="verdict v-ok">
+    <div class="vt vt-ok">RESULTADO: Strato só trabalha durante o encode final (20-40s)</div>
+    <div class="s">Durante os minutos de edição criativa do utilizador — timeline, filtros, trim — o CPU do Strato está a zero para este job. O pico só ocorre quando o utilizador clica "Render Final".</div>
+  </div>
+</div>
+
+<!-- EDIT SCRIPT -->
+<div id="pane-script" class="pane">
+  <div class="verdict v-info">
+    <div class="vt vt-info">O EDIT SCRIPT é o protocolo central desta arquitectura</div>
+    <div class="s">O client envia ~2KB de JSON com todas as decisões criativas. O servidor nunca vê o utilizador editar — só recebe o resultado. É o "script de realização" que o artesão executa.</div>
+  </div>
+  <div class="label" style="margin-top:12px">EDIT SCRIPT JSON — SCHEMA CANÓNICO</div>
+  <div class="code">
+<div>{</div>
+<div>  <span class="hl">"job_id"</span>: <span class="ok-c">"uuid-v4"</span>,</div>
+<div>  <span class="hl">"wallet_did"</span>: <span class="ok-c">"did:windi:kempten:abc123"</span>,</div>
+<div>&nbsp;</div>
+<div>  <span class="cm">// PROVA DE INTEGRIDADE DO ORIGINAL</span></div>
+<div>  <span class="hl">"source_hash"</span>: <span class="ok-c">"sha256-do-raw-file"</span>,</div>
+<div>  <span class="hl">"source_duration"</span>: <span class="ok-c">87.4</span>, <span class="cm">// segundos</span></div>
+<div>&nbsp;</div>
+<div>  <span class="cm">// DECISÕES DE CORTE</span></div>
+<div>  <span class="hl">"trim"</span>: {</div>
+<div>    <span class="hl">"start"</span>: <span class="ok-c">12.5</span>,  <span class="cm">// segundos</span></div>
+<div>    <span class="hl">"end"</span>: <span class="ok-c">72.0</span>    <span class="cm">// max 120s</span></div>
+<div>  },</div>
+<div>&nbsp;</div>
+<div>  <span class="cm">// FORMATO OUTPUT</span></div>
+<div>  <span class="hl">"format"</span>: <span class="ok-c">"9:16"</span>,        <span class="cm">// "9:16" | "1:1" | "16:9"</span></div>
+<div>  <span class="hl">"resolution"</span>: <span class="ok-c">"720p"</span>,  <span class="cm">// "720p" | "1080p"</span></div>
+<div>&nbsp;</div>
+<div>  <span class="cm">// ESTÉTICA</span></div>
+<div>  <span class="hl">"lut"</span>: <span class="ok-c">"windi-organic"</span>,</div>
+<div>  <span class="hl">"stabilize"</span>: <span class="ok-c">true</span>,</div>
+<div>&nbsp;</div>
+<div>  <span class="cm">// OVERLAYS</span></div>
+<div>  <span class="hl">"overlays"</span>: [</div>
+<div>    { <span class="hl">"type"</span>: <span class="ok-c">"seal_badge"</span>, <span class="hl">"position"</span>: <span class="ok-c">"bottom-left"</span> },</div>
+<div>    { <span class="hl">"type"</span>: <span class="ok-c">"text"</span>, <span class="hl">"text"</span>: <span class="ok-c">"Kempten, Bayern"</span>,</div>
+<div>      <span class="hl">"position"</span>: <span class="ok-c">"top-center"</span>, <span class="hl">"style"</span>: <span class="ok-c">"cinematic"</span> }</div>
+<div>  ],</div>
+<div>&nbsp;</div>
+<div>  <span class="cm">// ÁUDIO</span></div>
+<div>  <span class="hl">"audio"</span>: { <span class="hl">"normalize"</span>: <span class="ok-c">true</span>, <span class="hl">"noise_reduce"</span>: <span class="ok-c">false</span> },</div>
+<div>&nbsp;</div>
+<div>  <span class="cm">// CONTEXTO FORENSE</span></div>
+<div>  <span class="hl">"gps_place"</span>: <span class="ok-c">"Kempten, Bayern"</span>,</div>
+<div>  <span class="hl">"label"</span>: <span class="ok-c">"Morgendliche Wanderung"</span>,</div>
+<div>  <span class="hl">"tags_ai"</span>: [<span class="ok-c">"travel"</span>, <span class="ok-c">"nature"</span>, <span class="ok-c">"morning"</span>],</div>
+<div>&nbsp;</div>
+<div>  <span class="cm">// DESTINO</span></div>
+<div>  <span class="hl">"broadcast"</span>: [<span class="ok-c">"blue_sky"</span>, <span class="ok-c">"thread"</span>],</div>
+<div>  <span class="hl">"governance"</span>: <span class="ok-c">"HIGH"</span></div>
+<div>}</div>
+  </div>
+  <div class="div"></div>
+  <div class="label">O QUE O SERVIDOR FAZ COM ESTE JSON</div>
+  <div class="code">
+<div>ffmpeg -i {source} \</div>
+<div>  -ss {trim.start} -to {trim.end} \</div>
+<div>  -vf "crop=ih*9/16:ih:(iw-ih*9/16)/2:0, \</div>
+<div>       scale=720:1280, \</div>
+<div>       lut3d=windi-organic.cube, \</div>
+<div>       drawtext=text='Kempten\, Bayern':..., \</div>
+<div>       drawtext=text='🔐 WINDI·a1b2c3d4':..." \</div>
+<div>  -af "loudnorm" \</div>
+<div>  -c:v libx264 -preset fast -crf 28 \</div>
+<div>  -metadata windi_hash="..." \</div>
+<div>  -movflags +faststart \</div>
+<div>  {output}.mp4</div>
+<div>&nbsp;</div>
+<div><span class="cm"># Duração do pico no Strato: 20-40 segundos</span></div>
+  </div>
+</div>
+
+<!-- CLIENT CODE -->
+<div id="pane-client" class="pane">
+  <div class="label">CLIENT-SIDE — IMPLEMENTAÇÃO BROWSER/MOBILE</div>
+  <div class="block">
+    <div class="bh"><span class="badge ok">SHA-256 local</span> Web Crypto API · zero servidor</div>
+    <div class="code">
+<div><span class="cm">// Hash do raw file antes de qualquer upload</span></div>
+<div>async function hashFile(file) {</div>
+<div>  const buf = await file.arrayBuffer();</div>
+<div>  const hash = await crypto.subtle.digest('SHA-256', buf);</div>
+<div>  return [...new Uint8Array(hash)]</div>
+<div>    .map(b => b.toString(16).padStart(2,'0')).join('');</div>
+<div>}</div>
+    </div>
+  </div>
+  <div class="block">
+    <div class="bh"><span class="badge ok">Timeline Preview</span> Canvas API · 100% local</div>
+    <div class="code">
+<div><span class="cm">// Seek em qualquer frame sem tocar no servidor</span></div>
+<div>const video = document.getElementById('preview');</div>
+<div>video.src = URL.createObjectURL(rawFile); <span class="cm">// blob local</span></div>
+<div>&nbsp;</div>
+<div>let trimStart = 0, trimEnd = video.duration;</div>
+<div>startHandle.addEventListener('input', e => {</div>
+<div>  trimStart = parseFloat(e.target.value);</div>
+<div>  video.currentTime = trimStart; <span class="cm">// seek local</span></div>
+<div>});</div>
+    </div>
+  </div>
+  <div class="block">
+    <div class="bh"><span class="badge ok">WebGL LUT Preview</span> GPU local · zero latência</div>
+    <div class="code">
+<div><span class="cm">// Aplica LUT ao vídeo em tempo real via WebGL shader</span></div>
+<div>const gl = canvas.getContext('webgl2');</div>
+<div>const lutTexture = uploadLUT(gl, lutCubeData);</div>
+<div><span class="cm">// Fragment shader — aplica LUT a cada frame</span></div>
+<div><span class="cm">// O servidor nunca renderiza um frame de preview</span></div>
+    </div>
+  </div>
+  <div class="block">
+    <div class="bh"><span class="badge ok">Build Edit Script</span> Botão "Render Final"</div>
+    <div class="code">
+<div>async function submitEditScript() {</div>
+<div>  const script = {</div>
+<div>    job_id: crypto.randomUUID(),</div>
+<div>    wallet_did: sessionStorage.getItem('windi_vdcut_wallet'),</div>
+<div>    source_hash: await hashFile(rawFile),</div>
+<div>    trim: { start: trimStart, end: trimEnd },</div>
+<div>    format: selectedFormat,</div>
+<div>    lut: selectedLut,</div>
+<div>    gps_place: gpsPlace,</div>
+<div>    broadcast: selectedTargets</div>
+<div>  };</div>
+<div>  const form = new FormData();</div>
+<div>  form.append('video', rawFile);</div>
+<div>  form.append('script', JSON.stringify(script));</div>
+<div>  await fetch('/vdcut/api/jobs/create', {method:'POST', body:form});</div>
+<div>}</div>
+    </div>
+  </div>
+</div>
+
+<!-- SERVER CODE -->
+<div id="pane-server" class="pane">
+  <div class="label">SERVER.PY — ARTESÃO FINAL</div>
+  <div class="verdict v-warn">
+    <div class="vt vt-warn">O servidor é minimalista por design</div>
+    <div class="s">3 responsabilidades: receber upload, executar FFmpeg com o Edit Script, selar no Ledger. Sem lógica de preview. Sem interactividade.</div>
+  </div>
+  <div class="block">
+    <div class="bh"><span class="badge warn">POST /api/jobs/create</span></div>
+    <div class="code">
+<div>@app.post("/api/jobs/create")</div>
+<div>async def create_job(video: UploadFile, script: str = Form(...)):</div>
+<div>  s = json.loads(script)</div>
+<div>  data = await video.read()</div>
+<div>  received_hash = hashlib.sha256(data).hexdigest()</div>
+<div>  if received_hash != s["source_hash"]:</div>
+<div>    raise HTTPException(400, "Hash mismatch")</div>
+<div>  input_path = f"/opt/windi/media/incoming/{s['job_id']}.mp4"</div>
+<div>  with open(input_path, "wb") as f: f.write(data)</div>
+<div>  db_insert_job(s, input_path)</div>
+<div>  threading.Thread(target=run_ffmpeg_job, args=(s,)).start()</div>
+<div>  return {"job_id": s["job_id"], "status": "queued"}</div>
+    </div>
+  </div>
+  <div class="block">
+    <div class="bh"><span class="badge warn">build_ffmpeg_command()</span></div>
+    <div class="code">
+<div>def build_ffmpeg_command(s, input_path, output_path):</div>
+<div>  CROPS = {</div>
+<div>    "9:16": "crop=ih*9/16:ih:(iw-ih*9/16)/2:0,scale=720:1280",</div>
+<div>    "1:1":  "crop=min(iw\\,ih):min(iw\\,ih),scale=720:720",</div>
+<div>    "16:9": "scale=1280:720"</div>
+<div>  }</div>
+<div>  vf_chain = [CROPS[s["format"]]]</div>
+<div>  if s.get("lut"):</div>
+<div>    vf_chain.append(f"lut3d=luts/{s['lut']}.cube")</div>
+<div>  vf_chain.append("drawtext=text='WINDI·{hash8}':...")</div>
+<div>  return ["ffmpeg","-i",input_path,</div>
+<div>    "-ss",str(s["trim"]["start"]),"-to",str(s["trim"]["end"]),</div>
+<div>    "-vf", ",".join(vf_chain),</div>
+<div>    "-c:v","libx264","-preset","fast","-crf","28",</div>
+<div>    "-movflags","+faststart", output_path]</div>
+    </div>
+  </div>
+</div>
+
+<!-- EDGE AI -->
+<div id="pane-edge" class="pane">
+  <div class="label">EDGE AI — REAL AGORA vs FUTURO</div>
+  <div class="block">
+    <div class="bh"><span class="badge ok">REAL AGORA</span> Detecção de silêncio — Web Audio API</div>
+    <div class="s">Sem NPU necessário. Web Audio API analisa amplitude frame-a-frame. Identifica silêncio &lt;-40dB e sugere pontos de corte. Funciona em todos os browsers. Zero dependências.</div>
+    <div class="code" style="margin-top:8px">
+<div>const analyser = audioCtx.createAnalyser();</div>
+<div>analyser.fftSize = 512;</div>
+<div>const silentRanges = detectSilence(analyser, threshold=-40);</div>
+<div><span class="cm">// → [{start:0.0, end:2.3}, {start:45.1, end:47.8}]</span></div>
+<div><span class="cm">// VD-CUT UI marca estes ranges na timeline</span></div>
+    </div>
+  </div>
+  <div class="block">
+    <div class="bh"><span class="badge ok">REAL AGORA</span> Auto-tags — TensorFlow.js</div>
+    <div class="s">MobileNet v3 no browser. 1 frame/segundo. Tags: "outdoor", "nature", "city". GPU local via WebGL. Entra no Edit Script como <span class="sm">tags_ai[]</span>.</div>
+    <div class="code" style="margin-top:8px">
+<div>const model = await mobilenet.load({version:3,alpha:0.75});</div>
+<div>const predictions = await model.classify(videoFrame);</div>
+<div><span class="cm">// → [{className:"lakeside",probability:0.82}]</span></div>
+    </div>
+  </div>
+  <div class="block">
+    <div class="bh"><span class="badge warn">FASE 3+</span> NPU nativa do smartphone</div>
+    <div class="s">Android Neural Networks API / Apple CoreML. Requer app nativa. Relevante quando WINDI tiver app mobile dedicada.</div>
+  </div>
+  <div class="verdict v-ok">
+    <div class="vt vt-ok">FASE 1: browser nativo é suficiente — Web Audio + TF.js + Canvas + WebGL</div>
+    <div class="s">Cobrem 90% do valor da Edge AI. Disponíveis hoje, sem app nativa, sem dependências pesadas.</div>
+  </div>
+</div>
+
+<!-- CARGA STRATO -->
+<div id="pane-load" class="pane">
+  <div class="label">PERFIL DE CARGA — STRATO COM ARQUITECTURA HÍBRIDA</div>
+  <div class="block">
+    <div class="bh">Antes (arquitectura naïve)</div>
+    <div class="row"><div class="num">❌</div><div class="s">Trim handle move → servidor processa frame → CPU spike constante durante edição</div></div>
+    <div class="row"><div class="num">❌</div><div class="s">Mudança de LUT → servidor aplica filtro → latência visível + carga distribuída por minutos</div></div>
+  </div>
+  <div class="block">
+    <div class="bh">Depois (arquitectura híbrida)</div>
+    <div class="row"><div class="num">✅</div><div class="s">Sessão de edição (5-10min) → CPU Strato a <strong>zero</strong> para este utilizador</div></div>
+    <div class="row"><div class="num">✅</div><div class="s">Clique "Render Final" → pico de <strong>20-40 segundos</strong> → silêncio total</div></div>
+    <div class="row"><div class="num">✅</div><div class="s">2 utilizadores em paralelo → 2 jobs × 40s → geríveis com semáforo</div></div>
+  </div>
+  <div class="label">SEMÁFORO DE JOBS</div>
+  <div class="code">
+<div><span class="cm"># Máx 2 jobs FFmpeg em paralelo</span></div>
+<div>ffmpeg_semaphore = threading.Semaphore(2)</div>
+<div>&nbsp;</div>
+<div>def run_ffmpeg_job(script):</div>
+<div>  with ffmpeg_semaphore:</div>
+<div>    db_update_status(script["job_id"], "processing")</div>
+<div>    cmd = build_ffmpeg_command(script, ...)</div>
+<div>    result = subprocess.run(cmd, timeout=180)</div>
+<div>    if result.returncode == 0:</div>
+<div>      output_hash = sha256_file(output_path)</div>
+<div>      seal_to_ledger(script, output_hash) <span class="cm"># → :8101</span></div>
+<div>      db_update_status(script["job_id"], "done")</div>
+  </div>
+  <div class="verdict v-ok">
+    <div class="vt vt-ok">🐉 ARQUITECTURA SELADA — Thin Server, Fat Client</div>
+    <div class="s">O Strato mantém os 44 serviços estáveis. O VD-CUT é um "inquilino silencioso" que só faz barulho 40 segundos por clip. A criatividade vive no hardware do utilizador. A prova vive no Ledger.</div>
+  </div>
+</div>
+
+<div class="windi-sig">
+  WINDI-VD-CUT · W-VD-CUT-001 · :8128 · Blueprint v0.1 · 2026<br>
+  "AI processes. Human decides. WINDI guarantees." · windi-domain.com
+</div>
+
+</div><!-- /card -->
+
+<script>
+function st(n) {
+  document.querySelectorAll('.pane').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  document.getElementById('pane-' + n).classList.add('on');
+  event.target.classList.add('on');
+}
+</script>
+</body>
+</html>

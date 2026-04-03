@@ -1,0 +1,149 @@
+{
+  "report_id": "WSG-CSS-20260325-040000",
+  "audit_date": "2026-03-25T03:00:00.871924+00:00",
+  "pages_audited": 5,
+  "var_drifts": [
+    {
+      "variable": "--noir",
+      "expected": "#0a0a0f",
+      "actual": "#0A0A0B",
+      "page": "https://windi-domain.com/keys/",
+      "severity": "critical"
+    },
+    {
+      "variable": "--gold",
+      "expected": "#c9a84c",
+      "actual": "#C9952A",
+      "page": "https://windi-domain.com/keys/",
+      "severity": "critical"
+    },
+    {
+      "variable": "--gold-dim",
+      "expected": "#8a7535",
+      "actual": "#8B6914",
+      "page": "https://windi-domain.com/keys/",
+      "severity": "major"
+    },
+    {
+      "variable": "--text-dim",
+      "expected": "#4a4a44",
+      "actual": "#5A5650",
+      "page": "https://windi-domain.com/keys/",
+      "severity": "minor"
+    },
+    {
+      "variable": "--gold-dim",
+      "expected": "#8a7535",
+      "actual": "#8B6914",
+      "page": "https://windi-domain.com/pioneer/",
+      "severity": "major"
+    },
+    {
+      "variable": "--text",
+      "expected": "#f0efe8",
+      "actual": "#2C2A24",
+      "page": "https://windi-domain.com/pioneer/",
+      "severity": "critical"
+    },
+    {
+      "variable": "--text",
+      "expected": "#f0efe8",
+      "actual": "#2C2C2A",
+      "page": "https://windi-domain.com/verify-public/",
+      "severity": "critical"
+    },
+    {
+      "variable": "--radius",
+      "expected": "12px",
+      "actual": "16px",
+      "page": "https://windi-domain.com/verify-public/",
+      "severity": "minor"
+    },
+    {
+      "variable": "--radius-sm",
+      "expected": "8px",
+      "actual": "10px",
+      "page": "https://windi-domain.com/verify-public/",
+      "severity": "minor"
+    },
+    {
+      "variable": "--text",
+      "expected": "#f0efe8",
+      "actual": "#E2E2EA",
+      "page": "https://windi-domain.com/how-it-works/",
+      "severity": "critical"
+    }
+  ],
+  "font_drifts": [
+    {
+      "font_name": "Outfit",
+      "expected": true,
+      "actual": false,
+      "page": "https://windi-domain.com/desktop/",
+      "issue": "missing"
+    },
+    {
+      "font_name": "JetBrains Mono",
+      "expected": true,
+      "actual": false,
+      "page": "https://windi-domain.com/desktop/",
+      "issue": "missing"
+    },
+    {
+      "font_name": "Outfit",
+      "expected": true,
+      "actual": false,
+      "page": "https://windi-domain.com/keys/",
+      "issue": "missing"
+    },
+    {
+      "font_name": "JetBrains Mono",
+      "expected": true,
+      "actual": false,
+      "page": "https://windi-domain.com/keys/",
+      "issue": "missing"
+    },
+    {
+      "font_name": "Bricolage Grotesque",
+      "expected": true,
+      "actual": false,
+      "page": "https://windi-domain.com/pioneer/",
+      "issue": "missing"
+    },
+    {
+      "font_name": "Outfit",
+      "expected": true,
+      "actual": false,
+      "page": "https://windi-domain.com/pioneer/",
+      "issue": "missing"
+    },
+    {
+      "font_name": "Outfit",
+      "expected": true,
+      "actual": false,
+      "page": "https://windi-domain.com/verify-public/",
+      "issue": "missing"
+    },
+    {
+      "font_name": "Outfit",
+      "expected": true,
+      "actual": false,
+      "page": "https://windi-domain.com/how-it-works/",
+      "issue": "missing"
+    }
+  ],
+  "total_drift_count": 18,
+  "severity_summary": {
+    "critical": 5,
+    "major": 2,
+    "minor": 3,
+    "fonts": 8
+  },
+  "compliance_score": 90.0,
+  "recommendations": [
+    "Found CSS variable drifts in 4 page(s). Consider importing windi-design-system.css instead of inline :root declarations.",
+    "CRITICAL: Core brand variables diverge (--gold, --text, --noir). This affects visual identity consistency.",
+    "Missing canonical fonts: Outfit, JetBrains Mono, Outfit, JetBrains Mono, Bricolage Grotesque, Outfit, Outfit, Outfit. Add Google Fonts import or local font files."
+  ],
+  "hash": "sha256:6687d67da20ff51b"
+}

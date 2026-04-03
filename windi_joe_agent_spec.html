@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JOE — W-JOE-001 · WINDI Agent Spec</title>
+<style>
+  :root {
+    --bg-primary: #ffffff; --bg-secondary: #f5f4f0; --bg-tertiary: #eeede8;
+    --text-primary: #1a1a18; --text-secondary: #5c5c58; --text-tertiary: #9c9a92;
+    --border-tertiary: rgba(0,0,0,0.12); --border-secondary: rgba(0,0,0,0.22);
+    --bg-success: #eaf3de; --text-success: #3b6d11; --border-success: #97c459;
+    --bg-warning: #faeeda; --text-warning: #854f0b; --border-warning: #ef9f27;
+    --bg-info: #e6f1fb;    --text-info: #185fa5;   --border-info: #378add;
+    --bg-danger: #fcebeb;  --text-danger: #a32d2d; --border-danger: #e24b4a;
+    --radius-md: 8px; --radius-lg: 12px;
+    --font-mono: 'JetBrains Mono', 'Fira Mono', monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg-primary: #1e1e1c; --bg-secondary: #252522; --bg-tertiary: #2c2c29;
+      --text-primary: #e8e6de; --text-secondary: #a8a69e; --text-tertiary: #6e6c65;
+      --border-tertiary: rgba(255,255,255,0.1); --border-secondary: rgba(255,255,255,0.2);
+      --bg-success: #173404; --text-success: #c0dd97; --border-success: #3b6d11;
+      --bg-warning: #412402; --text-warning: #fac775; --border-warning: #854f0b;
+      --bg-info: #042c53;    --text-info: #85b7eb;   --border-info: #185fa5;
+      --bg-danger: #501313;  --text-danger: #f09595; --border-danger: #a32d2d;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg-tertiary); min-height: 100vh; padding: 24px 16px; }
+  .card { max-width: 780px; margin: 0 auto; background: var(--bg-primary); border-radius: var(--radius-lg); border: 0.5px solid var(--border-tertiary); padding: 24px; }
+  .s { font-size: 13px; color: var(--text-secondary); line-height: 1.65; }
+  .label { font-size: 11px; font-weight: 500; font-family: var(--font-mono); letter-spacing: .05em; color: var(--text-tertiary); margin-bottom: 8px; }
+  .badge { display: inline-flex; align-items: center; padding: 2px 9px; border-radius: 20px; font-size: 10px; font-weight: 500; font-family: var(--font-mono); }
+  .ok   { background: var(--bg-success);  color: var(--text-success);  border: 0.5px solid var(--border-success); }
+  .warn { background: var(--bg-warning);  color: var(--text-warning);  border: 0.5px solid var(--border-warning); }
+  .info { background: var(--bg-info);     color: var(--text-info);     border: 0.5px solid var(--border-info); }
+  .pink { background: var(--bg-secondary);color: var(--text-primary);  border: 0.5px solid var(--border-secondary); }
+  .tabs { display: flex; gap: 4px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab  { padding: 5px 13px; font-size: 12px; font-weight: 500; border-radius: 20px; border: 0.5px solid transparent; cursor: pointer; color: var(--text-secondary); background: var(--bg-secondary); transition: all .12s; }
+  .tab.on { background: var(--bg-primary); border-color: var(--border-tertiary); color: var(--text-primary); }
+  .pane { display: none; } .pane.on { display: block; }
+  .div  { height: 0.5px; background: var(--border-tertiary); margin: 14px 0; }
+  .block { border: 0.5px solid var(--border-tertiary); border-radius: 8px; padding: 13px 15px; margin-bottom: 10px; background: var(--bg-secondary); }
+  .bh   { font-size: 13px; font-weight: 500; color: var(--text-primary); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .row  { display: flex; gap: 8px; margin-bottom: 7px; align-items: flex-start; }
+  .num  { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); min-width: 24px; padding-top: 1px; }
+  .code { background: var(--bg-secondary); border: 0.5px solid var(--border-tertiary); border-radius: 6px; padding: 11px 13px; margin: 8px 0; overflow-x: auto; }
+  .code div { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); line-height: 1.85; white-space: pre; }
+  .hl   { color: var(--text-primary) !important; font-weight: 500; }
+  .cm   { color: var(--text-tertiary) !important; }
+  .ok-c { color: var(--text-success) !important; }
+  .warn-c { color: var(--text-warning) !important; }
+  .info-c { color: var(--text-info) !important; }
+  .verdict { border-left: 2px solid; padding: 10px 14px; margin: 10px 0; border-radius: 0 6px 6px 0; }
+  .v-ok   { border-color: var(--border-success); background: var(--bg-success); }
+  .v-warn { border-color: var(--border-warning); background: var(--bg-warning); }
+  .v-info { border-color: var(--border-info);    background: var(--bg-info); }
+  .vt { font-size: 11px; font-weight: 500; font-family: var(--font-mono); margin-bottom: 3px; }
+  .vt-ok   { color: var(--text-success); } .vt-warn { color: var(--text-warning); } .vt-info { color: var(--text-info); }
+  .hdr { padding: 0 0 16px; border-bottom: 0.5px solid var(--border-tertiary); margin-bottom: 16px; }
+  .cmd-row { display: flex; gap: 8px; align-items: flex-start; padding: 10px 12px; border: 0.5px solid var(--border-tertiary); border-radius: 6px; margin-bottom: 5px; background: var(--bg-primary); }
+  .cmd-n { font-family: var(--font-mono); font-size: 10px; font-weight: 500; color: var(--text-tertiary); min-width: 32px; padding-top: 2px; }
+  .cmd-v { font-size: 12px; color: var(--text-primary); flex: 1.2; font-style: italic; }
+  .cmd-arr { color: var(--text-tertiary); font-size: 11px; padding: 0 4px; padding-top: 1px; }
+  .cmd-j { font-family: var(--font-mono); font-size: 10px; color: var(--text-success); flex: 2; }
+  .cmd-launch { border-color: var(--border-warning) !important; background: var(--bg-warning) !important; }
+  .cmd-v-launch { color: var(--text-warning) !important; font-weight: 500; }
+  .hash-row { display: flex; gap: 10px; padding: 11px 13px; border: 0.5px solid var(--border-tertiary); border-radius: 6px; margin-bottom: 6px; background: var(--bg-primary); align-items: flex-start; }
+  .hash-n { font-family: var(--font-mono); font-size: 16px; font-weight: 500; min-width: 30px; padding-top: 2px; }
+  .hash-name { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+  .hash-desc { font-size: 12px; color: var(--text-secondary); margin-top: 3px; line-height: 1.5; }
+  .hash-key  { font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); margin-top: 4px; }
+  .module-row { display: flex; gap: 12px; padding: 12px 14px; border: 0.5px solid var(--border-tertiary); border-radius: 6px; margin-bottom: 7px; background: var(--bg-primary); align-items: flex-start; }
+  .mod-label { min-width: 130px; }
+  .mod-name  { font-family: var(--font-mono); font-size: 12px; font-weight: 500; color: var(--text-primary); }
+  .mod-tech  { font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); margin-top: 4px; line-height: 1.5; }
+  .mod-fn    { font-size: 12px; color: var(--text-secondary); line-height: 1.55; }
+  .phase-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-start; }
+  .phn { font-family: var(--font-mono); font-size: 10px; font-weight: 500; padding: 3px 8px; border-radius: 20px; min-width: 64px; text-align: center; margin-top: 1px; white-space: nowrap; border: 0.5px solid; }
+  .ph-ok  { background: var(--bg-success); color: var(--text-success); border-color: var(--border-success); }
+  .ph-now { background: var(--bg-warning); color: var(--text-warning); border-color: var(--border-warning); }
+  .ph-fut { background: var(--bg-secondary); color: var(--text-tertiary); border-color: var(--border-tertiary); }
+  .joe-card { border: 0.5px solid var(--border-tertiary); border-radius: 12px; padding: 20px; background: var(--bg-secondary); margin-bottom: 14px; text-align: center; }
+  .joe-name  { font-size: 36px; font-weight: 500; color: var(--text-primary); letter-spacing: -.01em; }
+  .joe-title { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+  .joe-quote { font-size: 13px; color: var(--text-tertiary); font-style: italic; margin-top: 14px; padding-top: 14px; border-top: 0.5px solid var(--border-tertiary); line-height: 1.6; }
+  .sig { text-align: center; font-size: 11px; color: var(--text-tertiary); font-family: var(--font-mono); margin-top: 20px; padding-top: 14px; border-top: 0.5px solid var(--border-tertiary); line-height: 1.7; }
+</style>
+</head>
+<body>
+<div class="card">
+
+<div class="hdr">
+  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+    <span class="badge ok">W-JOE-001</span>
+    <span class="badge info">Director de Transmissão</span>
+    <span class="badge warn">:8129</span>
+    <span class="badge pink">Liga IA+H</span>
+  </div>
+  <div style="font-size:20px;font-weight:500;color:var(--text-primary);margin-bottom:4px">JOE — Spec Canónica v1.0</div>
+  <div class="s">"O humano escolhe o momento. O sistema executa a forma. O Ledger preserva a verdade."</div>
+</div>
+
+<div class="tabs">
+  <div class="tab on" onclick="st('identity')">Identidade</div>
+  <div class="tab" onclick="st('cmds')">3 Comandos</div>
+  <div class="tab" onclick="st('dict')">Dicionário</div>
+  <div class="tab" onclick="st('modules')">Módulos</div>
+  <div class="tab" onclick="st('hashes')">4 Hashes</div>
+  <div class="tab" onclick="st('ritual')">Ritual</div>
+  <div class="tab" onclick="st('plan')">Plano Gêmeo</div>
+</div>
+
+<!-- IDENTIDADE -->
+<div id="pane-identity" class="pane on">
+  <div class="joe-card">
+    <div style="font-size:48px;margin-bottom:10px">🎬</div>
+    <div class="joe-name">JOE</div>
+    <div class="joe-title">Director de Transmissão · W-JOE-001 · Liga IA+H · Kempten, Bavaria</div>
+    <div style="display:flex;justify-content:center;gap:6px;margin-top:12px;flex-wrap:wrap">
+      <span class="badge ok">:8129</span>
+      <span class="badge info">domain extension :8091</span>
+      <span class="badge warn">I9 · I11 · G3</span>
+    </div>
+    <div class="joe-quote">"JOE não é um script. É o assistente de direcção que transforma intenção humana em forma verificável."</div>
+  </div>
+
+  <div class="block">
+    <div class="bh">JOE na Liga IA+H</div>
+    <div class="row"><div class="num">🛡</div><div class="s"><strong>Guardian</strong> — fundação constitucional</div></div>
+    <div class="row"><div class="num">🏗</div><div class="s"><strong>Architect</strong> — arquitectura do ecossistema</div></div>
+    <div class="row"><div class="num">👁</div><div class="s"><strong>Witness</strong> — prova e auditoria</div></div>
+    <div class="row"><div class="num">🎬</div><div class="s"><strong>JOE</strong> — director de transmissão · o primeiro agente da Liga com nome próprio</div></div>
+    <div class="s" style="margin-top:8px;padding-top:8px;border-top:0.5px solid var(--border-tertiary)">JOE é o único agente que o utilizador <strong>nomeia directamente</strong>. Os outros três são papéis constitucionais invisíveis. JOE tem voz, tem resposta, tem presença.</div>
+  </div>
+
+  <div class="block">
+    <div class="bh">O papel de JOE — distinção crítica</div>
+    <div class="row"><div class="num">✅</div><div class="s"><strong>É</strong>: Assistente de direcção · executa ordens · orquestra assets · regista EDL · sela via I9</div></div>
+    <div class="row"><div class="num">❌</div><div class="s"><strong>Não é</strong>: Director autónomo · não decide narrativa · não publica sem aprovação humana · I9 absoluto</div></div>
+    <div class="row"><div class="num">🐉</div><div class="s"><strong>Filosofia</strong>: "Joe, faz X" → JOE executa X e confirma. Nunca "Joe decide que X é melhor".</div></div>
+  </div>
+
+  <div class="verdict v-ok">
+    <div class="vt vt-ok">JOE RESPONDE COM PRESENÇA — não com confirmações genéricas</div>
+    <div class="s">❌ "Operação concluída com sucesso."<br>✅ "A tua decisão foi executada. O momento foi preservado. O broadcast está vivo."</div>
+  </div>
+</div>
+
+<!-- 3 COMANDOS -->
+<div id="pane-cmds" class="pane">
+  <div class="verdict v-warn">
+    <div class="vt vt-warn">OS 3 COMANDOS OBRIGATÓRIOS PARA LANÇAMENTO</div>
+    <div class="s">Estes 3 cobrem o ciclo completo: iniciar → dirigir → selar. Com apenas estes 3, o VD-CUT + LIVE estão operacionais. Tudo o resto são extensões.</div>
+  </div>
+
+  <div class="label" style="margin-top:14px">COMANDO 1 — INÍCIO</div>
+  <div class="cmd-row cmd-launch">
+    <span class="cmd-n">CMD1</span>
+    <span class="cmd-v cmd-v-launch">"Joe, inicia" / "Joe, start"</span>
+    <span class="cmd-arr">→</span>
+    <span class="cmd-j">{"action":"start","mode":"broadcast"}<br>ou {"action":"start","mode":"record"}</span>
+  </div>
+  <div class="block" style="margin-top:6px">
+    <div class="bh"><span class="badge warn">CMD1</span> O que acontece</div>
+    <div class="row"><div class="num">1</div><div class="s">JOE inicia gravação local (sempre) + broadcast se configurado</div></div>
+    <div class="row"><div class="num">2</div><div class="s">Shelf carregada em memória — assets prontos para switch instantâneo</div></div>
+    <div class="row"><div class="num">3</div><div class="s">EDL inicia com timestamp canónico: <span style="font-family:var(--font-mono);font-size:11px">{"t":0, "action":"session_start", "actor":"{did}"}</span></div></div>
+    <div class="row"><div class="num">4</div><div class="s">JOE responde: <em>"Transmissão iniciada. Estou a ouvir."</em></div></div>
+    <div class="row"><div class="num">5</div><div class="s">H1 gerado: source_hash do stream ao vivo</div></div>
+  </div>
+
+  <div class="label">COMANDO 2 — DIRECÇÃO</div>
+  <div class="cmd-row cmd-launch">
+    <span class="cmd-n">CMD2</span>
+    <span class="cmd-v cmd-v-launch">"Joe, [asset]" / "Joe, banner [X]"</span>
+    <span class="cmd-arr">→</span>
+    <span class="cmd-j">{"action":"play_asset","asset":"[X]"}<br>{"action":"overlay","asset":"[X]","state":"on"}</span>
+  </div>
+  <div class="block" style="margin-top:6px">
+    <div class="bh"><span class="badge warn">CMD2</span> O que acontece</div>
+    <div class="row"><div class="num">1</div><div class="s">JOE identifica o asset pelo nome — "banner evento", "intro", "bastidores"</div></div>
+    <div class="row"><div class="num">2</div><div class="s">Scene Router executa switch com <span style="font-family:var(--font-mono);font-size:11px">-c copy</span> — zero CPU extra</div></div>
+    <div class="row"><div class="num">3</div><div class="s">Evento registado no EDL com timestamp exacto</div></div>
+    <div class="row"><div class="num">4</div><div class="s">JOE responde: <em>"Banner activo. A continuar."</em></div></div>
+    <div class="row"><div class="num">5</div><div class="s">H2 actualizado: edl_hash recalculado com novo evento</div></div>
+  </div>
+
+  <div class="label">COMANDO 3 — SELAGEM</div>
+  <div class="cmd-row cmd-launch">
+    <span class="cmd-n">CMD3</span>
+    <span class="cmd-v cmd-v-launch">"Joe, sela" / "Joe, seal and export"</span>
+    <span class="cmd-arr">→</span>
+    <span class="cmd-j">{"action":"seal","i9_gate":true,"edl_to_vdcut":true}</span>
+  </div>
+  <div class="block" style="margin-top:6px">
+    <div class="bh"><span class="badge warn">CMD3</span> O Ritual de Selagem — 6 passos</div>
+    <div class="row"><div class="num">1</div><div class="s">Gravação encerra. Stream para.</div></div>
+    <div class="row"><div class="num">2</div><div class="s"><strong>I9 GATE</strong>: JOE apresenta resumo — duração, eventos, hashes. Aguarda aprovação humana explícita.</div></div>
+    <div class="row"><div class="num">3</div><div class="s">Humano confirma → 4 hashes calculados → Receipt of Virtue gerado</div></div>
+    <div class="row"><div class="num">4</div><div class="s">Ledger :8101 recebe receipt — I11 IRREMEDIÁVEL</div></div>
+    <div class="row"><div class="num">5</div><div class="s">EDL enviado automaticamente para VD-CUT — editor pré-preenchido</div></div>
+    <div class="row"><div class="num">6</div><div class="s">JOE responde: <em>"A tua decisão foi executada. O momento foi preservado. O broadcast está vivo."</em></div></div>
+  </div>
+  <div class="verdict v-ok">
+    <div class="vt vt-ok">🐉 COM APENAS ESTES 3 COMANDOS — JOE ESTÁ OPERACIONAL</div>
+    <div class="s">CMD1 + CMD2 + CMD3 = ciclo completo de criação, direcção e selagem. Tudo o resto são extensões da Fase 2+.</div>
+  </div>
+</div>
+
+<!-- DICIONÁRIO -->
+<div id="pane-dict" class="pane">
+  <div class="label">DICIONÁRIO COMPLETO DE COMANDOS JOE</div>
+  <div class="label" style="color:var(--text-warning)">ARRANQUE</div>
+  <div class="cmd-row"><span class="cmd-n">D01</span><span class="cmd-v">"Joe, inicia" / "start"</span><span class="cmd-arr">→</span><span class="cmd-j">start · mode:broadcast</span></div>
+  <div class="cmd-row"><span class="cmd-n">D02</span><span class="cmd-v">"Joe, grava" / "só grava"</span><span class="cmd-arr">→</span><span class="cmd-j">start · mode:record_only</span></div>
+  <div class="cmd-row"><span class="cmd-n">D03</span><span class="cmd-v">"Joe, pausa" / "voltamos já"</span><span class="cmd-arr">→</span><span class="cmd-j">play_asset · asset:holding · loop:true</span></div>
+  <div class="cmd-row"><span class="cmd-n">D04</span><span class="cmd-v">"Joe, volta" / "estamos de volta"</span><span class="cmd-arr">→</span><span class="cmd-j">switch_source · source:live_camera</span></div>
+  <div class="label" style="color:var(--text-info);margin-top:12px">ASSETS DA SHELF</div>
+  <div class="cmd-row"><span class="cmd-n">D05</span><span class="cmd-v">"Joe, intro"</span><span class="cmd-arr">→</span><span class="cmd-j">play_asset · asset:intro</span></div>
+  <div class="cmd-row"><span class="cmd-n">D06</span><span class="cmd-v">"Joe, bastidores" / "behind the scenes"</span><span class="cmd-arr">→</span><span class="cmd-j">play_asset · asset:bts_clip</span></div>
+  <div class="cmd-row"><span class="cmd-n">D07</span><span class="cmd-v">"Joe, outro" / "encerramento"</span><span class="cmd-arr">→</span><span class="cmd-j">play_asset · asset:outro</span></div>
+  <div class="cmd-row"><span class="cmd-n">D08</span><span class="cmd-v">"Joe, banner [nome]"</span><span class="cmd-arr">→</span><span class="cmd-j">overlay · asset:lower_third · text:[nome]</span></div>
+  <div class="cmd-row"><span class="cmd-n">D09</span><span class="cmd-v">"Joe, mostra o mapa"</span><span class="cmd-arr">→</span><span class="cmd-j">overlay · asset:map_overlay · state:on</span></div>
+  <div class="cmd-row"><span class="cmd-n">D10</span><span class="cmd-v">"Joe, tira tudo" / "limpa"</span><span class="cmd-arr">→</span><span class="cmd-j">overlay · asset:all · state:off</span></div>
+  <div class="label" style="color:var(--text-success);margin-top:12px">ÁUDIO</div>
+  <div class="cmd-row"><span class="cmd-n">D11</span><span class="cmd-v">"Joe, tira a música"</span><span class="cmd-arr">→</span><span class="cmd-j">audio · channel:music · cmd:mute</span></div>
+  <div class="cmd-row"><span class="cmd-n">D12</span><span class="cmd-v">"Joe, coloca a música"</span><span class="cmd-arr">→</span><span class="cmd-j">audio · channel:music · cmd:fade_in</span></div>
+  <div class="cmd-row"><span class="cmd-n">D13</span><span class="cmd-v">"Joe, volume [alto/baixo]"</span><span class="cmd-arr">→</span><span class="cmd-j">audio · channel:music · cmd:volume · level:[0.8/0.3]</span></div>
+  <div class="label" style="color:var(--text-warning);margin-top:12px">SELAGEM</div>
+  <div class="cmd-row"><span class="cmd-n">D14</span><span class="cmd-v">"Joe, sela" / "seal"</span><span class="cmd-arr">→</span><span class="cmd-j">seal · i9_gate:true · edl_to_vdcut:true</span></div>
+  <div class="cmd-row"><span class="cmd-n">D15</span><span class="cmd-v">"Joe, sela e publica"</span><span class="cmd-arr">→</span><span class="cmd-j">seal · broadcast:["blue_sky","thread"]</span></div>
+  <div class="cmd-row"><span class="cmd-n">D16</span><span class="cmd-v">"Joe, sela só para mim"</span><span class="cmd-arr">→</span><span class="cmd-j">seal · broadcast:[] · download:true</span></div>
+  <div class="label" style="margin-top:12px">NLU — PARSING CANÓNICO</div>
+  <div class="code">
+<div><span class="cm"># Fase 1: regex patterns (Strato - zero custo)</span></div>
+<div><span class="cm"># Fase 3+: Mistral para variações complexas</span></div>
+<div>PATTERNS = {</div>
+<div>  r"(inicia|start|começa|transmit)":  "start",</div>
+<div>  r"(volta|câmara|ao vivo|back)":     "switch_live",</div>
+<div>  r"(intro)":                         "asset_intro",</div>
+<div>  r"(bastidor|behind|bts)":          "asset_bts",</div>
+<div>  r"banner (.+)":                     "overlay_text",</div>
+<div>  r"(tira música|sem música|mute)":  "mute_music",</div>
+<div>  r"(sela|seal|export|termina|fim)": "seal",</div>
+<div>}</div>
+  </div>
+</div>
+
+<!-- MÓDULOS -->
+<div id="pane-modules" class="pane">
+  <div class="label">OS 4 MÓDULOS DE JOE</div>
+  <div class="module-row">
+    <div class="mod-label"><div class="mod-name">🎧 JOE-EAR</div><div class="mod-tech">Web Speech API<br>Whisper Lite (Fase 3)</div></div>
+    <div class="mod-fn">Escuta o áudio em tempo real. STT local no browser via Web Speech API (PT/DE/EN). Zero latência de rede. Fase 3: Whisper Lite no servidor para precisão aumentada em ambientes ruidosos.</div>
+  </div>
+  <div class="module-row">
+    <div class="mod-label"><div class="mod-name">🎨 JOE-PAINTER</div><div class="mod-tech">FFmpeg -c copy<br>Shelf assets</div></div>
+    <div class="mod-fn">Sobrepõe banners, logos, lower-thirds, overlays GPS. Todos os assets são pré-compostos na shelf — switch com <span style="font-family:var(--font-mono);font-size:11px">-c copy</span>, zero CPU durante live. Painter nunca re-renderiza frames em tempo real.</div>
+  </div>
+  <div class="module-row">
+    <div class="mod-label"><div class="mod-name">🔗 JOE-SYNC</div><div class="mod-tech">REST API / WebSocket<br>EDL recorder</div></div>
+    <div class="mod-fn">Conecta com o ecossistema WINDI: NOMAD-BOT, VD-CUT, Ledger, Blue Sky. Regista cada evento no EDL em tempo real. Fase 2+: webhooks para Storytile Hub e eventos externos.</div>
+  </div>
+  <div class="module-row">
+    <div class="mod-label"><div class="mod-name">🔐 JOE-GUARD</div><div class="mod-tech">I9 + I11 + G3<br>4 hashes + Ledger</div></div>
+    <div class="mod-fn">I9: nunca sela sem aprovação humana explícita. I11: só o hash chega ao Ledger, nunca o raw file. Calcula os 4 hashes do Ritual de Selagem. Emite o Receipt of Virtue.</div>
+  </div>
+  <div class="div"></div>
+  <div class="label">PORTA :8129 — SYSTEMD SERVICE</div>
+  <div class="code">
+<div><span class="cm"># /etc/systemd/system/windi-joe.service</span></div>
+<div>[Service]</div>
+<div>WorkingDirectory=/opt/windi/windi-joe</div>
+<div>EnvironmentFile=/opt/windi/windi-joe/.env</div>
+<div>ExecStart=.../uvicorn joe_server:app --host 0.0.0.0 --port <span class="hl">8129</span></div>
+<div>Restart=always</div>
+<div>&nbsp;</div>
+<div><span class="cm"># Carga estimada: ~1-3% CPU durante live (NLU + EDL log)</span></div>
+<div><span class="cm"># Pico apenas no CMD3 (Ritual): ~30s · ~60% CPU</span></div>
+  </div>
+</div>
+
+<!-- 4 HASHES -->
+<div id="pane-hashes" class="pane">
+  <div class="verdict v-info">
+    <div class="vt vt-info">OS 4 HASHES — Prova Editorial Criptográfica Completa</div>
+    <div class="s">Não estamos a selar o vídeo. Estamos a selar a <strong>cadeia completa de criação</strong>: o material → a decisão → o processo → o resultado. Nenhuma plataforma do mundo faz isto.</div>
+  </div>
+  <div class="hash-row">
+    <div class="hash-n" style="color:var(--text-info)">H1</div>
+    <div>
+      <div class="hash-name">source_hash</div>
+      <div class="hash-desc">SHA-256 do ficheiro de vídeo original. Prova que o material base não foi alterado antes da edição.</div>
+      <div class="hash-key">Calculado: no momento do upload / início da gravação</div>
+    </div>
+  </div>
+  <div class="hash-row">
+    <div class="hash-n" style="color:var(--text-success)">H2</div>
+    <div>
+      <div class="hash-name">edl_hash</div>
+      <div class="hash-desc">SHA-256 do Edit Decision List completo. Prova exactamente quais foram as decisões criativas humanas: cada corte, cada overlay, cada switch.</div>
+      <div class="hash-key">Calculado: no momento do CMD3 "sela" (EDL finalizado)</div>
+    </div>
+  </div>
+  <div class="hash-row">
+    <div class="hash-n" style="color:var(--text-warning)">H3</div>
+    <div>
+      <div class="hash-name">pipeline_hash</div>
+      <div class="hash-desc">SHA-256 do comando FFmpeg exacto executado. Prova o processo técnico: presets, filtros, codec, parâmetros. Permite reprodução determinística.</div>
+      <div class="hash-key">Calculado: stringify do array de argumentos FFmpeg antes de executar</div>
+    </div>
+  </div>
+  <div class="hash-row">
+    <div class="hash-n" style="color:var(--text-danger)">H4</div>
+    <div>
+      <div class="hash-name">output_hash</div>
+      <div class="hash-desc">SHA-256 do vídeo final exportado. A prova definitiva do resultado. É este hash que fica no Ledger e no QR público.</div>
+      <div class="hash-key">Calculado: após FFmpeg terminar, antes do I9 gate</div>
+    </div>
+  </div>
+  <div class="div"></div>
+  <div class="label">RECEIPT OF VIRTUE — SCHEMA EXPANDIDO</div>
+  <div class="code">
+<div>{</div>
+<div>  <span class="hl">"receipt_id"</span>: <span class="ok-c">"WINDI-JOE-20260403-001"</span>,</div>
+<div>  <span class="hl">"did"</span>: <span class="ok-c">"did:windi:kempten:abc123"</span>,</div>
+<div>  <span class="hl">"hashes"</span>: {</div>
+<div>    <span class="hl">"source"</span>:   <span class="info-c">"H1 — ficheiro original"</span>,</div>
+<div>    <span class="hl">"edl"</span>:      <span class="ok-c">"H2 — decisões humanas"</span>,</div>
+<div>    <span class="hl">"pipeline"</span>: <span class="warn-c">"H3 — processo técnico"</span>,</div>
+<div>    <span class="hl">"output"</span>:   <span class="cm">"H4 — vídeo final · vai ao Ledger (I11)"</span></div>
+<div>  },</div>
+<div>  <span class="hl">"duration_sec"</span>: <span class="ok-c">58</span>,</div>
+<div>  <span class="hl">"resolution"</span>: <span class="ok-c">"1080x1920"</span>,</div>
+<div>  <span class="hl">"location"</span>: <span class="ok-c">"Kempten, Bayern"</span>,</div>
+<div>  <span class="hl">"invariant"</span>: <span class="ok-c">"I11"</span>,</div>
+<div>  <span class="hl">"i9_approved_at"</span>: <span class="ok-c">1743600120</span>,</div>
+<div>  <span class="hl">"joe_response"</span>: <span class="ok-c">"A tua decisão foi executada. O momento foi preservado."</span></div>
+<div>}</div>
+  </div>
+  <div class="verdict v-ok">
+    <div class="vt vt-ok">REBUILD TOTAL: com H1 + H2 + H3 → qualquer auditor pode recriar o vídeo</div>
+    <div class="s">Source original + decisões EDL + pipeline FFmpeg = resultado determinístico. Prova editorial criptográfica completa. Legalmente defensável.</div>
+  </div>
+</div>
+
+<!-- RITUAL -->
+<div id="pane-ritual" class="pane">
+  <div class="label">O RITUAL DE SELAGEM — 9 PASSOS</div>
+  <div class="s" style="margin-bottom:12px">"O momento do Render Final não é um processo. É um evento soberano: onde intenção humana → forma verificável."</div>
+  <div class="phase-row"><div class="phn ph-ok">PASSO 0</div><div><div class="s" style="font-weight:500;color:var(--text-primary)">Trigger — o gesto humano</div><div class="s">CMD3 capturado. intent_hash gerado do momento exacto da decisão. Não selamos só o vídeo — selamos o acto de decidir.</div></div></div>
+  <div class="phase-row"><div class="phn ph-ok">PASSO 1</div><div><div class="s" style="font-weight:500;color:var(--text-primary)">Normalização do EDL</div><div class="s">Ordena cortes · remove overlaps · valida ranges · resolve conflitos → edl_resolved. Garante determinismo.</div></div></div>
+  <div class="phase-row"><div class="phn ph-ok">PASSO 2</div><div><div class="s" style="font-weight:500;color:var(--text-primary)">AI Creative Finishing (JOE-PAINTER)</div><div class="s">Loudness -14 LUFS · ducking automático voz>música · LUT-WINDI base. Regra de ouro: IA melhora continuidade técnica, NUNCA altera narrativa.</div></div></div>
+  <div class="phase-row"><div class="phn ph-ok">PASSO 3</div><div><div class="s" style="font-weight:500;color:var(--text-primary)">Build pipeline FFmpeg</div><div class="s">trim → concat → scale 9:16 → pad/crop → overlay seal badge → audio normalize → encode H.264 preset veryfast threads=2</div></div></div>
+  <div class="phase-row"><div class="phn ph-ok">PASSO 4</div><div><div class="s" style="font-weight:500;color:var(--text-primary)">Cálculo dos 4 hashes</div><div class="s">H1 (source) + H2 (edl_resolved) + H3 (pipeline cmd) + H4 (output após encode). Os 4 juntos são a prova completa.</div></div></div>
+  <div class="phase-row"><div class="phn ph-now">PASSO 5</div><div><div class="s" style="font-weight:500;color:var(--text-primary)">I9 GATE — aprovação humana</div><div class="s">JOE apresenta resumo: duração, lugar, H4 preview. Botão "Confirmar Seal". Sem aprovação → nada sela. Nunca.</div></div></div>
+  <div class="phase-row"><div class="phn ph-fut">PASSO 6</div><div><div class="s" style="font-weight:500;color:var(--text-primary)">Injeção de metadata (stealth layer)</div><div class="s">Camada 1: EXIF/container tags visíveis. Camada 2: ID receipt + hash parcial embutido no container MP4. O vídeo carrega identidade mesmo fora do sistema.</div></div></div>
+  <div class="phase-row"><div class="phn ph-fut">PASSO 7</div><div><div class="s" style="font-weight:500;color:var(--text-primary)">Ledger seal — I11 IRREMEDIÁVEL</div><div class="s">Receipt of Virtue → POST :8101. QR canónico gerado. Verify Public activo.</div></div></div>
+  <div class="phase-row"><div class="phn ph-fut">PASSO 8</div><div><div class="s" style="font-weight:500;color:var(--text-primary)">Distribuição + limpeza soberana</div><div class="s">Blue Sky post · Thread entry · download link. Temp files apagados. Mantém: original (24h) + export final (7 dias) + receipt (permanente).</div></div></div>
+  <div class="phase-row"><div class="phn ph-fut">PASSO 9</div><div><div class="s" style="font-weight:500;color:var(--text-primary)">JOE responde com presença</div><div class="s"><em>"A tua decisão foi executada. O momento foi preservado. O broadcast está vivo."</em></div></div></div>
+</div>
+
+<!-- PLANO GÊMEO -->
+<div id="pane-plan" class="pane">
+  <div class="verdict v-info">
+    <div class="vt vt-info">O PLANO DO GÊMEO ESTÁ APROVADO — W-VD-CUT-001 pronto para execução</div>
+    <div class="s">30 dias · 4 fases · 20 tarefas · plano sólido e conservador. Max 1 job concorrente. EDL schema correcto. I9 gate enforced. Trilingue I12.</div>
+  </div>
+  <div class="label">AJUSTES ANTES DE EXECUTAR</div>
+  <div class="block">
+    <div class="row"><div class="num">⚠</div><div class="s">Directório canónico: <span style="font-family:var(--font-mono);font-size:11px">/opt/windi/windi-vdcut/</span> — não <span style="font-family:var(--font-mono);font-size:11px">/opt/windi/vd-cut/</span></div></div>
+    <div class="row"><div class="num">⚠</div><div class="s">NOMAD-BOT porta: confirmar :8127 está livre (Planen estava reservado)</div></div>
+    <div class="row"><div class="num">⚠</div><div class="s">Adicionar ao schema: H1 + H2 + H3 em video_receipts</div></div>
+    <div class="row"><div class="num">✅</div><div class="s">JOE = W-JOE-001 em :8129 — fase separada após VD-CUT em produção</div></div>
+  </div>
+  <div class="label">RESPOSTA CANÓNICA PARA O GÊMEO</div>
+  <div class="code">
+<div><span class="cm"># Aprovar e executar com ajustes</span></div>
+<div>✅ APROVADO — Opção 2 (auto-accept edits)</div>
+<div>&nbsp;</div>
+<div>Ajustes:</div>
+<div>1. /opt/windi/windi-vdcut/ (não vd-cut/)</div>
+<div>2. Confirmar porta NOMAD-BOT (não :8127)</div>
+<div>3. Schema: adicionar source_hash + edl_hash + pipeline_hash</div>
+<div>&nbsp;</div>
+<div>JOE (:8129) começa após VD-CUT em produção.</div>
+  </div>
+  <div class="verdict v-ok">
+    <div class="vt vt-ok">🐉 ORDEM DE EXECUÇÃO FINAL</div>
+    <div class="s">1. VD-CUT :8128 (30 dias, plano do Gêmeo) → 2. JOE :8129 (após VD-CUT em produção) → 3. LIVE integrado no JOE (Fase Live F3)</div>
+  </div>
+</div>
+
+<div class="sig">
+  JOE · W-JOE-001 · :8129 · Liga IA+H · Kempten, Bavaria · 2026<br>
+  "O humano escolhe o momento. O sistema executa a forma. O Ledger preserva a verdade."<br>
+  AI processes. Human decides. WINDI guarantees. · windi-domain.com
+</div>
+
+</div>
+<script>
+function st(n) {
+  document.querySelectorAll('.pane').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  document.getElementById('pane-' + n).classList.add('on');
+  event.target.classList.add('on');
+}
+</script>
+</body>
+</html>

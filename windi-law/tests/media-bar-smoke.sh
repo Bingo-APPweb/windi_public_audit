@@ -224,7 +224,51 @@ else
     FAIL=$((FAIL+1))
 fi
 
-TOTAL=$((12 + 8))
+# ══════════════════════════════════════════════════════════════
+# NAVIGATION TESTS
+# ══════════════════════════════════════════════════════════════
+
+# TESTE N1: Nav buttons exist
+echo -n "[N1] Nav buttons exist... "
+if grep -q "nav-back" "$FILE" && grep -q "nav-forward" "$FILE"; then
+    echo "✅ PASS"
+    PASS=$((PASS+1))
+else
+    echo "❌ FAIL"
+    FAIL=$((FAIL+1))
+fi
+
+# TESTE N2: Nav functions
+echo -n "[N2] Nav functions... "
+if grep -q "function navBack" "$FILE" && grep -q "function navForward" "$FILE"; then
+    echo "✅ PASS"
+    PASS=$((PASS+1))
+else
+    echo "❌ FAIL"
+    FAIL=$((FAIL+1))
+fi
+
+# TESTE N3: NAV_FLOW defined
+echo -n "[N3] NAV_FLOW array... "
+if grep -q "NAV_FLOW" "$FILE" && grep -q "/law/landing/" "$FILE" && grep -q "/law/workspace/" "$FILE"; then
+    echo "✅ PASS"
+    PASS=$((PASS+1))
+else
+    echo "❌ FAIL"
+    FAIL=$((FAIL+1))
+fi
+
+# TESTE N4: i18n nav tooltips
+echo -n "[N4] i18n nav tooltips... "
+if grep -q "navBack:'Zurück'" "$FILE" && grep -q "navBack:'Voltar'" "$FILE" && grep -q "navBack:'Back'" "$FILE"; then
+    echo "✅ PASS"
+    PASS=$((PASS+1))
+else
+    echo "❌ FAIL"
+    FAIL=$((FAIL+1))
+fi
+
+TOTAL=$((12 + 8 + 4))
 echo ""
 echo "═══════════════════════════════════════════════════════════"
 echo "  RESULTADO: $PASS/$TOTAL PASS · $FAIL FAIL"
@@ -232,7 +276,7 @@ echo "════════════════════════�
 
 echo ""
 if [ $FAIL -eq 0 ]; then
-    echo "🟢 ALL $TOTAL MEDIA BAR + IDENTITY TESTS VERIFIED"
+    echo "🟢 ALL $TOTAL TESTS VERIFIED (Media+Identity+Nav)"
     exit 0
 else
     echo "🔴 $FAIL/$TOTAL TESTS FAILED"

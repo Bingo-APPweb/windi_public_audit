@@ -1,0 +1,110 @@
+{
+  "meta": {
+    "version": "1.0",
+    "updated_at": "2026-04-01T20:20:00Z",
+    "session_id": "SESSION-20260401-A",
+    "updated_by": "gemeo"
+  },
+
+  "sprint": {
+    "current": "D",
+    "product": "WINDI-TRAVEL",
+    "started": "2026-04-01",
+    "principle": "Gently proves. Silently seals."
+  },
+
+  "paragraphs": {
+    "done": [
+      {"id": "§96", "name": "Decision Router", "commit": "4a9e51a", "sealed": true, "done_at": "2026-04-01"},
+      {"id": "§97", "name": "Modo Nómada v1", "commit": "4a9e51a", "sealed": true, "done_at": "2026-04-01"},
+      {"id": "§98", "name": "DID Context", "commit": "4a9e51a", "sealed": true, "done_at": "2026-04-01"},
+      {"id": "§99", "name": "Live Context", "commit": "4a9e51a", "sealed": true, "done_at": "2026-04-01"},
+      {"id": "§100", "name": "Antecipação", "commit": "4a9e51a", "sealed": true, "done_at": "2026-04-01"},
+      {"id": "§100.5", "name": "Memory Engine", "commit": "253cbea", "sealed": true, "done_at": "2026-04-01"},
+      {"id": "§103", "name": "Intermodal Intelligence (DB API)", "commit": "fc31e86", "sealed": true, "done_at": "2026-04-01"},
+      {"id": "§103-pitch", "name": "Pitch Deck Trilíngue", "commit": "3b0bb9a", "sealed": false, "done_at": "2026-04-01"},
+      {"id": "§103-links", "name": "Gate ↔ Pitch Links", "commit": "53e50a4", "sealed": false, "done_at": "2026-04-01"},
+      {"id": "§109", "name": "DID Wizard Restaurado", "commit": "399c1df", "sealed": false, "done_at": "2026-04-01"},
+      {"id": "§I12-fix", "name": "Babel Tower Fix", "commit": "60b3f7c", "sealed": false, "done_at": "2026-04-01"},
+      {"id": "§workspace-auth", "name": "Workspace Auth Fallback", "commit": "508d160", "sealed": false, "done_at": "2026-04-01"}
+    ],
+    "in_progress": [
+      {"id": "§114", "name": "Session Cookie Protocol", "status": "implementando agora"}
+    ],
+    "next": [
+      {"id": "§107", "name": "Thread Visual Timeline", "status": "pendente"},
+      {"id": "§108", "name": "Memória Visível UI", "status": "backend pronto, UI pendente"},
+      {"id": "§113", "name": "MARIA Voice Input", "status": "ideia"}
+    ]
+  },
+
+  "infrastructure": {
+    "travel_port": 8126,
+    "travel_path": "/opt/windi/windi-travel/",
+    "identity_gate_path": "/opt/windi/windi-travel/identity-gate/",
+    "ledger_port": 8101,
+    "travel_url": "https://windi-domain.com/travel/",
+    "gate_url": "https://windi-domain.com/travel/gate",
+    "pitch_url": "https://windi-domain.com/travel/pitch/",
+    "workspace_url": "https://windi-domain.com/travel/workspace/",
+    "api_db_rest": "https://v6.db.transport.rest",
+    "api_kiwi": "via MCP claude_ai_Kiwi_com"
+  },
+
+  "decisions": [
+    {
+      "id": "001",
+      "topic": "API ferroviária",
+      "decision": "transport.rest em vez de DB Marketplace oficial",
+      "reason": "Sem auth = sem tracking. Dados iguais. Soberania total.",
+      "date": "2026-04-01"
+    },
+    {
+      "id": "002",
+      "topic": "Pitch Deck",
+      "decision": "HTML standalone, zero deps externas",
+      "reason": "Funciona offline, deployável em qualquer servidor",
+      "date": "2026-04-01"
+    },
+    {
+      "id": "003",
+      "topic": "Gate Template",
+      "decision": "Usar identity-gate/templates/gate.html (5-step wizard)",
+      "reason": "DID obrigatório antes de qualquer serviço WINDI (I9)",
+      "date": "2026-04-01"
+    },
+    {
+      "id": "004",
+      "topic": "Workspace Auth",
+      "decision": "Aceitar DID de query param como fallback",
+      "reason": "Fluxo de registo não cria session cookie, apenas DID",
+      "date": "2026-04-01"
+    }
+  ],
+
+  "pending_commits": [],
+
+  "pending_seals": [
+    "§103-pitch no Ledger",
+    "§103-links no Ledger",
+    "§109 no Ledger",
+    "§I12-fix no Ledger",
+    "§workspace-auth no Ledger"
+  ],
+
+  "context": {
+    "last_working_file": "/opt/windi/windi-travel/identity-gate/identity_gate.py",
+    "last_test": "curl https://windi-domain.com/travel/workspace/?did=did:windi:b36ecfc0-ef18-4c83-a306-3c1d180d8a3c",
+    "active_dbs": ["windi_travel_identity.db", "travel_users.db", "maria_memory.db"],
+    "user_registered": {
+      "name": "Jober Mögele Correa",
+      "email": "jober@a4desk.de",
+      "did": "did:windi:b36ecfc0-ef18-4c83-a306-3c1d180d8a3c",
+      "email_verified": false
+    }
+  },
+
+  "blockers": [],
+
+  "notes": "Sprint D: Gate/Pitch/Workspace flow corrigido. Próximo: testar fluxo completo de registo e depois §107 Thread Visual."
+}
