@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.76
-**Sealed:** 2026-04-03 · ProofStream v1.0 — Video-Chain LIVE
+**Version:** 1.9.77
+**Sealed:** 2026-04-03 · W-SGV-001 Truth Illumination Engine LIVE
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -267,6 +267,36 @@ fragment[n].prev_hash = sha256(fragment[n-1])
 **Schema:** sessions · moments · stories · ps_sessions · ps_fragments · audit_log
 
 **Path:** `/opt/windi/joe/`
+
+### W-SGV-001 — Truth Illumination Engine (LIVE 03 Apr 2026)
+
+| Campo | Valor |
+|-------|-------|
+| Status | LIVE · Integrated with JOE :8129 |
+| Module | `sgv.py` |
+| Invariants | I9, I13 |
+
+> **"SGV não julga. SGV ilumina."**
+
+**Princípio constitucional:** NEVER "isto é falso" → ALWAYS "este é o nível de certeza antes de publicares"
+
+**Three Layers:**
+```
+1. Integridade Técnica  → metadata, encoding, sinais de edição
+2. Sinais de Manipulação → deepfake patterns, splice, cortes
+3. Contexto Externo      → localização, timing, declaração
+```
+
+**Output:** `VERIFIED | UNVERIFIED | SUSPICIOUS` + confidence + risk_score + explainability
+
+**Endpoints:**
+- `POST /joe/sgv/analyse` — standalone analysis
+- `GET /joe/sgv/{fragment_id}` — retrieve analysis
+- `/joe/live/fragment` — auto-includes SGV illumination
+
+**SGV never blocks, only illuminates. Human decides (I9).**
+
+**Path:** `/opt/windi/joe/sgv.py`
 
 ---
 
@@ -717,7 +747,7 @@ KLAR (light):
 | :8126 | WINDI Travel Identity Gate | 🟢 **LIVE** · v1.3.0 · W-SESSION-001 · Sovereign Sessions |
 | :8127 | W-NOMAD-001 Telegram Bot | 🟢 **LIVE** · @windi_nomad_bot · MARIA + Ledger |
 | :8128 | W-VD-CUT-001 Video Cut Engine | 🟢 **LIVE** · FFmpeg · I9+I11 · First video seals |
-| :8129 | W-JOE-001 Director de Transmissão | 🟢 **LIVE** · Story Graph · I9+I11+I13 |
+| :8129 | W-JOE-001 Director de Transmissão | 🟢 **LIVE** · Story Graph + SGV · I9+I11+I13 |
 | :8130 | W-GATEWAY-001 (LLM Bridge) | 🟢 **LIVE** · 5 providers |
 
 ### Sistemas LIVE (32 total)
@@ -927,6 +957,9 @@ Se o Gêmeo inventa um receipt... isso é falsificação."
 ### Completado (ver §37-115)
 - [x] §115 **ProofStream v1.0** · Video-Chain · Hash continuity · Live verification · `30f97e7` ✅ 03 Apr 2026
 - [x] §114 **W-JOE-001 LIVE** · Director de Transmissão · :8129 · Story Graph · I9+I11+I13 · `30659c5` ✅ 03 Apr 2026
+- [x] §116 **W-SGV-001 LIVE** · Truth Illumination Engine · JOE integration · I9+I13 ✅ 03 Apr 2026
+- [x] §115 **W-JOE-001 ProofStream** · Video-Chain · Manifesto · `b23d623` ✅ 03 Apr 2026
+- [x] §114 **W-JOE-001 LIVE** · Director de Transmissão · :8129 · Story Graph ✅ 03 Apr 2026
 - [x] §113 **W-VD-CUT-001 LIVE** · Video Cut Engine · :8128 · FFmpeg · I9+I11 · `c2e06bd` ✅ 03 Apr 2026
 - [x] §112 **W-SESSION-001 LIVE** · Sovereign Sessions · 30-day continuity · `dd9077e` ✅ 02 Apr 2026
 - [x] §111 **W-PRESENCE-001** · Presence Seal + Timeline · `60da249` + `1afacdf` ✅ 02 Apr 2026
