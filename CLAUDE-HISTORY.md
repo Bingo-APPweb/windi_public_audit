@@ -6,6 +6,100 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 03 Abr 2026 — §118 Travel Stack Auto-Healing
+**Commits:** `e7cff50` · `8e3d9c12`
+**Scope:** Infraestrutura Crítica · Travel Stack
+**CLAUDE.md:** v1.9.79
+
+### Contexto
+Sessão iniciada com diagnóstico completo do WINDI-TRAVEL:
+- 4 serviços (MARIA, NOMAD-BOT, VD-CUT, JOE)
+- Problema detectado: processos órfãos bloqueando portas
+- Log de erros: 6.2MB (18,251 "address already in use")
+- VD-CUT e JOE corriam como nohup (não systemd)
+
+### Problema Resolvido
+```
+ANTES:
+- windi-travel.service em restart loop (porta 8126 bloqueada)
+- Processos órfãos de Apr02 (PIDs 2155666, 2177032)
+- vd-cut e joe como nohup (sem auto-recovery)
+- Logs a crescer sem limite
+
+DEPOIS:
+- 4 services systemd blindados
+- Watchdog auto-heal a cada 15s
+- Logrotate configurado (daily, 7 rot, 50MB max)
+- Zero processos órfãos
+```
+
+### Artefactos Criados
+
+| Artefacto | Path | Função |
+|-----------|------|--------|
+| `windi-vd-cut.service` | `/etc/systemd/system/` | Migração nohup → systemd |
+| `windi-joe.service` | `/etc/systemd/system/` | Migração nohup → systemd |
+| `windi-watchdog.service` | `/etc/systemd/system/` | Auto-heal 4 services |
+| `windi-travel override` | `.service.d/override.conf` | KillMode=mixed |
+| `windi-nomad-bot override` | `.service.d/override.conf` | KillMode + port-cleaner |
+| `port-cleaner.sh` | `/opt/windi/bin/` | Limpeza porta via fuser |
+| `windi-watchdog.sh` | `/opt/windi/bin/` | Loop 15s monitor |
+| `windi-travel logrotate` | `/etc/logrotate.d/` | Rotação logs |
+
+### Systemd Overrides Aplicados
+```ini
+[Service]
+KillMode=mixed
+KillSignal=SIGTERM
+TimeoutStopSec=10
+ExecStopPost=/bin/bash -c 'pkill -9 -f "..." 2>/dev/null; fuser -k PORT/tcp 2>/dev/null; true'
+RestartSec=5
+Restart=on-failure
+```
+
+### Portas Protegidas
+| Porta | Serviço | Status |
+|-------|---------|--------|
+| :8126 | windi-travel (MARIA) | 🟢 LIVE |
+| :8127 | windi-nomad-bot | 🟢 LIVE |
+| :8128 | windi-vd-cut | 🟢 LIVE |
+| :8129 | windi-joe | 🟢 LIVE |
+
+### Watchdog Architecture
+```
+windi-watchdog.service
+    ↓
+windi-watchdog.sh (loop 15s)
+    ↓
+for service in travel, nomad-bot, vd-cut, joe:
+    if systemctl is-active != active:
+        fuser -k PORT/tcp
+        sleep 2
+        systemctl restart service
+```
+
+### Git Cleanup
+- Resolvido conflito de rebase (CLAUDE.md)
+- `nomad-bot/` adicionado ao `.gitignore` (embedded repo → server-only)
+- Ficheiros `bin/*.sh` criados por root (untracked, vivem no servidor)
+
+### Lições Aprendidas
+1. **Heredocs no bash** — espaços no início quebram shebang (`#!/bin/bash`)
+2. **Processos órfãos** — `fuser -k PORT/tcp` mais fiável que `lsof` (não instalado)
+3. **systemd 203/EXEC** — sempre verificar permissões e shebang sem espaços
+4. **Submódulos Git** — warning de embedded repo ≠ erro, decisão arquitectural
+
+### Princípio Selado
+> "O sistema mantém a sua integridade sem depender de vigilância humana."
+
+### Classificação
+- **Tipo:** Infraestrutura Crítica
+- **Escopo:** Global (Travel Stack)
+- **Estado:** ACTIVE · CANONICAL
+- **Invariantes:** Systemd resilience · Auto-heal · Log hygiene
+
+---
+
 ## § SESSÃO 21 Mar 2026
 **Commits:** b507ed4 · eba800b · bd2d2a1 · 337222a
 **Receipt:** WINDI-UX-ONBOARD-BRIDGE-20260321
