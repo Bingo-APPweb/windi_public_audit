@@ -1896,6 +1896,38 @@ body {
     </div>
   </div>
 
+  <!-- ═══════════════════════════════════════════════════════════════════════════
+       PLANEN MODE — Brainstorm Engine :8127
+       ═══════════════════════════════════════════════════════════════════════════ -->
+  <div class="mode-view" id="mode-planen">
+    <div class="rescue-hero">
+      <div class="rescue-icon">🐉</div>
+      <h1 class="rescue-title" data-i18n="planen_title">Reiseintelligenz</h1>
+      <p class="rescue-sub" data-i18n="planen_sub">Strategische Ideen für deine nächste Reise</p>
+    </div>
+    <div class="rescue-zone" onclick="openPlanen()">
+      <div class="rescue-zone-icon">💡</div>
+      <p class="rescue-zone-text" data-i18n="planen_cta">Brainstorm starten</p>
+      <p class="rescue-zone-cta" data-i18n="planen_btn">Engine öffnen</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════════
+       NOMAD MODE — Telegram Gateway :8129
+       ═══════════════════════════════════════════════════════════════════════════ -->
+  <div class="mode-view" id="mode-nomad">
+    <div class="rescue-hero">
+      <div class="rescue-icon">✈️</div>
+      <h1 class="rescue-title" data-i18n="nomad_title">WINDI NOMAD</h1>
+      <p class="rescue-sub" data-i18n="nomad_sub">MARIA 24h im Telegram</p>
+    </div>
+    <div class="rescue-zone" onclick="openNomad()">
+      <div class="rescue-zone-icon">💬</div>
+      <p class="rescue-zone-text" data-i18n="nomad_cta">@windi_nomad_bot</p>
+      <p class="rescue-zone-cta" data-i18n="nomad_btn">Telegram öffnen</p>
+    </div>
+  </div>
+
 </main>
 
 <!-- ═══════════════════════════════════════════════════════════════════════════
@@ -1924,6 +1956,14 @@ body {
   <button class="nav-btn" onclick="setMode('thread')" id="nav-thread">
     <span class="icon">🧵</span>
     <span class="label" data-i18n="nav_thread">Dein Faden</span>
+  </button>
+  <button class="nav-btn" onclick="setMode('planen')" id="nav-planen">
+    <span class="icon">🐉</span>
+    <span class="label" data-i18n="nav_planen">Planen</span>
+  </button>
+  <button class="nav-btn" onclick="setMode('nomad')" id="nav-nomad">
+    <span class="icon">✈️</span>
+    <span class="label" data-i18n="nav_nomad">NOMAD</span>
   </button>
 </nav>
 
@@ -2111,6 +2151,20 @@ const TRAVEL_I18N = {
   nav_rescue:  { de: "Retten",      pt: "Resgatar",    en: "Rescue"   },
   nav_capture: { de: "Aufnehmen",   pt: "Capturar",    en: "Capture"  },
   nav_thread:  { de: "Dein Faden",  pt: "O teu fio",   en: "Your thread" },
+  nav_planen:  { de: "Planen",      pt: "Planear",     en: "Plan"     },
+  nav_nomad:   { de: "NOMAD",       pt: "NOMAD",       en: "NOMAD"    },
+
+  // ── PLANEN MODE ──
+  planen_title: { de: "Reiseintelligenz", pt: "Inteligência de viagem", en: "Travel intelligence" },
+  planen_sub:   { de: "Strategische Ideen für deine nächste Reise", pt: "Ideias estratégicas para a tua próxima viagem", en: "Strategic ideas for your next trip" },
+  planen_cta:   { de: "Brainstorm starten", pt: "Iniciar brainstorm", en: "Start brainstorm" },
+  planen_btn:   { de: "Engine öffnen", pt: "Abrir engine", en: "Open engine" },
+
+  // ── NOMAD MODE ──
+  nomad_title:  { de: "WINDI NOMAD", pt: "WINDI NOMAD", en: "WINDI NOMAD" },
+  nomad_sub:    { de: "MARIA 24h im Telegram", pt: "MARIA 24h no Telegram", en: "MARIA 24h on Telegram" },
+  nomad_cta:    { de: "@windi_nomad_bot", pt: "@windi_nomad_bot", en: "@windi_nomad_bot" },
+  nomad_btn:    { de: "Telegram öffnen", pt: "Abrir Telegram", en: "Open Telegram" },
 
   // ── MARIA MODE (P3-B) ──
   maria_hello: {
@@ -2640,6 +2694,25 @@ function setMode(mode) {
   if (mode === 'thread') {
     renderTimeline();  // W-PRESENCE-001: Presence moments
   }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PLANEN + NOMAD — External Engines (Fase 1)
+// ═══════════════════════════════════════════════════════════════════════════
+
+function openPlanen() {
+  // Fase 1: External window
+  // Fase 2: Pass wallet_id for I1 compliance
+  const win = window.open('https://windi-domain.com/travel/brainstorm/', '_blank');
+  if (!win) {
+    alert(TRAVEL_I18N.error_generic[LANG] || 'Please allow popups for WINDI Travel');
+  }
+  console.log('[WINDI] Planen opened');
+}
+
+function openNomad() {
+  window.open('https://t.me/windi_nomad_bot', '_blank');
+  console.log('[WINDI] NOMAD opened → @windi_nomad_bot');
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
