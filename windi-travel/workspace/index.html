@@ -654,6 +654,25 @@ body {
 }
 .moment-expand-btn:hover { color: var(--text); }
 
+/* §119 Moment Action Buttons */
+.moment-action-btn {
+  font-size: 14px;
+  color: var(--text-2);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 4px;
+  transition: all 0.15s;
+}
+.moment-action-btn:hover {
+  background: var(--gold-bg);
+  transform: scale(1.1);
+}
+.moment-action-btn:active {
+  transform: scale(0.95);
+}
+
 /* Expanded Details */
 .moment-details {
   display: none;
@@ -1081,6 +1100,105 @@ body {
   color: #fff;
 }
 .modal-btn-seal:hover { filter: brightness(1.1); }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   §119 CAPTURE ACTIONS PANEL
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.actions-modal {
+  padding: 20px;
+}
+.actions-preview {
+  aspect-ratio: 16/9;
+  margin-bottom: 12px;
+}
+.actions-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+  padding: 12px;
+  background: var(--bg-2);
+  border-radius: var(--r);
+}
+.actions-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+.actions-meta-icon {
+  font-size: 14px;
+}
+.actions-meta-hash {
+  font-family: var(--mono);
+  color: var(--gold);
+}
+.actions-meta-geo {
+  color: var(--text-2);
+}
+
+.actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 16px 12px;
+  background: var(--bg-2);
+  border: 1px solid var(--border-2);
+  border-radius: var(--r);
+  cursor: pointer;
+  transition: all 0.15s;
+  min-height: 100px;
+}
+.action-btn:hover {
+  background: var(--bg-3);
+  border-color: var(--gold);
+}
+.action-btn:active {
+  transform: scale(0.98);
+}
+
+.action-icon {
+  font-size: 28px;
+}
+.action-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  text-align: center;
+}
+.action-desc {
+  font-size: 10px;
+  color: var(--text-3);
+  text-align: center;
+  line-height: 1.3;
+}
+
+/* Primary action (seal) highlighted */
+.action-seal {
+  background: linear-gradient(135deg, var(--bg-2), rgba(201,168,76,0.1));
+  border-color: var(--gold);
+}
+.action-seal .action-icon {
+  filter: drop-shadow(0 0 8px var(--gold));
+}
+
+/* Discard action subdued */
+.action-discard {
+  opacity: 0.7;
+}
+.action-discard:hover {
+  opacity: 1;
+  border-color: #c44;
+}
 
 /* ═══════════════════════════════════════════════════════════════════════════
    POST-SEAL STATE
@@ -2015,6 +2133,61 @@ body {
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════════════════
+     §119 CAPTURE ACTIONS PANEL — Escolha após captura
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-actions">
+  <div class="modal actions-modal">
+    <div class="modal-header">
+      <h3 class="modal-title" data-i18n="actions_title">Was möchtest du tun?</h3>
+      <button class="modal-close" onclick="closeActionsModal()">×</button>
+    </div>
+
+    <div class="modal-preview actions-preview" id="actions-preview"></div>
+
+    <div class="actions-meta">
+      <div class="actions-meta-row">
+        <span class="actions-meta-icon">🔐</span>
+        <span class="actions-meta-hash" id="actions-hash">SHA-256: —</span>
+      </div>
+      <div class="actions-meta-row">
+        <span class="actions-meta-icon">📍</span>
+        <span class="actions-meta-geo" id="actions-geo">—</span>
+      </div>
+    </div>
+
+    <div class="actions-grid">
+      <!-- Versiegeln (primary action) -->
+      <button class="action-btn action-seal" onclick="actionSeal()">
+        <span class="action-icon">🔒</span>
+        <span class="action-label" data-i18n="action_seal">Im Ledger versiegeln</span>
+        <span class="action-desc" data-i18n="action_seal_desc">Unveränderlich · Verifizierbar · Für immer</span>
+      </button>
+
+      <!-- Lokal speichern -->
+      <button class="action-btn action-save" onclick="actionSaveLocal()">
+        <span class="action-icon">💾</span>
+        <span class="action-label" data-i18n="action_save">Lokal speichern</span>
+        <span class="action-desc" data-i18n="action_save_desc">Nur auf diesem Gerät · Später versiegeln</span>
+      </button>
+
+      <!-- Teilen -->
+      <button class="action-btn action-share" onclick="actionShare()">
+        <span class="action-icon">📤</span>
+        <span class="action-label" data-i18n="action_share">Teilen</span>
+        <span class="action-desc" data-i18n="action_share_desc">An andere Apps senden</span>
+      </button>
+
+      <!-- Verwerfen -->
+      <button class="action-btn action-discard" onclick="actionDiscard()">
+        <span class="action-icon">❌</span>
+        <span class="action-label" data-i18n="action_discard">Verwerfen</span>
+        <span class="action-desc" data-i18n="action_discard_desc">Diesen Moment löschen</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
      W-PRESENCE-001 — PRESENCE COMPOSER MODAL
      ═══════════════════════════════════════════════════════════════════════════ -->
 <div class="presence-modal" id="presence-modal">
@@ -2233,6 +2406,73 @@ const TRAVEL_I18N = {
   mode_video:   { de: "Video",   pt: "Vídeo",   en: "Video"   },
   mode_note:    { de: "Notiz",   pt: "Nota",    en: "Note"    },
   mode_collage: { de: "Collage", pt: "Compor",  en: "Compose" },
+
+  // ── §119 CAPTURE ACTIONS PANEL ──
+  actions_title: {
+    de: "Was möchtest du tun?",
+    pt: "O que queres fazer?",
+    en: "What would you like to do?"
+  },
+  action_seal: {
+    de: "Im Ledger versiegeln",
+    pt: "Selar no Ledger",
+    en: "Seal in Ledger"
+  },
+  action_seal_desc: {
+    de: "Unveränderlich · Verifizierbar · Für immer",
+    pt: "Imutável · Verificável · Para sempre",
+    en: "Immutable · Verifiable · Forever"
+  },
+  action_save: {
+    de: "Lokal speichern",
+    pt: "Guardar localmente",
+    en: "Save locally"
+  },
+  action_save_desc: {
+    de: "Nur auf diesem Gerät · Später versiegeln",
+    pt: "Apenas neste dispositivo · Selar depois",
+    en: "Only on this device · Seal later"
+  },
+  action_share: {
+    de: "Teilen",
+    pt: "Partilhar",
+    en: "Share"
+  },
+  action_share_desc: {
+    de: "An andere Apps senden",
+    pt: "Enviar para outras apps",
+    en: "Send to other apps"
+  },
+  action_discard: {
+    de: "Verwerfen",
+    pt: "Descartar",
+    en: "Discard"
+  },
+  action_discard_desc: {
+    de: "Diesen Moment löschen",
+    pt: "Apagar este momento",
+    en: "Delete this moment"
+  },
+  saved_local: {
+    de: "Lokal gespeichert",
+    pt: "Guardado localmente",
+    en: "Saved locally"
+  },
+  saved_local_sub: {
+    de: "Im Thread · nicht versiegelt",
+    pt: "No fio · não selado",
+    en: "In thread · not sealed"
+  },
+  share_not_supported: {
+    de: "Teilen nicht unterstützt",
+    pt: "Partilha não suportada",
+    en: "Sharing not supported"
+  },
+  moment_discarded: {
+    de: "Moment verworfen",
+    pt: "Momento descartado",
+    en: "Moment discarded"
+  },
 
   // ── SEAL ──
   seal_btn: {
@@ -2615,7 +2855,8 @@ async function getMediaFromIDB(hash) {
 
       request.onsuccess = () => {
         const result = request.result;
-        resolve(result ? result.dataUrl : null);
+        // §119: Return full object for share/download actions
+        resolve(result || null);
       };
       request.onerror = () => resolve(null);
     } catch (e) {
@@ -2842,12 +3083,13 @@ async function handleMedia(file, source) {
   };
   previewReader.readAsDataURL(file);
 
-  // Switch to capture mode and show modal
+  // Switch to capture mode and show actions panel
   if (currentMode === 'rescue') {
     setMode('capture');
   }
 
-  setTimeout(() => openSealModal(), 300);
+  // §119 — Abrir Actions Panel em vez de Seal Modal directo
+  setTimeout(() => openActionsModal(), 300);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -2943,6 +3185,255 @@ async function hashFile(file) {
   const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// §119 CAPTURE ACTIONS PANEL — Escolhas após captura
+// ═══════════════════════════════════════════════════════════════════════════
+
+function openActionsModal() {
+  if (!currentMoment) return;
+
+  const modal = document.getElementById('modal-actions');
+  const preview = document.getElementById('actions-preview');
+
+  // Set preview
+  if (currentMoment.dataUrl) {
+    preview.innerHTML = currentMoment.media_type === 'video'
+      ? `<video src="${currentMoment.dataUrl}" controls style="width:100%;height:100%;object-fit:cover;"></video>`
+      : `<img src="${currentMoment.dataUrl}" alt="Preview" style="width:100%;height:100%;object-fit:cover;">`;
+  } else if (currentMoment.thumbnail) {
+    preview.innerHTML = `<img src="${currentMoment.thumbnail}" alt="Preview" style="width:100%;height:100%;object-fit:cover;">`;
+  }
+
+  // Set meta
+  document.getElementById('actions-hash').textContent = `SHA-256: ${currentMoment.hash.substring(0, 16)}…`;
+  document.getElementById('actions-geo').textContent = currentMoment.placeName
+    ? currentMoment.placeName
+    : currentMoment.geo
+      ? `${currentMoment.geo.lat}, ${currentMoment.geo.lon}`
+      : TRAVEL_I18N.capture_geo_none[LANG];
+
+  modal.classList.add('active');
+  applyI18N();
+}
+
+function closeActionsModal() {
+  document.getElementById('modal-actions').classList.remove('active');
+}
+
+// §119 — Action: Versiegeln (abre seal modal)
+function actionSeal() {
+  closeActionsModal();
+  setTimeout(() => openSealModal(), 150);
+}
+
+// §119 — Action: Lokal speichern (só IndexedDB, sem Ledger)
+async function actionSaveLocal() {
+  if (!currentMoment) return;
+
+  // Guardar thumbnail em localStorage para thread local
+  const localThread = JSON.parse(localStorage.getItem('windi_travel_local_moments') || '[]');
+  localThread.unshift({
+    hash: currentMoment.hash,
+    thumbnail: currentMoment.thumbnail,
+    placeName: currentMoment.placeName || null,
+    geo: currentMoment.geo,
+    ts: currentMoment.ts,
+    media_type: currentMoment.media_type,
+    sealed: false
+  });
+  // Manter só últimos 50
+  if (localThread.length > 50) localThread.pop();
+  localStorage.setItem('windi_travel_local_moments', JSON.stringify(localThread));
+
+  closeActionsModal();
+
+  // Feedback visual
+  showToast(TRAVEL_I18N.saved_local[LANG], TRAVEL_I18N.saved_local_sub[LANG]);
+
+  // Limpar momento actual
+  currentMoment = null;
+  resetViewfinder();
+}
+
+// §119 — Action: Teilen (Web Share API)
+async function actionShare() {
+  if (!currentMoment || !currentMoment.dataUrl) return;
+
+  // Converter dataUrl para Blob
+  const response = await fetch(currentMoment.dataUrl);
+  const blob = await response.blob();
+  const file = new File([blob], `WINDI-${currentMoment.hash.substring(0,8)}.${currentMoment.media_type === 'video' ? 'mp4' : 'jpg'}`, {
+    type: blob.type
+  });
+
+  if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+    try {
+      await navigator.share({
+        files: [file],
+        title: 'WINDI Moment',
+        text: `SHA-256: ${currentMoment.hash.substring(0,16)}…`
+      });
+      closeActionsModal();
+    } catch (e) {
+      if (e.name !== 'AbortError') {
+        console.warn('Share failed:', e);
+      }
+    }
+  } else {
+    // Fallback: download
+    showToast(TRAVEL_I18N.share_not_supported[LANG], '');
+    const link = document.createElement('a');
+    link.href = currentMoment.dataUrl;
+    link.download = `WINDI-${currentMoment.hash.substring(0,8)}.${currentMoment.media_type === 'video' ? 'mp4' : 'jpg'}`;
+    link.click();
+  }
+}
+
+// §119 — Action: Verwerfen (descartar momento)
+function actionDiscard() {
+  if (!currentMoment) return;
+
+  // Remover de IndexedDB se existir
+  if (currentMoment.hash) {
+    deleteMediaFromIDB(currentMoment.hash).catch(() => {});
+  }
+
+  closeActionsModal();
+  showToast(TRAVEL_I18N.moment_discarded[LANG], '');
+
+  // Limpar momento actual
+  currentMoment = null;
+  resetViewfinder();
+}
+
+// Helper: reset viewfinder após acção
+function resetViewfinder() {
+  const vf = document.getElementById('viewfinder');
+  const overlay = document.getElementById('vf-overlay');
+  vf.classList.remove('has-preview');
+  vf.innerHTML = `
+    <div class="viewfinder-empty">
+      <div class="viewfinder-empty-icon">📷</div>
+      <p class="viewfinder-empty-text" data-i18n="capture_title">${TRAVEL_I18N.capture_title[LANG]}</p>
+    </div>
+  `;
+  overlay.style.display = 'none';
+  vf.appendChild(overlay);
+}
+
+// §119 — Share sealed moment from thread
+async function shareMoment(receiptId) {
+  const moment = presenceTimeline.find(m => m.receipt_id === receiptId);
+  if (!moment || !moment.evidence_hash) {
+    showToast('No media available', '');
+    return;
+  }
+
+  try {
+    // Fetch from IndexedDB using evidence_hash
+    const mediaData = await getMediaFromIDB(moment.evidence_hash);
+    if (!mediaData || !mediaData.dataUrl) {
+      showToast(TRAVEL_I18N.share_not_supported?.[LANG] || 'Media not available locally', '');
+      return;
+    }
+
+    const response = await fetch(mediaData.dataUrl);
+    const blob = await response.blob();
+    const ext = mediaData.mediaType === 'video' ? 'mp4' : 'jpg';
+    const file = new File([blob], `WINDI-${receiptId}.${ext}`, { type: blob.type });
+
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        files: [file],
+        title: 'WINDI Sealed Moment',
+        text: `Receipt: ${receiptId}\nSHA-256: ${moment.evidence_hash.substring(0,16)}…\nVerify: ${moment.verify_url || 'windi-domain.com/verify-public/?id=' + receiptId}`
+      });
+    } else {
+      // Fallback: download
+      downloadMoment(receiptId);
+    }
+  } catch (e) {
+    if (e.name !== 'AbortError') {
+      console.warn('Share moment failed:', e);
+      showToast('Share failed', '');
+    }
+  }
+}
+
+// §119 — Download sealed moment from thread
+async function downloadMoment(receiptId) {
+  const moment = presenceTimeline.find(m => m.receipt_id === receiptId);
+  if (!moment || !moment.evidence_hash) {
+    showToast('No media available', '');
+    return;
+  }
+
+  try {
+    const mediaData = await getMediaFromIDB(moment.evidence_hash);
+    if (!mediaData || !mediaData.dataUrl) {
+      showToast(TRAVEL_I18N.share_not_supported?.[LANG] || 'Media not available locally', '');
+      return;
+    }
+
+    const ext = mediaData.mediaType === 'video' ? 'mp4' : 'jpg';
+    const link = document.createElement('a');
+    link.href = mediaData.dataUrl;
+    link.download = `WINDI-${receiptId}.${ext}`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    showToast(TRAVEL_I18N.action_save?.[LANG] || 'Saved', '✓');
+  } catch (e) {
+    console.warn('Download moment failed:', e);
+    showToast('Download failed', '');
+  }
+}
+
+// Helper: Toast notification
+function showToast(title, subtitle) {
+  // Criar toast se não existir
+  let toast = document.getElementById('windi-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'windi-toast';
+    toast.style.cssText = `
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 12px 20px;
+      z-index: 2000;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      opacity: 0;
+      transition: opacity 0.3s;
+    `;
+    document.body.appendChild(toast);
+  }
+
+  toast.innerHTML = `
+    <div style="font-weight:600;font-size:14px;">${title}</div>
+    ${subtitle ? `<div style="font-size:12px;color:var(--text-2);margin-top:4px;">${subtitle}</div>` : ''}
+  `;
+  toast.style.opacity = '1';
+
+  setTimeout(() => {
+    toast.style.opacity = '0';
+  }, 2500);
+}
+
+// Helper: Delete from IndexedDB
+async function deleteMediaFromIDB(hash) {
+  if (!mediaDb) return;
+  const tx = mediaDb.transaction([MEDIA_STORE_NAME], 'readwrite');
+  const store = tx.objectStore(MEDIA_STORE_NAME);
+  store.delete(hash);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -4677,6 +5168,14 @@ function renderMomentCard(m) {
         <a href="${verifyUrl}" target="_blank" class="moment-verify-btn" onclick="event.stopPropagation()">
           🔗 ${verifyLabel}
         </a>
+        ${m.evidence_hash ? `
+        <button class="moment-action-btn" onclick="event.stopPropagation(); shareMoment('${m.receipt_id}')" title="${TRAVEL_I18N.action_share?.[LANG] || 'Share'}">
+          📤
+        </button>
+        <button class="moment-action-btn" onclick="event.stopPropagation(); downloadMoment('${m.receipt_id}')" title="${TRAVEL_I18N.action_save?.[LANG] || 'Save'}">
+          💾
+        </button>
+        ` : ''}
         <button class="moment-expand-btn">${expandLabel}</button>
       </div>
       ${detailsHtml}
