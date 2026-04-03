@@ -64,3 +64,4 @@ agents/constitutional-agent/manifests/
 agents/constitutional-agent/data/*.db
 windi-audit-report/
 nomad-bot/
+nomad-bot/
