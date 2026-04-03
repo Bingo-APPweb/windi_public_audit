@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI NOMAD — Telegram Sovereign Vision</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    background: #F5F0E0;
+    color: #1A1610;
+    min-height: 100vh;
+    padding: 32px 24px 80px;
+  }
+
+  .page-header {
+    max-width: 900px;
+    margin: 0 auto 28px;
+  }
+  .page-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    color: #8B6914;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+  .page-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1A1610;
+    margin-bottom: 4px;
+    letter-spacing: -0.5px;
+  }
+  .page-sub { font-size: 13px; color: #6B6050; line-height: 1.6; }
+
+  /* TABS */
+  .tabs {
+    max-width: 900px;
+    margin: 0 auto 20px;
+    display: flex;
+    gap: 6px;
+    border-bottom: 1px solid rgba(139,105,20,0.15);
+    padding-bottom: 0;
+  }
+  .tab-btn {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 18px;
+    border: 1px solid transparent;
+    border-bottom: none;
+    border-radius: 6px 6px 0 0;
+    background: transparent;
+    color: #8A7D65;
+    cursor: pointer;
+    position: relative;
+    bottom: -1px;
+    transition: all 0.12s;
+  }
+  .tab-btn:hover { color: #3D3628; }
+  .tab-btn.on {
+    background: white;
+    border-color: rgba(139,105,20,0.2);
+    color: #1A1610;
+  }
+
+  /* MAIN */
+  .main { max-width: 900px; margin: 0 auto; }
+
+  /* SECTION */
+  .section { display: none; }
+  .section.on { display: block; }
+
+  /* VISION — side by side chat */
+  .chat-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .chat-frame {
+    border: 1px solid rgba(139,105,20,0.18);
+    border-radius: 10px;
+    overflow: hidden;
+    background: white;
+  }
+  .chat-header {
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid rgba(139,105,20,0.1);
+    font-size: 12px;
+    font-weight: 600;
+    color: #1A1610;
+  }
+  .chat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .chat-sub { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #8A7D65; margin-top: 1px; }
+  .chat-body { padding: 12px; background: #0e1621; display: flex; flex-direction: column; gap: 6px; min-height: 200px; }
+  .chat-body.windi { background: #F5F0E0; }
+  .bubble {
+    max-width: 85%;
+    padding: 8px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .bubble-in {
+    background: #182533;
+    color: #e8e8e8;
+    align-self: flex-start;
+    border-bottom-left-radius: 3px;
+  }
+  .bubble-out {
+    background: #2b5278;
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 3px;
+  }
+  .bubble-windi-in {
+    background: white;
+    color: #1A1610;
+    align-self: flex-start;
+    border-bottom-left-radius: 3px;
+    border: 1px solid rgba(139,105,20,0.15);
+  }
+  .bubble-windi-out {
+    background: rgba(139,105,20,0.12);
+    color: #8B6914;
+    align-self: flex-end;
+    border-bottom-right-radius: 3px;
+  }
+  .bubble-seal {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    background: rgba(26,120,60,0.15);
+    color: #1a783c;
+    align-self: flex-end;
+    border-bottom-right-radius: 3px;
+    border: 1px solid rgba(26,120,60,0.25);
+  }
+  .insight-bar {
+    background: #1A1610;
+    border-radius: 8px;
+    padding: 12px 18px;
+    font-size: 13px;
+    color: rgba(245,240,224,0.85);
+    text-align: center;
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
+  .insight-bar em { color: #C4970E; font-style: normal; font-weight: 600; }
+
+  /* FLOW */
+  .flow-step {
+    border: 1px solid rgba(139,105,20,0.15);
+    border-radius: 8px;
+    padding: 14px 18px;
+    background: white;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+  .flow-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: #8B6914;
+    min-width: 24px;
+    margin-top: 2px;
+  }
+  .flow-title { font-size: 13px; font-weight: 600; color: #1A1610; margin-bottom: 4px; }
+  .flow-desc { font-size: 12px; color: #6B6050; line-height: 1.6; }
+  .flow-code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #1a783c;
+    background: rgba(26,120,60,0.08);
+    border: 1px solid rgba(26,120,60,0.2);
+    border-radius: 4px;
+    padding: 4px 10px;
+    margin-top: 6px;
+    display: inline-block;
+  }
+
+  /* NOMAD SCENARIOS */
+  .scenario-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .scenario {
+    border: 1px solid rgba(139,105,20,0.15);
+    border-radius: 8px;
+    padding: 14px;
+    background: white;
+  }
+  .scenario-title { font-size: 12px; font-weight: 600; color: #1A1610; margin-bottom: 8px; }
+  .scenario-msg {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    margin-bottom: 5px;
+    font-size: 12px;
+    color: #3D3628;
+  }
+  .scenario-arrow { color: #8B6914; font-size: 11px; margin-top: 2px; flex-shrink: 0; }
+  .scenario-reply { font-size: 11px; color: #1a783c; padding-left: 14px; line-height: 1.5; }
+
+  /* ARCH */
+  .arch-row {
+    display: grid;
+    grid-template-columns: 100px 1fr auto;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 14px;
+    border: 1px solid rgba(139,105,20,0.15);
+    border-radius: 8px;
+    background: white;
+    margin-bottom: 6px;
+    font-size: 13px;
+  }
+  .arch-port { font-family: 'JetBrains Mono', monospace; font-weight: 600; color: #8B6914; }
+  .arch-desc { color: #3D3628; }
+  .arch-desc small { display: block; font-size: 11px; color: #8A7D65; font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
+  .arch-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .badge-ext { background: rgba(139,105,20,0.1); color: #8B6914; }
+  .badge-new { background: rgba(26,74,122,0.1); color: #1A4A7A; }
+  .badge-live { background: rgba(26,120,60,0.1); color: #1a783c; }
+  .badge-sealed { background: rgba(139,105,20,0.08); color: #8B6914; border: 1px solid rgba(139,105,20,0.2); }
+
+  /* PRIVACY NOTE */
+  .privacy-box {
+    border: 1px solid rgba(26,74,122,0.2);
+    border-radius: 8px;
+    padding: 14px 18px;
+    background: rgba(26,74,122,0.04);
+    margin-top: 14px;
+  }
+  .privacy-title { font-size: 12px; font-weight: 600; color: #1A4A7A; margin-bottom: 8px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.5px; }
+  .privacy-row { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 5px; font-size: 12px; color: #3D3628; }
+  .privacy-check { color: #1a783c; flex-shrink: 0; }
+
+  /* SEAL FOOTER */
+  .seal-footer {
+    max-width: 900px;
+    margin: 28px auto 0;
+    border-top: 1px solid rgba(139,105,20,0.15);
+    padding-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .seal-text { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #8A7D65; letter-spacing: 1px; }
+  .seal-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: #8B6914;
+    border: 1px solid rgba(139,105,20,0.25);
+    border-radius: 3px;
+    padding: 4px 10px;
+  }
+  .seal-dot { width: 5px; height: 5px; border-radius: 50%; background: #C4970E; }
+
+  @media (max-width: 640px) {
+    body { padding: 20px 14px 60px; }
+    .chat-row { grid-template-columns: 1fr; }
+    .scenario-grid { grid-template-columns: 1fr; }
+    .arch-row { grid-template-columns: 80px 1fr; }
+    .arch-badge { display: none; }
+    .tabs { overflow-x: auto; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="page-eyebrow">WINDI NOMAD · Visão · 03 Abr 2026</div>
+  <div class="page-title">Telegram como surface soberana do WINDI Travel</div>
+  <div class="page-sub">A visão nasceu num podcast sobre WhatsApp. Tornou-se o @windi_nomad_bot — MARIA 24h no telemóvel do viajante, sem Meta, sem aprovações, sem custos fixos.</div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab-btn on" onclick="showTab('vision')">A visão</button>
+  <button class="tab-btn" onclick="showTab('flow')">Como funciona</button>
+  <button class="tab-btn" onclick="showTab('nomad')">Cenário NOMAD</button>
+  <button class="tab-btn" onclick="showTab('arch')">Arquitectura</button>
+</div>
+
+<div class="main">
+
+  <!-- VISION -->
+  <div class="section on" id="sec-vision">
+    <p style="font-size:13px;color:#6B6050;margin-bottom:14px;line-height:1.6;">Duas surfaces. Um ecossistema. O utilizador escolhe onde quer estar — dentro do WINDI Travel ou no Telegram. A MARIA responde igual nos dois lados.</p>
+
+    <div class="chat-row">
+      <div class="chat-frame">
+        <div class="chat-header" style="background:#232e3c;">
+          <div class="chat-dot" style="background:#25D366;"></div>
+          <div>
+            <div style="color:white;">Telegram — @windi_nomad_bot</div>
+            <div class="chat-sub">Surface externa · 24h · sem login</div>
+          </div>
+        </div>
+        <div class="chat-body">
+          <div class="bubble bubble-out">Estou em Kyoto! Sela este momento 🌸</div>
+          <div class="bubble bubble-in">📍 Kyoto, Japão detectado via GPS.<br>A selar no Ledger...</div>
+          <div class="bubble bubble-seal">🔒 WINDI-PRESENCE-20260403-K9T3<br>✓ Selado para sempre.</div>
+          <div class="bubble bubble-out">Voo mais barato Lisboa amanhã?</div>
+          <div class="bubble bubble-in">✈️ EasyJet LIS→ORY · 177€ · 06h30</div>
+        </div>
+      </div>
+
+      <div class="chat-frame">
+        <div class="chat-header" style="background:#F5F0E0;border-bottom:1px solid rgba(139,105,20,0.15);">
+          <div class="chat-dot" style="background:#8B6914;"></div>
+          <div>
+            <div style="color:#1A1610;">WINDI Travel — Maria</div>
+            <div class="chat-sub" style="color:#8A7D65;">Surface interna · DID autenticado</div>
+          </div>
+        </div>
+        <div class="chat-body windi">
+          <div class="bubble bubble-windi-out">Estou em Kyoto! Sela este momento 🌸</div>
+          <div class="bubble bubble-windi-in">Kyoto, Japão detectado. A selar...</div>
+          <div class="bubble bubble-windi-in" style="font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(26,120,60,0.08);color:#1a783c;border:1px solid rgba(26,120,60,0.2);">🔒 WINDI-PRESENCE-20260403-K9T3 ✓</div>
+          <div class="bubble bubble-windi-out">Voo mais barato Lisboa amanhã?</div>
+          <div class="bubble bubble-windi-in">✈️ EasyJet LIS→ORY · 177€ · 06h30</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight-bar">
+      As duas conversas são a mesma acção. A <em>MARIA</em> responde nos dois lados. O <em>Ledger</em> sela uma vez. A identidade <em>DID</em> persiste em ambas as surfaces.
+    </div>
+  </div>
+
+  <!-- FLOW -->
+  <div class="section" id="sec-flow">
+    <p style="font-size:13px;color:#6B6050;margin-bottom:14px;">O caminho de uma mensagem Telegram até ao Ledger — sem violar nada, apenas integrando.</p>
+
+    <div class="flow-step">
+      <div class="flow-num">01</div>
+      <div>
+        <div class="flow-title">Utilizador envia mensagem no Telegram</div>
+        <div class="flow-desc">"Sela este momento, estou em Tóquio" — mensagem normal. O utilizador vinculou o wallet_id uma vez com <code style="font-family:'JetBrains Mono',monospace;font-size:11px;">WALLET-20260402-0001</code> no primeiro /start.</div>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num">02</div>
+      <div>
+        <div class="flow-title">Telegram API → WINDI Webhook :8129</div>
+        <div class="flow-desc">Telegram entrega o update ao servidor WINDI via HTTPS. I13: o payload é processado e descartado. O número de telemóvel nunca é armazenado — apenas hash SHA-256.</div>
+        <span class="flow-code">POST https://windi-domain.com/nomad/telegram</span>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num">03</div>
+      <div>
+        <div class="flow-title">MARIA processa — Claude API + contexto DID</div>
+        <div class="flow-desc">A MARIA identifica o utilizador pelo chat_hash → wallet_id → contexto completo. Processa com LLM server-side. Detecta intenção: seal, pesquisar voo, thread, responder.</div>
+        <span class="flow-code">call_maria(text, wallet_id) → {action, message, seal_label}</span>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num">04</div>
+      <div>
+        <div class="flow-title">Acção soberana → Ledger (se relevante)</div>
+        <div class="flow-desc">Se a acção gera evidência, sela no Ledger. I9: a MARIA propõe, o utilizador confirma com "SIM" antes de selos HIGH. I11: uma vez selado, IRREMEDIÁVEL.</div>
+        <span class="flow-code">POST :8101/api/seal → receipt_id WINDI-PRESENCE-*</span>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num">05</div>
+      <div>
+        <div class="flow-title">Resposta volta ao Telegram + sincroniza no WINDI</div>
+        <div class="flow-desc">O utilizador recebe resposta no Telegram com receipt_id e link de verificação pública. O Thread da Maria mostra o momento selado. Uma acção, duas surfaces.</div>
+        <span class="flow-code">GET windi-domain.com/verify-public/?id=WINDI-PRESENCE-*</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOMAD SCENARIOS -->
+  <div class="section" id="sec-nomad">
+    <p style="font-size:13px;color:#6B6050;margin-bottom:14px;">O NOMAD está sempre em movimento. O Telegram é a sua janela natural — sem abrir apps, sem login, sem fricção.</p>
+
+    <div class="scenario-grid">
+      <div class="scenario">
+        <div class="scenario-title">No aeroporto às 06h00</div>
+        <div class="scenario-msg"><span class="scenario-arrow">💬</span>"Voo mais barato Berlim amanhã?"</div>
+        <div class="scenario-reply">→ Travelpayouts API · resultado imediato<br>→ Link para WINDI Travel</div>
+      </div>
+      <div class="scenario">
+        <div class="scenario-title">Em Kyoto às 6h da manhã</div>
+        <div class="scenario-msg"><span class="scenario-arrow">💬</span>"Sela este momento"</div>
+        <div class="scenario-reply">→ GPS → "Kyoto, Japão"<br>→ WINDI-PRESENCE-K9T3 · Ledger ✓</div>
+      </div>
+      <div class="scenario">
+        <div class="scenario-title">Num táxi em movimento</div>
+        <div class="scenario-msg"><span class="scenario-arrow">📸</span>[envia foto da vista]</div>
+        <div class="scenario-reply">→ SHA-256 da imagem · I13: foto não guardada<br>→ Receipt selado automaticamente</div>
+      </div>
+      <div class="scenario">
+        <div class="scenario-title">Partilha localização GPS</div>
+        <div class="scenario-msg"><span class="scenario-arrow">📍</span>[localização Telegram]</div>
+        <div class="scenario-reply">→ Nominatim OSM → "Kempten, Bayern"<br>→ "Selaste em Kempten." · Ledger ✓</div>
+      </div>
+      <div class="scenario">
+        <div class="scenario-title">No hotel à meia-noite</div>
+        <div class="scenario-msg"><span class="scenario-arrow">💬</span>"/thread"</div>
+        <div class="scenario-reply">→ Últimos 5 momentos do Ledger<br>→ Cronologia soberana verificável</div>
+      </div>
+      <div class="scenario">
+        <div class="scenario-title">Primeiro uso — onboarding</div>
+        <div class="scenario-msg"><span class="scenario-arrow">💬</span>"WALLET-20260402-0001"</div>
+        <div class="scenario-reply">→ DID vinculado · uma vez para sempre<br>→ "Bem-vindo! Onde estás agora? 🌍"</div>
+      </div>
+    </div>
+
+    <div style="background:#1A1610;border-radius:8px;padding:14px 18px;text-align:center;">
+      <p style="font-size:13px;color:rgba(245,240,224,0.85);line-height:1.6;">O NOMAD nunca precisa de abrir o browser. O WINDI Travel é a sede — o Telegram é o campo. A <span style="color:#C4970E;font-weight:600;">MARIA</span> trabalha 24h nos dois lados.</p>
+    </div>
+  </div>
+
+  <!-- ARCH -->
+  <div class="section" id="sec-arch">
+    <p style="font-size:13px;color:#6B6050;margin-bottom:14px;">Um novo serviço soberano em :8129. Não toca em nenhum serviço existente — apenas conecta o Telegram ao ecossistema via webhook.</p>
+
+    <div class="arch-row" style="background:#EDE8D4;">
+      <span class="arch-port">Telegram</span>
+      <div class="arch-desc">Bot API oficial · gratuito · @windi_nomad_bot criado<small>t.me/windi_nomad_bot · token em mãos · 03 Abr 2026</small></div>
+      <span class="arch-badge badge-live">TOKEN ✓</span>
+    </div>
+
+    <div style="text-align:center;color:#8A7D65;font-size:16px;padding:4px 0;">↓</div>
+
+    <div class="arch-row" style="border-color:rgba(26,74,122,0.3);">
+      <span class="arch-port">:8129</span>
+      <div class="arch-desc">W-NOMAD-001 · webhook receiver · MARIA bridge · FastAPI<small>w_nomad_telegram.py · systemd windi-nomad · deploy pendente</small></div>
+      <span class="arch-badge badge-new">DEPLOY PENDENTE</span>
+    </div>
+
+    <div style="text-align:center;color:#8A7D65;font-size:14px;padding:4px 0;">↓ &nbsp;&nbsp;&nbsp; ↓ &nbsp;&nbsp;&nbsp; ↓</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">
+      <div class="arch-row" style="display:flex;flex-direction:column;gap:4px;padding:12px;">
+        <div class="arch-port" style="font-size:11px;">MARIA</div>
+        <div style="font-size:12px;color:#3D3628;">Claude API</div>
+        <div style="font-size:10px;color:#8A7D65;font-family:'JetBrains Mono',monospace;">contexto DID</div>
+      </div>
+      <div class="arch-row" style="display:flex;flex-direction:column;gap:4px;padding:12px;">
+        <div class="arch-port" style="font-size:11px;">:8101</div>
+        <div style="font-size:12px;color:#3D3628;">Ledger</div>
+        <div style="font-size:10px;color:#8A7D65;font-family:'JetBrains Mono',monospace;">I11 · IRREMEDIÁVEL</div>
+      </div>
+      <div class="arch-row" style="display:flex;flex-direction:column;gap:4px;padding:12px;">
+        <div class="arch-port" style="font-size:11px;">Nominatim</div>
+        <div style="font-size:12px;color:#3D3628;">GPS → place</div>
+        <div style="font-size:10px;color:#8A7D65;font-family:'JetBrains Mono',monospace;">OSM · GDPR ✓</div>
+      </div>
+    </div>
+
+    <div class="privacy-box">
+      <div class="privacy-title">I13 — GDPR BY DESIGN</div>
+      <div class="privacy-row"><span class="privacy-check">✓</span>Número de telemóvel nunca armazenado — apenas SHA-256 hash</div>
+      <div class="privacy-row"><span class="privacy-check">✓</span>Query do utilizador processada e descartada — não guardada</div>
+      <div class="privacy-row"><span class="privacy-check">✓</span>Ledger guarda: "user selou um momento" — não os detalhes</div>
+      <div class="privacy-row"><span class="privacy-check">✓</span>GPS: apenas place_name preservado, coordenadas não persistidas</div>
+      <div class="privacy-row"><span class="privacy-check">✓</span>Servidor em Kempten, Bavaria — jurisdição GDPR directa</div>
+    </div>
+
+    <div style="margin-top:14px;padding:12px 16px;border-radius:8px;background:#1A1610;font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(196,151,14,0.8);text-align:center;letter-spacing:1px;">
+      CUSTO NOVO: ~€9/mês em tokens Anthropic · Telegram Bot API: GRATUITO · Nominatim: GRATUITO · Infra: VPS já paga
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="seal-footer">
+  <div class="seal-text">W-NOMAD-001 · @windi_nomad_bot · Liga IA+H · Kempten, Bavaria · 03 Abr 2026</div>
+  <div class="seal-badge"><span class="seal-dot"></span>AI processes. Human decides. WINDI guarantees.</div>
+</div>
+
+<script>
+function showTab(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('on'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('on'));
+  document.getElementById('sec-' + name).classList.add('on');
+  event.target.classList.add('on');
+}
+</script>
+</body>
+</html>

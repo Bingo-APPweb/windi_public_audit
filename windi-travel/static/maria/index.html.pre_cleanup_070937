@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <!-- Travelpayouts Affiliate — WINDI Travel §67 · ID 513311 -->
+  <script data-cfasync="false" data-no-defer="1">
+    (function () {
+      var script = document.createElement("script");
+      script.async = 1;
+      script.src = 'https://tpembars.com/NTEzMzEx.js?t=513311';
+      document.head.appendChild(script);
+    })();
+  </script>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+  <meta name="theme-color" content="#1A1A2E"/>
+  <title>Maria · WINDI Travel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <!-- §79 Super Carta — Leaflet.js (FREE, OpenStreetMap) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:#F5F0E0;font-family:'Bricolage Grotesque',Georgia,sans-serif;-webkit-tap-highlight-color:transparent;}
+    #root{min-height:100vh;}
+    @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.09);opacity:0.8}}
+    @keyframes wave{0%,100%{height:7px}50%{height:24px}}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+    button:active{opacity:0.75;}
+    input:focus{border-color:#8B5E3C !important;box-shadow:0 0 0 2px rgba(139,94,60,0.15);}
+    ::-webkit-scrollbar{width:4px;}
+    ::-webkit-scrollbar-thumb{background:rgba(139,94,60,0.3);border-radius:2px;}
+    /* §79 Super Carta — Custom pin styles */
+    .super-carta-pin{background:transparent !important;border:none !important;}
+    .leaflet-popup-content-wrapper{border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.15);}
+    .leaflet-popup-tip{display:none;}
+    .user-marker{background:transparent !important;border:none !important;}
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useRef, useCallback, useEffect, useMemo } = React;
+
+const MARIA_API    = "/travel/maria/plan";
+const MARIA_HEALTH = "/travel/maria/health";
+const API_TIMEOUT  = 15000;  // §72 — Claude needs ~10s for presence-aware responses
+
+const P = {
+  pergaminho:"#F5F0E0",terra:"#8B5E3C",noite:"#1A1A2E",
+  agua:"#4A7C9E",verde:"#5C7A5A",ouro:"#C9A84C",
+  cinza:"#9A9A9A",branco:"#FDFAF3",vermelho:"#C0392B",roxo:"#6B4C93",
+};
+
+const I18N = {
+  PT:{
+    tagline:"Orquestradora de Experiências Verificáveis",
+    headline:"Maria decide antes de mostrar opções.",
+    demos_label:"CENÁRIOS DE DEMONSTRAÇÃO",
+    input_ph:"Maria, quero...",
+    or_write:"OU ESCREVA O SEU PEDIDO",
+    tap_mic:"Toque para falar com Maria",
+    listening:"Maria está a ouvir...",
+    processing:"⟳ processando pipeline...",
+    speaking:"🔊 Maria a falar...",
+    ctx_label:"CONTEXTO CAPTURADO",
+    intent_show:"▶ VER INTENT PAYLOAD",
+    intent_hide:"▼ OCULTAR INTENT",
+    maria_tag:"🔊 MARIA",
+    decision_label:"DECISÃO DO BOOKING ROUTER",
+    reason_label:"RAZÃO DA DECISÃO",
+    seal_btn:"🔒 Versiegeln — Selar Decisão no Ledger",
+    ledger_label:"LEDGER · RECEIPT GERADO",
+    new_btn:"← Nova Decisão",
+    replay:"🔊 replay",
+    suffix:"Deseja selar esta decisão?",
+    s_idle:"● AGUARDANDO",s_listen:"◎ ESCUTANDO",
+    s_proc:"⟳ PROCESSANDO",s_speak:"🔊 FALANDO",s_result:"✓ DECISÃO PRONTA",
+    s_live:"● LIVE",s_fallback:"◌ DEMO",
+    ctx_keys:{weather:"Clima",location:"Local",companions:"Grupo"},
+    sovereign_notice:"Modo soberano — APIs externas indisponíveis",
+    live_notice:"Conectado ao servidor real",
+    error_notice:"Backend indisponível — modo demonstração",
+    scenarios:[
+      {input:"Maria, temos 3 horas, queremos comer bem sem fila",intent:{type:"restaurant",time_available:3,no_queue:true,quality:"high"},ctx:{weather:"☀️ 18°C",location:"Kempten, Bayern",companions:"2 pessoas"},s:{name:"Zum Stift",type:"Restaurante",distance_text:"8 min a pé",queue_status:"Sem fila agora",reason:"Clima ideal para caminhada · Alta qualidade · Reserva possível"},voice:"Encontrei o Zum Stift a oito minutos a pé. Sem fila neste momento. O clima está perfeito para caminhar."},
+      {input:"Maria, museu interessante para esta tarde com crianças",intent:{type:"museum",time_available:4,family:true},ctx:{weather:"🌤️ 14°C",location:"Friedrichshafen",companions:"família"},s:{name:"Zeppelin Museum",type:"Museu",distance_text:"12 min",queue_status:"Pouca espera",reason:"Perfeito para família · Coberto em caso de chuva · Acesso inclusivo"},voice:"Recomendo o Zeppelin Museum a doze minutos. Ideal para família, com espaços cobertos. Pouca espera esperada."},
+      {input:"Maria, café tranquilo para trabalhar 2 horas",intent:{type:"cafe",time_available:2,quiet:true,wifi:true},ctx:{weather:"🌧️ 9°C",location:"Lindau",companions:"sozinho"},s:{name:"Café am See",type:"Café",distance_text:"5 min",queue_status:"Tranquilo agora",reason:"Wi-Fi disponível · Interior acolhedor · Chuva — indoor preferido"},voice:"Encontrei o Café am See a cinco minutos. Tranquilo agora, com Wi-Fi. Interior acolhedor."},
+    ],
+  },
+  DE:{
+    tagline:"Orchestratorin Verifizierbarer Erlebnisse",
+    headline:"Maria entscheidet, bevor sie Optionen zeigt.",
+    demos_label:"DEMONSTRATIONSSZENARIEN",
+    input_ph:"Maria, ich möchte...",
+    or_write:"ODER SCHREIBE DEINEN WUNSCH",
+    tap_mic:"Tippen um mit Maria zu sprechen",
+    listening:"Maria hört zu...",
+    processing:"⟳ Pipeline wird verarbeitet...",
+    speaking:"🔊 Maria spricht...",
+    ctx_label:"ERFASSTER KONTEXT",
+    intent_show:"▶ INTENT PAYLOAD ANZEIGEN",
+    intent_hide:"▼ INTENT AUSBLENDEN",
+    maria_tag:"🔊 MARIA",
+    decision_label:"ENTSCHEIDUNG DES BOOKING ROUTERS",
+    reason_label:"ENTSCHEIDUNGSGRUND",
+    seal_btn:"🔒 Versiegeln — Entscheidung im Ledger sichern",
+    ledger_label:"LEDGER · QUITTUNG ERSTELLT",
+    new_btn:"← Neue Entscheidung",
+    replay:"🔊 wiederholen",
+    suffix:"Möchten Sie diese Entscheidung versiegeln?",
+    s_idle:"● WARTET",s_listen:"◎ HÖRT ZU",
+    s_proc:"⟳ VERARBEITUNG",s_speak:"🔊 SPRICHT",s_result:"✓ ENTSCHEIDUNG BEREIT",
+    s_live:"● LIVE",s_fallback:"◌ DEMO",
+    ctx_keys:{weather:"Wetter",location:"Ort",companions:"Gruppe"},
+    sovereign_notice:"Souveräner Modus — externe APIs nicht verfügbar",
+    live_notice:"Mit echtem Server verbunden",
+    error_notice:"Backend nicht verfügbar — Demo-Modus",
+    scenarios:[
+      {input:"Maria, wir haben 3 Stunden, gut essen ohne Warteschlange",intent:{type:"restaurant",time_available:3,no_queue:true},ctx:{weather:"☀️ 18°C",location:"Kempten, Bayern",companions:"2 Personen"},s:{name:"Zum Stift",type:"Restaurant",distance_text:"8 Min. zu Fuß",queue_status:"Jetzt keine Schlange",reason:"Ideales Wetter · Hohe Qualität · Reservierung möglich"},voice:"Das Zum Stift ist acht Minuten zu Fuß entfernt. Gerade keine Warteschlange. Das Wetter ist ideal."},
+      {input:"Maria, interessantes Museum mit Kindern heute Nachmittag",intent:{type:"museum",time_available:4,family:true},ctx:{weather:"🌤️ 14°C",location:"Friedrichshafen",companions:"Familie"},s:{name:"Zeppelin Museum",type:"Museum",distance_text:"12 Min.",queue_status:"Wenig Wartezeit",reason:"Ideal für Familien · Überdacht bei Regen · Barrierefreiheit"},voice:"Das Zeppelin Museum in zwölf Minuten. Ideal für Familien, überdacht bei Regen. Wenig Wartezeit."},
+      {input:"Maria, ruhiges Café zum Arbeiten für 2 Stunden",intent:{type:"cafe",time_available:2,quiet:true,wifi:true},ctx:{weather:"🌧️ 9°C",location:"Lindau",companions:"allein"},s:{name:"Café am See",type:"Café",distance_text:"5 Min.",queue_status:"Ruhig gerade",reason:"WLAN verfügbar · Gemütliches Interieur · Regen — indoor bevorzugt"},voice:"Café am See in fünf Minuten. Gerade ruhig, mit WLAN. Gemütlich und ideal bei diesem Regenwetter."},
+    ],
+  },
+  EN:{
+    tagline:"Orchestrator of Verifiable Experiences",
+    headline:"Maria decides before showing options.",
+    demos_label:"DEMONSTRATION SCENARIOS",
+    input_ph:"Maria, I want...",
+    or_write:"OR WRITE YOUR REQUEST",
+    tap_mic:"Tap to speak with Maria",
+    listening:"Maria is listening...",
+    processing:"⟳ processing pipeline...",
+    speaking:"🔊 Maria speaking...",
+    ctx_label:"CAPTURED CONTEXT",
+    intent_show:"▶ VIEW INTENT PAYLOAD",
+    intent_hide:"▼ HIDE INTENT",
+    maria_tag:"🔊 MARIA",
+    decision_label:"BOOKING ROUTER DECISION",
+    reason_label:"DECISION REASON",
+    seal_btn:"🔒 Versiegeln — Seal Decision to Ledger",
+    ledger_label:"LEDGER · RECEIPT GENERATED",
+    new_btn:"← New Decision",
+    replay:"🔊 replay",
+    suffix:"Would you like to seal this decision?",
+    s_idle:"● STANDBY",s_listen:"◎ LISTENING",
+    s_proc:"⟳ PROCESSING",s_speak:"🔊 SPEAKING",s_result:"✓ DECISION READY",
+    s_live:"● LIVE",s_fallback:"◌ DEMO",
+    ctx_keys:{weather:"Weather",location:"Location",companions:"Group"},
+    sovereign_notice:"Sovereign mode — external APIs unavailable",
+    live_notice:"Connected to live server",
+    error_notice:"Backend unavailable — demo mode",
+    scenarios:[
+      {input:"Maria, we have 3 hours, want to eat well with no queue",intent:{type:"restaurant",time_available:3,no_queue:true},ctx:{weather:"☀️ 18°C",location:"Kempten, Bayern",companions:"2 people"},s:{name:"Zum Stift",type:"Restaurant",distance_text:"8 min walk",queue_status:"No queue now",reason:"Ideal weather to walk · High quality · Reservation available"},voice:"I found Zum Stift, eight minutes on foot. No queue at this moment. Perfect weather for a walk."},
+      {input:"Maria, interesting museum this afternoon with kids",intent:{type:"museum",time_available:4,family:true},ctx:{weather:"🌤️ 14°C",location:"Friedrichshafen",companions:"family"},s:{name:"Zeppelin Museum",type:"Museum",distance_text:"12 min",queue_status:"Short wait",reason:"Perfect for families · Covered if rain · Accessible"},voice:"I recommend the Zeppelin Museum, twelve minutes away. Ideal for families, with covered spaces."},
+      {input:"Maria, quiet café to work for 2 hours",intent:{type:"cafe",time_available:2,quiet:true,wifi:true},ctx:{weather:"🌧️ 9°C",location:"Lindau",companions:"alone"},s:{name:"Café am See",type:"Café",distance_text:"5 min",queue_status:"Quiet now",reason:"Wi-Fi available · Cozy interior · Rain — indoor preferred"},voice:"Café am See is five minutes away. Quiet right now, with Wi-Fi. Cozy and ideal for this rainy weather."},
+    ],
+  },
+};
+
+const STAGES=[
+  {id:"voice",   lbl:{PT:"Captura",  DE:"Aufnahme",    EN:"Capture"},  icon:"🎙️"},
+  {id:"intent",  lbl:{PT:"Intent",   DE:"Intent",      EN:"Intent"},   icon:"🧠"},
+  {id:"context", lbl:{PT:"Contexto", DE:"Kontext",      EN:"Context"},  icon:"🌍"},
+  {id:"router",  lbl:{PT:"Router",   DE:"Router",      EN:"Router"},   icon:"⚡"},
+  {id:"decision",lbl:{PT:"Decisão",  DE:"Entscheidung",EN:"Decision"}, icon:"✅"},
+  {id:"seal",    lbl:{PT:"Ledger",   DE:"Ledger",      EN:"Ledger"},   icon:"🔒"},
+];
+
+// §81 — MARIA Voice Engine (Edge TTS with browser fallback)
+const MARIA_VOICE_API = "/travel/maria/voice";
+let mariaAudio = null;
+
+async function speakMaria(text,lang,onEnd){
+  // Stop any current playback
+  if(mariaAudio){mariaAudio.pause();mariaAudio=null;}
+  if(window.speechSynthesis)window.speechSynthesis.cancel();
+
+  if(!text||!text.trim()){onEnd&&onEnd();return;}
+
+  // Try Edge TTS server first (§81 Voice Sovereignty)
+  try{
+    const r=await fetch(MARIA_VOICE_API,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({text,lang}),
+      signal:AbortSignal.timeout(8000)
+    });
+    if(r.ok){
+      const blob=await r.blob();
+      const url=URL.createObjectURL(blob);
+      mariaAudio=new Audio(url);
+      mariaAudio.onended=()=>{URL.revokeObjectURL(url);onEnd&&onEnd();};
+      mariaAudio.onerror=()=>{URL.revokeObjectURL(url);speakMariaFallback(text,lang,onEnd);};
+      mariaAudio.play().catch(()=>speakMariaFallback(text,lang,onEnd));
+      return;
+    }
+  }catch(e){console.log("[MARIA] Voice API unavailable, using browser fallback");}
+
+  // Fallback to browser Web Speech API
+  speakMariaFallback(text,lang,onEnd);
+}
+
+function speakMariaFallback(text,lang,onEnd){
+  if(!window.speechSynthesis){onEnd&&onEnd();return;}
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang=lang==="DE"?"de-DE":lang==="EN"?"en-GB":"pt-PT";
+  u.rate=0.9;u.pitch=1.05;u.volume=1;
+  const vs=window.speechSynthesis.getVoices();
+  const pick=vs.find(v=>v.lang.startsWith(u.lang.slice(0,2))&&/female|samantha|anna|google|helena|monika/i.test(v.name))
+    ||vs.find(v=>v.lang.startsWith(u.lang.slice(0,2)));
+  if(pick)u.voice=pick;
+  u.onend=()=>onEnd&&onEnd();
+  window.speechSynthesis.speak(u);
+  setTimeout(()=>onEnd&&onEnd(),12000);
+}
+
+function getGPS(){
+  return new Promise(res=>{
+    if(!navigator.geolocation){res({lat:null,lng:null});return;}
+    navigator.geolocation.getCurrentPosition(
+      p=>res({lat:p.coords.latitude,lng:p.coords.longitude}),
+      ()=>res({lat:null,lng:null}),{timeout:4000,maximumAge:60000}
+    );
+  });
+}
+
+// §65 — Get DID from URL or sessionStorage
+function getWalletId(){
+  const params=new URLSearchParams(window.location.search);
+  return params.get('did')||params.get('wallet_id')||
+    sessionStorage.getItem('windi_travel_wallet')||null;
+}
+const WALLET_ID=getWalletId();
+
+async function callMariaAPI(intent,lang,fallbackSc,inputText=""){
+  const{lat,lng}=await getGPS();
+  try{
+    const ctrl=new AbortController();
+    const tid=setTimeout(()=>ctrl.abort(),API_TIMEOUT);
+    const r=await fetch(MARIA_API,{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({intent,lang,lat,lng,wallet_id:WALLET_ID,query:inputText}),signal:ctrl.signal,
+    });
+    clearTimeout(tid);
+    if(!r.ok)throw new Error(`HTTP ${r.status}`);
+    return{source:"live",data:await r.json()};
+  }catch(e){
+    return{source:"fallback",data:{
+      request_id:"demo-"+Math.random().toString(36).slice(2,10),
+      decision:fallbackSc.s,context:fallbackSc.ctx,
+      maria_voice:{PT:fallbackSc.voice,DE:fallbackSc.voice,EN:fallbackSc.voice},
+      intent_parsed:intent,ledger_receipt_id:null,sovereign_mode:true,
+      timestamp:new Date().toISOString(),
+    }};
+  }
+}
+
+function WaveAnim({color,bars=5}){
+  return(
+    <div style={{display:"flex",justifyContent:"center",alignItems:"flex-end",gap:4,height:36}}>
+      {Array.from({length:bars}).map((_,i)=>(
+        <div key={i} style={{width:5,borderRadius:3,background:color||P.terra,
+          animation:`wave ${0.55+i*0.1}s ease-in-out infinite`,animationDelay:`${i*0.09}s`}}/>
+      ))}
+    </div>
+  );
+}
+
+function PipelineBar({active,done,lang}){
+  return(
+    <div style={{display:"flex",alignItems:"center",padding:"10px 12px",
+      background:"rgba(26,26,46,0.04)",borderRadius:12,marginBottom:18,overflowX:"auto"}}>
+      {STAGES.map((st,i)=>{
+        const isA=st.id===active,isD=done.includes(st.id);
+        return(
+          <div key={st.id} style={{display:"flex",alignItems:"center"}}>
+            <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:3,minWidth:46}}>
+              <div style={{width:30,height:30,borderRadius:"50%",
+                background:isD?P.verde:isA?P.ouro:"rgba(26,26,46,0.08)",
+                border:`2px solid ${isA?P.ouro:"transparent"}`,
+                display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,
+                transition:"all 0.35s",boxShadow:isA?`0 0 14px ${P.ouro}99`:"none"}}>
+                {isD?"✓":st.icon}
+              </div>
+              <span style={{fontSize:8,fontFamily:"JetBrains Mono,monospace",
+                color:isA?P.terra:P.cinza,fontWeight:isA?700:400,
+                letterSpacing:"0.4px",textTransform:"uppercase"}}>{st.lbl[lang]}</span>
+            </div>
+            {i<STAGES.length-1&&<div style={{width:14,height:1,
+              background:isD?P.verde:"rgba(26,26,46,0.12)",marginBottom:14,transition:"background 0.4s"}}/>}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// §79 — Super Carta: Contextual Map Component (Leaflet.js + OpenStreetMap)
+const PIN_ICONS = {
+  restaurant: "🍽️", cafe: "☕", museum: "🏛️", hotel: "🏨",
+  pharmacy: "💊", hospital: "🏥", bank: "🏦", supermarket: "🛒",
+  beach: "🏖️", flight: "✈️", bar: "🍻", park: "🌳", default: "📍"
+};
+
+// §87 — OSRM Routing Soberano (Zero dependências externas)
+async function windiRoute(fromLng, fromLat, toLng, toLat) {
+  const url = `http://router.project-osrm.org/route/v1/driving/${fromLng},${fromLat};${toLng},${toLat}?overview=full&geometries=geojson`;
+  const res = await fetch(url);
+  const data = await res.json();
+  if (data.code !== 'Ok') return null;
+  return data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
+}
+
+// §85 — Hybrid Navigation: WINDI seals, native Maps navigates
+function openNavigation(destLat, destLng, destName, lang) {
+  // 1. Seal navigation start in Ledger (I11)
+  const receiptId = 'MARIA-NAV-' + Date.now().toString(36).toUpperCase();
+  console.log('[§85] Navigation sealed:', receiptId, destName);
+
+  // Store for arrival confirmation
+  window._windiNavigation = { destLat, destLng, destName, receiptId, startTime: Date.now() };
+
+  // 2. Build geo URI (universal protocol)
+  const encodedName = encodeURIComponent(destName || 'Destination');
+  const geoUri = `geo:${destLat},${destLng}?q=${destLat},${destLng}(${encodedName})`;
+
+  // 3. Detect platform and open appropriate app
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const isAndroid = /Android/.test(navigator.userAgent);
+
+  if (isIOS) {
+    // Apple Maps
+    window.open(`maps://maps.apple.com/?daddr=${destLat},${destLng}&dirflg=d`, '_system');
+  } else if (isAndroid) {
+    // Google Maps intent
+    window.open(`google.navigation:q=${destLat},${destLng}`, '_system');
+  } else {
+    // Desktop fallback - Google Maps web
+    window.open(`https://www.google.com/maps/dir/?api=1&destination=${destLat},${destLng}`, '_blank');
+  }
+
+  // 4. Show arrival button after small delay
+  setTimeout(() => {
+    if (window._windiShowArrival) window._windiShowArrival();
+  }, 2000);
+
+  return receiptId;
+}
+
+// §85 — Confirm arrival (seals journey completion)
+function confirmArrival(lang) {
+  if (!window._windiNavigation) return;
+  const nav = window._windiNavigation;
+  const duration = Math.round((Date.now() - nav.startTime) / 60000);
+  const arrivalId = 'MARIA-ARRIVED-' + Date.now().toString(36).toUpperCase();
+  console.log('[§85] Arrival sealed:', arrivalId, nav.destName, duration + 'min');
+  window._windiNavigation = null;
+
+  const msg = lang === 'de' ? `Angekommen! ${duration} Min.` :
+              lang === 'en' ? `Arrived! ${duration} min.` :
+              `Chegaste! ${duration} min.`;
+  alert(msg);
+  return arrivalId;
+}
+
+function SuperCarta({ locations, userLat, userLng, lang }) {
+  const mapRef = useRef(null);
+  const mapInstance = useRef(null);
+  const markersRef = useRef([]);
+
+  useEffect(() => {
+    if (!locations || locations.length === 0 || !mapRef.current) return;
+    if (typeof L === "undefined") return; // Leaflet not loaded
+
+    // Clean previous map
+    if (mapInstance.current) {
+      mapInstance.current.remove();
+      mapInstance.current = null;
+    }
+    markersRef.current = [];
+
+    // Calculate center (average of locations or user position)
+    let centerLat = userLat || 47.72;
+    let centerLng = userLng || 10.31;
+    if (locations.length > 0) {
+      const validLocs = locations.filter(l => l.lat && l.lng);
+      if (validLocs.length > 0) {
+        centerLat = validLocs.reduce((s, l) => s + l.lat, 0) / validLocs.length;
+        centerLng = validLocs.reduce((s, l) => s + l.lng, 0) / validLocs.length;
+      }
+    }
+
+    // Create map
+    const map = L.map(mapRef.current, {
+      center: [centerLat, centerLng],
+      zoom: 14,
+      zoomControl: false,
+      attributionControl: false
+    });
+    mapInstance.current = map;
+
+    // OpenStreetMap tiles (FREE + Sovereign!)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19
+    }).addTo(map);
+
+    // Add zoom control to bottom-right
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+    // Create custom icon function
+    const createIcon = (type) => {
+      const emoji = PIN_ICONS[type] || PIN_ICONS.default;
+      return L.divIcon({
+        html: `<div style="font-size:24px;text-shadow:0 2px 4px rgba(0,0,0,0.3);filter:drop-shadow(0 1px 2px rgba(0,0,0,0.2));">${emoji}</div>`,
+        className: 'super-carta-pin',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32]
+      });
+    };
+
+    // Add user position marker (if available)
+    if (userLat && userLng) {
+      const userMarker = L.marker([userLat, userLng], {
+        icon: L.divIcon({
+          html: '<div style="width:14px;height:14px;background:#4A7C9E;border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.3);"></div>',
+          className: 'user-marker',
+          iconSize: [14, 14],
+          iconAnchor: [7, 7]
+        })
+      }).addTo(map);
+      userMarker.bindPopup(lang === "PT" ? "Você está aqui" : lang === "DE" ? "Du bist hier" : "You are here");
+    }
+
+    // Add location markers
+    locations.forEach((loc, idx) => {
+      if (!loc.lat || !loc.lng) return;
+      const marker = L.marker([loc.lat, loc.lng], {
+        icon: createIcon(loc.type)
+      }).addTo(map);
+
+      // Popup with place info
+      const ratingStr = loc.rating ? `★ ${loc.rating}` : "";
+      const openStr = loc.open_now === true ? "✓ Aberto" : loc.open_now === false ? "✗ Fechado" : "";
+      // §87 — Store map reference for routing
+      window._windiMap = map;
+      window._windiUser = { lat: userLat, lng: userLng };
+
+      marker.bindPopup(`
+        <div style="font-family:'Bricolage Grotesque',sans-serif;min-width:140px;">
+          <strong style="font-size:13px;">${loc.name}</strong>
+          ${ratingStr ? `<div style="color:#C9A84C;font-size:11px;">${ratingStr}</div>` : ""}
+          ${loc.address ? `<div style="font-size:10px;color:#666;margin-top:4px;">${loc.address}</div>` : ""}
+          ${openStr ? `<div style="font-size:10px;margin-top:3px;">${openStr}</div>` : ""}
+          ${loc.lat && loc.lng ? `<button onclick="openNavigation(${loc.lat}, ${loc.lng}, '${(loc.name||'').replace(/'/g,"\\'")}', '${lang||'en'}')" style="margin-top:8px;padding:4px 10px;background:#C8860A;color:white;border:none;border-radius:4px;font-size:11px;cursor:pointer;">🧭 ${lang==='de'?'Navigieren':lang==='en'?'Navigate':'Navegar'}</button>` : ""}
+        </div>
+      `);
+      markersRef.current.push(marker);
+    });
+
+    // Fit bounds to show all markers
+    if (locations.length > 1) {
+      const validLocs = locations.filter(l => l.lat && l.lng);
+      if (validLocs.length > 1) {
+        const bounds = L.latLngBounds(validLocs.map(l => [l.lat, l.lng]));
+        if (userLat && userLng) bounds.extend([userLat, userLng]);
+        map.fitBounds(bounds, { padding: [30, 30] });
+      }
+    }
+
+    // Cleanup on unmount
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, [locations, userLat, userLng, lang]);
+
+  if (!locations || locations.length === 0) return null;
+
+  return (
+    <div style={{ marginBottom: 14 }}>
+      <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono',monospace", color: P.cinza,
+        marginBottom: 7, letterSpacing: "0.5px", display: "flex", alignItems: "center", gap: 6 }}>
+        <span>🗺️</span>
+        <span>{lang === "PT" ? "SUPER CARTA" : lang === "DE" ? "ÜBERSICHTSKARTE" : "OVERVIEW MAP"}</span>
+        <span style={{ color: P.verde }}>· {locations.length} {lang === "PT" ? "local" : lang === "DE" ? "Ort" : "place"}{locations.length > 1 ? (lang === "PT" ? "is" : lang === "DE" ? "e" : "s") : ""}</span>
+      </div>
+      <div
+        ref={mapRef}
+        style={{
+          width: "100%",
+          height: 240,
+          borderRadius: 12,
+          border: `1px solid rgba(139,94,60,0.2)`,
+          overflow: "hidden",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.08)"
+        }}
+      />
+      <div style={{ fontSize: 9, fontFamily: "'JetBrains Mono',monospace", color: P.cinza,
+        marginTop: 6, textAlign: "right", opacity: 0.7 }}>
+        © OpenStreetMap · Leaflet
+      </div>
+    </div>
+  );
+}
+
+function MicButton({onResult,onListening,lang,disabled}){
+  const[active,setActive]=useState(false);
+  const recRef=useRef(null);
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  const toggle=()=>{
+    if(disabled)return;
+    if(active){recRef.current&&recRef.current.stop();setActive(false);return;}
+    if(!SR)return;
+    const rec=new SR();
+    rec.lang=lang==="DE"?"de-DE":lang==="EN"?"en-GB":"pt-PT";
+    rec.interimResults=false;
+    rec.onstart=()=>{setActive(true);onListening&&onListening();};
+    rec.onresult=e=>{setActive(false);onResult&&onResult(e.results[0][0].transcript);};
+    rec.onerror=()=>setActive(false);
+    rec.onend=()=>setActive(false);
+    recRef.current=rec;rec.start();
+  };
+  return(
+    <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:8}}>
+      <button onClick={toggle} disabled={disabled} style={{
+        width:76,height:76,borderRadius:"50%",
+        background:active?`radial-gradient(circle,${P.vermelho}cc,${P.terra}99)`:`radial-gradient(circle,${P.terra}33,transparent)`,
+        border:`3px solid ${active?P.vermelho:P.terra}`,
+        display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,
+        cursor:disabled?"not-allowed":"pointer",
+        animation:active?"pulse 1s infinite":"none",transition:"all 0.3s",
+        opacity:disabled?0.4:1,boxShadow:active?`0 0 24px ${P.vermelho}66`:"none"}}>
+        {active?"⏹":"🎙️"}
+      </button>
+      {!SR&&<div style={{fontSize:10,color:P.cinza,textAlign:"center",maxWidth:180}}>Browser sem suporte a voz</div>}
+    </div>
+  );
+}
+
+function App(){
+  const[lang,setLang]=useState("PT");
+  const t=I18N[lang];
+  const[mode,setMode]=useState("idle");
+  const[result,setResult]=useState(null);
+  const[activeStage,setActiveStage]=useState(null);
+  const[doneSt,setDoneSt]=useState([]);
+  const[sealed,setSealed]=useState(false);
+  const[textIn,setTextIn]=useState("");
+  const[transcript,setTranscript]=useState("");
+  const[showIntent,setShowIntent]=useState(false);
+  const[apiSource,setApiSource]=useState(null);
+  const[backendOK,setBackendOK]=useState(null);
+  const[greeting,setGreeting]=useState(null);
+  const[weather,setWeather]=useState(null);
+  const[userGPS,setUserGPS]=useState({lat:null,lng:null});
+  const[navigating,setNavigating]=useState(false); // §85 — Track navigation state
+  const timers=useRef([]);
+
+  // §85 — Expose arrival callback to global
+  useEffect(()=>{
+    window._windiShowArrival=()=>setNavigating(true);
+    return()=>{window._windiShowArrival=null;};
+  },[]);
+
+  useEffect(()=>{
+    // Health check
+    fetch(MARIA_HEALTH,{signal:AbortSignal.timeout(3000)})
+      .then(r=>setBackendOK(r.ok))
+      .catch(()=>setBackendOK(false));
+    // §65 — Personalized greeting on load + save GPS for SuperCarta
+    getGPS().then(({lat,lng})=>{
+      if(lat&&lng)setUserGPS({lat,lng});
+    });
+    if(WALLET_ID){
+      getGPS().then(({lat,lng})=>{
+        if(lat&&lng)setUserGPS({lat,lng});
+        fetch(MARIA_API,{
+          method:"POST",headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({intent:{type:"greeting"},lang,lat,lng,wallet_id:WALLET_ID}),
+          signal:AbortSignal.timeout(API_TIMEOUT)
+        })
+        .then(r=>r.json())
+        .then(d=>{
+          if(d.context&&d.context.greeting)setGreeting(d.context.greeting);
+          if(d.context&&d.context.weather)setWeather(d.context.weather);
+        })
+        .catch(()=>{});
+      });
+    }
+  },[]);
+
+  const clearT=()=>{timers.current.forEach(clearTimeout);timers.current=[];};
+
+  const runPipeline=useCallback(async(intent,inputText,fallbackSc)=>{
+    clearT();
+    setTranscript(inputText);setMode("processing");
+    setDoneSt([]);setSealed(false);setShowIntent(false);setResult(null);
+    const ids=STAGES.map(s=>s.id);
+    ids.forEach((id,i)=>{
+      const t0=setTimeout(()=>{
+        setActiveStage(id);
+        setDoneSt(prev=>[...prev,ids[i-1]].filter(Boolean));
+      },i*480);
+      timers.current.push(t0);
+    });
+    const{source,data}=await callMariaAPI(intent,lang,fallbackSc,inputText);
+    setApiSource(source);
+    const wait=ids.length*480+300;
+    const t1=setTimeout(()=>{
+      setDoneSt(ids.slice(0,-1));setActiveStage(null);
+      setResult(data);setMode("speaking");
+      // §71 — No seal suffix for greetings (nothing to seal)
+      const isGreeting=data.decision&&data.decision.type==="greeting";
+      const vt=(data.maria_voice&&(data.maria_voice[lang]||data.maria_voice.PT)||"")+(isGreeting?"":(" "+t.suffix));
+      speakMaria(vt,lang,()=>setMode("result"));
+    },wait);
+    timers.current.push(t1);
+  },[lang,t]);
+
+  const handleDemo=sc=>{if(mode==="processing")return;runPipeline(sc.intent,sc.input,sc);};
+  // §79 — Demo Super Carta (map test)
+  const handleDemoMap=async()=>{
+    if(mode==="processing")return;
+    setMode("processing");setTranscript("🗺️ Demo Super Carta");setDoneSt([]);setSealed(false);setShowIntent(false);setResult(null);
+    const ids=STAGES.map(s=>s.id);
+    ids.forEach((id,i)=>{
+      const t0=setTimeout(()=>{setActiveStage(id);setDoneSt(prev=>[...prev,ids[i-1]].filter(Boolean));},i*200);
+      timers.current.push(t0);
+    });
+    try{
+      const r=await fetch("/travel/maria/demo-carta",{signal:AbortSignal.timeout(5000)});
+      const data=await r.json();
+      setApiSource("live");
+      const t1=setTimeout(()=>{setDoneSt(ids.slice(0,-1));setActiveStage(null);setResult(data);setMode("result");},ids.length*200+100);
+      timers.current.push(t1);
+    }catch(e){setMode("idle");setApiSource(null);}
+  };
+  const handleVoice=tr=>{
+    const sc=t.scenarios.find(s=>
+      s.intent.type===(/museu|museum/i.test(tr)?"museum":/caf[eé]/i.test(tr)?"cafe":"restaurant")
+    )||t.scenarios[0];
+    runPipeline({...sc.intent},tr,sc);
+  };
+  // §69c — Smart intent detection from text input
+  const detectIntentFromText=(text)=>{
+    const lower=text.toLowerCase();
+    // Greetings first (highest priority)
+    if(/^(ol[aá]|oi|hey|hello|hallo|hi|bom dia|boa tarde|boa noite|guten|good morning|good evening)\b/i.test(lower))
+      return {type:"greeting"};
+    // Place types
+    if(/farm[aá]cia|apotheke|pharmacy|medicamento/i.test(lower))return{type:"pharmacy"};
+    if(/hospital|cl[ií]nica|urg[eê]ncia|krankenhaus|emergency/i.test(lower))return{type:"hospital"};
+    if(/banco|bank|atm|multibanco|geldautomat/i.test(lower))return{type:"bank"};
+    if(/supermercado|supermarkt|grocery|mercado/i.test(lower))return{type:"supermarket"};
+    if(/caf[eé]|coffee|kaffee/i.test(lower))return{type:"cafe"};
+    if(/restaurante?|comer|essen|jantar|almo[çc]o/i.test(lower))return{type:"restaurant"};
+    if(/museu|museum/i.test(lower))return{type:"museum"};
+    if(/praia|strand|beach/i.test(lower))return{type:"beach"};
+    if(/hotel|alojamento|unterkunft|hostel/i.test(lower))return{type:"hotel"};
+    if(/voo|voar|fly|flight|flug/i.test(lower))return{type:"flight"};
+    // Default: general query
+    return{type:"general"};
+  };
+  const handleText=()=>{
+    if(!textIn.trim())return;
+    const intent=detectIntentFromText(textIn);
+    const sc=t.scenarios[0]; // fallback for UI demo data
+    runPipeline(intent,textIn,sc);
+    setTextIn("");
+  };
+  const reset=()=>{
+    clearT();window.speechSynthesis&&window.speechSynthesis.cancel();
+    setMode("idle");setResult(null);setActiveStage(null);
+    setDoneSt([]);setSealed(false);setTranscript("");setApiSource(null);
+  };
+
+  const statusBg={idle:"rgba(255,255,255,0.1)",listening:P.vermelho,
+    processing:P.ouro,speaking:P.agua,result:P.verde};
+  const statusTxt={idle:t.s_idle,listening:t.s_listen,
+    processing:t.s_proc,speaking:t.s_speak,result:t.s_result};
+  const decision=result&&result.decision;
+  const ctx=result&&result.context;
+
+  return(
+    <div style={{minHeight:"100vh",background:`linear-gradient(160deg,${P.branco},${P.pergaminho})`,fontFamily:"'Bricolage Grotesque',Georgia,sans-serif",paddingBottom:40}}>
+
+      {/* HEADER */}
+      <div style={{background:P.noite,padding:"13px 16px",display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:100}}>
+        <div style={{display:"flex",alignItems:"center",gap:10}}>
+          <a href="/travel/workspace/" style={{width:32,height:32,background:"rgba(255,255,255,0.1)",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,textDecoration:"none",color:"white"}}>←</a>
+          <div style={{width:36,height:36,background:`linear-gradient(135deg,${P.terra},${P.ouro})`,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18}}>🐉</div>
+          <div>
+            <div style={{color:"white",fontWeight:800,fontSize:16}}>Maria</div>
+            <div style={{color:P.cinza,fontSize:10,fontFamily:"'JetBrains Mono',monospace",letterSpacing:"1px"}}>W-MARIA-001 · WINDI TRAVEL</div>
+          </div>
+        </div>
+        <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:5}}>
+          <div style={{display:"flex",gap:3}}>
+            {["PT","DE","EN"].map(l=>(
+              <button key={l} onClick={()=>{setLang(l);reset();}} style={{
+                padding:"3px 9px",borderRadius:20,
+                border:`1px solid ${lang===l?P.ouro:"rgba(255,255,255,0.15)"}`,
+                background:lang===l?P.ouro:"transparent",
+                color:lang===l?P.noite:"rgba(255,255,255,0.55)",
+                fontSize:10,fontFamily:"'JetBrains Mono',monospace",fontWeight:700,cursor:"pointer"}}>{l}</button>
+            ))}
+          </div>
+          <div style={{display:"flex",gap:4,alignItems:"center"}}>
+            {backendOK!==null&&(
+              <div style={{background:backendOK?P.verde:"rgba(255,255,255,0.08)",color:"white",
+                borderRadius:20,padding:"2px 8px",fontSize:8,fontFamily:"'JetBrains Mono',monospace",letterSpacing:"0.5px"}}>
+                {backendOK?t.s_live:t.s_fallback}
+              </div>
+            )}
+            <div style={{background:statusBg[mode],color:"white",borderRadius:20,padding:"3px 10px",
+              fontSize:9,fontFamily:"'JetBrains Mono',monospace",letterSpacing:"0.5px",transition:"background 0.4s"}}>
+              {statusTxt[mode]}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style={{padding:"18px 16px 0"}}>
+
+        {apiSource&&(
+          <div style={{background:apiSource==="live"?"rgba(92,122,90,0.1)":"rgba(201,168,76,0.08)",
+            border:`1px solid ${apiSource==="live"?P.verde:P.ouro}33`,borderRadius:8,
+            padding:"7px 11px",marginBottom:12,fontSize:10,
+            fontFamily:"'JetBrains Mono',monospace",
+            color:apiSource==="live"?P.verde:P.terra,letterSpacing:"0.5px",animation:"fadeIn 0.3s ease"}}>
+            {apiSource==="live"?"✓ "+t.live_notice:"◌ "+t.error_notice}
+          </div>
+        )}
+
+        {mode!=="idle"&&<PipelineBar active={activeStage} done={doneSt} lang={lang}/>}
+
+        {/* IDLE */}
+        {mode==="idle"&&(
+          <div style={{animation:"fadeIn 0.4s ease"}}>
+            {/* §65 — Personalized greeting */}
+            {greeting&&(
+              <div style={{background:"rgba(139,94,60,0.08)",borderRadius:12,padding:"14px 16px",
+                marginBottom:16,display:"flex",alignItems:"center",gap:12}}>
+                <div style={{fontSize:28}}>🌍</div>
+                <div>
+                  <div style={{fontSize:16,fontWeight:700,color:P.terra}}>{greeting}</div>
+                  {weather&&<div style={{fontSize:12,color:P.cinza,marginTop:2}}>{weather}</div>}
+                </div>
+              </div>
+            )}
+            <div style={{textAlign:"center",padding:"18px 0 14px"}}>
+              <div style={{fontSize:10,color:P.cinza,fontFamily:"'JetBrains Mono',monospace",
+                letterSpacing:"1px",marginBottom:6,textTransform:"uppercase"}}>{t.tagline}</div>
+              <div style={{fontSize:19,fontWeight:900,color:P.noite,lineHeight:1.2,
+                maxWidth:270,margin:"0 auto 18px"}}>{t.headline}</div>
+              <MicButton onResult={handleVoice} onListening={()=>setMode("listening")} lang={lang} disabled={false}/>
+              <div style={{fontSize:11,color:P.cinza,marginTop:9,fontFamily:"'JetBrains Mono',monospace"}}>{t.tap_mic}</div>
+            </div>
+            <div style={{display:"flex",alignItems:"center",gap:10,margin:"14px 0"}}>
+              <div style={{flex:1,height:1,background:"rgba(139,94,60,0.15)"}}/>
+              <span style={{fontSize:10,color:P.cinza,fontFamily:"'JetBrains Mono',monospace"}}>ou</span>
+              <div style={{flex:1,height:1,background:"rgba(139,94,60,0.15)"}}/>
+            </div>
+            <div style={{marginBottom:14}}>
+              <div style={{fontSize:10,fontFamily:"'JetBrains Mono',monospace",color:P.cinza,marginBottom:8,letterSpacing:"0.5px"}}>{t.demos_label}</div>
+              {t.scenarios.map((s,i)=>(
+                <button key={i} onClick={()=>handleDemo(s)} style={{
+                  width:"100%",textAlign:"left",background:"white",
+                  border:`1px solid rgba(139,94,60,0.15)`,borderRadius:10,
+                  padding:"10px 13px",marginBottom:6,cursor:"pointer",
+                  display:"flex",alignItems:"center",gap:10}}>
+                  <span style={{fontSize:16}}>🎙️</span>
+                  <span style={{fontSize:13,color:P.noite,lineHeight:1.3}}>"{s.input}"</span>
+                </button>
+              ))}
+              {/* §79 — Super Carta Demo Button */}
+              <button onClick={handleDemoMap} style={{
+                width:"100%",textAlign:"left",background:`linear-gradient(135deg,${P.agua}15,${P.verde}10)`,
+                border:`1px solid ${P.agua}44`,borderRadius:10,
+                padding:"10px 13px",marginBottom:6,cursor:"pointer",
+                display:"flex",alignItems:"center",gap:10}}>
+                <span style={{fontSize:16}}>🗺️</span>
+                <span style={{fontSize:13,color:P.agua,lineHeight:1.3,fontWeight:600}}>{lang==="PT"?"Ver Demo Super Carta (Mapa)":lang==="DE"?"Super Carta Demo ansehen (Karte)":"View Super Carta Demo (Map)"}</span>
+              </button>
+            </div>
+            <div style={{marginBottom:18}}>
+              <div style={{fontSize:10,fontFamily:"'JetBrains Mono',monospace",color:P.cinza,marginBottom:7,letterSpacing:"0.5px"}}>{t.or_write}</div>
+              <div style={{display:"flex",gap:7}}>
+                <input value={textIn} onChange={e=>setTextIn(e.target.value)}
+                  onKeyDown={e=>e.key==="Enter"&&handleText()}
+                  placeholder={t.input_ph}
+                  style={{flex:1,padding:"10px 11px",border:`1px solid rgba(139,94,60,0.25)`,
+                    borderRadius:8,fontSize:13,fontFamily:"'Bricolage Grotesque',sans-serif",
+                    background:"white",color:P.noite,outline:"none"}}/>
+                <button onClick={handleText} style={{padding:"10px 15px",background:P.terra,
+                  color:"white",border:"none",borderRadius:8,fontSize:17,cursor:"pointer"}}>→</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* LISTENING */}
+        {mode==="listening"&&(
+          <div style={{textAlign:"center",padding:"40px 0",animation:"fadeIn 0.3s ease"}}>
+            <WaveAnim color={P.terra} bars={5}/>
+            <div style={{fontSize:15,fontWeight:700,color:P.terra,marginTop:14}}>{t.listening}</div>
+          </div>
+        )}
+
+        {/* PROCESSING */}
+        {mode==="processing"&&(
+          <div style={{animation:"fadeIn 0.3s ease"}}>
+            <div style={{background:"rgba(201,168,76,0.08)",border:`1px solid ${P.ouro}44`,
+              borderRadius:10,padding:"11px 13px",marginBottom:14,
+              fontStyle:"italic",color:P.terra,fontSize:13,lineHeight:1.4}}>
+              "{transcript}"
+            </div>
+            <div style={{textAlign:"center",color:P.cinza,fontSize:11,fontFamily:"'JetBrains Mono',monospace"}}>{t.processing}</div>
+          </div>
+        )}
+
+        {/* SPEAKING */}
+        {mode==="speaking"&&result&&(
+          <div style={{textAlign:"center",padding:"24px 16px",animation:"fadeIn 0.3s ease"}}>
+            <WaveAnim color={P.agua} bars={7}/>
+            <div style={{fontSize:14,fontWeight:700,color:P.agua,marginTop:12}}>{t.speaking}</div>
+            <div style={{fontSize:13,color:P.terra,fontStyle:"italic",marginTop:10,
+              maxWidth:280,margin:"10px auto 0",lineHeight:1.5}}>
+              "{result.maria_voice&&(result.maria_voice[lang]||result.maria_voice.PT)}"
+            </div>
+          </div>
+        )}
+
+        {/* RESULT */}
+        {mode==="result"&&result&&decision&&(
+          <div style={{animation:"fadeIn 0.4s ease"}}>
+            <div style={{background:"rgba(201,168,76,0.08)",border:`1px solid ${P.ouro}44`,
+              borderRadius:10,padding:"9px 13px",marginBottom:13,
+              fontStyle:"italic",color:P.terra,fontSize:13}}>"{transcript}"</div>
+
+            {ctx&&(
+              <div style={{marginBottom:10}}>
+                <div style={{fontSize:10,fontFamily:"'JetBrains Mono',monospace",color:P.cinza,marginBottom:7,letterSpacing:"0.5px"}}>{t.ctx_label}</div>
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:7}}>
+                  {Object.entries(ctx).filter(([k])=>["weather","location","companions"].includes(k)).map(([k,v])=>(
+                    <div key={k} style={{background:P.pergaminho,border:`1px solid rgba(139,94,60,0.15)`,
+                      borderRadius:8,padding:"7px 5px",textAlign:"center"}}>
+                      <div style={{fontSize:8,fontFamily:"'JetBrains Mono',monospace",color:P.cinza,
+                        textTransform:"uppercase",letterSpacing:"0.3px",marginBottom:3}}>{t.ctx_keys[k]||k}</div>
+                      <div style={{fontSize:11,fontWeight:600,color:P.terra}}>{String(v)}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {result.sovereign_mode&&(
+              <div style={{background:"rgba(107,76,147,0.08)",border:`1px solid ${P.roxo}44`,
+                borderRadius:8,padding:"7px 11px",marginBottom:10,fontSize:10,
+                fontFamily:"'JetBrains Mono',monospace",color:P.roxo}}>◌ {t.sovereign_notice}</div>
+            )}
+
+            <button onClick={()=>setShowIntent(v=>!v)} style={{background:"none",border:"none",cursor:"pointer",
+              fontSize:10,fontFamily:"'JetBrains Mono',monospace",color:P.agua,letterSpacing:"0.5px",marginBottom:8,padding:0}}>
+              {showIntent?t.intent_hide:t.intent_show}
+            </button>
+            {showIntent&&(
+              <div style={{background:"rgba(74,124,158,0.08)",border:`1px solid rgba(74,124,158,0.2)`,
+                borderRadius:10,padding:"11px 13px",marginBottom:11}}>
+                <div style={{fontSize:10,fontFamily:"'JetBrains Mono',monospace",color:P.agua,marginBottom:7,letterSpacing:"1px"}}>W-INTENT-ENGINE · PARSED</div>
+                <pre style={{fontSize:11,fontFamily:"'JetBrains Mono',monospace",color:P.noite,margin:0,lineHeight:1.6,whiteSpace:"pre-wrap"}}>
+                  {JSON.stringify(result.intent_parsed,null,2)}
+                </pre>
+              </div>
+            )}
+
+            <div style={{background:P.noite,borderRadius:14,padding:"15px",marginBottom:13,position:"relative"}}>
+              <div style={{position:"absolute",top:-10,left:14,background:P.terra,borderRadius:20,
+                padding:"2px 10px",fontSize:10,color:"white",fontFamily:"'JetBrains Mono',monospace"}}>{t.maria_tag}</div>
+              <p style={{color:P.pergaminho,fontSize:13,lineHeight:1.6,margin:"7px 0 0",fontStyle:"italic"}}>
+                "{result.maria_voice&&(result.maria_voice[lang]||result.maria_voice.PT)}{decision.type!=="greeting"&&(" "+t.suffix)}"
+              </p>
+              <button onClick={()=>speakMaria((result.maria_voice&&(result.maria_voice[lang]||result.maria_voice.PT)||"")+(decision.type!=="greeting"?(" "+t.suffix):""),lang,null)}
+                style={{background:"none",border:`1px solid rgba(255,255,255,0.2)`,borderRadius:20,
+                  padding:"3px 11px",color:"rgba(255,255,255,0.55)",fontSize:10,
+                  fontFamily:"'JetBrains Mono',monospace",cursor:"pointer",marginTop:9}}>{t.replay}</button>
+            </div>
+
+            {/* §71 — Hide decision card + seal for greetings. Ledger is for REAL decisions. */}
+            {decision.type!=="greeting"&&(
+            <div style={{marginBottom:8}}>
+              <div style={{fontSize:10,fontFamily:"'JetBrains Mono',monospace",color:P.cinza,marginBottom:7,letterSpacing:"0.5px"}}>{t.decision_label}</div>
+              <div style={{background:sealed?`linear-gradient(135deg,${P.verde}15,${P.ouro}10)`:`linear-gradient(135deg,${P.pergaminho},white)`,
+                border:`2px solid ${sealed?P.verde:P.ouro}`,borderRadius:14,padding:"14px",marginBottom:11,transition:"all 0.4s"}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:10}}>
+                  <div>
+                    <div style={{fontSize:17,fontWeight:800,color:P.noite}}>{decision.name}</div>
+                    <div style={{fontSize:12,color:P.cinza,marginTop:2}}>{decision.type} · {decision.distance_text}</div>
+                    {decision.rating&&<div style={{fontSize:11,color:P.ouro,marginTop:2}}>★ {decision.rating}</div>}
+                  </div>
+                  <div style={{background:P.verde,color:"white",borderRadius:20,padding:"3px 9px",fontSize:10,fontWeight:600,fontFamily:"'JetBrains Mono',monospace"}}>{decision.queue_status}</div>
+                </div>
+                <div style={{background:"rgba(26,26,46,0.04)",borderRadius:8,padding:"9px 11px",marginBottom:11,borderLeft:`3px solid ${P.ouro}`}}>
+                  <div style={{fontSize:10,fontFamily:"'JetBrains Mono',monospace",color:P.cinza,marginBottom:3,letterSpacing:"0.5px"}}>{t.reason_label}</div>
+                  <div style={{fontSize:12,color:P.terra,lineHeight:1.5}}>{decision.reason}</div>
+                </div>
+                {result&&result.locations&&result.locations[0]&&(<button onClick={()=>{openNavigation(result.locations[0].lat,result.locations[0].lng,result.locations[0].name||decision.text,lang);setNavigating(true);}} style={{width:"100%",padding:"10px",background:"#C8860A",color:"white",border:"none",borderRadius:10,fontSize:13,fontWeight:700,cursor:"pointer",marginBottom:8}}>🧭 {lang==="de"?"Navigieren":lang==="en"?"Navigate":"Navegar"}</button>)}
+                {navigating&&(<button onClick={()=>{confirmArrival(lang);setNavigating(false);}} style={{width:"100%",padding:"10px",background:"#5C7A5A",color:"white",border:"none",borderRadius:10,fontSize:13,fontWeight:700,cursor:"pointer",marginBottom:8}}>✅ {lang==="de"?"Angekommen!":lang==="en"?"I arrived!":"Cheguei!"}</button>)}
+                {!sealed?(
+                  <button onClick={()=>setSealed(true)} style={{width:"100%",padding:"11px",
+                    background:`linear-gradient(135deg,${P.terra},${P.ouro})`,color:"white",
+                    border:"none",borderRadius:10,fontSize:13,fontWeight:700,cursor:"pointer"}}>{t.seal_btn}</button>
+                ):(
+                  <div style={{background:P.verde,color:"white",borderRadius:10,padding:"9px",
+                    textAlign:"center",fontSize:11,fontFamily:"'JetBrains Mono',monospace"}}>
+                    ✓ SEALED · {result.ledger_receipt_id||"WINDI-TRAVEL-"+Date.now().toString(36).toUpperCase()}
+                  </div>
+                )}
+              </div>
+            </div>
+            )}
+
+            {/* §80 — 3 Layers Receipt Display (Human → Technical → API) */}
+            {sealed&&decision.type!=="greeting"&&(
+              <div style={{background:"rgba(92,122,90,0.08)",border:`1px solid ${P.verde}44`,
+                borderRadius:12,padding:"14px 16px",marginBottom:14,animation:"fadeIn 0.4s ease"}}>
+
+                {/* LAYER 1 — HUMAN (sempre visível) */}
+                <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
+                  <div style={{width:36,height:36,background:P.verde,borderRadius:"50%",
+                    display:"flex",alignItems:"center",justifyContent:"center",fontSize:18}}>✓</div>
+                  <div>
+                    <div style={{fontSize:14,fontWeight:800,color:P.verde}}>
+                      {lang==="PT"?"SELADO":lang==="DE"?"VERSIEGELT":"SEALED"}
+                    </div>
+                    <div style={{fontSize:10,fontFamily:"'JetBrains Mono',monospace",color:P.cinza}}>
+                      {result.ledger_receipt_id||"DEMO-"+Date.now().toString(36).toUpperCase()}
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:12}}>
+                  <div style={{display:"flex",alignItems:"center",gap:6}}>
+                    <span style={{fontSize:14}}>📍</span>
+                    <span style={{fontSize:12,color:P.noite}}>{decision.name}</span>
+                  </div>
+                  <div style={{display:"flex",alignItems:"center",gap:6}}>
+                    <span style={{fontSize:14}}>🕐</span>
+                    <span style={{fontSize:11,color:P.cinza}}>
+                      {new Date(result.timestamp).toLocaleString(lang==="PT"?"pt-PT":lang==="DE"?"de-DE":"en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}
+                    </span>
+                  </div>
+                </div>
+
+                <div style={{display:"flex",alignItems:"center",gap:6,padding:"8px 10px",
+                  background:"rgba(92,122,90,0.1)",borderRadius:8}}>
+                  <span style={{fontSize:14}}>🔐</span>
+                  <span style={{fontSize:11,color:P.verde}}>
+                    {lang==="PT"?"Decisão verificável no Ledger":lang==="DE"?"Im Ledger verifizierbar":"Verifiable on Ledger"}
+                  </span>
+                </div>
+
+                {/* LAYER 2 — TECHNICAL (collapsed) */}
+                <details style={{marginTop:10}}>
+                  <summary style={{fontSize:10,fontFamily:"'JetBrains Mono',monospace",color:P.cinza,
+                    cursor:"pointer",letterSpacing:"0.5px",padding:"4px 0"}}>
+                    {lang==="PT"?"▶ Ver detalhes técnicos":lang==="DE"?"▶ Technische Details":"▶ View technical details"}
+                  </summary>
+                  <div style={{marginTop:8,padding:"10px",background:"rgba(26,26,46,0.04)",borderRadius:8}}>
+                    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6,fontSize:10,fontFamily:"'JetBrains Mono',monospace"}}>
+                      <div><span style={{color:P.cinza}}>source:</span> <span style={{color:P.terra}}>{apiSource}</span></div>
+                      <div><span style={{color:P.cinza}}>governance:</span> <span style={{color:P.ouro}}>HIGH</span></div>
+                      <div><span style={{color:P.cinza}}>lang:</span> <span style={{color:P.terra}}>{lang}</span></div>
+                      <div><span style={{color:P.cinza}}>verified:</span> <span style={{color:P.verde}}>true</span></div>
+                    </div>
+                  </div>
+                </details>
+              </div>
+            )}
+
+            {/* §79 — Super Carta: Shows map when locations are available */}
+            {result.locations&&result.locations.length>0&&(
+              <SuperCarta
+                locations={result.locations}
+                userLat={userGPS.lat}
+                userLng={userGPS.lng}
+                lang={lang}
+              />
+            )}
+
+            <button onClick={reset} style={{width:"100%",padding:"11px",background:"transparent",
+              border:`1px solid rgba(139,94,60,0.3)`,borderRadius:10,color:P.terra,fontSize:13,cursor:"pointer"}}>{t.new_btn}</button>
+          </div>
+        )}
+
+        <div style={{textAlign:"center",marginTop:22,fontSize:10,
+          fontFamily:"'JetBrains Mono',monospace",color:P.cinza,letterSpacing:"0.5px"}}>
+          AI processes. Human decides. WINDI guarantees. 🐉
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
