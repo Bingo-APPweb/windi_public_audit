@@ -34,6 +34,9 @@ from proofstream import (
     register_fragment, human_decision, verify_chain
 )
 
+# SGV integration (Truth Illumination Engine)
+from sgv import analyse as sgv_analyse, init_sgv_db, SGVStatus
+
 # ── Config ────────────────────────────────────────────────────────────────────
 PORT        = int(os.getenv("JOE_PORT", 8129))
 DB_PATH     = os.getenv("JOE_DB", "/opt/windi/joe/joe.db")
@@ -117,7 +120,8 @@ def init_db():
 async def lifespan(app: FastAPI):
     init_db()
     init_proofstream(DB_PATH)
-    log.info("W-JOE-001 v%s live on :%d (ProofStream enabled)", VERSION, PORT)
+    init_sgv_db()
+    log.info("W-JOE-001 v%s live on :%d (ProofStream + SGV enabled)", VERSION, PORT)
     yield
     log.info("W-JOE-001 shutdown")
 
@@ -521,13 +525,27 @@ def route_live_end(body: LiveEndPayload):
 
 @app.post("/joe/live/fragment")
 def route_fragment(body: FragmentPayload):
-    """Regista fragmento do VD-CUT. Devolve prompt Telegram (SIM/NAO)."""
+    """Regista fragmento do VD-CUT. Devolve prompt Telegram (SIM/NAO) + SGV illumination."""
     result = register_fragment(
         DB_PATH, body.session_id,
         body.export_id, body.vdcut_hash, body.thumbnail_b64
     )
     if "error" in result:
         raise HTTPException(400, result["error"])
+
+    # SGV Truth Illumination (I13: illuminates, never blocks)
+    video_path = EXPORTS_DIR / f"{body.export_id}.mp4"
+    sgv_result = sgv_analyse(
+        fragment_id=result.get("fragment_id", body.export_id),
+        export_id=body.export_id,
+        video_path=video_path,
+        expected_hash=body.vdcut_hash
+    )
+    result["sgv"] = sgv_result.to_dict()
+    result["sgv_summary"] = sgv_result.telegram_summary()
+    log.info("SGV illumination: %s → %s (risk=%.2f)",
+             body.export_id, sgv_result.sgv_status, sgv_result.risk_score)
+
     return result
 
 
@@ -576,6 +594,59 @@ def route_get_manifest(session_id: str):
     if not manifest_path.exists():
         raise HTTPException(404, "Manifest not found")
     return HTMLResponse(manifest_path.read_text())
+
+
+# ── SGV Routes ─────────────────────────────────────────────────────────────────
+
+class SGVAnalysePayload(BaseModel):
+    fragment_id: str
+    export_id:   str
+    expected_hash: Optional[str] = None
+    location:    Optional[str] = None
+    timestamp:   Optional[str] = None
+    claim:       Optional[str] = None
+
+
+@app.post("/joe/sgv/analyse")
+def route_sgv_analyse(body: SGVAnalysePayload):
+    """
+    Standalone SGV analysis.
+    I13: SGV illuminates, never blocks. Human decides.
+    """
+    video_path = EXPORTS_DIR / f"{body.export_id}.mp4"
+    result = sgv_analyse(
+        fragment_id=body.fragment_id,
+        export_id=body.export_id,
+        video_path=video_path,
+        expected_hash=body.expected_hash,
+        location=body.location,
+        timestamp=body.timestamp,
+        claim=body.claim
+    )
+    return {
+        "sgv":      result.to_dict(),
+        "summary":  result.telegram_summary(),
+        "advisory": "SGV nao julga. SGV ilumina. Decisao final: humana."
+    }
+
+
+@app.get("/joe/sgv/{fragment_id}")
+def route_sgv_get(fragment_id: str):
+    """Retrieve SGV analysis for a fragment."""
+    import sqlite3
+    sgv_db = sqlite3.connect("/opt/windi/joe/sgv.db")
+    sgv_db.row_factory = sqlite3.Row
+    row = sgv_db.execute(
+        "SELECT * FROM sgv_analyses WHERE fragment_id=?", (fragment_id,)
+    ).fetchone()
+    sgv_db.close()
+    if not row:
+        raise HTTPException(404, "SGV analysis not found")
+    row = dict(row)
+    row["signals"] = json.loads(row.get("signals_json", "[]"))
+    row["explainability"] = json.loads(row.get("explainability", "[]"))
+    del row["signals_json"]
+    return row
 
 
 # ── Entrypoint ────────────────────────────────────────────────────────────────
