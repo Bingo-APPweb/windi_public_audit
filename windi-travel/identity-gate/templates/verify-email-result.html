@@ -196,11 +196,26 @@
         <div class="did-box">{{ did }}</div>
         {% endif %}
 
-        <a href="/law/workspace/?did={{ did }}" class="btn">
+        <a href="/travel/workspace/" class="btn">
             <span class="msg active" data-lang="de">Zum Workspace</span>
             <span class="msg" data-lang="en">Go to Workspace</span>
             <span class="msg" data-lang="pt">Ir para Workspace</span>
         </a>
+
+        <p class="message" style="margin-top: 1.5rem; font-size: 0.8rem;">
+            <span class="msg active" data-lang="de">
+                &#128241; Registriert auf einem anderen Gerät?<br>
+                Kehre zu deinem Mobilgerät zurück, oder verwende <a href="/travel/gate" style="color: var(--gold);">Magic Link Login</a> für dieses Gerät.
+            </span>
+            <span class="msg" data-lang="en">
+                &#128241; Registered on a different device?<br>
+                Return to your mobile device, or use <a href="/travel/gate" style="color: var(--gold);">Magic Link Login</a> for this device.
+            </span>
+            <span class="msg" data-lang="pt">
+                &#128241; Registado noutro dispositivo?<br>
+                Volta ao teu telemóvel, ou usa <a href="/travel/gate" style="color: var(--gold);">Magic Link Login</a> para este dispositivo.
+            </span>
+        </p>
 
         {% else %}
         <h1 class="error">
@@ -233,7 +248,7 @@
             </span>
         </p>
 
-        <a href="/law/gate" class="btn">
+        <a href="/travel/gate" class="btn">
             <span class="msg active" data-lang="de">Zum Gate</span>
             <span class="msg" data-lang="en">Go to Gate</span>
             <span class="msg" data-lang="pt">Ir para Gate</span>
