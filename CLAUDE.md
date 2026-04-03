@@ -935,6 +935,34 @@ Se o Gêmeo inventa um receipt... isso é falsificação."
 
 ---
 
+## §VD-CUT — W-VD-CUT-001 v1.0 — LIVE · 03 Apr 2026
+
+**Status:** LIVE · SEALED · I9+I11+I12 · IRREMEDIÁVEL
+**Porto:** :8128 · `/opt/windi/vd-cut/`
+**Commits:** `c2e06bd` (main · 15 files · 3419 ins) · `9beee7e` (nomad-bot · 7 files · 473 ins)
+**FFmpeg:** 5.1.8 · libx264 confirmado
+
+### Primeiros seals de vídeo WINDI
+- `WINDI-VDCUT-20260403132852-BB3E3F2F` · sha256:`32646d0f...` · valid
+- `WINDI-VDCUT-20260403132931-EEFB9816` · sha256:`368e261e...` · valid
+
+### Arquitectura
+Thin Server / Fat Client · Edit Script JSON · Queue max 1 job (Semaphore) · Telegram I9 gate
+
+### Known issue
+Telegram callback timeout após ~30s de encoding · UX only · seal funciona correctamente
+
+### Stack
+FastAPI · FFmpeg · SQLite WAL · python-telegram-bot · Ledger :8101 · Verify Public :8114
+
+### Próximo
+JOE (W-JOE-001) · :8129 · Director de Transmissão · PENDING
+
+### Filosofia
+> "Este momento é agora imutável e verificável."
+
+---
+
 *LIGA IA+H — Kempten, Bavaria · 2026*
 *"AI processes. Human decides. WINDI guarantees."*
 
