@@ -157,6 +157,7 @@ async def seal_to_ledger(story_id: str, h: str, narrative: str) -> Optional[str]
         "doc_type":       "jmpg",
         "governance_level": "HIGH",
         "content_hash":   f"sha256:{h}",
+        "sge_score":      0.85,
         "metadata": {
             "narrative":  narrative,
             "agent":      "W-JOE-001",
