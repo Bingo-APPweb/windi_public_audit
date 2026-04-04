@@ -1064,9 +1064,9 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
           <div class="pbox">
             <textarea id="prompt-input" placeholder="Beschreiben Sie Ihr rechtliches Anliegen… Dokument hochladen, Vertrag analysieren, Beweiskette erstellen"></textarea>
             <div class="pbox-ft" id="cmd-media-bar">
-              <div class="patt" title="Dokument"><span class="ico">📄</span><span class="lbl">DOC</span></div>
-              <div class="patt" title="Bild"><span class="ico">🖼</span><span class="lbl">IMG</span></div>
-              <div class="patt" title="Video"><span class="ico">🎥</span><span class="lbl">VID</span></div>
+              <div class="patt" title="Dokument" onclick="handleMedia('doc')"><span class="ico">📄</span><span class="lbl">DOC</span></div>
+              <div class="patt" title="Bild" onclick="handleMedia('img')"><span class="ico">🖼</span><span class="lbl">IMG</span></div>
+              <div class="patt" title="Video" onclick="handleMedia('vid')"><span class="ico">🎥</span><span class="lbl">VID</span></div>
               <!-- §122 Agent Selector -->
               <select id="agent-select" class="pagent-select" title="Agent auswählen">
                 <option value="legal">⚖️ W-LEGAL</option>
@@ -1213,9 +1213,9 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
             <div class="pbox">
               <textarea id="doc-followup" data-i18n-placeholder="docFollowupPh" placeholder="Folgeanalyse, weitere Fragen…" style="min-height:36px"></textarea>
               <div class="pbox-ft">
-                <div class="patt"><span class="ico">📄</span><span class="lbl">DOC</span></div>
-                <div class="patt"><span class="ico">🖼</span><span class="lbl">IMG</span></div>
-                <div class="patt"><span class="ico">🎥</span><span class="lbl">VID</span></div>
+                <div class="patt" onclick="handleMedia('doc')"><span class="ico">📄</span><span class="lbl">DOC</span></div>
+                <div class="patt" onclick="handleMedia('img')"><span class="ico">🖼</span><span class="lbl">IMG</span></div>
+                <div class="patt" onclick="handleMedia('vid')"><span class="ico">🎥</span><span class="lbl">VID</span></div>
                 <div class="pagent" id="doc-agent">W-LEGAL-001</div>
                 <div class="plang">
                   <button class="plbtn on">DE</button>
@@ -1806,26 +1806,72 @@ async function hashFile(file) {
 }
 
 function handleMedia(type) {
+  console.log('[WINDI-LAW] handleMedia called:', type);
   var input = document.createElement('input');
   input.type = 'file';
   if (type === 'img') input.accept = 'image/*';
   if (type === 'vid') input.accept = 'video/*';
-  if (type === 'doc') input.accept = '.pdf,.docx,.txt';
+  if (type === 'doc') input.accept = '.pdf,.docx,.doc,.txt,.md';
   input.onchange = async function(e) {
     var file = e.target.files[0];
     if (!file) return;
-    var hash = await hashFile(file);
+
+    console.log('[WINDI-LAW] File selected:', file.name, file.size, 'bytes');
+
+    // Show loading indicator
     var preview = document.getElementById('media-preview');
     if (preview) {
-      preview.innerHTML = '<span style="font-size:9px;font-family:var(--mono);color:var(--ink-3)">' +
-        file.name + ' · SHA-256: ' + hash.substring(0,16) + '…</span>';
+      preview.innerHTML = '<span style="font-size:9px;color:var(--gold)">⏳ Hashando ' + file.name + '...</span>';
       preview.style.display = 'flex';
     }
+
+    var hash = await hashFile(file);
     currentFileHash = hash;
     currentFileName = file.name;
-    console.log('[WINDI-LAW] File hashed:', file.name, hash.substring(0,16) + '…');
+    currentFileSize = file.size;
+    currentFileType = type;
+
+    // Update preview with file info
+    if (preview) {
+      var icon = type === 'img' ? '🖼' : (type === 'vid' ? '🎥' : '📄');
+      var sizeStr = file.size > 1024*1024 ? (file.size/1024/1024).toFixed(1) + ' MB' : (file.size/1024).toFixed(0) + ' KB';
+      preview.innerHTML = '<span style="font-size:10px;color:var(--ink-2)">' + icon + ' ' + file.name + '</span>' +
+        '<span style="font-size:9px;font-family:var(--mono);color:var(--gold);margin-left:8px">' + sizeStr + '</span>' +
+        '<span style="font-size:8px;font-family:var(--mono);color:var(--ink-4);margin-left:8px">SHA: ' + hash.substring(0,12) + '…</span>' +
+        '<button onclick="clearMediaPreview()" style="margin-left:8px;background:none;border:none;color:var(--ink-4);cursor:pointer;font-size:12px" title="Entfernen">✕</button>';
+      preview.style.display = 'flex';
+      preview.style.alignItems = 'center';
+      preview.style.gap = '4px';
+    }
+
+    // Add reference to prompt input
+    var promptInput = document.getElementById('prompt-input');
+    if (promptInput && !promptInput.value.includes(file.name)) {
+      var fileRef = '\n\n📎 Anhang: ' + file.name + ' (' + type.toUpperCase() + ')';
+      if (promptInput.value.trim()) {
+        promptInput.value += fileRef;
+      }
+    }
+
+    console.log('[WINDI-LAW] File hashed:', file.name, 'SHA-256:', hash.substring(0,16) + '…');
   };
   input.click();
+}
+
+var currentFileSize = null;
+var currentFileType = null;
+
+function clearMediaPreview() {
+  var preview = document.getElementById('media-preview');
+  if (preview) {
+    preview.style.display = 'none';
+    preview.innerHTML = '';
+  }
+  currentFileHash = null;
+  currentFileName = null;
+  currentFileSize = null;
+  currentFileType = null;
+  console.log('[WINDI-LAW] Media preview cleared');
 }
 
 // ═══════════════════════════════════════════════════════════════
