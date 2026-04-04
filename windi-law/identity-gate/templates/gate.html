@@ -493,11 +493,32 @@
     <script>
     (function() {
         try {
+            // §120.3: Check sessionStorage first, then cookie (DID = sovereign seed)
+            var did = '';
+
+            // 1. Try sessionStorage (active session)
             var w = sessionStorage.getItem('windi_law_wallet');
-            if (!w) return;
-            var wallet = JSON.parse(w);
-            var did = wallet.did || '';
+            if (w) {
+                try {
+                    var wallet = JSON.parse(w);
+                    did = wallet.did || '';
+                } catch(e) {}
+            }
+
+            // 2. If no sessionStorage, check cookie (returning user - browser closed)
+            if (!did) {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var c = cookies[i].trim();
+                    if (c.startsWith('windi_did=')) {
+                        did = decodeURIComponent(c.substring(10));
+                        break;
+                    }
+                }
+            }
+
             if (!did) return;
+
             var banner = document.getElementById('returning-banner');
             var didSpan = document.getElementById('returning-did');
             var wsLink = document.getElementById('returning-workspace-link');
