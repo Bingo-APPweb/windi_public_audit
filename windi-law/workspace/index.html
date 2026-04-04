@@ -547,8 +547,8 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
         <span class="topbar-live">aktiv</span>
         <div class="lang-pills">
           <button class="lpill on">DE</button>
-          <button class="lpill">PT</button>
           <button class="lpill">EN</button>
+          <button class="lpill">PT</button>
         </div>
       </div>
     </div>
@@ -570,8 +570,8 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
               <div class="pagent">W-LEGAL-001</div>
               <div class="plang">
                 <button class="plbtn on">DE</button>
-                <button class="plbtn">PT</button>
                 <button class="plbtn">EN</button>
+                <button class="plbtn">PT</button>
               </div>
               <button class="psend" onclick="go('active')">→</button>
             </div>
@@ -831,44 +831,128 @@ var inspOpen = false;
 // ══════════════════════════════════════════════════════════════
 var LANG = {
   de: {
+    pageTitle: 'WINDI LAW — Stille Governance',
     sbSchluesselTitle: 'Schlüssel', sbWalletTitle: 'Wallet',
     sbKeyTypeLabel: 'Typ', sbKeyCreatedLabel: 'Erstellt',
     sbPioneerLabel: 'Pioneer', sbCreditsLabel: 'Kredite',
     sbSovLabel: 'Lokale Souveränität',
     notConnected: 'Noch keine Wallet', connect: 'Wallet erstellen →',
     hashPlaceholder: '— — — —', createWallet: 'Wallet erstellen →',
-    tlStatusVerified: 'VERIFIED', tlStatusPending: 'PENDING'
+    tlStatusVerified: 'VERIFIED', tlStatusPending: 'PENDING',
+    // AI Draft i18n
+    aiStep1: '1 · Konfigurieren', aiStep2: '2 · I9 Genehmigung', aiStep3: '3 · Generieren',
+    aiStep4: '4 · Prüfen', aiStep5: '5 · I11 Versiegeln',
+    aiDocType: 'Dokumenttyp', aiJurisdiction: 'Gerichtsbarkeit', aiLanguage: 'Sprache',
+    aiDocName: 'Dokumentname', aiDocNamePh: 'z.B.: NDA zwischen Firma A und Firma B · 2026',
+    aiContext: 'Kontext · Parteien · Zweck',
+    aiContextPh: 'Beschreiben Sie:\n• Beteiligte Parteien\n• Zweck des Dokuments\n• Spezifische Bedingungen\n• Fristen, Werte, Pflichten',
+    aiHashWarn: '⚠️ Der Text wird gehasht und unveränderlich im Ledger versiegelt.',
+    aiI9Title: '🛡️ Invariant I9 — Menschliche Genehmigung',
+    aiI9Desc: 'Mit Klick auf "Generieren" bestätigst du diesen Antrag und wirst das Ergebnis prüfen.',
+    aiGenerate: '⚖️ Mit KI generieren', aiClose: 'Schließen',
+    aiGenerating: 'Juristisches Dokument wird generiert…', aiMotor: 'Motor: wird geladen…',
+    aiAfterGen: '🔐 Nach Generierung → menschliche Prüfung → I11 Versiegelung',
+    aiReviewLabel: '📄 Generiertes Dokument — Prüfen und bearbeiten',
+    aiEditHint: '✏️ Du kannst bearbeiten. Der finale Hash wird über den versiegelten Text berechnet.',
+    aiI11Title: '🔐 Invariant I11 + G3 — Permanente Versiegelung',
+    aiI11Desc: 'Der Hash wird unveränderlich im Forensic Ledger eingetragen.',
+    aiNotDelete: 'Kann nicht gelöscht werden.',
+    aiBack: '← Zurück', aiSeal: '🔐 Im Ledger versiegeln · I11',
+    aiModelLoading: 'Motor: lädt…',
+    aiSealedTitle: 'Dokument versiegelt · I11 ✅',
+    aiSealedDesc: 'Das Dokument existiert, ist identifiziert und öffentlich verifizierbar.',
+    aiVerifyLink: '🔍 Verify Public öffnen →',
+    aiNewDoc: '+ Neues Dokument'
   },
   pt: {
+    pageTitle: 'WINDI LAW — Governança Silenciosa',
     sbSchluesselTitle: 'Chave', sbWalletTitle: 'Carteira',
     sbKeyTypeLabel: 'Tipo', sbKeyCreatedLabel: 'Criada',
     sbPioneerLabel: 'Pioneer', sbCreditsLabel: 'Créditos',
     sbSovLabel: 'Soberania Local',
     notConnected: 'Ainda sem wallet', connect: 'Criar wallet →',
     hashPlaceholder: '— — — —', createWallet: 'Criar wallet →',
-    tlStatusVerified: 'VERIFICADO', tlStatusPending: 'PENDENTE'
+    tlStatusVerified: 'VERIFICADO', tlStatusPending: 'PENDENTE',
+    // AI Draft i18n
+    aiStep1: '1 · Configurar', aiStep2: '2 · Aprovar I9', aiStep3: '3 · Gerar',
+    aiStep4: '4 · Rever', aiStep5: '5 · Selar I11',
+    aiDocType: 'Tipo de Documento', aiJurisdiction: 'Jurisdição', aiLanguage: 'Idioma',
+    aiDocName: 'Nome do Documento', aiDocNamePh: 'Ex: NDA entre Empresa A e Empresa B · 2026',
+    aiContext: 'Contexto · Partes · Objectivo',
+    aiContextPh: 'Descreva:\n• Partes envolvidas\n• Objectivo do documento\n• Condições específicas\n• Prazo, valor, obrigações',
+    aiHashWarn: '⚠️ O texto será hasheado e selado no Ledger imutavelmente.',
+    aiI9Title: '🛡️ Invariant I9 — Aprovação Humana',
+    aiI9Desc: 'Ao clicar "Gerar", confirmas que aprovaste este pedido e irás rever o resultado.',
+    aiGenerate: '⚖️ Gerar com IA', aiClose: 'Fechar',
+    aiGenerating: 'A gerar documento jurídico…', aiMotor: 'Motor: carregando…',
+    aiAfterGen: '🔐 Após geração → revisão humana → seal I11',
+    aiReviewLabel: '📄 Documento Gerado — Revê e edita',
+    aiEditHint: '✏️ Podes editar. O hash final será calculado sobre o texto que selarás.',
+    aiI11Title: '🔐 Invariant I11 + G3 — Seal Permanente',
+    aiI11Desc: 'O hash será inscrito imutavelmente no Forensic Ledger.',
+    aiNotDelete: 'Não é possível apagar.',
+    aiBack: '← Voltar', aiSeal: '🔐 Selar no Ledger · I11',
+    aiModelLoading: 'Motor: carregando…',
+    aiSealedTitle: 'Documento Selado · I11 ✅',
+    aiSealedDesc: 'O documento existe, está identificado e é verificável publicamente.',
+    aiVerifyLink: '🔍 Abrir Verify Public →',
+    aiNewDoc: '+ Novo Documento'
   },
   en: {
+    pageTitle: 'WINDI LAW — Silent Governance',
     sbSchluesselTitle: 'Key', sbWalletTitle: 'Wallet',
     sbKeyTypeLabel: 'Type', sbKeyCreatedLabel: 'Created',
     sbPioneerLabel: 'Pioneer', sbCreditsLabel: 'Credits',
     sbSovLabel: 'Local Sovereignty',
     notConnected: 'No wallet yet', connect: 'Create wallet →',
     hashPlaceholder: '— — — —', createWallet: 'Create wallet →',
-    tlStatusVerified: 'VERIFIED', tlStatusPending: 'PENDING'
+    tlStatusVerified: 'VERIFIED', tlStatusPending: 'PENDING',
+    // AI Draft i18n
+    aiStep1: '1 · Configure', aiStep2: '2 · Approve I9', aiStep3: '3 · Generate',
+    aiStep4: '4 · Review', aiStep5: '5 · Seal I11',
+    aiDocType: 'Document Type', aiJurisdiction: 'Jurisdiction', aiLanguage: 'Language',
+    aiDocName: 'Document Name', aiDocNamePh: 'E.g.: NDA between Company A and Company B · 2026',
+    aiContext: 'Context · Parties · Purpose',
+    aiContextPh: 'Describe:\n• Parties involved\n• Document purpose\n• Specific conditions\n• Deadlines, values, obligations',
+    aiHashWarn: '⚠️ The text will be hashed and sealed immutably in the Ledger.',
+    aiI9Title: '🛡️ Invariant I9 — Human Approval',
+    aiI9Desc: 'By clicking "Generate", you confirm this request and will review the result.',
+    aiGenerate: '⚖️ Generate with AI', aiClose: 'Close',
+    aiGenerating: 'Generating legal document…', aiMotor: 'Engine: loading…',
+    aiAfterGen: '🔐 After generation → human review → I11 seal',
+    aiReviewLabel: '📄 Generated Document — Review and edit',
+    aiEditHint: '✏️ You can edit. The final hash will be calculated on the sealed text.',
+    aiI11Title: '🔐 Invariant I11 + G3 — Permanent Seal',
+    aiI11Desc: 'The hash will be inscribed immutably in the Forensic Ledger.',
+    aiNotDelete: 'Cannot be deleted.',
+    aiBack: '← Back', aiSeal: '🔐 Seal in Ledger · I11',
+    aiModelLoading: 'Engine: loading…',
+    aiSealedTitle: 'Document Sealed · I11 ✅',
+    aiSealedDesc: 'The document exists, is identified and publicly verifiable.',
+    aiVerifyLink: '🔍 Open Verify Public →',
+    aiNewDoc: '+ New Document'
   }
 };
 
 // ══════════════════════════════════════════════════════════════
 // setLang — Apply i18n to elements with data-i18n (F11 SEALED)
+// §120.4: Added data-i18n-placeholder support for inputs/textareas
 // ══════════════════════════════════════════════════════════════
 function setLang(l) {
   lang = l;
   var strings = LANG[l] || LANG.en;
+  // Text content
   document.querySelectorAll('[data-i18n]').forEach(function(el) {
     var key = el.getAttribute('data-i18n');
     if (strings[key]) el.textContent = strings[key];
   });
+  // Placeholders (inputs, textareas)
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n-placeholder');
+    if (strings[key]) el.placeholder = strings[key];
+  });
+  // Update page title
+  if (strings.pageTitle) document.title = strings.pageTitle;
   // Update lang pills
   document.querySelectorAll('.lpill, .plbtn').forEach(function(btn) {
     btn.classList.toggle('on', btn.textContent === l.toUpperCase());
@@ -1468,15 +1552,15 @@ console.log('[WINDI LAW] AI Draft Module v1.0.0 loaded');
         <h2>⚖️ AI Draft Mode</h2>
         <span class="ai-badge">WINDI LAW</span>
       </div>
-      <button class="ai-draft-close" onclick="closeAiDraft()" title="Fechar">×</button>
+      <button class="ai-draft-close" onclick="closeAiDraft()" data-i18n-title="aiClose">×</button>
     </div>
     <div class="ai-draft-body">
       <div class="ai-draft-steps">
-        <div class="ai-step active">1 · Configurar</div>
-        <div class="ai-step">2 · Aprovar I9</div>
-        <div class="ai-step">3 · Gerar</div>
-        <div class="ai-step">4 · Rever</div>
-        <div class="ai-step">5 · Selar I11</div>
+        <div class="ai-step active" data-i18n="aiStep1">1 · Configure</div>
+        <div class="ai-step" data-i18n="aiStep2">2 · Approve I9</div>
+        <div class="ai-step" data-i18n="aiStep3">3 · Generate</div>
+        <div class="ai-step" data-i18n="aiStep4">4 · Review</div>
+        <div class="ai-step" data-i18n="aiStep5">5 · Seal I11</div>
       </div>
 
       <!-- PHASE 1: Configure -->
@@ -1488,7 +1572,7 @@ console.log('[WINDI LAW] AI Draft Module v1.0.0 loaded');
         </div>
         <div class="ai-row">
           <div class="ai-field">
-            <label>Tipo de Documento</label>
+            <label data-i18n="aiDocType">Dokumenttyp</label>
             <select id="ai-doc-type">
               <option value="nda">NDA · Geheimhaltung</option>
               <option value="vertrag">Dienstleistungsvertrag</option>
@@ -1501,7 +1585,7 @@ console.log('[WINDI LAW] AI Draft Module v1.0.0 loaded');
             </select>
           </div>
           <div class="ai-field">
-            <label>Jurisdição</label>
+            <label data-i18n="aiJurisdiction">Gerichtsbarkeit</label>
             <select id="ai-jurisdiction">
               <option value="DE">🇩🇪 Deutschland</option>
               <option value="EU">🇪🇺 Europa (EU)</option>
@@ -1510,7 +1594,7 @@ console.log('[WINDI LAW] AI Draft Module v1.0.0 loaded');
             </select>
           </div>
           <div class="ai-field">
-            <label>Idioma</label>
+            <label data-i18n="aiLanguage">Sprache</label>
             <select id="ai-lang">
               <option value="DE">Deutsch</option>
               <option value="EN">English</option>
@@ -1519,33 +1603,33 @@ console.log('[WINDI LAW] AI Draft Module v1.0.0 loaded');
           </div>
         </div>
         <div class="ai-field">
-          <label>Nome do Documento</label>
-          <input type="text" id="ai-doc-name" placeholder="Ex: NDA zwischen Firma A und Firma B · 2026" />
+          <label data-i18n="aiDocName">Dokumentname</label>
+          <input type="text" id="ai-doc-name" data-i18n-placeholder="aiDocNamePh" placeholder="z.B.: NDA zwischen Firma A und Firma B · 2026" />
         </div>
         <div class="ai-field">
-          <label>Contexto · Partes · Objectivo</label>
-          <textarea id="ai-context" rows="5" placeholder="Descreva:
-• Partes envolvidas (nomes, tipo: empresa/particular)
-• Objectivo do documento
-• Condições específicas relevantes
-• Prazo, valor, obrigações"></textarea>
-          <p class="hint">⚠️ O texto será hasheado e selado no Ledger imutavelmente.</p>
+          <label data-i18n="aiContext">Kontext · Parteien · Zweck</label>
+          <textarea id="ai-context" rows="5" data-i18n-placeholder="aiContextPh" placeholder="Beschreiben Sie:
+• Beteiligte Parteien
+• Zweck des Dokuments
+• Spezifische Bedingungen
+• Fristen, Werte, Pflichten"></textarea>
+          <p class="hint" data-i18n="aiHashWarn">⚠️ Der Text wird gehasht und unveränderlich im Ledger versiegelt.</p>
         </div>
         <div style="background:var(--gold-bg); border:1px solid rgba(139,105,20,0.2); border-radius:10px; padding:14px 18px; margin-bottom:20px; font-size:0.78rem; line-height:1.6; color:var(--ink-3);">
-          <strong style="color:var(--gold);">🛡️ Invariant I9 — Aprovação Humana</strong><br>
-          Ao clicar "Gerar", confirmas que aprovaste este pedido e irás rever o resultado.<br>
+          <strong style="color:var(--gold);" data-i18n="aiI9Title">🛡️ Invariant I9 — Menschliche Genehmigung</strong><br>
+          <span data-i18n="aiI9Desc">Mit Klick auf "Generieren" bestätigst du diesen Antrag und wirst das Ergebnis prüfen.</span><br>
           <em style="font-size:0.7rem; color:var(--ink-4);">"AI processes. Human decides. WINDI guarantees."</em>
         </div>
-        <button class="btn-generate" onclick="initiateAiGenerate()">⚖️ Gerar com IA</button>
+        <button class="btn-generate" onclick="initiateAiGenerate()" data-i18n="aiGenerate">⚖️ Mit KI generieren</button>
       </div>
 
       <!-- PHASE 2: Loading -->
       <div id="ai-phase-loading" style="display:none;">
         <div class="ai-loading">
           <div class="spinner"></div>
-          <p style="font-weight:600; margin-bottom:8px;">A gerar documento jurídico…</p>
-          <p class="model-label" id="ai-model-label">Motor: carregando…</p>
-          <p style="font-size:0.72rem; color:var(--ink-4); margin-top:16px;">🔐 Após geração → revisão humana → seal I11</p>
+          <p style="font-weight:600; margin-bottom:8px;" data-i18n="aiGenerating">Juristisches Dokument wird generiert…</p>
+          <p class="model-label" id="ai-model-label" data-i18n="aiModelLoading">Motor: lädt…</p>
+          <p style="font-size:0.72rem; color:var(--ink-4); margin-top:16px;" data-i18n="aiAfterGen">🔐 Nach Generierung → Menschliche Prüfung → Seal I11</p>
         </div>
       </div>
 
@@ -1553,20 +1637,20 @@ console.log('[WINDI LAW] AI Draft Module v1.0.0 loaded');
       <div id="ai-phase-review" style="display:none;">
         <div class="ai-result-meta" id="ai-result-meta"></div>
         <div class="ai-field">
-          <label>📄 Documento Gerado — Revê e edita</label>
+          <label data-i18n="aiReviewLabel">📄 Generiertes Dokument — Prüfen und bearbeiten</label>
           <textarea id="ai-result-text" class="ai-result-box" rows="12" style="font-family:var(--mono); font-size:0.8rem;"></textarea>
-          <p class="hint">✏️ Podes editar. O hash final será calculado sobre o texto que selarás.</p>
+          <p class="hint" data-i18n="aiEditHint">✏️ Du kannst bearbeiten. Der finale Hash wird über den versiegelten Text berechnet.</p>
         </div>
         <div style="font-family:var(--mono); font-size:0.68rem; color:var(--ink-4); padding:8px 12px; background:rgba(0,0,0,0.04); border-radius:6px; margin-bottom:16px;">
           SHA-256 preview: <span id="ai-preview-hash">—</span>
         </div>
         <div style="background:rgba(0,0,0,0.03); border:1px solid var(--border); border-radius:10px; padding:14px 18px; margin-bottom:16px; font-size:0.76rem; color:var(--ink-3);">
-          <strong>🔐 Invariant I11 + G3 — Seal Permanente</strong><br>
-          O hash será inscrito imutavelmente no Forensic Ledger. <em>Não é possível apagar.</em>
+          <strong data-i18n="aiI11Title">🔐 Invariant I11 + G3 — Permanentes Seal</strong><br>
+          <span data-i18n="aiI11Desc">Der Hash wird unveränderlich im Forensic Ledger eingetragen. Löschen ist nicht möglich.</span>
         </div>
         <div style="display:flex; gap:12px;">
-          <button style="flex:1; padding:12px; background:none; border:1.5px solid var(--border-2); border-radius:10px; cursor:pointer; font-size:0.85rem;" onclick="resetAiDraft()">← Voltar</button>
-          <button class="btn-seal" onclick="sealAiDraft()" id="btn-seal-draft" style="flex:2;">🔐 Selar no Ledger · I11</button>
+          <button style="flex:1; padding:12px; background:none; border:1.5px solid var(--border-2); border-radius:10px; cursor:pointer; font-size:0.85rem;" onclick="resetAiDraft()" data-i18n="aiBack">← Zurück</button>
+          <button class="btn-seal" onclick="sealAiDraft()" id="btn-seal-draft" style="flex:2;" data-i18n="aiSeal">🔐 Im Ledger versiegeln · I11</button>
         </div>
       </div>
 
@@ -1574,16 +1658,16 @@ console.log('[WINDI LAW] AI Draft Module v1.0.0 loaded');
       <div id="ai-phase-sealed" style="display:none;">
         <div class="ai-sealed-box">
           <div class="ai-sealed-icon">🔐</div>
-          <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:8px;">Documento Selado · I11 ✅</h3>
-          <p style="font-size:0.85rem; color:var(--ink-3); margin-bottom:16px;">O documento existe, está identificado e é verificável publicamente.</p>
+          <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:8px;" data-i18n="aiSealedTitle">Dokument versiegelt · I11 ✅</h3>
+          <p style="font-size:0.85rem; color:var(--ink-3); margin-bottom:16px;" data-i18n="aiSealedDesc">Das Dokument existiert, ist identifiziert und öffentlich verifizierbar.</p>
           <div class="ai-sealed-receipt" id="ai-sealed-receipt">—</div>
           <div style="font-family:var(--mono); font-size:0.68rem; color:var(--ink-4); word-break:break-all; margin:8px auto; max-width:480px;" id="ai-sealed-hash">—</div>
-          <a class="ai-verify-link" id="ai-verify-link" onclick="openVerify()">🔍 Abrir Verify Public →</a>
+          <a class="ai-verify-link" id="ai-verify-link" onclick="openVerify()" data-i18n="aiVerifyLink">🔍 Verify Public öffnen →</a>
           <div class="ai-constitutional-proof">
             I9 ✅ Human approved · G3 ✅ Human confirmed · I11 ✅ Ledger sealed<br>
             <em style="font-size:0.66rem;">"Any AI can generate a document. Only WINDI can prove it."</em>
           </div>
-          <button class="btn-generate" onclick="resetAiDraft()" style="margin-top:20px; max-width:280px; margin-left:auto; margin-right:auto; display:block;">+ Novo Documento</button>
+          <button class="btn-generate" onclick="resetAiDraft()" style="margin-top:20px; max-width:280px; margin-left:auto; margin-right:auto; display:block;" data-i18n="aiNewDoc">+ Neues Dokument</button>
         </div>
       </div>
 
