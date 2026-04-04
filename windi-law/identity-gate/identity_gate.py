@@ -1357,8 +1357,8 @@ async def gate_ui(request: Request):
 
 from fastapi.responses import RedirectResponse
 
-# §123 — Workspace static files (demo pages, etc)
-@app.get("/workspace/{filename:path}")
+# §123 — Workspace static files (demo pages, assets like .html, .css, .js)
+@app.get("/workspace/{filename}")
 async def workspace_static(filename: str, request: Request):
     """Serve static files from workspace directory (demo pages, assets)."""
     import os
@@ -1367,11 +1367,11 @@ async def workspace_static(filename: str, request: Request):
     allowed_extensions = ['.html', '.css', '.js', '.png', '.jpg', '.svg', '.ico']
     ext = os.path.splitext(filename)[1].lower()
 
-    if ext not in allowed_extensions:
+    if not ext or ext not in allowed_extensions:
         raise HTTPException(status_code=403, detail="File type not allowed")
 
     # Security: prevent directory traversal
-    if '..' in filename or filename.startswith('/'):
+    if '..' in filename or '/' in filename:
         raise HTTPException(status_code=403, detail="Invalid path")
 
     filepath = f"/opt/windi/windi-law/workspace/{filename}"
