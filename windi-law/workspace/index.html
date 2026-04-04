@@ -767,13 +767,133 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
 /* ═══ §126 QUILL EDITOR — WHITE DOCUMENT STYLE ═══ */
 /* Document appears as white paper for professional legal documents */
 
+/* §126.3 — Professional Document Editor Toolbar */
 .ql-toolbar.ql-snow {
   background: var(--perg-2);
   border: 1px solid var(--border-2) !important;
   border-bottom: none !important;
   border-radius: var(--r) var(--r) 0 0;
   padding: 8px 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
 }
+
+.ql-toolbar.ql-snow .ql-formats {
+  margin-right: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.ql-toolbar.ql-snow button {
+  width: 28px;
+  height: 28px;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.ql-toolbar.ql-snow button:hover {
+  background: var(--gold-bg);
+}
+
+.ql-toolbar.ql-snow button.ql-active {
+  background: var(--gold-bg);
+  color: var(--gold);
+}
+
+.ql-toolbar.ql-snow .ql-picker {
+  height: 28px;
+}
+
+.ql-toolbar.ql-snow .ql-picker-label {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 11px;
+}
+
+.ql-toolbar.ql-snow .ql-picker-options {
+  background: var(--perg);
+  border: 1px solid var(--border-2);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  padding: 4px;
+}
+
+.ql-toolbar.ql-snow .ql-picker-item {
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.ql-toolbar.ql-snow .ql-picker-item:hover {
+  background: var(--gold-bg);
+}
+
+/* Color picker styling */
+.ql-toolbar.ql-snow .ql-color-picker .ql-picker-options,
+.ql-toolbar.ql-snow .ql-background .ql-picker-options {
+  width: 152px;
+  padding: 8px;
+}
+
+.ql-toolbar.ql-snow .ql-color-picker .ql-picker-item,
+.ql-toolbar.ql-snow .ql-background .ql-picker-item {
+  width: 16px;
+  height: 16px;
+  border-radius: 2px;
+  margin: 2px;
+}
+
+/* Header dropdown */
+.ql-toolbar.ql-snow .ql-header .ql-picker-label::before {
+  content: 'Überschrift';
+}
+.ql-toolbar.ql-snow .ql-header .ql-picker-item[data-value="1"]::before { content: 'Titel (H1)'; }
+.ql-toolbar.ql-snow .ql-header .ql-picker-item[data-value="2"]::before { content: 'Abschnitt (H2)'; }
+.ql-toolbar.ql-snow .ql-header .ql-picker-item[data-value="3"]::before { content: 'Unterabschnitt (H3)'; }
+.ql-toolbar.ql-snow .ql-header .ql-picker-item:not([data-value])::before { content: 'Normal'; }
+
+/* Size dropdown */
+.ql-toolbar.ql-snow .ql-size .ql-picker-label::before { content: 'Größe'; }
+.ql-toolbar.ql-snow .ql-size .ql-picker-item[data-value="small"]::before { content: 'Klein'; }
+.ql-toolbar.ql-snow .ql-size .ql-picker-item:not([data-value])::before { content: 'Normal'; }
+.ql-toolbar.ql-snow .ql-size .ql-picker-item[data-value="large"]::before { content: 'Groß'; }
+.ql-toolbar.ql-snow .ql-size .ql-picker-item[data-value="huge"]::before { content: 'Sehr groß'; }
+
+/* Readonly mode - hide toolbar */
+.quill-wrapper.readonly .ql-toolbar {
+  display: none;
+}
+
+/* Edit mode - show toolbar with highlight */
+.quill-wrapper:not(.readonly) .ql-toolbar {
+  display: flex;
+  border-left: 3px solid var(--gold);
+}
+
+/* Size classes in editor */
+.ql-editor .ql-size-small { font-size: 9pt; }
+.ql-editor .ql-size-large { font-size: 14pt; }
+.ql-editor .ql-size-huge { font-size: 18pt; }
+
+/* Alignment */
+.ql-editor .ql-align-center { text-align: center; }
+.ql-editor .ql-align-right { text-align: right; }
+.ql-editor .ql-align-justify { text-align: justify; }
+
+/* Indent */
+.ql-editor .ql-indent-1 { padding-left: 2em; }
+.ql-editor .ql-indent-2 { padding-left: 4em; }
+.ql-editor .ql-indent-3 { padding-left: 6em; }
+.ql-editor .ql-indent-4 { padding-left: 8em; }
+
+/* Strikethrough */
+.ql-editor s, .ql-editor strike { text-decoration: line-through; color: #888; }
+
+/* Links */
+.ql-editor a { color: #185FA5; text-decoration: underline; }
 
 .ql-container.ql-snow {
   border: 1px solid var(--border-2) !important;
@@ -2947,15 +3067,30 @@ var quillReadOnly = true;
 function initQuillEditor() {
   if (quillEditor) return; // Already initialized
 
+  // §126.3 — Professional Document Editor Toolbar
   quillEditor = new Quill('#quill-editor', {
     theme: 'snow',
     readOnly: true,
     modules: {
       toolbar: [
+        // Row 1: Text structure
         [{ 'header': [1, 2, 3, false] }],
-        ['bold', 'italic', 'underline'],
+        [{ 'size': ['small', false, 'large', 'huge'] }],
+
+        // Row 2: Text formatting
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ 'color': [] }, { 'background': [] }],
+
+        // Row 3: Alignment & Indentation
+        [{ 'align': [] }],
+        [{ 'indent': '-1'}, { 'indent': '+1' }],
+
+        // Row 4: Lists & Blocks
         [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-        ['blockquote', 'code-block'],
+        ['blockquote'],
+
+        // Row 5: Insert & Clean
+        ['link'],
         ['clean']
       ]
     },
