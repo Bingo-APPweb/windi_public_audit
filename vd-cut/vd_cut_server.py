@@ -152,6 +152,22 @@ class JoeRenderRequest(BaseModel):
     auto_seal: bool = False  # I9: default False
 
 
+class FrameSealRequest(BaseModel):
+    """Request to seal specific frames (edit points) to Ledger."""
+    video_path: str               # Path to video file
+    actor_did: str                # WINDI DID
+    edit_points: list[int]        # Frame indices to seal
+    fps: float = 25.0             # Video FPS
+    source_hash: Optional[str] = None  # Pre-computed hash (optional)
+
+
+class FrameVerifyRequest(BaseModel):
+    """Request to verify a frame against expected hash."""
+    video_path: str
+    frame_index: int
+    expected_hash: str
+
+
 # ----- Lifespan -----
 
 @asynccontextmanager
@@ -793,6 +809,166 @@ async def joe_render(request: JoeRenderRequest):
         "next_step": "POST /vd-cut/seal with human_approved=true to finalize",
         "invariant": "I9 · humano confirma antes do seal"
     }
+
+
+# ----- Frame Integrity Engine -----
+
+@app.post("/vd-cut/seal-frames")
+async def seal_edit_frames(request: FrameSealRequest):
+    """
+    Seal edit points (frame-level) to Ledger.
+
+    "Deepfake Killer" — Each edit point is sealed with hash chain.
+    Any subsequent alteration invalidates the chain.
+
+    I9 COMPLIANCE:
+    This endpoint requires explicit human invocation.
+    Each frame seal is a conscious decision.
+    Never auto-seal entire timeline.
+
+    I11 COMPLIANCE:
+    Only frame hashes go to Ledger, never raw frame data.
+
+    Args:
+        video_path: Path to video file (in /opt/windi/media/vd-cut/)
+        actor_did: WINDI DID of actor
+        edit_points: List of frame indices to seal
+        fps: Video frames per second
+
+    Returns:
+        EditManifest with all sealed frames and chain info
+    """
+    from services.frame_integrity_engine import FrameIntegrityEngine
+
+    # Validate video path exists
+    video_path = Path(request.video_path)
+    if not video_path.exists():
+        # Try relative to media directory
+        video_path = MEDIA_DIR / request.video_path
+        if not video_path.exists():
+            raise HTTPException(status_code=404, detail="Video not found")
+
+    if not request.edit_points:
+        raise HTTPException(status_code=400, detail="edit_points required")
+
+    log.info(f"Frame seal request: {len(request.edit_points)} edit points, actor={request.actor_did}")
+
+    try:
+        engine = FrameIntegrityEngine(
+            video_path=str(video_path),
+            actor_did=request.actor_did,
+            source_hash=request.source_hash
+        )
+
+        manifest = await engine.seal_edit_points(
+            edit_points=request.edit_points,
+            fps=request.fps
+        )
+
+        return {
+            "status": "sealed",
+            "manifest_version": manifest.manifest_version,
+            "source_video": manifest.source_video,
+            "source_hash": manifest.source_hash,
+            "edit_points_sealed": len(manifest.edit_points),
+            "chain_root": manifest.chain_root,
+            "chain_tip": manifest.chain_tip,
+            "manifest_receipt": manifest.manifest_receipt,
+            "verify_url": manifest.verify_url,
+            "edit_points": manifest.edit_points,
+            "invariants": manifest.windi_invariants
+        }
+
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        log.error(f"Frame seal error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/vd-cut/verify-frame")
+async def verify_frame_integrity(request: FrameVerifyRequest):
+    """
+    Verify a frame against expected hash.
+
+    Deepfake detection: if current frame hash doesn't match
+    sealed hash, video was tampered.
+
+    Args:
+        video_path: Path to video file
+        frame_index: Frame to verify
+        expected_hash: Hash from sealed FrameSeal
+
+    Returns:
+        Verification result with match status
+    """
+    from services.frame_integrity_engine import verify_single_frame
+
+    video_path = Path(request.video_path)
+    if not video_path.exists():
+        video_path = MEDIA_DIR / request.video_path
+        if not video_path.exists():
+            raise HTTPException(status_code=404, detail="Video not found")
+
+    try:
+        result = await verify_single_frame(
+            video_path=str(video_path),
+            frame_index=request.frame_index,
+            expected_hash=request.expected_hash
+        )
+
+        return result
+
+    except Exception as e:
+        log.error(f"Frame verify error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/vd-cut/frame-hash/{export_id}/{frame_index}")
+async def get_frame_hash(export_id: str, frame_index: int):
+    """
+    Compute hash of a specific frame from an export.
+
+    Useful for building verification chains without sealing.
+    """
+    from services.frame_integrity_engine import FrameIntegrityEngine
+
+    # Find export path
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT output_path FROM video_exports WHERE id = ?", (export_id,))
+    row = cursor.fetchone()
+    conn.close()
+
+    if not row:
+        raise HTTPException(status_code=404, detail="Export not found")
+
+    video_path = Path(row["output_path"])
+    if not video_path.exists():
+        raise HTTPException(status_code=404, detail="Video file not found")
+
+    try:
+        engine = FrameIntegrityEngine(
+            video_path=str(video_path),
+            actor_did="frame_hash_query"
+        )
+
+        fps = await engine.get_video_fps()
+        frame_hash = await engine.compute_frame_hash(frame_index)
+        timestamp_ms = engine.get_frame_timestamp(frame_index, fps)
+
+        return {
+            "export_id": export_id,
+            "frame_index": frame_index,
+            "timestamp_ms": timestamp_ms,
+            "frame_hash": frame_hash,
+            "source_hash": engine.source_hash,
+            "fps": fps
+        }
+
+    except Exception as e:
+        log.error(f"Frame hash error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # ----- Test Dashboard -----
