@@ -2865,9 +2865,10 @@ async function exportAgentDraft() {
   var dateStr = new Date().toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
   // Create professional PDF document with proper styling
+  // §127: Container must be visible for html2canvas to capture properly
   var pdfContainer = document.createElement('div');
   pdfContainer.id = 'pdf-export-container';
-  pdfContainer.style.cssText = 'position:absolute;left:-9999px;top:0;width:170mm;padding:20mm;font-family:Georgia,"Times New Roman",serif;font-size:11pt;line-height:1.6;color:#1a1a1a;background:white;';
+  pdfContainer.style.cssText = 'position:fixed;left:0;top:0;width:210mm;min-height:297mm;padding:20mm;font-family:Georgia,"Times New Roman",serif;font-size:11pt;line-height:1.6;color:#1a1a1a;background:white;z-index:-1;opacity:0.01;';
 
   // Build PDF HTML with embedded styles
   var pdfHtml = '\
@@ -3291,7 +3292,142 @@ async function updateDocumentHash() {
 
 // §126 — Convert plain text to properly formatted HTML for Quill
 // Creates white document with editable placeholder fields
+// §127.1 — Markdown to Quill HTML Converter
+// Handles LLM output with Markdown syntax: # ## ### **bold** *italic* - bullets ---
 function textToQuillHtml(text) {
+  if (!text) return '<p>Kein Inhalt generiert.</p>';
+
+  var html = '';
+  var lines = text.split('\n');
+  var inList = false;
+  var listItems = [];
+
+  // Helper: Apply inline Markdown formatting
+  function formatInline(line) {
+    // Escape HTML first, then apply Markdown
+    var escaped = escapeHtmlQuill(line);
+    // **bold** → <strong>
+    escaped = escaped.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    // *italic* → <em> (but not inside **)
+    escaped = escaped.replace(/(?<!\*)\*([^*]+?)\*(?!\*)/g, '<em>$1</em>');
+    // Convert placeholders to editable fields
+    escaped = convertPlaceholdersToFields(escaped);
+    // ← Empfehlung: recommendations
+    escaped = escaped.replace(/←\s*Empfehlung:/g, '<span style="color:#8B6914;font-size:0.9em;">← Empfehlung:</span>');
+    return escaped;
+  }
+
+  // Helper: Close open list
+  function closeList() {
+    if (inList && listItems.length > 0) {
+      html += '<ul>' + listItems.join('') + '</ul>';
+      listItems = [];
+      inList = false;
+    }
+  }
+
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i];
+    var trimmedLine = line.trim();
+
+    // Skip empty lines but close any open list
+    if (!trimmedLine) {
+      closeList();
+      continue;
+    }
+
+    // --- Horizontal rule
+    if (/^-{3,}$/.test(trimmedLine)) {
+      closeList();
+      html += '<hr style="border:none;border-top:1px solid #ccc;margin:1.5rem 0;">';
+      continue;
+    }
+
+    // # H1 (Markdown)
+    if (/^#\s+(.+)$/.test(trimmedLine)) {
+      closeList();
+      var h1Text = trimmedLine.replace(/^#\s+/, '');
+      html += '<h1>' + formatInline(h1Text) + '</h1>';
+      continue;
+    }
+
+    // ## H2 (Markdown) or **§N Title**
+    if (/^##\s+(.+)$/.test(trimmedLine) || /^\*\*§\s*\d+/.test(trimmedLine)) {
+      closeList();
+      var h2Text = trimmedLine.replace(/^##\s+/, '').replace(/^\*\*/, '').replace(/\*\*$/, '');
+      html += '<h2>' + formatInline(h2Text) + '</h2>';
+      continue;
+    }
+
+    // ### H3 (Markdown)
+    if (/^###\s+(.+)$/.test(trimmedLine)) {
+      closeList();
+      var h3Text = trimmedLine.replace(/^###\s+/, '');
+      html += '<h3>' + formatInline(h3Text) + '</h3>';
+      continue;
+    }
+
+    // §N Section headers (German legal style)
+    if (/^§\s*\d+/.test(trimmedLine)) {
+      closeList();
+      html += '<h2>' + formatInline(trimmedLine) + '</h2>';
+      continue;
+    }
+
+    // (1) (2) (3) Numbered paragraphs
+    if (/^\*?\*?\(\d+\)\*?\*?\s/.test(trimmedLine)) {
+      closeList();
+      var paraText = trimmedLine.replace(/^\*?\*?\(\d+\)\*?\*?\s*/, '');
+      var paraNum = trimmedLine.match(/\((\d+)\)/)[1];
+      html += '<p><strong>(' + paraNum + ')</strong> ' + formatInline(paraText) + '</p>';
+      continue;
+    }
+
+    // a) b) c) lettered items
+    if (/^[a-z]\)\s/i.test(trimmedLine)) {
+      inList = true;
+      var itemText = trimmedLine.replace(/^[a-z]\)\s*/i, '');
+      var itemLetter = trimmedLine.match(/^([a-z])\)/i)[1];
+      listItems.push('<li><strong>' + itemLetter + ')</strong> ' + formatInline(itemText) + '</li>');
+      continue;
+    }
+
+    // - or • bullet points
+    if (/^[-•]\s/.test(trimmedLine)) {
+      inList = true;
+      var bulletText = trimmedLine.replace(/^[-•]\s*/, '');
+      listItems.push('<li>' + formatInline(bulletText) + '</li>');
+      continue;
+    }
+
+    // Signature lines: underscores
+    if (/^_{5,}$/.test(trimmedLine)) {
+      closeList();
+      html += '<p style="margin-top:1.5rem;border-bottom:1px solid #333;width:200px;padding-bottom:4px;"></p>';
+      continue;
+    }
+
+    // **zwischen** / **und** section markers
+    if (/^\*\*(zwischen|und|—|Für)\*?\*?/.test(trimmedLine)) {
+      closeList();
+      var markerText = trimmedLine.replace(/^\*\*/, '').replace(/\*\*$/, '');
+      html += '<p style="text-align:center;font-weight:bold;margin:1rem 0;">' + formatInline(markerText) + '</p>';
+      continue;
+    }
+
+    // Regular paragraph - close list first
+    closeList();
+    html += '<p>' + formatInline(trimmedLine) + '</p>';
+  }
+
+  // Close any remaining list
+  closeList();
+
+  return html || '<p>Kein Inhalt generiert.</p>';
+}
+
+// Legacy function kept for compatibility - now redirects to main function
+function textToQuillHtmlLegacy(text) {
   if (!text) return '<p>Kein Inhalt generiert.</p>';
 
   var html = '';
