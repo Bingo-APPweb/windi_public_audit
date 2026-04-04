@@ -1357,6 +1357,46 @@ async def gate_ui(request: Request):
 
 from fastapi.responses import RedirectResponse
 
+# §123 — Workspace static files (demo pages, etc)
+@app.get("/workspace/{filename:path}")
+async def workspace_static(filename: str, request: Request):
+    """Serve static files from workspace directory (demo pages, assets)."""
+    import os
+
+    # Security: only allow specific file extensions
+    allowed_extensions = ['.html', '.css', '.js', '.png', '.jpg', '.svg', '.ico']
+    ext = os.path.splitext(filename)[1].lower()
+
+    if ext not in allowed_extensions:
+        raise HTTPException(status_code=403, detail="File type not allowed")
+
+    # Security: prevent directory traversal
+    if '..' in filename or filename.startswith('/'):
+        raise HTTPException(status_code=403, detail="Invalid path")
+
+    filepath = f"/opt/windi/windi-law/workspace/{filename}"
+
+    if not os.path.exists(filepath):
+        raise HTTPException(status_code=404, detail="File not found")
+
+    # Determine content type
+    content_types = {
+        '.html': 'text/html',
+        '.css': 'text/css',
+        '.js': 'application/javascript',
+        '.png': 'image/png',
+        '.jpg': 'image/jpeg',
+        '.svg': 'image/svg+xml',
+        '.ico': 'image/x-icon'
+    }
+    content_type = content_types.get(ext, 'application/octet-stream')
+
+    with open(filepath, 'rb') as f:
+        content = f.read()
+
+    from fastapi.responses import Response
+    return Response(content=content, media_type=content_type)
+
 @app.get("/workspace/")
 @app.get("/workspace")
 async def workspace_gate(request: Request):
