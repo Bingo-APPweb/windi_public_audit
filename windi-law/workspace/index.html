@@ -417,12 +417,17 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
 /* demo bar */
 .demo-bar {
   position: fixed; top: 10px; right: 10px; z-index: 200;
-  display: flex; gap: 4px;
+  display: flex; gap: 6px; align-items: center;
   background: white; border: 1px solid var(--border-2);
-  border-radius: 20px; padding: 4px 7px;
+  border-radius: 20px; padding: 5px 10px;
   box-shadow: 0 2px 12px rgba(90,74,42,0.10);
 }
-.demo-btn { font-size: 10px; font-weight: 500; padding: 4px 12px; border-radius: 14px; border: none; background: transparent; color: var(--ink-4); cursor: pointer; font-family: var(--font); transition: all 0.12s; }
+.demo-lang { display: flex; gap: 3px; }
+.dlang { font-size: 11px; font-weight: 600; padding: 5px 10px; border-radius: 12px; border: 1.5px solid var(--border); background: transparent; color: var(--ink-4); cursor: pointer; font-family: var(--font); transition: all 0.15s; }
+.dlang:hover { border-color: var(--gold); color: var(--gold); }
+.dlang.on { background: var(--gold); color: white; border-color: var(--gold); }
+.demo-sep { width: 1px; height: 18px; background: var(--border-2); margin: 0 4px; }
+.demo-btn { font-size: 11px; font-weight: 500; padding: 5px 14px; border-radius: 14px; border: none; background: transparent; color: var(--ink-4); cursor: pointer; font-family: var(--font); transition: all 0.12s; }
 .demo-btn.on { background: var(--gold); color: white; }
 
 /* ══ AI DRAFT PANEL ══ */
@@ -736,6 +741,12 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
 <div class="mobile-overlay" id="mobileOverlay" onclick="closeMobileMenu()"></div>
 
 <div class="demo-bar">
+  <div class="demo-lang">
+    <button class="dlang" onclick="setLang('de')">DE</button>
+    <button class="dlang" onclick="setLang('en')">EN</button>
+    <button class="dlang" onclick="setLang('pt')">PT</button>
+  </div>
+  <div class="demo-sep"></div>
   <button class="demo-btn on" onclick="go('empty')" data-i18n="demoEmpty">Leerer Zustand</button>
   <button class="demo-btn" onclick="go('active')" data-i18n="demoActive">Aktives Dokument</button>
 </div>
@@ -1207,8 +1218,8 @@ function setLang(l) {
   });
   // Update page title
   if (strings.pageTitle) document.title = strings.pageTitle;
-  // Update lang pills
-  document.querySelectorAll('.lpill, .plbtn').forEach(function(btn) {
+  // Update lang pills (topbar, prompt area, demo-bar)
+  document.querySelectorAll('.lpill, .plbtn, .dlang').forEach(function(btn) {
     btn.classList.toggle('on', btn.textContent === l.toUpperCase());
   });
   localStorage.setItem('windi-lang', l);
