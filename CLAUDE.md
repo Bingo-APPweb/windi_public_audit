@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.84
-**Sealed:** 2026-04-04 · §122 W-VD-MASS-001 I9-P Protocol
+**Version:** 1.9.85
+**Sealed:** 2026-04-04 · §122.1 MLT/Shotcut Engine
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -65,7 +65,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-SESSION-001 | :8126 | I1,I9,I13 | 30-day HMAC cookies |
 | W-NOMAD-001 | :8127 | I9,I11,I12 | @windi_nomad_bot Telegram |
 | W-VD-CUT-001 | :8128 | I9,I11,I12 | FFmpeg · Frame Integrity · **CERTIFIED** |
-| W-VD-MASS-001 | :8131 | I9-P,I11 | Policy Engine · Batch Automation |
+| W-VD-MASS-001 | :8131 | I9-P,I11 | Policy Engine · Batch · **MLT/Shotcut** |
 | W-JOE-001 | :8129 | I9,I11,I13 | Story Graph + ProofStream |
 | W-SGV-001 | :8129 | I9,I13 | Truth Illumination (ilumina, não bloqueia) |
 
@@ -265,6 +265,34 @@ Batch submitted → avaliação automática
 **Endpoints:** `/policy/create` · `/policy/{id}/activate` · `/batch/submit` · `/queue/exceptions` · `/queue/{id}/decide`
 
 **Primeira Policy:** "WINDI TRAVEL Hotels v1" · válida até 2026-07-04 · ledger: `58a7fdc3...`
+
+### §122.1 — MLT/Shotcut Rendering Engine (04 Apr 2026)
+
+| Campo | Valor |
+|-------|-------|
+| Status | ✅ LIVE (feature flag) |
+| Commit | `5f11bcc` |
+| Module | `mlt_engine.py` |
+| Binary | melt 7.12.0 |
+| Invariants | I9-P, I11 |
+
+> **"O ficheiro .mlt é a receita auditável antes de renderizar."**
+
+**Arquitectura:**
+- `.mlt` file = auditable XML recipe (timeline, effects, transitions)
+- `melt` renders locally = total sovereignty
+- Disabled by default until `MLT_ENABLED=true` in .env
+- Render failure → Exception Queue (never auto-seal)
+
+**Security Validation:**
+- Valid XML structure with `<mlt>` root
+- Block remote URLs (`http://`, `https://`, `ftp://`)
+- Block paths outside `/opt/windi/media`
+- Extract profiles, producers, playlists metadata
+
+**Endpoints:** `/mlt/status` · `/mlt/validate` · `/mlt/render`
+
+**Hash Chain:** MLT hash (recipe) + Render hash (output) — both tracked for I11
 
 ### §118 — Travel Stack Auto-Healing (03 Apr 2026)
 
@@ -902,6 +930,7 @@ workspace/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
 ### Completado (últimos 10 · ver CLAUDE-HISTORY.md para §37-115)
+- [x] §122.1 **MLT Engine** · Shotcut/melt integration · Local render sovereignty · `5f11bcc` ✅ 04 Apr
 - [x] §122 **W-VD-MASS-001** · I9-P Policy Engine · Batch Automation · `d7da443` ✅ 04 Apr
 - [x] §121 **VD-CUT CERTIFIED** · Frame Integrity · First field video · `d7b69bf` ✅ 04 Apr
 - [x] §120.5 **Mobile Emergency Fix** · WINDI-LAW responsive · `7f05abb` ✅ 04 Apr
@@ -925,7 +954,7 @@ workspace/
 | §57 | WINDI-LAW Workspace v3 | ✅ SEALED | 23 features · Receipt: WINDI-LAW-WORKSPACE-V3-CERTIFIED-20260326164718 |
 | §59 | WINDI TRAVEL v1.0 | ✅ LIVE | :8126 · I14 Presence · `/travel/` |
 | §121 | W-VD-CUT-001 CERTIFIED | ✅ SEALED | :8128 · Frame Integrity · Receipt: WINDI-VDCUT-20260404145505-E9983867 |
-| §122 | W-VD-MASS-001 I9-P | ✅ SEALED | :8131 · Policy Engine · Batch Automation · `d7da443` |
+| §122 | W-VD-MASS-001 I9-P | ✅ SEALED | :8131 · Policy Engine · Batch · MLT/Shotcut · `5f11bcc` |
 | §120 | AI Draft Mode | ✅ LIVE | :8122 · Receipt: WINDI-LAW-AIDRAFT-20260404105917-C445AFF9 |
 
 > **Detalhes completos:** `CLAUDE-HISTORY.md`
