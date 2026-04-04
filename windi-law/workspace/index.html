@@ -820,8 +820,8 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
 
         <!-- ══ VAZIO ══ -->
         <div id="st-empty" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 36px">
-          <div class="greet">Guten Morgen, Dr. Schmidt</div>
-          <div class="wtitle">Was möchten Sie<br>heute <em>prüfen?</em></div>
+          <div class="greet" id="user-greeting">Guten Morgen</div>
+          <div class="wtitle" data-i18n="greetQuestion">Was möchten Sie<br>heute <em>prüfen?</em></div>
 
           <div class="pbox">
             <textarea placeholder="Beschreiben Sie Ihr rechtliches Anliegen… Dokument hochladen, Vertrag analysieren, Beweiskette erstellen"></textarea>
@@ -1095,6 +1095,8 @@ var LANG = {
   de: {
     pageTitle: 'WINDI LAW — Stille Governance',
     demoEmpty: 'Leerer Zustand', demoActive: 'Aktives Dokument',
+    greetMorning: 'Guten Morgen', greetAfternoon: 'Guten Tag', greetEvening: 'Guten Abend',
+    greetQuestion: 'Was möchten Sie<br>heute <em>prüfen?</em>',
     sbSchluesselTitle: 'Schlüssel', sbWalletTitle: 'Wallet',
     sbKeyTypeLabel: 'Typ', sbKeyCreatedLabel: 'Erstellt',
     sbPioneerLabel: 'Pioneer', sbCreditsLabel: 'Kredite',
@@ -1130,6 +1132,8 @@ var LANG = {
   pt: {
     pageTitle: 'WINDI LAW — Governança Silenciosa',
     demoEmpty: 'Estado vazio', demoActive: 'Documento activo',
+    greetMorning: 'Bom dia', greetAfternoon: 'Boa tarde', greetEvening: 'Boa noite',
+    greetQuestion: 'O que deseja<br><em>verificar</em> hoje?',
     sbSchluesselTitle: 'Chave', sbWalletTitle: 'Carteira',
     sbKeyTypeLabel: 'Tipo', sbKeyCreatedLabel: 'Criada',
     sbPioneerLabel: 'Pioneer', sbCreditsLabel: 'Créditos',
@@ -1165,6 +1169,8 @@ var LANG = {
   en: {
     pageTitle: 'WINDI LAW — Silent Governance',
     demoEmpty: 'Empty State', demoActive: 'Active Document',
+    greetMorning: 'Good morning', greetAfternoon: 'Good afternoon', greetEvening: 'Good evening',
+    greetQuestion: 'What would you like<br>to <em>verify</em> today?',
     sbSchluesselTitle: 'Key', sbWalletTitle: 'Wallet',
     sbKeyTypeLabel: 'Type', sbKeyCreatedLabel: 'Created',
     sbPioneerLabel: 'Pioneer', sbCreditsLabel: 'Credits',
@@ -1223,6 +1229,33 @@ function setLang(l) {
     btn.classList.toggle('on', btn.textContent === l.toUpperCase());
   });
   localStorage.setItem('windi-lang', l);
+  // Update greeting if user name is available
+  updateGreeting();
+}
+
+// ══════════════════════════════════════════════════════════════
+// updateGreeting — Personalized greeting based on time + user name
+// ══════════════════════════════════════════════════════════════
+function updateGreeting(userName) {
+  var strings = LANG[lang] || LANG.en;
+  var hour = new Date().getHours();
+  var greet = hour < 12 ? strings.greetMorning : hour < 18 ? strings.greetAfternoon : strings.greetEvening;
+
+  // Use passed userName, or try to get from wallet
+  if (!userName && window.__windiLawWallet) {
+    userName = window.__windiLawWallet.company;
+  }
+
+  var greetEl = document.getElementById('user-greeting');
+  if (greetEl) {
+    greetEl.textContent = userName ? greet + ', ' + userName : greet;
+  }
+
+  // Update question text
+  var qEl = document.querySelector('[data-i18n="greetQuestion"]');
+  if (qEl && strings.greetQuestion) {
+    qEl.innerHTML = strings.greetQuestion;
+  }
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1305,6 +1338,9 @@ async function initWallet() {
 
     // Store globally for agent context injection
     window.__windiLawWallet = w;
+
+    // Update personalized greeting with user name
+    updateGreeting(w.company);
 
     // SESSION FOUND: Populate SCHLÜSSEL + WALLET panels + hide connect button
     document.getElementById('sb-connect-btn').classList.add('hidden');
