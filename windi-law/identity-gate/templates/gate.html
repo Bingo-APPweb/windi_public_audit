@@ -1175,6 +1175,7 @@
                 }
             } catch (error) {
                 document.getElementById('generating').classList.remove('active');
+                document.getElementById('btn_step3').disabled = false; // §120.5 fix: re-enable button on error
                 alert('Error: ' + error.message);
             }
         }
