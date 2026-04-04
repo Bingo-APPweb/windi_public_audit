@@ -1105,7 +1105,18 @@ var LANG = {
     aiSealedTitle: 'Dokument versiegelt · I11 ✅',
     aiSealedDesc: 'Das Dokument existiert, ist identifiziert und öffentlich verifizierbar.',
     aiVerifyLink: '🔍 Verify Public öffnen →',
-    aiNewDoc: '+ Neues Dokument'
+    aiNewDoc: '+ Neues Dokument',
+    // Errors & Confirmations
+    errNoWallet: '🔐 Zugriff verweigert. Wallet + DID erforderlich.\nI9: Identität erforderlich.',
+    errContextShort: 'Kontext zu kurz (min. 20 Zeichen).',
+    errDocName: 'Dokumentname erforderlich.',
+    errTextEmpty: 'Text ist leer.',
+    errPrefix: '❌ Fehler: ',
+    confirmI9Generate: '🛡️ WINDI LAW — Invariant I9\n\nGenerieren: {docType} · {jurisdiction}\nName: {docName}\n\nBestätigst du:\n✓ Diese Anfrage ist legitim\n✓ Du wirst das Ergebnis prüfen\n✓ Die finale Entscheidung liegt bei dir\n\nGeneration bestätigen?',
+    confirmG3Seal: '🔐 WINDI LAW — Invariant G3 + I11\n\nPERMANENT VERSIEGELN:\n• "{docName}"\n• {docType} · {jurisdiction}\n\n⚠️ UNWIDERRUFLICH. Hash wird für immer im Ledger eingetragen.\n\nVersiegelung bestätigen?',
+    verifySuccess: '✓ Verifiziert · Ledger bestätigt Integrität',
+    verifyNotFound: '✗ Nicht im Ledger gefunden',
+    verifyOffline: 'Ledger nicht erreichbar — Offline-Verifizierung ausstehend'
   },
   pt: {
     pageTitle: 'WINDI LAW — Governança Silenciosa',
@@ -1143,7 +1154,18 @@ var LANG = {
     aiSealedTitle: 'Documento Selado · I11 ✅',
     aiSealedDesc: 'O documento existe, está identificado e é verificável publicamente.',
     aiVerifyLink: '🔍 Abrir Verify Public →',
-    aiNewDoc: '+ Novo Documento'
+    aiNewDoc: '+ Novo Documento',
+    // Errors & Confirmations
+    errNoWallet: '🔐 Acesso negado. Wallet + DID obrigatórios.\nI9: identidade necessária.',
+    errContextShort: 'Contexto muito curto (mín. 20 caracteres).',
+    errDocName: 'Nome do documento obrigatório.',
+    errTextEmpty: 'Texto vazio.',
+    errPrefix: '❌ Erro: ',
+    confirmI9Generate: '🛡️ WINDI LAW — Invariant I9\n\nGerar: {docType} · {jurisdiction}\nNome: {docName}\n\nConfirmas que:\n✓ Este pedido é legítimo\n✓ Irás rever o resultado\n✓ A decisão final é tua\n\nConfirmar geração?',
+    confirmG3Seal: '🔐 WINDI LAW — Invariant G3 + I11\n\nSELAR PERMANENTEMENTE:\n• "{docName}"\n• {docType} · {jurisdiction}\n\n⚠️ IRREMEDIÁVEL. Hash inscrito no Ledger para sempre.\n\nConfirmar selagem?',
+    verifySuccess: '✓ Verificado · Ledger confirma integridade',
+    verifyNotFound: '✗ Não encontrado no Ledger',
+    verifyOffline: 'Ledger inacessível — verificação offline pendente'
   },
   en: {
     pageTitle: 'WINDI LAW — Silent Governance',
@@ -1181,7 +1203,18 @@ var LANG = {
     aiSealedTitle: 'Document Sealed · I11 ✅',
     aiSealedDesc: 'The document exists, is identified and publicly verifiable.',
     aiVerifyLink: '🔍 Open Verify Public →',
-    aiNewDoc: '+ New Document'
+    aiNewDoc: '+ New Document',
+    // Errors & Confirmations
+    errNoWallet: '🔐 Access denied. Wallet + DID required.\nI9: identity required.',
+    errContextShort: 'Context too short (min. 20 characters).',
+    errDocName: 'Document name required.',
+    errTextEmpty: 'Text is empty.',
+    errPrefix: '❌ Error: ',
+    confirmI9Generate: '🛡️ WINDI LAW — Invariant I9\n\nGenerate: {docType} · {jurisdiction}\nName: {docName}\n\nYou confirm:\n✓ This request is legitimate\n✓ You will review the result\n✓ The final decision is yours\n\nConfirm generation?',
+    confirmG3Seal: '🔐 WINDI LAW — Invariant G3 + I11\n\nSEAL PERMANENTLY:\n• "{docName}"\n• {docType} · {jurisdiction}\n\n⚠️ IRREVOCABLE. Hash inscribed in Ledger forever.\n\nConfirm seal?',
+    verifySuccess: '✓ Verified · Ledger confirms integrity',
+    verifyNotFound: '✗ Not found in Ledger',
+    verifyOffline: 'Ledger inaccessible — offline verification pending'
   }
 };
 
@@ -1211,6 +1244,21 @@ function setLang(l) {
   localStorage.setItem('windi-lang', l);
   // Update greeting if user name is available
   updateGreeting();
+}
+
+// ══════════════════════════════════════════════════════════════
+// t() — Get translated string with variable substitution
+// Usage: t('confirmI9Generate', {docType: 'NDA', jurisdiction: 'DE', docName: 'Test'})
+// ══════════════════════════════════════════════════════════════
+function t(key, vars) {
+  var strings = LANG[lang] || LANG.de;
+  var text = strings[key] || LANG.de[key] || key;
+  if (vars) {
+    Object.keys(vars).forEach(function(k) {
+      text = text.replace(new RegExp('\\{' + k + '\\}', 'g'), vars[k]);
+    });
+  }
+  return text;
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1589,12 +1637,12 @@ async function verifyReceipt(receiptId) {
     var res = await fetch('https://windi-domain.com/api/verify/' + encodeURIComponent(id));
     var data = await res.json();
     if (data.valid) {
-      alert('✓ Verificado · Ledger confirma integridade');
+      alert(t('verifySuccess'));
     } else {
-      alert('✗ Não encontrado no Ledger');
+      alert(t('verifyNotFound'));
     }
   } catch(e) {
-    alert('Ledger inacessível — verificação offline pendente');
+    alert(t('verifyOffline'));
   }
 }
 
@@ -1730,7 +1778,7 @@ const AiDraft = { currentDraftId: null, currentDraftText: null, currentDocType: 
 
 function openAiDraft() {
   var wallet = sessionStorage.getItem('windi_law_wallet');
-  if (!wallet) { alert('🔐 Acesso negado. Wallet + DID obrigatórios.\nI9: identity required.'); return; }
+  if (!wallet) { alert(t('errNoWallet')); return; }
   document.getElementById('ai-draft-panel').classList.add('open');
   resetAiDraftPhase();
   updateAiTierInfo();
@@ -1762,9 +1810,9 @@ function initiateAiGenerate() {
   var docType = document.getElementById('ai-doc-type').value;
   var docName = document.getElementById('ai-doc-name').value.trim();
   var jurisdiction = document.getElementById('ai-jurisdiction').value;
-  if (!context || context.length < 20) { alert('Descreve o contexto (min 20 chars).'); return; }
-  if (!docName) { alert('Define o nome do documento.'); return; }
-  var confirmed = confirm('🛡️ WINDI LAW — Invariant I9\n\nGerar: ' + docType.toUpperCase() + ' · ' + jurisdiction + '\nNome: ' + docName + '\n\nConfirmas que:\n✓ Este pedido é legítimo\n✓ Irás rever antes de selar\n✓ A decisão final é tua\n\nConfirmar geração?');
+  if (!context || context.length < 20) { alert(t('errContextShort')); return; }
+  if (!docName) { alert(t('errDocName')); return; }
+  var confirmed = confirm(t('confirmI9Generate', {docType: docType.toUpperCase(), jurisdiction: jurisdiction, docName: docName}));
   if (!confirmed) return;
   executeAiGenerate();
 }
@@ -1794,7 +1842,7 @@ async function executeAiGenerate() {
     if (metaEl) metaEl.innerHTML = '<span class="ai-meta-chip">📄 ' + (data.doc_label || docType) + '</span><span class="ai-meta-chip">⚖️ ' + jurisdiction + '</span><span class="ai-meta-chip">🤖 ' + tierLabelResult + '</span><span class="ai-meta-chip">📊 ' + (data.tokens || 0) + ' tokens</span><span class="ai-meta-chip">⏱ ' + (data.elapsed_seconds || 0) + 's</span>';
     setAiPhase('review');
     document.getElementById('ai-result-text').addEventListener('input', updatePreviewHash);
-  } catch (err) { setAiPhase('configure'); alert('❌ Erro: ' + err.message); }
+  } catch (err) { setAiPhase('configure'); alert(t('errPrefix') + err.message); }
 }
 
 async function updatePreviewHash() {
@@ -1813,8 +1861,8 @@ async function sealAiDraft() {
   var did = wallet.did || sessionStorage.getItem('windi_law_did') || 'UNKNOWN';
   var draftText = document.getElementById('ai-result-text').value.trim();
   var tier = wallet.tier || 'FREE';
-  if (!draftText) { alert('Texto vazio.'); return; }
-  var confirmed = confirm('🔐 WINDI LAW — Invariant G3 + I11\n\nSELAR PERMANENTEMENTE:\n• "' + AiDraft.currentDocName + '"\n• ' + (AiDraft.currentDocType || '').toUpperCase() + ' · ' + AiDraft.currentJurisdiction + '\n\n⚠️ IRREMEDIÁVEL. Hash inscrito no Ledger para sempre.\n\nConfirmas o seal?');
+  if (!draftText) { alert(t('errTextEmpty')); return; }
+  var confirmed = confirm(t('confirmG3Seal', {docName: AiDraft.currentDocName, docType: (AiDraft.currentDocType || '').toUpperCase(), jurisdiction: AiDraft.currentJurisdiction}));
   if (!confirmed) return;
   var btn = document.getElementById('btn-seal-draft');
   if (btn) { btn.disabled = true; btn.textContent = '🔄 A selar…'; }
@@ -1827,7 +1875,7 @@ async function sealAiDraft() {
     document.getElementById('ai-sealed-hash').textContent = 'SHA-256: ' + data.hash;
     document.getElementById('ai-verify-link').href = data.verify_url;
     setAiPhase('sealed');
-  } catch (err) { if (btn) { btn.disabled = false; btn.textContent = '🔐 Selar no Ledger · I11'; } alert('❌ Erro: ' + err.message); }
+  } catch (err) { if (btn) { btn.disabled = false; btn.textContent = t('aiSeal'); } alert(t('errPrefix') + err.message); }
 }
 function openVerify() { if (AiDraft.currentVerifyUrl) window.open(AiDraft.currentVerifyUrl, '_blank'); }
 console.log('[WINDI LAW] AI Draft Module v1.0.0 loaded');
