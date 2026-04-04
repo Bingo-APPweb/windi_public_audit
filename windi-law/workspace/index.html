@@ -862,30 +862,30 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
 
           <div class="chips">
             <span class="chip chip-ai" onclick="openAiDraft()">⚖️ AI Draft</span>
-            <span class="chip" onclick="openAiDraft()">📄 NDA · ZPO §273</span>
-            <span class="chip" onclick="openAiDraft()">🔗 Beweiskette · SHA-256</span>
-            <span class="chip" onclick="openAiDraft()">⚖️ Tribunalpaket · DE/EN/PT</span>
-            <span class="chip" onclick="openAiDraft()">🏦 BaFin · MiCA</span>
-            <span class="chip" onclick="openAiDraft()">✍️ eIDAS Signatur</span>
-            <span class="chip" onclick="openAiDraft()">📊 ELSTER XML · C6</span>
+            <span class="chip" onclick="quickPrompt('Erstelle einen NDA-Vertrag (Geheimhaltungsvereinbarung) nach deutschem Recht. Berücksichtige ZPO §273 für Beweissicherung. Parteien: [PARTEI A] und [PARTEI B]. Laufzeit: 3 Jahre. Vertragsstrafe bei Verstoß.', 'legal')">📄 NDA · ZPO §273</span>
+            <span class="chip" onclick="quickPrompt('Erstelle eine forensische Beweiskette für ein digitales Dokument. Dokumentiere: SHA-256 Hash, Zeitstempel, Urheber-DID, Prüfpfad. Format: Ledger-kompatibel mit QR-Code-Verifizierung.', 'audit')">🔗 Beweiskette · SHA-256</span>
+            <span class="chip" onclick="quickPrompt('Erstelle ein Tribunalpaket für internationale Verfahren in DE/EN/PT. Enthält: Klageschrift, Beweisverzeichnis, Vollmacht, Kostenvorschuss-Antrag. Gerichtsstand: Deutschland.', 'legal')">⚖️ Tribunalpaket · DE/EN/PT</span>
+            <span class="chip" onclick="quickPrompt('Prüfe Compliance für Krypto-Asset-Dienstleister nach BaFin-Anforderungen und MiCA-Verordnung. Erstelle Checkliste: Lizenzierung, AML/KYC, Meldepflichten, Kapitalanforderungen.', 'compliance')">🏦 BaFin · MiCA</span>
+            <span class="chip" onclick="quickPrompt('Erstelle eine eIDAS-konforme Signaturanforderung. Qualifizierte elektronische Signatur (QES) nach EU 910/2014. Validierung: Zertifikatskette, Zeitstempel, Signaturformat XAdES/PAdES.', 'notary')">✍️ eIDAS Signatur</span>
+            <span class="chip" onclick="quickPrompt('Generiere ELSTER XML für Umsatzsteuervoranmeldung (UStVA). GoBD-konform, DATEV-Export-fähig. Periode: [MONAT/QUARTAL]. Steuernummer: [STNR]. Umsatz: [BETRAG] EUR.', 'accounting')">📊 ELSTER XML · C6</span>
           </div>
 
           <div class="sugg">
-            <div class="sugg-lbl">Häufige Anfragen</div>
+            <div class="sugg-lbl" data-i18n="frequentRequests">Häufige Anfragen</div>
             <div class="sugg-grid">
-              <div class="sc" onclick="openAiDraft()">
+              <div class="sc" onclick="quickPrompt('Analysiere den folgenden NDA-Vertrag auf rechtliche Risiken. Prüfe: Geheimhaltungspflichten, Vertragsstrafen, Laufzeit, Kündigungsklauseln, GDPR-Konformität, Gerichtsstand. Markiere kritische Klauseln.', 'legal')">
                 <div class="sc-t">Legal</div>
-                <div class="sc-n">NDA auf Risiken prüfen</div>
+                <div class="sc-n" data-i18n="sugg_nda">NDA auf Risiken prüfen</div>
                 <div class="sc-s">ZPO · GDPR · eIDAS</div>
               </div>
-              <div class="sc" onclick="openAiDraft()">
+              <div class="sc" onclick="quickPrompt('Erstelle eine vollständige Beweiskette für das angehängte Dokument. Generiere SHA-256 Hash, dokumentiere Metadaten, erstelle Ledger-Receipt mit QR-Code zur öffentlichen Verifizierung.', 'audit')">
                 <div class="sc-t">Forensisch</div>
-                <div class="sc-n">Beweiskette erstellen</div>
+                <div class="sc-n" data-i18n="sugg_evidence">Beweiskette erstellen</div>
                 <div class="sc-s">SHA-256 · Ledger · QR</div>
               </div>
-              <div class="sc" onclick="openAiDraft()">
+              <div class="sc" onclick="quickPrompt('Prüfe die angehängte XRechnung auf GoBD-Konformität. Validiere: XML-Schema, Pflichtfelder, Steuersätze, Rechnungsnummer-Sequenz. Erstelle DATEV-Export und ELSTER-Meldung (C6).', 'accounting')">
                 <div class="sc-t">Buchhaltung</div>
-                <div class="sc-n">XRechnung GoBD prüfen</div>
+                <div class="sc-n" data-i18n="sugg_xrechnung">XRechnung GoBD prüfen</div>
                 <div class="sc-s">DATEV · ELSTER · C6</div>
               </div>
             </div>
@@ -1092,6 +1092,7 @@ var LANG = {
     demoEmpty: 'Leerer Zustand', demoActive: 'Aktives Dokument',
     greetMorning: 'Guten Morgen', greetAfternoon: 'Guten Tag', greetEvening: 'Guten Abend',
     greetQuestion: 'Was möchten Sie<br>heute <em>prüfen?</em>',
+    frequentRequests: 'Häufige Anfragen', sugg_nda: 'NDA auf Risiken prüfen', sugg_evidence: 'Beweiskette erstellen', sugg_xrechnung: 'XRechnung GoBD prüfen',
     sbSchluesselTitle: 'Schlüssel', sbWalletTitle: 'Wallet',
     sbKeyTypeLabel: 'Typ', sbKeyCreatedLabel: 'Erstellt',
     sbNameLabel: 'Name', sbPioneerLabel: 'Pioneer', sbCreditsLabel: 'Kredite',
@@ -1141,6 +1142,7 @@ var LANG = {
     demoEmpty: 'Estado vazio', demoActive: 'Documento activo',
     greetMorning: 'Bom dia', greetAfternoon: 'Boa tarde', greetEvening: 'Boa noite',
     greetQuestion: 'O que deseja<br><em>verificar</em> hoje?',
+    frequentRequests: 'Pedidos Frequentes', sugg_nda: 'Analisar riscos do NDA', sugg_evidence: 'Criar cadeia de prova', sugg_xrechnung: 'Validar fatura GoBD',
     sbSchluesselTitle: 'Chave', sbWalletTitle: 'Carteira',
     sbKeyTypeLabel: 'Tipo', sbKeyCreatedLabel: 'Criada',
     sbNameLabel: 'Nome', sbPioneerLabel: 'Pioneer', sbCreditsLabel: 'Créditos',
@@ -1190,6 +1192,7 @@ var LANG = {
     demoEmpty: 'Empty State', demoActive: 'Active Document',
     greetMorning: 'Good morning', greetAfternoon: 'Good afternoon', greetEvening: 'Good evening',
     greetQuestion: 'What would you like<br>to <em>verify</em> today?',
+    frequentRequests: 'Frequent Requests', sugg_nda: 'Analyze NDA risks', sugg_evidence: 'Create evidence chain', sugg_xrechnung: 'Validate GoBD invoice',
     sbSchluesselTitle: 'Key', sbWalletTitle: 'Wallet',
     sbKeyTypeLabel: 'Type', sbKeyCreatedLabel: 'Created',
     sbNameLabel: 'Name', sbPioneerLabel: 'Pioneer', sbCreditsLabel: 'Credits',
@@ -2117,6 +2120,45 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
+
+// ══════════════════════════════════════════════════════════════
+// §122.1 — Quick Prompt (pre-fills prompt area with template)
+// ══════════════════════════════════════════════════════════════
+function quickPrompt(text, agent) {
+  // Check wallet first
+  var walletStr = sessionStorage.getItem('windi_law_wallet');
+  if (!walletStr) { alert(t('errNoWallet')); return; }
+
+  // Pre-fill prompt input
+  var promptInput = document.getElementById('prompt-input');
+  if (promptInput) {
+    promptInput.value = text;
+    promptInput.focus();
+    // Scroll to prompt area
+    promptInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  // Select the appropriate agent
+  if (agent) {
+    var agentSelect = document.getElementById('agent-select');
+    if (agentSelect) {
+      agentSelect.value = agent;
+    }
+  }
+
+  // Visual feedback
+  var pbox = document.querySelector('.pbox');
+  if (pbox) {
+    pbox.style.borderColor = 'var(--gold)';
+    pbox.style.boxShadow = '0 3px 20px rgba(139,105,20,0.15)';
+    setTimeout(function() {
+      pbox.style.borderColor = '';
+      pbox.style.boxShadow = '';
+    }, 1500);
+  }
+
+  console.log('[§122.1] Quick prompt loaded:', agent, text.substring(0, 40) + '...');
+}
 
 console.log('[WINDI LAW] §122 Direct Prompt Module v1.0.0 loaded');
 
