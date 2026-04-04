@@ -973,7 +973,7 @@ async def get_frame_hash(export_id: str, frame_index: int):
 
 # ----- Test Dashboard -----
 
-@app.get("/test/", response_class=HTMLResponse)
+@app.get("/vd-cut/test/", response_class=HTMLResponse)
 async def test_dashboard():
     """
     Serve the VD-CUT Test Dashboard.
