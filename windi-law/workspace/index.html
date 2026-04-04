@@ -200,6 +200,16 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
 .patt .ico { font-size: 14px; }
 .patt .lbl { font-size: 8px; color: var(--ink-4); letter-spacing: 0.04em; }
 .pagent { font-size: 10px; font-weight: 500; padding: 3px 9px; border-radius: 14px; background: var(--gold-bg); color: var(--gold); border: 1px solid rgba(139,105,20,0.18); cursor: pointer; margin-left: 2px; }
+/* §122 Agent Selector */
+.pagent-select { font-size: 10px; font-weight: 500; padding: 4px 8px; border-radius: 14px; background: var(--gold-bg); color: var(--gold); border: 1px solid rgba(139,105,20,0.25); cursor: pointer; margin-left: 2px; font-family: var(--font); appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath fill='%238B6914' d='M0 2l4 4 4-4z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 6px center; padding-right: 18px; }
+.pagent-select:hover { border-color: var(--gold); }
+.pagent-select:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 2px rgba(139,105,20,0.15); }
+.pagent-select option { background: var(--bg); color: var(--ink); padding: 8px; }
+/* §122 Loading Animation */
+.loading-dots span { animation: blink 1.4s infinite both; }
+.loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+.loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes blink { 0%, 80%, 100% { opacity: 0; } 40% { opacity: 1; } }
 .plang { display: flex; gap: 2px; margin-left: auto; }
 .plbtn { font-size: 9px; padding: 2px 6px; border-radius: 8px; border: 1px solid var(--border); color: var(--ink-4); cursor: pointer; background: transparent; }
 .plbtn.on { background: var(--perg-2); color: var(--ink-2); border-color: var(--border-2); }
@@ -602,6 +612,7 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
   .patt .ico { font-size: 16px; }
   .patt .lbl { font-size: 9px; }
   .pagent { font-size: 11px; padding: 6px 12px; min-height: 32px; display: flex; align-items: center; }
+  .pagent-select { font-size: 11px; padding: 8px 24px 8px 12px; min-height: 40px; border-radius: 20px; }
   .plang { gap: 3px; }
   .plbtn { font-size: 10px; padding: 4px 8px; min-width: 32px; min-height: 32px; }
   .psend { width: 44px; height: 44px; font-size: 16px; }
@@ -827,18 +838,25 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
           <div class="wtitle" data-i18n="greetQuestion">Was möchten Sie<br>heute <em>prüfen?</em></div>
 
           <div class="pbox">
-            <textarea placeholder="Beschreiben Sie Ihr rechtliches Anliegen… Dokument hochladen, Vertrag analysieren, Beweiskette erstellen"></textarea>
+            <textarea id="prompt-input" placeholder="Beschreiben Sie Ihr rechtliches Anliegen… Dokument hochladen, Vertrag analysieren, Beweiskette erstellen"></textarea>
             <div class="pbox-ft" id="cmd-media-bar">
               <div class="patt" title="Dokument"><span class="ico">📄</span><span class="lbl">DOC</span></div>
               <div class="patt" title="Bild"><span class="ico">🖼</span><span class="lbl">IMG</span></div>
               <div class="patt" title="Video"><span class="ico">🎥</span><span class="lbl">VID</span></div>
-              <div class="pagent">W-LEGAL-001</div>
+              <!-- §122 Agent Selector -->
+              <select id="agent-select" class="pagent-select" title="Agent auswählen">
+                <option value="legal">⚖️ W-LEGAL</option>
+                <option value="notary">📜 W-NOTARY</option>
+                <option value="audit">🔍 W-AUDIT</option>
+                <option value="compliance">✓ W-COMPLY</option>
+                <option value="accounting">📊 W-ACCT</option>
+              </select>
               <div class="plang">
-                <button class="plbtn on">DE</button>
-                <button class="plbtn">EN</button>
-                <button class="plbtn">PT</button>
+                <button class="plbtn on" data-lang="de">DE</button>
+                <button class="plbtn" data-lang="en">EN</button>
+                <button class="plbtn" data-lang="pt">PT</button>
               </div>
-              <button class="psend" onclick="openAiDraft()">→</button>
+              <button class="psend" onclick="submitDirectPrompt()" title="Senden">→</button>
             </div>
           </div>
 
@@ -1879,6 +1897,228 @@ async function sealAiDraft() {
 }
 function openVerify() { if (AiDraft.currentVerifyUrl) window.open(AiDraft.currentVerifyUrl, '_blank'); }
 console.log('[WINDI LAW] AI Draft Module v1.0.0 loaded');
+
+// ══════════════════════════════════════════════════════════════
+// §122 — DIRECT PROMPT MODULE (LAW Agent Corps Integration)
+// Submits prompt directly to selected agent without modal
+// ══════════════════════════════════════════════════════════════
+
+const DirectPrompt = {
+  currentSession: null,
+  selectedAgent: 'legal',
+  selectedLang: 'de'
+};
+
+// Agent configuration
+const AGENT_CONFIG = {
+  legal:      { name: 'W-LEGAL-001',   icon: '⚖️', badge: 'Legal',      color: '#1a3a6b', endpoint: '/agents/legal/bridge' },
+  notary:     { name: 'W-NOTARY-001',  icon: '📜', badge: 'Notarial',   color: '#5a1a6b', endpoint: '/agents/notary/bridge' },
+  audit:      { name: 'W-AUDIT-001',   icon: '🔍', badge: 'Audit',      color: '#2d4a1a', endpoint: '/agents/audit/bridge' },
+  compliance: { name: 'W-COMPLY-001',  icon: '✓',  badge: 'Compliance', color: '#1a4a5a', endpoint: '/agents/compliance/bridge' },
+  accounting: { name: 'W-ACCT-001',    icon: '📊', badge: 'Buchhaltung', color: '#4a3a1a', endpoint: '/agents/accounting/bridge' }
+};
+
+function getSelectedAgent() {
+  var sel = document.getElementById('agent-select');
+  return sel ? sel.value : 'legal';
+}
+
+function getSelectedPromptLang() {
+  var active = document.querySelector('.plbtn.on');
+  return active ? (active.dataset.lang || active.textContent.toLowerCase()) : 'de';
+}
+
+async function submitDirectPrompt() {
+  // Get wallet
+  var walletStr = sessionStorage.getItem('windi_law_wallet');
+  if (!walletStr) { alert(t('errNoWallet')); return; }
+  var wallet = JSON.parse(walletStr);
+  var did = wallet.did || 'UNKNOWN';
+
+  // Get prompt
+  var promptInput = document.getElementById('prompt-input');
+  var prompt = promptInput ? promptInput.value.trim() : '';
+  if (!prompt || prompt.length < 10) {
+    alert(t('errContextShort') || 'Bitte geben Sie mindestens 10 Zeichen ein.');
+    return;
+  }
+
+  // Get agent and language
+  var agent = getSelectedAgent();
+  var lang = getSelectedPromptLang();
+  var config = AGENT_CONFIG[agent] || AGENT_CONFIG.legal;
+
+  // I9 Gate: Confirm before generation
+  var confirmMsg = t('confirmI9Generate', {
+    docType: config.badge.toUpperCase(),
+    jurisdiction: 'DE',
+    docName: prompt.substring(0, 30) + '...'
+  }) || ('🛡️ ' + config.name + ' aktivieren?\n\nPrompt: ' + prompt.substring(0, 50) + '...\n\nBestätigen?');
+
+  if (!confirm(confirmMsg)) return;
+
+  // Show loading state
+  switchToActive();
+  showAgentLoading(config);
+
+  try {
+    // Step 1: Create session with the agent
+    var sessionResp = await fetch('/law' + config.endpoint + '/open', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        wallet_id: did,
+        title: prompt.substring(0, 60),
+        doc_type: 'prompt',
+        jurisdiction: 'DE'
+      })
+    });
+    var sessionData = await sessionResp.json();
+
+    if (!sessionResp.ok) throw new Error(sessionData.detail || 'Session creation failed');
+
+    DirectPrompt.currentSession = sessionData;
+    console.log('[§122] Agent session created:', sessionData.session_id);
+
+    // Step 2: Generate content via AI Draft (unified generation)
+    var genResp = await fetch('/law/ai-draft/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        did: did,
+        wallet_id: did,
+        doc_type: agent,
+        jurisdiction: 'DE',
+        lang: lang,
+        tier: wallet.tier || 'FREE',
+        context: prompt,
+        doc_name: prompt.substring(0, 40),
+        agent_session: sessionData.session_id
+      })
+    });
+    var genData = await genResp.json();
+
+    if (!genResp.ok) throw new Error(genData.detail || 'Generation failed');
+
+    // Show result
+    showAgentResult(config, genData, sessionData);
+
+    // Clear prompt input
+    if (promptInput) promptInput.value = '';
+
+  } catch (err) {
+    console.error('[§122] Error:', err);
+    showAgentError(config, err.message);
+  }
+}
+
+function switchToActive() {
+  document.getElementById('st-empty').style.display = 'none';
+  document.getElementById('st-active').style.display = 'flex';
+  document.getElementById('doc-empty-state').style.display = 'none';
+  document.getElementById('doc-content').style.display = 'block';
+}
+
+function showAgentLoading(config) {
+  var agentResp = document.getElementById('agent-response');
+  var docCanvas = document.getElementById('doc-canvas');
+
+  if (agentResp) {
+    agentResp.style.display = 'flex';
+    document.getElementById('agent-icon').textContent = config.icon;
+    document.getElementById('agent-name').textContent = config.name;
+    document.getElementById('agent-text').innerHTML = '<div class="loading-dots">Verarbeite Anfrage<span>.</span><span>.</span><span>.</span></div>';
+    document.getElementById('agent-risks').innerHTML = '';
+  }
+
+  if (docCanvas) docCanvas.style.display = 'none';
+
+  // Update header
+  var hdr = document.getElementById('doc-hdr-dynamic');
+  if (hdr) {
+    hdr.style.display = 'flex';
+    document.getElementById('doc-badge').textContent = config.badge;
+    document.getElementById('doc-badge').className = 'dbadge';
+    document.getElementById('doc-badge').style.background = config.color;
+    document.getElementById('doc-badge').style.color = 'white';
+    document.getElementById('doc-title').textContent = 'Wird generiert...';
+  }
+}
+
+function showAgentResult(config, genData, sessionData) {
+  var agentResp = document.getElementById('agent-response');
+  var docCanvas = document.getElementById('doc-canvas');
+
+  // Update agent response
+  if (agentResp) {
+    document.getElementById('agent-text').innerHTML = '<div style="white-space:pre-wrap;line-height:1.6">' + escapeHtml(genData.draft_text || 'Kein Inhalt generiert.') + '</div>';
+    document.getElementById('agent-risks').innerHTML =
+      '<span class="risk" style="background:#2d4a1a;color:#8fbc8f">✓ ' + config.name + '</span>' +
+      '<span class="risk" style="background:var(--gold-bg);color:var(--gold)">' + (genData.tokens || 0) + ' tokens</span>' +
+      '<span class="risk" style="background:var(--gold-bg);color:var(--gold)">' + (genData.elapsed_seconds || 0) + 's</span>' +
+      '<span class="risk" style="background:#1a3a6b;color:#8fb3d9">Session: ' + sessionData.session_id + '</span>';
+  }
+
+  // Update header
+  document.getElementById('doc-title').textContent = genData.doc_name || sessionData.title || 'Generiertes Dokument';
+
+  // Store for sealing
+  AiDraft.currentDraftId = genData.draft_id;
+  AiDraft.currentDraftText = genData.draft_text;
+  AiDraft.currentDocType = config.badge.toLowerCase();
+  AiDraft.currentDocName = genData.doc_name || sessionData.title;
+  AiDraft.currentJurisdiction = 'DE';
+
+  // Also populate doc canvas for editing
+  if (docCanvas) {
+    docCanvas.style.display = 'block';
+    var dcTitle = document.getElementById('dc-title');
+    var dcMeta = document.getElementById('dc-meta');
+    if (dcTitle) dcTitle.textContent = genData.doc_name || sessionData.title;
+    if (dcMeta) dcMeta.textContent = config.name + ' · ' + new Date().toLocaleDateString('de-DE') + ' · Session: ' + sessionData.session_id;
+  }
+
+  console.log('[§122] Agent result displayed:', config.name, sessionData.session_id);
+}
+
+function showAgentError(config, errorMsg) {
+  var agentResp = document.getElementById('agent-response');
+  if (agentResp) {
+    document.getElementById('agent-text').innerHTML = '<div style="color:#c0392b">❌ Fehler: ' + escapeHtml(errorMsg) + '</div>';
+    document.getElementById('agent-risks').innerHTML = '<span class="risk" style="background:#c0392b;color:white">Fehlgeschlagen</span>';
+  }
+  document.getElementById('doc-title').textContent = 'Fehler';
+}
+
+function escapeHtml(text) {
+  var div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// Wire up language buttons in prompt area
+document.querySelectorAll('.pbox-ft .plbtn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.pbox-ft .plbtn').forEach(function(b) { b.classList.remove('on'); });
+    btn.classList.add('on');
+    DirectPrompt.selectedLang = btn.dataset.lang || btn.textContent.toLowerCase();
+  });
+});
+
+// Enter key to submit
+document.addEventListener('DOMContentLoaded', function() {
+  var promptInput = document.getElementById('prompt-input');
+  if (promptInput) {
+    promptInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        submitDirectPrompt();
+      }
+    });
+  }
+});
+
+console.log('[WINDI LAW] §122 Direct Prompt Module v1.0.0 loaded');
 
 // ══════════════════════════════════════════════════════════════
 // §120.5 MOBILE MENU FUNCTIONS — Phase 1 Emergency Fix
