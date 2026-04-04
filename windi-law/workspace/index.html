@@ -887,6 +887,9 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
 </style>
 <!-- Quill CSS -->
 <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+<!-- §125 QRCode.js + html2pdf.js for professional export -->
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 
@@ -2346,59 +2349,158 @@ async function sealAgentDraft() {
   await sealAiDraft();
 }
 
-function showAgentQR() {
-  if (!AiDraft.currentDraftText) { alert('Kein Entwurf für QR-Code.'); return; }
+// §125 — QR Code Modal with real QRCode.js
+async function showAgentQR() {
+  var content = getQuillContent();
+  if (!content || content.trim() === '') {
+    alert('Kein Entwurf für QR-Code.');
+    return;
+  }
 
-  // Compute hash and show QR
-  computeHashPreview(AiDraft.currentDraftText).then(function(hash) {
-    var qrData = 'WINDI:' + (DirectPrompt.currentSession?.session_id || 'DRAFT') + '|' + hash.replace('…', '');
+  // Compute full hash
+  var encoder = new TextEncoder();
+  var data = encoder.encode(content);
+  var hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  var hashArray = Array.from(new Uint8Array(hashBuffer));
+  var fullHash = hashArray.map(function(b) { return b.toString(16).padStart(2,'0'); }).join('');
 
-    // Use existing QR function if available
-    if (typeof showQRCode === 'function') {
-      showQRCode(qrData, AiDraft.currentDocName || 'Dokument');
-    } else {
-      // Fallback: show in alert
-      alert('QR-Code Daten:\n\n' + qrData + '\n\nSession: ' + (DirectPrompt.currentSession?.session_id || 'N/A'));
-    }
-  });
+  var sessionId = DirectPrompt.currentSession?.session_id || 'DRAFT';
+  var verifyUrl = 'https://windi-domain.com/verify-public/?id=' + sessionId;
+
+  // Create modal
+  var modal = document.createElement('div');
+  modal.id = 'qr-modal';
+  modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:10000;';
+  modal.innerHTML = '\
+    <div style="background:var(--perg-2);border-radius:12px;padding:2rem;max-width:400px;text-align:center;border:1px solid var(--border-2);">\
+      <h3 style="color:var(--gold);margin-bottom:1rem;font-size:1.2rem;">📱 WINDI Verification QR</h3>\
+      <div id="qr-canvas" style="background:white;padding:1rem;border-radius:8px;margin-bottom:1rem;display:inline-block;"></div>\
+      <p style="font-size:0.85rem;color:var(--ink-2);margin-bottom:0.5rem;">' + (AiDraft.currentDocName || 'Dokument') + '</p>\
+      <p style="font-family:var(--mono);font-size:0.7rem;color:var(--ink-3);word-break:break-all;margin-bottom:1rem;">SHA-256: ' + fullHash.substring(0,32) + '...</p>\
+      <p style="font-size:0.75rem;color:var(--ink-3);margin-bottom:1rem;">Session: ' + sessionId + '</p>\
+      <div style="display:flex;gap:0.5rem;justify-content:center;">\
+        <button onclick="downloadAgentQR()" style="background:var(--gold);color:#080808;border:none;padding:0.75rem 1.5rem;border-radius:6px;cursor:pointer;font-weight:600;">⬇️ Download</button>\
+        <button onclick="closeQRModal()" style="background:transparent;border:1px solid var(--border-2);color:var(--ink);padding:0.75rem 1.5rem;border-radius:6px;cursor:pointer;">Schließen</button>\
+      </div>\
+    </div>';
+
+  document.body.appendChild(modal);
+  modal.onclick = function(e) { if (e.target === modal) closeQRModal(); };
+
+  // Generate real QR code
+  if (typeof QRCode !== 'undefined') {
+    QRCode.toCanvas(document.createElement('canvas'), verifyUrl, { width: 200, margin: 2 }, function(err, canvas) {
+      if (!err) {
+        document.getElementById('qr-canvas').appendChild(canvas);
+      }
+    });
+  } else {
+    document.getElementById('qr-canvas').innerHTML = '<p style="color:#666;padding:2rem;">QR Library not loaded</p>';
+  }
+
+  console.log('[§125] QR Modal shown for:', sessionId);
 }
 
-async function exportAgentDraft() {
-  // §124: Get content from Quill editor (reflects any edits)
+function closeQRModal() {
+  var modal = document.getElementById('qr-modal');
+  if (modal) modal.remove();
+}
+
+async function downloadAgentQR() {
   var content = getQuillContent();
+  if (!content) return;
+
+  var sessionId = DirectPrompt.currentSession?.session_id || 'DRAFT';
+  var verifyUrl = 'https://windi-domain.com/verify-public/?id=' + sessionId;
+
+  if (typeof QRCode !== 'undefined') {
+    QRCode.toDataURL(verifyUrl, { width: 400, margin: 2 }, function(err, url) {
+      if (!err) {
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'WINDI-QR_' + sessionId + '.png';
+        a.click();
+      }
+    });
+  }
+}
+
+// §125 — Professional PDF Export with html2pdf.js
+async function exportAgentDraft() {
+  // Get content from Quill editor
+  var content = getQuillContent();
+  var htmlContent = getQuillHtml();
+
   if (!content || content.trim() === '') {
     alert('Kein Entwurf zum Exportieren.');
     return;
   }
 
-  // Update stored draft text
-  AiDraft.currentDraftText = content;
+  // Compute hash for footer
+  var encoder = new TextEncoder();
+  var data = encoder.encode(content);
+  var hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  var hashArray = Array.from(new Uint8Array(hashBuffer));
+  var fullHash = hashArray.map(function(b) { return b.toString(16).padStart(2,'0'); }).join('');
 
-  // Export as formatted text with WINDI header
-  var exportContent = '═══════════════════════════════════════════════════════════════\n';
-  exportContent += '  WINDI LAW — ' + (AiDraft.currentDocName || 'Dokument') + '\n';
-  exportContent += '═══════════════════════════════════════════════════════════════\n\n';
-  exportContent += 'Session: ' + (DirectPrompt.currentSession?.session_id || 'N/A') + '\n';
-  exportContent += 'Datum: ' + new Date().toLocaleString('de-DE') + '\n';
-  exportContent += 'Agent: ' + (AGENT_CONFIG[getSelectedAgent()]?.name || 'W-LEGAL-001') + '\n\n';
-  exportContent += '───────────────────────────────────────────────────────────────\n\n';
-  exportContent += content + '\n\n';
-  exportContent += '───────────────────────────────────────────────────────────────\n';
-  exportContent += '⚠️ KI-generierter Entwurf. Rechtliche Prüfung erforderlich.\n';
-  exportContent += '🔐 WINDI LAW · Invariants: I9 · I11 · G3\n';
-  exportContent += '═══════════════════════════════════════════════════════════════\n';
+  var sessionId = DirectPrompt.currentSession?.session_id || 'DRAFT';
+  var docName = AiDraft.currentDocName || 'Rechtsdokument';
+  var agentName = AGENT_CONFIG[getSelectedAgent()]?.name || 'W-LEGAL-001';
+  var dateStr = new Date().toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
-  var blob = new Blob([exportContent], { type: 'text/plain;charset=utf-8' });
-  var url = URL.createObjectURL(blob);
-  var a = document.createElement('a');
-  a.href = url;
-  a.download = 'WINDI-LAW_' + (AiDraft.currentDocName || 'Export') + '_' + new Date().toISOString().slice(0,10) + '.txt';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  // Create professional PDF document
+  var pdfContainer = document.createElement('div');
+  pdfContainer.id = 'pdf-export-container';
+  pdfContainer.style.cssText = 'position:absolute;left:-9999px;top:0;width:210mm;padding:20mm;font-family:Georgia,serif;font-size:12pt;line-height:1.6;color:#1a1a1a;background:white;';
 
-  console.log('[§122.2] Draft exported');
+  pdfContainer.innerHTML = '\
+    <div style="text-align:center;margin-bottom:30px;padding-bottom:20px;border-bottom:2px solid #8B6914;">\
+      <div style="font-size:10pt;color:#666;letter-spacing:2px;margin-bottom:5px;">WINDI LAW</div>\
+      <h1 style="font-size:18pt;font-weight:normal;margin:0;color:#1a1a1a;">' + escapeHtml(docName) + '</h1>\
+    </div>\
+    <div style="margin-bottom:20px;padding:15px;background:#f8f8f6;border-left:3px solid #8B6914;font-size:10pt;color:#444;">\
+      <strong>Session:</strong> ' + sessionId + '<br>\
+      <strong>Datum:</strong> ' + dateStr + '<br>\
+      <strong>Agent:</strong> ' + agentName + '\
+    </div>\
+    <div style="text-align:justify;">' + htmlContent + '</div>\
+    <div style="margin-top:40px;padding-top:20px;border-top:1px solid #ddd;font-size:9pt;color:#666;">\
+      <div style="margin-bottom:10px;">⚠️ <em>KI-generierter Entwurf. Rechtliche Überprüfung durch einen Anwalt erforderlich.</em></div>\
+      <div style="font-family:monospace;font-size:8pt;color:#888;word-break:break-all;">SHA-256: ' + fullHash + '</div>\
+      <div style="margin-top:15px;text-align:center;color:#8B6914;font-size:8pt;">\
+        🔐 WINDI LAW · Invariants: I9 · I11 · G3<br>\
+        <em>"Any AI generates. Only WINDI proves."</em>\
+      </div>\
+    </div>';
+
+  document.body.appendChild(pdfContainer);
+
+  // Generate PDF
+  var opt = {
+    margin: 0,
+    filename: 'WINDI-LAW_' + docName.replace(/[^a-zA-Z0-9äöüÄÖÜß\-_]/g, '_') + '_' + new Date().toISOString().slice(0,10) + '.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+
+  if (typeof html2pdf !== 'undefined') {
+    html2pdf().set(opt).from(pdfContainer).save().then(function() {
+      document.body.removeChild(pdfContainer);
+      console.log('[§125] PDF exported:', opt.filename);
+    });
+  } else {
+    // Fallback to HTML download if html2pdf not loaded
+    document.body.removeChild(pdfContainer);
+    var blob = new Blob([pdfContainer.innerHTML], { type: 'text/html;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'WINDI-LAW_' + docName + '.html';
+    a.click();
+    URL.revokeObjectURL(url);
+    console.log('[§125] HTML fallback exported');
+  }
 }
 
 function showAgentError(config, errorMsg) {
