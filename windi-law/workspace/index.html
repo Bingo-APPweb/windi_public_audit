@@ -129,7 +129,7 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
 .ok.pending { color: var(--amber); }
 
 /* ── CENTER ── */
-.center { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+.center { flex: 1; display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden; }
 
 .topbar {
   display: flex; align-items: center;
@@ -220,7 +220,7 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
 .sc-s { font-size: 9px; color: var(--ink-4); margin-top: 2px; }
 
 /* ══ ESTADO ACTIVO ══ */
-#st-active { flex: 1; display: none; flex-direction: column; overflow: hidden; }
+#st-active { flex: 1; display: none; flex-direction: column; overflow: hidden; min-height: 0; }
 
 .doc-hdr {
   padding: 8px 16px; border-bottom: 1px solid var(--border);
@@ -239,8 +239,10 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
 
 /* scroll */
 .scroll { flex: 1; overflow-y: auto; padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; min-height: 0; }
-.scroll::-webkit-scrollbar { width: 3px; }
-.scroll::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 2px; }
+.scroll::-webkit-scrollbar { width: 8px; }
+.scroll::-webkit-scrollbar-track { background: var(--perg-2); border-radius: 4px; }
+.scroll::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 4px; opacity: 0.6; }
+.scroll::-webkit-scrollbar-thumb:hover { background: #6B4F10; }
 .demo-notice { background: rgba(139,105,20,0.08); border: 1px dashed var(--gold); border-radius: 8px; padding: 8px 12px; font-size: 10px; color: var(--gold); text-align: center; margin-bottom: 8px; }
 
 /* agent response */
