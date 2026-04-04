@@ -4583,3 +4583,106 @@ Vídeo de campo (117MB · 31s · 1080p)
 *Sealed: 04 Apr 2026 · §121 VD-CUT CERTIFIED*
 *"AI processes. Human decides. WINDI guarantees."*
 *Liga IA+H · Kempten, Bavaria · 2026*
+
+---
+
+## §122 — W-VD-MASS-001 · Policy-Based Video Automation (04 Apr 2026)
+
+**Estado:** LIVE · SEALED · IRREMEDIÁVEL
+
+> **"I9-P não é delegação de responsabilidade — é delegação de critério."**
+
+### Identidade do Serviço
+
+| Campo | Valor |
+|-------|-------|
+| Commit | `d7da443` |
+| Port | :8131 |
+| Directory | `/opt/windi/vd-mass/` |
+| systemd | `windi-vd-mass.service` |
+| DB | `/opt/windi/data/vd_mass.db` |
+| nginx | `/vd-mass/` → linha 261 |
+
+### Protocolo I9-P (Policy-Based Automation)
+
+**Contexto:** WINDI TRAVEL · Media Partners · Hotel Networks
+
+**Arquitectura dos Dois Pilares:**
+```
+W-VD-CUT-001  :8128   I9 Directo    Forense · 1 vídeo/vez · SEALED 03 Abr
+W-VD-MASS-001 :8131   I9-P Policy   Batch assistido · SEALED 04 Abr
+```
+
+### Fluxo I9-P
+
+```
+1. Humano define Policy (critérios + validade)
+        ↓
+2. Sistema activa (hash no ledger interno)
+        ↓
+3. Batch submitted → avaliação automática
+        ↓
+4. ✅ Conforme → auto-seal (Policy-I9-P)
+   ⚠️  Exception → Queue → decisão humana obrigatória
+```
+
+### Endpoints
+
+| Endpoint | Função |
+|----------|--------|
+| POST /policy/create | Cria política |
+| GET /policy/{id} | Lê política |
+| POST /policy/{id}/activate | Activa (hash ledger) |
+| GET /policy/list | Lista políticas |
+| POST /batch/submit | Submete lote |
+| GET /batch/{id}/status | Estado do lote |
+| GET /batch/{id}/results | Resultados |
+| GET /queue/exceptions | Lista excepções |
+| POST /queue/{id}/decide | Humano decide |
+| GET /health | Health check |
+| GET /metrics | Métricas |
+
+### Tipos de Critério Suportados (v1.0)
+
+| type | descrição |
+|------|-----------|
+| file_type | extensão permitida |
+| min_resolution | resolução mínima em p |
+| max_duration_seconds | duração máxima |
+| origin_domain | domínio de origem |
+| has_hash | artefacto tem SHA-256 |
+| timestamp_valid | timestamp dentro de janela |
+
+### Primeira Policy Activa
+
+```json
+{
+  "name": "WINDI TRAVEL Hotels v1",
+  "criteria": ["file_type", "min_resolution", "max_duration_seconds"],
+  "valid_until": "2026-07-04",
+  "ledger_hash": "58a7fdc31f0211ae351a95be4dcf310ddb47ec14064c4af1c8afa09a9d329d28"
+}
+```
+
+### Smoke Test Results
+
+```
+Total:      3 items
+Conformes:  2 (auto-sealed Policy-I9-P)
+Exceptions: 1 (file_type: avi não permitido)
+```
+
+### Nota Constitucional
+
+I9-P não é delegação de responsabilidade — é delegação de critério.
+O humano aprova a regra, a máquina verifica a conformidade,
+o humano decide todas as excepções.
+
+**Invariantes:** I9 (responsabilidade via política) · I11 (rastreabilidade total)
+**Protocolo base:** WINDI-I9-P-001 v0.1.0
+
+---
+
+*Sealed: 04 Apr 2026 · §122 W-VD-MASS-001 I9-P Protocol*
+*"AI processes. Human decides. WINDI guarantees."*
+*Liga IA+H · Kempten, Bavaria · 2026*
