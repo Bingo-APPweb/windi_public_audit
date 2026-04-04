@@ -553,6 +553,10 @@ app = FastAPI(
     description="Sovereign Identity Management for Legal Professionals"
 )
 
+# ─── AI Draft Module ─────────────────────────────────────────────────────────
+from ai_draft import ai_draft_router
+app.include_router(ai_draft_router)
+
 # Mount static files and templates
 templates = Jinja2Templates(directory="/opt/windi/windi-law/identity-gate/templates")
 # Disable Jinja2 cache to avoid unhashable type error with dict globals
