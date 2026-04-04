@@ -827,6 +827,27 @@ Se o Gêmeo inventa um receipt... isso é falsificação."
 - [ ] **Cron 48h** — Downgrade email não verificado → EMAIL_PENDING
 - [ ] **HIGH ops gate** — Bloquear operações HIGH se email_verified=0
 
+### P1.5 — WINDI-LAW Mobile Phase 2 (OBRIGATÓRIO)
+> **Condição de §120.5:** Este ticket é obrigatório, não opcional.
+
+- [ ] **Mobile-first Rewrite** — Separar CSS em ficheiro dedicado (fim do "ficheiro deus")
+- [ ] **Inspector Modal** — Panel direito como modal em mobile
+- [ ] **Swipe Gestures** — Sidebar abre com swipe direita
+- [ ] **Document Viewer** — Optimizado para leitura vertical
+- [ ] **AI Draft Mobile** — Modal adaptado para teclado virtual
+
+**Arquitectura Target:**
+```
+workspace/
+├── index.html          (só estrutura)
+├── css/
+│   ├── base.css        (variáveis + reset)
+│   ├── desktop.css     (≥768px)
+│   └── mobile.css      (mobile-first)
+└── js/
+    └── mobile-menu.js  (hamburger + gestures)
+```
+
 ### P1.5 — WINDI Travel Phase 2
 - [x] **Vídeo** — ✅ W-VD-CUT-001 LIVE · Captura + seal via Telegram · 03 Apr 2026
 - [ ] **Colagem Soberana** — Composição multi-momento
