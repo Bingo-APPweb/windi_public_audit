@@ -2802,8 +2802,21 @@ function setQuillContent(text) {
 
 // Get content from Quill (for sealing/saving)
 function getQuillContent() {
-  if (!quillEditor) return '';
-  return quillEditor.getText();
+  // Try Quill editor first
+  if (quillEditor) {
+    var text = quillEditor.getText();
+    if (text && text.trim().length > 0) {
+      console.log('[§124] getQuillContent: from Quill editor, length=' + text.length);
+      return text;
+    }
+  }
+  // Fallback to stored draft text
+  if (AiDraft.currentDraftText && AiDraft.currentDraftText.trim().length > 0) {
+    console.log('[§124] getQuillContent: fallback to AiDraft.currentDraftText, length=' + AiDraft.currentDraftText.length);
+    return AiDraft.currentDraftText;
+  }
+  console.log('[§124] getQuillContent: no content found, quillEditor=' + !!quillEditor);
+  return '';
 }
 
 function getQuillHtml() {
