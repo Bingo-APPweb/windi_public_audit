@@ -764,7 +764,9 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
     }
   }
 }
-/* ═══ §124 QUILL EDITOR NOIR THEME ═══ */
+/* ═══ §126 QUILL EDITOR — WHITE DOCUMENT STYLE ═══ */
+/* Document appears as white paper for professional legal documents */
+
 .ql-toolbar.ql-snow {
   background: var(--perg-2);
   border: 1px solid var(--border-2) !important;
@@ -776,60 +778,137 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
 .ql-container.ql-snow {
   border: 1px solid var(--border-2) !important;
   border-radius: 0 0 var(--r) var(--r);
-  background: var(--perg-3);
-  font-family: var(--font-doc);
-  font-size: 1rem;
-  min-height: 300px;
+  /* WHITE DOCUMENT BACKGROUND */
+  background: #FFFFFF !important;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 11pt;
+  min-height: 400px;
+  /* Paper shadow effect */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 
 .ql-editor {
-  color: var(--ink);
-  line-height: 1.75;
-  padding: 1.25rem 1.5rem;
+  /* Document text is black on white */
+  color: #1a1a1a !important;
+  line-height: 1.7;
+  padding: 2rem 2.5rem;
+  background: #FFFFFF;
 }
 
-.ql-editor h1, .ql-editor h2, .ql-editor h3 {
-  color: var(--gold);
-  font-family: var(--font);
-  font-weight: 600;
+/* Document headings - black, professional */
+.ql-editor h1 {
+  color: #1a1a1a !important;
+  font-family: 'Georgia', serif;
+  font-weight: bold;
+  font-size: 16pt;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.ql-editor h2 {
+  color: #1a1a1a !important;
+  font-family: 'Georgia', serif;
+  font-weight: bold;
+  font-size: 12pt;
+  margin-top: 1.5rem;
   margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #ccc;
 }
 
-.ql-editor h1 { font-size: 1.4rem; }
-.ql-editor h2 { font-size: 1.2rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
-.ql-editor h3 { font-size: 1.05rem; }
+.ql-editor h3 {
+  color: #1a1a1a !important;
+  font-family: 'Georgia', serif;
+  font-weight: bold;
+  font-size: 11pt;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
 
-.ql-editor p { margin-bottom: 1rem; }
+.ql-editor p {
+  margin-bottom: 0.75rem;
+  text-align: justify;
+  color: #1a1a1a;
+}
 
-.ql-editor strong { color: var(--gold); font-weight: 600; }
+.ql-editor strong {
+  color: #1a1a1a !important;
+  font-weight: bold;
+}
 
 .ql-editor ul, .ql-editor ol {
-  margin-left: 1.5rem;
+  margin-left: 2rem;
   margin-bottom: 1rem;
   padding-left: 0;
+  color: #1a1a1a;
 }
 
-.ql-editor li { margin-bottom: 0.4rem; }
+.ql-editor li {
+  margin-bottom: 0.4rem;
+  color: #1a1a1a;
+}
 
 .ql-editor blockquote {
-  border-left: 3px solid var(--gold);
+  border-left: 3px solid #8B6914;
   padding-left: 1rem;
   margin: 1rem 0;
-  color: var(--ink-2);
+  color: #444;
   font-style: italic;
+  background: #f9f9f7;
 }
 
 .ql-editor pre {
-  background: var(--perg-2);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
   padding: 1rem;
-  font-family: var(--mono);
-  font-size: 0.85rem;
+  font-family: 'Courier New', monospace;
+  font-size: 10pt;
   overflow-x: auto;
+  color: #333;
 }
 
-/* Toolbar icons for NOIR */
+/* §126 Editable placeholder fields */
+.ql-editor .doc-field {
+  display: inline-block;
+  min-width: 150px;
+  padding: 2px 8px;
+  margin: 0 2px;
+  border-bottom: 1px solid #8B6914;
+  background: #fffef5;
+  color: #666;
+  font-style: italic;
+  cursor: text;
+}
+
+.ql-editor .doc-field:focus {
+  outline: none;
+  background: #fff8e0;
+  border-bottom: 2px solid #8B6914;
+  color: #1a1a1a;
+  font-style: normal;
+}
+
+.ql-editor .doc-field:empty:before {
+  content: attr(data-placeholder);
+  color: #999;
+}
+
+/* Signature lines */
+.ql-editor .signature-line {
+  display: inline-block;
+  width: 200px;
+  border-bottom: 1px solid #333;
+  margin: 0 10px;
+  text-align: center;
+  padding-top: 30px;
+  font-size: 9pt;
+  color: #666;
+}
+
+/* Toolbar icons - keep NOIR style */
 .ql-snow .ql-stroke { stroke: var(--ink-3) !important; }
 .ql-snow .ql-fill { fill: var(--ink-3) !important; }
 .ql-snow .ql-picker-label { color: var(--ink-3) !important; }
@@ -2050,7 +2129,8 @@ async function updatePreviewHash() {
 async function sealAiDraft() {
   var wallet = JSON.parse(sessionStorage.getItem('windi_law_wallet') || '{}');
   var did = wallet.did || sessionStorage.getItem('windi_law_did') || 'UNKNOWN';
-  var draftText = document.getElementById('ai-result-text').value.trim();
+  // §126: Try stored draft first (from Quill editor), then textarea
+  var draftText = AiDraft.currentDraftText || document.getElementById('ai-result-text').value.trim();
   var tier = wallet.tier || 'FREE';
   if (!draftText) { alert(t('errTextEmpty')); return; }
   var confirmed = confirm(t('confirmG3Seal', {docName: AiDraft.currentDocName, docType: (AiDraft.currentDocType || '').toUpperCase(), jurisdiction: AiDraft.currentJurisdiction}));
@@ -2856,7 +2936,8 @@ async function updateDocumentHash() {
   }
 }
 
-// §125 — Convert plain text to properly formatted HTML for Quill
+// §126 — Convert plain text to properly formatted HTML for Quill
+// Creates white document with editable placeholder fields
 function textToQuillHtml(text) {
   if (!text) return '<p>Kein Inhalt generiert.</p>';
 
@@ -2864,6 +2945,7 @@ function textToQuillHtml(text) {
   var lines = text.split('\n');
   var inList = false;
   var listItems = [];
+  var titleFound = false;
 
   for (var i = 0; i < lines.length; i++) {
     var line = lines[i];
@@ -2879,20 +2961,24 @@ function textToQuillHtml(text) {
       continue;
     }
 
+    // Convert placeholders [XXX] to editable fields
+    var processedLine = convertPlaceholdersToFields(escapeHtmlQuill(trimmedLine));
+
     // Detect main document title (all caps, first significant line)
-    if (i < 5 && /^[A-ZÄÖÜẌ\s\-\(\)]{8,}$/.test(trimmedLine) && !trimmedLine.startsWith('§')) {
+    if (!titleFound && i < 10 && /^[A-ZÄÖÜẌ\s\-\(\)]{8,}$/.test(trimmedLine) && !trimmedLine.startsWith('§')) {
       if (inList && listItems.length > 0) {
         html += '<ul>' + listItems.join('') + '</ul>';
         listItems = [];
         inList = false;
       }
-      html += '<h1 style="text-align:center;margin-bottom:1.5rem;">' + escapeHtmlQuill(trimmedLine) + '</h1>';
+      html += '<h1>' + processedLine + '</h1>';
+      titleFound = true;
       continue;
     }
 
     // Detect subtitle (line after title, often describes the document)
-    if (i < 8 && html.includes('<h1') && !html.includes('<h2') && !trimmedLine.startsWith('§') && trimmedLine.length < 100) {
-      html += '<p style="text-align:center;font-style:italic;margin-bottom:2rem;color:#666;">' + escapeHtmlQuill(trimmedLine) + '</p>';
+    if (titleFound && i < 12 && !html.includes('<h2') && !trimmedLine.startsWith('§') && trimmedLine.length < 100 && !/^[A-ZÄÖÜ].*:$/.test(trimmedLine)) {
+      html += '<p style="text-align:center;font-style:italic;margin-bottom:1.5rem;color:#555;">' + processedLine + '</p>';
       continue;
     }
 
@@ -2903,7 +2989,7 @@ function textToQuillHtml(text) {
         listItems = [];
         inList = false;
       }
-      html += '<h2 style="margin-top:1.5rem;margin-bottom:0.75rem;padding-bottom:0.5rem;border-bottom:1px solid #ddd;">' + escapeHtmlQuill(trimmedLine) + '</h2>';
+      html += '<h2>' + processedLine + '</h2>';
       continue;
     }
 
@@ -2914,7 +3000,7 @@ function textToQuillHtml(text) {
         listItems = [];
         inList = false;
       }
-      html += '<h3 style="margin-top:1rem;margin-bottom:0.5rem;">' + escapeHtmlQuill(trimmedLine) + '</h3>';
+      html += '<h3>' + processedLine + '</h3>';
       continue;
     }
 
@@ -2922,29 +3008,29 @@ function textToQuillHtml(text) {
     if (/^[-•]\s/.test(trimmedLine) || /^[a-z]\)\s/i.test(trimmedLine) || /^\([a-z0-9]\)\s/i.test(trimmedLine)) {
       inList = true;
       var itemText = trimmedLine.replace(/^[-•]\s*/, '').replace(/^[a-z]\)\s*/i, '').replace(/^\([a-z0-9]\)\s*/i, '');
-      listItems.push('<li style="margin-bottom:0.4rem;">' + escapeHtmlQuill(itemText) + '</li>');
+      listItems.push('<li>' + convertPlaceholdersToFields(escapeHtmlQuill(itemText)) + '</li>');
       continue;
     }
 
-    // Detect signature lines: underscores or dashes
-    if (/^[_\-]{10,}$/.test(trimmedLine) || /^_{5,}\s+_{5,}/.test(trimmedLine)) {
+    // Detect signature lines: underscores
+    if (/^_{10,}$/.test(trimmedLine)) {
       if (inList && listItems.length > 0) {
         html += '<ul>' + listItems.join('') + '</ul>';
         listItems = [];
         inList = false;
       }
-      html += '<div style="margin-top:2rem;display:flex;justify-content:space-between;"><span style="border-top:1px solid #333;width:40%;display:inline-block;padding-top:0.5rem;text-align:center;font-size:0.9rem;">[Unterschrift]</span><span style="border-top:1px solid #333;width:40%;display:inline-block;padding-top:0.5rem;text-align:center;font-size:0.9rem;">[Unterschrift]</span></div>';
+      html += '<p style="margin-top:2rem;"><span class="signature-line">Unterschrift</span></p>';
       continue;
     }
 
-    // Detect place/date lines: [ORT], den DD.MM.YYYY
+    // Detect place/date lines
     if (/^\[ORT\]|^[A-Za-zäöüÄÖÜ]+,\s*den\s*\d/.test(trimmedLine)) {
       if (inList && listItems.length > 0) {
         html += '<ul>' + listItems.join('') + '</ul>';
         listItems = [];
         inList = false;
       }
-      html += '<p style="margin-top:2rem;text-align:center;">' + escapeHtmlQuill(trimmedLine) + '</p>';
+      html += '<p style="margin-top:2rem;">' + processedLine + '</p>';
       continue;
     }
 
@@ -2956,7 +3042,7 @@ function textToQuillHtml(text) {
     }
 
     // Regular paragraph
-    html += '<p style="margin-bottom:0.75rem;text-align:justify;">' + escapeHtmlQuill(trimmedLine) + '</p>';
+    html += '<p>' + processedLine + '</p>';
   }
 
   // Close any remaining list
@@ -2965,6 +3051,15 @@ function textToQuillHtml(text) {
   }
 
   return html || '<p>Kein Inhalt generiert.</p>';
+}
+
+// Convert [PLACEHOLDER] to editable input fields
+function convertPlaceholdersToFields(html) {
+  // Match [TEXT] patterns
+  return html.replace(/\[([A-ZÄÖÜ][A-ZÄÖÜ\s\-_]{1,30})\]/g, function(match, placeholder) {
+    var fieldId = 'field-' + placeholder.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9\-]/g, '');
+    return '<span class="doc-field" contenteditable="true" data-placeholder="' + placeholder + '" id="' + fieldId + '"></span>';
+  });
 }
 
 function escapeHtmlQuill(text) {
@@ -2994,28 +3089,85 @@ function setQuillContent(text) {
   console.log('[§125] setQuillContent: HTML generated, Quill updated');
 }
 
-// Get content from Quill (for sealing/saving)
+// §126 — Get content from Quill with filled-in field values
 function getQuillContent() {
-  // Try Quill editor first
+  // Try Quill editor first - get text with field values
   if (quillEditor) {
-    var text = quillEditor.getText();
+    // Get HTML and extract text with field values
+    var html = quillEditor.root.innerHTML;
+    var text = extractTextWithFields(html);
     if (text && text.trim().length > 0) {
-      console.log('[§124] getQuillContent: from Quill editor, length=' + text.length);
+      console.log('[§126] getQuillContent: from Quill with fields, length=' + text.length);
       return text;
+    }
+    // Fallback to plain getText
+    var plainText = quillEditor.getText();
+    if (plainText && plainText.trim().length > 0) {
+      console.log('[§126] getQuillContent: from Quill getText, length=' + plainText.length);
+      return plainText;
     }
   }
   // Fallback to stored draft text
   if (AiDraft.currentDraftText && AiDraft.currentDraftText.trim().length > 0) {
-    console.log('[§124] getQuillContent: fallback to AiDraft.currentDraftText, length=' + AiDraft.currentDraftText.length);
+    console.log('[§126] getQuillContent: fallback to AiDraft.currentDraftText, length=' + AiDraft.currentDraftText.length);
     return AiDraft.currentDraftText;
   }
-  console.log('[§124] getQuillContent: no content found, quillEditor=' + !!quillEditor);
+  console.log('[§126] getQuillContent: no content found, quillEditor=' + !!quillEditor);
   return '';
+}
+
+// Extract text from HTML, replacing doc-field spans with their content or placeholder
+function extractTextWithFields(html) {
+  var temp = document.createElement('div');
+  temp.innerHTML = html;
+
+  // Replace doc-field spans with their content or placeholder in brackets
+  var fields = temp.querySelectorAll('.doc-field');
+  fields.forEach(function(field) {
+    var value = field.textContent.trim();
+    var placeholder = field.getAttribute('data-placeholder') || 'FELD';
+    var text = value || '[' + placeholder + ']';
+    field.replaceWith(text);
+  });
+
+  // Replace signature lines
+  var sigs = temp.querySelectorAll('.signature-line');
+  sigs.forEach(function(sig) {
+    sig.replaceWith('_________________________');
+  });
+
+  return temp.textContent || temp.innerText || '';
 }
 
 function getQuillHtml() {
   if (!quillEditor) return '';
-  return quillEditor.root.innerHTML;
+
+  // Get HTML and process fields to show values
+  var html = quillEditor.root.innerHTML;
+
+  // For PDF export, convert doc-field spans to styled text with their values
+  var temp = document.createElement('div');
+  temp.innerHTML = html;
+
+  var fields = temp.querySelectorAll('.doc-field');
+  fields.forEach(function(field) {
+    var value = field.textContent.trim();
+    var placeholder = field.getAttribute('data-placeholder') || 'FELD';
+    if (value) {
+      // Field has value - show it in bold
+      var span = document.createElement('strong');
+      span.textContent = value;
+      field.replaceWith(span);
+    } else {
+      // Field is empty - show placeholder underlined
+      var span = document.createElement('span');
+      span.style.cssText = 'border-bottom:1px solid #333;padding:0 20px;color:#666;';
+      span.textContent = placeholder;
+      field.replaceWith(span);
+    }
+  });
+
+  return temp.innerHTML;
 }
 
 // Initialize on page load
