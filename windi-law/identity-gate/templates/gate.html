@@ -535,10 +535,11 @@
     </div>
 
     <script>
-    (function() {
+    // §120.6 — DID Fast Lane: Auto-redirect for returning users with valid DID
+    (async function() {
         try {
-            // §120.3: Check sessionStorage first, then cookie (DID = sovereign seed)
             var did = '';
+            var BASE_PATH = window.location.hostname.includes('windilaw.de') ? '' : '/law';
 
             // 1. Try sessionStorage (active session)
             var w = sessionStorage.getItem('windi_law_wallet');
@@ -561,16 +562,35 @@
                 }
             }
 
-            if (!did) return;
+            if (!did) return; // No DID = new user, show registration form
 
+            // §120.6: Verify DID with backend before redirect (Fast Lane)
+            try {
+                var resp = await fetch(BASE_PATH + '/identity/verify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ did: did })
+                });
+                var data = await resp.json();
+
+                if (data.valid && data.workspace_access) {
+                    // DID VALID → Fast Lane redirect (no email needed!)
+                    console.log('[WINDI-LAW] §120.6 Fast Lane: DID valid, redirecting...');
+                    window.location.href = BASE_PATH + '/workspace/?did=' + encodeURIComponent(did);
+                    return; // Stop execution, redirect happening
+                }
+            } catch(e) {
+                console.warn('[WINDI-LAW] Fast Lane verify failed, showing banner fallback:', e);
+            }
+
+            // Fallback: Show banner with manual link (if verify fails or access denied)
             var banner = document.getElementById('returning-banner');
             var didSpan = document.getElementById('returning-did');
             var wsLink = document.getElementById('returning-workspace-link');
-            var BASE_PATH = window.location.hostname.includes('windilaw.de') ? '' : '/law';
             if (didSpan) didSpan.textContent = did.length > 28 ? did.substring(0, 28) + '…' : did;
             if (wsLink) wsLink.href = BASE_PATH + '/workspace/?did=' + encodeURIComponent(did);
             if (banner) banner.style.display = 'flex';
-        } catch(e) { console.warn('[WINDI-LAW] Returning banner error:', e); }
+        } catch(e) { console.warn('[WINDI-LAW] Returning user check error:', e); }
     })();
     </script>
 
