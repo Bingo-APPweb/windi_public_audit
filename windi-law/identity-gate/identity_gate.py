@@ -190,6 +190,16 @@ def init_db():
     except sqlite3.OperationalError:
         pass
 
+    # §120.7: Add PIN login columns (6-digit code alternative to magic link)
+    try:
+        cursor.execute("ALTER TABLE admins ADD COLUMN login_pin TEXT")
+    except sqlite3.OperationalError:
+        pass
+    try:
+        cursor.execute("ALTER TABLE admins ADD COLUMN login_pin_expires TEXT")
+    except sqlite3.OperationalError:
+        pass
+
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS api_keys (
             id          TEXT PRIMARY KEY,
@@ -396,14 +406,25 @@ WINDI Publishing House
 # §LOGIN — Magic Link Login Email
 # ═══════════════════════════════════════════════════════════════
 
-async def send_login_email(email: str, token: str, full_name: str, lang: str = "en"):
-    """Send magic link login email."""
+def generate_login_pin() -> str:
+    """Generate 6-digit PIN for login (§120.7)."""
+    import random
+    return ''.join([str(random.randint(0, 9)) for _ in range(6)])
+
+
+async def send_login_email(email: str, token: str, full_name: str, lang: str = "en", pin: str = None):
+    """Send magic link login email with optional PIN code (§120.7)."""
     login_url = f"{DOMAIN_URL}/law/login/{token}"
 
+    # §120.7: Include PIN in email if provided
+    pin_section_de = f"\n\n📱 ODER gib diesen Code ein:\n\n   {pin}\n\n(Code 15 Minuten gültig)" if pin else ""
+    pin_section_en = f"\n\n📱 OR enter this code:\n\n   {pin}\n\n(Code valid for 15 minutes)" if pin else ""
+    pin_section_pt = f"\n\n📱 OU insere este código:\n\n   {pin}\n\n(Código válido por 15 minutos)" if pin else ""
+
     subjects = {
-        "de": "WINDI-LAW: Dein Login-Link",
-        "en": "WINDI-LAW: Your login link",
-        "pt": "WINDI-LAW: Teu link de acesso"
+        "de": "WINDI-LAW: Dein Login-Code",
+        "en": "WINDI-LAW: Your login code",
+        "pt": "WINDI-LAW: Teu código de acesso"
     }
 
     bodies = {
@@ -413,8 +434,8 @@ Hallo {full_name},
 Hier ist dein Login-Link für WINDI-LAW:
 
 {login_url}
-
-Dieser Link ist 1 Stunde gültig.
+{pin_section_de}
+Link ist 1 Stunde gültig.
 
 Falls du diese Anfrage nicht gestellt hast, ignoriere diese E-Mail.
 
@@ -427,8 +448,8 @@ Hello {full_name},
 Here is your login link for WINDI-LAW:
 
 {login_url}
-
-This link is valid for 1 hour.
+{pin_section_en}
+Link is valid for 1 hour.
 
 If you did not request this, please ignore this email.
 
@@ -441,8 +462,8 @@ Olá {full_name},
 Aqui está o teu link de acesso ao WINDI-LAW:
 
 {login_url}
-
-Este link é válido por 1 hora.
+{pin_section_pt}
+Link válido por 1 hora.
 
 Se não solicitaste este acesso, ignora este email.
 
@@ -864,22 +885,29 @@ async def login_request(request: Request):
 
     admin_id, full_name, did = admin
 
-    # Generate login token
+    # Generate login token (magic link)
     login_token = generate_email_token()
     login_expiry = get_login_token_expiry()
 
+    # §120.7: Generate 6-digit PIN (15 min expiry)
+    login_pin = generate_login_pin()
+    pin_expiry = (datetime.now(timezone.utc) + timedelta(minutes=15)).isoformat()
+
     cursor.execute("""
-        UPDATE admins SET login_token = ?, login_token_expires = ? WHERE id = ?
-    """, (login_token, login_expiry, admin_id))
+        UPDATE admins SET
+            login_token = ?, login_token_expires = ?,
+            login_pin = ?, login_pin_expires = ?
+        WHERE id = ?
+    """, (login_token, login_expiry, login_pin, pin_expiry, admin_id))
     conn.commit()
     conn.close()
 
-    # Send login email
+    # Send login email with both link AND PIN
     accept_lang = request.headers.get("Accept-Language", "en")
     lang = "de" if "de" in accept_lang.lower() else ("pt" if "pt" in accept_lang.lower() else "en")
-    await send_login_email(email, login_token, full_name, lang)
+    await send_login_email(email, login_token, full_name, lang, pin=login_pin)
 
-    return {"success": True, "message": "If this email is registered, you will receive a login link"}
+    return {"success": True, "message": "If this email is registered, you will receive a login code"}
 
 
 @app.get("/login/{token}", response_class=HTMLResponse)
@@ -1049,6 +1077,76 @@ async def login_with_token(token: str, request: Request):
         httponly=False  # Needs to be readable by JavaScript for Fast Lane
     )
     return response
+
+
+# ═══════════════════════════════════════════════════════════════
+# §120.7 — PIN Login (6-digit code alternative to magic link)
+# ═══════════════════════════════════════════════════════════════
+
+class PinLogin(BaseModel):
+    email: str
+    pin: str
+
+
+@app.post("/login-pin")
+async def login_with_pin(data: PinLogin, request: Request):
+    """
+    Validate 6-digit PIN and return session data.
+    More reliable than magic links on mobile devices.
+    """
+    email = data.email.strip().lower()
+    pin = data.pin.strip()
+
+    if len(pin) != 6 or not pin.isdigit():
+        raise HTTPException(status_code=400, detail="Invalid PIN format")
+
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT id, full_name, did, fingerprint, public_key, state, login_pin, login_pin_expires
+        FROM admins WHERE LOWER(email) = ?
+    """, (email,))
+    admin = cursor.fetchone()
+
+    if not admin:
+        conn.close()
+        raise HTTPException(status_code=401, detail="Invalid email or PIN")
+
+    admin_id, full_name, did, fingerprint, public_key, state, stored_pin, pin_expires = admin
+
+    # Verify PIN matches
+    if stored_pin != pin:
+        conn.close()
+        raise HTTPException(status_code=401, detail="Invalid email or PIN")
+
+    # Check PIN expiry
+    if pin_expires:
+        try:
+            expiry_dt = datetime.fromisoformat(pin_expires.replace('Z', '+00:00'))
+            if datetime.now(timezone.utc) > expiry_dt:
+                conn.close()
+                raise HTTPException(status_code=401, detail="PIN expired. Please request a new one.")
+        except:
+            pass
+
+    # Clear PIN (one-time use)
+    cursor.execute("""
+        UPDATE admins SET login_pin = NULL, login_pin_expires = NULL WHERE id = ?
+    """, (admin_id,))
+    conn.commit()
+    conn.close()
+
+    # Return session data (frontend will store in sessionStorage)
+    return {
+        "success": True,
+        "did": did,
+        "fingerprint": fingerprint,
+        "public_key": public_key,
+        "state": state,
+        "full_name": full_name,
+        "workspace_url": "/law/workspace/?did=" + did
+    }
 
 
 @app.post("/wallet/create")

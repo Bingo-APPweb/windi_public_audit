@@ -865,25 +865,47 @@
     </div>
 
     <!-- Login Modal -->
-    <div id="login-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:1000;display:none;align-items:center;justify-content:center;">
-        <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:12px;padding:2rem;max-width:400px;width:90%;position:relative;">
+    <!-- §120.7: Login Modal with PIN support -->
+    <div id="login-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:1000;align-items:center;justify-content:center;">
+        <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:12px;padding:2rem;max-width:420px;width:90%;position:relative;">
             <button onclick="closeLoginModal()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--text-secondary);font-size:1.5rem;cursor:pointer;">&times;</button>
 
             <h3 style="color:var(--gold);margin-bottom:0.5rem;" data-i18n="login_title">Einloggen</h3>
-            <p style="color:var(--text-secondary);font-size:0.875rem;margin-bottom:1.5rem;" data-i18n="login_desc">Wir senden dir einen Login-Link per E-Mail.</p>
+            <p style="color:var(--text-secondary);font-size:0.875rem;margin-bottom:1.5rem;" data-i18n="login_desc">Gib deine E-Mail ein — du erhältst einen Code.</p>
 
+            <!-- Step 1: Email input -->
             <div id="login-form">
                 <div class="form-group">
                     <label class="form-label">Email</label>
-                    <input type="email" class="form-input" id="login_email" placeholder="deine@email.de">
+                    <input type="email" class="form-input" id="login_email" placeholder="deine@email.de" style="font-size:16px;">
                 </div>
-                <button class="btn btn-primary" style="width:100%;margin-top:1rem;" onclick="requestLoginLink()" data-i18n="send_login_link">Login-Link senden</button>
+                <button class="btn btn-primary" style="width:100%;margin-top:1rem;min-height:50px;" onclick="requestLoginLink()" data-i18n="send_login_code">📧 Code senden</button>
             </div>
 
-            <div id="login-sent" style="display:none;text-align:center;padding:1rem 0;">
-                <div style="font-size:3rem;margin-bottom:1rem;">✉️</div>
-                <p style="color:var(--success);font-weight:600;" data-i18n="login_sent_title">Link gesendet!</p>
-                <p style="color:var(--text-secondary);font-size:0.875rem;" data-i18n="login_sent_desc">Prüfe deine E-Mail und klicke auf den Link.</p>
+            <!-- Step 2: Email sent, show PIN input -->
+            <div id="login-sent" style="display:none;padding:1rem 0;">
+                <div style="text-align:center;margin-bottom:1.5rem;">
+                    <div style="font-size:2.5rem;margin-bottom:0.5rem;">📱</div>
+                    <p style="color:var(--success);font-weight:600;margin-bottom:0.25rem;" data-i18n="login_sent_title">Code gesendet!</p>
+                    <p style="color:var(--text-secondary);font-size:0.8rem;" data-i18n="login_sent_desc2">Gib den 6-stelligen Code aus der E-Mail ein:</p>
+                </div>
+
+                <!-- PIN Input (6 digits) -->
+                <div style="display:flex;justify-content:center;gap:8px;margin-bottom:1.5rem;">
+                    <input type="text" maxlength="1" class="pin-digit" id="pin1" style="width:44px;height:56px;text-align:center;font-size:24px;font-weight:600;border:2px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);" oninput="pinInput(this,1)" onkeydown="pinKeydown(event,1)">
+                    <input type="text" maxlength="1" class="pin-digit" id="pin2" style="width:44px;height:56px;text-align:center;font-size:24px;font-weight:600;border:2px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);" oninput="pinInput(this,2)" onkeydown="pinKeydown(event,2)">
+                    <input type="text" maxlength="1" class="pin-digit" id="pin3" style="width:44px;height:56px;text-align:center;font-size:24px;font-weight:600;border:2px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);" oninput="pinInput(this,3)" onkeydown="pinKeydown(event,3)">
+                    <span style="color:var(--text-secondary);font-size:24px;line-height:56px;">–</span>
+                    <input type="text" maxlength="1" class="pin-digit" id="pin4" style="width:44px;height:56px;text-align:center;font-size:24px;font-weight:600;border:2px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);" oninput="pinInput(this,4)" onkeydown="pinKeydown(event,4)">
+                    <input type="text" maxlength="1" class="pin-digit" id="pin5" style="width:44px;height:56px;text-align:center;font-size:24px;font-weight:600;border:2px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);" oninput="pinInput(this,5)" onkeydown="pinKeydown(event,5)">
+                    <input type="text" maxlength="1" class="pin-digit" id="pin6" style="width:44px;height:56px;text-align:center;font-size:24px;font-weight:600;border:2px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);" oninput="pinInput(this,6)" onkeydown="pinKeydown(event,6)">
+                </div>
+
+                <button class="btn btn-primary" style="width:100%;min-height:50px;" id="btn-verify-pin" onclick="verifyPin()" disabled data-i18n="verify_pin">✓ Code bestätigen</button>
+
+                <p style="text-align:center;margin-top:1rem;font-size:0.75rem;color:var(--text-tertiary);">
+                    <span data-i18n="or_use_link">Oder klicke den Link in der E-Mail</span>
+                </p>
             </div>
 
             <div id="login-error" style="display:none;background:rgba(231,76,60,0.1);border:1px solid var(--error);border-radius:8px;padding:0.75rem;margin-top:1rem;">
@@ -959,7 +981,11 @@
                 login_desc: "Wir senden Ihnen einen Login-Link per E-Mail.",
                 send_login_link: "Login-Link senden",
                 login_sent_title: "Link gesendet!",
-                login_sent_desc: "Prüfen Sie Ihre E-Mail und klicken Sie auf den Link."
+                login_sent_desc: "Prüfen Sie Ihre E-Mail und klicken Sie auf den Link.",
+                login_sent_desc2: "Gib den 6-stelligen Code aus der E-Mail ein:",
+                send_login_code: "📧 Code senden",
+                verify_pin: "✓ Code bestätigen",
+                or_use_link: "Oder klicke den Link in der E-Mail"
             },
             en: {
                 step1_title: "Company",
@@ -1005,7 +1031,11 @@
                 login_desc: "We'll send you a login link via email.",
                 send_login_link: "Send login link",
                 login_sent_title: "Link sent!",
-                login_sent_desc: "Check your email and click the link."
+                login_sent_desc: "Check your email and click the link.",
+                login_sent_desc2: "Enter the 6-digit code from the email:",
+                send_login_code: "📧 Send code",
+                verify_pin: "✓ Verify code",
+                or_use_link: "Or click the link in the email"
             },
             pt: {
                 step1_title: "Empresa",
@@ -1051,7 +1081,11 @@
                 login_desc: "Enviamos-te um link de acesso por email.",
                 send_login_link: "Enviar link de acesso",
                 login_sent_title: "Link enviado!",
-                login_sent_desc: "Verifica o teu email e clica no link."
+                login_sent_desc: "Verifica o teu email e clica no link.",
+                login_sent_desc2: "Insere o código de 6 dígitos do email:",
+                send_login_code: "📧 Enviar código",
+                verify_pin: "✓ Verificar código",
+                or_use_link: "Ou clica no link do email"
             }
         };
 
@@ -1399,6 +1433,124 @@
         document.getElementById('login_email').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') requestLoginLink();
         });
+
+        // ═══════════════════════════════════════════════════════════════
+        // §120.7 — PIN LOGIN FUNCTIONS
+        // ═══════════════════════════════════════════════════════════════
+
+        var loginEmail = ''; // Store email for PIN verification
+
+        function pinInput(el, index) {
+            // Only allow digits
+            el.value = el.value.replace(/[^0-9]/g, '');
+            if (el.value && index < 6) {
+                document.getElementById('pin' + (index + 1)).focus();
+            }
+            checkPinComplete();
+        }
+
+        function pinKeydown(e, index) {
+            // Handle backspace
+            if (e.key === 'Backspace' && !e.target.value && index > 1) {
+                document.getElementById('pin' + (index - 1)).focus();
+            }
+        }
+
+        function checkPinComplete() {
+            var pin = '';
+            for (var i = 1; i <= 6; i++) {
+                pin += document.getElementById('pin' + i).value;
+            }
+            document.getElementById('btn-verify-pin').disabled = pin.length !== 6;
+        }
+
+        function getPin() {
+            var pin = '';
+            for (var i = 1; i <= 6; i++) {
+                pin += document.getElementById('pin' + i).value;
+            }
+            return pin;
+        }
+
+        function clearPin() {
+            for (var i = 1; i <= 6; i++) {
+                document.getElementById('pin' + i).value = '';
+            }
+            document.getElementById('btn-verify-pin').disabled = true;
+        }
+
+        async function verifyPin() {
+            var pin = getPin();
+            var email = document.getElementById('login_email').value.trim();
+
+            if (pin.length !== 6) {
+                showLoginError('Please enter all 6 digits');
+                return;
+            }
+
+            var btn = document.getElementById('btn-verify-pin');
+            btn.disabled = true;
+            btn.textContent = '⏳ Verifying...';
+
+            try {
+                var response = await fetch(BASE_PATH + '/login-pin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, pin: pin })
+                });
+
+                var data = await response.json();
+
+                if (response.ok && data.success) {
+                    // Store session data
+                    var walletData = {
+                        did: data.did,
+                        fingerprint: data.fingerprint,
+                        public_key: data.public_key,
+                        state: data.state,
+                        created_at: new Date().toISOString(),
+                        pioneer_number: null,
+                        tier: 'FREE',
+                        credits: 0
+                    };
+                    sessionStorage.setItem('windi_law_wallet', JSON.stringify(walletData));
+                    sessionStorage.setItem('windi_law_did', data.did);
+                    sessionStorage.setItem('windi_law_fingerprint', data.fingerprint);
+
+                    // Set cookie
+                    document.cookie = 'windi_did=' + encodeURIComponent(data.did) + '; path=/; max-age=31536000; SameSite=Lax';
+
+                    // Redirect to workspace
+                    btn.textContent = '✓ Success!';
+                    btn.style.background = '#2EC27E';
+                    setTimeout(function() {
+                        window.location.href = BASE_PATH + '/workspace/?did=' + encodeURIComponent(data.did);
+                    }, 500);
+                } else {
+                    showLoginError(data.detail || 'Invalid PIN');
+                    clearPin();
+                    btn.disabled = false;
+                    btn.textContent = '✓ Code bestätigen';
+                    document.getElementById('pin1').focus();
+                }
+            } catch (error) {
+                showLoginError('Connection error. Please try again.');
+                btn.disabled = false;
+                btn.textContent = '✓ Code bestätigen';
+            }
+        }
+
+        // Auto-focus first PIN input when shown
+        var observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(m) {
+                if (m.target.id === 'login-sent' && m.target.style.display !== 'none') {
+                    setTimeout(function() {
+                        document.getElementById('pin1').focus();
+                    }, 100);
+                }
+            });
+        });
+        observer.observe(document.getElementById('login-sent'), { attributes: true, attributeFilter: ['style'] });
     </script>
 </body>
 </html>
