@@ -659,11 +659,26 @@
                 <button class="btn btn-primary" onclick="nextStep(2)" data-i18n="next">Weiter</button>
             </div>
 
-            <!-- Login link for existing users -->
-            <div style="text-align:center;margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border);">
-                <p style="font-size:0.875rem;color:var(--text-secondary);">
-                    <span data-i18n="already_have_account">Bereits registriert?</span>
-                    <a href="#" onclick="openLoginModal();return false;" style="color:var(--gold);text-decoration:none;font-weight:600;" data-i18n="login_link">Mit E-Mail einloggen</a>
+            <!-- §120.6: Login button for existing users (prominent for mobile) -->
+            <div style="text-align:center;margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--border);">
+                <button onclick="openLoginModal()" style="
+                    width:100%;
+                    padding:0.875rem 1rem;
+                    background:transparent;
+                    border:1.5px solid var(--gold);
+                    border-radius:8px;
+                    color:var(--gold);
+                    font-family:inherit;
+                    font-size:0.95rem;
+                    font-weight:600;
+                    cursor:pointer;
+                    transition:all 0.2s;
+                    min-height:48px;
+                " onmouseover="this.style.background='rgba(201,168,76,0.1)'" onmouseout="this.style.background='transparent'">
+                    <span data-i18n="already_have_account_btn">🔑 Já tenho conta · Login</span>
+                </button>
+                <p style="font-size:0.75rem;color:var(--text-tertiary);margin-top:0.75rem;" data-i18n="login_hint">
+                    Recebe um link mágico por email — sem password
                 </p>
             </div>
         </div>
@@ -937,6 +952,8 @@
                 email_sent_title: "Bestatigungsmail gesendet",
                 email_sent_desc: "Bitte bestatigen Sie Ihre E-Mail fur vollen Zugang zu HIGH-Operationen. Sie haben bereits Zugang zum Workspace.",
                 already_have_account: "Bereits registriert?",
+                already_have_account_btn: "🔑 Ich habe ein Konto · Login",
+                login_hint: "Du erhältst einen magischen Link per E-Mail — kein Passwort nötig",
                 login_link: "Mit E-Mail einloggen",
                 login_title: "Einloggen",
                 login_desc: "Wir senden Ihnen einen Login-Link per E-Mail.",
@@ -981,6 +998,8 @@
                 email_sent_title: "Verification email sent",
                 email_sent_desc: "Please verify your email for full access to HIGH operations. You already have access to the workspace.",
                 already_have_account: "Already registered?",
+                already_have_account_btn: "🔑 I have an account · Login",
+                login_hint: "Get a magic link by email — no password needed",
                 login_link: "Login with email",
                 login_title: "Login",
                 login_desc: "We'll send you a login link via email.",
@@ -1025,6 +1044,8 @@
                 email_sent_title: "Email de verificacao enviado",
                 email_sent_desc: "Por favor verifique seu email para acesso completo as operacoes HIGH. Voce ja tem acesso ao workspace.",
                 already_have_account: "Já tens conta?",
+                already_have_account_btn: "🔑 Já tenho conta · Login",
+                login_hint: "Recebe um link mágico por email — sem password",
                 login_link: "Entrar com email",
                 login_title: "Entrar",
                 login_desc: "Enviamos-te um link de acesso por email.",
