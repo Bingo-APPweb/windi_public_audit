@@ -424,6 +424,62 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
 }
 .demo-btn { font-size: 10px; font-weight: 500; padding: 4px 12px; border-radius: 14px; border: none; background: transparent; color: var(--ink-4); cursor: pointer; font-family: var(--font); transition: all 0.12s; }
 .demo-btn.on { background: var(--gold); color: white; }
+
+/* ══ AI DRAFT PANEL ══ */
+#ai-draft-panel {
+  display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(10,10,10,0.72); z-index: 1200;
+  align-items: center; justify-content: center; backdrop-filter: blur(4px);
+}
+#ai-draft-panel.open { display: flex; }
+.ai-draft-modal {
+  background: var(--perg); border: 1.5px solid rgba(139,105,20,0.25);
+  border-radius: 16px; width: min(720px, 95vw); max-height: 90vh;
+  overflow-y: auto; padding: 0; box-shadow: 0 24px 80px rgba(0,0,0,0.35);
+  animation: modalSlideIn 0.22s ease;
+}
+@keyframes modalSlideIn { from { opacity:0; transform: translateY(20px) scale(0.97); } to { opacity:1; transform: none; } }
+.ai-draft-header {
+  padding: 28px 32px 20px; border-bottom: 1px solid rgba(139,105,20,0.15);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.ai-draft-header h2 { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); margin: 0; }
+.ai-draft-header .ai-badge { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; background: linear-gradient(135deg, #8B6914, #C4960A); color: #fff; padding: 3px 10px; border-radius: 20px; }
+.ai-draft-close { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--ink-3); padding: 4px 8px; border-radius: 6px; transition: background 0.15s; }
+.ai-draft-close:hover { background: rgba(0,0,0,0.08); }
+.ai-draft-body { padding: 24px 32px 32px; }
+.ai-draft-steps { display: flex; gap: 0; margin-bottom: 28px; }
+.ai-step { flex: 1; text-align: center; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-4); padding: 8px 4px; border-bottom: 2px solid var(--border); transition: all 0.2s; }
+.ai-step.active { color: var(--gold); border-bottom-color: var(--gold); }
+.ai-step.done { color: var(--green); border-bottom-color: var(--green); }
+.ai-field { margin-bottom: 18px; }
+.ai-field label { display: block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+.ai-field select, .ai-field input, .ai-field textarea { width: 100%; padding: 10px 14px; background: rgba(255,255,255,0.7); border: 1.5px solid rgba(139,105,20,0.2); border-radius: 8px; font-family: inherit; font-size: 0.88rem; color: var(--ink); transition: border-color 0.15s; box-sizing: border-box; resize: vertical; }
+.ai-field select:focus, .ai-field input:focus, .ai-field textarea:focus { outline: none; border-color: var(--gold); }
+.ai-field .hint { font-size: 0.68rem; color: var(--ink-3); margin-top: 5px; }
+.ai-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.tier-info { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--gold-bg); border-radius: 8px; border: 1px solid rgba(139,105,20,0.12); margin-bottom: 18px; font-size: 0.78rem; color: var(--ink-3); }
+.tier-info .tier-badge { font-size: 0.68rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: var(--gold); color: #fff; }
+.btn-generate { width: 100%; padding: 14px; background: linear-gradient(135deg, #8B6914 0%, #C4960A 100%); color: #fff; border: none; border-radius: 10px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: opacity 0.15s, transform 0.1s; letter-spacing: 0.01em; }
+.btn-generate:hover:not(:disabled) { opacity: 0.92; transform: translateY(-1px); }
+.btn-generate:disabled { opacity: 0.5; cursor: not-allowed; }
+.ai-loading { text-align: center; padding: 40px 20px; }
+.ai-loading .spinner { width: 40px; height: 40px; border: 3px solid rgba(139,105,20,0.2); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.ai-loading .model-label { font-size: 0.72rem; color: var(--ink-4); letter-spacing: 0.05em; }
+.ai-result-box { background: rgba(255,255,255,0.8); border: 1.5px solid rgba(139,105,20,0.2); border-radius: 10px; padding: 20px; max-height: 320px; overflow-y: auto; font-family: var(--mono); font-size: 0.82rem; line-height: 1.65; color: var(--ink); white-space: pre-wrap; word-break: break-word; margin-bottom: 16px; }
+.ai-result-meta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+.ai-meta-chip { font-size: 0.67rem; padding: 4px 10px; border-radius: 20px; background: var(--gold-bg); color: var(--gold); font-weight: 600; letter-spacing: 0.04em; }
+.btn-seal { width: 100%; padding: 14px; background: var(--ink); color: var(--perg); border: none; border-radius: 10px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: opacity 0.15s; letter-spacing: 0.01em; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.btn-seal:hover:not(:disabled) { opacity: 0.85; }
+.ai-sealed-box { text-align: center; padding: 32px 20px; }
+.ai-sealed-icon { font-size: 3rem; margin-bottom: 12px; }
+.ai-sealed-receipt { font-family: var(--mono); font-size: 0.72rem; color: var(--gold); background: var(--gold-bg); padding: 10px 16px; border-radius: 8px; margin: 12px auto; max-width: 480px; word-break: break-all; }
+.ai-verify-link { display: inline-block; margin-top: 12px; color: var(--gold); font-size: 0.8rem; text-decoration: underline; cursor: pointer; }
+.ai-constitutional-proof { font-size: 0.68rem; color: var(--ink-4); margin-top: 16px; line-height: 1.6; }
+[data-theme="noir"] .ai-field select, [data-theme="noir"] .ai-field input, [data-theme="noir"] .ai-field textarea { background: rgba(255,255,255,0.06); }
+[data-theme="noir"] .ai-result-box { background: rgba(255,255,255,0.04); }
+.chip-ai { background: linear-gradient(135deg, var(--gold) 0%, #C4960A 100%) !important; color: #fff !important; font-weight: 600; }
 </style>
 </head>
 <body>
@@ -522,6 +578,7 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
           </div>
 
           <div class="chips">
+            <span class="chip chip-ai" onclick="openAiDraft()">⚖️ AI Draft</span>
             <span class="chip" onclick="go('active')">📄 NDA · ZPO §273</span>
             <span class="chip" onclick="go('active')">🔗 Beweiskette · SHA-256</span>
             <span class="chip" onclick="go('active')">⚖️ Tribunalpaket · DE/EN/PT</span>
@@ -1295,6 +1352,244 @@ function toggleTheme() {
     currentTheme = 'noir';
   }
 })();
+
+/* ══ WINDI LAW AI DRAFT MODULE v1.0.0 ══ */
+const AiDraft = { currentDraftId: null, currentDraftText: null, currentDocType: null, currentDocName: null, currentJurisdiction: null, currentVerifyUrl: null };
+
+function openAiDraft() {
+  var wallet = sessionStorage.getItem('windi_law_wallet');
+  if (!wallet) { alert('🔐 Acesso negado. Wallet + DID obrigatórios.\nI9: identity required.'); return; }
+  document.getElementById('ai-draft-panel').classList.add('open');
+  resetAiDraftPhase();
+  updateAiTierInfo();
+}
+function closeAiDraft() { document.getElementById('ai-draft-panel').classList.remove('open'); }
+document.addEventListener('click', function(e) { if (e.target.id === 'ai-draft-panel') closeAiDraft(); });
+
+function updateAiTierInfo() {
+  var wallet = JSON.parse(sessionStorage.getItem('windi_law_wallet') || '{}');
+  var tier = wallet.tier || 'FREE';
+  var tierBadge = document.getElementById('ai-tier-badge');
+  var tierDesc = document.getElementById('ai-tier-desc');
+  if (tierBadge) tierBadge.textContent = tier;
+  var models = { 'HIGH': 'claude-sonnet-4-20250514 (premium)', 'MED': 'mistral-small-latest', 'FREE': 'mistral-small-latest' };
+  if (tierDesc) tierDesc.textContent = 'Motor: ' + (models[tier] || models['FREE']);
+}
+
+function setAiPhase(phase) {
+  ['configure','loading','review','sealed'].forEach(function(p) {
+    var el = document.getElementById('ai-phase-' + p);
+    if (el) el.style.display = p === phase ? 'block' : 'none';
+  });
+}
+function resetAiDraftPhase() { setAiPhase('configure'); AiDraft.currentDraftId = null; AiDraft.currentDraftText = null; AiDraft.currentVerifyUrl = null; }
+function resetAiDraft() { resetAiDraftPhase(); }
+
+function initiateAiGenerate() {
+  var context = document.getElementById('ai-context').value.trim();
+  var docType = document.getElementById('ai-doc-type').value;
+  var docName = document.getElementById('ai-doc-name').value.trim();
+  var jurisdiction = document.getElementById('ai-jurisdiction').value;
+  if (!context || context.length < 20) { alert('Descreve o contexto (min 20 chars).'); return; }
+  if (!docName) { alert('Define o nome do documento.'); return; }
+  var confirmed = confirm('🛡️ WINDI LAW — Invariant I9\n\nGerar: ' + docType.toUpperCase() + ' · ' + jurisdiction + '\nNome: ' + docName + '\n\nConfirmas que:\n✓ Este pedido é legítimo\n✓ Irás rever antes de selar\n✓ A decisão final é tua\n\nConfirmar geração?');
+  if (!confirmed) return;
+  executeAiGenerate();
+}
+
+async function executeAiGenerate() {
+  var wallet = JSON.parse(sessionStorage.getItem('windi_law_wallet') || '{}');
+  var did = wallet.did || sessionStorage.getItem('windi_law_did') || 'UNKNOWN';
+  var tier = wallet.tier || 'FREE';
+  var docType = document.getElementById('ai-doc-type').value;
+  var jurisdiction = document.getElementById('ai-jurisdiction').value;
+  var lang = document.getElementById('ai-lang').value;
+  var context = document.getElementById('ai-context').value.trim();
+  var docName = document.getElementById('ai-doc-name').value.trim();
+  AiDraft.currentDocType = docType; AiDraft.currentDocName = docName; AiDraft.currentJurisdiction = jurisdiction;
+  setAiPhase('loading');
+  var modelLabels = { HIGH: 'claude-sonnet-4-20250514', MED: 'mistral-small-latest', FREE: 'mistral-small-latest' };
+  document.getElementById('ai-model-label').textContent = 'Motor: ' + (modelLabels[tier] || 'mistral-small-latest');
+  try {
+    var resp = await fetch('/law/ai-draft/generate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ did: did, wallet_id: wallet.wallet_id || did, doc_type: docType, jurisdiction: jurisdiction, lang: lang, tier: tier, context: context, doc_name: docName }) });
+    var data = await resp.json();
+    if (!resp.ok) throw new Error(data.detail || 'Erro na geração');
+    AiDraft.currentDraftId = data.draft_id; AiDraft.currentDraftText = data.draft_text;
+    document.getElementById('ai-result-text').value = data.draft_text;
+    document.getElementById('ai-preview-hash').textContent = data.preview_hash ? data.preview_hash.substring(0,32) + '…' : '—';
+    var metaEl = document.getElementById('ai-result-meta');
+    if (metaEl) metaEl.innerHTML = '<span class="ai-meta-chip">📄 ' + (data.doc_label || docType) + '</span><span class="ai-meta-chip">⚖️ ' + jurisdiction + '</span><span class="ai-meta-chip">🤖 ' + (data.model_used || 'AI') + '</span><span class="ai-meta-chip">📊 ' + (data.tokens || 0) + ' tokens</span><span class="ai-meta-chip">⏱ ' + (data.elapsed_seconds || 0) + 's</span>';
+    setAiPhase('review');
+    document.getElementById('ai-result-text').addEventListener('input', updatePreviewHash);
+  } catch (err) { setAiPhase('configure'); alert('❌ Erro: ' + err.message); }
+}
+
+async function updatePreviewHash() {
+  var text = document.getElementById('ai-result-text').value;
+  var encoder = new TextEncoder();
+  var data = encoder.encode(text);
+  var hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  var hashArray = Array.from(new Uint8Array(hashBuffer));
+  var hashHex = hashArray.map(function(b) { return b.toString(16).padStart(2,'0'); }).join('');
+  var el = document.getElementById('ai-preview-hash');
+  if (el) el.textContent = hashHex.substring(0,32) + '…';
+}
+
+async function sealAiDraft() {
+  var wallet = JSON.parse(sessionStorage.getItem('windi_law_wallet') || '{}');
+  var did = wallet.did || sessionStorage.getItem('windi_law_did') || 'UNKNOWN';
+  var draftText = document.getElementById('ai-result-text').value.trim();
+  var tier = wallet.tier || 'FREE';
+  if (!draftText) { alert('Texto vazio.'); return; }
+  var confirmed = confirm('🔐 WINDI LAW — Invariant G3 + I11\n\nSELAR PERMANENTEMENTE:\n• "' + AiDraft.currentDocName + '"\n• ' + (AiDraft.currentDocType || '').toUpperCase() + ' · ' + AiDraft.currentJurisdiction + '\n\n⚠️ IRREMEDIÁVEL. Hash inscrito no Ledger para sempre.\n\nConfirmas o seal?');
+  if (!confirmed) return;
+  var btn = document.getElementById('btn-seal-draft');
+  if (btn) { btn.disabled = true; btn.textContent = '🔄 A selar…'; }
+  try {
+    var resp = await fetch('/law/ai-draft/seal', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ did: did, wallet_id: wallet.wallet_id || did, draft_id: AiDraft.currentDraftId || 'UNKNOWN', draft_text: draftText, doc_name: AiDraft.currentDocName, doc_type: AiDraft.currentDocType, jurisdiction: AiDraft.currentJurisdiction, tier: tier }) });
+    var data = await resp.json();
+    if (!resp.ok) throw new Error(data.detail || 'Erro no seal');
+    AiDraft.currentVerifyUrl = data.verify_url;
+    document.getElementById('ai-sealed-receipt').textContent = data.receipt_id;
+    document.getElementById('ai-sealed-hash').textContent = 'SHA-256: ' + data.hash;
+    document.getElementById('ai-verify-link').href = data.verify_url;
+    setAiPhase('sealed');
+  } catch (err) { if (btn) { btn.disabled = false; btn.textContent = '🔐 Selar no Ledger · I11'; } alert('❌ Erro: ' + err.message); }
+}
+function openVerify() { if (AiDraft.currentVerifyUrl) window.open(AiDraft.currentVerifyUrl, '_blank'); }
+console.log('[WINDI LAW] AI Draft Module v1.0.0 loaded');
 </script>
+
+<!-- ══ AI DRAFT PANEL ══ -->
+<div id="ai-draft-panel" role="dialog" aria-modal="true">
+  <div class="ai-draft-modal">
+    <div class="ai-draft-header">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <h2>⚖️ AI Draft Mode</h2>
+        <span class="ai-badge">WINDI LAW</span>
+      </div>
+      <button class="ai-draft-close" onclick="closeAiDraft()" title="Fechar">×</button>
+    </div>
+    <div class="ai-draft-body">
+      <div class="ai-draft-steps">
+        <div class="ai-step active">1 · Configurar</div>
+        <div class="ai-step">2 · Aprovar I9</div>
+        <div class="ai-step">3 · Gerar</div>
+        <div class="ai-step">4 · Rever</div>
+        <div class="ai-step">5 · Selar I11</div>
+      </div>
+
+      <!-- PHASE 1: Configure -->
+      <div id="ai-phase-configure">
+        <div class="tier-info">
+          <span class="tier-badge" id="ai-tier-badge">FREE</span>
+          <span id="ai-tier-desc">Motor: mistral-small-latest</span>
+          <span style="margin-left:auto; font-size:0.67rem; color:var(--ink-4);">HIGH → claude-sonnet-4-20250514</span>
+        </div>
+        <div class="ai-row">
+          <div class="ai-field">
+            <label>Tipo de Documento</label>
+            <select id="ai-doc-type">
+              <option value="nda">NDA · Geheimhaltung</option>
+              <option value="vertrag">Dienstleistungsvertrag</option>
+              <option value="vollmacht">Vollmacht</option>
+              <option value="mahnung">Mahnung</option>
+              <option value="kuendigung">Kündigung</option>
+              <option value="klausel">Vertragsklausel</option>
+              <option value="stellungnahme">Stellungnahme</option>
+              <option value="gutachten">Rechtsgutachten</option>
+            </select>
+          </div>
+          <div class="ai-field">
+            <label>Jurisdição</label>
+            <select id="ai-jurisdiction">
+              <option value="DE">🇩🇪 Deutschland</option>
+              <option value="EU">🇪🇺 Europa (EU)</option>
+              <option value="PT">🇵🇹 Portugal</option>
+              <option value="INT">🌐 Internacional</option>
+            </select>
+          </div>
+          <div class="ai-field">
+            <label>Idioma</label>
+            <select id="ai-lang">
+              <option value="DE">Deutsch</option>
+              <option value="EN">English</option>
+              <option value="PT">Português</option>
+            </select>
+          </div>
+        </div>
+        <div class="ai-field">
+          <label>Nome do Documento</label>
+          <input type="text" id="ai-doc-name" placeholder="Ex: NDA zwischen Firma A und Firma B · 2026" />
+        </div>
+        <div class="ai-field">
+          <label>Contexto · Partes · Objectivo</label>
+          <textarea id="ai-context" rows="5" placeholder="Descreva:
+• Partes envolvidas (nomes, tipo: empresa/particular)
+• Objectivo do documento
+• Condições específicas relevantes
+• Prazo, valor, obrigações"></textarea>
+          <p class="hint">⚠️ O texto será hasheado e selado no Ledger imutavelmente.</p>
+        </div>
+        <div style="background:var(--gold-bg); border:1px solid rgba(139,105,20,0.2); border-radius:10px; padding:14px 18px; margin-bottom:20px; font-size:0.78rem; line-height:1.6; color:var(--ink-3);">
+          <strong style="color:var(--gold);">🛡️ Invariant I9 — Aprovação Humana</strong><br>
+          Ao clicar "Gerar", confirmas que aprovaste este pedido e irás rever o resultado.<br>
+          <em style="font-size:0.7rem; color:var(--ink-4);">"AI processes. Human decides. WINDI guarantees."</em>
+        </div>
+        <button class="btn-generate" onclick="initiateAiGenerate()">⚖️ Gerar com IA</button>
+      </div>
+
+      <!-- PHASE 2: Loading -->
+      <div id="ai-phase-loading" style="display:none;">
+        <div class="ai-loading">
+          <div class="spinner"></div>
+          <p style="font-weight:600; margin-bottom:8px;">A gerar documento jurídico…</p>
+          <p class="model-label" id="ai-model-label">Motor: carregando…</p>
+          <p style="font-size:0.72rem; color:var(--ink-4); margin-top:16px;">🔐 Após geração → revisão humana → seal I11</p>
+        </div>
+      </div>
+
+      <!-- PHASE 3: Review -->
+      <div id="ai-phase-review" style="display:none;">
+        <div class="ai-result-meta" id="ai-result-meta"></div>
+        <div class="ai-field">
+          <label>📄 Documento Gerado — Revê e edita</label>
+          <textarea id="ai-result-text" class="ai-result-box" rows="12" style="font-family:var(--mono); font-size:0.8rem;"></textarea>
+          <p class="hint">✏️ Podes editar. O hash final será calculado sobre o texto que selarás.</p>
+        </div>
+        <div style="font-family:var(--mono); font-size:0.68rem; color:var(--ink-4); padding:8px 12px; background:rgba(0,0,0,0.04); border-radius:6px; margin-bottom:16px;">
+          SHA-256 preview: <span id="ai-preview-hash">—</span>
+        </div>
+        <div style="background:rgba(0,0,0,0.03); border:1px solid var(--border); border-radius:10px; padding:14px 18px; margin-bottom:16px; font-size:0.76rem; color:var(--ink-3);">
+          <strong>🔐 Invariant I11 + G3 — Seal Permanente</strong><br>
+          O hash será inscrito imutavelmente no Forensic Ledger. <em>Não é possível apagar.</em>
+        </div>
+        <div style="display:flex; gap:12px;">
+          <button style="flex:1; padding:12px; background:none; border:1.5px solid var(--border-2); border-radius:10px; cursor:pointer; font-size:0.85rem;" onclick="resetAiDraft()">← Voltar</button>
+          <button class="btn-seal" onclick="sealAiDraft()" id="btn-seal-draft" style="flex:2;">🔐 Selar no Ledger · I11</button>
+        </div>
+      </div>
+
+      <!-- PHASE 4: Sealed -->
+      <div id="ai-phase-sealed" style="display:none;">
+        <div class="ai-sealed-box">
+          <div class="ai-sealed-icon">🔐</div>
+          <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:8px;">Documento Selado · I11 ✅</h3>
+          <p style="font-size:0.85rem; color:var(--ink-3); margin-bottom:16px;">O documento existe, está identificado e é verificável publicamente.</p>
+          <div class="ai-sealed-receipt" id="ai-sealed-receipt">—</div>
+          <div style="font-family:var(--mono); font-size:0.68rem; color:var(--ink-4); word-break:break-all; margin:8px auto; max-width:480px;" id="ai-sealed-hash">—</div>
+          <a class="ai-verify-link" id="ai-verify-link" onclick="openVerify()">🔍 Abrir Verify Public →</a>
+          <div class="ai-constitutional-proof">
+            I9 ✅ Human approved · G3 ✅ Human confirmed · I11 ✅ Ledger sealed<br>
+            <em style="font-size:0.66rem;">"Any AI can generate a document. Only WINDI can prove it."</em>
+          </div>
+          <button class="btn-generate" onclick="resetAiDraft()" style="margin-top:20px; max-width:280px; margin-left:auto; margin-right:auto; display:block;">+ Novo Documento</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
