@@ -174,13 +174,17 @@ def call_mistral(system: str, user_message: str) -> tuple[str, int]:
 
 
 def route_and_generate(tier: str, system: str, user_msg: str) -> tuple[str, str, int]:
-    """Route to correct LLM and return (text, model_used, tokens)"""
-    if tier == "HIGH":
-        text, tokens = call_claude(system, user_msg)
-        return text, "claude-sonnet-4-20250514", tokens
-    else:
-        text, tokens = call_mistral(system, user_msg)
-        return text, "mistral-small-latest", tokens
+    """Route to correct LLM and return (text, model_used, tokens)
+
+    CANONICAL STRATEGY (04 Apr 2026):
+    - < 500 users: ALL tiers → Claude (Anthropic)
+    - ≥ 500 users: FREE/MED → Mistral, HIGH → Claude
+
+    Current: Claude for all (phase 1)
+    """
+    # Phase 1: Anthropic para todos os tiers até 500 users
+    text, tokens = call_claude(system, user_msg)
+    return text, "claude-sonnet-4-20250514", tokens
 
 
 # ─── Endpoints ────────────────────────────────────────────────────────────────
@@ -192,9 +196,8 @@ async def get_doc_types():
         "doc_types": DOC_TYPES,
         "jurisdictions": JURISDICTIONS,
         "routing": {
-            "FREE": "mistral-small-latest",
-            "MED":  "mistral-small-latest",
-            "HIGH": "claude-sonnet-4-20250514 (premium)",
+            "ALL_TIERS": "claude-sonnet-4-20250514 (phase 1: <500 users)",
+            "threshold": "≥500 users → FREE/MED=Mistral, HIGH=Claude",
         },
         "constitutional_note": "I9: human approves before generation · I11: auto-sealed after review · G3: all decisions remain human"
     }
@@ -370,11 +373,11 @@ async def ai_draft_health():
 
     return {
         "module": "WINDI-LAW AI Draft v1.0.0",
-        "status": "healthy" if (has_anthropic or has_mistral) else "degraded",
+        "status": "healthy" if has_anthropic else "degraded",
         "llm_routing": {
-            "HIGH": f"claude-sonnet-4-20250514 · {'✅' if has_anthropic else '❌ ANTHROPIC_API_KEY missing'}",
-            "MED":  f"mistral-small-latest · {'✅' if has_mistral else '❌ MISTRAL_API_KEY missing'}",
-            "FREE": f"mistral-small-latest · {'✅' if has_mistral else '❌ MISTRAL_API_KEY missing'}",
+            "ALL_TIERS": f"claude-sonnet-4-20250514 · {'✅' if has_anthropic else '❌ ANTHROPIC_API_KEY missing'}",
+            "strategy": "<500 users → Claude all | ≥500 users → FREE/MED=Mistral, HIGH=Claude",
+            "phase": "1 (Anthropic only)",
         },
         "pipeline": "INPUT → I9(human) → LLM → DRAFT → G3(human review) → HASH → LEDGER → VERIFY",
         "positioning": "Harvey writes. WINDI proves.",
