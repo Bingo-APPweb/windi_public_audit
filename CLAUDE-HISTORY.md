@@ -6,6 +6,161 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 04 Abr 2026 — §122.2-§122.6 ProofStream Arquitectura
+**Commits:** `bc35d282` · `577265e` (nomad-bot local)
+**Scope:** Arquitectura Constitucional · Verdade Narrativa
+**CLAUDE.md:** v1.9.86
+
+### §122.2 — ProofStream v1.0 · Primeiro Seal Real em Produção
+
+**Data:** 04 Abril 2026 · 18:38:36Z
+**Canal:** WINDI Travel NOMAD (Telegram)
+**Recibo:** `WINDI-VDCUT-20260404183836-C181E66D`
+**Hash:** `sha256:10a34a3cda834667f9fa2ce44d660bd23bcb9e957e8dfc07870eb3afe914ae55`
+**Verify:** `windi-domain.com/verify-public/?id=WINDI-VDCUT-20260404183836-C181E66D`
+**Integridade:** valid · Ledger: Verankert
+
+**Artefacto:** Vídeo de cavalo gravado em Kempten, Bavaria.
+**Ciclo completo:** gravação → NOMAD-BOT Telegram → seal automático → Recibo → Verify Public "Authentisches Dokument" · < 1 minuto.
+
+> **Nota histórica:** Primeiro momento real selado pelo ProofStream WINDI em produção.
+> Primeiro artefacto imutável da infraestrutura de Verdade Narrativa da Liga IA+H.
+> Kempten, Bavaria, 2026.
+
+### §122.3 — Descoberta Técnica: Hash Divergente entre Canais
+
+**Facto observado:** O mesmo vídeo físico (`VID_20260404_185345.mp4`) submetido por dois canais diferentes produziu hashes distintos:
+
+```
+Canal VD-CUT (upload directo):
+  sha256:e30bd5f2ac1bd6abfbb43cf8d27b1e89864470c4403b7d76128ca1b5d63e71ea
+
+Canal NOMAD-BOT (via Telegram):
+  sha256:10a34a3cda834667f9fa2ce44d660bd23bcb9e957e8dfc07870eb3afe914ae55
+```
+
+**Causa:** O Telegram comprime e transcodifica todo o conteúdo multimédia nos seus servidores antes de o entregar ao bot. O ficheiro recebido pelo NOMAD-BOT já não é o ficheiro original — é uma cópia processada pelo Telegram.
+
+**Binário diferente → hash diferente.** Comportamento estrutural, não bug.
+
+**Implicação constitucional:**
+- Seal via NOMAD-BOT certifica: "Este ficheiro tal como chegou via Telegram"
+- NÃO certifica: "Este ficheiro tal como saiu da câmara"
+- Seal via VD-CUT directo certifica o ficheiro ORIGINAL
+
+### §122.4 — Princípio Arquitectural: Telegram é Canal, não Infraestrutura (IRREMEDIÁVEL)
+
+**Limitações estruturais do Telegram (não contornáveis):**
+```
+Telegram:
+  ✅ Texto · comandos · notificações · recibos
+  ✅ Links para conteúdo externo WINDI
+  ✅ Interface conversacional com o utilizador
+  ❌ Integridade binária de vídeo (comprime sempre)
+  ❌ Hosting de media soberano
+  ❌ Download fora do ecossistema Telegram
+  ❌ Cadeia de custódia forense
+  ❌ Verificação de hash original
+```
+
+**Princípio canónico:**
+```
+NOMAD-BOT (Telegram) = Interface conversacional
+  → recebe comando do utilizador
+  → devolve link WINDI verificável
+  → notifica resultado do seal
+  → NUNCA é o canal do ficheiro multimédia
+
+O ficheiro vai SEMPRE por:
+  → Upload directo VD-CUT (:8128)   — forense / jurídico / I9 Directo
+  → Upload directo VD-MASS (:8131)  — batch / travel / I9-P Policy
+  → API directa do parceiro         — enterprise / integração
+```
+
+> "O Telegram é a PORTA DE ENTRADA. O WINDI é a CASA.
+> O vídeo nunca vive no Telegram — vive no WINDI."
+
+**Reposicionamento do NOMAD-BOT:**
+
+| NOMAD-BOT FAZ | NOMAD-BOT NÃO FAZ |
+|---------------|-------------------|
+| Receber intenção via linguagem natural | Ser canal de transmissão do ficheiro |
+| Gerar link de upload directo | Garantir integridade binária |
+| Notificar resultado do seal | Substituir upload directo forense |
+| Entregar recibo e link verificação | |
+| Conversação contextual | |
+
+### §122.5 — Comportamento Correcto do content_hash
+
+**Observação validada:** O mesmo ficheiro submetido duas vezes ao VD-CUT (upload directo) produziu o mesmo content_hash:
+
+```
+Upload 1:  sha256:e30bd5f2ac1bd6abfbb43cf8d27b1e89864470c4403b7d76128ca1b5d63e71ea
+Upload 2:  sha256:e30bd5f2ac1bd6abfbb43cf8d27b1e89864470c4403b7d76128ca1b5d63e71ea
+```
+
+**IDs de sessão diferentes (esperado):**
+```
+project_id:  VDCUT-20260404184404-6EFC7F3D  →  VDCUT-20260404185205-B4D7B37E
+asset_id:    ASSET-E4F6EECE9682             →  ASSET-DCA80B69073E
+```
+
+**Distinção canónica:**
+| Campo | Identidade | Natureza |
+|-------|------------|----------|
+| content_hash | FICHEIRO | imutável, SHA-256 do conteúdo |
+| project_id | SESSÃO | gerado no momento do upload |
+| asset_id | REGISTO | gerado no momento do upload |
+| ledger entry | ACÇÃO | quando + quem + onde |
+
+O content_hash é o fio forense que une múltiplos registos do mesmo ficheiro.
+Se alguém adulterar o vídeo e re-submeter, o hash muda — detecção imediata.
+
+### §122.6 — Matriz de Canais e Casos de Uso (IRREMEDIÁVEL)
+
+| Canal | Hash Original | Forense | Consumer | Caso de Uso |
+|-------|--------------|---------|----------|-------------|
+| VD-CUT upload directo | ✅ SIM | ✅ SIM | ✅ SIM | Jurídico · Peritos · Investigação |
+| VD-MASS upload directo | ✅ SIM | ⚠️ I9-P | ✅ SIM | Travel · Media · Hotel Networks |
+| NOMAD-BOT via Telegram | ❌ NÃO | ❌ NÃO | ✅ SIM | Interface · Notificação · Consumer |
+| API directa parceiro | ✅ SIM | ⚠️ contrato | ✅ SIM | Enterprise · Câmaras · TV |
+
+**Arquitectura Validada (Dois Pilares + Interface):**
+```
+Forense / Jurídico  →  VD-CUT :8128  (I9 Directo · SEALED)
+Mass / Travel       →  VD-MASS :8131 (I9-P Policy · LIVE)
+Interface consumer  →  NOMAD-BOT     (canal · não ficheiro)
+```
+
+### Evolução Futura (Pendente Decisão Human Dragon)
+
+Para preservar integridade binária via Telegram no futuro:
+- **Opção A:** NOMAD-BOT gera link de upload directo WINDI → utilizador faz upload fora do Telegram
+- **Opção B:** NOMAD-BOT recebe apenas metadados via Telegram + ficheiro vai por canal separado
+- **Opção C:** App nativa WINDI (mobile) que faz upload directo sem passar pelo Telegram
+
+**Decisão:** Human Dragon. Não implementar sem aprovação.
+
+### Artefactos Criados
+
+| Artefacto | Path | Função |
+|-----------|------|--------|
+| `README.md` | `/opt/windi/nomad-bot/` | Documentação canal + limitações |
+| `CLAUDE.md` | `/home/windi/` | §122.2-§122.6 adicionados |
+
+### Princípio Selado
+
+> "A infraestrutura de Verdade Narrativa da Liga IA+H está operacional.
+> Kempten, Bavaria, 2026."
+
+### Classificação
+- **Tipo:** Arquitectura Constitucional
+- **Escopo:** ProofStream · Canais · Verdade Narrativa
+- **Estado:** ACTIVE · CANONICAL · IRREMEDIÁVEL (§122.4, §122.6)
+- **Invariantes:** I9 (Human Gate) · I11 (Hash Permanence) · I12 (Language)
+
+---
+
 ## § SESSÃO 03 Abr 2026 — §118 Travel Stack Auto-Healing
 **Commits:** `e7cff50` · `8e3d9c12`
 **Scope:** Infraestrutura Crítica · Travel Stack
