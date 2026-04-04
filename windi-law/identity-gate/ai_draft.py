@@ -16,12 +16,22 @@ import hashlib
 import uuid
 import json
 import logging
+import io
+import re
 from datetime import datetime, timezone
 from typing import Optional
 
 import requests
-from fastapi import APIRouter, HTTPException, Header
+from fastapi import APIRouter, HTTPException, Header, Request
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
+
+# §127.2 — DOCX Export
+from docx import Document
+from docx.shared import Pt, Cm, RGBColor
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.oxml.ns import qn
+from docx.oxml import OxmlElement
 
 logger = logging.getLogger(__name__)
 
@@ -431,6 +441,173 @@ async def seal_draft(req: SealRequest):
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "message": "Any AI can generate a document. Only WINDI can prove it.",
     }
+
+
+# ─── §127.2 DOCX Export ──────────────────────────────────────────────────────
+
+def markdown_to_docx(markdown_text: str, doc_name: str) -> bytes:
+    """Convert Markdown/legal text to professional DOCX format"""
+    doc = Document()
+
+    # Margens A4 jurídicas (2.5cm todos os lados)
+    for section in doc.sections:
+        section.page_width  = Cm(21)
+        section.page_height = Cm(29.7)
+        section.left_margin = section.right_margin = Cm(2.5)
+        section.top_margin  = section.bottom_margin = Cm(2.5)
+
+    # Estilos base
+    style = doc.styles['Normal']
+    style.font.name = 'Times New Roman'
+    style.font.size = Pt(11)
+
+    lines = markdown_text.split('\n')
+
+    for line in lines:
+        line = line.rstrip()
+
+        # H1 → título centrado
+        if line.startswith('# '):
+            p = doc.add_heading(line[2:], level=1)
+            p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            for run in p.runs:
+                run.font.name = 'Times New Roman'
+                run.font.size = Pt(14)
+
+        # H2 / §§ → heading nível 2
+        elif line.startswith('## ') or re.match(r'^\*\*§\d+', line):
+            text = line.replace('## ', '').replace('**', '')
+            p = doc.add_heading(text, level=2)
+            for run in p.runs:
+                run.font.name = 'Times New Roman'
+                run.font.size = Pt(12)
+
+        # H3
+        elif line.startswith('### '):
+            p = doc.add_heading(line[4:], level=3)
+            for run in p.runs:
+                run.font.name = 'Times New Roman'
+                run.font.size = Pt(11)
+
+        # §N Section headers (German legal style)
+        elif re.match(r'^§\s*\d+', line):
+            p = doc.add_heading(line, level=2)
+            for run in p.runs:
+                run.font.name = 'Times New Roman'
+                run.font.size = Pt(12)
+
+        # Parágrafos numerados (1) (2) (3)
+        elif re.match(r'^\(\d+\)', line):
+            p = doc.add_paragraph()
+            p.paragraph_format.first_line_indent = Cm(0)
+            p.paragraph_format.left_indent = Cm(0)
+            p.paragraph_format.space_after = Pt(4)
+            run = p.add_run(line)
+            run.font.name = 'Times New Roman'
+            run.font.size = Pt(11)
+
+        # Letras a) b) c)
+        elif re.match(r'^[a-z]\)', line):
+            p = doc.add_paragraph(style='List Bullet')
+            p.paragraph_format.left_indent = Cm(1)
+            run = p.add_run(line)
+            run.font.name = 'Times New Roman'
+            run.font.size = Pt(11)
+
+        # Bullets — e •
+        elif line.startswith('- ') or line.startswith('• '):
+            text = line[2:]
+            p = doc.add_paragraph(style='List Bullet')
+            run = p.add_run(text)
+            run.font.name = 'Times New Roman'
+            run.font.size = Pt(11)
+
+        # Linha horizontal ---
+        elif line.strip() == '---':
+            p = doc.add_paragraph()
+            pPr = p._p.get_or_add_pPr()
+            pBdr = OxmlElement('w:pBdr')
+            bottom = OxmlElement('w:bottom')
+            bottom.set(qn('w:val'), 'single')
+            bottom.set(qn('w:sz'), '6')
+            bottom.set(qn('w:space'), '1')
+            pBdr.append(bottom)
+            pPr.append(pBdr)
+
+        # Linha de assinatura _____
+        elif '___' in line:
+            p = doc.add_paragraph()
+            p.paragraph_format.space_before = Pt(24)
+            run = p.add_run('_' * 40)
+            run.font.name = 'Times New Roman'
+
+        # Linha vazia
+        elif line.strip() == '':
+            doc.add_paragraph()
+
+        # Parágrafo normal com **bold** inline
+        else:
+            p = doc.add_paragraph()
+            p.paragraph_format.space_after = Pt(4)
+            p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+
+            # Parse **bold** markers
+            parts = re.split(r'\*\*(.+?)\*\*', line)
+            for i, part in enumerate(parts):
+                if not part:
+                    continue
+                run = p.add_run(part)
+                run.font.name = 'Times New Roman'
+                run.font.size = Pt(11)
+                if i % 2 == 1:  # odd index = was between **
+                    run.bold = True
+
+    # Footer WINDI
+    footer = doc.sections[0].footer
+    fp = footer.paragraphs[0]
+    fp.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    fr = fp.add_run('⚠️ KI-generierter Entwurf · WINDI LAW · Rechtliche Überprüfung erforderlich')
+    fr.font.size = Pt(8)
+    fr.font.color.rgb = RGBColor(0x88, 0x88, 0x88)
+
+    buffer = io.BytesIO()
+    doc.save(buffer)
+    buffer.seek(0)
+    return buffer.read()
+
+
+@ai_draft_router.post("/export/docx")
+async def export_docx(request: Request):
+    """
+    §127.2 — Export draft as DOCX
+
+    Professional legal format for Word editing by lawyers.
+    """
+    body = await request.json()
+    draft_text = body.get("draft_text", "")
+    doc_name = body.get("doc_name", "WINDI-LAW-Draft")
+
+    if not draft_text or len(draft_text.strip()) < 10:
+        raise HTTPException(400, "draft_text required (min 10 chars)")
+
+    try:
+        docx_bytes = markdown_to_docx(draft_text, doc_name)
+
+        # Safe filename
+        safe_name = re.sub(r'[^a-zA-Z0-9äöüÄÖÜß\-_\s]', '', doc_name)
+        safe_name = re.sub(r'\s+', '-', safe_name)[:50] or 'WINDI-LAW-Draft'
+        filename = f"{safe_name}.docx"
+
+        logger.info(f"[AI-DRAFT/DOCX] Exported: {filename} · {len(docx_bytes)} bytes")
+
+        return StreamingResponse(
+            io.BytesIO(docx_bytes),
+            media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            headers={"Content-Disposition": f'attachment; filename="{filename}"'}
+        )
+    except Exception as e:
+        logger.error(f"[AI-DRAFT/DOCX] Error: {e}")
+        raise HTTPException(500, f"DOCX generation failed: {str(e)}")
 
 
 @ai_draft_router.get("/health")
