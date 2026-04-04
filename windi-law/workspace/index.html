@@ -1931,6 +1931,33 @@ function getSelectedPromptLang() {
   return active ? (active.dataset.lang || active.textContent.toLowerCase()) : 'de';
 }
 
+// Detect document type from prompt content or use agent default
+// Valid types: nda, vertrag, vollmacht, mahnung, kuendigung, klausel, stellungnahme, gutachten
+function detectDocType(prompt, agent) {
+  var p = prompt.toLowerCase();
+
+  // Keyword detection
+  if (p.includes('nda') || p.includes('geheimhaltung') || p.includes('confidential') || p.includes('vertraulich')) return 'nda';
+  if (p.includes('vollmacht') || p.includes('power of attorney') || p.includes('procuração')) return 'vollmacht';
+  if (p.includes('mahnung') || p.includes('zahlungserinnerung') || p.includes('payment reminder')) return 'mahnung';
+  if (p.includes('kündigung') || p.includes('kuendigung') || p.includes('termination') || p.includes('rescisão')) return 'kuendigung';
+  if (p.includes('klausel') || p.includes('clause') || p.includes('cláusula')) return 'klausel';
+  if (p.includes('stellungnahme') || p.includes('statement') || p.includes('parecer')) return 'stellungnahme';
+  if (p.includes('gutachten') || p.includes('expert opinion') || p.includes('laudo') || p.includes('prüf')) return 'gutachten';
+  if (p.includes('vertrag') || p.includes('contract') || p.includes('contrato') || p.includes('agreement')) return 'vertrag';
+
+  // Agent-based defaults
+  var agentDefaults = {
+    legal: 'vertrag',
+    notary: 'vollmacht',
+    audit: 'gutachten',
+    compliance: 'stellungnahme',
+    accounting: 'gutachten'
+  };
+
+  return agentDefaults[agent] || 'vertrag';
+}
+
 async function submitDirectPrompt() {
   // Get wallet
   var walletStr = sessionStorage.getItem('windi_law_wallet');
@@ -1984,13 +2011,16 @@ async function submitDirectPrompt() {
     console.log('[§122] Agent session created:', sessionData.session_id);
 
     // Step 2: Generate content via AI Draft (unified generation)
+    // Detect doc_type from prompt or use default based on agent
+    var docType = detectDocType(prompt, agent);
+
     var genResp = await fetch('/law/ai-draft/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         did: did,
         wallet_id: did,
-        doc_type: agent,
+        doc_type: docType,
         jurisdiction: 'DE',
         lang: lang,
         tier: wallet.tier || 'FREE',
