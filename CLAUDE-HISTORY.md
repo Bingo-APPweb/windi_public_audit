@@ -6,6 +6,90 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 05 Abr 2026 — §127 AI Draft v2.0
+
+**Commits:** `e634d2b` · `2391484` · `8fea073` · `872407c`
+**Scope:** WINDI-LAW · AI Draft Pipeline · Export · UX
+**CLAUDE.md:** v1.9.87
+
+### §127 — WINDI-LAW AI Draft v2.0 — SEALED
+
+**Data:** 05 Abril 2026
+**Serviço:** windi-law · :8122 · windi-domain.com/law
+**Invariants:** I9 · I11 · G3
+
+**Iniciada por:** Análise do output do KI Draft (Dienstleistungsvertrag)
+**Diagnóstico inicial:** 7.5/10 — semi-pronto para advogado, Präambel magra, sem Anlagen, placeholders sem prioridade
+
+### §127.1 — Markdown to Quill HTML Converter
+
+**Commit:** `e634d2b` (+137 linhas)
+
+**Problema:** O LLM devolve Markdown (`##`, `**`) mas o Quill espera HTML.
+
+**Solução:** Função `textToQuillHtml()` com parsing completo:
+- `# H1`, `## H2`, `### H3` → headings HTML
+- `§N` German legal sections → `<h2>`
+- `**bold**` → `<strong>`, `*italic*` → `<em>`
+- `(1)(2)(3)` parágrafos numerados
+- `a) b) c)` lettered lists → `<ul><li>`
+- `- bullets` → bullet points
+- `---` → horizontal rules
+- `_____` → signature lines
+
+**Pipeline:** `LLM Markdown → textToQuillHtml() → Quill Delta → Rich Document`
+
+### §127.2 — DOCX Export Server-Side
+
+**Commits:** `a06fbee` (client-side) → `2391484` (server-side refactor)
+**Biblioteca:** python-docx 1.2.0
+
+**Evolução:**
+1. Primeira tentativa: docx.js client-side (408 linhas JS)
+2. Refactor: python-docx server-side (-360 linhas frontend)
+
+**Endpoint:** `POST /ai-draft/export/docx`
+
+**Especificação DOCX:**
+- A4 format, margens 2.5cm (jurídicas)
+- Times New Roman 11pt
+- H1 centrado, H2 §§, parágrafos justificados
+- `**bold**` inline support
+- Footer WINDI com disclaimer
+
+**Função:** `markdown_to_docx()` em ai_draft.py
+
+**Lei aprendida:**
+> "O advogado precisa de editar. PDF mata o workflow.
+> DOCX é o formato de trabalho. PDF/A é o formato de arquivo."
+
+### §127.3 — Quick Prompt Auto-Submit
+
+**Commit:** `872407c`
+
+**Problema:** Os chips de prompt rápido (NDA, Beweiskette, etc.) apenas preenchiam o campo mas NÃO enviavam automaticamente. Utilizador esperava 60s sem resposta.
+
+**Causa:** Função `quickPrompt()` não chamava `submitDirectPrompt()`.
+
+**Fix:** Auto-submit após 300ms delay.
+
+**Cards corrigidos:**
+- Legal: NDA auf Risiken prüfen → `W-LEGAL-001`
+- Forensisch: Beweiskette erstellen → `W-AUDIT-001`
+- Buchhaltung: XRechnung GoBD prüfen → `W-ACCT-001`
+
+### UX — Loading Animation Pulse
+
+**Commit:** `8fea073`
+
+"Verarbeite Anfrage..." agora pulsa em dourado com feedback visual.
+
+### Próximo Candidato
+
+§128: PDF/A-1b via WeasyPrint para arquivo tribunal
+
+---
+
 ## § SESSÃO 04 Abr 2026 — §122.2-§122.6 ProofStream Arquitectura
 **Commits:** `bc35d282` · `577265e` (nomad-bot local)
 **Scope:** Arquitectura Constitucional · Verdade Narrativa
