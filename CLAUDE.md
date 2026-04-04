@@ -200,6 +200,33 @@ Verify:       windi-domain.com/verify-public/?id=WINDI-LAW-AIDRAFT-2026040410591
 
 **Bonus:** `windilaw.de` sincronizado com `windi-domain.com/law/` via `get_base_path()`
 
+### §120.7 — PIN Login for Mobile (04 Apr 2026)
+
+| Campo | Valor |
+|-------|-------|
+| Status | **LIVE · TESTED · WORKING** |
+| Commit | `56479a4` |
+| Invariants | I9, I12 |
+
+> **"Zero dependência de links. O utilizador lê e digita."**
+
+**Problema:** Magic links falhavam em tablets (sincronização de browsers, intercepção).
+
+**Solução:** Código PIN de 6 dígitos — manual, funciona em qualquer dispositivo.
+
+**Fluxo:**
+```
+Tablet → Gate → "Já tenho conta" → email → PIN no email
+                                           ↓
+                      Tablet: insere 6 dígitos → Workspace ✅
+```
+
+**Email inclui:** Link (1h) + PIN 6 dígitos (15min)
+
+**Endpoints:** `/login-request` (gera PIN) · `/login-pin` (valida)
+
+**Testado:** Samsung tablet cross-device ✅ 04 Apr 2026
+
 ### §120.5 — WINDI-LAW Mobile Emergency Fix (04 Apr 2026)
 
 | Campo | Valor |
