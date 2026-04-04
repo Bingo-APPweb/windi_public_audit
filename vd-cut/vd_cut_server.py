@@ -715,7 +715,7 @@ async def get_thumbnail(export_id: str):
 
 # ----- JOE Bridge Endpoint -----
 
-@app.post("/joe/render")
+@app.post("/vd-cut/joe/render")
 async def joe_render(request: JoeRenderRequest):
     """
     Entry point for W-JOE-001 Director de Transmissao.
