@@ -363,6 +363,34 @@
         @media (max-width: 600px) {
             .company-info { grid-template-columns: 1fr; }
         }
+
+        /* §120.5 Enhanced Mobile */
+        @media (max-width: 767px) {
+            body { padding: 1rem; }
+            .header { flex-wrap: wrap; gap: 0.75rem; }
+            .controls { gap: 0.25rem; }
+            .lang-btn, .theme-btn {
+                padding: 0.5rem 0.6rem;
+                font-size: 0.7rem;
+                min-width: 40px;
+                min-height: 40px;
+            }
+            .card { padding: 1.25rem; }
+            .card-title { font-size: 0.8rem; }
+            .did-value { font-size: 0.65rem; }
+            .action-btn {
+                padding: 0.875rem 1rem;
+                font-size: 0.9rem;
+                min-height: 48px;
+            }
+        }
+        @supports (padding: max(0px)) {
+            @media (max-width: 767px) {
+                body {
+                    padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+                }
+            }
+        }
     </style>
 </head>
 <body>

@@ -456,6 +456,50 @@
         }
 
         .footer a { color: var(--gold); text-decoration: none; }
+
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* §120.5 MOBILE RESPONSIVENESS */
+        /* ═══════════════════════════════════════════════════════════════ */
+        @media (max-width: 767px) {
+            body { padding: 1rem; }
+            .step { padding: 1.25rem; }
+            .step-title { font-size: 1.1rem; }
+            .step-desc { font-size: 0.85rem; }
+            .form-input, .form-select {
+                padding: 1rem;
+                font-size: 16px; /* prevents iOS zoom */
+            }
+            .btn-primary, .btn-secondary {
+                padding: 1rem;
+                font-size: 1rem;
+                min-height: 50px;
+            }
+            .controls { gap: 0.25rem; }
+            .lang-btn, .theme-btn {
+                padding: 0.5rem 0.6rem;
+                font-size: 0.7rem;
+                min-width: 40px;
+                min-height: 40px;
+            }
+            .radio-group { gap: 0.4rem; }
+            .radio-option {
+                padding: 0.6rem 0.8rem;
+                font-size: 0.8rem;
+                min-height: 44px;
+            }
+            .success-box { padding: 1.5rem; }
+            .progress { flex-direction: column; gap: 0.4rem; }
+        }
+        @supports (padding: max(0px)) {
+            @media (max-width: 767px) {
+                body {
+                    padding-top: max(1rem, env(safe-area-inset-top));
+                    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+                    padding-left: max(1rem, env(safe-area-inset-left));
+                    padding-right: max(1rem, env(safe-area-inset-right));
+                }
+            }
+        }
     </style>
 </head>
 <body>
