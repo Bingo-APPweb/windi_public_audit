@@ -767,11 +767,10 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
     <div class="sl-item">📊 Buchhaltung</div>
     <div class="sl-item">✅ Compliance</div>
 
-    <div class="sl-sec" style="margin-top:6px">Dokumente</div>
-    <div class="sl-doc on" onclick="go('active')"><span class="sl-dot" style="background:var(--green)"></span>NDA · Müller GmbH</div>
-    <div class="sl-doc" onclick="go('active')"><span class="sl-dot" style="background:var(--blue)"></span>BaFin Audit Q1</div>
-    <div class="sl-doc" onclick="go('active')"><span class="sl-dot" style="background:var(--amber)"></span>XRechnung 0041</div>
-    <div class="sl-doc" onclick="go('active')"><span class="sl-dot" style="background:var(--green)"></span>DSGVO-Analyse</div>
+    <div class="sl-sec" style="margin-top:6px" data-i18n="sbDocsTitle">Dokumente</div>
+    <div id="sb-docs-list">
+      <div class="sl-doc-empty" data-i18n="sbDocsEmpty" style="font-size:10px;color:var(--ink-4);padding:8px 12px;font-style:italic;">Noch keine Dokumente</div>
+    </div>
 
     <div class="sl-sec" style="margin-top:6px">Verifikation</div>
     <div class="sl-item" onclick="window.open('https://windi-domain.com/verify-public/web/','_blank')" style="cursor:pointer">🔍 Verify Public</div>
@@ -786,6 +785,7 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
       </div>
       <div class="sl-id-block" id="sb-wallet">
         <div class="sl-id-hdr">🪪 <span data-i18n="sbWalletTitle">Wallet</span> <span class="ok" id="sb-wallet-status">✓</span></div>
+        <div class="sl-id-row"><span class="k" data-i18n="sbNameLabel">Name</span><span class="v" id="sb-user-name">—</span></div>
         <div class="sl-id-row"><span class="k" data-i18n="sbPioneerLabel">Pioneer</span><span class="v g" id="sb-pioneer-num">—</span></div>
         <div class="sl-id-row"><span class="k">Tier</span><span class="v g" id="sb-tier">—</span></div>
         <div class="sl-id-row"><span class="k" data-i18n="sbCreditsLabel">Kredite</span><span class="v" id="sb-credits">—</span></div>
@@ -1099,8 +1099,8 @@ var LANG = {
     greetQuestion: 'Was möchten Sie<br>heute <em>prüfen?</em>',
     sbSchluesselTitle: 'Schlüssel', sbWalletTitle: 'Wallet',
     sbKeyTypeLabel: 'Typ', sbKeyCreatedLabel: 'Erstellt',
-    sbPioneerLabel: 'Pioneer', sbCreditsLabel: 'Kredite',
-    sbSovLabel: 'Lokale Souveränität',
+    sbNameLabel: 'Name', sbPioneerLabel: 'Pioneer', sbCreditsLabel: 'Kredite',
+    sbSovLabel: 'Lokale Souveränität', sbDocsTitle: 'Dokumente', sbDocsEmpty: 'Noch keine Dokumente',
     notConnected: 'Noch keine Wallet', connect: 'Wallet erstellen →',
     hashPlaceholder: '— — — —', createWallet: 'Wallet erstellen →',
     tlStatusVerified: 'VERIFIED', tlStatusPending: 'PENDING',
@@ -1136,8 +1136,8 @@ var LANG = {
     greetQuestion: 'O que deseja<br><em>verificar</em> hoje?',
     sbSchluesselTitle: 'Chave', sbWalletTitle: 'Carteira',
     sbKeyTypeLabel: 'Tipo', sbKeyCreatedLabel: 'Criada',
-    sbPioneerLabel: 'Pioneer', sbCreditsLabel: 'Créditos',
-    sbSovLabel: 'Soberania Local',
+    sbNameLabel: 'Nome', sbPioneerLabel: 'Pioneer', sbCreditsLabel: 'Créditos',
+    sbSovLabel: 'Soberania Local', sbDocsTitle: 'Documentos', sbDocsEmpty: 'Ainda sem documentos',
     notConnected: 'Ainda sem wallet', connect: 'Criar wallet →',
     hashPlaceholder: '— — — —', createWallet: 'Criar wallet →',
     tlStatusVerified: 'VERIFICADO', tlStatusPending: 'PENDENTE',
@@ -1173,8 +1173,8 @@ var LANG = {
     greetQuestion: 'What would you like<br>to <em>verify</em> today?',
     sbSchluesselTitle: 'Key', sbWalletTitle: 'Wallet',
     sbKeyTypeLabel: 'Type', sbKeyCreatedLabel: 'Created',
-    sbPioneerLabel: 'Pioneer', sbCreditsLabel: 'Credits',
-    sbSovLabel: 'Local Sovereignty',
+    sbNameLabel: 'Name', sbPioneerLabel: 'Pioneer', sbCreditsLabel: 'Credits',
+    sbSovLabel: 'Local Sovereignty', sbDocsTitle: 'Documents', sbDocsEmpty: 'No documents yet',
     notConnected: 'No wallet yet', connect: 'Create wallet →',
     hashPlaceholder: '— — — —', createWallet: 'Create wallet →',
     tlStatusVerified: 'VERIFIED', tlStatusPending: 'PENDING',
@@ -1241,9 +1241,9 @@ function updateGreeting(userName) {
   var hour = new Date().getHours();
   var greet = hour < 12 ? strings.greetMorning : hour < 18 ? strings.greetAfternoon : strings.greetEvening;
 
-  // Use passed userName, or try to get from wallet
+  // Use passed userName, or try to get from wallet (full_name takes priority)
   if (!userName && window.__windiLawWallet) {
-    userName = window.__windiLawWallet.company;
+    userName = window.__windiLawWallet.full_name || window.__windiLawWallet.company_name;
   }
 
   var greetEl = document.getElementById('user-greeting');
@@ -1287,6 +1287,8 @@ async function initWallet() {
           pioneer_number: null,
           tier: 'FREE',
           credits: 0,
+          full_name: data.full_name,
+          company_name: data.company ? data.company.legal_name : '',
           company: data.company
         };
         sessionStorage.setItem('windi_law_wallet', JSON.stringify(walletData));
@@ -1340,7 +1342,7 @@ async function initWallet() {
     window.__windiLawWallet = w;
 
     // Update personalized greeting with user name
-    updateGreeting(w.company);
+    updateGreeting(w.full_name || w.company_name);
 
     // SESSION FOUND: Populate SCHLÜSSEL + WALLET panels + hide connect button
     document.getElementById('sb-connect-btn').classList.add('hidden');
@@ -1358,6 +1360,11 @@ async function initWallet() {
     }
     if (w.created_at) {
       document.getElementById('sb-key-created').textContent = w.created_at.substring(0,10);
+    }
+    // Populate user name in wallet section
+    var userName = w.full_name || w.company_name || '';
+    if (userName) {
+      document.getElementById('sb-user-name').textContent = userName;
     }
     if (w.pioneer_number) {
       document.getElementById('sb-pioneer-num').textContent = '#' + w.pioneer_number;
