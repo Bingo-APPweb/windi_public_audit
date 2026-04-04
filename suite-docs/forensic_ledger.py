@@ -143,8 +143,9 @@ def upsert_receipt(r: Dict[str, Any], db_path: str = DEFAULT_DB_PATH) -> None:
                 id, created_at, actor, device_id, app, doc_name, doc_type,
                 local_filename, content_hash, bytes, governance_level, sge_score,
                 isp_context, template_id, tags_json, flags_json,
-                ed25519_pub, ed25519_sig, merkle_root, status, metadata_json
-            ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+                ed25519_pub, ed25519_sig, merkle_root, status, metadata_json,
+                jurisdiction, declaration
+            ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
             ON CONFLICT(id) DO UPDATE SET
                 actor=excluded.actor,
                 device_id=excluded.device_id,
@@ -164,7 +165,9 @@ def upsert_receipt(r: Dict[str, Any], db_path: str = DEFAULT_DB_PATH) -> None:
                 ed25519_sig=excluded.ed25519_sig,
                 merkle_root=excluded.merkle_root,
                 status=excluded.status,
-                metadata_json=excluded.metadata_json
+                metadata_json=excluded.metadata_json,
+                jurisdiction=excluded.jurisdiction,
+                declaration=excluded.declaration
         """, (
             r["id"],
             r["created_at"],
@@ -187,6 +190,8 @@ def upsert_receipt(r: Dict[str, Any], db_path: str = DEFAULT_DB_PATH) -> None:
             r.get("merkle_root"),
             r.get("status", "sealed"),
             json.dumps(r.get("metadata", {}), ensure_ascii=False),
+            r.get("jurisdiction"),
+            r.get("declaration", "operator"),
         ))
         con.commit()
     finally:

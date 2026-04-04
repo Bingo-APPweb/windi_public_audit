@@ -309,15 +309,20 @@ async def seal_draft(req: SealRequest):
         "doc_name": req.doc_name,
         "doc_type": "doc",
         "governance_level": "HIGH",
-        "hash": final_hash,
-        "invariant": "I11",
-        "note": (
-            f"AI Draft · {doc_label} · {req.jurisdiction} · "
-            f"DraftID:{req.draft_id} · "
-            f"Tier:{req.tier} · "
-            f"G3:HUMAN_CONFIRMED · I9:APPROVED · "
-            f"'Any AI generates. Only WINDI proves.'"
-        ),
+        "content_hash": final_hash,
+        "sge_score": 0.95,  # AI-generated legal document, high governance
+        "jurisdiction": req.jurisdiction,
+        "isp_context": f"AI Draft · {doc_label} · I9+G3 CONFIRMED",
+        "declaration": "operator",
+        "tags": ["AI-DRAFT", "I9-APPROVED", "G3-CONFIRMED", f"TIER-{req.tier}"],
+        "metadata": {
+            "draft_id": req.draft_id,
+            "tier": req.tier,
+            "doc_label": doc_label,
+            "invariants": ["I9", "I11", "G3"],
+            "eu_ai_act": "Art. 14 — human oversight confirmed",
+            "positioning": "Any AI generates. Only WINDI proves."
+        },
     }
 
     try:
