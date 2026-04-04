@@ -205,11 +205,27 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
 .pagent-select:hover { border-color: var(--gold); }
 .pagent-select:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 2px rgba(139,105,20,0.15); }
 .pagent-select option { background: var(--bg); color: var(--ink); padding: 8px; }
-/* §122 Loading Animation */
-.loading-dots span { animation: blink 1.4s infinite both; }
+/* §122 Loading Animation — Enhanced with pulse effect */
+.loading-dots {
+  animation: textPulse 1.8s ease-in-out infinite;
+  color: var(--gold);
+  font-style: italic;
+}
+.loading-dots span {
+  animation: dotBlink 1.4s infinite both;
+  font-weight: bold;
+  font-size: 1.2em;
+}
 .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
 .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
-@keyframes blink { 0%, 80%, 100% { opacity: 0; } 40% { opacity: 1; } }
+@keyframes dotBlink {
+  0%, 80%, 100% { opacity: 0.2; transform: translateY(0); }
+  40% { opacity: 1; transform: translateY(-2px); }
+}
+@keyframes textPulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
 .plang { display: flex; gap: 2px; margin-left: auto; }
 .plbtn { font-size: 9px; padding: 2px 6px; border-radius: 8px; border: 1px solid var(--border); color: var(--ink-4); cursor: pointer; background: transparent; }
 .plbtn.on { background: var(--perg-2); color: var(--ink-2); border-color: var(--border-2); }
