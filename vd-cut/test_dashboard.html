@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="klar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>W-VD-CUT-001 · Test Dashboard</title>
+    <style>
+        :root {
+            --bg: #F5F0E0;
+            --text: #1A1A1A;
+            --gold: #8B7424;
+            --border: #D0C8B0;
+            --card: #FFFFFF;
+            --success: #2D5A2D;
+            --error: #8B2424;
+            --progress-bg: #E0D8C0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', 'SF Mono', 'Consolas', monospace;
+            background: var(--bg);
+            color: var(--text);
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--gold);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        .subtitle {
+            font-size: 0.85rem;
+            color: var(--text);
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            font-size: 1rem;
+            color: var(--gold);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .step-num {
+            background: var(--gold);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            background: var(--bg);
+        }
+
+        input[type="file"] {
+            padding: 8px;
+        }
+
+        .row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .row > div {
+            flex: 1;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--gold);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-seal {
+            background: var(--error);
+            color: white;
+            width: 100%;
+            padding: 15px;
+            font-size: 1rem;
+        }
+
+        .btn-seal:hover {
+            background: #6B1A1A;
+        }
+
+        .progress-container {
+            background: var(--progress-bg);
+            border-radius: 4px;
+            height: 24px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--gold);
+            width: 0%;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.75rem;
+        }
+
+        .output {
+            background: #1A1A1A;
+            color: #00FF00;
+            padding: 15px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+
+        .status {
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin: 10px 0;
+        }
+
+        .status.success {
+            background: rgba(45, 90, 45, 0.15);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .status.error {
+            background: rgba(139, 36, 36, 0.15);
+            color: var(--error);
+            border: 1px solid var(--error);
+        }
+
+        .preview {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .preview.show {
+            display: flex;
+        }
+
+        .preview img {
+            max-width: 200px;
+            border-radius: 4px;
+            border: 2px solid var(--gold);
+        }
+
+        .preview-links {
+            display: flex;
+            gap: 10px;
+        }
+
+        .preview-links a {
+            color: var(--gold);
+            text-decoration: none;
+            font-size: 0.85rem;
+        }
+
+        .preview-links a:hover {
+            text-decoration: underline;
+        }
+
+        .receipt-card {
+            display: none;
+            background: rgba(45, 90, 45, 0.1);
+            border: 2px solid var(--success);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .receipt-card.show {
+            display: block;
+        }
+
+        .receipt-id {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--success);
+            margin: 10px 0;
+            word-break: break-all;
+        }
+
+        .verify-link {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 20px;
+            background: var(--success);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        .i9-warning {
+            background: rgba(139, 36, 36, 0.1);
+            border: 1px solid var(--error);
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: var(--error);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            font-size: 0.75rem;
+            color: var(--text);
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>W-VD-CUT-001 · Test Dashboard</h1>
+        <p class="subtitle">JOE Bridge Integration · I9 Compliant</p>
+    </header>
+
+    <!-- Step 1: Upload -->
+    <div class="card">
+        <h2><span class="step-num">1</span> Upload Video</h2>
+        <input type="file" id="videoFile" accept="video/*">
+        <input type="text" id="walletId" placeholder="DID (e.g., did:windi:telegram:abc123)" value="did:windi:test:dashboard">
+        <button class="btn-primary" id="uploadBtn" onclick="uploadVideo()">Upload to VD-CUT</button>
+        <div id="uploadOutput" class="output" style="display:none;"></div>
+    </div>
+
+    <!-- Step 2: Create Sequence -->
+    <div class="card">
+        <h2><span class="step-num">2</span> Create JOE Sequence</h2>
+        <div class="row">
+            <div>
+                <label>Project ID</label>
+                <input type="text" id="projectId" placeholder="From upload or existing">
+            </div>
+            <div>
+                <label>Asset ID</label>
+                <input type="text" id="assetId" placeholder="From upload or existing">
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <label>Clip 1: In (ms)</label>
+                <input type="number" id="clip1In" value="0">
+            </div>
+            <div>
+                <label>Clip 1: Out (ms)</label>
+                <input type="number" id="clip1Out" value="5000">
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <label>Clip 2: In (ms) [optional]</label>
+                <input type="number" id="clip2In" placeholder="Leave empty for single clip">
+            </div>
+            <div>
+                <label>Clip 2: Out (ms)</label>
+                <input type="number" id="clip2Out" placeholder="">
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <label>Preset</label>
+                <select id="preset">
+                    <option value="story_clean">story_clean (1080x1920, CRF 23)</option>
+                    <option value="story_light">story_light (720x1280, CRF 26)</option>
+                    <option value="bts">bts (720x1280, CRF 28)</option>
+                </select>
+            </div>
+            <div>
+                <label>Story ID</label>
+                <input type="text" id="storyId" placeholder="Optional identifier" value="test-story-001">
+            </div>
+        </div>
+        <button class="btn-primary" id="renderBtn" onclick="renderSequence()">POST /joe/render</button>
+    </div>
+
+    <!-- Step 3: Progress -->
+    <div class="card">
+        <h2><span class="step-num">3</span> Encoding Progress</h2>
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar">0%</div>
+        </div>
+        <div id="jobStatus" class="status" style="display:none;"></div>
+        <div id="renderOutput" class="output" style="display:none;"></div>
+    </div>
+
+    <!-- Step 4: Preview -->
+    <div class="card">
+        <h2><span class="step-num">4</span> Preview &amp; Download</h2>
+        <div class="preview" id="previewSection">
+            <img id="thumbnail" src="" alt="Thumbnail">
+            <div class="preview-links">
+                <a id="downloadLink" href="#" target="_blank">📥 Download MP4</a>
+                <a id="thumbLink" href="#" target="_blank">🖼️ View Thumbnail</a>
+            </div>
+        </div>
+        <div id="previewPlaceholder" style="text-align:center;color:#888;padding:20px;">
+            Waiting for render to complete...
+        </div>
+    </div>
+
+    <!-- Step 5: Seal -->
+    <div class="card">
+        <h2><span class="step-num">5</span> Seal to Ledger (I9)</h2>
+        <div class="i9-warning">
+            ⚠️ I9 GATE: This action is IRREMEDIABLE. Once sealed, the hash is permanent on the Forensic Ledger.
+        </div>
+        <input type="text" id="exportId" placeholder="Export ID (from render)">
+        <button class="btn-seal" id="sealBtn" onclick="sealExport()" disabled>🔐 CONFIRM &amp; SEAL</button>
+
+        <div class="receipt-card" id="receiptCard">
+            <h3>✅ SEALED TO LEDGER</h3>
+            <div class="receipt-id" id="receiptId"></div>
+            <a id="verifyLink" class="verify-link" href="#" target="_blank">🔍 Verify on Ledger</a>
+        </div>
+        <div id="sealOutput" class="output" style="display:none;"></div>
+    </div>
+
+    <footer>
+        Liga IA+H · Kempten, Bavaria · 2026<br>
+        "AI processes. Human decides. WINDI guarantees."
+    </footer>
+
+    <script>
+        const BASE = '';  // Same origin
+        let currentJobId = null;
+        let pollInterval = null;
+
+        async function uploadVideo() {
+            const fileInput = document.getElementById('videoFile');
+            const walletId = document.getElementById('walletId').value;
+            const output = document.getElementById('uploadOutput');
+            const btn = document.getElementById('uploadBtn');
+
+            if (!fileInput.files[0]) {
+                alert('Please select a video file');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Uploading...';
+            output.style.display = 'block';
+            output.textContent = 'Uploading video to VD-CUT...';
+
+            const formData = new FormData();
+            formData.append('video', fileInput.files[0]);
+            formData.append('did', walletId);
+
+            try {
+                const response = await fetch('/vd-cut/intake', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                output.textContent = JSON.stringify(data, null, 2);
+
+                if (data.project_id) {
+                    document.getElementById('projectId').value = data.project_id;
+                    document.getElementById('assetId').value = data.asset_id;
+                    output.textContent += '\n\n✅ Project and Asset IDs populated above!';
+                }
+            } catch (err) {
+                output.textContent = 'Error: ' + err.message;
+            }
+
+            btn.disabled = false;
+            btn.textContent = 'Upload to VD-CUT';
+        }
+
+        async function renderSequence() {
+            const projectId = document.getElementById('projectId').value;
+            const assetId = document.getElementById('assetId').value;
+            const walletId = document.getElementById('walletId').value;
+            const preset = document.getElementById('preset').value;
+            const storyId = document.getElementById('storyId').value;
+            const output = document.getElementById('renderOutput');
+            const btn = document.getElementById('renderBtn');
+
+            if (!projectId || !assetId) {
+                alert('Please enter Project ID and Asset ID');
+                return;
+            }
+
+            // Build clips array
+            const clips = [];
+            const clip1In = parseInt(document.getElementById('clip1In').value) || 0;
+            const clip1Out = parseInt(document.getElementById('clip1Out').value);
+            if (clip1Out > clip1In) {
+                clips.push({ asset_id: assetId, in_ms: clip1In, out_ms: clip1Out, order: 1 });
+            }
+
+            const clip2In = document.getElementById('clip2In').value;
+            const clip2Out = document.getElementById('clip2Out').value;
+            if (clip2In && clip2Out && parseInt(clip2Out) > parseInt(clip2In)) {
+                clips.push({ asset_id: assetId, in_ms: parseInt(clip2In), out_ms: parseInt(clip2Out), order: 2 });
+            }
+
+            if (clips.length === 0) {
+                alert('Please define at least one clip');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Rendering...';
+            output.style.display = 'block';
+            output.textContent = 'Submitting render job...';
+            document.getElementById('progressBar').style.width = '0%';
+            document.getElementById('progressBar').textContent = '0%';
+
+            const payload = {
+                project_id: projectId,
+                actor_did: walletId,
+                sequence: {
+                    story_id: storyId || 'dashboard-' + Date.now(),
+                    preset: preset,
+                    clips: clips
+                }
+            };
+
+            try {
+                const response = await fetch('/joe/render', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                output.textContent = JSON.stringify(data, null, 2);
+
+                if (data.status === 'rendered') {
+                    showSuccess('Render complete!');
+                    showPreview(data.export_id);
+                    document.getElementById('exportId').value = data.export_id;
+                    document.getElementById('sealBtn').disabled = false;
+                } else if (data.job_id) {
+                    // Start polling
+                    currentJobId = data.job_id;
+                    startPolling();
+                }
+            } catch (err) {
+                output.textContent = 'Error: ' + err.message;
+                showError('Render failed');
+            }
+
+            btn.disabled = false;
+            btn.textContent = 'POST /joe/render';
+        }
+
+        function startPolling() {
+            if (pollInterval) clearInterval(pollInterval);
+
+            pollInterval = setInterval(async () => {
+                try {
+                    const response = await fetch('/vd-cut/job/' + currentJobId);
+                    const data = await response.json();
+
+                    const progress = data.progress || 0;
+                    document.getElementById('progressBar').style.width = progress + '%';
+                    document.getElementById('progressBar').textContent = progress + '%';
+
+                    if (data.status === 'COMPLETED') {
+                        clearInterval(pollInterval);
+                        showSuccess('Render complete!');
+                        if (data.export && data.export.id) {
+                            showPreview(data.export.id);
+                            document.getElementById('exportId').value = data.export.id;
+                            document.getElementById('sealBtn').disabled = false;
+                        }
+                        document.getElementById('renderOutput').textContent = JSON.stringify(data, null, 2);
+                    } else if (data.status === 'FAILED') {
+                        clearInterval(pollInterval);
+                        showError('Render failed: ' + (data.error || 'Unknown'));
+                    }
+                } catch (err) {
+                    // Continue polling
+                }
+            }, 3000);
+        }
+
+        function showPreview(exportId) {
+            const section = document.getElementById('previewSection');
+            const placeholder = document.getElementById('previewPlaceholder');
+            const thumb = document.getElementById('thumbnail');
+            const download = document.getElementById('downloadLink');
+            const thumbLink = document.getElementById('thumbLink');
+
+            thumb.src = '/vd-cut/thumb/' + exportId;
+            download.href = '/vd-cut/media/' + exportId;
+            thumbLink.href = '/vd-cut/thumb/' + exportId;
+
+            section.classList.add('show');
+            placeholder.style.display = 'none';
+        }
+
+        function showSuccess(msg) {
+            const status = document.getElementById('jobStatus');
+            status.className = 'status success';
+            status.textContent = '✅ ' + msg;
+            status.style.display = 'block';
+        }
+
+        function showError(msg) {
+            const status = document.getElementById('jobStatus');
+            status.className = 'status error';
+            status.textContent = '❌ ' + msg;
+            status.style.display = 'block';
+        }
+
+        async function sealExport() {
+            const projectId = document.getElementById('projectId').value;
+            const exportId = document.getElementById('exportId').value;
+            const walletId = document.getElementById('walletId').value;
+            const output = document.getElementById('sealOutput');
+            const btn = document.getElementById('sealBtn');
+
+            if (!confirm('⚠️ I9 GATE\n\nThis action is IRREMEDIABLE.\n\nAre you sure you want to seal this export to the Forensic Ledger?')) {
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = '🔐 Sealing...';
+            output.style.display = 'block';
+            output.textContent = 'Sealing to Ledger...';
+
+            try {
+                const response = await fetch('/vd-cut/seal', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        project_id: projectId,
+                        export_id: exportId,
+                        wallet_id: walletId,
+                        human_approved: true  // I9 gate passed via confirm dialog
+                    })
+                });
+
+                const data = await response.json();
+                output.textContent = JSON.stringify(data, null, 2);
+
+                if (data.sealed) {
+                    const receiptCard = document.getElementById('receiptCard');
+                    document.getElementById('receiptId').textContent = data.receipt_id;
+                    document.getElementById('verifyLink').href = data.verify_url;
+                    receiptCard.classList.add('show');
+                    btn.textContent = '✅ SEALED';
+                } else {
+                    btn.disabled = false;
+                    btn.textContent = '🔐 CONFIRM & SEAL';
+                }
+            } catch (err) {
+                output.textContent = 'Error: ' + err.message;
+                btn.disabled = false;
+                btn.textContent = '🔐 CONFIRM & SEAL';
+            }
+        }
+    </script>
+</body>
+</html>

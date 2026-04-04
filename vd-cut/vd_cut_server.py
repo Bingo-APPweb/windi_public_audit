@@ -24,7 +24,7 @@ from typing import Optional, Dict, Any
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form, BackgroundTasks
-from fastapi.responses import JSONResponse, FileResponse
+from fastapi.responses import JSONResponse, FileResponse, HTMLResponse
 from pydantic import BaseModel
 
 # Configuration
@@ -793,6 +793,27 @@ async def joe_render(request: JoeRenderRequest):
         "next_step": "POST /vd-cut/seal with human_approved=true to finalize",
         "invariant": "I9 · humano confirma antes do seal"
     }
+
+
+# ----- Test Dashboard -----
+
+@app.get("/test/", response_class=HTMLResponse)
+async def test_dashboard():
+    """
+    Serve the VD-CUT Test Dashboard.
+
+    Interactive HTML page for testing:
+    - Upload video → /vd-cut/intake
+    - Create sequence → /joe/render
+    - Poll progress → /vd-cut/job/{id}
+    - Preview + Download
+    - Seal (I9) → /vd-cut/seal
+    """
+    dashboard_path = BASE_DIR / "test_dashboard.html"
+    if not dashboard_path.exists():
+        raise HTTPException(status_code=404, detail="Dashboard not found")
+
+    return HTMLResponse(content=dashboard_path.read_text(), status_code=200)
 
 
 # ----- Run Server -----
