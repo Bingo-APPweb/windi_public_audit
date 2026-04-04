@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.83
-**Sealed:** 2026-04-04 · §120.5 Mobile Emergency Fix
+**Version:** 1.9.84
+**Sealed:** 2026-04-04 · §122 W-VD-MASS-001 I9-P Protocol
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -65,6 +65,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-SESSION-001 | :8126 | I1,I9,I13 | 30-day HMAC cookies |
 | W-NOMAD-001 | :8127 | I9,I11,I12 | @windi_nomad_bot Telegram |
 | W-VD-CUT-001 | :8128 | I9,I11,I12 | FFmpeg · Frame Integrity · **CERTIFIED** |
+| W-VD-MASS-001 | :8131 | I9-P,I11 | Policy Engine · Batch Automation |
 | W-JOE-001 | :8129 | I9,I11,I13 | Story Graph + ProofStream |
 | W-SGV-001 | :8129 | I9,I13 | Truth Illumination (ilumina, não bloqueia) |
 
@@ -230,6 +231,40 @@ Verify:       windi-domain.com/verify-public/?id=WINDI-LAW-AIDRAFT-2026040410591
 **Relatório:** `/opt/windi/windi-law/MOBILE-DIAGNOSTIC-REPORT.md`
 
 **Phase 2 (pendente):** Full rewrite mobile-first para paridade com Travel
+
+### §122 — W-VD-MASS-001 · Policy-Based Video Automation (04 Apr 2026)
+
+| Campo | Valor |
+|-------|-------|
+| Status | ✅ LIVE · SEALED |
+| Commit | `d7da443` |
+| Port | :8131 |
+| Protocol | I9-P (Policy-Based Automation) |
+| Invariants | I9-P, I11 |
+
+> **"I9-P não é delegação de responsabilidade — é delegação de critério."**
+
+**Arquitectura dos Dois Pilares:**
+```
+W-VD-CUT-001  :8128   I9 Directo    Forense · 1 vídeo/vez · SEALED
+W-VD-MASS-001 :8131   I9-P Policy   Batch · Mass processing · SEALED
+```
+
+**Fluxo I9-P:**
+```
+Humano define Policy (critérios + validade)
+        ↓
+Sistema activa (hash no ledger interno)
+        ↓
+Batch submitted → avaliação automática
+        ↓
+✅ Conforme → auto-seal (Policy-I9-P)
+⚠️  Exception → Queue → decisão humana obrigatória
+```
+
+**Endpoints:** `/policy/create` · `/policy/{id}/activate` · `/batch/submit` · `/queue/exceptions` · `/queue/{id}/decide`
+
+**Primeira Policy:** "WINDI TRAVEL Hotels v1" · válida até 2026-07-04 · ledger: `58a7fdc3...`
 
 ### §118 — Travel Stack Auto-Healing (03 Apr 2026)
 
@@ -802,7 +837,7 @@ Se o Gêmeo inventa um receipt... isso é falsificação."
 
 ---
 
-## Sistemas LIVE (§37-120)
+## Sistemas LIVE (§37-122)
 
 > **Detalhes:** `CLAUDE-HISTORY.md`
 
@@ -812,6 +847,7 @@ Se o Gêmeo inventa um receipt... isso é falsificação."
 | LAW | :8122 | ✅ AI Draft v1.3.0 · 12 functions |
 | Travel | :8126 | ✅ Tesoura v10 · Kiwi/Hotellook |
 | VD-CUT | :8128 | ✅ CERTIFIED · Frame Integrity · Deepfake Killer |
+| VD-MASS | :8131 | ✅ I9-P Policy Engine · Batch Automation |
 | JOE | :8129 | ✅ Story Graph · ProofStream |
 | Canvas | :8119 | ✅ GEN 7 · 7 motores |
 
@@ -866,8 +902,9 @@ workspace/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
 ### Completado (últimos 10 · ver CLAUDE-HISTORY.md para §37-115)
-- [x] §120.5 **Mobile Emergency Fix** · WINDI-LAW responsive · `7f05abb` ✅ 04 Apr
+- [x] §122 **W-VD-MASS-001** · I9-P Policy Engine · Batch Automation · `d7da443` ✅ 04 Apr
 - [x] §121 **VD-CUT CERTIFIED** · Frame Integrity · First field video · `d7b69bf` ✅ 04 Apr
+- [x] §120.5 **Mobile Emergency Fix** · WINDI-LAW responsive · `7f05abb` ✅ 04 Apr
 - [x] §120 **AI Draft Mode** · WINDI-LAW v1.3.0 · `3895a52` ✅ 04 Apr
 - [x] §119 **Capture Actions Panel** · Thread actions ✅ 03 Apr
 - [x] §118 **Travel Auto-Healing** · `e7cff50` ✅ 03 Apr
@@ -888,6 +925,7 @@ workspace/
 | §57 | WINDI-LAW Workspace v3 | ✅ SEALED | 23 features · Receipt: WINDI-LAW-WORKSPACE-V3-CERTIFIED-20260326164718 |
 | §59 | WINDI TRAVEL v1.0 | ✅ LIVE | :8126 · I14 Presence · `/travel/` |
 | §121 | W-VD-CUT-001 CERTIFIED | ✅ SEALED | :8128 · Frame Integrity · Receipt: WINDI-VDCUT-20260404145505-E9983867 |
+| §122 | W-VD-MASS-001 I9-P | ✅ SEALED | :8131 · Policy Engine · Batch Automation · `d7da443` |
 | §120 | AI Draft Mode | ✅ LIVE | :8122 · Receipt: WINDI-LAW-AIDRAFT-20260404105917-C445AFF9 |
 
 > **Detalhes completos:** `CLAUDE-HISTORY.md`
