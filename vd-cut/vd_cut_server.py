@@ -131,6 +131,27 @@ class HealthResponse(BaseModel):
     queued_jobs: int
 
 
+class JoeClip(BaseModel):
+    asset_id: str
+    in_ms: int = 0
+    out_ms: int
+    order: int = 1
+    label: Optional[str] = None
+
+
+class JoeSequence(BaseModel):
+    story_id: Optional[str] = None
+    clips: list[JoeClip]
+    preset: str = "story_clean"
+
+
+class JoeRenderRequest(BaseModel):
+    project_id: str
+    actor_did: str
+    sequence: JoeSequence
+    auto_seal: bool = False  # I9: default False
+
+
 # ----- Lifespan -----
 
 @asynccontextmanager
@@ -674,6 +695,104 @@ async def get_thumbnail(export_id: str):
         media_type="image/jpeg",
         filename=f"{export_id}_thumb.jpg"
     )
+
+
+# ----- JOE Bridge Endpoint -----
+
+@app.post("/joe/render")
+async def joe_render(request: JoeRenderRequest):
+    """
+    Entry point for W-JOE-001 Director de Transmissao.
+
+    Receives JOE sequence -> converts to EDL -> renders -> returns job info.
+
+    I9 COMPLIANCE:
+        Seal does NOT happen here.
+        Human must confirm via separate POST /vd-cut/seal endpoint.
+        auto_seal parameter exists but requires upstream human confirmation.
+
+    Flow:
+        JOE sequence -> sequence_to_edl -> /job/create -> poll -> result
+                                                              |
+                                                    (seal is separate)
+
+    Returns:
+        {
+            "status": "rendered",
+            "job_id": "...",
+            "export_id": "...",
+            "preview_url": "...",
+            "download_url": "...",
+            "seal_pending": true,
+            "seal_action": "POST /vd-cut/seal with human_approved=true",
+            "invariant": "I9"
+        }
+    """
+    from services.joe_bridge import bridge
+
+    # Convert Pydantic to dict for bridge
+    sequence_dict = {
+        "story_id": request.sequence.story_id,
+        "clips": [
+            {
+                "asset_id": clip.asset_id,
+                "in_ms": clip.in_ms,
+                "out_ms": clip.out_ms,
+                "order": clip.order,
+                "label": clip.label
+            }
+            for clip in request.sequence.clips
+        ],
+        "preset": request.sequence.preset
+    }
+
+    log.info(f"JOE render request: project={request.project_id}, clips={len(request.sequence.clips)}")
+
+    result = await bridge.render_sequence(
+        sequence=sequence_dict,
+        project_id=request.project_id,
+        actor_did=request.actor_did,
+        auto_seal=request.auto_seal  # I9: passed through but humano must confirm upstream
+    )
+
+    if result.get("status") == "failed":
+        log.error(f"JOE render failed: {result.get('error')}")
+        return JSONResponse(
+            status_code=400,
+            content={
+                "status": "failed",
+                "error": result.get("error"),
+                "stage": result.get("stage"),
+                "detail": result.get("detail")
+            }
+        )
+
+    if result.get("status") == "timeout":
+        log.warning(f"JOE render timeout: job={result.get('job_id')}")
+        return JSONResponse(
+            status_code=408,
+            content={
+                "status": "timeout",
+                "job_id": result.get("job_id"),
+                "message": "Encoding took too long. Check job status manually.",
+                "check_url": f"/vd-cut/job/{result.get('job_id')}"
+            }
+        )
+
+    return {
+        "status": "rendered",
+        "job_id": result.get("job_id"),
+        "export_id": result.get("export_id"),
+        "content_hash": result.get("content_hash"),
+        "preview_url": result.get("preview_url"),
+        "download_url": result.get("download_url"),
+        "story_id": result.get("story_id"),
+        "preset": result.get("preset"),
+        "seal_pending": result.get("seal_pending", True),
+        "seal_action": result.get("seal_action"),
+        "next_step": "POST /vd-cut/seal with human_approved=true to finalize",
+        "invariant": "I9 · humano confirma antes do seal"
+    }
 
 
 # ----- Run Server -----
