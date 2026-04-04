@@ -736,8 +736,8 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
 <div class="mobile-overlay" id="mobileOverlay" onclick="closeMobileMenu()"></div>
 
 <div class="demo-bar">
-  <button class="demo-btn on" onclick="go('empty')">Estado vazio</button>
-  <button class="demo-btn" onclick="go('active')">Documento activo</button>
+  <button class="demo-btn on" onclick="go('empty')" data-i18n="demoEmpty">Leerer Zustand</button>
+  <button class="demo-btn" onclick="go('active')" data-i18n="demoActive">Aktives Dokument</button>
 </div>
 
 <div class="app">
@@ -1083,6 +1083,7 @@ var inspOpen = false;
 var LANG = {
   de: {
     pageTitle: 'WINDI LAW — Stille Governance',
+    demoEmpty: 'Leerer Zustand', demoActive: 'Aktives Dokument',
     sbSchluesselTitle: 'Schlüssel', sbWalletTitle: 'Wallet',
     sbKeyTypeLabel: 'Typ', sbKeyCreatedLabel: 'Erstellt',
     sbPioneerLabel: 'Pioneer', sbCreditsLabel: 'Kredite',
@@ -1117,6 +1118,7 @@ var LANG = {
   },
   pt: {
     pageTitle: 'WINDI LAW — Governança Silenciosa',
+    demoEmpty: 'Estado vazio', demoActive: 'Documento activo',
     sbSchluesselTitle: 'Chave', sbWalletTitle: 'Carteira',
     sbKeyTypeLabel: 'Tipo', sbKeyCreatedLabel: 'Criada',
     sbPioneerLabel: 'Pioneer', sbCreditsLabel: 'Créditos',
@@ -1151,6 +1153,7 @@ var LANG = {
   },
   en: {
     pageTitle: 'WINDI LAW — Silent Governance',
+    demoEmpty: 'Empty State', demoActive: 'Active Document',
     sbSchluesselTitle: 'Key', sbWalletTitle: 'Wallet',
     sbKeyTypeLabel: 'Type', sbKeyCreatedLabel: 'Created',
     sbPioneerLabel: 'Pioneer', sbCreditsLabel: 'Credits',
