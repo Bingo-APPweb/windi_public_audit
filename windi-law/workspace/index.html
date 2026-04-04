@@ -272,6 +272,19 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
 .rcard-v.m { color: var(--amber); }
 .rcard-v.l { color: var(--green); }
 
+/* §122.2 Agent Action Bar */
+.agent-actions { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+.agent-forensic { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-family: var(--mono); font-size: 10px; }
+.af-label { color: var(--ink-4); }
+.af-hash { color: var(--gold); background: var(--gold-bg); padding: 4px 10px; border-radius: 4px; letter-spacing: 0.02em; }
+.agent-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+.abtn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; font-family: var(--font); cursor: pointer; transition: all 0.15s; border: 1px solid var(--border); background: var(--bg); color: var(--ink-2); }
+.abtn:hover { border-color: var(--gold); color: var(--gold); }
+.abtn-seal { background: linear-gradient(135deg, #8B6914, #C4960A); color: white; border: none; }
+.abtn-seal:hover { opacity: 0.9; color: white; }
+.abtn-qr { background: var(--ink); color: white; border: none; }
+.abtn-qr:hover { opacity: 0.85; color: white; }
+
 /* ════════════════════════════════════
    DOCUMENTO — O PROTAGONISTA
    Forense é o subtexto, não o tema
@@ -655,6 +668,13 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
   .rcard-l { font-size: 10px; }
   .rcard-v { font-size: 13px; }
 
+  /* Agent actions mobile */
+  .agent-actions { margin-top: 12px; padding-top: 12px; }
+  .agent-forensic { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .af-hash { font-size: 9px; word-break: break-all; }
+  .agent-btns { gap: 6px; }
+  .abtn { padding: 12px 14px; font-size: 13px; min-height: 48px; flex: 1; justify-content: center; }
+
   /* Document canvas */
   .doc-canvas { border-radius: 10px; }
   .dc-header { padding: 16px 14px 12px; flex-direction: column; gap: 12px; }
@@ -925,6 +945,19 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
                 <div class="aname" id="agent-name"></div>
                 <div class="atext" id="agent-text"></div>
                 <div class="risk-row" id="agent-risks"></div>
+                <!-- §122.2 Forensic Action Bar -->
+                <div class="agent-actions" id="agent-actions" style="display:none">
+                  <div class="agent-forensic">
+                    <span class="af-label">SHA-256:</span>
+                    <span class="af-hash" id="agent-hash">—</span>
+                  </div>
+                  <div class="agent-btns">
+                    <button class="abtn abtn-save" onclick="saveAgentDraft()" title="Entwurf speichern">💾 <span data-i18n="btnSave">Speichern</span></button>
+                    <button class="abtn abtn-seal" onclick="sealAgentDraft()" title="Im Ledger versiegeln (I11)">⬡ <span data-i18n="btnSeal">Seal · I11</span></button>
+                    <button class="abtn abtn-qr" onclick="showAgentQR()" title="QR-Code anzeigen">📱 QR</button>
+                    <button class="abtn abtn-export" onclick="exportAgentDraft()" title="Als PDF exportieren">📄 Export</button>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -1093,6 +1126,7 @@ var LANG = {
     greetMorning: 'Guten Morgen', greetAfternoon: 'Guten Tag', greetEvening: 'Guten Abend',
     greetQuestion: 'Was möchten Sie<br>heute <em>prüfen?</em>',
     frequentRequests: 'Häufige Anfragen', sugg_nda: 'NDA auf Risiken prüfen', sugg_evidence: 'Beweiskette erstellen', sugg_xrechnung: 'XRechnung GoBD prüfen',
+    btnSave: 'Speichern', btnSeal: 'Seal · I11', btnExport: 'Export',
     sbSchluesselTitle: 'Schlüssel', sbWalletTitle: 'Wallet',
     sbKeyTypeLabel: 'Typ', sbKeyCreatedLabel: 'Erstellt',
     sbNameLabel: 'Name', sbPioneerLabel: 'Pioneer', sbCreditsLabel: 'Kredite',
@@ -1143,6 +1177,7 @@ var LANG = {
     greetMorning: 'Bom dia', greetAfternoon: 'Boa tarde', greetEvening: 'Boa noite',
     greetQuestion: 'O que deseja<br><em>verificar</em> hoje?',
     frequentRequests: 'Pedidos Frequentes', sugg_nda: 'Analisar riscos do NDA', sugg_evidence: 'Criar cadeia de prova', sugg_xrechnung: 'Validar fatura GoBD',
+    btnSave: 'Guardar', btnSeal: 'Selar · I11', btnExport: 'Exportar',
     sbSchluesselTitle: 'Chave', sbWalletTitle: 'Carteira',
     sbKeyTypeLabel: 'Tipo', sbKeyCreatedLabel: 'Criada',
     sbNameLabel: 'Nome', sbPioneerLabel: 'Pioneer', sbCreditsLabel: 'Créditos',
@@ -1193,6 +1228,7 @@ var LANG = {
     greetMorning: 'Good morning', greetAfternoon: 'Good afternoon', greetEvening: 'Good evening',
     greetQuestion: 'What would you like<br>to <em>verify</em> today?',
     frequentRequests: 'Frequent Requests', sugg_nda: 'Analyze NDA risks', sugg_evidence: 'Create evidence chain', sugg_xrechnung: 'Validate GoBD invoice',
+    btnSave: 'Save', btnSeal: 'Seal · I11', btnExport: 'Export',
     sbSchluesselTitle: 'Key', sbWalletTitle: 'Wallet',
     sbKeyTypeLabel: 'Type', sbKeyCreatedLabel: 'Created',
     sbNameLabel: 'Name', sbPioneerLabel: 'Pioneer', sbCreditsLabel: 'Credits',
@@ -2078,7 +2114,7 @@ function showAgentLoading(config) {
   }
 }
 
-function showAgentResult(config, genData, sessionData) {
+async function showAgentResult(config, genData, sessionData) {
   var agentResp = document.getElementById('agent-response');
   var docCanvas = document.getElementById('doc-canvas');
 
@@ -2101,6 +2137,14 @@ function showAgentResult(config, genData, sessionData) {
   AiDraft.currentDocType = config.badge.toLowerCase();
   AiDraft.currentDocName = genData.doc_name || sessionData.title;
   AiDraft.currentJurisdiction = 'DE';
+  DirectPrompt.currentSession = sessionData;
+
+  // Compute and show hash preview
+  var hashPreview = await computeHashPreview(genData.draft_text || '');
+  var agentActions = document.getElementById('agent-actions');
+  var agentHash = document.getElementById('agent-hash');
+  if (agentActions) agentActions.style.display = 'block';
+  if (agentHash) agentHash.textContent = hashPreview;
 
   // Also populate doc canvas for editing
   if (docCanvas) {
@@ -2112,6 +2156,88 @@ function showAgentResult(config, genData, sessionData) {
   }
 
   console.log('[§122] Agent result displayed:', config.name, sessionData.session_id);
+}
+
+// §122.2 Forensic Functions
+async function computeHashPreview(text) {
+  if (!text) return '—';
+  var encoder = new TextEncoder();
+  var data = encoder.encode(text);
+  var hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  var hashArray = Array.from(new Uint8Array(hashBuffer));
+  var hashHex = hashArray.map(function(b) { return b.toString(16).padStart(2,'0'); }).join('');
+  return hashHex.substring(0, 16) + '…' + hashHex.substring(hashHex.length - 8);
+}
+
+async function saveAgentDraft() {
+  if (!AiDraft.currentDraftText) { alert('Kein Entwurf zum Speichern.'); return; }
+
+  // Create blob and download
+  var blob = new Blob([AiDraft.currentDraftText], { type: 'text/plain;charset=utf-8' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = (AiDraft.currentDocName || 'Entwurf') + '_' + (DirectPrompt.currentSession?.session_id || 'DRAFT') + '.txt';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  console.log('[§122.2] Draft saved locally');
+}
+
+async function sealAgentDraft() {
+  if (!AiDraft.currentDraftText) { alert('Kein Entwurf zum Versiegeln.'); return; }
+
+  // Use existing AI Draft seal function (I9 + I11 compliant)
+  await sealAiDraft();
+}
+
+function showAgentQR() {
+  if (!AiDraft.currentDraftText) { alert('Kein Entwurf für QR-Code.'); return; }
+
+  // Compute hash and show QR
+  computeHashPreview(AiDraft.currentDraftText).then(function(hash) {
+    var qrData = 'WINDI:' + (DirectPrompt.currentSession?.session_id || 'DRAFT') + '|' + hash.replace('…', '');
+
+    // Use existing QR function if available
+    if (typeof showQRCode === 'function') {
+      showQRCode(qrData, AiDraft.currentDocName || 'Dokument');
+    } else {
+      // Fallback: show in alert
+      alert('QR-Code Daten:\n\n' + qrData + '\n\nSession: ' + (DirectPrompt.currentSession?.session_id || 'N/A'));
+    }
+  });
+}
+
+async function exportAgentDraft() {
+  if (!AiDraft.currentDraftText) { alert('Kein Entwurf zum Exportieren.'); return; }
+
+  // For now, save as formatted text (PDF export requires backend)
+  var exportContent = '═══════════════════════════════════════════════════════════════\n';
+  exportContent += '  WINDI LAW — ' + (AiDraft.currentDocName || 'Dokument') + '\n';
+  exportContent += '═══════════════════════════════════════════════════════════════\n\n';
+  exportContent += 'Session: ' + (DirectPrompt.currentSession?.session_id || 'N/A') + '\n';
+  exportContent += 'Datum: ' + new Date().toLocaleString('de-DE') + '\n';
+  exportContent += 'Agent: ' + (AGENT_CONFIG[getSelectedAgent()]?.name || 'W-LEGAL-001') + '\n\n';
+  exportContent += '───────────────────────────────────────────────────────────────\n\n';
+  exportContent += AiDraft.currentDraftText + '\n\n';
+  exportContent += '───────────────────────────────────────────────────────────────\n';
+  exportContent += '⚠️ KI-generierter Entwurf. Rechtliche Prüfung erforderlich.\n';
+  exportContent += '🔐 WINDI LAW · Invariants: I9 · I11 · G3\n';
+  exportContent += '═══════════════════════════════════════════════════════════════\n';
+
+  var blob = new Blob([exportContent], { type: 'text/plain;charset=utf-8' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'WINDI-LAW_' + (AiDraft.currentDocName || 'Export') + '_' + new Date().toISOString().slice(0,10) + '.txt';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  console.log('[§122.2] Draft exported');
 }
 
 function showAgentError(config, errorMsg) {
