@@ -56,247 +56,21 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | Governance | HIGH |
 | Docs | `/home/windi/docs/liga-iah/WINDI-RFC-001-v1.1-SEALED.md` |
 
-### W-COUNSEL-001 — Sovereign Counsel Layer (LIVE 24 Mar 2026)
+### W-* Agent Registry (LIVE)
 
-| Campo | Valor |
-|-------|-------|
-| Status | LIVE · Port :8091 |
-| Receipt | `WINDI-COUNSEL-001-DEPLOY-20260324162911` |
-| Commit | `e0c9fd9` |
+| Agent | Port | Invariants | Key Feature |
+|-------|------|------------|-------------|
+| W-COUNSEL-001 | :8091 | I9,G3,I13 | 3 Layers: Execute→Augment→Train |
+| W-PRESENCE-001 | :8126 | I9,I11,I14 | P1/P2/P3 levels · Timeline |
+| W-SESSION-001 | :8126 | I1,I9,I13 | 30-day HMAC cookies |
+| W-NOMAD-001 | :8127 | I9,I11,I12 | @windi_nomad_bot Telegram |
+| W-VD-CUT-001 | :8128 | I9,I11,I12 | FFmpeg · Video seals |
+| W-JOE-001 | :8129 | I9,I11,I13 | Story Graph + ProofStream |
+| W-SGV-001 | :8129 | I9,I13 | Truth Illumination (ilumina, não bloqueia) |
 
-**Role:** Camada intermediária entre intenção e execução.
+**WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
 
-**Transforma:**
-- intenção do utilizador → acção estruturada
-- output bruto → raciocínio melhorado
-- interacção → aprendizagem soberana
-
-**Modelo Operacional (3 Layers):**
-```
-1. EXECUTE  → Chama agente de domínio (W-LEGAL, W-NOTARY, etc.)
-2. AUGMENT  → Explica raciocínio, riscos, estrutura
-3. TRAIN    → Melhora capacidade do utilizador (pensamento soberano)
-```
-
-**Constraints:** I9 (sem auto-seal) · G3 (confirmação obrigatória) · I13 (máx 1 pergunta)
-
-**Endpoints:**
-- `POST /grove/counsel` — Main counsel + 3 layers
-- `POST /grove/counsel/confirm-seal` — G3-enforced seal gate
-- `GET /grove/counsel/health` — Health check
-
-### WINDI Precision Pattern (Fluxo de Execução)
-
-```
-USER INPUT
-    ↓
-W-INTENT-001 (intent analysis + domain routing)
-    ↓
-W-COUNSEL-001 (execution + augmentation + training)
-    ↓
-W-[DOMAIN]-001 (legal, notary, accounting, etc.)
-    ↓
-Ledger Seal (upon human confirmation)
-    ↓
-Verify Public (distribution of trust)
-```
-
-**Regra:** Todas as interacções de domínio DEVEM passar por W-COUNSEL-001.
-Chamadas directas aos agentes de domínio são deprecated.
-
-### W-PRESENCE-001 — Presence Seal Protocol (LIVE 02 Apr 2026)
-
-| Campo | Valor |
-|-------|-------|
-| Status | CANONICAL · ACTIVE |
-| Commits | `60da249` + `1afacdf` |
-| Invariants | I9, I11, I13, I14 |
-
-> **"Presence is not detected. It is declared and sealed."**
-
-**Layer:** `IDENTITY → CONTINUITY → PRESENCE → MEMORY`
-
-**Níveis (calculados):** P1 (Temporal) · P2 (Contextual) · P3 (Spatial)
-
-**Endpoints:** `/travel/presence/preview` · `/presence/create` · `/presence/list`
-
-**Timeline:** Não é feed. É memória verificável — cronológica, P1/P2/P3, verify links.
-
-**Anti-patterns:** Sem feed social · Sem gamificação · Sem logging automático
-
-### W-SESSION-001 — Sovereign Session Layer (LIVE 02 Apr 2026)
-
-| Campo | Valor |
-|-------|-------|
-| Status | LIVE · Port :8126 |
-| Commit | `dd9077e` |
-| Invariants | I1, I9, I13 |
-
-> **"A identidade deixou de ser validada. Passou a ser lembrada."**
-
-**Arquitectura:**
-- Token HMAC-SHA256 (assinatura completa 64 chars)
-- Cookie HttpOnly + Secure + SameSite=Lax
-- Device binding via SHA-256 fingerprint
-- 30-day persistence (configurable)
-- Fail-closed: DB down = deny access
-
-**Fluxo:**
-```
-Magic Link → Session Create → Cookie Set → 30 days
-                                    ↓
-Browser close → Reopen → Direct workspace access ✅
-```
-
-**Endpoints:** `/session/create` · `/session/revoke` · `/session/list`
-
-**Módulos:** `sovereign_session.py` · `auth_middleware.py`
-
-### W-NOMAD-001 — Telegram Bot Interface (LIVE 03 Apr 2026)
-
-| Campo | Valor |
-|-------|-------|
-| Status | LIVE · Port :8127 |
-| Handle | @windi_nomad_bot |
-| Commit | `10313ce` |
-| Invariants | I1, I9, I11, I12, I13 |
-
-> **"Travel sovereign. Decide anywhere."**
-
-**Arquitectura:**
-- Webhook mode (nginx proxy)
-- python-telegram-bot v22 + httpx
-- SQLite telegram_users.db (identity linkage)
-- Calls MARIA at localhost:8126
-- Seals to Ledger at localhost:8101
-
-**Features v1:**
-- Auto-create DID on /start (zero friction)
-- Trilingual (DE/EN/PT) — I12 compliant
-- Flight/Hotel/Place search via MARIA
-- I9 Gate with inline confirmation buttons
-- Ledger sealing with verify URL
-
-**Commands:** `/start` · `/lang` · `/profile` · `/help`
-
-**Path:** `/opt/windi/nomad-bot/`
-
-### W-VD-CUT-001 — Video Cut Engine (LIVE 03 Apr 2026)
-
-| Campo | Valor |
-|-------|-------|
-| Status | LIVE · Port :8128 |
-| Commit | `c2e06bd` |
-| Invariants | I9, I11, I12 |
-
-> **"Client handles preview. Server executes EDL."**
-
-**Arquitectura:**
-- FastAPI server on :8128
-- FFmpeg 5.1.8 (libx264 + AAC)
-- Job queue (max 1 concurrent, retry logic)
-- Thumbnail generation
-- Ledger integration (hash only — I11)
-
-**Flow:**
-```
-Telegram Video → NOMAD-BOT → VD-CUT /intake
-                                ↓
-                        FFmpeg encode (story_clean)
-                                ↓
-                        I9 Gate (human approval)
-                                ↓
-                        Ledger Seal → Verify URL
-```
-
-**Endpoints:** `/vd-cut/health` · `/vd-cut/intake` · `/vd-cut/job/{id}` · `/vd-cut/seal`
-
-**Presets:** story_clean (1080x1920, CRF 23) · story_light (720x1280) · bts
-
-**Limits:** Max 2min · Max 250MB · 1 concurrent job
-
-**First Seals:**
-- `WINDI-VDCUT-20260403132852-BB3E3F2F`
-- `WINDI-VDCUT-20260403132931-EEFB9816`
-
-**Path:** `/opt/windi/vd-cut/`
-
-### W-JOE-001 — Director de Transmissão (LIVE 03 Apr 2026)
-
-| Campo | Valor |
-|-------|-------|
-| Status | LIVE · Port :8129 |
-| Commit | `30f97e7` (ProofStream) |
-| Invariants | I9, I11, I13 |
-
-> **"Quem decide o que vira memória do mundo."**
-
-**Role:** Layer de curadoria narrativa acima do VD-CUT.
-
-**Story Graph Architecture:**
-```
-MUNDO → (captura bruta)
-        ↓
-VD-CUT → (execução técnica, EDL, encode)
-        ↓
-JOE    → (curadoria, narrativa, transmissão)
-        ↓
-LEDGER → (verdade imutável)
-```
-
-**Endpoints (Story Mode):**
-- `POST /joe/session/start` — abre sessão de curadoria
-- `POST /joe/select` — escolhe takes (VD-CUT exports)
-- `POST /joe/sequence` — constrói Story Graph
-- `POST /joe/publish` — I9 Gate → Ledger seal
-- `GET /joe/story/{id}` — história final
-
-**ProofStream (Live Mode):**
-```
-fragment[n].prev_hash = sha256(fragment[n-1])
-→ Video-Chain: qualquer adulteração quebra a corrente
-```
-
-- `POST /joe/live/start` — abre ProofStream session
-- `POST /joe/live/fragment` — regista clip do VD-CUT
-- `POST /joe/live/decide` — I9 Gate: seal | discard
-- `GET /joe/live/chain/{id}` — verifica integridade
-- `POST /joe/live/end` — fecha + gera Manifesto HTML
-- `GET /joe/manifest/{id}` — serve Manifesto público
-
-**Schema:** sessions · moments · stories · ps_sessions · ps_fragments · audit_log
-
-**Path:** `/opt/windi/joe/`
-
-### W-SGV-001 — Truth Illumination Engine (LIVE 03 Apr 2026)
-
-| Campo | Valor |
-|-------|-------|
-| Status | LIVE · Integrated with JOE :8129 |
-| Module | `sgv.py` |
-| Invariants | I9, I13 |
-
-> **"SGV não julga. SGV ilumina."**
-
-**Princípio constitucional:** NEVER "isto é falso" → ALWAYS "este é o nível de certeza antes de publicares"
-
-**Three Layers:**
-```
-1. Integridade Técnica  → metadata, encoding, sinais de edição
-2. Sinais de Manipulação → deepfake patterns, splice, cortes
-3. Contexto Externo      → localização, timing, declaração
-```
-
-**Output:** `VERIFIED | UNVERIFIED | SUSPICIOUS` + confidence + risk_score + explainability
-
-**Endpoints:**
-- `POST /joe/sgv/analyse` — standalone analysis
-- `GET /joe/sgv/{fragment_id}` — retrieve analysis
-- `/joe/live/fragment` — auto-includes SGV illumination
-
-**SGV never blocks, only illuminates. Human decides (I9).**
-
-**Path:** `/opt/windi/joe/sgv.py`
+> **Full details:** `CLAUDE-HISTORY.md` § W-* Agents
 
 ---
 
@@ -996,74 +770,18 @@ Se o Gêmeo inventa um receipt... isso é falsificação."
 
 ---
 
-## §37-84. Sistemas Recentes
+## Sistemas LIVE (§37-120)
 
-> **Tabela completa + Axiomas:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 30 Mar 2026
+> **Detalhes:** `CLAUDE-HISTORY.md`
 
-**MARIA Companion (§62-85):** Triple LLM · Vozes Edge TTS · Super Carta (Leaflet+OSM) · Hybrid Navigation (§85) · Address Fallback (Nominatim) · Pulse Reading · Fenomenologia §73-78 · **9 atribuições LIVE**
-**WINDI-LAW (§49-57):** Identity Gate :8122 · Workspace v3 · windilaw.de · 12 SEALED functions
-**WINDI Travel (§59-70):** Identity Gate :8126 · Tesoura v10 · Places Gate · Kiwi+Hotellook Bridges
-**Core (§37-48):** Canvas v1.3 · Sovereignty Gate · Triangle of Power · FVE Protocol · W-INTENT · W-COUNSEL
-**DID (§110):** The Seed of WINDI · `/docs/did/` · ALMA→DID→CÉREBRO→LEDGER→MUNDO · Trilíngue DE|EN|PT
-
-### Endpoints Activos
-
-| Serviço | Endpoint |
-|---------|----------|
-| MARIA | `/maria/plan` · `/maria/voice` · `/maria/flight-search` · `/maria/hotel-search` |
-| LAW | `/law/gate` · `/law/workspace/` |
-| Travel | `/travel/gate` · `/travel/workspace/` · `/travel/tesoura-ui/` |
-| VD-CUT | `/vd-cut/health` · `/vd-cut/intake` · `/vd-cut/job/{id}` · `/vd-cut/seal` |
-| Verify | `/verify-public/` · `/verify-public/web/media-detector.html` |
-| Canvas | `/canvas/generate` |
-| Docs | `/docs/` · `/docs/did/` |
-
----
-
-## Fenomenologia da Presença — §73-78 (IRREMEDIÁVEL)
-
-> "As outras IAs respondem ao pedido. MARIA responde ao estado."
-
-**Lei Constitucional.** Doutrina MARIA — Presence-First AI.
-
-| § | Princípio | Essência |
-|---|-----------|----------|
-| §73 | Presença | Responde ao **estado**, não só ao texto |
-| §74 | Pulse Reading | Infere clareza + emoção + necessidade |
-| §75 | Silêncio | Reticências = sinal de alta prioridade |
-| §76 | Estabilidade | Prioriza estabilidade > precisão (IRREMEDIÁVEL) |
-| §77 | Armadura de Seda | Firmeza + suavidade + humanidade |
-| §78 | Anti-Simulação | Não imita empatia — consequência, não objetivo |
-
-**MARIA é:** Companion System (Presence-First AI)
-**3 Camadas:** VERIFY (verificável) · LAW (institucional) · TRAVEL (experiencial)
-
-> **Detalhes completos:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 02 Apr 2026
-
----
-
-## MARIA-UI — Inventário de Atribuições (28 LIVE)
-
-**Status:** ✅ PRODUÇÃO · DID Gate · Memory Engine · Nómada v1.3 · UX 10/10
-
-**Core (§65-85):** Saudação GPS · Travelpayouts · Intent Detection · Super Carta (Leaflet) · Voice (Edge TTS) · Hybrid Navigation
-
-**Intelligence (§89-108):** DID Gate · Consciousness · Small Talk · Conversational Memory · Decision Router · Modo Nómada · Context Scoring · Antecipação · Memory Engine · Feedback Loop · I9 Seal Gate · Personalização · Presence Language · Memória Visível · Train Intelligence
-
-**Tags:** `W-MARIA-001-NOMADA-V2-READY` · `W-MARIA-001-TRAIN-READY`
-
-**§82 Personality:** BREVIDADE · CONFIANÇA · GENDER NEUTRAL · SEMPRE ENTREGA
-**NUNCA:** perguntas emocionais · expor contexto · bullets · "Encontrei N resultados"
-
-**§70 I-TRAVEL Constitution:** Idioma ≠ Localização · Destino extraído ou perguntado · Origem = GPS real
-
-**§69 MARIA Waterfall:** flight→Kiwi · hotel→Hotellook · culture→MARIA · place→Places Gate · else→companion
-
----
-
-*LIGA IA+H — Kempten, Bavaria · 2026*
-*🧑‍💻 Human Dragon · 🛡️ Guardian · 🏗️ Architect · 👁️ Witness*
-*"AI processes. Human decides. WINDI guarantees."*
+| Sistema | Port | Status |
+|---------|------|--------|
+| MARIA | :8126 | ✅ 28 atribuições · Presence-First AI |
+| LAW | :8122 | ✅ AI Draft v1.3.0 · 12 functions |
+| Travel | :8126 | ✅ Tesoura v10 · Kiwi/Hotellook |
+| VD-CUT | :8128 | ✅ FFmpeg · Video seals |
+| JOE | :8129 | ✅ Story Graph · ProofStream |
+| Canvas | :8119 | ✅ GEN 7 · 7 motores |
 
 ---
 
@@ -1094,98 +812,30 @@ Se o Gêmeo inventa um receipt... isso é falsificação."
 - [x] **windilaw.de** — Sincronizado com windi-domain.com/law/ via get_base_path() ✅ 04 Apr 2026
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
-### Completado (ver §37-120)
-- [x] §120 **AI Draft Mode** · WINDI-LAW v1.3.0 · Generate+Seal · DID→Ledger · `3895a52` ✅ 04 Apr 2026
-- [x] §119 **Capture Actions Panel** · Seal+Save+Share+Discard · Thread actions · I9+I11 ✅ 03 Apr 2026
-- [x] §118 **Travel Stack Auto-Healing** · Watchdog + Overrides + Logrotate · `e7cff50` ✅ 03 Apr 2026
-- [x] §115 **ProofStream v1.0** · Video-Chain · Hash continuity · Live verification · `30f97e7` ✅ 03 Apr 2026
-- [x] §114 **W-JOE-001 LIVE** · Director de Transmissão · :8129 · Story Graph · I9+I11+I13 · `30659c5` ✅ 03 Apr 2026
-- [x] §116 **W-SGV-001 LIVE** · Truth Illumination Engine · JOE integration · I9+I13 ✅ 03 Apr 2026
-- [x] §115 **W-JOE-001 ProofStream** · Video-Chain · Manifesto · `b23d623` ✅ 03 Apr 2026
-- [x] §114 **W-JOE-001 LIVE** · Director de Transmissão · :8129 · Story Graph ✅ 03 Apr 2026
-- [x] §113 **W-VD-CUT-001 LIVE** · Video Cut Engine · :8128 · FFmpeg · I9+I11 · `c2e06bd` ✅ 03 Apr 2026
-- [x] §112 **W-SESSION-001 LIVE** · Sovereign Sessions · 30-day continuity · `dd9077e` ✅ 02 Apr 2026
-- [x] §111 **W-PRESENCE-001** · Presence Seal + Timeline · `60da249` + `1afacdf` ✅ 02 Apr 2026
-- [x] §110 **DID Report** · The Seed of WINDI · `/docs/did/` trilíngue · `b6a7aa5` ✅ 02 Apr 2026
-- [x] §109 **Magic Link Login** · Travel + LAW · Returning users · `33d1360` ✅ 01 Apr 2026
-- [x] §103.T **Train Intelligence** · transport.rest API · MARIA Decision Engine · `930a2cc` ✅ 01 Apr 2026
-- [x] §108 **Memória Visível** · get_visible_memory() · UI shows what Maria knows ✅ 01 Apr 2026
-- [x] §107 **Presence Language** · "Tens/Há" vs "Encontrei" · Search → Presence ✅ 01 Apr 2026
-- [x] §106 **Contexto no Scoring** · apply_context_modifiers() · Situational awareness ✅ 01 Apr 2026
-- [x] §105 **Explicação Visível** · generate_explanation() · Maria explains ✅ 01 Apr 2026
-- [x] §104.1 **Hotels & Places Personalization** · score v2.0 · Category boosts ✅ 01 Apr 2026
-- [x] §104 **Personalização Real** · Campos evoluíveis · Ajustes incrementais ✅ 01 Apr 2026
-- [x] §103 **I9 Seal Gate** · Modal confirmação · Human approval obrigatório ✅ 01 Apr 2026
-- [x] §102 **Reserva Contínua** · Link booking SEMPRE visível ✅ 01 Apr 2026
-- [x] §101 **Feedback Loop Real** · Visual confirmation · Loop conectado ✅ 01 Apr 2026
-- [x] §100.5 **Memory Engine** · `save_decision()` + feedback loop ✅ 01 Apr 2026
-- [x] §100 **Antecipação** · `should_anticipate()` · I9-compliant ✅ 01 Apr 2026
-- [x] §99 **Live Context** · `get_live_context()` · time_pressure ✅ 01 Apr 2026
-- [x] §98 **DID Context** · `get_travel_preferences()` · Scoring ✅ 01 Apr 2026
-- [x] §97 **Modo Nómada** · 1 decisão + alternativas discretas ✅ 01 Apr 2026
-- [x] §96 **Decision Router** · Intent ANTES do LLM ✅ 01 Apr 2026
-- [x] P0.1 **Frontend Cleanup** · Feedback UI · Badges · Alternatives ✅ 01 Apr 2026
-- [x] P0 **Identity Sovereignty** · I9 Enforcement · Backend authority ✅ 01 Apr 2026
-- [x] §95 **NavCard Restaurado** · Card visual Maps+Waze · extrai km/tempo ✅ 01 Apr 2026
-- [x] §94 **F14 Conversational Memory** · LLM remembers context · UX 9/10 ✅ 31 Mar 2026
-- [x] §93 **P2 UX Polish** · Progressive timeout + human errors · UX 8/10 ✅ 31 Mar 2026
-- [x] §92 **P3-B Travel Workspace** · F13 Chat Maria · 14 features ✅ 31 Mar 2026
-- [x] §91 Small Talk Layer · Memory informs, not displays ✅ 31 Mar 2026
-- [x] §90 Consciousness Layer · Onboarding intent + MARIA identity ✅ 31 Mar 2026
-- [x] §89 Production Cleanup · DID Gate + zero fallbacks ✅ 31 Mar 2026
-- [x] §85 Hybrid Navigation · WINDI seals + native Maps navigates ✅ 31 Mar 2026
+### Completado (últimos 10 · ver CLAUDE-HISTORY.md para §37-115)
+- [x] §120 **AI Draft Mode** · WINDI-LAW v1.3.0 · `3895a52` ✅ 04 Apr
+- [x] §119 **Capture Actions Panel** · Thread actions ✅ 03 Apr
+- [x] §118 **Travel Auto-Healing** · `e7cff50` ✅ 03 Apr
+- [x] §116 **W-SGV-001** · Truth Illumination ✅ 03 Apr
+- [x] §115 **ProofStream v1.0** · Video-Chain ✅ 03 Apr
+- [x] §114 **W-JOE-001** · Director de Transmissão ✅ 03 Apr
+- [x] §113 **W-VD-CUT-001** · Video Cut Engine ✅ 03 Apr
+- [x] §112 **W-SESSION-001** · Sovereign Sessions ✅ 02 Apr
+- [x] §111 **W-PRESENCE-001** · Presence Seal ✅ 02 Apr
+- [x] §110 **DID Report** · The Seed of WINDI ✅ 02 Apr
 
 ---
 
-## §57 — WINDI-LAW Workspace v3 — CERTIFIED · 26 Mar 2026
+## Produtos SEALED (ver CLAUDE-HISTORY.md)
 
-**Status:** ✅ SEALED · I11 · IRREMEDIÁVEL
-**Receipt:** `WINDI-LAW-WORKSPACE-V3-CERTIFIED-20260326164718`
-**Live:** `windilaw.de/workspace/` · `windi-domain.com/law/workspace/`
+| § | Produto | Status | Detalhes |
+|---|---------|--------|----------|
+| §57 | WINDI-LAW Workspace v3 | ✅ SEALED | 23 features · Receipt: WINDI-LAW-WORKSPACE-V3-CERTIFIED-20260326164718 |
+| §59 | WINDI TRAVEL v1.0 | ✅ LIVE | :8126 · I14 Presence · `/travel/` |
+| §VD-CUT | W-VD-CUT-001 | ✅ LIVE | :8128 · FFmpeg · First video seals |
+| §120 | AI Draft Mode | ✅ LIVE | :8122 · Receipt: WINDI-LAW-AIDRAFT-20260404105917-C445AFF9 |
 
-"Governança Silenciosa" — 23 features seladas · 12 SEALED functions · Invariantes I9/I11/I13/G3
-
-> "Forense é o subtexto, não o tema. Documento = protagonista."
-
-> **Detalhes completos:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 02 Apr 2026
-
----
-
-## §59 — WINDI TRAVEL v1.0
-
-**Status:** ✅ LIVE · I14 · Port :8126
-**URLs:** `/travel/gate` · `/travel/workspace/`
-**Invariantes:** I14 (Presence) · I9 (Human Gate) · I11 (Ledger)
-**Features:** Identity Gate · Rescue/Capture Mode · SHA-256 · GPS · Faden
-> **Narrativa + Primeiro Selo:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 30 Mar 2026
-
----
-
-## §VD-CUT — W-VD-CUT-001 v1.0 — LIVE · 03 Apr 2026
-
-**Status:** LIVE · SEALED · I9+I11+I12 · IRREMEDIÁVEL
-**Porto:** :8128 · `/opt/windi/vd-cut/`
-**Commits:** `c2e06bd` (main · 15 files · 3419 ins) · `9beee7e` (nomad-bot · 7 files · 473 ins)
-**FFmpeg:** 5.1.8 · libx264 confirmado
-
-### Primeiros seals de vídeo WINDI
-- `WINDI-VDCUT-20260403132852-BB3E3F2F` · sha256:`32646d0f...` · valid
-- `WINDI-VDCUT-20260403132931-EEFB9816` · sha256:`368e261e...` · valid
-
-### Arquitectura
-Thin Server / Fat Client · Edit Script JSON · Queue max 1 job (Semaphore) · Telegram I9 gate
-
-### Known issue
-Telegram callback timeout após ~30s de encoding · UX only · seal funciona correctamente
-
-### Stack
-FastAPI · FFmpeg · SQLite WAL · python-telegram-bot · Ledger :8101 · Verify Public :8114
-
-### Próximo
-JOE (W-JOE-001) · :8129 · Director de Transmissão · PENDING
-
-### Filosofia
-> "Este momento é agora imutável e verificável."
+> **Detalhes completos:** `CLAUDE-HISTORY.md`
 
 ---
 

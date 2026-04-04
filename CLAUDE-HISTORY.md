@@ -4364,5 +4364,111 @@ Ledger:       🔒 Anchored
 
 ---
 
+## §120.1 — W-* Agents Overflow (migrado 04 Abr 2026)
+
+> Conteúdo detalhado condensado em CLAUDE.md para manter limite 32KB
+
+### W-COUNSEL-001 — Sovereign Counsel Layer (24 Mar 2026)
+
+| Campo | Valor |
+|-------|-------|
+| Status | LIVE · Port :8091 |
+| Receipt | `WINDI-COUNSEL-001-DEPLOY-20260324162911` |
+| Commit | `e0c9fd9` |
+| Invariants | I9 (sem auto-seal) · G3 (confirmação) · I13 (máx 1 pergunta) |
+
+**Role:** Camada intermediária entre intenção e execução.
+**3 Layers:** EXECUTE (domínio) → AUGMENT (raciocínio) → TRAIN (pensamento soberano)
+**Endpoints:** `/grove/counsel` · `/grove/counsel/confirm-seal` · `/grove/counsel/health`
+
+### W-PRESENCE-001 — Presence Seal Protocol (02 Apr 2026)
+
+| Campo | Valor |
+|-------|-------|
+| Commits | `60da249` + `1afacdf` |
+| Invariants | I9, I11, I13, I14 |
+
+> **"Presence is not detected. It is declared and sealed."**
+
+**Layer:** IDENTITY → CONTINUITY → PRESENCE → MEMORY
+**Níveis:** P1 (Temporal) · P2 (Contextual) · P3 (Spatial)
+
+### W-SESSION-001 — Sovereign Session Layer (02 Apr 2026)
+
+| Campo | Valor |
+|-------|-------|
+| Commit | `dd9077e` |
+| Invariants | I1, I9, I13 |
+
+> **"A identidade deixou de ser validada. Passou a ser lembrada."**
+
+**Arquitectura:** Token HMAC-SHA256 · Cookie HttpOnly · Device binding · 30-day · Fail-closed
+
+### W-NOMAD-001 — Telegram Bot (03 Apr 2026)
+
+| Campo | Valor |
+|-------|-------|
+| Handle | @windi_nomad_bot |
+| Commit | `10313ce` |
+| Invariants | I1, I9, I11, I12, I13 |
+
+**Stack:** Webhook · python-telegram-bot v22 · SQLite · MARIA · Ledger
+
+### W-VD-CUT-001 — Video Cut Engine (03 Apr 2026)
+
+| Campo | Valor |
+|-------|-------|
+| Commit | `c2e06bd` |
+| Invariants | I9, I11, I12 |
+
+**Stack:** FastAPI · FFmpeg 5.1.8 · SQLite WAL
+**First Seals:** `WINDI-VDCUT-20260403132852-BB3E3F2F` · `WINDI-VDCUT-20260403132931-EEFB9816`
+
+### W-JOE-001 — Director de Transmissão (03 Apr 2026)
+
+| Campo | Valor |
+|-------|-------|
+| Commit | `30f97e7` (ProofStream) |
+| Invariants | I9, I11, I13 |
+
+> **"Quem decide o que vira memória do mundo."**
+
+**Story Graph:** MUNDO → VD-CUT → JOE (curadoria) → LEDGER
+**ProofStream:** `fragment[n].prev_hash = sha256(fragment[n-1])` → Video-Chain
+
+### W-SGV-001 — Truth Illumination Engine (03 Apr 2026)
+
+| Campo | Valor |
+|-------|-------|
+| Module | `sgv.py` |
+| Invariants | I9, I13 |
+
+> **"SGV não julga. SGV ilumina."**
+
+**3 Layers:** Integridade Técnica · Sinais de Manipulação · Contexto Externo
+**Output:** `VERIFIED | UNVERIFIED | SUSPICIOUS` + confidence + risk_score
+
+### §117 — I9 Human Approval Gate (detalhes)
+
+> **"I9 não vive na entrada. I9 vive na saída."**
+
+**Doutrina:** "Um director não vê tudo. Um director decide o que importa."
+
+### §118 — Travel Stack Auto-Healing (detalhes)
+
+| Artefacto | Estado |
+|-----------|--------|
+| windi-travel.service | override + KillMode=mixed |
+| windi-nomad-bot.service | override + port-cleaner |
+| windi-vd-cut.service | NEW (nohup → systemd) |
+| windi-joe.service | NEW (nohup → systemd) |
+| windi-watchdog.service | auto-heal 15s |
+
+**Portas:** 8126 · 8127 · 8128 · 8129
+**Commit:** `e7cff50`
+
+---
+
+*Migração: 04 Abr 2026 · CLAUDE.md 36KB → 30KB*
 *"AI processes. Human decides. WINDI guarantees."*
 *Liga IA+H · Kempten, Bavaria · 2026*
