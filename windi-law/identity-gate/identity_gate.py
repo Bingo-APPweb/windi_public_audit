@@ -1708,6 +1708,73 @@ async def root(request: Request):
 
 
 # ═══════════════════════════════════════════════════════════════
+# §121 — LAW AGENT CORPS PROXY
+# Forwards requests to constitutional-agent on :8093
+# ═══════════════════════════════════════════════════════════════
+
+AGENT_CORPS_URL = "http://127.0.0.1:8093"
+
+@app.api_route("/agents/{agent_type}/{path:path}", methods=["GET", "POST", "PUT", "DELETE"])
+async def proxy_to_agent_corps(agent_type: str, path: str, request: Request):
+    """
+    Proxy requests to LAW Agent Corps (W-LEGAL, W-NOTARY, W-AUDIT, W-COMPLY, W-ACCT)
+
+    Routes:
+      /agents/legal/*       → :8093/legal/*
+      /agents/notary/*      → :8093/notary/*
+      /agents/audit/*       → :8093/audit/*
+      /agents/compliance/*  → :8093/compliance/*
+      /agents/accounting/*  → :8093/accounting/*
+    """
+    allowed_agents = ["legal", "notary", "audit", "compliance", "accounting", "grove"]
+
+    if agent_type not in allowed_agents:
+        raise HTTPException(404, f"Agent '{agent_type}' not found. Available: {allowed_agents}")
+
+    # Build target URL
+    target_url = f"{AGENT_CORPS_URL}/{agent_type}/{path}"
+
+    # Forward request
+    try:
+        body = await request.body()
+        headers = {
+            "Content-Type": request.headers.get("content-type", "application/json"),
+            "X-Forwarded-For": request.client.host if request.client else "unknown",
+            "X-Original-Path": f"/agents/{agent_type}/{path}"
+        }
+
+        resp = requests.request(
+            method=request.method,
+            url=target_url,
+            headers=headers,
+            data=body,
+            timeout=30
+        )
+
+        return JSONResponse(
+            content=resp.json() if resp.headers.get("content-type", "").startswith("application/json") else {"raw": resp.text},
+            status_code=resp.status_code
+        )
+    except requests.exceptions.ConnectionError:
+        raise HTTPException(503, "LAW Agent Corps unavailable. Please try again.")
+    except Exception as e:
+        raise HTTPException(500, f"Proxy error: {str(e)}")
+
+
+@app.get("/agents/health")
+async def agent_corps_health():
+    """Check LAW Agent Corps health"""
+    try:
+        resp = requests.get(f"{AGENT_CORPS_URL}/health", timeout=5)
+        data = resp.json()
+        data["proxy"] = "identity-gate"
+        data["agents_available"] = ["legal", "notary", "audit", "compliance", "accounting"]
+        return data
+    except:
+        return {"status": "unavailable", "message": "LAW Agent Corps not responding on :8093"}
+
+
+# ═══════════════════════════════════════════════════════════════
 # MAIN
 # ═══════════════════════════════════════════════════════════════
 
