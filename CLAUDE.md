@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.85
-**Sealed:** 2026-04-04 · §122.1 MLT/Shotcut Engine
+**Version:** 1.9.86
+**Sealed:** 2026-04-04 · §122.6 ProofStream Arquitectura
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -320,6 +320,76 @@ Batch submitted → avaliação automática
 **Endpoints:** `/mlt/status` · `/mlt/validate` · `/mlt/render`
 
 **Hash Chain:** MLT hash (recipe) + Render hash (output) — both tracked for I11
+
+### §122.2 — ProofStream v1.0 · Primeiro Seal Real (04 Apr 2026)
+
+| Campo | Valor |
+|-------|-------|
+| Receipt | `WINDI-VDCUT-20260404183836-C181E66D` |
+| Hash | `sha256:10a34a3cda834667f9fa2ce44d660bd23bcb9e957e8dfc07870eb3afe914ae55` |
+| Verify | `windi-domain.com/verify-public/?id=WINDI-VDCUT-20260404183836-C181E66D` |
+| Status | valid · Ledger: Verankert |
+
+> **"Primeiro momento real selado pelo ProofStream WINDI em produção."**
+
+**Artefacto:** Vídeo de cavalo gravado em Kempten, Bavaria.
+**Ciclo:** gravação → NOMAD-BOT → seal → Verify Public < 1 minuto.
+
+### §122.3 — Hash Divergente entre Canais (Descoberta Técnica)
+
+```
+Canal VD-CUT (upload directo):  sha256:e30bd5f2...
+Canal NOMAD-BOT (via Telegram): sha256:10a34a3c...
+```
+
+**Causa:** Telegram comprime e transcodifica vídeos nos seus servidores.
+O ficheiro recebido pelo bot já não é o ficheiro original.
+
+**Implicação:** Seal via NOMAD-BOT certifica "ficheiro tal como chegou via Telegram".
+Seal via VD-CUT directo certifica o ficheiro ORIGINAL.
+
+### §122.4 — Telegram é Canal, não Infraestrutura (Princípio Arquitectural)
+
+```
+NOMAD-BOT (Telegram):
+  ✅ Texto · comandos · notificações · recibos · links WINDI
+  ❌ Integridade binária · Hosting soberano · Cadeia forense
+```
+
+> **"O Telegram é a PORTA DE ENTRADA. O WINDI é a CASA."**
+
+**NOMAD-BOT faz:** Interface · Intenção · Link upload · Notificação · Recibo
+**NOMAD-BOT NÃO faz:** Canal de ficheiro · Integridade binária · Substituir upload directo
+
+### §122.5 — content_hash Validado
+
+```
+Upload 1: sha256:e30bd5f2... → project_id: VDCUT-20260404184404-6EFC7F3D
+Upload 2: sha256:e30bd5f2... → project_id: VDCUT-20260404185205-B4D7B37E
+```
+
+| Campo | Identidade |
+|-------|------------|
+| content_hash | FICHEIRO (imutável, SHA-256) |
+| project_id | SESSÃO (gerado no upload) |
+| asset_id | REGISTO (gerado no upload) |
+| ledger entry | ACÇÃO (quando + quem + onde) |
+
+### §122.6 — Matriz de Canais e Casos de Uso (IRREMEDIÁVEL)
+
+| Canal | Hash Original | Forense | Consumer | Caso de Uso |
+|-------|--------------|---------|----------|-------------|
+| VD-CUT directo | ✅ | ✅ | ✅ | Jurídico · Peritos · Investigação |
+| VD-MASS directo | ✅ | ⚠️ I9-P | ✅ | Travel · Media · Hotel Networks |
+| NOMAD-BOT Telegram | ❌ | ❌ | ✅ | Interface · Notificação · Consumer |
+| API parceiro | ✅ | ⚠️ contrato | ✅ | Enterprise · Câmaras · TV |
+
+**Arquitectura Validada:**
+```
+Forense / Jurídico  →  VD-CUT :8128  (I9 Directo)
+Mass / Travel       →  VD-MASS :8131 (I9-P Policy)
+Interface consumer  →  NOMAD-BOT     (canal · não ficheiro)
+```
 
 ### §118 — Travel Stack Auto-Healing (03 Apr 2026)
 
@@ -957,6 +1027,7 @@ workspace/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
 ### Completado (últimos 10 · ver CLAUDE-HISTORY.md para §37-115)
+- [x] §122.2-6 **ProofStream Arquitectura** · Primeiro seal real · Matriz de canais · IRREMEDIÁVEL ✅ 04 Apr
 - [x] §122.1 **MLT Engine** · Shotcut/melt integration · Local render sovereignty · `5f11bcc` ✅ 04 Apr
 - [x] §122 **W-VD-MASS-001** · I9-P Policy Engine · Batch Automation · `d7da443` ✅ 04 Apr
 - [x] §121 **VD-CUT CERTIFIED** · Frame Integrity · First field video · `d7b69bf` ✅ 04 Apr
