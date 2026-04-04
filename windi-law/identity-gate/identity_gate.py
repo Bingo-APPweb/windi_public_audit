@@ -68,6 +68,22 @@ STATE_SUSPENDED = "SUSPENDED"
 STATE_REVOKED = "REVOKED"
 
 # ═══════════════════════════════════════════════════════════════
+# HOST-AWARE ROUTING (windilaw.de vs windi-domain.com/law/)
+# ═══════════════════════════════════════════════════════════════
+
+def get_base_path(request: Request) -> str:
+    """
+    Returns '' for windilaw.de, '/law' for windi-domain.com
+    X-Forwarded-Host has priority (nginx proxy)
+    """
+    host = request.headers.get("host", "")
+    forwarded = request.headers.get("x-forwarded-host", "")
+    effective_host = forwarded or host
+    if "windilaw.de" in effective_host:
+        return ""
+    return "/law"
+
+# ═══════════════════════════════════════════════════════════════
 # PYDANTIC MODELS
 # ═══════════════════════════════════════════════════════════════
 
@@ -662,7 +678,7 @@ async def register(data: CompanyRegister, request: Request):
             "email_verification_sent": True,
             "ledger_receipt": ledger_result,
             "message": "Identity created. Workspace access granted. Verification email sent.",
-            "workspace_url": "/law/workspace/"
+            "workspace_url": f"{get_base_path(request)}/workspace/"
         }
 
     except sqlite3.IntegrityError as e:
@@ -675,14 +691,14 @@ async def register(data: CompanyRegister, request: Request):
                 "error": "Email já registado no sistema",
                 "code": "DUPLICATE_EMAIL",
                 "action": "Aceda ao seu dashboard ou use outro email",
-                "gate": "/law/gate"
+                "gate": f"{get_base_path(request)}/gate"
             })
         elif "unique" in err and ("vat" in err or "company" in err):
             raise HTTPException(status_code=409, detail={
                 "error": "Entidade já registada no sistema",
                 "code": "DUPLICATE_ENTITY",
                 "action": "Contacte o administrador da conta existente",
-                "gate": "/law/gate"
+                "gate": f"{get_base_path(request)}/gate"
             })
         else:
             # Nunca expor o erro real — log interno apenas
@@ -1048,7 +1064,7 @@ async def keys_generate(data: KeysGenerate):
 
 
 @app.get("/identity/{did}")
-async def identity_get(did: str):
+async def identity_get(did: str, request: Request):
     """Get identity by DID."""
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
@@ -1070,8 +1086,8 @@ async def identity_get(did: str):
             "error": "Identidade não encontrada",
             "code": "NOT_FOUND",
             "did": did,
-            "action": "Registe a sua entidade em /law/gate",
-            "gate": "/law/gate"
+            "action": f"Registe a sua entidade em {get_base_path(request)}/gate",
+            "gate": f"{get_base_path(request)}/gate"
         })
 
     return {
@@ -1205,7 +1221,7 @@ async def workspace_gate(request: Request):
         did = request.cookies.get("windi_did", "").strip()
 
     if not did:
-        return RedirectResponse(url="/law/gate", status_code=302)
+        return RedirectResponse(url=f"{get_base_path(request)}/gate", status_code=302)
 
     # Verificar DID no DB
     conn = sqlite3.connect(DB_PATH)
@@ -1215,7 +1231,7 @@ async def workspace_gate(request: Request):
     conn.close()
 
     if not admin:
-        return RedirectResponse(url="/law/gate", status_code=302)
+        return RedirectResponse(url=f"{get_base_path(request)}/gate", status_code=302)
 
     admin_state = admin[0]
 
@@ -1245,7 +1261,7 @@ async def workspace_gate(request: Request):
               O Human Dragon irá validar a sua conta.<br>
               Estado actual: <strong style="color:#C9A84C">{admin_state}</strong>
             </div>
-            <a href="/law/gate" style="font-size:12px;
+            <a href="{get_base_path(request)}/gate" style="font-size:12px;
               color:rgba(201,168,76,0.8);text-decoration:none;
               border:1px solid rgba(201,168,76,0.3);
               padding:10px 20px;border-radius:4px;
@@ -1267,7 +1283,7 @@ async def workspace_gate(request: Request):
           font-family:monospace;text-align:center;padding:4rem;">
           <h1 style="color:#C9A84C">Workspace em Construção</h1>
           <p>O workspace está a ser preparado.</p>
-          <a href="/law/dashboard/{did}" style="color:#C9A84C">Ver Dashboard →</a>
+          <a href="{get_base_path(request)}/dashboard/{did}" style="color:#C9A84C">Ver Dashboard →</a>
         </body></html>
         """.format(did=did), status_code=200)
 
@@ -1523,15 +1539,16 @@ async def admin_verify(did: str, x_admin_secret: Optional[str] = Header(None)):
 # ═══════════════════════════════════════════════════════════════
 
 @app.get("/")
-async def root():
+async def root(request: Request):
     """Root redirect to gate."""
+    base = get_base_path(request)
     return JSONResponse(
         status_code=200,
         content={
             "service": f"WINDI-LAW Identity Gate {VERSION}",
-            "gate_url": "/law/gate",
-            "health_url": "/law/health",
-            "register_url": "/law/register",
+            "gate_url": f"{base}/gate",
+            "health_url": f"{base}/health",
+            "register_url": f"{base}/register",
             "invariants": ["I9", "I11", "I13", "G3"],
             "blocking_rule": "if(!did||!wallet){blockWorkspace()}"
         }
