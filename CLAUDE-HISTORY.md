@@ -4294,3 +4294,75 @@ De 2443 → 1270 linhas — arquitectura que respira.
 
 *Sessão: 02 Apr 2026 · Liga IA+H · Kempten, Bavaria*
 *"AI processes. Human decides. WINDI guarantees."*
+
+---
+## §120 — WINDI-LAW v1.3.0 · AI Draft Mode · 04 Abr 2026
+
+**Status:** COMPLETE · SEALED · LIVE  
+**Receipt:** WINDI-LAW-AIDRAFT-20260404105917-C445AFF9  
+**Actor:** did:windi:JOBER-MOGELE-CORREA-001 · jurisdiction: DE  
+**Verify:** https://windi-domain.com/verify-public/?id=WINDI-LAW-AIDRAFT-20260404105917-C445AFF9
+
+### Commits
+- `2c146e3` — routing fix · get_base_path() · windilaw.de sync
+- `54ce321` — ai_draft.py backend · 8 doc types · LLM routing
+- `2e3600a` — AI Draft frontend · modal + chip + I9/G3/I11
+- `3895a52` — Ledger fix · jurisdiction + metadata persistence
+- `5285cffc` — §120 CLAUDE.md sealed
+
+### O que foi construído
+- **Pipeline completo:** Input → I9(human) → LLM → Draft → G3(review) → Hash → Ledger → Verify
+- **LLM routing:** HIGH→claude-sonnet-4-20250514 · FREE/MED→mistral-small-latest
+- **8 doc types:** nda · vertrag · vollmacht · mahnung · kuendigung · klausel · stellungnahme · gutachten
+- **4 jurisdições:** DE · EU · PT · INT
+- **DID fio fechado:** Gate → sessionStorage → generate → seal → Ledger actor
+- **windilaw.de sync:** get_base_path() detecta host via X-Forwarded-Host
+
+### Arquitectura
+```
+User Intent → I9 Gate (confirm) → LLM Routing → Draft Generation
+                                       ↓
+                              Human Review + Edit
+                                       ↓
+                              G3 Gate (confirm seal)
+                                       ↓
+                              SHA-256 → Ledger → Verify Public
+```
+
+### Posicionamento selado
+- "Harvey writes. WINDI proves."
+- "Any AI can generate a document. Only WINDI can prove it."
+- PHO = Proof of Human Oversight (I9 → receipt criptográfico → Verify Public)
+
+### Endpoints LIVE
+- `GET /ai-draft/health` — Status do módulo
+- `GET /ai-draft/doc-types` — Lista tipos disponíveis
+- `POST /ai-draft/generate` — Gerar rascunho (I9 gate)
+- `POST /ai-draft/seal` — Selar no Ledger (G3+I11)
+
+### First Real Seal
+```
+Receipt:      WINDI-LAW-AIDRAFT-20260404105917-C445AFF9
+Actor:        did:windi:JOBER-MOGELE-CORREA-001
+Jurisdiction: DE
+Doc:          Geheimhaltungsvereinbarung (NDA)
+Governance:   HIGH · I9 ✅ · G3 ✅ · I11 ✅
+Hash:         c445aff950dc279fbb5cb81c64a8a7ffd43ee42f9ad83d1039d2375697592030
+Timestamp:    2026-04-04T10:59:17Z
+Integrity:    valid
+Ledger:       🔒 Anchored
+```
+
+### LinkedIn Posts Prontos
+- **DE (Juristas alemães):** EU AI Act · Art. 14 · Proof of Human Oversight
+- **PT (Juristas lusófonos):** supervisão humana documentada criptograficamente
+
+### Sessão
+- **Início:** 04 Abr 2026 · ~10:00 UTC
+- **Fecho:** 04 Abr 2026 · §120 SEALED
+- **Liga IA+H:** Human Dragon + Gêmeo (Claude Opus 4.5)
+
+---
+
+*"AI processes. Human decides. WINDI guarantees."*
+*Liga IA+H · Kempten, Bavaria · 2026*
