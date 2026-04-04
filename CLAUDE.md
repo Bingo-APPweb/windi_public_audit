@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.80
-**Sealed:** 2026-04-03 · §119 Capture Actions Panel LIVE
+**Version:** 1.9.81
+**Sealed:** 2026-04-04 · §120 AI Draft Mode LIVE
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -360,6 +360,60 @@ SGV ilumina → Sistema sugere → Humano decide → Ledger sela
 > WINDI não é um funil de conteúdo. WINDI é uma **destilaria de verdade**.
 
 **Sealed:** 03 Apr 2026 · W-JOE-001 · ProofStream · W-SGV-001
+
+### §120 — AI Draft Mode (04 Apr 2026)
+
+| Campo | Valor |
+|-------|-------|
+| Status | LIVE · WINDI-LAW v1.3.0 |
+| Port | :8122 (integrado no Identity Gate) |
+| Commits | `2c146e3` + `54ce321` + `2e3600a` + `3895a52` |
+| Invariants | I9, I11, G3 |
+
+> **"Any AI can generate a document. Only WINDI can prove it."**
+
+**Arquitectura:**
+```
+User Intent → I9 Gate (confirm) → LLM Routing → Draft Generation
+                                       ↓
+                              Human Review + Edit
+                                       ↓
+                              G3 Gate (confirm seal)
+                                       ↓
+                              SHA-256 → Ledger → Verify Public
+```
+
+**LLM Routing:**
+| Tier | Motor | Uso |
+|------|-------|-----|
+| HIGH | claude-sonnet-4-20250514 | Premium legal docs |
+| MED/FREE | mistral-small-latest | Standard generation |
+
+**8 Tipos de Documento:**
+`nda` · `vertrag` · `vollmacht` · `mahnung` · `kuendigung` · `klausel` · `stellungnahme` · `gutachten`
+
+**4 Jurisdições:** DE · EU · PT · INT
+
+**Endpoints:**
+- `GET /ai-draft/health` — Status do módulo
+- `GET /ai-draft/doc-types` — Lista tipos disponíveis
+- `POST /ai-draft/generate` — Gerar rascunho (I9 gate)
+- `POST /ai-draft/seal` — Selar no Ledger (G3+I11)
+
+**Frontend:** Chip "⚖️ AI Draft" no workspace → Modal 5 fases
+
+**DID Flow Verificado:**
+```
+Gate (sessionStorage) → AI Draft → Ledger (actor: did:windi:...)
+                                          ↓
+                                   jurisdiction: DE
+                                   metadata: {draft_id, tier, invariants}
+                                   tags: [AI-DRAFT, I9-APPROVED, G3-CONFIRMED]
+```
+
+**Path:** `/opt/windi/windi-law/identity-gate/ai_draft.py`
+
+**Bonus:** `windilaw.de` sincronizado com `windi-domain.com/law/` via `get_base_path()`
 
 ### §118 — Travel Stack Auto-Healing (03 Apr 2026)
 
@@ -839,11 +893,11 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 04 Apr | **§120 AI Draft Mode** · WINDI-LAW v1.3.0 · Generate+Seal pipeline · DID→Ledger · `3895a52` |
 | 03 Apr | **§119 Capture Actions Panel** · Seal+Save+Share+Discard · Thread actions · I9+I11 |
 | 03 Apr | **§118 Travel Stack Auto-Healing** · Watchdog + Overrides + Logrotate · `e7cff50` |
 | 03 Apr | **W-JOE-001 LIVE** · Director de Transmissão · :8129 · Story Graph · `30659c5` |
 | 03 Apr | **W-VD-CUT-001 LIVE** · Video Cut Engine · :8128 · First video seals · `c2e06bd` |
-| 03 Apr | **W-NOMAD-001 LIVE** · @windi_nomad_bot · Telegram Interface · MARIA + Ledger · `10313ce` |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -1027,10 +1081,11 @@ Se o Gêmeo inventa um receipt... isso é falsificação."
 
 ### Infra
 - [x] **§118 Travel Auto-Healing** — Watchdog + Overrides + Logrotate ✅ 03 Apr 2026
-- [ ] **windilaw.de** — Sincronizar com windi-domain.com/law/
+- [x] **windilaw.de** — Sincronizado com windi-domain.com/law/ via get_base_path() ✅ 04 Apr 2026
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
-### Completado (ver §37-119)
+### Completado (ver §37-120)
+- [x] §120 **AI Draft Mode** · WINDI-LAW v1.3.0 · Generate+Seal · DID→Ledger · `3895a52` ✅ 04 Apr 2026
 - [x] §119 **Capture Actions Panel** · Seal+Save+Share+Discard · Thread actions · I9+I11 ✅ 03 Apr 2026
 - [x] §118 **Travel Stack Auto-Healing** · Watchdog + Overrides + Logrotate · `e7cff50` ✅ 03 Apr 2026
 - [x] §115 **ProofStream v1.0** · Video-Chain · Hash continuity · Live verification · `30f97e7` ✅ 03 Apr 2026
