@@ -413,6 +413,16 @@ Gate (sessionStorage) → AI Draft → Ledger (actor: did:windi:...)
 
 **Path:** `/opt/windi/windi-law/identity-gate/ai_draft.py`
 
+**First Real Seal:**
+```
+Receipt:      WINDI-LAW-AIDRAFT-20260404105917-C445AFF9
+Actor:        did:windi:JOBER-MOGELE-CORREA-001
+Jurisdiction: DE
+Doc:          Geheimhaltungsvereinbarung (NDA)
+Governance:   HIGH · I9 ✅ · G3 ✅ · I11 ✅
+Verify:       windi-domain.com/verify-public/?id=WINDI-LAW-AIDRAFT-20260404105917-C445AFF9
+```
+
 **Bonus:** `windilaw.de` sincronizado com `windi-domain.com/law/` via `get_base_path()`
 
 ### §118 — Travel Stack Auto-Healing (03 Apr 2026)
