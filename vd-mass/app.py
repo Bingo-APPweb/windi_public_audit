@@ -816,6 +816,105 @@ def queue_decide(item_id: str):
 
 
 # ═══════════════════════════════════════════════════════════════
+# ROUTES — MLT Engine (Shotcut Integration)
+# ═══════════════════════════════════════════════════════════════
+
+@app.route("/mlt/status", methods=["GET"])
+def mlt_status():
+    """Get MLT engine status."""
+    from mlt_engine import get_engine
+    engine = get_engine()
+    return jsonify(engine.get_status())
+
+
+@app.route("/mlt/validate", methods=["POST"])
+def mlt_validate():
+    """Validate MLT content without rendering."""
+    from mlt_engine import get_engine
+    engine = get_engine()
+
+    if not engine.is_enabled():
+        return jsonify({
+            "error": "MLT Engine disabled",
+            "hint": "Set MLT_ENABLED=true in .env after installing melt"
+        }), 503
+
+    data = request.get_json()
+    if not data or "mlt_content" not in data:
+        return jsonify({"error": "mlt_content required"}), 400
+
+    valid, msg, metadata = engine.validate_mlt(data["mlt_content"])
+    mlt_hash = engine.hash_mlt(data["mlt_content"])
+
+    return jsonify({
+        "valid": valid,
+        "message": msg,
+        "mlt_hash": mlt_hash,
+        "metadata": metadata
+    })
+
+
+@app.route("/mlt/render", methods=["POST"])
+def mlt_render():
+    """
+    Render MLT content.
+
+    I9-P COMPLIANCE:
+    - Render failure → Exception Queue (never auto-seal)
+    - Success → conforme verdict (seal via separate endpoint)
+    """
+    from mlt_engine import get_engine
+    engine = get_engine()
+
+    if not engine.is_enabled():
+        return jsonify({
+            "error": "MLT Engine disabled",
+            "hint": "Set MLT_ENABLED=true in .env after installing melt"
+        }), 503
+
+    data = request.get_json()
+    required = ["mlt_content", "actor_did"]
+    missing = [f for f in required if f not in data]
+    if missing:
+        return jsonify({"error": f"Missing fields: {missing}"}), 400
+
+    job_id = str(uuid.uuid4())[:12].upper()
+
+    result = engine.process_mlt_job(
+        mlt_content=data["mlt_content"],
+        job_id=job_id,
+        policy_id=data.get("policy_id"),
+        actor_did=data["actor_did"]
+    )
+
+    if result["verdict"] == "exception":
+        # Log to exception queue
+        db = get_db()
+        cursor = db.cursor()
+        cursor.execute("""
+            INSERT INTO batch_items (id, batch_id, artifact_url, artifact_hash, criteria_results, verdict)
+            VALUES (?, 'mlt-render', ?, ?, ?, 'exception')
+        """, (
+            job_id,
+            f"mlt:{job_id}",
+            result.get("mlt_hash"),
+            json.dumps({"error": result.get("error"), "metadata": result.get("metadata")}),
+        ))
+        db.commit()
+        log.warning(f"MLT render failed, added to exception queue: {job_id}")
+
+    return jsonify({
+        "job_id": job_id,
+        "verdict": result["verdict"],
+        "mlt_hash": result.get("mlt_hash"),
+        "render_hash": result.get("render_hash"),
+        "output_path": result.get("output_path"),
+        "error": result.get("error"),
+        "metadata": result.get("metadata")
+    })
+
+
+# ═══════════════════════════════════════════════════════════════
 # MAIN
 # ═══════════════════════════════════════════════════════════════
 
