@@ -1093,7 +1093,7 @@ var LANG = {
     aiI9Title: '🛡️ Invariant I9 — Menschliche Genehmigung',
     aiI9Desc: 'Mit Klick auf "Generieren" bestätigst du diesen Antrag und wirst das Ergebnis prüfen.',
     aiGenerate: '⚖️ Mit KI generieren', aiClose: 'Schließen',
-    aiGenerating: 'Juristisches Dokument wird generiert…', aiMotor: 'Motor: wird geladen…',
+    aiGenerating: 'Juristisches Dokument wird generiert…',
     aiAfterGen: '🔐 Nach Generierung → menschliche Prüfung → I11 Versiegelung',
     aiReviewLabel: '📄 Generiertes Dokument — Prüfen und bearbeiten',
     aiEditHint: '✏️ Du kannst bearbeiten. Der finale Hash wird über den versiegelten Text berechnet.',
@@ -1101,7 +1101,7 @@ var LANG = {
     aiI11Desc: 'Der Hash wird unveränderlich im Forensic Ledger eingetragen.',
     aiNotDelete: 'Kann nicht gelöscht werden.',
     aiBack: '← Zurück', aiSeal: '🔐 Im Ledger versiegeln · I11',
-    aiModelLoading: 'Motor: lädt…',
+    aiModelLoading: 'KI-Entwurf wird vorbereitet…',
     aiSealedTitle: 'Dokument versiegelt · I11 ✅',
     aiSealedDesc: 'Das Dokument existiert, ist identifiziert und öffentlich verifizierbar.',
     aiVerifyLink: '🔍 Verify Public öffnen →',
@@ -1131,7 +1131,7 @@ var LANG = {
     aiI9Title: '🛡️ Invariant I9 — Aprovação Humana',
     aiI9Desc: 'Ao clicar "Gerar", confirmas que aprovaste este pedido e irás rever o resultado.',
     aiGenerate: '⚖️ Gerar com IA', aiClose: 'Fechar',
-    aiGenerating: 'A gerar documento jurídico…', aiMotor: 'Motor: carregando…',
+    aiGenerating: 'A gerar documento jurídico…',
     aiAfterGen: '🔐 Após geração → revisão humana → seal I11',
     aiReviewLabel: '📄 Documento Gerado — Revê e edita',
     aiEditHint: '✏️ Podes editar. O hash final será calculado sobre o texto que selarás.',
@@ -1139,7 +1139,7 @@ var LANG = {
     aiI11Desc: 'O hash será inscrito imutavelmente no Forensic Ledger.',
     aiNotDelete: 'Não é possível apagar.',
     aiBack: '← Voltar', aiSeal: '🔐 Selar no Ledger · I11',
-    aiModelLoading: 'Motor: carregando…',
+    aiModelLoading: 'A preparar rascunho IA…',
     aiSealedTitle: 'Documento Selado · I11 ✅',
     aiSealedDesc: 'O documento existe, está identificado e é verificável publicamente.',
     aiVerifyLink: '🔍 Abrir Verify Public →',
@@ -1169,7 +1169,7 @@ var LANG = {
     aiI9Title: '🛡️ Invariant I9 — Human Approval',
     aiI9Desc: 'By clicking "Generate", you confirm this request and will review the result.',
     aiGenerate: '⚖️ Generate with AI', aiClose: 'Close',
-    aiGenerating: 'Generating legal document…', aiMotor: 'Engine: loading…',
+    aiGenerating: 'Generating legal document…',
     aiAfterGen: '🔐 After generation → human review → I11 seal',
     aiReviewLabel: '📄 Generated Document — Review and edit',
     aiEditHint: '✏️ You can edit. The final hash will be calculated on the sealed text.',
@@ -1177,7 +1177,7 @@ var LANG = {
     aiI11Desc: 'The hash will be inscribed immutably in the Forensic Ledger.',
     aiNotDelete: 'Cannot be deleted.',
     aiBack: '← Back', aiSeal: '🔐 Seal in Ledger · I11',
-    aiModelLoading: 'Engine: loading…',
+    aiModelLoading: 'Preparing AI draft…',
     aiSealedTitle: 'Document Sealed · I11 ✅',
     aiSealedDesc: 'The document exists, is identified and publicly verifiable.',
     aiVerifyLink: '🔍 Open Verify Public →',
@@ -1744,8 +1744,8 @@ function updateAiTierInfo() {
   var tierBadge = document.getElementById('ai-tier-badge');
   var tierDesc = document.getElementById('ai-tier-desc');
   if (tierBadge) tierBadge.textContent = tier;
-  var models = { 'HIGH': 'claude-sonnet-4-20250514 (premium)', 'MED': 'mistral-small-latest', 'FREE': 'mistral-small-latest' };
-  if (tierDesc) tierDesc.textContent = 'Motor: ' + (models[tier] || models['FREE']);
+  var tierLabels = { 'HIGH': '🏆 Premium · KI-Entwurf', 'MED': '⚡ Standard · KI-Entwurf', 'FREE': '⚡ Standard · KI-Entwurf' };
+  if (tierDesc) tierDesc.textContent = tierLabels[tier] || tierLabels['FREE'];
 }
 
 function setAiPhase(phase) {
@@ -1780,8 +1780,8 @@ async function executeAiGenerate() {
   var docName = document.getElementById('ai-doc-name').value.trim();
   AiDraft.currentDocType = docType; AiDraft.currentDocName = docName; AiDraft.currentJurisdiction = jurisdiction;
   setAiPhase('loading');
-  var modelLabels = { HIGH: 'claude-sonnet-4-20250514', MED: 'mistral-small-latest', FREE: 'mistral-small-latest' };
-  document.getElementById('ai-model-label').textContent = 'Motor: ' + (modelLabels[tier] || 'mistral-small-latest');
+  var tierLabelsLoading = { HIGH: '🏆 Premium · KI-Entwurf', MED: '⚡ Standard · KI-Entwurf', FREE: '⚡ Standard · KI-Entwurf' };
+  document.getElementById('ai-model-label').textContent = tierLabelsLoading[tier] || tierLabelsLoading['FREE'];
   try {
     var resp = await fetch('/law/ai-draft/generate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ did: did, wallet_id: wallet.wallet_id || did, doc_type: docType, jurisdiction: jurisdiction, lang: lang, tier: tier, context: context, doc_name: docName }) });
     var data = await resp.json();
@@ -1790,7 +1790,8 @@ async function executeAiGenerate() {
     document.getElementById('ai-result-text').value = data.draft_text;
     document.getElementById('ai-preview-hash').textContent = data.preview_hash ? data.preview_hash.substring(0,32) + '…' : '—';
     var metaEl = document.getElementById('ai-result-meta');
-    if (metaEl) metaEl.innerHTML = '<span class="ai-meta-chip">📄 ' + (data.doc_label || docType) + '</span><span class="ai-meta-chip">⚖️ ' + jurisdiction + '</span><span class="ai-meta-chip">🤖 ' + (data.model_used || 'AI') + '</span><span class="ai-meta-chip">📊 ' + (data.tokens || 0) + ' tokens</span><span class="ai-meta-chip">⏱ ' + (data.elapsed_seconds || 0) + 's</span>';
+    var tierLabelResult = tier === 'HIGH' ? 'Premium' : 'Standard';
+    if (metaEl) metaEl.innerHTML = '<span class="ai-meta-chip">📄 ' + (data.doc_label || docType) + '</span><span class="ai-meta-chip">⚖️ ' + jurisdiction + '</span><span class="ai-meta-chip">🤖 ' + tierLabelResult + '</span><span class="ai-meta-chip">📊 ' + (data.tokens || 0) + ' tokens</span><span class="ai-meta-chip">⏱ ' + (data.elapsed_seconds || 0) + 's</span>';
     setAiPhase('review');
     document.getElementById('ai-result-text').addEventListener('input', updatePreviewHash);
   } catch (err) { setAiPhase('configure'); alert('❌ Erro: ' + err.message); }
@@ -1898,8 +1899,7 @@ console.log('[WINDI LAW] Mobile Menu v1.0 loaded · §120.5');
       <div id="ai-phase-configure">
         <div class="tier-info">
           <span class="tier-badge" id="ai-tier-badge">FREE</span>
-          <span id="ai-tier-desc">Motor: mistral-small-latest</span>
-          <span style="margin-left:auto; font-size:0.67rem; color:var(--ink-4);">HIGH → claude-sonnet-4-20250514</span>
+          <span id="ai-tier-desc">⚡ Standard · KI-Entwurf</span>
         </div>
         <div class="ai-row">
           <div class="ai-field">
@@ -1959,7 +1959,7 @@ console.log('[WINDI LAW] Mobile Menu v1.0 loaded · §120.5');
         <div class="ai-loading">
           <div class="spinner"></div>
           <p style="font-weight:600; margin-bottom:8px;" data-i18n="aiGenerating">Juristisches Dokument wird generiert…</p>
-          <p class="model-label" id="ai-model-label" data-i18n="aiModelLoading">Motor: lädt…</p>
+          <p class="model-label" id="ai-model-label" data-i18n="aiModelLoading">KI-Entwurf wird vorbereitet…</p>
           <p style="font-size:0.72rem; color:var(--ink-4); margin-top:16px;" data-i18n="aiAfterGen">🔐 Nach Generierung → Menschliche Prüfung → Seal I11</p>
         </div>
       </div>
