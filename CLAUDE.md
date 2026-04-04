@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.82
-**Sealed:** 2026-04-04 · §121 VD-CUT CERTIFIED
+**Version:** 1.9.83
+**Sealed:** 2026-04-04 · §120.5 Mobile Emergency Fix
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -198,6 +198,38 @@ Verify:       windi-domain.com/verify-public/?id=WINDI-LAW-AIDRAFT-2026040410591
 ```
 
 **Bonus:** `windilaw.de` sincronizado com `windi-domain.com/law/` via `get_base_path()`
+
+### §120.5 — WINDI-LAW Mobile Emergency Fix (04 Apr 2026)
+
+| Campo | Valor |
+|-------|-------|
+| Status | LIVE · Phase 1 Complete |
+| Commit | `7f05abb` |
+| Files | workspace/index.html · gate.html · dashboard.html |
+| Invariants | I12 (responsive) |
+
+> **"Desktop ✅ Mobile ❌ → Desktop ✅ Mobile ✅"**
+
+**Problema:** WINDI-LAW workspace tinha ZERO responsividade — sidebar fixa 192px, sem media queries, touch targets ~10px.
+
+**Solução Phase 1:**
+- Hamburger menu off-canvas para sidebar
+- Breakpoints: 1024px (tablet) · 767px (mobile) · 399px (small)
+- Touch targets 44px (Apple HIG)
+- Safe area support (notch/iPhone)
+- Inspector hidden em mobile
+- iOS zoom prevention (font-size: 16px)
+
+**Ficheiros alterados:**
+| Ficheiro | Alterações |
+|----------|------------|
+| `workspace/index.html` | +294 linhas CSS + JS hamburger |
+| `gate.html` | +44 linhas mobile CSS |
+| `dashboard.html` | +28 linhas mobile CSS |
+
+**Relatório:** `/opt/windi/windi-law/MOBILE-DIAGNOSTIC-REPORT.md`
+
+**Phase 2 (pendente):** Full rewrite mobile-first para paridade com Travel
 
 ### §118 — Travel Stack Auto-Healing (03 Apr 2026)
 
@@ -677,11 +709,11 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 04 Apr | **§120.5 Mobile Emergency Fix** · WINDI-LAW mobile responsive · Hamburger + Touch · `7f05abb` |
 | 04 Apr | **§120 AI Draft Mode** · WINDI-LAW v1.3.0 · Generate+Seal pipeline · DID→Ledger · `3895a52` |
 | 03 Apr | **§119 Capture Actions Panel** · Seal+Save+Share+Discard · Thread actions · I9+I11 |
 | 03 Apr | **§118 Travel Stack Auto-Healing** · Watchdog + Overrides + Logrotate · `e7cff50` |
 | 03 Apr | **W-JOE-001 LIVE** · Director de Transmissão · :8129 · Story Graph · `30659c5` |
-| 03 Apr | **W-VD-CUT-001 LIVE** · Video Cut Engine · :8128 · First video seals · `c2e06bd` |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -813,6 +845,7 @@ Se o Gêmeo inventa um receipt... isso é falsificação."
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
 ### Completado (últimos 10 · ver CLAUDE-HISTORY.md para §37-115)
+- [x] §120.5 **Mobile Emergency Fix** · WINDI-LAW responsive · `7f05abb` ✅ 04 Apr
 - [x] §121 **VD-CUT CERTIFIED** · Frame Integrity · First field video · `d7b69bf` ✅ 04 Apr
 - [x] §120 **AI Draft Mode** · WINDI-LAW v1.3.0 · `3895a52` ✅ 04 Apr
 - [x] §119 **Capture Actions Panel** · Thread actions ✅ 03 Apr
