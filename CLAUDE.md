@@ -869,11 +869,11 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 05 Apr | **§127 AI Draft v2.0** · Markdown→Quill + DOCX Export + Quick Prompt Auto-Submit · `872407c` |
 | 04 Apr | **§120.5 Mobile Emergency Fix** · WINDI-LAW mobile responsive · Hamburger + Touch · `7f05abb` |
 | 04 Apr | **§120 AI Draft Mode** · WINDI-LAW v1.3.0 · Generate+Seal pipeline · DID→Ledger · `3895a52` |
 | 03 Apr | **§119 Capture Actions Panel** · Seal+Save+Share+Discard · Thread actions · I9+I11 |
 | 03 Apr | **§118 Travel Stack Auto-Healing** · Watchdog + Overrides + Logrotate · `e7cff50` |
-| 03 Apr | **W-JOE-001 LIVE** · Director de Transmissão · :8129 · Story Graph · `30659c5` |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -1027,6 +1027,7 @@ workspace/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
 ### Completado (últimos 10 · ver CLAUDE-HISTORY.md para §37-115)
+- [x] §127 **AI Draft v2.0** · Markdown→Quill + DOCX Export + Quick Prompt · `872407c` ✅ 05 Apr
 - [x] §122.2-6 **ProofStream Arquitectura** · Primeiro seal real · Matriz de canais · IRREMEDIÁVEL ✅ 04 Apr
 - [x] §122.1 **MLT Engine** · Shotcut/melt integration · Local render sovereignty · `5f11bcc` ✅ 04 Apr
 - [x] §122 **W-VD-MASS-001** · I9-P Policy Engine · Batch Automation · `d7da443` ✅ 04 Apr
@@ -1054,6 +1055,7 @@ workspace/
 | §121 | W-VD-CUT-001 CERTIFIED | ✅ SEALED | :8128 · Frame Integrity · Receipt: WINDI-VDCUT-20260404145505-E9983867 |
 | §122 | W-VD-MASS-001 I9-P | ✅ SEALED | :8131 · Policy Engine · Batch · MLT/Shotcut · `5f11bcc` |
 | §120 | AI Draft Mode | ✅ LIVE | :8122 · Receipt: WINDI-LAW-AIDRAFT-20260404105917-C445AFF9 |
+| §127 | AI Draft v2.0 | ✅ SEALED | Markdown→Quill + DOCX Export + Quick Prompt · `872407c` |
 
 > **Detalhes completos:** `CLAUDE-HISTORY.md`
 
