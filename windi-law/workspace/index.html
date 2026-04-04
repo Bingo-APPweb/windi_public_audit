@@ -751,7 +751,7 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
   </div>
   <div class="demo-sep"></div>
   <button class="demo-btn on" onclick="go('empty')" data-i18n="demoEmpty">Leerer Zustand</button>
-  <button class="demo-btn" onclick="go('active')" data-i18n="demoActive">Aktives Dokument</button>
+  <button class="demo-btn" onclick="openAiDraft()" data-i18n="demoActive">Aktives Dokument</button>
 </div>
 
 <div class="app">
@@ -838,34 +838,34 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
                 <button class="plbtn">EN</button>
                 <button class="plbtn">PT</button>
               </div>
-              <button class="psend" onclick="go('active')">→</button>
+              <button class="psend" onclick="openAiDraft()">→</button>
             </div>
           </div>
 
           <div class="chips">
             <span class="chip chip-ai" onclick="openAiDraft()">⚖️ AI Draft</span>
-            <span class="chip" onclick="go('active')">📄 NDA · ZPO §273</span>
-            <span class="chip" onclick="go('active')">🔗 Beweiskette · SHA-256</span>
-            <span class="chip" onclick="go('active')">⚖️ Tribunalpaket · DE/EN/PT</span>
-            <span class="chip" onclick="go('active')">🏦 BaFin · MiCA</span>
-            <span class="chip" onclick="go('active')">✍️ eIDAS Signatur</span>
-            <span class="chip" onclick="go('active')">📊 ELSTER XML · C6</span>
+            <span class="chip" onclick="openAiDraft()">📄 NDA · ZPO §273</span>
+            <span class="chip" onclick="openAiDraft()">🔗 Beweiskette · SHA-256</span>
+            <span class="chip" onclick="openAiDraft()">⚖️ Tribunalpaket · DE/EN/PT</span>
+            <span class="chip" onclick="openAiDraft()">🏦 BaFin · MiCA</span>
+            <span class="chip" onclick="openAiDraft()">✍️ eIDAS Signatur</span>
+            <span class="chip" onclick="openAiDraft()">📊 ELSTER XML · C6</span>
           </div>
 
           <div class="sugg">
             <div class="sugg-lbl">Häufige Anfragen</div>
             <div class="sugg-grid">
-              <div class="sc" onclick="go('active')">
+              <div class="sc" onclick="openAiDraft()">
                 <div class="sc-t">Legal</div>
                 <div class="sc-n">NDA auf Risiken prüfen</div>
                 <div class="sc-s">ZPO · GDPR · eIDAS</div>
               </div>
-              <div class="sc" onclick="go('active')">
+              <div class="sc" onclick="openAiDraft()">
                 <div class="sc-t">Forensisch</div>
                 <div class="sc-n">Beweiskette erstellen</div>
                 <div class="sc-s">SHA-256 · Ledger · QR</div>
               </div>
-              <div class="sc" onclick="go('active')">
+              <div class="sc" onclick="openAiDraft()">
                 <div class="sc-t">Buchhaltung</div>
                 <div class="sc-n">XRechnung GoBD prüfen</div>
                 <div class="sc-s">DATEV · ELSTER · C6</div>
@@ -877,9 +877,10 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
         <!-- ══ ACTIVO ══ -->
         <div id="st-active" style="flex:1;display:none;flex-direction:column;overflow:hidden;min-height:0">
 
-          <div class="doc-hdr">
-            <span class="dbadge legal">Legal</span>
-            <span class="dtitle">Geheimhaltungsvertrag · Müller GmbH vs. Tech AG</span>
+          <!-- Document header - populated dynamically -->
+          <div class="doc-hdr" id="doc-hdr-dynamic" style="display:none">
+            <span class="dbadge legal" id="doc-badge">Legal</span>
+            <span class="dtitle" id="doc-title"></span>
             <div class="dacts">
               <button class="dact" onclick="verifyReceipt()">Verify</button>
               <button class="dact">Export</button>
@@ -887,63 +888,42 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
             </div>
           </div>
 
-          <div class="scroll">
+          <!-- Empty state - shown when no document loaded -->
+          <div class="scroll" id="doc-empty-state" style="align-items:center;justify-content:center;text-align:center;">
+            <div style="max-width:320px;">
+              <div style="font-size:48px;margin-bottom:16px;opacity:0.3;">📄</div>
+              <div style="font-size:14px;font-weight:600;color:var(--ink-2);margin-bottom:8px;" data-i18n="docEmptyTitle">Kein Dokument geladen</div>
+              <div style="font-size:12px;color:var(--ink-4);margin-bottom:20px;line-height:1.5;" data-i18n="docEmptyDesc">Erstellen Sie Ihr erstes Dokument mit AI Draft oder laden Sie ein bestehendes Dokument.</div>
+              <button onclick="openAiDraft()" style="background:linear-gradient(135deg,#8B6914,#C4960A);color:white;border:none;padding:12px 24px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);" data-i18n="docEmptyBtn">⚖️ Erstes Dokument erstellen</button>
+            </div>
+          </div>
 
-            <!-- demo notice -->
-            <div class="demo-notice" data-i18n="demoNotice">⚠️ DEMO — Beispieldokument zur Vorschau der Benutzeroberfläche</div>
-
-            <!-- resposta do agente -->
-            <div class="amsg">
-              <div class="aav">⚖️</div>
+          <!-- Document content - populated dynamically, hidden by default -->
+          <div class="scroll" id="doc-content" style="display:none">
+            <!-- Agent response container -->
+            <div class="amsg" id="agent-response" style="display:none">
+              <div class="aav" id="agent-icon">⚖️</div>
               <div class="abody">
-                <div class="aname">W-LEGAL-001 · Strukturanalyse</div>
-                <div class="atext">
-                  <p>Analyse abgeschlossen. Drei Risikobereiche identifiziert — die finale Bewertung liegt beim zuständigen Menschen.</p>
-                </div>
-                <div class="risk-row">
-                  <div class="rcard"><div class="rcard-l">§4 — Laufzeit</div><div class="rcard-v h">Hoch · ZPO §273</div></div>
-                  <div class="rcard"><div class="rcard-l">§7 — Vertragsstrafe</div><div class="rcard-v m">Mittel · €50k</div></div>
-                  <div class="rcard"><div class="rcard-l">§9 — Gerichtsstand</div><div class="rcard-v l">Niedrig · München</div></div>
-                </div>
+                <div class="aname" id="agent-name"></div>
+                <div class="atext" id="agent-text"></div>
+                <div class="risk-row" id="agent-risks"></div>
               </div>
             </div>
 
-            <!-- O DOCUMENTO — PROTAGONISTA -->
-            <div class="doc-canvas">
+            <!-- Document canvas container -->
+            <div class="doc-canvas" id="doc-canvas">
               <div class="dc-header">
                 <div class="dc-header-left">
-                  <div class="dc-org">Kanzlei Schmidt & Partner</div>
-                  <div class="dc-title">Geheimhaltungsvertrag<br>Müller GmbH vs. Tech AG</div>
-                  <div class="dc-meta">
-                    <span class="dc-tag">⚖️ W-LEGAL-001</span>
-                    <span class="dc-tag">ZPO · §273</span>
-                    <span class="dc-tag">HIGH</span>
-                    <span class="dc-tag">24. März 2026</span>
-                  </div>
+                  <div class="dc-org" id="dc-org"></div>
+                  <div class="dc-title" id="dc-title"></div>
+                  <div class="dc-meta" id="dc-meta"></div>
                 </div>
               </div>
-
-              <div class="dc-body">
-                <div class="clause">
-                  <div class="clause-num">§ 1 — Gegenstand</div>
-                  <div class="clause-text">Die Parteien vereinbaren, alle im Rahmen dieser Zusammenarbeit ausgetauschten Informationen vertraulich zu behandeln.</div>
-                </div>
-                <div class="clause">
-                  <div class="clause-num">§ 4 — Laufzeit</div>
-                  <div class="clause-text">Diese Vereinbarung gilt für einen Zeitraum von <strong>fünf Jahren</strong> ab Unterzeichnung.</div>
-                  <div class="highlight">⚠ Analyse: Laufzeit von 5 Jahren ist im Vergleich zum Marktstandard (2–3 Jahre) erhöht.</div>
-                </div>
-                <div class="clause">
-                  <div class="clause-num">§ 7 — Vertragsstrafe</div>
-                  <div class="clause-text">Bei Verstoß ist eine Vertragsstrafe von <strong>€ 50.000</strong> fällig.</div>
-                </div>
-              </div>
-
-              <!-- RODAPÉ FORENSE SILENCIOSO -->
-              <div class="dc-forensic-footer">
+              <div class="dc-body" id="dc-body"></div>
+              <div class="dc-forensic-footer" id="dc-footer">
                 <div class="dc-seal-mark">
                   <span class="dc-seal-icon">🔐</span>
-                  <span class="dc-seal-hash">SHA-256: a3f8c12d4e9b7f2a…</span>
+                  <span class="dc-seal-hash" id="dc-hash"></span>
                 </div>
                 <div class="dc-sep"></div>
                 <div class="dc-seal-mark">
@@ -951,7 +931,7 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
                   <span style="color:var(--ink-4)">· Forensic Ledger</span>
                 </div>
                 <div class="dc-sep"></div>
-                <span class="dc-verify-badge">✓ Verificável</span>
+                <span class="dc-verify-badge" id="dc-verify-badge"></span>
                 <div class="dc-sep"></div>
                 <div style="display:flex;gap:3px;">
                   <span id="cia-i9" style="font-size:8px;padding:1px 5px;border-radius:3px;background:var(--perg-3);color:var(--ink-4);opacity:0.6;transition:all 0.2s;">I9</span>
@@ -959,33 +939,24 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
                   <span id="cia-i13" style="font-size:8px;padding:1px 5px;border-radius:3px;background:var(--perg-3);color:var(--ink-4);opacity:0.6;transition:all 0.2s;">I13</span>
                   <span id="cia-g3" style="font-size:8px;padding:1px 5px;border-radius:3px;background:var(--perg-3);color:var(--ink-4);opacity:0.6;transition:all 0.2s;">G3</span>
                 </div>
-                <div class="dc-qr-wrap">
-                  <div class="dc-qr-mini" title="Verificar autenticidade">
-                    <svg viewBox="0 0 24 24"><rect x="1" y="1" width="9" height="9" fill="none" stroke="#8B6914" stroke-width="0.8"/><rect x="3" y="3" width="5" height="5" fill="#8B6914"/><rect x="14" y="1" width="9" height="9" fill="none" stroke="#8B6914" stroke-width="0.8"/><rect x="16" y="3" width="5" height="5" fill="#8B6914"/><rect x="1" y="14" width="9" height="9" fill="none" stroke="#8B6914" stroke-width="0.8"/><rect x="3" y="16" width="5" height="5" fill="#8B6914"/></svg>
-                  </div>
-                  <div class="dc-qr-tooltip">
-                    <svg viewBox="0 0 74 74"><rect width="74" height="74" fill="white"/><rect x="3" y="3" width="22" height="22" fill="none" stroke="#8B6914" stroke-width="1.5"/><rect x="9" y="9" width="10" height="10" fill="#8B6914"/><rect x="49" y="3" width="22" height="22" fill="none" stroke="#8B6914" stroke-width="1.5"/><rect x="55" y="9" width="10" height="10" fill="#8B6914"/><rect x="3" y="49" width="22" height="22" fill="none" stroke="#8B6914" stroke-width="1.5"/><rect x="9" y="55" width="10" height="10" fill="#8B6914"/></svg>
-                    <div class="dc-qr-tooltip-label">windi-domain.com/verify</div>
-                  </div>
-                </div>
+                <div class="dc-qr-wrap" id="dc-qr"></div>
               </div>
             </div>
-
           </div>
 
-          <!-- prompt bottom -->
-          <div class="pb">
+          <!-- prompt bottom - hidden until document loaded -->
+          <div class="pb" id="doc-prompt" style="display:none">
             <div class="pbox">
-              <textarea placeholder="Folgeanalyse, weitere Fragen…" style="min-height:36px"></textarea>
+              <textarea id="doc-followup" data-i18n-placeholder="docFollowupPh" placeholder="Folgeanalyse, weitere Fragen…" style="min-height:36px"></textarea>
               <div class="pbox-ft">
                 <div class="patt"><span class="ico">📄</span><span class="lbl">DOC</span></div>
                 <div class="patt"><span class="ico">🖼</span><span class="lbl">IMG</span></div>
                 <div class="patt"><span class="ico">🎥</span><span class="lbl">VID</span></div>
-                <div class="pagent">W-LEGAL-001</div>
+                <div class="pagent" id="doc-agent">W-LEGAL-001</div>
                 <div class="plang">
                   <button class="plbtn on">DE</button>
-                  <button class="plbtn">PT</button>
                   <button class="plbtn">EN</button>
+                  <button class="plbtn">PT</button>
                 </div>
                 <button class="psend">→</button>
               </div>
@@ -1107,7 +1078,7 @@ var LANG = {
     sbKeyTypeLabel: 'Typ', sbKeyCreatedLabel: 'Erstellt',
     sbNameLabel: 'Name', sbPioneerLabel: 'Pioneer', sbCreditsLabel: 'Kredite',
     sbSovLabel: 'Lokale Souveränität', sbDocsTitle: 'Dokumente', sbDocsEmpty: 'Noch keine Dokumente',
-    demoNotice: '⚠️ DEMO — Beispieldokument zur Vorschau der Benutzeroberfläche',
+    docEmptyTitle: 'Kein Dokument geladen', docEmptyDesc: 'Erstellen Sie Ihr erstes Dokument mit AI Draft oder laden Sie ein bestehendes Dokument.', docEmptyBtn: '⚖️ Erstes Dokument erstellen', docFollowupPh: 'Folgeanalyse, weitere Fragen…',
     notConnected: 'Noch keine Wallet', connect: 'Wallet erstellen →',
     hashPlaceholder: '— — — —', createWallet: 'Wallet erstellen →',
     tlStatusVerified: 'VERIFIED', tlStatusPending: 'PENDING',
@@ -1145,7 +1116,7 @@ var LANG = {
     sbKeyTypeLabel: 'Tipo', sbKeyCreatedLabel: 'Criada',
     sbNameLabel: 'Nome', sbPioneerLabel: 'Pioneer', sbCreditsLabel: 'Créditos',
     sbSovLabel: 'Soberania Local', sbDocsTitle: 'Documentos', sbDocsEmpty: 'Ainda sem documentos',
-    demoNotice: '⚠️ DEMO — Documento exemplo para pré-visualização da interface',
+    docEmptyTitle: 'Nenhum documento carregado', docEmptyDesc: 'Crie o seu primeiro documento com AI Draft ou carregue um documento existente.', docEmptyBtn: '⚖️ Criar primeiro documento', docFollowupPh: 'Análise adicional, mais perguntas…',
     notConnected: 'Ainda sem wallet', connect: 'Criar wallet →',
     hashPlaceholder: '— — — —', createWallet: 'Criar wallet →',
     tlStatusVerified: 'VERIFICADO', tlStatusPending: 'PENDENTE',
@@ -1183,7 +1154,7 @@ var LANG = {
     sbKeyTypeLabel: 'Type', sbKeyCreatedLabel: 'Created',
     sbNameLabel: 'Name', sbPioneerLabel: 'Pioneer', sbCreditsLabel: 'Credits',
     sbSovLabel: 'Local Sovereignty', sbDocsTitle: 'Documents', sbDocsEmpty: 'No documents yet',
-    demoNotice: '⚠️ DEMO — Sample document for interface preview',
+    docEmptyTitle: 'No document loaded', docEmptyDesc: 'Create your first document with AI Draft or load an existing document.', docEmptyBtn: '⚖️ Create first document', docFollowupPh: 'Follow-up analysis, more questions…',
     notConnected: 'No wallet yet', connect: 'Create wallet →',
     hashPlaceholder: '— — — —', createWallet: 'Create wallet →',
     tlStatusVerified: 'VERIFIED', tlStatusPending: 'PENDING',
