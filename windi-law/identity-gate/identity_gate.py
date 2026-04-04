@@ -932,16 +932,22 @@ async def login_with_token(token: str, request: Request):
     conn.commit()
     conn.close()
 
+    # §120.6: Detect base path from request host
+    host = request.headers.get("host", "")
+    base_path = "" if "windilaw.de" in host else "/law"
+    workspace_url = f"{base_path}/workspace/?did={did}"
+
     # Return HTML that sets sessionStorage and redirects to workspace
     html_content = f"""
     <!DOCTYPE html>
     <html>
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>WINDI-LAW Login</title>
         <style>
             body {{
-                font-family: 'JetBrains Mono', monospace;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
                 background: #0A0A10;
                 color: #E8E6E1;
                 display: flex;
@@ -949,6 +955,7 @@ async def login_with_token(token: str, request: Request):
                 align-items: center;
                 min-height: 100vh;
                 margin: 0;
+                padding: 1rem;
             }}
             .card {{
                 background: #12121A;
@@ -957,48 +964,91 @@ async def login_with_token(token: str, request: Request):
                 padding: 2rem;
                 text-align: center;
                 max-width: 400px;
+                width: 100%;
             }}
             .success {{ color: #2EC27E; font-size: 3rem; }}
-            .title {{ color: #1a3a6b; font-size: 1.25rem; margin: 1rem 0; }}
-            .did {{ font-size: 0.75rem; color: #666; word-break: break-all; }}
+            .title {{ color: #C9A84C; font-size: 1.25rem; margin: 1rem 0; font-weight: 600; }}
+            .did {{ font-size: 0.7rem; color: #666; word-break: break-all; margin: 0.5rem 0; }}
+            .status {{ color: #666; font-size: 0.875rem; margin-top: 1rem; }}
+            .manual-link {{
+                display: inline-block;
+                margin-top: 1.5rem;
+                padding: 0.875rem 1.5rem;
+                background: #C9A84C;
+                color: #0A0A10;
+                text-decoration: none;
+                border-radius: 8px;
+                font-weight: 600;
+                font-size: 1rem;
+                min-height: 48px;
+                line-height: 1.5;
+            }}
+            .manual-link:hover {{ opacity: 0.9; }}
+            .hint {{ font-size: 0.75rem; color: #555; margin-top: 1rem; }}
         </style>
     </head>
     <body>
         <div class="card">
             <div class="success">✓</div>
-            <div class="title">Login erfolgreich</div>
+            <div class="title">Login erfolgreich!</div>
             <p>Willkommen zurück, {full_name}!</p>
             <p class="did">{did}</p>
-            <p style="color:#666;font-size:0.875rem;">Weiterleitung zum Workspace...</p>
+            <p class="status" id="status">Weiterleitung zum Workspace...</p>
+            <a href="{workspace_url}" class="manual-link" id="manual-btn" style="display:none;">
+                → Workspace öffnen
+            </a>
+            <p class="hint" id="hint" style="display:none;">
+                Falls die automatische Weiterleitung nicht funktioniert
+            </p>
         </div>
         <script>
-            // Set session data
-            var walletData = {{
-                did: "{did}",
-                fingerprint: "{fingerprint}",
-                public_key: "{public_key}",
-                state: "{state}",
-                created_at: new Date().toISOString(),
-                pioneer_number: null,
-                tier: "FREE",
-                credits: 0
-            }};
-            sessionStorage.setItem('windi_law_wallet', JSON.stringify(walletData));
-            sessionStorage.setItem('windi_law_did', "{did}");
-            sessionStorage.setItem('windi_law_fingerprint', "{fingerprint}");
+            // Set session data for workspace
+            try {{
+                var walletData = {{
+                    did: "{did}",
+                    fingerprint: "{fingerprint}",
+                    public_key: "{public_key}",
+                    state: "{state}",
+                    created_at: new Date().toISOString(),
+                    pioneer_number: null,
+                    tier: "FREE",
+                    credits: 0
+                }};
+                sessionStorage.setItem('windi_law_wallet', JSON.stringify(walletData));
+                sessionStorage.setItem('windi_law_did', "{did}");
+                sessionStorage.setItem('windi_law_fingerprint', "{fingerprint}");
+            }} catch(e) {{
+                console.warn('[WINDI-LAW] sessionStorage not available:', e);
+            }}
 
-            // Set cookie for future visits
-            document.cookie = 'windi_did=' + encodeURIComponent("{did}") + '; path=/; max-age=31536000; SameSite=Lax';
-
-            // Redirect to workspace
+            // Redirect after delay (cookie already set by server)
             setTimeout(function() {{
-                window.location.href = '/law/workspace/?did=' + encodeURIComponent("{did}");
+                window.location.href = "{workspace_url}";
             }}, 1500);
+
+            // Show manual button after 3 seconds as fallback
+            setTimeout(function() {{
+                document.getElementById('manual-btn').style.display = 'inline-block';
+                document.getElementById('hint').style.display = 'block';
+                document.getElementById('status').textContent = 'Klicke unten falls nicht automatisch weitergeleitet';
+            }}, 3000);
         </script>
     </body>
     </html>
     """
-    return HTMLResponse(content=html_content)
+
+    # §120.6: Set cookie via HTTP header (more reliable than JavaScript on mobile)
+    from fastapi.responses import Response
+    response = Response(content=html_content, media_type="text/html")
+    response.set_cookie(
+        key="windi_did",
+        value=did,
+        max_age=31536000,  # 1 year
+        path="/",
+        samesite="lax",
+        httponly=False  # Needs to be readable by JavaScript for Fast Lane
+    )
+    return response
 
 
 @app.post("/wallet/create")
