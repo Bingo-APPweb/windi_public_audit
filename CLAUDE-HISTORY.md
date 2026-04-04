@@ -4472,3 +4472,114 @@ Ledger:       🔒 Anchored
 *Migração: 04 Abr 2026 · CLAUDE.md 36KB → 30KB*
 *"AI processes. Human decides. WINDI guarantees."*
 *Liga IA+H · Kempten, Bavaria · 2026*
+
+---
+
+## §121 — W-VD-CUT-001 CERTIFIED (04 Apr 2026)
+
+**Estado:** CERTIFIED · SEALED · IRREMEDIÁVEL
+
+> **"Este momento é agora imutável e verificável."**
+
+### Milestone
+
+Primeiro vídeo de campo real selado com o Sovereign Video Evidence Engine.
+End-to-end testado: Upload → JOE Render → Frame Integrity → I9 Gate → Ledger Seal.
+
+### First Field Video Seal
+
+| Campo | Valor |
+|-------|-------|
+| Receipt | `WINDI-VDCUT-20260404145505-E9983867` |
+| Content Hash | `sha256:4cc98c7c3d1635a6fb4163e1d2189e7bd72e303b1f7fc9738b69c6be086312f2` |
+| Source | `VID_20260403_152045.mp4` |
+| Resolution | 1920x1080 (Full HD) |
+| Duration | 31 segundos (original) · 5s (clip renderizado) |
+| Project | `VDCUT-20260404145126-7EE9E658` |
+| Export | `EXPORT-66D95F7D4F97` |
+| Verify URL | `https://windi-domain.com/verify-public/?id=WINDI-VDCUT-20260404145505-E9983867` |
+
+### Components CERTIFIED
+
+| Component | Status | Commit |
+|-----------|--------|--------|
+| JOE Bridge v1.0 | ✅ LIVE | `1283847` |
+| Frame Integrity Engine v1.0 | ✅ LIVE | `47a96c3` + `d7b69bf` |
+| Test Dashboard | ✅ LIVE | `77026f4` + `55783f8` |
+| Ledger Integration | ✅ LIVE | `d7b69bf` (doc_type fix) |
+
+### Frame Integrity Engine — "Deepfake Killer"
+
+**Arquitectura:**
+```
+FFmpeg extract frame → SHA-256 hash → prev_hash chain → Ledger seal
+                                           ↓
+                           GENESIS → frame[0] → frame[N]
+                                           ↓
+                           Any tampering breaks the chain
+```
+
+**Test Results:**
+```
+Correct hash: tampered=false ✅
+Wrong hash:   tampered=true  ✅ (deepfake detected)
+```
+
+**Sample Frame Chain:**
+```
+GENESIS
+    ↓
+Frame 0:   8abdd59f... (0ms)     → VD-FRAME-20260404144418-8ABDD59F
+    ↓
+Frame 50:  76e25e76... (2000ms)  → VD-FRAME-20260404144418-76E25E76
+    ↓
+Frame 100: 5a3187a4... (4000ms)  → VD-FRAME-20260404144420-5A3187A4
+    ↓
+Manifest:  9597dbbd...           → VD-MANIFEST-20260404144420-9597DBBD
+```
+
+### Bug Fixed
+
+**Issue:** `doc_type: "video_frame"` not recognized by Ledger
+**Fix:** Changed to `doc_type: "doc"` in frame_integrity_engine.py
+**Commit:** `d7b69bf`
+
+### Invariants Enforced
+
+| Invariant | Enforcement |
+|-----------|-------------|
+| I9 | Modal "IRREMEDIABLE" antes de seal · `human_approved: true` |
+| I11 | Apenas hash no Ledger, nunca conteúdo raw |
+| I12 | Dashboard trilíngue-ready (KLAR theme) |
+
+### End-to-End Flow Validated
+
+```
+Vídeo de campo (117MB · 31s · 1080p)
+       ↓
+1. Upload → /vd-cut/intake
+       ↓
+2. JOE Render → /vd-cut/joe/render · FFmpeg encode
+       ↓
+3. Progress → "Render complete!" ✅
+       ↓
+4. Preview → Thumbnail 🌲 visível
+       ↓
+5. I9 Gate → Modal "This action is IRREMEDIABLE"
+       ↓
+6. Human Decision → OK clicked
+       ↓
+7. Ledger Seal → WINDI-VDCUT-20260404145505-E9983867
+       ↓
+8. Verify Public → URL funcional
+```
+
+### Próximo
+
+**Video Integrity Report PDF** — Template estruturado para certificação de vídeos.
+
+---
+
+*Sealed: 04 Apr 2026 · §121 VD-CUT CERTIFIED*
+*"AI processes. Human decides. WINDI guarantees."*
+*Liga IA+H · Kempten, Bavaria · 2026*
