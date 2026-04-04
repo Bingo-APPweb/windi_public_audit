@@ -3095,7 +3095,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // ══════════════════════════════════════════════════════════════
 // §122.1 — Quick Prompt (pre-fills prompt area with template)
 // ══════════════════════════════════════════════════════════════
-function quickPrompt(text, agent) {
+function quickPrompt(text, agent, autoSubmit) {
   // Check wallet first
   var walletStr = sessionStorage.getItem('windi_law_wallet');
   if (!walletStr) { alert(t('errNoWallet')); return; }
@@ -3129,6 +3129,14 @@ function quickPrompt(text, agent) {
   }
 
   console.log('[§122.1] Quick prompt loaded:', agent, text.substring(0, 40) + '...');
+
+  // §127.3 — Auto-submit after brief delay for visual feedback
+  // Default: true (chips auto-submit)
+  if (autoSubmit !== false) {
+    setTimeout(function() {
+      submitDirectPrompt();
+    }, 300);
+  }
 }
 
 console.log('[WINDI LAW] §122 Direct Prompt Module v1.0.0 loaded');
