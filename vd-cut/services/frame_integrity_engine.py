@@ -303,7 +303,7 @@ class FrameIntegrityEngine:
             "actor": seal.actor_did,
             "app": "w-vd-cut-001",
             "doc_name": f"Frame {seal.frame_index} · {seal.timestamp_ms:.0f}ms",
-            "doc_type": "video_frame",
+            "doc_type": "doc",  # video_frame not valid Ledger type
             "governance_level": "HIGH",
             "content_hash": f"sha256:{seal.sha256}",  # I11: ONLY hash
             "invariants": ["I9", "I11"],
@@ -442,7 +442,7 @@ class FrameIntegrityEngine:
             "actor": manifest.actor_did,
             "app": "w-vd-cut-001",
             "doc_name": f"Edit Manifest · {manifest.source_video}",
-            "doc_type": "edit_manifest",
+            "doc_type": "doc",  # edit_manifest not valid Ledger type
             "governance_level": "HIGH",
             "content_hash": f"sha256:{manifest_hash}",
             "invariants": ["I9", "I11"],
