@@ -238,9 +238,10 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
 .dact.seal-btn:hover { background: #6B4F10; animation: none; }
 
 /* scroll */
-.scroll { flex: 1; overflow-y: auto; padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; }
+.scroll { flex: 1; overflow-y: auto; padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; min-height: 0; }
 .scroll::-webkit-scrollbar { width: 3px; }
 .scroll::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 2px; }
+.demo-notice { background: rgba(139,105,20,0.08); border: 1px dashed var(--gold); border-radius: 8px; padding: 8px 12px; font-size: 10px; color: var(--gold); text-align: center; margin-bottom: 8px; }
 
 /* agent response */
 .amsg { display: flex; gap: 10px; animation: fu 0.3s ease; }
@@ -872,7 +873,7 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
         </div>
 
         <!-- ══ ACTIVO ══ -->
-        <div id="st-active" style="flex:1;display:none;flex-direction:column;overflow:hidden">
+        <div id="st-active" style="flex:1;display:none;flex-direction:column;overflow:hidden;min-height:0">
 
           <div class="doc-hdr">
             <span class="dbadge legal">Legal</span>
@@ -885,6 +886,9 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
           </div>
 
           <div class="scroll">
+
+            <!-- demo notice -->
+            <div class="demo-notice" data-i18n="demoNotice">⚠️ DEMO — Beispieldokument zur Vorschau der Benutzeroberfläche</div>
 
             <!-- resposta do agente -->
             <div class="amsg">
@@ -1101,6 +1105,7 @@ var LANG = {
     sbKeyTypeLabel: 'Typ', sbKeyCreatedLabel: 'Erstellt',
     sbNameLabel: 'Name', sbPioneerLabel: 'Pioneer', sbCreditsLabel: 'Kredite',
     sbSovLabel: 'Lokale Souveränität', sbDocsTitle: 'Dokumente', sbDocsEmpty: 'Noch keine Dokumente',
+    demoNotice: '⚠️ DEMO — Beispieldokument zur Vorschau der Benutzeroberfläche',
     notConnected: 'Noch keine Wallet', connect: 'Wallet erstellen →',
     hashPlaceholder: '— — — —', createWallet: 'Wallet erstellen →',
     tlStatusVerified: 'VERIFIED', tlStatusPending: 'PENDING',
@@ -1138,6 +1143,7 @@ var LANG = {
     sbKeyTypeLabel: 'Tipo', sbKeyCreatedLabel: 'Criada',
     sbNameLabel: 'Nome', sbPioneerLabel: 'Pioneer', sbCreditsLabel: 'Créditos',
     sbSovLabel: 'Soberania Local', sbDocsTitle: 'Documentos', sbDocsEmpty: 'Ainda sem documentos',
+    demoNotice: '⚠️ DEMO — Documento exemplo para pré-visualização da interface',
     notConnected: 'Ainda sem wallet', connect: 'Criar wallet →',
     hashPlaceholder: '— — — —', createWallet: 'Criar wallet →',
     tlStatusVerified: 'VERIFICADO', tlStatusPending: 'PENDENTE',
@@ -1175,6 +1181,7 @@ var LANG = {
     sbKeyTypeLabel: 'Type', sbKeyCreatedLabel: 'Created',
     sbNameLabel: 'Name', sbPioneerLabel: 'Pioneer', sbCreditsLabel: 'Credits',
     sbSovLabel: 'Local Sovereignty', sbDocsTitle: 'Documents', sbDocsEmpty: 'No documents yet',
+    demoNotice: '⚠️ DEMO — Sample document for interface preview',
     notConnected: 'No wallet yet', connect: 'Create wallet →',
     hashPlaceholder: '— — — —', createWallet: 'Create wallet →',
     tlStatusVerified: 'VERIFIED', tlStatusPending: 'PENDING',
