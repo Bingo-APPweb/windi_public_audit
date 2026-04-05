@@ -4925,3 +4925,139 @@ o humano decide todas as excepções.
 *Sealed: 04 Apr 2026 · §122 W-VD-MASS-001 I9-P Protocol*
 *"AI processes. Human decides. WINDI guarantees."*
 *Liga IA+H · Kempten, Bavaria · 2026*
+
+---
+
+## §128 — W-DIST-001 Sovereign Distribution Layer (05 Apr 2026)
+
+### Definição
+
+W-DIST-001 estabelece a primeira camada de distribuição soberana do WINDI, onde artefactos verificáveis são transmitidos através de canais externos mantendo integridade, identidade e prova.
+
+> "A verdade já não fica no sistema. Agora ela circula."
+
+### Componentes Implementados
+
+| Componente | Ficheiro | Função |
+|------------|----------|--------|
+| W-PROOF-LOOP-001 | `communique_blueprint.py` | Ligação bidirecional Communiqué ↔ JMPG |
+| Distribution Router | `distribution_router.py` | Orquestração de canais externos |
+| Telegram Channel | `channel_telegram.py` | Primeiro canal operacional |
+| Editorial Proof Layer | `proof_renderer.py` | Visual proof card (PNG) |
+| Ledger Auto-Seal | `communique_blueprint.py` | Integração automática com Ledger |
+
+### Pipeline Soberano
+
+```
+REALIDADE
+   ↓
+COMMUNIQUÉ (CREATE → REVIEW)
+   ↓
+PUBLISH
+   ↓
+LEDGER SEAL (I11) — automático
+   ↓
+JMPG GENERATION
+   ↓
+VISUAL PROOF RENDER (PNG)
+   ↓
+DISTRIBUTION (Telegram)
+   ↓
+VERIFY PUBLIC
+```
+
+### Estados de Prova (v1.1)
+
+| Estado | Badge | Cor | Significado |
+|--------|-------|-----|-------------|
+| FORENSIC VERIFIED | 🟢 | Verde | Ancorado no Ledger |
+| EVIDENCE SEALED | 🟡 | Dourado | Aguardando selo |
+
+**Regra:** A representação visual reflete o estado real — nunca antecipa prova.
+
+### Separação de Identidade
+
+| Prefixo | Tipo | Função |
+|---------|------|--------|
+| WINDI-* | Ledger Receipt | Prova forense de ancoragem |
+| JMPG-* | Evidence Package | Container de evidência |
+
+**Invariante:** Ledger Receipt ≠ Evidence Package (claramente separados)
+
+### Visual Proof Card (Editorial Proof Layer v1.1)
+
+Design: NOIR + ACCENT GREEN
+Dimensões: 1200x1600px
+
+4 Zonas:
+1. **HEADER** — WINDI COMMUNIQUÉ + Governance + Date
+2. **HEADLINE** — Título em destaque (72px)
+3. **CORE** — Texto explicativo
+4. **PROOF BLOCK** — Badge + Receipt + JMPG + Hash + QR
+
+### Telegram Channel
+
+Prioridade de envio:
+1. Photo (proof card PNG) — impacto visual
+2. Document (.jmpg) — integridade forense
+3. Text — fallback
+
+### Ficheiros Criados
+
+```
+communique/
+├── distribution_router.py    # W-DIST-001 Router
+├── proof_renderer.py         # Editorial Proof Layer v1.1
+├── channels/
+│   ├── __init__.py
+│   └── channel_telegram.py   # Telegram integration
+└── jmpg/                     # Storage para .jmpg e .png
+```
+
+### Ficheiros Modificados
+
+- `communique_blueprint.py` — W-PROOF-LOOP-001 + Ledger auto-seal
+- `jmpg_export_engine.py` — `/api/export/jmpg/from-communique`
+- `jmpg_packager.py` — `source_info` parameter
+
+### Testes Realizados
+
+| Communiqué | Receipt | Badge | Telegram |
+|------------|---------|-------|----------|
+| COM-20260405-0001 | (pending) | EVIDENCE SEALED | msg:58 |
+| COM-20260405-0002 | WINDI-COMM-20260405-0002 | FORENSIC VERIFIED | msg:59 |
+| COM-20260405-0006 | WINDI-COMM-20260405-AE298BD9 | FORENSIC VERIFIED | msg:60 |
+
+### Invariantes Aplicadas
+
+- **I9** — Sem distribuição autónoma (requer acção humana)
+- **I11** — Prova imutável após selo
+- **I13** — Convergência antes da distribuição
+- **G3** — Propor ≠ Executar
+
+### Propriedade Emergente
+
+**Portable Truth Object** — Um artefacto que:
+- Transporta narrativa
+- Contém prova
+- Permite verificação independente
+- Mantém integridade fora do sistema
+
+### Commit
+
+```
+a3cd0af feat(communique): §128 W-DIST-001 + Editorial Proof Layer v1.1 — sovereign distribution LIVE
+```
+
+7 ficheiros alterados, 1364 inserções(+), 18 remoções(-)
+
+### Declaração Canônica
+
+> "A verdade já não precisa de plataforma.
+> Ela viaja com a sua própria prova."
+
+---
+
+*Sealed: 05 Apr 2026 · §128 W-DIST-001 Sovereign Distribution*
+*"AI processes. Human decides. WINDI guarantees."*
+*Liga IA+H · Kempten, Bavaria · 2026*
