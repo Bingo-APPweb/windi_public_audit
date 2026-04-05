@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.93
-**Sealed:** 2026-04-05 · §133 Preview Endpoint (Full-Size Frames)
+**Version:** 1.9.94
+**Sealed:** 2026-04-05 · §135 MLT Engine Fusão Real (VD-CUT × VD-MASS)
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -652,11 +652,11 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 05 Apr | **§135 MLT Engine Fusão Real** · VD-CUT × VD-MASS · Dual-Hash Chain · Policy I9-P LIVE |
 | 05 Apr | **§133 Preview Endpoint** · Full-size frames · Semantic separation thumb/preview · `0ddaeed` |
 | 05 Apr | **§132 Partilhar Button** · VD-CUT Dashboard · Telegram/Email/Copy Link · `8840542` |
-| 05 Apr | **§128 W-DIST-001** · Sovereign Distribution Layer · Editorial Proof v1.1 · `a3cd0af` |
-| 05 Apr | **§127 AI Draft v2.0** · Markdown→Quill + DOCX Export + Quick Prompt Auto-Submit · `872407c` |
-| 04 Apr | **§120.5 Mobile Emergency Fix** · WINDI-LAW mobile responsive · Hamburger + Touch · `7f05abb` |
+| 05 Apr | **§131 Email Distribution** · W-DIST-001 email channel · Trilingual HTML · `92c3fb5` |
+| 05 Apr | **§130 Whisper Transcription** · Cut-by-text + Legal Overlay · `6c73805` |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -810,11 +810,11 @@ workspace/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
 ### Completado (últimos 10 · ver CLAUDE-HISTORY.md para §37-115)
+- [x] §135 **MLT Engine Fusão Real** · VD-CUT × VD-MASS · Dual-Hash Chain · Policy I9-P ✅ 05 Apr
 - [x] §133 **Preview Endpoint** · Full-size frames · thumb vs preview · `0ddaeed` ✅ 05 Apr
 - [x] §132 **Partilhar Button** · VD-CUT UI · Telegram/Email/Copy · `8840542` ✅ 05 Apr
 - [x] §131 **Email Distribution** · W-DIST-001 email channel · Trilingual · `92c3fb5` ✅ 05 Apr
 - [x] §130 **Whisper Transcription** · Cut-by-text + Legal Overlay · `6c73805` ✅ 05 Apr
-- [x] §129 **VD-CUT Workspace Retention** · Voice + PWA + 30d Buffer · `054091e` ✅ 05 Apr
 - [x] §128 **W-DIST-001** · Sovereign Distribution · Editorial Proof v1.1 · `a3cd0af` ✅ 05 Apr
 - [x] §127 **AI Draft v2.0** · Markdown→Quill + DOCX Export + Quick Prompt · `872407c` ✅ 05 Apr
 - [x] §122.2-6 **ProofStream Arquitectura** · Primeiro seal real · Matriz de canais · IRREMEDIÁVEL ✅ 04 Apr
@@ -851,8 +851,9 @@ workspace/
 | §131 | Email Distribution | ✅ LIVE | W-DIST-001 email channel · Trilingual HTML · `92c3fb5` |
 | §132 | Partilhar Button | ✅ LIVE | VD-CUT Dashboard · Telegram/Email/Copy Link · `8840542` |
 | §133 | Preview Endpoint | ✅ LIVE | Full-size frames · /preview/ vs /thumb/ · `0ddaeed` |
+| §135 | MLT Engine Fusão Real | ✅ SEALED | VD-CUT × VD-MASS · Dual-Hash · Policy `27bcbb0e` · melt 7.12.0 |
 
-> **Detalhes completos §128-133:** `CLAUDE-HISTORY.md` § SESSÃO 05 Abr 2026
+> **Detalhes completos §128-135:** `CLAUDE-HISTORY.md` § SESSÃO 05 Abr 2026
 
 ---
 
