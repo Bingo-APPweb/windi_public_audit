@@ -1022,6 +1022,155 @@ async def get_frame_hash(export_id: str, frame_index: int):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# ----- Transcription (Whisper) -----
+
+class TranscribeRequest(BaseModel):
+    """Request for video transcription."""
+    video_path: str
+    model: str = "base"  # tiny/base/small/medium
+    language: Optional[str] = None  # auto-detect if None
+
+
+class TextToCutRequest(BaseModel):
+    """Find timestamps for selected text."""
+    transcription: Dict[str, Any]
+    selected_text: str
+
+
+class LegalOverlayRequest(BaseModel):
+    """Add legal watermark to video."""
+    input_path: str
+    output_path: str
+    case_ref: str
+    court: Optional[str] = None
+    timestamp: Optional[str] = None
+
+
+@app.post("/vd-cut/transcribe")
+async def transcribe_video_endpoint(request: TranscribeRequest):
+    """
+    Transcribe video audio with word-level timestamps.
+
+    Uses OpenAI Whisper (local, no cloud dependency).
+
+    Models:
+    - tiny: 39M, ~32x realtime, basic accuracy
+    - base: 74M, ~16x realtime, good accuracy (default)
+    - small: 244M, ~6x realtime, better accuracy
+    - medium: 769M, ~2x realtime, high accuracy
+
+    Returns segments with timestamps for cut-by-text feature.
+
+    Invariants: None (read-only operation)
+    """
+    from services.transcribe_service import transcribe_video
+
+    video_path = Path(request.video_path)
+    if not video_path.exists():
+        # Try relative to media dir
+        video_path = MEDIA_DIR / request.video_path
+        if not video_path.exists():
+            raise HTTPException(status_code=404, detail="Video not found")
+
+    log.info(f"Transcription request: {video_path.name}, model={request.model}")
+
+    result = await transcribe_video(
+        video_path=video_path,
+        model_name=request.model,
+        language=request.language
+    )
+
+    if result.get("error"):
+        raise HTTPException(status_code=500, detail=result.get("message"))
+
+    return result
+
+
+@app.post("/vd-cut/text-to-cuts")
+async def text_to_cuts_endpoint(request: TextToCutRequest):
+    """
+    Find video timestamps for selected text.
+
+    Workflow:
+    1. POST /vd-cut/transcribe → get transcription with timestamps
+    2. User selects text portion in UI
+    3. POST /vd-cut/text-to-cuts → get start/end timestamps
+    4. Use timestamps for FFmpeg cut
+
+    Returns list of matching segments with timestamps.
+    """
+    from services.transcribe_service import text_to_cuts
+
+    matches = text_to_cuts(
+        transcription=request.transcription,
+        selected_text=request.selected_text
+    )
+
+    return {
+        "query": request.selected_text,
+        "matches": matches,
+        "count": len(matches)
+    }
+
+
+@app.post("/vd-cut/legal-overlay")
+async def legal_overlay_endpoint(request: LegalOverlayRequest):
+    """
+    Add legal watermark overlay to video.
+
+    Overlay includes:
+    - Case reference number
+    - Court name (optional)
+    - UTC timestamp
+
+    Semi-transparent background, bottom-left position.
+
+    Invariants: None (creates new file, doesn't modify original)
+    """
+    from services.transcribe_service import add_legal_overlay
+
+    input_path = Path(request.input_path)
+    if not input_path.exists():
+        input_path = MEDIA_DIR / request.input_path
+        if not input_path.exists():
+            raise HTTPException(status_code=404, detail="Input video not found")
+
+    output_path = Path(request.output_path)
+    if not output_path.parent.exists():
+        output_path = EXPORTS_DIR / output_path.name
+
+    log.info(f"Legal overlay request: {request.case_ref}")
+
+    result = await add_legal_overlay(
+        input_path=input_path,
+        output_path=output_path,
+        case_ref=request.case_ref,
+        court=request.court,
+        timestamp=request.timestamp
+    )
+
+    if result.get("error"):
+        raise HTTPException(status_code=500, detail=result.get("message"))
+
+    return result
+
+
+@app.get("/vd-cut/transcribe/models")
+async def list_transcribe_models():
+    """
+    List available Whisper models.
+
+    Returns model names with size and speed info.
+    """
+    from services.transcribe_service import MODELS, DEFAULT_MODEL
+
+    return {
+        "models": MODELS,
+        "default": DEFAULT_MODEL,
+        "note": "First transcription with a model will download it (~1-2 min)"
+    }
+
+
 # ----- Test Dashboard -----
 
 @app.get("/vd-cut/test/", response_class=HTMLResponse)
