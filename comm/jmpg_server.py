@@ -1,18 +1,20 @@
 #!/usr/bin/env python3
 """
 W-JMPG-001 — JPEG Manifest Proof Graphic Server
-§134-136 · Liga IA+H · Kempten, Bavaria · 05 Abril 2026
+§134-137 · Liga IA+H · Kempten, Bavaria · 05 Abril 2026
 
 Port: 8132
 Endpoints:
   POST /comm/render/jmpg - Render a proof card
   GET  /comm/render/jmpg/{receipt_id} - Get existing or render new
   GET  /comm/jmpg/{filename} - Serve rendered images
-  POST /comm/distribute - Distribute proof card (Telegram)
-  POST /comm/communique - Send institutional communiqué (§136)
+  POST /comm/distribute - Distribute proof card (Telegram - PRIVATE chats)
+  POST /comm/communique - Send institutional communiqué (§136 - PRIVATE)
+  POST /comm/publish - §137 PUBLIC distribution (LINK ONLY - §122.4 compliant)
   GET  /comm/health - Health check
 
 "Não publicamos conteúdo. Emitimos prova."
+"O canal Telegram não transmite ficheiros. Transmite acesso."
 """
 
 import os
@@ -38,7 +40,7 @@ load_dotenv("/opt/windi/nomad-bot/.env")
 
 PORT = 8132
 SERVICE_NAME = "W-JMPG-001"
-VERSION = "1.2.0"
+VERSION = "1.3.0"  # §137 Medium-Agnostic Distribution
 
 # Telegram configuration
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
@@ -127,6 +129,66 @@ DEFAULT_TITLES = {
 }
 
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# §137 — Public Distribution Templates (LINK ONLY)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+PUBLIC_TEMPLATES = {
+    "PT": """🔐 <b>WINDI — Verified Truth</b>
+
+{title}
+
+Prova selada e verificável independentemente.
+
+🔗 <a href="{verify_url}">Verificar autenticidade</a>
+
+#WINDIProof #VerifiedTruth""",
+
+    "EN": """🔐 <b>WINDI — Verified Truth</b>
+
+{title}
+
+Sealed proof. Independently verifiable.
+
+🔗 <a href="{verify_url}">Verify authenticity</a>
+
+#WINDIProof #VerifiedTruth""",
+
+    "DE": """🔐 <b>WINDI — Verified Truth</b>
+
+{title}
+
+Versiegelte Beweis. Unabhängig verifizierbar.
+
+🔗 <a href="{verify_url}">Authentizität verifizieren</a>
+
+#WINDIProof #VerifiedTruth""",
+}
+
+
+def generate_public_post(
+    receipt_id: str,
+    verify_url: str,
+    lang: str = "EN",
+    title: Optional[str] = None,
+) -> str:
+    """
+    Generate public post text (§137 compliant).
+
+    The medium points to the proof. It never carries the proof.
+    """
+    lang = lang.upper()
+    if lang not in PUBLIC_TEMPLATES:
+        lang = "EN"
+
+    title_text = title or DEFAULT_TITLES.get(lang, DEFAULT_TITLES["EN"])
+
+    return PUBLIC_TEMPLATES[lang].format(
+        title=title_text,
+        verify_url=verify_url,
+    )
+
+
 def generate_communique(
     receipt_id: str,
     verify_url: str,
@@ -153,7 +215,13 @@ async def send_telegram_photo(
     caption: str,
     reply_to_message_id: Optional[int] = None,
 ) -> dict:
-    """Send photo to Telegram chat using sendPhoto API."""
+    """
+    Send photo to Telegram chat using sendPhoto API.
+
+    WARNING: Use only for PRIVATE chats where hash integrity
+    is not critical. For PUBLIC distribution, use send_telegram_link()
+    per §122.4 (Telegram transcodes images, breaking SHA-256).
+    """
     if not TELEGRAM_API_URL:
         return {"ok": False, "error": "Telegram not configured"}
 
@@ -180,6 +248,53 @@ async def send_telegram_photo(
                     log.error(f"Telegram error: {result}")
 
                 return result
+
+    except Exception as e:
+        log.error(f"Telegram send failed: {e}")
+        return {"ok": False, "error": str(e)}
+
+
+# ═══════════════════════════════════════════════════════════════════════���═══════
+# §137 — Medium-Agnostic Distribution (§122.4 Compliant)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+async def send_telegram_link(
+    chat_id: str,
+    text: str,
+    reply_to_message_id: Optional[int] = None,
+    disable_web_page_preview: bool = False,
+) -> dict:
+    """
+    Send text message to Telegram (LINK ONLY — no files).
+
+    §122.4 Compliant: Telegram = interface, not file transport.
+    The medium points to the proof. It never carries the proof.
+    """
+    if not TELEGRAM_API_URL:
+        return {"ok": False, "error": "Telegram not configured"}
+
+    url = f"{TELEGRAM_API_URL}/sendMessage"
+
+    try:
+        async with httpx.AsyncClient() as client:
+            data = {
+                "chat_id": chat_id,
+                "text": text,
+                "parse_mode": "HTML",
+                "disable_web_page_preview": disable_web_page_preview,
+            }
+            if reply_to_message_id:
+                data["reply_to_message_id"] = reply_to_message_id
+
+            response = await client.post(url, json=data, timeout=30.0)
+            result = response.json()
+
+            if result.get("ok"):
+                log.info(f"Telegram link sent to {chat_id}")
+            else:
+                log.error(f"Telegram error: {result}")
+
+            return result
 
     except Exception as e:
         log.error(f"Telegram send failed: {e}")
@@ -256,6 +371,28 @@ class CommuniqueResponse(BaseModel):
     error: Optional[str] = None
 
 
+class PublishRequest(BaseModel):
+    """§137 Public Distribution — Link Only (§122.4 Compliant)"""
+    receipt_id: str
+    lang: str = "EN"
+    channel: str = "telegram"
+    chat_id: str  # Required — typically the public channel
+    title: Optional[str] = None
+
+
+class PublishResponse(BaseModel):
+    """§137 Response — No files transmitted"""
+    ok: bool
+    receipt_id: str
+    lang: str
+    channel: str
+    verify_url: str
+    jmpg_url: str
+    post_text: str
+    telegram_result: Optional[dict] = None
+    error: Optional[str] = None
+
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # Endpoints
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -272,6 +409,10 @@ async def health():
         "output_dir": str(OUTPUT_DIR),
         "telegram_configured": TELEGRAM_BOT_TOKEN is not None,
         "channels": ["telegram"],
+        "distribution_modes": {
+            "private": "/comm/distribute, /comm/communique (sendPhoto)",
+            "public": "/comm/publish (sendMessage - LINK ONLY, §122.4)",
+        },
     }
 
 
@@ -586,6 +727,107 @@ async def send_communique(request: CommuniqueRequest):
             lang=request.lang,
             channel=request.channel,
             communique_text=communique_text,
+            error=f"Unknown channel: {request.channel}. Supported: telegram",
+        )
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# §137 — Public Distribution (§122.4 Compliant — LINK ONLY)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@app.post("/comm/publish", response_model=PublishResponse)
+async def publish_to_channel(request: PublishRequest):
+    """
+    §137 — Medium-Agnostic Truth Distribution (§122.4 Compliant)
+
+    SENDS LINK ONLY — NO FILES.
+
+    This endpoint is for PUBLIC distribution where hash integrity matters.
+    Telegram transcodes images, breaking SHA-256 verification.
+
+    The medium POINTS to the proof. It never CARRIES the proof.
+
+    "O canal Telegram não transmite ficheiros. Transmite acesso."
+    """
+    log.info(f"§137 Publish: {request.receipt_id} lang={request.lang} to {request.chat_id}")
+
+    # Build URLs
+    verify_url = f"https://windi-domain.com/verify-public/?id={request.receipt_id}"
+    filename = f"{request.receipt_id}_telegram_square.jpg"
+    jmpg_url = f"https://windi-domain.com/comm/jmpg/{filename}"
+
+    # Ensure JMPG exists (renders if needed — but we DON'T send it)
+    image_path = OUTPUT_DIR / filename
+    if not image_path.exists():
+        log.info(f"Pre-rendering JMPG for public access: {request.receipt_id}")
+        result = render_jmpg(
+            receipt_id=request.receipt_id,
+            profile="telegram_square",
+            title=request.title,
+        )
+        if not result["ok"]:
+            return PublishResponse(
+                ok=False,
+                receipt_id=request.receipt_id,
+                lang=request.lang,
+                channel=request.channel,
+                verify_url=verify_url,
+                jmpg_url=jmpg_url,
+                post_text="",
+                error=f"JMPG render failed: {result.get('error')}",
+            )
+
+    # Generate public post text (contains ONLY the link)
+    post_text = generate_public_post(
+        receipt_id=request.receipt_id,
+        verify_url=verify_url,
+        lang=request.lang,
+        title=request.title,
+    )
+
+    # Distribute based on channel
+    if request.channel == "telegram":
+        if not TELEGRAM_BOT_TOKEN:
+            return PublishResponse(
+                ok=False,
+                receipt_id=request.receipt_id,
+                lang=request.lang,
+                channel="telegram",
+                verify_url=verify_url,
+                jmpg_url=jmpg_url,
+                post_text=post_text,
+                error="Telegram not configured (missing BOT_TOKEN)",
+            )
+
+        # §122.4: Send LINK ONLY — no files
+        # disable_web_page_preview=False so Telegram shows preview of verify page
+        telegram_result = await send_telegram_link(
+            chat_id=request.chat_id,
+            text=post_text,
+            disable_web_page_preview=False,  # Let Telegram preview the verify link
+        )
+
+        return PublishResponse(
+            ok=telegram_result.get("ok", False),
+            receipt_id=request.receipt_id,
+            lang=request.lang,
+            channel="telegram",
+            verify_url=verify_url,
+            jmpg_url=jmpg_url,
+            post_text=post_text,
+            telegram_result=telegram_result,
+            error=telegram_result.get("error") if not telegram_result.get("ok") else None,
+        )
+
+    else:
+        return PublishResponse(
+            ok=False,
+            receipt_id=request.receipt_id,
+            lang=request.lang,
+            channel=request.channel,
+            verify_url=verify_url,
+            jmpg_url=jmpg_url,
+            post_text=post_text,
             error=f"Unknown channel: {request.channel}. Supported: telegram",
         )
 
