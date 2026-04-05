@@ -63,6 +63,40 @@
       margin-top: 0.5rem;
     }
 
+    /* Pipeline Flow */
+    .pipeline {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      margin-top: 1rem;
+      padding: 0.75rem;
+      background: rgba(139, 115, 85, 0.08);
+      border-radius: 8px;
+      font-size: 0.75rem;
+    }
+    .pipeline .step {
+      display: flex;
+      align-items: center;
+      gap: 0.2rem;
+      white-space: nowrap;
+    }
+    .pipeline .step .icon {
+      font-size: 1rem;
+    }
+    .pipeline .step .label {
+      color: var(--text-muted);
+    }
+    .pipeline .arrow {
+      color: var(--gold);
+      font-weight: bold;
+    }
+    .pipeline .step.active .label {
+      color: var(--gold);
+      font-weight: 600;
+    }
+
     /* Upload Area */
     .upload-area {
       border: 2px dashed var(--border);
@@ -311,6 +345,17 @@
     <div class="header">
       <h1>WINDI</h1>
       <p id="txt-subtitle">Sela este momento. Para sempre verificável.</p>
+
+      <!-- Pipeline Flow -->
+      <div class="pipeline" id="pipeline">
+        <span class="step active" id="step-upload"><span class="icon">🎬</span> <span class="label" id="lbl-upload">Upload</span></span>
+        <span class="arrow">→</span>
+        <span class="step" id="step-edit"><span class="icon">📝</span> <span class="label" id="lbl-edit">30d Edit</span></span>
+        <span class="arrow">→</span>
+        <span class="step" id="step-seal"><span class="icon">👆</span> <span class="label" id="lbl-seal">Human Seal</span></span>
+        <span class="arrow">→</span>
+        <span class="step" id="step-vault"><span class="icon">🔒</span> <span class="label" id="lbl-vault">Ledger ∞</span></span>
+      </div>
     </div>
 
     <!-- Upload Area -->
@@ -390,8 +435,8 @@
     // ─── i18n ────────────────────────────────────────────────────────────────
     const I18N = {
       de: {
-        subtitle: 'Sela este momento. Para sempre verificável.',
-        uploadTitle: 'Vídeo auswählen',
+        subtitle: 'Versiegle diesen Moment. Für immer verifizierbar.',
+        uploadTitle: 'Video auswählen',
         uploadDesc: 'Tippe zum Auswählen oder Datei hierher ziehen',
         didLabel: 'DID (Identität)',
         didHint: 'Auto-erkannt oder manuell eingeben',
@@ -405,7 +450,11 @@
         verify: 'Verifizieren',
         share: 'Teilen',
         new: 'Neu',
-        vaultArchived: '✓ Im Forensic Vault archiviert'
+        vaultArchived: '✓ Im Forensic Vault archiviert',
+        pipeUpload: 'Upload',
+        pipeEdit: '30 Tage',
+        pipeSeal: 'Versiegeln',
+        pipeVault: 'Ledger ∞'
       },
       en: {
         subtitle: 'Seal this moment. Forever verifiable.',
@@ -423,7 +472,11 @@
         verify: 'Verify',
         share: 'Share',
         new: 'New',
-        vaultArchived: '✓ Archived to Forensic Vault'
+        vaultArchived: '✓ Archived to Forensic Vault',
+        pipeUpload: 'Upload',
+        pipeEdit: '30 days',
+        pipeSeal: 'Human Seal',
+        pipeVault: 'Ledger ∞'
       },
       pt: {
         subtitle: 'Sela este momento. Para sempre verificável.',
@@ -441,7 +494,11 @@
         verify: 'Verificar',
         share: 'Partilhar',
         new: 'Novo',
-        vaultArchived: '✓ Arquivado no Forensic Vault'
+        vaultArchived: '✓ Arquivado no Forensic Vault',
+        pipeUpload: 'Upload',
+        pipeEdit: '30 dias',
+        pipeSeal: 'Humano Sela',
+        pipeVault: 'Ledger ∞'
       }
     };
 
@@ -463,6 +520,12 @@
       document.getElementById('btn-seal').textContent = t.seal;
       document.getElementById('btn-share').textContent = t.share;
       document.getElementById('btn-new').textContent = t.new;
+
+      // Update pipeline labels
+      document.getElementById('lbl-upload').textContent = t.pipeUpload;
+      document.getElementById('lbl-edit').textContent = t.pipeEdit;
+      document.getElementById('lbl-seal').textContent = t.pipeSeal;
+      document.getElementById('lbl-vault').textContent = t.pipeVault;
 
       localStorage.setItem('windi-lang', lang);
     }
@@ -518,6 +581,9 @@
       // Show preview section
       document.getElementById('upload-area').style.display = 'none';
       document.getElementById('preview').classList.add('active');
+
+      // Update pipeline - file uploaded, now in edit phase
+      setPipelineStep('edit');
     }
 
     async function computeHash(file) {
@@ -538,6 +604,9 @@
       // Show progress
       document.getElementById('preview').classList.remove('active');
       document.getElementById('progress-container').classList.add('active');
+
+      // Update pipeline - seal in progress
+      setPipelineStep('seal');
 
       try {
         // Step 1: Upload to VD-CUT intake
@@ -677,6 +746,25 @@
       return new Promise(resolve => setTimeout(resolve, ms));
     }
 
+    // ─── Pipeline Progress ─────────────────────────────────────────────────────
+
+    function setPipelineStep(step) {
+      // Steps: 'upload', 'edit', 'seal', 'vault'
+      const steps = ['upload', 'edit', 'seal', 'vault'];
+      const idx = steps.indexOf(step);
+
+      steps.forEach((s, i) => {
+        const el = document.getElementById('step-' + s);
+        if (el) {
+          if (i <= idx) {
+            el.classList.add('active');
+          } else {
+            el.classList.remove('active');
+          }
+        }
+      });
+    }
+
     // ─── Result Display ───────────────────────────────────────────────────────
 
     function showResult(data) {
@@ -690,6 +778,9 @@
         document.getElementById('result-icon').textContent = '✓';
         document.getElementById('result-title').textContent = t.successTitle;
         document.getElementById('result-message').textContent = t.successMsg;
+
+        // Update pipeline - sealed to vault
+        setPipelineStep('vault');
         document.getElementById('result-receipt').textContent = data.receiptId;
         document.getElementById('result-verify').href = data.verifyUrl;
         document.getElementById('result-verify').textContent = t.verify;
@@ -729,6 +820,9 @@
       document.getElementById('result').classList.remove('active');
       document.getElementById('upload-area').style.display = 'block';
       document.getElementById('progress-fill').style.width = '0%';
+
+      // Reset pipeline to upload step
+      setPipelineStep('upload');
     }
 
     async function shareResult() {
