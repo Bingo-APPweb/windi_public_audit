@@ -1,4 +1,4 @@
-# WINDI SDK v1.0
+# WINDI SDK v1.1
 
 > "Escala não vem de fazer tudo igual.
 >  Vem de garantir que tudo termina da mesma forma."
@@ -18,21 +18,22 @@ PRODUTO → EXPERIÊNCIA ESPECÍFICA → WINDI CORE → PROVA → MUNDO
 
 ---
 
-## As 4 Funções Sagradas
+## As 5 Funções Sagradas
 
 | Função | O Que Faz | Invariante |
 |--------|-----------|------------|
 | `seal()` | Compute hash + I9 Gate | **I9** (Vontade Humana) |
 | `ledger()` | Ancoragem eterna no Ledger | **I11** (Imutabilidade) |
 | `render_jmpg()` | Prova visual verificável | Clareza |
-| `distribute()` | Distribuição multi-canal | Alcance |
+| `distribute()` | Distribuição PRIVADA | Alcance (chat pessoal) |
+| `publish()` | Distribuição PÚBLICA (§137) | **§122.4** (Link Only) |
 
 ---
 
 ## Quick Start
 
 ```python
-from windi_core import seal, ledger, render_jmpg, distribute
+from windi_core import seal, ledger, render_jmpg, distribute, publish
 
 # 1. SEAL — Compute hash (I9: human_approved=True)
 seal_result = await seal("/path/to/document.pdf", "did:windi:user:001")
@@ -43,9 +44,21 @@ receipt = await ledger(seal_result, doc_type="contract")
 # 3. RENDER — Create proof card
 jmpg = await render_jmpg(receipt.receipt_id, title="Contract signed")
 
-# 4. DISTRIBUTE — Send to world
+# 4a. DISTRIBUTE — Send to PRIVATE chat (sendPhoto)
 await distribute(receipt.receipt_id, chat_id="8618440285", lang="PT")
+
+# 4b. PUBLISH — Post to PUBLIC channel (§137 — LINK ONLY)
+await publish(receipt.receipt_id, chat_id="@windi_public", lang="EN")
 ```
+
+### §137 — Medium-Agnostic Truth Distribution
+
+> "O canal Telegram não transmite ficheiros. Transmite acesso."
+
+Para distribuição PÚBLICA, usar sempre `publish()`:
+- Telegram transcodifica imagens → quebra SHA-256
+- `publish()` envia apenas LINK → integridade mantida
+- O medium APONTA para a prova. Nunca CARREGA a prova.
 
 ---
 
