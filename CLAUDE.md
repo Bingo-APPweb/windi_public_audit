@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.87
-**Sealed:** 2026-04-05 · §128 W-DIST-001 Sovereign Distribution
+**Version:** 1.9.88
+**Sealed:** 2026-04-05 · §129 Pitch Dashboard LIVE
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -834,7 +834,7 @@ KLAR (light):
 
 ---
 
-## 13. Estado Actual — 03 Abril 2026
+## 13. Estado Actual — 05 Abril 2026
 
 ### Mapa de Portas
 
@@ -871,11 +871,11 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 05 Apr | **§129 Pitch Dashboard** · Live proof experience for VCs · 56,882 seals · `f39e609` |
 | 05 Apr | **§128 W-DIST-001** · Sovereign Distribution Layer · Editorial Proof v1.1 · `a3cd0af` |
 | 05 Apr | **§127 AI Draft v2.0** · Markdown→Quill + DOCX Export + Quick Prompt Auto-Submit · `872407c` |
 | 04 Apr | **§120.5 Mobile Emergency Fix** · WINDI-LAW mobile responsive · Hamburger + Touch · `7f05abb` |
 | 04 Apr | **§120 AI Draft Mode** · WINDI-LAW v1.3.0 · Generate+Seal pipeline · DID→Ledger · `3895a52` |
-| 03 Apr | **§118 Travel Stack Auto-Healing** · Watchdog + Overrides + Logrotate · `e7cff50` |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -1029,6 +1029,7 @@ workspace/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
 ### Completado (últimos 10 · ver CLAUDE-HISTORY.md para §37-115)
+- [x] §129 **Pitch Dashboard** · Live proof for VCs · 56,882 seals · `f39e609` ✅ 05 Apr
 - [x] §128 **W-DIST-001** · Sovereign Distribution · Editorial Proof v1.1 · `a3cd0af` ✅ 05 Apr
 - [x] §127 **AI Draft v2.0** · Markdown→Quill + DOCX Export + Quick Prompt · `872407c` ✅ 05 Apr
 - [x] §122.2-6 **ProofStream Arquitectura** · Primeiro seal real · Matriz de canais · IRREMEDIÁVEL ✅ 04 Apr
@@ -1060,6 +1061,7 @@ workspace/
 | §120 | AI Draft Mode | ✅ LIVE | :8122 · Receipt: WINDI-LAW-AIDRAFT-20260404105917-C445AFF9 |
 | §127 | AI Draft v2.0 | ✅ SEALED | Markdown→Quill + DOCX Export + Quick Prompt · `872407c` |
 | §128 | W-DIST-001 | ✅ LIVE | Sovereign Distribution · Editorial Proof v1.1 · `a3cd0af` |
+| §129 | Pitch Dashboard | ✅ LIVE | `/pitch/` · 56,882 seals · Live proof for VCs · `f39e609` |
 
 > **Detalhes completos:** `CLAUDE-HISTORY.md`
 
