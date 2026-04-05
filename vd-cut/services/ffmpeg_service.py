@@ -359,6 +359,67 @@ async def generate_thumbnail(
         return {"error": True, "message": str(e)}
 
 
+async def generate_preview(
+    video_path: Path,
+    output_path: Path,
+    timestamp: float = 1.0
+) -> Dict[str, Any]:
+    """
+    Generate full-size preview frame from video.
+
+    Unlike thumbnail, this preserves original resolution.
+    Used for detailed preview in dashboard.
+
+    Args:
+        video_path: Source video
+        output_path: Output JPEG path
+        timestamp: Time in seconds for frame extraction
+    """
+    if not video_path.exists():
+        return {"error": True, "message": "Video not found"}
+
+    try:
+        # Extract frame at original resolution (no -s flag)
+        cmd = [
+            "ffmpeg", "-y",
+            "-ss", str(timestamp),
+            "-i", str(video_path),
+            "-vframes", "1",
+            "-q:v", "2",  # High quality JPEG
+            "-f", "image2",
+            str(output_path)
+        ]
+
+        proc = await asyncio.create_subprocess_exec(
+            *cmd,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE
+        )
+
+        _, stderr = await asyncio.wait_for(proc.communicate(), timeout=30)
+
+        if proc.returncode != 0:
+            return {
+                "error": True,
+                "message": f"Preview generation failed: {stderr.decode()[:200]}"
+            }
+
+        if not output_path.exists():
+            return {"error": True, "message": "Preview not created"}
+
+        return {
+            "success": True,
+            "path": str(output_path),
+            "size": output_path.stat().st_size
+        }
+
+    except asyncio.TimeoutError:
+        return {"error": True, "message": "Preview timeout"}
+    except Exception as e:
+        log.error(f"Preview error: {e}")
+        return {"error": True, "message": str(e)}
+
+
 async def normalize_audio(
     input_path: Path,
     output_path: Path,

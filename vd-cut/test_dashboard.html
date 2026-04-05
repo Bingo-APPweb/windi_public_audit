@@ -522,7 +522,7 @@
     <div class="card">
         <h2><span class="step-num">4</span> Preview &amp; Download</h2>
         <div class="preview" id="previewSection">
-            <img id="thumbnail" src="" alt="Thumbnail">
+            <img id="previewImage" src="" alt="Preview">
             <div class="preview-links">
                 <a id="downloadLink" href="#" target="_blank">📥 Download MP4</a>
                 <a id="thumbLink" href="#" target="_blank">🖼️ View Thumbnail</a>
@@ -758,12 +758,14 @@
         function showPreview(exportId) {
             const section = document.getElementById('previewSection');
             const placeholder = document.getElementById('previewPlaceholder');
-            const thumb = document.getElementById('thumbnail');
+            const previewImg = document.getElementById('previewImage');
             const download = document.getElementById('downloadLink');
             const thumbLink = document.getElementById('thumbLink');
 
-            thumb.src = '/vd-cut/thumb/' + exportId;
+            // Full-size preview for main display
+            previewImg.src = '/vd-cut/preview/' + exportId;
             download.href = '/vd-cut/media/' + exportId;
+            // Small thumbnail for quick view link
             thumbLink.href = '/vd-cut/thumb/' + exportId;
 
             section.classList.add('show');
