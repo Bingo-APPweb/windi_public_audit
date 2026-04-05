@@ -168,12 +168,12 @@ def init_channels():
     except ImportError as e:
         log.warning(f"[W-DIST-001] Could not load telegram channel: {e}")
 
-    # Email (future)
-    # try:
-    #     from channels import channel_email
-    #     register_channel("email", channel_email)
-    # except ImportError:
-    #     pass
+    # Email
+    try:
+        from channels import channel_email
+        register_channel("email", channel_email)
+    except ImportError as e:
+        log.warning(f"[W-DIST-001] Could not load email channel: {e}")
 
     # Signal (future)
     # try:
