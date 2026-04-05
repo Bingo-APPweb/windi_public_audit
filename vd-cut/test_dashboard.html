@@ -247,6 +247,158 @@
             display: block;
         }
 
+        /* Share Button */
+        .share-container {
+            margin-top: 15px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .share-btn {
+            background: var(--gold);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .share-btn:hover {
+            background: #6B5A14;
+        }
+
+        .share-dropdown {
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 0;
+            min-width: 200px;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.15);
+            margin-bottom: 8px;
+            z-index: 100;
+        }
+
+        .share-dropdown.show {
+            display: block;
+        }
+
+        .share-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 0.85rem;
+        }
+
+        .share-option:hover {
+            background: var(--bg);
+        }
+
+        .share-option .icon {
+            font-size: 1.2rem;
+        }
+
+        .share-option .label {
+            flex: 1;
+        }
+
+        .share-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 4px 0;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text);
+            color: var(--bg);
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+
+        /* Email Modal */
+        .email-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .email-modal.show {
+            display: flex;
+        }
+
+        .email-modal-content {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 24px;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .email-modal h3 {
+            margin-bottom: 16px;
+            color: var(--gold);
+        }
+
+        .email-modal input {
+            margin-bottom: 16px;
+        }
+
+        .email-modal-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .email-modal-buttons button {
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .email-modal-buttons .cancel {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .email-modal-buttons .send {
+            background: var(--gold);
+            border: none;
+            color: white;
+        }
+
         .receipt-id {
             font-size: 0.9rem;
             font-weight: 600;
@@ -391,7 +543,50 @@
             <h3>✅ SEALED TO LEDGER</h3>
             <div class="receipt-id" id="receiptId"></div>
             <a id="verifyLink" class="verify-link" href="#" target="_blank">🔍 Verify on Ledger</a>
+
+            <div class="share-container">
+                <button class="share-btn" onclick="toggleShareMenu()">
+                    📤 <span>Partilhar</span>
+                </button>
+                <div class="share-dropdown" id="shareDropdown">
+                    <div class="share-option" onclick="shareViaTelegram()">
+                        <span class="icon">📱</span>
+                        <span class="label">Telegram</span>
+                    </div>
+                    <div class="share-option" onclick="openEmailModal()">
+                        <span class="icon">📧</span>
+                        <span class="label">Email</span>
+                    </div>
+                    <div class="share-divider"></div>
+                    <div class="share-option" onclick="copyVerifyLink()">
+                        <span class="icon">🔗</span>
+                        <span class="label">Copiar Link</span>
+                    </div>
+                </div>
+            </div>
         </div>
+
+        <!-- Email Modal -->
+        <div class="email-modal" id="emailModal">
+            <div class="email-modal-content">
+                <h3>📧 Enviar por Email</h3>
+                <label>Endereço de email:</label>
+                <input type="email" id="shareEmailInput" placeholder="destinatario@exemplo.com">
+                <label>Idioma:</label>
+                <select id="shareEmailLang">
+                    <option value="de">Deutsch</option>
+                    <option value="en">English</option>
+                    <option value="pt">Português</option>
+                </select>
+                <div class="email-modal-buttons">
+                    <button class="cancel" onclick="closeEmailModal()">Cancelar</button>
+                    <button class="send" onclick="sendShareEmail()">Enviar 📤</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast -->
+        <div class="toast" id="toast"></div>
         <div id="sealOutput" class="output" style="display:none;"></div>
     </div>
 
@@ -633,6 +828,164 @@
                 btn.textContent = '🔐 CONFIRM & SEAL';
             }
         }
+
+        // ═══════════════════════════════════════════════════════
+        // SHARE FUNCTIONS (W-DIST-001)
+        // ═══════════════════════════════════════════════════════
+
+        let currentReceiptId = null;
+        let currentVerifyUrl = null;
+
+        // Store receipt info when seal succeeds
+        function storeReceiptInfo(receiptId, verifyUrl) {
+            currentReceiptId = receiptId;
+            currentVerifyUrl = verifyUrl;
+        }
+
+        function toggleShareMenu() {
+            const dropdown = document.getElementById('shareDropdown');
+            dropdown.classList.toggle('show');
+
+            // Close when clicking outside
+            if (dropdown.classList.contains('show')) {
+                document.addEventListener('click', closeShareMenuOnClickOutside);
+            }
+        }
+
+        function closeShareMenuOnClickOutside(e) {
+            const dropdown = document.getElementById('shareDropdown');
+            const shareBtn = e.target.closest('.share-btn');
+
+            if (!shareBtn && !e.target.closest('.share-dropdown')) {
+                dropdown.classList.remove('show');
+                document.removeEventListener('click', closeShareMenuOnClickOutside);
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function getReceiptInfo() {
+            const receiptId = document.getElementById('receiptId').textContent;
+            const verifyUrl = document.getElementById('verifyLink').href;
+            return { receiptId, verifyUrl };
+        }
+
+        // Telegram Share (via Web API or Telegram URL)
+        async function shareViaTelegram() {
+            const { receiptId, verifyUrl } = getReceiptInfo();
+
+            const text = `🔐 WINDI Communiqué
+
+📄 Video sealed in Forensic Ledger
+
+🛡️ Receipt: ${receiptId}
+
+🔗 Verify: ${verifyUrl}
+
+AI processes. Human decides. WINDI guarantees.`;
+
+            // Try Telegram URL scheme
+            const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(verifyUrl)}&text=${encodeURIComponent(text)}`;
+            window.open(telegramUrl, '_blank');
+
+            document.getElementById('shareDropdown').classList.remove('show');
+            showToast('Opening Telegram...');
+        }
+
+        // Email Modal
+        function openEmailModal() {
+            document.getElementById('emailModal').classList.add('show');
+            document.getElementById('shareDropdown').classList.remove('show');
+            document.getElementById('shareEmailInput').focus();
+        }
+
+        function closeEmailModal() {
+            document.getElementById('emailModal').classList.remove('show');
+            document.getElementById('shareEmailInput').value = '';
+        }
+
+        async function sendShareEmail() {
+            const email = document.getElementById('shareEmailInput').value.trim();
+            const lang = document.getElementById('shareEmailLang').value;
+
+            if (!email || !email.includes('@')) {
+                showToast('Por favor, insira um email válido');
+                return;
+            }
+
+            const { receiptId, verifyUrl } = getReceiptInfo();
+
+            // Build communiqué object for W-DIST-001
+            const communique = {
+                receipt_id: receiptId,
+                evidence_verify_url: verifyUrl,
+                title_de: 'WINDI Video Seal',
+                title_en: 'WINDI Video Seal',
+                title_pt: 'WINDI Video Seal',
+                sealed_at: new Date().toISOString()
+            };
+
+            try {
+                // Call W-DIST-001 email channel
+                const response = await fetch('/comm/distribute', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        communique: communique,
+                        channel: 'email',
+                        options: {
+                            to: email,
+                            lang: lang
+                        }
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success || (result.results && result.results[0]?.success)) {
+                    showToast('📧 Email enviado com sucesso!');
+                    closeEmailModal();
+                } else {
+                    showToast('Erro ao enviar email: ' + (result.error || 'unknown'));
+                }
+            } catch (err) {
+                console.error('Email send error:', err);
+                showToast('Erro: ' + err.message);
+            }
+        }
+
+        // Copy Verify Link
+        function copyVerifyLink() {
+            const { verifyUrl } = getReceiptInfo();
+
+            navigator.clipboard.writeText(verifyUrl).then(() => {
+                showToast('🔗 Link copiado!');
+            }).catch(() => {
+                // Fallback for older browsers
+                const input = document.createElement('input');
+                input.value = verifyUrl;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                showToast('🔗 Link copiado!');
+            });
+
+            document.getElementById('shareDropdown').classList.remove('show');
+        }
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeEmailModal();
+                document.getElementById('shareDropdown').classList.remove('show');
+            }
+        });
     </script>
 </body>
 </html>
