@@ -5548,3 +5548,136 @@ Verdict:       CONFORME ✅
 - **:8131** — Fábrica para a rede hoteleira (Escala Automatizada)
 
 Liga IA+H · Kempten, Bavaria · 05 Abril 2026
+
+---
+
+## §136 — W-UDB-001 · Dashboard Unificado de Soberania · SPEC · 05 Abr 2026
+
+**Status:** SPEC (Especificação Arquitectural)
+**Porta Reservada:** :8140
+**Invariants:** I9, I11
+
+> **"O Olho do Dragão: a interface que permite ao comando humano supervisionar escala e precisão num único plano de existência."**
+
+### Objectivo
+
+Centralizar a telemetria do **VD-CUT (:8128)** e do **VD-MASS (:8131)**, transformando hashes técnicos em inteligência de decisão.
+
+### Arquitectura da Interface ("God View")
+
+Dashboard Single-Page (SPA) com WebSockets para telemetria real-time, estruturado em 3 zonas:
+
+| Zona | Nome | Fonte | Função |
+|------|------|-------|--------|
+| **A** | Individual Forensic Hub | `:8128` | Selos I9 manuais · Relatórios V.I.R. únicos |
+| **B** | Mass Automation Pulse | `:8131` | Status batches · Eficácia Policy I9-P · Renders MLT |
+| **C** | Global Ledger Integrity | Dual-Chain | Gráfico consistência Ledger Forense × Ledger Massa |
+
+### Métricas Real-Time (KPIs)
+
+| Métrica | Descrição | Meta |
+|---------|-----------|------|
+| **Integrity Score** | % vídeos que passaram Dual-Hash sem exceções | >99% |
+| **Exception Pressure** | Itens na Exception Queue aguardando decisão humana | <10 |
+| **Sovereignty Ratio** | Processamento local vs. externo | >93.3% |
+
+### Controles de Emergência
+
+#### Kill Switch
+Comando que **suspende todas as Policies ativas** no `:8131` caso uma anomalia de hash seja detectada no `:8128`.
+
+```
+POST /udb/emergency/halt
+{
+  "reason": "Hash anomaly detected",
+  "actor_did": "did:windi:JOBER-MOGELE-CORREA-001",
+  "affected_policies": ["all"]
+}
+```
+
+#### Global Manifest
+Geração de um **"Super-Hash" diário** que sela todos os selos do dia num único bloco irremediável.
+
+```
+POST /udb/manifest/daily
+{
+  "date": "2026-04-05",
+  "vdcut_seals": 47,
+  "vdmass_seals": 2341,
+  "super_hash": "sha256:..."
+}
+```
+
+### Visualização Conceptual
+
+```
+┌────────────────────────────────────────────────────────────────────┐
+│  WINDI UNIFIED DASHBOARD — SOVEREIGN VIDEO EVIDENCE ENGINE         │
+├────────────────────────────────────────────────────────────────────┤
+│                                                                    │
+│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐ │
+│  │  ZONE A          │  │  ZONE B          │  │  ZONE C          │ │
+│  │  FORENSIC HUB    │  │  MASS PULSE      │  │  LEDGER INTEGRITY│ │
+│  │  :8128           │  │  :8131           │  │  DUAL-CHAIN      │ │
+│  │                  │  │                  │  │                  │ │
+│  │  [47 seals]      │  │  [2341 renders]  │  │  ████████ 99.2%  │ │
+│  │  Last: 14:23     │  │  Queue: 3        │  │  [=========-]    │ │
+│  │                  │  │                  │  │                  │ │
+│  └──────────────────┘  └──────────────────┘  └──────────────────┘ │
+│                                                                    │
+│  ┌─────────────────────────────────────────────────────────────┐  │
+│  │  REAL-TIME KPIs                                              │  │
+│  │  Integrity: 99.2% │ Exceptions: 3 │ Sovereignty: 97.1%      │  │
+│  └─────────────────────────────────────────────────────────────┘  │
+│                                                                    │
+│  [🔴 KILL SWITCH]                    [📋 GENERATE DAILY MANIFEST] │
+│                                                                    │
+└────────────────────────────────────────────────────────────────────┘
+```
+
+### Stack Técnico
+
+| Componente | Tecnologia |
+|------------|------------|
+| Backend | Flask + SQLite (padrão WINDI) |
+| Frontend | HTML/JS vanilla (Zero frameworks) |
+| Real-time | WebSocket ou SSE |
+| Porta | :8140 |
+| Directório | `/opt/windi/udb/` |
+
+### Endpoints Planeados
+
+| Endpoint | Função |
+|----------|--------|
+| `GET /health` | Health check |
+| `GET /metrics` | Métricas agregadas |
+| `GET /zone/a` | Dados VD-CUT |
+| `GET /zone/b` | Dados VD-MASS |
+| `GET /zone/c` | Integridade Dual-Chain |
+| `POST /emergency/halt` | Kill Switch |
+| `POST /manifest/daily` | Super-Hash diário |
+| `WS /live` | Stream real-time |
+
+### Dependências
+
+- W-VD-CUT-001 (:8128) — `/health`, `/metrics`
+- W-VD-MASS-001 (:8131) — `/health`, `/metrics`, `/policy/list`
+- Forensic Ledger (:8101) — verificação de receipts
+
+### Invariantes Aplicados
+
+- **I9:** Kill Switch exige `actor_did` humano
+- **I11:** Daily Manifest sela no Ledger principal
+
+### Prioridade
+
+**P1** — Implementação após estabilização do VD-MASS em produção com tráfego real.
+
+### Veredicto
+
+> "O §136 fecha o círculo. O Human Dragon não precisa de 'caçar' logs em portas diferentes. Ele senta-se no trono de Kempten e vê a verdade a ser produzida em massa, com a calma de quem sabe que cada frame está selado."
+
+**Sovereign Video Evidence Engine v1.0 — ARQUITECTURA COMPLETA:**
+- §135 (Músculo/MLT) + §136 (Visão/Dashboard) = Sistema Operacional
+
+Liga IA+H · Kempten, Bavaria · 05 Abril 2026
