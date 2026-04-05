@@ -1171,6 +1171,109 @@ async def list_transcribe_models():
     }
 
 
+# ----- Distribution (W-DIST-001) -----
+
+class DistributeRequest(BaseModel):
+    """Request for distributing a communiqué."""
+    communique: Dict[str, Any]
+    channel: str  # "telegram" or "email"
+    options: Optional[Dict[str, Any]] = None
+
+
+@app.post("/comm/distribute")
+async def distribute_communique(request: DistributeRequest):
+    """
+    Distribute a sealed communiqué via W-DIST-001.
+
+    Channels:
+    - telegram: Opens Telegram share (client-side redirect)
+    - email: Sends SMTP email with verify link
+
+    Args:
+        communique: Dict with receipt_id, evidence_verify_url, title_*
+        channel: Distribution channel name
+        options: Channel-specific options (e.g., {to: "email@...", lang: "de"})
+
+    Returns:
+        Distribution result from W-DIST-001
+    """
+    import sys
+    sys.path.insert(0, '/opt/windi/communique')
+
+    try:
+        from channels import channel_email
+
+        if request.channel == "email":
+            options = request.options or {}
+            result = channel_email.send(
+                communique=request.communique,
+                to=options.get("to"),
+                lang=options.get("lang", "de"),
+                attach_jmpg=options.get("attach_jmpg", False)
+            )
+            return result
+
+        elif request.channel == "telegram":
+            # Telegram is handled client-side via URL scheme
+            return {
+                "success": True,
+                "channel": "telegram",
+                "message": "Telegram share handled client-side"
+            }
+
+        else:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Unknown channel: {request.channel}. Available: email, telegram"
+            )
+
+    except ImportError as e:
+        log.error(f"Distribution import error: {e}")
+        raise HTTPException(status_code=500, detail=f"Distribution channel not available: {e}")
+    except Exception as e:
+        log.error(f"Distribution error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/comm/channels")
+async def list_distribution_channels():
+    """
+    List available distribution channels.
+
+    Returns channel names and their status.
+    """
+    import sys
+    sys.path.insert(0, '/opt/windi/communique')
+
+    channels = []
+
+    # Check email
+    try:
+        from channels import channel_email
+        info = channel_email.get_info()
+        channels.append({
+            "name": "email",
+            "available": info.get("configured", False),
+            "smtp_host": info.get("smtp_host"),
+            "from": info.get("from")
+        })
+    except ImportError:
+        channels.append({"name": "email", "available": False, "error": "not installed"})
+
+    # Check telegram
+    try:
+        from channels import channel_telegram
+        channels.append({
+            "name": "telegram",
+            "available": True,
+            "note": "Client-side via URL scheme"
+        })
+    except ImportError:
+        channels.append({"name": "telegram", "available": False, "error": "not installed"})
+
+    return {"channels": channels}
+
+
 # ----- Test Dashboard -----
 
 @app.get("/vd-cut/test/", response_class=HTMLResponse)
