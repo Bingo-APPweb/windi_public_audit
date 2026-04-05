@@ -92,7 +92,8 @@ def build_manifest(
     author: str,
     metadata: dict,
     media_count: int,
-    receipt_id: str = None
+    receipt_id: str = None,
+    source_info: dict = None
 ) -> dict:
     """Build the manifest.json for the .jmpg package."""
     now = datetime.now(timezone.utc)
@@ -120,6 +121,13 @@ def build_manifest(
             "receipt_id": receipt_id,
             "sge_score": metadata.get("sge_score", None),
             "risk_level": metadata.get("risk_level", "R0"),
+        },
+        # W-PROOF-LOOP-001: Bidirectional link to source
+        "source": source_info if source_info else {
+            "type": "standalone",
+            "communique_id": None,
+            "content_hash": None,
+            "created_at": None
         },
         "integrity": {
             "algorithm": "SHA-256",
@@ -226,7 +234,8 @@ def create_jmpg_package(
     template: str,
     content_blocks: list,
     metadata: dict,
-    media_refs: list = None
+    media_refs: list = None,
+    source_info: dict = None
 ) -> tuple:
     """
     Create a .jmpg package.
@@ -250,7 +259,8 @@ def create_jmpg_package(
         author=author,
         metadata=metadata,
         media_count=len(media_files),
-        receipt_id=None
+        receipt_id=None,
+        source_info=source_info
     )
 
     # 4. Register with Forensic Ledger
@@ -362,6 +372,9 @@ def create_jmpg_package(
         except Exception as e:
             log(f"Bundle seal WARNING (non-fatal): {e}")
     # ── END DUAL-HASH ──
+
+    # Add bundle_hash to manifest for W-PROOF-LOOP-001
+    manifest["integrity"]["bundle_hash"] = package_hash
 
     return zip_bytes, manifest, receipt_data
 
@@ -506,6 +519,8 @@ class JMPGExportHandler(BaseHTTPRequestHandler):
             self._handle_export()
         elif self.path == "/api/export/jmpg/preview":
             self._handle_preview()
+        elif self.path == "/api/export/jmpg/from-communique":
+            self._handle_export_from_communique()
         elif self.path == "/api/trigger/build":
             self._handle_trigger_build()
         elif self.path == "/api/export/pdf":
@@ -625,6 +640,123 @@ class JMPGExportHandler(BaseHTTPRequestHandler):
             })
 
         except Exception as e:
+            self._json_response(500, {"error": str(e)})
+
+    def _handle_export_from_communique(self):
+        """
+        POST /api/export/jmpg/from-communique
+
+        W-PROOF-LOOP-001: Generate JMPG bundle from sealed Communiqué with
+        bidirectional link (source block in manifest).
+
+        Body: {
+            "communique_id": "COMM-20260405-0001",
+            "content_hash": "sha256:...",
+            "receipt_id": "WINDI-xxx",
+            "title": "Document Title",
+            "author_name": "Author Name",
+            "author_role": "Role",
+            "category": "LAUNCH|UPDATE|...",
+            "impact_level": "LOW|MED|HIGH|CRIT",
+            "created_at": "2026-04-05T...",
+            "source_type": "communique"
+        }
+
+        Returns: JSON with package_id, bundle_hash, verify_url
+        """
+        try:
+            body = self._read_body()
+
+            communique_id = body.get("communique_id")
+            content_hash = body.get("content_hash")
+            receipt_id = body.get("receipt_id")
+
+            if not communique_id or not content_hash:
+                self._json_response(400, {
+                    "error": "communique_id and content_hash are required",
+                    "hint": "W-PROOF-LOOP-001 requires source identification"
+                })
+                return
+
+            # Build source_info for bidirectional link
+            source_info = {
+                "type": body.get("source_type", "communique"),
+                "communique_id": communique_id,
+                "content_hash": content_hash,
+                "receipt_id": receipt_id,
+                "created_at": body.get("created_at")
+            }
+
+            # Build minimal content blocks from communiqué data
+            title = body.get("title", "Untitled")
+            content_blocks = [
+                {"type": "heading", "level": 1, "text": title},
+                {"type": "paragraph", "text": f"Communiqué {communique_id}"},
+                {"type": "divider"},
+                {"type": "paragraph", "text": f"Source Hash: {content_hash[:16]}..."},
+            ]
+
+            metadata = {
+                "doc_type": "communique",
+                "category": body.get("category", "UPDATE"),
+                "impact_level": body.get("impact_level", "MED"),
+                "source_type": "W-PROOF-LOOP-001"
+            }
+
+            log(f"[W-PROOF-LOOP-001] Export from communiqué: {communique_id}")
+
+            t0 = time.monotonic()
+            zip_bytes, manifest, receipt = create_jmpg_package(
+                title=title,
+                author=body.get("author_name", "WINDI System"),
+                template="communique",
+                content_blocks=content_blocks,
+                metadata=metadata,
+                media_refs=[],
+                source_info=source_info
+            )
+            elapsed = (time.monotonic() - t0) * 1000
+
+            package_id = manifest["package_id"]
+            bundle_hash = manifest.get("integrity", {}).get("bundle_hash") or manifest.get("bundle_hash")
+            verify_url = f"https://windi-domain.com/verify-public/?id={package_id}"
+
+            log(f"[W-PROOF-LOOP-001] Generated {package_id} for {communique_id} in {elapsed:.0f}ms")
+
+            # Save to disk if save_path provided
+            file_path = None
+            file_size = len(zip_bytes)
+            save_path = body.get("save_path")
+
+            if save_path:
+                try:
+                    # Ensure directory exists
+                    save_dir = os.path.dirname(save_path)
+                    if save_dir and not os.path.exists(save_dir):
+                        os.makedirs(save_dir, exist_ok=True)
+
+                    # Write file
+                    with open(save_path, "wb") as f:
+                        f.write(zip_bytes)
+                    file_path = save_path
+                    log(f"[W-PROOF-LOOP-001] Saved {package_id} to {save_path} ({file_size} bytes)")
+                except Exception as save_err:
+                    log(f"[W-PROOF-LOOP-001] Failed to save file: {save_err}")
+
+            self._json_response(200, {
+                "success": True,
+                "package_id": package_id,
+                "bundle_hash": bundle_hash,
+                "content_hash": manifest.get("content_hash"),
+                "verify_url": verify_url,
+                "source": source_info,
+                "file_path": file_path,
+                "file_size": file_size,
+                "elapsed_ms": round(elapsed, 1)
+            })
+
+        except Exception as e:
+            log(f"[W-PROOF-LOOP-001] Error: {e}")
             self._json_response(500, {"error": str(e)})
 
     # ─── TRIGGER API HANDLERS (P1 Sovereign Spec) ─────────────────
