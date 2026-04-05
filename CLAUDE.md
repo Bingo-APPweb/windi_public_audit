@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.88
-**Sealed:** 2026-04-05 · §129 Pitch Dashboard LIVE
+**Version:** 1.9.89
+**Sealed:** 2026-04-05 · §129 VD-CUT Workspace Retention SEALED
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -871,7 +871,7 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
-| 05 Apr | **§129 Pitch Dashboard** · Live proof experience for VCs · 56,882 seals · `f39e609` |
+| 05 Apr | **§129 VD-CUT Workspace Retention** · Voice + PWA + 30d Editable Buffer · `054091e` |
 | 05 Apr | **§128 W-DIST-001** · Sovereign Distribution Layer · Editorial Proof v1.1 · `a3cd0af` |
 | 05 Apr | **§127 AI Draft v2.0** · Markdown→Quill + DOCX Export + Quick Prompt Auto-Submit · `872407c` |
 | 04 Apr | **§120.5 Mobile Emergency Fix** · WINDI-LAW mobile responsive · Hamburger + Touch · `7f05abb` |
@@ -1029,7 +1029,7 @@ workspace/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
 ### Completado (últimos 10 · ver CLAUDE-HISTORY.md para §37-115)
-- [x] §129 **Pitch Dashboard** · Live proof for VCs · 56,882 seals · `f39e609` ✅ 05 Apr
+- [x] §129 **VD-CUT Workspace Retention** · Voice + PWA + 30d Buffer · `054091e` ✅ 05 Apr
 - [x] §128 **W-DIST-001** · Sovereign Distribution · Editorial Proof v1.1 · `a3cd0af` ✅ 05 Apr
 - [x] §127 **AI Draft v2.0** · Markdown→Quill + DOCX Export + Quick Prompt · `872407c` ✅ 05 Apr
 - [x] §122.2-6 **ProofStream Arquitectura** · Primeiro seal real · Matriz de canais · IRREMEDIÁVEL ✅ 04 Apr
@@ -1061,7 +1061,7 @@ workspace/
 | §120 | AI Draft Mode | ✅ LIVE | :8122 · Receipt: WINDI-LAW-AIDRAFT-20260404105917-C445AFF9 |
 | §127 | AI Draft v2.0 | ✅ SEALED | Markdown→Quill + DOCX Export + Quick Prompt · `872407c` |
 | §128 | W-DIST-001 | ✅ LIVE | Sovereign Distribution · Editorial Proof v1.1 · `a3cd0af` |
-| §129 | Pitch Dashboard | ✅ LIVE | `/pitch/` · 56,882 seals · Live proof for VCs · `f39e609` |
+| §129 | VD-CUT Workspace Retention | ✅ SEALED | Voice + PWA + 30d Buffer · Tag: W-VD-CUT-001-S129 · `054091e` |
 
 > **Detalhes completos:** `CLAUDE-HISTORY.md`
 
@@ -1107,5 +1107,73 @@ I9 ✅ · I11 ✅ · G3 ✅ · §122.4 ✅ · :8128 SELADO ✅
 
 ### Excluído (fase futura)
 Proposta C — frame-level seal (deepfake prevention) — não implementado
+
+Liga IA+H · Kempten, Bavaria · 05 Abril 2026
+
+---
+
+## §129 — VD-CUT Workspace Retention Layer + Voice + PWA Upload · SEALED 05 Abr 2026
+
+**Status:** CANONICAL · ACTIVE · SEALED
+**Commit:** `054091e`
+**Tag:** `W-VD-CUT-001-S129`
+**Invariants:** I9, I11, G3
+
+### Pipeline Evolution
+
+| Before | After |
+|--------|-------|
+| Upload → Seal → Vault | Upload → Workspace (30d) → Edit → Seal → Vault |
+| Immediate immutability | 30-day editable window |
+| Notarial system | Creative + sovereign system |
+
+### Retention Layer
+
+| Phase | Location | Retention | Editable |
+|-------|----------|-----------|----------|
+| Intake | `/media/vd-cut/incoming/` | 30 days | ✅ |
+| Processed | `/media/vd-cut/exports/` | 30 days | ✅ |
+| Sealed | Forensic Vault | ∞ Permanent | ❌ |
+
+**Config:**
+```python
+ORIGINAL_RETENTION_HOURS = 720   # 30 days
+SEALED_RETENTION_DAYS = 30
+```
+
+### Components Implemented
+
+| Component | Details |
+|-----------|---------|
+| **NOMAD Voice** | `handlers/voice.py` · Whisper transcription |
+| **PWA Upload** | `/opt/windi/nomad-pwa/` · 6 files |
+| **Nginx** | `/nomad-upload/` route |
+| **VD-CUT API** | Fixed: `video`, `did`, `source_asset`, `in_point`, `out_point` |
+| **DID Chain** | URL → Travel → Law → Cookie → Auto-generate |
+| **Vault Archive** | `archive_to_vault()` · permanent copy after seal |
+
+### Constitutional Alignment
+
+- **I9** — Human decides when to seal ✅
+- **I11** — Sealed data is immutable ✅
+- **G3** — Propose ≠ Execute ✅
+
+### Canonical Interpretation
+
+> "Between creation and truth, there must be a space where the human decides."
+
+§129 introduces a **temporal sovereignty layer** between creation and irreversible truth, enabling:
+- Iteration before commitment
+- Human-controlled finalization
+- Integration with MARIA (suggestion layer)
+- Integration with JOE (narrative orchestration)
+
+### Next Phase (Preview)
+
+**§130 — Workspace Integration (planned)**
+- Unified Workspace (VD-CUT + MARIA + Thread)
+- Timeline visualization
+- JMPG Preview Layers (P2/P3)
+- "Seal Consciente" trigger
 
 Liga IA+H · Kempten, Bavaria · 05 Abril 2026
