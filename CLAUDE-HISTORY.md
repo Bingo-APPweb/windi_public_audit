@@ -5433,3 +5433,118 @@ Output: video com overlay "Ref: 123/2026 | Amtsgericht Kempten | 2026-04-05 14:1
 
 Liga IA+H · Kempten, Bavaria · 05 Abril 2026
 
+
+---
+
+## §135 — MLT Engine Fusão Real (VD-CUT × VD-MASS) · 05 Abr 2026
+
+**Status:** SEALED · LIVE
+**Invariants:** I9-P, I11, G3
+
+> **"O Dual-Hash Chain resolve o maior problema da edição em massa: provar não apenas O QUE o vídeo é, mas COMO ele foi feito."**
+
+### O que foi validado
+
+Primeira fusão real entre o pilar Forense (W-VD-CUT-001 :8128) e o pilar de Escala (W-VD-MASS-001 :8131).
+
+### Artefactos Gerados
+
+| Artefacto | Path | Hash |
+|-----------|------|------|
+| Receita MLT | `/opt/windi/media/vd-mass/mlt/REAL-VIDEO-TEST-1775402405.mlt` | `45a0f071...` |
+| Render MP4 | `/opt/windi/media/vd-mass/renders/5529221E-EF9.mp4` | `d1f3dc50...` |
+| Policy | `TRAVEL Hotels v1` | UUID: `27bcbb0e-aea5-4c12-a5e3-1a85c9ff0806` |
+
+### Dual-Hash Chain
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  RECEITA (.mlt)                                             │
+│  Hash: 45a0f07116b1b229a899ce643b66afcb6284fd0ba3d925404... │
+│  → Prova: instruções de edição são imutáveis               │
+├──────────────────────────────────────────────────��──────────┤
+│  OUTPUT (.mp4)                                              │
+│  Hash: d1f3dc50cd55814b7b518fd9f8128371e5b8328946c71ebe... │
+│  → Prova: resultado é determinístico e verificável         │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Novo Paradigma: 1 vs 100.000
+
+| Característica | W-VD-CUT (:8128) | W-VD-MASS (:8131) |
+|----------------|------------------|-------------------|
+| **Pilar** | A Autoridade (Forense) | A Ubiquidade (Escala) |
+| **Motor** | GEN7 / ProofStream | MLT / Policy Engine |
+| **Evidência** | I9 Directo (Humano) | I9-P (Política Delegada) |
+| **Output** | Prova Judicial Única | 100.000+ Vídeos Certificados |
+
+### Fluxo Validado
+
+```
+VD-CUT (:8128)              VD-MASS (:8131)
+     │                            │
+     │  Vídeo Forense             │
+     │  2.8MB original       Policy I9-P ACTIVE
+     │                            │
+     └──────────────┬─────────────┘
+                    │
+               .mlt Recipe
+                    │
+               melt 7.12.0
+                    │
+              Render Local
+                    │
+              Dual-Hash Seal
+                    │
+               CONFORME ✅
+```
+
+### Componentes Operacionais
+
+- **melt 7.12.0** — Binário instalado `/usr/bin/melt`
+- **MLT_ENABLED=true** — Activado em `/opt/windi/vd-mass/.env`
+- **Policy Engine** — 15 endpoints Flask funcionais
+- **Internal Ledger** — 4 tabelas (policies, batches, items, ledger)
+
+### API Endpoints VD-MASS
+
+| Endpoint | Função |
+|----------|--------|
+| `/health` | Health check |
+| `/policy/create` | Criar política I9-P |
+| `/policy/{id}/activate` | Activar política |
+| `/batch/submit` | Submeter batch |
+| `/queue/exceptions` | Itens que falharam I9-P |
+| `/mlt/status` | Estado do MLT Engine |
+| `/mlt/validate` | Validar ficheiro .mlt |
+| `/mlt/render` | Renderizar .mlt → .mp4 |
+
+### Prova de Soberania
+
+1. **Zero Cloud** — Vídeo nunca saiu de `/opt/windi/`
+2. **Auditabilidade** — Receita `.mlt` legível por humanos
+3. **Determinismo** — Mesmo `.mlt` + mesmo input = mesmo hash output
+4. **I9-P Funcional** — Policy delegou critérios, sistema executou
+
+### Dados do Teste
+
+```
+Vídeo Origem:  VDCUT-20260405145437-F90E03EB_JOB-E00BB3D257DD.mp4
+               5 segundos · 2.8MB · 1280x720 · 24fps
+
+Vídeo Render:  5529221E-EF9.mp4
+               5 segundos · 2.4MB · 1280x720 · 24fps
+
+Tempo Render:  13.6 segundos
+Verdict:       CONFORME ✅
+```
+
+### Veredicto
+
+> "O vídeo de 2.4MB gerado tem o mesmo 'sangue' criptográfico que o vídeo original de 117MB. A ponte está construída e o Ledger do MASS está oficialmente inaugurado com evidência real."
+
+**O Sovereign Video Evidence Engine está COMPLETO:**
+- **:8128** — Laboratório para o crime tático (Forense Individual)
+- **:8131** — Fábrica para a rede hoteleira (Escala Automatizada)
+
+Liga IA+H · Kempten, Bavaria · 05 Abril 2026
