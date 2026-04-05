@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
 """
 W-JMPG-001 — JPEG Manifest Proof Graphic Server
-§134-135 · Liga IA+H · Kempten, Bavaria · 05 Abril 2026
+§134-136 · Liga IA+H · Kempten, Bavaria · 05 Abril 2026
 
 Port: 8132
 Endpoints:
   POST /comm/render/jmpg - Render a proof card
   GET  /comm/render/jmpg/{receipt_id} - Get existing or render new
   GET  /comm/jmpg/{filename} - Serve rendered images
-  POST /comm/distribute - Distribute proof card (Telegram, Email)
+  POST /comm/distribute - Distribute proof card (Telegram)
+  POST /comm/communique - Send institutional communiqué (§136)
   GET  /comm/health - Health check
+
+"Não publicamos conteúdo. Emitimos prova."
 """
 
 import os
@@ -35,7 +38,7 @@ load_dotenv("/opt/windi/nomad-bot/.env")
 
 PORT = 8132
 SERVICE_NAME = "W-JMPG-001"
-VERSION = "1.1.0"
+VERSION = "1.2.0"
 
 # Telegram configuration
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
@@ -67,6 +70,81 @@ def build_telegram_caption(receipt_id: str, verify_url: str, title: Optional[str
 🔐 <a href="{verify_url}">Verify authenticity</a>
 
 <i>Protocol: .jmpg v1</i>"""
+
+
+# ══════════════════════════════════════════════════════════════════���════════════
+# Communiqué Generator (§136)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+COMMUNIQUE_TEMPLATES = {
+    "PT": """📢 <b>WINDI Communiqué</b>
+
+{title}
+
+Este conteúdo foi registado e selado no WINDI Forensic Ledger.
+Verificável publicamente com integridade criptográfica garantida.
+
+<b>Receipt:</b>
+<code>{receipt_id}</code>
+
+🔐 <a href="{verify_url}">Verificar autenticidade</a>
+
+<i>Protocol: .jmpg v1 · Liga IA+H</i>""",
+
+    "EN": """📢 <b>WINDI Communiqué</b>
+
+{title}
+
+This content has been sealed in the WINDI Forensic Ledger.
+Publicly verifiable with guaranteed cryptographic integrity.
+
+<b>Receipt:</b>
+<code>{receipt_id}</code>
+
+🔐 <a href="{verify_url}">Verify authenticity</a>
+
+<i>Protocol: .jmpg v1 · Liga IA+H</i>""",
+
+    "DE": """📢 <b>WINDI Communiqué</b>
+
+{title}
+
+Dieser Inhalt wurde im WINDI Forensic Ledger versiegelt.
+Öffentlich verifizierbar mit garantierter kryptographischer Integrität.
+
+<b>Receipt:</b>
+<code>{receipt_id}</code>
+
+🔐 <a href="{verify_url}">Authentizität verifizieren</a>
+
+<i>Protocol: .jmpg v1 · Liga IA+H</i>""",
+}
+
+DEFAULT_TITLES = {
+    "PT": "Momento registado com prova pública.",
+    "EN": "Moment sealed with public proof.",
+    "DE": "Moment mit öffentlichem Nachweis versiegelt.",
+}
+
+
+def generate_communique(
+    receipt_id: str,
+    verify_url: str,
+    lang: str = "EN",
+    title: Optional[str] = None,
+) -> str:
+    """Generate institutional communiqué text."""
+    lang = lang.upper()
+    if lang not in COMMUNIQUE_TEMPLATES:
+        lang = "EN"
+
+    title_text = title or DEFAULT_TITLES.get(lang, DEFAULT_TITLES["EN"])
+
+    return COMMUNIQUE_TEMPLATES[lang].format(
+        title=title_text,
+        receipt_id=receipt_id,
+        verify_url=verify_url,
+    )
 
 
 async def send_telegram_photo(
@@ -154,6 +232,26 @@ class DistributeResponse(BaseModel):
     channel: str
     receipt_id: str
     image_url: Optional[str] = None
+    telegram_result: Optional[dict] = None
+    error: Optional[str] = None
+
+
+class CommuniqueRequest(BaseModel):
+    receipt_id: str
+    lang: str = "EN"
+    channel: str = "telegram"
+    chat_id: Optional[str] = None
+    title: Optional[str] = None
+    reply_to_message_id: Optional[int] = None
+
+
+class CommuniqueResponse(BaseModel):
+    ok: bool
+    receipt_id: str
+    lang: str
+    channel: str
+    image_url: Optional[str] = None
+    communique_text: Optional[str] = None
     telegram_result: Optional[dict] = None
     error: Optional[str] = None
 
@@ -385,6 +483,109 @@ async def distribute_proof_card(request: DistributeRequest):
             ok=False,
             channel=request.channel,
             receipt_id=request.receipt_id,
+            error=f"Unknown channel: {request.channel}. Supported: telegram",
+        )
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Communiqué Endpoint (§136)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@app.post("/comm/communique", response_model=CommuniqueResponse)
+async def send_communique(request: CommuniqueRequest):
+    """
+    Send an institutional communiqué with proof card.
+
+    This is the official WINDI communication format:
+    - Institutional language (PT/EN/DE)
+    - JMPG proof card attached
+    - Cryptographic verification link
+
+    "Não publicamos conteúdo. Emitimos prova."
+    """
+    log.info(f"Communiqué request: {request.receipt_id} lang={request.lang} via {request.channel}")
+
+    # Build verify URL
+    verify_url = f"https://windi-domain.com/verify-public/?id={request.receipt_id}"
+
+    # Check/render JMPG
+    filename = f"{request.receipt_id}_telegram_square.jpg"
+    image_path = OUTPUT_DIR / filename
+
+    if not image_path.exists():
+        log.info(f"Auto-rendering JMPG for communiqué: {request.receipt_id}")
+        result = render_jmpg(
+            receipt_id=request.receipt_id,
+            profile="telegram_square",
+            title=request.title,
+        )
+        if not result["ok"]:
+            return CommuniqueResponse(
+                ok=False,
+                receipt_id=request.receipt_id,
+                lang=request.lang,
+                channel=request.channel,
+                error=f"Render failed: {result.get('error')}",
+            )
+        image_path = Path(result["image_path"])
+
+    image_url = f"https://windi-domain.com/comm/jmpg/{filename}"
+
+    # Generate communiqué text
+    communique_text = generate_communique(
+        receipt_id=request.receipt_id,
+        verify_url=verify_url,
+        lang=request.lang,
+        title=request.title,
+    )
+
+    # Distribute based on channel
+    if request.channel == "telegram":
+        if not request.chat_id:
+            return CommuniqueResponse(
+                ok=False,
+                receipt_id=request.receipt_id,
+                lang=request.lang,
+                channel="telegram",
+                communique_text=communique_text,
+                error="chat_id required for Telegram distribution",
+            )
+
+        if not TELEGRAM_BOT_TOKEN:
+            return CommuniqueResponse(
+                ok=False,
+                receipt_id=request.receipt_id,
+                lang=request.lang,
+                channel="telegram",
+                error="Telegram not configured (missing BOT_TOKEN)",
+            )
+
+        # Send photo with communiqué caption
+        telegram_result = await send_telegram_photo(
+            chat_id=request.chat_id,
+            photo_path=str(image_path),
+            caption=communique_text,
+            reply_to_message_id=request.reply_to_message_id,
+        )
+
+        return CommuniqueResponse(
+            ok=telegram_result.get("ok", False),
+            receipt_id=request.receipt_id,
+            lang=request.lang,
+            channel="telegram",
+            image_url=image_url,
+            communique_text=communique_text,
+            telegram_result=telegram_result,
+            error=telegram_result.get("error") if not telegram_result.get("ok") else None,
+        )
+
+    else:
+        return CommuniqueResponse(
+            ok=False,
+            receipt_id=request.receipt_id,
+            lang=request.lang,
+            channel=request.channel,
+            communique_text=communique_text,
             error=f"Unknown channel: {request.channel}. Supported: telegram",
         )
 
