@@ -1,0 +1,20 @@
+[Unit]
+Description=W-JMPG-001 — WINDI JMPG Proof Card Renderer
+After=network.target
+
+[Service]
+Type=simple
+User=windi
+Group=windi
+WorkingDirectory=/opt/windi/comm
+ExecStart=/usr/bin/python3 /opt/windi/comm/jmpg_server.py
+Restart=always
+RestartSec=5
+StandardOutput=append:/opt/windi/logs/jmpg.log
+StandardError=append:/opt/windi/logs/jmpg.log
+
+# Environment
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target
