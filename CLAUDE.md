@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.86
-**Sealed:** 2026-04-04 · §122.6 ProofStream Arquitectura
+**Version:** 1.9.87
+**Sealed:** 2026-04-05 · §128 W-DIST-001 Sovereign Distribution
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -68,6 +68,8 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-VD-MASS-001 | :8131 | I9-P,I11 | Policy Engine · Batch · **MLT/Shotcut** |
 | W-JOE-001 | :8129 | I9,I11,I13 | Story Graph + ProofStream |
 | W-SGV-001 | :8129 | I9,I13 | Truth Illumination (ilumina, não bloqueia) |
+| W-DIST-001 | :8091 | I9,I11,I13 | Distribution Router · Telegram · **LIVE** |
+| W-COMM-001 | :8091 | I9,I11 | Communiqué Engine · JMPG · Proof Cards |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
 
@@ -859,7 +861,7 @@ KLAR (light):
 
 **Core:** GEN7 Desktop · Pioneer Program · VPR System · API Keys · Dispatch · Web Hosting · i18n · Wallet · Lead Admin
 
-**Agents (W-*):** CIA-001 · WSG-001 · GATE-001 · NGINX-001 · CANVAS-001 · CANVAS-OBS-001 · CANVAS-LAB-001 · COMM-001 · PROVE-001 · DETECT-MEDIA-001 · VERIFY-MODUS4 · INTENT-001 · COUNSEL-001 · SESSION-001 · NOMAD-001 · VD-CUT-001 · JOE-001
+**Agents (W-*):** CIA-001 · WSG-001 · GATE-001 · NGINX-001 · CANVAS-001 · CANVAS-OBS-001 · CANVAS-LAB-001 · COMM-001 · PROVE-001 · DETECT-MEDIA-001 · VERIFY-MODUS4 · INTENT-001 · COUNSEL-001 · SESSION-001 · NOMAD-001 · VD-CUT-001 · JOE-001 · DIST-001
 
 **Products:** Triangle of Power · WINDI FIELD · WINDI TRAVEL · FVE Protocol · RFC-001 DNA
 
@@ -869,10 +871,10 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 05 Apr | **§128 W-DIST-001** · Sovereign Distribution Layer · Editorial Proof v1.1 · `a3cd0af` |
 | 05 Apr | **§127 AI Draft v2.0** · Markdown→Quill + DOCX Export + Quick Prompt Auto-Submit · `872407c` |
 | 04 Apr | **§120.5 Mobile Emergency Fix** · WINDI-LAW mobile responsive · Hamburger + Touch · `7f05abb` |
 | 04 Apr | **§120 AI Draft Mode** · WINDI-LAW v1.3.0 · Generate+Seal pipeline · DID→Ledger · `3895a52` |
-| 03 Apr | **§119 Capture Actions Panel** · Seal+Save+Share+Discard · Thread actions · I9+I11 |
 | 03 Apr | **§118 Travel Stack Auto-Healing** · Watchdog + Overrides + Logrotate · `e7cff50` |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
@@ -1027,6 +1029,7 @@ workspace/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
 ### Completado (últimos 10 · ver CLAUDE-HISTORY.md para §37-115)
+- [x] §128 **W-DIST-001** · Sovereign Distribution · Editorial Proof v1.1 · `a3cd0af` ✅ 05 Apr
 - [x] §127 **AI Draft v2.0** · Markdown→Quill + DOCX Export + Quick Prompt · `872407c` ✅ 05 Apr
 - [x] §122.2-6 **ProofStream Arquitectura** · Primeiro seal real · Matriz de canais · IRREMEDIÁVEL ✅ 04 Apr
 - [x] §122.1 **MLT Engine** · Shotcut/melt integration · Local render sovereignty · `5f11bcc` ✅ 04 Apr
@@ -1056,6 +1059,7 @@ workspace/
 | §122 | W-VD-MASS-001 I9-P | ✅ SEALED | :8131 · Policy Engine · Batch · MLT/Shotcut · `5f11bcc` |
 | §120 | AI Draft Mode | ✅ LIVE | :8122 · Receipt: WINDI-LAW-AIDRAFT-20260404105917-C445AFF9 |
 | §127 | AI Draft v2.0 | ✅ SEALED | Markdown→Quill + DOCX Export + Quick Prompt · `872407c` |
+| §128 | W-DIST-001 | ✅ LIVE | Sovereign Distribution · Editorial Proof v1.1 · `a3cd0af` |
 
 > **Detalhes completos:** `CLAUDE-HISTORY.md`
 
