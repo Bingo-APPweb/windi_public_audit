@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.90
-**Sealed:** 2026-04-05 · §130 Whisper Transcription + Legal Overlay
+**Version:** 1.9.91
+**Sealed:** 2026-04-05 · §131 Email Distribution Channel
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -652,8 +652,8 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 05 Apr | **§131 Email Distribution** · W-DIST-001 email channel · Trilingual HTML+Text · `92c3fb5` |
 | 05 Apr | **§130 Whisper Transcription** · Cut-by-text + Legal Overlay · Local Whisper v20250625 · `6c73805` |
-| 05 Apr | **§129 VD-CUT Workspace Retention** · Voice + PWA + 30d Editable Buffer · `054091e` |
 | 05 Apr | **§128 W-DIST-001** · Sovereign Distribution Layer · Editorial Proof v1.1 · `a3cd0af` |
 | 05 Apr | **§127 AI Draft v2.0** · Markdown→Quill + DOCX Export + Quick Prompt Auto-Submit · `872407c` |
 | 04 Apr | **§120.5 Mobile Emergency Fix** · WINDI-LAW mobile responsive · Hamburger + Touch · `7f05abb` |
@@ -810,6 +810,7 @@ workspace/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
 ### Completado (últimos 10 · ver CLAUDE-HISTORY.md para §37-115)
+- [x] §131 **Email Distribution** · W-DIST-001 email channel · Trilingual · `92c3fb5` ✅ 05 Apr
 - [x] §130 **Whisper Transcription** · Cut-by-text + Legal Overlay · `6c73805` ✅ 05 Apr
 - [x] §129 **VD-CUT Workspace Retention** · Voice + PWA + 30d Buffer · `054091e` ✅ 05 Apr
 - [x] §128 **W-DIST-001** · Sovereign Distribution · Editorial Proof v1.1 · `a3cd0af` ✅ 05 Apr
@@ -845,8 +846,9 @@ workspace/
 | §128 | W-DIST-001 | ✅ LIVE | Sovereign Distribution · Editorial Proof v1.1 · `a3cd0af` |
 | §129 | VD-CUT Workspace Retention | ✅ SEALED | Voice + PWA + 30d Buffer · Tag: W-VD-CUT-001-S129 · `054091e` |
 | §130 | Whisper Transcription | ✅ LIVE | Cut-by-text + Legal Overlay · Local Whisper · `6c73805` |
+| §131 | Email Distribution | ✅ LIVE | W-DIST-001 email channel · Trilingual HTML · `92c3fb5` |
 
-> **Detalhes completos §128-130:** `CLAUDE-HISTORY.md` § SESSÃO 05 Abr 2026
+> **Detalhes completos §128-131:** `CLAUDE-HISTORY.md` § SESSÃO 05 Abr 2026
 
 ---
 
