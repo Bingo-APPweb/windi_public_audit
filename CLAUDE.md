@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.89
-**Sealed:** 2026-04-05 · §129 VD-CUT Workspace Retention SEALED
+**Version:** 1.9.90
+**Sealed:** 2026-04-05 · §130 Whisper Transcription + Legal Overlay
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -140,242 +140,48 @@ SGV ilumina → Sistema sugere → Humano decide → Ledger sela
 
 ### §120 — AI Draft Mode (04 Apr 2026)
 
-| Campo | Valor |
-|-------|-------|
-| Status | LIVE · WINDI-LAW v1.3.0 |
-| Port | :8122 (integrado no Identity Gate) |
-| Commits | `2c146e3` + `54ce321` + `2e3600a` + `3895a52` |
-| Invariants | I9, I11, G3 |
+**Status:** LIVE · :8122 · `3895a52` · I9, I11, G3
 
 > **"Any AI can generate a document. Only WINDI can prove it."**
 
-**Arquitectura:**
-```
-User Intent → I9 Gate (confirm) → LLM Routing → Draft Generation
-                                       ↓
-                              Human Review + Edit
-                                       ↓
-                              G3 Gate (confirm seal)
-                                       ↓
-                              SHA-256 → Ledger → Verify Public
-```
-
-**LLM Routing:**
-| Tier | Motor | Uso |
-|------|-------|-----|
-| HIGH | claude-sonnet-4-20250514 | Premium legal docs |
-| MED/FREE | mistral-small-latest | Standard generation |
-
-**8 Tipos de Documento:**
-`nda` · `vertrag` · `vollmacht` · `mahnung` · `kuendigung` · `klausel` · `stellungnahme` · `gutachten`
-
+**Pipeline:** Intent → I9 Gate → LLM → Review → G3 Gate → Ledger
+**8 Doc Types:** nda · vertrag · vollmacht · mahnung · kuendigung · klausel · stellungnahme · gutachten
 **4 Jurisdições:** DE · EU · PT · INT
-
-**Endpoints:**
-- `GET /ai-draft/health` — Status do módulo
-- `GET /ai-draft/doc-types` — Lista tipos disponíveis
-- `POST /ai-draft/generate` — Gerar rascunho (I9 gate)
-- `POST /ai-draft/seal` — Selar no Ledger (G3+I11)
-
-**Frontend:** Chip "⚖️ AI Draft" no workspace → Modal 5 fases
-
-**DID Flow Verificado:**
-```
-Gate (sessionStorage) → AI Draft → Ledger (actor: did:windi:...)
-                                          ↓
-                                   jurisdiction: DE
-                                   metadata: {draft_id, tier, invariants}
-                                   tags: [AI-DRAFT, I9-APPROVED, G3-CONFIRMED]
-```
-
-**Path:** `/opt/windi/windi-law/identity-gate/ai_draft.py`
-
-**First Real Seal:**
-```
-Receipt:      WINDI-LAW-AIDRAFT-20260404105917-C445AFF9
-Actor:        did:windi:JOBER-MOGELE-CORREA-001
-Jurisdiction: DE
-Doc:          Geheimhaltungsvereinbarung (NDA)
-Governance:   HIGH · I9 ✅ · G3 ✅ · I11 ✅
-Verify:       windi-domain.com/verify-public/?id=WINDI-LAW-AIDRAFT-20260404105917-C445AFF9
-```
-
-**Bonus:** `windilaw.de` sincronizado com `windi-domain.com/law/` via `get_base_path()`
+**First Seal:** `WINDI-LAW-AIDRAFT-20260404105917-C445AFF9`
 
 ### §120.7 — PIN Login for Mobile (04 Apr 2026)
 
-| Campo | Valor |
-|-------|-------|
-| Status | **LIVE · TESTED · WORKING** |
-| Commit | `56479a4` |
-| Invariants | I9, I12 |
+**Status:** LIVE · `56479a4` · I9, I12
 
-> **"Zero dependência de links. O utilizador lê e digita."**
-
-**Problema:** Magic links falhavam em tablets (sincronização de browsers, intercepção).
-
-**Solução:** Código PIN de 6 dígitos — manual, funciona em qualquer dispositivo.
-
-**Fluxo:**
-```
-Tablet → Gate → "Já tenho conta" → email → PIN no email
-                                           ↓
-                      Tablet: insere 6 dígitos → Workspace ✅
-```
-
-**Email inclui:** Link (1h) + PIN 6 dígitos (15min)
-
-**Endpoints:** `/login-request` (gera PIN) · `/login-pin` (valida)
-
-**Testado:** Samsung tablet cross-device ✅ 04 Apr 2026
+PIN 6 dígitos para tablets (magic links falhavam). Endpoints: `/login-request` · `/login-pin`
 
 ### §120.5 — WINDI-LAW Mobile Emergency Fix (04 Apr 2026)
 
-| Campo | Valor |
-|-------|-------|
-| Status | LIVE · Phase 1 Complete |
-| Commit | `7f05abb` |
-| Files | workspace/index.html · gate.html · dashboard.html |
-| Invariants | I12 (responsive) |
-
-> **"Desktop ✅ Mobile ❌ → Desktop ✅ Mobile ✅"**
-
-**Problema:** WINDI-LAW workspace tinha ZERO responsividade — sidebar fixa 192px, sem media queries, touch targets ~10px.
-
-**Solução Phase 1:**
-- Hamburger menu off-canvas para sidebar
-- Breakpoints: 1024px (tablet) · 767px (mobile) · 399px (small)
-- Touch targets 44px (Apple HIG)
-- Safe area support (notch/iPhone)
-- Inspector hidden em mobile
-- iOS zoom prevention (font-size: 16px)
-
-**Ficheiros alterados:**
-| Ficheiro | Alterações |
-|----------|------------|
-| `workspace/index.html` | +294 linhas CSS + JS hamburger |
-| `gate.html` | +44 linhas mobile CSS |
-| `dashboard.html` | +28 linhas mobile CSS |
-
-**Relatório:** `/opt/windi/windi-law/MOBILE-DIAGNOSTIC-REPORT.md`
-
-**Phase 2 (pendente):** Full rewrite mobile-first para paridade com Travel
+**Status:** LIVE · `7f05abb` · I12 · Hamburger menu · Touch 44px · Phase 2 pendente
 
 ### §122 — W-VD-MASS-001 · Policy-Based Video Automation (04 Apr 2026)
 
-| Campo | Valor |
-|-------|-------|
-| Status | ✅ LIVE · SEALED |
-| Commit | `d7da443` |
-| Port | :8131 |
-| Protocol | I9-P (Policy-Based Automation) |
-| Invariants | I9-P, I11 |
+**Status:** LIVE · `d7da443` · :8131 · I9-P, I11
 
 > **"I9-P não é delegação de responsabilidade — é delegação de critério."**
 
-**Arquitectura dos Dois Pilares:**
-```
-W-VD-CUT-001  :8128   I9 Directo    Forense · 1 vídeo/vez · SEALED
-W-VD-MASS-001 :8131   I9-P Policy   Batch · Mass processing · SEALED
-```
+**Dois Pilares:** VD-CUT :8128 (I9 Directo · Forense) + VD-MASS :8131 (I9-P · Batch)
 
-**Fluxo I9-P:**
-```
-Humano define Policy (critérios + validade)
-        ↓
-Sistema activa (hash no ledger interno)
-        ↓
-Batch submitted → avaliação automática
-        ↓
-✅ Conforme → auto-seal (Policy-I9-P)
-⚠️  Exception → Queue → decisão humana obrigatória
-```
-
-**Endpoints:** `/policy/create` · `/policy/{id}/activate` · `/batch/submit` · `/queue/exceptions` · `/queue/{id}/decide`
-
-**Primeira Policy:** "WINDI TRAVEL Hotels v1" · válida até 2026-07-04 · ledger: `58a7fdc3...`
+**Fluxo:** Policy define → Batch avalia → Conforme=auto-seal · Exception=human queue
 
 ### §122.1 — MLT/Shotcut Rendering Engine (04 Apr 2026)
 
-| Campo | Valor |
-|-------|-------|
-| Status | ✅ LIVE (feature flag) |
-| Commit | `5f11bcc` |
-| Module | `mlt_engine.py` |
-| Binary | melt 7.12.0 |
-| Invariants | I9-P, I11 |
-
-> **"O ficheiro .mlt é a receita auditável antes de renderizar."**
-
-**Arquitectura:**
-- `.mlt` file = auditable XML recipe (timeline, effects, transitions)
-- `melt` renders locally = total sovereignty
-- Disabled by default until `MLT_ENABLED=true` in .env
-- Render failure → Exception Queue (never auto-seal)
-
-**Security Validation:**
-- Valid XML structure with `<mlt>` root
-- Block remote URLs (`http://`, `https://`, `ftp://`)
-- Block paths outside `/opt/windi/media`
-- Extract profiles, producers, playlists metadata
-
-**Endpoints:** `/mlt/status` · `/mlt/validate` · `/mlt/render`
-
-**Hash Chain:** MLT hash (recipe) + Render hash (output) — both tracked for I11
+**Status:** LIVE · `5f11bcc` · melt 7.12.0 · `.mlt` = auditable recipe · local render
 
 ### §122.2 — ProofStream v1.0 · Primeiro Seal Real (04 Apr 2026)
 
-| Campo | Valor |
-|-------|-------|
-| Receipt | `WINDI-VDCUT-20260404183836-C181E66D` |
-| Hash | `sha256:10a34a3cda834667f9fa2ce44d660bd23bcb9e957e8dfc07870eb3afe914ae55` |
-| Verify | `windi-domain.com/verify-public/?id=WINDI-VDCUT-20260404183836-C181E66D` |
-| Status | valid · Ledger: Verankert |
+**Receipt:** `WINDI-VDCUT-20260404183836-C181E66D` · Vídeo cavalo Kempten · < 1 min cycle
 
-> **"Primeiro momento real selado pelo ProofStream WINDI em produção."**
+### §122.4 — Telegram é Canal, não Infraestrutura
 
-**Artefacto:** Vídeo de cavalo gravado em Kempten, Bavaria.
-**Ciclo:** gravação → NOMAD-BOT → seal → Verify Public < 1 minuto.
+> **"Telegram é PORTA. WINDI é CASA."** NOMAD-BOT: Interface ✅ · Ficheiro binário ❌
 
-### §122.3 — Hash Divergente entre Canais (Descoberta Técnica)
-
-```
-Canal VD-CUT (upload directo):  sha256:e30bd5f2...
-Canal NOMAD-BOT (via Telegram): sha256:10a34a3c...
-```
-
-**Causa:** Telegram comprime e transcodifica vídeos nos seus servidores.
-O ficheiro recebido pelo bot já não é o ficheiro original.
-
-**Implicação:** Seal via NOMAD-BOT certifica "ficheiro tal como chegou via Telegram".
-Seal via VD-CUT directo certifica o ficheiro ORIGINAL.
-
-### §122.4 — Telegram é Canal, não Infraestrutura (Princípio Arquitectural)
-
-```
-NOMAD-BOT (Telegram):
-  ✅ Texto · comandos · notificações · recibos · links WINDI
-  ❌ Integridade binária · Hosting soberano · Cadeia forense
-```
-
-> **"O Telegram é a PORTA DE ENTRADA. O WINDI é a CASA."**
-
-**NOMAD-BOT faz:** Interface · Intenção · Link upload · Notificação · Recibo
-**NOMAD-BOT NÃO faz:** Canal de ficheiro · Integridade binária · Substituir upload directo
-
-### §122.5 — content_hash Validado
-
-```
-Upload 1: sha256:e30bd5f2... → project_id: VDCUT-20260404184404-6EFC7F3D
-Upload 2: sha256:e30bd5f2... → project_id: VDCUT-20260404185205-B4D7B37E
-```
-
-| Campo | Identidade |
-|-------|------------|
-| content_hash | FICHEIRO (imutável, SHA-256) |
-| project_id | SESSÃO (gerado no upload) |
-| asset_id | REGISTO (gerado no upload) |
-| ledger entry | ACÇÃO (quando + quem + onde) |
+> **§122.3/§122.5:** ver `CLAUDE-HISTORY.md`
 
 ### §122.6 — Matriz de Canais e Casos de Uso (IRREMEDIÁVEL)
 
@@ -386,43 +192,18 @@ Upload 2: sha256:e30bd5f2... → project_id: VDCUT-20260404185205-B4D7B37E
 | NOMAD-BOT Telegram | ❌ | ❌ | ✅ | Interface · Notificação · Consumer |
 | API parceiro | ✅ | ⚠️ contrato | ✅ | Enterprise · Câmaras · TV |
 
-**Arquitectura Validada:**
-```
-Forense / Jurídico  →  VD-CUT :8128  (I9 Directo)
-Mass / Travel       →  VD-MASS :8131 (I9-P Policy)
-Interface consumer  →  NOMAD-BOT     (canal · não ficheiro)
-```
+**Rota:** Forense→VD-CUT · Mass→VD-MASS · Consumer→NOMAD-BOT
 
 ### §118 — Travel Stack Auto-Healing (03 Apr 2026)
 
-**Estado:** CANONICAL · ACTIVE
+**Estado:** CANONICAL · ACTIVE · **Commit:** `e7cff50`
 
 > **"O sistema mantém a sua integridade sem depender de vigilância humana."**
 
-**Artefactos:**
+**Portas protegidas:** 8126 · 8127 · 8128 �� 8129
+**Watchdog:** 15s loop · port-cleaner · logrotate
 
-| Artefacto | Estado |
-|-----------|--------|
-| `windi-travel.service` | 🟢 override + KillMode=mixed |
-| `windi-nomad-bot.service` | 🟢 override + port-cleaner |
-| `windi-vd-cut.service` | 🟢 NEW (migração nohup → systemd) |
-| `windi-joe.service` | 🟢 NEW (migração nohup → systemd) |
-| `windi-watchdog.service` | 🟢 auto-heal loop 15s |
-| `/opt/windi/bin/port-cleaner.sh` | 🟢 limpeza via fuser |
-| `/opt/windi/bin/windi-watchdog.sh` | 🟢 monitor 4 services |
-| `/etc/logrotate.d/windi-travel` | 🟢 daily · 7 rot · 50MB max |
-
-**Portas protegidas:** 8126 (MARIA) · 8127 (NOMAD) · 8128 (VD-CUT) · 8129 (JOE)
-
-**Mecanismo:**
-1. Pre-clean (ExecStartPre) → remove órfãos antes de bind
-2. Systemd resilience → KillMode=mixed + TimeoutStopSec curto
-3. Watchdog contínuo → verificação 15s + restart automático
-4. Log hygiene → rotação diária + retenção controlada
-
-**Commit:** `e7cff50`
-
-**Sealed:** 03 Apr 2026 · Travel Stack · Infra Crítica
+> **Detalhes:** `CLAUDE-HISTORY.md`
 
 ### 3.2 Layer 7 — Communication Semantics
 
@@ -871,11 +652,11 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 05 Apr | **§130 Whisper Transcription** · Cut-by-text + Legal Overlay · Local Whisper v20250625 · `6c73805` |
 | 05 Apr | **§129 VD-CUT Workspace Retention** · Voice + PWA + 30d Editable Buffer · `054091e` |
 | 05 Apr | **§128 W-DIST-001** · Sovereign Distribution Layer · Editorial Proof v1.1 · `a3cd0af` |
 | 05 Apr | **§127 AI Draft v2.0** · Markdown→Quill + DOCX Export + Quick Prompt Auto-Submit · `872407c` |
 | 04 Apr | **§120.5 Mobile Emergency Fix** · WINDI-LAW mobile responsive · Hamburger + Touch · `7f05abb` |
-| 04 Apr | **§120 AI Draft Mode** · WINDI-LAW v1.3.0 · Generate+Seal pipeline · DID→Ledger · `3895a52` |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -1029,6 +810,7 @@ workspace/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
 ### Completado (últimos 10 · ver CLAUDE-HISTORY.md para §37-115)
+- [x] §130 **Whisper Transcription** · Cut-by-text + Legal Overlay · `6c73805` ✅ 05 Apr
 - [x] §129 **VD-CUT Workspace Retention** · Voice + PWA + 30d Buffer · `054091e` ✅ 05 Apr
 - [x] §128 **W-DIST-001** · Sovereign Distribution · Editorial Proof v1.1 · `a3cd0af` ✅ 05 Apr
 - [x] §127 **AI Draft v2.0** · Markdown→Quill + DOCX Export + Quick Prompt · `872407c` ✅ 05 Apr
@@ -1062,118 +844,11 @@ workspace/
 | §127 | AI Draft v2.0 | ✅ SEALED | Markdown→Quill + DOCX Export + Quick Prompt · `872407c` |
 | §128 | W-DIST-001 | ✅ LIVE | Sovereign Distribution · Editorial Proof v1.1 · `a3cd0af` |
 | §129 | VD-CUT Workspace Retention | ✅ SEALED | Voice + PWA + 30d Buffer · Tag: W-VD-CUT-001-S129 · `054091e` |
+| §130 | Whisper Transcription | ✅ LIVE | Cut-by-text + Legal Overlay · Local Whisper · `6c73805` |
 
-> **Detalhes completos:** `CLAUDE-HISTORY.md`
+> **Detalhes completos §128-130:** `CLAUDE-HISTORY.md` § SESSÃO 05 Abr 2026
 
 ---
 
 *LIGA IA+H — Kempten, Bavaria · 2026*
 *"AI processes. Human decides. WINDI guarantees."*
-
-
----
-
-## §128 — WINDI-LAW × VD-CUT — Videobeweis Bridge · SEALED 05 Abr 2026
-
-**Status:** LIVE · SEALED · Opção B · I11 · IRREMEDIÁVEL
-**Commit:** 7b3d3c2
-**Receipt:** WINDI-LAW-COMPOSITE-1775386047-07BC60C1
-**Composite:** sha256:568d1d78536f1222cb85b57cfaa230f5e00e7ba398b15a5908ab8b0e7c150ca8
-**VD-CUT Ref:** WINDI-VDCUT-20260403132852-BB3E3F2F
-**Verify:** windi-domain.com/verify-public/?id=WINDI-LAW-COMPOSITE-1775386047-07BC60C1
-
-### O que foi construído
-Decisão do Conselho (Opção B — Integração Mínima):
-- `POST /ai-draft/video/attach` — anexa vídeo já selado via Ledger verify
-- `POST /ai-draft/seal-with-video` — hash composto SHA-256(doc+videos)
-- Modal Video Choice no workspace: upload local OU VD-CUT selado
-- `__videoAttachments[]` + `sealComposite()` live no workspace
-
-### Invariantes
-I9 ✅ · I11 ✅ · G3 ✅ · §122.4 ✅ · :8128 SELADO ✅
-
-### Arquitectura canónica
-- VD-CUT guarda o vídeo · LAW guarda apenas hash + receipt
-- Verificação de receipt via Ledger público (não VD-CUT directo)
-- Hash composto = SHA-256(doc_hash + video_hashes ordenados)
-
-### Ficheiros alterados
-- `windi-law/identity-gate/ai_draft.py` +110 linhas
-- `windi-law/workspace/index.html` +180 linhas
-
-### Backups
-- `/opt/windi/backups/ai-draft-pre-video-20260405.py`
-- `/opt/windi/backups/law-workspace-pre-video-20260405.html`
-
-### Excluído (fase futura)
-Proposta C — frame-level seal (deepfake prevention) — não implementado
-
-Liga IA+H · Kempten, Bavaria · 05 Abril 2026
-
----
-
-## §129 — VD-CUT Workspace Retention Layer + Voice + PWA Upload · SEALED 05 Abr 2026
-
-**Status:** CANONICAL · ACTIVE · SEALED
-**Commit:** `054091e`
-**Tag:** `W-VD-CUT-001-S129`
-**Invariants:** I9, I11, G3
-
-### Pipeline Evolution
-
-| Before | After |
-|--------|-------|
-| Upload → Seal → Vault | Upload → Workspace (30d) → Edit → Seal → Vault |
-| Immediate immutability | 30-day editable window |
-| Notarial system | Creative + sovereign system |
-
-### Retention Layer
-
-| Phase | Location | Retention | Editable |
-|-------|----------|-----------|----------|
-| Intake | `/media/vd-cut/incoming/` | 30 days | ✅ |
-| Processed | `/media/vd-cut/exports/` | 30 days | ✅ |
-| Sealed | Forensic Vault | ∞ Permanent | ❌ |
-
-**Config:**
-```python
-ORIGINAL_RETENTION_HOURS = 720   # 30 days
-SEALED_RETENTION_DAYS = 30
-```
-
-### Components Implemented
-
-| Component | Details |
-|-----------|---------|
-| **NOMAD Voice** | `handlers/voice.py` · Whisper transcription |
-| **PWA Upload** | `/opt/windi/nomad-pwa/` · 6 files |
-| **Nginx** | `/nomad-upload/` route |
-| **VD-CUT API** | Fixed: `video`, `did`, `source_asset`, `in_point`, `out_point` |
-| **DID Chain** | URL → Travel → Law → Cookie → Auto-generate |
-| **Vault Archive** | `archive_to_vault()` · permanent copy after seal |
-
-### Constitutional Alignment
-
-- **I9** — Human decides when to seal ✅
-- **I11** — Sealed data is immutable ✅
-- **G3** — Propose ≠ Execute ✅
-
-### Canonical Interpretation
-
-> "Between creation and truth, there must be a space where the human decides."
-
-§129 introduces a **temporal sovereignty layer** between creation and irreversible truth, enabling:
-- Iteration before commitment
-- Human-controlled finalization
-- Integration with MARIA (suggestion layer)
-- Integration with JOE (narrative orchestration)
-
-### Next Phase (Preview)
-
-**§130 — Workspace Integration (planned)**
-- Unified Workspace (VD-CUT + MARIA + Thread)
-- Timeline visualization
-- JMPG Preview Layers (P2/P3)
-- "Seal Consciente" trigger
-
-Liga IA+H · Kempten, Bavaria · 05 Abril 2026
