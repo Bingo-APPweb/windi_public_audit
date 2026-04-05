@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#8B7355">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="WINDI Seal">
+  <title>WINDI Nomad Seal</title>
+  <link rel="manifest" href="/nomad-upload/manifest.json">
+  <link rel="apple-touch-icon" href="/nomad-upload/icon-192.png">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #F5F0E0;
+      --gold: #8B7355;
+      --gold-dark: #6B5A45;
+      --text: #2A2520;
+      --text-muted: #7A756D;
+      --border: #D5D0C5;
+      --success: #4A7C4E;
+      --error: #9C4040;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+      padding-top: env(safe-area-inset-top, 1rem);
+      padding-bottom: env(safe-area-inset-bottom, 1rem);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      padding: 1.5rem 0;
+    }
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.05em;
+    }
+    .header p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+    }
+
+    /* Upload Area */
+    .upload-area {
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 2rem 1rem;
+      text-align: center;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .upload-area:hover, .upload-area.dragover {
+      border-color: var(--gold);
+      background: rgba(139, 115, 85, 0.05);
+    }
+    .upload-area .icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    .upload-area h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .upload-area p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Hidden file input */
+    #file-input { display: none; }
+
+    /* Preview */
+    .preview {
+      display: none;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .preview.active { display: flex; }
+
+    .preview video {
+      width: 100%;
+      max-height: 280px;
+      border-radius: 8px;
+      background: #000;
+      object-fit: contain;
+    }
+
+    .preview-info {
+      background: rgba(139, 115, 85, 0.1);
+      padding: 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .preview-info .filename {
+      font-weight: 600;
+      word-break: break-all;
+    }
+    .preview-info .meta {
+      color: var(--text-muted);
+      margin-top: 0.3rem;
+    }
+    .preview-info .hash {
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 0.75rem;
+      color: var(--gold);
+      margin-top: 0.5rem;
+      word-break: break-all;
+    }
+
+    /* Form */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .form-group label {
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .form-group input {
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      background: #fff;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--gold);
+    }
+    .form-group .hint {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Buttons */
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 1rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-height: 52px;
+    }
+    .btn-primary {
+      background: var(--gold);
+      color: #fff;
+    }
+    .btn-primary:hover { background: var(--gold-dark); }
+    .btn-primary:disabled {
+      background: var(--border);
+      cursor: not-allowed;
+    }
+    .btn-secondary {
+      background: transparent;
+      color: var(--gold);
+      border: 1px solid var(--gold);
+    }
+    .btn-secondary:hover {
+      background: rgba(139, 115, 85, 0.1);
+    }
+
+    /* Progress */
+    .progress-container {
+      display: none;
+    }
+    .progress-container.active { display: block; }
+
+    .progress-bar {
+      height: 8px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-bar .fill {
+      height: 100%;
+      background: var(--gold);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    .progress-text {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+    }
+
+    /* Result */
+    .result {
+      display: none;
+      text-align: center;
+      padding: 1.5rem;
+      border-radius: 12px;
+    }
+    .result.active { display: block; }
+    .result.success { background: rgba(74, 124, 78, 0.1); }
+    .result.error { background: rgba(156, 64, 64, 0.1); }
+
+    .result .icon { font-size: 3rem; margin-bottom: 1rem; }
+    .result h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+    .result .receipt {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      background: rgba(0,0,0,0.05);
+      padding: 0.75rem;
+      border-radius: 6px;
+      margin: 1rem 0;
+      word-break: break-all;
+    }
+    .result .verify-link {
+      color: var(--gold);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .result .verify-link:hover { text-decoration: underline; }
+
+    /* Actions row */
+    .actions {
+      display: flex;
+      gap: 0.75rem;
+    }
+    .actions .btn { flex: 1; }
+
+    /* Footer */
+    .footer {
+      margin-top: auto;
+      padding-top: 2rem;
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .footer a {
+      color: var(--gold);
+      text-decoration: none;
+    }
+
+    /* Language Toggle */
+    .lang-toggle {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .lang-toggle button {
+      padding: 0.4rem 0.8rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: transparent;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.2s;
+    }
+    .lang-toggle button.active {
+      background: var(--gold);
+      color: #fff;
+      border-color: var(--gold);
+    }
+
+    /* Responsive */
+    @media (max-width: 360px) {
+      .header h1 { font-size: 1.3rem; }
+      .upload-area { padding: 1.5rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Language Toggle -->
+    <div class="lang-toggle">
+      <button onclick="setLang('de')" id="btn-de" class="active">DE</button>
+      <button onclick="setLang('en')" id="btn-en">EN</button>
+      <button onclick="setLang('pt')" id="btn-pt">PT</button>
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+      <h1>WINDI</h1>
+      <p id="txt-subtitle">Sela este momento. Para sempre verificável.</p>
+    </div>
+
+    <!-- Upload Area -->
+    <div class="upload-area" id="upload-area" onclick="document.getElementById('file-input').click()">
+      <div class="icon">📹</div>
+      <h2 id="txt-upload-title">Escolher Vídeo</h2>
+      <p id="txt-upload-desc">Toca para seleccionar ou arrastar ficheiro</p>
+      <input type="file" id="file-input" accept="video/*" capture="environment">
+    </div>
+
+    <!-- Preview -->
+    <div class="preview" id="preview">
+      <video id="video-preview" controls playsinline></video>
+      <div class="preview-info">
+        <div class="filename" id="preview-filename"></div>
+        <div class="meta" id="preview-meta"></div>
+        <div class="hash" id="preview-hash"></div>
+      </div>
+
+      <!-- DID Input -->
+      <div class="form-group">
+        <label for="did-input" id="txt-did-label">DID (Identidade)</label>
+        <input type="text" id="did-input" placeholder="did:windi:...">
+        <span class="hint" id="txt-did-hint">Pré-preenchido via link do NOMAD-BOT</span>
+      </div>
+
+      <!-- Actions -->
+      <div class="actions">
+        <button class="btn btn-secondary" onclick="resetUpload()" id="btn-cancel">Cancelar</button>
+        <button class="btn btn-primary" onclick="sealVideo()" id="btn-seal">Selar</button>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-container" id="progress-container">
+      <div class="progress-bar">
+        <div class="fill" id="progress-fill"></div>
+      </div>
+      <div class="progress-text" id="progress-text">A enviar... 0%</div>
+    </div>
+
+    <!-- Result -->
+    <div class="result" id="result">
+      <div class="icon" id="result-icon"></div>
+      <h3 id="result-title"></h3>
+      <p id="result-message"></p>
+      <div class="receipt" id="result-receipt"></div>
+      <a href="#" class="verify-link" id="result-verify" target="_blank" id="txt-verify">Verificar</a>
+      <div class="vault-status" id="result-vault" style="margin-top:0.75rem;color:#4ade80;font-size:0.9rem;display:none;"></div>
+      <div class="actions" style="margin-top:1rem;">
+        <button class="btn btn-secondary" onclick="shareResult()" id="btn-share">Partilhar</button>
+        <button class="btn btn-primary" onclick="resetUpload()" id="btn-new">Novo</button>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p>WINDI · <a href="https://windi-domain.com">windi-domain.com</a></p>
+      <p>Liga IA+H · §122.4 Integridade · I9 Soberania</p>
+    </div>
+
+  </div>
+
+  <script>
+    // ═══════════════════════════════════════════════════════════════════════
+    // WINDI NOMAD PWA — §129 Upload Directo
+    // Liga IA+H · Kempten, Bavaria · 05 Abril 2026
+    // ═══════════════════════════════════════════════════════════════════════
+
+    const VD_CUT_URL = '/vd-cut';
+    const VERIFY_BASE = 'https://windi-domain.com/verify-public/';
+
+    let currentFile = null;
+    let currentHash = null;
+    let currentLang = 'de';
+
+    // ─── i18n ────────────────────────────────────────────────────────────────
+    const I18N = {
+      de: {
+        subtitle: 'Sela este momento. Para sempre verificável.',
+        uploadTitle: 'Vídeo auswählen',
+        uploadDesc: 'Tippe zum Auswählen oder Datei hierher ziehen',
+        didLabel: 'DID (Identität)',
+        didHint: 'Auto-erkannt oder manuell eingeben',
+        cancel: 'Abbrechen',
+        seal: 'Versiegeln',
+        uploading: 'Hochladen...',
+        hashing: 'Hash berechnen...',
+        successTitle: 'Versiegelt!',
+        successMsg: 'Dein Moment ist jetzt unveränderlich im Ledger.',
+        errorTitle: 'Fehler',
+        verify: 'Verifizieren',
+        share: 'Teilen',
+        new: 'Neu',
+        vaultArchived: '✓ Im Forensic Vault archiviert'
+      },
+      en: {
+        subtitle: 'Seal this moment. Forever verifiable.',
+        uploadTitle: 'Choose Video',
+        uploadDesc: 'Tap to select or drag file here',
+        didLabel: 'DID (Identity)',
+        didHint: 'Auto-detected or enter manually',
+        cancel: 'Cancel',
+        seal: 'Seal',
+        uploading: 'Uploading...',
+        hashing: 'Computing hash...',
+        successTitle: 'Sealed!',
+        successMsg: 'Your moment is now immutable in the Ledger.',
+        errorTitle: 'Error',
+        verify: 'Verify',
+        share: 'Share',
+        new: 'New',
+        vaultArchived: '✓ Archived to Forensic Vault'
+      },
+      pt: {
+        subtitle: 'Sela este momento. Para sempre verificável.',
+        uploadTitle: 'Escolher Vídeo',
+        uploadDesc: 'Toca para seleccionar ou arrastar ficheiro',
+        didLabel: 'DID (Identidade)',
+        didHint: 'Auto-detectado ou inserir manualmente',
+        cancel: 'Cancelar',
+        seal: 'Selar',
+        uploading: 'A enviar...',
+        hashing: 'A calcular hash...',
+        successTitle: 'Selado!',
+        successMsg: 'O teu momento está agora imutável no Ledger.',
+        errorTitle: 'Erro',
+        verify: 'Verificar',
+        share: 'Partilhar',
+        new: 'Novo',
+        vaultArchived: '✓ Arquivado no Forensic Vault'
+      }
+    };
+
+    function setLang(lang) {
+      currentLang = lang;
+      const t = I18N[lang];
+
+      // Update buttons
+      document.querySelectorAll('.lang-toggle button').forEach(b => b.classList.remove('active'));
+      document.getElementById('btn-' + lang).classList.add('active');
+
+      // Update texts
+      document.getElementById('txt-subtitle').textContent = t.subtitle;
+      document.getElementById('txt-upload-title').textContent = t.uploadTitle;
+      document.getElementById('txt-upload-desc').textContent = t.uploadDesc;
+      document.getElementById('txt-did-label').textContent = t.didLabel;
+      document.getElementById('txt-did-hint').textContent = t.didHint;
+      document.getElementById('btn-cancel').textContent = t.cancel;
+      document.getElementById('btn-seal').textContent = t.seal;
+      document.getElementById('btn-share').textContent = t.share;
+      document.getElementById('btn-new').textContent = t.new;
+
+      localStorage.setItem('windi-lang', lang);
+    }
+
+    // ─── File Handling ────────────────────────────────────────────────────────
+
+    document.getElementById('file-input').addEventListener('change', handleFileSelect);
+
+    // Drag and drop
+    const uploadArea = document.getElementById('upload-area');
+    uploadArea.addEventListener('dragover', e => {
+      e.preventDefault();
+      uploadArea.classList.add('dragover');
+    });
+    uploadArea.addEventListener('dragleave', () => {
+      uploadArea.classList.remove('dragover');
+    });
+    uploadArea.addEventListener('drop', e => {
+      e.preventDefault();
+      uploadArea.classList.remove('dragover');
+      if (e.dataTransfer.files.length > 0) {
+        handleFile(e.dataTransfer.files[0]);
+      }
+    });
+
+    function handleFileSelect(e) {
+      if (e.target.files.length > 0) {
+        handleFile(e.target.files[0]);
+      }
+    }
+
+    async function handleFile(file) {
+      if (!file.type.startsWith('video/')) {
+        alert('Please select a video file.');
+        return;
+      }
+
+      currentFile = file;
+
+      // Show preview
+      const video = document.getElementById('video-preview');
+      video.src = URL.createObjectURL(file);
+
+      document.getElementById('preview-filename').textContent = file.name;
+      const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+      document.getElementById('preview-meta').textContent = `${sizeMB} MB`;
+
+      // Compute hash
+      document.getElementById('preview-hash').textContent = I18N[currentLang].hashing;
+      currentHash = await computeHash(file);
+      document.getElementById('preview-hash').textContent = 'SHA-256: ' + currentHash.substring(0, 24) + '...';
+
+      // Show preview section
+      document.getElementById('upload-area').style.display = 'none';
+      document.getElementById('preview').classList.add('active');
+    }
+
+    async function computeHash(file) {
+      const buffer = await file.arrayBuffer();
+      const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    // ─── Upload & Seal ────────────────────────────────────────────────────────
+
+    async function sealVideo() {
+      if (!currentFile || !currentHash) return;
+
+      const did = document.getElementById('did-input').value || 'anon';
+      const t = I18N[currentLang];
+
+      // Show progress
+      document.getElementById('preview').classList.remove('active');
+      document.getElementById('progress-container').classList.add('active');
+
+      try {
+        // Step 1: Upload to VD-CUT intake
+        const formData = new FormData();
+        formData.append('video', currentFile);
+        formData.append('did', did);
+        formData.append('title', currentFile.name);
+
+        const uploadResult = await uploadWithProgress(
+          VD_CUT_URL + '/intake',
+          formData,
+          (percent) => {
+            document.getElementById('progress-fill').style.width = percent + '%';
+            document.getElementById('progress-text').textContent = t.uploading + ' ' + percent + '%';
+          }
+        );
+
+        if (!uploadResult.ok) {
+          throw new Error(uploadResult.error || 'Upload failed');
+        }
+
+        const intakeData = await uploadResult.json();
+        const projectId = intakeData.project_id;
+        const assetId = intakeData.asset_id;
+        const duration = intakeData.duration || 60;
+
+        // Step 2: Create job (full video, no trim)
+        document.getElementById('progress-text').textContent = 'Creating job...';
+        const jobRes = await fetch(VD_CUT_URL + '/job/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            project_id: projectId,
+            source_asset: assetId,
+            edl: [{ in_point: 0, out_point: duration }],
+            preset: 'story_clean'
+          })
+        });
+
+        if (!jobRes.ok) {
+          throw new Error('Job creation failed');
+        }
+
+        const jobData = await jobRes.json();
+        const jobId = jobData.job_id;
+
+        // Step 3: Poll for job completion
+        document.getElementById('progress-text').textContent = 'Processing...';
+        let exportId = null;
+        for (let i = 0; i < 60; i++) {
+          await sleep(2000);
+          const statusRes = await fetch(VD_CUT_URL + '/job/' + jobId);
+          const statusData = await statusRes.json();
+
+          if (statusData.status === 'COMPLETED') {
+            exportId = statusData.export?.id || statusData.export_id;
+            break;
+          } else if (statusData.status === 'FAILED') {
+            throw new Error('Processing failed');
+          }
+
+          document.getElementById('progress-fill').style.width = (50 + i) + '%';
+        }
+
+        if (!exportId) {
+          throw new Error('Processing timeout');
+        }
+
+        // Step 4: Seal (I9 gate - human already clicked Seal button)
+        document.getElementById('progress-text').textContent = 'Sealing...';
+        const sealRes = await fetch(VD_CUT_URL + '/seal', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            project_id: projectId,
+            export_id: exportId,
+            wallet_id: did,
+            human_approved: true
+          })
+        });
+
+        if (!sealRes.ok) {
+          throw new Error('Seal failed');
+        }
+
+        const sealData = await sealRes.json();
+
+        // Show success
+        showResult({
+          success: true,
+          receiptId: sealData.receipt_id,
+          verifyUrl: sealData.verify_url || VERIFY_BASE + '?id=' + sealData.receipt_id,
+          hash: sealData.content_hash || currentHash,
+          vaultArchived: sealData.vault_archived,
+          vaultPath: sealData.vault_path
+        });
+
+      } catch (error) {
+        console.error('Seal error:', error);
+        showResult({
+          success: false,
+          error: error.message
+        });
+      }
+    }
+
+    function uploadWithProgress(url, formData, onProgress) {
+      return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+
+        xhr.upload.addEventListener('progress', (e) => {
+          if (e.lengthComputable) {
+            const percent = Math.round((e.loaded / e.total) * 100);
+            onProgress(percent);
+          }
+        });
+
+        xhr.addEventListener('load', () => {
+          resolve({
+            ok: xhr.status >= 200 && xhr.status < 300,
+            status: xhr.status,
+            json: () => JSON.parse(xhr.responseText),
+            error: xhr.status >= 400 ? xhr.responseText : null
+          });
+        });
+
+        xhr.addEventListener('error', () => {
+          reject(new Error('Network error'));
+        });
+
+        xhr.open('POST', url);
+        xhr.send(formData);
+      });
+    }
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    // ─── Result Display ───────────────────────────────────────────────────────
+
+    function showResult(data) {
+      const t = I18N[currentLang];
+
+      document.getElementById('progress-container').classList.remove('active');
+      document.getElementById('result').classList.add('active');
+
+      if (data.success) {
+        document.getElementById('result').className = 'result active success';
+        document.getElementById('result-icon').textContent = '✓';
+        document.getElementById('result-title').textContent = t.successTitle;
+        document.getElementById('result-message').textContent = t.successMsg;
+        document.getElementById('result-receipt').textContent = data.receiptId;
+        document.getElementById('result-verify').href = data.verifyUrl;
+        document.getElementById('result-verify').textContent = t.verify;
+        document.getElementById('result-verify').style.display = 'inline';
+
+        // Show vault status
+        const vaultEl = document.getElementById('result-vault');
+        if (vaultEl) {
+          if (data.vaultArchived) {
+            vaultEl.textContent = t.vaultArchived || '✓ Archived to Forensic Vault';
+            vaultEl.style.display = 'block';
+          } else {
+            vaultEl.style.display = 'none';
+          }
+        }
+
+        // Store for sharing
+        window.lastResult = data;
+      } else {
+        document.getElementById('result').className = 'result active error';
+        document.getElementById('result-icon').textContent = '✕';
+        document.getElementById('result-title').textContent = t.errorTitle;
+        document.getElementById('result-message').textContent = data.error;
+        document.getElementById('result-receipt').textContent = '';
+        document.getElementById('result-verify').style.display = 'none';
+      }
+    }
+
+    function resetUpload() {
+      currentFile = null;
+      currentHash = null;
+
+      document.getElementById('file-input').value = '';
+      document.getElementById('video-preview').src = '';
+      document.getElementById('preview').classList.remove('active');
+      document.getElementById('progress-container').classList.remove('active');
+      document.getElementById('result').classList.remove('active');
+      document.getElementById('upload-area').style.display = 'block';
+      document.getElementById('progress-fill').style.width = '0%';
+    }
+
+    async function shareResult() {
+      if (!window.lastResult) return;
+
+      const shareData = {
+        title: 'WINDI Seal',
+        text: `Momento selado! Recibo: ${window.lastResult.receiptId}`,
+        url: window.lastResult.verifyUrl
+      };
+
+      try {
+        if (navigator.share) {
+          await navigator.share(shareData);
+        } else {
+          // Fallback: copy to clipboard
+          await navigator.clipboard.writeText(window.lastResult.verifyUrl);
+          alert('Link copiado!');
+        }
+      } catch (err) {
+        console.log('Share failed:', err);
+      }
+    }
+
+    // ─── Init ─────────────────────────────────────────────────────────────────
+
+    async function init() {
+      // Get DID from URL params
+      const params = new URLSearchParams(window.location.search);
+      let did = params.get('did');
+      const context = params.get('context');
+
+      // §129 DID Resolution Chain:
+      // 1. URL param ?did=
+      // 2. Existing WINDI Travel session
+      // 3. Existing WINDI Law session
+      // 4. Generate temporary DID for testing
+
+      if (!did) {
+        // Try Travel session
+        did = sessionStorage.getItem('windi_travel_wallet');
+      }
+
+      if (!did) {
+        // Try Law session
+        did = sessionStorage.getItem('windi_law_wallet');
+      }
+
+      if (!did) {
+        // Try to verify existing cookie session
+        try {
+          const res = await fetch('/travel/session/verify', { credentials: 'include' });
+          if (res.ok) {
+            const data = await res.json();
+            if (data.did) {
+              did = data.did;
+              sessionStorage.setItem('windi_travel_wallet', did);
+            }
+          }
+        } catch (e) {
+          // No session, continue
+        }
+      }
+
+      if (!did) {
+        // Generate temporary DID for anonymous uploads
+        const tempId = Date.now().toString(36).toUpperCase();
+        did = 'did:windi:nomad:anon-' + tempId;
+      }
+
+      document.getElementById('did-input').value = did;
+
+      // Restore language preference
+      const savedLang = localStorage.getItem('windi-lang');
+      if (savedLang && I18N[savedLang]) {
+        setLang(savedLang);
+      }
+
+      // Register service worker
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/nomad-upload/sw.js')
+          .then(() => console.log('SW registered'))
+          .catch(err => console.log('SW failed:', err));
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

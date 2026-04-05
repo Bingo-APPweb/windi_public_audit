@@ -43,14 +43,15 @@ EXPORTS_DIR = MEDIA_DIR / "exports"
 THUMBS_DIR = MEDIA_DIR / "thumbs"
 TEMP_DIR = MEDIA_DIR / "temp"
 SEALED_DIR = MEDIA_DIR / "sealed"
+VAULT_PATH = Path("/opt/windi/forensic-vault/vd-cut")
 
 # Operational Limits
 MAX_DURATION_SECONDS = 120  # 2 minutes
 MAX_FILE_SIZE_MB = 250
 MAX_CONCURRENT_JOBS = 1
 MAX_QUEUED_PER_USER = 1
-ORIGINAL_RETENTION_HOURS = 24
-SEALED_RETENTION_DAYS = 7
+ORIGINAL_RETENTION_HOURS = 720   # 30 dias — tempo real para decisão humana
+SEALED_RETENTION_DAYS = 30       # exports editáveis antes do vault definitivo
 
 # Logging
 log_level = logging.DEBUG if DEBUG else logging.INFO
@@ -507,6 +508,42 @@ async def get_job_status(job_id: str):
     return result
 
 
+def archive_to_vault(export_path: str, receipt_id: str) -> str:
+    """
+    Archive sealed export to Forensic Vault for permanent storage.
+
+    I11 COMPLIANCE: Vault preserves the file, Ledger preserves the hash.
+    Two independent systems ensuring evidence permanence.
+
+    Args:
+        export_path: Path to sealed export file
+        receipt_id: Ledger receipt ID for naming
+
+    Returns:
+        Path to archived file in Vault
+    """
+    import shutil
+
+    source = Path(export_path)
+    if not source.exists():
+        log.warning(f"Vault archive skipped: file not found {export_path}")
+        return None
+
+    # Ensure vault directory exists
+    VAULT_PATH.mkdir(parents=True, exist_ok=True)
+
+    # Format: WINDI-VDCUT-20260405-XXXXX_original.mp4
+    dest = VAULT_PATH / f"{receipt_id}_{source.name}"
+
+    try:
+        shutil.copy2(source, dest)
+        log.info(f"Vault archived: {receipt_id} -> {dest}")
+        return str(dest)
+    except Exception as e:
+        log.error(f"Vault archive failed: {e}")
+        return None
+
+
 @app.post("/vd-cut/seal")
 async def seal_export(request: SealRequest):
     """
@@ -625,13 +662,21 @@ async def seal_export(request: SealRequest):
 
     log.info(f"Export sealed: {request.export_id} -> {seal_result.get('receipt_id')}")
 
+    # Archive to Forensic Vault for permanent storage (I11)
+    vault_path = None
+    if export_path.exists() or sealed_path.exists():
+        archive_source = sealed_path if sealed_path.exists() else export_path
+        vault_path = archive_to_vault(str(archive_source), seal_result.get("receipt_id"))
+
     return {
         "sealed": True,
         "receipt_id": seal_result.get("receipt_id"),
         "verify_url": seal_result.get("verify_url"),
         "content_hash": row["content_hash"],
         "project_id": request.project_id,
-        "export_id": request.export_id
+        "export_id": request.export_id,
+        "vault_archived": vault_path is not None,
+        "vault_path": vault_path
     }
 
 
