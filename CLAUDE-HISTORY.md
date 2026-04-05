@@ -5061,3 +5061,52 @@ a3cd0af feat(communique): §128 W-DIST-001 + Editorial Proof Layer v1.1 — sove
 *Sealed: 05 Apr 2026 · §128 W-DIST-001 Sovereign Distribution*
 *"AI processes. Human decides. WINDI guarantees."*
 *Liga IA+H · Kempten, Bavaria · 2026*
+
+---
+
+## §128 — WINDI Evidence Layer v1.0 · 05 Abril 2026
+
+**WINDI-LAW × VD-CUT — Videobeweis Bridge · SEALED**
+
+### Decisão do Conselho
+Opção B — Integração Mínima aprovada pelo Human Dragon.
+Investigação read-only → decisão → execução → seal. Ciclo completo num dia.
+
+### O que mudou no mundo
+A prova deixou de ser estática. Agora ela inclui o próprio acontecimento.
+
+Antes do §128: WINDI-LAW selava documentos.
+Depois do §128: WINDI-LAW sela documentos + o acontecimento que os originou.
+
+### Arquitectura selada
+- `POST /ai-draft/video/attach`    — vídeo referenciado via Ledger (não VD-CUT directo)
+- `POST /ai-draft/seal-with-video` — hash composto SHA-256(doc+videos)
+- Modal Video Choice no workspace: upload local OU VD-CUT selado
+- VD-CUT guarda o vídeo · LAW guarda apenas hash + receipt
+
+### Primeiro seal composto real
+```
+Receipt:   WINDI-LAW-COMPOSITE-1775386047-07BC60C1
+Composite: sha256:568d1d78536f1222cb85b57cfaa230f5e00e7ba398b15a5908ab8b0e7c150ca8
+VD-CUT:    WINDI-VDCUT-20260403132852-BB3E3F2F
+Verify:    windi-domain.com/verify-public/?id=WINDI-LAW-COMPOSITE-1775386047-07BC60C1
+```
+
+### Commits
+- `7b3d3c2` — implementação (ai_draft.py + workspace)
+- `2a12397` — documentação (CLAUDE.md)
+
+### Invariantes — confirmados imutáveis
+- I9: humano sempre decide. O sistema não decide verdade.
+- I11: hash é hash, para sempre.
+- G3: propor ≠ executar.
+
+### Frase canónica do §128
+*"A prova deixou de ser estática. Agora ela inclui o próprio acontecimento."*
+
+### Próximo passo — NÃO é código
+1 jurista + 1 caso real + 1 ciclo completo.
+Sistema selado em capacidade até validação real acontecer.
+
+Liga IA+H · Kempten, Bavaria · 05 Abril 2026
+"AI processes. Human decides. WINDI guarantees."
