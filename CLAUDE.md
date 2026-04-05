@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.92
-**Sealed:** 2026-04-05 · §132 Partilhar Button UI
+**Version:** 1.9.93
+**Sealed:** 2026-04-05 · §133 Preview Endpoint (Full-Size Frames)
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -652,8 +652,8 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 05 Apr | **§133 Preview Endpoint** · Full-size frames · Semantic separation thumb/preview · `0ddaeed` |
 | 05 Apr | **§132 Partilhar Button** · VD-CUT Dashboard · Telegram/Email/Copy Link · `8840542` |
-| 05 Apr | **§131 Email Distribution** · W-DIST-001 email channel · Trilingual HTML+Text · `92c3fb5` |
 | 05 Apr | **§128 W-DIST-001** · Sovereign Distribution Layer · Editorial Proof v1.1 · `a3cd0af` |
 | 05 Apr | **§127 AI Draft v2.0** · Markdown→Quill + DOCX Export + Quick Prompt Auto-Submit · `872407c` |
 | 04 Apr | **§120.5 Mobile Emergency Fix** · WINDI-LAW mobile responsive · Hamburger + Touch · `7f05abb` |
@@ -810,6 +810,7 @@ workspace/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
 ### Completado (últimos 10 · ver CLAUDE-HISTORY.md para §37-115)
+- [x] §133 **Preview Endpoint** · Full-size frames · thumb vs preview · `0ddaeed` ✅ 05 Apr
 - [x] §132 **Partilhar Button** · VD-CUT UI · Telegram/Email/Copy · `8840542` ✅ 05 Apr
 - [x] §131 **Email Distribution** · W-DIST-001 email channel · Trilingual · `92c3fb5` ✅ 05 Apr
 - [x] §130 **Whisper Transcription** · Cut-by-text + Legal Overlay · `6c73805` ✅ 05 Apr
@@ -849,8 +850,9 @@ workspace/
 | §130 | Whisper Transcription | ✅ LIVE | Cut-by-text + Legal Overlay · Local Whisper · `6c73805` |
 | §131 | Email Distribution | ✅ LIVE | W-DIST-001 email channel · Trilingual HTML · `92c3fb5` |
 | §132 | Partilhar Button | ✅ LIVE | VD-CUT Dashboard · Telegram/Email/Copy Link · `8840542` |
+| §133 | Preview Endpoint | ✅ LIVE | Full-size frames · /preview/ vs /thumb/ · `0ddaeed` |
 
-> **Detalhes completos §128-132:** `CLAUDE-HISTORY.md` § SESSÃO 05 Abr 2026
+> **Detalhes completos §128-133:** `CLAUDE-HISTORY.md` § SESSÃO 05 Abr 2026
 
 ---
 
