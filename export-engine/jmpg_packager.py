@@ -238,6 +238,7 @@ def build_manifest(
     content_hash: str,
     evidence: list[EvidenceFile],
     created_at: str,
+    source_info: dict = None,
 ) -> dict:
     """Build the manifest.json — the integrity map of the bundle."""
     return {
@@ -300,6 +301,14 @@ def build_manifest(
             "protocol": "WINDI PACT",
             "version": PACT_VERSION,
             "principle": "AI processes. Human decides. WINDI guarantees.",
+        },
+
+        # Source (W-PROOF-LOOP-001 bidirectional link)
+        "source": source_info if source_info else {
+            "type": "standalone",
+            "communique_id": None,
+            "content_hash": None,
+            "created_at": None
         },
     }
 
@@ -409,6 +418,7 @@ def package_communique(
     evidence_files: list[EvidenceFile] = None,
     output_dir: str = "/opt/windi/vault/staging",
     communique_id: str = None,
+    source_info: dict = None,
 ) -> PackageResult:
     """
     Package a Communiqué into a deterministic .jmpg bundle.
@@ -455,6 +465,7 @@ def package_communique(
         content_hash=content_hash,
         evidence=processed_evidence,
         created_at=created_at,
+        source_info=source_info,
     )
 
     # ── Step 4: Build chain.json ──────────────────────────────

@@ -24,6 +24,7 @@ Sealed: W-COMM-001
 
 import hashlib
 import json
+import logging
 import os
 import re
 import sqlite3
@@ -33,6 +34,9 @@ from typing import Any, Dict, List, Optional
 
 import requests
 from flask import Blueprint, jsonify, request, Response
+
+# Logging
+log = logging.getLogger("w-comm-001")
 
 __version__ = "2.0.0"
 __agent_id__ = "W-COMM-001"
@@ -137,7 +141,11 @@ def init_db():
             created_at      TEXT NOT NULL,
             published_at    TEXT,
             updated_at      TEXT NOT NULL,
-            archived_at     TEXT
+            archived_at     TEXT,
+            evidence_jmpg_id      TEXT,
+            evidence_bundle_hash  TEXT,
+            evidence_generated_at TEXT,
+            evidence_verify_url   TEXT
         );
 
         CREATE INDEX IF NOT EXISTS idx_communiques_status ON communiques(status);
@@ -175,6 +183,15 @@ def init_db():
         # Backfill existing rows
         conn.execute("UPDATE communiques SET doc_type = 'communique' WHERE doc_type IS NULL")
         conn.commit()
+
+    # Migration: add evidence columns (W-PROOF-LOOP-001)
+    cursor = conn.execute("PRAGMA table_info(communiques)")
+    columns = [row[1] for row in cursor.fetchall()]
+    evidence_cols = ["evidence_jmpg_id", "evidence_bundle_hash", "evidence_generated_at", "evidence_verify_url"]
+    for col in evidence_cols:
+        if col not in columns:
+            conn.execute(f"ALTER TABLE communiques ADD COLUMN {col} TEXT DEFAULT NULL")
+            conn.commit()
 
     conn.close()
 
@@ -660,34 +677,83 @@ def publish(com_id):
     # Compute content hash
     content_hash = compute_content_hash(com)
 
-    # Publish to Ledger
+    # Publish to Ledger (W-DIST-001 fix: correct endpoint)
     ledger_id = None
     receipt_id = None
     try:
+        # Generate receipt ID with WINDI prefix
+        import hashlib
+        ts_hash = hashlib.sha256(now_iso().encode()).hexdigest()[:8].upper()
+        generated_receipt_id = f"WINDI-COMM-{com_id.split('-')[1]}-{ts_hash}"
+
         ledger_payload = {
-            "type": "communique_publish",
-            "source": "communique",
-            "source_id": com_id,
+            "id": generated_receipt_id,
+            "actor": actor,
+            "app": "communique-blueprint",
+            "doc_name": com.get("title_de") or com.get("title_en") or com_id,
+            "doc_type": "communique",
             "content_hash": content_hash,
-            "category": com.get("category"),
-            "impact_level": com.get("impact_level"),
-            "author": actor,
+            "governance_level": com.get("impact_level", "MED"),
+            "sge_score": 0.85 if com.get("impact_level") == "HIGH" else 0.5,
         }
-        r = requests.post(f"{LEDGER_URL}/ingest", json=ledger_payload, timeout=5)
-        # FIX 2026-03-17: Accept 201 Created as success (REST standard)
+        r = requests.post(f"{LEDGER_URL}/api/receipts", json=ledger_payload, timeout=5)
         if r.status_code in (200, 201):
             ledger_data = r.json()
-            ledger_id = ledger_data.get("ledger_id") or ledger_data.get("verification_id")
-            receipt_id = ledger_data.get("receipt_id") or ledger_data.get("id")
+            if ledger_data.get("ok"):
+                receipt_id = ledger_data.get("id") or generated_receipt_id
+                ledger_id = receipt_id
+                log.info(f"[LEDGER] Sealed {com_id} with receipt {receipt_id}")
     except Exception as e:
-        pass  # Ledger failure should not block publish
+        log.warning(f"[LEDGER] Seal failed for {com_id}: {e}")
 
-    # Update crypto fields
+    # ── JMPG Generation (W-PROOF-LOOP-001) ──
+    jmpg_id = None
+    jmpg_bundle_hash = None
+    jmpg_verify_url = None
+    jmpg_generated_at = None
+    jmpg_file_path = None
+
+    try:
+        # Generate unique filename based on communique ID
+        jmpg_save_path = f"/opt/windi/communique/jmpg/{com_id}.jmpg"
+
+        jmpg_payload = {
+            "communique_id": com_id,
+            "content_hash": content_hash,
+            "receipt_id": receipt_id,
+            "title": com.get("title_de") or com.get("title_en"),
+            "author_name": com.get("author_name"),
+            "author_role": com.get("author_role"),
+            "category": com.get("category"),
+            "impact_level": com.get("impact_level"),
+            "created_at": com.get("created_at"),
+            "source_type": "communique",
+            "save_path": jmpg_save_path
+        }
+        r = requests.post(f"{EXPORT_URL}/api/export/jmpg/from-communique", json=jmpg_payload, timeout=30)
+        if r.status_code in (200, 201):
+            jmpg_data = r.json()
+            jmpg_id = jmpg_data.get("package_id")
+            jmpg_bundle_hash = jmpg_data.get("bundle_hash")
+            jmpg_verify_url = jmpg_data.get("verify_url")
+            jmpg_file_path = jmpg_data.get("file_path")
+            jmpg_generated_at = now_iso()
+            log.info(f"[JMPG] Generated {jmpg_id} for {com_id} -> {jmpg_file_path}")
+    except Exception as e:
+        log.warning(f"[JMPG] Generation failed for {com_id}: {e}")
+
+    # Update crypto + evidence fields
     conn = get_db()
     conn.execute("""
-        UPDATE communiques SET content_hash=?, ledger_id=?, receipt_id=?, updated_at=?
+        UPDATE communiques SET
+            content_hash=?, ledger_id=?, receipt_id=?,
+            evidence_jmpg_id=?, evidence_bundle_hash=?,
+            evidence_generated_at=?, evidence_verify_url=?,
+            updated_at=?
         WHERE id = ?
-    """, (content_hash, ledger_id, receipt_id, now_iso(), com_id))
+    """, (content_hash, ledger_id, receipt_id,
+          jmpg_id, jmpg_bundle_hash, jmpg_generated_at, jmpg_verify_url,
+          now_iso(), com_id))
     conn.commit()
     conn.close()
 
@@ -697,6 +763,14 @@ def publish(com_id):
         "content_hash": content_hash,
         "ledger_id": ledger_id,
         "receipt_id": receipt_id,
+        "evidence": {
+            "type": "jmpg",
+            "jmpg_id": jmpg_id,
+            "bundle_hash": jmpg_bundle_hash,
+            "generated_at": jmpg_generated_at,
+            "verify_url": jmpg_verify_url,
+            "relation": "primary_evidence"
+        } if jmpg_id else None,
         "timestamp": result.get("timestamp")
     })
 
@@ -727,6 +801,79 @@ def revoke(com_id):
     result = _transition_status(com_id, "REVOKED", actor, reason)
     if "error" in result:
         return jsonify(result), result.get("code", 400)
+    return jsonify(result)
+
+
+@communique_bp.route("/<com_id>/distribute", methods=["POST"])
+def distribute(com_id):
+    """
+    W-DIST-001: Distribute sealed communiqué to external channels.
+
+    Body: {
+        "channels": ["telegram", "email"],
+        "options": {
+            "telegram": {"chat_id": "123456789"}
+        }
+    }
+
+    Requires: status = PUBLISHED
+    """
+    import sys
+    sys.path.insert(0, "/opt/windi/communique")
+
+    try:
+        from distribution_router import distribute as do_distribute, list_channels
+    except ImportError as e:
+        log.error(f"[W-DIST-001] Import error: {e}")
+        return jsonify({"error": "distribution_not_available", "message": str(e)}), 503
+
+    data = request.get_json() or {}
+    channels = data.get("channels", [])
+    options = data.get("options", {})
+
+    if not channels:
+        available = list_channels()
+        return jsonify({
+            "error": "no_channels_specified",
+            "hint": "Provide 'channels' array in request body",
+            "available_channels": available
+        }), 400
+
+    # Load communiqué
+    conn = get_db()
+    row = conn.execute("SELECT * FROM communiques WHERE id = ?", (com_id,)).fetchone()
+    conn.close()
+
+    if not row:
+        return jsonify({"error": "not_found"}), 404
+
+    com = dict(row)
+
+    # Only PUBLISHED can be distributed
+    if com["status"] != "PUBLISHED":
+        return jsonify({
+            "error": "not_published",
+            "message": f"Cannot distribute from status '{com['status']}'. Must be PUBLISHED.",
+            "hint": "Call /publish first"
+        }), 400
+
+    # Check if JMPG exists
+    if not com.get("evidence_jmpg_id"):
+        log.warning(f"[W-DIST-001] No JMPG for {com_id}, distributing without file")
+
+    # Distribute
+    log.info(f"[W-DIST-001] Distributing {com_id} to channels: {channels}")
+    result = do_distribute(com, channels, options)
+
+    # Log distribution event
+    conn = get_db()
+    conn.execute("""
+        INSERT INTO communique_audit (com_id, action, actor, details, timestamp)
+        VALUES (?, ?, ?, ?, ?)
+    """, (com_id, "DISTRIBUTE", "system", str(result), now_iso()))
+    conn.commit()
+    conn.close()
+
     return jsonify(result)
 
 
