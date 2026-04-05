@@ -668,6 +668,28 @@ async def seal_export(request: SealRequest):
         archive_source = sealed_path if sealed_path.exists() else export_path
         vault_path = archive_to_vault(str(archive_source), seal_result.get("receipt_id"))
 
+    # Auto-render JMPG proof card (§134)
+    jmpg_url = None
+    try:
+        import httpx
+        jmpg_response = httpx.post(
+            "http://127.0.0.1:8132/comm/render/jmpg",
+            json={
+                "receipt_id": seal_result.get("receipt_id"),
+                "title": row.get("title", "Video sealed with public proof"),
+                "source_app": "VD-CUT",
+                "content_hash": row["content_hash"]
+            },
+            timeout=10.0
+        )
+        if jmpg_response.status_code == 200:
+            jmpg_data = jmpg_response.json()
+            if jmpg_data.get("ok"):
+                jmpg_url = jmpg_data.get("image_url")
+                log.info(f"JMPG rendered: {jmpg_url}")
+    except Exception as e:
+        log.warning(f"JMPG render skipped: {e}")
+
     return {
         "sealed": True,
         "receipt_id": seal_result.get("receipt_id"),
@@ -676,7 +698,8 @@ async def seal_export(request: SealRequest):
         "project_id": request.project_id,
         "export_id": request.export_id,
         "vault_archived": vault_path is not None,
-        "vault_path": vault_path
+        "vault_path": vault_path,
+        "jmpg_url": jmpg_url
     }
 
 
