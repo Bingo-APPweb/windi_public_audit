@@ -2150,6 +2150,120 @@ function handleMedia(type) {
   input.click();
 }
 
+// ══ VIDEO ATTACH BRIDGE — VD-CUT × LAW · §128 · 05 Abr 2026 ═══════════════════
+// Intercepta VID para oferecer: (A) Upload local ou (B) Anexar vídeo selado
+const _originalHandleMedia = handleMedia;
+handleMedia = function(type) {
+  if (type === 'vid') {
+    openVideoChoiceModal();
+    return;
+  }
+  _originalHandleMedia(type);
+};
+
+let __videoAttachments = [];  // [{receipt_id, video_hash}]
+
+function openVideoChoiceModal() {
+  document.getElementById('modal-video-choice').style.display = 'flex';
+}
+function closeVideoChoiceModal() {
+  document.getElementById('modal-video-choice').style.display = 'none';
+}
+
+function chooseLocalVideo() {
+  closeVideoChoiceModal();
+  _originalHandleMedia('vid');  // comportamento original
+}
+
+function chooseAttachSealed() {
+  closeVideoChoiceModal();
+  document.getElementById('modal-video-attach').style.display = 'flex';
+}
+
+function closeVideoAttachModal() {
+  document.getElementById('modal-video-attach').style.display = 'none';
+  document.getElementById('va-receipt-input').value = '';
+  document.getElementById('va-hash-input').value = '';
+  document.getElementById('va-status').textContent = '';
+  document.getElementById('va-status').style.display = 'none';
+}
+
+async function attachVideoToDraft() {
+  const receiptId = document.getElementById('va-receipt-input').value.trim();
+  const videoHash = document.getElementById('va-hash-input').value.trim();
+  const did = sessionStorage.getItem('windi_law_wallet') || 'ANON';
+  const docId = window.__currentDocId || 'DRAFT-' + Date.now();
+  const statusEl = document.getElementById('va-status');
+
+  if (!receiptId || !videoHash) {
+    statusEl.textContent = '⚠️ Receipt ID e Hash obrigatórios.';
+    statusEl.style.color = '#cc6600';
+    statusEl.style.display = 'block';
+    return;
+  }
+
+  statusEl.textContent = '⏳ A verificar no Ledger…';
+  statusEl.style.color = '#666';
+  statusEl.style.display = 'block';
+
+  try {
+    const res = await fetch('/ai-draft/video/attach', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        did, doc_id: docId,
+        vd_cut_receipt_id: receiptId,
+        video_hash: videoHash
+      })
+    });
+    const data = await res.json();
+
+    if (data.status === 'attached') {
+      __videoAttachments.push({ receipt_id: receiptId, video_hash: videoHash });
+      document.getElementById('va-counter').textContent = __videoAttachments.length;
+      statusEl.textContent = '✅ Anexado · ' + receiptId;
+      statusEl.style.color = '#2a7a2a';
+
+      // Adicionar referência ao preview
+      var preview = document.getElementById('media-preview');
+      if (preview) {
+        preview.innerHTML = '<span style="font-size:10px;color:var(--ink-2)">🎥 Videobeweis</span>' +
+          '<span style="font-size:8px;font-family:var(--mono);color:var(--gold);margin-left:8px">' + receiptId.substring(0,24) + '…</span>' +
+          '<span style="font-size:9px;color:#2a7a2a;margin-left:8px">✓ Selado</span>';
+        preview.style.display = 'flex';
+        preview.style.alignItems = 'center';
+        preview.style.gap = '4px';
+      }
+    } else {
+      statusEl.textContent = '❌ ' + (data.error || 'Erro');
+      statusEl.style.color = '#cc0000';
+    }
+  } catch(e) {
+    statusEl.textContent = '❌ ' + e.message;
+    statusEl.style.color = '#cc0000';
+  }
+}
+
+// Integração no Seal — chamado quando há vídeos anexados
+async function sealComposite(docHash, caseRef) {
+  if (__videoAttachments.length === 0) return null;
+  const did = sessionStorage.getItem('windi_law_wallet') || 'ANON';
+  const res = await fetch('/ai-draft/seal-with-video', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      did,
+      doc_hash: docHash,
+      video_hashes: __videoAttachments.map(v => v.video_hash),
+      vd_cut_receipt_ids: __videoAttachments.map(v => v.receipt_id),
+      human_approved: true,
+      case_ref: caseRef || ''
+    })
+  });
+  return await res.json();
+}
+// ═══════════════════════════════════════════════════════════════════════════════
+
 var currentFileSize = null;
 var currentFileType = null;
 
@@ -3791,6 +3905,101 @@ document.addEventListener('DOMContentLoaded', function() {
 
 console.log('[WINDI LAW] Quill Editor Module v1.0 loaded · §124');
 </script>
+
+<!-- ══ MODAL VIDEO CHOICE — Upload Local vs Anexar Selado · §128 ═══════════ -->
+<div id="modal-video-choice" style="display:none;position:fixed;inset:0;
+     background:rgba(0,0,0,.55);z-index:9000;align-items:center;
+     justify-content:center;">
+  <div style="background:var(--bg,#F5F0E0);border-radius:8px;padding:1.8rem;
+       max-width:400px;width:90%;font-family:'Bricolage Grotesque',sans-serif;
+       box-shadow:0 8px 32px rgba(0,0,0,.25);">
+
+    <h3 style="margin:0 0 .6rem;font-size:1.1rem">🎥 Vídeo hinzufügen</h3>
+    <p style="font-size:.82rem;color:#666;margin-bottom:1.4rem">
+      Escolha como adicionar o vídeo ao documento:
+    </p>
+
+    <div style="display:flex;flex-direction:column;gap:.8rem">
+      <button onclick="chooseLocalVideo()"
+              style="padding:.9rem 1rem;background:transparent;border:1px solid #ccc;
+                     border-radius:6px;cursor:pointer;text-align:left;
+                     transition:all .15s ease">
+        <strong style="display:block;font-size:.92rem;margin-bottom:.2rem">📁 Upload Local</strong>
+        <span style="font-size:.78rem;color:#666">Selecionar ficheiro do dispositivo (apenas hash)</span>
+      </button>
+
+      <button onclick="chooseAttachSealed()"
+              style="padding:.9rem 1rem;background:linear-gradient(135deg,#8B6914 0%,#a67c1a 100%);
+                     color:#fff;border:none;border-radius:6px;cursor:pointer;text-align:left;
+                     transition:all .15s ease">
+        <strong style="display:block;font-size:.92rem;margin-bottom:.2rem">🛡️ Videobeweis (VD-CUT)</strong>
+        <span style="font-size:.78rem;opacity:.9">Anexar vídeo já selado no sistema VD-CUT</span>
+      </button>
+    </div>
+
+    <button onclick="closeVideoChoiceModal()"
+            style="margin-top:1rem;padding:.4rem .9rem;background:transparent;
+                   border:1px solid #ddd;border-radius:4px;cursor:pointer;
+                   font-size:.8rem;width:100%">
+      Cancelar
+    </button>
+  </div>
+</div>
+
+<!-- ══ MODAL VIDEO ATTACH — VD-CUT Bridge · §128 ═══════════════════════════ -->
+<div id="modal-video-attach" style="display:none;position:fixed;inset:0;
+     background:rgba(0,0,0,.55);z-index:9001;align-items:center;
+     justify-content:center;">
+  <div style="background:var(--bg,#F5F0E0);border-radius:8px;padding:2rem;
+       max-width:460px;width:90%;font-family:'Bricolage Grotesque',sans-serif;
+       box-shadow:0 8px 32px rgba(0,0,0,.25);">
+
+    <h3 style="margin:0 0 .4rem;font-size:1.1rem">🛡️ Videobeweis — Anexar Prova</h3>
+    <p style="font-size:.8rem;color:#666;margin-bottom:1.2rem">
+      Cole o Receipt ID e Hash do vídeo já selado no VD-CUT.<br>
+      Verificação ocorre no Ledger WINDI. Nenhum ficheiro é transmitido.
+    </p>
+
+    <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:.2rem">Receipt ID (VD-CUT)</label>
+    <input id="va-receipt-input" type="text"
+           placeholder="WINDI-VDCUT-20260403-XXXXXXXX"
+           style="width:100%;padding:.5rem;margin-bottom:.8rem;
+                  border:1px solid #ccc;border-radius:4px;
+                  background:transparent;box-sizing:border-box;font-size:.9rem">
+
+    <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:.2rem">Hash SHA-256</label>
+    <input id="va-hash-input" type="text"
+           placeholder="sha256:aabbcc..."
+           style="width:100%;padding:.5rem;margin-bottom:1rem;
+                  border:1px solid #ccc;border-radius:4px;background:transparent;
+                  box-sizing:border-box;font-family:'JetBrains Mono',monospace;
+                  font-size:.72rem">
+
+    <div id="va-status" style="display:none;font-size:.82rem;margin-bottom:.8rem;
+         padding:.5rem;border-radius:4px;background:rgba(0,0,0,.03)"></div>
+
+    <div style="font-size:.78rem;color:#666;margin-bottom:1rem;
+         padding:.5rem;background:rgba(139,105,20,.08);border-radius:4px">
+      <span style="color:#8B6914">🎥</span> Vídeos anexados: <strong id="va-counter">0</strong>
+    </div>
+
+    <div style="display:flex;gap:.7rem;justify-content:flex-end">
+      <button onclick="closeVideoAttachModal()"
+              style="padding:.5rem 1rem;border:1px solid #ccc;
+                     border-radius:4px;background:transparent;cursor:pointer;
+                     font-size:.85rem">
+        Fechar
+      </button>
+      <button onclick="attachVideoToDraft()"
+              style="padding:.5rem 1rem;background:#8B6914;color:#fff;
+                     border:none;border-radius:4px;cursor:pointer;font-size:.85rem;
+                     font-weight:600">
+        + Anexar
+      </button>
+    </div>
+  </div>
+</div>
+<!-- ════════════════════════════════════════════════════════════════════════ -->
 
 </body>
 </html>

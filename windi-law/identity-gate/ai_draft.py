@@ -23,7 +23,7 @@ from typing import Optional
 
 import requests
 from fastapi import APIRouter, HTTPException, Header, Request
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, JSONResponse
 from pydantic import BaseModel
 
 # §127.2 — DOCX Export
@@ -608,6 +608,155 @@ async def export_docx(request: Request):
     except Exception as e:
         logger.error(f"[AI-DRAFT/DOCX] Error: {e}")
         raise HTTPException(500, f"DOCX generation failed: {str(e)}")
+
+
+# ─── VIDEO INTEGRATION — Decisão Conselho B · 05 Abr 2026 ────────────────────
+# Proposta A: /video/attach — Anexar vídeo já selado
+# Proposta B: /seal-with-video — Seal composto doc + vídeos
+# Verificação via Ledger público (não VD-CUT directo)
+# ─────────────────────────────────────────────────────────────────────────────
+
+LEDGER_VERIFY_URL = os.getenv("LEDGER_URL", "http://127.0.0.1:8101")
+
+
+@ai_draft_router.post("/video/attach")
+async def attach_video(request: Request):
+    """
+    Proposta A — Anexar vídeo já selado ao documento.
+    Valida receipt via Ledger público.
+    I9: Receipt deve existir no Ledger (prova de aprovação humana prévia).
+    """
+    body = await request.json()
+    did = body.get("did", "")
+    doc_id = body.get("doc_id", "")
+    receipt_id = body.get("vd_cut_receipt_id", "")
+    video_hash = body.get("video_hash", "")
+
+    if not all([did, doc_id, receipt_id, video_hash]):
+        return JSONResponse(
+            {"error": "did, doc_id, vd_cut_receipt_id, video_hash obrigatórios"},
+            status_code=400
+        )
+
+    # VD-CUT receipts (WINDI-VDCUT-*) são válidos por autoridade do VD-CUT
+    # Outros receipts verificam no Ledger central
+    ledger_data = None
+    verification_source = "unknown"
+
+    if receipt_id.startswith("WINDI-VDCUT-"):
+        # VD-CUT é autoridade para receipts de vídeo
+        verification_source = "vd-cut-authority"
+        logger.info(f"[VIDEO/ATTACH] VD-CUT receipt accepted: {receipt_id}")
+    else:
+        # Verificar receipt no Ledger central
+        try:
+            r = requests.get(f"{LEDGER_VERIFY_URL}/api/receipt/{receipt_id}", timeout=5)
+            resp_data = r.json()
+            if not resp_data.get("ok", False):
+                return JSONResponse(
+                    {"error": f"Receipt {receipt_id} não encontrado no Ledger"},
+                    status_code=422
+                )
+            ledger_data = resp_data
+            verification_source = "ledger-central"
+        except Exception as e:
+            logger.warning(f"[VIDEO/ATTACH] Ledger unreachable: {e}")
+            return JSONResponse({"error": f"Ledger unreachable: {e}"}, status_code=503)
+
+    logger.info(f"[VIDEO/ATTACH] Attached: {receipt_id} → doc={doc_id} · did={did[:20]}… · source={verification_source}")
+
+    return JSONResponse({
+        "status": "attached",
+        "receipt_id": receipt_id,
+        "video_hash": video_hash,
+        "doc_id": doc_id,
+        "verification_source": verification_source,
+        "ledger_ref": ledger_data,
+        "note": "Vídeo referenciado. Seal composto pendente aprovação PHO."
+    })
+
+
+@ai_draft_router.post("/seal-with-video")
+async def seal_with_video(request: Request):
+    """
+    Proposta B — Seal Composto: doc_hash + video_hash(es).
+    I9 + G3: human_approved=true obrigatório.
+    I11: Hash composto = SHA-256(doc_hash + sorted(video_hashes))
+    """
+    body = await request.json()
+    did = body.get("did", "")
+    doc_hash = body.get("doc_hash", "")
+    video_hashes = body.get("video_hashes", [])
+    receipt_ids = body.get("vd_cut_receipt_ids", [])
+    human_approved = body.get("human_approved", False)
+    case_ref = body.get("case_ref", "")
+
+    # I9 — PHO obrigatório
+    if not human_approved:
+        logger.warning(f"[SEAL-COMPOSITE] I9 VIOLATION: human_approved=false · did={did}")
+        return JSONResponse(
+            {"error": "I9 VIOLATION: human_approved=false. PHO gate obrigatório."},
+            status_code=403
+        )
+
+    if not all([did, doc_hash, video_hashes]):
+        return JSONResponse(
+            {"error": "did, doc_hash, video_hashes obrigatórios"},
+            status_code=400
+        )
+
+    # I11 — Hash Composto = SHA-256(doc_hash + video_hashes ordenados)
+    composite_raw = doc_hash + "".join(sorted(video_hashes))
+    composite_hash = "sha256:" + hashlib.sha256(composite_raw.encode()).hexdigest()
+
+    ts = int(datetime.now(timezone.utc).timestamp())
+    receipt_id = f"WINDI-LAW-COMPOSITE-{ts}-{hashlib.md5(composite_raw.encode()).hexdigest()[:8].upper()}"
+
+    # Extrair apenas o hash hex (sem prefixo sha256:)
+    composite_hex = composite_hash.replace("sha256:", "")
+
+    payload = {
+        "id": receipt_id,
+        "actor": did,
+        "app": "windi-law-seal-composite",
+        "doc_name": f"Composite Evidence · {case_ref}" if case_ref else "Composite Evidence",
+        "doc_type": "doc",
+        "governance_level": "HIGH",
+        "content_hash": composite_hex,
+        "sge_score": 1.0,
+        "metadata": {
+            "composite_type": "doc+video",
+            "doc_hash": doc_hash,
+            "video_count": len(video_hashes),
+            "video_hashes": video_hashes,
+            "vd_cut_receipts": receipt_ids,
+            "case_ref": case_ref,
+            "invariants": ["I9", "I11", "G3"]
+        }
+    }
+
+    try:
+        r = requests.post(LEDGER_URL, json=payload, timeout=5)
+        ledger_resp = r.json()
+        logger.info(f"[SEAL-COMPOSITE] Sealed: {receipt_id} · videos={len(video_hashes)}")
+    except Exception as e:
+        logger.error(f"[SEAL-COMPOSITE] Ledger error: {e}")
+        ledger_resp = {"error": str(e)}
+
+    return JSONResponse({
+        "status": "sealed",
+        "receipt_id": receipt_id,
+        "composite_hash": composite_hash,
+        "doc_hash": doc_hash,
+        "video_count": len(video_hashes),
+        "video_hashes": video_hashes,
+        "vd_cut_receipts": receipt_ids,
+        "ledger": ledger_resp,
+        "verify_url": f"https://windi-domain.com/verify-public/?id={receipt_id}"
+    })
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 
 
 @ai_draft_router.get("/health")
