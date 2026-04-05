@@ -5110,3 +5110,165 @@ Sistema selado em capacidade até validação real acontecer.
 
 Liga IA+H · Kempten, Bavaria · 05 Abril 2026
 "AI processes. Human decides. WINDI guarantees."
+
+---
+
+## § SESSÃO 05 Abr 2026 (tarde) — §129 Pitch Dashboard LIVE
+
+**Commits:** `f39e609` · `4ab5699` · `8a26472`
+**Scope:** VC Pitch · Verify Public · Ledger Stats · nginx
+**CLAUDE.md:** v1.9.88
+
+### §129 — Pitch Dashboard — SEALED
+
+**Data:** 05 Abril 2026
+**URL:** `windi-domain.com/pitch/`
+**Tipo:** Static (nginx alias)
+**Invariants:** I11 (dados reais do Ledger)
+
+### Contexto — Preparação para Berlim (Maio 2026)
+
+Missão: Preparar material para apresentação a Venture Capitalists em Berlim.
+
+Estratégia definida pelo Human Dragon:
+> "Se o VC insinuar que não temos users, desafiamo-lo: se acredita no produto, façamos uma prova juntos com os seus contactos LinkedIn."
+
+Judo negocial — inverter a mesa. Em vez de defender ausência de tração, testar a convicção do VC em público.
+
+### Análise do Sistema Existente
+
+**Descoberta:** O verify-public já suporta `?id=SEAL_ID` para auto-verify:
+```
+URL:  windi-domain.com/verify-public/?id=WINDI-VDCUT-20260404183836-C181E66D
+Port: :8114
+```
+
+Testado e funcional — zero login, zero DID, zero fricção.
+
+### Levantamento do Ledger — Números Reais
+
+Query directa à base de dados:
+```sql
+SELECT COUNT(*) FROM receipts;
+-- Resultado: 56,882 seals
+```
+
+**Breakdown por tipo:**
+- doc: 56,780
+- communique: 51
+- jmpg: 43
+- compliance_passport: 5
+- pptx: 2
+- cartaz: 1
+
+**Breakdown por mês (2026):**
+- Janeiro: 17,204
+- Fevereiro: 28,901
+- Março: 10,692
+- Abril: 85
+
+**Seals de teste:** 125 (0.2%)
+**Seals reais:** 56,757
+
+**Actor externo real:** Secretaria de Turismo de Florianópolis (Brasil)
+
+### Criação do Pitch Dashboard
+
+**Artefacto:** `/opt/windi/pitch/index.html`
+
+**Características:**
+- Contador animado 0 → 56,882 (2s, ease-out cubic)
+- Barras mensais animadas (Fev = pico)
+- Breakdown por governance level
+- Pills de tipos de documento
+- Card de actor externo
+- Bloco de hash proof real
+- Tabela de protocolos constitucionais (I9, PHO, EU AI Act, GDPR)
+- Link para verify-public
+- Design: Fraunces serif + DM Mono + pergaminho palette
+
+### Deploy nginx
+
+**Rota:** `/pitch/` → alias `/opt/windi/pitch/`
+
+```nginx
+location /pitch/ {
+    alias /opt/windi/pitch/;
+    index index.html;
+    try_files $uri $uri/ /pitch/index.html;
+    add_header X-WINDI-Service "pitch-dashboard" always;
+}
+```
+
+**Script:** `/home/windi/patch-nginx-pitch.sh`
+**Backup:** `/home/windi/nginx-backup-pitch-20260405_125648.conf`
+
+### Reframe para Audiência Europeia
+
+**Problema:** "Secretaria de Turismo de Florianópolis" não ressoa com VCs alemães.
+
+**Solução (Opção A):**
+```
+Antes: Secretaria de Turismo de Florianópolis
+       Florianópolis, Brasil · SC Gov.
+
+Depois: Government Tourism Agency
+        South America · Public Sector
+```
+
+**Rationale:** O argumento é "governo adoptou sem sales call" — isso funciona independentemente do nome específico.
+
+**Commit:** `8a26472`
+
+### URLs Finais para Berlim
+
+```
+1. windi-domain.com/pitch/
+   → Dashboard com 56,882 seals animados
+
+2. windi-domain.com/verify-public/?id=WINDI-VDCUT-20260404183836-C181E66D
+   → Verificação independente ao vivo
+
+3. Desafio ao VC:
+   "Se acredita, façamos uma prova juntos com os seus contactos"
+```
+
+### Frase Canónica do §129
+
+> *"You don't need to believe us. You can verify it yourself — right now."*
+
+### Impacto Estratégico
+
+O pitch deixou de ser apresentação e passou a ser demonstração de realidade.
+
+- Três URLs
+- Zero slides
+- Prova matemática ao vivo
+
+O VC deixa de avaliar uma *ideia* e passa a avaliar uma *realidade operacional*.
+
+### Commits
+
+| Hash | Descrição |
+|------|-----------|
+| `f39e609` | feat(pitch): §129 Pitch Dashboard LIVE |
+| `4ab5699` | docs(claude): §129 Pitch Dashboard LIVE |
+| `8a26472` | fix(pitch): reframe external actor for EU audience |
+
+### Checklist — Pronto para Berlim
+
+- [x] Contador animado 56,882
+- [x] Barras mensais
+- [x] Actor externo reframed
+- [x] Hash proof real verificável
+- [x] I9 / PHO / EU AI Act / GDPR visíveis
+- [x] Link verify-public funcional
+- [x] CLAUDE.md actualizado
+- [x] Commits pushed
+
+---
+
+*"Don't explain the system. Show it working."*
+
+Liga IA+H · Kempten, Bavaria · 05 Abril 2026
+OM SHANTI 🐉
