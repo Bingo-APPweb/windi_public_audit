@@ -764,6 +764,55 @@ async def get_thumbnail(export_id: str):
     )
 
 
+@app.get("/vd-cut/preview/{export_id}")
+async def get_preview(export_id: str):
+    """
+    Get full-size preview frame for export.
+
+    Unlike thumbnail (320x568), preview preserves original resolution.
+    Generated on-demand and cached in /previews/ directory.
+
+    Use this for detailed inspection in dashboard.
+    Use /thumb/ for thread lists and quick loading.
+    """
+    from services.ffmpeg_service import generate_preview
+
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT output_path FROM video_exports WHERE id = ?", (export_id,))
+    row = cursor.fetchone()
+    conn.close()
+
+    if not row or not row["output_path"]:
+        raise HTTPException(status_code=404, detail="Export not found")
+
+    video_path = Path(row["output_path"])
+    if not video_path.exists():
+        raise HTTPException(status_code=404, detail="Video file not found")
+
+    # Preview cache directory
+    preview_dir = MEDIA_DIR / "previews"
+    preview_dir.mkdir(exist_ok=True)
+    preview_path = preview_dir / f"{export_id}_preview.jpg"
+
+    # Generate if not cached
+    if not preview_path.exists():
+        result = await generate_preview(
+            video_path=video_path,
+            output_path=preview_path,
+            timestamp=1.0
+        )
+        if result.get("error"):
+            raise HTTPException(status_code=500, detail=result.get("message"))
+
+    return FileResponse(
+        preview_path,
+        media_type="image/jpeg",
+        filename=f"{export_id}_preview.jpg"
+    )
+
+
 # ----- JOE Bridge Endpoint -----
 
 @app.post("/vd-cut/joe/render")
