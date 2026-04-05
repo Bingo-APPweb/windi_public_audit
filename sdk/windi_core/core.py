@@ -324,6 +324,88 @@ async def distribute(
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
+# 5. PUBLISH — Public Distribution (§137 / §122.4 Compliant)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+async def publish(
+    receipt_id: str,
+    channel: str = "telegram",
+    chat_id: str = None,
+    title: Optional[str] = None,
+    lang: str = "EN",
+) -> DistributeResult:
+    """
+    Publish proof to PUBLIC channels (§137 / §122.4 Compliant).
+
+    SENDS LINK ONLY — NO FILES.
+
+    This function is for PUBLIC distribution where hash integrity matters.
+    Telegram transcodes images, breaking SHA-256 verification.
+    For private chats, use distribute() instead.
+
+    "O canal Telegram não transmite ficheiros. Transmite acesso."
+
+    Args:
+        receipt_id: WINDI receipt ID
+        channel: Distribution channel ("telegram")
+        chat_id: Target channel ID (required)
+        title: Optional title for the post
+        lang: Language for post (PT, EN, DE)
+
+    Returns:
+        DistributeResult with channel-specific result
+
+    Example:
+        # Publish to WINDI public channel
+        result = await publish(
+            "WINDI-VDCUT-20260405-XXXX",
+            chat_id="@windi_public",
+            lang="EN"
+        )
+    """
+    if channel == "telegram" and not chat_id:
+        return DistributeResult(
+            ok=False,
+            channel=channel,
+            error="chat_id required for public Telegram publishing"
+        )
+
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                f"{COMM_URL}/comm/publish",
+                json={
+                    "receipt_id": receipt_id,
+                    "channel": channel,
+                    "chat_id": chat_id,
+                    "title": title,
+                    "lang": lang,
+                },
+                timeout=DEFAULT_TIMEOUT,
+            )
+
+            if response.status_code == 200:
+                data = response.json()
+                return DistributeResult(
+                    ok=data.get("ok", False),
+                    channel=channel,
+                    receipt_id=receipt_id,
+                    image_url=data.get("jmpg_url"),  # URL only, not sent
+                    telegram_result=data.get("telegram_result"),
+                    error=data.get("error"),
+                )
+            else:
+                return DistributeResult(
+                    ok=False,
+                    channel=channel,
+                    error=f"Publish error: {response.status_code}"
+                )
+
+    except Exception as e:
+        return DistributeResult(ok=False, channel=channel, error=str(e))
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
 # Convenience: Full Pipeline
 # ═══════════════════════════════════════════════════════════════════════════════
 
