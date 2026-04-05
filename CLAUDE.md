@@ -1068,3 +1068,42 @@ workspace/
 *LIGA IA+H — Kempten, Bavaria · 2026*
 *"AI processes. Human decides. WINDI guarantees."*
 
+
+---
+
+## §128 — WINDI-LAW × VD-CUT — Videobeweis Bridge · SEALED 05 Abr 2026
+
+**Status:** LIVE · SEALED · Opção B · I11 · IRREMEDIÁVEL
+**Commit:** 7b3d3c2
+**Receipt:** WINDI-LAW-COMPOSITE-1775386047-07BC60C1
+**Composite:** sha256:568d1d78536f1222cb85b57cfaa230f5e00e7ba398b15a5908ab8b0e7c150ca8
+**VD-CUT Ref:** WINDI-VDCUT-20260403132852-BB3E3F2F
+**Verify:** windi-domain.com/verify-public/?id=WINDI-LAW-COMPOSITE-1775386047-07BC60C1
+
+### O que foi construído
+Decisão do Conselho (Opção B — Integração Mínima):
+- `POST /ai-draft/video/attach` — anexa vídeo já selado via Ledger verify
+- `POST /ai-draft/seal-with-video` — hash composto SHA-256(doc+videos)
+- Modal Video Choice no workspace: upload local OU VD-CUT selado
+- `__videoAttachments[]` + `sealComposite()` live no workspace
+
+### Invariantes
+I9 ✅ · I11 ✅ · G3 ✅ · §122.4 ✅ · :8128 SELADO ✅
+
+### Arquitectura canónica
+- VD-CUT guarda o vídeo · LAW guarda apenas hash + receipt
+- Verificação de receipt via Ledger público (não VD-CUT directo)
+- Hash composto = SHA-256(doc_hash + video_hashes ordenados)
+
+### Ficheiros alterados
+- `windi-law/identity-gate/ai_draft.py` +110 linhas
+- `windi-law/workspace/index.html` +180 linhas
+
+### Backups
+- `/opt/windi/backups/ai-draft-pre-video-20260405.py`
+- `/opt/windi/backups/law-workspace-pre-video-20260405.html`
+
+### Excluído (fase futura)
+Proposta C — frame-level seal (deepfake prevention) — não implementado
+
+Liga IA+H · Kempten, Bavaria · 05 Abril 2026
