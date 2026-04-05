@@ -1,20 +1,23 @@
 #!/usr/bin/env python3
 """
 W-JMPG-001 — JPEG Manifest Proof Graphic Server
-§134 · Liga IA+H · Kempten, Bavaria · 05 Abril 2026
+§134-135 · Liga IA+H · Kempten, Bavaria · 05 Abril 2026
 
 Port: 8132
 Endpoints:
   POST /comm/render/jmpg - Render a proof card
   GET  /comm/render/jmpg/{receipt_id} - Get existing or render new
   GET  /comm/jmpg/{filename} - Serve rendered images
+  POST /comm/distribute - Distribute proof card (Telegram, Email)
   GET  /comm/health - Health check
 """
 
 import os
 import logging
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List
+from dotenv import load_dotenv
+import httpx
 
 from fastapi import FastAPI, HTTPException, Response
 from fastapi.responses import FileResponse, JSONResponse
@@ -23,13 +26,20 @@ import uvicorn
 
 from jmpg_renderer import render_jmpg, OUTPUT_DIR, PROFILES
 
+# Load environment from nomad-bot (shares Telegram token)
+load_dotenv("/opt/windi/nomad-bot/.env")
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # Configuration
 # ═══════════════════════════════════════════════════════════════════════════════
 
 PORT = 8132
 SERVICE_NAME = "W-JMPG-001"
-VERSION = "1.0.0"
+VERSION = "1.1.0"
+
+# Telegram configuration
+TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
+TELEGRAM_API_URL = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}" if TELEGRAM_BOT_TOKEN else None
 
 # Logging
 logging.basicConfig(
@@ -38,6 +48,64 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 log = logging.getLogger(SERVICE_NAME)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Telegram Distribution (§135)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def build_telegram_caption(receipt_id: str, verify_url: str, title: Optional[str] = None) -> str:
+    """Build HTML caption for Telegram photo."""
+    title_text = title or "Sealed content"
+    return f"""🎥 <b>WINDI Proof Card</b>
+
+{title_text}
+
+<b>Receipt:</b>
+<code>{receipt_id}</code>
+
+🔐 <a href="{verify_url}">Verify authenticity</a>
+
+<i>Protocol: .jmpg v1</i>"""
+
+
+async def send_telegram_photo(
+    chat_id: str,
+    photo_path: str,
+    caption: str,
+    reply_to_message_id: Optional[int] = None,
+) -> dict:
+    """Send photo to Telegram chat using sendPhoto API."""
+    if not TELEGRAM_API_URL:
+        return {"ok": False, "error": "Telegram not configured"}
+
+    url = f"{TELEGRAM_API_URL}/sendPhoto"
+
+    try:
+        async with httpx.AsyncClient() as client:
+            with open(photo_path, "rb") as photo:
+                files = {"photo": photo}
+                data = {
+                    "chat_id": chat_id,
+                    "caption": caption,
+                    "parse_mode": "HTML",
+                }
+                if reply_to_message_id:
+                    data["reply_to_message_id"] = reply_to_message_id
+
+                response = await client.post(url, data=data, files=files, timeout=30.0)
+                result = response.json()
+
+                if result.get("ok"):
+                    log.info(f"Telegram photo sent to {chat_id}")
+                else:
+                    log.error(f"Telegram error: {result}")
+
+                return result
+
+    except Exception as e:
+        log.error(f"Telegram send failed: {e}")
+        return {"ok": False, "error": str(e)}
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # FastAPI App
@@ -73,6 +141,23 @@ class RenderResponse(BaseModel):
     error: Optional[str] = None
 
 
+class DistributeRequest(BaseModel):
+    receipt_id: str
+    channel: str = "telegram"
+    chat_id: Optional[str] = None
+    title: Optional[str] = None
+    reply_to_message_id: Optional[int] = None
+
+
+class DistributeResponse(BaseModel):
+    ok: bool
+    channel: str
+    receipt_id: str
+    image_url: Optional[str] = None
+    telegram_result: Optional[dict] = None
+    error: Optional[str] = None
+
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # Endpoints
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -87,6 +172,8 @@ async def health():
         "port": PORT,
         "profiles": list(PROFILES.keys()),
         "output_dir": str(OUTPUT_DIR),
+        "telegram_configured": TELEGRAM_BOT_TOKEN is not None,
+        "channels": ["telegram"],
     }
 
 
@@ -208,6 +295,98 @@ async def list_rendered():
             for f in sorted(files, key=lambda x: x.stat().st_mtime, reverse=True)[:50]
         ],
     }
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Distribution Endpoint (§135)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@app.post("/comm/distribute", response_model=DistributeResponse)
+async def distribute_proof_card(request: DistributeRequest):
+    """
+    Distribute a proof card via specified channel.
+
+    Channels:
+    - telegram: Send photo to Telegram chat (requires chat_id)
+
+    The JMPG is auto-rendered if not already existing.
+    """
+    log.info(f"Distribute request: {request.receipt_id} via {request.channel}")
+
+    # Build verify URL
+    verify_url = f"https://windi-domain.com/verify-public/?id={request.receipt_id}"
+
+    # Check/render JMPG
+    filename = f"{request.receipt_id}_telegram_square.jpg"
+    image_path = OUTPUT_DIR / filename
+
+    if not image_path.exists():
+        log.info(f"Auto-rendering JMPG for distribution: {request.receipt_id}")
+        result = render_jmpg(
+            receipt_id=request.receipt_id,
+            profile="telegram_square",
+            title=request.title,
+        )
+        if not result["ok"]:
+            return DistributeResponse(
+                ok=False,
+                channel=request.channel,
+                receipt_id=request.receipt_id,
+                error=f"Render failed: {result.get('error')}",
+            )
+        image_path = Path(result["image_path"])
+
+    image_url = f"https://windi-domain.com/comm/jmpg/{filename}"
+
+    # Distribute based on channel
+    if request.channel == "telegram":
+        if not request.chat_id:
+            return DistributeResponse(
+                ok=False,
+                channel="telegram",
+                receipt_id=request.receipt_id,
+                error="chat_id required for Telegram distribution",
+            )
+
+        if not TELEGRAM_BOT_TOKEN:
+            return DistributeResponse(
+                ok=False,
+                channel="telegram",
+                receipt_id=request.receipt_id,
+                error="Telegram not configured (missing BOT_TOKEN)",
+            )
+
+        # Build caption
+        caption = build_telegram_caption(
+            receipt_id=request.receipt_id,
+            verify_url=verify_url,
+            title=request.title,
+        )
+
+        # Send photo
+        telegram_result = await send_telegram_photo(
+            chat_id=request.chat_id,
+            photo_path=str(image_path),
+            caption=caption,
+            reply_to_message_id=request.reply_to_message_id,
+        )
+
+        return DistributeResponse(
+            ok=telegram_result.get("ok", False),
+            channel="telegram",
+            receipt_id=request.receipt_id,
+            image_url=image_url,
+            telegram_result=telegram_result,
+            error=telegram_result.get("error") if not telegram_result.get("ok") else None,
+        )
+
+    else:
+        return DistributeResponse(
+            ok=False,
+            channel=request.channel,
+            receipt_id=request.receipt_id,
+            error=f"Unknown channel: {request.channel}. Supported: telegram",
+        )
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
