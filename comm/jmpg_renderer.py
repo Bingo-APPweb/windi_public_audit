@@ -33,6 +33,15 @@ COLORS = {
     "border": "#D5D0C5",
 }
 
+# Status badge colors (SGV integration ready)
+STATUS_COLORS = {
+    "VERIFIED": "#2D5A2D",    # green
+    "SEALED": "#2D5A2D",      # green
+    "TRACEABLE": "#8B6914",   # gold/yellow
+    "UNVERIFIED": "#6B6B6B",  # grey
+    "SUSPICIOUS": "#9C4040",  # red
+}
+
 # Profile dimensions
 PROFILES = {
     "telegram_square": (1080, 1080),
@@ -120,13 +129,13 @@ def build_card_data(
     hash_short = None
     if content_hash:
         if len(content_hash) > 16:
-            hash_short = f"{content_hash[:4]}...{content_hash[-4:]}"
+            hash_short = f"SHA-256: {content_hash[:4].upper()}...{content_hash[-4:].upper()}"
         else:
-            hash_short = content_hash
+            hash_short = f"SHA-256: {content_hash.upper()}"
     else:
         # Generate from receipt_id
         h = hashlib.sha256(receipt_id.encode()).hexdigest()
-        hash_short = f"{h[:4].upper()}...{h[-4:].upper()}"
+        hash_short = f"SHA-256: {h[:4].upper()}...{h[-4:].upper()}"
 
     verify_url = f"https://windi-domain.com/verify-public/?id={receipt_id}"
 
@@ -201,16 +210,19 @@ def render_telegram_square(card: Dict[str, Any], output_path: Path) -> Path:
     # ─── Status Badge ─────────────────────────────────────────────────────────
     status_y = y + 40
 
-    # Draw status badge background
+    # Draw status badge background with dynamic color
     badge_text = f"  {card['status']}  "
     bbox = draw.textbbox((0, 0), badge_text, font=font_body)
     badge_width = bbox[2] - bbox[0] + 40
     badge_height = bbox[3] - bbox[1] + 20
 
+    # Get status color (SGV ready)
+    status_color = STATUS_COLORS.get(card["status"], COLORS["success"])
+
     draw.rounded_rectangle(
         [(pad, status_y), (pad + badge_width, status_y + badge_height)],
         radius=8,
-        fill=COLORS["success"],
+        fill=status_color,
     )
     draw.text((pad + 20, status_y + 8), card["status"], font=font_body, fill="#FFFFFF")
 
@@ -218,10 +230,24 @@ def render_telegram_square(card: Dict[str, Any], output_path: Path) -> Path:
     info_y = status_y + badge_height + 50
 
     draw.text((pad, info_y), "Receipt:", font=font_small, fill=COLORS["text_muted"])
-    draw.text((pad, info_y + 35), card["receipt_id"], font=font_mono, fill=COLORS["text_dark"])
 
-    draw.text((pad, info_y + 100), "Hash:", font=font_small, fill=COLORS["text_muted"])
-    draw.text((pad, info_y + 135), card["hash_short"], font=font_mono, fill=COLORS["gold_dark"])
+    # Break receipt ID into two lines for readability
+    receipt_id = card["receipt_id"]
+    if len(receipt_id) > 28:
+        # Split at timestamp boundary (WINDI-VDCUT-20260405 | 135729-94F5566F)
+        parts = receipt_id.rsplit("-", 2)
+        if len(parts) >= 3:
+            line1 = "-".join(parts[:-2]) + "-" + parts[-2][:8]
+            line2 = parts[-2][8:] + "-" + parts[-1]
+            draw.text((pad, info_y + 35), line1, font=font_mono, fill=COLORS["text_dark"])
+            draw.text((pad, info_y + 70), line2, font=font_mono, fill=COLORS["text_dark"])
+            info_y += 35  # Adjust for extra line
+        else:
+            draw.text((pad, info_y + 35), receipt_id, font=font_mono, fill=COLORS["text_dark"])
+    else:
+        draw.text((pad, info_y + 35), receipt_id, font=font_mono, fill=COLORS["text_dark"])
+
+    draw.text((pad, info_y + 100), card["hash_short"], font=font_mono, fill=COLORS["gold_dark"])
 
     # ─── QR Code ──────────────────────────────────────────────────────────────
     qr_size = 280
@@ -232,7 +258,7 @@ def render_telegram_square(card: Dict[str, Any], output_path: Path) -> Path:
     img.paste(qr_img, (qr_x, qr_y))
 
     # QR label
-    draw.text((qr_x, qr_y + qr_size + 10), "Scan to verify", font=font_small, fill=COLORS["text_muted"])
+    draw.text((qr_x + 20, qr_y + qr_size + 10), "Verify authenticity", font=font_small, fill=COLORS["text_muted"])
 
     # ─── Footer ───────────────────────────────────────────────────────────────
     footer_y = height - pad - 20

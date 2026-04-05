@@ -451,6 +451,7 @@
         share: 'Teilen',
         new: 'Neu',
         vaultArchived: '✓ Im Forensic Vault archiviert',
+        linkCopied: 'Link kopiert!',
         pipeUpload: 'Upload',
         pipeEdit: '30 Tage',
         pipeSeal: 'Versiegeln',
@@ -473,6 +474,7 @@
         share: 'Share',
         new: 'New',
         vaultArchived: '✓ Archived to Forensic Vault',
+        linkCopied: 'Link copied!',
         pipeUpload: 'Upload',
         pipeEdit: '30 days',
         pipeSeal: 'Human Seal',
@@ -495,6 +497,7 @@
         share: 'Partilhar',
         new: 'Novo',
         vaultArchived: '✓ Arquivado no Forensic Vault',
+        linkCopied: 'Link copiado!',
         pipeUpload: 'Upload',
         pipeEdit: '30 dias',
         pipeSeal: 'Humano Sela',
@@ -701,7 +704,8 @@
           verifyUrl: sealData.verify_url || VERIFY_BASE + '?id=' + sealData.receipt_id,
           hash: sealData.content_hash || currentHash,
           vaultArchived: sealData.vault_archived,
-          vaultPath: sealData.vault_path
+          vaultPath: sealData.vault_path,
+          jmpgUrl: sealData.jmpg_url
         });
 
       } catch (error) {
@@ -828,10 +832,40 @@
     async function shareResult() {
       if (!window.lastResult) return;
 
+      const t = I18N[currentLang];
+      const result = window.lastResult;
+
+      // Build share text with proof card info
+      const shareText = `${t.successTitle} ${result.receiptId}\n\n${t.verify}: ${result.verifyUrl}`;
+
+      // Try to share with image if JMPG is available and Web Share API supports files
+      if (result.jmpgUrl && navigator.canShare) {
+        try {
+          // Fetch the JMPG image
+          const imgResponse = await fetch(result.jmpgUrl);
+          const imgBlob = await imgResponse.blob();
+          const imgFile = new File([imgBlob], `${result.receiptId}.jpg`, { type: 'image/jpeg' });
+
+          const shareWithImage = {
+            title: 'WINDI Proof Card',
+            text: shareText,
+            files: [imgFile]
+          };
+
+          if (navigator.canShare(shareWithImage)) {
+            await navigator.share(shareWithImage);
+            return;
+          }
+        } catch (e) {
+          console.log('Image share not supported, falling back to URL share');
+        }
+      }
+
+      // Fallback: share URL only
       const shareData = {
         title: 'WINDI Seal',
-        text: `Momento selado! Recibo: ${window.lastResult.receiptId}`,
-        url: window.lastResult.verifyUrl
+        text: shareText,
+        url: result.verifyUrl
       };
 
       try {
@@ -839,8 +873,8 @@
           await navigator.share(shareData);
         } else {
           // Fallback: copy to clipboard
-          await navigator.clipboard.writeText(window.lastResult.verifyUrl);
-          alert('Link copiado!');
+          await navigator.clipboard.writeText(result.verifyUrl);
+          alert(t.linkCopied || 'Link copiado!');
         }
       } catch (err) {
         console.log('Share failed:', err);
