@@ -5272,3 +5272,164 @@ O VC deixa de avaliar uma *ideia* e passa a avaliar uma *realidade operacional*.
 
 Liga IA+H · Kempten, Bavaria · 05 Abril 2026
 OM SHANTI 🐉
+
+---
+
+## § SESSÃO 05 Abr 2026 — §128-130 Migração de CLAUDE.md
+
+**Motivo:** Overflow CLAUDE.md (42KB → target ≤32KB)
+**Data:** 05 Abril 2026
+
+---
+
+## §128 — WINDI-LAW × VD-CUT — Videobeweis Bridge · SEALED 05 Abr 2026
+
+**Status:** LIVE · SEALED · Opção B · I11 · IRREMEDIÁVEL
+**Commit:** 7b3d3c2
+**Receipt:** WINDI-LAW-COMPOSITE-1775386047-07BC60C1
+**Composite:** sha256:568d1d78536f1222cb85b57cfaa230f5e00e7ba398b15a5908ab8b0e7c150ca8
+**VD-CUT Ref:** WINDI-VDCUT-20260403132852-BB3E3F2F
+**Verify:** windi-domain.com/verify-public/?id=WINDI-LAW-COMPOSITE-1775386047-07BC60C1
+
+### O que foi construído
+Decisão do Conselho (Opção B — Integração Mínima):
+- `POST /ai-draft/video/attach` — anexa vídeo já selado via Ledger verify
+- `POST /ai-draft/seal-with-video` — hash composto SHA-256(doc+videos)
+- Modal Video Choice no workspace: upload local OU VD-CUT selado
+- `__videoAttachments[]` + `sealComposite()` live no workspace
+
+### Invariantes
+I9 ✅ · I11 ✅ · G3 ✅ · §122.4 ✅ · :8128 SELADO ✅
+
+### Arquitectura canónica
+- VD-CUT guarda o vídeo · LAW guarda apenas hash + receipt
+- Verificação de receipt via Ledger público (não VD-CUT directo)
+- Hash composto = SHA-256(doc_hash + video_hashes ordenados)
+
+### Ficheiros alterados
+- `windi-law/identity-gate/ai_draft.py` +110 linhas
+- `windi-law/workspace/index.html` +180 linhas
+
+---
+
+## §129 — VD-CUT Workspace Retention Layer + Voice + PWA Upload · SEALED 05 Abr 2026
+
+**Status:** CANONICAL · ACTIVE · SEALED
+**Commit:** `054091e`
+**Tag:** `W-VD-CUT-001-S129`
+**Invariants:** I9, I11, G3
+
+### Pipeline Evolution
+
+| Before | After |
+|--------|-------|
+| Upload → Seal → Vault | Upload → Workspace (30d) → Edit → Seal → Vault |
+| Immediate immutability | 30-day editable window |
+| Notarial system | Creative + sovereign system |
+
+### Retention Layer
+
+| Phase | Location | Retention | Editable |
+|-------|----------|-----------|----------|
+| Intake | `/media/vd-cut/incoming/` | 30 days | ✅ |
+| Processed | `/media/vd-cut/exports/` | 30 days | ✅ |
+| Sealed | Forensic Vault | ∞ Permanent | ❌ |
+
+**Config:**
+```python
+ORIGINAL_RETENTION_HOURS = 720   # 30 days
+SEALED_RETENTION_DAYS = 30
+```
+
+### Components Implemented
+
+| Component | Details |
+|-----------|---------|
+| **NOMAD Voice** | `handlers/voice.py` · Whisper transcription |
+| **PWA Upload** | `/opt/windi/nomad-pwa/` · 6 files |
+| **Nginx** | `/nomad-upload/` route |
+| **VD-CUT API** | Fixed: `video`, `did`, `source_asset`, `in_point`, `out_point` |
+| **DID Chain** | URL → Travel → Law → Cookie → Auto-generate |
+| **Vault Archive** | `archive_to_vault()` · permanent copy after seal |
+
+### Constitutional Alignment
+
+- **I9** — Human decides when to seal ✅
+- **I11** — Sealed data is immutable ✅
+- **G3** — Propose ≠ Execute ✅
+
+### Canonical Interpretation
+
+> "Between creation and truth, there must be a space where the human decides."
+
+§129 introduces a **temporal sovereignty layer** between creation and irreversible truth, enabling:
+- Iteration before commitment
+- Human-controlled finalization
+- Integration with MARIA (suggestion layer)
+- Integration with JOE (narrative orchestration)
+
+---
+
+## §130 — Whisper Transcription + Legal Overlay · SEALED 05 Abr 2026
+
+| Campo | Valor |
+|-------|-------|
+| Status | ✅ LIVE · SEALED |
+| Commit | `6c73805` |
+| Port | :8128 (extensão do VD-CUT-001) |
+| Invariants | I9 intocado · I11 intocado |
+
+> **"Cut by text. Seal by truth."**
+
+### O que foi construído
+
+Extensão cirúrgica ao W-VD-CUT-001 (:8128) — sem nova porta.
+
+**Whisper v20250625** instalado com suporte PyTorch + CUDA local.
+
+**Novo módulo:** `/opt/windi/vd-cut/services/transcribe_service.py` (378 linhas)
+
+### Endpoints Adicionados
+
+| Endpoint | Função |
+|----------|--------|
+| `POST /vd-cut/transcribe` | Transcrição com timestamps word-level |
+| `GET /vd-cut/transcribe/models` | Lista modelos disponíveis |
+| `POST /vd-cut/text-to-cuts` | Encontra timestamps para texto seleccionado |
+| `POST /vd-cut/legal-overlay` | Marca d'água judicial no vídeo |
+
+### Modelos Whisper
+
+```
+tiny   → 39M  · ~32x realtime · básico
+base   → 74M  · ~16x realtime · bom (default)
+small  → 244M · ~6x realtime  · melhor
+medium → 769M · ~2x realtime  · alto
+```
+
+### Workflow Cut-by-Text
+
+```
+Video → /transcribe → User selects text → /text-to-cuts → timestamps
+                                                    ↓
+                                            FFmpeg cut → Seal
+```
+
+### Legal Overlay (Marca d'Água Judicial)
+
+```
+Input: video + case_ref + court
+Output: video com overlay "Ref: 123/2026 | Amtsgericht Kempten | 2026-04-05 14:12 UTC"
+```
+
+**Escapamento FFmpeg drawtext:** `:` → `\\:` para compatibilidade.
+
+### Arquitectura Respeitada
+
+- **Zero nova porta** — extensão no :8128 existente
+- **I9 intocado** — lógica de seal não modificada
+- **I11 intocado** — Ledger chain intact
+- **Zero dependência cloud** — Whisper corre 100% local
+
+Liga IA+H · Kempten, Bavaria · 05 Abril 2026
+
