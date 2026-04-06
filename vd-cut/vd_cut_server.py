@@ -603,6 +603,147 @@ async def vision_health():
     }
 
 
+# ===== W-OBS-GATE — Cloud-Side Composition =====
+
+@app.post("/vd-cut/compose")
+async def compose_video_endpoint(
+    project_id: str = Form(...),
+    asset_id: str = Form(...),
+    scene: str = Form("clean"),  # berlin_pitch, forensic, clean, broadcast, social
+    verdict: str = Form("VERIFIED"),
+    receipt_id: Optional[str] = Form(None)
+):
+    """
+    W-OBS-GATE — Compose video with sovereign overlays.
+
+    Applies scene template to create broadcast-ready output with
+    verification elements (QR, timestamp, verdict badge, logo).
+
+    I9: Composition is a TOOL. Human decides when and how to use it.
+    I11: Output hash is computed and returned for potential sealing.
+    """
+    from services.compose_service import compose_video, list_available_scenes, SCENES
+    from dataclasses import asdict
+
+    # Validate scene
+    if scene not in SCENES:
+        available = list(SCENES.keys())
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unknown scene: {scene}. Available: {available}"
+        )
+
+    # Get asset
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM video_assets WHERE id = ?", (asset_id,))
+    asset = cursor.fetchone()
+
+    if not asset:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Asset not found")
+
+    cursor.execute("SELECT * FROM video_projects WHERE id = ?", (project_id,))
+    project = cursor.fetchone()
+
+    if not project:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    conn.close()
+
+    # Get source path (stored_path is the column name in DB)
+    source_path = Path(asset["stored_path"])
+    if not source_path.exists():
+        # Fallback to incoming dir by asset ID
+        source_path = INCOMING_DIR / f"{asset_id}.mp4"
+    if not source_path.exists():
+        raise HTTPException(status_code=404, detail="Source file not found")
+
+    # Generate output path
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
+    output_filename = f"{asset_id}_composed_{scene}_{timestamp}.mp4"
+    output_path = EXPORTS_DIR / output_filename
+
+    # Generate receipt ID if not provided
+    if not receipt_id:
+        receipt_id = f"WINDI-COMPOSE-{timestamp}-{uuid.uuid4().hex[:8].upper()}"
+
+    # Build verify URL
+    verify_url = f"https://windi-domain.com/verify-public/?id={receipt_id}"
+
+    # Compose video
+    result = await compose_video(
+        input_path=source_path,
+        output_path=output_path,
+        scene_name=scene,
+        receipt_id=receipt_id,
+        verdict=verdict,
+        verify_url=verify_url,
+        project_id=project_id,
+        asset_id=asset_id
+    )
+
+    if not result.success:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Composition failed: {result.error}"
+        )
+
+    log.info(f"W-OBS-GATE composed: {scene} for {asset_id} in {result.composition_ms:.0f}ms")
+
+    return {
+        "success": True,
+        "service": "W-OBS-GATE",
+        "scene": scene,
+        "scene_name": SCENES[scene].name,
+        "output_path": str(output_path),
+        "output_hash": result.output_hash,
+        "composition_ms": result.composition_ms,
+        "overlays_applied": result.overlays_applied,
+        "receipt_id": receipt_id,
+        "verify_url": verify_url,
+        "i9_notice": "Composition ready. Human decides publication.",
+        "i11_notice": "Output hash computed. Ready for Ledger seal if approved."
+    }
+
+
+@app.get("/vd-cut/compose/scenes")
+async def list_scenes():
+    """List available composition scenes for W-OBS-GATE."""
+    from services.compose_service import list_available_scenes
+
+    return {
+        "service": "W-OBS-GATE",
+        "version": "1.0.0",
+        "scenes": list_available_scenes(),
+        "note": "Each scene defines overlay position, elements shown, and styling."
+    }
+
+
+@app.get("/vd-cut/compose/health")
+async def compose_health():
+    """Health check for W-OBS-GATE Composition Service."""
+    from services.compose_service import SCENES
+
+    return {
+        "status": "healthy",
+        "service": "W-OBS-GATE",
+        "version": "1.0.0",
+        "description": "Cloud-Side Composition — FFmpeg-based video overlays",
+        "capabilities": {
+            "scene_templates": len(SCENES),
+            "qr_overlay": True,
+            "timestamp_overlay": True,
+            "verdict_badge": True,
+            "logo_watermark": True,
+            "ffmpeg_local": True,
+            "obs_dependency": False  # 100% local FFmpeg
+        }
+    }
+
+
 @app.post("/vd-cut/job/create")
 async def create_job(edl: EDLRequest, background_tasks: BackgroundTasks):
     """
