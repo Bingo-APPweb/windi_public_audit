@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
 **Version:** 2.0.4
-**Sealed:** 2026-04-06 · §145 ALMA v1.0 — MARIA Constitutional Identity LIVE
+**Sealed:** 2026-04-06 · §145.3 Weather/Culture Routing Fix SEALED
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -710,11 +710,11 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
-| 06 Apr | **§145 ALMA v1.0** · MARIA Constitutional Identity · Motor de Espelho · 4 Registos · Bug fix /plan |
-| 06 Apr | **§144 Strike 6 — Share Button** · verify-public SHARE → I9 Modal → Glass Embassy · 2nd Broadcast |
+| 06 Apr | **§145.3 Weather/Culture** · Routing separation · Overlap eliminated · `2017c3a` |
+| 06 Apr | **§145 ALMA v1.0** · MARIA Constitutional Identity · Motor de Espelho · 4 Registos |
+| 06 Apr | **§144 Strike 6 — Share Button** · verify-public SHARE → I9 Modal → Glass Embassy |
 | 06 Apr | **§143 W-BRIDGE-001 LIVE** · BIG-BRIDGE Gateway · /watch/{id} · HLS + Proof Panel · :8143 |
 | 06 Apr | **§142 W-FEDIVERSE-001 LIVE** · Glass Embassy · Mastodon + BlueSky · Parallel Broadcast · :8142 |
-| 06 Apr | **§141 W-NOMAD-VOICE LIVE** · A Pele Humana do Dragão · /cmd pitch · I9 Telegram Buttons |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -876,6 +876,9 @@ workspace/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
 ### Completado (últimos 10 · ver CLAUDE-HISTORY.md para §37-115)
+- [x] §145.3 **Weather/Culture Separation** · Routing fix · `2017c3a` ✅ 06 Apr
+- [x] §145.2 **3-Bug Fix** · Truncation + Lang case + Weather priority · `d6ad9c3` ✅ 06 Apr
+- [x] §145.1 **Human Warmth** · Greeting detection → Claude routing · `§145.1` ✅ 06 Apr
 - [x] §145 **ALMA v1.0** · MARIA Constitutional Identity · Motor de Espelho · 4 Registos · Bug fix /plan ✅ 06 Apr
 - [x] §144 **Strike 6 — Share Button** · verify-public SHARE → I9 Modal → Glass Embassy ✅ 06 Apr
 - [x] §143 **W-BRIDGE-001** · BIG-BRIDGE Gateway · /watch/{id} · HLS Streaming · :8143 ✅ 06 Apr
@@ -938,6 +941,9 @@ workspace/
 | §143 | W-BRIDGE-001 | ✅ LIVE | BIG-BRIDGE Gateway · /watch/{id} · HLS · :8143 |
 | §144 | Strike 6 — Share Button | ✅ LIVE | verify-public SHARE → Glass Embassy |
 | §145 | ALMA v1.0 | ✅ LIVE | MARIA Constitutional Identity · Motor de Espelho · 4 Registos |
+| §145.1 | Human Warmth | ✅ SEALED | Greeting detection → Claude routing |
+| §145.2 | 3-Bug Fix | ✅ SEALED | Truncation + Lang case + Weather priority · `d6ad9c3` |
+| §145.3 | Weather/Culture | ✅ SEALED | Routing separation · Overlap eliminated · `2017c3a` |
 
 > **Detalhes completos §128-145:** `CLAUDE-HISTORY.md` § SESSÃO 05-06 Abr 2026
 
