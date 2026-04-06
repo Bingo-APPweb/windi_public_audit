@@ -2310,6 +2310,12 @@ async def maria_plan(req: PlanRequest):
             address=best.get("address"), rating=best.get("rating"),
             open_now=best.get("open_now"),
         )
+        # §145 — voice was missing in this branch (fixed 06 Apr 2026)
+        voice = MariaVoice(
+            PT=decision.reason if lang == "PT" else "",
+            DE=decision.reason if lang == "DE" else "",
+            EN=decision.reason if lang == "EN" else "",
+        )
 
     # 4. Ledger seal (I11) — non-blocking
     seal_payload = {
