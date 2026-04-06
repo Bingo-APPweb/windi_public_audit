@@ -2626,6 +2626,9 @@ async def maria_location(request: Request, lang: str = "en"):
         "fly_from": loc["iata"],
         "detected": loc.get("detected", False),
         "source": loc.get("source", "unknown"),
+        # §145.12 fix: Expose lat/lng for places search
+        "lat": loc.get("lat"),
+        "lng": loc.get("lng"),
     }
 
 
