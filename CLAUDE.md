@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.0.4
-**Sealed:** 2026-04-06 · §145.3 Weather/Culture Routing Fix SEALED
+**Version:** 2.0.5
+**Sealed:** 2026-04-06 · §145.11 Stable Response Contract SEALED
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -710,11 +710,11 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 06 Apr | **§145.11 Stable Response Contract** · Maria breathing never fails · LLM timeout 2.5s · `cf6a168` |
 | 06 Apr | **§145.3 Weather/Culture** · Routing separation · Overlap eliminated · `2017c3a` |
 | 06 Apr | **§145 ALMA v1.0** · MARIA Constitutional Identity · Motor de Espelho · 4 Registos |
 | 06 Apr | **§144 Strike 6 — Share Button** · verify-public SHARE → I9 Modal → Glass Embassy |
 | 06 Apr | **§143 W-BRIDGE-001 LIVE** · BIG-BRIDGE Gateway · /watch/{id} · HLS + Proof Panel · :8143 |
-| 06 Apr | **§142 W-FEDIVERSE-001 LIVE** · Glass Embassy · Mastodon + BlueSky · Parallel Broadcast · :8142 |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -876,16 +876,16 @@ workspace/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
 ### Completado (últimos 10 · ver CLAUDE-HISTORY.md para §37-115)
+- [x] §145.11 **Stable Response Contract** · Maria breathing never fails · LLM 2.5s · `cf6a168` ✅ 06 Apr
+- [x] §145.10 **Memory → Brain Bridge** · Preferences inject into LLM prompts · `7f7e772` ✅ 06 Apr
+- [x] §145.9 **Feedback Loop** · 👍/👎 learning · Intent tracking · `a96766f` ✅ 06 Apr
+- [x] §145.8 **Maria Narrates** · LLM narratives + trilingual fallback · `05518f6` ✅ 06 Apr
+- [x] §145.7 **Unlock Memory** · Gate 0.3→0.1 · Passive confidence · `f692a67` ✅ 06 Apr
 - [x] §145.3 **Weather/Culture Separation** · Routing fix · `2017c3a` ✅ 06 Apr
-- [x] §145.2 **3-Bug Fix** · Truncation + Lang case + Weather priority · `d6ad9c3` ✅ 06 Apr
-- [x] §145.1 **Human Warmth** · Greeting detection → Claude routing · `§145.1` ✅ 06 Apr
-- [x] §145 **ALMA v1.0** · MARIA Constitutional Identity · Motor de Espelho · 4 Registos · Bug fix /plan ✅ 06 Apr
-- [x] §144 **Strike 6 — Share Button** · verify-public SHARE → I9 Modal → Glass Embassy ✅ 06 Apr
-- [x] §143 **W-BRIDGE-001** · BIG-BRIDGE Gateway · /watch/{id} · HLS Streaming · :8143 ✅ 06 Apr
-- [x] §142 **W-FEDIVERSE-001** · Glass Embassy · Mastodon + BlueSky · Parallel Broadcast · :8142 ✅ 06 Apr
-- [x] §141 **W-NOMAD-VOICE** · A Pele Humana do Dragão · /cmd pitch · I9 Telegram · `900eba8` ✅ 06 Apr
-- [x] §140 **W-INTENT-CMD** · Director-as-a-Service · :8141 · 6 Intents · `5004346` ✅ 06 Apr
-- [x] §139 **W-INFRA-AUGMENT** · CLASSIFY + VISION + OBS-GATE · 5 Scenes · `d535e50` ✅ 06 Apr
+- [x] §145 **ALMA v1.0** · MARIA Constitutional Identity · Motor de Espelho · 4 Registos ✅ 06 Apr
+- [x] §144 **Strike 6 — Share Button** · verify-public SHARE → Glass Embassy ✅ 06 Apr
+- [x] §143 **W-BRIDGE-001** · BIG-BRIDGE Gateway · /watch/{id} · HLS · :8143 ✅ 06 Apr
+- [x] §142 **W-FEDIVERSE-001** · Glass Embassy · Mastodon + BlueSky · :8142 ✅ 06 Apr
 - [x] §138 **W-COMPOSER-001** · Sovereign Collage Engine · First Seal `58B241B1` ✅ 06 Apr
 - [x] §137 **Medium-Agnostic Distribution** · W-JMPG-001 v1.3.0 · SDK v1.1.0 · t.me/windi_public ✅ 06 Apr
 - [x] §136 **W-UDB-001 LIVE** · Dashboard Unificado · God View · Kill Switch · SSE ✅ 06 Apr
