@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.98
-**Sealed:** 2026-04-06 · §136 W-UDB-001 Dashboard LIVE — God View Operacional
+**Version:** 1.9.99
+**Sealed:** 2026-04-06 · §138 W-COMPOSER-001 LIVE — Sovereign Collage Engine
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -72,6 +72,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-COMM-001 | :8091 | I9,I11 | Communiqué Engine · JMPG · Proof Cards |
 | W-JMPG-001 | :8132 | I11,§122.4 | Proof Card Renderer · `/comm/publish` · **LIVE** |
 | W-UDB-001 | :8140 | I9,I11 | **LIVE** · Unified Dashboard · God View · Kill Switch · SSE |
+| W-COMPOSER-001 | :8140 | I9,I11,I9-P | **LIVE** · Sovereign Collage · MLT Engine · Dual-Source Forensic |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
 
@@ -659,7 +660,7 @@ KLAR (light):
 
 ---
 
-## 13. Estado Actual — 05 Abril 2026
+## 13. Estado Actual — 06 Abril 2026
 
 ### Mapa de Portas
 
@@ -685,11 +686,11 @@ KLAR (light):
 | :8132 | W-JMPG-001 Proof Card Renderer | 🟢 **LIVE** · `/comm/publish` |
 | :8140 | W-UDB-001 Unified Dashboard | 🟢 **LIVE** · God View · Kill Switch · SSE |
 
-### Sistemas LIVE (33 total)
+### Sistemas LIVE (34 total)
 
 **Core:** GEN7 Desktop · Pioneer Program · VPR System · API Keys · Dispatch · Web Hosting · i18n · Wallet · Lead Admin
 
-**Agents (W-*):** CIA-001 · WSG-001 · GATE-001 · NGINX-001 · CANVAS-001 · CANVAS-OBS-001 · CANVAS-LAB-001 · COMM-001 · PROVE-001 · DETECT-MEDIA-001 · VERIFY-MODUS4 · INTENT-001 · COUNSEL-001 · SESSION-001 · NOMAD-001 · VD-CUT-001 · VD-MASS-001 · JOE-001 · DIST-001 · JMPG-001 · UDB-001
+**Agents (W-*):** CIA-001 · WSG-001 · GATE-001 · NGINX-001 · CANVAS-001 · CANVAS-OBS-001 · CANVAS-LAB-001 · COMM-001 · PROVE-001 · DETECT-MEDIA-001 · VERIFY-MODUS4 · INTENT-001 · COUNSEL-001 · SESSION-001 · NOMAD-001 · VD-CUT-001 · VD-MASS-001 · JOE-001 · DIST-001 · JMPG-001 · UDB-001 · COMPOSER-001
 
 **Products:** Triangle of Power · WINDI FIELD · WINDI TRAVEL · FVE Protocol · RFC-001 DNA
 
@@ -699,12 +700,11 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 06 Apr | **§138 W-COMPOSER-001 LIVE** · Sovereign Collage Engine · Dual-Source Forensic · First Seal `58B241B1` |
 | 06 Apr | **§136 W-UDB-001 LIVE** · Dashboard Unificado · God View · :8140 · Kill Switch · SSE |
-| 06 Apr | **§138 Preparação Maio 2026** · 4 Entregáveis · SKILL instalado · Nervos mapeados |
 | 06 Apr | **§137 Medium-Agnostic Distribution** · W-JMPG-001 v1.3.0 · `/comm/publish` · t.me/windi_public LIVE |
 | 05 Apr | **§135 MLT Engine Fusão Real** · VD-CUT × VD-MASS · Dual-Hash Chain · Policy I9-P LIVE |
 | 05 Apr | **§133 Preview Endpoint** · Full-size frames · Semantic separation thumb/preview · `0ddaeed` |
-| 05 Apr | **§132 Partilhar Button** · VD-CUT Dashboard · Telegram/Email/Copy Link · `8840542` |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -813,7 +813,8 @@ Se o Gêmeo inventa um receipt... isso é falsificação."
 
 ### P0 — Crítico (Próxima Sessão)
 - [x] **P3-B Travel Workspace** — ✅ LIVE · F13 Chat Maria · 14 features
-- [ ] **§138 WINDI-LAW Painel de Anexos** — IMG/DOC não visíveis após upload. Implementar:
+- [x] **§138 W-COMPOSER-001** — ✅ LIVE · Sovereign Collage Engine · First Seal `58B241B1` · SGE 95%
+- [ ] **§139 WINDI-LAW Painel de Anexos** — IMG/DOC não visíveis após upload. Implementar:
   - Lista persistente de anexos (não só o último)
   - Painel lateral ou expandível: nome · SHA · tamanho · botão remover
   - Suporte múltiplos ficheiros (IMG + DOC + VID conjunto)
