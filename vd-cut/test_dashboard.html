@@ -884,22 +884,42 @@
         async function shareViaTelegram() {
             const { receiptId, verifyUrl } = getReceiptInfo();
 
-            const text = `🔐 WINDI Communiqué
+            if (!receiptId || receiptId === '') {
+                showToast('❌ No receipt to share');
+                return;
+            }
 
-📄 Video sealed in Forensic Ledger
+            const text = `🔐 WINDI Verified
 
-🛡️ Receipt: ${receiptId}
+🛡️ ${receiptId}
 
-🔗 Verify: ${verifyUrl}
+👉 VERIFY`;
 
-AI processes. Human decides. WINDI guarantees.`;
+            // Use native share if available (mobile)
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'WINDI Verified',
+                        text: text,
+                        url: verifyUrl
+                    });
+                    document.getElementById('shareDropdown').classList.remove('show');
+                    return;
+                } catch (e) {
+                    // User cancelled or not supported, fall through to Telegram
+                }
+            }
 
-            // Try Telegram URL scheme
+            // Telegram URL - use location.href for WebView compatibility
             const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(verifyUrl)}&text=${encodeURIComponent(text)}`;
-            window.open(telegramUrl, '_blank');
 
             document.getElementById('shareDropdown').classList.remove('show');
             showToast('Opening Telegram...');
+
+            // Use location.href instead of window.open for Telegram WebView
+            setTimeout(() => {
+                location.href = telegramUrl;
+            }, 100);
         }
 
         // Email Modal
