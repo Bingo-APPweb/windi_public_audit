@@ -3616,3 +3616,173 @@ async def get_memories(did: str, lang: str = "PT"):
             "patterns": len(visible_memory),
         }
     }
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# §145.8 — /memories/narrated · "Maria tells your story"
+# ══════════════════════════════════════════════════════════════════════════════
+
+def _narrative_fallback(item: dict, lang: str) -> str:
+    """
+    §145.8 — Fallback narratives when LLM unavailable.
+    Human, warm, no technical jargon.
+    """
+    intent = item.get("intent", "").lower()
+    title = item.get("title", "")
+    item_type = item.get("type", "maria")
+
+    fallbacks = {
+        "PT": {
+            "hotel": f"Procuraste descanso em {title}" if title else "Procuraste alojamento",
+            "flight": f"Consideraste viajar de {title}" if title else "Exploraste opções de voo",
+            "restaurant": f"Procuraste onde comer — {title}" if title else "Procuraste restaurantes",
+            "cafe": f"Procuraste um café — {title}" if title else "Procuraste um lugar tranquilo",
+            "museum": f"Exploraste cultura — {title}" if title else "Exploraste opções culturais",
+            "weather": "Quiseste saber como estava o tempo",
+            "culture": "Pediste conselhos de viagem",
+            "general": "Conversámos sobre a tua jornada",
+            "journey": f"Iniciaste uma jornada — {title}" if title else "Começaste uma nova aventura",
+        },
+        "DE": {
+            "hotel": f"Du hast nach Unterkunft in {title} gesucht" if title else "Du hast nach Unterkunft gesucht",
+            "flight": f"Du hast Flüge von {title} erkundet" if title else "Du hast Flugoptionen erkundet",
+            "restaurant": f"Du hast Restaurants gesucht — {title}" if title else "Du hast Restaurants gesucht",
+            "cafe": f"Du hast ein Café gesucht — {title}" if title else "Du hast einen ruhigen Ort gesucht",
+            "museum": f"Du hast Kultur erkundet — {title}" if title else "Du hast kulturelle Optionen erkundet",
+            "weather": "Du wolltest wissen, wie das Wetter ist",
+            "culture": "Du hast nach Reisetipps gefragt",
+            "general": "Wir haben über deine Reise gesprochen",
+            "journey": f"Du hast eine Reise begonnen — {title}" if title else "Du hast ein neues Abenteuer begonnen",
+        },
+        "EN": {
+            "hotel": f"You looked for a place to stay in {title}" if title else "You searched for accommodation",
+            "flight": f"You explored flights from {title}" if title else "You explored flight options",
+            "restaurant": f"You looked for places to eat — {title}" if title else "You searched for restaurants",
+            "cafe": f"You looked for a café — {title}" if title else "You searched for a quiet spot",
+            "museum": f"You explored culture — {title}" if title else "You explored cultural options",
+            "weather": "You wanted to know the weather",
+            "culture": "You asked for travel tips",
+            "general": "We talked about your journey",
+            "journey": f"You started a journey — {title}" if title else "You began a new adventure",
+        },
+    }
+
+    lang_fallbacks = fallbacks.get(lang.upper(), fallbacks["EN"])
+
+    if item_type == "journey":
+        return lang_fallbacks.get("journey", title or "Journey")
+
+    return lang_fallbacks.get(intent, lang_fallbacks.get("general", title or "Moment"))
+
+
+async def _generate_narratives_llm(timeline: list, lang: str) -> list:
+    """
+    §145.8 — Batch LLM call to generate narratives.
+    Uses W-GATEWAY-001 for efficient processing.
+    """
+    if not timeline:
+        return []
+
+    # Build compact representation for LLM
+    items_for_llm = []
+    for item in timeline[:10]:  # Max 10 for cost control
+        items_for_llm.append({
+            "type": item.get("type", "maria"),
+            "intent": item.get("intent", "general"),
+            "title": item.get("title", ""),
+        })
+
+    lang_instruction = {
+        "PT": "Responde em português europeu",
+        "DE": "Antworte auf Deutsch",
+        "EN": "Respond in English",
+    }.get(lang.upper(), "Respond in English")
+
+    system_prompt = f"""You are Maria, a warm travel companion with memory.
+Transform each memory item into ONE natural sentence (max 10 words).
+
+Rules:
+- Human, warm, personal
+- No technical terms (no "intent", "query", "search")
+- Use "you" to address the traveller
+- {lang_instruction}
+
+Return ONLY a JSON array of strings, one per item. No explanations."""
+
+    user_prompt = f"""Transform these {len(items_for_llm)} memories into short narratives:
+
+{json.dumps(items_for_llm, ensure_ascii=False)}
+
+Return as JSON array: ["narrative1", "narrative2", ...]"""
+
+    try:
+        async with httpx.AsyncClient(timeout=8.0) as client:
+            r = await client.post(
+                f"{GATEWAY_URL}/gateway/call",
+                json={
+                    "actor": "W-MARIA-001",
+                    "tier": "MED",  # Cost-efficient tier
+                    "task": "narrative",
+                    "prompt": user_prompt,
+                    "system": system_prompt,
+                },
+                headers={
+                    "Content-Type": "application/json",
+                    "X-Gateway-Secret": GATEWAY_SECRET,
+                },
+            )
+            if r.status_code == 200:
+                data = r.json()
+                response_text = data.get("response", "")
+
+                # Parse JSON array from response
+                # LLM might wrap in markdown code blocks
+                clean = response_text.strip()
+                if clean.startswith("```"):
+                    clean = clean.split("```")[1]
+                    if clean.startswith("json"):
+                        clean = clean[4:]
+                clean = clean.strip()
+
+                narratives = json.loads(clean)
+                if isinstance(narratives, list):
+                    log.info(f"[MARIA §145.8] Generated {len(narratives)} narratives via LLM")
+                    return narratives
+    except Exception as e:
+        log.warning(f"[MARIA §145.8] LLM narrative failed: {e}")
+
+    return []
+
+
+@router.get("/memories/{did}/narrated")
+async def get_narrated_memories(did: str, lang: str = "PT"):
+    """
+    §145.8 — Maria tells your story.
+
+    "Memory is not a list of events. It's a story told by someone who was there."
+
+    Returns timeline with human narratives instead of raw data.
+    Uses LLM when available, graceful fallback when not.
+    """
+    # Get base memories (reuse existing logic)
+    base = await get_memories(did, lang)
+    timeline = base.get("timeline", [])
+
+    if not timeline:
+        return base
+
+    # Try LLM narratives first
+    llm_narratives = await _generate_narratives_llm(timeline, lang)
+
+    # Merge narratives into timeline
+    for i, item in enumerate(timeline):
+        if i < len(llm_narratives) and llm_narratives[i]:
+            item["narrative"] = llm_narratives[i]
+        else:
+            # Fallback for items without LLM narrative
+            item["narrative"] = _narrative_fallback(item, lang)
+
+    base["timeline"] = timeline
+    base["narrated"] = True
+
+    return base
