@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.99
-**Sealed:** 2026-04-06 · §138 W-COMPOSER-001 LIVE — Sovereign Collage Engine
+**Version:** 2.0.0
+**Sealed:** 2026-04-06 · §141 W-NOMAD-VOICE — Director-as-a-Service LIVE
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -73,6 +73,11 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-JMPG-001 | :8132 | I11,§122.4 | Proof Card Renderer · `/comm/publish` · **LIVE** |
 | W-UDB-001 | :8140 | I9,I11 | **LIVE** · Unified Dashboard · God View · Kill Switch · SSE |
 | W-COMPOSER-001 | :8140 | I9,I11,I9-P | **LIVE** · Sovereign Collage · MLT Engine · Dual-Source Forensic |
+| W-CLASSIFY-001 | :8128 | I9,I11 | **LIVE** · Sensibilidade de Ingestão · Audio/Encoder/Resolution |
+| W-VISION-001 | :8128 | I9,I11 | **LIVE** · Forensic Vision · pHash · Noise Signature · Deepfake |
+| W-OBS-GATE | :8128 | I9,I11 | **LIVE** · Cloud Composition · 5 Scenes · FFmpeg Overlays |
+| W-INTENT-CMD | :8141 | I9,I11,I13 | **LIVE** · Director-as-a-Service · Intent Orchestration |
+| W-NOMAD-VOICE | :8127 | I9,I12 | **LIVE** · Human Translation Layer · No-Jargon Filter |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
 
@@ -685,12 +690,13 @@ KLAR (light):
 | :8131 | W-VD-MASS-001 Policy Engine | 🟢 **LIVE** · I9-P · Batch · MLT/Shotcut |
 | :8132 | W-JMPG-001 Proof Card Renderer | 🟢 **LIVE** · `/comm/publish` |
 | :8140 | W-UDB-001 Unified Dashboard | 🟢 **LIVE** · God View · Kill Switch · SSE |
+| :8141 | W-INTENT-CMD Director-as-a-Service | 🟢 **LIVE** · Intent Orchestration · 6 Intents · I9 Gate |
 
-### Sistemas LIVE (34 total)
+### Sistemas LIVE (38 total)
 
 **Core:** GEN7 Desktop · Pioneer Program · VPR System · API Keys · Dispatch · Web Hosting · i18n · Wallet · Lead Admin
 
-**Agents (W-*):** CIA-001 · WSG-001 · GATE-001 · NGINX-001 · CANVAS-001 · CANVAS-OBS-001 · CANVAS-LAB-001 · COMM-001 · PROVE-001 · DETECT-MEDIA-001 · VERIFY-MODUS4 · INTENT-001 · COUNSEL-001 · SESSION-001 · NOMAD-001 · VD-CUT-001 · VD-MASS-001 · JOE-001 · DIST-001 · JMPG-001 · UDB-001 · COMPOSER-001
+**Agents (W-*):** CIA-001 · WSG-001 · GATE-001 · NGINX-001 · CANVAS-001 · CANVAS-OBS-001 · CANVAS-LAB-001 · COMM-001 · PROVE-001 · DETECT-MEDIA-001 · VERIFY-MODUS4 · INTENT-001 · COUNSEL-001 · SESSION-001 · NOMAD-001 · VD-CUT-001 · VD-MASS-001 · JOE-001 · DIST-001 · JMPG-001 · UDB-001 · COMPOSER-001 · CLASSIFY-001 · VISION-001 · OBS-GATE · INTENT-CMD · NOMAD-VOICE
 
 **Products:** Triangle of Power · WINDI FIELD · WINDI TRAVEL · FVE Protocol · RFC-001 DNA
 
@@ -700,11 +706,11 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 06 Apr | **§141 W-NOMAD-VOICE LIVE** · A Pele Humana do Dragão · /cmd pitch · I9 Telegram Buttons |
+| 06 Apr | **§140 W-INTENT-CMD LIVE** · Director-as-a-Service · :8141 · 6 Intents · First Dragon Command |
+| 06 Apr | **§139 W-OBS-GATE + VISION + CLASSIFY** · Infraestrutura Multimédia · 5 Scenes · Forensic Analysis |
 | 06 Apr | **§138 W-COMPOSER-001 LIVE** · Sovereign Collage Engine · Dual-Source Forensic · First Seal `58B241B1` |
-| 06 Apr | **§136 W-UDB-001 LIVE** · Dashboard Unificado · God View · :8140 · Kill Switch · SSE |
 | 06 Apr | **§137 Medium-Agnostic Distribution** · W-JMPG-001 v1.3.0 · `/comm/publish` · t.me/windi_public LIVE |
-| 05 Apr | **§135 MLT Engine Fusão Real** · VD-CUT × VD-MASS · Dual-Hash Chain · Policy I9-P LIVE |
-| 05 Apr | **§133 Preview Endpoint** · Full-size frames · Semantic separation thumb/preview · `0ddaeed` |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -848,10 +854,12 @@ workspace/
 
 ### P1.5 — WINDI Travel Phase 2
 - [x] **Vídeo** — ✅ W-VD-CUT-001 LIVE · Captura + seal via Telegram · 03 Apr 2026
+- [x] **W-VISION-001** — ✅ LIVE · Forensic Frame Analysis · pHash · Manipulation Detection · 06 Apr 2026
+- [x] **W-OBS-GATE** — ✅ LIVE · Cloud Composition · 5 Scenes · FFmpeg Overlays · 06 Apr 2026
+- [x] **W-INTENT-CMD** — ✅ LIVE · Director-as-a-Service · /cmd pitch · 06 Apr 2026
 - [ ] **Colagem Soberana** — Composição multi-momento
 - [ ] **Thread Visual** — Timeline com thumbnails
 - [ ] **GPS Reverse Geocoding** — Nomes de lugares
-- [ ] **W-VISION-001** — Descrição automática
 
 ### P2 — Melhorias
 - [ ] **W-ACCT-001** — Bridge dedicado
@@ -864,6 +872,10 @@ workspace/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
 ### Completado (últimos 10 · ver CLAUDE-HISTORY.md para §37-115)
+- [x] §141 **W-NOMAD-VOICE** · A Pele Humana do Dragão · /cmd pitch · I9 Telegram · `900eba8` ✅ 06 Apr
+- [x] §140 **W-INTENT-CMD** · Director-as-a-Service · :8141 · 6 Intents · `5004346` ✅ 06 Apr
+- [x] §139 **W-INFRA-AUGMENT** · CLASSIFY + VISION + OBS-GATE · 5 Scenes · `d535e50` ✅ 06 Apr
+- [x] §138 **W-COMPOSER-001** · Sovereign Collage Engine · First Seal `58B241B1` ✅ 06 Apr
 - [x] §137 **Medium-Agnostic Distribution** · W-JMPG-001 v1.3.0 · SDK v1.1.0 · t.me/windi_public ✅ 06 Apr
 - [x] §136 **W-UDB-001 LIVE** · Dashboard Unificado · God View · Kill Switch · SSE ✅ 06 Apr
 - [x] §135 **MLT Engine Fusão Real** · VD-CUT × VD-MASS · Dual-Hash Chain · Policy I9-P ✅ 05 Apr
@@ -910,9 +922,12 @@ workspace/
 | §135 | MLT Engine Fusão Real | ✅ SEALED | VD-CUT × VD-MASS · Dual-Hash · Policy `27bcbb0e` · melt 7.12.0 |
 | §136 | W-UDB-001 Dashboard | ✅ LIVE | Unified Dashboard · God View · :8140 · Kill Switch · SSE · `windi-domain.com/udb/` |
 | §137 | Medium-Agnostic Distribution | ✅ SEALED | W-JMPG-001 v1.3.0 · SDK v1.1.0 · `bda0400` · t.me/windi_public |
-| §138 | Preparação Maio 2026 | 🎯 EM CURSO | Demo 5min · Caso Real · Verify Carlos · Página Austera |
+| §138 | W-COMPOSER-001 | ✅ LIVE | Sovereign Collage · MLT · Dual-Source Forensic · First Seal `58B241B1` |
+| §139 | W-INFRA-AUGMENT | ✅ LIVE | CLASSIFY + VISION + OBS-GATE · 5 Scenes · `d535e50` |
+| §140 | W-INTENT-CMD | ✅ LIVE | Director-as-a-Service · :8141 · 6 Intents · `5004346` |
+| §141 | W-NOMAD-VOICE | ✅ LIVE | A Pele Humana · /cmd pitch · No-Jargon · `900eba8` |
 
-> **Detalhes completos §128-138:** `CLAUDE-HISTORY.md` § SESSÃO 05-06 Abr 2026
+> **Detalhes completos §128-141:** `CLAUDE-HISTORY.md` § SESSÃO 05-06 Abr 2026
 
 ---
 
