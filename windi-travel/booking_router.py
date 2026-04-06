@@ -3718,7 +3718,8 @@ Return ONLY a JSON array of strings, one per item. No explanations."""
 Return as JSON array: ["narrative1", "narrative2", ...]"""
 
     try:
-        async with httpx.AsyncClient(timeout=8.0) as client:
+        # §145.11 — Reduced timeout for responsive UX (LLM is upgrade, not dependency)
+        async with httpx.AsyncClient(timeout=2.5) as client:
             r = await client.post(
                 f"{GATEWAY_URL}/gateway/call",
                 json={
@@ -3759,35 +3760,77 @@ Return as JSON array: ["narrative1", "narrative2", ...]"""
 @router.get("/memories/{did}/narrated")
 async def get_narrated_memories(did: str, lang: str = "PT"):
     """
-    §145.8 — Maria tells your story.
+    §145.8 + §145.11 — Maria tells your story with stable "breathing".
 
     "Memory is not a list of events. It's a story told by someone who was there."
 
-    Returns timeline with human narratives instead of raw data.
-    Uses LLM when available, graceful fallback when not.
+    Response contract (ALWAYS):
+    - status: "ok" | "error"
+    - mode: "llm" | "fallback" | "offline"
+    - confidence: 0.0-1.0
+    - timeline: [...]
+
+    Never fails. Always returns useful data.
     """
-    # Get base memories (reuse existing logic)
-    base = await get_memories(did, lang)
-    timeline = base.get("timeline", [])
+    try:
+        # Get base memories (reuse existing logic)
+        base = await get_memories(did, lang)
+        timeline = base.get("timeline", [])
+        confidence = base.get("confidence", 0.0)
 
-    if not timeline:
-        return base
+        # Empty timeline = valid but empty response
+        if not timeline:
+            return {
+                "status": "ok",
+                "mode": "empty",
+                "did": did,
+                "lang": lang,
+                "confidence": confidence,
+                "timeline": [],
+                "visible_memory": base.get("visible_memory", []),
+                "stats": base.get("stats", {}),
+            }
 
-    # Try LLM narratives first
-    llm_narratives = await _generate_narratives_llm(timeline, lang)
+        # Try LLM narratives (with reduced timeout for UX)
+        mode = "fallback"
+        llm_narratives = await _generate_narratives_llm(timeline, lang)
 
-    # Merge narratives into timeline
-    for i, item in enumerate(timeline):
-        if i < len(llm_narratives) and llm_narratives[i]:
-            item["narrative"] = llm_narratives[i]
-        else:
-            # Fallback for items without LLM narrative
-            item["narrative"] = _narrative_fallback(item, lang)
+        if llm_narratives and len(llm_narratives) > 0:
+            mode = "llm"
 
-    base["timeline"] = timeline
-    base["narrated"] = True
+        # Merge narratives into timeline
+        for i, item in enumerate(timeline):
+            if i < len(llm_narratives) and llm_narratives[i]:
+                item["narrative"] = llm_narratives[i]
+            else:
+                # Fallback for items without LLM narrative
+                item["narrative"] = _narrative_fallback(item, lang)
 
-    return base
+        return {
+            "status": "ok",
+            "mode": mode,
+            "did": did,
+            "lang": lang,
+            "confidence": confidence,
+            "timeline": timeline,
+            "visible_memory": base.get("visible_memory", []),
+            "stats": base.get("stats", {}),
+        }
+
+    except Exception as e:
+        # §145.11 — Never fail. Return graceful offline response.
+        log.error(f"[MARIA §145.11] Narrated endpoint error: {e}")
+        return {
+            "status": "error",
+            "mode": "offline",
+            "did": did,
+            "lang": lang,
+            "confidence": 0.0,
+            "timeline": [],
+            "visible_memory": [],
+            "stats": {},
+            "error": str(e)[:100],  # Truncated for security
+        }
 
 
 # ══════════════════════════════════════════════════════════════════════════════
