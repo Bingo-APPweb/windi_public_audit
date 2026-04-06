@@ -495,6 +495,114 @@ async def classify_health():
     }
 
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# W-VISION-001 — Forensic Vision Layer
+# "The Lens sees. The Ledger remembers. The Truth endures."
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@app.post("/vd-cut/describe")
+async def describe_video(project_id: str = Form(...), asset_id: str = Form(...)):
+    """
+    W-VISION-001 — Forensic Video Analysis
+
+    Analyzes video frames for integrity verification:
+    - Extracts key frames at regular intervals
+    - Computes perceptual hashes (similarity detection)
+    - Computes content hashes (exact match)
+    - Analyzes sensor noise signatures (forgery detection)
+    - Calculates manipulation probability
+
+    Returns:
+        - integrity_hash: Combined hash of all frame hashes
+        - sensor_consistency: 0.0-1.0 (1.0 = same sensor)
+        - manipulation_score: 0.0-1.0 (0.0 = likely authentic)
+        - key_frames: Detailed analysis of sampled frames
+        - verdict: LIKELY_AUTHENTIC / REVIEW_RECOMMENDED / HIGH_MANIPULATION_RISK
+    """
+    from services.vision_service import analyze_video_frames, generate_vision_receipt_data
+
+    # Validate project and asset exist
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM video_projects WHERE id = ?", (project_id,))
+    project = cursor.fetchone()
+
+    if not project:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    cursor.execute("SELECT * FROM video_assets WHERE id = ?", (asset_id,))
+    asset = cursor.fetchone()
+
+    if not asset:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Asset not found")
+
+    conn.close()
+
+    # Get file path
+    file_path = INCOMING_DIR / f"{asset_id}.mp4"
+
+    if not file_path.exists():
+        file_path = PROCESSING_DIR / f"{asset_id}.mp4"
+
+    if not file_path.exists():
+        file_path = SEALED_DIR / f"{project_id}_{asset_id}.mp4"
+
+    if not file_path.exists():
+        log.warning(f"Vision: File not found for {asset_id}")
+        return {
+            "project_id": project_id,
+            "asset_id": asset_id,
+            "error": "File not found",
+            "verdict": "ANALYSIS_FAILED"
+        }
+
+    # Run vision analysis
+    report = await analyze_video_frames(file_path, project_id, asset_id)
+
+    # Generate receipt data for potential Ledger attachment
+    receipt_data = generate_vision_receipt_data(report)
+
+    return {
+        "project_id": report.project_id,
+        "asset_id": report.asset_id,
+        "analyzed_at": report.analyzed_at,
+        "analysis_ms": report.analysis_ms,
+        "total_frames": report.total_frames,
+        "sampled_frames": report.sampled_frames,
+        "integrity_hash": report.integrity_hash,
+        "sensor_consistency": report.sensor_consistency,
+        "manipulation_score": report.manipulation_score,
+        "verdict": receipt_data["verdict"],
+        "key_frames": report.key_frames[:5],  # Return first 5 for preview
+        "receipt_data": receipt_data,
+        "vision_version": report.vision_version
+    }
+
+
+@app.get("/vd-cut/vision/health")
+async def vision_health():
+    """Health check for W-VISION-001 Forensic Vision Layer."""
+    import os
+    vision_api = os.getenv("WINDI_VISION_API", "false").lower() == "true"
+
+    return {
+        "status": "healthy",
+        "service": "W-VISION-001",
+        "version": "1.0.0",
+        "description": "Forensic Vision Layer — Frame integrity analysis",
+        "capabilities": {
+            "frame_extraction": True,
+            "perceptual_hash": True,
+            "noise_signature": True,
+            "manipulation_detection": True,
+            "vision_api_description": vision_api
+        }
+    }
+
+
 @app.post("/vd-cut/job/create")
 async def create_job(edl: EDLRequest, background_tasks: BackgroundTasks):
     """
