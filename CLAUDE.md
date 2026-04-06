@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.97
-**Sealed:** 2026-04-06 · §138 Preparação Maio 2026 — EM CURSO
+**Version:** 1.9.98
+**Sealed:** 2026-04-06 · §136 W-UDB-001 Dashboard LIVE — God View Operacional
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -71,7 +71,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-DIST-001 | :8091 | I9,I11,I13 | Distribution Router · Telegram · **LIVE** |
 | W-COMM-001 | :8091 | I9,I11 | Communiqué Engine · JMPG · Proof Cards |
 | W-JMPG-001 | :8132 | I11,§122.4 | Proof Card Renderer · `/comm/publish` · **LIVE** |
-| W-UDB-001 | :8140 | I9,I11 | **SPEC** · Unified Dashboard · God View · VD-CUT+MASS |
+| W-UDB-001 | :8140 | I9,I11 | **LIVE** · Unified Dashboard · God View · Kill Switch · SSE |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
 
@@ -681,12 +681,15 @@ KLAR (light):
 | :8128 | W-VD-CUT-001 Video Cut Engine | 🟢 **LIVE** · FFmpeg · I9+I11 · First video seals |
 | :8129 | W-JOE-001 Director de Transmissão | 🟢 **LIVE** · Story Graph + SGV · I9+I11+I13 |
 | :8130 | W-GATEWAY-001 (LLM Bridge) | 🟢 **LIVE** · 5 providers |
+| :8131 | W-VD-MASS-001 Policy Engine | 🟢 **LIVE** · I9-P · Batch · MLT/Shotcut |
+| :8132 | W-JMPG-001 Proof Card Renderer | 🟢 **LIVE** · `/comm/publish` |
+| :8140 | W-UDB-001 Unified Dashboard | 🟢 **LIVE** · God View · Kill Switch · SSE |
 
-### Sistemas LIVE (32 total)
+### Sistemas LIVE (33 total)
 
 **Core:** GEN7 Desktop · Pioneer Program · VPR System · API Keys · Dispatch · Web Hosting · i18n · Wallet · Lead Admin
 
-**Agents (W-*):** CIA-001 · WSG-001 · GATE-001 · NGINX-001 · CANVAS-001 · CANVAS-OBS-001 · CANVAS-LAB-001 · COMM-001 · PROVE-001 · DETECT-MEDIA-001 · VERIFY-MODUS4 · INTENT-001 · COUNSEL-001 · SESSION-001 · NOMAD-001 · VD-CUT-001 · JOE-001 · DIST-001
+**Agents (W-*):** CIA-001 · WSG-001 · GATE-001 · NGINX-001 · CANVAS-001 · CANVAS-OBS-001 · CANVAS-LAB-001 · COMM-001 · PROVE-001 · DETECT-MEDIA-001 · VERIFY-MODUS4 · INTENT-001 · COUNSEL-001 · SESSION-001 · NOMAD-001 · VD-CUT-001 · VD-MASS-001 · JOE-001 · DIST-001 · JMPG-001 · UDB-001
 
 **Products:** Triangle of Power · WINDI FIELD · WINDI TRAVEL · FVE Protocol · RFC-001 DNA
 
@@ -696,9 +699,9 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 06 Apr | **§136 W-UDB-001 LIVE** · Dashboard Unificado · God View · :8140 · Kill Switch · SSE |
 | 06 Apr | **§138 Preparação Maio 2026** · 4 Entregáveis · SKILL instalado · Nervos mapeados |
 | 06 Apr | **§137 Medium-Agnostic Distribution** · W-JMPG-001 v1.3.0 · `/comm/publish` · t.me/windi_public LIVE |
-| 05 Apr | **§136 W-UDB-001 SPEC** · Dashboard Unificado · God View · :8140 · VD-CUT + VD-MASS |
 | 05 Apr | **§135 MLT Engine Fusão Real** · VD-CUT × VD-MASS · Dual-Hash Chain · Policy I9-P LIVE |
 | 05 Apr | **§133 Preview Endpoint** · Full-size frames · Semantic separation thumb/preview · `0ddaeed` |
 | 05 Apr | **§132 Partilhar Button** · VD-CUT Dashboard · Telegram/Email/Copy Link · `8840542` |
@@ -861,7 +864,7 @@ workspace/
 
 ### Completado (últimos 10 · ver CLAUDE-HISTORY.md para §37-115)
 - [x] §137 **Medium-Agnostic Distribution** · W-JMPG-001 v1.3.0 · SDK v1.1.0 · t.me/windi_public ✅ 06 Apr
-- [x] §136 **W-UDB-001 SPEC** · Dashboard Unificado · God View · :8140 ✅ 05 Apr
+- [x] §136 **W-UDB-001 LIVE** · Dashboard Unificado · God View · Kill Switch · SSE ✅ 06 Apr
 - [x] §135 **MLT Engine Fusão Real** · VD-CUT × VD-MASS · Dual-Hash Chain · Policy I9-P ✅ 05 Apr
 - [x] §133 **Preview Endpoint** · Full-size frames · thumb vs preview · `0ddaeed` ✅ 05 Apr
 - [x] §132 **Partilhar Button** · VD-CUT UI · Telegram/Email/Copy · `8840542` ✅ 05 Apr
@@ -904,7 +907,7 @@ workspace/
 | §132 | Partilhar Button | ✅ LIVE | VD-CUT Dashboard · Telegram/Email/Copy Link · `8840542` |
 | §133 | Preview Endpoint | ✅ LIVE | Full-size frames · /preview/ vs /thumb/ · `0ddaeed` |
 | §135 | MLT Engine Fusão Real | ✅ SEALED | VD-CUT × VD-MASS · Dual-Hash · Policy `27bcbb0e` · melt 7.12.0 |
-| §136 | W-UDB-001 Dashboard | 📋 SPEC | Unified Dashboard · God View · :8140 · 3 Zonas · Kill Switch |
+| §136 | W-UDB-001 Dashboard | ✅ LIVE | Unified Dashboard · God View · :8140 · Kill Switch · SSE · `windi-domain.com/udb/` |
 | §137 | Medium-Agnostic Distribution | ✅ SEALED | W-JMPG-001 v1.3.0 · SDK v1.1.0 · `bda0400` · t.me/windi_public |
 | §138 | Preparação Maio 2026 | 🎯 EM CURSO | Demo 5min · Caso Real · Verify Carlos · Página Austera |
 
