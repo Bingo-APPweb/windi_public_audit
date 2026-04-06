@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.95
-**Sealed:** 2026-04-05 · §136 Dashboard Unificado (W-UDB-001) — SPEC
+**Version:** 1.9.96
+**Sealed:** 2026-04-06 · §137 Medium-Agnostic Truth Distribution — LIVE
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -70,6 +70,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-SGV-001 | :8129 | I9,I13 | Truth Illumination (ilumina, não bloqueia) |
 | W-DIST-001 | :8091 | I9,I11,I13 | Distribution Router · Telegram · **LIVE** |
 | W-COMM-001 | :8091 | I9,I11 | Communiqué Engine · JMPG · Proof Cards |
+| W-JMPG-001 | :8132 | I11,§122.4 | Proof Card Renderer · `/comm/publish` · **LIVE** |
 | W-UDB-001 | :8140 | I9,I11 | **SPEC** · Unified Dashboard · God View · VD-CUT+MASS |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
@@ -265,6 +266,48 @@ Dragon também informa:
 ```
 
 **Sealed:** 2026-03-17 · Dragon Alzheimer Fix → Language Sovereign Principle
+
+### §137 — Medium-Agnostic Truth Distribution (06 Apr 2026)
+
+**Estado:** CANONICAL · ACTIVE · **IRREMEDIÁVEL**
+
+> **"O medium aponta para a prova. Nunca carrega a prova."**
+
+**Princípio:** Canais de distribuição (Telegram, Email, etc.) transmitem apenas LINKS para verificação.
+Nunca transmitem ficheiros — plataformas transcodificam e quebram SHA-256.
+
+```
+✅ CORRECTO (§122.4 Compliant)
+   Post → Link → /verify-public/ → JMPG + Hash + Ledger
+
+❌ PROIBIDO
+   Post → sendPhoto → Telegram transcodes → Hash quebrado
+```
+
+**Endpoints:**
+| Endpoint | Método | Uso |
+|----------|--------|-----|
+| `/comm/distribute` | sendPhoto | Chat PRIVADO (hash não crítico) |
+| `/comm/communique` | sendPhoto | Chat PRIVADO + institucional |
+| `/comm/publish` | sendMessage | Canal PÚBLICO (§122.4) |
+
+**SDK v1.1:**
+```python
+from windi_core import distribute, publish
+
+# Privado — foto OK
+await distribute(receipt_id, chat_id="123456")
+
+# Público — LINK ONLY
+await publish(receipt_id, chat_id="@windi_public", lang="PT")
+```
+
+**Primeiro Post Público:** 06 Abr 2026 · `t.me/windi_public`
+- Receipt: `WINDI-VDCUT-20260404183836-C181E66D`
+- Trilíngue: PT (msg 2) · EN (msg 3) · DE (msg 4)
+- Zero ficheiros transmitidos
+
+**Commits:** `bda0400` (W-JMPG-001 v1.3.0) · `1a5720e` (SDK v1.1.0)
 
 ---
 
@@ -653,11 +696,11 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 06 Apr | **§137 Medium-Agnostic Distribution** · W-JMPG-001 v1.3.0 · `/comm/publish` · t.me/windi_public LIVE |
 | 05 Apr | **§136 W-UDB-001 SPEC** · Dashboard Unificado · God View · :8140 · VD-CUT + VD-MASS |
 | 05 Apr | **§135 MLT Engine Fusão Real** · VD-CUT × VD-MASS · Dual-Hash Chain · Policy I9-P LIVE |
 | 05 Apr | **§133 Preview Endpoint** · Full-size frames · Semantic separation thumb/preview · `0ddaeed` |
 | 05 Apr | **§132 Partilhar Button** · VD-CUT Dashboard · Telegram/Email/Copy Link · `8840542` |
-| 05 Apr | **§131 Email Distribution** · W-DIST-001 email channel · Trilingual HTML · `92c3fb5` |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -811,6 +854,7 @@ workspace/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
 ### Completado (últimos 10 · ver CLAUDE-HISTORY.md para §37-115)
+- [x] §137 **Medium-Agnostic Distribution** · W-JMPG-001 v1.3.0 · SDK v1.1.0 · t.me/windi_public ✅ 06 Apr
 - [x] §136 **W-UDB-001 SPEC** · Dashboard Unificado · God View · :8140 ✅ 05 Apr
 - [x] §135 **MLT Engine Fusão Real** · VD-CUT × VD-MASS · Dual-Hash Chain · Policy I9-P ✅ 05 Apr
 - [x] §133 **Preview Endpoint** · Full-size frames · thumb vs preview · `0ddaeed` ✅ 05 Apr
@@ -855,8 +899,9 @@ workspace/
 | §133 | Preview Endpoint | ✅ LIVE | Full-size frames · /preview/ vs /thumb/ · `0ddaeed` |
 | §135 | MLT Engine Fusão Real | ✅ SEALED | VD-CUT × VD-MASS · Dual-Hash · Policy `27bcbb0e` · melt 7.12.0 |
 | §136 | W-UDB-001 Dashboard | 📋 SPEC | Unified Dashboard · God View · :8140 · 3 Zonas · Kill Switch |
+| §137 | Medium-Agnostic Distribution | ✅ SEALED | W-JMPG-001 v1.3.0 · SDK v1.1.0 · `bda0400` · t.me/windi_public |
 
-> **Detalhes completos §128-136:** `CLAUDE-HISTORY.md` § SESSÃO 05 Abr 2026
+> **Detalhes completos §128-137:** `CLAUDE-HISTORY.md` § SESSÃO 05-06 Abr 2026
 
 ---
 
