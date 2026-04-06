@@ -4502,8 +4502,9 @@ function formatJourney(journey) {
   const dateStr = journey.timestamp || journey.date;
   const date = dateStr ? formatJourneyDate(dateStr) : '';
 
-  // §145.9 — Feedback buttons (only show if narrative exists)
+  // §145.9 + §145.10 — Feedback buttons with intent tracking
   const showFeedback = journey.narrative ? true : false;
+  const intent = journey.intent || 'general';
 
   return `
     <div class="maria-memory-journey">
@@ -4514,8 +4515,8 @@ function formatJourney(journey) {
       </div>
       ${showFeedback ? `
       <div class="maria-memory-feedback">
-        <button class="feedback-btn feedback-positive" onclick="sendMemoryFeedback(true)" title="Maria understood">👍</button>
-        <button class="feedback-btn feedback-negative" onclick="sendMemoryFeedback(false)" title="Maria misunderstood">👎</button>
+        <button class="feedback-btn feedback-positive" onclick="sendMemoryFeedback(true, '${intent}')" title="Maria understood">👍</button>
+        <button class="feedback-btn feedback-negative" onclick="sendMemoryFeedback(false, '${intent}')" title="Maria misunderstood">👎</button>
       </div>
       ` : ''}
     </div>
@@ -4557,8 +4558,8 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
-// §145.9 — Memory Feedback Loop
-async function sendMemoryFeedback(positive) {
+// §145.9 + §145.10 — Memory Feedback Loop with Intent Tracking
+async function sendMemoryFeedback(positive, intent = null) {
   const did = sessionStorage.getItem('windi_travel_wallet');
   if (!did) {
     console.log('[§145.9] No DID, cannot send feedback');
@@ -4572,13 +4573,14 @@ async function sendMemoryFeedback(positive) {
       body: JSON.stringify({
         did: did,
         positive: positive === true,
-        negative: positive === false
+        negative: positive === false,
+        intent: intent  // §145.10 — Track feedback by intent
       })
     });
 
     if (response.ok) {
       const data = await response.json();
-      console.log(`[§145.9] Feedback sent: ${data.confidence_before.toFixed(2)} → ${data.confidence_after.toFixed(2)}`);
+      console.log(`[§145.10] Feedback: ${data.confidence_before.toFixed(2)} → ${data.confidence_after.toFixed(2)}, intent=${intent}, signal=${data.intent_signal}`);
 
       // Update confidence display
       const confidenceEl = document.getElementById('maria-memory-confidence');

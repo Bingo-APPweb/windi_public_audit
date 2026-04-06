@@ -529,6 +529,9 @@ DEFAULT_TRAVEL_PREFS = {
 
     # ─── Confiança global ───
     "learned_confidence": 0.0, # Confiança na personalização (0 → 1)
+
+    # ─── §145.10 Feedback Signals ───
+    "feedback_signals": {},    # {intent: score} — positive = +1, negative = -1
 }
 
 

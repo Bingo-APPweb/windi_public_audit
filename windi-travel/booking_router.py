@@ -3799,6 +3799,7 @@ class MemoryFeedbackRequest(BaseModel):
     did: str
     positive: bool = False  # 👍 = Maria understood correctly
     negative: bool = False  # 👎 = Maria misunderstood
+    intent: Optional[str] = None  # §145.10: Intent type for signal tracking
 
 
 class MemoryFeedbackResponse(BaseModel):
@@ -3807,18 +3808,19 @@ class MemoryFeedbackResponse(BaseModel):
     confidence_before: float
     confidence_after: float
     delta: float
+    intent_signal: Optional[int] = None  # Current signal for this intent
 
 
 @router.post("/memory-feedback")
 async def memory_feedback(req: MemoryFeedbackRequest) -> MemoryFeedbackResponse:
     """
-    §145.9 — Maria learns from your reactions.
+    §145.9 + §145.10 — Maria learns from your reactions.
 
     Simple feedback loop:
-    - 👍 (positive=true): Maria understood → confidence +0.05
-    - 👎 (negative=true): Maria misunderstood → confidence -0.03
+    - 👍 (positive=true): Maria understood → confidence +0.05, intent signal +1
+    - 👎 (negative=true): Maria misunderstood → confidence -0.03, intent signal -1
 
-    This creates a direct learning path from UI to memory.
+    This creates a direct learning path from UI to memory AND brain.
     """
     if not req.did:
         return MemoryFeedbackResponse(
@@ -3828,7 +3830,7 @@ async def memory_feedback(req: MemoryFeedbackRequest) -> MemoryFeedbackResponse:
             delta=0
         )
 
-    # Get current confidence
+    # Get current preferences
     prefs = get_travel_preferences(req.did) if MEMORY_ENGINE_ENABLED else {}
     current = prefs.get("learned_confidence", 0.0)
 
@@ -3840,10 +3842,23 @@ async def memory_feedback(req: MemoryFeedbackRequest) -> MemoryFeedbackResponse:
     else:
         delta = 0
 
-    # Apply bounded update
+    # Apply bounded update for confidence
     new_conf = max(0.0, min(1.0, current + delta))
 
-    # Persist
+    # §145.10 — Track feedback signals by intent for brain injection
+    intent_signal = None
+    if req.intent and MEMORY_ENGINE_ENABLED:
+        signals = prefs.get("feedback_signals", {})
+        current_signal = signals.get(req.intent, 0)
+        if req.positive:
+            signals[req.intent] = current_signal + 1
+        elif req.negative:
+            signals[req.intent] = current_signal - 1
+        intent_signal = signals.get(req.intent, 0)
+        update_travel_preference(req.did, "feedback_signals", signals)
+        log.info(f"[MARIA §145.10] Intent signal: {req.intent}={intent_signal}")
+
+    # Persist confidence
     if delta != 0 and MEMORY_ENGINE_ENABLED:
         update_travel_preference(req.did, "learned_confidence", new_conf)
         log.info(f"[MARIA §145.9] Feedback: {current:.2f} → {new_conf:.2f} (delta={delta:+.2f})")
@@ -3852,5 +3867,6 @@ async def memory_feedback(req: MemoryFeedbackRequest) -> MemoryFeedbackResponse:
         ok=True,
         confidence_before=current,
         confidence_after=new_conf,
-        delta=delta
+        delta=delta,
+        intent_signal=intent_signal
     )
