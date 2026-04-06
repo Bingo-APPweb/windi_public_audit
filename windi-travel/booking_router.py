@@ -3082,6 +3082,10 @@ async def maria_think_endpoint(req: ThinkRequest):
         "confidence": result.get("confidence", 0.9),
         "pulse": result.get("pulse"),
         "soul_active": result.get("soul_active"),
+        # P5: Memory fields
+        "memory_active": result.get("memory_active", False),
+        "visible_memory": result.get("visible_memory", []),
+        "learned_confidence": result.get("learned_confidence", 0.0),
         "lang": req.lang,
         "session_count": session_count
     }
