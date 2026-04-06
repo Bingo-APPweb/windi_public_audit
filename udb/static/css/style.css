@@ -341,12 +341,35 @@ body {
     padding: 0.75rem 1.5rem;
     border-top: 1px solid var(--border);
     background: var(--bg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .governance-tag {
     font-size: 0.75rem;
     color: var(--gold-dim);
     font-weight: 600;
+}
+
+.btn-collage {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--gold);
+    color: var(--bg);
+    border: none;
+    border-radius: var(--radius);
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-collage:hover {
+    filter: brightness(1.1);
+    transform: scale(1.02);
 }
 
 /* Zone C — Integrity Meter */
@@ -590,6 +613,129 @@ body {
     border-radius: var(--radius);
     cursor: pointer;
     font-weight: 600;
+}
+
+/* Collage Modal Specifics */
+.modal-wide {
+    max-width: 700px;
+    border-color: var(--gold);
+}
+
+.modal-wide h3 {
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.collage-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 1.5rem;
+    align-items: start;
+    margin: 1.5rem 0;
+}
+
+.collage-side {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.collage-side label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--gold);
+}
+
+.collage-divider {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-dim);
+    align-self: center;
+    padding-top: 1.5rem;
+}
+
+.source-select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+}
+
+.source-select:focus {
+    border-color: var(--gold);
+    outline: none;
+}
+
+.timestamp-input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+}
+
+.collage-preview {
+    background: var(--bg);
+    padding: 1rem;
+    border-radius: var(--radius);
+    margin: 1rem 0;
+}
+
+.preview-status {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.preview-label {
+    color: var(--text-dim);
+}
+
+.preview-value {
+    color: var(--gold);
+    font-family: var(--font-mono);
+}
+
+.preview-progress {
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: var(--gold);
+    transition: width 0.3s ease;
+}
+
+.btn-collage-create {
+    padding: 0.75rem 1.5rem;
+    background: var(--gold);
+    color: var(--bg);
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-collage-create:hover {
+    filter: brightness(1.1);
+}
+
+.btn-collage-create:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 /* ═══════════════════════════════════════════════════════════════

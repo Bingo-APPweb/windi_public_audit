@@ -89,6 +89,9 @@
             </div>
             <div class="zone-footer">
                 <span class="governance-tag">I9-P Policy</span>
+                <button class="btn-collage" onclick="openCollageModal()" title="Create Sovereign Collage">
+                    <span>&#x29C9;</span> <span data-i18n="new_collage">NEW COLLAGE</span>
+                </button>
             </div>
         </section>
 
@@ -171,6 +174,47 @@
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="closeModal('kill-modal')" data-i18n="cancel">Cancel</button>
                 <button class="btn-confirm-kill" onclick="confirmKill()" data-i18n="confirm_halt">CONFIRM HALT</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Collage Modal -->
+    <div class="modal" id="collage-modal" style="display: none;">
+        <div class="modal-content modal-wide">
+            <h3><span>&#x29C9;</span> <span data-i18n="create_collage">Create Sovereign Collage</span></h3>
+            <p data-i18n="collage_desc">Select two VD-CUT sources for side-by-side forensic comparison.</p>
+
+            <div class="collage-grid">
+                <div class="collage-side">
+                    <label data-i18n="momento_a">MOMENTO A (Left)</label>
+                    <select id="source-a" class="source-select">
+                        <option value="">Loading sources...</option>
+                    </select>
+                    <input type="text" id="timestamp-a" placeholder="Label (e.g., 14:23:05)" class="timestamp-input">
+                </div>
+                <div class="collage-divider">VS</div>
+                <div class="collage-side">
+                    <label data-i18n="momento_b">MOMENTO B (Right)</label>
+                    <select id="source-b" class="source-select">
+                        <option value="">Loading sources...</option>
+                    </select>
+                    <input type="text" id="timestamp-b" placeholder="Label (e.g., 14:23:47)" class="timestamp-input">
+                </div>
+            </div>
+
+            <div class="collage-preview" id="collage-preview" style="display: none;">
+                <div class="preview-status">
+                    <span class="preview-label" data-i18n="render_status">Render Status:</span>
+                    <span class="preview-value" id="render-status">--</span>
+                </div>
+                <div class="preview-progress">
+                    <div class="progress-bar" id="render-progress" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal('collage-modal')" data-i18n="cancel">Cancel</button>
+                <button class="btn-collage-create" onclick="createCollage()" data-i18n="create_and_render">CREATE & RENDER</button>
             </div>
         </div>
     </div>

@@ -33,7 +33,14 @@ const I18N = {
         error: "FEHLER",
         online: "ONLINE",
         down: "OFFLINE",
-        loading: "LADEN"
+        loading: "LADEN",
+        new_collage: "NEUE COLLAGE",
+        create_collage: "Souveräne Collage erstellen",
+        collage_desc: "Wählen Sie zwei VD-CUT-Quellen für den forensischen Vergleich.",
+        momento_a: "MOMENT A (Links)",
+        momento_b: "MOMENT B (Rechts)",
+        render_status: "Render-Status:",
+        create_and_render: "ERSTELLEN & RENDERN"
     },
     en: {
         zone_a_name: "FORENSIC HUB",
@@ -59,7 +66,14 @@ const I18N = {
         error: "ERROR",
         online: "ONLINE",
         down: "DOWN",
-        loading: "LOADING"
+        loading: "LOADING",
+        new_collage: "NEW COLLAGE",
+        create_collage: "Create Sovereign Collage",
+        collage_desc: "Select two VD-CUT sources for side-by-side forensic comparison.",
+        momento_a: "MOMENTO A (Left)",
+        momento_b: "MOMENTO B (Right)",
+        render_status: "Render Status:",
+        create_and_render: "CREATE & RENDER"
     },
     pt: {
         zone_a_name: "HUB FORENSE",
@@ -85,7 +99,14 @@ const I18N = {
         error: "ERRO",
         online: "ONLINE",
         down: "OFFLINE",
-        loading: "A CARREGAR"
+        loading: "A CARREGAR",
+        new_collage: "NOVA COLAGEM",
+        create_collage: "Criar Colagem Soberana",
+        collage_desc: "Selecione duas fontes VD-CUT para comparação forense lado a lado.",
+        momento_a: "MOMENTO A (Esquerda)",
+        momento_b: "MOMENTO B (Direita)",
+        render_status: "Estado do Render:",
+        create_and_render: "CRIAR & RENDERIZAR"
     }
 };
 
@@ -330,6 +351,125 @@ async function generateManifest() {
         }
     } catch (e) {
         alert('Connection error: ' + e.message);
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// COLLAGE CONTROLS (§138)
+// ═══════════════════════════════════════════════════════════════
+
+let availableSources = [];
+
+async function loadSources() {
+    try {
+        const response = await fetch('compose/sources');
+        if (response.ok) {
+            const data = await response.json();
+            availableSources = data.sources || [];
+            populateSourceSelects();
+        }
+    } catch (e) {
+        console.error('Failed to load sources:', e);
+    }
+}
+
+function populateSourceSelects() {
+    const selectA = document.getElementById('source-a');
+    const selectB = document.getElementById('source-b');
+
+    if (!selectA || !selectB) return;
+
+    const options = availableSources.map(s => {
+        const label = s.id.length > 40 ? s.id.substring(0, 40) + '...' : s.id;
+        const size = (s.size / 1024 / 1024).toFixed(1) + 'MB';
+        return `<option value="${s.id}">[${s.type}] ${label} (${size})</option>`;
+    }).join('');
+
+    const placeholder = '<option value="">-- Select source --</option>';
+    selectA.innerHTML = placeholder + options;
+    selectB.innerHTML = placeholder + options;
+}
+
+function openCollageModal() {
+    loadSources();
+    document.getElementById('collage-modal').style.display = 'flex';
+    document.getElementById('collage-preview').style.display = 'none';
+}
+
+async function createCollage() {
+    const sourceA = document.getElementById('source-a').value;
+    const sourceB = document.getElementById('source-b').value;
+    const timestampA = document.getElementById('timestamp-a').value || 'MOMENTO A';
+    const timestampB = document.getElementById('timestamp-b').value || 'MOMENTO B';
+
+    if (!sourceA || !sourceB) {
+        alert('Please select both sources');
+        return;
+    }
+
+    if (sourceA === sourceB) {
+        alert('Please select different sources for comparison');
+        return;
+    }
+
+    const actorDid = 'did:windi:JOBER-MOGELE-CORREA-001';
+
+    // Show progress
+    document.getElementById('collage-preview').style.display = 'block';
+    document.getElementById('render-status').textContent = 'Creating collage...';
+    document.getElementById('render-progress').style.width = '10%';
+
+    try {
+        // Step 1: Create collage
+        const createResponse = await fetch('compose', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                source_a: sourceA,
+                source_b: sourceB,
+                timestamp_a: timestampA,
+                timestamp_b: timestampB,
+                actor_did: actorDid
+            })
+        });
+
+        const createResult = await createResponse.json();
+
+        if (!createResponse.ok) {
+            throw new Error(createResult.error || 'Failed to create collage');
+        }
+
+        document.getElementById('render-status').textContent = 'Rendering: ' + createResult.collage_id;
+        document.getElementById('render-progress').style.width = '30%';
+
+        // Step 2: Render collage
+        const renderResponse = await fetch(`compose/${createResult.collage_id}/render`, {
+            method: 'POST'
+        });
+
+        const renderResult = await renderResponse.json();
+
+        if (renderResult.status === 'COMPLETED') {
+            document.getElementById('render-status').textContent = 'COMPLETED!';
+            document.getElementById('render-progress').style.width = '100%';
+
+            setTimeout(() => {
+                alert('COLLAGE CREATED!\n\n' +
+                      'ID: ' + renderResult.collage_id + '\n' +
+                      'Hash: ' + renderResult.output_hash.substring(0, 32) + '...\n' +
+                      'Size: ' + (renderResult.file_size / 1024 / 1024).toFixed(2) + ' MB');
+                closeModal('collage-modal');
+            }, 500);
+        } else if (renderResult.error) {
+            throw new Error(renderResult.error);
+        } else {
+            document.getElementById('render-status').textContent = renderResult.status || 'Processing...';
+        }
+
+    } catch (e) {
+        document.getElementById('render-status').textContent = 'ERROR: ' + e.message;
+        document.getElementById('render-progress').style.width = '0%';
+        console.error('Collage error:', e);
     }
 }
 
