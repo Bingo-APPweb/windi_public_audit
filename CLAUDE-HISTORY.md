@@ -5813,3 +5813,113 @@ Se carregar em <3s e mostrar "SEALED" → Entregável #3 fechado.
 
 Liga IA+H · Kempten, Bavaria · 06 Abril 2026
 "AI processes. Human decides. WINDI guarantees."
+
+---
+
+## §138.2 — Catálogo Institucional + Investor Page Update · 06 Abr 2026
+
+**Data:** 06 Abril 2026
+**Status:** DEPLOYED · LIVE
+**CLAUDE.md:** v1.9.97
+
+### Contexto
+
+Preparação de artefactos visuais para apresentações institucionais de Maio 2026:
+- Página de apresentação austera para reguladores
+- Catálogo institucional com índice de páginas importantes
+- Actualização completa da página de investidor
+
+### Artefactos Criados/Actualizados
+
+#### 1. Catálogo Institucional
+
+**URL LIVE:** `https://windi-domain.com/nomad-upload/catalog.html`
+**Ficheiro:** `/opt/windi/nomad-pwa/catalog.html`
+**Design:** Pergaminho · Garamond · Trilíngue DE/EN/PT · Cards clicáveis
+
+**Páginas Indexadas:**
+| Categoria | Página | URL |
+|-----------|--------|-----|
+| Identidade | DID Spec | /docs/did/ |
+| Identidade | Verify Master Spec | /library/docs/verify/WINDI_VERIFY_MasterSpec_v1.0.html |
+| Produtos | WINDI-LAW Gate | /law/gate/ |
+| Produtos | Travel Pitch | /travel/pitch/ |
+| Produtos | Nomad Upload PWA | /nomad-upload/ |
+| Video | VD-CUT Integrity Report | /vd-cut/static/reports/VIR-WINDI-VDCUT-20260404.pdf |
+| Investor | Main Pitch | /pitch/ |
+| Investor | Investor Portal | /investor/ |
+
+#### 2. Investor Page — Actualização Completa
+
+**URL:** `https://windi-domain.com/investor/`
+**Ficheiro:** `/var/www/investor/index.html`
+
+**Alterações Aplicadas:**
+
+| # | Antes | Depois |
+|---|-------|--------|
+| 1 | "WINDI SYSTEMS" | "WINDI" |
+| 2 | "February 2026" | "Q2 2026" |
+| 3 | WINDI-IR-2026-0212 | WINDI-IR-2026-0406 |
+| 4 | "WINDI Systems is building" | "WINDI Publishing House is building" |
+| 5 | "28 Engine Modules" | "56K+ Seals Live" |
+| 6 | Live Systems desactualizados | WINDI-LAW, ProofStream, TRAVEL, Ledger, Verify |
+| 7 | — | **Nova secção PMF** (56,757 seals + Gov Agency adoption) |
+| 8 | Footer inconsistente | Footer limpo: "WINDI Publishing House" |
+
+**Racional das Mudanças:**
+- Consistência legal: "WINDI Systems" não é entidade registada
+- Data actualizada: Fev→Q2 2026 para não parecer abandonado
+- PMF Signal: 56K+ seals + adopção orgânica Gov Agency = argumento forte para VC
+- Live Systems: mostrar produtos reais (WINDI-LAW, ProofStream) em vez de módulos internos
+
+### Incidente Nginx
+
+Durante tentativa de criar rota `/catalog/`:
+1. Patch inseriu bloco dentro de outro location (erro sintaxe)
+2. Backup ficou em sites-enabled causando "duplicate upstream"
+3. Resolução: remover backup, usar URL existente `/nomad-upload/catalog.html`
+
+**Lição:** Usar estrutura nginx existente. Não criar rotas novas sem necessidade.
+
+### Estado Final — Entregáveis Maio 2026
+
+| # | Entregável | Status |
+|---|------------|--------|
+| 1 | Demo 5 minutos | ✅ Funcional (pipeline <300ms) |
+| 2 | Caso de uso real | ✅ FECHADO (WINDI-LAW-AIDRAFT-20260406064803-BDAFDB68) |
+| 3 | Verify público móvel | ✅ FECHADO (testado em telefone) |
+| 4 | Página apresentação | ✅ FECHADO |
+| + | Catálogo institucional | ✅ BÓNUS |
+| + | Investor page actualizada | ✅ BÓNUS |
+
+### URLs Finais para Maio 2026
+
+```
+Catálogo:       https://windi-domain.com/nomad-upload/catalog.html
+Investor:       https://windi-domain.com/investor/
+Verify Test:    https://windi-domain.com/verify-public/?id=WINDI-LAW-AIDRAFT-20260406064803-BDAFDB68
+LAW Gate:       https://windi-domain.com/law/gate/
+Main Pitch:     https://windi-domain.com/pitch/
+```
+
+### Diagnósticos Executados
+
+1. **Ledger :8101** — Saudável (17ms latência, 56.894 receipts)
+2. **Teste End-to-End** — Sucesso (login→draft→seal→verify em 31s)
+3. **Verify móvel** — Confirmado funcional (<3s)
+4. **Rotas nginx** — /investor/ e /pitch/ funcionais
+
+### Conclusão
+
+Todos os 4 entregáveis de Maio 2026 estão fechados.
+Sistema pronto para apresentações institucionais:
+- Carlos (seed, Berlim)
+- Comité EU AI Act
+- Universidades Kempten + Munique
+- VC Berlim
+
+---
+
+Liga IA+H · Kempten, Bavaria · 06 Abril 2026
+"AI processes. Human decides. WINDI guarantees."
