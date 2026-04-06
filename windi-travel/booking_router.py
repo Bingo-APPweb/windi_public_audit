@@ -43,6 +43,7 @@ try:
         set_preference,
         gerar_saudacao,
         get_total_interactions,
+        get_recent_interactions,  # §145.5
         # §98 — MODO NÓMADA v1.1
         get_travel_preferences,
         learn_from_choice,
@@ -82,6 +83,7 @@ except ImportError:
     THREAD_ENABLED = False
     def gerar_saudacao(did, lang, weather=None, hour=None): return {"PT": "Bom dia, viajante", "DE": "Guten Tag, Reisender", "EN": "Good day, traveller"}.get(lang, "Good day")
     def get_total_interactions(did): return 0
+    def get_recent_interactions(did, limit=10): return []  # §145.5
     def get_travel_preferences(did): return {"avoid_stops": True, "price_sensitivity": 0.5, "prefer_morning": True, "comfort_priority": 0.5}
     def get_enhanced_travel_preferences(did): return get_travel_preferences(did)
     def explain_personalized_decision(choice_type, prefs, lang): return ""
@@ -3540,3 +3542,77 @@ async def close_thread_endpoint(thread_id: str):
 
     close_thread(thread_id)
     return {"ok": True}
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# §145.5 — /memories · "Maria knows you" · Vida visível do DID
+# ══════════════════════════════════════════════════════════════════════════════
+
+@router.get("/memories/{did}")
+async def get_memories(did: str, lang: str = "PT"):
+    """
+    §145.5 — A vida visível do DID.
+
+    "Memória só tem valor quando pode ser vista, entendida e verificada."
+
+    Retorna:
+      - visible_memory: padrões que Maria aprendeu
+      - confidence: quanto Maria te conhece (0-1)
+      - timeline: história unificada (receipts + interacções)
+    """
+    # P5: Get nomada profile
+    profile = get_or_create_nomada(did)
+    prefs = get_travel_preferences(did) if MEMORY_ENGINE_ENABLED else {}
+    visible_memory = get_visible_memory(prefs, lang) if prefs else []
+
+    # Get recent interactions
+    interactions = get_recent_interactions(did, limit=10) if MEMORY_ENABLED else []
+
+    # Get threads (journeys)
+    threads = get_user_threads(did, limit=5) if THREAD_ENABLED else []
+
+    # Build unified timeline
+    timeline = []
+
+    # Add interactions to timeline
+    for i in interactions:
+        timeline.append({
+            "type": "maria",
+            "timestamp": i.get("timestamp", ""),
+            "title": i.get("place_name") or i.get("intent_type", "conversa"),
+            "intent": i.get("intent_type"),
+        })
+
+    # Add thread starts to timeline
+    for t in threads:
+        timeline.append({
+            "type": "journey",
+            "timestamp": t.get("created_at", ""),
+            "title": t.get("title", "Jornada"),
+            "destination": t.get("destination"),
+            "thread_id": t.get("id"),
+            "active": t.get("status") == "active",
+        })
+
+    # Sort by timestamp (newest first)
+    timeline = sorted(
+        timeline,
+        key=lambda x: x.get("timestamp", "") or "",
+        reverse=True
+    )[:20]  # Max 20 items
+
+    # Calculate confidence from profile
+    confidence = prefs.get("learned_confidence", 0.0) if prefs else 0.0
+
+    return {
+        "did": did,
+        "lang": lang,
+        "visible_memory": visible_memory,
+        "confidence": confidence,
+        "timeline": timeline,
+        "stats": {
+            "interactions": len(interactions),
+            "journeys": len(threads),
+            "patterns": len(visible_memory),
+        }
+    }
