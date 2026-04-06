@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.0.6
-**Sealed:** 2026-04-06 · §145.12 Memory → Ranking Engine SEALED
+**Version:** 2.0.7
+**Sealed:** 2026-04-06 · §146 I14 Proibição de Placeholders SEALED
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -63,7 +63,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-COUNSEL-001 | :8091 | I9,G3,I13 | 3 Layers: Execute→Augment→Train |
 | W-PRESENCE-001 | :8126 | I9,I11,I14 | P1/P2/P3 levels · Timeline |
 | W-SESSION-001 | :8126 | I1,I9,I13 | 30-day HMAC cookies |
-| W-NOMAD-001 | :8127 | I9,I11,I12 | @windi_nomad_bot Telegram |
+| W-NOMAD-001 | :8127 | I9,I11,I12,I14 | @windi_nomad_bot Telegram |
 | W-VD-CUT-001 | :8128 | I9,I11,I12 | FFmpeg · Frame Integrity · **CERTIFIED** |
 | W-VD-MASS-001 | :8131 | I9-P,I11 | Policy Engine · Batch · **MLT/Shotcut** |
 | W-JOE-001 | :8129 | I9,I11,I13 | Story Graph + ProofStream |
@@ -102,7 +102,51 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | I11 | Permanência de Evidência Criptográfica | Ledger receipt após C6 = imutável para sempre. **IRREMEDIÁVEL.** |
 | I12 | Language Sovereign Principle | Conversa=Universal, Documento=Soberano. Babel Tower=IRREMEDIÁVEL. |
 | I13 | Convergence with Sovereignty | Todo Dragon converge para estrutura/decisão/artefacto. Loop reflexivo proibido. **IRREMEDIÁVEL.** |
+| I14 | Explicit Failure Principle | Dados ausentes = erro explícito. Placeholders mascaram bugs. **IRREMEDIÁVEL.** |
 | C6 | Invariante Fiscal | IA prepara. Humano aprova. ELSTER envia. Nunca autónomo. |
+
+### §146 — I14: Proibição de Placeholders (06 Apr 2026)
+
+**Estado:** CANONICAL · ACTIVE · **IRREMEDIÁVEL**
+
+> **"Placeholders escondem falhas. Falhas escondidas tornam-se bugs em produção."**
+
+**Definição:** Nenhum endpoint pode retornar dados com valores default que mascarem ausência de dados reais. Todo campo ausente deve gerar erro explícito e visível.
+
+```python
+# ❌ PROIBIDO — Mascarar ausência de dados:
+name = response.get("name", "Lugar desconhecido")
+receipt_id = data.get("receipt_id", "unknown")
+intent = user_intent or "discover"
+response_text = str(response_dict)  # serialização de emergência
+
+# ✅ CORRECTO — Falha barulhenta:
+name = response["name"]           # KeyError → diagnóstico imediato
+receipt_id = data["receipt_id"]   # campo obrigatório → falha visível
+if not user_intent:
+    raise ValueError("Intent obrigatório")
+```
+
+**Valores Proibidos em Retornos:**
+```
+❌ "unknown"    ❌ "N/A"        ❌ "?"
+❌ "---"        ❌ "TBD"        ❌ str(dict)
+❌ "default"    ❌ ""           ❌ None silencioso
+```
+
+**Excepção Única — I10 LLM Fallback:**
+Quando um LLM externo falha, o sistema pode usar LLM local alternativo (Mistral).
+Isto NÃO é placeholder de dados — é redundância de infraestrutura.
+
+**Aplicação por Agente:**
+| Agente | Campo Obrigatório | Comportamento |
+|--------|-------------------|---------------|
+| W-NOMAD-001 | `response`, `intent` | Erro se ausente |
+| W-MARIA-001 | `decision.name`, `decision.reason` | Erro se ausente |
+| W-VD-CUT-001 | `receipt_id`, `sha256` | Erro se ausente |
+| W-DIST-001 | `channel`, `target_id` | Erro se ausente |
+
+**Sealed:** 06 Apr 2026 · Human Dragon · "Placeholders são mentiras silenciosas."
 
 ### §117 — I9: Human Approval Gate (Operational Doctrine)
 
