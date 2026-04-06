@@ -153,6 +153,22 @@ def read_pulse(message: str, hour: int = None, history: list = None) -> dict:
         pulse["respond_to"] = "the_feeling"
         pulse["energy"] = "medium"
 
+    # §145.2 — Weather/Temperature: resposta directa, sem turismo
+    weather_signals = [
+        # PT
+        "temperatura", "tempo está", "tempo está a fazer", "clima", "vai chover", "está frio", "está calor",
+        "quantos graus", "previsão", "meteorologia",
+        # DE
+        "temperatur", "wetter", "regnet", "kalt", "warm", "grad", "vorhersage",
+        # EN
+        "temperature", "weather", "raining", "cold", "hot", "degrees", "forecast"
+    ]
+    if any(s in lower for s in weather_signals):
+        pulse["intent"] = "weather"
+        pulse["tone_needed"] = "direct"
+        pulse["respond_to"] = "the_words"
+        pulse["energy"] = "medium"
+
     # ─────────────────────────────────────────────────────────────────────────
     # 3. CONTEXTO TEMPORAL
     # ─────────────────────────────────────────────────────────────────────────
@@ -703,7 +719,7 @@ def select_provider(intent: dict, context: dict, pulse: dict = None) -> str:
     if pulse:
         if pulse.get("energy") == "fragile":
             return "anthropic"
-        if pulse.get("intent") in ("lost", "urgent", "connect"):
+        if pulse.get("intent") in ("lost", "urgent", "connect", "weather"):
             return "anthropic"
         if pulse.get("respond_to") in ("the_feeling", "the_silence"):
             return "anthropic"

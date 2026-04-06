@@ -207,7 +207,7 @@ async def _call_claude(system: str, user_input: str, lang: str, history: list = 
                 },
                 json={
                     "model": "claude-sonnet-4-20250514",
-                    "max_tokens": 250,
+                    "max_tokens": 500,  # §145.2 — increased from 250 to prevent truncation
                     "temperature": 0.3,
                     "system": system,
                     "messages": [*history, {"role": "user", "content": user_input}]
@@ -245,7 +245,7 @@ async def _call_gemini(system: str, user_input: str, lang: str) -> Dict[str, Any
                         "parts": [{"text": f"{system}\n\nUser: {user_input}"}]
                     }],
                     "generationConfig": {
-                        "maxOutputTokens": 250,
+                        "maxOutputTokens": 500,  # §145.2 — increased from 250 to prevent truncation
                         "temperature": 0.4
                     }
                 }
@@ -287,7 +287,7 @@ async def _call_mistral(system: str, user_input: str, lang: str, history: list =
                         *history,
                         {"role": "user", "content": user_input}
                     ],
-                    "max_tokens": 300,
+                    "max_tokens": 500,  # §145.2 — increased from 300 to prevent truncation
                     "temperature": 0.7
                 }
             )
