@@ -63,6 +63,8 @@ try:
         # §108 — MEMÓRIA VISÍVEL
         get_visible_memory,
         should_show_memory,
+        # §145.9 — FEEDBACK LOOP
+        update_travel_preference,
         # §107 — THREAD VISUAL TIMELINE
         create_thread,
         get_active_thread,
@@ -3786,3 +3788,69 @@ async def get_narrated_memories(did: str, lang: str = "PT"):
     base["narrated"] = True
 
     return base
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# §145.9 — /memory-feedback · "Maria learns from your reactions"
+# ══════════════════════════════════════════════════════════════════════════════
+
+class MemoryFeedbackRequest(BaseModel):
+    """Simple feedback on memory accuracy."""
+    did: str
+    positive: bool = False  # 👍 = Maria understood correctly
+    negative: bool = False  # 👎 = Maria misunderstood
+
+
+class MemoryFeedbackResponse(BaseModel):
+    """Feedback confirmation."""
+    ok: bool
+    confidence_before: float
+    confidence_after: float
+    delta: float
+
+
+@router.post("/memory-feedback")
+async def memory_feedback(req: MemoryFeedbackRequest) -> MemoryFeedbackResponse:
+    """
+    §145.9 — Maria learns from your reactions.
+
+    Simple feedback loop:
+    - 👍 (positive=true): Maria understood → confidence +0.05
+    - 👎 (negative=true): Maria misunderstood → confidence -0.03
+
+    This creates a direct learning path from UI to memory.
+    """
+    if not req.did:
+        return MemoryFeedbackResponse(
+            ok=False,
+            confidence_before=0,
+            confidence_after=0,
+            delta=0
+        )
+
+    # Get current confidence
+    prefs = get_travel_preferences(req.did) if MEMORY_ENGINE_ENABLED else {}
+    current = prefs.get("learned_confidence", 0.0)
+
+    # Calculate delta based on feedback type
+    if req.positive:
+        delta = 0.05  # Positive reinforcement
+    elif req.negative:
+        delta = -0.03  # Negative but gentle (we learn more from mistakes)
+    else:
+        delta = 0
+
+    # Apply bounded update
+    new_conf = max(0.0, min(1.0, current + delta))
+
+    # Persist
+    if delta != 0 and MEMORY_ENGINE_ENABLED:
+        update_travel_preference(req.did, "learned_confidence", new_conf)
+        log.info(f"[MARIA §145.9] Feedback: {current:.2f} → {new_conf:.2f} (delta={delta:+.2f})")
+
+    return MemoryFeedbackResponse(
+        ok=True,
+        confidence_before=current,
+        confidence_after=new_conf,
+        delta=delta
+    )
