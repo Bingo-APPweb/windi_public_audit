@@ -277,6 +277,19 @@ def log_interaction(
     conn.commit()
     conn.close()
 
+    # §145.7 — Passive confidence increment (Maria learns from presence)
+    # Soft increment: +0.02 per interaction, capped at 1.0
+    # This allows memory to become visible after ~5 interactions
+    try:
+        prefs = get_travel_preferences(did)
+        current = prefs.get("learned_confidence", 0.0)
+        if current < 1.0:
+            new_conf = min(1.0, current + 0.02)
+            update_travel_preference(did, "learned_confidence", new_conf)
+            log.debug(f"[MARIA §145.7] Passive confidence: {current:.2f} → {new_conf:.2f}")
+    except Exception as e:
+        log.debug(f"[MARIA §145.7] Confidence update skipped: {e}")
+
 
 def get_recent_interactions(did: str, limit: int = 10) -> list:
     """Get recent interactions for context."""
@@ -570,8 +583,9 @@ def get_visible_memory(prefs: dict, lang: str = "PT") -> list:
         return []
 
     # Gate: only show memory if we have learned something
+    # §145.7 — Lowered from 0.3 to 0.1 to allow early visibility
     learned_confidence = prefs.get("learned_confidence", 0.0)
-    if learned_confidence < 0.3:
+    if learned_confidence < 0.1:
         return []
 
     signals = []
