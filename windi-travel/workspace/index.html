@@ -4387,19 +4387,26 @@ async function loadMemories() {
   if (timelineEl) timelineEl.style.display = 'none';
 
   try {
-    // §145.8 — Use narrated endpoint for Maria's voice
+    // §145.8 + §145.11 — Use narrated endpoint with stable response contract
     const response = await fetch(`/maria/memories/${did}/narrated?lang=${LANG.toUpperCase()}`);
-    if (!response.ok) throw new Error('Memory fetch failed');
-
     const data = await response.json();
-    console.log('[§145.8] Narrated memory data:', data);
+
+    // §145.11 — Always handle response, even errors
+    console.log(`[§145.11] Memory response: status=${data.status}, mode=${data.mode}`);
 
     if (loadingEl) loadingEl.style.display = 'none';
+
+    // Handle all modes gracefully
+    if (data.status === 'error' || data.mode === 'offline') {
+      console.warn('[§145.11] Maria offline, showing minimal state');
+      if (emptyEl) emptyEl.style.display = 'block';
+      return;
+    }
 
     renderMariaMemory(data);
 
   } catch (err) {
-    console.error('[§145.6] Memory load error:', err);
+    console.error('[§145.11] Memory load error:', err);
     if (loadingEl) loadingEl.style.display = 'none';
     if (emptyEl) emptyEl.style.display = 'block';
   }
