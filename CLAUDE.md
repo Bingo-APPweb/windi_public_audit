@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.0.5
-**Sealed:** 2026-04-06 · §145.11 Stable Response Contract SEALED
+**Version:** 2.0.6
+**Sealed:** 2026-04-06 · §145.12 Memory → Ranking Engine SEALED
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -710,11 +710,11 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 06 Apr | **§145.12 Memory → Ranking Engine** · Maria shows different worlds · `1c2e3df` |
 | 06 Apr | **§145.11 Stable Response Contract** · Maria breathing never fails · LLM timeout 2.5s · `cf6a168` |
 | 06 Apr | **§145.3 Weather/Culture** · Routing separation · Overlap eliminated · `2017c3a` |
 | 06 Apr | **§145 ALMA v1.0** · MARIA Constitutional Identity · Motor de Espelho · 4 Registos |
 | 06 Apr | **§144 Strike 6 — Share Button** · verify-public SHARE → I9 Modal → Glass Embassy |
-| 06 Apr | **§143 W-BRIDGE-001 LIVE** · BIG-BRIDGE Gateway · /watch/{id} · HLS + Proof Panel · :8143 |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -876,6 +876,7 @@ workspace/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
 ### Completado (últimos 10 · ver CLAUDE-HISTORY.md para §37-115)
+- [x] §145.12 **Memory → Ranking Engine** · Maria shows different worlds · `1c2e3df` ✅ 06 Apr
 - [x] §145.11 **Stable Response Contract** · Maria breathing never fails · LLM 2.5s · `cf6a168` ✅ 06 Apr
 - [x] §145.10 **Memory → Brain Bridge** · Preferences inject into LLM prompts · `7f7e772` ✅ 06 Apr
 - [x] §145.9 **Feedback Loop** · 👍/👎 learning · Intent tracking · `a96766f` ✅ 06 Apr
