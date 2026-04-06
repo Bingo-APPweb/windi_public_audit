@@ -1,0 +1,18 @@
+[Unit]
+Description=W-INTENT-CMD — Director-as-a-Service
+After=network.target windi-vd-cut.service
+Wants=windi-vd-cut.service
+
+[Service]
+Type=simple
+User=windi
+Group=windi
+WorkingDirectory=/opt/windi/intent-cmd
+Environment="PATH=/usr/local/bin:/usr/bin:/bin"
+Environment="PYTHONPATH=/opt/windi"
+ExecStart=/usr/bin/python3 intent_cmd_server.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

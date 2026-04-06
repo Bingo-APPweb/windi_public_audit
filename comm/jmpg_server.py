@@ -60,18 +60,16 @@ log = logging.getLogger(SERVICE_NAME)
 # ═══════════════════════════════════════════════════════════════════════════════
 
 def build_telegram_caption(receipt_id: str, verify_url: str, title: Optional[str] = None) -> str:
-    """Build HTML caption for Telegram photo."""
-    title_text = title or "Sealed content"
-    return f"""🎥 <b>WINDI Proof Card</b>
+    """
+    §138 Architect Doctrine: Clarity Infinity
+    -85% text, VERIFY as magnetic destination
+    "confiança substitui curiosidade"
+    """
+    # Title only if provided and short
+    title_line = f"<b>{title}</b>\n\n" if title and len(title) < 40 else ""
+    return f"""{title_line}<code>{receipt_id}</code>
 
-{title_text}
-
-<b>Receipt:</b>
-<code>{receipt_id}</code>
-
-🔐 <a href="{verify_url}">Verify authenticity</a>
-
-<i>Protocol: .jmpg v1</i>"""
+👉 <a href="{verify_url}"><b>VERIFY</b></a>"""
 
 
 # ══════════════════════════════════════════════════════════════════���════════════
@@ -79,53 +77,34 @@ def build_telegram_caption(receipt_id: str, verify_url: str, title: Optional[str
 # ═══════════════════════════════════════════════════════════════════════════════
 
 COMMUNIQUE_TEMPLATES = {
-    "PT": """📢 <b>WINDI Communiqué</b>
+    # §138 Architect Doctrine: Clarity Infinity
+    # "confiança substitui curiosidade"
+    # Image speaks, text whispers, VERIFY shouts
 
-{title}
+    "PT": """<b>{title}</b>
 
-Este conteúdo foi registado e selado no WINDI Forensic Ledger.
-Verificável publicamente com integridade criptográfica garantida.
-
-<b>Receipt:</b>
 <code>{receipt_id}</code>
 
-🔐 <a href="{verify_url}">Verificar autenticidade</a>
+👉 <a href="{verify_url}"><b>VERIFICAR</b></a>""",
 
-<i>Protocol: .jmpg v1 · Liga IA+H</i>""",
+    "EN": """<b>{title}</b>
 
-    "EN": """📢 <b>WINDI Communiqué</b>
-
-{title}
-
-This content has been sealed in the WINDI Forensic Ledger.
-Publicly verifiable with guaranteed cryptographic integrity.
-
-<b>Receipt:</b>
 <code>{receipt_id}</code>
 
-🔐 <a href="{verify_url}">Verify authenticity</a>
+👉 <a href="{verify_url}"><b>VERIFY</b></a>""",
 
-<i>Protocol: .jmpg v1 · Liga IA+H</i>""",
+    "DE": """<b>{title}</b>
 
-    "DE": """📢 <b>WINDI Communiqué</b>
-
-{title}
-
-Dieser Inhalt wurde im WINDI Forensic Ledger versiegelt.
-Öffentlich verifizierbar mit garantierter kryptographischer Integrität.
-
-<b>Receipt:</b>
 <code>{receipt_id}</code>
 
-🔐 <a href="{verify_url}">Authentizität verifizieren</a>
-
-<i>Protocol: .jmpg v1 · Liga IA+H</i>""",
+👉 <a href="{verify_url}"><b>PRÜFEN</b></a>""",
 }
 
 DEFAULT_TITLES = {
-    "PT": "Momento registado com prova pública.",
-    "EN": "Moment sealed with public proof.",
-    "DE": "Moment mit öffentlichem Nachweis versiegelt.",
+    # §138 Clarity Infinity: Short titles
+    "PT": "Momento selado",
+    "EN": "Sealed moment",
+    "DE": "Versiegelter Moment",
 }
 
 
@@ -134,35 +113,20 @@ DEFAULT_TITLES = {
 # ═══════════════════════════════════════════════════════════════════════════════
 
 PUBLIC_TEMPLATES = {
-    "PT": """🔐 <b>WINDI — Verified Truth</b>
+    # §138 Architect Doctrine: Clarity Infinity
+    # Image speaks, text whispers, VERIFY shouts
 
-{title}
+    "PT": """<b>{title}</b>
 
-Prova selada e verificável independentemente.
+👉 <a href="{verify_url}"><b>VERIFICAR</b></a>""",
 
-🔗 <a href="{verify_url}">Verificar autenticidade</a>
+    "EN": """<b>{title}</b>
 
-#WINDIProof #VerifiedTruth""",
+👉 <a href="{verify_url}"><b>VERIFY</b></a>""",
 
-    "EN": """🔐 <b>WINDI — Verified Truth</b>
+    "DE": """<b>{title}</b>
 
-{title}
-
-Sealed proof. Independently verifiable.
-
-🔗 <a href="{verify_url}">Verify authenticity</a>
-
-#WINDIProof #VerifiedTruth""",
-
-    "DE": """🔐 <b>WINDI — Verified Truth</b>
-
-{title}
-
-Versiegelte Beweis. Unabhängig verifizierbar.
-
-🔗 <a href="{verify_url}">Authentizität verifizieren</a>
-
-#WINDIProof #VerifiedTruth""",
+👉 <a href="{verify_url}"><b>PRÜFEN</b></a>""",
 }
 
 

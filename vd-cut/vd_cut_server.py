@@ -403,6 +403,347 @@ async def intake_video(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# W-CLASSIFY-001 — Sensibility Layer
+# "AI suggests. Human decides. WINDI guarantees."
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@app.post("/vd-cut/classify")
+async def classify_video(project_id: str = Form(...), asset_id: str = Form(...)):
+    """
+    W-CLASSIFY-001 — Intelligent Content Classification
+
+    Analyzes uploaded video and suggests processing modules.
+    This is a NON-BLOCKING advisory service:
+    - If classification succeeds: returns recommendations
+    - If classification fails: returns empty suggestions
+    - NEVER blocks the upload/seal pipeline
+
+    The I9 Gate remains the final human decision point.
+
+    Returns:
+        - recommendations: List of suggested modules with rationale
+        - metadata_summary: Key metadata extracted from file
+        - can_proceed_to_seal: Always True (modules are optional)
+        - analysis_ms: Time taken for analysis (latency audit)
+    """
+    from services.classify_service import classify_content
+
+    # Validate project and asset exist
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM video_projects WHERE id = ?", (project_id,))
+    project = cursor.fetchone()
+
+    if not project:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    cursor.execute("SELECT * FROM video_assets WHERE id = ?", (asset_id,))
+    asset = cursor.fetchone()
+
+    if not asset:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Asset not found")
+
+    conn.close()
+
+    # Get file path
+    file_path = INCOMING_DIR / f"{asset_id}.mp4"
+
+    if not file_path.exists():
+        # Fallback: check processing dir
+        file_path = PROCESSING_DIR / f"{asset_id}.mp4"
+
+    if not file_path.exists():
+        # File not found - return empty suggestions (don't block)
+        log.warning(f"Classify: File not found for {asset_id}")
+        return {
+            "project_id": project_id,
+            "asset_id": asset_id,
+            "recommendations": [],
+            "metadata_summary": {"error": "File not found"},
+            "can_proceed_to_seal": True,
+            "analysis_ms": 0,
+            "sensibility_version": "1.0.0"
+        }
+
+    # Run classification
+    result = await classify_content(file_path, project_id, asset_id)
+
+    return {
+        "project_id": result.project_id,
+        "asset_id": result.asset_id,
+        "recommendations": result.recommendations,
+        "metadata_summary": result.metadata_summary,
+        "can_proceed_to_seal": result.can_proceed_to_seal,
+        "analysis_ms": result.analysis_ms,
+        "analyzed_at": result.analyzed_at,
+        "sensibility_version": result.sensibility_version
+    }
+
+
+@app.get("/vd-cut/classify/health")
+async def classify_health():
+    """Health check for W-CLASSIFY-001 Sensibility Layer."""
+    return {
+        "status": "healthy",
+        "service": "W-CLASSIFY-001",
+        "version": "1.0.0",
+        "description": "Sensibility Layer — AI suggests, Human decides"
+    }
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# W-VISION-001 — Forensic Vision Layer
+# "The Lens sees. The Ledger remembers. The Truth endures."
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@app.post("/vd-cut/describe")
+async def describe_video(project_id: str = Form(...), asset_id: str = Form(...)):
+    """
+    W-VISION-001 — Forensic Video Analysis
+
+    Analyzes video frames for integrity verification:
+    - Extracts key frames at regular intervals
+    - Computes perceptual hashes (similarity detection)
+    - Computes content hashes (exact match)
+    - Analyzes sensor noise signatures (forgery detection)
+    - Calculates manipulation probability
+
+    Returns:
+        - integrity_hash: Combined hash of all frame hashes
+        - sensor_consistency: 0.0-1.0 (1.0 = same sensor)
+        - manipulation_score: 0.0-1.0 (0.0 = likely authentic)
+        - key_frames: Detailed analysis of sampled frames
+        - verdict: LIKELY_AUTHENTIC / REVIEW_RECOMMENDED / HIGH_MANIPULATION_RISK
+    """
+    from services.vision_service import analyze_video_frames, generate_vision_receipt_data
+
+    # Validate project and asset exist
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM video_projects WHERE id = ?", (project_id,))
+    project = cursor.fetchone()
+
+    if not project:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    cursor.execute("SELECT * FROM video_assets WHERE id = ?", (asset_id,))
+    asset = cursor.fetchone()
+
+    if not asset:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Asset not found")
+
+    conn.close()
+
+    # Get file path
+    file_path = INCOMING_DIR / f"{asset_id}.mp4"
+
+    if not file_path.exists():
+        file_path = PROCESSING_DIR / f"{asset_id}.mp4"
+
+    if not file_path.exists():
+        file_path = SEALED_DIR / f"{project_id}_{asset_id}.mp4"
+
+    if not file_path.exists():
+        log.warning(f"Vision: File not found for {asset_id}")
+        return {
+            "project_id": project_id,
+            "asset_id": asset_id,
+            "error": "File not found",
+            "verdict": "ANALYSIS_FAILED"
+        }
+
+    # Run vision analysis
+    report = await analyze_video_frames(file_path, project_id, asset_id)
+
+    # Generate receipt data for potential Ledger attachment
+    receipt_data = generate_vision_receipt_data(report)
+
+    return {
+        "project_id": report.project_id,
+        "asset_id": report.asset_id,
+        "analyzed_at": report.analyzed_at,
+        "analysis_ms": report.analysis_ms,
+        "total_frames": report.total_frames,
+        "sampled_frames": report.sampled_frames,
+        "integrity_hash": report.integrity_hash,
+        "sensor_consistency": report.sensor_consistency,
+        "manipulation_score": report.manipulation_score,
+        "verdict": receipt_data["verdict"],
+        "key_frames": report.key_frames[:5],  # Return first 5 for preview
+        "receipt_data": receipt_data,
+        "vision_version": report.vision_version
+    }
+
+
+@app.get("/vd-cut/vision/health")
+async def vision_health():
+    """Health check for W-VISION-001 Forensic Vision Layer."""
+    import os
+    vision_api = os.getenv("WINDI_VISION_API", "false").lower() == "true"
+
+    return {
+        "status": "healthy",
+        "service": "W-VISION-001",
+        "version": "1.0.0",
+        "description": "Forensic Vision Layer — Frame integrity analysis",
+        "capabilities": {
+            "frame_extraction": True,
+            "perceptual_hash": True,
+            "noise_signature": True,
+            "manipulation_detection": True,
+            "vision_api_description": vision_api
+        }
+    }
+
+
+# ===== W-OBS-GATE — Cloud-Side Composition =====
+
+@app.post("/vd-cut/compose")
+async def compose_video_endpoint(
+    project_id: str = Form(...),
+    asset_id: str = Form(...),
+    scene: str = Form("clean"),  # berlin_pitch, forensic, clean, broadcast, social
+    verdict: str = Form("VERIFIED"),
+    receipt_id: Optional[str] = Form(None)
+):
+    """
+    W-OBS-GATE — Compose video with sovereign overlays.
+
+    Applies scene template to create broadcast-ready output with
+    verification elements (QR, timestamp, verdict badge, logo).
+
+    I9: Composition is a TOOL. Human decides when and how to use it.
+    I11: Output hash is computed and returned for potential sealing.
+    """
+    from services.compose_service import compose_video, list_available_scenes, SCENES
+    from dataclasses import asdict
+
+    # Validate scene
+    if scene not in SCENES:
+        available = list(SCENES.keys())
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unknown scene: {scene}. Available: {available}"
+        )
+
+    # Get asset
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM video_assets WHERE id = ?", (asset_id,))
+    asset = cursor.fetchone()
+
+    if not asset:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Asset not found")
+
+    cursor.execute("SELECT * FROM video_projects WHERE id = ?", (project_id,))
+    project = cursor.fetchone()
+
+    if not project:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    conn.close()
+
+    # Get source path (stored_path is the column name in DB)
+    source_path = Path(asset["stored_path"])
+    if not source_path.exists():
+        # Fallback to incoming dir by asset ID
+        source_path = INCOMING_DIR / f"{asset_id}.mp4"
+    if not source_path.exists():
+        raise HTTPException(status_code=404, detail="Source file not found")
+
+    # Generate output path
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
+    output_filename = f"{asset_id}_composed_{scene}_{timestamp}.mp4"
+    output_path = EXPORTS_DIR / output_filename
+
+    # Generate receipt ID if not provided
+    if not receipt_id:
+        receipt_id = f"WINDI-COMPOSE-{timestamp}-{uuid.uuid4().hex[:8].upper()}"
+
+    # Build verify URL
+    verify_url = f"https://windi-domain.com/verify-public/?id={receipt_id}"
+
+    # Compose video
+    result = await compose_video(
+        input_path=source_path,
+        output_path=output_path,
+        scene_name=scene,
+        receipt_id=receipt_id,
+        verdict=verdict,
+        verify_url=verify_url,
+        project_id=project_id,
+        asset_id=asset_id
+    )
+
+    if not result.success:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Composition failed: {result.error}"
+        )
+
+    log.info(f"W-OBS-GATE composed: {scene} for {asset_id} in {result.composition_ms:.0f}ms")
+
+    return {
+        "success": True,
+        "service": "W-OBS-GATE",
+        "scene": scene,
+        "scene_name": SCENES[scene].name,
+        "output_path": str(output_path),
+        "output_hash": result.output_hash,
+        "composition_ms": result.composition_ms,
+        "overlays_applied": result.overlays_applied,
+        "receipt_id": receipt_id,
+        "verify_url": verify_url,
+        "i9_notice": "Composition ready. Human decides publication.",
+        "i11_notice": "Output hash computed. Ready for Ledger seal if approved."
+    }
+
+
+@app.get("/vd-cut/compose/scenes")
+async def list_scenes():
+    """List available composition scenes for W-OBS-GATE."""
+    from services.compose_service import list_available_scenes
+
+    return {
+        "service": "W-OBS-GATE",
+        "version": "1.0.0",
+        "scenes": list_available_scenes(),
+        "note": "Each scene defines overlay position, elements shown, and styling."
+    }
+
+
+@app.get("/vd-cut/compose/health")
+async def compose_health():
+    """Health check for W-OBS-GATE Composition Service."""
+    from services.compose_service import SCENES
+
+    return {
+        "status": "healthy",
+        "service": "W-OBS-GATE",
+        "version": "1.0.0",
+        "description": "Cloud-Side Composition — FFmpeg-based video overlays",
+        "capabilities": {
+            "scene_templates": len(SCENES),
+            "qr_overlay": True,
+            "timestamp_overlay": True,
+            "verdict_badge": True,
+            "logo_watermark": True,
+            "ffmpeg_local": True,
+            "obs_dependency": False  # 100% local FFmpeg
+        }
+    }
+
+
 @app.post("/vd-cut/job/create")
 async def create_job(edl: EDLRequest, background_tasks: BackgroundTasks):
     """
