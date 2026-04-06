@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="noir">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>W-UDB-001 — God View</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <h1 class="logo">WINDI<span class="logo-sub">UDB</span></h1>
+            <span class="version">v1.0.0</span>
+        </div>
+        <div class="header-center">
+            <h2 class="title">UNIFIED DASHBOARD — SOVEREIGN VIDEO EVIDENCE ENGINE</h2>
+        </div>
+        <div class="header-right">
+            <div class="status-indicator" id="connection-status">
+                <span class="status-dot"></span>
+                <span class="status-text">Connecting...</span>
+            </div>
+            <div class="controls">
+                <button class="btn-theme" onclick="toggleTheme()" title="Toggle Theme">
+                    <span id="theme-icon">&#9788;</span>
+                </button>
+                <select id="lang-toggle" onchange="setLang(this.value)">
+                    <option value="de">DE</option>
+                    <option value="en" selected>EN</option>
+                    <option value="pt">PT</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dashboard -->
+    <main class="dashboard">
+        <!-- Zone A: Forensic Hub -->
+        <section class="zone zone-a" id="zone-a">
+            <div class="zone-header">
+                <h3 class="zone-title">ZONE A</h3>
+                <span class="zone-name" data-i18n="zone_a_name">FORENSIC HUB</span>
+                <span class="zone-port">:8128</span>
+            </div>
+            <div class="zone-body">
+                <div class="metric-large">
+                    <span class="metric-value" id="zone-a-seals">--</span>
+                    <span class="metric-label" data-i18n="seals">seals</span>
+                </div>
+                <div class="metric-small">
+                    <span class="metric-label" data-i18n="last_seal">Last seal:</span>
+                    <span class="metric-value" id="zone-a-last">--:--</span>
+                </div>
+                <div class="zone-status" id="zone-a-status">
+                    <span class="status-badge loading">LOADING</span>
+                </div>
+            </div>
+            <div class="zone-footer">
+                <span class="governance-tag">I9 Direct</span>
+            </div>
+        </section>
+
+        <!-- Zone B: Mass Pulse -->
+        <section class="zone zone-b" id="zone-b">
+            <div class="zone-header">
+                <h3 class="zone-title">ZONE B</h3>
+                <span class="zone-name" data-i18n="zone_b_name">MASS PULSE</span>
+                <span class="zone-port">:8131</span>
+            </div>
+            <div class="zone-body">
+                <div class="metric-large">
+                    <span class="metric-value" id="zone-b-renders">--</span>
+                    <span class="metric-label" data-i18n="renders">renders</span>
+                </div>
+                <div class="metric-row">
+                    <div class="metric-small">
+                        <span class="metric-label" data-i18n="queue">Queue:</span>
+                        <span class="metric-value" id="zone-b-queue">--</span>
+                    </div>
+                    <div class="metric-small">
+                        <span class="metric-label" data-i18n="exceptions">Exceptions:</span>
+                        <span class="metric-value" id="zone-b-exceptions">--</span>
+                    </div>
+                </div>
+                <div class="zone-status" id="zone-b-status">
+                    <span class="status-badge loading">LOADING</span>
+                </div>
+            </div>
+            <div class="zone-footer">
+                <span class="governance-tag">I9-P Policy</span>
+            </div>
+        </section>
+
+        <!-- Zone C: Ledger Integrity -->
+        <section class="zone zone-c" id="zone-c">
+            <div class="zone-header">
+                <h3 class="zone-title">ZONE C</h3>
+                <span class="zone-name" data-i18n="zone_c_name">LEDGER INTEGRITY</span>
+                <span class="zone-port">DUAL-CHAIN</span>
+            </div>
+            <div class="zone-body">
+                <div class="integrity-meter">
+                    <div class="integrity-bar" id="integrity-bar" style="width: 0%"></div>
+                    <span class="integrity-value" id="integrity-score">--%</span>
+                </div>
+                <div class="agent-status-grid">
+                    <div class="agent-status" id="agent-vdcut">
+                        <span class="agent-name">VD-CUT</span>
+                        <span class="agent-dot"></span>
+                    </div>
+                    <div class="agent-status" id="agent-vdmass">
+                        <span class="agent-name">VD-MASS</span>
+                        <span class="agent-dot"></span>
+                    </div>
+                    <div class="agent-status" id="agent-ledger">
+                        <span class="agent-name">LEDGER</span>
+                        <span class="agent-dot"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="zone-footer">
+                <span class="governance-tag">Dual-Chain</span>
+            </div>
+        </section>
+    </main>
+
+    <!-- KPI Bar -->
+    <section class="kpi-bar">
+        <div class="kpi">
+            <span class="kpi-label" data-i18n="integrity">Integrity:</span>
+            <span class="kpi-value" id="kpi-integrity">--%</span>
+        </div>
+        <div class="kpi">
+            <span class="kpi-label" data-i18n="exceptions_kpi">Exceptions:</span>
+            <span class="kpi-value" id="kpi-exceptions">--</span>
+        </div>
+        <div class="kpi">
+            <span class="kpi-label" data-i18n="sovereignty">Sovereignty:</span>
+            <span class="kpi-value" id="kpi-sovereignty">100%</span>
+        </div>
+    </section>
+
+    <!-- Emergency Controls -->
+    <section class="controls-bar">
+        <button class="btn-kill" id="btn-kill-switch" onclick="killSwitch()">
+            <span class="btn-icon">&#9679;</span>
+            <span data-i18n="kill_switch">KILL SWITCH</span>
+        </button>
+        <button class="btn-manifest" id="btn-manifest" onclick="generateManifest()">
+            <span class="btn-icon">&#128203;</span>
+            <span data-i18n="generate_manifest">GENERATE DAILY MANIFEST</span>
+        </button>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <span>Liga IA+H · Kempten, Bavaria · 2026</span>
+        <span class="footer-motto">"Se nao consegues ver, nao consegues escalar."</span>
+    </footer>
+
+    <!-- Kill Switch Modal -->
+    <div class="modal" id="kill-modal" style="display: none;">
+        <div class="modal-content">
+            <h3 data-i18n="kill_confirm_title">Confirm Kill Switch</h3>
+            <p data-i18n="kill_confirm_msg">This will suspend ALL VD-MASS policies immediately.</p>
+            <div class="form-group">
+                <label for="kill-reason" data-i18n="reason">Reason:</label>
+                <input type="text" id="kill-reason" placeholder="Enter reason...">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal('kill-modal')" data-i18n="cancel">Cancel</button>
+                <button class="btn-confirm-kill" onclick="confirmKill()" data-i18n="confirm_halt">CONFIRM HALT</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/monitor.js"></script>
+</body>
+</html>
