@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
 **Version:** 2.0.4
-**Sealed:** 2026-04-06 · §144 Strike 6 — Share Button Integration LIVE
+**Sealed:** 2026-04-06 · §145 ALMA v1.0 — MARIA Constitutional Identity LIVE
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -710,11 +710,11 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 06 Apr | **§145 ALMA v1.0** · MARIA Constitutional Identity · Motor de Espelho · 4 Registos · Bug fix /plan |
 | 06 Apr | **§144 Strike 6 — Share Button** · verify-public SHARE → I9 Modal → Glass Embassy · 2nd Broadcast |
 | 06 Apr | **§143 W-BRIDGE-001 LIVE** · BIG-BRIDGE Gateway · /watch/{id} · HLS + Proof Panel · :8143 |
 | 06 Apr | **§142 W-FEDIVERSE-001 LIVE** · Glass Embassy · Mastodon + BlueSky · Parallel Broadcast · :8142 |
 | 06 Apr | **§141 W-NOMAD-VOICE LIVE** · A Pele Humana do Dragão · /cmd pitch · I9 Telegram Buttons |
-| 06 Apr | **§140 W-INTENT-CMD LIVE** · Director-as-a-Service · :8141 · 6 Intents · First Dragon Command |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -876,6 +876,10 @@ workspace/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
 ### Completado (últimos 10 · ver CLAUDE-HISTORY.md para §37-115)
+- [x] §145 **ALMA v1.0** · MARIA Constitutional Identity · Motor de Espelho · 4 Registos · Bug fix /plan ✅ 06 Apr
+- [x] §144 **Strike 6 — Share Button** · verify-public SHARE → I9 Modal → Glass Embassy ✅ 06 Apr
+- [x] §143 **W-BRIDGE-001** · BIG-BRIDGE Gateway · /watch/{id} · HLS Streaming · :8143 ✅ 06 Apr
+- [x] §142 **W-FEDIVERSE-001** · Glass Embassy · Mastodon + BlueSky · Parallel Broadcast · :8142 ✅ 06 Apr
 - [x] §141 **W-NOMAD-VOICE** · A Pele Humana do Dragão · /cmd pitch · I9 Telegram · `900eba8` ✅ 06 Apr
 - [x] §140 **W-INTENT-CMD** · Director-as-a-Service · :8141 · 6 Intents · `5004346` ✅ 06 Apr
 - [x] §139 **W-INFRA-AUGMENT** · CLASSIFY + VISION + OBS-GATE · 5 Scenes · `d535e50` ✅ 06 Apr
@@ -930,8 +934,12 @@ workspace/
 | §139 | W-INFRA-AUGMENT | ✅ LIVE | CLASSIFY + VISION + OBS-GATE · 5 Scenes · `d535e50` |
 | §140 | W-INTENT-CMD | ✅ LIVE | Director-as-a-Service · :8141 · 6 Intents · `5004346` |
 | §141 | W-NOMAD-VOICE | ✅ LIVE | A Pele Humana · /cmd pitch · No-Jargon · `900eba8` |
+| §142 | W-FEDIVERSE-001 | ✅ LIVE | Glass Embassy · Mastodon + BlueSky · :8142 |
+| §143 | W-BRIDGE-001 | ✅ LIVE | BIG-BRIDGE Gateway · /watch/{id} · HLS · :8143 |
+| §144 | Strike 6 — Share Button | ✅ LIVE | verify-public SHARE → Glass Embassy |
+| §145 | ALMA v1.0 | ✅ LIVE | MARIA Constitutional Identity · Motor de Espelho · 4 Registos |
 
-> **Detalhes completos §128-141:** `CLAUDE-HISTORY.md` § SESSÃO 05-06 Abr 2026
+> **Detalhes completos §128-145:** `CLAUDE-HISTORY.md` § SESSÃO 05-06 Abr 2026
 
 ---
 
