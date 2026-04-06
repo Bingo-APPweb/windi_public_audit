@@ -403,6 +403,98 @@ async def intake_video(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# W-CLASSIFY-001 — Sensibility Layer
+# "AI suggests. Human decides. WINDI guarantees."
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@app.post("/vd-cut/classify")
+async def classify_video(project_id: str = Form(...), asset_id: str = Form(...)):
+    """
+    W-CLASSIFY-001 — Intelligent Content Classification
+
+    Analyzes uploaded video and suggests processing modules.
+    This is a NON-BLOCKING advisory service:
+    - If classification succeeds: returns recommendations
+    - If classification fails: returns empty suggestions
+    - NEVER blocks the upload/seal pipeline
+
+    The I9 Gate remains the final human decision point.
+
+    Returns:
+        - recommendations: List of suggested modules with rationale
+        - metadata_summary: Key metadata extracted from file
+        - can_proceed_to_seal: Always True (modules are optional)
+        - analysis_ms: Time taken for analysis (latency audit)
+    """
+    from services.classify_service import classify_content
+
+    # Validate project and asset exist
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM video_projects WHERE id = ?", (project_id,))
+    project = cursor.fetchone()
+
+    if not project:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    cursor.execute("SELECT * FROM video_assets WHERE id = ?", (asset_id,))
+    asset = cursor.fetchone()
+
+    if not asset:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Asset not found")
+
+    conn.close()
+
+    # Get file path
+    file_path = INCOMING_DIR / f"{asset_id}.mp4"
+
+    if not file_path.exists():
+        # Fallback: check processing dir
+        file_path = PROCESSING_DIR / f"{asset_id}.mp4"
+
+    if not file_path.exists():
+        # File not found - return empty suggestions (don't block)
+        log.warning(f"Classify: File not found for {asset_id}")
+        return {
+            "project_id": project_id,
+            "asset_id": asset_id,
+            "recommendations": [],
+            "metadata_summary": {"error": "File not found"},
+            "can_proceed_to_seal": True,
+            "analysis_ms": 0,
+            "sensibility_version": "1.0.0"
+        }
+
+    # Run classification
+    result = await classify_content(file_path, project_id, asset_id)
+
+    return {
+        "project_id": result.project_id,
+        "asset_id": result.asset_id,
+        "recommendations": result.recommendations,
+        "metadata_summary": result.metadata_summary,
+        "can_proceed_to_seal": result.can_proceed_to_seal,
+        "analysis_ms": result.analysis_ms,
+        "analyzed_at": result.analyzed_at,
+        "sensibility_version": result.sensibility_version
+    }
+
+
+@app.get("/vd-cut/classify/health")
+async def classify_health():
+    """Health check for W-CLASSIFY-001 Sensibility Layer."""
+    return {
+        "status": "healthy",
+        "service": "W-CLASSIFY-001",
+        "version": "1.0.0",
+        "description": "Sensibility Layer — AI suggests, Human decides"
+    }
+
+
 @app.post("/vd-cut/job/create")
 async def create_job(edl: EDLRequest, background_tasks: BackgroundTasks):
     """
