@@ -1291,6 +1291,92 @@ async def search_places(intent: IntentPayload, lat: float, lng: float, lang: str
         log.warning(f"Google Places fallback: {e}")
         return [], False
 
+
+# ══════════════════════════════════════════════════════════════════════════════
+# §145.12 — Memory → Ranking Engine
+# ══════════════════════════════════════════════════════════════════════════════
+import math
+
+def _apply_preference_ranking(places: list, place_type: str, did: str) -> list:
+    """
+    §145.12 — Memory → Ranking Engine.
+
+    "O mundo que Maria mostra muda baseado em quem tu és."
+
+    User preferences modify ranking, not filtering:
+    - Positive signals → boost quality weighting
+    - Negative signals → raw quality only
+    - Neutral → no change
+
+    Formula:
+        signal = feedback_signals.get(place_type, 0)
+        preference_multiplier = 1 + (signal * 0.1)  # ±10% per signal
+        quality_score = (rating or 3.0) * log10(reviews + 10)
+        final_score = quality_score * preference_multiplier
+    """
+    if not places or not did or not MEMORY_ENABLED:
+        return places
+
+    # Fetch user preferences
+    try:
+        prefs = get_travel_preferences(did)
+        signals = prefs.get("feedback_signals", {})
+        confidence = prefs.get("learned_confidence", 0.0)
+    except Exception as e:
+        log.warning(f"[MARIA §145.12] Could not fetch preferences: {e}")
+        return places
+
+    # No signals yet = no ranking change (let user discover first)
+    if not signals or confidence < 0.1:
+        return places
+
+    # Map place_type to signal key (normalize)
+    signal_key = place_type.lower().replace("_", "").replace("-", "")
+    # Also try common mappings
+    signal_mappings = {
+        "restaurant": ["restaurant", "food", "eat"],
+        "cafe": ["cafe", "coffee", "kaffee"],
+        "hotel": ["hotel", "lodging", "accommodation"],
+        "museum": ["museum", "culture", "kunst"],
+        "bar": ["bar", "nightlife", "drinks"],
+        "pharmacy": ["pharmacy", "health", "apotheke"],
+        "gasstation": ["gas", "fuel", "tanken"],
+    }
+
+    # Find best matching signal
+    signal_score = signals.get(signal_key, 0)
+    for base_type, variants in signal_mappings.items():
+        if signal_key in variants or base_type in signal_key:
+            for v in variants:
+                if v in signals:
+                    signal_score = max(signal_score, signals[v])
+                    break
+
+    # No signal for this type = no ranking change
+    if signal_score == 0:
+        log.debug(f"[MARIA §145.12] No signal for {place_type}, keeping original order")
+        return places
+
+    # Calculate preference multiplier (±10% per signal point, capped at ±50%)
+    preference_multiplier = 1 + (min(max(signal_score, -5), 5) * 0.1)
+
+    # Score and rank each place
+    def rank_score(place):
+        rating = place.get("rating") or 3.0
+        reviews = place.get("user_ratings_total") or 0
+        # Quality score: rating × log(reviews + 10)
+        quality = rating * math.log10(reviews + 10)
+        # Apply preference multiplier
+        return quality * preference_multiplier
+
+    # Sort by score (descending)
+    ranked = sorted(places, key=rank_score, reverse=True)
+
+    log.info(f"[MARIA §145.12] Ranked {len(ranked)} places for {place_type} · signal={signal_score} · multiplier={preference_multiplier:.2f}")
+
+    return ranked
+
+
 # ── §104.1 Decision Engine (Personalização Real) ─────────────────────────────
 def score_place(place: dict, intent: IntentPayload, ctx: dict, prefs: dict = None) -> float:
     """
@@ -2252,6 +2338,9 @@ async def maria_plan(req: PlanRequest):
             tier="TRAVEL",  # Travel users get premium access
             actor=did or "anonymous"
         )
+        # §145.12 — Memory → Ranking Engine (user preferences modify order)
+        if candidates and did:
+            candidates = _apply_preference_ranking(candidates, req.intent.type, did)
 
     if not candidates:
         # §69 — Plan B: MARIA as general_companion
@@ -2940,6 +3029,9 @@ async def maria_think_endpoint(req: ThinkRequest):
                 tier="MED",
                 actor=req.did or "anonymous"
             )
+            # §145.12 — Memory → Ranking Engine
+            if places and req.did:
+                places = _apply_preference_ranking(places, place_type, req.did)
 
             if places:
                 best = places[0]
