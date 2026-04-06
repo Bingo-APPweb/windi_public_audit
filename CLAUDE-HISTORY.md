@@ -5910,7 +5910,7 @@ Main Pitch:     https://windi-domain.com/pitch/
 3. **Verify móvel** — Confirmado funcional (<3s)
 4. **Rotas nginx** — /investor/ e /pitch/ funcionais
 
-### Conclusão
+### Conclusão §138.1-§138.2
 
 Todos os 4 entregáveis de Maio 2026 estão fechados.
 Sistema pronto para apresentações institucionais:
@@ -5918,6 +5918,88 @@ Sistema pronto para apresentações institucionais:
 - Comité EU AI Act
 - Universidades Kempten + Munique
 - VC Berlim
+
+---
+
+### §138.3 — Sovereignty Manifesto v2.0 (06 Abril 2026)
+
+**Status:** LIVE · Trilíngue · Dados Q2 2026
+
+**URL:** `https://windi-domain.com/investor/manifesto/`
+**Ficheiro:** `/var/www/investor/manifesto/index.html`
+**Versão:** v1.0 → **v2.0**
+**Seal:** VR-CP-GOLD-1771706708 → **VR-SM-Q2-2026**
+
+#### Audit Identificado pelo Council
+
+O manifesto v1.0 (Fevereiro 2026) tinha dados desactualizados:
+- 9,743 receipts quando o Ledger tinha 56,757+
+- 9 serviços quando havia 14+ live
+- Data de Fevereiro para apresentações de Maio
+- Roadmap desalinhada com realidade
+
+#### Alterações Aplicadas v1.0 → v2.0
+
+| Campo | v1.0 | v2.0 |
+|-------|------|------|
+| Forensic Receipts | 9,743 (×6) | **56,757+** (×10) |
+| Sovereign Services | 9 (8100–8108) | **14+** (8100–8131) |
+| VR Code | VR-CP-GOLD-1771706708 | **VR-SM-Q2-2026** |
+| Data seal | 21 February 2026 | **Q2 2026 · April** |
+| Latency card | 36ms Rendering | **17ms Ledger** (dado real) |
+| Phase I | Incompleto | + WINDI-LAW, TRAVEL, ProofStream |
+| Phase II | "Current" | **Completed** |
+| Phase III | "Next" | **Current** |
+
+#### Nova Arquitectura Visual (4 Camadas)
+
+```
+Core Governance:    Ledger :8101 · Sentinel :8102 · Export :8103 · Vault :8106
+Document Layer:     GEN7 :8119 · Communiqué :8105 · Dragon :8108 · Dispatch :8121
+Product Layer:      WINDI-LAW :8122 · TRAVEL :8126 · ProofStream :8128 · VD-MASS :8131  ← NOVO
+Semantic Layer:     LLM Gateway :8130 · OCR · SMTP
+```
+
+#### EU AI Act — Artigos Actualizados
+
+- Art. 11 (Technical Documentation): 9,743 → **56,757+ receipts**
+- Art. 12 (Record-Keeping): números corrigidos
+
+#### Roadmap Reclassificada
+
+| Fase | v1.0 | v2.0 |
+|------|------|------|
+| Phase I | "Completed" (incompleta) | **Completed** + LAW/TRAVEL/ProofStream |
+| Phase II | "Current" | **Completed** (LLM Gateway, MLT, Whisper) |
+| Phase III | "Next" | **Current** (Institutional Scale, W-UDB-001) |
+| Phase IV | Horizon | Horizon (European Trust Network) |
+
+#### Verificação Final
+
+```bash
+grep -c "56,757\|56.757" /var/www/investor/manifesto/index.html  # 9 ocorrências
+grep -c "VR-SM-Q2" /var/www/investor/manifesto/index.html        # 2 ocorrências
+grep -c "9743\|VR-CP-GOLD" /var/www/investor/manifesto/index.html # 0 (removidos)
+```
+
+#### Nota: Egress Proxy
+
+Council reportou inicialmente que não via alterações — problema de cache + egress proxy do container (whitelist só permite `www.windi-domain.com`, não `windi-domain.com`). Servidor confirmado correcto via grep directo no ficheiro.
+
+---
+
+### Estado Final Completo — Pacote Berlim Maio 2026
+
+| # | Entregável | URL | Status |
+|---|------------|-----|--------|
+| 1 | Investor Portal | /investor/ | ✅ Q2 2026, PMF section |
+| 2 | Sovereignty Manifesto v2 | /investor/manifesto/ | ✅ 56K+ seals, VR-SM-Q2-2026 |
+| 3 | Catálogo Institucional | /nomad-upload/catalog.html | ✅ 8 links, trilíngue |
+| 4 | Pitch Deck PDF | /pitch/WINDI_Pitch_Deck_Berlin_Q2_2026.pdf | ✅ Upload completo |
+| 5 | Demo E2E WINDI-LAW | /law/gate/ | ✅ 31s testado |
+| 6 | Verify Público | /verify-public/ | ✅ Mobile <3s |
+
+**Berlim está pronto.** 🐉
 
 ---
 
