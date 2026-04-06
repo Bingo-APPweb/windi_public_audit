@@ -2111,6 +2111,45 @@ async def maria_plan(req: PlanRequest):
             timestamp=datetime.now(timezone.utc).isoformat(),
         )
 
+    # 1f.5 §145.2 — Weather intent: resposta directa, sem turismo
+    #       Weather questions get simple, direct answers from context
+    WEATHER_KEYWORDS = ["temperatura", "tempo está", "clima", "quantos graus", "vai chover",
+                        "temperatur", "wetter", "grad", "regnet",
+                        "temperature", "weather", "degrees", "raining"]
+    if req.query and any(kw in req.query.lower() for kw in WEATHER_KEYWORDS):
+        log.info(f"[{request_id[:8]}] Weather intent detected → direct response")
+        weather_info = ctx.get("weather", "informação não disponível")
+
+        weather_templates = {
+            "PT": f"Neste momento: {weather_info}.",
+            "DE": f"Aktuell: {weather_info}.",
+            "EN": f"Currently: {weather_info}."
+        }
+        maria_text = weather_templates.get(lang, weather_templates["EN"])
+
+        return PlanResponse(
+            request_id=request_id,
+            decision=PlaceResult(
+                name="Clima" if lang == "PT" else ("Wetter" if lang == "DE" else "Weather"),
+                type="weather",
+                distance_text="",
+                queue_status="",
+                reason=maria_text,
+            ),
+            context={"weather": weather_info},
+            maria_voice=MariaVoice(
+                PT=maria_text if lang == "PT" else "",
+                DE=maria_text if lang == "DE" else "",
+                EN=maria_text if lang == "EN" else "",
+            ),
+            intent_parsed={"type": "weather"},
+            ledger_receipt_id=None,  # Weather not sealed
+            cost_eur=0.0,
+            sovereign_mode=False,
+            memory_active=memory_active,
+            timestamp=datetime.now(timezone.utc).isoformat(),
+        )
+
     # 1g. §69 — Culture/Tips intent detection
     #     Practical travel questions → MARIA responds directly via LLM
     if req.query and detect_culture_intent(req.query):
