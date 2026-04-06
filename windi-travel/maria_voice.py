@@ -135,6 +135,24 @@ def read_pulse(message: str, hour: int = None, history: list = None) -> dict:
         pulse["tone_needed"] = "playful"
         pulse["energy"] = "high"
 
+    # §145.1 — Saudação/Presença: routing para Claude (calor humano)
+    greeting_signals = [
+        # PT
+        "olá", "oi maria", "bom dia", "boa tarde", "boa noite", "estás aí", "está aí",
+        "como estás", "tudo bem", "maria?", "por aí",
+        # DE
+        "hallo", "guten tag", "guten morgen", "guten abend", "bist du da", "wie geht",
+        "maria?", "da?",
+        # EN
+        "hello", "hi maria", "good morning", "good evening", "are you there", "how are you",
+        "maria?", "there?"
+    ]
+    if any(s in lower for s in greeting_signals):
+        pulse["intent"] = "connect"
+        pulse["tone_needed"] = "warm"
+        pulse["respond_to"] = "the_feeling"
+        pulse["energy"] = "medium"
+
     # ─────────────────────────────────────────────────────────────────────────
     # 3. CONTEXTO TEMPORAL
     # ─────────────────────────────────────────────────────────────────────────
@@ -647,15 +665,24 @@ When shown an image, I describe with elegant precision. I don't say "image conta
 # ══════════════════════════════════════════════════════════════════════════════
 
 EMOTIONAL_SIGNALS = [
-    # Portuguese
+    # Portuguese — distress
     "cansado", "sozinho", "perdido", "triste", "exausto", "saudade",
     "preciso de pausa", "dia difícil", "não sei", "ajuda",
-    # German
+    # Portuguese — connection/presence (§145.1 — route greetings to Claude)
+    "olá maria", "oi maria", "bom dia maria", "boa tarde maria", "boa noite maria",
+    "estás aí", "está aí", "como estás", "tudo bem",
+    # German — distress
     "müde", "allein", "verloren", "traurig", "erschöpft", "einsam",
     "brauche pause", "schwieriger tag", "weiß nicht", "hilfe",
-    # English
+    # German — connection/presence
+    "hallo maria", "guten tag maria", "guten morgen maria", "guten abend maria",
+    "bist du da", "wie geht es dir", "alles gut",
+    # English — distress
     "tired", "alone", "lost", "sad", "exhausted", "lonely", "overwhelmed",
-    "need a break", "difficult day", "don't know", "help"
+    "need a break", "difficult day", "don't know", "help",
+    # English — connection/presence
+    "hello maria", "hi maria", "good morning maria", "good evening maria",
+    "are you there", "how are you", "you there"
 ]
 
 def select_provider(intent: dict, context: dict, pulse: dict = None) -> str:
