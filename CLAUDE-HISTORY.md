@@ -6,6 +6,192 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 06 Abr 2026 — §142-§143 Glass Embassy + Share Button
+
+**Commits:** `9c9b8ba` · `7dc7c27` · `013e8f5` · `7bce77d`
+**Scope:** Multi-Protocol Truth Distribution · Share Integration
+**CLAUDE.md:** v2.0.2
+
+### §143 — Strike 6 · Share Button Integration — LIVE
+
+**Data:** 06 Abril 2026 · 15:57 CEST
+**Ficheiro:** `/opt/windi/verify-public/web/index.html` (+200 linhas)
+**Invariants:** I9 · I11 · I12
+
+> **"Da verificação à distribuição com um clique."**
+
+### Arquitectura Strike 6
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  VERIFY PAGE                                                │
+│  ───────────────────────────────────────────────────────── │
+│  ✅ VERIFIED                                                │
+│  Receipt: WINDI-VDCUT-...                                  │
+│                                                             │
+│  [🔗 SHARE TO FEDIVERSE]  ← Strike 6                       │
+│           ↓                                                 │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │  GLASS EMBASSY · I9 GATE                            │   │
+│  │  [✓] 🐘 Mastodon    [✓] 🦋 BlueSky                 │   │
+│  │  [Cancelar]  [Confirmar]                            │   │
+│  └─────────────────────────────────────────────────────┘   │
+│           ↓                                                 │
+│  W-FEDIVERSE-001 /fediverse/publish → Links displayed      │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Funcionalidades Implementadas
+
+| Feature | Descrição |
+|---------|-----------|
+| SHARE Button | Aparece apenas em receipts verificados |
+| I9 Modal | Confirmação humana antes de publicar |
+| Platform Selection | Checkboxes para Mastodon/BlueSky |
+| Loading State | "A publicar..." com feedback visual |
+| Success Display | Links clicáveis para cada post |
+| I18N | Traduções PT/DE/EN completas |
+
+### Nginx Route Adicionada
+
+```nginx
+location /fediverse/ {
+    proxy_pass http://127.0.0.1:8142/fediverse/;
+}
+```
+
+### Segundo Broadcast — Sucesso via SHARE Button
+
+| Plataforma | Post URL |
+|------------|----------|
+| Mastodon | `https://mastodon.social/@windi_domain/116358107571081468` |
+| BlueSky | `https://bsky.app/profile/windidomain.bsky.social/post/3mitg7ajnmr2j` |
+
+### Doutrina Strike 6
+
+> **"O SHARE não é marketing. É distribuição de prova."**
+> Cada clique garante que a verdade existe em múltiplos
+> protocolos independentes, resistentes à censura.
+
+---
+
+### §142 — W-FEDIVERSE-001 · Glass Embassy — OPERATIONAL
+
+**Data:** 06 Abril 2026 · 15:20:55 CEST
+**Serviço:** W-FEDIVERSE-001 · :8142
+**Invariants:** I9 · I11
+
+> **"Se uma rede tentar silenciar, a outra mantém viva."**
+
+### Arquitectura
+
+**Conceito:** Embaixada de Vidro — distribuição paralela de verdade certificada para múltiplos protocolos descentralizados, garantindo resistência à censura.
+
+**Protocolos Suportados:**
+| Protocolo | Plataforma | API |
+|-----------|------------|-----|
+| ActivityPub | Mastodon | OAuth2 + REST |
+| AT Protocol | BlueSky | XRPC + App Passwords |
+
+**Fluxo de Publicação:**
+```
+1. Vídeo/Doc selado no Ledger (I9 PASSED)
+           ↓
+2. Humano decide: /cmd publish --fediverse
+           ↓
+3. Glass Embassy dispara em PARALELO:
+     ├── MastodonBridge → ActivityPub API
+     └── BlueSkyBridge → AT Protocol XRPC
+           ↓
+4. Dois links retornam → Verdade distribuída
+```
+
+### Ficheiros Criados
+
+| Ficheiro | Função |
+|----------|--------|
+| `/opt/windi/fediverse/fediverse_server.py` | Servidor principal · 680 linhas |
+| `/opt/windi/fediverse/windi-fediverse.service` | Systemd service |
+| `/opt/windi/fediverse/.env.example` | Template de credenciais |
+| `/opt/windi/fediverse/.env` | Credenciais (não versionado) |
+
+### Endpoints
+
+| Endpoint | Método | Função |
+|----------|--------|--------|
+| `/fediverse/health` | GET | Status + configuração |
+| `/fediverse/publish` | POST | Broadcast paralelo |
+| `/fediverse/platforms` | GET | Lista plataformas activas |
+
+### Primeiro Broadcast Federado — SUCESSO
+
+**Receipt:** `WINDI-VDCUT-20260406115309-E897C7F1`
+**Timestamp:** 2026-04-06T13:20:55.595345+00:00
+
+**Resultados:**
+| Plataforma | Status | Post URL |
+|------------|--------|----------|
+| Mastodon | ✅ SUCCESS | `https://mastodon.social/@windi_domain/116357965811591301` |
+| BlueSky | ✅ SUCCESS | `https://bsky.app/profile/windidomain.bsky.social/post/3mite6s2ne52c` |
+
+**Reach Estimado:** ~1500
+
+### Formato Clarity Infinity
+
+Cada post segue o formato minimalista:
+```
+`{receipt_id}`
+
+👉 VERIFY: {verify_url}
+```
+
+Sem ruído. Sem marketing. Apenas a prova e o link de verificação.
+
+### Configuração de Credenciais
+
+**Mastodon:**
+1. Settings → Development → New Application
+2. Scopes: `read`, `write:statuses`, `write:media`
+3. Copiar Access Token
+
+**BlueSky:**
+1. Settings → App Passwords → Add App Password
+2. Copiar App Password gerada
+
+### Fix Aplicado
+
+**Problema:** Credenciais não carregavam do `.env`
+**Causa:** Faltava `load_dotenv()` no servidor
+**Fix:** Adicionado import e chamada no início do ficheiro
+
+```python
+from dotenv import load_dotenv
+load_dotenv(Path(__file__).parent / ".env")
+```
+
+### Doutrina
+
+> **"A verdade não depende de plataforma."**
+>
+> O WINDI não publica em redes sociais para "engagement".
+> O WINDI distribui provas verificáveis em múltiplos protocolos
+> para garantir que a verdade sobreviva à censura.
+>
+> Se o Mastodon cair → BlueSky mantém.
+> Se o BlueSky cair → Mastodon mantém.
+> Se ambos caírem → O Ledger permanece.
+
+### Status Final
+
+```
+Strike 5 — W-FEDIVERSE-001 — COMPLETE ✅
+Glass Embassy — OPERATIONAL
+Primeiro Broadcast — SUCESSO
+Censorship Resistance — ACTIVE
+```
+
+---
+
 ## § SESSÃO 05 Abr 2026 — §127 AI Draft v2.0
 
 **Commits:** `e634d2b` · `2391484` · `8fea073` · `872407c`
