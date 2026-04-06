@@ -472,6 +472,133 @@ def daily_manifest():
 
 
 # ═══════════════════════════════════════════════════════════════
+# ROUTES — Sovereign Collage (§138)
+# ═══════════════════════════════════════════════════════════════
+
+# Import composer
+from composer import composer as collage_engine
+
+@app.route("/compose", methods=["POST"])
+def create_collage():
+    """
+    Create a new sovereign collage from two VD-CUT sources.
+    Requires I9 human authorization.
+    """
+    data = request.get_json() or {}
+
+    # I9 Gate
+    actor_did = data.get("actor_did")
+    if not actor_did:
+        return jsonify({
+            "error": "I9 VIOLATION: actor_did required",
+            "message": "Collage creation requires human authorization"
+        }), 403
+
+    source_a = data.get("source_a")
+    source_b = data.get("source_b")
+
+    if not source_a or not source_b:
+        return jsonify({
+            "error": "Both source_a and source_b are required"
+        }), 400
+
+    result = collage_engine.create_collage(
+        source_a_id=source_a,
+        source_b_id=source_b,
+        timestamp_a=data.get("timestamp_a", ""),
+        timestamp_b=data.get("timestamp_b", ""),
+        actor_did=actor_did
+    )
+
+    if "error" in result:
+        return jsonify(result), 400 if "not found" in result.get("error", "").lower() else 403
+
+    return jsonify(result)
+
+
+@app.route("/compose/<collage_id>/render", methods=["POST"])
+def render_collage(collage_id: str):
+    """
+    Render a pending collage.
+    """
+    result = collage_engine.render_collage(collage_id)
+
+    if "error" in result:
+        return jsonify(result), 400
+
+    return jsonify(result)
+
+
+@app.route("/compose/list")
+def list_collages():
+    """
+    List all collages, optionally filtered by status.
+    """
+    status = request.args.get("status")
+    collages = collage_engine.list_collages(status)
+
+    return jsonify({
+        "count": len(collages),
+        "collages": collages,
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    })
+
+
+@app.route("/compose/<collage_id>")
+def get_collage(collage_id: str):
+    """
+    Get collage details by ID.
+    """
+    collage = collage_engine.get_collage(collage_id)
+
+    if not collage:
+        return jsonify({"error": f"Collage not found: {collage_id}"}), 404
+
+    return jsonify(collage)
+
+
+@app.route("/compose/sources")
+def list_available_sources():
+    """
+    List available VD-CUT sources for collage creation.
+    """
+    from pathlib import Path
+
+    exports_dir = Path("/opt/windi/media/vd-cut/exports")
+    sealed_dir = Path("/opt/windi/media/vd-cut/sealed")
+
+    sources = []
+
+    # List exports
+    if exports_dir.exists():
+        for f in sorted(exports_dir.glob("*.mp4"), key=lambda x: x.stat().st_mtime, reverse=True)[:20]:
+            sources.append({
+                "id": f.stem,
+                "path": str(f),
+                "type": "export",
+                "size": f.stat().st_size,
+                "modified": datetime.fromtimestamp(f.stat().st_mtime, timezone.utc).isoformat()
+            })
+
+    # List sealed
+    if sealed_dir.exists():
+        for f in sorted(sealed_dir.glob("*.mp4"), key=lambda x: x.stat().st_mtime, reverse=True)[:20]:
+            sources.append({
+                "id": f.stem,
+                "path": str(f),
+                "type": "sealed",
+                "size": f.stat().st_size,
+                "modified": datetime.fromtimestamp(f.stat().st_mtime, timezone.utc).isoformat()
+            })
+
+    return jsonify({
+        "count": len(sources),
+        "sources": sources,
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    })
+
+
+# ═══════════════════════════════════════════════════════════════
 # ROUTES — SSE Real-Time Stream
 # ═══════════════════════════════════════════════════════════════
 
