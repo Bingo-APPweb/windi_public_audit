@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.96
-**Sealed:** 2026-04-06 · §137 Medium-Agnostic Truth Distribution — LIVE
+**Version:** 1.9.97
+**Sealed:** 2026-04-06 · §138 Preparação Maio 2026 — EM CURSO
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -696,6 +696,7 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 06 Apr | **§138 Preparação Maio 2026** · 4 Entregáveis · SKILL instalado · Nervos mapeados |
 | 06 Apr | **§137 Medium-Agnostic Distribution** · W-JMPG-001 v1.3.0 · `/comm/publish` · t.me/windi_public LIVE |
 | 05 Apr | **§136 W-UDB-001 SPEC** · Dashboard Unificado · God View · :8140 · VD-CUT + VD-MASS |
 | 05 Apr | **§135 MLT Engine Fusão Real** · VD-CUT × VD-MASS · Dual-Hash Chain · Policy I9-P LIVE |
@@ -809,6 +810,11 @@ Se o Gêmeo inventa um receipt... isso é falsificação."
 
 ### P0 — Crítico (Próxima Sessão)
 - [x] **P3-B Travel Workspace** — ✅ LIVE · F13 Chat Maria · 14 features
+- [ ] **§138 WINDI-LAW Painel de Anexos** — IMG/DOC não visíveis após upload. Implementar:
+  - Lista persistente de anexos (não só o último)
+  - Painel lateral ou expandível: nome · SHA · tamanho · botão remover
+  - Suporte múltiplos ficheiros (IMG + DOC + VID conjunto)
+  - Integração com seal composto (hash de todos os anexos)
 
 ### P1 — Importante
 - [ ] **Rate limiting** — nginx Agent Corps
@@ -900,8 +906,9 @@ workspace/
 | §135 | MLT Engine Fusão Real | ✅ SEALED | VD-CUT × VD-MASS · Dual-Hash · Policy `27bcbb0e` · melt 7.12.0 |
 | §136 | W-UDB-001 Dashboard | 📋 SPEC | Unified Dashboard · God View · :8140 · 3 Zonas · Kill Switch |
 | §137 | Medium-Agnostic Distribution | ✅ SEALED | W-JMPG-001 v1.3.0 · SDK v1.1.0 · `bda0400` · t.me/windi_public |
+| §138 | Preparação Maio 2026 | 🎯 EM CURSO | Demo 5min · Caso Real · Verify Carlos · Página Austera |
 
-> **Detalhes completos §128-137:** `CLAUDE-HISTORY.md` § SESSÃO 05-06 Abr 2026
+> **Detalhes completos §128-138:** `CLAUDE-HISTORY.md` § SESSÃO 05-06 Abr 2026
 
 ---
 
