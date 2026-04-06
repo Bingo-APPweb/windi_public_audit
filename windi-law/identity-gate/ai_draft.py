@@ -18,10 +18,12 @@ import json
 import logging
 import io
 import re
+import asyncio
 from datetime import datetime, timezone
 from typing import Optional
 
 import requests
+import anthropic  # §137 — Streaming SDK
 from fastapi import APIRouter, HTTPException, Header, Request
 from fastapi.responses import StreamingResponse, JSONResponse
 from pydantic import BaseModel
@@ -355,6 +357,75 @@ Erstelle jetzt das vollständige Dokument:"""
         },
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }
+
+
+# ─── §137 — SSE Streaming for VC Demo ────────────────────────────────────────
+
+@ai_draft_router.post("/stream")
+async def stream_draft(request: Request):
+    """
+    §137 — SSE Streaming para demo VC Berlin
+
+    Pipeline: User clica → texto surge palavra a palavra → SEAL
+    Invariant I9: Frontend confirmou antes de chamar
+    """
+    body = await request.json()
+
+    did          = body.get("did", "")
+    wallet_id    = body.get("wallet_id", "")
+    doc_type     = body.get("doc_type", "analyse")
+    jurisdiction = body.get("jurisdiction", "DE")
+    lang         = body.get("lang", "DE")
+    context      = body.get("context", "")
+    prompt       = body.get("prompt", "")
+    tier         = body.get("tier", "HIGH")
+
+    if not prompt or len(prompt.strip()) < 5:
+        raise HTTPException(400, "Prompt required (min 5 chars)")
+
+    system = build_system_prompt(doc_type, jurisdiction, lang)
+
+    user_message = f"""Kontext: {context}
+
+Aufgabe: {prompt}
+
+Tier: {tier} — Vollständige Analyse auf höchstem juristischen Niveau."""
+
+    async def generate():
+        try:
+            client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+
+            with client.messages.stream(
+                model="claude-sonnet-4-20250514",
+                max_tokens=4000,
+                system=system,
+                messages=[{"role": "user", "content": user_message}]
+            ) as stream:
+                for text in stream.text_stream:
+                    # Escapar para SSE seguro
+                    escaped = text.replace('\\', '\\\\').replace('\n', '\\n').replace('\r', '')
+                    yield f"data: {escaped}\n\n"
+                    await asyncio.sleep(0)  # yield control ao event loop
+
+            yield "data: [DONE]\n\n"
+            logger.info(f"[AI-DRAFT/STREAM] Completed · DID:{did[:12] if did else 'UNKNOWN'}...")
+
+        except anthropic.APIError as e:
+            logger.error(f"[AI-DRAFT/STREAM] Anthropic API error: {e}")
+            yield f"data: [ERROR] Anthropic API: {str(e)[:100]}\n\n"
+        except Exception as e:
+            logger.error(f"[AI-DRAFT/STREAM] Error: {e}")
+            yield f"data: [ERROR] {str(e)[:100]}\n\n"
+
+    return StreamingResponse(
+        generate(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control":     "no-cache",
+            "X-Accel-Buffering": "no",
+            "Connection":        "keep-alive"
+        }
+    )
 
 
 @ai_draft_router.post("/seal")

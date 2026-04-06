@@ -147,6 +147,20 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
 .lang-pills { display: flex; gap: 2px; }
 .lpill { font-size: 9px; padding: 1px 6px; border-radius: 8px; border: 1px solid var(--border); color: var(--ink-4); cursor: pointer; background: transparent; transition: all 0.12s; }
 .lpill.on { background: var(--perg-2); color: var(--ink-2); border-color: var(--border-2); }
+/* Theme toggle button — matches dlang style */
+.theme-toggle {
+  font-size: 13px;
+  padding: 5px 10px;
+  border-radius: 12px;
+  border: 1.5px solid var(--gold);
+  color: var(--gold);
+  cursor: pointer;
+  background: transparent;
+  transition: all 0.15s;
+  line-height: 1;
+  font-family: var(--font);
+}
+.theme-toggle:hover { background: var(--gold); color: white; }
 
 /* main flex */
 .main { flex: 1; display: flex; overflow: hidden; }
@@ -164,7 +178,32 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
   @keyframes fu { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:none} }
   @keyframes docEnter { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
   @keyframes sealPulse { 0%,100%{box-shadow:0 0 0 0 rgba(139,105,20,0)} 50%{box-shadow:0 0 0 4px rgba(139,105,20,0.18)} }
+  /* §137 — Streaming pulse animation */
+  @keyframes kpulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.3;transform:scale(0.6)} }
 }
+/* §137 — Streaming dot */
+.pulse-dot {
+  display: inline-block;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+  animation: kpulse 1s infinite;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+.btn-vc-demo {
+  background: var(--gold);
+  color: var(--perg);
+  border: none;
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--font);
+  transition: all 0.15s;
+}
+.btn-vc-demo:hover { background: #6B4F10; }
 /* A4: QR hover expand */
 .dc-qr-tooltip { transition: transform 0.2s ease, box-shadow 0.2s ease; }
 .dc-qr-tooltip:hover { transform: scale(1.08); box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
@@ -1270,6 +1309,7 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
     <button class="dlang" onclick="setLang('en')">EN</button>
     <button class="dlang" onclick="setLang('pt')">PT</button>
   </div>
+  <button id="theme-toggle" class="theme-toggle" onclick="toggleTheme()" title="NOIR ↔ KLAR">☀</button>
   <div class="demo-sep"></div>
   <button class="demo-btn on" onclick="go('empty')" data-i18n="demoEmpty">Leerer Zustand</button>
   <button class="demo-btn" onclick="openAiDraft()" data-i18n="demoActive">Aktives Dokument</button>
@@ -1329,13 +1369,8 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
       <div class="tab">Prozessual</div>
       <div class="tab">Analyse</div>
       <div class="topbar-r">
-        <span class="topbar-sha">SHA-256 · Forensic Ledger · Unveränderlich</span>
+        <span class="topbar-sha">SHA-256 · Forensic Ledger</span>
         <span class="topbar-live">aktiv</span>
-        <div class="lang-pills">
-          <button class="lpill on">DE</button>
-          <button class="lpill">EN</button>
-          <button class="lpill">PT</button>
-        </div>
       </div>
     </div>
 
@@ -1674,7 +1709,23 @@ var LANG = {
     confirmG3Seal: '🔐 WINDI LAW — Invariant G3 + I11\n\nPERMANENT VERSIEGELN:\n• "{docName}"\n• {docType} · {jurisdiction}\n\n⚠️ UNWIDERRUFLICH. Hash wird für immer im Ledger eingetragen.\n\nVersiegelung bestätigen?',
     verifySuccess: '✓ Verifiziert · Ledger bestätigt Integrität',
     verifyNotFound: '✗ Nicht im Ledger gefunden',
-    verifyOffline: 'Ledger nicht erreichbar — Offline-Verifizierung ausstehend'
+    verifyOffline: 'Ledger nicht erreichbar — Offline-Verifizierung ausstehend',
+    // Video Modal i18n (§128)
+    vidChoiceTitle: '🎥 Video hinzufügen',
+    vidChoiceDesc: 'Wählen Sie, wie das Video hinzugefügt werden soll:',
+    vidLocalTitle: '📁 Lokaler Upload',
+    vidLocalDesc: 'Datei vom Gerät auswählen (nur Hash)',
+    vidSealedTitle: '🛡️ Videobeweis (VD-CUT)',
+    vidSealedDesc: 'Bereits versiegeltes Video aus dem VD-CUT-System anhängen',
+    vidCancel: 'Abbrechen',
+    vidAttachTitle: '🛡️ Videobeweis — Beweis anhängen',
+    vidAttachDesc: 'Receipt ID und Hash des im VD-CUT versiegelten Videos einfügen.<br>Verifizierung erfolgt im WINDI Ledger. Keine Datei wird übertragen.',
+    vidReceiptLabel: 'Receipt ID (VD-CUT)',
+    vidHashLabel: 'Hash SHA-256',
+    vidAttached: 'Angehängte Videos',
+    vidVerify: 'Verifizieren',
+    vidAttach: 'Anhängen',
+    vidClose: 'Schließen'
   },
   pt: {
     pageTitle: 'WINDI LAW — Governança Silenciosa',
@@ -1725,7 +1776,23 @@ var LANG = {
     confirmG3Seal: '🔐 WINDI LAW — Invariant G3 + I11\n\nSELAR PERMANENTEMENTE:\n• "{docName}"\n• {docType} · {jurisdiction}\n\n⚠️ IRREMEDIÁVEL. Hash inscrito no Ledger para sempre.\n\nConfirmar selagem?',
     verifySuccess: '✓ Verificado · Ledger confirma integridade',
     verifyNotFound: '✗ Não encontrado no Ledger',
-    verifyOffline: 'Ledger inacessível — verificação offline pendente'
+    verifyOffline: 'Ledger inacessível — verificação offline pendente',
+    // Video Modal i18n (§128)
+    vidChoiceTitle: '🎥 Adicionar Vídeo',
+    vidChoiceDesc: 'Escolha como adicionar o vídeo ao documento:',
+    vidLocalTitle: '📁 Upload Local',
+    vidLocalDesc: 'Selecionar ficheiro do dispositivo (apenas hash)',
+    vidSealedTitle: '🛡️ Videobeweis (VD-CUT)',
+    vidSealedDesc: 'Anexar vídeo já selado no sistema VD-CUT',
+    vidCancel: 'Cancelar',
+    vidAttachTitle: '🛡️ Videobeweis — Anexar Prova',
+    vidAttachDesc: 'Cole o Receipt ID e Hash do vídeo já selado no VD-CUT.<br>Verificação ocorre no Ledger WINDI. Nenhum ficheiro é transmitido.',
+    vidReceiptLabel: 'Receipt ID (VD-CUT)',
+    vidHashLabel: 'Hash SHA-256',
+    vidAttached: 'Vídeos anexados',
+    vidVerify: 'Verificar',
+    vidAttach: 'Anexar',
+    vidClose: 'Fechar'
   },
   en: {
     pageTitle: 'WINDI LAW — Silent Governance',
@@ -1776,7 +1843,23 @@ var LANG = {
     confirmG3Seal: '🔐 WINDI LAW — Invariant G3 + I11\n\nSEAL PERMANENTLY:\n• "{docName}"\n• {docType} · {jurisdiction}\n\n⚠️ IRREVOCABLE. Hash inscribed in Ledger forever.\n\nConfirm seal?',
     verifySuccess: '✓ Verified · Ledger confirms integrity',
     verifyNotFound: '✗ Not found in Ledger',
-    verifyOffline: 'Ledger inaccessible — offline verification pending'
+    verifyOffline: 'Ledger inaccessible — offline verification pending',
+    // Video Modal i18n (§128)
+    vidChoiceTitle: '🎥 Add Video',
+    vidChoiceDesc: 'Choose how to add video to the document:',
+    vidLocalTitle: '📁 Local Upload',
+    vidLocalDesc: 'Select file from device (hash only)',
+    vidSealedTitle: '🛡️ Videobeweis (VD-CUT)',
+    vidSealedDesc: 'Attach already sealed video from VD-CUT system',
+    vidCancel: 'Cancel',
+    vidAttachTitle: '🛡️ Videobeweis — Attach Proof',
+    vidAttachDesc: 'Paste Receipt ID and Hash of video already sealed in VD-CUT.<br>Verification occurs in WINDI Ledger. No file is transmitted.',
+    vidReceiptLabel: 'Receipt ID (VD-CUT)',
+    vidHashLabel: 'Hash SHA-256',
+    vidAttached: 'Videos attached',
+    vidVerify: 'Verify',
+    vidAttach: 'Attach',
+    vidClose: 'Close'
   }
 };
 
@@ -2476,12 +2559,15 @@ var currentTheme = 'klar';
 
 function toggleTheme() {
   var html = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
   if (currentTheme === 'klar') {
     html.setAttribute('data-theme', 'noir');
     currentTheme = 'noir';
+    if (btn) btn.textContent = '☀'; // Sun = click to get light
   } else {
     html.removeAttribute('data-theme');
     currentTheme = 'klar';
+    if (btn) btn.textContent = '☽'; // Moon = click to get dark
   }
   localStorage.setItem('windi-theme', currentTheme);
 }
@@ -2493,6 +2579,13 @@ function toggleTheme() {
     document.documentElement.setAttribute('data-theme', 'noir');
     currentTheme = 'noir';
   }
+  // Update button icon on page load (runs after DOM ready)
+  document.addEventListener('DOMContentLoaded', function() {
+    var btn = document.getElementById('theme-toggle');
+    if (btn) {
+      btn.textContent = (currentTheme === 'noir') ? '☀' : '☽';
+    }
+  });
 })();
 
 /* ══ WINDI LAW AI DRAFT MODULE v1.0.0 ══ */
@@ -2602,7 +2695,173 @@ async function sealAiDraft() {
   } catch (err) { if (btn) { btn.disabled = false; btn.textContent = t('aiSeal'); } alert(t('errPrefix') + err.message); }
 }
 function openVerify() { if (AiDraft.currentVerifyUrl) window.open(AiDraft.currentVerifyUrl, '_blank'); }
+
+// ══════════════════════════════════════════════════════════════
+// §137 — STREAMING MODULE (Demo VC Berlin)
+// Real-time text generation via SSE
+// ══════════════════════════════════════════════════════════════
+
+async function streamDraft() {
+    // Get prompt from AI Draft panel or Direct Prompt
+    var promptEl = document.getElementById('ai-context');
+    var prompt = promptEl ? promptEl.value.trim() : '';
+
+    if (!prompt || prompt.length < 10) {
+        alert(t('errContextShort') || 'Bitte geben Sie mindestens 10 Zeichen ein.');
+        return;
+    }
+
+    var wallet = JSON.parse(sessionStorage.getItem('windi_law_wallet') || '{}');
+    var did = wallet.did || 'DEMO';
+    var walletId = wallet.wallet_id || 'DEMO';
+
+    var docType = document.getElementById('ai-doc-type')?.value || 'analyse';
+    var jurisdiction = document.getElementById('ai-jurisdiction')?.value || 'DE';
+    var lang = document.getElementById('ai-lang')?.value || 'DE';
+    var docName = document.getElementById('ai-doc-name')?.value || 'WINDI-LAW-Draft';
+
+    // Store for seal
+    AiDraft.currentDocType = docType;
+    AiDraft.currentDocName = docName;
+    AiDraft.currentJurisdiction = jurisdiction;
+
+    // UI: Streaming state
+    var btnGen = document.getElementById('btn-ai-generate');
+    var btnSeal = document.getElementById('btn-seal-draft');
+    var resultArea = document.getElementById('ai-result-text');
+
+    if (btnGen) {
+        btnGen.disabled = true;
+        btnGen.innerHTML = '<span class="pulse-dot"></span> Analysiere...';
+    }
+    if (btnSeal) btnSeal.disabled = true;
+    if (resultArea) resultArea.value = '';
+
+    var fullText = '';
+    var buffer = '';
+
+    // Switch to review phase to show result area
+    setAiPhase('loading');
+    document.getElementById('ai-model-label').textContent = '🏆 Premium · Streaming...';
+
+    try {
+        var response = await fetch('/law/ai-draft/stream', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                prompt: prompt,
+                doc_type: docType,
+                context: prompt,
+                jurisdiction: jurisdiction,
+                lang: lang,
+                tier: 'HIGH',
+                did: did,
+                wallet_id: walletId
+            })
+        });
+
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+
+        // Switch to review phase NOW to show text appearing
+        setAiPhase('review');
+
+        var reader = response.body.getReader();
+        var decoder = new TextDecoder();
+
+        while (true) {
+            var result = await reader.read();
+            if (result.done) break;
+
+            var chunk = decoder.decode(result.value, { stream: true });
+            var lines = chunk.split('\n');
+
+            for (var i = 0; i < lines.length; i++) {
+                var line = lines[i];
+                if (!line.startsWith('data: ')) continue;
+                var data = line.slice(6).trim();
+                if (data === '[DONE]') break;
+                if (data.startsWith('[ERROR]')) {
+                    throw new Error(data.replace('[ERROR] ', ''));
+                }
+
+                // Restore escaped newlines
+                var text = data.replace(/\\n/g, '\n').replace(/\\\\/g, '\\');
+                fullText += text;
+                buffer += text;
+
+                // Incremental render every ~50 chars or newline
+                if (buffer.length > 50 || text.includes('\n')) {
+                    if (resultArea) {
+                        resultArea.value = fullText;
+                        resultArea.scrollTop = resultArea.scrollHeight;
+                    }
+                    buffer = '';
+                }
+            }
+        }
+
+        // Final render
+        if (resultArea) {
+            resultArea.value = fullText;
+            resultArea.scrollTop = resultArea.scrollHeight;
+        }
+        AiDraft.currentDraftText = fullText;
+        AiDraft.currentDraftId = 'STREAM-' + Date.now();
+
+        // Update preview hash
+        updatePreviewHash();
+
+    } catch (err) {
+        console.error('[§137] Stream error:', err);
+        setAiPhase('configure');
+        alert('Streaming Fehler: ' + err.message);
+    } finally {
+        if (btnGen) {
+            btnGen.disabled = false;
+            btnGen.innerHTML = '⚡ ' + (t('aiGenerate') || 'Generieren');
+        }
+        if (btnSeal) btnSeal.disabled = false;
+    }
+}
+
+// Demo VC Berlin — um clique
+function loadVCDemo() {
+    // Open AI Draft panel if not open
+    openAiDraft();
+
+    setTimeout(function() {
+        var contextEl = document.getElementById('ai-context');
+        var docNameEl = document.getElementById('ai-doc-name');
+        var docTypeEl = document.getElementById('ai-doc-type');
+
+        if (contextEl) {
+            contextEl.value =
+                'Vergleiche die Anforderungen des EU AI Act an das Risikomanagement ' +
+                'mit den bestehenden Anforderungen der DSGVO (Datenschutz-Folgenabschätzung). ' +
+                'Wo gibt es Überschneidungen und wo muss eine Kanzlei ihre internen ' +
+                'Compliance-Prozesse erweitern, um beide Verordnungen gleichzeitig zu erfüllen?\n\n' +
+                'Kontext: Kanzlei Berlin · 15 Anwälte · LLM-Einsatz für Vertragsanalyse · ' +
+                'Investorenpräsentation · Tier HIGH';
+        }
+
+        if (docNameEl) docNameEl.value = 'EU AI Act × DSGVO Compliance-Analyse';
+        if (docTypeEl) docTypeEl.value = 'gutachten';
+
+        // Highlight generate button
+        var btn = document.getElementById('btn-ai-generate');
+        if (btn) {
+            btn.style.boxShadow = '0 0 0 3px var(--gold)';
+            btn.style.transform = 'scale(1.02)';
+            setTimeout(function() {
+                btn.style.boxShadow = '';
+                btn.style.transform = '';
+            }, 2000);
+        }
+    }, 300);
+}
+
 console.log('[WINDI LAW] AI Draft Module v1.0.0 loaded');
+console.log('[WINDI LAW] §137 Streaming Module loaded');
 
 // ══════════════════════════════════════════════════════════════
 // §122 — DIRECT PROMPT MODULE (LAW Agent Corps Integration)
@@ -3374,7 +3633,10 @@ console.log('[WINDI LAW] Mobile Menu v1.0 loaded · §120.5');
           <span data-i18n="aiI9Desc">Mit Klick auf "Generieren" bestätigst du diesen Antrag und wirst das Ergebnis prüfen.</span><br>
           <em style="font-size:0.7rem; color:var(--ink-4);">"AI processes. Human decides. WINDI guarantees."</em>
         </div>
-        <button class="btn-generate" onclick="initiateAiGenerate()" data-i18n="aiGenerate">⚖️ Mit KI generieren</button>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <button id="btn-ai-generate" class="btn-generate" onclick="streamDraft()" data-i18n="aiGenerate">⚡ Mit KI generieren</button>
+          <button class="btn-vc-demo" onclick="loadVCDemo()" title="Demo für VC Berlin — EU AI Act × DSGVO">🎯 DEMO VC</button>
+        </div>
       </div>
 
       <!-- PHASE 2: Loading -->
@@ -3914,9 +4176,9 @@ console.log('[WINDI LAW] Quill Editor Module v1.0 loaded · §124');
        max-width:400px;width:90%;font-family:'Bricolage Grotesque',sans-serif;
        box-shadow:0 8px 32px rgba(0,0,0,.25);">
 
-    <h3 style="margin:0 0 .6rem;font-size:1.1rem">🎥 Vídeo hinzufügen</h3>
-    <p style="font-size:.82rem;color:#666;margin-bottom:1.4rem">
-      Escolha como adicionar o vídeo ao documento:
+    <h3 style="margin:0 0 .6rem;font-size:1.1rem" data-i18n="vidChoiceTitle">🎥 Video hinzufügen</h3>
+    <p style="font-size:.82rem;color:#666;margin-bottom:1.4rem" data-i18n="vidChoiceDesc">
+      Wählen Sie, wie das Video hinzugefügt werden soll:
     </p>
 
     <div style="display:flex;flex-direction:column;gap:.8rem">
@@ -3924,24 +4186,24 @@ console.log('[WINDI LAW] Quill Editor Module v1.0 loaded · §124');
               style="padding:.9rem 1rem;background:transparent;border:1px solid #ccc;
                      border-radius:6px;cursor:pointer;text-align:left;
                      transition:all .15s ease">
-        <strong style="display:block;font-size:.92rem;margin-bottom:.2rem">📁 Upload Local</strong>
-        <span style="font-size:.78rem;color:#666">Selecionar ficheiro do dispositivo (apenas hash)</span>
+        <strong style="display:block;font-size:.92rem;margin-bottom:.2rem" data-i18n="vidLocalTitle">📁 Lokaler Upload</strong>
+        <span style="font-size:.78rem;color:#666" data-i18n="vidLocalDesc">Datei vom Gerät auswählen (nur Hash)</span>
       </button>
 
       <button onclick="chooseAttachSealed()"
               style="padding:.9rem 1rem;background:linear-gradient(135deg,#8B6914 0%,#a67c1a 100%);
                      color:#fff;border:none;border-radius:6px;cursor:pointer;text-align:left;
                      transition:all .15s ease">
-        <strong style="display:block;font-size:.92rem;margin-bottom:.2rem">🛡️ Videobeweis (VD-CUT)</strong>
-        <span style="font-size:.78rem;opacity:.9">Anexar vídeo já selado no sistema VD-CUT</span>
+        <strong style="display:block;font-size:.92rem;margin-bottom:.2rem" data-i18n="vidSealedTitle">🛡️ Videobeweis (VD-CUT)</strong>
+        <span style="font-size:.78rem;opacity:.9" data-i18n="vidSealedDesc">Bereits versiegeltes Video aus dem VD-CUT-System anhängen</span>
       </button>
     </div>
 
     <button onclick="closeVideoChoiceModal()"
             style="margin-top:1rem;padding:.4rem .9rem;background:transparent;
                    border:1px solid #ddd;border-radius:4px;cursor:pointer;
-                   font-size:.8rem;width:100%">
-      Cancelar
+                   font-size:.8rem;width:100%" data-i18n="vidCancel">
+      Abbrechen
     </button>
   </div>
 </div>
@@ -3954,20 +4216,20 @@ console.log('[WINDI LAW] Quill Editor Module v1.0 loaded · §124');
        max-width:460px;width:90%;font-family:'Bricolage Grotesque',sans-serif;
        box-shadow:0 8px 32px rgba(0,0,0,.25);">
 
-    <h3 style="margin:0 0 .4rem;font-size:1.1rem">🛡️ Videobeweis — Anexar Prova</h3>
-    <p style="font-size:.8rem;color:#666;margin-bottom:1.2rem">
-      Cole o Receipt ID e Hash do vídeo já selado no VD-CUT.<br>
-      Verificação ocorre no Ledger WINDI. Nenhum ficheiro é transmitido.
+    <h3 style="margin:0 0 .4rem;font-size:1.1rem" data-i18n="vidAttachTitle">🛡️ Videobeweis — Beweis anhängen</h3>
+    <p style="font-size:.8rem;color:#666;margin-bottom:1.2rem" data-i18n="vidAttachDesc">
+      Receipt ID und Hash des im VD-CUT versiegelten Videos einfügen.<br>
+      Verifizierung erfolgt im WINDI Ledger. Keine Datei wird übertragen.
     </p>
 
-    <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:.2rem">Receipt ID (VD-CUT)</label>
+    <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:.2rem" data-i18n="vidReceiptLabel">Receipt ID (VD-CUT)</label>
     <input id="va-receipt-input" type="text"
            placeholder="WINDI-VDCUT-20260403-XXXXXXXX"
            style="width:100%;padding:.5rem;margin-bottom:.8rem;
                   border:1px solid #ccc;border-radius:4px;
                   background:transparent;box-sizing:border-box;font-size:.9rem">
 
-    <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:.2rem">Hash SHA-256</label>
+    <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:.2rem" data-i18n="vidHashLabel">Hash SHA-256</label>
     <input id="va-hash-input" type="text"
            placeholder="sha256:aabbcc..."
            style="width:100%;padding:.5rem;margin-bottom:1rem;
@@ -3980,21 +4242,21 @@ console.log('[WINDI LAW] Quill Editor Module v1.0 loaded · §124');
 
     <div style="font-size:.78rem;color:#666;margin-bottom:1rem;
          padding:.5rem;background:rgba(139,105,20,.08);border-radius:4px">
-      <span style="color:#8B6914">🎥</span> Vídeos anexados: <strong id="va-counter">0</strong>
+      <span style="color:#8B6914">🎥</span> <span data-i18n="vidAttached">Angehängte Videos</span>: <strong id="va-counter">0</strong>
     </div>
 
     <div style="display:flex;gap:.7rem;justify-content:flex-end">
       <button onclick="closeVideoAttachModal()"
               style="padding:.5rem 1rem;border:1px solid #ccc;
                      border-radius:4px;background:transparent;cursor:pointer;
-                     font-size:.85rem">
-        Fechar
+                     font-size:.85rem" data-i18n="vidClose">
+        Schließen
       </button>
       <button onclick="attachVideoToDraft()"
               style="padding:.5rem 1rem;background:#8B6914;color:#fff;
                      border:none;border-radius:4px;cursor:pointer;font-size:.85rem;
                      font-weight:600">
-        + Anexar
+        + <span data-i18n="vidAttach">Anhängen</span>
       </button>
     </div>
   </div>
