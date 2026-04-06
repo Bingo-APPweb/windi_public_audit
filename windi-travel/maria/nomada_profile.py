@@ -660,6 +660,37 @@ def get_visible_memory(prefs: dict, lang: str = "PT") -> list:
             "EN": "You value practical services nearby"
         })
 
+    # ─── §145.12 FEEDBACK SIGNALS (from 👍/👎 interactions) ───
+    feedback_signals = prefs.get("feedback_signals", {})
+    # Sort by signal strength (most positive first)
+    top_feedbacks = sorted(
+        [(k, v) for k, v in feedback_signals.items() if v > 0],
+        key=lambda x: x[1],
+        reverse=True
+    )[:3]
+
+    signal_labels = {
+        "cafe": {"PT": "Gostas de cafés", "DE": "Du magst Cafés", "EN": "You like cafés"},
+        "coffee": {"PT": "Gostas de cafés", "DE": "Du magst Cafés", "EN": "You like cafés"},
+        "restaurant": {"PT": "Gostas de restaurantes", "DE": "Du magst Restaurants", "EN": "You like restaurants"},
+        "hotel": {"PT": "Procuras bons hotéis", "DE": "Du suchst gute Hotels", "EN": "You look for good hotels"},
+        "museum": {"PT": "Gostas de cultura", "DE": "Du magst Kultur", "EN": "You like culture"},
+        "bar": {"PT": "Gostas de vida nocturna", "DE": "Du magst Nachtleben", "EN": "You like nightlife"},
+        "pharmacy": {"PT": "Valorizas farmácias por perto", "DE": "Du schätzt Apotheken in der Nähe", "EN": "You value nearby pharmacies"},
+        "gas": {"PT": "Precisas de postos de combustível", "DE": "Du brauchst Tankstellen", "EN": "You need gas stations"},
+    }
+
+    for intent, score in top_feedbacks:
+        if intent.lower() in signal_labels:
+            signals.append(signal_labels[intent.lower()])
+        else:
+            # Generic fallback for unknown intents
+            signals.append({
+                "PT": f"Interessas-te por {intent}",
+                "DE": f"Du interessierst dich für {intent}",
+                "EN": f"You're interested in {intent}"
+            })
+
     # Select top 3 and convert to requested language
     top_signals = signals[:3]
     return [s.get(lang, s.get("EN", "")) for s in top_signals]
@@ -671,7 +702,7 @@ def should_show_memory(prefs: dict, session_memory_shown: bool = False) -> bool:
 
     Rules:
     - Only show 1x per session (unless pattern changes)
-    - Only when learned_confidence > 0.3
+    - Only when learned_confidence > 0.1 (§145.12 — lowered for consistency)
     - Only when there's something meaningful to show
     """
     if session_memory_shown:
@@ -680,8 +711,9 @@ def should_show_memory(prefs: dict, session_memory_shown: bool = False) -> bool:
     if prefs is None:
         return False
 
+    # §145.12 — Lowered from 0.3 to 0.1 for consistency with ranking engine
     learned_confidence = prefs.get("learned_confidence", 0.0)
-    if learned_confidence < 0.3:
+    if learned_confidence < 0.1:
         return False
 
     # Check if we have any meaningful patterns
