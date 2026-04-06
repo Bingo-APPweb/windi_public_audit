@@ -732,7 +732,17 @@ def select_provider(intent: dict, context: dict, pulse: dict = None) -> str:
     if any(signal in combined for signal in EMOTIONAL_SIGNALS):
         return "anthropic"
 
-    # Gemini → default (places, geographic knowledge)
+    # §146 — Intent-based routing HIGH tier → Claude
+    history_len = context.get("history_length", 0)
+    intent_type = intent.get("type", "") if isinstance(intent, dict) else str(intent)
+
+    if intent_type in ("booking", "seal", "decision", "complex_itinerary", "multi_leg"):
+        return "anthropic"
+
+    if history_len >= 3:
+        return "anthropic"
+
+    # Gemini → default (quick queries, places, geographic knowledge)
     return "gemini"
 
 
