@@ -23,6 +23,9 @@ from pathlib import Path
 from typing import Optional, Dict, Any
 from contextlib import asynccontextmanager
 
+from dotenv import load_dotenv
+load_dotenv()  # Load .env from current directory
+
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form, BackgroundTasks
 from fastapi.responses import JSONResponse, FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -131,6 +134,7 @@ class HealthResponse(BaseModel):
     ffmpeg_available: bool
     active_jobs: int
     queued_jobs: int
+    auto_publish: bool = False  # §137
 
 
 class JoeClip(BaseModel):
@@ -279,7 +283,8 @@ async def health_check():
         port=PORT,
         ffmpeg_available=check_ffmpeg(),
         active_jobs=active,
-        queued_jobs=queued
+        queued_jobs=queued,
+        auto_publish=os.getenv("WINDI_AUTO_PUBLISH", "false").lower() == "true"
     )
 
 
@@ -690,6 +695,36 @@ async def seal_export(request: SealRequest):
     except Exception as e:
         log.warning(f"JMPG render skipped: {e}")
 
+    # §137 Auto-publish to public channel (non-blocking)
+    if os.getenv("WINDI_AUTO_PUBLISH", "false").lower() == "true":
+        import asyncio
+
+        async def safe_auto_publish():
+            """Publish to @windi_public without blocking seal flow."""
+            try:
+                title = f"🎬 Moment sealed — {row.get('title', 'Video proof')}"
+                async with httpx.AsyncClient() as client:
+                    response = await client.post(
+                        "http://127.0.0.1:8132/comm/publish",
+                        json={
+                            "receipt_id": seal_result.get("receipt_id"),
+                            "chat_id": "@windi_public",
+                            "lang": "EN",
+                            "title": title
+                        },
+                        timeout=15.0
+                    )
+                    if response.status_code == 200:
+                        data = response.json()
+                        if data.get("ok"):
+                            log.info(f"[AUTO-PUBLISH] {seal_result.get('receipt_id')} → @windi_public")
+                        else:
+                            log.warning(f"[AUTO-PUBLISH] Failed: {data.get('error')}")
+            except Exception as e:
+                log.warning(f"[AUTO-PUBLISH] Skipped: {e}")
+
+        asyncio.create_task(safe_auto_publish())
+
     return {
         "sealed": True,
         "receipt_id": seal_result.get("receipt_id"),
@@ -699,7 +734,8 @@ async def seal_export(request: SealRequest):
         "export_id": request.export_id,
         "vault_archived": vault_path is not None,
         "vault_path": vault_path,
-        "jmpg_url": jmpg_url
+        "jmpg_url": jmpg_url,
+        "auto_published": os.getenv("WINDI_AUTO_PUBLISH", "false").lower() == "true"
     }
 
 
