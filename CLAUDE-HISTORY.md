@@ -6261,3 +6261,78 @@ voice = MariaVoice(
 
 Liga IA+H · Kempten, Bavaria · 06 Abril 2026
 "AI processes. Human decides. WINDI guarantees."
+
+---
+
+## §146-147 — I14 + F14 Session (06 Abr 2026 · Noite)
+
+**Commits:** `2c4c35f` · `0ce9da2` · `82009cc` · `76abeef`
+
+### §146 — I14: Proibição de Placeholders (IRREMEDIÁVEL)
+
+Nova regra constitucional que proíbe valores default que mascarem ausência de dados reais.
+
+```python
+# ❌ PROIBIDO
+name = response.get("name", "Lugar desconhecido")
+receipt_id = data.get("receipt_id", "unknown")
+
+# ✅ OBRIGATÓRIO
+name = response["name"]       # KeyError visível
+receipt_id = data["receipt_id"]  # falha barulhenta
+```
+
+**Valores Proibidos:** `"unknown"`, `"N/A"`, `"?"`, `str(dict)`, `None` silencioso
+
+**Aplicação:**
+- `format_flight_for_telegram`: origin/dest REQUIRED, raise ValueError
+- `format_hotel_for_telegram`: name REQUIRED, omit optional if None
+- `format_place_for_telegram`: name REQUIRED, omit rating/address if None
+
+### §147 — F14: Conversation History Fix
+
+**O Bug:** Intent detection triggering em perguntas de follow-up (ex: "qual é o aeroporto que mencionei?" → flight clarification em vez de usar history)
+
+**O Fix:** Adicionar `followup_patterns` aos detectores de intent:
+
+```python
+followup_patterns = [
+    "qual é o", "qual o", "que mencionei", "que eu disse",
+    "onde fica", "como chego", "quanto custa o",
+    "welcher", "welches", "was ist", "wo ist", "wo liegt",
+    "which is the", "what is the", "what's the", "where is",
+]
+
+for pattern in followup_patterns:
+    if pattern in lower:
+        return False  # → vai para LLM com history
+```
+
+**Aplicado a:**
+- `detect_flight_intent()` — kiwi_bridge.py
+- `detect_hotel_intent()` — hotel_bridge.py
+- `detect_culture_intent()` — booking_router.py
+
+**Teste E2E:**
+```
+User: "Quero viajar de Munique para Lisboa em Maio"
+Maria: [info voos]
+
+User: "Qual é o aeroporto de partida que mencionei?"
+Maria: "Munique." ✅
+
+User: "E o destino?"
+Maria: "Lisboa." ✅
+```
+
+### §137 — SSE Streaming for WINDI-LAW
+
+**Endpoint:** `/ai-draft/stream`
+**Função:** Word-by-word streaming para demo VC Berlin
+**SDK:** Anthropic streaming integration
+**I9:** User confirma antes de geração
+
+---
+
+Liga IA+H · Kempten, Bavaria · 06 Abril 2026
+"AI processes. Human decides. WINDI guarantees."

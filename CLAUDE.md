@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.0.7
-**Sealed:** 2026-04-06 · §146 I14 Proibição de Placeholders SEALED
+**Version:** 2.0.8
+**Sealed:** 2026-04-06 · §147 F14 Conversation History + §137 SSE Streaming SEALED
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -754,11 +754,11 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 06 Apr | **§147 F14 Conversation History** · Follow-up routing fix · Intent detection bypass · `82009cc` |
+| 06 Apr | **§146 I14 Proibição de Placeholders** · IRREMEDIÁVEL · No "?" or "unknown" · `2c4c35f` |
+| 06 Apr | **§137 SSE Streaming** · WINDI-LAW AI Draft · Word-by-word · VC Berlin · `76abeef` |
 | 06 Apr | **§145.12 Memory → Ranking Engine** · Maria shows different worlds · `1c2e3df` |
-| 06 Apr | **§145.11 Stable Response Contract** · Maria breathing never fails · LLM timeout 2.5s · `cf6a168` |
-| 06 Apr | **§145.3 Weather/Culture** · Routing separation · Overlap eliminated · `2017c3a` |
-| 06 Apr | **§145 ALMA v1.0** · MARIA Constitutional Identity · Motor de Espelho · 4 Registos |
-| 06 Apr | **§144 Strike 6 — Share Button** · verify-public SHARE → I9 Modal → Glass Embassy |
+| 06 Apr | **§145.11 Stable Response Contract** · Maria breathing never fails · `cf6a168` |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -920,6 +920,9 @@ workspace/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
 ### Completado (últimos 10 · ver CLAUDE-HISTORY.md para §37-115)
+- [x] §147 **F14 Conversation History** · Follow-up routing fix · Intent bypass · `82009cc` ✅ 06 Apr
+- [x] §146 **I14 Proibição de Placeholders** · IRREMEDIÁVEL · `2c4c35f` ✅ 06 Apr
+- [x] §137 **SSE Streaming** · WINDI-LAW AI Draft · Word-by-word · `76abeef` ✅ 06 Apr
 - [x] §145.12 **Memory → Ranking Engine** · Maria shows different worlds · `1c2e3df` ✅ 06 Apr
 - [x] §145.11 **Stable Response Contract** · Maria breathing never fails · LLM 2.5s · `cf6a168` ✅ 06 Apr
 - [x] §145.10 **Memory → Brain Bridge** · Preferences inject into LLM prompts · `7f7e772` ✅ 06 Apr
@@ -989,8 +992,11 @@ workspace/
 | §145.1 | Human Warmth | ✅ SEALED | Greeting detection → Claude routing |
 | §145.2 | 3-Bug Fix | ✅ SEALED | Truncation + Lang case + Weather priority · `d6ad9c3` |
 | §145.3 | Weather/Culture | ✅ SEALED | Routing separation · Overlap eliminated · `2017c3a` |
+| §146 | I14 Proibição de Placeholders | ✅ SEALED | IRREMEDIÁVEL · No "?" or "unknown" · `2c4c35f` |
+| §147 | F14 Conversation History | ✅ SEALED | Follow-up routing · Intent bypass · `82009cc` |
+| §137 | SSE Streaming | ✅ LIVE | WINDI-LAW AI Draft · Word-by-word · `76abeef` |
 
-> **Detalhes completos §128-145:** `CLAUDE-HISTORY.md` § SESSÃO 05-06 Abr 2026
+> **Detalhes completos §128-147:** `CLAUDE-HISTORY.md` § SESSÃO 05-06 Abr 2026
 
 ---
 
