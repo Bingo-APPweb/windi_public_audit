@@ -44,6 +44,21 @@ except ImportError as e:
     SOUL_AVAILABLE = False
     log.error(f"[MARIA Brain] §72 Soul NOT available: {e}")
 
+# ── P5: Import the Memory ─────────────────────────────────────────────────────
+# A Memória vive em /opt/windi/windi-travel/maria/nomada_profile.py
+try:
+    from maria.nomada_profile import (
+        enrich_context_with_memory,
+        get_visible_memory,
+        get_travel_preferences,
+        log_interaction
+    )
+    MEMORY_AVAILABLE = True
+    log.info("[MARIA Brain] P5 Memory connected: enrich_context_with_memory, get_visible_memory")
+except ImportError as e:
+    MEMORY_AVAILABLE = False
+    log.warning(f"[MARIA Brain] P5 Memory NOT available: {e}")
+
 # ── LLM Providers ────────────────────────────────────────────────────────────
 
 ANTHROPIC_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
@@ -104,6 +119,26 @@ async def think(
         log.warning("[MARIA Brain] Soul not available — using default pulse")
 
     # ─────────────────────────────────────────────────────────────────────────
+    # P5 Step 1.5: MEMORY ENRICHMENT — Maria lembra quem tu és
+    # ─────────────────────────────────────────────────────────────────────────
+    memory_context = {}
+    visible_memory = []
+    if MEMORY_AVAILABLE and did:
+        try:
+            # Enrich context with nomada profile data
+            memory_context = enrich_context_with_memory(did, context)
+
+            # Get visible memory patterns
+            prefs = get_travel_preferences(did)
+            visible_memory = get_visible_memory(prefs, lang)
+
+            log.info(f"[MARIA P5] Memory enriched for DID {did[:8]}...: "
+                     f"patterns={len(visible_memory)}, "
+                     f"confidence={memory_context.get('learned_confidence', 0):.2f}")
+        except Exception as e:
+            log.warning(f"[MARIA P5] Memory enrichment failed: {e}")
+
+    # ─────────────────────────────────────────────────────────────────────────
     # P4 Step 2: SELECT PROVIDER — Alma decide qual motor usar
     # ─────────────────────────────────────────────────────────────────────────
     if SOUL_AVAILABLE:
@@ -138,7 +173,25 @@ async def think(
     result = await _call_provider(provider, system, user_input, lang, history=history or [])
 
     # ─────────────────────────────────────────────────────────────────────────
-    # P4 Step 5: RETURN — Resposta enriquecida com pulse
+    # P5 Step 4.5: LOG INTERACTION — Maria aprende com cada conversa
+    # ─────────────────────────────────────────────────────────────────────────
+    if MEMORY_AVAILABLE and did and result.get("response"):
+        try:
+            import uuid
+            log_interaction(
+                did=did,
+                request_id=str(uuid.uuid4())[:8],
+                intent_type=pulse.get("intent", "general"),
+                place_name=location or "",
+                rating=None,
+                feedback=None
+            )
+            log.debug(f"[MARIA P5] Interaction logged for DID {did[:8]}...")
+        except Exception as e:
+            log.warning(f"[MARIA P5] Failed to log interaction: {e}")
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # P4+P5 Step 5: RETURN — Resposta com alma + memória
     # ─────────────────────────────────────────────────────────────────────────
     return {
         "response": result["response"],
@@ -146,7 +199,11 @@ async def think(
         "pulse": pulse,
         "intent": pulse.get("intent", "discover"),
         "confidence": result.get("confidence", 0.9),
-        "soul_active": SOUL_AVAILABLE
+        "soul_active": SOUL_AVAILABLE,
+        # P5: Memory enrichment
+        "memory_active": MEMORY_AVAILABLE and did is not None,
+        "visible_memory": visible_memory,
+        "learned_confidence": memory_context.get("learned_confidence", 0.0)
     }
 
 
