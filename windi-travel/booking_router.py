@@ -182,10 +182,13 @@ except ImportError as e:
     log.warning(f"[MARIA] DB Bridge not available: {e}")
 
 # ── §69 Culture/Tips Intent Detection ─────────────────────────────────────────
+# §145.3 — Weather terms REMOVED to prevent conflict with §145.2 weather detection
+#          Weather queries are now handled FIRST at line ~2114
 CULTURE_KEYWORDS = {
     "pt": [
         "moeda", "língua", "idioma", "costume", "horário", "horarios",
-        "seguro", "segurança", "perigoso", "tempo", "clima", "temperatura",
+        "seguro", "segurança", "perigoso",
+        # §145.3: "tempo", "clima", "temperatura" → moved to WEATHER_KEYWORDS
         "como chegar", "transporte", "metro", "autocarro", "táxi", "uber",
         "dica", "dicas", "conselho", "recomenda", "gorjeta", "propina",
         "tomada", "voltagem", "adaptador", "wifi", "internet", "roaming",
@@ -194,7 +197,9 @@ CULTURE_KEYWORDS = {
     ],
     "de": [
         "währung", "geld", "sprache", "öffnungszeiten", "sicher", "sicherheit",
-        "gefährlich", "wetter", "klima", "temperatur", "wie komme ich",
+        "gefährlich",
+        # §145.3: "wetter", "klima", "temperatur" → moved to WEATHER_KEYWORDS
+        "wie komme ich",
         "transport", "u-bahn", "bus", "taxi", "tipp", "tipps", "empfehlung",
         "trinkgeld", "steckdose", "spannung", "adapter", "wlan", "internet",
         "visum", "reisepass", "impfung", "wasser", "trinken", "essen",
@@ -202,7 +207,8 @@ CULTURE_KEYWORDS = {
     ],
     "en": [
         "currency", "money", "language", "customs", "hours", "opening",
-        "safe", "safety", "dangerous", "weather", "climate", "temperature",
+        "safe", "safety", "dangerous",
+        # §145.3: "weather", "climate", "temperature" → moved to WEATHER_KEYWORDS
         "how to get", "transport", "metro", "subway", "bus", "taxi", "uber",
         "tip", "tips", "advice", "recommend", "tipping", "gratuity",
         "plug", "voltage", "adapter", "wifi", "internet", "roaming",
@@ -2111,11 +2117,21 @@ async def maria_plan(req: PlanRequest):
             timestamp=datetime.now(timezone.utc).isoformat(),
         )
 
-    # 1f.5 §145.2 — Weather intent: resposta directa, sem turismo
+    # 1f.5 §145.2/§145.3 — Weather intent: resposta directa, sem turismo
     #       Weather questions get simple, direct answers from context
-    WEATHER_KEYWORDS = ["temperatura", "tempo está", "clima", "quantos graus", "vai chover",
-                        "temperatur", "wetter", "grad", "regnet",
-                        "temperature", "weather", "degrees", "raining"]
+    #       §145.3: Expanded to cover all weather terms removed from CULTURE_KEYWORDS
+    WEATHER_KEYWORDS = [
+        # PT — temperatura, clima, previsão
+        "temperatura", "tempo está", "qual o tempo", "como está o tempo",
+        "clima", "quantos graus", "vai chover", "está frio", "está calor",
+        "previsão", "meteorologia", "chover", "sol", "chuva", "nublado",
+        # DE — Wetter, Temperatur, Vorhersage
+        "temperatur", "wetter", "grad", "regnet", "wie ist das wetter",
+        "vorhersage", "kalt", "warm", "sonne", "regen", "bewölkt",
+        # EN — weather, temperature, forecast
+        "temperature", "weather", "degrees", "raining", "what's the weather",
+        "forecast", "cold", "hot", "sunny", "rain", "cloudy",
+    ]
     if req.query and any(kw in req.query.lower() for kw in WEATHER_KEYWORDS):
         log.info(f"[{request_id[:8]}] Weather intent detected → direct response")
         weather_info = ctx.get("weather", "informação não disponível")
