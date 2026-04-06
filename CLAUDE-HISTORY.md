@@ -5681,3 +5681,135 @@ POST /udb/manifest/daily
 - §135 (Músculo/MLT) + §136 (Visão/Dashboard) = Sistema Operacional
 
 Liga IA+H · Kempten, Bavaria · 05 Abril 2026
+
+---
+
+## §138.1 — Teste End-to-End Completo · Demo Maio 2026
+
+**Data:** 06 Abril 2026
+**Status:** EXECUTADO · SUCESSO
+**CLAUDE.md:** v1.9.96
+
+### Contexto
+
+Teste completo do fluxo WINDI-LAW para validação da demo de Maio 2026.
+Objectivo: verificar continuidade real do pipeline.
+
+```
+login → workspace → AI Draft → PHO → seal → verify
+```
+
+Públicos-alvo:
+- Carlos (empresa seed, Berlim)
+- Comité EU AI Act
+- Universidades Kempten + Munique
+- VC Berlim (contacto amistoso)
+
+### Resultados por Etapa
+
+| Etapa | Tempo | Status | Observação |
+|-------|-------|--------|------------|
+| 1. LOGIN | 24ms | ✅ OK | Entrada imediata, sem fricção |
+| 2. WORKSPACE | 36ms | ✅ OK | Carregamento rápido, DID validado |
+| 3. AI DRAFT | 30.25s | ✅ OK | Dependência externa (Anthropic API) |
+| 4. PHO GATE | manual | ✅ OK | Aprovação humana explícita funcional |
+| 5. SEAL | 68ms | ✅ OK | Ledger respondeu rápido, receipt gerado |
+| 6. VERIFY | 92ms | ✅ OK | Verify público rápido e acessível |
+
+**Tempo total do fluxo:** ~31 segundos
+- 30.25s é Claude API (esperado para HIGH tier)
+- Pipeline interno (sem Claude): <300ms
+
+### Artefacto Real Gerado
+
+```
+Receipt ID:    WINDI-LAW-AIDRAFT-20260406064803-BDAFDB68
+Documento:     NDA WINDI-Softwareentwickler Test Maio 2026
+Hash:          sha256:bdafdb6861e98921a515e28d41e9419bb4b8c6c93ef467d18a2abe1085b5c8c7
+Status:        SEALED
+Verify URL:    https://windi-domain.com/verify-public/?id=WINDI-LAW-AIDRAFT-20260406064803-BDAFDB68
+```
+
+Este é um **caso de uso real** (Entregável #2) que pode ser verificado publicamente.
+
+### Análise dos Nervos
+
+| Nervo | Resultado | Notas |
+|-------|-----------|-------|
+| #1 sessionStorage | ⚠️ NÃO TESTADO | Requer validação em browser real/mobile |
+| #2A Ledger registration | ✅ OK | Ledger respondeu 22ms |
+| #3A Anthropic API | ✅ OK | Claude respondeu 30.25s (funcional) |
+| #3B Ledger seal | ✅ OK | Seal em 68ms |
+| #3C Verify lento | ✅ OK | 92ms via HTTPS |
+
+### Diagnóstico Ledger :8101
+
+Executado antes do teste end-to-end:
+
+```
+Serviço:     WINDI Forensic Ledger API v1.0.0
+Protocolo:   Three Dragons v1.1 — I9 Active
+Receipts:    56.894 (após teste diagnóstico)
+Latência:    12ms / 15ms / 26ms (3 testes)
+Write test:  16ms (WINDI-DIAG-20260406084435-TEST)
+Status:      🟢 SAUDÁVEL
+```
+
+### Passo Mais Frágil do Fluxo
+
+🟠 **AI DRAFT (30.25s)** — dependência externa do Anthropic API.
+
+**Riscos identificados:**
+- Latência variável (rede + tokens)
+- Sem fallback local implementado
+- 30s de silêncio numa demo = perda de impacto
+
+### Mitigações Obrigatórias para Demo Maio
+
+1. **Pre-aquecer conexão Claude** antes da demo (chamada dummy)
+2. **Ter draft backup já gerado** — mostrar primeiro, explicar depois
+3. **Context curto** — menos tokens = mais rápido
+4. **Nunca gerar ao vivo sem rede garantida**
+5. **Testar verify URL em dispositivo móvel externo**
+
+### Entregáveis Maio 2026 — Status Após Teste
+
+| # | Entregável | Status | Notas |
+|---|------------|--------|-------|
+| 1 | Demo 5 minutos | 🟡 PARCIAL | Funcional, latência AI Draft a mitigar |
+| 2 | Caso de uso real | ✅ FECHADO | Receipt WINDI-LAW-AIDRAFT-20260406064803-BDAFDB68 |
+| 3 | Verify público | 🟡 PENDENTE | Testar em telefone real |
+| 4 | Página apresentação | ⏳ PENDENTE | A criar |
+
+### Conclusão
+
+O fluxo completo está **funcional e consistente**.
+O sistema suporta uma demo real de Maio 2026.
+
+**Risco principal:** latência e variabilidade da API externa (AI Draft).
+**Mitigação:** backup de draft pré-gerado + pre-aquecimento da conexão.
+
+### Significado
+
+Primeira execução completa do ciclo WINDI-LAW com:
+- Identidade (DID)
+- Geração assistida por IA
+- Aprovação humana (PHO / I9)
+- Registo imutável (Ledger / I11)
+- Verificação pública
+
+**O sistema deixa de ser conceito e torna-se prova operacional.**
+
+### Próxima Acção
+
+Human Dragon testa verify URL no telefone:
+```
+https://windi-domain.com/verify-public/?id=WINDI-LAW-AIDRAFT-20260406064803-BDAFDB68
+```
+
+Se carregar em <3s e mostrar "SEALED" → Entregável #3 fechado.
+
+---
+
+Liga IA+H · Kempten, Bavaria · 06 Abril 2026
+"AI processes. Human decides. WINDI guarantees."
