@@ -34,27 +34,50 @@ DEFAULT_CHAT_ID = os.environ.get("WINDI_BROADCAST_CHAT_ID")
 
 def build_caption(communique: dict, lang: str = "en") -> str:
     """
-    Build trilingual caption for Telegram message.
+    Build caption for Telegram message.
 
-    Includes:
-    - Title
-    - Brief summary
-    - Receipt ID
-    - Verify URL
+    §138 Architect Doctrine:
+    - 30% less text, 2x clarity on Verify
+    - One dominant language per post
+    - "Verify" must feel inevitable
+    - Breathing room = authority
+
+    "confiança substitui curiosidade"
     """
-    title = communique.get(f"title_{lang}") or communique.get("title_de") or communique.get("title_en") or "WINDI Communiqué"
+    title = communique.get(f"title_{lang}") or communique.get("title_de") or communique.get("title_en") or "WINDI"
     receipt_id = communique.get("receipt_id") or communique.get("evidence_jmpg_id") or "PENDING"
     verify_url = communique.get("evidence_verify_url") or f"https://windi-domain.com/verify-public/?id={receipt_id}"
 
-    # Build caption
-    caption = f"""🔐 *WINDI Communiqué*
+    # §138 Refined: Less text, Verify as magnetic destination
+    caption = f"""*{title}*
 
-📄 *{title}*
+`{receipt_id}`
 
-🛡️ Receipt: `{receipt_id}`
-🔗 [Verify Integrity]({verify_url})
+👉 *[VERIFY]({verify_url})*
+"""
+    return caption
 
-_AI processes. Human decides. WINDI guarantees._
+
+def build_caption_collage(collage_id: str, timestamp_a: str = "", timestamp_b: str = "") -> str:
+    """
+    §138 Sovereign Collage caption.
+
+    Architect Doctrine: Image speaks, text whispers, Verify shouts.
+    """
+    verify_url = f"https://windi-domain.com/verify-public/?id={collage_id}"
+
+    # Minimal: Let the video speak
+    if timestamp_a and timestamp_b:
+        caption = f"""*{timestamp_a}* ↔ *{timestamp_b}*
+
+`{collage_id}`
+
+👉 *[VERIFY]({verify_url})*
+"""
+    else:
+        caption = f"""`{collage_id}`
+
+👉 *[VERIFY]({verify_url})*
 """
     return caption
 
