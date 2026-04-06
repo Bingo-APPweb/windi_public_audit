@@ -120,12 +120,26 @@ async def get_user_location(ip: str = None, locale: str = "pt") -> Dict[str, Any
             if r.status_code == 200:
                 data = r.json()
                 log.info(f"[WhereAmI] Detected: {data.get('name', '?')} ({data.get('iata', '?')})")
+
+                # §145.12 fix: Parse coordinates "lng:lat" → separate lat/lng
+                coords = data.get("coordinates", "")
+                lat, lng = None, None
+                if coords and ":" in coords:
+                    try:
+                        parts = coords.split(":")
+                        lng = float(parts[0])
+                        lat = float(parts[1])
+                    except (ValueError, IndexError):
+                        pass
+
                 return {
                     "iata": data.get("iata", "MUC"),
                     "name": data.get("name", "Munique"),
                     "country_code": data.get("country_code", "DE"),
                     "country_name": data.get("country_name", "Germany"),
-                    "coordinates": data.get("coordinates", ""),
+                    "coordinates": coords,
+                    "lat": lat,
+                    "lng": lng,
                     "detected": True,
                     "source": "travelpayouts_whereami"
                 }
@@ -538,7 +552,32 @@ def format_maria_response(flights_data: Dict, lang: str = "PT") -> str:
 
 
 def detect_flight_intent(text: str) -> bool:
-    """Detect if user input contains flight-related intent."""
+    """
+    Detect if user input contains flight-related intent.
+
+    §146 F14 Fix: Follow-up questions about previous context should NOT
+    trigger intent detection — they should go to LLM with history.
+    """
+    lower = text.lower()
+
+    # §146 F14: Follow-up patterns — route to LLM, not intent
+    # These are questions about something mentioned before, not new searches
+    followup_patterns = [
+        # Portuguese
+        "qual é o", "qual o", "que mencionei", "que eu disse", "que falei",
+        "onde fica", "onde é", "como chego", "quanto custa o",
+        # German
+        "welcher", "welches", "was ist der", "was ist das", "wo ist",
+        "wo liegt", "wie komme ich", "was kostet",
+        # English
+        "which is the", "what is the", "what's the", "where is",
+        "how do i get", "what did i", "that i mentioned",
+    ]
+
+    for pattern in followup_patterns:
+        if pattern in lower:
+            return False  # Not an intent — route to LLM with history
+
     keywords = [
         # Portuguese
         "voo", "voos", "voar", "avião", "aviao", "aeroporto", "viajar de avião",
@@ -552,7 +591,6 @@ def detect_flight_intent(text: str) -> bool:
         "book a flight", "flight to", "air ticket",
     ]
 
-    lower = text.lower()
     return any(kw in lower for kw in keywords)
 
 

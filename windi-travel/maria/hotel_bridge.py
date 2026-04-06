@@ -358,7 +358,26 @@ def format_maria_hotel_response(data: Dict, lang: str = "PT") -> str:
 # ══════════════════════════════════════════════════════════════════════════════
 
 def detect_hotel_intent(text: str) -> bool:
-    """Detect if user input contains hotel-related intent."""
+    """
+    Detect if user input contains hotel-related intent.
+
+    §146 F14 Fix: Follow-up questions should go to LLM with history.
+    """
+    lower = text.lower()
+
+    # §146 F14: Follow-up patterns — route to LLM, not intent
+    followup_patterns = [
+        "qual é o", "qual o", "que mencionei", "que eu disse",
+        "onde fica", "como chego", "quanto custa o",
+        "welcher", "welches", "was ist", "wo ist", "wo liegt",
+        "which is the", "what is the", "what's the", "where is",
+        "that i mentioned", "how do i get",
+    ]
+
+    for pattern in followup_patterns:
+        if pattern in lower:
+            return False
+
     keywords = [
         # Portuguese
         "hotel", "hotéis", "hostel", "hostels", "pousada", "pensão",
@@ -374,7 +393,6 @@ def detect_hotel_intent(text: str) -> bool:
         "where to stay", "book a room", "lodging",
     ]
 
-    lower = text.lower()
     return any(kw in lower for kw in keywords)
 
 

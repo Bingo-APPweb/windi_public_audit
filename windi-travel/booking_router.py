@@ -222,8 +222,26 @@ CULTURE_KEYWORDS = {
 }
 
 def detect_culture_intent(text: str) -> bool:
-    """Detect if user is asking cultural/practical travel questions."""
+    """
+    Detect if user is asking cultural/practical travel questions.
+
+    §146 F14 Fix: Follow-up questions should go to LLM with history.
+    """
     lower = text.lower()
+
+    # §146 F14: Follow-up patterns — route to LLM, not intent
+    followup_patterns = [
+        "qual é o", "qual o", "que mencionei", "que eu disse",
+        "onde fica", "como chego", "quanto custa o",
+        "welcher", "welches", "was ist", "wo ist", "wo liegt",
+        "which is the", "what is the", "what's the", "where is",
+        "that i mentioned", "how do i get",
+    ]
+
+    for pattern in followup_patterns:
+        if pattern in lower:
+            return False
+
     for lang_keywords in CULTURE_KEYWORDS.values():
         if any(kw in lower for kw in lang_keywords):
             return True
@@ -2091,6 +2109,7 @@ async def maria_plan(req: PlanRequest):
                 reason=maria_text[:200],
                 rating=best_hotel.get("rating"),
                 open_now=None,
+                deep_link=best_hotel.get("deep_link"),  # §145.12 — booking URL fix
             ),
             context={
                 "weather": ctx.get("weather", ""),
@@ -2408,9 +2427,9 @@ async def maria_plan(req: PlanRequest):
                     open_now=None,
                 )
                 voice = MariaVoice(
-                    PT=fallback_voice["PT"] if lang == "PT" else "",
-                    DE=fallback_voice["DE"] if lang == "DE" else "",
-                    EN=fallback_voice["EN"] if lang == "EN" else "",
+                    PT=fallback_voice["PT"],
+                    DE=fallback_voice["DE"],
+                    EN=fallback_voice["EN"],
                 )
             else:
                 # Place type matched but no results — use old sovereign fallback
@@ -2458,11 +2477,23 @@ async def maria_plan(req: PlanRequest):
             address=best.get("address"), rating=best.get("rating"),
             open_now=best.get("open_now"),
         )
-        # §145 — voice was missing in this branch (fixed 06 Apr 2026)
+        # §146 — I12 trilingual compliance: populate ALL languages
+        explanation_pt = generate_explanation(
+            entity={"type": req.intent.type, "type_group": _classify_place_type_group(req.intent.type), **best},
+            entity_type="place", prefs=travel_prefs or {}, context=ctx, lang="PT"
+        )
+        explanation_de = generate_explanation(
+            entity={"type": req.intent.type, "type_group": _classify_place_type_group(req.intent.type), **best},
+            entity_type="place", prefs=travel_prefs or {}, context=ctx, lang="DE"
+        )
+        explanation_en = generate_explanation(
+            entity={"type": req.intent.type, "type_group": _classify_place_type_group(req.intent.type), **best},
+            entity_type="place", prefs=travel_prefs or {}, context=ctx, lang="EN"
+        )
         voice = MariaVoice(
-            PT=decision.reason if lang == "PT" else "",
-            DE=decision.reason if lang == "DE" else "",
-            EN=decision.reason if lang == "EN" else "",
+            PT=f"{best['name']} está perto de ti. {explanation_pt}",
+            DE=f"{best['name']} ist in deiner Nähe. {explanation_de}",
+            EN=f"{best['name']} is near you. {explanation_en}",
         )
 
     # 4. Ledger seal (I11) — non-blocking
@@ -3100,7 +3131,12 @@ async def maria_think_endpoint(req: ThinkRequest):
                     "cache_hit": cache_hit,
                     "mode": "nomada_v1.3",  # §100.5: Memory Engine
                     "visible_memory": visible_mem,  # §108
-                    "thread_id": thread_id  # §107
+                    "thread_id": thread_id,  # §107
+                    "maria_voice": {  # §146: I12 trilingual compliance
+                        "PT": voice_templates["PT"],
+                        "DE": voice_templates["DE"],
+                        "EN": voice_templates["EN"],
+                    }
                 }
             else:
                 # Sem resultados — mas intent permanece places
@@ -3114,7 +3150,12 @@ async def maria_think_endpoint(req: ThinkRequest):
                     "intent": place_type,
                     "response": no_places_msg.get(req.lang, no_places_msg["EN"]),
                     "data": [],
-                    "lang": req.lang
+                    "lang": req.lang,
+                    "maria_voice": {  # §146: I12 trilingual compliance
+                        "PT": no_places_msg["PT"],
+                        "DE": no_places_msg["DE"],
+                        "EN": no_places_msg["EN"],
+                    }
                 }
         except Exception as e:
             log.error(f"[MARIA §96] Places search error: {e}")
