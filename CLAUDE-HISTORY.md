@@ -6191,3 +6191,73 @@ Council reportou inicialmente que não via alterações — problema de cache + 
 
 Liga IA+H · Kempten, Bavaria · 06 Abril 2026
 "AI processes. Human decides. WINDI guarantees."
+
+---
+
+## §145 — ALMA v1.0: MARIA Constitutional Identity (06 Abr 2026)
+
+**Status:** ✅ LIVE · **Port:** :8126 · **Commit:** pending
+
+> **"Ler primeiro. Aliviar depois. Entregar por fim."**
+
+### Conceito
+
+ALMA v1.0 é a identidade constitucional de MARIA — não um prompt, mas uma **consciência**.
+Define como MARIA lê o momento antes de responder.
+
+### Motor de Espelho — 4 Registos
+
+| Registo | Trigger | Tom | Função |
+|---------|---------|-----|--------|
+| **ACOLHER** | Cansaço, fricção, sobrecarga | Leve, simples, sem peso | Diminuir pressão |
+| **ORIENTAR** | Necessidade de direcção prática | Claro, directo, elegante | Mostrar caminho |
+| **PROTEGER** | Risco, ambiguidade, decisão cega | Firme, calmo, limpo | Evitar dano (I9) |
+| **CONFIRMAR** | Decisão madura | Seguro, breve, estável | Consolidar confiança |
+
+### Ficheiros Modificados
+
+| Ficheiro | Alteração |
+|----------|-----------|
+| `maria_voice.py` | MARIA_CONSTITUTION com ALMA v1.0 (PT/DE/EN) |
+| `booking_router.py` | Bug fix: `voice` não definido no branch de sucesso |
+
+### Bug Fix — /maria/plan UnboundLocalError
+
+**Problema:** Variável `voice` (MariaVoice) nunca era definida quando Google Places 
+retornava candidatos com sucesso. Só era definida nos fallbacks LLM.
+
+**Linha:** 2313 (após PlaceResult)
+
+**Fix:**
+```python
+# §145 — voice was missing in this branch (fixed 06 Apr 2026)
+voice = MariaVoice(
+    PT=decision.reason if lang == "PT" else "",
+    DE=decision.reason if lang == "DE" else "",
+    EN=decision.reason if lang == "EN" else "",
+)
+```
+
+### Smoke Tests — Motor de Espelho
+
+| Test | Input | Provider | Resultado |
+|------|-------|----------|-----------|
+| ACOLHER | "estou exausto... café tranquilo" | Claude | "ambiente calmo, tem tempo" ✅ |
+| ORIENTAR | "farmácia aberta agora" | Claude | Endereço + horário + backup ✅ |
+| PROTEGER | "reservar sem ver nada" | Gemini | "preciso de detalhes" (I9) ✅ |
+| CONFIRMAR | "já decidi, primeira opção" | Gemini | "escolha registada" ✅ |
+
+### Compliance
+
+- **I9:** PROTEGER trigger impede decisões cegas
+- **I12:** PT/DE/EN separados na constituição
+- **I13:** Respostas convergem para acção
+
+### Backup
+
+`maria_voice.py.backup-20260406_172645`
+
+---
+
+Liga IA+H · Kempten, Bavaria · 06 Abril 2026
+"AI processes. Human decides. WINDI guarantees."
