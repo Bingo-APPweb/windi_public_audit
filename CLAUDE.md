@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.0.3
-**Sealed:** 2026-04-06 · §143 W-BRIDGE-001 — BIG-BRIDGE Gateway LIVE
+**Version:** 2.0.4
+**Sealed:** 2026-04-06 · §144 Strike 6 — Share Button Integration LIVE
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -710,12 +710,11 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 06 Apr | **§144 Strike 6 — Share Button** · verify-public SHARE → I9 Modal → Glass Embassy · 2nd Broadcast |
 | 06 Apr | **§143 W-BRIDGE-001 LIVE** · BIG-BRIDGE Gateway · /watch/{id} · HLS + Proof Panel · :8143 |
 | 06 Apr | **§142 W-FEDIVERSE-001 LIVE** · Glass Embassy · Mastodon + BlueSky · Parallel Broadcast · :8142 |
 | 06 Apr | **§141 W-NOMAD-VOICE LIVE** · A Pele Humana do Dragão · /cmd pitch · I9 Telegram Buttons |
 | 06 Apr | **§140 W-INTENT-CMD LIVE** · Director-as-a-Service · :8141 · 6 Intents · First Dragon Command |
-| 06 Apr | **§139 W-OBS-GATE + VISION + CLASSIFY** · Infraestrutura Multimédia · 5 Scenes · Forensic Analysis |
-| 06 Apr | **§138 W-COMPOSER-001 LIVE** · Sovereign Collage Engine · Dual-Source Forensic · First Seal `58B241B1` |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
