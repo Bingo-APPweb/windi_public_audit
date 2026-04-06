@@ -164,8 +164,14 @@ async def think(
         # Fallback básico se alma não disponível
         system = _fallback_system_prompt(lang)
 
+    # §145.10 — Build memory context for brain injection
+    prefs_for_brain = get_travel_preferences(did) if MEMORY_AVAILABLE and did else {}
+    brain_memory_context = _build_memory_context(prefs_for_brain, lang)
+    if brain_memory_context:
+        log.info(f"[MARIA §145.10] Memory→Brain injection: {len(brain_memory_context)} chars")
+
     # Enrich system prompt with context (location, weather, memory)
-    system = _enrich_system_prompt(system, lang, location, weather, session_count, memory, hour)
+    system = _enrich_system_prompt(system, lang, location, weather, session_count, memory, hour, brain_memory_context)
 
     # ─────────────────────────────────────────────────────────────────────────
     # P4 Step 4: CALL LLM — Com o provider e prompt certos
@@ -382,8 +388,100 @@ def _offline_response(lang: str) -> Dict[str, Any]:
 # SYSTEM PROMPT HELPERS
 # ══════════════════════════════════════════════════════════════════════════════
 
+def _build_memory_context(prefs: dict, lang: str) -> str:
+    """
+    §145.10 — Memory → Brain Bridge.
+
+    Inject condensed, relevant memory context into the system prompt.
+    Only signal, no noise. No raw data.
+
+    Rules:
+    - Only inject if confidence >= 0.1
+    - Max 3 preference signals
+    - Human language, not technical terms
+    """
+    if not prefs:
+        return ""
+
+    confidence = prefs.get("learned_confidence", 0.0)
+    if confidence < 0.1:
+        return ""  # Not enough confidence yet
+
+    # Gather positive signals from feedback
+    signals = prefs.get("feedback_signals", {})
+    top_signals = sorted(
+        [(k, v) for k, v in signals.items() if v > 0],
+        key=lambda x: x[1],
+        reverse=True
+    )[:3]
+
+    # Check strong preferences from travel preferences
+    strong_prefs = []
+    if prefs.get("direct_bonus", 200) > 240:
+        strong_prefs.append("direct_flights")
+    if prefs.get("morning_bonus", 50) > 65:
+        strong_prefs.append("morning")
+    if prefs.get("price_sensitivity", 0.5) > 0.7:
+        strong_prefs.append("budget")
+
+    # Build context in target language
+    if lang.upper() == "PT":
+        lines = [f"Confiança: {confidence:.0%}"]
+        intent_map = {
+            "cafe": "cafés", "restaurant": "restaurantes", "museum": "cultura",
+            "hotel": "alojamento", "flight": "voos", "nature": "natureza"
+        }
+        for intent, _ in top_signals:
+            lines.append(f"Gosta de {intent_map.get(intent, intent)}")
+        if "direct_flights" in strong_prefs:
+            lines.append("Prefere voos directos")
+        if "morning" in strong_prefs:
+            lines.append("Prefere partir de manhã")
+        if "budget" in strong_prefs:
+            lines.append("Valoriza bons preços")
+        header = "Perfil do viajante"
+
+    elif lang.upper() == "DE":
+        lines = [f"Vertrauen: {confidence:.0%}"]
+        intent_map = {
+            "cafe": "Cafés", "restaurant": "Restaurants", "museum": "Kultur",
+            "hotel": "Unterkünfte", "flight": "Flüge", "nature": "Natur"
+        }
+        for intent, _ in top_signals:
+            lines.append(f"Mag {intent_map.get(intent, intent)}")
+        if "direct_flights" in strong_prefs:
+            lines.append("Bevorzugt Direktflüge")
+        if "morning" in strong_prefs:
+            lines.append("Reist gerne morgens")
+        if "budget" in strong_prefs:
+            lines.append("Achtet auf gute Preise")
+        header = "Reisendenprofil"
+
+    else:  # EN
+        lines = [f"Confidence: {confidence:.0%}"]
+        intent_map = {
+            "cafe": "cafés", "restaurant": "restaurants", "museum": "culture",
+            "hotel": "accommodation", "flight": "flights", "nature": "nature"
+        }
+        for intent, _ in top_signals:
+            lines.append(f"Likes {intent_map.get(intent, intent)}")
+        if "direct_flights" in strong_prefs:
+            lines.append("Prefers direct flights")
+        if "morning" in strong_prefs:
+            lines.append("Prefers morning departures")
+        if "budget" in strong_prefs:
+            lines.append("Values good prices")
+        header = "Traveler profile"
+
+    if len(lines) <= 1:
+        return ""  # Only confidence, no actual signals
+
+    return f"\n[{header}]\n" + "\n".join(f"- {line}" for line in lines)
+
+
 def _enrich_system_prompt(system: str, lang: str, location: str, weather: str,
-                          session_count: int, memory: str, hour: int) -> str:
+                          session_count: int, memory: str, hour: int,
+                          memory_context: str = "") -> str:
     """Add context to system prompt without overwriting Soul's personality."""
     # I12 — Language Sovereign Principle: context labels in target language
     labels = {
@@ -447,7 +545,7 @@ def _enrich_system_prompt(system: str, lang: str, location: str, weather: str,
 - {L["sessions"]}: {session_count}
 - {L["memory"]}: {memory or L["first"]}
 - {location_context}
-
+{memory_context}
 {L["lang_instruction"]}
 """
 
