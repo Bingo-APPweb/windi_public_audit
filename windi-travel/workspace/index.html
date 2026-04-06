@@ -879,6 +879,153 @@ body {
   color: var(--text-2);
 }
 
+/* §145.6 — Maria Knows You (P5 Memory Display) */
+.maria-memory {
+  margin-top: 20px;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--bg-2) 0%, rgba(201, 168, 76, 0.08) 100%);
+  border-radius: var(--r);
+  border: 1px solid rgba(201, 168, 76, 0.2);
+}
+
+.maria-memory-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.maria-memory-icon {
+  font-size: 20px;
+}
+
+.maria-memory-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.maria-memory-confidence {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text-3);
+  background: var(--bg-1);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.maria-memory-patterns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.maria-memory-pattern {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: var(--bg-1);
+  border-radius: 20px;
+  font-size: 12px;
+  color: var(--text-1);
+  border: 1px solid var(--border);
+  transition: all 0.2s ease;
+}
+
+.maria-memory-pattern:hover {
+  border-color: var(--gold);
+  transform: translateY(-1px);
+}
+
+.maria-memory-pattern .pattern-icon {
+  font-size: 14px;
+}
+
+.maria-memory-pattern .pattern-text {
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.maria-memory-timeline {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.maria-memory-timeline-title {
+  font-size: 11px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.maria-memory-journey {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.maria-memory-journey:last-child {
+  border-bottom: none;
+}
+
+.maria-memory-journey-icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-1);
+  border-radius: 50%;
+  font-size: 14px;
+}
+
+.maria-memory-journey-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.maria-memory-journey-text {
+  font-size: 13px;
+  color: var(--text-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.maria-memory-journey-date {
+  font-size: 11px;
+  color: var(--text-3);
+  margin-top: 2px;
+}
+
+.maria-memory-empty {
+  text-align: center;
+  padding: 16px;
+  color: var(--text-3);
+  font-size: 13px;
+  font-style: italic;
+}
+
+.maria-memory-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  color: var(--text-3);
+  font-size: 13px;
+}
+
 /* Loading state */
 .maria-loading {
   display: flex;
@@ -1993,6 +2140,30 @@ body {
       <p class="maria-history-title" data-i18n="maria_history">Letzte Empfehlungen</p>
       <div class="maria-history-list" id="maria-history-list"></div>
     </div>
+
+    <!-- §145.6 — Maria Knows You (P5 Memory Display) -->
+    <div class="maria-memory" id="maria-memory" style="display:none;">
+      <div class="maria-memory-header">
+        <span class="maria-memory-icon">🧠</span>
+        <span class="maria-memory-title" data-i18n="maria_knows_you">Maria kennt dich</span>
+        <span class="maria-memory-confidence" id="maria-memory-confidence">0%</span>
+      </div>
+      <div class="maria-memory-patterns" id="maria-memory-patterns">
+        <!-- Patterns populated by JS -->
+      </div>
+      <div class="maria-memory-timeline" id="maria-memory-timeline" style="display:none;">
+        <div class="maria-memory-timeline-title" data-i18n="maria_recent_journeys">Letzte Reisen</div>
+        <div class="maria-memory-timeline-list" id="maria-memory-timeline-list">
+          <!-- Journeys populated by JS -->
+        </div>
+      </div>
+      <div class="maria-memory-empty" id="maria-memory-empty" style="display:none;">
+        <span data-i18n="maria_memory_empty">Noch keine Muster erkannt. Frag Maria etwas!</span>
+      </div>
+      <div class="maria-memory-loading" id="maria-memory-loading" style="display:none;">
+        <span data-i18n="maria_memory_loading">Lade Erinnerungen...</span>
+      </div>
+    </div>
   </div>
 
   <!-- POST-SEAL STATE -->
@@ -2362,6 +2533,21 @@ const TRAVEL_I18N = {
   maria_history:  { de: "Letzte Empfehlungen", pt: "Últimas recomendações", en: "Recent recommendations" },
   maria_loading:  { de: "Denke nach...", pt: "A pensar...", en: "Thinking..." },
   maria_sealed:   { de: "Im Ledger gesiegelt", pt: "Selado no Ledger", en: "Sealed in Ledger" },
+
+  // §145.6 — Maria Knows You (P5 Memory)
+  maria_knows_you:     { de: "Maria kennt dich",           pt: "Maria conhece-te",           en: "Maria knows you" },
+  maria_recent_journeys: { de: "Letzte Reisen",            pt: "Viagens recentes",           en: "Recent journeys" },
+  maria_memory_empty:  { de: "Noch keine Muster erkannt. Frag Maria etwas!",
+                         pt: "Ainda sem padrões. Pergunta algo à Maria!",
+                         en: "No patterns yet. Ask Maria something!" },
+  maria_memory_loading: { de: "Lade Erinnerungen...",      pt: "A carregar memórias...",     en: "Loading memories..." },
+  maria_confidence:    { de: "Vertrauen",                  pt: "Confiança",                  en: "Confidence" },
+  maria_pattern_food:  { de: "Liebt gutes Essen",          pt: "Adora boa comida",           en: "Loves good food" },
+  maria_pattern_culture: { de: "Kulturinteressiert",       pt: "Interessado em cultura",     en: "Culture enthusiast" },
+  maria_pattern_nature: { de: "Naturliebhaber",            pt: "Amante da natureza",         en: "Nature lover" },
+  maria_pattern_work:  { de: "Arbeitet gern unterwegs",    pt: "Gosta de trabalhar em viagem", en: "Likes working on the go" },
+  maria_journey_prefix: { de: "Reise nach",                pt: "Viagem a",                   en: "Journey to" },
+
   // P2-A/B — Progressive timeout + error messages
   maria_working:  { de: "Arbeite noch…", pt: "Ainda a trabalhar…", en: "Still working…" },
   maria_slow:     { de: "Dauert länger als üblich…", pt: "Mais tempo que o usual…", en: "Taking longer than usual…" },
@@ -2934,6 +3120,11 @@ function setMode(mode) {
   // Update timeline + thread on switch
   if (mode === 'thread') {
     renderTimeline();  // W-PRESENCE-001: Presence moments
+  }
+
+  // §145.6 — Load Maria memories when entering Maria mode
+  if (mode === 'maria' && typeof loadMemories === 'function') {
+    loadMemories();
   }
 }
 
@@ -4127,6 +4318,193 @@ async function askMariaQuick(type) {
 
   document.getElementById('maria-input').value = message;
   await askMaria();
+}
+
+// ── §145.6 — Maria Knows You (P5 Memory Functions) ──
+
+async function loadMemories() {
+  const did = sessionStorage.getItem('windi_travel_wallet');
+  if (!did) {
+    console.log('[§145.6] No DID, skipping memory load');
+    return;
+  }
+
+  const container = document.getElementById('maria-memory');
+  const loadingEl = document.getElementById('maria-memory-loading');
+  const emptyEl = document.getElementById('maria-memory-empty');
+  const patternsEl = document.getElementById('maria-memory-patterns');
+  const timelineEl = document.getElementById('maria-memory-timeline');
+  const confidenceEl = document.getElementById('maria-memory-confidence');
+
+  if (!container) return;
+
+  // Show loading
+  container.style.display = 'block';
+  if (loadingEl) loadingEl.style.display = 'flex';
+  if (emptyEl) emptyEl.style.display = 'none';
+  if (patternsEl) patternsEl.innerHTML = '';
+  if (timelineEl) timelineEl.style.display = 'none';
+
+  try {
+    // §145.8 — Use narrated endpoint for Maria's voice
+    const response = await fetch(`/maria/memories/${did}/narrated?lang=${LANG.toUpperCase()}`);
+    if (!response.ok) throw new Error('Memory fetch failed');
+
+    const data = await response.json();
+    console.log('[§145.8] Narrated memory data:', data);
+
+    if (loadingEl) loadingEl.style.display = 'none';
+
+    renderMariaMemory(data);
+
+  } catch (err) {
+    console.error('[§145.6] Memory load error:', err);
+    if (loadingEl) loadingEl.style.display = 'none';
+    if (emptyEl) emptyEl.style.display = 'block';
+  }
+}
+
+function renderMariaMemory(data) {
+  const container = document.getElementById('maria-memory');
+  const patternsEl = document.getElementById('maria-memory-patterns');
+  const timelineEl = document.getElementById('maria-memory-timeline');
+  const timelineList = document.getElementById('maria-memory-timeline-list');
+  const emptyEl = document.getElementById('maria-memory-empty');
+  const confidenceEl = document.getElementById('maria-memory-confidence');
+
+  if (!container) return;
+
+  const patterns = data.visible_memory || [];
+  const timeline = data.timeline || [];
+  const confidence = data.confidence || 0;
+
+  // Update confidence display
+  if (confidenceEl) {
+    const pct = Math.round(confidence * 100);
+    confidenceEl.textContent = `${pct}%`;
+  }
+
+  // Render patterns
+  if (patterns.length === 0 && timeline.length === 0) {
+    if (emptyEl) emptyEl.style.display = 'block';
+    if (patternsEl) patternsEl.style.display = 'none';
+    return;
+  }
+
+  if (emptyEl) emptyEl.style.display = 'none';
+
+  // Render pattern badges
+  if (patternsEl && patterns.length > 0) {
+    patternsEl.style.display = 'flex';
+    patternsEl.innerHTML = patterns.map(p => formatMemoryPattern(p)).join('');
+  }
+
+  // Render timeline (journeys)
+  if (timelineEl && timelineList && timeline.length > 0) {
+    timelineEl.style.display = 'block';
+    timelineList.innerHTML = timeline.slice(0, 5).map(j => formatJourney(j)).join('');
+  }
+}
+
+function formatMemoryPattern(pattern) {
+  // Pattern format: "icon:text" or just "text"
+  const iconMap = {
+    'food': '🍽️',
+    'culture': '🏛️',
+    'nature': '🌿',
+    'work': '💼',
+    'weather': '⛅',
+    'hotel': '🏨',
+    'transport': '🚌',
+    'default': '✨'
+  };
+
+  let icon = iconMap.default;
+  let text = pattern;
+
+  // Try to detect pattern type from text
+  const lowerPattern = (pattern || '').toLowerCase();
+  if (lowerPattern.includes('comida') || lowerPattern.includes('essen') || lowerPattern.includes('food') || lowerPattern.includes('restaurant')) {
+    icon = iconMap.food;
+  } else if (lowerPattern.includes('cultura') || lowerPattern.includes('kultur') || lowerPattern.includes('culture') || lowerPattern.includes('museum')) {
+    icon = iconMap.culture;
+  } else if (lowerPattern.includes('natureza') || lowerPattern.includes('natur') || lowerPattern.includes('nature') || lowerPattern.includes('park')) {
+    icon = iconMap.nature;
+  } else if (lowerPattern.includes('trabalho') || lowerPattern.includes('arbeit') || lowerPattern.includes('work') || lowerPattern.includes('café')) {
+    icon = iconMap.work;
+  } else if (lowerPattern.includes('clima') || lowerPattern.includes('wetter') || lowerPattern.includes('weather')) {
+    icon = iconMap.weather;
+  } else if (lowerPattern.includes('hotel') || lowerPattern.includes('hostel') || lowerPattern.includes('alojamento')) {
+    icon = iconMap.hotel;
+  }
+
+  return `
+    <div class="maria-memory-pattern">
+      <span class="pattern-icon">${icon}</span>
+      <span class="pattern-text">${escapeHtml(text)}</span>
+    </div>
+  `;
+}
+
+function formatJourney(journey) {
+  const typeIcons = {
+    'journey': '🧭',
+    'interaction': '💬',
+    'decision': '🎯',
+    'seal': '🔏',
+    'maria': '🌍'
+  };
+
+  const icon = typeIcons[journey.type] || '📍';
+  // §145.8 — Prefer narrative (Maria's voice) over raw title
+  const text = journey.narrative || journey.title || journey.query || journey.location || 'Journey';
+  const dateStr = journey.timestamp || journey.date;
+  const date = dateStr ? formatJourneyDate(dateStr) : '';
+
+  return `
+    <div class="maria-memory-journey">
+      <div class="maria-memory-journey-icon">${icon}</div>
+      <div class="maria-memory-journey-info">
+        <div class="maria-memory-journey-text">${escapeHtml(text)}</div>
+        ${date ? `<div class="maria-memory-journey-date">${date}</div>` : ''}
+      </div>
+    </div>
+  `;
+}
+
+function formatJourneyDate(dateStr) {
+  try {
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    const dateLabels = {
+      de: { today: 'Heute', yesterday: 'Gestern', daysAgo: 'vor {n} Tagen' },
+      pt: { today: 'Hoje', yesterday: 'Ontem', daysAgo: 'há {n} dias' },
+      en: { today: 'Today', yesterday: 'Yesterday', daysAgo: '{n} days ago' }
+    };
+
+    const labels = dateLabels[LANG] || dateLabels.en;
+
+    if (diffDays === 0) return labels.today;
+    if (diffDays === 1) return labels.yesterday;
+    if (diffDays < 7) return labels.daysAgo.replace('{n}', diffDays);
+
+    // Format as date
+    return date.toLocaleDateString(LANG === 'de' ? 'de-DE' : LANG === 'pt' ? 'pt-PT' : 'en-GB', {
+      day: 'numeric',
+      month: 'short'
+    });
+  } catch {
+    return '';
+  }
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text || '';
+  return div.innerHTML;
 }
 
 function interpretSemantic(data, userQuery) {
