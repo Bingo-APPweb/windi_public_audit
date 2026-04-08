@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.0.9
-**Sealed:** 2026-04-08 · §149 Camada 1 Rule Engine + §148 Cross-Modal Connections SEALED
+**Version:** 2.1.1
+**Sealed:** 2026-04-08 · §150 W-SEC-001 Security Sentinel + Dual Correlation SEALED
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -80,6 +80,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-NOMAD-VOICE | :8127 | I9,I12 | **LIVE** · Human Translation Layer · No-Jargon Filter |
 | W-FEDIVERSE-001 | :8142 | I9,I11 | **LIVE** · Glass Embassy · Mastodon + BlueSky · Parallel Broadcast |
 | W-BRIDGE-001 | :8143 | I9,I11 | **LIVE** · BIG-BRIDGE Gateway · /watch/{id} · HLS Streaming |
+| W-SEC-001 | :8144 | I9,I11 | **LIVE** · Security Sentinel · Threat Correlation · Ledger Anchor |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
 
@@ -147,6 +148,48 @@ Isto NÃO é placeholder de dados — é redundância de infraestrutura.
 | W-DIST-001 | `channel`, `target_id` | Erro se ausente |
 
 **Sealed:** 06 Apr 2026 · Human Dragon · "Placeholders são mentiras silenciosas."
+
+### §150 — W-SEC-001: Security Sentinel (08 Apr 2026)
+
+**Estado:** LIVE · **Port:** 8144 · **Invariants:** I9, I11
+
+> **"Distributed threats must be correlated by behavior, not merely by source."**
+> **"One phenomenon, one incident. Many sources, one pattern."**
+
+**Definição:** Sistema de evidência de segurança com correlação dual (técnica + comportamental).
+
+**Correlação de 2 Níveis:**
+| Nível | Quando Usa | Agrupa Por | Exemplo |
+|-------|-----------|------------|---------|
+| **Behavioral** | `api_flood`, `rate_limit_exceeded`, `brute_force` | endpoint + type + vector + time_window | 30 IPs → 1 incidente distribuído |
+| **Technical** | Outros ataques (injection, tampering) | actor + ua + endpoint + type | 1 IP → 1 incidente direcionado |
+
+**Pipeline:** SEC-EVT → Correlation → SEC-INCIDENT → Human Gate (I9) → Ledger Seal (I11)
+
+**Dashboard NOIR — Live Intelligence:**
+- 🔥 **Heatmap**: Intensidade por IP (quem ataca)
+- ⏱ **Timeline**: Evolução temporal (quando acontece)
+- 🎥 **Replay**: Eventos recentes (como evoluiu)
+
+**Endpoints:**
+```
+POST /sec/events              — Ingest security event
+POST /sec/events/batch        — Ingest batch
+GET  /sec/incidents           — List incidents
+POST /sec/incidents/{id}/create-case  — Create governance case
+POST /sec/incidents/{id}/approve      — Human approval (I9)
+POST /sec/incidents/{id}/seal         — Anchor to Ledger (I11)
+GET  /sec/stream              — SSE real-time feed
+GET  /dashboard/              — NOIR Dashboard
+```
+
+**Princípio Canónico:**
+```
+W-SEC não agrega por conveniência. Agrega por significado.
+Detector de anomalias → Interpretador de comportamento hostil.
+```
+
+**Sealed:** 08 Apr 2026 · Human Dragon · "Um fenómeno, um incidente."
 
 ### §117 — I9: Human Approval Gate (Operational Doctrine)
 
@@ -739,12 +782,13 @@ KLAR (light):
 | :8141 | W-INTENT-CMD Director-as-a-Service | 🟢 **LIVE** · Intent Orchestration · 6 Intents · I9 Gate |
 | :8142 | W-FEDIVERSE-001 Glass Embassy | 🟢 **LIVE** · Mastodon + BlueSky · Parallel Broadcast |
 | :8143 | W-BRIDGE-001 BIG-BRIDGE Gateway | 🟢 **LIVE** · /watch/{id} · HLS Streaming · Clarity Infinity |
+| :8144 | W-SEC-001 Security Sentinel | 🟢 **LIVE** · Threat Correlation · SEC-EVT → SEC-INCIDENT → Ledger |
 
-### Sistemas LIVE (40 total)
+### Sistemas LIVE (41 total)
 
 **Core:** GEN7 Desktop · Pioneer Program · VPR System · API Keys · Dispatch · Web Hosting · i18n · Wallet · Lead Admin
 
-**Agents (W-*):** CIA-001 · WSG-001 · GATE-001 · NGINX-001 · CANVAS-001 · CANVAS-OBS-001 · CANVAS-LAB-001 · COMM-001 · PROVE-001 · DETECT-MEDIA-001 · VERIFY-MODUS4 · INTENT-001 · COUNSEL-001 · SESSION-001 · NOMAD-001 · VD-CUT-001 · VD-MASS-001 · JOE-001 · DIST-001 · JMPG-001 · UDB-001 · COMPOSER-001 · CLASSIFY-001 · VISION-001 · OBS-GATE · INTENT-CMD · NOMAD-VOICE · FEDIVERSE-001 · BRIDGE-001
+**Agents (W-*):** CIA-001 · WSG-001 · GATE-001 · NGINX-001 · CANVAS-001 · CANVAS-OBS-001 · CANVAS-LAB-001 · COMM-001 · PROVE-001 · DETECT-MEDIA-001 · VERIFY-MODUS4 · INTENT-001 · COUNSEL-001 · SESSION-001 · NOMAD-001 · VD-CUT-001 · VD-MASS-001 · JOE-001 · DIST-001 · JMPG-001 · UDB-001 · COMPOSER-001 · CLASSIFY-001 · VISION-001 · OBS-GATE · INTENT-CMD · NOMAD-VOICE · FEDIVERSE-001 · BRIDGE-001 · SEC-001
 
 **Products:** Triangle of Power · WINDI FIELD · WINDI TRAVEL · FVE Protocol · RFC-001 DNA
 
@@ -754,11 +798,11 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 08 Apr | **§150 W-SEC-001 Security Sentinel** · :8144 · Threat Correlation · SEC-EVT → Ledger |
 | 08 Apr | **§149 Camada 1 Rule Engine** · Train intent fix · "Zug"→train não places · `ea3dddd` |
 | 08 Apr | **§148 Cross-Modal Connections** · Flight→Hotel→Train suggestions · `88bafdc` |
 | 06 Apr | **§147 F14 Conversation History** · Follow-up routing fix · `82009cc` |
 | 06 Apr | **§146 I14 Proibição de Placeholders** · IRREMEDIÁVEL · `2c4c35f` |
-| 06 Apr | **§137 SSE Streaming** · WINDI-LAW AI Draft · Word-by-word · `76abeef` |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -920,6 +964,7 @@ workspace/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
 ### Completado (últimos 10 · ver CLAUDE-HISTORY.md para §37-115)
+- [x] §150 **W-SEC-001 Security Sentinel** · :8144 · Dual Correlation · Dashboard NOIR · Live Intelligence ✅ 08 Apr
 - [x] §149 **Camada 1 Rule Engine** · Train intent fix · detect_intent_local() · `ea3dddd` ✅ 08 Apr
 - [x] §148 **Cross-Modal Connections** · Flight→Hotel→Train suggestions · `88bafdc` ✅ 08 Apr
 - [x] §147 **F14 Conversation History** · Follow-up routing fix · Intent bypass · `82009cc` ✅ 06 Apr
@@ -998,9 +1043,10 @@ workspace/
 | §147 | F14 Conversation History | ✅ SEALED | Follow-up routing · Intent bypass · `82009cc` |
 | §148 | Cross-Modal Connections | ✅ SEALED | Flight→Hotel→Train · Suggest buttons · `88bafdc` |
 | §149 | Camada 1 Rule Engine | ✅ SEALED | Train intent fix · detect_intent_local() · `ea3dddd` |
+| §150 | W-SEC-001 Security Sentinel | ✅ LIVE | :8144 · Dual Correlation · Live Intelligence · Dashboard NOIR |
 | §137 | SSE Streaming | ✅ LIVE | WINDI-LAW AI Draft · Word-by-word · `76abeef` |
 
-> **Detalhes completos §128-149:** `CLAUDE-HISTORY.md` § SESSÃO 05-08 Abr 2026
+> **Detalhes completos §128-150:** `CLAUDE-HISTORY.md` § SESSÃO 05-08 Abr 2026
 
 ---
 
