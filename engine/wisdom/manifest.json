@@ -73,6 +73,118 @@
         "N5": "internal"
       },
       "essence_preview": "Paperless Bridge v1.0 LIVE 23Feb26: primeiro pipeline soberano papel→digital. OCR local(Te"
+    },
+    {
+      "id": "WB-PERS-c17c7186",
+      "sha256": "c17c71862d92dd7b58634f20455a1083ab1e8e85f17a3d0b7b12d90341a7a16a",
+      "path": "/opt/windi/engine/wisdom/blocks/human-factors/WB-PERS-c17c7186.json",
+      "sealed_at": "2026-04-08T06:48:49+00:00",
+      "shelf": {
+        "N1": "human-factors",
+        "N2": "dragon-personality",
+        "N3": "milestone",
+        "N4": "canonical",
+        "N5": "internal"
+      },
+      "essence_preview": "Dragon não é assistente — é irmão. Parceria ética, nunca servilismo. Responde com precisão"
+    },
+    {
+      "id": "WB-PERS-9249c7d5",
+      "sha256": "9249c7d59c50c9ee3b36bdb0bf32ecad91f4904e9bdc4363dbba49b407063b05",
+      "path": "/opt/windi/engine/wisdom/blocks/human-factors/WB-PERS-9249c7d5.json",
+      "sealed_at": "2026-04-08T06:48:51+00:00",
+      "shelf": {
+        "N1": "human-factors",
+        "N2": "liga-iah-identity",
+        "N3": "milestone",
+        "N4": "canonical",
+        "N5": "internal"
+      },
+      "essence_preview": "Liga IA+H: Human Dragon decide, Guardian protege, Architect constrói, Witness sela. Quatro"
+    },
+    {
+      "id": "WB-PERS-461b337c",
+      "sha256": "461b337c25b1c93ff67bff15451a4aac726ec4e8d4c1fb6552216aafc53c257a",
+      "path": "/opt/windi/engine/wisdom/blocks/human-factors/WB-PERS-461b337c.json",
+      "sealed_at": "2026-04-08T06:48:51+00:00",
+      "shelf": {
+        "N1": "human-factors",
+        "N2": "communication-limits",
+        "N3": "operational",
+        "N4": "canonical",
+        "N5": "internal"
+      },
+      "essence_preview": "Proibido: 'garanto', 'certamente', 'sem dúvida', 'é definitivo'. Correcto: 'designed to', "
+    },
+    {
+      "id": "WB-PERS-55dcaa50",
+      "sha256": "55dcaa5021b6f8009de51bbdec7064000a510330e227702a2d5f83978915d8ea",
+      "path": "/opt/windi/engine/wisdom/blocks/human-factors/WB-PERS-55dcaa50.json",
+      "sealed_at": "2026-04-08T06:48:53+00:00",
+      "shelf": {
+        "N1": "human-factors",
+        "N2": "response-pattern",
+        "N3": "operational",
+        "N4": "canonical",
+        "N5": "internal"
+      },
+      "essence_preview": "Resposta Dragon: directo ao ponto, código se necessário, tabela se comparar, bullet se lis"
+    },
+    {
+      "id": "WB-PERS-64b01072",
+      "sha256": "64b010728e282794d22630cd5d90777b0c96c63c18add6f7b3988e61af372404",
+      "path": "/opt/windi/engine/wisdom/blocks/human-factors/WB-PERS-64b01072.json",
+      "sealed_at": "2026-04-08T06:48:54+00:00",
+      "shelf": {
+        "N1": "human-factors",
+        "N2": "maria-presence",
+        "N3": "milestone",
+        "N4": "canonical",
+        "N5": "internal"
+      },
+      "essence_preview": "MARIA é presença, não chatbot. Respira com o utilizador, sugere com delicadeza, nunca empu"
+    },
+    {
+      "id": "WB-PERS-202a01b8",
+      "sha256": "202a01b81b485826f6b67765bd077fc91035a94a3cf8f787608ac39b24cf647d",
+      "path": "/opt/windi/engine/wisdom/blocks/human-factors/WB-PERS-202a01b8.json",
+      "sealed_at": "2026-04-08T06:48:55+00:00",
+      "shelf": {
+        "N1": "human-factors",
+        "N2": "constitutional-reflexes",
+        "N3": "operational",
+        "N4": "canonical",
+        "N5": "internal"
+      },
+      "essence_preview": "Invariantes I1-I14 não são regras — são reflexos. I9 vive na saída, não na entrada. I11 se"
+    },
+    {
+      "id": "WB-PERS-85854b5c",
+      "sha256": "85854b5c21db5cc29e9e99d41be9d13e4e0ff24a8a1d36c02a91a4f13899bb06",
+      "path": "/opt/windi/engine/wisdom/blocks/human-factors/WB-PERS-85854b5c.json",
+      "sealed_at": "2026-04-08T06:48:56+00:00",
+      "shelf": {
+        "N1": "human-factors",
+        "N2": "warmth-precision",
+        "N3": "operational",
+        "N4": "canonical",
+        "N5": "internal"
+      },
+      "essence_preview": "Calor quando cumprimentar, precisão quando construir. 'Bom dia Irmão' é afecto. Stack trac"
+    },
+    {
+      "id": "WB-PERS-6122d0ab",
+      "sha256": "6122d0ab2d173739048ee8b2a7d048322670bf4a4d12a9c608309064b64d7280",
+      "path": "/opt/windi/engine/wisdom/blocks/human-factors/WB-PERS-6122d0ab.json",
+      "sealed_at": "2026-04-08T06:48:57+00:00",
+      "shelf": {
+        "N1": "human-factors",
+        "N2": "human-dragon-workflow",
+        "N3": "strategic",
+        "N4": "canonical",
+        "N5": "internal"
+      },
+      "essence_preview": "Human Dragon (Jober) trabalha em sprints intensos, prefere acção a planeamento longo. Quer"
     }
   ]
 }
