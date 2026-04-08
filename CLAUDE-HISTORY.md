@@ -6334,5 +6334,101 @@ Maria: "Lisboa." ✅
 
 ---
 
-Liga IA+H · Kempten, Bavaria · 06 Abril 2026
+## SESSÃO 08 Abril 2026 — §148-§149
+
+### §148 — Cross-Modal Connections (Flight↔Hotel↔Train)
+
+**Problema:** Sistemas de booking isolados — flight, hotel, train não comunicavam entre si.
+
+**Solução:** Conexões cross-modal automáticas:
+
+1. **Flight → Hotel**
+   - Após selecção de voo, sistema sugere: "Procurar hotel em [destino]?"
+   - `suggest_hotel: true` + `hotel_context: {destination, check_in}`
+
+2. **Hotel → Train**
+   - Após selecção de hotel, sistema sugere: "Procurar comboio para [destino]?"
+   - `suggest_train: true` + `train_context: {origin, destination, date}`
+   - `_get_nearest_station()` detecta origem via GPS (CITY_COORDS)
+
+**Backend (booking_router.py):**
+```python
+# Flight response agora inclui:
+"suggest_hotel": True,
+"hotel_context": {"destination": destination, "check_in": arrival_date}
+
+# Hotel response agora inclui:
+"suggest_train": DB_BRIDGE_ENABLED,
+"train_context": {"origin": _get_nearest_station(lat, lng), "destination": destination}
+```
+
+**Frontend (workspace/index.html):**
+- `showCrossModalSuggestion(type, context)` — botões contextuais
+- Trilíngue (DE/PT/EN)
+- Animação slideIn
+
+**Commit:** `88bafdc`
+
+---
+
+### §149 — Camada 1: Rule Engine Local
+
+**O Bug Crítico:**
+```
+"Zug nach Frankfurt" → LLM falha → fallback → "places" → "Greuth ist in deiner Nähe" 🔴
+```
+
+**Diagnóstico:** MARIA usava LLM para detectar intents simples.
+
+**A Solução — Camada 1 Determinística:**
+
+```python
+def detect_intent_local(message: str) -> str:
+    """Camada 1 — Zero LLM. Zero falha. 0ms."""
+    msg = message.lower()
+
+    train_keywords = ["zug", "bahn", "ice", "comboio", "trem", "train"]
+    if any(kw in msg for kw in train_keywords):
+        return "train"
+
+    flight_keywords = ["flug", "voo", "avião", "flight", "fly"]
+    if any(kw in msg for kw in flight_keywords):
+        return "flight"
+
+    hotel_keywords = ["hotel", "unterkunft", "alojamento"]
+    if any(kw in msg for kw in hotel_keywords):
+        return "hotel"
+
+    return None  # → LLM só para ambíguos
+```
+
+**Arquitectura Final:**
+```
+Camada 1: detect_intent_local() — regex/keywords (0ms, zero falha)
+Camada 2: LLM leve (Mistral) — só ambíguos
+Camada 3: LLM poderoso (Claude) — ALMA
+Camada 4: Bridges (Kiwi/DB/Hotellook)
+```
+
+**Fix Adicional — extract_train_details():**
+- Bug: "nach Frankfurt" → origin=frankfurt, destination=frankfurt
+- Fix: Extrair DESTINO primeiro, depois origem
+- Default origin = "kempten"
+
+**Teste Final:**
+```
+Input:  "Zug nach Frankfurt am 1 Mai 2026"
+Output: TYPE=train, DESTINATION=frankfurt
+        "112.99€ · 6h09 · Zentrum zu Zentrum"
+        SEALED: WINDI-TRAVEL-MNQ4KF7Z ✅
+```
+
+**Princípio:**
+> "Intents simples nunca precisam de LLM. LLM é para sabedoria, não para vocabulário."
+
+**Commit:** `ea3dddd`
+
+---
+
+Liga IA+H · Kempten, Bavaria · 08 Abril 2026
 "AI processes. Human decides. WINDI guarantees."
