@@ -7,7 +7,7 @@ import os
 
 # Service identity
 SERVICE_NAME = "w-sec-001"
-SERVICE_VERSION = "1.0.0"
+SERVICE_VERSION = "1.1.0"  # Added Telegram webhooks
 SERVICE_PORT = int(os.getenv("SEC_PORT", "8144"))
 
 # Correlation settings
@@ -43,3 +43,29 @@ HIGH_PRIORITY_EVENT_TYPES = {
 
 # Logging
 LOG_DIR = os.getenv("SEC_LOG_DIR", "/opt/windi/logs/security")
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# WEBHOOKS — Telegram Notification Configuration
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Environment variables:
+#   SEC_TELEGRAM_ENABLED     - Enable/disable Telegram (default: true)
+#   SEC_TELEGRAM_CHAT_ID     - Telegram chat/group ID to send alerts
+#   SEC_TELEGRAM_BOT_TOKEN   - Telegram bot token from @BotFather
+#
+# To configure:
+#   1. Create bot via @BotFather on Telegram
+#   2. Get the bot token
+#   3. Add bot to your security alerts chat/group
+#   4. Get chat_id (use @userinfobot or API)
+#   5. Export the environment variables before starting the service
+#
+# Example:
+#   export SEC_TELEGRAM_CHAT_ID="-1001234567890"
+#   export SEC_TELEGRAM_BOT_TOKEN="1234567890:ABCdefGHIjklMNOpqrsTUVwxyz"
+#
+# Anti-noise features (built-in):
+#   - Only high/critical severity incidents trigger notifications
+#   - 60-second debounce for same incident
+#   - SEALED events always notify (30s debounce)
+#

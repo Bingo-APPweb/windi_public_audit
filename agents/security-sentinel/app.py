@@ -38,6 +38,17 @@ from security_sentinel import ingest_event, close_incident, seal_incident
 from canonicalize import canonical_json, sha256_hex
 from ledger_client import anchor_security_incident, build_ledger_payload, verify_ledger_health
 from geo_resolver import enrich_incidents_geo, get_cached_geo_points
+from notifier import (
+    notify_incident_created,
+    notify_incident_escalated,
+    notify_distributed_detected,
+    notify_case_created,
+    notify_case_approved,
+    notify_incident_sealed,
+    get_notification_stats,
+    get_notification_log,
+    is_telegram_configured,
+)
 
 
 app = FastAPI(
@@ -92,6 +103,7 @@ async def health():
     """Health check endpoint."""
     ledger_ok = await verify_ledger_health()
     stats = storage.stats()
+    notif_stats = get_notification_stats()
 
     return {
         "status": "healthy",
@@ -101,6 +113,9 @@ async def health():
         "time": datetime.now(timezone.utc).isoformat(),
         "ledger_connected": ledger_ok,
         "storage": stats,
+        "webhooks": {
+            "telegram_configured": notif_stats.get("telegram_configured", False),
+        },
     }
 
 
@@ -134,8 +149,26 @@ async def post_event(event: SecEvent):
 
     The event will be correlated into an existing incident
     or create a new incident.
+
+    Triggers notifications for:
+    - New high/critical incidents
+    - Escalated incidents
+    - Distributed attack detection
     """
-    incident, was_correlated = await ingest_event(event)
+    incident, was_correlated, ingest_result = await ingest_event(event)
+
+    # Fire notifications in background (non-blocking)
+    if ingest_result:
+        if ingest_result.is_new:
+            # New incident - notify if high/critical
+            asyncio.create_task(notify_incident_created(incident))
+        elif ingest_result.was_escalated:
+            # Severity increased
+            asyncio.create_task(notify_incident_escalated(incident))
+
+        if ingest_result.is_distributed and len(incident.actors) == 2:
+            # Just became distributed (2nd unique actor)
+            asyncio.create_task(notify_distributed_detected(incident))
 
     return EventResponse(
         ok=True,
@@ -151,16 +184,32 @@ async def post_events_batch(events: List[SecEvent]):
     Ingest a batch of security events.
 
     Events are processed sequentially for proper correlation.
+    Notifications are batched to avoid spam.
     """
     accepted = 0
     rejected = 0
     incident_ids = set()
+    notified_incidents = set()  # Track to avoid duplicate notifications
 
     for event in events:
         try:
-            incident, _ = await ingest_event(event)
+            incident, _, ingest_result = await ingest_event(event)
             incident_ids.add(incident.incident_id)
             accepted += 1
+
+            # Fire notifications (with deduplication)
+            if ingest_result and incident.incident_id not in notified_incidents:
+                if ingest_result.is_new:
+                    asyncio.create_task(notify_incident_created(incident))
+                    notified_incidents.add(incident.incident_id)
+                elif ingest_result.was_escalated:
+                    asyncio.create_task(notify_incident_escalated(incident))
+                    notified_incidents.add(incident.incident_id)
+
+                if ingest_result.is_distributed and len(incident.actors) == 2:
+                    asyncio.create_task(notify_distributed_detected(incident))
+                    notified_incidents.add(incident.incident_id)
+
         except Exception:
             rejected += 1
 
@@ -279,6 +328,9 @@ async def seal_incident_endpoint(incident_id: str):
     incident.updated_at = now
     storage.store_incident(incident)
 
+    # Notify seal (important - always notify regardless of severity)
+    asyncio.create_task(notify_incident_sealed(incident))
+
     return SealResponse(
         ok=True,
         incident_id=incident.incident_id,
@@ -392,6 +444,9 @@ async def create_case(incident_id: str):
     incident.updated_at = now
     storage.store_incident(incident)
 
+    # Notify case creation
+    asyncio.create_task(notify_case_created(incident))
+
     return {
         "ok": True,
         "incident_id": incident_id,
@@ -418,6 +473,9 @@ async def approve_incident(incident_id: str):
     incident.status = "approved"
     incident.updated_at = datetime.now(timezone.utc)
     storage.store_incident(incident)
+
+    # Notify approval
+    asyncio.create_task(notify_case_approved(incident))
 
     return {
         "ok": True,
@@ -451,6 +509,82 @@ async def reject_incident(incident_id: str):
         "status": "closed",
         "resolution": "false_positive",
         "message": "Marked as false positive. Not sealed.",
+    }
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# WEBHOOKS — Notification Status and Log
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@app.get("/sec/webhooks/status")
+async def webhook_status():
+    """
+    Get webhook configuration and status.
+    """
+    from webhooks import get_telegram_config
+
+    config = get_telegram_config()
+    stats = get_notification_stats()
+
+    return {
+        "telegram": {
+            "enabled": config.enabled,
+            "configured": is_telegram_configured(),
+            "chat_id_set": bool(config.chat_id),
+            "token_set": bool(config.bot_token),
+            "events": [e.value for e in config.events],
+            "min_severity": config.min_severity,
+        },
+        "stats": stats,
+    }
+
+
+@app.get("/sec/webhooks/log")
+async def webhook_log(limit: int = 50):
+    """
+    Get recent notification log.
+    """
+    log = get_notification_log()
+    return {
+        "entries": log[-limit:] if len(log) > limit else log,
+        "count": len(log),
+    }
+
+
+@app.post("/sec/webhooks/test")
+async def test_webhook():
+    """
+    Send a test notification to verify webhook configuration.
+    """
+    if not is_telegram_configured():
+        return {
+            "ok": False,
+            "error": "Telegram not configured. Set SEC_TELEGRAM_CHAT_ID and SEC_TELEGRAM_BOT_TOKEN env vars.",
+        }
+
+    from notifier import send_telegram
+    from webhooks import get_telegram_config
+
+    config = get_telegram_config()
+
+    message = (
+        "🔔 *W-SEC-001 Test Notification*\n\n"
+        "✅ Telegram webhook is working correctly.\n\n"
+        f"⏰ {datetime.now(timezone.utc).isoformat()[:19]}\n"
+        "—\n"
+        "_Security Sentinel · WINDI_"
+    )
+
+    result = await send_telegram(
+        chat_id=config.chat_id,
+        bot_token=config.bot_token,
+        message=message,
+    )
+
+    return {
+        "ok": result.get("ok", False),
+        "message_id": result.get("message_id"),
+        "error": result.get("error"),
     }
 
 
