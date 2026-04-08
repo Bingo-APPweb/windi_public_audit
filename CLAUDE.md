@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.0.8
-**Sealed:** 2026-04-06 · §147 F14 Conversation History + §137 SSE Streaming SEALED
+**Version:** 2.0.9
+**Sealed:** 2026-04-08 · §148 WB-PERS Injection — MARIA Identity Stable
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -754,11 +754,11 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 08 Apr | **§148 WB-PERS Injection** · MARIA identity stable · 8 blocos selados · Dragon Alzheimer Causa 2 CURADA · `ce9f48d` |
 | 06 Apr | **§147 F14 Conversation History** · Follow-up routing fix · Intent detection bypass · `82009cc` |
 | 06 Apr | **§146 I14 Proibição de Placeholders** · IRREMEDIÁVEL · No "?" or "unknown" · `2c4c35f` |
 | 06 Apr | **§137 SSE Streaming** · WINDI-LAW AI Draft · Word-by-word · VC Berlin · `76abeef` |
 | 06 Apr | **§145.12 Memory → Ranking Engine** · Maria shows different worlds · `1c2e3df` |
-| 06 Apr | **§145.11 Stable Response Contract** · Maria breathing never fails · `cf6a168` |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -920,6 +920,7 @@ workspace/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
 ### Completado (últimos 10 · ver CLAUDE-HISTORY.md para §37-115)
+- [x] §148 **WB-PERS Injection** · MARIA identity stable · 8 blocos · Wisdom Protocol live · `ce9f48d` ✅ 08 Apr
 - [x] §147 **F14 Conversation History** · Follow-up routing fix · Intent bypass · `82009cc` ✅ 06 Apr
 - [x] §146 **I14 Proibição de Placeholders** · IRREMEDIÁVEL · `2c4c35f` ✅ 06 Apr
 - [x] §137 **SSE Streaming** · WINDI-LAW AI Draft · Word-by-word · `76abeef` ✅ 06 Apr
@@ -994,9 +995,10 @@ workspace/
 | §145.3 | Weather/Culture | ✅ SEALED | Routing separation · Overlap eliminated · `2017c3a` |
 | §146 | I14 Proibição de Placeholders | ✅ SEALED | IRREMEDIÁVEL · No "?" or "unknown" · `2c4c35f` |
 | §147 | F14 Conversation History | ✅ SEALED | Follow-up routing · Intent bypass · `82009cc` |
+| §148 | WB-PERS Injection | ✅ LIVE | MARIA identity stable · 8 blocos · Wisdom Protocol · `ce9f48d` |
 | §137 | SSE Streaming | ✅ LIVE | WINDI-LAW AI Draft · Word-by-word · `76abeef` |
 
-> **Detalhes completos §128-147:** `CLAUDE-HISTORY.md` § SESSÃO 05-06 Abr 2026
+> **Detalhes completos §128-148:** `CLAUDE-HISTORY.md` § SESSÃO 05-08 Abr 2026
 
 ---
 
