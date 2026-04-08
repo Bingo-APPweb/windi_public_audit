@@ -165,6 +165,144 @@ def should_include_trains(origin: str, destination: str) -> bool:
         return False
 
 
+def detect_train_intent(text: str) -> bool:
+    """
+    Detect if user input contains train-related intent.
+
+    §103 — Intermodal Intelligence: Recognize train queries.
+    """
+    lower = text.lower()
+
+    keywords = [
+        # Portuguese
+        "trem", "trens", "comboio", "comboios", "estação", "estacao",
+        "bilhete de trem", "horário do trem", "horario do trem",
+        # German
+        "zug", "züge", "zuge", "bahn", "bahnhof", "ice", "ic", "re", "rb",
+        "zugfahrt", "bahnfahrt", "zugverbindung", "fahrplan",
+        "mit dem zug", "zugticket",
+        # English
+        "train", "trains", "railway", "rail", "station",
+        "train ticket", "train schedule", "by train",
+    ]
+
+    return any(kw in lower for kw in keywords)
+
+
+def extract_train_details(text: str, default_from: str = "kempten") -> Dict[str, Any]:
+    """Extract train journey details from natural language."""
+    import re
+    from datetime import datetime, timedelta
+
+    lower = text.lower()
+
+    # Find origin and destination
+    origin = None
+    destination = None
+
+    # Prepositions for origin/destination
+    origin_preps = ["de ", "saindo de ", "partindo de ", "from ", "von ", "aus "]
+    dest_preps = ["para ", "até ", "to ", "nach ", "pra "]
+    via_preps = ["via ", "passando por ", "über "]
+
+    # §149 FIX: Extract DESTINATION FIRST (most important for "nach Frankfurt")
+    for prep in dest_preps:
+        if prep in lower:
+            after_prep = lower.split(prep, 1)[1].split()[0:3]
+            for word in after_prep:
+                clean = word.strip(".,!?")
+                if clean in STATION_CODES:
+                    destination = clean
+                    break
+            if destination:
+                break
+
+    # Extract origin (only after destination is found)
+    for prep in origin_preps:
+        if prep in lower:
+            after_prep = lower.split(prep, 1)[1].split()[0:3]
+            for word in after_prep:
+                clean = word.strip(".,!?")
+                if clean in STATION_CODES and clean != destination:  # Don't use same station
+                    origin = clean
+                    break
+            if origin:
+                break
+
+    # Extract via station
+    via = None
+    for prep in via_preps:
+        if prep in lower:
+            after_prep = lower.split(prep, 1)[1].split()[0:3]
+            for word in after_prep:
+                clean = word.strip(".,!?")
+                if clean in STATION_CODES and clean not in (origin, destination):
+                    via = clean
+                    break
+            if via:
+                break
+
+    # Fallback: find any station not already used (only for origin if missing)
+    if not origin and destination:
+        for station in STATION_CODES.keys():
+            pattern = r'\b' + re.escape(station) + r'\b'
+            if re.search(pattern, lower) and station != destination:
+                origin = station
+                break
+
+    # If still no origin but have destination, use default
+    if not origin and destination:
+        origin = default_from
+
+    # If no destination found, try to find any station
+    if not destination:
+        for station in STATION_CODES.keys():
+            pattern = r'\b' + re.escape(station) + r'\b'
+            if re.search(pattern, lower) and station != origin:
+                destination = station
+                break
+
+    # Parse time preference
+    time = "08:00"  # Default morning
+    if any(w in lower for w in ["manhã", "manha", "morning", "morgen", "früh", "fruh", "cedo"]):
+        time = "07:00"
+    elif any(w in lower for w in ["tarde", "afternoon", "nachmittag"]):
+        time = "14:00"
+    elif any(w in lower for w in ["noite", "evening", "abend"]):
+        time = "18:00"
+
+    # Parse date
+    date = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
+
+    month_names = {
+        "janeiro": "01", "fevereiro": "02", "março": "03", "marco": "03",
+        "abril": "04", "maio": "05", "junho": "06",
+        "julho": "07", "agosto": "08", "setembro": "09",
+        "outubro": "10", "novembro": "11", "dezembro": "12",
+        "january": "01", "february": "02", "march": "03",
+        "april": "04", "may": "05", "june": "06",
+        "juli": "07", "august": "08", "september": "09",
+        "oktober": "10", "november": "11", "dezember": "12",
+    }
+
+    month_pattern = r'(?:dia\s+)?(\d{1,2})\s+(?:de\s+)?(' + '|'.join(month_names.keys()) + r')(?:\s+(?:de\s+)?(\d{4}))?'
+    month_match = re.search(month_pattern, lower)
+    if month_match:
+        day = month_match.group(1).zfill(2)
+        month = month_names.get(month_match.group(2), "01")
+        year = month_match.group(3) or "2026"
+        date = f"{year}-{month}-{day}"
+
+    return {
+        "origin": origin,
+        "destination": destination,
+        "via": via,
+        "date": date,
+        "time": time,
+        "destination_missing": not destination
+    }
+
+
 def normalize_station(location: str) -> Optional[str]:
     """Convert city name to DB station ID if known."""
     lower = location.lower().strip()

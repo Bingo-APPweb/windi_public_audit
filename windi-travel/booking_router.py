@@ -178,6 +178,8 @@ try:
         should_include_trains,
         estimate_distance,
         CITY_COORDS,  # §148 — For nearest station lookup
+        detect_train_intent,  # §149 — Direct train intent detection
+        extract_train_details,  # §149 — Extract train journey details
     )
     DB_BRIDGE_ENABLED = True
     log.info("[MARIA] Deutsche Bahn Bridge loaded ✓")
@@ -187,6 +189,8 @@ except ImportError as e:
     async def search_trains(*args, **kwargs): return {"trains": []}
     def should_include_trains(*args, **kwargs): return False
     def estimate_distance(*args, **kwargs): return 9999
+    def detect_train_intent(text): return False  # §149 fallback
+    def extract_train_details(text, default_from="kempten"): return {}  # §149 fallback
     log.warning(f"[MARIA] DB Bridge not available: {e}")
 
 # ── §148 — Nearest Station Helper (Cross-Modal Connection) ────────────────────
@@ -2775,12 +2779,159 @@ async def maria_think_endpoint(req: ThinkRequest):
                 }
 
     # ═══════════════════════════════════════════════════════════════════════════
+    # §149 — CAMADA 1: RULE ENGINE LOCAL (determinístico, 0ms, zero falha)
+    # "Intents simples nunca precisam de LLM. LLM é para sabedoria, não vocabulário."
+    # ═══════════════════════════════════════════════════════════════════════════
+
+    def detect_intent_local(message: str) -> str:
+        """
+        Camada 1 — Determinística. Zero LLM. Zero falha.
+        Retorna: 'train' | 'flight' | 'hotel' | 'weather' | None
+        """
+        msg = message.lower()
+
+        # 🚆 TRAIN — prioridade máxima (foi o bug)
+        train_keywords = [
+            "zug", "züge", "bahn", "ice", "intercity", "bahnhof", "gleis", "zugfahrt",
+            "comboio", "comboios", "trem", "trens", "cp", "estação", "estacao",
+            "train", "trains", "rail", "railway", "station"
+        ]
+        if any(kw in msg for kw in train_keywords):
+            return "train"
+
+        # ✈️ FLIGHT
+        flight_keywords = [
+            "flug", "flüge", "fliegen", "flugzeug", "airport", "flughafen", "lufthansa",
+            "voo", "voos", "avião", "aviao", "aeroporto", "voar",
+            "flight", "flights", "fly", "airplane", "airport"
+        ]
+        if any(kw in msg for kw in flight_keywords):
+            return "flight"
+
+        # 🏨 HOTEL
+        hotel_keywords = [
+            "hotel", "hotels", "hostel", "unterkunft", "übernachtung", "zimmer",
+            "alojamento", "hospedagem", "pousada", "airbnb",
+            "accommodation", "lodging", "stay", "room"
+        ]
+        if any(kw in msg for kw in hotel_keywords):
+            return "hotel"
+
+        # ⛅ WEATHER (quick detection to avoid places fallback)
+        weather_keywords = [
+            "wetter", "temperatur", "regen", "sonne", "kalt", "warm", "grad",
+            "tempo", "temperatura", "chuva", "sol", "frio", "calor", "graus",
+            "weather", "temperature", "rain", "sunny", "cold", "hot", "degrees"
+        ]
+        if any(kw in msg for kw in weather_keywords):
+            return "weather"
+
+        return None  # Só então → fluxo normal (pode usar LLM)
+
+    # Camada 1 — Detecção local determinística
+    local_intent = detect_intent_local(user_input)
+    if local_intent:
+        log.info(f"[MARIA §149] Camada 1 detected: {local_intent} (from: {user_input[:40]}...)")
+
+    # ═══════════════════════════════════════════════════════════════════════════
     # §96 — DECISION ROUTING (antes do LLM)
     # "MARIA deve decidir antes de falar."
     # ═══════════════════════════════════════════════════════════════════════════
 
+    # 🚆 TRAIN INTENT — §149 (Camada 1 prioridade)
+    if local_intent == "train" or (DB_BRIDGE_ENABLED and detect_train_intent(user_input)):
+        log.info(f"[MARIA §149] Train intent routing: {user_input[:50]}...")
+        # §147 F14 — Include conversation history for extraction
+        extraction_context = user_input
+        if req.history:
+            history_text = " ".join([m.get("content", "") for m in req.history if isinstance(m, dict)])
+            extraction_context = f"{history_text} {user_input}"
+        details = extract_train_details(extraction_context)
+
+        # Se não tem destino, pedir ao utilizador
+        if not details.get("destination"):
+            ask_dest = {
+                "PT": "Para qual cidade queres ir de comboio? 🚆",
+                "DE": "In welche Stadt möchtest du mit dem Zug fahren? 🚆",
+                "EN": "Which city would you like to travel to by train? 🚆"
+            }
+            return {
+                "type": "clarification",
+                "intent": "train",
+                "response": ask_dest.get(req.lang, ask_dest["EN"]),
+                "needs": ["destination"],
+                "lang": req.lang
+            }
+
+        # Buscar comboios
+        try:
+            origin = details.get("origin", "kempten")
+            destination = details["destination"]
+            travel_date = details.get("date") or (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d")
+            travel_time = details.get("time", "08:00")
+
+            result = await search_trains(
+                origin=origin,
+                destination=destination,
+                date=travel_date,
+                time=travel_time
+            )
+
+            train_list = result.get("trains", [])
+
+            if train_list:
+                travel_prefs = get_enhanced_travel_preferences(req.did) if req.did and MEMORY_ENGINE_ENABLED else (
+                    get_travel_preferences(req.did) if req.did else None
+                )
+                live_context = get_live_context(user_input, req.lat, req.lng)
+
+                for train in train_list:
+                    train["_score"] = score_travel_option(train, travel_prefs, live_context)
+                train_list.sort(key=lambda x: x.get("_score", 0), reverse=True)
+
+                best_train = train_list[0]
+                voice = explain_train_decision(best_train, req.lang)
+
+                decision_id = None
+                if req.did and MEMORY_ENGINE_ENABLED:
+                    decision_id = save_decision(
+                        did=req.did,
+                        decision_type="train",
+                        decision=best_train,
+                        context=live_context,
+                        route=f"{origin}→{destination}",
+                        destination=destination
+                    )
+
+                return {
+                    "type": "train",
+                    "intent": "train",
+                    "response": voice,
+                    "decision": best_train,
+                    "decision_id": decision_id,
+                    "alternatives": train_list[1:3],
+                    "data": train_list[:3],
+                    "origin": origin,
+                    "destination": destination,
+                    "lang": req.lang,
+                    "source": "deutschebahn.com",
+                    "mode": "nomada_v1.3",
+                    "suggest_hotel": True,
+                    "hotel_context": {"destination": destination, "check_in": travel_date}
+                }
+            else:
+                no_trains = {
+                    "PT": f"Não encontrei comboios para {destination}. Tenta outra data.",
+                    "DE": f"Keine Züge nach {destination} gefunden. Versuche ein anderes Datum.",
+                    "EN": f"No trains to {destination} found. Try a different date."
+                }
+                return {"type": "train", "intent": "train", "response": no_trains.get(req.lang, no_trains["EN"]), "data": [], "lang": req.lang}
+        except Exception as e:
+            log.error(f"[MARIA §149] Train error: {e}")
+            return {"type": "train_error", "intent": "train", "response": "Erro nos comboios. Tenta novamente.", "lang": req.lang}
+
     # ✈️ FLIGHT INTENT
-    if KIWI_BRIDGE_ENABLED and detect_flight_intent(user_input):
+    if local_intent == "flight" or (KIWI_BRIDGE_ENABLED and detect_flight_intent(user_input)):
         log.info(f"[MARIA §96] Flight intent detected: {user_input[:50]}...")
         # §147 F14 — Include conversation history for extraction
         extraction_context = user_input
