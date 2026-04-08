@@ -29,7 +29,26 @@ def generate_incident_id() -> str:
     return f"sec_inc_{ts}_{suffix}"
 
 
-async def ingest_event(event: SecEvent) -> Tuple[SecIncident, bool]:
+class IngestResult:
+    """Result of event ingestion with metadata for notifications."""
+    def __init__(
+        self,
+        incident: SecIncident,
+        was_correlated: bool,
+        is_new: bool = False,
+        was_escalated: bool = False,
+        is_distributed: bool = False,
+        previous_severity: Optional[str] = None,
+    ):
+        self.incident = incident
+        self.was_correlated = was_correlated
+        self.is_new = is_new
+        self.was_escalated = was_escalated
+        self.is_distributed = is_distributed
+        self.previous_severity = previous_severity
+
+
+async def ingest_event(event: SecEvent) -> Tuple[SecIncident, bool, Optional[IngestResult]]:
     """
     Ingest a security event and correlate into incident.
 
@@ -38,9 +57,10 @@ async def ingest_event(event: SecEvent) -> Tuple[SecIncident, bool]:
     - Technical: Targeted attacks → grouped by actor
 
     Returns:
-        Tuple of (incident, was_correlated)
+        Tuple of (incident, was_correlated, ingest_result)
         - was_correlated=True if event merged into existing incident
         - was_correlated=False if new incident created
+        - ingest_result contains metadata for notification decisions
     """
     # Store the event
     storage.store_event(event)
@@ -52,11 +72,36 @@ async def ingest_event(event: SecEvent) -> Tuple[SecIncident, bool]:
     existing = storage.get_incident_by_correlation_key(key)
 
     if existing and within_correlation_window(existing.updated_at, event.timestamp):
+        # Track previous state for escalation detection
+        previous_severity = existing.severity
+        previous_actor_count = len(existing.actors)
+
         # Merge into existing incident
         incident = merge_event_into_incident(existing, event, key_type)
         storage.store_incident(incident)
         storage.link_event_to_incident(event.event_id, incident.incident_id)
-        return incident, True
+
+        # Detect escalation
+        severity_order = {"low": 0, "medium": 1, "high": 2, "critical": 3}
+        was_escalated = severity_order.get(incident.severity, 0) > severity_order.get(previous_severity, 0)
+
+        # Detect new distributed attack (went from 1 to >1 actors)
+        is_distributed = (
+            key_type == "behavioral" and
+            previous_actor_count == 1 and
+            len(incident.actors) > 1
+        )
+
+        result = IngestResult(
+            incident=incident,
+            was_correlated=True,
+            is_new=False,
+            was_escalated=was_escalated,
+            is_distributed=is_distributed,
+            previous_severity=previous_severity,
+        )
+
+        return incident, True, result
 
     # Create new incident
     incident = create_incident_from_event(event, key, key_type)
@@ -64,7 +109,16 @@ async def ingest_event(event: SecEvent) -> Tuple[SecIncident, bool]:
     storage.set_correlation_index(key, incident.incident_id)
     storage.link_event_to_incident(event.event_id, incident.incident_id)
 
-    return incident, False
+    result = IngestResult(
+        incident=incident,
+        was_correlated=False,
+        is_new=True,
+        was_escalated=False,
+        is_distributed=(key_type == "behavioral"),
+        previous_severity=None,
+    )
+
+    return incident, False, result
 
 
 def merge_event_into_incident(
