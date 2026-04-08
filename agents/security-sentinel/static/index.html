@@ -7,6 +7,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<!-- Leaflet for GeoMap -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <style>
 :root {
@@ -505,6 +508,80 @@ body {
   padding: 20px;
   font-size: 0.75rem;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   GEO MAP — World Attack Visualization
+   ═══════════════════════════════════════════════════════════════════ */
+
+.map-container {
+  position: relative;
+  height: 280px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #0a0a0c;
+}
+
+#threat-map {
+  height: 100%;
+  width: 100%;
+  background: #0a0a0c;
+}
+
+/* Dark map tiles override */
+.leaflet-container {
+  background: #0a0a0c;
+  font-family: "JetBrains Mono", monospace;
+}
+
+.leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.8) contrast(1.2);
+}
+
+.leaflet-popup-content-wrapper {
+  background: var(--bg-card);
+  color: var(--text);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.leaflet-popup-tip {
+  background: var(--bg-card);
+}
+
+.leaflet-popup-content {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.75rem;
+}
+
+.map-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-dim);
+  font-size: 0.75rem;
+}
+
+/* Pulse animation for markers */
+@keyframes marker-pulse {
+  0% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.5); opacity: 0.4; }
+  100% { transform: scale(1); opacity: 0.8; }
+}
+
+.geo-stats {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+}
+
+.geo-stats span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
 </style>
 </head>
 
@@ -534,6 +611,18 @@ body {
   <div class="metric sealed">
     <div class="value" id="sealed-count">0</div>
     <div class="label">Sealed</div>
+  </div>
+</div>
+
+<!-- ═══ GEO MAP — World Attack Visualization ═══ -->
+<div class="card" style="margin-bottom: 20px;">
+  <h3>🌍 Threat Map</h3>
+  <div class="map-container">
+    <div id="threat-map"></div>
+  </div>
+  <div class="geo-stats" id="geo-stats">
+    <span>🌐 0 locations</span>
+    <span>🗺️ 0 countries</span>
   </div>
 </div>
 
@@ -689,6 +778,101 @@ function initTimelineChart() {
   });
 }
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// GEO MAP — Leaflet World Map
+// ═══════════════════════════════════════════════════════════════════════════════
+
+let threatMap = null;
+let mapMarkers = [];
+const geoStatsDiv = document.getElementById('geo-stats');
+
+function initThreatMap() {
+  // Initialize Leaflet map with dark theme
+  threatMap = L.map('threat-map', {
+    zoomControl: false,
+    attributionControl: false,
+    minZoom: 1,
+    maxZoom: 10,
+  }).setView([30, 0], 2);
+
+  // Dark tile layer (CartoDB Dark)
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    subdomains: 'abcd',
+  }).addTo(threatMap);
+
+  // Add zoom control to bottom right
+  L.control.zoom({ position: 'bottomright' }).addTo(threatMap);
+}
+
+function renderGeoMap(geoPoints) {
+  if (!threatMap) return;
+
+  // Clear existing markers
+  mapMarkers.forEach(m => threatMap.removeLayer(m));
+  mapMarkers = [];
+
+  if (!geoPoints || geoPoints.length === 0) {
+    geoStatsDiv.innerHTML = '<span>🌐 No geo data</span>';
+    return;
+  }
+
+  // Track unique countries
+  const countries = new Set();
+  let totalCount = 0;
+
+  // Add markers for each geo point
+  geoPoints.forEach(p => {
+    if (!p.lat || !p.lon) return;
+
+    countries.add(p.country || 'Unknown');
+    totalCount += p.count || 1;
+
+    // Intensity based on event count
+    const intensity = Math.min(1, (p.count || 1) / 30);
+
+    // Determine color based on severity
+    let color = '#ff2e2e'; // Default red
+    if (p.severity === 'critical') color = '#ff2e2e';
+    else if (p.severity === 'high') color = '#ff8c00';
+    else if (p.severity === 'medium') color = '#e6c200';
+    else color = '#4a4a4a';
+
+    // Create circle marker with pulsing effect
+    const marker = L.circleMarker([p.lat, p.lon], {
+      radius: 6 + intensity * 12,
+      color: color,
+      fillColor: color,
+      fillOpacity: 0.4 + intensity * 0.4,
+      weight: 2,
+    }).addTo(threatMap);
+
+    // Popup with details
+    const popupContent = `
+      <div style="text-align:center;">
+        <div style="color:${color};font-weight:bold;">${p.count || 1} events</div>
+        <div style="font-size:0.65rem;margin-top:4px;">${p.ip}</div>
+        <div style="font-size:0.6rem;color:#666;">${p.city || ''} ${p.country || ''}</div>
+      </div>
+    `;
+    marker.bindPopup(popupContent);
+
+    mapMarkers.push(marker);
+  });
+
+  // Update geo stats
+  geoStatsDiv.innerHTML = `
+    <span>🌐 ${geoPoints.length} locations</span>
+    <span>🗺️ ${countries.size} countries</span>
+    <span>⚡ ${totalCount} events</span>
+  `;
+
+  // Auto-fit bounds if we have markers
+  if (mapMarkers.length > 0 && mapMarkers.length < 50) {
+    const group = L.featureGroup(mapMarkers);
+    threatMap.fitBounds(group.getBounds().pad(0.2), { maxZoom: 6 });
+  }
+}
+
 // SSE Connection
 let evtSource = null;
 
@@ -772,6 +956,7 @@ function updateDashboard(data) {
   renderHeatmap(data.heatmap || {});
   updateTimeline(data.timeline || []);
   renderReplay(data.recent_events || []);
+  renderGeoMap(data.geo || []);
 }
 
 function renderIncidents(incidents) {
@@ -994,9 +1179,11 @@ async function investigateIncident(id) {
 // Initialize
 // Initialize
 initTimelineChart();
+initThreatMap();
 connect();
 addActivity('Dashboard initialized', 'low');
 addActivity('Live Intelligence enabled', 'medium');
+addActivity('Geo Map active', 'low');
 </script>
 
 </body>

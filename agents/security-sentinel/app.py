@@ -37,6 +37,7 @@ from storage import storage
 from security_sentinel import ingest_event, close_incident, seal_incident
 from canonicalize import canonical_json, sha256_hex
 from ledger_client import anchor_security_incident, build_ledger_payload, verify_ledger_health
+from geo_resolver import enrich_incidents_geo, get_cached_geo_points
 
 
 app = FastAPI(
@@ -53,6 +54,37 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# Background task for geo enrichment
+geo_enrichment_task = None
+
+
+async def geo_enrichment_loop():
+    """Background task to periodically enrich IPs with geo data."""
+    while True:
+        try:
+            incidents = storage.list_incidents(limit=50)
+            if incidents:
+                await enrich_incidents_geo(incidents)
+        except Exception:
+            pass
+        await asyncio.sleep(10)  # Run every 10 seconds
+
+
+@app.on_event("startup")
+async def startup_event():
+    """Start background geo enrichment task."""
+    global geo_enrichment_task
+    geo_enrichment_task = asyncio.create_task(geo_enrichment_loop())
+
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Cancel background task on shutdown."""
+    global geo_enrichment_task
+    if geo_enrichment_task:
+        geo_enrichment_task.cancel()
 
 
 @app.get("/health")
@@ -486,6 +518,9 @@ async def incident_stream():
             # Get recent events for replay
             recent_events = get_recent_events(30)
 
+            # Get geo points (uses cache, enrichment happens in background)
+            geo_points = get_cached_geo_points(incidents)
+
             data = {
                 "time": now.isoformat(),
                 "events_total": stats["events"],
@@ -510,6 +545,7 @@ async def incident_stream():
                 "heatmap": heatmap,
                 "timeline": list(TIMELINE_BUFFER),
                 "recent_events": recent_events,
+                "geo": geo_points,
             }
 
             # Always emit for timeline animation (remove hash check)
