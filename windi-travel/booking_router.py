@@ -104,6 +104,8 @@ except ImportError:
     def get_user_threads(*args, **kwargs): return []
     def get_thread_with_timeline(*args, **kwargs): return None
     def close_thread(*args, **kwargs): pass
+    # §145.9 fallback
+    def update_travel_preference(*args, **kwargs): pass
     log.warning("[MARIA] Memory module not available — running without DID persistence")
 
 # ── Places Sovereignty Gate ───────────────────────────────────────────────────
@@ -2741,7 +2743,12 @@ async def maria_think_endpoint(req: ThinkRequest):
     # ✈️ FLIGHT INTENT
     if KIWI_BRIDGE_ENABLED and detect_flight_intent(user_input):
         log.info(f"[MARIA §96] Flight intent detected: {user_input[:50]}...")
-        details = extract_flight_details(user_input)
+        # §147 F14 — Include conversation history for extraction
+        extraction_context = user_input
+        if req.history:
+            history_text = " ".join([m.get("content", "") for m in req.history if isinstance(m, dict)])
+            extraction_context = f"{history_text} {user_input}"
+        details = extract_flight_details(extraction_context)
 
         # Se não tem destino, pedir ao utilizador
         # Nota: extract_flight_details retorna fly_to, não destination
@@ -2905,7 +2912,12 @@ async def maria_think_endpoint(req: ThinkRequest):
     # 🏨 HOTEL INTENT
     if HOTEL_BRIDGE_ENABLED and detect_hotel_intent(user_input):
         log.info(f"[MARIA §96] Hotel intent detected: {user_input[:50]}...")
-        details = extract_hotel_details(user_input)
+        # §147 F14 — Include conversation history for extraction
+        extraction_context = user_input
+        if req.history:
+            history_text = " ".join([m.get("content", "") for m in req.history if isinstance(m, dict)])
+            extraction_context = f"{history_text} {user_input}"
+        details = extract_hotel_details(extraction_context)
 
         # Se não tem destino, pedir ao utilizador
         if not details.get("destination"):
