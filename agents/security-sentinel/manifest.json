@@ -1,0 +1,43 @@
+{
+  "agent_id": "W-SEC-001",
+  "name": "Security Sentinel",
+  "version": "1.0.0",
+  "port": 8144,
+  "status": "LIVE",
+  "created_at": "2026-04-08T14:55:00Z",
+  "description": "Security Evidence Architecture for WINDI Core. Detects, correlates, and anchors security events to the Forensic Ledger.",
+  "invariants": ["I9", "I11"],
+  "endpoints": {
+    "health": "/health",
+    "metrics": "/metrics",
+    "events": "/sec/events",
+    "events_batch": "/sec/events/batch",
+    "incidents": "/sec/incidents",
+    "incident_detail": "/sec/incidents/{incident_id}",
+    "incident_events": "/sec/incidents/{incident_id}/events",
+    "seal": "/sec/incidents/{incident_id}/seal",
+    "close": "/sec/incidents/{incident_id}/close",
+    "investigate": "/sec/incidents/{incident_id}/investigate"
+  },
+  "integrations": {
+    "ledger": "http://127.0.0.1:8101",
+    "maestro": "http://127.0.0.1:8106"
+  },
+  "event_types": [
+    "rate_limit_exceeded",
+    "token_invalid",
+    "token_replay_detected",
+    "forbidden_endpoint_access",
+    "device_binding_mismatch",
+    "constitutional_violation_attempt",
+    "merkle_integrity_failed",
+    "seal_forgery_attempt",
+    "ledger_tamper_attempt",
+    "input_validation_failed",
+    "path_traversal_attempt",
+    "payload_injection"
+  ],
+  "severity_levels": ["low", "medium", "high", "critical"],
+  "correlation_window_seconds": 300,
+  "principle": "Not every suspicious event deserves a seal. Every seal must arise from correlated evidence."
+}

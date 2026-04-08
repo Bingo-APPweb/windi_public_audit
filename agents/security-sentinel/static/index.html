@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="noir">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>W-SEC-001 — NOIR OPS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<style>
+:root {
+  --bg: #0a0a0c;
+  --bg-card: #111114;
+  --border: #1a1a1f;
+  --text: #e5e5e8;
+  --text-dim: #666;
+  --gold: #c9a227;
+  --low: #4a4a4a;
+  --medium: #e6c200;
+  --high: #ff8c00;
+  --critical: #ff2e2e;
+  --sealed: #00cc66;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "JetBrains Mono", monospace;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.header h1 {
+  font-weight: 300;
+  font-size: 1.5rem;
+  letter-spacing: 3px;
+  color: var(--gold);
+}
+
+.header .status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pulse {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--sealed);
+  animation: pulse 2s infinite;
+}
+
+.pulse.disconnected {
+  background: var(--critical);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.9); }
+}
+
+/* Grid Layout */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 20px;
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Cards */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.card h3 {
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  margin-bottom: 16px;
+}
+
+/* Metrics */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.metric {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+}
+
+.metric .value {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.metric .label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+
+.metric.critical .value { color: var(--critical); }
+.metric.high .value { color: var(--high); }
+.metric.medium .value { color: var(--medium); }
+.metric.sealed .value { color: var(--sealed); }
+
+/* Incidents List */
+.incidents-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.incident {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.incident:hover {
+  border-color: var(--gold);
+}
+
+.incident-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.severity-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.severity-badge.low {
+  background: var(--low);
+  color: #aaa;
+}
+
+.severity-badge.medium {
+  background: rgba(230, 194, 0, 0.2);
+  color: var(--medium);
+}
+
+.severity-badge.high {
+  background: rgba(255, 140, 0, 0.2);
+  color: var(--high);
+}
+
+.severity-badge.critical {
+  background: rgba(255, 46, 46, 0.2);
+  color: var(--critical);
+  animation: critical-pulse 1s infinite;
+}
+
+@keyframes critical-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 46, 46, 0.4); }
+  50% { box-shadow: 0 0 12px 2px rgba(255, 46, 46, 0.6); }
+}
+
+.status-badge {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 3px 6px;
+  border-radius: 3px;
+  background: var(--border);
+  color: var(--text-dim);
+}
+
+.status-badge.sealed {
+  background: rgba(0, 204, 102, 0.2);
+  color: var(--sealed);
+}
+
+.incident-title {
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.incident-meta {
+  display: flex;
+  gap: 16px;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+}
+
+.incident-meta span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Sidebar */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Severity Distribution */
+.severity-dist {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.severity-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.severity-row .label {
+  width: 70px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.severity-row .bar {
+  flex: 1;
+  height: 8px;
+  background: var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.severity-row .bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.severity-row.critical .label { color: var(--critical); }
+.severity-row.critical .bar-fill { background: var(--critical); }
+.severity-row.high .label { color: var(--high); }
+.severity-row.high .bar-fill { background: var(--high); }
+.severity-row.medium .label { color: var(--medium); }
+.severity-row.medium .bar-fill { background: var(--medium); }
+.severity-row.low .label { color: var(--low); }
+.severity-row.low .bar-fill { background: var(--text-dim); }
+
+.severity-row .count {
+  width: 30px;
+  text-align: right;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* Activity Feed */
+.activity-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.activity-item {
+  font-size: 0.7rem;
+  padding: 8px;
+  background: var(--bg);
+  border-radius: 4px;
+  border-left: 3px solid var(--border);
+}
+
+.activity-item.critical { border-left-color: var(--critical); }
+.activity-item.high { border-left-color: var(--high); }
+.activity-item.medium { border-left-color: var(--medium); }
+
+.activity-item .time {
+  color: var(--text-dim);
+  font-size: 0.6rem;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-dim);
+}
+
+.empty-state .icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  opacity: 0.3;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.btn {
+  font-family: inherit;
+  font-size: 0.7rem;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.btn.primary {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--bg);
+}
+
+.btn.primary:hover {
+  background: #b8931f;
+}
+
+.btn.danger {
+  border-color: var(--critical);
+  color: var(--critical);
+}
+
+.btn.danger:hover {
+  background: var(--critical);
+  color: white;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   LIVE INTELLIGENCE — Heatmap, Timeline, Replay
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Intelligence Grid */
+.intel-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 1200px) {
+  .intel-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .intel-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Heatmap */
+.heatmap-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.heatmap-row {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  transition: all 0.3s ease;
+}
+
+.heatmap-row .ip {
+  flex: 1;
+  font-family: "JetBrains Mono", monospace;
+  letter-spacing: 0.5px;
+}
+
+.heatmap-row .count {
+  font-weight: 700;
+  min-width: 40px;
+  text-align: right;
+}
+
+.heatmap-empty {
+  color: var(--text-dim);
+  text-align: center;
+  padding: 20px;
+  font-size: 0.75rem;
+}
+
+/* Timeline Canvas */
+.timeline-container {
+  position: relative;
+  height: 100px;
+}
+
+#timeline-canvas {
+  width: 100% !important;
+  height: 100px !important;
+}
+
+/* Replay */
+.replay-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  font-size: 0.7rem;
+}
+
+.replay-event {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: var(--bg);
+  border-radius: 4px;
+  border-left: 3px solid var(--border);
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.replay-event.low { border-left-color: var(--low); }
+.replay-event.medium { border-left-color: var(--medium); }
+.replay-event.high { border-left-color: var(--high); }
+.replay-event.critical { border-left-color: var(--critical); }
+
+.replay-event .time {
+  color: var(--text-dim);
+  font-size: 0.65rem;
+  min-width: 60px;
+}
+
+.replay-event .type {
+  flex: 1;
+  color: var(--text);
+}
+
+.replay-event .ip {
+  color: var(--gold);
+  font-size: 0.65rem;
+}
+
+.replay-empty {
+  color: var(--text-dim);
+  text-align: center;
+  padding: 20px;
+  font-size: 0.75rem;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <h1>W-SEC-001 — NOIR OPS</h1>
+  <div class="status">
+    <span id="connection-text">Connecting...</span>
+    <div class="pulse" id="connection-pulse"></div>
+  </div>
+</div>
+
+<div class="metrics-grid">
+  <div class="metric">
+    <div class="value" id="events-total">0</div>
+    <div class="label">Events</div>
+  </div>
+  <div class="metric">
+    <div class="value" id="incidents-total">0</div>
+    <div class="label">Incidents</div>
+  </div>
+  <div class="metric critical">
+    <div class="value" id="critical-count">0</div>
+    <div class="label">Critical</div>
+  </div>
+  <div class="metric sealed">
+    <div class="value" id="sealed-count">0</div>
+    <div class="label">Sealed</div>
+  </div>
+</div>
+
+<!-- ═══ LIVE INTELLIGENCE — Heatmap, Timeline, Replay ═══ -->
+<div class="intel-grid">
+  <div class="card">
+    <h3>🔥 Threat Heatmap</h3>
+    <div class="heatmap-container" id="heatmap">
+      <div class="heatmap-empty">No threat sources detected</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>⏱ Activity Timeline</h3>
+    <div class="timeline-container">
+      <canvas id="timeline-canvas"></canvas>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🎥 Event Replay</h3>
+    <div class="replay-container" id="replay">
+      <div class="replay-empty">Waiting for events...</div>
+    </div>
+  </div>
+</div>
+
+<div class="grid">
+  <div class="card">
+    <h3>Active Incidents</h3>
+    <div class="incidents-list" id="incidents-list">
+      <div class="empty-state">
+        <div class="icon">🛡️</div>
+        <p>No incidents detected</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar">
+    <div class="card">
+      <h3>Severity Distribution</h3>
+      <div class="severity-dist">
+        <div class="severity-row critical">
+          <span class="label">Critical</span>
+          <div class="bar"><div class="bar-fill" id="bar-critical" style="width: 0%"></div></div>
+          <span class="count" id="count-critical">0</span>
+        </div>
+        <div class="severity-row high">
+          <span class="label">High</span>
+          <div class="bar"><div class="bar-fill" id="bar-high" style="width: 0%"></div></div>
+          <span class="count" id="count-high">0</span>
+        </div>
+        <div class="severity-row medium">
+          <span class="label">Medium</span>
+          <div class="bar"><div class="bar-fill" id="bar-medium" style="width: 0%"></div></div>
+          <span class="count" id="count-medium">0</span>
+        </div>
+        <div class="severity-row low">
+          <span class="label">Low</span>
+          <div class="bar"><div class="bar-fill" id="bar-low" style="width: 0%"></div></div>
+          <span class="count" id="count-low">0</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Activity Feed</h3>
+      <div class="activity-feed" id="activity-feed">
+        <div class="activity-item">
+          <div>System initialized</div>
+          <div class="time">--:--:--</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// State
+let lastIncidents = [];
+const activityLog = [];
+const MAX_ACTIVITY = 20;
+
+// API Base Path — nginx strips /sec/ prefix, so we need /sec/sec/... to get /sec/... at backend
+const API_BASE = window.location.pathname.includes('/sec/') ? '/sec/sec' : '/sec';
+
+// DOM Elements
+const connectionText = document.getElementById('connection-text');
+const connectionPulse = document.getElementById('connection-pulse');
+const eventsTotal = document.getElementById('events-total');
+const incidentsTotal = document.getElementById('incidents-total');
+const criticalCount = document.getElementById('critical-count');
+const sealedCount = document.getElementById('sealed-count');
+const incidentsList = document.getElementById('incidents-list');
+const activityFeed = document.getElementById('activity-feed');
+
+// Live Intelligence Elements
+const heatmapDiv = document.getElementById('heatmap');
+const replayDiv = document.getElementById('replay');
+const timelineCanvas = document.getElementById('timeline-canvas');
+
+// Timeline Chart (Chart.js)
+let timelineChart = null;
+
+function initTimelineChart() {
+  const ctx = timelineCanvas.getContext('2d');
+  timelineChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [{
+        label: 'Events',
+        data: [],
+        borderColor: '#c9a227',
+        backgroundColor: 'rgba(201, 162, 39, 0.1)',
+        borderWidth: 2,
+        fill: true,
+        tension: 0.4,
+        pointRadius: 0,
+        pointHoverRadius: 4,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 300 },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#111114',
+          titleColor: '#c9a227',
+          bodyColor: '#e5e5e8',
+          borderColor: '#1a1a1f',
+          borderWidth: 1,
+        }
+      },
+      scales: {
+        x: {
+          display: false,
+          grid: { display: false }
+        },
+        y: {
+          display: false,
+          grid: { display: false },
+          beginAtZero: true,
+        }
+      },
+      interaction: {
+        intersect: false,
+        mode: 'index',
+      }
+    }
+  });
+}
+
+// SSE Connection
+let evtSource = null;
+
+function connect() {
+  evtSource = new EventSource(API_BASE + '/stream');
+
+  evtSource.onopen = function() {
+    connectionText.textContent = 'LIVE';
+    connectionPulse.classList.remove('disconnected');
+    addActivity('Connected to W-SEC-001', 'low');
+  };
+
+  evtSource.onmessage = function(event) {
+    try {
+      const data = JSON.parse(event.data);
+      updateDashboard(data);
+    } catch (e) {
+      console.error('Parse error:', e);
+    }
+  };
+
+  evtSource.onerror = function() {
+    connectionText.textContent = 'Disconnected';
+    connectionPulse.classList.add('disconnected');
+    addActivity('Connection lost — reconnecting...', 'high');
+
+    // Reconnect after 3 seconds
+    setTimeout(() => {
+      evtSource.close();
+      connect();
+    }, 3000);
+  };
+}
+
+function updateDashboard(data) {
+  // Update metrics
+  eventsTotal.textContent = data.events_total || 0;
+  incidentsTotal.textContent = data.incidents_total || 0;
+
+  // Count by severity and status
+  const bySeverity = { critical: 0, high: 0, medium: 0, low: 0 };
+  let sealedTotal = 0;
+
+  (data.incidents || []).forEach(inc => {
+    bySeverity[inc.severity] = (bySeverity[inc.severity] || 0) + 1;
+    if (inc.status === 'sealed') sealedTotal++;
+  });
+
+  criticalCount.textContent = bySeverity.critical;
+  sealedCount.textContent = sealedTotal;
+
+  // Update severity bars
+  const total = Math.max(1, data.incidents_total || 1);
+  ['critical', 'high', 'medium', 'low'].forEach(sev => {
+    const pct = (bySeverity[sev] / total) * 100;
+    document.getElementById(`bar-${sev}`).style.width = `${pct}%`;
+    document.getElementById(`count-${sev}`).textContent = bySeverity[sev];
+  });
+
+  // Check for new/updated incidents
+  const currentIds = new Set((data.incidents || []).map(i => i.id));
+  const lastIds = new Set(lastIncidents.map(i => i.id));
+
+  data.incidents?.forEach(inc => {
+    const prev = lastIncidents.find(p => p.id === inc.id);
+    if (!prev) {
+      addActivity(`New incident: ${inc.severity.toUpperCase()} — ${inc.title}`, inc.severity);
+    } else if (prev.count !== inc.count) {
+      addActivity(`Updated: ${inc.id.slice(-8)} (${prev.count} → ${inc.count} events)`, inc.severity);
+    } else if (prev.status !== inc.status && inc.status === 'sealed') {
+      addActivity(`SEALED: ${inc.id.slice(-8)}`, 'sealed');
+    }
+  });
+
+  lastIncidents = data.incidents || [];
+
+  // Render incidents list
+  renderIncidents(data.incidents || []);
+
+  // ═══ LIVE INTELLIGENCE ═══
+  renderHeatmap(data.heatmap || {});
+  updateTimeline(data.timeline || []);
+  renderReplay(data.recent_events || []);
+}
+
+function renderIncidents(incidents) {
+  if (incidents.length === 0) {
+    incidentsList.innerHTML = `
+      <div class="empty-state">
+        <div class="icon">🛡️</div>
+        <p>No incidents detected</p>
+      </div>
+    `;
+    return;
+  }
+
+  incidentsList.innerHTML = incidents.map(inc => `
+    <div class="incident" data-id="${inc.id}">
+      <div class="incident-header">
+        <span class="severity-badge ${inc.severity}">${inc.severity}</span>
+        <span class="status-badge ${inc.status}">${inc.status}</span>
+      </div>
+      <div class="incident-title">${escapeHtml(inc.title)}</div>
+      <div class="incident-meta">
+        <span>📊 ${inc.count} events</span>
+        <span>🎯 ${(inc.confidence * 100).toFixed(0)}%</span>
+        <span>⚡ ${inc.vector || 'unknown'}</span>
+      </div>
+      ${inc.case_id ? `<div class="incident-meta" style="margin-top: 6px; color: var(--gold);">📋 ${inc.case_id}</div>` : ''}
+      ${getActionButtons(inc)}
+      ${inc.receipt ? `<div class="incident-meta" style="margin-top: 8px; color: var(--sealed);">🔐 ${inc.receipt}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+function addActivity(message, severity = 'low') {
+  const time = new Date().toLocaleTimeString('en-GB', { hour12: false });
+  activityLog.unshift({ message, severity, time });
+
+  if (activityLog.length > MAX_ACTIVITY) {
+    activityLog.pop();
+  }
+
+  activityFeed.innerHTML = activityLog.map(item => `
+    <div class="activity-item ${item.severity}">
+      <div>${escapeHtml(item.message)}</div>
+      <div class="time">${item.time}</div>
+    </div>
+  `).join('');
+}
+
+function getActionButtons(inc) {
+  // Status-based action buttons
+  if (inc.status === 'sealed' || inc.status === 'closed') {
+    return ''; // No actions for sealed/closed
+  }
+
+  if (inc.status === 'approved') {
+    return `
+      <div class="actions">
+        <button class="btn primary" onclick="sealIncident('${inc.id}')">🔐 Seal to Ledger</button>
+      </div>
+    `;
+  }
+
+  if (inc.status === 'investigating' && inc.case_id) {
+    return `
+      <div class="actions">
+        <button class="btn primary" onclick="approveIncident('${inc.id}')">✅ Approve</button>
+        <button class="btn danger" onclick="rejectIncident('${inc.id}')">❌ Reject</button>
+      </div>
+    `;
+  }
+
+  if (inc.status === 'open') {
+    return `
+      <div class="actions">
+        <button class="btn primary" onclick="createCase('${inc.id}')">📋 Create Case</button>
+        <button class="btn" onclick="investigateIncident('${inc.id}')">🔍 Investigate</button>
+      </div>
+    `;
+  }
+
+  return '';
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// LIVE INTELLIGENCE — Heatmap, Timeline, Replay
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function renderHeatmap(heatmap) {
+  const entries = Object.entries(heatmap).sort((a, b) => b[1] - a[1]).slice(0, 10);
+
+  if (entries.length === 0) {
+    heatmapDiv.innerHTML = '<div class="heatmap-empty">No threat sources detected</div>';
+    return;
+  }
+
+  const maxCount = Math.max(...entries.map(e => e[1]));
+
+  heatmapDiv.innerHTML = entries.map(([ip, count]) => {
+    const intensity = Math.min(1, count / Math.max(maxCount, 50));
+    const r = Math.round(255 * intensity);
+    const g = Math.round(50 * (1 - intensity));
+    const b = Math.round(50 * (1 - intensity));
+    const bgColor = `rgba(${r}, ${g}, ${b}, ${0.3 + intensity * 0.5})`;
+
+    return `
+      <div class="heatmap-row" style="background: ${bgColor};">
+        <span class="ip">${escapeHtml(ip)}</span>
+        <span class="count">${count}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+function updateTimeline(timeline) {
+  if (!timelineChart) return;
+
+  // Extract last 60 data points
+  const data = timeline.slice(-60);
+
+  timelineChart.data.labels = data.map(p => {
+    const t = p.t || '';
+    return t.slice(11, 19); // Extract HH:MM:SS
+  });
+
+  timelineChart.data.datasets[0].data = data.map(p => p.events || 0);
+  timelineChart.update('none'); // No animation for smooth updates
+}
+
+function renderReplay(events) {
+  if (!events || events.length === 0) {
+    replayDiv.innerHTML = '<div class="replay-empty">Waiting for events...</div>';
+    return;
+  }
+
+  // Show most recent 15 events (reversed to show newest first)
+  const recent = events.slice(0, 15);
+
+  replayDiv.innerHTML = recent.map(e => {
+    const time = (e.time || '').slice(11, 19); // Extract HH:MM:SS
+    return `
+      <div class="replay-event ${e.severity || 'low'}">
+        <span class="time">${time}</span>
+        <span class="type">${escapeHtml(e.type || '?')}</span>
+        <span class="ip">${escapeHtml(e.ip || '?')}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+// Actions — all use API_BASE for nginx proxy compatibility
+async function createCase(id) {
+  try {
+    const resp = await fetch(`${API_BASE}/incidents/${id}/create-case`, { method: 'POST' });
+    const data = await resp.json();
+    if (data.ok) {
+      addActivity(`📋 Case created: ${data.case_id}`, 'medium');
+    } else {
+      addActivity(`❌ Case creation failed`, 'critical');
+    }
+  } catch (e) {
+    addActivity(`❌ Error: ${e.message}`, 'critical');
+  }
+}
+
+async function approveIncident(id) {
+  try {
+    const resp = await fetch(`${API_BASE}/incidents/${id}/approve`, { method: 'POST' });
+    const data = await resp.json();
+    if (data.ok) {
+      addActivity(`✅ Approved: ${id.slice(-8)} — Ready to seal`, 'sealed');
+    }
+  } catch (e) {
+    addActivity(`❌ Approve failed: ${e.message}`, 'critical');
+  }
+}
+
+async function rejectIncident(id) {
+  if (!confirm('Mark this incident as false positive?')) return;
+  try {
+    const resp = await fetch(`${API_BASE}/incidents/${id}/reject`, { method: 'POST' });
+    const data = await resp.json();
+    if (data.ok) {
+      addActivity(`❌ Rejected: ${id.slice(-8)} — False positive`, 'low');
+    }
+  } catch (e) {
+    addActivity(`❌ Reject failed: ${e.message}`, 'critical');
+  }
+}
+
+async function sealIncident(id) {
+  try {
+    const resp = await fetch(`${API_BASE}/incidents/${id}/seal`, { method: 'POST' });
+    const data = await resp.json();
+    if (data.ok) {
+      addActivity(`🔐 Sealed: ${data.ledger_receipt_id}`, 'sealed');
+    }
+  } catch (e) {
+    addActivity(`❌ Seal failed: ${e.message}`, 'critical');
+  }
+}
+
+async function investigateIncident(id) {
+  try {
+    const resp = await fetch(`${API_BASE}/incidents/${id}/investigate`, { method: 'POST' });
+    const data = await resp.json();
+    if (data.ok) {
+      addActivity(`🔍 Investigating: ${id.slice(-8)}`, 'medium');
+    }
+  } catch (e) {
+    addActivity(`❌ Action failed: ${e.message}`, 'critical');
+  }
+}
+
+// Initialize
+// Initialize
+initTimelineChart();
+connect();
+addActivity('Dashboard initialized', 'low');
+addActivity('Live Intelligence enabled', 'medium');
+</script>
+
+</body>
+</html>
