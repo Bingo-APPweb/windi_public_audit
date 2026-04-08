@@ -13,6 +13,11 @@ Endpoints:
 - GET  /metrics             — Basic metrics
 """
 
+# Load .env file before anything else
+from dotenv import load_dotenv
+import os
+load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
+
 import asyncio
 import json
 from datetime import datetime, timezone
