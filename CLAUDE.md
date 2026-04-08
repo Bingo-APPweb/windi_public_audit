@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.1.1
-**Sealed:** 2026-04-08 · §150 W-SEC-001 Security Sentinel + Dual Correlation SEALED
+**Version:** 2.1.2
+**Sealed:** 2026-04-08 · §150 W-SEC-001 Security Sentinel COMPLETE (systemd + Telegram + Receipt)
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -80,7 +80,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-NOMAD-VOICE | :8127 | I9,I12 | **LIVE** · Human Translation Layer · No-Jargon Filter |
 | W-FEDIVERSE-001 | :8142 | I9,I11 | **LIVE** · Glass Embassy · Mastodon + BlueSky · Parallel Broadcast |
 | W-BRIDGE-001 | :8143 | I9,I11 | **LIVE** · BIG-BRIDGE Gateway · /watch/{id} · HLS Streaming |
-| W-SEC-001 | :8144 | I9,I11 | **LIVE** · Security Sentinel · Threat Correlation · Ledger Anchor |
+| W-SEC-001 | :8144 | I9,I11 | **SEALED** · Security Sentinel · Dual Correlation · Telegram · systemd |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
 
@@ -798,7 +798,7 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
-| 08 Apr | **§150 W-SEC-001 Security Sentinel** · :8144 · Threat Correlation · SEC-EVT → Ledger |
+| 08 Apr | **§150 W-SEC-001 COMPLETE** · systemd · Telegram @W_sec_bot · Receipt `BD09970F` · `30cfaa4` |
 | 08 Apr | **§149 Camada 1 Rule Engine** · Train intent fix · "Zug"→train não places · `ea3dddd` |
 | 08 Apr | **§148 Cross-Modal Connections** · Flight→Hotel→Train suggestions · `88bafdc` |
 | 06 Apr | **§147 F14 Conversation History** · Follow-up routing fix · `82009cc` |
@@ -1043,7 +1043,11 @@ workspace/
 | §147 | F14 Conversation History | ✅ SEALED | Follow-up routing · Intent bypass · `82009cc` |
 | §148 | Cross-Modal Connections | ✅ SEALED | Flight→Hotel→Train · Suggest buttons · `88bafdc` |
 | §149 | Camada 1 Rule Engine | ✅ SEALED | Train intent fix · detect_intent_local() · `ea3dddd` |
-| §150 | W-SEC-001 Security Sentinel | ✅ LIVE | :8144 · Dual Correlation · Live Intelligence · Dashboard NOIR |
+| §150 | W-SEC-001 Security Sentinel | ✅ SEALED | :8144 · systemd · Telegram · First Receipt `BD09970F` |
+| §150.1 | Geo Map | ✅ SEALED | World Attack Visualization · Leaflet.js · `77b08d1` |
+| §150.2 | Telegram Webhooks | ✅ SEALED | @W_sec_bot · 6 event types · Anti-noise · `17aa2b3` |
+| §150.3 | systemd Service | ✅ SEALED | windi-sec-001.service · Restart=always · `110d274` |
+| §150.4 | First Security Receipt | ✅ SEALED | WINDI-SEC-LOCAL-20260408184001-BD09970F · `30cfaa4` |
 | §137 | SSE Streaming | ✅ LIVE | WINDI-LAW AI Draft · Word-by-word · `76abeef` |
 
 > **Detalhes completos §128-150:** `CLAUDE-HISTORY.md` § SESSÃO 05-08 Abr 2026
