@@ -157,6 +157,16 @@ def format_critical_alert(payload: Dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def escape_markdown(text: str) -> str:
+    """Escape Telegram Markdown special characters."""
+    if not text:
+        return text
+    # Escape underscores and other markdown chars
+    for char in ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!']:
+        text = text.replace(char, '\\' + char)
+    return text
+
+
 def format_sealed_notification(payload: Dict[str, Any]) -> str:
     """
     Special format for SEALED incidents.
@@ -167,27 +177,30 @@ def format_sealed_notification(payload: Dict[str, Any]) -> str:
 
     severity_emoji = SEVERITY_EMOJI.get(inc.get("severity", "medium"), "⚪")
 
+    # Escape title to prevent markdown parsing errors
+    title = escape_markdown(inc.get('title', 'Unknown'))
+
     lines = [
-        "🔏 *INCIDENT SEALED TO LEDGER*",
+        "🔏 INCIDENT SEALED TO LEDGER",
         "",
-        f"📌 {inc.get('title', 'Unknown')}",
-        f"🔸 Severity: {severity_emoji} `{inc.get('severity', 'unknown').upper()}`",
-        f"🔸 Events: `{inc.get('event_count', 0)}`",
+        f"📌 {title}",
+        f"🔸 Severity: {severity_emoji} {inc.get('severity', 'unknown').upper()}",
+        f"🔸 Events: {inc.get('event_count', 0)}",
         "",
         "━━━━━━━━━━━━━━━━━━━━━",
-        f"📜 Receipt: `{seal.get('receipt_id', 'N/A')}`",
+        f"📜 Receipt: {seal.get('receipt_id', 'N/A')}",
         "━━━━━━━━━━━━━━━━━━━━━",
         "",
     ]
 
     if seal.get("verify_url"):
-        lines.append(f"✅ [Verify on Ledger]({seal['verify_url']})")
+        lines.append(f"✅ Verify: {seal['verify_url']}")
         lines.append("")
 
     lines.extend([
         "—",
-        "_Cryptographic proof anchored._",
-        "_W-SEC-001 · I11 Forensic Integrity_",
+        "Cryptographic proof anchored.",
+        "W-SEC-001 · I11 Forensic Integrity",
     ])
 
     return "\n".join(lines)
