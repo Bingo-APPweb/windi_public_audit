@@ -1699,6 +1699,7 @@ body {
   animation: slideUp 0.3s ease-out;
 }
 @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
 .presence-modal-header {
   display: flex;
@@ -4647,6 +4648,16 @@ function interpretSemantic(data, userQuery) {
     showNavigationHint(text, data);
   }
 
+  // §148 — Cross-modal suggestions (Flight→Hotel, Hotel→Train)
+  if (data.suggest_hotel && data.hotel_context) {
+    console.log('[§148] Flight→Hotel suggestion:', data.hotel_context);
+    showCrossModalSuggestion('hotel', data.hotel_context);
+  }
+  if (data.suggest_train && data.train_context) {
+    console.log('[§148] Hotel→Train suggestion:', data.train_context);
+    showCrossModalSuggestion('train', data.train_context);
+  }
+
   // Se houver seal suggestion
   if (data.ledger_receipt_id) {
     showSealSuccess(data.ledger_receipt_id);
@@ -4791,6 +4802,106 @@ function showSealSuccess(receiptId) {
   // Update last receipt for verify button
   lastReceipt = receiptId;
   console.log('[F13] Sealed:', receiptId);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// §148 — Cross-Modal Suggestions (Flight→Hotel, Hotel→Train)
+// ═══════════════════════════════════════════════════════════════════════════
+
+function showCrossModalSuggestion(type, context) {
+  // Remove existing suggestion card
+  const existing = document.getElementById('crossModalCard');
+  if (existing) existing.remove();
+
+  // Labels by language
+  const labels = {
+    hotel: {
+      de: 'Hotel in ' + context.destination + ' suchen?',
+      pt: 'Procurar hotel em ' + context.destination + '?',
+      en: 'Find hotel in ' + context.destination + '?'
+    },
+    train: {
+      de: 'Zug nach ' + context.destination + ' suchen?',
+      pt: 'Procurar comboio para ' + context.destination + '?',
+      en: 'Find train to ' + context.destination + '?'
+    }
+  };
+
+  const buttonLabels = {
+    hotel: { de: '🏨 Hotel suchen', pt: '🏨 Procurar hotel', en: '🏨 Find hotel' },
+    train: { de: '🚆 Zug suchen', pt: '🚆 Procurar comboio', en: '🚆 Find train' }
+  };
+
+  const label = labels[type]?.[LANG] || labels[type]?.en || 'Continue?';
+  const btnLabel = buttonLabels[type]?.[LANG] || buttonLabels[type]?.en || 'Search';
+
+  // Create suggestion card
+  const card = document.createElement('div');
+  card.id = 'crossModalCard';
+  card.style.cssText = `
+    background: var(--gold-bg);
+    border: 1px solid var(--gold);
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    animation: slideIn 0.3s ease;
+  `;
+  card.innerHTML = `
+    <div style="font-size: 0.95rem; color: var(--text);">
+      ${label}
+    </div>
+    <button id="crossModalBtn" style="
+      padding: 12px 20px;
+      background: var(--gold);
+      color: var(--bg);
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    " onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+      ${btnLabel}
+    </button>
+  `;
+
+  // Insert after maria-response
+  const response = document.getElementById('maria-response');
+  if (response) response.after(card);
+
+  // Add click handler
+  document.getElementById('crossModalBtn')?.addEventListener('click', () => {
+    // Generate query based on type
+    let query;
+    if (type === 'hotel') {
+      const checkIn = context.check_in || '';
+      query = {
+        de: `Hotel in ${context.destination}${checkIn ? ' ab ' + checkIn : ''}`,
+        pt: `Hotel em ${context.destination}${checkIn ? ' a partir de ' + checkIn : ''}`,
+        en: `Hotel in ${context.destination}${checkIn ? ' from ' + checkIn : ''}`
+      }[LANG] || `Hotel in ${context.destination}`;
+    } else if (type === 'train') {
+      const origin = context.origin || '';
+      query = {
+        de: `Zug ${origin ? 'von ' + origin + ' ' : ''}nach ${context.destination}`,
+        pt: `Comboio ${origin ? 'de ' + origin + ' ' : ''}para ${context.destination}`,
+        en: `Train ${origin ? 'from ' + origin + ' ' : ''}to ${context.destination}`
+      }[LANG] || `Train to ${context.destination}`;
+    }
+
+    // Fill input and send
+    if (query) {
+      document.getElementById('maria-input').value = query;
+      card.remove();
+      askMaria();
+    }
+  });
+
+  // Auto-scroll
+  card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
