@@ -1,0 +1,39 @@
+[Unit]
+Description=WINDI Security Sentinel (W-SEC-001)
+Documentation=https://windi-domain.com/sec/
+After=network.target
+
+[Service]
+Type=simple
+
+# 🔐 Segurança
+User=windi
+Group=windi
+WorkingDirectory=/opt/windi/agents/security-sentinel
+
+# 🌱 Environment
+EnvironmentFile=/opt/windi/agents/security-sentinel/.env
+
+# 🚀 Execução (uvicorn padrão WINDI)
+ExecStart=/usr/bin/python3 -m uvicorn app:app --host 0.0.0.0 --port 8144
+
+# 🔁 Resiliência
+Restart=always
+RestartSec=3
+
+# 📊 Logging
+StandardOutput=append:/opt/windi/logs/security/w-sec-001.log
+StandardError=append:/opt/windi/logs/security/w-sec-001-error.log
+
+# 🔒 Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=read-only
+
+# 📈 Limits
+LimitNOFILE=4096
+MemoryMax=256M
+
+[Install]
+WantedBy=multi-user.target
