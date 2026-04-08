@@ -748,10 +748,14 @@ def select_provider(intent: dict, context: dict, pulse: dict = None) -> str:
 
 def get_system_prompt(provider: str, lang: str, pulse: dict = None) -> str:
     """
-    §72 — Get system prompt with optional pulse context injection.
+    §72 + §148 — Get system prompt with wisdom blocks and pulse context.
 
-    O pulse context é adicionado ao fim do prompt base, instruindo MARIA
-    sobre como responder a ESTE momento específico.
+    Pipeline:
+    1. Load base provider prompt (MARIA_CONSTITUTION + specialty)
+    2. §148: Inject WB-PERS wisdom blocks (stable identity)
+    3. §72: Inject pulse context (moment-specific)
+
+    "Blocos são memória comprimida. O agente sabe sem precisar de ser explicado."
     """
     lang_key = lang.upper()[:2] if lang else "EN"
     if lang_key not in ("PT", "DE", "EN"):
@@ -759,6 +763,16 @@ def get_system_prompt(provider: str, lang: str, pulse: dict = None) -> str:
 
     provider_prompts = MARIA_PROMPTS.get(provider, MARIA_PROMPTS["gemini"])
     base_prompt = provider_prompts.get(lang_key, provider_prompts.get("EN", ""))
+
+    # §148: Inject Wisdom Blocks (stable identity)
+    try:
+        from wisdom_loader import inject_wisdom_for_maria
+        base_prompt = inject_wisdom_for_maria(base_prompt, lang_key, max_blocks=3)
+    except ImportError:
+        pass  # Wisdom loader not available - continue without injection
+    except Exception as e:
+        import logging
+        logging.getLogger("maria-voice").warning(f"[§148] Wisdom injection failed: {e}")
 
     # §72: Inject pulse context if available
     if pulse:

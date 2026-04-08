@@ -1987,7 +1987,17 @@ async def workspace_gate(request: Request, did: str = None):
     wallet_id = user["wallet_id"] if user else "anonymous"
     user_name = user["name"] if user else "Viajante"
 
-    # FASE 3 — Rescue Mode (Tesoura rules mantidas)
+    # §148 — Use external file for cross-modal features
+    try:
+        with open("/opt/windi/windi-travel/workspace/index.html", "r", encoding="utf-8") as f:
+            content = f.read()
+            content = content.replace("{{WALLET_ID}}", wallet_id)
+            content = content.replace("{{USER_NAME}}", user_name)
+            return HTMLResponse(content=content)
+    except FileNotFoundError:
+        pass  # Fall through to inline HTML below
+
+    # FASE 3 — Rescue Mode (Tesoura rules mantidas) — FALLBACK
     return HTMLResponse(content=f"""
 <!DOCTYPE html>
 <html lang="pt">
@@ -2960,16 +2970,6 @@ function loadThread() {{
 </body>
 </html>
 """)
-
-    # ORIGINAL CODE (disabled for Samsung flicker test):
-    # try:
-    #     with open("/opt/windi/windi-travel/workspace/index.html", "r", encoding="utf-8") as f:
-    #         content = f.read()
-    #         content = content.replace("{{WALLET_ID}}", wallet_id)
-    #         content = content.replace("{{USER_NAME}}", user_name)
-    #         return HTMLResponse(content=content)
-    # except FileNotFoundError:
-    #     return HTMLResponse(content="Workspace not found", status_code=404)
 
 
 # ═══════════════════════════════════════════════════════════════
