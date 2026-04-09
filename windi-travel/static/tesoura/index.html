@@ -1,889 +1,883 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<meta name="theme-color" content="#1a1a18"/>
-<title>Tesoura Soberana · WINDI Travel</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Tesoura Soberana v12 — WINDI Travel</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
-body{background:#1a1a18;font-family:'DM Sans',system-ui,sans-serif;-webkit-tap-highlight-color:transparent;overscroll-behavior:none;}
-#root{height:100vh;overflow:hidden;}
-@keyframes ripple{0%{transform:scale(0.3);opacity:1;}100%{transform:scale(2.5);opacity:0;}}
-button:active{opacity:0.75;}
-::-webkit-scrollbar{width:3px;height:3px;}
-::-webkit-scrollbar-thumb{background:rgba(201,96,58,0.3);border-radius:2px;}
+:root {
+  --bg:#F5F0E0; --bg2:#EDE8D5; --surface:#E8E2CE; --border:#C8BC9A;
+  --text:#1A1612; --text2:#4A4030; --text3:#7A7060;
+  --gold:#8B6914; --gold-l:#C8A96E;
+  --danger:#7A2020; --success:#1A4A2A;
+  --canvas-bg:#D8D2BE;
+  --shadow:rgba(0,0,0,0.12); --shadow-lg:rgba(0,0,0,0.22);
+  --safe-t:env(safe-area-inset-top,0px);
+  --safe-b:env(safe-area-inset-bottom,0px);
+  --tool:52px; --r:12px;
+}
+.noir {
+  --bg:#0D0D0D; --bg2:#141414; --surface:#1A1A1A; --border:#2A2A2A;
+  --text:#F0EAD6; --text2:#B0A890; --text3:#706858;
+  --gold:#C8A96E; --gold-l:#E8C88E;
+  --danger:#C84040; --success:#40A060;
+  --canvas-bg:#111111;
+  --shadow:rgba(0,0,0,0.45); --shadow-lg:rgba(0,0,0,0.65);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--text);font-family:'Bricolage Grotesque',sans-serif;
+  min-height:100dvh;display:flex;flex-direction:column;overflow:hidden;
+  padding-top:var(--safe-t);padding-bottom:var(--safe-b);transition:background .3s,color .3s}
+
+header{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px;background:var(--bg2);border-bottom:1px solid var(--border);
+  min-height:52px;gap:8px;flex-shrink:0}
+.logo{display:flex;align-items:center;gap:8px}
+.logo-text{font-size:15px;font-weight:600;letter-spacing:-.02em}
+.logo-sub{font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--text3);
+  letter-spacing:.08em;text-transform:uppercase}
+.hdr-r{display:flex;align-items:center;gap:6px}
+.lang-btn{height:30px;padding:0 9px;border-radius:7px;border:1.5px solid var(--border);
+  background:var(--surface);color:var(--text2);font-family:'JetBrains Mono',monospace;
+  font-size:10px;font-weight:500;cursor:pointer;letter-spacing:.05em;transition:all .15s}
+.lang-btn.on{background:var(--gold);color:#fff;border-color:var(--gold)}
+.noir .lang-btn.on{background:var(--gold-l);color:#0D0D0D;border-color:var(--gold-l)}
+.theme-tog{width:46px;height:26px;border-radius:13px;background:var(--border);
+  border:none;cursor:pointer;position:relative;transition:background .2s}
+.theme-tog::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;
+  border-radius:50%;background:var(--bg);transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.noir .theme-tog{background:var(--gold)}
+.noir .theme-tog::after{transform:translateX(20px)}
+
+.sbar{padding:5px 14px;background:var(--bg2);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.sbar-mode{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--gold);
+  letter-spacing:.08em;text-transform:uppercase}
+.noir .sbar-mode{color:var(--gold-l)}
+.sbar-info{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--text3)}
+
+.workspace{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
+
+.cwrap{flex:1;position:relative;overflow:hidden;background:var(--canvas-bg);touch-action:none}
+#mainCanvas{display:block;width:100%;height:100%;touch-action:none}
+#overlayCanvas{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10}
+.chint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  text-align:center;pointer-events:none;opacity:.45;transition:opacity .3s}
+.chint.gone{opacity:0}
+.chint-icon{font-size:44px;margin-bottom:8px}
+.chint-txt{font-size:13px;font-weight:500;color:var(--text3);font-family:'JetBrains Mono',monospace;letter-spacing:.05em}
+
+.ia-panel{position:absolute;top:0;left:0;right:0;z-index:30;
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  padding:12px 14px;transform:translateY(-100%);transition:transform .25s ease}
+.ia-panel.open{transform:translateY(0)}
+.ia-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.ia-row:last-child{margin-bottom:0}
+.ia-label{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--text3);
+  letter-spacing:.08em;text-transform:uppercase;min-width:72px}
+.ia-info{font-size:11px;color:var(--text2);flex:1}
+input[type=range]{flex:1;height:36px;-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:var(--border)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;
+  border-radius:50%;background:var(--gold);border:2px solid var(--bg);
+  box-shadow:0 2px 6px var(--shadow-lg);margin-top:-12px}
+.noir input[type=range]::-webkit-slider-thumb{background:var(--gold-l)}
+.sl-val{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text3);min-width:30px;text-align:right}
+
+.pctrl{position:absolute;bottom:0;left:0;right:0;background:var(--bg2);
+  border-top:1px solid var(--border);padding:12px 14px;z-index:20;
+  transform:translateY(100%);transition:transform .25s ease}
+.pctrl.open{transform:translateY(0)}
+.ctrl-label{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--text3);
+  letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px}
+.ctrl-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.ctrl-row:last-child{margin-bottom:0}
+.ctrl-close{width:44px;height:44px;border-radius:10px;border:1.5px solid var(--border);
+  background:var(--surface);color:var(--text3);font-size:18px;display:flex;
+  align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0}
+.ctrl-close:active{transform:scale(.9);background:var(--border)}
+
+.toolbar{background:var(--bg2);border-top:1px solid var(--border);
+  padding:8px 10px calc(8px + var(--safe-b));display:flex;align-items:center;
+  justify-content:space-around;gap:4px;flex-shrink:0;z-index:40}
+.tool-item{display:flex;flex-direction:column;align-items:center;gap:2px}
+.tool-lbl{font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--text3);
+  text-align:center;letter-spacing:.05em;text-transform:uppercase}
+.tdiv{width:1px;height:34px;background:var(--border);opacity:.5}
+
+.ibtn{width:var(--tool);height:var(--tool);border-radius:var(--r);
+  border:1.5px solid var(--border);background:var(--surface);color:var(--text2);
+  font-size:20px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;position:relative;overflow:hidden;
+  transition:background .15s,color .15s,border-color .15s,transform .1s;
+  user-select:none;-webkit-user-select:none;flex-shrink:0}
+.ibtn:active{transform:scale(.91)}
+.ibtn.on{background:var(--gold);color:#fff;border-color:var(--gold)}
+.noir .ibtn.on{background:var(--gold-l);color:#0D0D0D;border-color:var(--gold-l)}
+.ibtn.danger{border-color:var(--danger);color:var(--danger)}
+.ibtn.danger:active{background:var(--danger);color:#fff}
+.ibtn.primary{background:var(--gold);color:#fff;border-color:var(--gold);font-size:18px}
+.noir .ibtn.primary{background:var(--gold-l);color:#0D0D0D;border-color:var(--gold-l)}
+.ibtn-seal{width:56px;height:56px;border-radius:16px;font-size:22px}
+.pbadge{position:absolute;top:-5px;right:-5px;width:18px;height:18px;border-radius:50%;
+  background:var(--gold);color:#fff;font-size:10px;font-weight:600;
+  display:none;align-items:center;justify-content:center;pointer-events:none}
+.noir .pbadge{background:var(--gold-l);color:#0D0D0D}
+.pbadge.show{display:flex}
+.ripple{position:absolute;border-radius:50%;width:80px;height:80px;
+  background:rgba(255,255,255,.32);transform:scale(0);
+  animation:rpl .45s ease-out forwards;pointer-events:none}
+@keyframes rpl{to{transform:scale(2.8);opacity:0}}
+
+.ia-cursor{position:absolute;pointer-events:none;z-index:50;display:none}
+.ia-cursor circle{fill:none;stroke:var(--gold);stroke-width:2}
+.noir .ia-cursor circle{stroke:var(--gold-l)}
+
+.moverlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;
+  align-items:flex-end;justify-content:center;z-index:100;
+  opacity:0;pointer-events:none;transition:opacity .25s;padding-bottom:var(--safe-b)}
+.moverlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:20px 20px 0 0;
+  width:100%;max-width:600px;padding:20px 20px 28px;
+  transform:translateY(100%);transition:transform .3s cubic-bezier(.32,.72,0,1)}
+.moverlay.open .modal{transform:translateY(0)}
+.mhandle{width:40px;height:4px;border-radius:2px;background:var(--border);margin:0 auto 18px}
+.mtitle{font-size:18px;font-weight:600;margin-bottom:3px}
+.msub{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text3);
+  letter-spacing:.06em;text-transform:uppercase;margin-bottom:18px}
+.hash-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:13px;margin-bottom:14px}
+.hash-lbl{font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--text3);
+  text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px}
+.hash-val{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--gold);word-break:break-all;line-height:1.6}
+.noir .hash-val{color:var(--gold-l)}
+.rid{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text3);
+  text-align:center;margin-bottom:18px;padding:8px;background:var(--surface);border-radius:8px}
+.mactions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.mbtn{height:52px;border-radius:12px;border:1.5px solid var(--border);
+  background:var(--surface);color:var(--text);font-family:'Bricolage Grotesque',sans-serif;
+  font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:all .15s}
+.mbtn:active{transform:scale(.96)}
+.mbtn.primary{background:var(--gold);color:#fff;border-color:var(--gold);grid-column:1/-1}
+.noir .mbtn.primary{background:var(--gold-l);color:#0D0D0D}
+.sealed-badge{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;
+  background:var(--success);color:#fff;border-radius:20px;
+  font-size:10px;font-family:'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;margin-bottom:13px}
+
+#toast{position:fixed;bottom:calc(86px + var(--safe-b));left:50%;
+  transform:translateX(-50%) translateY(16px);background:var(--text);color:var(--bg);
+  padding:9px 18px;border-radius:30px;font-size:13px;font-weight:500;
+  opacity:0;transition:opacity .2s,transform .2s;z-index:200;white-space:nowrap;pointer-events:none}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite}
+#fileInput{display:none}
+
+.scene-strip{height:54px;background:var(--bg2);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:8px;padding:0 12px;overflow-x:auto;flex-shrink:0}
+.scene-strip::-webkit-scrollbar{height:0}
+.scene-lbl{font-size:8px;font-family:'JetBrains Mono',monospace;color:var(--text3);
+  letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;flex-shrink:0}
+.scene-item{width:40px;height:40px;border-radius:8px;flex-shrink:0;cursor:pointer;
+  border:2px solid transparent;transition:all .15s;overflow:hidden;position:relative}
+.scene-item.on{border-color:var(--gold);transform:scale(1.08)}
+.noir .scene-item.on{border-color:var(--gold-l)}
+.scene-item canvas{width:100%;height:100%;display:block}
+.scene-item img{width:100%;height:100%;object-fit:cover;display:block}
+.scene-add{width:40px;height:40px;border-radius:8px;flex-shrink:0;cursor:pointer;
+  border:1.5px dashed var(--gold);background:transparent;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
+.scene-add span{font-size:14px;line-height:1}
+.scene-add small{font-size:6px;font-family:'JetBrains Mono',monospace;color:var(--gold);
+  text-transform:uppercase;letter-spacing:.05em}
+.scene-div{width:1px;height:28px;background:var(--border);opacity:.5;flex-shrink:0}
+
+.layer-bar{height:44px;background:var(--bg2);border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;gap:8px;padding:0 12px;flex-shrink:0}
+.layer-lbl{font-size:8px;font-family:'JetBrains Mono',monospace;color:var(--gold);
+  letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.noir .layer-lbl{color:var(--gold-l)}
+.layer-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);
+  background:var(--surface);color:var(--text2);font-size:14px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s}
+.layer-btn:active{transform:scale(.9)}
+.layer-btn:disabled{opacity:.25;cursor:default}
+.layer-btn:disabled:active{transform:none}
+.layer-indicator{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+  padding:2px 12px;min-width:50px;text-align:center}
+.layer-indicator small{font-size:7px;font-family:'JetBrains Mono',monospace;color:var(--text3);
+  text-transform:uppercase;letter-spacing:.08em;display:block}
+.layer-indicator b{font-size:13px;font-family:'JetBrains Mono',monospace;color:var(--gold);line-height:1.2}
+.noir .layer-indicator b{color:var(--gold-l)}
+
+.txt-modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;
+  align-items:center;justify-content:center;z-index:100;
+  opacity:0;pointer-events:none;transition:opacity .25s;padding:16px}
+.txt-modal.open{opacity:1;pointer-events:all}
+.txt-box{background:var(--bg);border:1px solid var(--border);border-radius:16px;
+  width:100%;max-width:340px;padding:18px;transform:translateY(20px);transition:transform .3s}
+.txt-modal.open .txt-box{transform:translateY(0)}
+.txt-title{font-size:16px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.txt-area{width:100%;padding:12px;border-radius:10px;border:1.5px solid var(--border);
+  background:var(--surface);color:var(--text);font-family:'Bricolage Grotesque',sans-serif;
+  font-size:16px;resize:none;outline:none;min-height:80px;line-height:1.5}
+.txt-area:focus{border-color:var(--gold)}
+.noir .txt-area:focus{border-color:var(--gold-l)}
+.txt-controls{display:flex;gap:12px;margin:12px 0;align-items:flex-start}
+.txt-ctrl{flex:1}
+.txt-ctrl-lbl{font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--text3);
+  text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.txt-colors{display:flex;gap:5px;flex-wrap:wrap}
+.txt-color{width:24px;height:24px;border-radius:50%;cursor:pointer;
+  border:2px solid transparent;transition:all .12s}
+.txt-color.on{border-color:var(--gold);transform:scale(1.15)}
+.noir .txt-color.on{border-color:var(--gold-l)}
+.txt-actions{display:flex;gap:8px;margin-top:14px}
+.txt-btn{flex:1;height:44px;border-radius:10px;border:1.5px solid var(--border);
+  background:var(--surface);color:var(--text);font-family:'Bricolage Grotesque',sans-serif;
+  font-size:13px;font-weight:500;cursor:pointer;transition:all .15s}
+.txt-btn:active{transform:scale(.96)}
+.txt-btn.primary{background:var(--gold);color:#fff;border-color:var(--gold)}
+.noir .txt-btn.primary{background:var(--gold-l);color:#0D0D0D;border-color:var(--gold-l)}
+
+.export-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0}
+.export-btn{height:44px;border-radius:10px;border:1.5px solid var(--border);
+  background:var(--surface);color:var(--text);font-family:'Bricolage Grotesque',sans-serif;
+  font-size:12px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s}
+.export-btn:active{transform:scale(.96)}
+.export-btn.full{grid-column:1/-1}
+.export-btn.ledger{background:var(--success);color:#fff;border-color:var(--success)}
+.export-btn.ledger:disabled{opacity:.5}
+.ledger-status{padding:10px;border-radius:10px;text-align:center;font-size:11px;
+  font-family:'JetBrains Mono',monospace;margin-top:8px}
+.ledger-status.ok{background:rgba(26,74,42,.15);border:1px solid var(--success);color:var(--success)}
+.ledger-status.fail{background:rgba(122,32,32,.1);border:1px solid var(--danger);color:var(--danger)}
+.ledger-status.ing{background:var(--surface);border:1px solid var(--border);color:var(--text3)}
 </style>
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel">
-const { useState, useRef, useEffect, useCallback } = React;
+<header>
+  <div class="logo">
+    <span style="font-size:20px">✂️</span>
+    <div>
+      <div class="logo-text">Tesoura Soberana</div>
+      <div class="logo-sub">v12 · WINDI Travel</div>
+    </div>
+  </div>
+  <div class="hdr-r">
+    <button class="lang-btn on" data-l="pt" onclick="setLang('pt')">PT</button>
+    <button class="lang-btn" data-l="de" onclick="setLang('de')">DE</button>
+    <button class="lang-btn" data-l="en" onclick="setLang('en')">EN</button>
+    <button class="theme-tog" onclick="toggleTheme()"></button>
+  </div>
+</header>
+<div class="sbar">
+  <span class="sbar-mode" id="sMode">— SELECCIONAR FERRAMENTA —</span>
+  <span class="sbar-info" id="sInfo">0 peças</span>
+</div>
+<div class="scene-strip" id="sceneStrip">
+  <span class="scene-lbl">📦</span>
+  <div class="scene-item on" data-scene="0" onclick="selectScene(0)"><canvas id="sc0"></canvas></div>
+  <div class="scene-item" data-scene="1" onclick="selectScene(1)"><canvas id="sc1"></canvas></div>
+  <div class="scene-item" data-scene="2" onclick="selectScene(2)"><canvas id="sc2"></canvas></div>
+  <div class="scene-item" data-scene="3" onclick="selectScene(3)"><canvas id="sc3"></canvas></div>
+  <div class="scene-div"></div>
+  <div id="extraPhotos"></div>
+  <label class="scene-add">
+    <span>📷</span>
+    <small id="lAddBg">+ BG</small>
+    <input type="file" id="bgInput" accept="image/*" onchange="handleBgFiles(event)" style="display:none">
+  </label>
+</div>
+<div class="workspace">
+  <div class="ia-panel" id="iaPanel">
+    <div class="ia-row">
+      <span class="ia-label" id="lIaTol">Tolerância</span>
+      <input type="range" id="tolSlider" min="5" max="120" value="40">
+      <span class="sl-val" id="tolVal">40</span>
+    </div>
+    <div class="ia-row">
+      <span class="ia-label">Modo</span>
+      <span class="ia-info" id="iaModeInfo">Toca na foto para recortar por cor</span>
+    </div>
+  </div>
+  <div class="cwrap" id="cwrap">
+    <canvas id="mainCanvas"></canvas>
+    <canvas id="overlayCanvas"></canvas>
+    <div class="chint" id="chint">
+      <div class="chint-icon">📷</div>
+      <div class="chint-txt" id="hintTxt">Adiciona uma foto</div>
+    </div>
+    <svg class="ia-cursor" id="iaCursor" width="48" height="48" viewBox="0 0 48 48">
+      <circle cx="24" cy="24" r="20" stroke-dasharray="4 4"/>
+      <circle cx="24" cy="24" r="4" fill="var(--gold)"/>
+    </svg>
+  </div>
+  <div class="pctrl" id="pctrl">
+    <div class="ctrl-row">
+      <div style="flex:1">
+        <div class="ctrl-label" id="lRot">Rotação</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:15px">↺</span>
+          <input type="range" id="rotSl" min="-180" max="180" value="0">
+          <span class="sl-val" id="rotVal">0°</span>
+        </div>
+      </div>
+      <button class="ctrl-close" onclick="closePctrl()">✕</button>
+    </div>
+    <div class="ctrl-row">
+      <div style="flex:1">
+        <div class="ctrl-label" id="lSc">Escala</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:15px">⤢</span>
+          <input type="range" id="scSl" min="20" max="220" value="100">
+          <span class="sl-val" id="scVal">100%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="layer-bar" id="layerBar" style="display:none">
+  <span class="layer-lbl" id="lLayers">Camadas</span>
+  <button class="layer-btn" id="lbBack" onclick="layerToBack()" title="Fundo total">⬇</button>
+  <button class="layer-btn" id="lbDown" onclick="layerDown()" title="Camada abaixo">▼</button>
+  <div class="layer-indicator">
+    <small>LAYER</small>
+    <b id="layerPos">-</b>
+  </div>
+  <button class="layer-btn" id="lbUp" onclick="layerUp()" title="Camada acima">▲</button>
+  <button class="layer-btn" id="lbFront" onclick="layerToFront()" title="Frente total">⬆</button>
+</div>
+<div class="toolbar">
+  <div class="tool-item">
+    <button class="ibtn" id="btnAdd" onclick="triggerAdd(this)">📷<span class="pbadge" id="pbadge">0</span></button>
+    <div class="tool-lbl" id="lAdd">Foto</div>
+  </div>
+  <div class="tool-item">
+    <button class="ibtn" id="btnLasso" onclick="activateLasso(this)">✂️</button>
+    <div class="tool-lbl" id="lLasso">Lasso</div>
+  </div>
+  <div class="tool-item">
+    <button class="ibtn" id="btnIA" onclick="activateIATouch(this)">🤖</button>
+    <div class="tool-lbl" id="lIA">IA Touch</div>
+  </div>
+  <div class="tool-item">
+    <button class="ibtn" id="btnTxt" onclick="activateText(this)">𝐓</button>
+    <div class="tool-lbl" id="lTxt">Texto</div>
+  </div>
+  <div class="tdiv"></div>
+  <div class="tool-item">
+    <button class="ibtn" id="btnUndo" onclick="doUndo(this)">↩</button>
+    <div class="tool-lbl" id="lUndo">Undo</div>
+  </div>
+  <div class="tool-item">
+    <button class="ibtn danger" id="btnDel" onclick="deletePiece(this)">🗑</button>
+    <div class="tool-lbl" id="lDel">Apagar</div>
+  </div>
+  <div class="tdiv"></div>
+  <div class="tool-item">
+    <button class="ibtn primary ibtn-seal" id="btnSeal" onclick="doSeal(this)">🔏</button>
+    <div class="tool-lbl" id="lSeal">Selar</div>
+  </div>
+</div>
+<input type="file" id="fileInput" accept="image/*" multiple onchange="handleFiles(event)">
+<div class="moverlay" id="modal">
+  <div class="modal">
+    <div class="mhandle"></div>
+    <div class="sealed-badge">✓ <span id="sbTxt">Selado</span></div>
+    <div class="mtitle" id="mTitle">Colagem Selada</div>
+    <div class="msub" id="mSub">Governança silenciosa · WINDI Travel</div>
+    <div class="hash-box">
+      <div class="hash-lbl">SHA-256</div>
+      <div class="hash-val" id="hashVal">—</div>
+    </div>
+    <div class="rid" id="ridVal">—</div>
+    <div style="font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px" id="lExport">Partilhar & Exportar</div>
+    <div class="export-grid">
+      <button class="export-btn" onclick="downloadCollage()">📥 <span id="bDl">Download</span></button>
+      <button class="export-btn" onclick="shareCollage()">📤 <span id="bSh">Partilhar</span></button>
+      <button class="export-btn" onclick="emailCollage()">📧 <span id="bEmail">Email</span></button>
+      <button class="export-btn" onclick="verifyCollage()">🔗 <span id="bVerify">Verificar</span></button>
+      <button class="export-btn ledger full" id="btnLedger" onclick="sealToLedger()">🔒 <span id="bLedger">Selar no Ledger</span></button>
+    </div>
+    <div class="ledger-status" id="ledgerStatus" style="display:none"></div>
+    <div style="margin-top:14px">
+      <button class="mbtn" style="width:100%" onclick="closeModal()">✕ <span id="bCl">Fechar</span></button>
+    </div>
+  </div>
+</div>
+<div class="txt-modal" id="txtModal">
+  <div class="txt-box">
+    <div class="txt-title">✍️ <span id="txtTitle">Adicionar Texto</span></div>
+    <textarea class="txt-area" id="txtArea" placeholder="O teu texto..." rows="3"></textarea>
+    <div class="txt-controls">
+      <div class="txt-ctrl">
+        <div class="txt-ctrl-lbl" id="lTxtSize">Tamanho <span id="txtSizeVal">28</span>px</div>
+        <input type="range" id="txtSizeSlider" min="14" max="72" value="28" style="width:100%">
+      </div>
+      <div class="txt-ctrl">
+        <div class="txt-ctrl-lbl" id="lTxtColor">Cor</div>
+        <div class="txt-colors">
+          <div class="txt-color on" data-c="#FFFFFF" style="background:#FFFFFF;box-shadow:inset 0 0 0 1px #ccc"></div>
+          <div class="txt-color" data-c="#1A1612" style="background:#1A1612"></div>
+          <div class="txt-color" data-c="#8B6914" style="background:#8B6914"></div>
+          <div class="txt-color" data-c="#C84040" style="background:#C84040"></div>
+          <div class="txt-color" data-c="#3A7CA8" style="background:#3A7CA8"></div>
+          <div class="txt-color" data-c="#40A060" style="background:#40A060"></div>
+        </div>
+      </div>
+    </div>
+    <div class="txt-actions">
+      <button class="txt-btn" onclick="closeTxtModal()">✕</button>
+      <button class="txt-btn primary" id="txtConfirm" onclick="confirmText()">✓ <span id="lTxtAdd">Adicionar</span></button>
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+<script>
+(function(global){'use strict';
+const BP={MOBILE_SM:480,MOBILE:768,TABLET:1024,DESKTOP:1200};
+let _t={startX:0,startY:0,startTime:0,el:null};
+let _h={left:[],right:[],up:[],down:[],swipe:[]};
+let _bp={};let _bpL=[];
+let _cfg={threshold:60,maxDuration:500,maxVertical:100,edgeWidth:30,debug:false};
+function _ubp(){const w=window.innerWidth,prev=JSON.stringify(_bp);
+_bp={isMobileSm:w<BP.MOBILE_SM,isMobile:w<BP.MOBILE,isTablet:w>=BP.MOBILE&&w<BP.DESKTOP,isDesktop:w>=BP.DESKTOP,width:w};
+if(JSON.stringify(_bp)!==prev){_bpL.forEach(f=>f({..._bp}));document.dispatchEvent(new CustomEvent('windi:breakpoint',{detail:{..._bp}}))}}
+function _ts(e){const t=e.touches[0];_t={startX:t.clientX,startY:t.clientY,startTime:Date.now(),el:e.target}}
+function _te(e){const t=e.changedTouches[0],dx=t.clientX-_t.startX,dy=t.clientY-_t.startY;
+const dt=Date.now()-_t.startTime,ax=Math.abs(dx),ay=Math.abs(dy);
+if(dt>_cfg.maxDuration)return;if(ax<_cfg.threshold&&ay<_cfg.threshold)return;
+let d=null;if(ax>ay&&ay<_cfg.maxVertical)d=dx>0?'right':'left';else if(ay>ax)d=dy>0?'down':'up';
+if(!d)return;_h.swipe.forEach(f=>f({dir:d,dx,dy,dt,startX:_t.startX,el:_t.el}));_h[d].forEach(f=>f({dx,dy,dt,startX:_t.startX,el:_t.el}))}
+function _hap(style){if('vibrate' in navigator)navigator.vibrate(style==='light'?10:30)}
+global.WindiTouch={
+init(o={}){if(o.debug)_cfg.debug=o.debug;document.addEventListener('touchstart',_ts,{passive:true});
+document.addEventListener('touchend',_te,{passive:true});_ubp();window.addEventListener('resize',_ubp,{passive:true});return this},
+onSwipe(d,f){if(_h[d])_h[d].push(f);return this},onBreakpoint(f){_bpL.push(f);f({..._bp});return this},
+get breakpoints(){return{..._bp}},haptic:_hap,version:'1.0.0'};
+})(window);
 
-const TERRA="#C9603A",OCEAN="#3A7CA8",CREAM="#FAF7F2",INK="#2E2219",
-      NOIR="#1a1a18",MIST="#B8A898",GOLD_L="#C49A1E",SAGE="#6A8F72",VERDE="#5C7A5A";
-
-const LEDGER_URL  = "/tesoura/seal";
-const VERIFY_BASE = "https://windi-domain.com/verify-public/?id=";
-
-const T={
-  pt:{
-    brand:"WINDI Travel",sub:"Tesoura Soberana",
-    lasso:"Lasso",ai:"IA Touch",move:"Mover",rotate:"Rodar",
-    text:"Texto",clear:"Tudo",seal:"Selar",layers:"Camadas",
-    undo:"Desfazer",del:"Apagar",rotation:"Rotação",
-    hint_lasso:"✂️ Desenha o contorno com o dedo",
-    hint_toque:"🤖 Toca num objecto · IA segmenta",
-    hint_mover:"✋ Arrasta · selecciona para camadas",
-    hint_rodar:"🔄 Toca numa peça · usa o slider",
-    hint_texto:"✍️ Toca no workspace para adicionar texto",
-    text_placeholder:"O teu texto...",text_size:"Tamanho",text_color:"Cor",
-    ai_on:"🤖 MODO IA",piece:"PEÇA",pieces:"PEÇAS",
-    sealed:"Colagem Selada",sealed_sub:"Composição soberana · Camadas preservadas",
-    receipt:"Receipt ID",layers_lbl:"Camadas",recipe:"Receita",
-    hash_note:"A ordem das camadas faz parte do hash.\nMudar sobreposição = hash diferente.\nComposição única e irrepetível.",
-    close:"Fechar",
-    st_ready:"PRONTO",st_cut:"A recortar...",st_ai:"IA a analisar...",
-    st_ok:"✨ Extraído",st_touch:"Toca numa área",st_undo:"↩ Desfeito",
-    st_del:"Eliminado",st_clear:"LIMPO",st_calc:"A calcular...",
-    st_render:"A renderizar...",st_sealed:"SELADO ✓",st_none:"⚠️ SEM PEÇAS",st_nundo:"Nada para desfazer",
-    lup:"▲ Camada acima",ldown:"▼ Camada abaixo",lfront:"⬆ Frente total",lback:"⬇ Fundo total",
-    addphoto:"+ FOTO",box:"Caixa",
-    export_title:"Partilhar & Exportar",
-    btn_download:"📥 Download PNG",btn_share:"📤 Partilhar",btn_email:"📧 Email",
-    btn_ledger:"🔒 Selar no Ledger",btn_verify:"🔗 Verificar",
-    ledger_ok:"✦ SELADO NO LEDGER",ledger_fail:"⚠️ Ledger indisponível · Receipt local",ledger_ing:"A selar...",
-    share_text:"Criei esta colagem verificável com WINDI Travel.",
-    email_subject:"Colagem WINDI Travel — Receipt",
-    copy_ok:"✓ Link copiado",
-  },
-  de:{
-    brand:"WINDI Travel",sub:"Souveräne Schere",
-    lasso:"Lasso",ai:"KI Touch",move:"Verschieben",rotate:"Drehen",
-    text:"Text",clear:"Alles",seal:"Versiegeln",layers:"Ebenen",
-    undo:"Rückgängig",del:"Löschen",rotation:"Drehung",
-    hint_lasso:"✂️ Kontur mit dem Finger zeichnen",
-    hint_toque:"🤖 Objekt berühren · KI segmentiert",
-    hint_mover:"✋ Verschieben · auswählen für Ebenen",
-    hint_rodar:"🔄 Stück berühren · Schieberegler",
-    hint_texto:"✍️ Workspace berühren um Text hinzuzufügen",
-    text_placeholder:"Dein Text...",text_size:"Größe",text_color:"Farbe",
-    ai_on:"🤖 KI-MODUS",piece:"TEIL",pieces:"TEILE",
-    sealed:"Collage versiegelt",sealed_sub:"Souveräne Komposition · Ebenen gesichert",
-    receipt:"Receipt ID",layers_lbl:"Ebenen",recipe:"Rezept",
-    hash_note:"Die Ebenenreihenfolge ist Teil des Hashs.\nAndere Überlappung = anderer Hash.\nEinzigartige Komposition.",
-    close:"Schließen",
-    st_ready:"BEREIT",st_cut:"Ausschneiden...",st_ai:"KI analysiert...",
-    st_ok:"✨ Extrahiert",st_touch:"Bereich berühren",st_undo:"↩ Rückgängig",
-    st_del:"Gelöscht",st_clear:"GELEERT",st_calc:"Berechne...",
-    st_render:"Wird gerendert...",st_sealed:"VERSIEGELT ✓",st_none:"⚠️ KEINE TEILE",st_nundo:"Nichts rückgängig",
-    lup:"▲ Ebene höher",ldown:"▼ Ebene tiefer",lfront:"⬆ Ganz vorne",lback:"⬇ Ganz hinten",
-    addphoto:"+ FOTO",box:"Schachtel",
-    export_title:"Teilen & Exportieren",
-    btn_download:"📥 Download PNG",btn_share:"📤 Teilen",btn_email:"📧 E-Mail",
-    btn_ledger:"🔒 Im Ledger versiegeln",btn_verify:"🔗 Verifizieren",
-    ledger_ok:"✦ IM LEDGER VERSIEGELT",ledger_fail:"⚠️ Ledger nicht verfügbar",ledger_ing:"Versiegeln...",
-    share_text:"Ich habe diese verifizierbare Collage mit WINDI Travel erstellt.",
-    email_subject:"WINDI Travel Collage — Receipt",
-    copy_ok:"✓ Link kopiert",
-  },
-  en:{
-    brand:"WINDI Travel",sub:"Sovereign Shear",
-    lasso:"Lasso",ai:"AI Touch",move:"Move",rotate:"Rotate",
-    text:"Text",clear:"Clear",seal:"Seal",layers:"Layers",
-    undo:"Undo",del:"Delete",rotation:"Rotation",
-    hint_lasso:"✂️ Draw the outline with your finger",
-    hint_toque:"🤖 Touch an object · AI segments it",
-    hint_mover:"✋ Drag · select to manage layers",
-    hint_rodar:"🔄 Touch a piece · use the slider",
-    hint_texto:"✍️ Touch the workspace to add text",
-    text_placeholder:"Your text...",text_size:"Size",text_color:"Color",
-    ai_on:"🤖 AI MODE",piece:"PIECE",pieces:"PIECES",
-    sealed:"Collage Sealed",sealed_sub:"Sovereign composition · Layers preserved",
-    receipt:"Receipt ID",layers_lbl:"Layers",recipe:"Recipe",
-    hash_note:"Layer order is part of the hash.\nChanging overlap = different hash.\nUnique, irreproducible composition.",
-    close:"Close",
-    st_ready:"READY",st_cut:"Cutting...",st_ai:"AI analysing...",
-    st_ok:"✨ Extracted",st_touch:"Touch a coloured area",st_undo:"↩ Undone",
-    st_del:"Deleted",st_clear:"CLEARED",st_calc:"Calculating...",
-    st_render:"Rendering...",st_sealed:"SEALED ✓",st_none:"⚠️ NO PIECES",st_nundo:"Nothing to undo",
-    lup:"▲ Layer up",ldown:"▼ Layer down",lfront:"⬆ Bring to front",lback:"⬇ Send to back",
-    addphoto:"+ PHOTO",box:"Box",
-    export_title:"Share & Export",
-    btn_download:"📥 Download PNG",btn_share:"📤 Share",btn_email:"📧 Email",
-    btn_ledger:"🔒 Seal to Ledger",btn_verify:"🔗 Verify",
-    ledger_ok:"✦ SEALED IN LEDGER",ledger_fail:"⚠️ Ledger unavailable",ledger_ing:"Sealing...",
-    share_text:"I created this verifiable collage with WINDI Travel.",
-    email_subject:"WINDI Travel Collage — Receipt",
-    copy_ok:"✓ Link copied",
-  },
-};
+const H={tap:()=>navigator.vibrate?.(12),select:()=>navigator.vibrate?.(18),place:()=>navigator.vibrate?.([20,10,20]),
+lasso:()=>navigator.vibrate?.(8),ia:()=>navigator.vibrate?.([15,8,15]),iaDone:()=>navigator.vibrate?.([30,15,60]),
+del:()=>navigator.vibrate?.([35,20,60]),err:()=>navigator.vibrate?.([80,40,80]),seal:()=>navigator.vibrate?.([50,30,50,30,120]),
+dl:()=>navigator.vibrate?.([20,10,20,10,20])};
 
 const SCENES=[
-  {name:"🏔️",sky:["#87CEEB","#B8D4E8"],ground:"#6B8E4E",sun:"#FFF176",hill:"#4A7C40",extra:"mountain"},
-  {name:"🌅",sky:["#FF6B35","#FFA07A"],ground:"#8B4513",sun:"#FFD700",hill:"#6B3410",extra:"sunset"},
-  {name:"🌊",sky:["#4A90D9","#87CEEB"],ground:"#1E6091",sun:"#FFFFFF",hill:"#1A5276",extra:"ocean"},
-  {name:"🌲",sky:["#90EE90","#228B22"],ground:"#3D5A1E",sun:"#FFFF99",hill:"#2D4A0E",extra:"forest"},
-];
+{name:'🏔️',sky:['#87CEEB','#B8D4E8'],ground:'#6B8E4E',sun:'#FFF176',hill:'#4A7C40',extra:'mountain'},
+{name:'🌅',sky:['#FF6B35','#FFA07A'],ground:'#8B4513',sun:'#FFD700',hill:'#6B3410',extra:'sunset'},
+{name:'🌊',sky:['#4A90D9','#87CEEB'],ground:'#1E6091',sun:'#FFFFFF',hill:'#1A5276',extra:'ocean'},
+{name:'🌲',sky:['#90EE90','#228B22'],ground:'#3D5A1E',sun:'#FFFF99',hill:'#2D4A0E',extra:'forest'}];
+
+const VERIFY_BASE='https://windi-domain.com/verify-public/?id=';
+const LEDGER_URL='/tesoura/seal';
+
+const LANG={
+pt:{hint:'Adiciona uma foto',mSel:'— SELECCIONAR FERRAMENTA —',mMove:'↖ MOVER PEÇA',
+mLasso:'✂ LASSO — desenha o recorte',mIA:'🤖 IA TOUCH — toca na foto',mTxt:'𝐓 ESCREVE O TEXTO',
+pieces:p=>`${p} peça${p!==1?'s':''}`,lAdd:'Foto',lLasso:'Lasso',lIA:'IA Touch',lTxt:'Texto',
+lUndo:'Undo',lDel:'Apagar',lSeal:'Selar',lRot:'Rotação',lSc:'Escala',lIaTol:'Tolerância',
+iaInfo:'Toca na foto para recortar por cor',mTitle:'Colagem Selada',mSub:'Governança silenciosa · WINDI Travel',
+sbTxt:'Selado',bDl:'Download',bSh:'Partilhar',bCl:'Fechar',tAdd:'📷 Foto adicionada',tDel:'🗑 Peça removida',
+tUndo:'↩ Desfeito',tSeal:'🔏 A selar…',tCopy:'✓ Copiado',tSh:'↗ Partilhar…',
+tIA:'🤖 Toca numa zona da foto',tIADone:'✓ Recorte criado',noImg:'⚠ Adiciona uma foto primeiro',
+noSel:'⚠ Selecciona uma peça',txtPmt:'Escreve o texto:',
+lLayers:'Camadas',lAddBg:'+ BG',lExport:'Partilhar & Exportar',bEmail:'Email',bVerify:'Verificar',
+bLedger:'Selar no Ledger',ledgerOk:'✦ SELADO NO LEDGER',ledgerFail:'⚠ Ledger indisponível',ledgerIng:'A selar…',
+txtTitle:'Adicionar Texto',lTxtSize:'Tamanho',lTxtColor:'Cor',lTxtAdd:'Adicionar',
+shareText:'Criei esta colagem verificável com WINDI Travel.',emailSubj:'Colagem WINDI Travel — Receipt'},
+de:{hint:'Foto hinzufügen',mSel:'— WERKZEUG WÄHLEN —',mMove:'↖ STÜCK VERSCHIEBEN',
+mLasso:'✂ LASSO — Schnitt zeichnen',mIA:'🤖 IA TOUCH — Foto antippen',mTxt:'𝐓 TEXT SCHREIBEN',
+pieces:p=>`${p} Stück${p!==1?'e':''}`,lAdd:'Foto',lLasso:'Lasso',lIA:'IA Touch',lTxt:'Text',
+lUndo:'Rückgängig',lDel:'Löschen',lSeal:'Versiegeln',lRot:'Drehen',lSc:'Skalieren',lIaTol:'Toleranz',
+iaInfo:'Foto antippen, um nach Farbe auszuschneiden',mTitle:'Versiegelte Collage',mSub:'Stille Governance · WINDI Travel',
+sbTxt:'Versiegelt',bDl:'Download',bSh:'Teilen',bCl:'Schließen',tAdd:'📷 Foto hinzugefügt',tDel:'🗑 Stück entfernt',
+tUndo:'↩ Rückgängig',tSeal:'🔏 Versiegeln…',tCopy:'✓ Kopiert',tSh:'↗ Teilen…',
+tIA:'🤖 Farb-Zone antippen',tIADone:'✓ Ausschnitt erstellt',noImg:'⚠ Erst Foto hinzufügen',
+noSel:'⚠ Stück auswählen',txtPmt:'Text eingeben:',
+lLayers:'Ebenen',lAddBg:'+ BG',lExport:'Teilen & Exportieren',bEmail:'E-Mail',bVerify:'Verifizieren',
+bLedger:'Im Ledger versiegeln',ledgerOk:'✦ IM LEDGER VERSIEGELT',ledgerFail:'⚠ Ledger nicht verfügbar',ledgerIng:'Versiegeln…',
+txtTitle:'Text hinzufügen',lTxtSize:'Größe',lTxtColor:'Farbe',lTxtAdd:'Hinzufügen',
+shareText:'Ich habe diese verifizierbare Collage mit WINDI Travel erstellt.',emailSubj:'WINDI Travel Collage — Receipt'},
+en:{hint:'Add a photo',mSel:'— SELECT TOOL —',mMove:'↖ MOVE PIECE',
+mLasso:'✂ LASSO — draw the cut',mIA:'🤖 IA TOUCH — tap the photo',mTxt:'𝐓 WRITE TEXT',
+pieces:p=>`${p} piece${p!==1?'s':''}`,lAdd:'Photo',lLasso:'Lasso',lIA:'IA Touch',lTxt:'Text',
+lUndo:'Undo',lDel:'Delete',lSeal:'Seal',lRot:'Rotate',lSc:'Scale',lIaTol:'Tolerance',
+iaInfo:'Tap the photo to cut by colour',mTitle:'Sealed Collage',mSub:'Silent governance · WINDI Travel',
+sbTxt:'Sealed',bDl:'Download',bSh:'Share',bCl:'Close',tAdd:'📷 Photo added',tDel:'🗑 Piece removed',
+tUndo:'↩ Undone',tSeal:'🔏 Sealing…',tCopy:'✓ Copied',tSh:'↗ Share…',
+tIA:'🤖 Tap a colour zone',tIADone:'✓ Cut created',noImg:'⚠ Add a photo first',
+noSel:'⚠ Select a piece',txtPmt:'Enter text:',
+lLayers:'Layers',lAddBg:'+ BG',lExport:'Share & Export',bEmail:'Email',bVerify:'Verify',
+bLedger:'Seal to Ledger',ledgerOk:'✦ SEALED IN LEDGER',ledgerFail:'⚠ Ledger unavailable',ledgerIng:'Sealing…',
+txtTitle:'Add Text',lTxtSize:'Size',lTxtColor:'Color',lTxtAdd:'Add',
+shareText:'I created this verifiable collage with WINDI Travel.',emailSubj:'WINDI Travel Collage — Receipt'}};
+let lang='pt';
+function t(k){return LANG[lang][k]||LANG.pt[k]}
+function setLang(l){H.tap();lang=l;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('on',b.dataset.l===l));applyLang()}
+function applyLang(){const L=LANG[lang];document.getElementById('hintTxt').textContent=L.hint;
+['Add','Lasso','IA','Txt','Undo','Del','Seal'].forEach(k=>document.getElementById('l'+k).textContent=L['l'+k]);
+document.getElementById('lRot').textContent=L.lRot;document.getElementById('lSc').textContent=L.lSc;
+document.getElementById('lIaTol').textContent=L.lIaTol;document.getElementById('iaModeInfo').textContent=L.iaInfo;
+document.getElementById('mTitle').textContent=L.mTitle;document.getElementById('mSub').textContent=L.mSub;
+document.getElementById('sbTxt').textContent=L.sbTxt;document.getElementById('bDl').textContent=L.bDl;
+document.getElementById('bSh').textContent=L.bSh;document.getElementById('bCl').textContent=L.bCl;
+document.getElementById('lLayers').textContent=L.lLayers;document.getElementById('lAddBg').textContent=L.lAddBg;
+document.getElementById('lExport').textContent=L.lExport;document.getElementById('bEmail').textContent=L.bEmail;
+document.getElementById('bVerify').textContent=L.bVerify;document.getElementById('bLedger').textContent=L.bLedger;
+document.getElementById('txtTitle').textContent=L.txtTitle;document.getElementById('lTxtAdd').textContent=L.lTxtAdd;
+updateStatus()}
+
+let noir=false;
+function toggleTheme(){H.tap();noir=!noir;document.body.classList.toggle('noir',noir);render()}
+
+let _tt;function toast(msg){const el=document.getElementById('toast');el.textContent=msg;
+el.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>el.classList.remove('show'),2400)}
+
+function ripple(btn,e){const r=document.createElement('span');r.className='ripple';
+const rect=btn.getBoundingClientRect();r.style.left=((e?.clientX||rect.left+rect.width/2)-rect.left-40)+'px';
+r.style.top=((e?.clientY||rect.top+rect.height/2)-rect.top-40)+'px';btn.appendChild(r);setTimeout(()=>r.remove(),500)}
+document.querySelectorAll('.ibtn,.mbtn').forEach(b=>b.addEventListener('pointerdown',e=>ripple(b,e)));
+
+const MC=document.getElementById('mainCanvas'),ctx=MC.getContext('2d');
+const OC=document.getElementById('overlayCanvas'),oct=OC.getContext('2d');
+const cwrap=document.getElementById('cwrap');
+
+function resizeCanvas(){const w=cwrap.clientWidth,h=cwrap.clientHeight;MC.width=w;MC.height=h;OC.width=w;OC.height=h;
+sceneCanvases=SCENES.map(s=>buildScene(s,w,h));render()}
+window.addEventListener('resize',()=>{clearTimeout(window._rst);window._rst=setTimeout(resizeCanvas,80)});
+setTimeout(resizeCanvas,80);
+
+let pieces=[],selIdx=-1,tool='select',history=[],isDrag=false,dragStart=null,dragOrig=null;
+let isLassoing=false,lassoPoints=[],lassoImg=null;
+let iaActive=false,iaTolerance=40;
+let currentScene=0,extraBgs=[],activeBgIdx=-1,sceneCanvases=[];
+let txtSize=28,txtColor='#FFFFFF',txtPos=null;
+let ledgerState=null;
 
 function buildScene(s,w,h){
-  const c=document.createElement("canvas");c.width=w;c.height=h;
-  const ctx=c.getContext("2d");
-  const g=ctx.createLinearGradient(0,0,0,h*.65);
-  g.addColorStop(0,s.sky[0]);g.addColorStop(1,s.sky[1]);
-  ctx.fillStyle=g;ctx.fillRect(0,0,w,h*.65);
-  ctx.fillStyle=s.ground;ctx.fillRect(0,h*.65,w,h*.35);
-  ctx.beginPath();ctx.moveTo(0,h*.65);
-  ctx.bezierCurveTo(w*.15,h*.45,w*.35,h*.52,w*.5,h*.48);
-  ctx.bezierCurveTo(w*.65,h*.44,w*.82,h*.58,w,h*.52);
-  ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();
-  ctx.fillStyle=s.hill;ctx.fill();
-  ctx.beginPath();ctx.arc(w*.78,h*.18,h*.09,0,Math.PI*2);
-  ctx.fillStyle=s.sun;ctx.fill();
-  if(s.extra==="mountain"){
-    ctx.beginPath();ctx.moveTo(w*.3,h*.65);ctx.lineTo(w*.45,h*.28);ctx.lineTo(w*.6,h*.65);
-    ctx.fillStyle="#8B9E8B";ctx.fill();
-    ctx.beginPath();ctx.moveTo(w*.38,h*.42);ctx.lineTo(w*.45,h*.28);ctx.lineTo(w*.52,h*.42);
-    ctx.fillStyle="#EEE";ctx.fill();
-  }
-  if(s.extra==="ocean"){
-    for(let i=0;i<4;i++){
-      ctx.beginPath();ctx.moveTo(i*w*.28,h*.55+i*8);
-      ctx.bezierCurveTo(i*w*.28+30,h*.52+i*8,i*w*.28+60,h*.56+i*8,i*w*.28+90,h*.54+i*8);
-      ctx.strokeStyle="rgba(255,255,255,0.4)";ctx.lineWidth=2;ctx.stroke();
-    }
-  }
-  if(s.extra==="forest"){
-    for(let i=0;i<6;i++){
-      const tx=(i+.5)*w/6,ty=h*.55;
-      ctx.beginPath();ctx.moveTo(tx,ty-h*.18);ctx.lineTo(tx+w*.05,ty);ctx.lineTo(tx-w*.05,ty);
-      ctx.fillStyle="#1B4D1B";ctx.fill();
-    }
-  }
-  if(s.extra==="sunset"){
-    for(let a=0;a<8;a++){
-      const ang=(a/8)*Math.PI*2;
-      ctx.beginPath();ctx.moveTo(w*.78,h*.18);
-      ctx.lineTo(w*.78+Math.cos(ang)*h*.2,h*.18+Math.sin(ang)*h*.2);
-      ctx.strokeStyle="rgba(255,200,50,0.2)";ctx.lineWidth=2;ctx.stroke();
-    }
-  }
-  return c;
-}
+const c=document.createElement('canvas');c.width=w;c.height=h;const ctx=c.getContext('2d');
+const g=ctx.createLinearGradient(0,0,0,h*.65);g.addColorStop(0,s.sky[0]);g.addColorStop(1,s.sky[1]);
+ctx.fillStyle=g;ctx.fillRect(0,0,w,h*.65);ctx.fillStyle=s.ground;ctx.fillRect(0,h*.65,w,h*.35);
+ctx.beginPath();ctx.moveTo(0,h*.65);ctx.bezierCurveTo(w*.15,h*.45,w*.35,h*.52,w*.5,h*.48);
+ctx.bezierCurveTo(w*.65,h*.44,w*.82,h*.58,w,h*.52);ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();
+ctx.fillStyle=s.hill;ctx.fill();ctx.beginPath();ctx.arc(w*.78,h*.18,h*.09,0,Math.PI*2);ctx.fillStyle=s.sun;ctx.fill();
+if(s.extra==='mountain'){ctx.beginPath();ctx.moveTo(w*.3,h*.65);ctx.lineTo(w*.45,h*.28);ctx.lineTo(w*.6,h*.65);
+ctx.fillStyle='#8B9E8B';ctx.fill();ctx.beginPath();ctx.moveTo(w*.38,h*.42);ctx.lineTo(w*.45,h*.28);
+ctx.lineTo(w*.52,h*.42);ctx.fillStyle='#EEE';ctx.fill()}
+if(s.extra==='ocean'){for(let i=0;i<4;i++){ctx.beginPath();ctx.moveTo(i*w*.28,h*.55+i*8);
+ctx.bezierCurveTo(i*w*.28+30,h*.52+i*8,i*w*.28+60,h*.56+i*8,i*w*.28+90,h*.54+i*8);
+ctx.strokeStyle='rgba(255,255,255,0.4)';ctx.lineWidth=2;ctx.stroke()}}
+if(s.extra==='forest'){for(let i=0;i<6;i++){const tx=(i+.5)*w/6,ty=h*.55;
+ctx.beginPath();ctx.moveTo(tx,ty-h*.18);ctx.lineTo(tx+w*.05,ty);ctx.lineTo(tx-w*.05,ty);ctx.fillStyle='#1B4D1B';ctx.fill()}}
+if(s.extra==='sunset'){for(let a=0;a<8;a++){const ang=(a/8)*Math.PI*2;ctx.beginPath();ctx.moveTo(w*.78,h*.18);
+ctx.lineTo(w*.78+Math.cos(ang)*h*.2,h*.18+Math.sin(ang)*h*.2);ctx.strokeStyle='rgba(255,200,50,0.2)';ctx.lineWidth=2;ctx.stroke()}}
+return c}
 
-async function sha256(str){
-  const buf=new TextEncoder().encode(str);
-  const hash=await crypto.subtle.digest("SHA-256",buf);
-  return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,"0")).join("");
-}
+function initScenes(){const W=MC.width||300,H=MC.height||400;
+SCENES.forEach((s,i)=>{const thumb=buildScene(s,40,40);document.getElementById('sc'+i).replaceWith(thumb);
+thumb.id='sc'+i;thumb.style.cssText='width:100%;height:100%;display:block'});
+sceneCanvases=SCENES.map(s=>buildScene(s,W,H))}
 
-function floodFill(imageData,sx,sy,tol=42){
-  const{data,width,height}=imageData;
-  const idx=(x,y)=>(y*width+x)*4;
-  const sr=data[idx(sx,sy)],sg=data[idx(sx,sy)+1],sb=data[idx(sx,sy)+2];
-  const diff=(x,y)=>{const i=idx(x,y);return Math.sqrt((data[i]-sr)**2+(data[i+1]-sg)**2+(data[i+2]-sb)**2);};
-  const mask=new Uint8Array(width*height),visited=new Uint8Array(width*height);
-  const stack=[[sx,sy]];visited[sy*width+sx]=1;
-  let minX=sx,maxX=sx,minY=sy,maxY=sy;
-  while(stack.length){
-    const[x,y]=stack.pop();
-    if(diff(x,y)<=tol){
-      mask[y*width+x]=1;
-      minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y);
-      for(const[nx,ny]of[[x-1,y],[x+1,y],[x,y-1],[x,y+1]])
-        if(nx>=0&&nx<width&&ny>=0&&ny<height&&!visited[ny*width+nx]){visited[ny*width+nx]=1;stack.push([nx,ny]);}
-    }
-  }
-  return{mask,minX,maxX,minY,maxY};
-}
+function selectScene(idx){H.tap();currentScene=idx;activeBgIdx=-1;
+document.querySelectorAll('.scene-item').forEach((el,i)=>el.classList.toggle('on',i===idx&&activeBgIdx<0));
+render()}
 
-function extractMasked(src,mask,minX,minY,maxX,maxY){
-  const bw=maxX-minX+8,bh=maxY-minY+8;
-  if(bw<8||bh<8) return null;
-  const tmp=document.createElement("canvas");tmp.width=bw;tmp.height=bh;
-  const tctx=tmp.getContext("2d");
-  const sd=src.getContext("2d").getImageData(minX-4,minY-4,bw,bh);
-  const id=new ImageData(new Uint8ClampedArray(sd.data),bw,bh);
-  const mW=src.width;
-  for(let py=0;py<bh;py++) for(let px=0;px<bw;px++){
-    const sx2=px+minX-4,sy2=py+minY-4;
-    if(sx2<0||sy2<0||sx2>=mW||!mask[sy2*mW+sx2]) id.data[(py*bw+px)*4+3]=0;
-  }
-  tctx.putImageData(id,0,0);
-  return{dataUrl:tmp.toDataURL("image/png"),w:bw,h:bh};
-}
+function handleBgFiles(e){Array.from(e.target.files).forEach(file=>{const reader=new FileReader();
+reader.onload=ev=>{extraBgs.push(ev.target.result);renderExtraBgs();selectExtraBg(extraBgs.length-1);H.place()};
+reader.readAsDataURL(file)});e.target.value=''}
 
-async function renderComposite(colCanvas,pieces,W,H){
-  const out=document.createElement("canvas");out.width=W;out.height=H;
-  const ctx=out.getContext("2d");
-  ctx.drawImage(colCanvas,0,0);
-  for(const p of pieces){
-    await new Promise(res=>{
-      const img=new Image();
-      img.onload=()=>{
-        ctx.save();
-        ctx.translate(p.x+p.w/2,p.y+p.h/2);
-        ctx.rotate((p.rot*Math.PI)/180);
-        ctx.drawImage(img,-p.w/2,-p.h/2,p.w,p.h);
-        ctx.restore();res();
-      };
-      img.onerror=res;img.src=p.src;
-    });
-  }
-  return out.toDataURL("image/png");
-}
+function renderExtraBgs(){const cont=document.getElementById('extraPhotos');cont.innerHTML='';
+extraBgs.forEach((url,i)=>{const div=document.createElement('div');div.className='scene-item'+(activeBgIdx===i?' on':'');
+div.onclick=()=>selectExtraBg(i);const img=document.createElement('img');img.src=url;div.appendChild(img);cont.appendChild(div)})}
 
-async function sealToLedger(receiptId,hash,recipe,lang){
-  try{
-    const r=await fetch(LEDGER_URL,{
-      method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        id:receiptId,actor:"anonymous",app:"windi-travel-tesoura",
-        doc_name:`COLLAGE_${receiptId}`,doc_type:"doc",governance_level:"HIGH",
-        content_hash:`sha256:${hash}`,sge_score:90,
-        metadata:JSON.stringify({hash,lang,pieces:recipe.pieces.length}),
-      }),
-      signal:AbortSignal.timeout(6000),
-    });
-    return r.ok?"ok":"fail";
-  }catch{return"fail";}
-}
+function selectExtraBg(idx){H.tap();activeBgIdx=idx;currentScene=-1;
+document.querySelectorAll('.scene-item').forEach(el=>el.classList.remove('on'));
+document.querySelectorAll('#extraPhotos .scene-item')[idx]?.classList.add('on');render()}
 
-function App(){
-  const wsRef=useRef(null),colRef=useRef(null),drawRef=useRef(null);
-  const scenes=useRef([]);
-  const sr=useRef({mode:"lasso",sceneIdx:0,pieces:[],selIdx:null,isDown:false,pts:[],extraPhotos:[],extraIdx:-1});
+function updateStatus(){const modes={select:t('mSel'),lasso:t('mLasso'),ia:t('mIA'),text:t('mTxt'),move:t('mMove')};
+document.getElementById('sMode').textContent=modes[tool]||t('mSel');const n=pieces.length;
+document.getElementById('sInfo').textContent=t('pieces')(n);
+const b=document.getElementById('pbadge');b.textContent=n;b.classList.toggle('show',n>0);
+document.getElementById('chint').classList.toggle('gone',n>0||isLassoing)}
 
-  const[lang,setLang]=useState("de");
-  const[mode,setModeS]=useState("lasso");
-  const[sceneIdx,setScnS]=useState(0);
-  const[extraPhotos,setExtras]=useState([]);
-  const[activeExtra,setActExt]=useState(-1);
-  const[pieces,setPieces]=useState([]);
-  const[selIdx,setSelS]=useState(null);
-  const[rotVal,setRotVal]=useState(0);
-  const[status,setStatus]=useState("BEREIT");
-  const[sealModal,setSeal]=useState(null);
-  const[ripple,setRipple]=useState(null);
-  const[flash,setFlash]=useState(false);
-  const[textModal,setTextModal]=useState(null);
-  const[textInput,setTextInput]=useState("");
-  const[textSize,setTextSize]=useState(28);
-  const[textColor,setTextColor]=useState("#FFFFFF");
-  const[ledgerSt,setLedgerSt]=useState(null);
-  const[copyFb,setCopyFb]=useState(false);
+function saveState(){history.push(pieces.map(p=>({x:p.x,y:p.y,r:p.r,s:p.s,type:p.type,text:p.text||''})));if(history.length>25)history.shift()}
 
-  // §111 MARIA ↔ Tesoura — Context from URL params
-  const[travelContext,setTravelContext]=useState(null);
+function bgColor(){return noir?'#111111':'#D8D2BE'}
+function gridColor(){return noir?'rgba(255,255,255,0.03)':'rgba(0,0,0,0.055)'}
 
-  // Read URL params on mount
-  useEffect(()=>{
-    const params = new URLSearchParams(window.location.search);
-    const context = params.get('context');
-    const place = params.get('place');
-    const receipts = params.get('receipts')?.split(',').filter(r=>r) || [];
+function render(){const W=MC.width,H=MC.height;ctx.clearRect(0,0,W,H);
+if(activeBgIdx>=0&&extraBgs[activeBgIdx]){const img=new Image();img.onload=()=>{
+const sc=Math.max(W/img.width,H/img.height);ctx.filter='blur(8px) brightness(0.4)';
+ctx.drawImage(img,(W-img.width*sc)/2,(H-img.height*sc)/2,img.width*sc,img.height*sc);ctx.filter='none';
+const sf=Math.min(W/img.width,H/img.height)*.95;
+ctx.drawImage(img,(W-img.width*sf)/2,(H-img.height*sf)/2,img.width*sf,img.height*sf);renderPieces()};img.src=extraBgs[activeBgIdx];return}
+else if(currentScene>=0&&sceneCanvases[currentScene]){ctx.drawImage(sceneCanvases[currentScene],0,0)}
+else{ctx.fillStyle=bgColor();ctx.fillRect(0,0,W,H);ctx.strokeStyle=gridColor();ctx.lineWidth=1;
+for(let x=0;x<W;x+=32){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()}
+for(let y=0;y<H;y+=32){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}}
+renderPieces()}
+function renderPieces(){const W=MC.width,H=MC.height;
+pieces.forEach((p,i)=>{ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r*Math.PI/180);ctx.scale(p.s/100,p.s/100);
+if(p.type==='text'){ctx.font=`bold ${p.fs||28}px 'Bricolage Grotesque',sans-serif`;
+ctx.fillStyle=p.color||(noir?'#F0EAD6':'#1A1612');ctx.textAlign='center';ctx.textBaseline='middle';
+ctx.shadowColor=noir?'rgba(0,0,0,.8)':'rgba(0,0,0,.22)';ctx.shadowBlur=4;ctx.fillText(p.text,0,0);ctx.shadowBlur=0}
+else if(p.img){if(p.offscreen){ctx.shadowColor='rgba(0,0,0,.32)';ctx.shadowBlur=14;ctx.shadowOffsetY=4;
+ctx.drawImage(p.offscreen,-p.offscreen.width/2,-p.offscreen.height/2);ctx.shadowBlur=0;ctx.shadowOffsetY=0}
+else{const iw=p.img.naturalWidth||200,ih=p.img.naturalHeight||200;const sz=Math.min(220,Math.max(iw,ih));
+const sw=(iw/Math.max(iw,ih))*sz,sh=(ih/Math.max(iw,ih))*sz;
+if(p.lassoPath&&p.lassoPath.length>4){ctx.beginPath();p.lassoPath.forEach((pt,j)=>j===0?ctx.moveTo(pt[0],pt[1]):ctx.lineTo(pt[0],pt[1]));ctx.closePath();ctx.clip()}
+ctx.shadowColor='rgba(0,0,0,.32)';ctx.shadowBlur=14;ctx.shadowOffsetY=4;ctx.drawImage(p.img,-sw/2,-sh/2,sw,sh);ctx.shadowBlur=0;ctx.shadowOffsetY=0}}
+ctx.restore();
+if(i===selIdx){ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r*Math.PI/180);
+const hw=(p.type==='text'?85:p.offscreen?p.offscreen.width/2:115)*p.s/100;
+const hh=(p.type==='text'?32:p.offscreen?p.offscreen.height/2:115)*p.s/100;
+ctx.strokeStyle=noir?'#C8A96E':'#8B6914';ctx.lineWidth=2;ctx.setLineDash([6,4]);
+ctx.strokeRect(-hw,-hh,hw*2,hh*2);ctx.setLineDash([]);
+[[-hw,-hh],[hw,-hh],[hw,hh],[-hw,hh]].forEach(([cx,cy])=>{ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(cx,cy,7,0,Math.PI*2);ctx.fill();
+ctx.strokeStyle=noir?'#C8A96E':'#8B6914';ctx.lineWidth=2;ctx.stroke()});ctx.restore()}})}
 
-    if (context === 'travel' && place) {
-      setTravelContext({ place, receipts, count: receipts.length });
-      // Update document title
-      const memoryLabel = lang === 'de' ? 'Erinnerung an' : lang === 'pt' ? 'Memória de' : 'Memory of';
-      document.title = `${memoryLabel} ${place} — WINDI`;
-    }
-  },[]);
+function renderLasso(){oct.clearRect(0,0,OC.width,OC.height);if(!isLassoing||lassoPoints.length<2)return;
+oct.strokeStyle=noir?'#C8A96E':'#8B6914';oct.lineWidth=2.5;oct.setLineDash([8,5]);oct.lineCap='round';oct.lineJoin='round';
+oct.beginPath();lassoPoints.forEach((p,i)=>i===0?oct.moveTo(p[0],p[1]):oct.lineTo(p[0],p[1]));oct.stroke();
+if(lassoPoints.length>2){oct.setLineDash([4,4]);oct.strokeStyle=noir?'rgba(200,169,110,.5)':'rgba(139,105,20,.5)';
+oct.beginPath();oct.moveTo(lassoPoints[lassoPoints.length-1][0],lassoPoints[lassoPoints.length-1][1]);
+oct.lineTo(lassoPoints[0][0],lassoPoints[0][1]);oct.stroke()}oct.setLineDash([]);
+oct.fillStyle=noir?'#C8A96E':'#8B6914';oct.beginPath();oct.arc(lassoPoints[0][0],lassoPoints[0][1],9,0,Math.PI*2);oct.fill()}
 
-  const t=T[lang];
-  const sync=()=>setPieces([...sr.current.pieces]);
-  const flashFx=()=>{setFlash(true);setTimeout(()=>setFlash(false),300);};
-  const setMode=m=>{sr.current.mode=m;sr.current.selIdx=null;setModeS(m);setSelS(null);};
+function iaFloodFill(img,touchX,touchY,tolerance){const sz=Math.min(220,Math.max(img.naturalWidth||200,img.naturalHeight||200));
+const iw=img.naturalWidth||200,ih=img.naturalHeight||200,scale=sz/Math.max(iw,ih);
+const sw=Math.round(iw*scale),sh=Math.round(ih*scale);const tmp=document.createElement('canvas');
+tmp.width=sw;tmp.height=sh;const tc=tmp.getContext('2d');tc.drawImage(img,0,0,sw,sh);
+const px=Math.max(0,Math.min(sw-1,Math.round(touchX))),py=Math.max(0,Math.min(sh-1,Math.round(touchY)));
+const imgData=tc.getImageData(0,0,sw,sh),data=imgData.data;const idx4=(py*sw+px)*4;
+const tR=data[idx4],tG=data[idx4+1],tB=data[idx4+2];const visited=new Uint8Array(sw*sh),mask=new Uint8Array(sw*sh);
+const queue=[];queue.push([px,py]);visited[py*sw+px]=1;
+function colourDiff(r,g,b){return Math.abs(r-tR)+Math.abs(g-tG)+Math.abs(b-tB)}
+let filled=0;const MAX_FILL=sw*sh;
+while(queue.length>0&&filled<MAX_FILL){const [x,y]=queue.shift();mask[y*sw+x]=1;filled++;
+const neighbours=[[x-1,y],[x+1,y],[x,y-1],[x,y+1]];
+for(const [nx,ny] of neighbours){if(nx<0||nx>=sw||ny<0||ny>=sh)continue;const ni=ny*sw+nx;
+if(visited[ni])continue;visited[ni]=1;const nIdx=ni*4;
+if(colourDiff(data[nIdx],data[nIdx+1],data[nIdx+2])<=tolerance){queue.push([nx,ny])}}}
+let minX=sw,minY=sh,maxX=0,maxY=0;
+for(let y=0;y<sh;y++)for(let x=0;x<sw;x++){if(mask[y*sw+x]){if(x<minX)minX=x;if(x>maxX)maxX=x;if(y<minY)minY=y;if(y>maxY)maxY=y}}
+if(maxX<=minX||maxY<=minY)return null;
+const outW=maxX-minX+1,outH=maxY-minY+1;const out=document.createElement('canvas');out.width=outW;out.height=outH;
+const oc2=out.getContext('2d'),outImg=oc2.createImageData(outW,outH);
+for(let y=minY;y<=maxY;y++)for(let x=minX;x<=maxX;x++){if(!mask[y*sw+x])continue;
+const si=(y*sw+x)*4,di=((y-minY)*outW+(x-minX))*4;
+outImg.data[di]=data[si];outImg.data[di+1]=data[si+1];outImg.data[di+2]=data[si+2];outImg.data[di+3]=data[si+3]}
+oc2.putImageData(outImg,0,0);return{canvas:out,offsetX:minX-sw/2,offsetY:minY-sh/2}}
 
-  const drawCurrent=useCallback(()=>{
-    const s=sr.current,c=colRef.current;if(!c)return;
-    const ctx=c.getContext("2d");ctx.clearRect(0,0,c.width,c.height);
-    if(s.extraIdx>=0&&s.extraPhotos[s.extraIdx]){
-      const img=new Image();
-      img.onload=()=>{
-        ctx.clearRect(0,0,c.width,c.height);
-        const sc=Math.max(c.width/img.width,c.height/img.height);
-        ctx.filter="blur(14px) brightness(0.35)";
-        ctx.drawImage(img,(c.width-img.width*sc)/2,(c.height-img.height*sc)/2,img.width*sc,img.height*sc);
-        ctx.filter="none";
-        const sf=Math.min(c.width/img.width,c.height/img.height)*0.93;
-        ctx.drawImage(img,(c.width-img.width*sf)/2,(c.height-img.height*sf)/2,img.width*sf,img.height*sf);
-      };
-      img.src=s.extraPhotos[s.extraIdx];
-    }else{
-      const sc=scenes.current[s.sceneIdx];if(sc)ctx.drawImage(sc,0,0);
-    }
-  },[]);
+function showIACursor(x,y){const c=document.getElementById('iaCursor');c.style.display='block';c.style.left=(x-24)+'px';c.style.top=(y-24)+'px'}
+function hideIACursor(){document.getElementById('iaCursor').style.display='none'}
 
-  useEffect(()=>{
-    const ws=wsRef.current;if(!ws)return;
-    const W=ws.clientWidth,H=ws.clientHeight;
-    scenes.current=SCENES.map(s=>buildScene(s,W,H));
-    colRef.current.width=drawRef.current.width=W;
-    colRef.current.height=drawRef.current.height=H;
-    drawCurrent();
-    const onR=()=>{
-      const W2=ws.clientWidth,H2=ws.clientHeight;
-      scenes.current=SCENES.map(s=>buildScene(s,W2,H2));
-      colRef.current.width=drawRef.current.width=W2;
-      colRef.current.height=drawRef.current.height=H2;
-      drawCurrent();
-    };
-    window.addEventListener("resize",onR);
-    return()=>window.removeEventListener("resize",onR);
-  },[]);
+function findNearestImage(px,py){for(let i=pieces.length-1;i>=0;i--){const p=pieces[i];
+if(p.type==='text')continue;const dx=px-p.x,dy=py-p.y;
+const hw=(p.offscreen?p.offscreen.width/2:115)*p.s/100,hh=(p.offscreen?p.offscreen.height/2:115)*p.s/100;
+const angle=-p.r*Math.PI/180,rx=dx*Math.cos(angle)-dy*Math.sin(angle),ry=dx*Math.sin(angle)+dy*Math.cos(angle);
+if(Math.abs(rx)<=hw&&Math.abs(ry)<=hh)return i}return -1}
 
-  useEffect(()=>{drawCurrent();},[sceneIdx,activeExtra]);
+function processIATouch(canvasX,canvasY){const pIdx=findNearestImage(canvasX,canvasY);
+if(pIdx<0){toast(t('noImg'));H.err();return}const piece=pieces[pIdx],img=piece.img;
+if(!img){toast(t('noImg'));H.err();return}
+const sz=Math.min(220,Math.max(img.naturalWidth||200,img.naturalHeight||200));
+const iw=img.naturalWidth||200,ih=img.naturalHeight||200,scale=sz/Math.max(iw,ih);
+const sw=Math.round(iw*scale),sh=Math.round(ih*scale);
+const dx=canvasX-piece.x,dy=canvasY-piece.y,angle=-piece.r*Math.PI/180;
+const rx=(dx*Math.cos(angle)-dy*Math.sin(angle))/(piece.s/100);
+const ry=(dx*Math.sin(angle)+dy*Math.cos(angle))/(piece.s/100);
+const imgTouchX=rx+sw/2,imgTouchY=ry+sh/2;H.ia();
+const result=iaFloodFill(img,imgTouchX,imgTouchY,iaTolerance);
+if(!result){toast('⚠ Zona muito pequena — aumenta a tolerância');H.err();return}
+saveState();const newPiece={type:'image',img:img,offscreen:result.canvas,
+x:piece.x+result.offsetX*(piece.s/100),y:piece.y+result.offsetY*(piece.s/100),r:piece.r,s:piece.s,lassoPath:null};
+pieces.push(newPiece);selIdx=pieces.length-1;H.iaDone();render();updateStatus();showPctrl();syncSliders();toast(t('tIADone'))}
 
-  const handleFiles=e=>{
-    const files=Array.from(e.target.files||[]);if(!files.length)return;
-    let done=0;const loaded=[];
-    files.forEach((f,fi)=>{
-      const reader=new FileReader();
-      reader.onload=ev=>{
-        loaded[fi]=ev.target.result;done++;
-        if(done===files.length){
-          const valid=loaded.filter(Boolean);if(!valid.length)return;
-          const updated=[...sr.current.extraPhotos,...valid];
-          sr.current.extraPhotos=updated;sr.current.extraIdx=updated.length-1;
-          setExtras([...updated]);setActExt(updated.length-1);
-          setTimeout(drawCurrent,60);
-        }
-      };
-      reader.onerror=()=>{done++;};
-      reader.readAsDataURL(f);
-    });
-    e.target.value="";
-  };
+function hitTest(px,py,p){const dx=px-p.x,dy=py-p.y,angle=-p.r*Math.PI/180;
+const rx=dx*Math.cos(angle)-dy*Math.sin(angle),ry=dx*Math.sin(angle)+dy*Math.cos(angle);
+const hw=(p.type==='text'?90:p.offscreen?p.offscreen.width/2:118)*p.s/100;
+const hh=(p.type==='text'?36:p.offscreen?p.offscreen.height/2:118)*p.s/100;
+return Math.abs(rx)<=hw&&Math.abs(ry)<=hh}
 
-  const selectSource=(type,idx)=>{
-    if(type==="scene"){sr.current.sceneIdx=idx;sr.current.extraIdx=-1;setScnS(idx);setActExt(-1);}
-    else{sr.current.extraIdx=idx;setActExt(idx);}
-    setTimeout(drawCurrent,20);
-  };
+function getPos(e){const rect=MC.getBoundingClientRect(),touch=e.touches?.[0]||e;
+return{x:touch.clientX-rect.left,y:touch.clientY-rect.top}}
 
-  const getPos=e=>{
-    const r=wsRef.current.getBoundingClientRect();
-    const s=e.touches?e.touches[0]:e;
-    return{x:Math.round(s.clientX-r.left),y:Math.round(s.clientY-r.top)};
-  };
+function nearLassoStart(x,y){if(lassoPoints.length<4)return false;
+const dx=x-lassoPoints[0][0],dy=y-lassoPoints[0][1];return Math.sqrt(dx*dx+dy*dy)<22}
 
-  const onDown=e=>{
-    const s=sr.current;
-    if(s.mode==="toque"){handleToque(e);return;}
-    if(s.mode==="texto"){e.preventDefault();setTextInput("");setTextModal(getPos(e));return;}
-    if(s.mode!=="lasso")return;
-    e.preventDefault();s.isDown=true;s.pts=[getPos(e)];
-    drawRef.current.getContext("2d").clearRect(0,0,drawRef.current.width,drawRef.current.height);
-    setStatus(t.st_cut);
-  };
-  const onMove=e=>{
-    const s=sr.current;if(!s.isDown||s.mode!=="lasso")return;
-    e.preventDefault();s.pts.push(getPos(e));
-    const dctx=drawRef.current.getContext("2d");
-    dctx.clearRect(0,0,drawRef.current.width,drawRef.current.height);
-    dctx.strokeStyle="rgba(255,255,255,0.9)";dctx.setLineDash([6,4]);
-    dctx.lineWidth=2;dctx.lineJoin="round";
-    dctx.beginPath();dctx.moveTo(s.pts[0].x,s.pts[0].y);
-    s.pts.forEach(p=>dctx.lineTo(p.x,p.y));dctx.stroke();
-  };
-  const onUp=e=>{
-    const s=sr.current;if(!s.isDown)return;
-    e.preventDefault();s.isDown=false;
-    drawRef.current.getContext("2d").clearRect(0,0,drawRef.current.width,drawRef.current.height);
-    doLassoClip();setStatus(t.st_ready);
-  };
+MC.addEventListener('pointerdown',onDown);MC.addEventListener('pointermove',onMove);
+MC.addEventListener('pointerup',onUp);MC.addEventListener('pointercancel',onUp);
 
-  const doLassoClip=()=>{
-    const s=sr.current,pts=s.pts;if(pts.length<5)return;
-    const xs=pts.map(p=>p.x),ys=pts.map(p=>p.y);
-    const x0=Math.max(0,Math.floor(Math.min(...xs))-4);
-    const y0=Math.max(0,Math.floor(Math.min(...ys))-4);
-    const x1=Math.min(colRef.current.width,Math.ceil(Math.max(...xs))+4);
-    const y1=Math.min(colRef.current.height,Math.ceil(Math.max(...ys))+4);
-    const bw=x1-x0,bh=y1-y0;if(bw<10||bh<10)return;
-    const tmp=document.createElement("canvas");tmp.width=bw;tmp.height=bh;
-    const tctx=tmp.getContext("2d");
-    tctx.beginPath();tctx.moveTo(pts[0].x-x0,pts[0].y-y0);
-    pts.forEach(p=>tctx.lineTo(p.x-x0,p.y-y0));
-    tctx.closePath();tctx.clip();tctx.drawImage(colRef.current,-x0,-y0);
-    s.pieces.push({id:Date.now(),src:tmp.toDataURL("image/png"),
-      x:x0,y:y0,w:bw,h:bh,rot:0,method:"lasso",ts:Date.now(),
-      anchorPts:pts.slice(0,6).map(p=>({x:Math.round(p.x-x0),y:Math.round(p.y-y0)}))});
-    s.pts=[];sync();
-  };
+function onDown(e){e.preventDefault();MC.setPointerCapture(e.pointerId);const pos=getPos(e);
+if(tool==='ia'){showIACursor(pos.x,pos.y);processIATouch(pos.x,pos.y);return}
+if(tool==='lasso'){H.lasso();if(nearLassoStart(pos.x,pos.y)&&lassoPoints.length>5){commitLasso();return}
+if(!isLassoing){isLassoing=true;lassoPoints=[]}lassoPoints.push([pos.x,pos.y]);renderLasso();return}
+let hit=-1;for(let i=pieces.length-1;i>=0;i--)if(hitTest(pos.x,pos.y,pieces[i])){hit=i;break}
+if(hit!==selIdx){if(hit>=0)H.select();selIdx=hit;render();if(hit>=0){showPctrl();syncSliders()}else closePctrl()}
+if(selIdx>=0){isDrag=true;dragStart=pos;dragOrig={x:pieces[selIdx].x,y:pieces[selIdx].y};tool='move';updateStatus()}}
 
-  const handleToque=e=>{
-    e.preventDefault();const{x,y}=getPos(e);
-    setRipple({x,y});setTimeout(()=>setRipple(null),900);setStatus(t.st_ai);
-    setTimeout(()=>{
-      const c=colRef.current;
-      const imgData=c.getContext("2d").getImageData(0,0,c.width,c.height);
-      const{mask,minX,maxX,minY,maxY}=floodFill(imgData,
-        Math.max(0,Math.min(x,c.width-1)),Math.max(0,Math.min(y,c.height-1)));
-      const result=extractMasked(c,mask,minX,minY,maxX,maxY);
-      if(!result||result.w<12||result.h<12){setStatus(t.st_touch);return;}
-      sr.current.pieces.push({id:Date.now(),src:result.dataUrl,
-        x:minX-4,y:minY-4,w:result.w,h:result.h,rot:0,
-        method:"toque-ia",ts:Date.now(),anchorPts:[{x,y}]});
-      sync();setStatus(t.st_ok);setTimeout(()=>setStatus(t.st_ready),1500);
-    },300);
-  };
+function onMove(e){e.preventDefault();const pos=getPos(e);
+if(tool==='ia'){showIACursor(pos.x,pos.y);return}
+if(tool==='lasso'&&isLassoing){lassoPoints.push([pos.x,pos.y]);renderLasso();return}
+if(isDrag&&selIdx>=0&&dragStart){pieces[selIdx].x=dragOrig.x+(pos.x-dragStart.x);
+pieces[selIdx].y=dragOrig.y+(pos.y-dragStart.y);render()}}
 
-  const onPieceDown=(e,idx)=>{
-    const s=sr.current;
-    if(s.mode==="lasso"||s.mode==="toque")return;
-    e.stopPropagation();e.preventDefault();
-    s.selIdx=idx;setSelS(idx);setRotVal(s.pieces[idx].rot);
-    if(s.mode!=="mover")return;
-    const pt=e.touches?e.touches[0]:e;
-    const ox=pt.clientX-s.pieces[idx].x,oy=pt.clientY-s.pieces[idx].y;
-    const onMv=ev=>{const p=ev.touches?ev.touches[0]:ev;s.pieces[idx].x=p.clientX-ox;s.pieces[idx].y=p.clientY-oy;sync();};
-    const onUp2=()=>{window.removeEventListener("pointermove",onMv);window.removeEventListener("pointerup",onUp2);};
-    window.addEventListener("pointermove",onMv,{passive:false});
-    window.addEventListener("pointerup",onUp2);
-  };
+function onUp(e){hideIACursor();if(isDrag&&selIdx>=0){H.place();saveState()}
+isDrag=false;dragStart=null;dragOrig=null;if(tool==='move'){tool='select';updateStatus()}}
 
-  const bringForward=()=>{const s=sr.current,i=s.selIdx;if(i===null||i>=s.pieces.length-1)return;[s.pieces[i],s.pieces[i+1]]=[s.pieces[i+1],s.pieces[i]];s.selIdx=i+1;setSelS(i+1);sync();};
-  const sendBackward=()=>{const s=sr.current,i=s.selIdx;if(i===null||i<=0)return;[s.pieces[i],s.pieces[i-1]]=[s.pieces[i-1],s.pieces[i]];s.selIdx=i-1;setSelS(i-1);sync();};
-  const bringToFront=()=>{const s=sr.current,i=s.selIdx;if(i===null||i>=s.pieces.length-1)return;const p=s.pieces.splice(i,1)[0];s.pieces.push(p);s.selIdx=s.pieces.length-1;setSelS(s.pieces.length-1);sync();};
-  const sendToBack=()=>{const s=sr.current,i=s.selIdx;if(i===null||i<=0)return;const p=s.pieces.splice(i,1)[0];s.pieces.unshift(p);s.selIdx=0;setSelS(0);sync();};
-  const applyRot=v=>{setRotVal(v);const s=sr.current;if(s.selIdx!==null){s.pieces[s.selIdx].rot=v;sync();}};
-  const doUndo=()=>{const s=sr.current;if(!s.pieces.length){setStatus(t.st_nundo);setTimeout(()=>setStatus(t.st_ready),1200);return;}s.pieces.pop();if(s.selIdx>=s.pieces.length){s.selIdx=null;setSelS(null);}sync();flashFx();setStatus(t.st_undo);setTimeout(()=>setStatus(t.st_ready),1200);};
-  const doDelete=()=>{const s=sr.current;if(s.selIdx===null)return;s.pieces.splice(s.selIdx,1);s.selIdx=null;setSelS(null);sync();flashFx();setStatus(t.st_del);setTimeout(()=>setStatus(t.st_ready),1000);};
-  const doClear=()=>{sr.current.pieces=[];sr.current.selIdx=null;setPieces([]);setSelS(null);setStatus(t.st_clear);setTimeout(()=>setStatus(t.st_ready),900);};
+function commitLasso(){if(!lassoImg||lassoPoints.length<6){cancelLasso();return}H.place();saveState();
+const W=MC.width,H2=MC.height;const iw=lassoImg.naturalWidth||200,ih=lassoImg.naturalHeight||200;
+const sz=Math.min(220,Math.max(iw,ih)),scale=sz/Math.max(iw,ih);
+const sw=Math.round(iw*scale),sh=Math.round(ih*scale);
+const xs=lassoPoints.map(p=>p[0]),ys=lassoPoints.map(p=>p[1]);
+const cx=(Math.min(...xs)+Math.max(...xs))/2,cy=(Math.min(...ys)+Math.max(...ys))/2;
+const lassoPath_canvas=lassoPoints.map(p=>[(p[0]-cx)/scale,(p[1]-cy)/scale]);
+pieces.push({type:'image',img:lassoImg,offscreen:null,lassoPath:lassoPath_canvas,x:cx,y:cy,r:0,s:100});
+selIdx=pieces.length-1;isLassoing=false;lassoPoints=[];lassoImg=null;
+oct.clearRect(0,0,OC.width,OC.height);tool='select';updateToolUI();render();updateStatus();showPctrl();syncSliders();toast(t('tIADone'))}
 
-  const addTextPiece=()=>{
-    const txt=textInput.trim();if(!txt||!textModal)return;
-    const tmp=document.createElement("canvas");
-    const fs=textSize,font=`bold ${fs}px Georgia,serif`;
-    const ctx2=tmp.getContext("2d");ctx2.font=font;
-    const lines=txt.split("\n"),lh=fs*1.3;
-    const maxW=Math.max(...lines.map(l=>ctx2.measureText(l).width));
-    const pad=fs*0.35;
-    tmp.width=Math.ceil(maxW+pad*2);tmp.height=Math.ceil(lines.length*lh+pad*2);
-    ctx2.font=font;ctx2.clearRect(0,0,tmp.width,tmp.height);
-    ctx2.shadowColor="rgba(0,0,0,0.6)";ctx2.shadowBlur=fs*0.25;
-    ctx2.fillStyle=textColor;ctx2.textBaseline="top";
-    lines.forEach((line,i)=>{ctx2.fillText(line,pad,pad+i*lh);});
-    ctx2.shadowBlur=0;
-    sr.current.pieces.push({
-      id:Date.now(),src:tmp.toDataURL("image/png"),
-      x:Math.round(textModal.x-tmp.width/2),y:Math.round(textModal.y-tmp.height/2),
-      w:tmp.width,h:tmp.height,rot:0,method:"texto",
-      text:txt,fontSize:fs,color:textColor,
-      anchorPts:[{x:textModal.x,y:textModal.y}],ts:Date.now(),
-    });
-    sync();setTextModal(null);setTextInput("");
-    setStatus(t.st_ok);setTimeout(()=>setStatus(t.st_ready),1200);
-  };
+function cancelLasso(){isLassoing=false;lassoPoints=[];lassoImg=null;
+oct.clearRect(0,0,OC.width,OC.height);tool='select';updateToolUI();render();updateStatus()}
 
-  const doSeal=async()=>{
-    const s=sr.current;
-    if(!s.pieces.length){setStatus(t.st_none);setTimeout(()=>setStatus(t.st_ready),1500);return;}
-    setStatus(t.st_calc);
-    const ts=new Date().toISOString();
-    const recipe={version:"3.0",protocol:"WINDI-TRAVEL-COLLAGE",lang,timestamp:ts,
-      pieces:s.pieces.map((p,i)=>({index:i,layer:i,method:p.method,
-        position:{x:Math.round(p.x),y:Math.round(p.y)},
-        size:{w:p.w,h:p.h},rotation_deg:p.rot,anchor_pts:p.anchorPts}))};
-    const hash=await sha256(JSON.stringify(recipe));
-    const id=`WINDI-TRAVEL-COLLAGE-${ts.replace(/[-:T.Z]/g,"").slice(0,14)}`;
-    setStatus(t.st_render);
-    const ws=wsRef.current;
-    const imgUrl=await renderComposite(colRef.current,s.pieces,ws.clientWidth,ws.clientHeight);
-    setLedgerSt(null);
-    setSeal({id,hash,recipe,ts,imgUrl});
-    setStatus(t.st_sealed);
-  };
+function triggerAdd(btn){H.tap();ripple(btn);document.getElementById('fileInput').click()}
 
-  const doDownload=()=>{
-    if(!sealModal?.imgUrl)return;
-    const a=document.createElement("a");a.href=sealModal.imgUrl;
-    a.download=`${sealModal.id}.png`;a.click();
-  };
+function activateLasso(btn){H.tap();ripple(btn);if(pieces.length===0){toast(t('noImg'));H.err();return}
+const imgPiece=pieces.slice().reverse().find(p=>p.type==='image'&&p.img);
+if(!imgPiece){toast(t('noImg'));H.err();return}lassoImg=imgPiece.img;
+tool='lasso';selIdx=-1;isLassoing=true;lassoPoints=[];closePctrl();updateToolUI();updateStatus();
+const W=MC.width,H2=MC.height;const iw=lassoImg.naturalWidth||200,ih=lassoImg.naturalHeight||200;
+const sz=Math.min(220,Math.max(iw,ih));const sw=Math.round((iw/Math.max(iw,ih))*sz),sh=Math.round((ih/Math.max(iw,ih))*sz);
+ctx.save();ctx.globalAlpha=0.55;ctx.drawImage(lassoImg,W/2-sw/2,H2/2-sh/2,sw,sh);ctx.restore();
+toast('✂ '+t('mLasso').split('— ')[1]||'Desenha o recorte')}
 
-  const doShare=async()=>{
-    const url=`${VERIFY_BASE}${sealModal.id}`;
-    if(navigator.share){
-      try{await navigator.share({title:"WINDI Travel · Colagem",text:t.share_text,url});return;}
-      catch(e){if(e.name==="AbortError")return;}
-    }
-    navigator.clipboard?.writeText(url).catch(()=>{});
-    setCopyFb(true);setTimeout(()=>setCopyFb(false),2000);
-  };
+function activateIATouch(btn){H.tap();ripple(btn);
+if(pieces.filter(p=>p.type==='image'&&p.img).length===0){toast(t('noImg'));H.err();return}
+tool='ia';iaActive=true;selIdx=-1;closePctrl();document.getElementById('iaPanel').classList.add('open');
+updateToolUI();updateStatus();toast(t('tIA'))}
 
-  const doEmail=()=>{
-    const url=`${VERIFY_BASE}${sealModal.id}`;
-    const body=encodeURIComponent(`${t.share_text}\n\nReceipt: ${sealModal.id}\nSHA-256: ${sealModal.hash}\n\n${url}\n\nAI processes. Human decides. WINDI guarantees. 🐉`);
-    window.location.href=`mailto:?subject=${encodeURIComponent(t.email_subject)}&body=${body}`;
-  };
+function deactivateIA(){iaActive=false;tool='select';document.getElementById('iaPanel').classList.remove('open');
+hideIACursor();updateToolUI();updateStatus()}
 
-  const doVerify=()=>window.open(`${VERIFY_BASE}${sealModal.id}`,"_blank");
+function activateText(btn){H.tap();ripple(btn);
+txtPos={x:MC.width/2+(Math.random()-.5)*80,y:MC.height/2+(Math.random()-.5)*80};
+document.getElementById('txtArea').value='';openTxtModal()}
 
-  const doLedgerSeal=async()=>{
-    if(!sealModal)return;
-    setLedgerSt("ing");
-    const result=await sealToLedger(sealModal.id,sealModal.hash,sealModal.recipe,lang);
-    setLedgerSt(result);
-  };
+function openTxtModal(){document.getElementById('txtModal').classList.add('open');
+document.getElementById('txtArea').focus();document.getElementById('txtSizeVal').textContent=txtSize;
+document.querySelectorAll('.txt-color').forEach(c=>c.classList.toggle('on',c.dataset.c===txtColor))}
 
-  const hasSel=selIdx!==null;
-  const isTop=hasSel&&selIdx===pieces.length-1;
-  const isBot=hasSel&&selIdx===0;
-  const showLayerBar=hasSel&&(mode==="mover"||mode==="rodar");
+function closeTxtModal(){document.getElementById('txtModal').classList.remove('open')}
 
-  const ToolBtn=({id,icon,label,accent})=>{
-    const isA=mode===id,col=accent||TERRA;
-    return(
-      <button onClick={()=>setMode(id)} style={{display:"flex",flexDirection:"column",
-        alignItems:"center",gap:2,padding:"5px 4px",borderRadius:10,minWidth:40,
-        cursor:"pointer",border:`1.5px solid ${isA?col:"transparent"}`,
-        background:isA?`${col}18`:"transparent",flexShrink:0}}>
-        <span style={{fontSize:17,lineHeight:1}}>{icon}</span>
-        <span style={{fontSize:7,fontWeight:700,letterSpacing:"0.04em",
-          textTransform:"uppercase",color:isA?col:MIST,whiteSpace:"nowrap"}}>{label}</span>
-      </button>
-    );
-  };
+function confirmText(){const txt=document.getElementById('txtArea').value.trim();if(!txt){closeTxtModal();return}
+saveState();pieces.push({type:'text',text:txt,x:txtPos.x,y:txtPos.y,r:(Math.random()-.5)*10,s:100,fs:txtSize,color:txtColor});
+selIdx=pieces.length-1;tool='select';closeTxtModal();render();updateStatus();updateLayerBar();showPctrl();syncSliders();H.place();toast(t('tIADone'))}
 
-  const LBtn=({onClick,icon,disabled,accent})=>(
-    <button onClick={onClick} disabled={disabled} style={{
-      width:34,height:34,borderRadius:8,flexShrink:0,fontSize:16,
-      border:`1px solid ${disabled?"rgba(255,255,255,0.07)":`${accent||TERRA}55`}`,
-      background:disabled?"transparent":`${accent||TERRA}14`,
-      cursor:disabled?"default":"pointer",opacity:disabled?0.2:1,
-      display:"flex",alignItems:"center",justifyContent:"center"}}>
-      {icon}
-    </button>
-  );
+document.getElementById('txtSizeSlider').addEventListener('input',function(){txtSize=+this.value;
+document.getElementById('txtSizeVal').textContent=txtSize});
+document.querySelectorAll('.txt-color').forEach(c=>c.addEventListener('click',function(){H.tap();txtColor=this.dataset.c;
+document.querySelectorAll('.txt-color').forEach(x=>x.classList.toggle('on',x.dataset.c===txtColor))}))
 
-  const ActBtn=({onClick,label,color,disabled})=>(
-    <button onClick={onClick} disabled={disabled} style={{
-      width:"100%",padding:"10px 8px",borderRadius:9,border:`1.5px solid ${color}55`,
-      background:`${color}18`,color,fontFamily:"inherit",fontSize:11,fontWeight:700,
-      cursor:disabled?"default":"pointer",opacity:disabled?0.4:1,letterSpacing:"0.02em",
-      display:"flex",alignItems:"center",justifyContent:"center",gap:4}}>
-      {label}
-    </button>
-  );
+function doUndo(btn){H.tap();ripple(btn);if(!history.length){toast(t('tUndo'));return}
+const prev=history.pop();pieces=pieces.slice(0,prev.length).map((p,i)=>({...p,...prev[i]}));
+selIdx=-1;closePctrl();render();updateStatus();toast(t('tUndo'))}
 
-  return(
-    <div style={{display:"flex",flexDirection:"column",height:"100vh",
-      background:NOIR,fontFamily:"'DM Sans',system-ui,sans-serif",
-      userSelect:"none",overflow:"hidden"}}>
+function deletePiece(btn){H.del();ripple(btn);if(selIdx<0){toast(t('noSel'));H.err();return}
+saveState();pieces.splice(selIdx,1);selIdx=-1;closePctrl();render();updateStatus();toast(t('tDel'))}
 
-      {/* HEADER */}
-      <div style={{height:46,background:CREAM,borderBottom:`2px solid ${TERRA}`,
-        display:"flex",alignItems:"center",justifyContent:"space-between",
-        padding:"0 10px",flexShrink:0,gap:6}}>
-        <div style={{display:"flex",alignItems:"center",gap:8,flexShrink:0}}>
-          <a href="/travel/workspace/" style={{width:28,height:28,background:TERRA,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,textDecoration:"none",color:CREAM}}>←</a>
-          <span style={{fontFamily:"Georgia,serif",fontStyle:"italic",fontSize:15,fontWeight:500,color:TERRA}}>{t.brand}</span>
-          <span style={{fontSize:9,color:MIST}}>· {t.sub}</span>
-          {travelContext && (
-            <span style={{
-              background:`linear-gradient(135deg,${GOLD_L}22,${TERRA}15)`,
-              border:`1px solid ${GOLD_L}44`,
-              padding:"2px 8px",borderRadius:12,
-              fontSize:9,fontWeight:600,color:GOLD_L,
-              marginLeft:4,display:"inline-flex",alignItems:"center",gap:4
-            }}>
-              📍 {lang==='de'?'Erinnerung an':lang==='pt'?'Memória de':'Memory of'} {travelContext.place}
-            </span>
-          )}
-        </div>
-        <div style={{display:"flex",alignItems:"center",gap:5,flex:1,justifyContent:"flex-end"}}>
-          <div style={{display:"flex",gap:2,background:"#E8E0D4",padding:"2px 3px",borderRadius:10}}>
-            {["pt","de","en"].map(l=>(
-              <button key={l} onClick={()=>setLang(l)} style={{
-                padding:"2px 7px",borderRadius:8,border:"none",
-                background:lang===l?CREAM:"transparent",
-                fontSize:9,fontWeight:700,color:lang===l?TERRA:MIST,
-                cursor:"pointer",textTransform:"uppercase",letterSpacing:"0.04em",
-                boxShadow:lang===l?"0 1px 3px rgba(0,0,0,0.1)":"none"}}>{l}</button>
-            ))}
-          </div>
-          <button onClick={doUndo} disabled={pieces.length===0} style={{
-            display:"flex",alignItems:"center",gap:3,padding:"3px 8px",borderRadius:7,
-            border:`1px solid ${pieces.length>0?TERRA+"55":"rgba(0,0,0,0.1)"}`,
-            background:"transparent",cursor:pieces.length>0?"pointer":"default",opacity:pieces.length>0?1:0.3}}>
-            <span style={{fontSize:12}}>↩</span>
-            <span style={{fontSize:8,fontWeight:700,textTransform:"uppercase",color:pieces.length>0?TERRA:MIST,letterSpacing:"0.04em"}}>{t.undo}</span>
-          </button>
-          {hasSel&&(mode==="mover"||mode==="rodar")&&(
-            <button onClick={doDelete} style={{display:"flex",alignItems:"center",gap:3,
-              padding:"3px 8px",borderRadius:7,border:`1px solid ${TERRA}66`,
-              background:`${TERRA}10`,cursor:"pointer"}}>
-              <span style={{fontSize:12}}>🗑</span>
-              <span style={{fontSize:8,fontWeight:700,textTransform:"uppercase",color:TERRA,letterSpacing:"0.04em"}}>{t.del}</span>
-            </button>
-          )}
-          <span style={{fontSize:8,fontFamily:"monospace",color:"#888",minWidth:56,textAlign:"right",flexShrink:0}}>{status}</span>
-        </div>
-      </div>
+function updateToolUI(){document.getElementById('btnLasso').classList.toggle('on',tool==='lasso');
+document.getElementById('btnIA').classList.toggle('on',tool==='ia');
+document.getElementById('btnTxt').classList.toggle('on',tool==='text');
+if(tool!=='ia')document.getElementById('iaPanel').classList.remove('open')}
 
-      {/* PHOTO STRIP */}
-      <div style={{height:62,background:"#0E0A07",borderBottom:"1px solid rgba(255,255,255,0.05)",
-        display:"flex",alignItems:"center",gap:7,padding:"0 10px",overflowX:"auto",flexShrink:0}}>
-        <span style={{fontSize:8,color:"rgba(255,255,255,0.25)",textTransform:"uppercase",letterSpacing:"0.1em",whiteSpace:"nowrap"}}>📦 {t.box}</span>
-        {SCENES.map((sc,i)=>{
-          const isAct=activeExtra===-1&&sceneIdx===i;
-          return(
-            <div key={i} onClick={()=>selectSource("scene",i)} style={{
-              width:42,height:42,borderRadius:7,flexShrink:0,cursor:"pointer",
-              background:`linear-gradient(135deg,${sc.sky[0]},${sc.sky[1]})`,
-              border:`2px solid ${isAct?TERRA:"transparent"}`,
-              transform:isAct?"scale(1.1)":"scale(1)",transition:"all 0.15s",
-              display:"flex",alignItems:"center",justifyContent:"center",fontSize:14}}>
-              {sc.name}
-            </div>
-          );
-        })}
-        {extraPhotos.length>0&&<div style={{width:1,height:32,background:"rgba(255,255,255,0.1)",flexShrink:0}}/>}
-        {extraPhotos.map((url,i)=>{
-          const isAct=activeExtra===i;
-          return(
-            <div key={i} onClick={()=>selectSource("extra",i)} style={{
-              width:42,height:42,borderRadius:7,flexShrink:0,cursor:"pointer",overflow:"hidden",
-              border:`2px solid ${isAct?TERRA:"rgba(255,255,255,0.15)"}`,
-              transform:isAct?"scale(1.1)":"scale(1)",transition:"all 0.15s"}}>
-              <img src={url} style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}/>
-            </div>
-          );
-        })}
-        <label style={{width:42,height:42,borderRadius:7,flexShrink:0,
-          border:`1.5px dashed ${TERRA}99`,background:`${TERRA}0D`,
-          display:"flex",flexDirection:"column",alignItems:"center",
-          justifyContent:"center",gap:1,cursor:"pointer",position:"relative"}}>
-          <span style={{fontSize:16,lineHeight:1,pointerEvents:"none"}}>📷</span>
-          <span style={{fontSize:7,color:TERRA,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.05em",pointerEvents:"none"}}>{t.addphoto}</span>
-          <input type="file" accept="image/*" multiple onChange={handleFiles}
-            style={{position:"absolute",inset:0,opacity:0,cursor:"pointer",width:"100%",height:"100%"}}/>
-        </label>
-      </div>
+document.getElementById('tolSlider').addEventListener('input',function(){
+iaTolerance=+this.value;document.getElementById('tolVal').textContent=this.value;H.tap()});
 
-      {/* WORKSPACE */}
-      <div ref={wsRef} style={{flex:1,position:"relative",overflow:"hidden",touchAction:"none",
-        background:"#0A0806",
-        backgroundImage:"linear-gradient(rgba(255,255,255,0.012) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.012) 1px,transparent 1px)",
-        backgroundSize:"24px 24px",
-        boxShadow:flash?`inset 0 0 0 3px ${TERRA}`:"none",transition:"box-shadow 0.12s"}}
-        onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp}
-        onTouchStart={onDown} onTouchMove={onMove} onTouchEnd={onUp}>
-        <canvas ref={colRef} style={{position:"absolute",top:0,left:0,zIndex:1}}/>
-        <canvas ref={drawRef} style={{position:"absolute",top:0,left:0,zIndex:5,pointerEvents:"none"}}/>
-        {ripple&&(
-          <div style={{position:"absolute",left:ripple.x,top:ripple.y,
-            width:60,height:60,marginLeft:-30,marginTop:-30,
-            border:`2px solid ${OCEAN}`,borderRadius:"50%",zIndex:15,
-            pointerEvents:"none",animation:"ripple 0.8s ease-out forwards"}}/>
-        )}
-        {pieces.map((p,i)=>(
-          <img key={p.id} src={p.src} alt=""
-            onPointerDown={e=>onPieceDown(e,i)} onTouchStart={e=>onPieceDown(e,i)}
-            style={{position:"absolute",left:p.x,top:p.y,width:p.w,height:p.h,
-              transform:`rotate(${p.rot}deg)`,transformOrigin:"center",
-              zIndex:10+i,pointerEvents:"all",cursor:mode==="mover"?"grab":"default",
-              filter:"drop-shadow(0 4px 18px rgba(0,0,0,0.7))",
-              outline:selIdx===i&&showLayerBar?`2px dashed ${TERRA}`:"none",
-              outlineOffset:4,transition:"outline 0.1s"}}/>
-        ))}
-        {hasSel&&showLayerBar&&pieces[selIdx]&&(
-          <div style={{position:"absolute",
-            left:pieces[selIdx].x+pieces[selIdx].w/2-22,
-            top:Math.max(4,pieces[selIdx].y-22),
-            zIndex:50,pointerEvents:"none",
-            background:"rgba(20,16,12,0.92)",color:"white",
-            fontFamily:"monospace",fontSize:9,fontWeight:700,
-            padding:"2px 8px",borderRadius:6,whiteSpace:"nowrap"}}>
-            L{selIdx+1}/{pieces.length}
-          </div>
-        )}
-        {pieces.map((p,i)=>(
-          <div key={`b${p.id}`} style={{position:"absolute",left:p.x+2,top:p.y+2,
-            zIndex:20+i,pointerEvents:"none",fontSize:8,
-            background:p.method==="toque-ia"?OCEAN:p.method==="texto"?SAGE:TERRA,
-            color:"white",padding:"1px 5px",borderRadius:4,
-            fontFamily:"monospace",fontWeight:700,opacity:0.85}}>
-            {p.method==="toque-ia"?"IA":p.method==="texto"?"T":"✂"}
-          </div>
-        ))}
-        {pieces.length>0&&(
-          <div style={{position:"absolute",top:10,right:10,background:TERRA,color:"white",
-            fontFamily:"monospace",fontSize:9,fontWeight:700,padding:"3px 10px",
-            borderRadius:20,zIndex:25}}>
-            {pieces.length} {pieces.length===1?t.piece:t.pieces}
-          </div>
-        )}
-        {mode==="toque"&&(
-          <div style={{position:"absolute",top:10,left:10,background:`${OCEAN}EE`,
-            color:"white",fontFamily:"monospace",fontSize:9,fontWeight:700,
-            padding:"4px 12px",borderRadius:20,zIndex:25}}>{t.ai_on}</div>
-        )}
-        <div style={{position:"absolute",bottom:10,width:"100%",textAlign:"center",
-          fontFamily:"monospace",fontSize:9,letterSpacing:"0.08em",
-          color:"rgba(255,255,255,0.2)",pointerEvents:"none",zIndex:6,textTransform:"uppercase"}}>
-          {T[lang]["hint_"+mode]||""}
-        </div>
-      </div>
+function showPctrl(){document.getElementById('pctrl').classList.add('open');updateLayerBar()}
+function closePctrl(){document.getElementById('pctrl').classList.remove('open');document.getElementById('layerBar').style.display='none'}
+document.getElementById('rotSl').addEventListener('input',function(){if(selIdx<0)return;
+pieces[selIdx].r=+this.value;document.getElementById('rotVal').textContent=this.value+'°';render()});
+document.getElementById('rotSl').addEventListener('pointerup',()=>{H.tap();saveState()});
+document.getElementById('scSl').addEventListener('input',function(){if(selIdx<0)return;
+pieces[selIdx].s=+this.value;document.getElementById('scVal').textContent=this.value+'%';render()});
+document.getElementById('scSl').addEventListener('pointerup',()=>{H.tap();saveState()});
+function syncSliders(){if(selIdx<0)return;const p=pieces[selIdx];
+document.getElementById('rotSl').value=p.r||0;document.getElementById('rotVal').textContent=(p.r||0)+'°';
+document.getElementById('scSl').value=p.s||100;document.getElementById('scVal').textContent=(p.s||100)+'%'}
 
-      {/* TEXT MODAL */}
-      {textModal&&(
-        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.75)",zIndex:90,
-          display:"flex",alignItems:"center",justifyContent:"center",backdropFilter:"blur(4px)"}}
-          onClick={e=>{if(e.target===e.currentTarget)setTextModal(null);}}>
-          <div style={{background:CREAM,border:`2px solid ${SAGE}`,borderRadius:14,
-            padding:"20px 18px",maxWidth:320,width:"90%"}}>
-            <div style={{fontFamily:"Georgia,serif",fontStyle:"italic",fontSize:17,fontWeight:300,color:INK,marginBottom:14}}>✍️ {t.text}</div>
-            <textarea autoFocus value={textInput} onChange={e=>setTextInput(e.target.value)}
-              placeholder={t.text_placeholder} rows={3}
-              style={{width:"100%",padding:"10px 12px",borderRadius:8,border:"1.5px solid #D0C8BC",
-                background:"white",fontFamily:"Georgia,serif",fontSize:textSize*0.65,
-                color:textColor,resize:"none",outline:"none",fontStyle:"italic",
-                lineHeight:1.5,boxSizing:"border-box"}}/>
-            <div style={{display:"flex",alignItems:"center",gap:12,marginTop:12,marginBottom:16}}>
-              <div style={{flex:1}}>
-                <div style={{fontSize:9,fontFamily:"monospace",color:MIST,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:4}}>{t.text_size} {textSize}px</div>
-                <input type="range" min="16" max="72" value={textSize} onChange={e=>setTextSize(parseInt(e.target.value))} style={{width:"100%",accentColor:SAGE}}/>
-              </div>
-              <div>
-                <div style={{fontSize:9,fontFamily:"monospace",color:MIST,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:4}}>{t.text_color}</div>
-                <div style={{display:"flex",gap:5,flexWrap:"wrap",width:110}}>
-                  {["#FFFFFF","#1a1a18","#C9603A","#3A7CA8","#6A8F72","#FFD700","#FF6B6B","#F0E8D8"].map(c=>(
-                    <div key={c} onClick={()=>setTextColor(c)} style={{
-                      width:20,height:20,borderRadius:"50%",background:c,cursor:"pointer",
-                      border:`2px solid ${textColor===c?"#333":"rgba(0,0,0,0.15)"}`,
-                      transform:textColor===c?"scale(1.2)":"scale(1)",transition:"all 0.1s",
-                      boxShadow:c==="#FFFFFF"?"inset 0 0 0 1px #ccc":"none"}}/>
-                  ))}
-                </div>
-              </div>
-            </div>
-            <div style={{display:"flex",gap:8}}>
-              <button onClick={()=>setTextModal(null)} style={{flex:1,padding:"10px",borderRadius:8,border:"1px solid #D0C8BC",background:"transparent",fontFamily:"inherit",fontSize:12,color:MIST,cursor:"pointer"}}>✕</button>
-              <button onClick={addTextPiece} disabled={!textInput.trim()} style={{flex:2,padding:"10px",borderRadius:8,border:"none",background:textInput.trim()?NOIR:"#ccc",fontFamily:"inherit",fontSize:12,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",color:CREAM,cursor:textInput.trim()?"pointer":"default"}}>✍️ {t.text}</button>
-            </div>
-          </div>
-        </div>
-      )}
+function updateLayerBar(){const bar=document.getElementById('layerBar');
+if(selIdx<0){bar.style.display='none';return}
+bar.style.display='flex';document.getElementById('layerPos').innerHTML=`${selIdx+1}<span style="opacity:.4">/${pieces.length}</span>`;
+document.getElementById('lbBack').disabled=selIdx<=0;document.getElementById('lbDown').disabled=selIdx<=0;
+document.getElementById('lbUp').disabled=selIdx>=pieces.length-1;document.getElementById('lbFront').disabled=selIdx>=pieces.length-1}
 
-      {/* LAYER BAR */}
-      {showLayerBar&&(
-        <div style={{height:46,background:"rgba(10,8,6,0.98)",borderTop:`1px solid rgba(139,105,20,0.25)`,
-          display:"flex",alignItems:"center",justifyContent:"center",gap:8,padding:"0 12px",flexShrink:0}}>
-          <span style={{fontSize:9,color:GOLD_L,fontFamily:"monospace",textTransform:"uppercase",letterSpacing:"0.08em",marginRight:2,whiteSpace:"nowrap"}}>{t.layers}</span>
-          <LBtn onClick={sendToBack}   icon="⬇" disabled={isBot} accent={TERRA}/>
-          <LBtn onClick={sendBackward} icon="▼" disabled={isBot} accent={TERRA}/>
-          <div style={{background:"rgba(139,105,20,0.18)",border:"1px solid rgba(139,105,20,0.35)",borderRadius:8,padding:"3px 14px",minWidth:58,textAlign:"center"}}>
-            <div style={{fontFamily:"monospace",fontSize:7,color:"rgba(255,255,255,0.3)",textTransform:"uppercase",letterSpacing:"0.08em"}}>layer</div>
-            <div style={{fontFamily:"monospace",fontSize:14,fontWeight:700,color:GOLD_L,lineHeight:1.1}}>
-              {selIdx+1}<span style={{fontSize:9,color:"rgba(255,255,255,0.28)"}}>/{pieces.length}</span></div>
-          </div>
-          <LBtn onClick={bringForward} icon="▲" disabled={isTop} accent={SAGE}/>
-          <LBtn onClick={bringToFront} icon="⬆" disabled={isTop} accent={SAGE}/>
-        </div>
-      )}
+function layerUp(){if(selIdx<0||selIdx>=pieces.length-1)return;H.tap();saveState();
+[pieces[selIdx],pieces[selIdx+1]]=[pieces[selIdx+1],pieces[selIdx]];selIdx++;render();updateLayerBar();toast('▲')}
 
-      {/* ROTATION BAR */}
-      {mode==="rodar"&&selIdx!==null&&(
-        <div style={{height:42,background:"rgba(12,10,8,0.98)",borderTop:`1px solid ${TERRA}30`,
-          display:"flex",alignItems:"center",gap:12,padding:"0 16px",flexShrink:0}}>
-          <span style={{fontSize:9,color:TERRA,fontFamily:"monospace",textTransform:"uppercase",letterSpacing:"0.08em",whiteSpace:"nowrap"}}>{t.rotation}</span>
-          <input type="range" min="-180" max="180" value={rotVal} onChange={e=>applyRot(parseInt(e.target.value))} style={{flex:1,accentColor:TERRA}}/>
-          <span style={{fontFamily:"monospace",fontSize:10,color:"white",minWidth:38,textAlign:"right"}}>{rotVal}°</span>
-        </div>
-      )}
+function layerDown(){if(selIdx<0||selIdx<=0)return;H.tap();saveState();
+[pieces[selIdx],pieces[selIdx-1]]=[pieces[selIdx-1],pieces[selIdx]];selIdx--;render();updateLayerBar();toast('▼')}
 
-      {/* TOOLBAR */}
-      <div style={{height:58,background:CREAM,borderTop:`2px solid ${TERRA}`,
-        display:"flex",alignItems:"center",justifyContent:"space-around",padding:"0 4px",flexShrink:0,gap:1}}>
-        <ToolBtn id="lasso" icon="✂️" label={t.lasso}/>
-        <ToolBtn id="toque" icon="🤖" label={t.ai}   accent={OCEAN}/>
-        <ToolBtn id="texto" icon="✍️" label={t.text} accent={SAGE}/>
-        <ToolBtn id="mover" icon="✋" label={t.move}/>
-        <ToolBtn id="rodar" icon="🔄" label={t.rotate}/>
-        <button onClick={doClear} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:2,padding:"5px 4px",borderRadius:10,minWidth:38,cursor:"pointer",border:"1.5px solid transparent",background:"transparent",flexShrink:0}}>
-          <span style={{fontSize:17,lineHeight:1}}>🗑️</span>
-          <span style={{fontSize:7,fontWeight:700,textTransform:"uppercase",color:MIST,letterSpacing:"0.04em"}}>{t.clear}</span>
-        </button>
-        <button onClick={doSeal} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:2,padding:"5px 8px",borderRadius:10,minWidth:42,cursor:"pointer",border:`1.5px solid ${NOIR}`,background:NOIR,flexShrink:0}}>
-          <span style={{fontSize:17,lineHeight:1}}>🔐</span>
-          <span style={{fontSize:7,fontWeight:700,textTransform:"uppercase",color:CREAM,letterSpacing:"0.04em"}}>{t.seal}</span>
-        </button>
-      </div>
+function layerToFront(){if(selIdx<0||selIdx>=pieces.length-1)return;H.tap();saveState();
+const p=pieces.splice(selIdx,1)[0];pieces.push(p);selIdx=pieces.length-1;render();updateLayerBar();toast('⬆ Frente')}
 
-      {/* SEAL MODAL v10 */}
-      {sealModal&&(
-        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.92)",zIndex:100,
-          display:"flex",alignItems:"center",justifyContent:"center",backdropFilter:"blur(10px)"}}>
-          <div style={{background:CREAM,border:`2px solid ${TERRA}`,borderRadius:18,
-            padding:"18px 16px",maxWidth:360,width:"95%",maxHeight:"95vh",overflowY:"auto"}}>
+function layerToBack(){if(selIdx<0||selIdx<=0)return;H.tap();saveState();
+const p=pieces.splice(selIdx,1)[0];pieces.unshift(p);selIdx=0;render();updateLayerBar();toast('⬇ Fundo')}
 
-            {sealModal.imgUrl&&(
-              <div style={{borderRadius:10,overflow:"hidden",marginBottom:12,border:`1px solid ${TERRA}30`,background:NOIR}}>
-                <img src={sealModal.imgUrl} style={{width:"100%",display:"block",maxHeight:150,objectFit:"contain"}}/>
-              </div>
-            )}
+function handleFiles(e){Array.from(e.target.files).forEach(file=>{const reader=new FileReader();
+reader.onload=ev=>{const img=new Image();img.onload=()=>{saveState();const W=MC.width,H2=MC.height;
+pieces.push({type:'image',img,offscreen:null,x:W/2+(Math.random()-.5)*60,y:H2/2+(Math.random()-.5)*60,
+r:(Math.random()-.5)*10,s:100,lassoPath:null});selIdx=pieces.length-1;render();updateStatus();
+showPctrl();syncSliders();H.place();toast(t('tAdd'))};img.src=ev.target.result};
+reader.readAsDataURL(file)});e.target.value=''}
 
-            <div style={{fontFamily:"Georgia,serif",fontStyle:"italic",fontSize:18,fontWeight:300,color:INK,marginBottom:2}}>{t.sealed}</div>
-            <div style={{fontSize:10,color:MIST,marginBottom:12}}>{t.sealed_sub}</div>
+async function computeHash(){const d=pieces.map(p=>({x:Math.round(p.x),y:Math.round(p.y),r:p.r,s:p.s,type:p.type,text:p.text||'',ts:Date.now()}));
+const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify(d)));
+return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('')}
+function makeRID(){const ts=new Date().toISOString().replace(/[-:T.Z]/g,'').slice(0,15);
+return `WINDI-TRAVEL-COLLAGE-${ts}-${Math.random().toString(16).slice(2,10).toUpperCase()}`}
 
-            <div style={{background:NOIR,borderRadius:8,padding:"8px 12px",marginBottom:6}}>
-              <div style={{fontSize:8,fontFamily:"monospace",color:"rgba(255,255,255,0.38)",letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:2}}>{t.receipt}</div>
-              <div style={{fontFamily:"monospace",fontSize:10,color:"white",wordBreak:"break-all",lineHeight:1.5}}>{sealModal.id}</div>
-            </div>
-            <div style={{background:NOIR,borderRadius:8,padding:"8px 12px",marginBottom:12}}>
-              <div style={{fontSize:8,fontFamily:"monospace",color:"rgba(255,255,255,0.38)",letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:2}}>SHA-256</div>
-              <div style={{fontFamily:"monospace",fontSize:8,color:GOLD_L,wordBreak:"break-all",lineHeight:1.5}}>{sealModal.hash}</div>
-            </div>
+let lastHash='',lastRID='';
+async function doSeal(btn){if(!pieces.length){toast(t('noImg'));H.err();return}
+H.seal();ripple(btn);btn.innerHTML='<div class="spin"></div>';btn.disabled=true;toast(t('tSeal'));
+try{lastHash=await computeHash();lastRID=makeRID();
+try{await fetch('/tesoura/seal',{method:'POST',headers:{'Content-Type':'application/json'},
+body:JSON.stringify({hash:lastHash,receipt_id:lastRID,pieces:pieces.length})})}catch(_){}
+document.getElementById('hashVal').textContent=lastHash;document.getElementById('ridVal').textContent=lastRID;
+document.getElementById('modal').classList.add('open')}finally{btn.innerHTML='🔏';btn.disabled=false}}
 
-            <div style={{fontSize:9,fontFamily:"monospace",color:MIST,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:8}}>{t.export_title}</div>
+function closeModal(){H.tap();document.getElementById('modal').classList.remove('open');
+ledgerState=null;document.getElementById('ledgerStatus').style.display='none';document.getElementById('btnLedger').disabled=false}
+async function downloadCollage(){H.dl();const a=document.createElement('a');
+a.download=`${lastRID||'tesoura'}.png`;a.href=MC.toDataURL('image/png');a.click()}
+async function shareCollage(){H.tap();toast(t('tSh'));const url=VERIFY_BASE+lastRID;
+if(navigator.share){try{await navigator.share({title:'WINDI Travel · Colagem',text:t('shareText'),url});return}catch(_){}}
+navigator.clipboard?.writeText(url).then(()=>toast(t('tCopy')))}
+function copyHash(){navigator.clipboard?.writeText(lastHash).then(()=>toast(t('tCopy')))}
 
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:7,marginBottom:8}}>
-              <ActBtn onClick={doDownload} label={t.btn_download} color={TERRA}/>
-              <ActBtn onClick={doShare} label={copyFb?t.copy_ok:t.btn_share} color={OCEAN}/>
-              <ActBtn onClick={doEmail} label={t.btn_email} color={SAGE}/>
-              <ActBtn onClick={doVerify} label={t.btn_verify} color={GOLD_L}/>
-            </div>
+function emailCollage(){H.tap();const url=VERIFY_BASE+lastRID;
+const body=encodeURIComponent(`${t('shareText')}\n\nReceipt: ${lastRID}\nSHA-256: ${lastHash}\n\n${url}\n\nAI processes. Human decides. WINDI guarantees. 🐉`);
+window.location.href=`mailto:?subject=${encodeURIComponent(t('emailSubj'))}&body=${body}`}
 
-            <div style={{marginBottom:10}}>
-              {ledgerSt===null&&<ActBtn onClick={doLedgerSeal} label={t.btn_ledger} color={VERDE}/>}
-              {ledgerSt==="ing"&&(
-                <div style={{background:`${VERDE}14`,border:`1px solid ${VERDE}44`,borderRadius:9,padding:"10px",textAlign:"center",fontSize:11,fontFamily:"monospace",color:VERDE}}>⟳ {t.ledger_ing}</div>
-              )}
-              {ledgerSt==="ok"&&(
-                <div style={{background:`${VERDE}20`,border:`2px solid ${VERDE}`,borderRadius:9,padding:"10px",textAlign:"center",fontSize:11,fontFamily:"monospace",color:VERDE,fontWeight:700}}>
-                  {t.ledger_ok}
-                  <div style={{fontSize:9,marginTop:3,fontWeight:400,opacity:0.7,wordBreak:"break-all"}}>{VERIFY_BASE}{sealModal.id}</div>
-                </div>
-              )}
-              {ledgerSt==="fail"&&(
-                <div style={{background:"rgba(201,96,58,0.1)",border:`1px solid ${TERRA}55`,borderRadius:9,padding:"10px",textAlign:"center",fontSize:10,fontFamily:"monospace",color:TERRA}}>{t.ledger_fail}</div>
-              )}
-            </div>
+function verifyCollage(){H.tap();window.open(VERIFY_BASE+lastRID,'_blank')}
 
-            <div style={{background:`${SAGE}14`,border:`1px solid ${SAGE}40`,borderRadius:8,padding:"9px 12px",marginBottom:12}}>
-              <div style={{fontSize:9,color:SAGE,lineHeight:1.8,whiteSpace:"pre-line"}}>{t.hash_note}</div>
-            </div>
+async function sealToLedger(){if(ledgerState==='ing')return;
+const statusEl=document.getElementById('ledgerStatus');const btn=document.getElementById('btnLedger');
+ledgerState='ing';statusEl.style.display='block';statusEl.className='ledger-status ing';statusEl.textContent=t('ledgerIng');btn.disabled=true;
+try{const r=await fetch(LEDGER_URL,{method:'POST',headers:{'Content-Type':'application/json'},
+body:JSON.stringify({id:lastRID,actor:'anonymous',app:'windi-travel-tesoura',doc_name:`COLLAGE_${lastRID}`,
+doc_type:'doc',governance_level:'HIGH',content_hash:`sha256:${lastHash}`,sge_score:90,
+metadata:JSON.stringify({hash:lastHash,lang,pieces:pieces.length})}),signal:AbortSignal.timeout(6000)});
+if(r.ok){ledgerState='ok';statusEl.className='ledger-status ok';statusEl.innerHTML=`${t('ledgerOk')}<br><small style="opacity:.7">${VERIFY_BASE}${lastRID}</small>`;H.seal()}
+else throw new Error('fail')}
+catch(_){ledgerState='fail';statusEl.className='ledger-status fail';statusEl.textContent=t('ledgerFail');H.err()}
+finally{btn.disabled=ledgerState==='ok'}}
+document.getElementById('modal').addEventListener('pointerdown',e=>{if(e.target===document.getElementById('modal'))closeModal()});
 
-            <button onClick={()=>{setSeal(null);setLedgerSt(null);}} style={{width:"100%",padding:12,background:NOIR,color:CREAM,border:"none",borderRadius:8,fontFamily:"inherit",fontSize:12,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",cursor:"pointer"}}>
-              {t.close}
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+WindiTouch.init();applyLang();updateStatus();resizeCanvas();setTimeout(initScenes,100);
 </script>
 </body>
 </html>
