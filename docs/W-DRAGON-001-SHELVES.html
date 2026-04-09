@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>W-DRAGON-001 · Shelf Organization · WINDI</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0a0a08;
+  --bg2: #12120f;
+  --bg3: #1a1a16;
+  --text: #e8e0c8;
+  --text2: #a09880;
+  --text3: #605848;
+  --border: rgba(200,188,155,0.12);
+  --border2: rgba(200,188,155,0.25);
+  --gold: #c8a840;
+  --gold-fade: rgba(200,168,64,0.12);
+  --ok: #4ac070;
+  --warn: #e8a030;
+  --err: #e05050;
+  --purple: #a080d0;
+  --blue: #60a0d0;
+  --mono: 'JetBrains Mono', 'Fira Mono', 'Courier New', monospace;
+}
+
+[data-theme="klar"] {
+  --bg: #f8f6f0;
+  --bg2: #efede6;
+  --bg3: #e6e4dc;
+  --text: #1a1a18;
+  --text2: #5a5848;
+  --text3: #8a8878;
+  --border: rgba(60,55,40,0.12);
+  --border2: rgba(60,55,40,0.25);
+  --gold: #8a7020;
+  --gold-fade: rgba(138,112,32,0.12);
+}
+
+body {
+  font-family: var(--mono);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 2rem;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  padding: 4px 12px;
+  border: 1px solid var(--gold);
+  border-radius: 3px;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: var(--text2);
+}
+
+/* Language Toggle */
+.lang-toggle {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  margin: 1.5rem 0;
+}
+
+.lang-btn {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  padding: 6px 16px;
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--text2);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.lang-btn:first-child { border-radius: 4px 0 0 4px; }
+.lang-btn:last-child { border-radius: 0 4px 4px 0; }
+.lang-btn:not(:last-child) { border-right: none; }
+
+.lang-btn.active {
+  background: var(--gold-fade);
+  color: var(--gold);
+  border-color: var(--gold);
+}
+
+.lang-btn:hover:not(.active) {
+  background: var(--bg3);
+}
+
+/* Theme Toggle */
+.theme-toggle {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  font-size: 18px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Shelf Index */
+.shelf-index {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: var(--bg2);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.shelf-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  text-decoration: none;
+  color: var(--text);
+  font-size: 11px;
+  transition: all 0.15s;
+}
+
+.shelf-link:hover {
+  border-color: var(--gold);
+  background: var(--gold-fade);
+}
+
+.shelf-letter {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--gold);
+  width: 20px;
+}
+
+.shelf-status {
+  margin-left: auto;
+  font-size: 10px;
+}
+
+.shelf-status.done { color: var(--ok); }
+.shelf-status.wip { color: var(--warn); }
+.shelf-status.future { color: var(--purple); }
+
+/* Shelf Section */
+.shelf {
+  margin-bottom: 2.5rem;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.shelf-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 1rem 1.25rem;
+  background: var(--bg3);
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.shelf-header:hover {
+  background: var(--gold-fade);
+}
+
+.shelf-id {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--gold);
+  width: 32px;
+}
+
+.shelf-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  flex: 1;
+}
+
+.shelf-title span {
+  display: block;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text3);
+  margin-top: 2px;
+}
+
+.shelf-toggle {
+  font-size: 12px;
+  color: var(--text3);
+  transition: transform 0.2s;
+}
+
+.shelf.open .shelf-toggle {
+  transform: rotate(180deg);
+}
+
+.shelf-body {
+  display: none;
+  padding: 1.25rem;
+}
+
+.shelf.open .shelf-body {
+  display: block;
+}
+
+/* Steps */
+.steps {
+  counter-reset: step;
+}
+
+.step {
+  position: relative;
+  padding-left: 48px;
+  padding-bottom: 1.5rem;
+  border-left: 2px solid var(--border);
+  margin-left: 16px;
+}
+
+.step:last-child {
+  border-left-color: transparent;
+  padding-bottom: 0;
+}
+
+.step::before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: -13px;
+  top: 0;
+  width: 24px;
+  height: 24px;
+  background: var(--bg);
+  border: 2px solid var(--gold);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.step.done::before {
+  background: var(--ok);
+  border-color: var(--ok);
+  color: var(--bg);
+  content: "✓";
+}
+
+.step.wip::before {
+  border-color: var(--warn);
+  color: var(--warn);
+}
+
+.step-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.step-desc {
+  font-size: 11px;
+  color: var(--text2);
+  line-height: 1.7;
+}
+
+/* Code blocks */
+.code {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 12px;
+  font-size: 10px;
+  color: var(--text2);
+  overflow-x: auto;
+  margin: 8px 0;
+  white-space: pre;
+  line-height: 1.6;
+}
+
+.code .comment { color: var(--text3); }
+.code .string { color: var(--ok); }
+.code .keyword { color: var(--purple); }
+.code .func { color: var(--blue); }
+
+/* Tables */
+.table-wrap {
+  overflow-x: auto;
+  margin: 12px 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+th, td {
+  padding: 8px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  font-weight: 600;
+  color: var(--text3);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+td {
+  color: var(--text2);
+}
+
+tr:hover td {
+  background: var(--bg);
+}
+
+/* Checklist */
+.checklist {
+  list-style: none;
+}
+
+.checklist li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 6px 0;
+  font-size: 11px;
+  color: var(--text2);
+}
+
+.checklist li::before {
+  content: "□";
+  color: var(--text3);
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.checklist li.done::before {
+  content: "✓";
+  color: var(--ok);
+}
+
+/* i18n */
+[data-lang] { display: none; }
+[data-lang="en"] { display: block; }
+
+.i18n-inline { display: inline; }
+.i18n-inline[data-lang] { display: none; }
+.i18n-inline[data-lang="en"] { display: inline; }
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+  margin-top: 2rem;
+}
+
+.footer p {
+  font-size: 11px;
+  color: var(--text3);
+  margin: 4px 0;
+}
+
+.footer .dragon {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .container { padding: 1rem; }
+  .title { font-size: 22px; }
+  .shelf-index { grid-template-columns: 1fr 1fr; }
+  .step { padding-left: 36px; margin-left: 12px; }
+}
+</style>
+</head>
+<body data-theme="noir">
+
+<button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">☀</button>
+
+<div class="container">
+  <header class="header">
+    <div class="badge">W-DRAGON-001 · PHASE 1.5 · APPROVED</div>
+    <h1 class="title">Dragon Shadow Forest™</h1>
+    <p class="subtitle" data-lang="en">Implementation Roadmap · Shelf Organization</p>
+    <p class="subtitle" data-lang="de">Implementierungs-Roadmap · Regalorganisation</p>
+    <p class="subtitle" data-lang="pt">Roteiro de Implementação · Organização por Prateleiras</p>
+
+    <div class="lang-toggle">
+      <button class="lang-btn" data-l="de" onclick="setLang('de')">DE</button>
+      <button class="lang-btn active" data-l="en" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" data-l="pt" onclick="setLang('pt')">PT</button>
+    </div>
+  </header>
+
+  <!-- Shelf Index -->
+  <nav class="shelf-index">
+    <a href="#shelf-a" class="shelf-link">
+      <span class="shelf-letter">A</span>
+      <span data-lang="en">Foundation</span>
+      <span data-lang="de">Grundlage</span>
+      <span data-lang="pt">Fundação</span>
+      <span class="shelf-status done">✓</span>
+    </a>
+    <a href="#shelf-b" class="shelf-link">
+      <span class="shelf-letter">B</span>
+      <span data-lang="en">Backend</span>
+      <span data-lang="de">Backend</span>
+      <span data-lang="pt">Backend</span>
+      <span class="shelf-status done">✓</span>
+    </a>
+    <a href="#shelf-c" class="shelf-link">
+      <span class="shelf-letter">C</span>
+      <span data-lang="en">Frontend</span>
+      <span data-lang="de">Frontend</span>
+      <span data-lang="pt">Frontend</span>
+      <span class="shelf-status done">✓</span>
+    </a>
+    <a href="#shelf-d" class="shelf-link">
+      <span class="shelf-letter">D</span>
+      <span data-lang="en">Integration</span>
+      <span data-lang="de">Integration</span>
+      <span data-lang="pt">Integração</span>
+      <span class="shelf-status wip">⏳</span>
+    </a>
+    <a href="#shelf-e" class="shelf-link">
+      <span class="shelf-letter">E</span>
+      <span data-lang="en">Ledger</span>
+      <span data-lang="de">Ledger</span>
+      <span data-lang="pt">Ledger</span>
+      <span class="shelf-status wip">⏳</span>
+    </a>
+    <a href="#shelf-f" class="shelf-link">
+      <span class="shelf-letter">F</span>
+      <span data-lang="en">Deploy</span>
+      <span data-lang="de">Deploy</span>
+      <span data-lang="pt">Deploy</span>
+      <span class="shelf-status wip">⏳</span>
+    </a>
+    <a href="#shelf-g" class="shelf-link">
+      <span class="shelf-letter">G</span>
+      <span data-lang="en">Optical</span>
+      <span data-lang="de">Optisch</span>
+      <span data-lang="pt">Óptico</span>
+      <span class="shelf-status future">🔮</span>
+    </a>
+    <a href="#shelf-h" class="shelf-link">
+      <span class="shelf-letter">H</span>
+      <span data-lang="en">Print</span>
+      <span data-lang="de">Druck</span>
+      <span data-lang="pt">Impressão</span>
+      <span class="shelf-status future">🔮</span>
+    </a>
+  </nav>
+
+  <!-- SHELF A: Foundation -->
+  <section id="shelf-a" class="shelf open">
+    <div class="shelf-header" onclick="toggleShelf(this)">
+      <span class="shelf-id">A</span>
+      <div class="shelf-title">
+        <span data-lang="en">Foundation</span>
+        <span data-lang="de">Grundlage</span>
+        <span data-lang="pt">Fundação</span>
+        <span data-lang="en">Core concepts, architecture, invariants</span>
+        <span data-lang="de">Kernkonzepte, Architektur, Invarianten</span>
+        <span data-lang="pt">Conceitos core, arquitetura, invariantes</span>
+      </div>
+      <span class="shelf-toggle">▼</span>
+    </div>
+    <div class="shelf-body">
+      <h4 style="color:var(--gold);font-size:12px;margin-bottom:12px;" data-lang="en">A.1 The Dragon Grid</h4>
+      <h4 style="color:var(--gold);font-size:12px;margin-bottom:12px;" data-lang="de">A.1 Das Drachen-Gitter</h4>
+      <h4 style="color:var(--gold);font-size:12px;margin-bottom:12px;" data-lang="pt">A.1 O Grid de Dragões</h4>
+
+      <div class="table-wrap">
+        <table>
+          <tr>
+            <th data-lang="en">Aspect</th>
+            <th data-lang="de">Aspekt</th>
+            <th data-lang="pt">Aspecto</th>
+            <th data-lang="en">Value</th>
+            <th data-lang="de">Wert</th>
+            <th data-lang="pt">Valor</th>
+          </tr>
+          <tr><td>Grid size</td><td>16 × 16 = 256 cells</td></tr>
+          <tr><td>Hash algorithm</td><td>SHA-256 (256 bits)</td></tr>
+          <tr><td>Bit = 1</td><td>Dark Dragon (heptagon)</td></tr>
+          <tr><td>Bit = 0</td><td>Shadow Dragon (diamond)</td></tr>
+          <tr><td>Opacity (print)</td><td>0.07 (invisible at reading distance)</td></tr>
+          <tr><td>Opacity (screen)</td><td>0.18 (visible for demo)</td></tr>
+        </table>
+      </div>
+
+      <h4 style="color:var(--gold);font-size:12px;margin:16px 0 12px;" data-lang="en">A.2 Constitutional Invariants</h4>
+      <h4 style="color:var(--gold);font-size:12px;margin:16px 0 12px;" data-lang="de">A.2 Konstitutionelle Invarianten</h4>
+      <h4 style="color:var(--gold);font-size:12px;margin:16px 0 12px;" data-lang="pt">A.2 Invariantes Constitucionais</h4>
+
+      <div class="table-wrap">
+        <table>
+          <tr><th>ID</th><th>Name</th><th data-lang="en">Application</th><th data-lang="de">Anwendung</th><th data-lang="pt">Aplicação</th></tr>
+          <tr>
+            <td style="color:var(--gold);font-weight:600">I9</td>
+            <td>Human Gate</td>
+            <td data-lang="en">Receipt requires human approval before seal</td>
+            <td data-lang="de">Quittung erfordert menschliche Genehmigung vor Versiegelung</td>
+            <td data-lang="pt">Receipt requer aprovação humana antes do seal</td>
+          </tr>
+          <tr>
+            <td style="color:var(--gold);font-weight:600">I11</td>
+            <td>Evidence Sovereignty</td>
+            <td data-lang="en">receipt_id MUST come from Ledger, NEVER frontend</td>
+            <td data-lang="de">receipt_id MUSS vom Ledger kommen, NIE vom Frontend</td>
+            <td data-lang="pt">receipt_id DEVE vir do Ledger, NUNCA do frontend</td>
+          </tr>
+          <tr>
+            <td style="color:var(--gold);font-weight:600">I14</td>
+            <td>No Placeholders</td>
+            <td data-lang="en">Empty content = explicit error, never silent</td>
+            <td data-lang="de">Leerer Inhalt = expliziter Fehler, nie still</td>
+            <td data-lang="pt">Conteúdo vazio = erro explícito, nunca silencioso</td>
+          </tr>
+        </table>
+      </div>
+
+      <h4 style="color:var(--gold);font-size:12px;margin:16px 0 12px;">A.3 Data Flow</h4>
+      <div class="code">Document (bytes)
+    ↓
+SHA-256 hash (64 hex chars)
+    ↓
+256 bits (hash_to_bits)
+    ↓
+16×16 Dragon Grid (visual encoding)
+    ↓
+POST to Ledger :8101
+    ↓
+receipt_id (sovereign)
+    ↓
+PDF overlay / SVG grid
+    ↓
+Verify URL: /verify?id={receipt_id}</div>
+    </div>
+  </section>
+
+  <!-- SHELF B: Backend -->
+  <section id="shelf-b" class="shelf">
+    <div class="shelf-header" onclick="toggleShelf(this)">
+      <span class="shelf-id">B</span>
+      <div class="shelf-title">
+        <span data-lang="en">Backend</span>
+        <span data-lang="de">Backend</span>
+        <span data-lang="pt">Backend</span>
+        <span data-lang="en">Python modules, API routes</span>
+        <span data-lang="de">Python-Module, API-Routen</span>
+        <span data-lang="pt">Módulos Python, rotas API</span>
+      </div>
+      <span class="shelf-toggle">▼</span>
+    </div>
+    <div class="shelf-body">
+      <h4 style="color:var(--gold);font-size:12px;margin-bottom:12px;">B.1 File Structure</h4>
+      <div class="code">/home/windi/engine/
+├── w_dragon_001.py              <span class="comment"># Core module</span>
+├── w_dragon_001_law_routes.py   <span class="comment"># FastAPI routes</span>
+└── .env                         <span class="comment"># Secrets</span></div>
+
+      <h4 style="color:var(--gold);font-size:12px;margin:16px 0 12px;">B.2 Functions</h4>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Function</th><th>Purpose</th><th>Status</th></tr>
+          <tr><td><code>compute_hash(content: bytes)</code></td><td>SHA-256 of document</td><td style="color:var(--ok)">✓</td></tr>
+          <tr><td><code>hash_to_bits(hash_hex: str)</code></td><td>64 hex → 256 bits</td><td style="color:var(--ok)">✓</td></tr>
+          <tr><td><code>register_with_ledger(...)</code></td><td>POST to :8101, get receipt_id</td><td style="color:var(--ok)">✓</td></tr>
+          <tr><td><code>generate_pdf_overlay(...)</code></td><td>ReportLab transparent page</td><td style="color:var(--ok)">✓</td></tr>
+          <tr><td><code>merge_overlay_into_pdf(...)</code></td><td>PyPDF merge onto original</td><td style="color:var(--ok)">✓</td></tr>
+          <tr><td><code>generate_svg_grid(...)</code></td><td>SVG for web display</td><td style="color:var(--ok)">✓</td></tr>
+          <tr><td><code>encode_document(...)</code></td><td>Full pipeline entry point</td><td style="color:var(--ok)">✓</td></tr>
+        </table>
+      </div>
+
+      <h4 style="color:var(--gold);font-size:12px;margin:16px 0 12px;">B.3 Dependencies</h4>
+      <div class="code"><span class="comment"># Install on Strato</span>
+pip install --break-system-packages httpx reportlab pypdf</div>
+
+      <h4 style="color:var(--gold);font-size:12px;margin:16px 0 12px;">B.4 API Endpoints</h4>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Method</th><th>Path</th><th>Purpose</th></tr>
+          <tr><td>GET</td><td><code>/dragon/health</code></td><td>Module status</td></tr>
+          <tr><td>POST</td><td><code>/dragon/encode</code></td><td>Text → receipt + SVG</td></tr>
+          <tr><td>POST</td><td><code>/dragon/encode-pdf</code></td><td>PDF → sealed PDF</td></tr>
+          <tr><td>GET</td><td><code>/dragon/verify/{id}</code></td><td>Query Ledger</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- SHELF C: Frontend -->
+  <section id="shelf-c" class="shelf">
+    <div class="shelf-header" onclick="toggleShelf(this)">
+      <span class="shelf-id">C</span>
+      <div class="shelf-title">
+        <span data-lang="en">Frontend</span>
+        <span data-lang="de">Frontend</span>
+        <span data-lang="pt">Frontend</span>
+        <span data-lang="en">UI components, JavaScript module</span>
+        <span data-lang="de">UI-Komponenten, JavaScript-Modul</span>
+        <span data-lang="pt">Componentes UI, módulo JavaScript</span>
+      </div>
+      <span class="shelf-toggle">▼</span>
+    </div>
+    <div class="shelf-body">
+      <h4 style="color:var(--gold);font-size:12px;margin-bottom:12px;">C.1 Integration</h4>
+      <div class="code"><span class="comment">&lt;!-- Add to WINDI-LAW workspace --&gt;</span>
+&lt;div id="windi-dragon-panel"&gt;&lt;/div&gt;
+&lt;script src="/static/windi_dragon_ui.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  DragonUI.init({
+    containerId: 'windi-dragon-panel',
+    apiBase: '/dragon',
+    userId: sessionStorage.getItem('windi_did'),
+    openByDefault: false
+  });
+&lt;/script&gt;</div>
+
+      <h4 style="color:var(--gold);font-size:12px;margin:16px 0 12px;">C.2 Features</h4>
+      <ul class="checklist">
+        <li class="done">NOIR theme matching WINDI design system</li>
+        <li class="done">Client-side SHA-256 via WebCrypto (instant preview)</li>
+        <li class="done">Server sync for sovereign receipt</li>
+        <li class="done">Offline fallback (shows local hash)</li>
+        <li class="done">One-click copy receipt</li>
+        <li class="done">Direct Ledger verify button</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- SHELF D: Integration -->
+  <section id="shelf-d" class="shelf">
+    <div class="shelf-header" onclick="toggleShelf(this)">
+      <span class="shelf-id">D</span>
+      <div class="shelf-title">
+        <span data-lang="en">Integration</span>
+        <span data-lang="de">Integration</span>
+        <span data-lang="pt">Integração</span>
+        <span data-lang="en">WINDI-LAW connection (:8122)</span>
+        <span data-lang="de">WINDI-LAW Verbindung (:8122)</span>
+        <span data-lang="pt">Conexão WINDI-LAW (:8122)</span>
+      </div>
+      <span class="shelf-toggle">▼</span>
+    </div>
+    <div class="shelf-body">
+      <div class="steps">
+        <div class="step done">
+          <div class="step-title" data-lang="en">Add import to windi_law_app.py</div>
+          <div class="step-title" data-lang="de">Import zu windi_law_app.py hinzufügen</div>
+          <div class="step-title" data-lang="pt">Adicionar import ao windi_law_app.py</div>
+          <div class="code">import sys
+sys.path.insert(0, '/home/windi/engine')
+from w_dragon_001_law_routes import dragon_router</div>
+        </div>
+
+        <div class="step wip">
+          <div class="step-title" data-lang="en">Register router</div>
+          <div class="step-title" data-lang="de">Router registrieren</div>
+          <div class="step-title" data-lang="pt">Registar router</div>
+          <div class="code">app.include_router(dragon_router)</div>
+        </div>
+
+        <div class="step">
+          <div class="step-title" data-lang="en">Restart service</div>
+          <div class="step-title" data-lang="de">Dienst neu starten</div>
+          <div class="step-title" data-lang="pt">Reiniciar serviço</div>
+          <div class="code">sudo systemctl restart windi-law</div>
+        </div>
+
+        <div class="step">
+          <div class="step-title" data-lang="en">Verify health</div>
+          <div class="step-title" data-lang="de">Gesundheit überprüfen</div>
+          <div class="step-title" data-lang="pt">Verificar health</div>
+          <div class="code">curl http://localhost:8122/dragon/health</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SHELF E: Ledger -->
+  <section id="shelf-e" class="shelf">
+    <div class="shelf-header" onclick="toggleShelf(this)">
+      <span class="shelf-id">E</span>
+      <div class="shelf-title">
+        <span data-lang="en">Ledger</span>
+        <span data-lang="de">Ledger</span>
+        <span data-lang="pt">Ledger</span>
+        <span data-lang="en">Receipt registration, verification (:8101)</span>
+        <span data-lang="de">Quittungsregistrierung, Verifizierung (:8101)</span>
+        <span data-lang="pt">Registo de receipt, verificação (:8101)</span>
+      </div>
+      <span class="shelf-toggle">▼</span>
+    </div>
+    <div class="shelf-body">
+      <h4 style="color:var(--gold);font-size:12px;margin-bottom:12px;">E.1 Registration Payload</h4>
+      <div class="code">{
+  <span class="string">"schema"</span>: <span class="string">"W-DRAGON-001-v1"</span>,
+  <span class="string">"invariants"</span>: [<span class="string">"I9"</span>, <span class="string">"I11"</span>, <span class="string">"I14"</span>],
+  <span class="string">"hash_algorithm"</span>: <span class="string">"SHA-256"</span>,
+  <span class="string">"hash_real"</span>: <span class="string">"7d865e959b2466918c..."</span>,
+  <span class="string">"grid"</span>: {
+    <span class="string">"cols"</span>: 16,
+    <span class="string">"rows"</span>: 16,
+    <span class="string">"bits"</span>: 256
+  },
+  <span class="string">"human_gate"</span>: {
+    <span class="string">"required"</span>: <span class="keyword">true</span>,
+    <span class="string">"invariant"</span>: <span class="string">"I9"</span>,
+    <span class="string">"status"</span>: <span class="string">"PENDING"</span>
+  }
+}</div>
+
+      <h4 style="color:var(--gold);font-size:12px;margin:16px 0 12px;">E.2 Verify Flow</h4>
+      <div class="code">GET /verify?id=WINDI-DSF-...
+    ↓
+Ledger :8101 lookup
+    ↓
+Compare hash
+    ↓
+Return: VALID | INVALID | NOT_FOUND</div>
+    </div>
+  </section>
+
+  <!-- SHELF F: Deploy -->
+  <section id="shelf-f" class="shelf">
+    <div class="shelf-header" onclick="toggleShelf(this)">
+      <span class="shelf-id">F</span>
+      <div class="shelf-title">
+        <span data-lang="en">Deploy</span>
+        <span data-lang="de">Deploy</span>
+        <span data-lang="pt">Deploy</span>
+        <span data-lang="en">Server setup, checklist</span>
+        <span data-lang="de">Server-Setup, Checkliste</span>
+        <span data-lang="pt">Setup do servidor, checklist</span>
+      </div>
+      <span class="shelf-toggle">▼</span>
+    </div>
+    <div class="shelf-body">
+      <h4 style="color:var(--gold);font-size:12px;margin-bottom:12px;" data-lang="en">Pre-Deploy Checklist</h4>
+      <h4 style="color:var(--gold);font-size:12px;margin-bottom:12px;" data-lang="de">Pre-Deploy Checkliste</h4>
+      <h4 style="color:var(--gold);font-size:12px;margin-bottom:12px;" data-lang="pt">Checklist Pré-Deploy</h4>
+      <ul class="checklist">
+        <li>LEDGER_TOKEN exists in .env</li>
+        <li>Ledger :8101 is reachable</li>
+        <li>Python dependencies installed</li>
+        <li>Backend files copied to /home/windi/engine/</li>
+        <li>Frontend file copied to static folder</li>
+        <li>windi_law_app.py patched with router</li>
+      </ul>
+
+      <h4 style="color:var(--gold);font-size:12px;margin:16px 0 12px;">Quick Test Commands</h4>
+      <div class="code"><span class="comment"># Health</span>
+curl http://localhost:8122/dragon/health
+
+<span class="comment"># Encode text</span>
+curl -X POST http://localhost:8122/dragon/encode \
+  -H 'Content-Type: application/json' \
+  -d '{"content": "Test document"}'
+
+<span class="comment"># Encode PDF</span>
+curl -X POST http://localhost:8122/dragon/encode-pdf \
+  -F 'file=@document.pdf' -o sealed.pdf
+
+<span class="comment"># Verify</span>
+curl http://localhost:8122/dragon/verify/WINDI-DSF-...</div>
+    </div>
+  </section>
+
+  <!-- SHELF G: Optical -->
+  <section id="shelf-g" class="shelf">
+    <div class="shelf-header" onclick="toggleShelf(this)">
+      <span class="shelf-id">G</span>
+      <div class="shelf-title">
+        <span data-lang="en">Optical Reader (Phase 2)</span>
+        <span data-lang="de">Optischer Leser (Phase 2)</span>
+        <span data-lang="pt">Leitor Óptico (Fase 2)</span>
+        <span data-lang="en">UV reader, camera scanner</span>
+        <span data-lang="de">UV-Leser, Kamera-Scanner</span>
+        <span data-lang="pt">Leitor UV, scanner por câmara</span>
+      </div>
+      <span class="shelf-toggle">▼</span>
+    </div>
+    <div class="shelf-body">
+      <h4 style="color:var(--gold);font-size:12px;margin-bottom:12px;">G.1 UV Reader Architecture</h4>
+      <div class="code">Document (physical)
+    ↓
+UV LED illumination (365nm)
+    ↓
+Camera capture (RGB)
+    ↓
+Image processing
+    ↓
+Grid detection
+    ↓
+Bit extraction
+    ↓
+Hash reconstruction
+    ↓
+Ledger verification</div>
+
+      <h4 style="color:var(--gold);font-size:12px;margin:16px 0 12px;">G.2 Hardware Components</h4>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Component</th><th>Spec</th></tr>
+          <tr><td>UV LED</td><td>365nm, 3W</td></tr>
+          <tr><td>Camera</td><td>12MP+, no IR filter</td></tr>
+          <tr><td>Housing</td><td>Dark box / hood</td></tr>
+          <tr><td>Filter</td><td>UV-blocking (optional)</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- SHELF H: Print -->
+  <section id="shelf-h" class="shelf">
+    <div class="shelf-header" onclick="toggleShelf(this)">
+      <span class="shelf-id">H</span>
+      <div class="shelf-title">
+        <span data-lang="en">Print Optimization (Phase 3)</span>
+        <span data-lang="de">Druck-Optimierung (Phase 3)</span>
+        <span data-lang="pt">Optimização de Impressão (Fase 3)</span>
+        <span data-lang="en">Physical documents, error correction</span>
+        <span data-lang="de">Physische Dokumente, Fehlerkorrektur</span>
+        <span data-lang="pt">Documentos físicos, correção de erros</span>
+      </div>
+      <span class="shelf-toggle">▼</span>
+    </div>
+    <div class="shelf-body">
+      <h4 style="color:var(--gold);font-size:12px;margin-bottom:12px;">H.1 Challenges</h4>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Challenge</th><th>Mitigation</th></tr>
+          <tr><td>Printer DPI < 600</td><td>Require 1200+ DPI</td></tr>
+          <tr><td>Toner spread</td><td>Larger glyphs + ECC</td></tr>
+          <tr><td>Scanner noise</td><td>Reed-Solomon encoding</td></tr>
+          <tr><td>Photocopy degradation</td><td>"Original only" policy</td></tr>
+        </table>
+      </div>
+
+      <h4 style="color:var(--gold);font-size:12px;margin:16px 0 12px;">H.2 Error Correction</h4>
+      <div class="code">Original: 256 bits (hash)
+    ↓
+Reed-Solomon encoding
+    ↓
+Protected: 256 + 64 bits
+    ↓
+Grid: 20×16 or 16×20
+
+Recovery: can correct up to 32 bit errors</div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="dragon">🐉</div>
+    <p>Liga IA+H · WINDI Publishing House · Kempten, Bavaria · 2026</p>
+    <p style="color:var(--gold)">"Proof that reveals itself — not proof that declares."</p>
+    <p>OM SHANTI</p>
+  </footer>
+</div>
+
+<script>
+// Theme
+function toggleTheme() {
+  const body = document.body;
+  const btn = document.querySelector('.theme-toggle');
+  if (body.dataset.theme === 'noir') {
+    body.dataset.theme = 'klar';
+    btn.textContent = '☽';
+    localStorage.setItem('windi-theme', 'klar');
+  } else {
+    body.dataset.theme = 'noir';
+    btn.textContent = '☀';
+    localStorage.setItem('windi-theme', 'noir');
+  }
+}
+
+// Language
+function setLang(lang) {
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[data-l="${lang}"]`).classList.add('active');
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    el.style.display = el.dataset.lang === lang ? '' : 'none';
+  });
+  localStorage.setItem('windi-lang', lang);
+}
+
+// Shelf toggle
+function toggleShelf(header) {
+  header.closest('.shelf').classList.toggle('open');
+}
+
+// Init
+document.addEventListener('DOMContentLoaded', () => {
+  // Theme
+  const savedTheme = localStorage.getItem('windi-theme') || 'noir';
+  document.body.dataset.theme = savedTheme;
+  document.querySelector('.theme-toggle').textContent = savedTheme === 'noir' ? '☀' : '☽';
+
+  // Language
+  const savedLang = localStorage.getItem('windi-lang') || 'en';
+  setLang(savedLang);
+});
+</script>
+</body>
+</html>
