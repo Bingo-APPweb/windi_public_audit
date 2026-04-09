@@ -26,6 +26,7 @@ import secrets
 import hashlib
 import base64
 import requests
+import httpx
 import os
 import smtplib
 import ssl
@@ -3965,6 +3966,70 @@ def _set_cached_geocode(lat: str, lng: str, place: dict):
     import time
     key = f"{lat},{lng}"
     _geocode_cache[key] = {"place": place, "ts": time.time()}
+
+
+# ═══════════════════════════════════════════════════════════════
+# §102 WhereAmI Geo Auto — MARIA detecta cidade do utilizador
+# ═══════════════════════════════════════════════════════════════
+
+async def get_user_location(ip: str = None, locale: str = "pt") -> dict:
+    """
+    Detecta localização via Travelpayouts WhereAmI API.
+    Fallback: MUC (Munique) se erro ou IP local.
+    """
+    try:
+        url = f"https://www.travelpayouts.com/whereami?locale={locale}"
+        if ip and ip not in ("127.0.0.1", "::1", ""):
+            url += f"&ip={ip}"
+        async with httpx.AsyncClient(timeout=5.0) as client:
+            r = await client.get(url)
+            d = r.json()
+            return {
+                "iata": d.get("iata", "MUC"),
+                "name": d.get("name", "Munique"),
+                "country_code": d.get("country_code", "DE")
+            }
+    except Exception:
+        return {"iata": "MUC", "name": "Munique", "country_code": "DE"}
+
+
+@app.get("/travel/maria/location")
+async def maria_location(request: Request):
+    """
+    §102 WhereAmI — detecta cidade do utilizador para pré-popular fly_from.
+
+    Usa Travelpayouts WhereAmI API.
+    Greeting contextual: PT/DE/BR/EN/AT/CH
+    X-Real-IP do nginx para IP real.
+    """
+    ip = (
+        request.headers.get("X-Real-IP")
+        or request.headers.get("X-Forwarded-For", "").split(",")[0].strip()
+        or None
+    )
+
+    loc = await get_user_location(ip=ip)
+
+    greetings = {
+        "DE": f"Estás em {loc['name']}. Para onde queres voar?",
+        "AT": f"Estás em {loc['name']}. Para onde queres voar?",
+        "CH": f"Estás em {loc['name']}. Para onde queres voar?",
+        "BR": f"Você está em {loc['name']}. Para onde quer voar?",
+        "PT": f"Estás em {loc['name']}. Para onde queres voar?",
+    }
+    greeting = greetings.get(
+        loc["country_code"],
+        f"You are in {loc['name']}. Where do you want to fly?"
+    )
+
+    return {
+        "iata": loc["iata"],
+        "city": loc["name"],
+        "country_code": loc["country_code"],
+        "greeting": greeting,
+        "fly_from": loc["iata"]
+    }
+
 
 @app.get("/reverse-geocode")
 async def reverse_geocode(lat: str = None, lng: str = None, lang: str = "pt"):
