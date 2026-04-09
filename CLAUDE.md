@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.1.4
+**Version:** 2.1.5
 **Sealed:** 2026-04-09 · §151 W-DRAGON-001 Dragon Shadow Forest LIVE
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -8,7 +8,7 @@
 > **Ficheiros relacionados:** `CHANGELOG.md` (histórico) · `ARCHITECTURE.md` (código técnico)
 
 ## 📚 Overflow Policy (17 Mar 2026)
-Hard limit: **32KB**. Último fix: 09 Abr 2026 (44.6KB → 30.9KB).
+Hard limit: **32KB**. Último fix: 09 Abr 2026 (31.9KB → ~28KB).
 - **CLAUDE.md** = presente + futuro + regras (≤ 32KB)
 - **CLAUDE-HISTORY.md** = passado selado (ilimitado, append-only)
 - **REGRA:** sessão encerrada → documentação detalhada migra para HISTORY
@@ -115,41 +115,20 @@ Nenhum endpoint retorna valores default que mascarem dados ausentes.
 **Proibido:** "unknown", "N/A", "?", "---", str(dict), "", None silencioso
 **Correcto:** `response["name"]` → KeyError → diagnóstico imediato
 **Excepção:** I10 LLM Fallback (redundância de infra, não placeholder)
-> **Detalhes:** `CLAUDE-HISTORY.md` § SESSÃO 08 Abr
 
 ### §150 — W-SEC-001: Security Sentinel
 
 **Port:** 8144 · **Invariants:** I9, I11 · **Receipt:** `BD09970F`
-
-> **"One phenomenon, one incident. Many sources, one pattern."**
-
 **Correlação Dual:** Behavioral (30 IPs → 1 flood) + Technical (1 IP → injection)
 **Pipeline:** SEC-EVT → Correlation → SEC-INCIDENT → I9 Gate → Ledger
-**Dashboard:** Heatmap + Timeline + Replay · `windi-domain.com/sec/dashboard/`
-> **Detalhes:** `CLAUDE-HISTORY.md` § SESSÃO 08 Abr
 
 ### §151 — W-DRAGON-001: Dragon Shadow Forest (09 Apr 2026)
 
 **Port:** :8122 (via WINDI-LAW) · **Invariants:** I9, I11, I14
-
-> **"Invisible guardians encoding truth in every document."**
-
 **Conceito:** 16×16 glyph grid encodes 256 SHA-256 bits as dragon micropictures.
-- **Bit=1:** Dark Dragon (heptagon) · **Bit=0:** Shadow Dragon (diamond)
-- **Opacity:** 0.07 (print invisible) · 0.18 (screen demo)
-- **PDF Overlay:** Merges into any PDF without altering original content
-
-**Endpoints:**
-```
-GET  /dragon/health           — Module status
-POST /dragon/encode           — Encode + SVG + Ledger
-POST /dragon/encode-pdf       — PDF with dragon overlay
-POST /dragon/preview          — Preview (no Ledger)
-GET  /dragon/verify/{id}      — Ledger verification
-```
-
+**Bit=1:** Dark Dragon (heptagon) · **Bit=0:** Shadow Dragon (diamond)
 **Pipeline:** Content → SHA-256 → 256 bits → Dragon Grid → PDF/SVG → Ledger (I11)
-**External:** `windi-domain.com/law/dragon/health`
+**Endpoints:** `/dragon/health` · `/dragon/encode` · `/dragon/encode-pdf` · `/dragon/preview` · `/dragon/verify/{id}`
 
 ### §117 — I9: Human Approval Gate (NON-NEGOTIABLE)
 
@@ -157,20 +136,16 @@ GET  /dragon/verify/{id}      — Ledger verification
 
 ✔ Auto-process/classify/suggest → OK · ❌ Auto-publish/seal → PROIBIDO
 **Pipeline:** SGV ilumina → Sistema sugere → **Humano decide** → Ledger sela
-**Aplicação:** W-JOE `/publish` · ProofStream `/decide` · SGV (ilumina, não bloqueia)
 
 ### §120 — AI Draft Mode · WINDI-LAW
 
 **Port:** :8122 · **Receipt:** `WINDI-LAW-AIDRAFT-20260404105917-C445AFF9`
 **8 Doc Types:** nda · vertrag · vollmacht · mahnung · kuendigung · klausel · stellungnahme · gutachten
-**Sub-features:** §120.5 Mobile Fix · §120.7 PIN Login
 
 ### §122 — Video Stack (VD-CUT + VD-MASS)
 
 **VD-CUT :8128** — I9 Directo · Forense · First Receipt `WINDI-VDCUT-20260404183836-C181E66D`
 **VD-MASS :8131** — I9-P Policy · Batch · MLT/Shotcut `melt 7.12.0`
-**§122.4:** "Telegram é PORTA. WINDI é CASA." (NOMAD-BOT: Interface ✅ · Binário ❌)
-**§122.6:** Forense→VD-CUT · Mass→VD-MASS · Consumer→NOMAD-BOT
 
 ### §118 — Travel Auto-Healing
 
@@ -178,71 +153,26 @@ GET  /dragon/verify/{id}      — Ledger verification
 
 ### 3.2 Layer 7 — Communication Semantics
 
-O Dragon **nunca usa linguagem de garantia absoluta**. Regras:
-
-```
-❌ PROIBIDO           ✅ CORRECTO
-"garanto que..."   →  "designed to support..."
-"vou garantir..."  →  "este processo está estruturado para..."
-"certamente..."    →  "com base nos dados disponíveis..."
-"é definitivo..."  →  "selado no Ledger — verificável publicamente"
-```
+O Dragon **nunca usa linguagem de garantia absoluta**:
+`❌ "garanto/certamente/definitivo"` → `✅ "designed to/estruturado para/selado no Ledger"`
 
 ### 3.3 Three Dragons Protocol (Routing Interno)
 
 ```
-Input do utilizador
-        ↓
-🛡️ Guardian  — valida I1-I9+I11 antes de processar
-        ↓
-🏗️ Architect — constrói resposta / documento
-        ↓
-👁️ Witness   — sela evidência + gera receipt
-        ↓
-Output para utilizador
+Input → 🛡️ Guardian (valida I1-I9+I11) → 🏗️ Architect (constrói) → 👁️ Witness (sela) → Output
 ```
 
 ### 3.4 Language Sovereign Principle (I12)
 
-```
-CONVERSA  →  Universal Language
-             Responde SEMPRE na língua em que o utilizador escreve.
-             "Olá" → PT · "Hallo" → DE · "Hello" → EN
-
-DOCUMENTO →  Língua Soberana
-             Gera SEMPRE na língua do toggle/wallet do utilizador.
-             Nunca misturar línguas dentro de um documento.
-             Ao iniciar rascunho: "Documento em [DE/EN/PT]"
-
-BABEL TOWER = anti-pattern WINDI (IRREMEDIÁVEL)
-             Um documento = uma língua.
-             Misturar PT/DE/EN no mesmo doc é violação constitucional.
-```
-
-**UX — Hint Visual (obrigatório):**
-```
-┌─────────────────────────────────────────────────────┐
-│ Barra de acções do documento                        │
-│                                                     │
-│  [📎 Img] [🎬 Video] [🎙️ Voz]    📄 DE ▼  [🛡️ Finalizar] │
-│                                  ↑                  │
-│                        Clicável → abre toggle       │
-└─────────────────────────────────────────────────────┘
-
-Dragon também informa:
-  "Documento parece pronto! Clica Finalizar. 🛡️
-   📄 Documento em **DE**"
-```
-
-**Sealed:** 2026-03-17 · Dragon Alzheimer Fix → Language Sovereign Principle
+**CONVERSA:** Responde na língua do utilizador (Olá→PT · Hallo→DE · Hello→EN)
+**DOCUMENTO:** Gera na língua do toggle/wallet. Um documento = uma língua.
+**BABEL TOWER = anti-pattern WINDI (IRREMEDIÁVEL)**
 
 ### §137 — Medium-Agnostic Truth Distribution (IRREMEDIÁVEL)
 
 > **"O medium aponta para a prova. Nunca carrega a prova."**
 
 Canais transmitem **LINKS**, nunca ficheiros (plataformas transcodificam → hash quebrado).
-**Endpoints:** `/comm/distribute` (privado,foto) · `/comm/publish` (público,link)
-**SDK:** `await publish(receipt_id, chat_id="@windi_public", lang="PT")`
 
 ---
 
@@ -251,23 +181,10 @@ Canais transmitem **LINKS**, nunca ficheiros (plataformas transcodificam → has
 ### 4.1 Stack de Produção
 
 ```
-Utilizador (mobile/desktop)
-      ↓
-windi-domain.com/       → 301 → /desktop/
-windi-domain.com/app/   → 301 → /desktop/
-windi-domain.com/desktop/   (GEN 7 :8119)
-      ↓
-POST /api/dragon/chat   (Dragon Hub :8108)
-      ↓
-Dragon decide por tier:
-  ├── FREE / MED → Mistral local  (93% sovereignty)
-  └── HIGH       → Anthropic API  (7% externo)
-      ↓
-Agent Bridge (por tipo de documento)
-      ↓
-Forensic Ledger :8101   (Seal + QR)
-      ↓
-Verify Public :8114     (Prova pública)
+Utilizador → windi-domain.com/desktop/ (GEN 7 :8119)
+           → POST /api/dragon/chat (Dragon Hub :8108)
+           → Dragon: FREE/MED→Mistral(93%) | HIGH→Anthropic(7%)
+           → Agent Bridge → Forensic Ledger :8101 → Verify Public :8114
 ```
 
 ### 4.2 API Key — Regra Absoluta
@@ -294,26 +211,14 @@ Bridges: /opt/windi/agents/constitutional-agent/blueprints/
 
 ### Stage Map Universal
 
-```
-C1 → Intenção recebida / sessão criada
-C2 → Rascunho gerado
-C3 → Edição / iteração (auto-save a cada 30s)
-C4 → Revisão final
-C5 → AGUARDA APROVAÇÃO HUMANA  ← I9 GATE
-C6 → SELADO NO LEDGER ✅ IRREMEDIÁVEL
-```
+`C1→Intenção` · `C2→Rascunho` · `C3→Edição` · `C4→Revisão` · `C5→AGUARDA I9` · `C6→SELADO ✅`
 
 ### Tabela de Bridges
 
 | # | Agente | Bridge Prefix | Status |
 |---|--------|---------------|--------|
-| 1 | W-COMM-001 | `/communique/bridge/*` | ✅ LIVE |
-| 2 | W-JOURN-001 | `/journalist/bridge/*` | ✅ LIVE |
-| 3 | W-LEGAL-001 | `/legal/bridge/*` | ✅ LIVE |
-| 4 | W-NOTARY-001 | `/notary/bridge/*` | ✅ LIVE |
-| 5 | W-AUDIT-001 | `/audit/bridge/*` | ✅ LIVE |
-| 6 | W-COMPLY-001 | `/compliance/bridge/*` | ⏳ Pendente |
-| 7 | W-ACCT-001 | `/accounting/bridge/*` | ⏳ Pendente |
+| 1-5 | COMM/JOURN/LEGAL/NOTARY/AUDIT | `/[agent]/bridge/*` | ✅ LIVE |
+| 6-7 | COMPLY/ACCT | `/[agent]/bridge/*` | ⏳ Pendente |
 | 8 | GROVE ARENA | `/grove/arena` | ✅ LIVE v1.3.0 |
 
 **Total:** 25 blueprints activos em `/constitutional-agent/blueprints/`
@@ -324,24 +229,16 @@ C6 → SELADO NO LEDGER ✅ IRREMEDIÁVEL
 
 ```json
 {
-  "receipt_id":   "WINDI-[AGENT]-[YYYYMMDDHHMMSS]",
-  "actor":        "human-dragon",
-  "app":          "one-touch-mobile",
-  "doc_name":     "Título do documento",
-  "doc_type":     "communique | doc | jmpg | pptx | web | slides",
-  "governance_level": "HIGH",
-  "content_hash": "sha256:...",
-  "verify_url":   "https://windi-domain.com/verify-public/?id=...",
-  "qr_payload":   "WINDI:{receipt_id}|{hash[:16]}",
-  "invariants":   ["I9", "I11"],
-  "stage":        "C6",
-  "sealed_at":    "2026-03-14T...",
-  "witness":      "👁️ Witness — Observação & Validação"
+  "receipt_id": "WINDI-[AGENT]-[YYYYMMDDHHMMSS]",
+  "actor": "human-dragon", "app": "one-touch-mobile",
+  "doc_name": "Título", "doc_type": "communique|doc|jmpg|pptx|web|slides",
+  "governance_level": "HIGH", "content_hash": "sha256:...",
+  "verify_url": "https://windi-domain.com/verify-public/?id=...",
+  "invariants": ["I9","I11"], "stage": "C6", "sealed_at": "2026-..."
 }
 ```
 
-**Endpoint de seal:** `POST http://localhost:8101/api/receipts`
-**Verificação:** `GET https://windi-domain.com/verify-public/?id={receipt_id}`
+**Seal:** `POST http://localhost:8101/api/receipts` · **Verify:** `GET /verify-public/?id={receipt_id}`
 
 ---
 
@@ -349,30 +246,11 @@ C6 → SELADO NO LEDGER ✅ IRREMEDIÁVEL
 
 **Versão:** v1.3.0 · **Port:** :8091
 
-O Grove Arena é um **motor de decisão constitucional**.
-
-### Estados de Divergência
-
 | Status | Significado | Acção |
 |--------|-------------|-------|
-| `ALL_AGREE` | Consenso total | Síntese directa |
-| `TWO_VS_ONE` | Maioria clara, minoria dissidente | Expor ambas posições |
-| `ALL_DIFFER` | Fragmentação total | **Escalar para Human Dragon (I9)** |
-
-### Grove Síntese — Formato
-
-```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-GROVE SÍNTESE
-
-[Recomendação clara em 2-3 frases]
-
-FUNDAMENTO: [Princípio constitucional que suporta]
-RISCO SE IGNORADO: [Consequência de não seguir]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-→ Decisão final: Human Dragon.
-```
+| `ALL_AGREE` | Consenso | Síntese directa |
+| `TWO_VS_ONE` | Maioria | Expor ambas posições |
+| `ALL_DIFFER` | Fragmentação | **Escalar para Human Dragon (I9)** |
 
 ---
 
@@ -387,23 +265,11 @@ RISCO SE IGNORADO: [Consequência de não seguir]
 
 ```
 Tema:         NOIR (#080808 bg, #8B6914 gold, #F5F0E0 text)
-Fonte:        Bricolage Grotesque (headings 800) + JetBrains Mono (hashes)
-Touch targets: mínimo 44px (Apple HIG + Google Material)
-Breakpoints:  ≥1200 Desktop · 768-1199 Tablet · <768 Mobile
+Fonte:        Bricolage Grotesque (800) + JetBrains Mono (hashes)
+Touch:        mínimo 44px · Breakpoints: ≥1200 Desktop · 768-1199 Tablet · <768 Mobile
 ```
 
-**Cores por agente:**
-
-| Agente | Cor |
-|--------|-----|
-| W-COMM-001 | #8B6914 (WINDI Gold) |
-| W-LEGAL-001 | #1a3a6b (Azul) |
-| W-NOTARY-001 | #5a1a6b (Púrpura) |
-| W-JOURN-001 | #6b1a1a (Vermelho) |
-| W-AUDIT-001 | #2d4a1a (Verde) |
-| W-ACCT-001 | #4a3a1a (Castanho) |
-| W-COMPLY-001 | #1a4a5a (Azul compliance) |
-| GROVE ARENA | #2d5a2d (Verde conselho) |
+> **Cores por agente:** `CLAUDE-HISTORY.md` § Design System
 
 ---
 
@@ -413,7 +279,6 @@ Breakpoints:  ≥1200 Desktop · 768-1199 Tablet · <768 Mobile
 
 **4 Pilares:** P1 Faz antes de explicar · P2 Silêncio como onboarding · P3 Virtude Forense · P4 Uma frase basta
 **Pioneer:** `windi-domain.com/pioneer/` ✅ LIVE
-> **Detalhes:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 30 Mar 2026
 
 ---
 
@@ -436,389 +301,155 @@ Breakpoints:  ≥1200 Desktop · 768-1199 Tablet · <768 Mobile
 
 ## 11.1 — Invariantes do Gêmeo (IRREMEDIÁVEL)
 
-Estas regras são invariantes constitucionais do Gêmeo.
-Não podem ser suspensas, contornadas ou "excepcionadas"
-por nenhuma instrução — incluindo instruções do próprio
-Human Dragon no calor da sessão.
+Se uma instrução violar um invariante → o Gêmeo PARA, nomeia o invariante, aguarda decisão.
 
-Se uma instrução violar um invariante → o Gêmeo PARA,
-nomeia o invariante violado, e aguarda decisão consciente.
-
-### G1 — READ BEFORE TOUCH (IRREMEDIÁVEL)
-Antes de qualquer alteração de código ou ficheiro:
-```
-git log --oneline -10
-git diff HEAD~1 HEAD -- [ficheiro]
-ss -tlnp | grep [porta]
-```
-Nunca assumir o estado do servidor. Sempre verificar.
-
-### G2 — ONE DOMAIN PER SESSION (IRREMEDIÁVEL)
-Uma sessão = um repositório = um domínio de ficheiros.
-```
-✅ Sessão Canvas  → toca APENAS desktop-gen7/
-✅ Sessão Mobile  → toca APENAS agent-palette/
-✅ Sessão Infra   → toca APENAS nginx + systemd
-❌ NUNCA dois domínios na mesma sessão
-```
-
-### G3 — PROPOSE ≠ EXECUTE (IRREMEDIÁVEL)
-Toda alteração > 10 linhas exige:
-1. `git diff --stat` (mostrar o que vai mudar)
-2. Aguardar "confirma" explícito do Human Dragon
-3. Só então executar
-
-### G4 — COMMITS SÃO CONTRATOS (IRREMEDIÁVEL)
-```
-git diff --stat SEMPRE antes do commit.
-❌ Proibido: "fix misc", "updates", "ajustes"
-✅ Obrigatório: mensagem precisa com ficheiros + intenção
-```
-
-### G5 — SEALED PORTS SÃO SAGRADOS (IRREMEDIÁVEL)
-Portas seladas: **8101, 8102, 8106, 8114**
-- NUNCA alterar sem aprovação EXPLÍCITA
-- `nginx -t` SEMPRE antes de reload
-- Ledger (:8101) = intocável
-
-### G6 — CANVAS COMMITS SÃO PROTEGIDOS (IRREMEDIÁVEL)
-Commits do pipeline Canvas são protegidos.
-Qualquer alteração exige:
-1. Listar commits Canvas existentes
-2. Justificar por que não os quebra
-3. Aprovação do Human Dragon
+| Inv | Nome | Regra |
+|-----|------|-------|
+| G1 | READ BEFORE TOUCH | `git log` + `git diff` + `ss -tlnp` antes de tocar |
+| G2 | ONE DOMAIN PER SESSION | Uma sessão = um repositório = um domínio |
+| G3 | PROPOSE ≠ EXECUTE | Alteração >10 linhas → `git diff --stat` → aguardar "confirma" |
+| G4 | COMMITS SÃO CONTRATOS | Mensagem precisa, nunca "fix misc" |
+| G5 | SEALED PORTS SAGRADOS | :8101, :8102, :8106, :8114 intocáveis |
+| G6 | CANVAS COMMITS PROTEGIDOS | Listar + justificar + aprovar antes de alterar |
 
 ### T1 — TRAVEL MOSAIC PROTOCOL (IRREMEDIÁVEL)
-"No Travel, nenhum § toca em código existente sem cirurgia documentada."
 
-**Protocolo MOSAIC — 4 regras permanentes:**
-1. **ADIÇÃO, nunca substituição** — criar endpoint novo → testar → redirecionar
-2. **Feature Flag obrigatória** — todo § novo entra desligado por defeito
-3. **Smoke test obrigatório** — `bash /opt/windi/session/smoke-travel.sh` antes de deploy
-4. **Cookie update obrigatório** — após cada § concluído
-
-**Endpoints LOCKED (não tocar sem cirurgia):**
-```
-🔒 /workspace/media-seals   → §111 depende
-🔒 /workspace/check-collage → §111 depende
-🔒 /workspace/thread        → §112 depende
-🔒 Ledger receipt schema    → todos os §§ dependem
-🔒 wallet_id como param     → threading inteiro depende
-```
-
-**Smoke Test:** `/opt/windi/session/smoke-travel.sh`
+**4 regras:** ADIÇÃO nunca substituição · Feature Flag · Smoke test · Cookie update
+**Endpoints LOCKED:** `/workspace/media-seals` · `/workspace/check-collage` · `/workspace/thread` · Ledger schema · `wallet_id`
 
 ### Hierarquia
 
-```
-Constitucionais WINDI (I1-I11) > Invariantes Gêmeo (G1-G6) > T1 (Travel MOSAIC)
-> Regras de Ouro (11.1-11.10) > Invariantes Frontend (11.2) > Instruções de sessão
-```
+`I1-I11 > G1-G6 > T1 > Regras de Ouro > Frontend Invariants > Instruções sessão`
 
 ---
 
 ## 11.2 — FRONTEND INVARIANTS (Lei Constitucional UI)
 
-**TODA criação de UI/página/componente WINDI deve cumprir DUAS leis:**
-
 ### A) I18N — Trilíngue Obrigatório
-
-```
-Toggle sempre: DE | EN | PT (esta ordem, sempre)
-Auto-detect:   localStorage('windi-lang') → browser → fallback 'en'
-Strings:       objecto I18N = { de:{}, en:{}, pt:{} }
-setLang():     aplica + persiste + marca botão .active
-```
+Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser → 'en'
 
 ### B) THEME — NOIR/KLAR Obrigatório
-
-```
-Temas:         NOIR (dark) = default | KLAR (light)
-localStorage:  'windi-theme' → 'noir' | 'klar'
-Toggle icon:   ☀ (está noir) | ☽ (está klar)
-CSS vars:      [data-theme="noir"] e [data-theme="klar"]
-initTheme():   ler localStorage + aplicar no body.dataset.theme
-```
+`localStorage('windi-theme')` · Toggle: ☀ (noir) | ☽ (klar)
 
 ### Cores Canónicas
+**NOIR:** `--bg:#0A0A10` `--gold:#C9A84C` `--text:#E8E6E1` `--border:#1A1A24`
+**KLAR:** `--bg:#FAFAF8` `--gold:#8B7424` `--text:#1A1A1A` `--border:#E0DED8`
 
-```
-NOIR (dark):
-  --bg:      #0A0A10
-  --gold:    #C9A84C
-  --text:    #E8E6E1
-  --border:  #1A1A24
-
-KLAR (light):
-  --bg:      #FAFAF8
-  --gold:    #8B7424
-  --text:    #1A1A1A
-  --border:  #E0DED8
-```
-
-### Anti-patterns PROIBIDOS
-
-```
-❌ Página só em PT (ou qualquer língua única)
-❌ Página só em NOIR (sem toggle KLAR)
-❌ Hardcode de texto visível fora do objecto I18N
-❌ Hardcode de cores fora das CSS vars
-❌ Ordem diferente no toggle idioma (ex: PT|EN|DE)
-❌ Usar chave localStorage diferente de 'windi-lang' / 'windi-theme'
-```
-
-### Checklist Antes de Entregar
-
-```
-[ ] Título traduzido nas 3 línguas?
-[ ] CTAs traduzidos?
-[ ] Footer/labels traduzidos?
-[ ] Toggle DE|EN|PT presente e funcional?
-[ ] Toggle ☀/☽ NOIR/KLAR presente e funcional?
-[ ] CSS vars para ambos os temas?
-[ ] localStorage sync com outras páginas?
-[ ] Botão voltar trilíngue?
-```
-
-**Violação = retrabalho imediato. Sem excepções.**
+**Anti-patterns PROIBIDOS:** Língua única · Tema único · Hardcode texto/cores · Ordem errada toggle
+> **Checklist completa:** `CLAUDE-HISTORY.md` § Frontend Invariants
 
 ---
 
 ## 12. GEN 7 — Desktop Sovereign Editor
 
 **Status:** ✅ PRODUÇÃO · **Port:** :8119 · **URL:** `windi-domain.com/desktop/`
-
-**Pipeline:** Intent → Dragon Processing → Agent Bridge → Canvas → Human Gate (I9) → Ledger Seal (I11)
+**Pipeline:** Intent → Dragon → Agent Bridge → Canvas → I9 Gate → Ledger Seal
 **7 Motores:** DOC · SLIDES · WEB · ART · DATA · CODE · MEDIA (todos ✅ LIVE)
-> **Endpoints + Smart Zones:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 30 Mar 2026 | `ARCHITECTURE.md`
 
 ---
 
-## 13. Estado Actual — 06 Abril 2026
+## 13. Estado Actual — 09 Abril 2026
 
-### Mapa de Portas
+### Portas Críticas
 
 | Porto | Serviço | Estado |
 |---|---|---|
 | :8091 | Sandbox Core (Agent Corps) | 🟢 LIVE |
-| :8100 | Desktop v2.0.0 (legacy) | 🔴 RETIRED |
-| :8101 | Forensic Ledger | 🟢 SEALED |
+| :8101 | Forensic Ledger | 🟢 **SEALED** |
 | :8108 | Dragon Hub v1.3.0 | 🟢 LIVE |
-| :8113 | WSG Hub v0.3.0 | 🟢 **LIVE** · Sistema Nervoso · 8 services |
 | :8119 | Desktop GEN 7 | 🟢 **PRODUÇÃO** |
-| :8096 | Lead Admin (ID Genesis) | 🟢 LIVE · systemd · env secured |
-| :8099 | Wallet Service | 🟢 LIVE · Trust E2E · 11 pioneers |
-| :8120 | Pioneer Landing | 🟢 LIVE |
-| :8121 | Dispatch Gateway | 🟢 **.jmpg Hydration Engine** · I5+I6+I9 |
-| :8122 | WINDI-LAW Identity Gate | 🟢 **SEALED** · Isolado · 12 empresas · W-DRAGON-001 |
-| :8126 | WINDI Travel Identity Gate | 🟢 **LIVE** · v1.3.0 · W-SESSION-001 · Sovereign Sessions |
-| :8127 | W-NOMAD-001 Telegram Bot | 🟢 **LIVE** · @windi_nomad_bot · MARIA + Ledger |
-| :8128 | W-VD-CUT-001 Video Cut Engine | 🟢 **LIVE** · FFmpeg · I9+I11 · First video seals |
-| :8129 | W-JOE-001 Director de Transmissão | 🟢 **LIVE** · Story Graph + SGV · I9+I11+I13 |
-| :8130 | W-GATEWAY-001 (LLM Bridge) | 🟢 **LIVE** · 5 providers |
-| :8131 | W-VD-MASS-001 Policy Engine | 🟢 **LIVE** · I9-P · Batch · MLT/Shotcut |
-| :8132 | W-JMPG-001 Proof Card Renderer | 🟢 **LIVE** · `/comm/publish` |
-| :8140 | W-UDB-001 Unified Dashboard | 🟢 **LIVE** · God View · Kill Switch · SSE |
-| :8141 | W-INTENT-CMD Director-as-a-Service | 🟢 **LIVE** · Intent Orchestration · 6 Intents · I9 Gate |
-| :8142 | W-FEDIVERSE-001 Glass Embassy | 🟢 **LIVE** · Mastodon + BlueSky · Parallel Broadcast |
-| :8143 | W-BRIDGE-001 BIG-BRIDGE Gateway | 🟢 **LIVE** · /watch/{id} · HLS Streaming · Clarity Infinity |
-| :8144 | W-SEC-001 Security Sentinel | 🟢 **LIVE** · Threat Correlation · SEC-EVT → SEC-INCIDENT → Ledger |
+| :8122 | WINDI-LAW + W-DRAGON-001 | 🟢 **SEALED** |
+| :8126 | WINDI Travel | 🟢 **LIVE** v1.3.0 |
+| :8127-:8132 | NOMAD/VD-CUT/JOE/MASS/JMPG | 🟢 LIVE |
+| :8140-:8144 | UDB/INTENT-CMD/FEDIVERSE/BRIDGE/SEC | 🟢 LIVE |
+
+> **Mapa completo (25 portas):** `CLAUDE-HISTORY.md` § Mapa de Portas 09 Abr
 
 ### Sistemas LIVE (41 total)
 
-**Core:** GEN7 Desktop · Pioneer Program · VPR System · API Keys · Dispatch · Web Hosting · i18n · Wallet · Lead Admin
-
-**Agents (W-*):** CIA-001 · WSG-001 · GATE-001 · NGINX-001 · CANVAS-001 · CANVAS-OBS-001 · CANVAS-LAB-001 · COMM-001 · PROVE-001 · DETECT-MEDIA-001 · VERIFY-MODUS4 · INTENT-001 · COUNSEL-001 · SESSION-001 · NOMAD-001 · VD-CUT-001 · VD-MASS-001 · JOE-001 · DIST-001 · JMPG-001 · UDB-001 · COMPOSER-001 · CLASSIFY-001 · VISION-001 · OBS-GATE · INTENT-CMD · NOMAD-VOICE · FEDIVERSE-001 · BRIDGE-001 · SEC-001
-
+**Core:** GEN7 · Pioneer · VPR · API Keys · Dispatch · Web Hosting · i18n · Wallet · Lead Admin
+**Agents (30):** CIA · WSG · GATE · NGINX · CANVAS · COMM · PROVE · DETECT-MEDIA · VERIFY · INTENT · COUNSEL · SESSION · NOMAD · VD-CUT · VD-MASS · JOE · DIST · JMPG · UDB · COMPOSER · CLASSIFY · VISION · OBS-GATE · INTENT-CMD · NOMAD-VOICE · FEDIVERSE · BRIDGE · SEC · DRAGON
 **Products:** Triangle of Power · WINDI FIELD · WINDI TRAVEL · FVE Protocol · RFC-001 DNA
 
-> **Detalhes:** ver `§37-84. Sistemas Recentes` abaixo
-
-### Histórico Recente (últimos 5)
+### Histórico Recente
 
 | Data | Milestone |
 |------|-----------|
-| 09 Apr | **§151 W-DRAGON-001** · Dragon Shadow Forest · 16×16 SHA-256 Glyph Grid · PDF Overlay |
-| 08 Apr | **§150 W-SEC-001 COMPLETE** · systemd · Telegram @W_sec_bot · Receipt `BD09970F` · `30cfaa4` |
-| 08 Apr | **§149 Camada 1 Rule Engine** · Train intent fix · "Zug"→train não places · `ea3dddd` |
-| 08 Apr | **§148 Cross-Modal Connections** · Flight→Hotel→Train suggestions · `88bafdc` |
-| 06 Apr | **§147 F14 Conversation History** · Follow-up routing fix · `82009cc` |
+| 09 Apr | **§151 W-DRAGON-001** · Dragon Shadow Forest · PDF Overlay |
+| 08 Apr | **§150 W-SEC-001** · Security Sentinel · Receipt `BD09970F` |
+| 08 Apr | **§148-149** · Cross-Modal + Rule Engine |
+| 06 Apr | **§147** · F14 Conversation History |
 
-> **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
+> **Histórico completo §110-§150:** `CLAUDE-HISTORY.md`
 
 ---
 
 ## 14. Integridade do Ledger — Regra I11
 
 ```
-⚠️ NUNCA VIOLAR
-
-O Ledger manifesta eventos REAIS, nunca placeholders.
-
-❌ PROIBIDO: Criar receipts artificiais "para demo"
-❌ PROIBIDO: Inventar hashes ou receipt_ids
-❌ PROIBIDO: Selar documentos que não existem
-
-✅ CORRECTO: Aguardar evento real antes de criar receipt
-✅ CORRECTO: Usar apenas receipts já existentes no Ledger
-
-"O Ledger é evidência forense de eventos reais.
-Se o Gêmeo inventa um receipt... isso é falsificação."
-— Human Dragon, 15 Mar 2026
+⚠️ NUNCA VIOLAR — O Ledger manifesta eventos REAIS, nunca placeholders.
+❌ PROIBIDO: Criar receipts artificiais / Inventar hashes / Selar docs inexistentes
+✅ CORRECTO: Aguardar evento real / Usar apenas receipts existentes
 ```
 
 ---
 
-## 15-16. Keys + Naming (resumo)
+## 15-16. Keys + Naming
 
 **W-KEYS:** `windi-domain.com/keys/` ✅ LIVE · 4 Tiers (SEED/NODAL/SOVEREIGN/ORACLE)
-**NAMING:** Interface pública = "WINDI" · Interno = "Three Dragons" · Código = `dragon_*` OK
-> **Detalhes:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 30 Mar 2026
+**NAMING:** Interface = "WINDI" · Interno = "Three Dragons" · Código = `dragon_*` OK
 
 ---
 
 ## 21. Wallet Gate — DID Identity
 
-**Status:** FASE 1 LIVE · FASE 2 pendente
-**URL:** `windi-domain.com/desktop/` (botão 🪪)
+**Status:** FASE 1 LIVE · **URL:** `windi-domain.com/desktop/` (botão 🪪)
 **Storage:** `sessionStorage('windi_desktop_wallet')`
-> **Detalhes:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 30 Mar 2026
 
 ---
 
-## 22-30. Sistemas de Contenção — Resumo
-
-> **Detalhes completos:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 20 Mar 2026
-
-| § | Sistema | Função | Status |
-|---|---------|--------|--------|
-| 22 | Sovereignty Metrics | 93.3% local · 149.3% progresso | ✅ SEALED |
-| 23 | Qualidade Soberana | WB-KNOW-SOVEREIGNTY-Q-20260318 | ✅ SEALED |
-| 24 | W-CIA-001 | Detetive Constitucional · Health Pulse | ✅ LIVE |
-| 25 | W-MGR-001 | Gerente do Composer | ✅ LIVE |
-| 26 | W-SCH-001 | Instrutor do Composer | ✅ LIVE |
-| 27 | W-GATE-001 | API Schema Contracts · 15 endpoints | ✅ LIVE |
-| 28 | CIA Pre-Flight | Validação frontend · 4 funções | ✅ LIVE |
-| 29 | W-KEYS-002 | Technical Explainer `/keys/` | ✅ LIVE |
-| 30 | W-NGINX-001 | Nginx Auto-Register · 302 routes | ✅ LIVE |
-
----
-
-## 31. WINDI Verify v2
-
-> **Detalhes completos:** `CLAUDE-HISTORY.md`
-
-| Modo | URL | Função |
-|------|-----|--------|
-| 1 | `/verify-public/` | Ledger verification (I11) |
-| 2 | `/verify-public/web/hash-inspector.html` | Prova matemática local |
-| 3 | `/verify-public/web/qr-decoder.html` | QR decoder universal |
-
-**PWA:** Instalável · Offline-capable · 8 padrões QR
-**Agent:** W-VERIFY-001 em :8091
-
----
-
-## 32-36. DID + Data Policy (resumo)
-
-> **Detalhes:** `CLAUDE-HISTORY.md` § SESSÃO 19 Mar 2026
-
-**§32 DID Seed:** `ALMA → DID → CÉREBRO → LEDGER → MUNDO` · **IRREMEDIÁVEL**
-**§33 Berçário:** `/hub/bercario/*` · :8108 ✅ LIVE
-**§36 Data Policy:** "Utilizador = Autor. Não produto." · **IRREMEDIÁVEL**
-
-**NUNCA recolhemos:** localização · comportamento · histórico · biométricos · preferências comerciais
-
----
-
-## Sistemas LIVE (§37-122)
+## 22-36. Sistemas de Contenção
 
 > **Detalhes:** `CLAUDE-HISTORY.md`
 
-| Sistema | Port | Status |
-|---------|------|--------|
-| MARIA | :8126 | ✅ 28 atribuições · Presence-First AI |
-| LAW | :8122 | ✅ AI Draft v1.3.0 · 12 functions |
-| Travel | :8126 | ✅ Tesoura v10 · Kiwi/Hotellook |
-| VD-CUT | :8128 | ✅ CERTIFIED · Frame Integrity · Deepfake Killer |
-| VD-MASS | :8131 | ✅ I9-P Policy Engine · Batch Automation |
-| JOE | :8129 | ✅ Story Graph · ProofStream |
-| Canvas | :8119 | ✅ GEN 7 · 7 motores |
+| § | Sistema | Status |
+|---|---------|--------|
+| 22-23 | Sovereignty Metrics + Qualidade | ✅ SEALED |
+| 24-30 | CIA/MGR/SCH/GATE/Pre-Flight/KEYS/NGINX | ✅ LIVE |
+| 31 | WINDI Verify v2 (3 modos + PWA) | ✅ LIVE |
+| 32-36 | DID Seed + Berçário + Data Policy | ✅ LIVE |
 
 ---
 
 ## BACKLOG — Próximas Sessões
 
-### P0 — Crítico (Próxima Sessão)
-- [x] **P3-B Travel Workspace** — ✅ LIVE · F13 Chat Maria · 14 features
-- [x] **§138 W-COMPOSER-001** — ✅ LIVE · Sovereign Collage Engine · First Seal `58B241B1` · SGE 95%
-- [ ] **§139 WINDI-LAW Painel de Anexos** — IMG/DOC não visíveis após upload. Implementar:
-  - Lista persistente de anexos (não só o último)
-  - Painel lateral ou expandível: nome · SHA · tamanho · botão remover
-  - Suporte múltiplos ficheiros (IMG + DOC + VID conjunto)
-  - Integração com seal composto (hash de todos os anexos)
+### P0 — Crítico
+- [ ] **§139 WINDI-LAW Painel de Anexos** — Lista persistente · SHA · Suporte múltiplos ficheiros
 
 ### P1 — Importante
-- [ ] **Rate limiting** — nginx Agent Corps
-- [ ] **Cron 48h** — Downgrade email não verificado → EMAIL_PENDING
-- [ ] **HIGH ops gate** — Bloquear operações HIGH se email_verified=0
+- [ ] **Rate limiting** nginx · **Cron 48h** email downgrade · **HIGH ops gate**
 
 ### P1.5 — WINDI-LAW Mobile Phase 2 (OBRIGATÓRIO)
-> **Condição de §120.5:** Este ticket é obrigatório, não opcional.
-
-- [ ] **Mobile-first Rewrite** — Separar CSS em ficheiro dedicado (fim do "ficheiro deus")
-- [ ] **Inspector Modal** — Panel direito como modal em mobile
-- [ ] **Swipe Gestures** — Sidebar abre com swipe direita
-- [ ] **Document Viewer** — Optimizado para leitura vertical
-- [ ] **AI Draft Mobile** — Modal adaptado para teclado virtual
-
-**Arquitectura Target:**
-```
-workspace/
-├── index.html          (só estrutura)
-├── css/
-│   ├── base.css        (variáveis + reset)
-│   ├── desktop.css     (≥768px)
-│   └── mobile.css      (mobile-first)
-└── js/
-    └── mobile-menu.js  (hamburger + gestures)
-```
+- [ ] Mobile-first CSS · Inspector Modal · Swipe Gestures · Document Viewer · AI Draft Mobile
 
 ### P1.5 — WINDI Travel Phase 2
-- [x] **Vídeo** — ✅ W-VD-CUT-001 LIVE · Captura + seal via Telegram · 03 Apr 2026
-- [x] **W-VISION-001** — ✅ LIVE · Forensic Frame Analysis · pHash · Manipulation Detection · 06 Apr 2026
-- [x] **W-OBS-GATE** — ✅ LIVE · Cloud Composition · 5 Scenes · FFmpeg Overlays · 06 Apr 2026
-- [x] **W-INTENT-CMD** — ✅ LIVE · Director-as-a-Service · /cmd pitch · 06 Apr 2026
-- [ ] **Colagem Soberana** — Composição multi-momento
-- [ ] **Thread Visual** — Timeline com thumbnails
-- [ ] **GPS Reverse Geocoding** — Nomes de lugares
+- [ ] Colagem Soberana · Thread Visual · GPS Reverse Geocoding
 
 ### P2 — Melhorias
-- [ ] **W-ACCT-001** — Bridge dedicado
-- [ ] **W-COMPLY-001** — Dashboard
-- [ ] **Resend UI** — Botão "Reenviar email" no workspace
+- [ ] W-ACCT-001 Bridge · W-COMPLY-001 Dashboard · Resend UI
 
 ### Infra
-- [x] **§118 Travel Auto-Healing** — Watchdog + Overrides + Logrotate ✅ 03 Apr 2026
-- [x] **windilaw.de** — Sincronizado com windi-domain.com/law/ via get_base_path() ✅ 04 Apr 2026
-- [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
-
-### Completado Recente (ver CLAUDE-HISTORY.md para lista completa §110-§150)
-
-> **41 features completadas 02-08 Abr:** §110-§150
-> **Últimos:** W-SEC-001 · ALMA v1.0 · Glass Embassy · W-COMPOSER-001 · I14 Placeholders
+- [ ] **Backup DB** — windi_law_identity.db + travel_users.db
 
 ---
 
 ## Produtos SEALED
 
-> **Tabela completa migrada para:** `CLAUDE-HISTORY.md` § SESSÃO 08 Abr 2026
->
-> **Receipts Chave:**
-> - WINDI-LAW: `WINDI-LAW-AIDRAFT-20260404105917-C445AFF9`
-> - VD-CUT: `WINDI-VDCUT-20260404145505-E9983867`
-> - W-SEC: `WINDI-SEC-LOCAL-20260408184001-BD09970F`
-> - W-COMPOSER: First Seal `58B241B1`
+**Receipts Chave:**
+- WINDI-LAW: `WINDI-LAW-AIDRAFT-20260404105917-C445AFF9`
+- VD-CUT: `WINDI-VDCUT-20260404145505-E9983867`
+- W-SEC: `WINDI-SEC-LOCAL-20260408184001-BD09970F`
+- W-COMPOSER: First Seal `58B241B1`
 
 ---
 
