@@ -1,14 +1,14 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.1.2
-**Sealed:** 2026-04-08 · §150 W-SEC-001 Security Sentinel COMPLETE (systemd + Telegram + Receipt)
+**Version:** 2.1.4
+**Sealed:** 2026-04-09 · §151 W-DRAGON-001 Dragon Shadow Forest LIVE
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
 > **Ficheiros relacionados:** `CHANGELOG.md` (histórico) · `ARCHITECTURE.md` (código técnico)
 
 ## 📚 Overflow Policy (17 Mar 2026)
-Hard limit: **32KB**. Último fix: 26 Mar 2026 (53.7KB → 32.2KB).
+Hard limit: **32KB**. Último fix: 09 Abr 2026 (44.6KB → 30.9KB).
 - **CLAUDE.md** = presente + futuro + regras (≤ 32KB)
 - **CLAUDE-HISTORY.md** = passado selado (ilimitado, append-only)
 - **REGRA:** sessão encerrada → documentação detalhada migra para HISTORY
@@ -81,6 +81,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-FEDIVERSE-001 | :8142 | I9,I11 | **LIVE** · Glass Embassy · Mastodon + BlueSky · Parallel Broadcast |
 | W-BRIDGE-001 | :8143 | I9,I11 | **LIVE** · BIG-BRIDGE Gateway · /watch/{id} · HLS Streaming |
 | W-SEC-001 | :8144 | I9,I11 | **SEALED** · Security Sentinel · Dual Correlation · Telegram · systemd |
+| W-DRAGON-001 | :8122 | I9,I11,I14 | **LIVE** · Dragon Shadow Forest · 16×16 SHA-256 Glyph Grid · PDF Overlay |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
 
@@ -106,201 +107,74 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | I14 | Explicit Failure Principle | Dados ausentes = erro explícito. Placeholders mascaram bugs. **IRREMEDIÁVEL.** |
 | C6 | Invariante Fiscal | IA prepara. Humano aprova. ELSTER envia. Nunca autónomo. |
 
-### §146 — I14: Proibição de Placeholders (06 Apr 2026)
+### §146 — I14: Proibição de Placeholders (IRREMEDIÁVEL)
 
-**Estado:** CANONICAL · ACTIVE · **IRREMEDIÁVEL**
+> **"Placeholders escondem falhas. Falhas escondidas tornam-se bugs."**
 
-> **"Placeholders escondem falhas. Falhas escondidas tornam-se bugs em produção."**
+Nenhum endpoint retorna valores default que mascarem dados ausentes.
+**Proibido:** "unknown", "N/A", "?", "---", str(dict), "", None silencioso
+**Correcto:** `response["name"]` → KeyError → diagnóstico imediato
+**Excepção:** I10 LLM Fallback (redundância de infra, não placeholder)
+> **Detalhes:** `CLAUDE-HISTORY.md` § SESSÃO 08 Abr
 
-**Definição:** Nenhum endpoint pode retornar dados com valores default que mascarem ausência de dados reais. Todo campo ausente deve gerar erro explícito e visível.
+### §150 — W-SEC-001: Security Sentinel
 
-```python
-# ❌ PROIBIDO — Mascarar ausência de dados:
-name = response.get("name", "Lugar desconhecido")
-receipt_id = data.get("receipt_id", "unknown")
-intent = user_intent or "discover"
-response_text = str(response_dict)  # serialização de emergência
+**Port:** 8144 · **Invariants:** I9, I11 · **Receipt:** `BD09970F`
 
-# ✅ CORRECTO — Falha barulhenta:
-name = response["name"]           # KeyError → diagnóstico imediato
-receipt_id = data["receipt_id"]   # campo obrigatório → falha visível
-if not user_intent:
-    raise ValueError("Intent obrigatório")
-```
-
-**Valores Proibidos em Retornos:**
-```
-❌ "unknown"    ❌ "N/A"        ❌ "?"
-❌ "---"        ❌ "TBD"        ❌ str(dict)
-❌ "default"    ❌ ""           ❌ None silencioso
-```
-
-**Excepção Única — I10 LLM Fallback:**
-Quando um LLM externo falha, o sistema pode usar LLM local alternativo (Mistral).
-Isto NÃO é placeholder de dados — é redundância de infraestrutura.
-
-**Aplicação por Agente:**
-| Agente | Campo Obrigatório | Comportamento |
-|--------|-------------------|---------------|
-| W-NOMAD-001 | `response`, `intent` | Erro se ausente |
-| W-MARIA-001 | `decision.name`, `decision.reason` | Erro se ausente |
-| W-VD-CUT-001 | `receipt_id`, `sha256` | Erro se ausente |
-| W-DIST-001 | `channel`, `target_id` | Erro se ausente |
-
-**Sealed:** 06 Apr 2026 · Human Dragon · "Placeholders são mentiras silenciosas."
-
-### §150 — W-SEC-001: Security Sentinel (08 Apr 2026)
-
-**Estado:** LIVE · **Port:** 8144 · **Invariants:** I9, I11
-
-> **"Distributed threats must be correlated by behavior, not merely by source."**
 > **"One phenomenon, one incident. Many sources, one pattern."**
 
-**Definição:** Sistema de evidência de segurança com correlação dual (técnica + comportamental).
+**Correlação Dual:** Behavioral (30 IPs → 1 flood) + Technical (1 IP → injection)
+**Pipeline:** SEC-EVT → Correlation → SEC-INCIDENT → I9 Gate → Ledger
+**Dashboard:** Heatmap + Timeline + Replay · `windi-domain.com/sec/dashboard/`
+> **Detalhes:** `CLAUDE-HISTORY.md` § SESSÃO 08 Abr
 
-**Correlação de 2 Níveis:**
-| Nível | Quando Usa | Agrupa Por | Exemplo |
-|-------|-----------|------------|---------|
-| **Behavioral** | `api_flood`, `rate_limit_exceeded`, `brute_force` | endpoint + type + vector + time_window | 30 IPs → 1 incidente distribuído |
-| **Technical** | Outros ataques (injection, tampering) | actor + ua + endpoint + type | 1 IP → 1 incidente direcionado |
+### §151 — W-DRAGON-001: Dragon Shadow Forest (09 Apr 2026)
 
-**Pipeline:** SEC-EVT → Correlation → SEC-INCIDENT → Human Gate (I9) → Ledger Seal (I11)
+**Port:** :8122 (via WINDI-LAW) · **Invariants:** I9, I11, I14
 
-**Dashboard NOIR — Live Intelligence:**
-- 🔥 **Heatmap**: Intensidade por IP (quem ataca)
-- ⏱ **Timeline**: Evolução temporal (quando acontece)
-- 🎥 **Replay**: Eventos recentes (como evoluiu)
+> **"Invisible guardians encoding truth in every document."**
+
+**Conceito:** 16×16 glyph grid encodes 256 SHA-256 bits as dragon micropictures.
+- **Bit=1:** Dark Dragon (heptagon) · **Bit=0:** Shadow Dragon (diamond)
+- **Opacity:** 0.07 (print invisible) · 0.18 (screen demo)
+- **PDF Overlay:** Merges into any PDF without altering original content
 
 **Endpoints:**
 ```
-POST /sec/events              — Ingest security event
-POST /sec/events/batch        — Ingest batch
-GET  /sec/incidents           — List incidents
-POST /sec/incidents/{id}/create-case  — Create governance case
-POST /sec/incidents/{id}/approve      — Human approval (I9)
-POST /sec/incidents/{id}/seal         — Anchor to Ledger (I11)
-GET  /sec/stream              — SSE real-time feed
-GET  /dashboard/              — NOIR Dashboard
+GET  /dragon/health           — Module status
+POST /dragon/encode           — Encode + SVG + Ledger
+POST /dragon/encode-pdf       — PDF with dragon overlay
+POST /dragon/preview          — Preview (no Ledger)
+GET  /dragon/verify/{id}      — Ledger verification
 ```
 
-**Princípio Canónico:**
-```
-W-SEC não agrega por conveniência. Agrega por significado.
-Detector de anomalias → Interpretador de comportamento hostil.
-```
+**Pipeline:** Content → SHA-256 → 256 bits → Dragon Grid → PDF/SVG → Ledger (I11)
+**External:** `windi-domain.com/law/dragon/health`
 
-**Sealed:** 08 Apr 2026 · Human Dragon · "Um fenómeno, um incidente."
-
-### §117 — I9: Human Approval Gate (Operational Doctrine)
-
-**Estado:** CANONICAL · ACTIVE · NON-NEGOTIABLE
+### §117 — I9: Human Approval Gate (NON-NEGOTIABLE)
 
 > **"I9 não vive na entrada. I9 vive na saída."**
 
-**Definição:** Nenhum conteúdo pode ser publicado, selado ou transmitido sem decisão humana explícita no momento final da saída.
+✔ Auto-process/classify/suggest → OK · ❌ Auto-publish/seal → PROIBIDO
+**Pipeline:** SGV ilumina → Sistema sugere → **Humano decide** → Ledger sela
+**Aplicação:** W-JOE `/publish` · ProofStream `/decide` · SGV (ilumina, não bloqueia)
 
-```
-✔ Processamento automático   → permitido
-✔ Classificação automática   → permitido
-✔ Sugestão automática        → permitido
-❌ Execução final sem humano  → PROIBIDO
-```
+### §120 — AI Draft Mode · WINDI-LAW
 
-**Interpretação:** O sistema pode ver 100.000 inputs. Mas apenas o humano decide quais se tornam memória verificável, narrativa pública ou prova selada. I9 não filtra dados — I9 define o momento onde dados se tornam realidade pública.
-
-**Aplicação WINDI:**
-| Sistema | Gate I9 |
-|---------|---------|
-| W-JOE-001 | `/joe/publish` exige `human_approved=true` |
-| ProofStream | `/joe/live/decide` exige `seal` ou `discard` explícito |
-| Story Mode | Sequência sugerida, publicação só com confirmação |
-| SGV | Ilumina, nunca bloqueia — humano decide |
-
-**Anti-Pattern (PROIBIDO):**
-```
-❌ Auto-publish após score alto
-❌ Auto-seal baseado em confiança algorítmica
-❌ "Se score > X então publicar"
-❌ Remover o humano da decisão final
-```
-
-**Forma Correcta:**
-```
-SGV ilumina → Sistema sugere → Humano decide → Ledger sela
-```
-
-**Doutrina Editorial:**
-> "Um director não vê tudo. Um director decide o que importa."
-> WINDI não é um funil de conteúdo. WINDI é uma **destilaria de verdade**.
-
-**Sealed:** 03 Apr 2026 · W-JOE-001 · ProofStream · W-SGV-001
-
-### §120 — AI Draft Mode (04 Apr 2026)
-
-**Status:** LIVE · :8122 · `3895a52` · I9, I11, G3
-
-> **"Any AI can generate a document. Only WINDI can prove it."**
-
-**Pipeline:** Intent → I9 Gate → LLM → Review → G3 Gate → Ledger
+**Port:** :8122 · **Receipt:** `WINDI-LAW-AIDRAFT-20260404105917-C445AFF9`
 **8 Doc Types:** nda · vertrag · vollmacht · mahnung · kuendigung · klausel · stellungnahme · gutachten
-**4 Jurisdições:** DE · EU · PT · INT
-**First Seal:** `WINDI-LAW-AIDRAFT-20260404105917-C445AFF9`
+**Sub-features:** §120.5 Mobile Fix · §120.7 PIN Login
 
-### §120.7 — PIN Login for Mobile (04 Apr 2026)
+### §122 — Video Stack (VD-CUT + VD-MASS)
 
-**Status:** LIVE · `56479a4` · I9, I12
+**VD-CUT :8128** — I9 Directo · Forense · First Receipt `WINDI-VDCUT-20260404183836-C181E66D`
+**VD-MASS :8131** — I9-P Policy · Batch · MLT/Shotcut `melt 7.12.0`
+**§122.4:** "Telegram é PORTA. WINDI é CASA." (NOMAD-BOT: Interface ✅ · Binário ❌)
+**§122.6:** Forense→VD-CUT · Mass→VD-MASS · Consumer→NOMAD-BOT
 
-PIN 6 dígitos para tablets (magic links falhavam). Endpoints: `/login-request` · `/login-pin`
+### §118 — Travel Auto-Healing
 
-### §120.5 — WINDI-LAW Mobile Emergency Fix (04 Apr 2026)
-
-**Status:** LIVE · `7f05abb` · I12 · Hamburger menu · Touch 44px · Phase 2 pendente
-
-### §122 — W-VD-MASS-001 · Policy-Based Video Automation (04 Apr 2026)
-
-**Status:** LIVE · `d7da443` · :8131 · I9-P, I11
-
-> **"I9-P não é delegação de responsabilidade — é delegação de critério."**
-
-**Dois Pilares:** VD-CUT :8128 (I9 Directo · Forense) + VD-MASS :8131 (I9-P · Batch)
-
-**Fluxo:** Policy define → Batch avalia → Conforme=auto-seal · Exception=human queue
-
-### §122.1 — MLT/Shotcut Rendering Engine (04 Apr 2026)
-
-**Status:** LIVE · `5f11bcc` · melt 7.12.0 · `.mlt` = auditable recipe · local render
-
-### §122.2 — ProofStream v1.0 · Primeiro Seal Real (04 Apr 2026)
-
-**Receipt:** `WINDI-VDCUT-20260404183836-C181E66D` · Vídeo cavalo Kempten · < 1 min cycle
-
-### §122.4 — Telegram é Canal, não Infraestrutura
-
-> **"Telegram é PORTA. WINDI é CASA."** NOMAD-BOT: Interface ✅ · Ficheiro binário ❌
-
-> **§122.3/§122.5:** ver `CLAUDE-HISTORY.md`
-
-### §122.6 — Matriz de Canais e Casos de Uso (IRREMEDIÁVEL)
-
-| Canal | Hash Original | Forense | Consumer | Caso de Uso |
-|-------|--------------|---------|----------|-------------|
-| VD-CUT directo | ✅ | ✅ | ✅ | Jurídico · Peritos · Investigação |
-| VD-MASS directo | ✅ | ⚠️ I9-P | ✅ | Travel · Media · Hotel Networks |
-| NOMAD-BOT Telegram | ❌ | ❌ | ✅ | Interface · Notificação · Consumer |
-| API parceiro | ✅ | ⚠️ contrato | ✅ | Enterprise · Câmaras · TV |
-
-**Rota:** Forense→VD-CUT · Mass→VD-MASS · Consumer→NOMAD-BOT
-
-### §118 — Travel Stack Auto-Healing (03 Apr 2026)
-
-**Estado:** CANONICAL · ACTIVE · **Commit:** `e7cff50`
-
-> **"O sistema mantém a sua integridade sem depender de vigilância humana."**
-
-**Portas protegidas:** 8126 · 8127 · 8128 �� 8129
-**Watchdog:** 15s loop · port-cleaner · logrotate
-
-> **Detalhes:** `CLAUDE-HISTORY.md`
+**Portas:** 8126-8129 · **Watchdog:** 15s loop · port-cleaner · logrotate
 
 ### 3.2 Layer 7 — Communication Semantics
 
@@ -362,47 +236,13 @@ Dragon também informa:
 
 **Sealed:** 2026-03-17 · Dragon Alzheimer Fix → Language Sovereign Principle
 
-### §137 — Medium-Agnostic Truth Distribution (06 Apr 2026)
-
-**Estado:** CANONICAL · ACTIVE · **IRREMEDIÁVEL**
+### §137 — Medium-Agnostic Truth Distribution (IRREMEDIÁVEL)
 
 > **"O medium aponta para a prova. Nunca carrega a prova."**
 
-**Princípio:** Canais de distribuição (Telegram, Email, etc.) transmitem apenas LINKS para verificação.
-Nunca transmitem ficheiros — plataformas transcodificam e quebram SHA-256.
-
-```
-✅ CORRECTO (§122.4 Compliant)
-   Post → Link → /verify-public/ → JMPG + Hash + Ledger
-
-❌ PROIBIDO
-   Post → sendPhoto → Telegram transcodes → Hash quebrado
-```
-
-**Endpoints:**
-| Endpoint | Método | Uso |
-|----------|--------|-----|
-| `/comm/distribute` | sendPhoto | Chat PRIVADO (hash não crítico) |
-| `/comm/communique` | sendPhoto | Chat PRIVADO + institucional |
-| `/comm/publish` | sendMessage | Canal PÚBLICO (§122.4) |
-
-**SDK v1.1:**
-```python
-from windi_core import distribute, publish
-
-# Privado — foto OK
-await distribute(receipt_id, chat_id="123456")
-
-# Público — LINK ONLY
-await publish(receipt_id, chat_id="@windi_public", lang="PT")
-```
-
-**Primeiro Post Público:** 06 Abr 2026 · `t.me/windi_public`
-- Receipt: `WINDI-VDCUT-20260404183836-C181E66D`
-- Trilíngue: PT (msg 2) · EN (msg 3) · DE (msg 4)
-- Zero ficheiros transmitidos
-
-**Commits:** `bda0400` (W-JMPG-001 v1.3.0) · `1a5720e` (SDK v1.1.0)
+Canais transmitem **LINKS**, nunca ficheiros (plataformas transcodificam → hash quebrado).
+**Endpoints:** `/comm/distribute` (privado,foto) · `/comm/publish` (público,link)
+**SDK:** `await publish(receipt_id, chat_id="@windi_public", lang="PT")`
 
 ---
 
@@ -770,7 +610,7 @@ KLAR (light):
 | :8099 | Wallet Service | 🟢 LIVE · Trust E2E · 11 pioneers |
 | :8120 | Pioneer Landing | 🟢 LIVE |
 | :8121 | Dispatch Gateway | 🟢 **.jmpg Hydration Engine** · I5+I6+I9 |
-| :8122 | WINDI-LAW Identity Gate | 🟢 **SEALED** · Isolado · 12 empresas |
+| :8122 | WINDI-LAW Identity Gate | 🟢 **SEALED** · Isolado · 12 empresas · W-DRAGON-001 |
 | :8126 | WINDI Travel Identity Gate | 🟢 **LIVE** · v1.3.0 · W-SESSION-001 · Sovereign Sessions |
 | :8127 | W-NOMAD-001 Telegram Bot | 🟢 **LIVE** · @windi_nomad_bot · MARIA + Ledger |
 | :8128 | W-VD-CUT-001 Video Cut Engine | 🟢 **LIVE** · FFmpeg · I9+I11 · First video seals |
@@ -798,11 +638,11 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 09 Apr | **§151 W-DRAGON-001** · Dragon Shadow Forest · 16×16 SHA-256 Glyph Grid · PDF Overlay |
 | 08 Apr | **§150 W-SEC-001 COMPLETE** · systemd · Telegram @W_sec_bot · Receipt `BD09970F` · `30cfaa4` |
 | 08 Apr | **§149 Camada 1 Rule Engine** · Train intent fix · "Zug"→train não places · `ea3dddd` |
 | 08 Apr | **§148 Cross-Modal Connections** · Flight→Hotel→Train suggestions · `88bafdc` |
 | 06 Apr | **§147 F14 Conversation History** · Follow-up routing fix · `82009cc` |
-| 06 Apr | **§146 I14 Proibição de Placeholders** · IRREMEDIÁVEL · `2c4c35f` |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -963,94 +803,22 @@ workspace/
 - [x] **windilaw.de** — Sincronizado com windi-domain.com/law/ via get_base_path() ✅ 04 Apr 2026
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
-### Completado (últimos 10 · ver CLAUDE-HISTORY.md para §37-115)
-- [x] §150 **W-SEC-001 Security Sentinel** · :8144 · Dual Correlation · Dashboard NOIR · Live Intelligence ✅ 08 Apr
-- [x] §149 **Camada 1 Rule Engine** · Train intent fix · detect_intent_local() · `ea3dddd` ✅ 08 Apr
-- [x] §148 **Cross-Modal Connections** · Flight→Hotel→Train suggestions · `88bafdc` ✅ 08 Apr
-- [x] §147 **F14 Conversation History** · Follow-up routing fix · Intent bypass · `82009cc` ✅ 06 Apr
-- [x] §146 **I14 Proibição de Placeholders** · IRREMEDIÁVEL · `2c4c35f` ✅ 06 Apr
-- [x] §137 **SSE Streaming** · WINDI-LAW AI Draft · Word-by-word · `76abeef` ✅ 06 Apr
-- [x] §145.12 **Memory → Ranking Engine** · Maria shows different worlds · `1c2e3df` ✅ 06 Apr
-- [x] §145.11 **Stable Response Contract** · Maria breathing never fails · LLM 2.5s · `cf6a168` ✅ 06 Apr
-- [x] §145.10 **Memory → Brain Bridge** · Preferences inject into LLM prompts · `7f7e772` ✅ 06 Apr
-- [x] §145.9 **Feedback Loop** · 👍/👎 learning · Intent tracking · `a96766f` ✅ 06 Apr
-- [x] §145.8 **Maria Narrates** · LLM narratives + trilingual fallback · `05518f6` ✅ 06 Apr
-- [x] §145.7 **Unlock Memory** · Gate 0.3→0.1 · Passive confidence · `f692a67` ✅ 06 Apr
-- [x] §145.3 **Weather/Culture Separation** · Routing fix · `2017c3a` ✅ 06 Apr
-- [x] §145 **ALMA v1.0** · MARIA Constitutional Identity · Motor de Espelho · 4 Registos ✅ 06 Apr
-- [x] §144 **Strike 6 — Share Button** · verify-public SHARE → Glass Embassy ✅ 06 Apr
-- [x] §143 **W-BRIDGE-001** · BIG-BRIDGE Gateway · /watch/{id} · HLS · :8143 ✅ 06 Apr
-- [x] §142 **W-FEDIVERSE-001** · Glass Embassy · Mastodon + BlueSky · :8142 ✅ 06 Apr
-- [x] §138 **W-COMPOSER-001** · Sovereign Collage Engine · First Seal `58B241B1` ✅ 06 Apr
-- [x] §137 **Medium-Agnostic Distribution** · W-JMPG-001 v1.3.0 · SDK v1.1.0 · t.me/windi_public ✅ 06 Apr
-- [x] §136 **W-UDB-001 LIVE** · Dashboard Unificado · God View · Kill Switch · SSE ✅ 06 Apr
-- [x] §135 **MLT Engine Fusão Real** · VD-CUT × VD-MASS · Dual-Hash Chain · Policy I9-P ✅ 05 Apr
-- [x] §133 **Preview Endpoint** · Full-size frames · thumb vs preview · `0ddaeed` ✅ 05 Apr
-- [x] §132 **Partilhar Button** · VD-CUT UI · Telegram/Email/Copy · `8840542` ✅ 05 Apr
-- [x] §131 **Email Distribution** · W-DIST-001 email channel · Trilingual · `92c3fb5` ✅ 05 Apr
-- [x] §130 **Whisper Transcription** · Cut-by-text + Legal Overlay · `6c73805` ✅ 05 Apr
-- [x] §128 **W-DIST-001** · Sovereign Distribution · Editorial Proof v1.1 · `a3cd0af` ✅ 05 Apr
-- [x] §127 **AI Draft v2.0** · Markdown→Quill + DOCX Export + Quick Prompt · `872407c` ✅ 05 Apr
-- [x] §122.2-6 **ProofStream Arquitectura** · Primeiro seal real · Matriz de canais · IRREMEDIÁVEL ✅ 04 Apr
-- [x] §122.1 **MLT Engine** · Shotcut/melt integration · Local render sovereignty · `5f11bcc` ✅ 04 Apr
-- [x] §122 **W-VD-MASS-001** · I9-P Policy Engine · Batch Automation · `d7da443` ✅ 04 Apr
-- [x] §121 **VD-CUT CERTIFIED** · Frame Integrity · First field video · `d7b69bf` ✅ 04 Apr
-- [x] §120.5 **Mobile Emergency Fix** · WINDI-LAW responsive · `7f05abb` ✅ 04 Apr
-- [x] §120 **AI Draft Mode** · WINDI-LAW v1.3.0 · `3895a52` ✅ 04 Apr
-- [x] §119 **Capture Actions Panel** · Thread actions ✅ 03 Apr
-- [x] §118 **Travel Auto-Healing** · `e7cff50` ✅ 03 Apr
-- [x] §116 **W-SGV-001** · Truth Illumination ✅ 03 Apr
-- [x] §115 **ProofStream v1.0** · Video-Chain ✅ 03 Apr
-- [x] §114 **W-JOE-001** · Director de Transmissão ✅ 03 Apr
-- [x] §113 **W-VD-CUT-001** · Video Cut Engine ✅ 03 Apr
-- [x] §112 **W-SESSION-001** · Sovereign Sessions ✅ 02 Apr
-- [x] §111 **W-PRESENCE-001** · Presence Seal ✅ 02 Apr
-- [x] §110 **DID Report** · The Seed of WINDI ✅ 02 Apr
+### Completado Recente (ver CLAUDE-HISTORY.md para lista completa §110-§150)
+
+> **41 features completadas 02-08 Abr:** §110-§150
+> **Últimos:** W-SEC-001 · ALMA v1.0 · Glass Embassy · W-COMPOSER-001 · I14 Placeholders
 
 ---
 
-## Produtos SEALED (ver CLAUDE-HISTORY.md)
+## Produtos SEALED
 
-| § | Produto | Status | Detalhes |
-|---|---------|--------|----------|
-| §57 | WINDI-LAW Workspace v3 | ✅ SEALED | 23 features · Receipt: WINDI-LAW-WORKSPACE-V3-CERTIFIED-20260326164718 |
-| §59 | WINDI TRAVEL v1.0 | ✅ LIVE | :8126 · I14 Presence · `/travel/` |
-| §121 | W-VD-CUT-001 CERTIFIED | ✅ SEALED | :8128 · Frame Integrity · Receipt: WINDI-VDCUT-20260404145505-E9983867 |
-| §122 | W-VD-MASS-001 I9-P | ✅ SEALED | :8131 · Policy Engine · Batch · MLT/Shotcut · `5f11bcc` |
-| §120 | AI Draft Mode | ✅ LIVE | :8122 · Receipt: WINDI-LAW-AIDRAFT-20260404105917-C445AFF9 |
-| §127 | AI Draft v2.0 | ✅ SEALED | Markdown→Quill + DOCX Export + Quick Prompt · `872407c` |
-| §128 | W-DIST-001 | ✅ LIVE | Sovereign Distribution · Editorial Proof v1.1 · `a3cd0af` |
-| §129 | VD-CUT Workspace Retention | ✅ SEALED | Voice + PWA + 30d Buffer · Tag: W-VD-CUT-001-S129 · `054091e` |
-| §130 | Whisper Transcription | ✅ LIVE | Cut-by-text + Legal Overlay · Local Whisper · `6c73805` |
-| §131 | Email Distribution | ✅ LIVE | W-DIST-001 email channel · Trilingual HTML · `92c3fb5` |
-| §132 | Partilhar Button | ✅ LIVE | VD-CUT Dashboard · Telegram/Email/Copy Link · `8840542` |
-| §133 | Preview Endpoint | ✅ LIVE | Full-size frames · /preview/ vs /thumb/ · `0ddaeed` |
-| §135 | MLT Engine Fusão Real | ✅ SEALED | VD-CUT × VD-MASS · Dual-Hash · Policy `27bcbb0e` · melt 7.12.0 |
-| §136 | W-UDB-001 Dashboard | ✅ LIVE | Unified Dashboard · God View · :8140 · Kill Switch · SSE · `windi-domain.com/udb/` |
-| §137 | Medium-Agnostic Distribution | ✅ SEALED | W-JMPG-001 v1.3.0 · SDK v1.1.0 · `bda0400` · t.me/windi_public |
-| §138 | W-COMPOSER-001 | ✅ LIVE | Sovereign Collage · MLT · Dual-Source Forensic · First Seal `58B241B1` |
-| §139 | W-INFRA-AUGMENT | ✅ LIVE | CLASSIFY + VISION + OBS-GATE · 5 Scenes · `d535e50` |
-| §140 | W-INTENT-CMD | ✅ LIVE | Director-as-a-Service · :8141 · 6 Intents · `5004346` |
-| §141 | W-NOMAD-VOICE | ✅ LIVE | A Pele Humana · /cmd pitch · No-Jargon · `900eba8` |
-| §142 | W-FEDIVERSE-001 | ✅ LIVE | Glass Embassy · Mastodon + BlueSky · :8142 |
-| §143 | W-BRIDGE-001 | ✅ LIVE | BIG-BRIDGE Gateway · /watch/{id} · HLS · :8143 |
-| §144 | Strike 6 — Share Button | ✅ LIVE | verify-public SHARE → Glass Embassy |
-| §145 | ALMA v1.0 | ✅ LIVE | MARIA Constitutional Identity · Motor de Espelho · 4 Registos |
-| §145.1 | Human Warmth | ✅ SEALED | Greeting detection → Claude routing |
-| §145.2 | 3-Bug Fix | ✅ SEALED | Truncation + Lang case + Weather priority · `d6ad9c3` |
-| §145.3 | Weather/Culture | ✅ SEALED | Routing separation · Overlap eliminated · `2017c3a` |
-| §146 | I14 Proibição de Placeholders | ✅ SEALED | IRREMEDIÁVEL · No "?" or "unknown" · `2c4c35f` |
-| §147 | F14 Conversation History | ✅ SEALED | Follow-up routing · Intent bypass · `82009cc` |
-| §148 | Cross-Modal Connections | ✅ SEALED | Flight→Hotel→Train · Suggest buttons · `88bafdc` |
-| §149 | Camada 1 Rule Engine | ✅ SEALED | Train intent fix · detect_intent_local() · `ea3dddd` |
-| §150 | W-SEC-001 Security Sentinel | ✅ SEALED | :8144 · systemd · Telegram · First Receipt `BD09970F` |
-| §150.1 | Geo Map | ✅ SEALED | World Attack Visualization · Leaflet.js · `77b08d1` |
-| §150.2 | Telegram Webhooks | ✅ SEALED | @W_sec_bot · 6 event types · Anti-noise · `17aa2b3` |
-| §150.3 | systemd Service | ✅ SEALED | windi-sec-001.service · Restart=always · `110d274` |
-| §150.4 | First Security Receipt | ✅ SEALED | WINDI-SEC-LOCAL-20260408184001-BD09970F · `30cfaa4` |
-| §137 | SSE Streaming | ✅ LIVE | WINDI-LAW AI Draft · Word-by-word · `76abeef` |
-
-> **Detalhes completos §128-150:** `CLAUDE-HISTORY.md` § SESSÃO 05-08 Abr 2026
+> **Tabela completa migrada para:** `CLAUDE-HISTORY.md` § SESSÃO 08 Abr 2026
+>
+> **Receipts Chave:**
+> - WINDI-LAW: `WINDI-LAW-AIDRAFT-20260404105917-C445AFF9`
+> - VD-CUT: `WINDI-VDCUT-20260404145505-E9983867`
+> - W-SEC: `WINDI-SEC-LOCAL-20260408184001-BD09970F`
+> - W-COMPOSER: First Seal `58B241B1`
 
 ---
 
