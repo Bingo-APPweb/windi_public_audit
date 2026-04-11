@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WINDI Verify</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0A0A10;
+            color: #E8E6E1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: #C9A84C;
+            margin-bottom: 40px;
+            letter-spacing: 2px;
+        }
+
+        .status {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .status-text {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 40px;
+        }
+
+        .verified { color: #22C55E; }
+        .unverified { color: #EF4444; }
+        .suspicious { color: #F59E0B; }
+        .loading { color: #6B7280; }
+
+        .card {
+            background: #1A1A24;
+            border: 1px solid #2A2A34;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .field {
+            margin-bottom: 16px;
+        }
+
+        .field:last-child {
+            margin-bottom: 0;
+        }
+
+        .label {
+            font-size: 12px;
+            color: #8B8B8B;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .value {
+            font-size: 16px;
+            color: #E8E6E1;
+            word-break: break-all;
+        }
+
+        .value.highlight {
+            color: #C9A84C;
+            font-weight: 600;
+        }
+
+        .hash {
+            font-family: 'JetBrains Mono', 'Consolas', monospace;
+            font-size: 11px;
+            background: #0A0A10;
+            padding: 8px 12px;
+            border-radius: 6px;
+            color: #8B8B8B;
+            word-break: break-all;
+            overflow-wrap: break-word;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge.high { background: #7C2D12; color: #FED7AA; }
+        .badge.sealed { background: #14532D; color: #BBF7D0; }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 12px;
+            color: #6B7280;
+        }
+
+        .footer a {
+            color: #C9A84C;
+            text-decoration: none;
+        }
+
+        .dragons {
+            font-size: 14px;
+            color: #4B4B4B;
+            margin-top: 20px;
+        }
+
+        .error-msg {
+            background: #2D1B1B;
+            border: 1px solid #7C2D12;
+            color: #FCA5A5;
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 480px) {
+            .status { font-size: 48px; }
+            .status-text { font-size: 24px; }
+            .value { font-size: 14px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">WINDI</div>
+
+        <div id="loading">
+            <div class="status loading">⏳</div>
+            <div class="status-text loading">Verifying...</div>
+        </div>
+
+        <div id="result" style="display: none;">
+            <div class="status" id="status-icon"></div>
+            <div class="status-text" id="status-text"></div>
+
+            <div class="card" id="details-card" style="display: none;">
+                <div class="field">
+                    <div class="label">Document</div>
+                    <div class="value highlight" id="doc-name"></div>
+                </div>
+                <div class="field">
+                    <div class="label">Actor</div>
+                    <div class="value" id="actor"></div>
+                </div>
+                <div class="field">
+                    <div class="label">Status</div>
+                    <div class="value">
+                        <span class="badge sealed" id="doc-status"></span>
+                        <span class="badge high" id="gov-level"></span>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="label">Content Hash</div>
+                    <div class="hash" id="content-hash"></div>
+                </div>
+                <div class="field">
+                    <div class="label">Receipt ID</div>
+                    <div class="value" id="receipt-id"></div>
+                </div>
+                <div class="field">
+                    <div class="label">Verified At</div>
+                    <div class="value" id="verified-at"></div>
+                </div>
+            </div>
+
+            <div id="error-box" class="error-msg" style="display: none;"></div>
+        </div>
+
+        <div class="footer">
+            <a href="https://windi-domain.com">windi-domain.com</a>
+        </div>
+        <div class="dragons">🐉 Three Dragons Protocol</div>
+    </div>
+
+    <script>
+        async function verify() {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+
+            if (!id) {
+                showError('No receipt ID provided. Use ?id=WINDI-XXX');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/verify/${id}`);
+                const data = await response.json();
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('result').style.display = 'block';
+
+                if (data.verified) {
+                    showVerified(data);
+                } else if (data.error) {
+                    showUnverified(data);
+                } else {
+                    showSuspicious(data);
+                }
+            } catch (err) {
+                showError('Failed to connect to verification service');
+            }
+        }
+
+        function showVerified(data) {
+            document.getElementById('status-icon').textContent = '✓';
+            document.getElementById('status-icon').className = 'status verified';
+            document.getElementById('status-text').textContent = 'VERIFIED';
+            document.getElementById('status-text').className = 'status-text verified';
+
+            const receipt = data.ledger_data?.receipt || {};
+
+            document.getElementById('doc-name').textContent = receipt.doc_name || 'Unknown';
+            document.getElementById('actor').textContent = receipt.actor || 'Unknown';
+            document.getElementById('doc-status').textContent = receipt.status || 'sealed';
+            document.getElementById('gov-level').textContent = receipt.governance_level || 'HIGH';
+            document.getElementById('content-hash').textContent = receipt.content_hash || 'N/A';
+            document.getElementById('receipt-id').textContent = data.ledger_id || '';
+            document.getElementById('verified-at').textContent = new Date(data.timestamp).toLocaleString();
+
+            document.getElementById('details-card').style.display = 'block';
+        }
+
+        function showUnverified(data) {
+            document.getElementById('status-icon').textContent = '✗';
+            document.getElementById('status-icon').className = 'status unverified';
+            document.getElementById('status-text').textContent = 'NOT VERIFIED';
+            document.getElementById('status-text').className = 'status-text unverified';
+
+            if (data.error) {
+                document.getElementById('error-box').textContent = data.error;
+                document.getElementById('error-box').style.display = 'block';
+            }
+        }
+
+        function showSuspicious(data) {
+            document.getElementById('status-icon').textContent = '⚠';
+            document.getElementById('status-icon').className = 'status suspicious';
+            document.getElementById('status-text').textContent = 'SUSPICIOUS';
+            document.getElementById('status-text').className = 'status-text suspicious';
+        }
+
+        function showError(msg) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('status-icon').textContent = '?';
+            document.getElementById('status-icon').className = 'status loading';
+            document.getElementById('status-text').textContent = 'ERROR';
+            document.getElementById('status-text').className = 'status-text loading';
+            document.getElementById('error-box').textContent = msg;
+            document.getElementById('error-box').style.display = 'block';
+        }
+
+        verify();
+    </script>
+</body>
+</html>
