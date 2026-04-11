@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request API Key — WINDI Developer API</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #0A0A10;
+            --card: #1A1A24;
+            --border: #2A2A34;
+            --gold: #C9A84C;
+            --text: #E8E6E1;
+            --muted: #8B8B8B;
+            --green: #22C55E;
+            --red: #EF4444;
+        }
+
+        body {
+            font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--gold);
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .tagline {
+            font-size: 12px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 800;
+            margin-top: 24px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+        }
+
+        .field {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 15px;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .required::after {
+            content: " *";
+            color: var(--red);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px 28px;
+            background: var(--gold);
+            color: var(--bg);
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: #D4B55E;
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .note {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 16px;
+            text-align: center;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 24px;
+            color: var(--gold);
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .success-msg {
+            background: #14532D;
+            border: 1px solid #22C55E;
+            color: #BBF7D0;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error-msg {
+            background: #2D1B1B;
+            border: 1px solid #7C2D12;
+            color: #FCA5A5;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .key-display {
+            background: var(--bg);
+            border: 1px solid var(--gold);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+            text-align: center;
+        }
+
+        .key-display code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: var(--gold);
+            word-break: break-all;
+        }
+
+        .key-warning {
+            font-size: 11px;
+            color: var(--red);
+            margin-top: 8px;
+        }
+
+        .i9-note {
+            background: rgba(201, 168, 76, 0.1);
+            border: 1px solid var(--gold);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        .i9-note strong {
+            color: var(--gold);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">WINDI</div>
+            <div class="tagline">Developer API</div>
+            <h1>Request API Key</h1>
+        </div>
+
+        <div class="card">
+            <div class="i9-note">
+                <strong>I9 Constitutional Note:</strong> API key requests require human approval.
+                You'll receive your key via email within 24 hours.
+            </div>
+
+            <div class="success-msg" id="success">
+                <strong>Request submitted!</strong><br>
+                We'll review your request and send your API key to your email.
+            </div>
+
+            <div class="error-msg" id="error"></div>
+
+            <form id="keyForm">
+                <div class="field">
+                    <label class="required">Email</label>
+                    <input type="email" name="email" required placeholder="dev@company.com">
+                </div>
+
+                <div class="field">
+                    <label class="required">Name</label>
+                    <input type="text" name="name" required placeholder="Your name">
+                </div>
+
+                <div class="field">
+                    <label>Company / Project</label>
+                    <input type="text" name="company" placeholder="Company or project name">
+                </div>
+
+                <div class="field">
+                    <label>Tier Requested</label>
+                    <select name="tier">
+                        <option value="SEED">SEED — 10 req/min (testing)</option>
+                        <option value="NODAL" selected>NODAL — 60 req/min (small integrations)</option>
+                        <option value="SOVEREIGN">SOVEREIGN — 300 req/min (production)</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label class="required">Use Case</label>
+                    <textarea name="use_case" required placeholder="Describe how you plan to use the WINDI API..."></textarea>
+                </div>
+
+                <button type="submit" class="btn" id="submitBtn">Submit Request</button>
+
+                <p class="note">
+                    By requesting an API key, you agree to the WINDI Developer Terms.
+                </p>
+            </form>
+        </div>
+
+        <a href="/dev-api/" class="back-link">← Back to API Overview</a>
+    </div>
+
+    <script>
+        const form = document.getElementById('keyForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const successMsg = document.getElementById('success');
+        const errorMsg = document.getElementById('error');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            successMsg.style.display = 'none';
+            errorMsg.style.display = 'none';
+
+            const data = {
+                email: form.email.value,
+                name: form.name.value,
+                company: form.company.value,
+                tier_requested: form.tier.value,
+                use_case: form.use_case.value
+            };
+
+            try {
+                const res = await fetch('/dev-api/v1/keys/request', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await res.json();
+
+                if (result.success) {
+                    successMsg.style.display = 'block';
+                    form.reset();
+                } else {
+                    errorMsg.textContent = result.error?.message || 'Request failed. Please try again.';
+                    errorMsg.style.display = 'block';
+                }
+            } catch (err) {
+                errorMsg.textContent = 'Network error. Please try again.';
+                errorMsg.style.display = 'block';
+            }
+
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit Request';
+        });
+    </script>
+</body>
+</html>
