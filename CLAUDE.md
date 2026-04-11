@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.1.5
-**Sealed:** 2026-04-09 · §151 W-DRAGON-001 Dragon Shadow Forest LIVE
+**Version:** 2.1.6
+**Sealed:** 2026-04-11 · §153 W-STATE-CORE-006 Verify Public LIVE
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -129,6 +129,14 @@ Nenhum endpoint retorna valores default que mascarem dados ausentes.
 **Bit=1:** Dark Dragon (heptagon) · **Bit=0:** Shadow Dragon (diamond)
 **Pipeline:** Content → SHA-256 → 256 bits → Dragon Grid → PDF/SVG → Ledger (I11)
 **Endpoints:** `/dragon/health` · `/dragon/encode` · `/dragon/encode-pdf` · `/dragon/preview` · `/dragon/verify/{id}`
+
+### §153 — W-STATE-CORE-006: Verify Public (11 Apr 2026)
+
+**Port:** :8145 · **Invariants:** I9, I11, I14 · **Commit:** `a566464`
+**Conceito:** Endpoint público de verificação. Qualquer pessoa, qualquer dispositivo, sem login.
+**Stack:** W-STATE-CORE 001-006 completo (hash → persist → DID → PHO → ledger → verify)
+**Endpoints:** `/verify/{id}` (API) · `/verify-public/web/verify.html?id=X` (Visual UI)
+**Berlin:** `berlin-slide.html` · QR funcional · Script 3 min
 
 ### §117 — I9: Human Approval Gate (NON-NEGOTIABLE)
 
@@ -348,7 +356,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 ---
 
-## 13. Estado Actual — 09 Abril 2026
+## 13. Estado Actual — 11 Abril 2026
 
 ### Portas Críticas
 
@@ -362,6 +370,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | :8126 | WINDI Travel | 🟢 **LIVE** v1.3.0 |
 | :8127-:8132 | NOMAD/VD-CUT/JOE/MASS/JMPG | 🟢 LIVE |
 | :8140-:8144 | UDB/INTENT-CMD/FEDIVERSE/BRIDGE/SEC | 🟢 LIVE |
+| :8145 | W-STATE-CORE-006 Verify Public | 🟢 **LIVE** |
 
 > **Mapa completo (25 portas):** `CLAUDE-HISTORY.md` § Mapa de Portas 09 Abr
 
@@ -375,12 +384,12 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 11 Apr | **§153 W-STATE-CORE-006** · Verify Public · Berlin Pitch Ready |
 | 09 Apr | **§151 W-DRAGON-001** · Dragon Shadow Forest · PDF Overlay |
 | 08 Apr | **§150 W-SEC-001** · Security Sentinel · Receipt `BD09970F` |
 | 08 Apr | **§148-149** · Cross-Modal + Rule Engine |
-| 06 Apr | **§147** · F14 Conversation History |
 
-> **Histórico completo §110-§150:** `CLAUDE-HISTORY.md`
+> **Histórico completo §110-§153:** `CLAUDE-HISTORY.md`
 
 ---
 
