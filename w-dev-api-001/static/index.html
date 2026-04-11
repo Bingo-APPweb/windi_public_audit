@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WINDI Developer API</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #0A0A10;
+            --card: #1A1A24;
+            --border: #2A2A34;
+            --gold: #C9A84C;
+            --text: #E8E6E1;
+            --muted: #8B8B8B;
+            --green: #22C55E;
+        }
+
+        body {
+            font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px 24px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--gold);
+            letter-spacing: 3px;
+            margin-bottom: 8px;
+        }
+
+        .tagline {
+            font-size: 14px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        h1 {
+            font-size: 48px;
+            font-weight: 800;
+            margin: 40px 0 16px;
+            line-height: 1.1;
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: var(--muted);
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+
+        .cta-group {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 60px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--gold);
+            color: var(--bg);
+        }
+
+        .btn-primary:hover {
+            background: #D4B55E;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+
+        .feature {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .feature h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: var(--gold);
+        }
+
+        .feature p {
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        .code-block {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            overflow-x: auto;
+        }
+
+        .code-block pre {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: var(--text);
+            white-space: pre-wrap;
+        }
+
+        .code-block .comment { color: var(--muted); }
+        .code-block .string { color: #98C379; }
+        .code-block .keyword { color: var(--gold); }
+
+        .endpoints {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 60px;
+        }
+
+        .endpoint {
+            display: flex;
+            align-items: center;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .endpoint:last-child { border-bottom: none; }
+
+        .method {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-right: 16px;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .method.get { background: #14532D; color: #BBF7D0; }
+        .method.post { background: #1E3A5F; color: #93C5FD; }
+
+        .endpoint-path {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            flex: 1;
+        }
+
+        .endpoint-desc {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .tiers {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 60px;
+        }
+
+        .tier {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .tier-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .tier-limit {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .tier-unit {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .footer {
+            text-align: center;
+            padding-top: 40px;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-text {
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        .footer-text a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        .dragons {
+            font-size: 14px;
+            color: #4B4B4B;
+            margin-top: 16px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #14532D;
+            color: #BBF7D0;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #22C55E;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">WINDI</div>
+            <div class="tagline">Developer API</div>
+
+            <h1>Build with verifiable trust</h1>
+            <p class="subtitle">
+                Seal documents, anchor to ledger, verify publicly.
+                Three endpoints. Zero trust required.
+            </p>
+
+            <div class="status-badge">
+                <span class="status-dot"></span>
+                API Operational
+            </div>
+
+            <div class="cta-group">
+                <a href="/dev-api/access" class="btn btn-primary">Request API Key</a>
+                <a href="/dev-api/v1/docs" class="btn btn-secondary">View Documentation</a>
+            </div>
+        </div>
+
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">📄</div>
+                <h3>Upload & Hash</h3>
+                <p>Upload any document. We compute SHA-256 and store securely.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🔏</div>
+                <h3>Seal with I9</h3>
+                <p>Human confirmation required. Constitutional compliance built-in.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">✓</div>
+                <h3>Verify Publicly</h3>
+                <p>Anyone can verify. No login. No trust. Just proof.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🔗</div>
+                <h3>Permanent URL</h3>
+                <p>Every seal generates a public verification link.</p>
+            </div>
+        </div>
+
+        <h2 style="margin-bottom: 24px;">Quick Start</h2>
+
+        <div class="code-block">
+<pre><span class="comment"># 1. Upload a document</span>
+curl -X POST https://windi-domain.com/dev-api/v1/artifacts/upload \
+  -H <span class="string">"Authorization: Bearer wnd_live_xxx"</span> \
+  -F <span class="string">"file=@contract.pdf"</span> \
+  -F <span class="string">"did=did:windi:user:001"</span>
+
+<span class="comment"># 2. Seal it (human confirmation required)</span>
+curl -X POST https://windi-domain.com/dev-api/v1/seals \
+  -H <span class="string">"Authorization: Bearer wnd_live_xxx"</span> \
+  -H <span class="string">"Content-Type: application/json"</span> \
+  -d <span class="string">'{"artifact_id":"art_xxx","did":"did:windi:user:001","intent":{"confirmed_by_human":true}}'</span>
+
+<span class="comment"># 3. Anyone can verify (no auth needed)</span>
+https://windi-domain.com/verify-public/?id=WINDI-DEV-xxx</pre>
+        </div>
+
+        <h2 style="margin-bottom: 24px;">Endpoints</h2>
+
+        <div class="endpoints">
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="endpoint-path">/v1/health</span>
+                <span class="endpoint-desc">Service status</span>
+            </div>
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="endpoint-path">/v1/auth/me</span>
+                <span class="endpoint-desc">API key info</span>
+            </div>
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="endpoint-path">/v1/artifacts/upload</span>
+                <span class="endpoint-desc">Upload file</span>
+            </div>
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="endpoint-path">/v1/seals</span>
+                <span class="endpoint-desc">Seal artifact (I9)</span>
+            </div>
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="endpoint-path">/v1/receipts/{id}</span>
+                <span class="endpoint-desc">Get receipt</span>
+            </div>
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="endpoint-path">/v1/verify</span>
+                <span class="endpoint-desc">Verify hash/receipt</span>
+            </div>
+        </div>
+
+        <h2 style="margin-bottom: 24px;">Rate Limits</h2>
+
+        <div class="tiers">
+            <div class="tier">
+                <div class="tier-name">Seed</div>
+                <div class="tier-limit">10</div>
+                <div class="tier-unit">requests / minute</div>
+            </div>
+            <div class="tier">
+                <div class="tier-name">Nodal</div>
+                <div class="tier-limit">60</div>
+                <div class="tier-unit">requests / minute</div>
+            </div>
+            <div class="tier">
+                <div class="tier-name">Sovereign</div>
+                <div class="tier-limit">300</div>
+                <div class="tier-unit">requests / minute</div>
+            </div>
+            <div class="tier">
+                <div class="tier-name">Oracle</div>
+                <div class="tier-limit">∞</div>
+                <div class="tier-unit">unlimited</div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p class="footer-text">
+                <a href="/dev-api/v1/docs">API Docs</a> ·
+                <a href="/dev-api/v1/health">Status</a> ·
+                <a href="mailto:dev@windi-domain.com">Contact</a>
+            </p>
+            <p class="dragons">🐉 Three Dragons Protocol</p>
+            <p class="footer-text" style="margin-top: 8px;">
+                AI processes. Human decides. WINDI guarantees.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
