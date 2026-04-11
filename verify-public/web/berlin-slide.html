@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WINDI — Berlin Pitch</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+            background: #0A0A10;
+            color: #E8E6E1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .slide {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            position: relative;
+        }
+
+        .logo {
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 28px;
+            font-weight: 800;
+            color: #C9A84C;
+            letter-spacing: 4px;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .status-block {
+            text-align: center;
+        }
+
+        .verified-icon {
+            font-size: 120px;
+            color: #22C55E;
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+
+        .verified-text {
+            font-size: 48px;
+            font-weight: 800;
+            color: #22C55E;
+            letter-spacing: 6px;
+        }
+
+        .qr-container {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+        }
+
+        .qr-box {
+            background: #1A1A24;
+            border: 2px solid #2A2A34;
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .qr-box img {
+            width: 200px;
+            height: 200px;
+        }
+
+        .scan-text {
+            margin-top: 16px;
+            font-size: 14px;
+            color: #8B8B8B;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .proof-card {
+            background: #1A1A24;
+            border: 1px solid #2A2A34;
+            border-radius: 12px;
+            padding: 24px 32px;
+            max-width: 400px;
+        }
+
+        .proof-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #2A2A34;
+        }
+
+        .proof-row:last-child {
+            border-bottom: none;
+        }
+
+        .proof-label {
+            font-size: 11px;
+            color: #6B7280;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .proof-value {
+            font-size: 14px;
+            color: #E8E6E1;
+            font-weight: 500;
+        }
+
+        .proof-value.gold {
+            color: #C9A84C;
+        }
+
+        .proof-value.hash {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: #8B8B8B;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-left: 8px;
+        }
+
+        .badge.sealed { background: #14532D; color: #BBF7D0; }
+        .badge.high { background: #7C2D12; color: #FED7AA; }
+
+        .tagline {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .tagline-main {
+            font-size: 24px;
+            font-weight: 700;
+            color: #E8E6E1;
+            margin-bottom: 8px;
+        }
+
+        .tagline-sub {
+            font-size: 14px;
+            color: #6B7280;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dragons {
+            font-size: 16px;
+            color: #4B4B4B;
+        }
+
+        .domain {
+            font-size: 12px;
+            color: #C9A84C;
+            letter-spacing: 1px;
+        }
+
+        /* Fullscreen mode */
+        .slide:fullscreen {
+            background: #0A0A10;
+        }
+
+        /* Press F for fullscreen hint */
+        .hint {
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            font-size: 11px;
+            color: #4B4B4B;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide" id="slide">
+        <div class="logo">WINDI</div>
+        <div class="hint">Press F for fullscreen</div>
+
+        <div class="main-content">
+            <div class="status-block">
+                <div class="verified-icon">✓</div>
+                <div class="verified-text">VERIFIED</div>
+            </div>
+
+            <div class="qr-container">
+                <div class="qr-box">
+                    <img src="windi_berlin_qr_clean.png" alt="Scan to Verify">
+                    <div class="scan-text">Scan to verify</div>
+                </div>
+
+                <div class="proof-card">
+                    <div class="proof-row">
+                        <span class="proof-label">Document</span>
+                        <span class="proof-value gold">WINDI Pitch Deck Berlin May 2026</span>
+                    </div>
+                    <div class="proof-row">
+                        <span class="proof-label">Actor</span>
+                        <span class="proof-value">did:windi:JOBER-MOGELE-CORREA-001</span>
+                    </div>
+                    <div class="proof-row">
+                        <span class="proof-label">Status</span>
+                        <span class="proof-value">
+                            <span class="badge sealed">SEALED</span>
+                            <span class="badge high">HIGH</span>
+                        </span>
+                    </div>
+                    <div class="proof-row">
+                        <span class="proof-label">Hash</span>
+                        <span class="proof-value hash">d1aaddd245f2c940...241c3bf</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tagline">
+                <div class="tagline-main">Any document. Any moment. Verified by anyone.</div>
+                <div class="tagline-sub">No login. No trust required.</div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="dragons">🐉 Three Dragons Protocol</div>
+            <div class="domain">windi-domain.com</div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'f' || e.key === 'F') {
+                const slide = document.getElementById('slide');
+                if (document.fullscreenElement) {
+                    document.exitFullscreen();
+                } else {
+                    slide.requestFullscreen();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
