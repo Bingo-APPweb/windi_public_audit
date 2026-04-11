@@ -27,8 +27,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding: 40px;
+            justify-content: flex-start;
+            padding: 100px 40px 80px 40px;
             position: relative;
         }
 
@@ -47,7 +47,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 40px;
+            gap: 30px;
+            margin-top: 20px;
         }
 
         .status-block {
@@ -55,14 +56,14 @@
         }
 
         .verified-icon {
-            font-size: 120px;
+            font-size: 80px;
             color: #22C55E;
             line-height: 1;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
 
         .verified-text {
-            font-size: 48px;
+            font-size: 36px;
             font-weight: 800;
             color: #22C55E;
             letter-spacing: 6px;
@@ -71,7 +72,7 @@
         .qr-container {
             display: flex;
             align-items: center;
-            gap: 60px;
+            gap: 40px;
         }
 
         .qr-box {
@@ -155,39 +156,33 @@
 
         .tagline {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 15px;
         }
 
         .tagline-main {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 700;
             color: #E8E6E1;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }
 
         .tagline-sub {
-            font-size: 14px;
+            font-size: 13px;
             color: #6B7280;
         }
 
         .footer {
             position: absolute;
-            bottom: 40px;
+            bottom: 20px;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 8px;
-        }
-
-        .dragons {
-            font-size: 16px;
+            gap: 12px;
+            font-size: 12px;
             color: #4B4B4B;
         }
 
-        .domain {
-            font-size: 12px;
+        .footer .domain {
             color: #C9A84C;
-            letter-spacing: 1px;
         }
 
         /* Fullscreen mode */
@@ -254,8 +249,9 @@
         </div>
 
         <div class="footer">
-            <div class="dragons">🐉 Three Dragons Protocol</div>
-            <div class="domain">windi-domain.com</div>
+            <span class="domain">windi-domain.com</span>
+            <span>·</span>
+            <span>🐉 Three Dragons Protocol</span>
         </div>
     </div>
 
