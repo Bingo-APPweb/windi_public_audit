@@ -6,6 +6,154 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 11 Abr 2026 — §154 W-DEV-API-001 Developer API
+
+**Commits:** `8e35773` · `bcfaaf89`
+**Scope:** External Developer API · 4 Tiers · I9 Gate · Verify Bridge
+**CLAUDE.md:** v2.1.7
+
+### §154 — W-DEV-API-001 · Developer API — LIVE
+
+**Data:** 11 Abril 2026 · 17:04 CEST
+**Serviço:** W-DEV-API-001 · :8200 → `/dev-api/`
+**Invariants:** I9 · I11
+**Ficheiros:** `/opt/windi/w-dev-api-001/` (20 ficheiros, 1808 linhas)
+
+> **"seal · ledger · verify · distribute"**
+
+### Arquitectura
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  EXTERNAL DEVELOPER                                         │
+│  ─────────────────────────────────────────────────────────  │
+│  Authorization: Bearer windi_xxx...                         │
+│           ↓                                                 │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │  W-DEV-API-001 · :8200                              │   │
+│  │  FastAPI + SQLite WAL                               │   │
+│  │  ┌───────────────────────────────────────────────┐  │   │
+│  │  │  /v1/artifacts  → Upload + SHA-256            │  │   │
+│  │  │  /v1/seals      → I9 Gate (human_approved)    │  │   │
+│  │  │  /v1/verify     → Cascade: Local → :8145      │  │   │
+│  │  │  /v1/receipts   → Ledger records              │  │   │
+│  │  │  /v1/keys       → Admin: approve/revoke       │  │   │
+│  │  └───────────────────────────────────────────────┘  │   │
+│  └─────────────────────────────────────────────────────┘   │
+│           ↓                                                 │
+│  Forensic Ledger :8101 ←→ Verify Public :8145              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Endpoints Implementados
+
+| Endpoint | Método | Scope | Descrição |
+|----------|--------|-------|-----------|
+| `/v1/health` | GET | — | Health check + dependency status |
+| `/v1/auth/me` | GET | * | API key info + rate limit remaining |
+| `/v1/artifacts` | POST | artifacts:write | Upload file, generate SHA-256 |
+| `/v1/artifacts/{id}` | GET | artifacts:read | Retrieve artifact metadata |
+| `/v1/seals` | POST | seals:write | **I9 Gate** — require `confirmed_by_human: true` |
+| `/v1/verify` | POST | verify:read | Verify by receipt_id or sha256 |
+| `/v1/receipts/{id}` | GET | receipts:read | Get receipt details |
+| `/v1/keys/request` | POST | — | Public key request flow |
+| `/v1/keys/approve` | POST | keys:admin | Admin approve pending key |
+
+### Sistema de Tiers
+
+| Tier | Rate Limit | Use Case |
+|------|------------|----------|
+| **SEED** | 10 req/min | Testing, development |
+| **NODAL** | 60 req/min | Small integrations |
+| **SOVEREIGN** | 300 req/min | Production apps |
+| **ORACLE** | Unlimited | Internal, admin |
+
+### I9 Gate — Seal Endpoint
+
+```python
+# /v1/seals — POST
+{
+  "artifact_id": "art_xxx",
+  "confirmed_by_human": true,  # ← OBRIGATÓRIO
+  "confirmer_did": "did:windi:human-dragon",
+  "governance_level": "HIGH"
+}
+
+# Se confirmed_by_human=false → HTTP 403
+# "I9 VIOLATION: human_approved required"
+```
+
+### Verify Cascade
+
+```
+POST /v1/verify { "receipt_id": "WINDI-XXX" }
+    ↓
+1. Check local DB (wdev_api.db)
+    ↓ (not found)
+2. Cascade to Verify Public :8145
+    ↓
+3. Return unified response
+```
+
+### Database Schema
+
+```sql
+-- 7 Tables in /opt/windi/data/wdev_api.db
+api_keys          -- Key management, tiers, scopes
+artifacts         -- Uploaded files, SHA-256 hashes
+seals             -- Seal requests with I9 gate
+receipts          -- Ledger receipt copies
+idempotency_keys  -- Prevent duplicate operations
+audit_log         -- All API activity
+key_requests      -- Pending key applications
+```
+
+### Nginx Route
+
+```nginx
+# Added to windi-domain.com after W-SEC-001
+location /dev-api/ {
+    proxy_pass http://127.0.0.1:8200/;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+```
+
+### URLs Públicas
+
+| URL | Descrição |
+|-----|-----------|
+| `windi-domain.com/dev-api/v1/health` | Health endpoint |
+| `windi-domain.com/dev-api/v1/docs` | Swagger UI |
+| `windi-domain.com/dev-api/static/` | Landing page |
+| `windi-domain.com/dev-api/static/access.html` | Key request form |
+
+### Response Envelope
+
+```json
+{
+  "success": true,
+  "data": { ... },
+  "meta": {
+    "request_id": "req_xxx",
+    "timestamp": "2026-04-11T14:47:19Z",
+    "version": "v1"
+  },
+  "error": null
+}
+```
+
+### Doutrina §154
+
+> **"A API não é um atalho. É uma porta de entrada com as mesmas garantias."**
+> Todo developer externo passa pelo mesmo I9 gate que os sistemas internos.
+> Nenhum seal sem confirmação humana. Nenhuma excepção.
+
+---
+
 ## § SESSÃO 06 Abr 2026 — §142-§143 Glass Embassy + Share Button
 
 **Commits:** `9c9b8ba` · `7dc7c27` · `013e8f5` · `7bce77d`
