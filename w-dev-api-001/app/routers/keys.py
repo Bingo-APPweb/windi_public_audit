@@ -7,9 +7,11 @@ POST /v1/keys/approve   — Admin: approve request (I9 gate)
 
 import uuid
 from datetime import datetime, timezone
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel, EmailStr
 from typing import Optional
+
+from app.deps.auth import validate_api_key, require_scope
 
 router = APIRouter(prefix="/keys", tags=["Keys"])
 
@@ -77,11 +79,13 @@ def request_key(body: KeyRequest):
 
 
 @router.get("/pending")
-def list_pending():
+def list_pending(key: dict = Depends(validate_api_key)):
     """
     Admin: List pending key requests.
-    TODO: Add ORACLE key authentication
+    Requires ORACLE key with keys:admin scope.
     """
+    require_scope(key, "keys:admin")
+
     conn = get_conn()
     rows = conn.execute("""
         SELECT * FROM key_requests WHERE status = 'pending' ORDER BY created_at DESC
@@ -104,17 +108,30 @@ def list_pending():
 
 class ApproveRequest(BaseModel):
     request_id: str
+    confirmed_by_human: bool = False  # I9 gate
     approved_by: str = "human-dragon"
     tier: Optional[str] = None  # Override tier if needed
 
 
 @router.post("/approve")
-def approve_key(body: ApproveRequest):
+def approve_key(body: ApproveRequest, key: dict = Depends(validate_api_key)):
     """
     Admin: Approve a key request (I9 gate).
     Generates the actual API key and updates the request.
-    TODO: Add ORACLE key authentication
+    Requires ORACLE key with keys:admin scope.
     """
+    require_scope(key, "keys:admin")
+
+    # ═══ I9 GATE ═══
+    if not body.confirmed_by_human:
+        raise HTTPException(403, detail={
+            "success": False,
+            "error": {
+                "code": "I9_VIOLATION",
+                "message": "confirmed_by_human must be true. Human approval is required."
+            }
+        })
+
     import hashlib
     import secrets
 

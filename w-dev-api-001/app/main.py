@@ -24,6 +24,7 @@ app = FastAPI(
     docs_url="/v1/docs",
     redoc_url="/v1/redoc",
     openapi_url="/v1/openapi.json",
+    root_path="/dev-api",
 )
 
 # ── CORS ──────────────────────────────────────────────────
@@ -66,9 +67,9 @@ app.include_router(verify.router, prefix="/v1")
 app.include_router(keys.router, prefix="/v1")
 
 # ── Static Pages ──────────────────────────────────────────
-static_dir = os.path.join(os.path.dirname(__file__), "..", "static")
+static_dir = "/opt/windi/w-dev-api-001/static"
 if os.path.isdir(static_dir):
-    app.mount("/static", StaticFiles(directory=static_dir), name="static")
+    app.mount("/static", StaticFiles(directory=static_dir, html=True), name="static")
 
 
 # ── Root ──────────────────────────────────────────────────
