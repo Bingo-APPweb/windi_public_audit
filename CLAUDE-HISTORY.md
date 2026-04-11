@@ -6770,3 +6770,79 @@ RISCO SE IGNORADO: [Consequência de não seguir]
 - WindiTouch v1.0.0 integrado
 
 ---
+
+## § SESSÃO 11 Abr 2026 — §153 W-STATE-CORE-006 Verify Public LIVE
+
+**Commit:** `a566464`
+**Scope:** W-STATE-CORE-006 Verify Public · Berlin Pitch QR · Visual Verify UI
+**CLAUDE.md:** v2.1.5
+
+---
+
+### §153 — W-STATE-CORE-006 Verify Public — LIVE :8145
+
+**Data:** 11 Abril 2026 · **Port:** 8145 · **Invariants:** I9, I11, I14
+**Commit:** `a566464`
+
+> **"A verdade existe agora fora do sistema."**
+> **"Scan. Verify. Trust. Sem nos pedir nada."**
+
+**Conceito:** Endpoint público de verificação de receipts forenses. Qualquer pessoa, qualquer dispositivo, sem conta, sem login, sem confiar no sistema.
+
+**W-STATE-CORE Stack Completo:**
+| Module | Port | Function |
+|--------|------|----------|
+| 001 | Core | Deterministic hashing |
+| 002 | Core | Persistence layer |
+| 003 | :8098 | DID-native identity |
+| 004 | :8099 | PHO seal (human approval) |
+| 005 | :8101 | Ledger anchoring |
+| **006** | **:8145** | **Verify Public** ✅ |
+
+**Endpoints:**
+| Endpoint | Função |
+|----------|--------|
+| `GET /verify/{id}` | API JSON — retorna dados do receipt |
+| `GET /verify/health` | Health check |
+| `/verify-public/web/verify.html?id=X` | UI Visual — VERIFIED/UNVERIFIED |
+| `/verify-public/web/berlin-slide.html` | Slide fullscreen Berlin pitch |
+
+**Ficheiros Criados:**
+- `verify_public.py` — 356 linhas · BaseHTTPRequestHandler · sem dependências externas
+- `verify.html` — UI NOIR · hash word-break fix
+- `berlin-slide.html` — Fullscreen · Press F · QR integrado
+- `windi_berlin_qr_clean.png` — 855×855px · preto/branco · alta legibilidade
+
+**Receipt Verificado:**
+```
+ID:     WINDI-DSF-20260410094726-289EE95D
+Doc:    WINDI Pitch Deck Berlin May 2026
+Actor:  did:windi:JOBER-MOGELE-CORREA-001
+Status: SEALED · HIGH
+Hash:   d1aaddd245f2c940774f9db23d04cd21dfaec40945790170ecdef6389241c3bf
+```
+
+**URLs Públicas:**
+- API: `windi-domain.com/verify/{id}`
+- Visual: `windi-domain.com/verify-public/web/verify.html?id={id}`
+- Slide: `windi-domain.com/verify-public/web/berlin-slide.html`
+- QR: `windi-domain.com/verify-public/web/windi_berlin_qr_clean.png`
+
+**Berlin Pitch Script (30 segundos):**
+```
+"You don't need to trust this presentation."
+(pausa)
+"Scan it."
+(pessoas escaneiam)
+"What you see is not hosted trust.
+It's independently verifiable proof."
+(pausa)
+"This document now exists outside of us."
+```
+
+**Doutrina §153:**
+> **"O pitch agora tem prova física. Scan → VERIFIED → Silêncio na sala."**
+
+**Sealed:** 11 Apr 2026 · Human Dragon · Liga IA+H
+
+---
