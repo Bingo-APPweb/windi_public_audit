@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.1.6
-**Sealed:** 2026-04-11 · §153 W-STATE-CORE-006 Verify Public LIVE
+**Version:** 2.1.7
+**Sealed:** 2026-04-11 · §154 W-DEV-API-001 Developer API LIVE
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -82,6 +82,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-BRIDGE-001 | :8143 | I9,I11 | **LIVE** · BIG-BRIDGE Gateway · /watch/{id} · HLS Streaming |
 | W-SEC-001 | :8144 | I9,I11 | **SEALED** · Security Sentinel · Dual Correlation · Telegram · systemd |
 | W-DRAGON-001 | :8122 | I9,I11,I14 | **LIVE** · Dragon Shadow Forest · 16×16 SHA-256 Glyph Grid · PDF Overlay |
+| W-DEV-API-001 | :8200 | I9,I11 | **LIVE** · Developer API · /dev-api/ · 4 Tiers · Verify Bridge |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
 
@@ -377,19 +378,20 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 ### Sistemas LIVE (41 total)
 
 **Core:** GEN7 · Pioneer · VPR · API Keys · Dispatch · Web Hosting · i18n · Wallet · Lead Admin
-**Agents (30):** CIA · WSG · GATE · NGINX · CANVAS · COMM · PROVE · DETECT-MEDIA · VERIFY · INTENT · COUNSEL · SESSION · NOMAD · VD-CUT · VD-MASS · JOE · DIST · JMPG · UDB · COMPOSER · CLASSIFY · VISION · OBS-GATE · INTENT-CMD · NOMAD-VOICE · FEDIVERSE · BRIDGE · SEC · DRAGON
+**Agents (31):** CIA · WSG · GATE · NGINX · CANVAS · COMM · PROVE · DETECT-MEDIA · VERIFY · INTENT · COUNSEL · SESSION · NOMAD · VD-CUT · VD-MASS · JOE · DIST · JMPG · UDB · COMPOSER · CLASSIFY · VISION · OBS-GATE · INTENT-CMD · NOMAD-VOICE · FEDIVERSE · BRIDGE · SEC · DRAGON · DEV-API
 **Products:** Triangle of Power · WINDI FIELD · WINDI TRAVEL · FVE Protocol · RFC-001 DNA
 
 ### Histórico Recente
 
 | Data | Milestone |
 |------|-----------|
+| 11 Apr | **§154 W-DEV-API-001** · Developer API · :8200 · 4 Tiers · Verify Bridge |
 | 11 Apr | **§153 W-STATE-CORE-006** · Verify Public · Berlin Pitch Ready |
 | 09 Apr | **§151 W-DRAGON-001** · Dragon Shadow Forest · PDF Overlay |
 | 08 Apr | **§150 W-SEC-001** · Security Sentinel · Receipt `BD09970F` |
 | 08 Apr | **§148-149** · Cross-Modal + Rule Engine |
 
-> **Histórico completo §110-§153:** `CLAUDE-HISTORY.md`
+> **Histórico completo §110-§154:** `CLAUDE-HISTORY.md`
 
 ---
 
