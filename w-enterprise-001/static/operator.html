@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>W-Enterprise-001 · Capacity Amplifier · Operator of Verifiable Systems</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* NOIR Theme (default) */
+  --bg-primary: #0B0D14;
+  --bg-secondary: #12141C;
+  --bg-tertiary: #1A1D28;
+  --bg-success: #0A2E24;
+  --bg-info: #0A1E2E;
+  --bg-warning: #2E1A0A;
+  --text-primary: #E8E5DC;
+  --text-secondary: #A8A5A0;
+  --text-tertiary: #6B6966;
+  --text-success: #5DCAA5;
+  --text-info: #85B7EB;
+  --text-warning: #EF9F27;
+  --gold: #C8A45A;
+  --gold-dim: #8B7424;
+  --border-primary: rgba(200, 164, 90, 0.3);
+  --border-secondary: rgba(255, 255, 255, 0.12);
+  --border-tertiary: rgba(255, 255, 255, 0.06);
+  --border-success: #1D9E75;
+  --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  --font-sans: 'Bricolage Grotesque', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Mono', monospace;
+}
+
+[data-theme="klar"] {
+  --bg-primary: #FAFAF8;
+  --bg-secondary: #F0EDE8;
+  --bg-tertiary: #E8E5E0;
+  --bg-success: #E1F5EE;
+  --bg-info: #E6F1FB;
+  --bg-warning: #FAEEDA;
+  --text-primary: #1A1A18;
+  --text-secondary: #5F5E5A;
+  --text-tertiary: #888780;
+  --text-success: #0F6E56;
+  --text-info: #185FA5;
+  --text-warning: #854F0B;
+  --gold: #8B7424;
+  --gold-dim: #6B5A1C;
+  --border-primary: rgba(139, 116, 36, 0.4);
+  --border-secondary: rgba(0, 0, 0, 0.15);
+  --border-tertiary: rgba(0, 0, 0, 0.08);
+  --border-success: #1D9E75;
+  --shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-mono);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  transition: background 0.3s, color 0.3s;
+  padding: 1.5rem;
+}
+
+/* Top Controls */
+.top-controls {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  gap: 0.75rem;
+  z-index: 100;
+}
+
+.toggle-btn {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-secondary);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.toggle-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.toggle-btn.active {
+  background: var(--gold);
+  color: var(--bg-primary);
+  border-color: var(--gold);
+}
+
+.lang-toggle {
+  display: flex;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border-secondary);
+}
+
+.lang-btn {
+  background: var(--bg-tertiary);
+  border: none;
+  padding: 0.5rem 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.lang-btn:not(:last-child) {
+  border-right: 1px solid var(--border-secondary);
+}
+
+.lang-btn:hover {
+  color: var(--text-primary);
+}
+
+.lang-btn.active {
+  background: var(--gold);
+  color: var(--bg-primary);
+}
+
+/* Main Container */
+.w-root {
+  max-width: 800px;
+  margin: 3rem auto 2rem;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-secondary);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: var(--shadow);
+}
+
+/* Banner */
+.w-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-tertiary);
+  flex-wrap: wrap;
+}
+
+.w-tag {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  background: var(--bg-success);
+  color: var(--text-success);
+  border-radius: 6px;
+  border: 1px solid var(--border-success);
+}
+
+.w-title {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.w-version {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+/* Headlines */
+.headline {
+  font-family: var(--font-sans);
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.3;
+  margin-bottom: 0.75rem;
+}
+
+.subline {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 2rem;
+}
+
+/* Section Labels */
+.section-label {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+/* Profile Cards */
+.profiles-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 640px) {
+  .profiles-grid { grid-template-columns: 1fr; }
+}
+
+.profile-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-tertiary);
+  border-radius: 12px;
+  padding: 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.profile-card:hover {
+  border-color: var(--border-secondary);
+  transform: translateY(-2px);
+}
+
+.profile-card.active {
+  border: 2px solid var(--border-success);
+  background: var(--bg-success);
+}
+
+.profile-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.icon-blue { background: var(--bg-info); color: var(--text-info); }
+.icon-amber { background: var(--bg-warning); color: var(--text-warning); }
+.icon-teal { background: var(--bg-success); color: var(--text-success); }
+
+.profile-role {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  margin-bottom: 6px;
+}
+
+.profile-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+/* Amplifier Panel */
+.amplifier-panel {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  border: 1px solid var(--border-tertiary);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.amp-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+
+.amp-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.amp-name {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  font-family: var(--font-sans);
+}
+
+.before-after {
+  display: grid;
+  grid-template-columns: 1fr 32px 1fr;
+  align-items: start;
+  gap: 8px;
+}
+
+@media (max-width: 560px) {
+  .before-after {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .ba-arrow { display: none; }
+}
+
+.ba-col-label {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 500;
+  margin-bottom: 10px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.ba-before-label {
+  color: var(--text-tertiary);
+  background: var(--bg-tertiary);
+}
+
+.ba-after-label {
+  color: var(--text-success);
+  background: var(--bg-success);
+}
+
+.ba-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 32px;
+  color: var(--gold);
+  font-size: 18px;
+}
+
+.ba-item {
+  font-size: 12px;
+  color: var(--text-secondary);
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-tertiary);
+  line-height: 1.5;
+}
+
+.ba-item:last-child { border-bottom: none; }
+
+.ba-item.highlight {
+  color: var(--text-success);
+  font-weight: 500;
+}
+
+/* Workflow Strip */
+.workflow-section { margin-bottom: 2rem; }
+
+.workflow-strip {
+  display: flex;
+  align-items: stretch;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-tertiary);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.wf-step {
+  flex: 1;
+  padding: 14px 12px;
+  text-align: center;
+  border-right: 1px solid var(--border-tertiary);
+  transition: all 0.2s;
+}
+
+.wf-step:last-child { border-right: none; }
+
+.wf-num {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  margin-bottom: 4px;
+}
+
+.wf-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.wf-sub {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  margin-top: 3px;
+}
+
+.wf-step.wf-active {
+  background: var(--bg-success);
+}
+
+.wf-step.wf-active .wf-label { color: var(--text-success); }
+.wf-step.wf-active .wf-num,
+.wf-step.wf-active .wf-sub { color: var(--text-success); opacity: 0.8; }
+
+/* Role Card */
+.role-card {
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-success);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 520px) {
+  .role-card { grid-template-columns: 1fr; }
+}
+
+.role-title-tag {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-success);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.role-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.3;
+  margin-bottom: 10px;
+}
+
+.role-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.role-badge {
+  background: var(--bg-success);
+  border: 1px solid var(--border-success);
+  border-radius: 12px;
+  padding: 14px 18px;
+  text-align: center;
+  min-width: 90px;
+}
+
+.rb-icon { font-size: 26px; margin-bottom: 6px; }
+.rb-label {
+  font-size: 10px;
+  color: var(--text-success);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1.4;
+}
+
+/* Pills */
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.pill {
+  font-size: 10px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-weight: 500;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-tertiary);
+}
+
+/* Manifesto */
+.manifesto {
+  background: var(--bg-secondary);
+  border-left: 3px solid var(--gold);
+  border-radius: 0 12px 12px 0;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.manifesto-text {
+  font-size: 15px;
+  color: var(--text-primary);
+  line-height: 1.9;
+  font-family: var(--font-sans);
+}
+
+.manifesto-text strong {
+  font-weight: 600;
+  color: var(--gold);
+}
+
+/* Footer */
+.seal-footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-tertiary);
+  flex-wrap: wrap;
+}
+
+.seal-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-success);
+  flex-shrink: 0;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.seal-hash {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.seal-link {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--gold);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.seal-link:hover { text-decoration: underline; }
+
+/* Back Button */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+  text-decoration: none;
+  margin-bottom: 1rem;
+  transition: color 0.2s;
+}
+
+.back-link:hover { color: var(--gold); }
+</style>
+</head>
+<body>
+
+<!-- Top Controls -->
+<div class="top-controls">
+  <div class="lang-toggle">
+    <button class="lang-btn" data-lang="pt" onclick="setLang('pt')">PT</button>
+    <button class="lang-btn" data-lang="de" onclick="setLang('de')">DE</button>
+    <button class="lang-btn active" data-lang="en" onclick="setLang('en')">EN</button>
+  </div>
+  <button class="toggle-btn" id="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-icon">☀</span>
+  </button>
+</div>
+
+<div class="w-root">
+  <a href="/enterprise/" class="back-link">
+    <span>←</span>
+    <span data-i18n="back">Back to Dashboard</span>
+  </a>
+
+  <div class="w-banner">
+    <span class="w-tag">W-Enterprise-001</span>
+    <span class="w-title">capacity amplifier module</span>
+    <span class="w-version">§160 · v1.0</span>
+  </div>
+
+  <h1 class="headline" data-i18n="headline">Capacity Amplifier</h1>
+  <p class="subline" data-i18n="subline">W-Enterprise-001 does not replace specialists. It gives normal professionals the ability to work with verifiable systems.</p>
+
+  <div class="section-label" data-i18n="selectProfile">— select profile to see amplification</div>
+
+  <div class="profiles-grid">
+    <div class="profile-card active" onclick="selectProfile(0)" id="card-0">
+      <div class="profile-icon icon-blue">DR</div>
+      <div class="profile-role" data-i18n="profile1Label">Profile 1</div>
+      <div class="profile-name" data-i18n="profile1Name">Digital Risk / Compliance Translator</div>
+    </div>
+    <div class="profile-card" onclick="selectProfile(1)" id="card-1">
+      <div class="profile-icon icon-amber">TP</div>
+      <div class="profile-role" data-i18n="profile2Label">Profile 2</div>
+      <div class="profile-name" data-i18n="profile2Name">Technical Product / Systems Owner</div>
+    </div>
+    <div class="profile-card" onclick="selectProfile(2)" id="card-2">
+      <div class="profile-icon icon-teal">IA</div>
+      <div class="profile-role" data-i18n="profile3Label">Profile 3</div>
+      <div class="profile-name" data-i18n="profile3Name">Internal Auditor (new type)</div>
+    </div>
+  </div>
+
+  <div class="amplifier-panel">
+    <div class="amp-header">
+      <span class="w-tag" id="amp-tag">Profile 1</span>
+      <span class="amp-label" data-i18n="ampLabel">— W-Enterprise amplification</span>
+    </div>
+    <div class="amp-name" id="amp-name">Digital Risk / Compliance Translator</div>
+    <div class="before-after">
+      <div class="ba-col">
+        <span class="ba-col-label ba-before-label" data-i18n="beforeLabel">Today, without WINDI</span>
+        <div id="ba-before"></div>
+      </div>
+      <div class="ba-arrow">→</div>
+      <div class="ba-col">
+        <span class="ba-col-label ba-after-label" data-i18n="afterLabel">With W-Enterprise-001</span>
+        <div id="ba-after"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="workflow-section">
+    <div class="section-label" data-i18n="workflowLabel">— verifiable workflow</div>
+    <div class="workflow-strip">
+      <div class="wf-step">
+        <div class="wf-num">01</div>
+        <div class="wf-label" data-i18n="wf1Label">decision</div>
+        <div class="wf-sub" data-i18n="wf1Sub">human intent</div>
+      </div>
+      <div class="wf-step">
+        <div class="wf-num">02</div>
+        <div class="wf-label" data-i18n="wf2Label">validation</div>
+        <div class="wf-sub">I9 gate</div>
+      </div>
+      <div class="wf-step wf-active">
+        <div class="wf-num">03</div>
+        <div class="wf-label">seal</div>
+        <div class="wf-sub">SHA-256 + ledger</div>
+      </div>
+      <div class="wf-step wf-active">
+        <div class="wf-num">04</div>
+        <div class="wf-label" data-i18n="wf4Label">proof</div>
+        <div class="wf-sub" data-i18n="wf4Sub">immediate · verifiable</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="role-card">
+    <div>
+      <div class="role-title-tag" data-i18n="roleTag">— new official role</div>
+      <div class="role-title">Operator of Verifiable Systems</div>
+      <div class="role-desc" data-i18n="roleDesc">Professional who navigates regulatory complexity with a system that transforms every action into verifiable evidence. Doesn't need to know everything — needs to know how to ask, trust proof, and act with sovereignty.</div>
+      <div class="pills">
+        <span class="pill">EU AI Act · Art. 14</span>
+        <span class="pill">DORA compliant</span>
+        <span class="pill">PHO certified</span>
+        <span class="pill">Ledger-native</span>
+        <span class="pill">Audit-ready</span>
+      </div>
+    </div>
+    <div class="role-badge">
+      <div class="rb-icon">🛡</div>
+      <div class="rb-label">OVS<br>Certified</div>
+    </div>
+  </div>
+
+  <div class="manifesto">
+    <div class="manifesto-text" data-i18n="manifesto">
+      <strong>The future of digital risk is not hiring better experts.</strong><br>
+      It's giving normal operators the ability to work with provable systems.<br><br>
+      <strong>AI processes. Human decides. WINDI guarantees.</strong>
+    </div>
+  </div>
+
+  <div class="seal-footer">
+    <div class="seal-dot"></div>
+    <span class="seal-hash">W-ENTERPRISE-001 · CAPACITY-AMPLIFIER · §160</span>
+    <a href="https://windi-domain.com/enterprise/" class="seal-link">
+      windi-domain.com/enterprise ↗
+    </a>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// i18n TRANSLATIONS
+// ═══════════════════════════════════════════════════════════
+const i18n = {
+  en: {
+    back: "Back to Dashboard",
+    headline: "Capacity Amplifier",
+    subline: "W-Enterprise-001 does not replace specialists. It gives normal professionals the ability to work with verifiable systems.",
+    selectProfile: "— select profile to see amplification",
+    profile1Label: "Profile 1",
+    profile1Name: "Digital Risk / Compliance Translator",
+    profile2Label: "Profile 2",
+    profile2Name: "Technical Product / Systems Owner",
+    profile3Label: "Profile 3",
+    profile3Name: "Internal Auditor (new type)",
+    ampLabel: "— W-Enterprise amplification",
+    beforeLabel: "Today, without WINDI",
+    afterLabel: "With W-Enterprise-001",
+    workflowLabel: "— verifiable workflow",
+    wf1Label: "decision",
+    wf1Sub: "human intent",
+    wf2Label: "validation",
+    wf4Label: "proof",
+    wf4Sub: "immediate · verifiable",
+    roleTag: "— new official role",
+    roleDesc: "Professional who navigates regulatory complexity with a system that transforms every action into verifiable evidence. Doesn't need to know everything — needs to know how to ask, trust proof, and act with sovereignty.",
+    manifesto: "<strong>The future of digital risk is not hiring better experts.</strong><br>It's giving normal operators the ability to work with provable systems.<br><br><strong>AI processes. Human decides. WINDI guarantees.</strong>"
+  },
+  de: {
+    back: "Zurück zum Dashboard",
+    headline: "Kapazitätsverstärker",
+    subline: "W-Enterprise-001 ersetzt keine Spezialisten. Es gibt normalen Fachleuten die Fähigkeit, mit verifizierbaren Systemen zu arbeiten.",
+    selectProfile: "— Profil auswählen für Verstärkung",
+    profile1Label: "Profil 1",
+    profile1Name: "Digital Risk / Compliance Übersetzer",
+    profile2Label: "Profil 2",
+    profile2Name: "Technical Product / Systems Owner",
+    profile3Label: "Profil 3",
+    profile3Name: "Interner Prüfer (neuer Typ)",
+    ampLabel: "— W-Enterprise Verstärkung",
+    beforeLabel: "Heute, ohne WINDI",
+    afterLabel: "Mit W-Enterprise-001",
+    workflowLabel: "— verifizierbarer Arbeitsablauf",
+    wf1Label: "Entscheidung",
+    wf1Sub: "menschliche Absicht",
+    wf2Label: "Validierung",
+    wf4Label: "Beweis",
+    wf4Sub: "sofort · verifizierbar",
+    roleTag: "— neue offizielle Rolle",
+    roleDesc: "Fachmann, der regulatorische Komplexität mit einem System navigiert, das jede Aktion in verifizierbare Beweise umwandelt. Muss nicht alles wissen — muss wissen, wie man fragt, Beweisen vertraut und souverän handelt.",
+    manifesto: "<strong>Die Zukunft des digitalen Risikos besteht nicht darin, bessere Experten einzustellen.</strong><br>Es geht darum, normalen Operatoren die Fähigkeit zu geben, mit beweisbaren Systemen zu arbeiten.<br><br><strong>KI verarbeitet. Mensch entscheidet. WINDI garantiert.</strong>"
+  },
+  pt: {
+    back: "Voltar ao Dashboard",
+    headline: "Amplificador de Capacidade",
+    subline: "W-Enterprise-001 não substitui especialistas. Dá a profissionais normais a capacidade de trabalhar com sistemas verificáveis.",
+    selectProfile: "— seleciona o perfil para ver a amplificação",
+    profile1Label: "Perfil 1",
+    profile1Name: "Digital Risk / Compliance Translator",
+    profile2Label: "Perfil 2",
+    profile2Name: "Technical Product / Systems Owner",
+    profile3Label: "Perfil 3",
+    profile3Name: "Auditor Interno (novo tipo)",
+    ampLabel: "— amplificação W-Enterprise",
+    beforeLabel: "Hoje, sem WINDI",
+    afterLabel: "Com W-Enterprise-001",
+    workflowLabel: "— fluxo de trabalho verificável",
+    wf1Label: "decisão",
+    wf1Sub: "intenção humana",
+    wf2Label: "validação",
+    wf4Label: "prova",
+    wf4Sub: "imediata · verificável",
+    roleTag: "— novo cargo oficial",
+    roleDesc: "Profissional que navega complexidade regulatória com um sistema que transforma cada ação em evidência verificável. Não precisa saber tudo — precisa saber perguntar, confiar em prova e atuar com soberania.",
+    manifesto: "<strong>O futuro do risco digital não é contratar melhores especialistas.</strong><br>É dar a operadores normais a capacidade de trabalhar com sistemas prováveis.<br><br><strong>IA processa. Humano decide. WINDI garante.</strong>"
+  }
+};
+
+// ═══════════════════════════════════════════════════════════
+// PROFILE DATA (TRILINGUAL)
+// ═══════════════════════════════════════════════════════════
+const profiles = {
+  en: [
+    {
+      tag: "Profile 1",
+      name: "Digital Risk / Compliance Translator",
+      before: [
+        "understands frameworks (DORA, EU AI Act)",
+        "speaks with business and writes policies",
+        "depends on narrative and reports",
+        "responds to auditor with interpretation"
+      ],
+      after: [
+        "validates real execution — not just policy",
+        "generates verifiable evidence in ledger",
+        "responds to auditor with direct proof",
+        "seal + hash = immediate compliance"
+      ]
+    },
+    {
+      tag: "Profile 2",
+      name: "Technical Product / Systems Owner",
+      before: [
+        "implements features and thinks about performance",
+        "governance is friction, not design",
+        "compliance = separate department",
+        "audit happens after delivery"
+      ],
+      after: [
+        "governance embedded in execution",
+        "every action is auditable by design",
+        "speaks with compliance without friction",
+        "I9 gate integrated in workflow"
+      ]
+    },
+    {
+      tag: "Profile 3",
+      name: "Internal Auditor (new type)",
+      before: [
+        "collects manual and fragmented evidence",
+        "depends on reports and reconstructions",
+        "high uncertainty about what really happened",
+        "audit cycle time: weeks"
+      ],
+      after: [
+        "verifies directly in ledger",
+        "audits real events — not reconstructions",
+        "uncertainty drastically reduced",
+        "immediate proof · SHA-256 verifiable"
+      ]
+    }
+  ],
+  de: [
+    {
+      tag: "Profil 1",
+      name: "Digital Risk / Compliance Übersetzer",
+      before: [
+        "versteht Frameworks (DORA, EU AI Act)",
+        "spricht mit Business und schreibt Policies",
+        "abhängig von Narrativ und Berichten",
+        "antwortet Prüfer mit Interpretation"
+      ],
+      after: [
+        "validiert echte Ausführung — nicht nur Policy",
+        "generiert verifizierbare Beweise im Ledger",
+        "antwortet Prüfer mit direktem Beweis",
+        "Seal + Hash = sofortige Compliance"
+      ]
+    },
+    {
+      tag: "Profil 2",
+      name: "Technical Product / Systems Owner",
+      before: [
+        "implementiert Features und denkt an Performance",
+        "Governance ist Reibung, nicht Design",
+        "Compliance = separate Abteilung",
+        "Audit passiert nach Lieferung"
+      ],
+      after: [
+        "Governance eingebettet in Ausführung",
+        "jede Aktion ist prüfbar by Design",
+        "spricht mit Compliance ohne Reibung",
+        "I9 Gate integriert im Workflow"
+      ]
+    },
+    {
+      tag: "Profil 3",
+      name: "Interner Prüfer (neuer Typ)",
+      before: [
+        "sammelt manuelle und fragmentierte Beweise",
+        "abhängig von Berichten und Rekonstruktionen",
+        "hohe Unsicherheit über was wirklich passiert ist",
+        "Audit-Zykluszeit: Wochen"
+      ],
+      after: [
+        "verifiziert direkt im Ledger",
+        "prüft echte Events — keine Rekonstruktionen",
+        "Unsicherheit drastisch reduziert",
+        "sofortiger Beweis · SHA-256 verifizierbar"
+      ]
+    }
+  ],
+  pt: [
+    {
+      tag: "Perfil 1",
+      name: "Digital Risk / Compliance Translator",
+      before: [
+        "entende frameworks (DORA, EU AI Act)",
+        "fala com negócio e escreve políticas",
+        "depende de narrativa e relatório",
+        "responde auditor com interpretação"
+      ],
+      after: [
+        "valida execução real — não só policy",
+        "gera evidência verificável no ledger",
+        "responde auditor com prova directa",
+        "seal + hash = compliance imediata"
+      ]
+    },
+    {
+      tag: "Perfil 2",
+      name: "Technical Product / Systems Owner",
+      before: [
+        "implementa features e pensa em performance",
+        "governança é fricção, não design",
+        "compliance = departamento separado",
+        "auditoria acontece depois da entrega"
+      ],
+      after: [
+        "governança embutida na execução",
+        "cada acção é auditável by design",
+        "fala com compliance sem fricção",
+        "I9 gate integrado no workflow"
+      ]
+    },
+    {
+      tag: "Perfil 3",
+      name: "Auditor Interno (novo tipo)",
+      before: [
+        "colecta evidência manual e fragmentada",
+        "depende de relatórios e reconstruções",
+        "incerteza alta sobre o que realmente aconteceu",
+        "tempo de ciclo de auditoria: semanas"
+      ],
+      after: [
+        "verifica directamente no ledger",
+        "audita eventos reais — não reconstruções",
+        "incerteza drasticamente reduzida",
+        "prova imediata · SHA-256 verificável"
+      ]
+    }
+  ]
+};
+
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+let currentLang = localStorage.getItem('windi-lang') || 'en';
+let currentTheme = localStorage.getItem('windi-theme') || 'noir';
+let currentProfile = 0;
+
+// ═══════════════════════════════════════════════════════════
+// THEME
+// ═══════════════════════════════════════════════════════════
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  const icon = document.getElementById('theme-icon');
+  icon.textContent = theme === 'noir' ? '☀' : '☽';
+  localStorage.setItem('windi-theme', theme);
+  currentTheme = theme;
+}
+
+function toggleTheme() {
+  const newTheme = currentTheme === 'noir' ? 'klar' : 'noir';
+  applyTheme(newTheme);
+}
+
+// ═══════════════════════════════════════════════════════════
+// LANGUAGE
+// ═══════════════════════════════════════════════════════════
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('windi-lang', lang);
+
+  // Update toggle buttons
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === lang);
+  });
+
+  // Update all i18n elements
+  const translations = i18n[lang];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (translations[key]) {
+      if (key === 'manifesto') {
+        el.innerHTML = translations[key];
+      } else {
+        el.textContent = translations[key];
+      }
+    }
+  });
+
+  // Update profile cards
+  const p = profiles[lang];
+  document.querySelector('#card-0 .profile-name').textContent = p[0].name;
+  document.querySelector('#card-1 .profile-name').textContent = p[1].name;
+  document.querySelector('#card-2 .profile-name').textContent = p[2].name;
+
+  // Re-render current profile
+  selectProfile(currentProfile);
+}
+
+// ═══════════════════════════════════════════════════════════
+// PROFILE SELECTION
+// ═══════════════════════════════════════════════════════════
+function selectProfile(idx) {
+  currentProfile = idx;
+
+  // Update card states
+  for (let i = 0; i < 3; i++) {
+    document.getElementById('card-' + i).classList.toggle('active', i === idx);
+  }
+
+  const p = profiles[currentLang][idx];
+  document.getElementById('amp-tag').textContent = p.tag;
+  document.getElementById('amp-name').textContent = p.name;
+
+  document.getElementById('ba-before').innerHTML = p.before
+    .map(t => `<div class="ba-item">${t}</div>`)
+    .join('');
+
+  document.getElementById('ba-after').innerHTML = p.after
+    .map(t => `<div class="ba-item highlight">${t}</div>`)
+    .join('');
+}
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  applyTheme(currentTheme);
+  setLang(currentLang);
+  selectProfile(0);
+});
+</script>
+
+</body>
+</html>
