@@ -6,6 +6,49 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 12 Abr 2026 (Noite) — §160 DID Universal Frontend Integration
+
+**Commit:** `b962bb7`
+**Scope:** DID Universal no W-Enterprise-001 Dashboard
+**CLAUDE.md:** v2.2.4
+
+### §160 — DID Universal Frontend (12 Apr 2026 · 22:01 CEST)
+
+**Evangelho:** ALMA → DID → CÉREBRO → LEDGER → MUNDO
+
+**Implementação das Três Leis no Frontend:**
+
+| Lei | Componente | Função |
+|-----|------------|--------|
+| I | `#wallet-overlay` | WalletBanner bloqueia sem DID válido |
+| II | `submitPHO()` | Inclui `officer_did` em receipts Ledger |
+| III | `restoreContext()` | Restaura histórico ao regressar |
+
+**Ficheiro:** `/opt/windi/w-enterprise-001/static/index.html` (+376 linhas)
+
+**Novos Componentes UI:**
+- WalletBanner overlay (z-index: 200) — input DID + Evangelho + passos
+- Session bar — DID activo + tier + status Berçário + logout
+- VERA greeting banner — saudação personalizada
+- DID_STATE object — state da sessão
+
+**Status Berçário:**
+- `nasceu` — Primeira vez (total_actions = 0)
+- `entrou` — Novo DID ou primeiro login
+- `voltou` — Mesmo DID a regressar
+
+**sessionStorage:** `windi_enterprise_did`
+
+**Endpoints Usados:**
+- `GET /enterprise/vera/did/validate/{did}` — validação DID
+- `GET /enterprise/vera/did/context/{did}` — Lei III restauração
+
+**Graceful Degradation:**
+- Se W-SESSION-001 offline → validação local para DIDs com formato correcto
+- Status mostrado como "Validação local · Ledger offline"
+
+---
+
 ## § SESSÃO 12 Abr 2026 — §159 W-ENTERPRISE-001 DESK v4.1 Complete
 
 **Commit:** `9f616d7`

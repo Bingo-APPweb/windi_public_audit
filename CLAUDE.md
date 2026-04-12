@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.2.3
-**Sealed:** 2026-04-12 · §159 W-ENTERPRISE-001 DESK v4.1 Complete
+**Version:** 2.2.4
+**Sealed:** 2026-04-12 · §160 DID Universal Frontend Integration
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -585,6 +585,28 @@ Piece Panel (slide-up via ⚙):
 **Conceito:** AI Compliance Secretary. Não decide — ilumina o caminho até à decisão humana.
 
 **VERA Endpoints:** `/vera/health` · `/vera/brief` · `/vera/chat` · `/vera/routing/route` · `/vera/instructor/ask`
+
+### §160 — DID Universal Frontend Integration (12 Apr 2026)
+
+**Commit:** `b962bb7` · **File:** `static/index.html` (+376 linhas)
+**Conceito:** DID Universal no dashboard W-Enterprise-001. Sem DID = sem acesso.
+
+**Três Leis no Frontend:**
+| Lei | Componente | Função |
+|-----|------------|--------|
+| I | WalletBanner overlay | Bloqueia dashboard sem DID válido |
+| II | submitPHO() | Inclui `officer_did` em todos os receipts |
+| III | restoreContext() | Restaura histórico ao regressar |
+
+**UI Components:**
+- `#wallet-overlay` — Full-screen DID input com Evangelho WINDI
+- `#session-bar` — DID activo + tier + status Berçário + logout
+- `#vera-greeting` — VERA greeting personalizado por contexto
+- `DID_STATE` — State object para sessão activa
+
+**Status Berçário:** `nasceu` (primeira vez) · `entrou` (novo DID) · `voltou` (mesmo DID)
+
+**sessionStorage:** `windi_enterprise_did`
 
 ### DASH v4.1 — 9 Prateleiras Trilíngue
 
