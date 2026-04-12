@@ -504,6 +504,113 @@ body {
   font-family: var(--fm); font-size: 9px; color: var(--ok); letter-spacing: 0.06em;
 }
 
+/* ─── DID UNIVERSAL: WALLET BANNER OVERLAY ─── */
+#wallet-overlay {
+  position: fixed; inset: 0;
+  background: var(--noir);
+  z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+  padding: 1.5rem;
+}
+#wallet-overlay.hidden { display: none; }
+
+.wb-card {
+  background: var(--noir2);
+  border: 1px solid var(--borderS);
+  border-radius: 4px;
+  padding: 2rem;
+  max-width: 480px;
+  width: 100%;
+  text-align: center;
+}
+.wb-glyph { font-size: 36px; margin-bottom: 1rem; color: var(--gold); }
+.wb-logo { font-family: var(--fm); font-size: 10px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; margin-bottom: 1rem; }
+.wb-title { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.wb-sub { font-size: 13px; color: var(--muted); margin-bottom: 1.5rem; line-height: 1.6; }
+.wb-evangelho {
+  font-family: var(--fm); font-size: 11px; font-style: italic;
+  color: var(--gold); background: var(--goldBg);
+  border: 1px solid var(--goldBd); border-radius: 4px;
+  padding: 12px 16px; margin-bottom: 1.5rem; line-height: 1.6;
+}
+.wb-status {
+  font-family: var(--fm); font-size: 11px;
+  padding: 8px 14px; border-radius: 4px; margin-bottom: 12px;
+  display: none;
+}
+.wb-status.checking { background: var(--warnB); color: var(--warn); display: block; }
+.wb-status.success { background: var(--okB); color: var(--ok); display: block; }
+.wb-status.fail { background: var(--dangerB); color: var(--danger); display: block; }
+
+.wb-input-wrap { margin-bottom: 12px; text-align: left; }
+.wb-label { font-family: var(--fm); font-size: 9px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; display: block; }
+.wb-input {
+  width: 100%; font-family: var(--fm); font-size: 12px;
+  padding: 10px 12px; border: 1px solid var(--borderS);
+  border-radius: 4px; background: var(--noir3); color: var(--text);
+  outline: none; transition: border-color 0.15s;
+}
+.wb-input:focus { border-color: var(--gold); }
+.wb-input.error { border-color: var(--danger); }
+.wb-error { font-family: var(--fm); font-size: 10px; color: var(--danger); margin-top: 4px; display: none; }
+.wb-btn {
+  width: 100%; font-family: var(--fm); font-size: 12px; letter-spacing: 1px;
+  padding: 12px; background: var(--gold); color: var(--btn-gold-text); border: none;
+  border-radius: 4px; cursor: pointer; transition: opacity 0.15s; margin-bottom: 10px;
+}
+.wb-btn:hover { opacity: 0.88; }
+.wb-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.wb-create {
+  font-family: var(--fm); font-size: 11px; color: var(--gold);
+  text-decoration: none; display: block; padding: 4px;
+}
+.wb-create:hover { text-decoration: underline; }
+
+.wb-steps { text-align: left; margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 1rem; }
+.wb-steps-title { font-family: var(--fm); font-size: 9px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+.wb-step { font-size: 11px; color: var(--muted); padding: 3px 0; display: flex; gap: 8px; align-items: flex-start; }
+.wb-step-num { font-family: var(--fm); font-size: 10px; color: var(--gold); font-weight: 500; flex-shrink: 0; margin-top: 1px; }
+
+/* ─── DID UNIVERSAL: SESSION BAR ─── */
+#session-bar {
+  background: var(--noir3);
+  border-bottom: 1px solid var(--border);
+  padding: 6px 1.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 8px;
+  display: none;
+}
+#session-bar.active { display: flex; }
+.sb-did { font-family: var(--fm); font-size: 10px; color: var(--muted); }
+.sb-did span { color: var(--text); font-weight: 500; }
+.sb-badges { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.sb-badge { font-family: var(--fm); font-size: 9px; padding: 2px 7px; border-radius: 3px; }
+.sb-nasceu { background: var(--okB); color: var(--ok); }
+.sb-entrou { background: var(--goldBg); color: var(--gold); }
+.sb-voltou { background: rgba(139,92,246,0.12); color: rgb(139,92,246); }
+.sb-trust { background: var(--warnB); color: var(--warn); }
+.sb-logout {
+  font-family: var(--fm); font-size: 10px; color: var(--muted);
+  cursor: pointer; padding: 2px 6px; border-radius: 3px; background: none; border: none;
+}
+.sb-logout:hover { color: var(--danger); background: var(--dangerB); }
+
+/* ─── VERA GREETING BANNER ─── */
+#vera-greeting {
+  background: var(--goldBg);
+  border: 1px solid var(--goldBd);
+  border-radius: 4px;
+  padding: 14px 18px;
+  margin-bottom: 1.5rem;
+  display: none;
+}
+#vera-greeting.active { display: block; }
+.vg-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.vg-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); flex-shrink: 0; animation: pulse 2s infinite; }
+.vg-label { font-family: var(--fm); font-size: 10px; color: var(--gold); letter-spacing: 1px; text-transform: uppercase; }
+.vg-text { font-size: 13px; color: var(--text); line-height: 1.6; }
+.vg-next { font-family: var(--fm); font-size: 11px; color: var(--gold); margin-top: 6px; }
+
 @media (max-width: 900px) {
   .sidebar { display: none; }
   .stats { grid-template-columns: 1fr 1fr; }
@@ -514,6 +621,52 @@ body {
 </style>
 </head>
 <body>
+
+<!-- ═══ DID UNIVERSAL: WALLET BANNER OVERLAY ═══ -->
+<div id="wallet-overlay">
+  <div class="wb-card">
+    <div class="wb-glyph">⬡</div>
+    <div class="wb-logo">W-Enterprise-001 · WINDI</div>
+    <h1 class="wb-title">A tua identidade soberana</h1>
+    <p class="wb-sub">Para aceder ao W-Enterprise precisas do teu DID WINDI.<br>É a tua chave permanente e verificável.</p>
+    <div class="wb-evangelho">
+      "WINDI é para todos. Só funciona com DID."<br>
+      "Um cérebro não funciona sem Alma. A Alma entra pelo DID."
+    </div>
+    <div class="wb-status" id="wb-status"></div>
+    <div class="wb-input-wrap">
+      <label class="wb-label" for="did-input">O teu DID WINDI</label>
+      <input class="wb-input" id="did-input" type="text"
+        placeholder="did:windi:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        autocomplete="off" spellcheck="false">
+      <div class="wb-error" id="wb-error">DID inválido ou expirado. Verifica e tenta novamente.</div>
+    </div>
+    <button class="wb-btn" id="wb-enter-btn" onclick="enterWithDID()">
+      ENTRAR COM DID ↗
+    </button>
+    <a class="wb-create" href="https://windi-domain.com/wallet/" target="_blank">
+      Ainda não tens DID? Cria a tua identidade soberana →
+    </a>
+    <div class="wb-steps">
+      <div class="wb-steps-title">Como começar</div>
+      <div class="wb-step"><span class="wb-step-num">1</span><span>Acede a windi-domain.com/wallet/ e cria o teu DID</span></div>
+      <div class="wb-step"><span class="wb-step-num">2</span><span>Guarda o teu DID — é a tua chave permanente</span></div>
+      <div class="wb-step"><span class="wb-step-num">3</span><span>Cola o DID acima e entra no W-Enterprise</span></div>
+      <div class="wb-step"><span class="wb-step-num">4</span><span>VERA reconhece-te e guia-te por cada módulo</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DID SESSION BAR ═══ -->
+<div id="session-bar">
+  <div class="sb-did">DID activo: <span id="sb-did-display">—</span></div>
+  <div class="sb-badges">
+    <span class="sb-badge sb-trust" id="sb-trust">SEED</span>
+    <span class="sb-badge sb-nasceu" id="sb-status-badge">nasceu</span>
+    <span class="sb-badge" style="background:var(--noir4);color:var(--muted)" id="sb-history">0 acções</span>
+    <button class="sb-logout" onclick="logout()">sair</button>
+  </div>
+</div>
 
 <!-- TOPBAR -->
 <div class="topbar">
@@ -643,6 +796,18 @@ body {
         <div class="stat-val" id="stat-ledger">47</div>
         <div class="stat-sub">Immutable · Verified</div>
       </div>
+    </div>
+
+    <!-- VERA GREETING (shows after DID auth) -->
+    <div id="vera-greeting">
+      <div class="vg-header">
+        <div class="vg-dot"></div>
+        <div class="vg-label">VERA · Sovereign Instructor · Online</div>
+      </div>
+      <div class="vg-text" id="vera-greeting-text">
+        Bem-vindo ao W-Enterprise. Estou aqui para te guiar.
+      </div>
+      <div class="vg-next" id="vera-next-step"></div>
     </div>
 
     <!-- DECISIONS TABLE -->
@@ -786,6 +951,193 @@ body {
 </div>
 
 <script>
+// ═══════════════════════════════════════════════════════════════════════════
+//  DID UNIVERSAL — AS TRÊS LEIS DA SEMENTE
+//  EVANGELHO WINDI: ALMA → DID → CÉREBRO → LEDGER → MUNDO
+//  Lei I:   Existência antes de Acção (WalletBanner mode)
+//  Lei II:  Toda Acção gera Rastro DID (bind_action_to_did)
+//  Lei III: Sistema lê Histórico do DID (restore_did_context)
+// ═══════════════════════════════════════════════════════════════════════════
+
+const DID_STATE = {
+  did: null,
+  tier: 'SEED',
+  status: null, // 'nasceu' | 'entrou' | 'voltou'
+  history: { total_actions: 0, modules_used: [] },
+  verified: false
+};
+
+// ─── LEI I: WALLET BANNER ───
+function checkExistingSession() {
+  const savedDID = sessionStorage.getItem('windi_enterprise_did');
+  if (savedDID) {
+    // Returning user → restore context (Lei III)
+    DID_STATE.status = 'voltou';
+    restoreContext(savedDID);
+  }
+  // No DID → WalletBanner stays visible (Lei I)
+}
+
+async function enterWithDID() {
+  const did = document.getElementById('did-input').value.trim();
+  const statusEl = document.getElementById('wb-status');
+  const inputEl = document.getElementById('did-input');
+  const errorEl = document.getElementById('wb-error');
+  const btn = document.getElementById('wb-enter-btn');
+
+  if (!did || did.length < 10) {
+    inputEl.classList.add('error');
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  inputEl.classList.remove('error');
+  errorEl.style.display = 'none';
+  statusEl.className = 'wb-status checking';
+  statusEl.textContent = 'A verificar identidade...';
+  btn.disabled = true;
+
+  try {
+    const resp = await fetch(`/enterprise/vera/did/validate/${encodeURIComponent(did)}`);
+    const data = await resp.json();
+
+    if (data.status === 'success' && data.validation && data.validation.valid) {
+      statusEl.className = 'wb-status success';
+      statusEl.textContent = 'DID válido · A carregar contexto...';
+
+      DID_STATE.did = did;
+      DID_STATE.tier = data.validation.tier || 'SEED';
+      DID_STATE.verified = true;
+
+      // Check if first time or returning
+      const previousDID = sessionStorage.getItem('windi_enterprise_did');
+      if (!previousDID) {
+        DID_STATE.status = 'nasceu'; // First time ever
+      } else if (previousDID === did) {
+        DID_STATE.status = 'voltou'; // Same DID returning
+      } else {
+        DID_STATE.status = 'entrou'; // Different DID
+      }
+
+      sessionStorage.setItem('windi_enterprise_did', did);
+
+      // Restore context (Lei III)
+      await restoreContext(did);
+
+      // Success animation
+      await sleep(800);
+      unlockDashboard();
+
+    } else {
+      statusEl.className = 'wb-status fail';
+      statusEl.textContent = data.validation?.error || 'DID inválido ou não encontrado';
+      btn.disabled = false;
+    }
+  } catch (e) {
+    // Graceful degradation: allow local validation
+    if (did.startsWith('did:windi:') && did.length > 20) {
+      statusEl.className = 'wb-status success';
+      statusEl.textContent = 'Validação local · Ledger offline';
+      DID_STATE.did = did;
+      DID_STATE.tier = 'SEED';
+      DID_STATE.verified = true;
+      DID_STATE.status = 'entrou';
+      sessionStorage.setItem('windi_enterprise_did', did);
+      await sleep(600);
+      unlockDashboard();
+    } else {
+      statusEl.className = 'wb-status fail';
+      statusEl.textContent = 'Erro de ligação. Tenta novamente.';
+      btn.disabled = false;
+    }
+  }
+}
+
+// ─── LEI III: RESTORE CONTEXT ───
+async function restoreContext(did) {
+  try {
+    const resp = await fetch(`/enterprise/vera/did/context/${encodeURIComponent(did)}`);
+    const data = await resp.json();
+
+    if (data.status === 'success' && data.context) {
+      const ctx = data.context;
+      DID_STATE.history = ctx.history || { total_actions: 0, modules_used: [] };
+      DID_STATE.tier = ctx.validation?.tier || 'SEED';
+
+      // Update status based on history
+      if (DID_STATE.history.total_actions === 0) {
+        DID_STATE.status = 'nasceu';
+      } else if (DID_STATE.status !== 'voltou') {
+        DID_STATE.status = 'entrou';
+      }
+
+      // Set VERA greeting
+      if (ctx.vera_greeting) {
+        const lang = localStorage.getItem('windi-lang') || 'en';
+        const greeting = ctx.vera_greeting[lang] || ctx.vera_greeting.en || ctx.vera_greeting.pt;
+        document.getElementById('vera-greeting-text').textContent = greeting;
+      }
+
+      if (ctx.recommended_next?.reason) {
+        const lang = localStorage.getItem('windi-lang') || 'en';
+        const next = ctx.recommended_next.reason[lang] || ctx.recommended_next.reason.en;
+        document.getElementById('vera-next-step').textContent = next;
+      }
+    }
+  } catch (e) {
+    console.log('[Lei III] Context restoration unavailable:', e.message);
+    // Continue with local state
+  }
+}
+
+function unlockDashboard() {
+  // Hide WalletBanner
+  document.getElementById('wallet-overlay').classList.add('hidden');
+
+  // Show session bar
+  const sessionBar = document.getElementById('session-bar');
+  sessionBar.classList.add('active');
+
+  // Update session bar
+  const shortDID = DID_STATE.did.length > 30
+    ? DID_STATE.did.substring(0, 20) + '...' + DID_STATE.did.slice(-8)
+    : DID_STATE.did;
+  document.getElementById('sb-did-display').textContent = shortDID;
+  document.getElementById('sb-trust').textContent = DID_STATE.tier;
+  document.getElementById('sb-history').textContent = `${DID_STATE.history.total_actions} acções`;
+
+  // Set status badge
+  const statusBadge = document.getElementById('sb-status-badge');
+  statusBadge.textContent = DID_STATE.status;
+  statusBadge.className = 'sb-badge sb-' + DID_STATE.status;
+
+  // Show VERA greeting
+  document.getElementById('vera-greeting').classList.add('active');
+
+  // Update user badge in topbar
+  const initials = DID_STATE.did.slice(-2).toUpperCase();
+  document.querySelector('.user-badge').textContent = initials;
+  document.querySelector('.topbar-user span').textContent = `DID Officer · ${DID_STATE.tier}`;
+}
+
+function logout() {
+  sessionStorage.removeItem('windi_enterprise_did');
+  DID_STATE.did = null;
+  DID_STATE.verified = false;
+  DID_STATE.status = null;
+
+  // Reset UI
+  document.getElementById('wallet-overlay').classList.remove('hidden');
+  document.getElementById('session-bar').classList.remove('active');
+  document.getElementById('vera-greeting').classList.remove('active');
+  document.getElementById('did-input').value = '';
+  document.getElementById('wb-status').className = 'wb-status';
+  document.getElementById('wb-enter-btn').disabled = false;
+}
+
+// Check session on load
+document.addEventListener('DOMContentLoaded', checkExistingSession);
+
 // ─── THEME TOGGLE ───
 function setTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
@@ -803,6 +1155,16 @@ function initTheme() {
 
 // Initialize theme immediately
 initTheme();
+
+// DID input Enter key handler
+document.addEventListener('DOMContentLoaded', () => {
+  const didInput = document.getElementById('did-input');
+  if (didInput) {
+    didInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') enterWithDID();
+    });
+  }
+});
 
 // ─── DATA ───
 const LEDGER_API = 'https://www.windi-domain.com/api/receipts';
@@ -897,14 +1259,17 @@ async function submitPHO() {
   const decision = document.getElementById('ap-decision').value;
   const note = document.getElementById('ap-note').value.trim();
 
+  // Lei II: Every action bound to DID
+  const officerDID = DID_STATE.did || 'anonymous';
+
   // Show loading
   document.getElementById('ap-actions').style.display = 'none';
   document.getElementById('approval-body').style.display = 'none';
   document.getElementById('ap-loading').classList.add('active');
 
-  // Compute hash client-side
+  // Compute hash client-side (includes DID for traceability)
   const now = new Date();
-  const payload = `${d.id}|${reviewer}|${decision}|${now.toISOString()}|${note}`;
+  const payload = `${d.id}|${officerDID}|${reviewer}|${decision}|${now.toISOString()}|${note}`;
   const hashHex = await sha256(payload);
   const shortHash = hashHex.substring(0, 8).toUpperCase();
   const receiptId = `WINDI-PHO-${now.toISOString().slice(0,10).replace(/-/g,'')}-${shortHash}`;
@@ -917,13 +1282,14 @@ async function submitPHO() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         id: receiptId,
-        actor: reviewer,
+        actor: officerDID, // Lei II: DID as actor for traceability
         app: 'W-ENTERPRISE-001',
         doc_name: d.title,
         doc_type: 'PHO_OVERSIGHT',
         content_hash: hashHex,
         governance_level: d.risk,
-        sge_score: d.sgeScore || 5.0
+        sge_score: d.sgeScore || 5.0,
+        metadata: { reviewer_name: reviewer, officer_did: officerDID } // Lei II
       })
     });
     if (resp.ok) {
@@ -955,6 +1321,12 @@ async function submitPHO() {
 
   // Store receipt
   lastReceipt = { d, reviewer, decision, note, hash: hashHex, receiptId: ledgerRef, ts: now };
+
+  // Lei II: Update DID action count in session
+  if (DID_STATE.verified) {
+    DID_STATE.history.total_actions++;
+    document.getElementById('sb-history').textContent = `${DID_STATE.history.total_actions} acções`;
+  }
 
   // Close approval, open receipt
   closePanel('approval-overlay');
