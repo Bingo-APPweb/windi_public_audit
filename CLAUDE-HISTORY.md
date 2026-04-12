@@ -6,6 +6,94 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 12 Abr 2026 — §157 VERA REGO v1.0 + DASH v4.1 Trilingual
+
+**Commit:** `359ebc6`
+**Scope:** VERA Constitutional Agent · DASH v4.1 · i18n PT/DE/EN · NOIR/KLAR
+**CLAUDE.md:** v2.2.1
+
+### §157 — VERA + DASH v4.1 Trilingual (12 Apr 2026)
+
+**Data:** 12 Abril 2026 · 13:00 CEST
+**Serviço:** W-ENTERPRISE-001 v3.1.0 · :8150
+**URLs:**
+- DASH: `windi-domain.com/enterprise/static/desk.html`
+- VERA: `windi-domain.com/enterprise/vera/health`
+
+### VERA — Verified Evidence Routing Agent
+
+**Ficheiro:** `vera_agent.py` (452 linhas)
+**Conceito:** AI Compliance Secretary. Não decide — ilumina o caminho até à decisão humana.
+**Constituição:** REGO v1.0 · 9 Invariantes (R1-R9)
+
+| ID | Nome | Descrição |
+|----|------|-----------|
+| R1 | Consciência do Desk | Conhece estado das 9 prateleiras em tempo real |
+| R2 | Ancoragem Legal | Cita artigos específicos (EU AI Act, GDPR, HGB) |
+| R3 | Não-Decisão | Orienta. O officer decide. Sempre. I9 activo. |
+| R4 | Rastreabilidade | Cada orientação pode ser selada como PHO evidence |
+| R5 | Adaptação ao Nível | TUTORIAL / BRIEFING / EXECUTIVO |
+| R6 | Alerta sem Pressão | Informa com clareza, sem urgência exagerada |
+| R7 | Explicação Completa | Cadeia legal completa quando pedido |
+| R8 | Falha Explícita | Nunca inventa artigos. I14 activo. |
+| R9 | Memória de Sessão | Lembra contexto durante a sessão |
+
+### VERA Endpoints
+
+| Endpoint | Método | Função |
+|----------|--------|--------|
+| `/vera/health` | GET | Liveness + REGO status |
+| `/vera/context` | GET | 9 shelves state (R1) |
+| `/vera/brief` | GET | Daily briefing (R1+R2+R5) |
+| `/vera/chat` | POST | Contextual Q&A (R1-R9) |
+| `/vera/seal-opinion` | POST | Seal guidance as PHO (R4) |
+
+### DASH v4.1 — 9 Prateleiras com i18n
+
+**Ficheiro:** `static/desk.html` (893 linhas)
+**i18n:** Trilingual PT/DE/EN com localStorage
+**Theme:** NOIR/KLAR toggle com CSS Variables
+
+### 9 Prateleiras (P01-P09)
+
+| ID | Nome PT | Nome DE | Nome EN |
+|----|---------|---------|---------|
+| P01 | Visão 360° | 360° Übersicht | 360° View |
+| P02 | Observações | Beobachtungen | Observations |
+| P03 | Fluxo 1LOD | 1LOD Stream | 1LOD Stream |
+| P04 | PHO Queue | PHO Queue | PHO Queue |
+| P05 | Documentos | Dokumente | Documents |
+| P06 | Consultas Jurídicas | Rechtsberatung | Legal Advisory |
+| P07 | Facturas | Rechnungen | Invoices |
+| P08 | PHO + Ledger | PHO + Ledger | PHO + Ledger |
+| P09 | REP | REP | REP |
+
+### Ficheiros Criados
+
+| Ficheiro | Linhas | Descrição |
+|----------|--------|-----------|
+| `main.py` | 504 | FastAPI + VERA router import |
+| `vera_agent.py` | 452 | REGO v1.0 constitutional agent |
+| `static/desk.html` | 893 | DASH v4.1 trilingual + NOIR/KLAR |
+
+**Total:** 1849 linhas adicionadas
+
+### Nginx Path Resolution
+
+**Problema resolvido:** Router prefix `/enterprise/vera` → 404 via nginx
+**Causa:** Nginx strips `/enterprise/` prefix when proxying to :8150
+**Solução:** Router uses `/vera` prefix (nginx adds `/enterprise/` back)
+
+### Invariantes Aplicados
+
+- **I1** — Soberania Humana (W-ENTERPRISE-001 sempre requer human approval)
+- **I9** — VERA nunca decide, apenas ilumina (R3 = I9)
+- **I11** — Seal guidance preservado no Ledger (R4)
+- **I12** — Trilingual completo (PT/DE/EN)
+- **I14** — VERA R8 = I14 (nunca inventa artigos)
+
+---
+
 ## § SESSÃO 12 Abr 2026 — §156 W-ENTERPRISE-001 User Manual + NOIR/KLAR
 
 **Commit:** `7f8e5af`
