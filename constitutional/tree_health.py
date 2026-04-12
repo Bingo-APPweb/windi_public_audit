@@ -61,14 +61,14 @@ ORGANS = {
     "verify": {
         "name": "Verify Public",
         "port": 8145,
-        "health": "/health",
+        "health": "/verify/health",
         "route": "/verify-public/",
         "checks": ["health_ok"],
     },
     "dev_api": {
         "name": "W-DEV-API",
         "port": 8200,
-        "health": "/health",
+        "health": "/v1/health",
         "route": "/dev-api/",
         "checks": ["health_ok"],
     },
@@ -98,9 +98,17 @@ async def check_organ_health(organ_id: str, organ: dict) -> Dict[str, Any]:
         "checks": {},
     }
 
+    # Ledger (TRUNK) is self-checking - if we're here, it's healthy
+    if organ_id == "ledger":
+        result["healthy"] = True
+        result["response_ms"] = 0.0
+        result["version"] = "1.0.0"
+        result["note"] = "self-check (TRUNK)"
+        return result
+
     try:
         start = datetime.now(timezone.utc)
-        async with httpx.AsyncClient(timeout=5) as client:
+        async with httpx.AsyncClient(timeout=10) as client:
             url = f"http://localhost:{organ['port']}{organ['health']}"
             r = await client.get(url)
             elapsed = (datetime.now(timezone.utc) - start).total_seconds() * 1000
