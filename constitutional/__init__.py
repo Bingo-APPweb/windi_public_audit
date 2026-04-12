@@ -21,7 +21,17 @@ from .windi_tree import (
     build_return_url,
 )
 
-__version__ = "1.0.0"
+from .did_sovereign import (
+    DIDTier,
+    TIER_HIERARCHY,
+    ORGAN_ACCESS,
+    cross_validate_did as supreme_validate_did,
+    validate_did_format,
+    validate_did_sync,
+    get_tier_info,
+)
+
+__version__ = "1.1.0"
 __decree__ = "DECREE-001-LIVING-TREE"
 __author__ = "Human Dragon"
 __sealed__ = "2026-04-12"

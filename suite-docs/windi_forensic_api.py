@@ -147,6 +147,38 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
                 "articles": 7,
             })
 
+        # ── /api/did/validate/{did} — DECREE-001 Article 4: DID Cross-Validation ──
+        elif path.startswith("/api/did/validate/"):
+            did = path.split("/")[-1]
+            if not did or did == "validate":
+                self._json(400, {
+                    "ok": False,
+                    "error": "did_required",
+                    "message": "Usage: /api/did/validate/{did}",
+                    "example": "/api/did/validate/did:windi:abc123",
+                })
+                return
+
+            from constitutional.did_sovereign import validate_did_sync
+            result = validate_did_sync(did)
+            status_code = 200 if result.get("valid") else 404
+            self._json(status_code, result)
+
+        # ── /api/did/tiers — DID Tier Information ──
+        elif path == "/api/did/tiers":
+            from constitutional.did_sovereign import DIDTier, get_tier_info, ORGAN_ACCESS
+            tiers = []
+            for tier in DIDTier:
+                info = get_tier_info(tier)
+                info["accessible_organs"] = ORGAN_ACCESS.get(tier, [])
+                tiers.append(info)
+            self._json(200, {
+                "decree": "DECREE-001-LIVING-TREE",
+                "article": "Article 4: DID Cross-Validation",
+                "tiers": tiers,
+                "principle": "One DID, one identity, the whole tree.",
+            })
+
         # ── /api/receipts ──
         elif path == "/api/receipts":
             limit = min(int(q("limit", "50")), 500)
