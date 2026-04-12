@@ -1,0 +1,445 @@
+# ═══════════════════════════════════════════════════════════════════════════
+#  llm_registry.yaml — VERA · LLM Sovereign Registry
+#  REGO v1.2 · W-GATEWAY-001 · Princípio XIV + XV
+#  Liga IA+H · Human Dragon · 12 Abril 2026
+#
+#  "VERA does not use AI models. It governs them."
+#
+#  ESTRUTURA:
+#   · tiers: A (núcleo) / B (especialistas) / C (edge cases)
+#   · task_map: routing por tipo de tarefa
+#   · consensus_rules: regras de triangulação
+#   · fallback_chain: degradação declarada (XIII)
+#   · governance: invariantes activos
+# ═══════════════════════════════════════════════════════════════════════════
+
+meta:
+  version: "1.0.0"
+  constitution: "REGO v1.2"
+  gateway: "W-GATEWAY-001"
+  port: 8130
+  updated: "2026-04-12"
+  authority: "Human Dragon · Liga IA+H"
+  invariants_active: ["I9", "I14", "I11"]
+
+# ─── TIER A — Núcleo de Raciocínio ────────────────────────────────────────
+tier_a:
+  label: "Núcleo de Raciocínio e Documentos"
+  weight_class: HIGH
+  pho_required: true
+
+  models:
+
+    claude:
+      provider: "Anthropic"
+      model_id: "claude-sonnet-4-20250514"
+      alias: "Guardian"
+      tier: A
+      weight: 0.95
+      strengths:
+        - "interpretação longa"
+        - "compliance reasoning"
+        - "leitura de documentos extensos"
+        - "análise densa"
+        - "segurança constitucional"
+      primary_tasks:
+        - "legal_analysis"
+        - "document_review"
+        - "compliance_reasoning"
+        - "gdpr_interpretation"
+        - "eu_ai_act_analysis"
+      cost_tier: HIGH
+      max_tokens: 200000
+      latency_sla_s: 8
+      gdpr_safe: true
+      eu_resident: false
+      fallback_to: "gpt4"
+
+    gpt4:
+      provider: "OpenAI"
+      model_id: "gpt-4o"
+      alias: "Architect"
+      tier: A
+      weight: 0.90
+      strengths:
+        - "estruturação lógica"
+        - "consistência"
+        - "pareceres"
+        - "síntese regulatória"
+        - "contratos"
+      primary_tasks:
+        - "legal_drafting"
+        - "contract_analysis"
+        - "regulatory_synthesis"
+        - "structured_output"
+      cost_tier: HIGH
+      max_tokens: 128000
+      latency_sla_s: 6
+      gdpr_safe: false
+      eu_resident: false
+      fallback_to: "claude"
+
+    gemini:
+      provider: "Google DeepMind"
+      model_id: "gemini-2.0-flash"
+      alias: "Witness"
+      tier: A
+      weight: 0.85
+      strengths:
+        - "multimodal"
+        - "busca contextual"
+        - "enriquecimento factual"
+        - "inputs multimodais"
+        - "contexto externo"
+      primary_tasks:
+        - "factual_enrichment"
+        - "multimodal_analysis"
+        - "external_context"
+        - "real_time_data"
+      cost_tier: MED
+      max_tokens: 1000000
+      latency_sla_s: 4
+      gdpr_safe: false
+      eu_resident: false
+      fallback_to: "mistral"
+
+# ─── TIER B — Especialistas e Redundância ─────────────────────────────────
+tier_b:
+  label: "Especialistas e Redundância Soberana"
+  weight_class: MED
+  pho_required: conditional
+
+  models:
+
+    llama:
+      provider: "Meta"
+      model_id: "llama-3.3-70b-instruct"
+      alias: "Sovereign"
+      tier: B
+      weight: 0.75
+      strengths:
+        - "open-weight auditável"
+        - "execução local"
+        - "zero data egress"
+        - "GDPR forte"
+      primary_tasks:
+        - "gdpr_sensitive"
+        - "local_fallback"
+        - "sovereign_execution"
+        - "pii_processing"
+      cost_tier: LOCAL
+      max_tokens: 128000
+      latency_sla_s: 12
+      gdpr_safe: true
+      eu_resident: true
+      fallback_to: "mistral"
+      deployment: "local_inference"
+
+    mistral:
+      provider: "Mistral AI"
+      model_id: "mistral-large-latest"
+      alias: "Efficiency"
+      tier: B
+      weight: 0.70
+      strengths:
+        - "eficiência"
+        - "baixa latência"
+        - "contexto europeu"
+        - "alinhamento EU"
+      primary_tasks:
+        - "low_latency_tasks"
+        - "controlled_workloads"
+        - "free_tier_serving"
+        - "eu_context"
+      cost_tier: LOW
+      max_tokens: 131000
+      latency_sla_s: 3
+      gdpr_safe: true
+      eu_resident: true
+      fallback_to: "llama"
+
+    grok:
+      provider: "xAI"
+      model_id: "grok-3"
+      alias: "Devil's Advocate"
+      tier: B
+      weight: 0.65
+      strengths:
+        - "raciocínio alternativo"
+        - "contra-narrativa"
+        - "stress-test"
+        - "detecção de inconsistências"
+      primary_tasks:
+        - "stress_test"
+        - "inconsistency_detection"
+        - "adversarial_review"
+        - "devil_advocate"
+      cost_tier: MED
+      max_tokens: 131000
+      latency_sla_s: 5
+      gdpr_safe: false
+      eu_resident: false
+      fallback_to: "gpt4"
+      note: "Usar APENAS para stress-test. PHO sempre obrigatório."
+
+# ─── TIER C — Especializados / Edge Cases ─────────────────────────────────
+tier_c:
+  label: "Especializados e Edge Cases"
+  weight_class: SPECIALIZED
+  pho_required: conditional
+
+  models:
+
+    cohere:
+      provider: "Cohere"
+      model_id: "command-r-plus"
+      alias: "Retrieval"
+      tier: C
+      weight: 0.60
+      strengths:
+        - "enterprise NLP"
+        - "retrieval augmented"
+        - "embeddings"
+        - "classificação"
+      primary_tasks:
+        - "document_classification"
+        - "semantic_search"
+        - "embeddings_generation"
+        - "rag_pipeline"
+      cost_tier: MED
+      gdpr_safe: false
+      eu_resident: false
+      fallback_to: "mistral"
+
+    bedrock:
+      provider: "Amazon Web Services"
+      model_id: "anthropic.claude-3-5-sonnet-20241022-v2:0"
+      alias: "Enterprise Bridge"
+      tier: C
+      weight: 0.55
+      strengths:
+        - "integração enterprise"
+        - "ambientes AWS"
+        - "clientes corporativos"
+      primary_tasks:
+        - "aws_enterprise_clients"
+        - "corporate_environment"
+        - "vpc_isolated"
+      cost_tier: HIGH
+      gdpr_safe: false
+      eu_resident: false
+      fallback_to: "claude"
+      note: "Activar apenas para clientes enterprise em ambiente AWS."
+
+# ─── TASK MAP — Routing por Tipo de Tarefa ────────────────────────────────
+task_map:
+
+  legal_analysis:
+    label: "Análise jurídica"
+    mode: HIGH
+    primary: ["claude", "gpt4"]
+    consensus_required: true
+    min_models: 2
+    pho_required: true
+    seal_required: true
+
+  contract_analysis:
+    label: "Análise de contratos"
+    mode: HIGH
+    primary: ["claude", "gpt4"]
+    consensus_required: true
+    min_models: 2
+    pho_required: true
+    seal_required: true
+
+  compliance_reasoning:
+    label: "Raciocínio de compliance"
+    mode: HIGH
+    primary: ["claude"]
+    secondary: ["gpt4"]
+    consensus_required: false
+    pho_required: true
+    seal_required: true
+
+  eu_ai_act_analysis:
+    label: "Análise EU AI Act"
+    mode: HIGH
+    primary: ["claude", "gpt4"]
+    consensus_required: true
+    min_models: 2
+    pho_required: true
+    seal_required: true
+    legal_anchor: ["EU AI Act Art.6", "Art.9", "Art.14", "Art.17"]
+
+  gdpr_sensitive:
+    label: "Dados sensíveis GDPR"
+    mode: LOCAL
+    primary: ["llama"]
+    consensus_required: false
+    pho_required: true
+    seal_required: true
+    data_stays_local: true
+    legal_anchor: ["GDPR Art.5", "Art.9", "Art.44"]
+
+  factual_enrichment:
+    label: "Enriquecimento factual"
+    mode: MED
+    primary: ["gemini"]
+    consensus_required: false
+    pho_required: false
+    seal_required: false
+
+  stress_test:
+    label: "Stress-test / contra-narrativa"
+    mode: MED
+    primary: ["grok"]
+    secondary: ["claude"]
+    consensus_required: true
+    min_models: 2
+    pho_required: true
+    seal_required: true
+    note: "Grok propõe. Claude valida. VERA decide."
+
+  high_risk_decision:
+    label: "Decisão alto risco"
+    mode: HIGH
+    primary: ["claude", "gpt4", "gemini"]
+    consensus_required: true
+    min_models: 3
+    divergence_threshold: 0.20
+    pho_required: true
+    seal_required: true
+    legal_anchor: ["EU AI Act Art.14", "GDPR Art.22"]
+
+  low_latency:
+    label: "Workload controlado / baixa latência"
+    mode: FREE
+    primary: ["mistral"]
+    consensus_required: false
+    pho_required: false
+    seal_required: false
+
+  document_classification:
+    label: "Classificação de documentos"
+    mode: MED
+    primary: ["cohere"]
+    fallback: ["mistral"]
+    consensus_required: false
+    pho_required: false
+
+  dora_incident:
+    label: "Incidente DORA"
+    mode: HIGH
+    primary: ["claude", "gpt4"]
+    consensus_required: true
+    min_models: 2
+    pho_required: true
+    seal_required: true
+    reporting_sla_hours: 24
+    legal_anchor: ["DORA Art.19", "NIS2 Art.23", "GDPR Art.33"]
+
+  instructor_guidance:
+    label: "Instrução ao utilizador"
+    mode: MED
+    primary: ["claude"]
+    consensus_required: false
+    pho_required: false
+    seal_required: false
+
+# ─── CONSENSUS RULES — Triangulação de Inteligência ──────────────────────
+consensus_rules:
+
+  divergence_detection:
+    method: "semantic_similarity"
+    threshold_warning: 0.25
+    threshold_critical: 0.40
+    action_on_warning: "flag_to_officer"
+    action_on_critical: "block_output + require_pho"
+
+  agreement_scoring:
+    method: "weighted_average"
+    weights_source: "model.weight"
+    min_agreement_score: 0.70
+
+  conflict_resolution:
+    strategy: "escalate_to_human"
+    never_auto_resolve: true
+    reason: "I9 — Princípio da Não-Decisão"
+
+  confidence_matrix:
+    fields:
+      - "model_id"
+      - "response_hash"
+      - "confidence_score"
+      - "latency_ms"
+      - "divergence_from_consensus"
+      - "pho_flag"
+    output_format: "json"
+    include_in_receipt: true
+
+# ─── FALLBACK CHAIN — Degradação Declarada (Princípio XIII) ───────────────
+fallback_chain:
+
+  default_sequence:
+    - claude
+    - gpt4
+    - gemini
+    - mistral
+    - llama
+
+  gdpr_sensitive_sequence:
+    - llama
+    - mistral
+
+  offline_mode:
+    trigger: "all_tier_a_unavailable"
+    action: "declare_degraded_mode"
+    message: "VERA em modo degradado — LLMs Tier A indisponíveis. Activando fallback soberano."
+    log_to_ledger: true
+    notify_officer: true
+    never_silent: true
+
+  degraded_capabilities:
+    - task: "legal_analysis"
+      fallback_model: "mistral"
+      confidence_cap: 0.60
+      pho_required: true
+      warning: "Análise com capacidade reduzida. Revisão humana obrigatória."
+
+# ─── GOVERNANCE — Invariantes Constitucionais ─────────────────────────────
+governance:
+
+  active_invariants:
+    I9:
+      label: "Proibição de Escalada de Autonomia"
+      rule: "VERA nunca executa. Sempre propõe + explicita risco."
+      irremediable: true
+
+    I14:
+      label: "Princípio da Falha Explícita"
+      rule: "Nunca silencioso. Nunca placeholder. Declarar sempre."
+      irremediable: true
+
+    I11:
+      label: "Ledger Obrigatório"
+      rule: "Toda decisão HIGH é selada no Forensic Ledger."
+      endpoint: "POST /api/receipts"
+
+  pho_layer:
+    label: "Proof of Human Oversight"
+    legal_anchor: "EU AI Act Art.14"
+    required_fields:
+      - "officer_did"
+      - "models_consulted"
+      - "confidence_matrix"
+      - "divergence_score"
+      - "decision_approved_by_human"
+      - "timestamp_utc"
+      - "seal_hash"
+
+  never_allowed:
+    - "autonomous_final_decision"
+    - "silent_fallback"
+    - "fabricated_legal_citations"
+    - "cross_session_data_without_did"
+    - "extra_eu_transfer_without_tia"
