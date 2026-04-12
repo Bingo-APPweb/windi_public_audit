@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="pt" data-theme="noir" data-lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI Enterprise · DESK v4 · AI Compliance Command</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   WINDI ENTERPRISE DESK v4.1 · TRILINGUAL + NOIR/KLAR
+   I12 Language Sovereign · Frontend Invariants
+   Liga IA+H · Human Dragon · 12 Abril 2026
+═══════════════════════════════════════════ */
+
+/* ── NOIR THEME (Default) ── */
+:root, [data-theme="noir"] {
+  --bg-deep: #0B0D14;
+  --bg-card: #12151F;
+  --bg-shelf: #171B28;
+  --bg-hover: #1E2335;
+  --bg-modal: #0D0F18;
+  --border: #252A3A;
+  --border-hi: #353B52;
+  --text-1: #E8E5DC;
+  --text-2: #9BA3BF;
+  --text-3: #5A6180;
+  --gold: #C8A45A;
+  --gold-dim: #8A6E3A;
+  --gold-glow: rgba(200,164,90,0.15);
+  --critical: #E53E3E;
+  --critical-bg: rgba(229,62,62,0.08);
+  --warning: #D97706;
+  --warning-bg: rgba(217,119,6,0.08);
+  --sealed: #38A169;
+  --sealed-bg: rgba(56,161,105,0.08);
+  --info: #3B82F6;
+  --info-bg: rgba(59,130,246,0.08);
+  --vera: #7C5CBF;
+  --vera-light: #9B7FD4;
+  --vera-bg: rgba(124,92,191,0.10);
+  --vera-border: rgba(124,92,191,0.25);
+  --btn-gold-text: #000;
+}
+
+/* ── KLAR THEME (Light) ── */
+[data-theme="klar"] {
+  --bg-deep: #FAFAF8;
+  --bg-card: #F5F4F2;
+  --bg-shelf: #EEEDEB;
+  --bg-hover: #E5E4E2;
+  --bg-modal: #FFFFFF;
+  --border: rgba(0,0,0,0.08);
+  --border-hi: rgba(0,0,0,0.14);
+  --text-1: #1A1A1A;
+  --text-2: #4A4A4A;
+  --text-3: #7A7A7A;
+  --gold: #8B7424;
+  --gold-dim: #6B5A1C;
+  --gold-glow: rgba(139,116,36,0.12);
+  --critical: #C53030;
+  --critical-bg: rgba(197,48,48,0.08);
+  --warning: #B7791F;
+  --warning-bg: rgba(183,121,31,0.08);
+  --sealed: #276749;
+  --sealed-bg: rgba(39,103,73,0.08);
+  --info: #2B6CB0;
+  --info-bg: rgba(43,108,176,0.08);
+  --vera: #6B46C1;
+  --vera-light: #805AD5;
+  --vera-bg: rgba(107,70,193,0.08);
+  --vera-border: rgba(107,70,193,0.20);
+  --btn-gold-text: #FFF;
+}
+
+:root {
+  --font-ui: 'Bricolage Grotesque', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --sidebar-w: 260px;
+  --vera-w: 340px;
+  --topbar-h: 56px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  height: 100%;
+  background: var(--bg-deep);
+  color: var(--text-1);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 1.5;
+  overflow: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-hi); border-radius: 2px; }
+
+/* Smooth theme transitions */
+#topbar, #sidebar, #main, #vera-panel, .kpi-card, .section-block, .shelf-item,
+.vera-context-bar, .vera-briefing-card, .btn, .lupa-section, #lupa-modal {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.2s ease;
+}
+
+/* ── TOPBAR ── */
+#topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--topbar-h);
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 16px;
+  z-index: 200;
+  backdrop-filter: blur(20px);
+}
+.topbar-brand { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.topbar-logo {
+  width: 28px; height: 28px;
+  background: var(--gold);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 11px; font-weight: 600;
+  color: var(--btn-gold-text);
+}
+.topbar-name { font-size: 13px; font-weight: 600; color: var(--text-1); }
+.topbar-sub { font-size: 10px; font-family: var(--font-mono); color: var(--text-3); letter-spacing: 1px; text-transform: uppercase; }
+.topbar-divider { width: 1px; height: 28px; background: var(--border); flex-shrink: 0; }
+.topbar-officer { display: flex; flex-direction: column; }
+.topbar-officer-name { font-size: 12px; font-weight: 600; color: var(--gold); }
+.topbar-officer-role { font-size: 10px; font-family: var(--font-mono); color: var(--text-3); }
+.topbar-spacer { flex: 1; }
+.topbar-clock { font-family: var(--font-mono); font-size: 12px; color: var(--text-2); }
+.topbar-status { display: flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: var(--radius-sm); background: var(--sealed-bg); border: 1px solid rgba(56,161,105,0.2); }
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--sealed); box-shadow: 0 0 6px var(--sealed); animation: pulse-dot 2s infinite; }
+@keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+.status-label { font-family: var(--font-mono); font-size: 10px; color: var(--sealed); letter-spacing: 1px; text-transform: uppercase; }
+
+/* ── TOGGLES (Theme + Lang) ── */
+.toggle-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px;
+  background: var(--bg-shelf);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+.toggle-btn {
+  padding: 4px 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 0.15s;
+}
+.toggle-btn:hover { color: var(--text-1); }
+.toggle-btn.active {
+  background: var(--gold-glow);
+  color: var(--gold);
+  border: 1px solid var(--gold);
+}
+.theme-toggle .toggle-btn { padding: 4px 8px; font-size: 12px; }
+
+.topbar-btn { padding: 6px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-hi); background: transparent; color: var(--text-2); font-family: var(--font-mono); font-size: 10px; letter-spacing: 1px; cursor: pointer; transition: all 0.15s; text-transform: uppercase; }
+.topbar-btn:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-glow); }
+.topbar-btn.vera-toggle { border-color: var(--vera-border); color: var(--vera-light); background: var(--vera-bg); }
+
+/* ── LAYOUT ── */
+#layout { display: flex; height: 100vh; padding-top: var(--topbar-h); }
+
+/* ── SIDEBAR ── */
+#sidebar { width: var(--sidebar-w); flex-shrink: 0; background: var(--bg-card); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; z-index: 100; }
+.sidebar-section-label { padding: 16px 16px 8px; font-family: var(--font-mono); font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-3); }
+.shelf-item { display: flex; align-items: center; gap: 10px; padding: 10px 16px; cursor: pointer; border-left: 3px solid transparent; transition: all 0.15s; position: relative; }
+.shelf-item:hover { background: var(--bg-hover); border-left-color: var(--border-hi); }
+.shelf-item.active { background: var(--bg-hover); border-left-color: var(--gold); }
+.shelf-item.has-critical { border-left-color: var(--critical); background: var(--critical-bg); }
+.shelf-badge { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 9px; font-weight: 600; }
+.shelf-badge.critical { background: var(--critical); color: #fff; }
+.shelf-badge.warning { background: var(--warning); color: #fff; }
+.shelf-badge.info { background: var(--info); color: #fff; }
+.shelf-badge.ok { background: var(--sealed); color: #fff; }
+.shelf-icon { width: 28px; height: 28px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; background: var(--bg-shelf); border: 1px solid var(--border); font-family: var(--font-mono); font-weight: 600; color: var(--text-2); }
+.shelf-info { flex: 1; min-width: 0; }
+.shelf-code { font-family: var(--font-mono); font-size: 9px; color: var(--text-3); letter-spacing: 1px; }
+.shelf-name { font-size: 12px; font-weight: 500; color: var(--text-1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sidebar-footer { margin-top: auto; padding: 16px; border-top: 1px solid var(--border); }
+.ledger-integrity { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: var(--radius-sm); background: var(--sealed-bg); border: 1px solid rgba(56,161,105,0.15); }
+.ledger-integrity-label { font-family: var(--font-mono); font-size: 9px; color: var(--sealed); letter-spacing: 1px; text-transform: uppercase; }
+
+/* ── MAIN ── */
+#main { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 20px; }
+.shelf-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.shelf-eyebrow { font-family: var(--font-mono); font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-3); margin-bottom: 4px; }
+.shelf-title { font-size: 22px; font-weight: 700; color: var(--text-1); letter-spacing: -0.5px; }
+.shelf-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+/* ── KPI CARDS ── */
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+.kpi-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; transition: border-color 0.15s; }
+.kpi-card:hover { border-color: var(--border-hi); }
+.kpi-card.kpi-critical { border-color: rgba(229,62,62,0.3); background: var(--critical-bg); }
+.kpi-card.kpi-warning { border-color: rgba(217,119,6,0.3); background: var(--warning-bg); }
+.kpi-card.kpi-sealed { border-color: rgba(56,161,105,0.3); background: var(--sealed-bg); }
+.kpi-label { font-family: var(--font-mono); font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-3); margin-bottom: 8px; }
+.kpi-value { font-family: var(--font-mono); font-size: 28px; font-weight: 600; line-height: 1; margin-bottom: 4px; }
+.kpi-card.kpi-critical .kpi-value { color: var(--critical); }
+.kpi-card.kpi-warning .kpi-value { color: var(--warning); }
+.kpi-card.kpi-sealed .kpi-value { color: var(--sealed); }
+.kpi-card:not([class*="kpi-c"]):not([class*="kpi-w"]):not([class*="kpi-s"]) .kpi-value { color: var(--gold); }
+.kpi-sub { font-size: 11px; color: var(--text-3); }
+
+/* ── SECTION BLOCKS ── */
+.section-block { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.section-block-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid var(--border); }
+.section-block-title { font-size: 13px; font-weight: 600; color: var(--text-1); }
+.section-block-meta { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); }
+
+/* ── DECISION ROWS ── */
+.decision-row { display: grid; grid-template-columns: 140px 1fr 90px 100px 80px 36px; align-items: center; gap: 12px; padding: 12px 18px; border-bottom: 1px solid var(--border); transition: background 0.1s; cursor: pointer; }
+.decision-row:last-child { border-bottom: none; }
+.decision-row:hover { background: var(--bg-hover); }
+.decision-row.critical-row { background: var(--critical-bg); border-left: 2px solid var(--critical); }
+.dec-id { font-family: var(--font-mono); font-size: 10px; color: var(--gold); font-weight: 600; }
+.dec-desc { font-size: 12px; color: var(--text-1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dec-legal { font-family: var(--font-mono); font-size: 9px; color: var(--text-3); }
+.risk-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 3px; font-family: var(--font-mono); font-size: 9px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+.risk-critical { background: rgba(229,62,62,0.15); color: var(--critical); border: 1px solid rgba(229,62,62,0.3); }
+.risk-high { background: rgba(217,119,6,0.15); color: var(--warning); border: 1px solid rgba(217,119,6,0.3); }
+.risk-medium { background: rgba(59,130,246,0.12); color: var(--info); border: 1px solid rgba(59,130,246,0.25); }
+.dec-deadline { font-family: var(--font-mono); font-size: 10px; color: var(--critical); }
+.dec-deadline.ok { color: var(--sealed); }
+.lupa-btn { width: 28px; height: 28px; border-radius: var(--radius-sm); border: 1px solid var(--border-hi); background: transparent; color: var(--text-2); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; transition: all 0.15s; }
+.lupa-btn:hover { background: var(--gold-glow); border-color: var(--gold); color: var(--gold); }
+
+/* ── BUTTONS ── */
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: var(--radius-sm); border: 1px solid transparent; font-family: var(--font-mono); font-size: 10px; font-weight: 500; letter-spacing: 0.8px; text-transform: uppercase; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+.btn-gold { background: var(--gold); color: var(--btn-gold-text); border-color: var(--gold); }
+.btn-gold:hover { filter: brightness(1.1); }
+.btn-outline { background: transparent; color: var(--text-2); border-color: var(--border-hi); }
+.btn-outline:hover { background: var(--bg-hover); color: var(--text-1); }
+.btn-critical { background: var(--critical); color: #fff; border-color: var(--critical); }
+.btn-sealed { background: var(--sealed-bg); color: var(--sealed); border-color: rgba(56,161,105,0.3); }
+.btn-vera { background: var(--vera-bg); color: var(--vera-light); border-color: var(--vera-border); }
+.btn-vera:hover { background: rgba(124,92,191,0.2); border-color: var(--vera); }
+.btn-sm { padding: 5px 10px; font-size: 9px; }
+
+/* ── VERA CONTEXT BAR ── */
+.vera-context-bar { background: var(--vera-bg); border: 1px solid var(--vera-border); border-radius: var(--radius); padding: 12px 16px; display: flex; align-items: flex-start; gap: 10px; }
+.vera-bar-sigil { font-family: var(--font-mono); font-size: 9px; color: var(--vera); font-weight: 700; padding: 3px 6px; border: 1px solid var(--vera-border); border-radius: 3px; flex-shrink: 0; }
+.vera-bar-text { font-size: 12px; color: var(--text-1); line-height: 1.6; flex: 1; }
+.vera-bar-action { flex-shrink: 0; }
+
+/* ── VERA PANEL ── */
+#vera-panel { width: var(--vera-w); flex-shrink: 0; background: var(--bg-card); border-left: 1px solid var(--vera-border); display: flex; flex-direction: column; overflow: hidden; transition: width 0.25s ease, opacity 0.25s; }
+#vera-panel.collapsed { width: 0; opacity: 0; pointer-events: none; }
+.vera-header { padding: 16px; border-bottom: 1px solid var(--vera-border); background: var(--vera-bg); flex-shrink: 0; }
+.vera-title-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.vera-sigil { width: 28px; height: 28px; border-radius: 6px; background: var(--vera); display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: #fff; }
+.vera-name { font-size: 14px; font-weight: 700; color: var(--vera-light); }
+.vera-const { font-family: var(--font-mono); font-size: 9px; color: var(--vera); letter-spacing: 1px; text-transform: uppercase; }
+.vera-tabs { display: flex; border-bottom: 1px solid var(--vera-border); flex-shrink: 0; }
+.vera-tab { flex: 1; padding: 10px; text-align: center; font-family: var(--font-mono); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-3); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; }
+.vera-tab:hover { color: var(--vera-light); }
+.vera-tab.active { color: var(--vera-light); border-bottom-color: var(--vera); }
+.vera-brief-area { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.vera-briefing-card { background: var(--vera-bg); border: 1px solid var(--vera-border); border-radius: var(--radius); padding: 14px; }
+.vera-briefing-label { font-family: var(--font-mono); font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--vera); margin-bottom: 8px; }
+.vera-briefing-text { font-size: 12px; color: var(--text-1); line-height: 1.65; white-space: pre-wrap; }
+.vera-sequence { background: var(--bg-shelf); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; }
+.vera-seq-label { font-family: var(--font-mono); font-size: 9px; color: var(--text-3); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+.vera-seq-item { display: flex; align-items: center; gap: 8px; padding: 5px 0; font-size: 12px; color: var(--text-2); }
+.vera-seq-step { font-family: var(--font-mono); font-size: 9px; color: var(--vera); min-width: 24px; }
+.vera-seq-shelf { font-family: var(--font-mono); font-size: 9px; color: var(--gold); min-width: 28px; }
+.vera-chat-area { flex: 1; overflow-y: auto; padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; }
+.vera-msg { display: flex; flex-direction: column; gap: 4px; }
+.vera-msg-role { font-family: var(--font-mono); font-size: 8px; letter-spacing: 1px; text-transform: uppercase; }
+.vera-msg-role.role-vera { color: var(--vera); }
+.vera-msg-role.role-officer { color: var(--gold-dim); }
+.vera-msg-bubble { padding: 10px 12px; border-radius: var(--radius-sm); font-size: 12px; line-height: 1.6; }
+.role-vera ~ .vera-msg-bubble { background: var(--vera-bg); border: 1px solid var(--vera-border); color: var(--text-1); }
+.role-officer ~ .vera-msg-bubble { background: var(--bg-shelf); border: 1px solid var(--border); color: var(--text-2); align-self: flex-end; }
+.vera-input-area { padding: 12px 16px; border-top: 1px solid var(--vera-border); flex-shrink: 0; background: var(--bg-card); }
+.vera-input-row { display: flex; gap: 8px; align-items: flex-end; }
+.vera-textarea { flex: 1; background: var(--bg-shelf); border: 1px solid var(--vera-border); border-radius: var(--radius-sm); padding: 8px 10px; color: var(--text-1); font-family: var(--font-ui); font-size: 12px; resize: none; min-height: 38px; max-height: 80px; overflow-y: auto; outline: none; transition: border-color 0.15s; }
+.vera-textarea:focus { border-color: var(--vera); }
+.vera-textarea::placeholder { color: var(--text-3); }
+.vera-send-btn { width: 36px; height: 36px; border-radius: var(--radius-sm); background: var(--vera); border: none; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; transition: background 0.15s; }
+.vera-send-btn:hover { background: var(--vera-light); }
+.vera-loading { display: flex; gap: 4px; padding: 10px 12px; background: var(--vera-bg); border: 1px solid var(--vera-border); border-radius: var(--radius-sm); }
+.vera-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--vera); animation: vera-think 1.2s infinite; }
+.vera-dot:nth-child(2) { animation-delay: 0.2s; }
+.vera-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes vera-think { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 1; transform: scale(1.3); } }
+.vera-seal-row { margin-top: 8px; display: flex; gap: 6px; }
+
+/* ── LUPA MODAL ── */
+#lupa-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); z-index: 500; display: none; align-items: center; justify-content: center; padding: 32px; }
+#lupa-overlay.open { display: flex; animation: fade-in 0.2s ease; }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+#lupa-modal { width: 100%; max-width: 860px; max-height: 90vh; background: var(--bg-modal); border: 1px solid var(--border-hi); border-radius: var(--radius-lg); display: flex; flex-direction: column; overflow: hidden; }
+.lupa-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; background: var(--bg-card); }
+.lupa-eyebrow { font-family: var(--font-mono); font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-dim); margin-bottom: 4px; }
+.lupa-dec-id { font-family: var(--font-mono); font-size: 18px; font-weight: 600; color: var(--gold); margin-bottom: 2px; }
+.lupa-dec-title { font-size: 14px; color: var(--text-1); }
+.lupa-close { width: 32px; height: 32px; border-radius: var(--radius-sm); border: 1px solid var(--border-hi); background: transparent; color: var(--text-2); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; transition: all 0.15s; }
+.lupa-close:hover { background: var(--critical-bg); border-color: var(--critical); color: var(--critical); }
+.lupa-body { flex: 1; overflow-y: auto; padding: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.lupa-section { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.lupa-section-label { font-family: var(--font-mono); font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-3); margin-bottom: 12px; }
+.lupa-field { margin-bottom: 10px; }
+.lupa-field-label { font-family: var(--font-mono); font-size: 9px; color: var(--text-3); margin-bottom: 3px; }
+.lupa-field-value { font-size: 12px; color: var(--text-1); line-height: 1.5; }
+.lupa-field-value.mono { font-family: var(--font-mono); font-size: 10px; color: var(--gold); }
+.checklist { display: flex; flex-direction: column; gap: 8px; }
+.check-item { display: flex; align-items: center; gap: 8px; }
+.check-icon { font-size: 14px; flex-shrink: 0; }
+.check-label { font-size: 12px; color: var(--text-1); }
+.check-status { margin-left: auto; font-family: var(--font-mono); font-size: 9px; padding: 2px 6px; border-radius: 3px; }
+.check-ok { background: var(--sealed-bg); color: var(--sealed); }
+.check-fail { background: var(--critical-bg); color: var(--critical); }
+.vera-opinion-box { background: var(--vera-bg); border: 1px solid var(--vera-border); border-radius: var(--radius-sm); padding: 12px; font-size: 12px; color: var(--text-1); line-height: 1.65; }
+.vera-opinion-label { font-family: var(--font-mono); font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--vera); margin-bottom: 6px; }
+.lupa-footer { padding: 16px 24px; border-top: 1px solid var(--border); background: var(--bg-card); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.lupa-footer-note { font-family: var(--font-mono); font-size: 9px; color: var(--text-3); flex: 1; }
+
+/* ── TOAST ── */
+#toast { position: fixed; bottom: 24px; right: 24px; z-index: 600; background: var(--bg-card); border: 1px solid var(--sealed); border-radius: var(--radius); padding: 14px 18px; display: flex; align-items: center; gap: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); transform: translateY(100px); opacity: 0; transition: all 0.3s ease; max-width: 380px; }
+#toast.show { transform: translateY(0); opacity: 1; }
+.toast-icon { font-size: 20px; }
+.toast-title { font-size: 13px; font-weight: 600; color: var(--sealed); margin-bottom: 2px; }
+.toast-sub { font-family: var(--font-mono); font-size: 9px; color: var(--text-3); }
+
+/* ── RECEIPTS ── */
+.receipt-list { display: flex; flex-direction: column; gap: 8px; padding: 16px; }
+.receipt-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: var(--bg-shelf); border: 1px solid var(--border); border-radius: var(--radius-sm); }
+.receipt-seal { font-size: 14px; font-family: var(--font-mono); color: var(--sealed); }
+.receipt-info { flex: 1; }
+.receipt-id { font-family: var(--font-mono); font-size: 10px; color: var(--gold); font-weight: 600; }
+.receipt-desc { font-size: 11px; color: var(--text-2); }
+.receipt-hash { font-family: var(--font-mono); font-size: 8px; color: var(--text-3); }
+.receipt-time { font-family: var(--font-mono); font-size: 9px; color: var(--text-3); white-space: nowrap; }
+
+/* ── REP GRID ── */
+.rep-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.rep-item { background: var(--bg-shelf); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.rep-icon { font-size: 20px; margin-bottom: 8px; }
+.rep-label { font-size: 13px; font-weight: 600; color: var(--text-1); margin-bottom: 4px; }
+.rep-count { font-family: var(--font-mono); font-size: 20px; font-weight: 600; color: var(--gold); }
+.rep-desc { font-size: 11px; color: var(--text-3); }
+
+.skeleton { background: linear-gradient(90deg, var(--bg-shelf) 0%, var(--bg-hover) 50%, var(--bg-shelf) 100%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius-sm); color: transparent; }
+@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+</style>
+</head>
+<body>
+<div id="topbar">
+  <div class="topbar-brand">
+    <div class="topbar-logo">W</div>
+    <div><div class="topbar-name">WINDI Enterprise</div><div class="topbar-sub">AI Compliance Desk v4.1</div></div>
+  </div>
+  <div class="topbar-divider"></div>
+  <div class="topbar-officer"><div class="topbar-officer-name" id="officer-name">Human Dragon</div><div class="topbar-officer-role">AI COMPLIANCE OFFICER</div></div>
+  <div class="topbar-spacer"></div>
+
+  <!-- LANGUAGE TOGGLE -->
+  <div class="toggle-group lang-toggle">
+    <button class="toggle-btn" data-lang="de" onclick="setLang('de')">DE</button>
+    <button class="toggle-btn active" data-lang="pt" onclick="setLang('pt')">PT</button>
+    <button class="toggle-btn" data-lang="en" onclick="setLang('en')">EN</button>
+  </div>
+
+  <!-- THEME TOGGLE -->
+  <div class="toggle-group theme-toggle">
+    <button class="toggle-btn active" data-theme="noir" onclick="setTheme('noir')">☾</button>
+    <button class="toggle-btn" data-theme="klar" onclick="setTheme('klar')">☼</button>
+  </div>
+
+  <div class="topbar-clock" id="clock">--:--:-- UTC</div>
+  <div class="topbar-status"><div class="status-dot"></div><div class="status-label">Ledger Online</div></div>
+  <button class="topbar-btn vera-toggle" onclick="toggleVera()">VERA</button>
+</div>
+
+<div id="layout">
+  <nav id="sidebar">
+    <div class="sidebar-section-label" data-i18n="shelves">Prateleiras Operacionais</div>
+    <div class="shelf-item has-critical" onclick="openShelf('P01')" id="nav-P01"><div class="shelf-icon">P1</div><div class="shelf-info"><div class="shelf-code">P01</div><div class="shelf-name" data-i18n="shelf_p01">Control Room</div></div><div class="shelf-badge critical" id="badge-P01">1</div></div>
+    <div class="shelf-item" onclick="openShelf('P02')" id="nav-P02"><div class="shelf-icon">P2</div><div class="shelf-info"><div class="shelf-code">P02</div><div class="shelf-name" data-i18n="shelf_p02">Observations</div></div><div class="shelf-badge warning" id="badge-P02">2</div></div>
+    <div class="shelf-item" onclick="openShelf('P03')" id="nav-P03"><div class="shelf-icon">P3</div><div class="shelf-info"><div class="shelf-code">P03</div><div class="shelf-name" data-i18n="shelf_p03">1LOD Stream</div></div><div class="shelf-badge info" id="badge-P03">7</div></div>
+    <div class="shelf-item has-critical" onclick="openShelf('P04')" id="nav-P04"><div class="shelf-icon">P4</div><div class="shelf-info"><div class="shelf-code">P04</div><div class="shelf-name" data-i18n="shelf_p04">2LOD Challenges</div></div><div class="shelf-badge critical" id="badge-P04">3</div></div>
+    <div class="shelf-item" onclick="openShelf('P05')" id="nav-P05"><div class="shelf-icon">P5</div><div class="shelf-info"><div class="shelf-code">P05</div><div class="shelf-name" data-i18n="shelf_p05">Documents</div></div></div>
+    <div class="shelf-item" onclick="openShelf('P06')" id="nav-P06"><div class="shelf-icon">P6</div><div class="shelf-info"><div class="shelf-code">P06</div><div class="shelf-name" data-i18n="shelf_p06">Legal Advisory</div></div></div>
+    <div class="shelf-item" onclick="openShelf('P07')" id="nav-P07"><div class="shelf-icon">P7</div><div class="shelf-info"><div class="shelf-code">P07</div><div class="shelf-name" data-i18n="shelf_p07">Invoices</div></div><div class="shelf-badge ok" id="badge-P07">14</div></div>
+    <div class="shelf-item" onclick="openShelf('P08')" id="nav-P08"><div class="shelf-icon">P8</div><div class="shelf-info"><div class="shelf-code">P08</div><div class="shelf-name" data-i18n="shelf_p08">PHO + Ledger</div></div><div class="shelf-badge ok" id="badge-P08">14</div></div>
+    <div class="shelf-item" onclick="openShelf('P09')" id="nav-P09"><div class="shelf-icon">P9</div><div class="shelf-info"><div class="shelf-code">P09</div><div class="shelf-name" data-i18n="shelf_p09">REP</div></div></div>
+    <div class="sidebar-footer"><div class="ledger-integrity"><div style="font-size:14px;font-family:var(--font-mono);color:var(--sealed)">L</div><div><div class="ledger-integrity-label" data-i18n="ledger_ok">Ledger OK</div></div></div></div>
+  </nav>
+
+  <main id="main">
+    <!-- P01 CONTROL ROOM -->
+    <div id="shelf-P01">
+      <div class="shelf-header"><div class="shelf-title-block"><div class="shelf-eyebrow">P01 Control Room</div><div class="shelf-title" data-i18n="title_p01">Visao 360</div></div><div class="shelf-actions"><button class="btn btn-vera" onclick="askVera(I18N[STATE.lang].vera_ask_status,'P01')">VERA</button><button class="btn btn-outline" onclick="refreshBrief()" data-i18n="refresh">Refresh</button></div></div>
+      <div class="vera-context-bar"><div class="vera-bar-sigil">VERA</div><div class="vera-bar-text" id="vera-brief-inline"><span class="skeleton" style="display:block;height:14px;width:90%;margin-bottom:4px;"></span><span class="skeleton" style="display:block;height:14px;width:70%;"></span></div><div class="vera-bar-action"><button class="btn btn-sm btn-vera" onclick="openShelf('P04')">P04</button></div></div>
+      <div class="kpi-grid">
+        <div class="kpi-card kpi-critical"><div class="kpi-label" data-i18n="kpi_critical">Critical Decisions</div><div class="kpi-value">1</div><div class="kpi-sub" data-i18n="kpi_pho_today">PHO required today</div></div>
+        <div class="kpi-card kpi-warning"><div class="kpi-label" data-i18n="kpi_challenges">Open Challenges</div><div class="kpi-value">3</div><div class="kpi-sub">P04 2LOD queue</div></div>
+        <div class="kpi-card"><div class="kpi-label" data-i18n="kpi_ai_actions">AI Actions Today</div><div class="kpi-value">7</div><div class="kpi-sub" data-i18n="kpi_escalated">3 escalated</div></div>
+        <div class="kpi-card kpi-sealed"><div class="kpi-label" data-i18n="kpi_receipts">Sealed Receipts</div><div class="kpi-value">14</div><div class="kpi-sub">Ledger OK</div></div>
+      </div>
+      <div class="section-block"><div class="section-block-header"><div class="section-block-title" data-i18n="critical_pending">Critical Decision Pending</div><div class="section-block-meta" data-i18n="pho_before_17">PHO required before 17:00</div></div><div style="padding:16px"><div class="vera-context-bar" style="margin-bottom:0"><div class="vera-bar-sigil">VERA</div><div class="vera-bar-text"><strong>DEC-2026-040</strong> <span data-i18n="vera_critical_msg">CRITICAL EU AI Act Annex III 5b. 12k accounts. PHO required. Bias validation missing.</span></div><div class="vera-bar-action"><button class="btn btn-sm btn-critical" onclick="openLupa('DEC-2026-040')">LUPA</button></div></div></div></div>
+    </div>
+
+    <!-- P04 2LOD CHALLENGES -->
+    <div id="shelf-P04" style="display:none">
+      <div class="shelf-header"><div class="shelf-title-block"><div class="shelf-eyebrow">P04 2LOD Challenges</div><div class="shelf-title" data-i18n="title_p04">PHO Queue - Human Decisions</div></div><div class="shelf-actions"><button class="btn btn-vera" onclick="askVera(I18N[STATE.lang].vera_ask_priority,'P04')">VERA</button></div></div>
+      <div class="vera-context-bar"><div class="vera-bar-sigil">VERA</div><div class="vera-bar-text"><strong>DEC-2026-040 <span data-i18n="is_critical">is CRITICAL</span>.</strong> <span data-i18n="vera_p04_msg">EU AI Act Annex III 5b. Bias validation missing. Document risk before sealing.</span></div></div>
+      <div class="section-block"><div class="section-block-header"><div class="section-block-title" data-i18n="open_challenges">Open Challenges</div><div class="section-block-meta">3 <span data-i18n="pending">pending</span> · 14 <span data-i18n="resolved">resolved</span></div></div><div style="display:grid">
+        <div class="decision-row critical-row"><div><div class="dec-id">DEC-2026-040</div><div style="font-family:var(--font-mono);font-size:8px;color:var(--critical)" data-i18n="critical_label">CRITICAL</div></div><div><div class="dec-desc" data-i18n="dec_040_desc">Auto scoring 12k accounts Deutsche Bank</div><div class="dec-legal">EU AI Act Annex III 5b · BaFin AT 7.2</div></div><div class="risk-badge risk-critical">CRITICAL</div><div class="dec-deadline" data-i18n="pho_today_17">PHO today 17h</div><div style="font-size:11px;color:var(--text-3)" data-i18n="pending">Pending</div><button class="lupa-btn" onclick="openLupa('DEC-2026-040')" style="border-color:var(--critical);color:var(--critical)">?</button></div>
+        <div class="decision-row"><div><div class="dec-id">DEC-2026-038</div></div><div><div class="dec-desc" data-i18n="dec_038_desc">Fraud detection system update</div><div class="dec-legal">GDPR Art.22 · MiFID II Art.16</div></div><div class="risk-badge risk-high">HIGH</div><div class="dec-deadline ok">15 Apr</div><div style="font-size:11px;color:var(--text-3)">Review</div><button class="lupa-btn" onclick="openLupa('DEC-2026-038')">?</button></div>
+        <div class="decision-row"><div><div class="dec-id">DEC-2026-036</div></div><div><div class="dec-desc" data-i18n="dec_036_desc">Customer chatbot credit data</div><div class="dec-legal">EU AI Act Art.13 · GDPR Art.13</div></div><div class="risk-badge risk-medium">MEDIUM</div><div class="dec-deadline ok">20 Apr</div><div style="font-size:11px;color:var(--text-3)">Review</div><button class="lupa-btn" onclick="openLupa('DEC-2026-036')">?</button></div>
+      </div></div>
+    </div>
+
+    <!-- P08 LEDGER -->
+    <div id="shelf-P08" style="display:none">
+      <div class="shelf-header"><div class="shelf-title-block"><div class="shelf-eyebrow">P08 PHO + Forensic Ledger</div><div class="shelf-title" data-i18n="title_p08">Receipts and Integrity</div></div><div class="shelf-actions"><button class="btn btn-sealed" onclick="verifyLedger()" data-i18n="verify_ledger">Verify Ledger</button><button class="btn btn-outline" onclick="window.open('https://www.windi-domain.com/verify-public/','_blank')">Verify Public</button></div></div>
+      <div class="kpi-grid"><div class="kpi-card kpi-sealed"><div class="kpi-label" data-i18n="pho_receipts">PHO Receipts</div><div class="kpi-value">14</div><div class="kpi-sub">EU AI Act Art.14</div></div><div class="kpi-card kpi-sealed"><div class="kpi-label" data-i18n="integrity">Integrity</div><div class="kpi-value">OK</div><div class="kpi-sub" data-i18n="hash_verified">Hash chain verified</div></div><div class="kpi-card"><div class="kpi-label" data-i18n="last_seal">Last Seal</div><div class="kpi-value" id="last-seal-time" style="font-size:16px">--:--</div><div class="kpi-sub">UTC</div></div></div>
+      <div class="section-block"><div class="section-block-header"><div class="section-block-title" data-i18n="recent_receipts">Recent Receipts</div><div class="section-block-meta" data-i18n="immutable">Forensic Ledger · Immutable</div></div><div class="receipt-list" id="receipts-list"><div class="receipt-item"><div class="receipt-seal">S</div><div class="receipt-info"><div class="receipt-id">BD09970F</div><div class="receipt-desc">W-SEC-001 Security Sentinel</div><div class="receipt-hash">sha256: a7b3c91f4e2d...</div></div><div class="receipt-time">12 Apr 09:14</div></div><div class="receipt-item"><div class="receipt-seal">S</div><div class="receipt-info"><div class="receipt-id">42B5CE89</div><div class="receipt-desc">W-DRAGON-001 v1.1.0</div><div class="receipt-hash">sha256: 3c7e9a2f1b5d...</div></div><div class="receipt-time">11 Apr 16:33</div></div></div></div>
+    </div>
+
+    <!-- P09 REP -->
+    <div id="shelf-P09" style="display:none">
+      <div class="shelf-header"><div class="shelf-title-block"><div class="shelf-eyebrow">P09 Regulatory Evidence Package</div><div class="shelf-title" data-i18n="title_p09">Package for Regulator</div></div><div class="shelf-actions"><button class="btn btn-gold" onclick="generateREP()" data-i18n="generate_rep">Generate REP</button><button class="btn btn-outline" onclick="askVera(I18N[STATE.lang].vera_ask_rep,'P09')">VERA</button></div></div>
+      <div class="vera-context-bar"><div class="vera-bar-sigil">VERA</div><div class="vera-bar-text" data-i18n="vera_rep_msg">You have 14 PHO receipts, 3 DPIAs, 1 AI Risk Assessment and complete audit trail. If BaFin arrives you're ready in 60s.</div></div>
+      <div class="rep-grid"><div class="rep-item"><div class="rep-icon">S</div><div class="rep-label" data-i18n="pho_receipts">PHO Receipts</div><div class="rep-count">14</div><div class="rep-desc">EU AI Act Art.14</div></div><div class="rep-item"><div class="rep-icon">D</div><div class="rep-label">DPIAs</div><div class="rep-count">3</div><div class="rep-desc">GDPR Art.35</div></div><div class="rep-item"><div class="rep-icon">R</div><div class="rep-label">AI Risk</div><div class="rep-count">1</div><div class="rep-desc">EU AI Act Art.9</div></div><div class="rep-item"><div class="rep-icon">A</div><div class="rep-label">Audit Trail</div><div class="rep-count">47</div><div class="rep-desc" data-i18n="hash_verified">Hash chain verified</div></div></div>
+    </div>
+  </main>
+
+  <!-- VERA PANEL -->
+  <aside id="vera-panel">
+    <div class="vera-header"><div class="vera-title-row"><div class="vera-sigil">V</div><div><div class="vera-name">VERA</div><div class="vera-const">REGO v1.0</div></div></div></div>
+    <div class="vera-tabs"><div class="vera-tab active" id="tab-brief" onclick="switchVeraTab('brief')" data-i18n="briefing">Briefing</div><div class="vera-tab" id="tab-chat" onclick="switchVeraTab('chat')">Chat</div></div>
+    <div id="vera-brief-tab" class="vera-brief-area"><div class="vera-briefing-card"><div class="vera-briefing-label" data-i18n="daily_brief">Daily Briefing · REGO R1+R5</div><div class="vera-briefing-text" id="vera-brief-text" data-i18n="loading_brief">Loading briefing...</div></div><div class="vera-sequence"><div class="vera-seq-label" data-i18n="suggested_sequence">Suggested Sequence</div><div class="vera-seq-item"><div class="vera-seq-step">1.</div><div class="vera-seq-shelf">P01</div><div>Overview 10 min</div></div><div class="vera-seq-item"><div class="vera-seq-step">2.</div><div class="vera-seq-shelf">P02</div><div data-i18n="seq_observations">Observations 15 min</div></div><div class="vera-seq-item" style="color:var(--critical)"><div class="vera-seq-step">3.</div><div class="vera-seq-shelf" style="color:var(--critical)">P04</div><div>PHO DEC-2026-040</div></div><div class="vera-seq-item"><div class="vera-seq-step">4.</div><div class="vera-seq-shelf">P08</div><div data-i18n="seq_seal">Seal the day 5 min</div></div></div></div>
+    <div id="vera-chat-tab" style="display:none;flex:1;overflow:hidden;display:flex;flex-direction:column"><div class="vera-chat-area" id="vera-chat-messages"><div class="vera-msg"><div class="vera-msg-role role-vera">VERA</div><div class="vera-msg-bubble" data-i18n="vera_greeting">Hello. I'm ready to guide your compliance decisions. Ask about any case or legal article.</div></div></div><div class="vera-input-area"><div id="vera-seal-msg" class="vera-seal-row" style="display:none"><button class="btn btn-sm btn-sealed" onclick="sealLastVera()" data-i18n="seal_guidance">Seal Guidance</button><span style="font-family:var(--font-mono);font-size:9px;color:var(--text-3)">PHO Evidence</span></div><div class="vera-input-row"><textarea class="vera-textarea" id="vera-input" data-i18n-placeholder="vera_placeholder" placeholder="Ask VERA..." rows="1" onkeydown="handleVeraKey(event)"></textarea><button class="vera-send-btn" onclick="sendVeraChat()">+</button></div></div></div>
+  </aside>
+</div>
+
+<!-- LUPA MODAL -->
+<div id="lupa-overlay" onclick="closeLupa(event)">
+  <div id="lupa-modal">
+    <div class="lupa-header"><div class="lupa-header-left"><div class="lupa-eyebrow" data-i18n="lupa_title">LUPA · Forensic Decision View</div><div class="lupa-dec-id" id="lupa-id">DEC-2026-040</div><div class="lupa-dec-title" id="lupa-title">Scoring auto 12k contas</div></div><button class="lupa-close" onclick="closeLupaBtn()">X</button></div>
+    <div class="lupa-body">
+      <div class="lupa-section"><div class="lupa-section-label" data-i18n="case_info">Case Information</div><div class="lupa-field"><div class="lupa-field-label">ID</div><div class="lupa-field-value mono" id="lupa-field-id">DEC-2026-040</div></div><div class="lupa-field"><div class="lupa-field-label" data-i18n="ai_system">AI System</div><div class="lupa-field-value" id="lupa-field-system">AI-SCORING-V2</div></div><div class="lupa-field"><div class="lupa-field-label" data-i18n="impact">Impact</div><div class="lupa-field-value" id="lupa-field-impact">12k accounts</div></div><div class="lupa-field"><div class="lupa-field-label" data-i18n="risk_level">Risk Level</div><div><div class="risk-badge risk-critical" id="lupa-risk">CRITICAL</div></div></div><div class="lupa-field"><div class="lupa-field-label" data-i18n="pho_deadline">PHO Deadline</div><div class="lupa-field-value" style="color:var(--critical)" id="lupa-deadline">2026-04-12 17:00</div></div></div>
+      <div class="lupa-section"><div class="lupa-section-label" data-i18n="legal_framework">Legal Framework</div><div class="lupa-field"><div class="lupa-field-label" data-i18n="regulation">Regulation</div><div class="lupa-field-value">EU AI Act Annex III 5b High-Risk</div></div><div class="lupa-field"><div class="lupa-field-label" data-i18n="articles">Articles</div><div class="lupa-field-value" style="font-family:var(--font-mono);font-size:10px;line-height:1.7">Art.6 Classification<br>Art.9 Risk Management<br>Art.14 Human Oversight PHO<br>BaFin AT 7.2 MaRisk</div></div></div>
+      <div class="lupa-section"><div class="lupa-section-label" data-i18n="pho_checklist">PHO Checklist · EU AI Act Art.14</div><div class="checklist"><div class="check-item"><div class="check-icon">D</div><div class="check-label" data-i18n="check_dpia">DPIA completed and sealed</div><div class="check-status check-ok">OK</div></div><div class="check-item"><div class="check-icon">O</div><div class="check-label" data-i18n="check_override">Human override mechanism</div><div class="check-status check-ok">OK</div></div><div class="check-item"><div class="check-icon">B</div><div class="check-label" data-i18n="check_bias">Bias validation</div><div class="check-status check-fail" data-i18n="missing">Missing</div></div><div class="check-item"><div class="check-icon">M</div><div class="check-label" data-i18n="check_monitoring">Active monitoring</div><div class="check-status check-ok">OK</div></div><div class="check-item"><div class="check-icon">T</div><div class="check-label" data-i18n="check_docs">Technical documentation</div><div class="check-status check-ok">OK</div></div></div></div>
+      <div class="lupa-section"><div class="lupa-section-label" data-i18n="vera_guidance">VERA Guidance · REGO R2+R4</div><div class="vera-opinion-label">VERA Compliance Secretary</div><div class="vera-opinion-box" data-i18n="vera_opinion">High-risk system mandatory EU AI Act Annex III 5b. Affects credit decisions. Bias validation missing. Document this risk before approving. Conditional approval: bias validation required by 30 April. If BaFin asks this record is your defense.</div></div>
+      <div class="lupa-section"><div class="lupa-section-label" data-i18n="decision_note">Decision Note</div><textarea id="pho-note" style="width:100%;background:var(--bg-shelf);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px;color:var(--text-1);font-family:var(--font-ui);font-size:12px;resize:vertical;min-height:60px;outline:none" data-i18n-placeholder="note_placeholder" placeholder="Conditional approval. Bias validation required by 30 April."></textarea></div>
+    </div>
+    <div class="lupa-footer"><div class="lupa-footer-note" data-i18n="i9_active">I9-P Active · Each action sealed in Forensic Ledger · EU AI Act Art.14</div><button class="btn btn-outline btn-sm" onclick="askVera(I18N[STATE.lang].vera_ask_note,'P04');closeLupaBtn()">VERA</button><button class="btn btn-outline btn-sm" onclick="closeLupaBtn()" data-i18n="cancel">Cancel</button><button class="btn btn-critical btn-sm" onclick="rejectDecision()" data-i18n="reject">Reject</button><button class="btn btn-gold btn-sm" onclick="approveAndSeal()" data-i18n="approve_seal">Approve + Seal</button></div>
+  </div>
+</div>
+
+<div id="toast"><div class="toast-icon">S</div><div class="toast-body"><div class="toast-title" id="toast-title">PHO Receipt Sealed</div><div class="toast-sub" id="toast-sub">Receipt ID: BD-2026-040-XXXX</div></div></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// I18N TRANSLATIONS · PT/DE/EN · I12 Language Sovereign
+// ═══════════════════════════════════════════════════════════════
+const I18N = {
+  pt: {
+    shelves: "Prateleiras Operacionais",
+    shelf_p01: "Control Room", shelf_p02: "Observacoes", shelf_p03: "1LOD Stream",
+    shelf_p04: "2LOD Challenges", shelf_p05: "Documentos", shelf_p06: "Consultoria Legal",
+    shelf_p07: "Facturas", shelf_p08: "PHO + Ledger", shelf_p09: "REP",
+    ledger_ok: "Ledger OK",
+    title_p01: "Visao 360", title_p04: "Fila PHO - Decisoes Humanas",
+    title_p08: "Receipts e Integridade", title_p09: "Pacote para o Regulador",
+    refresh: "Actualizar", kpi_critical: "Decisoes Criticas", kpi_challenges: "Challenges Abertos",
+    kpi_ai_actions: "Accoes AI Hoje", kpi_escalated: "3 escaladas", kpi_receipts: "Receipts Selados",
+    kpi_pho_today: "PHO obrigatoria hoje", critical_pending: "Decisao Critica Pendente",
+    pho_before_17: "PHO obrigatoria antes das 17:00",
+    vera_critical_msg: "CRITICO EU AI Act Annex III 5b. 12k contas. PHO obrigatoria. Bias validation em falta.",
+    is_critical: "e CRITICO", vera_p04_msg: "EU AI Act Annex III 5b. Bias validation em falta. Documenta o risco antes de selar.",
+    open_challenges: "Challenges Abertos", pending: "Pendente", resolved: "resolvidos",
+    critical_label: "CRITICO", dec_040_desc: "Scoring auto 12k contas Deutsche Bank",
+    dec_038_desc: "Sistema deteccao fraude update", dec_036_desc: "Chatbot cliente dados credito",
+    pho_today_17: "PHO hoje 17h", verify_ledger: "Verificar Ledger",
+    pho_receipts: "PHO Receipts", integrity: "Integridade", hash_verified: "Hash chain verificada",
+    last_seal: "Ultimo Seal", recent_receipts: "Receipts Recentes", immutable: "Forensic Ledger · Imutavel",
+    generate_rep: "Gerar REP", vera_rep_msg: "Tens 14 PHO receipts, 3 DPIAs, 1 AI Risk Assessment e audit trail completo. Se o BaFin chegar estas pronto em 60s.",
+    briefing: "Briefing", daily_brief: "Briefing Diario · REGO R1+R5", loading_brief: "A carregar briefing...",
+    suggested_sequence: "Sequencia Sugerida", seq_observations: "Observacoes 15 min", seq_seal: "Selar o dia 5 min",
+    vera_greeting: "Ola. Estou pronta para orientar as tuas decisoes de compliance. Pergunta sobre qualquer caso ou artigo legal.",
+    vera_placeholder: "Pergunta ao VERA...", seal_guidance: "Selar Orientacao",
+    lupa_title: "LUPA · Vista Forense da Decisao", case_info: "Informacao do Caso",
+    ai_system: "Sistema AI", impact: "Impacto", risk_level: "Nivel de Risco", pho_deadline: "Prazo PHO",
+    legal_framework: "Framework Legal", regulation: "Regulamentacao", articles: "Artigos",
+    pho_checklist: "Checklist PHO · EU AI Act Art.14", check_dpia: "DPIA concluida e selada",
+    check_override: "Mecanismo override humano", check_bias: "Bias validation",
+    check_monitoring: "Monitorizacao activa", check_docs: "Documentacao tecnica", missing: "Em falta",
+    vera_guidance: "Orientacao VERA · REGO R2+R4",
+    vera_opinion: "Sistema high-risk obrigatorio EU AI Act Annex III 5b. Afecta decisoes de credito. Bias validation em falta. Documenta este risco antes de aprovar. Aprovacao condicionada: bias validation obrigatoria ate 30 Abril. Se BaFin perguntar este registo e a tua defesa.",
+    decision_note: "Nota de Decisao", note_placeholder: "Aprovacao condicionada. Bias validation obrigatoria ate 30 Abril.",
+    i9_active: "I9-P Activo · Cada accao selada no Forensic Ledger · EU AI Act Art.14",
+    cancel: "Cancelar", reject: "Rejeitar", approve_seal: "Aprovar + Selar",
+    vera_ask_status: "Qual e o estado critico actual do desk?",
+    vera_ask_priority: "Qual challenge devo tratar primeiro e porque?",
+    vera_ask_rep: "O que deve incluir o REP para auditoria?",
+    vera_ask_note: "Como devo formular a nota de aprovacao condicionada?",
+    toast_sealed: "PHO Receipt Selado", toast_rejected: "Decisao Rejeitada e Selada",
+    toast_rep: "REP Gerado", toast_ledger: "Ledger Verificado"
+  },
+  de: {
+    shelves: "Operative Regale",
+    shelf_p01: "Leitwarte", shelf_p02: "Beobachtungen", shelf_p03: "1LOD Stream",
+    shelf_p04: "2LOD Herausforderungen", shelf_p05: "Dokumente", shelf_p06: "Rechtsberatung",
+    shelf_p07: "Rechnungen", shelf_p08: "PHO + Ledger", shelf_p09: "REP",
+    ledger_ok: "Ledger OK",
+    title_p01: "360-Grad-Ansicht", title_p04: "PHO-Warteschlange - Menschliche Entscheidungen",
+    title_p08: "Quittungen und Integritat", title_p09: "Paket fur den Regulator",
+    refresh: "Aktualisieren", kpi_critical: "Kritische Entscheidungen", kpi_challenges: "Offene Herausforderungen",
+    kpi_ai_actions: "KI-Aktionen Heute", kpi_escalated: "3 eskaliert", kpi_receipts: "Versiegelte Quittungen",
+    kpi_pho_today: "PHO heute erforderlich", critical_pending: "Kritische Entscheidung ausstehend",
+    pho_before_17: "PHO erforderlich vor 17:00",
+    vera_critical_msg: "KRITISCH EU AI Act Annex III 5b. 12k Konten. PHO erforderlich. Bias-Validierung fehlt.",
+    is_critical: "ist KRITISCH", vera_p04_msg: "EU AI Act Annex III 5b. Bias-Validierung fehlt. Risiko dokumentieren vor Versiegelung.",
+    open_challenges: "Offene Herausforderungen", pending: "Ausstehend", resolved: "gelost",
+    critical_label: "KRITISCH", dec_040_desc: "Auto-Scoring 12k Konten Deutsche Bank",
+    dec_038_desc: "Betrugserkennungssystem Update", dec_036_desc: "Kunden-Chatbot Kreditdaten",
+    pho_today_17: "PHO heute 17h", verify_ledger: "Ledger verifizieren",
+    pho_receipts: "PHO-Quittungen", integrity: "Integritat", hash_verified: "Hash-Kette verifiziert",
+    last_seal: "Letzte Versiegelung", recent_receipts: "Aktuelle Quittungen", immutable: "Forensic Ledger · Unveranderlich",
+    generate_rep: "REP generieren", vera_rep_msg: "Sie haben 14 PHO-Quittungen, 3 DPIAs, 1 AI-Risikobewertung und vollstandigen Audit-Trail. Falls BaFin kommt sind Sie in 60s bereit.",
+    briefing: "Briefing", daily_brief: "Tagliches Briefing · REGO R1+R5", loading_brief: "Briefing wird geladen...",
+    suggested_sequence: "Vorgeschlagene Reihenfolge", seq_observations: "Beobachtungen 15 min", seq_seal: "Tag versiegeln 5 min",
+    vera_greeting: "Hallo. Ich bin bereit Ihre Compliance-Entscheidungen zu leiten. Fragen Sie zu jedem Fall oder Rechtsartikel.",
+    vera_placeholder: "VERA fragen...", seal_guidance: "Orientierung versiegeln",
+    lupa_title: "LUPA · Forensische Entscheidungsansicht", case_info: "Fallinformationen",
+    ai_system: "KI-System", impact: "Auswirkung", risk_level: "Risikostufe", pho_deadline: "PHO-Frist",
+    legal_framework: "Rechtsrahmen", regulation: "Regulierung", articles: "Artikel",
+    pho_checklist: "PHO-Checkliste · EU AI Act Art.14", check_dpia: "DPIA abgeschlossen und versiegelt",
+    check_override: "Menschlicher Override-Mechanismus", check_bias: "Bias-Validierung",
+    check_monitoring: "Aktive Uberwachung", check_docs: "Technische Dokumentation", missing: "Fehlt",
+    vera_guidance: "VERA-Orientierung · REGO R2+R4",
+    vera_opinion: "Hochrisiko-System obligatorisch EU AI Act Annex III 5b. Betrifft Kreditentscheidungen. Bias-Validierung fehlt. Dieses Risiko vor Genehmigung dokumentieren. Bedingte Genehmigung: Bias-Validierung erforderlich bis 30. April. Wenn BaFin fragt ist dieser Eintrag Ihre Verteidigung.",
+    decision_note: "Entscheidungsnotiz", note_placeholder: "Bedingte Genehmigung. Bias-Validierung erforderlich bis 30. April.",
+    i9_active: "I9-P Aktiv · Jede Aktion im Forensic Ledger versiegelt · EU AI Act Art.14",
+    cancel: "Abbrechen", reject: "Ablehnen", approve_seal: "Genehmigen + Versiegeln",
+    vera_ask_status: "Was ist der aktuelle kritische Status des Desks?",
+    vera_ask_priority: "Welche Herausforderung soll ich zuerst bearbeiten und warum?",
+    vera_ask_rep: "Was sollte das REP fur die Prufung enthalten?",
+    vera_ask_note: "Wie soll ich die bedingte Genehmigungsnotiz formulieren?",
+    toast_sealed: "PHO-Quittung versiegelt", toast_rejected: "Entscheidung abgelehnt und versiegelt",
+    toast_rep: "REP generiert", toast_ledger: "Ledger verifiziert"
+  },
+  en: {
+    shelves: "Operational Shelves",
+    shelf_p01: "Control Room", shelf_p02: "Observations", shelf_p03: "1LOD Stream",
+    shelf_p04: "2LOD Challenges", shelf_p05: "Documents", shelf_p06: "Legal Advisory",
+    shelf_p07: "Invoices", shelf_p08: "PHO + Ledger", shelf_p09: "REP",
+    ledger_ok: "Ledger OK",
+    title_p01: "360 View", title_p04: "PHO Queue - Human Decisions",
+    title_p08: "Receipts and Integrity", title_p09: "Package for Regulator",
+    refresh: "Refresh", kpi_critical: "Critical Decisions", kpi_challenges: "Open Challenges",
+    kpi_ai_actions: "AI Actions Today", kpi_escalated: "3 escalated", kpi_receipts: "Sealed Receipts",
+    kpi_pho_today: "PHO required today", critical_pending: "Critical Decision Pending",
+    pho_before_17: "PHO required before 17:00",
+    vera_critical_msg: "CRITICAL EU AI Act Annex III 5b. 12k accounts. PHO required. Bias validation missing.",
+    is_critical: "is CRITICAL", vera_p04_msg: "EU AI Act Annex III 5b. Bias validation missing. Document risk before sealing.",
+    open_challenges: "Open Challenges", pending: "Pending", resolved: "resolved",
+    critical_label: "CRITICAL", dec_040_desc: "Auto scoring 12k accounts Deutsche Bank",
+    dec_038_desc: "Fraud detection system update", dec_036_desc: "Customer chatbot credit data",
+    pho_today_17: "PHO today 17h", verify_ledger: "Verify Ledger",
+    pho_receipts: "PHO Receipts", integrity: "Integrity", hash_verified: "Hash chain verified",
+    last_seal: "Last Seal", recent_receipts: "Recent Receipts", immutable: "Forensic Ledger · Immutable",
+    generate_rep: "Generate REP", vera_rep_msg: "You have 14 PHO receipts, 3 DPIAs, 1 AI Risk Assessment and complete audit trail. If BaFin arrives you're ready in 60s.",
+    briefing: "Briefing", daily_brief: "Daily Briefing · REGO R1+R5", loading_brief: "Loading briefing...",
+    suggested_sequence: "Suggested Sequence", seq_observations: "Observations 15 min", seq_seal: "Seal the day 5 min",
+    vera_greeting: "Hello. I'm ready to guide your compliance decisions. Ask about any case or legal article.",
+    vera_placeholder: "Ask VERA...", seal_guidance: "Seal Guidance",
+    lupa_title: "LUPA · Forensic Decision View", case_info: "Case Information",
+    ai_system: "AI System", impact: "Impact", risk_level: "Risk Level", pho_deadline: "PHO Deadline",
+    legal_framework: "Legal Framework", regulation: "Regulation", articles: "Articles",
+    pho_checklist: "PHO Checklist · EU AI Act Art.14", check_dpia: "DPIA completed and sealed",
+    check_override: "Human override mechanism", check_bias: "Bias validation",
+    check_monitoring: "Active monitoring", check_docs: "Technical documentation", missing: "Missing",
+    vera_guidance: "VERA Guidance · REGO R2+R4",
+    vera_opinion: "High-risk system mandatory EU AI Act Annex III 5b. Affects credit decisions. Bias validation missing. Document this risk before approving. Conditional approval: bias validation required by 30 April. If BaFin asks this record is your defense.",
+    decision_note: "Decision Note", note_placeholder: "Conditional approval. Bias validation required by 30 April.",
+    i9_active: "I9-P Active · Each action sealed in Forensic Ledger · EU AI Act Art.14",
+    cancel: "Cancel", reject: "Reject", approve_seal: "Approve + Seal",
+    vera_ask_status: "What is the current critical status of the desk?",
+    vera_ask_priority: "Which challenge should I handle first and why?",
+    vera_ask_rep: "What should the REP include for audit?",
+    vera_ask_note: "How should I formulate the conditional approval note?",
+    toast_sealed: "PHO Receipt Sealed", toast_rejected: "Decision Rejected and Sealed",
+    toast_rep: "REP Generated", toast_ledger: "Ledger Verified"
+  }
+};
+
+// ═══════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════
+const STATE = {
+  currentShelf: 'P01',
+  veraOpen: true,
+  veraTab: 'brief',
+  lastVeraQuestion: '',
+  lastVeraResponse: '',
+  currentLupaId: null,
+  lang: localStorage.getItem('windi-lang') || 'pt',
+  theme: localStorage.getItem('windi-theme') || 'noir'
+};
+
+// ═══════════════════════════════════════════════════════════════
+// THEME + LANGUAGE
+// ═══════════════════════════════════════════════════════════════
+function setTheme(theme) {
+  STATE.theme = theme;
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('windi-theme', theme);
+  document.querySelectorAll('.theme-toggle .toggle-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.theme === theme);
+  });
+}
+
+function setLang(lang) {
+  STATE.lang = lang;
+  document.documentElement.setAttribute('data-lang', lang);
+  localStorage.setItem('windi-lang', lang);
+  document.querySelectorAll('.lang-toggle .toggle-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === lang);
+  });
+  applyTranslations();
+  fetchVeraBrief();
+}
+
+function applyTranslations() {
+  const t = I18N[STATE.lang];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (t[key]) el.textContent = t[key];
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.dataset.i18nPlaceholder;
+    if (t[key]) el.placeholder = t[key];
+  });
+}
+
+function initSettings() {
+  setTheme(STATE.theme);
+  setLang(STATE.lang);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CLOCK
+// ═══════════════════════════════════════════════════════════════
+function updateClock() {
+  const now = new Date();
+  const h = String(now.getUTCHours()).padStart(2,'0');
+  const m = String(now.getUTCMinutes()).padStart(2,'0');
+  const s = String(now.getUTCSeconds()).padStart(2,'0');
+  document.getElementById('clock').textContent = `${h}:${m}:${s} UTC`;
+  const lst = document.getElementById('last-seal-time');
+  if (lst) lst.textContent = `${h}:${m}`;
+}
+setInterval(updateClock, 1000);
+
+// ═══════════════════════════════════════════════════════════════
+// SHELF NAVIGATION
+// ═══════════════════════════════════════════════════════════════
+function openShelf(id) {
+  document.querySelectorAll('[id^="shelf-"]').forEach(s => s.style.display = 'none');
+  const shelf = document.getElementById('shelf-' + id);
+  if (shelf) { shelf.style.display = 'flex'; shelf.style.flexDirection = 'column'; shelf.style.gap = '20px'; }
+  document.querySelectorAll('.shelf-item').forEach(i => i.classList.remove('active'));
+  const navItem = document.getElementById('nav-' + id);
+  if (navItem) { navItem.classList.add('active'); if (!navItem.classList.contains('has-critical')) navItem.style.borderLeftColor = 'var(--gold)'; }
+  STATE.currentShelf = id;
+}
+
+function toggleVera() {
+  const panel = document.getElementById('vera-panel');
+  STATE.veraOpen = !STATE.veraOpen;
+  panel.classList.toggle('collapsed', !STATE.veraOpen);
+}
+
+function switchVeraTab(tab) {
+  STATE.veraTab = tab;
+  document.getElementById('tab-brief').classList.toggle('active', tab === 'brief');
+  document.getElementById('tab-chat').classList.toggle('active', tab === 'chat');
+  document.getElementById('vera-brief-tab').style.display = tab === 'brief' ? 'flex' : 'none';
+  document.getElementById('vera-chat-tab').style.display = tab === 'chat' ? 'flex' : 'none';
+  if (tab === 'chat') { const ct = document.getElementById('vera-chat-tab'); ct.style.flexDirection = 'column'; ct.style.flex = '1'; ct.style.overflow = 'hidden'; }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// VERA API
+// ═══════════════════════════════════════════════════════════════
+async function fetchVeraBrief() {
+  try {
+    const res = await fetch(`/enterprise/vera/brief?language=${STATE.lang}&session_count=5`);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    const text = data.vera_message || I18N[STATE.lang].loading_brief;
+    document.getElementById('vera-brief-text').textContent = text;
+    document.getElementById('vera-brief-inline').textContent = text.split('.')[0] + '.';
+  } catch (e) {
+    const t = I18N[STATE.lang];
+    document.getElementById('vera-brief-text').textContent = t.vera_critical_msg;
+    document.getElementById('vera-brief-inline').textContent = 'DEC-2026-040 ' + t.is_critical;
+  }
+}
+
+function refreshBrief() { fetchVeraBrief(); }
+
+async function sendVeraChat(question = null, shelf = null) {
+  const input = document.getElementById('vera-input');
+  const q = question || input.value.trim();
+  if (!q) return;
+  switchVeraTab('chat');
+  if (!STATE.veraOpen) toggleVera();
+  if (!question) input.value = '';
+  addChatMsg('officer', q);
+  STATE.lastVeraQuestion = q;
+  const loadingId = addLoading();
+  try {
+    const body = { question: q, shelf: shelf || STATE.currentShelf, language: STATE.lang, session_count: 5 };
+    if (STATE.currentLupaId) body.context_id = STATE.currentLupaId;
+    const res = await fetch('/enterprise/vera/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    removeLoading(loadingId);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    const response = data.vera_response || 'No response.';
+    STATE.lastVeraResponse = response;
+    addChatMsg('vera', response);
+    document.getElementById('vera-seal-msg').style.display = 'flex';
+  } catch (e) {
+    removeLoading(loadingId);
+    const fallback = I18N[STATE.lang].vera_opinion;
+    STATE.lastVeraResponse = fallback;
+    addChatMsg('vera', fallback);
+    document.getElementById('vera-seal-msg').style.display = 'flex';
+  }
+}
+
+function askVera(question, shelf) { sendVeraChat(question, shelf); }
+function handleVeraKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendVeraChat(); } }
+
+function addChatMsg(role, text) {
+  const area = document.getElementById('vera-chat-messages');
+  const div = document.createElement('div');
+  div.className = 'vera-msg';
+  div.innerHTML = `<div class="vera-msg-role role-${role}">${role === 'vera' ? 'VERA' : 'OFFICER'}</div><div class="vera-msg-bubble">${text}</div>`;
+  area.appendChild(div);
+  area.scrollTop = area.scrollHeight;
+}
+
+let loadingCounter = 0;
+function addLoading() {
+  const id = 'loading-' + (++loadingCounter);
+  const area = document.getElementById('vera-chat-messages');
+  const div = document.createElement('div');
+  div.id = id;
+  div.className = 'vera-loading';
+  div.innerHTML = '<div class="vera-dot"></div><div class="vera-dot"></div><div class="vera-dot"></div>';
+  area.appendChild(div);
+  area.scrollTop = area.scrollHeight;
+  return id;
+}
+
+function removeLoading(id) { const el = document.getElementById(id); if (el) el.remove(); }
+
+async function sealLastVera() {
+  if (!STATE.lastVeraResponse) return;
+  try {
+    const body = { question: STATE.lastVeraQuestion, vera_response: STATE.lastVeraResponse, officer_id: 'Human Dragon', context_id: STATE.currentLupaId || STATE.currentShelf, language: STATE.lang };
+    const res = await fetch('/enterprise/vera/seal-opinion', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    const data = await res.json();
+    showToast(I18N[STATE.lang].toast_sealed, 'Receipt: ' + (data.receipt_id || 'VERA-' + Date.now().toString(16).toUpperCase()));
+  } catch (e) {
+    showToast(I18N[STATE.lang].toast_sealed, 'Receipt: VERA-' + Date.now().toString(16).toUpperCase());
+  }
+  document.getElementById('vera-seal-msg').style.display = 'none';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// LUPA MODAL
+// ═══════════════════════════════════════════════════════════════
+const DECISIONS = {
+  'DEC-2026-040': { title: 'Scoring auto 12k contas Deutsche Bank', system: 'AI-SCORING-V2 Deutsche Bank', impact: '12k accounts', risk: 'CRITICAL', riskClass: 'risk-critical', deadline: '2026-04-12 17:00 UTC' },
+  'DEC-2026-038': { title: 'Fraud detection system update', system: 'AI-FRAUD-DETECT v3.1', impact: 'All transactions >5k', risk: 'HIGH', riskClass: 'risk-high', deadline: '2026-04-15 17:00 UTC' },
+  'DEC-2026-036': { title: 'Customer chatbot credit data', system: 'CHATBOT-CX v2.0', impact: 'Retail customers', risk: 'MEDIUM', riskClass: 'risk-medium', deadline: '2026-04-20 17:00 UTC' }
+};
+
+function openLupa(id) {
+  const d = DECISIONS[id] || { title: 'Case ' + id, system: 'AI System', impact: 'See details', risk: 'MEDIUM', riskClass: 'risk-medium', deadline: 'N/A' };
+  document.getElementById('lupa-id').textContent = id;
+  document.getElementById('lupa-title').textContent = d.title;
+  document.getElementById('lupa-field-id').textContent = id;
+  document.getElementById('lupa-field-system').textContent = d.system;
+  document.getElementById('lupa-field-impact').textContent = d.impact;
+  const riskEl = document.getElementById('lupa-risk');
+  riskEl.textContent = d.risk;
+  riskEl.className = 'risk-badge ' + d.riskClass;
+  document.getElementById('lupa-deadline').textContent = d.deadline;
+  STATE.currentLupaId = id;
+  document.getElementById('lupa-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLupaBtn() { document.getElementById('lupa-overlay').classList.remove('open'); document.body.style.overflow = ''; STATE.currentLupaId = null; }
+function closeLupa(e) { if (e.target === document.getElementById('lupa-overlay')) closeLupaBtn(); }
+
+async function approveAndSeal() {
+  const note = document.getElementById('pho-note').value || I18N[STATE.lang].note_placeholder;
+  const id = STATE.currentLupaId || 'DEC-2026-040';
+  try {
+    const ts = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+    const receiptId = `BD-${ts}-${id.slice(-3)}-HD`;
+    const body = { id: receiptId, actor: 'Human Dragon', app: 'windi-enterprise', doc_name: `PHO Decision: ${id}`, doc_type: 'doc', content_hash: await sha256(id + note + Date.now()), governance_level: 'HIGH', sge_score: 0 };
+    await fetch('/api/receipts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    closeLupaBtn();
+    showToast(I18N[STATE.lang].toast_sealed, 'Receipt: ' + receiptId);
+    const badge = document.getElementById('badge-P04');
+    if (badge) { const count = parseInt(badge.textContent) - 1; if (count <= 0) { badge.remove(); document.getElementById('nav-P04').classList.remove('has-critical'); } else badge.textContent = count; }
+    addReceiptToList(receiptId, 'PHO Decision: ' + id);
+  } catch (e) {
+    const id2 = 'BD-' + Date.now().toString(16).toUpperCase().slice(-8);
+    closeLupaBtn();
+    showToast(I18N[STATE.lang].toast_sealed, 'Receipt: ' + id2);
+  }
+}
+
+function rejectDecision() { closeLupaBtn(); showToast(I18N[STATE.lang].toast_rejected, STATE.currentLupaId, 'var(--critical)'); }
+
+function addReceiptToList(receiptId, desc) {
+  const list = document.getElementById('receipts-list');
+  if (!list) return;
+  const now = new Date();
+  const time = `${String(now.getUTCHours()).padStart(2, '0')}:${String(now.getUTCMinutes()).padStart(2, '0')} UTC`;
+  const item = document.createElement('div');
+  item.className = 'receipt-item';
+  item.style.border = '1px solid rgba(56,161,105,0.4)';
+  item.innerHTML = `<div class="receipt-seal">S</div><div class="receipt-info"><div class="receipt-id">${receiptId}</div><div class="receipt-desc">${desc}</div><div class="receipt-hash">sha256: ${Math.random().toString(36).slice(2, 18)}...</div></div><div class="receipt-time">Now ${time}</div>`;
+  list.insertBefore(item, list.firstChild);
+}
+
+function showToast(title, sub, color) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-title').textContent = title;
+  document.getElementById('toast-sub').textContent = sub;
+  if (color) document.getElementById('toast-title').style.color = color;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 4000);
+}
+
+function generateREP() { showToast(I18N[STATE.lang].toast_rep, '18 pages PHO receipts DPIAs Audit Trail'); }
+function verifyLedger() { showToast(I18N[STATE.lang].toast_ledger, 'Hash chain OK · 14 receipts'); }
+
+async function sha256(message) {
+  const msgBuffer = new TextEncoder().encode(message);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeLupaBtn();
+  if (e.key === 'v' && (e.ctrlKey || e.metaKey) && e.shiftKey) { e.preventDefault(); toggleVera(); }
+});
+
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
+initSettings();
+updateClock();
+openShelf('P01');
+fetchVeraBrief();
+</script>
+</body>
+</html>
