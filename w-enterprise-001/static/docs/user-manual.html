@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>W-Enterprise-001 User Manual | WINDI Publishing House</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ─── NOIR THEME (Default) ─── */
+:root, [data-theme="noir"] {
+  --noir: #0A0A0B;
+  --noir2: #111114;
+  --noir3: #1A1A1E;
+  --noir4: #222226;
+  --border: rgba(255,255,255,0.07);
+  --borderS: rgba(255,255,255,0.14);
+  --text: #EDEAE2;
+  --muted: #7A7874;
+  --dim: #3E3C3A;
+  --gold: #E8C87A;
+  --goldBg: rgba(232,200,122,0.08);
+  --goldBd: rgba(232,200,122,0.25);
+  --danger: #E05555;
+  --dangerB: rgba(224,85,85,0.12);
+  --warn: #E8962A;
+  --warnB: rgba(232,150,42,0.12);
+  --ok: #4CAF82;
+  --okB: rgba(76,175,130,0.12);
+  --fd: 'Bricolage Grotesque', Georgia, serif;
+  --fm: 'JetBrains Mono', monospace;
+  --scrollbar-thumb: #333;
+  --code-bg: var(--noir3);
+}
+
+/* ─── KLAR THEME (Light) ─── */
+[data-theme="klar"] {
+  --noir: #FAFAF8;
+  --noir2: #F5F4F2;
+  --noir3: #EEEDEB;
+  --noir4: #E5E4E2;
+  --border: rgba(0,0,0,0.08);
+  --borderS: rgba(0,0,0,0.14);
+  --text: #1A1A1A;
+  --muted: #6B6965;
+  --dim: #9E9C98;
+  --gold: #8B7424;
+  --goldBg: rgba(139,116,36,0.08);
+  --goldBd: rgba(139,116,36,0.25);
+  --danger: #C43C3C;
+  --dangerB: rgba(196,60,60,0.10);
+  --warn: #B87420;
+  --warnB: rgba(184,116,32,0.10);
+  --ok: #2E8B57;
+  --okB: rgba(46,139,87,0.10);
+  --scrollbar-thumb: #CCC;
+  --code-bg: #E8E7E5;
+}
+
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  background: var(--noir);
+  color: var(--text);
+  font-family: var(--fd);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.7;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Smooth theme transition for all elements */
+*, *::before, *::after {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.2s ease;
+}
+
+/* ─── LAYOUT ─── */
+.doc-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: 100vh;
+}
+
+/* ─── SIDEBAR NAV ─── */
+.doc-nav {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  background: var(--noir2);
+  border-right: 1px solid var(--border);
+  padding: 2rem 0;
+}
+.doc-nav::-webkit-scrollbar { width: 4px; }
+.doc-nav::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 2px; }
+
+/* ─── THEME TOGGLE ─── */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.theme-toggle-label {
+  font-family: var(--fm);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.theme-switch {
+  display: flex;
+  background: var(--noir3);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.theme-btn {
+  padding: 5px 10px;
+  font-family: var(--fm);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.theme-btn:hover { color: var(--text); }
+.theme-btn.active {
+  background: var(--goldBg);
+  color: var(--gold);
+  border-color: var(--goldBd);
+}
+.theme-icon { font-size: 11px; }
+
+.nav-header {
+  padding: 0 1.5rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.5rem;
+}
+.nav-logo {
+  font-family: var(--fm);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gold);
+  letter-spacing: 0.08em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.nav-logo::after {
+  content: 'DOCS';
+  font-size: 8px;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  background: var(--noir4);
+  border: 1px solid var(--border);
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+.nav-title {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 8px;
+  font-weight: 400;
+}
+
+.nav-section {
+  font-family: var(--fm);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+  padding: 0.8rem 1.5rem 0.5rem;
+}
+.nav-link {
+  display: block;
+  padding: 0.45rem 1.5rem;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  transition: all 0.15s;
+  border-left: 2px solid transparent;
+}
+.nav-link:hover { color: var(--text); background: var(--noir3); }
+.nav-link.active { color: var(--gold); border-left-color: var(--gold); background: var(--goldBg); }
+.nav-sub {
+  padding-left: 2.5rem;
+  font-size: 12px;
+}
+
+/* ─── MAIN CONTENT ─── */
+.doc-main {
+  padding: 3rem 4rem;
+  max-width: 900px;
+}
+
+/* ─── TYPOGRAPHY ─── */
+h1 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.5rem;
+  color: var(--gold);
+}
+.doc-subtitle {
+  font-size: 1rem;
+  color: var(--muted);
+  margin-bottom: 2rem;
+  font-family: var(--fm);
+}
+h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 3rem 0 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  color: var(--text);
+}
+h2:first-of-type { margin-top: 0; border-top: none; padding-top: 0; }
+h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 2rem 0 0.75rem;
+  color: var(--text);
+}
+h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 1.5rem 0 0.5rem;
+  color: var(--gold);
+  font-family: var(--fm);
+  letter-spacing: 0.02em;
+}
+
+p { margin-bottom: 1rem; }
+strong { color: var(--gold); font-weight: 600; }
+em { color: var(--muted); }
+
+a { color: var(--gold); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ─── LISTS ─── */
+ul, ol { margin: 1rem 0 1.5rem 1.5rem; }
+li { margin-bottom: 0.5rem; }
+li::marker { color: var(--gold); }
+
+/* ─── CODE ─── */
+code {
+  font-family: var(--fm);
+  font-size: 0.85em;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  padding: 2px 6px;
+  border-radius: 3px;
+  color: var(--gold);
+}
+pre {
+  background: var(--noir2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1.25rem;
+  overflow-x: auto;
+  margin: 1rem 0 1.5rem;
+  font-family: var(--fm);
+  font-size: 13px;
+  line-height: 1.6;
+}
+pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--text);
+}
+
+/* ─── TABLES ─── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0 1.5rem;
+  font-size: 14px;
+}
+th, td {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+}
+th {
+  background: var(--noir3);
+  font-family: var(--fm);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+td { background: var(--noir2); }
+tr:hover td { background: var(--noir3); }
+
+/* ─── CALLOUTS ─── */
+.callout {
+  padding: 1rem 1.25rem;
+  border-radius: 4px;
+  margin: 1.5rem 0;
+  border-left: 3px solid;
+}
+.callout-info {
+  background: var(--goldBg);
+  border-color: var(--gold);
+}
+.callout-info strong { color: var(--gold); }
+.callout-warning {
+  background: var(--warnB);
+  border-color: var(--warn);
+}
+.callout-warning strong { color: var(--warn); }
+.callout-danger {
+  background: var(--dangerB);
+  border-color: var(--danger);
+}
+.callout-danger strong { color: var(--danger); }
+.callout-success {
+  background: var(--okB);
+  border-color: var(--ok);
+}
+.callout-success strong { color: var(--ok); }
+.callout-title {
+  font-family: var(--fm);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* ─── BADGES ─── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--fm);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 2px;
+}
+.badge-ok { background: var(--okB); color: var(--ok); border: 1px solid rgba(76,175,130,0.3); }
+.badge-warn { background: var(--warnB); color: var(--warn); border: 1px solid rgba(232,150,42,0.3); }
+.badge-danger { background: var(--dangerB); color: var(--danger); border: 1px solid rgba(224,85,85,0.3); }
+.badge-gold { background: var(--goldBg); color: var(--gold); border: 1px solid var(--goldBd); }
+
+/* ─── FIGURES ─── */
+figure {
+  margin: 2rem 0;
+  background: var(--noir2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+figure img {
+  width: 100%;
+  display: block;
+}
+figcaption {
+  padding: 0.75rem 1rem;
+  font-family: var(--fm);
+  font-size: 11px;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+}
+
+/* ─── FLOW DIAGRAM ─── */
+.flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding: 1.5rem;
+  background: var(--noir2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  margin: 1.5rem 0;
+}
+.flow-step {
+  background: var(--noir3);
+  border: 1px solid var(--borderS);
+  padding: 0.6rem 1rem;
+  border-radius: 3px;
+  font-family: var(--fm);
+  font-size: 11px;
+  color: var(--text);
+  text-align: center;
+}
+.flow-step.highlight {
+  background: var(--goldBg);
+  border-color: var(--goldBd);
+  color: var(--gold);
+}
+.flow-arrow {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* ─── TOC ─── */
+.toc {
+  background: var(--noir2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1.5rem 2rem;
+  margin: 2rem 0;
+}
+.toc-title {
+  font-family: var(--fm);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1rem;
+}
+.toc ol { margin: 0; padding-left: 1.25rem; }
+.toc li { margin-bottom: 0.4rem; }
+.toc a { color: var(--muted); font-size: 14px; }
+.toc a:hover { color: var(--gold); }
+
+/* ─── FOOTER ─── */
+.doc-footer {
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+  font-family: var(--fm);
+  font-size: 11px;
+  color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.doc-footer a { color: var(--gold); }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 900px) {
+  .doc-layout { grid-template-columns: 1fr; }
+  .doc-nav {
+    position: fixed;
+    left: -280px;
+    width: 280px;
+    z-index: 100;
+    transition: left 0.3s;
+  }
+  .doc-nav.open { left: 0; }
+  .doc-main { padding: 2rem 1.5rem; }
+  .mobile-toggle {
+    display: flex !important;
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 101;
+    width: 40px;
+    height: 40px;
+    background: var(--noir2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+    cursor: pointer;
+  }
+}
+.mobile-toggle { display: none; }
+</style>
+</head>
+<body>
+
+<button class="mobile-toggle" onclick="document.querySelector('.doc-nav').classList.toggle('open')">☰</button>
+
+<div class="doc-layout">
+
+<!-- SIDEBAR NAVIGATION -->
+<nav class="doc-nav">
+  <div class="nav-header">
+    <div class="nav-logo">WINDI ENTERPRISE</div>
+    <div class="nav-title">User Manual v1.0</div>
+    <div class="theme-toggle">
+      <span class="theme-toggle-label">Theme</span>
+      <div class="theme-switch">
+        <button class="theme-btn active" data-theme="noir" onclick="setTheme('noir')">
+          <span class="theme-icon">&#9790;</span> NOIR
+        </button>
+        <button class="theme-btn" data-theme="klar" onclick="setTheme('klar')">
+          <span class="theme-icon">&#9788;</span> KLAR
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-section">Getting Started</div>
+  <a class="nav-link active" href="#introduction">Introduction</a>
+  <a class="nav-link nav-sub" href="#what-is">What is W-Enterprise</a>
+  <a class="nav-link nav-sub" href="#why-pho">Why PHO Matters</a>
+  <a class="nav-link nav-sub" href="#glossary">Glossary</a>
+
+  <div class="nav-section">Quick Start</div>
+  <a class="nav-link" href="#access">Accessing the Dashboard</a>
+  <a class="nav-link" href="#interface">Interface Overview</a>
+  <a class="nav-link" href="#first-approval">Your First Approval</a>
+
+  <div class="nav-section">Workflow</div>
+  <a class="nav-link" href="#pending">Review Pending Decisions</a>
+  <a class="nav-link" href="#approve">Approve with PHO</a>
+  <a class="nav-link" href="#reject">Reject or Escalate</a>
+  <a class="nav-link" href="#verify">Verify Receipts</a>
+
+  <div class="nav-section">Features</div>
+  <a class="nav-link" href="#stats">Dashboard Statistics</a>
+  <a class="nav-link" href="#audit">Audit Log</a>
+  <a class="nav-link" href="#export">Export & Reports</a>
+
+  <div class="nav-section">Integration</div>
+  <a class="nav-link" href="#api">API Reference</a>
+  <a class="nav-link" href="#systems">Connect AI Systems</a>
+
+  <div class="nav-section">Reference</div>
+  <a class="nav-link" href="#invariants">Constitutional Invariants</a>
+  <a class="nav-link" href="#troubleshooting">Troubleshooting</a>
+  <a class="nav-link" href="#support">Support</a>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="doc-main">
+
+<h1>W-Enterprise-001</h1>
+<p class="doc-subtitle">AI Compliance Dashboard &middot; User Manual v1.0 &middot; April 2026</p>
+
+<div class="toc">
+  <div class="toc-title">Table of Contents</div>
+  <ol>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#access">Quick Start</a></li>
+    <li><a href="#pending">Workflow</a></li>
+    <li><a href="#stats">Features</a></li>
+    <li><a href="#api">Integration</a></li>
+    <li><a href="#invariants">Reference</a></li>
+  </ol>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<h2 id="introduction">1. Introduction</h2>
+
+<h3 id="what-is">1.1 What is W-Enterprise-001?</h3>
+
+<p><strong>W-Enterprise-001</strong> is the WINDI AI Compliance Dashboard — a human oversight system designed for enterprises using artificial intelligence in high-risk decision-making.</p>
+
+<p>In simple terms: when your AI system makes a recommendation (approve a loan, settle a claim, flag fraud), this dashboard ensures a <strong>qualified human reviews and approves</strong> that decision before it takes effect.</p>
+
+<div class="flow">
+  <div class="flow-step">AI System</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">Decision</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step highlight">Human Review</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">PHO Seal</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">Ledger</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">Execution</div>
+</div>
+
+<p>Every approval generates a <strong>cryptographic receipt</strong> that proves:</p>
+<ul>
+  <li><strong>WHO</strong> approved (identity of the reviewer)</li>
+  <li><strong>WHEN</strong> approved (exact timestamp)</li>
+  <li><strong>WHAT</strong> was approved (SHA-256 hash of the decision)</li>
+  <li><strong>WHERE</strong> it's recorded (immutable Forensic Ledger)</li>
+</ul>
+
+<h3 id="why-pho">1.2 Why PHO Matters</h3>
+
+<div class="callout callout-warning">
+  <span class="callout-title">EU AI Act — Article 14</span>
+  <p>High-risk AI systems shall be designed and developed in such a way that they can be effectively overseen by natural persons during the period in which the AI system is in use.</p>
+</div>
+
+<p><strong>PHO</strong> stands for <strong>Prescribed Human Oversight</strong>. Under the EU AI Act (effective 2026), companies deploying high-risk AI systems must demonstrate that:</p>
+
+<ol>
+  <li>A human can understand the AI's recommendations</li>
+  <li>A human can override or reject those recommendations</li>
+  <li>There is an <strong>auditable trail</strong> of all human oversight actions</li>
+</ol>
+
+<p>Without PHO compliance:</p>
+<ul>
+  <li><span class="badge badge-danger">Regulatory fines up to €35M or 7% of global turnover</span></li>
+  <li><span class="badge badge-warn">Decisions may be legally contested</span></li>
+  <li><span class="badge badge-warn">Reputational damage</span></li>
+</ul>
+
+<p>With W-Enterprise-001:</p>
+<ul>
+  <li><span class="badge badge-ok">Court-admissible proof of human oversight</span></li>
+  <li><span class="badge badge-ok">Immutable cryptographic receipts</span></li>
+  <li><span class="badge badge-ok">Real-time compliance dashboard</span></li>
+</ul>
+
+<h3 id="glossary">1.3 Glossary</h3>
+
+<table>
+  <tr>
+    <th>Term</th>
+    <th>Definition</th>
+  </tr>
+  <tr>
+    <td><strong>PHO</strong></td>
+    <td>Prescribed Human Oversight — the act of a human reviewing and approving an AI decision</td>
+  </tr>
+  <tr>
+    <td><strong>Receipt</strong></td>
+    <td>Cryptographic proof of a PHO action, containing hash, timestamp, and identity</td>
+  </tr>
+  <tr>
+    <td><strong>Ledger</strong></td>
+    <td>WINDI Forensic Ledger — immutable database where all receipts are permanently stored</td>
+  </tr>
+  <tr>
+    <td><strong>SHA-256</strong></td>
+    <td>Cryptographic hash function that creates a unique fingerprint of the decision data</td>
+  </tr>
+  <tr>
+    <td><strong>SGE Score</strong></td>
+    <td>Semantic Governance Engine score — risk classification from 0 (low) to 10 (critical)</td>
+  </tr>
+  <tr>
+    <td><strong>Trust Officer</strong></td>
+    <td>The human authorized to review and approve AI decisions in the organization</td>
+  </tr>
+  <tr>
+    <td><strong>Decision</strong></td>
+    <td>An AI system output that requires human oversight before execution</td>
+  </tr>
+  <tr>
+    <td><strong>Verify Public</strong></td>
+    <td>Public endpoint where anyone can independently verify a receipt's authenticity</td>
+  </tr>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<h2 id="access">2. Quick Start</h2>
+
+<h3>2.1 Accessing the Dashboard</h3>
+
+<p>Open your browser and navigate to:</p>
+
+<pre><code>https://windi-domain.com/enterprise/</code></pre>
+
+<div class="callout callout-info">
+  <span class="callout-title">Pilot Mode</span>
+  <p>During pilot phase, the dashboard operates with a fixed token. In production, you will authenticate using your organization's DID (Decentralized Identity) credentials.</p>
+</div>
+
+<h3 id="interface">2.2 Interface Overview</h3>
+
+<p>The dashboard is organized into four main areas:</p>
+
+<h4>A) Top Bar</h4>
+<ul>
+  <li><strong>WINDI ENTERPRISE</strong> — Logo and system identifier</li>
+  <li><strong>Ledger · Live</strong> — Connection status to the Forensic Ledger</li>
+  <li><strong>User Badge</strong> — Your identity as Trust Officer</li>
+</ul>
+
+<h4>B) Sidebar Navigation</h4>
+<ul>
+  <li><strong>Decisions</strong> — Main view of pending and verified decisions</li>
+  <li><strong>PHO Receipts</strong> — Archive of all sealed approvals</li>
+  <li><strong>Audit Export</strong> — Download compliance reports</li>
+  <li><strong>Verify Public</strong> — Link to independent verification</li>
+  <li><strong>Configuration</strong> — AI systems, rules, reviewers (admin)</li>
+</ul>
+
+<h4>C) Statistics Panel</h4>
+<table>
+  <tr>
+    <th>Metric</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>PHO Verified Today</td>
+    <td>Number of decisions approved with PHO seal today</td>
+  </tr>
+  <tr>
+    <td>Pending Oversight</td>
+    <td>Decisions awaiting human review (requires action)</td>
+  </tr>
+  <tr>
+    <td>Compliance Rate</td>
+    <td>Percentage of decisions with PHO coverage this week</td>
+  </tr>
+  <tr>
+    <td>Ledger Receipts</td>
+    <td>Total receipts stored in the immutable ledger</td>
+  </tr>
+</table>
+
+<h4>D) Decisions Table</h4>
+<p>The main working area showing all AI decisions with their status:</p>
+<ul>
+  <li><span class="badge badge-warn">Missing PHO</span> — Requires your review</li>
+  <li><span class="badge badge-ok">PHO Verified</span> — Already approved and sealed</li>
+</ul>
+
+<h3 id="first-approval">2.3 Your First Approval</h3>
+
+<p>Follow these steps to approve your first AI decision:</p>
+
+<ol>
+  <li>Find a decision with <span class="badge badge-warn">Missing PHO</span> status</li>
+  <li>Click the <strong>Approve with PHO</strong> button</li>
+  <li>Review the decision details in the modal</li>
+  <li>Select your decision: Approved / Modified / Rejected / Escalated</li>
+  <li>Add an optional oversight note</li>
+  <li>Click <strong>Seal PHO Receipt →</strong></li>
+  <li>Wait for the cryptographic seal to complete</li>
+  <li>View your receipt with verification link</li>
+</ol>
+
+<div class="callout callout-success">
+  <span class="callout-title">Congratulations</span>
+  <p>You've just created a court-admissible proof of human oversight! The receipt is now permanently stored in the WINDI Forensic Ledger and can be independently verified by anyone.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<h2 id="pending">3. Workflow</h2>
+
+<h3>3.1 Review Pending Decisions</h3>
+
+<p>Decisions appear in the table as soon as your connected AI systems generate them. Each decision shows:</p>
+
+<table>
+  <tr>
+    <th>Field</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>Decision Title</td>
+    <td>Human-readable summary of what the AI recommends</td>
+  </tr>
+  <tr>
+    <td>Decision ID</td>
+    <td>Unique identifier (e.g., DEC-2026-0041)</td>
+  </tr>
+  <tr>
+    <td>AI System</td>
+    <td>The system that generated this decision</td>
+  </tr>
+  <tr>
+    <td>Risk Level</td>
+    <td>HIGH / MEDIUM / LOW classification</td>
+  </tr>
+  <tr>
+    <td>Time</td>
+    <td>When the decision was created</td>
+  </tr>
+  <tr>
+    <td>Status</td>
+    <td>Missing PHO or PHO Verified</td>
+  </tr>
+</table>
+
+<div class="callout callout-danger">
+  <span class="callout-title">Important</span>
+  <p>Decisions marked <strong>HIGH</strong> risk require human oversight before any action is taken. Proceeding without PHO approval violates EU AI Act Article 14.</p>
+</div>
+
+<h3 id="approve">3.2 Approve with PHO</h3>
+
+<p>When you click <strong>Approve with PHO</strong>, a modal opens with:</p>
+
+<h4>Decision Preview</h4>
+<p>Shows the decision title, ID, AI system, and risk level for confirmation.</p>
+
+<h4>PHO Seal Information</h4>
+<p>Reminder that your approval will generate a cryptographic receipt containing your identity, timestamp, decision hash, and immutable ledger anchor.</p>
+
+<h4>Reviewer Name</h4>
+<p>Your name as it will appear on the receipt. This identifies you as the responsible human overseer.</p>
+
+<h4>Decision Options</h4>
+<table>
+  <tr>
+    <th>Option</th>
+    <th>When to Use</th>
+  </tr>
+  <tr>
+    <td><strong>Approved</strong></td>
+    <td>You agree with the AI's recommendation — proceed as suggested</td>
+  </tr>
+  <tr>
+    <td><strong>Approved with Modifications</strong></td>
+    <td>You agree but with changes (document in the note)</td>
+  </tr>
+  <tr>
+    <td><strong>Rejected</strong></td>
+    <td>You disagree — return to AI system for reconsideration</td>
+  </tr>
+  <tr>
+    <td><strong>Escalated</strong></td>
+    <td>Requires senior review — outside your authorization level</td>
+  </tr>
+</table>
+
+<h4>Oversight Note</h4>
+<p>Optional field to document your rationale. This becomes part of the cryptographic record.</p>
+
+<h3 id="reject">3.3 Reject or Escalate</h3>
+
+<p>If you select <strong>Rejected</strong>:</p>
+<ul>
+  <li>The decision is marked as rejected in the system</li>
+  <li>A receipt is still generated (proof that oversight occurred)</li>
+  <li>The AI system should be notified to reconsider or generate alternatives</li>
+</ul>
+
+<p>If you select <strong>Escalated</strong>:</p>
+<ul>
+  <li>The decision is flagged for senior review</li>
+  <li>Your escalation is recorded in the audit trail</li>
+  <li>A notification should be sent to the appropriate authority</li>
+</ul>
+
+<h3 id="verify">3.4 Verify Receipts</h3>
+
+<p>After sealing, every receipt can be verified independently:</p>
+
+<ol>
+  <li>Click the <strong>Verify →</strong> button on any verified decision</li>
+  <li>Or visit <code>windi-domain.com/verify-public/?id=RECEIPT_ID</code></li>
+  <li>The verification page shows all receipt details</li>
+  <li>Anyone can verify — no login required</li>
+</ol>
+
+<div class="callout callout-info">
+  <span class="callout-title">Independent Verification</span>
+  <p>The Verify Public endpoint is designed for third-party verification. Auditors, regulators, or legal teams can independently confirm that human oversight occurred without needing access to your internal systems.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<h2 id="stats">4. Features</h2>
+
+<h3>4.1 Dashboard Statistics</h3>
+
+<p>The statistics panel provides real-time metrics:</p>
+
+<table>
+  <tr>
+    <th>Metric</th>
+    <th>Target</th>
+    <th>Action if Low</th>
+  </tr>
+  <tr>
+    <td>PHO Verified Today</td>
+    <td>Match decision volume</td>
+    <td>Review pending queue</td>
+  </tr>
+  <tr>
+    <td>Pending Oversight</td>
+    <td>0 (ideal)</td>
+    <td>Prioritize HIGH risk first</td>
+  </tr>
+  <tr>
+    <td>Compliance Rate</td>
+    <td>100%</td>
+    <td>Check for oversight gaps</td>
+  </tr>
+  <tr>
+    <td>Ledger Receipts</td>
+    <td>Growing</td>
+    <td>Normal operation</td>
+  </tr>
+</table>
+
+<h3 id="audit">4.2 Audit Log</h3>
+
+<p>The audit log shows recent PHO activities:</p>
+
+<ul>
+  <li><span class="badge badge-ok">PHO Sealed</span> — Successful approval with receipt</li>
+  <li><span class="badge badge-danger">Oversight Gap</span> — Decision executed without PHO (violation)</li>
+</ul>
+
+<p>Each entry shows:</p>
+<ul>
+  <li>Timestamp of the action</li>
+  <li>Decision reference</li>
+  <li>Receipt ID (ledger anchor)</li>
+  <li>Short hash for verification</li>
+</ul>
+
+<h3 id="export">4.3 Export & Reports</h3>
+
+<p>Click <strong>↓ Audit Export</strong> to download a CSV file containing:</p>
+
+<ul>
+  <li>Receipt ID</li>
+  <li>Decision title</li>
+  <li>Reviewer name</li>
+  <li>Timestamp</li>
+  <li>SHA-256 hash</li>
+  <li>Compliance status</li>
+</ul>
+
+<p>This export is suitable for:</p>
+<ul>
+  <li>Regulatory audits</li>
+  <li>Internal compliance reviews</li>
+  <li>Legal discovery</li>
+  <li>Board reporting</li>
+</ul>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<h2 id="api">5. Integration</h2>
+
+<h3>5.1 API Reference</h3>
+
+<p>W-Enterprise-001 provides a REST API for integration with your AI systems:</p>
+
+<h4>Health Check</h4>
+<pre><code>GET /enterprise/health
+
+Response:
+{
+  "service": "W-Enterprise-001",
+  "version": "1.0.0",
+  "status": "operational",
+  "invariants": ["I1", "I9", "I11", "I14"]
+}</code></pre>
+
+<h4>List Decisions</h4>
+<pre><code>GET /enterprise/api/decisions
+
+Response:
+{
+  "decisions": [...],
+  "stats": {
+    "pending": 3,
+    "verified": 12,
+    "total": 15,
+    "compliance_rate": 80
+  }
+}</code></pre>
+
+<h4>Create Decision</h4>
+<pre><code>POST /enterprise/api/decisions
+Content-Type: application/json
+
+{
+  "title": "Loan Application Risk Assessment",
+  "system": "AllianzRisk-AI v3.2",
+  "risk_level": "HIGH",
+  "description": "Automated risk score: 72/100",
+  "sge_score": 7.2
+}</code></pre>
+
+<h4>PHO Approval</h4>
+<pre><code>POST /enterprise/api/pho/approve
+Content-Type: application/json
+
+{
+  "decision_id": "DEC-2026-0041",
+  "decision_title": "Loan Application Risk Assessment",
+  "reviewer": "Anna Müller",
+  "outcome": "APPROVED",
+  "note": "Risk acceptable for SME segment",
+  "risk_level": "HIGH",
+  "sge_score": 7.2
+}
+
+Response:
+{
+  "ok": true,
+  "receipt_id": "WINDI-PHO-20260412-A4F8C9D2",
+  "hash": "a4f8c9d2e1b3f7a8...",
+  "timestamp": "2026-04-12T09:14:22Z",
+  "ledger_ok": true,
+  "verify_url": "https://windi-domain.com/verify-public/?id=...",
+  "eu_ai_act": "Article 14 — Human Oversight — Compliant"
+}</code></pre>
+
+<h4>Audit Log</h4>
+<pre><code>GET /enterprise/api/audit
+
+Response:
+{
+  "log": [...],
+  "total": 47
+}</code></pre>
+
+<h3 id="systems">5.2 Connect AI Systems</h3>
+
+<p>To connect your AI system to W-Enterprise-001:</p>
+
+<ol>
+  <li><strong>Configure webhook</strong> — Your AI system should POST decisions to <code>/enterprise/api/decisions</code></li>
+  <li><strong>Include metadata</strong> — Title, system name, risk level, description, SGE score</li>
+  <li><strong>Wait for approval</strong> — Do not execute until PHO receipt is generated</li>
+  <li><strong>Verify receipt</strong> — Optionally confirm via the verification endpoint</li>
+</ol>
+
+<div class="callout callout-warning">
+  <span class="callout-title">Critical Requirement</span>
+  <p>Your AI system must NOT execute high-risk decisions until a PHO receipt exists. This is the core compliance requirement of EU AI Act Article 14.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<h2 id="invariants">6. Reference</h2>
+
+<h3>6.1 Constitutional Invariants</h3>
+
+<p>W-Enterprise-001 operates under WINDI's constitutional framework. These invariants are <strong>non-negotiable</strong>:</p>
+
+<table>
+  <tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Impact</th>
+  </tr>
+  <tr>
+    <td><strong>I1</strong></td>
+    <td>Human Sovereignty</td>
+    <td>AI suggests, human decides. Never autonomous execution.</td>
+  </tr>
+  <tr>
+    <td><strong>I9</strong></td>
+    <td>Human Approval Gate</td>
+    <td><code>human_approved=true</code> required before any seal. <span class="badge badge-danger">IRREMEDIÁVEL</span></td>
+  </tr>
+  <tr>
+    <td><strong>I11</strong></td>
+    <td>Cryptographic Evidence</td>
+    <td>SHA-256 hash sealed to Forensic Ledger. Immutable forever. <span class="badge badge-danger">IRREMEDIÁVEL</span></td>
+  </tr>
+  <tr>
+    <td><strong>I14</strong></td>
+    <td>Explicit Failure</td>
+    <td>No placeholders. Missing data = explicit error. <span class="badge badge-danger">IRREMEDIÁVEL</span></td>
+  </tr>
+</table>
+
+<div class="callout callout-info">
+  <span class="callout-title">IRREMEDIÁVEL</span>
+  <p>Invariants marked as IRREMEDIÁVEL cannot be overridden by any configuration, user, or system. They are hardcoded into the system architecture.</p>
+</div>
+
+<h3 id="troubleshooting">6.2 Troubleshooting</h3>
+
+<h4>Ledger Offline</h4>
+<p><strong>Symptom:</strong> "Ledger · Offline" in top bar</p>
+<p><strong>Cause:</strong> Connection to Forensic Ledger (:8101) unavailable</p>
+<p><strong>Impact:</strong> Receipts are generated locally with <code>ledger_mode: "local_fallback"</code></p>
+<p><strong>Resolution:</strong> Contact system administrator. Local receipts remain valid but should be synced when ledger recovers.</p>
+
+<h4>Session Expired</h4>
+<p><strong>Symptom:</strong> Actions fail with 401 error</p>
+<p><strong>Cause:</strong> Authentication token expired</p>
+<p><strong>Resolution:</strong> Refresh the page or re-authenticate with your DID credentials</p>
+
+<h4>Decision Not Appearing</h4>
+<p><strong>Symptom:</strong> AI system created a decision but it's not in the dashboard</p>
+<p><strong>Cause:</strong> API integration issue</p>
+<p><strong>Resolution:</strong> Check that POST to <code>/enterprise/api/decisions</code> returned 200/201</p>
+
+<h4>Hash Mismatch on Verification</h4>
+<p><strong>Symptom:</strong> Verify Public shows different hash</p>
+<p><strong>Cause:</strong> Data modified after sealing (potential tampering)</p>
+<p><strong>Resolution:</strong> This is a critical alert. Investigate immediately. The original sealed data should be retrieved from the Forensic Ledger.</p>
+
+<h3 id="support">6.3 Support</h3>
+
+<p>For technical support:</p>
+
+<ul>
+  <li><strong>Documentation:</strong> <a href="https://windi-domain.com/docs/">windi-domain.com/docs/</a></li>
+  <li><strong>API Status:</strong> <a href="https://windi-domain.com/enterprise/health">windi-domain.com/enterprise/health</a></li>
+  <li><strong>Verify Endpoint:</strong> <a href="https://windi-domain.com/verify-public/">windi-domain.com/verify-public/</a></li>
+</ul>
+
+<p>For enterprise inquiries:</p>
+<ul>
+  <li><strong>WINDI Publishing House</strong></li>
+  <li>Kempten, Bavaria, Deutschland</li>
+  <li>windi-domain.com</li>
+</ul>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+
+<div class="doc-footer">
+  <div>
+    WINDI Publishing House &middot; Liga IA+H &middot; 2026<br>
+    <em>"AI processes. Human decides. WINDI guarantees."</em>
+  </div>
+  <div>
+    <a href="https://windi-domain.com/enterprise/">Dashboard</a> &middot;
+    <a href="https://windi-domain.com/verify-public/">Verify</a> &middot;
+    v1.0.0
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+// ─── THEME TOGGLE ───
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('windi-theme', theme);
+
+  // Update button states
+  document.querySelectorAll('.theme-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.theme === theme);
+  });
+}
+
+// Initialize theme from localStorage or default to noir
+function initTheme() {
+  const saved = localStorage.getItem('windi-theme');
+  const theme = saved || 'noir';
+  setTheme(theme);
+}
+
+// Run on load
+initTheme();
+
+// ─── ACTIVE NAV LINK ON SCROLL ───
+document.addEventListener('scroll', () => {
+  const sections = document.querySelectorAll('h2[id], h3[id]');
+  let current = '';
+  sections.forEach(section => {
+    const rect = section.getBoundingClientRect();
+    if (rect.top <= 100) current = section.id;
+  });
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) {
+      link.classList.add('active');
+    }
+  });
+});
+</script>
+
+</body>
+</html>

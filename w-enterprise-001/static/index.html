@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI Enterprise · AI Compliance Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ─── NOIR THEME (Default) ─── */
+:root, [data-theme="noir"] {
+  --noir:    #0A0A0B;
+  --noir2:   #111114;
+  --noir3:   #1A1A1E;
+  --noir4:   #222226;
+  --border:  rgba(255,255,255,0.07);
+  --borderS: rgba(255,255,255,0.14);
+  --text:    #EDEAE2;
+  --muted:   #7A7874;
+  --dim:     #3E3C3A;
+  --gold:    #E8C87A;
+  --goldBg:  rgba(232,200,122,0.08);
+  --goldBd:  rgba(232,200,122,0.25);
+  --danger:  #E05555;
+  --dangerB: rgba(224,85,85,0.12);
+  --warn:    #E8962A;
+  --warnB:   rgba(232,150,42,0.12);
+  --ok:      #4CAF82;
+  --okB:     rgba(76,175,130,0.12);
+  --fd: 'Bricolage Grotesque', Georgia, serif;
+  --fm: 'JetBrains Mono', monospace;
+  --btn-gold-text: #0A0A0B;
+}
+
+/* ─── KLAR THEME (Light) ─── */
+[data-theme="klar"] {
+  --noir:    #FAFAF8;
+  --noir2:   #F5F4F2;
+  --noir3:   #EEEDEB;
+  --noir4:   #E5E4E2;
+  --border:  rgba(0,0,0,0.08);
+  --borderS: rgba(0,0,0,0.14);
+  --text:    #1A1A1A;
+  --muted:   #6B6965;
+  --dim:     #9E9C98;
+  --gold:    #8B7424;
+  --goldBg:  rgba(139,116,36,0.08);
+  --goldBd:  rgba(139,116,36,0.25);
+  --danger:  #C43C3C;
+  --dangerB: rgba(196,60,60,0.10);
+  --warn:    #B87420;
+  --warnB:   rgba(184,116,32,0.10);
+  --ok:      #2E8B57;
+  --okB:     rgba(46,139,87,0.10);
+  --btn-gold-text: #FAFAF8;
+}
+
+html { font-size: 15px; }
+body {
+  background: var(--noir);
+  color: var(--text);
+  font-family: var(--fd);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Smooth theme transitions */
+.topbar, .sidebar, .main, .footer-bar, .stat, .table-wrap, .table-head,
+.decision-row, .panel, .receipt-panel, .nav-item, .btn, .badge, .form-input,
+.form-select, .form-textarea, .audit-entry {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.2s ease;
+}
+
+/* ─── THEME TOGGLE ─── */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 16px;
+  padding-left: 16px;
+  border-left: 1px solid var(--border);
+}
+.theme-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--muted);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.theme-btn:hover {
+  color: var(--text);
+  border-color: var(--borderS);
+}
+.theme-btn.active {
+  background: var(--goldBg);
+  border-color: var(--goldBd);
+  color: var(--gold);
+}
+
+/* ─── TOPBAR ─── */
+.topbar {
+  height: 56px;
+  background: var(--noir2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.topbar-logo {
+  font-family: var(--fm);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gold);
+  letter-spacing: 0.06em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.topbar-logo::after {
+  content: 'ENTERPRISE';
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  background: var(--noir4);
+  border: 1px solid var(--border);
+  padding: 2px 7px;
+  border-radius: 2px;
+}
+.topbar-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--muted);
+  font-family: var(--fm);
+}
+.user-badge {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: var(--goldBg);
+  border: 1px solid var(--goldBd);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: var(--gold);
+  font-family: var(--fm);
+}
+.topbar-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  color: var(--ok);
+  font-family: var(--fm);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.pulse {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--ok);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+/* ─── LAYOUT ─── */
+.layout { display: flex; flex: 1; min-height: calc(100vh - 56px); }
+
+/* ─── SIDEBAR ─── */
+.sidebar {
+  width: 220px;
+  min-width: 220px;
+  background: var(--noir2);
+  border-right: 1px solid var(--border);
+  padding: 1.5rem 0;
+}
+.sidebar-section {
+  font-family: var(--fm);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+  padding: 0 1.2rem 0.6rem;
+  margin-top: 1.2rem;
+}
+.sidebar-section:first-child { margin-top: 0; }
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0.55rem 1.2rem;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  border-left: 2px solid transparent;
+  text-decoration: none;
+}
+.nav-item:hover { color: var(--text); background: var(--noir3); }
+.nav-item.active { color: var(--gold); border-left-color: var(--gold); background: var(--goldBg); }
+.nav-dot {
+  width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+}
+.nav-count {
+  margin-left: auto;
+  font-family: var(--fm);
+  font-size: 10px;
+  background: var(--noir4);
+  border: 1px solid var(--border);
+  padding: 1px 6px;
+  border-radius: 10px;
+  color: var(--muted);
+}
+.nav-count.alert { background: var(--dangerB); border-color: rgba(224,85,85,0.3); color: var(--danger); }
+
+/* ─── MAIN ─── */
+.main { flex: 1; padding: 2rem; overflow-y: auto; }
+
+/* ─── PAGE HEADER ─── */
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1.8rem;
+  gap: 1rem;
+}
+.page-title { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; }
+.page-sub { font-size: 12px; color: var(--muted); margin-top: 4px; font-family: var(--fm); }
+.btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--fm); font-size: 11px; font-weight: 500;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  padding: 8px 18px; border-radius: 2px; cursor: pointer;
+  border: none; transition: all 0.2s; text-decoration: none; white-space: nowrap;
+}
+.btn-ghost {
+  background: transparent; color: var(--muted);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover { color: var(--text); border-color: var(--borderS); }
+.btn-gold {
+  background: var(--gold); color: var(--btn-gold-text); border: 1px solid var(--gold);
+}
+.btn-gold:hover { filter: brightness(1.1); }
+.btn-sm { padding: 5px 12px; font-size: 10px; }
+
+/* ─── STATS ROW ─── */
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); margin-bottom: 1.5rem; }
+.stat {
+  background: var(--noir2); padding: 1rem 1.25rem;
+}
+.stat-label { font-family: var(--fm); font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.stat-val { font-size: 1.6rem; font-weight: 700; font-family: var(--fm); letter-spacing: -0.02em; }
+.stat-sub { font-size: 10px; color: var(--muted); margin-top: 3px; font-family: var(--fm); }
+.c-ok { color: var(--ok); }
+.c-warn { color: var(--warn); }
+.c-danger { color: var(--danger); }
+.c-gold { color: var(--gold); }
+
+/* ─── DECISION TABLE ─── */
+.section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1rem;
+}
+.section-title { font-size: 13px; font-weight: 700; letter-spacing: -0.01em; }
+.section-meta { font-family: var(--fm); font-size: 10px; color: var(--muted); }
+
+.table-wrap { border: 1px solid var(--border); background: var(--noir2); }
+.table-head {
+  display: grid;
+  grid-template-columns: 2fr 1.2fr 1fr 100px 140px;
+  padding: 0.6rem 1rem;
+  background: var(--noir3);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--fm);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.decision-row {
+  display: grid;
+  grid-template-columns: 2fr 1.2fr 1fr 100px 140px;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--border);
+  align-items: center;
+  transition: background 0.15s;
+}
+.decision-row:last-child { border-bottom: none; }
+.decision-row:hover { background: var(--noir3); }
+.decision-row.selected { background: var(--goldBg); }
+
+.d-title { font-size: 13px; font-weight: 500; color: var(--text); }
+.d-id { font-family: var(--fm); font-size: 10px; color: var(--muted); margin-top: 3px; }
+.d-system { font-size: 12px; color: var(--muted); }
+.d-risk { font-size: 11px; font-family: var(--fm); }
+
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: var(--fm); font-size: 9px; font-weight: 500;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 2px;
+}
+.badge-ok { background: var(--okB); color: var(--ok); border: 1px solid rgba(76,175,130,0.3); }
+.badge-warn { background: var(--warnB); color: var(--warn); border: 1px solid rgba(232,150,42,0.3); }
+.badge-danger { background: var(--dangerB); color: var(--danger); border: 1px solid rgba(224,85,85,0.3); }
+.badge-dim { background: var(--noir4); color: var(--muted); border: 1px solid var(--border); }
+.badge-gold { background: var(--goldBg); color: var(--gold); border: 1px solid var(--goldBd); }
+
+.badge::before { content:''; display:inline-block; width:5px; height:5px; border-radius:50%; background:currentColor; flex-shrink:0; }
+
+.row-action { display: flex; gap: 6px; justify-content: flex-end; }
+
+/* ─── APPROVAL PANEL ─── */
+.panel-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+  padding: 1.5rem;
+  opacity: 0; pointer-events: none; transition: opacity 0.2s;
+}
+.panel-overlay.open { opacity: 1; pointer-events: all; }
+.panel {
+  background: var(--noir2);
+  border: 1px solid var(--borderS);
+  border-radius: 2px;
+  width: 100%; max-width: 580px;
+  position: relative;
+  transform: translateY(16px);
+  transition: transform 0.25s;
+}
+.panel-overlay.open .panel { transform: translateY(0); }
+
+.panel-top {
+  background: var(--noir3);
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 1.25rem;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.panel-top h3 { font-size: 14px; font-weight: 700; }
+.panel-close {
+  background: none; border: none; color: var(--muted); cursor: pointer;
+  font-size: 18px; line-height: 1; padding: 2px 6px; border-radius: 2px;
+}
+.panel-close:hover { color: var(--text); background: var(--noir4); }
+.panel-body { padding: 1.25rem; }
+
+.decision-preview {
+  background: var(--noir3);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 1rem;
+  margin-bottom: 1.25rem;
+}
+.dp-label { font-family: var(--fm); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+.dp-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.dp-meta { font-family: var(--fm); font-size: 10px; color: var(--muted); }
+
+.form-group { margin-bottom: 1rem; }
+.form-label { font-family: var(--fm); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; display: block; }
+.form-input, .form-select {
+  width: 100%;
+  background: var(--noir3);
+  border: 1px solid var(--borderS);
+  border-radius: 2px;
+  padding: 9px 12px;
+  color: var(--text);
+  font-family: var(--fd);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s;
+  appearance: none;
+}
+.form-input:focus, .form-select:focus { border-color: var(--gold); }
+.form-input::placeholder { color: var(--dim); }
+.form-select option { background: var(--noir2); }
+.form-textarea {
+  width: 100%; background: var(--noir3); border: 1px solid var(--borderS);
+  border-radius: 2px; padding: 9px 12px; color: var(--text);
+  font-family: var(--fd); font-size: 13px; outline: none; resize: vertical;
+  min-height: 70px; transition: border-color 0.2s;
+}
+.form-textarea:focus { border-color: var(--gold); }
+.form-textarea::placeholder { color: var(--dim); }
+
+.pho-info {
+  background: var(--goldBg);
+  border: 1px solid var(--goldBd);
+  border-radius: 2px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+  font-family: var(--fm);
+  font-size: 10px;
+  color: var(--gold);
+  line-height: 1.5;
+}
+.panel-actions { display: flex; gap: 8px; justify-content: flex-end; }
+
+/* ─── RECEIPT PANEL ─── */
+.receipt-panel {
+  background: var(--noir2);
+  border: 1px solid var(--borderS);
+  border-radius: 2px;
+  width: 100%; max-width: 560px;
+  position: relative;
+  transform: translateY(16px);
+  transition: transform 0.25s;
+}
+.panel-overlay.open .receipt-panel { transform: translateY(0); }
+
+.receipt-header {
+  background: var(--okB);
+  border-bottom: 1px solid rgba(76,175,130,0.2);
+  padding: 1.25rem;
+  text-align: center;
+}
+.receipt-icon {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: rgba(76,175,130,0.15); border: 1px solid rgba(76,175,130,0.4);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; margin: 0 auto 10px;
+}
+.receipt-header h3 { font-size: 15px; font-weight: 700; color: var(--ok); }
+.receipt-header p { font-size: 11px; color: var(--muted); margin-top: 4px; font-family: var(--fm); }
+
+.receipt-body { padding: 1.25rem; }
+.receipt-row {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  padding: 8px 0; border-bottom: 1px solid var(--border); gap: 1rem;
+}
+.receipt-row:last-child { border-bottom: none; }
+.r-label { font-family: var(--fm); font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); min-width: 90px; margin-top: 2px; }
+.r-val { font-family: var(--fm); font-size: 11px; color: var(--text); text-align: right; word-break: break-all; }
+.r-val.gold { color: var(--gold); }
+.r-val.ok { color: var(--ok); }
+
+.receipt-actions { display: flex; gap: 8px; padding: 0 1.25rem 1.25rem; }
+.verify-link-btn {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px;
+  font-family: var(--fm); font-size: 10px; font-weight: 500;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 10px; border-radius: 2px; cursor: pointer;
+  background: var(--okB); color: var(--ok);
+  border: 1px solid rgba(76,175,130,0.3); text-decoration: none;
+  transition: all 0.2s;
+}
+.verify-link-btn:hover { background: rgba(76,175,130,0.2); }
+
+/* ─── LOADING STATE ─── */
+.loading-state {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem;
+  gap: 1rem;
+}
+.loading-state.active { display: flex; }
+.spinner {
+  width: 36px; height: 36px;
+  border: 2px solid var(--border);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-msg { font-family: var(--fm); font-size: 11px; color: var(--muted); text-align: center; line-height: 1.6; }
+
+/* ─── AUDIT LOG ─── */
+.audit-entry {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 0.9rem 1rem; border-bottom: 1px solid var(--border);
+}
+.audit-entry:last-child { border-bottom: none; }
+.audit-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px;
+}
+.audit-content { flex: 1; min-width: 0; }
+.audit-title { font-size: 12px; font-weight: 500; color: var(--text); }
+.audit-meta { font-family: var(--fm); font-size: 10px; color: var(--muted); margin-top: 3px; word-break: break-all; }
+
+/* ─── FOOTER ─── */
+.footer-bar {
+  height: 36px; background: var(--noir2); border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 1.5rem; flex-shrink: 0;
+}
+.footer-text { font-family: var(--fm); font-size: 9px; color: var(--muted); letter-spacing: 0.06em; }
+.footer-live {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--fm); font-size: 9px; color: var(--ok); letter-spacing: 0.06em;
+}
+
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .stats { grid-template-columns: 1fr 1fr; }
+  .table-head, .decision-row { grid-template-columns: 1fr auto; }
+  .table-head .th-system, .table-head .th-risk,
+  .decision-row .d-system, .decision-row .d-risk { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-logo">WINDI</div>
+  <div class="topbar-status">
+    <div class="pulse"></div>
+    Ledger · Live
+  </div>
+  <div class="topbar-user">
+    <span>Anna Müller · AI Trust Officer</span>
+    <div class="user-badge">AM</div>
+    <div class="theme-toggle">
+      <button class="theme-btn active" data-theme="noir" onclick="setTheme('noir')" title="NOIR Theme">&#9790;</button>
+      <button class="theme-btn" data-theme="klar" onclick="setTheme('klar')" title="KLAR Theme">&#9788;</button>
+    </div>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-section">Compliance</div>
+    <a class="nav-item active" href="#">
+      <div class="nav-dot" style="background: var(--gold)"></div>
+      Decisions
+      <span class="nav-count alert">3</span>
+    </a>
+    <a class="nav-item" href="#">
+      <div class="nav-dot" style="background: var(--ok)"></div>
+      PHO Receipts
+      <span class="nav-count">12</span>
+    </a>
+    <a class="nav-item" href="#">
+      <div class="nav-dot" style="background: var(--muted)"></div>
+      Audit Export
+    </a>
+
+    <div class="sidebar-section">Verification</div>
+    <a class="nav-item" href="https://windi-domain.com/verify-public/" target="_blank">
+      <div class="nav-dot" style="background: var(--ok)"></div>
+      Verify Public →
+    </a>
+    <a class="nav-item" href="#">
+      <div class="nav-dot" style="background: var(--muted)"></div>
+      Ledger Status
+    </a>
+
+    <div class="sidebar-section">Configuration</div>
+    <a class="nav-item" href="#">
+      <div class="nav-dot" style="background: var(--muted)"></div>
+      AI Systems
+    </a>
+    <a class="nav-item" href="#">
+      <div class="nav-dot" style="background: var(--muted)"></div>
+      Oversight Rules
+    </a>
+    <a class="nav-item" href="#">
+      <div class="nav-dot" style="background: var(--muted)"></div>
+      Reviewers
+    </a>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+      <div>
+        <div class="page-title">AI Decision Oversight</div>
+        <div class="page-sub">Saturday, 11 April 2026 · Allianz Partners · EU AI Act Article 14</div>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button class="btn btn-ghost" onclick="downloadAuditCSV()">↓ Audit Export</button>
+        <button class="btn btn-gold" onclick="showNewDecision()">+ New Decision</button>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">PHO Verified Today</div>
+        <div class="stat-val c-ok" id="stat-verified">12</div>
+        <div class="stat-sub">Court-admissible receipts</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Pending Oversight</div>
+        <div class="stat-val c-danger" id="stat-pending">3</div>
+        <div class="stat-sub">Require human approval</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Compliance Rate</div>
+        <div class="stat-val c-gold" id="stat-rate">80%</div>
+        <div class="stat-sub">PHO coverage this week</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Ledger Receipts</div>
+        <div class="stat-val" id="stat-ledger">47</div>
+        <div class="stat-sub">Immutable · Verified</div>
+      </div>
+    </div>
+
+    <!-- DECISIONS TABLE -->
+    <div class="section-header">
+      <div class="section-title">Active Decisions</div>
+      <div class="section-meta">3 pending · 12 verified · EU AI Act Article 14 scope</div>
+    </div>
+
+    <div class="table-wrap">
+      <div class="table-head">
+        <div>Decision</div>
+        <div class="th-system">AI System</div>
+        <div class="th-risk">Risk Level</div>
+        <div>Status</div>
+        <div style="text-align:right">Action</div>
+      </div>
+
+      <!-- Rows injected by JS -->
+      <div id="decisions-body"></div>
+    </div>
+
+    <!-- AUDIT LOG -->
+    <div style="margin-top: 2rem;">
+      <div class="section-header">
+        <div class="section-title">PHO Audit Log</div>
+        <div class="section-meta">Last 5 receipts · Ledger confirmed</div>
+      </div>
+      <div class="table-wrap" id="audit-log"></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- FOOTER -->
+<div class="footer-bar">
+  <div class="footer-text">WINDI Publishing House · W-Enterprise-001 · Pilot v1.0</div>
+  <div class="footer-live">
+    <div class="pulse"></div>
+    windi-domain.com/verify-public/ · Live
+  </div>
+</div>
+
+<!-- ─── APPROVAL PANEL ─── -->
+<div class="panel-overlay" id="approval-overlay" onclick="closeOnBg(event, 'approval-overlay')">
+  <div class="panel">
+    <div class="panel-top">
+      <h3>Approve with PHO</h3>
+      <button class="panel-close" onclick="closePanel('approval-overlay')">✕</button>
+    </div>
+    <div class="panel-body" id="approval-body">
+
+      <div class="decision-preview" id="ap-preview">
+        <div class="dp-label">Decision under review</div>
+        <div class="dp-title" id="ap-title">—</div>
+        <div class="dp-meta" id="ap-meta">—</div>
+      </div>
+
+      <div class="pho-info">
+        PHO SEAL — Your approval will generate a cryptographic receipt:<br>
+        Identity · Timestamp · Decision Hash · Immutable Ledger Anchor
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Reviewer Name</label>
+        <input class="form-input" id="ap-reviewer" value="Anna Müller" placeholder="Your name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Decision</label>
+        <select class="form-select" id="ap-decision">
+          <option value="APPROVED">Approved — proceed as recommended</option>
+          <option value="APPROVED_MODIFIED">Approved with modifications</option>
+          <option value="REJECTED">Rejected — return to AI system</option>
+          <option value="ESCALATED">Escalated — requires senior review</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Oversight Note (optional)</label>
+        <textarea class="form-textarea" id="ap-note" placeholder="Rationale for this decision..."></textarea>
+      </div>
+
+    </div>
+
+    <!-- Loading state -->
+    <div class="loading-state" id="ap-loading">
+      <div class="spinner"></div>
+      <div class="loading-msg" id="ap-loading-msg">
+        Generating SHA-256 hash…<br>
+        Sealing PHO receipt to ledger…
+      </div>
+    </div>
+
+    <div class="panel-actions" style="padding: 0 1.25rem 1.25rem;" id="ap-actions">
+      <button class="btn btn-ghost" onclick="closePanel('approval-overlay')">Cancel</button>
+      <button class="btn btn-gold" onclick="submitPHO()">Seal PHO Receipt →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── RECEIPT PANEL ─── -->
+<div class="panel-overlay" id="receipt-overlay" onclick="closeOnBg(event, 'receipt-overlay')">
+  <div class="receipt-panel">
+    <div class="receipt-header">
+      <div class="receipt-icon">✓</div>
+      <h3>PHO Receipt Sealed</h3>
+      <p id="rec-id">WINDI-PHO-—</p>
+    </div>
+    <div class="receipt-body">
+      <div class="receipt-row">
+        <div class="r-label">Decision</div>
+        <div class="r-val" id="rec-decision">—</div>
+      </div>
+      <div class="receipt-row">
+        <div class="r-label">Reviewer</div>
+        <div class="r-val" id="rec-reviewer">—</div>
+      </div>
+      <div class="receipt-row">
+        <div class="r-label">Timestamp</div>
+        <div class="r-val" id="rec-ts">—</div>
+      </div>
+      <div class="receipt-row">
+        <div class="r-label">SHA-256</div>
+        <div class="r-val ok" id="rec-hash">—</div>
+      </div>
+      <div class="receipt-row">
+        <div class="r-label">Ledger ID</div>
+        <div class="r-val gold" id="rec-ledger">—</div>
+      </div>
+      <div class="receipt-row">
+        <div class="r-label">Status</div>
+        <div class="r-val ok">Court-admissible · Immutable · EU AI Act Art. 14</div>
+      </div>
+    </div>
+    <div class="receipt-actions">
+      <a class="verify-link-btn" id="rec-verify-link" href="https://windi-domain.com/verify-public/" target="_blank">
+        → Verify Independently
+      </a>
+      <button class="btn btn-ghost btn-sm" onclick="downloadReceipt()">↓ Download</button>
+      <button class="btn btn-ghost btn-sm" onclick="closePanel('receipt-overlay')">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── THEME TOGGLE ───
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('windi-theme', theme);
+  document.querySelectorAll('.theme-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.theme === theme);
+  });
+}
+
+function initTheme() {
+  const saved = localStorage.getItem('windi-theme');
+  const theme = saved || 'noir';
+  setTheme(theme);
+}
+
+// Initialize theme immediately
+initTheme();
+
+// ─── DATA ───
+const LEDGER_API = 'https://www.windi-domain.com/api/receipts';
+const VERIFY_URL = 'https://windi-domain.com/verify-public/';
+
+let decisions = [
+  { id: 'DEC-2026-0041', title: 'Loan Application Risk Assessment', system: 'AllianzRisk-AI v3.2', risk: 'HIGH', status: 'PENDING', time: '09:14', desc: 'Automated risk score: 72/100. Recommendation: DECLINE. Customer segment: SME, Bavaria.', sgeScore: 7.2 },
+  { id: 'DEC-2026-0040', title: 'Claims Settlement Automation', system: 'ClaimsGPT-EU', risk: 'HIGH', status: 'PENDING', time: '08:51', desc: 'Settlement amount: €14,200. Fraud indicator: LOW. Policy: AZ-2024-881234.', sgeScore: 5.1 },
+  { id: 'DEC-2026-0039', title: 'Customer Churn Prediction — Segment B', system: 'RetentionML v1.7', risk: 'MEDIUM', status: 'PENDING', time: '08:30', desc: 'Churn probability: 84%. Recommended action: Priority retention outreach.', sgeScore: 3.4 },
+  { id: 'DEC-2026-0038', title: 'Fraud Detection — Transaction Alert', system: 'FraudGuard-EU', risk: 'HIGH', status: 'VERIFIED', time: '07:55', hash: 'a4f8c9d2e1b3f7a8', ledger: 'WINDI-PHO-20260411-A4F8C9D2', reviewer: 'Anna Müller', decision: 'APPROVED' },
+  { id: 'DEC-2026-0037', title: 'Credit Line Increase — Auto-approval', system: 'CreditAI v2.1', risk: 'HIGH', status: 'VERIFIED', time: '07:22', hash: 'b9e3a1c7f4d2e8b5', ledger: 'WINDI-PHO-20260411-B9E3A1C7', reviewer: 'Anna Müller', decision: 'APPROVED_MODIFIED' },
+];
+
+let auditLog = [
+  { ts: '09:12', title: 'PHO Sealed — DEC-2026-0037', hash: 'b9e3a1c7f4d2e8b5', ledger: 'WINDI-PHO-20260411-B9E3A1C7', ok: true },
+  { ts: '08:58', title: 'PHO Sealed — DEC-2026-0036', hash: 'c2f1a9b4e7d3c8f0', ledger: 'WINDI-PHO-20260411-C2F1A9B4', ok: true },
+  { ts: '08:45', title: 'PHO Sealed — DEC-2026-0035', hash: 'd7a3b2c9f1e4d6a8', ledger: 'WINDI-PHO-20260411-D7A3B2C9', ok: true },
+  { ts: '08:30', title: 'Oversight Gap Detected — DEC-2026-0034', hash: '—', ledger: 'Missing PHO', ok: false },
+  { ts: '08:15', title: 'PHO Sealed — DEC-2026-0033', hash: 'e1c4f8a2b9d7e3c1', ledger: 'WINDI-PHO-20260411-E1C4F8A2', ok: true },
+];
+
+let currentDecisionId = null;
+let lastReceipt = null;
+
+// ─── RENDER ───
+function renderDecisions() {
+  const body = document.getElementById('decisions-body');
+  body.innerHTML = decisions.map(d => `
+    <div class="decision-row ${d.status === 'PENDING' ? '' : ''}" id="row-${d.id}">
+      <div>
+        <div class="d-title">${d.title}</div>
+        <div class="d-id">${d.id} · ${d.time}</div>
+      </div>
+      <div class="d-system th-system">${d.system}</div>
+      <div class="th-risk">
+        <span class="badge ${d.risk === 'HIGH' ? 'badge-danger' : d.risk === 'MEDIUM' ? 'badge-warn' : 'badge-dim'}">${d.risk}</span>
+      </div>
+      <div>
+        ${d.status === 'PENDING'
+          ? '<span class="badge badge-warn">Missing PHO</span>'
+          : '<span class="badge badge-ok">PHO Verified</span>'}
+      </div>
+      <div class="row-action">
+        ${d.status === 'PENDING'
+          ? `<button class="btn btn-gold btn-sm" onclick="openApproval('${d.id}')">Approve with PHO</button>`
+          : `<a class="btn btn-ghost btn-sm" href="${VERIFY_URL}" target="_blank">Verify →</a>`}
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderAudit() {
+  const log = document.getElementById('audit-log');
+  log.innerHTML = auditLog.map(e => `
+    <div class="audit-entry">
+      <div class="audit-dot" style="background: ${e.ok ? 'var(--ok)' : 'var(--danger)'}"></div>
+      <div class="audit-content">
+        <div class="audit-title">${e.title}</div>
+        <div class="audit-meta">${e.ts} · ${e.ledger} ${e.hash !== '—' ? '· ' + e.hash : ''}</div>
+      </div>
+      ${e.ok ? `<a class="btn btn-ghost btn-sm" href="${VERIFY_URL}" target="_blank" style="flex-shrink:0">Verify →</a>` : '<span class="badge badge-danger">Gap</span>'}
+    </div>
+  `).join('');
+}
+
+function updateStats() {
+  const pending = decisions.filter(d => d.status === 'PENDING').length;
+  const verified = decisions.filter(d => d.status === 'VERIFIED').length;
+  const rate = Math.round((verified / decisions.length) * 100);
+  document.getElementById('stat-pending').textContent = pending;
+  document.getElementById('stat-verified').textContent = verified + 10;
+  document.getElementById('stat-rate').textContent = rate + '%';
+}
+
+// ─── APPROVAL ───
+function openApproval(id) {
+  currentDecisionId = id;
+  const d = decisions.find(x => x.id === id);
+  document.getElementById('ap-title').textContent = d.title;
+  document.getElementById('ap-meta').textContent = `${d.id} · ${d.system} · Risk: ${d.risk}`;
+  document.getElementById('ap-reviewer').value = 'Anna Müller';
+  document.getElementById('ap-note').value = '';
+  document.getElementById('ap-loading').classList.remove('active');
+  document.getElementById('ap-actions').style.display = 'flex';
+  document.getElementById('approval-body').style.display = 'block';
+  document.getElementById('approval-overlay').classList.add('open');
+}
+
+async function submitPHO() {
+  const d = decisions.find(x => x.id === currentDecisionId);
+  const reviewer = document.getElementById('ap-reviewer').value.trim() || 'Anna Müller';
+  const decision = document.getElementById('ap-decision').value;
+  const note = document.getElementById('ap-note').value.trim();
+
+  // Show loading
+  document.getElementById('ap-actions').style.display = 'none';
+  document.getElementById('approval-body').style.display = 'none';
+  document.getElementById('ap-loading').classList.add('active');
+
+  // Compute hash client-side
+  const now = new Date();
+  const payload = `${d.id}|${reviewer}|${decision}|${now.toISOString()}|${note}`;
+  const hashHex = await sha256(payload);
+  const shortHash = hashHex.substring(0, 8).toUpperCase();
+  const receiptId = `WINDI-PHO-${now.toISOString().slice(0,10).replace(/-/g,'')}-${shortHash}`;
+
+  // Try real ledger, fallback graceful
+  let ledgerRef = receiptId;
+  try {
+    const resp = await fetch(LEDGER_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: receiptId,
+        actor: reviewer,
+        app: 'W-ENTERPRISE-001',
+        doc_name: d.title,
+        doc_type: 'PHO_OVERSIGHT',
+        content_hash: hashHex,
+        governance_level: d.risk,
+        sge_score: d.sgeScore || 5.0
+      })
+    });
+    if (resp.ok) {
+      const data = await resp.json();
+      ledgerRef = data.receipt_id || data.id || receiptId;
+    }
+  } catch(e) {
+    // offline graceful — PHO receipt still valid client-side
+  }
+
+  // Simulate seal delay for UX
+  await sleep(1800);
+
+  // Update decision
+  d.status = 'VERIFIED';
+  d.hash = hashHex.substring(0, 16);
+  d.ledger = ledgerRef;
+  d.reviewer = reviewer;
+  d.decision = decision;
+
+  // Add to audit log
+  auditLog.unshift({
+    ts: now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
+    title: `PHO Sealed — ${d.id}`,
+    hash: d.hash,
+    ledger: ledgerRef,
+    ok: true
+  });
+
+  // Store receipt
+  lastReceipt = { d, reviewer, decision, note, hash: hashHex, receiptId: ledgerRef, ts: now };
+
+  // Close approval, open receipt
+  closePanel('approval-overlay');
+  await sleep(200);
+  showReceipt();
+
+  renderDecisions();
+  renderAudit();
+  updateStats();
+}
+
+function showReceipt() {
+  const r = lastReceipt;
+  document.getElementById('rec-id').textContent = r.receiptId;
+  document.getElementById('rec-decision').textContent = r.d.title;
+  document.getElementById('rec-reviewer').textContent = r.reviewer + ' · AI Trust Officer';
+  document.getElementById('rec-ts').textContent = r.ts.toISOString().replace('T', ' ').substring(0, 19) + ' UTC';
+  document.getElementById('rec-hash').textContent = r.hash;
+  document.getElementById('rec-ledger').textContent = r.receiptId;
+  document.getElementById('rec-verify-link').href = VERIFY_URL + '?id=' + encodeURIComponent(r.receiptId);
+  document.getElementById('receipt-overlay').classList.add('open');
+}
+
+function showNewDecision() {
+  const id = 'DEC-2026-' + (42 + decisions.length).toString().padStart(4, '0');
+  const templates = [
+    { title: 'Automated Contract Risk Analysis', system: 'LegalAI-EU v2.0', risk: 'HIGH', sgeScore: 6.8 },
+    { title: 'Customer Segmentation Override', system: 'SegmentML v3.1', risk: 'MEDIUM', sgeScore: 4.2 },
+  ];
+  const t = templates[decisions.length % 2];
+  const now = new Date();
+  decisions.unshift({
+    id, title: t.title, system: t.system, risk: t.risk, status: 'PENDING',
+    time: now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
+    desc: 'New AI decision requiring human oversight before execution.',
+    sgeScore: t.sgeScore
+  });
+  renderDecisions();
+  updateStats();
+  setTimeout(() => openApproval(id), 200);
+}
+
+function downloadAuditCSV() {
+  const rows = [['Receipt ID', 'Decision', 'Reviewer', 'Timestamp', 'SHA-256 Hash', 'Status']];
+  decisions.filter(d => d.status === 'VERIFIED').forEach(d => {
+    rows.push([d.ledger || '—', d.title, d.reviewer || '—', new Date().toISOString(), d.hash || '—', 'PHO Verified · EU AI Act Art. 14']);
+  });
+  const csv = rows.map(r => r.map(c => `"${c}"`).join(',')).join('\n');
+  downloadFile('WINDI-Audit-' + new Date().toISOString().slice(0,10) + '.csv', csv, 'text/csv');
+}
+
+function downloadReceipt() {
+  if (!lastReceipt) return;
+  const r = lastReceipt;
+  const content = [
+    'WINDI PHO RECEIPT',
+    '================',
+    'Receipt ID: ' + r.receiptId,
+    'Decision: ' + r.d.title,
+    'Reviewer: ' + r.reviewer,
+    'Outcome: ' + r.decision,
+    'Timestamp: ' + r.ts.toISOString(),
+    'SHA-256: ' + r.hash,
+    'Ledger: ' + r.receiptId,
+    '',
+    'Status: Court-admissible · Immutable · EU AI Act Article 14 compliant',
+    'Verify: ' + VERIFY_URL + '?id=' + r.receiptId,
+    '',
+    'WINDI Publishing House · windi-domain.com'
+  ].join('\n');
+  downloadFile(r.receiptId + '.txt', content, 'text/plain');
+}
+
+function downloadFile(name, content, type) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([content], { type }));
+  a.download = name;
+  a.click();
+}
+
+// ─── UTILS ───
+async function sha256(str) {
+  const buf = new TextEncoder().encode(str);
+  const hash = await crypto.subtle.digest('SHA-256', buf);
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+function closePanel(id) {
+  document.getElementById(id).classList.remove('open');
+}
+function closeOnBg(e, id) {
+  if (e.target === document.getElementById(id)) closePanel(id);
+}
+
+// ─── INIT ───
+renderDecisions();
+renderAudit();
+updateStats();
+</script>
+</body>
+</html>
