@@ -79,6 +79,27 @@ app.add_middleware(
 # ── VERA Router ───────────────────────────────────────────────────────────
 app.include_router(vera_router)
 
+# ── VERA v1.2 — Sovereign Instructor + Routing + IAT-001 + DID Gate ───────
+try:
+    from routing_engine import create_routing_router
+    from agent_transfer_protocol import create_context_router
+    from vera_instructor import create_instructor_router
+    from vera_did_gate import create_did_gate_router
+
+    app.include_router(create_routing_router())
+    app.include_router(create_context_router())
+    app.include_router(create_instructor_router())
+    app.include_router(create_did_gate_router())
+
+    log.info("[VERA v1.2] Routing Engine: LOADED")
+    log.info("[VERA v1.2] IAT-001 Protocol: LOADED")
+    log.info("[VERA v1.2] Instructor Engine: LOADED")
+    log.info("[VERA v1.2] DID Gate: LOADED — EVANGELHO ACTIVO")
+    log.info("[VERA v1.2] REGO v1.2 · R10 + R11 + R12 + 3 LEIS DID: ACTIVE")
+except Exception as e:
+    log.warning(f"[VERA v1.2] Partial load — some modules unavailable: {e}")
+    log.info("[VERA v1.2] Core VERA v1.1 still operational — I14 declared")
+
 # ── Static files ──────────────────────────────────────────────────────────
 if STATIC_DIR.exists():
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
