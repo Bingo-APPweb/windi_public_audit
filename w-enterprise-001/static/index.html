@@ -544,10 +544,12 @@ body {
 #wallet-overlay.hidden { display: none; }
 
 .wb-card {
+  position: relative;
   background: var(--noir2);
   border: 1px solid var(--borderS);
   border-radius: 4px;
   padding: 2rem;
+  padding-top: 3rem;
   max-width: 480px;
   width: 100%;
   text-align: center;
@@ -599,6 +601,63 @@ body {
 .wb-steps-title { font-family: var(--fm); font-size: 9px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
 .wb-step { font-size: 11px; color: var(--muted); padding: 3px 0; display: flex; gap: 8px; align-items: flex-start; }
 .wb-step-num { font-family: var(--fm); font-size: 10px; color: var(--gold); font-weight: 500; flex-shrink: 0; margin-top: 1px; }
+
+/* ─── WALLET BANNER TOGGLES ─── */
+.wb-toggles {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.wb-theme-toggle, .wb-lang-toggle {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.wb-theme-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--muted);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.wb-theme-btn:hover {
+  color: var(--text);
+  border-color: var(--borderS);
+}
+.wb-theme-btn.active {
+  background: var(--goldBg);
+  border-color: var(--goldBd);
+  color: var(--gold);
+}
+.wb-lang-btn {
+  padding: 3px 5px;
+  font-family: var(--fm);
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.wb-lang-btn:hover { color: var(--text); border-color: var(--borderS); }
+.wb-lang-btn.active {
+  background: var(--goldBg);
+  border-color: var(--goldBd);
+  color: var(--gold);
+}
 
 /* ─── DID UNIVERSAL: SESSION BAR ─── */
 #session-bar {
@@ -654,6 +713,17 @@ body {
 <!-- ═══ DID UNIVERSAL: WALLET BANNER OVERLAY ═══ -->
 <div id="wallet-overlay">
   <div class="wb-card">
+    <div class="wb-toggles">
+      <div class="wb-theme-toggle">
+        <button class="wb-theme-btn active" data-theme="noir" onclick="setTheme('noir')" title="NOIR">&#9790;</button>
+        <button class="wb-theme-btn" data-theme="klar" onclick="setTheme('klar')" title="KLAR">&#9788;</button>
+      </div>
+      <div class="wb-lang-toggle">
+        <button class="wb-lang-btn" data-lang="de" onclick="setLang('de')">DE</button>
+        <button class="wb-lang-btn active" data-lang="en" onclick="setLang('en')">EN</button>
+        <button class="wb-lang-btn" data-lang="pt" onclick="setLang('pt')">PT</button>
+      </div>
+    </div>
     <div class="wb-glyph">⬡</div>
     <div class="wb-logo">W-Enterprise-001 · WINDI</div>
     <h1 class="wb-title" data-i18n="wb_title">Your sovereign identity</h1>
@@ -1121,7 +1191,7 @@ function detectLang() {
 function setLang(lang) {
   LANG = lang;
   localStorage.setItem('windi-lang', lang);
-  document.querySelectorAll('.lang-btn').forEach(btn => {
+  document.querySelectorAll('.lang-btn, .wb-lang-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.lang === lang);
   });
   applyI18n();
@@ -1154,7 +1224,7 @@ function applyI18n() {
 function initLang() {
   const saved = localStorage.getItem('windi-lang');
   LANG = saved || detectLang();
-  document.querySelectorAll('.lang-btn').forEach(btn => {
+  document.querySelectorAll('.lang-btn, .wb-lang-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.lang === LANG);
   });
   applyI18n();
@@ -1351,7 +1421,7 @@ document.addEventListener('DOMContentLoaded', checkExistingSession);
 function setTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
   localStorage.setItem('windi-theme', theme);
-  document.querySelectorAll('.theme-btn').forEach(btn => {
+  document.querySelectorAll('.theme-btn, .wb-theme-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.theme === theme);
   });
 }
