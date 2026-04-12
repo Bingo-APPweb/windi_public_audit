@@ -6,6 +6,98 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 12 Abr 2026 — §156 W-ENTERPRISE-001 User Manual + NOIR/KLAR
+
+**Commit:** `7f8e5af`
+**Scope:** User Manual HTML/MD · Dashboard NOIR/KLAR Toggle
+**CLAUDE.md:** v2.1.9
+
+### §156 — W-Enterprise-001 User Manual + NOIR/KLAR Toggle
+
+**Data:** 12 Abril 2026 · 08:50 CEST
+**Serviço:** W-ENTERPRISE-001 · :8150
+**URLs:**
+- Dashboard: `windi-domain.com/enterprise/`
+- Manual: `windi-domain.com/enterprise/static/docs/user-manual.html`
+
+### Ficheiros Criados
+
+| Ficheiro | Linhas | Descrição |
+|----------|--------|-----------|
+| `static/index.html` | 1007 | Dashboard + NOIR/KLAR toggle |
+| `static/docs/user-manual.html` | 1162 | Manual HTML completo |
+| `docs/USER-MANUAL.md` | 471 | Markdown source |
+
+**Total:** 2640 linhas adicionadas
+
+### User Manual — Estrutura
+
+1. **Introduction** — O que é, por que PHO, glossário
+2. **Quick Start** — Acesso, interface, primeiro approval
+3. **Workflow** — Pending → Approve → Reject/Escalate → Verify
+4. **Features** — Stats, Audit Log, Export CSV
+5. **Integration** — API Reference (5 endpoints)
+6. **Reference** — Invariantes I1/I9/I11/I14, Troubleshooting
+
+### NOIR/KLAR Toggle
+
+**Localização Dashboard:** Topbar, ao lado do user badge
+**Localização Manual:** Sidebar header
+
+```
+Toggle: [☾ NOIR] [☼ KLAR]
+Storage: localStorage('windi-theme')
+Transition: 0.3s ease
+```
+
+### Paleta de Cores
+
+| Variável | NOIR | KLAR |
+|----------|------|------|
+| `--noir` (bg) | `#0A0A0B` | `#FAFAF8` |
+| `--noir2` (cards) | `#111114` | `#F5F4F2` |
+| `--gold` (accent) | `#E8C87A` | `#8B7424` |
+| `--text` | `#EDEAE2` | `#1A1A1A` |
+| `--muted` | `#7A7874` | `#6B6965` |
+
+### CSS Transitions
+
+```css
+body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.topbar, .sidebar, .main, .stat, .table-wrap, ... {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.2s ease;
+}
+```
+
+### JavaScript Theme System
+
+```javascript
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('windi-theme', theme);
+  document.querySelectorAll('.theme-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.theme === theme);
+  });
+}
+
+function initTheme() {
+  const saved = localStorage.getItem('windi-theme');
+  setTheme(saved || 'noir');
+}
+```
+
+### Invariantes Aplicados
+
+- **I1** — Documentação serve humanos, não sistemas
+- **I9** — PHO workflow documentado passo a passo
+- **I11** — Verificação independente explicada
+- **I14** — Sem ambiguidade no manual
+
+---
+
 ## § SESSÃO 11 Abr 2026 — §154 W-DEV-API-001 Developer API
 
 **Commits:** `8e35773` · `bcfaaf89`

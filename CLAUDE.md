@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.1.7
-**Sealed:** 2026-04-11 · §154 W-DEV-API-001 Developer API LIVE
+**Version:** 2.1.9
+**Sealed:** 2026-04-12 · §156 W-ENTERPRISE-001 User Manual + NOIR/KLAR
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -83,6 +83,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-SEC-001 | :8144 | I9,I11 | **SEALED** · Security Sentinel · Dual Correlation · Telegram · systemd |
 | W-DRAGON-001 | :8122 | I9,I11,I14 | **LIVE** · Dragon Shadow Forest · 16×16 SHA-256 Glyph Grid · PDF Overlay |
 | W-DEV-API-001 | :8200 | I9,I11 | **LIVE** · Developer API · /dev-api/ · 4 Tiers · Verify Bridge |
+| W-ENTERPRISE-001 | :8150 | I1,I9,I11,I14 | **LIVE** · AI Compliance Dashboard · PHO · EU AI Act Art.14 |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
 
@@ -357,7 +358,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 ---
 
-## 13. Estado Actual — 11 Abril 2026
+## 13. Estado Actual — 12 Abril 2026
 
 ### Portas Críticas
 
@@ -372,26 +373,28 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | :8127-:8132 | NOMAD/VD-CUT/JOE/MASS/JMPG | 🟢 LIVE |
 | :8140-:8144 | UDB/INTENT-CMD/FEDIVERSE/BRIDGE/SEC | 🟢 LIVE |
 | :8145 | W-STATE-CORE-006 Verify Public | 🟢 **LIVE** |
+| :8150 | W-Enterprise-001 AI Compliance | 🟢 **LIVE** |
 
 > **Mapa completo (25 portas):** `CLAUDE-HISTORY.md` § Mapa de Portas 09 Abr
 
-### Sistemas LIVE (41 total)
+### Sistemas LIVE (42 total)
 
 **Core:** GEN7 · Pioneer · VPR · API Keys · Dispatch · Web Hosting · i18n · Wallet · Lead Admin
-**Agents (31):** CIA · WSG · GATE · NGINX · CANVAS · COMM · PROVE · DETECT-MEDIA · VERIFY · INTENT · COUNSEL · SESSION · NOMAD · VD-CUT · VD-MASS · JOE · DIST · JMPG · UDB · COMPOSER · CLASSIFY · VISION · OBS-GATE · INTENT-CMD · NOMAD-VOICE · FEDIVERSE · BRIDGE · SEC · DRAGON · DEV-API
+**Agents (32):** CIA · WSG · GATE · NGINX · CANVAS · COMM · PROVE · DETECT-MEDIA · VERIFY · INTENT · COUNSEL · SESSION · NOMAD · VD-CUT · VD-MASS · JOE · DIST · JMPG · UDB · COMPOSER · CLASSIFY · VISION · OBS-GATE · INTENT-CMD · NOMAD-VOICE · FEDIVERSE · BRIDGE · SEC · DRAGON · DEV-API · ENTERPRISE
 **Products:** Triangle of Power · WINDI FIELD · WINDI TRAVEL · FVE Protocol · RFC-001 DNA
 
 ### Histórico Recente
 
 | Data | Milestone |
 |------|-----------|
+| 12 Apr | **§156 W-ENTERPRISE-001** · User Manual + NOIR/KLAR Toggle · `7f8e5af` |
+| 12 Apr | **§155 W-ENTERPRISE-001** · AI Compliance Dashboard · :8150 · PHO · EU AI Act Art.14 |
 | 11 Apr | **§154 W-DEV-API-001** · Developer API · :8200 · 4 Tiers · Verify Bridge |
 | 11 Apr | **§153 W-STATE-CORE-006** · Verify Public · Berlin Pitch Ready |
 | 09 Apr | **§151 W-DRAGON-001** · Dragon Shadow Forest · PDF Overlay |
 | 08 Apr | **§150 W-SEC-001** · Security Sentinel · Receipt `BD09970F` |
-| 08 Apr | **§148-149** · Cross-Modal + Rule Engine |
 
-> **Histórico completo §110-§154:** `CLAUDE-HISTORY.md`
+> **Histórico completo §110-§155:** `CLAUDE-HISTORY.md`
 
 ---
 
@@ -541,3 +544,59 @@ Piece Panel (slide-up via ⚙):
 - **I14** — Sem fallbacks silenciosos · falha explícita
 
 **Princípio:** *Gently proves. Silently seals.* ✂️
+
+---
+
+## §155-156 W-Enterprise-001 — AI Compliance Dashboard (12 Apr 2026)
+
+**Port:** :8150 · **Invariants:** I1, I9, I11, I14
+**URL:** `https://windi-domain.com/enterprise/`
+**Docs:** `https://windi-domain.com/enterprise/static/docs/user-manual.html`
+**Conceito:** EU AI Act Article 14 compliance dashboard for enterprise AI oversight.
+
+### Arquitectura
+
+```
+AI System → Decision → W-ENTERPRISE-001 → PHO Review
+                              ↓
+                    Human Approval (I9)
+                              ↓
+                    SHA-256 → Ledger :8101 (I11)
+                              ↓
+                    Court-admissible Receipt
+```
+
+### Endpoints
+
+| Endpoint | Função |
+|----------|--------|
+| `/enterprise/` | Dashboard UI (NOIR/KLAR) |
+| `/enterprise/health` | Health check |
+| `/enterprise/api/decisions` | List/create decisions |
+| `/enterprise/api/pho/approve` | PHO seal endpoint |
+| `/enterprise/api/audit` | Audit log |
+| `/enterprise/static/docs/` | User Manual |
+
+### §156 — User Manual + NOIR/KLAR Toggle
+
+**Commit:** `7f8e5af` · 2640 linhas adicionadas
+**Dashboard:** Toggle NOIR/KLAR na topbar (☾/☼)
+**User Manual:** 1162 linhas · sidebar nav · NOIR/KLAR
+
+**Files:**
+```
+/opt/windi/w-enterprise-001/
+├── main.py                      → FastAPI backend
+├── static/index.html            → Dashboard + NOIR/KLAR
+├── static/docs/user-manual.html → Manual HTML (1162 linhas)
+└── docs/USER-MANUAL.md          → Markdown source
+```
+
+### NOIR/KLAR Palette
+
+| Theme | Background | Gold | Text |
+|-------|------------|------|------|
+| NOIR | `#0A0A0B` | `#E8C87A` | `#EDEAE2` |
+| KLAR | `#FAFAF8` | `#8B7424` | `#1A1A1A` |
+
+**localStorage:** `windi-theme` · Transições 0.3s
