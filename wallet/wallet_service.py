@@ -121,6 +121,27 @@ def endpoint_me():
     return jsonify(result)
 
 
+@app.route("/api/wallet/check-email", methods=["GET"])
+def endpoint_check_email():
+    """
+    Verifica se email já está registado.
+    Usado no frontend para redirecionar para login se já existe.
+    """
+    email = request.args.get("email", "").strip().lower()
+    if not email:
+        return jsonify({"error": "email required"}), 400
+
+    result = get_wallet_by_email(email)
+    if result:
+        return jsonify({
+            "exists": True,
+            "display_name": result.get("display_name"),
+            "wallet_id": result.get("contexts", [{}])[0].get("wallet_id") if result.get("contexts") else None
+        })
+    else:
+        return jsonify({"exists": False})
+
+
 @app.route("/api/wallet/context/<context_id>/freeze", methods=["POST"])
 def endpoint_freeze(context_id):
     data = request.get_json(force=True) if request.data else {}
