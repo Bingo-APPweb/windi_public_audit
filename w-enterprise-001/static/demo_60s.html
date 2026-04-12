@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="noir">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VERA · Live Demo · 60 seconds</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,600;12..96,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #0A0C12;
+  --card:     #111420;
+  --border:   #1E2236;
+  --border-hi:#2E3450;
+  --text-1:   #E8E5DC;
+  --text-2:   #8A93B0;
+  --text-3:   #4A5270;
+  --gold:     #C8A45A;
+  --gold-bg:  rgba(200,164,90,0.10);
+  --vera:     #7C5CBF;
+  --vera-bg:  rgba(124,92,191,0.12);
+  --vera-b:   rgba(124,92,191,0.3);
+  --sealed:   #38A169;
+  --seal-bg:  rgba(56,161,105,0.10);
+  --critical: #E53E3E;
+  --ui:       'Bricolage Grotesque', sans-serif;
+  --mono:     'JetBrains Mono', monospace;
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+html, body {
+  height:100%; background:var(--bg);
+  color:var(--text-1); font-family:var(--ui); font-size:14px;
+  overflow:hidden;
+}
+
+/* HEADER */
+#header {
+  position:fixed; top:0; left:0; right:0;
+  height:52px;
+  background:var(--card);
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:center;
+  padding:0 24px; gap:16px;
+  z-index:100;
+}
+.hdr-logo {
+  width:28px; height:28px;
+  background:var(--gold); border-radius:6px;
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-size:11px; font-weight:700; color:#000;
+}
+.hdr-title { font-size:14px; font-weight:600; color:var(--text-1); }
+.hdr-sub { font-family:var(--mono); font-size:9px; color:var(--text-3); letter-spacing:1px; text-transform:uppercase; }
+.hdr-space { flex:1; }
+
+/* PROGRESS BAR */
+#progress-bar {
+  position:fixed; top:52px; left:0; right:0;
+  height:3px; background:var(--border); z-index:100;
+}
+#progress-fill {
+  height:100%; background:var(--gold);
+  transition:width 0.5s ease;
+  box-shadow:0 0 8px var(--gold);
+  width:0%;
+}
+
+/* STEP DOTS */
+#step-dots {
+  position:fixed; top:63px; left:50%; transform:translateX(-50%);
+  display:flex; gap:8px; z-index:100;
+  padding:6px 12px;
+  background:var(--card); border:1px solid var(--border);
+  border-radius:20px;
+}
+.dot {
+  width:8px; height:8px; border-radius:50%;
+  background:var(--border-hi);
+  transition:all 0.3s;
+  cursor:pointer;
+}
+.dot.done  { background:var(--sealed); }
+.dot.active { background:var(--gold); box-shadow:0 0 6px var(--gold); transform:scale(1.3); }
+
+/* MAIN */
+#main {
+  position:fixed;
+  top:55px; left:0; right:0; bottom:0;
+  display:flex; align-items:center; justify-content:center;
+  padding:24px;
+}
+
+.step {
+  display:none;
+  width:100%; max-width:900px;
+  animation:step-in 0.4s ease;
+}
+
+.step.active { display:flex; flex-direction:column; gap:20px; }
+
+@keyframes step-in {
+  from { opacity:0; transform:translateY(16px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* NARRATOR BAR */
+.narrator {
+  background:rgba(200,164,90,0.06);
+  border:1px solid rgba(200,164,90,0.15);
+  border-radius:8px;
+  padding:14px 18px;
+  display:flex; align-items:center; gap:12px;
+}
+.narrator-icon { font-size:18px; flex-shrink:0; }
+.narrator-text { font-size:13px; color:var(--text-1); line-height:1.6; }
+.narrator-text strong { color:var(--gold); }
+
+/* DESK MOCK */
+.desk-row {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+
+/* VERA TERMINAL */
+.vera-terminal {
+  background:var(--vera-bg);
+  border:1px solid var(--vera-b);
+  border-radius:8px;
+  overflow:hidden;
+}
+.vera-term-header {
+  padding:10px 14px;
+  background:rgba(124,92,191,0.08);
+  border-bottom:1px solid var(--vera-b);
+  display:flex; align-items:center; gap:8px;
+}
+.vera-sigil {
+  width:22px; height:22px;
+  background:var(--vera); border-radius:4px;
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-size:9px; font-weight:700; color:#fff;
+}
+.vera-term-name { font-size:12px; font-weight:600; color:#9B7FD4; }
+.vera-term-body { padding:14px; }
+.vera-label { font-family:var(--mono); font-size:8px; color:var(--vera); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:8px; }
+.vera-text  { font-size:12px; color:var(--text-1); line-height:1.7; white-space:pre-wrap; }
+.vera-typing::after { content:'▋'; animation:blink .8s infinite; color:var(--vera); }
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+
+/* DECISION CARD */
+.dec-card {
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:8px;
+  overflow:hidden;
+}
+.dec-card-header {
+  padding:12px 16px;
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.dec-card-title { font-size:13px; font-weight:600; color:var(--text-1); }
+.dec-body { padding:16px; display:flex; flex-direction:column; gap:10px; }
+.dec-field-label { font-family:var(--mono); font-size:9px; color:var(--text-3); margin-bottom:2px; }
+.dec-field-value { font-size:12px; color:var(--text-1); }
+.dec-field-value.mono { font-family:var(--mono); font-size:10px; color:var(--gold); }
+
+.risk-badge {
+  display:inline-flex; padding:3px 8px; border-radius:3px;
+  font-family:var(--mono); font-size:9px; font-weight:700;
+  text-transform:uppercase;
+}
+.risk-critical { background:rgba(229,62,62,0.15); color:#E53E3E; border:1px solid rgba(229,62,62,0.3); }
+.risk-high     { background:rgba(217,119,6,0.15);  color:#D97706; border:1px solid rgba(217,119,6,0.3); }
+
+/* CHECKLIST */
+.checklist { display:flex; flex-direction:column; gap:6px; }
+.check-row { display:flex; align-items:center; gap:8px; }
+.check-ico { font-size:13px; flex-shrink:0; }
+.check-lbl { font-size:12px; color:var(--text-1); flex:1; }
+.check-st  { font-family:var(--mono); font-size:9px; padding:2px 6px; border-radius:3px; }
+.cst-ok   { background:var(--seal-bg); color:var(--sealed); }
+.cst-fail { background:rgba(229,62,62,0.1); color:var(--critical); }
+
+/* APPROVE BUTTON */
+.approve-btn {
+  padding:12px 24px;
+  background:var(--gold); color:#000;
+  border:none; border-radius:6px;
+  font-family:var(--mono); font-size:11px; font-weight:700;
+  letter-spacing:1px; text-transform:uppercase;
+  cursor:pointer; transition:all 0.2s;
+  display:flex; align-items:center; gap:8px;
+  align-self:flex-start;
+}
+.approve-btn:hover { background:#DAB86A; transform:translateY(-1px); }
+.approve-btn.sealing { background:var(--sealed); color:#fff; pointer-events:none; }
+
+/* RECEIPT CARD */
+.receipt-card {
+  background:var(--seal-bg);
+  border:1px solid rgba(56,161,105,0.3);
+  border-radius:8px;
+  padding:16px;
+}
+.receipt-header { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+.receipt-badge {
+  width:36px; height:36px;
+  background:var(--sealed); border-radius:6px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px;
+}
+.receipt-id { font-family:var(--mono); font-size:16px; font-weight:600; color:var(--sealed); }
+.receipt-label { font-family:var(--mono); font-size:9px; color:var(--text-3); }
+.receipt-fields { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.receipt-field-label { font-family:var(--mono); font-size:8px; color:var(--text-3); text-transform:uppercase; letter-spacing:1px; margin-bottom:2px; }
+.receipt-field-value { font-family:var(--mono); font-size:10px; color:var(--text-1); word-break:break-all; }
+
+/* VERIFY CARD */
+.verify-card {
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:20px;
+  text-align:center;
+}
+.verify-url { font-family:var(--mono); font-size:11px; color:var(--gold); margin:8px 0 16px; }
+.verify-stamp {
+  display:inline-flex; align-items:center; gap:8px;
+  padding:10px 20px;
+  background:var(--seal-bg); border:1px solid rgba(56,161,105,0.3);
+  border-radius:6px;
+  font-family:var(--mono); font-size:11px; color:var(--sealed);
+  font-weight:600; letter-spacing:0.5px;
+}
+.verify-note { font-size:11px; color:var(--text-3); margin-top:10px; }
+
+/* COVER */
+.cover-block {
+  text-align:center; display:flex; flex-direction:column; align-items:center; gap:20px;
+}
+.cover-logo {
+  width:72px; height:72px;
+  background:var(--gold); border-radius:16px;
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-size:28px; font-weight:700; color:#000;
+  box-shadow:0 0 40px rgba(200,164,90,0.2);
+}
+.cover-title { font-size:32px; font-weight:700; color:var(--text-1); letter-spacing:-1px; }
+.cover-sub   { font-size:15px; color:var(--text-2); }
+.cover-tag {
+  font-family:var(--mono); font-size:11px; color:var(--vera);
+  padding:6px 14px;
+  border:1px solid var(--vera-b); border-radius:4px;
+  letter-spacing:1px; text-transform:uppercase;
+}
+.cover-lukas {
+  font-size:18px; color:var(--text-1);
+  max-width:520px; text-align:center; line-height:1.7;
+}
+.cover-lukas em { color:var(--gold); font-style:normal; }
+
+/* KPI ROW */
+.kpi-row {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:12px;
+}
+.kpi-c {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:8px; padding:16px;
+}
+.kpi-n { font-family:var(--mono); font-size:32px; font-weight:700; color:var(--gold); }
+.kpi-l { font-family:var(--mono); font-size:9px; color:var(--text-3); letter-spacing:1px; text-transform:uppercase; margin-top:4px; }
+.kpi-d { font-size:11px; color:var(--text-2); margin-top:2px; }
+.kpi-c.kpi-red .kpi-n { color:var(--critical); }
+.kpi-c.kpi-green .kpi-n { color:var(--sealed); }
+
+/* WITHOUT/WITH */
+.compare-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.compare-card { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:18px; }
+.compare-card.without { border-color:rgba(229,62,62,0.3); background:rgba(229,62,62,0.04); }
+.compare-card.with    { border-color:rgba(56,161,105,0.3); background:rgba(56,161,105,0.04); }
+.compare-label { font-family:var(--mono); font-size:9px; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:10px; }
+.compare-card.without .compare-label { color:var(--critical); }
+.compare-card.with    .compare-label { color:var(--sealed); }
+.compare-item { display:flex; align-items:flex-start; gap:8px; margin-bottom:7px; font-size:12px; color:var(--text-2); line-height:1.5; }
+
+/* NAV BUTTONS */
+#nav {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+  display:flex; gap:12px; align-items:center;
+  background:var(--card); border:1px solid var(--border);
+  border-radius:40px; padding:10px 20px;
+  z-index:100;
+}
+.nav-btn {
+  padding:8px 20px; border-radius:20px;
+  font-family:var(--mono); font-size:10px; font-weight:600;
+  letter-spacing:0.8px; text-transform:uppercase;
+  cursor:pointer; border:none; transition:all 0.15s;
+}
+.nav-prev { background:var(--border-hi); color:var(--text-2); }
+.nav-prev:hover { background:var(--border); color:var(--text-1); }
+.nav-next { background:var(--gold); color:#000; }
+.nav-next:hover { background:#DAB86A; }
+.nav-next:disabled { background:var(--sealed); color:#fff; pointer-events:none; }
+.nav-label {
+  font-family:var(--mono); font-size:10px; color:var(--text-3);
+  min-width:80px; text-align:center;
+}
+.timer-badge {
+  font-family:var(--mono); font-size:10px; color:var(--gold);
+  padding:4px 10px; border:1px solid rgba(200,164,90,0.2);
+  border-radius:12px;
+}
+</style>
+</head>
+<body>
+
+<div id="header">
+  <div class="hdr-logo">W</div>
+  <div>
+    <div class="hdr-title">VERA · Live Demo</div>
+    <div class="hdr-sub">Berlin Pitch · 60 Seconds · Liga IA+H</div>
+  </div>
+  <div class="hdr-space"></div>
+  <div class="timer-badge" id="timer">0:00</div>
+</div>
+
+<div id="progress-bar"><div id="progress-fill"></div></div>
+
+<div id="step-dots">
+  <div class="dot active" onclick="goTo(0)" title="Intro"></div>
+  <div class="dot" onclick="goTo(1)" title="The Problem"></div>
+  <div class="dot" onclick="goTo(2)" title="Lukas + VERA"></div>
+  <div class="dot" onclick="goTo(3)" title="Decision DEC-040"></div>
+  <div class="dot" onclick="goTo(4)" title="Approve + Seal"></div>
+  <div class="dot" onclick="goTo(5)" title="Verify Public"></div>
+  <div class="dot" onclick="goTo(6)" title="BaFin Result"></div>
+</div>
+
+<div id="main">
+
+  <!-- STEP 0: COVER -->
+  <div class="step active" id="step-0">
+    <div class="cover-block">
+      <div class="cover-logo">W</div>
+      <div class="cover-title">WINDI Enterprise</div>
+      <div class="cover-sub">AI Compliance Command · Powered by VERA</div>
+      <div class="cover-tag">⬡ Verified Evidence Routing Agent · REGO v1.0</div>
+      <div class="cover-lukas">
+        "Every bank in Europe needs someone to answer:<br>
+        <em>'Who supervises your AI systems?'</em><br>
+        Today, nobody can. Tomorrow, they have VERA."
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 1: THE PROBLEM -->
+  <div class="step" id="step-1">
+    <div class="narrator">
+      <div class="narrator-icon">🏦</div>
+      <div class="narrator-text">
+        <strong>Frankfurt. March 2025.</strong> The EU AI Act is final. The CEO asks:
+        <em>"Who is responsible for supervising our AI systems?"</em> Silence.
+        In every bank in Europe — <strong>the same silence.</strong>
+      </div>
+    </div>
+    <div class="kpi-row">
+      <div class="kpi-c kpi-red">
+        <div class="kpi-n">€30M</div>
+        <div class="kpi-l">Maximum fine</div>
+        <div class="kpi-d">Per violation · EU AI Act Art.73</div>
+      </div>
+      <div class="kpi-c kpi-red">
+        <div class="kpi-n">18mo</div>
+        <div class="kpi-l">Average time to comply</div>
+        <div class="kpi-d">With zero certified officers</div>
+      </div>
+      <div class="kpi-c kpi-green">
+        <div class="kpi-n">1</div>
+        <div class="kpi-l">Solution exists</div>
+        <div class="kpi-d">VERA · AI Compliance Secretary</div>
+      </div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-card without">
+        <div class="compare-label">✗ Without VERA</div>
+        <div class="compare-item">❌ Officer opens Google for legal answers</div>
+        <div class="compare-item">❌ No evidence of human oversight</div>
+        <div class="compare-item">❌ Decisions undocumented</div>
+        <div class="compare-item">❌ BaFin audit = €30M exposure</div>
+      </div>
+      <div class="compare-card with">
+        <div class="compare-label">✓ With VERA</div>
+        <div class="compare-item">✅ Every decision grounded in EU AI Act</div>
+        <div class="compare-item">✅ PHO evidence sealed immutably</div>
+        <div class="compare-item">✅ Audit trail verifiable in real-time</div>
+        <div class="compare-item">✅ BaFin audit = 60 seconds, done</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: LUKAS + VERA DESK -->
+  <div class="step" id="step-2">
+    <div class="narrator">
+      <div class="narrator-icon">👤</div>
+      <div class="narrator-text">
+        <strong>Monday 08:43. Frankfurt.</strong> Lukas Bauer sits at his desk.
+        New title: <em>Head of AI Governance & Compliance.</em>
+        <strong>VERA is already there.</strong>
+      </div>
+    </div>
+    <div class="desk-row">
+      <div class="vera-terminal">
+        <div class="vera-term-header">
+          <div class="vera-sigil">V</div>
+          <div class="vera-term-name">VERA · 08:43 · Daily Briefing</div>
+        </div>
+        <div class="vera-term-body">
+          <div class="vera-label">REGO R1 · R2 · R5 · Session-Persistent</div>
+          <div class="vera-text" id="brief-text"></div>
+        </div>
+      </div>
+      <div class="dec-card">
+        <div class="dec-card-header">
+          <div class="dec-card-title">Today's Sequence</div>
+          <div style="font-family:var(--mono);font-size:9px;color:var(--text-3)">VERA Suggested</div>
+        </div>
+        <div class="dec-body">
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:rgba(200,164,90,0.08);border:1px solid rgba(200,164,90,0.2);border-radius:4px">
+              <span style="font-family:var(--mono);font-size:9px;color:var(--gold)">P01</span>
+              <span style="font-size:12px;color:var(--text-1)">Overview — 10 min</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--border);border-radius:4px">
+              <span style="font-family:var(--mono);font-size:9px;color:var(--text-3)">P02</span>
+              <span style="font-size:12px;color:var(--text-2)">Observations — 15 min</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:rgba(229,62,62,0.08);border:1px solid rgba(229,62,62,0.2);border-radius:4px">
+              <span style="font-family:var(--mono);font-size:9px;color:var(--critical)">P04</span>
+              <span style="font-size:12px;color:var(--critical)">⚠ PHO · DEC-2026-040</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--border);border-radius:4px">
+              <span style="font-family:var(--mono);font-size:9px;color:var(--text-3)">P08</span>
+              <span style="font-size:12px;color:var(--text-2)">Seal the day — 5 min</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: DECISION + VERA CONTEXT -->
+  <div class="step" id="step-3">
+    <div class="narrator">
+      <div class="narrator-icon">⚖️</div>
+      <div class="narrator-text">
+        <strong>09:47 · Prateleira 04.</strong> DEC-2026-040 is CRITICAL.
+        Lukas asks VERA: <em>"Do I approve this system? I don't understand why it's critical if it's just ML."</em>
+      </div>
+    </div>
+    <div class="desk-row">
+      <div class="dec-card">
+        <div class="dec-card-header">
+          <div>
+            <div style="font-family:var(--mono);font-size:10px;color:var(--gold);font-weight:600">DEC-2026-040</div>
+            <div style="font-size:12px;color:var(--text-1)">Automated scoring · 12,000 accounts</div>
+          </div>
+          <div class="risk-badge risk-critical">CRITICAL</div>
+        </div>
+        <div class="dec-body">
+          <div>
+            <div class="dec-field-label">Legal Framework</div>
+            <div class="dec-field-value" style="font-family:var(--mono);font-size:10px;line-height:1.7">
+              EU AI Act Annex III (5b)<br>Art.14 · Human Oversight<br>BaFin AT 7.2 · MaRisk
+            </div>
+          </div>
+          <div>
+            <div class="dec-field-label">PHO Checklist</div>
+            <div class="checklist">
+              <div class="check-row">
+                <div class="check-ico">📋</div>
+                <div class="check-lbl">DPIA completed</div>
+                <div class="check-st cst-ok">✓ OK</div>
+              </div>
+              <div class="check-row">
+                <div class="check-ico">🔄</div>
+                <div class="check-lbl">Human override mechanism</div>
+                <div class="check-st cst-ok">✓ OK</div>
+              </div>
+              <div class="check-row">
+                <div class="check-ico">⚖️</div>
+                <div class="check-lbl">Bias validation</div>
+                <div class="check-st cst-fail">✗ Missing</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="vera-terminal">
+        <div class="vera-term-header">
+          <div class="vera-sigil">V</div>
+          <div class="vera-term-name">VERA · Legal Guidance</div>
+        </div>
+        <div class="vera-term-body">
+          <div class="vera-label">REGO R2 · R3 · I9 Protected</div>
+          <div class="vera-text" id="vera-legal"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4: APPROVE + SEAL -->
+  <div class="step" id="step-4">
+    <div class="narrator">
+      <div class="narrator-icon">🔐</div>
+      <div class="narrator-text">
+        <strong>11:15.</strong> Lukas reads the checklist. Bias validation is missing.
+        He types the condition note. Clicks <em>Approve + Seal.</em>
+        <strong>The Forensic Ledger records it. Forever.</strong>
+      </div>
+    </div>
+    <div class="desk-row">
+      <div class="dec-card">
+        <div class="dec-card-header">
+          <div class="dec-card-title">Decision Note · Lukas Bauer</div>
+        </div>
+        <div class="dec-body">
+          <div style="background:rgba(200,164,90,0.05);border:1px solid rgba(200,164,90,0.15);border-radius:6px;padding:12px;font-size:12px;color:var(--text-1);line-height:1.7">
+            "Conditional approval. Bias validation mandatory before 30 April.
+            System approved under EU AI Act Art.14 — human oversight confirmed.
+            PHO evidence: VERA guidance VERA-67E4F2A1 sealed."
+          </div>
+          <button class="approve-btn" id="approve-btn" onclick="triggerSeal()">
+            🔐 Approve + Seal
+          </button>
+          <div style="font-family:var(--mono);font-size:9px;color:var(--text-3)">
+            I9-P Protocol · Human decides · Ledger seals
+          </div>
+        </div>
+      </div>
+      <div class="receipt-card" id="receipt-card" style="opacity:0;transition:opacity 0.5s">
+        <div class="receipt-header">
+          <div class="receipt-badge">🔐</div>
+          <div>
+            <div class="receipt-id" id="receipt-id">---</div>
+            <div class="receipt-label">PHO RECEIPT · EU AI Act Art.14</div>
+          </div>
+        </div>
+        <div class="receipt-fields">
+          <div>
+            <div class="receipt-field-label">Officer</div>
+            <div class="receipt-field-value">Lukas Bauer</div>
+          </div>
+          <div>
+            <div class="receipt-field-label">Decision</div>
+            <div class="receipt-field-value">DEC-2026-040</div>
+          </div>
+          <div>
+            <div class="receipt-field-label">Status</div>
+            <div class="receipt-field-value" style="color:var(--sealed)">✓ Sealed · Immutable</div>
+          </div>
+          <div>
+            <div class="receipt-field-label">Timestamp</div>
+            <div class="receipt-field-value" id="seal-time">---</div>
+          </div>
+          <div style="grid-column:1/-1">
+            <div class="receipt-field-label">SHA-256 Hash</div>
+            <div class="receipt-field-value" style="font-size:9px" id="seal-hash">---</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5: VERIFY PUBLIC -->
+  <div class="step" id="step-5">
+    <div class="narrator">
+      <div class="narrator-icon">🌐</div>
+      <div class="narrator-text">
+        VERA responds: <em>"If the BaFin asks tomorrow — show them this receipt.
+        Verifiable publicly. Right now. In real-time."</em>
+      </div>
+    </div>
+    <div class="desk-row">
+      <div class="vera-terminal">
+        <div class="vera-term-header">
+          <div class="vera-sigil">V</div>
+          <div class="vera-term-name">VERA · Post-Decision</div>
+        </div>
+        <div class="vera-term-body">
+          <div class="vera-label">REGO R4 · PHO Evidence Confirmed</div>
+          <div class="vera-text">PHO receipt sealed.
+
+If the BaFin asks tomorrow:
+"Prove that you supervised this system"
+— you show this receipt.
+
+You have your digital signature
+on a legally-grounded decision.
+
+EU AI Act Art.14 complied.
+
+Next step: seal the day in P08.
+Ledger integrity: OK.</div>
+        </div>
+      </div>
+      <div class="verify-card">
+        <div style="font-size:13px;font-weight:600;color:var(--text-1);margin-bottom:4px">Verify Public Endpoint</div>
+        <div class="verify-url">windi-domain.com/verify-public/?id=BD-2026-040-LB-1117</div>
+        <div class="verify-stamp">
+          ✓ VERIFIED · Immutable · Hash Chain OK
+        </div>
+        <div class="verify-note">
+          Any regulator can verify this decision.<br>
+          No trust required — the cryptographic proof is public.
+        </div>
+        <div style="margin-top:16px;padding:12px;background:var(--border);border-radius:6px">
+          <div style="font-family:var(--mono);font-size:9px;color:var(--text-3);margin-bottom:6px;letter-spacing:1px">LEDGER ENTRY</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--gold)">BD-2026-040-LB-1117</div>
+          <div style="font-family:var(--mono);font-size:8px;color:var(--text-3);margin-top:4px;word-break:break-all">sha256: a7b3c91f4e2d8c1a9f7e5b3d2a8c4f1e9b7c3d5a2e8f4c1b9a7e3d5c2f8b4a</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-top:8px">
+            <div style="width:5px;height:5px;border-radius:50%;background:var(--sealed);box-shadow:0 0 4px var(--sealed)"></div>
+            <div style="font-family:var(--mono);font-size:9px;color:var(--sealed)">CHAIN INTACT · 14 RECEIPTS</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 6: BAFIN RESULT -->
+  <div class="step" id="step-6">
+    <div class="narrator">
+      <div class="narrator-icon">🏛️</div>
+      <div class="narrator-text">
+        <strong>Six weeks later. BaFin surprise audit.</strong>
+        Two inspectors arrive. They ask for 60 days of AI supervision evidence.
+        Lukas opens WINDI. 60 seconds later —
+      </div>
+    </div>
+    <div class="kpi-row">
+      <div class="kpi-c kpi-green">
+        <div class="kpi-n">47</div>
+        <div class="kpi-l">PHO Receipts</div>
+        <div class="kpi-d">60 days · all sealed</div>
+      </div>
+      <div class="kpi-c kpi-green">
+        <div class="kpi-n">60s</div>
+        <div class="kpi-l">Time to produce</div>
+        <div class="kpi-d">Complete audit package</div>
+      </div>
+      <div class="kpi-c kpi-green">
+        <div class="kpi-n">€0</div>
+        <div class="kpi-l">Fine risk</div>
+        <div class="kpi-d">BaFin: "Das ist beeindruckend."</div>
+      </div>
+    </div>
+    <div style="background:var(--card);border:1px solid rgba(56,161,105,0.3);border-radius:8px;padding:24px;text-align:center">
+      <div style="font-size:13px;color:var(--text-2);margin-bottom:12px;font-style:italic">BaFin Inspector, Frankfurt · April 2026</div>
+      <div style="font-size:20px;color:var(--text-1);font-weight:600;line-height:1.5;max-width:600px;margin:0 auto">
+        "Das ist beeindruckend. Wir sind fertig."
+      </div>
+      <div style="font-size:14px;color:var(--sealed);margin-top:8px">"This is impressive. We are done."</div>
+      <div style="margin-top:24px;padding:16px;background:var(--vera-bg);border:1px solid var(--vera-b);border-radius:6px;max-width:480px;margin:24px auto 0">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--vera);margin-bottom:6px;letter-spacing:1px">WINDI DOES NOT DECLARE</div>
+        <div style="font-size:18px;font-weight:700;color:var(--gold)">"AI processes. Human decides. WINDI guarantees."</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- NAV -->
+<div id="nav">
+  <button class="nav-btn nav-prev" id="btn-prev" onclick="prevStep()" disabled>← Back</button>
+  <div class="nav-label" id="nav-label">Step 1 / 7</div>
+  <button class="nav-btn nav-next" id="btn-next" onclick="nextStep()">Next →</button>
+</div>
+
+<script>
+const STEPS = 7;
+let current = 0;
+let timerStart = Date.now();
+let timerInterval = null;
+
+// ── CONTENT TYPING ─────────────────────────────────────────────────────────
+const briefContent = `Good morning, Lukas. Dense Monday.
+
+CRITICAL:   DEC-2026-040
+            Scoring system · 12,000 accounts
+            EU AI Act Annex III (5b) — high-risk
+            PHO required today before 17:00
+            Without your approval: system pauses.
+
+PENDING:    3 challenges await your decision
+            2 observations unclassified
+            7 AI actions — 3 escalated
+
+SEQUENCE:
+            P01 → Overview (10 min)
+            P02 → Classify observations
+            P04 → PHO approval ← TODAY
+            P08 → Seal the day
+
+Shall we start with the most urgent?`;
+
+const legalContent = `"Your question is exactly what the BaFin will ask.
+
+This system affects credit decisions.
+Under EU AI Act Annex III (5b), any system
+influencing access to credit for individuals
+is automatically high-risk.
+
+It's not about the technology.
+It's about the impact on the citizen.
+
+Before approving, confirm three things:
+1. DPIA exists? ✓
+2. Human override mechanism? ✓
+3. Bias validation of training data? ✗ Missing
+
+If all three are 'yes':
+your PHO is legally solid.
+
+Since bias validation is missing:
+document the risk as a condition.
+Approve conditionally — never unconditionally."`;
+
+function typeText(el, text, speed = 18, onDone) {
+  el.textContent = '';
+  let i = 0;
+  const interval = setInterval(() => {
+    el.textContent += text[i] || '';
+    i++;
+    if (i >= text.length) {
+      clearInterval(interval);
+      el.classList.remove('vera-typing');
+      if (onDone) onDone();
+    }
+  }, speed);
+  el.classList.add('vera-typing');
+}
+
+// ── NAVIGATION ──────────────────────────────────────────────────────────────
+function goTo(n) {
+  if (n < 0 || n >= STEPS) return;
+
+  document.getElementById(`step-${current}`).classList.remove('active');
+  current = n;
+  document.getElementById(`step-${current}`).classList.add('active');
+
+  // Update dots
+  document.querySelectorAll('.dot').forEach((d, i) => {
+    d.className = 'dot';
+    if (i < current)  d.classList.add('done');
+    if (i === current) d.classList.add('active');
+  });
+
+  // Progress
+  document.getElementById('progress-fill').style.width = `${(current / (STEPS-1)) * 100}%`;
+
+  // Nav buttons
+  document.getElementById('btn-prev').disabled = current === 0;
+  document.getElementById('btn-next').disabled = current === STEPS - 1;
+  document.getElementById('btn-next').textContent = current === STEPS - 1 ? 'Done ✓' : 'Next →';
+  document.getElementById('nav-label').textContent = `Step ${current + 1} / ${STEPS}`;
+
+  // Step-specific actions
+  if (current === 2) {
+    setTimeout(() => {
+      const el = document.getElementById('brief-text');
+      if (el && !el.textContent.trim()) typeText(el, briefContent, 12);
+    }, 300);
+  }
+
+  if (current === 3) {
+    setTimeout(() => {
+      const el = document.getElementById('vera-legal');
+      if (el && !el.textContent.trim()) typeText(el, legalContent, 14);
+    }, 300);
+  }
+
+  if (current === 4) {
+    document.getElementById('receipt-card').style.opacity = '0';
+    document.getElementById('approve-btn').classList.remove('sealing');
+    document.getElementById('approve-btn').innerHTML = '🔐 Approve + Seal';
+  }
+}
+
+function nextStep() { goTo(current + 1); }
+function prevStep() { goTo(current - 1); }
+
+// ── SEAL ANIMATION ──────────────────────────────────────────────────────────
+function triggerSeal() {
+  const btn = document.getElementById('approve-btn');
+  btn.innerHTML = '⏳ Sealing to Ledger...';
+  btn.classList.add('sealing');
+
+  setTimeout(() => {
+    const ts = new Date().toISOString().slice(0,19).replace('T',' ');
+    const receiptId = 'BD-2026-040-LB-' + Math.floor(Math.random()*9000+1000);
+    const hash = Array.from({length:64},()=>'0123456789abcdef'[Math.floor(Math.random()*16)]).join('');
+
+    document.getElementById('receipt-id').textContent = receiptId;
+    document.getElementById('seal-time').textContent = ts + ' UTC';
+    document.getElementById('seal-hash').textContent = hash;
+
+    btn.innerHTML = '✓ Sealed · Immutable';
+    document.getElementById('receipt-card').style.opacity = '1';
+  }, 1200);
+}
+
+// ── TIMER ────────────────────────────────────────────────────────────────────
+function startTimer() {
+  timerStart = Date.now();
+  timerInterval = setInterval(() => {
+    const elapsed = Math.floor((Date.now() - timerStart) / 1000);
+    const m = Math.floor(elapsed / 60);
+    const s = String(elapsed % 60).padStart(2,'0');
+    document.getElementById('timer').textContent = `${m}:${s}`;
+  }, 1000);
+}
+
+// ── KEYBOARD ─────────────────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextStep(); }
+  if (e.key === 'ArrowLeft')  { e.preventDefault(); prevStep(); }
+  if (e.key === 'Home')       { e.preventDefault(); goTo(0); }
+  if (e.key === 'End')        { e.preventDefault(); goTo(STEPS-1); }
+});
+
+startTimer();
+goTo(0);
+</script>
+</body>
+</html>
