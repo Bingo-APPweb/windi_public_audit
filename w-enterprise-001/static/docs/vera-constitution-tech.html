@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VERA · REGO v1.1 · Constituição Técnica e Infra-estrutural</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: #F5F0E0;
+  color: #1a1a18;
+  padding: 2rem 1.5rem;
+  min-height: 100vh;
+}
+:root {
+  --vera: #185FA5;
+  --vera-light: #E6F1FB;
+  --vera-dark: #0C447C;
+  --teal: #1D9E75;
+  --teal-light: #E1F5EE;
+  --teal-dark: #085041;
+  --amber: #EF9F27;
+  --amber-light: #FAEEDA;
+  --amber-dark: #633806;
+  --coral: #D85A30;
+  --coral-light: #FAECE7;
+  --coral-dark: #712B13;
+  --purple: #534AB7;
+  --purple-light: #EEEDFE;
+  --purple-dark: #3C3489;
+  --green-light: #EAF3DE;
+  --green-dark: #27500A;
+  --pink-light: #FBEAF0;
+  --pink-dark: #72243E;
+  --ink: #1a1a18;
+  --muted: #5a5a55;
+  --hint: #909088;
+  --surface: #ffffff;
+  --bg2: #edeae0;
+  --border: rgba(0,0,0,0.10);
+  --border2: rgba(0,0,0,0.18);
+  --r: 8px;
+  --rl: 12px;
+  --mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+}
+
+.page { max-width: 960px; margin: 0 auto; }
+
+.header {
+  border-bottom: 0.5px solid var(--border2);
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+.header-top {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+}
+.vera-logo {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 2px; font-weight: 500;
+  color: var(--vera); text-transform: uppercase;
+}
+.badge {
+  font-family: var(--mono); font-size: 10px; padding: 3px 8px;
+  border-radius: var(--r); letter-spacing: 1px; display: inline-block;
+}
+.badge-rego { background: var(--vera-light); color: var(--vera-dark); }
+.badge-sealed { background: var(--teal-light); color: var(--teal-dark); }
+.header-title {
+  font-size: 20px; font-weight: 500; color: var(--ink); margin-top: 10px;
+}
+.header-sub {
+  font-size: 13px; color: var(--muted); margin-top: 4px;
+}
+.invariant-row {
+  display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px;
+}
+.inv-badge {
+  font-family: var(--mono); font-size: 10px; padding: 3px 9px;
+  border-radius: 4px; border: 0.5px solid var(--border2); color: var(--muted);
+  background: var(--surface);
+}
+.inv-active { background: var(--teal-light); color: var(--teal-dark); border-color: transparent; }
+
+.section-label {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 2px;
+  color: var(--hint); text-transform: uppercase;
+  margin-bottom: 12px; margin-top: 24px; padding-bottom: 6px;
+  border-bottom: 0.5px solid var(--border);
+}
+
+.pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+
+.pillar {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--rl);
+  padding: 14px 16px;
+}
+.pillar-header {
+  display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px;
+}
+.pillar-num {
+  font-family: var(--mono); font-size: 10px; font-weight: 500;
+  padding: 2px 7px; border-radius: 4px; flex-shrink: 0; margin-top: 2px;
+}
+.pillar-title {
+  font-size: 13px; font-weight: 500; color: var(--ink); line-height: 1.4;
+}
+.pillar-law {
+  font-family: var(--mono); font-size: 10px; color: var(--muted);
+  margin-bottom: 8px; padding-left: 32px;
+}
+.pillar-quote {
+  font-size: 11px; font-style: italic; color: var(--hint);
+  border-left: 2px solid var(--border2); padding-left: 8px;
+  margin: 6px 0 6px 32px; line-height: 1.5;
+}
+.impl-list {
+  list-style: none; padding: 0; margin: 4px 0 0 32px;
+}
+.impl-list li {
+  font-size: 11px; color: var(--muted); padding: 2px 0;
+  display: flex; align-items: flex-start; gap: 6px;
+}
+.impl-list li::before {
+  content: "→"; color: var(--hint); flex-shrink: 0; font-size: 10px; margin-top: 1px;
+}
+
+.p-infra .pillar-num { background: var(--vera-light); color: var(--vera-dark); }
+.p-llm .pillar-num { background: var(--purple-light); color: var(--purple-dark); }
+.p-data .pillar-num { background: var(--teal-light); color: var(--teal-dark); }
+.p-chain .pillar-num { background: var(--amber-light); color: var(--amber-dark); }
+.p-did .pillar-num { background: var(--coral-light); color: var(--coral-dark); }
+.p-sys .pillar-num { background: var(--green-light); color: var(--green-dark); }
+.p-const .pillar-num { background: var(--pink-light); color: var(--pink-dark); }
+
+.matrix-wrap {
+  background: var(--bg2);
+  border: 0.5px solid var(--border);
+  border-radius: var(--rl);
+  padding: 14px 16px;
+  margin-bottom: 1rem;
+  overflow-x: auto;
+}
+.matrix-title {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 1.5px;
+  color: var(--muted); text-transform: uppercase; margin-bottom: 10px;
+}
+.matrix-table {
+  width: 100%; border-collapse: collapse; font-size: 11px;
+}
+.matrix-table th {
+  font-family: var(--mono); font-size: 10px; font-weight: 500;
+  color: var(--hint); text-align: left; padding: 4px 10px 6px 0;
+  border-bottom: 0.5px solid var(--border2); letter-spacing: 1px;
+  white-space: nowrap;
+}
+.matrix-table td {
+  padding: 5px 10px 5px 0; color: var(--muted); vertical-align: top;
+  border-bottom: 0.5px solid var(--border);
+}
+.matrix-table tr:last-child td { border-bottom: none; }
+.tag {
+  display: inline-block; font-family: var(--mono); font-size: 9px;
+  padding: 1px 5px; border-radius: 3px; margin-right: 2px; margin-bottom: 2px;
+}
+.tag-blue { background: var(--vera-light); color: var(--vera-dark); }
+.tag-green { background: var(--teal-light); color: var(--teal-dark); }
+.tag-amber { background: var(--amber-light); color: var(--amber-dark); }
+.tag-red { background: #FCEBEB; color: #791F1F; }
+
+.seal-block {
+  background: var(--surface); border: 0.5px solid var(--border);
+  border-radius: var(--rl); padding: 14px 18px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 8px; margin-top: 24px;
+}
+.seal-left { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.seal-version { font-size: 14px; font-weight: 500; color: var(--ink); }
+.seal-right {
+  font-family: var(--mono); font-size: 10px; color: var(--hint);
+  text-align: right;
+}
+
+.footer {
+  margin-top: 2rem; text-align: center;
+  font-family: var(--mono); font-size: 10px; color: var(--hint);
+  letter-spacing: 1px;
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="header">
+  <div class="header-top">
+    <span class="vera-logo">VERA · Verified Evidence Routing Agent</span>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <span class="badge badge-rego">REGO v1.1 · DRAFT</span>
+      <span class="badge badge-sealed">Liga IA+H · 12 Abr 2026</span>
+    </div>
+  </div>
+  <div class="header-title">Constituição Operacional — Complementos Técnicos e Infra-estruturais</div>
+  <div class="header-sub">Pilares XI–XX · Ancoram os Pilares Normativos I–X em realidade executável</div>
+  <div class="invariant-row">
+    <span class="inv-badge inv-active">I9 activo</span>
+    <span class="inv-badge inv-active">I14 activo</span>
+    <span class="inv-badge inv-active">I11 ledger</span>
+    <span class="inv-badge">ONE TREE</span>
+    <span class="inv-badge">W-GATEWAY-001</span>
+    <span class="inv-badge">DID-bound</span>
+    <span class="inv-badge">TRINDADE IMUTABILIDADE</span>
+  </div>
+</div>
+
+<!-- BLOCO A -->
+<div class="section-label">Bloco A · Soberania de Infra-estrutura</div>
+<div class="pillars-grid">
+
+  <div class="pillar p-infra">
+    <div class="pillar-header">
+      <span class="pillar-num">XI</span>
+      <span class="pillar-title">Princípio da Soberania Infra-estrutural</span>
+    </div>
+    <div class="pillar-quote">"VERA opera exclusivamente sobre infra-estrutura soberana e auditável."</div>
+    <ul class="impl-list">
+      <li>Strato VPS (87.106.29.233) = âncora primária de execução</li>
+      <li>ONE TREE: nginx + systemd, sem dependência de cloud externo para operação crítica</li>
+      <li>Toda alteração de porta/nginx/systemd exige aprovação PHO explícita</li>
+      <li>Fallback não é cloud pública — é modo degradado declarado (ver XIV)</li>
+    </ul>
+  </div>
+
+  <div class="pillar p-infra">
+    <div class="pillar-header">
+      <span class="pillar-num">XII</span>
+      <span class="pillar-title">Princípio da Residência de Dados</span>
+    </div>
+    <div class="pillar-law">GDPR Art.5(1)(b) · Art.44–49 · NIS2 · EU Data Act (Set 2025)</div>
+    <div class="pillar-quote">"Dados pessoais e decisões críticas nunca saem da jurisdição EU sem TIA aprovado."</div>
+    <ul class="impl-list">
+      <li>GDPR by design: processamento EU-only por defeito</li>
+      <li>Dados de sessão: SQLite local no servidor Strato (Alemanha)</li>
+      <li>Transferências extra-EU: exigem TIA + receipt PHO obrigatório</li>
+      <li>VERA declara jurisdição de processamento em cada output crítico</li>
+    </ul>
+  </div>
+
+  <div class="pillar p-data">
+    <div class="pillar-header">
+      <span class="pillar-num">XIII</span>
+      <span class="pillar-title">Princípio do Modo Degradado Declarado</span>
+    </div>
+    <div class="pillar-law">EU AI Act Art.14 · I14 (Falha Explícita)</div>
+    <div class="pillar-quote">"Degradação é declarada, documentada e selada — nunca silenciosa."</div>
+    <ul class="impl-list">
+      <li>LLM externo indisponível → VERA declara modo offline com razão explícita</li>
+      <li>Ledger indisponível → VERA regista localmente, sela quando restabelecer</li>
+      <li>Nenhum fallback silencioso — I14 aplicado a toda a pilha</li>
+      <li>Degradação reportada ao officer com impacto e próximo passo</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- BLOCO B -->
+<div class="section-label">Bloco B · Governança de Inteligência Artificial</div>
+<div class="pillars-grid">
+
+  <div class="pillar p-llm">
+    <div class="pillar-header">
+      <span class="pillar-num">XIV</span>
+      <span class="pillar-title">Princípio da Governança Multi-LLM</span>
+    </div>
+    <div class="pillar-law">EU AI Act Art.13 · Art.14 · W-GATEWAY-001 (:8130)</div>
+    <div class="pillar-quote">"VERA não usa LLMs — governa-os. Nenhum modelo externo toma decisão."</div>
+    <ul class="impl-list">
+      <li>W-GATEWAY-001 = camada obrigatória entre VERA e todos os LLMs</li>
+      <li>LLM output = input não confiável até validado pela camada VERA</li>
+      <li>Routing por função: Jurídico → Claude/GPT · Factual → Gemini · Sensível GDPR → local</li>
+      <li>Qual modelo respondeu é parte da evidência PHO (auditável)</li>
+    </ul>
+  </div>
+
+  <div class="pillar p-llm">
+    <div class="pillar-header">
+      <span class="pillar-num">XV</span>
+      <span class="pillar-title">Princípio do Consensus de Inteligência</span>
+    </div>
+    <div class="pillar-law">EU AI Act Art.9 · Art.10 · I9-P Protocol</div>
+    <div class="pillar-quote">"Decisões de alto risco exigem triangulação entre ≥2 modelos independentes."</div>
+    <ul class="impl-list">
+      <li>Modo HIGH: VERA consulta ≥2 modelos e compara outputs</li>
+      <li>Divergência detectada → alerta automático ao officer com detalhes</li>
+      <li>Confidence Matrix: modelo, nível de confiança, divergência registados</li>
+      <li>Convergência entre modelos não elimina PHO — reforça-a</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- BLOCO C - Routing Matrix -->
+<div class="section-label">Bloco C · Routing de Inteligência — Matriz Operacional</div>
+<div class="matrix-wrap">
+  <div class="matrix-title">LLM Routing Matrix · W-GATEWAY-001</div>
+  <table class="matrix-table">
+    <thead>
+      <tr>
+        <th>Tipo de tarefa</th>
+        <th>Motor primário</th>
+        <th>Modo</th>
+        <th>PHO obrigatório</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Análise jurídica / contratos</td>
+        <td><span class="tag tag-blue">Claude</span><span class="tag tag-blue">GPT-4</span></td>
+        <td>HIGH</td>
+        <td><span class="tag tag-green">Sim</span></td>
+      </tr>
+      <tr>
+        <td>Enriquecimento factual externo</td>
+        <td><span class="tag tag-blue">Gemini</span></td>
+        <td>MED</td>
+        <td><span class="tag tag-amber">Se crítico</span></td>
+      </tr>
+      <tr>
+        <td>Decisão alto risco (consensus)</td>
+        <td><span class="tag tag-blue">Claude</span><span class="tag tag-blue">GPT</span><span class="tag tag-blue">Gemini</span></td>
+        <td>HIGH · multi</td>
+        <td><span class="tag tag-green">Sim</span></td>
+      </tr>
+      <tr>
+        <td>Dados sensíveis GDPR</td>
+        <td><span class="tag tag-amber">Llama local</span></td>
+        <td>LOCAL</td>
+        <td><span class="tag tag-green">Sim</span></td>
+      </tr>
+      <tr>
+        <td>Eficiência / workloads controlados</td>
+        <td><span class="tag tag-blue">Mistral</span></td>
+        <td>FREE/MED</td>
+        <td><span class="tag tag-amber">Se crítico</span></td>
+      </tr>
+      <tr>
+        <td>Stress-test / contra-narrativa</td>
+        <td><span class="tag tag-blue">Grok</span></td>
+        <td>MED</td>
+        <td><span class="tag tag-red">Sempre</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- BLOCO D -->
+<div class="section-label">Bloco D · Identidade, Prova e Cadeia de Custódia</div>
+<div class="pillars-grid">
+
+  <div class="pillar p-did">
+    <div class="pillar-header">
+      <span class="pillar-num">XVI</span>
+      <span class="pillar-title">Princípio da Autenticação Contínua DID-bound</span>
+    </div>
+    <div class="pillar-law">eIDAS 2.0 · GDPR Art.5 · W-IDENTITY</div>
+    <div class="pillar-quote">"Toda sessão VERA está vinculada a um DID válido e activo."</div>
+    <ul class="impl-list">
+      <li>Sem DID → modo leitura apenas, sem outputs selados</li>
+      <li>DID expirado → sessão encerrada + declaração no ledger</li>
+      <li>Officer identity = DID + timestamp UTC + assinatura Ed25519</li>
+      <li>Sessões SQLite são DID-bound: não transferíveis entre identidades</li>
+    </ul>
+  </div>
+
+  <div class="pillar p-chain">
+    <div class="pillar-header">
+      <span class="pillar-num">XVII</span>
+      <span class="pillar-title">Princípio da Integridade da Cadeia de Prova</span>
+    </div>
+    <div class="pillar-law">EU AI Act Art.17 · I11 Ledger · TRINDADE IMUTABILIDADE</div>
+    <div class="pillar-quote">"A cadeia Ledger → Receipt → Verify é irremediável e permanente."</div>
+    <ul class="impl-list">
+      <li>Seal = SHA-256 + timestamp UTC + DID + modelo usado</li>
+      <li>Receipt post-seal: imutável. Alteração = CRITICAL SEAL automático</li>
+      <li>Verify URL público e permanente em windi-domain.com/verify-public/</li>
+      <li>TRINDADE: Ledger Tamper + Soul Gate Bypass + Seal Forgery = lockdown imediato</li>
+    </ul>
+  </div>
+
+  <div class="pillar p-chain">
+    <div class="pillar-header">
+      <span class="pillar-num">XVIII</span>
+      <span class="pillar-title">Princípio da Latência Governada</span>
+    </div>
+    <div class="pillar-law">DORA Art.11 · SLA interno VERA</div>
+    <div class="pillar-quote">"VERA declara quando opera fora dos parâmetros de performance esperados."</div>
+    <ul class="impl-list">
+      <li>SLA interno: resposta standard &lt; 5s · consensus multi-LLM &lt; 15s</li>
+      <li>Se &gt; 10s (standard): declara atraso + razão ao officer</li>
+      <li>Nunca emite resposta parcial como completa (I14)</li>
+      <li>Latência registada no log de auditoria para análise DORA</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- BLOCO E -->
+<div class="section-label">Bloco E · Integração Sistémica e Evolução Constitucional</div>
+<div class="pillars-grid">
+
+  <div class="pillar p-sys">
+    <div class="pillar-header">
+      <span class="pillar-num">XIX</span>
+      <span class="pillar-title">Princípio da Integração Sistémica WINDI</span>
+    </div>
+    <div class="pillar-law">W-ENTERPRISE-001 :8150 · W-STATE-CORE · W-SEC-001 · W-GATEWAY-001</div>
+    <div class="pillar-quote">"VERA é nativa ao ecossistema WINDI — não uma camada separada."</div>
+    <ul class="impl-list">
+      <li>Ledger: POST /api/receipts — obrigatório para todas as decisões HIGH</li>
+      <li>Verify: windi-domain.com/verify-public/ — endpoint público de auditoria</li>
+      <li>W-SEC-001: alertas de segurança alimentam contexto VERA automaticamente</li>
+      <li>W-GATEWAY-001 (:8130): todo LLM externo passa por esta camada</li>
+      <li>VERA vive em :8150/enterprise/vera/ — não tem porto autónomo</li>
+    </ul>
+  </div>
+
+  <div class="pillar p-const">
+    <div class="pillar-header">
+      <span class="pillar-num">XX</span>
+      <span class="pillar-title">Princípio da Actualização Constitucional</span>
+    </div>
+    <div class="pillar-law">EU AI Act Art.9 (ciclo de vida) · I9 · Liga IA+H</div>
+    <div class="pillar-quote">"A Constituição de VERA só é alterada por decisão PHO selada pelo Human Dragon."</div>
+    <ul class="impl-list">
+      <li>Qualquer alteração a R1–R9 ou XI–XX gera receipt obrigatório no ledger</li>
+      <li>Versão semântica obrigatória: REGO v1.0 → v1.1.0 → v2.0 etc.</li>
+      <li>Human Dragon = única autoridade de aprovação constitucional (I9 irremediável)</li>
+      <li>Mudanças auditáveis: before/after + razão + timestamp + DID do aprovador</li>
+      <li>Revisão constitucional mínima: 1x por ano ou após mudança regulatória major</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- SEAL -->
+<div class="seal-block">
+  <div class="seal-left">
+    <div class="seal-version">VERA · REGO v1.1 · Constituição Completa</div>
+    <div style="margin-top:4px;font-size:11px">Pilares I–X (Normativos) + XI–XX (Técnicos e Infra-estruturais)</div>
+  </div>
+  <div class="seal-right">
+    <div>Human Dragon · Liga IA+H</div>
+    <div style="margin-top:2px">12 Abr 2026 · Pendente seal PHO</div>
+    <div style="margin-top:4px;color:var(--vera);font-weight:500">⬡ AGUARDA RECEIPT</div>
+  </div>
+</div>
+
+<div class="footer">
+  WINDI Publishing House · windi-domain.com · Kempten, Bavaria · Liga IA+H 2026
+</div>
+
+</div>
+</body>
+</html>
