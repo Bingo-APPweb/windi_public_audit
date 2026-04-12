@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.2.1
-**Sealed:** 2026-04-12 · §157 VERA REGO v1.0 + DASH v4.1 Trilingual
+**Version:** 2.2.3
+**Sealed:** 2026-04-12 · §159 W-ENTERPRISE-001 DESK v4.1 Complete
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -387,6 +387,8 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 12 Apr | **§159 W-ENTERPRISE-001** · DESK v4.1 Complete · 10 Shelves + Calendar · i18n Full · `9f616d7` |
+| 12 Apr | **§158 W-ENTERPRISE-001** · VERA v1.2 DID Gate · Evangelho WINDI · 3 Leis da Semente |
 | 12 Apr | **§157 W-ENTERPRISE-001** · VERA REGO v1.0 + DASH v4.1 Trilingual · `359ebc6` |
 | 12 Apr | **§156 W-ENTERPRISE-001** · User Manual + NOIR/KLAR Toggle · `7f8e5af` |
 | 12 Apr | **§155 W-ENTERPRISE-001** · AI Compliance Dashboard · :8150 · PHO · EU AI Act Art.14 |
@@ -548,27 +550,41 @@ Piece Panel (slide-up via ⚙):
 
 ---
 
-## §155-157 W-Enterprise-001 — AI Compliance Dashboard (12 Apr 2026)
+## §155-158 W-Enterprise-001 — AI Compliance Dashboard (12 Apr 2026)
 
-**Port:** :8150 · **Version:** v3.1.0 · **Invariants:** I1, I9, I11, I14
+**Port:** :8150 · **Version:** v3.2.0 · **Invariants:** I1, I9, I11, I14
 **URL:** `https://windi-domain.com/enterprise/`
 **DASH v4.1:** `https://windi-domain.com/enterprise/static/desk.html`
 **Conceito:** EU AI Act Article 14 compliance + VERA constitutional agent.
 
-### §157 — VERA · Verified Evidence Routing Agent
+### §158 — VERA v1.2 · DID Gate + Evangelho WINDI
 
-**Commit:** `359ebc6` · **File:** `vera_agent.py` (452 linhas)
-**Constitution:** REGO v1.0 · 9 Invariantes (R1-R9)
+**Evangelho:** `ALMA → DID → CÉREBRO → LEDGER → MUNDO`
+**Receipt:** `VERA-DID-GATE-EVANGELHO-20260412154934`
+
+**As Três Leis da Semente:**
+| Lei | Nome | Implementação |
+|-----|------|---------------|
+| I | Existência antes de Acção | Sem DID → WalletBanner mode · zero acções |
+| II | Toda Acção gera Rastro DID | `bind_action_to_did()` → Ledger receipt |
+| III | Sistema lê Histórico do DID | `restore_did_context()` → VERA adapta |
+
+**VERA v1.2 Componentes:**
+- `vera_did_gate.py` — DID Gate + 3 Leis (380 linhas)
+- `routing_engine.py` — Multi-LLM Routing + Consensus (480 linhas)
+- `agent_transfer_protocol.py` — IAT-001 Inter-Agent (350 linhas)
+- `vera_instructor.py` — Sovereign Instructor R10 (420 linhas)
+- `vera_module_map.json` — 8 Módulos Trilíngue
+- `llm_registry.yaml` — 8 Modelos em 3 Tiers
+
+**Endpoints DID Gate:** `/vera/did/validate/{did}` · `/vera/did/history/{did}` · `/vera/did/context/{did}` · `/vera/did/wallet-banner`
+
+### §157 — VERA · REGO Constitution
+
+**Constitution:** REGO v1.2 · 32 Pilares (10 Normativos + 9 Operacionais + 10 Técnicos + 3 DID)
 **Conceito:** AI Compliance Secretary. Não decide — ilumina o caminho até à decisão humana.
 
-| ID | Nome | Descrição |
-|----|------|-----------|
-| R1 | Consciência do Desk | Conhece estado das 9 prateleiras |
-| R2 | Ancoragem Legal | Cita artigos específicos (EU AI Act, GDPR) |
-| R3 | Não-Decisão | Orienta. O officer decide. I9 activo. |
-| R4-R9 | Rastreabilidade+Adaptação+Falha | PHO evidence · Níveis · I14 |
-
-**VERA Endpoints:** `/vera/health` · `/vera/brief` · `/vera/chat` · `/vera/seal-opinion`
+**VERA Endpoints:** `/vera/health` · `/vera/brief` · `/vera/chat` · `/vera/routing/route` · `/vera/instructor/ask`
 
 ### DASH v4.1 — 9 Prateleiras Trilíngue
 

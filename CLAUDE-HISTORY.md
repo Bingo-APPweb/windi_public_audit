@@ -6,6 +6,155 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 12 Abr 2026 — §159 W-ENTERPRISE-001 DESK v4.1 Complete
+
+**Commit:** `9f616d7`
+**Scope:** 10 Prateleiras Operacionais + Calendar + i18n Full Trilingual
+**CLAUDE.md:** v2.2.3
+
+### §159 — DESK v4.1 Complete (12 Apr 2026)
+
+**Data:** 12 Abril 2026 · 15:52 CEST
+**Serviço:** W-ENTERPRISE-001 v3.1.0 · :8150
+**URLs:**
+- DESK: `windi-domain.com/enterprise/static/desk.html`
+- Tools: `windi-domain.com/enterprise/static/tools.html`
+
+### 10 Prateleiras Operacionais
+
+| Shelf | Nome | Função |
+|-------|------|--------|
+| P01 | Control Room | Visão 360° · KPIs críticos · Decisão urgente |
+| P02 | Observations | Monitorização AI · Anomalias · Baseline drift |
+| P03 | 1LOD Stream | First Line of Defense · Acções escaladas |
+| P04 | 2LOD Challenges | Fila PHO · Decisões humanas · LUPA modal |
+| P05 | Documents | Documentação Compliance · DPIAs · Receipts |
+| P06 | Legal Advisory | Framework Regulatório (EU AI Act, GDPR, MaRisk, MiFID II) |
+| P07 | Invoices | Custos de Compliance · Facturas seladas |
+| P08 | PHO + Ledger | Receipts Forenses · Integridade Hash |
+| P09 | REP | Regulatory Evidence Package |
+| CAL | Calendar | Eventos de Compliance · CRUD · localStorage |
+
+### Calendar de Eventos
+
+**Funcionalidades:**
+- 4 tipos de evento: Deadline, Meeting, Delivery, PHO Review
+- Cores: Critical (vermelho), Info (azul), Gold (amarelo), Sealed (verde)
+- Navegação mensal com ← / →
+- Lista de próximos eventos
+- Modal de criação/edição
+- localStorage persistência
+- Badge no sidebar com contagem
+
+### i18n Trilíngue Completo
+
+Todas as 10 prateleiras com traduções PT/DE/EN incluindo:
+- Títulos e labels de KPIs
+- Mensagens VERA contextuais por shelf
+- Perguntas VERA (`vera_ask_*`)
+- Labels de documentos, facturas, regulamentos
+- Campos do calendário e modal de eventos
+- Dias da semana e meses
+
+### Invariantes Activos
+
+- **I1** — Soberania Humana
+- **I9** — Human Approval Gate (cada shelf com VERA contextual)
+- **I11** — Forensic Ledger (receipts em P08)
+- **I12** — Language Sovereign (i18n trilíngue)
+- **I14** — Explicit Failure Principle
+
+### Ficheiros Alterados
+
+- `static/desk.html` — +665 linhas (10 shelves + calendar + i18n)
+- `vera_agent.py` — REGO v1.1 (20 pillars)
+- `static/tools.html` — Workspace com A4Desk + VERA integration
+
+---
+
+## § SESSÃO 12 Abr 2026 — §158 VERA v1.2 DID Gate + Evangelho WINDI
+
+**CLAUDE.md:** v2.2.2
+**Scope:** VERA v1.2 · DID Gate · Evangelho WINDI · 3 Leis da Semente · Multi-LLM Routing
+**Receipt:** `VERA-DID-GATE-EVANGELHO-20260412154934`
+**Receipt2:** `VERA-V12-SOVEREIGN-20260412154040`
+
+### §158 — VERA v1.2 · DID Gate + Evangelho WINDI (12 Apr 2026)
+
+**Data:** 12 Abril 2026 · 15:49 CEST
+**Serviço:** W-ENTERPRISE-001 v3.2.0 · :8150
+**Evangelho:** `ALMA → DID → CÉREBRO → LEDGER → MUNDO`
+
+### As Três Leis da Semente — IMPLEMENTADAS
+
+| Lei | Nome | Código | Descrição |
+|-----|------|--------|-----------|
+| I | Existência antes de Acção | `get_wallet_banner()` | Sem DID → WalletBanner mode · zero acções |
+| II | Toda Acção gera Rastro DID | `bind_action_to_did()` | Instrução + DID + timestamp → receipt obrigatório |
+| III | Sistema lê Histórico do DID | `restore_did_context()` | DID retorna → Ledger query → VERA adapta contexto |
+
+### Artefactos Criados
+
+| Ficheiro | Linhas | Função |
+|----------|--------|--------|
+| `vera_did_gate.py` | 380 | DID Gate + 3 Leis + WalletBanner trilíngue |
+| `routing_engine.py` | 480 | Multi-LLM Routing + Consensus + Confidence Matrix |
+| `agent_transfer_protocol.py` | 350 | IAT-001 Inter-Agent Protocol (R11) |
+| `vera_instructor.py` | 420 | Sovereign Instructor (R10/R12) |
+| `vera_module_map.json` | 600 | 8 Módulos W-Enterprise trilíngue |
+| `llm_registry.yaml` | 400 | 8 Modelos em 3 Tiers |
+
+### LLM Registry — 8 Modelos Governados
+
+| Tier | Modelo | Alias | Função |
+|------|--------|-------|--------|
+| A | claude | Guardian | compliance reasoning |
+| A | gpt4 | Architect | estruturação lógica |
+| A | gemini | Witness | multimodal |
+| B | llama | Sovereign | GDPR local |
+| B | mistral | Efficiency | baixa latência |
+| B | grok | Devil's Advocate | stress-test |
+| C | cohere | Retrieval | embeddings |
+| C | bedrock | Enterprise | AWS clients |
+
+### VERA v1.2 Endpoints Novos
+
+| Endpoint | Função |
+|----------|--------|
+| `/vera/did/validate/{did}` | Valida DID em W-SESSION-001 |
+| `/vera/did/history/{did}` | Histórico de acções do DID |
+| `/vera/did/context/{did}` | Contexto completo (Lei III) |
+| `/vera/did/wallet-banner` | WalletBanner trilíngue |
+| `/vera/routing/route` | Multi-LLM routing com consensus |
+| `/vera/routing/registry` | LLM Registry |
+| `/vera/context/inject` | IAT-001 context injection |
+| `/vera/instructor/ask` | Sovereign Instructor |
+| `/vera/instructor/onboard` | Onboarding workflows |
+
+### REGO v1.2 — 35 Pilares
+
+- **10 Pilares Normativos** (I-X)
+- **9 Pilares Operacionais** (R1-R9)
+- **10 Pilares Técnicos** (XI-XX)
+- **3 Leis DID** (Lei I, II, III)
+- **3 Princípios Novos:** R10 Pedagogia Activa · R11 Recepção Inter-Agente · R12 Mapa Vivo
+
+### Fluxo DID Gate
+
+```
+ANON → 5min max → WALLET BANNER → DID CRIADO → VERA ACORDA → LEDGER SELA
+```
+
+### Invariantes Activos
+
+- **I9** — Proibição de Escalada de Autonomia
+- **I11** — Ledger Obrigatório
+- **I14** — Falha Explícita
+
+**Princípio:** *"WINDI é para todos. Só funciona com DID."*
+
+---
+
 ## § SESSÃO 12 Abr 2026 — §157 VERA REGO v1.0 + DASH v4.1 Trilingual
 
 **Commit:** `359ebc6`
