@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.2.6
-**Sealed:** 2026-04-12 · §162 VERA Profile-Aware R10
+**Version:** 2.2.7
+**Sealed:** 2026-04-13 · §163 DECRETO-001 A Árvore Viva
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -139,6 +139,44 @@ Nenhum endpoint retorna valores default que mascarem dados ausentes.
 **Stack:** W-STATE-CORE 001-006 completo (hash → persist → DID → PHO → ledger → verify)
 **Endpoints:** `/verify/{id}` (API) · `/verify-public/web/verify.html?id=X` (Visual UI)
 **Berlin:** `berlin-slide.html` · QR funcional · Script 3 min
+
+### §163 — DECRETO-001: A Árvore Viva (13 Apr 2026)
+
+> **"O servidor WINDI é uma Árvore Viva. Cada serviço é um galho.
+> A seiva (DID) flui do tronco às folhas. Nenhum galho vive sozinho."**
+
+**Status:** CONSTITUTIONAL · **Commit:** `9f31574` · **Invariants:** I1, I9, I11, I12, I14
+
+**Arquitectura Living Tree:**
+```
+TRUNK (Tronco)    → Forensic Ledger :8101
+SAP (Seiva)       → DID Cross-Validation
+BRANCHES (Galhos) → 8 Órgãos WINDI
+LEAVES (Folhas)   → Endpoints
+FRUITS (Frutos)   → Virtue Receipts
+```
+
+**Endpoints Constitucionais (TRUNK :8101):**
+- `/api/tree/health` → Verifica saúde de todos os órgãos
+- `/api/tree/decree` → Informação do decreto
+- `/api/did/validate/{did}` → Validação cruzada DID
+- `/api/did/tiers` → Hierarquia de tiers
+
+**DID Tiers (As 4 Leis da Seiva):**
+| Tier | Nível | Acesso |
+|------|-------|--------|
+| 🌱 SEED | 1 | `/verify-public/` |
+| 🌿 NODAL | 2 | +`/wallet/` +`/travel/` |
+| 🌳 SOVEREIGN | 3 | +`/law/` +`/enterprise/` |
+| 🏛 ORACLE | 4 | +`/sec/` +`/dev-api/` (cross-validated) |
+
+**Files:**
+- `/opt/windi/constitutional/DECREE-001-LIVING-TREE.md`
+- `/opt/windi/constitutional/windi_tree.py`
+- `/opt/windi/constitutional/did_sovereign.py`
+- `/opt/windi/constitutional/tree_health.py`
+
+**Princípio:** A Árvore cresce. A estrutura permanece. Mutável no crescimento. Imutável na direcção.
 
 ### §117 — I9: Human Approval Gate (NON-NEGOTIABLE)
 
@@ -407,14 +445,9 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 13 Apr | **§163 DECRETO-001** · A Árvore Viva · DID Sovereign · Living Tree CONSTITUTIONAL |
 | 12 Apr | **§162 W-ENTERPRISE-001** · VERA Profile-Aware R10 · OVS Integration |
-| 12 Apr | **§161 W-ENTERPRISE-001** · Capacity Amplifier · OVS · `/enterprise/operator` |
-| 12 Apr | **§160 W-ENTERPRISE-001** · DID Universal Frontend Integration |
-| 12 Apr | **§159 W-ENTERPRISE-001** · DESK v4.1 Complete · 10 Shelves + Calendar · i18n Full · `9f616d7` |
-| 12 Apr | **§158 W-ENTERPRISE-001** · VERA v1.2 DID Gate · Evangelho WINDI · 3 Leis da Semente |
-| 12 Apr | **§157 W-ENTERPRISE-001** · VERA REGO v1.0 + DASH v4.1 Trilingual · `359ebc6` |
-| 12 Apr | **§156 W-ENTERPRISE-001** · User Manual + NOIR/KLAR Toggle · `7f8e5af` |
-| 12 Apr | **§155 W-ENTERPRISE-001** · AI Compliance Dashboard · :8150 · PHO · EU AI Act Art.14 |
+| 12 Apr | **§155-§161** · W-ENTERPRISE-001 Complete · VERA + DASH + NOIR/KLAR |
 | 11 Apr | **§154 W-DEV-API-001** · Developer API · :8200 · 4 Tiers · Verify Bridge |
 | 11 Apr | **§153 W-STATE-CORE-006** · Verify Public · Berlin Pitch Ready |
 | 09 Apr | **§151 W-DRAGON-001** · Dragon Shadow Forest · PDF Overlay |
