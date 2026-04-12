@@ -35,13 +35,16 @@ except ImportError:
 
 try:
     import uuid_utils  # UUIDv7
+    # Test if uuid7 is actually available
+    _test = uuid_utils.uuid7()
     def make_uuid7() -> str:
         return str(uuid_utils.uuid7())
     HAS_UUID7 = True
-except ImportError:
+except (ImportError, AttributeError):
+    # Fallback: UUID4 when uuid_utils not available or uuid7 not in module
     import uuid
     def make_uuid7() -> str:
-        """Fallback: UUID4 quando uuid_utils não disponível."""
+        """Fallback: UUID4 quando uuid_utils.uuid7 não disponível."""
         return str(uuid.uuid4())
     HAS_UUID7 = False
 
@@ -1214,6 +1217,37 @@ def create_wallet_blueprint():
             return jsonify({"error": "wallet not found"}), 404
 
         return jsonify(result)
+
+    # ─── GET /api/wallet/check-email?email=... ────────────────────────────
+    @bp.route("/check-email", methods=["GET"])
+    def endpoint_check_email():
+        """
+        Verifica se email já está registado.
+        Retorna: {exists: bool, display_name?: str, wallet_id?: str}
+        Usado no frontend para redirecionar para login se já existe.
+        """
+        email = request.args.get("email", "").strip().lower()
+        if not email:
+            return jsonify({"error": "email required"}), 400
+
+        conn = get_db()
+        row = conn.execute(
+            """SELECT wh.display_name, wc.wallet_id
+               FROM wallet_human wh
+               LEFT JOIN wallet_context wc ON wc.human_id = wh.human_id
+               WHERE LOWER(wh.email) = ?
+               LIMIT 1""",
+            (email,)
+        ).fetchone()
+
+        if row:
+            return jsonify({
+                "exists": True,
+                "display_name": row["display_name"],
+                "wallet_id": row["wallet_id"]
+            })
+        else:
+            return jsonify({"exists": False})
 
     # ─── POST /api/wallet/context/<id>/freeze ────────────────────────────
     @bp.route("/context/<context_id>/freeze", methods=["POST"])
