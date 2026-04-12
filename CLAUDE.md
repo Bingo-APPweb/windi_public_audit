@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.2.4
-**Sealed:** 2026-04-12 · §160 DID Universal Frontend Integration
+**Version:** 2.2.5
+**Sealed:** 2026-04-12 · §161 Capacity Amplifier · OVS
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -387,6 +387,8 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 12 Apr | **§161 W-ENTERPRISE-001** · Capacity Amplifier · OVS · `/enterprise/operator` |
+| 12 Apr | **§160 W-ENTERPRISE-001** · DID Universal Frontend Integration |
 | 12 Apr | **§159 W-ENTERPRISE-001** · DESK v4.1 Complete · 10 Shelves + Calendar · i18n Full · `9f616d7` |
 | 12 Apr | **§158 W-ENTERPRISE-001** · VERA v1.2 DID Gate · Evangelho WINDI · 3 Leis da Semente |
 | 12 Apr | **§157 W-ENTERPRISE-001** · VERA REGO v1.0 + DASH v4.1 Trilingual · `359ebc6` |
@@ -550,7 +552,7 @@ Piece Panel (slide-up via ⚙):
 
 ---
 
-## §155-158 W-Enterprise-001 — AI Compliance Dashboard (12 Apr 2026)
+## §155-161 W-Enterprise-001 — AI Compliance Dashboard (12 Apr 2026)
 
 **Port:** :8150 · **Version:** v3.2.0 · **Invariants:** I1, I9, I11, I14
 **URL:** `https://windi-domain.com/enterprise/`
@@ -607,6 +609,29 @@ Piece Panel (slide-up via ⚙):
 **Status Berçário:** `nasceu` (primeira vez) · `entrou` (novo DID) · `voltou` (mesmo DID)
 
 **sessionStorage:** `windi_enterprise_did`
+
+### §161 — Capacity Amplifier · OVS (12 Apr 2026)
+
+**URL:** `https://windi-domain.com/enterprise/operator`
+**File:** `static/operator.html` · **i18n:** PT/DE/EN · **Theme:** NOIR/KLAR
+
+**Conceito:** Posicionamento estratégico. Não é feature — é argumento de venda.
+**Novo Cargo:** Operator of Verifiable Systems (OVS)
+
+**3 Perfis Amplificados:**
+| Perfil | Antes | Depois |
+|--------|-------|--------|
+| Digital Risk / Compliance | Depende de narrativa | Prova directa no Ledger |
+| Technical Product Owner | Governança = fricção | Governança embutida |
+| Internal Auditor | Semanas de ciclo | Verificação imediata SHA-256 |
+
+**Workflow:** Decision → I9 Gate → Seal (SHA-256 + Ledger) → Proof
+
+**Manifesto:**
+> *"The future of digital risk is not hiring better experts.*
+> *It's giving normal operators the ability to work with provable systems."*
+
+**Badges:** EU AI Act Art.14 · DORA · PHO Certified · Ledger-native · Audit-ready
 
 ### DASH v4.1 — 9 Prateleiras Trilíngue
 

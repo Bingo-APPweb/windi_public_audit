@@ -6,6 +6,67 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 12 Abr 2026 (Noite) — §161 Capacity Amplifier · OVS
+
+**Commit:** `70d9271`
+**Scope:** Standalone Capacity Amplifier page for Berlin pitch
+**CLAUDE.md:** v2.2.5
+
+### §161 — Capacity Amplifier · Operator of Verifiable Systems (12 Apr 2026 · 22:45 CEST)
+
+**URL:** `https://windi-domain.com/enterprise/operator`
+**File:** `static/operator.html` (1038 linhas)
+**Route:** `main.py` → `/operator`
+
+**Conceito Estratégico:**
+> Não é uma feature. É o argumento de venda principal do W-Enterprise-001.
+> Transforma software de compliance em criador de um novo cargo no mercado.
+
+**Novo Cargo:** Operator of Verifiable Systems (OVS)
+
+**3 Perfis Amplificados:**
+
+| Perfil | Sigla | Cor | Antes | Depois |
+|--------|-------|-----|-------|--------|
+| Digital Risk / Compliance Translator | DR | Blue | Depende de narrativa e relatórios | Prova directa no Ledger |
+| Technical Product / Systems Owner | TP | Amber | Governança = fricção separada | Governança embutida na execução |
+| Internal Auditor (novo tipo) | IA | Teal | Semanas de ciclo de auditoria | Verificação imediata SHA-256 |
+
+**Workflow Verificável:**
+```
+01 Decision (human intent) → 02 Validation (I9 gate) → 03 Seal (SHA-256 + ledger) → 04 Proof (immediate · verifiable)
+```
+
+**Features Implementadas:**
+- Full trilingual (PT/DE/EN) via i18n object
+- NOIR/KLAR theme toggle via `windi-theme` localStorage
+- 3 Profile cards com selecção interactiva
+- Before/After comparison panel
+- Workflow strip com steps 03+04 highlighted (active)
+- OVS Role card com badge certificação
+- Pills: EU AI Act Art.14 · DORA · PHO Certified · Ledger-native · Audit-ready
+- Manifesto box com citação dourada
+- Back link para `/enterprise/`
+
+**Manifesto Selado:**
+> "The future of digital risk is not hiring better experts.
+> It's giving normal operators the ability to work with provable systems.
+> AI processes. Human decides. WINDI guarantees."
+
+**Paleta NOIR/KLAR:**
+| Theme | Background | Gold | Text |
+|-------|------------|------|------|
+| NOIR | `#0B0D14` | `#C8A45A` | `#E8E5DC` |
+| KLAR | `#FAFAF8` | `#8B7424` | `#1A1A18` |
+
+**localStorage sync:** `windi-theme` + `windi-lang`
+
+**Próximos Passos (F2/F3):**
+- F2: VERA reconhece perfil, adapta R10 Pedagogia
+- F3: OVS Certification real via W-DEV-API-001
+
+---
+
 ## § SESSÃO 12 Abr 2026 (Noite) — §160 DID Universal Frontend Integration
 
 **Commit:** `b962bb7`
