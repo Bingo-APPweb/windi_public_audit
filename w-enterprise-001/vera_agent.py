@@ -361,13 +361,26 @@ async def vera_brief(language: str = "pt", session_count: int = 0, officer_id: s
                 {"step": 4, "shelf": "P04", "action": "PHO challenges", "duration": "30 min"},
                 {"step": 5, "shelf": "P08", "action": "Seal the day", "duration": "5 min"}]
     hora = datetime.utcnow().strftime("%H:%M")
-    crit_id = critical_items[0]["id"] if critical_items else "nenhum"
+    crit_id = critical_items[0]["id"] if critical_items else "none"
+
+    # Trilingual prompts (I12)
+    brief_prompts = {
+        "de": f"Tägliches Briefing. {hora} UTC. Modus: {mode}. Max 4 Sätze. Kritisch: {crit_id}. Gesamt: {len(decisions)}. Ende mit 'Beginnen wir?'",
+        "en": f"Daily briefing. {hora} UTC. Mode: {mode}. Max 4 sentences. Critical: {crit_id}. Total: {len(decisions)}. End with 'Shall we begin?'",
+        "pt": f"Briefing diário. {hora} UTC. Modo: {mode}. Max 4 frases. Crítico: {crit_id}. Total: {len(decisions)}. Termina com 'Começamos?'"
+    }
+    fallback_msgs = {
+        "de": f"Guten Morgen. {len(decisions)} ausstehende Challenges. {crit_id} ist KRITISCH — PHO erforderlich. Beginnen wir mit dem Dringendsten?",
+        "en": f"Good morning. {len(decisions)} pending challenges. {crit_id} is CRITICAL — PHO required. Shall we start with the most urgent?",
+        "pt": f"Bom dia. {len(decisions)} challenges pendentes. {crit_id} é CRITICAL — PHO obrigatória. Começamos pelo mais urgente?"
+    }
+
     try:
         system = build_system_prompt(language, officer_id, session_count)
-        messages = [{"role": "user", "content": f"Briefing diário. {hora} UTC. Modo: {mode}. Max 4 frases. Crítico: {crit_id}. Total: {len(decisions)}. Termina com 'Começamos?'"}]
+        messages = [{"role": "user", "content": brief_prompts.get(language, brief_prompts["en"])}]
         vera_text = await call_ai(system, messages, max_tokens=400)
     except Exception:
-        vera_text = f"Bom dia. {len(decisions)} challenges pendentes. {crit_id} é CRITICAL — PHO obrigatória. Começamos pelo mais urgente?"
+        vera_text = fallback_msgs.get(language, fallback_msgs["en"])
     save_message(officer_id, "vera", vera_text, shelf="P01")
     return {"status": "ok", "timestamp": datetime.utcnow().isoformat(), "language": language, "officer_mode": mode,
             "vera_message": vera_text, "critical": critical_items, "pending": pending_items, "sequence": sequence,
