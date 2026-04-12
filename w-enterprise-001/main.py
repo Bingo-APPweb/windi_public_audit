@@ -255,6 +255,20 @@ async def dashboard():
         return HTMLResponse(content=index.read_text(encoding="utf-8"))
     return HTMLResponse("<h1>W-Enterprise-001</h1><p>static/index.html not found</p>", status_code=503)
 
+
+@app.get("/operator", response_class=HTMLResponse)
+async def operator_page():
+    """
+    Capacity Amplifier Module — Operator of Verifiable Systems (OVS)
+    Standalone page for Berlin pitch and onboarding.
+    §160 · F1 · Trilingual (PT/DE/EN) · NOIR/KLAR
+    """
+    operator = STATIC_DIR / "operator.html"
+    if operator.exists():
+        return HTMLResponse(content=operator.read_text(encoding="utf-8"))
+    return HTMLResponse("<h1>W-Enterprise-001</h1><p>operator.html not found</p>", status_code=503)
+
+
 @app.get("/health")
 async def health():
     return {
