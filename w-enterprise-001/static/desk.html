@@ -404,6 +404,21 @@ html, body {
     <div class="shelf-item" onclick="openShelf('P07')" id="nav-P07"><div class="shelf-icon">P7</div><div class="shelf-info"><div class="shelf-code">P07</div><div class="shelf-name" data-i18n="shelf_p07">Invoices</div></div><div class="shelf-badge ok" id="badge-P07">14</div></div>
     <div class="shelf-item" onclick="openShelf('P08')" id="nav-P08"><div class="shelf-icon">P8</div><div class="shelf-info"><div class="shelf-code">P08</div><div class="shelf-name" data-i18n="shelf_p08">PHO + Ledger</div></div><div class="shelf-badge ok" id="badge-P08">14</div></div>
     <div class="shelf-item" onclick="openShelf('P09')" id="nav-P09"><div class="shelf-icon">P9</div><div class="shelf-info"><div class="shelf-code">P09</div><div class="shelf-name" data-i18n="shelf_p09">REP</div></div></div>
+    <div class="shelf-item" onclick="window.location.href='/enterprise/static/tools.html'" id="nav-P10"><div class="shelf-icon">🛠️</div><div class="shelf-info"><div class="shelf-code">P10</div><div class="shelf-name" data-i18n="shelf_p10">Tools & Workspace</div></div></div>
+
+    <div class="sidebar-section-label" style="margin-top:20px" data-i18n="vera_section">VERA Agent</div>
+    <div class="shelf-item" onclick="window.open('/enterprise/vera/constitution','_blank')"><div class="shelf-icon" style="background:var(--vera-bg);border-color:var(--vera-border);color:var(--vera)">⬡</div><div class="shelf-info"><div class="shelf-code">REGO v1.1</div><div class="shelf-name" data-i18n="vera_constitution">Constitution</div></div></div>
+    <div class="shelf-item" onclick="window.open('/enterprise/vera/health','_blank')"><div class="shelf-icon" style="background:var(--vera-bg);border-color:var(--vera-border);color:var(--vera)">⚙</div><div class="shelf-info"><div class="shelf-code">20 Pillars</div><div class="shelf-name" data-i18n="vera_health">Health Status</div></div></div>
+
+    <div class="sidebar-section-label" style="margin-top:20px" data-i18n="windi_section">WINDI Tools</div>
+    <div class="shelf-item" onclick="window.open('/law/dragon/','_blank')"><div class="shelf-icon" style="color:var(--gold)">🐉</div><div class="shelf-info"><div class="shelf-code">SHA-256</div><div class="shelf-name">Dragon Shadow</div></div></div>
+    <div class="shelf-item" onclick="window.open('/law/','_blank')"><div class="shelf-icon" style="color:var(--gold)">⚖</div><div class="shelf-info"><div class="shelf-code">AI Draft</div><div class="shelf-name">WINDI-LAW</div></div></div>
+    <div class="shelf-item" onclick="window.open('/verify-public/','_blank')"><div class="shelf-icon" style="color:var(--sealed)">✓</div><div class="shelf-info"><div class="shelf-code">Public</div><div class="shelf-name" data-i18n="verify_public">Verify Public</div></div></div>
+
+    <div class="sidebar-section-label" style="margin-top:20px" data-i18n="navigation">Navigation</div>
+    <div class="shelf-item" onclick="window.location.href='/enterprise/'"><div class="shelf-icon">←</div><div class="shelf-info"><div class="shelf-code">Dashboard</div><div class="shelf-name" data-i18n="back_dashboard">Back to Dashboard</div></div></div>
+    <div class="shelf-item" onclick="window.open('/enterprise/static/docs/user-manual.html','_blank')"><div class="shelf-icon">📖</div><div class="shelf-info"><div class="shelf-code">Docs</div><div class="shelf-name" data-i18n="user_manual">User Manual</div></div></div>
+
     <div class="sidebar-footer"><div class="ledger-integrity"><div style="font-size:14px;font-family:var(--font-mono);color:var(--sealed)">L</div><div><div class="ledger-integrity-label" data-i18n="ledger_ok">Ledger OK</div></div></div></div>
   </nav>
 
@@ -519,7 +534,10 @@ const I18N = {
     vera_ask_rep: "O que deve incluir o REP para auditoria?",
     vera_ask_note: "Como devo formular a nota de aprovacao condicionada?",
     toast_sealed: "PHO Receipt Selado", toast_rejected: "Decisao Rejeitada e Selada",
-    toast_rep: "REP Gerado", toast_ledger: "Ledger Verificado"
+    toast_rep: "REP Gerado", toast_ledger: "Ledger Verificado",
+    shelf_p10: "Tools & Workspace", vera_section: "Agente VERA", vera_constitution: "Constituicao",
+    vera_health: "Estado de Saude", windi_section: "Ferramentas WINDI", verify_public: "Verificar Publico",
+    navigation: "Navegacao", back_dashboard: "Voltar ao Dashboard", user_manual: "Manual do Utilizador"
   },
   de: {
     shelves: "Operative Regale",
@@ -562,7 +580,10 @@ const I18N = {
     vera_ask_rep: "Was sollte das REP fur die Prufung enthalten?",
     vera_ask_note: "Wie soll ich die bedingte Genehmigungsnotiz formulieren?",
     toast_sealed: "PHO-Quittung versiegelt", toast_rejected: "Entscheidung abgelehnt und versiegelt",
-    toast_rep: "REP generiert", toast_ledger: "Ledger verifiziert"
+    toast_rep: "REP generiert", toast_ledger: "Ledger verifiziert",
+    shelf_p10: "Werkzeuge & Arbeitsbereich", vera_section: "VERA Agent", vera_constitution: "Verfassung",
+    vera_health: "Gesundheitsstatus", windi_section: "WINDI Werkzeuge", verify_public: "Offentlich verifizieren",
+    navigation: "Navigation", back_dashboard: "Zuruck zum Dashboard", user_manual: "Benutzerhandbuch"
   },
   en: {
     shelves: "Operational Shelves",
@@ -605,7 +626,10 @@ const I18N = {
     vera_ask_rep: "What should the REP include for audit?",
     vera_ask_note: "How should I formulate the conditional approval note?",
     toast_sealed: "PHO Receipt Sealed", toast_rejected: "Decision Rejected and Sealed",
-    toast_rep: "REP Generated", toast_ledger: "Ledger Verified"
+    toast_rep: "REP Generated", toast_ledger: "Ledger Verified",
+    shelf_p10: "Tools & Workspace", vera_section: "VERA Agent", vera_constitution: "Constitution",
+    vera_health: "Health Status", windi_section: "WINDI Tools", verify_public: "Verify Public",
+    navigation: "Navigation", back_dashboard: "Back to Dashboard", user_manual: "User Manual"
   }
 };
 
