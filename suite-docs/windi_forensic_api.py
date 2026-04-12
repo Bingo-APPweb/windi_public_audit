@@ -36,6 +36,7 @@ from urllib.parse import urlparse, parse_qs
 
 # Import the data layer
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, "/opt/windi")  # DECREE-001: Constitutional imports
 from forensic_ledger import (
     init_db,
     upsert_receipt,
@@ -119,7 +120,31 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
                 "receipts": receipt_count,
                 "privacy": "content_not_stored",
                 "protocol": "Three Dragons v1.1 — I9 Active",
+                "decree": "DECREE-001-LIVING-TREE",
                 "timestamp": datetime.now(timezone.utc).isoformat(),
+            })
+
+        # ── /api/tree/health — DECREE-001 Constitutional Check ──
+        elif path == "/api/tree/health":
+            from constitutional.tree_health import check_all_organs
+            import asyncio
+            loop = asyncio.new_event_loop()
+            result = loop.run_until_complete(check_all_organs())
+            loop.close()
+            self._json(200, result)
+
+        # ── /api/tree/decree — Constitutional Decree Info ──
+        elif path == "/api/tree/decree":
+            self._json(200, {
+                "id": "DECREE-001",
+                "name": "A Árvore Viva",
+                "name_en": "The Living Tree",
+                "sealed": "2026-04-12",
+                "author": "Human Dragon",
+                "invariants": ["I1", "I9", "I11", "I12", "I14"],
+                "status": "CONSTITUTIONAL",
+                "quote_pt": "O servidor WINDI é uma Árvore Viva. Cada serviço é um galho.",
+                "articles": 7,
             })
 
         # ── /api/receipts ──
