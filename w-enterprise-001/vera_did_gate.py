@@ -31,11 +31,19 @@ log = logging.getLogger("vera.did_gate")
 
 # ─── CONFIG ───────────────────────────────────────────────────────────────
 SESSION_SERVICE_URL = "http://localhost:8096"
+WINDI_LAW_URL = "http://localhost:8122"  # WINDI-LAW Identity Gate
 LEDGER_URL = "http://localhost:8101"
 DID_CACHE_TTL_SECONDS = 300  # 5 min cache
 
 # In-memory cache for DID validation (production: use Redis)
 _did_cache: Dict[str, Dict[str, Any]] = {}
+
+# §162 F2: Officer profile cache (DID → profile mapping)
+# Profile persists across sessions for the same DID
+_profile_cache: Dict[str, str] = {}
+
+# Valid OVS profiles from §161 Capacity Amplifier
+VALID_PROFILES = ["digital_risk", "tech_product", "internal_auditor"]
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -59,6 +67,15 @@ class DIDHistory(BaseModel):
     last_action: Optional[str] = None
     modules_used: List[str]
     receipts: List[Dict[str, Any]]
+
+
+class OfficerProfile(BaseModel):
+    """§162 F2: Officer profile from Capacity Amplifier (§161)"""
+    profile_id: str  # digital_risk | tech_product | internal_auditor
+    profile_label: Dict[str, str]  # Trilingual labels
+    focus_areas: List[str]  # Primary focus for VERA guidance
+    preferred_modules: List[str]  # Modules most relevant to profile
+    vera_tone: str  # compliance | technical | audit
 
 class WalletBanner(BaseModel):
     """Lei I: Response when no DID present"""
@@ -87,7 +104,7 @@ def get_wallet_banner(lang: str = "en") -> WalletBanner:
         message_pt="Bem-vindo ao W-Enterprise. Para usar VERA, precisas de uma identidade digital (DID). Cria a tua carteira para começar.",
         message_de="Willkommen bei W-Enterprise. Um VERA zu nutzen, benötigst du eine digitale Identität (DID). Erstelle deine Wallet, um zu beginnen.",
         message_en="Welcome to W-Enterprise. To use VERA, you need a digital identity (DID). Create your wallet to begin.",
-        create_did_url="https://windi-domain.com/wallet/create",
+        create_did_url="https://windi-domain.com/wallet/?return=/enterprise/",
         what_is_did={
             "pt": "O DID (Decentralized Identifier) é a tua identidade soberana no ecossistema WINDI. Não pertence a nenhuma empresa — pertence a ti. Com ele, todas as tuas acções são rastreáveis e verificáveis, mas só tu controlas o acesso.",
             "de": "Die DID (Decentralized Identifier) ist deine souveräne Identität im WINDI-Ökosystem. Sie gehört keinem Unternehmen — sie gehört dir. Damit sind alle deine Aktionen nachvollziehbar und überprüfbar, aber nur du kontrollierst den Zugang.",
@@ -109,6 +126,44 @@ def get_wallet_banner(lang: str = "en") -> WalletBanner:
             "REP — Reporting Engine",
         ],
     )
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+#  WINDI-LAW CROSS-VALIDATION
+#  DID Universal: se existe no WINDI-LAW, é válido em todo o ecossistema
+# ═══════════════════════════════════════════════════════════════════════════
+
+async def _try_windi_law_validation(did: str) -> Optional[DIDValidation]:
+    """
+    Try to validate DID against WINDI-LAW Identity Gate (:8122).
+    If DID exists in WINDI-LAW, it's valid across the WINDI ecosystem.
+    """
+    try:
+        async with httpx.AsyncClient(timeout=5) as client:
+            r = await client.get(f"{WINDI_LAW_URL}/identity/{did}")
+
+            if r.status_code == 200:
+                data = r.json()
+                log.info(f"DID found in WINDI-LAW: {did[:25]}... → {data.get('state', 'UNKNOWN')}")
+
+                # Map WINDI-LAW state to tier
+                state = data.get("state", "PROVISIONAL")
+                tier = "ORACLE" if state == "VERIFIED" else "SEED"
+
+                return DIDValidation(
+                    valid=True,
+                    did=did,
+                    active=state in ["VERIFIED", "PROVISIONAL"],
+                    tier=tier,
+                    created_at=data.get("created_at"),
+                    last_seen=None,
+                    error=None
+                )
+            else:
+                return None  # Not found in WINDI-LAW
+    except Exception as e:
+        log.debug(f"WINDI-LAW validation unavailable: {e}")
+        return None  # Service unavailable, let caller decide
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -158,24 +213,26 @@ async def verify_did(did: str) -> DIDValidation:
                     last_seen=data.get("last_seen"),
                 )
             elif r.status_code == 404:
-                # DID not in session DB but format is valid → graceful pass
-                # Evangelho: Every soul with a DID deserves entry
-                if did.startswith("did:windi:") and len(did) > 15:
-                    log.info(f"DID format valid but not in DB — graceful pass: {did[:25]}...")
-                    validation = DIDValidation(
-                        valid=True,
-                        did=did,
-                        active=True,
-                        tier="SEED",
-                        error="DID válido · Modo local [Lei I graceful]"
-                    )
-                else:
-                    validation = DIDValidation(
-                        valid=False,
-                        did=did,
-                        active=False,
-                        error="DID não encontrado em W-SESSION-001"
-                    )
+                # DID not in W-SESSION-001 — try WINDI-LAW Identity Gate
+                validation = await _try_windi_law_validation(did)
+                if not validation:
+                    # Fallback: graceful pass for valid format
+                    if did.startswith("did:windi:") and len(did) > 15:
+                        log.info(f"DID format valid but not in DBs — graceful pass: {did[:25]}...")
+                        validation = DIDValidation(
+                            valid=True,
+                            did=did,
+                            active=True,
+                            tier="SEED",
+                            error="DID válido · Modo local [Lei I graceful]"
+                        )
+                    else:
+                        validation = DIDValidation(
+                            valid=False,
+                            did=did,
+                            active=False,
+                            error="DID não encontrado"
+                        )
             else:
                 # Session service might be down, allow graceful degradation
                 log.warning(f"W-SESSION-001 returned {r.status_code} for DID validation")
@@ -345,10 +402,11 @@ async def read_did_history(did: str, limit: int = 50) -> DIDHistory:
         )
 
 
-async def restore_did_context(did: str) -> Dict[str, Any]:
+async def restore_did_context(did: str, lang: str = "en") -> Dict[str, Any]:
     """
     Lei III: Full context restoration for returning officer.
-    Combines validation + history for complete situational awareness.
+    Combines validation + history + profile for complete situational awareness.
+    §162 F2: Now includes officer profile for VERA adaptation.
     """
     validation = await verify_did(did)
 
@@ -361,6 +419,9 @@ async def restore_did_context(did: str) -> Dict[str, Any]:
 
     history = await read_did_history(did)
 
+    # §162 F2: Get officer profile
+    profile = get_officer_profile(did)
+
     # Build context summary
     context = {
         "restored": True,
@@ -369,9 +430,12 @@ async def restore_did_context(did: str) -> Dict[str, Any]:
         "history": history.model_dump(),
         "vera_greeting": _build_greeting(history),
         "recommended_next": _recommend_next_module(history.modules_used),
+        # §162 F2: Profile-aware context
+        "officer_profile": profile.model_dump() if profile else None,
+        "profile_greeting": get_profile_greeting(profile, lang, history.total_actions),
     }
 
-    log.info(f"Lei III: Context restored for {did[:20]}... ({history.total_actions} actions)")
+    log.info(f"Lei III: Context restored for {did[:20]}... ({history.total_actions} actions, profile={profile.profile_id if profile else 'none'})")
     return context
 
 
@@ -419,6 +483,171 @@ def _recommend_next_module(modules_used: List[str]) -> Dict[str, Any]:
             "de": "Du hast alle Module verwendet. Du bist bereit für fortgeschrittene Operationen.",
             "en": "You've used all modules. You're ready for advanced operations.",
         },
+    }
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+#  §162 F2 — OFFICER PROFILE (Capacity Amplifier Integration)
+#  VERA adapts R10 Pedagogia based on officer's chosen profile
+# ═══════════════════════════════════════════════════════════════════════════
+
+# Profile definitions from §161 Capacity Amplifier
+PROFILE_DEFINITIONS: Dict[str, OfficerProfile] = {
+    "digital_risk": OfficerProfile(
+        profile_id="digital_risk",
+        profile_label={
+            "pt": "Digital Risk / Compliance Translator",
+            "de": "Digital Risk / Compliance Übersetzer",
+            "en": "Digital Risk / Compliance Translator",
+        },
+        focus_areas=["legal_anchors", "frameworks", "audit_evidence", "policy_validation"],
+        preferred_modules=["pho", "lod2", "legal_advisory", "rep"],
+        vera_tone="compliance",
+    ),
+    "tech_product": OfficerProfile(
+        profile_id="tech_product",
+        profile_label={
+            "pt": "Technical Product / Systems Owner",
+            "de": "Technical Product / Systems Owner",
+            "en": "Technical Product / Systems Owner",
+        },
+        focus_areas=["integration", "api_workflow", "system_design", "automation"],
+        preferred_modules=["obs_engine", "lod1", "doc_gen", "invoice_gen"],
+        vera_tone="technical",
+    ),
+    "internal_auditor": OfficerProfile(
+        profile_id="internal_auditor",
+        profile_label={
+            "pt": "Auditor Interno (novo tipo)",
+            "de": "Interner Prüfer (neuer Typ)",
+            "en": "Internal Auditor (new type)",
+        },
+        focus_areas=["verification", "ledger_queries", "evidence_chain", "sha256_proof"],
+        preferred_modules=["pho", "rep", "obs_engine", "lod2"],
+        vera_tone="audit",
+    ),
+}
+
+
+def get_officer_profile(did: str) -> Optional[OfficerProfile]:
+    """
+    §162 F2: Get the officer's profile from cache.
+    Returns None if profile not set.
+    """
+    profile_id = _profile_cache.get(did)
+    if profile_id and profile_id in PROFILE_DEFINITIONS:
+        return PROFILE_DEFINITIONS[profile_id]
+    return None
+
+
+def set_officer_profile(did: str, profile_id: str) -> Dict[str, Any]:
+    """
+    §162 F2: Set the officer's profile.
+    Validates profile_id against VALID_PROFILES.
+    """
+    if profile_id not in VALID_PROFILES:
+        return {
+            "success": False,
+            "error": f"Invalid profile: {profile_id}. Valid: {VALID_PROFILES}",
+        }
+
+    _profile_cache[did] = profile_id
+    profile = PROFILE_DEFINITIONS[profile_id]
+
+    log.info(f"§162 F2: Profile set for {did[:20]}... → {profile_id}")
+
+    return {
+        "success": True,
+        "did": did,
+        "profile": profile.model_dump(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+def get_profile_greeting(profile: Optional[OfficerProfile], lang: str, history_count: int) -> str:
+    """
+    §162 F2: Generate profile-aware greeting.
+    VERA adapts tone and focus based on officer profile.
+    """
+    if not profile:
+        # No profile set — generic greeting
+        greetings = {
+            "pt": "Bem-vindo ao W-Enterprise. Ainda não definiste o teu perfil. Recomendo visitares /operator para escolher.",
+            "de": "Willkommen bei W-Enterprise. Du hast noch kein Profil definiert. Ich empfehle /operator zu besuchen.",
+            "en": "Welcome to W-Enterprise. You haven't set your profile yet. I recommend visiting /operator to choose.",
+        }
+        return greetings.get(lang, greetings["en"])
+
+    profile_label = profile.profile_label.get(lang, profile.profile_label["en"])
+
+    if profile.vera_tone == "compliance":
+        greetings = {
+            "pt": f"Bem-vindo, {profile_label}. Como especialista em risco e compliance, vou focar em âncoras legais, frameworks regulatórios e evidência de auditoria.",
+            "de": f"Willkommen, {profile_label}. Als Risiko- und Compliance-Spezialist werde ich mich auf rechtliche Anker, regulatorische Frameworks und Audit-Evidenz konzentrieren.",
+            "en": f"Welcome, {profile_label}. As a risk and compliance specialist, I'll focus on legal anchors, regulatory frameworks, and audit evidence.",
+        }
+    elif profile.vera_tone == "technical":
+        greetings = {
+            "pt": f"Bem-vindo, {profile_label}. Como owner de produto/sistemas, vou focar em integração, APIs, workflow de automação e design de sistema.",
+            "de": f"Willkommen, {profile_label}. Als Produkt-/System-Owner werde ich mich auf Integration, APIs, Automatisierungs-Workflow und System-Design konzentrieren.",
+            "en": f"Welcome, {profile_label}. As a product/systems owner, I'll focus on integration, APIs, automation workflow, and system design.",
+        }
+    else:  # audit
+        greetings = {
+            "pt": f"Bem-vindo, {profile_label}. Como auditor interno, vou focar em verificação directa, queries ao Ledger, cadeia de evidência e prova SHA-256.",
+            "de": f"Willkommen, {profile_label}. Als interner Prüfer werde ich mich auf direkte Verifizierung, Ledger-Abfragen, Evidenzkette und SHA-256-Beweis konzentrieren.",
+            "en": f"Welcome, {profile_label}. As an internal auditor, I'll focus on direct verification, Ledger queries, evidence chain, and SHA-256 proof.",
+        }
+
+    return greetings.get(lang, greetings["en"])
+
+
+def adapt_guidance_to_profile(
+    guidance: str,
+    profile: Optional[OfficerProfile],
+    lang: str,
+) -> Dict[str, Any]:
+    """
+    §162 F2: Adapt VERA guidance based on officer profile.
+    Returns enriched guidance with profile-specific context.
+    """
+    if not profile:
+        return {
+            "guidance": guidance,
+            "profile_context": None,
+            "recommended_focus": None,
+        }
+
+    # Add profile-specific enrichment
+    focus_labels = {
+        "legal_anchors": {"pt": "Âncoras Legais", "de": "Rechtliche Anker", "en": "Legal Anchors"},
+        "frameworks": {"pt": "Frameworks Regulatórios", "de": "Regulatorische Frameworks", "en": "Regulatory Frameworks"},
+        "audit_evidence": {"pt": "Evidência de Auditoria", "de": "Audit-Evidenz", "en": "Audit Evidence"},
+        "policy_validation": {"pt": "Validação de Políticas", "de": "Policy-Validierung", "en": "Policy Validation"},
+        "integration": {"pt": "Integração", "de": "Integration", "en": "Integration"},
+        "api_workflow": {"pt": "Workflow API", "de": "API-Workflow", "en": "API Workflow"},
+        "system_design": {"pt": "Design de Sistema", "de": "System-Design", "en": "System Design"},
+        "automation": {"pt": "Automação", "de": "Automatisierung", "en": "Automation"},
+        "verification": {"pt": "Verificação", "de": "Verifizierung", "en": "Verification"},
+        "ledger_queries": {"pt": "Queries Ledger", "de": "Ledger-Abfragen", "en": "Ledger Queries"},
+        "evidence_chain": {"pt": "Cadeia de Evidência", "de": "Evidenzkette", "en": "Evidence Chain"},
+        "sha256_proof": {"pt": "Prova SHA-256", "de": "SHA-256-Beweis", "en": "SHA-256 Proof"},
+    }
+
+    focus_list = []
+    for area in profile.focus_areas:
+        label = focus_labels.get(area, {}).get(lang, area)
+        focus_list.append(label)
+
+    return {
+        "guidance": guidance,
+        "profile_context": {
+            "profile_id": profile.profile_id,
+            "profile_label": profile.profile_label.get(lang, profile.profile_label["en"]),
+            "vera_tone": profile.vera_tone,
+        },
+        "recommended_focus": focus_list,
+        "preferred_modules": profile.preferred_modules,
     }
 
 
@@ -613,6 +842,119 @@ def create_did_gate_router() -> APIRouter:
             "status": "wallet_banner",
             "law": "Lei I — Existência antes de Acção",
             "banner": banner.model_dump(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        }
+
+    # ═══════════════════════════════════════════════════════════════════
+    #  §162 F2 — PROFILE MANAGEMENT ENDPOINTS
+    # ═══════════════════════════════════════════════════════════════════
+
+    @router.post("/profile/{did}")
+    async def set_profile(did: str, profile_id: str):
+        """
+        §162 F2: Set officer profile for VERA adaptation.
+        Valid profiles: digital_risk, tech_product, internal_auditor
+        """
+        # First validate DID
+        validation = await verify_did(did)
+        if not validation.valid:
+            return JSONResponse(
+                content={
+                    "status": "invalid_did",
+                    "error": validation.error,
+                },
+                status_code=401,
+            )
+
+        result = set_officer_profile(did, profile_id)
+
+        if not result["success"]:
+            return JSONResponse(
+                content={
+                    "status": "error",
+                    "error": result["error"],
+                    "valid_profiles": VALID_PROFILES,
+                },
+                status_code=400,
+            )
+
+        # Bind profile selection to DID (Lei II)
+        await bind_action_to_did(
+            did=did,
+            action=f"profile_set:{profile_id}",
+            module="did_gate",
+        )
+
+        return {
+            "status": "success",
+            "message": f"Profile set to {profile_id}",
+            "profile": result["profile"],
+            "timestamp": result["timestamp"],
+        }
+
+    @router.get("/profile/{did}")
+    async def get_profile(did: str, lang: str = "en"):
+        """
+        §162 F2: Get officer profile and VERA adaptation context.
+        """
+        # Validate DID
+        validation = await verify_did(did)
+        if not validation.valid:
+            return JSONResponse(
+                content={
+                    "status": "invalid_did",
+                    "error": validation.error,
+                },
+                status_code=401,
+            )
+
+        profile = get_officer_profile(did)
+
+        if not profile:
+            return {
+                "status": "no_profile",
+                "message": "No profile set for this DID",
+                "set_profile_url": f"/vera/did/profile/{did}?profile_id=digital_risk",
+                "available_profiles": VALID_PROFILES,
+                "capacity_amplifier_url": "https://windi-domain.com/enterprise/operator",
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+            }
+
+        # Get profile-aware greeting
+        history = await read_did_history(did, limit=10)
+        greeting = get_profile_greeting(profile, lang, history.total_actions)
+
+        return {
+            "status": "success",
+            "profile": profile.model_dump(),
+            "greeting": greeting,
+            "vera_adaptation": {
+                "tone": profile.vera_tone,
+                "focus_areas": profile.focus_areas,
+                "preferred_modules": profile.preferred_modules,
+            },
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        }
+
+    @router.get("/profiles")
+    async def list_profiles(lang: str = "en"):
+        """
+        §162 F2: List all available OVS profiles.
+        """
+        profiles_list = []
+        for pid, profile in PROFILE_DEFINITIONS.items():
+            profiles_list.append({
+                "id": pid,
+                "label": profile.profile_label.get(lang, profile.profile_label["en"]),
+                "tone": profile.vera_tone,
+                "focus_areas": profile.focus_areas,
+                "preferred_modules": profile.preferred_modules,
+            })
+
+        return {
+            "status": "success",
+            "profiles": profiles_list,
+            "capacity_amplifier_url": "https://windi-domain.com/enterprise/operator",
             "timestamp": datetime.now(timezone.utc).isoformat(),
         }
 

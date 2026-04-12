@@ -161,6 +161,26 @@ Nenhum endpoint retorna valores default que mascarem dados ausentes.
 
 **Portas:** 8126-8129 · **Watchdog:** 15s loop · port-cleaner · logrotate
 
+### DECREE-001 — A Árvore Viva (12 Apr 2026)
+
+> *"O servidor WINDI é uma Árvore Viva. Cada serviço é um galho.*
+> *A seiva (DID) flui do tronco às folhas. Nenhum galho vive sozinho."*
+
+**Invariantes:** I1, I9, I11, I12, I14 · **Status:** CONSTITUTIONAL · IRREMEDIÁVEL
+**Ficheiros:** `/opt/windi/constitutional/DECREE-001-LIVING-TREE.md`
+
+| Artigo | Lei | Implementação |
+|--------|-----|---------------|
+| Art.1 | Definição | Tronco=Ledger · Seiva=DID · Galhos=Órgãos |
+| Art.2 | Origem Preservada | `?return=` · `windi_origin` · Referrer |
+| Art.3 | Navegação Universal | Server Operations sidebar obrigatório |
+| Art.4 | Seiva DID | Cross-validation entre todos os gates |
+| Art.5 | Frutos Partilhados | Receipts verificáveis em Verify Public |
+| Art.6 | Proibições | `/desktop/` deprecated · DID hardcoded proibido |
+| Art.7 | Verificação | `/api/tree/health` |
+
+**Módulos:** `windi-tree.js` (frontend) · `windi_tree.py` (backend)
+
 ### 3.2 Layer 7 — Communication Semantics
 
 O Dragon **nunca usa linguagem de garantia absoluta**:

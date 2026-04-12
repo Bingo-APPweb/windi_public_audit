@@ -673,7 +673,7 @@ body {
     <button class="wb-btn" id="wb-enter-btn" onclick="enterWithDID()" data-i18n="wb_btn">
       ENTER WITH DID ↗
     </button>
-    <a class="wb-create" href="https://windi-domain.com/wallet/" target="_blank" data-i18n="wb_create">
+    <a class="wb-create" href="https://windi-domain.com/wallet/?return=/enterprise/" target="_blank" data-i18n="wb_create">
       Don't have a DID yet? Create your sovereign identity →
     </a>
     <div class="wb-steps">
@@ -790,6 +790,20 @@ body {
     <a class="nav-item" href="#">
       <div class="nav-dot" style="background: var(--muted)"></div>
       Reviewers
+    </a>
+
+    <div class="sidebar-section" data-i18n="nav_server">Server Operations</div>
+    <a class="nav-item" href="/sec/dashboard/" target="_blank">
+      <div class="nav-dot" style="background: var(--critical)"></div>
+      🛡 W-SEC-001 · NOIR OPS
+    </a>
+    <a class="nav-item" href="/dev-api/" target="_blank">
+      <div class="nav-dot" style="background: var(--gold)"></div>
+      ⚡ W-DEV-API · Developers
+    </a>
+    <a class="nav-item" href="/verify-public/" target="_blank">
+      <div class="nav-dot" style="background: var(--ok)"></div>
+      ✓ Verify Public
     </a>
   </nav>
 
@@ -1023,6 +1037,7 @@ const I18N = {
     vera_welcome_first: "Welcome to W-Enterprise. This is your first time here. I'll guide you through the system.",
     vera_welcome_back: "Welcome back. You have {n} actions registered. Let's continue where you left off.",
     vera_welcome_expert: "Welcome, experienced officer. {n} actions in your history. How can I help today?",
+    nav_server: "Server Operations",
   },
   de: {
     // WalletBanner
@@ -1056,6 +1071,7 @@ const I18N = {
     vera_welcome_first: "Willkommen bei W-Enterprise. Dies ist dein erstes Mal hier. Ich werde dich durch das System führen.",
     vera_welcome_back: "Willkommen zurück. Du hast {n} Aktionen registriert. Lass uns weitermachen, wo du aufgehört hast.",
     vera_welcome_expert: "Willkommen, erfahrener Officer. {n} Aktionen in deiner Historie. Wie kann ich heute helfen?",
+    nav_server: "Server-Operationen",
   },
   pt: {
     // WalletBanner
@@ -1089,6 +1105,7 @@ const I18N = {
     vera_welcome_first: "Bem-vindo ao W-Enterprise. É a tua primeira vez aqui. Vou guiar-te pelo sistema.",
     vera_welcome_back: "Bem-vindo de volta. Tens {n} acções registadas. Vamos continuar onde paraste.",
     vera_welcome_expert: "Bem-vindo, officer experiente. {n} acções no teu histórico. Como posso ajudar hoje?",
+    nav_server: "Operações do Servidor",
   }
 };
 
