@@ -180,7 +180,7 @@
             <h2 class="card-title" data-t="reg_title">Wallet erstellen</h2>
             <p class="card-sub" data-t="reg_subtitle">Registrieren Sie sich für Ihre Governance-Identität</p>
             <div class="fg"><label class="fl" data-t="label_name">Vollständiger Name</label><input class="fi" type="text" id="regName" placeholder="Max Mustermann" autocomplete="name"></div>
-            <div class="fg"><label class="fl">E-Mail</label><div class="email-wrap"><input class="fi" type="email" id="regEmail" placeholder="max@firma.de" autocomplete="email"><span class="email-checking" id="emailSpinner" style="display:none"></span></div></div>
+            <div class="fg"><label class="fl">E-Mail</label><div class="email-wrap"><input class="fi" type="email" id="regEmail" placeholder="max@firma.de" autocomplete="email" oninput="onEmailInput()" onblur="checkEmailExists(this.value.trim())"><span class="email-checking" id="emailSpinner" style="display:none"></span></div></div>
             <div class="fexists" id="emailExists"><strong data-t="email_exists_title">E-Mail bereits registriert!</strong><span data-t="email_exists_text">Sie haben bereits ein Wallet. Melden Sie sich an.</span><div class="go-login" onclick="goToLoginFromExists()" data-t="email_exists_btn">→ Zum Login</div></div>
             <div class="form-row">
                 <div class="fg"><label class="fl" data-t="label_firma">Firma <span class="form-opt" data-t="optional">(optional)</span></label><input class="fi" type="text" id="regOrg" placeholder="Firma GmbH"></div>
@@ -428,7 +428,7 @@ function doLogout(){authToken=null;localStorage.removeItem('windi_token');fetch(
 
 async function checkSession(){const s=localStorage.getItem('windi_token');if(!s)return;authToken=s;try{const r=await fetch('/api/auth/session',{headers:{'Authorization':'Bearer '+s}});if(r.ok){const d=await r.json();await loadDash(d.wallet_id)}else{localStorage.removeItem('windi_token');authToken=null}}catch(e){authToken=null}}
 
-document.addEventListener('DOMContentLoaded',()=>{if(localStorage.getItem('windi_theme')==='klar')toggleTheme();const sl=localStorage.getItem('windi_lang');if(sl&&T[sl])setLang(sl);checkSession();document.getElementById('loginPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});document.getElementById('loginId').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('loginPass').focus()});document.getElementById('regPass').addEventListener('keydown',e=>{if(e.key==='Enter')doRegister()});document.getElementById('regEmail').addEventListener('input',onEmailInput);document.getElementById('regEmail').addEventListener('blur',()=>{const e=document.getElementById('regEmail').value.trim();if(e.length>5)checkEmailExists(e)})});
+document.addEventListener('DOMContentLoaded',()=>{if(localStorage.getItem('windi_theme')==='klar')toggleTheme();const sl=localStorage.getItem('windi_lang');if(sl&&T[sl])setLang(sl);checkSession();document.getElementById('loginPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});document.getElementById('loginId').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('loginPass').focus()});document.getElementById('regPass').addEventListener('keydown',e=>{if(e.key==='Enter')doRegister()})});
 </script>
 </body>
 </html>
