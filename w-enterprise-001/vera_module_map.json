@@ -1,0 +1,274 @@
+{
+  "_meta": {
+    "version": "1.0.0",
+    "constitution": "REGO v1.2",
+    "product": "W-Enterprise-001",
+    "port": 8150,
+    "base_path": "/enterprise/",
+    "updated": "2026-04-12",
+    "authority": "Human Dragon · Liga IA+H",
+    "vera_principle": "R12 — Mapa Vivo do Produto"
+  },
+
+  "adoption_sequence": [
+    "pho", "obs_engine", "lod1", "lod2", "doc_gen", "legal_advisory", "invoice_gen", "rep"
+  ],
+
+  "modules": {
+
+    "lod1": {
+      "id": "lod1",
+      "label": "1LOD — First Line of Defence",
+      "short": "Defesa Operacional",
+      "ui_path": "/enterprise/#lod1",
+      "adoption_order": 3,
+      "legal_anchors": ["EU AI Act Art.9", "EU AI Act Art.17", "MaRisk AT 4.3", "BaFin BAIT §27"],
+      "description": "Primeira linha de defesa operacional. Registo e triagem de riscos em tempo real pelo próprio colaborador ou sistema.",
+      "vera_intro": {
+        "pt": "O 1LOD é o ponto de entrada de qualquer risco operacional. É aqui que o colaborador regista o que detectou, sem precisar de saber se é grave — a triagem é feita pelo sistema.",
+        "de": "Das 1LOD ist der Einstiegspunkt für jedes operative Risiko. Hier erfasst der Mitarbeiter, was er erkannt hat, ohne wissen zu müssen, ob es schwerwiegend ist — die Triage erfolgt durch das System.",
+        "en": "The 1LOD is the entry point for any operational risk. This is where the employee records what they detected, without needing to know if it's serious — triage is done by the system."
+      },
+      "key_actions": [
+        {
+          "id": "register_risk",
+          "label": {
+            "pt": "Registar risco operacional",
+            "de": "Operatives Risiko erfassen",
+            "en": "Register operational risk"
+          },
+          "steps": {
+            "pt": [
+              "Acede a /enterprise/#lod1",
+              "Clica em 'Novo Registo de Risco'",
+              "Preenche: descrição, área afectada, data de detecção",
+              "Sistema classifica automaticamente: LOW / MEDIUM / HIGH / CRITICAL",
+              "Se HIGH ou CRITICAL → escalação automática para 2LOD",
+              "Recebe referência de rastreio (ID único)"
+            ],
+            "de": [
+              "Gehe zu /enterprise/#lod1",
+              "Klicke auf 'Neues Risiko erfassen'",
+              "Fülle aus: Beschreibung, betroffener Bereich, Erkennungsdatum",
+              "System klassifiziert automatisch: LOW / MEDIUM / HIGH / CRITICAL",
+              "Bei HIGH oder CRITICAL → automatische Eskalation an 2LOD",
+              "Erhalte Tracking-Referenz (eindeutige ID)"
+            ],
+            "en": [
+              "Access /enterprise/#lod1",
+              "Click 'New Risk Registration'",
+              "Fill in: description, affected area, detection date",
+              "System classifies automatically: LOW / MEDIUM / HIGH / CRITICAL",
+              "If HIGH or CRITICAL → automatic escalation to 2LOD",
+              "Receive tracking reference (unique ID)"
+            ]
+          },
+          "vera_tip": {
+            "pt": "Se não tens a certeza da gravidade, descreve o que observaste. O sistema classifica. O teu papel é observar e registar — nunca filtrar.",
+            "de": "Wenn du dir über die Schwere nicht sicher bist, beschreibe, was du beobachtet hast. Das System klassifiziert. Deine Aufgabe ist beobachten und erfassen — niemals filtern.",
+            "en": "If you're unsure of severity, describe what you observed. The system classifies. Your role is to observe and record — never filter."
+          }
+        }
+      ],
+      "pho_required_when": ["risk_classified_HIGH", "risk_classified_CRITICAL"],
+      "ledger_events": ["risk_registered", "risk_escalated", "risk_resolved"],
+      "next_module": "lod2"
+    },
+
+    "lod2": {
+      "id": "lod2",
+      "label": "2LOD — Second Line of Defence",
+      "short": "Supervisão de Compliance",
+      "ui_path": "/enterprise/#lod2",
+      "adoption_order": 4,
+      "legal_anchors": ["EU AI Act Art.9", "MaRisk AT 4.4", "BaFin MaRisk", "DORA Art.5", "NIS2 Art.21"],
+      "description": "Segunda linha de defesa: supervisão independente de compliance. Revê decisões do 1LOD, aprova ou rejeita escalações, emite parecer formal.",
+      "vera_intro": {
+        "pt": "O 2LOD é a supervisão independente. Não detecta riscos — verifica se a detecção do 1LOD foi correcta e se a resposta foi adequada. É aqui que o compliance officer trabalha.",
+        "de": "Das 2LOD ist die unabhängige Aufsicht. Es erkennt keine Risiken — es prüft, ob die Erkennung des 1LOD korrekt war und ob die Reaktion angemessen war. Hier arbeitet der Compliance Officer.",
+        "en": "The 2LOD is independent oversight. It doesn't detect risks — it verifies whether 1LOD detection was correct and whether the response was adequate. This is where the compliance officer works."
+      },
+      "pho_required_when": ["override_vera_recommendation", "approve_critical_risk", "issue_formal_opinion"],
+      "ledger_events": ["review_completed", "opinion_issued", "escalation_resolved"],
+      "next_module": "pho"
+    },
+
+    "pho": {
+      "id": "pho",
+      "label": "PHO — Proof of Human Oversight",
+      "short": "Prova de Supervisão Humana",
+      "ui_path": "/enterprise/#pho",
+      "adoption_order": 1,
+      "legal_anchors": ["EU AI Act Art.14", "EU AI Act Art.22", "GDPR Art.22", "EU AI Act Annex III"],
+      "description": "O módulo central de conformidade. Toda decisão com impacto AI deve passar por PHO — gera a evidência legal de que um humano aprovou.",
+      "vera_intro": {
+        "pt": "O PHO é o coração do W-Enterprise. É o que transforma uma decisão AI em evidência auditável. Sem PHO, o regulador não vê supervisão humana — vê uma caixa negra. Com PHO, cada aprovação é um facto jurídico.",
+        "de": "Der PHO ist das Herz des W-Enterprise. Er verwandelt eine KI-Entscheidung in prüfbare Evidenz. Ohne PHO sieht der Regulator keine menschliche Aufsicht — er sieht eine Blackbox. Mit PHO ist jede Genehmigung eine rechtliche Tatsache.",
+        "en": "PHO is the heart of W-Enterprise. It transforms an AI decision into auditable evidence. Without PHO, the regulator sees no human oversight — they see a black box. With PHO, each approval is a legal fact."
+      },
+      "key_actions": [
+        {
+          "id": "approve_ai_decision",
+          "label": {
+            "pt": "Aprovar decisão AI",
+            "de": "KI-Entscheidung genehmigen",
+            "en": "Approve AI decision"
+          },
+          "vera_tip": {
+            "pt": "PHO não é burocracia. É a tua assinatura digital numa decisão AI. Se algo correr mal depois, o PHO prova que houve supervisão humana consciente — isso é protecção legal para ti e para a organização.",
+            "de": "PHO ist keine Bürokratie. Es ist deine digitale Unterschrift bei einer KI-Entscheidung. Wenn später etwas schiefgeht, beweist der PHO, dass es bewusste menschliche Aufsicht gab — das ist rechtlicher Schutz für dich und die Organisation.",
+            "en": "PHO is not bureaucracy. It's your digital signature on an AI decision. If something goes wrong later, the PHO proves there was conscious human oversight — that's legal protection for you and the organization."
+          }
+        }
+      ],
+      "pho_required_when": ["always_for_high_risk_ai", "override_any_ai_recommendation"],
+      "ledger_events": ["pho_approved", "pho_rejected", "pho_requested"],
+      "next_module": "doc_gen"
+    },
+
+    "doc_gen": {
+      "id": "doc_gen",
+      "label": "DocGen — Document Generator",
+      "short": "Gerador de Documentos Legais",
+      "ui_path": "/enterprise/#docgen",
+      "adoption_order": 5,
+      "legal_anchors": ["HGB §238", "HGB §257", "GDPR Art.13", "EU AI Act Art.13", "GoBS"],
+      "description": "Gerador de documentos legais com IA. 8 tipos de documento, 4 jurisdições, streaming SSE, export DOCX.",
+      "vera_intro": {
+        "pt": "O DocGen não é um editor de texto. É um sistema de produção documental com consciência legal. Cada documento gerado conhece a jurisdição, os artigos aplicáveis e pode ser selado imediatamente no Ledger.",
+        "de": "DocGen ist kein Texteditor. Es ist ein Dokumentenproduktionssystem mit rechtlichem Bewusstsein. Jedes generierte Dokument kennt die Jurisdiktion, die anwendbaren Artikel und kann sofort im Ledger versiegelt werden.",
+        "en": "DocGen is not a text editor. It's a document production system with legal awareness. Every generated document knows the jurisdiction, applicable articles, and can be sealed immediately in the Ledger."
+      },
+      "document_types": [
+        {"id": "gdpr_privacy_notice", "anchor": "GDPR Art.13"},
+        {"id": "ai_risk_assessment", "anchor": "EU AI Act Art.9"},
+        {"id": "dpia", "anchor": "GDPR Art.35"},
+        {"id": "compliance_report", "anchor": "MaRisk"},
+        {"id": "incident_report", "anchor": "NIS2 Art.23 · DORA Art.19"},
+        {"id": "vendor_contract", "anchor": "EU AI Act Art.28"},
+        {"id": "board_memo", "anchor": "NIS2 · DORA liability"},
+        {"id": "audit_trail", "anchor": "EU AI Act Art.17"}
+      ],
+      "pho_required_when": ["seal_document", "export_for_regulatory_submission"],
+      "ledger_events": ["document_generated", "document_sealed", "document_exported"],
+      "next_module": "legal_advisory"
+    },
+
+    "obs_engine": {
+      "id": "obs_engine",
+      "label": "ObsEngine — Observation Engine",
+      "short": "Motor de Observação",
+      "ui_path": "/enterprise/#obs",
+      "adoption_order": 2,
+      "legal_anchors": ["NIS2 Art.21", "DORA Art.11", "EU AI Act Art.9", "GDPR Art.32"],
+      "description": "Monitorização contínua do ecossistema enterprise. Detecta anomalias, gera alertas, alimenta 1LOD e VERA com contexto em tempo real.",
+      "vera_intro": {
+        "pt": "O ObsEngine é os olhos do sistema. Enquanto trabalhas, ele monitoriza — transacções, decisões AI, acessos, anomalias. Quando detecta algo relevante, informa VERA que informa o officer. Nunca age sozinho.",
+        "de": "ObsEngine ist die Augen des Systems. Während du arbeitest, überwacht es — Transaktionen, KI-Entscheidungen, Zugriffe, Anomalien. Wenn es etwas Relevantes erkennt, informiert es VERA, das den Officer informiert. Es handelt nie allein.",
+        "en": "ObsEngine is the eyes of the system. While you work, it monitors — transactions, AI decisions, accesses, anomalies. When it detects something relevant, it informs VERA which informs the officer. It never acts alone."
+      },
+      "pho_required_when": ["dismiss_critical_alert", "modify_threshold_below_regulatory_minimum"],
+      "ledger_events": ["alert_triggered", "alert_acknowledged", "alert_escalated"],
+      "next_module": "lod1"
+    },
+
+    "invoice_gen": {
+      "id": "invoice_gen",
+      "label": "InvoiceGen — Invoice Generator",
+      "short": "Gerador de Facturas",
+      "ui_path": "/enterprise/#invoice",
+      "adoption_order": 7,
+      "legal_anchors": ["§14 UStG", "§14a UStG", "XRechnung Standard", "PEPPOL BIS 3.0", "ZUGFeRD 2.3"],
+      "description": "Gerador de facturas conforme com XRechnung (obrigatório para B2G Alemanha), ZUGFeRD e PEPPOL. Compliance fiscal automático.",
+      "vera_intro": {
+        "pt": "Para empresas que faturam ao sector público alemão, o XRechnung não é opcional desde 2020 — é obrigação legal. O InvoiceGen garante conformidade automática com os três standards europeus mais exigentes.",
+        "de": "Für Unternehmen, die an den deutschen öffentlichen Sektor fakturieren, ist XRechnung seit 2020 keine Option — es ist gesetzliche Pflicht. InvoiceGen gewährleistet automatische Konformität mit den drei anspruchsvollsten europäischen Standards.",
+        "en": "For companies invoicing the German public sector, XRechnung is not optional since 2020 — it's a legal obligation. InvoiceGen ensures automatic compliance with the three most demanding European standards."
+      },
+      "pho_required_when": ["invoice_above_10000_eur", "invoice_to_regulated_entity"],
+      "ledger_events": ["invoice_created", "invoice_validated", "invoice_sent"],
+      "next_module": "rep"
+    },
+
+    "legal_advisory": {
+      "id": "legal_advisory",
+      "label": "LegalAdvisory — Assessoria Legal AI",
+      "short": "Assessoria Legal",
+      "ui_path": "/enterprise/#legal",
+      "adoption_order": 6,
+      "legal_anchors": ["EU AI Act corpus", "GDPR corpus", "DORA", "NIS2", "HGB", "BaFin"],
+      "description": "Interface de assessoria legal contextual. VERA responde a questões legais com âncoras específicas, histórico de decisões e geração de pareceres formais.",
+      "vera_intro": {
+        "pt": "O LegalAdvisory não substitui o advogado. Cria o contexto que torna o advogado 10x mais eficiente. Cada questão recebe uma resposta ancorada em artigos específicos, com o historial de decisões anteriores da organização.",
+        "de": "LegalAdvisory ersetzt nicht den Anwalt. Es schafft den Kontext, der den Anwalt 10x effizienter macht. Jede Frage erhält eine in spezifischen Artikeln verankerte Antwort, mit der Historie früherer Entscheidungen der Organisation.",
+        "en": "LegalAdvisory doesn't replace the lawyer. It creates the context that makes the lawyer 10x more efficient. Every question receives a response anchored in specific articles, with the history of the organization's previous decisions."
+      },
+      "pho_required_when": ["seal_legal_opinion", "opinion_used_in_regulatory_submission"],
+      "ledger_events": ["opinion_generated", "opinion_sealed", "opinion_referenced"],
+      "next_module": "invoice_gen"
+    },
+
+    "rep": {
+      "id": "rep",
+      "label": "REP — Reporting Engine",
+      "short": "Motor de Relatórios",
+      "ui_path": "/enterprise/#rep",
+      "adoption_order": 8,
+      "legal_anchors": ["CSRD", "DORA Art.28", "EU AI Act Art.62", "NIS2 Art.23", "MaRisk"],
+      "description": "Motor de relatórios de conformidade. Consolida dados de todos os módulos e gera relatórios regulatórios prontos para submissão.",
+      "vera_intro": {
+        "pt": "O REP é onde tudo converge. Dados do ObsEngine, decisões do 1LOD e 2LOD, PHO receipts, documentos do DocGen — tudo consolidado num relatório auditável. Para auditorias e submissões regulatórias.",
+        "de": "REP ist, wo alles zusammenläuft. Daten aus ObsEngine, Entscheidungen aus 1LOD und 2LOD, PHO-Quittungen, Dokumente aus DocGen — alles in einem prüfbaren Bericht konsolidiert. Für Audits und regulatorische Einreichungen.",
+        "en": "REP is where everything converges. Data from ObsEngine, decisions from 1LOD and 2LOD, PHO receipts, documents from DocGen — all consolidated in an auditable report. For audits and regulatory submissions."
+      },
+      "pho_required_when": ["export_for_regulator", "board_submission"],
+      "ledger_events": ["report_generated", "report_sealed", "report_submitted"],
+      "next_module": null
+    }
+  },
+
+  "common_workflows": [
+    {
+      "id": "new_user_onboarding",
+      "label": {
+        "pt": "Onboarding de Novo Utilizador",
+        "de": "Onboarding neuer Benutzer",
+        "en": "New User Onboarding"
+      },
+      "vera_sequence": ["pho", "obs_engine", "lod1"],
+      "vera_intro": {
+        "pt": "Vamos começar pelo PHO — é o módulo mais importante e o mais simples de entender. Depois o ObsEngine para saberes o que o sistema está a monitorizar. Depois o 1LOD para começares a registar.",
+        "de": "Beginnen wir mit PHO — es ist das wichtigste Modul und am einfachsten zu verstehen. Dann ObsEngine, um zu wissen, was das System überwacht. Dann 1LOD, um mit der Erfassung zu beginnen.",
+        "en": "Let's start with PHO — it's the most important module and the simplest to understand. Then ObsEngine to know what the system is monitoring. Then 1LOD to start registering."
+      }
+    },
+    {
+      "id": "incident_response",
+      "label": {
+        "pt": "Resposta a Incidente",
+        "de": "Incident Response",
+        "en": "Incident Response"
+      },
+      "vera_sequence": ["obs_engine", "lod1", "lod2", "pho", "doc_gen", "rep"],
+      "vera_intro": {
+        "pt": "Incidente detectado. Seguimos o protocolo: confirmar no ObsEngine → registar no 1LOD → escalar para 2LOD → PHO do officer → DocumentAR → Reportar. NIS2 exige notificação em 24h. Começamos agora.",
+        "de": "Vorfall erkannt. Wir folgen dem Protokoll: bestätigen in ObsEngine → erfassen in 1LOD → eskalieren an 2LOD → PHO des Officers → dokumentieren → berichten. NIS2 erfordert Benachrichtigung innerhalb von 24h. Wir beginnen jetzt.",
+        "en": "Incident detected. Following protocol: confirm in ObsEngine → register in 1LOD → escalate to 2LOD → officer PHO → document → report. NIS2 requires notification within 24h. Starting now."
+      }
+    },
+    {
+      "id": "regulatory_audit_prep",
+      "label": {
+        "pt": "Preparação para Auditoria Regulatória",
+        "de": "Vorbereitung auf Regulierungsaudit",
+        "en": "Regulatory Audit Preparation"
+      },
+      "vera_sequence": ["pho", "lod2", "doc_gen", "rep"],
+      "vera_intro": {
+        "pt": "Para auditoria, o regulador vai pedir três coisas: evidências de supervisão humana (PHO), histórico de riscos tratados (2LOD), e documentação formal (DocGen + REP). Vou guiar-te por cada um.",
+        "de": "Für das Audit wird der Regulator drei Dinge verlangen: Nachweise menschlicher Aufsicht (PHO), Historie behandelter Risiken (2LOD), und formelle Dokumentation (DocGen + REP). Ich führe dich durch jeden.",
+        "en": "For the audit, the regulator will ask for three things: evidence of human oversight (PHO), history of treated risks (2LOD), and formal documentation (DocGen + REP). I'll guide you through each."
+      }
+    }
+  ]
+}
