@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.1.9
-**Sealed:** 2026-04-12 · §156 W-ENTERPRISE-001 User Manual + NOIR/KLAR
+**Version:** 2.2.1
+**Sealed:** 2026-04-12 · §157 VERA REGO v1.0 + DASH v4.1 Trilingual
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -83,7 +83,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-SEC-001 | :8144 | I9,I11 | **SEALED** · Security Sentinel · Dual Correlation · Telegram · systemd |
 | W-DRAGON-001 | :8122 | I9,I11,I14 | **LIVE** · Dragon Shadow Forest · 16×16 SHA-256 Glyph Grid · PDF Overlay |
 | W-DEV-API-001 | :8200 | I9,I11 | **LIVE** · Developer API · /dev-api/ · 4 Tiers · Verify Bridge |
-| W-ENTERPRISE-001 | :8150 | I1,I9,I11,I14 | **LIVE** · AI Compliance Dashboard · PHO · EU AI Act Art.14 |
+| W-ENTERPRISE-001 | :8150 | I1,I9,I11,I14 | **LIVE** v3.1.0 · VERA REGO v1.0 · DASH v4.1 · i18n PT/DE/EN · NOIR/KLAR |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
 
@@ -387,6 +387,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 12 Apr | **§157 W-ENTERPRISE-001** · VERA REGO v1.0 + DASH v4.1 Trilingual · `359ebc6` |
 | 12 Apr | **§156 W-ENTERPRISE-001** · User Manual + NOIR/KLAR Toggle · `7f8e5af` |
 | 12 Apr | **§155 W-ENTERPRISE-001** · AI Compliance Dashboard · :8150 · PHO · EU AI Act Art.14 |
 | 11 Apr | **§154 W-DEV-API-001** · Developer API · :8200 · 4 Tiers · Verify Bridge |
@@ -547,56 +548,53 @@ Piece Panel (slide-up via ⚙):
 
 ---
 
-## §155-156 W-Enterprise-001 — AI Compliance Dashboard (12 Apr 2026)
+## §155-157 W-Enterprise-001 — AI Compliance Dashboard (12 Apr 2026)
 
-**Port:** :8150 · **Invariants:** I1, I9, I11, I14
+**Port:** :8150 · **Version:** v3.1.0 · **Invariants:** I1, I9, I11, I14
 **URL:** `https://windi-domain.com/enterprise/`
-**Docs:** `https://windi-domain.com/enterprise/static/docs/user-manual.html`
-**Conceito:** EU AI Act Article 14 compliance dashboard for enterprise AI oversight.
+**DASH v4.1:** `https://windi-domain.com/enterprise/static/desk.html`
+**Conceito:** EU AI Act Article 14 compliance + VERA constitutional agent.
 
-### Arquitectura
+### §157 — VERA · Verified Evidence Routing Agent
 
-```
-AI System → Decision → W-ENTERPRISE-001 → PHO Review
-                              ↓
-                    Human Approval (I9)
-                              ↓
-                    SHA-256 → Ledger :8101 (I11)
-                              ↓
-                    Court-admissible Receipt
-```
+**Commit:** `359ebc6` · **File:** `vera_agent.py` (452 linhas)
+**Constitution:** REGO v1.0 · 9 Invariantes (R1-R9)
+**Conceito:** AI Compliance Secretary. Não decide — ilumina o caminho até à decisão humana.
 
-### Endpoints
+| ID | Nome | Descrição |
+|----|------|-----------|
+| R1 | Consciência do Desk | Conhece estado das 9 prateleiras |
+| R2 | Ancoragem Legal | Cita artigos específicos (EU AI Act, GDPR) |
+| R3 | Não-Decisão | Orienta. O officer decide. I9 activo. |
+| R4-R9 | Rastreabilidade+Adaptação+Falha | PHO evidence · Níveis · I14 |
 
-| Endpoint | Função |
-|----------|--------|
-| `/enterprise/` | Dashboard UI (NOIR/KLAR) |
-| `/enterprise/health` | Health check |
-| `/enterprise/api/decisions` | List/create decisions |
-| `/enterprise/api/pho/approve` | PHO seal endpoint |
-| `/enterprise/api/audit` | Audit log |
-| `/enterprise/static/docs/` | User Manual |
+**VERA Endpoints:** `/vera/health` · `/vera/brief` · `/vera/chat` · `/vera/seal-opinion`
 
-### §156 — User Manual + NOIR/KLAR Toggle
+### DASH v4.1 — 9 Prateleiras Trilíngue
 
-**Commit:** `7f8e5af` · 2640 linhas adicionadas
-**Dashboard:** Toggle NOIR/KLAR na topbar (☾/☼)
-**User Manual:** 1162 linhas · sidebar nav · NOIR/KLAR
+**File:** `static/desk.html` (893 linhas) · **i18n:** PT/DE/EN · **Theme:** NOIR/KLAR
 
-**Files:**
+| P01-P03 | Control Room · Observations · 1LOD Stream |
+| P04-P06 | PHO Queue · Documents · Legal Advisory |
+| P07-P09 | Invoices · PHO+Ledger · REP |
+
+**Features:** VERA Panel · LUPA Modal · Approve+Seal · Toast · i18n Toggle · NOIR/KLAR Toggle
+
+### Files v3.1.0
+
 ```
 /opt/windi/w-enterprise-001/
-├── main.py                      → FastAPI backend
-├── static/index.html            → Dashboard + NOIR/KLAR
-├── static/docs/user-manual.html → Manual HTML (1162 linhas)
-└── docs/USER-MANUAL.md          → Markdown source
+├── main.py          → FastAPI + VERA router (504 linhas)
+├── vera_agent.py    → REGO v1.0 (452 linhas)
+├── static/desk.html → DASH v4.1 trilingual (893 linhas)
+└── static/docs/     → User Manual
 ```
 
 ### NOIR/KLAR Palette
 
 | Theme | Background | Gold | Text |
 |-------|------------|------|------|
-| NOIR | `#0A0A0B` | `#E8C87A` | `#EDEAE2` |
+| NOIR | `#0B0D14` | `#C8A45A` | `#E8E5DC` |
 | KLAR | `#FAFAF8` | `#8B7424` | `#1A1A1A` |
 
-**localStorage:** `windi-theme` · Transições 0.3s
+**localStorage:** `windi-theme` + `windi-lang` · Transições 0.3s
