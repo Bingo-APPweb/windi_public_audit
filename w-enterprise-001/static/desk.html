@@ -362,6 +362,52 @@ html, body {
 
 .skeleton { background: linear-gradient(90deg, var(--bg-shelf) 0%, var(--bg-hover) 50%, var(--bg-shelf) 100%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius-sm); color: transparent; }
 @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+
+/* ── CALENDAR ── */
+.cal-container { background: var(--bg-shelf); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 16px; }
+.cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; }
+.cal-month { font-size: 18px; font-weight: 600; color: var(--text-1); }
+.cal-legend { display: flex; gap: 16px; flex-wrap: wrap; }
+.cal-legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-2); }
+.cal-dot { width: 8px; height: 8px; border-radius: 50%; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+#cal-days { display: contents; }
+.cal-weekday { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); text-align: center; padding: 8px 4px; text-transform: uppercase; letter-spacing: 1px; }
+.cal-day { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 4px; min-height: 60px; cursor: pointer; transition: all 0.15s; }
+.cal-day:hover { background: var(--bg-hover); border-color: var(--border-hi); }
+.cal-day.today { border-color: var(--gold); background: var(--gold-glow); }
+.cal-day.other-month { opacity: 0.4; }
+.cal-day-num { font-family: var(--font-mono); font-size: 11px; color: var(--text-2); margin-bottom: 4px; }
+.cal-day-events { display: flex; flex-direction: column; gap: 2px; }
+.cal-event-dot { height: 4px; border-radius: 2px; }
+.cal-upcoming { background: var(--bg-shelf); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.cal-upcoming-header { font-size: 13px; font-weight: 600; color: var(--text-1); margin-bottom: 12px; }
+.cal-event-item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 12px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 8px; cursor: pointer; transition: all 0.15s; }
+.cal-event-item:hover { background: var(--bg-hover); }
+.cal-event-date { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); min-width: 70px; }
+.cal-event-type { width: 4px; border-radius: 2px; align-self: stretch; flex-shrink: 0; }
+.cal-event-info { flex: 1; }
+.cal-event-title { font-size: 12px; font-weight: 500; color: var(--text-1); margin-bottom: 2px; }
+.cal-event-desc { font-size: 11px; color: var(--text-3); }
+.cal-event-shelf { font-family: var(--font-mono); font-size: 9px; color: var(--gold); margin-top: 4px; }
+.cal-event-actions { display: flex; gap: 4px; }
+.cal-no-events { font-size: 12px; color: var(--text-3); text-align: center; padding: 20px; }
+
+/* ── EVENT MODAL ── */
+#event-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(2px); }
+#event-modal-overlay.show { display: flex; }
+#event-modal { background: var(--bg-modal); border: 1px solid var(--border-hi); border-radius: var(--radius-lg); width: 90%; max-width: 420px; padding: 20px; }
+.evt-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.evt-modal-title { font-size: 16px; font-weight: 600; color: var(--text-1); }
+.evt-modal-close { background: none; border: none; color: var(--text-3); font-size: 18px; cursor: pointer; padding: 4px 8px; }
+.evt-form-group { margin-bottom: 14px; }
+.evt-form-label { font-size: 11px; color: var(--text-2); margin-bottom: 4px; display: block; }
+.evt-form-input, .evt-form-select, .evt-form-textarea { width: 100%; background: var(--bg-shelf); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; color: var(--text-1); font-family: var(--font-ui); font-size: 13px; outline: none; transition: border-color 0.15s; }
+.evt-form-input:focus, .evt-form-select:focus, .evt-form-textarea:focus { border-color: var(--gold); }
+.evt-form-textarea { min-height: 60px; resize: vertical; }
+.evt-form-row { display: flex; gap: 12px; }
+.evt-form-row > .evt-form-group { flex: 1; }
+.evt-modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
 </style>
 </head>
 <body>
@@ -415,6 +461,9 @@ html, body {
     <div class="shelf-item" onclick="window.open('/law/','_blank')"><div class="shelf-icon" style="color:var(--gold)">⚖</div><div class="shelf-info"><div class="shelf-code">AI Draft</div><div class="shelf-name">WINDI-LAW</div></div></div>
     <div class="shelf-item" onclick="window.open('/verify-public/','_blank')"><div class="shelf-icon" style="color:var(--sealed)">✓</div><div class="shelf-info"><div class="shelf-code">Public</div><div class="shelf-name" data-i18n="verify_public">Verify Public</div></div></div>
 
+    <div class="sidebar-section-label" style="margin-top:20px" data-i18n="calendar_section">Calendar</div>
+    <div class="shelf-item" onclick="openShelf('CAL')" id="nav-CAL"><div class="shelf-icon" style="color:var(--gold)">📅</div><div class="shelf-info"><div class="shelf-code">Events</div><div class="shelf-name" data-i18n="calendar">Event Calendar</div></div><div class="shelf-badge info" id="badge-CAL">0</div></div>
+
     <div class="sidebar-section-label" style="margin-top:20px" data-i18n="navigation">Navigation</div>
     <div class="shelf-item" onclick="window.location.href='/enterprise/'"><div class="shelf-icon">←</div><div class="shelf-info"><div class="shelf-code">Dashboard</div><div class="shelf-name" data-i18n="back_dashboard">Back to Dashboard</div></div></div>
     <div class="shelf-item" onclick="window.open('/enterprise/static/docs/user-manual.html','_blank')"><div class="shelf-icon">📖</div><div class="shelf-info"><div class="shelf-code">Docs</div><div class="shelf-name" data-i18n="user_manual">User Manual</div></div></div>
@@ -436,6 +485,90 @@ html, body {
       <div class="section-block"><div class="section-block-header"><div class="section-block-title" data-i18n="critical_pending">Critical Decision Pending</div><div class="section-block-meta" data-i18n="pho_before_17">PHO required before 17:00</div></div><div style="padding:16px"><div class="vera-context-bar" style="margin-bottom:0"><div class="vera-bar-sigil">VERA</div><div class="vera-bar-text"><strong>DEC-2026-040</strong> <span data-i18n="vera_critical_msg">CRITICAL EU AI Act Annex III 5b. 12k accounts. PHO required. Bias validation missing.</span></div><div class="vera-bar-action"><button class="btn btn-sm btn-critical" onclick="openLupa('DEC-2026-040')">LUPA</button></div></div></div></div>
     </div>
 
+    <!-- P02 OBSERVATIONS -->
+    <div id="shelf-P02" style="display:none">
+      <div class="shelf-header"><div class="shelf-title-block"><div class="shelf-eyebrow">P02 Observations</div><div class="shelf-title" data-i18n="title_p02">AI System Monitoring</div></div><div class="shelf-actions"><button class="btn btn-vera" onclick="askVera(I18N[STATE.lang].vera_ask_obs,'P02')">VERA</button><button class="btn btn-outline" data-i18n="export">Export</button></div></div>
+      <div class="vera-context-bar"><div class="vera-bar-sigil">VERA</div><div class="vera-bar-text" data-i18n="vera_p02_msg">2 anomalies detected in last 24h. AI-SCORING-V2 showing 12% variance from baseline. Recommend review before PHO approval.</div></div>
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-label" data-i18n="active_systems">Active AI Systems</div><div class="kpi-value">8</div><div class="kpi-sub" data-i18n="monitored">Monitored 24/7</div></div>
+        <div class="kpi-card kpi-warning"><div class="kpi-label" data-i18n="anomalies">Anomalies</div><div class="kpi-value">2</div><div class="kpi-sub" data-i18n="last_24h">Last 24h</div></div>
+        <div class="kpi-card kpi-sealed"><div class="kpi-label" data-i18n="baseline_ok">Baseline OK</div><div class="kpi-value">6</div><div class="kpi-sub" data-i18n="within_tolerance">Within tolerance</div></div>
+        <div class="kpi-card"><div class="kpi-label" data-i18n="data_points">Data Points</div><div class="kpi-value">1.2M</div><div class="kpi-sub" data-i18n="processed_today">Processed today</div></div>
+      </div>
+      <div class="section-block"><div class="section-block-header"><div class="section-block-title" data-i18n="system_observations">System Observations</div><div class="section-block-meta" data-i18n="real_time">Real-time · EU AI Act Art.9</div></div>
+        <div style="padding:16px;display:flex;flex-direction:column;gap:12px">
+          <div class="obs-row" style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--warning-bg);border:1px solid rgba(217,119,6,0.3);border-radius:var(--radius-sm)">
+            <div style="font-family:var(--font-mono);font-size:10px;color:var(--warning);min-width:120px">AI-SCORING-V2</div>
+            <div style="flex:1;font-size:12px;color:var(--text-1)" data-i18n="obs_scoring">12% variance from baseline · Bias drift detected</div>
+            <div class="risk-badge risk-high">HIGH</div>
+            <button class="btn btn-sm btn-outline" onclick="openShelf('P04')">P04</button>
+          </div>
+          <div class="obs-row" style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--warning-bg);border:1px solid rgba(217,119,6,0.3);border-radius:var(--radius-sm)">
+            <div style="font-family:var(--font-mono);font-size:10px;color:var(--warning);min-width:120px">AI-FRAUD-V3</div>
+            <div style="flex:1;font-size:12px;color:var(--text-1)" data-i18n="obs_fraud">False positive rate increased 8% after update</div>
+            <div class="risk-badge risk-medium">MEDIUM</div>
+            <button class="btn btn-sm btn-outline" onclick="openLupa('DEC-2026-038')">LUPA</button>
+          </div>
+          <div class="obs-row" style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--bg-shelf);border:1px solid var(--border);border-radius:var(--radius-sm)">
+            <div style="font-family:var(--font-mono);font-size:10px;color:var(--sealed);min-width:120px">CHATBOT-CX</div>
+            <div style="flex:1;font-size:12px;color:var(--text-2)" data-i18n="obs_chatbot">Operating within parameters · No drift</div>
+            <div class="risk-badge" style="background:var(--sealed-bg);color:var(--sealed);border:1px solid rgba(56,161,105,0.3)">OK</div>
+          </div>
+          <div class="obs-row" style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--bg-shelf);border:1px solid var(--border);border-radius:var(--radius-sm)">
+            <div style="font-family:var(--font-mono);font-size:10px;color:var(--sealed);min-width:120px">AI-RECOMMEND</div>
+            <div style="flex:1;font-size:12px;color:var(--text-2)" data-i18n="obs_recommend">Product recommendations · Low risk · Stable</div>
+            <div class="risk-badge" style="background:var(--sealed-bg);color:var(--sealed);border:1px solid rgba(56,161,105,0.3)">OK</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- P03 1LOD STREAM -->
+    <div id="shelf-P03" style="display:none">
+      <div class="shelf-header"><div class="shelf-title-block"><div class="shelf-eyebrow">P03 1LOD Stream</div><div class="shelf-title" data-i18n="title_p03">First Line of Defense</div></div><div class="shelf-actions"><button class="btn btn-vera" onclick="askVera(I18N[STATE.lang].vera_ask_1lod,'P03')">VERA</button><button class="btn btn-outline" data-i18n="filter">Filter</button></div></div>
+      <div class="vera-context-bar"><div class="vera-bar-sigil">VERA</div><div class="vera-bar-text" data-i18n="vera_p03_msg">7 actions logged today by business units. 3 escalated to 2LOD for PHO review. Normal operating rhythm.</div></div>
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-label" data-i18n="actions_today">Actions Today</div><div class="kpi-value">7</div><div class="kpi-sub">1LOD Stream</div></div>
+        <div class="kpi-card kpi-warning"><div class="kpi-label" data-i18n="escalated_2lod">Escalated to 2LOD</div><div class="kpi-value">3</div><div class="kpi-sub" data-i18n="needs_pho">Needs PHO</div></div>
+        <div class="kpi-card kpi-sealed"><div class="kpi-label" data-i18n="auto_approved">Auto-Approved</div><div class="kpi-value">4</div><div class="kpi-sub" data-i18n="low_risk">Low risk</div></div>
+        <div class="kpi-card"><div class="kpi-label" data-i18n="avg_response">Avg Response</div><div class="kpi-value">4.2h</div><div class="kpi-sub" data-i18n="sla_ok">SLA OK</div></div>
+      </div>
+      <div class="section-block"><div class="section-block-header"><div class="section-block-title" data-i18n="action_stream">Action Stream</div><div class="section-block-meta">7 <span data-i18n="today">today</span> · 23 <span data-i18n="this_week">this week</span></div></div>
+        <div style="padding:16px;display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--critical-bg);border-left:3px solid var(--critical);border-radius:var(--radius-sm)">
+            <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-3);min-width:50px">14:32</div>
+            <div style="font-family:var(--font-mono);font-size:10px;color:var(--critical);min-width:80px">ESCALATED</div>
+            <div style="flex:1;font-size:12px;color:var(--text-1)" data-i18n="stream_1">AI-SCORING model retrained · Requires PHO</div>
+            <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-3)">→ P04</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--warning-bg);border-left:3px solid var(--warning);border-radius:var(--radius-sm)">
+            <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-3);min-width:50px">13:15</div>
+            <div style="font-family:var(--font-mono);font-size:10px;color:var(--warning);min-width:80px">ESCALATED</div>
+            <div style="flex:1;font-size:12px;color:var(--text-1)" data-i18n="stream_2">Fraud detection threshold changed · Review needed</div>
+            <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-3)">→ P04</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--warning-bg);border-left:3px solid var(--warning);border-radius:var(--radius-sm)">
+            <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-3);min-width:50px">11:45</div>
+            <div style="font-family:var(--font-mono);font-size:10px;color:var(--warning);min-width:80px">ESCALATED</div>
+            <div style="flex:1;font-size:12px;color:var(--text-1)" data-i18n="stream_3">Chatbot credit data access expanded · GDPR check</div>
+            <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-3)">→ P04</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--sealed-bg);border-left:3px solid var(--sealed);border-radius:var(--radius-sm)">
+            <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-3);min-width:50px">10:20</div>
+            <div style="font-family:var(--font-mono);font-size:10px;color:var(--sealed);min-width:80px">APPROVED</div>
+            <div style="flex:1;font-size:12px;color:var(--text-2)" data-i18n="stream_4">Product recommendation A/B test · Low risk auto-approved</div>
+            <div style="font-family:var(--font-mono);font-size:9px;color:var(--sealed)">✓</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--sealed-bg);border-left:3px solid var(--sealed);border-radius:var(--radius-sm)">
+            <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-3);min-width:50px">09:45</div>
+            <div style="font-family:var(--font-mono);font-size:10px;color:var(--sealed);min-width:80px">APPROVED</div>
+            <div style="flex:1;font-size:12px;color:var(--text-2)" data-i18n="stream_5">Dashboard analytics update · No PII</div>
+            <div style="font-family:var(--font-mono);font-size:9px;color:var(--sealed)">✓</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- P04 2LOD CHALLENGES -->
     <div id="shelf-P04" style="display:none">
       <div class="shelf-header"><div class="shelf-title-block"><div class="shelf-eyebrow">P04 2LOD Challenges</div><div class="shelf-title" data-i18n="title_p04">PHO Queue - Human Decisions</div></div><div class="shelf-actions"><button class="btn btn-vera" onclick="askVera(I18N[STATE.lang].vera_ask_priority,'P04')">VERA</button></div></div>
@@ -445,6 +578,76 @@ html, body {
         <div class="decision-row"><div><div class="dec-id">DEC-2026-038</div></div><div><div class="dec-desc" data-i18n="dec_038_desc">Fraud detection system update</div><div class="dec-legal">GDPR Art.22 · MiFID II Art.16</div></div><div class="risk-badge risk-high">HIGH</div><div class="dec-deadline ok">15 Apr</div><div style="font-size:11px;color:var(--text-3)">Review</div><button class="lupa-btn" onclick="openLupa('DEC-2026-038')">?</button></div>
         <div class="decision-row"><div><div class="dec-id">DEC-2026-036</div></div><div><div class="dec-desc" data-i18n="dec_036_desc">Customer chatbot credit data</div><div class="dec-legal">EU AI Act Art.13 · GDPR Art.13</div></div><div class="risk-badge risk-medium">MEDIUM</div><div class="dec-deadline ok">20 Apr</div><div style="font-size:11px;color:var(--text-3)">Review</div><button class="lupa-btn" onclick="openLupa('DEC-2026-036')">?</button></div>
       </div></div>
+    </div>
+
+    <!-- P05 DOCUMENTS -->
+    <div id="shelf-P05" style="display:none">
+      <div class="shelf-header"><div class="shelf-title-block"><div class="shelf-eyebrow">P05 Documents</div><div class="shelf-title" data-i18n="title_p05">Compliance Documentation</div></div><div class="shelf-actions"><button class="btn btn-gold" onclick="window.open('/enterprise/static/tools.html','_self')">+ <span data-i18n="new_doc">New Document</span></button><button class="btn btn-vera" onclick="askVera(I18N[STATE.lang].vera_ask_docs,'P05')">VERA</button></div></div>
+      <div class="vera-context-bar"><div class="vera-bar-sigil">VERA</div><div class="vera-bar-text" data-i18n="vera_p05_msg">12 documents sealed this month. 3 DPIAs, 2 AI Risk Assessments, 7 PHO decisions. All properly archived with forensic receipts.</div></div>
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-label" data-i18n="docs_month">Documents This Month</div><div class="kpi-value">12</div><div class="kpi-sub" data-i18n="sealed_ledger">Sealed in Ledger</div></div>
+        <div class="kpi-card"><div class="kpi-label">DPIAs</div><div class="kpi-value">3</div><div class="kpi-sub">GDPR Art.35</div></div>
+        <div class="kpi-card"><div class="kpi-label" data-i18n="risk_assessments">Risk Assessments</div><div class="kpi-value">2</div><div class="kpi-sub">EU AI Act Art.9</div></div>
+        <div class="kpi-card kpi-sealed"><div class="kpi-label" data-i18n="pho_decisions">PHO Decisions</div><div class="kpi-value">7</div><div class="kpi-sub">Art.14 Human Oversight</div></div>
+      </div>
+      <div class="section-block"><div class="section-block-header"><div class="section-block-title" data-i18n="recent_documents">Recent Documents</div><div class="section-block-meta" data-i18n="click_to_view">Click to view</div></div>
+        <div class="receipt-list">
+          <div class="receipt-item" style="cursor:pointer" onclick="window.open('/verify-public/?id=DPIA-2026-003','_blank')"><div class="receipt-seal" style="background:var(--info-bg);color:var(--info)">D</div><div class="receipt-info"><div class="receipt-id">DPIA-2026-003</div><div class="receipt-desc" data-i18n="doc_dpia_scoring">DPIA: AI Scoring System Deutsche Bank</div><div class="receipt-hash">sha256: 7c4e2f1a8b3d...</div></div><div class="receipt-time">10 Apr</div></div>
+          <div class="receipt-item" style="cursor:pointer" onclick="window.open('/verify-public/?id=AIRC-2026-001','_blank')"><div class="receipt-seal" style="background:var(--warning-bg);color:var(--warning)">R</div><div class="receipt-info"><div class="receipt-id">AIRC-2026-001</div><div class="receipt-desc" data-i18n="doc_risk_fraud">AI Risk Assessment: Fraud Detection v3</div><div class="receipt-hash">sha256: 9a1b3c5d7e2f...</div></div><div class="receipt-time">08 Apr</div></div>
+          <div class="receipt-item" style="cursor:pointer" onclick="window.open('/verify-public/?id=PHO-2026-007','_blank')"><div class="receipt-seal" style="background:var(--sealed-bg);color:var(--sealed)">P</div><div class="receipt-info"><div class="receipt-id">PHO-2026-007</div><div class="receipt-desc" data-i18n="doc_pho_chatbot">PHO Decision: Chatbot Credit Access</div><div class="receipt-hash">sha256: 2d4f6a8c1b3e...</div></div><div class="receipt-time">05 Apr</div></div>
+          <div class="receipt-item" style="cursor:pointer" onclick="window.open('/verify-public/?id=DPIA-2026-002','_blank')"><div class="receipt-seal" style="background:var(--info-bg);color:var(--info)">D</div><div class="receipt-info"><div class="receipt-id">DPIA-2026-002</div><div class="receipt-desc" data-i18n="doc_dpia_fraud">DPIA: Fraud Detection System</div><div class="receipt-hash">sha256: 5e7f9a1c3b2d...</div></div><div class="receipt-time">02 Apr</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- P06 LEGAL ADVISORY -->
+    <div id="shelf-P06" style="display:none">
+      <div class="shelf-header"><div class="shelf-title-block"><div class="shelf-eyebrow">P06 Legal Advisory</div><div class="shelf-title" data-i18n="title_p06">Regulatory Framework</div></div><div class="shelf-actions"><button class="btn btn-vera" onclick="askVera(I18N[STATE.lang].vera_ask_legal,'P06')">VERA</button><button class="btn btn-outline" onclick="window.open('/law/','_blank')">WINDI-LAW</button></div></div>
+      <div class="vera-context-bar"><div class="vera-bar-sigil">VERA</div><div class="vera-bar-text" data-i18n="vera_p06_msg">Current focus: EU AI Act compliance for high-risk AI systems. BaFin MaRisk AT 7.2 applies to all credit scoring. GDPR Art.22 automated decisions require human review.</div></div>
+      <div class="section-block"><div class="section-block-header"><div class="section-block-title" data-i18n="applicable_regulations">Applicable Regulations</div><div class="section-block-meta" data-i18n="your_jurisdiction">Your jurisdiction: EU · Germany</div></div>
+        <div style="padding:16px;display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:12px">
+          <div style="background:var(--bg-shelf);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div style="font-size:18px">🇪🇺</div><div style="font-weight:600;color:var(--text-1)">EU AI Act</div></div>
+            <div style="font-size:11px;color:var(--text-2);line-height:1.6" data-i18n="reg_aiact">Regulation on Artificial Intelligence. Art.6 Classification, Art.9 Risk Management, Art.14 Human Oversight (PHO). High-risk systems in Annex III.</div>
+            <div style="margin-top:8px;display:flex;gap:6px"><span class="risk-badge risk-critical">Annex III</span><span class="risk-badge risk-high">Art.14 PHO</span></div>
+          </div>
+          <div style="background:var(--bg-shelf);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div style="font-size:18px">🇩🇪</div><div style="font-weight:600;color:var(--text-1)">BaFin MaRisk</div></div>
+            <div style="font-size:11px;color:var(--text-2);line-height:1.6" data-i18n="reg_bafin">Minimum Requirements for Risk Management. AT 7.2 applies to AI/ML models in credit decisions. Requires model validation and ongoing monitoring.</div>
+            <div style="margin-top:8px;display:flex;gap:6px"><span class="risk-badge risk-high">AT 7.2</span><span class="risk-badge risk-medium">Model Risk</span></div>
+          </div>
+          <div style="background:var(--bg-shelf);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div style="font-size:18px">🇪🇺</div><div style="font-weight:600;color:var(--text-1)">GDPR</div></div>
+            <div style="font-size:11px;color:var(--text-2);line-height:1.6" data-i18n="reg_gdpr">General Data Protection Regulation. Art.22 Automated decisions, Art.35 DPIA required for high-risk processing. Art.13 Transparency.</div>
+            <div style="margin-top:8px;display:flex;gap:6px"><span class="risk-badge risk-high">Art.22</span><span class="risk-badge risk-medium">Art.35 DPIA</span></div>
+          </div>
+          <div style="background:var(--bg-shelf);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div style="font-size:18px">🇪🇺</div><div style="font-weight:600;color:var(--text-1)">MiFID II</div></div>
+            <div style="font-size:11px;color:var(--text-2);line-height:1.6" data-i18n="reg_mifid">Markets in Financial Instruments Directive. Art.16 algorithmic trading requirements. Applies to AI-driven investment decisions.</div>
+            <div style="margin-top:8px;display:flex;gap:6px"><span class="risk-badge risk-medium">Art.16</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- P07 INVOICES -->
+    <div id="shelf-P07" style="display:none">
+      <div class="shelf-header"><div class="shelf-title-block"><div class="shelf-eyebrow">P07 Invoices</div><div class="shelf-title" data-i18n="title_p07">Compliance Costs</div></div><div class="shelf-actions"><button class="btn btn-gold" data-i18n="new_invoice">+ New Invoice</button><button class="btn btn-vera" onclick="askVera(I18N[STATE.lang].vera_ask_costs,'P07')">VERA</button></div></div>
+      <div class="vera-context-bar"><div class="vera-bar-sigil">VERA</div><div class="vera-bar-text" data-i18n="vera_p07_msg">14 invoices sealed this quarter. Total compliance spend €47,500. External audits represent 60% of costs.</div></div>
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-label" data-i18n="invoices_quarter">Invoices This Quarter</div><div class="kpi-value">14</div><div class="kpi-sub" data-i18n="all_sealed">All sealed</div></div>
+        <div class="kpi-card"><div class="kpi-label" data-i18n="total_spend">Total Spend</div><div class="kpi-value">€47.5k</div><div class="kpi-sub">Q2 2026</div></div>
+        <div class="kpi-card"><div class="kpi-label" data-i18n="external_audits">External Audits</div><div class="kpi-value">€28.5k</div><div class="kpi-sub">60%</div></div>
+        <div class="kpi-card kpi-sealed"><div class="kpi-label" data-i18n="budget_status">Budget Status</div><div class="kpi-value">OK</div><div class="kpi-sub" data-i18n="within_budget">Within budget</div></div>
+      </div>
+      <div class="section-block"><div class="section-block-header"><div class="section-block-title" data-i18n="recent_invoices">Recent Invoices</div><div class="section-block-meta" data-i18n="sealed_ledger">Sealed in Ledger</div></div>
+        <div class="receipt-list">
+          <div class="receipt-item"><div class="receipt-seal" style="background:var(--gold-glow);color:var(--gold)">€</div><div class="receipt-info"><div class="receipt-id">INV-2026-014</div><div class="receipt-desc" data-i18n="inv_ext_audit">External AI Audit - Q2 Review</div><div class="receipt-hash">€12,500 · sha256: 8a3b5c7d...</div></div><div class="receipt-time">11 Apr</div></div>
+          <div class="receipt-item"><div class="receipt-seal" style="background:var(--gold-glow);color:var(--gold)">€</div><div class="receipt-info"><div class="receipt-id">INV-2026-013</div><div class="receipt-desc" data-i18n="inv_legal_consult">Legal Consultation - EU AI Act</div><div class="receipt-hash">€4,200 · sha256: 2f4e6a8c...</div></div><div class="receipt-time">08 Apr</div></div>
+          <div class="receipt-item"><div class="receipt-seal" style="background:var(--gold-glow);color:var(--gold)">€</div><div class="receipt-info"><div class="receipt-id">INV-2026-012</div><div class="receipt-desc" data-i18n="inv_dpia_service">DPIA Service - Scoring System</div><div class="receipt-hash">€3,800 · sha256: 9c1d3e5f...</div></div><div class="receipt-time">05 Apr</div></div>
+          <div class="receipt-item"><div class="receipt-seal" style="background:var(--gold-glow);color:var(--gold)">€</div><div class="receipt-info"><div class="receipt-id">INV-2026-011</div><div class="receipt-desc" data-i18n="inv_training">Compliance Training - Staff</div><div class="receipt-hash">€2,100 · sha256: 4b6d8f1a...</div></div><div class="receipt-time">01 Apr</div></div>
+        </div>
+      </div>
     </div>
 
     <!-- P08 LEDGER -->
@@ -459,6 +662,48 @@ html, body {
       <div class="shelf-header"><div class="shelf-title-block"><div class="shelf-eyebrow">P09 Regulatory Evidence Package</div><div class="shelf-title" data-i18n="title_p09">Package for Regulator</div></div><div class="shelf-actions"><button class="btn btn-gold" onclick="generateREP()" data-i18n="generate_rep">Generate REP</button><button class="btn btn-outline" onclick="askVera(I18N[STATE.lang].vera_ask_rep,'P09')">VERA</button></div></div>
       <div class="vera-context-bar"><div class="vera-bar-sigil">VERA</div><div class="vera-bar-text" data-i18n="vera_rep_msg">You have 14 PHO receipts, 3 DPIAs, 1 AI Risk Assessment and complete audit trail. If BaFin arrives you're ready in 60s.</div></div>
       <div class="rep-grid"><div class="rep-item"><div class="rep-icon">S</div><div class="rep-label" data-i18n="pho_receipts">PHO Receipts</div><div class="rep-count">14</div><div class="rep-desc">EU AI Act Art.14</div></div><div class="rep-item"><div class="rep-icon">D</div><div class="rep-label">DPIAs</div><div class="rep-count">3</div><div class="rep-desc">GDPR Art.35</div></div><div class="rep-item"><div class="rep-icon">R</div><div class="rep-label">AI Risk</div><div class="rep-count">1</div><div class="rep-desc">EU AI Act Art.9</div></div><div class="rep-item"><div class="rep-icon">A</div><div class="rep-label">Audit Trail</div><div class="rep-count">47</div><div class="rep-desc" data-i18n="hash_verified">Hash chain verified</div></div></div>
+    </div>
+
+    <!-- CALENDAR -->
+    <div id="shelf-CAL" style="display:none">
+      <div class="shelf-header">
+        <div class="shelf-title-block">
+          <div class="shelf-eyebrow" data-i18n="calendar_section">Event Calendar</div>
+          <div class="shelf-title" data-i18n="calendar_title">Compliance Events</div>
+        </div>
+        <div class="shelf-actions">
+          <button class="btn btn-gold" onclick="openEventModal()">+ <span data-i18n="new_event">New Event</span></button>
+          <button class="btn btn-outline" onclick="calPrevMonth()">←</button>
+          <button class="btn btn-outline" onclick="calNextMonth()">→</button>
+        </div>
+      </div>
+
+      <div class="cal-container">
+        <div class="cal-header">
+          <div class="cal-month" id="cal-month-display">April 2026</div>
+          <div class="cal-legend">
+            <span class="cal-legend-item"><span class="cal-dot" style="background:var(--critical)"></span> <span data-i18n="evt_deadline">Deadline</span></span>
+            <span class="cal-legend-item"><span class="cal-dot" style="background:var(--info)"></span> <span data-i18n="evt_meeting">Meeting</span></span>
+            <span class="cal-legend-item"><span class="cal-dot" style="background:var(--gold)"></span> <span data-i18n="evt_delivery">Delivery</span></span>
+            <span class="cal-legend-item"><span class="cal-dot" style="background:var(--sealed)"></span> <span data-i18n="evt_pho">PHO Review</span></span>
+          </div>
+        </div>
+        <div class="cal-grid">
+          <div class="cal-weekday" data-i18n="day_mon">Mon</div>
+          <div class="cal-weekday" data-i18n="day_tue">Tue</div>
+          <div class="cal-weekday" data-i18n="day_wed">Wed</div>
+          <div class="cal-weekday" data-i18n="day_thu">Thu</div>
+          <div class="cal-weekday" data-i18n="day_fri">Fri</div>
+          <div class="cal-weekday" data-i18n="day_sat">Sat</div>
+          <div class="cal-weekday" data-i18n="day_sun">Sun</div>
+          <div id="cal-days"></div>
+        </div>
+      </div>
+
+      <div class="cal-upcoming">
+        <div class="cal-upcoming-header" data-i18n="upcoming_events">Upcoming Events</div>
+        <div id="cal-events-list"></div>
+      </div>
     </div>
   </main>
 
@@ -487,6 +732,62 @@ html, body {
 </div>
 
 <div id="toast"><div class="toast-icon">S</div><div class="toast-body"><div class="toast-title" id="toast-title">PHO Receipt Sealed</div><div class="toast-sub" id="toast-sub">Receipt ID: BD-2026-040-XXXX</div></div></div>
+
+<!-- EVENT MODAL -->
+<div id="event-modal-overlay" onclick="if(event.target===this)closeEventModal()">
+  <div id="event-modal">
+    <div class="evt-modal-header">
+      <div class="evt-modal-title" data-i18n="new_event">New Event</div>
+      <button class="evt-modal-close" onclick="closeEventModal()">×</button>
+    </div>
+    <div class="evt-form-group">
+      <label class="evt-form-label" data-i18n="evt_title">Title</label>
+      <input type="text" class="evt-form-input" id="evt-title" data-i18n-placeholder="evt_title_placeholder" placeholder="Event title...">
+    </div>
+    <div class="evt-form-row">
+      <div class="evt-form-group">
+        <label class="evt-form-label" data-i18n="evt_date">Date</label>
+        <input type="date" class="evt-form-input" id="evt-date">
+      </div>
+      <div class="evt-form-group">
+        <label class="evt-form-label" data-i18n="evt_time">Time</label>
+        <input type="time" class="evt-form-input" id="evt-time" value="09:00">
+      </div>
+    </div>
+    <div class="evt-form-group">
+      <label class="evt-form-label" data-i18n="evt_type">Type</label>
+      <select class="evt-form-select" id="evt-type">
+        <option value="deadline" data-i18n="evt_deadline">Deadline</option>
+        <option value="meeting" data-i18n="evt_meeting">Meeting</option>
+        <option value="delivery" data-i18n="evt_delivery">Delivery</option>
+        <option value="pho" data-i18n="evt_pho">PHO Review</option>
+      </select>
+    </div>
+    <div class="evt-form-group">
+      <label class="evt-form-label" data-i18n="evt_shelf">Related Shelf</label>
+      <select class="evt-form-select" id="evt-shelf">
+        <option value="">—</option>
+        <option value="P01">P01 Control Room</option>
+        <option value="P02">P02 Observations</option>
+        <option value="P03">P03 1LOD Stream</option>
+        <option value="P04">P04 2LOD Challenges</option>
+        <option value="P05">P05 Documents</option>
+        <option value="P06">P06 Legal Advisory</option>
+        <option value="P07">P07 Invoices</option>
+        <option value="P08">P08 PHO + Ledger</option>
+        <option value="P09">P09 REP</option>
+      </select>
+    </div>
+    <div class="evt-form-group">
+      <label class="evt-form-label" data-i18n="evt_desc">Description</label>
+      <textarea class="evt-form-textarea" id="evt-desc" data-i18n-placeholder="evt_desc_placeholder" placeholder="Event details..."></textarea>
+    </div>
+    <div class="evt-modal-actions">
+      <button class="btn btn-outline" onclick="closeEventModal()" data-i18n="cancel">Cancel</button>
+      <button class="btn btn-gold" onclick="saveEvent()" data-i18n="save_event">Save Event</button>
+    </div>
+  </div>
+</div>
 
 <script>
 // ═══════════════════════════════════════════════════════════════
@@ -537,7 +838,55 @@ const I18N = {
     toast_rep: "REP Gerado", toast_ledger: "Ledger Verificado",
     shelf_p10: "Tools & Workspace", vera_section: "Agente VERA", vera_constitution: "Constituicao",
     vera_health: "Estado de Saude", windi_section: "Ferramentas WINDI", verify_public: "Verificar Publico",
-    navigation: "Navegacao", back_dashboard: "Voltar ao Dashboard", user_manual: "Manual do Utilizador"
+    navigation: "Navegacao", back_dashboard: "Voltar ao Dashboard", user_manual: "Manual do Utilizador",
+    // P02 Observations
+    title_p02: "Monitorizacao de Sistemas AI", vera_ask_obs: "Que anomalias devo priorizar?",
+    vera_p02_msg: "2 anomalias detectadas nas ultimas 24h. AI-SCORING-V2 mostra 12% de variacao da baseline. Recomendo revisao antes da aprovacao PHO.",
+    active_systems: "Sistemas AI Activos", monitored: "Monitorizados 24/7", anomalies: "Anomalias", last_24h: "Ultimas 24h",
+    baseline_ok: "Baseline OK", within_tolerance: "Dentro da tolerancia", data_points: "Pontos de Dados", processed_today: "Processados hoje",
+    system_observations: "Observacoes de Sistema", real_time: "Tempo real · EU AI Act Art.9",
+    obs_scoring: "12% variacao da baseline · Drift de bias detectado", obs_fraud: "Taxa de falsos positivos aumentou 8% apos update",
+    obs_chatbot: "A operar dentro dos parametros · Sem drift", obs_recommend: "Recomendacoes de produto · Baixo risco · Estavel", export: "Exportar",
+    // P03 1LOD Stream
+    title_p03: "Primeira Linha de Defesa", vera_ask_1lod: "Que accoes foram escaladas hoje?",
+    vera_p03_msg: "7 accoes registadas hoje pelas unidades de negocio. 3 escaladas para 2LOD para revisao PHO. Ritmo operacional normal.",
+    actions_today: "Accoes Hoje", escalated_2lod: "Escaladas para 2LOD", needs_pho: "Precisa PHO",
+    auto_approved: "Auto-Aprovadas", low_risk: "Baixo risco", avg_response: "Resposta Media", sla_ok: "SLA OK",
+    action_stream: "Stream de Accoes", today: "hoje", this_week: "esta semana", filter: "Filtrar",
+    stream_1: "Modelo AI-SCORING retreinado · Requer PHO", stream_2: "Limiar de deteccao de fraude alterado · Revisao necessaria",
+    stream_3: "Acesso a dados de credito do chatbot expandido · Verificacao GDPR", stream_4: "Teste A/B de recomendacao de produto · Baixo risco auto-aprovado",
+    stream_5: "Actualizacao de analytics do dashboard · Sem PII",
+    // P05 Documents
+    title_p05: "Documentacao de Compliance", vera_ask_docs: "Que documentos estao em falta?",
+    vera_p05_msg: "12 documentos selados este mes. 3 DPIAs, 2 Avaliacoes de Risco AI, 7 decisoes PHO. Todos devidamente arquivados com receipts forenses.",
+    docs_month: "Documentos Este Mes", sealed_ledger: "Selados no Ledger", risk_assessments: "Avaliacoes de Risco",
+    pho_decisions: "Decisoes PHO", recent_documents: "Documentos Recentes", click_to_view: "Clique para ver", new_doc: "Novo Documento",
+    doc_dpia_scoring: "DPIA: Sistema de Scoring AI Deutsche Bank", doc_risk_fraud: "Avaliacao de Risco AI: Deteccao de Fraude v3",
+    doc_pho_chatbot: "Decisao PHO: Acesso a Credito do Chatbot", doc_dpia_fraud: "DPIA: Sistema de Deteccao de Fraude",
+    // P06 Legal Advisory
+    title_p06: "Framework Regulatorio", vera_ask_legal: "Que regulamentos se aplicam ao meu caso?",
+    vera_p06_msg: "Foco actual: Conformidade com EU AI Act para sistemas AI de alto risco. BaFin MaRisk AT 7.2 aplica-se a todo o scoring de credito. GDPR Art.22 decisoes automatizadas requerem revisao humana.",
+    applicable_regulations: "Regulamentos Aplicaveis", your_jurisdiction: "Sua jurisdicao: UE · Alemanha",
+    reg_aiact: "Regulamento sobre Inteligencia Artificial. Art.6 Classificacao, Art.9 Gestao de Risco, Art.14 Supervisao Humana (PHO). Sistemas de alto risco no Anexo III.",
+    reg_bafin: "Requisitos Minimos para Gestao de Risco. AT 7.2 aplica-se a modelos AI/ML em decisoes de credito. Requer validacao de modelo e monitorizacao continua.",
+    reg_gdpr: "Regulamento Geral de Proteccao de Dados. Art.22 Decisoes automatizadas, Art.35 DPIA obrigatoria para processamento de alto risco. Art.13 Transparencia.",
+    reg_mifid: "Directiva de Mercados de Instrumentos Financeiros. Art.16 requisitos de trading algoritmico. Aplica-se a decisoes de investimento com AI.",
+    // P07 Invoices
+    title_p07: "Custos de Compliance", vera_ask_costs: "Qual e o custo total de compliance este trimestre?",
+    vera_p07_msg: "14 facturas seladas este trimestre. Gasto total de compliance €47,500. Auditorias externas representam 60% dos custos.",
+    invoices_quarter: "Facturas Este Trimestre", all_sealed: "Todas seladas", total_spend: "Gasto Total",
+    external_audits: "Auditorias Externas", budget_status: "Estado do Orcamento", within_budget: "Dentro do orcamento",
+    recent_invoices: "Facturas Recentes", new_invoice: "+ Nova Factura",
+    inv_ext_audit: "Auditoria AI Externa - Revisao Q2", inv_legal_consult: "Consultoria Legal - EU AI Act",
+    inv_dpia_service: "Servico DPIA - Sistema de Scoring", inv_training: "Formacao de Compliance - Staff",
+    // Calendar
+    calendar_section: "Calendario", calendar: "Calendario de Eventos", calendar_title: "Eventos de Compliance",
+    new_event: "Novo Evento", evt_deadline: "Prazo", evt_meeting: "Reuniao", evt_delivery: "Entrega", evt_pho: "Revisao PHO",
+    day_mon: "Seg", day_tue: "Ter", day_wed: "Qua", day_thu: "Qui", day_fri: "Sex", day_sat: "Sab", day_sun: "Dom",
+    upcoming_events: "Proximos Eventos", no_events: "Sem eventos agendados",
+    evt_title: "Titulo", evt_title_placeholder: "Titulo do evento...", evt_date: "Data", evt_time: "Hora",
+    evt_type: "Tipo", evt_shelf: "Prateleira Relacionada", evt_desc: "Descricao", evt_desc_placeholder: "Detalhes do evento...",
+    save_event: "Guardar Evento", delete_event: "Apagar", event_saved: "Evento Guardado", event_deleted: "Evento Apagado"
   },
   de: {
     shelves: "Operative Regale",
@@ -583,7 +932,55 @@ const I18N = {
     toast_rep: "REP generiert", toast_ledger: "Ledger verifiziert",
     shelf_p10: "Werkzeuge & Arbeitsbereich", vera_section: "VERA Agent", vera_constitution: "Verfassung",
     vera_health: "Gesundheitsstatus", windi_section: "WINDI Werkzeuge", verify_public: "Offentlich verifizieren",
-    navigation: "Navigation", back_dashboard: "Zuruck zum Dashboard", user_manual: "Benutzerhandbuch"
+    navigation: "Navigation", back_dashboard: "Zuruck zum Dashboard", user_manual: "Benutzerhandbuch",
+    // P02 Observations
+    title_p02: "KI-System-Uberwachung", vera_ask_obs: "Welche Anomalien soll ich priorisieren?",
+    vera_p02_msg: "2 Anomalien in den letzten 24h erkannt. AI-SCORING-V2 zeigt 12% Abweichung von der Baseline. Empfehle Uberprufung vor PHO-Genehmigung.",
+    active_systems: "Aktive KI-Systeme", monitored: "24/7 uberwacht", anomalies: "Anomalien", last_24h: "Letzte 24h",
+    baseline_ok: "Baseline OK", within_tolerance: "Innerhalb der Toleranz", data_points: "Datenpunkte", processed_today: "Heute verarbeitet",
+    system_observations: "Systembeobachtungen", real_time: "Echtzeit · EU AI Act Art.9",
+    obs_scoring: "12% Abweichung von Baseline · Bias-Drift erkannt", obs_fraud: "Falsch-Positiv-Rate nach Update um 8% gestiegen",
+    obs_chatbot: "Arbeitet innerhalb der Parameter · Kein Drift", obs_recommend: "Produktempfehlungen · Niedriges Risiko · Stabil", export: "Exportieren",
+    // P03 1LOD Stream
+    title_p03: "Erste Verteidigungslinie", vera_ask_1lod: "Welche Aktionen wurden heute eskaliert?",
+    vera_p03_msg: "7 Aktionen heute von Geschaftseinheiten protokolliert. 3 an 2LOD zur PHO-Uberprufung eskaliert. Normaler Betriebsrhythmus.",
+    actions_today: "Aktionen Heute", escalated_2lod: "An 2LOD eskaliert", needs_pho: "Benotigt PHO",
+    auto_approved: "Auto-Genehmigt", low_risk: "Niedriges Risiko", avg_response: "Durchschn. Antwort", sla_ok: "SLA OK",
+    action_stream: "Aktions-Stream", today: "heute", this_week: "diese Woche", filter: "Filtern",
+    stream_1: "AI-SCORING Modell neu trainiert · Erfordert PHO", stream_2: "Betrugserkennungsschwelle geandert · Uberprufung erforderlich",
+    stream_3: "Chatbot-Kreditdatenzugriff erweitert · DSGVO-Prufung", stream_4: "Produkt-A/B-Test · Niedriges Risiko auto-genehmigt",
+    stream_5: "Dashboard-Analytics-Update · Keine PII",
+    // P05 Documents
+    title_p05: "Compliance-Dokumentation", vera_ask_docs: "Welche Dokumente fehlen?",
+    vera_p05_msg: "12 Dokumente diesen Monat versiegelt. 3 DPIAs, 2 KI-Risikobewertungen, 7 PHO-Entscheidungen. Alle ordnungsgemas mit forensischen Quittungen archiviert.",
+    docs_month: "Dokumente Diesen Monat", sealed_ledger: "Im Ledger versiegelt", risk_assessments: "Risikobewertungen",
+    pho_decisions: "PHO-Entscheidungen", recent_documents: "Aktuelle Dokumente", click_to_view: "Klicken zum Ansehen", new_doc: "Neues Dokument",
+    doc_dpia_scoring: "DPIA: KI-Scoring-System Deutsche Bank", doc_risk_fraud: "KI-Risikobewertung: Betrugserkennung v3",
+    doc_pho_chatbot: "PHO-Entscheidung: Chatbot-Kreditzugriff", doc_dpia_fraud: "DPIA: Betrugserkennungssystem",
+    // P06 Legal Advisory
+    title_p06: "Regulatorischer Rahmen", vera_ask_legal: "Welche Vorschriften gelten fur meinen Fall?",
+    vera_p06_msg: "Aktueller Fokus: EU AI Act Compliance fur Hochrisiko-KI-Systeme. BaFin MaRisk AT 7.2 gilt fur alle Kreditbewertungen. DSGVO Art.22 automatisierte Entscheidungen erfordern menschliche Uberprufung.",
+    applicable_regulations: "Anwendbare Vorschriften", your_jurisdiction: "Ihre Gerichtsbarkeit: EU · Deutschland",
+    reg_aiact: "Verordnung uber Kunstliche Intelligenz. Art.6 Klassifizierung, Art.9 Risikomanagement, Art.14 Menschliche Aufsicht (PHO). Hochrisikosysteme in Anhang III.",
+    reg_bafin: "Mindestanforderungen an das Risikomanagement. AT 7.2 gilt fur KI/ML-Modelle bei Kreditentscheidungen. Erfordert Modellvalidierung und laufende Uberwachung.",
+    reg_gdpr: "Datenschutz-Grundverordnung. Art.22 Automatisierte Entscheidungen, Art.35 DPIA erforderlich fur Hochrisikoverarbeitung. Art.13 Transparenz.",
+    reg_mifid: "Richtlinie uber Markte fur Finanzinstrumente. Art.16 Anforderungen fur algorithmischen Handel. Gilt fur KI-gesteuerte Anlageentscheidungen.",
+    // P07 Invoices
+    title_p07: "Compliance-Kosten", vera_ask_costs: "Was sind die Gesamtkosten fur Compliance in diesem Quartal?",
+    vera_p07_msg: "14 Rechnungen in diesem Quartal versiegelt. Gesamte Compliance-Ausgaben €47.500. Externe Audits machen 60% der Kosten aus.",
+    invoices_quarter: "Rechnungen Dieses Quartal", all_sealed: "Alle versiegelt", total_spend: "Gesamtausgaben",
+    external_audits: "Externe Audits", budget_status: "Budget-Status", within_budget: "Im Budget",
+    recent_invoices: "Aktuelle Rechnungen", new_invoice: "+ Neue Rechnung",
+    inv_ext_audit: "Externe KI-Prufung - Q2 Review", inv_legal_consult: "Rechtsberatung - EU AI Act",
+    inv_dpia_service: "DPIA-Service - Scoring-System", inv_training: "Compliance-Schulung - Personal",
+    // Calendar
+    calendar_section: "Kalender", calendar: "Veranstaltungskalender", calendar_title: "Compliance-Termine",
+    new_event: "Neues Ereignis", evt_deadline: "Frist", evt_meeting: "Besprechung", evt_delivery: "Lieferung", evt_pho: "PHO-Prufung",
+    day_mon: "Mo", day_tue: "Di", day_wed: "Mi", day_thu: "Do", day_fri: "Fr", day_sat: "Sa", day_sun: "So",
+    upcoming_events: "Kommende Ereignisse", no_events: "Keine Termine geplant",
+    evt_title: "Titel", evt_title_placeholder: "Ereignistitel...", evt_date: "Datum", evt_time: "Uhrzeit",
+    evt_type: "Typ", evt_shelf: "Zugehoriges Regal", evt_desc: "Beschreibung", evt_desc_placeholder: "Ereignisdetails...",
+    save_event: "Ereignis speichern", delete_event: "Loschen", event_saved: "Ereignis gespeichert", event_deleted: "Ereignis geloscht"
   },
   en: {
     shelves: "Operational Shelves",
@@ -629,7 +1026,55 @@ const I18N = {
     toast_rep: "REP Generated", toast_ledger: "Ledger Verified",
     shelf_p10: "Tools & Workspace", vera_section: "VERA Agent", vera_constitution: "Constitution",
     vera_health: "Health Status", windi_section: "WINDI Tools", verify_public: "Verify Public",
-    navigation: "Navigation", back_dashboard: "Back to Dashboard", user_manual: "User Manual"
+    navigation: "Navigation", back_dashboard: "Back to Dashboard", user_manual: "User Manual",
+    // P02 Observations
+    title_p02: "AI System Monitoring", vera_ask_obs: "Which anomalies should I prioritize?",
+    vera_p02_msg: "2 anomalies detected in last 24h. AI-SCORING-V2 showing 12% variance from baseline. Recommend review before PHO approval.",
+    active_systems: "Active AI Systems", monitored: "Monitored 24/7", anomalies: "Anomalies", last_24h: "Last 24h",
+    baseline_ok: "Baseline OK", within_tolerance: "Within tolerance", data_points: "Data Points", processed_today: "Processed today",
+    system_observations: "System Observations", real_time: "Real-time · EU AI Act Art.9",
+    obs_scoring: "12% variance from baseline · Bias drift detected", obs_fraud: "False positive rate increased 8% after update",
+    obs_chatbot: "Operating within parameters · No drift", obs_recommend: "Product recommendations · Low risk · Stable", export: "Export",
+    // P03 1LOD Stream
+    title_p03: "First Line of Defense", vera_ask_1lod: "Which actions were escalated today?",
+    vera_p03_msg: "7 actions logged today by business units. 3 escalated to 2LOD for PHO review. Normal operating rhythm.",
+    actions_today: "Actions Today", escalated_2lod: "Escalated to 2LOD", needs_pho: "Needs PHO",
+    auto_approved: "Auto-Approved", low_risk: "Low risk", avg_response: "Avg Response", sla_ok: "SLA OK",
+    action_stream: "Action Stream", today: "today", this_week: "this week", filter: "Filter",
+    stream_1: "AI-SCORING model retrained · Requires PHO", stream_2: "Fraud detection threshold changed · Review needed",
+    stream_3: "Chatbot credit data access expanded · GDPR check", stream_4: "Product recommendation A/B test · Low risk auto-approved",
+    stream_5: "Dashboard analytics update · No PII",
+    // P05 Documents
+    title_p05: "Compliance Documentation", vera_ask_docs: "Which documents are missing?",
+    vera_p05_msg: "12 documents sealed this month. 3 DPIAs, 2 AI Risk Assessments, 7 PHO decisions. All properly archived with forensic receipts.",
+    docs_month: "Documents This Month", sealed_ledger: "Sealed in Ledger", risk_assessments: "Risk Assessments",
+    pho_decisions: "PHO Decisions", recent_documents: "Recent Documents", click_to_view: "Click to view", new_doc: "New Document",
+    doc_dpia_scoring: "DPIA: AI Scoring System Deutsche Bank", doc_risk_fraud: "AI Risk Assessment: Fraud Detection v3",
+    doc_pho_chatbot: "PHO Decision: Chatbot Credit Access", doc_dpia_fraud: "DPIA: Fraud Detection System",
+    // P06 Legal Advisory
+    title_p06: "Regulatory Framework", vera_ask_legal: "Which regulations apply to my case?",
+    vera_p06_msg: "Current focus: EU AI Act compliance for high-risk AI systems. BaFin MaRisk AT 7.2 applies to all credit scoring. GDPR Art.22 automated decisions require human review.",
+    applicable_regulations: "Applicable Regulations", your_jurisdiction: "Your jurisdiction: EU · Germany",
+    reg_aiact: "Regulation on Artificial Intelligence. Art.6 Classification, Art.9 Risk Management, Art.14 Human Oversight (PHO). High-risk systems in Annex III.",
+    reg_bafin: "Minimum Requirements for Risk Management. AT 7.2 applies to AI/ML models in credit decisions. Requires model validation and ongoing monitoring.",
+    reg_gdpr: "General Data Protection Regulation. Art.22 Automated decisions, Art.35 DPIA required for high-risk processing. Art.13 Transparency.",
+    reg_mifid: "Markets in Financial Instruments Directive. Art.16 algorithmic trading requirements. Applies to AI-driven investment decisions.",
+    // P07 Invoices
+    title_p07: "Compliance Costs", vera_ask_costs: "What is the total compliance cost this quarter?",
+    vera_p07_msg: "14 invoices sealed this quarter. Total compliance spend €47,500. External audits represent 60% of costs.",
+    invoices_quarter: "Invoices This Quarter", all_sealed: "All sealed", total_spend: "Total Spend",
+    external_audits: "External Audits", budget_status: "Budget Status", within_budget: "Within budget",
+    recent_invoices: "Recent Invoices", new_invoice: "+ New Invoice",
+    inv_ext_audit: "External AI Audit - Q2 Review", inv_legal_consult: "Legal Consultation - EU AI Act",
+    inv_dpia_service: "DPIA Service - Scoring System", inv_training: "Compliance Training - Staff",
+    // Calendar
+    calendar_section: "Calendar", calendar: "Event Calendar", calendar_title: "Compliance Events",
+    new_event: "New Event", evt_deadline: "Deadline", evt_meeting: "Meeting", evt_delivery: "Delivery", evt_pho: "PHO Review",
+    day_mon: "Mon", day_tue: "Tue", day_wed: "Wed", day_thu: "Thu", day_fri: "Fri", day_sat: "Sat", day_sun: "Sun",
+    upcoming_events: "Upcoming Events", no_events: "No events scheduled",
+    evt_title: "Title", evt_title_placeholder: "Event title...", evt_date: "Date", evt_time: "Time",
+    evt_type: "Type", evt_shelf: "Related Shelf", evt_desc: "Description", evt_desc_placeholder: "Event details...",
+    save_event: "Save Event", delete_event: "Delete", event_saved: "Event Saved", event_deleted: "Event Deleted"
   }
 };
 
@@ -901,9 +1346,220 @@ async function sha256(message) {
 }
 
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeLupaBtn();
+  if (e.key === 'Escape') { closeLupaBtn(); closeEventModal(); }
   if (e.key === 'v' && (e.ctrlKey || e.metaKey) && e.shiftKey) { e.preventDefault(); toggleVera(); }
 });
+
+// ═══════════════════════════════════════════════════════════════
+// CALENDAR SYSTEM
+// ═══════════════════════════════════════════════════════════════
+const CAL = {
+  year: new Date().getFullYear(),
+  month: new Date().getMonth(),
+  events: JSON.parse(localStorage.getItem('windi-cal-events') || '[]')
+};
+
+const EVENT_COLORS = {
+  deadline: 'var(--critical)',
+  meeting: 'var(--info)',
+  delivery: 'var(--gold)',
+  pho: 'var(--sealed)'
+};
+
+const MONTH_NAMES = {
+  pt: ['Janeiro','Fevereiro','Marco','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+  de: ['Januar','Februar','Marz','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'],
+  en: ['January','February','March','April','May','June','July','August','September','October','November','December']
+};
+
+function calPrevMonth() {
+  CAL.month--;
+  if (CAL.month < 0) { CAL.month = 11; CAL.year--; }
+  renderCalendar();
+}
+
+function calNextMonth() {
+  CAL.month++;
+  if (CAL.month > 11) { CAL.month = 0; CAL.year++; }
+  renderCalendar();
+}
+
+function renderCalendar() {
+  const monthDisplay = document.getElementById('cal-month-display');
+  const daysGrid = document.getElementById('cal-days');
+  const eventsList = document.getElementById('cal-events-list');
+  if (!monthDisplay || !daysGrid) return;
+
+  // Month display
+  const monthNames = MONTH_NAMES[STATE.lang] || MONTH_NAMES.en;
+  monthDisplay.textContent = `${monthNames[CAL.month]} ${CAL.year}`;
+
+  // Build calendar grid
+  const firstDay = new Date(CAL.year, CAL.month, 1);
+  const lastDay = new Date(CAL.year, CAL.month + 1, 0);
+  const startDay = (firstDay.getDay() + 6) % 7; // Monday = 0
+  const daysInMonth = lastDay.getDate();
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+
+  let html = '';
+  // Previous month padding
+  const prevMonth = new Date(CAL.year, CAL.month, 0);
+  const prevDays = prevMonth.getDate();
+  for (let i = startDay - 1; i >= 0; i--) {
+    html += `<div class="cal-day other-month"><div class="cal-day-num">${prevDays - i}</div></div>`;
+  }
+
+  // Current month days
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${CAL.year}-${String(CAL.month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday = dateStr === todayStr;
+    const dayEvents = CAL.events.filter(e => e.date === dateStr);
+    let evtDots = dayEvents.map(e => `<div class="cal-event-dot" style="background:${EVENT_COLORS[e.type] || 'var(--gold)'}"></div>`).join('');
+    html += `<div class="cal-day ${isToday ? 'today' : ''}" onclick="onCalDayClick('${dateStr}')">
+      <div class="cal-day-num">${d}</div>
+      <div class="cal-day-events">${evtDots}</div>
+    </div>`;
+  }
+
+  // Next month padding
+  const totalCells = startDay + daysInMonth;
+  const remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+  for (let i = 1; i <= remaining; i++) {
+    html += `<div class="cal-day other-month"><div class="cal-day-num">${i}</div></div>`;
+  }
+
+  daysGrid.innerHTML = html;
+
+  // Upcoming events
+  if (eventsList) {
+    const upcoming = CAL.events
+      .filter(e => e.date >= todayStr)
+      .sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time))
+      .slice(0, 5);
+
+    if (upcoming.length === 0) {
+      eventsList.innerHTML = `<div class="cal-no-events" data-i18n="no_events">${I18N[STATE.lang].no_events}</div>`;
+    } else {
+      eventsList.innerHTML = upcoming.map(e => {
+        const [y, m, day] = e.date.split('-');
+        const dateDisplay = `${day}/${m}`;
+        return `<div class="cal-event-item" onclick="viewEvent('${e.id}')">
+          <div class="cal-event-date">${dateDisplay} ${e.time}</div>
+          <div class="cal-event-type" style="background:${EVENT_COLORS[e.type] || 'var(--gold)'}"></div>
+          <div class="cal-event-info">
+            <div class="cal-event-title">${e.title}</div>
+            ${e.desc ? `<div class="cal-event-desc">${e.desc.slice(0, 50)}${e.desc.length > 50 ? '...' : ''}</div>` : ''}
+            ${e.shelf ? `<div class="cal-event-shelf">${e.shelf}</div>` : ''}
+          </div>
+          <div class="cal-event-actions">
+            <button class="btn btn-sm btn-outline" onclick="event.stopPropagation();deleteEvent('${e.id}')" data-i18n="delete_event">×</button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+  }
+
+  updateCalendarBadge();
+}
+
+function onCalDayClick(dateStr) {
+  document.getElementById('evt-date').value = dateStr;
+  openEventModal();
+}
+
+function openEventModal(eventId = null) {
+  const modal = document.getElementById('event-modal-overlay');
+  const title = document.getElementById('evt-modal-title') || document.querySelector('.evt-modal-title');
+
+  if (eventId) {
+    const evt = CAL.events.find(e => e.id === eventId);
+    if (evt) {
+      document.getElementById('evt-title').value = evt.title;
+      document.getElementById('evt-date').value = evt.date;
+      document.getElementById('evt-time').value = evt.time;
+      document.getElementById('evt-type').value = evt.type;
+      document.getElementById('evt-shelf').value = evt.shelf || '';
+      document.getElementById('evt-desc').value = evt.desc || '';
+      modal.dataset.editId = eventId;
+    }
+  } else {
+    document.getElementById('evt-title').value = '';
+    if (!document.getElementById('evt-date').value) {
+      const today = new Date();
+      document.getElementById('evt-date').value = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+    }
+    document.getElementById('evt-time').value = '09:00';
+    document.getElementById('evt-type').value = 'deadline';
+    document.getElementById('evt-shelf').value = '';
+    document.getElementById('evt-desc').value = '';
+    delete modal.dataset.editId;
+  }
+
+  modal.classList.add('show');
+  document.getElementById('evt-title').focus();
+}
+
+function closeEventModal() {
+  document.getElementById('event-modal-overlay').classList.remove('show');
+}
+
+function saveEvent() {
+  const title = document.getElementById('evt-title').value.trim();
+  const date = document.getElementById('evt-date').value;
+  const time = document.getElementById('evt-time').value;
+  const type = document.getElementById('evt-type').value;
+  const shelf = document.getElementById('evt-shelf').value;
+  const desc = document.getElementById('evt-desc').value.trim();
+
+  if (!title || !date) {
+    document.getElementById('evt-title').style.borderColor = 'var(--critical)';
+    return;
+  }
+
+  const modal = document.getElementById('event-modal-overlay');
+  const editId = modal.dataset.editId;
+
+  if (editId) {
+    const idx = CAL.events.findIndex(e => e.id === editId);
+    if (idx >= 0) {
+      CAL.events[idx] = { ...CAL.events[idx], title, date, time, type, shelf, desc };
+    }
+  } else {
+    const newEvent = {
+      id: 'EVT-' + Date.now().toString(36).toUpperCase(),
+      title, date, time, type, shelf, desc,
+      created: new Date().toISOString()
+    };
+    CAL.events.push(newEvent);
+  }
+
+  localStorage.setItem('windi-cal-events', JSON.stringify(CAL.events));
+  closeEventModal();
+  renderCalendar();
+  showToast(I18N[STATE.lang].event_saved, title);
+}
+
+function deleteEvent(id) {
+  CAL.events = CAL.events.filter(e => e.id !== id);
+  localStorage.setItem('windi-cal-events', JSON.stringify(CAL.events));
+  renderCalendar();
+  showToast(I18N[STATE.lang].event_deleted, id);
+}
+
+function viewEvent(id) {
+  openEventModal(id);
+}
+
+function updateCalendarBadge() {
+  const badge = document.getElementById('badge-CAL');
+  if (!badge) return;
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+  const upcoming = CAL.events.filter(e => e.date >= todayStr).length;
+  badge.textContent = upcoming;
+  badge.style.display = upcoming > 0 ? 'flex' : 'none';
+}
 
 // ═══════════════════════════════════════════════════════════════
 // INIT
@@ -912,6 +1568,7 @@ initSettings();
 updateClock();
 openShelf('P01');
 fetchVeraBrief();
+renderCalendar();
 </script>
 </body>
 </html>
