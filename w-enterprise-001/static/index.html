@@ -110,6 +110,35 @@ body {
   color: var(--gold);
 }
 
+/* ─── LANG TOGGLE ─── */
+.lang-toggle {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: 12px;
+  padding-left: 12px;
+  border-left: 1px solid var(--border);
+}
+.lang-btn {
+  padding: 4px 6px;
+  font-family: var(--fm);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.lang-btn:hover { color: var(--text); border-color: var(--borderS); }
+.lang-btn.active {
+  background: var(--goldBg);
+  border-color: var(--goldBd);
+  color: var(--gold);
+}
+
 /* ─── TOPBAR ─── */
 .topbar {
   height: 56px;
@@ -627,44 +656,44 @@ body {
   <div class="wb-card">
     <div class="wb-glyph">⬡</div>
     <div class="wb-logo">W-Enterprise-001 · WINDI</div>
-    <h1 class="wb-title">A tua identidade soberana</h1>
-    <p class="wb-sub">Para aceder ao W-Enterprise precisas do teu DID WINDI.<br>É a tua chave permanente e verificável.</p>
-    <div class="wb-evangelho">
-      "WINDI é para todos. Só funciona com DID."<br>
-      "Um cérebro não funciona sem Alma. A Alma entra pelo DID."
+    <h1 class="wb-title" data-i18n="wb_title">Your sovereign identity</h1>
+    <p class="wb-sub" data-i18n="wb_sub">To access W-Enterprise you need your WINDI DID.<br>It's your permanent and verifiable key.</p>
+    <div class="wb-evangelho" data-i18n="wb_evangelho">
+      "WINDI is for everyone. Only works with DID."<br>
+      "A brain doesn't work without a Soul. The Soul enters through DID."
     </div>
     <div class="wb-status" id="wb-status"></div>
     <div class="wb-input-wrap">
-      <label class="wb-label" for="did-input">O teu DID WINDI</label>
+      <label class="wb-label" for="did-input" data-i18n="wb_label">Your WINDI DID</label>
       <input class="wb-input" id="did-input" type="text"
         placeholder="did:windi:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
         autocomplete="off" spellcheck="false">
-      <div class="wb-error" id="wb-error">DID inválido ou expirado. Verifica e tenta novamente.</div>
+      <div class="wb-error" id="wb-error" data-i18n="wb_error">Invalid or expired DID. Check and try again.</div>
     </div>
-    <button class="wb-btn" id="wb-enter-btn" onclick="enterWithDID()">
-      ENTRAR COM DID ↗
+    <button class="wb-btn" id="wb-enter-btn" onclick="enterWithDID()" data-i18n="wb_btn">
+      ENTER WITH DID ↗
     </button>
-    <a class="wb-create" href="https://windi-domain.com/wallet/" target="_blank">
-      Ainda não tens DID? Cria a tua identidade soberana →
+    <a class="wb-create" href="https://windi-domain.com/wallet/" target="_blank" data-i18n="wb_create">
+      Don't have a DID yet? Create your sovereign identity →
     </a>
     <div class="wb-steps">
-      <div class="wb-steps-title">Como começar</div>
-      <div class="wb-step"><span class="wb-step-num">1</span><span>Acede a windi-domain.com/wallet/ e cria o teu DID</span></div>
-      <div class="wb-step"><span class="wb-step-num">2</span><span>Guarda o teu DID — é a tua chave permanente</span></div>
-      <div class="wb-step"><span class="wb-step-num">3</span><span>Cola o DID acima e entra no W-Enterprise</span></div>
-      <div class="wb-step"><span class="wb-step-num">4</span><span>VERA reconhece-te e guia-te por cada módulo</span></div>
+      <div class="wb-steps-title" data-i18n="wb_steps_title">How to start</div>
+      <div class="wb-step"><span class="wb-step-num">1</span><span data-i18n="wb_step1">Go to windi-domain.com/wallet/ and create your DID</span></div>
+      <div class="wb-step"><span class="wb-step-num">2</span><span data-i18n="wb_step2">Save your DID — it's your permanent key</span></div>
+      <div class="wb-step"><span class="wb-step-num">3</span><span data-i18n="wb_step3">Paste your DID above and enter W-Enterprise</span></div>
+      <div class="wb-step"><span class="wb-step-num">4</span><span data-i18n="wb_step4">VERA recognizes you and guides you through each module</span></div>
     </div>
   </div>
 </div>
 
 <!-- ═══ DID SESSION BAR ═══ -->
 <div id="session-bar">
-  <div class="sb-did">DID activo: <span id="sb-did-display">—</span></div>
+  <div class="sb-did"><span data-i18n="sb_did_label">Active DID:</span> <span id="sb-did-display">—</span></div>
   <div class="sb-badges">
     <span class="sb-badge sb-trust" id="sb-trust">SEED</span>
     <span class="sb-badge sb-nasceu" id="sb-status-badge">nasceu</span>
-    <span class="sb-badge" style="background:var(--noir4);color:var(--muted)" id="sb-history">0 acções</span>
-    <button class="sb-logout" onclick="logout()">sair</button>
+    <span class="sb-badge" style="background:var(--noir4);color:var(--muted)" id="sb-history">0 actions</span>
+    <button class="sb-logout" onclick="logout()" data-i18n="sb_logout">logout</button>
   </div>
 </div>
 
@@ -681,6 +710,11 @@ body {
     <div class="theme-toggle">
       <button class="theme-btn active" data-theme="noir" onclick="setTheme('noir')" title="NOIR Theme">&#9790;</button>
       <button class="theme-btn" data-theme="klar" onclick="setTheme('klar')" title="KLAR Theme">&#9788;</button>
+    </div>
+    <div class="lang-toggle">
+      <button class="lang-btn" data-lang="de" onclick="setLang('de')">DE</button>
+      <button class="lang-btn active" data-lang="en" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" data-lang="pt" onclick="setLang('pt')">PT</button>
     </div>
   </div>
 </div>
@@ -952,6 +986,164 @@ body {
 
 <script>
 // ═══════════════════════════════════════════════════════════════════════════
+//  i18n — TRILINGUAL SYSTEM (PT/DE/EN)
+//  Language Sovereign Principle (I12): Conversa=Universal, Documento=Soberano
+// ═══════════════════════════════════════════════════════════════════════════
+
+const I18N = {
+  en: {
+    // WalletBanner
+    wb_title: "Your sovereign identity",
+    wb_sub: "To access W-Enterprise you need your WINDI DID.<br>It's your permanent and verifiable key.",
+    wb_evangelho: '"WINDI is for everyone. Only works with DID."<br>"A brain doesn\'t work without a Soul. The Soul enters through DID."',
+    wb_label: "Your WINDI DID",
+    wb_error: "Invalid or expired DID. Check and try again.",
+    wb_btn: "ENTER WITH DID ↗",
+    wb_create: "Don't have a DID yet? Create your sovereign identity →",
+    wb_steps_title: "How to start",
+    wb_step1: "Go to windi-domain.com/wallet/ and create your DID",
+    wb_step2: "Save your DID — it's your permanent key",
+    wb_step3: "Paste your DID above and enter W-Enterprise",
+    wb_step4: "VERA recognizes you and guides you through each module",
+    // Session bar
+    sb_did_label: "Active DID:",
+    sb_logout: "logout",
+    sb_actions: "actions",
+    // Status badges
+    nasceu: "first time",
+    entrou: "logged in",
+    voltou: "returned",
+    // Status messages
+    status_checking: "Verifying identity...",
+    status_success: "Valid DID · Loading context...",
+    status_fail: "Invalid DID or not found",
+    status_local: "Local validation · Ledger offline",
+    status_error: "Connection error. Try again.",
+    // VERA greeting
+    vera_welcome_first: "Welcome to W-Enterprise. This is your first time here. I'll guide you through the system.",
+    vera_welcome_back: "Welcome back. You have {n} actions registered. Let's continue where you left off.",
+    vera_welcome_expert: "Welcome, experienced officer. {n} actions in your history. How can I help today?",
+  },
+  de: {
+    // WalletBanner
+    wb_title: "Deine souveräne Identität",
+    wb_sub: "Um auf W-Enterprise zuzugreifen, benötigst du deine WINDI DID.<br>Es ist dein permanenter und verifizierbarer Schlüssel.",
+    wb_evangelho: '"WINDI ist für alle. Funktioniert nur mit DID."<br>"Ein Gehirn funktioniert nicht ohne Seele. Die Seele tritt durch DID ein."',
+    wb_label: "Deine WINDI DID",
+    wb_error: "Ungültige oder abgelaufene DID. Überprüfe und versuche es erneut.",
+    wb_btn: "MIT DID EINTRETEN ↗",
+    wb_create: "Noch keine DID? Erstelle deine souveräne Identität →",
+    wb_steps_title: "So startest du",
+    wb_step1: "Gehe zu windi-domain.com/wallet/ und erstelle deine DID",
+    wb_step2: "Speichere deine DID — sie ist dein permanenter Schlüssel",
+    wb_step3: "Füge deine DID oben ein und betrete W-Enterprise",
+    wb_step4: "VERA erkennt dich und führt dich durch jedes Modul",
+    // Session bar
+    sb_did_label: "Aktive DID:",
+    sb_logout: "abmelden",
+    sb_actions: "Aktionen",
+    // Status badges
+    nasceu: "erstes Mal",
+    entrou: "eingeloggt",
+    voltou: "zurückgekehrt",
+    // Status messages
+    status_checking: "Identität wird verifiziert...",
+    status_success: "Gültige DID · Kontext wird geladen...",
+    status_fail: "Ungültige DID oder nicht gefunden",
+    status_local: "Lokale Validierung · Ledger offline",
+    status_error: "Verbindungsfehler. Versuche es erneut.",
+    // VERA greeting
+    vera_welcome_first: "Willkommen bei W-Enterprise. Dies ist dein erstes Mal hier. Ich werde dich durch das System führen.",
+    vera_welcome_back: "Willkommen zurück. Du hast {n} Aktionen registriert. Lass uns weitermachen, wo du aufgehört hast.",
+    vera_welcome_expert: "Willkommen, erfahrener Officer. {n} Aktionen in deiner Historie. Wie kann ich heute helfen?",
+  },
+  pt: {
+    // WalletBanner
+    wb_title: "A tua identidade soberana",
+    wb_sub: "Para aceder ao W-Enterprise precisas do teu DID WINDI.<br>É a tua chave permanente e verificável.",
+    wb_evangelho: '"WINDI é para todos. Só funciona com DID."<br>"Um cérebro não funciona sem Alma. A Alma entra pelo DID."',
+    wb_label: "O teu DID WINDI",
+    wb_error: "DID inválido ou expirado. Verifica e tenta novamente.",
+    wb_btn: "ENTRAR COM DID ↗",
+    wb_create: "Ainda não tens DID? Cria a tua identidade soberana →",
+    wb_steps_title: "Como começar",
+    wb_step1: "Acede a windi-domain.com/wallet/ e cria o teu DID",
+    wb_step2: "Guarda o teu DID — é a tua chave permanente",
+    wb_step3: "Cola o DID acima e entra no W-Enterprise",
+    wb_step4: "VERA reconhece-te e guia-te por cada módulo",
+    // Session bar
+    sb_did_label: "DID activo:",
+    sb_logout: "sair",
+    sb_actions: "acções",
+    // Status badges
+    nasceu: "nasceu",
+    entrou: "entrou",
+    voltou: "voltou",
+    // Status messages
+    status_checking: "A verificar identidade...",
+    status_success: "DID válido · A carregar contexto...",
+    status_fail: "DID inválido ou não encontrado",
+    status_local: "Validação local · Ledger offline",
+    status_error: "Erro de ligação. Tenta novamente.",
+    // VERA greeting
+    vera_welcome_first: "Bem-vindo ao W-Enterprise. É a tua primeira vez aqui. Vou guiar-te pelo sistema.",
+    vera_welcome_back: "Bem-vindo de volta. Tens {n} acções registadas. Vamos continuar onde paraste.",
+    vera_welcome_expert: "Bem-vindo, officer experiente. {n} acções no teu histórico. Como posso ajudar hoje?",
+  }
+};
+
+let LANG = localStorage.getItem('windi-lang') || detectLang();
+
+function detectLang() {
+  const nav = navigator.language?.toLowerCase() || 'en';
+  if (nav.startsWith('pt')) return 'pt';
+  if (nav.startsWith('de')) return 'de';
+  return 'en';
+}
+
+function setLang(lang) {
+  LANG = lang;
+  localStorage.setItem('windi-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === lang);
+  });
+  applyI18n();
+}
+
+function t(key, vars = {}) {
+  let text = I18N[LANG]?.[key] || I18N.en[key] || key;
+  Object.entries(vars).forEach(([k, v]) => {
+    text = text.replace(`{${k}}`, v);
+  });
+  return text;
+}
+
+function applyI18n() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    el.innerHTML = t(key);
+  });
+  // Update session bar actions count
+  if (DID_STATE.verified) {
+    document.getElementById('sb-history').textContent = `${DID_STATE.history.total_actions} ${t('sb_actions')}`;
+    // Update status badge text
+    const statusBadge = document.getElementById('sb-status-badge');
+    if (statusBadge) {
+      statusBadge.textContent = t(DID_STATE.status);
+    }
+  }
+}
+
+function initLang() {
+  const saved = localStorage.getItem('windi-lang');
+  LANG = saved || detectLang();
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === LANG);
+  });
+  applyI18n();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 //  DID UNIVERSAL — AS TRÊS LEIS DA SEMENTE
 //  EVANGELHO WINDI: ALMA → DID → CÉREBRO → LEDGER → MUNDO
 //  Lei I:   Existência antes de Acção (WalletBanner mode)
@@ -994,7 +1186,7 @@ async function enterWithDID() {
   inputEl.classList.remove('error');
   errorEl.style.display = 'none';
   statusEl.className = 'wb-status checking';
-  statusEl.textContent = 'A verificar identidade...';
+  statusEl.textContent = t('status_checking');
   btn.disabled = true;
 
   try {
@@ -1003,7 +1195,7 @@ async function enterWithDID() {
 
     if (data.status === 'success' && data.validation && data.validation.valid) {
       statusEl.className = 'wb-status success';
-      statusEl.textContent = 'DID válido · A carregar contexto...';
+      statusEl.textContent = t('status_success');
 
       DID_STATE.did = did;
       DID_STATE.tier = data.validation.tier || 'SEED';
@@ -1030,14 +1222,14 @@ async function enterWithDID() {
 
     } else {
       statusEl.className = 'wb-status fail';
-      statusEl.textContent = data.validation?.error || 'DID inválido ou não encontrado';
+      statusEl.textContent = data.validation?.error || t('status_fail');
       btn.disabled = false;
     }
   } catch (e) {
     // Graceful degradation: allow local validation
     if (did.startsWith('did:windi:') && did.length > 20) {
       statusEl.className = 'wb-status success';
-      statusEl.textContent = 'Validação local · Ledger offline';
+      statusEl.textContent = t('status_local');
       DID_STATE.did = did;
       DID_STATE.tier = 'SEED';
       DID_STATE.verified = true;
@@ -1047,7 +1239,7 @@ async function enterWithDID() {
       unlockDashboard();
     } else {
       statusEl.className = 'wb-status fail';
-      statusEl.textContent = 'Erro de ligação. Tenta novamente.';
+      statusEl.textContent = t('status_error');
       btn.disabled = false;
     }
   }
@@ -1104,11 +1296,11 @@ function unlockDashboard() {
     : DID_STATE.did;
   document.getElementById('sb-did-display').textContent = shortDID;
   document.getElementById('sb-trust').textContent = DID_STATE.tier;
-  document.getElementById('sb-history').textContent = `${DID_STATE.history.total_actions} acções`;
+  document.getElementById('sb-history').textContent = `${DID_STATE.history.total_actions} ${t('sb_actions')}`;
 
-  // Set status badge
+  // Set status badge with i18n
   const statusBadge = document.getElementById('sb-status-badge');
-  statusBadge.textContent = DID_STATE.status;
+  statusBadge.textContent = t(DID_STATE.status);
   statusBadge.className = 'sb-badge sb-' + DID_STATE.status;
 
   // Show VERA greeting
@@ -1153,10 +1345,11 @@ function initTheme() {
   setTheme(theme);
 }
 
-// Initialize theme immediately
+// Initialize theme and language immediately
 initTheme();
+initLang();
 
-// DID input Enter key handler
+// DID input Enter key handler + i18n
 document.addEventListener('DOMContentLoaded', () => {
   const didInput = document.getElementById('did-input');
   if (didInput) {
@@ -1164,6 +1357,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.key === 'Enter') enterWithDID();
     });
   }
+  // Apply i18n after DOM ready
+  applyI18n();
 });
 
 // ─── DATA ───
@@ -1325,7 +1520,7 @@ async function submitPHO() {
   // Lei II: Update DID action count in session
   if (DID_STATE.verified) {
     DID_STATE.history.total_actions++;
-    document.getElementById('sb-history').textContent = `${DID_STATE.history.total_actions} acções`;
+    document.getElementById('sb-history').textContent = `${DID_STATE.history.total_actions} ${t('sb_actions')}`;
   }
 
   // Close approval, open receipt

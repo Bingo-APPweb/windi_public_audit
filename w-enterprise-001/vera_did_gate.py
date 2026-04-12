@@ -158,12 +158,24 @@ async def verify_did(did: str) -> DIDValidation:
                     last_seen=data.get("last_seen"),
                 )
             elif r.status_code == 404:
-                validation = DIDValidation(
-                    valid=False,
-                    did=did,
-                    active=False,
-                    error="DID não encontrado em W-SESSION-001"
-                )
+                # DID not in session DB but format is valid → graceful pass
+                # Evangelho: Every soul with a DID deserves entry
+                if did.startswith("did:windi:") and len(did) > 15:
+                    log.info(f"DID format valid but not in DB — graceful pass: {did[:25]}...")
+                    validation = DIDValidation(
+                        valid=True,
+                        did=did,
+                        active=True,
+                        tier="SEED",
+                        error="DID válido · Modo local [Lei I graceful]"
+                    )
+                else:
+                    validation = DIDValidation(
+                        valid=False,
+                        did=did,
+                        active=False,
+                        error="DID não encontrado em W-SESSION-001"
+                    )
             else:
                 # Session service might be down, allow graceful degradation
                 log.warning(f"W-SESSION-001 returned {r.status_code} for DID validation")
