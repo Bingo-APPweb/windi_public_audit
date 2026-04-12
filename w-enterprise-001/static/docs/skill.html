@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>W-ENTERPRISE-001 SKILL | WINDI Publishing House</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ─── NOIR THEME (Default) ─── */
+:root, [data-theme="noir"] {
+  --noir: #0A0A0B;
+  --noir2: #111114;
+  --noir3: #1A1A1E;
+  --noir4: #222226;
+  --border: rgba(255,255,255,0.07);
+  --borderS: rgba(255,255,255,0.14);
+  --text: #EDEAE2;
+  --muted: #7A7874;
+  --dim: #3E3C3A;
+  --gold: #E8C87A;
+  --goldBg: rgba(232,200,122,0.08);
+  --goldBd: rgba(232,200,122,0.25);
+  --danger: #E05555;
+  --dangerB: rgba(224,85,85,0.12);
+  --warn: #E8962A;
+  --warnB: rgba(232,150,42,0.12);
+  --ok: #4CAF82;
+  --okB: rgba(76,175,130,0.12);
+  --vera: #7C5CBF;
+  --veraBg: rgba(124,92,191,0.12);
+  --fd: 'Bricolage Grotesque', Georgia, serif;
+  --fm: 'JetBrains Mono', monospace;
+  --scrollbar-thumb: #333;
+  --code-bg: var(--noir3);
+}
+
+/* ─── KLAR THEME (Light) ─── */
+[data-theme="klar"] {
+  --noir: #FAFAF8;
+  --noir2: #F5F4F2;
+  --noir3: #EEEDEB;
+  --noir4: #E5E4E2;
+  --border: rgba(0,0,0,0.08);
+  --borderS: rgba(0,0,0,0.14);
+  --text: #1A1A1A;
+  --muted: #6B6965;
+  --dim: #9E9C98;
+  --gold: #8B7424;
+  --goldBg: rgba(139,116,36,0.08);
+  --goldBd: rgba(139,116,36,0.25);
+  --danger: #C43C3C;
+  --dangerB: rgba(196,60,60,0.10);
+  --warn: #B87420;
+  --warnB: rgba(184,116,32,0.10);
+  --ok: #2E8B57;
+  --okB: rgba(46,139,87,0.10);
+  --vera: #6B46C1;
+  --veraBg: rgba(107,70,193,0.10);
+  --scrollbar-thumb: #CCC;
+  --code-bg: #E8E7E5;
+}
+
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  background: var(--noir);
+  color: var(--text);
+  font-family: var(--fd);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.7;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+*, *::before, *::after {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.2s ease;
+}
+
+/* ─── LAYOUT ─── */
+.doc-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: 100vh;
+}
+
+/* ─── SIDEBAR NAV ─── */
+.doc-nav {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  background: var(--noir2);
+  border-right: 1px solid var(--border);
+  padding: 2rem 0;
+}
+.doc-nav::-webkit-scrollbar { width: 4px; }
+.doc-nav::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 2px; }
+
+/* ─── THEME TOGGLE ─── */
+.theme-toggle {
+  display: flex;
+  justify-content: center;
+  padding: 0 1.5rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.5rem;
+}
+.theme-toggle button {
+  background: var(--noir3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--fd);
+  font-size: 0.85rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.theme-toggle button:first-child { border-radius: 6px 0 0 6px; }
+.theme-toggle button:last-child { border-radius: 0 6px 6px 0; border-left: none; }
+.theme-toggle button.active {
+  background: var(--goldBg);
+  border-color: var(--goldBd);
+  color: var(--gold);
+}
+.theme-toggle button:hover:not(.active) {
+  background: var(--noir4);
+}
+
+.nav-brand {
+  padding: 0 1.5rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1rem;
+}
+.nav-brand h2 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--gold);
+  letter-spacing: -0.02em;
+}
+.nav-brand p {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 0.25rem;
+}
+.nav-section {
+  padding: 0.75rem 1.5rem;
+}
+.nav-section-title {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--dim);
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+.nav-link {
+  display: block;
+  padding: 0.4rem 0;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: color 0.15s;
+}
+.nav-link:hover { color: var(--text); }
+.nav-link.active { color: var(--gold); }
+
+/* ─── MAIN CONTENT ─── */
+.doc-main {
+  padding: 3rem 4rem;
+  max-width: 900px;
+}
+
+.doc-header {
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--border);
+}
+.doc-header h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.5rem;
+}
+.doc-header .subtitle {
+  color: var(--muted);
+  font-size: 1.1rem;
+}
+.doc-header .meta {
+  margin-top: 1rem;
+  display: flex;
+  gap: 1.5rem;
+  font-size: 0.8rem;
+  color: var(--dim);
+}
+.doc-header .meta span {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* ─── SECTIONS ─── */
+.section {
+  margin-bottom: 3rem;
+}
+.section h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 1rem;
+  color: var(--gold);
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.section h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 1.5rem 0 0.75rem;
+  color: var(--text);
+}
+.section h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 1.25rem 0 0.5rem;
+  color: var(--muted);
+}
+.section p {
+  margin-bottom: 1rem;
+  color: var(--text);
+}
+.section ul, .section ol {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+.section li {
+  margin-bottom: 0.5rem;
+  color: var(--text);
+}
+
+/* ─── CODE BLOCKS ─── */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+  margin: 1rem 0;
+  font-family: var(--fm);
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+code {
+  font-family: var(--fm);
+  font-size: 0.85em;
+  background: var(--code-bg);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+}
+pre code {
+  background: none;
+  padding: 0;
+}
+
+/* ─── TABLES ─── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 0.85rem;
+}
+th, td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+th {
+  background: var(--noir3);
+  font-weight: 700;
+  color: var(--gold);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+tr:hover td {
+  background: var(--noir2);
+}
+
+/* ─── BADGES ─── */
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.badge-gold { background: var(--goldBg); color: var(--gold); border: 1px solid var(--goldBd); }
+.badge-ok { background: var(--okB); color: var(--ok); }
+.badge-warn { background: var(--warnB); color: var(--warn); }
+.badge-danger { background: var(--dangerB); color: var(--danger); }
+.badge-vera { background: var(--veraBg); color: var(--vera); }
+
+/* ─── CALLOUTS ─── */
+.callout {
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  margin: 1.5rem 0;
+  border-left: 3px solid;
+}
+.callout-gold {
+  background: var(--goldBg);
+  border-color: var(--gold);
+}
+.callout-vera {
+  background: var(--veraBg);
+  border-color: var(--vera);
+}
+.callout-danger {
+  background: var(--dangerB);
+  border-color: var(--danger);
+}
+.callout-ok {
+  background: var(--okB);
+  border-color: var(--ok);
+}
+.callout h4 {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.callout p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* ─── FILE TREE ─── */
+.file-tree {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.25rem;
+  font-family: var(--fm);
+  font-size: 0.8rem;
+  line-height: 1.8;
+}
+.file-tree .folder { color: var(--gold); }
+.file-tree .file { color: var(--text); }
+.file-tree .comment { color: var(--dim); }
+
+/* ─── PILLAR GRID ─── */
+.pillar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+.pillar-card {
+  background: var(--noir2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+}
+.pillar-card:hover {
+  border-color: var(--borderS);
+}
+.pillar-id {
+  font-family: var(--fm);
+  font-size: 0.7rem;
+  color: var(--gold);
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+.pillar-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+.pillar-desc {
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 900px) {
+  .doc-layout {
+    grid-template-columns: 1fr;
+  }
+  .doc-nav {
+    position: relative;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .doc-main {
+    padding: 2rem 1.5rem;
+  }
+  .doc-header h1 {
+    font-size: 1.8rem;
+  }
+}
+
+/* ─── PRINT ─── */
+@media print {
+  .doc-nav, .theme-toggle { display: none; }
+  .doc-layout { grid-template-columns: 1fr; }
+  .doc-main { padding: 0; max-width: 100%; }
+  body { background: white; color: black; }
+}
+</style>
+</head>
+<body data-theme="noir">
+
+<div class="doc-layout">
+  <!-- SIDEBAR -->
+  <nav class="doc-nav">
+    <div class="theme-toggle">
+      <button id="btn-noir" class="active" onclick="setTheme('noir')">☾ NOIR</button>
+      <button id="btn-klar" onclick="setTheme('klar')">☼ KLAR</button>
+    </div>
+
+    <div class="nav-brand">
+      <h2>W-ENTERPRISE-001</h2>
+      <p>AI Compliance SKILL</p>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Identity</div>
+      <a href="#identity" class="nav-link">Product Identity</a>
+      <a href="#philosophy" class="nav-link">Core Philosophy</a>
+      <a href="#architecture" class="nav-link">Architecture</a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">REGO v1.1 Constitution</div>
+      <a href="#normative" class="nav-link">Normative Pillars (I-X)</a>
+      <a href="#operational" class="nav-link">Operational Rules (R1-R9)</a>
+      <a href="#technical" class="nav-link">Technical Pillars (XI-XX)</a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Components</div>
+      <a href="#vera" class="nav-link">VERA Agent</a>
+      <a href="#routing" class="nav-link">Multi-LLM Routing</a>
+      <a href="#did" class="nav-link">DID Gate</a>
+      <a href="#shelves" class="nav-link">10 Shelves</a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Development</div>
+      <a href="#files" class="nav-link">File Structure</a>
+      <a href="#endpoints" class="nav-link">API Endpoints</a>
+      <a href="#debugging" class="nav-link">Debugging</a>
+      <a href="#testing" class="nav-link">Testing</a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Reference</div>
+      <a href="#invariants" class="nav-link">Active Invariants</a>
+      <a href="#ports" class="nav-link">Port Map</a>
+      <a href="#colors" class="nav-link">Design System</a>
+      <a href="#checklist" class="nav-link">Commit Checklist</a>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="doc-main">
+    <header class="doc-header">
+      <h1>W-ENTERPRISE-001 SKILL</h1>
+      <p class="subtitle">AI Compliance Dashboard — Complete Technical Reference</p>
+      <div class="meta">
+        <span>📋 Version 1.0.0</span>
+        <span>⚖️ REGO v1.1</span>
+        <span>🔏 §159 · 12 April 2026</span>
+        <span>👤 Liga IA+H · Human Dragon</span>
+      </div>
+    </header>
+
+    <!-- IDENTITY -->
+    <section class="section" id="identity">
+      <h2>1. Product Identity</h2>
+
+      <div class="callout callout-gold">
+        <h4>W-ENTERPRISE-001</h4>
+        <p>The world's first AI Compliance Dashboard designed for EU AI Act Article 14 (Human Oversight) compliance.</p>
+      </div>
+
+      <table>
+        <tr><th>Field</th><th>Value</th></tr>
+        <tr><td>Product</td><td>AI Compliance Dashboard</td></tr>
+        <tr><td>Port</td><td><code>8150</code></td></tr>
+        <tr><td>URL</td><td><code>windi-domain.com/enterprise/</code></td></tr>
+        <tr><td>Stack</td><td>FastAPI + Vanilla JS</td></tr>
+        <tr><td>Size</td><td>~8000 LOC</td></tr>
+        <tr><td>Languages</td><td>PT, DE, EN (I12)</td></tr>
+      </table>
+    </section>
+
+    <!-- PHILOSOPHY -->
+    <section class="section" id="philosophy">
+      <h2>2. Core Philosophy</h2>
+
+      <div class="callout callout-vera">
+        <h4>"AI processes. Human decides. WINDI guarantees."</h4>
+        <p>This is the nuclear philosophy of W-ENTERPRISE-001.</p>
+      </div>
+
+      <ul>
+        <li><strong>VERA does not decide</strong> — illuminates the path</li>
+        <li><strong>Human always approves</strong> — I9 active</li>
+        <li><strong>Ledger seals everything</strong> — I11 active</li>
+        <li><strong>Failure is explicit</strong> — I14 active</li>
+      </ul>
+    </section>
+
+    <!-- ARCHITECTURE -->
+    <section class="section" id="architecture">
+      <h2>3. Architecture</h2>
+
+      <div class="file-tree">
+<span class="folder">/opt/windi/w-enterprise-001/</span>
+│
+├── <span class="folder">BACKEND (Python)</span>
+│   ├── <span class="file">main.py</span>              <span class="comment"># FastAPI core (525 LOC)</span>
+│   ├── <span class="file">vera_agent.py</span>        <span class="comment"># VERA REGO v1.1 (554 LOC)</span>
+│   ├── <span class="file">routing_engine.py</span>    <span class="comment"># Multi-LLM (522 LOC)</span>
+│   ├── <span class="file">vera_did_gate.py</span>     <span class="comment"># DID Gate (645 LOC)</span>
+│   ├── <span class="file">vera_instructor.py</span>   <span class="comment"># Instructor (520 LOC)</span>
+│   └── <span class="file">llm_registry.yaml</span>    <span class="comment"># LLM config (446 LOC)</span>
+│
+├── <span class="folder">FRONTEND (HTML/CSS/JS)</span>
+│   ├── <span class="file">static/desk.html</span>     <span class="comment"># 10 Shelves (1574 LOC)</span>
+│   ├── <span class="file">static/tools.html</span>    <span class="comment"># A4Desk (2148 LOC)</span>
+│   └── <span class="file">static/index.html</span>    <span class="comment"># Landing (1060 LOC)</span>
+│
+├── <span class="folder">CONFIG</span>
+│   ├── <span class="file">.env</span>                  <span class="comment"># API keys (gitignored)</span>
+│   └── <span class="file">vera_module_map.json</span> <span class="comment"># 8 modules</span>
+│
+└── <span class="folder">DOCS</span>
+    └── <span class="file">static/docs/</span>         <span class="comment"># User Manual + Skill</span>
+      </div>
+    </section>
+
+    <!-- NORMATIVE PILLARS -->
+    <section class="section" id="normative">
+      <h2>4. Normative Pillars (I-X)</h2>
+
+      <div class="pillar-grid">
+        <div class="pillar-card">
+          <div class="pillar-id">PILLAR I</div>
+          <div class="pillar-name">Truth Sovereignty</div>
+          <div class="pillar-desc"><code>verify_before_output()</code> — No output valid without verification possibility.</div>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-id">PILLAR II</div>
+          <div class="pillar-name">Autonomy Limit</div>
+          <div class="pillar-desc"><code>I9_GATE</code> — VERA proposes, never executes. Human approval mandatory.</div>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-id">PILLAR III</div>
+          <div class="pillar-name">Proof Before Decision</div>
+          <div class="pillar-desc"><code>context_required=True</code> — No decision without verifiable context.</div>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-id">PILLAR IV</div>
+          <div class="pillar-name">Auditable Memory</div>
+          <div class="pillar-desc"><code>vera_sessions.db</code> — Every interaction can be reconstructed.</div>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-id">PILLAR V</div>
+          <div class="pillar-name">Explicit Jurisdiction</div>
+          <div class="pillar-desc"><code>legal_anchors[]</code> — Every recommendation declares legal context.</div>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-id">PILLAR VI</div>
+          <div class="pillar-name">No Authority Simulation</div>
+          <div class="pillar-desc"><code>role="secretary"</code> — VERA is not final authority.</div>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-id">PILLAR VII</div>
+          <div class="pillar-name">Structural Transparency</div>
+          <div class="pillar-desc"><code>show_reasoning=True</code> — User understands why VERA reached conclusion.</div>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-id">PILLAR VIII</div>
+          <div class="pillar-name">Risk Containment</div>
+          <div class="pillar-desc"><code>if not measurable: skip</code> — If risk not measurable, action not recommended.</div>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-id">PILLAR IX</div>
+          <div class="pillar-name">Forensic Integration</div>
+          <div class="pillar-desc"><code>seal_to_ledger()</code> — Every intelligence can be sealed (I11).</div>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-id">PILLAR X</div>
+          <div class="pillar-name">Convergence</div>
+          <div class="pillar-desc"><code>must_converge=True</code> — Every interaction leads to decision/artifact/action.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- OPERATIONAL RULES -->
+    <section class="section" id="operational">
+      <h2>5. Operational Rules (R1-R9)</h2>
+
+      <table>
+        <tr><th>Rule</th><th>Name</th><th>Implementation</th></tr>
+        <tr><td><span class="badge badge-vera">R1</span></td><td>Desk Awareness</td><td><code>get_live_decisions()</code></td></tr>
+        <tr><td><span class="badge badge-vera">R2</span></td><td>Legal Anchoring</td><td><code>legal_basis</code> field</td></tr>
+        <tr><td><span class="badge badge-vera">R3</span></td><td>Non-Decision</td><td><code>human_approved=True</code></td></tr>
+        <tr><td><span class="badge badge-vera">R4</span></td><td>Traceability</td><td><code>seal-opinion</code> endpoint</td></tr>
+        <tr><td><span class="badge badge-vera">R5</span></td><td>Level Adaptation</td><td><code>mode: TUTORIAL|BRIEFING|EXECUTIVE</code></td></tr>
+        <tr><td><span class="badge badge-vera">R6</span></td><td>Alert Without Pressure</td><td>Single notification</td></tr>
+        <tr><td><span class="badge badge-vera">R7</span></td><td>Complete Explanation</td><td><code>detailed_chain=True</code></td></tr>
+        <tr><td><span class="badge badge-vera">R8</span></td><td>Explicit Failure</td><td>Never invent articles (I14)</td></tr>
+        <tr><td><span class="badge badge-vera">R9</span></td><td>Session Memory</td><td>SQLite persistence</td></tr>
+      </table>
+    </section>
+
+    <!-- TECHNICAL PILLARS -->
+    <section class="section" id="technical">
+      <h2>6. Technical Pillars (XI-XX)</h2>
+
+      <table>
+        <tr><th>Pillar</th><th>Name</th><th>Config</th></tr>
+        <tr><td><span class="badge badge-gold">XI</span></td><td>Infrastructure Sovereignty</td><td>Strato VPS EU</td></tr>
+        <tr><td><span class="badge badge-gold">XII</span></td><td>Data Residency</td><td><code>gdpr_safe: true</code></td></tr>
+        <tr><td><span class="badge badge-gold">XIII</span></td><td>Degraded Mode Declared</td><td><code>offline_mode.never_silent: true</code></td></tr>
+        <tr><td><span class="badge badge-gold">XIV</span></td><td>Multi-LLM Governance</td><td><code>routing_engine.py</code></td></tr>
+        <tr><td><span class="badge badge-gold">XV</span></td><td>Intelligence Consensus</td><td><code>min_models: 2</code></td></tr>
+        <tr><td><span class="badge badge-gold">XVI</span></td><td>DID-bound Auth</td><td><code>vera_did_gate.py</code></td></tr>
+        <tr><td><span class="badge badge-gold">XVII</span></td><td>Proof Chain Integrity</td><td>Ledger :8101</td></tr>
+        <tr><td><span class="badge badge-gold">XVIII</span></td><td>Governed Latency</td><td><code>latency_sla_s: 5</code></td></tr>
+        <tr><td><span class="badge badge-gold">XIX</span></td><td>WINDI Integration</td><td>Native ecosystem</td></tr>
+        <tr><td><span class="badge badge-gold">XX</span></td><td>Constitutional Update</td><td>PHO sealed only</td></tr>
+      </table>
+    </section>
+
+    <!-- VERA AGENT -->
+    <section class="section" id="vera">
+      <h2>7. VERA Agent</h2>
+
+      <p><strong>VERA</strong> = Verified Evidence Routing Agent. The AI Compliance Secretary that illuminates the path to human decision.</p>
+
+      <h3>VERA Endpoints</h3>
+      <table>
+        <tr><th>Endpoint</th><th>Method</th><th>Function</th></tr>
+        <tr><td><code>/vera/health</code></td><td>GET</td><td>Liveness + 20 pillars status</td></tr>
+        <tr><td><code>/vera/context</code></td><td>GET</td><td>9 shelves state</td></tr>
+        <tr><td><code>/vera/brief</code></td><td>GET</td><td>Daily briefing (trilingual)</td></tr>
+        <tr><td><code>/vera/chat</code></td><td>POST</td><td>Contextual Q&A</td></tr>
+        <tr><td><code>/vera/seal-opinion</code></td><td>POST</td><td>Seal guidance as PHO</td></tr>
+        <tr><td><code>/vera/constitution</code></td><td>GET</td><td>Audit all 20 pillars</td></tr>
+      </table>
+
+      <div class="callout callout-danger">
+        <h4>I9 — Autonomy Prohibition</h4>
+        <p>VERA never decides. She illuminates, suggests, guides. The human officer always has final authority.</p>
+      </div>
+    </section>
+
+    <!-- MULTI-LLM ROUTING -->
+    <section class="section" id="routing">
+      <h2>8. Multi-LLM Routing Engine</h2>
+
+      <h3>Tier A — Core Reasoning</h3>
+      <table>
+        <tr><th>Model</th><th>Alias</th><th>Weight</th><th>Primary Task</th></tr>
+        <tr><td>claude-sonnet-4</td><td>Guardian</td><td>0.95</td><td>Compliance reasoning</td></tr>
+        <tr><td>gpt-4o</td><td>Architect</td><td>0.90</td><td>Structured output</td></tr>
+        <tr><td>gemini-2.0-flash</td><td>Witness</td><td>0.85</td><td>Multimodal verification</td></tr>
+      </table>
+
+      <h3>Tier B — Specialists</h3>
+      <table>
+        <tr><th>Model</th><th>Alias</th><th>Weight</th><th>Primary Task</th></tr>
+        <tr><td>llama-3.3-70b</td><td>Sovereign</td><td>0.75</td><td>GDPR-safe local</td></tr>
+        <tr><td>mistral-large</td><td>Efficiency</td><td>0.70</td><td>EU-resident</td></tr>
+        <tr><td>grok-3</td><td>Devil's Advocate</td><td>0.65</td><td>Stress-test</td></tr>
+      </table>
+
+      <h3>Task Modes</h3>
+      <ul>
+        <li><span class="badge badge-danger">HIGH</span> — PHO required, consensus ≥2 models, seal required</li>
+        <li><span class="badge badge-warn">MED</span> — PHO conditional</li>
+        <li><span class="badge badge-ok">FREE</span> — No PHO required</li>
+        <li><span class="badge badge-gold">LOCAL</span> — GDPR-sensitive, LLama only</li>
+      </ul>
+    </section>
+
+    <!-- DID GATE -->
+    <section class="section" id="did">
+      <h2>9. DID Gate — 3 Laws of the Seed</h2>
+
+      <div class="callout callout-gold">
+        <h4>Gospel WINDI</h4>
+        <p><code>ALMA → DID → CÉREBRO → LEDGER → MUNDO</code></p>
+      </div>
+
+      <table>
+        <tr><th>Law</th><th>Name</th><th>Description</th></tr>
+        <tr><td><span class="badge badge-vera">I</span></td><td>Existence Before Action</td><td>No DID = WalletBanner mode only</td></tr>
+        <tr><td><span class="badge badge-vera">II</span></td><td>Every Action Leaves DID Trace</td><td>Receipt mandatory</td></tr>
+        <tr><td><span class="badge badge-vera">III</span></td><td>System Reads DID History</td><td>Context on return</td></tr>
+      </table>
+    </section>
+
+    <!-- 10 SHELVES -->
+    <section class="section" id="shelves">
+      <h2>10. Operational Shelves</h2>
+
+      <table>
+        <tr><th>Shelf</th><th>Name</th><th>Function</th></tr>
+        <tr><td><span class="badge badge-gold">P01</span></td><td>Control Room</td><td>360° view, critical KPIs, urgent decision</td></tr>
+        <tr><td><span class="badge badge-gold">P02</span></td><td>Observations</td><td>AI monitoring, anomalies, baseline drift</td></tr>
+        <tr><td><span class="badge badge-gold">P03</span></td><td>1LOD Stream</td><td>First Line of Defense, escalated actions</td></tr>
+        <tr><td><span class="badge badge-gold">P04</span></td><td>2LOD Challenges</td><td>PHO queue, human decisions, LUPA modal</td></tr>
+        <tr><td><span class="badge badge-gold">P05</span></td><td>Documents</td><td>DPIAs, Risk Assessments, sealed receipts</td></tr>
+        <tr><td><span class="badge badge-gold">P06</span></td><td>Legal Advisory</td><td>Regulatory framework (EU AI Act, GDPR, MaRisk)</td></tr>
+        <tr><td><span class="badge badge-gold">P07</span></td><td>Invoices</td><td>Compliance costs, sealed invoices</td></tr>
+        <tr><td><span class="badge badge-gold">P08</span></td><td>PHO + Ledger</td><td>Forensic receipts, hash integrity</td></tr>
+        <tr><td><span class="badge badge-gold">P09</span></td><td>REP</td><td>Regulatory Evidence Package</td></tr>
+        <tr><td><span class="badge badge-gold">CAL</span></td><td>Calendar</td><td>Compliance events, deadlines, meetings</td></tr>
+      </table>
+    </section>
+
+    <!-- FILE STRUCTURE -->
+    <section class="section" id="files">
+      <h2>11. File Structure</h2>
+
+      <table>
+        <tr><th>File</th><th>Lines</th><th>Purpose</th></tr>
+        <tr><td><code>main.py</code></td><td>525</td><td>FastAPI backend</td></tr>
+        <tr><td><code>vera_agent.py</code></td><td>554</td><td>VERA REGO v1.1</td></tr>
+        <tr><td><code>routing_engine.py</code></td><td>522</td><td>Multi-LLM routing</td></tr>
+        <tr><td><code>vera_did_gate.py</code></td><td>645</td><td>3 Laws DID</td></tr>
+        <tr><td><code>vera_instructor.py</code></td><td>520</td><td>Sovereign Instructor</td></tr>
+        <tr><td><code>llm_registry.yaml</code></td><td>446</td><td>LLM configuration</td></tr>
+        <tr><td><code>desk.html</code></td><td>1574</td><td>10 Shelves dashboard</td></tr>
+        <tr><td><code>tools.html</code></td><td>2148</td><td>A4Desk workspace</td></tr>
+        <tr><td><code>index.html</code></td><td>1060</td><td>Landing page</td></tr>
+      </table>
+    </section>
+
+    <!-- ENDPOINTS -->
+    <section class="section" id="endpoints">
+      <h2>12. API Endpoints</h2>
+
+      <h3>Main Backend (main.py)</h3>
+      <table>
+        <tr><th>Endpoint</th><th>Method</th><th>Function</th></tr>
+        <tr><td><code>/health</code></td><td>GET</td><td>Liveness check</td></tr>
+        <tr><td><code>/api/ai</code></td><td>POST</td><td>AI proxy</td></tr>
+        <tr><td><code>/api/decisions</code></td><td>GET/POST</td><td>Decision list</td></tr>
+        <tr><td><code>/api/pho/approve</code></td><td>POST</td><td>PHO seal</td></tr>
+        <tr><td><code>/api/generate</code></td><td>POST</td><td>Doc generator</td></tr>
+        <tr><td><code>/api/analyse</code></td><td>POST</td><td>Observation</td></tr>
+        <tr><td><code>/api/legal</code></td><td>POST</td><td>Legal advisory</td></tr>
+        <tr><td><code>/api/invoice</code></td><td>POST</td><td>Invoice seal</td></tr>
+        <tr><td><code>/api/rep</code></td><td>POST</td><td>REP generator</td></tr>
+        <tr><td><code>/api/audit</code></td><td>GET</td><td>Audit log</td></tr>
+      </table>
+    </section>
+
+    <!-- DEBUGGING -->
+    <section class="section" id="debugging">
+      <h2>13. Debugging</h2>
+
+      <h3>Logs</h3>
+<pre># VERA logs
+tail -f /tmp/w-enterprise.log
+
+# Format:
+# 2026-04-12T15:00:00 [W-ENT] INFO message
+# 2026-04-12T15:00:00 [VERA-ROUTER] message</pre>
+
+      <h3>Health Checks</h3>
+<pre># Service health
+curl http://localhost:8150/health
+
+# VERA health (20 pillars)
+curl http://localhost:8150/vera/health
+
+# Shelf context
+curl http://localhost:8150/vera/context</pre>
+
+      <h3>Common Errors</h3>
+      <table>
+        <tr><th>Error</th><th>Cause</th><th>Solution</th></tr>
+        <tr><td><code>[I14] Missing data</code></td><td>Required field empty</td><td>Check request body</td></tr>
+        <tr><td><code>[I9] Not approved</code></td><td>Missing human_approved</td><td>Use PHO flow</td></tr>
+        <tr><td><code>401 Unauthorized</code></td><td>Invalid API key</td><td>Check .env</td></tr>
+        <tr><td><code>Degraded mode</code></td><td>Tier A unavailable</td><td>Automatic fallback</td></tr>
+        <tr><td><code>DID required</code></td><td>Law I violated</td><td>Create DID first</td></tr>
+      </table>
+
+      <h3>Restart Service</h3>
+<pre># Find PID
+pgrep -f "w-enterprise-001/main.py"
+
+# Kill and restart
+pkill -f "w-enterprise-001/main.py"
+cd /opt/windi/w-enterprise-001
+nohup python3 main.py > /tmp/w-enterprise.log 2>&1 &
+
+# Verify
+curl http://localhost:8150/vera/health</pre>
+    </section>
+
+    <!-- TESTING -->
+    <section class="section" id="testing">
+      <h2>14. Testing</h2>
+
+      <h3>VERA Brief (trilingual)</h3>
+<pre># PT
+curl "http://localhost:8150/vera/brief?language=pt"
+
+# DE
+curl "http://localhost:8150/vera/brief?language=de"
+
+# EN
+curl "http://localhost:8150/vera/brief?language=en"</pre>
+
+      <h3>VERA Chat</h3>
+<pre>curl -X POST http://localhost:8150/vera/chat \
+  -H "Content-Type: application/json" \
+  -d '{
+    "question": "What is the status of DEC-2026-040?",
+    "shelf": "P04",
+    "language": "en"
+  }'</pre>
+
+      <h3>PHO Approval</h3>
+<pre>curl -X POST http://localhost:8150/api/pho/approve \
+  -H "Content-Type: application/json" \
+  -d '{
+    "decision_id": "DEC-2026-040",
+    "actor": "Human Dragon",
+    "note": "Conditional approval."
+  }'</pre>
+    </section>
+
+    <!-- ACTIVE INVARIANTS -->
+    <section class="section" id="invariants">
+      <h2>15. Active Invariants</h2>
+
+      <div class="callout callout-danger">
+        <h4>Critical Invariants — Violation = System STOP</h4>
+        <p>These invariants are non-negotiable and irremediable.</p>
+      </div>
+
+      <table>
+        <tr><th>ID</th><th>Name</th><th>Impact</th></tr>
+        <tr><td><span class="badge badge-danger">I9</span></td><td>Autonomy Prohibition</td><td>System STOPS if violated</td></tr>
+        <tr><td><span class="badge badge-danger">I11</span></td><td>Evidence Permanence</td><td>Data LOST if violated</td></tr>
+        <tr><td><span class="badge badge-danger">I14</span></td><td>Explicit Failure</td><td>Bug HIDDEN if violated</td></tr>
+      </table>
+
+      <table>
+        <tr><th>ID</th><th>Name</th><th>Function</th></tr>
+        <tr><td><span class="badge badge-gold">I1</span></td><td>Human Sovereignty</td><td>Officer decides, VERA guides</td></tr>
+        <tr><td><span class="badge badge-gold">I12</span></td><td>Language Sovereign</td><td>i18n trilingual (PT/DE/EN)</td></tr>
+        <tr><td><span class="badge badge-gold">I13</span></td><td>Convergence</td><td>Every interaction → decision/artifact</td></tr>
+      </table>
+    </section>
+
+    <!-- PORT MAP -->
+    <section class="section" id="ports">
+      <h2>16. Port Map</h2>
+
+      <table>
+        <tr><th>Service</th><th>Port</th><th>Status</th></tr>
+        <tr><td>W-Enterprise-001</td><td><code>8150</code></td><td><span class="badge badge-ok">LIVE</span></td></tr>
+        <tr><td>Forensic Ledger</td><td><code>8101</code></td><td><span class="badge badge-ok">SEALED</span></td></tr>
+        <tr><td>W-SESSION-001</td><td><code>8096</code></td><td><span class="badge badge-ok">LIVE</span></td></tr>
+        <tr><td>W-GATEWAY-001</td><td><code>8130</code></td><td><span class="badge badge-ok">LIVE</span></td></tr>
+        <tr><td>Verify Public</td><td><code>8114</code></td><td><span class="badge badge-ok">LIVE</span></td></tr>
+      </table>
+    </section>
+
+    <!-- DESIGN SYSTEM -->
+    <section class="section" id="colors">
+      <h2>17. Design System</h2>
+
+      <h3>NOIR Theme (Default)</h3>
+      <table>
+        <tr><th>Variable</th><th>Value</th><th>Usage</th></tr>
+        <tr><td><code>--bg-deep</code></td><td><code>#0B0D14</code></td><td>Background</td></tr>
+        <tr><td><code>--gold</code></td><td><code>#C8A45A</code></td><td>Accent</td></tr>
+        <tr><td><code>--critical</code></td><td><code>#E53E3E</code></td><td>Danger</td></tr>
+        <tr><td><code>--sealed</code></td><td><code>#38A169</code></td><td>Success</td></tr>
+        <tr><td><code>--vera</code></td><td><code>#7C5CBF</code></td><td>VERA accent</td></tr>
+      </table>
+
+      <h3>KLAR Theme (Light)</h3>
+      <table>
+        <tr><th>Variable</th><th>Value</th><th>Usage</th></tr>
+        <tr><td><code>--bg-deep</code></td><td><code>#FAFAF8</code></td><td>Background</td></tr>
+        <tr><td><code>--gold</code></td><td><code>#8B7424</code></td><td>Accent</td></tr>
+        <tr><td><code>--critical</code></td><td><code>#C53030</code></td><td>Danger</td></tr>
+        <tr><td><code>--sealed</code></td><td><code>#276749</code></td><td>Success</td></tr>
+        <tr><td><code>--vera</code></td><td><code>#6B46C1</code></td><td>VERA accent</td></tr>
+      </table>
+    </section>
+
+    <!-- COMMIT CHECKLIST -->
+    <section class="section" id="checklist">
+      <h2>18. Commit Checklist</h2>
+
+      <div class="callout callout-ok">
+        <h4>Before Every Commit</h4>
+        <p>Verify all items before pushing code to production.</p>
+      </div>
+
+      <ul>
+        <li>☐ i18n in PT, DE, EN</li>
+        <li>☐ Invariants documented</li>
+        <li>☐ Endpoint with docstring</li>
+        <li>☐ Health check works</li>
+        <li>☐ VERA brief trilingual</li>
+        <li>☐ Theme NOIR/KLAR tested</li>
+        <li>☐ Ledger seal works</li>
+      </ul>
+    </section>
+
+    <!-- FOOTER -->
+    <footer style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border); text-align: center; color: var(--dim); font-size: 0.85rem;">
+      <p><strong>Sealed:</strong> §159 · 12 April 2026</p>
+      <p><strong>Liga IA+H</strong> · WINDI Publishing House</p>
+      <p style="margin-top: 1rem; font-style: italic; color: var(--gold);">"AI processes. Human decides. WINDI guarantees."</p>
+    </footer>
+  </main>
+</div>
+
+<script>
+// Theme Management
+function setTheme(theme) {
+  document.body.dataset.theme = theme;
+  localStorage.setItem('windi-theme', theme);
+  document.getElementById('btn-noir').classList.toggle('active', theme === 'noir');
+  document.getElementById('btn-klar').classList.toggle('active', theme === 'klar');
+}
+
+// Init theme from localStorage
+(function() {
+  const saved = localStorage.getItem('windi-theme') || 'noir';
+  setTheme(saved);
+})();
+
+// Active nav link on scroll
+const sections = document.querySelectorAll('.section');
+const navLinks = document.querySelectorAll('.nav-link');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop;
+    if (scrollY >= sectionTop - 100) {
+      current = section.getAttribute('id');
+    }
+  });
+
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) {
+      link.classList.add('active');
+    }
+  });
+});
+</script>
+
+</body>
+</html>
