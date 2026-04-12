@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.2.5
-**Sealed:** 2026-04-12 · §161 Capacity Amplifier · OVS
+**Version:** 2.2.6
+**Sealed:** 2026-04-12 · §162 VERA Profile-Aware R10
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -407,6 +407,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 12 Apr | **§162 W-ENTERPRISE-001** · VERA Profile-Aware R10 · OVS Integration |
 | 12 Apr | **§161 W-ENTERPRISE-001** · Capacity Amplifier · OVS · `/enterprise/operator` |
 | 12 Apr | **§160 W-ENTERPRISE-001** · DID Universal Frontend Integration |
 | 12 Apr | **§159 W-ENTERPRISE-001** · DESK v4.1 Complete · 10 Shelves + Calendar · i18n Full · `9f616d7` |
@@ -572,7 +573,7 @@ Piece Panel (slide-up via ⚙):
 
 ---
 
-## §155-161 W-Enterprise-001 — AI Compliance Dashboard (12 Apr 2026)
+## §155-162 W-Enterprise-001 — AI Compliance Dashboard (12 Apr 2026)
 
 **Port:** :8150 · **Version:** v3.2.0 · **Invariants:** I1, I9, I11, I14
 **URL:** `https://windi-domain.com/enterprise/`
@@ -652,6 +653,31 @@ Piece Panel (slide-up via ⚙):
 > *It's giving normal operators the ability to work with provable systems."*
 
 **Badges:** EU AI Act Art.14 · DORA · PHO Certified · Ledger-native · Audit-ready
+
+### §162 — VERA Profile-Aware R10 (12 Apr 2026)
+
+**Commit:** `415f482` · **Engine:** VERA Instructor v1.1
+**Conceito:** VERA adapta R10 Pedagogia ao perfil OVS do officer.
+
+**3 Perfis OVS (§161):**
+| Perfil | Tone | Focus Areas |
+|--------|------|-------------|
+| `digital_risk` | compliance | legal_anchors, frameworks, audit_evidence |
+| `tech_product` | technical | integration, api_workflow, system_design |
+| `internal_auditor` | audit | verification, ledger_queries, sha256_proof |
+
+**Endpoints:**
+- `POST /vera/did/profile/{did}?profile_id=X` — Set profile
+- `GET /vera/did/profile/{did}` — Get profile + greeting
+- `GET /vera/did/profiles` — List all profiles
+
+**Adaptação R10:**
+- Intro personalizado por perfil (trilíngue)
+- Focus areas específicas
+- Next steps com terminologia do perfil
+- Fallback guidance por perfil
+
+**Integração §161:** Profile choice in `/enterprise/operator` syncs with VERA guidance.
 
 ### DASH v4.1 — 9 Prateleiras Trilíngue
 
