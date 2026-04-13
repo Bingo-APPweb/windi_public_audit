@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="noir">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>W-CACHE-001 | NOIR Control</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* NOIR Theme (default) */
+            --bg-primary: #0A0A10;
+            --bg-secondary: #12121A;
+            --bg-card: #16161F;
+            --gold: #C9A84C;
+            --gold-dim: #8B7424;
+            --text-primary: #E8E6E1;
+            --text-secondary: #9A9890;
+            --border: #1A1A24;
+            --green: #4ADE80;
+            --red: #F87171;
+            --yellow: #FACC15;
+            --blue: #60A5FA;
+        }
+
+        [data-theme="klar"] {
+            --bg-primary: #FAFAF8;
+            --bg-secondary: #F0EDE8;
+            --bg-card: #FFFFFF;
+            --gold: #8B7424;
+            --gold-dim: #6B5A1C;
+            --text-primary: #1A1A1A;
+            --text-secondary: #5A5A5A;
+            --border: #E0DED8;
+            --green: #16A34A;
+            --red: #DC2626;
+            --yellow: #CA8A04;
+            --blue: #2563EB;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-secondary);
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header h1 span {
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .controls {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .toggle-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .toggle-btn:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .toggle-btn.active {
+            background: var(--gold);
+            color: var(--bg-primary);
+            border-color: var(--gold);
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Main Grid */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 24px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 900px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Card */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            transition: border-color 0.2s;
+        }
+
+        .card:hover {
+            border-color: var(--gold-dim);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-subtitle {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        /* Metrics */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .metric {
+            background: var(--bg-secondary);
+            padding: 16px;
+            border-radius: 6px;
+            border-left: 3px solid var(--gold-dim);
+        }
+
+        .metric-label {
+            font-size: 10px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .metric-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .metric-value.good { color: var(--green); }
+        .metric-value.warning { color: var(--yellow); }
+        .metric-value.danger { color: var(--red); }
+        .metric-value.info { color: var(--blue); }
+
+        .metric-change {
+            font-size: 10px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Tier Distribution */
+        .tier-bar {
+            display: flex;
+            height: 32px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .tier-segment {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 600;
+            transition: width 0.5s ease;
+        }
+
+        .tier-L1 { background: var(--text-secondary); }
+        .tier-L2 { background: var(--blue); }
+        .tier-L3 { background: var(--green); }
+        .tier-L4 { background: var(--gold); }
+
+        .tier-legend {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .tier-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+        }
+
+        .tier-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+        }
+
+        /* Alerts */
+        .alerts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .alert {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .alert-ok {
+            background: rgba(74, 222, 128, 0.1);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            color: var(--green);
+        }
+
+        .alert-warning {
+            background: rgba(250, 204, 21, 0.1);
+            border: 1px solid rgba(250, 204, 21, 0.3);
+            color: var(--yellow);
+        }
+
+        .alert-danger {
+            background: rgba(248, 113, 113, 0.1);
+            border: 1px solid rgba(248, 113, 113, 0.3);
+            color: var(--red);
+        }
+
+        .alert-icon {
+            font-size: 16px;
+        }
+
+        /* Timeline Events */
+        .events-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .event-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+            font-size: 11px;
+        }
+
+        .event-type {
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .event-type.promotion { background: var(--green); color: #000; }
+        .event-type.hit { background: var(--blue); color: #000; }
+        .event-type.miss { background: var(--yellow); color: #000; }
+        .event-type.fail { background: var(--red); color: #fff; }
+
+        .event-time {
+            color: var(--text-secondary);
+            margin-left: auto;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-secondary);
+            font-size: 11px;
+            border-top: 1px solid var(--border);
+            margin-top: 20px;
+        }
+
+        /* Critical Metric Highlight */
+        .critical-metric {
+            grid-column: span 2;
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-card) 100%);
+            border-left: 3px solid var(--gold);
+            text-align: center;
+            padding: 24px;
+        }
+
+        .critical-metric .metric-label {
+            font-size: 12px;
+            color: var(--gold);
+        }
+
+        .critical-metric .metric-value {
+            font-size: 36px;
+        }
+
+        /* Language toggle */
+        .lang-toggle {
+            display: flex;
+            gap: 4px;
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 4px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 10px;
+            transition: all 0.2s;
+        }
+
+        .lang-btn.active {
+            background: var(--gold);
+            color: var(--bg-primary);
+            border-color: var(--gold);
+        }
+
+        /* Loading */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100px;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 12px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>
+            W-CACHE-001 <span>NOIR CONTROL</span>
+        </h1>
+        <div class="controls">
+            <div class="lang-toggle">
+                <button class="lang-btn" data-lang="pt">PT</button>
+                <button class="lang-btn active" data-lang="en">EN</button>
+                <button class="lang-btn" data-lang="de">DE</button>
+            </div>
+            <button class="toggle-btn" id="theme-toggle" title="Toggle Theme">KLAR</button>
+            <div class="status-indicator">
+                <div class="status-dot" id="status-dot"></div>
+                <span id="status-text">LIVE</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="dashboard" id="dashboard">
+        <div class="loading">
+            <div class="spinner"></div>
+            <span data-i18n="loading">Loading...</span>
+        </div>
+    </main>
+
+    <footer class="footer">
+        W-CACHE-001 | Verifiable Cache Layer | WINDI Publishing House
+        <br>
+        <span style="color: var(--gold);">"If you can't see your system's truth, you don't control it."</span>
+    </footer>
+
+    <script>
+        // ═══════════════════════════════════════════════
+        // W-CACHE-001 NOIR DASHBOARD
+        // Interface of system consciousness
+        // ═══════════════════════════════════════════════
+
+        const i18n = {
+            en: {
+                loading: "Loading...",
+                performance: "Performance",
+                performance_sub: "Is the system fast?",
+                hit_rate: "Hit Rate",
+                hit_rate_l3: "L3 Hit Rate",
+                latency: "Avg Latency",
+                fallback_rate: "Ledger Fallback",
+                temporal: "Temporal Integrity",
+                temporal_sub: "Are we coherent in time?",
+                mismatches: "Temporal Mismatches",
+                regressions_prevented: "Regressions Prevented",
+                stale_blocked: "Stale Blocked",
+                mismatch_rate: "Mismatch Rate",
+                proof: "Proof Layer",
+                proof_sub: "What became proof?",
+                proven_entries: "Proven Entries",
+                promotions: "Promotions",
+                proof_reuse: "Proof Reuse Rate",
+                verify_hits: "Verify Cache Hits",
+                alerts: "Risk & Alerts",
+                alerts_sub: "Where are we close to failing?",
+                tier_distribution: "Tier Distribution",
+                tier_distribution_sub: "Cache layer breakdown",
+                recent_events: "Recent Events",
+                recent_events_sub: "Live activity stream",
+                all_systems: "All systems operational",
+                low_hit_rate: "Low hit rate detected",
+                temporal_drift: "Temporal drift warning",
+                promotion_failures: "Promotion failures detected",
+                high_memory: "High memory usage"
+            },
+            pt: {
+                loading: "Carregando...",
+                performance: "Performance",
+                performance_sub: "O sistema est\u00e1 r\u00e1pido?",
+                hit_rate: "Taxa de Acerto",
+                hit_rate_l3: "Acerto L3",
+                latency: "Lat\u00eancia M\u00e9dia",
+                fallback_rate: "Fallback Ledger",
+                temporal: "Integridade Temporal",
+                temporal_sub: "Estamos coerentes no tempo?",
+                mismatches: "Desencontros Temporais",
+                regressions_prevented: "Regress\u00f5es Evitadas",
+                stale_blocked: "Stale Bloqueados",
+                mismatch_rate: "Taxa de Desencontro",
+                proof: "Camada de Prova",
+                proof_sub: "O que virou prova?",
+                proven_entries: "Entradas Provadas",
+                promotions: "Promo\u00e7\u00f5es",
+                proof_reuse: "Reuso de Prova",
+                verify_hits: "Hits no Verify",
+                alerts: "Riscos e Alertas",
+                alerts_sub: "Onde estamos perto de falhar?",
+                tier_distribution: "Distribui\u00e7\u00e3o por Tier",
+                tier_distribution_sub: "Camadas do cache",
+                recent_events: "Eventos Recentes",
+                recent_events_sub: "Fluxo de actividade",
+                all_systems: "Todos os sistemas operacionais",
+                low_hit_rate: "Taxa de acerto baixa",
+                temporal_drift: "Alerta de deriva temporal",
+                promotion_failures: "Falhas de promo\u00e7\u00e3o detectadas",
+                high_memory: "Uso de mem\u00f3ria alto"
+            },
+            de: {
+                loading: "Laden...",
+                performance: "Performance",
+                performance_sub: "Ist das System schnell?",
+                hit_rate: "Trefferrate",
+                hit_rate_l3: "L3 Trefferrate",
+                latency: "Durchschn. Latenz",
+                fallback_rate: "Ledger Fallback",
+                temporal: "Zeitliche Integrit\u00e4t",
+                temporal_sub: "Sind wir zeitlich koh\u00e4rent?",
+                mismatches: "Zeitliche Abweichungen",
+                regressions_prevented: "Vermiedene R\u00fcckschritte",
+                stale_blocked: "Veraltete Blockiert",
+                mismatch_rate: "Abweichungsrate",
+                proof: "Beweis-Schicht",
+                proof_sub: "Was wurde zum Beweis?",
+                proven_entries: "Bewiesene Eintr\u00e4ge",
+                promotions: "Bef\u00f6rderungen",
+                proof_reuse: "Beweis-Wiederverwendung",
+                verify_hits: "Verify Cache Treffer",
+                alerts: "Risiken & Warnungen",
+                alerts_sub: "Wo sind wir nah am Scheitern?",
+                tier_distribution: "Tier-Verteilung",
+                tier_distribution_sub: "Cache-Ebenen Aufschl\u00fcsselung",
+                recent_events: "Aktuelle Ereignisse",
+                recent_events_sub: "Live-Aktivit\u00e4tsstrom",
+                all_systems: "Alle Systeme betriebsbereit",
+                low_hit_rate: "Niedrige Trefferrate erkannt",
+                temporal_drift: "Zeitliche Drift Warnung",
+                promotion_failures: "Bef\u00f6rderungsfehler erkannt",
+                high_memory: "Hohe Speichernutzung"
+            }
+        };
+
+        let currentLang = localStorage.getItem('windi-lang') || 'en';
+        let currentTheme = localStorage.getItem('windi-theme') || 'noir';
+        let metrics = null;
+        let events = [];
+
+        // ─── Theme Toggle ────────────────────────────────
+        function setTheme(theme) {
+            currentTheme = theme;
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('windi-theme', theme);
+            document.getElementById('theme-toggle').textContent = theme === 'noir' ? 'KLAR' : 'NOIR';
+        }
+
+        document.getElementById('theme-toggle').addEventListener('click', () => {
+            setTheme(currentTheme === 'noir' ? 'klar' : 'noir');
+        });
+
+        // ─── Language Toggle ────────────────────────────────
+        function setLang(lang) {
+            currentLang = lang;
+            localStorage.setItem('windi-lang', lang);
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+            render();
+        }
+
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => setLang(btn.dataset.lang));
+        });
+
+        // ─── Text helper ────────────────────────────────
+        function t(key) {
+            return i18n[currentLang]?.[key] || i18n.en[key] || key;
+        }
+
+        // ─── Fetch Metrics ────────────────────────────────
+        async function fetchMetrics() {
+            try {
+                const res = await fetch('/api/cache/v1/metrics');
+                if (!res.ok) throw new Error('Failed to fetch');
+                metrics = await res.json();
+                updateStatus(true);
+                render();
+            } catch (err) {
+                console.error('Metrics fetch error:', err);
+                updateStatus(false);
+            }
+        }
+
+        // ─── Fetch Events ────────────────────────────────
+        async function fetchEvents() {
+            try {
+                const res = await fetch('/api/cache/v1/events?limit=20');
+                if (res.ok) {
+                    const data = await res.json();
+                    events = data.events || [];
+                }
+            } catch (err) {
+                // Events endpoint might not exist yet
+            }
+        }
+
+        // ─── Status Indicator ────────────────────────────────
+        function updateStatus(ok) {
+            const dot = document.getElementById('status-dot');
+            const text = document.getElementById('status-text');
+            if (ok) {
+                dot.style.background = 'var(--green)';
+                text.textContent = 'LIVE';
+            } else {
+                dot.style.background = 'var(--red)';
+                text.textContent = 'OFFLINE';
+            }
+        }
+
+        // ─── Render Dashboard ────────────────────────────────
+        function render() {
+            if (!metrics) return;
+
+            const g = metrics.global || {};
+            const byTier = metrics.by_tier || {};
+            const integrity = metrics.integrity || {};
+
+            const totalEntries = g.total_entries || 0;
+            const l1 = byTier.L1_EPHEMERAL || 0;
+            const l2 = byTier.L2_DETERMINISTIC || 0;
+            const l3 = byTier.L3_PROVEN || 0;
+            const l4 = byTier.L4_POLICY || 0;
+
+            // Calculate percentages
+            const l1Pct = totalEntries ? (l1 / totalEntries * 100).toFixed(0) : 0;
+            const l2Pct = totalEntries ? (l2 / totalEntries * 100).toFixed(0) : 0;
+            const l3Pct = totalEntries ? (l3 / totalEntries * 100).toFixed(0) : 0;
+            const l4Pct = totalEntries ? (l4 / totalEntries * 100).toFixed(0) : 0;
+
+            // Alerts
+            const alerts = [];
+            const hitRate = g.hit_rate || 0;
+            const temporalMismatches = integrity.temporal_mismatches || 0;
+            const promotionFailures = g.promotion_failures || 0;
+
+            if (hitRate < 0.3 && totalEntries > 5) {
+                alerts.push({ type: 'warning', text: t('low_hit_rate'), icon: '\u26a0' });
+            }
+            if (temporalMismatches > 0) {
+                alerts.push({ type: 'danger', text: t('temporal_drift'), icon: '\u23f1' });
+            }
+            if (promotionFailures > 0) {
+                alerts.push({ type: 'warning', text: t('promotion_failures'), icon: '\u274c' });
+            }
+            if (alerts.length === 0) {
+                alerts.push({ type: 'ok', text: t('all_systems'), icon: '\u2714' });
+            }
+
+            // Proof reuse rate (L3 hits / total hits estimate)
+            const proofReuse = g.proven_entries > 0 ? Math.min(100, (g.proven_entries / Math.max(1, totalEntries) * 100)).toFixed(0) : 0;
+
+            // Regressions prevented = temporal mismatches blocked
+            const regressionsPrevented = temporalMismatches;
+
+            document.getElementById('dashboard').innerHTML = `
+                <!-- Performance -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">\u26a1 ${t('performance')}</div>
+                        <div class="card-subtitle">${t('performance_sub')}</div>
+                    </div>
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <div class="metric-label">${t('hit_rate')}</div>
+                            <div class="metric-value ${hitRate > 0.7 ? 'good' : hitRate > 0.3 ? 'warning' : 'danger'}">
+                                ${(hitRate * 100).toFixed(1)}%
+                            </div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">${t('hit_rate_l3')}</div>
+                            <div class="metric-value info">${l3}/${totalEntries}</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">${t('fallback_rate')}</div>
+                            <div class="metric-value ${g.miss_rate < 0.3 ? 'good' : 'warning'}">
+                                ${((g.miss_rate || 0) * 100).toFixed(1)}%
+                            </div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Total Entries</div>
+                            <div class="metric-value">${totalEntries}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Proof Layer -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">\ud83d\udd10 ${t('proof')}</div>
+                        <div class="card-subtitle">${t('proof_sub')}</div>
+                    </div>
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <div class="metric-label">${t('proven_entries')}</div>
+                            <div class="metric-value good">${g.proven_entries || 0}</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">${t('promotions')}</div>
+                            <div class="metric-value info">${g.promotion_count || 0}</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">${t('proof_reuse')}</div>
+                            <div class="metric-value ${proofReuse > 50 ? 'good' : 'info'}">${proofReuse}%</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Promotion Fails</div>
+                            <div class="metric-value ${promotionFailures > 0 ? 'danger' : 'good'}">
+                                ${promotionFailures}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Temporal Integrity -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">\ud83e\uddec ${t('temporal')}</div>
+                        <div class="card-subtitle">${t('temporal_sub')}</div>
+                    </div>
+                    <div class="metrics-grid">
+                        <div class="metric critical-metric">
+                            <div class="metric-label">\ud83d\udd25 ${t('regressions_prevented')}</div>
+                            <div class="metric-value good">${regressionsPrevented}</div>
+                            <div class="metric-change">Temporal regressions blocked</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">${t('mismatches')}</div>
+                            <div class="metric-value ${temporalMismatches > 0 ? 'danger' : 'good'}">
+                                ${temporalMismatches}
+                            </div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">${t('mismatch_rate')}</div>
+                            <div class="metric-value">
+                                ${((integrity.temporal_mismatch_rate || 0) * 100).toFixed(2)}%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alerts -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">\u26a0\ufe0f ${t('alerts')}</div>
+                        <div class="card-subtitle">${t('alerts_sub')}</div>
+                    </div>
+                    <div class="alerts-list">
+                        ${alerts.map(a => `
+                            <div class="alert alert-${a.type}">
+                                <span class="alert-icon">${a.icon}</span>
+                                ${a.text}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <!-- Tier Distribution -->
+                <div class="card" style="grid-column: span 2;">
+                    <div class="card-header">
+                        <div class="card-title">\ud83d\udcca ${t('tier_distribution')}</div>
+                        <div class="card-subtitle">${t('tier_distribution_sub')}</div>
+                    </div>
+                    <div class="tier-bar">
+                        ${l1 > 0 ? `<div class="tier-segment tier-L1" style="width: ${l1Pct}%">L1</div>` : ''}
+                        ${l2 > 0 ? `<div class="tier-segment tier-L2" style="width: ${l2Pct}%">L2</div>` : ''}
+                        ${l3 > 0 ? `<div class="tier-segment tier-L3" style="width: ${l3Pct}%">L3</div>` : ''}
+                        ${l4 > 0 ? `<div class="tier-segment tier-L4" style="width: ${l4Pct}%">L4</div>` : ''}
+                        ${totalEntries === 0 ? '<div style="width:100%;text-align:center;color:var(--text-secondary)">No entries</div>' : ''}
+                    </div>
+                    <div class="tier-legend">
+                        <div class="tier-item">
+                            <div class="tier-dot tier-L1"></div>
+                            L1 Ephemeral: ${l1}
+                        </div>
+                        <div class="tier-item">
+                            <div class="tier-dot tier-L2"></div>
+                            L2 Deterministic: ${l2}
+                        </div>
+                        <div class="tier-item">
+                            <div class="tier-dot tier-L3"></div>
+                            L3 Proven: ${l3}
+                        </div>
+                        <div class="tier-item">
+                            <div class="tier-dot tier-L4"></div>
+                            L4 Policy: ${l4}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ─── Init ────────────────────────────────
+        setTheme(currentTheme);
+        setLang(currentLang);
+        fetchMetrics();
+        fetchEvents();
+
+        // Poll every 2 seconds
+        setInterval(() => {
+            fetchMetrics();
+            fetchEvents();
+        }, 2000);
+    </script>
+</body>
+</html>

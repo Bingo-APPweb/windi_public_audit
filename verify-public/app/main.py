@@ -20,6 +20,18 @@ from fastapi.templating import Jinja2Templates
 sys.path.insert(0, os.path.dirname(__file__))
 from verify_engine import VerifyEngine, extract_jmpg_proof
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# W-CACHE-001 Integration — Verifiable Cache Layer
+# Replaces simple dict cache with temporal + proof-aware cache
+# ═══════════════════════════════════════════════════════════════════════════════
+try:
+    from wcache_integration import cache_get, cache_set, wcache_health
+    WCACHE_ENABLED = True
+    logging.getLogger("windi.verify").info("[WCACHE] W-CACHE-001 integration ENABLED")
+except ImportError:
+    WCACHE_ENABLED = False
+    logging.getLogger("windi.verify").warning("[WCACHE] W-CACHE-001 not available, using fallback")
+
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [VERIFY] %(levelname)s %(message)s", handlers=[logging.StreamHandler(), logging.FileHandler("/opt/windi/logs/verify-public.log")])
 log = logging.getLogger("windi.verify")
 
@@ -30,18 +42,20 @@ MAX_FILE_SIZE = 10 * 1024 * 1024
 CACHE_TTL     = 60
 _cache: dict  = {}
 
-def cache_get(key):
-    e = _cache.get(key)
-    if e and time.time() < e[1]:
-        return e[0]
-    return None
+# Fallback cache functions (used if W-CACHE-001 not available)
+if not WCACHE_ENABLED:
+    def cache_get(key):
+        e = _cache.get(key)
+        if e and time.time() < e[1]:
+            return e[0]
+        return None
 
-def cache_set(key, value):
-    _cache[key] = (value, time.time() + CACHE_TTL)
-    if len(_cache) > 1000:
-        now = time.time()
-        for k in [k for k, v in list(_cache.items()) if now >= v[1]]:
-            del _cache[k]
+    def cache_set(key, value):
+        _cache[key] = (value, time.time() + CACHE_TTL)
+        if len(_cache) > 1000:
+            now = time.time()
+            for k in [k for k, v in list(_cache.items()) if now >= v[1]]:
+                del _cache[k]
 
 def now_iso():
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
@@ -180,7 +194,17 @@ class VerifyResult(BaseModel):
 @app.get("/health")
 @app.get("/verify-public/health")
 async def health():
-    return {"service":"windi-verify-public","version":"1.0.1","status":"operational","cache_entries":len(_cache),"port":PORT,"timestamp":now_iso()}
+    wcache_status = wcache_health() if WCACHE_ENABLED else {"wcache": "disabled"}
+    return {
+        "service": "windi-verify-public",
+        "version": "1.0.2",
+        "status": "operational",
+        "wcache_enabled": WCACHE_ENABLED,
+        "wcache_status": wcache_status.get("wcache", "unknown"),
+        "fallback_cache_entries": len(_cache),
+        "port": PORT,
+        "timestamp": now_iso()
+    }
 
 @app.get("/verify-public/")
 async def ui_root():
