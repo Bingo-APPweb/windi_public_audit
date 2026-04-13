@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.2.7
-**Sealed:** 2026-04-13 · §163 DECRETO-001 A Árvore Viva
+**Version:** 2.2.8
+**Sealed:** 2026-04-13 · §165 WINDI Portal
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -84,6 +84,8 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-DRAGON-001 | :8122 | I9,I11,I14 | **LIVE** · Dragon Shadow Forest · 16×16 SHA-256 Glyph Grid · PDF Overlay |
 | W-DEV-API-001 | :8200 | I9,I11 | **LIVE** · Developer API · /dev-api/ · 4 Tiers · Verify Bridge |
 | W-ENTERPRISE-001 | :8150 | I1,I9,I11,I14 | **LIVE** v3.1.0 · VERA REGO v1.0 · DASH v4.1 · i18n PT/DE/EN · NOIR/KLAR |
+| W-CACHE-001 | :8160 | I11,I14 | **LIVE** · Verifiable Cache Layer · L2→L3 Promotion · NOIR Dashboard |
+| WINDI-PORTAL | static | — | **LIVE** · Internal Control Center · 35 Services · 7 Categories |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
 
@@ -432,19 +434,22 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | :8140-:8144 | UDB/INTENT-CMD/FEDIVERSE/BRIDGE/SEC | 🟢 LIVE |
 | :8145 | W-STATE-CORE-006 Verify Public | 🟢 **LIVE** |
 | :8150 | W-Enterprise-001 AI Compliance | 🟢 **LIVE** |
+| :8160 | W-CACHE-001 Verifiable Cache | 🟢 **LIVE** |
 
-> **Mapa completo (25 portas):** `CLAUDE-HISTORY.md` § Mapa de Portas 09 Abr
+> **Mapa completo (26 portas):** `CLAUDE-HISTORY.md` § Mapa de Portas 13 Abr
 
-### Sistemas LIVE (42 total)
+### Sistemas LIVE (44 total)
 
-**Core:** GEN7 · Pioneer · VPR · API Keys · Dispatch · Web Hosting · i18n · Wallet · Lead Admin
-**Agents (32):** CIA · WSG · GATE · NGINX · CANVAS · COMM · PROVE · DETECT-MEDIA · VERIFY · INTENT · COUNSEL · SESSION · NOMAD · VD-CUT · VD-MASS · JOE · DIST · JMPG · UDB · COMPOSER · CLASSIFY · VISION · OBS-GATE · INTENT-CMD · NOMAD-VOICE · FEDIVERSE · BRIDGE · SEC · DRAGON · DEV-API · ENTERPRISE
+**Core:** GEN7 · Pioneer · VPR · API Keys · Dispatch · Web Hosting · i18n · Wallet · Lead Admin · **Portal**
+**Agents (33):** CIA · WSG · GATE · NGINX · CANVAS · COMM · PROVE · DETECT-MEDIA · VERIFY · INTENT · COUNSEL · SESSION · NOMAD · VD-CUT · VD-MASS · JOE · DIST · JMPG · UDB · COMPOSER · CLASSIFY · VISION · OBS-GATE · INTENT-CMD · NOMAD-VOICE · FEDIVERSE · BRIDGE · SEC · DRAGON · DEV-API · ENTERPRISE · **CACHE**
 **Products:** Triangle of Power · WINDI FIELD · WINDI TRAVEL · FVE Protocol · RFC-001 DNA
 
 ### Histórico Recente
 
 | Data | Milestone |
 |------|-----------|
+| 13 Apr | **§165 WINDI Portal** · Internal Control Center · 35 Services · 7 Categories · `77f82e2` |
+| 13 Apr | **§164 W-CACHE-001** · Verifiable Cache Layer · L2→L3 Promotion · NOIR Dashboard · :8160 |
 | 13 Apr | **§163 DECRETO-001** · A Árvore Viva · DID Sovereign · Living Tree CONSTITUTIONAL |
 | 12 Apr | **§162 W-ENTERPRISE-001** · VERA Profile-Aware R10 · OVS Integration |
 | 12 Apr | **§155-§161** · W-ENTERPRISE-001 Complete · VERA + DASH + NOIR/KLAR |
@@ -523,6 +528,33 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 - VD-CUT: `WINDI-VDCUT-20260404145505-E9983867`
 - W-SEC: `WINDI-SEC-LOCAL-20260408184001-BD09970F`
 - W-COMPOSER: First Seal `58B241B1`
+
+---
+
+## §164-165 W-CACHE-001 + WINDI Portal (13 Apr 2026)
+
+### §164 — W-CACHE-001: Verifiable Cache Layer
+
+**Port:** :8160 · **Invariants:** I11, I14 · **Commit:** `77f82e2`
+**URLs:** `/wcache/noir` (Dashboard) · `/wcache/api/cache/v1/` (API)
+
+**4 Tiers:** L1_EPHEMERAL (5min) → L2_DETERMINISTIC (1h) → L3_PROVEN (24h) → L4_POLICY
+**Temporal:** `timeline_id` + `state_version` + `state_hash` = consistência temporal
+**Promoção:** L2→L3 automática via `/verify` ou manual com `anchor_to_ledger: true`
+
+**NOIR Dashboard:** Performance · Temporal Integrity · Proof Layer · Alerts
+**Endpoints:** `/get` · `/entries` · `/promote` · `/invalidate` · `/metrics` · `/events`
+**Regra:** Cache nunca deleta. Apenas marca status (INVALIDATED/REVOKED/SUPERSEDED).
+
+### §165 — WINDI Portal: Internal Control Center
+
+**URL:** `https://windi-domain.com/portal/` · **File:** `/opt/windi/portal/index.html`
+
+**7 Categorias (35 serviços):**
+📊 Dashboards · ⚖️ Legal · 🎬 Video · 🔗 Integration · 🏗️ Infra · 🔌 APIs · 📦 Deprecated
+
+**Features:** Search · NOIR/KLAR · i18n PT/DE/EN · Quick Stats · Status badges
+**Frase:** *"A complexidade não desapareceu. Ela foi organizada."*
 
 ---
 
