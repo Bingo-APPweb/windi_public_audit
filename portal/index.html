@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="noir">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WINDI PORTAL | Internal Control Center</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #08080C;
+            --bg-secondary: #0E0E14;
+            --bg-card: #14141C;
+            --bg-hover: #1A1A24;
+            --gold: #C9A84C;
+            --gold-dim: #8B7424;
+            --gold-glow: rgba(201, 168, 76, 0.15);
+            --text-primary: #E8E6E1;
+            --text-secondary: #8A8880;
+            --text-muted: #5A5A54;
+            --border: #1E1E28;
+            --green: #4ADE80;
+            --red: #F87171;
+            --yellow: #FACC15;
+            --blue: #60A5FA;
+            --purple: #A78BFA;
+            --cyan: #22D3EE;
+            --orange: #FB923C;
+        }
+
+        [data-theme="klar"] {
+            --bg-primary: #FAFAF8;
+            --bg-secondary: #F5F3F0;
+            --bg-card: #FFFFFF;
+            --bg-hover: #F0EDE8;
+            --gold: #8B7424;
+            --gold-dim: #6B5A1C;
+            --gold-glow: rgba(139, 116, 36, 0.1);
+            --text-primary: #1A1A1A;
+            --text-secondary: #5A5A5A;
+            --text-muted: #8A8A8A;
+            --border: #E0DED8;
+            --green: #16A34A;
+            --red: #DC2626;
+            --yellow: #CA8A04;
+            --blue: #2563EB;
+            --purple: #7C3AED;
+            --cyan: #0891B2;
+            --orange: #EA580C;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+
+        /* ═══ HEADER ═══ */
+        .header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dim) 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .logo-text span {
+            color: var(--text-secondary);
+            font-weight: 400;
+            font-size: 14px;
+            margin-left: 8px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .lang-toggle, .theme-toggle {
+            display: flex;
+            gap: 4px;
+        }
+
+        .btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 11px;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .btn.active {
+            background: var(--gold);
+            color: var(--bg-primary);
+            border-color: var(--gold);
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: rgba(74, 222, 128, 0.1);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            border-radius: 4px;
+            font-size: 11px;
+            color: var(--green);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* ═══ MAIN ═══ */
+        .main {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* ═══ SEARCH ═══ */
+        .search-container {
+            margin-bottom: 24px;
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px var(--gold-glow);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* ═══ CATEGORY ═══ */
+        .category {
+            margin-bottom: 32px;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .category-icon {
+            font-size: 20px;
+        }
+
+        .category-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .category-count {
+            font-size: 11px;
+            color: var(--text-muted);
+            background: var(--bg-card);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        /* ═══ GRID ═══ */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        /* ═══ SERVICE CARD ═══ */
+        .service-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card:hover {
+            border-color: var(--gold-dim);
+            background: var(--bg-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 100%;
+            background: var(--accent-color, var(--gold));
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .service-card:hover::before {
+            opacity: 1;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .card-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .card-port {
+            font-size: 10px;
+            color: var(--text-muted);
+            font-family: monospace;
+        }
+
+        .card-status {
+            font-size: 9px;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .card-status.live {
+            background: rgba(74, 222, 128, 0.15);
+            color: var(--green);
+        }
+
+        .card-status.deprecated {
+            background: rgba(248, 113, 113, 0.15);
+            color: var(--red);
+        }
+
+        .card-status.sealed {
+            background: rgba(201, 168, 76, 0.15);
+            color: var(--gold);
+        }
+
+        .card-description {
+            font-size: 11px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .tag {
+            font-size: 9px;
+            padding: 2px 6px;
+            background: var(--bg-secondary);
+            border-radius: 3px;
+            color: var(--text-muted);
+        }
+
+        .tag.invariant {
+            background: rgba(167, 139, 250, 0.15);
+            color: var(--purple);
+        }
+
+        /* ═══ FOOTER ═══ */
+        .footer {
+            text-align: center;
+            padding: 32px 24px;
+            border-top: 1px solid var(--border);
+            margin-top: 48px;
+        }
+
+        .footer-text {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .footer-quote {
+            font-size: 12px;
+            color: var(--gold);
+            font-style: italic;
+        }
+
+        /* ═══ RESPONSIVE ═══ */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .controls {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+
+        /* ═══ HIDDEN ═══ */
+        .hidden {
+            display: none !important;
+        }
+
+        /* ═══ QUICK STATS ═══ */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">🐉</div>
+                <div class="logo-text">
+                    WINDI PORTAL
+                    <span data-i18n="subtitle">Internal Control Center</span>
+                </div>
+            </div>
+            <div class="controls">
+                <div class="lang-toggle">
+                    <button class="btn" data-lang="pt">PT</button>
+                    <button class="btn active" data-lang="en">EN</button>
+                    <button class="btn" data-lang="de">DE</button>
+                </div>
+                <button class="btn theme-toggle" id="theme-toggle">KLAR</button>
+                <div class="status-badge">
+                    <div class="status-dot"></div>
+                    <span data-i18n="systems_online">Systems Online</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <!-- Quick Stats -->
+        <div class="quick-stats">
+            <div class="stat-card">
+                <div class="stat-value" id="stat-total">35</div>
+                <div class="stat-label" data-i18n="total_services">Total Services</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="stat-live">32</div>
+                <div class="stat-label" data-i18n="live_now">Live Now</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="stat-ports">25</div>
+                <div class="stat-label" data-i18n="active_ports">Active Ports</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">I9</div>
+                <div class="stat-label" data-i18n="governance">Governance Gate</div>
+            </div>
+        </div>
+
+        <!-- Search -->
+        <div class="search-container">
+            <input type="text" class="search-input" id="search" data-i18n-placeholder="search_placeholder" placeholder="Search services, ports, features...">
+        </div>
+
+        <!-- Categories -->
+        <div id="categories-container">
+            <!-- Populated by JS -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-text">WINDI Publishing House · Liga IA+H · Kempten, Bavaria</div>
+        <div class="footer-quote">"AI processes. Human decides. WINDI guarantees."</div>
+    </footer>
+
+    <script>
+        // ═══════════════════════════════════════════════
+        // WINDI PORTAL · Internal Control Center
+        // ═══════════════════════════════════════════════
+
+        const i18n = {
+            en: {
+                subtitle: "Internal Control Center",
+                systems_online: "Systems Online",
+                total_services: "Total Services",
+                live_now: "Live Now",
+                active_ports: "Active Ports",
+                governance: "Governance Gate",
+                search_placeholder: "Search services, ports, features...",
+                cat_dashboards: "Dashboards & Control Panels",
+                cat_video: "Video & Media Processing",
+                cat_legal: "Legal & Compliance",
+                cat_integration: "Integration & Distribution",
+                cat_infrastructure: "Infrastructure & Monitoring",
+                cat_api: "APIs & Developer Tools",
+                cat_deprecated: "Deprecated / Legacy"
+            },
+            pt: {
+                subtitle: "Centro de Controle Interno",
+                systems_online: "Sistemas Online",
+                total_services: "Total de Serviços",
+                live_now: "Ao Vivo",
+                active_ports: "Portas Activas",
+                governance: "Gate de Governança",
+                search_placeholder: "Buscar serviços, portas, recursos...",
+                cat_dashboards: "Dashboards & Painéis de Controle",
+                cat_video: "Processamento de Vídeo & Média",
+                cat_legal: "Legal & Compliance",
+                cat_integration: "Integração & Distribuição",
+                cat_infrastructure: "Infraestrutura & Monitoramento",
+                cat_api: "APIs & Ferramentas de Desenvolvimento",
+                cat_deprecated: "Deprecado / Legado"
+            },
+            de: {
+                subtitle: "Internes Kontrollzentrum",
+                systems_online: "Systeme Online",
+                total_services: "Gesamtdienste",
+                live_now: "Jetzt Live",
+                active_ports: "Aktive Ports",
+                governance: "Governance Gate",
+                search_placeholder: "Dienste, Ports, Funktionen suchen...",
+                cat_dashboards: "Dashboards & Kontrollpanels",
+                cat_video: "Video & Medienverarbeitung",
+                cat_legal: "Recht & Compliance",
+                cat_integration: "Integration & Verteilung",
+                cat_infrastructure: "Infrastruktur & Überwachung",
+                cat_api: "APIs & Entwicklertools",
+                cat_deprecated: "Veraltet / Legacy"
+            }
+        };
+
+        const services = [
+            // ═══ DASHBOARDS & CONTROL PANELS ═══
+            {
+                category: "dashboards",
+                name: "W-CACHE-001 NOIR",
+                port: 8160,
+                url: "/wcache/noir",
+                status: "live",
+                description: {
+                    en: "Verifiable Cache Layer dashboard. Real-time metrics, temporal integrity, proof tracking.",
+                    pt: "Dashboard da Camada de Cache Verificável. Métricas em tempo real, integridade temporal.",
+                    de: "Verifiable Cache Layer Dashboard. Echtzeit-Metriken, zeitliche Integrität."
+                },
+                tags: ["cache", "temporal", "proof"],
+                invariants: ["I11", "I14"],
+                accent: "#60A5FA"
+            },
+            {
+                category: "dashboards",
+                name: "W-ENTERPRISE-001 DESK",
+                port: 8150,
+                url: "/enterprise/static/desk.html",
+                status: "live",
+                description: {
+                    en: "AI Compliance Dashboard v4.1. 9 Shelves: Control Room, PHO Queue, Documents, Legal, Ledger.",
+                    pt: "Dashboard de Compliance IA v4.1. 9 Prateleiras: Sala de Controle, Fila PHO, Documentos.",
+                    de: "AI Compliance Dashboard v4.1. 9 Regale: Kontrollraum, PHO-Warteschlange, Dokumente."
+                },
+                tags: ["compliance", "VERA", "PHO", "EU AI Act"],
+                invariants: ["I1", "I9", "I11"],
+                accent: "#C9A84C"
+            },
+            {
+                category: "dashboards",
+                name: "W-ENTERPRISE Operator",
+                port: 8150,
+                url: "/enterprise/operator",
+                status: "live",
+                description: {
+                    en: "OVS Capacity Amplifier. Strategic positioning for Digital Risk, TPO, Internal Auditor.",
+                    pt: "Amplificador de Capacidade OVS. Posicionamento estratégico para Risk Digital, TPO, Auditor.",
+                    de: "OVS Kapazitätsverstärker. Strategische Positionierung für Digital Risk, TPO, Auditor."
+                },
+                tags: ["OVS", "capacity", "profiles"],
+                invariants: ["I9"],
+                accent: "#C9A84C"
+            },
+            {
+                category: "dashboards",
+                name: "W-UDB-001 God View",
+                port: 8140,
+                url: "/udb/",
+                status: "live",
+                description: {
+                    en: "Unified Dashboard. 5 Zones: Forensic Hub, Mass Pulse, Ledger Integrity, Vision, Metrics.",
+                    pt: "Dashboard Unificado. 5 Zonas: Hub Forense, Pulso em Massa, Integridade Ledger.",
+                    de: "Einheitliches Dashboard. 5 Zonen: Forensic Hub, Massenpuls, Ledger-Integrität."
+                },
+                tags: ["SSE", "real-time", "zones"],
+                invariants: ["I9", "I11"],
+                accent: "#22D3EE"
+            },
+            {
+                category: "dashboards",
+                name: "War Room",
+                port: 8090,
+                url: "/war-room/",
+                status: "live",
+                description: {
+                    en: "PPTX Engine & Presentation Synthesis. WebSocket real-time aggregation.",
+                    pt: "Motor PPTX & Síntese de Apresentações. Agregação em tempo real via WebSocket.",
+                    de: "PPTX-Engine & Präsentationssynthese. WebSocket-Echtzeitaggregation."
+                },
+                tags: ["PPTX", "WebSocket", "synthesis"],
+                invariants: [],
+                accent: "#FB923C"
+            },
+            {
+                category: "dashboards",
+                name: "W-VERIFY-PUBLIC",
+                port: 8145,
+                url: "/verify-public/",
+                status: "live",
+                description: {
+                    en: "Public verification portal. No login required. QR codes, Berlin pitch ready.",
+                    pt: "Portal de verificação pública. Sem login. QR codes, pronto para Berlin pitch.",
+                    de: "Öffentliches Verifizierungsportal. Kein Login erforderlich. QR-Codes."
+                },
+                tags: ["verify", "public", "QR"],
+                invariants: ["I11", "I14"],
+                accent: "#4ADE80"
+            },
+
+            // ═══ LEGAL & COMPLIANCE ═══
+            {
+                category: "legal",
+                name: "WINDI-LAW Dashboard",
+                port: 8122,
+                url: "/law/",
+                status: "sealed",
+                description: {
+                    en: "Dragon Shadow Forest + AI Draft. 8 doc types: NDA, Vertrag, Vollmacht, Mahnung...",
+                    pt: "Dragon Shadow Forest + AI Draft. 8 tipos: NDA, Contrato, Procuração, Cobrança...",
+                    de: "Dragon Shadow Forest + AI Draft. 8 Dokumenttypen: NDA, Vertrag, Vollmacht..."
+                },
+                tags: ["legal", "AI draft", "dragon"],
+                invariants: ["I9", "I11", "I14"],
+                accent: "#A78BFA"
+            },
+            {
+                category: "legal",
+                name: "W-LEGAL-001 Justiça",
+                port: 8091,
+                url: "/legal/",
+                status: "live",
+                description: {
+                    en: "Sovereign Legal Dashboard. Contract lifecycle, compliance visualization.",
+                    pt: "Dashboard Legal Soberano. Ciclo de contratos, visualização de compliance.",
+                    de: "Souveränes Rechts-Dashboard. Vertragslebenszyklus, Compliance-Visualisierung."
+                },
+                tags: ["contracts", "compliance"],
+                invariants: ["I9"],
+                accent: "#22D3EE"
+            },
+            {
+                category: "legal",
+                name: "W-NOTARY-001 Cera Digital",
+                port: 8091,
+                url: "/notary/",
+                status: "live",
+                description: {
+                    en: "Notarial Dashboard. Seal management, document witness, cryptographic proof.",
+                    pt: "Dashboard Notarial. Gestão de selos, testemunho de documentos, prova criptográfica.",
+                    de: "Notar-Dashboard. Siegelverwaltung, Dokumentenzeuge, kryptografischer Beweis."
+                },
+                tags: ["notary", "seals", "witness"],
+                invariants: ["I11"],
+                accent: "#FACC15"
+            },
+            {
+                category: "legal",
+                name: "W-AUDIT-001 Money Flow",
+                port: 8091,
+                url: "/audit/",
+                status: "live",
+                description: {
+                    en: "Audit Dashboard. Financial flow radar, audit trail tracking, compliance status.",
+                    pt: "Dashboard de Auditoria. Radar de fluxo financeiro, rastreamento de trilha de auditoria.",
+                    de: "Audit-Dashboard. Finanzfluss-Radar, Audit-Trail-Tracking, Compliance-Status."
+                },
+                tags: ["audit", "finance", "radar"],
+                invariants: ["I9", "I11"],
+                accent: "#22D3EE"
+            },
+
+            // ═══ VIDEO & MEDIA ═══
+            {
+                category: "video",
+                name: "VD-CUT-001 Forensic",
+                port: 8128,
+                url: "/vd-cut/",
+                status: "sealed",
+                description: {
+                    en: "Forensic Video Evidence. I9 Direct approval, frame integrity, SHA-256 sealing.",
+                    pt: "Evidência de Vídeo Forense. Aprovação I9 directa, integridade de frames, selagem SHA-256.",
+                    de: "Forensische Videobeweise. I9 direkte Genehmigung, Frame-Integrität, SHA-256."
+                },
+                tags: ["forensic", "video", "SHA-256"],
+                invariants: ["I9", "I11"],
+                accent: "#F87171"
+            },
+            {
+                category: "video",
+                name: "VD-MASS-001 Batch",
+                port: 8131,
+                url: "/vd-mass/",
+                status: "live",
+                description: {
+                    en: "Mass Pulse batch processing. I9-P Policy engine, MLT/Shotcut integration.",
+                    pt: "Processamento em lote Mass Pulse. Motor de políticas I9-P, integração MLT/Shotcut.",
+                    de: "Mass Pulse Stapelverarbeitung. I9-P Policy Engine, MLT/Shotcut-Integration."
+                },
+                tags: ["batch", "MLT", "policy"],
+                invariants: ["I9-P", "I11"],
+                accent: "#FB923C"
+            },
+            {
+                category: "video",
+                name: "W-COMPOSER-001",
+                port: 8140,
+                url: "/udb/",
+                status: "live",
+                description: {
+                    en: "Sovereign Collage Engine. MLT composition, dual-source forensic.",
+                    pt: "Motor de Colagem Soberano. Composição MLT, forense de fonte dupla.",
+                    de: "Souveräne Collage-Engine. MLT-Komposition, Dual-Source-Forensik."
+                },
+                tags: ["collage", "MLT", "composition"],
+                invariants: ["I9", "I11"],
+                accent: "#A78BFA"
+            },
+            {
+                category: "video",
+                name: "W-BRIDGE-001 HLS",
+                port: 8143,
+                url: "/watch/",
+                status: "live",
+                description: {
+                    en: "BIG-BRIDGE Gateway. HLS streaming, watch party functionality.",
+                    pt: "Gateway BIG-BRIDGE. Streaming HLS, funcionalidade watch party.",
+                    de: "BIG-BRIDGE Gateway. HLS-Streaming, Watch-Party-Funktionalität."
+                },
+                tags: ["HLS", "streaming", "watch"],
+                invariants: ["I11"],
+                accent: "#60A5FA"
+            },
+            {
+                category: "video",
+                name: "Tesoura Soberana v13",
+                port: 8126,
+                url: "/travel/tesoura-ui/",
+                status: "live",
+                description: {
+                    en: "Sovereign Scissors. Lasso, IA Touch flood fill, collage sealing to Ledger.",
+                    pt: "Tesoura Soberana. Laço, IA Touch flood fill, selagem de colagem no Ledger.",
+                    de: "Souveräne Schere. Lasso, IA Touch Flood Fill, Collage-Versiegelung."
+                },
+                tags: ["collage", "IA touch", "seal"],
+                invariants: ["I9", "I11"],
+                accent: "#4ADE80"
+            },
+
+            // ═══ INTEGRATION & DISTRIBUTION ═══
+            {
+                category: "integration",
+                name: "W-FEDIVERSE-001",
+                port: 8142,
+                url: "/fediverse/",
+                status: "live",
+                description: {
+                    en: "Glass Embassy. Mastodon + BlueSky parallel broadcast, federation protocol.",
+                    pt: "Embaixada de Vidro. Mastodon + BlueSky broadcast paralelo, protocolo de federação.",
+                    de: "Glas-Botschaft. Mastodon + BlueSky parallele Übertragung."
+                },
+                tags: ["fediverse", "Mastodon", "BlueSky"],
+                invariants: ["I9", "I11"],
+                accent: "#A78BFA"
+            },
+            {
+                category: "integration",
+                name: "W-NOMAD-001 Telegram",
+                port: 8127,
+                url: "/telegram/webhook/",
+                status: "live",
+                description: {
+                    en: "@windi_nomad_bot. Human translation layer, no-jargon filter.",
+                    pt: "@windi_nomad_bot. Camada de tradução humana, filtro sem jargão.",
+                    de: "@windi_nomad_bot. Menschliche Übersetzungsschicht, Jargon-Filter."
+                },
+                tags: ["Telegram", "bot", "voice"],
+                invariants: ["I9", "I12"],
+                accent: "#60A5FA"
+            },
+            {
+                category: "integration",
+                name: "W-JMPG-001 Proof Cards",
+                port: 8132,
+                url: "/comm/jmpg/",
+                status: "live",
+                description: {
+                    en: "Proof Card Renderer. /comm/publish endpoint, receipt visualization.",
+                    pt: "Renderizador de Proof Cards. Endpoint /comm/publish, visualização de receipts.",
+                    de: "Proof Card Renderer. /comm/publish Endpunkt, Receipt-Visualisierung."
+                },
+                tags: ["JMPG", "proof cards", "publish"],
+                invariants: ["I11"],
+                accent: "#FACC15"
+            },
+            {
+                category: "integration",
+                name: "WINDI Travel",
+                port: 8126,
+                url: "/travel/",
+                status: "live",
+                description: {
+                    en: "Travel Management. Booking, identity gate, collage interface.",
+                    pt: "Gestão de Viagens. Reservas, gate de identidade, interface de colagem.",
+                    de: "Reisemanagement. Buchung, Identitäts-Gate, Collage-Interface."
+                },
+                tags: ["travel", "booking", "identity"],
+                invariants: ["I9", "I11"],
+                accent: "#22D3EE"
+            },
+
+            // ═══ INFRASTRUCTURE & MONITORING ═══
+            {
+                category: "infrastructure",
+                name: "W-SEC-001 Sentinel",
+                port: 8144,
+                url: "/sec/",
+                status: "sealed",
+                description: {
+                    en: "Security Sentinel. Dual correlation (behavioral + technical), Telegram alerts.",
+                    pt: "Sentinela de Segurança. Correlação dual (comportamental + técnica), alertas Telegram.",
+                    de: "Sicherheits-Sentinel. Duale Korrelation (Verhalten + Technik), Telegram-Alerts."
+                },
+                tags: ["security", "correlation", "alerts"],
+                invariants: ["I9", "I11"],
+                accent: "#F87171"
+            },
+            {
+                category: "infrastructure",
+                name: "Forensic Ledger",
+                port: 8101,
+                url: "/ledger/",
+                status: "sealed",
+                description: {
+                    en: "Core receipt storage. Immutable proof chain, SHA-256 integrity.",
+                    pt: "Armazenamento central de receipts. Cadeia de prova imutável, integridade SHA-256.",
+                    de: "Kern-Receipt-Speicher. Unveränderliche Beweiskette, SHA-256-Integrität."
+                },
+                tags: ["ledger", "receipts", "core"],
+                invariants: ["I11"],
+                accent: "#C9A84C"
+            },
+            {
+                category: "infrastructure",
+                name: "Dragon Hub",
+                port: 8108,
+                url: "/api/dragon/",
+                status: "live",
+                description: {
+                    en: "LLM routing hub. Mistral 93%, Anthropic 7%. Three Dragons protocol.",
+                    pt: "Hub de roteamento LLM. Mistral 93%, Anthropic 7%. Protocolo Three Dragons.",
+                    de: "LLM-Routing-Hub. Mistral 93%, Anthropic 7%. Three Dragons Protokoll."
+                },
+                tags: ["LLM", "routing", "dragons"],
+                invariants: ["I9", "I10"],
+                accent: "#FB923C"
+            },
+
+            // ═══ APIs & DEVELOPER ═══
+            {
+                category: "api",
+                name: "W-DEV-API-001",
+                port: 8200,
+                url: "/dev-api/",
+                status: "live",
+                description: {
+                    en: "Developer API. 4-tier access system, documentation, Verify Bridge.",
+                    pt: "API de Desenvolvimento. Sistema de acesso em 4 tiers, documentação, Verify Bridge.",
+                    de: "Entwickler-API. 4-stufiges Zugriffssystem, Dokumentation, Verify Bridge."
+                },
+                tags: ["API", "developers", "tiers"],
+                invariants: ["I9", "I11"],
+                accent: "#4ADE80"
+            },
+            {
+                category: "api",
+                name: "W-CACHE-001 API",
+                port: 8160,
+                url: "/wcache/api/cache/v1/",
+                status: "live",
+                description: {
+                    en: "Verifiable Cache API. GET/PUT/PROMOTE/INVALIDATE operations.",
+                    pt: "API de Cache Verificável. Operações GET/PUT/PROMOTE/INVALIDATE.",
+                    de: "Verifiable Cache API. GET/PUT/PROMOTE/INVALIDATE Operationen."
+                },
+                tags: ["cache", "API", "temporal"],
+                invariants: ["I11", "I14"],
+                accent: "#60A5FA"
+            },
+
+            // ═══ DEPRECATED ═══
+            {
+                category: "deprecated",
+                name: "Desktop GEN 7",
+                port: 8119,
+                url: "/desktop/",
+                status: "deprecated",
+                description: {
+                    en: "Legacy Desktop Editor. 7 engines. Deprecated per DECREE-001 Art.6.",
+                    pt: "Editor Desktop Legado. 7 motores. Deprecado conforme DECREE-001 Art.6.",
+                    de: "Legacy Desktop Editor. 7 Engines. Veraltet gemäß DECREE-001 Art.6."
+                },
+                tags: ["legacy", "canvas", "deprecated"],
+                invariants: [],
+                accent: "#5A5A54"
+            }
+        ];
+
+        const categories = [
+            { id: "dashboards", icon: "📊", key: "cat_dashboards" },
+            { id: "legal", icon: "⚖️", key: "cat_legal" },
+            { id: "video", icon: "🎬", key: "cat_video" },
+            { id: "integration", icon: "🔗", key: "cat_integration" },
+            { id: "infrastructure", icon: "🏗️", key: "cat_infrastructure" },
+            { id: "api", icon: "🔌", key: "cat_api" },
+            { id: "deprecated", icon: "📦", key: "cat_deprecated" }
+        ];
+
+        let currentLang = localStorage.getItem('windi-lang') || 'en';
+        let currentTheme = localStorage.getItem('windi-theme') || 'noir';
+
+        // ─── Theme ───
+        function setTheme(theme) {
+            currentTheme = theme;
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('windi-theme', theme);
+            document.getElementById('theme-toggle').textContent = theme === 'noir' ? 'KLAR' : 'NOIR';
+        }
+
+        document.getElementById('theme-toggle').addEventListener('click', () => {
+            setTheme(currentTheme === 'noir' ? 'klar' : 'noir');
+        });
+
+        // ─── Language ───
+        function setLang(lang) {
+            currentLang = lang;
+            localStorage.setItem('windi-lang', lang);
+            document.querySelectorAll('.lang-toggle .btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+            updateTexts();
+            render();
+        }
+
+        document.querySelectorAll('.lang-toggle .btn').forEach(btn => {
+            btn.addEventListener('click', () => setLang(btn.dataset.lang));
+        });
+
+        function t(key) {
+            return i18n[currentLang]?.[key] || i18n.en[key] || key;
+        }
+
+        function updateTexts() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                el.textContent = t(el.dataset.i18n);
+            });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                el.placeholder = t(el.dataset.i18nPlaceholder);
+            });
+        }
+
+        // ─── Render ───
+        function render(filter = '') {
+            const container = document.getElementById('categories-container');
+            const filterLower = filter.toLowerCase();
+
+            let html = '';
+
+            categories.forEach(cat => {
+                const catServices = services.filter(s => {
+                    if (s.category !== cat.id) return false;
+                    if (!filter) return true;
+
+                    const searchable = [
+                        s.name,
+                        s.port.toString(),
+                        s.description[currentLang] || s.description.en,
+                        ...s.tags,
+                        ...s.invariants
+                    ].join(' ').toLowerCase();
+
+                    return searchable.includes(filterLower);
+                });
+
+                if (catServices.length === 0) return;
+
+                html += `
+                    <div class="category">
+                        <div class="category-header">
+                            <span class="category-icon">${cat.icon}</span>
+                            <span class="category-title">${t(cat.key)}</span>
+                            <span class="category-count">${catServices.length}</span>
+                        </div>
+                        <div class="services-grid">
+                            ${catServices.map(s => `
+                                <a href="${s.url}" target="_blank" class="service-card" style="--accent-color: ${s.accent}">
+                                    <div class="card-header">
+                                        <div>
+                                            <div class="card-title">${s.name}</div>
+                                            <div class="card-port">:${s.port}</div>
+                                        </div>
+                                        <span class="card-status ${s.status}">${s.status.toUpperCase()}</span>
+                                    </div>
+                                    <div class="card-description">${s.description[currentLang] || s.description.en}</div>
+                                    <div class="card-tags">
+                                        ${s.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                                        ${s.invariants.map(inv => `<span class="tag invariant">${inv}</span>`).join('')}
+                                    </div>
+                                </a>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html || '<div style="text-align:center;color:var(--text-muted);padding:48px;">No services match your search</div>';
+        }
+
+        // ─── Search ───
+        document.getElementById('search').addEventListener('input', (e) => {
+            render(e.target.value);
+        });
+
+        // ─── Init ───
+        setTheme(currentTheme);
+        setLang(currentLang);
+        render();
+    </script>
+</body>
+</html>

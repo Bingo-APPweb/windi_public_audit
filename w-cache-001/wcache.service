@@ -1,0 +1,29 @@
+# ═══════════════════════════════════════════════
+# W-CACHE-001 · SYSTEMD SERVICE
+# Verifiable Cache Layer for Regulated Systems
+# Port: 8160
+# ═══════════════════════════════════════════════
+
+[Unit]
+Description=W-CACHE-001 Verifiable Cache Layer
+After=network.target
+
+[Service]
+Type=simple
+User=windi
+Group=windi
+WorkingDirectory=/opt/windi/w-cache-001/app
+Environment="PATH=/opt/windi/w-cache-001/venv/bin"
+Environment="WCACHE_PORT=8160"
+Environment="WCACHE_DATABASE_URL=sqlite:////opt/windi/w-cache-001/data/wcache.db"
+Environment="LEDGER_URL=http://localhost:8101"
+ExecStart=/opt/windi/w-cache-001/venv/bin/python main.py
+Restart=always
+RestartSec=5
+
+# Logging
+StandardOutput=append:/var/log/windi/wcache.log
+StandardError=append:/var/log/windi/wcache-error.log
+
+[Install]
+WantedBy=multi-user.target
