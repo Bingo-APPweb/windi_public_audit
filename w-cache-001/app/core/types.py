@@ -195,3 +195,5 @@ class PromoteRequest(BaseModel):
     verify_url: Optional[str] = None
     anchor_to_ledger: bool = False
     promotion_reason: str = "MANUAL_PROMOTION"
+    # W-CACHE-002: Human approval gate for enterprise/legal namespaces
+    human_approved: bool = False
