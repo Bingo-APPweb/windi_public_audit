@@ -4,7 +4,10 @@
 # ═══════════════════════════════════════════════
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
+import asyncio
+import json
 
 from db.session import get_db
 from services.cache_service import CacheService
@@ -12,6 +15,7 @@ from core.types import (
     CacheReadRequest, CacheWriteRequest,
     InvalidateRequest, PromoteRequest
 )
+from core.policy_engine import get_policy_registry
 
 router = APIRouter()
 
@@ -168,3 +172,22 @@ def get_events(
     Returns promotion, hit, miss, and failure events.
     """
     return service.get_events(limit=limit)
+
+
+# ──────────────────────────────────────────────
+# POLICY REGISTRY (W-CACHE-002)
+# ──────────────────────────────────────────────
+
+@router.get("/policy")
+def get_policy():
+    """
+    Get current policy registry.
+
+    🔥 W-CACHE-002: Shows which namespaces require human approval,
+    which auto-promote, and the mode (REFERENTIAL vs ANCHORED).
+    """
+    return {
+        "ok": True,
+        "version": "W-CACHE-002",
+        "policies": get_policy_registry()
+    }
