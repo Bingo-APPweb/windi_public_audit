@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.2.8
-**Sealed:** 2026-04-13 · §165 WINDI Portal
+**Version:** 2.2.9
+**Sealed:** 2026-04-13 · §166 Full Dashboard Audit
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -448,6 +448,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 13 Apr | **§166 Full Dashboard Audit** · 10 NOIR/KLAR dashboards · nginx patcher · 20/20 services · `26b0da2` |
 | 13 Apr | **§165 WINDI Portal** · Internal Control Center · 35 Services · 7 Categories · `77f82e2` |
 | 13 Apr | **§164 W-CACHE-001** · Verifiable Cache Layer · L2→L3 Promotion · NOIR Dashboard · :8160 |
 | 13 Apr | **§163 DECRETO-001** · A Árvore Viva · DID Sovereign · Living Tree CONSTITUTIONAL |
@@ -555,6 +556,31 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 **Features:** Search · NOIR/KLAR · i18n PT/DE/EN · Quick Stats · Status badges
 **Frase:** *"A complexidade não desapareceu. Ela foi organizada."*
+
+### §166 — Full Dashboard Audit (13 Apr 2026)
+
+**Commit:** `26b0da2` · **Files:** 7 changed, 2099 insertions
+
+**Problema:** 10 links do Portal retornavam 404 (APIs sem interface web)
+**Solução:** Criar dashboards NOIR/KLAR trilíngues + patch nginx
+
+**Dashboards Criados (6):**
+| Dashboard | Ficheiro | Tamanho |
+|-----------|----------|---------|
+| W-SEC-001 | `/opt/windi/sec-dashboard/index.html` | 17KB |
+| W-JOE-001 | `/opt/windi/joe-dashboard/index.html` | 16KB |
+| W-VD-CUT-001 | `/opt/windi/vdcut-dashboard/index.html` | 16KB |
+| W-VD-MASS-001 | `/opt/windi/vdmass-dashboard/index.html` | 16KB |
+| Ledger Info | `/opt/windi/ledger-info/index.html` | 7KB |
+| Watch Info | `/opt/windi/watch-info/index.html` | 6KB |
+
+**Nginx Patched:** `patch_nginx_dashboards.py`
+- 7 rotas convertidas (proxy → static alias)
+- 2 rotas adicionadas (ledger, audit-dash)
+- fediverse corrigido (proxy path)
+
+**Portal:** `/audit/` → `/audit-dash/` (evitar conflito API)
+**Resultado:** 20/20 serviços operacionais
 
 ---
 

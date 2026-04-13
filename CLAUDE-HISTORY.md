@@ -7427,3 +7427,126 @@ It's independently verifiable proof."
 **Sealed:** 11 Apr 2026 · Human Dragon · Liga IA+H
 
 ---
+
+## §166 — Full Dashboard Audit (13 Apr 2026)
+
+**Commit:** `26b0da2` · **Files:** 7 changed, 2099 insertions(+)
+**Invariants:** I9, I11, I14 · **Resultado:** 20/20 serviços operacionais
+
+### Contexto
+
+O WINDI Portal (§165) listava 35 serviços, mas 10 links retornavam 404:
+- Rotas nginx apontavam para APIs sem interface web
+- Dashboards HTML existiam mas sem rotas
+- Alguns serviços não tinham dashboard
+
+### Solução
+
+**1. Diagnóstico Completo:**
+```
+✅ OK:        11 serviços (wcache, enterprise, travel, etc.)
+⚠️ Down:     1 serviço (udb - 502)
+❌ 404:      10 serviços (legal, notary, audit, sec, joe, vd-cut, vd-mass, fediverse, ledger, watch)
+```
+
+**2. Dashboards Criados (6 novos):**
+| Dashboard | Ficheiro | Features |
+|-----------|----------|----------|
+| W-SEC-001 | `/opt/windi/sec-dashboard/index.html` | Security Sentinel · Invariants I9,I11 |
+| W-JOE-001 | `/opt/windi/joe-dashboard/index.html` | Story Graph + ProofStream |
+| W-VD-CUT-001 | `/opt/windi/vdcut-dashboard/index.html` | Forensic Video · CERTIFIED badge |
+| W-VD-MASS-001 | `/opt/windi/vdmass-dashboard/index.html` | Batch Processing · MLT/SHOTCUT |
+| Ledger Info | `/opt/windi/ledger-info/index.html` | API-only info page |
+| Watch Info | `/opt/windi/watch-info/index.html` | Bridge watch info page |
+
+**Características de todos os dashboards:**
+- NOIR/KLAR theme toggle (☀/☽)
+- Trilingual i18n (PT/DE/EN)
+- Health status polling (30s)
+- Constitutional invariants displayed
+- Quick links to Portal
+- localStorage persistence
+
+**3. Dashboards Existentes Activados (3):**
+- `/opt/windi/legal-dashboard/index.html` (22KB)
+- `/opt/windi/notary-dashboard/index.html` (22KB)
+- `/opt/windi/audit-dashboard/index.html` (49KB)
+
+**4. Nginx Patcher:**
+Ficheiro: `/home/windi/patch_nginx_dashboards.py`
+
+```python
+# Rotas convertidas (proxy → static alias):
+REPLACEMENTS = {
+    "/legal/": "/opt/windi/legal-dashboard/",
+    "/notary/": "/opt/windi/notary-dashboard/",
+    "/sec/": "/opt/windi/sec-dashboard/",
+    "/vd-cut/": "/opt/windi/vdcut-dashboard/",
+    "/vd-mass/": "/opt/windi/vdmass-dashboard/",
+    "/joe/": "/opt/windi/joe-dashboard/",
+    "/watch/": "/opt/windi/watch-info/",
+}
+
+# Rotas adicionadas:
+- /ledger/ → /opt/windi/ledger-info/
+- /audit-dash/ → /opt/windi/audit-dashboard/
+```
+
+**5. Fixes Adicionais:**
+- Fediverse: `proxy_pass http://127.0.0.1:8142/fediverse/` → `http://127.0.0.1:8142/`
+- Portal: `/audit/` → `/audit-dash/` (evitar conflito com API)
+- UDB: Reiniciado (porta 8140)
+
+### Verificação Final
+
+```
+╔════════════════════════════════════════════════════════════════════╗
+║              WINDI PORTAL - FINAL STATUS CHECK                     ║
+╚════════════════════════════════════════════════════════════════════╝
+
+  ✅ travel         200    ✅ legal          200
+  ✅ desktop        200    ✅ notary         200
+  ✅ enterprise     200    ✅ verify         200
+  ✅ ledger         200    ✅ joe            200
+  ✅ fediverse      200    ✅ watch          200
+  ✅ dev-api        200    ✅ audit-dash     200
+  ✅ war-room       200    ✅ vd-cut         200
+  ✅ wcache         200    ✅ portal         200
+  ✅ vd-mass        200    ✅ udb            200
+  ✅ law            200    ✅ sec            200
+
+═══════════════════════════════════════════════════════════════════
+  Total: 20 | ✅ OK: 20 | ❌ Failed: 0
+═══════════════════════════════════════════════════════════════════
+```
+
+### URLs Novas
+
+| Dashboard | URL |
+|-----------|-----|
+| Legal | https://windi-domain.com/legal/ |
+| Notary | https://windi-domain.com/notary/ |
+| Audit | https://windi-domain.com/audit-dash/ |
+| SEC | https://windi-domain.com/sec/ |
+| JOE | https://windi-domain.com/joe/ |
+| VD-CUT | https://windi-domain.com/vd-cut/ |
+| VD-MASS | https://windi-domain.com/vd-mass/ |
+| Ledger | https://windi-domain.com/ledger/ |
+| Watch | https://windi-domain.com/watch/ |
+| Fediverse | https://windi-domain.com/fediverse/ |
+
+### Hooks Verificados
+
+```
+✅ nginx audit PASS — all routes covered
+✅ WINDI-LAW Feature Lock — 23/23 features verified
+```
+
+### Doutrina §166
+
+> **"A complexidade não desapareceu. Ela foi organizada."**
+> — WINDI Portal
+
+**Sealed:** 13 Apr 2026 · Human Dragon + Architect · Liga IA+H
+
+---
