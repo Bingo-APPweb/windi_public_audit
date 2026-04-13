@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI — EU AI Act Deck</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  background: #0a0a0a;
+  color: #f5f0e0;
+  font-weight: 400;
+}
+
+.slide {
+  min-height: 100vh;
+  padding: 80px 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  page-break-after: always;
+  border-bottom: 1px solid #151515;
+}
+
+h1 {
+  font-size: 52px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  letter-spacing: -1px;
+  line-height: 1.1;
+}
+
+h2 {
+  font-size: 26px;
+  color: #c9a84c;
+  font-weight: 500;
+  margin-bottom: 16px;
+  letter-spacing: 0.5px;
+}
+
+p {
+  font-size: 24px;
+  max-width: 780px;
+  line-height: 1.65;
+  margin-bottom: 14px;
+}
+
+.subtitle {
+  font-size: 20px;
+  color: #888;
+  margin-top: 8px;
+  letter-spacing: 1px;
+}
+
+.quote {
+  font-style: italic;
+  color: #777;
+  margin-top: 28px;
+  border-left: 3px solid #c9a84c;
+  padding-left: 24px;
+}
+
+.list {
+  margin-top: 24px;
+  margin-left: 0;
+}
+
+.list p {
+  margin-bottom: 10px;
+  padding-left: 0;
+}
+
+.table {
+  margin-top: 36px;
+}
+
+.table-row {
+  display: flex;
+  margin: 18px 0;
+  font-size: 22px;
+  align-items: baseline;
+}
+
+.table-row .label {
+  width: 220px;
+  color: #888;
+  font-weight: 500;
+}
+
+.table-row .value {
+  color: #f5f0e0;
+}
+
+.table-row .arrow {
+  color: #c9a84c;
+  margin-right: 12px;
+}
+
+.highlight {
+  color: #c9a84c;
+}
+
+.small {
+  font-size: 18px;
+  color: #555;
+  margin-top: 48px;
+  line-height: 1.8;
+}
+
+.validation {
+  margin-top: 40px;
+  padding: 20px 24px;
+  background: #0f0f0f;
+  border-left: 3px solid #c9a84c;
+  font-size: 20px;
+  color: #999;
+}
+
+.logo {
+  font-size: 13px;
+  color: #333;
+  position: fixed;
+  bottom: 28px;
+  right: 40px;
+  letter-spacing: 2px;
+}
+
+.center {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Print styles */
+@media print {
+  .slide {
+    page-break-after: always;
+    border-bottom: none;
+  }
+  .logo {
+    position: absolute;
+  }
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- SLIDE 1: TITLE -->
+<section class="slide center">
+  <h1>WINDI</h1>
+  <h2>Verifiable Infrastructure for AI Governance</h2>
+  <p class="subtitle">Operationalizing EU AI Act Compliance</p>
+</section>
+
+<!-- SLIDE 2: CONTEXT -->
+<section class="slide">
+  <h1>EU AI Act</h1>
+  <p>AI systems must include <span class="highlight">human oversight</span>.</p>
+  <p class="quote">But the regulation does not define how oversight is proven.</p>
+</section>
+
+<!-- SLIDE 3: PROBLEM -->
+<section class="slide">
+  <h1>The Problem</h1>
+  <p>Compliance today is <span class="highlight">declared</span> — not independently verifiable.</p>
+  <div class="list" style="margin-top: 36px;">
+    <p>Logs can be altered.</p>
+    <p>Decisions cannot be externally audited.</p>
+    <p>Oversight leaves no persistent evidence.</p>
+  </div>
+</section>
+
+<!-- SLIDE 4: THE GAP -->
+<section class="slide">
+  <h1>The Proof Gap</h1>
+  <p>There is no independent mechanism</p>
+  <p>to verify <span class="highlight">what was allowed to bind</span>.</p>
+</section>
+
+<!-- SLIDE 5: SOLUTION -->
+<section class="slide">
+  <h1>Solution</h1>
+  <h2>Proof of Human Oversight (PHO)</h2>
+  <p class="quote" style="margin-top: 48px; font-size: 26px;">
+    AI proposes → Human decides → WINDI seals → Ledger proves
+  </p>
+</section>
+
+<!-- SLIDE 6: HOW IT WORKS -->
+<section class="slide">
+  <h1>How It Works</h1>
+  <div class="table">
+    <div class="table-row">
+      <span class="label">Integrity</span>
+      <span class="value">SHA-256 cryptographic hashing</span>
+    </div>
+    <div class="table-row">
+      <span class="label">Identity</span>
+      <span class="value">Decentralized Identifiers (DID)</span>
+    </div>
+    <div class="table-row">
+      <span class="label">Independence</span>
+      <span class="value">External ledger anchoring</span>
+    </div>
+    <div class="table-row">
+      <span class="label">Accessibility</span>
+      <span class="value">Public verification endpoint</span>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 7: POLICY ENGINE -->
+<section class="slide">
+  <h1>Policy Engine</h1>
+  <p><span class="highlight">Not everything that can be proven should be.</span></p>
+  <div class="list" style="margin-top: 36px;">
+    <p>Promotion governed by policy.</p>
+    <p>Human approval enforced at runtime.</p>
+    <p>Default denial when conditions are not met.</p>
+  </div>
+</section>
+
+<!-- SLIDE 8: ALIGNMENT -->
+<section class="slide">
+  <h1>EU AI Act Alignment</h1>
+  <div class="table">
+    <div class="table-row">
+      <span class="label">Human Oversight</span>
+      <span class="arrow">→</span>
+      <span class="value">PHO</span>
+    </div>
+    <div class="table-row">
+      <span class="label">Traceability</span>
+      <span class="arrow">→</span>
+      <span class="value">Forensic Ledger</span>
+    </div>
+    <div class="table-row">
+      <span class="label">Auditability</span>
+      <span class="arrow">→</span>
+      <span class="value">Public Verification</span>
+    </div>
+    <div class="table-row">
+      <span class="label">Risk Control</span>
+      <span class="arrow">→</span>
+      <span class="value">Policy Engine</span>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 9: LIVE SYSTEM -->
+<section class="slide">
+  <h1>Live System</h1>
+  <div class="list">
+    <p>Real-time observability dashboard</p>
+    <p>Streaming event architecture</p>
+    <p>Zero temporal inconsistencies</p>
+  </div>
+  <div class="validation">
+    Validated under load: 100% policy enforcement · 0 integrity violations
+  </div>
+</section>
+
+<!-- SLIDE 10: POSITION -->
+<section class="slide">
+  <h1>Position</h1>
+  <p>We do not propose regulation.</p>
+  <p class="quote">
+    We provide infrastructure that makes regulation <span class="highlight">enforceable</span>.
+  </p>
+</section>
+
+<!-- SLIDE 11: CONCLUSION -->
+<section class="slide">
+  <h1>Conclusion</h1>
+  <p style="font-size: 30px; margin-bottom: 8px;">If AI systems are regulated,</p>
+  <p style="font-size: 30px;"><span class="highlight">their behavior must be independently verifiable.</span></p>
+</section>
+
+<!-- SLIDE 12: CONTACT -->
+<section class="slide center">
+  <h1 style="font-size: 42px;">WINDI</h1>
+  <p class="small" style="margin-top: 40px; text-align: center;">
+    WINDI Publishing House<br>
+    Kempten, Bavaria<br><br>
+    windi-domain.com
+  </p>
+</section>
+
+<div class="logo">WINDI · 2026</div>
+
+</body>
+</html>
