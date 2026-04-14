@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.2.9
-**Sealed:** 2026-04-14 · §167 W-DID-GENESIS Audit
+**Version:** 2.2.10
+**Sealed:** 2026-04-14 · §168 VDT Academic Outreach
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -450,6 +450,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 14 Apr | **§168 VDT Academic Outreach** · IDT Kempten · HNU Neu-Ulm · PHO Framework · `c66fefe` |
 | 14 Apr | **§167 W-DID-GENESIS** · Sovereign Identity Audit · DID Canonical · MARIA Fix · 57k Receipts |
 | 13 Apr | **§165 WINDI Portal** · Internal Control Center · 35 Services · 7 Categories · `77f82e2` |
 | 13 Apr | **§164 W-CACHE-001** · Verifiable Cache Layer · L2→L3 Promotion · NOIR Dashboard · :8160 |
@@ -570,6 +571,43 @@ Anonymous → HTTPException 400 · Receipt `WINDI-MARIA-COMPLIANCE-FIX-20260414`
 
 **Princípio Descoberto:**
 > *"A Árvore não planeia os frutos. Responde às estações."*
+
+### §168 — VDT Academic Outreach (14 Apr 2026)
+
+**Commit:** `c66fefe` · **Invariants:** I9, I11, I14
+**Conceito:** Verifiable Digital Transformation — colaboração académica com universidades DACH.
+
+**Problema Central (Proof Gap):**
+> *"Sistemas podem documentar transformação. Não podem provar que foi executada."*
+
+**PHO Framework:** Proof of Human Oversight — camada criptográfica para learning systems.
+**Alinhamento:** EU AI Act Art.14 · GDPR Art.22 · GRC Market €65B
+
+**Outreach Enviado:**
+| Universidade | Status | Data | Contactos |
+|--------------|--------|------|-----------|
+| **HS Kempten (IDT)** | ✅ SENT | 14 Apr 16:26 | Prof. Winkler, Prof. Niedermeier, Dr. Müller-Kreiner + 8 CC |
+| **HNU Neu-Ulm (IDT)** | 🟡 PREPARED | — | Prof. Klaus Lang (fundador IDT) |
+| **bidt München** | 📋 RESEARCH | — | Prof. Sabine Pfeiffer (2026) |
+| **OST St. Gallen** | 📋 RESEARCH | — | LeBi Interreg region |
+
+**Ficheiros:**
+```
+/opt/windi/projects/vdt-kempten/
+├── VDT_Konzeptpapier_v1.1_DE.pdf   (b5d073be)
+├── VDT_Concept_Note_v1.1.pdf       (e654807c)
+├── vdt-project-vision-v1.html      (3a467ddc)
+├── outreach-tracker.md
+├── email_hnu_prepared.txt
+├── verification-hashes.txt
+└── tools/send_vdt_email.py
+```
+
+**Estratégia:**
+- Kempten = porta institucional (UE/research/LeBi)
+- HNU = porta prática (KMU/aplicação)
+- Timing: mínimo 4 dias entre envios
+- Follow-up: 7 dias silêncio → email elegante
 
 ---
 
