@@ -29,38 +29,38 @@ LEDGER_URL = "http://localhost:8101"
 # Services to monitor (systemd service names)
 WINDI_SERVICES = [
     # Core Infrastructure
-    {"name": "windi-suite-docs", "port": 8101, "display": "Forensic Ledger", "category": "core", "sealed": True},
-    {"name": "windi-dragon-chat", "port": 8108, "display": "Dragon Hub", "category": "core"},
-    {"name": "windi-desktop-gen7", "port": 8119, "display": "Desktop GEN7", "category": "core"},
-    {"name": "windi-governance", "port": 8080, "display": "Governance API", "category": "core"},
+    {"name": "windi-suite-docs", "port": 8101, "display": "Forensic Ledger", "category": "core", "sealed": True, "url": "/ledger/"},
+    {"name": "windi-dragon-chat", "port": 8108, "display": "Dragon Hub", "category": "core", "url": "/desktop/"},
+    {"name": "windi-desktop-gen7", "port": 8119, "display": "Desktop GEN7", "category": "core", "url": "/desktop/"},
+    {"name": "windi-governance", "port": 8080, "display": "Governance API", "category": "core", "url": "/governance/"},
 
     # Agents
-    {"name": "windi-law", "port": 8122, "display": "WINDI-LAW", "category": "agents", "sealed": True},
-    {"name": "windi-travel", "port": 8126, "display": "WINDI Travel", "category": "agents"},
-    {"name": "windi-nomad-bot", "port": 8127, "display": "W-NOMAD-001", "category": "agents"},
-    {"name": "windi-vd-cut", "port": 8128, "display": "W-VD-CUT-001", "category": "agents"},
-    {"name": "windi-joe", "port": 8129, "display": "W-JOE-001", "category": "agents"},
-    {"name": "windi-vd-mass", "port": 8131, "display": "W-VD-MASS-001", "category": "agents"},
-    {"name": "windi-jmpg", "port": 8132, "display": "W-JMPG-001", "category": "agents"},
+    {"name": "windi-law", "port": 8122, "display": "WINDI-LAW", "category": "agents", "sealed": True, "url": "/law/"},
+    {"name": "windi-travel", "port": 8126, "display": "WINDI Travel", "category": "agents", "url": "/travel/"},
+    {"name": "windi-nomad-bot", "port": 8127, "display": "W-NOMAD-001", "category": "agents", "url": "/telegram/"},
+    {"name": "windi-vd-cut", "port": 8128, "display": "W-VD-CUT-001", "category": "agents", "url": "/vdcut-dash/"},
+    {"name": "windi-joe", "port": 8129, "display": "W-JOE-001", "category": "agents", "url": "/joe-dash/"},
+    {"name": "windi-vd-mass", "port": 8131, "display": "W-VD-MASS-001", "category": "agents", "url": "/vdmass-dash/"},
+    {"name": "windi-jmpg", "port": 8132, "display": "W-JMPG-001", "category": "agents", "url": "/comm/"},
 
     # Dashboards
-    {"name": "windi-udb", "port": 8140, "display": "UDB God View", "category": "dashboards", "nohup": True},
-    {"name": "windi-intent-cmd", "port": 8141, "display": "W-INTENT-CMD", "category": "dashboards"},
-    {"name": "windi-fediverse", "port": 8142, "display": "W-FEDIVERSE-001", "category": "dashboards"},
-    {"name": "windi-bridge", "port": 8143, "display": "W-BRIDGE-001", "category": "dashboards"},
-    {"name": "windi-sec-001", "port": 8144, "display": "W-SEC-001", "category": "dashboards"},
-    {"name": "windi-verify-public", "port": 8145, "display": "Verify Public", "category": "dashboards"},
-    {"name": "windi-enterprise", "port": 8150, "display": "W-Enterprise-001", "category": "dashboards"},
-    {"name": "windi-cache", "port": 8160, "display": "W-CACHE-001", "category": "dashboards", "nohup": True},
+    {"name": "windi-udb", "port": 8140, "display": "UDB God View", "category": "dashboards", "nohup": True, "url": "/udb/"},
+    {"name": "windi-intent-cmd", "port": 8141, "display": "W-INTENT-CMD", "category": "dashboards", "url": "/intent/"},
+    {"name": "windi-fediverse", "port": 8142, "display": "W-FEDIVERSE-001", "category": "dashboards", "url": "/fediverse/"},
+    {"name": "windi-bridge", "port": 8143, "display": "W-BRIDGE-001", "category": "dashboards", "url": "/watch/"},
+    {"name": "windi-sec-001", "port": 8144, "display": "W-SEC-001", "category": "dashboards", "url": "/sec-dash/"},
+    {"name": "windi-verify-public", "port": 8145, "display": "Verify Public", "category": "dashboards", "url": "/verify-public/"},
+    {"name": "windi-enterprise", "port": 8150, "display": "W-Enterprise-001", "category": "dashboards", "url": "/enterprise/"},
+    {"name": "windi-cache", "port": 8160, "display": "W-CACHE-001", "category": "dashboards", "nohup": True, "url": "/wcache/noir"},
 
     # Support
-    {"name": "windi-leads", "port": 8096, "display": "DID Genesis", "category": "support"},
-    {"name": "windi-wallet", "port": 8095, "display": "Wallet Service", "category": "support"},
-    {"name": "windi-communique", "port": 8105, "display": "Communiqué Engine", "category": "support"},
-    {"name": "windi-dispatch", "port": 8106, "display": "Dispatch Gateway", "category": "support"},
+    {"name": "windi-leads", "port": 8096, "display": "DID Genesis", "category": "support", "url": "/genesis/"},
+    {"name": "windi-wallet", "port": 8095, "display": "Wallet Service", "category": "support", "url": "/wallet/"},
+    {"name": "windi-communique", "port": 8105, "display": "Communiqué Engine", "category": "support", "url": "/communique/"},
+    {"name": "windi-dispatch", "port": 8106, "display": "Dispatch Gateway", "category": "support", "url": "/dispatch/"},
 
     # Special (nohup)
-    {"name": "sandbox-core", "port": 8091, "display": "Sandbox Core", "category": "core", "nohup": True},
+    {"name": "sandbox-core", "port": 8091, "display": "Sandbox Core", "category": "core", "nohup": True, "url": "/agents/"},
 ]
 
 # Health check endpoints by port
@@ -191,6 +191,7 @@ def get_full_service_status(service):
         "category": service.get("category", "other"),
         "sealed": service.get("sealed", False),
         "nohup": is_nohup,
+        "url": service.get("url", ""),
         "systemd": systemd,
         "port_active": port_active,
         "health": health,
@@ -640,6 +641,8 @@ DASHBOARD_HTML = '''
         }
         .btn-action:hover { border-color: var(--gold); color: var(--gold); }
         .btn-action:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-action.open { border-color: var(--blue); color: var(--blue); text-decoration: none; text-align: center; }
+        .btn-action.open:hover { background: var(--blue); color: var(--bg); }
         .btn-action.restart:hover { border-color: var(--yellow); color: var(--yellow); }
         .btn-action.stop:hover { border-color: var(--red); color: var(--red); }
         .btn-action.start:hover { border-color: var(--green); color: var(--green); }
@@ -795,7 +798,7 @@ DASHBOARD_HTML = '''
                 logs: "Logs", core: "Core Infrastructure", agents: "Agents", dashboards: "Dashboards",
                 support: "Support Services", other: "Other", restartSuccess: "Restart initiated",
                 restartFailed: "Restart failed", noDidWarning: "Connect DID to control services",
-                sealed: "SEALED", nohup: "NOHUP"
+                sealed: "SEALED", nohup: "NOHUP", open: "Open"
             },
             de: {
                 connect: "Verbinden", disconnect: "Trennen", online: "Online", offline: "Offline",
@@ -803,7 +806,7 @@ DASHBOARD_HTML = '''
                 logs: "Logs", core: "Kerninfrastruktur", agents: "Agenten", dashboards: "Dashboards",
                 support: "Support-Dienste", other: "Andere", restartSuccess: "Neustart eingeleitet",
                 restartFailed: "Neustart fehlgeschlagen", noDidWarning: "DID verbinden um Dienste zu steuern",
-                sealed: "VERSIEGELT", nohup: "NOHUP"
+                sealed: "VERSIEGELT", nohup: "NOHUP", open: "Öffnen"
             },
             pt: {
                 connect: "Conectar", disconnect: "Desconectar", online: "Online", offline: "Offline",
@@ -811,7 +814,7 @@ DASHBOARD_HTML = '''
                 logs: "Logs", core: "Infraestrutura Core", agents: "Agentes", dashboards: "Dashboards",
                 support: "Serviços de Suporte", other: "Outros", restartSuccess: "Reinício iniciado",
                 restartFailed: "Reinício falhou", noDidWarning: "Conecte DID para controlar serviços",
-                sealed: "SELADO", nohup: "NOHUP"
+                sealed: "SELADO", nohup: "NOHUP", open: "Abrir"
             }
         };
         let lang = localStorage.getItem('windi-lang') || 'en';
@@ -946,6 +949,11 @@ DASHBOARD_HTML = '''
                                 <span class="badge">${svc.systemd}</span>
                             </div>
                             <div class="service-actions">
+                                ${svc.url ? `
+                                    <a href="${svc.url}" target="_blank" class="btn-action open">
+                                        🔗 ${t('open')}
+                                    </a>
+                                ` : ''}
                                 <button class="btn-action restart" onclick="restartService('${svc.service}')" ${canControl ? '' : 'disabled'}>
                                     ↻ ${t('restart')}
                                 </button>
