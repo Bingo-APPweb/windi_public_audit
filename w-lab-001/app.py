@@ -157,10 +157,27 @@ def init_db():
         )
     """)
 
+    # Early access emails table
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS early_access_emails (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT NOT NULL UNIQUE,
+            source TEXT DEFAULT 'farejador-lite',
+            demo_result TEXT,
+            scenario_shown TEXT,
+            trap_caught INTEGER DEFAULT 0,
+            time_remaining INTEGER,
+            ip_address TEXT,
+            user_agent TEXT,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
     # Create indexes
     c.execute("CREATE INDEX IF NOT EXISTS idx_sessions_officer ON lab_sessions(officer_did)")
     c.execute("CREATE INDEX IF NOT EXISTS idx_events_session ON lab_events(session_id)")
     c.execute("CREATE INDEX IF NOT EXISTS idx_decisions_session ON lab_decisions(session_id)")
+    c.execute("CREATE INDEX IF NOT EXISTS idx_emails_created ON early_access_emails(created_at)")
 
     conn.commit()
     conn.close()
@@ -206,6 +223,15 @@ class FormulaCreate(BaseModel):
     steps: List[Dict[str, str]]
     risk_signals: List[str]
     source_session_id: Optional[str] = None
+
+class EarlyAccessRequest(BaseModel):
+    """Request for early access email capture."""
+    email: str
+    source: str = Field(default="farejador-lite")
+    demo_result: Optional[str] = None  # "win", "lose", "timeout"
+    scenario_shown: Optional[str] = None
+    trap_caught: bool = False
+    time_remaining: Optional[int] = None
 
 # ============================================================================
 # HELPERS
@@ -422,6 +448,165 @@ async def health():
 async def get_invariants():
     """Return W-LAB invariants."""
     return {"invariants": INVARIANTS}
+
+# ============================================================================
+# EARLY ACCESS EMAIL CAPTURE
+# ============================================================================
+
+import re
+
+def is_valid_email(email: str) -> bool:
+    """Basic email validation."""
+    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    return bool(re.match(pattern, email))
+
+@app.post("/api/lab/early-access")
+async def capture_early_access(req: EarlyAccessRequest, request: Request):
+    """
+    Capture email for early access from FAREJADOR-LITE demo.
+
+    This is the conversion funnel:
+    Landing → Demo → Email Capture → Full Lab
+    """
+    # Validate email
+    email = req.email.strip().lower()
+    if not email or not is_valid_email(email):
+        raise HTTPException(400, {
+            "error": "invalid_email",
+            "message": {
+                "pt": "Email inválido. Verifica o formato.",
+                "de": "Ungültige E-Mail. Bitte Format prüfen.",
+                "en": "Invalid email. Please check the format."
+            }
+        })
+
+    # Get request metadata
+    ip_address = request.client.host if request.client else None
+    user_agent = request.headers.get("user-agent", "")[:500]  # Truncate
+
+    now = now_iso()
+
+    with get_db() as conn:
+        c = conn.cursor()
+
+        # Check if email already exists
+        c.execute("SELECT id, created_at FROM early_access_emails WHERE email = ?", (email,))
+        existing = c.fetchone()
+
+        if existing:
+            return {
+                "status": "already_registered",
+                "email": email,
+                "registered_at": existing["created_at"],
+                "message": {
+                    "pt": "Este email já está na lista. Vais receber acesso em breve.",
+                    "de": "Diese E-Mail ist bereits registriert. Du erhältst bald Zugang.",
+                    "en": "This email is already registered. You'll receive access soon."
+                }
+            }
+
+        # Insert new email
+        try:
+            c.execute("""
+                INSERT INTO early_access_emails
+                (email, source, demo_result, scenario_shown, trap_caught, time_remaining, ip_address, user_agent, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                email,
+                req.source,
+                req.demo_result,
+                req.scenario_shown,
+                1 if req.trap_caught else 0,
+                req.time_remaining,
+                ip_address,
+                user_agent,
+                now
+            ))
+            conn.commit()
+        except sqlite3.IntegrityError:
+            # Race condition - email was inserted by another request
+            return {
+                "status": "already_registered",
+                "email": email,
+                "message": {
+                    "pt": "Este email já está na lista.",
+                    "de": "Diese E-Mail ist bereits registriert.",
+                    "en": "This email is already registered."
+                }
+            }
+
+    return {
+        "status": "registered",
+        "email": email,
+        "source": req.source,
+        "demo_result": req.demo_result,
+        "trap_caught": req.trap_caught,
+        "registered_at": now,
+        "message": {
+            "pt": "Registado com sucesso! Vais receber acesso ao W-LAB em breve.",
+            "de": "Erfolgreich registriert! Du erhältst bald Zugang zum W-LAB.",
+            "en": "Successfully registered! You'll receive W-LAB access soon."
+        }
+    }
+
+@app.get("/api/lab/early-access/stats")
+async def get_early_access_stats():
+    """Get early access signup statistics (internal use)."""
+    with get_db() as conn:
+        c = conn.cursor()
+
+        # Total signups
+        c.execute("SELECT COUNT(*) as total FROM early_access_emails")
+        total = c.fetchone()["total"]
+
+        # By source
+        c.execute("""
+            SELECT source, COUNT(*) as count
+            FROM early_access_emails
+            GROUP BY source
+        """)
+        by_source = {row["source"]: row["count"] for row in c.fetchall()}
+
+        # By demo result
+        c.execute("""
+            SELECT demo_result, COUNT(*) as count
+            FROM early_access_emails
+            WHERE demo_result IS NOT NULL
+            GROUP BY demo_result
+        """)
+        by_result = {row["demo_result"]: row["count"] for row in c.fetchall()}
+
+        # Trap catch rate
+        c.execute("""
+            SELECT
+                SUM(trap_caught) as caught,
+                COUNT(*) as total
+            FROM early_access_emails
+            WHERE demo_result IS NOT NULL
+        """)
+        trap_stats = c.fetchone()
+        catch_rate = (trap_stats["caught"] or 0) / max(1, trap_stats["total"] or 1) * 100
+
+        # Last 24h signups
+        c.execute("""
+            SELECT COUNT(*) as recent
+            FROM early_access_emails
+            WHERE created_at > datetime('now', '-24 hours')
+        """)
+        recent = c.fetchone()["recent"]
+
+        return {
+            "total_signups": total,
+            "last_24h": recent,
+            "by_source": by_source,
+            "by_demo_result": by_result,
+            "trap_catch_rate": round(catch_rate, 1),
+            "conversion_insight": {
+                "pt": f"{catch_rate:.0f}% detectam a armadilha. {100-catch_rate:.0f}% precisam de treino.",
+                "de": f"{catch_rate:.0f}% erkennen die Falle. {100-catch_rate:.0f}% brauchen Training.",
+                "en": f"{catch_rate:.0f}% catch the trap. {100-catch_rate:.0f}% need training."
+            }
+        }
 
 # ============================================================================
 # SESSIONS
