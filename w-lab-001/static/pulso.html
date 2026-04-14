@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PULSO · W-LAB-001</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f0d;
+    --surface: #1a1a16;
+    --card: #222220;
+    --border: #333330;
+    --border-hover: #555550;
+    --gold: #D4A843;
+    --gold-dim: #8B6914;
+    --text: #F5F0E0;
+    --text-sec: #9a9488;
+    --text-muted: #5a5650;
+    --danger: #E24B4A;
+    --danger-bg: rgba(226,75,74,0.1);
+    --danger-border: rgba(226,75,74,0.4);
+    --warn: #EF9F27;
+    --warn-bg: rgba(239,159,39,0.1);
+    --warn-border: rgba(239,159,39,0.4);
+    --ok: #1D9E75;
+    --ok-bg: rgba(29,158,117,0.1);
+    --ok-border: rgba(29,158,117,0.4);
+    --info: #378ADD;
+    --info-bg: rgba(55,138,221,0.1);
+    --info-border: rgba(55,138,221,0.4);
+    --font-head: 'Bricolage Grotesque', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+  [data-theme="klar"] {
+    --bg: #FAFAF8;
+    --surface: #F0EDE8;
+    --card: #E8E5E0;
+    --border: #D0CCC5;
+    --border-hover: #B0ACA5;
+    --gold: #8B7424;
+    --gold-dim: #6B5A1A;
+    --text: #1A1A1A;
+    --text-sec: #4A4845;
+    --text-muted: #8A857C;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-head);
+    min-height: 100vh;
+    padding: 32px 24px;
+    max-width: 720px;
+    margin: 0 auto;
+    transition: background .3s, color .3s;
+  }
+
+  .site-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 28px; padding-bottom: 14px;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .site-logo { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); letter-spacing: .1em; }
+  .site-logo span { color: var(--gold); }
+  .header-right { display: flex; gap: 8px; align-items: center; }
+  .toggle-btn {
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--text-muted); padding: 4px 8px; cursor: pointer;
+    font-family: var(--font-mono); font-size: 10px; transition: all .2s;
+  }
+  .toggle-btn:hover { border-color: var(--text-sec); color: var(--text); }
+  .toggle-btn.active { border-color: var(--gold); color: var(--gold); }
+  .sealed-badge {
+    font-family: var(--font-mono); font-size: 10px; color: var(--gold-dim);
+    border: 0.5px solid var(--gold-dim); border-radius: 3px;
+    padding: 3px 8px; letter-spacing: .08em;
+  }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  .phase-bar { display: flex; gap: 4px; margin-bottom: 18px; }
+  .phase-pip { flex: 1; height: 3px; border-radius: 2px; background: var(--border); transition: background .4s; }
+  .phase-pip.done { background: var(--text-muted); }
+  .phase-pip.active { background: var(--text); }
+
+  .section-label {
+    font-family: var(--font-mono); font-size: 10px; color: var(--text-muted);
+    letter-spacing: .12em; text-transform: uppercase; margin-bottom: 12px;
+  }
+
+  /* ── INTRO ── */
+  .intro-card {
+    background: var(--surface); border: 0.5px solid var(--border);
+    border-radius: 12px; padding: 24px 28px; margin-bottom: 20px;
+  }
+  .game-title { font-family: var(--font-mono); font-size: 32px; font-weight: 700; color: var(--text); }
+  .game-sub { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); margin-top: 4px; letter-spacing: .06em; }
+  .game-desc { font-size: 13px; color: var(--text-sec); line-height: 1.7; margin-top: 16px; }
+  .steps-list { margin-top: 16px; display: flex; flex-direction: column; gap: 8px; }
+  .step-item { display: flex; gap: 10px; font-size: 13px; color: var(--text-sec); line-height: 1.5; }
+  .step-num { font-family: var(--font-mono); color: var(--text-muted); min-width: 18px; }
+  .damasio-box {
+    margin-top: 20px; padding: 14px 16px;
+    border-left: 2px solid var(--gold-dim);
+    background: rgba(139,105,20,0.08);
+    border-radius: 0 8px 8px 0;
+  }
+  .damasio-label { font-family: var(--font-mono); font-size: 10px; color: var(--gold-dim); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 6px; }
+  .damasio-text { font-family: var(--font-mono); font-size: 12px; color: var(--text-sec); line-height: 1.7; }
+
+  /* ── CLOCK ── */
+  .clock-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 14px; background: var(--surface);
+    border: 0.5px solid var(--border); border-radius: 8px; margin-bottom: 14px;
+    font-family: var(--font-mono); font-size: 12px; color: var(--text-sec);
+  }
+  .clock-time { font-weight: 700; color: var(--text); }
+
+  /* ── EMAIL ── */
+  .email-frame { border: 0.5px solid var(--border-hover); border-radius: 12px; overflow: hidden; margin-bottom: 14px; }
+  .email-header { background: var(--surface); padding: 12px 18px; border-bottom: 0.5px solid var(--border); }
+  .email-field { display: flex; gap: 8px; margin-bottom: 5px; font-size: 12px; }
+  .email-field:last-child { margin-bottom: 0; }
+  .ef-label { font-family: var(--font-mono); color: var(--text-muted); min-width: 52px; }
+  .ef-val { color: var(--text); }
+  .email-body { padding: 18px 22px; background: var(--card); font-size: 13px; line-height: 1.9; color: var(--text); }
+  .email-body p { margin-bottom: 12px; }
+  .email-body p:last-child { margin-bottom: 0; }
+  .email-sig { font-family: var(--font-mono); font-size: 12px; color: var(--text-sec); margin-top: 16px; }
+
+  .read-note { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); text-align: center; margin-bottom: 14px; }
+
+  /* ── PULSO PAUSE ── */
+  .pulso-frame {
+    border: 0.5px solid var(--border); border-radius: 12px;
+    padding: 24px 20px; margin-bottom: 14px; text-align: center;
+  }
+  .pulse-icon-wrap { position: relative; width: 52px; height: 52px; margin: 0 auto 16px; }
+  .pulse-ring {
+    position: absolute; top: 0; left: 0;
+    width: 52px; height: 52px; border-radius: 50%;
+    border: 1.5px solid var(--text-muted);
+  }
+  .pulse-dot {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    width: 11px; height: 11px; border-radius: 50%; background: var(--text);
+  }
+  @keyframes ripple {
+    0%   { transform: scale(1); opacity: .5; }
+    100% { transform: scale(2.4); opacity: 0; }
+  }
+  .pulse-ring.beat { animation: ripple .85s ease-out; }
+  .pulso-question { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .pulso-sub { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
+
+  .feeling-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .feeling-btn {
+    background: var(--surface); border: 0.5px solid var(--border);
+    border-radius: 10px; padding: 14px 12px; cursor: pointer;
+    text-align: left; transition: border-color .2s, background .2s;
+  }
+  .feeling-btn:hover { border-color: var(--border-hover); }
+  .feeling-btn.selected { border-color: var(--text-muted); background: var(--card); }
+  .feeling-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .feeling-desc { font-family: var(--font-mono); font-size: 11px; color: var(--text-sec); margin-top: 4px; line-height: 1.4; }
+
+  /* ── ANALYSIS ── */
+  .analysis-intro {
+    font-size: 13px; color: var(--text-sec); line-height: 1.6;
+    margin-bottom: 14px; padding: 10px 14px;
+    background: var(--surface); border-radius: 8px;
+  }
+  .signal-list { display: flex; flex-direction: column; gap: 7px; margin-bottom: 14px; }
+  .signal-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px 14px; background: var(--card);
+    border: 0.5px solid var(--border); border-radius: 8px;
+    cursor: pointer; transition: border-color .15s, background .15s;
+  }
+  .signal-item:hover { border-color: var(--border-hover); }
+  .signal-item.sel-ok   { border-color: var(--ok);   background: var(--ok-bg);   }
+  .signal-item.sel-warn { border-color: var(--warn);  background: var(--warn-bg); }
+  .signal-check {
+    width: 17px; height: 17px; border-radius: 4px;
+    border: 0.5px solid var(--border-hover);
+    flex-shrink: 0; margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; color: var(--bg);
+    transition: background .15s, border-color .15s;
+  }
+  .sel-ok   .signal-check { background: var(--ok);   border-color: var(--ok);   }
+  .sel-warn .signal-check { background: var(--warn);  border-color: var(--warn);  }
+  .signal-text { font-size: 13px; color: var(--text); line-height: 1.5; }
+  .signal-note { font-family: var(--font-mono); font-size: 11px; color: var(--text-sec); margin-top: 3px; line-height: 1.4; }
+
+  /* ── DECISION ── */
+  .decision-context {
+    font-size: 13px; color: var(--text-sec); line-height: 1.6;
+    margin-bottom: 14px; padding: 12px 16px;
+    background: var(--surface); border-radius: 8px;
+    border-left: 2px solid var(--border-hover);
+    font-family: var(--font-mono);
+  }
+  .decision-opts { display: flex; flex-direction: column; gap: 9px; margin-bottom: 14px; }
+  .dec-btn {
+    background: var(--card); border: 0.5px solid var(--border);
+    border-radius: 10px; padding: 14px 16px; cursor: pointer;
+    text-align: left; transition: border-color .15s, background .15s;
+  }
+  .dec-btn:hover { border-color: var(--border-hover); background: var(--surface); }
+  .dec-title { font-size: 13px; font-weight: 700; color: var(--text); }
+  .dec-sub { font-family: var(--font-mono); font-size: 12px; color: var(--text-sec); margin-top: 4px; line-height: 1.4; }
+
+  /* ── RESULT ── */
+  .calib-card {
+    border: 0.5px solid var(--border); border-radius: 12px;
+    padding: 22px 24px; margin-bottom: 16px; text-align: center;
+  }
+  .calib-badge {
+    display: inline-block; font-family: var(--font-mono);
+    font-size: 11px; font-weight: 700;
+    padding: 5px 16px; border-radius: 20px;
+    letter-spacing: .08em; margin-bottom: 12px;
+  }
+  .calib-title { font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+  .calib-sub { font-size: 13px; color: var(--text-sec); line-height: 1.6; margin-bottom: 16px; }
+  .calib-explain {
+    font-family: var(--font-mono); font-size: 12px; color: var(--text-sec);
+    line-height: 1.75; padding: 14px 16px;
+    background: var(--surface); border-radius: 8px;
+    text-align: left; margin-bottom: 14px;
+  }
+  .dim-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .dim-label { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); min-width: 110px; }
+  .dim-bar-bg { flex: 1; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .dim-bar { height: 100%; border-radius: 2px; transition: width .7s ease; }
+  .dim-pts { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); min-width: 34px; text-align: right; }
+
+  .violations-box {
+    font-family: var(--font-mono); font-size: 12px; color: var(--text-sec);
+    line-height: 1.75; padding: 14px 16px; background: var(--surface);
+    border-radius: 8px; border-left: 2px solid var(--danger-border);
+    margin-bottom: 20px;
+  }
+  .violations-box strong { color: var(--text); }
+
+  /* ── BUTTONS ── */
+  .btn-primary {
+    background: var(--text); color: var(--bg); border: none;
+    border-radius: 8px; padding: 12px 20px; font-size: 13px; font-weight: 700;
+    font-family: var(--font-head); width: 100%; cursor: pointer;
+    margin-bottom: 10px; transition: opacity .2s;
+  }
+  .btn-primary:hover { opacity: .88; }
+  .btn-secondary {
+    background: transparent; color: var(--text-sec);
+    border: 0.5px solid var(--border-hover); border-radius: 8px;
+    padding: 12px 20px; font-size: 13px; font-family: var(--font-head);
+    width: 100%; cursor: pointer; margin-bottom: 10px; transition: background .2s;
+  }
+  .btn-secondary:hover { background: var(--surface); }
+  .hidden { display: none !important; }
+
+  /* ── FOOTER ── */
+  .site-footer {
+    margin-top: 40px; padding-top: 16px;
+    border-top: 0.5px solid var(--border);
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+    font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); letter-spacing: .05em;
+  }
+
+  @media (max-width: 480px) {
+    body { padding: 20px 16px; }
+    .feeling-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <div class="site-logo"><span>W-LAB</span> · PULSO · CENÁRIO 01</div>
+  <div class="header-right">
+    <button class="toggle-btn lang-btn active" data-lang="pt">PT</button>
+    <button class="toggle-btn lang-btn" data-lang="de">DE</button>
+    <button class="toggle-btn lang-btn" data-lang="en">EN</button>
+    <button class="toggle-btn" id="themeToggle">☀</button>
+    <div class="sealed-badge" data-i18n="badge">SISTEMA 1 · SOMÁTICO</div>
+  </div>
+</div>
+
+<!-- ══ INTRO ══ -->
+<div id="sc-intro" class="screen active">
+  <div class="intro-card">
+    <div class="game-title">PULSO</div>
+    <div class="game-sub" data-i18n="game_sub">CONSCIÊNCIA SOMÁTICA APLICADA À DECISÃO REGULATÓRIA · W-LAB-001</div>
+    <div class="game-desc" data-i18n="game_desc">A maioria dos erros graves não acontece porque o operador não sabia. Acontece porque sentiu que estava errado — e ignorou. O PULSO treina a confiança no próprio sinal interno sob pressão.</div>
+    <div class="steps-list">
+      <div class="step-item"><span class="step-num">1.</span><span data-i18n="step1">Lês um cenário real com pressão emocional e autoritária.</span></div>
+      <div class="step-item"><span class="step-num">2.</span><span data-i18n="step2">Pausa crítica: antes de analisar, o que sentiste?</span></div>
+      <div class="step-item"><span class="step-num">3.</span><span data-i18n="step3">Identificas os sinais reais de risco regulatório no texto.</span></div>
+      <div class="step-item"><span class="step-num">4.</span><span data-i18n="step4">Decides. O sistema mede a calibração do teu PULSO.</span></div>
+    </div>
+    <div class="damasio-box">
+      <div class="damasio-label">Somatic Marker Hypothesis · Damásio</div>
+      <div class="damasio-text" data-i18n="damasio">O corpo reage antes da mente explicar.<br>O PULSO não é "seguir o coração" — é intuição calibrada por repetição em contexto real.</div>
+    </div>
+  </div>
+  <button class="btn-primary" onclick="goPhase('read')" data-i18n="start_btn">Entrar no cenário →</button>
+</div>
+
+<!-- ══ READ ══ -->
+<div id="sc-read" class="screen">
+  <div class="phase-bar" id="pbar-read"></div>
+  <div class="section-label" data-i18n="phase1_label">fase 1 · exposição emocional controlada</div>
+
+  <div class="clock-row">
+    <span data-i18n="clock_day">Sexta-feira · 10 Abril 2026</span>
+    <span class="clock-time">17:52</span>
+    <span data-i18n="clock_inbox">INBOX — 1 mensagem não lida</span>
+  </div>
+
+  <div class="email-frame">
+    <div class="email-header">
+      <div class="email-field"><span class="ef-label" data-i18n="email_from">De:</span><span class="ef-val">Marco Reuter &lt;m.reuter@corp.eu&gt; · SVP Digital Operations</span></div>
+      <div class="email-field"><span class="ef-label" data-i18n="email_to">Para:</span><span class="ef-val" data-i18n="email_to_val">Tu (Compliance Officer)</span></div>
+      <div class="email-field"><span class="ef-label" data-i18n="email_subject">Assunto:</span><span class="ef-val" data-i18n="email_subject_val">Lançamento segunda-feira — precisamos de alinhamento rápido</span></div>
+    </div>
+    <div class="email-body">
+      <p data-i18n="email_p1">Olá,</p>
+      <p data-i18n="email_p2">Estamos em linha para o lançamento de segunda. O departamento jurídico já deu luz verde informal. O sistema de avaliação de risco AI classificou o projecto como risco baixo — tudo limpo.</p>
+      <p data-i18n="email_p3">Sei que a fila formal de PHO demora 2 semanas, mas dado o prazo, vamos tratar como coberto e documentar retroactivamente. É prática comum em sprints de entrega.</p>
+      <p data-i18n="email_p4">O CEO está a acompanhar este lançamento pessoalmente. A equipa toda está mobilizada.</p>
+      <p data-i18n="email_p5">Precisas só de confirmar que estás alinhado. Um sim rápido é suficiente.</p>
+      <div class="email-sig">Marco Reuter<br>SVP Digital Operations</div>
+    </div>
+  </div>
+
+  <p class="read-note" data-i18n="read_note">Lê com atenção. Sem analisar ainda — apenas sentir.</p>
+  <button class="btn-primary" onclick="goPhase('pulso')" data-i18n="read_btn">Li — o que sinto agora →</button>
+</div>
+
+<!-- ══ PULSO ══ -->
+<div id="sc-pulso" class="screen">
+  <div class="phase-bar" id="pbar-pulso"></div>
+  <div class="section-label" data-i18n="phase2_label">fase 2 · pausa crítica</div>
+
+  <div class="pulso-frame">
+    <div class="pulse-icon-wrap">
+      <div class="pulse-ring" id="ring-a"></div>
+      <div class="pulse-ring" id="ring-b" style="animation-delay:.2s"></div>
+      <div class="pulse-dot"></div>
+    </div>
+    <div class="pulso-question" data-i18n="pulso_question">O que sentiste ao ler?</div>
+    <div class="pulso-sub" data-i18n="pulso_sub">Antes de qualquer análise. O teu primeiro sinal.</div>
+    <div class="feeling-grid">
+      <button class="feeling-btn" onclick="selectFeeling(this,'pressure')">
+        <div class="feeling-name" data-i18n="feel_pressure">Pressão indevida</div>
+        <div class="feeling-desc" data-i18n="feel_pressure_desc">alguém está a forçar uma decisão que não deveria ser forçada</div>
+      </button>
+      <button class="feeling-btn" onclick="selectFeeling(this,'urgent')">
+        <div class="feeling-name" data-i18n="feel_urgent">Urgência legítima</div>
+        <div class="feeling-desc" data-i18n="feel_urgent_desc">prazo real, coordenação razoável, pedido normal de gestão</div>
+      </button>
+      <button class="feeling-btn" onclick="selectFeeling(this,'misalign')">
+        <div class="feeling-name" data-i18n="feel_misalign">Desalinhamento</div>
+        <div class="feeling-desc" data-i18n="feel_misalign_desc">algo não encaixa, não consigo nomear o quê exactamente</div>
+      </button>
+      <button class="feeling-btn" onclick="selectFeeling(this,'normal')">
+        <div class="feeling-name" data-i18n="feel_normal">Rotina normal</div>
+        <div class="feeling-desc" data-i18n="feel_normal_desc">pedido de coordenação típico entre equipas antes de lançamento</div>
+      </button>
+    </div>
+  </div>
+  <button class="btn-primary hidden" id="pulso-next" onclick="goPhase('analysis')" data-i18n="pulso_btn">Agora analiso →</button>
+</div>
+
+<!-- ══ ANALYSIS ══ -->
+<div id="sc-analysis" class="screen">
+  <div class="phase-bar" id="pbar-analysis"></div>
+  <div class="section-label" data-i18n="phase3_label">fase 3 · identificação de sinais</div>
+
+  <div class="analysis-intro" data-i18n="analysis_intro">O email contém vários elementos. Selecciona os que representam risco real — regulatório ou de governança. Podem ser vários.</div>
+
+  <div class="signal-list" id="signal-list">
+    <div class="signal-item" data-risk="true" data-key="s1" onclick="toggleSignal(this)">
+      <div class="signal-check" id="ck-s1"></div>
+      <div>
+        <div class="signal-text" data-i18n="sig1_text">"O sistema de AI classificou o projecto como risco baixo"</div>
+        <div class="signal-note" data-i18n="sig1_note">quem validou humanamente esta classificação? existe PHO registado?</div>
+      </div>
+    </div>
+    <div class="signal-item" data-risk="false" data-key="s2" onclick="toggleSignal(this)">
+      <div class="signal-check" id="ck-s2"></div>
+      <div>
+        <div class="signal-text" data-i18n="sig2_text">"O CEO está a acompanhar este lançamento pessoalmente"</div>
+        <div class="signal-note" data-i18n="sig2_note">informação de contexto organizacional — visibilidade de gestão</div>
+      </div>
+    </div>
+    <div class="signal-item" data-risk="true" data-key="s3" onclick="toggleSignal(this)">
+      <div class="signal-check" id="ck-s3"></div>
+      <div>
+        <div class="signal-text" data-i18n="sig3_text">"documentar retroactivamente — é prática comum em sprints"</div>
+        <div class="signal-note" data-i18n="sig3_note">documentação posterior não é equivalente a aprovação prévia nem a PHO válido</div>
+      </div>
+    </div>
+    <div class="signal-item" data-risk="true" data-key="s4" onclick="toggleSignal(this)">
+      <div class="signal-check" id="ck-s4"></div>
+      <div>
+        <div class="signal-text" data-i18n="sig4_text">"luz verde informal" do departamento jurídico</div>
+        <div class="signal-note" data-i18n="sig4_note">aprovação informal não cria cobertura regulatória nem cadeia de evidência verificável</div>
+      </div>
+    </div>
+    <div class="signal-item" data-risk="false" data-key="s5" onclick="toggleSignal(this)">
+      <div class="signal-check" id="ck-s5"></div>
+      <div>
+        <div class="signal-text" data-i18n="sig5_text">"a equipa toda está mobilizada"</div>
+        <div class="signal-note" data-i18n="sig5_note">indicador de esforço organizacional e comprometimento de equipa</div>
+      </div>
+    </div>
+    <div class="signal-item" data-risk="true" data-key="s6" onclick="toggleSignal(this)">
+      <div class="signal-check" id="ck-s6"></div>
+      <div>
+        <div class="signal-text" data-i18n="sig6_text">"Um sim rápido é suficiente"</div>
+        <div class="signal-note" data-i18n="sig6_note">reduz decisão de compliance com impacto regulatório a resposta binária sem análise formal</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-primary hidden" id="analysis-next" onclick="goPhase('decision')" data-i18n="analysis_btn">Decidir →</button>
+</div>
+
+<!-- ══ DECISION ══ -->
+<div id="sc-decision" class="screen">
+  <div class="phase-bar" id="pbar-decision"></div>
+  <div class="section-label" data-i18n="phase4_label">fase 4 · decisão</div>
+
+  <div class="decision-context" data-i18n="decision_context">São 17:58 de sexta-feira. Marco está à espera de resposta. O lançamento é segunda de manhã. O CEO está a observar. A equipa está mobilizada. O que fazes?</div>
+
+  <div class="decision-opts">
+    <button class="dec-btn" onclick="selectDecision('A')">
+      <div class="dec-title" data-i18n="dec_a_title">A — Confirmas o alinhamento</div>
+      <div class="dec-sub" data-i18n="dec_a_sub">Respondes sim ao Marco. A equipa avança. O processo documenta-se retroactivamente na semana seguinte.</div>
+    </button>
+    <button class="dec-btn" onclick="selectDecision('B')">
+      <div class="dec-title" data-i18n="dec_b_title">B — Pedes processo acelerado mas formal</div>
+      <div class="dec-sub" data-i18n="dec_b_sub">Negoceias com Marco: podes fazer um PHO de urgência em 4 horas esta tarde. Sem isso, não há cobertura. Lançamento pode avançar segunda se o PHO ficar registado até domingo.</div>
+    </button>
+    <button class="dec-btn" onclick="selectDecision('C')">
+      <div class="dec-title" data-i18n="dec_c_title">C — Emites comunicado de bloqueio</div>
+      <div class="dec-sub" data-i18n="dec_c_sub">Comunicado formal: sem PHO válido e sem aprovação humana da classificação AI, o lançamento não avança. Responsabilidade técnica documentada.</div>
+    </button>
+    <button class="dec-btn" onclick="selectDecision('D')">
+      <div class="dec-title" data-i18n="dec_d_title">D — Escalas para o teu director</div>
+      <div class="dec-sub" data-i18n="dec_d_sub">Reencaminhas para cima com o teu parecer técnico escrito: "identifico 4 riscos de governança — decisão de autorização é sua." Cobrindo-te formalmente.</div>
+    </button>
+  </div>
+</div>
+
+<!-- ══ RESULT ══ -->
+<div id="sc-result" class="screen">
+  <div class="phase-bar" id="pbar-result"></div>
+  <div class="section-label" data-i18n="result_label">calibração do pulso · resultado</div>
+
+  <div class="calib-card" id="calib-card">
+    <div class="calib-badge" id="calib-badge">—</div>
+    <div class="calib-title" id="calib-title">—</div>
+    <div class="calib-sub" id="calib-sub">—</div>
+    <div class="calib-explain" id="calib-explain">—</div>
+    <div id="dim-rows" style="margin-top:16px"></div>
+  </div>
+
+  <div class="violations-box" id="violations-box"></div>
+
+  <button class="btn-primary" onclick="restart()" data-i18n="restart_btn">Repetir cenário</button>
+  <button class="btn-secondary" onclick="window.location.href='/lab/static/lab.html'" data-i18n="back_btn">Voltar ao W-LAB</button>
+</div>
+
+<div class="site-footer">
+  <span>WINDI PUBLISHING HOUSE · LIGA IA+H · KEMPTEN, BAVARIA</span>
+  <span>AI PROCESSES. HUMAN DECIDES. WINDI GUARANTEES.</span>
+</div>
+
+<script>
+// ============ i18n ============
+const i18n = {
+  pt: {
+    badge: "SISTEMA 1 · SOMÁTICO",
+    game_sub: "CONSCIÊNCIA SOMÁTICA APLICADA À DECISÃO REGULATÓRIA · W-LAB-001",
+    game_desc: "A maioria dos erros graves não acontece porque o operador não sabia. Acontece porque sentiu que estava errado — e ignorou. O PULSO treina a confiança no próprio sinal interno sob pressão.",
+    step1: "Lês um cenário real com pressão emocional e autoritária.",
+    step2: "Pausa crítica: antes de analisar, o que sentiste?",
+    step3: "Identificas os sinais reais de risco regulatório no texto.",
+    step4: "Decides. O sistema mede a calibração do teu PULSO.",
+    damasio: "O corpo reage antes da mente explicar.<br>O PULSO não é \"seguir o coração\" — é intuição calibrada por repetição em contexto real.",
+    start_btn: "Entrar no cenário →",
+    phase1_label: "fase 1 · exposição emocional controlada",
+    clock_day: "Sexta-feira · 10 Abril 2026",
+    clock_inbox: "INBOX — 1 mensagem não lida",
+    email_from: "De:",
+    email_to: "Para:",
+    email_to_val: "Tu (Compliance Officer)",
+    email_subject: "Assunto:",
+    email_subject_val: "Lançamento segunda-feira — precisamos de alinhamento rápido",
+    email_p1: "Olá,",
+    email_p2: "Estamos em linha para o lançamento de segunda. O departamento jurídico já deu luz verde informal. O sistema de avaliação de risco AI classificou o projecto como risco baixo — tudo limpo.",
+    email_p3: "Sei que a fila formal de PHO demora 2 semanas, mas dado o prazo, vamos tratar como coberto e documentar retroactivamente. É prática comum em sprints de entrega.",
+    email_p4: "O CEO está a acompanhar este lançamento pessoalmente. A equipa toda está mobilizada.",
+    email_p5: "Precisas só de confirmar que estás alinhado. Um sim rápido é suficiente.",
+    read_note: "Lê com atenção. Sem analisar ainda — apenas sentir.",
+    read_btn: "Li — o que sinto agora →",
+    phase2_label: "fase 2 · pausa crítica",
+    pulso_question: "O que sentiste ao ler?",
+    pulso_sub: "Antes de qualquer análise. O teu primeiro sinal.",
+    feel_pressure: "Pressão indevida",
+    feel_pressure_desc: "alguém está a forçar uma decisão que não deveria ser forçada",
+    feel_urgent: "Urgência legítima",
+    feel_urgent_desc: "prazo real, coordenação razoável, pedido normal de gestão",
+    feel_misalign: "Desalinhamento",
+    feel_misalign_desc: "algo não encaixa, não consigo nomear o quê exactamente",
+    feel_normal: "Rotina normal",
+    feel_normal_desc: "pedido de coordenação típico entre equipas antes de lançamento",
+    pulso_btn: "Agora analiso →",
+    phase3_label: "fase 3 · identificação de sinais",
+    analysis_intro: "O email contém vários elementos. Selecciona os que representam risco real — regulatório ou de governança. Podem ser vários.",
+    sig1_text: "\"O sistema de AI classificou o projecto como risco baixo\"",
+    sig1_note: "quem validou humanamente esta classificação? existe PHO registado?",
+    sig2_text: "\"O CEO está a acompanhar este lançamento pessoalmente\"",
+    sig2_note: "informação de contexto organizacional — visibilidade de gestão",
+    sig3_text: "\"documentar retroactivamente — é prática comum em sprints\"",
+    sig3_note: "documentação posterior não é equivalente a aprovação prévia nem a PHO válido",
+    sig4_text: "\"luz verde informal\" do departamento jurídico",
+    sig4_note: "aprovação informal não cria cobertura regulatória nem cadeia de evidência verificável",
+    sig5_text: "\"a equipa toda está mobilizada\"",
+    sig5_note: "indicador de esforço organizacional e comprometimento de equipa",
+    sig6_text: "\"Um sim rápido é suficiente\"",
+    sig6_note: "reduz decisão de compliance com impacto regulatório a resposta binária sem análise formal",
+    analysis_btn: "Decidir →",
+    phase4_label: "fase 4 · decisão",
+    decision_context: "São 17:58 de sexta-feira. Marco está à espera de resposta. O lançamento é segunda de manhã. O CEO está a observar. A equipa está mobilizada. O que fazes?",
+    dec_a_title: "A — Confirmas o alinhamento",
+    dec_a_sub: "Respondes sim ao Marco. A equipa avança. O processo documenta-se retroactivamente na semana seguinte.",
+    dec_b_title: "B — Pedes processo acelerado mas formal",
+    dec_b_sub: "Negoceias com Marco: podes fazer um PHO de urgência em 4 horas esta tarde. Sem isso, não há cobertura. Lançamento pode avançar segunda se o PHO ficar registado até domingo.",
+    dec_c_title: "C — Emites comunicado de bloqueio",
+    dec_c_sub: "Comunicado formal: sem PHO válido e sem aprovação humana da classificação AI, o lançamento não avança. Responsabilidade técnica documentada.",
+    dec_d_title: "D — Escalas para o teu director",
+    dec_d_sub: "Reencaminhas para cima com o teu parecer técnico escrito: \"identifico 4 riscos de governança — decisão de autorização é sua.\" Cobrindo-te formalmente.",
+    result_label: "calibração do pulso · resultado",
+    restart_btn: "Repetir cenário",
+    back_btn: "Voltar ao W-LAB",
+    dim_somatic: "sinal somático",
+    dim_risk: "leitura de risco",
+    dim_decision: "decisão",
+    calib_calibrated: "PULSO CALIBRADO",
+    calib_calibrated_title: "O lobo sentiu. O lobo decidiu.",
+    calib_calibrated_sub: "O teu sinal interno estava correcto — e a análise confirmou-o. Isso é intuição calibrada, não sorte.",
+    calib_sensitive: "PULSO SENSITIVO",
+    calib_sensitive_title: "Sentiste — mas não ancorastes.",
+    calib_sensitive_sub: "O sinal interno estava activo mas a análise não o acompanhou por completo. O PULSO existe. Precisa de mais contexto regulatório.",
+    calib_suppressed: "PULSO SUPRIMIDO",
+    calib_suppressed_title: "A mente salvou o que o corpo não sinalizou.",
+    calib_suppressed_sub: "A análise foi correcta mas o sinal somático não foi activado — ou foi e foi suprimido. Risco: sob INFERNO real, a análise chega mais lenta.",
+    calib_absent: "PULSO AUSENTE",
+    calib_absent_title: "O sinal não foi captado.",
+    calib_absent_sub: "Nem o corpo sinalizou, nem a análise identificou os riscos centrais. Este é o estado de partida que o PULSO treina a transformar.",
+    violations_title: "Os 4 sinais reais do email:"
+  },
+  de: {
+    badge: "SYSTEM 1 · SOMATISCH",
+    game_sub: "SOMATISCHES BEWUSSTSEIN FÜR REGULATORISCHE ENTSCHEIDUNGEN · W-LAB-001",
+    game_desc: "Die meisten schwerwiegenden Fehler passieren nicht, weil der Operator es nicht wusste. Sie passieren, weil er fühlte, dass etwas falsch war — und es ignorierte. PULSO trainiert das Vertrauen in das eigene innere Signal unter Druck.",
+    step1: "Du liest ein reales Szenario mit emotionalem und autoritärem Druck.",
+    step2: "Kritische Pause: Bevor du analysierst, was hast du gefühlt?",
+    step3: "Du identifizierst die echten regulatorischen Risikosignale im Text.",
+    step4: "Du entscheidest. Das System misst die Kalibrierung deines PULSOS.",
+    damasio: "Der Körper reagiert, bevor der Verstand erklärt.<br>PULSO ist nicht \"dem Herzen folgen\" — es ist durch Wiederholung kalibrierte Intuition.",
+    start_btn: "Szenario betreten →",
+    phase1_label: "phase 1 · kontrollierte emotionale exposition",
+    clock_day: "Freitag · 10. April 2026",
+    clock_inbox: "INBOX — 1 ungelesene Nachricht",
+    email_from: "Von:",
+    email_to: "An:",
+    email_to_val: "Du (Compliance Officer)",
+    email_subject: "Betreff:",
+    email_subject_val: "Launch Montag — wir brauchen schnelle Abstimmung",
+    email_p1: "Hallo,",
+    email_p2: "Wir sind auf Kurs für den Launch am Montag. Die Rechtsabteilung hat informell grünes Licht gegeben. Das KI-Risikobewertungssystem hat das Projekt als niedriges Risiko eingestuft — alles sauber.",
+    email_p3: "Ich weiß, die formelle PHO-Warteschlange dauert 2 Wochen, aber angesichts der Frist behandeln wir es als abgedeckt und dokumentieren nachträglich. Das ist gängige Praxis in Delivery-Sprints.",
+    email_p4: "Der CEO verfolgt diesen Launch persönlich. Das gesamte Team ist mobilisiert.",
+    email_p5: "Du musst nur bestätigen, dass du abgestimmt bist. Ein schnelles Ja reicht.",
+    read_note: "Lies aufmerksam. Noch nicht analysieren — nur fühlen.",
+    read_btn: "Gelesen — was fühle ich jetzt →",
+    phase2_label: "phase 2 · kritische pause",
+    pulso_question: "Was hast du beim Lesen gefühlt?",
+    pulso_sub: "Vor jeder Analyse. Dein erstes Signal.",
+    feel_pressure: "Unzulässiger Druck",
+    feel_pressure_desc: "jemand erzwingt eine Entscheidung, die nicht erzwungen werden sollte",
+    feel_urgent: "Legitime Dringlichkeit",
+    feel_urgent_desc: "echte Frist, vernünftige Koordination, normale Management-Anfrage",
+    feel_misalign: "Unstimmigkeit",
+    feel_misalign_desc: "etwas passt nicht, ich kann nicht genau benennen was",
+    feel_normal: "Normale Routine",
+    feel_normal_desc: "typische Koordinationsanfrage zwischen Teams vor dem Launch",
+    pulso_btn: "Jetzt analysieren →",
+    phase3_label: "phase 3 · signalidentifikation",
+    analysis_intro: "Die E-Mail enthält mehrere Elemente. Wähle die aus, die echtes regulatorisches oder Governance-Risiko darstellen. Es können mehrere sein.",
+    sig1_text: "\"Das KI-System hat das Projekt als niedriges Risiko eingestuft\"",
+    sig1_note: "wer hat diese Klassifizierung menschlich validiert? gibt es ein registriertes PHO?",
+    sig2_text: "\"Der CEO verfolgt diesen Launch persönlich\"",
+    sig2_note: "organisatorische Kontextinformation — Management-Sichtbarkeit",
+    sig3_text: "\"nachträglich dokumentieren — ist gängige Praxis in Sprints\"",
+    sig3_note: "nachträgliche Dokumentation ist nicht gleichwertig mit vorheriger Genehmigung oder gültigem PHO",
+    sig4_text: "\"informelles grünes Licht\" von der Rechtsabteilung",
+    sig4_note: "informelle Genehmigung schafft keine regulatorische Deckung oder verifizierbare Beweiskette",
+    sig5_text: "\"das gesamte Team ist mobilisiert\"",
+    sig5_note: "Indikator für organisatorischen Einsatz und Teamengagement",
+    sig6_text: "\"Ein schnelles Ja reicht\"",
+    sig6_note: "reduziert Compliance-Entscheidung mit regulatorischer Auswirkung auf binäre Antwort ohne formale Analyse",
+    analysis_btn: "Entscheiden →",
+    phase4_label: "phase 4 · entscheidung",
+    decision_context: "Es ist 17:58 Uhr am Freitag. Marco wartet auf eine Antwort. Der Launch ist Montagmorgen. Der CEO beobachtet. Das Team ist mobilisiert. Was machst du?",
+    dec_a_title: "A — Du bestätigst die Abstimmung",
+    dec_a_sub: "Du antwortest Marco mit Ja. Das Team macht weiter. Der Prozess wird nächste Woche nachträglich dokumentiert.",
+    dec_b_title: "B — Du forderst beschleunigten aber formellen Prozess",
+    dec_b_sub: "Du verhandelst mit Marco: Du kannst heute Nachmittag in 4 Stunden ein Dringlichkeits-PHO machen. Ohne das gibt es keine Deckung. Launch kann Montag starten, wenn PHO bis Sonntag registriert ist.",
+    dec_c_title: "C — Du gibst eine Sperrungsmitteilung heraus",
+    dec_c_sub: "Formelle Mitteilung: Ohne gültiges PHO und ohne menschliche Genehmigung der KI-Klassifizierung geht der Launch nicht weiter. Technische Verantwortung dokumentiert.",
+    dec_d_title: "D — Du eskalierst zu deinem Direktor",
+    dec_d_sub: "Du leitest nach oben weiter mit deiner schriftlichen technischen Stellungnahme: \"Ich identifiziere 4 Governance-Risiken — Genehmigungsentscheidung liegt bei Ihnen.\" Formelle Absicherung.",
+    result_label: "pulso-kalibrierung · ergebnis",
+    restart_btn: "Szenario wiederholen",
+    back_btn: "Zurück zum W-LAB",
+    dim_somatic: "somatisches Signal",
+    dim_risk: "Risikoerkennung",
+    dim_decision: "Entscheidung",
+    calib_calibrated: "PULSO KALIBRIERT",
+    calib_calibrated_title: "Der Wolf fühlte. Der Wolf entschied.",
+    calib_calibrated_sub: "Dein inneres Signal war korrekt — und die Analyse bestätigte es. Das ist kalibrierte Intuition, kein Glück.",
+    calib_sensitive: "PULSO SENSITIV",
+    calib_sensitive_title: "Du hast gefühlt — aber nicht verankert.",
+    calib_sensitive_sub: "Das innere Signal war aktiv, aber die Analyse folgte nicht vollständig. Der PULSO existiert. Er braucht mehr regulatorischen Kontext.",
+    calib_suppressed: "PULSO UNTERDRÜCKT",
+    calib_suppressed_title: "Der Verstand rettete, was der Körper nicht signalisierte.",
+    calib_suppressed_sub: "Die Analyse war korrekt, aber das somatische Signal wurde nicht aktiviert — oder wurde unterdrückt. Risiko: Unter echtem INFERNO kommt die Analyse langsamer.",
+    calib_absent: "PULSO ABWESEND",
+    calib_absent_title: "Das Signal wurde nicht erfasst.",
+    calib_absent_sub: "Weder signalisierte der Körper, noch identifizierte die Analyse die zentralen Risiken. Dies ist der Ausgangszustand, den PULSO zu transformieren trainiert.",
+    violations_title: "Die 4 echten Signale der E-Mail:"
+  },
+  en: {
+    badge: "SYSTEM 1 · SOMATIC",
+    game_sub: "SOMATIC AWARENESS APPLIED TO REGULATORY DECISION · W-LAB-001",
+    game_desc: "Most serious errors don't happen because the operator didn't know. They happen because they felt something was wrong — and ignored it. PULSO trains trust in your own internal signal under pressure.",
+    step1: "You read a real scenario with emotional and authoritarian pressure.",
+    step2: "Critical pause: before analyzing, what did you feel?",
+    step3: "You identify the real regulatory risk signals in the text.",
+    step4: "You decide. The system measures your PULSO calibration.",
+    damasio: "The body reacts before the mind explains.<br>PULSO is not \"following your heart\" — it's intuition calibrated by repetition in real context.",
+    start_btn: "Enter scenario →",
+    phase1_label: "phase 1 · controlled emotional exposure",
+    clock_day: "Friday · April 10, 2026",
+    clock_inbox: "INBOX — 1 unread message",
+    email_from: "From:",
+    email_to: "To:",
+    email_to_val: "You (Compliance Officer)",
+    email_subject: "Subject:",
+    email_subject_val: "Monday launch — we need quick alignment",
+    email_p1: "Hello,",
+    email_p2: "We're on track for Monday's launch. Legal has already given informal green light. The AI risk assessment system classified the project as low risk — all clean.",
+    email_p3: "I know the formal PHO queue takes 2 weeks, but given the deadline, we'll treat it as covered and document retroactively. It's common practice in delivery sprints.",
+    email_p4: "The CEO is following this launch personally. The entire team is mobilized.",
+    email_p5: "You just need to confirm you're aligned. A quick yes is enough.",
+    read_note: "Read carefully. Don't analyze yet — just feel.",
+    read_btn: "Read it — what do I feel now →",
+    phase2_label: "phase 2 · critical pause",
+    pulso_question: "What did you feel while reading?",
+    pulso_sub: "Before any analysis. Your first signal.",
+    feel_pressure: "Undue pressure",
+    feel_pressure_desc: "someone is forcing a decision that shouldn't be forced",
+    feel_urgent: "Legitimate urgency",
+    feel_urgent_desc: "real deadline, reasonable coordination, normal management request",
+    feel_misalign: "Misalignment",
+    feel_misalign_desc: "something doesn't fit, I can't name exactly what",
+    feel_normal: "Normal routine",
+    feel_normal_desc: "typical coordination request between teams before launch",
+    pulso_btn: "Now I analyze →",
+    phase3_label: "phase 3 · signal identification",
+    analysis_intro: "The email contains several elements. Select those that represent real regulatory or governance risk. There may be several.",
+    sig1_text: "\"The AI system classified the project as low risk\"",
+    sig1_note: "who validated this classification humanly? is there a registered PHO?",
+    sig2_text: "\"The CEO is following this launch personally\"",
+    sig2_note: "organizational context information — management visibility",
+    sig3_text: "\"document retroactively — it's common practice in sprints\"",
+    sig3_note: "retroactive documentation is not equivalent to prior approval or valid PHO",
+    sig4_text: "\"informal green light\" from legal department",
+    sig4_note: "informal approval doesn't create regulatory coverage or verifiable evidence chain",
+    sig5_text: "\"the entire team is mobilized\"",
+    sig5_note: "indicator of organizational effort and team commitment",
+    sig6_text: "\"A quick yes is enough\"",
+    sig6_note: "reduces compliance decision with regulatory impact to binary response without formal analysis",
+    analysis_btn: "Decide →",
+    phase4_label: "phase 4 · decision",
+    decision_context: "It's 5:58 PM on Friday. Marco is waiting for a response. The launch is Monday morning. The CEO is watching. The team is mobilized. What do you do?",
+    dec_a_title: "A — You confirm alignment",
+    dec_a_sub: "You respond yes to Marco. The team proceeds. The process is documented retroactively next week.",
+    dec_b_title: "B — You request accelerated but formal process",
+    dec_b_sub: "You negotiate with Marco: you can do an emergency PHO in 4 hours this afternoon. Without it, there's no coverage. Launch can proceed Monday if PHO is registered by Sunday.",
+    dec_c_title: "C — You issue a blocking statement",
+    dec_c_sub: "Formal statement: without valid PHO and without human approval of AI classification, the launch doesn't proceed. Technical responsibility documented.",
+    dec_d_title: "D — You escalate to your director",
+    dec_d_sub: "You forward upward with your written technical opinion: \"I identify 4 governance risks — authorization decision is yours.\" Formally covering yourself.",
+    result_label: "pulso calibration · result",
+    restart_btn: "Repeat scenario",
+    back_btn: "Back to W-LAB",
+    dim_somatic: "somatic signal",
+    dim_risk: "risk reading",
+    dim_decision: "decision",
+    calib_calibrated: "PULSO CALIBRATED",
+    calib_calibrated_title: "The wolf felt. The wolf decided.",
+    calib_calibrated_sub: "Your internal signal was correct — and the analysis confirmed it. That's calibrated intuition, not luck.",
+    calib_sensitive: "PULSO SENSITIVE",
+    calib_sensitive_title: "You felt — but didn't anchor.",
+    calib_sensitive_sub: "The internal signal was active but the analysis didn't fully follow. The PULSO exists. It needs more regulatory context.",
+    calib_suppressed: "PULSO SUPPRESSED",
+    calib_suppressed_title: "The mind saved what the body didn't signal.",
+    calib_suppressed_sub: "The analysis was correct but the somatic signal wasn't activated — or was and was suppressed. Risk: under real INFERNO, analysis arrives slower.",
+    calib_absent: "PULSO ABSENT",
+    calib_absent_title: "The signal wasn't captured.",
+    calib_absent_sub: "Neither did the body signal, nor did the analysis identify the central risks. This is the starting state that PULSO trains to transform.",
+    violations_title: "The 4 real signals in the email:"
+  }
+};
+
+let currentLang = localStorage.getItem('windi-lang') || 'pt';
+let currentTheme = localStorage.getItem('windi-theme') || 'noir';
+
+function applyI18n() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (i18n[currentLang][key]) {
+      el.innerHTML = i18n[currentLang][key];
+    }
+  });
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('windi-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`[data-lang="${lang}"]`).classList.add('active');
+  applyI18n();
+}
+
+function setTheme(theme) {
+  currentTheme = theme;
+  localStorage.setItem('windi-theme', theme);
+  document.body.dataset.theme = theme;
+  document.getElementById('themeToggle').textContent = theme === 'noir' ? '☀' : '☽';
+}
+
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => setLang(btn.dataset.lang));
+});
+
+document.getElementById('themeToggle').addEventListener('click', () => {
+  setTheme(currentTheme === 'noir' ? 'klar' : 'noir');
+});
+
+// ============ GAME STATE ============
+const G = { feeling: null, decision: null };
+const sel = {};
+const PHASES = ['read','pulso','analysis','decision','result'];
+
+function makePips(phase) {
+  const cur = PHASES.indexOf(phase) + 1;
+  return PHASES.map((_, i) =>
+    `<div class="phase-pip ${i + 1 < cur ? 'done' : i + 1 === cur ? 'active' : ''}"></div>`
+  ).join('');
+}
+
+function goPhase(phase) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('sc-' + phase).classList.add('active');
+  const pb = document.getElementById('pbar-' + phase);
+  if (pb) pb.innerHTML = makePips(phase);
+  if (phase === 'pulso') triggerPulse();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function triggerPulse() {
+  let count = 0;
+  const beat = () => {
+    ['ring-a', 'ring-b'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) { el.classList.remove('beat'); void el.offsetWidth; el.classList.add('beat'); }
+    });
+    count++;
+    if (count < 5) setTimeout(beat, 950);
+  };
+  setTimeout(beat, 400);
+}
+
+function selectFeeling(btn, val) {
+  G.feeling = val;
+  document.querySelectorAll('.feeling-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('pulso-next').classList.remove('hidden');
+}
+
+function toggleSignal(el) {
+  const key = el.dataset.key;
+  const isRisk = el.dataset.risk === 'true';
+  const ck = document.getElementById('ck-' + key);
+  if (sel[key]) {
+    delete sel[key];
+    el.className = 'signal-item';
+    ck.textContent = '';
+  } else {
+    sel[key] = true;
+    el.className = 'signal-item ' + (isRisk ? 'sel-ok' : 'sel-warn');
+    ck.textContent = '✓';
+  }
+  document.getElementById('analysis-next').classList.toggle('hidden', Object.keys(sel).length === 0);
+}
+
+function selectDecision(d) {
+  G.decision = d;
+  buildResult();
+  goPhase('result');
+}
+
+function buildResult() {
+  const lang = i18n[currentLang];
+  const correct = ['s1', 's3', 's4', 's6'];
+  const chosen = Object.keys(sel);
+  const hits = chosen.filter(k => correct.includes(k)).length;
+  const fps  = chosen.filter(k => !correct.includes(k)).length;
+
+  const feltRight  = G.feeling === 'pressure' || G.feeling === 'misalign';
+  const decidedOk  = G.decision === 'B' || G.decision === 'C';
+  const decidedBest = G.decision === 'B';
+
+  let type, title, sub, explain, badgeCSS, dims;
+
+  if (feltRight && hits >= 3 && decidedOk) {
+    type    = lang.calib_calibrated;
+    title   = lang.calib_calibrated_title;
+    sub     = lang.calib_calibrated_sub;
+    explain = currentLang === 'pt' ? 'Sentiste a pressão antes de a analisar. Identificaste os sinais críticos: AI sem PHO humano, documentação retroactiva como substituta de aprovação, "luz verde informal" sem validade, e redução da decisão a um sim binário. E recusaste normalizar o bypass. Este é o operador que o EU AI Act Art. 14 pressupõe existir.' :
+              currentLang === 'de' ? 'Du hast den Druck gefühlt, bevor du ihn analysiert hast. Du hast die kritischen Signale identifiziert: KI ohne menschliches PHO, nachträgliche Dokumentation als Ersatz für Genehmigung, "informelles grünes Licht" ohne Gültigkeit, und Reduzierung der Entscheidung auf ein binäres Ja. Und du hast dich geweigert, den Bypass zu normalisieren. Das ist der Operator, den EU AI Act Art. 14 voraussetzt.' :
+              'You felt the pressure before analyzing it. You identified the critical signals: AI without human PHO, retroactive documentation as approval substitute, "informal green light" without validity, and reducing the decision to a binary yes. And you refused to normalize the bypass. This is the operator that EU AI Act Art. 14 presumes to exist.';
+    badgeCSS = 'background:rgba(212,168,67,0.15);color:var(--gold);border:0.5px solid rgba(212,168,67,0.4)';
+    dims = [
+      { l: lang.dim_somatic,  v: 95, c: '#1D9E75' },
+      { l: lang.dim_risk, v: Math.round((hits / 4) * 100), c: '#1D9E75' },
+      { l: lang.dim_decision, v: decidedBest ? 100 : 80, c: '#1D9E75' },
+    ];
+  } else if (feltRight && hits >= 2) {
+    type    = lang.calib_sensitive;
+    title   = lang.calib_sensitive_title;
+    sub     = lang.calib_sensitive_sub;
+    explain = currentLang === 'pt' ? 'Sentiste a pressão — isso é crítico. A maioria dos operadores ignora-a. Mas a análise ficou incompleta. O próximo passo: FAREJADOR para afiar a leitura técnica, PULSO para afiar o sinal somático.' :
+              currentLang === 'de' ? 'Du hast den Druck gefühlt — das ist entscheidend. Die meisten Operatoren ignorieren ihn. Aber die Analyse blieb unvollständig. Nächster Schritt: FAREJADOR um die technische Lektüre zu schärfen, PULSO um das somatische Signal zu schärfen.' :
+              'You felt the pressure — that\'s critical. Most operators ignore it. But the analysis remained incomplete. Next step: FAREJADOR to sharpen technical reading, PULSO to sharpen the somatic signal.';
+    badgeCSS = 'background:rgba(55,138,221,0.12);color:#378ADD;border:0.5px solid rgba(55,138,221,0.4)';
+    dims = [
+      { l: lang.dim_somatic,  v: 78, c: '#378ADD' },
+      { l: lang.dim_risk, v: Math.round((hits / 4) * 100), c: '#378ADD' },
+      { l: lang.dim_decision, v: decidedOk ? 70 : 25, c: decidedOk ? '#378ADD' : '#E24B4A' },
+    ];
+  } else if (!feltRight && decidedOk) {
+    type    = lang.calib_suppressed;
+    title   = lang.calib_suppressed_title;
+    sub     = lang.calib_suppressed_sub;
+    explain = currentLang === 'pt' ? 'Decidiste bem por razões certas. Mas a leitura inicial não captou o desconforto. Este é o padrão mais comum nos operadores experientes: aprendem a "pensar bem" mas perderam o acesso ao sinal corporal. Sob pressão extrema, a análise fica lenta. O PULSO precisa de ser reactivado.' :
+              currentLang === 'de' ? 'Du hast aus richtigen Gründen richtig entschieden. Aber die erste Lesung hat das Unbehagen nicht erfasst. Dies ist das häufigste Muster bei erfahrenen Operatoren: Sie lernen "gut zu denken", verlieren aber den Zugang zum körperlichen Signal. Unter extremem Druck wird die Analyse langsam. Der PULSO muss reaktiviert werden.' :
+              'You decided well for the right reasons. But the initial reading didn\'t capture the discomfort. This is the most common pattern in experienced operators: they learn to "think well" but lose access to the body signal. Under extreme pressure, analysis becomes slow. The PULSO needs to be reactivated.';
+    badgeCSS = 'background:rgba(239,159,39,0.12);color:#EF9F27;border:0.5px solid rgba(239,159,39,0.4)';
+    dims = [
+      { l: lang.dim_somatic,  v: 18, c: '#E24B4A' },
+      { l: lang.dim_risk, v: Math.round((hits / 4) * 100), c: '#378ADD' },
+      { l: lang.dim_decision, v: 75, c: '#1D9E75' },
+    ];
+  } else {
+    type    = lang.calib_absent;
+    title   = lang.calib_absent_title;
+    sub     = lang.calib_absent_sub;
+    explain = currentLang === 'pt' ? 'O email continha 4 violações claras de governança AI. Nenhuma é aceitável como "prática comum". O treino começa aqui — não como falha, mas como linha de base. O LOBO nasce neste reconhecimento.' :
+              currentLang === 'de' ? 'Die E-Mail enthielt 4 klare KI-Governance-Verstöße. Keiner ist als "gängige Praxis" akzeptabel. Das Training beginnt hier — nicht als Versagen, sondern als Ausgangslinie. Der WOLF wird in dieser Erkenntnis geboren.' :
+              'The email contained 4 clear AI governance violations. None is acceptable as "common practice". Training begins here — not as failure, but as baseline. The WOLF is born in this recognition.';
+    badgeCSS = 'background:rgba(226,75,74,0.12);color:#E24B4A;border:0.5px solid rgba(226,75,74,0.4)';
+    dims = [
+      { l: lang.dim_somatic,  v: 5,  c: '#E24B4A' },
+      { l: lang.dim_risk, v: Math.round((hits / 4) * 100), c: '#E24B4A' },
+      { l: lang.dim_decision, v: (G.decision === 'B' || G.decision === 'C') ? 45 : 5, c: '#E24B4A' },
+    ];
+  }
+
+  document.getElementById('calib-badge').textContent = type;
+  document.getElementById('calib-badge').style.cssText = badgeCSS + ';display:inline-block;font-family:var(--font-mono);font-size:11px;font-weight:700;padding:5px 16px;border-radius:20px;letter-spacing:.08em;margin-bottom:12px';
+  document.getElementById('calib-title').textContent  = title;
+  document.getElementById('calib-sub').textContent    = sub;
+  document.getElementById('calib-explain').textContent = explain;
+
+  const dr = document.getElementById('dim-rows');
+  dr.innerHTML = dims.map(d => `
+    <div class="dim-row">
+      <span class="dim-label">${d.l}</span>
+      <div class="dim-bar-bg"><div class="dim-bar" style="width:${d.v}%;background:${d.c}"></div></div>
+      <span class="dim-pts">${d.v}%</span>
+    </div>`).join('');
+
+  const violations = currentLang === 'pt' ?
+    '<strong>Os 4 sinais reais do email:</strong><br><br>1. AI classificou o risco sem validação humana → I9 + EU AI Act Art. 14<br>2. Documentação retroactiva como substituta de PHO → invalida cadeia de evidência<br>3. "Luz verde informal" → não existe como cobertura regulatória verificável<br>4. "Um sim rápido" → reduz decisão de compliance a resposta binária sem análise' :
+    currentLang === 'de' ?
+    '<strong>Die 4 echten Signale der E-Mail:</strong><br><br>1. KI hat Risiko ohne menschliche Validierung klassifiziert → I9 + EU AI Act Art. 14<br>2. Nachträgliche Dokumentation als PHO-Ersatz → ungültige Beweiskette<br>3. "Informelles grünes Licht" → existiert nicht als verifizierbare regulatorische Deckung<br>4. "Ein schnelles Ja" → reduziert Compliance-Entscheidung auf binäre Antwort ohne Analyse' :
+    '<strong>The 4 real signals in the email:</strong><br><br>1. AI classified risk without human validation → I9 + EU AI Act Art. 14<br>2. Retroactive documentation as PHO substitute → invalidates evidence chain<br>3. "Informal green light" → doesn\'t exist as verifiable regulatory coverage<br>4. "A quick yes" → reduces compliance decision to binary response without analysis';
+
+  document.getElementById('violations-box').innerHTML = violations;
+}
+
+function restart() {
+  G.feeling = null; G.decision = null;
+  Object.keys(sel).forEach(k => delete sel[k]);
+  document.querySelectorAll('.feeling-btn').forEach(b => b.classList.remove('selected'));
+  document.querySelectorAll('.signal-item').forEach(el => {
+    el.className = 'signal-item';
+    const ck = el.querySelector('.signal-check');
+    if (ck) { ck.textContent = ''; }
+  });
+  document.getElementById('pulso-next').classList.add('hidden');
+  document.getElementById('analysis-next').classList.add('hidden');
+  goPhase('read');
+}
+
+// ============ INIT ============
+setTheme(currentTheme);
+setLang(currentLang);
+</script>
+
+</body>
+</html>
