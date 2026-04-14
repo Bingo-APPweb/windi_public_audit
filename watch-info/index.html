@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="noir">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch | WINDI Bridge</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #08080C; --card: #14141C; --gold: #C9A84C; --text: #E8E6E1;
+            --muted: #8A8880; --border: #1E1E28; --blue: #60A5FA;
+        }
+        [data-theme="klar"] {
+            --bg: #FAFAF8; --card: #FFFFFF; --gold: #8B7424; --text: #1A1A1A;
+            --muted: #5A5A5A; --border: #E0DED8; --blue: #2563EB;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+        .container {
+            max-width: 600px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+        }
+        .icon { font-size: 64px; margin-bottom: 24px; }
+        h1 { color: var(--gold); font-size: 24px; margin-bottom: 8px; }
+        .subtitle { color: var(--muted); font-size: 14px; margin-bottom: 32px; }
+        .info {
+            text-align: left;
+            background: var(--bg);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+        .info p { font-size: 13px; line-height: 1.6; margin-bottom: 12px; }
+        .info code {
+            color: var(--gold);
+            background: var(--card);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--blue);
+            color: #000;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+        .links { display: flex; flex-direction: column; gap: 12px; }
+        .link {
+            display: block;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px;
+            color: var(--gold);
+            text-decoration: none;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        .link:hover { border-color: var(--gold); }
+        .controls {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            display: flex;
+            gap: 8px;
+        }
+        .toggle {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 6px 10px;
+            color: var(--muted);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 11px;
+        }
+        .toggle.active { background: var(--gold); color: var(--bg); }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <button class="toggle" onclick="setLang('pt')">PT</button>
+        <button class="toggle active" onclick="setLang('en')">EN</button>
+        <button class="toggle" onclick="setLang('de')">DE</button>
+        <button class="toggle active" onclick="toggleTheme()">☀</button>
+    </div>
+
+    <div class="container">
+        <div class="icon">📺</div>
+        <h1>W-BRIDGE-001</h1>
+        <div class="subtitle" data-i18n="subtitle">BIG-BRIDGE Gateway · HLS Streaming</div>
+
+        <div class="badge">LIVE · Port 8143</div>
+
+        <div class="info">
+            <p data-i18n="desc">The Watch endpoint is part of W-BRIDGE-001, the BIG-BRIDGE Gateway for HLS streaming. To watch content, you need a valid content ID.</p>
+            <p data-i18n="usage"><strong>Usage:</strong> <code>/watch/{content_id}</code></p>
+            <p data-i18n="note">Content IDs are provided when media is uploaded and sealed through the WINDI pipeline.</p>
+        </div>
+
+        <div class="links">
+            <a href="/bridge/" class="link" data-i18n="bridge">Bridge Dashboard</a>
+            <a href="/travel/" class="link" data-i18n="travel">WINDI Travel (Media Upload)</a>
+            <a href="/portal/" class="link" data-i18n="portal">← Back to Portal</a>
+        </div>
+    </div>
+
+    <script>
+        const i18n = {
+            en: { subtitle: "BIG-BRIDGE Gateway · HLS Streaming", desc: "The Watch endpoint is part of W-BRIDGE-001, the BIG-BRIDGE Gateway for HLS streaming. To watch content, you need a valid content ID.", usage: "<strong>Usage:</strong> <code>/watch/{content_id}</code>", note: "Content IDs are provided when media is uploaded and sealed through the WINDI pipeline.", bridge: "Bridge Dashboard", travel: "WINDI Travel (Media Upload)", portal: "← Back to Portal" },
+            pt: { subtitle: "Gateway BIG-BRIDGE · Streaming HLS", desc: "O endpoint Watch faz parte do W-BRIDGE-001, o Gateway BIG-BRIDGE para streaming HLS. Para ver conteúdo, precisas de um ID de conteúdo válido.", usage: "<strong>Uso:</strong> <code>/watch/{content_id}</code>", note: "Os IDs de conteúdo são fornecidos quando o média é carregado e selado através do pipeline WINDI.", bridge: "Dashboard do Bridge", travel: "WINDI Travel (Upload de Média)", portal: "← Voltar ao Portal" },
+            de: { subtitle: "BIG-BRIDGE Gateway · HLS-Streaming", desc: "Der Watch-Endpunkt ist Teil von W-BRIDGE-001, dem BIG-BRIDGE Gateway für HLS-Streaming. Um Inhalte anzusehen, benötigen Sie eine gültige Inhalts-ID.", usage: "<strong>Verwendung:</strong> <code>/watch/{content_id}</code>", note: "Inhalts-IDs werden bereitgestellt, wenn Medien über die WINDI-Pipeline hochgeladen und versiegelt werden.", bridge: "Bridge-Dashboard", travel: "WINDI Travel (Medien-Upload)", portal: "← Zurück zum Portal" }
+        };
+        let lang = localStorage.getItem('windi-lang') || 'en';
+        let theme = localStorage.getItem('windi-theme') || 'noir';
+
+        function setLang(l) {
+            lang = l; localStorage.setItem('windi-lang', l);
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const k = el.getAttribute('data-i18n');
+                if (i18n[l][k]) el.innerHTML = i18n[l][k];
+            });
+        }
+        function toggleTheme() {
+            theme = theme === 'noir' ? 'klar' : 'noir';
+            localStorage.setItem('windi-theme', theme);
+            document.documentElement.setAttribute('data-theme', theme);
+        }
+        document.documentElement.setAttribute('data-theme', theme);
+        setLang(lang);
+    </script>
+</body>
+</html>

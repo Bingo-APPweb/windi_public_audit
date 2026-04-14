@@ -609,6 +609,31 @@ Anonymous → HTTPException 400 · Receipt `WINDI-MARIA-COMPLIANCE-FIX-20260414`
 - Timing: mínimo 4 dias entre envios
 - Follow-up: 7 dias silêncio → email elegante
 
+### §166 — Full Dashboard Audit (13 Apr 2026)
+
+**Commit:** `26b0da2` · **Files:** 7 changed, 2099 insertions
+
+**Problema:** 10 links do Portal retornavam 404 (APIs sem interface web)
+**Solução:** Criar dashboards NOIR/KLAR trilíngues + patch nginx
+
+**Dashboards Criados (6):**
+| Dashboard | Ficheiro | Tamanho |
+|-----------|----------|---------|
+| W-SEC-001 | `/opt/windi/sec-dashboard/index.html` | 17KB |
+| W-JOE-001 | `/opt/windi/joe-dashboard/index.html` | 16KB |
+| W-VD-CUT-001 | `/opt/windi/vdcut-dashboard/index.html` | 16KB |
+| W-VD-MASS-001 | `/opt/windi/vdmass-dashboard/index.html` | 16KB |
+| Ledger Info | `/opt/windi/ledger-info/index.html` | 7KB |
+| Watch Info | `/opt/windi/watch-info/index.html` | 6KB |
+
+**Nginx Patched:** `patch_nginx_dashboards.py`
+- 7 rotas convertidas (proxy → static alias)
+- 2 rotas adicionadas (ledger, audit-dash)
+- fediverse corrigido (proxy path)
+
+**Portal:** `/audit/` → `/audit-dash/` (evitar conflito API)
+**Resultado:** 20/20 serviços operacionais
+
 ---
 
 *LIGA IA+H — Kempten, Bavaria · 2026*

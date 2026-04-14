@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VDT — Verifiable Digital Transformation</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#8B6914;--gold-light:#D4A843;--perg:#F5F0E0;
+  --ink:#1A1612;--ink2:#4A3F2F;--ink3:#7A6E5E;
+  --border:rgba(139,105,20,0.18);--border2:rgba(139,105,20,0.32);
+  --radius:10px;--font-head:'Georgia',serif;--font-body:'Helvetica Neue',Arial,sans-serif;--font-mono:'Courier New',monospace;
+  --bg:#FDFAF5;--card:#FFFFFF;--surface:#F8F4ED;
+}
+body{font-family:var(--font-body);color:var(--ink);background:var(--bg);padding:2rem 1rem;max-width:800px;margin:0 auto}
+
+.nav{display:flex;gap:0;border-bottom:1.5px solid var(--border2);margin-bottom:1.5rem;overflow-x:auto;flex-wrap:nowrap}
+.nav button{
+  font-family:var(--font-body);font-size:12px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;
+  padding:10px 16px;background:transparent;border:none;border-bottom:2.5px solid transparent;
+  color:var(--ink3);cursor:pointer;white-space:nowrap;transition:all 0.2s;margin-bottom:-1.5px;
+}
+.nav button.active{color:var(--gold);border-bottom-color:var(--gold)}
+.nav button:hover:not(.active){color:var(--ink2)}
+
+.tab{display:none}.tab.active{display:block}
+
+.hero{border-left:3px solid var(--gold);padding:1rem 1.25rem;margin-bottom:1.5rem;background:rgba(139,105,20,0.04);border-radius:0 var(--radius) var(--radius) 0}
+.hero .label{font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:6px}
+.hero h1{font-family:var(--font-head);font-size:22px;font-weight:700;color:var(--ink);line-height:1.3;margin-bottom:4px}
+.hero .sub{font-size:14px;color:var(--ink2);font-style:italic}
+
+.section-title{font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);font-weight:600;margin:1.5rem 0 0.75rem;border-bottom:0.5px solid var(--border);padding-bottom:6px}
+
+.card{background:var(--card);border:0.5px solid var(--border2);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1rem}
+.card p{font-size:14px;line-height:1.7;color:var(--ink2)}
+.card strong{color:var(--ink);font-weight:600}
+
+.pill{display:inline-block;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500;letter-spacing:0.04em}
+.pill.gold{background:rgba(139,105,20,0.1);color:var(--gold)}
+.pill.gray{background:var(--surface);color:var(--ink3)}
+.pill.green{background:rgba(63,109,17,0.08);color:#3B6D11}
+
+.table-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.col-card{border:0.5px solid var(--border);border-radius:var(--radius);padding:1rem}
+.col-card .col-head{font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px;font-weight:600}
+.col-card ul{list-style:none;padding:0}
+.col-card li{font-size:13px;color:var(--ink2);padding:3px 0;border-bottom:0.5px solid var(--border);line-height:1.5}
+.col-card li:last-child{border-bottom:none}
+.col-card li::before{content:"↗ ";color:var(--gold);font-size:11px}
+
+.phase{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;padding:10px;border:0.5px solid var(--border);border-radius:var(--radius)}
+.phase-num{width:28px;height:28px;border-radius:50%;background:rgba(139,105,20,0.12);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0}
+.phase-body .phase-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:3px}
+.phase-body .phase-desc{font-size:12px;color:var(--ink3);line-height:1.5}
+
+.email-block{font-family:var(--font-mono);font-size:12px;line-height:1.8;color:var(--ink2);background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:1.25rem;white-space:pre-wrap;word-break:break-word}
+
+.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1rem}
+.kpi{background:var(--surface);border-radius:var(--radius);padding:12px;text-align:center}
+.kpi .k-num{font-size:22px;font-weight:700;color:var(--gold);font-family:var(--font-head)}
+.kpi .k-label{font-size:11px;color:var(--ink3);margin-top:2px}
+
+.quote{border-left:2.5px solid var(--gold);padding:0.75rem 1rem;margin:1rem 0;font-style:italic;font-size:14px;color:var(--ink2);background:rgba(139,105,20,0.03);border-radius:0 var(--radius) var(--radius) 0}
+
+.tag-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+
+.copy-btn{font-size:11px;padding:4px 10px;background:transparent;border:0.5px solid var(--border2);border-radius:6px;color:var(--gold);cursor:pointer;font-family:var(--font-body);font-weight:500;margin-top:8px}
+.copy-btn:hover{background:rgba(139,105,20,0.06)}
+
+.arrow-row{display:flex;align-items:center;gap:8px;margin:8px 0;font-size:13px}
+.arrow-row .from{color:var(--ink3)}.arrow-row .arr{color:var(--gold);font-weight:700}.arrow-row .to{color:var(--ink);font-weight:500}
+
+@media(max-width:520px){.table-2{grid-template-columns:1fr}.kpi-row{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<div class="nav" id="nav">
+  <button class="active" onclick="showTab('vision',this)">01 / Visão</button>
+  <button onclick="showTab('concept',this)">02 / Concept Note</button>
+  <button onclick="showTab('email',this)">03 / Contacto</button>
+  <button onclick="showTab('berlin',this)">04 / Berlin Bridge</button>
+</div>
+
+<!-- TAB 1: VISÃO -->
+<div id="vision" class="tab active">
+  <div class="hero">
+    <div class="label">PHO Framework · Kempten 2026</div>
+    <h1>VDT — Verifiable Digital Transformation</h1>
+    <div class="sub">A proof layer for organizational learning systems</div>
+  </div>
+
+  <div class="section-title">O Problema Central</div>
+  <div class="card">
+    <p>A transformação digital ensina, estrutura e mede perceção. Mas existe um <strong>gap invisível</strong>: nenhum sistema actual consegue provar que o processo foi executado conforme definido, por quem estava autorizado, no momento correcto.</p>
+    <div class="quote">"Organizations can document transformation. They cannot prove it happened."</div>
+    <div class="tag-row"><span class="pill gold">Proof Gap</span><span class="pill gray">AI Act Art.14</span><span class="pill green">EU-funded research</span></div>
+  </div>
+
+  <div class="section-title">Parceiros e Contributos</div>
+  <div class="table-2">
+    <div class="col-card">
+      <div class="col-head">IDT Kempten traz</div>
+      <ul>
+        <li>Credibilidade académica</li>
+        <li>Acesso a KMUs reais</li>
+        <li>Projecto LeBi (onboarding)</li>
+        <li>Rede Interreg / UE</li>
+        <li>Linguagem institucional</li>
+      </ul>
+    </div>
+    <div class="col-card">
+      <div class="col-head">PHO Framework traz</div>
+      <ul>
+        <li>Proof of Human Oversight</li>
+        <li>DID (identidade soberana)</li>
+        <li>Ledger imutável</li>
+        <li>Sistema em produção</li>
+        <li>EU AI Act alignment</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-title">Três Fases do Projecto</div>
+  <div class="phase"><div class="phase-num">1</div><div class="phase-body"><div class="phase-title">Concept Validation — Q3 2026</div><div class="phase-desc">Research question alinhada com LeBi. Workshop com IDT. Paper conceptual conjunto.</div></div></div>
+  <div class="phase"><div class="phase-num">2</div><div class="phase-body"><div class="phase-title">Pilot Integration — Q4 2026</div><div class="phase-desc">PHO layer integrada no onboarding LeBi. 16 KMUs piloto. Dados empíricos reais.</div></div></div>
+  <div class="phase"><div class="phase-num">3</div><div class="phase-body"><div class="phase-title">Publication & Scale — 2027</div><div class="phase-desc">Framework publicado. Replicação europeia. Modelo certificável para GRC.</div></div></div>
+
+  <div class="section-title">Posicionamento</div>
+  <div class="arrow-row"><span class="from">IDT</span><span class="arr">→</span><span class="to">ensina e estrutura transformação</span></div>
+  <div class="arrow-row"><span class="from">PHO Framework</span><span class="arr">→</span><span class="to">prova que a transformação aconteceu</span></div>
+  <div class="arrow-row"><span class="from">Juntos</span><span class="arr">→</span><span class="to">primeiro standard verificável para GRC europeu</span></div>
+</div>
+
+<!-- TAB 2: CONCEPT NOTE -->
+<div id="concept" class="tab">
+  <div class="hero">
+    <div class="label">Concept Note · EU-Ready · v1.0</div>
+    <h1>Proof Gap in Digital Transformation</h1>
+    <div class="sub">A joint research initiative between IDT Kempten and the PHO Framework (within the WINDI system)</div>
+  </div>
+
+  <div class="section-title">1. Research Problem</div>
+  <div class="card">
+    <p>Digital transformation frameworks — in learning, onboarding, and organizational change — operate under a structural blind spot: <strong>they can document process design, but not process proof.</strong></p>
+    <p style="margin-top:8px">Current systems measure adoption perception, training completion rates, and self-reported compliance. What they cannot measure is: who made which decision, when, under which authorization, and whether the agreed process was actually followed — not just recorded.</p>
+    <p style="margin-top:8px">We define this as the <strong>Proof Gap</strong>: the distance between documented transformation and verifiable transformation.</p>
+  </div>
+
+  <div class="section-title">2. Research Question</div>
+  <div class="card">
+    <div class="quote">"How can digital transformation and organizational learning processes be made independently auditable and cryptographically verifiable — not only documented — using proof-of-oversight mechanisms?"</div>
+    <p style="margin-top:10px;font-size:13px">Sub-questions: What constitutes valid proof of human decision in a learning process? How can PHO (Proof of Human Oversight) be operationalized in onboarding? What is the minimum viable proof layer for EU AI Act Article 14 compliance?</p>
+  </div>
+
+  <div class="section-title">3. Methodology</div>
+  <div class="card">
+    <p><strong>Empirical base:</strong> 16+ KMU pilot companies from the LeBi Interreg project (Vorarlberg, Ostschweiz, Süddeutschland), Q1 2026 – Q4 2028.</p>
+    <p style="margin-top:8px"><strong>Intervention:</strong> Integration of a PHO layer into LeBi's onboarding toolbox. Each critical decision step is anchored to an immutable ledger record: actor DID, timestamp, authorization level, process deviation (if any).</p>
+    <p style="margin-top:8px"><strong>Measurement:</strong> Comparative analysis of (a) documented process vs (b) proven process execution. Gap quantification. Human oversight coverage score (SGE).</p>
+  </div>
+
+  <div class="section-title">4. Expected Outputs</div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="k-num">1</div><div class="k-label">Joint publication</div></div>
+    <div class="kpi"><div class="k-num">16+</div><div class="k-label">KMU pilots</div></div>
+    <div class="kpi"><div class="k-num">1st</div><div class="k-label">EU PHO standard</div></div>
+  </div>
+  <div class="card">
+    <p><strong>Academic:</strong> Peer-reviewed paper — "From Digital Transformation to Verifiable Transformation". Framework definition. Empirical dataset.</p>
+    <p style="margin-top:8px"><strong>Practical:</strong> Replicable PHO-onboarding model. Open methodology for KMUs. Certification pathway aligned with EU AI Act Art. 14.</p>
+    <p style="margin-top:8px"><strong>Societal:</strong> First empirical evidence base for proof-of-oversight in organizational learning in German-speaking Europe.</p>
+  </div>
+
+  <div class="section-title">5. EU Alignment</div>
+  <div class="card">
+    <p>This initiative directly addresses <strong>EU AI Act Article 14</strong> (Human Oversight) and <strong>GDPR Art. 22</strong> requirements for meaningful human involvement in automated systems. The PHO Framework was designed as a constitutional primitive, not a compliance patch.</p>
+    <div class="tag-row"><span class="pill gold">AI Act Art.14</span><span class="pill gold">GDPR Art.22</span><span class="pill green">Interreg Compatible</span><span class="pill gray">GRC Market €65B</span></div>
+  </div>
+
+  <div class="section-title">Note on this Document</div>
+  <div class="card">
+    <p style="font-style:italic;color:var(--ink3)">This is an initial working hypothesis intended to be refined together with IDT's research perspective. The framework presented here is functional but open — the academic framing, research design, and pilot scope are all areas where IDT's expertise would be essential to shape the final direction.</p>
+  </div>
+</div>
+
+<!-- TAB 3: CONTACTO -->
+<div id="email" class="tab">
+  <div class="hero">
+    <div class="label">Contacto Inicial · Alemão + Inglês</div>
+    <h1>Mensagem para o IDT</h1>
+    <div class="sub">Para Prof. Dr. Katrin Winkler &amp; Prof. Dr. Sandra Niedermeier</div>
+  </div>
+
+  <div class="section-title">Versão Alemão (recomendada)</div>
+  <div class="email-block" id="email-de">Betreff: Forschungskooperation – Nachweisbarkeit digitaler Transformation / LeBi-Projekt
+
+Sehr geehrte Frau Prof. Dr. Winkler,
+sehr geehrte Frau Prof. Dr. Niedermeier,
+
+mein Name ist Jober Mögele Correa. Ich bin in Kempten ansässig und arbeite an einem Forschungsrahmen, der eine strukturelle Lücke in der Praxis der digitalen Transformation adressiert:
+
+Aktuelle Systeme können Transformationsprozesse dokumentieren – sie können jedoch nicht beweisen, dass diese tatsächlich wie definiert ausgeführt wurden.
+
+Wir nennen dies den „Proof Gap": die Distanz zwischen dokumentierter und nachweisbarer Transformation.
+
+Im Rahmen unserer Arbeit am PHO Framework (Proof of Human Oversight) haben wir einen technischen Ansatz entwickelt, der auf kryptografischer Beweisführung basiert und direkt mit den Anforderungen des EU AI Act (Art. 14) und GDPR (Art. 22) korrespondiert.
+
+Ich habe gesehen, dass das IDT im Rahmen des Interreg-Projekts LeBi genau an dem Bereich arbeitet, in dem dieser Ansatz besonders relevant ist: Onboarding von Mitarbeiter:innen in KMUs.
+
+Die zentrale Frage, die wir gemeinsam untersuchen könnten:
+
+„Wie kann digitales Onboarding nicht nur strukturiert, sondern unabhängig nachweisbar gemacht werden?"
+
+Ich würde mich sehr über ein erstes, unverbindliches Gespräch freuen – ich richte mich gerne nach Ihrem Zeitfenster.
+
+Mit freundlichen Grüßen,
+Jober Mögele Correa
+PHO Framework / WINDI Publishing House
+Kempten, Bayern</div>
+  <button class="copy-btn" onclick="copyText('email-de',this)">Copiar texto</button>
+
+  <div class="section-title" style="margin-top:1.5rem">Versão Inglês (alternativa)</div>
+  <div class="email-block" id="email-en">Subject: Research Collaboration – Verifiable Digital Transformation / LeBi Project
+
+Dear Prof. Dr. Winkler, dear Prof. Dr. Niedermeier,
+
+My name is Jober Mögele Correa, based in Kempten. I work on a framework that addresses a structural gap in digital transformation practice:
+
+Current systems can document transformation processes. They cannot prove that these processes were actually executed as defined.
+
+We call this the "Proof Gap" — the distance between documented and verifiable transformation.
+
+Through our PHO Framework (Proof of Human Oversight), we have developed a technical approach based on cryptographic proof mechanisms, aligned with EU AI Act Article 14 and GDPR Article 22.
+
+Your work at IDT — particularly the LeBi Interreg project on KMU onboarding — is precisely where this approach becomes most relevant.
+
+A research question we could explore together:
+
+"How can digital onboarding be made not only structured, but independently verifiable?"
+
+I would welcome a brief, informal conversation — 30 minutes to explore whether a joint research initiative makes sense.
+
+Kind regards,
+Jober Mögele Correa
+PHO Framework / WINDI Publishing House
+Kempten, Bavaria</div>
+  <button class="copy-btn" onclick="copyText('email-en',this)">Copiar texto</button>
+
+  <div class="section-title" style="margin-top:1.5rem">Notas de tom</div>
+  <div class="card">
+    <p><strong>Não enviar:</strong> pitch deck, proposta comercial, linguagem de startup.</p>
+    <p style="margin-top:6px"><strong>Enviar:</strong> curiosidade intelectual genuína + problema real + proposta de conversa — sem pressão.</p>
+    <p style="margin-top:6px"><strong>Canal preferido:</strong> e-mail directo para katrin.winkler@hs-kempten.de e sandra.niedermeier@hs-kempten.de (cc: claudia.mueller-kreiner@hs-kempten.de)</p>
+  </div>
+</div>
+
+<!-- TAB 4: BERLIN BRIDGE -->
+<div id="berlin" class="tab">
+  <div class="hero">
+    <div class="label">Berlin Pitch · seed+speed · Carlos Halloun</div>
+    <h1>IDT como Asset no Pitch</h1>
+    <div class="sub">Como a parceria académica muda o peso do argumento</div>
+  </div>
+
+  <div class="section-title">O Que Muda com o IDT</div>
+  <div class="card">
+    <p>Sem IDT: "Temos um sistema PHO funcional em produção."</p>
+    <p style="margin-top:8px"><strong>Com IDT:</strong> "Temos um sistema PHO funcional em produção, em diálogo inicial com um projecto de investigação académica com 16+ KMUs reais, financiado pela UE, no coração do mercado alemão."</p>
+    <div class="quote">A diferença entre "startup de AI" e "infraestrutura que define um novo standard europeu."</div>
+  </div>
+
+  <div class="section-title">Framing para Carlos Halloun</div>
+  <div class="phase"><div class="phase-num">1</div><div class="phase-body"><div class="phase-title">Traction statement</div><div class="phase-desc">"We are in early-stage dialogue with the Institut für digitale Transformation at Hochschule Kempten — exploring application of our PHO Framework to real KMU onboarding data under an EU Interreg project."</div></div></div>
+  <div class="phase"><div class="phase-num">2</div><div class="phase-body"><div class="phase-title">Market validation statement</div><div class="phase-desc">"Academic engagement in the German-speaking market anchors our GRC positioning. We are initiating a joint research initiative on Proof of Human Oversight in organizational learning with this institute."</div></div></div>
+  <div class="phase"><div class="phase-num">3</div><div class="phase-body"><div class="phase-title">EU AI Act angle</div><div class="phase-desc">"The EU AI Act Article 14 creates a legal mandate for what we build. Our academic engagement is producing the empirical evidence base that regulators and enterprises will need to comply."</div></div></div>
+
+  <div class="section-title">Timeline Sincronizado</div>
+  <div class="card">
+    <div class="arrow-row"><span class="from">Abr 2026</span><span class="arr">→</span><span class="to">Enviar mensagem ao IDT</span></div>
+    <div class="arrow-row"><span class="from">Mai 2026</span><span class="arr">→</span><span class="to">Berlin pitch com IDT como asset confirmado</span></div>
+    <div class="arrow-row"><span class="from">Jun–Set 2026</span><span class="arr">→</span><span class="to">Concept Note conjunto. Workshop IDT.</span></div>
+    <div class="arrow-row"><span class="from">Out 2026+</span><span class="arr">→</span><span class="to">Pilot LeBi. Dados reais. Paper draft.</span></div>
+    <p style="margin-top:10px;font-size:12px;color:var(--ink3)">Nota: mesmo que a resposta do IDT demore, enviar a mensagem ANTES do pitch — o movimento já é um asset.</p>
+  </div>
+
+  <div class="section-title">One-liner para o Deck</div>
+  <div class="quote" style="font-size:15px;font-weight:500">"PHO Framework is the first cryptographic proof layer for human oversight in organizational processes — developed in production, in early-stage dialogue with Hochschule Kempten, and aligned with EU AI Act Article 14."</div>
+
+  <div class="section-title">Próximos Passos</div>
+  <div class="card">
+    <div class="arrow-row"><span class="pill gold">1</span><span class="to" style="margin-left:6px">Aprovar mensagem alemã → enviar esta semana</span></div>
+    <div class="arrow-row" style="margin-top:6px"><span class="pill gold">2</span><span class="to" style="margin-left:6px">Preparar Concept Note 2 páginas (formato PDF)</span></div>
+    <div class="arrow-row" style="margin-top:6px"><span class="pill gold">3</span><span class="to" style="margin-left:6px">Actualizar Berlin deck com IDT mention</span></div>
+    <div class="arrow-row" style="margin-top:6px"><span class="pill gold">4</span><span class="to" style="margin-left:6px">Aguardar resposta → preparar 30-min meeting</span></div>
+  </div>
+</div>
+
+<script>
+function showTab(id,btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+function copyText(id,btn){
+  var t=document.getElementById(id).innerText;
+  navigator.clipboard.writeText(t).then(()=>{btn.textContent='Copiado!';setTimeout(()=>btn.textContent='Copiar texto',2000)});
+}
+</script>
+</body>
+</html>
