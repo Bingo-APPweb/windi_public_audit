@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ÁRBITRO · W-LAB-001</title>
+<style>
+:root {
+  --bg:#0A0A10;--bg2:#12121A;--gold:#C9A84C;--txt:#E8E6E1;--txt2:#A09A8C;--txt3:#6B6560;
+  --border:#1A1A24;--danger:#E74C3C;--success:#27AE60;--warn:#E67E22;
+  --gdpr:#E74C3C;--dora:#9B59B6;--aiact:#3498DB;
+}
+[data-theme="klar"]{
+  --bg:#FAFAF8;--bg2:#F0EDE8;--gold:#8B7424;--txt:#1A1A1A;--txt2:#4A4640;--txt3:#8A857C;
+  --border:#E0DED8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px;transition:background .3s,color .3s}
+
+.top-bar{display:flex;gap:8px;margin-bottom:24px}
+.toggle-btn{background:var(--bg2);border:1px solid var(--border);color:var(--txt2);padding:6px 12px;font-size:11px;cursor:pointer;transition:all .2s}
+.toggle-btn.active{color:var(--gold);border-color:var(--gold)}
+
+h1{font-size:28px;color:var(--gold);margin-bottom:4px;letter-spacing:2px}
+.subtitle{font-size:12px;color:var(--txt2);margin-bottom:24px;text-align:center}
+
+/* START SCREEN */
+.start-screen{text-align:center;max-width:520px}
+.game-icon{font-size:72px;margin-bottom:16px}
+.tagline{font-size:14px;color:var(--txt2);margin-bottom:24px;font-style:italic}
+.concept-box{background:var(--bg2);border:1px solid var(--border);padding:20px;margin-bottom:16px;text-align:left}
+.concept-title{font-size:11px;color:var(--gold);letter-spacing:1px;margin-bottom:12px}
+.concept-text{font-size:13px;color:var(--txt2);line-height:1.6}
+
+.frameworks-preview{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+.fw-card{background:var(--bg2);border:1px solid var(--border);padding:14px 10px;text-align:center}
+.fw-icon{font-size:24px;margin-bottom:8px}
+.fw-name{font-size:12px;font-weight:700;margin-bottom:4px}
+.fw-gdpr .fw-name{color:var(--gdpr)}
+.fw-dora .fw-name{color:var(--dora)}
+.fw-aiact .fw-name{color:var(--aiact)}
+.fw-hint{font-size:10px;color:var(--txt3);line-height:1.4}
+
+.start-btn{background:var(--gold);color:var(--bg);border:none;padding:16px 48px;font-size:14px;font-weight:600;cursor:pointer;letter-spacing:1px}
+.start-btn:hover{filter:brightness(1.1)}
+
+/* GAME SCREEN */
+.game-screen{display:none;width:100%;max-width:600px}
+.game-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding:12px 16px;background:var(--bg2);border:1px solid var(--border)}
+.round-info{font-size:11px;color:var(--txt2);letter-spacing:1px}
+.score-info{font-size:13px;color:var(--gold);font-weight:700}
+.streak-info{font-size:11px;color:var(--success)}
+
+.timer-bar{height:6px;background:var(--border);margin-bottom:20px;overflow:hidden}
+.timer-fill{height:100%;background:var(--gold);transition:width .1s linear}
+.timer-fill.warning{background:var(--warn)}
+.timer-fill.danger{background:var(--danger);animation:pulse-timer .3s infinite}
+@keyframes pulse-timer{0%,100%{opacity:1}50%{opacity:.6}}
+
+.scenario-card{background:var(--bg2);border:1px solid var(--border);padding:24px;margin-bottom:20px;min-height:180px}
+.scenario-label{font-size:10px;color:var(--txt3);letter-spacing:1px;margin-bottom:12px}
+.scenario-text{font-size:15px;color:var(--txt);line-height:1.7}
+.scenario-context{font-size:12px;color:var(--txt2);margin-top:12px;padding-top:12px;border-top:1px solid var(--border);line-height:1.5}
+
+.framework-buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.fw-btn{background:var(--bg2);border:2px solid var(--border);padding:20px 12px;cursor:pointer;transition:all .15s;text-align:center}
+.fw-btn:hover{border-color:var(--txt3)}
+.fw-btn .fw-icon{font-size:28px;margin-bottom:8px}
+.fw-btn .fw-name{font-size:13px;font-weight:700}
+.fw-btn.btn-gdpr:hover,.fw-btn.btn-gdpr.selected{border-color:var(--gdpr);background:rgba(231,76,60,0.1)}
+.fw-btn.btn-dora:hover,.fw-btn.btn-dora.selected{border-color:var(--dora);background:rgba(155,89,182,0.1)}
+.fw-btn.btn-aiact:hover,.fw-btn.btn-aiact.selected{border-color:var(--aiact);background:rgba(52,152,219,0.1)}
+.fw-btn.correct{border-color:var(--success)!important;background:rgba(39,174,96,0.15)!important}
+.fw-btn.incorrect{border-color:var(--danger)!important;background:rgba(231,76,60,0.15)!important}
+
+/* FEEDBACK */
+.feedback{display:none;text-align:center;padding:16px;margin-top:16px;border:1px solid var(--border)}
+.feedback.show{display:block}
+.feedback.correct{border-color:var(--success);background:rgba(39,174,96,0.08)}
+.feedback.incorrect{border-color:var(--danger);background:rgba(231,76,60,0.08)}
+.feedback.timeout{border-color:var(--warn);background:rgba(230,126,34,0.08)}
+.fb-icon{font-size:32px;margin-bottom:8px}
+.fb-title{font-size:14px;font-weight:700;margin-bottom:4px}
+.fb-explain{font-size:12px;color:var(--txt2);line-height:1.5}
+
+/* RESULT SCREEN */
+.result-screen{display:none;text-align:center;max-width:500px}
+.result-icon{font-size:72px;margin-bottom:16px}
+.result-title{font-size:24px;color:var(--gold);margin-bottom:8px}
+.result-subtitle{font-size:14px;color:var(--txt2);margin-bottom:24px}
+
+.result-stats{background:var(--bg2);border:1px solid var(--border);padding:20px;margin-bottom:24px}
+.stat-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+.stat-row:last-child{border:none}
+.stat-label{font-size:12px;color:var(--txt2)}
+.stat-value{font-size:14px;color:var(--gold);font-weight:700}
+
+.fw-breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px}
+.fwb-card{background:var(--bg2);border:1px solid var(--border);padding:14px 10px;text-align:center}
+.fwb-name{font-size:11px;color:var(--txt2);margin-bottom:6px}
+.fwb-score{font-size:18px;font-weight:700}
+.fwb-gdpr .fwb-score{color:var(--gdpr)}
+.fwb-dora .fwb-score{color:var(--dora)}
+.fwb-aiact .fwb-score{color:var(--aiact)}
+
+.rank-badge{display:inline-block;background:rgba(201,168,76,0.15);border:1px solid var(--gold);color:var(--gold);padding:8px 24px;font-size:12px;font-weight:700;letter-spacing:1px;margin-bottom:24px}
+
+.play-again{background:var(--gold);color:var(--bg);border:none;padding:14px 40px;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:1px;margin-right:10px}
+.back-btn{background:transparent;border:1px solid var(--border);color:var(--txt2);padding:14px 24px;font-size:13px;cursor:pointer}
+
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <button class="toggle-btn lang-btn active" data-lang="pt">PT</button>
+  <button class="toggle-btn lang-btn" data-lang="de">DE</button>
+  <button class="toggle-btn lang-btn" data-lang="en">EN</button>
+  <span style="width:20px"></span>
+  <button class="toggle-btn" id="themeToggle">☀</button>
+</div>
+
+<h1>ÁRBITRO</h1>
+<p class="subtitle" data-i18n="subtitle">Classificação instantânea de framework regulatório</p>
+
+<!-- START SCREEN -->
+<div class="start-screen" id="startScreen">
+  <div class="game-icon">🎯</div>
+  <p class="tagline" data-i18n="tagline">"15 segundos. Qual framework se aplica?"</p>
+
+  <div class="concept-box">
+    <div class="concept-title" data-i18n="concept_title">SISTEMA 1 · CLASSIFICAÇÃO</div>
+    <p class="concept-text" data-i18n="concept_text">
+      Situações regulatórias aparecem. Tu tens 15 segundos para identificar qual framework se aplica.
+      Não há tempo para análise profunda — apenas reconhecimento de padrões treinado.
+    </p>
+  </div>
+
+  <div class="frameworks-preview">
+    <div class="fw-card fw-gdpr">
+      <div class="fw-icon">🔓</div>
+      <div class="fw-name">GDPR</div>
+      <div class="fw-hint" data-i18n="gdpr_hint">dados pessoais · consentimento · direitos do titular</div>
+    </div>
+    <div class="fw-card fw-dora">
+      <div class="fw-icon">⚡</div>
+      <div class="fw-name">DORA</div>
+      <div class="fw-hint" data-i18n="dora_hint">resiliência operacional · ICT risk · incidentes</div>
+    </div>
+    <div class="fw-card fw-aiact">
+      <div class="fw-icon">🤖</div>
+      <div class="fw-name">EU AI Act</div>
+      <div class="fw-hint" data-i18n="aiact_hint">sistemas alto risco · transparência · supervisão humana</div>
+    </div>
+  </div>
+
+  <button class="start-btn" id="startBtn" data-i18n="start_btn">INICIAR ÁRBITRO</button>
+</div>
+
+<!-- GAME SCREEN -->
+<div class="game-screen" id="gameScreen">
+  <div class="game-header">
+    <div class="round-info"><span data-i18n="round">RONDA</span> <span id="roundNum">1</span>/12</div>
+    <div class="score-info"><span id="scoreNum">0</span> <span data-i18n="points">pontos</span></div>
+    <div class="streak-info" id="streakInfo"></div>
+  </div>
+
+  <div class="timer-bar">
+    <div class="timer-fill" id="timerFill"></div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-label" data-i18n="scenario_label">SITUAÇÃO</div>
+    <div class="scenario-text" id="scenarioText">—</div>
+    <div class="scenario-context" id="scenarioContext"></div>
+  </div>
+
+  <div class="framework-buttons" id="fwButtons">
+    <button class="fw-btn btn-gdpr" data-fw="GDPR" onclick="selectFramework('GDPR')">
+      <div class="fw-icon">🔓</div>
+      <div class="fw-name">GDPR</div>
+    </button>
+    <button class="fw-btn btn-dora" data-fw="DORA" onclick="selectFramework('DORA')">
+      <div class="fw-icon">⚡</div>
+      <div class="fw-name">DORA</div>
+    </button>
+    <button class="fw-btn btn-aiact" data-fw="AIACT" onclick="selectFramework('AIACT')">
+      <div class="fw-icon">🤖</div>
+      <div class="fw-name">EU AI Act</div>
+    </button>
+  </div>
+
+  <div class="feedback" id="feedback">
+    <div class="fb-icon" id="fbIcon">✓</div>
+    <div class="fb-title" id="fbTitle">Correcto!</div>
+    <div class="fb-explain" id="fbExplain">—</div>
+  </div>
+</div>
+
+<!-- RESULT SCREEN -->
+<div class="result-screen" id="resultScreen">
+  <div class="result-icon">🎯</div>
+  <div class="result-title" id="resultTitle" data-i18n="result_title">Sessão Completa</div>
+  <div class="result-subtitle" id="resultSubtitle">—</div>
+
+  <div class="rank-badge" id="rankBadge">—</div>
+
+  <div class="result-stats">
+    <div class="stat-row">
+      <span class="stat-label" data-i18n="correct_answers">Respostas correctas</span>
+      <span class="stat-value" id="correctCount">0/12</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label" data-i18n="accuracy">Precisão</span>
+      <span class="stat-value" id="accuracy">0%</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label" data-i18n="avg_time">Tempo médio</span>
+      <span class="stat-value" id="avgTime">0s</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label" data-i18n="best_streak">Melhor sequência</span>
+      <span class="stat-value" id="bestStreak">0</span>
+    </div>
+  </div>
+
+  <div class="fw-breakdown">
+    <div class="fwb-card fwb-gdpr">
+      <div class="fwb-name">GDPR</div>
+      <div class="fwb-score" id="gdprScore">0/0</div>
+    </div>
+    <div class="fwb-card fwb-dora">
+      <div class="fwb-name">DORA</div>
+      <div class="fwb-score" id="doraScore">0/0</div>
+    </div>
+    <div class="fwb-card fwb-aiact">
+      <div class="fwb-name">EU AI Act</div>
+      <div class="fwb-score" id="aiactScore">0/0</div>
+    </div>
+  </div>
+
+  <div>
+    <button class="play-again" id="playAgain" data-i18n="play_again">JOGAR NOVAMENTE</button>
+    <a href="/lab/static/lab.html" class="back-btn" data-i18n="back_lab">← VOLTAR</a>
+  </div>
+</div>
+
+<script>
+// ============ i18n ============
+const i18n = {
+  pt: {
+    subtitle: "Classificação instantânea de framework regulatório",
+    tagline: "\"15 segundos. Qual framework se aplica?\"",
+    concept_title: "SISTEMA 1 · CLASSIFICAÇÃO",
+    concept_text: "Situações regulatórias aparecem. Tu tens 15 segundos para identificar qual framework se aplica. Não há tempo para análise profunda — apenas reconhecimento de padrões treinado.",
+    gdpr_hint: "dados pessoais · consentimento · direitos do titular",
+    dora_hint: "resiliência operacional · ICT risk · incidentes",
+    aiact_hint: "sistemas alto risco · transparência · supervisão humana",
+    start_btn: "INICIAR ÁRBITRO",
+    round: "RONDA",
+    points: "pontos",
+    scenario_label: "SITUAÇÃO",
+    result_title: "Sessão Completa",
+    correct_answers: "Respostas correctas",
+    accuracy: "Precisão",
+    avg_time: "Tempo médio",
+    best_streak: "Melhor sequência",
+    play_again: "JOGAR NOVAMENTE",
+    back_lab: "← VOLTAR",
+    correct: "Correcto!",
+    incorrect: "Incorrecto",
+    timeout: "Tempo esgotado",
+    streak: "Sequência",
+    rank_master: "MESTRE REGULATÓRIO",
+    rank_expert: "ÁRBITRO EXPERIENTE",
+    rank_apprentice: "ÁRBITRO APRENDIZ",
+    rank_novice: "NOVATO"
+  },
+  de: {
+    subtitle: "Sofortige Klassifizierung des regulatorischen Rahmens",
+    tagline: "\"15 Sekunden. Welches Framework gilt?\"",
+    concept_title: "SYSTEM 1 · KLASSIFIZIERUNG",
+    concept_text: "Regulatorische Situationen erscheinen. Du hast 15 Sekunden, um zu identifizieren, welches Framework gilt. Keine Zeit für tiefe Analyse — nur trainierte Mustererkennung.",
+    gdpr_hint: "personenbezogene Daten · Einwilligung · Betroffenenrechte",
+    dora_hint: "betriebliche Resilienz · IKT-Risiko · Vorfälle",
+    aiact_hint: "Hochrisikosysteme · Transparenz · menschliche Aufsicht",
+    start_btn: "ÁRBITRO STARTEN",
+    round: "RUNDE",
+    points: "Punkte",
+    scenario_label: "SITUATION",
+    result_title: "Sitzung Abgeschlossen",
+    correct_answers: "Richtige Antworten",
+    accuracy: "Genauigkeit",
+    avg_time: "Durchschnittliche Zeit",
+    best_streak: "Beste Serie",
+    play_again: "ERNEUT SPIELEN",
+    back_lab: "← ZURÜCK",
+    correct: "Richtig!",
+    incorrect: "Falsch",
+    timeout: "Zeit abgelaufen",
+    streak: "Serie",
+    rank_master: "REGULATORISCHER MEISTER",
+    rank_expert: "ERFAHRENER ÁRBITRO",
+    rank_apprentice: "ÁRBITRO-LEHRLING",
+    rank_novice: "ANFÄNGER"
+  },
+  en: {
+    subtitle: "Instant regulatory framework classification",
+    tagline: "\"15 seconds. Which framework applies?\"",
+    concept_title: "SYSTEM 1 · CLASSIFICATION",
+    concept_text: "Regulatory situations appear. You have 15 seconds to identify which framework applies. No time for deep analysis — just trained pattern recognition.",
+    gdpr_hint: "personal data · consent · data subject rights",
+    dora_hint: "operational resilience · ICT risk · incidents",
+    aiact_hint: "high-risk systems · transparency · human oversight",
+    start_btn: "START ÁRBITRO",
+    round: "ROUND",
+    points: "points",
+    scenario_label: "SITUATION",
+    result_title: "Session Complete",
+    correct_answers: "Correct answers",
+    accuracy: "Accuracy",
+    avg_time: "Average time",
+    best_streak: "Best streak",
+    play_again: "PLAY AGAIN",
+    back_lab: "← BACK",
+    correct: "Correct!",
+    incorrect: "Incorrect",
+    timeout: "Time expired",
+    streak: "Streak",
+    rank_master: "REGULATORY MASTER",
+    rank_expert: "EXPERT ÁRBITRO",
+    rank_apprentice: "ÁRBITRO APPRENTICE",
+    rank_novice: "NOVICE"
+  }
+};
+
+let currentLang = localStorage.getItem('windi-lang') || 'pt';
+let currentTheme = localStorage.getItem('windi-theme') || 'noir';
+
+function applyI18n() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (i18n[currentLang][key]) el.innerHTML = i18n[currentLang][key];
+  });
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('windi-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`[data-lang="${lang}"]`).classList.add('active');
+  applyI18n();
+}
+
+function setTheme(theme) {
+  currentTheme = theme;
+  localStorage.setItem('windi-theme', theme);
+  document.body.dataset.theme = theme;
+  document.getElementById('themeToggle').textContent = theme === 'noir' ? '☀' : '☽';
+}
+
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => setLang(btn.dataset.lang));
+});
+document.getElementById('themeToggle').addEventListener('click', () => {
+  setTheme(currentTheme === 'noir' ? 'klar' : 'noir');
+});
+
+// ============ SCENARIOS ============
+const scenarios = [
+  // GDPR scenarios
+  {
+    framework: "GDPR",
+    text: {
+      pt: "Um cliente pede para ver todos os dados pessoais que a empresa tem sobre ele.",
+      de: "Ein Kunde bittet darum, alle personenbezogenen Daten einzusehen, die das Unternehmen über ihn hat.",
+      en: "A customer asks to see all personal data the company holds about them."
+    },
+    context: {
+      pt: "Direito de acesso — Art. 15 GDPR",
+      de: "Auskunftsrecht — Art. 15 DSGVO",
+      en: "Right of access — Art. 15 GDPR"
+    }
+  },
+  {
+    framework: "GDPR",
+    text: {
+      pt: "A empresa quer enviar newsletters promocionais para uma lista de emails comprada.",
+      de: "Das Unternehmen möchte Werbe-Newsletter an eine gekaufte E-Mail-Liste senden.",
+      en: "The company wants to send promotional newsletters to a purchased email list."
+    },
+    context: {
+      pt: "Base legal e consentimento — Art. 6, 7 GDPR",
+      de: "Rechtsgrundlage und Einwilligung — Art. 6, 7 DSGVO",
+      en: "Legal basis and consent — Art. 6, 7 GDPR"
+    }
+  },
+  {
+    framework: "GDPR",
+    text: {
+      pt: "Um ex-funcionário exige que a empresa apague todos os seus dados pessoais dos sistemas.",
+      de: "Ein ehemaliger Mitarbeiter verlangt, dass das Unternehmen alle seine personenbezogenen Daten aus den Systemen löscht.",
+      en: "A former employee demands the company delete all their personal data from systems."
+    },
+    context: {
+      pt: "Direito ao apagamento — Art. 17 GDPR",
+      de: "Recht auf Löschung — Art. 17 DSGVO",
+      en: "Right to erasure — Art. 17 GDPR"
+    }
+  },
+  {
+    framework: "GDPR",
+    text: {
+      pt: "Um hacker conseguiu acesso a uma base de dados com 50.000 registos de clientes.",
+      de: "Ein Hacker erlangte Zugriff auf eine Datenbank mit 50.000 Kundendatensätzen.",
+      en: "A hacker gained access to a database containing 50,000 customer records."
+    },
+    context: {
+      pt: "Notificação de violação — Art. 33, 34 GDPR (72 horas)",
+      de: "Meldung von Verletzungen — Art. 33, 34 DSGVO (72 Stunden)",
+      en: "Breach notification — Art. 33, 34 GDPR (72 hours)"
+    }
+  },
+  // DORA scenarios
+  {
+    framework: "DORA",
+    text: {
+      pt: "O fornecedor cloud do banco teve uma falha que afectou transacções durante 4 horas.",
+      de: "Der Cloud-Anbieter der Bank hatte einen Ausfall, der Transaktionen 4 Stunden lang beeinträchtigte.",
+      en: "The bank's cloud provider had an outage affecting transactions for 4 hours."
+    },
+    context: {
+      pt: "Gestão de risco ICT de terceiros — Art. 28 DORA",
+      de: "IKT-Drittparteienrisikomanagement — Art. 28 DORA",
+      en: "ICT third-party risk management — Art. 28 DORA"
+    }
+  },
+  {
+    framework: "DORA",
+    text: {
+      pt: "O sistema de pagamentos do banco ficou indisponível durante o fim de semana.",
+      de: "Das Zahlungssystem der Bank war am Wochenende nicht verfügbar.",
+      en: "The bank's payment system was unavailable over the weekend."
+    },
+    context: {
+      pt: "Resiliência operacional digital — Art. 5-14 DORA",
+      de: "Digitale Betriebsresilienz — Art. 5-14 DORA",
+      en: "Digital operational resilience — Art. 5-14 DORA"
+    }
+  },
+  {
+    framework: "DORA",
+    text: {
+      pt: "Uma seguradora precisa de testar a sua capacidade de resposta a ciberataques.",
+      de: "Ein Versicherer muss seine Fähigkeit zur Reaktion auf Cyberangriffe testen.",
+      en: "An insurer needs to test its capacity to respond to cyber attacks."
+    },
+    context: {
+      pt: "Testes de resiliência — Art. 24-27 DORA",
+      de: "Resilienztests — Art. 24-27 DORA",
+      en: "Resilience testing — Art. 24-27 DORA"
+    }
+  },
+  {
+    framework: "DORA",
+    text: {
+      pt: "Um banco detectou um incidente ICT grave e precisa de o reportar às autoridades.",
+      de: "Eine Bank hat einen schweren IKT-Vorfall festgestellt und muss ihn den Behörden melden.",
+      en: "A bank detected a major ICT incident and needs to report it to authorities."
+    },
+    context: {
+      pt: "Reporte de incidentes — Art. 17-23 DORA (24 horas)",
+      de: "Vorfallmeldung — Art. 17-23 DORA (24 Stunden)",
+      en: "Incident reporting — Art. 17-23 DORA (24 hours)"
+    }
+  },
+  // AI Act scenarios
+  {
+    framework: "AIACT",
+    text: {
+      pt: "Uma empresa quer usar AI para selecionar candidatos em processos de recrutamento.",
+      de: "Ein Unternehmen möchte KI zur Auswahl von Kandidaten in Rekrutierungsprozessen einsetzen.",
+      en: "A company wants to use AI to select candidates in recruitment processes."
+    },
+    context: {
+      pt: "Sistema de alto risco — Anexo III, ponto 4 EU AI Act",
+      de: "Hochrisikosystem — Anhang III, Punkt 4 EU AI Act",
+      en: "High-risk system — Annex III, point 4 EU AI Act"
+    }
+  },
+  {
+    framework: "AIACT",
+    text: {
+      pt: "O sistema de AI tomou uma decisão de crédito sem que um humano pudesse intervir.",
+      de: "Das KI-System traf eine Kreditentscheidung, ohne dass ein Mensch eingreifen konnte.",
+      en: "The AI system made a credit decision without a human being able to intervene."
+    },
+    context: {
+      pt: "Supervisão humana obrigatória — Art. 14 EU AI Act (I9)",
+      de: "Obligatorische menschliche Aufsicht — Art. 14 EU AI Act (I9)",
+      en: "Mandatory human oversight — Art. 14 EU AI Act (I9)"
+    }
+  },
+  {
+    framework: "AIACT",
+    text: {
+      pt: "Um chatbot de atendimento não informa os utilizadores que estão a falar com AI.",
+      de: "Ein Kundenservice-Chatbot informiert die Benutzer nicht, dass sie mit KI sprechen.",
+      en: "A customer service chatbot doesn't inform users they are talking to AI."
+    },
+    context: {
+      pt: "Obrigação de transparência — Art. 52 EU AI Act",
+      de: "Transparenzpflicht — Art. 52 EU AI Act",
+      en: "Transparency obligation — Art. 52 EU AI Act"
+    }
+  },
+  {
+    framework: "AIACT",
+    text: {
+      pt: "O modelo de AI foi actualizado em produção sem re-validação de bias e fairness.",
+      de: "Das KI-Modell wurde in der Produktion aktualisiert, ohne dass Bias und Fairness erneut validiert wurden.",
+      en: "The AI model was updated in production without re-validation of bias and fairness."
+    },
+    context: {
+      pt: "Gestão de qualidade — Art. 9 EU AI Act",
+      de: "Qualitätsmanagement — Art. 9 EU AI Act",
+      en: "Quality management — Art. 9 EU AI Act"
+    }
+  }
+];
+
+// ============ GAME STATE ============
+let gameState = {
+  round: 0,
+  score: 0,
+  streak: 0,
+  bestStreak: 0,
+  correct: 0,
+  times: [],
+  answers: { GDPR: { correct: 0, total: 0 }, DORA: { correct: 0, total: 0 }, AIACT: { correct: 0, total: 0 } },
+  currentScenario: null,
+  timer: null,
+  timeLeft: 15,
+  startTime: 0,
+  shuffledScenarios: [],
+  answered: false
+};
+
+const TOTAL_ROUNDS = 12;
+const TIME_LIMIT = 15;
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startGame() {
+  gameState = {
+    round: 0,
+    score: 0,
+    streak: 0,
+    bestStreak: 0,
+    correct: 0,
+    times: [],
+    answers: { GDPR: { correct: 0, total: 0 }, DORA: { correct: 0, total: 0 }, AIACT: { correct: 0, total: 0 } },
+    currentScenario: null,
+    timer: null,
+    timeLeft: TIME_LIMIT,
+    startTime: 0,
+    shuffledScenarios: shuffle(scenarios).slice(0, TOTAL_ROUNDS),
+    answered: false
+  };
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('resultScreen').style.display = 'none';
+  document.getElementById('gameScreen').style.display = 'block';
+  nextRound();
+}
+
+function nextRound() {
+  gameState.round++;
+  if (gameState.round > TOTAL_ROUNDS) {
+    showResults();
+    return;
+  }
+
+  gameState.answered = false;
+  gameState.currentScenario = gameState.shuffledScenarios[gameState.round - 1];
+  gameState.timeLeft = TIME_LIMIT;
+  gameState.startTime = Date.now();
+
+  // Update UI
+  document.getElementById('roundNum').textContent = gameState.round;
+  document.getElementById('scoreNum').textContent = gameState.score;
+  document.getElementById('streakInfo').textContent = gameState.streak > 1 ? `${i18n[currentLang].streak} ${gameState.streak}` : '';
+  document.getElementById('scenarioText').textContent = gameState.currentScenario.text[currentLang];
+  document.getElementById('scenarioContext').textContent = '';
+
+  // Reset buttons
+  document.querySelectorAll('.fw-btn').forEach(btn => {
+    btn.classList.remove('selected', 'correct', 'incorrect');
+    btn.disabled = false;
+  });
+
+  // Hide feedback
+  document.getElementById('feedback').classList.remove('show', 'correct', 'incorrect', 'timeout');
+
+  // Start timer
+  startTimer();
+}
+
+function startTimer() {
+  const timerFill = document.getElementById('timerFill');
+  timerFill.style.width = '100%';
+  timerFill.classList.remove('warning', 'danger');
+
+  if (gameState.timer) clearInterval(gameState.timer);
+
+  gameState.timer = setInterval(() => {
+    gameState.timeLeft -= 0.1;
+    const pct = (gameState.timeLeft / TIME_LIMIT) * 100;
+    timerFill.style.width = pct + '%';
+
+    if (gameState.timeLeft <= 5) timerFill.classList.add('warning');
+    if (gameState.timeLeft <= 3) timerFill.classList.add('danger');
+
+    if (gameState.timeLeft <= 0) {
+      clearInterval(gameState.timer);
+      handleTimeout();
+    }
+  }, 100);
+}
+
+function selectFramework(fw) {
+  if (gameState.answered) return;
+  gameState.answered = true;
+  clearInterval(gameState.timer);
+
+  const timeTaken = (Date.now() - gameState.startTime) / 1000;
+  gameState.times.push(timeTaken);
+
+  const correct = gameState.currentScenario.framework === fw;
+  const correctFw = gameState.currentScenario.framework;
+
+  // Track per-framework stats
+  gameState.answers[correctFw].total++;
+  if (correct) {
+    gameState.answers[correctFw].correct++;
+    gameState.correct++;
+    gameState.streak++;
+    if (gameState.streak > gameState.bestStreak) gameState.bestStreak = gameState.streak;
+
+    // Points: base 100 + time bonus (up to 50)
+    const timeBonus = Math.round((gameState.timeLeft / TIME_LIMIT) * 50);
+    const streakBonus = gameState.streak > 2 ? (gameState.streak - 2) * 10 : 0;
+    gameState.score += 100 + timeBonus + streakBonus;
+  } else {
+    gameState.streak = 0;
+  }
+
+  // Update UI
+  document.querySelectorAll('.fw-btn').forEach(btn => {
+    btn.disabled = true;
+    if (btn.dataset.fw === fw) {
+      btn.classList.add(correct ? 'correct' : 'incorrect');
+    }
+    if (!correct && btn.dataset.fw === correctFw) {
+      btn.classList.add('correct');
+    }
+  });
+
+  showFeedback(correct, correctFw);
+}
+
+function handleTimeout() {
+  if (gameState.answered) return;
+  gameState.answered = true;
+
+  const correctFw = gameState.currentScenario.framework;
+  gameState.answers[correctFw].total++;
+  gameState.streak = 0;
+  gameState.times.push(TIME_LIMIT);
+
+  document.querySelectorAll('.fw-btn').forEach(btn => {
+    btn.disabled = true;
+    if (btn.dataset.fw === correctFw) {
+      btn.classList.add('correct');
+    }
+  });
+
+  showFeedback('timeout', correctFw);
+}
+
+function showFeedback(result, correctFw) {
+  const fb = document.getElementById('feedback');
+  const lang = i18n[currentLang];
+
+  fb.classList.remove('correct', 'incorrect', 'timeout');
+
+  if (result === true) {
+    fb.classList.add('correct');
+    document.getElementById('fbIcon').textContent = '✓';
+    document.getElementById('fbTitle').textContent = lang.correct;
+  } else if (result === 'timeout') {
+    fb.classList.add('timeout');
+    document.getElementById('fbIcon').textContent = '⏱';
+    document.getElementById('fbTitle').textContent = lang.timeout;
+  } else {
+    fb.classList.add('incorrect');
+    document.getElementById('fbIcon').textContent = '✗';
+    document.getElementById('fbTitle').textContent = lang.incorrect;
+  }
+
+  document.getElementById('fbExplain').textContent = gameState.currentScenario.context[currentLang];
+  document.getElementById('scenarioContext').textContent = gameState.currentScenario.context[currentLang];
+  fb.classList.add('show');
+
+  // Auto-advance after 2 seconds
+  setTimeout(nextRound, 2000);
+}
+
+function showResults() {
+  document.getElementById('gameScreen').style.display = 'none';
+  document.getElementById('resultScreen').style.display = 'block';
+
+  const lang = i18n[currentLang];
+  const accuracy = Math.round((gameState.correct / TOTAL_ROUNDS) * 100);
+  const avgTime = gameState.times.length ? (gameState.times.reduce((a, b) => a + b, 0) / gameState.times.length).toFixed(1) : 0;
+
+  // Rank
+  let rank;
+  if (accuracy >= 90) rank = lang.rank_master;
+  else if (accuracy >= 70) rank = lang.rank_expert;
+  else if (accuracy >= 50) rank = lang.rank_apprentice;
+  else rank = lang.rank_novice;
+
+  document.getElementById('resultSubtitle').textContent = `${gameState.score} ${lang.points}`;
+  document.getElementById('rankBadge').textContent = rank;
+  document.getElementById('correctCount').textContent = `${gameState.correct}/${TOTAL_ROUNDS}`;
+  document.getElementById('accuracy').textContent = `${accuracy}%`;
+  document.getElementById('avgTime').textContent = `${avgTime}s`;
+  document.getElementById('bestStreak').textContent = gameState.bestStreak;
+
+  // Per-framework breakdown
+  const gdpr = gameState.answers.GDPR;
+  const dora = gameState.answers.DORA;
+  const aiact = gameState.answers.AIACT;
+  document.getElementById('gdprScore').textContent = gdpr.total > 0 ? `${gdpr.correct}/${gdpr.total}` : '—';
+  document.getElementById('doraScore').textContent = dora.total > 0 ? `${dora.correct}/${dora.total}` : '—';
+  document.getElementById('aiactScore').textContent = aiact.total > 0 ? `${aiact.correct}/${aiact.total}` : '—';
+}
+
+// Event listeners
+document.getElementById('startBtn').addEventListener('click', startGame);
+document.getElementById('playAgain').addEventListener('click', startGame);
+
+// Init
+setTheme(currentTheme);
+setLang(currentLang);
+</script>
+
+</body>
+</html>
