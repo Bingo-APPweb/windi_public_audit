@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>W-LAB · Can you prove it?</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #0b0b09;
+  --surface:  #141412;
+  --card:     #1c1c19;
+  --border:   #2a2a26;
+  --border-md:#3d3d38;
+  --gold:     #D4A843;
+  --gold-dim: #7a5f1e;
+  --gold-faint:rgba(212,168,67,0.06);
+  --text:     #F0EBD8;
+  --text-sec: #8a8478;
+  --text-muted:#4e4d48;
+  --danger:   #E24B4A;
+  --warn:     #EF9F27;
+  --ok:       #1D9E75;
+  --head: 'Bricolage Grotesque', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--head);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse-ring {
+  0%   { transform: scale(1);   opacity: .4; }
+  100% { transform: scale(2.6); opacity: 0;  }
+}
+@keyframes blink {
+  0%,100% { opacity: 1; } 50% { opacity: 0; }
+}
+.fade-up { animation: fadeUp .7s ease both; }
+.fade-up-2 { animation: fadeUp .7s ease .15s both; }
+.fade-up-3 { animation: fadeUp .7s ease .3s both; }
+.fade-up-4 { animation: fadeUp .7s ease .45s both; }
+.fade-up-5 { animation: fadeUp .7s ease .6s both; }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 40px;
+  border-bottom: 0.5px solid transparent;
+  transition: background .3s, border-color .3s;
+}
+nav.scrolled {
+  background: rgba(11,11,9,0.92);
+  border-color: var(--border);
+  backdrop-filter: blur(12px);
+}
+.nav-logo {
+  font-family: var(--mono); font-size: 13px; font-weight: 700;
+  color: var(--text-sec); letter-spacing: .08em; text-decoration: none;
+}
+.nav-logo span { color: var(--gold); }
+.nav-right { display: flex; align-items: center; gap: 20px; }
+.nav-badge {
+  font-family: var(--mono); font-size: 10px; color: var(--gold-dim);
+  border: 0.5px solid var(--gold-dim); border-radius: 3px;
+  padding: 3px 8px; letter-spacing: .08em;
+}
+.nav-cta {
+  font-family: var(--mono); font-size: 12px; font-weight: 700;
+  color: var(--bg); background: var(--text);
+  border: none; border-radius: 6px; padding: 8px 16px;
+  cursor: pointer; text-decoration: none; letter-spacing: .02em;
+  transition: opacity .2s;
+}
+.nav-cta:hover { opacity: .85; }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: flex-start; justify-content: center;
+  padding: 120px 40px 80px;
+  max-width: 860px; margin: 0 auto;
+  position: relative;
+}
+.hero-tag {
+  font-family: var(--mono); font-size: 11px; color: var(--gold-dim);
+  letter-spacing: .14em; text-transform: uppercase;
+  border: 0.5px solid var(--gold-dim); border-radius: 3px;
+  padding: 4px 10px; display: inline-block; margin-bottom: 36px;
+}
+.hero-h1 {
+  font-size: clamp(36px, 6vw, 68px);
+  font-weight: 800; line-height: 1.08;
+  letter-spacing: -.03em; color: var(--text);
+  margin-bottom: 28px;
+}
+.hero-h1 em {
+  font-style: normal;
+  color: var(--gold);
+  position: relative;
+}
+.hero-sub {
+  font-size: clamp(16px, 2vw, 20px);
+  color: var(--text-sec); line-height: 1.6;
+  max-width: 520px; margin-bottom: 44px;
+}
+.hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn-gold {
+  background: var(--gold); color: var(--bg);
+  border: none; border-radius: 8px;
+  padding: 14px 28px; font-size: 14px; font-weight: 800;
+  font-family: var(--head); cursor: pointer; text-decoration: none;
+  transition: opacity .2s; display: inline-block; letter-spacing: -.01em;
+}
+.btn-gold:hover { opacity: .88; }
+.btn-outline {
+  background: transparent; color: var(--text-sec);
+  border: 0.5px solid var(--border-md); border-radius: 8px;
+  padding: 14px 28px; font-size: 14px; font-weight: 600;
+  font-family: var(--head); cursor: pointer; text-decoration: none;
+  transition: border-color .2s, color .2s; display: inline-block;
+}
+.btn-outline:hover { border-color: var(--text-muted); color: var(--text); }
+
+.hero-scroll {
+  position: absolute; bottom: 36px; left: 40px;
+  font-family: var(--mono); font-size: 11px; color: var(--text-muted);
+  letter-spacing: .1em; display: flex; align-items: center; gap: 8px;
+}
+.scroll-line {
+  width: 32px; height: 0.5px; background: var(--text-muted);
+}
+
+/* ── SECTION BASE ── */
+.section { padding: 100px 40px; max-width: 860px; margin: 0 auto; }
+.section-label {
+  font-family: var(--mono); font-size: 10px; color: var(--text-muted);
+  letter-spacing: .14em; text-transform: uppercase; margin-bottom: 20px;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-label::after {
+  content: ''; flex: 1; height: 0.5px; background: var(--border);
+}
+.section-h2 {
+  font-size: clamp(26px, 4vw, 40px); font-weight: 800;
+  letter-spacing: -.025em; line-height: 1.15;
+  color: var(--text); margin-bottom: 16px;
+}
+.section-sub {
+  font-size: 15px; color: var(--text-sec); line-height: 1.7;
+  max-width: 560px; margin-bottom: 48px;
+}
+
+/* ── PROBLEM SECTION ── */
+.problem-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+  margin-bottom: 48px;
+}
+.problem-card {
+  background: var(--card); border: 0.5px solid var(--border);
+  border-radius: 12px; padding: 24px;
+}
+.problem-card.bad  { border-color: rgba(226,75,74,0.3); }
+.problem-card.good { border-color: rgba(29,158,117,0.3); }
+.pc-label {
+  font-family: var(--mono); font-size: 10px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase;
+  margin-bottom: 14px; display: flex; align-items: center; gap: 6px;
+}
+.pc-label.bad  { color: var(--danger); }
+.pc-label.good { color: var(--ok); }
+.pc-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.pc-dot.bad  { background: var(--danger); }
+.pc-dot.good { background: var(--ok); }
+.pc-list { display: flex; flex-direction: column; gap: 8px; }
+.pc-item {
+  font-size: 13px; color: var(--text-sec); line-height: 1.5;
+  padding-left: 12px; border-left: 1.5px solid var(--border);
+}
+.pc-item.strike { text-decoration: line-through; color: var(--text-muted); }
+.pc-item.strong { color: var(--text); font-weight: 600; border-left-color: var(--ok); }
+
+/* ── 3 STEPS ── */
+.steps-row {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+  margin-bottom: 20px;
+}
+.step-card {
+  background: var(--surface); border: 0.5px solid var(--border);
+  border-radius: 12px; padding: 24px 22px; position: relative;
+}
+.step-num {
+  font-family: var(--mono); font-size: 11px; font-weight: 700;
+  color: var(--gold-dim); letter-spacing: .08em;
+  border: 0.5px solid var(--gold-dim); border-radius: 3px;
+  padding: 3px 7px; display: inline-block; margin-bottom: 14px;
+}
+.step-title {
+  font-size: 16px; font-weight: 800; color: var(--text);
+  margin-bottom: 8px; letter-spacing: -.01em;
+}
+.step-desc { font-size: 13px; color: var(--text-sec); line-height: 1.6; }
+.step-arrow {
+  position: absolute; top: 50%; right: -14px;
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--card); border: 0.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; color: var(--text-muted); transform: translateY(-50%);
+  z-index: 1;
+}
+
+/* ── SCENARIOS ── */
+.scenarios-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  margin-bottom: 20px;
+}
+.scenario-card {
+  background: var(--card); border: 0.5px solid var(--border);
+  border-radius: 12px; padding: 22px; cursor: pointer;
+  transition: border-color .2s, transform .2s;
+  text-decoration: none; display: block;
+}
+.scenario-card:hover { border-color: var(--border-md); transform: translateY(-2px); }
+.sc-tag {
+  font-family: var(--mono); font-size: 10px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 3px; display: inline-block;
+  margin-bottom: 14px;
+}
+.sc-tag.dora { background: rgba(226,75,74,0.12); color: var(--danger); }
+.sc-tag.gdpr { background: rgba(239,159,39,0.12); color: var(--warn);  }
+.sc-title {
+  font-size: 17px; font-weight: 800; color: var(--text);
+  margin-bottom: 8px; letter-spacing: -.01em; line-height: 1.2;
+}
+.sc-desc {
+  font-size: 13px; color: var(--text-sec); line-height: 1.6;
+  margin-bottom: 16px;
+}
+.sc-meta {
+  display: flex; gap: 12px; flex-wrap: wrap;
+}
+.sc-chip {
+  font-family: var(--mono); font-size: 10px; color: var(--text-muted);
+  border: 0.5px solid var(--border); border-radius: 3px;
+  padding: 3px 8px; letter-spacing: .05em;
+}
+
+/* ── MINI-GAMES ── */
+.games-row {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+  margin-bottom: 20px;
+}
+.game-card {
+  background: var(--surface); border: 0.5px solid var(--border);
+  border-radius: 12px; padding: 20px 18px;
+  transition: border-color .2s;
+}
+.game-card:hover { border-color: var(--border-md); }
+.game-icon {
+  font-size: 22px; margin-bottom: 12px; display: block;
+  font-family: var(--mono);
+}
+.game-name {
+  font-family: var(--mono); font-size: 12px; font-weight: 700;
+  color: var(--gold); letter-spacing: .06em; margin-bottom: 6px;
+}
+.game-tagline { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.game-desc { font-size: 12px; color: var(--text-sec); line-height: 1.5; }
+.game-timer {
+  font-family: var(--mono); font-size: 10px; color: var(--text-muted);
+  margin-top: 10px; letter-spacing: .06em;
+}
+
+/* ── MATURITY ── */
+.maturity-track {
+  display: flex; flex-direction: column; gap: 8px; margin-bottom: 32px;
+}
+.mat-row {
+  display: flex; align-items: center; gap: 16px;
+  padding: 14px 18px; background: var(--surface);
+  border: 0.5px solid var(--border); border-radius: 10px;
+  transition: border-color .2s;
+}
+.mat-row:hover { border-color: var(--border-md); }
+.mat-row.lobo { border-color: var(--gold-dim); background: var(--gold-faint); }
+.mat-num {
+  font-family: var(--mono); font-size: 10px; font-weight: 700;
+  color: var(--text-muted); min-width: 22px;
+}
+.mat-bar {
+  height: 3px; border-radius: 2px; background: var(--border);
+  position: relative; flex: 1; max-width: 120px;
+}
+.mat-fill { height: 100%; border-radius: 2px; }
+.mat-label { font-size: 13px; font-weight: 700; color: var(--text); min-width: 100px; }
+.mat-desc { font-size: 12px; color: var(--text-sec); }
+.mat-row.lobo .mat-label { color: var(--gold); }
+
+/* ── CERT ── */
+.cert-frame {
+  border: 0.5px solid var(--gold-dim); border-radius: 12px;
+  padding: 32px; background: var(--gold-faint);
+  text-align: center; margin-bottom: 20px;
+  position: relative; overflow: hidden;
+}
+.cert-frame::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+}
+.cert-tag {
+  font-family: var(--mono); font-size: 10px; color: var(--gold-dim);
+  letter-spacing: .14em; text-transform: uppercase; margin-bottom: 16px;
+}
+.cert-title {
+  font-size: 26px; font-weight: 800; color: var(--text);
+  letter-spacing: -.02em; margin-bottom: 10px;
+}
+.cert-sub { font-size: 14px; color: var(--text-sec); line-height: 1.6; max-width: 500px; margin: 0 auto 24px; }
+.cert-receipt {
+  font-family: var(--mono); font-size: 12px;
+  background: var(--card); border: 0.5px solid var(--border);
+  border-radius: 8px; padding: 16px 20px;
+  text-align: left; display: inline-block; margin-bottom: 24px;
+  color: var(--text-sec); line-height: 1.9;
+}
+.cert-receipt .r-key { color: var(--text-muted); }
+.cert-receipt .r-val { color: var(--text); }
+.cert-receipt .r-val.gold { color: var(--gold); }
+.cert-receipt .r-val.ok { color: var(--ok); }
+
+/* ── QUOTE ── */
+.quote-section {
+  padding: 80px 40px;
+  max-width: 860px; margin: 0 auto;
+  border-top: 0.5px solid var(--border);
+}
+.quote-text {
+  font-size: clamp(22px, 3.5vw, 34px); font-weight: 800;
+  letter-spacing: -.025em; line-height: 1.25;
+  color: var(--text); margin-bottom: 20px;
+}
+.quote-text em { font-style: normal; color: var(--gold); }
+.quote-attr {
+  font-family: var(--mono); font-size: 12px; color: var(--text-muted);
+  letter-spacing: .06em;
+}
+
+/* ── FINAL CTA ── */
+.final-section {
+  padding: 100px 40px;
+  border-top: 0.5px solid var(--border);
+  text-align: center;
+}
+.final-h {
+  font-size: clamp(28px, 4vw, 48px); font-weight: 800;
+  letter-spacing: -.025em; color: var(--text); margin-bottom: 16px;
+}
+.final-sub { font-size: 15px; color: var(--text-sec); margin-bottom: 40px; max-width: 480px; margin-left: auto; margin-right: auto; }
+
+/* ── FOOTER ── */
+footer {
+  border-top: 0.5px solid var(--border);
+  padding: 32px 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  max-width: 100%;
+}
+.footer-logo { font-family: var(--mono); font-size: 11px; color: var(--text-muted); letter-spacing: .08em; }
+.footer-logo span { color: var(--gold-dim); }
+.footer-right { font-family: var(--mono); font-size: 10px; color: var(--text-muted); letter-spacing: .06em; text-align: right; }
+
+/* ── DIVIDER ── */
+hr { border: none; border-top: 0.5px solid var(--border); }
+
+/* ── FAREJADOR-LITE DEMO ── */
+.demo-section {
+  padding: 80px 40px;
+  max-width: 860px; margin: 0 auto;
+  border-top: 0.5px solid var(--border);
+}
+.demo-header {
+  text-align: center; margin-bottom: 32px;
+}
+.demo-tag {
+  font-family: var(--mono); font-size: 10px; color: var(--danger);
+  letter-spacing: .14em; text-transform: uppercase;
+  border: 0.5px solid var(--danger); border-radius: 3px;
+  padding: 4px 10px; display: inline-block; margin-bottom: 16px;
+  animation: blink 1.5s infinite;
+}
+.demo-tag.ready { color: var(--gold-dim); border-color: var(--gold-dim); animation: none; }
+.demo-tag.success { color: var(--ok); border-color: var(--ok); animation: none; }
+.demo-tag.fail { color: var(--danger); border-color: var(--danger); animation: none; }
+.demo-title {
+  font-size: clamp(22px, 3vw, 32px); font-weight: 800;
+  letter-spacing: -.02em; color: var(--text); margin-bottom: 10px;
+}
+.demo-sub {
+  font-size: 14px; color: var(--text-sec); max-width: 480px; margin: 0 auto;
+}
+.demo-timer-bar {
+  height: 4px; background: var(--border); border-radius: 2px;
+  margin: 24px 0; overflow: hidden;
+}
+.demo-timer-fill {
+  height: 100%; background: var(--gold); border-radius: 2px;
+  width: 100%; transition: width 0.1s linear;
+}
+.demo-timer-fill.danger { background: var(--danger); }
+.demo-document {
+  background: var(--card); border: 0.5px solid var(--border);
+  border-radius: 12px; padding: 24px 28px;
+  margin-bottom: 24px;
+}
+.demo-doc-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px; padding-bottom: 12px;
+  border-bottom: 0.5px solid var(--border);
+}
+.demo-doc-type {
+  font-family: var(--mono); font-size: 10px; color: var(--text-muted);
+  letter-spacing: .1em;
+}
+.demo-doc-timer {
+  font-family: var(--mono); font-size: 14px; font-weight: 700;
+  color: var(--gold); letter-spacing: .05em;
+}
+.demo-doc-timer.danger { color: var(--danger); }
+.demo-line {
+  padding: 10px 14px; margin: 6px 0;
+  border-radius: 6px; cursor: pointer;
+  font-size: 13px; color: var(--text-sec); line-height: 1.6;
+  border: 1px solid transparent;
+  transition: all .15s;
+}
+.demo-line:hover { background: var(--surface); border-color: var(--border-md); color: var(--text); }
+.demo-line.selected { background: rgba(212,168,67,0.1); border-color: var(--gold-dim); color: var(--text); }
+.demo-line.correct { background: rgba(29,158,117,0.15); border-color: var(--ok); color: var(--ok); }
+.demo-line.wrong { background: rgba(226,75,74,0.1); border-color: var(--danger); color: var(--danger); }
+.demo-line.trap-reveal { background: rgba(226,75,74,0.2); border-color: var(--danger); color: var(--text); }
+.demo-line.disabled { pointer-events: none; opacity: 0.6; }
+.demo-cta {
+  text-align: center;
+}
+.demo-start-btn {
+  background: var(--gold); color: var(--bg);
+  border: none; border-radius: 8px;
+  padding: 14px 32px; font-size: 14px; font-weight: 800;
+  font-family: var(--head); cursor: pointer;
+  transition: opacity .2s; letter-spacing: -.01em;
+}
+.demo-start-btn:hover { opacity: .88; }
+.demo-start-btn:disabled { opacity: .5; cursor: not-allowed; }
+.demo-result {
+  text-align: center; padding: 32px;
+  background: var(--surface); border: 0.5px solid var(--border);
+  border-radius: 12px; display: none;
+}
+.demo-result.show { display: block; }
+.demo-result-icon { font-size: 48px; margin-bottom: 16px; }
+.demo-result-title {
+  font-size: 20px; font-weight: 800; margin-bottom: 8px;
+}
+.demo-result-title.win { color: var(--ok); }
+.demo-result-title.lose { color: var(--danger); }
+.demo-result-desc {
+  font-size: 13px; color: var(--text-sec); margin-bottom: 24px;
+  line-height: 1.6; max-width: 400px; margin-left: auto; margin-right: auto;
+}
+.demo-email-form {
+  display: flex; gap: 10px; justify-content: center;
+  flex-wrap: wrap; margin-bottom: 16px;
+}
+.demo-email-input {
+  background: var(--card); border: 0.5px solid var(--border);
+  color: var(--text); padding: 12px 16px; border-radius: 8px;
+  font-family: var(--mono); font-size: 13px;
+  min-width: 240px;
+}
+.demo-email-input:focus { outline: none; border-color: var(--gold-dim); }
+.demo-email-input::placeholder { color: var(--text-muted); }
+.demo-email-btn {
+  background: var(--gold); color: var(--bg);
+  border: none; border-radius: 8px;
+  padding: 12px 20px; font-size: 13px; font-weight: 700;
+  font-family: var(--head); cursor: pointer;
+  transition: opacity .2s;
+}
+.demo-email-btn:hover { opacity: .88; }
+.demo-skip {
+  font-family: var(--mono); font-size: 11px;
+  color: var(--text-muted); text-decoration: none;
+  transition: color .2s;
+}
+.demo-skip:hover { color: var(--text-sec); }
+.demo-retry-btn {
+  background: transparent; color: var(--text-sec);
+  border: 0.5px solid var(--border-md); border-radius: 8px;
+  padding: 10px 20px; font-size: 12px; font-weight: 600;
+  font-family: var(--head); cursor: pointer;
+  transition: all .2s; margin-top: 16px;
+}
+.demo-retry-btn:hover { border-color: var(--text-muted); color: var(--text); }
+.demo-trap-explain {
+  margin-top: 20px; padding: 16px;
+  background: rgba(226,75,74,0.08); border-left: 2px solid var(--danger);
+  border-radius: 0 8px 8px 0; text-align: left;
+}
+.demo-trap-label {
+  font-family: var(--mono); font-size: 10px; color: var(--danger);
+  letter-spacing: .1em; margin-bottom: 6px;
+}
+.demo-trap-text {
+  font-size: 12px; color: var(--text-sec); line-height: 1.6;
+}
+.hidden { display: none !important; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 680px) {
+  nav { padding: 14px 20px; }
+  .nav-badge { display: none; }
+  .hero { padding: 100px 20px 60px; }
+  .section { padding: 70px 20px; }
+  .demo-section { padding: 60px 20px; }
+  .demo-document { padding: 16px 18px; }
+  .demo-email-form { flex-direction: column; align-items: center; }
+  .demo-email-input { min-width: 100%; }
+  .problem-grid { grid-template-columns: 1fr; }
+  .steps-row { grid-template-columns: 1fr; }
+  .step-arrow { display: none; }
+  .scenarios-grid { grid-template-columns: 1fr; }
+  .games-row { grid-template-columns: 1fr; }
+  .cert-frame { padding: 24px 20px; }
+  footer { flex-direction: column; gap: 10px; text-align: center; }
+  .footer-right { text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-logo"><span>W-LAB</span> · WINDI</a>
+  <div class="nav-right">
+    <span class="nav-badge">BETA · 2026</span>
+    <a href="#enter" class="nav-cta">Enter the Lab →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-tag fade-up">W-LAB · GOVERNANCE TRAINING</div>
+  <h1 class="hero-h1 fade-up-2">
+    Can you <em>prove</em> a decision<br>actually happened —<br>and who approved it?
+  </h1>
+  <p class="hero-sub fade-up-3">
+    Most systems can't. This lab lets you test why — and trains you to fix it before a regulator asks.
+  </p>
+  <div class="hero-ctas fade-up-4">
+    <a href="#demo" class="btn-gold">🐺 Try the 20s demo →</a>
+    <a href="#enter" class="btn-outline">Full scenarios</a>
+  </div>
+  <div class="hero-scroll fade-up-5">
+    <span class="scroll-line"></span>
+    scroll
+  </div>
+</section>
+
+<!-- FAREJADOR-LITE DEMO -->
+<section class="demo-section" id="demo">
+  <div class="demo-header">
+    <div class="demo-tag ready" id="demo-tag">TRY IT NOW · 20 SECONDS</div>
+    <h2 class="demo-title">Can you spot the trap?</h2>
+    <p class="demo-sub">Below is a real document. One sentence allows AI to act without human approval. Find it before time runs out.</p>
+  </div>
+
+  <!-- IDLE STATE -->
+  <div id="demo-idle">
+    <div class="demo-document" style="opacity:0.5">
+      <div class="demo-doc-header">
+        <span class="demo-doc-type">INTERNAL MEMO · AI DEPLOYMENT</span>
+        <span class="demo-doc-timer">20s</span>
+      </div>
+      <div class="demo-line" style="pointer-events:none">The system has been configured to require explicit approval for all high-risk decisions...</div>
+      <div class="demo-line" style="pointer-events:none">Operators must review automated outputs before external distribution...</div>
+      <div class="demo-line" style="pointer-events:none">████████████████████████████████████████████</div>
+      <div class="demo-line" style="pointer-events:none">All deployment phases will follow the standard governance checklist...</div>
+      <div class="demo-line" style="pointer-events:none">The compliance team will receive weekly summary reports...</div>
+    </div>
+    <div class="demo-cta">
+      <button class="demo-start-btn" onclick="startDemo()">🐺 Start the hunt →</button>
+    </div>
+  </div>
+
+  <!-- PLAYING STATE -->
+  <div id="demo-playing" class="hidden">
+    <div class="demo-timer-bar">
+      <div class="demo-timer-fill" id="demo-timer-fill"></div>
+    </div>
+    <div class="demo-document" id="demo-document">
+      <div class="demo-doc-header">
+        <span class="demo-doc-type">INTERNAL MEMO · AI DEPLOYMENT</span>
+        <span class="demo-doc-timer" id="demo-countdown">20s</span>
+      </div>
+      <div id="demo-lines"></div>
+    </div>
+  </div>
+
+  <!-- RESULT STATE -->
+  <div id="demo-result" class="demo-result">
+    <div class="demo-result-icon" id="result-icon">🐺</div>
+    <div class="demo-result-title" id="result-title">Result</div>
+    <div class="demo-result-desc" id="result-desc">Description</div>
+
+    <div class="demo-trap-explain" id="trap-explain">
+      <div class="demo-trap-label">THE I9 TRAP</div>
+      <div class="demo-trap-text" id="trap-text"></div>
+    </div>
+
+    <div style="margin-top:28px">
+      <div class="demo-email-form">
+        <input type="email" class="demo-email-input" id="demo-email" placeholder="your@email.com">
+        <button class="demo-email-btn" onclick="submitEmail()">Train this reflex →</button>
+      </div>
+      <a href="https://windi-domain.com/lab/" class="demo-skip">or enter the full lab now →</a>
+    </div>
+    <button class="demo-retry-btn" onclick="resetDemo()">↻ Try again</button>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="section" id="problem">
+  <div class="section-label">the problem</div>
+  <h2 class="section-h2">Everyone trains compliance.<br>No one proves they can handle it.</h2>
+  <p class="section-sub">Traditional training teaches rules. W-LAB tests whether you can apply them — under pressure, with incomplete information, and with a regulator watching.</p>
+
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="pc-label bad"><span class="pc-dot bad"></span>Standard compliance training</div>
+      <div class="pc-list">
+        <div class="pc-item strike">Read the policy</div>
+        <div class="pc-item strike">Pass a 10-question quiz</div>
+        <div class="pc-item strike">Get a certificate</div>
+        <div class="pc-item strike">Prove nothing about real performance</div>
+      </div>
+    </div>
+    <div class="problem-card good">
+      <div class="pc-label good"><span class="pc-dot good"></span>W-LAB approach</div>
+      <div class="pc-list">
+        <div class="pc-item strong">Enter a realistic crisis scenario</div>
+        <div class="pc-item strong">Make decisions under real pressure</div>
+        <div class="pc-item strong">Every decision is logged and measured</div>
+        <div class="pc-item strong">Receive forensic proof of performance</div>
+      </div>
+    </div>
+  </div>
+
+  <blockquote style="border-left:2px solid var(--gold-dim);padding:14px 20px;background:var(--gold-faint);border-radius:0 8px 8px 0;font-size:14px;color:var(--text-sec);line-height:1.7;font-family:var(--mono)">
+    Most serious errors don't happen because someone didn't know the rule.<br>
+    They happen because <strong style="color:var(--text)">someone felt something was wrong — and ignored it.</strong>
+  </blockquote>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how">
+  <div class="section-label">how it works</div>
+  <h2 class="section-h2">Three steps.<br>One forensic proof.</h2>
+  <p class="section-sub">No lectures. No reading assignments. You learn by doing — and failing under controlled pressure.</p>
+
+  <div class="steps-row">
+    <div class="step-card">
+      <div class="step-num">STEP 01</div>
+      <div class="step-title">Choose a scenario</div>
+      <div class="step-desc">Pick a real regulatory crisis — a GDPR data breach, a DORA incident, an AI system acting without oversight. Each one is a simulation of something that has actually happened.</div>
+      <div class="step-arrow">→</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">STEP 02</div>
+      <div class="step-title">Make a decision</div>
+      <div class="step-desc">Under time pressure, with incomplete information, with interruptions. Exactly like the real world. Every choice is tracked — what you decided, how fast, and whether you fell into a governance trap.</div>
+      <div class="step-arrow">→</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">STEP 03</div>
+      <div class="step-title">Try to prove it</div>
+      <div class="step-desc">At the end, you receive a maturity score and a sealed forensic receipt — cryptographically logged to a ledger. Not a certificate for studying. Proof that you performed.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SCENARIOS -->
+<section class="section" id="enter">
+  <div class="section-label">scenarios · choose your inferno</div>
+  <h2 class="section-h2">Real crises.<br>Simulated consequences.</h2>
+  <p class="section-sub">Each scenario is built from real regulatory frameworks. There are no trick questions — only realistic pressure and genuine governance decisions.</p>
+
+  <div class="scenarios-grid">
+    <a href="https://windi-domain.com/lab/" class="scenario-card">
+      <div class="sc-tag dora">DORA · INFERNO-001</div>
+      <div class="sc-title">Your payment system fails at 3am</div>
+      <div class="sc-desc">Regulators ask for documented proof of your response chain. Can you show exactly who decided what — and when? Or did the AI act without a human approving it?</div>
+      <div class="sc-meta">
+        <span class="sc-chip">4-hour window</span>
+        <span class="sc-chip">6 decisions</span>
+        <span class="sc-chip">3 lives</span>
+      </div>
+    </a>
+    <a href="https://windi-domain.com/lab/" class="scenario-card">
+      <div class="sc-tag gdpr">GDPR · INFERNO-002</div>
+      <div class="sc-title">Personal data leaks on Friday at 6pm</div>
+      <div class="sc-desc">You have 72 hours to notify authorities. The CEO is calling. A journalist wants a comment. An AI system already classified it as "non-notifiable." Do you trust it?</div>
+      <div class="sc-meta">
+        <span class="sc-chip">72-hour clock</span>
+        <span class="sc-chip">CEO + DPA + press</span>
+        <span class="sc-chip">3 lives</span>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- MINI-GAMES -->
+<section class="section">
+  <div class="section-label">training modules · build the reflex</div>
+  <h2 class="section-h2">Train the organ<br>compliance never trained.</h2>
+  <p class="section-sub">Regulatory knowledge lives in System 2 — slow, analytical. Under pressure, System 2 fails. These modules train System 1: the fast, pattern-recognising brain that decides before you think.</p>
+
+  <div class="games-row">
+    <div class="game-card">
+      <span class="game-icon">🐺</span>
+      <div class="game-name">FAREJADOR</div>
+      <div class="game-tagline">Detect the hidden trap</div>
+      <div class="game-desc">A document appears. Somewhere inside it, one sentence bypasses human oversight. Find it before the timer runs out.</div>
+      <div class="game-timer">30 SECONDS · LAYER 01</div>
+    </div>
+    <div class="game-card">
+      <span class="game-icon">🌬️</span>
+      <div class="game-name">FARO</div>
+      <div class="game-tagline">Feel the crisis forming</div>
+      <div class="game-desc">No violation exists yet. But six ambient signals suggest one is building. Which three, together, predict the next incident?</div>
+      <div class="game-timer">75 SECONDS · LAYER 01</div>
+    </div>
+    <div class="game-card">
+      <span class="game-icon">💓</span>
+      <div class="game-name">PULSO</div>
+      <div class="game-tagline">Trust your body's signal</div>
+      <div class="game-desc">Read a message under pressure. Before analyzing — what do you feel? This module trains you to stop suppressing the signal your body already knows.</div>
+      <div class="game-timer">90 SECONDS · LAYER 01</div>
+    </div>
+  </div>
+</section>
+
+<!-- MATURITY -->
+<section class="section">
+  <div class="section-label">maturity scale · where do you stand?</div>
+  <h2 class="section-h2">Five levels.<br>One destination.</h2>
+  <p class="section-sub">Your score isn't points — it's a maturity index across six dimensions. It shows exactly where you perform under pressure and where you collapse.</p>
+
+  <div class="maturity-track">
+    <div class="mat-row">
+      <span class="mat-num">01</span>
+      <div class="mat-bar"><div class="mat-fill" style="width:20%;background:var(--text-muted)"></div></div>
+      <div class="mat-label">Reactive</div>
+      <div class="mat-desc">Learns only by experiencing the consequences of errors</div>
+    </div>
+    <div class="mat-row">
+      <span class="mat-num">02</span>
+      <div class="mat-bar"><div class="mat-fill" style="width:40%;background:var(--text-muted)"></div></div>
+      <div class="mat-label">Assisted</div>
+      <div class="mat-desc">Makes correct decisions with guidance — needs prompting</div>
+    </div>
+    <div class="mat-row">
+      <span class="mat-num">03</span>
+      <div class="mat-bar"><div class="mat-fill" style="width:60%;background:#378ADD"></div></div>
+      <div class="mat-label">Operational</div>
+      <div class="mat-desc">Decides correctly under normal pressure without support</div>
+    </div>
+    <div class="mat-row">
+      <span class="mat-num">04</span>
+      <div class="mat-bar"><div class="mat-fill" style="width:80%;background:var(--ok)"></div></div>
+      <div class="mat-label">Reliable</div>
+      <div class="mat-desc">Decides correctly under high pressure — can train others</div>
+    </div>
+    <div class="mat-row lobo">
+      <span class="mat-num" style="color:var(--gold-dim)">05</span>
+      <div class="mat-bar"><div class="mat-fill" style="width:100%;background:var(--gold)"></div></div>
+      <div class="mat-label">LOBO</div>
+      <div class="mat-desc">Recognises an I9 trap before finishing the sentence — pre-conscious rejection</div>
+    </div>
+  </div>
+</section>
+
+<!-- CERTIFICATION -->
+<section class="section">
+  <div class="section-label">ovs certification · proof not paper</div>
+  <h2 class="section-h2">Not a certificate<br>for studying.</h2>
+  <p class="section-sub">Forensic proof that the human performed — sealed to a cryptographic ledger. Verifiable by anyone, anywhere, with a hash.</p>
+
+  <div class="cert-frame">
+    <div class="cert-tag">OVS CERTIFICATION · SAMPLE RECEIPT</div>
+    <div class="cert-title">Operator of Verifiable Systems</div>
+    <div class="cert-sub">Every completed scenario produces a sealed receipt — logged to the WINDI Forensic Ledger with SHA-256 integrity. This is what you show a regulator.</div>
+    <div>
+      <div class="cert-receipt">
+<span class="r-key">Actor     </span><span class="r-val">did:windi:operator-id-7f3a</span><br>
+<span class="r-key">Scenario  </span><span class="r-val">INFERNO-002 (GDPR Breach · Friday 18:00)</span><br>
+<span class="r-key">Score     </span><span class="r-val gold">OPERATIONAL · 74/100</span><br>
+<span class="r-key">I9 Traps  </span><span class="r-val ok">0 triggered</span><br>
+<span class="r-key">Level     </span><span class="r-val gold">OVS-NODAL</span><br>
+<span class="r-key">Integrity </span><span class="r-val">SHA-256 · a3f7e9c2...</span><br>
+<span class="r-key">Verify    </span><span class="r-val" style="color:#378ADD">windi-domain.com/verify/A3F7E9</span>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--text-sec);font-family:var(--mono)">This is not a course completion record. It is forensic proof that the human held under pressure.</p>
+  </div>
+</section>
+
+<!-- QUOTE -->
+<div class="quote-section">
+  <div class="quote-text">
+    "We don't just talk about<br>AI governance.<br>We simulate <em>what happens</em><br>when it breaks."
+  </div>
+  <div class="quote-attr">W-LAB · WINDI PUBLISHING HOUSE · KEMPTEN, BAVARIA · 2026</div>
+</div>
+
+<!-- FINAL CTA -->
+<section class="final-section">
+  <h2 class="final-h">You already know the rules.<br>Can you prove you apply them?</h2>
+  <p class="final-sub">Start with one scenario. It takes 8 minutes. You will leave knowing exactly where your governance reflex breaks.</p>
+  <a href="https://windi-domain.com/lab/" class="btn-gold" style="font-size:15px;padding:16px 36px">Enter the Lab →</a>
+</section>
+
+<footer>
+  <div class="footer-logo"><span>WINDI</span> PUBLISHING HOUSE · LIGA IA+H · KEMPTEN</div>
+  <div class="footer-right">AI PROCESSES. HUMAN DECIDES. WINDI GUARANTEES.<br>© 2026 WINDI. W-LAB-001.</div>
+</footer>
+
+<script>
+// ============================================================================
+// NAV SCROLL
+// ============================================================================
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 40);
+});
+
+// ============================================================================
+// FAREJADOR-LITE DEMO
+// ============================================================================
+const DEMO_SCENARIOS = [
+  {
+    docType: "INTERNAL MEMO · AI DEPLOYMENT",
+    lines: [
+      { text: "The system has been configured to require explicit approval for all high-risk decisions.", trap: false },
+      { text: "Operators must review automated outputs before external distribution.", trap: false },
+      { text: "For efficiency, low-risk classifications are processed automatically without operator confirmation.", trap: true },
+      { text: "All deployment phases will follow the standard governance checklist.", trap: false },
+      { text: "The compliance team will receive weekly summary reports.", trap: false }
+    ],
+    explanation: "\"Low-risk classifications processed automatically\" bypasses human oversight. Who decides what's 'low-risk'? The AI. This is exactly how I9 violations happen — the machine classifies something as safe and acts without a human validating that classification."
+  },
+  {
+    docType: "AI SYSTEM POLICY · FRAUD DETECTION",
+    lines: [
+      { text: "All flagged transactions require manual review by the compliance officer.", trap: false },
+      { text: "The AI model has been trained on 3 years of historical fraud patterns.", trap: false },
+      { text: "High-confidence alerts (>95%) are automatically escalated to the fraud response team.", trap: false },
+      { text: "To reduce analyst fatigue, transactions cleared by the model are archived without review.", trap: true },
+      { text: "Weekly audits ensure model accuracy remains above acceptable thresholds.", trap: false }
+    ],
+    explanation: "\"Cleared by the model are archived without review\" means the AI decides what's NOT fraud — and no human ever checks. If the model misses something, it disappears into the archive. This violates I9: the machine is making consequential decisions autonomously."
+  },
+  {
+    docType: "GDPR COMPLIANCE · DATA PROCESSING",
+    lines: [
+      { text: "Personal data requests are logged with full audit trails.", trap: false },
+      { text: "Data subjects can exercise their rights through the self-service portal.", trap: false },
+      { text: "Automated deletion routines execute after the retention period without manual confirmation.", trap: true },
+      { text: "The DPO receives monthly reports on all processing activities.", trap: false },
+      { text: "Cross-border transfers require explicit contractual safeguards.", trap: false }
+    ],
+    explanation: "\"Automated deletion without manual confirmation\" sounds efficient — but what if the AI deletes data that's still needed for legal proceedings? The human never gets a chance to say 'wait'. This is autonomous action with irreversible consequences."
+  },
+  {
+    docType: "HIRING AI · CANDIDATE SCREENING",
+    lines: [
+      { text: "All final hiring decisions are made by the hiring manager.", trap: false },
+      { text: "The AI provides a ranked shortlist based on job requirements.", trap: false },
+      { text: "Candidates below the threshold score are automatically rejected to streamline the process.", trap: true },
+      { text: "Diversity metrics are tracked across all recruitment stages.", trap: false },
+      { text: "The system is audited quarterly for bias indicators.", trap: false }
+    ],
+    explanation: "\"Automatically rejected\" means a human never sees these candidates. The AI decides who gets a chance and who doesn't. Even if the threshold seems reasonable, the machine is making life-changing decisions without any human in the loop."
+  },
+  {
+    docType: "CONTENT MODERATION · PLATFORM POLICY",
+    lines: [
+      { text: "Flagged content is reviewed by trained human moderators.", trap: false },
+      { text: "Appeals are processed within 48 hours by a senior review team.", trap: false },
+      { text: "Obvious violations matching known patterns are removed instantly by the system.", trap: true },
+      { text: "Moderator decisions are logged for quality assurance.", trap: false },
+      { text: "Escalation paths exist for legally sensitive content.", trap: false }
+    ],
+    explanation: "\"Removed instantly by the system\" for 'obvious violations' — but who defines obvious? The AI. What if it's satire? A false positive? The content is gone before any human can assess context. I9 violation: autonomous action with no human gate."
+  }
+];
+
+let demoState = {
+  playing: false,
+  timeLeft: 20,
+  scenario: null,
+  interval: null,
+  answered: false
+};
+
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startDemo() {
+  // Pick random scenario
+  demoState.scenario = DEMO_SCENARIOS[Math.floor(Math.random() * DEMO_SCENARIOS.length)];
+  demoState.timeLeft = 20;
+  demoState.playing = true;
+  demoState.answered = false;
+
+  // Hide idle, show playing
+  document.getElementById('demo-idle').classList.add('hidden');
+  document.getElementById('demo-result').classList.remove('show');
+  document.getElementById('demo-playing').classList.remove('hidden');
+
+  // Update tag
+  const tag = document.getElementById('demo-tag');
+  tag.textContent = 'HUNTING · FIND THE TRAP';
+  tag.className = 'demo-tag';
+
+  // Shuffle and render lines
+  const shuffledLines = shuffleArray(demoState.scenario.lines);
+  demoState.shuffledLines = shuffledLines;
+  const linesContainer = document.getElementById('demo-lines');
+  linesContainer.innerHTML = '';
+  shuffledLines.forEach((line, idx) => {
+    const div = document.createElement('div');
+    div.className = 'demo-line';
+    div.textContent = line.text;
+    div.onclick = () => selectLine(idx);
+    div.id = 'line-' + idx;
+    linesContainer.appendChild(div);
+  });
+
+  // Update timer bar
+  document.getElementById('demo-timer-fill').style.width = '100%';
+  document.getElementById('demo-timer-fill').classList.remove('danger');
+  document.getElementById('demo-countdown').textContent = '20s';
+  document.getElementById('demo-countdown').classList.remove('danger');
+
+  // Start countdown
+  demoState.interval = setInterval(() => {
+    demoState.timeLeft--;
+    const pct = (demoState.timeLeft / 20) * 100;
+    document.getElementById('demo-timer-fill').style.width = pct + '%';
+    document.getElementById('demo-countdown').textContent = demoState.timeLeft + 's';
+
+    if (demoState.timeLeft <= 5) {
+      document.getElementById('demo-timer-fill').classList.add('danger');
+      document.getElementById('demo-countdown').classList.add('danger');
+    }
+
+    if (demoState.timeLeft <= 0) {
+      endDemo(false, -1);
+    }
+  }, 1000);
+}
+
+function selectLine(idx) {
+  if (!demoState.playing || demoState.answered) return;
+  demoState.answered = true;
+
+  const line = demoState.shuffledLines[idx];
+  const el = document.getElementById('line-' + idx);
+
+  // Disable all lines
+  document.querySelectorAll('.demo-line').forEach(l => l.classList.add('disabled'));
+
+  if (line.trap) {
+    el.classList.add('correct');
+    setTimeout(() => endDemo(true, idx), 600);
+  } else {
+    el.classList.add('wrong');
+    // Reveal the trap
+    demoState.shuffledLines.forEach((l, i) => {
+      if (l.trap) {
+        document.getElementById('line-' + i).classList.add('trap-reveal');
+      }
+    });
+    setTimeout(() => endDemo(false, idx), 1200);
+  }
+}
+
+function endDemo(won, selectedIdx) {
+  clearInterval(demoState.interval);
+  demoState.playing = false;
+
+  // Hide playing, show result
+  document.getElementById('demo-playing').classList.add('hidden');
+  document.getElementById('demo-result').classList.add('show');
+
+  const tag = document.getElementById('demo-tag');
+  const icon = document.getElementById('result-icon');
+  const title = document.getElementById('result-title');
+  const desc = document.getElementById('result-desc');
+  const trapText = document.getElementById('trap-text');
+
+  trapText.textContent = demoState.scenario.explanation;
+
+  if (won) {
+    tag.textContent = 'TRAP DETECTED';
+    tag.className = 'demo-tag success';
+    icon.textContent = '🐺';
+    title.textContent = 'You caught it.';
+    title.className = 'demo-result-title win';
+    desc.textContent = 'Your System 1 detected the I9 violation. But can you do it under real pressure, with interruptions, with incomplete information? That\'s what the full lab tests.';
+  } else {
+    tag.textContent = 'TRAP MISSED';
+    tag.className = 'demo-tag fail';
+    icon.textContent = '💀';
+    title.textContent = selectedIdx === -1 ? 'Time\'s up.' : 'Wrong line.';
+    title.className = 'demo-result-title lose';
+    desc.textContent = selectedIdx === -1
+      ? 'The AI acted while you were still reading. In a real crisis, that\'s how violations happen — the machine moves faster than human oversight.'
+      : 'You clicked a safe line. The trap was hiding in plain sight. This is exactly why we train the reflex — so you catch it before thinking.';
+  }
+}
+
+function resetDemo() {
+  document.getElementById('demo-result').classList.remove('show');
+  document.getElementById('demo-idle').classList.remove('hidden');
+  document.getElementById('demo-tag').textContent = 'TRY IT NOW · 20 SECONDS';
+  document.getElementById('demo-tag').className = 'demo-tag ready';
+}
+
+function submitEmail() {
+  const email = document.getElementById('demo-email').value.trim();
+  if (!email || !email.includes('@')) {
+    alert('Please enter a valid email address.');
+    return;
+  }
+  // In production, this would send to an API
+  console.log('Email captured:', email);
+  alert('Thanks! We\'ll notify you when W-LAB opens for early access.');
+  document.getElementById('demo-email').value = '';
+}
+</script>
+</body>
+</html>
