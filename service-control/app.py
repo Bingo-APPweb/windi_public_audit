@@ -895,9 +895,12 @@ DASHBOARD_HTML = '''
         }
 
         // Load Services
+        // Base path for API calls (handles /svc-control/ prefix)
+        const API_BASE = window.location.pathname.replace(/\/$/, '');
+
         async function loadServices() {
             try {
-                const r = await fetch('/api/services');
+                const r = await fetch(API_BASE + '/api/services');
                 const data = await r.json();
                 services = data.services;
 
@@ -970,7 +973,7 @@ DASHBOARD_HTML = '''
         async function restartService(name) {
             if (!currentDID) { showToast(t('noDidWarning'), 'error'); return; }
             try {
-                const r = await fetch(`/api/services/${name}/restart`, {
+                const r = await fetch(`${API_BASE}/api/services/${name}/restart`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({actor_did: currentDID, reason: 'Manual restart via Control Panel'})
@@ -990,7 +993,7 @@ DASHBOARD_HTML = '''
         async function stopService(name) {
             if (!currentDID) { showToast(t('noDidWarning'), 'error'); return; }
             try {
-                const r = await fetch(`/api/services/${name}/stop`, {
+                const r = await fetch(`${API_BASE}/api/services/${name}/stop`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({actor_did: currentDID})
@@ -1007,7 +1010,7 @@ DASHBOARD_HTML = '''
         async function startService(name) {
             if (!currentDID) { showToast(t('noDidWarning'), 'error'); return; }
             try {
-                const r = await fetch(`/api/services/${name}/start`, {
+                const r = await fetch(`${API_BASE}/api/services/${name}/start`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({actor_did: currentDID})
@@ -1032,7 +1035,7 @@ DASHBOARD_HTML = '''
             modal.classList.add('active');
 
             try {
-                const r = await fetch(`/api/services/${name}/logs?lines=100`);
+                const r = await fetch(`${API_BASE}/api/services/${name}/logs?lines=100`);
                 const data = await r.json();
                 content.textContent = data.logs || 'No logs available';
             } catch (e) {
