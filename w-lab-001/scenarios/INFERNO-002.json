@@ -1,0 +1,316 @@
+{
+  "scenario_id": "INFERNO-002",
+  "title": {
+    "pt": "Sexta-Feira 18h00 — GDPR Breach",
+    "de": "Freitag 18:00 — GDPR-Breach",
+    "en": "Friday 6PM — GDPR Breach"
+  },
+  "description": {
+    "pt": "Breach de dados confirmado às 17:52. DPO em voo. Legal indisponível. CEO não sabe. Art. 33 GDPR: 72h para notificar. Tu és o único no escritório.",
+    "de": "Datenschutzverletzung um 17:52 bestätigt. DPO im Flug. Rechtsabteilung nicht verfügbar. CEO weiß nichts. Art. 33 DSGVO: 72h zur Meldung. Du bist allein im Büro.",
+    "en": "Data breach confirmed at 17:52. DPO on flight. Legal unavailable. CEO doesn't know. Art. 33 GDPR: 72h to notify. You're the only one in the office."
+  },
+  "domain": "compliance",
+  "difficulty": "advanced",
+  "persona": {
+    "primary": "digital_risk",
+    "secondary": ["internal_auditor"]
+  },
+  "prompt_packet": {
+    "context": {
+      "pt": "São 18h00 de sexta-feira. O escritório está vazio. Às 17:45 chegou um email anónimo de whistle-blower. IT confirmou às 17:52: breach real. 47.832 registos expostos. IBAN em 12.400.",
+      "de": "Es ist Freitag 18:00 Uhr. Das Büro ist leer. Um 17:45 kam eine anonyme Whistleblower-E-Mail. IT bestätigte um 17:52: echter Breach. 47.832 Datensätze exponiert. IBAN in 12.400.",
+      "en": "It's Friday 6PM. The office is empty. At 17:45 an anonymous whistleblower email arrived. IT confirmed at 17:52: real breach. 47,832 records exposed. IBAN in 12,400."
+    },
+    "initial_state": {
+      "time": "Friday 18:00",
+      "available_resources": ["VERA", "Forensic Ledger :8101", "Email", "Your authority"],
+      "unavailable_resources": ["DPO (9h flight)", "Legal (out-of-office)", "CEO (unaware)", "IT Security (investigating)"],
+      "active_deadlines": [
+        {
+          "name": "Art. 33 GDPR Notification",
+          "hours_remaining": 72,
+          "legal_anchor": "GDPR Art. 33"
+        },
+        {
+          "name": "Art. 34 Data Subject Notification",
+          "hours_remaining": 96,
+          "legal_anchor": "GDPR Art. 34"
+        }
+      ]
+    },
+    "actors": [
+      {"role": "Whistle-blower", "name": "Anonymous", "status": "available", "communication_style": "cryptic"},
+      {"role": "IT Security", "name": "Pedro Alves", "status": "limited", "communication_style": "technical"},
+      {"role": "DPO", "name": "Dr. Müller", "status": "unavailable", "communication_style": "formal"},
+      {"role": "Legal", "name": "Dra. Schmidt", "status": "unavailable", "communication_style": "cautious"},
+      {"role": "CEO", "name": "Unknown", "status": "available", "communication_style": "demanding"}
+    ]
+  },
+  "tasks": [
+    {
+      "task_id": "T1",
+      "title": {"pt": "Confirmar breach", "de": "Breach bestätigen", "en": "Confirm breach"},
+      "description": {
+        "pt": "Verificar com IT se o breach é real e documentar evidência inicial.",
+        "de": "Mit IT überprüfen, ob der Breach echt ist, und erste Beweise dokumentieren.",
+        "en": "Verify with IT if breach is real and document initial evidence."
+      },
+      "priority": "critical",
+      "time_limit_seconds": 300,
+      "requires_pho": false,
+      "legal_anchors": ["GDPR Art. 33(1)"],
+      "success_criteria": ["IT confirmation received", "Evidence documented"],
+      "failure_modes": ["Ignoring whistleblower", "Delaying verification"]
+    },
+    {
+      "task_id": "T2",
+      "title": {"pt": "Documentar antes de intervir", "de": "Dokumentieren vor Eingriff", "en": "Document before intervening"},
+      "description": {
+        "pt": "Pilar III: Prova antes de Decisão. Fechar o canal sem documentar = perder evidência forense.",
+        "de": "Säule III: Beweis vor Entscheidung. Kanal schließen ohne Dokumentation = forensische Beweise verlieren.",
+        "en": "Pillar III: Proof Before Decision. Closing channel without documenting = losing forensic evidence."
+      },
+      "priority": "high",
+      "time_limit_seconds": 600,
+      "requires_pho": true,
+      "legal_anchors": ["GDPR Art. 33(3)", "Pilar III"],
+      "success_criteria": ["Evidence preserved", "Channel documented before closure"],
+      "failure_modes": ["Closing channel first", "Incomplete documentation"]
+    },
+    {
+      "task_id": "T3",
+      "title": {"pt": "Notificar autoridade", "de": "Behörde benachrichtigen", "en": "Notify authority"},
+      "description": {
+        "pt": "Art. 33: notificação sem demora injustificada, max 72h. DPO delegou autoridade. Tens poder para agir.",
+        "de": "Art. 33: Meldung ohne unangemessene Verzögerung, max 72h. DPO hat Befugnis delegiert. Du hast die Macht zu handeln.",
+        "en": "Art. 33: notification without undue delay, max 72h. DPO delegated authority. You have power to act."
+      },
+      "priority": "critical",
+      "time_limit_seconds": 3600,
+      "requires_pho": true,
+      "legal_anchors": ["GDPR Art. 33(1)", "GDPR Art. 33(2)"],
+      "success_criteria": ["Draft prepared", "PHO seal applied", "Notification sent"],
+      "failure_modes": ["Waiting for Monday", "Sending without PHO seal"]
+    },
+    {
+      "task_id": "T4",
+      "title": {"pt": "Informar CEO", "de": "CEO informieren", "en": "Inform CEO"},
+      "description": {
+        "pt": "CEO suspeita. Informa com factos verificados, nunca especulação não documentada.",
+        "de": "CEO vermutet etwas. Mit verifizierten Fakten informieren, niemals mit undokumentierten Spekulationen.",
+        "en": "CEO suspects. Inform with verified facts, never undocumented speculation."
+      },
+      "priority": "high",
+      "time_limit_seconds": 900,
+      "requires_pho": false,
+      "legal_anchors": ["OVS §160"],
+      "success_criteria": ["CEO informed with facts", "Next steps communicated"],
+      "failure_modes": ["Speculating", "Hiding information", "Incomplete briefing"]
+    }
+  ],
+  "decisions": [
+    {
+      "decision_id": "D1",
+      "trigger": "after_it_confirmation",
+      "question": {
+        "pt": "IT pode fechar o canal de exposição agora. Documentes primeiro ou fechas primeiro?",
+        "de": "IT kann den Expositionskanal jetzt schließen. Zuerst dokumentieren oder zuerst schließen?",
+        "en": "IT can close the exposure channel now. Document first or close first?"
+      },
+      "constraint": {
+        "pt": "Pilar III: Proof Before Decision. Se fechares sem documentar, perdes evidência forense.",
+        "de": "Säule III: Beweis vor Entscheidung. Schließen ohne Dokumentation = Verlust forensischer Beweise.",
+        "en": "Pillar III: Proof Before Decision. Closing without documenting = losing forensic evidence."
+      },
+      "options": [
+        {"option_id": "doc_first", "label": {"pt": "Documentar primeiro, fechar depois", "de": "Erst dokumentieren, dann schließen", "en": "Document first, close after"}, "is_correct": true, "is_i9_trap": false, "is_risky": false, "consequence": "Evidence preserved"},
+        {"option_id": "close_first", "label": {"pt": "Fechar agora, documentar depois", "de": "Jetzt schließen, später dokumentieren", "en": "Close now, document after"}, "is_correct": false, "is_i9_trap": false, "is_risky": true, "consequence": "Forensic evidence lost"},
+        {"option_id": "vera_decide", "label": {"pt": "Deixar VERA decidir a sequência", "de": "VERA die Reihenfolge entscheiden lassen", "en": "Let VERA decide the sequence"}, "is_correct": false, "is_i9_trap": true, "is_risky": false, "consequence": "I9 violation - VERA cannot decide"}
+      ]
+    },
+    {
+      "decision_id": "D2",
+      "trigger": "legal_blocked",
+      "question": {
+        "pt": "DPO delegou autoridade. Legal diz reporta. Reportas à autoridade agora ou esperas segunda-feira?",
+        "de": "DPO hat Befugnis delegiert. Legal sagt melden. Jetzt an Behörde melden oder bis Montag warten?",
+        "en": "DPO delegated authority. Legal says report. Report to authority now or wait until Monday?"
+      },
+      "constraint": {
+        "pt": "Art. 33 GDPR: notificação sem demora injustificada, max 72h. Segunda-feira = demora injustificada.",
+        "de": "Art. 33 DSGVO: Meldung ohne unangemessene Verzögerung, max 72h. Montag = unangemessene Verzögerung.",
+        "en": "Art. 33 GDPR: notification without undue delay, max 72h. Monday = undue delay."
+      },
+      "options": [
+        {"option_id": "report_now", "label": {"pt": "Reportar agora via VERA draft", "de": "Jetzt über VERA-Entwurf melden", "en": "Report now via VERA draft"}, "is_correct": true, "is_i9_trap": false, "is_risky": false, "consequence": "Compliant notification"},
+        {"option_id": "wait_monday", "label": {"pt": "Esperar segunda-feira com DPO e Legal", "de": "Bis Montag mit DPO und Legal warten", "en": "Wait until Monday with DPO and Legal"}, "is_correct": false, "is_i9_trap": false, "is_risky": true, "consequence": "Potential Art. 33 violation"},
+        {"option_id": "vera_submit", "label": {"pt": "Reportar mas VERA submete autonomamente", "de": "Melden, aber VERA autonom einreichen lassen", "en": "Report but let VERA submit autonomously"}, "is_correct": false, "is_i9_trap": true, "is_risky": false, "consequence": "I9 violation - autonomous submission"}
+      ]
+    },
+    {
+      "decision_id": "D3",
+      "trigger": "ceo_contact",
+      "question": {
+        "pt": "CEO suspeita e quer saber. Informas agora com factos ou esperas relatório completo?",
+        "de": "CEO vermutet und will wissen. Jetzt mit Fakten informieren oder auf vollständigen Bericht warten?",
+        "en": "CEO suspects and wants to know. Inform now with facts or wait for complete report?"
+      },
+      "constraint": {
+        "pt": "OVS §160: Informa CEO com factos verificados, nunca especulação não documentada.",
+        "de": "OVS §160: CEO mit verifizierten Fakten informieren, niemals mit undokumentierter Spekulation.",
+        "en": "OVS §160: Inform CEO with verified facts, never undocumented speculation."
+      },
+      "options": [
+        {"option_id": "inform_now", "label": {"pt": "Informar agora: factos + próximos passos", "de": "Jetzt informieren: Fakten + nächste Schritte", "en": "Inform now: facts + next steps"}, "is_correct": true, "is_i9_trap": false, "is_risky": false, "consequence": "CEO aligned"},
+        {"option_id": "wait_report", "label": {"pt": "Esperar relatório completo (30min)", "de": "Auf vollständigen Bericht warten (30min)", "en": "Wait for complete report (30min)"}, "is_correct": false, "is_i9_trap": false, "is_risky": false, "consequence": "Acceptable delay"},
+        {"option_id": "vera_draft_ceo", "label": {"pt": "VERA redige a mensagem ao CEO autonomamente", "de": "VERA verfasst die CEO-Nachricht autonom", "en": "VERA drafts CEO message autonomously"}, "is_correct": false, "is_i9_trap": true, "is_risky": false, "consequence": "I9 violation - autonomous communication"}
+      ]
+    },
+    {
+      "decision_id": "D4",
+      "trigger": "pho_approval",
+      "question": {
+        "pt": "VERA preparou draft Art. 33. Aproves e selas como PHO antes do envio?",
+        "de": "VERA hat Art. 33-Entwurf vorbereitet. Genehmigen und als PHO vor dem Senden versiegeln?",
+        "en": "VERA prepared Art. 33 draft. Approve and seal as PHO before sending?"
+      },
+      "constraint": {
+        "pt": "I9 IRREMEDIÁVEL: VERA prepara, Human Dragon aprova. PHO seal = prova legal de supervisão humana.",
+        "de": "I9 UNUMKEHRBAR: VERA bereitet vor, Human Dragon genehmigt. PHO-Siegel = rechtlicher Beweis menschlicher Aufsicht.",
+        "en": "I9 IRREMEDIABLE: VERA prepares, Human Dragon approves. PHO seal = legal proof of human oversight."
+      },
+      "options": [
+        {"option_id": "pho_seal", "label": {"pt": "Rever, aprovar e selar como PHO", "de": "Überprüfen, genehmigen und als PHO versiegeln", "en": "Review, approve and seal as PHO"}, "is_correct": true, "is_i9_trap": false, "is_risky": false, "consequence": "Legal compliance achieved"},
+        {"option_id": "no_seal", "label": {"pt": "Enviar sem seal — é urgente", "de": "Ohne Siegel senden — es ist dringend", "en": "Send without seal — it's urgent"}, "is_correct": false, "is_i9_trap": false, "is_risky": true, "consequence": "No proof of human oversight"}
+      ]
+    }
+  ],
+  "stress_profile": {
+    "interruption_frequency": "high",
+    "interruptions": [
+      {
+        "interrupt_id": "INT1",
+        "delay_seconds": 240,
+        "source": "anónimo@protonmail.com",
+        "severity": "HIGH",
+        "message": {
+          "pt": "Alguém devia saber. O CRM exportou dados para servidor externo não autorizado. 50.000 pessoas. IBAN. Desde quinta-feira.",
+          "de": "Jemand sollte es wissen. Das CRM hat Daten auf einen nicht autorisierten externen Server exportiert. 50.000 Personen. IBAN. Seit Donnerstag.",
+          "en": "Someone should know. CRM exported data to unauthorized external server. 50,000 people. IBAN. Since Thursday."
+        },
+        "can_defer": false,
+        "defer_penalty_seconds": 0
+      },
+      {
+        "interrupt_id": "INT2",
+        "delay_seconds": 540,
+        "source": "IT Security · Pedro Alves",
+        "severity": "CRITICAL",
+        "message": {
+          "pt": "Confirmado. Servidor externo da agência de marketing sem contrato válido. 47.832 registos. IBAN em 12.400. Acesso há 48h.",
+          "de": "Bestätigt. Externer Server der Marketingagentur ohne gültigen Vertrag. 47.832 Datensätze. IBAN in 12.400. Zugriff seit 48h.",
+          "en": "Confirmed. External server from marketing agency without valid contract. 47,832 records. IBAN in 12,400. Access for 48h."
+        },
+        "can_defer": false,
+        "defer_penalty_seconds": 0
+      },
+      {
+        "interrupt_id": "INT3",
+        "delay_seconds": 960,
+        "source": "Voicemail · Dr. Müller DPO",
+        "severity": "HIGH",
+        "message": {
+          "pt": "Estou em voo até Singapura — 9h sem sinal. Segue o protocolo Art. 33. Não esperes por mim. Tu tens autoridade.",
+          "de": "Ich bin im Flug nach Singapur — 9h ohne Signal. Folge dem Art. 33-Protokoll. Warte nicht auf mich. Du hast die Befugnis.",
+          "en": "I'm on flight to Singapore — 9h without signal. Follow Art. 33 protocol. Don't wait for me. You have authority."
+        },
+        "can_defer": false,
+        "defer_penalty_seconds": 0
+      },
+      {
+        "interrupt_id": "INT4",
+        "delay_seconds": 1320,
+        "source": "Dra. Schmidt · Legal · auto-reply",
+        "severity": "HIGH",
+        "message": {
+          "pt": "Estou fora até segunda-feira. Para breaches GDPR: reporta à autoridade, informa CEO, documenta tudo.",
+          "de": "Ich bin bis Montag nicht erreichbar. Bei DSGVO-Verstößen: Behörde melden, CEO informieren, alles dokumentieren.",
+          "en": "I'm out until Monday. For GDPR breaches: report to authority, inform CEO, document everything."
+        },
+        "can_defer": false,
+        "defer_penalty_seconds": 0
+      },
+      {
+        "interrupt_id": "INT5",
+        "delay_seconds": 1800,
+        "source": "CEO · WhatsApp",
+        "severity": "MEDIUM",
+        "message": {
+          "pt": "Ouvi que há algo. Tudo bem? Podes ligar?",
+          "de": "Ich habe gehört, dass etwas los ist. Alles in Ordnung? Kannst du anrufen?",
+          "en": "Heard there's something. Everything OK? Can you call?"
+        },
+        "can_defer": true,
+        "defer_penalty_seconds": 300
+      }
+    ],
+    "system_failures": [],
+    "conflicting_priorities": true,
+    "incomplete_information": true,
+    "hostile_actors": false
+  },
+  "expected_outcomes": {
+    "optimal_time_seconds": 1200,
+    "max_time_seconds": 3600,
+    "required_actions": ["document_evidence", "notify_authority", "seal_pho", "inform_ceo"],
+    "forbidden_actions": ["wait_monday", "delegate_to_vera", "close_without_document"],
+    "success_state": "Art. 33 notification sent with PHO seal within 72h deadline",
+    "partial_state": "Notification prepared but not sent, or sent without PHO seal",
+    "failure_state": "Waited until Monday or delegated decision to VERA"
+  },
+  "legal_anchors": [
+    "GDPR Art. 33(1) — Notification to supervisory authority",
+    "GDPR Art. 33(2) — Content of notification",
+    "GDPR Art. 33(3) — Documentation requirement",
+    "GDPR Art. 34 — Communication to data subjects",
+    "I9 — Human approval required",
+    "Pillar III — Proof Before Decision"
+  ],
+  "vera_guidance": {
+    "on_start": {
+      "pt": "Breach confirmado. Tens autoridade delegada do DPO. O protocolo é claro: documenta, reporta, informa. Nesta ordem.",
+      "de": "Breach bestätigt. Du hast delegierte Befugnis vom DPO. Das Protokoll ist klar: dokumentieren, melden, informieren. In dieser Reihenfolge.",
+      "en": "Breach confirmed. You have delegated authority from DPO. Protocol is clear: document, report, inform. In this order."
+    },
+    "on_interrupt": {
+      "pt": "Nova informação recebida. Avalia o impacto na sequência de tarefas. Art. 33 permanece a prioridade.",
+      "de": "Neue Information erhalten. Auswirkungen auf die Aufgabenreihenfolge bewerten. Art. 33 bleibt Priorität.",
+      "en": "New information received. Evaluate impact on task sequence. Art. 33 remains priority."
+    },
+    "on_correct": {
+      "pt": "Decisão correcta. Pilar III respeitado. Continua com a sequência.",
+      "de": "Richtige Entscheidung. Säule III eingehalten. Mit der Sequenz fortfahren.",
+      "en": "Correct decision. Pillar III respected. Continue with sequence."
+    },
+    "on_i9_trap": {
+      "pt": "⚠ VIOLAÇÃO I9 DETECTADA. VERA nunca decide — VERA propõe. Esta acção foi registada. Corrige a decisão.",
+      "de": "⚠ I9-VERLETZUNG ERKANNT. VERA entscheidet nie — VERA schlägt vor. Diese Aktion wurde registriert. Entscheidung korrigieren.",
+      "en": "⚠ I9 VIOLATION DETECTED. VERA never decides — VERA proposes. This action was logged. Correct the decision."
+    },
+    "on_complete": {
+      "pt": "Sessão terminada. Art. 33 notificado. PHO seal aplicado. Esta sessão é elegível para FORMULA library.",
+      "de": "Sitzung beendet. Art. 33 gemeldet. PHO-Siegel angewendet. Diese Sitzung ist für die FORMULA-Bibliothek berechtigt.",
+      "en": "Session complete. Art. 33 notified. PHO seal applied. This session is eligible for FORMULA library."
+    }
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "created_at": "2026-04-14T22:00:00Z",
+    "created_by": "Human Dragon",
+    "tested_count": 0,
+    "success_rate": 0,
+    "avg_completion_seconds": 0,
+    "formula_eligible": true
+  }
+}

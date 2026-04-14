@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>W-LAB-001 · Where Human Oversight Meets Real Pressure</title>
+    <meta name="description" content="Everyone trains compliance. No one proves they can handle it. W-LAB is where you discover if someone can actually operate under AI responsibility.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0A0A10;
+            --bg-elevated: #12121A;
+            --bg-card: #1A1A24;
+            --gold: #C9A84C;
+            --gold-dim: #8B7424;
+            --text: #E8E6E1;
+            --text-dim: #9A9890;
+            --border: #2A2A34;
+            --red: #C74B4B;
+            --green: #4B8B4B;
+            --accent: #C9A84C;
+        }
+
+        [data-theme="klar"] {
+            --bg: #FAFAF8;
+            --bg-elevated: #F0EFE8;
+            --bg-card: #E8E6E0;
+            --gold: #8B7424;
+            --gold-dim: #6B5A1C;
+            --text: #1A1A1A;
+            --text-dim: #5A5A5A;
+            --border: #D0CEC8;
+            --red: #A03030;
+            --green: #2A6B2A;
+            --accent: #8B7424;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        .nav-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .lang-toggle, .theme-toggle {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.4rem 0.8rem;
+            color: var(--text);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.85rem;
+        }
+
+        .lang-toggle:hover, .theme-toggle:hover {
+            border-color: var(--gold);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 6rem 2rem 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at center top, rgba(201, 168, 76, 0.08) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-bottom: 2rem;
+        }
+
+        .hero-badge .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 6vw, 4rem);
+            font-weight: 800;
+            line-height: 1.1;
+            max-width: 900px;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero h1 .line1 {
+            color: var(--text-dim);
+            display: block;
+        }
+
+        .hero h1 .line2 {
+            color: var(--text);
+            display: block;
+        }
+
+        .hero-sub {
+            font-size: 1.25rem;
+            color: var(--gold);
+            margin-bottom: 3rem;
+            font-weight: 600;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--gold);
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            background: var(--text);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        /* Category Section */
+        .category {
+            padding: 6rem 2rem;
+            text-align: center;
+            background: var(--bg-elevated);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .category-label {
+            font-size: 0.85rem;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1.5rem;
+        }
+
+        .category h2 {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-weight: 600;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.4;
+        }
+
+        /* Problem Section */
+        .problem {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            color: var(--text-dim);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .problem-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .problem-card .icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .problem-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+            color: var(--text);
+        }
+
+        .problem-card p {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+        }
+
+        .problem-card .status {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.25rem 0.75rem;
+            background: rgba(199, 75, 75, 0.15);
+            color: var(--red);
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Triangle Section */
+        .triangle {
+            padding: 6rem 2rem;
+            background: var(--bg-elevated);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .triangle-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .triangle-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            margin: 3rem 0;
+            flex-wrap: wrap;
+        }
+
+        .triangle-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .triangle-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            transition: all 0.3s;
+        }
+
+        .triangle-step:hover .triangle-icon {
+            border-color: var(--gold);
+            transform: scale(1.05);
+        }
+
+        .triangle-step h3 {
+            font-size: 1.2rem;
+            color: var(--gold);
+        }
+
+        .triangle-step p {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            max-width: 200px;
+        }
+
+        .triangle-arrow {
+            font-size: 1.5rem;
+            color: var(--border);
+        }
+
+        /* INFERNO Section */
+        .inferno {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .inferno-showcase {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-top: 3rem;
+        }
+
+        .inferno-header {
+            background: linear-gradient(135deg, rgba(199, 75, 75, 0.2) 0%, rgba(201, 168, 76, 0.1) 100%);
+            padding: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .inferno-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(199, 75, 75, 0.2);
+            color: var(--red);
+            padding: 0.4rem 1rem;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .inferno-header h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .inferno-header p {
+            color: var(--text-dim);
+        }
+
+        .inferno-content {
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .inferno-stat {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--bg);
+            border-radius: 8px;
+        }
+
+        .inferno-stat .value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--gold);
+        }
+
+        .inferno-stat .label {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-top: 0.5rem;
+        }
+
+        /* OVS Section */
+        .ovs {
+            padding: 6rem 2rem;
+            background: var(--bg-elevated);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .ovs-content {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .ovs-levels {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+
+        .ovs-level {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .ovs-level:hover {
+            border-color: var(--gold);
+            transform: translateY(-4px);
+        }
+
+        .ovs-level .tier {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .ovs-level h4 {
+            color: var(--gold);
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .ovs-level p {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+
+        /* Proof Section */
+        .proof {
+            padding: 6rem 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .receipt-preview {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 3rem;
+            text-align: left;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+        }
+
+        .receipt-preview .line {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .receipt-preview .line:last-child {
+            border-bottom: none;
+        }
+
+        .receipt-preview .key {
+            color: var(--text-dim);
+        }
+
+        .receipt-preview .value {
+            color: var(--text);
+        }
+
+        .receipt-preview .value.gold {
+            color: var(--gold);
+        }
+
+        .receipt-preview .value.green {
+            color: var(--green);
+        }
+
+        .receipt-preview .hash {
+            word-break: break-all;
+            font-size: 0.75rem;
+            color: var(--gold);
+        }
+
+        /* Regulatory Section */
+        .regulatory {
+            padding: 6rem 2rem;
+            background: var(--bg-elevated);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .regulatory-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .regulatory-badges {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .reg-badge {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* CTA Section */
+        .cta {
+            padding: 8rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at center, rgba(201, 168, 76, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .cta h2 {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .cta p {
+            color: var(--text-dim);
+            margin-bottom: 2rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Footer */
+        footer {
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .footer-brand {
+            font-weight: 800;
+            color: var(--gold);
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-sub {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .footer-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.85rem;
+        }
+
+        .footer-links a:hover {
+            color: var(--gold);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 1rem;
+            }
+
+            .triangle-arrow {
+                transform: rotate(90deg);
+            }
+
+            .receipt-preview .line {
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+        }
+    </style>
+</head>
+<body data-theme="noir">
+    <!-- Navigation -->
+    <nav>
+        <a href="/" class="logo">WINDI</a>
+        <div class="nav-controls">
+            <select class="lang-toggle" id="langToggle">
+                <option value="en">EN</option>
+                <option value="de">DE</option>
+                <option value="pt">PT</option>
+            </select>
+            <button class="theme-toggle" id="themeToggle">☀</button>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-badge">
+            <span class="dot"></span>
+            <span data-i18n="hero.badge">W-LAB-001 · Governance Laboratory</span>
+        </div>
+        <h1>
+            <span class="line1" data-i18n="hero.line1">Everyone trains compliance.</span>
+            <span class="line2" data-i18n="hero.line2">No one proves they can handle it.</span>
+        </h1>
+        <p class="hero-sub" data-i18n="hero.sub">Where human oversight meets real pressure.</p>
+        <div class="hero-cta">
+            <a href="/lab/static/lab.html" class="btn btn-primary" data-i18n="hero.cta1">Enter the Lab</a>
+            <a href="#how" class="btn btn-secondary" data-i18n="hero.cta2">How it works</a>
+        </div>
+    </section>
+
+    <!-- Category Definition -->
+    <section class="category">
+        <p class="category-label" data-i18n="category.label">A New Category</p>
+        <h2 data-i18n="category.text">The environment where you discover if someone can actually operate under AI responsibility.</h2>
+    </section>
+
+    <!-- Problem -->
+    <section class="problem">
+        <div class="section-header">
+            <h2 data-i18n="problem.title">The Compliance Gap</h2>
+            <p data-i18n="problem.sub">EU AI Act Article 14 requires human oversight. But how do you prove the human can actually oversee?</p>
+        </div>
+        <div class="problem-grid">
+            <div class="problem-card">
+                <div class="icon">📋</div>
+                <h3 data-i18n="problem.card1.title">Policies</h3>
+                <p data-i18n="problem.card1.text">Documents that describe what should happen. No proof it will.</p>
+                <span class="status" data-i18n="problem.card1.status">Not Evidence</span>
+            </div>
+            <div class="problem-card">
+                <div class="icon">🎓</div>
+                <h3 data-i18n="problem.card2.title">E-Learning</h3>
+                <p data-i18n="problem.card2.text">10 questions. Multiple choice. Passed with 70%. Zero pressure.</p>
+                <span class="status" data-i18n="problem.card2.status">Not Evidence</span>
+            </div>
+            <div class="problem-card">
+                <div class="icon">✅</div>
+                <h3 data-i18n="problem.card3.title">Certifications</h3>
+                <p data-i18n="problem.card3.text">Proves you studied. Doesn't prove you'll decide correctly at 3am.</p>
+                <span class="status" data-i18n="problem.card3.status">Not Evidence</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Triangle -->
+    <section class="triangle" id="how">
+        <div class="triangle-content">
+            <div class="section-header">
+                <h2 data-i18n="triangle.title">Train → Decide → Prove</h2>
+                <p data-i18n="triangle.sub">W-LAB creates verifiable evidence of human oversight capability.</p>
+            </div>
+            <div class="triangle-visual">
+                <div class="triangle-step">
+                    <div class="triangle-icon">🧪</div>
+                    <h3 data-i18n="triangle.step1.title">Train</h3>
+                    <p data-i18n="triangle.step1.text">Real scenarios. Real pressure. INFERNO mode.</p>
+                </div>
+                <span class="triangle-arrow">→</span>
+                <div class="triangle-step">
+                    <div class="triangle-icon">⚖️</div>
+                    <h3 data-i18n="triangle.step2.title">Decide</h3>
+                    <p data-i18n="triangle.step2.text">I9 gates. Time limits. Consequences.</p>
+                </div>
+                <span class="triangle-arrow">→</span>
+                <div class="triangle-step">
+                    <div class="triangle-icon">🔐</div>
+                    <h3 data-i18n="triangle.step3.title">Prove</h3>
+                    <p data-i18n="triangle.step3.text">Sealed in Ledger. Verifiable forever.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- INFERNO -->
+    <section class="inferno">
+        <div class="section-header">
+            <h2 data-i18n="inferno.title">INFERNO Scenarios</h2>
+            <p data-i18n="inferno.sub">Where compliance training meets reality.</p>
+        </div>
+        <div class="inferno-showcase">
+            <div class="inferno-header">
+                <span class="inferno-badge">🔥 STRESS LEVEL 5</span>
+                <h3>INFERNO-002: Friday 6PM GDPR Breach</h3>
+                <p data-i18n="inferno.scenario">Personal data exposed. 72h deadline. Board waiting. What do you do?</p>
+            </div>
+            <div class="inferno-content">
+                <div class="inferno-stat">
+                    <div class="value">4</div>
+                    <div class="label" data-i18n="inferno.stat1">Critical Decisions</div>
+                </div>
+                <div class="inferno-stat">
+                    <div class="value">5</div>
+                    <div class="label" data-i18n="inferno.stat2">Interruptions</div>
+                </div>
+                <div class="inferno-stat">
+                    <div class="value">2</div>
+                    <div class="label" data-i18n="inferno.stat3">I9 Traps</div>
+                </div>
+                <div class="inferno-stat">
+                    <div class="value">∞</div>
+                    <div class="label" data-i18n="inferno.stat4">Pressure</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- OVS Certification -->
+    <section class="ovs">
+        <div class="ovs-content">
+            <div class="section-header">
+                <h2 data-i18n="ovs.title">OVS Certification Path</h2>
+                <p data-i18n="ovs.sub">Operator of Verifiable Systems — A credential auditors trust.</p>
+            </div>
+            <div class="ovs-levels">
+                <div class="ovs-level">
+                    <div class="tier">🌱</div>
+                    <h4>OVS-SEED</h4>
+                    <p data-i18n="ovs.seed">Completed basic scenario. Understands I9 gate.</p>
+                </div>
+                <div class="ovs-level">
+                    <div class="tier">🌿</div>
+                    <h4>OVS-NODAL</h4>
+                    <p data-i18n="ovs.nodal">Passed INFERNO in specific domain.</p>
+                </div>
+                <div class="ovs-level">
+                    <div class="tier">🌳</div>
+                    <h4>OVS-SOVEREIGN</h4>
+                    <p data-i18n="ovs.sovereign">Cross-domain expert. Multiple INFERNOs.</p>
+                </div>
+                <div class="ovs-level">
+                    <div class="tier">🏛️</div>
+                    <h4>OVS-ORACLE</h4>
+                    <p data-i18n="ovs.oracle">Creates scenarios. Trains others.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Proof -->
+    <section class="proof">
+        <div class="section-header">
+            <h2 data-i18n="proof.title">The Proof Auditors Accept</h2>
+            <p data-i18n="proof.sub">Not a certificate. A cryptographic receipt sealed in the Forensic Ledger.</p>
+        </div>
+        <div class="receipt-preview">
+            <div class="line">
+                <span class="key">receipt_id</span>
+                <span class="value gold">WINDI-LAB-OVS-20260414-A3F7E9</span>
+            </div>
+            <div class="line">
+                <span class="key">actor</span>
+                <span class="value">did:windi:officer-maria-silva</span>
+            </div>
+            <div class="line">
+                <span class="key">scenario</span>
+                <span class="value">INFERNO-002</span>
+            </div>
+            <div class="line">
+                <span class="key">maturity_score</span>
+                <span class="value green">OPERATIONAL (74/100)</span>
+            </div>
+            <div class="line">
+                <span class="key">i9_violations</span>
+                <span class="value green">0</span>
+            </div>
+            <div class="line">
+                <span class="key">content_hash</span>
+                <span class="hash">sha256:7f3a9c2e8b1d4f6a0e5c8b2d9f4a1e7c3b8d5f2a9e6c1b4d7f0a3e8c5b2d9f4a</span>
+            </div>
+            <div class="line">
+                <span class="key">verify</span>
+                <span class="value gold">windi-domain.com/verify/A3F7E9</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Regulatory -->
+    <section class="regulatory">
+        <div class="regulatory-content">
+            <div class="section-header">
+                <h2 data-i18n="reg.title">Built for Regulators</h2>
+                <p data-i18n="reg.sub">When they ask "How do you prove human oversight?", you have the answer.</p>
+            </div>
+            <div class="regulatory-badges">
+                <div class="reg-badge">EU AI Act Art. 14</div>
+                <div class="reg-badge">GDPR Art. 22</div>
+                <div class="reg-badge">DORA</div>
+                <div class="reg-badge">NIS2</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <h2 data-i18n="cta.title">Ready to prove you can handle it?</h2>
+        <p data-i18n="cta.sub">Start with a sandbox scenario. Graduate to INFERNO. Get certified.</p>
+        <a href="/lab/static/lab.html" class="btn btn-primary" data-i18n="cta.button">Enter W-LAB</a>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-brand">WINDI Publishing House</div>
+        <div class="footer-sub">AI processes. Human decides. WINDI guarantees.</div>
+        <div class="footer-links">
+            <a href="/enterprise/">W-Enterprise</a>
+            <a href="/verify-public/">Verify</a>
+            <a href="/portal/">Portal</a>
+        </div>
+    </footer>
+
+    <script>
+        // i18n translations
+        const i18n = {
+            en: {
+                "hero.badge": "W-LAB-001 · Governance Laboratory",
+                "hero.line1": "Everyone trains compliance.",
+                "hero.line2": "No one proves they can handle it.",
+                "hero.sub": "Where human oversight meets real pressure.",
+                "hero.cta1": "Enter the Lab",
+                "hero.cta2": "How it works",
+                "category.label": "A New Category",
+                "category.text": "The environment where you discover if someone can actually operate under AI responsibility.",
+                "problem.title": "The Compliance Gap",
+                "problem.sub": "EU AI Act Article 14 requires human oversight. But how do you prove the human can actually oversee?",
+                "problem.card1.title": "Policies",
+                "problem.card1.text": "Documents that describe what should happen. No proof it will.",
+                "problem.card1.status": "Not Evidence",
+                "problem.card2.title": "E-Learning",
+                "problem.card2.text": "10 questions. Multiple choice. Passed with 70%. Zero pressure.",
+                "problem.card2.status": "Not Evidence",
+                "problem.card3.title": "Certifications",
+                "problem.card3.text": "Proves you studied. Doesn't prove you'll decide correctly at 3am.",
+                "problem.card3.status": "Not Evidence",
+                "triangle.title": "Train → Decide → Prove",
+                "triangle.sub": "W-LAB creates verifiable evidence of human oversight capability.",
+                "triangle.step1.title": "Train",
+                "triangle.step1.text": "Real scenarios. Real pressure. INFERNO mode.",
+                "triangle.step2.title": "Decide",
+                "triangle.step2.text": "I9 gates. Time limits. Consequences.",
+                "triangle.step3.title": "Prove",
+                "triangle.step3.text": "Sealed in Ledger. Verifiable forever.",
+                "inferno.title": "INFERNO Scenarios",
+                "inferno.sub": "Where compliance training meets reality.",
+                "inferno.scenario": "Personal data exposed. 72h deadline. Board waiting. What do you do?",
+                "inferno.stat1": "Critical Decisions",
+                "inferno.stat2": "Interruptions",
+                "inferno.stat3": "I9 Traps",
+                "inferno.stat4": "Pressure",
+                "ovs.title": "OVS Certification Path",
+                "ovs.sub": "Operator of Verifiable Systems — A credential auditors trust.",
+                "ovs.seed": "Completed basic scenario. Understands I9 gate.",
+                "ovs.nodal": "Passed INFERNO in specific domain.",
+                "ovs.sovereign": "Cross-domain expert. Multiple INFERNOs.",
+                "ovs.oracle": "Creates scenarios. Trains others.",
+                "proof.title": "The Proof Auditors Accept",
+                "proof.sub": "Not a certificate. A cryptographic receipt sealed in the Forensic Ledger.",
+                "reg.title": "Built for Regulators",
+                "reg.sub": "When they ask \"How do you prove human oversight?\", you have the answer.",
+                "cta.title": "Ready to prove you can handle it?",
+                "cta.sub": "Start with a sandbox scenario. Graduate to INFERNO. Get certified.",
+                "cta.button": "Enter W-LAB"
+            },
+            de: {
+                "hero.badge": "W-LAB-001 · Governance-Labor",
+                "hero.line1": "Alle trainieren Compliance.",
+                "hero.line2": "Keiner beweist, dass er es schafft.",
+                "hero.sub": "Wo menschliche Aufsicht auf echten Druck trifft.",
+                "hero.cta1": "Labor betreten",
+                "hero.cta2": "Wie es funktioniert",
+                "category.label": "Eine neue Kategorie",
+                "category.text": "Die Umgebung, in der Sie herausfinden, ob jemand tatsächlich unter KI-Verantwortung arbeiten kann.",
+                "problem.title": "Die Compliance-Lücke",
+                "problem.sub": "EU AI Act Artikel 14 erfordert menschliche Aufsicht. Aber wie beweisen Sie, dass der Mensch tatsächlich beaufsichtigen kann?",
+                "problem.card1.title": "Richtlinien",
+                "problem.card1.text": "Dokumente, die beschreiben, was passieren soll. Kein Beweis, dass es wird.",
+                "problem.card1.status": "Kein Beweis",
+                "problem.card2.title": "E-Learning",
+                "problem.card2.text": "10 Fragen. Multiple Choice. Mit 70% bestanden. Kein Druck.",
+                "problem.card2.status": "Kein Beweis",
+                "problem.card3.title": "Zertifikate",
+                "problem.card3.text": "Beweist, dass Sie gelernt haben. Nicht, dass Sie um 3 Uhr morgens richtig entscheiden.",
+                "problem.card3.status": "Kein Beweis",
+                "triangle.title": "Trainieren → Entscheiden → Beweisen",
+                "triangle.sub": "W-LAB erstellt verifizierbare Nachweise der menschlichen Aufsichtsfähigkeit.",
+                "triangle.step1.title": "Trainieren",
+                "triangle.step1.text": "Echte Szenarien. Echter Druck. INFERNO-Modus.",
+                "triangle.step2.title": "Entscheiden",
+                "triangle.step2.text": "I9-Gates. Zeitlimits. Konsequenzen.",
+                "triangle.step3.title": "Beweisen",
+                "triangle.step3.text": "Im Ledger versiegelt. Für immer verifizierbar.",
+                "inferno.title": "INFERNO-Szenarien",
+                "inferno.sub": "Wo Compliance-Training auf Realität trifft.",
+                "inferno.scenario": "Personenbezogene Daten offengelegt. 72h Frist. Vorstand wartet. Was tun Sie?",
+                "inferno.stat1": "Kritische Entscheidungen",
+                "inferno.stat2": "Unterbrechungen",
+                "inferno.stat3": "I9-Fallen",
+                "inferno.stat4": "Druck",
+                "ovs.title": "OVS-Zertifizierungspfad",
+                "ovs.sub": "Operator of Verifiable Systems — Ein Nachweis, dem Prüfer vertrauen.",
+                "ovs.seed": "Basisszenario abgeschlossen. Versteht I9-Gate.",
+                "ovs.nodal": "INFERNO in spezifischer Domäne bestanden.",
+                "ovs.sovereign": "Cross-Domain-Experte. Mehrere INFERNOs.",
+                "ovs.oracle": "Erstellt Szenarien. Trainiert andere.",
+                "proof.title": "Der Beweis, den Prüfer akzeptieren",
+                "proof.sub": "Kein Zertifikat. Ein kryptografischer Beleg, versiegelt im Forensic Ledger.",
+                "reg.title": "Für Regulatoren gebaut",
+                "reg.sub": "Wenn sie fragen \"Wie beweisen Sie menschliche Aufsicht?\", haben Sie die Antwort.",
+                "cta.title": "Bereit zu beweisen, dass Sie es schaffen?",
+                "cta.sub": "Starten Sie mit einem Sandbox-Szenario. Graduieren Sie zu INFERNO. Werden Sie zertifiziert.",
+                "cta.button": "W-LAB betreten"
+            },
+            pt: {
+                "hero.badge": "W-LAB-001 · Laboratório de Governança",
+                "hero.line1": "Todos treinam compliance.",
+                "hero.line2": "Ninguém prova que aguenta.",
+                "hero.sub": "Onde a supervisão humana encontra pressão real.",
+                "hero.cta1": "Entrar no Lab",
+                "hero.cta2": "Como funciona",
+                "category.label": "Uma Nova Categoria",
+                "category.text": "O ambiente onde se descobre se alguém consegue realmente operar sob responsabilidade de AI.",
+                "problem.title": "A Lacuna do Compliance",
+                "problem.sub": "O EU AI Act Artigo 14 exige supervisão humana. Mas como provar que o humano consegue supervisionar?",
+                "problem.card1.title": "Políticas",
+                "problem.card1.text": "Documentos que descrevem o que deveria acontecer. Nenhuma prova de que vai.",
+                "problem.card1.status": "Não é Prova",
+                "problem.card2.title": "E-Learning",
+                "problem.card2.text": "10 perguntas. Múltipla escolha. Passou com 70%. Zero pressão.",
+                "problem.card2.status": "Não é Prova",
+                "problem.card3.title": "Certificações",
+                "problem.card3.text": "Prova que estudou. Não prova que vai decidir corretamente às 3h da manhã.",
+                "problem.card3.status": "Não é Prova",
+                "triangle.title": "Treinar → Decidir → Provar",
+                "triangle.sub": "O W-LAB cria evidência verificável de capacidade de supervisão humana.",
+                "triangle.step1.title": "Treinar",
+                "triangle.step1.text": "Cenários reais. Pressão real. Modo INFERNO.",
+                "triangle.step2.title": "Decidir",
+                "triangle.step2.text": "Gates I9. Limites de tempo. Consequências.",
+                "triangle.step3.title": "Provar",
+                "triangle.step3.text": "Selado no Ledger. Verificável para sempre.",
+                "inferno.title": "Cenários INFERNO",
+                "inferno.sub": "Onde o treino de compliance encontra a realidade.",
+                "inferno.scenario": "Dados pessoais expostos. Prazo de 72h. Conselho a aguardar. O que faz?",
+                "inferno.stat1": "Decisões Críticas",
+                "inferno.stat2": "Interrupções",
+                "inferno.stat3": "Armadilhas I9",
+                "inferno.stat4": "Pressão",
+                "ovs.title": "Caminho de Certificação OVS",
+                "ovs.sub": "Operator of Verifiable Systems — Uma credencial que auditores confiam.",
+                "ovs.seed": "Completou cenário básico. Entende gate I9.",
+                "ovs.nodal": "Passou INFERNO em domínio específico.",
+                "ovs.sovereign": "Especialista cross-domain. Múltiplos INFERNOs.",
+                "ovs.oracle": "Cria cenários. Treina outros.",
+                "proof.title": "A Prova que Auditores Aceitam",
+                "proof.sub": "Não é um certificado. É um receipt criptográfico selado no Forensic Ledger.",
+                "reg.title": "Construído para Reguladores",
+                "reg.sub": "Quando perguntam \"Como prova supervisão humana?\", tem a resposta.",
+                "cta.title": "Pronto para provar que aguenta?",
+                "cta.sub": "Comece com um cenário sandbox. Avance para INFERNO. Seja certificado.",
+                "cta.button": "Entrar no W-LAB"
+            }
+        };
+
+        // Apply translations
+        function applyLang(lang) {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[lang] && i18n[lang][key]) {
+                    el.textContent = i18n[lang][key];
+                }
+            });
+            localStorage.setItem('windi-lang', lang);
+        }
+
+        // Theme toggle
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.getElementById('themeToggle');
+            if (body.dataset.theme === 'noir') {
+                body.dataset.theme = 'klar';
+                btn.textContent = '☽';
+                localStorage.setItem('windi-theme', 'klar');
+            } else {
+                body.dataset.theme = 'noir';
+                btn.textContent = '☀';
+                localStorage.setItem('windi-theme', 'noir');
+            }
+        }
+
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load saved preferences
+            const savedLang = localStorage.getItem('windi-lang') || 'en';
+            const savedTheme = localStorage.getItem('windi-theme') || 'noir';
+
+            document.getElementById('langToggle').value = savedLang;
+            applyLang(savedLang);
+
+            if (savedTheme === 'klar') {
+                document.body.dataset.theme = 'klar';
+                document.getElementById('themeToggle').textContent = '☽';
+            }
+
+            // Event listeners
+            document.getElementById('langToggle').addEventListener('change', (e) => {
+                applyLang(e.target.value);
+            });
+
+            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+        });
+    </script>
+</body>
+</html>

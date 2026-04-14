@@ -1,0 +1,199 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "W-LAB Session Schema v1.0",
+  "description": "Schema for W-LAB-001 training sessions",
+  "type": "object",
+  "required": ["session_id", "officer_did", "scenario_id", "mode", "status"],
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "pattern": "^LAB-[A-F0-9]{8}$",
+      "description": "Unique session identifier"
+    },
+    "officer_did": {
+      "type": "string",
+      "pattern": "^did:windi:.+$",
+      "description": "DID of the officer running the session"
+    },
+    "officer_profile": {
+      "type": "string",
+      "enum": ["digital_risk", "tech_product", "internal_auditor"],
+      "description": "OVS profile from W-Enterprise-001"
+    },
+    "scenario_id": {
+      "type": "string",
+      "description": "Reference to the scenario being executed"
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["sandbox", "stress", "formula", "replay"],
+      "description": "Execution mode"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "active", "paused", "completed", "aborted"],
+      "description": "Current session status"
+    },
+    "stress_level": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 5,
+      "description": "Current stress level (0=none, 5=extreme)"
+    },
+    "timing": {
+      "type": "object",
+      "properties": {
+        "started_at": { "type": "string", "format": "date-time" },
+        "ended_at": { "type": "string", "format": "date-time" },
+        "elapsed_seconds": { "type": "integer" },
+        "paused_seconds": { "type": "integer" }
+      }
+    },
+    "events": {
+      "type": "array",
+      "description": "Chronological log of all session events",
+      "items": {
+        "type": "object",
+        "properties": {
+          "event_id": { "type": "string" },
+          "timestamp": { "type": "string", "format": "date-time" },
+          "event_type": {
+            "type": "string",
+            "enum": [
+              "SESSION_START",
+              "SESSION_END",
+              "TASK_START",
+              "TASK_COMPLETE",
+              "DECISION_PRESENTED",
+              "DECISION_MADE",
+              "INTERRUPT_RECEIVED",
+              "INTERRUPT_HANDLED",
+              "INTERRUPT_DEFERRED",
+              "VERA_QUERY",
+              "VERA_RESPONSE",
+              "I9_TRAP_TRIGGERED",
+              "STRESS_ESCALATION",
+              "SYSTEM_FAILURE",
+              "USER_INPUT",
+              "PAUSE",
+              "RESUME"
+            ]
+          },
+          "payload": {
+            "type": "object",
+            "description": "Event-specific data"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["INFO", "WARNING", "ERROR", "CRITICAL"]
+          }
+        },
+        "required": ["event_id", "timestamp", "event_type"]
+      }
+    },
+    "decisions": {
+      "type": "array",
+      "description": "All decisions made during session",
+      "items": {
+        "type": "object",
+        "properties": {
+          "decision_id": { "type": "string" },
+          "presented_at": { "type": "string", "format": "date-time" },
+          "resolved_at": { "type": "string", "format": "date-time" },
+          "time_to_decision_seconds": { "type": "integer" },
+          "option_chosen": { "type": "string" },
+          "was_correct": { "type": "boolean" },
+          "was_i9_trap": { "type": "boolean" },
+          "was_risky": { "type": "boolean" },
+          "content_hash": { "type": "string", "description": "SHA-256 of decision context" }
+        }
+      }
+    },
+    "interrupts": {
+      "type": "object",
+      "properties": {
+        "received": { "type": "integer" },
+        "handled_immediately": { "type": "integer" },
+        "deferred": { "type": "integer" },
+        "ignored": { "type": "integer" }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "description": "Session performance metrics",
+      "properties": {
+        "tasks_completed": { "type": "integer" },
+        "tasks_total": { "type": "integer" },
+        "decisions_made": { "type": "integer" },
+        "decisions_correct": { "type": "integer" },
+        "decisions_risky": { "type": "integer" },
+        "i9_traps_triggered": { "type": "integer" },
+        "avg_decision_time_seconds": { "type": "number" },
+        "total_reformulations": { "type": "integer" },
+        "vera_queries": { "type": "integer" },
+        "formula_usage_count": { "type": "integer" },
+        "escalations_correct": { "type": "integer" },
+        "escalations_missed": { "type": "integer" }
+      }
+    },
+    "maturity_score": {
+      "type": "object",
+      "description": "Calculated maturity dimensions",
+      "properties": {
+        "discipline": { "type": "number", "minimum": 0, "maximum": 100 },
+        "clarity": { "type": "number", "minimum": 0, "maximum": 100 },
+        "escalation": { "type": "number", "minimum": 0, "maximum": 100 },
+        "legal_basis": { "type": "number", "minimum": 0, "maximum": 100 },
+        "integrity": { "type": "number", "minimum": 0, "maximum": 100 },
+        "efficiency": { "type": "number", "minimum": 0, "maximum": 100 },
+        "overall": { "type": "number", "minimum": 0, "maximum": 100 },
+        "level": {
+          "type": "string",
+          "enum": ["reactive", "assisted", "operational", "reliable", "reference"]
+        }
+      }
+    },
+    "final_state": {
+      "type": "string",
+      "enum": ["SUCCESS", "PARTIAL", "DEGRADED", "FAILURE"],
+      "description": "Final session outcome"
+    },
+    "failure_points": {
+      "type": "array",
+      "description": "Identified failure points for review",
+      "items": { "type": "string" }
+    },
+    "improvement_recommendations": {
+      "type": "array",
+      "description": "VERA-generated improvement suggestions",
+      "items": {
+        "type": "object",
+        "properties": {
+          "area": { "type": "string" },
+          "recommendation": {
+            "type": "object",
+            "properties": { "pt": { "type": "string" }, "de": { "type": "string" }, "en": { "type": "string" } }
+          },
+          "related_formula": { "type": "string" }
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "description": "Final output for sealing",
+      "properties": {
+        "content_hash": { "type": "string" },
+        "governance_level": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH"] },
+        "pho_candidate": { "type": "boolean" },
+        "formula_candidate": { "type": "boolean" },
+        "sealed_at": { "type": "string", "format": "date-time" },
+        "receipt_id": { "type": "string" },
+        "ledger_mode": { "type": "string", "enum": ["sandbox", "production"] }
+      }
+    },
+    "replay_available": {
+      "type": "boolean",
+      "description": "Whether full replay is available"
+    }
+  }
+}
