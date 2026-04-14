@@ -18,6 +18,7 @@ from core.types import (
 from repository.cache_repository import CacheRepository
 from services.temporal import validate_temporal_consistency, validate_tier_requirements
 from services.ledger_adapter import LedgerAdapter
+from core.policy_engine import evaluate_promotion_policy
 
 
 class CacheService:
@@ -279,6 +280,36 @@ class CacheService:
         if not entry:
             return {"ok": False, "reason": "CACHE_ENTRY_NOT_FOUND"}
 
+        # 1.5 🔥 POLICY CHECK (W-CACHE-002)
+        # promote() does NOT decide alone → asks policy → executes decision
+        policy_context = {
+            "human_approved": request.human_approved,
+            "actor_did": actor_did,
+            "anchor_to_ledger": anchor_to_ledger,
+            "promotion_reason": promotion_reason
+        }
+
+        policy_result = evaluate_promotion_policy(entry, policy_context)
+
+        if not policy_result.allow:
+            # Log denial event for NOIR dashboard
+            self.repo.log_event(
+                cache_id=entry.id,
+                event_type="PROMOTION_DENIED",
+                reason=policy_result.reason,
+                payload={
+                    "namespace": entry.namespace,
+                    "policy_mode": policy_result.mode,
+                    "requires_human": policy_result.requires_human
+                }
+            )
+            return {
+                "ok": False,
+                "reason": policy_result.reason,
+                "policy_mode": policy_result.mode,
+                "requires_human": policy_result.requires_human
+            }
+
         # 2. Check tier - only L2 can be promoted
         if entry.tier != "L2_DETERMINISTIC":
             return {"ok": False, "reason": "ONLY_L2_CAN_BE_PROMOTED"}
@@ -301,8 +332,10 @@ class CacheService:
 
         ledger_result = None
 
-        # 7. Anchor to ledger if requested
-        if anchor_to_ledger:
+        # 7. Anchor to ledger if requested OR if policy requires it
+        # 🔥 W-CACHE-002: Policy mode ANCHORED forces ledger anchor
+        should_anchor = anchor_to_ledger or policy_result.mode == "ANCHORED"
+        if should_anchor:
             ledger_result = self.ledger.anchor_cache_promotion(
                 entry=entry,
                 actor_did=actor_did,

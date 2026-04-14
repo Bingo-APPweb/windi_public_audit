@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="noir">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>W-SEC-001 | Security Sentinel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #08080C;
+            --bg-secondary: #0E0E14;
+            --bg-card: #14141C;
+            --bg-hover: #1A1A24;
+            --gold: #C9A84C;
+            --gold-dim: #8B7424;
+            --gold-glow: rgba(201, 168, 76, 0.15);
+            --text-primary: #E8E6E1;
+            --text-secondary: #8A8880;
+            --text-muted: #5A5A54;
+            --border: #1E1E28;
+            --green: #4ADE80;
+            --red: #F87171;
+            --yellow: #FACC15;
+        }
+        [data-theme="klar"] {
+            --bg-primary: #FAFAF8;
+            --bg-secondary: #F5F3F0;
+            --bg-card: #FFFFFF;
+            --bg-hover: #F0EDE8;
+            --gold: #8B7424;
+            --gold-dim: #6B5A1C;
+            --gold-glow: rgba(139, 116, 36, 0.1);
+            --text-primary: #1A1A1A;
+            --text-secondary: #5A5A5A;
+            --text-muted: #8A8A8A;
+            --border: #E0DED8;
+            --green: #16A34A;
+            --red: #DC2626;
+            --yellow: #CA8A04;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+        .header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--red) 0%, #991B1B 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        .logo-text h1 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gold);
+        }
+        .logo-text span {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .lang-toggle, .theme-toggle {
+            display: flex;
+            background: var(--bg-card);
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        .lang-btn, .theme-btn {
+            padding: 6px 10px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 11px;
+            transition: all 0.2s;
+        }
+        .lang-btn.active, .theme-btn.active {
+            background: var(--gold);
+            color: var(--bg-primary);
+        }
+        .main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+        .status-banner {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .status-indicator {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--green);
+            animation: pulse 2s infinite;
+        }
+        .status-indicator.offline { background: var(--red); animation: none; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .status-info h2 {
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+        .status-info span {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+        }
+        .card h3 {
+            font-size: 14px;
+            color: var(--gold);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .endpoint {
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+        .endpoint code {
+            color: var(--gold);
+            font-size: 11px;
+        }
+        .endpoint p {
+            color: var(--text-secondary);
+            margin-top: 4px;
+            font-size: 11px;
+        }
+        .invariant {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--bg-secondary);
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin: 4px;
+            font-size: 11px;
+        }
+        .invariant-id {
+            background: var(--gold);
+            color: var(--bg-primary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 12px;
+            margin-bottom: 24px;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: var(--gold); }
+        .receipt {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--text-muted);
+            background: var(--bg-secondary);
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin-top: 12px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">🛡️</div>
+                <div class="logo-text">
+                    <h1>W-SEC-001</h1>
+                    <span data-i18n="subtitle">Security Sentinel</span>
+                </div>
+            </div>
+            <div class="controls">
+                <div class="lang-toggle">
+                    <button class="lang-btn" data-lang="pt">PT</button>
+                    <button class="lang-btn active" data-lang="en">EN</button>
+                    <button class="lang-btn" data-lang="de">DE</button>
+                </div>
+                <div class="theme-toggle">
+                    <button class="theme-btn active" data-theme="noir" title="Dark">☀</button>
+                    <button class="theme-btn" data-theme="klar" title="Light">☽</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <a href="/portal/" class="back-link">← <span data-i18n="back">Back to Portal</span></a>
+
+        <div class="status-banner">
+            <div class="status-indicator" id="statusIndicator"></div>
+            <div class="status-info">
+                <h2 data-i18n="status">Service Status</h2>
+                <span id="statusText">Checking...</span>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h3>📡 <span data-i18n="endpoints">API Endpoints</span></h3>
+                <div class="endpoint">
+                    <code>GET /sec/health</code>
+                    <p data-i18n="ep_health">Health check endpoint</p>
+                </div>
+                <div class="endpoint">
+                    <code>POST /sec/event</code>
+                    <p data-i18n="ep_event">Log security event</p>
+                </div>
+                <div class="endpoint">
+                    <code>GET /sec/incidents</code>
+                    <p data-i18n="ep_incidents">List security incidents</p>
+                </div>
+                <div class="endpoint">
+                    <code>GET /sec/correlation</code>
+                    <p data-i18n="ep_correlation">Dual correlation status</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>⚖️ <span data-i18n="invariants">Constitutional Invariants</span></h3>
+                <div class="invariant">
+                    <span class="invariant-id">I9</span>
+                    <span data-i18n="i9">Human Approval Gate</span>
+                </div>
+                <div class="invariant">
+                    <span class="invariant-id">I11</span>
+                    <span data-i18n="i11">Cryptographic Evidence</span>
+                </div>
+                <div class="receipt">
+                    Receipt: WINDI-SEC-LOCAL-20260408184001-BD09970F
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>🔗 <span data-i18n="architecture">Architecture</span></h3>
+                <div class="endpoint">
+                    <code>Port: 8144</code>
+                    <p data-i18n="port_desc">Internal service port</p>
+                </div>
+                <div class="endpoint">
+                    <code data-i18n="dual_corr">Dual Correlation</code>
+                    <p data-i18n="dual_desc">Behavioral (30 IPs → 1 flood) + Technical (1 IP → injection)</p>
+                </div>
+                <div class="endpoint">
+                    <code data-i18n="pipeline">Pipeline</code>
+                    <p>SEC-EVT → Correlation → SEC-INCIDENT → I9 Gate → Ledger</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>📊 <span data-i18n="links">Quick Links</span></h3>
+                <div class="endpoint">
+                    <a href="/portal/" style="color: var(--gold); text-decoration: none;">
+                        <code data-i18n="link_portal">WINDI Portal</code>
+                    </a>
+                </div>
+                <div class="endpoint">
+                    <a href="/verify-public/" style="color: var(--gold); text-decoration: none;">
+                        <code data-i18n="link_verify">Verify Public</code>
+                    </a>
+                </div>
+                <div class="endpoint">
+                    <a href="/enterprise/" style="color: var(--gold); text-decoration: none;">
+                        <code data-i18n="link_enterprise">Enterprise Dashboard</code>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const i18n = {
+            en: {
+                subtitle: "Security Sentinel",
+                back: "Back to Portal",
+                status: "Service Status",
+                endpoints: "API Endpoints",
+                ep_health: "Health check endpoint",
+                ep_event: "Log security event",
+                ep_incidents: "List security incidents",
+                ep_correlation: "Dual correlation status",
+                invariants: "Constitutional Invariants",
+                i9: "Human Approval Gate",
+                i11: "Cryptographic Evidence",
+                architecture: "Architecture",
+                port_desc: "Internal service port",
+                dual_corr: "Dual Correlation",
+                dual_desc: "Behavioral (30 IPs → 1 flood) + Technical (1 IP → injection)",
+                pipeline: "Pipeline",
+                links: "Quick Links",
+                link_portal: "WINDI Portal",
+                link_verify: "Verify Public",
+                link_enterprise: "Enterprise Dashboard",
+                online: "Online · Port 8144",
+                offline: "Offline"
+            },
+            pt: {
+                subtitle: "Sentinela de Segurança",
+                back: "Voltar ao Portal",
+                status: "Estado do Serviço",
+                endpoints: "Endpoints API",
+                ep_health: "Endpoint de verificação de saúde",
+                ep_event: "Registar evento de segurança",
+                ep_incidents: "Listar incidentes de segurança",
+                ep_correlation: "Estado da correlação dual",
+                invariants: "Invariantes Constitucionais",
+                i9: "Gate de Aprovação Humana",
+                i11: "Evidência Criptográfica",
+                architecture: "Arquitectura",
+                port_desc: "Porta do serviço interno",
+                dual_corr: "Correlação Dual",
+                dual_desc: "Comportamental (30 IPs → 1 flood) + Técnica (1 IP → injecção)",
+                pipeline: "Pipeline",
+                links: "Links Rápidos",
+                link_portal: "Portal WINDI",
+                link_verify: "Verificar Público",
+                link_enterprise: "Dashboard Empresarial",
+                online: "Online · Porta 8144",
+                offline: "Offline"
+            },
+            de: {
+                subtitle: "Sicherheitswächter",
+                back: "Zurück zum Portal",
+                status: "Dienststatus",
+                endpoints: "API-Endpunkte",
+                ep_health: "Gesundheitsprüfungs-Endpunkt",
+                ep_event: "Sicherheitsereignis protokollieren",
+                ep_incidents: "Sicherheitsvorfälle auflisten",
+                ep_correlation: "Dual-Korrelationsstatus",
+                invariants: "Verfassungsinvarianten",
+                i9: "Menschliche Genehmigungsschranke",
+                i11: "Kryptografischer Beweis",
+                architecture: "Architektur",
+                port_desc: "Interner Dienstport",
+                dual_corr: "Dual-Korrelation",
+                dual_desc: "Verhalten (30 IPs → 1 Flood) + Technik (1 IP → Injektion)",
+                pipeline: "Pipeline",
+                links: "Schnelllinks",
+                link_portal: "WINDI Portal",
+                link_verify: "Öffentlich verifizieren",
+                link_enterprise: "Enterprise-Dashboard",
+                online: "Online · Port 8144",
+                offline: "Offline"
+            }
+        };
+
+        let currentLang = localStorage.getItem('windi-lang') || 'en';
+        let currentTheme = localStorage.getItem('windi-theme') || 'noir';
+
+        function setLang(lang) {
+            currentLang = lang;
+            localStorage.setItem('windi-lang', lang);
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[lang][key]) el.textContent = i18n[lang][key];
+            });
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+        }
+
+        function setTheme(theme) {
+            currentTheme = theme;
+            localStorage.setItem('windi-theme', theme);
+            document.documentElement.setAttribute('data-theme', theme);
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.theme === theme);
+            });
+        }
+
+        async function checkHealth() {
+            const indicator = document.getElementById('statusIndicator');
+            const text = document.getElementById('statusText');
+            try {
+                const res = await fetch('/sec/health', { timeout: 5000 });
+                if (res.ok) {
+                    indicator.classList.remove('offline');
+                    text.textContent = i18n[currentLang].online;
+                } else {
+                    throw new Error();
+                }
+            } catch {
+                indicator.classList.add('offline');
+                text.textContent = i18n[currentLang].offline;
+            }
+        }
+
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => setLang(btn.dataset.lang));
+        });
+        document.querySelectorAll('.theme-btn').forEach(btn => {
+            btn.addEventListener('click', () => setTheme(btn.dataset.theme));
+        });
+
+        setLang(currentLang);
+        setTheme(currentTheme);
+        checkHealth();
+        setInterval(checkHealth, 30000);
+    </script>
+</body>
+</html>
