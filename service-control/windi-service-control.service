@@ -1,0 +1,16 @@
+[Unit]
+Description=WINDI Service Control Panel v1.0.0 — Sovereign Service Management
+After=network.target
+
+[Service]
+Type=simple
+User=windi
+Group=windi
+WorkingDirectory=/opt/windi/service-control
+ExecStart=/opt/windi/service-control/venv/bin/python3 /opt/windi/service-control/app.py
+Restart=always
+RestartSec=5
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target
