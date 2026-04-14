@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>W-LAB-001 · Experimental Governance Lab</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+/* THEME VARIABLES */
+:root{
+  /* NOIR (default) */
+  --bg:#0B0D14;--bg2:#12151F;--bg3:#1A1E2D;--bg4:#222740;
+  --gold:#C8A45A;--gold2:#6B4F10;--gold3:#3D2E0A;
+  --sealed:#38A169;--vera:#9B72D4;
+  --stress:#E05252;--stress2:#8B2020;
+  --sandbox:#5B9BD4;--formula:#6ABF8A;
+  --txt:#E8E6DF;--txt2:#A09C92;--txt3:#5B5855;
+  --border:#1C2030;--border2:#2A3040;
+  --shadow:rgba(0,0,0,.4);
+}
+[data-theme="klar"]{
+  --bg:#FAFAF8;--bg2:#F0EDE8;--bg3:#E8E5E0;--bg4:#DDD9D0;
+  --gold:#8B7424;--gold2:#C8A45A;--gold3:#E8D9B0;
+  --sealed:#2D7A50;--vera:#7B5AAF;
+  --stress:#C04040;--stress2:#E08080;
+  --sandbox:#4A85B5;--formula:#4A9A6A;
+  --txt:#1A1A1A;--txt2:#4A4845;--txt3:#8E8A82;
+  --border:#D0CCC5;--border2:#C0BBB0;
+  --shadow:rgba(0,0,0,.1);
+}
+
+body{background:var(--bg);color:var(--txt);font-family:'JetBrains Mono','SF Mono',monospace;font-size:12px;min-height:100vh;transition:background .3s,color .3s}
+.lab{min-height:100vh;display:flex;flex-direction:column}
+
+/* TOPBAR */
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:8px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:8px}
+.brand-icon{font-size:16px}
+.brand-tag{background:var(--bg3);border:1px solid var(--gold2);color:var(--gold);font-size:9px;padding:3px 8px;letter-spacing:1.8px}
+.session-meta{font-size:10px;color:var(--txt3)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.timer-block{text-align:right}
+.timer{font-size:16px;font-weight:700;color:var(--gold);letter-spacing:2px;font-variant-numeric:tabular-nums}
+.timer.stress{color:var(--stress)}
+.timer-label{font-size:8px;color:var(--txt3);letter-spacing:1px}
+.mode-pill{font-size:9px;padding:3px 10px;letter-spacing:1.2px;border:1px solid}
+.mp-idle{border-color:var(--txt3);color:var(--txt3)}
+.mp-sandbox{border-color:var(--sandbox);color:var(--sandbox)}
+.mp-stress{border-color:var(--stress);color:var(--stress)}
+.mp-formula{border-color:var(--formula);color:var(--formula)}
+
+/* THEME & LANG TOGGLES */
+.toggles{display:flex;gap:6px}
+.toggle-btn{background:var(--bg3);border:1px solid var(--border);color:var(--txt3);padding:4px 8px;cursor:pointer;font-family:inherit;font-size:9px;transition:all .2s}
+.toggle-btn:hover{border-color:var(--txt2);color:var(--txt)}
+.toggle-btn.active{border-color:var(--gold);color:var(--gold)}
+.theme-toggle{font-size:12px}
+
+/* MODE SELECTOR */
+.mode-selector{display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid var(--border)}
+.mode-card{padding:14px 16px;cursor:pointer;border-right:1px solid var(--border);transition:background .2s}
+.mode-card:last-child{border-right:none}
+.mode-card:hover{background:var(--bg2)}
+.mode-card.active-sandbox{background:rgba(91,155,212,.08);border-bottom:2px solid var(--sandbox)}
+.mode-card.active-stress{background:rgba(224,82,82,.08);border-bottom:2px solid var(--stress)}
+.mode-card.active-formula{background:rgba(106,191,138,.08);border-bottom:2px solid var(--formula)}
+.mc-icon{font-size:18px;margin-bottom:6px}
+.mc-name{font-size:11px;font-weight:700;letter-spacing:.8px;margin-bottom:3px}
+.mc-sandbox{color:var(--sandbox)}.mc-stress{color:var(--stress)}.mc-formula{color:var(--formula)}
+.mc-desc{font-size:10px;color:var(--txt3);line-height:1.5}
+
+/* MAIN GRID */
+.main{flex:1;display:grid;grid-template-columns:1fr 280px;overflow:hidden}
+@media(max-width:800px){.main{grid-template-columns:1fr}}
+
+/* LEFT COLUMN */
+.left-col{display:flex;flex-direction:column;border-right:1px solid var(--border);overflow:hidden}
+.col-header{padding:8px 14px;border-bottom:1px solid var(--border);background:var(--bg2);display:flex;align-items:center;justify-content:space-between}
+.col-title{font-size:9px;color:var(--txt3);letter-spacing:1.2px}
+.col-actions{display:flex;gap:6px}
+.btn{background:transparent;border:1px solid var(--border);color:var(--txt2);padding:5px 12px;cursor:pointer;font-family:inherit;font-size:10px;letter-spacing:.6px;transition:all .2s}
+.btn:hover{border-color:var(--txt);color:var(--txt)}
+.btn-primary{border-color:var(--gold2);color:var(--gold)}
+.btn-primary:hover{background:rgba(200,164,90,.1);border-color:var(--gold)}
+.btn-stress{border-color:var(--stress2);color:var(--stress)}
+.btn-stress:hover{background:rgba(224,82,82,.1)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* START SCREEN */
+.start-screen{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;text-align:center}
+.ss-icon{font-size:40px;margin-bottom:8px;opacity:.6}
+.ss-title{font-size:14px;color:var(--txt)}
+.ss-sub{font-size:11px;color:var(--txt3);line-height:1.7;max-width:320px}
+.ss-invariant{font-size:10px;color:var(--gold2);margin-top:12px;padding:8px 16px;border:1px dashed var(--gold3);max-width:360px}
+
+/* SCENARIO BOX */
+.scenario-box{padding:12px 14px;border-bottom:1px solid var(--border);background:var(--bg3)}
+.scenario-label{font-size:9px;color:var(--txt3);letter-spacing:1px;margin-bottom:6px}
+.scenario-text{font-size:11px;color:var(--txt);line-height:1.6}
+.scenario-tags{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.s-tag{font-size:9px;padding:2px 7px;border:1px solid var(--border);color:var(--txt3)}
+.s-tag-hot{border-color:var(--stress2);color:var(--stress)}
+
+/* TASK AREA */
+.task-area{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.task-item{background:var(--bg2);border:1px solid var(--border);padding:10px 12px;transition:border-color .3s}
+.task-item.urgent{border-color:var(--stress);animation:pulse-border 1.5s infinite}
+.task-item.done{opacity:.45;border-color:var(--sealed)}
+@keyframes pulse-border{0%,100%{border-color:var(--stress)}50%{border-color:var(--stress2)}}
+.task-num{font-size:9px;color:var(--txt3);margin-bottom:4px}
+.task-text{font-size:11px;color:var(--txt);line-height:1.5;margin-bottom:8px}
+.task-footer{display:flex;gap:6px;align-items:center}
+.task-priority{font-size:9px;padding:2px 6px;border:1px solid}
+.tp-critical{border-color:var(--stress);color:var(--stress)}
+.tp-high{border-color:var(--stress2);color:var(--stress)}
+.tp-medium{border-color:var(--gold2);color:var(--gold)}
+.tp-low{border-color:var(--txt3);color:var(--txt3)}
+.task-btn{margin-left:auto;background:transparent;border:1px solid var(--border);color:var(--txt3);padding:4px 10px;cursor:pointer;font-family:inherit;font-size:10px;transition:all .2s}
+.task-btn:hover{border-color:var(--sealed);color:var(--sealed)}
+.task-btn.done-btn{border-color:var(--sealed);color:var(--sealed)}
+
+/* DEBRIEF */
+.debrief{display:none;padding:14px;background:var(--bg3);border-top:1px solid var(--border)}
+.debrief.show{display:block}
+.db-title{font-size:10px;color:var(--gold);letter-spacing:1.5px;margin-bottom:12px}
+.db-stat{margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.db-stat:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.db-label{font-size:9px;color:var(--txt3);margin-bottom:3px;letter-spacing:.8px}
+.db-value{font-size:11px;color:var(--txt);line-height:1.5}
+.db-value span{color:var(--gold)}
+.db-seal-btn{width:100%;margin-top:14px;background:rgba(200,164,90,.08);border:1px solid var(--gold2);color:var(--gold);padding:8px;cursor:pointer;font-family:inherit;font-size:10px;letter-spacing:1px;transition:all .2s}
+.db-seal-btn:hover{background:rgba(200,164,90,.18)}
+
+/* RIGHT PANEL */
+.right-panel{background:var(--bg2);overflow-y:auto;display:flex;flex-direction:column}
+.rp-section{padding:12px;border-bottom:1px solid var(--border)}
+.rp-title{font-size:9px;color:var(--txt3);letter-spacing:1.3px;margin-bottom:8px}
+.metric-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--border)}
+.metric-row:last-child{border-bottom:none}
+.m-label{font-size:10px;color:var(--txt2)}
+.m-val{font-size:10px;font-weight:700}
+.mv-ok{color:var(--sealed)}.mv-warn{color:var(--gold)}.mv-bad{color:var(--stress)}.mv-neu{color:var(--txt)}
+.vera-box{background:var(--bg3);border-left:3px solid var(--vera);padding:8px 10px;font-size:10px;color:var(--txt2);line-height:1.55}
+.vera-tag{font-size:9px;color:var(--vera);letter-spacing:.8px;margin-bottom:4px}
+.progress-track{height:4px;background:var(--bg3);margin-top:6px}
+.progress-fill{height:100%;background:var(--gold);transition:width .6s}
+.progress-fill.ok{background:var(--sealed)}
+
+/* FORMULA GRID */
+.formula-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px 14px;overflow-y:auto}
+.formula-card{background:var(--bg2);border:1px solid var(--border);padding:10px 12px;cursor:pointer;transition:border-color .2s}
+.formula-card:hover{border-color:var(--formula)}
+.fc-tag{font-size:9px;color:var(--formula);letter-spacing:.8px;margin-bottom:4px}
+.fc-title{font-size:11px;color:var(--txt);margin-bottom:3px}
+.fc-desc{font-size:10px;color:var(--txt3);line-height:1.4}
+.fc-seal{font-size:9px;color:var(--txt3);margin-top:6px}
+
+/* DID OVERLAY */
+.did-overlay{display:flex;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(11,13,20,.92);z-index:200;align-items:center;justify-content:center}
+.did-overlay.hidden{display:none}
+.did-card{background:var(--bg2);border:1px solid var(--gold2);padding:24px;max-width:360px;width:90%;text-align:center}
+.did-title{font-size:12px;color:var(--gold);letter-spacing:1.2px;margin-bottom:16px}
+.did-input{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--txt);padding:10px;font-family:inherit;font-size:11px;margin-bottom:12px}
+.did-input:focus{outline:none;border-color:var(--gold)}
+.did-hint{font-size:10px;color:var(--txt3);margin-bottom:16px;line-height:1.5}
+.did-submit{width:100%;background:rgba(200,164,90,.1);border:1px solid var(--gold2);color:var(--gold);padding:10px;cursor:pointer;font-family:inherit;font-size:11px;letter-spacing:1px}
+.did-submit:hover{background:rgba(200,164,90,.2)}
+
+/* FOOTER */
+.footer{background:var(--bg2);border-top:1px solid var(--border);padding:6px 14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.footer-brand{font-size:9px;color:var(--txt3);letter-spacing:.8px}
+.footer-seal{font-size:9px;color:var(--gold2)}
+
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="lab" id="lab">
+
+<!-- DID OVERLAY -->
+<div class="did-overlay" id="did-overlay">
+  <div class="did-card">
+    <div class="did-title" data-i18n="did_title">LEI I · IDENTIDADE NECESSÁRIA</div>
+    <input type="text" class="did-input" id="did-input" placeholder="did:windi:dragon-001" value="did:windi:dragon-001">
+    <div class="did-hint" data-i18n="did_hint">Sem DID válido = sem acesso ao LAB. Lei I: Existência antes de Acção.</div>
+    <button class="did-submit" onclick="submitDID()" data-i18n="did_submit">ENTRAR NO LAB</button>
+  </div>
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="brand">
+    <span class="brand-icon">⬡</span>
+    <span class="brand-tag">W-LAB-001</span>
+    <span class="session-meta" id="session-meta" data-i18n="no_session">Nenhuma sessão activa</span>
+  </div>
+  <div class="topbar-right">
+    <div class="toggles">
+      <button class="toggle-btn active" onclick="setLang('pt')">PT</button>
+      <button class="toggle-btn" onclick="setLang('de')">DE</button>
+      <button class="toggle-btn" onclick="setLang('en')">EN</button>
+      <button class="toggle-btn theme-toggle" onclick="toggleTheme()" id="theme-btn">☀</button>
+    </div>
+    <div class="timer-block">
+      <div class="timer" id="timer">00:00</div>
+      <div class="timer-label" data-i18n="elapsed">DECORRIDO</div>
+    </div>
+    <span class="mode-pill mp-idle" id="mode-pill" data-i18n="idle">IDLE</span>
+  </div>
+</div>
+
+<!-- MODE SELECTOR -->
+<div class="mode-selector">
+  <div class="mode-card" id="mc-sandbox" onclick="selectMode('sandbox')">
+    <div class="mc-icon">🧪</div>
+    <div class="mc-name mc-sandbox">SANDBOX</div>
+    <div class="mc-desc" data-i18n="sandbox_desc">Ambiente isolado. Testa prompts e workflows sem consequências reais.</div>
+  </div>
+  <div class="mode-card" id="mc-stress" onclick="selectMode('stress')">
+    <div class="mc-icon">🌪</div>
+    <div class="mc-name mc-stress">STRESS</div>
+    <div class="mc-desc" data-i18n="stress_desc">Congestionamento real. Interrupções inesperadas. Campo de batalha simulado.</div>
+  </div>
+  <div class="mode-card" id="mc-formula" onclick="selectMode('formula')">
+    <div class="mc-icon">🎯</div>
+    <div class="mc-name mc-formula">FORMULA</div>
+    <div class="mc-desc" data-i18n="formula_desc">Receitas testadas. Workflows que sobreviveram ao modo STRESS.</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="left-col" id="left-col">
+
+    <!-- START SCREEN -->
+    <div class="start-screen" id="start-screen">
+      <div class="ss-icon">⬡</div>
+      <div class="ss-title" data-i18n="select_mode">Selecciona um modo acima para começar</div>
+      <div class="ss-sub" data-i18n="lab_intro">O W-LAB é um ambiente de treino governado. Todas as sessões são rastreadas. Nenhuma sessão executa em produção.</div>
+      <div class="ss-invariant" data-i18n="wl1">WL-I: Treino não pode fingir produção</div>
+    </div>
+
+    <!-- SANDBOX AREA -->
+    <div class="hidden" id="sandbox-area">
+      <div class="col-header">
+        <span class="col-title" data-i18n="sandbox_session">SANDBOX · SESSÃO ACTIVA</span>
+        <div class="col-actions">
+          <button class="btn btn-primary" onclick="startSession('sandbox')" id="sandbox-start" data-i18n="start">▶ INICIAR</button>
+          <button class="btn" onclick="endSession()" data-i18n="end">■ TERMINAR</button>
+        </div>
+      </div>
+      <div class="scenario-box">
+        <div class="scenario-label" data-i18n="scenario">CENÁRIO</div>
+        <div class="scenario-text" id="sandbox-scenario" data-i18n="sandbox_scenario">Auditoria DORA em 48h. Precisas de produzir um Risk Assessment para 3 sistemas críticos. Ambiente controlado.</div>
+        <div class="scenario-tags">
+          <span class="s-tag">DORA</span>
+          <span class="s-tag">Risk Assessment</span>
+          <span class="s-tag">48h</span>
+        </div>
+      </div>
+      <div class="task-area" id="sandbox-tasks">
+        <div class="task-item" id="st1">
+          <div class="task-num">01 / 04</div>
+          <div class="task-text" data-i18n="task1">Identificar os 3 sistemas críticos e mapear dependências com VERA.</div>
+          <div class="task-footer">
+            <span class="task-priority tp-high" data-i18n="high">ALTA</span>
+            <button class="task-btn" onclick="completeTask('st1',this)" data-i18n="complete">CONCLUIR →</button>
+          </div>
+        </div>
+        <div class="task-item" id="st2">
+          <div class="task-num">02 / 04</div>
+          <div class="task-text" data-i18n="task2">Gerar Risk Assessment via VERA. Pilares III, V, IX são obrigatórios.</div>
+          <div class="task-footer">
+            <span class="task-priority tp-high" data-i18n="high">ALTA</span>
+            <button class="task-btn" onclick="completeTask('st2',this)" data-i18n="complete">CONCLUIR →</button>
+          </div>
+        </div>
+        <div class="task-item" id="st3">
+          <div class="task-num">03 / 04</div>
+          <div class="task-text" data-i18n="task3">Selar documento no Ledger como PHO receipt. Governance: HIGH.</div>
+          <div class="task-footer">
+            <span class="task-priority tp-medium" data-i18n="medium">MÉDIA</span>
+            <button class="task-btn" onclick="completeTask('st3',this)" data-i18n="complete">CONCLUIR →</button>
+          </div>
+        </div>
+        <div class="task-item" id="st4">
+          <div class="task-num">04 / 04</div>
+          <div class="task-text" data-i18n="task4">Gerar REP package e enviar link de verificação ao auditor.</div>
+          <div class="task-footer">
+            <span class="task-priority tp-low" data-i18n="low">BAIXA</span>
+            <button class="task-btn" onclick="completeTask('st4',this)" data-i18n="complete">CONCLUIR →</button>
+          </div>
+        </div>
+      </div>
+      <div class="debrief" id="sandbox-debrief">
+        <div class="db-title" data-i18n="debrief">⬡ DEBRIEF · SANDBOX</div>
+        <div class="db-stat">
+          <div class="db-label" data-i18n="total_time">TEMPO TOTAL</div>
+          <div class="db-value"><span id="db-time">—</span> · <span data-i18n="ref">Ref OVS: 8min 30s</span></div>
+        </div>
+        <div class="db-stat">
+          <div class="db-label" data-i18n="sequence">SEQUÊNCIA</div>
+          <div class="db-value" data-i18n="sequence_ok">Ordem correcta. Pilar III respeitado.</div>
+        </div>
+        <div class="db-stat">
+          <div class="db-label" data-i18n="next_level">PRÓXIMO NÍVEL</div>
+          <div class="db-value" data-i18n="try_stress">Tenta o modo STRESS com interrupções.</div>
+        </div>
+        <button class="db-seal-btn" onclick="sealSession()" data-i18n="seal">⬡ SELAR SESSÃO NO LEDGER</button>
+      </div>
+    </div>
+
+    <!-- STRESS AREA -->
+    <div class="hidden" id="stress-area">
+      <div class="col-header">
+        <span class="col-title" data-i18n="stress_session">STRESS · CAMPO DE BATALHA</span>
+        <div class="col-actions">
+          <button class="btn btn-stress" onclick="startSession('stress')" id="stress-start" data-i18n="start_inferno">▶ INFERNO</button>
+          <button class="btn btn-stress" onclick="endSession()" data-i18n="abort">■ ABORT</button>
+        </div>
+      </div>
+      <div class="scenario-box" style="border-left:3px solid var(--stress)">
+        <div class="scenario-label" style="color:var(--stress)" data-i18n="stress_scenario_label">CENÁRIO STRESS</div>
+        <div class="scenario-text" data-i18n="stress_scenario">Auditoria DORA em 48h. CEO no corredor. Legal bloqueou. Sistema offline. 4 frentes simultâneas.</div>
+        <div class="scenario-tags">
+          <span class="s-tag s-tag-hot" data-i18n="urgent">URGENTE</span>
+          <span class="s-tag s-tag-hot" data-i18n="interrupts">INTERRUPÇÕES</span>
+          <span class="s-tag">VERA STRESS</span>
+        </div>
+      </div>
+      <div class="task-area" id="stress-tasks">
+        <div class="task-item urgent" id="sr1">
+          <div class="task-num">01</div>
+          <div class="task-text" data-i18n="stress_task1">Risk Assessment Sistema A (pagamentos). Sistema offline — usa Ledger.</div>
+          <div class="task-footer">
+            <span class="task-priority tp-critical" data-i18n="critical">CRÍTICA</span>
+            <button class="task-btn" onclick="completeTask('sr1',this)" data-i18n="respond">RESPONDER →</button>
+          </div>
+        </div>
+        <div class="task-item urgent" id="sr2">
+          <div class="task-num">02</div>
+          <div class="task-text" data-i18n="stress_task2">CEO quer status em 5min. Formato: narrativa ou SHA-256?</div>
+          <div class="task-footer">
+            <span class="task-priority tp-critical" data-i18n="critical">CRÍTICA</span>
+            <button class="task-btn" onclick="completeTask('sr2',this)" data-i18n="respond">RESPONDER →</button>
+          </div>
+        </div>
+        <div class="task-item" id="sr3">
+          <div class="task-num">03</div>
+          <div class="task-text" data-i18n="stress_task3">Anomalia Sistema B detectada por VERA. I9 gate activo.</div>
+          <div class="task-footer">
+            <span class="task-priority tp-high" data-i18n="high">ALTA</span>
+            <button class="task-btn" onclick="completeTask('sr3',this)" data-i18n="respond">RESPONDER →</button>
+          </div>
+        </div>
+      </div>
+      <div class="debrief" id="stress-debrief">
+        <div class="db-title" data-i18n="debrief_stress">⬡ DEBRIEF · STRESS</div>
+        <div class="db-stat">
+          <div class="db-label" data-i18n="total_time">TEMPO TOTAL</div>
+          <div class="db-value"><span id="db-stress-time">—</span></div>
+        </div>
+        <div class="db-stat">
+          <div class="db-label" data-i18n="i9_status">I9 STATUS</div>
+          <div class="db-value" id="db-i9-status">—</div>
+        </div>
+        <button class="db-seal-btn" onclick="sealSession()" data-i18n="seal_formula">⬡ SELAR + GUARDAR NA FORMULA</button>
+      </div>
+    </div>
+
+    <!-- FORMULA AREA -->
+    <div class="hidden" id="formula-area">
+      <div class="col-header">
+        <span class="col-title" data-i18n="formulas">FORMULA · RECEITAS VERIFICADAS</span>
+        <span style="font-size:10px;color:var(--txt3)">5 <span data-i18n="sealed">seladas</span></span>
+      </div>
+      <div class="formula-grid" id="formula-grid">
+        <div class="formula-card" onclick="useFormula('DORA Risk 48h')">
+          <div class="fc-tag">DORA · RISK</div>
+          <div class="fc-title">Auditoria 48h</div>
+          <div class="fc-desc" data-i18n="formula1">Risk Assessment com sistema offline. Testado 12x.</div>
+          <div class="fc-seal">⬡ PHO-2026-04-12</div>
+        </div>
+        <div class="formula-card" onclick="useFormula('CFO Briefing')">
+          <div class="fc-tag">COMM</div>
+          <div class="fc-title">Briefing CFO</div>
+          <div class="fc-desc" data-i18n="formula2">Hash primeiro, narrativa depois. 3 frases máx.</div>
+          <div class="fc-seal">⬡ PHO-2026-04-10</div>
+        </div>
+        <div class="formula-card" onclick="useFormula('I9 Escalation')">
+          <div class="fc-tag">I9 · ESCALADA</div>
+          <div class="fc-title">Anomalia Sistema</div>
+          <div class="fc-desc" data-i18n="formula3">Escalada P03→P04 sem violar I9.</div>
+          <div class="fc-seal">⬡ PHO-2026-04-09</div>
+        </div>
+        <div class="formula-card" onclick="useFormula('REP Express')">
+          <div class="fc-tag">AUDIT</div>
+          <div class="fc-title">REP Express</div>
+          <div class="fc-desc" data-i18n="formula4">P09 em menos de 4 minutos.</div>
+          <div class="fc-seal">⬡ PHO-2026-04-08</div>
+        </div>
+        <div class="formula-card" style="border-style:dashed;cursor:default;opacity:.5">
+          <div class="fc-tag" style="color:var(--txt3)" data-i18n="blank">EM BRANCO</div>
+          <div class="fc-title" style="color:var(--txt3)" data-i18n="your_formula">A tua próxima receita</div>
+          <div class="fc-desc" data-i18n="complete_stress">Completa STRESS para gerar.</div>
+          <div class="fc-seal" style="color:var(--txt3)">—</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+    <div class="rp-section">
+      <div class="rp-title" data-i18n="metrics">MÉTRICAS</div>
+      <div class="metric-row"><span class="m-label" data-i18n="tasks_done">Tarefas</span><span class="m-val mv-neu" id="m-tasks">0 / 0</span></div>
+      <div class="metric-row"><span class="m-label" data-i18n="interrupts">Interrupções</span><span class="m-val mv-neu" id="m-ints">0</span></div>
+      <div class="metric-row"><span class="m-label" data-i18n="i9_gate">I9 Gate</span><span class="m-val mv-ok" id="m-i9">—</span></div>
+      <div class="metric-row"><span class="m-label">PHO</span><span class="m-val mv-ok">HIGH</span></div>
+      <div style="margin-top:8px">
+        <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--txt3);margin-bottom:3px"><span data-i18n="progress">PROGRESSO</span><span id="m-pct">0%</span></div>
+        <div class="progress-track"><div class="progress-fill" id="m-bar" style="width:0%"></div></div>
+      </div>
+    </div>
+    <div class="rp-section">
+      <div class="rp-title">VERA</div>
+      <div class="vera-box" id="vera-box">
+        <div class="vera-tag">VERA</div>
+        <span data-i18n="vera_default">Selecciona um modo para iniciar. VERA está disponível em todos os modos.</span>
+      </div>
+    </div>
+    <div class="rp-section">
+      <div class="rp-title" data-i18n="pillars">PILARES ACTIVOS</div>
+      <div class="metric-row"><span class="m-label">II · Autonomy Limit</span><span class="m-val mv-ok">LOCKED</span></div>
+      <div class="metric-row"><span class="m-label">III · Proof Before</span><span class="m-val mv-warn" id="p-iii">PENDING</span></div>
+      <div class="metric-row"><span class="m-label">IX · Forensic</span><span class="m-val mv-neu" id="p-ix">READY</span></div>
+    </div>
+    <div class="rp-section">
+      <div class="rp-title">OVS §160</div>
+      <div style="font-size:10px;color:var(--txt3);line-height:1.6" data-i18n="ovs_desc">Sessões seladas contribuem para certificação OVS.</div>
+      <div style="margin-top:8px">
+        <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--txt3);margin-bottom:3px"><span>CERT</span><span id="cert-count">0 / 5</span></div>
+        <div class="progress-track"><div class="progress-fill ok" id="cert-bar" style="width:0%"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span class="footer-brand">W-LAB-001 · WINDI Publishing House · Kempten, Bavaria · Liga IA+H</span>
+  <span class="footer-seal">AI processes. Human decides. WINDI guarantees.</span>
+</div>
+
+</div>
+
+<script>
+// ============================================================================
+// STATE
+// ============================================================================
+let state = {
+  did: null,
+  mode: null,
+  sessionId: null,
+  running: false,
+  elapsed: 0,
+  tasksDone: 0,
+  totalTasks: 0,
+  certCount: 0,
+  lang: localStorage.getItem('windi-lang') || 'pt',
+  theme: localStorage.getItem('windi-theme') || 'noir'
+};
+let timerInterval = null;
+
+// ============================================================================
+// I18N
+// ============================================================================
+const i18n = {
+  pt: {
+    did_title: "LEI I · IDENTIDADE NECESSÁRIA",
+    did_hint: "Sem DID válido = sem acesso ao LAB. Lei I: Existência antes de Acção.",
+    did_submit: "ENTRAR NO LAB",
+    no_session: "Nenhuma sessão activa",
+    elapsed: "DECORRIDO",
+    idle: "IDLE",
+    sandbox_desc: "Ambiente isolado. Testa prompts e workflows sem consequências reais.",
+    stress_desc: "Congestionamento real. Interrupções inesperadas. Campo de batalha simulado.",
+    formula_desc: "Receitas testadas. Workflows que sobreviveram ao modo STRESS.",
+    select_mode: "Selecciona um modo acima para começar",
+    lab_intro: "O W-LAB é um ambiente de treino governado. Todas as sessões são rastreadas. Nenhuma sessão executa em produção.",
+    wl1: "WL-I: Treino não pode fingir produção",
+    sandbox_session: "SANDBOX · SESSÃO ACTIVA",
+    start: "▶ INICIAR",
+    end: "■ TERMINAR",
+    scenario: "CENÁRIO",
+    sandbox_scenario: "Auditoria DORA em 48h. Produzir Risk Assessment para 3 sistemas críticos. Ambiente controlado.",
+    task1: "Identificar os 3 sistemas críticos e mapear dependências com VERA.",
+    task2: "Gerar Risk Assessment via VERA. Pilares III, V, IX são obrigatórios.",
+    task3: "Selar documento no Ledger como PHO receipt. Governance: HIGH.",
+    task4: "Gerar REP package e enviar link de verificação ao auditor.",
+    high: "ALTA", medium: "MÉDIA", low: "BAIXA", critical: "CRÍTICA",
+    complete: "CONCLUIR →", respond: "RESPONDER →",
+    debrief: "⬡ DEBRIEF · SANDBOX",
+    total_time: "TEMPO TOTAL", sequence: "SEQUÊNCIA", next_level: "PRÓXIMO NÍVEL",
+    ref: "Ref OVS: 8min 30s", sequence_ok: "Ordem correcta. Pilar III respeitado.", try_stress: "Tenta o modo STRESS com interrupções.",
+    seal: "⬡ SELAR SESSÃO NO LEDGER",
+    stress_session: "STRESS · CAMPO DE BATALHA",
+    start_inferno: "▶ INFERNO", abort: "■ ABORT",
+    stress_scenario_label: "CENÁRIO STRESS",
+    stress_scenario: "Auditoria DORA em 48h. CEO no corredor. Legal bloqueou. Sistema offline. 4 frentes simultâneas.",
+    urgent: "URGENTE", interrupts: "INTERRUPÇÕES",
+    stress_task1: "Risk Assessment Sistema A (pagamentos). Sistema offline — usa Ledger.",
+    stress_task2: "CEO quer status em 5min. Formato: narrativa ou SHA-256?",
+    stress_task3: "Anomalia Sistema B detectada por VERA. I9 gate activo.",
+    debrief_stress: "⬡ DEBRIEF · STRESS", i9_status: "I9 STATUS",
+    seal_formula: "⬡ SELAR + GUARDAR NA FORMULA",
+    formulas: "FORMULA · RECEITAS VERIFICADAS", sealed: "seladas",
+    formula1: "Risk Assessment com sistema offline. Testado 12x.",
+    formula2: "Hash primeiro, narrativa depois. 3 frases máx.",
+    formula3: "Escalada P03→P04 sem violar I9.",
+    formula4: "P09 em menos de 4 minutos.",
+    blank: "EM BRANCO", your_formula: "A tua próxima receita", complete_stress: "Completa STRESS para gerar.",
+    metrics: "MÉTRICAS", tasks_done: "Tarefas", i9_gate: "I9 Gate", progress: "PROGRESSO",
+    vera_default: "Selecciona um modo para iniciar. VERA está disponível em todos os modos.",
+    pillars: "PILARES ACTIVOS",
+    ovs_desc: "Sessões seladas contribuem para certificação OVS."
+  },
+  de: {
+    did_title: "GESETZ I · IDENTITÄT ERFORDERLICH",
+    did_hint: "Ohne gültige DID = kein Zugang zum LAB. Gesetz I: Existenz vor Aktion.",
+    did_submit: "LAB BETRETEN",
+    no_session: "Keine aktive Sitzung",
+    elapsed: "VERGANGEN",
+    idle: "LEERLAUF",
+    sandbox_desc: "Isolierte Umgebung. Teste Prompts und Workflows ohne reale Konsequenzen.",
+    stress_desc: "Echte Überlastung. Unerwartete Unterbrechungen. Simuliertes Schlachtfeld.",
+    formula_desc: "Getestete Rezepte. Workflows, die den STRESS-Modus überlebt haben.",
+    select_mode: "Wähle oben einen Modus zum Starten",
+    lab_intro: "W-LAB ist eine regulierte Trainingsumgebung. Alle Sitzungen werden verfolgt. Keine Sitzung betrifft die Produktion.",
+    wl1: "WL-I: Training kann Produktion nicht vortäuschen",
+    sandbox_session: "SANDBOX · AKTIVE SITZUNG",
+    start: "▶ STARTEN",
+    end: "■ BEENDEN",
+    scenario: "SZENARIO",
+    sandbox_scenario: "DORA-Audit in 48h. Risk Assessment für 3 kritische Systeme erstellen. Kontrollierte Umgebung.",
+    task1: "Die 3 kritischen Systeme identifizieren und Abhängigkeiten mit VERA abbilden.",
+    task2: "Risk Assessment über VERA generieren. Säulen III, V, IX sind obligatorisch.",
+    task3: "Dokument im Ledger als PHO-Receipt versiegeln. Governance: HIGH.",
+    task4: "REP-Paket generieren und Verifizierungslink an Auditor senden.",
+    high: "HOCH", medium: "MITTEL", low: "NIEDRIG", critical: "KRITISCH",
+    complete: "ABSCHLIESSEN →", respond: "ANTWORTEN →",
+    debrief: "⬡ DEBRIEF · SANDBOX",
+    total_time: "GESAMTZEIT", sequence: "SEQUENZ", next_level: "NÄCHSTE STUFE",
+    ref: "Ref OVS: 8min 30s", sequence_ok: "Korrekte Reihenfolge. Säule III eingehalten.", try_stress: "Versuche STRESS-Modus mit Unterbrechungen.",
+    seal: "⬡ SITZUNG IM LEDGER VERSIEGELN",
+    stress_session: "STRESS · SCHLACHTFELD",
+    start_inferno: "▶ INFERNO", abort: "■ ABBRUCH",
+    stress_scenario_label: "STRESS-SZENARIO",
+    stress_scenario: "DORA-Audit in 48h. CEO im Flur. Legal blockiert. System offline. 4 Fronten gleichzeitig.",
+    urgent: "DRINGEND", interrupts: "UNTERBRECHUNGEN",
+    stress_task1: "Risk Assessment System A (Zahlungen). System offline — Ledger verwenden.",
+    stress_task2: "CEO will Status in 5min. Format: Narrativ oder SHA-256?",
+    stress_task3: "Anomalie System B von VERA erkannt. I9-Gate aktiv.",
+    debrief_stress: "⬡ DEBRIEF · STRESS", i9_status: "I9 STATUS",
+    seal_formula: "⬡ VERSIEGELN + IN FORMEL SPEICHERN",
+    formulas: "FORMULA · VERIFIZIERTE REZEPTE", sealed: "versiegelt",
+    formula1: "Risk Assessment bei System offline. 12x getestet.",
+    formula2: "Hash zuerst, Narrativ danach. Max 3 Sätze.",
+    formula3: "Eskalation P03→P04 ohne I9-Verletzung.",
+    formula4: "P09 in unter 4 Minuten.",
+    blank: "LEER", your_formula: "Dein nächstes Rezept", complete_stress: "STRESS abschließen zum Generieren.",
+    metrics: "METRIKEN", tasks_done: "Aufgaben", i9_gate: "I9-Gate", progress: "FORTSCHRITT",
+    vera_default: "Wähle einen Modus zum Starten. VERA ist in allen Modi verfügbar.",
+    pillars: "AKTIVE SÄULEN",
+    ovs_desc: "Versiegelte Sitzungen tragen zur OVS-Zertifizierung bei."
+  },
+  en: {
+    did_title: "LAW I · IDENTITY REQUIRED",
+    did_hint: "No valid DID = no access to LAB. Law I: Existence before Action.",
+    did_submit: "ENTER LAB",
+    no_session: "No active session",
+    elapsed: "ELAPSED",
+    idle: "IDLE",
+    sandbox_desc: "Isolated environment. Test prompts and workflows without real consequences.",
+    stress_desc: "Real congestion. Unexpected interruptions. Simulated battlefield.",
+    formula_desc: "Tested recipes. Workflows that survived STRESS mode.",
+    select_mode: "Select a mode above to start",
+    lab_intro: "W-LAB is a governed training environment. All sessions are tracked. No session executes in production.",
+    wl1: "WL-I: Training cannot pretend production",
+    sandbox_session: "SANDBOX · ACTIVE SESSION",
+    start: "▶ START",
+    end: "■ END",
+    scenario: "SCENARIO",
+    sandbox_scenario: "DORA audit in 48h. Produce Risk Assessment for 3 critical systems. Controlled environment.",
+    task1: "Identify the 3 critical systems and map dependencies with VERA.",
+    task2: "Generate Risk Assessment via VERA. Pillars III, V, IX are mandatory.",
+    task3: "Seal document in Ledger as PHO receipt. Governance: HIGH.",
+    task4: "Generate REP package and send verification link to auditor.",
+    high: "HIGH", medium: "MEDIUM", low: "LOW", critical: "CRITICAL",
+    complete: "COMPLETE →", respond: "RESPOND →",
+    debrief: "⬡ DEBRIEF · SANDBOX",
+    total_time: "TOTAL TIME", sequence: "SEQUENCE", next_level: "NEXT LEVEL",
+    ref: "Ref OVS: 8min 30s", sequence_ok: "Correct order. Pillar III respected.", try_stress: "Try STRESS mode with interruptions.",
+    seal: "⬡ SEAL SESSION TO LEDGER",
+    stress_session: "STRESS · BATTLEFIELD",
+    start_inferno: "▶ INFERNO", abort: "■ ABORT",
+    stress_scenario_label: "STRESS SCENARIO",
+    stress_scenario: "DORA audit in 48h. CEO in corridor. Legal blocked. System offline. 4 simultaneous fronts.",
+    urgent: "URGENT", interrupts: "INTERRUPTS",
+    stress_task1: "Risk Assessment System A (payments). System offline — use Ledger.",
+    stress_task2: "CEO wants status in 5min. Format: narrative or SHA-256?",
+    stress_task3: "Anomaly System B detected by VERA. I9 gate active.",
+    debrief_stress: "⬡ DEBRIEF · STRESS", i9_status: "I9 STATUS",
+    seal_formula: "⬡ SEAL + SAVE TO FORMULA",
+    formulas: "FORMULA · VERIFIED RECIPES", sealed: "sealed",
+    formula1: "Risk Assessment with system offline. Tested 12x.",
+    formula2: "Hash first, narrative after. Max 3 sentences.",
+    formula3: "Escalation P03→P04 without I9 violation.",
+    formula4: "P09 in under 4 minutes.",
+    blank: "BLANK", your_formula: "Your next recipe", complete_stress: "Complete STRESS to generate.",
+    metrics: "METRICS", tasks_done: "Tasks", i9_gate: "I9 Gate", progress: "PROGRESS",
+    vera_default: "Select a mode to start. VERA is available in all modes.",
+    pillars: "ACTIVE PILLARS",
+    ovs_desc: "Sealed sessions contribute to OVS certification."
+  }
+};
+
+function t(key) { return i18n[state.lang][key] || i18n.en[key] || key; }
+
+function applyI18n() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (i18n[state.lang][key]) el.textContent = i18n[state.lang][key];
+  });
+}
+
+function setLang(lang) {
+  state.lang = lang;
+  localStorage.setItem('windi-lang', lang);
+  document.querySelectorAll('.toggles .toggle-btn:not(.theme-toggle)').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  applyI18n();
+}
+
+// ============================================================================
+// THEME
+// ============================================================================
+function applyTheme() {
+  document.body.setAttribute('data-theme', state.theme);
+  document.getElementById('theme-btn').textContent = state.theme === 'noir' ? '☀' : '☽';
+}
+
+function toggleTheme() {
+  state.theme = state.theme === 'noir' ? 'klar' : 'noir';
+  localStorage.setItem('windi-theme', state.theme);
+  applyTheme();
+}
+
+// ============================================================================
+// DID
+// ============================================================================
+function submitDID() {
+  const input = document.getElementById('did-input').value.trim();
+  if (!input.startsWith('did:windi:')) {
+    alert('Invalid DID format. Must start with did:windi:');
+    return;
+  }
+  state.did = input;
+  document.getElementById('did-overlay').classList.add('hidden');
+  setVera('DID validado: ' + input.substring(0, 25) + '... Selecciona um modo para começar.');
+}
+
+// ============================================================================
+// MODES
+// ============================================================================
+function selectMode(mode) {
+  state.mode = mode;
+  state.tasksDone = 0;
+  state.elapsed = 0;
+
+  // Update mode cards
+  ['sandbox', 'stress', 'formula'].forEach(m => {
+    document.getElementById('mc-' + m).className = 'mode-card' + (m === mode ? ' active-' + m : '');
+  });
+
+  // Update mode pill
+  const pill = document.getElementById('mode-pill');
+  pill.className = 'mode-pill mp-' + mode;
+  pill.textContent = mode.toUpperCase();
+
+  // Show correct area
+  document.getElementById('start-screen').classList.add('hidden');
+  document.getElementById('sandbox-area').classList.add('hidden');
+  document.getElementById('stress-area').classList.add('hidden');
+  document.getElementById('formula-area').classList.add('hidden');
+  document.getElementById(mode + '-area').classList.remove('hidden');
+
+  // Reset metrics
+  state.totalTasks = mode === 'sandbox' ? 4 : mode === 'stress' ? 3 : 0;
+  document.getElementById('m-tasks').textContent = '0 / ' + state.totalTasks;
+  document.getElementById('m-pct').textContent = '0%';
+  document.getElementById('m-bar').style.width = '0%';
+  document.getElementById('m-i9').textContent = '—';
+  document.getElementById('p-iii').textContent = 'PENDING';
+  document.getElementById('p-ix').textContent = 'READY';
+
+  // Reset task states
+  ['st1','st2','st3','st4','sr1','sr2','sr3'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.classList.remove('done');
+      const btn = el.querySelector('.task-btn');
+      if (btn) {
+        btn.textContent = t(mode === 'stress' ? 'respond' : 'complete');
+        btn.classList.remove('done-btn');
+      }
+    }
+  });
+
+  // Hide debriefs
+  document.getElementById('sandbox-debrief').classList.remove('show');
+  document.getElementById('stress-debrief').classList.remove('show');
+
+  // VERA message
+  const msgs = {
+    sandbox: 'Modo SANDBOX activo. Ambiente controlado. Completa as tarefas por ordem.',
+    stress: 'STRESS MODE. Interrupções vão ocorrer. Mantém foco no impacto regulatório.',
+    formula: 'Biblioteca de receitas. Clica numa receita para carregar em SANDBOX.'
+  };
+  setVera(msgs[mode]);
+}
+
+// ============================================================================
+// SESSION
+// ============================================================================
+function startSession(mode) {
+  if (state.running) return;
+  state.running = true;
+  state.elapsed = 0;
+  state.sessionId = 'LAB-' + Math.random().toString(16).substring(2, 10).toUpperCase();
+
+  document.getElementById('session-meta').textContent = state.sessionId + ' · ' + mode.toUpperCase();
+  document.getElementById('m-i9').textContent = 'ACTIVE';
+  document.getElementById('timer').className = 'timer' + (mode === 'stress' ? ' stress' : '');
+
+  timerInterval = setInterval(() => {
+    state.elapsed++;
+    const m = String(Math.floor(state.elapsed / 60)).padStart(2, '0');
+    const s = String(state.elapsed % 60).padStart(2, '0');
+    document.getElementById('timer').textContent = m + ':' + s;
+  }, 1000);
+
+  setVera('Sessão ' + state.sessionId + ' iniciada. I9 gate activo. Todas as decisões serão registadas.');
+}
+
+function endSession() {
+  if (!state.running) return;
+  state.running = false;
+  clearInterval(timerInterval);
+
+  document.getElementById('session-meta').textContent = t('no_session');
+  document.getElementById('mode-pill').className = 'mode-pill mp-idle';
+  document.getElementById('mode-pill').textContent = t('idle');
+
+  setVera('Sessão terminada. Dados guardados no store local.');
+}
+
+// ============================================================================
+// TASKS
+// ============================================================================
+function completeTask(id, btn) {
+  if (!state.running) {
+    alert('Inicia a sessão primeiro.');
+    return;
+  }
+
+  state.tasksDone++;
+  const el = document.getElementById(id);
+  el.classList.add('done');
+  btn.textContent = '✓';
+  btn.classList.add('done-btn');
+
+  // Update metrics
+  const pct = Math.round((state.tasksDone / state.totalTasks) * 100);
+  document.getElementById('m-tasks').textContent = state.tasksDone + ' / ' + state.totalTasks;
+  document.getElementById('m-pct').textContent = pct + '%';
+  document.getElementById('m-bar').style.width = pct + '%';
+
+  if (state.tasksDone === 1) {
+    document.getElementById('p-iii').textContent = 'ACTIVE';
+    document.getElementById('p-iii').className = 'm-val mv-ok';
+  }
+  if (state.tasksDone === Math.ceil(state.totalTasks / 2)) {
+    document.getElementById('p-ix').textContent = 'ACTIVE';
+  }
+
+  // Check completion
+  if (state.tasksDone === state.totalTasks) {
+    clearInterval(timerInterval);
+    state.running = false;
+
+    const m = String(Math.floor(state.elapsed / 60)).padStart(2, '0');
+    const s = String(state.elapsed % 60).padStart(2, '0');
+    const timeStr = m + 'min ' + s + 's';
+
+    if (state.mode === 'sandbox') {
+      document.getElementById('db-time').textContent = timeStr;
+      document.getElementById('sandbox-debrief').classList.add('show');
+    } else if (state.mode === 'stress') {
+      document.getElementById('db-stress-time').textContent = timeStr;
+      document.getElementById('db-i9-status').textContent = '0 violações · I9 respeitado';
+      document.getElementById('db-i9-status').style.color = 'var(--sealed)';
+      document.getElementById('stress-debrief').classList.add('show');
+    }
+
+    setVera('Sessão completa em ' + timeStr + '. Revê o DEBRIEF e sela no Ledger.');
+  }
+}
+
+// ============================================================================
+// SEAL
+// ============================================================================
+function sealSession() {
+  state.certCount++;
+  document.getElementById('cert-count').textContent = state.certCount + ' / 5';
+  document.getElementById('cert-bar').style.width = (state.certCount / 5 * 100) + '%';
+
+  const btn = event.target;
+  btn.textContent = '✓ SELADO · PHO-' + new Date().toISOString().slice(0, 10);
+  btn.disabled = true;
+
+  setVera('Sessão selada no Ledger (sandbox). Contribuição OVS registada: ' + state.certCount + '/5.');
+}
+
+// ============================================================================
+// FORMULA
+// ============================================================================
+function useFormula(name) {
+  selectMode('sandbox');
+  setVera('Receita "' + name + '" carregada. Segue o workflow testado.');
+}
+
+// ============================================================================
+// VERA
+// ============================================================================
+function setVera(msg) {
+  document.getElementById('vera-box').innerHTML = '<div class="vera-tag">VERA</div>' + msg;
+}
+
+// ============================================================================
+// INIT
+// ============================================================================
+applyTheme();
+applyI18n();
+</script>
+</body>
+</html>

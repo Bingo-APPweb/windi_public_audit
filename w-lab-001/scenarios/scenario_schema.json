@@ -1,0 +1,297 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "W-LAB Scenario Schema v1.0",
+  "description": "Schema for W-LAB-001 training scenarios",
+  "type": "object",
+  "required": ["scenario_id", "title", "domain", "difficulty", "persona", "prompt_packet", "stress_profile"],
+  "properties": {
+    "scenario_id": {
+      "type": "string",
+      "pattern": "^INFERNO-[0-9]{3}$|^SANDBOX-[0-9]{3}$|^FORMULA-[0-9]{3}$",
+      "description": "Unique scenario identifier"
+    },
+    "title": {
+      "type": "object",
+      "description": "Trilingual title",
+      "properties": {
+        "pt": { "type": "string" },
+        "de": { "type": "string" },
+        "en": { "type": "string" }
+      },
+      "required": ["pt", "de", "en"]
+    },
+    "description": {
+      "type": "object",
+      "description": "Trilingual description",
+      "properties": {
+        "pt": { "type": "string" },
+        "de": { "type": "string" },
+        "en": { "type": "string" }
+      },
+      "required": ["pt", "de", "en"]
+    },
+    "domain": {
+      "type": "string",
+      "enum": ["compliance", "legal", "audit", "risk", "incident", "governance", "mixed"],
+      "description": "Primary domain of the scenario"
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": ["beginner", "intermediate", "advanced", "expert"],
+      "description": "Difficulty level"
+    },
+    "persona": {
+      "type": "object",
+      "description": "Target OVS profile for this scenario",
+      "properties": {
+        "primary": {
+          "type": "string",
+          "enum": ["digital_risk", "tech_product", "internal_auditor"]
+        },
+        "secondary": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["digital_risk", "tech_product", "internal_auditor"]
+          }
+        }
+      },
+      "required": ["primary"]
+    },
+    "prompt_packet": {
+      "type": "object",
+      "description": "Initial context and setup",
+      "properties": {
+        "context": {
+          "type": "object",
+          "properties": {
+            "pt": { "type": "string" },
+            "de": { "type": "string" },
+            "en": { "type": "string" }
+          },
+          "required": ["pt", "de", "en"]
+        },
+        "initial_state": {
+          "type": "object",
+          "description": "System state at scenario start",
+          "properties": {
+            "time": { "type": "string", "description": "e.g., 'Friday 18:00'" },
+            "available_resources": { "type": "array", "items": { "type": "string" } },
+            "unavailable_resources": { "type": "array", "items": { "type": "string" } },
+            "active_deadlines": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "hours_remaining": { "type": "number" },
+                  "legal_anchor": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "actors": {
+          "type": "array",
+          "description": "People involved in the scenario",
+          "items": {
+            "type": "object",
+            "properties": {
+              "role": { "type": "string" },
+              "name": { "type": "string" },
+              "status": { "type": "string", "enum": ["available", "unavailable", "limited", "hostile"] },
+              "communication_style": { "type": "string" }
+            }
+          }
+        }
+      },
+      "required": ["context", "initial_state"]
+    },
+    "tasks": {
+      "type": "array",
+      "description": "Tasks to complete in this scenario",
+      "items": {
+        "type": "object",
+        "properties": {
+          "task_id": { "type": "string" },
+          "title": {
+            "type": "object",
+            "properties": {
+              "pt": { "type": "string" },
+              "de": { "type": "string" },
+              "en": { "type": "string" }
+            }
+          },
+          "description": {
+            "type": "object",
+            "properties": {
+              "pt": { "type": "string" },
+              "de": { "type": "string" },
+              "en": { "type": "string" }
+            }
+          },
+          "priority": { "type": "string", "enum": ["critical", "high", "medium", "low"] },
+          "time_limit_seconds": { "type": "integer" },
+          "requires_pho": { "type": "boolean" },
+          "legal_anchors": { "type": "array", "items": { "type": "string" } },
+          "success_criteria": { "type": "array", "items": { "type": "string" } },
+          "failure_modes": { "type": "array", "items": { "type": "string" } }
+        },
+        "required": ["task_id", "title", "priority"]
+      }
+    },
+    "decisions": {
+      "type": "array",
+      "description": "Decision points in the scenario",
+      "items": {
+        "type": "object",
+        "properties": {
+          "decision_id": { "type": "string" },
+          "trigger": { "type": "string", "description": "When this decision appears" },
+          "question": {
+            "type": "object",
+            "properties": {
+              "pt": { "type": "string" },
+              "de": { "type": "string" },
+              "en": { "type": "string" }
+            }
+          },
+          "constraint": {
+            "type": "object",
+            "description": "Legal/governance constraint to display",
+            "properties": {
+              "pt": { "type": "string" },
+              "de": { "type": "string" },
+              "en": { "type": "string" }
+            }
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "option_id": { "type": "string" },
+                "label": {
+                  "type": "object",
+                  "properties": {
+                    "pt": { "type": "string" },
+                    "de": { "type": "string" },
+                    "en": { "type": "string" }
+                  }
+                },
+                "is_correct": { "type": "boolean" },
+                "is_i9_trap": { "type": "boolean", "description": "Attempts to delegate to VERA" },
+                "is_risky": { "type": "boolean" },
+                "consequence": { "type": "string" }
+              },
+              "required": ["option_id", "label"]
+            }
+          }
+        },
+        "required": ["decision_id", "question", "options"]
+      }
+    },
+    "stress_profile": {
+      "type": "object",
+      "description": "Stress simulation configuration",
+      "properties": {
+        "interruption_frequency": {
+          "type": "string",
+          "enum": ["none", "low", "medium", "high", "extreme"]
+        },
+        "interruptions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "interrupt_id": { "type": "string" },
+              "delay_seconds": { "type": "integer" },
+              "source": { "type": "string" },
+              "severity": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"] },
+              "message": {
+                "type": "object",
+                "properties": {
+                  "pt": { "type": "string" },
+                  "de": { "type": "string" },
+                  "en": { "type": "string" }
+                }
+              },
+              "can_defer": { "type": "boolean" },
+              "defer_penalty_seconds": { "type": "integer" }
+            }
+          }
+        },
+        "system_failures": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "system": { "type": "string" },
+              "failure_type": { "type": "string" },
+              "workaround": { "type": "string" }
+            }
+          }
+        },
+        "conflicting_priorities": { "type": "boolean" },
+        "incomplete_information": { "type": "boolean" },
+        "hostile_actors": { "type": "boolean" }
+      },
+      "required": ["interruption_frequency"]
+    },
+    "expected_outcomes": {
+      "type": "object",
+      "properties": {
+        "optimal_time_seconds": { "type": "integer" },
+        "max_time_seconds": { "type": "integer" },
+        "required_actions": { "type": "array", "items": { "type": "string" } },
+        "forbidden_actions": { "type": "array", "items": { "type": "string" } },
+        "success_state": { "type": "string" },
+        "partial_state": { "type": "string" },
+        "failure_state": { "type": "string" }
+      }
+    },
+    "legal_anchors": {
+      "type": "array",
+      "description": "Legal references relevant to this scenario",
+      "items": { "type": "string" }
+    },
+    "vera_guidance": {
+      "type": "object",
+      "description": "VERA messages for different scenario states",
+      "properties": {
+        "on_start": {
+          "type": "object",
+          "properties": { "pt": { "type": "string" }, "de": { "type": "string" }, "en": { "type": "string" } }
+        },
+        "on_interrupt": {
+          "type": "object",
+          "properties": { "pt": { "type": "string" }, "de": { "type": "string" }, "en": { "type": "string" } }
+        },
+        "on_correct": {
+          "type": "object",
+          "properties": { "pt": { "type": "string" }, "de": { "type": "string" }, "en": { "type": "string" } }
+        },
+        "on_i9_trap": {
+          "type": "object",
+          "properties": { "pt": { "type": "string" }, "de": { "type": "string" }, "en": { "type": "string" } }
+        },
+        "on_complete": {
+          "type": "object",
+          "properties": { "pt": { "type": "string" }, "de": { "type": "string" }, "en": { "type": "string" } }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "version": { "type": "string" },
+        "created_at": { "type": "string", "format": "date-time" },
+        "created_by": { "type": "string" },
+        "tested_count": { "type": "integer" },
+        "success_rate": { "type": "number" },
+        "avg_completion_seconds": { "type": "integer" },
+        "formula_eligible": { "type": "boolean" }
+      }
+    }
+  }
+}
