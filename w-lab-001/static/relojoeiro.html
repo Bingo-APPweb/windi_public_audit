@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RELOJOEIRO · W-LAB-001</title>
+<style>
+:root {
+  --bg:#0A0A10;--bg2:#12121A;--bg3:#1A1A24;--gold:#C9A84C;--txt:#E8E6E1;--txt2:#A09A8C;--txt3:#6B6560;
+  --border:#1A1A24;--danger:#E74C3C;--success:#27AE60;--warn:#E67E22;--info:#3498DB;
+  --gdpr:#E74C3C;--dora:#9B59B6;--aiact:#3498DB;--tax:#27AE60;
+}
+[data-theme="klar"]{
+  --bg:#FAFAF8;--bg2:#F0EDE8;--bg3:#E8E5E0;--gold:#8B7424;--txt:#1A1A1A;--txt2:#4A4640;--txt3:#8A857C;
+  --border:#E0DED8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px;transition:background .3s,color .3s}
+
+.top-bar{display:flex;gap:8px;margin-bottom:24px}
+.toggle-btn{background:var(--bg2);border:1px solid var(--border);color:var(--txt2);padding:6px 12px;font-size:11px;cursor:pointer;transition:all .2s}
+.toggle-btn.active{color:var(--gold);border-color:var(--gold)}
+
+h1{font-size:28px;color:var(--gold);margin-bottom:4px;letter-spacing:2px}
+.subtitle{font-size:12px;color:var(--txt2);margin-bottom:24px;text-align:center}
+
+/* START SCREEN */
+.start-screen{text-align:center;max-width:520px}
+.game-icon{font-size:72px;margin-bottom:16px}
+.tagline{font-size:14px;color:var(--txt2);margin-bottom:24px;font-style:italic}
+.concept-box{background:var(--bg2);border:1px solid var(--border);padding:20px;margin-bottom:16px;text-align:left}
+.concept-title{font-size:11px;color:var(--gold);letter-spacing:1px;margin-bottom:12px}
+.concept-text{font-size:13px;color:var(--txt2);line-height:1.6}
+
+.deadlines-preview{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.dl-card{display:flex;align-items:center;gap:12px;background:var(--bg2);border:1px solid var(--border);padding:12px 16px}
+.dl-time{font-size:18px;font-weight:700;min-width:50px}
+.dl-gdpr .dl-time{color:var(--gdpr)}
+.dl-dora .dl-time{color:var(--dora)}
+.dl-aiact .dl-time{color:var(--aiact)}
+.dl-tax .dl-time{color:var(--tax)}
+.dl-info{text-align:left}
+.dl-name{font-size:12px;font-weight:600;color:var(--txt)}
+.dl-desc{font-size:11px;color:var(--txt3)}
+
+.start-btn{background:var(--gold);color:var(--bg);border:none;padding:16px 48px;font-size:14px;font-weight:600;cursor:pointer;letter-spacing:1px}
+.start-btn:hover{filter:brightness(1.1)}
+
+/* GAME SCREEN */
+.game-screen{display:none;width:100%;max-width:700px}
+.game-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding:12px 16px;background:var(--bg2);border:1px solid var(--border)}
+.day-info{font-size:13px;color:var(--txt)}
+.day-num{color:var(--gold);font-weight:700}
+.score-info{font-size:13px;color:var(--gold);font-weight:700}
+
+.master-clock{text-align:center;margin-bottom:20px;padding:16px;background:var(--bg2);border:1px solid var(--border)}
+.clock-label{font-size:10px;color:var(--txt3);letter-spacing:1px;margin-bottom:8px}
+.clock-time{font-size:36px;font-weight:700;color:var(--txt);font-variant-numeric:tabular-nums;letter-spacing:2px}
+.clock-time.warning{color:var(--warn)}
+.clock-time.danger{color:var(--danger);animation:pulse-clock .5s infinite}
+@keyframes pulse-clock{0%,100%{opacity:1}50%{opacity:.6}}
+
+.incident-card{background:var(--bg2);border:2px solid var(--border);padding:20px;margin-bottom:16px}
+.incident-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.incident-type{font-size:10px;letter-spacing:1px;padding:4px 10px;border:1px solid}
+.it-gdpr{border-color:var(--gdpr);color:var(--gdpr)}
+.it-dora{border-color:var(--dora);color:var(--dora)}
+.it-aiact{border-color:var(--aiact);color:var(--aiact)}
+.it-tax{border-color:var(--tax);color:var(--tax)}
+.incident-time{text-align:right}
+.it-label{font-size:10px;color:var(--txt3)}
+.it-value{font-size:14px;font-weight:700;color:var(--txt)}
+.it-value.critical{color:var(--danger)}
+.it-value.warning{color:var(--warn)}
+.incident-title{font-size:15px;font-weight:600;color:var(--txt);margin-bottom:8px}
+.incident-desc{font-size:13px;color:var(--txt2);line-height:1.5;margin-bottom:12px}
+.incident-question{font-size:13px;color:var(--gold);font-weight:600}
+
+.deadline-options{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.dl-btn{background:var(--bg3);border:2px solid var(--border);padding:14px 8px;cursor:pointer;text-align:center;transition:all .15s}
+.dl-btn:hover{border-color:var(--txt3);background:var(--bg2)}
+.dl-btn.selected{border-color:var(--gold);background:rgba(201,168,76,0.1)}
+.dl-btn.correct{border-color:var(--success)!important;background:rgba(39,174,96,0.15)!important}
+.dl-btn.incorrect{border-color:var(--danger)!important;background:rgba(231,76,60,0.15)!important}
+.dl-btn .dl-hours{font-size:18px;font-weight:700;color:var(--txt);margin-bottom:4px}
+.dl-btn .dl-unit{font-size:10px;color:var(--txt3)}
+
+.submit-row{display:flex;gap:10px}
+.submit-btn{flex:1;background:var(--gold);color:var(--bg);border:none;padding:14px;font-size:13px;font-weight:600;cursor:pointer}
+.submit-btn:disabled{opacity:.4;cursor:not-allowed}
+.skip-btn{background:transparent;border:1px solid var(--border);color:var(--txt3);padding:14px 20px;cursor:pointer;font-size:12px}
+
+.feedback{display:none;text-align:center;padding:16px;margin-top:16px;border:1px solid var(--border)}
+.feedback.show{display:block}
+.feedback.correct{border-color:var(--success);background:rgba(39,174,96,0.08)}
+.feedback.incorrect{border-color:var(--danger);background:rgba(231,76,60,0.08)}
+.fb-icon{font-size:28px;margin-bottom:8px}
+.fb-title{font-size:14px;font-weight:700;margin-bottom:4px}
+.fb-explain{font-size:12px;color:var(--txt2);line-height:1.5}
+.fb-article{font-size:11px;color:var(--txt3);margin-top:8px;font-style:italic}
+
+/* QUEUE */
+.queue-section{margin-top:20px}
+.queue-title{font-size:10px;color:var(--txt3);letter-spacing:1px;margin-bottom:10px}
+.queue-list{display:flex;flex-direction:column;gap:8px}
+.queue-item{display:flex;align-items:center;gap:12px;background:var(--bg3);border:1px solid var(--border);padding:10px 14px;opacity:.7}
+.queue-item.urgent{border-color:var(--danger);opacity:1}
+.qi-type{font-size:9px;padding:3px 8px;border:1px solid;letter-spacing:.5px}
+.qi-gdpr{border-color:var(--gdpr);color:var(--gdpr)}
+.qi-dora{border-color:var(--dora);color:var(--dora)}
+.qi-aiact{border-color:var(--aiact);color:var(--aiact)}
+.qi-tax{border-color:var(--tax);color:var(--tax)}
+.qi-text{flex:1;font-size:12px;color:var(--txt2)}
+.qi-time{font-size:12px;font-weight:700;color:var(--txt3)}
+.qi-time.critical{color:var(--danger)}
+
+/* RESULT SCREEN */
+.result-screen{display:none;text-align:center;max-width:500px}
+.result-icon{font-size:72px;margin-bottom:16px}
+.result-title{font-size:24px;color:var(--gold);margin-bottom:8px}
+.result-subtitle{font-size:14px;color:var(--txt2);margin-bottom:24px}
+
+.result-stats{background:var(--bg2);border:1px solid var(--border);padding:20px;margin-bottom:24px}
+.stat-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+.stat-row:last-child{border:none}
+.stat-label{font-size:12px;color:var(--txt2)}
+.stat-value{font-size:14px;color:var(--gold);font-weight:700}
+.stat-value.bad{color:var(--danger)}
+
+.violations-list{background:var(--bg2);border:1px solid var(--border);padding:16px;margin-bottom:24px;text-align:left}
+.vl-title{font-size:11px;color:var(--danger);letter-spacing:1px;margin-bottom:10px}
+.vl-item{font-size:12px;color:var(--txt2);padding:6px 0;border-bottom:1px solid var(--border)}
+.vl-item:last-child{border:none}
+
+.rank-badge{display:inline-block;background:rgba(201,168,76,0.15);border:1px solid var(--gold);color:var(--gold);padding:8px 24px;font-size:12px;font-weight:700;letter-spacing:1px;margin-bottom:24px}
+
+.play-again{background:var(--gold);color:var(--bg);border:none;padding:14px 40px;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:1px;margin-right:10px}
+.back-btn{background:transparent;border:1px solid var(--border);color:var(--txt2);padding:14px 24px;font-size:13px;cursor:pointer}
+
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <button class="toggle-btn lang-btn active" data-lang="pt">PT</button>
+  <button class="toggle-btn lang-btn" data-lang="de">DE</button>
+  <button class="toggle-btn lang-btn" data-lang="en">EN</button>
+  <span style="width:20px"></span>
+  <button class="toggle-btn" id="themeToggle">☀</button>
+</div>
+
+<h1>RELOJOEIRO</h1>
+<p class="subtitle" data-i18n="subtitle">Deadlines regulatórios sob pressão</p>
+
+<!-- START SCREEN -->
+<div class="start-screen" id="startScreen">
+  <div class="game-icon">⏱️</div>
+  <p class="tagline" data-i18n="tagline">"O relógio não para. Tu priorizas."</p>
+
+  <div class="concept-box">
+    <div class="concept-title" data-i18n="concept_title">SISTEMA 1 · URGÊNCIA</div>
+    <p class="concept-text" data-i18n="concept_text">
+      Incidentes regulatórios têm deadlines legais específicos. Falhar um deadline transforma uma obrigação de compliance
+      num agravante de infracção. O RELOJOEIRO treina a identificação instantânea do prazo correcto sob pressão.
+    </p>
+  </div>
+
+  <div class="deadlines-preview">
+    <div class="dl-card dl-gdpr">
+      <div class="dl-time">72h</div>
+      <div class="dl-info">
+        <div class="dl-name">GDPR · Art. 33</div>
+        <div class="dl-desc" data-i18n="dl_gdpr">Notificação de violação de dados à autoridade</div>
+      </div>
+    </div>
+    <div class="dl-card dl-dora">
+      <div class="dl-time">24h</div>
+      <div class="dl-info">
+        <div class="dl-name">DORA · Art. 19</div>
+        <div class="dl-desc" data-i18n="dl_dora">Reporte inicial de incidente ICT major</div>
+      </div>
+    </div>
+    <div class="dl-card dl-aiact">
+      <div class="dl-time">15d</div>
+      <div class="dl-info">
+        <div class="dl-name">EU AI Act · Art. 62</div>
+        <div class="dl-desc" data-i18n="dl_aiact">Notificação de incidente grave de AI</div>
+      </div>
+    </div>
+    <div class="dl-card dl-tax">
+      <div class="dl-time">30d</div>
+      <div class="dl-info">
+        <div class="dl-name">AML · 4AMLD</div>
+        <div class="dl-desc" data-i18n="dl_aml">Reporte de transacção suspeita (STR)</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="start-btn" id="startBtn" data-i18n="start_btn">INICIAR RELOJOEIRO</button>
+</div>
+
+<!-- GAME SCREEN -->
+<div class="game-screen" id="gameScreen">
+  <div class="game-header">
+    <div class="day-info"><span data-i18n="incident">INCIDENTE</span> <span class="day-num" id="incidentNum">1</span>/8</div>
+    <div class="score-info"><span id="scoreNum">0</span> <span data-i18n="points">pontos</span></div>
+  </div>
+
+  <div class="master-clock">
+    <div class="clock-label" data-i18n="time_remaining">TEMPO PARA RESPONDER</div>
+    <div class="clock-time" id="clockTime">00:20</div>
+  </div>
+
+  <div class="incident-card" id="incidentCard">
+    <div class="incident-header">
+      <div class="incident-type it-gdpr" id="incidentType">GDPR</div>
+      <div class="incident-time">
+        <div class="it-label" data-i18n="discovered">Descoberto há</div>
+        <div class="it-value" id="discoveredTime">2 horas</div>
+      </div>
+    </div>
+    <div class="incident-title" id="incidentTitle">—</div>
+    <div class="incident-desc" id="incidentDesc">—</div>
+    <div class="incident-question" data-i18n="question">Qual é o deadline legal para actuar?</div>
+  </div>
+
+  <div class="deadline-options" id="deadlineOptions">
+    <button class="dl-btn" data-hours="24" onclick="selectDeadline(24)">
+      <div class="dl-hours">24</div>
+      <div class="dl-unit" data-i18n="hours">horas</div>
+    </button>
+    <button class="dl-btn" data-hours="48" onclick="selectDeadline(48)">
+      <div class="dl-hours">48</div>
+      <div class="dl-unit" data-i18n="hours">horas</div>
+    </button>
+    <button class="dl-btn" data-hours="72" onclick="selectDeadline(72)">
+      <div class="dl-hours">72</div>
+      <div class="dl-unit" data-i18n="hours">horas</div>
+    </button>
+    <button class="dl-btn" data-hours="168" onclick="selectDeadline(168)">
+      <div class="dl-hours">7</div>
+      <div class="dl-unit" data-i18n="days">dias</div>
+    </button>
+  </div>
+
+  <div class="submit-row">
+    <button class="submit-btn" id="submitBtn" disabled onclick="submitAnswer()" data-i18n="confirm">CONFIRMAR DEADLINE</button>
+  </div>
+
+  <div class="feedback" id="feedback">
+    <div class="fb-icon" id="fbIcon">✓</div>
+    <div class="fb-title" id="fbTitle">Correcto!</div>
+    <div class="fb-explain" id="fbExplain">—</div>
+    <div class="fb-article" id="fbArticle">—</div>
+  </div>
+
+  <div class="queue-section" id="queueSection">
+    <div class="queue-title" data-i18n="queue_title">PRÓXIMOS NA FILA</div>
+    <div class="queue-list" id="queueList"></div>
+  </div>
+</div>
+
+<!-- RESULT SCREEN -->
+<div class="result-screen" id="resultScreen">
+  <div class="result-icon">⏱️</div>
+  <div class="result-title" data-i18n="result_title">Sessão Completa</div>
+  <div class="result-subtitle" id="resultSubtitle">—</div>
+
+  <div class="rank-badge" id="rankBadge">—</div>
+
+  <div class="result-stats">
+    <div class="stat-row">
+      <span class="stat-label" data-i18n="correct_deadlines">Deadlines correctos</span>
+      <span class="stat-value" id="correctCount">0/8</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label" data-i18n="accuracy">Precisão</span>
+      <span class="stat-value" id="accuracy">0%</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label" data-i18n="avg_time">Tempo médio</span>
+      <span class="stat-value" id="avgTime">0s</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label" data-i18n="violations">Violações de deadline</span>
+      <span class="stat-value" id="violationCount">0</span>
+    </div>
+  </div>
+
+  <div class="violations-list" id="violationsList">
+    <div class="vl-title" data-i18n="violations_title">DEADLINES FALHADOS</div>
+  </div>
+
+  <div>
+    <button class="play-again" id="playAgain" data-i18n="play_again">JOGAR NOVAMENTE</button>
+    <a href="/lab/static/lab.html" class="back-btn" data-i18n="back_lab">← VOLTAR</a>
+  </div>
+</div>
+
+<script>
+// ============ i18n ============
+const i18n = {
+  pt: {
+    subtitle: "Deadlines regulatórios sob pressão",
+    tagline: "\"O relógio não para. Tu priorizas.\"",
+    concept_title: "SISTEMA 1 · URGÊNCIA",
+    concept_text: "Incidentes regulatórios têm deadlines legais específicos. Falhar um deadline transforma uma obrigação de compliance num agravante de infracção. O RELOJOEIRO treina a identificação instantânea do prazo correcto sob pressão.",
+    dl_gdpr: "Notificação de violação de dados à autoridade",
+    dl_dora: "Reporte inicial de incidente ICT major",
+    dl_aiact: "Notificação de incidente grave de AI",
+    dl_aml: "Reporte de transacção suspeita (STR)",
+    start_btn: "INICIAR RELOJOEIRO",
+    incident: "INCIDENTE",
+    points: "pontos",
+    time_remaining: "TEMPO PARA RESPONDER",
+    discovered: "Descoberto há",
+    question: "Qual é o deadline legal para actuar?",
+    hours: "horas",
+    days: "dias",
+    confirm: "CONFIRMAR DEADLINE",
+    queue_title: "PRÓXIMOS NA FILA",
+    result_title: "Sessão Completa",
+    correct_deadlines: "Deadlines correctos",
+    accuracy: "Precisão",
+    avg_time: "Tempo médio",
+    violations: "Violações de deadline",
+    violations_title: "DEADLINES FALHADOS",
+    play_again: "JOGAR NOVAMENTE",
+    back_lab: "← VOLTAR",
+    correct: "Correcto!",
+    incorrect: "Incorrecto",
+    timeout: "Tempo esgotado!",
+    rank_master: "MESTRE DO TEMPO",
+    rank_expert: "RELOJOEIRO EXPERIENTE",
+    rank_apprentice: "RELOJOEIRO APRENDIZ",
+    rank_novice: "NOVATO"
+  },
+  de: {
+    subtitle: "Regulatorische Fristen unter Druck",
+    tagline: "\"Die Uhr stoppt nicht. Du priorisierst.\"",
+    concept_title: "SYSTEM 1 · DRINGLICHKEIT",
+    concept_text: "Regulatorische Vorfälle haben spezifische gesetzliche Fristen. Eine Frist zu verpassen verwandelt eine Compliance-Pflicht in einen erschwerenden Verstoß. RELOJOEIRO trainiert die sofortige Identifikation der richtigen Frist unter Druck.",
+    dl_gdpr: "Meldung einer Datenverletzung an die Behörde",
+    dl_dora: "Erstmeldung eines schweren IKT-Vorfalls",
+    dl_aiact: "Meldung eines schweren KI-Vorfalls",
+    dl_aml: "Verdachtsmeldung (STR)",
+    start_btn: "RELOJOEIRO STARTEN",
+    incident: "VORFALL",
+    points: "Punkte",
+    time_remaining: "ZEIT ZUM ANTWORTEN",
+    discovered: "Entdeckt vor",
+    question: "Was ist die gesetzliche Frist zum Handeln?",
+    hours: "Stunden",
+    days: "Tage",
+    confirm: "FRIST BESTÄTIGEN",
+    queue_title: "NÄCHSTE IN DER WARTESCHLANGE",
+    result_title: "Sitzung Abgeschlossen",
+    correct_deadlines: "Richtige Fristen",
+    accuracy: "Genauigkeit",
+    avg_time: "Durchschnittliche Zeit",
+    violations: "Fristverletzungen",
+    violations_title: "VERPASSTE FRISTEN",
+    play_again: "ERNEUT SPIELEN",
+    back_lab: "← ZURÜCK",
+    correct: "Richtig!",
+    incorrect: "Falsch",
+    timeout: "Zeit abgelaufen!",
+    rank_master: "ZEITMEISTER",
+    rank_expert: "ERFAHRENER RELOJOEIRO",
+    rank_apprentice: "RELOJOEIRO-LEHRLING",
+    rank_novice: "ANFÄNGER"
+  },
+  en: {
+    subtitle: "Regulatory deadlines under pressure",
+    tagline: "\"The clock doesn't stop. You prioritize.\"",
+    concept_title: "SYSTEM 1 · URGENCY",
+    concept_text: "Regulatory incidents have specific legal deadlines. Missing a deadline transforms a compliance obligation into an aggravating violation. RELOJOEIRO trains instant identification of the correct deadline under pressure.",
+    dl_gdpr: "Data breach notification to authority",
+    dl_dora: "Initial report of major ICT incident",
+    dl_aiact: "Serious AI incident notification",
+    dl_aml: "Suspicious transaction report (STR)",
+    start_btn: "START RELOJOEIRO",
+    incident: "INCIDENT",
+    points: "points",
+    time_remaining: "TIME TO RESPOND",
+    discovered: "Discovered",
+    question: "What is the legal deadline to act?",
+    hours: "hours",
+    days: "days",
+    confirm: "CONFIRM DEADLINE",
+    queue_title: "NEXT IN QUEUE",
+    result_title: "Session Complete",
+    correct_deadlines: "Correct deadlines",
+    accuracy: "Accuracy",
+    avg_time: "Average time",
+    violations: "Deadline violations",
+    violations_title: "MISSED DEADLINES",
+    play_again: "PLAY AGAIN",
+    back_lab: "← BACK",
+    correct: "Correct!",
+    incorrect: "Incorrect",
+    timeout: "Time expired!",
+    rank_master: "TIME MASTER",
+    rank_expert: "EXPERT RELOJOEIRO",
+    rank_apprentice: "RELOJOEIRO APPRENTICE",
+    rank_novice: "NOVICE"
+  }
+};
+
+let currentLang = localStorage.getItem('windi-lang') || 'pt';
+let currentTheme = localStorage.getItem('windi-theme') || 'noir';
+
+function applyI18n() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (i18n[currentLang][key]) el.innerHTML = i18n[currentLang][key];
+  });
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('windi-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`[data-lang="${lang}"]`).classList.add('active');
+  applyI18n();
+}
+
+function setTheme(theme) {
+  currentTheme = theme;
+  localStorage.setItem('windi-theme', theme);
+  document.body.dataset.theme = theme;
+  document.getElementById('themeToggle').textContent = theme === 'noir' ? '☀' : '☽';
+}
+
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => setLang(btn.dataset.lang));
+});
+document.getElementById('themeToggle').addEventListener('click', () => {
+  setTheme(currentTheme === 'noir' ? 'klar' : 'noir');
+});
+
+// ============ SCENARIOS ============
+const scenarios = [
+  {
+    type: "GDPR",
+    deadline: 72,
+    title: { pt: "Violação de dados pessoais", de: "Verletzung personenbezogener Daten", en: "Personal data breach" },
+    desc: { pt: "Um hacker acedeu a 10.000 registos de clientes com nomes, emails e números de telefone.", de: "Ein Hacker hat auf 10.000 Kundendatensätze mit Namen, E-Mails und Telefonnummern zugegriffen.", en: "A hacker accessed 10,000 customer records with names, emails, and phone numbers." },
+    discovered: { pt: "4 horas", de: "4 Stunden", en: "4 hours ago" },
+    article: "GDPR Art. 33 — 72 horas"
+  },
+  {
+    type: "GDPR",
+    deadline: 72,
+    title: { pt: "Laptop perdido com dados sensíveis", de: "Verlorener Laptop mit sensiblen Daten", en: "Lost laptop with sensitive data" },
+    desc: { pt: "Um colaborador perdeu um laptop não encriptado contendo dados de saúde de funcionários.", de: "Ein Mitarbeiter verlor einen unverschlüsselten Laptop mit Gesundheitsdaten von Angestellten.", en: "An employee lost an unencrypted laptop containing employee health data." },
+    discovered: { pt: "12 horas", de: "12 Stunden", en: "12 hours ago" },
+    article: "GDPR Art. 33 — 72 horas"
+  },
+  {
+    type: "DORA",
+    deadline: 24,
+    title: { pt: "Falha crítica no sistema de pagamentos", de: "Kritischer Ausfall des Zahlungssystems", en: "Critical payment system failure" },
+    desc: { pt: "O core banking system está em baixo há 3 horas, afectando todas as transacções.", de: "Das Kernbankensystem ist seit 3 Stunden ausgefallen und betrifft alle Transaktionen.", en: "The core banking system has been down for 3 hours, affecting all transactions." },
+    discovered: { pt: "3 horas", de: "3 Stunden", en: "3 hours ago" },
+    article: "DORA Art. 19 — 24 horas (reporte inicial)"
+  },
+  {
+    type: "DORA",
+    deadline: 24,
+    title: { pt: "Ransomware detectado em servidores", de: "Ransomware auf Servern entdeckt", en: "Ransomware detected on servers" },
+    desc: { pt: "Malware foi detectado em 3 servidores críticos da instituição financeira.", de: "Malware wurde auf 3 kritischen Servern des Finanzinstituts entdeckt.", en: "Malware was detected on 3 critical servers of the financial institution." },
+    discovered: { pt: "6 horas", de: "6 Stunden", en: "6 hours ago" },
+    article: "DORA Art. 19 — 24 horas (reporte inicial)"
+  },
+  {
+    type: "AIACT",
+    deadline: 72,
+    title: { pt: "Sistema AI rejeitou 100% de candidatos de uma etnia", de: "KI-System lehnte 100% der Kandidaten einer ethnischen Gruppe ab", en: "AI system rejected 100% of candidates from one ethnicity" },
+    desc: { pt: "O sistema de recrutamento AI mostrou bias discriminatório evidente nos últimos 30 dias.", de: "Das KI-Rekrutierungssystem zeigte in den letzten 30 Tagen offensichtliche diskriminierende Voreingenommenheit.", en: "The AI recruitment system showed evident discriminatory bias in the last 30 days." },
+    discovered: { pt: "8 horas", de: "8 Stunden", en: "8 hours ago" },
+    article: "EU AI Act Art. 62 — 72 horas (incidente grave)"
+  },
+  {
+    type: "AIACT",
+    deadline: 72,
+    title: { pt: "AI de crédito aprovou empréstimo fraudulento", de: "Kredit-KI genehmigte betrügerisches Darlehen", en: "Credit AI approved fraudulent loan" },
+    desc: { pt: "O sistema de scoring AI aprovou um empréstimo de €500.000 com documentos falsos.", de: "Das KI-Scoring-System genehmigte einen Kredit von 500.000€ mit gefälschten Dokumenten.", en: "The AI scoring system approved a €500,000 loan with fake documents." },
+    discovered: { pt: "2 horas", de: "2 Stunden", en: "2 hours ago" },
+    article: "EU AI Act Art. 62 — 72 horas (incidente grave)"
+  },
+  {
+    type: "GDPR",
+    deadline: 72,
+    title: { pt: "Email com dados enviado para destinatário errado", de: "E-Mail mit Daten an falschen Empfänger gesendet", en: "Email with data sent to wrong recipient" },
+    desc: { pt: "Um funcionário enviou por engano uma lista com 500 salários para um email externo.", de: "Ein Mitarbeiter sendete versehentlich eine Liste mit 500 Gehältern an eine externe E-Mail.", en: "An employee mistakenly sent a list with 500 salaries to an external email." },
+    discovered: { pt: "1 hora", de: "1 Stunde", en: "1 hour ago" },
+    article: "GDPR Art. 33 — 72 horas"
+  },
+  {
+    type: "DORA",
+    deadline: 24,
+    title: { pt: "DDoS derrubou serviços online do banco", de: "DDoS legte Online-Dienste der Bank lahm", en: "DDoS took down bank's online services" },
+    desc: { pt: "Ataque DDoS massivo está a impedir acesso ao home banking há 5 horas.", de: "Ein massiver DDoS-Angriff verhindert seit 5 Stunden den Zugang zum Online-Banking.", en: "Massive DDoS attack has been preventing access to home banking for 5 hours." },
+    discovered: { pt: "5 horas", de: "5 Stunden", en: "5 hours ago" },
+    article: "DORA Art. 19 — 24 horas (reporte inicial)"
+  }
+];
+
+// Deadline options (in hours)
+const deadlineOptions = [
+  { hours: 24, label: { pt: "24 horas", de: "24 Stunden", en: "24 hours" } },
+  { hours: 48, label: { pt: "48 horas", de: "48 Stunden", en: "48 hours" } },
+  { hours: 72, label: { pt: "72 horas", de: "72 Stunden", en: "72 hours" } },
+  { hours: 168, label: { pt: "7 dias", de: "7 Tage", en: "7 days" } }
+];
+
+// ============ GAME STATE ============
+let gameState = {
+  round: 0,
+  score: 0,
+  correct: 0,
+  times: [],
+  violations: [],
+  currentScenario: null,
+  selectedDeadline: null,
+  timer: null,
+  timeLeft: 20,
+  startTime: 0,
+  shuffledScenarios: [],
+  answered: false
+};
+
+const TOTAL_ROUNDS = 8;
+const TIME_LIMIT = 20;
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startGame() {
+  gameState = {
+    round: 0,
+    score: 0,
+    correct: 0,
+    times: [],
+    violations: [],
+    currentScenario: null,
+    selectedDeadline: null,
+    timer: null,
+    timeLeft: TIME_LIMIT,
+    startTime: 0,
+    shuffledScenarios: shuffle(scenarios).slice(0, TOTAL_ROUNDS),
+    answered: false
+  };
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('resultScreen').style.display = 'none';
+  document.getElementById('gameScreen').style.display = 'block';
+  nextRound();
+}
+
+function nextRound() {
+  gameState.round++;
+  if (gameState.round > TOTAL_ROUNDS) {
+    showResults();
+    return;
+  }
+
+  gameState.answered = false;
+  gameState.selectedDeadline = null;
+  gameState.currentScenario = gameState.shuffledScenarios[gameState.round - 1];
+  gameState.timeLeft = TIME_LIMIT;
+  gameState.startTime = Date.now();
+
+  // Update UI
+  document.getElementById('incidentNum').textContent = gameState.round;
+  document.getElementById('scoreNum').textContent = gameState.score;
+
+  const sc = gameState.currentScenario;
+  document.getElementById('incidentType').textContent = sc.type;
+  document.getElementById('incidentType').className = `incident-type it-${sc.type.toLowerCase()}`;
+  document.getElementById('incidentTitle').textContent = sc.title[currentLang];
+  document.getElementById('incidentDesc').textContent = sc.desc[currentLang];
+  document.getElementById('discoveredTime').textContent = sc.discovered[currentLang];
+
+  // Reset buttons
+  document.querySelectorAll('.dl-btn').forEach(btn => {
+    btn.classList.remove('selected', 'correct', 'incorrect');
+    btn.disabled = false;
+  });
+  document.getElementById('submitBtn').disabled = true;
+
+  // Hide feedback
+  document.getElementById('feedback').classList.remove('show', 'correct', 'incorrect');
+
+  // Update queue
+  updateQueue();
+
+  // Start timer
+  startTimer();
+}
+
+function updateQueue() {
+  const queueList = document.getElementById('queueList');
+  queueList.innerHTML = '';
+
+  const remaining = gameState.shuffledScenarios.slice(gameState.round, gameState.round + 2);
+  remaining.forEach(sc => {
+    const item = document.createElement('div');
+    item.className = 'queue-item';
+    item.innerHTML = `
+      <div class="qi-type qi-${sc.type.toLowerCase()}">${sc.type}</div>
+      <div class="qi-text">${sc.title[currentLang]}</div>
+      <div class="qi-time">${sc.deadline}h</div>
+    `;
+    queueList.appendChild(item);
+  });
+
+  if (remaining.length === 0) {
+    document.getElementById('queueSection').style.display = 'none';
+  } else {
+    document.getElementById('queueSection').style.display = 'block';
+  }
+}
+
+function startTimer() {
+  const clockTime = document.getElementById('clockTime');
+
+  if (gameState.timer) clearInterval(gameState.timer);
+
+  gameState.timer = setInterval(() => {
+    gameState.timeLeft -= 0.1;
+    const secs = Math.max(0, Math.ceil(gameState.timeLeft));
+    clockTime.textContent = `00:${secs.toString().padStart(2, '0')}`;
+
+    clockTime.classList.remove('warning', 'danger');
+    if (gameState.timeLeft <= 10) clockTime.classList.add('warning');
+    if (gameState.timeLeft <= 5) clockTime.classList.add('danger');
+
+    if (gameState.timeLeft <= 0) {
+      clearInterval(gameState.timer);
+      handleTimeout();
+    }
+  }, 100);
+}
+
+function selectDeadline(hours) {
+  if (gameState.answered) return;
+  gameState.selectedDeadline = hours;
+
+  document.querySelectorAll('.dl-btn').forEach(btn => {
+    btn.classList.remove('selected');
+    if (parseInt(btn.dataset.hours) === hours) {
+      btn.classList.add('selected');
+    }
+  });
+
+  document.getElementById('submitBtn').disabled = false;
+}
+
+function submitAnswer() {
+  if (gameState.answered || !gameState.selectedDeadline) return;
+  gameState.answered = true;
+  clearInterval(gameState.timer);
+
+  const timeTaken = (Date.now() - gameState.startTime) / 1000;
+  gameState.times.push(timeTaken);
+
+  const correct = gameState.selectedDeadline === gameState.currentScenario.deadline;
+
+  if (correct) {
+    gameState.correct++;
+    const timeBonus = Math.round((gameState.timeLeft / TIME_LIMIT) * 50);
+    gameState.score += 100 + timeBonus;
+  } else {
+    gameState.violations.push({
+      title: gameState.currentScenario.title[currentLang],
+      selected: gameState.selectedDeadline,
+      correct: gameState.currentScenario.deadline
+    });
+  }
+
+  // Update UI
+  document.querySelectorAll('.dl-btn').forEach(btn => {
+    btn.disabled = true;
+    const hours = parseInt(btn.dataset.hours);
+    if (hours === gameState.currentScenario.deadline) {
+      btn.classList.add('correct');
+    } else if (hours === gameState.selectedDeadline && !correct) {
+      btn.classList.add('incorrect');
+    }
+  });
+
+  showFeedback(correct);
+}
+
+function handleTimeout() {
+  if (gameState.answered) return;
+  gameState.answered = true;
+
+  gameState.times.push(TIME_LIMIT);
+  gameState.violations.push({
+    title: gameState.currentScenario.title[currentLang],
+    selected: null,
+    correct: gameState.currentScenario.deadline
+  });
+
+  document.querySelectorAll('.dl-btn').forEach(btn => {
+    btn.disabled = true;
+    if (parseInt(btn.dataset.hours) === gameState.currentScenario.deadline) {
+      btn.classList.add('correct');
+    }
+  });
+
+  showFeedback('timeout');
+}
+
+function showFeedback(result) {
+  const fb = document.getElementById('feedback');
+  const lang = i18n[currentLang];
+
+  fb.classList.remove('correct', 'incorrect');
+
+  if (result === true) {
+    fb.classList.add('correct');
+    document.getElementById('fbIcon').textContent = '✓';
+    document.getElementById('fbTitle').textContent = lang.correct;
+    document.getElementById('fbExplain').textContent = `${gameState.currentScenario.deadline} ${currentLang === 'pt' ? 'horas' : currentLang === 'de' ? 'Stunden' : 'hours'}`;
+  } else if (result === 'timeout') {
+    fb.classList.add('incorrect');
+    document.getElementById('fbIcon').textContent = '⏱';
+    document.getElementById('fbTitle').textContent = lang.timeout;
+    document.getElementById('fbExplain').textContent = `${currentLang === 'pt' ? 'O deadline correcto era' : currentLang === 'de' ? 'Die richtige Frist war' : 'The correct deadline was'} ${gameState.currentScenario.deadline}h`;
+  } else {
+    fb.classList.add('incorrect');
+    document.getElementById('fbIcon').textContent = '✗';
+    document.getElementById('fbTitle').textContent = lang.incorrect;
+    document.getElementById('fbExplain').textContent = `${currentLang === 'pt' ? 'O deadline correcto é' : currentLang === 'de' ? 'Die richtige Frist ist' : 'The correct deadline is'} ${gameState.currentScenario.deadline}h`;
+  }
+
+  document.getElementById('fbArticle').textContent = gameState.currentScenario.article;
+  fb.classList.add('show');
+
+  setTimeout(nextRound, 2500);
+}
+
+function showResults() {
+  document.getElementById('gameScreen').style.display = 'none';
+  document.getElementById('resultScreen').style.display = 'block';
+
+  const lang = i18n[currentLang];
+  const accuracy = Math.round((gameState.correct / TOTAL_ROUNDS) * 100);
+  const avgTime = gameState.times.length ? (gameState.times.reduce((a, b) => a + b, 0) / gameState.times.length).toFixed(1) : 0;
+
+  // Rank
+  let rank;
+  if (accuracy >= 90) rank = lang.rank_master;
+  else if (accuracy >= 70) rank = lang.rank_expert;
+  else if (accuracy >= 50) rank = lang.rank_apprentice;
+  else rank = lang.rank_novice;
+
+  document.getElementById('resultSubtitle').textContent = `${gameState.score} ${lang.points}`;
+  document.getElementById('rankBadge').textContent = rank;
+  document.getElementById('correctCount').textContent = `${gameState.correct}/${TOTAL_ROUNDS}`;
+  document.getElementById('accuracy').textContent = `${accuracy}%`;
+  document.getElementById('avgTime').textContent = `${avgTime}s`;
+  document.getElementById('violationCount').textContent = gameState.violations.length;
+  document.getElementById('violationCount').className = gameState.violations.length > 0 ? 'stat-value bad' : 'stat-value';
+
+  // Violations list
+  const violationsList = document.getElementById('violationsList');
+  if (gameState.violations.length === 0) {
+    violationsList.style.display = 'none';
+  } else {
+    violationsList.style.display = 'block';
+    violationsList.innerHTML = `<div class="vl-title">${lang.violations_title}</div>`;
+    gameState.violations.forEach(v => {
+      const item = document.createElement('div');
+      item.className = 'vl-item';
+      const selected = v.selected ? `${v.selected}h` : (currentLang === 'pt' ? 'sem resposta' : currentLang === 'de' ? 'keine Antwort' : 'no answer');
+      item.textContent = `${v.title}: ${selected} → ${v.correct}h`;
+      violationsList.appendChild(item);
+    });
+  }
+}
+
+// Event listeners
+document.getElementById('startBtn').addEventListener('click', startGame);
+document.getElementById('playAgain').addEventListener('click', startGame);
+
+// Init
+setTheme(currentTheme);
+setLang(currentLang);
+</script>
+
+</body>
+</html>
