@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.2.11
-**Sealed:** 2026-04-14 · §169 W-SERVICE-CONTROL
+**Version:** 2.2.12
+**Sealed:** 2026-04-15 · §170 W-LAB-001
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -87,6 +87,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-CACHE-001 | :8160 | I11,I14 | **LIVE** · Verifiable Cache Layer · L2→L3 Promotion · NOIR Dashboard |
 | W-DID-GENESIS | :8096 | I1,I9,I11,I14 | **LIVE** · Sovereign Identity Tree · Cross-Service Session · 4 Tiers |
 | W-SERVICE-CONTROL | :8170 | I1,I9,I11 | **LIVE** · Service Control Panel · 24 Services · Restart/Stop/Start · DID Gate |
+| W-LAB-001 | :8151 | I9,I11,I14 | **LIVE** · Governance Laboratory · LOBO Architecture · 5 Mini-Games · OVS Certification |
 | WINDI-PORTAL | static | — | **LIVE** · Internal Control Center · 35 Services · 7 Categories |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
@@ -437,21 +438,23 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | :8140-:8144 | UDB/INTENT-CMD/FEDIVERSE/BRIDGE/SEC | 🟢 LIVE |
 | :8145 | W-STATE-CORE-006 Verify Public | 🟢 **LIVE** |
 | :8150 | W-Enterprise-001 AI Compliance | 🟢 **LIVE** |
+| :8151 | W-LAB-001 Governance Laboratory | 🟢 **LIVE** |
 | :8160 | W-CACHE-001 Verifiable Cache | 🟢 **LIVE** |
 | :8170 | W-SERVICE-CONTROL Panel | 🟢 **LIVE** |
 
-> **Mapa completo (27 portas):** `CLAUDE-HISTORY.md` § Mapa de Portas 14 Abr
+> **Mapa completo (28 portas):** `CLAUDE-HISTORY.md` § Mapa de Portas 15 Abr
 
-### Sistemas LIVE (45 total)
+### Sistemas LIVE (46 total)
 
 **Core:** GEN7 · Pioneer · VPR · API Keys · Dispatch · Web Hosting · i18n · Wallet · Lead Admin · **Portal** · **SVC-CONTROL**
-**Agents (33):** CIA · WSG · GATE · NGINX · CANVAS · COMM · PROVE · DETECT-MEDIA · VERIFY · INTENT · COUNSEL · SESSION · NOMAD · VD-CUT · VD-MASS · JOE · DIST · JMPG · UDB · COMPOSER · CLASSIFY · VISION · OBS-GATE · INTENT-CMD · NOMAD-VOICE · FEDIVERSE · BRIDGE · SEC · DRAGON · DEV-API · ENTERPRISE · **CACHE**
+**Agents (34):** CIA · WSG · GATE · NGINX · CANVAS · COMM · PROVE · DETECT-MEDIA · VERIFY · INTENT · COUNSEL · SESSION · NOMAD · VD-CUT · VD-MASS · JOE · DIST · JMPG · UDB · COMPOSER · CLASSIFY · VISION · OBS-GATE · INTENT-CMD · NOMAD-VOICE · FEDIVERSE · BRIDGE · SEC · DRAGON · DEV-API · ENTERPRISE · CACHE · **LAB**
 **Products:** Triangle of Power · WINDI FIELD · WINDI TRAVEL · FVE Protocol · RFC-001 DNA
 
 ### Histórico Recente
 
 | Data | Milestone |
 |------|-----------|
+| 15 Apr | **§170 W-LAB-001** · Governance Laboratory · LOBO Architecture · 5 Mini-Games · Entry Landing · `b9b7fd1` |
 | 14 Apr | **§169 W-SERVICE-CONTROL** · Service Control Panel · :8170 · 24 Services · I9 DID Gate · `55e1b26` |
 | 14 Apr | **§168 VDT Academic Outreach** · IDT Kempten · HNU Neu-Ulm · PHO Framework · `c66fefe` |
 | 14 Apr | **§167 W-DID-GENESIS** · Sovereign Identity Audit · DID Canonical · MARIA Fix · 57k Receipts |
@@ -574,6 +577,44 @@ Anonymous → HTTPException 400 · Receipt `WINDI-MARIA-COMPLIANCE-FIX-20260414`
 
 **Princípio Descoberto:**
 > *"A Árvore não planeia os frutos. Responde às estações."*
+
+### §170 — W-LAB-001: Governance Laboratory (15 Apr 2026)
+
+**Port:** :8151 · **Invariants:** I9, I11, I14 · **Commits:** `8ea52ec` → `b9b7fd1`
+**URL:** `https://windi-domain.com/lab/`
+**Entry:** `https://windi-domain.com/lab/static/entry.html`
+
+**Conceito:** Campo de treino para supervisão humana de IA sob pressão.
+
+> *"W-LAB doesn't test AI. It tests the human responsible for it."*
+
+**LOBO Architecture (Layer 01 REFLEXO):**
+| Game | Skill | Timer |
+|------|-------|-------|
+| 🐺 FAREJADOR | Detecção I9 | 30s |
+| 🌬️ FARO | Antecipação | 75s |
+| 💓 PULSO | Somático | 90s |
+| 🎯 ÁRBITRO | Classificação | 15s |
+| ⏱️ RELOJOEIRO | Urgência | 20s |
+
+**Entry Landing (market-ready):**
+- FAREJADOR-LITE inline demo (5 scenarios, 20s, no login)
+- Email capture with conversion analytics
+- Emotional hook: "You'll be asked what you can prove"
+- Authority signal: GDPR · DORA · EU AI Act patterns
+
+**Features:**
+- Maturity Scale (5 levels → LOBO)
+- OVS Certification (Operator of Verifiable Systems)
+- Session sealing to Forensic Ledger
+- SANDBOX/STRESS/FORMULA modes
+- NOIR/KLAR + i18n PT/DE/EN
+
+**Files:**
+- `/opt/windi/w-lab-001/app.py` (FastAPI)
+- `/opt/windi/w-lab-001/static/entry.html` (Entry landing)
+- `/opt/windi/w-lab-001/static/lab.html` (Dashboard)
+- `/opt/windi/w-lab-001/static/*.html` (5 mini-games)
 
 ### §169 — W-SERVICE-CONTROL: Service Control Panel (14 Apr 2026)
 
