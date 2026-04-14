@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAREJADOR · W-LAB-001</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f0d;
+    --surface: #1a1a16;
+    --card: #222220;
+    --border: #333330;
+    --border-hover: #555550;
+    --gold: #D4A843;
+    --gold-dim: #8B6914;
+    --text: #F5F0E0;
+    --text-sec: #9a9488;
+    --text-muted: #5a5650;
+    --danger: #E24B4A;
+    --danger-bg: rgba(226,75,74,0.1);
+    --warn: #EF9F27;
+    --warn-bg: rgba(239,159,39,0.1);
+    --ok: #1D9E75;
+    --ok-bg: rgba(29,158,117,0.1);
+    --info: #378ADD;
+    --font-head: 'Bricolage Grotesque', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-head);
+    min-height: 100vh;
+    padding: 32px 24px;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    padding-bottom: 14px;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .site-logo { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); letter-spacing: .1em; }
+  .site-logo span { color: var(--gold); }
+  .sealed-badge {
+    font-family: var(--font-mono); font-size: 10px; color: var(--gold-dim);
+    border: 0.5px solid var(--gold-dim); border-radius: 3px; padding: 3px 8px; letter-spacing: .08em;
+  }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ── INTRO ── */
+  .intro-card {
+    background: var(--surface); border: 0.5px solid var(--border);
+    border-radius: 12px; padding: 24px 28px; margin-bottom: 20px;
+  }
+  .game-title { font-size: 32px; font-weight: 800; color: var(--text); letter-spacing: -.02em; font-family: var(--font-mono); }
+  .game-sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; font-family: var(--font-mono); letter-spacing: .06em; }
+  .game-tagline { font-size: 14px; color: var(--text-sec); margin-top: 16px; line-height: 1.6; }
+
+  .rules-list { margin-top: 20px; display: flex; flex-direction: column; gap: 8px; }
+  .rule-item { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--text-sec); line-height: 1.5; }
+  .rule-bullet { width: 5px; height: 5px; border-radius: 50%; background: var(--border-hover); margin-top: 6px; flex-shrink: 0; }
+
+  .i9-box {
+    margin-top: 20px; padding: 14px 16px;
+    border-left: 2px solid var(--gold-dim);
+    background: rgba(139,105,20,0.08);
+    border-radius: 0 8px 8px 0;
+  }
+  .i9-label { font-family: var(--font-mono); font-size: 10px; color: var(--gold-dim); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 6px; }
+  .i9-text { font-family: var(--font-mono); font-size: 12px; color: var(--text-sec); line-height: 1.7; }
+  .i9-text em { color: var(--gold); font-style: normal; font-weight: 700; }
+
+  /* ── HUD ── */
+  .hud {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px; background: var(--surface);
+    border: 0.5px solid var(--border); border-radius: 10px; margin-bottom: 14px;
+  }
+  .hud-round { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); }
+  .hud-round strong { color: var(--text); font-weight: 700; }
+  .hud-difficulty { font-family: var(--font-mono); font-size: 10px; padding: 3px 8px; border-radius: 10px; letter-spacing: .05em; }
+
+  .timer-group { display: flex; align-items: center; gap: 10px; }
+  .timer-bar-bg { width: 100px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .timer-bar { height: 100%; border-radius: 2px; transition: width .1s linear, background .3s; }
+  .timer-num {
+    font-family: var(--font-mono); font-size: 22px; font-weight: 700;
+    color: var(--text); min-width: 34px; text-align: center; transition: color .3s;
+  }
+  .timer-num.urgent { color: var(--danger); }
+
+  .lives { display: flex; gap: 5px; align-items: center; }
+  .life { width: 9px; height: 9px; border-radius: 50%; background: var(--text); transition: background .3s; }
+  .life.lost { background: var(--border); }
+
+  /* ── DOCUMENT ── */
+  .doc-frame { border: 0.5px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 14px; }
+  .doc-header {
+    background: var(--surface); padding: 10px 18px;
+    border-bottom: 0.5px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .doc-type { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); letter-spacing: .1em; text-transform: uppercase; }
+  .doc-ref { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); }
+
+  .doc-body { padding: 18px 22px; background: var(--card); }
+  .doc-hint {
+    font-family: var(--font-mono); font-size: 11px; color: var(--text-muted);
+    padding: 8px 12px; background: var(--surface); border-radius: 6px;
+    margin-bottom: 16px; letter-spacing: .03em;
+  }
+
+  .sentence {
+    font-size: 13px; line-height: 1.85; color: var(--text);
+    padding: 5px 8px; border-radius: 5px; cursor: pointer;
+    transition: background .15s, border-color .15s;
+    border: 0.5px solid transparent;
+    display: block; margin-bottom: 3px;
+  }
+  .sentence:hover { background: rgba(255,255,255,0.04); }
+  .sentence.selected-wrong {
+    background: var(--danger-bg) !important;
+    border-color: var(--danger) !important;
+    color: var(--danger) !important;
+  }
+  .sentence.correct-reveal {
+    background: var(--warn-bg) !important;
+    border-color: var(--warn) !important;
+    color: var(--warn) !important;
+  }
+  .sentence.found {
+    background: var(--ok-bg) !important;
+    border-color: var(--ok) !important;
+    color: var(--ok) !important;
+  }
+  .sentence.disabled { cursor: default; }
+
+  /* ── FEEDBACK ── */
+  .feedback-box { border-radius: 10px; padding: 16px 18px; margin-bottom: 14px; display: none; }
+  .feedback-box.show { display: block; }
+  .feedback-box.success { background: var(--ok-bg); border: 0.5px solid var(--ok); }
+  .feedback-box.wrong   { background: var(--danger-bg); border: 0.5px solid var(--danger); }
+  .feedback-box.timeout { background: var(--warn-bg); border: 0.5px solid var(--warn); }
+
+  .fb-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .fb-icon { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+  .fb-icon.success { background: var(--ok); color: #fff; }
+  .fb-icon.wrong   { background: var(--danger); color: #fff; }
+  .fb-icon.timeout { background: var(--warn); color: #fff; }
+  .fb-title { font-size: 13px; font-weight: 700; }
+  .fb-title.success { color: var(--ok); }
+  .fb-title.wrong   { color: var(--danger); }
+  .fb-title.timeout { color: var(--warn); }
+
+  .fb-body { font-family: var(--font-mono); font-size: 12px; color: var(--text-sec); line-height: 1.7; }
+  .fb-highlight { font-family: var(--font-mono); font-size: 11px; margin-top: 8px; padding: 8px 10px; background: rgba(255,255,255,0.04); border-radius: 6px; color: var(--text-muted); }
+
+  /* ── BUTTONS ── */
+  .btn-primary {
+    background: var(--text); color: var(--bg); border: none;
+    border-radius: 8px; padding: 12px 20px; font-size: 13px; font-weight: 700;
+    font-family: var(--font-head); width: 100%; cursor: pointer;
+    margin-bottom: 10px; transition: opacity .2s;
+  }
+  .btn-primary:hover { opacity: .9; }
+  .btn-secondary {
+    background: transparent; color: var(--text-sec);
+    border: 0.5px solid var(--border-hover); border-radius: 8px;
+    padding: 12px 20px; font-size: 13px; font-family: var(--font-head);
+    width: 100%; cursor: pointer; margin-bottom: 10px; transition: background .2s;
+  }
+  .btn-secondary:hover { background: var(--surface); }
+  #next-btn { display: none; }
+
+  /* ── RESULTS ── */
+  .result-hero {
+    background: var(--surface); border: 0.5px solid var(--border);
+    border-radius: 12px; padding: 28px; text-align: center; margin-bottom: 16px;
+  }
+  .result-score-num {
+    font-family: var(--font-mono); font-size: 64px; font-weight: 700;
+    color: var(--text); line-height: 1;
+  }
+  .result-score-label { font-size: 12px; color: var(--text-muted); margin-top: 6px; font-family: var(--font-mono); }
+  .result-rank {
+    display: inline-block; margin-top: 14px;
+    font-family: var(--font-mono); font-size: 12px; font-weight: 700;
+    padding: 6px 16px; border-radius: 20px; letter-spacing: .06em;
+  }
+
+  .stat-row {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px;
+  }
+  .stat-card {
+    background: var(--surface); border: 0.5px solid var(--border);
+    border-radius: 8px; padding: 14px 12px; text-align: center;
+  }
+  .stat-num { font-family: var(--font-mono); font-size: 24px; font-weight: 700; color: var(--text); }
+  .stat-lbl { font-size: 11px; color: var(--text-muted); margin-top: 3px; font-family: var(--font-mono); }
+
+  .history-list { margin-bottom: 18px; display: flex; flex-direction: column; gap: 6px; }
+  .history-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px; background: var(--surface);
+    border: 0.5px solid var(--border); border-radius: 8px;
+    font-family: var(--font-mono); font-size: 12px;
+  }
+  .history-round { color: var(--text-muted); }
+  .history-result { font-weight: 700; }
+  .history-result.ok { color: var(--ok); }
+  .history-result.fail { color: var(--danger); }
+  .history-pts { color: var(--gold); }
+
+  /* ── FOOTER ── */
+  .site-footer {
+    margin-top: 40px; padding-top: 16px;
+    border-top: 0.5px solid var(--border);
+    display: flex; justify-content: space-between;
+    font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); letter-spacing: .05em;
+  }
+
+  @media (max-width: 480px) {
+    body { padding: 20px 16px; }
+    .result-score-num { font-size: 48px; }
+    .stat-row { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <div class="site-logo"><span>W-LAB</span> · LAYER 01 · REFLEXO</div>
+  <div class="sealed-badge">FAREJADOR v1.0</div>
+</div>
+
+<!-- ══ INTRO ══ -->
+<div id="screen-intro" class="screen active">
+  <div class="intro-card">
+    <div class="game-title">FAREJADOR</div>
+    <div class="game-sub">MINI-GAME · W-LAB-001 · SISTEMA 1 TRAINING</div>
+    <div class="game-tagline">Um documento aparece. Dentro dele, uma armadilha I9 escondida. O teu reflexo tem 30 segundos.</div>
+
+    <div class="rules-list">
+      <div class="rule-item"><span class="rule-bullet"></span>Lê o documento e clica na frase que viola o Invariante I9.</div>
+      <div class="rule-item"><span class="rule-bullet"></span>30 segundos por round. Velocidade vale pontos.</div>
+      <div class="rule-item"><span class="rule-bullet"></span>Erro: perdes uma vida. Timeout: round falhado.</div>
+      <div class="rule-item"><span class="rule-bullet"></span>3 rounds. Dificuldade cresce. O lobo aprende.</div>
+    </div>
+
+    <div class="i9-box">
+      <div class="i9-label">Invariante I9 — Proibição de Escalada de Autonomia</div>
+      <div class="i9-text">A AI <em>propõe</em>. Nunca decide. Nunca executa.<br>O humano tem sempre autoridade final. Sem excepção.<br>Violação = SYSTEM STOP.</div>
+    </div>
+  </div>
+  <button class="btn-primary" onclick="startGame()">Iniciar caçada →</button>
+</div>
+
+<!-- ══ GAME ══ -->
+<div id="screen-game" class="screen">
+  <div class="hud">
+    <div>
+      <div class="hud-round">Round <strong id="round-num">1</strong> / 3</div>
+    </div>
+    <div class="timer-group">
+      <div class="timer-bar-bg"><div class="timer-bar" id="timer-bar" style="width:100%;background:var(--ok)"></div></div>
+      <div class="timer-num" id="timer-num">30</div>
+    </div>
+    <div class="lives" id="lives-display"></div>
+  </div>
+
+  <div class="doc-frame">
+    <div class="doc-header">
+      <span class="doc-type" id="doc-type-label">compliance document</span>
+      <span class="doc-ref" id="doc-ref">DOC-001</span>
+    </div>
+    <div class="doc-body">
+      <div class="doc-hint">► Identifica a frase que viola o Invariante I9 — autonomia de AI não supervisionada</div>
+      <div id="doc-sentences"></div>
+    </div>
+  </div>
+
+  <div class="feedback-box" id="feedback-box">
+    <div class="fb-header">
+      <div class="fb-icon" id="fb-icon"></div>
+      <div class="fb-title" id="fb-title"></div>
+    </div>
+    <div class="fb-body" id="fb-body"></div>
+    <div class="fb-highlight" id="fb-highlight"></div>
+  </div>
+
+  <button class="btn-primary" id="next-btn" onclick="nextRound()">Próximo round →</button>
+</div>
+
+<!-- ══ RESULTS ══ -->
+<div id="screen-results" class="screen">
+  <div class="result-hero">
+    <div class="result-score-num" id="final-score">0</div>
+    <div class="result-score-label">PONTOS · FAREJADOR · W-LAB-001</div>
+    <div class="result-rank" id="result-rank">—</div>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-card"><div class="stat-num" id="stat-found">0/3</div><div class="stat-lbl">traps encontradas</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-avg">—</div><div class="stat-lbl">tempo médio</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-lives">0</div><div class="stat-lbl">vidas restantes</div></div>
+  </div>
+
+  <div class="history-list" id="history-list"></div>
+
+  <button class="btn-primary" onclick="startGame()">Jogar novamente →</button>
+  <button class="btn-secondary" onclick="window.location.href='/lab/'">Voltar ao W-LAB</button>
+</div>
+
+<div class="site-footer">
+  <span>WINDI PUBLISHING HOUSE · LIGA IA+H · KEMPTEN</span>
+  <span>AI PROCESSES. HUMAN DECIDES. WINDI GUARANTEES.</span>
+</div>
+
+<script>
+const ROUNDS = [
+  {
+    type: 'ACTA DE REUNIÃO — COMITÉ DE RISCO',
+    ref: 'ACT-2026-047',
+    difficulty: 'BÁSICO',
+    diffColor: 'color:var(--ok);background:var(--ok-bg)',
+    sentences: [
+      'Reunião realizada na sexta-feira, 10 de Abril de 2026, pelas 14h00.',
+      'O Comité de Risco analisou os incidentes de segurança do trimestre anterior.',
+      'A equipa técnica apresentou um relatório com 3 vulnerabilidades identificadas.',
+      'Após análise dos dados, o sistema de AI avaliou o nível de risco como CRÍTICO e bloqueou automaticamente o acesso às contas afectadas sem aprovação humana.',
+      'O responsável de compliance solicitou documentação adicional sobre os procedimentos de notificação.',
+      'A próxima reunião foi agendada para 24 de Abril de 2026.',
+    ],
+    trap: 3,
+    explanation: 'O sistema AI "bloqueou automaticamente... sem aprovação humana." A AI tomou uma decisão com consequências reais — bloqueio de contas — sem supervisão. AI propõe. Nunca executa.',
+    trapKey: '"bloqueou automaticamente... sem aprovação humana"',
+  },
+  {
+    type: 'PROCEDIMENTO OPERACIONAL — DPO OFFICE',
+    ref: 'PROC-GDPR-012',
+    difficulty: 'INTERMÉDIO',
+    diffColor: 'color:var(--warn);background:var(--warn-bg)',
+    sentences: [
+      'Este procedimento define o fluxo de resposta a incidentes de dados pessoais.',
+      'Após detecção de uma anomalia, a equipa técnica procede à análise preliminar.',
+      'O DPO é notificado nas primeiras 2 horas após confirmação do incidente.',
+      'A equipa de comunicação prepara os templates de resposta para os stakeholders.',
+      'Quando o motor de análise classifica um incidente como não notificável à CNPD, o ticket é automaticamente fechado e arquivado sem revisão humana.',
+      'Todos os incidentes notificáveis são comunicados à autoridade supervisora no prazo legal de 72 horas.',
+    ],
+    trap: 4,
+    explanation: 'A decisão de "não notificar à CNPD" é tomada pelo motor de análise e o ticket é fechado automaticamente. Determinar se um breach GDPR é notificável é uma decisão legal com impacto regulatório — requer supervisão humana obrigatória (Art. 33 GDPR + EU AI Act Art. 14).',
+    trapKey: '"classifica... automaticamente fechado... sem revisão humana"',
+  },
+  {
+    type: 'RELATÓRIO DE AUDITORIA INTERNA — DORA Q1',
+    ref: 'AUDIT-DORA-2026-Q1',
+    difficulty: 'AVANÇADO',
+    diffColor: 'color:var(--danger);background:var(--danger-bg)',
+    sentences: [
+      'Auditoria ao Sistema de Gestão de Incidentes de TIC referente ao Q1 2026.',
+      'O sistema registou 14 incidentes no período, dos quais 3 foram classificados como major.',
+      'Para optimizar os tempos de resposta, implementámos um fluxo de triagem inteligente.',
+      'Incidentes com score de severidade inferior a 40 são resolvidos pelo agente autónomo sem escalada à equipa humana.',
+      'O tempo médio de resolução melhorou 34% após a implementação do novo fluxo.',
+      'Recomendamos a extensão do modelo a outros domínios operacionais no Q2 de 2026.',
+    ],
+    trap: 3,
+    explanation: 'A trap mais subtil: o critério "score < 40" parece objectivo e racional. Mas "resolvidos pelo agente autónomo sem escalada à equipa humana" viola I9 e o DORA Art. 17. A sofisticação da armadilha está na aparência de eficiência — é exactamente assim que o I9 entra disfarçado.',
+    trapKey: '"agente autónomo sem escalada à equipa humana"',
+  },
+];
+
+const state = { round:0, lives:3, score:0, timerVal:30, timerInterval:null, roundStart:0, roundTimes:[], trapsFound:0, canClick:false, history:[] };
+
+function startGame() {
+  Object.assign(state, { round:0, lives:3, score:0, timerVal:30, timerInterval:null, roundStart:0, roundTimes:[], trapsFound:0, canClick:false, history:[] });
+  showScreen('game');
+  loadRound();
+}
+
+function loadRound() {
+  const r = ROUNDS[state.round];
+  document.getElementById('round-num').textContent = state.round + 1;
+  document.getElementById('doc-type-label').textContent = r.type;
+  document.getElementById('doc-ref').textContent = r.ref;
+  renderLives();
+
+  const container = document.getElementById('doc-sentences');
+  container.innerHTML = '';
+  r.sentences.forEach((s, i) => {
+    const el = document.createElement('span');
+    el.className = 'sentence';
+    el.textContent = s;
+    el.dataset.idx = i;
+    el.onclick = () => handleClick(i);
+    container.appendChild(el);
+  });
+
+  document.getElementById('feedback-box').className = 'feedback-box';
+  document.getElementById('next-btn').style.display = 'none';
+  startTimer();
+  state.roundStart = Date.now();
+  state.canClick = true;
+}
+
+function startTimer() {
+  state.timerVal = 30;
+  updateTimer();
+  clearInterval(state.timerInterval);
+  state.timerInterval = setInterval(() => {
+    state.timerVal -= 0.1;
+    if (state.timerVal <= 0) {
+      state.timerVal = 0;
+      updateTimer();
+      clearInterval(state.timerInterval);
+      handleTimeout();
+    } else {
+      updateTimer();
+    }
+  }, 100);
+}
+
+function updateTimer() {
+  const pct = (state.timerVal / 30) * 100;
+  const numEl = document.getElementById('timer-num');
+  const bar = document.getElementById('timer-bar');
+  numEl.textContent = Math.ceil(state.timerVal);
+  numEl.className = 'timer-num' + (state.timerVal <= 8 ? ' urgent' : '');
+  bar.style.width = pct + '%';
+  bar.style.background = state.timerVal > 15 ? 'var(--ok)' : state.timerVal > 8 ? 'var(--warn)' : 'var(--danger)';
+}
+
+function handleClick(idx) {
+  if (!state.canClick) return;
+  const r = ROUNDS[state.round];
+  if (idx === r.trap) {
+    clearInterval(state.timerInterval);
+    state.canClick = false;
+    const elapsed = ((Date.now() - state.roundStart) / 1000).toFixed(1);
+    state.roundTimes.push(parseFloat(elapsed));
+    state.trapsFound++;
+    const pts = Math.round(50 + (state.timerVal / 30) * 50);
+    state.score += pts;
+    state.history.push({ round: state.round+1, found: true, pts, time: elapsed });
+    setSentenceClass(idx, 'found');
+    disableAllSentences();
+    showFeedback('success', '+' + pts + ' pontos · encontrada em ' + elapsed + 's', r.explanation, r.trapKey);
+    setTimeout(() => { document.getElementById('next-btn').style.display = 'block'; }, 500);
+  } else {
+    state.lives--;
+    renderLives();
+    setSentenceClass(idx, 'selected-wrong');
+    setTimeout(() => { setSentenceClass(idx, ''); }, 700);
+    if (state.lives <= 0) {
+      clearInterval(state.timerInterval);
+      state.canClick = false;
+      setSentenceClass(r.trap, 'correct-reveal');
+      disableAllSentences();
+      state.history.push({ round: state.round+1, found: false, pts: 0, time: null });
+      showFeedback('wrong', 'Sem vidas — round falhado', 'A trap estava na frase ' + (r.trap + 1) + '. ' + r.explanation, r.trapKey);
+      setTimeout(() => { document.getElementById('next-btn').style.display = 'block'; }, 500);
+    }
+  }
+}
+
+function handleTimeout() {
+  if (!state.canClick) return;
+  state.canClick = false;
+  const r = ROUNDS[state.round];
+  setSentenceClass(r.trap, 'correct-reveal');
+  disableAllSentences();
+  state.lives = Math.max(0, state.lives - 1);
+  renderLives();
+  state.history.push({ round: state.round+1, found: false, pts: 0, time: null });
+  showFeedback('timeout', 'Tempo esgotado — o lobo perdeu o rasto', 'A trap estava na frase ' + (r.trap + 1) + '. ' + r.explanation, r.trapKey);
+  setTimeout(() => { document.getElementById('next-btn').style.display = 'block'; }, 500);
+}
+
+function setSentenceClass(idx, cls) {
+  const sentences = document.querySelectorAll('.sentence');
+  if (sentences[idx]) sentences[idx].className = 'sentence' + (cls ? ' ' + cls : '');
+}
+
+function disableAllSentences() {
+  document.querySelectorAll('.sentence').forEach(s => {
+    s.classList.add('disabled');
+    s.onclick = null;
+  });
+}
+
+function showFeedback(type, title, body, highlight) {
+  const box = document.getElementById('feedback-box');
+  box.className = 'feedback-box show ' + type;
+  const icon = document.getElementById('fb-icon');
+  icon.className = 'fb-icon ' + type;
+  icon.textContent = type === 'success' ? '✓' : type === 'wrong' ? '✗' : '!';
+  const titleEl = document.getElementById('fb-title');
+  titleEl.className = 'fb-title ' + type;
+  titleEl.textContent = title;
+  document.getElementById('fb-body').textContent = body;
+  const hl = document.getElementById('fb-highlight');
+  hl.textContent = 'Trap: ' + highlight;
+  hl.style.display = highlight ? 'block' : 'none';
+}
+
+function nextRound() {
+  state.round++;
+  if (state.round >= ROUNDS.length) { showResults(); return; }
+  if (state.lives <= 0) state.lives = 1;
+  loadRound();
+}
+
+function renderLives() {
+  const el = document.getElementById('lives-display');
+  el.innerHTML = '';
+  for (let i = 0; i < 3; i++) {
+    const d = document.createElement('div');
+    d.className = 'life' + (i >= state.lives ? ' lost' : '');
+    el.appendChild(d);
+  }
+}
+
+function showResults() {
+  showScreen('results');
+  document.getElementById('final-score').textContent = state.score;
+  document.getElementById('stat-found').textContent = state.trapsFound + '/3';
+  const avg = state.roundTimes.length
+    ? (state.roundTimes.reduce((a, b) => a + b, 0) / state.roundTimes.length).toFixed(1) + 's'
+    : '—';
+  document.getElementById('stat-avg').textContent = avg;
+  document.getElementById('stat-lives').textContent = state.lives;
+
+  const rankEl = document.getElementById('result-rank');
+  if (state.score >= 250) {
+    rankEl.textContent = 'LOBO EM FORMAÇÃO';
+    rankEl.style.cssText = 'background:rgba(212,168,67,0.15);color:#D4A843;display:inline-block;margin-top:14px;font-family:var(--font-mono);font-size:12px;font-weight:700;padding:6px 16px;border-radius:20px;letter-spacing:.06em;border:0.5px solid var(--gold-dim)';
+  } else if (state.score >= 150) {
+    rankEl.textContent = 'RASTRO DETECTADO';
+    rankEl.style.cssText = 'background:var(--ok-bg);color:var(--ok);display:inline-block;margin-top:14px;font-family:var(--font-mono);font-size:12px;font-weight:700;padding:6px 16px;border-radius:20px;letter-spacing:.06em';
+  } else {
+    rankEl.textContent = 'CONTINUA A FAREJAR';
+    rankEl.style.cssText = 'background:rgba(255,255,255,0.05);color:var(--text-muted);display:inline-block;margin-top:14px;font-family:var(--font-mono);font-size:12px;font-weight:700;padding:6px 16px;border-radius:20px;letter-spacing:.06em';
+  }
+
+  const historyEl = document.getElementById('history-list');
+  historyEl.innerHTML = '';
+  state.history.forEach(h => {
+    const item = document.createElement('div');
+    item.className = 'history-item';
+    item.innerHTML = `
+      <span class="history-round">Round ${h.round} · ${ROUNDS[h.round-1].difficulty}</span>
+      <span class="history-result ${h.found ? 'ok' : 'fail'}">${h.found ? 'ENCONTRADA' : 'FALHADA'}</span>
+      <span class="history-pts">${h.found ? '+' + h.pts + ' pts · ' + h.time + 's' : '0 pts'}</span>
+    `;
+    historyEl.appendChild(item);
+  });
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+}
+</script>
+</body>
+</html>
