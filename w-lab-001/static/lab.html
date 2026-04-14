@@ -172,6 +172,21 @@ body{background:var(--bg);color:var(--txt);font-family:'JetBrains Mono','SF Mono
 .footer-brand{font-size:9px;color:var(--txt3);letter-spacing:.8px}
 .footer-seal{font-size:9px;color:var(--gold2)}
 
+/* MINI-GAMES SECTION */
+.minigames-section{margin-top:24px;width:100%;max-width:400px}
+.mg-title{font-size:9px;color:var(--txt3);letter-spacing:1.2px;margin-bottom:12px;text-align:center}
+.mg-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mg-card{display:flex;flex-direction:column;align-items:center;background:var(--bg2);border:1px solid var(--border);padding:16px 12px;text-decoration:none;color:inherit;cursor:pointer;transition:all .2s}
+.mg-card:hover{border-color:var(--gold);background:var(--bg3)}
+.mg-card.mg-disabled{opacity:.5;cursor:default;pointer-events:none}
+.mg-icon{font-size:24px;margin-bottom:8px}
+.mg-name{font-size:11px;font-weight:700;color:var(--txt);letter-spacing:1px;margin-bottom:4px}
+.mg-desc{font-size:10px;color:var(--txt3);line-height:1.4;text-align:center}
+.mg-badge{font-size:8px;margin-top:10px;padding:3px 8px;border:1px solid var(--gold2);color:var(--gold);letter-spacing:.5px}
+.mg-badge.mg-soon{border-color:var(--txt3);color:var(--txt3)}
+.mg-arch-link{display:block;margin-top:16px;font-size:10px;color:var(--txt3);text-decoration:none;transition:color .2s}
+.mg-arch-link:hover{color:var(--gold)}
+
 .hidden{display:none!important}
 </style>
 </head>
@@ -239,6 +254,26 @@ body{background:var(--bg);color:var(--txt);font-family:'JetBrains Mono','SF Mono
       <div class="ss-title" data-i18n="select_mode">Selecciona um modo acima para começar</div>
       <div class="ss-sub" data-i18n="lab_intro">O W-LAB é um ambiente de treino governado. Todas as sessões são rastreadas. Nenhuma sessão executa em produção.</div>
       <div class="ss-invariant" data-i18n="wl1">WL-I: Treino não pode fingir produção</div>
+
+      <!-- MINI-GAMES SECTION -->
+      <div class="minigames-section">
+        <div class="mg-title" data-i18n="minigames_title">MINI-GAMES · LAYER 01 · REFLEXO</div>
+        <div class="mg-grid">
+          <a href="/lab/static/farejador.html" class="mg-card">
+            <div class="mg-icon">🐺</div>
+            <div class="mg-name">FAREJADOR</div>
+            <div class="mg-desc" data-i18n="farejador_desc">Detecta armadilhas I9 em 30 segundos</div>
+            <div class="mg-badge" data-i18n="farejador_badge">Sistema 1</div>
+          </a>
+          <a href="/lab/static/architecture.html" class="mg-card mg-disabled">
+            <div class="mg-icon">🎯</div>
+            <div class="mg-name">ÁRBITRO</div>
+            <div class="mg-desc" data-i18n="arbitro_desc">GDPR vs DORA vs AI Act — 15s</div>
+            <div class="mg-badge mg-soon" data-i18n="coming_soon">Em breve</div>
+          </a>
+        </div>
+        <a href="/lab/static/architecture.html" class="mg-arch-link" data-i18n="view_architecture">Ver arquitectura educacional LOBO →</a>
+      </div>
     </div>
 
     <!-- SANDBOX AREA -->
@@ -491,6 +526,12 @@ const i18n = {
     select_mode: "Selecciona um modo acima para começar",
     lab_intro: "O W-LAB é um ambiente de treino governado. Todas as sessões são rastreadas. Nenhuma sessão executa em produção.",
     wl1: "WL-I: Treino não pode fingir produção",
+    minigames_title: "MINI-GAMES · LAYER 01 · REFLEXO",
+    farejador_desc: "Detecta armadilhas I9 em 30 segundos",
+    farejador_badge: "Sistema 1",
+    arbitro_desc: "GDPR vs DORA vs AI Act — 15s",
+    coming_soon: "Em breve",
+    view_architecture: "Ver arquitectura educacional LOBO →",
     sandbox_session: "SANDBOX · SESSÃO ACTIVA",
     start: "▶ INICIAR",
     end: "■ TERMINAR",
@@ -540,6 +581,12 @@ const i18n = {
     select_mode: "Wähle oben einen Modus zum Starten",
     lab_intro: "W-LAB ist eine regulierte Trainingsumgebung. Alle Sitzungen werden verfolgt. Keine Sitzung betrifft die Produktion.",
     wl1: "WL-I: Training kann Produktion nicht vortäuschen",
+    minigames_title: "MINI-GAMES · LAYER 01 · REFLEX",
+    farejador_desc: "Erkenne I9-Fallen in 30 Sekunden",
+    farejador_badge: "System 1",
+    arbitro_desc: "DSGVO vs DORA vs AI Act — 15s",
+    coming_soon: "Demnächst",
+    view_architecture: "LOBO Bildungsarchitektur ansehen →",
     sandbox_session: "SANDBOX · AKTIVE SITZUNG",
     start: "▶ STARTEN",
     end: "■ BEENDEN",
@@ -589,6 +636,12 @@ const i18n = {
     select_mode: "Select a mode above to start",
     lab_intro: "W-LAB is a governed training environment. All sessions are tracked. No session executes in production.",
     wl1: "WL-I: Training cannot pretend production",
+    minigames_title: "MINI-GAMES · LAYER 01 · REFLEX",
+    farejador_desc: "Detect I9 traps in 30 seconds",
+    farejador_badge: "System 1",
+    arbitro_desc: "GDPR vs DORA vs AI Act — 15s",
+    coming_soon: "Coming soon",
+    view_architecture: "View LOBO educational architecture →",
     sandbox_session: "SANDBOX · ACTIVE SESSION",
     start: "▶ START",
     end: "■ END",
