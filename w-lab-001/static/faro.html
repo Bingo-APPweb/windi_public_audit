@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FARO · W-LAB-001</title>
+<style>
+:root{
+  --bg:#0A0A10;--bg2:#12121A;--gold:#C9A84C;--txt:#E8E6E1;--txt2:#A09A8C;--txt3:#6B6560;
+  --border:#1A1A24;--danger:#E74C3C;--success:#27AE60;--warn:#E67E22;
+  --gdpr:#E74C3C;--dora:#9B59B6;--aiact:#3498DB;--fraud:#E67E22;--nothing:#27AE60;
+}
+[data-theme="klar"]{
+  --bg:#FAFAF8;--bg2:#F0EDE8;--gold:#8B7424;--txt:#1A1A1A;--txt2:#4A4640;--txt3:#8A857C;
+  --border:#E0DED8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.top-bar{display:flex;gap:8px;margin-bottom:24px}
+.toggle-btn{background:var(--bg2);border:1px solid var(--border);color:var(--txt2);padding:6px 12px;font-size:11px;cursor:pointer}
+.toggle-btn.active{color:var(--gold);border-color:var(--gold)}
+h1{font-size:28px;color:var(--gold);margin-bottom:4px;letter-spacing:2px}
+.subtitle{font-size:12px;color:var(--txt2);margin-bottom:24px;text-align:center}
+
+/* START SCREEN */
+.start-screen{text-align:center;max-width:500px}
+.wolf-icon{font-size:72px;margin-bottom:16px;filter:grayscale(0.3)}
+.tagline{font-size:14px;color:var(--txt2);margin-bottom:24px;font-style:italic}
+.concept-box{background:var(--bg2);border:1px solid var(--border);padding:20px;margin-bottom:24px;text-align:left}
+.concept-title{font-size:11px;color:var(--gold);letter-spacing:1px;margin-bottom:12px}
+.concept-text{font-size:13px;color:var(--txt2);line-height:1.6}
+.start-btn{background:var(--gold);color:var(--bg);border:none;padding:16px 48px;font-size:14px;font-weight:600;cursor:pointer;letter-spacing:1px;margin-top:16px}
+.start-btn:hover{filter:brightness(1.1)}
+
+/* GAME SCREEN */
+.game-screen{display:none;width:100%;max-width:700px}
+.game-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding:12px 16px;background:var(--bg2);border:1px solid var(--border)}
+.timer{font-size:24px;font-family:'JetBrains Mono',monospace;color:var(--gold)}
+.timer.warning{color:var(--warn)}
+.timer.danger{color:var(--danger);animation:pulse .5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.round-info{font-size:11px;color:var(--txt2);letter-spacing:1px}
+.lives{display:flex;gap:4px}
+.life{font-size:18px}
+.life.lost{opacity:.2}
+
+.scenario-box{background:var(--bg2);border:1px solid var(--border);padding:20px;margin-bottom:20px}
+.scenario-title{font-size:11px;color:var(--gold);letter-spacing:1px;margin-bottom:8px}
+.scenario-context{font-size:13px;color:var(--txt2);line-height:1.5}
+
+.signals-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:20px}
+.signal-card{background:var(--bg2);border:2px solid var(--border);padding:14px 16px;cursor:pointer;transition:all .2s;display:flex;align-items:flex-start;gap:12px}
+.signal-card:hover{border-color:var(--txt3)}
+.signal-card.selected{border-color:var(--gold);background:rgba(201,168,76,0.1)}
+.signal-card.correct{border-color:var(--success);background:rgba(39,174,96,0.1)}
+.signal-card.incorrect{border-color:var(--danger);background:rgba(231,76,60,0.1)}
+.signal-checkbox{width:20px;height:20px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px}
+.signal-card.selected .signal-checkbox{border-color:var(--gold);color:var(--gold)}
+.signal-text{font-size:13px;color:var(--txt);line-height:1.4}
+.signal-category{font-size:10px;color:var(--txt3);margin-top:4px;letter-spacing:0.5px}
+
+.prediction-section{background:var(--bg2);border:1px solid var(--border);padding:20px;margin-bottom:20px;display:none}
+.prediction-title{font-size:11px;color:var(--gold);letter-spacing:1px;margin-bottom:16px;text-align:center}
+.prediction-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.prediction-btn{background:var(--bg);border:2px solid var(--border);padding:14px;cursor:pointer;transition:all .2s;text-align:center}
+.prediction-btn:hover{border-color:var(--txt3)}
+.prediction-btn.selected{border-color:var(--gold)}
+.prediction-icon{font-size:24px;margin-bottom:6px}
+.prediction-label{font-size:12px;color:var(--txt)}
+.prediction-cost{font-size:10px;color:var(--txt3);margin-top:4px}
+.btn-gdpr{--accent:var(--gdpr)}.btn-gdpr.selected{border-color:var(--gdpr);background:rgba(231,76,60,0.1)}
+.btn-dora{--accent:var(--dora)}.btn-dora.selected{border-color:var(--dora);background:rgba(155,89,182,0.1)}
+.btn-aiact{--accent:var(--aiact)}.btn-aiact.selected{border-color:var(--aiact);background:rgba(52,152,219,0.1)}
+.btn-fraud{--accent:var(--fraud)}.btn-fraud.selected{border-color:var(--fraud);background:rgba(230,126,34,0.1)}
+.btn-nothing{--accent:var(--nothing)}.btn-nothing.selected{border-color:var(--nothing);background:rgba(39,174,96,0.1)}
+
+.submit-section{text-align:center}
+.submit-btn{background:var(--gold);color:var(--bg);border:none;padding:14px 40px;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:1px}
+.submit-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* RESULT SCREEN */
+.result-screen{display:none;text-align:center;max-width:500px}
+.result-icon{font-size:72px;margin-bottom:16px}
+.result-title{font-size:24px;color:var(--gold);margin-bottom:8px}
+.result-subtitle{font-size:14px;color:var(--txt2);margin-bottom:24px}
+.result-stats{background:var(--bg2);border:1px solid var(--border);padding:20px;margin-bottom:24px}
+.stat-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)}
+.stat-row:last-child{border:none}
+.stat-label{font-size:12px;color:var(--txt2)}
+.stat-value{font-size:14px;color:var(--gold);font-family:'JetBrains Mono',monospace}
+.explanation-box{background:var(--bg2);border:1px solid var(--border);padding:16px;margin-bottom:24px;text-align:left}
+.explanation-title{font-size:11px;color:var(--gold);letter-spacing:1px;margin-bottom:8px}
+.explanation-text{font-size:13px;color:var(--txt2);line-height:1.5}
+.next-btn{background:var(--gold);color:var(--bg);border:none;padding:14px 40px;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:1px}
+
+/* FINAL SCREEN */
+.final-screen{display:none;text-align:center;max-width:500px}
+.final-rank{font-size:14px;color:var(--gold);letter-spacing:2px;margin-bottom:8px}
+.final-message{font-size:16px;color:var(--txt2);margin-bottom:24px;line-height:1.6}
+.savings-box{background:linear-gradient(135deg,rgba(201,168,76,0.2),rgba(201,168,76,0.05));border:1px solid var(--gold);padding:24px;margin-bottom:24px}
+.savings-label{font-size:11px;color:var(--txt2);letter-spacing:1px;margin-bottom:8px}
+.savings-value{font-size:36px;color:var(--gold);font-family:'JetBrains Mono',monospace;font-weight:700}
+.savings-note{font-size:11px;color:var(--txt3);margin-top:8px}
+.play-again{background:var(--gold);color:var(--bg);border:none;padding:14px 40px;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:1px;margin-right:10px}
+.back-btn{background:transparent;border:1px solid var(--border);color:var(--txt2);padding:14px 24px;font-size:13px;cursor:pointer}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <button class="toggle-btn lang-btn active" data-lang="pt">PT</button>
+  <button class="toggle-btn lang-btn" data-lang="de">DE</button>
+  <button class="toggle-btn lang-btn" data-lang="en">EN</button>
+  <span style="width:20px"></span>
+  <button class="toggle-btn theme-btn" id="themeToggle">☀</button>
+</div>
+
+<h1>FARO</h1>
+<p class="subtitle" data-i18n="subtitle">O lobo fareja o vento antes da caçada</p>
+
+<!-- START SCREEN -->
+<div class="start-screen" id="startScreen">
+  <div class="wolf-icon">🐺</div>
+  <p class="tagline" data-i18n="tagline">"O perigo chega antes de ser visto."</p>
+
+  <div class="concept-box">
+    <div class="concept-title" data-i18n="concept_title">SISTEMA 1 · ANTECIPAÇÃO</div>
+    <p class="concept-text" data-i18n="concept_text">
+      Nenhum sinal é uma violação. Mas combinações de sinais fracos formam presságios de incidentes.
+      O teu trabalho: identificar os 3 sinais que, juntos, preveem o problema — antes dele existir.
+    </p>
+  </div>
+
+  <div class="concept-box">
+    <div class="concept-title" data-i18n="mechanics_title">MECÂNICA</div>
+    <p class="concept-text" data-i18n="mechanics_text">
+      1. Vês 4-6 sinais ambientais (nenhum é violação)<br>
+      2. Seleccionas 3 que formam um padrão<br>
+      3. Prevês o tipo de incidente que emerge<br>
+      4. Tempo: 60-90 segundos por ronda
+    </p>
+  </div>
+
+  <button class="start-btn" id="startBtn" data-i18n="start_btn">INICIAR FARO</button>
+</div>
+
+<!-- GAME SCREEN -->
+<div class="game-screen" id="gameScreen">
+  <div class="game-header">
+    <div class="round-info"><span data-i18n="round">RONDA</span> <span id="roundNum">1</span>/3</div>
+    <div class="timer" id="timer">90</div>
+    <div class="lives" id="lives">
+      <span class="life">🐺</span>
+      <span class="life">🐺</span>
+      <span class="life">🐺</span>
+    </div>
+  </div>
+
+  <div class="scenario-box">
+    <div class="scenario-title" data-i18n="scenario_title">SITUAÇÃO APARENTEMENTE NORMAL</div>
+    <p class="scenario-context" data-i18n="scenario_context">Uma empresa de tecnologia financeira opera normalmente. Nenhuma violação foi cometida. Mas estes sinais foram detectados:</p>
+  </div>
+
+  <div class="signals-grid" id="signalsGrid">
+    <!-- Signals inserted by JS -->
+  </div>
+
+  <div class="prediction-section" id="predictionSection">
+    <div class="prediction-title" data-i18n="prediction_title">O QUE VAI ACONTECER?</div>
+    <div class="prediction-grid">
+      <button class="prediction-btn btn-gdpr" data-outcome="GDPR_BREACH">
+        <div class="prediction-icon">🔓</div>
+        <div class="prediction-label" data-i18n="pred_gdpr">Violação GDPR</div>
+        <div class="prediction-cost">~€4.3M</div>
+      </button>
+      <button class="prediction-btn btn-dora" data-outcome="DORA_INCIDENT">
+        <div class="prediction-icon">⚡</div>
+        <div class="prediction-label" data-i18n="pred_dora">Incidente DORA</div>
+        <div class="prediction-cost">~€8.5M</div>
+      </button>
+      <button class="prediction-btn btn-aiact" data-outcome="AI_ACT_VIOLATION">
+        <div class="prediction-icon">🤖</div>
+        <div class="prediction-label" data-i18n="pred_aiact">Violação EU AI Act</div>
+        <div class="prediction-cost">~€35M</div>
+      </button>
+      <button class="prediction-btn btn-fraud" data-outcome="INTERNAL_FRAUD">
+        <div class="prediction-icon">👤</div>
+        <div class="prediction-label" data-i18n="pred_fraud">Fraude Interna</div>
+        <div class="prediction-cost">~€1.2M</div>
+      </button>
+      <button class="prediction-btn btn-nothing" data-outcome="NOTHING" style="grid-column:span 2">
+        <div class="prediction-icon">✓</div>
+        <div class="prediction-label" data-i18n="pred_nothing">Falso Alarme — Nada vai acontecer</div>
+        <div class="prediction-cost">€0</div>
+      </button>
+    </div>
+  </div>
+
+  <div class="submit-section">
+    <button class="submit-btn" id="submitBtn" disabled data-i18n="submit_btn">CONFIRMAR PREVISÃO</button>
+  </div>
+</div>
+
+<!-- RESULT SCREEN -->
+<div class="result-screen" id="resultScreen">
+  <div class="result-icon" id="resultIcon">✓</div>
+  <div class="result-title" id="resultTitle">Presságio Correcto</div>
+  <div class="result-subtitle" id="resultSubtitle">O teu faro detectou o padrão</div>
+
+  <div class="result-stats">
+    <div class="stat-row">
+      <span class="stat-label" data-i18n="your_selection">A tua selecção</span>
+      <span class="stat-value" id="yourSelection">S003, S010, S018</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label" data-i18n="correct_pattern">Padrão correcto</span>
+      <span class="stat-value" id="correctPattern">S003, S010, S018</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label" data-i18n="your_prediction">A tua previsão</span>
+      <span class="stat-value" id="yourPrediction">GDPR Breach</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label" data-i18n="actual_outcome">Resultado real</span>
+      <span class="stat-value" id="actualOutcome">GDPR Breach</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label" data-i18n="cost_avoided">Custo evitado</span>
+      <span class="stat-value" id="costAvoided">€4,300,000</span>
+    </div>
+  </div>
+
+  <div class="explanation-box" id="explanationBox">
+    <div class="explanation-title" data-i18n="why_title">PORQUE ESTE PADRÃO?</div>
+    <p class="explanation-text" id="explanationText">Queries nocturnas + acesso excessivo + exportação massiva = dados a sair</p>
+  </div>
+
+  <button class="next-btn" id="nextBtn" data-i18n="next_btn">PRÓXIMA RONDA</button>
+</div>
+
+<!-- FINAL SCREEN -->
+<div class="final-screen" id="finalScreen">
+  <div class="wolf-icon">🐺</div>
+  <div class="final-rank" id="finalRank">SENTINELA EMERGENTE</div>
+  <div class="result-title" id="finalTitle">Sessão Completa</div>
+  <div class="final-message" id="finalMessage">O teu faro detectou padrões antes de se tornarem problemas.</div>
+
+  <div class="savings-box">
+    <div class="savings-label" data-i18n="total_savings">CUSTO TOTAL EVITADO</div>
+    <div class="savings-value" id="totalSavings">€47,800,000</div>
+    <div class="savings-note" data-i18n="savings_note">Valor estimado se os incidentes tivessem ocorrido</div>
+  </div>
+
+  <div class="result-stats">
+    <div class="stat-row">
+      <span class="stat-label" data-i18n="patterns_detected">Padrões detectados</span>
+      <span class="stat-value" id="patternsDetected">2/3</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label" data-i18n="predictions_correct">Previsões correctas</span>
+      <span class="stat-value" id="predictionsCorrect">2/3</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label" data-i18n="avg_time">Tempo médio</span>
+      <span class="stat-value" id="avgTime">45s</span>
+    </div>
+  </div>
+
+  <div style="margin-top:24px">
+    <button class="play-again" id="playAgain" data-i18n="play_again">JOGAR NOVAMENTE</button>
+    <a href="/lab/static/lab.html" class="back-btn" data-i18n="back_lab">← VOLTAR AO LAB</a>
+  </div>
+</div>
+
+<script>
+// ============ i18n ============
+const i18n = {
+  pt: {
+    subtitle: "O lobo fareja o vento antes da caçada",
+    tagline: "\"O perigo chega antes de ser visto.\"",
+    concept_title: "SISTEMA 1 · ANTECIPAÇÃO",
+    concept_text: "Nenhum sinal é uma violação. Mas combinações de sinais fracos formam presságios de incidentes.\nO teu trabalho: identificar os 3 sinais que, juntos, preveem o problema — antes dele existir.",
+    mechanics_title: "MECÂNICA",
+    mechanics_text: "1. Vês 4-6 sinais ambientais (nenhum é violação)<br>2. Seleccionas 3 que formam um padrão<br>3. Prevês o tipo de incidente que emerge<br>4. Tempo: 60-90 segundos por ronda",
+    start_btn: "INICIAR FARO",
+    round: "RONDA",
+    scenario_title: "SITUAÇÃO APARENTEMENTE NORMAL",
+    scenario_context: "Uma empresa de tecnologia financeira opera normalmente. Nenhuma violação foi cometida. Mas estes sinais foram detectados:",
+    prediction_title: "O QUE VAI ACONTECER?",
+    pred_gdpr: "Violação GDPR",
+    pred_dora: "Incidente DORA",
+    pred_aiact: "Violação EU AI Act",
+    pred_fraud: "Fraude Interna",
+    pred_nothing: "Falso Alarme — Nada vai acontecer",
+    submit_btn: "CONFIRMAR PREVISÃO",
+    your_selection: "A tua selecção",
+    correct_pattern: "Padrão correcto",
+    your_prediction: "A tua previsão",
+    actual_outcome: "Resultado real",
+    cost_avoided: "Custo evitado",
+    why_title: "PORQUE ESTE PADRÃO?",
+    next_btn: "PRÓXIMA RONDA",
+    total_savings: "CUSTO TOTAL EVITADO",
+    savings_note: "Valor estimado se os incidentes tivessem ocorrido",
+    patterns_detected: "Padrões detectados",
+    predictions_correct: "Previsões correctas",
+    avg_time: "Tempo médio",
+    play_again: "JOGAR NOVAMENTE",
+    back_lab: "← VOLTAR AO LAB",
+    rank_wolf: "LOBO EM FORMAÇÃO",
+    rank_tracker: "RASTRO DETECTADO",
+    rank_sentinel: "SENTINELA EMERGENTE",
+    rank_alpha: "ALFA DA MATILHA",
+    correct_title: "Presságio Correcto",
+    correct_sub: "O teu faro detectou o padrão",
+    partial_title: "Padrão Parcial",
+    partial_sub: "Detectaste sinais mas erraste a previsão",
+    wrong_title: "Faro Errado",
+    wrong_sub: "Os sinais não formavam este padrão",
+    timeout_title: "Tempo Esgotado",
+    timeout_sub: "O incidente ocorreu antes da detecção",
+    final_complete: "Sessão Completa",
+    final_msg: "O teu faro detectou padrões antes de se tornarem problemas."
+  },
+  de: {
+    subtitle: "Der Wolf wittert den Wind vor der Jagd",
+    tagline: "\"Die Gefahr kommt, bevor sie gesehen wird.\"",
+    concept_title: "SYSTEM 1 · ANTIZIPATION",
+    concept_text: "Kein Signal ist eine Verletzung. Aber Kombinationen schwacher Signale bilden Vorzeichen von Vorfällen.\nDeine Aufgabe: Identifiziere die 3 Signale, die zusammen das Problem vorhersagen — bevor es existiert.",
+    mechanics_title: "MECHANIK",
+    mechanics_text: "1. Du siehst 4-6 Umgebungssignale (keines ist eine Verletzung)<br>2. Du wählst 3, die ein Muster bilden<br>3. Du sagst voraus, welcher Vorfall entsteht<br>4. Zeit: 60-90 Sekunden pro Runde",
+    start_btn: "FARO STARTEN",
+    round: "RUNDE",
+    scenario_title: "SCHEINBAR NORMALE SITUATION",
+    scenario_context: "Ein Fintech-Unternehmen arbeitet normal. Keine Verletzung wurde begangen. Aber diese Signale wurden erkannt:",
+    prediction_title: "WAS WIRD PASSIEREN?",
+    pred_gdpr: "DSGVO-Verstoß",
+    pred_dora: "DORA-Vorfall",
+    pred_aiact: "EU-KI-Gesetz Verstoß",
+    pred_fraud: "Interner Betrug",
+    pred_nothing: "Fehlalarm — Nichts wird passieren",
+    submit_btn: "VORHERSAGE BESTÄTIGEN",
+    your_selection: "Deine Auswahl",
+    correct_pattern: "Korrektes Muster",
+    your_prediction: "Deine Vorhersage",
+    actual_outcome: "Tatsächliches Ergebnis",
+    cost_avoided: "Vermiedene Kosten",
+    why_title: "WARUM DIESES MUSTER?",
+    next_btn: "NÄCHSTE RUNDE",
+    total_savings: "GESAMT VERMIEDENE KOSTEN",
+    savings_note: "Geschätzter Wert, wenn die Vorfälle eingetreten wären",
+    patterns_detected: "Erkannte Muster",
+    predictions_correct: "Korrekte Vorhersagen",
+    avg_time: "Durchschnittliche Zeit",
+    play_again: "ERNEUT SPIELEN",
+    back_lab: "← ZURÜCK ZUM LAB",
+    rank_wolf: "WOLF IN AUSBILDUNG",
+    rank_tracker: "SPUR ERKANNT",
+    rank_sentinel: "AUFSTREBENDER WÄCHTER",
+    rank_alpha: "ALPHA DES RUDELS",
+    correct_title: "Korrekte Vorahnung",
+    correct_sub: "Dein Gespür hat das Muster erkannt",
+    partial_title: "Teilmuster",
+    partial_sub: "Du hast Signale erkannt aber die Vorhersage verfehlt",
+    wrong_title: "Falsches Gespür",
+    wrong_sub: "Die Signale bildeten nicht dieses Muster",
+    timeout_title: "Zeit Abgelaufen",
+    timeout_sub: "Der Vorfall trat vor der Erkennung ein",
+    final_complete: "Sitzung Abgeschlossen",
+    final_msg: "Dein Gespür erkannte Muster, bevor sie zu Problemen wurden."
+  },
+  en: {
+    subtitle: "The wolf scents the wind before the hunt",
+    tagline: "\"Danger arrives before it's seen.\"",
+    concept_title: "SYSTEM 1 · ANTICIPATION",
+    concept_text: "No single signal is a violation. But combinations of weak signals form presages of incidents.\nYour task: identify the 3 signals that together predict the problem — before it exists.",
+    mechanics_title: "MECHANICS",
+    mechanics_text: "1. You see 4-6 environmental signals (none is a violation)<br>2. You select 3 that form a pattern<br>3. You predict which incident type emerges<br>4. Time: 60-90 seconds per round",
+    start_btn: "START FARO",
+    round: "ROUND",
+    scenario_title: "APPARENTLY NORMAL SITUATION",
+    scenario_context: "A fintech company operates normally. No violation has been committed. But these signals were detected:",
+    prediction_title: "WHAT WILL HAPPEN?",
+    pred_gdpr: "GDPR Breach",
+    pred_dora: "DORA Incident",
+    pred_aiact: "EU AI Act Violation",
+    pred_fraud: "Internal Fraud",
+    pred_nothing: "False Alarm — Nothing will happen",
+    submit_btn: "CONFIRM PREDICTION",
+    your_selection: "Your selection",
+    correct_pattern: "Correct pattern",
+    your_prediction: "Your prediction",
+    actual_outcome: "Actual outcome",
+    cost_avoided: "Cost avoided",
+    why_title: "WHY THIS PATTERN?",
+    next_btn: "NEXT ROUND",
+    total_savings: "TOTAL COST AVOIDED",
+    savings_note: "Estimated value if incidents had occurred",
+    patterns_detected: "Patterns detected",
+    predictions_correct: "Predictions correct",
+    avg_time: "Average time",
+    play_again: "PLAY AGAIN",
+    back_lab: "← BACK TO LAB",
+    rank_wolf: "WOLF IN TRAINING",
+    rank_tracker: "TRAIL DETECTED",
+    rank_sentinel: "EMERGING SENTINEL",
+    rank_alpha: "PACK ALPHA",
+    correct_title: "Correct Presage",
+    correct_sub: "Your scent detected the pattern",
+    partial_title: "Partial Pattern",
+    partial_sub: "You detected signals but missed the prediction",
+    wrong_title: "Wrong Scent",
+    wrong_sub: "The signals didn't form this pattern",
+    timeout_title: "Time Expired",
+    timeout_sub: "The incident occurred before detection",
+    final_complete: "Session Complete",
+    final_msg: "Your scent detected patterns before they became problems."
+  }
+};
+
+let currentLang = localStorage.getItem('windi-lang') || 'pt';
+let currentTheme = localStorage.getItem('windi-theme') || 'noir';
+
+function applyI18n() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (i18n[currentLang][key]) {
+      el.innerHTML = i18n[currentLang][key];
+    }
+  });
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('windi-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`[data-lang="${lang}"]`).classList.add('active');
+  applyI18n();
+}
+
+function setTheme(theme) {
+  currentTheme = theme;
+  localStorage.setItem('windi-theme', theme);
+  document.body.dataset.theme = theme;
+  document.getElementById('themeToggle').textContent = theme === 'noir' ? '☀' : '☽';
+}
+
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => setLang(btn.dataset.lang));
+});
+
+document.getElementById('themeToggle').addEventListener('click', () => {
+  setTheme(currentTheme === 'noir' ? 'klar' : 'noir');
+});
+
+// ============ SIGNAL BANK ============
+const incidentTypes = {
+  GDPR_BREACH: { name: { pt: "Violação GDPR", de: "DSGVO-Verstoß", en: "GDPR Breach" }, cost: 4300000 },
+  DORA_INCIDENT: { name: { pt: "Incidente DORA", de: "DORA-Vorfall", en: "DORA Incident" }, cost: 8500000 },
+  AI_ACT_VIOLATION: { name: { pt: "Violação EU AI Act", de: "EU-KI-Gesetz Verstoß", en: "EU AI Act Violation" }, cost: 35000000 },
+  INTERNAL_FRAUD: { name: { pt: "Fraude Interna", de: "Interner Betrug", en: "Internal Fraud" }, cost: 1200000 },
+  NOTHING: { name: { pt: "Falso Alarme", de: "Fehlalarm", en: "False Alarm" }, cost: 0 }
+};
+
+const signals = [
+  { id: "S001", text: { pt: "O agente AI respondeu 40% mais devagar esta semana", de: "Der KI-Agent antwortete diese Woche 40% langsamer", en: "The AI agent responded 40% slower this week" }, cat: "PERFORMANCE" },
+  { id: "S002", text: { pt: "Três chefes de equipa pediram transferência no mesmo mês", de: "Drei Teamleiter beantragten im selben Monat Versetzung", en: "Three team leads requested transfer in the same month" }, cat: "HR_PATTERN" },
+  { id: "S003", text: { pt: "Os logs do sistema mostram queries às 2h da manhã", de: "Systemprotokolle zeigen Abfragen um 2 Uhr nachts", en: "System logs show queries at 2 AM" }, cat: "ACCESS_ANOMALY" },
+  { id: "S004", text: { pt: "Um novo endpoint foi criado sem ticket de aprovação", de: "Ein neuer Endpoint wurde ohne Genehmigungsticket erstellt", en: "A new endpoint was created without approval ticket" }, cat: "PROCESS_SKIP" },
+  { id: "S005", text: { pt: "O DPO não foi incluído num email de 'rotina'", de: "Der DSB wurde in einer 'Routine'-E-Mail nicht einbezogen", en: "The DPO was not included in a 'routine' email" }, cat: "GOVERNANCE_GAP" },
+  { id: "S006", text: { pt: "O report mensal foi entregue com 4 dias de atraso", de: "Der Monatsbericht wurde 4 Tage verspätet eingereicht", en: "The monthly report was delivered 4 days late" }, cat: "DEADLINE_MISS" },
+  { id: "S007", text: { pt: "O modelo AI foi actualizado sem re-validação de bias", de: "Das KI-Modell wurde ohne Bias-Revalidierung aktualisiert", en: "The AI model was updated without bias re-validation" }, cat: "AI_GOVERNANCE" },
+  { id: "S008", text: { pt: "Um fornecedor cloud mudou os termos de serviço", de: "Ein Cloud-Anbieter änderte die Nutzungsbedingungen", en: "A cloud vendor changed their terms of service" }, cat: "THIRD_PARTY" },
+  { id: "S009", text: { pt: "O backup de ontem falhou silenciosamente", de: "Das gestrige Backup ist stillschweigend fehlgeschlagen", en: "Yesterday's backup failed silently" }, cat: "INFRA_FAILURE" },
+  { id: "S010", text: { pt: "Dois developers têm acesso admin à base de dados de clientes", de: "Zwei Entwickler haben Admin-Zugriff auf die Kundendatenbank", en: "Two developers have admin access to customer database" }, cat: "ACCESS_CREEP" },
+  { id: "S011", text: { pt: "O CEO perguntou 'quanto tempo até lançarmos?' três vezes esta semana", de: "Der CEO fragte diese Woche dreimal 'Wann launchen wir?'", en: "The CEO asked 'how soon can we launch?' three times this week" }, cat: "PRESSURE_SIGNAL" },
+  { id: "S012", text: { pt: "A documentação do sistema não foi actualizada há 6 meses", de: "Die Systemdokumentation wurde seit 6 Monaten nicht aktualisiert", en: "System documentation hasn't been updated in 6 months" }, cat: "DOCUMENTATION_DEBT" },
+  { id: "S013", text: { pt: "O consent banner mudou sem aprovação legal", de: "Das Einwilligungsbanner wurde ohne rechtliche Genehmigung geändert", en: "The consent banner changed without legal approval" }, cat: "CONSENT_ISSUE" },
+  { id: "S014", text: { pt: "Um estagiário foi adicionado ao grupo Slack de compliance", de: "Ein Praktikant wurde zur Compliance-Slack-Gruppe hinzugefügt", en: "An intern was added to the compliance Slack group" }, cat: "ACCESS_ANOMALY" },
+  { id: "S015", text: { pt: "O sistema de logging está 80% cheio", de: "Das Logging-System ist zu 80% voll", en: "The logging system is 80% full" }, cat: "CAPACITY_WARNING" },
+  { id: "S016", text: { pt: "O fornecedor de AI não respondeu ao questionário de compliance há 30 dias", de: "Der KI-Anbieter hat den Compliance-Fragebogen seit 30 Tagen nicht beantwortet", en: "The AI vendor hasn't responded to compliance questionnaire in 30 days" }, cat: "THIRD_PARTY" },
+  { id: "S017", text: { pt: "O modelo AI fez 3 decisões que foram revertidas manualmente", de: "Das KI-Modell traf 3 Entscheidungen, die manuell rückgängig gemacht wurden", en: "The AI model made 3 decisions that were manually reversed" }, cat: "AI_GOVERNANCE" },
+  { id: "S018", text: { pt: "Alguém exportou a lista completa de clientes para Excel", de: "Jemand exportierte die vollständige Kundenliste nach Excel", en: "Someone exported the full customer list to Excel" }, cat: "DATA_EXFIL" },
+  { id: "S019", text: { pt: "O seguro de responsabilidade civil do fornecedor expirou", de: "Die Haftpflichtversicherung des Anbieters ist abgelaufen", en: "The vendor's liability insurance has expired" }, cat: "THIRD_PARTY" },
+  { id: "S020", text: { pt: "O último penetration test foi há 14 meses", de: "Der letzte Penetrationstest war vor 14 Monaten", en: "The last penetration test was 14 months ago" }, cat: "SECURITY_DEBT" },
+  { id: "S021", text: { pt: "O Chief Risk Officer está de licença há 3 semanas", de: "Der Chief Risk Officer ist seit 3 Wochen im Urlaub", en: "The Chief Risk Officer has been on leave for 3 weeks" }, cat: "GOVERNANCE_GAP" },
+  { id: "S022", text: { pt: "Três alertas de monitorização foram ignorados como 'falsos positivos'", de: "Drei Monitoring-Alarme wurden als 'Fehlalarme' ignoriert", en: "Three monitoring alerts were dismissed as 'false positives'" }, cat: "ALERT_FATIGUE" },
+  { id: "S023", text: { pt: "O sistema de AI começou a recusar pedidos sem explicação clara", de: "Das KI-System begann Anfragen ohne klare Erklärung abzulehnen", en: "The AI system started refusing requests without clear explanation" }, cat: "AI_GOVERNANCE" },
+  { id: "S024", text: { pt: "Um script Python desconhecido foi encontrado no servidor de produção", de: "Ein unbekanntes Python-Skript wurde auf dem Produktionsserver gefunden", en: "An unknown Python script was found on the production server" }, cat: "SECURITY_ANOMALY" }
+];
+
+const combinations = [
+  { id: "C001", signals: ["S003", "S010", "S018"], outcome: "GDPR_BREACH", explanation: { pt: "Queries nocturnas + acesso excessivo + exportação massiva = dados a sair", de: "Nächtliche Abfragen + übermäßiger Zugriff + Massenexport = Daten werden abgezogen", en: "Nocturnal queries + excessive access + mass export = data leaving" } },
+  { id: "C002", signals: ["S007", "S017", "S023"], outcome: "AI_ACT_VIOLATION", explanation: { pt: "Modelo actualizado sem validação + decisões revertidas + recusas opacas = I9 violado", de: "Modell ohne Validierung aktualisiert + rückgängig gemachte Entscheidungen + undurchsichtige Ablehnungen = I9 verletzt", en: "Model updated without validation + reversed decisions + opaque refusals = I9 violated" } },
+  { id: "C003", signals: ["S005", "S011", "S013"], outcome: "GDPR_BREACH", explanation: { pt: "DPO excluído + pressão do CEO + consent alterado = compliance sacrificado", de: "DSB ausgeschlossen + CEO-Druck + Einwilligung geändert = Compliance geopfert", en: "DPO excluded + CEO pressure + consent changed = compliance sacrificed" } },
+  { id: "C004", signals: ["S008", "S016", "S019"], outcome: "DORA_INCIDENT", explanation: { pt: "Termos mudados + sem resposta compliance + seguro expirado = risco terceiros", de: "Geänderte Bedingungen + keine Compliance-Antwort + abgelaufene Versicherung = Drittparteirisiko", en: "Changed terms + no compliance response + expired insurance = third party risk" } },
+  { id: "C005", signals: ["S009", "S015", "S022"], outcome: "DORA_INCIDENT", explanation: { pt: "Backup falhou + logs cheios + alertas ignorados = cegueira operacional", de: "Backup fehlgeschlagen + Protokolle voll + Alarme ignoriert = betriebliche Blindheit", en: "Backup failed + logs full + alerts ignored = operational blindness" } },
+  { id: "C006", signals: ["S002", "S003", "S018"], outcome: "INTERNAL_FRAUD", explanation: { pt: "Líderes a sair + queries nocturnas + exportação dados = preparação de saída", de: "Führungskräfte verlassen + nächtliche Abfragen + Datenexport = Austrittsvorbereitung", en: "Leaders leaving + nocturnal queries + data export = exit preparation" } },
+  { id: "C007", signals: ["S001", "S007", "S016"], outcome: "AI_ACT_VIOLATION", explanation: { pt: "Performance alterada + update sem validação + fornecedor silencioso = modelo fora de controlo", de: "Geänderte Leistung + Update ohne Validierung + stiller Anbieter = Modell außer Kontrolle", en: "Changed performance + update without validation + silent vendor = model out of control" } },
+  { id: "C008", signals: ["S002", "S021", "S006"], outcome: "DORA_INCIDENT", explanation: { pt: "Líderes a sair + CRO ausente + reports atrasados = governance sem cabeça", de: "Führungskräfte verlassen + CRO abwesend + verspätete Berichte = kopflose Governance", en: "Leaders leaving + CRO absent + delayed reports = headless governance" } },
+  { id: "C009", signals: ["S006", "S012", "S014"], outcome: "NOTHING", explanation: { pt: "Report atrasado + docs desactualizados + estagiário adicionado = operação normal", de: "Verspäteter Bericht + veraltete Dokumentation + Praktikant hinzugefügt = normaler Betrieb", en: "Delayed report + outdated docs + intern added = normal operation" } },
+  { id: "C010", signals: ["S003", "S020", "S024"], outcome: "DORA_INCIDENT", explanation: { pt: "Queries 2h + pentest antigo + script desconhecido = comprometimento em curso", de: "2-Uhr-Abfragen + alter Pentest + unbekanntes Skript = laufende Kompromittierung", en: "2AM queries + old pentest + unknown script = active compromise" } }
+];
+
+const difficulty = [
+  { signals: 4, time: 90 },
+  { signals: 5, time: 75 },
+  { signals: 6, time: 60 }
+];
+
+// ============ GAME STATE ============
+let gameState = {
+  round: 0,
+  lives: 3,
+  totalSavings: 0,
+  patternsDetected: 0,
+  predictionsCorrect: 0,
+  times: [],
+  currentCombo: null,
+  currentSignals: [],
+  selectedSignals: [],
+  selectedOutcome: null,
+  timer: 0,
+  timerInterval: null
+};
+
+// ============ GAME LOGIC ============
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startGame() {
+  gameState = {
+    round: 0,
+    lives: 3,
+    totalSavings: 0,
+    patternsDetected: 0,
+    predictionsCorrect: 0,
+    times: [],
+    currentCombo: null,
+    currentSignals: [],
+    selectedSignals: [],
+    selectedOutcome: null,
+    timer: 0,
+    timerInterval: null
+  };
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('finalScreen').style.display = 'none';
+  nextRound();
+}
+
+function nextRound() {
+  gameState.round++;
+  if (gameState.round > 3 || gameState.lives <= 0) {
+    showFinal();
+    return;
+  }
+
+  gameState.selectedSignals = [];
+  gameState.selectedOutcome = null;
+
+  // Pick a random combination
+  const availableCombos = shuffle(combinations);
+  gameState.currentCombo = availableCombos[0];
+
+  // Get correct signals plus distractors
+  const d = difficulty[gameState.round - 1];
+  const correctIds = gameState.currentCombo.signals;
+  const correctSignals = signals.filter(s => correctIds.includes(s.id));
+  const otherSignals = signals.filter(s => !correctIds.includes(s.id));
+  const distractors = shuffle(otherSignals).slice(0, d.signals - 3);
+
+  gameState.currentSignals = shuffle([...correctSignals, ...distractors]);
+  gameState.timer = d.time;
+
+  renderGame();
+}
+
+function renderGame() {
+  document.getElementById('gameScreen').style.display = 'block';
+  document.getElementById('resultScreen').style.display = 'none';
+
+  document.getElementById('roundNum').textContent = gameState.round;
+
+  // Lives
+  const livesEl = document.getElementById('lives');
+  livesEl.innerHTML = '';
+  for (let i = 0; i < 3; i++) {
+    const span = document.createElement('span');
+    span.className = 'life' + (i >= gameState.lives ? ' lost' : '');
+    span.textContent = '🐺';
+    livesEl.appendChild(span);
+  }
+
+  // Signals
+  const grid = document.getElementById('signalsGrid');
+  grid.innerHTML = '';
+  gameState.currentSignals.forEach((sig, idx) => {
+    const card = document.createElement('div');
+    card.className = 'signal-card';
+    card.dataset.id = sig.id;
+    card.innerHTML = `
+      <div class="signal-checkbox"></div>
+      <div>
+        <div class="signal-text">${sig.text[currentLang]}</div>
+        <div class="signal-category">${sig.cat}</div>
+      </div>
+    `;
+    card.addEventListener('click', () => toggleSignal(sig.id, card));
+    grid.appendChild(card);
+  });
+
+  // Hide prediction until 3 signals selected
+  document.getElementById('predictionSection').style.display = 'none';
+  document.getElementById('submitBtn').disabled = true;
+
+  // Reset prediction buttons
+  document.querySelectorAll('.prediction-btn').forEach(b => b.classList.remove('selected'));
+  document.querySelectorAll('.prediction-btn').forEach(btn => {
+    btn.onclick = () => selectOutcome(btn.dataset.outcome);
+  });
+
+  startTimer();
+}
+
+function toggleSignal(id, card) {
+  const idx = gameState.selectedSignals.indexOf(id);
+  if (idx === -1) {
+    if (gameState.selectedSignals.length >= 3) return;
+    gameState.selectedSignals.push(id);
+    card.classList.add('selected');
+    card.querySelector('.signal-checkbox').textContent = '✓';
+  } else {
+    gameState.selectedSignals.splice(idx, 1);
+    card.classList.remove('selected');
+    card.querySelector('.signal-checkbox').textContent = '';
+  }
+
+  if (gameState.selectedSignals.length === 3) {
+    document.getElementById('predictionSection').style.display = 'block';
+  } else {
+    document.getElementById('predictionSection').style.display = 'none';
+    gameState.selectedOutcome = null;
+    document.querySelectorAll('.prediction-btn').forEach(b => b.classList.remove('selected'));
+    document.getElementById('submitBtn').disabled = true;
+  }
+}
+
+function selectOutcome(outcome) {
+  gameState.selectedOutcome = outcome;
+  document.querySelectorAll('.prediction-btn').forEach(b => b.classList.remove('selected'));
+  document.querySelector(`[data-outcome="${outcome}"]`).classList.add('selected');
+  document.getElementById('submitBtn').disabled = false;
+}
+
+function startTimer() {
+  const timerEl = document.getElementById('timer');
+  timerEl.textContent = gameState.timer;
+  timerEl.classList.remove('warning', 'danger');
+
+  if (gameState.timerInterval) clearInterval(gameState.timerInterval);
+
+  gameState.timerInterval = setInterval(() => {
+    gameState.timer--;
+    timerEl.textContent = gameState.timer;
+
+    if (gameState.timer <= 15) timerEl.classList.add('warning');
+    if (gameState.timer <= 5) timerEl.classList.add('danger');
+
+    if (gameState.timer <= 0) {
+      clearInterval(gameState.timerInterval);
+      submitAnswer(true);
+    }
+  }, 1000);
+}
+
+document.getElementById('submitBtn').addEventListener('click', () => submitAnswer(false));
+
+function submitAnswer(timeout) {
+  clearInterval(gameState.timerInterval);
+
+  const d = difficulty[gameState.round - 1];
+  const timeUsed = d.time - gameState.timer;
+  gameState.times.push(timeUsed);
+
+  const correctIds = gameState.currentCombo.signals.sort();
+  const selectedIds = gameState.selectedSignals.sort();
+  const correctOutcome = gameState.currentCombo.outcome;
+  const cost = incidentTypes[correctOutcome].cost;
+
+  const patternMatch = JSON.stringify(correctIds) === JSON.stringify(selectedIds);
+  const outcomeMatch = gameState.selectedOutcome === correctOutcome;
+
+  let resultType;
+  if (timeout) {
+    resultType = 'timeout';
+    gameState.lives--;
+  } else if (patternMatch && outcomeMatch) {
+    resultType = 'correct';
+    gameState.patternsDetected++;
+    gameState.predictionsCorrect++;
+    gameState.totalSavings += cost;
+  } else if (patternMatch && !outcomeMatch) {
+    resultType = 'partial';
+    gameState.patternsDetected++;
+    gameState.lives--;
+  } else {
+    resultType = 'wrong';
+    gameState.lives--;
+  }
+
+  showResult(resultType, correctIds, correctOutcome, cost);
+}
+
+function showResult(type, correctIds, correctOutcome, cost) {
+  document.getElementById('gameScreen').style.display = 'none';
+  document.getElementById('resultScreen').style.display = 'block';
+
+  const lang = i18n[currentLang];
+  const iconEl = document.getElementById('resultIcon');
+  const titleEl = document.getElementById('resultTitle');
+  const subEl = document.getElementById('resultSubtitle');
+
+  if (type === 'correct') {
+    iconEl.textContent = '✓';
+    iconEl.style.color = 'var(--success)';
+    titleEl.textContent = lang.correct_title;
+    subEl.textContent = lang.correct_sub;
+  } else if (type === 'partial') {
+    iconEl.textContent = '◐';
+    iconEl.style.color = 'var(--warn)';
+    titleEl.textContent = lang.partial_title;
+    subEl.textContent = lang.partial_sub;
+  } else if (type === 'timeout') {
+    iconEl.textContent = '⏱';
+    iconEl.style.color = 'var(--danger)';
+    titleEl.textContent = lang.timeout_title;
+    subEl.textContent = lang.timeout_sub;
+  } else {
+    iconEl.textContent = '✗';
+    iconEl.style.color = 'var(--danger)';
+    titleEl.textContent = lang.wrong_title;
+    subEl.textContent = lang.wrong_sub;
+  }
+
+  document.getElementById('yourSelection').textContent = gameState.selectedSignals.join(', ') || '—';
+  document.getElementById('correctPattern').textContent = correctIds.join(', ');
+  document.getElementById('yourPrediction').textContent = gameState.selectedOutcome ? incidentTypes[gameState.selectedOutcome].name[currentLang] : '—';
+  document.getElementById('actualOutcome').textContent = incidentTypes[correctOutcome].name[currentLang];
+  document.getElementById('costAvoided').textContent = type === 'correct' ? `€${cost.toLocaleString()}` : '€0';
+  document.getElementById('explanationText').textContent = gameState.currentCombo.explanation[currentLang];
+
+  // Highlight signals
+  document.querySelectorAll('.signal-card').forEach(card => {
+    const id = card.dataset.id;
+    if (correctIds.includes(id)) {
+      card.classList.add('correct');
+    } else if (gameState.selectedSignals.includes(id)) {
+      card.classList.add('incorrect');
+    }
+  });
+}
+
+document.getElementById('nextBtn').addEventListener('click', nextRound);
+
+function showFinal() {
+  document.getElementById('gameScreen').style.display = 'none';
+  document.getElementById('resultScreen').style.display = 'none';
+  document.getElementById('finalScreen').style.display = 'block';
+
+  const lang = i18n[currentLang];
+
+  // Rank
+  const score = gameState.patternsDetected + gameState.predictionsCorrect;
+  let rank;
+  if (score >= 5) rank = lang.rank_alpha;
+  else if (score >= 4) rank = lang.rank_sentinel;
+  else if (score >= 2) rank = lang.rank_tracker;
+  else rank = lang.rank_wolf;
+
+  document.getElementById('finalRank').textContent = rank;
+  document.getElementById('finalTitle').textContent = lang.final_complete;
+  document.getElementById('finalMessage').textContent = lang.final_msg;
+  document.getElementById('totalSavings').textContent = `€${gameState.totalSavings.toLocaleString()}`;
+  document.getElementById('patternsDetected').textContent = `${gameState.patternsDetected}/3`;
+  document.getElementById('predictionsCorrect').textContent = `${gameState.predictionsCorrect}/3`;
+
+  const avgTime = gameState.times.length ? Math.round(gameState.times.reduce((a,b) => a+b, 0) / gameState.times.length) : 0;
+  document.getElementById('avgTime').textContent = `${avgTime}s`;
+}
+
+document.getElementById('playAgain').addEventListener('click', startGame);
+document.getElementById('startBtn').addEventListener('click', startGame);
+
+// ============ INIT ============
+setTheme(currentTheme);
+setLang(currentLang);
+</script>
+
+</body>
+</html>

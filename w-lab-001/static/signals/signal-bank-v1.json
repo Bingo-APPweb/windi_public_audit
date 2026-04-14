@@ -1,0 +1,450 @@
+{
+  "version": "1.0.0",
+  "created": "2026-04-14",
+  "description": "WINDI Signal Bank — Weak signals that precede governance incidents",
+  "philosophy": "No single signal is a violation. Combinations create presages.",
+
+  "incident_types": {
+    "GDPR_BREACH": {
+      "name": { "pt": "Violação GDPR", "de": "DSGVO-Verstoß", "en": "GDPR Breach" },
+      "avg_cost_eur": 4300000,
+      "detection_window_hours": 72,
+      "color": "#E74C3C"
+    },
+    "DORA_INCIDENT": {
+      "name": { "pt": "Incidente DORA", "de": "DORA-Vorfall", "en": "DORA Incident" },
+      "avg_cost_eur": 8500000,
+      "detection_window_hours": 48,
+      "color": "#9B59B6"
+    },
+    "AI_ACT_VIOLATION": {
+      "name": { "pt": "Violação EU AI Act", "de": "EU-KI-Gesetz Verstoß", "en": "EU AI Act Violation" },
+      "avg_cost_eur": 35000000,
+      "detection_window_hours": 168,
+      "color": "#3498DB"
+    },
+    "INTERNAL_FRAUD": {
+      "name": { "pt": "Fraude Interna", "de": "Interner Betrug", "en": "Internal Fraud" },
+      "avg_cost_eur": 1200000,
+      "detection_window_hours": 96,
+      "color": "#E67E22"
+    },
+    "NOTHING": {
+      "name": { "pt": "Falso Alarme", "de": "Fehlalarm", "en": "False Alarm" },
+      "avg_cost_eur": 0,
+      "detection_window_hours": 0,
+      "color": "#27AE60"
+    }
+  },
+
+  "signals": [
+    {
+      "id": "S001",
+      "text": {
+        "pt": "O agente AI respondeu 40% mais devagar esta semana",
+        "de": "Der KI-Agent antwortete diese Woche 40% langsamer",
+        "en": "The AI agent responded 40% slower this week"
+      },
+      "category": "PERFORMANCE",
+      "severity": 2,
+      "alone_means": "NOTHING"
+    },
+    {
+      "id": "S002",
+      "text": {
+        "pt": "Três chefes de equipa pediram transferência no mesmo mês",
+        "de": "Drei Teamleiter beantragten im selben Monat Versetzung",
+        "en": "Three team leads requested transfer in the same month"
+      },
+      "category": "HR_PATTERN",
+      "severity": 3,
+      "alone_means": "NOTHING"
+    },
+    {
+      "id": "S003",
+      "text": {
+        "pt": "Os logs do sistema mostram queries às 2h da manhã",
+        "de": "Systemprotokolle zeigen Abfragen um 2 Uhr nachts",
+        "en": "System logs show queries at 2 AM"
+      },
+      "category": "ACCESS_ANOMALY",
+      "severity": 3,
+      "alone_means": "NOTHING"
+    },
+    {
+      "id": "S004",
+      "text": {
+        "pt": "Um novo endpoint foi criado sem ticket de aprovação",
+        "de": "Ein neuer Endpoint wurde ohne Genehmigungsticket erstellt",
+        "en": "A new endpoint was created without approval ticket"
+      },
+      "category": "PROCESS_SKIP",
+      "severity": 4,
+      "alone_means": "NOTHING"
+    },
+    {
+      "id": "S005",
+      "text": {
+        "pt": "O DPO não foi incluído num email de 'rotina'",
+        "de": "Der DSB wurde in einer 'Routine'-E-Mail nicht einbezogen",
+        "en": "The DPO was not included in a 'routine' email"
+      },
+      "category": "GOVERNANCE_GAP",
+      "severity": 4,
+      "alone_means": "NOTHING"
+    },
+    {
+      "id": "S006",
+      "text": {
+        "pt": "O report mensal foi entregue com 4 dias de atraso",
+        "de": "Der Monatsbericht wurde 4 Tage verspätet eingereicht",
+        "en": "The monthly report was delivered 4 days late"
+      },
+      "category": "DEADLINE_MISS",
+      "severity": 2,
+      "alone_means": "NOTHING"
+    },
+    {
+      "id": "S007",
+      "text": {
+        "pt": "O modelo AI foi actualizado sem re-validação de bias",
+        "de": "Das KI-Modell wurde ohne Bias-Revalidierung aktualisiert",
+        "en": "The AI model was updated without bias re-validation"
+      },
+      "category": "AI_GOVERNANCE",
+      "severity": 5,
+      "alone_means": "NOTHING"
+    },
+    {
+      "id": "S008",
+      "text": {
+        "pt": "Um fornecedor cloud mudou os termos de serviço",
+        "de": "Ein Cloud-Anbieter änderte die Nutzungsbedingungen",
+        "en": "A cloud vendor changed their terms of service"
+      },
+      "category": "THIRD_PARTY",
+      "severity": 2,
+      "alone_means": "NOTHING"
+    },
+    {
+      "id": "S009",
+      "text": {
+        "pt": "O backup de ontem falhou silenciosamente",
+        "de": "Das gestrige Backup ist stillschweigend fehlgeschlagen",
+        "en": "Yesterday's backup failed silently"
+      },
+      "category": "INFRA_FAILURE",
+      "severity": 4,
+      "alone_means": "NOTHING"
+    },
+    {
+      "id": "S010",
+      "text": {
+        "pt": "Dois developers têm acesso admin à base de dados de clientes",
+        "de": "Zwei Entwickler haben Admin-Zugriff auf die Kundendatenbank",
+        "en": "Two developers have admin access to customer database"
+      },
+      "category": "ACCESS_CREEP",
+      "severity": 4,
+      "alone_means": "NOTHING"
+    },
+    {
+      "id": "S011",
+      "text": {
+        "pt": "O CEO perguntou 'quanto tempo até lançarmos?' três vezes esta semana",
+        "de": "Der CEO fragte diese Woche dreimal 'Wann launchen wir?'",
+        "en": "The CEO asked 'how soon can we launch?' three times this week"
+      },
+      "category": "PRESSURE_SIGNAL",
+      "severity": 3,
+      "alone_means": "NOTHING"
+    },
+    {
+      "id": "S012",
+      "text": {
+        "pt": "A documentação do sistema não foi actualizada há 6 meses",
+        "de": "Die Systemdokumentation wurde seit 6 Monaten nicht aktualisiert",
+        "en": "System documentation hasn't been updated in 6 months"
+      },
+      "category": "DOCUMENTATION_DEBT",
+      "severity": 2,
+      "alone_means": "NOTHING"
+    },
+    {
+      "id": "S013",
+      "text": {
+        "pt": "O consent banner mudou sem aprovação legal",
+        "de": "Das Einwilligungsbanner wurde ohne rechtliche Genehmigung geändert",
+        "en": "The consent banner changed without legal approval"
+      },
+      "category": "CONSENT_ISSUE",
+      "severity": 5,
+      "alone_means": "NOTHING"
+    },
+    {
+      "id": "S014",
+      "text": {
+        "pt": "Um estagiário foi adicionado ao grupo Slack de compliance",
+        "de": "Ein Praktikant wurde zur Compliance-Slack-Gruppe hinzugefügt",
+        "en": "An intern was added to the compliance Slack group"
+      },
+      "category": "ACCESS_ANOMALY",
+      "severity": 2,
+      "alone_means": "NOTHING"
+    },
+    {
+      "id": "S015",
+      "text": {
+        "pt": "O sistema de logging está 80% cheio",
+        "de": "Das Logging-System ist zu 80% voll",
+        "en": "The logging system is 80% full"
+      },
+      "category": "CAPACITY_WARNING",
+      "severity": 3,
+      "alone_means": "NOTHING"
+    },
+    {
+      "id": "S016",
+      "text": {
+        "pt": "O fornecedor de AI não respondeu ao questionário de compliance há 30 dias",
+        "de": "Der KI-Anbieter hat den Compliance-Fragebogen seit 30 Tagen nicht beantwortet",
+        "en": "The AI vendor hasn't responded to compliance questionnaire in 30 days"
+      },
+      "category": "THIRD_PARTY",
+      "severity": 4,
+      "alone_means": "NOTHING"
+    },
+    {
+      "id": "S017",
+      "text": {
+        "pt": "O modelo AI fez 3 decisões que foram revertidas manualmente",
+        "de": "Das KI-Modell traf 3 Entscheidungen, die manuell rückgängig gemacht wurden",
+        "en": "The AI model made 3 decisions that were manually reversed"
+      },
+      "category": "AI_GOVERNANCE",
+      "severity": 4,
+      "alone_means": "NOTHING"
+    },
+    {
+      "id": "S018",
+      "text": {
+        "pt": "Alguém exportou a lista completa de clientes para Excel",
+        "de": "Jemand exportierte die vollständige Kundenliste nach Excel",
+        "en": "Someone exported the full customer list to Excel"
+      },
+      "category": "DATA_EXFIL",
+      "severity": 5,
+      "alone_means": "NOTHING"
+    },
+    {
+      "id": "S019",
+      "text": {
+        "pt": "O seguro de responsabilidade civil do fornecedor expirou",
+        "de": "Die Haftpflichtversicherung des Anbieters ist abgelaufen",
+        "en": "The vendor's liability insurance has expired"
+      },
+      "category": "THIRD_PARTY",
+      "severity": 3,
+      "alone_means": "NOTHING"
+    },
+    {
+      "id": "S020",
+      "text": {
+        "pt": "O último penetration test foi há 14 meses",
+        "de": "Der letzte Penetrationstest war vor 14 Monaten",
+        "en": "The last penetration test was 14 months ago"
+      },
+      "category": "SECURITY_DEBT",
+      "severity": 4,
+      "alone_means": "NOTHING"
+    },
+    {
+      "id": "S021",
+      "text": {
+        "pt": "O Chief Risk Officer está de licença há 3 semanas",
+        "de": "Der Chief Risk Officer ist seit 3 Wochen im Urlaub",
+        "en": "The Chief Risk Officer has been on leave for 3 weeks"
+      },
+      "category": "GOVERNANCE_GAP",
+      "severity": 3,
+      "alone_means": "NOTHING"
+    },
+    {
+      "id": "S022",
+      "text": {
+        "pt": "Três alertas de monitorização foram ignorados como 'falsos positivos'",
+        "de": "Drei Monitoring-Alarme wurden als 'Fehlalarme' ignoriert",
+        "en": "Three monitoring alerts were dismissed as 'false positives'"
+      },
+      "category": "ALERT_FATIGUE",
+      "severity": 4,
+      "alone_means": "NOTHING"
+    },
+    {
+      "id": "S023",
+      "text": {
+        "pt": "O sistema de AI começou a recusar pedidos sem explicação clara",
+        "de": "Das KI-System begann Anfragen ohne klare Erklärung abzulehnen",
+        "en": "The AI system started refusing requests without clear explanation"
+      },
+      "category": "AI_GOVERNANCE",
+      "severity": 5,
+      "alone_means": "NOTHING"
+    },
+    {
+      "id": "S024",
+      "text": {
+        "pt": "Um script Python desconhecido foi encontrado no servidor de produção",
+        "de": "Ein unbekanntes Python-Skript wurde auf dem Produktionsserver gefunden",
+        "en": "An unknown Python script was found on the production server"
+      },
+      "category": "SECURITY_ANOMALY",
+      "severity": 5,
+      "alone_means": "NOTHING"
+    }
+  ],
+
+  "combinations": [
+    {
+      "id": "C001",
+      "name": { "pt": "Exfiltração em Formação", "de": "Entstehende Exfiltration", "en": "Emerging Exfiltration" },
+      "signals": ["S003", "S010", "S018"],
+      "outcome": "GDPR_BREACH",
+      "explanation": {
+        "pt": "Queries nocturnas + acesso excessivo + exportação massiva = dados a sair",
+        "de": "Nächtliche Abfragen + übermäßiger Zugriff + Massenexport = Daten werden abgezogen",
+        "en": "Nocturnal queries + excessive access + mass export = data leaving"
+      },
+      "probability": 0.85
+    },
+    {
+      "id": "C002",
+      "name": { "pt": "Colapso de Oversight AI", "de": "KI-Aufsichtsversagen", "en": "AI Oversight Collapse" },
+      "signals": ["S007", "S017", "S023"],
+      "outcome": "AI_ACT_VIOLATION",
+      "explanation": {
+        "pt": "Modelo actualizado sem validação + decisões revertidas + recusas opacas = I9 violado",
+        "de": "Modell ohne Validierung aktualisiert + rückgängig gemachte Entscheidungen + undurchsichtige Ablehnungen = I9 verletzt",
+        "en": "Model updated without validation + reversed decisions + opaque refusals = I9 violated"
+      },
+      "probability": 0.90
+    },
+    {
+      "id": "C003",
+      "name": { "pt": "Pressão sobre Governance", "de": "Druck auf Governance", "en": "Governance Under Pressure" },
+      "signals": ["S005", "S011", "S013"],
+      "outcome": "GDPR_BREACH",
+      "explanation": {
+        "pt": "DPO excluído + pressão do CEO + consent alterado = compliance sacrificado",
+        "de": "DSB ausgeschlossen + CEO-Druck + Einwilligung geändert = Compliance geopfert",
+        "en": "DPO excluded + CEO pressure + consent changed = compliance sacrificed"
+      },
+      "probability": 0.80
+    },
+    {
+      "id": "C004",
+      "name": { "pt": "Cadeia de Fornecedores Fragilizada", "de": "Geschwächte Lieferkette", "en": "Weakened Supply Chain" },
+      "signals": ["S008", "S016", "S019"],
+      "outcome": "DORA_INCIDENT",
+      "explanation": {
+        "pt": "Termos mudados + sem resposta compliance + seguro expirado = risco terceiros",
+        "de": "Geänderte Bedingungen + keine Compliance-Antwort + abgelaufene Versicherung = Drittparteirisiko",
+        "en": "Changed terms + no compliance response + expired insurance = third party risk"
+      },
+      "probability": 0.75
+    },
+    {
+      "id": "C005",
+      "name": { "pt": "Sistema Invisível", "de": "Unsichtbares System", "en": "Invisible System" },
+      "signals": ["S009", "S015", "S022"],
+      "outcome": "DORA_INCIDENT",
+      "explanation": {
+        "pt": "Backup falhou + logs cheios + alertas ignorados = cegueira operacional",
+        "de": "Backup fehlgeschlagen + Protokolle voll + Alarme ignoriert = betriebliche Blindheit",
+        "en": "Backup failed + logs full + alerts ignored = operational blindness"
+      },
+      "probability": 0.85
+    },
+    {
+      "id": "C006",
+      "name": { "pt": "Insider em Movimento", "de": "Insider in Bewegung", "en": "Insider in Motion" },
+      "signals": ["S002", "S003", "S018"],
+      "outcome": "INTERNAL_FRAUD",
+      "explanation": {
+        "pt": "Líderes a sair + queries nocturnas + exportação dados = preparação de saída",
+        "de": "Führungskräfte verlassen + nächtliche Abfragen + Datenexport = Austrittsvorbereitung",
+        "en": "Leaders leaving + nocturnal queries + data export = exit preparation"
+      },
+      "probability": 0.70
+    },
+    {
+      "id": "C007",
+      "name": { "pt": "AI Autónoma Emergente", "de": "Entstehende autonome KI", "en": "Emerging Autonomous AI" },
+      "signals": ["S001", "S007", "S016"],
+      "outcome": "AI_ACT_VIOLATION",
+      "explanation": {
+        "pt": "Performance alterada + update sem validação + fornecedor silencioso = modelo fora de controlo",
+        "de": "Geänderte Leistung + Update ohne Validierung + stiller Anbieter = Modell außer Kontrolle",
+        "en": "Changed performance + update without validation + silent vendor = model out of control"
+      },
+      "probability": 0.65
+    },
+    {
+      "id": "C008",
+      "name": { "pt": "Vácuo de Liderança", "de": "Führungsvakuum", "en": "Leadership Vacuum" },
+      "signals": ["S002", "S021", "S006"],
+      "outcome": "DORA_INCIDENT",
+      "explanation": {
+        "pt": "Líderes a sair + CRO ausente + reports atrasados = governance sem cabeça",
+        "de": "Führungskräfte verlassen + CRO abwesend + verspätete Berichte = kopflose Governance",
+        "en": "Leaders leaving + CRO absent + delayed reports = headless governance"
+      },
+      "probability": 0.60
+    },
+    {
+      "id": "C009",
+      "name": { "pt": "Falso Padrão — Ruído Normal", "de": "Falsches Muster — Normales Rauschen", "en": "False Pattern — Normal Noise" },
+      "signals": ["S006", "S012", "S014"],
+      "outcome": "NOTHING",
+      "explanation": {
+        "pt": "Report atrasado + docs desactualizados + estagiário adicionado = operação normal",
+        "de": "Verspäteter Bericht + veraltete Dokumentation + Praktikant hinzugefügt = normaler Betrieb",
+        "en": "Delayed report + outdated docs + intern added = normal operation"
+      },
+      "probability": 0.95
+    },
+    {
+      "id": "C010",
+      "name": { "pt": "Intrusão Activa", "de": "Aktives Eindringen", "en": "Active Intrusion" },
+      "signals": ["S003", "S020", "S024"],
+      "outcome": "DORA_INCIDENT",
+      "explanation": {
+        "pt": "Queries 2h + pentest antigo + script desconhecido = comprometimento em curso",
+        "de": "2-Uhr-Abfragen + alter Pentest + unbekanntes Skript = laufende Kompromittierung",
+        "en": "2AM queries + old pentest + unknown script = active compromise"
+      },
+      "probability": 0.90
+    }
+  ],
+
+  "difficulty_levels": {
+    "BASIC": {
+      "signals_shown": 4,
+      "correct_signals": 3,
+      "distractors": 1,
+      "time_seconds": 90
+    },
+    "INTERMEDIATE": {
+      "signals_shown": 5,
+      "correct_signals": 3,
+      "distractors": 2,
+      "time_seconds": 75
+    },
+    "ADVANCED": {
+      "signals_shown": 6,
+      "correct_signals": 3,
+      "distractors": 3,
+      "time_seconds": 60
+    }
+  }
+}
