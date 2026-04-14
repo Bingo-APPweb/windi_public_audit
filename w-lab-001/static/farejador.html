@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root {
+    /* NOIR (default) */
     --bg: #0f0f0d;
     --surface: #1a1a16;
     --card: #222220;
@@ -28,6 +29,25 @@
     --font-mono: 'JetBrains Mono', monospace;
   }
 
+  [data-theme="klar"] {
+    --bg: #FAFAF8;
+    --surface: #F0EFE8;
+    --card: #E8E6E0;
+    --border: #D0CEC8;
+    --border-hover: #B0AEA8;
+    --gold: #8B7424;
+    --gold-dim: #6B5A1C;
+    --text: #1A1A1A;
+    --text-sec: #5A5A5A;
+    --text-muted: #8A8A8A;
+    --danger: #C03030;
+    --danger-bg: rgba(192,48,48,0.1);
+    --warn: #B07010;
+    --warn-bg: rgba(176,112,16,0.1);
+    --ok: #1A7A5A;
+    --ok-bg: rgba(26,122,90,0.1);
+  }
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
@@ -38,6 +58,7 @@
     padding: 32px 24px;
     max-width: 720px;
     margin: 0 auto;
+    transition: background 0.3s, color 0.3s;
   }
 
   .site-header {
@@ -50,6 +71,22 @@
   }
   .site-logo { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); letter-spacing: .1em; }
   .site-logo span { color: var(--gold); }
+
+  .header-controls { display: flex; align-items: center; gap: 8px; }
+  .lang-toggle, .theme-toggle {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 10px;
+    color: var(--text);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    transition: border-color 0.2s;
+  }
+  .lang-toggle:hover, .theme-toggle:hover { border-color: var(--gold); }
+  .theme-toggle { padding: 5px 8px; font-size: 14px; }
+
   .sealed-badge {
     font-family: var(--font-mono); font-size: 10px; color: var(--gold-dim);
     border: 0.5px solid var(--gold-dim); border-radius: 3px; padding: 3px 8px; letter-spacing: .08em;
@@ -62,6 +99,7 @@
   .intro-card {
     background: var(--surface); border: 0.5px solid var(--border);
     border-radius: 12px; padding: 24px 28px; margin-bottom: 20px;
+    transition: background 0.3s, border-color 0.3s;
   }
   .game-title { font-size: 32px; font-weight: 800; color: var(--text); letter-spacing: -.02em; font-family: var(--font-mono); }
   .game-sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; font-family: var(--font-mono); letter-spacing: .06em; }
@@ -86,10 +124,10 @@
     display: flex; align-items: center; justify-content: space-between;
     padding: 12px 16px; background: var(--surface);
     border: 0.5px solid var(--border); border-radius: 10px; margin-bottom: 14px;
+    transition: background 0.3s, border-color 0.3s;
   }
   .hud-round { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); }
   .hud-round strong { color: var(--text); font-weight: 700; }
-  .hud-difficulty { font-family: var(--font-mono); font-size: 10px; padding: 3px 8px; border-radius: 10px; letter-spacing: .05em; }
 
   .timer-group { display: flex; align-items: center; gap: 10px; }
   .timer-bar-bg { width: 100px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
@@ -105,20 +143,22 @@
   .life.lost { background: var(--border); }
 
   /* ── DOCUMENT ── */
-  .doc-frame { border: 0.5px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 14px; }
+  .doc-frame { border: 0.5px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 14px; transition: border-color 0.3s; }
   .doc-header {
     background: var(--surface); padding: 10px 18px;
     border-bottom: 0.5px solid var(--border);
     display: flex; align-items: center; justify-content: space-between;
+    transition: background 0.3s, border-color 0.3s;
   }
   .doc-type { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); letter-spacing: .1em; text-transform: uppercase; }
   .doc-ref { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); }
 
-  .doc-body { padding: 18px 22px; background: var(--card); }
+  .doc-body { padding: 18px 22px; background: var(--card); transition: background 0.3s; }
   .doc-hint {
     font-family: var(--font-mono); font-size: 11px; color: var(--text-muted);
     padding: 8px 12px; background: var(--surface); border-radius: 6px;
     margin-bottom: 16px; letter-spacing: .03em;
+    transition: background 0.3s;
   }
 
   .sentence {
@@ -128,7 +168,7 @@
     border: 0.5px solid transparent;
     display: block; margin-bottom: 3px;
   }
-  .sentence:hover { background: rgba(255,255,255,0.04); }
+  .sentence:hover { background: rgba(128,128,128,0.1); }
   .sentence.selected-wrong {
     background: var(--danger-bg) !important;
     border-color: var(--danger) !important;
@@ -147,7 +187,7 @@
   .sentence.disabled { cursor: default; }
 
   /* ── FEEDBACK ── */
-  .feedback-box { border-radius: 10px; padding: 16px 18px; margin-bottom: 14px; display: none; }
+  .feedback-box { border-radius: 10px; padding: 16px 18px; margin-bottom: 14px; display: none; transition: background 0.3s, border-color 0.3s; }
   .feedback-box.show { display: block; }
   .feedback-box.success { background: var(--ok-bg); border: 0.5px solid var(--ok); }
   .feedback-box.wrong   { background: var(--danger-bg); border: 0.5px solid var(--danger); }
@@ -164,21 +204,21 @@
   .fb-title.timeout { color: var(--warn); }
 
   .fb-body { font-family: var(--font-mono); font-size: 12px; color: var(--text-sec); line-height: 1.7; }
-  .fb-highlight { font-family: var(--font-mono); font-size: 11px; margin-top: 8px; padding: 8px 10px; background: rgba(255,255,255,0.04); border-radius: 6px; color: var(--text-muted); }
+  .fb-highlight { font-family: var(--font-mono); font-size: 11px; margin-top: 8px; padding: 8px 10px; background: rgba(128,128,128,0.1); border-radius: 6px; color: var(--text-muted); }
 
   /* ── BUTTONS ── */
   .btn-primary {
     background: var(--text); color: var(--bg); border: none;
     border-radius: 8px; padding: 12px 20px; font-size: 13px; font-weight: 700;
     font-family: var(--font-head); width: 100%; cursor: pointer;
-    margin-bottom: 10px; transition: opacity .2s;
+    margin-bottom: 10px; transition: opacity .2s, background 0.3s, color 0.3s;
   }
   .btn-primary:hover { opacity: .9; }
   .btn-secondary {
     background: transparent; color: var(--text-sec);
     border: 0.5px solid var(--border-hover); border-radius: 8px;
     padding: 12px 20px; font-size: 13px; font-family: var(--font-head);
-    width: 100%; cursor: pointer; margin-bottom: 10px; transition: background .2s;
+    width: 100%; cursor: pointer; margin-bottom: 10px; transition: background .2s, border-color 0.3s;
   }
   .btn-secondary:hover { background: var(--surface); }
   #next-btn { display: none; }
@@ -187,6 +227,7 @@
   .result-hero {
     background: var(--surface); border: 0.5px solid var(--border);
     border-radius: 12px; padding: 28px; text-align: center; margin-bottom: 16px;
+    transition: background 0.3s, border-color 0.3s;
   }
   .result-score-num {
     font-family: var(--font-mono); font-size: 64px; font-weight: 700;
@@ -205,6 +246,7 @@
   .stat-card {
     background: var(--surface); border: 0.5px solid var(--border);
     border-radius: 8px; padding: 14px 12px; text-align: center;
+    transition: background 0.3s, border-color 0.3s;
   }
   .stat-num { font-family: var(--font-mono); font-size: 24px; font-weight: 700; color: var(--text); }
   .stat-lbl { font-size: 11px; color: var(--text-muted); margin-top: 3px; font-family: var(--font-mono); }
@@ -215,6 +257,7 @@
     padding: 10px 14px; background: var(--surface);
     border: 0.5px solid var(--border); border-radius: 8px;
     font-family: var(--font-mono); font-size: 12px;
+    transition: background 0.3s, border-color 0.3s;
   }
   .history-round { color: var(--text-muted); }
   .history-result { font-weight: 700; }
@@ -228,49 +271,59 @@
     border-top: 0.5px solid var(--border);
     display: flex; justify-content: space-between;
     font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); letter-spacing: .05em;
+    transition: border-color 0.3s;
   }
 
   @media (max-width: 480px) {
     body { padding: 20px 16px; }
     .result-score-num { font-size: 48px; }
     .stat-row { grid-template-columns: 1fr 1fr; }
+    .site-footer { flex-direction: column; gap: 4px; text-align: center; }
   }
 </style>
 </head>
-<body>
+<body data-theme="noir">
 
 <div class="site-header">
   <div class="site-logo"><span>W-LAB</span> · LAYER 01 · REFLEXO</div>
-  <div class="sealed-badge">FAREJADOR v1.0</div>
+  <div class="header-controls">
+    <select class="lang-toggle" id="langToggle">
+      <option value="pt">PT</option>
+      <option value="de">DE</option>
+      <option value="en">EN</option>
+    </select>
+    <button class="theme-toggle" id="themeToggle">☀</button>
+    <div class="sealed-badge">FAREJADOR v1.0</div>
+  </div>
 </div>
 
 <!-- ══ INTRO ══ -->
 <div id="screen-intro" class="screen active">
   <div class="intro-card">
     <div class="game-title">FAREJADOR</div>
-    <div class="game-sub">MINI-GAME · W-LAB-001 · SISTEMA 1 TRAINING</div>
-    <div class="game-tagline">Um documento aparece. Dentro dele, uma armadilha I9 escondida. O teu reflexo tem 30 segundos.</div>
+    <div class="game-sub" data-i18n="intro.sub">MINI-GAME · W-LAB-001 · SISTEMA 1 TRAINING</div>
+    <div class="game-tagline" data-i18n="intro.tagline">Um documento aparece. Dentro dele, uma armadilha I9 escondida. O teu reflexo tem 30 segundos.</div>
 
     <div class="rules-list">
-      <div class="rule-item"><span class="rule-bullet"></span>Lê o documento e clica na frase que viola o Invariante I9.</div>
-      <div class="rule-item"><span class="rule-bullet"></span>30 segundos por round. Velocidade vale pontos.</div>
-      <div class="rule-item"><span class="rule-bullet"></span>Erro: perdes uma vida. Timeout: round falhado.</div>
-      <div class="rule-item"><span class="rule-bullet"></span>3 rounds. Dificuldade cresce. O lobo aprende.</div>
+      <div class="rule-item"><span class="rule-bullet"></span><span data-i18n="intro.rule1">Lê o documento e clica na frase que viola o Invariante I9.</span></div>
+      <div class="rule-item"><span class="rule-bullet"></span><span data-i18n="intro.rule2">30 segundos por round. Velocidade vale pontos.</span></div>
+      <div class="rule-item"><span class="rule-bullet"></span><span data-i18n="intro.rule3">Erro: perdes uma vida. Timeout: round falhado.</span></div>
+      <div class="rule-item"><span class="rule-bullet"></span><span data-i18n="intro.rule4">3 rounds. Dificuldade cresce. O lobo aprende.</span></div>
     </div>
 
     <div class="i9-box">
-      <div class="i9-label">Invariante I9 — Proibição de Escalada de Autonomia</div>
-      <div class="i9-text">A AI <em>propõe</em>. Nunca decide. Nunca executa.<br>O humano tem sempre autoridade final. Sem excepção.<br>Violação = SYSTEM STOP.</div>
+      <div class="i9-label" data-i18n="intro.i9label">Invariante I9 — Proibição de Escalada de Autonomia</div>
+      <div class="i9-text"><span data-i18n="intro.i9text1">A AI</span> <em data-i18n="intro.i9em">propõe</em>. <span data-i18n="intro.i9text2">Nunca decide. Nunca executa.</span><br><span data-i18n="intro.i9text3">O humano tem sempre autoridade final. Sem excepção.</span><br><span data-i18n="intro.i9text4">Violação = SYSTEM STOP.</span></div>
     </div>
   </div>
-  <button class="btn-primary" onclick="startGame()">Iniciar caçada →</button>
+  <button class="btn-primary" onclick="startGame()" data-i18n="intro.start">Iniciar caçada →</button>
 </div>
 
 <!-- ══ GAME ══ -->
 <div id="screen-game" class="screen">
   <div class="hud">
     <div>
-      <div class="hud-round">Round <strong id="round-num">1</strong> / 3</div>
+      <div class="hud-round"><span data-i18n="game.round">Round</span> <strong id="round-num">1</strong> / 3</div>
     </div>
     <div class="timer-group">
       <div class="timer-bar-bg"><div class="timer-bar" id="timer-bar" style="width:100%;background:var(--ok)"></div></div>
@@ -285,7 +338,7 @@
       <span class="doc-ref" id="doc-ref">DOC-001</span>
     </div>
     <div class="doc-body">
-      <div class="doc-hint">► Identifica a frase que viola o Invariante I9 — autonomia de AI não supervisionada</div>
+      <div class="doc-hint" data-i18n="game.hint">► Identifica a frase que viola o Invariante I9 — autonomia de AI não supervisionada</div>
       <div id="doc-sentences"></div>
     </div>
   </div>
@@ -299,27 +352,27 @@
     <div class="fb-highlight" id="fb-highlight"></div>
   </div>
 
-  <button class="btn-primary" id="next-btn" onclick="nextRound()">Próximo round →</button>
+  <button class="btn-primary" id="next-btn" onclick="nextRound()" data-i18n="game.next">Próximo round →</button>
 </div>
 
 <!-- ══ RESULTS ══ -->
 <div id="screen-results" class="screen">
   <div class="result-hero">
     <div class="result-score-num" id="final-score">0</div>
-    <div class="result-score-label">PONTOS · FAREJADOR · W-LAB-001</div>
+    <div class="result-score-label" data-i18n="results.label">PONTOS · FAREJADOR · W-LAB-001</div>
     <div class="result-rank" id="result-rank">—</div>
   </div>
 
   <div class="stat-row">
-    <div class="stat-card"><div class="stat-num" id="stat-found">0/3</div><div class="stat-lbl">traps encontradas</div></div>
-    <div class="stat-card"><div class="stat-num" id="stat-avg">—</div><div class="stat-lbl">tempo médio</div></div>
-    <div class="stat-card"><div class="stat-num" id="stat-lives">0</div><div class="stat-lbl">vidas restantes</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-found">0/3</div><div class="stat-lbl" data-i18n="results.found">traps encontradas</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-avg">—</div><div class="stat-lbl" data-i18n="results.avg">tempo médio</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-lives">0</div><div class="stat-lbl" data-i18n="results.lives">vidas restantes</div></div>
   </div>
 
   <div class="history-list" id="history-list"></div>
 
-  <button class="btn-primary" onclick="startGame()">Jogar novamente →</button>
-  <button class="btn-secondary" onclick="window.location.href='/lab/'">Voltar ao W-LAB</button>
+  <button class="btn-primary" onclick="startGame()" data-i18n="results.again">Jogar novamente →</button>
+  <button class="btn-secondary" onclick="window.location.href='/lab/'" data-i18n="results.back">Voltar ao W-LAB</button>
 </div>
 
 <div class="site-footer">
@@ -328,70 +381,321 @@
 </div>
 
 <script>
-const ROUNDS = [
-  {
-    type: 'ACTA DE REUNIÃO — COMITÉ DE RISCO',
-    ref: 'ACT-2026-047',
-    difficulty: 'BÁSICO',
-    diffColor: 'color:var(--ok);background:var(--ok-bg)',
-    sentences: [
-      'Reunião realizada na sexta-feira, 10 de Abril de 2026, pelas 14h00.',
-      'O Comité de Risco analisou os incidentes de segurança do trimestre anterior.',
-      'A equipa técnica apresentou um relatório com 3 vulnerabilidades identificadas.',
-      'Após análise dos dados, o sistema de AI avaliou o nível de risco como CRÍTICO e bloqueou automaticamente o acesso às contas afectadas sem aprovação humana.',
-      'O responsável de compliance solicitou documentação adicional sobre os procedimentos de notificação.',
-      'A próxima reunião foi agendada para 24 de Abril de 2026.',
-    ],
-    trap: 3,
-    explanation: 'O sistema AI "bloqueou automaticamente... sem aprovação humana." A AI tomou uma decisão com consequências reais — bloqueio de contas — sem supervisão. AI propõe. Nunca executa.',
-    trapKey: '"bloqueou automaticamente... sem aprovação humana"',
+// ══════════════════════════════════════════════════════════════
+// i18n TRANSLATIONS
+// ══════════════════════════════════════════════════════════════
+const i18n = {
+  pt: {
+    "intro.sub": "MINI-GAME · W-LAB-001 · TREINO SISTEMA 1",
+    "intro.tagline": "Um documento aparece. Dentro dele, uma armadilha I9 escondida. O teu reflexo tem 30 segundos.",
+    "intro.rule1": "Lê o documento e clica na frase que viola o Invariante I9.",
+    "intro.rule2": "30 segundos por round. Velocidade vale pontos.",
+    "intro.rule3": "Erro: perdes uma vida. Timeout: round falhado.",
+    "intro.rule4": "3 rounds. Dificuldade cresce. O lobo aprende.",
+    "intro.i9label": "Invariante I9 — Proibição de Escalada de Autonomia",
+    "intro.i9text1": "A AI",
+    "intro.i9em": "propõe",
+    "intro.i9text2": "Nunca decide. Nunca executa.",
+    "intro.i9text3": "O humano tem sempre autoridade final. Sem excepção.",
+    "intro.i9text4": "Violação = SYSTEM STOP.",
+    "intro.start": "Iniciar caçada →",
+    "game.round": "Round",
+    "game.hint": "► Identifica a frase que viola o Invariante I9 — autonomia de AI não supervisionada",
+    "game.next": "Próximo round →",
+    "results.label": "PONTOS · FAREJADOR · W-LAB-001",
+    "results.found": "traps encontradas",
+    "results.avg": "tempo médio",
+    "results.lives": "vidas restantes",
+    "results.again": "Jogar novamente →",
+    "results.back": "Voltar ao W-LAB",
+    "fb.success": "pontos · encontrada em",
+    "fb.nolives": "Sem vidas — round falhado",
+    "fb.timeout": "Tempo esgotado — o lobo perdeu o rasto",
+    "fb.trapwas": "A trap estava na frase",
+    "fb.trap": "Trap:",
+    "rank.lobo": "LOBO EM FORMAÇÃO",
+    "rank.rastro": "RASTRO DETECTADO",
+    "rank.continua": "CONTINUA A FAREJAR",
+    "history.found": "ENCONTRADA",
+    "history.failed": "FALHADA"
   },
-  {
-    type: 'PROCEDIMENTO OPERACIONAL — DPO OFFICE',
-    ref: 'PROC-GDPR-012',
-    difficulty: 'INTERMÉDIO',
-    diffColor: 'color:var(--warn);background:var(--warn-bg)',
-    sentences: [
-      'Este procedimento define o fluxo de resposta a incidentes de dados pessoais.',
-      'Após detecção de uma anomalia, a equipa técnica procede à análise preliminar.',
-      'O DPO é notificado nas primeiras 2 horas após confirmação do incidente.',
-      'A equipa de comunicação prepara os templates de resposta para os stakeholders.',
-      'Quando o motor de análise classifica um incidente como não notificável à CNPD, o ticket é automaticamente fechado e arquivado sem revisão humana.',
-      'Todos os incidentes notificáveis são comunicados à autoridade supervisora no prazo legal de 72 horas.',
-    ],
-    trap: 4,
-    explanation: 'A decisão de "não notificar à CNPD" é tomada pelo motor de análise e o ticket é fechado automaticamente. Determinar se um breach GDPR é notificável é uma decisão legal com impacto regulatório — requer supervisão humana obrigatória (Art. 33 GDPR + EU AI Act Art. 14).',
-    trapKey: '"classifica... automaticamente fechado... sem revisão humana"',
+  de: {
+    "intro.sub": "MINI-GAME · W-LAB-001 · SYSTEM 1 TRAINING",
+    "intro.tagline": "Ein Dokument erscheint. Darin versteckt: eine I9-Falle. Dein Reflex hat 30 Sekunden.",
+    "intro.rule1": "Lies das Dokument und klicke auf den Satz, der Invariante I9 verletzt.",
+    "intro.rule2": "30 Sekunden pro Runde. Geschwindigkeit bringt Punkte.",
+    "intro.rule3": "Fehler: du verlierst ein Leben. Timeout: Runde gescheitert.",
+    "intro.rule4": "3 Runden. Der Schwierigkeitsgrad steigt. Der Wolf lernt.",
+    "intro.i9label": "Invariante I9 — Verbot der Autonomie-Eskalation",
+    "intro.i9text1": "Die KI",
+    "intro.i9em": "schlägt vor",
+    "intro.i9text2": "Entscheidet nie. Führt nie aus.",
+    "intro.i9text3": "Der Mensch hat immer die letzte Autorität. Ohne Ausnahme.",
+    "intro.i9text4": "Verletzung = SYSTEM STOP.",
+    "intro.start": "Jagd starten →",
+    "game.round": "Runde",
+    "game.hint": "► Identifiziere den Satz, der Invariante I9 verletzt — unüberwachte KI-Autonomie",
+    "game.next": "Nächste Runde →",
+    "results.label": "PUNKTE · FAREJADOR · W-LAB-001",
+    "results.found": "Fallen gefunden",
+    "results.avg": "Durchschnittszeit",
+    "results.lives": "Leben übrig",
+    "results.again": "Nochmal spielen →",
+    "results.back": "Zurück zum W-LAB",
+    "fb.success": "Punkte · gefunden in",
+    "fb.nolives": "Keine Leben — Runde gescheitert",
+    "fb.timeout": "Zeit abgelaufen — der Wolf verlor die Spur",
+    "fb.trapwas": "Die Falle war in Satz",
+    "fb.trap": "Falle:",
+    "rank.lobo": "WOLF IN AUSBILDUNG",
+    "rank.rastro": "SPUR ERKANNT",
+    "rank.continua": "WEITER SPÜREN",
+    "history.found": "GEFUNDEN",
+    "history.failed": "GESCHEITERT"
   },
-  {
-    type: 'RELATÓRIO DE AUDITORIA INTERNA — DORA Q1',
-    ref: 'AUDIT-DORA-2026-Q1',
-    difficulty: 'AVANÇADO',
-    diffColor: 'color:var(--danger);background:var(--danger-bg)',
-    sentences: [
-      'Auditoria ao Sistema de Gestão de Incidentes de TIC referente ao Q1 2026.',
-      'O sistema registou 14 incidentes no período, dos quais 3 foram classificados como major.',
-      'Para optimizar os tempos de resposta, implementámos um fluxo de triagem inteligente.',
-      'Incidentes com score de severidade inferior a 40 são resolvidos pelo agente autónomo sem escalada à equipa humana.',
-      'O tempo médio de resolução melhorou 34% após a implementação do novo fluxo.',
-      'Recomendamos a extensão do modelo a outros domínios operacionais no Q2 de 2026.',
-    ],
-    trap: 3,
-    explanation: 'A trap mais subtil: o critério "score < 40" parece objectivo e racional. Mas "resolvidos pelo agente autónomo sem escalada à equipa humana" viola I9 e o DORA Art. 17. A sofisticação da armadilha está na aparência de eficiência — é exactamente assim que o I9 entra disfarçado.',
-    trapKey: '"agente autónomo sem escalada à equipa humana"',
-  },
-];
+  en: {
+    "intro.sub": "MINI-GAME · W-LAB-001 · SYSTEM 1 TRAINING",
+    "intro.tagline": "A document appears. Hidden inside: an I9 trap. Your reflex has 30 seconds.",
+    "intro.rule1": "Read the document and click the sentence that violates Invariant I9.",
+    "intro.rule2": "30 seconds per round. Speed earns points.",
+    "intro.rule3": "Mistake: lose a life. Timeout: round failed.",
+    "intro.rule4": "3 rounds. Difficulty increases. The wolf learns.",
+    "intro.i9label": "Invariant I9 — Autonomy Escalation Prohibition",
+    "intro.i9text1": "AI",
+    "intro.i9em": "proposes",
+    "intro.i9text2": "Never decides. Never executes.",
+    "intro.i9text3": "The human always has final authority. No exceptions.",
+    "intro.i9text4": "Violation = SYSTEM STOP.",
+    "intro.start": "Start the hunt →",
+    "game.round": "Round",
+    "game.hint": "► Identify the sentence that violates Invariant I9 — unsupervised AI autonomy",
+    "game.next": "Next round →",
+    "results.label": "POINTS · FAREJADOR · W-LAB-001",
+    "results.found": "traps found",
+    "results.avg": "avg time",
+    "results.lives": "lives left",
+    "results.again": "Play again →",
+    "results.back": "Back to W-LAB",
+    "fb.success": "points · found in",
+    "fb.nolives": "No lives — round failed",
+    "fb.timeout": "Time out — the wolf lost the trail",
+    "fb.trapwas": "The trap was in sentence",
+    "fb.trap": "Trap:",
+    "rank.lobo": "WOLF IN TRAINING",
+    "rank.rastro": "TRAIL DETECTED",
+    "rank.continua": "KEEP TRACKING",
+    "history.found": "FOUND",
+    "history.failed": "FAILED"
+  }
+};
 
+let currentLang = localStorage.getItem('windi-lang') || 'pt';
+
+function t(key) {
+  return i18n[currentLang]?.[key] || i18n['pt'][key] || key;
+}
+
+function applyLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('windi-lang', lang);
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (i18n[lang]?.[key]) el.textContent = i18n[lang][key];
+  });
+}
+
+// ══════════════════════════════════════════════════════════════
+// THEME
+// ══════════════════════════════════════════════════════════════
+function toggleTheme() {
+  const body = document.body;
+  const btn = document.getElementById('themeToggle');
+  if (body.dataset.theme === 'noir') {
+    body.dataset.theme = 'klar';
+    btn.textContent = '☽';
+    localStorage.setItem('windi-theme', 'klar');
+  } else {
+    body.dataset.theme = 'noir';
+    btn.textContent = '☀';
+    localStorage.setItem('windi-theme', 'noir');
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// ROUNDS DATA (Trilingual)
+// ══════════════════════════════════════════════════════════════
+const ROUNDS_DATA = {
+  pt: [
+    {
+      type: 'ACTA DE REUNIÃO — COMITÉ DE RISCO',
+      ref: 'ACT-2026-047',
+      difficulty: 'BÁSICO',
+      sentences: [
+        'Reunião realizada na sexta-feira, 10 de Abril de 2026, pelas 14h00.',
+        'O Comité de Risco analisou os incidentes de segurança do trimestre anterior.',
+        'A equipa técnica apresentou um relatório com 3 vulnerabilidades identificadas.',
+        'Após análise dos dados, o sistema de AI avaliou o nível de risco como CRÍTICO e bloqueou automaticamente o acesso às contas afectadas sem aprovação humana.',
+        'O responsável de compliance solicitou documentação adicional sobre os procedimentos de notificação.',
+        'A próxima reunião foi agendada para 24 de Abril de 2026.',
+      ],
+      trap: 3,
+      explanation: 'O sistema AI "bloqueou automaticamente... sem aprovação humana." A AI tomou uma decisão com consequências reais — bloqueio de contas — sem supervisão. AI propõe. Nunca executa.',
+      trapKey: '"bloqueou automaticamente... sem aprovação humana"',
+    },
+    {
+      type: 'PROCEDIMENTO OPERACIONAL — DPO OFFICE',
+      ref: 'PROC-GDPR-012',
+      difficulty: 'INTERMÉDIO',
+      sentences: [
+        'Este procedimento define o fluxo de resposta a incidentes de dados pessoais.',
+        'Após detecção de uma anomalia, a equipa técnica procede à análise preliminar.',
+        'O DPO é notificado nas primeiras 2 horas após confirmação do incidente.',
+        'A equipa de comunicação prepara os templates de resposta para os stakeholders.',
+        'Quando o motor de análise classifica um incidente como não notificável à CNPD, o ticket é automaticamente fechado e arquivado sem revisão humana.',
+        'Todos os incidentes notificáveis são comunicados à autoridade supervisora no prazo legal de 72 horas.',
+      ],
+      trap: 4,
+      explanation: 'A decisão de "não notificar à CNPD" é tomada pelo motor de análise e o ticket é fechado automaticamente. Determinar se um breach GDPR é notificável é uma decisão legal com impacto regulatório — requer supervisão humana obrigatória.',
+      trapKey: '"classifica... automaticamente fechado... sem revisão humana"',
+    },
+    {
+      type: 'RELATÓRIO DE AUDITORIA INTERNA — DORA Q1',
+      ref: 'AUDIT-DORA-2026-Q1',
+      difficulty: 'AVANÇADO',
+      sentences: [
+        'Auditoria ao Sistema de Gestão de Incidentes de TIC referente ao Q1 2026.',
+        'O sistema registou 14 incidentes no período, dos quais 3 foram classificados como major.',
+        'Para optimizar os tempos de resposta, implementámos um fluxo de triagem inteligente.',
+        'Incidentes com score de severidade inferior a 40 são resolvidos pelo agente autónomo sem escalada à equipa humana.',
+        'O tempo médio de resolução melhorou 34% após a implementação do novo fluxo.',
+        'Recomendamos a extensão do modelo a outros domínios operacionais no Q2 de 2026.',
+      ],
+      trap: 3,
+      explanation: 'A trap mais subtil: "resolvidos pelo agente autónomo sem escalada à equipa humana" viola I9 e DORA Art. 17. A sofisticação está na aparência de eficiência.',
+      trapKey: '"agente autónomo sem escalada à equipa humana"',
+    },
+  ],
+  de: [
+    {
+      type: 'SITZUNGSPROTOKOLL — RISIKOAUSSCHUSS',
+      ref: 'PROT-2026-047',
+      difficulty: 'EINFACH',
+      sentences: [
+        'Die Sitzung fand am Freitag, 10. April 2026, um 14:00 Uhr statt.',
+        'Der Risikoausschuss analysierte die Sicherheitsvorfälle des letzten Quartals.',
+        'Das technische Team präsentierte einen Bericht mit 3 identifizierten Schwachstellen.',
+        'Nach Analyse der Daten bewertete das KI-System das Risikoniveau als KRITISCH und sperrte automatisch den Zugang zu den betroffenen Konten ohne menschliche Genehmigung.',
+        'Der Compliance-Beauftragte bat um zusätzliche Dokumentation zu den Meldeverfahren.',
+        'Die nächste Sitzung wurde für den 24. April 2026 angesetzt.',
+      ],
+      trap: 3,
+      explanation: 'Das KI-System "sperrte automatisch... ohne menschliche Genehmigung." Die KI traf eine Entscheidung mit realen Konsequenzen — Kontosperrung — ohne Überwachung.',
+      trapKey: '"sperrte automatisch... ohne menschliche Genehmigung"',
+    },
+    {
+      type: 'VERFAHRENSANWEISUNG — DSB-BÜRO',
+      ref: 'VERF-DSGVO-012',
+      difficulty: 'MITTEL',
+      sentences: [
+        'Dieses Verfahren definiert den Reaktionsablauf bei Datenschutzvorfällen.',
+        'Nach Erkennung einer Anomalie führt das technische Team eine Voranalyse durch.',
+        'Der DSB wird innerhalb der ersten 2 Stunden nach Bestätigung des Vorfalls benachrichtigt.',
+        'Das Kommunikationsteam bereitet Antwortvorlagen für die Stakeholder vor.',
+        'Wenn die Analyse-Engine einen Vorfall als nicht meldepflichtig an die Aufsichtsbehörde einstuft, wird das Ticket automatisch geschlossen und archiviert ohne menschliche Überprüfung.',
+        'Alle meldepflichtigen Vorfälle werden der Aufsichtsbehörde innerhalb der gesetzlichen Frist von 72 Stunden gemeldet.',
+      ],
+      trap: 4,
+      explanation: 'Die Entscheidung "nicht meldepflichtig" wird von der Analyse-Engine getroffen und das Ticket automatisch geschlossen. Die Bestimmung der Meldepflicht erfordert menschliche Überwachung.',
+      trapKey: '"automatisch geschlossen... ohne menschliche Überprüfung"',
+    },
+    {
+      type: 'INTERNER PRÜFBERICHT — DORA Q1',
+      ref: 'AUDIT-DORA-2026-Q1',
+      difficulty: 'FORTGESCHRITTEN',
+      sentences: [
+        'Prüfung des IKT-Vorfallmanagementsystems für Q1 2026.',
+        'Das System erfasste 14 Vorfälle im Zeitraum, davon 3 als major klassifiziert.',
+        'Zur Optimierung der Reaktionszeiten haben wir einen intelligenten Triage-Workflow implementiert.',
+        'Vorfälle mit einem Schweregrad-Score unter 40 werden vom autonomen Agenten ohne Eskalation an das menschliche Team gelöst.',
+        'Die durchschnittliche Lösungszeit verbesserte sich um 34% nach Implementierung des neuen Workflows.',
+        'Wir empfehlen die Ausweitung des Modells auf andere operative Bereiche in Q2 2026.',
+      ],
+      trap: 3,
+      explanation: 'Die subtilste Falle: "vom autonomen Agenten ohne Eskalation an das menschliche Team gelöst" verletzt I9 und DORA Art. 17.',
+      trapKey: '"autonomen Agenten ohne Eskalation an das menschliche Team"',
+    },
+  ],
+  en: [
+    {
+      type: 'MEETING MINUTES — RISK COMMITTEE',
+      ref: 'MIN-2026-047',
+      difficulty: 'BASIC',
+      sentences: [
+        'Meeting held on Friday, April 10, 2026, at 2:00 PM.',
+        'The Risk Committee analyzed the security incidents from the previous quarter.',
+        'The technical team presented a report with 3 identified vulnerabilities.',
+        'After analyzing the data, the AI system assessed the risk level as CRITICAL and automatically blocked access to the affected accounts without human approval.',
+        'The compliance officer requested additional documentation on notification procedures.',
+        'The next meeting was scheduled for April 24, 2026.',
+      ],
+      trap: 3,
+      explanation: 'The AI system "automatically blocked... without human approval." The AI made a decision with real consequences — account blocking — without oversight. AI proposes. Never executes.',
+      trapKey: '"automatically blocked... without human approval"',
+    },
+    {
+      type: 'OPERATIONAL PROCEDURE — DPO OFFICE',
+      ref: 'PROC-GDPR-012',
+      difficulty: 'INTERMEDIATE',
+      sentences: [
+        'This procedure defines the response flow to personal data incidents.',
+        'After detecting an anomaly, the technical team proceeds with preliminary analysis.',
+        'The DPO is notified within the first 2 hours after incident confirmation.',
+        'The communications team prepares response templates for stakeholders.',
+        'When the analysis engine classifies an incident as non-notifiable to the supervisory authority, the ticket is automatically closed and archived without human review.',
+        'All notifiable incidents are reported to the supervisory authority within the legal 72-hour deadline.',
+      ],
+      trap: 4,
+      explanation: 'The decision of "non-notifiable" is made by the analysis engine and the ticket is automatically closed. Determining GDPR breach notifiability is a legal decision requiring mandatory human oversight.',
+      trapKey: '"automatically closed and archived without human review"',
+    },
+    {
+      type: 'INTERNAL AUDIT REPORT — DORA Q1',
+      ref: 'AUDIT-DORA-2026-Q1',
+      difficulty: 'ADVANCED',
+      sentences: [
+        'Audit of the ICT Incident Management System for Q1 2026.',
+        'The system recorded 14 incidents in the period, of which 3 were classified as major.',
+        'To optimize response times, we implemented an intelligent triage workflow.',
+        'Incidents with a severity score below 40 are resolved by the autonomous agent without escalation to the human team.',
+        'Average resolution time improved 34% after implementing the new workflow.',
+        'We recommend extending the model to other operational domains in Q2 2026.',
+      ],
+      trap: 3,
+      explanation: 'The most subtle trap: "resolved by the autonomous agent without escalation to the human team" violates I9 and DORA Art. 17. The sophistication lies in the appearance of efficiency.',
+      trapKey: '"autonomous agent without escalation to the human team"',
+    },
+  ]
+};
+
+function getRounds() {
+  return ROUNDS_DATA[currentLang] || ROUNDS_DATA['pt'];
+}
+
+// ══════════════════════════════════════════════════════════════
+// GAME STATE & LOGIC
+// ══════════════════════════════════════════════════════════════
 const state = { round:0, lives:3, score:0, timerVal:30, timerInterval:null, roundStart:0, roundTimes:[], trapsFound:0, canClick:false, history:[] };
 
 function startGame() {
+  const rounds = getRounds();
   Object.assign(state, { round:0, lives:3, score:0, timerVal:30, timerInterval:null, roundStart:0, roundTimes:[], trapsFound:0, canClick:false, history:[] });
   showScreen('game');
   loadRound();
 }
 
 function loadRound() {
-  const r = ROUNDS[state.round];
+  const rounds = getRounds();
+  const r = rounds[state.round];
   document.getElementById('round-num').textContent = state.round + 1;
   document.getElementById('doc-type-label').textContent = r.type;
   document.getElementById('doc-ref').textContent = r.ref;
@@ -444,7 +748,8 @@ function updateTimer() {
 
 function handleClick(idx) {
   if (!state.canClick) return;
-  const r = ROUNDS[state.round];
+  const rounds = getRounds();
+  const r = rounds[state.round];
   if (idx === r.trap) {
     clearInterval(state.timerInterval);
     state.canClick = false;
@@ -453,10 +758,10 @@ function handleClick(idx) {
     state.trapsFound++;
     const pts = Math.round(50 + (state.timerVal / 30) * 50);
     state.score += pts;
-    state.history.push({ round: state.round+1, found: true, pts, time: elapsed });
+    state.history.push({ round: state.round+1, found: true, pts, time: elapsed, difficulty: r.difficulty });
     setSentenceClass(idx, 'found');
     disableAllSentences();
-    showFeedback('success', '+' + pts + ' pontos · encontrada em ' + elapsed + 's', r.explanation, r.trapKey);
+    showFeedback('success', '+' + pts + ' ' + t('fb.success') + ' ' + elapsed + 's', r.explanation, r.trapKey);
     setTimeout(() => { document.getElementById('next-btn').style.display = 'block'; }, 500);
   } else {
     state.lives--;
@@ -468,8 +773,8 @@ function handleClick(idx) {
       state.canClick = false;
       setSentenceClass(r.trap, 'correct-reveal');
       disableAllSentences();
-      state.history.push({ round: state.round+1, found: false, pts: 0, time: null });
-      showFeedback('wrong', 'Sem vidas — round falhado', 'A trap estava na frase ' + (r.trap + 1) + '. ' + r.explanation, r.trapKey);
+      state.history.push({ round: state.round+1, found: false, pts: 0, time: null, difficulty: r.difficulty });
+      showFeedback('wrong', t('fb.nolives'), t('fb.trapwas') + ' ' + (r.trap + 1) + '. ' + r.explanation, r.trapKey);
       setTimeout(() => { document.getElementById('next-btn').style.display = 'block'; }, 500);
     }
   }
@@ -478,13 +783,14 @@ function handleClick(idx) {
 function handleTimeout() {
   if (!state.canClick) return;
   state.canClick = false;
-  const r = ROUNDS[state.round];
+  const rounds = getRounds();
+  const r = rounds[state.round];
   setSentenceClass(r.trap, 'correct-reveal');
   disableAllSentences();
   state.lives = Math.max(0, state.lives - 1);
   renderLives();
-  state.history.push({ round: state.round+1, found: false, pts: 0, time: null });
-  showFeedback('timeout', 'Tempo esgotado — o lobo perdeu o rasto', 'A trap estava na frase ' + (r.trap + 1) + '. ' + r.explanation, r.trapKey);
+  state.history.push({ round: state.round+1, found: false, pts: 0, time: null, difficulty: r.difficulty });
+  showFeedback('timeout', t('fb.timeout'), t('fb.trapwas') + ' ' + (r.trap + 1) + '. ' + r.explanation, r.trapKey);
   setTimeout(() => { document.getElementById('next-btn').style.display = 'block'; }, 500);
 }
 
@@ -511,13 +817,14 @@ function showFeedback(type, title, body, highlight) {
   titleEl.textContent = title;
   document.getElementById('fb-body').textContent = body;
   const hl = document.getElementById('fb-highlight');
-  hl.textContent = 'Trap: ' + highlight;
+  hl.textContent = t('fb.trap') + ' ' + highlight;
   hl.style.display = highlight ? 'block' : 'none';
 }
 
 function nextRound() {
   state.round++;
-  if (state.round >= ROUNDS.length) { showResults(); return; }
+  const rounds = getRounds();
+  if (state.round >= rounds.length) { showResults(); return; }
   if (state.lives <= 0) state.lives = 1;
   loadRound();
 }
@@ -544,14 +851,14 @@ function showResults() {
 
   const rankEl = document.getElementById('result-rank');
   if (state.score >= 250) {
-    rankEl.textContent = 'LOBO EM FORMAÇÃO';
-    rankEl.style.cssText = 'background:rgba(212,168,67,0.15);color:#D4A843;display:inline-block;margin-top:14px;font-family:var(--font-mono);font-size:12px;font-weight:700;padding:6px 16px;border-radius:20px;letter-spacing:.06em;border:0.5px solid var(--gold-dim)';
+    rankEl.textContent = t('rank.lobo');
+    rankEl.style.cssText = 'background:rgba(212,168,67,0.15);color:var(--gold);display:inline-block;margin-top:14px;font-family:var(--font-mono);font-size:12px;font-weight:700;padding:6px 16px;border-radius:20px;letter-spacing:.06em;border:0.5px solid var(--gold-dim)';
   } else if (state.score >= 150) {
-    rankEl.textContent = 'RASTRO DETECTADO';
+    rankEl.textContent = t('rank.rastro');
     rankEl.style.cssText = 'background:var(--ok-bg);color:var(--ok);display:inline-block;margin-top:14px;font-family:var(--font-mono);font-size:12px;font-weight:700;padding:6px 16px;border-radius:20px;letter-spacing:.06em';
   } else {
-    rankEl.textContent = 'CONTINUA A FAREJAR';
-    rankEl.style.cssText = 'background:rgba(255,255,255,0.05);color:var(--text-muted);display:inline-block;margin-top:14px;font-family:var(--font-mono);font-size:12px;font-weight:700;padding:6px 16px;border-radius:20px;letter-spacing:.06em';
+    rankEl.textContent = t('rank.continua');
+    rankEl.style.cssText = 'background:rgba(128,128,128,0.1);color:var(--text-muted);display:inline-block;margin-top:14px;font-family:var(--font-mono);font-size:12px;font-weight:700;padding:6px 16px;border-radius:20px;letter-spacing:.06em';
   }
 
   const historyEl = document.getElementById('history-list');
@@ -560,8 +867,8 @@ function showResults() {
     const item = document.createElement('div');
     item.className = 'history-item';
     item.innerHTML = `
-      <span class="history-round">Round ${h.round} · ${ROUNDS[h.round-1].difficulty}</span>
-      <span class="history-result ${h.found ? 'ok' : 'fail'}">${h.found ? 'ENCONTRADA' : 'FALHADA'}</span>
+      <span class="history-round">Round ${h.round} · ${h.difficulty}</span>
+      <span class="history-result ${h.found ? 'ok' : 'fail'}">${h.found ? t('history.found') : t('history.failed')}</span>
       <span class="history-pts">${h.found ? '+' + h.pts + ' pts · ' + h.time + 's' : '0 pts'}</span>
     `;
     historyEl.appendChild(item);
@@ -572,6 +879,30 @@ function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-' + id).classList.add('active');
 }
+
+// ══════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  // Load saved preferences
+  const savedLang = localStorage.getItem('windi-lang') || 'pt';
+  const savedTheme = localStorage.getItem('windi-theme') || 'noir';
+
+  document.getElementById('langToggle').value = savedLang;
+  applyLang(savedLang);
+
+  if (savedTheme === 'klar') {
+    document.body.dataset.theme = 'klar';
+    document.getElementById('themeToggle').textContent = '☽';
+  }
+
+  // Event listeners
+  document.getElementById('langToggle').addEventListener('change', (e) => {
+    applyLang(e.target.value);
+  });
+
+  document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+});
 </script>
 </body>
 </html>
