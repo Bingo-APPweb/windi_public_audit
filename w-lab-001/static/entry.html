@@ -1058,16 +1058,68 @@ function resetDemo() {
   document.getElementById('demo-tag').className = 'demo-tag ready';
 }
 
-function submitEmail() {
-  const email = document.getElementById('demo-email').value.trim();
-  if (!email || !email.includes('@')) {
+async function submitEmail() {
+  const emailInput = document.getElementById('demo-email');
+  const email = emailInput.value.trim();
+
+  if (!email || !email.includes('@') || !email.includes('.')) {
     alert('Please enter a valid email address.');
     return;
   }
-  // In production, this would send to an API
-  console.log('Email captured:', email);
-  alert('Thanks! We\'ll notify you when W-LAB opens for early access.');
-  document.getElementById('demo-email').value = '';
+
+  // Determine demo result from current state
+  const resultTitle = document.getElementById('result-title');
+  let demoResult = 'unknown';
+  if (resultTitle.classList.contains('win')) {
+    demoResult = 'win';
+  } else if (resultTitle.textContent.includes('Time')) {
+    demoResult = 'timeout';
+  } else {
+    demoResult = 'lose';
+  }
+
+  // Get scenario info
+  const scenarioShown = demoState.scenario ? demoState.scenario.docType : null;
+
+  const payload = {
+    email: email,
+    source: 'farejador-lite',
+    demo_result: demoResult,
+    scenario_shown: scenarioShown,
+    trap_caught: demoResult === 'win',
+    time_remaining: demoResult === 'win' ? demoState.timeLeft : 0
+  };
+
+  try {
+    const resp = await fetch('/lab/api/lab/early-access', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await resp.json();
+
+    if (resp.ok) {
+      // Success
+      emailInput.value = '';
+      emailInput.placeholder = '✓ Registered!';
+      emailInput.disabled = true;
+      document.querySelector('.demo-email-btn').textContent = 'Done!';
+      document.querySelector('.demo-email-btn').disabled = true;
+
+      // Show success message
+      setTimeout(() => {
+        alert(data.message?.en || 'Successfully registered! You\'ll receive W-LAB access soon.');
+      }, 100);
+    } else {
+      // Error
+      const errorMsg = data.message?.en || data.detail || 'Registration failed. Please try again.';
+      alert(errorMsg);
+    }
+  } catch (err) {
+    console.error('Email capture error:', err);
+    alert('Network error. Please try again.');
+  }
 }
 </script>
 </body>
