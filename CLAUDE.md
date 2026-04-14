@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.2.8
-**Sealed:** 2026-04-13 · §165 WINDI Portal
+**Version:** 2.2.9
+**Sealed:** 2026-04-14 · §167 W-DID-GENESIS Audit
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -85,6 +85,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-DEV-API-001 | :8200 | I9,I11 | **LIVE** · Developer API · /dev-api/ · 4 Tiers · Verify Bridge |
 | W-ENTERPRISE-001 | :8150 | I1,I9,I11,I14 | **LIVE** v3.1.0 · VERA REGO v1.0 · DASH v4.1 · i18n PT/DE/EN · NOIR/KLAR |
 | W-CACHE-001 | :8160 | I11,I14 | **LIVE** · Verifiable Cache Layer · L2→L3 Promotion · NOIR Dashboard |
+| W-DID-GENESIS | :8096 | I1,I9,I11,I14 | **LIVE** · Sovereign Identity Tree · Cross-Service Session · 4 Tiers |
 | WINDI-PORTAL | static | — | **LIVE** · Internal Control Center · 35 Services · 7 Categories |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
@@ -215,6 +216,7 @@ FRUITS (Frutos)   → Virtue Receipts
 | Art.2 | Origem Preservada | `?return=` · `windi_origin` · Referrer |
 | Art.3 | Navegação Universal | Server Operations sidebar obrigatório |
 | Art.4 | Seiva DID | Cross-validation entre todos os gates |
+| Art.4.2 | Fonte Soberana | Cada serviço nasce de necessidade real · Antecipação soberana |
 | Art.5 | Frutos Partilhados | Receipts verificáveis em Verify Public |
 | Art.6 | Proibições | `/desktop/` deprecated · DID hardcoded proibido |
 | Art.7 | Verificação | `/api/tree/health` |
@@ -448,6 +450,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 14 Apr | **§167 W-DID-GENESIS** · Sovereign Identity Audit · DID Canonical · MARIA Fix · 57k Receipts |
 | 13 Apr | **§165 WINDI Portal** · Internal Control Center · 35 Services · 7 Categories · `77f82e2` |
 | 13 Apr | **§164 W-CACHE-001** · Verifiable Cache Layer · L2→L3 Promotion · NOIR Dashboard · :8160 |
 | 13 Apr | **§163 DECRETO-001** · A Árvore Viva · DID Sovereign · Living Tree CONSTITUTIONAL |
@@ -554,7 +557,19 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 📊 Dashboards · ⚖️ Legal · 🎬 Video · 🔗 Integration · 🏗️ Infra · 🔌 APIs · 📦 Deprecated
 
 **Features:** Search · NOIR/KLAR · i18n PT/DE/EN · Quick Stats · Status badges
-**Frase:** *"A complexidade não desapareceu. Ela foi organizada."*
+
+### §167 — W-DID-GENESIS Audit (14 Apr 2026)
+
+**Port:** :8096 · **Invariants:** I1, I9, I11, I14 · **Receipts:** 57.005
+
+**DID Canónico:** `did:windi:dragon-001` (ORACLE, founder)
+**Revogado:** `did:windi:dc110410-...` → Receipt `WINDI-GENESIS-REVOKE-20260414-DID001` (CRIT)
+
+**W-MARIA-001 Fix:** `wallet_id` obrigatório para HIGH governance.
+Anonymous → HTTPException 400 · Receipt `WINDI-MARIA-COMPLIANCE-FIX-20260414`
+
+**Princípio Descoberto:**
+> *"A Árvore não planeia os frutos. Responde às estações."*
 
 ---
 
@@ -563,78 +578,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 ---
 
-## §151 Tesoura Soberana v13 — 09 Abr 2026
-
-**Commit:** `ed90ba17982afc51d57328f19c671bfeb531fcc6` (v12) + Patch v13
-**Endpoint:** `https://windi-domain.com/travel/tesoura-ui/`
-**Ficheiro:** `/opt/windi/windi-travel/static/tesoura/index.html` (71KB · ~1000 linhas)
-
-### Arquitectura v13
-
-**Motor IA Touch (BFS Flood Fill — client-side soberano)**
-- `getImageData()` → array de pixels
-- BFS por tolerância RGB (5–120, ajustável)
-- Bounding box → OffscreenCanvas transparente → nova camada
-- Zero API externa · 100% soberano
-
-**WindiTouch v1.0.0** integrado inline
-- Breakpoints reactivos (isMobile/isTablet/isDesktop)
-- Haptic patterns distintos por acção (tap/select/place/ia/seal/delete)
-- Swipe gestures ready
-
-### Features Seladas
-
-| Feature | Estado |
-|---|---|
-| 🎬 Scenes Strip | ✅ 4 backgrounds + upload custom BG |
-| 📚 Layer Bar (v12) | ✅ ⬇▼▲⬆ · aparece ao seleccionar |
-| **📚 Toolbar2 (v13)** | ✅ Layer + Escala rápida · polling 120ms |
-| **⚙ Piece Panel (v13)** | ✅ Slide-up · Rotação + Escala + Camada |
-| ✂️ Lasso Manual | ✅ BFS freehand path |
-| 🤖 IA Touch | ✅ Flood fill por cor · tolerância slider |
-| ✍️ Text Modal | ✅ textarea + size 14-72px + 6 cores |
-| 📧 Email Colagem | ✅ mailto: com receipt + hash |
-| 🔗 Verificar | ✅ /verify-public/?id= nova tab |
-| 🔒 Selar no Ledger | ✅ POST /tesoura/seal · estados visuais |
-| 🔏 SHA-256 | ✅ Web Crypto API real |
-| 🌐 i18n | ✅ PT/DE/EN · toolbar2 labels incluídos |
-| 📥 Download PNG | ✅ canvas.toDataURL |
-| ↗ Partilhar | ✅ Web Share API + fallback clipboard |
-
-### Patch v13 Arquitectura
-
-```
-Toolbar2 (aparece ao seleccionar peça):
-┌─────────────────────────────────────────────────────────┐
-│ [Camada: ⬇ ▼  L2/4  ▲ ⬆]  [Esc ────●──── 100%]  [⚙] │
-└─────────────────────────────────────────────────────────┘
-
-Piece Panel (slide-up via ⚙):
-┌─ Editar Peça ──────────────────── ✕ ┐
-│ Rotação  [────●──────────────]  -12° │
-│ Escala   [──────●────────────]  100% │
-│ Camada   [⬇  ▼   L2/4   ▲  ⬆]      │
-└─────────────────────────────────────┘
-```
-
-**Polling leve (120ms):** detecta `selIdx` e mostra/esconde toolbar2
-
-### Backups
-```
-/opt/windi/windi-travel/static/tesoura/
-├── index.html           → v13 LIVE
-├── index.html.v10.bak   → Backup React original
-├── index.html.v11.bak   → Backup v11
-├── index.html.v12.bak   → Backup v12 pré-commit
-└── index.html.v12.bak2  → Backup v12 pré-patch v13
-```
-
-### Invariantes
-- **I9** — Seal exige confirmação humana explícita
-- **I11** — SHA-256 real → Ledger `:8101`
-- **I14** — Sem fallbacks silenciosos · falha explícita
-
-**Princípio:** *Gently proves. Silently seals.* ✂️
+> **§151 Tesoura Soberana v13** — Detalhes em `CLAUDE-HISTORY.md`
 
 ---
 

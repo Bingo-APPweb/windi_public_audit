@@ -7427,3 +7427,51 @@ It's independently verifiable proof."
 **Sealed:** 11 Apr 2026 · Human Dragon · Liga IA+H
 
 ---
+
+---
+
+## §151 Tesoura Soberana v13 — 09 Abr 2026 (MIGRADO 14 Abr 2026)
+
+**Commit:** `ed90ba17982afc51d57328f19c671bfeb531fcc6` (v12) + Patch v13
+**Endpoint:** `https://windi-domain.com/travel/tesoura-ui/`
+**Ficheiro:** `/opt/windi/windi-travel/static/tesoura/index.html` (71KB · ~1000 linhas)
+
+### Arquitectura v13
+
+**Motor IA Touch (BFS Flood Fill — client-side soberano)**
+- `getImageData()` → array de pixels
+- BFS por tolerância RGB (5–120, ajustável)
+- Bounding box → OffscreenCanvas transparente → nova camada
+- Zero API externa · 100% soberano
+
+**WindiTouch v1.0.0** integrado inline
+- Breakpoints reactivos (isMobile/isTablet/isDesktop)
+- Haptic patterns distintos por acção (tap/select/place/ia/seal/delete)
+- Swipe gestures ready
+
+### Features Seladas
+
+| Feature | Estado |
+|---|---|
+| 🎬 Scenes Strip | ✅ 4 backgrounds + upload custom BG |
+| 📚 Layer Bar (v12) | ✅ ⬇▼▲⬆ · aparece ao seleccionar |
+| **📚 Toolbar2 (v13)** | ✅ Layer + Escala rápida · polling 120ms |
+| **⚙ Piece Panel (v13)** | ✅ Slide-up · Rotação + Escala + Camada |
+| ✂️ Lasso Manual | ✅ BFS freehand path |
+| 🤖 IA Touch | ✅ Flood fill por cor · tolerância slider |
+| ✍️ Text Modal | ✅ textarea + size 14-72px + 6 cores |
+| 📧 Email Colagem | ✅ mailto: com receipt + hash |
+| 🔗 Verificar | ✅ /verify-public/?id= nova tab |
+| 🔒 Selar no Ledger | ✅ POST /tesoura/seal · estados visuais |
+| 🔏 SHA-256 | ✅ Web Crypto API real |
+| 🌐 i18n | ✅ PT/DE/EN · toolbar2 labels incluídos |
+| 📥 Download PNG | ✅ canvas.toDataURL |
+| ↗ Partilhar | ✅ Web Share API + fallback clipboard |
+
+### Invariantes
+- **I9** — Seal exige confirmação humana explícita
+- **I11** — SHA-256 real → Ledger `:8101`
+- **I14** — Sem fallbacks silenciosos · falha explícita
+
+**Princípio:** *Gently proves. Silently seals.* ✂️
+
