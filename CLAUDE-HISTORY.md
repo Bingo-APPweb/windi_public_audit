@@ -7526,3 +7526,161 @@ It's independently verifiable proof."
 
 **Princípio:** *Gently proves. Silently seals.* ✂️
 
+
+---
+
+## § SESSÃO 15 Abr 2026 — §170 W-LAB-001 Governance Laboratory
+
+**Commits:** `e7a9e9b`, `5306944`, `2d9f9a3`, `b9b7fd1`
+**Scope:** W-LAB-001 — Sistema de Treino para Operadores Governança
+**CLAUDE.md:** v2.2.11 → v2.2.12
+
+### §170 — W-LAB-001: LOBO Governance Training (15 Apr 2026)
+
+**Port:** :8151 · **Invariants:** I9, I11, I13, I14
+**URL:** `https://windi-domain.com/lab/`
+**Entry:** `https://windi-domain.com/lab/entry`
+**Files:** `/opt/windi/w-lab-001/`
+
+**Conceito:**
+> *"O I9 não se aprende. Treina-se."*
+> Sistema de treino baseado em System 1 (Kahneman) — reflexos pré-conscientes para detectar violações de governança antes que aconteçam.
+
+**Arquitetura LOBO (5 Camadas):**
+
+| Layer | Nome | Focus | Status |
+|-------|------|-------|--------|
+| 01 | REFLEXO | Detectar violação instintivamente | ✅ LIVE (5 games) |
+| 02 | CONTEXTO | Identificar padrões regulatórios | 🔮 Future |
+| 03 | TÁTICA | Escolher resposta apropriada | 🔮 Future |
+| 04 | ESTRATÉGIA | Planear compliance proactivo | 🔮 Future |
+| 05 | SABEDORIA | Ensinar outros | 🔮 Future |
+
+**Layer 01 REFLEXO — 5 Mini-Games:**
+
+| Game | Descrição | Mechanics |
+|------|-----------|-----------|
+| 🎯 **FAREJADOR** | Caça I9 em contratos (60s) | 8 linhas, 1 trap escondida |
+| 👁 **OBSERVADOR** | Detectar mudança de escopo | Before/After compare |
+| 🔬 **DISSECTOR** | Desconstruir cláusulas | Drag-drop building blocks |
+| 🛡 **GUARDIÃO** | Classificar docs por risco | Swipe left/right triage |
+| ⏱ **RELOJOEIRO** | Deadlines regulatórios sob pressão | 3 frameworks (GDPR/DORA/EU AI Act) |
+
+**System 1 Training:**
+- Treino de reflexos, não conhecimento declarativo
+- 20-60 segundos por exercício
+- Feedback imediato (correcto/incorrecto)
+- Repetição cria reconhecimento automático de padrões
+
+**FAREJADOR-LITE (Inline Demo):**
+- 5 cenários I9: AI Deployment, Fraud Detection, GDPR, Hiring AI, Content Moderation
+- 20 segundos para encontrar o trap
+- Não requer login
+- Conversão para email capture
+
+**Entry Landing Page:**
+- Market-ready messaging (não técnico)
+- Emotional hooks: "A decisão que salva milhões começa num documento."
+- Authority signals: EU AI Act, GDPR, DORA badges
+- CTA: demo primeiro, email depois
+
+**Backend (app.py):**
+```python
+# Email capture with conversion analytics
+class EarlyAccessRequest(BaseModel):
+    email: str
+    source: str = "farejador-lite"
+    demo_result: Optional[str] = None  # win/lose/timeout
+    scenario_shown: Optional[str] = None
+    trap_caught: bool = False
+    time_remaining: Optional[int] = None
+
+@app.post("/api/lab/early-access")
+async def capture_early_access(req: EarlyAccessRequest, request: Request):
+    # Validates email, captures with metadata
+    ...
+
+@app.get("/api/lab/early-access/stats")
+async def get_early_access_stats():
+    # total_signups, by_demo_result, trap_catch_rate
+    ...
+```
+
+**Arquitetura de Ficheiros:**
+```
+/opt/windi/w-lab-001/
+├── app.py              # FastAPI + SQLite + email capture
+├── requirements.txt    # uvicorn, fastapi, pydantic, sqlite3
+├── static/
+│   ├── lab.html        # Main dashboard (5 games grid)
+│   ├── entry.html      # Market landing + FAREJADOR-LITE
+│   ├── farejador.html  # Full game (60s, 8 lines)
+│   ├── observador.html # Before/After compare
+│   ├── dissector.html  # Drag-drop clause builder
+│   ├── guardiao.html   # Swipe triage
+│   └── relojoeiro.html # Deadline pressure (3 frameworks)
+└── windi-lab.db        # SQLite (early_access_emails)
+```
+
+**Nginx Routes:**
+```nginx
+location /lab/ {
+    proxy_pass http://127.0.0.1:8151/;
+}
+location /lab/api/ {
+    proxy_pass http://127.0.0.1:8151/api/;
+}
+```
+
+**Systemd:**
+```
+[Unit]
+Description=WINDI Lab 001
+After=network.target
+
+[Service]
+User=windi
+WorkingDirectory=/opt/windi/w-lab-001
+ExecStart=/usr/bin/python3 -m uvicorn app:app --host 127.0.0.1 --port 8151 --reload
+```
+
+**OVS Certification Path:**
+> Layer 01 complete (5 games) → Layer 02 unlocks → ... → OVS Certified
+
+**Frameworks nos Exercícios:**
+- GDPR: 72 horas (notificação de breach)
+- DORA: 24 horas (incidentes ICT)
+- EU AI Act: 72 horas (incidentes IA de alto risco)
+
+**Logs Verificados:**
+```
+INFO: Uvicorn running on http://127.0.0.1:8151
+INFO: POST /api/lab/early-access 200 OK
+INFO: GET /api/lab/early-access/stats 200 OK
+```
+
+### Lapidação Final (4 Cirurgias)
+
+| # | Problema | Solução |
+|---|----------|---------|
+| 1 | Faltava emotional punch | Added: "A decisão que salva milhões começa num documento." |
+| 2 | CTA não era inevitável | After demo: "Prove what you already know" |
+| 3 | Faltavam authority signals | Badges: EU AI Act, GDPR, DORA, PHO Ready |
+| 4 | Cognitive friction | Demo inline, sem redirect, sem login |
+
+### Invariantes Aplicados
+
+| Inv | Aplicação |
+|-----|-----------|
+| I9 | Todos os games treinam detecção de violação I9 |
+| I11 | Stats backend preserva evidência de engagement |
+| I13 | Cada sessão converge para skill concreto |
+| I14 | Falha explícita (trap não encontrado = feedback claro) |
+
+**Princípio §170:**
+> *"O compliance que funciona não é o que se ensina.*
+> *É o que se torna reflexo."*
+
+**Sealed:** 15 Apr 2026 · Human Dragon · Liga IA+H
+
+---
