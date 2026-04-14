@@ -6,6 +6,57 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 14 Abr 2026 (Tarde) — §169 W-SERVICE-CONTROL
+
+**Commits:** `a763dc3`, `0e02f8c`, `55e1b26`
+**Scope:** Service Control Panel — Sovereign Service Management
+**CLAUDE.md:** v2.2.11
+
+### §169 — W-SERVICE-CONTROL: Service Control Panel (14 Apr 2026 · 18:00 CEST)
+
+**Port:** :8170 · **Invariants:** I1, I9, I11
+**URL:** `https://windi-domain.com/svc-control/`
+**File:** `/opt/windi/service-control/app.py` (Flask + HTML inline · ~1100 linhas)
+
+**Conceito:**
+> "Se não consegues controlar, não consegues escalar."
+> Painel de controlo centralizado para todos os serviços WINDI com I9 Gate obrigatório.
+
+**Motivação:**
+- Portal WINDI tinha apenas links estáticos, sem controlo
+- UDB tinha Kill Switch mas não restart individual
+- Serviços offline requeriam SSH manual
+
+**24 Serviços Monitorizados:**
+
+| Categoria | Serviços | Portas |
+|-----------|----------|--------|
+| Core | Forensic Ledger, Dragon Hub, Desktop GEN7, Governance API, Sandbox Core | 8101, 8108, 8119, 8080, 8091 |
+| Agents | WINDI-LAW, Travel, NOMAD, VD-CUT, JOE, VD-MASS, JMPG | 8122, 8126-8132 |
+| Dashboards | UDB, INTENT-CMD, FEDIVERSE, BRIDGE, SEC, Verify Public, Enterprise, CACHE | 8140-8160 |
+| Support | DID Genesis, Wallet, Communiqué, Dispatch | 8096, 8095, 8105, 8106 |
+
+**Features:**
+- Auto-fill founder DID (`did:windi:dragon-001`)
+- SEALED services protected (cannot restart Ledger, WINDI-LAW via panel)
+- Link directo para dashboard de cada serviço (🔗 Open)
+- Logs viewer (journalctl · últimas 100 linhas)
+- Auto-refresh cada 30 segundos
+- NOIR/KLAR theme + i18n PT/DE/EN
+- Ledger seal para todas as acções (I11)
+
+**Files:**
+```
+/opt/windi/service-control/
+├── app.py                      (Flask + HTML · 1100 linhas)
+├── requirements.txt
+├── start.sh
+├── patch-nginx-v3.sh           (nginx route script)
+└── windi-service-control.service
+```
+
+---
+
 ## § SESSÃO 12 Abr 2026 (Noite) — §161 Capacity Amplifier · OVS
 
 **Commit:** `70d9271`

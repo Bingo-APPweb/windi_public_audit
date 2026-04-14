@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.2.10
-**Sealed:** 2026-04-14 · §168 VDT Academic Outreach
+**Version:** 2.2.11
+**Sealed:** 2026-04-14 · §169 W-SERVICE-CONTROL
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -86,6 +86,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-ENTERPRISE-001 | :8150 | I1,I9,I11,I14 | **LIVE** v3.1.0 · VERA REGO v1.0 · DASH v4.1 · i18n PT/DE/EN · NOIR/KLAR |
 | W-CACHE-001 | :8160 | I11,I14 | **LIVE** · Verifiable Cache Layer · L2→L3 Promotion · NOIR Dashboard |
 | W-DID-GENESIS | :8096 | I1,I9,I11,I14 | **LIVE** · Sovereign Identity Tree · Cross-Service Session · 4 Tiers |
+| W-SERVICE-CONTROL | :8170 | I1,I9,I11 | **LIVE** · Service Control Panel · 24 Services · Restart/Stop/Start · DID Gate |
 | WINDI-PORTAL | static | — | **LIVE** · Internal Control Center · 35 Services · 7 Categories |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
@@ -437,12 +438,13 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | :8145 | W-STATE-CORE-006 Verify Public | 🟢 **LIVE** |
 | :8150 | W-Enterprise-001 AI Compliance | 🟢 **LIVE** |
 | :8160 | W-CACHE-001 Verifiable Cache | 🟢 **LIVE** |
+| :8170 | W-SERVICE-CONTROL Panel | 🟢 **LIVE** |
 
-> **Mapa completo (26 portas):** `CLAUDE-HISTORY.md` § Mapa de Portas 13 Abr
+> **Mapa completo (27 portas):** `CLAUDE-HISTORY.md` § Mapa de Portas 14 Abr
 
-### Sistemas LIVE (44 total)
+### Sistemas LIVE (45 total)
 
-**Core:** GEN7 · Pioneer · VPR · API Keys · Dispatch · Web Hosting · i18n · Wallet · Lead Admin · **Portal**
+**Core:** GEN7 · Pioneer · VPR · API Keys · Dispatch · Web Hosting · i18n · Wallet · Lead Admin · **Portal** · **SVC-CONTROL**
 **Agents (33):** CIA · WSG · GATE · NGINX · CANVAS · COMM · PROVE · DETECT-MEDIA · VERIFY · INTENT · COUNSEL · SESSION · NOMAD · VD-CUT · VD-MASS · JOE · DIST · JMPG · UDB · COMPOSER · CLASSIFY · VISION · OBS-GATE · INTENT-CMD · NOMAD-VOICE · FEDIVERSE · BRIDGE · SEC · DRAGON · DEV-API · ENTERPRISE · **CACHE**
 **Products:** Triangle of Power · WINDI FIELD · WINDI TRAVEL · FVE Protocol · RFC-001 DNA
 
@@ -450,6 +452,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 14 Apr | **§169 W-SERVICE-CONTROL** · Service Control Panel · :8170 · 24 Services · I9 DID Gate · `55e1b26` |
 | 14 Apr | **§168 VDT Academic Outreach** · IDT Kempten · HNU Neu-Ulm · PHO Framework · `c66fefe` |
 | 14 Apr | **§167 W-DID-GENESIS** · Sovereign Identity Audit · DID Canonical · MARIA Fix · 57k Receipts |
 | 13 Apr | **§165 WINDI Portal** · Internal Control Center · 35 Services · 7 Categories · `77f82e2` |
@@ -571,6 +574,26 @@ Anonymous → HTTPException 400 · Receipt `WINDI-MARIA-COMPLIANCE-FIX-20260414`
 
 **Princípio Descoberto:**
 > *"A Árvore não planeia os frutos. Responde às estações."*
+
+### §169 — W-SERVICE-CONTROL: Service Control Panel (14 Apr 2026)
+
+**Port:** :8170 · **Invariants:** I1, I9, I11 · **Commits:** `a763dc3`, `0e02f8c`, `55e1b26`
+**URL:** `https://windi-domain.com/svc-control/`
+**Conceito:** Painel de controlo centralizado para todos os serviços WINDI com I9 Gate.
+
+**Features:**
+- 24 serviços monitorizados (4 categorias: Core, Agents, Dashboards, Support)
+- Status em tempo real (online/degraded/offline/starting)
+- Restart/Stop/Start com I9 Gate (requer DID)
+- Logs viewer (journalctl integration)
+- Link directo para dashboard de cada serviço
+- SEALED services protegidos (Ledger, WINDI-LAW)
+- Auto-fill founder DID (`did:windi:dragon-001`)
+- NOIR/KLAR theme + i18n PT/DE/EN
+- Todas as acções seladas no Forensic Ledger (I11)
+
+**DID Gate:** Sem DID = apenas visualização. Com DID = controlo completo.
+**Files:** `/opt/windi/service-control/app.py` (Flask + HTML inline)
 
 ### §168 — VDT Academic Outreach (14 Apr 2026)
 
