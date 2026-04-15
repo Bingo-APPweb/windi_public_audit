@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.2.12
-**Sealed:** 2026-04-15 · §170 W-LAB-001
+**Version:** 2.2.13
+**Sealed:** 2026-04-15 · §174 W-COST-001
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -88,6 +88,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-DID-GENESIS | :8096 | I1,I9,I11,I14 | **LIVE** · Sovereign Identity Tree · Cross-Service Session · 4 Tiers |
 | W-SERVICE-CONTROL | :8170 | I1,I9,I11 | **LIVE** · Service Control Panel · 24 Services · Restart/Stop/Start · DID Gate |
 | W-LAB-001 | :8151 | I9,I11,I14 | **LIVE** · Governance Laboratory · LOBO Architecture · 5 Mini-Games · OVS Certification |
+| W-COST-001 | :8152 | I9,I11,I14 | **LIVE** · Cost Intelligence Layer · Telegram Alerts · Gateway Integration · Thresholds |
 | WINDI-PORTAL | static | — | **LIVE** · Internal Control Center · 35 Services · 7 Categories |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
@@ -203,27 +204,6 @@ FRUITS (Frutos)   → Virtue Receipts
 ### §118 — Travel Auto-Healing
 
 **Portas:** 8126-8129 · **Watchdog:** 15s loop · port-cleaner · logrotate
-
-### DECREE-001 — A Árvore Viva (12 Apr 2026)
-
-> *"O servidor WINDI é uma Árvore Viva. Cada serviço é um galho.*
-> *A seiva (DID) flui do tronco às folhas. Nenhum galho vive sozinho."*
-
-**Invariantes:** I1, I9, I11, I12, I14 · **Status:** CONSTITUTIONAL · IRREMEDIÁVEL
-**Ficheiros:** `/opt/windi/constitutional/DECREE-001-LIVING-TREE.md`
-
-| Artigo | Lei | Implementação |
-|--------|-----|---------------|
-| Art.1 | Definição | Tronco=Ledger · Seiva=DID · Galhos=Órgãos |
-| Art.2 | Origem Preservada | `?return=` · `windi_origin` · Referrer |
-| Art.3 | Navegação Universal | Server Operations sidebar obrigatório |
-| Art.4 | Seiva DID | Cross-validation entre todos os gates |
-| Art.4.2 | Fonte Soberana | Cada serviço nasce de necessidade real · Antecipação soberana |
-| Art.5 | Frutos Partilhados | Receipts verificáveis em Verify Public |
-| Art.6 | Proibições | `/desktop/` deprecated · DID hardcoded proibido |
-| Art.7 | Verificação | `/api/tree/health` |
-
-**Módulos:** `windi-tree.js` (frontend) · `windi_tree.py` (backend)
 
 ### 3.2 Layer 7 — Communication Semantics
 
@@ -440,9 +420,10 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | :8150 | W-Enterprise-001 AI Compliance | 🟢 **LIVE** |
 | :8151 | W-LAB-001 Governance Laboratory | 🟢 **LIVE** |
 | :8160 | W-CACHE-001 Verifiable Cache | 🟢 **LIVE** |
+| :8152 | W-COST-001 Cost Intelligence | 🟢 **LIVE** |
 | :8170 | W-SERVICE-CONTROL Panel | 🟢 **LIVE** |
 
-> **Mapa completo (28 portas):** `CLAUDE-HISTORY.md` § Mapa de Portas 15 Abr
+> **Mapa completo (29 portas):** `CLAUDE-HISTORY.md` § Mapa de Portas 15 Abr
 
 ### Sistemas LIVE (46 total)
 
@@ -454,6 +435,8 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 15 Apr | **§174 W-COST-001** · Cost Intelligence Layer · Telegram Alerts · Gateway Integration · `4ad6ba6` |
+| 15 Apr | **§173 DID Simplification** · WindiDID.js · Single Source of Truth · Orphan Migration · `a8a191c` |
 | 15 Apr | **§170 W-LAB-001** · Governance Laboratory · LOBO Architecture · 5 Mini-Games · Entry Landing · `b9b7fd1` |
 | 14 Apr | **§169 W-SERVICE-CONTROL** · Service Control Panel · :8170 · 24 Services · I9 DID Gate · `55e1b26` |
 | 14 Apr | **§168 VDT Academic Outreach** · IDT Kempten · HNU Neu-Ulm · PHO Framework · `c66fefe` |
@@ -616,6 +599,50 @@ Anonymous → HTTPException 400 · Receipt `WINDI-MARIA-COMPLIANCE-FIX-20260414`
 - `/opt/windi/w-lab-001/static/lab.html` (Dashboard)
 - `/opt/windi/w-lab-001/static/*.html` (5 mini-games)
 
+### §174 — W-COST-001: Cost Intelligence Layer (15 Apr 2026)
+
+**Port:** :8152 · **Invariants:** I9, I11, I14 · **Commits:** `5e7da0e`, `05f4bf7`, `4ad6ba6`
+**URL:** `https://windi-domain.com/cost/`
+**Conceito:** Centralização de custos LLM com alertas Telegram e integração W-GATEWAY.
+
+> *"O WINDI agora vê o que gasta. Decisões soberanas com números reais."*
+
+**Sovereign Routing Economics:**
+| Tier | Provider | Cost/call | Ratio |
+|------|----------|-----------|-------|
+| FREE | local | €0.00 | ∞ |
+| MED | Mistral | €0.000007 | 2800x cheaper |
+| HIGH | Anthropic | €0.02 | 1x (reference) |
+
+**Thresholds + Telegram:**
+- Daily Yellow: €2 (log only)
+- Daily Red: €5 → 🔴 Telegram
+- Weekly Red: €15 → 🔴 Telegram
+- Spike: 50% increase → ⚡ Telegram
+
+**Endpoints:**
+- `POST /api/cost/record` — Record cost event from W-GATEWAY
+- `GET /api/cost/summary` — Daily/weekly totals
+- `GET /api/cost/by-service` — Breakdown by service
+- `GET /api/cost/wisdom` — Candidates for caching
+- `GET /api/cost/test-alert` — Test Telegram delivery
+- `GET /api/cost/alerts` — Alert history
+
+**W-GATEWAY Integration:**
+- Real token tracking (not budget)
+- `call_anthropic()` returns `usage.input_tokens` + `usage.output_tokens`
+- `call_mistral()` returns `usage.prompt_tokens` + `usage.completion_tokens`
+- Non-blocking `record_cost()` after each LLM call
+
+**Files:**
+- `/opt/windi/w-cost-001/app.py` (FastAPI, 542 lines)
+- `/opt/windi/w-cost-001/static/index.html` (NOIR Dashboard)
+- `/opt/windi/w-cost-001/cost_hook.py` (Integration module)
+- `/opt/windi/w-cost-001/.env` (Telegram config, gitignored)
+- `/opt/windi/windi-gateway/server.py` (Gateway integration)
+
+**Princípio:** O sovereign_router não é apenas constitucional — é economicamente crítico.
+
 ### §169 — W-SERVICE-CONTROL: Service Control Panel (14 Apr 2026)
 
 **Port:** :8170 · **Invariants:** I1, I9, I11 · **Commits:** `a763dc3`, `0e02f8c`, `55e1b26`
@@ -713,133 +740,12 @@ Anonymous → HTTPException 400 · Receipt `WINDI-MARIA-COMPLIANCE-FIX-20260414`
 
 **Port:** :8150 · **Version:** v3.2.0 · **Invariants:** I1, I9, I11, I14
 **URL:** `https://windi-domain.com/enterprise/`
-**DASH v4.1:** `https://windi-domain.com/enterprise/static/desk.html`
 **Conceito:** EU AI Act Article 14 compliance + VERA constitutional agent.
 
-### §158 — VERA v1.2 · DID Gate + Evangelho WINDI
+**Key Components:**
+- VERA REGO v1.2 — AI Compliance Secretary (32 Pilares)
+- DID Gate — 3 Leis da Semente (Existência → Rastro → Histórico)
+- OVS — Operator of Verifiable Systems (3 perfis)
+- DASH v4.1 — 9 Prateleiras Trilíngue
 
-**Evangelho:** `ALMA → DID → CÉREBRO → LEDGER → MUNDO`
-**Receipt:** `VERA-DID-GATE-EVANGELHO-20260412154934`
-
-**As Três Leis da Semente:**
-| Lei | Nome | Implementação |
-|-----|------|---------------|
-| I | Existência antes de Acção | Sem DID → WalletBanner mode · zero acções |
-| II | Toda Acção gera Rastro DID | `bind_action_to_did()` → Ledger receipt |
-| III | Sistema lê Histórico do DID | `restore_did_context()` → VERA adapta |
-
-**VERA v1.2 Componentes:**
-- `vera_did_gate.py` — DID Gate + 3 Leis (380 linhas)
-- `routing_engine.py` — Multi-LLM Routing + Consensus (480 linhas)
-- `agent_transfer_protocol.py` — IAT-001 Inter-Agent (350 linhas)
-- `vera_instructor.py` — Sovereign Instructor R10 (420 linhas)
-- `vera_module_map.json` — 8 Módulos Trilíngue
-- `llm_registry.yaml` — 8 Modelos em 3 Tiers
-
-**Endpoints DID Gate:** `/vera/did/validate/{did}` · `/vera/did/history/{did}` · `/vera/did/context/{did}` · `/vera/did/wallet-banner`
-
-### §157 — VERA · REGO Constitution
-
-**Constitution:** REGO v1.2 · 32 Pilares (10 Normativos + 9 Operacionais + 10 Técnicos + 3 DID)
-**Conceito:** AI Compliance Secretary. Não decide — ilumina o caminho até à decisão humana.
-
-**VERA Endpoints:** `/vera/health` · `/vera/brief` · `/vera/chat` · `/vera/routing/route` · `/vera/instructor/ask`
-
-### §160 — DID Universal Frontend Integration (12 Apr 2026)
-
-**Commit:** `b962bb7` · **File:** `static/index.html` (+376 linhas)
-**Conceito:** DID Universal no dashboard W-Enterprise-001. Sem DID = sem acesso.
-
-**Três Leis no Frontend:**
-| Lei | Componente | Função |
-|-----|------------|--------|
-| I | WalletBanner overlay | Bloqueia dashboard sem DID válido |
-| II | submitPHO() | Inclui `officer_did` em todos os receipts |
-| III | restoreContext() | Restaura histórico ao regressar |
-
-**UI Components:**
-- `#wallet-overlay` — Full-screen DID input com Evangelho WINDI
-- `#session-bar` — DID activo + tier + status Berçário + logout
-- `#vera-greeting` — VERA greeting personalizado por contexto
-- `DID_STATE` — State object para sessão activa
-
-**Status Berçário:** `nasceu` (primeira vez) · `entrou` (novo DID) · `voltou` (mesmo DID)
-
-**sessionStorage:** `windi_enterprise_did`
-
-### §161 — Capacity Amplifier · OVS (12 Apr 2026)
-
-**URL:** `https://windi-domain.com/enterprise/operator`
-**File:** `static/operator.html` · **i18n:** PT/DE/EN · **Theme:** NOIR/KLAR
-
-**Conceito:** Posicionamento estratégico. Não é feature — é argumento de venda.
-**Novo Cargo:** Operator of Verifiable Systems (OVS)
-
-**3 Perfis Amplificados:**
-| Perfil | Antes | Depois |
-|--------|-------|--------|
-| Digital Risk / Compliance | Depende de narrativa | Prova directa no Ledger |
-| Technical Product Owner | Governança = fricção | Governança embutida |
-| Internal Auditor | Semanas de ciclo | Verificação imediata SHA-256 |
-
-**Workflow:** Decision → I9 Gate → Seal (SHA-256 + Ledger) → Proof
-
-**Manifesto:**
-> *"The future of digital risk is not hiring better experts.*
-> *It's giving normal operators the ability to work with provable systems."*
-
-**Badges:** EU AI Act Art.14 · DORA · PHO Certified · Ledger-native · Audit-ready
-
-### §162 — VERA Profile-Aware R10 (12 Apr 2026)
-
-**Commit:** `415f482` · **Engine:** VERA Instructor v1.1
-**Conceito:** VERA adapta R10 Pedagogia ao perfil OVS do officer.
-
-**3 Perfis OVS (§161):**
-| Perfil | Tone | Focus Areas |
-|--------|------|-------------|
-| `digital_risk` | compliance | legal_anchors, frameworks, audit_evidence |
-| `tech_product` | technical | integration, api_workflow, system_design |
-| `internal_auditor` | audit | verification, ledger_queries, sha256_proof |
-
-**Endpoints:**
-- `POST /vera/did/profile/{did}?profile_id=X` — Set profile
-- `GET /vera/did/profile/{did}` — Get profile + greeting
-- `GET /vera/did/profiles` — List all profiles
-
-**Adaptação R10:**
-- Intro personalizado por perfil (trilíngue)
-- Focus areas específicas
-- Next steps com terminologia do perfil
-- Fallback guidance por perfil
-
-**Integração §161:** Profile choice in `/enterprise/operator` syncs with VERA guidance.
-
-### DASH v4.1 — 9 Prateleiras Trilíngue
-
-**File:** `static/desk.html` (893 linhas) · **i18n:** PT/DE/EN · **Theme:** NOIR/KLAR
-
-| P01-P03 | Control Room · Observations · 1LOD Stream |
-| P04-P06 | PHO Queue · Documents · Legal Advisory |
-| P07-P09 | Invoices · PHO+Ledger · REP |
-
-**Features:** VERA Panel · LUPA Modal · Approve+Seal · Toast · i18n Toggle · NOIR/KLAR Toggle
-
-### Files v3.1.0
-
-```
-/opt/windi/w-enterprise-001/
-├── main.py          → FastAPI + VERA router (504 linhas)
-├── vera_agent.py    → REGO v1.0 (452 linhas)
-├── static/desk.html → DASH v4.1 trilingual (893 linhas)
-└── static/docs/     → User Manual
-```
-
-### NOIR/KLAR Palette
-
-| Theme | Background | Gold | Text |
-|-------|------------|------|------|
-| NOIR | `#0B0D14` | `#C8A45A` | `#E8E5DC` |
-| KLAR | `#FAFAF8` | `#8B7424` | `#1A1A1A` |
-
-**localStorage:** `windi-theme` + `windi-lang` · Transições 0.3s
+> **Full details:** `CLAUDE-HISTORY.md` § W-ENTERPRISE-001
