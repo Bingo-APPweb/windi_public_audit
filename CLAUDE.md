@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.2.13
-**Sealed:** 2026-04-15 · §174 W-COST-001
+**Version:** 2.2.14
+**Sealed:** 2026-04-15 · §175 Landing Page Complete
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -435,6 +435,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 15 Apr | **§175 Landing Page Complete** · 5 Products LIVE · W-Enterprise + W-Lab Cards · Trilingual · `1fa17d9` |
 | 15 Apr | **§174 W-COST-001** · Cost Intelligence Layer · Telegram Alerts · Gateway Integration · `4ad6ba6` |
 | 15 Apr | **§173 DID Simplification** · WindiDID.js · Single Source of Truth · Orphan Migration · `a8a191c` |
 | 15 Apr | **§170 W-LAB-001** · Governance Laboratory · LOBO Architecture · 5 Mini-Games · Entry Landing · `b9b7fd1` |
