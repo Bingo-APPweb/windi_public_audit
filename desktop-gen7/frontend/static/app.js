@@ -1088,11 +1088,19 @@ const WM = {
         localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
         window.__windiWallet = data;
         window.__windiWalletId = data.wallet_id || data.id;
+        // §173 DID SIMPLIFICATION — Sync with unified DID storage
+        if (typeof WindiDID !== 'undefined' && data.wallet_id) {
+            WindiDID.set(data.wallet_id);
+        }
     },
     clear() {
         localStorage.removeItem(this.STORAGE_KEY);
         window.__windiWallet = null;
         window.__windiWalletId = null;
+        // §173 DID SIMPLIFICATION — Clear unified DID storage
+        if (typeof WindiDID !== 'undefined') {
+            WindiDID.clear();
+        }
     }
 };
 

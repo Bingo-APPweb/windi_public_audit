@@ -154,14 +154,12 @@ async def validate_did_at_gate(did: str, gate: dict) -> Optional[Dict[str, Any]]
 
 async def cross_validate_did(did: str) -> Dict[str, Any]:
     """
-    DECREE-001 Article 4: Supreme DID Cross-Validation.
+    §173 SIMPLIFIED: Single Source of Truth — W-DID-GENESIS.
 
-    Queries all identity gates in parallel and returns:
-    - Highest achieved tier
-    - All gates where DID is recognized
-    - Accessible organs based on tier
+    Replaced complex multi-gate validation with direct Genesis lookup.
+    "Um DID. Uma fonte. Zero fallbacks."
 
-    "One DID, one identity, the whole tree."
+    DECREE-001 Article 4 still applies — now enforced at Genesis level.
     """
     if not did or not did.startswith("did:windi:"):
         return {
@@ -172,67 +170,43 @@ async def cross_validate_did(did: str) -> Dict[str, Any]:
             "accessible_organs": [],
         }
 
-    # Query all gates in parallel
-    tasks = [validate_did_at_gate(did, gate) for gate in IDENTITY_GATES]
-    results = await asyncio.gather(*tasks, return_exceptions=True)
+    # §173 — Single Source: W-DID-GENESIS
+    try:
+        async with httpx.AsyncClient(timeout=5.0) as client:
+            resp = await client.get(f"http://localhost:8096/api/genesis/lookup/{did}")
+            if resp.status_code == 200:
+                data = resp.json()
+                if data.get("valid"):
+                    tier_str = data.get("tier", "SEED")
+                    tier = DIDTier(tier_str) if tier_str in [t.value for t in DIDTier] else DIDTier.SEED
+                    tier_level = TIER_HIERARCHY.get(tier, 1)
+                    accessible_organs = ORGAN_ACCESS.get(tier, ORGAN_ACCESS[DIDTier.SEED])
 
-    # Collect successful validations
-    validations = []
-    highest_tier = None
-    highest_tier_level = 0
+                    return {
+                        "valid": True,
+                        "did": did,
+                        "tier": tier.value,
+                        "tier_level": tier_level,
+                        "accessible_organs": accessible_organs,
+                        "source": "W-DID-GENESIS",
+                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                        "decree": "DECREE-001-LIVING-TREE",
+                        "article": "Article 4 (§173 Simplified)",
+                        "principle": "Um DID. Uma fonte. Zero fallbacks.",
+                    }
+    except Exception as e:
+        log.warning(f"[DID] Genesis lookup failed: {e}")
 
-    for result in results:
-        if isinstance(result, dict) and result.get("valid"):
-            validations.append(result)
-
-            tier = result["tier"]
-            tier_level = TIER_HIERARCHY.get(tier, 0)
-
-            if tier_level > highest_tier_level:
-                highest_tier = tier
-                highest_tier_level = tier_level
-
-    # If validated at multiple gates, elevate to ORACLE
-    if len(validations) >= 2 and highest_tier_level >= TIER_HIERARCHY[DIDTier.SOVEREIGN]:
-        highest_tier = DIDTier.ORACLE
-
-    if not validations:
-        return {
-            "valid": False,
-            "error": "did_not_found",
-            "message": "DID not recognized by any identity gate",
-            "did": did,
-            "tier": None,
-            "accessible_organs": ORGAN_ACCESS[DIDTier.SEED],  # Public only
-            "gates_checked": [g["name"] for g in IDENTITY_GATES],
-            "decree": "DECREE-001-LIVING-TREE",
-        }
-
-    # Get accessible organs for highest tier
-    accessible_organs = ORGAN_ACCESS.get(highest_tier, [])
-
+    # DID not found or Genesis unavailable
     return {
-        "valid": True,
+        "valid": False,
+        "error": "did_not_found",
+        "message": "DID not recognized by W-DID-GENESIS",
         "did": did,
-        "tier": highest_tier.value,
-        "tier_level": highest_tier_level,
-        "accessible_organs": accessible_organs,
-        "validations": [
-            {
-                "gate": v["gate"],
-                "gate_name": v["gate_name"],
-                "state": v["state"],
-                "tier": v["tier"].value,
-            }
-            for v in validations
-        ],
-        "cross_validated": len(validations) >= 2,
-        "gates_checked": len(IDENTITY_GATES),
-        "gates_recognized": len(validations),
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "tier": None,
+        "accessible_organs": ORGAN_ACCESS[DIDTier.SEED],
+        "source": "W-DID-GENESIS",
         "decree": "DECREE-001-LIVING-TREE",
-        "article": "Article 4: DID Cross-Validation",
-        "principle": "One DID, one identity, the whole tree.",
     }
 
 

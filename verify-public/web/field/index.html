@@ -506,6 +506,7 @@
         <span id="t-tagline">AI processes. Human decides. WINDI guarantees.</span>
     </footer>
 
+    <script src="/shared/windi-did.js"></script>
     <script>
         // ── I18N ──────────────────────────────────────────────────────
         const I18N = {
@@ -699,49 +700,12 @@
             // Priority: direct DID > parsed wallet object > session storage
             let did = null;
 
-            // 1. Direct DID string
-            did = localStorage.getItem('windi_did');
-
-            // 2. GEN7 desktop wallet (stored as JSON object)
-            if (!did) {
-                try {
-                    const walletData = localStorage.getItem('windi_desktop_wallet');
-                    if (walletData) {
-                        const parsed = JSON.parse(walletData);
-                        did = parsed.wallet_id || parsed.id || parsed.did;
-                    }
-                } catch (e) {
-                    // If not JSON, use raw value
-                    did = localStorage.getItem('windi_desktop_wallet');
-                }
+            // §173 — Single source of truth
+            if (typeof WindiDID !== 'undefined') {
+                did = WindiDID.get();
             }
 
-            // 3. Session storage fallbacks
-            if (!did) did = sessionStorage.getItem('windi_did');
-            if (!did) {
-                try {
-                    const sessionWallet = sessionStorage.getItem('windi_desktop_wallet');
-                    if (sessionWallet) {
-                        const parsed = JSON.parse(sessionWallet);
-                        did = parsed.wallet_id || parsed.id || parsed.did;
-                    }
-                } catch (e) {
-                    did = sessionStorage.getItem('windi_desktop_wallet');
-                }
-            }
-
-            // 4. Mobile windi_user (stores walletId and did)
-            if (!did) {
-                try {
-                    const mobileUser = localStorage.getItem('windi_user');
-                    if (mobileUser) {
-                        const parsed = JSON.parse(mobileUser);
-                        did = parsed.did || parsed.walletId;
-                    }
-                } catch (e) {}
-            }
-
-            // 5. Window global (set by GEN7 on login)
+            // Fallback: Window global (set by GEN7 on login)
             if (!did && window.__windiWalletId) {
                 did = window.__windiWalletId;
             }

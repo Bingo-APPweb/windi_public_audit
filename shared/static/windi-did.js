@@ -172,9 +172,10 @@ const WindiDID = (function() {
     /**
      * Migrate from old storage keys to the new standard.
      * Call this once on page load to clean up legacy keys.
+     * §173 — Cleans both localStorage AND sessionStorage.
      */
     function migrateFromLegacy() {
-        const legacyKeys = [
+        const legacyLocalKeys = [
             'windi_desktop_wallet',
             'windi_enterprise_did',
             'windi_law_did',
@@ -183,27 +184,57 @@ const WindiDID = (function() {
             'windi_vdcut_wallet'
         ];
 
+        const legacySessionKeys = [
+            'windi_enterprise_did',
+            'windi_law_did',
+            'windi_travel_did',
+            'windi_law_wallet',
+            'windi_travel_wallet',
+            'windi_law_fingerprint',
+            'windi_travel_fingerprint'
+        ];
+
         let migrated = false;
         const currentDid = get();
 
         if (!currentDid) {
-            // Try to find a DID in legacy keys
-            for (const key of legacyKeys) {
+            // Try to find a DID in legacy localStorage keys
+            for (const key of legacyLocalKeys) {
                 const value = localStorage.getItem(key);
                 if (value && value.startsWith('did:windi:')) {
                     set(value);
-                    console.log('[WindiDID] Migrated from', key);
+                    console.log('[WindiDID] Migrated from localStorage:', key);
                     migrated = true;
                     break;
                 }
             }
+            // Also check sessionStorage
+            if (!migrated) {
+                for (const key of legacySessionKeys) {
+                    const value = sessionStorage.getItem(key);
+                    if (value && value.startsWith('did:windi:')) {
+                        set(value);
+                        console.log('[WindiDID] Migrated from sessionStorage:', key);
+                        migrated = true;
+                        break;
+                    }
+                }
+            }
         }
 
-        // Clean up legacy keys
-        for (const key of legacyKeys) {
+        // Clean up localStorage legacy keys
+        for (const key of legacyLocalKeys) {
             if (localStorage.getItem(key)) {
                 localStorage.removeItem(key);
-                console.log('[WindiDID] Removed legacy key:', key);
+                console.log('[WindiDID] Removed localStorage:', key);
+            }
+        }
+
+        // Clean up sessionStorage legacy keys
+        for (const key of legacySessionKeys) {
+            if (sessionStorage.getItem(key)) {
+                sessionStorage.removeItem(key);
+                console.log('[WindiDID] Removed sessionStorage:', key);
             }
         }
 
