@@ -26,6 +26,11 @@ import logging
 from datetime import datetime, timedelta, timezone
 from typing import Optional, Dict, Any, List
 from contextlib import contextmanager
+from pathlib import Path
+
+# Load .env file
+from dotenv import load_dotenv
+load_dotenv(Path(__file__).parent / ".env")
 
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.responses import JSONResponse, FileResponse
@@ -460,6 +465,62 @@ async def wisdom_candidates(min_calls: int = 5, min_avg_tokens: int = 2000):
             for row in candidates
         ],
         "principle": "Tasks that repeat with high token cost → candidates for local knowledge",
+    }
+
+
+@app.get("/api/cost/test-alert")
+async def test_alert():
+    """
+    Test Telegram alert delivery.
+
+    Sends a test message to verify configuration.
+    """
+    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+        return {
+            "status": "not_configured",
+            "token_set": bool(TELEGRAM_BOT_TOKEN),
+            "chat_id_set": bool(TELEGRAM_CHAT_ID),
+        }
+
+    success = await send_telegram_alert(
+        f"**Test Alert**\n\nW-COST-001 Telegram integration verified.\nTimestamp: {datetime.now(timezone.utc).isoformat()}",
+        "INFO"
+    )
+
+    return {
+        "status": "sent" if success else "failed",
+        "chat_id": TELEGRAM_CHAT_ID[:4] + "****",  # Partial for privacy
+    }
+
+
+@app.get("/api/cost/alerts")
+async def get_alerts(days: int = 7):
+    """
+    Get recent alerts history.
+    """
+    cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
+
+    with get_db() as conn:
+        alerts = conn.execute("""
+            SELECT timestamp, alert_type, threshold, actual, message
+            FROM alerts_sent
+            WHERE timestamp >= ?
+            ORDER BY timestamp DESC
+            LIMIT 50
+        """, (cutoff,)).fetchall()
+
+    return {
+        "period_days": days,
+        "alerts": [
+            {
+                "timestamp": row[0],
+                "type": row[1],
+                "threshold": row[2],
+                "actual": row[3],
+                "message": row[4],
+            }
+            for row in alerts
+        ],
     }
 
 
