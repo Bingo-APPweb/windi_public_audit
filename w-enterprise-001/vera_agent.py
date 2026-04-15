@@ -252,13 +252,34 @@ AI_GATEWAY = os.getenv("WINDI_AI_GATEWAY", "http://127.0.0.1:8130/gateway/call")
 AI_MODEL = os.getenv("WINDI_AI_MODEL", "claude-sonnet-4-20250514")
 LEDGER_URL = os.getenv("WINDI_LEDGER_URL", "http://127.0.0.1:8101/api/receipts")
 VERIFY_BASE = "https://windi-domain.com/verify-public/?id="
+GATEWAY_SECRET = os.getenv("GATEWAY_SECRET", "windi-gateway-secret-2026")
 
 async def call_ai(system: str, messages: list, max_tokens: int = 600) -> str:
-    payload = {"model": AI_MODEL, "max_tokens": max_tokens, "system": system, "messages": messages, "provider": "anthropic"}
+    # Build prompt from system + messages for Gateway format
+    prompt_parts = [f"System: {system}"]
+    for msg in messages:
+        role = msg.get("role", "user")
+        content = msg.get("content", "")
+        prompt_parts.append(f"{role.capitalize()}: {content}")
+    full_prompt = "\n\n".join(prompt_parts)
+
+    payload = {
+        "actor": "vera-agent",
+        "tier": "HIGH",
+        "task": "vera-compliance-chat",
+        "prompt": full_prompt,
+        "provider": "anthropic",
+        "model": AI_MODEL,
+        "max_tokens": max_tokens
+    }
+    headers = {"X-Gateway-Secret": GATEWAY_SECRET}
     async with httpx.AsyncClient(timeout=30.0) as client:
-        resp = await client.post(AI_GATEWAY, json=payload)
+        resp = await client.post(AI_GATEWAY, json=payload, headers=headers)
         resp.raise_for_status()
         data = resp.json()
+        # Gateway returns "response" field
+        if "response" in data: return data["response"]
+        # Fallback: try Anthropic-style formats
         if "content_text" in data: return data["content_text"]
         for block in data.get("content", []):
             if block.get("type") == "text": return block["text"]
