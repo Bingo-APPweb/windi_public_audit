@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>W-SOCIAL-001 · Embedded Probe §01 · First Voice Test</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200;12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F5F0E0; --bg2: #EDE7CF; --bg3: #E2DAC0; --bg4: #D8D0B8;
+    --ink: #1A1612; --ink2: #3D3328; --ink3: #6B5E4A; --ink4: #9A8E7E;
+    --gold: #8B6914; --gold2: #A07D1C; --gold3: #C9A84C;
+    --gold-pale: rgba(139,105,20,0.07); --gold-border: rgba(139,105,20,0.18);
+    --green: #3A6B3A; --green-pale: rgba(58,107,58,0.08);
+    --font-d: 'Bricolage Grotesque', sans-serif;
+    --font-m: 'JetBrains Mono', monospace;
+    --ease: cubic-bezier(0.25,0.46,0.45,0.94);
+  }
+  [data-theme="noir"] {
+    --bg: #0C0A07; --bg2: #141109; --bg3: #1C180F; --bg4: #252018;
+    --ink: #F0EAD6; --ink2: #C8BFA8; --ink3: #8A7E6A; --ink4: #5A5040;
+    --gold: #D4A843; --gold2: #E8C060; --gold3: #F5D888;
+    --gold-pale: rgba(212,168,67,0.07); --gold-border: rgba(212,168,67,0.16);
+    --green: #5A9B5A; --green-pale: rgba(90,155,90,0.08);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: var(--font-d); font-size: 15px; line-height: 1.7;
+    transition: background 0.4s var(--ease), color 0.4s var(--ease);
+    min-height: 100vh;
+  }
+
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; height: 46px;
+    background: var(--bg2); border-bottom: 1px solid var(--gold-border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 36px; z-index: 200;
+    transition: background 0.4s var(--ease);
+  }
+  .topbar-id {
+    font-family: var(--font-m); font-size: 10px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--ink3);
+  }
+  .topbar-id strong { color: var(--gold); }
+  .toggle-row { display: flex; align-items: center; gap: 9px; }
+  .tlabel { font-family: var(--font-m); font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink4); transition: color 0.3s; }
+  .tlabel.on { color: var(--gold); }
+  .lang-toggle { display: flex; gap: 2px; }
+  .lang-btn { font-family: var(--font-m); font-size: 9px; letter-spacing: 0.1em; color: var(--ink4); padding: 4px 8px; cursor: pointer; border: 1px solid transparent; transition: all 0.2s; }
+  .lang-btn:hover { color: var(--gold); }
+  .lang-btn.active { color: var(--gold); border-color: var(--gold-border); background: var(--gold-pale); }
+  .nav-link { font-family: var(--font-m); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink4); text-decoration: none; padding: 6px 12px; border: 1px solid var(--gold-border); transition: all 0.2s; margin-left: 12px; }
+  .nav-link:hover { color: var(--gold); border-color: var(--gold); background: var(--gold-pale); }
+  .tswitch {
+    width: 34px; height: 18px; background: var(--bg3);
+    border: 1px solid var(--gold-border); border-radius: 9px;
+    cursor: pointer; position: relative;
+    transition: background 0.3s, border-color 0.3s;
+  }
+  .tswitch::after {
+    content: ''; position: absolute; width: 12px; height: 12px;
+    border-radius: 50%; background: var(--gold); top: 2px; left: 2px;
+    transition: transform 0.3s var(--ease);
+  }
+  [data-theme="noir"] .tswitch::after { transform: translateX(16px); }
+
+  .nav-tabs {
+    position: fixed; top: 46px; left: 0; right: 0; height: 44px;
+    background: var(--bg); border-bottom: 1px solid var(--gold-border);
+    display: flex; align-items: flex-end; padding: 0 36px; gap: 0;
+    z-index: 190; transition: background 0.4s;
+  }
+  .nav-tab {
+    font-family: var(--font-m); font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink4); padding: 10px 20px;
+    cursor: pointer; border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s; white-space: nowrap;
+  }
+  .nav-tab:hover { color: var(--ink2); }
+  .nav-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  .page { display: none; padding: 120px 36px 80px; max-width: 1000px; margin: 0 auto; }
+  .page.active { display: block; }
+
+  .sec-label {
+    font-family: var(--font-m); font-size: 9px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--gold); display: block; margin-bottom: 10px;
+  }
+  .sec-title { font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 16px; line-height: 1.2; }
+  .sec-body { font-size: 14.5px; font-weight: 300; color: var(--ink3); line-height: 1.85; margin-bottom: 32px; }
+  .rule { width: 60px; height: 2px; background: linear-gradient(90deg, var(--gold), transparent); margin: 24px 0; }
+  .divider { width: 100%; height: 1px; background: var(--gold-border); margin: 48px 0; }
+
+  .law-mock {
+    border: 1px solid var(--gold-border); background: var(--bg2);
+    margin-bottom: 32px; overflow: hidden;
+  }
+  .law-mock-header {
+    background: var(--bg3); border-bottom: 1px solid var(--gold-border);
+    padding: 10px 20px; display: flex; align-items: center; gap: 12px;
+  }
+  .law-mock-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); opacity: 0.6; }
+  .law-mock-title { font-family: var(--font-m); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink3); }
+  .law-mock-body { padding: 24px; }
+  .law-doc-title { font-size: 16px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+  .law-doc-meta { font-family: var(--font-m); font-size: 10px; color: var(--ink4); letter-spacing: 0.1em; margin-bottom: 16px; }
+  .law-doc-text { font-size: 13.5px; color: var(--ink3); line-height: 1.8; font-weight: 300; }
+  .law-doc-text em { font-style: italic; color: var(--ink2); }
+
+  .publish-btn-zone {
+    padding: 16px 24px;
+    border-top: 1px solid var(--gold-border);
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    flex-wrap: wrap;
+  }
+  .publish-btn-hint {
+    font-family: var(--font-m); font-size: 10px; letter-spacing: 0.1em;
+    color: var(--ink4); display: flex; align-items: center; gap: 8px;
+  }
+  .hint-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); opacity: 0.5; }
+
+  .btn-publish {
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 22px;
+    background: var(--gold-pale);
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: var(--font-m); font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; cursor: pointer;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    position: relative; overflow: hidden;
+  }
+  .btn-publish:hover {
+    background: var(--gold); color: var(--bg);
+    box-shadow: 0 4px 20px rgba(139,105,20,0.3);
+    transform: translateY(-1px);
+  }
+  .btn-publish:active { transform: translateY(0); }
+  .btn-publish .btn-icon { font-size: 14px; }
+
+  .flow-panel {
+    display: none; margin-top: 24px;
+    border: 1px solid var(--gold-border);
+    background: var(--bg2); overflow: hidden;
+  }
+  .flow-panel.visible { display: block; animation: slideDown 0.35s var(--ease); }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .flow-step-bar {
+    display: flex; align-items: center;
+    background: var(--bg3); border-bottom: 1px solid var(--gold-border);
+    padding: 0;
+  }
+  .fstep {
+    flex: 1; padding: 12px 16px; text-align: center;
+    font-family: var(--font-m); font-size: 9px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink4);
+    border-right: 1px solid var(--gold-border);
+    transition: background 0.3s, color 0.3s;
+    position: relative;
+  }
+  .fstep:last-child { border-right: none; }
+  .fstep.done { color: var(--green); }
+  .fstep.active { color: var(--gold); background: var(--gold-pale); }
+  .fstep.done::before {
+    content: '✓'; position: absolute; top: 3px; right: 8px;
+    font-size: 9px; color: var(--green);
+  }
+
+  .flow-content { padding: 24px 28px; }
+
+  .stage { display: none; }
+  .stage.active { display: block; animation: fadeUp 0.3s var(--ease); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .stage-title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 14px; letter-spacing: -0.01em; }
+
+  .extract-box {
+    background: var(--bg); border: 1px solid var(--gold-border);
+    padding: 18px 20px; margin-bottom: 16px;
+  }
+  .extract-label { font-family: var(--font-m); font-size: 9px; color: var(--gold); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 8px; display: block; }
+  .extract-text { font-size: 13px; color: var(--ink2); line-height: 1.7; font-weight: 300; }
+  .extract-badge { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; font-family: var(--font-m); font-size: 9px; color: var(--ink3); border: 1px solid var(--gold-border); padding: 4px 10px; }
+
+  .compile-preview {
+    background: var(--bg); border: 1px solid var(--gold-border); padding: 20px 22px; margin-bottom: 16px;
+  }
+  .compile-channel { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--gold-border); }
+  .channel-icon { width: 28px; height: 28px; border-radius: 2px; display: flex; align-items: center; justify-content: center; font-size: 13px; background: var(--bg2); border: 1px solid var(--gold-border); }
+  .channel-name { font-family: var(--font-m); font-size: 10px; letter-spacing: 0.12em; color: var(--gold); }
+  .channel-chars { font-family: var(--font-m); font-size: 9px; color: var(--ink4); margin-left: auto; }
+  .compile-text { font-size: 13.5px; color: var(--ink2); line-height: 1.75; font-weight: 300; }
+  .compile-text strong { color: var(--ink); font-weight: 600; }
+  .compile-source { margin-top: 12px; font-family: var(--font-m); font-size: 9px; color: var(--ink4); letter-spacing: 0.1em; display: flex; align-items: center; gap: 8px; }
+  .source-tag { background: var(--gold-pale); border: 1px solid var(--gold-border); padding: 3px 8px; color: var(--gold); }
+
+  .approve-checklist { display: grid; gap: 8px; margin-bottom: 18px; }
+  .approve-item {
+    display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px;
+    background: var(--bg); border: 1px solid var(--gold-border);
+    font-size: 13px; color: var(--ink3); cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .approve-item:hover { background: var(--gold-pale); border-color: var(--gold); }
+  .approve-item.checked { border-color: var(--green); background: var(--green-pale); color: var(--ink2); }
+  .approve-check {
+    width: 16px; height: 16px; border: 1px solid var(--gold-border); border-radius: 2px;
+    flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: transparent; background: var(--bg2);
+    transition: all 0.2s;
+  }
+  .approve-item.checked .approve-check { background: var(--green); border-color: var(--green); color: white; }
+
+  .seal-result {
+    background: var(--bg); border: 1px solid var(--gold-border);
+    padding: 24px; text-align: center;
+  }
+  .seal-icon { font-size: 32px; margin-bottom: 12px; opacity: 0.8; }
+  .seal-id-block { font-family: var(--font-m); font-size: 11px; color: var(--gold); margin: 12px 0; letter-spacing: 0.1em; }
+  .seal-verify { font-family: var(--font-m); font-size: 11px; color: var(--ink3); }
+  .seal-verify a { color: var(--gold); text-decoration: none; }
+  .seal-channels { display: flex; justify-content: center; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+  .seal-channel-badge { font-family: var(--font-m); font-size: 10px; border: 1px solid var(--green); color: var(--green); padding: 5px 12px; background: var(--green-pale); }
+
+  .btn-row { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+  .btn-next {
+    padding: 10px 22px; background: var(--gold); color: var(--bg);
+    border: none; font-family: var(--font-m); font-size: 10px; font-weight: 600;
+    letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+  }
+  .btn-next:hover { opacity: 0.85; transform: translateY(-1px); }
+  .btn-next:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+  .btn-back {
+    padding: 10px 22px; background: transparent; color: var(--ink3);
+    border: 1px solid var(--gold-border); font-family: var(--font-m); font-size: 10px;
+    letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-back:hover { border-color: var(--gold); color: var(--gold); }
+  .btn-reset { padding: 10px 22px; background: transparent; color: var(--ink4); border: 1px solid var(--gold-border); font-family: var(--font-m); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
+  .btn-reset:hover { color: var(--gold); border-color: var(--gold); }
+
+  .payload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; }
+  .payload-block {
+    background: var(--bg2); border: 1px solid var(--gold-border);
+    overflow: hidden;
+  }
+  .payload-header {
+    background: var(--bg3); border-bottom: 1px solid var(--gold-border);
+    padding: 10px 16px; display: flex; align-items: center; justify-content: space-between;
+  }
+  .payload-title { font-family: var(--font-m); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); }
+  .payload-method { font-family: var(--font-m); font-size: 9px; padding: 3px 8px; letter-spacing: 0.1em; }
+  .m-post { background: rgba(139,105,20,0.2); color: var(--gold); }
+  .m-get  { background: var(--bg4); color: var(--ink3); }
+  pre {
+    padding: 16px; font-family: var(--font-m); font-size: 12px; line-height: 1.65;
+    color: var(--ink2); overflow-x: auto; tab-size: 2;
+    background: transparent;
+  }
+  .k { color: var(--gold); }
+  .s { color: var(--ink2); }
+  .c { color: var(--ink4); font-style: italic; }
+  .v { color: var(--gold2); }
+  .t { color: var(--green); }
+
+  .probe-grid { display: grid; gap: 12px; margin-top: 24px; }
+  .probe-card { background: var(--bg2); border: 1px solid var(--gold-border); padding: 22px 26px; position: relative; }
+  .probe-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--gold); opacity: 0.35; }
+  .probe-id { font-family: var(--font-m); font-size: 9px; letter-spacing: 0.2em; color: var(--gold); margin-bottom: 8px; display: block; }
+  .probe-q { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+  .probe-how { font-size: 13px; color: var(--ink3); line-height: 1.7; font-weight: 300; }
+  .probe-signal { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .signal-pass { font-family: var(--font-m); font-size: 9px; padding: 4px 10px; border: 1px solid var(--green); color: var(--green); background: var(--green-pale); }
+  .signal-fail { font-family: var(--font-m); font-size: 9px; padding: 4px 10px; border: 1px solid rgba(180,60,60,0.3); color: #B43C3C; background: rgba(180,60,60,0.06); }
+  [data-theme="noir"] .signal-fail { color: #E06060; border-color: rgba(224,96,96,0.3); background: rgba(224,96,96,0.06); }
+
+  .roadmap-track { position: relative; padding-left: 40px; margin-top: 28px; }
+  .roadmap-track::before { content: ''; position: absolute; left: 14px; top: 0; bottom: 0; width: 1px; background: var(--gold-border); }
+  .roadmap-item { position: relative; margin-bottom: 36px; }
+  .roadmap-item::before {
+    content: ''; position: absolute; left: -30px; top: 6px;
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--bg); border: 2px solid var(--gold-border);
+    transition: border-color 0.3s;
+  }
+  .roadmap-item.live::before { background: var(--gold); border-color: var(--gold); }
+  .roadmap-item.now::before { background: var(--gold); border-color: var(--gold); box-shadow: 0 0 0 4px var(--gold-pale); }
+  .roadmap-item.next::before { border-color: var(--gold3); }
+  .roadmap-phase { font-family: var(--font-m); font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; display: block; }
+  .roadmap-title { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+  .roadmap-desc { font-size: 13px; color: var(--ink3); line-height: 1.7; font-weight: 300; }
+  .roadmap-badge { display: inline-block; margin-top: 8px; font-family: var(--font-m); font-size: 9px; padding: 3px 10px; border: 1px solid; letter-spacing: 0.1em; }
+  .badge-live { border-color: var(--gold); color: var(--gold); background: var(--gold-pale); }
+  .badge-now  { border-color: var(--green); color: var(--green); background: var(--green-pale); }
+  .badge-next { border-color: var(--gold-border); color: var(--ink4); }
+
+  .flow-overview { display: flex; align-items: flex-start; gap: 0; flex-wrap: wrap; margin-top: 24px; }
+  .flow-card { flex: 1; min-width: 180px; background: var(--bg2); border: 1px solid var(--gold-border); padding: 20px; transition: all 0.3s; }
+  .flow-card:hover { border-color: var(--gold); background: var(--gold-pale); }
+  .flow-num { font-family: var(--font-m); font-size: 10px; color: var(--gold); letter-spacing: 0.2em; margin-bottom: 8px; }
+  .flow-name { font-size: 13px; font-weight: 700; color: var(--ink); letter-spacing: 0.08em; margin-bottom: 10px; }
+  .flow-desc { font-size: 12px; color: var(--ink3); line-height: 1.7; font-weight: 300; }
+  .flow-arrow { font-family: var(--font-m); font-size: 18px; color: var(--gold); padding: 20px 8px; align-self: center; }
+
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 24px; }
+  .info-card { background: var(--bg2); border: 1px solid var(--gold-border); padding: 20px 24px; }
+  .info-card.highlight { border-color: var(--gold); background: var(--gold-pale); }
+  .info-label { font-family: var(--font-m); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); display: block; margin-bottom: 14px; }
+  .info-list { list-style: none; }
+  .info-list li { font-size: 12px; color: var(--ink2); padding: 6px 0; border-bottom: 1px solid var(--gold-border); display: flex; align-items: center; gap: 8px; }
+  .info-list li:last-child { border-bottom: none; }
+  .info-list li::before { content: '→'; font-family: var(--font-m); color: var(--gold); font-size: 10px; }
+  .info-list.warning li::before { content: '✗'; color: var(--ink4); }
+  .info-list.warning li { color: var(--ink3); }
+
+  .nav-footer { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 40px; padding: 24px 0; border-top: 1px solid var(--gold-border); }
+  .nav-footer-link { font-family: var(--font-m); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); text-decoration: none; padding: 8px 16px; border: 1px solid var(--gold-border); transition: all 0.2s; }
+  .nav-footer-link:hover { background: var(--gold); color: var(--bg); }
+  .nav-footer-sep { color: var(--ink4); }
+
+  @media (max-width: 680px) {
+    .page { padding: 110px 20px 60px; }
+    .topbar { padding: 0 20px; }
+    .nav-tabs { padding: 0 20px; overflow-x: auto; }
+    .payload-grid { grid-template-columns: 1fr; }
+    .publish-btn-zone { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-id"><strong>W-SOCIAL-001</strong> · <span data-i18n="probe_title">Embedded Probe §01</span></div>
+  <div class="toggle-row">
+    <div class="lang-toggle">
+      <span class="lang-btn" data-lang="pt">PT</span>
+      <span class="lang-btn" data-lang="de">DE</span>
+      <span class="lang-btn active" data-lang="en">EN</span>
+    </div>
+    <div style="width:1px;height:16px;background:var(--gold-border);margin:0 8px;"></div>
+    <span class="tlabel on" id="lk">KLAR</span>
+    <div class="tswitch" id="ts"></div>
+    <span class="tlabel" id="ln">NOIR</span>
+  </div>
+</div>
+
+<nav class="nav-tabs">
+  <div class="nav-tab active" data-tab="demo">UX Demo</div>
+  <div class="nav-tab" data-tab="payload">Payload Spec</div>
+  <div class="nav-tab" data-tab="invariants">Invariants Probe</div>
+  <div class="nav-tab" data-tab="roadmap">Roadmap PoC</div>
+</nav>
+
+<div class="page active" id="page-demo">
+  <span class="sec-label">§01 · First Voice Test · WINDI-LAW Embedded</span>
+  <h1 class="sec-title">Como o botão vive dentro do fluxo real</h1>
+  <p class="sec-body">O profissional termina um documento no WINDI-LAW. O botão aparece naturalmente — não como distracção, mas como extensão lógica do trabalho concluído. Interaja com o fluxo completo abaixo.</p>
+  <div class="rule"></div>
+
+  <div class="law-mock">
+    <div class="law-mock-header">
+      <div class="law-mock-dot"></div>
+      <span class="law-mock-title">WINDI-LAW · Documento Activo</span>
+    </div>
+    <div class="law-mock-body">
+      <div class="law-doc-title">Nota Técnica: Conformidade com EU AI Act Art. 14 — Sistemas de Alto Risco</div>
+      <div class="law-doc-meta">law_case_id: LAW-2026-0415-0892 · Tipo: Análise Regulatória · Jurisdição: EU · Status: FINALIZADO</div>
+      <div class="law-doc-text">
+        O Art. 14 do EU AI Act impõe que sistemas de IA classificados como alto risco disponham de <em>supervisão humana efectiva</em> durante o ciclo operacional completo. Esta nota analisa os três critérios de conformidade aplicáveis a sistemas de decisão automatizada em contexto financeiro e apresenta o modelo de documentação recomendado para auditoria…
+      </div>
+    </div>
+    <div class="publish-btn-zone" id="buttonZone">
+      <div class="publish-btn-hint">
+        <div class="hint-dot"></div>
+        <span>Documento finalizado — átomo de autoridade detectado</span>
+      </div>
+      <button class="btn-publish" id="btnPublish">
+        <span class="btn-icon">📡</span>
+        <span>Transformar em Publicação</span>
+      </button>
+    </div>
+
+    <div class="flow-panel" id="flowPanel">
+      <div class="flow-step-bar">
+        <div class="fstep active" id="fs1">01 · Capture</div>
+        <div class="fstep" id="fs2">02 · Compile</div>
+        <div class="fstep" id="fs3">03 · Aprovar</div>
+        <div class="fstep" id="fs4">04 · Sealed</div>
+      </div>
+      <div class="flow-content">
+        <div class="stage active" id="stage1">
+          <div class="stage-title">Extracting narrative atom from source document…</div>
+          <div class="extract-box">
+            <span class="extract-label">Essência Extraída</span>
+            <div class="extract-text">
+              O EU AI Act Art. 14 exige supervisão humana efectiva em sistemas de alto risco. A conformidade requer documentação de três critérios auditáveis — um padrão que organizações financeiras precisam implementar antes de Agosto 2026.
+            </div>
+            <div class="extract-badge">
+              <span>🔗</span>
+              <span>Origem: LAW-2026-0415-0892 · Análise Regulatória EU</span>
+            </div>
+          </div>
+          <div class="extract-box" style="opacity:0.7;">
+            <span class="extract-label">I-SOC-001 verificado</span>
+            <div class="extract-text" style="font-size:12px;">
+              ✓ Semente de origem rastreável presente · ✓ Conteúdo derivado de trabalho real · ✓ Sem geração sintética
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn-next" onclick="goStage(2)">Compilar para LinkedIn →</button>
+            <button class="btn-back" onclick="resetFlow()">Cancelar</button>
+          </div>
+        </div>
+
+        <div class="stage" id="stage2">
+          <div class="stage-title">Compilando para canal — Humildade Sofisticada activa</div>
+          <div class="compile-preview">
+            <div class="compile-channel">
+              <div class="channel-icon">in</div>
+              <span class="channel-name">LinkedIn</span>
+              <span class="channel-chars">847 / 3000 chars</span>
+            </div>
+            <div class="compile-text">
+              <strong>O EU AI Act chega em Agosto. A maioria das organizações financeiras ainda não tem os três documentos que o Art. 14 exige.</strong><br><br>
+              Após analisar os requisitos de conformidade para sistemas de decisão automatizada, identifico três critérios auditáveis que precisam estar documentados antes do prazo:<br><br>
+              1. Protocolo de supervisão humana efectiva<br>
+              2. Registo de decisões com trilha verificável<br>
+              3. Plano de intervenção em caso de falha sistémica<br><br>
+              A boa notícia: organizações que implementam estes três critérios agora constroem um activo de conformidade que vai além do mínimo legal — criam confiança institucional auditável.
+            </div>
+            <div class="compile-source">
+              <span class="source-tag">ORIGIN: LAW-2026-0415-0892</span>
+              <span>· derivado de análise regulatória EU · conteúdo do autor</span>
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn-next" onclick="goStage(3)">Aprovar e Selar →</button>
+            <button class="btn-back" onclick="goStage(1)">← Rever extracção</button>
+          </div>
+        </div>
+
+        <div class="stage" id="stage3">
+          <div class="stage-title">Verificação Final — I9-P Protocol activo</div>
+          <div class="approve-checklist" id="checklist">
+            <div class="approve-item" onclick="toggleCheck(this)">
+              <div class="approve-check">✓</div>
+              <div>O conteúdo reflecte o meu pensamento real e posição profissional</div>
+            </div>
+            <div class="approve-item" onclick="toggleCheck(this)">
+              <div class="approve-check">✓</div>
+              <div>Não contém informação confidencial do cliente ou sujeita a sigilo</div>
+            </div>
+            <div class="approve-item" onclick="toggleCheck(this)">
+              <div class="approve-check">✓</div>
+              <div>Concordo que este post seja selado no Ledger WINDI com o meu DID</div>
+            </div>
+          </div>
+          <button class="btn-next" id="btnApprove" onclick="goStage(4)" disabled>🛡️  Selar e Publicar →</button>
+          <button class="btn-back" onclick="goStage(2)" style="margin-top:10px;">← Rever conteúdo</button>
+        </div>
+
+        <div class="stage" id="stage4">
+          <div class="seal-result">
+            <div class="seal-icon">🐉</div>
+            <div style="font-size:15px; font-weight:700; color:var(--ink); margin-bottom:6px;">Publicação Selada com Sucesso</div>
+            <div class="seal-id-block">SEAL-ID · WSC-2026-0415-8B3F9A2C</div>
+            <div class="seal-verify">
+              Prova pública: <a href="#">windi-domain.com/verify/WSC-2026-0415-8B3F9A2C</a>
+            </div>
+            <div style="font-family: var(--font-m); font-size: 10px; color: var(--ink4); margin-top: 10px; letter-spacing: 0.08em;">
+              SHA-256 · actor_did: did:windi:DR4G0N · ledger_anchor: block #8831
+            </div>
+            <div class="seal-channels">
+              <div class="seal-channel-badge">✓ LinkedIn publicado</div>
+              <div class="seal-channel-badge">✓ Ledger ancorado</div>
+              <div class="seal-channel-badge">✓ verify_url activo</div>
+            </div>
+          </div>
+          <div class="btn-row" style="justify-content:center;">
+            <button class="btn-reset" onclick="resetFlow()">← Nova Publicação</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="font-family: var(--font-m); font-size: 11px; color: var(--ink4); letter-spacing: 0.08em; padding: 12px 16px; background: var(--bg2); border: 1px solid var(--gold-border);">
+    ℹ  Este é um blueprint interactivo — simula o fluxo exacto a implementar em produção no WINDI-LAW (:8122). Os dados são fictícios para efeito de validação UX.
+  </div>
+</div>
+
+<div class="page" id="page-payload">
+  <span class="sec-label" data-i18n="payload_label">§02 · Data Flow · Conceptual</span>
+  <h1 class="sec-title" data-i18n="payload_title">How the Pipeline Works</h1>
+  <p class="sec-body" data-i18n="payload_desc">The W-SOCIAL-001 pipeline transforms real work output into verified social presence. Each step preserves provenance and ensures human oversight.</p>
+  <div class="rule"></div>
+
+  <div class="flow-overview">
+    <div class="flow-card">
+      <div class="flow-num">01</div>
+      <div class="flow-name" data-i18n="flow_capture">CAPTURE</div>
+      <div class="flow-desc" data-i18n="flow_capture_desc">User completes work in WINDI module. System detects "atom of authority" — a publishable insight derived from real intellectual output.</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-card">
+      <div class="flow-num">02</div>
+      <div class="flow-name" data-i18n="flow_compile">COMPILE</div>
+      <div class="flow-desc" data-i18n="flow_compile_desc">AI adapts the content for target channel (LinkedIn, Telegram, etc.) while preserving origin reference and applying tone constraints.</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-card">
+      <div class="flow-num">03</div>
+      <div class="flow-name" data-i18n="flow_approve">APPROVE</div>
+      <div class="flow-desc" data-i18n="flow_approve_desc">Human explicitly approves the publication. This is the I9-P Protocol in action — AI proposes, human decides. No bypass possible.</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-card">
+      <div class="flow-num">04</div>
+      <div class="flow-name" data-i18n="flow_seal">SEAL</div>
+      <div class="flow-desc" data-i18n="flow_seal_desc">Publication is cryptographically sealed with SHA-256, anchored to Forensic Ledger, and a public verify_url is generated for proof.</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="info-grid">
+    <div class="info-card">
+      <span class="info-label" data-i18n="what_travels">What travels in the pipeline</span>
+      <ul class="info-list">
+        <li data-i18n="travel_1">Actor DID (cryptographic identity)</li>
+        <li data-i18n="travel_2">Source reference (origin document)</li>
+        <li data-i18n="travel_3">Content hash (SHA-256 integrity)</li>
+        <li data-i18n="travel_4">Human approval flags</li>
+        <li data-i18n="travel_5">Target channel specification</li>
+        <li data-i18n="travel_6">Timestamp (ISO 8601)</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <span class="info-label" data-i18n="what_public">What becomes public</span>
+      <ul class="info-list">
+        <li data-i18n="public_1">Seal ID (verification handle)</li>
+        <li data-i18n="public_2">Verification status (VERIFIED/REVOKED)</li>
+        <li data-i18n="public_3">Publication timestamp</li>
+        <li data-i18n="public_4">Channel used</li>
+        <li data-i18n="public_5">Source type (category, not content)</li>
+        <li data-i18n="public_6">Content hash (proof, not content)</li>
+      </ul>
+    </div>
+    <div class="info-card highlight">
+      <span class="info-label" data-i18n="never_exposed">Never exposed publicly</span>
+      <ul class="info-list warning">
+        <li data-i18n="never_1">Original document content</li>
+        <li data-i18n="never_2">Excerpt text</li>
+        <li data-i18n="never_3">Actor personal name</li>
+        <li data-i18n="never_4">Internal system identifiers</li>
+        <li data-i18n="never_5">Client information</li>
+        <li data-i18n="never_6">Internal port mappings</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <p style="font-family: var(--font-m); font-size: 11px; color: var(--ink4); letter-spacing: 0.08em; line-height: 1.8;">
+    <span data-i18n="payload_footer">For detailed technical specifications and API documentation, authenticated developers can access the internal documentation portal.</span>
+  </p>
+</div>
+
+<div class="page" id="page-invariants">
+  <span class="sec-label">§03 · Invariants Probe · Como testamos no PoC</span>
+  <h1 class="sec-title">As três perguntas que o primeiro utilizador vai responder</h1>
+  <p class="sec-body">Cada invariante constitucional traduz-se num teste de comportamento observável. Não basta o sistema respeitar a lei — o utilizador precisa de sentir que a lei existe e que o protege.</p>
+  <div class="rule"></div>
+
+  <div class="probe-grid">
+    <div class="probe-card">
+      <span class="probe-id">I-SOC-001 · PROVENANCE INVARIANT</span>
+      <p class="probe-q">O utilizador sente que o conteúdo é genuinamente seu?</p>
+      <p class="probe-how">Observar se o utilizador edita o texto compilado ou se publica directamente. Edição mínima = alta fidelidade à origem. Reescrita completa = falha de I-SOC-001 na prática — a IA não captou a essência real do documento.</p>
+      <div class="probe-signal">
+        <span class="signal-pass">✓ PASS: publica com ≤ 2 edições</span>
+        <span class="signal-fail">✗ FAIL: reescreve completamente</span>
+        <span class="signal-fail">✗ FAIL: diz "isto não é meu"</span>
+      </div>
+    </div>
+
+    <div class="probe-card">
+      <span class="probe-id">I-SOC-002 · HUMAN SEAL INVARIANT</span>
+      <p class="probe-q">O utilizador sente controlo real no momento da aprovação?</p>
+      <p class="probe-how">O checklist de aprovação (três pontos) deve criar fricção intencional positiva — não burocracia. O utilizador deve sentir que está a assinar, não a carregar num botão de confirmação genérico. Observar tempo gasto na etapa de aprovação e linguagem corporal/verbal.</p>
+      <div class="probe-signal">
+        <span class="signal-pass">✓ PASS: lê cada item antes de marcar</span>
+        <span class="signal-pass">✓ PASS: pausa no último item (ledger consent)</span>
+        <span class="signal-fail">✗ FAIL: clica tudo sem ler</span>
+        <span class="signal-fail">✗ FAIL: sente que é burocracia</span>
+      </div>
+    </div>
+
+    <div class="probe-card">
+      <span class="probe-id">I-SOC-003 · VERIFICATION INVARIANT</span>
+      <p class="probe-q">O verify_url aumenta ou reduz a confiança do utilizador para publicar?</p>
+      <p class="probe-how">Este é o teste mais importante do PoC. O seal_id e o verify_url na confirmação final devem criar sensação de permanência e responsabilidade — não ansiedade. Se o utilizador reagir com "ah, fica gravado para sempre?" de forma negativa, a framing precisa de ajuste. Se reagir com "isto é poderoso", o valor está validado.</p>
+      <div class="probe-signal">
+        <span class="signal-pass">✓ PASS: "isto dá-me confiança"</span>
+        <span class="signal-pass">✓ PASS: pergunta como partilhar o link</span>
+        <span class="signal-fail">✗ FAIL: "não quero que fique registado"</span>
+        <span class="signal-fail">✗ FAIL: ignora completamente o seal</span>
+      </div>
+    </div>
+
+    <div class="probe-card" style="border-color: var(--gold); background: var(--gold-pale);">
+      <span class="probe-id" style="color: var(--gold2);">HIPÓTESE CENTRAL · VALIDAÇÃO FINAL</span>
+      <p class="probe-q">O utilizador sente que o social emergiu do fluxo de trabalho — não que saiu de uma ferramenta separada?</p>
+      <p class="probe-how">A pergunta definitiva. Perguntar directamente: <em>"Sentiste que publicaste a partir do teu trabalho, ou que foste usar uma ferramenta de redes sociais?"</em> A resposta a esta pergunta valida ou invalida a hipótese central do produto.</p>
+      <div class="probe-signal">
+        <span class="signal-pass">✓ "publiquei o meu trabalho"</span>
+        <span class="signal-fail">✗ "usei uma ferramenta de social"</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-roadmap">
+  <span class="sec-label">§04 · Roadmap · Do PoC ao :8133</span>
+  <h1 class="sec-title">Sequência sem over-architecture</h1>
+  <p class="sec-body">Cada fase só avança depois do comportamento da fase anterior ser observado e validado. O PRD canônico completo é escrito depois da Fase 2 — não antes.</p>
+  <div class="rule"></div>
+
+  <div class="roadmap-track">
+    <div class="roadmap-item live">
+      <span class="roadmap-phase">Fundação · Concluída</span>
+      <div class="roadmap-title">Manifesto W-SOCIAL-001 v0.1</div>
+      <div class="roadmap-desc">Invariantes constitucionais selados. Tese canônica definida. Posicionamento de mercado claro. Documento fundacional pronto para Berlin e para orientar execução.</div>
+      <span class="roadmap-badge badge-live">✓ SEALED · 15 Abr 2026</span>
+    </div>
+
+    <div class="roadmap-item now">
+      <span class="roadmap-phase">Fase 1 · AGORA · Embedded Probe §01</span>
+      <div class="roadmap-title">Botão "Transformar em Publicação" no WINDI-LAW</div>
+      <div class="roadmap-desc">
+        Implementar apenas: intake → compile → approve → seal. LinkedIn + Ledger. Zero dashboard. Zero scheduler. Zero analytics. O objetivo é validar as 3 perguntas dos Invariants Probe — não construir produto completo.
+        <br><br>
+        <strong>Critério de avanço:</strong> 5–10 utilizações reais. Hipótese central respondida. I-SOC-001 validado na prática.
+      </div>
+      <span class="roadmap-badge badge-now">🔥 EM EXECUÇÃO</span>
+    </div>
+
+    <div class="roadmap-item next">
+      <span class="roadmap-phase">Fase 2 · Pós-validação comportamental</span>
+      <div class="roadmap-title">Extensão a W-Enterprise + TRAVEL + Telegram</div>
+      <div class="roadmap-desc">Com o fluxo LAW validado, replicar o botão embedded nos outros dois módulos. Adicionar Telegram como segundo canal. Introduzir I9-P Policy assinada (delegação simples). Ainda sem dashboard standalone.</div>
+      <span class="roadmap-badge badge-next">Aguarda Fase 1</span>
+    </div>
+
+    <div class="roadmap-item">
+      <span class="roadmap-phase">Fase 3 · PRD Canônico + :8133</span>
+      <div class="roadmap-title">PRD baseado em comportamento real → :8133 em produção</div>
+      <div class="roadmap-desc">Agora sim: PRD completo com schema de dados real, policy engine, evidence footprint control (níveis A/B/C), history timeline, Signal-to-Noise Guard. O :8133 nasce baseado em comportamento observado — não em suposição.</div>
+      <span class="roadmap-badge badge-next">Aguarda Fase 2</span>
+    </div>
+
+    <div class="roadmap-item">
+      <span class="roadmap-phase">Fase 4 · Berlin-ready</span>
+      <div class="roadmap-title">W-SOCIAL-001 como feature de pitch + produto de autoridade</div>
+      <div class="roadmap-desc">Com comportamento real validado, o W-SOCIAL-001 entra no pitch de Berlin não como "plano" mas como "produto com utilizadores e dados de comportamento". Isso muda completamente a conversa com o investidor.</div>
+      <span class="roadmap-badge badge-next">Maio 2026 · Target</span>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <div style="background: var(--bg2); border: 1px solid var(--gold-border); border-left: 3px solid var(--gold); padding: 20px 24px;">
+    <span style="font-family: var(--font-m); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); display: block; margin-bottom: 8px;">Golden Rule · W-SOCIAL-001</span>
+    <p style="font-size: 14px; font-weight: 600; color: var(--ink); line-height: 1.5;">
+      "Um botão real. Num momento real. Com um utilizador real. Dentro de um fluxo real.<br>
+      Isso prova mais do que qualquer PRD."
+    </p>
+  </div>
+
+  <div class="nav-footer">
+    <a href="manifesto.html" class="nav-footer-link" data-i18n="nav_manifesto">← Manifesto</a>
+    <span class="nav-footer-sep">·</span>
+    <a href="https://windi-domain.com/portal/" class="nav-footer-link" data-i18n="nav_portal">Portal →</a>
+  </div>
+</div>
+
+<script>
+  // ─── i18n Translations ───────────────────────────────────────────────────────
+  const i18n = {
+    en: {
+      probe_title: "Embedded Probe §01",
+      tab_demo: "UX Demo", tab_payload: "Data Flow", tab_invariants: "Invariants Probe", tab_roadmap: "Roadmap",
+      demo_label: "§01 · First Voice Test · WINDI-LAW Embedded",
+      demo_title: "How the button lives inside the real workflow",
+      demo_desc: "The professional finishes a document in WINDI-LAW. The button appears naturally — not as a distraction, but as a logical extension of completed work. Interact with the full flow below.",
+      payload_label: "§02 · Data Flow · Conceptual",
+      payload_title: "How the Pipeline Works",
+      payload_desc: "The W-SOCIAL-001 pipeline transforms real work output into verified social presence. Each step preserves provenance and ensures human oversight.",
+      flow_capture: "CAPTURE", flow_capture_desc: "User completes work in WINDI module. System detects 'atom of authority' — a publishable insight derived from real intellectual output.",
+      flow_compile: "COMPILE", flow_compile_desc: "AI adapts the content for target channel (LinkedIn, Telegram, etc.) while preserving origin reference and applying tone constraints.",
+      flow_approve: "APPROVE", flow_approve_desc: "Human explicitly approves the publication. This is the I9-P Protocol in action — AI proposes, human decides. No bypass possible.",
+      flow_seal: "SEAL", flow_seal_desc: "Publication is cryptographically sealed with SHA-256, anchored to Forensic Ledger, and a public verify_url is generated for proof.",
+      what_travels: "What travels in the pipeline", what_public: "What becomes public", never_exposed: "Never exposed publicly",
+      travel_1: "Actor DID (cryptographic identity)", travel_2: "Source reference (origin document)", travel_3: "Content hash (SHA-256 integrity)",
+      travel_4: "Human approval flags", travel_5: "Target channel specification", travel_6: "Timestamp (ISO 8601)",
+      public_1: "Seal ID (verification handle)", public_2: "Verification status (VERIFIED/REVOKED)", public_3: "Publication timestamp",
+      public_4: "Channel used", public_5: "Source type (category, not content)", public_6: "Content hash (proof, not content)",
+      never_1: "Original document content", never_2: "Excerpt text", never_3: "Actor personal name",
+      never_4: "Internal system identifiers", never_5: "Client information", never_6: "Internal port mappings",
+      payload_footer: "For detailed technical specifications and API documentation, authenticated developers can access the internal documentation portal.",
+      inv_label: "§03 · Invariants Probe · How we test in PoC",
+      inv_title: "The three questions the first user will answer",
+      nav_manifesto: "← Manifesto", nav_portal: "Portal →"
+    },
+    pt: {
+      probe_title: "Probe Embarcado §01",
+      tab_demo: "Demo UX", tab_payload: "Fluxo de Dados", tab_invariants: "Invariantes", tab_roadmap: "Roadmap",
+      demo_label: "§01 · Primeiro Teste de Voz · Embarcado WINDI-LAW",
+      demo_title: "Como o botão vive dentro do fluxo real",
+      demo_desc: "O profissional termina um documento no WINDI-LAW. O botão aparece naturalmente — não como distracção, mas como extensão lógica do trabalho concluído. Interaja com o fluxo completo abaixo.",
+      payload_label: "§02 · Fluxo de Dados · Conceptual",
+      payload_title: "Como Funciona o Pipeline",
+      payload_desc: "O pipeline W-SOCIAL-001 transforma trabalho real em presença social verificada. Cada passo preserva a proveniência e garante supervisão humana.",
+      flow_capture: "CAPTURA", flow_capture_desc: "Utilizador completa trabalho no módulo WINDI. Sistema detecta 'átomo de autoridade' — um insight publicável derivado de output intelectual real.",
+      flow_compile: "COMPILA", flow_compile_desc: "IA adapta o conteúdo para o canal alvo (LinkedIn, Telegram, etc.) preservando referência de origem e aplicando restrições de tom.",
+      flow_approve: "APROVA", flow_approve_desc: "Humano aprova explicitamente a publicação. Este é o Protocolo I9-P em acção — IA propõe, humano decide. Sem bypass possível.",
+      flow_seal: "SELA", flow_seal_desc: "Publicação é selada criptograficamente com SHA-256, ancorada no Forensic Ledger, e um verify_url público é gerado como prova.",
+      what_travels: "O que viaja no pipeline", what_public: "O que se torna público", never_exposed: "Nunca exposto publicamente",
+      travel_1: "DID do Actor (identidade criptográfica)", travel_2: "Referência de origem (documento)", travel_3: "Hash do conteúdo (integridade SHA-256)",
+      travel_4: "Flags de aprovação humana", travel_5: "Especificação do canal alvo", travel_6: "Timestamp (ISO 8601)",
+      public_1: "Seal ID (identificador de verificação)", public_2: "Estado de verificação (VERIFIED/REVOKED)", public_3: "Timestamp de publicação",
+      public_4: "Canal utilizado", public_5: "Tipo de fonte (categoria, não conteúdo)", public_6: "Hash do conteúdo (prova, não conteúdo)",
+      never_1: "Conteúdo do documento original", never_2: "Texto do excerto", never_3: "Nome pessoal do actor",
+      never_4: "Identificadores internos do sistema", never_5: "Informação do cliente", never_6: "Mapeamento de portas internas",
+      payload_footer: "Para especificações técnicas detalhadas e documentação da API, desenvolvedores autenticados podem aceder ao portal de documentação interno.",
+      inv_label: "§03 · Probe de Invariantes · Como testamos no PoC",
+      inv_title: "As três perguntas que o primeiro utilizador vai responder",
+      nav_manifesto: "← Manifesto", nav_portal: "Portal →"
+    },
+    de: {
+      probe_title: "Eingebettete Probe §01",
+      tab_demo: "UX Demo", tab_payload: "Datenfluss", tab_invariants: "Invarianten", tab_roadmap: "Roadmap",
+      demo_label: "§01 · Erster Stimmtest · WINDI-LAW Eingebettet",
+      demo_title: "Wie der Button im echten Workflow lebt",
+      demo_desc: "Der Fachmann beendet ein Dokument in WINDI-LAW. Der Button erscheint natürlich — nicht als Ablenkung, sondern als logische Erweiterung der abgeschlossenen Arbeit. Interagieren Sie unten mit dem vollständigen Ablauf.",
+      payload_label: "§02 · Datenfluss · Konzeptionell",
+      payload_title: "Wie die Pipeline funktioniert",
+      payload_desc: "Die W-SOCIAL-001 Pipeline verwandelt echte Arbeitsleistung in verifizierte soziale Präsenz. Jeder Schritt bewahrt die Herkunft und gewährleistet menschliche Aufsicht.",
+      flow_capture: "ERFASSUNG", flow_capture_desc: "Benutzer schließt Arbeit im WINDI-Modul ab. System erkennt 'Autoritätsatom' — eine veröffentlichbare Erkenntnis aus echter intellektueller Arbeit.",
+      flow_compile: "KOMPILIERUNG", flow_compile_desc: "KI passt den Inhalt für den Zielkanal an (LinkedIn, Telegram, etc.) unter Beibehaltung der Herkunftsreferenz und Anwendung von Toneinschränkungen.",
+      flow_approve: "GENEHMIGUNG", flow_approve_desc: "Mensch genehmigt die Veröffentlichung explizit. Dies ist das I9-P Protokoll in Aktion — KI schlägt vor, Mensch entscheidet. Keine Umgehung möglich.",
+      flow_seal: "VERSIEGELUNG", flow_seal_desc: "Veröffentlichung wird kryptographisch mit SHA-256 versiegelt, im Forensic Ledger verankert, und eine öffentliche verify_url wird als Beweis generiert.",
+      what_travels: "Was durch die Pipeline fließt", what_public: "Was öffentlich wird", never_exposed: "Niemals öffentlich exponiert",
+      travel_1: "Akteur DID (kryptographische Identität)", travel_2: "Quellenreferenz (Ursprungsdokument)", travel_3: "Inhalts-Hash (SHA-256 Integrität)",
+      travel_4: "Menschliche Genehmigungsflags", travel_5: "Zielkanal-Spezifikation", travel_6: "Zeitstempel (ISO 8601)",
+      public_1: "Seal ID (Verifizierungskennung)", public_2: "Verifizierungsstatus (VERIFIED/REVOKED)", public_3: "Veröffentlichungszeitstempel",
+      public_4: "Verwendeter Kanal", public_5: "Quellentyp (Kategorie, nicht Inhalt)", public_6: "Inhalts-Hash (Beweis, nicht Inhalt)",
+      never_1: "Originaler Dokumentinhalt", never_2: "Auszugstext", never_3: "Persönlicher Name des Akteurs",
+      never_4: "Interne Systemkennungen", never_5: "Kundeninformationen", never_6: "Interne Port-Zuordnungen",
+      payload_footer: "Für detaillierte technische Spezifikationen und API-Dokumentation können authentifizierte Entwickler auf das interne Dokumentationsportal zugreifen.",
+      inv_label: "§03 · Invarianten-Probe · Wie wir im PoC testen",
+      inv_title: "Die drei Fragen, die der erste Benutzer beantworten wird",
+      nav_manifesto: "← Manifest", nav_portal: "Portal →"
+    }
+  };
+
+  let currentLang = localStorage.getItem('windi-lang') || 'en';
+
+  function applyI18n(lang) {
+    currentLang = lang;
+    localStorage.setItem('windi-lang', lang);
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (i18n[lang] && i18n[lang][key]) el.textContent = i18n[lang][key];
+    });
+  }
+
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => applyI18n(btn.dataset.lang));
+  });
+
+  // ─── Theme Toggle ────────────────────────────────────────────────────────────
+  const ts = document.getElementById('ts');
+  const lk = document.getElementById('lk');
+  const ln = document.getElementById('ln');
+
+  const savedTheme = localStorage.getItem('windi-theme');
+  if (savedTheme === 'noir') {
+    document.documentElement.setAttribute('data-theme', 'noir');
+    lk.classList.remove('on');
+    ln.classList.add('on');
+  }
+
+  ts.addEventListener('click', () => {
+    const noir = document.documentElement.getAttribute('data-theme') === 'noir';
+    document.documentElement.setAttribute('data-theme', noir ? '' : 'noir');
+    localStorage.setItem('windi-theme', noir ? '' : 'noir');
+    lk.classList.toggle('on', noir);
+    ln.classList.toggle('on', !noir);
+  });
+
+  // ─── Tab Navigation ──────────────────────────────────────────────────────────
+  document.querySelectorAll('.nav-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('page-' + tab.dataset.tab).classList.add('active');
+      window.scrollTo(0, 0);
+    });
+  });
+
+  // ─── Flow Demo ───────────────────────────────────────────────────────────────
+  let currentStage = 0;
+
+  document.getElementById('btnPublish').addEventListener('click', () => {
+    document.getElementById('flowPanel').classList.add('visible');
+    document.getElementById('buttonZone').style.display = 'none';
+    goStage(1);
+  });
+
+  function goStage(n) {
+    currentStage = n;
+    document.querySelectorAll('.stage').forEach((s, i) => {
+      s.classList.toggle('active', i + 1 === n);
+    });
+    ['fs1','fs2','fs3','fs4'].forEach((id, i) => {
+      const el = document.getElementById(id);
+      el.classList.remove('active', 'done');
+      if (i + 1 < n) el.classList.add('done');
+      if (i + 1 === n) el.classList.add('active');
+    });
+  }
+
+  function toggleCheck(item) {
+    item.classList.toggle('checked');
+    const all = document.querySelectorAll('.approve-item');
+    const allChecked = [...all].every(i => i.classList.contains('checked'));
+    document.getElementById('btnApprove').disabled = !allChecked;
+  }
+
+  function resetFlow() {
+    document.getElementById('flowPanel').classList.remove('visible');
+    document.getElementById('buttonZone').style.display = '';
+    document.querySelectorAll('.approve-item').forEach(i => i.classList.remove('checked'));
+    document.getElementById('btnApprove').disabled = true;
+    currentStage = 0;
+  }
+
+  // ─── Init ────────────────────────────────────────────────────────────────────
+  applyI18n(currentLang);
+</script>
+</body>
+</html>
