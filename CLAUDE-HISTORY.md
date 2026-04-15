@@ -8097,3 +8097,356 @@ python3 send_fhv_email.py <smtp_user> <smtp_pass> --live # LIVE mode
 **Sealed:** 15 Apr 2026 · 08:45 CEST · Human Dragon · Liga IA+H
 
 ---
+
+## §173 — DID Simplification Phase 2 (15 Apr 2026)
+
+**Commits:** `a8a191c` (Phase 2 COMPLETE)
+**Invariants:** I1, I9, I11, I14
+**Conceito:** Unificação de todo o storage DID para single source of truth via WindiDID.js
+
+### Problema Identificado
+
+Múltiplos serviços mantinham DID storage independente:
+- `sessionStorage('windi_desktop_wallet')` — Desktop
+- `sessionStorage('windi_enterprise_did')` — Enterprise
+- `sessionStorage('windi_law_did')` — LAW
+- `sessionStorage('windi_travel_did')` — Travel
+- `localStorage('windi_field_did')` — Field
+
+**Resultado:** DIDs órfãos, inconsistências, validação fragmentada.
+
+### Solução: WindiDID.js
+
+**File:** `/opt/windi/shared/static/windi-did.js`
+
+```javascript
+const WindiDID = {
+    STORAGE_KEY: 'windi_did',
+    
+    get() { return localStorage.getItem(this.STORAGE_KEY); },
+    set(did) { localStorage.setItem(this.STORAGE_KEY, did); },
+    clear() { localStorage.removeItem(this.STORAGE_KEY); },
+    
+    migrateFromLegacy() {
+        // Migra de sessionStorage para localStorage
+        // Limpa keys antigas após migração
+    }
+};
+```
+
+### Frontends Migrados (7)
+
+| Frontend | File | Migration |
+|----------|------|-----------|
+| Desktop GEN7 | `frontend/index.html` | ✅ |
+| Desktop App.js | `frontend/static/app.js` | ✅ |
+| Enterprise | `w-enterprise-001/static/index.html` | ✅ |
+| LAW Workspace | `windi-law/workspace/index.html` | ✅ |
+| LAW Gate | `windi-law/identity-gate/templates/gate.html` | ✅ |
+| Travel Gate | `windi-travel/identity-gate/templates/gate.html` | ✅ |
+| Field | `verify-public/web/field/index.html` | ✅ |
+
+### Backend Simplification
+
+**Files modificados:**
+- `/opt/windi/constitutional/did_sovereign.py` — cross_validate_did() → Genesis only
+- `/opt/windi/constitutional/windi_tree.py` — cross_validate_did() → Genesis only
+
+**Antes:** Validação em múltiplos gates (LAW, Travel, Enterprise)
+**Depois:** Single lookup em W-DID-GENESIS (:8096)
+
+### Orphan DID Migration
+
+**Script:** `/opt/windi/scripts/migrate_orphan_dids.py`
+
+```
+DIDs migrados: 14
+├── WINDI-LAW: 11
+└── WINDI-Travel: 3
+```
+
+### Nginx Route
+
+**Route:** `/shared/` → `/opt/windi/shared/static/`
+**Script:** `patch-nginx-shared.sh`
+
+### Princípio
+
+> *"Uma identidade. Um storage. Uma validação."*
+
+**Sealed:** 15 Apr 2026 · Liga IA+H
+
+---
+
+## §174 — W-COST-001: Cost Intelligence Layer (15 Apr 2026)
+
+**Port:** :8152 · **Invariants:** I9, I11, I14
+**Commits:** `5e7da0e` (base), `05f4bf7` (Telegram), `4ad6ba6` (Gateway)
+**URL:** `https://windi-domain.com/cost/`
+
+### Conceito
+
+Centralização de custos LLM com alertas Telegram e integração W-GATEWAY.
+
+> *"O WINDI agora vê o que gasta. Decisões soberanas com números reais."*
+
+### Sovereign Routing Economics
+
+| Tier | Provider | Model | Cost/call | Ratio |
+|------|----------|-------|-----------|-------|
+| FREE | local | sovereign_router | €0.00 | ∞ |
+| MED | Mistral | mistral-small-latest | €0.000007 | 2800x cheaper |
+| HIGH | Anthropic | claude-sonnet-4 | €0.02 | 1x (reference) |
+
+### Pricing Table (EUR per 1M tokens)
+
+```python
+PRICING = {
+    "claude-opus-4-5-20251101": {"input": 15.0, "output": 75.0},
+    "claude-sonnet-4-20250514": {"input": 3.0, "output": 15.0},
+    "claude-haiku-3-5-20241022": {"input": 0.25, "output": 1.25},
+    "mistral-large-latest": {"input": 2.0, "output": 6.0},
+    "mistral-small-latest": {"input": 0.2, "output": 0.6},
+}
+```
+
+### Thresholds + Telegram Alerts
+
+| Threshold | Value | Action |
+|-----------|-------|--------|
+| daily_yellow | €2 | Log only |
+| daily_red | €5 | 🔴 Telegram |
+| weekly_red | €15 | 🔴 Telegram |
+| spike_percent | 50% | ⚡ Telegram |
+| dev_max_tokens | 10000 | Block in DEV mode |
+
+### Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/cost/record` | POST | Record cost event from W-GATEWAY |
+| `/api/cost/summary` | GET | Daily/weekly cost summary |
+| `/api/cost/by-service` | GET | Breakdown by service |
+| `/api/cost/wisdom` | GET | Candidates for Wisdom Block caching |
+| `/api/cost/test-alert` | GET | Test Telegram delivery |
+| `/api/cost/alerts` | GET | Alert history |
+| `/health` | GET | Health check |
+
+### W-GATEWAY Integration
+
+**File:** `/opt/windi/windi-gateway/server.py`
+
+**Modificações:**
+1. `call_anthropic()` — Returns `usage.input_tokens` + `usage.output_tokens`
+2. `call_mistral()` — Returns `usage.prompt_tokens` + `usage.completion_tokens`
+3. `record_cost()` — Non-blocking POST to W-COST-001 after each LLM call
+
+```python
+def record_cost(service, provider, model, tokens_in, tokens_out, tier, task_type):
+    """Record cost to W-COST-001 (non-blocking)."""
+    try:
+        requests.post(COST_API_URL, json={...}, timeout=1.0)
+    except:
+        pass  # Non-critical, fail silently
+```
+
+### Database Schema
+
+**File:** `/opt/windi/w-cost-001/cost_ledger.db`
+
+```sql
+CREATE TABLE cost_events (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    timestamp TEXT NOT NULL,
+    service TEXT NOT NULL,
+    provider TEXT NOT NULL,
+    model TEXT NOT NULL,
+    tier TEXT DEFAULT 'FREE',
+    tokens_in INTEGER NOT NULL,
+    tokens_out INTEGER NOT NULL,
+    cost_eur REAL NOT NULL,
+    wallet_id TEXT,
+    task_type TEXT,
+    metadata TEXT
+);
+
+CREATE TABLE alerts_sent (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    timestamp TEXT NOT NULL,
+    alert_type TEXT NOT NULL,
+    threshold REAL,
+    actual REAL,
+    message TEXT
+);
+```
+
+### Files
+
+```
+/opt/windi/w-cost-001/
+├── app.py              → FastAPI service (542 lines)
+├── static/index.html   → NOIR Dashboard
+├── cost_hook.py        → Integration module (async + sync)
+├── cost_ledger.db      → SQLite database
+└── .env                → Telegram config (gitignored)
+
+/opt/windi/windi-gateway/
+└── server.py           → Gateway with cost integration
+```
+
+### Dashboard Features
+
+- Summary cards (Today/Week/Calls)
+- Daily breakdown table
+- Service breakdown chart
+- Wisdom candidates list
+- NOIR/KLAR theme
+- i18n PT/DE/EN
+
+### Telegram Configuration
+
+**Bot:** W-NOMAD-001 bot (reused)
+**Chat ID:** Human Dragon private chat
+**Alerts:** Automatic on threshold crossing
+
+### Princípio
+
+> *"O sovereign_router não é apenas constitucional — é economicamente crítico."*
+
+**Sealed:** 15 Apr 2026 · 21:30 CEST · Liga IA+H
+
+---
+
+## §155-162 W-Enterprise-001 — Full Documentation (Migrated from CLAUDE.md)
+
+**Port:** :8150 · **Version:** v3.2.0 · **Invariants:** I1, I9, I11, I14
+**URL:** `https://windi-domain.com/enterprise/`
+**DASH v4.1:** `https://windi-domain.com/enterprise/static/desk.html`
+**Conceito:** EU AI Act Article 14 compliance + VERA constitutional agent.
+
+### §158 — VERA v1.2 · DID Gate + Evangelho WINDI
+
+**Evangelho:** `ALMA → DID → CÉREBRO → LEDGER → MUNDO`
+**Receipt:** `VERA-DID-GATE-EVANGELHO-20260412154934`
+
+**As Três Leis da Semente:**
+
+| Lei | Nome | Implementação |
+|-----|------|---------------|
+| I | Existência antes de Acção | Sem DID → WalletBanner mode · zero acções |
+| II | Toda Acção gera Rastro DID | `bind_action_to_did()` → Ledger receipt |
+| III | Sistema lê Histórico do DID | `restore_did_context()` → VERA adapta |
+
+**VERA v1.2 Componentes:**
+- `vera_did_gate.py` — DID Gate + 3 Leis (380 linhas)
+- `routing_engine.py` — Multi-LLM Routing + Consensus (480 linhas)
+- `agent_transfer_protocol.py` — IAT-001 Inter-Agent (350 linhas)
+- `vera_instructor.py` — Sovereign Instructor R10 (420 linhas)
+- `vera_module_map.json` — 8 Módulos Trilíngue
+- `llm_registry.yaml` — 8 Modelos em 3 Tiers
+
+**Endpoints DID Gate:** 
+- `/vera/did/validate/{did}`
+- `/vera/did/history/{did}`
+- `/vera/did/context/{did}`
+- `/vera/did/wallet-banner`
+
+### §157 — VERA · REGO Constitution
+
+**Constitution:** REGO v1.2 · 32 Pilares (10 Normativos + 9 Operacionais + 10 Técnicos + 3 DID)
+**Conceito:** AI Compliance Secretary. Não decide — ilumina o caminho até à decisão humana.
+
+**VERA Endpoints:** `/vera/health` · `/vera/brief` · `/vera/chat` · `/vera/routing/route` · `/vera/instructor/ask`
+
+### §160 — DID Universal Frontend Integration
+
+**Commit:** `b962bb7` · **File:** `static/index.html` (+376 linhas)
+**Conceito:** DID Universal no dashboard W-Enterprise-001. Sem DID = sem acesso.
+
+**Três Leis no Frontend:**
+
+| Lei | Componente | Função |
+|-----|------------|--------|
+| I | WalletBanner overlay | Bloqueia dashboard sem DID válido |
+| II | submitPHO() | Inclui `officer_did` em todos os receipts |
+| III | restoreContext() | Restaura histórico ao regressar |
+
+**UI Components:**
+- `#wallet-overlay` — Full-screen DID input com Evangelho WINDI
+- `#session-bar` — DID activo + tier + status Berçário + logout
+- `#vera-greeting` — VERA greeting personalizado por contexto
+- `DID_STATE` — State object para sessão activa
+
+**Status Berçário:** `nasceu` (primeira vez) · `entrou` (novo DID) · `voltou` (mesmo DID)
+
+### §161 — Capacity Amplifier · OVS
+
+**URL:** `https://windi-domain.com/enterprise/operator`
+**File:** `static/operator.html` · **i18n:** PT/DE/EN · **Theme:** NOIR/KLAR
+
+**Novo Cargo:** Operator of Verifiable Systems (OVS)
+
+**3 Perfis Amplificados:**
+
+| Perfil | Antes | Depois |
+|--------|-------|--------|
+| Digital Risk / Compliance | Depende de narrativa | Prova directa no Ledger |
+| Technical Product Owner | Governança = fricção | Governança embutida |
+| Internal Auditor | Semanas de ciclo | Verificação imediata SHA-256 |
+
+**Workflow:** Decision → I9 Gate → Seal (SHA-256 + Ledger) → Proof
+
+**Manifesto:**
+> *"The future of digital risk is not hiring better experts.*
+> *It's giving normal operators the ability to work with provable systems."*
+
+### §162 — VERA Profile-Aware R10
+
+**Commit:** `415f482` · **Engine:** VERA Instructor v1.1
+
+**3 Perfis OVS:**
+
+| Perfil | Tone | Focus Areas |
+|--------|------|-------------|
+| `digital_risk` | compliance | legal_anchors, frameworks, audit_evidence |
+| `tech_product` | technical | integration, api_workflow, system_design |
+| `internal_auditor` | audit | verification, ledger_queries, sha256_proof |
+
+**Endpoints:**
+- `POST /vera/did/profile/{did}?profile_id=X` — Set profile
+- `GET /vera/did/profile/{did}` — Get profile + greeting
+- `GET /vera/did/profiles` — List all profiles
+
+### DASH v4.1 — 9 Prateleiras Trilíngue
+
+**File:** `static/desk.html` (893 linhas)
+
+| Prateleiras | Conteúdo |
+|-------------|----------|
+| P01-P03 | Control Room · Observations · 1LOD Stream |
+| P04-P06 | PHO Queue · Documents · Legal Advisory |
+| P07-P09 | Invoices · PHO+Ledger · REP |
+
+**Features:** VERA Panel · LUPA Modal · Approve+Seal · Toast · i18n Toggle · NOIR/KLAR Toggle
+
+### Files v3.1.0
+
+```
+/opt/windi/w-enterprise-001/
+├── main.py          → FastAPI + VERA router (504 linhas)
+├── vera_agent.py    → REGO v1.0 (452 linhas)
+├── static/desk.html → DASH v4.1 trilingual (893 linhas)
+└── static/docs/     → User Manual
+```
+
+### NOIR/KLAR Palette
+
+| Theme | Background | Gold | Text |
+|-------|------------|------|------|
+| NOIR | `#0B0D14` | `#C8A45A` | `#E8E5DC` |
+| KLAR | `#FAFAF8` | `#8B7424` | `#1A1A1A` |
+
+**Sealed:** 12 Apr 2026 · Liga IA+H (Migrated 15 Apr 2026)
+
+---
+
