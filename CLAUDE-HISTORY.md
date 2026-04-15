@@ -138,6 +138,45 @@ Response:
 > "Complexidade é o inimigo da confiança. Se o fundador não consegue entrar,
 > o sistema falhou — não importa quão sofisticado seja."
 
+### §173.4 — Phase 2: Frontend Migration + Orphan DIDs (15 Apr 2026 · 20:00 CEST)
+
+**Commit:** `2fa6d11`
+**Status:** ✅ **COMPLETE**
+
+**Frontend Migration (8 ficheiros):**
+| Ficheiro | Alteração |
+|----------|-----------|
+| `w-enterprise-001/static/index.html` | Removido fallback sessionStorage |
+| `windi-law/workspace/index.html` | Usa `WindiDID.get()` |
+| `windi-law/identity-gate/templates/gate.html` | WindiDID.set() |
+| `windi-travel/identity-gate/templates/gate.html` | WindiDID.set() |
+| `desktop-gen7/frontend/index.html` | Adicionado windi-did.js |
+| `desktop-gen7/frontend/static/app.js` | WM.set() sincroniza com WindiDID |
+| `constitutional/windi-tree.js` | getDID/setDID/clearDID usam WindiDID |
+| `verify-public/web/field/index.html` | Simplificado para WindiDID |
+
+**Backend Simplification:**
+| Ficheiro | Alteração |
+|----------|-----------|
+| `constitutional/did_sovereign.py` | cross_validate_did → Genesis lookup |
+| `constitutional/windi_tree.py` | cross_validate_did → Genesis lookup |
+
+**Orphan DID Migration:**
+- **14 DIDs migrados** (11 WINDI-LAW + 3 WINDI-Travel)
+- Script: `/opt/windi/scripts/migrate_orphan_dids.py`
+- Log: `/opt/windi/logs/identity-migration/orphan_migration.jsonl`
+
+**Cleanup:**
+- `windi-did.js` migrateFromLegacy() agora limpa sessionStorage
+- Keys removidas: `windi_enterprise_did`, `windi_law_did`, `windi_travel_did`, etc.
+
+**Genesis Status Final:**
+```
+22 DIDs total: 19 NODAL + 2 ORACLE + 1 SOVEREIGN
+```
+
+**§173 SEALED** ✅
+
 ---
 
 ## § SESSÃO 15 Abr 2026 (Manhã) — §172 VERA Gateway Integration Fix
