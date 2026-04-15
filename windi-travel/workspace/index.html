@@ -1994,6 +1994,8 @@ body {
   cursor: pointer;
 }
 </style>
+<!-- §173 DID SIMPLIFICATION — Single Source of Truth -->
+<script src="/shared/windi-did.js"></script>
 </head>
 <body>
 
@@ -4228,11 +4230,26 @@ async function checkWalletGate() {
   if (didParam) {
     sessionStorage.setItem('windi_travel_wallet', didParam);
     walletId = didParam;
+    // §173 — Also store in unified localStorage
+    if (typeof WindiDID !== 'undefined') {
+      WindiDID.set(didParam);
+    }
   }
 
   // Se temos walletId no sessionStorage, usar
   if (walletId) {
     return true;
+  }
+
+  // §173 DID SIMPLIFICATION — Check unified localStorage before session check
+  if (typeof WindiDID !== 'undefined' && WindiDID.exists()) {
+    const unifiedDid = WindiDID.get();
+    if (unifiedDid) {
+      walletId = unifiedDid;
+      sessionStorage.setItem('windi_travel_wallet', unifiedDid);
+      console.log('[§173] DID restored from unified storage:', unifiedDid.substring(0, 20) + '…');
+      return true;
+    }
   }
 
   // §120 FIX: Se sessionStorage vazio, verificar cookie de sessão soberana

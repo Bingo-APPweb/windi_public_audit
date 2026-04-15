@@ -467,6 +467,8 @@
 
         .footer a { color: var(--gold); text-decoration: none; }
     </style>
+    <!-- §173 DID SIMPLIFICATION — Single Source of Truth -->
+    <script src="/shared/windi-did.js"></script>
 </head>
 <body>
     <!-- Header -->
@@ -1052,23 +1054,54 @@
 
         /**
          * Check if user has valid sovereign session
+         * §167: Also checks DID Genesis for cross-service sessions
          */
         async function checkSovereignSession() {
+            // First: check local Travel session
             try {
                 const response = await fetch(BASE_PATH + '/session/verify', {
                     method: 'GET',
                     credentials: 'include'
                 });
 
-                if (!response.ok) return null;
-
-                const data = await response.json();
-                if (data.valid && data.did) {
-                    return data;
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.valid && data.did) {
+                        return data;
+                    }
                 }
             } catch (e) {
-                console.log('[W-SESSION] Session check failed:', e);
+                console.log('[W-SESSION] Local session check failed:', e);
             }
+
+            // Fallback: check DID Genesis (sovereign seiva)
+            try {
+                const genesisResp = await fetch('/api/genesis/validate', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+
+                if (genesisResp.ok) {
+                    const genesis = await genesisResp.json();
+                    if (genesis.valid && genesis.did) {
+                        console.log('[DID-GENESIS] Cross-service session found');
+                        // Create local session from Genesis
+                        const localSession = await createSovereignSession(genesis.did);
+                        if (localSession) {
+                            return {
+                                valid: true,
+                                did: genesis.did,
+                                display_name: genesis.display_name,
+                                tier: genesis.tier,
+                                from_genesis: true
+                            };
+                        }
+                    }
+                }
+            } catch (e) {
+                console.log('[DID-GENESIS] Genesis check failed:', e);
+            }
+
             return null;
         }
 
@@ -1378,7 +1411,11 @@
                 };
                 sessionStorage.setItem('windi_travel_wallet', JSON.stringify(walletData));
 
-                // Backwards compatibility
+                // §173 DID SIMPLIFICATION — Store DID in unified localStorage
+                if (typeof WindiDID !== 'undefined') {
+                    WindiDID.set(registrationData.did);
+                }
+                // Legacy sessionStorage (deprecated but maintained for backwards compatibility)
                 sessionStorage.setItem('windi_travel_did', registrationData.did);
                 sessionStorage.setItem('windi_travel_fingerprint', registrationData.fingerprint);
 
@@ -1434,6 +1471,15 @@
             sessionStorage.removeItem('windi_travel_fingerprint');
             // Clear cookie too
             document.cookie = 'windi_did=; path=/; max-age=0';
+            // §173 — Also clear unified DID storage
+            if (typeof WindiDID !== 'undefined') {
+                WindiDID.clear();
+            }
+        }
+
+        // §173 DID SIMPLIFICATION — Migrate from legacy keys on init
+        if (typeof WindiDID !== 'undefined') {
+            WindiDID.migrateFromLegacy();
         }
 
         // Only clear if no valid session exists (prevents wiping on revisit)

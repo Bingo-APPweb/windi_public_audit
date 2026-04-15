@@ -425,6 +425,8 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
 .demo-btn { font-size: 10px; font-weight: 500; padding: 4px 12px; border-radius: 14px; border: none; background: transparent; color: var(--ink-4); cursor: pointer; font-family: var(--font); transition: all 0.12s; }
 .demo-btn.on { background: var(--gold); color: white; }
 </style>
+<!-- §173 DID SIMPLIFICATION — Single Source of Truth -->
+<script src="/shared/windi-did.js"></script>
 </head>
 <body>
 
@@ -822,14 +824,26 @@ function setLang(l) {
 // ══════════════════════════════════════════════════════════════
 // initWallet — Wallet Gate Logic (F10 SEALED)
 // URL ?did= ALWAYS takes priority (fresh registration)
+// §173 — Added WindiDID unified storage fallback
 // ══════════════════════════════════════════════════════════════
 async function initWallet() {
   var stored = sessionStorage.getItem('windi_law_wallet');
   var fb = LANG[lang] || LANG.en;
 
+  // §173 DID SIMPLIFICATION — Migrate legacy keys on init
+  if (typeof WindiDID !== 'undefined') {
+    WindiDID.migrateFromLegacy();
+  }
+
   // Check for ?did= in URL (direct link access or fresh registration)
   var urlParams = new URLSearchParams(window.location.search);
   var urlDid = urlParams.get('did');
+
+  // §173 — If no URL DID and no stored wallet, try unified localStorage
+  if (!urlDid && !stored && typeof WindiDID !== 'undefined' && WindiDID.exists()) {
+    urlDid = WindiDID.get();
+    console.log('[§173] DID restored from unified storage:', urlDid.substring(0, 20) + '…');
+  }
 
   // If URL has DID, ALWAYS fetch from server (overrides stale sessionStorage)
   if (urlDid) {
@@ -852,6 +866,10 @@ async function initWallet() {
         };
         sessionStorage.setItem('windi_law_wallet', JSON.stringify(walletData));
         document.cookie = 'windi_did=' + encodeURIComponent(data.did) + '; path=/; max-age=31536000; SameSite=Lax';
+        // §173 — Store in unified localStorage
+        if (typeof WindiDID !== 'undefined') {
+          WindiDID.set(data.did);
+        }
         stored = JSON.stringify(walletData);
         console.log('[WINDI-LAW] Wallet loaded from server:', data.did);
       }

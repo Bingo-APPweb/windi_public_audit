@@ -707,6 +707,8 @@ body {
   .decision-row .d-system, .decision-row .d-risk { display: none; }
 }
 </style>
+<!-- §173 DID SIMPLIFICATION — Single Source of Truth -->
+<script src="/shared/windi-did.js"></script>
 </head>
 <body>
 
@@ -1246,9 +1248,46 @@ const DID_STATE = {
   verified: false
 };
 
-// ─── LEI I: WALLET BANNER ───
-function checkExistingSession() {
-  const savedDID = sessionStorage.getItem('windi_enterprise_did');
+// ─── LEI I: WALLET BANNER + DID GENESIS INTEGRATION ───
+async function checkExistingSession() {
+  // §167: First check DID Genesis session (sovereign cookie)
+  try {
+    const genesisResp = await fetch('/api/genesis/validate', { credentials: 'include' });
+    if (genesisResp.ok) {
+      const genesis = await genesisResp.json();
+      if (genesis.valid && genesis.did) {
+        // Seiva flows! User already authenticated via DID Genesis
+        console.log('[DID-GENESIS] Session found:', genesis.did.substring(0, 25) + '...');
+        DID_STATE.did = genesis.did;
+        DID_STATE.tier = genesis.tier || 'SEED';
+        DID_STATE.verified = true;
+
+        // §173 — Check unified storage first
+        const previousDID = (typeof WindiDID !== 'undefined' && WindiDID.get()) ||
+                           sessionStorage.getItem('windi_enterprise_did');
+        if (previousDID === genesis.did) {
+          DID_STATE.status = 'voltou';
+        } else {
+          DID_STATE.status = previousDID ? 'entrou' : 'nasceu';
+        }
+
+        // §173 — Store in both unified and legacy storage
+        if (typeof WindiDID !== 'undefined') {
+          WindiDID.set(genesis.did);
+        }
+        sessionStorage.setItem('windi_enterprise_did', genesis.did);
+        await restoreContext(genesis.did);
+        unlockDashboard();
+        return; // Exit early - no banner needed
+      }
+    }
+  } catch (e) {
+    console.log('[DID-GENESIS] No active session, checking local storage');
+  }
+
+  // §173 — Check unified localStorage first, then legacy sessionStorage
+  const savedDID = (typeof WindiDID !== 'undefined' && WindiDID.get()) ||
+                   sessionStorage.getItem('windi_enterprise_did');
   if (savedDID) {
     // Returning user → restore context (Lei III)
     DID_STATE.status = 'voltou';
@@ -1288,8 +1327,9 @@ async function enterWithDID() {
       DID_STATE.tier = data.validation.tier || 'SEED';
       DID_STATE.verified = true;
 
-      // Check if first time or returning
-      const previousDID = sessionStorage.getItem('windi_enterprise_did');
+      // Check if first time or returning — §173 check unified storage first
+      const previousDID = (typeof WindiDID !== 'undefined' && WindiDID.get()) ||
+                         sessionStorage.getItem('windi_enterprise_did');
       if (!previousDID) {
         DID_STATE.status = 'nasceu'; // First time ever
       } else if (previousDID === did) {
@@ -1298,6 +1338,10 @@ async function enterWithDID() {
         DID_STATE.status = 'entrou'; // Different DID
       }
 
+      // §173 — Store in unified localStorage
+      if (typeof WindiDID !== 'undefined') {
+        WindiDID.set(did);
+      }
       sessionStorage.setItem('windi_enterprise_did', did);
 
       // Restore context (Lei III)
@@ -1321,6 +1365,10 @@ async function enterWithDID() {
       DID_STATE.tier = 'SEED';
       DID_STATE.verified = true;
       DID_STATE.status = 'entrou';
+      // §173 — Store in unified localStorage
+      if (typeof WindiDID !== 'undefined') {
+        WindiDID.set(did);
+      }
       sessionStorage.setItem('windi_enterprise_did', did);
       await sleep(600);
       unlockDashboard();
@@ -1412,6 +1460,11 @@ function logout() {
   document.getElementById('did-input').value = '';
   document.getElementById('wb-status').className = 'wb-status';
   document.getElementById('wb-enter-btn').disabled = false;
+}
+
+// §173 DID SIMPLIFICATION — Migrate legacy keys on load
+if (typeof WindiDID !== 'undefined') {
+  WindiDID.migrateFromLegacy();
 }
 
 // Check session on load
