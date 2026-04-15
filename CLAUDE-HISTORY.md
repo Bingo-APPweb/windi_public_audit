@@ -8544,3 +8544,114 @@ LAW · TRAVEL · VERIFY · ENTERPRISE · LAB
 
 ---
 
+
+## §176 — W-SOCIAL-001: Verified Professional Presence (15 Apr 2026)
+
+**Port:** :8133 · **Invariants:** I9-P, I11, I14 · **Status:** LIVE
+**Author:** Human Dragon + Architect
+
+### Conceito Central
+
+> *"O humano define a lei narrativa. A IA amplifica a voz. O WINDI prova a autoria."*
+
+W-SOCIAL-001 resolve o paradoxo da geração de conteúdo:
+- Ferramentas de scheduling publicam mais, não melhor
+- Conteúdo sintético erode confiança em escala industrial
+- Profissionais de alto valor pensam mais do que publicam
+
+**Categoria:** Verified Professional Presence Infrastructure
+(Não é social media automation — é outra categoria)
+
+### 3 Invariantes Constitucionais (IRREMEDIÁVEL)
+
+| ID | Nome | Regra |
+|----|------|-------|
+| I-SOC-001 | Provenance Invariant | Sem ghostwriting sintético. Toda publicação requer origem rastreável (documento, decisão, observação de campo) |
+| I-SOC-002 | Human Seal Invariant | Aprovação humana explícita (I9-P Protocol). IA propõe, humano decide. Sem bypass |
+| I-SOC-003 | Verification Invariant | verify_url obrigatório. Prova de autoria no Forensic Ledger |
+
+### Canonical Flow
+
+```
+CAPTURE → COMPILE → APPROVE → SEAL
+   │         │         │        │
+   │         │         │        └─ SHA-256 + Ledger + verify_url
+   │         │         └─ I9-P Protocol (human_approved=true)
+   │         └─ AI adapts for channel (LinkedIn, Telegram, etc.)
+   └─ Detects "atom of authority" from real work output
+```
+
+### Target Profile
+
+- Compliance Officer
+- AI Governance Specialist
+- Jurista / Legal Counsel
+- Founder em mercado regulado
+- Risk & Audit Expert
+- Technical Thought Leader
+- Consultor Independente
+- Field Professional / Auditor
+
+> *"Para quem a presença é autoridade — e a autoridade é o negócio."*
+
+### Endpoints PoC
+
+| Method | Endpoint | Descrição |
+|--------|----------|-----------|
+| POST | `/social/intake` | Recebe átomo de origem do módulo (LAW, Enterprise, Travel) |
+| POST | `/social/compile` | Gera variações por canal com tone constraints |
+| POST | `/social/approve` | I9-P human approval (checklist 3 pontos) |
+| GET | `/social/verify/{seal_id}` | Prova pública (sem conteúdo, apenas metadata) |
+| GET | `/social/health` | Health check do serviço |
+
+### Security Sanitization (15 Apr)
+
+**Problema Identificado:**
+- Tab "Payload Spec" na probe.html expunha arquitectura interna
+- Ports `:8101`, `:8133` visíveis
+- ID patterns `WI-{uuid7}`, `WC-{uuid7}` expostos
+- Governance strings `EXPLICIT_HUMAN_APPROVAL` públicas
+
+**Solução Implementada:**
+- Payload Spec substituído por "Data Flow" conceptual
+- Sem referências a portas ou padrões internos
+- 4 flow cards abstractos (Capture → Compile → Approve → Seal)
+- 3 info cards: "What travels" / "What's public" / "Never exposed"
+- Nota: *"For detailed technical specifications, authenticated developers can access internal documentation"*
+
+### Trilingual i18n (15 Apr)
+
+**Ficheiros Actualizados:**
+- `manifesto.html` — i18n completo (PT/DE/EN)
+- `probe.html` — i18n completo (PT/DE/EN)
+
+**Componentes:**
+- Language toggle no topbar (PT | DE | EN)
+- `data-i18n` attributes em todos os textos
+- `localStorage('windi-lang')` persistência
+- Theme preference sync com `localStorage('windi-theme')`
+
+### Navigation Links
+
+**Adicionados:**
+- manifesto.html → [Interactive Probe →] [Portal →]
+- probe.html → [← Manifesto] [Portal →]
+
+### Files
+
+```
+/opt/windi/w-social-001/
+├── app.py                  (FastAPI PoC, 4 endpoints)
+├── windi-social.service    (systemd unit)
+└── static/
+    ├── manifesto.html      (Founding document, trilingual)
+    └── probe.html          (Interactive UX demo, sanitized)
+```
+
+### Princípio W-SOCIAL-001
+
+> *"Um botão real. Num momento real. Com um utilizador real. Dentro de um fluxo real.
+> Isso prova mais do que qualquer PRD."*
+
+---
+

@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.2.14
-**Sealed:** 2026-04-15 · §175 Landing Page Complete
+**Version:** 2.2.15
+**Sealed:** 2026-04-15 · §176 W-SOCIAL-001
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -89,6 +89,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-SERVICE-CONTROL | :8170 | I1,I9,I11 | **LIVE** · Service Control Panel · 24 Services · Restart/Stop/Start · DID Gate |
 | W-LAB-001 | :8151 | I9,I11,I14 | **LIVE** · Governance Laboratory · LOBO Architecture · 5 Mini-Games · OVS Certification |
 | W-COST-001 | :8152 | I9,I11,I14 | **LIVE** · Cost Intelligence Layer · Telegram Alerts · Gateway Integration · Thresholds |
+| W-SOCIAL-001 | :8133 | I9-P,I11,I14 | **LIVE** · Verified Professional Presence · Embedded-first · I9-P Protocol · Trilingual |
 | WINDI-PORTAL | static | — | **LIVE** · Internal Control Center · 35 Services · 7 Categories |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
@@ -435,6 +436,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 15 Apr | **§176 W-SOCIAL-001** · Verified Professional Presence · :8133 · I9-P Protocol · Security Sanitized · i18n PT/DE/EN |
 | 15 Apr | **§175 Landing Page Complete** · 5 Products LIVE · W-Enterprise + W-Lab Cards · Trilingual · `1fa17d9` |
 | 15 Apr | **§174 W-COST-001** · Cost Intelligence Layer · Telegram Alerts · Gateway Integration · `4ad6ba6` |
 | 15 Apr | **§173 DID Simplification** · WindiDID.js · Single Source of Truth · Orphan Migration · `a8a191c` |
@@ -643,6 +645,43 @@ Anonymous → HTTPException 400 · Receipt `WINDI-MARIA-COMPLIANCE-FIX-20260414`
 - `/opt/windi/windi-gateway/server.py` (Gateway integration)
 
 **Princípio:** O sovereign_router não é apenas constitucional — é economicamente crítico.
+
+### §176 — W-SOCIAL-001: Verified Professional Presence (15 Apr 2026)
+
+**Port:** :8133 · **Invariants:** I9-P, I11, I14 · **Status:** LIVE
+**URLs:** `https://windi-domain.com/social/static/manifesto.html` · `https://windi-domain.com/social/static/probe.html`
+**Conceito:** Transforma trabalho intelectual real em presença pública verificada.
+
+> *"O humano define a lei narrativa. A IA amplifica a voz. O WINDI prova a autoria."*
+
+**3 Invariantes Constitucionais:**
+| ID | Nome | Regra |
+|----|------|-------|
+| I-SOC-001 | Provenance | Sem ghostwriting sintético — toda publicação requer origem rastreável |
+| I-SOC-002 | Human Seal | Aprovação humana explícita (I9-P Protocol) antes de publicar |
+| I-SOC-003 | Verification | verify_url obrigatório — prova de autoria no Ledger |
+
+**Canonical Flow:** Capture → Compile → Approve → Seal
+**Target Profile:** Compliance Officers · Legal Counsel · Governance Specialists · Field Auditors
+
+**Endpoints PoC:**
+- `POST /social/intake` — Recebe átomo de origem
+- `POST /social/compile` — Gera variações por canal
+- `POST /social/approve` — I9-P human approval
+- `GET /social/verify/{seal_id}` — Prova pública
+
+**Features:**
+- Embedded-first (botão vive dentro de LAW/Enterprise/Travel)
+- Security sanitized (Payload Spec sem exposição interna)
+- Trilingual i18n (PT/DE/EN)
+- NOIR/KLAR theme
+- Navigation links (Manifesto ↔ Probe ↔ Portal)
+
+**Files:**
+- `/opt/windi/w-social-001/app.py` (FastAPI, PoC)
+- `/opt/windi/w-social-001/static/manifesto.html` (Founding document)
+- `/opt/windi/w-social-001/static/probe.html` (Interactive UX demo)
+- `/etc/systemd/system/windi-social.service`
 
 ### §169 — W-SERVICE-CONTROL: Service Control Panel (14 Apr 2026)
 
