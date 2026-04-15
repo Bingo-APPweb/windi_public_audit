@@ -6,6 +6,111 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 15 Abr 2026 (Manhã) — §172 VERA Gateway Integration Fix
+
+**Commit:** `0d8e1fb`
+**Scope:** VERA AI Compliance Secretary — Gateway Integration Fix
+**CLAUDE.md:** v2.2.12
+
+### §172 — VERA Gateway Integration + Bunker Mode Resolution (15 Apr 2026 · 12:17 CEST)
+
+**Port:** :8150 (VERA) · :8130 (Gateway)
+**Invariants:** I9, I10, I11, I14
+**Files Modified:** `/opt/windi/w-enterprise-001/vera_agent.py`
+
+**Problema Detectado:**
+VERA em modo degradado — todas as chamadas ao Gateway falhavam com erros 401→422.
+
+**Diagnóstico (3 fases):**
+
+| Fase | Erro | Causa | Fix |
+|------|------|-------|-----|
+| 1 | 401 Unauthorized | Header `X-Gateway-Secret` em falta | Adicionado `GATEWAY_SECRET` env var + header |
+| 2 | 422 Unprocessable | Payload format errado (`system`, `messages`) | Convertido para Gateway format (`actor`, `tier`, `task`, `prompt`) |
+| 3 | "no text content" | Response parsing errado | Adicionado parse de campo `response` |
+
+**Correcção vera_agent.py (linhas 251-276):**
+```python
+GATEWAY_SECRET = os.getenv("GATEWAY_SECRET", "windi-gateway-secret-2026")
+
+async def call_ai(system: str, messages: list, max_tokens: int = 600) -> str:
+    # Build prompt from system + messages for Gateway format
+    prompt_parts = [f"System: {system}"]
+    for msg in messages:
+        role = msg.get("role", "user")
+        content = msg.get("content", "")
+        prompt_parts.append(f"{role.capitalize()}: {content}")
+    full_prompt = "\n\n".join(prompt_parts)
+
+    payload = {
+        "actor": "vera-agent",
+        "tier": "HIGH",
+        "task": "vera-compliance-chat",
+        "prompt": full_prompt,
+        "provider": "anthropic",
+        "model": AI_MODEL,
+        "max_tokens": max_tokens
+    }
+    headers = {"X-Gateway-Secret": GATEWAY_SECRET}
+    # ... response parsing includes "response" field
+```
+
+### §172.1 — Gateway Bunker Mode Resolution (15 Apr 2026 · 12:41 CEST)
+
+**Problema Adicional:**
+Mesmo após fix VERA, Gateway estava em bunker mode (`consecutive_fails: 3`).
+
+**Diagnóstico:**
+```bash
+curl -s http://localhost:8130/gateway/health
+# bunker_active: true, consecutive_fails: 3
+```
+
+**Causa:**
+Gateway processo (PID 702998) iniciado em Mar 30 não carregou `.env` correctamente.
+`load_dotenv()` não encontrou ficheiro porque working directory estava errado.
+
+**Verificação:**
+```bash
+# API key no .env válida:
+export ANTHROPIC_API_KEY="sk-ant-api03-..."
+curl -X POST https://api.anthropic.com/v1/messages ... # OK ✓
+
+# Mas Gateway não a estava a usar (bunker mode)
+```
+
+**Solução:**
+```bash
+cd /opt/windi/windi-gateway
+nohup ./venv/bin/python -m uvicorn server:app --host 0.0.0.0 --port 8130 > /tmp/gateway.log 2>&1 &
+```
+
+**Resultado Final:**
+```json
+{
+  "service": "W-GATEWAY-001",
+  "bunker_active": false,
+  "consecutive_fails": 0,
+  "providers": {"anthropic": true, "mistral": true, "gemini": true, "openai": true}
+}
+```
+
+**VERA Operacional:**
+```json
+{
+  "status": "ok",
+  "degraded_mode": false,
+  "latency_ms": 3900,
+  "vera_response": "I9 = AUTONOMY LIMIT — VERA never executes decisions..."
+}
+```
+
+**Lição Aprendida:**
+> "Quando `load_dotenv()` falha silenciosamente, o serviço corre mas sem credenciais.
+> Sempre iniciar serviços Python a partir do seu próprio directório."
+
+---
+
 ## § SESSÃO 14 Abr 2026 (Tarde) — §169 W-SERVICE-CONTROL
 
 **Commits:** `a763dc3`, `0e02f8c`, `55e1b26`
