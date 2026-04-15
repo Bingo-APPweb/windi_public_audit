@@ -6,8 +6,13 @@ Integrar como blueprint no server.py existente (:8126)
 Pattern: domain extension · fail-closed · DID obrigatório
 """
 
+"""
+§173 DID SIMPLIFICATION — Migration Phase 1.1
+WINDI-Travel gate.py migrated to use shared.did_validator
+"""
 import os
 import re
+import sys
 import time
 import uuid
 import hashlib
@@ -24,6 +29,15 @@ import requests
 from fastapi import APIRouter, Request, Form, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
+
+# §173 — Import shared DID validator (Single Source of Truth)
+sys.path.insert(0, "/opt/windi/shared")
+try:
+    from did_validator import validate_did_format as _shared_validate_format
+    DID_VALIDATOR_AVAILABLE = True
+except ImportError:
+    DID_VALIDATOR_AVAILABLE = False
+    _shared_validate_format = None
 
 # ── Config ────────────────────────────────────────────────────────────────────
 BASE_DIR   = Path(__file__).parent
@@ -97,7 +111,10 @@ def generate_wallet_id() -> str:
 
 def is_valid_windi_did(did: str) -> bool:
     """
-    Valida qualquer DID do ecossistema WINDI — §64
+    §173 DID SIMPLIFICATION — Format validation using shared module.
+
+    Valida qualquer DID do ecossistema WINDI.
+    MIGRATED: Now uses shared.did_validator.validate_did_format()
 
     Aceita:
       did:windi:travel:xxx  ✅
@@ -106,16 +123,29 @@ def is_valid_windi_did(did: str) -> bool:
       WID-TRAVEL-xxx        ✅ (legacy)
       WID-LAW-xxx           ✅ (legacy)
 
-    "Entraste pelo Travel? O teu DID já te conhece no LAW."
+    NOTE: This is FORMAT validation only. For full Genesis validation
+    (tier, access, existence), use shared.did_validator.validate_did().
+
+    "Um DID. Uma fonte. Zero fallbacks." — §173
     """
     if not did:
         return False
-    # Universal format
+
+    # §173 — Use shared validator if available
+    if DID_VALIDATOR_AVAILABLE and _shared_validate_format:
+        if _shared_validate_format(did):
+            return True
+        # Fall through to check legacy formats
+
+    # Universal format (did:windi:*)
     if did.startswith("did:windi:"):
         return True
-    # Legacy formats (backwards compatible)
+
+    # Legacy formats (backwards compatible — DEPRECATED)
+    # TODO §173: Migrate legacy WID- format to did:windi:
     if did.startswith("WID-"):
         return True
+
     return False
 
 def make_session(wallet_id: str, ip: str) -> str:

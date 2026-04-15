@@ -30,6 +30,24 @@ import os
 from dataclasses import dataclass, asdict
 from typing import Optional, Dict, Any, Tuple
 
+# W-SEC-001 integration (fire-and-forget, never blocks)
+try:
+    import sys
+    sys.path.insert(0, "/opt/windi")
+    from shared.sec_client import emit_token_invalid, emit_device_binding_mismatch
+    SEC_ENABLED = True
+except ImportError:
+    SEC_ENABLED = False
+
+# §173 DID SIMPLIFICATION — Shared validator integration
+try:
+    sys.path.insert(0, "/opt/windi/shared")
+    from did_validator import validate_did_format as _shared_validate_format
+    DID_VALIDATOR_AVAILABLE = True
+except ImportError:
+    DID_VALIDATOR_AVAILABLE = False
+    _shared_validate_format = None
+
 # ==============================================================================
 # CONFIGURACAO
 # ==============================================================================
@@ -289,29 +307,43 @@ def hash_ip_for_signal(ip: str) -> str:
 
 def is_valid_windi_did(did: str) -> bool:
     """
+    §173 DID SIMPLIFICATION — Format validation using shared module.
+
     Valida formato de DID WINDI.
+    MIGRATED: Now uses shared.did_validator.validate_did_format()
 
     Formatos aceites:
         - did:windi:travel:xxx (4 parts)
         - did:windi:law:xxx (4 parts)
         - did:windi:xxx (3 parts - generic)
-        - WID-TRAVEL-xxx (legacy)
-        - WID-LAW-xxx (legacy)
+        - WID-TRAVEL-xxx (legacy — DEPRECATED)
+        - WID-LAW-xxx (legacy — DEPRECATED)
+
+    NOTE: This is FORMAT validation only. For full Genesis validation
+    (tier, access, existence), use shared.did_validator.validate_did().
+
+    "Um DID. Uma fonte. Zero fallbacks." — §173
     """
     if not did or not isinstance(did, str):
         return False
 
-    # Formato novo
+    # §173 — Use shared validator if available
+    if DID_VALIDATOR_AVAILABLE and _shared_validate_format:
+        if _shared_validate_format(did):
+            return True
+        # Fall through to check legacy formats
+
+    # Formato novo (did:windi:*)
     if did.startswith("did:windi:"):
         parts = did.split(":")
         # Accept both 3-part (did:windi:uuid) and 4-part (did:windi:travel:uuid)
         if len(parts) == 3:
             return len(parts[2]) > 0  # Just check uuid exists
         if len(parts) >= 4:
-            return parts[2] in ("travel", "law", "wallet")
+            return parts[2] in ("travel", "law", "wallet", "dragon")
         return False
 
-    # Formato legacy
+    # Formato legacy (DEPRECATED — TODO §173: migrate to did:windi:)
     if did.startswith("WID-TRAVEL-") or did.startswith("WID-LAW-"):
         return len(did) > 12
 
@@ -398,7 +430,97 @@ REVOKE_REASON_EXPIRED = "expired"
 # MODULE INFO
 # ==============================================================================
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 __module__ = "W-SESSION-001"
 __author__ = "WINDI Publishing House"
 __invariants__ = ["I1", "I9", "I13"]
+
+
+# ==============================================================================
+# W-SEC-001 INTEGRATION
+# ==============================================================================
+
+def verify_session_with_security(
+    token: str,
+    client_ip: str = None,
+    user_agent: str = None,
+    service: str = "sovereign-session",
+) -> SessionValidation:
+    """
+    Verify session token with W-SEC-001 integration.
+
+    Wraps verify_session_token() and emits security events
+    for suspicious failures (invalid_signature, corrupt_payload).
+
+    Args:
+        token: Session token to verify
+        client_ip: Client IP for security logging
+        user_agent: User-Agent for security logging
+        service: Service name for security logging
+
+    Returns:
+        SessionValidation result
+    """
+    result = verify_session_token(token)
+
+    # Emit security events for suspicious failures
+    if not result.valid and SEC_ENABLED and client_ip:
+        suspicious_codes = {"invalid_signature", "corrupt_payload"}
+        if result.error_code in suspicious_codes:
+            try:
+                emit_token_invalid(
+                    ip=client_ip,
+                    user_agent=user_agent,
+                    service=service,
+                    endpoint="/session/verify",
+                    error_code=result.error_code,
+                )
+            except Exception:
+                pass  # Never break main flow
+
+    return result
+
+
+def check_device_binding_with_security(
+    token_device_id: str,
+    current_device_id: str,
+    did: str,
+    session_id: str,
+    client_ip: str = None,
+    user_agent: str = None,
+    service: str = "sovereign-session",
+) -> bool:
+    """
+    Check device binding with W-SEC-001 integration.
+
+    Emits security event if device IDs don't match.
+
+    Args:
+        token_device_id: Device ID from token
+        current_device_id: Device ID from current request
+        did: User DID
+        session_id: Session ID
+        client_ip: Client IP for security logging
+        user_agent: User-Agent for security logging
+        service: Service name for security logging
+
+    Returns:
+        True if device binding matches, False otherwise
+    """
+    if token_device_id == current_device_id:
+        return True
+
+    # Device binding mismatch — emit security event
+    if SEC_ENABLED and client_ip:
+        try:
+            emit_device_binding_mismatch(
+                ip=client_ip,
+                session_id=session_id,
+                did=did,
+                user_agent=user_agent,
+                service=service,
+            )
+        except Exception:
+            pass  # Never break main flow
+
+    return False
