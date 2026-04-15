@@ -444,6 +444,15 @@ def dashboard():
 def dashboard_noir():
     return render_template_string(DASHBOARD_HTML)
 
+@app.route("/did-architecture")
+def did_architecture():
+    """§173 DID Architecture Diagram Page"""
+    try:
+        with open("/opt/windi/service-control/static/did-architecture.html", "r") as f:
+            return f.read()
+    except Exception as e:
+        return f"Error loading page: {e}", 500
+
 # ═══════════════════════════════════════════════════════════════
 # HTML TEMPLATE
 # ═══════════════════════════════════════════════════════════════
