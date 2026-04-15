@@ -530,6 +530,55 @@ hr { border: none; border-top: 0.5px solid var(--border); }
 }
 .hidden { display: none !important; }
 
+/* ── TOAST NOTIFICATION ── */
+.toast {
+  position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+  background: var(--card); border: 0.5px solid var(--border);
+  border-radius: 10px; padding: 16px 24px;
+  font-size: 13px; color: var(--text);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  z-index: 9999; opacity: 0;
+  transition: transform .3s ease, opacity .3s ease;
+  max-width: 90%; text-align: center;
+}
+.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+.toast.success { border-color: var(--ok); }
+.toast.error { border-color: var(--danger); }
+.toast.info { border-color: var(--gold-dim); }
+
+/* ── CONTROLS (Theme + Lang) ── */
+.controls {
+  position: fixed; top: 16px; right: 140px; z-index: 101;
+  display: flex; align-items: center; gap: 8px;
+}
+.control-btn {
+  background: var(--surface); border: 0.5px solid var(--border);
+  border-radius: 6px; padding: 6px 10px;
+  font-family: var(--mono); font-size: 10px;
+  color: var(--text-muted); cursor: pointer;
+  transition: all .2s; letter-spacing: .06em;
+}
+.control-btn:hover { border-color: var(--border-md); color: var(--text); }
+.control-btn.active { border-color: var(--gold-dim); color: var(--gold); }
+.lang-toggle { display: flex; gap: 2px; }
+.lang-btn { padding: 6px 8px; border-radius: 4px; }
+.lang-btn.active { background: var(--gold-faint); color: var(--gold); border-color: var(--gold-dim); }
+
+/* ── KLAR THEME ── */
+[data-theme="klar"] {
+  --bg:       #FAFAF8;
+  --surface:  #F0EFED;
+  --card:     #FFFFFF;
+  --border:   #E0DED8;
+  --border-md:#D0CEC8;
+  --gold:     #8B7424;
+  --gold-dim: #6B5A1C;
+  --gold-faint:rgba(139,116,36,0.08);
+  --text:     #1A1A1A;
+  --text-sec: #5A5A58;
+  --text-muted:#8A8A88;
+}
+
 /* ── RESPONSIVE ── */
 @media (max-width: 680px) {
   nav { padding: 14px 20px; }
@@ -558,9 +607,20 @@ hr { border: none; border-top: 0.5px solid var(--border); }
   <a href="#" class="nav-logo"><span>W-LAB</span> · WINDI</a>
   <div class="nav-right">
     <span class="nav-badge">BETA · 2026</span>
-    <a href="#enter" class="nav-cta">Enter the Lab →</a>
+    <div class="controls">
+      <div class="lang-toggle">
+        <button class="control-btn lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+        <button class="control-btn lang-btn" data-lang="de" onclick="setLang('de')">DE</button>
+        <button class="control-btn lang-btn" data-lang="pt" onclick="setLang('pt')">PT</button>
+      </div>
+      <button class="control-btn" id="theme-toggle" onclick="toggleTheme()">☀</button>
+    </div>
+    <a href="#enter" class="nav-cta" data-i18n="nav_cta">Enter the Lab →</a>
   </div>
 </nav>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
 
 <!-- HERO -->
 <section class="hero">
@@ -853,6 +913,167 @@ hr { border: none; border-top: 0.5px solid var(--border); }
 
 <script>
 // ============================================================================
+// i18n TRANSLATIONS
+// ============================================================================
+const i18n = {
+  en: {
+    nav_cta: "Enter the Lab →",
+    demo_tag_ready: "TRY IT NOW · 20 SECONDS",
+    demo_tag_hunting: "HUNTING · FIND THE TRAP",
+    demo_tag_success: "TRAP DETECTED",
+    demo_tag_fail: "TRAP MISSED",
+    demo_title: "Can you spot the trap?",
+    demo_sub: "Below is a real document. One sentence allows AI to act without human approval. Find it before time runs out.",
+    demo_start: "🐺 Start the hunt →",
+    result_win_title: "You caught it.",
+    result_win_desc: "Your System 1 detected the I9 violation. But can you do it under real pressure, with interruptions, with incomplete information? That's what the full lab tests.",
+    result_timeout_title: "Time's up.",
+    result_timeout_desc: "The AI acted while you were still reading. In a real crisis, that's how violations happen — the machine moves faster than human oversight.",
+    result_wrong_title: "Wrong line.",
+    result_wrong_desc: "You clicked a safe line. The trap was hiding in plain sight. This is exactly why we train the reflex — so you catch it before thinking.",
+    email_placeholder: "your@email.com",
+    email_btn: "Train this reflex →",
+    email_skip: "or enter the full lab now →",
+    email_success: "Successfully registered! You'll receive W-LAB access soon.",
+    email_already: "This email is already registered. You'll receive access soon.",
+    email_invalid: "Please enter a valid email address.",
+    email_error: "Registration failed. Please try again.",
+    email_network: "Network error. Please try again.",
+    retry: "↻ Try again"
+  },
+  de: {
+    nav_cta: "Zum Lab →",
+    demo_tag_ready: "JETZT TESTEN · 20 SEKUNDEN",
+    demo_tag_hunting: "SUCHE · FINDE DIE FALLE",
+    demo_tag_success: "FALLE ERKANNT",
+    demo_tag_fail: "FALLE VERPASST",
+    demo_title: "Erkennst du die Falle?",
+    demo_sub: "Unten ist ein echtes Dokument. Ein Satz erlaubt der KI, ohne menschliche Genehmigung zu handeln. Finde ihn, bevor die Zeit abläuft.",
+    demo_start: "🐺 Jagd starten →",
+    result_win_title: "Erwischt.",
+    result_win_desc: "Dein System 1 hat die I9-Verletzung erkannt. Aber kannst du das unter echtem Druck, mit Unterbrechungen, mit unvollständigen Informationen? Das testet das vollständige Lab.",
+    result_timeout_title: "Zeit abgelaufen.",
+    result_timeout_desc: "Die KI hat gehandelt, während du noch gelesen hast. In einer echten Krise passieren Verstöße genau so — die Maschine ist schneller als die menschliche Aufsicht.",
+    result_wrong_title: "Falsche Zeile.",
+    result_wrong_desc: "Du hast eine sichere Zeile geklickt. Die Falle war direkt sichtbar. Genau deshalb trainieren wir den Reflex — damit du sie erkennst, bevor du nachdenkst.",
+    email_placeholder: "deine@email.de",
+    email_btn: "Diesen Reflex trainieren →",
+    email_skip: "oder direkt zum vollständigen Lab →",
+    email_success: "Erfolgreich registriert! Du erhältst bald Zugang zum W-LAB.",
+    email_already: "Diese E-Mail ist bereits registriert. Du erhältst bald Zugang.",
+    email_invalid: "Bitte gib eine gültige E-Mail-Adresse ein.",
+    email_error: "Registrierung fehlgeschlagen. Bitte erneut versuchen.",
+    email_network: "Netzwerkfehler. Bitte erneut versuchen.",
+    retry: "↻ Nochmal versuchen"
+  },
+  pt: {
+    nav_cta: "Entrar no Lab →",
+    demo_tag_ready: "TESTA AGORA · 20 SEGUNDOS",
+    demo_tag_hunting: "À CAÇA · ENCONTRA A ARMADILHA",
+    demo_tag_success: "ARMADILHA DETECTADA",
+    demo_tag_fail: "ARMADILHA PERDIDA",
+    demo_title: "Consegues detectar a armadilha?",
+    demo_sub: "Abaixo está um documento real. Uma frase permite que a IA actue sem aprovação humana. Encontra-a antes do tempo acabar.",
+    demo_start: "🐺 Começar a caça →",
+    result_win_title: "Apanhaste.",
+    result_win_desc: "O teu Sistema 1 detectou a violação I9. Mas consegues fazer isto sob pressão real, com interrupções, com informação incompleta? É isso que o lab completo testa.",
+    result_timeout_title: "Tempo esgotado.",
+    result_timeout_desc: "A IA agiu enquanto ainda estavas a ler. Numa crise real, é assim que as violações acontecem — a máquina move-se mais rápido que a supervisão humana.",
+    result_wrong_title: "Linha errada.",
+    result_wrong_desc: "Clicaste numa linha segura. A armadilha estava à vista. É exactamente por isso que treinamos o reflexo — para a apanhares antes de pensares.",
+    email_placeholder: "teu@email.pt",
+    email_btn: "Treinar este reflexo →",
+    email_skip: "ou entra no lab completo →",
+    email_success: "Registado com sucesso! Vais receber acesso ao W-LAB em breve.",
+    email_already: "Este email já está registado. Vais receber acesso em breve.",
+    email_invalid: "Por favor insere um email válido.",
+    email_error: "Registo falhou. Por favor tenta novamente.",
+    email_network: "Erro de rede. Por favor tenta novamente.",
+    retry: "↻ Tentar novamente"
+  }
+};
+
+let currentLang = localStorage.getItem('windi-lang') || 'en';
+let currentTheme = localStorage.getItem('windi-theme') || 'noir';
+
+// ============================================================================
+// TOAST SYSTEM
+// ============================================================================
+function showToast(message, type = 'info', duration = 3500) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.className = 'toast ' + type + ' show';
+  setTimeout(() => { toast.classList.remove('show'); }, duration);
+}
+
+// ============================================================================
+// THEME TOGGLE
+// ============================================================================
+function toggleTheme() {
+  currentTheme = currentTheme === 'noir' ? 'klar' : 'noir';
+  document.documentElement.setAttribute('data-theme', currentTheme);
+  localStorage.setItem('windi-theme', currentTheme);
+  document.getElementById('theme-toggle').textContent = currentTheme === 'noir' ? '☀' : '☽';
+}
+
+function initTheme() {
+  document.documentElement.setAttribute('data-theme', currentTheme);
+  document.getElementById('theme-toggle').textContent = currentTheme === 'noir' ? '☀' : '☽';
+}
+
+// ============================================================================
+// LANGUAGE TOGGLE
+// ============================================================================
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('windi-lang', lang);
+  updateLangButtons();
+  applyTranslations();
+}
+
+function updateLangButtons() {
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === currentLang);
+  });
+}
+
+function applyTranslations() {
+  const t = i18n[currentLang];
+  // Nav
+  const navCta = document.querySelector('[data-i18n="nav_cta"]');
+  if (navCta) navCta.textContent = t.nav_cta;
+  // Demo
+  const demoTitle = document.querySelector('.demo-title');
+  if (demoTitle) demoTitle.textContent = t.demo_title;
+  const demoSub = document.querySelector('.demo-sub');
+  if (demoSub) demoSub.textContent = t.demo_sub;
+  const demoStart = document.querySelector('.demo-start-btn');
+  if (demoStart) demoStart.textContent = t.demo_start;
+  // Email
+  const emailInput = document.getElementById('demo-email');
+  if (emailInput) emailInput.placeholder = t.email_placeholder;
+  const emailBtn = document.querySelector('.demo-email-btn');
+  if (emailBtn && !emailBtn.disabled) emailBtn.textContent = t.email_btn;
+  const skipLink = document.querySelector('.demo-skip');
+  if (skipLink) skipLink.textContent = t.email_skip;
+  const retryBtn = document.querySelector('.demo-retry-btn');
+  if (retryBtn) retryBtn.textContent = t.retry;
+}
+
+function T(key) {
+  return i18n[currentLang][key] || i18n['en'][key] || key;
+}
+
+// ============================================================================
+// INIT
+// ============================================================================
+document.addEventListener('DOMContentLoaded', () => {
+  initTheme();
+  updateLangButtons();
+  applyTranslations();
+});
+
+// ============================================================================
 // NAV SCROLL
 // ============================================================================
 const nav = document.getElementById('nav');
@@ -952,7 +1173,7 @@ function startDemo() {
 
   // Update tag
   const tag = document.getElementById('demo-tag');
-  tag.textContent = 'HUNTING · FIND THE TRAP';
+  tag.textContent = T('demo_tag_hunting');
   tag.className = 'demo-tag';
 
   // Shuffle and render lines
@@ -1035,29 +1256,32 @@ function endDemo(won, selectedIdx) {
   trapText.textContent = demoState.scenario.explanation;
 
   if (won) {
-    tag.textContent = 'TRAP DETECTED';
+    tag.textContent = T('demo_tag_success');
     tag.className = 'demo-tag success';
     icon.textContent = '🐺';
-    title.textContent = 'You caught it.';
+    title.textContent = T('result_win_title');
     title.className = 'demo-result-title win';
-    desc.textContent = 'Your System 1 detected the I9 violation. But can you do it under real pressure, with interruptions, with incomplete information? That\'s what the full lab tests.';
+    desc.textContent = T('result_win_desc');
   } else {
-    tag.textContent = 'TRAP MISSED';
+    tag.textContent = T('demo_tag_fail');
     tag.className = 'demo-tag fail';
     icon.textContent = '💀';
-    title.textContent = selectedIdx === -1 ? 'Time\'s up.' : 'Wrong line.';
+    title.textContent = selectedIdx === -1 ? T('result_timeout_title') : T('result_wrong_title');
     title.className = 'demo-result-title lose';
-    desc.textContent = selectedIdx === -1
-      ? 'The AI acted while you were still reading. In a real crisis, that\'s how violations happen — the machine moves faster than human oversight.'
-      : 'You clicked a safe line. The trap was hiding in plain sight. This is exactly why we train the reflex — so you catch it before thinking.';
+    desc.textContent = selectedIdx === -1 ? T('result_timeout_desc') : T('result_wrong_desc');
   }
 }
 
 function resetDemo() {
   document.getElementById('demo-result').classList.remove('show');
   document.getElementById('demo-idle').classList.remove('hidden');
-  document.getElementById('demo-tag').textContent = 'TRY IT NOW · 20 SECONDS';
+  document.getElementById('demo-tag').textContent = T('demo_tag_ready');
   document.getElementById('demo-tag').className = 'demo-tag ready';
+  // Re-enable email form
+  const emailInput = document.getElementById('demo-email');
+  const emailBtn = document.querySelector('.demo-email-btn');
+  if (emailInput) { emailInput.disabled = false; emailInput.value = ''; emailInput.placeholder = T('email_placeholder'); }
+  if (emailBtn) { emailBtn.disabled = false; emailBtn.textContent = T('email_btn'); }
 }
 
 async function submitEmail() {
@@ -1065,7 +1289,7 @@ async function submitEmail() {
   const email = emailInput.value.trim();
 
   if (!email || !email.includes('@') || !email.includes('.')) {
-    alert('Please enter a valid email address.');
+    showToast(T('email_invalid'), 'error');
     return;
   }
 
@@ -1074,7 +1298,7 @@ async function submitEmail() {
   let demoResult = 'unknown';
   if (resultTitle.classList.contains('win')) {
     demoResult = 'win';
-  } else if (resultTitle.textContent.includes('Time')) {
+  } else if (resultTitle.textContent.includes('Time') || resultTitle.textContent.includes('Zeit') || resultTitle.textContent.includes('Tempo')) {
     demoResult = 'timeout';
   } else {
     demoResult = 'lose';
@@ -1109,18 +1333,16 @@ async function submitEmail() {
       document.querySelector('.demo-email-btn').textContent = 'Done!';
       document.querySelector('.demo-email-btn').disabled = true;
 
-      // Show success message
-      setTimeout(() => {
-        alert(data.message?.en || 'Successfully registered! You\'ll receive W-LAB access soon.');
-      }, 100);
+      // Show success toast
+      const msg = data.status === 'already_registered' ? T('email_already') : T('email_success');
+      showToast(msg, 'success');
     } else {
       // Error
-      const errorMsg = data.message?.en || data.detail || 'Registration failed. Please try again.';
-      alert(errorMsg);
+      showToast(T('email_error'), 'error');
     }
   } catch (err) {
     console.error('Email capture error:', err);
-    alert('Network error. Please try again.');
+    showToast(T('email_network'), 'error');
   }
 }
 </script>
