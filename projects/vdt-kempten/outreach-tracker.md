@@ -10,17 +10,17 @@
 
 | # | Universidade | Status | Data Envio | Resposta | Follow-up |
 |---|--------------|--------|------------|----------|-----------|
-| 1 | HS Kempten (IDT) | ✅ ENVIADO | 2026-04-14 16:26 | ⏳ Aguardar | +7 dias |
-| 2 | HNU Neu-Ulm (IDT) | 🟡 PREPARADO | — | — | Após #1 |
+| 1 | HS Kempten (IDT) | ✅ COMPLETO | 2026-04-14 16:26 | ✅ 14 Apr 19:44 | ✅ Agradecimento enviado |
+| 2 | HNU Neu-Ulm (IDT) | 🟡 PREPARADO | — | — | Avaliar após FHV |
 | 3 | bidt München | 📋 RESEARCH | — | — | — |
 | 4 | OST St. Gallen | 📋 RESEARCH | — | — | — |
-| 5 | FH Vorarlberg | 📋 RESEARCH | — | — | — |
+| 5 | FH Vorarlberg | ✅ ENVIADO | 2026-04-15 08:38 | ⏳ Aguardar | Via Niedermeier |
 
 ---
 
 ## 1️⃣ HS KEMPTEN — IDT
 
-**Status:** ✅ ENVIADO
+**Status:** ✅ RESPOSTA POSITIVA
 
 ### Contactos
 - **TO:** Prof. Dr. Katrin Winkler, Prof. Dr. Sandra Niedermeier, Dr. Claudia Müller-Kreiner
@@ -28,8 +28,15 @@
 
 ### Timeline
 - 2026-04-14 16:26 — Email enviado
-- 2026-04-21 — Follow-up se silêncio
-- 2026-04-28 — Segundo follow-up (último)
+- 2026-04-14 19:44 — **RESPOSTA Prof. Niedermeier** (3h!)
+- 2026-04-15 ~08:30 — ✅ Agradecimento enviado
+
+### Resultado
+**Prof. Niedermeier redirecionou para gestão LeBi:**
+> "Bitte wenden Sie sich mit der Anfrage an die Gesamtprojektleitung"
+> → https://www.fhv.at/forschung/empirische-sozialwissenschaften/projekte/laufende-projekte/lebi
+
+**Contacto obtido:** Dr. Julia Reiner (FH Vorarlberg) — Scientist no LeBi
 
 ### Ângulo
 - LeBi Interreg
@@ -98,15 +105,39 @@
 
 ## 5️⃣ FH VORARLBERG (Áustria)
 
-**Status:** 📋 RESEARCH
+**Status:** ✅ ENVIADO (via Niedermeier)
+
+### Contacto Principal (CONFIRMADO)
+- **Dr. Julia Reiner, B.A. MA** — Scientist
+- 📧 julia.reiner@fhv.at
+- 📞 +43 5572 792 2352
+- 🏢 Sala G313
+- 🔬 Kompetenzfeld Pflege (PFL)
+- 🔗 https://www.fhv.at/forschung/empirische-sozialwissenschaften/projekte/laufende-projekte/lebi
+
+### Origem do Contacto
+- Referência directa de **Prof. Dr. Sandra Niedermeier** (HS Kempten)
+- Data: 2026-04-14 19:44
 
 ### Info
 - Parceiro directo LeBi Interreg
-- Região fronteiriça
+- Região fronteiriça AT
+- Julia Reiner = execução operacional no projeto
+
+### Timeline
+- 2026-04-15 08:38 — Email enviado
+- 2026-04-22 — Follow-up se silêncio (+7 dias)
 
 ### Ângulo
-- Conexão LeBi natural
-- Validação AT
+- Warm introduction via Kempten
+- "Proof Gap" em contexto LeBi
+- Investigador → Investigador (não institucional)
+
+### Email
+- Ficheiro: `/opt/windi/projects/vdt-kempten/email_fhv_reiner.txt`
+- Script: `/opt/windi/tools/send_fhv_email.py`
+- Tom: colaborativo, directo
+- PDF: anexado sem mencionar no texto
 
 ---
 
@@ -114,9 +145,9 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Emails enviados | 1 |
-| Respostas | 0 |
-| Taxa resposta | — |
+| Emails enviados | 2 |
+| Respostas | 1 (Kempten → redirect) |
+| Taxa resposta | 50% |
 | Calls agendadas | 0 |
 
 ---
