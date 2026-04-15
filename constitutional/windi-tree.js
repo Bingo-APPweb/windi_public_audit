@@ -129,15 +129,16 @@ const WindiTree = (function() {
   }
 
   // ═══════════════════════════════════════════════════════════════════
-  // Article 4 — DID Flow Helpers
+  // Article 4 — DID Flow Helpers (§173 Simplified)
   // ═══════════════════════════════════════════════════════════════════
 
   function getDID() {
-    // Check multiple storage locations
-    return sessionStorage.getItem('windi_did')
-        || sessionStorage.getItem('windi_enterprise_did')
-        || sessionStorage.getItem('windi_desktop_wallet')
-        || localStorage.getItem('windi_did');
+    // §173 — Single source of truth
+    if (typeof WindiDID !== 'undefined') {
+      return WindiDID.get();
+    }
+    // Fallback for pages without windi-did.js
+    return localStorage.getItem('windi_did');
   }
 
   function setDID(did) {
@@ -145,15 +146,23 @@ const WindiTree = (function() {
       console.warn('[WindiTree] Invalid DID format');
       return false;
     }
-    sessionStorage.setItem('windi_did', did);
+    // §173 — Single source of truth
+    if (typeof WindiDID !== 'undefined') {
+      WindiDID.set(did);
+    } else {
+      localStorage.setItem('windi_did', did);
+    }
     console.log('[WindiTree] DID stored:', did.substring(0, 25) + '...');
     return true;
   }
 
   function clearDID() {
-    sessionStorage.removeItem('windi_did');
-    sessionStorage.removeItem('windi_enterprise_did');
-    sessionStorage.removeItem('windi_desktop_wallet');
+    // §173 — Single source of truth
+    if (typeof WindiDID !== 'undefined') {
+      WindiDID.clear();
+    } else {
+      localStorage.removeItem('windi_did');
+    }
     console.log('[WindiTree] DID cleared');
   }
 

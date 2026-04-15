@@ -1262,20 +1262,16 @@ async function checkExistingSession() {
         DID_STATE.tier = genesis.tier || 'SEED';
         DID_STATE.verified = true;
 
-        // §173 — Check unified storage first
-        const previousDID = (typeof WindiDID !== 'undefined' && WindiDID.get()) ||
-                           sessionStorage.getItem('windi_enterprise_did');
+        // §173 — Single source of truth
+        const previousDID = WindiDID.get();
         if (previousDID === genesis.did) {
           DID_STATE.status = 'voltou';
         } else {
           DID_STATE.status = previousDID ? 'entrou' : 'nasceu';
         }
 
-        // §173 — Store in both unified and legacy storage
-        if (typeof WindiDID !== 'undefined') {
-          WindiDID.set(genesis.did);
-        }
-        sessionStorage.setItem('windi_enterprise_did', genesis.did);
+        // §173 — Single source of truth
+        WindiDID.set(genesis.did);
         await restoreContext(genesis.did);
         unlockDashboard();
         return; // Exit early - no banner needed
@@ -1285,9 +1281,8 @@ async function checkExistingSession() {
     console.log('[DID-GENESIS] No active session, checking local storage');
   }
 
-  // §173 — Check unified localStorage first, then legacy sessionStorage
-  const savedDID = (typeof WindiDID !== 'undefined' && WindiDID.get()) ||
-                   sessionStorage.getItem('windi_enterprise_did');
+  // §173 — Single source of truth
+  const savedDID = WindiDID.get();
   if (savedDID) {
     // Returning user → restore context (Lei III)
     DID_STATE.status = 'voltou';
@@ -1327,9 +1322,8 @@ async function enterWithDID() {
       DID_STATE.tier = data.validation.tier || 'SEED';
       DID_STATE.verified = true;
 
-      // Check if first time or returning — §173 check unified storage first
-      const previousDID = (typeof WindiDID !== 'undefined' && WindiDID.get()) ||
-                         sessionStorage.getItem('windi_enterprise_did');
+      // §173 — Single source of truth
+      const previousDID = WindiDID.get();
       if (!previousDID) {
         DID_STATE.status = 'nasceu'; // First time ever
       } else if (previousDID === did) {
@@ -1338,11 +1332,8 @@ async function enterWithDID() {
         DID_STATE.status = 'entrou'; // Different DID
       }
 
-      // §173 — Store in unified localStorage
-      if (typeof WindiDID !== 'undefined') {
-        WindiDID.set(did);
-      }
-      sessionStorage.setItem('windi_enterprise_did', did);
+      // §173 — Single source of truth
+      WindiDID.set(did);
 
       // Restore context (Lei III)
       await restoreContext(did);
@@ -1365,11 +1356,8 @@ async function enterWithDID() {
       DID_STATE.tier = 'SEED';
       DID_STATE.verified = true;
       DID_STATE.status = 'entrou';
-      // §173 — Store in unified localStorage
-      if (typeof WindiDID !== 'undefined') {
-        WindiDID.set(did);
-      }
-      sessionStorage.setItem('windi_enterprise_did', did);
+      // §173 — Single source of truth
+      WindiDID.set(did);
       await sleep(600);
       unlockDashboard();
     } else {
@@ -1448,7 +1436,7 @@ function unlockDashboard() {
 }
 
 function logout() {
-  sessionStorage.removeItem('windi_enterprise_did');
+  WindiDID.clear();  // §173 — Single source of truth
   DID_STATE.did = null;
   DID_STATE.verified = false;
   DID_STATE.status = null;

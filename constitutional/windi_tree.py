@@ -150,34 +150,31 @@ def get_server_operations_nav() -> List[Dict[str, Any]]:
 
 async def cross_validate_did(did: str) -> Optional[Dict[str, Any]]:
     """
-    Cross-validate DID across all WINDI identity gates.
-    Returns validation result from first gate that recognizes the DID.
+    §173 SIMPLIFIED: Single Source of Truth — W-DID-GENESIS.
 
-    DECREE-001 Article 4: "One DID, one identity, the whole tree."
+    DECREE-001 Article 4: "Um DID. Uma fonte. Zero fallbacks."
     """
     if not did or not did.startswith("did:windi:"):
         return None
 
-    for gate_url, endpoint in IDENTITY_GATES:
-        try:
-            async with httpx.AsyncClient(timeout=3) as client:
-                url = f"{gate_url}{endpoint}{did}"
-                r = await client.get(url)
-
-                if r.status_code == 200:
-                    data = r.json()
-                    log.info(f"[WindiTree] DID validated at {gate_url}: {did[:25]}...")
+    # §173 — Single Source: W-DID-GENESIS
+    try:
+        async with httpx.AsyncClient(timeout=5) as client:
+            r = await client.get(f"http://localhost:8096/api/genesis/lookup/{did}")
+            if r.status_code == 200:
+                data = r.json()
+                if data.get("valid"):
+                    log.info(f"[WindiTree] DID validated: {did[:25]}... tier={data.get('tier')}")
                     return {
                         "valid": True,
                         "did": did,
-                        "source": gate_url,
+                        "source": "W-DID-GENESIS",
                         "data": data,
                     }
-        except Exception as e:
-            log.debug(f"[WindiTree] Gate {gate_url} unavailable: {e}")
-            continue
+    except Exception as e:
+        log.warning(f"[WindiTree] Genesis lookup failed: {e}")
 
-    log.warning(f"[WindiTree] DID not found in any gate: {did[:25]}...")
+    log.warning(f"[WindiTree] DID not found: {did[:25]}...")
     return None
 
 

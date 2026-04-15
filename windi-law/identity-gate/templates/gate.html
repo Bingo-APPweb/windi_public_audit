@@ -501,6 +501,7 @@
             }
         }
     </style>
+    <script src="/shared/windi-did.js"></script>
 </head>
 <body>
     <!-- Header -->
@@ -536,18 +537,37 @@
 
     <script>
     // §120.6 — DID Fast Lane: Auto-redirect for returning users with valid DID
+    // §167 — DID Genesis Integration: Cross-service sovereign session
     (async function() {
         try {
             var did = '';
             var BASE_PATH = window.location.hostname.includes('windilaw.de') ? '' : '/law';
 
+            // §167: First check DID Genesis (sovereign seiva)
+            try {
+                var genesisResp = await fetch('/api/genesis/validate', { credentials: 'include' });
+                if (genesisResp.ok) {
+                    var genesis = await genesisResp.json();
+                    if (genesis.valid && genesis.did) {
+                        console.log('[DID-GENESIS] Cross-service session found:', genesis.did.substring(0, 25) + '...');
+                        did = genesis.did;
+                        // Store in sessionStorage for local use
+                        sessionStorage.setItem('windi_law_wallet', JSON.stringify({ did: did, tier: genesis.tier }));
+                    }
+                }
+            } catch(e) {
+                console.log('[DID-GENESIS] Genesis check skipped');
+            }
+
             // 1. Try sessionStorage (active session)
-            var w = sessionStorage.getItem('windi_law_wallet');
-            if (w) {
-                try {
-                    var wallet = JSON.parse(w);
-                    did = wallet.did || '';
-                } catch(e) {}
+            if (!did) {
+                var w = sessionStorage.getItem('windi_law_wallet');
+                if (w) {
+                    try {
+                        var wallet = JSON.parse(w);
+                        did = wallet.did || '';
+                    } catch(e) {}
+                }
             }
 
             // 2. If no sessionStorage, check cookie (returning user - browser closed)
@@ -1301,8 +1321,8 @@
                 };
                 sessionStorage.setItem('windi_law_wallet', JSON.stringify(walletData));
 
-                // Backwards compatibility
-                sessionStorage.setItem('windi_law_did', registrationData.did);
+                // §173 DID SIMPLIFICATION — Single source of truth
+                WindiDID.set(registrationData.did);
                 sessionStorage.setItem('windi_law_fingerprint', registrationData.fingerprint);
 
                 // Show success
@@ -1350,10 +1370,10 @@
         // FIX: Don't wipe existing session when user revisits /gate
         function clearPreviousSession() {
             sessionStorage.removeItem('windi_law_wallet');
-            sessionStorage.removeItem('windi_law_did');
             sessionStorage.removeItem('windi_law_fingerprint');
-            // Clear cookie too
             document.cookie = 'windi_did=; path=/; max-age=0';
+            // §173 DID SIMPLIFICATION — Single source of truth
+            WindiDID.clear();
         }
 
         // Only clear if no valid session exists (prevents wiping on revisit)
@@ -1514,7 +1534,8 @@
                         credits: 0
                     };
                     sessionStorage.setItem('windi_law_wallet', JSON.stringify(walletData));
-                    sessionStorage.setItem('windi_law_did', data.did);
+                    // §173 DID SIMPLIFICATION — Single source of truth
+                    WindiDID.set(data.did);
                     sessionStorage.setItem('windi_law_fingerprint', data.fingerprint);
 
                     // Set cookie

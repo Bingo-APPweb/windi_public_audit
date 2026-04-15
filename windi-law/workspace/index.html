@@ -2653,7 +2653,7 @@ function initiateAiGenerate() {
 
 async function executeAiGenerate() {
   var wallet = JSON.parse(sessionStorage.getItem('windi_law_wallet') || '{}');
-  var did = wallet.did || sessionStorage.getItem('windi_law_did') || 'UNKNOWN';
+  var did = wallet.did || WindiDID.get() || 'UNKNOWN';  // §173 — Single source
   var tier = wallet.tier || 'FREE';
   var docType = document.getElementById('ai-doc-type').value;
   var jurisdiction = document.getElementById('ai-jurisdiction').value;
@@ -2692,7 +2692,7 @@ async function updatePreviewHash() {
 
 async function sealAiDraft() {
   var wallet = JSON.parse(sessionStorage.getItem('windi_law_wallet') || '{}');
-  var did = wallet.did || sessionStorage.getItem('windi_law_did') || 'UNKNOWN';
+  var did = wallet.did || WindiDID.get() || 'UNKNOWN';  // §173 — Single source
   // §126: Try stored draft first (from Quill editor), then textarea
   var draftText = AiDraft.currentDraftText || document.getElementById('ai-result-text').value.trim();
   var tier = wallet.tier || 'FREE';
