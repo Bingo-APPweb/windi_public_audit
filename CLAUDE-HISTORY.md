@@ -6,6 +6,140 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 15 Abr 2026 (Tarde) — §173 DID Simplification
+
+**Commits:** `8b65378`, `a6c35e4`, `ca8e15b`
+**Scope:** DID System Audit + Simplification — "Um DID. Uma fonte. Zero fallbacks."
+**CLAUDE.md:** v2.2.12
+
+### §173 — DID System Audit (15 Apr 2026 · 13:00 CEST)
+
+**Problema Reportado:**
+Human Dragon bloqueado de W-Enterprise-001. Credenciais "revogadas". Sistema DID instável e imprevisível.
+
+**Princípio Violado:**
+> "DID é a semente e basta um DID para acessar"
+
+**Auditoria Completa:**
+
+| Métrica | Antes | Problema |
+|---------|-------|----------|
+| Bases de dados | 4 diferentes | Não sincronizam |
+| Funções validação | 12+ duplicadas | Cada serviço com lógica própria |
+| Storage keys frontend | 50+ diferentes | Caos total |
+| Fallbacks | "graceful pass" | Mascaravam bugs (violação I14) |
+
+**Causa Raiz do Bloqueio:**
+```
+VERA chamava:  /session/validate/{did}  → 404 (não existe!)
+Genesis tem:   /api/genesis/validate    → requer cookie
+Resultado:     Fallback → tier=SEED    → fundador perde acesso ORACLE
+```
+
+**Ficheiro Auditoria:** `/home/windi/docs/DID-AUDIT-2026-04-15.md`
+
+### §173.1 — Phase 1: Fix Cirúrgico (15 Apr 2026 · 13:10 CEST)
+
+**Problema:** VERA não conseguia validar DID correctamente.
+
+**Solução:**
+1. Adicionado endpoint público ao Genesis: `GET /api/genesis/lookup/{did}`
+2. VERA corrigida para chamar novo endpoint
+3. Removido fallback "graceful" que mascarava bugs
+
+**Ficheiros Modificados:**
+- `/opt/windi/did-genesis/did_genesis.py` — novo endpoint lookup
+- `/opt/windi/w-enterprise-001/vera_did_gate.py` — validação corrigida
+
+**Resultado:**
+```json
+{
+  "valid": true,
+  "did": "did:windi:dragon-001",
+  "tier": "ORACLE",
+  "display_name": "Human Dragon",
+  "access": ["*"]
+}
+```
+
+### §173.2 — Phase 2: Simplificação Total (15 Apr 2026 · 13:20 CEST)
+
+**Objectivo:** Reduzir complexidade para "estupidamente simples"
+
+**Novos Módulos Criados:**
+
+| Ficheiro | Função |
+|----------|--------|
+| `/opt/windi/shared/did_validator.py` | Python: `validate_did()`, `DIDResult` |
+| `/opt/windi/shared/static/windi-did.js` | JavaScript: `WindiDID.get/set/validate` |
+| `/opt/windi/shared/patch_nginx_shared.sh` | Script nginx para /shared/ |
+
+**Python Backend:**
+```python
+from shared.did_validator import validate_did, DIDResult
+
+result = await validate_did("did:windi:dragon-001")
+if result.valid:
+    print(f"Tier: {result.tier}")  # ORACLE
+    print(f"Oracle: {result.is_oracle}")  # True
+```
+
+**JavaScript Frontend:**
+```javascript
+// Single storage key
+const did = WindiDID.get();  // localStorage('windi_did')
+
+// Validate against Genesis
+const result = await WindiDID.validate(did);
+if (result.valid) {
+    console.log(`Tier: ${result.tier}`);  // ORACLE
+}
+
+// Auto-migrate from 50+ legacy keys
+WindiDID.migrateFromLegacy();
+```
+
+**Genesis Lookup Endpoint:**
+```
+GET /api/genesis/lookup/{did}
+
+Response:
+{
+    "valid": true,
+    "did": "did:windi:dragon-001",
+    "tier": "ORACLE",
+    "tier_level": 4,
+    "tier_emoji": "🏛",
+    "access": ["*"],
+    "display_name": "Human Dragon",
+    "role": "founder",
+    "source": "W-DID-GENESIS"
+}
+```
+
+### §173.3 — Resultado Final
+
+```
+┌────────────────────────────────────────────────────────────┐
+│  ANTES                      →  DEPOIS                      │
+├────────────────────────────────────────────────────────────┤
+│  4 bases de dados           →  1 (Genesis)                 │
+│  12+ funções validação      →  1 (validate_did)            │
+│  50+ storage keys           →  1 (windi_did)               │
+│  Fallbacks mascarando bugs  →  Falha explícita (I14)       │
+│  Fundador tier=SEED         →  Fundador tier=ORACLE ✅     │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Princípio Restaurado:**
+> "Um DID. Uma fonte. Zero fallbacks."
+
+**Lição:**
+> "Complexidade é o inimigo da confiança. Se o fundador não consegue entrar,
+> o sistema falhou — não importa quão sofisticado seja."
+
+---
+
 ## § SESSÃO 15 Abr 2026 (Manhã) — §172 VERA Gateway Integration Fix
 
 **Commit:** `0d8e1fb`
