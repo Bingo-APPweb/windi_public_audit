@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="noir">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>§173 DID Architecture | WINDI</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0A0A10;
+            --card: #12121A;
+            --gold: #C9A84C;
+            --text: #E8E6E1;
+            --border: #1A1A24;
+            --red: #ff6b6b;
+            --green: #40c057;
+            --blue: #228be6;
+        }
+        [data-theme="klar"] {
+            --bg: #FAFAF8;
+            --card: #FFFFFF;
+            --gold: #8B7424;
+            --text: #1A1A1A;
+            --border: #E0DED8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: var(--gold);
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        .subtitle {
+            color: var(--text);
+            opacity: 0.7;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .btn:hover { border-color: var(--gold); }
+        .btn.active { background: var(--gold); color: #000; }
+
+        .section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .section h2 {
+            color: var(--gold);
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section h2 .emoji { font-size: 1.5rem; }
+
+        .mermaid {
+            background: var(--bg);
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 900px) {
+            .comparison { grid-template-columns: 1fr; }
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 20px;
+            background: var(--bg);
+            border-radius: 8px;
+        }
+        .stat-value {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
+        .principle-box {
+            background: linear-gradient(135deg, var(--gold) 0%, #8B6914 100%);
+            color: #000;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 30px 0;
+        }
+        .principle-box small {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 400;
+            margin-top: 10px;
+            opacity: 0.8;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        @media (max-width: 700px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge.before { background: var(--red); color: #fff; }
+        .badge.after { background: var(--green); color: #fff; }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            opacity: 0.6;
+            font-size: 0.85rem;
+        }
+
+        .back-link {
+            color: var(--gold);
+            text-decoration: none;
+        }
+        .back-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1>§173 DID Architecture</h1>
+                <div class="subtitle">WINDI Sovereign Identity Simplification · 15 Apr 2026</div>
+            </div>
+            <div class="controls">
+                <button class="btn" onclick="toggleTheme()">☀/☽</button>
+                <a href="/svc-control/" class="btn">← Back to Control</a>
+            </div>
+        </header>
+
+        <!-- Principle -->
+        <div class="principle-box">
+            "Um DID. Uma fonte. Zero fallbacks."
+            <small>§173 — Liga IA+H · Kempten, Bavaria</small>
+        </div>
+
+        <!-- Stats Comparison -->
+        <div class="section">
+            <h2><span class="emoji">📊</span> Transformation Metrics</h2>
+            <div class="comparison">
+                <div>
+                    <h3 style="color: var(--red); margin-bottom: 15px;"><span class="badge before">BEFORE</span> Complexity Chaos</h3>
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="stat-value" style="color: var(--red);">4</div>
+                            <div class="stat-label">Databases</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" style="color: var(--red);">12+</div>
+                            <div class="stat-label">Validation Functions</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" style="color: var(--red);">50+</div>
+                            <div class="stat-label">Storage Keys</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" style="color: var(--red);">3</div>
+                            <div class="stat-label">Fallbacks</div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h3 style="color: var(--green); margin-bottom: 15px;"><span class="badge after">AFTER</span> Sovereign Simplicity</h3>
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="stat-value" style="color: var(--green);">1</div>
+                            <div class="stat-label">Database</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" style="color: var(--green);">1</div>
+                            <div class="stat-label">Validation Function</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" style="color: var(--green);">1</div>
+                            <div class="stat-label">Storage Key</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" style="color: var(--green);">0</div>
+                            <div class="stat-label">Fallbacks</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Before Architecture -->
+        <div class="section">
+            <h2><span class="emoji">🔴</span> BEFORE — DID Chaos</h2>
+            <div class="mermaid">
+flowchart TB
+    subgraph Frontend["🖥️ FRONTEND - 50+ storage keys"]
+        F1[windi_desktop_wallet]
+        F2[windi_enterprise_did]
+        F3[windi_law_did]
+        F4[windi_travel_did]
+        F5[windi_wallet]
+        F6[...]
+    end
+
+    subgraph Services["🔧 SERVIÇOS - 12+ validações"]
+        S1[VERA :8150]
+        S2[WINDI-LAW :8122]
+        S3[Travel :8126]
+        S4[W-LAB :8151]
+    end
+
+    subgraph Databases["💾 4 BASES DE DADOS"]
+        DB1[(did_genesis.db)]
+        DB2[(wallet.db)]
+        DB3[(windi_law_identity.db)]
+        DB4[(windi_travel_identity.db)]
+    end
+
+    F1 & F2 --> S1
+    F3 --> S2
+    F4 --> S3
+
+    S1 -.->|"Tenta validar"| DB1
+    S1 -.->|"Fallback"| DB2
+    S2 -.->|"Própria DB"| DB3
+    S3 -.->|"Própria DB"| DB4
+
+    S1 -->|"graceful pass"| WRONG["❌ tier=SEED<br/>FUNDADOR BLOQUEADO"]
+
+    style WRONG fill:#ff6b6b,stroke:#c92a2a,color:#fff
+            </div>
+        </div>
+
+        <!-- After Architecture -->
+        <div class="section">
+            <h2><span class="emoji">🟢</span> AFTER — Sovereign Simplicity</h2>
+            <div class="mermaid">
+flowchart TB
+    subgraph Frontend["🖥️ FRONTEND - 1 key"]
+        F1["localStorage: windi_did"]
+        JS["WindiDID.js"]
+        F1 <--> JS
+    end
+
+    subgraph Services["🔧 TODOS OS SERVIÇOS"]
+        S1[VERA :8150]
+        S2[WINDI-LAW :8122]
+        S3[Travel :8126]
+        S4[W-LAB :8151]
+        PY["did_validator.py"]
+    end
+
+    subgraph Genesis["🏛️ GENESIS :8096<br/>ÚNICA FONTE DE VERDADE"]
+        API["/api/genesis/lookup/{did}"]
+        DB[(identities)]
+        API --> DB
+    end
+
+    JS -->|"GET"| API
+    S1 & S2 & S3 & S4 --> PY
+    PY -->|"GET"| API
+
+    API --> OK["✅ tier=ORACLE<br/>FUNDADOR ACEDE"]
+
+    style Genesis fill:#40c057,stroke:#2f9e44
+    style OK fill:#40c057,stroke:#2f9e44,color:#fff
+            </div>
+        </div>
+
+        <!-- Validation Flow -->
+        <div class="section">
+            <h2><span class="emoji">🔄</span> Validation Flow</h2>
+            <div class="mermaid">
+sequenceDiagram
+    participant U as 👤 User
+    participant FE as 🖥️ Frontend
+    participant G as 🏛️ Genesis :8096
+
+    U->>FE: Entra no sistema
+    FE->>FE: did = WindiDID.get()
+
+    alt DID existe
+        FE->>G: GET /api/genesis/lookup/{did}
+        G->>G: SELECT FROM identities
+
+        alt DID válido
+            G-->>FE: {valid: true, tier: "ORACLE"}
+            FE-->>U: ✅ Acesso completo
+        else DID inválido
+            G-->>FE: {valid: false, error: "..."}
+            FE-->>U: ❌ Erro explícito I14
+        end
+    else Sem DID
+        FE-->>U: 🔐 Redirect /wallet/
+    end
+
+    Note over G: ZERO FALLBACKS
+            </div>
+        </div>
+
+        <!-- Simplified Architecture -->
+        <div class="section">
+            <h2><span class="emoji">🏗️</span> Simplified Architecture</h2>
+            <div class="mermaid">
+graph LR
+    subgraph "FRONTEND"
+        A["Browser"] -->|"localStorage"| B["windi_did"]
+        B --> C["WindiDID.js"]
+    end
+
+    subgraph "API"
+        C -->|"HTTP GET"| D["/api/genesis/lookup/"]
+    end
+
+    subgraph "GENESIS"
+        D --> E["W-DID-GENESIS :8096"]
+        E --> F[("identities")]
+    end
+
+    subgraph "RESPONSE"
+        F --> G{"valid?"}
+        G -->|"true"| H["tier + access"]
+        G -->|"false"| I["error explícito"]
+    end
+
+    H --> J["✅ ACESSO"]
+    I --> K["❌ BLOQUEIO"]
+
+    style E fill:#40c057,stroke:#2f9e44
+    style J fill:#40c057,stroke:#2f9e44
+    style K fill:#ff6b6b,stroke:#c92a2a
+            </div>
+        </div>
+
+        <!-- Code Examples -->
+        <div class="section">
+            <h2><span class="emoji">💻</span> Implementation</h2>
+            <div class="comparison">
+                <div>
+                    <h3 style="margin-bottom: 15px;">Python Backend</h3>
+                    <pre style="background: var(--bg); padding: 15px; border-radius: 8px; overflow-x: auto; font-size: 0.85rem;"><code>from shared.did_validator import validate_did
+
+result = await validate_did("did:windi:dragon-001")
+
+if result.valid:
+    print(f"Tier: {result.tier}")      # ORACLE
+    print(f"Access: {result.access}")  # ["*"]
+    print(f"Oracle: {result.is_oracle}")  # True</code></pre>
+                </div>
+                <div>
+                    <h3 style="margin-bottom: 15px;">JavaScript Frontend</h3>
+                    <pre style="background: var(--bg); padding: 15px; border-radius: 8px; overflow-x: auto; font-size: 0.85rem;"><code>// Get DID from single storage key
+const did = WindiDID.get();
+
+// Validate against Genesis
+const result = await WindiDID.validate(did);
+
+if (result.valid) {
+    console.log(`Tier: ${result.tier}`);  // ORACLE
+}</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Response -->
+        <div class="section">
+            <h2><span class="emoji">📡</span> Genesis Lookup Response</h2>
+            <pre style="background: var(--bg); padding: 20px; border-radius: 8px; overflow-x: auto;"><code>{
+    "valid": true,
+    "did": "did:windi:dragon-001",
+    "tier": "ORACLE",
+    "tier_level": 4,
+    "tier_emoji": "🏛",
+    "access": ["*"],
+    "display_name": "Human Dragon",
+    "role": "founder",
+    "created_at": "2026-04-12T22:18:12.201996+00:00",
+    "source": "W-DID-GENESIS",
+    "decree": "DECRETO-001 Art.4"
+}</code></pre>
+        </div>
+
+        <footer>
+            Liga IA+H · Kempten, Bavaria · 2026<br>
+            "AI processes. Human decides. WINDI guarantees."
+        </footer>
+    </div>
+
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                primaryColor: '#C9A84C',
+                primaryTextColor: '#E8E6E1',
+                primaryBorderColor: '#1A1A24',
+                lineColor: '#C9A84C',
+                secondaryColor: '#12121A',
+                tertiaryColor: '#0A0A10',
+                background: '#0A0A10',
+                mainBkg: '#12121A',
+                secondBkg: '#0A0A10',
+                fontFamily: 'Segoe UI, system-ui, sans-serif'
+            },
+            flowchart: { curve: 'basis' },
+            sequence: { actorMargin: 50 }
+        });
+
+        // Theme toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            const next = current === 'noir' ? 'klar' : 'noir';
+            html.setAttribute('data-theme', next);
+            localStorage.setItem('windi-theme', next);
+
+            // Reinitialize mermaid with new theme
+            mermaid.initialize({
+                startOnLoad: false,
+                theme: next === 'noir' ? 'dark' : 'default'
+            });
+            location.reload();
+        }
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('windi-theme') || 'noir';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+</body>
+</html>
