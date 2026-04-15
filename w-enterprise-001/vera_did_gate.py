@@ -196,60 +196,51 @@ async def verify_did(did: str) -> DIDValidation:
             log.debug(f"DID cache hit: {did[:20]}...")
             return DIDValidation(**cached["validation"])
 
-    # Call W-SESSION-001
+    # §173 DID SIMPLIFICATION — Single Source of Truth
+    # Call W-DID-GENESIS /api/genesis/lookup/{did}
+    # No fallbacks. No graceful degradation. Explicit failure (I14).
     try:
         async with httpx.AsyncClient(timeout=5) as client:
-            # Try the session validation endpoint
-            r = await client.get(f"{SESSION_SERVICE_URL}/session/validate/{did}")
+            r = await client.get(f"{SESSION_SERVICE_URL}/api/genesis/lookup/{did}")
 
             if r.status_code == 200:
                 data = r.json()
-                validation = DIDValidation(
-                    valid=True,
-                    did=did,
-                    active=data.get("active", True),
-                    tier=data.get("tier", "SEED"),
-                    created_at=data.get("created_at"),
-                    last_seen=data.get("last_seen"),
-                )
-            elif r.status_code == 404:
-                # DID not in W-SESSION-001 — try WINDI-LAW Identity Gate
-                validation = await _try_windi_law_validation(did)
-                if not validation:
-                    # Fallback: graceful pass for valid format
-                    if did.startswith("did:windi:") and len(did) > 15:
-                        log.info(f"DID format valid but not in DBs — graceful pass: {did[:25]}...")
-                        validation = DIDValidation(
-                            valid=True,
-                            did=did,
-                            active=True,
-                            tier="SEED",
-                            error="DID válido · Modo local [Lei I graceful]"
-                        )
-                    else:
-                        validation = DIDValidation(
-                            valid=False,
-                            did=did,
-                            active=False,
-                            error="DID não encontrado"
-                        )
+                if data.get("valid"):
+                    validation = DIDValidation(
+                        valid=True,
+                        did=did,
+                        active=data.get("active", True),
+                        tier=data.get("tier", "SEED"),
+                        created_at=data.get("created_at"),
+                        last_seen=data.get("last_seen"),
+                    )
+                    log.info(f"DID validated via Genesis: {did[:25]}... → tier={data.get('tier')}")
+                else:
+                    # DID not found in Genesis — explicit failure (I14)
+                    validation = DIDValidation(
+                        valid=False,
+                        did=did,
+                        active=False,
+                        error=data.get("error", "DID não encontrado na Genesis")
+                    )
+                    log.warning(f"DID not found in Genesis: {did[:25]}...")
             else:
-                # Session service might be down, allow graceful degradation
-                log.warning(f"W-SESSION-001 returned {r.status_code} for DID validation")
+                # Service error — explicit failure (I14)
+                log.error(f"W-DID-GENESIS returned {r.status_code}")
                 validation = DIDValidation(
-                    valid=True,  # Graceful: assume valid if service unavailable
+                    valid=False,
                     did=did,
-                    active=True,
-                    error=f"W-SESSION-001 status {r.status_code} — graceful pass"
+                    active=False,
+                    error=f"W-DID-GENESIS error: HTTP {r.status_code}"
                 )
     except httpx.ConnectError:
-        # Service unavailable — graceful degradation
-        log.warning("W-SESSION-001 unavailable — graceful DID pass")
+        # Service unavailable — explicit failure (I14)
+        log.error("W-DID-GENESIS unavailable — cannot validate DID")
         validation = DIDValidation(
-            valid=True,
+            valid=False,
             did=did,
-            active=True,
-            error="W-SESSION-001 offline — graceful pass [I14 declared]"
+            active=False,
+            error="W-DID-GENESIS offline — validação impossível [I14]"
         )
     except Exception as e:
         log.error(f"DID validation error: {e}")
