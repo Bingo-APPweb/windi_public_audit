@@ -1,0 +1,15 @@
+[Unit]
+Description=W-COST-001 Cost Intelligence Layer
+After=network.target
+
+[Service]
+Type=simple
+User=windi
+WorkingDirectory=/opt/windi/w-cost-001
+Environment=WINDI_ENV=production
+ExecStart=/usr/bin/python3 app.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
