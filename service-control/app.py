@@ -52,6 +52,7 @@ WINDI_SERVICES = [
     {"name": "windi-verify-public", "port": 8145, "display": "Verify Public", "category": "dashboards", "url": "/verify-public/"},
     {"name": "windi-enterprise", "port": 8150, "display": "W-Enterprise-001", "category": "dashboards", "url": "/enterprise/"},
     {"name": "windi-cache", "port": 8160, "display": "W-CACHE-001", "category": "dashboards", "nohup": True, "url": "/wcache/noir"},
+    {"name": "windi-cost", "port": 8152, "display": "W-COST-001", "category": "dashboards", "nohup": True, "url": "/cost/"},
 
     # Support
     {"name": "windi-leads", "port": 8096, "display": "DID Genesis", "category": "support", "url": "/genesis/"},
@@ -85,6 +86,7 @@ HEALTH_ENDPOINTS = {
     8145: "/health",
     8150: "/health",
     8160: "/health",
+    8152: "/health",
 }
 
 # ═══════════════════════════════════════════════════════════════
