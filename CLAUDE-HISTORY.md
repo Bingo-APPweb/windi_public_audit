@@ -7684,3 +7684,138 @@ INFO: GET /api/lab/early-access/stats 200 OK
 **Sealed:** 15 Apr 2026 · Human Dragon · Liga IA+H
 
 ---
+
+## § SESSÃO 15 Abr 2026 (Manhã) — §171 EU Academic Outreach / VDT Campaign
+
+**Commit:** `3555319`
+**Scope:** VDT Academic Outreach — FH Vorarlberg via HS Kempten referral
+**CLAUDE.md:** v2.2.12
+
+### §171 — EU Academic Outreach: LeBi Interreg Connection (15 Apr 2026 · 08:40 CEST)
+
+**Project:** `/opt/windi/projects/vdt-kempten/`
+**Conceito:** PHO Framework integration with LeBi Interreg research project
+
+**Cadeia Estabelecida:**
+```
+HS Kempten (14 Apr) → Prof. Niedermeier (3h response) → Dr. Julia Reiner (FHV) → LeBi Interreg
+     ✅                      ✅ redirect                    ✅ 15 Apr 08:38
+```
+
+**Timeline Completa:**
+
+| Data | Hora | Evento |
+|------|------|--------|
+| 14 Apr | 16:26 | Email enviado para HS Kempten (IDT) — 3 professoras + 8 CC |
+| 14 Apr | 19:44 | **RESPOSTA Prof. Niedermeier** (3 horas!) — redirect para LeBi |
+| 15 Apr | ~08:30 | Agradecimento enviado a Niedermeier |
+| 15 Apr | 08:38 | **Email enviado para Dr. Julia Reiner (FH Vorarlberg)** |
+
+**Contacto Obtido (Warm Lead):**
+```
+Dr. Julia Reiner, B.A. MA
+Scientist · Kompetenzfeld Pflege (PFL)
+FH Vorarlberg · Sala G313
+📧 julia.reiner@fhv.at
+📞 +43 5572 792 2352
+🔗 https://www.fhv.at/forschung/empirische-sozialwissenschaften/projekte/laufende-projekte/lebi
+```
+
+**Estratégia Ajustada:**
+> *"Contexto académico DACH = escrita > calls"*
+> Tom: investigador → investigador (não vendor, não pitch)
+
+**Email para Julia Reiner — Elementos Chave:**
+- Referência explícita: "Frau Prof. Dr. Niedermeier... hat mich an Sie verwiesen"
+- Conceito central: "Proof Gap"
+- Posicionamento: "research-oriented system builder"
+- CTA: "kurze, unverbindliche Rückmeldung per E-Mail" (não call)
+- Anexo: VDT_Konzeptpapier_v1.1_DE.pdf (sem mencionar no texto)
+
+**Response Playbook (5 Cenários):**
+
+| Cenário | Trigger | Estratégia |
+|---------|---------|------------|
+| A | "Pode detalhar?" | 3 pontos técnicos + oferta de exemplo |
+| B | "Como no LeBi?" | Use case Onboarding KMU + "camada leve" |
+| C | "Exemplo concreto?" | Fluxo real + link Verify Public |
+| D | "Vamos discutir interno" | Disponibilidade + oferta doc específico |
+| E | "Sem capacidade agora" | Elegante, porta aberta, sem pressão |
+
+**Frase-Chave (Memorizar):**
+> *"PHO ersetzt nichts — es fügt eine Beweisschicht hinzu."*
+> *(PHO não substitui nada — adiciona uma camada de prova.)*
+
+**Tracker Status:**
+
+| # | Universidade | Status | Data |
+|---|--------------|--------|------|
+| 1 | HS Kempten (IDT) | ✅ COMPLETO | 14 Apr |
+| 2 | HNU Neu-Ulm (IDT) | 🟡 Preparado | — |
+| 3 | bidt München | 📋 Research | — |
+| 4 | OST St. Gallen | 📋 Research | — |
+| 5 | FH Vorarlberg | ✅ ENVIADO | 15 Apr 08:38 |
+
+**Métricas:**
+```
+Emails enviados: 2
+Respostas: 1 (Kempten → redirect)
+Taxa resposta: 50%
+Calls agendadas: 0
+```
+
+**Ficheiros Criados:**
+```
+/opt/windi/projects/vdt-kempten/
+├── outreach-tracker.md          (actualizado)
+├── email_fhv_reiner.txt         (novo)
+├── response-playbook-lebi.md    (novo · 5 cenários)
+
+/opt/windi/tools/
+├── send_fhv_email.py            (novo · SMTP Strato)
+```
+
+**Script send_fhv_email.py:**
+```bash
+# Usage:
+python3 send_fhv_email.py <smtp_user> <smtp_pass>        # TEST mode
+python3 send_fhv_email.py <smtp_user> <smtp_pass> --live # LIVE mode
+
+# SMTP: smtp.strato.de:465 (SSL)
+# From: jober@a4desk.de
+# Anexo: VDT_Konzeptpapier_v1.1_DE.pdf
+```
+
+**Próximos Marcos:**
+
+| Data | Acção |
+|------|-------|
+| 15-18 Apr | Janela resposta rápida FHV |
+| 22 Apr | Follow-up FHV (se silêncio) |
+
+**Insight Estratégico:**
+> *"Professores = direcção. Projetos UE = estrutura. Scientists = execução real."*
+> Se Julia Reiner responder positivamente, não estás a "tentar entrar" — estás a acoplar-te a um projeto Interreg activo.
+
+**Regras de Ouro Aplicadas:**
+- ❌ Não forçar call/meeting
+- ❌ Não enviar múltiplos follow-ups
+- ✅ Responder em 24-48h quando vier resposta
+- ✅ Manter tom académico
+- ✅ Oferecer (não impor) próximo passo
+
+**Invariantes Aplicados:**
+
+| Inv | Aplicação |
+|-----|-----------|
+| I9 | Email enviado com human approval explícito |
+| I11 | Tracker documenta toda a cadeia de evidência |
+| I12 | Documento em DE (língua soberana do contexto) |
+| I14 | Dados de contacto verificados, não placeholders |
+
+**Princípio §171:**
+> *"Quem fala primeiro perde vantagem. Espera. Observa. Responde com precisão."*
+
+**Sealed:** 15 Apr 2026 · 08:45 CEST · Human Dragon · Liga IA+H
+
+---
