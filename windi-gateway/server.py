@@ -11,6 +11,26 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 
 load_dotenv()
+
+# ── W-COST-001 Integration ───────────────────────────────
+COST_API_URL = "http://127.0.0.1:8152/api/cost/record"
+
+def record_cost(service: str, provider: str, model: str,
+                tokens_in: int, tokens_out: int, tier: str = "FREE",
+                task_type: str = None):
+    """Record cost to W-COST-001 (non-blocking)."""
+    try:
+        requests.post(COST_API_URL, json={
+            "service": service,
+            "provider": provider,
+            "model": model,
+            "tier": tier,
+            "tokens_in": tokens_in,
+            "tokens_out": tokens_out,
+            "task_type": task_type,
+        }, timeout=1.0)
+    except:
+        pass  # Non-critical, fail silently
 logging.basicConfig(level=logging.INFO,
     format='[%(asctime)s] [%(name)s] %(message)s')
 log = logging.getLogger("W-GATEWAY-001")
@@ -103,7 +123,14 @@ class LLMProviders:
                   "max_tokens":max_tokens,"system":system,"messages":msgs},
             timeout=30)
         r.raise_for_status()
-        return r.json()["content"][0]["text"]
+        data = r.json()
+        usage = data.get("usage", {})
+        return {
+            "text": data["content"][0]["text"],
+            "tokens_in": usage.get("input_tokens", 0),
+            "tokens_out": usage.get("output_tokens", 0),
+            "model": "claude-sonnet-4-20250514",
+        }
 
     @staticmethod
     def call_mistral(prompt,system,max_tokens,history=None):
@@ -118,7 +145,14 @@ class LLMProviders:
                   "messages":msgs,"max_tokens":max_tokens},
             timeout=30)
         r.raise_for_status()
-        return r.json()["choices"][0]["message"]["content"]
+        data = r.json()
+        usage = data.get("usage", {})
+        return {
+            "text": data["choices"][0]["message"]["content"],
+            "tokens_in": usage.get("prompt_tokens", 0),
+            "tokens_out": usage.get("completion_tokens", 0),
+            "model": "mistral-small-latest",
+        }
 
     @staticmethod
     def call_gemini(prompt,max_tokens,image_b64=None):
@@ -310,35 +344,58 @@ async def gateway_call(req: GatewayRequest,
     # I1 SGE filter
     clean_prompt, redactions = sge_filter.sanitize(req.prompt)
     llm_response = ""
-    tokens_used  = 0
+    tokens_in, tokens_out = 0, 0
+    model_used = route["model"]
     try:
         if   route["provider"] == "local":
             llm_response = f"[LOCAL] {req.task}"
         elif route["provider"] == "anthropic":
-            llm_response = providers.call_anthropic(
+            result = providers.call_anthropic(
                 clean_prompt, req.system, route["max_tokens"], req.history)
-            tokens_used = route["max_tokens"]; bunker.record_success()
+            llm_response = result["text"]
+            tokens_in, tokens_out = result["tokens_in"], result["tokens_out"]
+            model_used = result["model"]
+            bunker.record_success()
+            record_cost("W-GATEWAY", "anthropic", model_used,
+                       tokens_in, tokens_out, str(req.tier), req.task)
         elif route["provider"] == "mistral":
-            llm_response = providers.call_mistral(
+            result = providers.call_mistral(
                 clean_prompt, req.system, route["max_tokens"], req.history)
-            tokens_used = route["max_tokens"]; bunker.record_success()
+            llm_response = result["text"]
+            tokens_in, tokens_out = result["tokens_in"], result["tokens_out"]
+            model_used = result["model"]
+            bunker.record_success()
+            record_cost("W-GATEWAY", "mistral", model_used,
+                       tokens_in, tokens_out, str(req.tier), req.task)
         elif route["provider"] == "gemini":
             llm_response = providers.call_gemini(
                 clean_prompt, route["max_tokens"], req.image_b64)
-            tokens_used = route["max_tokens"]; bunker.record_success()
+            tokens_in = len(clean_prompt) // 4  # Estimate
+            tokens_out = route["max_tokens"]
+            bunker.record_success()
+            record_cost("W-GATEWAY", "gemini", "gemini-1.5-flash",
+                       tokens_in, tokens_out, str(req.tier), req.task)
         elif route["provider"] == "elevenlabs":
             audio = providers.call_elevenlabs(clean_prompt, language=req.language)
             llm_response = f"[VOICE] {len(audio)}B · {req.language}"
-            tokens_used = len(clean_prompt); bunker.record_success()
+            tokens_in = len(clean_prompt)
+            bunker.record_success()
+            record_cost("W-GATEWAY", "elevenlabs", "eleven_multilingual_v2",
+                       tokens_in, 0, str(req.tier), "voice")
         elif route["provider"] == "openai":
             llm_response = providers.call_openai(
                 clean_prompt, req.system, route["max_tokens"])
-            tokens_used = route["max_tokens"]; bunker.record_success()
+            tokens_in = len(clean_prompt) // 4
+            tokens_out = route["max_tokens"]
+            bunker.record_success()
+            record_cost("W-GATEWAY", "openai", "gpt-4o-mini",
+                       tokens_in, tokens_out, str(req.tier), req.task)
     except Exception as e:
         bunker.record_failure()
         log.warning(f"[FALLBACK-I10] {route['provider']}: {e}")
         llm_response = "[FALLBACK] Serviço indisponível · local activado"
         route["provider"] = "local"
+    tokens_used = tokens_in + tokens_out
     # Inject agent
     agent_resp = None
     if req.agent and route["provider"] != "local":
@@ -409,16 +466,22 @@ async def refine_with_wisdom(req: RefineRequest,
               f"Analisa logs e propõe Wisdom Block candidato (JSON). I9 inviolável.")
     prompt = f"Intenção:{req.intent}\nLogs:\n" + \
              "\n".join(f"[{i+1}] {l}" for i,l in enumerate(clean_logs))
+    tokens_in, tokens_out = 0, 0
     try:
-        resp = providers.call_anthropic(prompt,system,route["max_tokens"])
+        result = providers.call_anthropic(prompt,system,route["max_tokens"])
+        resp = result["text"]
+        tokens_in, tokens_out = result["tokens_in"], result["tokens_out"]
         bunker.record_success()
+        record_cost("W-GATEWAY", "anthropic", result["model"],
+                   tokens_in, tokens_out, "HIGH", "wisdom")
     except Exception as e:
         bunker.record_failure()
         resp = f"[FALLBACK] {e}"
-    cost = calc_cost("anthropic", route["max_tokens"])
+    tokens_used = tokens_in + tokens_out
+    cost = calc_cost("anthropic", tokens_used)
     rid  = f"WGW-WISDOM-{int(time.time())}-{req.domain[:4].upper()}"
     seal_to_ledger("anthropic",f"wisdom_{req.domain}",req.actor,
-                   route["max_tokens"],rid,cost,total_red)
+                   tokens_used,rid,cost,total_red)
     return {"receipt_id":rid,"domain":req.domain,"proposal":resp,
             "tokens":route["max_tokens"],"cost_eur":cost,
             "pii_redacted":total_red,
