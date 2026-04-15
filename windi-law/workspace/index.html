@@ -1294,6 +1294,8 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <!-- §127.2 DOCX: Server-side via python-docx (no client libs needed) -->
+<!-- §173 DID SIMPLIFICATION — Single Source of Truth -->
+<script src="/shared/windi-did.js"></script>
 </head>
 <body>
 
@@ -1339,6 +1341,7 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
     <div class="sl-sec" style="margin-top:6px">Verifikation</div>
     <div class="sl-item" onclick="window.open('https://windi-domain.com/verify-public/web/','_blank')" style="cursor:pointer">🔍 Verify Public</div>
     <div class="sl-item" onclick="showChain()" style="cursor:pointer">📒 Forensic Ledger</div>
+    <div class="sl-item" onclick="window.open('/law/dragon/','_blank')" style="cursor:pointer" title="Dragon Shadow Forest — SHA-256 Glyph Encoding">🐉 Dragon Forest</div>
 
     <div class="sl-identity">
       <div class="sl-id-block" id="sb-schluessel">
@@ -1934,14 +1937,26 @@ function updateGreeting(userName) {
 // ══════════════════════════════════════════════════════════════
 // initWallet — Wallet Gate Logic (F10 SEALED)
 // URL ?did= ALWAYS takes priority (fresh registration)
+// §173 — Added WindiDID unified storage fallback
 // ══════════════════════════════════════════════════════════════
 async function initWallet() {
   var stored = sessionStorage.getItem('windi_law_wallet');
   var fb = LANG[lang] || LANG.en;
 
+  // §173 DID SIMPLIFICATION — Migrate legacy keys on init
+  if (typeof WindiDID !== 'undefined') {
+    WindiDID.migrateFromLegacy();
+  }
+
   // Check for ?did= in URL (direct link access or fresh registration)
   var urlParams = new URLSearchParams(window.location.search);
   var urlDid = urlParams.get('did');
+
+  // §173 — If no URL DID and no stored wallet, try unified localStorage
+  if (!urlDid && !stored && typeof WindiDID !== 'undefined' && WindiDID.exists()) {
+    urlDid = WindiDID.get();
+    console.log('[§173] DID restored from unified storage:', urlDid.substring(0, 20) + '…');
+  }
 
   // If URL has DID, ALWAYS fetch from server (overrides stale sessionStorage)
   if (urlDid) {
@@ -1966,6 +1981,10 @@ async function initWallet() {
         };
         sessionStorage.setItem('windi_law_wallet', JSON.stringify(walletData));
         document.cookie = 'windi_did=' + encodeURIComponent(data.did) + '; path=/; max-age=31536000; SameSite=Lax';
+        // §173 — Store in unified localStorage
+        if (typeof WindiDID !== 'undefined') {
+          WindiDID.set(data.did);
+        }
         stored = JSON.stringify(walletData);
         console.log('[WINDI-LAW] Wallet loaded from server:', data.did);
       }

@@ -739,6 +739,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
   -webkit-user-select: none;
 }
 </style>
+<!-- §173 DID SIMPLIFICATION — Single Source of Truth -->
+<script src="/shared/windi-did.js"></script>
 </head>
 <body>
 <!-- WINDI Splash Screen — Mobile Loading -->
@@ -4311,7 +4313,10 @@ function App(){
   useEffect(()=>{const l=document.createElement("link");l.href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap";l.rel="stylesheet";document.head.appendChild(l);},[]);
 
   // FIX (K): Load persisted data
+  // §173 — Added WindiDID migration on init
   useEffect(()=>{
+    // §173 — Migrate legacy keys first
+    if(typeof WindiDID!=='undefined'){WindiDID.migrateFromLegacy();}
     try{
       const raw=localStorage.getItem(CONFIG.STORAGE_KEY);
       if(raw){const d=JSON.parse(raw);
@@ -4320,6 +4325,8 @@ function App(){
         if(d.theme)setThemeName(d.theme);
         if(d.lang)setLang(d.lang);
         setPersist(true);
+        // §173 — Sync wallet DID to unified storage
+        if(d.wallet&&d.wallet.id&&typeof WindiDID!=='undefined'){WindiDID.set(d.wallet.id);}
       }
     }catch(e){}
   },[]);
@@ -5498,6 +5505,8 @@ function App(){
       const w={id:CryptoProvider.walletId(),uuid:CryptoProvider.generateUUID(),fp:CryptoProvider.generateFingerprint(),
         ...didForm,name:didForm.name.trim(),trustScore:1,created_at:new Date().toISOString(),receipts:[]};
       setWallet(w);setShowDID(false);setDidCreating(false);
+      // §173 — Sync to unified WindiDID storage
+      if(typeof WindiDID!=='undefined'&&w.id&&w.id.startsWith('did:windi:')){WindiDID.set(w.id);}
       if(persist){try{const raw=JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEY)||"{}");raw.wallet=w;localStorage.setItem(CONFIG.STORAGE_KEY,JSON.stringify(raw));}catch(e){}}
       flash(`🛡️ ${t.did.success} — ${w.id}`);
       setMsgs(p=>[...p,{role:"system",text:`🛡️ ${w.id}`},{role:"bot",text:`${t.did.success} ${w.name}! T1/50 ✅`}]);
@@ -5519,6 +5528,8 @@ function App(){
   const wipeIdentity=useCallback(()=>{
     if(!confirm(t.did.wipeConfirm))return;
     setWallet(null);try{localStorage.removeItem(CONFIG.STORAGE_KEY);}catch(e){}
+    // §173 — Clear unified WindiDID storage on wipe
+    if(typeof WindiDID!=='undefined'){WindiDID.clear();}
     flash("🗑️ Identity wiped");setShowWallet(false);
   },[t,flash]);
 
