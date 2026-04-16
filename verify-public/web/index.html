@@ -909,11 +909,23 @@ applyI18N();
   `;
   document.body.appendChild(panel);
 
-  // Call the correct endpoint
-  fetch(`/verify-public/document/${encodeURIComponent(id)}`)
+  // Call the canonical Ledger API endpoint
+  fetch(`/api/receipts/${encodeURIComponent(id)}`)
     .then(r => r.json())
-    .then(data => {
-      const ok = data.status === 'verified' && data.integrity === 'valid';
+    .then(raw => {
+      // Transform Ledger response to verify format
+      const receipt = raw.receipt || {};
+      const ok = raw.ok && receipt.status === 'sealed';
+      const data = {
+        status: ok ? 'verified' : 'not_found',
+        integrity: ok ? 'valid' : 'unknown',
+        document_id: receipt.id || id,
+        hash: receipt.content_hash || null,
+        timestamp: receipt.created_at ? new Date(receipt.created_at * 1000).toISOString() : null,
+        ledger_anchor: ok,
+        message: ok ? null : (raw.error || raw.detail || 'Document not found in WINDI system')
+      };
+
       document.getElementById('avp-status').innerHTML = ok
         ? '✅ ' + L.av_authentic
         : '❌ ' + L.av_not_verified;
@@ -925,7 +937,7 @@ applyI18N();
         <div style="display:grid; gap:12px; font-size:13px;">
           ${row(L.av_receipt_id, data.document_id || id)}
           ${row(L.av_hash, data.hash || '—')}
-          ${row(L.av_timestamp, data.timestamp || '—')}
+          ${row(L.av_timestamp, data.timestamp ? new Date(data.timestamp).toLocaleString() : '—')}
           ${row(L.av_integrity, data.integrity || '—')}
           ${row(L.av_ledger, data.ledger_anchor ? '🔒 ' + L.av_anchored : '—')}
           ${data.message ? row(L.av_message, data.message) : ''}
