@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.2.18
-**Sealed:** 2026-04-16 · §180 W-TRAVEL-PUB-001
+**Version:** 2.2.19
+**Sealed:** 2026-04-16 · §181 SVG Sentinel
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -86,7 +86,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-ENTERPRISE-001 | :8150 | I1,I9,I11,I14 | **LIVE** v3.1.0 · VERA REGO v1.0 · DASH v4.1 · i18n PT/DE/EN · NOIR/KLAR |
 | W-CACHE-001 | :8160 | I11,I14 | **LIVE** · Verifiable Cache Layer · L2→L3 Promotion · NOIR Dashboard |
 | W-DID-GENESIS | :8096 | I1,I9,I11,I14 | **LIVE** · Sovereign Identity Tree · Cross-Service Session · 4 Tiers |
-| W-SERVICE-CONTROL | :8170 | I1,I9,I11 | **LIVE** · Service Control Panel · 24 Services · Restart/Stop/Start · DID Gate |
+| W-SERVICE-CONTROL | :8170 | I1,I9,I11 | **LIVE** · Service Control Panel · 27 Services · **SVG Sentinel** · Subsystem Monitoring · DID Gate |
 | W-LAB-001 | :8151 | I9,I11,I14 | **LIVE** · Governance Laboratory · LOBO · 5 Mini-Games · **/clear** Dilemas de Geleia |
 | W-COST-001 | :8152 | I9,I11,I14 | **LIVE** · Cost Intelligence Layer · Telegram Alerts · Gateway Integration · Thresholds |
 | W-SOCIAL-001 | :8133 | I9-P,I11,I14 | **LIVE** · Verified Professional Presence · Embedded-first · I9-P Protocol · Trilingual |
@@ -440,6 +440,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | 16 Apr | **§180 W-TRAVEL-PUB-001** · Sovereign Notebook Vision · I16 Cartographic · Mobile Phase 2 CANCELLED · Berlin Demo Target |
 | 16 Apr | **§179 W-LAB-001/clear** · Dilemas de Geleia · 4 Archetypes · Memory Loop · Trilingual · Ledger Integration |
 | 16 Apr | **§178 WPIL LIVE** · Proof Interface Layer · 3-Level Verification · Ceremony UI · /prove/ + /investor/ |
+| 16 Apr | **§181 SVG Sentinel** · W-SERVICE-CONTROL Subsystem Monitoring · 3 Services · 6 Subsystems · Critical Alerts |
 | 15 Apr | **§176 W-SOCIAL-001** · Verified Professional Presence · :8133 · I9-P Protocol · Security Sanitized · i18n PT/DE/EN |
 | 15 Apr | **§175 Landing Page Complete** · 5 Products LIVE · W-Enterprise + W-Lab Cards · Trilingual · `1fa17d9` |
 | 15 Apr | **§174 W-COST-001** · Cost Intelligence Layer · Telegram Alerts · Gateway Integration · `4ad6ba6` |
@@ -735,7 +736,7 @@ Anonymous → HTTPException 400 · Receipt `WINDI-MARIA-COMPLIANCE-FIX-20260414`
 **Conceito:** Painel de controlo centralizado para todos os serviços WINDI com I9 Gate.
 
 **Features:**
-- 24 serviços monitorizados (4 categorias: Core, Agents, Dashboards, Support)
+- 27 serviços monitorizados (4 categorias: Core, Agents, Dashboards, Support)
 - Status em tempo real (online/degraded/offline/starting)
 - Restart/Stop/Start com I9 Gate (requer DID)
 - Logs viewer (journalctl integration)
@@ -744,6 +745,22 @@ Anonymous → HTTPException 400 · Receipt `WINDI-MARIA-COMPLIANCE-FIX-20260414`
 - Auto-fill founder DID (`did:windi:dragon-001`)
 - NOIR/KLAR theme + i18n PT/DE/EN
 - Todas as acções seladas no Forensic Ledger (I11)
+
+**§181 SVG Sentinel — Subsystem Monitoring (16 Apr 2026):**
+| Service | Subsystems | Description |
+|---------|------------|-------------|
+| windi-law | AI Draft ★, Identity Gate ★, Dragon Law | LLM generation, DID auth, Shadow Forest |
+| windi-travel | Identity Gate ★, Workspace ★ | DID wallet, Travel workspace UI |
+| windi-lab | Dilemas de Geleia | Clear cognitive training module |
+
+★ = Critical subsystem (failure triggers alert)
+
+**API Endpoints:**
+- `GET /api/subsystems` — Lista serviços com subsistemas
+- `GET /api/subsystems/{service}` — Status de todos os subsistemas
+- `GET /api/subsystems/{service}/{id}` — Status de um subsistema específico
+
+**SVG Icons:** online (●), offline (⊘), degraded (⚠), blocked (◐), error (?)
 
 **DID Gate:** Sem DID = apenas visualização. Com DID = controlo completo.
 **Files:** `/opt/windi/service-control/app.py` (Flask + HTML inline)
