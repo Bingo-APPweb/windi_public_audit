@@ -703,6 +703,7 @@ Anonymous → HTTPException 400 · Receipt `WINDI-MARIA-COMPLIANCE-FIX-20260414`
 
 **Memory Loop:** Echo → Pattern → Archetype → Wisdom
 **Pressure Timer:** 90-120s por dilema
+**Navigation:** ← Back to W-LAB · ← Anterior · 1/3 · Próximo →
 
 **3 Dilemas Semente:**
 - CLEAR-001: LinkedIn Provocation (reputation, crisis)
