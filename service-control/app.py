@@ -37,7 +37,7 @@ WINDI_SERVICES = [
     # Agents
     {"name": "windi-law", "port": 8122, "display": "WINDI-LAW", "category": "agents", "sealed": True, "url": "/law/"},
     {"name": "windi-travel", "port": 8126, "display": "WINDI Travel", "category": "agents", "url": "/travel/"},
-    {"name": "windi-nomad-bot", "port": 8127, "display": "W-NOMAD-001", "category": "agents", "url": "/telegram/"},
+    {"name": "windi-nomad-bot", "port": 8127, "display": "W-NOMAD-001", "category": "agents", "url": "https://t.me/windi_nomad_bot"},
     {"name": "windi-vd-cut", "port": 8128, "display": "W-VD-CUT-001", "category": "agents", "url": "/vdcut-dash/"},
     {"name": "windi-joe", "port": 8129, "display": "W-JOE-001", "category": "agents", "url": "/joe-dash/"},
     {"name": "windi-vd-mass", "port": 8131, "display": "W-VD-MASS-001", "category": "agents", "url": "/vdmass-dash/"},
@@ -53,6 +53,8 @@ WINDI_SERVICES = [
     {"name": "windi-enterprise", "port": 8150, "display": "W-Enterprise-001", "category": "dashboards", "url": "/enterprise/"},
     {"name": "windi-cache", "port": 8160, "display": "W-CACHE-001", "category": "dashboards", "nohup": True, "url": "/wcache/noir"},
     {"name": "windi-cost", "port": 8152, "display": "W-COST-001", "category": "dashboards", "nohup": True, "url": "/cost/"},
+    {"name": "windi-lab", "port": 8151, "display": "W-LAB-001", "category": "dashboards", "url": "/lab/"},
+    {"name": "windi-social", "port": 8133, "display": "W-SOCIAL-001", "category": "agents", "url": "/social/"},
 
     # Support
     {"name": "windi-leads", "port": 8096, "display": "DID Genesis", "category": "support", "url": "/genesis/"},
@@ -87,6 +89,69 @@ HEALTH_ENDPOINTS = {
     8150: "/health",
     8160: "/health",
     8152: "/health",
+    8151: "/health",
+    8133: "/health",
+}
+
+# ═══════════════════════════════════════════════════════════════
+# SUBSYSTEMS — Module-level Health Monitoring (SVG Sentinel)
+# ═══════════════════════════════════════════════════════════════
+
+SUBSYSTEMS = {
+    "windi-law": [
+        {
+            "id": "ai-draft",
+            "display": "AI Draft",
+            "endpoint": "/ai-draft/health",
+            "port": 8122,
+            "critical": True,
+            "description": "LLM document generation"
+        },
+        {
+            "id": "identity-gate",
+            "display": "Identity Gate",
+            "endpoint": "/health",
+            "port": 8122,
+            "critical": True,
+            "description": "DID authentication"
+        },
+        {
+            "id": "dragon-law",
+            "display": "Dragon Law",
+            "endpoint": "/dragon/health",
+            "port": 8122,
+            "critical": False,
+            "description": "Dragon Shadow Forest integration"
+        }
+    ],
+    "windi-travel": [
+        {
+            "id": "identity-gate",
+            "display": "Identity Gate",
+            "endpoint": "/health",
+            "port": 8126,
+            "critical": True,
+            "description": "DID wallet authentication"
+        },
+        {
+            "id": "workspace",
+            "display": "Workspace",
+            "endpoint": "/workspace/",
+            "port": 8126,
+            "critical": True,
+            "description": "Travel workspace UI"
+        }
+    ],
+    "windi-lab": [
+        {
+            "id": "clear",
+            "display": "Dilemas de Geleia",
+            "endpoint": "/api/clear/stats",
+            "port": 8151,
+            "critical": False,
+            "description": "Cognitive training module"
+        }
+    ]
 }
 
 # ═══════════════════════════════════════════════════════════════
@@ -186,6 +251,9 @@ def get_full_service_status(service):
     else:
         overall = "offline"
 
+    # Check for subsystems
+    has_subsystems = name in SUBSYSTEMS
+
     return {
         "service": name,
         "display": service["display"],
@@ -198,6 +266,87 @@ def get_full_service_status(service):
         "port_active": port_active,
         "health": health,
         "overall": overall,
+        "has_subsystems": has_subsystems,
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }
+
+# ═══════════════════════════════════════════════════════════════
+# SUBSYSTEM HEALTH FUNCTIONS (SVG Sentinel)
+# ═══════════════════════════════════════════════════════════════
+
+def check_subsystem_health(service_name, subsystem):
+    """Check health of a specific subsystem module."""
+    port = subsystem["port"]
+    endpoint = subsystem["endpoint"]
+
+    try:
+        r = requests.get(f"http://localhost:{port}{endpoint}", timeout=3, allow_redirects=False)
+        # 200-399 = healthy (includes redirects and auth challenges)
+        if 200 <= r.status_code < 400:
+            return {
+                "id": subsystem["id"],
+                "display": subsystem["display"],
+                "status": "online",
+                "critical": subsystem.get("critical", False),
+                "description": subsystem.get("description", ""),
+                "response_time_ms": r.elapsed.total_seconds() * 1000
+            }
+        return {
+            "id": subsystem["id"],
+            "display": subsystem["display"],
+            "status": "degraded",
+            "critical": subsystem.get("critical", False),
+            "description": subsystem.get("description", ""),
+            "status_code": r.status_code
+        }
+    except requests.exceptions.ConnectionError:
+        return {
+            "id": subsystem["id"],
+            "display": subsystem["display"],
+            "status": "offline",
+            "critical": subsystem.get("critical", False),
+            "description": subsystem.get("description", ""),
+            "error": "connection_refused"
+        }
+    except requests.exceptions.Timeout:
+        return {
+            "id": subsystem["id"],
+            "display": subsystem["display"],
+            "status": "blocked",
+            "critical": subsystem.get("critical", False),
+            "description": subsystem.get("description", ""),
+            "error": "timeout"
+        }
+    except Exception as e:
+        return {
+            "id": subsystem["id"],
+            "display": subsystem["display"],
+            "status": "error",
+            "critical": subsystem.get("critical", False),
+            "description": subsystem.get("description", ""),
+            "error": str(e)[:50]
+        }
+
+def get_all_subsystems_status(service_name):
+    """Get status of all subsystems for a service."""
+    if service_name not in SUBSYSTEMS:
+        return {"service": service_name, "subsystems": [], "has_critical_failure": False}
+
+    subsystems = []
+    has_critical_failure = False
+
+    for sub in SUBSYSTEMS[service_name]:
+        status = check_subsystem_health(service_name, sub)
+        subsystems.append(status)
+
+        # Track critical failures
+        if status["critical"] and status["status"] not in ["online"]:
+            has_critical_failure = True
+
+    return {
+        "service": service_name,
+        "subsystems": subsystems,
+        "has_critical_failure": has_critical_failure,
         "timestamp": datetime.now(timezone.utc).isoformat()
     }
 
@@ -433,6 +582,43 @@ def get_logs(service_name):
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+# ═══════════════════════════════════════════════════════════════
+# SUBSYSTEM ENDPOINTS (SVG Sentinel API)
+# ═══════════════════════════════════════════════════════════════
+
+@app.route("/api/subsystems")
+def list_all_subsystems():
+    """List all services that have subsystems configured."""
+    return jsonify({
+        "services_with_subsystems": list(SUBSYSTEMS.keys()),
+        "total_subsystems": sum(len(subs) for subs in SUBSYSTEMS.values()),
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    })
+
+@app.route("/api/subsystems/<service_name>")
+def get_subsystems(service_name):
+    """Get subsystem status for a specific service (SVG Sentinel)."""
+    if service_name not in SUBSYSTEMS:
+        return jsonify({
+            "error": "NO_SUBSYSTEMS",
+            "message": f"Service {service_name} has no subsystems configured",
+            "available": list(SUBSYSTEMS.keys())
+        }), 404
+
+    return jsonify(get_all_subsystems_status(service_name))
+
+@app.route("/api/subsystems/<service_name>/<subsystem_id>")
+def get_single_subsystem(service_name, subsystem_id):
+    """Get status of a specific subsystem module."""
+    if service_name not in SUBSYSTEMS:
+        return jsonify({"error": "Service not found"}), 404
+
+    subsystem = next((s for s in SUBSYSTEMS[service_name] if s["id"] == subsystem_id), None)
+    if not subsystem:
+        return jsonify({"error": "Subsystem not found"}), 404
+
+    return jsonify(check_subsystem_health(service_name, subsystem))
 
 # ═══════════════════════════════════════════════════════════════
 # DASHBOARD
@@ -731,6 +917,75 @@ DASHBOARD_HTML = '''
         .loading { opacity: 0.5; pointer-events: none; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .spinner { animation: spin 1s linear infinite; display: inline-block; }
+
+        /* Subsystems (SVG Sentinel) */
+        .subsystems {
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px dashed var(--border);
+        }
+        .subsystems-title {
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+        .subsystem-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.3rem 0;
+        }
+        .sentinel-svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+        .sentinel-svg.online { color: var(--green); }
+        .sentinel-svg.offline { color: var(--red); }
+        .sentinel-svg.degraded { color: var(--yellow); }
+        .sentinel-svg.blocked { color: var(--red); animation: pulse 1.5s infinite; }
+        .sentinel-svg.error { color: var(--red); }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        .subsystem-name {
+            font-size: 0.75rem;
+            color: var(--text);
+            flex: 1;
+        }
+        .subsystem-name.critical::after {
+            content: " ★";
+            color: var(--gold);
+        }
+        .subsystem-status {
+            font-size: 0.65rem;
+            color: var(--text-dim);
+        }
+        .subsystem-expand {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-size: 0.65rem;
+            cursor: pointer;
+        }
+        .subsystem-expand:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+        .subsystem-alert {
+            background: rgba(248,113,113,0.1);
+            border: 1px solid var(--red);
+            border-radius: 4px;
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+            font-size: 0.7rem;
+            color: var(--red);
+        }
     </style>
 </head>
 <body>
@@ -924,6 +1179,14 @@ DASHBOARD_HTML = '''
                 document.getElementById('stat-total').textContent = data.counts.total;
 
                 renderServices();
+
+                // Load subsystems for services that have them (SVG Sentinel)
+                for (const svc of services) {
+                    if (svc.has_subsystems) {
+                        const containerId = `subsystems-${svc.service.replace(/[^a-z0-9]/gi, '-')}`;
+                        loadSubsystems(svc.service, containerId);
+                    }
+                }
             } catch (e) {
                 console.error('Failed to load services:', e);
             }
@@ -945,6 +1208,7 @@ DASHBOARD_HTML = '''
 
                 for (const svc of catServices) {
                     const canControl = currentDID && !svc.sealed && !svc.nohup;
+                    const subsystemId = `subsystems-${svc.service.replace(/[^a-z0-9]/gi, '-')}`;
                     html += `
                         <div class="service-card ${svc.overall}">
                             <div class="service-header">
@@ -957,8 +1221,10 @@ DASHBOARD_HTML = '''
                             <div class="service-meta">
                                 ${svc.sealed ? `<span class="badge sealed">${t('sealed')}</span>` : ''}
                                 ${svc.nohup ? `<span class="badge nohup">${t('nohup')}</span>` : ''}
+                                ${svc.has_subsystems ? `<span class="badge" style="background:rgba(201,168,76,0.2);color:var(--gold);">SENTINEL</span>` : ''}
                                 <span class="badge">${svc.systemd}</span>
                             </div>
+                            ${svc.has_subsystems ? `<div class="subsystems" id="${subsystemId}"></div>` : ''}
                             <div class="service-actions">
                                 ${svc.url ? `
                                     <a href="${svc.url}" target="_blank" class="btn-action open">
@@ -1064,6 +1330,78 @@ DASHBOARD_HTML = '''
 
         function closeModal() {
             document.getElementById('logs-modal').classList.remove('active');
+        }
+
+        // SVG Sentinel Icons
+        const SENTINEL_SVGS = {
+            online: `<svg class="sentinel-svg online" viewBox="0 0 16 16" fill="currentColor">
+                <circle cx="8" cy="8" r="6" fill="currentColor"/>
+            </svg>`,
+            offline: `<svg class="sentinel-svg offline" viewBox="0 0 16 16" fill="currentColor">
+                <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="2" fill="none"/>
+                <line x1="5" y1="5" x2="11" y2="11" stroke="currentColor" stroke-width="2"/>
+            </svg>`,
+            degraded: `<svg class="sentinel-svg degraded" viewBox="0 0 16 16" fill="currentColor">
+                <polygon points="8,2 14,14 2,14" fill="currentColor"/>
+                <text x="8" y="12" font-size="8" fill="var(--bg)" text-anchor="middle">!</text>
+            </svg>`,
+            blocked: `<svg class="sentinel-svg blocked" viewBox="0 0 16 16" fill="currentColor">
+                <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="2" fill="none"/>
+                <line x1="4" y1="8" x2="12" y2="8" stroke="currentColor" stroke-width="2"/>
+            </svg>`,
+            error: `<svg class="sentinel-svg error" viewBox="0 0 16 16" fill="currentColor">
+                <circle cx="8" cy="8" r="6" fill="currentColor"/>
+                <text x="8" y="11" font-size="8" fill="var(--bg)" text-anchor="middle">?</text>
+            </svg>`
+        };
+
+        // Load subsystems for a service
+        async function loadSubsystems(serviceName, containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            container.innerHTML = '<div class="subsystems-title">Loading subsystems...</div>';
+
+            try {
+                const r = await fetch(`${API_BASE}/api/subsystems/${serviceName}`);
+                if (!r.ok) {
+                    container.innerHTML = '';
+                    return;
+                }
+                const data = await r.json();
+                renderSubsystems(data, container);
+            } catch (e) {
+                container.innerHTML = `<div class="subsystem-alert">Failed to load subsystems</div>`;
+            }
+        }
+
+        // Render subsystems in container
+        function renderSubsystems(data, container) {
+            if (!data.subsystems || data.subsystems.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = `<div class="subsystems-title">Subsystems (${data.subsystems.length})</div>`;
+
+            for (const sub of data.subsystems) {
+                const icon = SENTINEL_SVGS[sub.status] || SENTINEL_SVGS.error;
+                const criticalClass = sub.critical ? 'critical' : '';
+                const respTime = sub.response_time_ms ? ` · ${sub.response_time_ms.toFixed(0)}ms` : '';
+
+                html += `
+                    <div class="subsystem-row">
+                        ${icon}
+                        <span class="subsystem-name ${criticalClass}" title="${sub.description}">${sub.display}</span>
+                        <span class="subsystem-status">${sub.status}${respTime}</span>
+                    </div>`;
+            }
+
+            if (data.has_critical_failure) {
+                html += `<div class="subsystem-alert">⚠️ Critical subsystem failure detected</div>`;
+            }
+
+            container.innerHTML = html;
         }
 
         // Init
