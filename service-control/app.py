@@ -38,9 +38,9 @@ WINDI_SERVICES = [
     {"name": "windi-law", "port": 8122, "display": "WINDI-LAW", "category": "agents", "sealed": True, "url": "/law/"},
     {"name": "windi-travel", "port": 8126, "display": "WINDI Travel", "category": "agents", "url": "/travel/"},
     {"name": "windi-nomad-bot", "port": 8127, "display": "W-NOMAD-001", "category": "agents", "url": "https://t.me/windi_nomad_bot"},
-    {"name": "windi-vd-cut", "port": 8128, "display": "W-VD-CUT-001", "category": "agents", "url": "/vdcut-dash/"},
-    {"name": "windi-joe", "port": 8129, "display": "W-JOE-001", "category": "agents", "url": "/joe-dash/"},
-    {"name": "windi-vd-mass", "port": 8131, "display": "W-VD-MASS-001", "category": "agents", "url": "/vdmass-dash/"},
+    {"name": "windi-vd-cut", "port": 8128, "display": "W-VD-CUT-001", "category": "agents", "url": "/vd-cut/"},
+    {"name": "windi-joe", "port": 8129, "display": "W-JOE-001", "category": "agents", "url": "/joe/"},
+    {"name": "windi-vd-mass", "port": 8131, "display": "W-VD-MASS-001", "category": "agents", "url": "/vd-mass/"},
     {"name": "windi-jmpg", "port": 8132, "display": "W-JMPG-001", "category": "agents", "url": "/comm/"},
 
     # Dashboards
