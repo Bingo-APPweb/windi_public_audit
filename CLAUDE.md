@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.2.15
-**Sealed:** 2026-04-15 · §176 W-SOCIAL-001
+**Version:** 2.2.17
+**Sealed:** 2026-04-16 · §179 W-LAB-001/clear
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -87,7 +87,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-CACHE-001 | :8160 | I11,I14 | **LIVE** · Verifiable Cache Layer · L2→L3 Promotion · NOIR Dashboard |
 | W-DID-GENESIS | :8096 | I1,I9,I11,I14 | **LIVE** · Sovereign Identity Tree · Cross-Service Session · 4 Tiers |
 | W-SERVICE-CONTROL | :8170 | I1,I9,I11 | **LIVE** · Service Control Panel · 24 Services · Restart/Stop/Start · DID Gate |
-| W-LAB-001 | :8151 | I9,I11,I14 | **LIVE** · Governance Laboratory · LOBO Architecture · 5 Mini-Games · OVS Certification |
+| W-LAB-001 | :8151 | I9,I11,I14 | **LIVE** · Governance Laboratory · LOBO · 5 Mini-Games · **/clear** Dilemas de Geleia |
 | W-COST-001 | :8152 | I9,I11,I14 | **LIVE** · Cost Intelligence Layer · Telegram Alerts · Gateway Integration · Thresholds |
 | W-SOCIAL-001 | :8133 | I9-P,I11,I14 | **LIVE** · Verified Professional Presence · Embedded-first · I9-P Protocol · Trilingual |
 | WINDI-PORTAL | static | — | **LIVE** · Internal Control Center · 35 Services · 7 Categories |
@@ -436,6 +436,8 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 16 Apr | **§179 W-LAB-001/clear** · Dilemas de Geleia · 4 Archetypes · Memory Loop · Trilingual · Ledger Integration |
+| 16 Apr | **§178 WPIL LIVE** · Proof Interface Layer · 3-Level Verification · Ceremony UI · /prove/ + /investor/ |
 | 15 Apr | **§176 W-SOCIAL-001** · Verified Professional Presence · :8133 · I9-P Protocol · Security Sanitized · i18n PT/DE/EN |
 | 15 Apr | **§175 Landing Page Complete** · 5 Products LIVE · W-Enterprise + W-Lab Cards · Trilingual · `1fa17d9` |
 | 15 Apr | **§174 W-COST-001** · Cost Intelligence Layer · Telegram Alerts · Gateway Integration · `4ad6ba6` |
@@ -682,6 +684,43 @@ Anonymous → HTTPException 400 · Receipt `WINDI-MARIA-COMPLIANCE-FIX-20260414`
 - `/opt/windi/w-social-001/static/manifesto.html` (Founding document)
 - `/opt/windi/w-social-001/static/probe.html` (Interactive UX demo)
 - `/etc/systemd/system/windi-social.service`
+
+### §179 — W-LAB-001/clear: Dilemas de Geleia (16 Apr 2026)
+
+**Port:** :8151 · **Invariants:** I9, I11, I14, WL-I · **Status:** LIVE
+**URL:** `https://windi-domain.com/lab/clear`
+**Conceito:** Exercícios cognitivos para treino de supervisão humana sob pressão.
+
+> *"A geleia que escolhes revela o loop em que estás preso."*
+
+**4 Arquétipos de Decisão:**
+| Arquétipo | Cor | Loop Risk | Padrão |
+|-----------|-----|-----------|--------|
+| 🔴 Red Jelly | reactive | high | Reacção impulsiva à pressão |
+| 🔵 Blue Jelly | false_authority | medium | Delegação a falsa autoridade |
+| 🪟 Glass Observer | evasion | high | Evasão/paralisia |
+| 🌿 Frequency Break | sovereign | low | Mudança soberana de frequência |
+
+**Memory Loop:** Echo → Pattern → Archetype → Wisdom
+**Pressure Timer:** 90-120s por dilema
+
+**3 Dilemas Semente:**
+- CLEAR-001: LinkedIn Provocation (reputation, crisis)
+- CLEAR-002: Investor Pressure (integrity, negotiation)
+- CLEAR-003: Competitor Mirror (strategy, market)
+
+**Endpoints:**
+- `GET /api/clear/dilemmas` — Lista todos os dilemas
+- `GET /api/clear/random` — Dilema aleatório para treino
+- `POST /api/clear/decide` — Regista decisão + sela no Ledger
+- `GET /api/clear/stats` — Estatísticas do módulo
+
+**Files:**
+- `/opt/windi/w-lab-001/clear/dilemmas/*.json` (3 dilemas)
+- `/opt/windi/w-lab-001/static/clear.html` (UI trilíngue)
+- `/opt/windi/w-lab-001/app.py` (Backend routes)
+
+**Princípio:** O treino não simula produção. O treino revela padrões antes de produção.
 
 ### §169 — W-SERVICE-CONTROL: Service Control Panel (14 Apr 2026)
 
