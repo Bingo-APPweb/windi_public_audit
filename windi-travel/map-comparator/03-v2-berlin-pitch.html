@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WINDI Travel · Bayern Süd · Edição Berlin Pitch</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+
+<style>
+  :root{
+    --klar-bg: #F5F0E0;
+    --klar-paper: #EDE5D0;
+    --klar-ink: #2A2520;
+    --klar-ink-soft: #5C5548;
+    --klar-gold: #8B6914;
+    --klar-gold-warm: #A8803A;
+    --klar-gold-bright: #C89B4A;
+    --klar-rule: #C4B896;
+    --klar-shadow: rgba(42,37,32,.12);
+    --font-display: "Bricolage Grotesque", Georgia, serif;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--klar-bg);color:var(--klar-ink);font-family:var(--font-display);-webkit-font-smoothing:antialiased}
+
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:1000;
+    background-image:
+      radial-gradient(circle at 25% 35%, transparent 0, rgba(139,105,20,.015) 2px, transparent 3px),
+      radial-gradient(circle at 75% 65%, transparent 0, rgba(42,37,32,.018) 1px, transparent 2px);
+    background-size: 3px 3px, 5px 5px;
+    mix-blend-mode: multiply;
+  }
+
+  /* ========== HEADER ========== */
+  header{padding:28px 40px 20px;border-bottom:1px solid var(--klar-rule);display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:24px;position:relative;z-index:2}
+  .brand{font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:var(--klar-ink-soft);font-weight:500}
+  .brand span{color:var(--klar-gold);font-weight:600}
+  .title-mark{text-align:center;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--klar-ink-soft)}
+  .title-mark b{display:block;font-size:22px;letter-spacing:.02em;text-transform:none;color:var(--klar-ink);font-weight:600;margin-top:4px;font-style:italic}
+  .stamp{font-family:var(--font-mono);font-size:10px;color:var(--klar-gold);border:1px solid var(--klar-gold);padding:6px 10px;letter-spacing:.1em;transform:rotate(1.5deg);background:rgba(139,105,20,.04)}
+  .stamp.pitch{border-color:var(--klar-ink);color:var(--klar-ink);background:var(--klar-gold);color:#FAF6EA !important;border-color:var(--klar-gold)}
+  .header-controls{display:flex;align-items:center;gap:12px;justify-self:end}
+  .lang-toggle{display:flex;gap:2px;background:var(--klar-paper);border:1px solid var(--klar-rule);border-radius:4px;padding:2px}
+  .lang-toggle button{background:transparent;border:none;color:var(--klar-ink-soft);padding:4px 8px;cursor:pointer;border-radius:3px;font-size:10px;font-weight:600;font-family:var(--font-mono);letter-spacing:.05em;opacity:.6;transition:all .2s}
+  .lang-toggle button.active{background:var(--klar-gold);color:#FAF6EA;opacity:1}
+  .lang-toggle button:hover{opacity:.9}
+
+  /* ========== STAGE ========== */
+  .stage{display:grid;grid-template-columns:260px 1fr 260px;min-height:calc(100vh - 120px);position:relative;z-index:2}
+
+  .sidebar-left,.sidebar-right{padding:32px 24px;background:linear-gradient(180deg, transparent, rgba(196,184,150,.08))}
+  .sidebar-left{border-right:1px solid var(--klar-rule)}
+  .sidebar-right{border-left:1px solid var(--klar-rule)}
+  .sidebar-label{font-family:var(--font-mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--klar-ink-soft);margin-bottom:18px;padding-bottom:8px;border-bottom:1px dotted var(--klar-rule)}
+
+  .city-list{display:flex;flex-direction:column;gap:18px}
+  .city-card{cursor:pointer;transition:all .25s ease;padding:6px 8px;margin:-6px -8px;border-left:2px solid transparent}
+  .city-card:hover{transform:translateX(3px);background:rgba(139,105,20,.04)}
+  .city-card.active{border-left-color:var(--klar-gold);background:rgba(139,105,20,.06)}
+  .city-card .num{font-family:var(--font-mono);font-size:10px;color:var(--klar-gold);letter-spacing:.1em}
+  .city-card h3{font-size:17px;font-weight:600;margin-top:2px;letter-spacing:-.01em}
+  .city-card .sub{font-size:11px;color:var(--klar-ink-soft);font-style:italic;margin-top:2px}
+  .city-card .meta{display:flex;gap:12px;font-family:var(--font-mono);font-size:9px;color:var(--klar-ink-soft);margin-top:6px;letter-spacing:.05em;flex-wrap:wrap}
+  .city-card .meta b{color:var(--klar-gold);font-weight:500}
+  .city-card .meta .live-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#2EA050;margin-right:4px;animation:liveDot 1.8s ease-in-out infinite}
+  @keyframes liveDot{0%,100%{opacity:1}50%{opacity:.35}}
+
+  /* ========== CANVAS ========== */
+  .canvas{position:relative;overflow:hidden;background:#B8A882}
+  #map{width:100%;height:100%;min-height:calc(100vh - 160px)}
+
+  /* Vignette cinematográfica */
+  .vignette{position:absolute;inset:0;pointer-events:none;z-index:400;
+    background: radial-gradient(ellipse at center, transparent 45%, rgba(42,37,32,.4) 115%);
+    mix-blend-mode: multiply;
+  }
+
+  /* FOG DOURADA — preenche o horizonte do pitch 50° */
+  .fog-horizon{
+    position:absolute;top:0;left:0;right:0;height:50%;
+    pointer-events:none;z-index:399;
+    background: linear-gradient(180deg,
+      rgba(196,160,100,.55) 0%,
+      rgba(200,170,120,.3) 35%,
+      rgba(220,200,160,.1) 65%,
+      transparent 100%);
+    mix-blend-mode: screen;
+  }
+  .fog-haze{
+    position:absolute;top:0;left:0;right:0;height:35%;
+    pointer-events:none;z-index:398;
+    background: linear-gradient(180deg,
+      rgba(245,225,180,.4) 0%,
+      rgba(230,200,150,.15) 60%,
+      transparent 100%);
+  }
+
+  /* Frame dourado */
+  .frame{position:absolute;inset:0;pointer-events:none;z-index:405}
+  .corner{position:absolute;width:42px;height:42px;opacity:.85}
+  .corner-tl{top:14px;left:14px;border-top:2px solid var(--klar-gold);border-left:2px solid var(--klar-gold)}
+  .corner-tr{top:14px;right:14px;border-top:2px solid var(--klar-gold);border-right:2px solid var(--klar-gold)}
+  .corner-bl{bottom:14px;left:14px;border-bottom:2px solid var(--klar-gold);border-left:2px solid var(--klar-gold)}
+  .corner-br{bottom:14px;right:14px;border-bottom:2px solid var(--klar-gold);border-right:2px solid var(--klar-gold)}
+
+  /* TÍTULO REFINADO — maior, mais contraste, hierarquia clara */
+  .map-title{
+    position:absolute;top:34px;left:34px;z-index:406;
+    font-family:var(--font-display);
+    color:#FAF6EA;
+    pointer-events:none;
+    max-width:380px;
+  }
+  .map-title .eyebrow{
+    font-family:var(--font-mono);
+    font-size:10px;
+    letter-spacing:.35em;
+    text-transform:uppercase;
+    color:#F5D98C;
+    text-shadow: 0 1px 4px rgba(0,0,0,.7), 0 0 20px rgba(139,105,20,.5);
+    margin-bottom:10px;
+    font-weight:500;
+  }
+  .map-title h1{
+    font-size:56px;
+    font-weight:800;
+    line-height:.92;
+    letter-spacing:-.03em;
+    text-shadow:
+      0 2px 4px rgba(0,0,0,.5),
+      0 4px 24px rgba(0,0,0,.4),
+      0 0 40px rgba(139,105,20,.3);
+    color:#FAF6EA;
+  }
+  .map-title h1 em{
+    font-style:italic;
+    font-weight:400;
+    color:#F5D98C;
+    display:block;
+    font-size:.6em;
+    letter-spacing:-.02em;
+    margin-top:4px;
+  }
+  .map-title .desc{
+    font-size:13px;
+    font-style:italic;
+    margin-top:16px;
+    line-height:1.5;
+    max-width:320px;
+    color:#EDE0BC;
+    text-shadow: 0 1px 4px rgba(0,0,0,.6);
+    border-left: 2px solid #F5D98C;
+    padding-left: 14px;
+  }
+
+  /* ====== CONTROLO: TOUR NARRADO ====== */
+  .tour-control{
+    position:absolute;bottom:30px;left:50%;transform:translateX(-50%);
+    z-index:407;
+    display:flex;align-items:center;gap:14px;
+    background: rgba(42,37,32,.88);
+    border:1.5px solid var(--klar-gold);
+    padding:10px 16px 10px 14px;
+    box-shadow: 0 8px 28px rgba(0,0,0,.45), 0 0 0 1px rgba(139,105,20,.3);
+    backdrop-filter: blur(8px);
+  }
+  .tour-btn{
+    background: var(--klar-gold);
+    color:#FAF6EA;
+    border:none;
+    width:38px;height:38px;
+    border-radius:50%;
+    cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    font-size:14px;
+    transition: all .25s ease;
+    box-shadow: 0 0 0 2px var(--klar-gold-bright), 0 4px 12px rgba(139,105,20,.5);
+  }
+  .tour-btn:hover{transform:scale(1.08);background:var(--klar-gold-bright)}
+  .tour-btn.playing{background:#C44A3A;box-shadow:0 0 0 2px #E5765A, 0 4px 12px rgba(196,74,58,.6)}
+  .tour-btn svg{width:16px;height:16px}
+  .tour-info{color:#FAF6EA;font-family:var(--font-mono);font-size:10px;letter-spacing:.15em}
+  .tour-info .label{color:var(--klar-gold-bright);font-weight:600;text-transform:uppercase;letter-spacing:.25em}
+  .tour-info .current{font-size:12px;color:#FAF6EA;margin-top:2px;letter-spacing:.05em;font-family:var(--font-display);font-weight:600}
+  .tour-progress{
+    width:140px;height:3px;background:rgba(245,246,234,.15);
+    position:relative;overflow:hidden;border-radius:2px;margin-top:6px;
+  }
+  .tour-progress-bar{
+    height:100%;background:linear-gradient(90deg, var(--klar-gold), var(--klar-gold-bright));
+    width:0%;transition: width .3s linear;
+    box-shadow: 0 0 8px var(--klar-gold-bright);
+  }
+
+  /* ====== LEGENDA NARRATIVA (aparece durante tour) ====== */
+  .tour-caption{
+    position:absolute;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);
+    z-index:406;
+    background: rgba(42,37,32,.92);
+    border-left: 3px solid var(--klar-gold);
+    color:#FAF6EA;
+    padding:16px 22px;
+    max-width: 400px;
+    opacity: 0;
+    transition: opacity .5s ease, transform .5s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 12px 36px rgba(0,0,0,.5);
+    pointer-events:none;
+  }
+  .tour-caption.visible{opacity:1;transform:translateX(-50%) translateY(0)}
+  .tour-caption .city-name{
+    font-family:var(--font-display);font-size:20px;font-weight:700;letter-spacing:-.01em;
+    color:#FAF6EA;margin-bottom:4px;
+  }
+  .tour-caption .city-name b{color:var(--klar-gold-bright);font-weight:700;margin-right:6px}
+  .tour-caption .city-story{
+    font-family:var(--font-display);font-size:13px;font-style:italic;
+    color:#EDE0BC;line-height:1.5;margin-bottom:10px;
+  }
+  .tour-caption .city-seal{
+    font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;
+    color:var(--klar-gold-bright);
+  }
+  .tour-caption .city-seal span{color:#EDE0BC;margin-right:10px}
+
+  /* ====== MARCA D'ÁGUA WINDI DENTRO DO MAPA ====== */
+  .map-watermark{
+    position:absolute;bottom:28px;right:28px;z-index:406;
+    display:flex;flex-direction:column;align-items:flex-end;
+    pointer-events:none;
+    opacity:.82;
+  }
+  .map-watermark .diamond{
+    font-size:28px;
+    color: var(--klar-gold-bright);
+    text-shadow: 0 2px 8px rgba(0,0,0,.6), 0 0 20px rgba(139,105,20,.5);
+    line-height:1;
+    margin-bottom:2px;
+  }
+  .map-watermark .text{
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: .28em;
+    color: #F5D98C;
+    text-shadow: 0 1px 3px rgba(0,0,0,.7);
+    text-transform: uppercase;
+    font-weight:600;
+  }
+  .map-watermark .sub{
+    font-family:var(--font-mono);
+    font-size:8px;
+    letter-spacing:.2em;
+    color:#EDE0BC;
+    opacity:.7;
+    margin-top:2px;
+    text-shadow: 0 1px 2px rgba(0,0,0,.7);
+  }
+
+  /* ====== MARCADORES CUSTOM ====== */
+  .windi-marker{cursor:pointer;position:relative}
+  .windi-marker .pulse{
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:40px;height:40px;border-radius:50%;
+    background:rgba(139,105,20,.3);
+    animation:mapPulse 2.6s ease-in-out infinite;
+  }
+  .windi-marker.primary .pulse{width:56px;height:56px;background:rgba(139,105,20,.4)}
+  .windi-marker.tour-active .pulse{background:rgba(200,155,74,.55);animation-duration:1.2s}
+  .windi-marker .dot{
+    position:relative;z-index:2;
+    width:14px;height:14px;
+    background:var(--klar-gold);
+    border:2px solid #FAF6EA;
+    border-radius:50%;
+    box-shadow:0 0 0 1.5px var(--klar-gold), 0 4px 10px rgba(0,0,0,.5);
+    transition: all .3s ease;
+  }
+  .windi-marker.primary .dot{
+    width:20px;height:20px;border-width:3px;
+    box-shadow:0 0 0 2px var(--klar-gold), 0 6px 14px rgba(0,0,0,.55);
+  }
+  .windi-marker.tour-active .dot{
+    background: var(--klar-gold-bright);
+    box-shadow: 0 0 0 3px var(--klar-gold-bright), 0 0 24px var(--klar-gold-bright), 0 6px 16px rgba(0,0,0,.6);
+    transform: scale(1.3);
+  }
+  .windi-marker .label{
+    position:absolute;top:24px;left:50%;transform:translateX(-50%);
+    background:rgba(42,37,32,.9);
+    color:#FAF6EA;
+    padding:5px 12px;white-space:nowrap;
+    font-family:var(--font-display);font-size:13px;font-weight:600;
+    border:1px solid var(--klar-gold);
+    letter-spacing:-.01em;
+    backdrop-filter: blur(4px);
+    box-shadow:0 4px 10px rgba(0,0,0,.35);
+  }
+  .windi-marker.primary .label{background:var(--klar-gold);color:#FAF6EA;font-weight:700;font-size:14px}
+  .windi-marker .label::before{
+    content:"";position:absolute;top:-5px;left:50%;transform:translateX(-50%);
+    width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;
+    border-bottom:5px solid var(--klar-gold);
+  }
+
+  @keyframes mapPulse{
+    0%{transform:translate(-50%,-50%) scale(.8);opacity:.8}
+    100%{transform:translate(-50%,-50%) scale(2);opacity:0}
+  }
+
+  /* Popups */
+  .maplibregl-popup-content{
+    background:var(--klar-bg) !important;
+    border:1px solid var(--klar-gold) !important;
+    border-radius:0 !important;
+    box-shadow:0 8px 24px rgba(0,0,0,.3) !important;
+    padding:14px 18px !important;
+    font-family:var(--font-display) !important;
+    color:var(--klar-ink) !important;
+  }
+  .maplibregl-popup-tip{border-top-color:var(--klar-gold) !important}
+  .maplibregl-popup-close-button{color:var(--klar-ink-soft) !important;font-size:18px !important;padding:4px 8px !important}
+  .popup-title{font-size:15px;font-weight:700;margin-bottom:4px}
+  .popup-sub{font-size:11px;color:var(--klar-ink-soft);font-style:italic;margin-bottom:8px}
+  .popup-meta{font-family:var(--font-mono);font-size:9.5px;color:var(--klar-gold);letter-spacing:.05em}
+  .popup-meta span{display:block;margin-top:2px;color:var(--klar-ink-soft)}
+  .popup-meta span b{color:var(--klar-gold);font-weight:500}
+
+  .maplibregl-ctrl-group{border:1px solid var(--klar-gold) !important;border-radius:0 !important}
+  .maplibregl-ctrl-group button{background:var(--klar-bg) !important}
+  .maplibregl-ctrl-attrib{background:rgba(245,240,224,.92) !important;font-family:var(--font-mono) !important;font-size:9px !important}
+
+  /* Polaroids */
+  .polaroid-stack{display:flex;flex-direction:column;gap:20px;align-items:center;margin-top:18px}
+  .polaroid{width:170px;background:#FAF6EA;padding:10px 10px 28px;box-shadow:0 3px 0 var(--klar-shadow), 0 8px 16px rgba(42,37,32,.1);position:relative;transition:transform .3s ease;cursor:pointer}
+  .polaroid:hover{transform:rotate(0deg) scale(1.04) !important}
+  .polaroid-image{width:100%;aspect-ratio:1/1;overflow:hidden}
+  .polaroid-image svg{width:100%;height:100%;display:block}
+  .polaroid-caption{font-family:var(--font-mono);font-size:10px;text-align:center;margin-top:10px;letter-spacing:.03em}
+  .polaroid-seal{position:absolute;top:6px;right:6px;font-family:var(--font-mono);font-size:8px;color:var(--klar-gold);letter-spacing:.1em}
+
+  /* Loading state inicial */
+  .loading-overlay{
+    position:absolute;inset:0;z-index:500;
+    background: linear-gradient(135deg, #2A2520 0%, #3A3025 100%);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    color:#F5D98C;transition: opacity .8s ease;
+  }
+  .loading-overlay.hidden{opacity:0;pointer-events:none}
+  .loading-overlay .diamond{font-size:48px;margin-bottom:16px;animation:loadingPulse 1.8s ease-in-out infinite}
+  .loading-overlay .text{font-family:var(--font-mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;opacity:.8}
+  @keyframes loadingPulse{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:1;transform:scale(1.08)}}
+
+  footer{padding:14px 40px;border-top:1px solid var(--klar-rule);display:flex;justify-content:space-between;align-items:center;font-family:var(--font-mono);font-size:10px;color:var(--klar-ink-soft);letter-spacing:.08em;position:relative;z-index:2;background:var(--klar-bg)}
+  footer b{color:var(--klar-gold);font-weight:500}
+  footer .live{color:#2EA050;font-weight:600}
+  footer .live::before{content:"● ";animation:liveDot 1.8s ease-in-out infinite}
+
+  /* HYBRID badge */
+  .hybrid-badge{
+    display:inline-block;
+    background: rgba(139,105,20,.15);
+    border: 1px solid var(--klar-gold);
+    color: var(--klar-gold);
+    padding: 2px 8px;
+    font-size: 9px;
+    letter-spacing: .2em;
+    font-weight: 600;
+    margin-left: 6px;
+    cursor: help;
+  }
+
+  /* Breakdown em sidebar (real · sim) */
+  .breakdown{
+    color: var(--klar-ink-soft);
+    font-size: 8.5px;
+    font-style: italic;
+    letter-spacing: 0;
+    margin-left: 2px;
+  }
+
+  /* Verify link em popup */
+  .verify-link{
+    display: inline-block;
+    margin-top: 10px;
+    padding: 5px 10px;
+    background: var(--klar-gold);
+    color: #FAF6EA !important;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: .08em;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all .2s ease;
+    border: 1px solid var(--klar-gold);
+  }
+  .verify-link:hover{
+    background: var(--klar-gold-bright);
+    transform: translateX(2px);
+  }
+
+  /* LIVE mini indicator (em popups) */
+  .live-mini{
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: .15em;
+    color: #2EA050;
+    font-weight: 700;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .live-mini::before{
+    content: "";
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #2EA050;
+    margin-right: 3px;
+    animation: liveDot 1.8s ease-in-out infinite;
+    vertical-align: middle;
+  }
+
+  @media (max-width: 900px){
+    header{padding:18px 16px;grid-template-columns:1fr;gap:10px;text-align:center}
+    .stamp{justify-self:center;margin-top:4px}
+    .stage{grid-template-columns:1fr;min-height:auto}
+    .sidebar-left,.sidebar-right{border:none;border-bottom:1px solid var(--klar-rule);padding:20px 16px}
+    .canvas{border-bottom:1px solid var(--klar-rule)}
+    #map{min-height:500px}
+    .city-list{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .polaroid-stack{flex-direction:row;flex-wrap:wrap;justify-content:center}
+    .polaroid{width:140px}
+    .map-title{top:20px;left:20px;max-width:240px}
+    .map-title h1{font-size:36px}
+    .map-title .desc{font-size:11px;max-width:200px}
+    .tour-control{bottom:20px;padding:8px 12px;gap:10px}
+    .tour-progress{width:90px}
+    .tour-caption{max-width:calc(100% - 40px);padding:12px 16px}
+    .map-watermark{bottom:90px;right:16px}
+    .map-watermark .diamond{font-size:22px}
+    footer{padding:10px 16px;font-size:9px;flex-direction:column;gap:4px;text-align:center}
+  }
+
+  @media (prefers-reduced-motion: no-preference){
+    @keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+    header>*{opacity:0;animation:fu .6s .1s ease-out forwards}
+    header>*:nth-child(2){animation-delay:.25s}
+    header>*:nth-child(3){animation-delay:.4s}
+    .sidebar-left{opacity:0;animation:fu .7s .6s ease-out forwards}
+    .sidebar-right{opacity:0;animation:fu .7s .8s ease-out forwards}
+    .polaroid{opacity:0;animation:fu .5s ease-out forwards}
+    .polaroid:nth-child(1){animation-delay:1s}
+    .polaroid:nth-child(2){animation-delay:1.15s}
+    .polaroid:nth-child(3){animation-delay:1.3s}
+    .polaroid:nth-child(4){animation-delay:1.45s}
+    .polaroid:nth-child(5){animation-delay:1.6s}
+    .map-title{opacity:0;animation:fu 1.2s 1.5s ease-out forwards}
+    .tour-control{opacity:0;animation:fu 1s 2s ease-out forwards}
+    .map-watermark{opacity:0;animation:fu 1.2s 1.8s ease-out forwards}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">WINDI <span>Travel</span> · <span data-i18n="brand_sub">Verifiable Memory</span></div>
+  <div class="title-mark">
+    <span data-i18n="map_type">Editorial Map · v2 Refined</span>
+    <b>Bayern Süd · Edition Berlin</b>
+  </div>
+  <div class="header-controls">
+    <div class="lang-toggle">
+      <button data-lang="de">DE</button>
+      <button data-lang="en">EN</button>
+      <button data-lang="pt">PT</button>
+    </div>
+    <div class="stamp pitch">BERLIN PITCH · MAI 2026</div>
+  </div>
+</header>
+
+<main class="stage">
+  <aside class="sidebar-left">
+    <div class="sidebar-label" data-i18n="sidebar_cities">Sealed Cities · 2026</div>
+    <ul class="city-list" id="cityList"></ul>
+  </aside>
+
+  <section class="canvas">
+    <div id="map"></div>
+
+    <!-- Fog dourada (sobre o mapa, abaixo dos markers) -->
+    <div class="fog-horizon"></div>
+    <div class="fog-haze"></div>
+
+    <!-- Vinheta -->
+    <div class="vignette"></div>
+
+    <!-- Título refinado -->
+    <div class="map-title">
+      <div class="eyebrow">— Edition Südbayern · 2026 —</div>
+      <h1>Bayern<em>Allgäu · Alpen</em></h1>
+      <div class="desc" data-i18n="map_desc">Five places. Sealed by the Sovereign Scissors. Proven by the Forensic Ledger.</div>
+    </div>
+
+    <!-- Marca d'água WINDI dentro do mapa -->
+    <div class="map-watermark">
+      <div class="diamond">◆</div>
+      <div class="text">WINDI Travel</div>
+      <div class="sub">I16 · Cartographic Sovereignty</div>
+    </div>
+
+    <!-- Controlo do Tour Narrado -->
+    <div class="tour-control">
+      <button class="tour-btn" id="tourBtn" aria-label="Start Narrated Tour">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path id="playIcon" d="M4 2 L4 14 L14 8 Z"/></svg>
+      </button>
+      <div class="tour-info">
+        <div class="label" id="tourLabel" data-i18n="tour_label">Narrated Tour</div>
+        <div class="current" id="tourCurrent" data-i18n="tour_cities">Bayern · 5 cities</div>
+        <div class="tour-progress"><div class="tour-progress-bar" id="tourProgressBar"></div></div>
+      </div>
+    </div>
+
+    <!-- Legenda narrativa (aparece durante tour) -->
+    <div class="tour-caption" id="tourCaption">
+      <div class="city-name"><b>◆</b><span id="captionName">—</span></div>
+      <div class="city-story" id="captionStory">—</div>
+      <div class="city-seal"><span id="captionCoords">—</span><span id="captionReceipts">—</span></div>
+    </div>
+
+    <!-- Frame dourado -->
+    <div class="frame">
+      <div class="corner corner-tl"></div>
+      <div class="corner corner-tr"></div>
+      <div class="corner corner-bl"></div>
+      <div class="corner corner-br"></div>
+    </div>
+
+    <!-- Loading cinematográfico -->
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="diamond">◆</div>
+      <div class="text" data-i18n="loading">Preparing Bayern…</div>
+    </div>
+  </section>
+
+  <aside class="sidebar-right">
+    <div class="sidebar-label" data-i18n="sidebar_postcards">Sovereign Scissors · Postcards</div>
+    <div class="polaroid-stack" id="polaroidStack"></div>
+  </aside>
+</main>
+
+<footer>
+  <div>🔐 <b data-i18n="approach">Approach:</b> MapLibre GL · v2 · <span data-i18n="refinements">6 refinements</span></div>
+  <div id="ledgerStatus">I16 · <span style="color:var(--klar-ink-soft)" data-i18n="contacting_ledger">Contacting Ledger…</span></div>
+  <div>🐉 windi-travel.de</div>
+</footer>
+
+<script>
+// ============================================================
+// CONFIG
+// ============================================================
+// ============================================================
+// LEDGER CONFIG — HYBRID MODE (reais + simulados, transparente)
+// ============================================================
+const LEDGER_CONFIG = {
+  enabled: true,
+  mode: "hybrid",  // "live" | "hybrid" | "mock"
+  endpoint: "https://www.windi-domain.com/api/receipts/",
+  filter: "?app=windi-travel-tesoura",
+  verifyBase: "https://www.windi-domain.com/verify-public/",
+  fallbackToMock: true,     // se o Ledger cair, continua com mocks (pitch não trava)
+  timeout: 4000,
+};
+
+const TOUR_CONFIG = {
+  dwellTime: 3500,        // ms em cada cidade
+  transitionTime: 2500,   // ms de flyTo entre cidades
+  zoomPrimary: 10.5,
+  zoomSecondary: 11,
+  pitch: 60,
+};
+
+// ============================================================
+// DATASET
+// ============================================================
+const CITIES = [
+  {id:"kempten",name:"Kempten",subtitle:"Allgäu · Sede WINDI",
+   lat:47.7267,lng:10.3167,sealed:"2026-03-01",receipts:14,primary:true,
+   story:"Onde o Dragon respira. Kempten é a origem do fio — a cidade-âncora que dá endereço ao ecossistema."},
+  {id:"oberstdorf",name:"Oberstdorf",subtitle:"Allgäuer Alpen · Raiz",
+   lat:47.4095,lng:10.2794,sealed:"2026-03-08",receipts:7,primary:false,
+   story:"O coração vertical do Allgäu. Neve, silêncio, altitude — o território que se conhece pelos nomes dos caminhos."},
+  {id:"neuschwanstein",name:"Neuschwanstein",subtitle:"Schwangau · Ícone",
+   lat:47.5576,lng:10.7498,sealed:"2026-03-15",receipts:23,primary:false,
+   story:"O castelo mais fotografado da Europa. Toda a gente tem uma foto. WINDI sela a prova de que essa foto é tua."},
+  {id:"munchen",name:"München",subtitle:"Capital da Bavaria",
+   lat:48.1351,lng:11.5820,sealed:"2026-03-22",receipts:41,primary:true,
+   story:"Onde o Dragon encontra o mundo. Pitch ground, DATEV ground, o nó central que liga Bavaria ao globo."},
+  {id:"berchtesgaden",name:"Berchtesgaden",subtitle:"Alpes · Fronteira",
+   lat:47.6309,lng:13.0017,sealed:"2026-03-29",receipts:11,primary:false,
+   story:"Onde a Alemanha toca os Alpes austríacos. Königssee, Watzmann — o fim do mapa, e por isso mesmo o começo."}
+];
+
+const POLAROIDS = [
+  {id:"p1",cityId:"kempten",caption:"Hildegardplatz · 14:22",rotation:-4,c1:"#8B6914",c2:"#C89B4A",pattern:"lines"},
+  {id:"p2",cityId:"oberstdorf",caption:"Nebelhorn · névoa",rotation:3,c1:"#5C6B7A",c2:"#8A97A5",pattern:"dots"},
+  {id:"p3",cityId:"neuschwanstein",caption:"Marienbrücke · 16:08",rotation:-2,c1:"#2A2520",c2:"#8B6914",pattern:"triangles"},
+  {id:"p4",cityId:"munchen",caption:"Viktualienmarkt",rotation:5,c1:"#A84A2A",c2:"#E8C39C",pattern:"waves"},
+  {id:"p5",cityId:"berchtesgaden",caption:"Königssee · reflexo",rotation:-3,c1:"#3A5A6A",c2:"#7FA3B5",pattern:"circles"}
+];
+
+// ============================================================
+// LEDGER ADAPTER — HYBRID MODE
+// Estratégia: busca receipts reais, distribui-os por cidade via hash
+// determinístico do ID (mesmo a cada refresh), mantém contagem separada
+// entre reais e simulados, mostra transparência no UI.
+// ============================================================
+
+// Hash estável de string → índice de cidade (0..4)
+// Determinístico: mesmo input = mesmo output sempre
+function stableHashToCity(str){
+  let h = 0;
+  for (let i = 0; i < str.length; i++){
+    h = ((h << 5) - h) + str.charCodeAt(i);
+    h = h & h; // 32-bit
+  }
+  return Math.abs(h) % CITIES.length;
+}
+
+// Tenta extrair city_id do metadata (futuro) ou do doc_name (heurística)
+function cityFromReceipt(receipt){
+  // 1. Preferred: metadata.city_id (convention futura)
+  if (receipt.metadata && receipt.metadata.city_id){
+    const c = CITIES.find(ci => ci.id === receipt.metadata.city_id);
+    if (c) return c;
+  }
+  // 2. Heurística: procurar nome de cidade no doc_name
+  const dn = (receipt.doc_name || "").toLowerCase();
+  for (const c of CITIES){
+    if (dn.includes(c.id) || dn.includes(c.name.toLowerCase())){
+      return c;
+    }
+  }
+  // 3. Fallback: hash determinístico do id → cidade (estável entre refreshes)
+  const idx = stableHashToCity(receipt.id);
+  return CITIES[idx];
+}
+
+// Estado global do Ledger
+const ledgerState = {
+  realReceipts: [],      // todos os receipts travel reais que vieram do Ledger
+  mockTotal: 0,          // soma dos receipts mockados (placeholder inicial)
+  realTotal: 0,          // count dos reais
+  loaded: false,
+  failed: false,
+  mode: "loading",       // "loading" | "hybrid" | "mock-only" | "failed"
+};
+
+async function fetchLedgerReceipts(){
+  if (!LEDGER_CONFIG.enabled) return null;
+  try {
+    const url = LEDGER_CONFIG.endpoint + LEDGER_CONFIG.filter;
+    const ctrl = new AbortController();
+    setTimeout(()=>ctrl.abort(), LEDGER_CONFIG.timeout);
+    const res = await fetch(url, {signal: ctrl.signal});
+    if (!res.ok) throw new Error(`Ledger HTTP ${res.status}`);
+    const data = await res.json();
+    if (!data.ok || !Array.isArray(data.receipts)){
+      throw new Error("Ledger response malformed");
+    }
+    return data.receipts;
+  } catch(e){
+    console.warn("[Ledger] fetch failed, using mock-only:", e.message);
+    return null;
+  }
+}
+
+async function hydrateFromLedger(){
+  // Guardar totais mock originais (antes de adicionar reais)
+  ledgerState.mockTotal = CITIES.reduce((sum, c)=>sum + c.receipts, 0);
+
+  const realReceipts = await fetchLedgerReceipts();
+
+  if (!realReceipts){
+    // Ledger falhou ou disabled → modo mock-only
+    ledgerState.mode = LEDGER_CONFIG.fallbackToMock ? "mock-only" : "failed";
+    ledgerState.failed = true;
+    updateLedgerUI();
+    return;
+  }
+
+  ledgerState.realReceipts = realReceipts;
+  ledgerState.realTotal = realReceipts.length;
+
+  // Distribuir receipts reais por cidade
+  CITIES.forEach(c => {
+    c.realReceipts = [];
+    c.realCount = 0;
+    c.simulatedCount = c.receipts;  // o número original mock vira "simulated"
+  });
+
+  realReceipts.forEach(r => {
+    const city = cityFromReceipt(r);
+    if (!city.realReceipts) city.realReceipts = [];
+    city.realReceipts.push(r);
+    city.realCount = (city.realCount || 0) + 1;
+  });
+
+  // Total por cidade = real + simulated
+  CITIES.forEach(c => {
+    c.receipts = (c.realCount || 0) + (c.simulatedCount || 0);
+    c.ledgerLive = (c.realCount || 0) > 0;
+  });
+
+  ledgerState.loaded = true;
+  ledgerState.mode = "hybrid";
+  renderCityList();
+  updateLedgerUI();
+}
+
+function updateLedgerUI(){
+  const statusEl = document.getElementById("ledgerStatus");
+  if (ledgerState.mode === "hybrid"){
+    statusEl.innerHTML = `I16 · <b class="live">${ledgerState.realTotal} reais</b> + <span style="color:var(--klar-ink-soft)">${ledgerState.mockTotal} simulados</span> · <span class="hybrid-badge" title="Modo Hybrid: números mistos — reais do Ledger ao vivo, simulados para escala demo">HYBRID</span>`;
+  } else if (ledgerState.mode === "mock-only"){
+    statusEl.innerHTML = `I16 · <span style="color:var(--klar-ink-soft)">Simulated · <b>${ledgerState.mockTotal} receipts</b></span> · <span class="hybrid-badge" style="background:rgba(160,120,80,.2);border-color:#A87850" title="Ledger indisponível neste momento — a mostrar dados de demo">FALLBACK</span>`;
+  } else if (ledgerState.mode === "loading"){
+    statusEl.innerHTML = `I16 · <span style="color:var(--klar-ink-soft)">A contactar Ledger…</span>`;
+  }
+}
+
+// ============================================================
+// SIDEBAR CIDADES
+// ============================================================
+function renderCityList(){
+  const cityList = document.getElementById("cityList");
+  cityList.innerHTML = "";
+  CITIES.forEach((c,i)=>{
+    const li = document.createElement("li");
+    li.className = "city-card";
+    li.dataset.cityId = c.id;
+    const liveDot = c.ledgerLive ? '<span class="live-dot" title="Tem receipts reais no Ledger"></span>' : '';
+    const breakdown = c.ledgerLive
+      ? `<b>${c.receipts}</b> <span class="breakdown">(${c.realCount} real · ${c.simulatedCount || 0} sim)</span>`
+      : `<b>${c.receipts}</b> receipts`;
+    li.innerHTML = `
+      <div class="num">0${i+1} ${c.primary ? "· ◆" : ""}</div>
+      <h3>${c.name}</h3>
+      <div class="sub">${c.subtitle}</div>
+      <div class="meta">
+        <span>${c.lat.toFixed(3)}°N</span>
+        <span>${c.lng.toFixed(3)}°E</span>
+        <span>${liveDot}${breakdown}</span>
+      </div>
+    `;
+    li.addEventListener("click", ()=>{
+      flyToCity(c);
+    });
+    cityList.appendChild(li);
+  });
+}
+renderCityList();
+
+// Highlight sidebar card activa
+function setActiveCityCard(cityId){
+  document.querySelectorAll(".city-card").forEach(el=>{
+    el.classList.toggle("active", el.dataset.cityId === cityId);
+  });
+}
+
+// ============================================================
+// MAPLIBRE — Estilo com sky layer para fog/atmosphere
+// ============================================================
+const EDITORIAL_STYLE = {
+  version: 8,
+  name: "WINDI KLAR Editorial v2",
+  glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
+  sources: {
+    "osm-raster": {
+      type: "raster",
+      tiles: [
+        "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        "https://b.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      ],
+      tileSize: 256,
+      attribution: "OSM · MapLibre · WINDI · I16"
+    },
+    "terrain-dem": {
+      type: "raster-dem",
+      tiles: ["https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png"],
+      tileSize: 256,
+      encoding: "terrarium",
+      maxzoom: 15,
+      attribution: "Terrain: Mapzen"
+    }
+  },
+  layers: [
+    {
+      id: "bg",
+      type: "background",
+      paint: { "background-color": "#B8A882" }
+    },
+    {
+      id: "osm-layer",
+      type: "raster",
+      source: "osm-raster",
+      paint: {
+        "raster-opacity": 0.78,
+        "raster-saturation": -0.55,
+        "raster-hue-rotate": -12,
+        "raster-brightness-min": 0.12,
+        "raster-brightness-max": 0.96,
+        "raster-contrast": -0.08
+      }
+    },
+    {
+      id: "hillshade",
+      type: "hillshade",
+      source: "terrain-dem",
+      paint: {
+        "hillshade-exaggeration": 0.75,
+        "hillshade-shadow-color": "#3A2A1A",
+        "hillshade-highlight-color": "#F5E8C8",
+        "hillshade-accent-color": "#8B6914"
+      }
+    }
+  ],
+  // Sky — atmosfera e fog dourada
+  sky: {
+    "atmosphere-blend": ["interpolate", ["linear"], ["zoom"], 0, 1, 10, 1, 12, 0]
+  }
+};
+
+const map = new maplibregl.Map({
+  container: 'map',
+  style: EDITORIAL_STYLE,
+  // SWOOP START — começa alto e vai descendo
+  center: [11.5, 47.75],
+  zoom: 4.8,
+  pitch: 0,
+  bearing: 0,
+  maxPitch: 75,
+  minZoom: 5,
+  maxZoom: 14,
+  attributionControl: true,
+  fadeDuration: 600,
+});
+
+map.addControl(new maplibregl.NavigationControl({showCompass: true, visualizePitch: true}), 'top-right');
+
+// ============================================================
+// SWOOP INICIAL + NEVE NOS PICOS + MARKERS
+// ============================================================
+const activeMarkers = {};
+
+map.on('load', ()=>{
+
+  // === NEVE NOS PICOS (acima de ~1800m) ===
+  // Usamos o terrain-dem como fonte e um fill baseado em altitude
+  // Nota: MapLibre raster-dem não suporta directamente isto em fill,
+  // então usamos um hillshade adicional com cor branca só nas zonas altas
+  map.addLayer({
+    id: "snow-peaks",
+    type: "hillshade",
+    source: "terrain-dem",
+    paint: {
+      "hillshade-exaggeration": 0.2,
+      "hillshade-shadow-color": "rgba(255,255,255,0)",
+      "hillshade-highlight-color": "rgba(255,255,255,0.35)",
+      "hillshade-accent-color": "rgba(245,248,255,0.25)"
+    },
+    layout: { visibility: "visible" },
+    minzoom: 6
+  });
+
+  // === REDE DE MEMÓRIA (linhas entre cidades) ===
+  const routes = [
+    ["kempten","oberstdorf"],
+    ["kempten","neuschwanstein"],
+    ["kempten","munchen"],
+    ["munchen","berchtesgaden"],
+    ["neuschwanstein","oberstdorf"]
+  ];
+  const getCity = id => CITIES.find(c=>c.id===id);
+
+  map.addSource('memory-net', {
+    type: 'geojson',
+    data: {
+      type: 'FeatureCollection',
+      features: routes.map(([a,b])=>{
+        const ca = getCity(a), cb = getCity(b);
+        return {type:'Feature',geometry:{type:'LineString',coordinates:[[ca.lng,ca.lat],[cb.lng,cb.lat]]}};
+      })
+    }
+  });
+  map.addLayer({
+    id:'memory-net-glow',
+    type:'line',
+    source:'memory-net',
+    paint:{'line-color':'#C89B4A','line-width':6,'line-opacity':0.2,'line-blur':6}
+  });
+  map.addLayer({
+    id:'memory-net-line',
+    type:'line',
+    source:'memory-net',
+    paint:{'line-color':'#8B6914','line-width':1.8,'line-opacity':0.8,'line-dasharray':[2,3]}
+  });
+
+  // === MARKERS ===
+  CITIES.forEach(c=>{
+    const el = document.createElement('div');
+    el.className = 'windi-marker' + (c.primary ? ' primary' : '');
+    el.dataset.cityId = c.id;
+    el.innerHTML = `<div class="pulse"></div><div class="dot"></div><div class="label">${c.name}</div>`;
+
+    // Popup builder — actualiza quando Ledger hidrata
+    const buildPopupHTML = ()=>{
+      const hasReal = c.ledgerLive && c.realReceipts && c.realReceipts.length;
+      const breakdown = hasReal
+        ? `<span>🔐 <b>${c.realCount}</b> real · <b>${c.simulatedCount || 0}</b> simulated</span>`
+        : `<span><b>${c.receipts}</b> receipts simulated</span>`;
+      const verifyLink = hasReal
+        ? `<a href="${LEDGER_CONFIG.verifyBase}?id=${encodeURIComponent(c.realReceipts[0].id)}" target="_blank" class="verify-link">→ verify real receipt</a>`
+        : '';
+      return `
+        <div class="popup-title">${c.name} ${c.primary ? '◆' : ''}${hasReal ? ' <span class="live-mini">● LIVE</span>' : ''}</div>
+        <div class="popup-sub">${c.subtitle}</div>
+        <div class="popup-meta">
+          <span>${c.lat.toFixed(4)}°N · ${c.lng.toFixed(4)}°E</span>
+          <span>Selado <b>${c.sealed}</b></span>
+          ${breakdown}
+        </div>
+        ${verifyLink}
+      `;
+    };
+
+    const popup = new maplibregl.Popup({offset:20, closeButton:true, maxWidth:'300px'});
+    popup.setHTML(buildPopupHTML());
+
+    const marker = new maplibregl.Marker({element: el, anchor:'center'})
+      .setLngLat([c.lng, c.lat])
+      .setPopup(popup)
+      .addTo(map);
+
+    // Guardar builder para refresh pós-Ledger
+    c._refreshPopup = ()=> popup.setHTML(buildPopupHTML());
+    activeMarkers[c.id] = el;
+  });
+
+  // === SWOOP — câmara desce do alto ===
+  // Damos 400ms para o mapa estabilizar, depois o swoop
+  setTimeout(()=>{
+    document.getElementById("loadingOverlay").classList.add("hidden");
+    map.flyTo({
+      center: [11.5, 47.75],
+      zoom: 7.5,
+      pitch: 50,
+      bearing: -6,
+      duration: 2800,
+      essential: true,
+      easing: t => t < .5 ? 2*t*t : -1 + (4 - 2*t)*t  // easeInOutQuad
+    });
+  }, 400);
+
+  // Hidratar Ledger (Hybrid mode) depois do swoop
+  setTimeout(async ()=>{
+    await hydrateFromLedger();
+    // Refresh popups para mostrar dados hybrid
+    CITIES.forEach(c => { if (c._refreshPopup) c._refreshPopup(); });
+  }, 3500);
+});
+
+// ============================================================
+// FLY TO CITY (usado por cards, polaroids, tour)
+// ============================================================
+function flyToCity(city, opts={}){
+  const zoom = city.primary ? TOUR_CONFIG.zoomPrimary : TOUR_CONFIG.zoomSecondary;
+  map.flyTo({
+    center: [city.lng, city.lat],
+    zoom: opts.zoom || zoom,
+    pitch: opts.pitch || TOUR_CONFIG.pitch,
+    bearing: opts.bearing !== undefined ? opts.bearing : -8,
+    duration: opts.duration || 2000,
+    essential: true,
+  });
+  setActiveCityCard(city.id);
+}
+
+// ============================================================
+// TOUR NARRADO
+// ============================================================
+const tourBtn = document.getElementById("tourBtn");
+const tourLabel = document.getElementById("tourLabel");
+const tourCurrent = document.getElementById("tourCurrent");
+const tourProgressBar = document.getElementById("tourProgressBar");
+const tourCaption = document.getElementById("tourCaption");
+const captionName = document.getElementById("captionName");
+const captionStory = document.getElementById("captionStory");
+const captionCoords = document.getElementById("captionCoords");
+const captionReceipts = document.getElementById("captionReceipts");
+const playIcon = document.getElementById("playIcon");
+
+let tourState = {
+  playing: false,
+  currentIndex: -1,
+  timers: [],
+};
+
+function stopTour(){
+  tourState.playing = false;
+  tourState.currentIndex = -1;
+  tourState.timers.forEach(t=>clearTimeout(t));
+  tourState.timers = [];
+  tourBtn.classList.remove("playing");
+  playIcon.setAttribute("d", "M4 2 L4 14 L14 8 Z");  // play icon
+  tourBtn.setAttribute("aria-label", "Iniciar Tour Narrado");
+  tourLabel.textContent = i18n[currentLang]?.tour_label || "Narrated Tour";
+  tourCurrent.textContent = i18n[currentLang]?.tour_cities || "Bayern · 5 cities";
+  tourProgressBar.style.width = "0%";
+  tourCaption.classList.remove("visible");
+  // Remover highlight de todos os markers
+  Object.values(activeMarkers).forEach(el=>el.classList.remove("tour-active"));
+}
+
+function showCaption(city){
+  captionName.textContent = city.name;
+  const cityI18n = i18n[currentLang]?.cities?.[city.id] || {};
+  captionStory.textContent = cityI18n.story || city.story;
+  captionCoords.textContent = `${city.lat.toFixed(3)}°N · ${city.lng.toFixed(3)}°E`;
+  const realLabel = i18n[currentLang]?.real || 'real';
+  const simLabel = i18n[currentLang]?.sim || 'sim';
+  const receiptsLabel = i18n[currentLang]?.receipts || 'receipts';
+  if (city.ledgerLive && city.realCount){
+    captionReceipts.innerHTML = `<b style="color:var(--klar-gold-bright)">${city.realCount} ${realLabel}</b> <span style="color:#C4B896;margin:0 4px">·</span> <b style="color:#C4B896">${city.simulatedCount || 0} ${simLabel}</b> <span style="color:#2EA050;margin-left:6px;font-weight:600">● LIVE</span>`;
+  } else {
+    captionReceipts.innerHTML = `<b style="color:var(--klar-gold-bright)">${city.receipts}</b> ${receiptsLabel} <span style="color:#C4B896;font-size:9px">(simulated)</span>`;
+  }
+  tourCaption.classList.add("visible");
+}
+
+function hideCaption(){
+  tourCaption.classList.remove("visible");
+}
+
+function playTour(){
+  if (tourState.playing){ stopTour(); return; }
+
+  tourState.playing = true;
+  tourBtn.classList.add("playing");
+  playIcon.setAttribute("d", "M3 3 L7 3 L7 13 L3 13 Z M9 3 L13 3 L13 13 L9 13 Z");  // stop/pause icon
+  tourBtn.setAttribute("aria-label", "Parar Tour");
+  tourLabel.textContent = "A correr…";
+
+  const total = CITIES.length;
+  const totalTime = total * (TOUR_CONFIG.dwellTime + TOUR_CONFIG.transitionTime);
+  const startTs = Date.now();
+
+  // Progress bar animation
+  const progressInterval = setInterval(()=>{
+    if (!tourState.playing){ clearInterval(progressInterval); return; }
+    const elapsed = Date.now() - startTs;
+    const pct = Math.min(100, (elapsed/totalTime)*100);
+    tourProgressBar.style.width = pct + "%";
+    if (pct >= 100) clearInterval(progressInterval);
+  }, 50);
+  tourState.timers.push({intervalId: progressInterval});
+
+  CITIES.forEach((city, idx)=>{
+    const stepDelay = idx * (TOUR_CONFIG.dwellTime + TOUR_CONFIG.transitionTime);
+
+    // Começa o flyTo
+    const t1 = setTimeout(()=>{
+      if (!tourState.playing) return;
+      tourState.currentIndex = idx;
+      tourCurrent.textContent = `${idx+1}/${total} · ${city.name}`;
+      // Highlight marker activo
+      Object.values(activeMarkers).forEach(el=>el.classList.remove("tour-active"));
+      if (activeMarkers[city.id]) activeMarkers[city.id].classList.add("tour-active");
+      // FlyTo
+      flyToCity(city, {
+        duration: TOUR_CONFIG.transitionTime,
+        bearing: -6 + (idx*3),  // varia ligeiramente o bearing para sensação de viagem
+      });
+      // Mostra caption no fim do flyTo
+      const t2 = setTimeout(()=>{
+        if (tourState.playing) showCaption(city);
+      }, TOUR_CONFIG.transitionTime - 200);
+      tourState.timers.push(t2);
+    }, stepDelay);
+    tourState.timers.push(t1);
+  });
+
+  // Final — voltar ao overview
+  const endTimer = setTimeout(()=>{
+    if (!tourState.playing) return;
+    hideCaption();
+    Object.values(activeMarkers).forEach(el=>el.classList.remove("tour-active"));
+    map.flyTo({center:[11.5, 47.75], zoom:7.5, pitch:50, bearing:-6, duration:2500, essential:true});
+    setTimeout(()=>{
+      stopTour();
+      tourCurrent.textContent = i18n[currentLang]?.tour_complete || "Tour complete · 5/5 ◆";
+    }, 2500);
+  }, totalTime);
+  tourState.timers.push(endTimer);
+}
+
+tourBtn.addEventListener("click", playTour);
+
+// Parar o tour se o user interagir manualmente
+map.on('dragstart', ()=>{ if(tourState.playing) stopTour(); });
+document.querySelectorAll(".city-card").forEach(el=>{
+  el.addEventListener("click", ()=>{ if(tourState.playing) stopTour(); });
+});
+
+// ============================================================
+// POLAROIDS
+// ============================================================
+function polaroidArt(p){
+  const patterns = {
+    lines: `<defs><pattern id="pat_${p.id}" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="${p.c1}" stroke-width="1.5"/></pattern></defs><rect width="100" height="100" fill="${p.c2}"/><rect width="100" height="100" fill="url(#pat_${p.id})" opacity=".7"/><circle cx="50" cy="50" r="22" fill="${p.c1}" opacity=".35"/>`,
+    dots: `<rect width="100" height="100" fill="${p.c2}"/><g fill="${p.c1}"><circle cx="20" cy="20" r="3"/><circle cx="50" cy="15" r="2"/><circle cx="80" cy="25" r="2.5"/><circle cx="30" cy="50" r="4"/><circle cx="70" cy="55" r="3"/><circle cx="15" cy="80" r="2"/><circle cx="55" cy="85" r="3.5"/><circle cx="85" cy="75" r="2.5"/></g><path d="M0 65 Q50 50 100 70 L100 100 L0 100 Z" fill="${p.c1}" opacity=".4"/>`,
+    triangles: `<rect width="100" height="100" fill="${p.c2}"/><polygon points="50,20 80,75 20,75" fill="${p.c1}"/><polygon points="30,40 60,75 10,75" fill="${p.c1}" opacity=".6"/><circle cx="75" cy="30" r="8" fill="${p.c2}" stroke="${p.c1}" stroke-width="1.5"/>`,
+    waves: `<rect width="100" height="100" fill="${p.c2}"/><path d="M0 40 Q25 30 50 40 T100 40 L100 60 Q75 70 50 60 T0 60 Z" fill="${p.c1}" opacity=".6"/><path d="M0 70 Q25 60 50 70 T100 70 L100 90 L0 90 Z" fill="${p.c1}"/><circle cx="75" cy="25" r="10" fill="${p.c1}" opacity=".7"/>`,
+    circles: `<rect width="100" height="100" fill="${p.c2}"/><circle cx="50" cy="50" r="35" fill="none" stroke="${p.c1}" stroke-width="1"/><circle cx="50" cy="50" r="24" fill="none" stroke="${p.c1}" stroke-width="1"/><circle cx="50" cy="50" r="14" fill="${p.c1}" opacity=".5"/><path d="M0 70 Q50 55 100 70 L100 100 L0 100 Z" fill="${p.c1}" opacity=".7"/>`
+  };
+  return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">${patterns[p.pattern] || patterns.dots}</svg>`;
+}
+
+const pStack = document.getElementById("polaroidStack");
+POLAROIDS.forEach(p=>{
+  const div = document.createElement("div");
+  div.className = "polaroid";
+  div.style.transform = `rotate(${p.rotation}deg)`;
+  div.innerHTML = `
+    <div class="polaroid-seal">◆ SEAL</div>
+    <div class="polaroid-image">${polaroidArt(p)}</div>
+    <div class="polaroid-caption">${p.caption}</div>
+  `;
+  div.addEventListener("click", ()=>{
+    if (tourState.playing) stopTour();
+    const c = CITIES.find(cc=>cc.id===p.cityId);
+    if (c) flyToCity(c);
+  });
+  pStack.appendChild(div);
+});
+
+// ============================================================
+// KEYBOARD SHORTCUTS (para demo suave)
+// ============================================================
+document.addEventListener("keydown", e=>{
+  if (e.target.tagName === "INPUT") return;
+  if (e.key === " " || e.key === "Enter"){
+    if (e.target === tourBtn) return; // deixa o clique natural tratar
+    e.preventDefault();
+    playTour();
+  }
+  if (e.key === "Escape" && tourState.playing) stopTour();
+});
+
+// ============================================================
+// I18N — TRILINGUAL (DE | EN | PT)
+// ============================================================
+const i18n = {
+  de: {
+    brand_sub: "Verifizierbare Erinnerung",
+    map_type: "Redaktionelle Karte · v2 Verfeinert",
+    sidebar_cities: "Versiegelte Städte · 2026",
+    sidebar_postcards: "Souveräne Schere · Postkarten",
+    map_desc: "Fünf Orte. Versiegelt durch die Souveräne Schere. Bewiesen durch das Forensic Ledger.",
+    tour_label: "Erzählte Tour",
+    tour_cities: "Bayern · 5 Städte",
+    loading: "Bayern wird vorbereitet…",
+    approach: "Ansatz:",
+    refinements: "6 Verfeinerungen",
+    contacting_ledger: "Ledger kontaktieren…",
+    receipts: "Belege",
+    real: "echt",
+    sim: "sim",
+    verify: "PRÜFEN",
+    tour_complete: "Tour abgeschlossen · 5/5 ◆",
+    cities: {
+      kempten: { subtitle: "Allgäu · WINDI Sitz", story: "Wo der Dragon atmet. Kempten ist der Ursprung des Fadens — die Ankerstadt, die dem Ökosystem seine Adresse gibt." },
+      oberstdorf: { subtitle: "Allgäuer Alpen · Wurzel", story: "Das vertikale Herz des Allgäus. Schnee, Stille, Höhe — das Territorium, das man an den Namen der Wege erkennt." },
+      neuschwanstein: { subtitle: "Schwangau · Ikone", story: "Das meistfotografierte Schloss Europas. Jeder hat ein Foto. WINDI versiegelt den Beweis, dass dieses Foto dir gehört." },
+      munchen: { subtitle: "Hauptstadt Bayerns", story: "Wo der Dragon die Welt trifft. Pitch Ground, DATEV Ground, der zentrale Knoten, der Bayern mit dem Globus verbindet." },
+      berchtesgaden: { subtitle: "Alpen · Grenze", story: "Wo Deutschland die österreichischen Alpen berührt. Königssee, Watzmann — das Ende der Karte und deshalb der Anfang." }
+    }
+  },
+  en: {
+    brand_sub: "Verifiable Memory",
+    map_type: "Editorial Map · v2 Refined",
+    sidebar_cities: "Sealed Cities · 2026",
+    sidebar_postcards: "Sovereign Scissors · Postcards",
+    map_desc: "Five places. Sealed by the Sovereign Scissors. Proven by the Forensic Ledger.",
+    tour_label: "Narrated Tour",
+    tour_cities: "Bayern · 5 cities",
+    loading: "Preparing Bayern…",
+    approach: "Approach:",
+    refinements: "6 refinements",
+    contacting_ledger: "Contacting Ledger…",
+    receipts: "receipts",
+    real: "real",
+    sim: "sim",
+    verify: "VERIFY",
+    tour_complete: "Tour complete · 5/5 ◆",
+    cities: {
+      kempten: { subtitle: "Allgäu · WINDI HQ", story: "Where the Dragon breathes. Kempten is the thread's origin — the anchor city that gives the ecosystem its address." },
+      oberstdorf: { subtitle: "Allgäu Alps · Root", story: "The vertical heart of the Allgäu. Snow, silence, altitude — the territory known by the names of its paths." },
+      neuschwanstein: { subtitle: "Schwangau · Icon", story: "Europe's most photographed castle. Everyone has a photo. WINDI seals the proof that photo is yours." },
+      munchen: { subtitle: "Capital of Bavaria", story: "Where the Dragon meets the world. Pitch ground, DATEV ground, the central node connecting Bavaria to the globe." },
+      berchtesgaden: { subtitle: "Alps · Border", story: "Where Germany touches the Austrian Alps. Königssee, Watzmann — the map's end, and thus the beginning." }
+    }
+  },
+  pt: {
+    brand_sub: "Memória Verificável",
+    map_type: "Mapa Editorial · v2 Refinado",
+    sidebar_cities: "Cidades Seladas · 2026",
+    sidebar_postcards: "Tesoura Soberana · Postais",
+    map_desc: "Cinco lugares. Selados pela Tesoura Soberana. Provados pelo Forensic Ledger.",
+    tour_label: "Tour Narrado",
+    tour_cities: "Bayern · 5 cidades",
+    loading: "A preparar Bayern…",
+    approach: "Abordagem:",
+    refinements: "6 refinamentos",
+    contacting_ledger: "A contactar Ledger…",
+    receipts: "receipts",
+    real: "real",
+    sim: "sim",
+    verify: "VERIFICAR",
+    tour_complete: "Tour completo · 5/5 ◆",
+    cities: {
+      kempten: { subtitle: "Allgäu · Sede WINDI", story: "Onde o Dragon respira. Kempten é a origem do fio — a cidade-âncora que dá endereço ao ecossistema." },
+      oberstdorf: { subtitle: "Allgäuer Alpen · Raiz", story: "O coração vertical do Allgäu. Neve, silêncio, altitude — o território que se conhece pelos nomes dos caminhos." },
+      neuschwanstein: { subtitle: "Schwangau · Ícone", story: "O castelo mais fotografado da Europa. Toda a gente tem uma foto. WINDI sela a prova de que essa foto é tua." },
+      munchen: { subtitle: "Capital da Bavaria", story: "Onde o Dragon encontra o mundo. Pitch ground, DATEV ground, o nó central que liga Bavaria ao globo." },
+      berchtesgaden: { subtitle: "Alpes · Fronteira", story: "Onde a Alemanha toca os Alpes austríacos. Königssee, Watzmann — o fim do mapa, e por isso mesmo o começo." }
+    }
+  }
+};
+
+let currentLang = 'en';
+
+function getLang() {
+  const stored = localStorage.getItem('windi-lang');
+  if (stored && i18n[stored]) return stored;
+  const browser = navigator.language.slice(0,2).toLowerCase();
+  if (i18n[browser]) return browser;
+  return 'en';
+}
+
+function setLang(lang) {
+  if (!i18n[lang]) return;
+  currentLang = lang;
+  localStorage.setItem('windi-lang', lang);
+  document.documentElement.lang = lang;
+
+  // Static elements
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (i18n[lang][key]) el.textContent = i18n[lang][key];
+  });
+
+  // Language toggle buttons
+  document.querySelectorAll('.lang-toggle button').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === lang);
+  });
+
+  // Re-render city cards with translated content
+  renderCityCards();
+}
+
+function renderCityCards() {
+  const cityList = document.getElementById('cityList');
+  if (!cityList) return;
+  cityList.innerHTML = '';
+
+  CITIES.forEach((c, i) => {
+    const cityI18n = i18n[currentLang].cities[c.id] || {};
+    const subtitle = cityI18n.subtitle || c.subtitle;
+    const receiptsLabel = i18n[currentLang].receipts || 'receipts';
+
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <div class="city-card${c.primary?' active':''}" data-city="${c.id}">
+        <span class="num">${String(i+1).padStart(2,'0')}</span>
+        <h3>${c.name}</h3>
+        <div class="sub">${subtitle}</div>
+        <div class="meta">
+          <span>📍 ${c.lat.toFixed(2)}°N ${c.lng.toFixed(2)}°E</span>
+          <span id="receipts-${c.id}"><b>${c.receipts}</b> ${receiptsLabel}</span>
+        </div>
+      </div>
+    `;
+    li.querySelector('.city-card').addEventListener('click', () => {
+      if (tourState.playing) stopTour();
+      flyToCity(c);
+      document.querySelectorAll('.city-card').forEach(el => el.classList.remove('active'));
+      li.querySelector('.city-card').classList.add('active');
+    });
+    cityList.appendChild(li);
+  });
+
+  // Re-apply ledger data if available
+  if (ledgerState.loaded) {
+    updateUIWithLedger();
+  }
+}
+
+// Override tour complete message
+const originalTourComplete = tourCurrent ? tourCurrent.textContent : '';
+function updateTourComplete() {
+  if (tourCurrent && !tourState.playing) {
+    tourCurrent.textContent = i18n[currentLang].tour_complete || "Tour complete · 5/5 ◆";
+  }
+}
+
+// Init language
+document.querySelectorAll('.lang-toggle button').forEach(btn => {
+  btn.addEventListener('click', () => setLang(btn.dataset.lang));
+});
+
+// Set initial language after DOM ready
+setLang(getLang());
+</script>
+</body>
+</html>

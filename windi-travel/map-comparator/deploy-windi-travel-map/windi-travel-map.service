@@ -1,0 +1,29 @@
+[Unit]
+Description=W-TRAVEL-MAP-001 WINDI Travel Map Comparator
+After=network.target
+Documentation=https://windi-domain.com/travel/map/
+
+[Service]
+Type=simple
+User=windi
+Group=windi
+WorkingDirectory=/opt/windi/windi-travel/map-comparator/deploy-windi-travel-map
+Environment="PATH=/opt/windi/windi-travel/map-comparator/deploy-windi-travel-map/venv/bin"
+ExecStart=/opt/windi/windi-travel/map-comparator/deploy-windi-travel-map/venv/bin/gunicorn \
+    --bind 127.0.0.1:8153 \
+    --workers 2 \
+    --timeout 30 \
+    --access-logfile /var/log/windi/travel-map-access.log \
+    --error-logfile /var/log/windi/travel-map-error.log \
+    server:app
+Restart=always
+RestartSec=5
+
+# Security hardening
+ProtectSystem=strict
+ReadWritePaths=/var/log/windi
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
