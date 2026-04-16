@@ -204,15 +204,16 @@
             }
 
             try {
-                const response = await fetch(`/verify/${id}`);
+                // Use canonical Ledger API endpoint
+                const response = await fetch(`/api/receipts/${encodeURIComponent(id)}`);
                 const data = await response.json();
 
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('result').style.display = 'block';
 
-                if (data.verified) {
+                if (data.ok && data.receipt) {
                     showVerified(data);
-                } else if (data.error) {
+                } else if (data.error || !data.ok) {
                     showUnverified(data);
                 } else {
                     showSuspicious(data);
@@ -228,15 +229,17 @@
             document.getElementById('status-text').textContent = 'VERIFIED';
             document.getElementById('status-text').className = 'status-text verified';
 
-            const receipt = data.ledger_data?.receipt || {};
+            const receipt = data.receipt || {};
 
             document.getElementById('doc-name').textContent = receipt.doc_name || 'Unknown';
             document.getElementById('actor').textContent = receipt.actor || 'Unknown';
             document.getElementById('doc-status').textContent = receipt.status || 'sealed';
             document.getElementById('gov-level').textContent = receipt.governance_level || 'HIGH';
             document.getElementById('content-hash').textContent = receipt.content_hash || 'N/A';
-            document.getElementById('receipt-id').textContent = data.ledger_id || '';
-            document.getElementById('verified-at').textContent = new Date(data.timestamp).toLocaleString();
+            document.getElementById('receipt-id').textContent = receipt.id || '';
+            document.getElementById('verified-at').textContent = receipt.created_at
+                ? new Date(receipt.created_at * 1000).toLocaleString()
+                : 'N/A';
 
             document.getElementById('details-card').style.display = 'block';
         }
@@ -247,10 +250,9 @@
             document.getElementById('status-text').textContent = 'NOT VERIFIED';
             document.getElementById('status-text').className = 'status-text unverified';
 
-            if (data.error) {
-                document.getElementById('error-box').textContent = data.error;
-                document.getElementById('error-box').style.display = 'block';
-            }
+            const msg = data.error || data.detail || 'Document not found in WINDI system';
+            document.getElementById('error-box').textContent = msg;
+            document.getElementById('error-box').style.display = 'block';
         }
 
         function showSuspicious(data) {
