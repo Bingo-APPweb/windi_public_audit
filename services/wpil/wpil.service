@@ -1,0 +1,31 @@
+[Unit]
+Description=WINDI Proof Interface Layer (WPIL)
+Documentation=https://github.com/Bingo-APPweb/windi-verification-api
+After=network.target
+
+[Service]
+Type=simple
+User=windi
+Group=windi
+WorkingDirectory=/opt/windi/services/wpil
+ExecStart=/usr/bin/node src/server.js
+Restart=always
+RestartSec=3
+
+# Segurança e estabilidade
+Environment=NODE_ENV=production
+EnvironmentFile=/opt/windi/services/wpil/.env
+
+# Logs
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=wpil
+
+# Limites
+LimitNOFILE=65536
+
+# Security hardening
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

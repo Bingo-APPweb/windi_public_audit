@@ -1,722 +1,345 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="noir">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prove Your System | WINDI</title>
-    <meta name="description" content="Most systems show dashboards. None can prove their own state. We just did.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --transition: 0.3s ease;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WPIL — WINDI Proof Interface Layer</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,600;12..96,700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0D0C08;--paper:#F8F4E8;--paper2:#F0EAD4;--paper3:#E8E0C4;
+  --gold:#8B6410;--gold2:#C49A1A;--gold3:#F0C840;
+  --seal:#1A3A20;--seal2:#2D6B3C;--seal-bg:#E8F2EC;
+  --dim:#9A9070;--dim2:#C8C0A0;
+  --border:rgba(139,100,16,0.18);--border2:rgba(139,100,16,0.35);
+  --mono:'JetBrains Mono',monospace;
+  --serif:'Playfair Display',serif;
+  --sans:'Bricolage Grotesque',sans-serif;
+}
+.noir{
+  --ink:#F0EAD4;--paper:#0A0908;--paper2:#121109;--paper3:#1A1810;
+  --gold:#D4A830;--gold2:#E8C050;--gold3:#F8D860;
+  --seal:#4CAF7D;--seal2:#6CD890;--seal-bg:#0A1E10;
+  --dim:#6A6448;--dim2:#4A4430;
+  --border:rgba(212,168,48,0.18);--border2:rgba(212,168,48,0.35);
+}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);transition:background .4s,color .4s}
+.wrap{max-width:620px;margin:0 auto;padding:40px 24px 56px}
 
-        [data-theme="noir"] {
-            --bg: #0A0A10;
-            --bg-card: #0F0F18;
-            --gold: #C9A84C;
-            --gold-dim: rgba(201, 168, 76, 0.15);
-            --text: #E8E6E1;
-            --text-dim: #6B6B70;
-            --border: #1A1A24;
-            --green: #4ade80;
-            --teal: #2dd4bf;
-        }
+.bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:48px;padding-bottom:16px;border-bottom:0.5px solid var(--border)}
+.wordmark{font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:.14em;color:var(--gold);text-transform:uppercase}
+.wordmark small{color:var(--dim);font-weight:400;letter-spacing:.06em}
+.controls{display:flex;gap:8px;align-items:center}
+.ctl{font-family:var(--mono);font-size:10px;padding:4px 10px;border:0.5px solid var(--border2);background:transparent;color:var(--dim);cursor:pointer;letter-spacing:.06em;transition:all .2s}
+.ctl:hover,.ctl.on{color:var(--gold);border-color:var(--gold)}
 
-        [data-theme="klar"] {
-            --bg: #FAFAF8;
-            --bg-card: #FFFFFF;
-            --gold: #8B7424;
-            --gold-dim: rgba(139, 116, 36, 0.1);
-            --text: #1A1A1A;
-            --text-dim: #6B6B70;
-            --border: #E0DED8;
-            --green: #16a34a;
-            --teal: #0d9488;
-        }
+.hero{margin-bottom:40px}
+.hero-q{font-family:var(--serif);font-size:32px;font-weight:400;font-style:italic;color:var(--dim);line-height:1.2;margin-bottom:6px}
+.hero-a{font-family:var(--sans);font-size:13px;color:var(--dim);letter-spacing:.06em;font-weight:300}
+.hero-a strong{color:var(--gold);font-weight:600}
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+.decision-label{font-family:var(--mono);font-size:10px;color:var(--gold);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+.decision-input{width:100%;background:transparent;border:none;border-bottom:1px solid var(--border2);color:var(--ink);font-family:var(--serif);font-size:22px;font-style:italic;padding:8px 0 12px;outline:none;transition:border-color .3s}
+.decision-input::placeholder{color:var(--dim);font-style:italic}
+.decision-input:focus{border-bottom-color:var(--gold)}
+.actor-row{display:flex;align-items:center;gap:12px;margin-top:20px}
+.actor-avatar{width:32px;height:32px;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;color:var(--gold);flex-shrink:0}
+.actor-info{flex:1}
+.actor-name{font-family:var(--sans);font-size:12px;font-weight:600;color:var(--ink)}
+.actor-did{font-family:var(--mono);font-size:9px;color:var(--dim);margin-top:2px}
+.seal-btn{font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.08em;padding:12px 28px;background:var(--gold);color:var(--paper);border:none;cursor:pointer;text-transform:uppercase;transition:all .2s;margin-top:28px;width:100%}
+.seal-btn:hover{background:var(--gold2)}
+.seal-btn:disabled{opacity:.3;cursor:not-allowed}
 
-        body {
-            font-family: 'Bricolage Grotesque', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 20px;
-            transition: background var(--transition), color var(--transition);
-        }
+.divider{border:none;border-top:0.5px solid var(--border);margin:36px 0}
 
-        .container {
-            max-width: 560px;
-            width: 100%;
-            text-align: center;
-        }
+.cert{display:none;border:0.5px solid var(--border2);padding:28px;background:var(--paper2);position:relative;overflow:hidden}
+.cert.show{display:block}
+.cert::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold2),var(--gold))}
+.cert-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px}
+.cert-title{font-family:var(--serif);font-size:14px;font-style:italic;color:var(--dim)}
+.cert-id{font-family:var(--mono);font-size:9px;color:var(--dim);text-align:right;line-height:1.6}
+.cert-decision{font-family:var(--serif);font-size:20px;font-style:italic;color:var(--ink);margin-bottom:20px;padding-bottom:16px;border-bottom:0.5px solid var(--border);line-height:1.4}
+.cert-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.cf-label{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px}
+.cf-value{font-family:var(--mono);font-size:10px;color:var(--ink);word-break:break-all;line-height:1.5}
+.cf-value.human{color:var(--seal);font-weight:500;font-size:12px;letter-spacing:.06em}
+.cf-value.gov{color:var(--gold);font-weight:500}
+.hash-field{grid-column:1/-1}
+.cert-hash{font-family:var(--mono);font-size:9px;color:var(--dim);word-break:break-all;line-height:1.8;padding:10px;background:var(--paper3);border-left:2px solid var(--gold);margin-top:4px}
+.cert-hash.lit{color:var(--gold)}
 
-        /* Theme Toggle */
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 8px 12px;
-            cursor: pointer;
-            font-size: 18px;
-            transition: all var(--transition);
-        }
+.verify-section{display:none;margin-top:28px}
+.verify-section.show{display:block}
+.verify-title{font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px}
+.stamps{display:flex;gap:10px;margin-bottom:20px}
+.stamp{flex:1;border:0.5px solid var(--border);padding:14px 10px;text-align:center;transition:all .5s}
+.stamp.checking{border-color:var(--gold2);background:var(--paper2)}
+.stamp.done{border-color:var(--seal);background:var(--seal-bg)}
+.stamp-icon{width:24px;height:24px;border:1.5px solid var(--dim);margin:0 auto 8px;display:flex;align-items:center;justify-content:center;transition:all .5s}
+.stamp.checking .stamp-icon{border-color:var(--gold2);animation:spin .8s linear infinite}
+.stamp.done .stamp-icon{border-color:var(--seal);background:var(--seal)}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.stamp-name{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.stamp.done .stamp-name{color:var(--seal)}
+.stamp-status{font-family:var(--mono);font-size:9px;color:var(--dim);margin-top:4px;height:12px}
+.stamp.done .stamp-status{color:var(--seal);font-weight:500}
 
-        .theme-toggle:hover {
-            border-color: var(--gold);
-        }
+.final-seal{display:none;margin-top:8px;padding:28px;text-align:center;border:1px solid var(--seal);background:var(--seal-bg)}
+.final-seal.show{display:block;animation:emerge .6s ease}
+@keyframes emerge{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
+.seal-ring{width:80px;height:80px;border:2px solid var(--seal);border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;position:relative}
+.seal-ring::before{content:'';position:absolute;inset:4px;border:0.5px solid var(--seal2);border-radius:50%;opacity:.5}
+.seal-check{font-size:28px;color:var(--seal)}
+.seal-verdict{font-family:var(--serif);font-size:22px;font-weight:700;color:var(--seal);margin-bottom:4px}
+.seal-sub{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.12em;margin-bottom:16px}
+.seal-receipt{font-family:var(--mono);font-size:9px;color:var(--seal2);background:var(--paper3);padding:8px 12px;display:inline-block;word-break:break-all;text-align:left;width:100%}
+.human-badge{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--seal);padding:4px 12px;margin-bottom:16px}
+.human-badge-text{font-family:var(--mono);font-size:9px;color:var(--seal);letter-spacing:.1em;text-transform:uppercase}
 
-        /* Hero */
-        .hero-title {
-            font-size: clamp(2rem, 8vw, 3.5rem);
-            font-weight: 800;
-            color: var(--gold);
-            letter-spacing: -1px;
-            margin-bottom: 32px;
-        }
+.quote{margin-top:40px;padding:20px 24px;border-left:2px solid var(--gold)}
+.quote-body{font-family:var(--serif);font-size:15px;font-style:italic;color:var(--ink);line-height:1.6}
+.quote-attr{font-family:var(--mono);font-size:9px;color:var(--dim);margin-top:8px;letter-spacing:.08em}
 
-        .hero-text {
-            font-size: 1.25rem;
-            line-height: 1.6;
-            color: var(--text);
-            margin-bottom: 8px;
-        }
-
-        .hero-text.dim {
-            color: var(--text-dim);
-        }
-
-        .hero-punchline {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text);
-            margin-top: 24px;
-            margin-bottom: 48px;
-        }
-
-        /* Flow Buttons */
-        .flow-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 32px;
-            flex-wrap: wrap;
-        }
-
-        .flow-btn {
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-family: 'Bricolage Grotesque', sans-serif;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 2px solid transparent;
-        }
-
-        .flow-btn.live {
-            background: linear-gradient(135deg, #dc2626, #b91c1c);
-            color: white;
-            border-color: #dc2626;
-        }
-
-        .flow-btn.live:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(220, 38, 38, 0.4);
-        }
-
-        .flow-btn.live.active {
-            animation: pulse-red 1.5s infinite;
-        }
-
-        .flow-btn.seal {
-            background: var(--gold-dim);
-            color: var(--gold);
-            border-color: var(--gold);
-        }
-
-        .flow-btn.seal:hover:not(:disabled) {
-            background: var(--gold);
-            color: #000;
-        }
-
-        .flow-btn.seal:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        .flow-btn.verify {
-            background: transparent;
-            color: var(--green);
-            border-color: var(--green);
-        }
-
-        .flow-btn.verify:hover:not(:disabled) {
-            background: var(--green);
-            color: #000;
-        }
-
-        .flow-btn.verify:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        .flow-arrow {
-            color: var(--text-dim);
-            font-size: 1.25rem;
-        }
-
-        @keyframes pulse-red {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
-            50% { box-shadow: 0 0 20px 4px rgba(220, 38, 38, 0.2); }
-        }
-
-        /* Result Card */
-        .result-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 40px;
-            text-align: left;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.4s ease;
-        }
-
-        .result-card.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .result-card.sealed {
-            border-color: var(--gold);
-            box-shadow: 0 0 30px var(--gold-dim);
-        }
-
-        .card-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--gold);
-            margin-bottom: 16px;
-        }
-
-        .card-status {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.5rem;
-            font-weight: 800;
-            margin-bottom: 12px;
-        }
-
-        .status-health {
-            font-size: 1.75rem;
-        }
-
-        .status-mode {
-            color: var(--green);
-        }
-
-        .status-sep {
-            color: var(--text-dim);
-            font-weight: 400;
-        }
-
-        .status-locality {
-            color: var(--text-dim);
-            font-weight: 600;
-            font-size: 1rem;
-        }
-
-        .card-metrics {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
-            color: var(--text-dim);
-            margin-bottom: 8px;
-        }
-
-        .card-timing {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
-            color: var(--text-dim);
-            margin-bottom: 16px;
-        }
-
-        .card-seal-status {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding-top: 12px;
-            border-top: 1px solid var(--border);
-            font-size: 0.85rem;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .card-seal-status.visible {
-            opacity: 1;
-        }
-
-        .seal-badge {
-            background: var(--gold-dim);
-            color: var(--gold);
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-weight: 600;
-        }
-
-        .verify-badge {
-            color: var(--green);
-            font-weight: 600;
-        }
-
-        .hash-display {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            color: var(--text-dim);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .hash-display.visible {
-            opacity: 1;
-        }
-
-        /* Bullets */
-        .bullets {
-            text-align: left;
-            margin-bottom: 40px;
-        }
-
-        .bullet {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 1rem;
-            color: var(--text);
-            margin-bottom: 12px;
-        }
-
-        .bullet-arrow {
-            color: var(--gold);
-            font-weight: 700;
-        }
-
-        /* CTA */
-        .cta-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--gold);
-            color: #000;
-            padding: 16px 32px;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            text-decoration: none;
-            transition: all 0.2s;
-            margin-bottom: 48px;
-        }
-
-        .cta-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px var(--gold-dim);
-        }
-
-        .cta-subtext {
-            font-size: 0.9rem;
-            color: var(--text-dim);
-            margin-bottom: 16px;
-            margin-top: -32px;
-        }
-
-        .cta-secondary {
-            background: transparent;
-            border: 2px solid var(--gold);
-            color: var(--gold);
-            margin-bottom: 48px;
-        }
-
-        .cta-secondary:hover {
-            background: var(--gold-dim);
-        }
-
-        /* Footer */
-        .footer {
-            text-align: center;
-            color: var(--text-dim);
-            font-size: 0.9rem;
-        }
-
-        .footer-brand {
-            font-weight: 700;
-            color: var(--text);
-            margin-bottom: 4px;
-        }
-
-        .footer-location {
-            margin-bottom: 12px;
-        }
-
-        .lang-toggle {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .lang-btn {
-            padding: 6px 12px;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            background: transparent;
-            color: var(--text-dim);
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .lang-btn:hover {
-            border-color: var(--gold);
-            color: var(--gold);
-        }
-
-        .lang-btn.active {
-            background: var(--gold-dim);
-            border-color: var(--gold);
-            color: var(--gold);
-        }
-
-        /* Responsive */
-        @media (max-width: 480px) {
-            .flow-container {
-                gap: 8px;
-            }
-            .flow-btn {
-                padding: 10px 16px;
-                font-size: 0.9rem;
-            }
-            .flow-arrow {
-                display: none;
-            }
-        }
-    </style>
+.foot{margin-top:36px;padding-top:16px;border-top:0.5px solid var(--border);display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px}
+.foot-l,.foot-r{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.07em}
+.foot-r{color:var(--gold)}
+</style>
 </head>
 <body>
-    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
-        <span id="themeIcon"></span>
-    </button>
+<div class="wrap" id="root">
 
-    <div class="container">
-        <!-- Hero -->
-        <h1 class="hero-title" data-i18n="title">PROVE YOUR SYSTEM</h1>
-        <p class="hero-text" data-i18n="line1">Most systems show dashboards.</p>
-        <p class="hero-text dim" data-i18n="line2">None can prove their own state.</p>
-        <p class="hero-punchline" data-i18n="punchline">We just did.</p>
-
-        <!-- Interactive Flow -->
-        <div class="flow-container">
-            <button class="flow-btn live" id="btnLive" onclick="triggerLive()">
-                <span data-i18n="live">LIVE</span>
-            </button>
-            <span class="flow-arrow">→</span>
-            <button class="flow-btn seal" id="btnSeal" onclick="triggerSeal()" disabled>
-                <span data-i18n="seal">SEAL</span>
-            </button>
-            <span class="flow-arrow">→</span>
-            <button class="flow-btn verify" id="btnVerify" onclick="triggerVerify()" disabled>
-                <span data-i18n="verify">VERIFY</span>
-            </button>
-        </div>
-
-        <!-- Result Card -->
-        <div class="result-card" id="resultCard">
-            <div class="card-title">
-                <span>📊</span>
-                <span data-i18n="cardTitle">WINDI System State</span>
-            </div>
-            <div class="card-status">
-                <span class="status-health">🟢</span>
-                <span class="status-mode">SOVEREIGN</span>
-                <span class="status-sep">•</span>
-                <span class="status-locality">100% LOCAL</span>
-            </div>
-            <div class="card-metrics">
-                <span>⚡</span>
-                <span data-i18n="services">8 services</span>
-                <span class="status-sep">•</span>
-                <span data-i18n="external">0 external</span>
-            </div>
-            <div class="card-timing">
-                <span>⏱</span>
-                <span id="latencyValue">42ms</span>
-                <span class="status-sep">•</span>
-                <span data-i18n="realtime">realtime</span>
-            </div>
-            <div class="card-seal-status" id="sealStatus">
-                <span class="seal-badge" data-i18n="sealedBadge">🔏 Sealed</span>
-                <span class="verify-badge" id="verifyBadge" style="opacity:0" data-i18n="verified">✔ Verified</span>
-            </div>
-            <div class="hash-display" id="hashDisplay">
-                sha256:7a3f...c8d1
-            </div>
-        </div>
-
-        <!-- Bullets -->
-        <div class="bullets">
-            <div class="bullet">
-                <span class="bullet-arrow">→</span>
-                <span data-i18n="bullet1">Real-time state (not simulated)</span>
-            </div>
-            <div class="bullet">
-                <span class="bullet-arrow">→</span>
-                <span data-i18n="bullet2">Zero external dependency</span>
-            </div>
-            <div class="bullet">
-                <span class="bullet-arrow">→</span>
-                <span data-i18n="bullet3">Sealed as verifiable evidence</span>
-            </div>
-        </div>
-
-        <!-- CTA -->
-        <a href="/desktop/" class="cta-btn cta-primary">
-            <span data-i18n="cta">See it live</span>
-            <span>→</span>
-        </a>
-        <p class="cta-subtext" data-i18n="ctaSub">No signup. No setup. See it in 5 seconds.</p>
-        <a href="/desktop/?auto=live" class="cta-btn cta-secondary">
-            <span data-i18n="cta2">Try with your own system</span>
-            <span>→</span>
-        </a>
-
-        <!-- Footer -->
-        <footer class="footer">
-            <div class="footer-brand">WINDI GEN7</div>
-            <div class="footer-location">Built in Kempten, Bavaria 🇩🇪</div>
-            <div class="lang-toggle">
-                <button class="lang-btn" data-lang="de" onclick="setLang('de')">DE</button>
-                <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
-                <button class="lang-btn" data-lang="pt" onclick="setLang('pt')">PT</button>
-            </div>
-        </footer>
+  <div class="bar">
+    <div class="wordmark">WINDI <small>/ Proof Interface Layer</small></div>
+    <div class="controls">
+      <button class="ctl on" onclick="setLang('en')" id="l-en">EN</button>
+      <button class="ctl" onclick="setLang('de')" id="l-de">DE</button>
+      <button class="ctl" onclick="setLang('pt')" id="l-pt">PT</button>
+      <button class="ctl" onclick="toggleNoir()" id="noir-btn">☽</button>
     </div>
+  </div>
 
-    <script>
-        // ══════════════════════════════════════════════════════════════
-        // W-PROVE-001 — Prove Your System
-        // ══════════════════════════════════════════════════════════════
+  <div class="hero">
+    <div class="hero-q" id="hero-q">Who decided this?</div>
+    <div class="hero-a" id="hero-a">The question every auditor will ask. <strong>WPIL makes it provable.</strong></div>
+  </div>
 
-        const I18N = {
-            de: {
-                title: "BEWEISE DEIN SYSTEM",
-                line1: "Die meisten Systeme zeigen Dashboards.",
-                line2: "Keines kann seinen Zustand beweisen.",
-                punchline: "Wir schon.",
-                live: "🔴 LIVE",
-                seal: "🔏 SEAL",
-                verify: "✓ VERIFY",
-                cardTitle: "WINDI Systemstatus",
-                services: "8 Dienste",
-                external: "0 extern",
-                realtime: "Echtzeit",
-                sealedBadge: "🔏 Versiegelt",
-                verified: "✔ Verifiziert",
-                bullet1: "Echtzeit-Status (nicht simuliert)",
-                bullet2: "Keine externe Abhängigkeit",
-                bullet3: "Versiegelt als verifizierbare Evidenz",
-                cta: "Live erleben",
-                ctaSub: "Keine Anmeldung. Kein Setup. In 5 Sekunden sehen.",
-                cta2: "Mit eigenem System testen"
-            },
-            en: {
-                title: "PROVE YOUR SYSTEM",
-                line1: "Most systems show dashboards.",
-                line2: "None can prove their own state.",
-                punchline: "We just did.",
-                live: "🔴 LIVE",
-                seal: "🔏 SEAL",
-                verify: "✓ VERIFY",
-                cardTitle: "WINDI System State",
-                services: "8 services",
-                external: "0 external",
-                realtime: "realtime",
-                sealedBadge: "🔏 Sealed",
-                verified: "✔ Verified",
-                bullet1: "Real-time state (not simulated)",
-                bullet2: "Zero external dependency",
-                bullet3: "Sealed as verifiable evidence",
-                cta: "See it live",
-                ctaSub: "No signup. No setup. See it in 5 seconds.",
-                cta2: "Try with your own system"
-            },
-            pt: {
-                title: "PROVE O SEU SISTEMA",
-                line1: "A maioria dos sistemas mostra dashboards.",
-                line2: "Nenhum consegue provar o seu estado.",
-                punchline: "Nós conseguimos.",
-                live: "🔴 LIVE",
-                seal: "🔏 SEAL",
-                verify: "✓ VERIFY",
-                cardTitle: "Estado do Sistema WINDI",
-                services: "8 serviços",
-                external: "0 externo",
-                realtime: "tempo real",
-                sealedBadge: "🔏 Selado",
-                verified: "✔ Verificado",
-                bullet1: "Estado em tempo real (não simulado)",
-                bullet2: "Zero dependência externa",
-                bullet3: "Selado como evidência verificável",
-                cta: "Ver ao vivo",
-                ctaSub: "Sem registo. Sem setup. Veja em 5 segundos.",
-                cta2: "Teste com o seu sistema"
-            }
-        };
+  <div class="decision-label" id="dec-label">The decision</div>
+  <input class="decision-input" id="decisionInput" type="text" placeholder="Describe the decision or action being sealed…">
 
-        let currentLang = 'en';
-        let flowState = 'idle'; // idle, live, sealed, verified
+  <div class="actor-row">
+    <div class="actor-avatar">HD</div>
+    <div class="actor-info">
+      <div class="actor-name" id="actor-name">Human Dragon</div>
+      <div class="actor-did">did:windi:dragon-001 · governance_level: HIGH</div>
+    </div>
+  </div>
 
-        // ── Theme ─────────────────────────────────────────────────────
-        function initTheme() {
-            const saved = localStorage.getItem('windi-theme') || 'noir';
-            document.documentElement.dataset.theme = saved;
-            updateThemeIcon();
-        }
+  <button class="seal-btn" id="sealBtn" onclick="beginSeal()" disabled>
+    <span id="seal-btn-txt">SEAL THIS DECISION</span>
+  </button>
 
-        function toggleTheme() {
-            const current = document.documentElement.dataset.theme;
-            const next = current === 'noir' ? 'klar' : 'noir';
-            document.documentElement.dataset.theme = next;
-            localStorage.setItem('windi-theme', next);
-            updateThemeIcon();
-        }
+  <hr class="divider" id="divider" style="display:none">
 
-        function updateThemeIcon() {
-            const theme = document.documentElement.dataset.theme;
-            document.getElementById('themeIcon').textContent = theme === 'noir' ? '☀' : '☽';
-        }
+  <div class="cert" id="cert">
+    <div class="cert-header">
+      <div class="cert-title" id="cert-title-txt">Virtue Receipt</div>
+      <div class="cert-id" id="cert-id-block"></div>
+    </div>
+    <div class="cert-decision" id="cert-decision"></div>
+    <div class="cert-fields">
+      <div class="cert-field">
+        <div class="cf-label" id="cf-actor-lbl">Actor</div>
+        <div class="cf-value">did:windi:dragon-001</div>
+      </div>
+      <div class="cert-field">
+        <div class="cf-label" id="cf-ts-lbl">Sealed at</div>
+        <div class="cf-value" id="cert-ts"></div>
+      </div>
+      <div class="cert-field">
+        <div class="cf-label" id="cf-gov-lbl">Governance</div>
+        <div class="cf-value gov">HIGH · I9 · I11</div>
+      </div>
+      <div class="cert-field">
+        <div class="cf-label" id="cf-human-lbl">Human approved</div>
+        <div class="cf-value human" id="cert-human"></div>
+      </div>
+      <div class="cert-field hash-field">
+        <div class="cf-label">SHA-256</div>
+        <div class="cert-hash" id="cert-hash"></div>
+      </div>
+    </div>
+  </div>
 
-        // ── Language ──────────────────────────────────────────────────
-        function initLang() {
-            const saved = localStorage.getItem('windi-lang');
-            if (saved && I18N[saved]) {
-                currentLang = saved;
-            } else {
-                // Auto-detect
-                const browserLang = navigator.language.slice(0, 2);
-                if (I18N[browserLang]) {
-                    currentLang = browserLang;
-                }
-            }
-            applyLang();
-        }
+  <div class="verify-section" id="verifySection">
+    <div class="verify-title" id="v-title">Independent verification</div>
+    <div class="stamps">
+      <div class="stamp" id="s1">
+        <div class="stamp-icon" id="si1">·</div>
+        <div class="stamp-name" id="sn1">Schema</div>
+        <div class="stamp-status" id="ss1"></div>
+      </div>
+      <div class="stamp" id="s2">
+        <div class="stamp-icon" id="si2">·</div>
+        <div class="stamp-name" id="sn2">Hash</div>
+        <div class="stamp-status" id="ss2"></div>
+      </div>
+      <div class="stamp" id="s3">
+        <div class="stamp-icon" id="si3">·</div>
+        <div class="stamp-name" id="sn3">Ledger</div>
+        <div class="stamp-status" id="ss3"></div>
+      </div>
+    </div>
+    <div class="final-seal" id="finalSeal">
+      <div class="human-badge">
+        <div class="human-badge-text" id="badge-txt">HUMAN DECISION · CRYPTOGRAPHICALLY SEALED</div>
+      </div>
+      <div class="seal-ring"><span class="seal-check">✓</span></div>
+      <div class="seal-verdict" id="verdict-txt">Verified.</div>
+      <div class="seal-sub" id="verdict-sub">SCHEMA · HASH · LEDGER · CONFIRMED</div>
+      <div class="seal-receipt" id="final-receipt-id"></div>
+    </div>
+  </div>
 
-        function setLang(lang) {
-            if (!I18N[lang]) return;
-            currentLang = lang;
-            localStorage.setItem('windi-lang', lang);
-            applyLang();
-        }
+  <div class="quote">
+    <div class="quote-body" id="q-body">"You do not need to trust WINDI to verify WINDI."</div>
+    <div class="quote-attr">WPIL · Invariant I11 · §177</div>
+  </div>
 
-        function applyLang() {
-            const strings = I18N[currentLang];
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.dataset.i18n;
-                if (strings[key]) {
-                    el.textContent = strings[key];
-                }
-            });
+  <div class="foot">
+    <div class="foot-l">Liga IA+H · Kempten, Bavaria</div>
+    <div class="foot-r">AI processes. Human decides. WINDI guarantees.</div>
+  </div>
 
-            // Update active button
-            document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.lang === currentLang);
-            });
+</div>
 
-            // Update HTML lang
-            document.documentElement.lang = currentLang;
-        }
+<script>
+const T={
+  en:{
+    heroQ:'Who decided this?',heroA:'The question every auditor will ask. <strong>WPIL makes it provable.</strong>',
+    decLabel:'The decision',placeholder:'Describe the decision or action being sealed…',
+    actorName:'Human Dragon',sealBtnTxt:'SEAL THIS DECISION',
+    certTitle:'Virtue Receipt',cfActor:'Actor',cfTs:'Sealed at',cfGov:'Governance',cfHuman:'Human approved',
+    vTitle:'Independent verification',
+    sn1:'Schema',sn2:'Hash',sn3:'Ledger',
+    ss1:'VALID',ss2:'MATCH',ss3:'CONFIRMED',
+    badgeTxt:'HUMAN DECISION · CRYPTOGRAPHICALLY SEALED',
+    verdictTxt:'Verified.',verdictSub:'SCHEMA · HASH · LEDGER · CONFIRMED',
+    humanVal:'✓ TRUE',
+    q:'"You do not need to trust WINDI to verify WINDI."'
+  },
+  de:{
+    heroQ:'Wer hat das entschieden?',heroA:'Die Frage, die jeder Prüfer stellen wird. <strong>WPIL macht es beweisbar.</strong>',
+    decLabel:'Die Entscheidung',placeholder:'Entscheidung oder Vorgang beschreiben…',
+    actorName:'Human Dragon',sealBtnTxt:'ENTSCHEIDUNG VERSIEGELN',
+    certTitle:'Virtue Receipt',cfActor:'Akteur',cfTs:'Versiegelt am',cfGov:'Governance',cfHuman:'Menschlich genehmigt',
+    vTitle:'Unabhängige Verifizierung',
+    sn1:'Schema',sn2:'Hash',sn3:'Ledger',
+    ss1:'GÜLTIG',ss2:'ÜBEREINSTIMMUNG',ss3:'BESTÄTIGT',
+    badgeTxt:'MENSCHLICHE ENTSCHEIDUNG · KRYPTOGRAFISCH VERSIEGELT',
+    verdictTxt:'Verifiziert.',verdictSub:'SCHEMA · HASH · LEDGER · BESTÄTIGT',
+    humanVal:'✓ WAHR',
+    q:'"Sie müssen WINDI nicht vertrauen, um WINDI zu verifizieren."'
+  },
+  pt:{
+    heroQ:'Quem tomou esta decisão?',heroA:'A pergunta que todo auditor vai fazer. <strong>O WPIL torna-a provável.</strong>',
+    decLabel:'A decisão',placeholder:'Descreva a decisão ou acção a selar…',
+    actorName:'Human Dragon',sealBtnTxt:'SELAR ESTA DECISÃO',
+    certTitle:'Virtue Receipt',cfActor:'Actor',cfTs:'Selado em',cfGov:'Governança',cfHuman:'Aprovação humana',
+    vTitle:'Verificação independente',
+    sn1:'Schema',sn2:'Hash',sn3:'Ledger',
+    ss1:'VÁLIDO',ss2:'CORRECTO',ss3:'CONFIRMADO',
+    badgeTxt:'DECISÃO HUMANA · SELADA CRIPTOGRAFICAMENTE',
+    verdictTxt:'Verificado.',verdictSub:'SCHEMA · HASH · LEDGER · CONFIRMADO',
+    humanVal:'✓ VERDADE',
+    q:'"Não precisa confiar no WINDI para verificar o WINDI."'
+  }
+};
 
-        // ── Interactive Flow ──────────────────────────────────────────
-        function triggerLive() {
-            const card = document.getElementById('resultCard');
-            const btnLive = document.getElementById('btnLive');
-            const btnSeal = document.getElementById('btnSeal');
+let lang='en',noir=false;
 
-            // Animate card appearance
-            card.classList.add('visible');
-            btnLive.classList.add('active');
-            btnSeal.disabled = false;
+document.getElementById('decisionInput').addEventListener('input',function(){
+  document.getElementById('sealBtn').disabled=!this.value.trim();
+});
 
-            // Randomize latency for realism
-            const latency = Math.floor(Math.random() * 30) + 35;
-            document.getElementById('latencyValue').textContent = latency + 'ms';
+function setLang(l){
+  lang=l;
+  ['en','de','pt'].forEach(x=>document.getElementById('l-'+x).classList.toggle('on',x===l));
+  const t=T[l];
+  document.getElementById('hero-q').textContent=t.heroQ;
+  document.getElementById('hero-a').innerHTML=t.heroA;
+  document.getElementById('dec-label').textContent=t.decLabel;
+  document.getElementById('decisionInput').placeholder=t.placeholder;
+  document.getElementById('actor-name').textContent=t.actorName;
+  document.getElementById('seal-btn-txt').textContent=t.sealBtnTxt;
+  document.getElementById('sn1').textContent=t.sn1;
+  document.getElementById('sn2').textContent=t.sn2;
+  document.getElementById('sn3').textContent=t.sn3;
+  document.getElementById('q-body').textContent=t.q;
+  if(document.getElementById('finalSeal').classList.contains('show')){
+    document.getElementById('badge-txt').textContent=t.badgeTxt;
+    document.getElementById('verdict-txt').textContent=t.verdictTxt;
+    document.getElementById('verdict-sub').textContent=t.verdictSub;
+  }
+}
 
-            flowState = 'live';
-        }
+function toggleNoir(){
+  noir=!noir;
+  document.getElementById('root').classList.toggle('noir',noir);
+  document.getElementById('noir-btn').textContent=noir?'☀':'☽';
+}
 
-        function triggerSeal() {
-            if (flowState !== 'live') return;
+async function beginSeal(){
+  const text=document.getElementById('decisionInput').value.trim();
+  if(!text)return;
+  document.getElementById('sealBtn').disabled=true;
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text));
+  const hash=Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  const now=new Date();
+  const ts=now.toISOString().replace(/[-:T]/g,'').slice(0,14);
+  const receiptId='PROVE-'+ts+'-'+hash.slice(0,8).toUpperCase();
+  const t=T[lang];
+  document.getElementById('cert-decision').textContent='"'+text+'"';
+  document.getElementById('cert-ts').textContent=now.toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})+'Z';
+  document.getElementById('cert-human').textContent=t.humanVal;
+  document.getElementById('cert-hash').textContent=hash;
+  document.getElementById('cert-hash').classList.add('lit');
+  document.getElementById('cert-id-block').innerHTML=receiptId+'<br>spec_version: 1.0.0<br>SHA-256';
+  document.getElementById('cert-title-txt').textContent=t.certTitle;
+  document.getElementById('cf-actor-lbl').textContent=t.cfActor;
+  document.getElementById('cf-ts-lbl').textContent=t.cfTs;
+  document.getElementById('cf-gov-lbl').textContent=t.cfGov;
+  document.getElementById('cf-human-lbl').textContent=t.cfHuman;
+  document.getElementById('v-title').textContent=t.vTitle;
+  document.getElementById('divider').style.display='';
+  document.getElementById('cert').classList.add('show');
+  document.getElementById('verifySection').classList.add('show');
+  setTimeout(()=>runVerify(receiptId,t),600);
+}
 
-            const card = document.getElementById('resultCard');
-            const sealStatus = document.getElementById('sealStatus');
-            const hashDisplay = document.getElementById('hashDisplay');
-            const btnSeal = document.getElementById('btnSeal');
-            const btnVerify = document.getElementById('btnVerify');
-
-            // Generate random hash
-            const hash = 'sha256:' + Array.from({length: 8}, () =>
-                Math.floor(Math.random() * 16).toString(16)).join('') + '...';
-            hashDisplay.textContent = hash;
-
-            // Animate seal
-            card.classList.add('sealed');
-            sealStatus.classList.add('visible');
-            hashDisplay.classList.add('visible');
-            btnSeal.disabled = true;
-            btnVerify.disabled = false;
-
-            flowState = 'sealed';
-        }
-
-        function triggerVerify() {
-            if (flowState !== 'sealed') return;
-
-            const verifyBadge = document.getElementById('verifyBadge');
-            const btnVerify = document.getElementById('btnVerify');
-
-            // Animate verify
-            verifyBadge.style.opacity = '1';
-            btnVerify.disabled = true;
-
-            flowState = 'verified';
-        }
-
-        // ── Init ──────────────────────────────────────────────────────
-        document.addEventListener('DOMContentLoaded', () => {
-            initTheme();
-            initLang();
-        });
-    </script>
+async function runVerify(receiptId,t){
+  const steps=[
+    {s:'s1',i:'si1',st:'ss1',res:t.ss1,delay:900},
+    {s:'s2',i:'si2',st:'ss2',res:t.ss2,delay:1600},
+    {s:'s3',i:'si3',st:'ss3',res:t.ss3,delay:2300}
+  ];
+  for(const x of steps){
+    document.getElementById(x.s).classList.add('checking');
+    document.getElementById(x.st).textContent='…';
+    await new Promise(r=>setTimeout(r,x.delay));
+    document.getElementById(x.s).classList.remove('checking');
+    document.getElementById(x.s).classList.add('done');
+    document.getElementById(x.i).textContent='✓';
+    document.getElementById(x.st).textContent=x.res;
+  }
+  document.getElementById('badge-txt').textContent=t.badgeTxt;
+  document.getElementById('verdict-txt').textContent=t.verdictTxt;
+  document.getElementById('verdict-sub').textContent=t.verdictSub;
+  document.getElementById('final-receipt-id').textContent=receiptId;
+  document.getElementById('finalSeal').classList.add('show');
+  document.getElementById('sealBtn').disabled=false;
+}
+</script>
 </body>
 </html>
