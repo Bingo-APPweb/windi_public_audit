@@ -32,7 +32,7 @@ WINDI_SERVICES = [
     {"name": "windi-suite-docs", "port": 8101, "display": "Forensic Ledger", "category": "core", "sealed": True, "url": "/ledger/"},
     {"name": "windi-dragon-chat", "port": 8108, "display": "Dragon Hub", "category": "core", "url": "/desktop/"},
     {"name": "windi-desktop-gen7", "port": 8119, "display": "Desktop GEN7", "category": "core", "url": "/desktop/"},
-    {"name": "windi-governance", "port": 8080, "display": "Governance API", "category": "core", "url": "/governance/"},
+    {"name": "windi-governance", "port": 8080, "display": "Governance API", "category": "core", "url": ""},  # API only
 
     # Agents
     {"name": "windi-law", "port": 8122, "display": "WINDI-LAW", "category": "agents", "sealed": True, "url": "/law/"},
@@ -41,14 +41,14 @@ WINDI_SERVICES = [
     {"name": "windi-vd-cut", "port": 8128, "display": "W-VD-CUT-001", "category": "agents", "url": "/vd-cut/"},
     {"name": "windi-joe", "port": 8129, "display": "W-JOE-001", "category": "agents", "url": "/joe/"},
     {"name": "windi-vd-mass", "port": 8131, "display": "W-VD-MASS-001", "category": "agents", "url": "/vd-mass/"},
-    {"name": "windi-jmpg", "port": 8132, "display": "W-JMPG-001", "category": "agents", "url": "/comm/"},
+    {"name": "windi-jmpg", "port": 8132, "display": "W-JMPG-001", "category": "agents", "url": ""},  # API only - Proof Card Renderer
 
     # Dashboards
     {"name": "windi-udb", "port": 8140, "display": "UDB God View", "category": "dashboards", "nohup": True, "url": "/udb/"},
-    {"name": "windi-intent-cmd", "port": 8141, "display": "W-INTENT-CMD", "category": "dashboards", "url": "/intent/"},
+    {"name": "windi-intent-cmd", "port": 8141, "display": "W-INTENT-CMD", "category": "dashboards", "url": ""},  # API only - Intent Orchestration
     {"name": "windi-fediverse", "port": 8142, "display": "W-FEDIVERSE-001", "category": "dashboards", "url": "/fediverse/"},
     {"name": "windi-bridge", "port": 8143, "display": "W-BRIDGE-001", "category": "dashboards", "url": "/watch/"},
-    {"name": "windi-sec-001", "port": 8144, "display": "W-SEC-001", "category": "dashboards", "url": "/sec-dash/"},
+    {"name": "windi-sec-001", "port": 8144, "display": "W-SEC-001", "category": "dashboards", "url": "/sec/"},
     {"name": "windi-verify-public", "port": 8145, "display": "Verify Public", "category": "dashboards", "url": "/verify-public/"},
     {"name": "windi-enterprise", "port": 8150, "display": "W-Enterprise-001", "category": "dashboards", "url": "/enterprise/"},
     {"name": "windi-cache", "port": 8160, "display": "W-CACHE-001", "category": "dashboards", "nohup": True, "url": "/wcache/noir"},
@@ -57,13 +57,13 @@ WINDI_SERVICES = [
     {"name": "windi-social", "port": 8133, "display": "W-SOCIAL-001", "category": "agents", "url": "/social/"},
 
     # Support
-    {"name": "windi-leads", "port": 8096, "display": "DID Genesis", "category": "support", "url": "/genesis/"},
+    {"name": "windi-leads", "port": 8096, "display": "DID Genesis", "category": "support", "url": ""},  # API only
     {"name": "windi-wallet", "port": 8095, "display": "Wallet Service", "category": "support", "url": "/wallet/"},
-    {"name": "windi-communique", "port": 8105, "display": "Communiqué Engine", "category": "support", "url": "/communique/"},
-    {"name": "windi-dispatch", "port": 8106, "display": "Dispatch Gateway", "category": "support", "url": "/dispatch/"},
+    {"name": "windi-communique", "port": 8105, "display": "Communiqué Engine", "category": "support", "url": ""},  # API only
+    {"name": "windi-dispatch", "port": 8106, "display": "Dispatch Gateway", "category": "support", "url": ""},  # API only
 
     # Special (nohup)
-    {"name": "sandbox-core", "port": 8091, "display": "Sandbox Core", "category": "core", "nohup": True, "url": "/agents/"},
+    {"name": "sandbox-core", "port": 8091, "display": "Sandbox Core", "category": "core", "nohup": True, "url": ""},  # API only
 ]
 
 # Health check endpoints by port
