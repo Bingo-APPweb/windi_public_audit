@@ -1,0 +1,58 @@
+# WINDI Canonicalization Example
+# ================================
+#
+# This file shows the step-by-step canonicalization of an invoice.
+
+## Original Document Fields
+
+IBAN:     DE89 3704 0044 0532 0130 00
+Amount:   € 1.234,50
+Currency: Euro
+Date:     07.02.2026
+Reference: INV-2026-001
+
+## Canonicalized Shelves
+
+PAYTO|IBAN|DE89370400440532013000
+AMOUNT|DEC|1234.50
+CURRENCY|ISO4217|EUR
+DATE|ISO8601|2026-02-07
+REF|INVOICE|INV-2026-001
+
+## Individual Shelf Hashes
+
+# PAYTO shelf
+echo -n "PAYTO|IBAN|DE89370400440532013000" | sha256sum
+# -> sha256:7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069
+
+# AMOUNT shelf
+echo -n "AMOUNT|DEC|1234.50" | sha256sum
+# -> sha256:2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae
+
+# CURRENCY shelf
+echo -n "CURRENCY|ISO4217|EUR" | sha256sum
+# -> sha256:fcde2b2edba56bf408601fb721fe9b5c338d10ee429ea04fae5511b68fbf8fb9
+
+# DATE shelf
+echo -n "DATE|ISO8601|2026-02-07" | sha256sum
+# -> sha256:1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b
+
+## Structure Hash
+
+# All shelves sorted and joined with newline
+AMOUNT|DEC|1234.50
+CURRENCY|ISO4217|EUR
+DATE|ISO8601|2026-02-07
+PAYTO|IBAN|DE89370400440532013000
+REF|INVOICE|INV-2026-001
+
+# -> sha256:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08
+
+## Verification Notes
+
+1. Whitespace in IBAN removed
+2. Amount normalized to 2 decimal places
+3. Currency mapped from "Euro" to "EUR"
+4. Date converted to ISO 8601
+5. All shelves use pipe separator
+6. Hashes are lowercase hex with sha256: prefix

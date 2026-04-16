@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI — Sovereignty Manifesto v2.0</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --parchment: #F5F0E0;
+    --parchment-dark: #E8E0C8;
+    --ink: #1A1A1A;
+    --ink-light: #3A3530;
+    --dragon-gold: #C4A35A;
+    --dragon-gold-bright: #D4B76A;
+    --dragon-ember: #8B4513;
+    --sovereignty-blue: #1B3A5C;
+    --sovereignty-blue-light: #2A5580;
+    --eu-blue: #003399;
+    --eu-gold: #FFCC00;
+    --sentinel-green: #2D6B3F;
+    --danger-red: #8B2020;
+    --noir: #0D0D0D;
+    --noir-surface: #1A1A1A;
+    --noir-border: #2A2A2A;
+    --text-muted: #8A8070;
+    --font-display: 'Cormorant Garamond', Georgia, serif;
+    --font-body: 'Source Sans 3', 'Segoe UI', sans-serif;
+    --font-mono: 'JetBrains Mono', 'Consolas', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--noir);
+    color: var(--parchment);
+    overflow-x: hidden;
+    line-height: 1.7;
+  }
+
+  /* ── Language Switcher ── */
+  .lang-switch {
+    position: fixed;
+    top: 20px;
+    right: 24px;
+    z-index: 1000;
+    display: flex;
+    gap: 2px;
+    background: rgba(13,13,13,0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--noir-border);
+    border-radius: 8px;
+    padding: 3px;
+  }
+  .lang-btn {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    padding: 6px 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: transparent;
+    color: var(--text-muted);
+    transition: all 0.3s ease;
+  }
+  .lang-btn.active {
+    background: var(--dragon-gold);
+    color: var(--noir);
+  }
+  .lang-btn:hover:not(.active) { color: var(--parchment); }
+
+  /* ── Scroll nav ── */
+  .scroll-nav {
+    position: fixed;
+    left: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .scroll-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1.5px solid var(--dragon-gold);
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .scroll-dot.active, .scroll-dot:hover {
+    background: var(--dragon-gold);
+    box-shadow: 0 0 8px rgba(196,163,90,0.4);
+  }
+
+  /* ── Hero ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    padding: 60px 24px;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 40%, rgba(196,163,90,0.06) 0%, transparent 70%),
+      radial-gradient(ellipse 80% 60% at 30% 80%, rgba(27,58,92,0.08) 0%, transparent 60%),
+      linear-gradient(180deg, var(--noir) 0%, rgba(26,26,26,1) 100%);
+    pointer-events: none;
+  }
+  .hero-dragon {
+    font-size: clamp(60px, 8vw, 100px);
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeScale 1.2s ease forwards 0.3s;
+    position: relative;
+    z-index: 1;
+    filter: drop-shadow(0 0 30px rgba(196,163,90,0.15));
+  }
+  .hero-pre {
+    font-family: var(--font-mono);
+    font-size: clamp(10px, 1.2vw, 13px);
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: var(--dragon-gold);
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.5s;
+    position: relative;
+    z-index: 1;
+  }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 5.5vw, 72px);
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--parchment);
+    max-width: 800px;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 0.7s;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-subtitle {
+    font-family: var(--font-body);
+    font-size: clamp(16px, 2vw, 20px);
+    font-weight: 300;
+    color: var(--text-muted);
+    max-width: 600px;
+    line-height: 1.6;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 0.9s;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-seal {
+    margin-top: 48px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--dragon-gold);
+    opacity: 0.5;
+    letter-spacing: 1px;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 1.2s;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-divider {
+    width: 60px;
+    height: 1px;
+    background: var(--dragon-gold);
+    margin: 40px auto 0;
+    opacity: 0;
+    animation: fadeWidth 1s ease forwards 1.4s;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Sections ── */
+  section {
+    padding: 100px 24px;
+    max-width: 960px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .section-full {
+    max-width: 100%;
+    padding: 100px 0;
+  }
+
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--dragon-gold);
+    margin-bottom: 16px;
+    display: block;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--parchment);
+    margin-bottom: 32px;
+  }
+  .section-text {
+    font-size: 17px;
+    line-height: 1.8;
+    color: rgba(245,240,224,0.75);
+    max-width: 680px;
+  }
+  .section-text + .section-text { margin-top: 20px; }
+
+  /* ── Doctrine Block ── */
+  .doctrine {
+    border-left: 3px solid var(--dragon-gold);
+    padding: 32px 40px;
+    background: linear-gradient(90deg, rgba(196,163,90,0.04) 0%, transparent 60%);
+    margin: 48px 0;
+    position: relative;
+  }
+  .doctrine::before {
+    content: '§';
+    position: absolute;
+    top: -20px;
+    left: -14px;
+    font-family: var(--font-display);
+    font-size: 28px;
+    color: var(--dragon-gold);
+    background: var(--noir);
+    padding: 0 6px;
+  }
+  .doctrine p {
+    font-family: var(--font-display);
+    font-size: clamp(20px, 2.5vw, 26px);
+    font-style: italic;
+    color: var(--parchment);
+    line-height: 1.5;
+  }
+  .doctrine .attribution {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--dragon-gold);
+    margin-top: 16px;
+    letter-spacing: 1px;
+    font-style: normal;
+  }
+
+  /* ── Stats Grid ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2px;
+    margin: 60px 0;
+    background: var(--noir-border);
+    border: 1px solid var(--noir-border);
+  }
+  .stat-card {
+    background: var(--noir-surface);
+    padding: 36px 28px;
+    text-align: center;
+    transition: all 0.4s ease;
+  }
+  .stat-card:hover {
+    background: rgba(196,163,90,0.05);
+  }
+  .stat-number {
+    font-family: var(--font-mono);
+    font-size: clamp(32px, 4vw, 48px);
+    font-weight: 700;
+    color: var(--dragon-gold);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .stat-unit {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--dragon-gold-bright);
+    opacity: 0.7;
+  }
+  .stat-label {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 12px;
+    line-height: 1.4;
+  }
+
+  /* ── Architecture Diagram ── */
+  .arch-container {
+    margin: 60px auto;
+    max-width: 800px;
+  }
+  .arch-row {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 2px;
+    flex-wrap: wrap;
+  }
+  .arch-block {
+    flex: 1;
+    min-width: 120px;
+    padding: 20px 16px;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+  .arch-local {
+    background: rgba(45,107,63,0.15);
+    border: 1px solid rgba(45,107,63,0.3);
+    color: #6DBF80;
+  }
+  .arch-pluggable {
+    background: rgba(196,163,90,0.08);
+    border: 1px solid rgba(196,163,90,0.2);
+    color: var(--dragon-gold);
+  }
+  .arch-block .port {
+    display: block;
+    font-size: 10px;
+    opacity: 0.6;
+    margin-top: 4px;
+  }
+  .arch-block:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+  .arch-legend {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-top: 20px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .arch-legend span::before {
+    content: '';
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  .legend-local::before { background: rgba(45,107,63,0.5); }
+  .legend-plug::before { background: rgba(196,163,90,0.4); }
+
+  /* ── Comparison Table ── */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 48px 0;
+    font-size: 14px;
+  }
+  .compare-table th {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--dragon-gold);
+    text-align: left;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--noir-border);
+    background: var(--noir-surface);
+  }
+  .compare-table td {
+    padding: 14px 20px;
+    border-bottom: 1px solid rgba(42,42,42,0.5);
+    color: rgba(245,240,224,0.7);
+    vertical-align: top;
+  }
+  .compare-table tr:hover td { background: rgba(196,163,90,0.02); }
+  .compare-table .col-windi {
+    color: var(--dragon-gold-bright);
+    font-weight: 600;
+  }
+  .compare-table .col-dependent { color: var(--danger-red); opacity: 0.8; }
+  .check { color: #6DBF80; }
+  .cross { color: #8B4040; }
+
+  /* ── EU Section ── */
+  .eu-banner {
+    background: linear-gradient(135deg, rgba(0,51,153,0.08) 0%, rgba(255,204,0,0.04) 100%);
+    border: 1px solid rgba(0,51,153,0.15);
+    border-radius: 2px;
+    padding: 40px;
+    margin: 48px 0;
+    position: relative;
+  }
+  .eu-banner::before {
+    content: '★';
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    color: var(--eu-gold);
+    font-size: 18px;
+    background: var(--noir);
+    padding: 0 8px;
+  }
+  .eu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-top: 24px;
+  }
+  .eu-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .eu-article {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--eu-gold);
+    background: rgba(255,204,0,0.08);
+    padding: 4px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .eu-item p {
+    font-size: 14px;
+    color: rgba(245,240,224,0.7);
+    line-height: 1.5;
+  }
+
+  /* ── Roadmap ── */
+  .roadmap {
+    position: relative;
+    padding-left: 40px;
+    margin: 48px 0;
+  }
+  .roadmap::before {
+    content: '';
+    position: absolute;
+    left: 12px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(180deg, var(--dragon-gold) 0%, transparent 100%);
+  }
+  .roadmap-item {
+    position: relative;
+    margin-bottom: 40px;
+  }
+  .roadmap-item::before {
+    content: '';
+    position: absolute;
+    left: -33px;
+    top: 6px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: 2px solid var(--dragon-gold);
+    background: var(--noir);
+  }
+  .roadmap-item.completed::before {
+    background: var(--dragon-gold);
+    box-shadow: 0 0 8px rgba(196,163,90,0.4);
+  }
+  .roadmap-phase {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--dragon-gold);
+    margin-bottom: 6px;
+  }
+  .roadmap-title {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--parchment);
+    margin-bottom: 8px;
+  }
+  .roadmap-desc {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* ── Footer ── */
+  .manifesto-footer {
+    text-align: center;
+    padding: 80px 24px;
+    border-top: 1px solid var(--noir-border);
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  .footer-seal {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--dragon-gold);
+    opacity: 0.6;
+    margin-bottom: 20px;
+  }
+  .footer-hash {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    opacity: 0.4;
+    word-break: break-all;
+    max-width: 500px;
+    margin: 16px auto 0;
+  }
+  .footer-dragon {
+    font-size: 32px;
+    margin-top: 24px;
+    opacity: 0.3;
+  }
+
+  /* ── Version Badge ── */
+  .version-badge {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: var(--dragon-gold);
+    background: rgba(196,163,90,0.1);
+    border: 1px solid rgba(196,163,90,0.2);
+    padding: 4px 10px;
+    border-radius: 4px;
+    margin-left: 12px;
+    vertical-align: middle;
+  }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeScale {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes fadeWidth {
+    from { opacity: 0; width: 0; }
+    to { opacity: 0.5; width: 60px; }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .scroll-nav { display: none; }
+    .lang-switch { top: 12px; right: 12px; }
+    section { padding: 60px 20px; }
+    .doctrine { padding: 24px; }
+    .eu-banner { padding: 24px; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .arch-row { flex-wrap: wrap; }
+    .arch-block { min-width: 45%; }
+  }
+
+  /* ── Language Visibility ── */
+  [data-lang] { display: none; }
+  [data-lang].active { display: block; }
+  span[data-lang] { display: none; }
+  span[data-lang].active { display: inline; }
+  .arch-block[data-lang] { display: none; }
+  .arch-block[data-lang].active { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  td[data-lang], th[data-lang] { display: none; }
+  td[data-lang].active, th[data-lang].active { display: table-cell; }
+  tr[data-lang] { display: none; }
+  tr[data-lang].active { display: table-row; }
+  .eu-item[data-lang] { display: none; }
+  .eu-item[data-lang].active { display: flex; }
+  .roadmap-item[data-lang] { display: none; }
+  .roadmap-item[data-lang].active { display: block; }
+  p[data-lang] { display: none; }
+  p[data-lang].active { display: block; }
+  div[data-lang] { display: none; }
+  div[data-lang].active { display: block; }
+</style>
+</head>
+<body>
+
+<!-- Language Switcher -->
+<div class="lang-switch">
+  <button class="lang-btn active" onclick="setLang('en')">EN</button>
+  <button class="lang-btn" onclick="setLang('de')">DE</button>
+  <button class="lang-btn" onclick="setLang('pt')">PT</button>
+</div>
+
+<!-- Scroll Navigation -->
+<nav class="scroll-nav">
+  <div class="scroll-dot active" data-section="hero"></div>
+  <div class="scroll-dot" data-section="doctrine"></div>
+  <div class="scroll-dot" data-section="sovereignty"></div>
+  <div class="scroll-dot" data-section="architecture"></div>
+  <div class="scroll-dot" data-section="comparison"></div>
+  <div class="scroll-dot" data-section="eu"></div>
+  <div class="scroll-dot" data-section="roadmap"></div>
+</nav>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<header class="hero" id="hero">
+  <div class="hero-dragon">🐉</div>
+  <div class="hero-pre">
+    <span data-lang="en" class="active">Sovereignty Manifesto <span class="version-badge">v2.0</span></span>
+    <span data-lang="de">Souveranitatsmanifest <span class="version-badge">v2.0</span></span>
+    <span data-lang="pt">Manifesto de Soberania <span class="version-badge">v2.0</span></span>
+  </div>
+  <h1>
+    <span data-lang="en" class="active">Publish What.<br>Protect How.<br>Let Transparency Prove.</span>
+    <span data-lang="de">Veroffentliche das Was.<br>Schutze das Wie.<br>Lass Transparenz beweisen.</span>
+    <span data-lang="pt">Publica o Que.<br>Protege o Como.<br>Deixa a Transparencia provar.</span>
+  </h1>
+  <p class="hero-subtitle">
+    <span data-lang="en" class="active">WINDI does not ask permission from third parties to guarantee your security. Fourteen sovereign services. One constitutional framework. Zero external dependencies for governance.</span>
+    <span data-lang="de">WINDI fragt keine Dritten um Erlaubnis, um Ihre Sicherheit zu gewahrleisten. Vierzehn souverane Dienste. Ein verfassungsrechtlicher Rahmen. Null externe Abhangigkeiten fur Governance.</span>
+    <span data-lang="pt">O WINDI nao pede permissao a terceiros para garantir a sua seguranca. Catorze servicos soberanos. Um framework constitucional. Zero dependencias externas para governanca.</span>
+  </p>
+  <div class="hero-seal">
+    VR-SM-Q2-2026 · SHA-256 · FORENSIC LEDGER
+  </div>
+  <div class="hero-divider"></div>
+</header>
+
+<!-- ═══════════════ DOCTRINE ═══════════════ -->
+<section id="doctrine">
+  <div class="reveal">
+    <span class="section-label">
+      <span data-lang="en" class="active">I · Core Doctrine</span>
+      <span data-lang="de">I · Kerndoktrin</span>
+      <span data-lang="pt">I · Doutrina Central</span>
+    </span>
+    <h2 class="section-title">
+      <span data-lang="en" class="active">Offensive Transparency</span>
+      <span data-lang="de">Offensive Transparenz</span>
+      <span data-lang="pt">Transparencia Ofensiva</span>
+    </h2>
+
+    <p class="section-text" data-lang="en" class="active">Traditional companies guard secrets because they sell hidden competitive advantage. WINDI offers verifiable trust, auditable governance, operational sovereignty, and systemic resilience. Trust does not survive secrecy. Trust is born from verifiability.</p>
+    <p class="section-text" data-lang="de">Traditionelle Unternehmen huten Geheimnisse, weil sie verborgene Wettbewerbsvorteile verkaufen. WINDI bietet verifizierbare Vertrauenswurdigkeit, prufbare Governance, operationale Souveranitat und systemische Resilienz. Vertrauen uberlebt keine Geheimhaltung. Vertrauen entsteht durch Verifizierbarkeit.</p>
+    <p class="section-text" data-lang="pt">Empresas tradicionais protegem segredos porque vendem vantagem competitiva oculta. O WINDI oferece confianca verificavel, governanca auditavel, soberania operacional e resiliencia sistemica. Confianca nao sobrevive ao segredo. Confianca nasce da verificabilidade.</p>
+
+    <div class="doctrine">
+      <p>
+        <span data-lang="en" class="active">"Secrets protect products.<br>Transparency legitimizes infrastructure.<br>WINDI is trust infrastructure."</span>
+        <span data-lang="de">"Geheimnisse schutzen Produkte.<br>Transparenz legitimiert Infrastruktur.<br>WINDI ist Vertrauensinfrastruktur."</span>
+        <span data-lang="pt">"Segredos protegem produtos.<br>Transparencia legitima infraestruturas.<br>WINDI e infraestrutura de confianca."</span>
+      </p>
+      <div class="attribution">
+        <span data-lang="en" class="active">— WINDI SOVEREIGNTY DOCTRINE · ARTICLE I</span>
+        <span data-lang="de">— WINDI SOUVERANITATSDOKTRIN · ARTIKEL I</span>
+        <span data-lang="pt">— DOUTRINA DE SOBERANIA WINDI · ARTIGO I</span>
+      </div>
+    </div>
+
+    <p class="section-text" data-lang="en" class="active">The auditor does not ask "does it work?" — the auditor asks "who do you depend on?", "what fails when a vendor falls?", "does the system keep running?" Answering with secrecy destroys trust. Answering with architecture builds it.</p>
+    <p class="section-text" data-lang="de">Der Auditor fragt nicht "Funktioniert es?" — er fragt "Von wem hangen Sie ab?", "Was fallt aus, wenn ein Anbieter ausfallt?", "Lauft das System weiter?" Antworten mit Geheimniskramerei zerstort Vertrauen. Antworten mit Architektur baut es auf.</p>
+    <p class="section-text" data-lang="pt">O auditor nao pergunta "voces funcionam?" — ele pergunta "de quem voces dependem?", "o que falha se um fornecedor cair?", "o sistema continua operando?" Responder com segredo destroi confianca. Responder com arquitetura constroi confianca.</p>
+  </div>
+</section>
+
+<!-- ═══════════════ SOVEREIGNTY NUMBERS ═══════════════ -->
+<section id="sovereignty">
+  <div class="reveal">
+    <span class="section-label">
+      <span data-lang="en" class="active">II · Operational Sovereignty</span>
+      <span data-lang="de">II · Operationale Souveranitat</span>
+      <span data-lang="pt">II · Soberania Operacional</span>
+    </span>
+    <h2 class="section-title">
+      <span data-lang="en" class="active">93% Local. 100% Sovereign.</span>
+      <span data-lang="de">93% Lokal. 100% Souveran.</span>
+      <span data-lang="pt">93% Local. 100% Soberano.</span>
+    </h2>
+
+    <p class="section-text" data-lang="en" class="active">If Silicon Valley turns off the signal, Bavaria keeps operating. Fourteen services running on local infrastructure. Full independence from external keys for governance, sealing, and monitoring.</p>
+    <p class="section-text" data-lang="de">Wenn das Silicon Valley das Signal abschaltet, arbeitet Bayern weiter. Vierzehn Dienste auf lokaler Infrastruktur. Vollstandige Unabhangigkeit von externen Schlusseln fur Governance, Versiegelung und Monitoring.</p>
+    <p class="section-text" data-lang="pt">Se o Vale do Silicio desligar o sinal, a Baviera continua operando. Catorze servicos em infraestrutura local. Independencia total de chaves externas para governanca, selagem e monitoramento.</p>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number">93<span class="stat-unit">%</span></div>
+        <div class="stat-label">
+          <span data-lang="en" class="active">Operational Independence</span>
+          <span data-lang="de">Operationale Unabhangigkeit</span>
+          <span data-lang="pt">Independencia Operacional</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">14<span class="stat-unit">+</span></div>
+        <div class="stat-label">
+          <span data-lang="en" class="active">Sovereign Services<br>Ports 8100–8131</span>
+          <span data-lang="de">Souverane Dienste<br>Ports 8100–8131</span>
+          <span data-lang="pt">Servicos Soberanos<br>Portas 8100–8131</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">1.4<span class="stat-unit">ms</span></div>
+        <div class="stat-label">
+          <span data-lang="en" class="active">Sentinel Response<br>p95 Latency</span>
+          <span data-lang="de">Sentinel-Antwort<br>p95 Latenz</span>
+          <span data-lang="pt">Resposta Sentinel<br>Latencia p95</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">17<span class="stat-unit">ms</span></div>
+        <div class="stat-label">
+          <span data-lang="en" class="active">Ledger Response<br>Avg Latency</span>
+          <span data-lang="de">Ledger-Antwort<br>Durchschn. Latenz</span>
+          <span data-lang="pt">Resposta Ledger<br>Latencia Media</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">56757</div>
+        <div class="stat-label">
+          <span data-lang="en" class="active">Forensic Receipts<br>SHA-256 Sealed</span>
+          <span data-lang="de">Forensische Quittungen<br>SHA-256 versiegelt</span>
+          <span data-lang="pt">Recibos Forenses<br>Selados SHA-256</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">0</div>
+        <div class="stat-label">
+          <span data-lang="en" class="active">Governance Violations<br>Verified Chain</span>
+          <span data-lang="de">Governance-Verstoße<br>Verifizierte Kette</span>
+          <span data-lang="pt">Violacoes de Governanca<br>Cadeia Verificada</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ ARCHITECTURE ═══════════════ -->
+<section id="architecture">
+  <div class="reveal">
+    <span class="section-label">
+      <span data-lang="en" class="active">III · Architecture</span>
+      <span data-lang="de">III · Architektur</span>
+      <span data-lang="pt">III · Arquitetura</span>
+    </span>
+    <h2 class="section-title">
+      <span data-lang="en" class="active">Show the What. Protect the How.</span>
+      <span data-lang="de">Zeige das Was. Schutze das Wie.</span>
+      <span data-lang="pt">Mostra o Que. Protege o Como.</span>
+    </h2>
+
+    <div class="arch-container">
+      <!-- Row 1: Core Governance -->
+      <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:2px;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase;">
+        <span data-lang="en" class="active">Core Governance Layer — 100% Local</span>
+        <span data-lang="de">Kern-Governance-Schicht — 100% Lokal</span>
+        <span data-lang="pt">Camada de Governanca Central — 100% Local</span>
+      </div>
+      <div class="arch-row">
+        <div class="arch-block arch-local">Forensic Ledger<span class="port">:8101</span></div>
+        <div class="arch-block arch-local">Sentinel LAW<span class="port">:8102</span></div>
+        <div class="arch-block arch-local">Export Engine<span class="port">:8103</span></div>
+        <div class="arch-block arch-local">Vault<span class="port">:8106</span></div>
+      </div>
+
+      <!-- Row 2: Document Layer -->
+      <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:2px;color:var(--text-muted);margin:16px 0 8px;text-transform:uppercase;">
+        <span data-lang="en" class="active">Document & Rendering Layer — 100% Local</span>
+        <span data-lang="de">Dokument- & Rendering-Schicht — 100% Lokal</span>
+        <span data-lang="pt">Camada de Documentos & Renderizacao — 100% Local</span>
+      </div>
+      <div class="arch-row">
+        <div class="arch-block arch-local">GEN 7 Desktop<span class="port">:8119</span></div>
+        <div class="arch-block arch-local">Communique Engine<span class="port">:8105</span></div>
+        <div class="arch-block arch-local">Dragon Hub<span class="port">:8108</span></div>
+        <div class="arch-block arch-local">Dispatch Gateway<span class="port">:8121</span></div>
+      </div>
+
+      <!-- Row 3: Product Layer -->
+      <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:2px;color:var(--text-muted);margin:16px 0 8px;text-transform:uppercase;">
+        <span data-lang="en" class="active">Product Layer — Sovereign Applications</span>
+        <span data-lang="de">Produkt-Schicht — Souverane Anwendungen</span>
+        <span data-lang="pt">Camada de Produtos — Aplicacoes Soberanas</span>
+      </div>
+      <div class="arch-row">
+        <div class="arch-block arch-local">WINDI-LAW<span class="port">:8122</span></div>
+        <div class="arch-block arch-local">WINDI TRAVEL<span class="port">:8126</span></div>
+        <div class="arch-block arch-local">ProofStream<span class="port">:8128</span></div>
+        <div class="arch-block arch-local">VD-MASS<span class="port">:8131</span></div>
+      </div>
+
+      <!-- Row 4: Intelligence Layer -->
+      <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:2px;color:var(--text-muted);margin:16px 0 8px;text-transform:uppercase;">
+        <span data-lang="en" class="active">Semantic Layer — Pluggable & Replaceable</span>
+        <span data-lang="de">Semantische Schicht — Austauschbar & Ersetzbar</span>
+        <span data-lang="pt">Camada Semantica — Plugavel & Substituivel</span>
+      </div>
+      <div class="arch-row">
+        <div class="arch-block arch-pluggable">
+          <span data-lang="en" class="active">LLM Gateway<span class="port">:8130</span></span>
+          <span data-lang="de">LLM-Gateway<span class="port">:8130</span></span>
+          <span data-lang="pt">Gateway LLM<span class="port">:8130</span></span>
+        </div>
+        <div class="arch-block arch-pluggable">
+          <span data-lang="en" class="active">OCR / Vision<span class="port">pluggable</span></span>
+          <span data-lang="de">OCR / Vision<span class="port">austauschbar</span></span>
+          <span data-lang="pt">OCR / Visao<span class="port">plugavel</span></span>
+        </div>
+        <div class="arch-block arch-pluggable" style="flex:0.6;">
+          <span data-lang="en" class="active">SMTP<span class="port">external</span></span>
+          <span data-lang="de">SMTP<span class="port">extern</span></span>
+          <span data-lang="pt">SMTP<span class="port">externo</span></span>
+        </div>
+      </div>
+
+      <div class="arch-legend">
+        <span class="legend-local">
+          <span data-lang="en" class="active">Sovereign / Local</span>
+          <span data-lang="de">Souveran / Lokal</span>
+          <span data-lang="pt">Soberano / Local</span>
+        </span>
+        <span class="legend-plug">
+          <span data-lang="en" class="active">Pluggable / Replaceable</span>
+          <span data-lang="de">Austauschbar / Ersetzbar</span>
+          <span data-lang="pt">Plugavel / Substituivel</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="doctrine">
+      <p>
+        <span data-lang="en" class="active">The semantic layer is pluggable and replaceable without impact on governance. Documents don't stop. Governance doesn't stop. Compliance doesn't stop.</span>
+        <span data-lang="de">Die semantische Schicht ist austauschbar ohne Auswirkung auf die Governance. Dokumente stoppen nicht. Governance stoppt nicht. Compliance stoppt nicht.</span>
+        <span data-lang="pt">A camada semantica e plugavel e substituivel sem impacto na governanca. Documentos nao param. Governanca nao para. Compliance nao para.</span>
+      </p>
+      <div class="attribution">
+        <span data-lang="en" class="active">— OPERATIONAL CONTINUITY GUARANTEE</span>
+        <span data-lang="de">— OPERATIONALE KONTINUITATSGARANTIE</span>
+        <span data-lang="pt">— GARANTIA DE CONTINUIDADE OPERACIONAL</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ COMPARISON ═══════════════ -->
+<section id="comparison">
+  <div class="reveal">
+    <span class="section-label">
+      <span data-lang="en" class="active">IV · The Market Question</span>
+      <span data-lang="de">IV · Die Marktfrage</span>
+      <span data-lang="pt">IV · A Pergunta do Mercado</span>
+    </span>
+    <h2 class="section-title">
+      <span data-lang="en" class="active">Not "Which AI do you use?"<br>But "How much depends on others?"</span>
+      <span data-lang="de">Nicht "Welche KI nutzen Sie?"<br>Sondern "Wie viel hangt von anderen ab?"</span>
+      <span data-lang="pt">Nao "Qual IA voce usa?"<br>Mas "Quanto depende de terceiros?"</span>
+    </h2>
+
+    <p class="section-text" data-lang="en" class="active">Transparency changes the market question. It exposes fragile architectures without attacking anyone. You simply set the standard.</p>
+    <p class="section-text" data-lang="de">Transparenz verandert die Marktfrage. Sie legt fragile Architekturen offen, ohne jemanden anzugreifen. Man setzt einfach den Standard.</p>
+    <p class="section-text" data-lang="pt">A transparencia muda a pergunta do mercado. Ela expoe arquiteturas frageis sem atacar ninguem. Voce simplesmente estabelece o padrao.</p>
+
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th style="width:35%">
+            <span data-lang="en" class="active">Capability</span>
+            <span data-lang="de">Fahigkeit</span>
+            <span data-lang="pt">Capacidade</span>
+          </th>
+          <th style="width:30%">WINDI</th>
+          <th style="width:35%">
+            <span data-lang="en" class="active">API-Dependent Systems</span>
+            <span data-lang="de">API-abhangige Systeme</span>
+            <span data-lang="pt">Sistemas API-Dependentes</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody data-lang="en" class="active">
+        <tr><td>Local infrastructure ratio</td><td class="col-windi">93%</td><td class="col-dependent">~0%</td></tr>
+        <tr><td>Governance without external keys</td><td class="col-windi"><span class="check">✓</span> Full independence</td><td class="col-dependent"><span class="cross">✗</span> API-key dependent</td></tr>
+        <tr><td>Operates if provider goes offline</td><td class="col-windi"><span class="check">✓</span> All core services continue</td><td class="col-dependent"><span class="cross">✗</span> Total system failure</td></tr>
+        <tr><td>Cryptographic evidence chain</td><td class="col-windi"><span class="check">✓</span> 56,757 SHA-256 receipts</td><td class="col-dependent"><span class="cross">✗</span> Logs on external servers</td></tr>
+        <tr><td>Constitutional invariants</td><td class="col-windi"><span class="check">✓</span> 9 invariants + I9 irremediable</td><td class="col-dependent"><span class="cross">✗</span> Policy guidelines only</td></tr>
+        <tr><td>Vendor lock-in risk</td><td class="col-windi">Pluggable semantic layer</td><td class="col-dependent">Complete dependency</td></tr>
+        <tr><td>Data sovereignty</td><td class="col-windi">Zero-Knowledge Architecture</td><td class="col-dependent">Content stored externally</td></tr>
+      </tbody>
+      <tbody data-lang="de">
+        <tr><td>Lokaler Infrastruktur-Anteil</td><td class="col-windi">93%</td><td class="col-dependent">~0%</td></tr>
+        <tr><td>Governance ohne externe Schlussel</td><td class="col-windi"><span class="check">✓</span> Volle Unabhangigkeit</td><td class="col-dependent"><span class="cross">✗</span> API-Schlussel-abhangig</td></tr>
+        <tr><td>Betrieb bei Anbieterausfall</td><td class="col-windi"><span class="check">✓</span> Alle Kerndienste laufen weiter</td><td class="col-dependent"><span class="cross">✗</span> Totaler Systemausfall</td></tr>
+        <tr><td>Kryptographische Beweiskette</td><td class="col-windi"><span class="check">✓</span> 56.757 SHA-256 Quittungen</td><td class="col-dependent"><span class="cross">✗</span> Logs auf externen Servern</td></tr>
+        <tr><td>Verfassungsinvarianten</td><td class="col-windi"><span class="check">✓</span> 9 Invarianten + I9 unanderlich</td><td class="col-dependent"><span class="cross">✗</span> Nur Richtlinien</td></tr>
+        <tr><td>Vendor-Lock-in-Risiko</td><td class="col-windi">Austauschbare semantische Schicht</td><td class="col-dependent">Vollstandige Abhangigkeit</td></tr>
+        <tr><td>Datensouveranitat</td><td class="col-windi">Zero-Knowledge-Architektur</td><td class="col-dependent">Inhalte extern gespeichert</td></tr>
+      </tbody>
+      <tbody data-lang="pt">
+        <tr><td>Ratio de infraestrutura local</td><td class="col-windi">93%</td><td class="col-dependent">~0%</td></tr>
+        <tr><td>Governanca sem chaves externas</td><td class="col-windi"><span class="check">✓</span> Independencia total</td><td class="col-dependent"><span class="cross">✗</span> Dependente de API-key</td></tr>
+        <tr><td>Opera se provedor cair</td><td class="col-windi"><span class="check">✓</span> Todos os servicos core continuam</td><td class="col-dependent"><span class="cross">✗</span> Falha total do sistema</td></tr>
+        <tr><td>Cadeia de evidencia criptografica</td><td class="col-windi"><span class="check">✓</span> 56.757 recibos SHA-256</td><td class="col-dependent"><span class="cross">✗</span> Logs em servidores externos</td></tr>
+        <tr><td>Invariantes constitucionais</td><td class="col-windi"><span class="check">✓</span> 9 invariantes + I9 irremediavel</td><td class="col-dependent"><span class="cross">✗</span> Apenas guidelines</td></tr>
+        <tr><td>Risco de vendor lock-in</td><td class="col-windi">Camada semantica plugavel</td><td class="col-dependent">Dependencia completa</td></tr>
+        <tr><td>Soberania de dados</td><td class="col-windi">Arquitetura Zero-Knowledge</td><td class="col-dependent">Conteudo armazenado externamente</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════ EU AI ACT ═══════════════ -->
+<section id="eu">
+  <div class="reveal">
+    <span class="section-label">
+      <span data-lang="en" class="active">V · European Digital Sovereignty</span>
+      <span data-lang="de">V · Europaische Digitale Souveranitat</span>
+      <span data-lang="pt">V · Soberania Digital Europeia</span>
+    </span>
+    <h2 class="section-title">
+      <span data-lang="en" class="active">Built for Brussels.<br>Designed for Trust.</span>
+      <span data-lang="de">Gebaut fur Brussel.<br>Entworfen fur Vertrauen.</span>
+      <span data-lang="pt">Construido para Bruxelas.<br>Desenhado para Confianca.</span>
+    </h2>
+
+    <p class="section-text" data-lang="en" class="active">WINDI's architecture directly addresses the EU AI Act's core requirements. Operational independence strengthens the European sovereignty narrative, reduces perceived vendor lock-in risk, facilitates institutional adoption, and aligns with EU digital strategies.</p>
+    <p class="section-text" data-lang="de">WINDIs Architektur adressiert direkt die Kernanforderungen des EU AI Act. Operationale Unabhangigkeit starkt die europaische Souveranitatsnarrative, reduziert wahrgenommene Vendor-Lock-in-Risiken, erleichtert institutionelle Ubernahme und ist mit EU-Digitalstrategien abgestimmt.</p>
+    <p class="section-text" data-lang="pt">A arquitetura do WINDI aborda diretamente os requisitos centrais do EU AI Act. A independencia operacional fortalece a narrativa de soberania europeia, reduz o risco percebido de vendor lock-in, facilita a adocao institucional e alinha com as estrategias digitais da UE.</p>
+
+    <div class="eu-banner">
+      <div style="font-family:var(--font-display);font-size:22px;color:var(--parchment);margin-bottom:20px;">
+        <span data-lang="en" class="active">EU AI Act Alignment Matrix</span>
+        <span data-lang="de">EU AI Act Ubereinstimmungsmatrix</span>
+        <span data-lang="pt">Matriz de Alinhamento EU AI Act</span>
+      </div>
+      <div class="eu-grid">
+        <!-- EN -->
+        <div class="eu-item" data-lang="en" class="active"><span class="eu-article">Art. 9</span><p>Risk Management — SGE 6-layer semantic risk analysis with R0–R5 classification</p></div>
+        <div class="eu-item" data-lang="en" class="active"><span class="eu-article">Art. 11</span><p>Technical Documentation — Forensic Ledger with 56,757+ immutable receipts</p></div>
+        <div class="eu-item" data-lang="en" class="active"><span class="eu-article">Art. 12</span><p>Record-Keeping — SHA-256 cryptographic evidence chain, zero violations</p></div>
+        <div class="eu-item" data-lang="en" class="active"><span class="eu-article">Art. 13</span><p>Transparency — Compliance Passport GOLD with verifiable sovereignty ratio</p></div>
+        <div class="eu-item" data-lang="en" class="active"><span class="eu-article">Art. 14</span><p>Human Oversight — I9 Constitutional Invariant: irremediable prohibition of autonomy escalation</p></div>
+        <div class="eu-item" data-lang="en" class="active"><span class="eu-article">Art. 15</span><p>Accuracy & Robustness — 93% local infrastructure, Sentinel LAW 1.4ms monitoring</p></div>
+        <div class="eu-item" data-lang="en" class="active"><span class="eu-article">Art. 17</span><p>Quality Management — Wisdom Protocol sealed blocks, virtue receipt audit trail</p></div>
+        <div class="eu-item" data-lang="en" class="active"><span class="eu-article">Art. 25</span><p>Provider Obligations — Zero-Knowledge Architecture, content never stored</p></div>
+        <!-- DE -->
+        <div class="eu-item" data-lang="de"><span class="eu-article">Art. 9</span><p>Risikomanagement — SGE 6-Schichten semantische Risikoanalyse mit R0–R5 Klassifizierung</p></div>
+        <div class="eu-item" data-lang="de"><span class="eu-article">Art. 11</span><p>Technische Dokumentation — Forensic Ledger mit 56.757+ unveranderlichen Quittungen</p></div>
+        <div class="eu-item" data-lang="de"><span class="eu-article">Art. 12</span><p>Aufzeichnungspflicht — SHA-256 kryptographische Beweiskette, null Verstoße</p></div>
+        <div class="eu-item" data-lang="de"><span class="eu-article">Art. 13</span><p>Transparenz — Compliance Passport GOLD mit verifizierbarem Souveranitatsverhaltnis</p></div>
+        <div class="eu-item" data-lang="de"><span class="eu-article">Art. 14</span><p>Menschliche Aufsicht — I9 Verfassungsinvariante: unanderliches Verbot der Autonomie-Eskalation</p></div>
+        <div class="eu-item" data-lang="de"><span class="eu-article">Art. 15</span><p>Genauigkeit & Robustheit — 93% lokale Infrastruktur, Sentinel LAW 1,4ms Uberwachung</p></div>
+        <div class="eu-item" data-lang="de"><span class="eu-article">Art. 17</span><p>Qualitatsmanagement — Wisdom Protocol versiegelte Blocke, Virtue Receipt Prufpfad</p></div>
+        <div class="eu-item" data-lang="de"><span class="eu-article">Art. 25</span><p>Anbieterpflichten — Zero-Knowledge-Architektur, Inhalte werden nie gespeichert</p></div>
+        <!-- PT -->
+        <div class="eu-item" data-lang="pt"><span class="eu-article">Art. 9</span><p>Gestao de Risco — SGE analise semantica de risco em 6 camadas com classificacao R0–R5</p></div>
+        <div class="eu-item" data-lang="pt"><span class="eu-article">Art. 11</span><p>Documentacao Tecnica — Forensic Ledger com 56.757+ recibos imutaveis</p></div>
+        <div class="eu-item" data-lang="pt"><span class="eu-article">Art. 12</span><p>Manutencao de Registos — Cadeia de evidencia criptografica SHA-256, zero violacoes</p></div>
+        <div class="eu-item" data-lang="pt"><span class="eu-article">Art. 13</span><p>Transparencia — Compliance Passport GOLD com ratio de soberania verificavel</p></div>
+        <div class="eu-item" data-lang="pt"><span class="eu-article">Art. 14</span><p>Supervisao Humana — Invariante Constitucional I9: proibicao irremediavel de escalacao de autonomia</p></div>
+        <div class="eu-item" data-lang="pt"><span class="eu-article">Art. 15</span><p>Precisao & Robustez — 93% infraestrutura local, monitoramento Sentinel LAW 1.4ms</p></div>
+        <div class="eu-item" data-lang="pt"><span class="eu-article">Art. 17</span><p>Gestao de Qualidade — Blocos selados do Wisdom Protocol, trilha de auditoria Virtue Receipt</p></div>
+        <div class="eu-item" data-lang="pt"><span class="eu-article">Art. 25</span><p>Obrigacoes do Fornecedor — Arquitetura Zero-Knowledge, conteudo nunca armazenado</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ ROADMAP ═══════════════ -->
+<section id="roadmap">
+  <div class="reveal">
+    <span class="section-label">
+      <span data-lang="en" class="active">VI · Sovereignty Roadmap</span>
+      <span data-lang="de">VI · Souveranitats-Roadmap</span>
+      <span data-lang="pt">VI · Roadmap de Soberania</span>
+    </span>
+    <h2 class="section-title">
+      <span data-lang="en" class="active">From Foundation to Fortress</span>
+      <span data-lang="de">Vom Fundament zur Festung</span>
+      <span data-lang="pt">Da Fundacao a Fortaleza</span>
+    </h2>
+
+    <div class="roadmap">
+      <!-- Phase 1 - Completed -->
+      <div class="roadmap-item completed" data-lang="en" class="active">
+        <div class="roadmap-phase">Phase I · Completed</div>
+        <div class="roadmap-title">Constitutional Foundation</div>
+        <div class="roadmap-desc">14 sovereign services deployed. Forensic Ledger operational with 56,757+ receipts. Sentinel LAW v2.0 GREEN status. Three Dragons Protocol formalized. Compliance Passport GOLD sealed. Zero-Knowledge Architecture verified. WINDI-LAW v1.3.0 live with AI Draft Mode. WINDI TRAVEL operational with ProofStream video certification.</div>
+      </div>
+      <div class="roadmap-item completed" data-lang="de">
+        <div class="roadmap-phase">Phase I · Abgeschlossen</div>
+        <div class="roadmap-title">Verfassungsfundament</div>
+        <div class="roadmap-desc">14 souverane Dienste bereitgestellt. Forensic Ledger operativ mit 56.757+ Quittungen. Sentinel LAW v2.0 GRUN-Status. Three Dragons Protocol formalisiert. Compliance Passport GOLD versiegelt. Zero-Knowledge-Architektur verifiziert. WINDI-LAW v1.3.0 live mit AI Draft Mode. WINDI TRAVEL operativ mit ProofStream Video-Zertifizierung.</div>
+      </div>
+      <div class="roadmap-item completed" data-lang="pt">
+        <div class="roadmap-phase">Fase I · Concluida</div>
+        <div class="roadmap-title">Fundacao Constitucional</div>
+        <div class="roadmap-desc">14 servicos soberanos implementados. Forensic Ledger operacional com 56.757+ recibos. Sentinel LAW v2.0 status VERDE. Three Dragons Protocol formalizado. Compliance Passport GOLD selado. Arquitetura Zero-Knowledge verificada. WINDI-LAW v1.3.0 live com AI Draft Mode. WINDI TRAVEL operacional com certificacao de video ProofStream.</div>
+      </div>
+
+      <!-- Phase 2 - Completed -->
+      <div class="roadmap-item completed" data-lang="en" class="active">
+        <div class="roadmap-phase">Phase II · Completed</div>
+        <div class="roadmap-title">Multimodal Sovereignty</div>
+        <div class="roadmap-desc">W-GATEWAY-001 LLM Bridge with 5 providers. ProofStream video certification with frame integrity. VD-MASS batch automation with I9-P policy engine. MLT/Shotcut local rendering. Whisper transcription for legal overlays. Distribution engine with Telegram and email channels.</div>
+      </div>
+      <div class="roadmap-item completed" data-lang="de">
+        <div class="roadmap-phase">Phase II · Abgeschlossen</div>
+        <div class="roadmap-title">Multimodale Souveranitat</div>
+        <div class="roadmap-desc">W-GATEWAY-001 LLM-Bridge mit 5 Anbietern. ProofStream Video-Zertifizierung mit Frame-Integritat. VD-MASS Batch-Automatisierung mit I9-P Policy Engine. MLT/Shotcut lokales Rendering. Whisper-Transkription fur juristische Overlays. Distributions-Engine mit Telegram und E-Mail-Kanalen.</div>
+      </div>
+      <div class="roadmap-item completed" data-lang="pt">
+        <div class="roadmap-phase">Fase II · Concluida</div>
+        <div class="roadmap-title">Soberania Multimodal</div>
+        <div class="roadmap-desc">W-GATEWAY-001 LLM Bridge com 5 provedores. Certificacao de video ProofStream com integridade de frame. Automacao batch VD-MASS com policy engine I9-P. Renderizacao local MLT/Shotcut. Transcricao Whisper para overlays legais. Motor de distribuicao com canais Telegram e email.</div>
+      </div>
+
+      <!-- Phase 3 - Current -->
+      <div class="roadmap-item" data-lang="en" class="active">
+        <div class="roadmap-phase">Phase III · Current</div>
+        <div class="roadmap-title">Institutional Scale</div>
+        <div class="roadmap-desc">Clone deployment enabling distributed governance nodes. Multi-tenant ISP factory. Unified Dashboard (W-UDB-001) for God View operations. Institutional onboarding pipeline. Berlin VC and EU AI Act Committee presentations. The constitutional matrix replicates while sovereignty deepens.</div>
+      </div>
+      <div class="roadmap-item" data-lang="de">
+        <div class="roadmap-phase">Phase III · Aktuell</div>
+        <div class="roadmap-title">Institutionelle Skalierung</div>
+        <div class="roadmap-desc">Clone-Bereitstellung ermoglicht verteilte Governance-Knoten. Multi-Tenant ISP-Fabrik. Unified Dashboard (W-UDB-001) fur God View Operations. Institutionelles Onboarding-Pipeline. Berlin VC und EU AI Act Committee Prasentationen. Die Verfassungsmatrix repliziert sich, wahrend die Souveranitat sich vertieft.</div>
+      </div>
+      <div class="roadmap-item" data-lang="pt">
+        <div class="roadmap-phase">Fase III · Atual</div>
+        <div class="roadmap-title">Escala Institucional</div>
+        <div class="roadmap-desc">Implantacao de Clones permitindo nodos de governanca distribuida. Fabrica ISP multi-tenant. Dashboard Unificado (W-UDB-001) para operacoes God View. Pipeline de onboarding institucional. Apresentacoes Berlin VC e EU AI Act Committee. A matriz constitucional se replica enquanto a soberania se aprofunda.</div>
+      </div>
+
+      <!-- Phase 4 -->
+      <div class="roadmap-item" data-lang="en" class="active">
+        <div class="roadmap-phase">Phase IV · Horizon</div>
+        <div class="roadmap-title">European Trust Network</div>
+        <div class="roadmap-desc">Federated governance mesh across institutions. Cross-border compliance passports. The WINDI standard becomes the European standard for AI governance infrastructure.</div>
+      </div>
+      <div class="roadmap-item" data-lang="de">
+        <div class="roadmap-phase">Phase IV · Horizont</div>
+        <div class="roadmap-title">Europaisches Vertrauensnetzwerk</div>
+        <div class="roadmap-desc">Foderiertes Governance-Netz uber Institutionen hinweg. Grenzuberschreitende Compliance-Passe. Der WINDI-Standard wird zum europaischen Standard fur KI-Governance-Infrastruktur.</div>
+      </div>
+      <div class="roadmap-item" data-lang="pt">
+        <div class="roadmap-phase">Fase IV · Horizonte</div>
+        <div class="roadmap-title">Rede de Confianca Europeia</div>
+        <div class="roadmap-desc">Malha de governanca federada entre instituicoes. Passaportes de compliance transfronteiricos. O padrao WINDI se torna o padrao europeu para infraestrutura de governanca de IA.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer class="manifesto-footer">
+  <div class="footer-seal">
+    <span data-lang="en" class="active">SEALED IN THE FORENSIC LEDGER · KEMPTEN, BAVARIA · Q2 2026 · APRIL</span>
+    <span data-lang="de">VERSIEGELT IM FORENSIC LEDGER · KEMPTEN, BAYERN · Q2 2026 · APRIL</span>
+    <span data-lang="pt">SELADO NO FORENSIC LEDGER · KEMPTEN, BAVIERA · Q2 2026 · ABRIL</span>
+  </div>
+  <div style="font-family:var(--font-display);font-size:18px;color:var(--parchment);opacity:0.7;">
+    <span data-lang="en" class="active">AI processes. Human decides. WINDI guarantees.</span>
+    <span data-lang="de">KI verarbeitet. Mensch entscheidet. WINDI garantiert.</span>
+    <span data-lang="pt">IA processa. Humano decide. WINDI garante.</span>
+  </div>
+  <div class="footer-hash">VR-SM-Q2-2026 · SHA-256 · ZERO-KNOWLEDGE CONFIRMED</div>
+  <div class="footer-dragon">🐉</div>
+</footer>
+
+<script>
+  // ── Language Switching ──
+  let currentLang = 'en';
+
+  function setLang(lang) {
+    currentLang = lang;
+    // Update buttons
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.textContent.trim().toLowerCase() === lang);
+    });
+    // Update all lang elements
+    document.querySelectorAll('[data-lang]').forEach(el => {
+      el.classList.toggle('active', el.getAttribute('data-lang') === lang);
+    });
+  }
+
+  // ── Scroll Reveal ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // ── Scroll Nav ──
+  const sections = ['hero', 'doctrine', 'sovereignty', 'architecture', 'comparison', 'eu', 'roadmap'];
+  const dots = document.querySelectorAll('.scroll-dot');
+
+  dots.forEach((dot, i) => {
+    dot.addEventListener('click', () => {
+      document.getElementById(sections[i]).scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  const sectionObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const idx = sections.indexOf(entry.target.id);
+        dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+      }
+    });
+  }, { threshold: 0.3 });
+
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) sectionObserver.observe(el);
+  });
+
+  // ── Counter Animation ──
+  function animateCounters() {
+    document.querySelectorAll('.stat-number').forEach(el => {
+      const text = el.textContent;
+      const match = text.match(/^([\d.]+)/);
+      if (!match) return;
+      const target = parseFloat(match[1]);
+      const suffix = el.querySelector('.stat-unit');
+      const isFloat = text.includes('.');
+      let start = 0;
+      const duration = 1500;
+      const startTime = performance.now();
+
+      function update(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = start + (target - start) * eased;
+        const display = isFloat ? current.toFixed(1) : Math.floor(current);
+        el.childNodes[0].textContent = display;
+        if (progress < 1) requestAnimationFrame(update);
+      }
+      requestAnimationFrame(update);
+    });
+  }
+
+  const statsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        animateCounters();
+        statsObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+
+  const statsGrid = document.querySelector('.stats-grid');
+  if (statsGrid) statsObserver.observe(statsGrid);
+</script>
+</body>
+</html>

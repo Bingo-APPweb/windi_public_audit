@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.2.19
-**Sealed:** 2026-04-16 · §181 SVG Sentinel
+**Version:** 2.2.20
+**Sealed:** 2026-04-16 · §182 W-TRAVEL-MAP-001
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -90,6 +90,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-LAB-001 | :8151 | I9,I11,I14 | **LIVE** · Governance Laboratory · LOBO · 5 Mini-Games · **/clear** Dilemas de Geleia |
 | W-COST-001 | :8152 | I9,I11,I14 | **LIVE** · Cost Intelligence Layer · Telegram Alerts · Gateway Integration · Thresholds |
 | W-SOCIAL-001 | :8133 | I9-P,I11,I14 | **LIVE** · Verified Professional Presence · Embedded-first · I9-P Protocol · Trilingual |
+| W-TRAVEL-MAP-001 | :8153 | I9,I11,I16 | **LIVE** · Berlin Pitch Map · Bayern Süd · Trilingual · Ledger Hybrid · `/travel/map/` |
 | WINDI-PORTAL | static | — | **LIVE** · Internal Control Center · 35 Services · 7 Categories |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
@@ -145,8 +146,10 @@ Nenhum endpoint retorna valores default que mascarem dados ausentes.
 **Port:** :8145 · **Invariants:** I9, I11, I14 · **Commit:** `a566464`
 **Conceito:** Endpoint público de verificação. Qualquer pessoa, qualquer dispositivo, sem login.
 **Stack:** W-STATE-CORE 001-006 completo (hash → persist → DID → PHO → ledger → verify)
-**Endpoints:** `/verify/{id}` (API) · `/verify-public/web/verify.html?id=X` (Visual UI)
+**Endpoints:** `/api/receipts/{id}` (canonical) · `/verify-public/?id=X` (Visual UI)
 **Berlin:** `berlin-slide.html` · QR funcional · Script 3 min
+
+**§182 Fix (16 Apr):** ISSUE-001 resolved — verify-public UI now calls canonical `/api/receipts/` endpoint instead of stale `/verify-public/document/`. Commit `6034019`.
 
 ### §163 — DECRETO-001: A Árvore Viva (13 Apr 2026)
 
@@ -423,9 +426,10 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | :8151 | W-LAB-001 Governance Laboratory | 🟢 **LIVE** |
 | :8160 | W-CACHE-001 Verifiable Cache | 🟢 **LIVE** |
 | :8152 | W-COST-001 Cost Intelligence | 🟢 **LIVE** |
+| :8153 | W-TRAVEL-MAP-001 Berlin Pitch | 🟢 **LIVE** |
 | :8170 | W-SERVICE-CONTROL Panel | 🟢 **LIVE** |
 
-> **Mapa completo (29 portas):** `CLAUDE-HISTORY.md` § Mapa de Portas 15 Abr
+> **Mapa completo (30 portas):** `CLAUDE-HISTORY.md` § Mapa de Portas 16 Abr
 
 ### Sistemas LIVE (46 total)
 
@@ -437,6 +441,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 16 Apr | **§182 W-TRAVEL-MAP-001** · Berlin Pitch Map · :8153 · Trilingual DE\|EN\|PT · Ledger Hybrid · verify-public fix · `/investor/` link |
 | 16 Apr | **§180 W-TRAVEL-PUB-001** · Sovereign Notebook Vision · I16 Cartographic · Mobile Phase 2 CANCELLED · Berlin Demo Target |
 | 16 Apr | **§179 W-LAB-001/clear** · Dilemas de Geleia · 4 Archetypes · Memory Loop · Trilingual · Ledger Integration |
 | 16 Apr | **§178 WPIL LIVE** · Proof Interface Layer · 3-Level Verification · Ceremony UI · /prove/ + /investor/ |
@@ -537,197 +542,26 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 ## §164-165 W-CACHE-001 + WINDI Portal (13 Apr 2026)
 
-### §164 — W-CACHE-001: Verifiable Cache Layer
+### §164-§170 — Serviços Core (13-15 Apr 2026)
 
-**Port:** :8160 · **Invariants:** I11, I14 · **Commit:** `77f82e2`
-**URLs:** `/wcache/noir` (Dashboard) · `/wcache/api/cache/v1/` (API)
+| § | Serviço | Port | Key |
+|---|---------|------|-----|
+| §164 | W-CACHE-001 | :8160 | 4-Tier Cache · L2→L3 Promotion |
+| §165 | WINDI Portal | static | 35 Services · 7 Categories |
+| §167 | W-DID-GENESIS | :8096 | `did:windi:dragon-001` canonical |
+| §170 | W-LAB-001 | :8151 | LOBO · 5 Mini-Games · OVS |
 
-**4 Tiers:** L1_EPHEMERAL (5min) → L2_DETERMINISTIC (1h) → L3_PROVEN (24h) → L4_POLICY
-**Temporal:** `timeline_id` + `state_version` + `state_hash` = consistência temporal
-**Promoção:** L2→L3 automática via `/verify` ou manual com `anchor_to_ledger: true`
+> **Full details:** `CLAUDE-HISTORY.md` § Services 13-15 Apr
 
-**NOIR Dashboard:** Performance · Temporal Integrity · Proof Layer · Alerts
-**Endpoints:** `/get` · `/entries` · `/promote` · `/invalidate` · `/metrics` · `/events`
-**Regra:** Cache nunca deleta. Apenas marca status (INVALIDATED/REVOKED/SUPERSEDED).
+### §174-§179 — Serviços 15-16 Apr 2026
 
-### §165 — WINDI Portal: Internal Control Center
+| § | Serviço | Port | Key Feature |
+|---|---------|------|-------------|
+| §174 | W-COST-001 | :8152 | LLM Cost Tracking · Telegram Alerts · Sovereign Routing Economics |
+| §176 | W-SOCIAL-001 | :8133 | Verified Professional Presence · I9-P Protocol · Trilingual |
+| §179 | W-LAB-001/clear | :8151 | Dilemas de Geleia · 4 Archetypes · Memory Loop |
 
-**URL:** `https://windi-domain.com/portal/` · **File:** `/opt/windi/portal/index.html`
-
-**7 Categorias (35 serviços):**
-📊 Dashboards · ⚖️ Legal · 🎬 Video · 🔗 Integration · 🏗️ Infra · 🔌 APIs · 📦 Deprecated
-
-**Features:** Search · NOIR/KLAR · i18n PT/DE/EN · Quick Stats · Status badges
-
-### §167 — W-DID-GENESIS Audit (14 Apr 2026)
-
-**Port:** :8096 · **Invariants:** I1, I9, I11, I14 · **Receipts:** 57.005
-
-**DID Canónico:** `did:windi:dragon-001` (ORACLE, founder)
-**Revogado:** `did:windi:dc110410-...` → Receipt `WINDI-GENESIS-REVOKE-20260414-DID001` (CRIT)
-
-**W-MARIA-001 Fix:** `wallet_id` obrigatório para HIGH governance.
-Anonymous → HTTPException 400 · Receipt `WINDI-MARIA-COMPLIANCE-FIX-20260414`
-
-**Princípio Descoberto:**
-> *"A Árvore não planeia os frutos. Responde às estações."*
-
-### §170 — W-LAB-001: Governance Laboratory (15 Apr 2026)
-
-**Port:** :8151 · **Invariants:** I9, I11, I14 · **Commits:** `8ea52ec` → `b9b7fd1`
-**URL:** `https://windi-domain.com/lab/`
-**Entry:** `https://windi-domain.com/lab/static/entry.html`
-
-**Conceito:** Campo de treino para supervisão humana de IA sob pressão.
-
-> *"W-LAB doesn't test AI. It tests the human responsible for it."*
-
-**LOBO Architecture (Layer 01 REFLEXO):**
-| Game | Skill | Timer |
-|------|-------|-------|
-| 🐺 FAREJADOR | Detecção I9 | 30s |
-| 🌬️ FARO | Antecipação | 75s |
-| 💓 PULSO | Somático | 90s |
-| 🎯 ÁRBITRO | Classificação | 15s |
-| ⏱️ RELOJOEIRO | Urgência | 20s |
-
-**Entry Landing (market-ready):**
-- FAREJADOR-LITE inline demo (5 scenarios, 20s, no login)
-- Email capture with conversion analytics
-- Emotional hook: "You'll be asked what you can prove"
-- Authority signal: GDPR · DORA · EU AI Act patterns
-
-**Features:**
-- Maturity Scale (5 levels → LOBO)
-- OVS Certification (Operator of Verifiable Systems)
-- Session sealing to Forensic Ledger
-- SANDBOX/STRESS/FORMULA modes
-- NOIR/KLAR + i18n PT/DE/EN
-
-**Files:**
-- `/opt/windi/w-lab-001/app.py` (FastAPI)
-- `/opt/windi/w-lab-001/static/entry.html` (Entry landing)
-- `/opt/windi/w-lab-001/static/lab.html` (Dashboard)
-- `/opt/windi/w-lab-001/static/*.html` (5 mini-games)
-
-### §174 — W-COST-001: Cost Intelligence Layer (15 Apr 2026)
-
-**Port:** :8152 · **Invariants:** I9, I11, I14 · **Commits:** `5e7da0e`, `05f4bf7`, `4ad6ba6`
-**URL:** `https://windi-domain.com/cost/`
-**Conceito:** Centralização de custos LLM com alertas Telegram e integração W-GATEWAY.
-
-> *"O WINDI agora vê o que gasta. Decisões soberanas com números reais."*
-
-**Sovereign Routing Economics:**
-| Tier | Provider | Cost/call | Ratio |
-|------|----------|-----------|-------|
-| FREE | local | €0.00 | ∞ |
-| MED | Mistral | €0.000007 | 2800x cheaper |
-| HIGH | Anthropic | €0.02 | 1x (reference) |
-
-**Thresholds + Telegram:**
-- Daily Yellow: €2 (log only)
-- Daily Red: €5 → 🔴 Telegram
-- Weekly Red: €15 → 🔴 Telegram
-- Spike: 50% increase → ⚡ Telegram
-
-**Endpoints:**
-- `POST /api/cost/record` — Record cost event from W-GATEWAY
-- `GET /api/cost/summary` — Daily/weekly totals
-- `GET /api/cost/by-service` — Breakdown by service
-- `GET /api/cost/wisdom` — Candidates for caching
-- `GET /api/cost/test-alert` — Test Telegram delivery
-- `GET /api/cost/alerts` — Alert history
-
-**W-GATEWAY Integration:**
-- Real token tracking (not budget)
-- `call_anthropic()` returns `usage.input_tokens` + `usage.output_tokens`
-- `call_mistral()` returns `usage.prompt_tokens` + `usage.completion_tokens`
-- Non-blocking `record_cost()` after each LLM call
-
-**Files:**
-- `/opt/windi/w-cost-001/app.py` (FastAPI, 542 lines)
-- `/opt/windi/w-cost-001/static/index.html` (NOIR Dashboard)
-- `/opt/windi/w-cost-001/cost_hook.py` (Integration module)
-- `/opt/windi/w-cost-001/.env` (Telegram config, gitignored)
-- `/opt/windi/windi-gateway/server.py` (Gateway integration)
-
-**Princípio:** O sovereign_router não é apenas constitucional — é economicamente crítico.
-
-### §176 — W-SOCIAL-001: Verified Professional Presence (15 Apr 2026)
-
-**Port:** :8133 · **Invariants:** I9-P, I11, I14 · **Status:** LIVE
-**URLs:** `https://windi-domain.com/social/static/manifesto.html` · `https://windi-domain.com/social/static/probe.html`
-**Conceito:** Transforma trabalho intelectual real em presença pública verificada.
-
-> *"O humano define a lei narrativa. A IA amplifica a voz. O WINDI prova a autoria."*
-
-**3 Invariantes Constitucionais:**
-| ID | Nome | Regra |
-|----|------|-------|
-| I-SOC-001 | Provenance | Sem ghostwriting sintético — toda publicação requer origem rastreável |
-| I-SOC-002 | Human Seal | Aprovação humana explícita (I9-P Protocol) antes de publicar |
-| I-SOC-003 | Verification | verify_url obrigatório — prova de autoria no Ledger |
-
-**Canonical Flow:** Capture → Compile → Approve → Seal
-**Target Profile:** Compliance Officers · Legal Counsel · Governance Specialists · Field Auditors
-
-**Endpoints PoC:**
-- `POST /social/intake` — Recebe átomo de origem
-- `POST /social/compile` — Gera variações por canal
-- `POST /social/approve` — I9-P human approval
-- `GET /social/verify/{seal_id}` — Prova pública
-
-**Features:**
-- Embedded-first (botão vive dentro de LAW/Enterprise/Travel)
-- Security sanitized (Payload Spec sem exposição interna)
-- Trilingual i18n (PT/DE/EN)
-- NOIR/KLAR theme
-- Navigation links (Manifesto ↔ Probe ↔ Portal)
-
-**Files:**
-- `/opt/windi/w-social-001/app.py` (FastAPI, PoC)
-- `/opt/windi/w-social-001/static/manifesto.html` (Founding document)
-- `/opt/windi/w-social-001/static/probe.html` (Interactive UX demo)
-- `/etc/systemd/system/windi-social.service`
-
-### §179 — W-LAB-001/clear: Dilemas de Geleia (16 Apr 2026)
-
-**Port:** :8151 · **Invariants:** I9, I11, I14, WL-I · **Status:** LIVE
-**URL:** `https://windi-domain.com/lab/clear`
-**Conceito:** Exercícios cognitivos para treino de supervisão humana sob pressão.
-
-> *"A geleia que escolhes revela o loop em que estás preso."*
-
-**4 Arquétipos de Decisão:**
-| Arquétipo | Cor | Loop Risk | Padrão |
-|-----------|-----|-----------|--------|
-| 🔴 Red Jelly | reactive | high | Reacção impulsiva à pressão |
-| 🔵 Blue Jelly | false_authority | medium | Delegação a falsa autoridade |
-| 🪟 Glass Observer | evasion | high | Evasão/paralisia |
-| 🌿 Frequency Break | sovereign | low | Mudança soberana de frequência |
-
-**Memory Loop:** Echo → Pattern → Archetype → Wisdom
-**Pressure Timer:** 90-120s por dilema
-**Navigation:** ← Back to W-LAB · ← Anterior · 1/3 · Próximo →
-
-**3 Dilemas Semente:**
-- CLEAR-001: LinkedIn Provocation (reputation, crisis)
-- CLEAR-002: Investor Pressure (integrity, negotiation)
-- CLEAR-003: Competitor Mirror (strategy, market)
-
-**Endpoints:**
-- `GET /api/clear/dilemmas` — Lista todos os dilemas
-- `GET /api/clear/random` — Dilema aleatório para treino
-- `POST /api/clear/decide` — Regista decisão + sela no Ledger
-- `GET /api/clear/stats` — Estatísticas do módulo
-
-**Files:**
-- `/opt/windi/w-lab-001/clear/dilemmas/*.json` (3 dilemas)
-- `/opt/windi/w-lab-001/static/clear.html` (UI trilíngue)
-- `/opt/windi/w-lab-001/app.py` (Backend routes)
-
-**Princípio:** O treino não simula produção. O treino revela padrões antes de produção.
+> **Full details:** `CLAUDE-HISTORY.md` § Services 15-16 Apr
 
 ### §169 — W-SERVICE-CONTROL: Service Control Panel (14 Apr 2026)
 

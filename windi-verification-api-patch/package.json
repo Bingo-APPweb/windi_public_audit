@@ -1,0 +1,36 @@
+{
+  "name": "@windi/verification-api",
+  "version": "1.0.0",
+  "description": "WINDI Proof Interface Layer (WPIL) - Independent verification of WINDI proof artifacts",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test tests/",
+    "validate-schemas": "node scripts/validate-schemas.js"
+  },
+  "keywords": [
+    "windi",
+    "verification",
+    "proof",
+    "integrity",
+    "governance",
+    "wpil"
+  ],
+  "author": "WINDI Publishing House",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Bingo-APPweb/windi-verification-api.git"
+  },
+  "dependencies": {
+    "ajv": "^8.12.0",
+    "ajv-formats": "^3.0.1",
+    "express": "^4.19.2",
+    "morgan": "^1.10.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "spec_version": "1.0.0",
+  "receipt_id": "WINDI-EXAMPLE-20260410120000-MINIMAL",
+  "issued_at": "2026-04-10T12:00:00Z",
+  "actor": "did:windi:example-001",
+  "app": "windi-example",
+  "content_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "hash_algorithm": "SHA-256",
+  "governance_level": "FREE",
+  "verify_url": "https://windi-domain.com/verify/WINDI-EXAMPLE-20260410120000-MINIMAL"
+}

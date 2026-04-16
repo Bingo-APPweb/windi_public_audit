@@ -1,0 +1,22 @@
+{
+  "version": "1.0",
+  "document_id": "windi:doc:inv-2026-001",
+  "document_hash": "sha256:a7f5f35426b927411fc9231b56382173a0b25fd4e8c9d72a4f3c8b9d74e91c23",
+  "proof_shelves": {
+    "payto_hash": "sha256:7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069",
+    "amount_hash": "sha256:2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae",
+    "currency_hash": "sha256:fcde2b2edba56bf408601fb721fe9b5c338d10ee429ea04fae5511b68fbf8fb9",
+    "date_hash": "sha256:1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b",
+    "structure_hash": "sha256:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"
+  },
+  "issuer_key_id": "windi:key:bank-de",
+  "signature": "MEUCIQDKZokqnCjrRtw5YxJZrpOqvJzxMw+7TibVViG6bNPAQwIgZPtSdKJYr8wHVNpkhKwqY5w1kE8qF0sMyTvQB3j8f5M=",
+  "created_at": "2026-02-07T12:00:00Z",
+  "expires_at": "2027-02-07T12:00:00Z",
+  "manifest_id": "windi:manifest:invoice-v1",
+  "metadata": {
+    "issuer_name": "Deutsche Bank AG",
+    "document_type": "INVOICE",
+    "jurisdiction": "DE"
+  }
+}

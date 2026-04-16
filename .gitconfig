@@ -1,0 +1,3 @@
+[pack]
+	threads = 1
+	deltaCacheSize = 1m

@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI — Institutional Catalog · Maio 2026</title>
+<meta name="description" content="WINDI Institutional Catalog: Documentation, Products, and Verification Systems. Kempten, Bavaria.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --parchment: #F5F0E0;
+    --ink: #1C1A14;
+    --ink-muted: #6B6455;
+    --ink-faint: #AEA89A;
+    --gold: #8B7355;
+    --gold-light: #C4AA82;
+    --rule: #D4CDB8;
+    --seal-green: #2D5A3D;
+    --law-blue: #1a3a6b;
+    --travel-teal: #1a4a5a;
+    --video-red: #6b1a1a;
+  }
+
+  html { font-size: 16px; }
+
+  body {
+    background: var(--parchment);
+    color: var(--ink);
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 1.125rem;
+    line-height: 1.75;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* ── LANG SWITCHER ── */
+  .lang-bar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    display: flex;
+    justify-content: flex-end;
+    padding: 0.75rem 2rem;
+    gap: 1rem;
+    background: var(--parchment);
+    border-bottom: 1px solid var(--rule);
+    z-index: 100;
+  }
+  .lang-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    color: var(--ink-muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    transition: color 0.2s;
+  }
+  .lang-btn:hover, .lang-btn.active { color: var(--ink); }
+  .lang-btn.active { border-bottom: 1.5px solid var(--gold); }
+
+  /* ── LAYOUT ── */
+  .page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 6rem 2rem 4rem;
+  }
+
+  /* ── HEADER ── */
+  .masthead {
+    text-align: center;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 3rem;
+  }
+
+  .ligature {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+
+  .wordmark {
+    font-size: 2.5rem;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+    color: var(--ink);
+  }
+
+  .subtitle {
+    font-size: 1rem;
+    color: var(--gold);
+    letter-spacing: 0.08em;
+    font-style: italic;
+  }
+
+  /* ── CATEGORY ── */
+  .category {
+    margin-bottom: 3rem;
+  }
+
+  .category-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .category-icon {
+    font-size: 1.25rem;
+    width: 2rem;
+    text-align: center;
+  }
+
+  .category-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+
+  /* ── CATALOG ITEM ── */
+  .catalog-item {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 0.75rem;
+    background: white;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    transition: all 0.2s ease;
+  }
+
+  .catalog-item:hover {
+    border-color: var(--gold-light);
+    transform: translateX(4px);
+  }
+
+  .item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+  }
+
+  .item-title {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+
+  .item-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    padding: 0.2rem 0.5rem;
+    border-radius: 2px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    margin-left: 1rem;
+  }
+
+  .badge-live {
+    background: var(--seal-green);
+    color: white;
+  }
+
+  .badge-spec {
+    background: var(--gold);
+    color: white;
+  }
+
+  .badge-pdf {
+    background: var(--video-red);
+    color: white;
+  }
+
+  .item-desc {
+    font-size: 0.95rem;
+    color: var(--ink-muted);
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+  }
+
+  .item-url {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--ink-faint);
+    letter-spacing: 0.02em;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    border-top: 1px solid var(--rule);
+    padding-top: 2rem;
+    text-align: center;
+    margin-top: 2rem;
+  }
+
+  .footer-logo {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 0.25rem;
+  }
+
+  .footer-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: var(--ink-faint);
+    line-height: 2;
+  }
+
+  /* ── LANG CONTENT ── */
+  [data-lang] { display: none; }
+  [data-lang].visible { display: block; }
+
+  /* ── MOBILE ── */
+  @media (max-width: 600px) {
+    .page { padding: 5rem 1.25rem 3rem; }
+    .wordmark { font-size: 2rem; }
+    .lang-bar { padding: 0.75rem 1.25rem; }
+    .catalog-item { padding: 1rem; }
+    .item-header { flex-direction: column; gap: 0.5rem; }
+    .item-badge { margin-left: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LANG BAR -->
+<nav class="lang-bar">
+  <button class="lang-btn active" onclick="setLang('de')">DE</button>
+  <button class="lang-btn" onclick="setLang('en')">EN</button>
+  <button class="lang-btn" onclick="setLang('pt')">PT</button>
+</nav>
+
+<main class="page">
+
+  <!-- MASTHEAD -->
+  <header class="masthead">
+    <div class="ligature">Liga IA+H · Kempten, Bavaria · Maio 2026</div>
+    <div class="wordmark">WINDI</div>
+    <div class="subtitle">
+      <span data-lang="de" class="visible">Institutioneller Katalog</span>
+      <span data-lang="en">Institutional Catalog</span>
+      <span data-lang="pt">Catálogo Institucional</span>
+    </div>
+  </header>
+
+  <!-- IDENTITY & DOCUMENTATION -->
+  <section class="category">
+    <div class="category-header">
+      <span class="category-icon">🪪</span>
+      <span class="category-title">
+        <span data-lang="de" class="visible">Identität & Dokumentation</span>
+        <span data-lang="en">Identity & Documentation</span>
+        <span data-lang="pt">Identidade & Documentação</span>
+      </span>
+    </div>
+
+    <a class="catalog-item" href="https://windi-domain.com/docs/did/" target="_blank">
+      <div class="item-header">
+        <span class="item-title">DID — The Seed of WINDI</span>
+        <span class="item-badge badge-spec">SPEC</span>
+      </div>
+      <div class="item-desc" data-lang="de" class="visible">
+        Technische Spezifikation des Decentralized Identifier Systems. Ed25519 Kryptographie. Wallet-Generierung. Sicherheitsarchitektur.
+      </div>
+      <div class="item-desc" data-lang="en">
+        Technical specification of the Decentralized Identifier system. Ed25519 cryptography. Wallet generation. Security architecture.
+      </div>
+      <div class="item-desc" data-lang="pt">
+        Especificação técnica do sistema de Identificador Descentralizado. Criptografia Ed25519. Geração de wallet. Arquitectura de segurança.
+      </div>
+      <div class="item-url">/docs/did/</div>
+    </a>
+
+    <a class="catalog-item" href="https://windi-domain.com/library/docs/verify/WINDI_VERIFY_MasterSpec_v1.0.html" target="_blank">
+      <div class="item-header">
+        <span class="item-title">WINDI Verify — Master Specification v1.0</span>
+        <span class="item-badge badge-spec">SPEC</span>
+      </div>
+      <div class="item-desc" data-lang="de" class="visible">
+        Vollständige Spezifikation des öffentlichen Verifizierungssystems. SHA-256 Protokoll. QR-Decoder. PWA-Architektur.
+      </div>
+      <div class="item-desc" data-lang="en">
+        Complete specification of the public verification system. SHA-256 protocol. QR decoder. PWA architecture.
+      </div>
+      <div class="item-desc" data-lang="pt">
+        Especificação completa do sistema de verificação pública. Protocolo SHA-256. Decoder QR. Arquitectura PWA.
+      </div>
+      <div class="item-url">/library/docs/verify/WINDI_VERIFY_MasterSpec_v1.0.html</div>
+    </a>
+  </section>
+
+  <!-- PRODUCTS -->
+  <section class="category">
+    <div class="category-header">
+      <span class="category-icon">⚖️</span>
+      <span class="category-title">
+        <span data-lang="de" class="visible">Produkte</span>
+        <span data-lang="en">Products</span>
+        <span data-lang="pt">Produtos</span>
+      </span>
+    </div>
+
+    <a class="catalog-item" href="https://windi-domain.com/law/gate/" target="_blank">
+      <div class="item-header">
+        <span class="item-title">WINDI-LAW — Identity Gate</span>
+        <span class="item-badge badge-live">LIVE</span>
+      </div>
+      <div class="item-desc" data-lang="de" class="visible">
+        Rechtskonformes Dokumentationssystem mit KI-Unterstützung und menschlicher Aufsicht. PHO-Gate. AI Draft Mode. DOCX Export.
+      </div>
+      <div class="item-desc" data-lang="en">
+        Legal documentation system with AI assistance and human oversight. PHO gate. AI Draft mode. DOCX export.
+      </div>
+      <div class="item-desc" data-lang="pt">
+        Sistema de documentação jurídica com assistência IA e supervisão humana. Gate PHO. Modo AI Draft. Export DOCX.
+      </div>
+      <div class="item-url">/law/gate/</div>
+    </a>
+
+    <a class="catalog-item" href="https://windi-domain.com/travel/pitch/" target="_blank">
+      <div class="item-header">
+        <span class="item-title">WINDI TRAVEL — Pitch Deck</span>
+        <span class="item-badge badge-live">LIVE</span>
+      </div>
+      <div class="item-desc" data-lang="de" class="visible">
+        Souveränes Reisedokumentationssystem. Presence Seal. Video Evidence. Telegram Integration via @windi_nomad_bot.
+      </div>
+      <div class="item-desc" data-lang="en">
+        Sovereign travel documentation system. Presence Seal. Video Evidence. Telegram integration via @windi_nomad_bot.
+      </div>
+      <div class="item-desc" data-lang="pt">
+        Sistema soberano de documentação de viagem. Presence Seal. Video Evidence. Integração Telegram via @windi_nomad_bot.
+      </div>
+      <div class="item-url">/travel/pitch/</div>
+    </a>
+
+    <a class="catalog-item" href="https://windi-domain.com/nomad-upload/" target="_blank">
+      <div class="item-header">
+        <span class="item-title">NOMAD Upload — PWA</span>
+        <span class="item-badge badge-live">LIVE</span>
+      </div>
+      <div class="item-desc" data-lang="de" class="visible">
+        Progressive Web App für mobilen Upload. Offline-fähig. Direkte Ledger-Versiegelung. Installierbar auf jedem Gerät.
+      </div>
+      <div class="item-desc" data-lang="en">
+        Progressive Web App for mobile upload. Offline-capable. Direct Ledger sealing. Installable on any device.
+      </div>
+      <div class="item-desc" data-lang="pt">
+        Progressive Web App para upload móvel. Funciona offline. Selagem directa no Ledger. Instalável em qualquer dispositivo.
+      </div>
+      <div class="item-url">/nomad-upload/</div>
+    </a>
+  </section>
+
+  <!-- VIDEO EVIDENCE -->
+  <section class="category">
+    <div class="category-header">
+      <span class="category-icon">🎬</span>
+      <span class="category-title">
+        <span data-lang="de" class="visible">Video Evidence</span>
+        <span data-lang="en">Video Evidence</span>
+        <span data-lang="pt">Video Evidence</span>
+      </span>
+    </div>
+
+    <a class="catalog-item" href="https://windi-domain.com/vd-cut/static/reports/VIR-WINDI-VDCUT-20260404.pdf" target="_blank">
+      <div class="item-header">
+        <span class="item-title">W-VD-CUT-001 — Video Integrity Report</span>
+        <span class="item-badge badge-pdf">PDF</span>
+      </div>
+      <div class="item-desc" data-lang="de" class="visible">
+        Zertifizierter Bericht über Frame-Integrität. SHA-256 pro Frame. Dual-Chain-Architektur. Deepfake-Erkennung.
+      </div>
+      <div class="item-desc" data-lang="en">
+        Certified report on frame integrity. SHA-256 per frame. Dual-chain architecture. Deepfake detection.
+      </div>
+      <div class="item-desc" data-lang="pt">
+        Relatório certificado de integridade de frames. SHA-256 por frame. Arquitectura dual-chain. Detecção de deepfake.
+      </div>
+      <div class="item-url">/vd-cut/static/reports/VIR-WINDI-VDCUT-20260404.pdf</div>
+    </a>
+  </section>
+
+  <!-- INVESTOR RELATIONS -->
+  <section class="category">
+    <div class="category-header">
+      <span class="category-icon">📊</span>
+      <span class="category-title">
+        <span data-lang="de" class="visible">Investor Relations</span>
+        <span data-lang="en">Investor Relations</span>
+        <span data-lang="pt">Relações com Investidores</span>
+      </span>
+    </div>
+
+    <a class="catalog-item" href="https://windi-domain.com/pitch/" target="_blank">
+      <div class="item-header">
+        <span class="item-title">WINDI — Main Pitch Deck</span>
+        <span class="item-badge badge-live">LIVE</span>
+      </div>
+      <div class="item-desc" data-lang="de" class="visible">
+        Hauptpräsentation für Investoren. Marktübersicht GRC €65B. Geschäftsmodell. Technologische Differenzierung.
+      </div>
+      <div class="item-desc" data-lang="en">
+        Main investor presentation. GRC market overview €65B. Business model. Technological differentiation.
+      </div>
+      <div class="item-desc" data-lang="pt">
+        Apresentação principal para investidores. Mercado GRC €65B. Modelo de negócio. Diferenciação tecnológica.
+      </div>
+      <div class="item-url">/pitch/</div>
+    </a>
+
+    <a class="catalog-item" href="https://windi-domain.com/investor/" target="_blank">
+      <div class="item-header">
+        <span class="item-title">Investor Portal</span>
+        <span class="item-badge badge-live">LIVE</span>
+      </div>
+      <div class="item-desc" data-lang="de" class="visible">
+        Detaillierte Investorinformationen. Finanzstruktur. Roadmap. Kontaktformular für qualifizierte Interessenten.
+      </div>
+      <div class="item-desc" data-lang="en">
+        Detailed investor information. Financial structure. Roadmap. Contact form for qualified prospects.
+      </div>
+      <div class="item-desc" data-lang="pt">
+        Informações detalhadas para investidores. Estrutura financeira. Roadmap. Formulário para interessados qualificados.
+      </div>
+      <div class="item-url">/investor/</div>
+    </a>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-logo">WINDI</div>
+    <div class="footer-meta">
+      Liga IA+H · Kempten, Bavaria, Deutschland<br>
+      <span data-lang="de" class="visible">Katalog für institutionelle Präsentationen · Maio 2026</span>
+      <span data-lang="en">Catalog for institutional presentations · May 2026</span>
+      <span data-lang="pt">Catálogo para apresentações institucionais · Maio 2026</span>
+    </div>
+  </footer>
+
+</main>
+
+<script>
+function setLang(lang) {
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    el.classList.remove('visible');
+  });
+  document.querySelectorAll('[data-lang="' + lang + '"]').forEach(el => {
+    el.classList.add('visible');
+  });
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  event.target.classList.add('active');
+  document.documentElement.lang = lang;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WINDI — Investor Relations</title>
+    <meta name="description" content="WINDI Publishing House — Pre-AI Governance Layer. Investor information and pitch deck for seed funding round.">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+        :root {
+            --dark: #0F1419;
+            --dark-card: #1A1F2E;
+            --dark-accent: #252B3B;
+            --gold: #D4A843;
+            --gold-light: #E8C76A;
+            --white: #FFFFFF;
+            --off-white: #F5F5F0;
+            --light-gray: #E8E8E8;
+            --med-gray: #94A3B8;
+            --text-dark: #1E293B;
+            --green: #16A34A;
+            --red: #DC2626;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--dark);
+            color: var(--white);
+            min-height: 100vh;
+        }
+
+        .gold-bar { height: 3px; background: var(--gold); width: 100%; }
+
+        .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+        /* Header */
+        header {
+            padding: 40px 0 20px;
+            text-align: center;
+        }
+
+        .shield-icon {
+            width: 60px; height: 60px; margin-bottom: 16px;
+        }
+
+        .shield-icon svg { fill: var(--white); }
+
+        header h1 {
+            font-size: 2.4rem; font-weight: 700; color: var(--gold);
+            letter-spacing: 8px; margin-bottom: 4px;
+        }
+
+        header .subtitle {
+            font-size: 1.1rem; color: var(--med-gray); font-weight: 300;
+        }
+
+        .tagline {
+            font-size: 0.85rem; color: var(--med-gray); font-style: italic;
+            margin-top: 12px; opacity: 0.7;
+        }
+
+        /* Classification Banner */
+        .classification {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-accent);
+            border-left: 3px solid var(--gold);
+            padding: 12px 20px;
+            margin: 30px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--med-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .classification .label { color: var(--gold); font-weight: 500; }
+
+        /* Main Content */
+        .section {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-accent);
+            border-radius: 8px;
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+
+        .section h2 {
+            font-size: 1.3rem; color: var(--gold); font-weight: 600;
+            margin-bottom: 16px;
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        .section h2 .icon { font-size: 1.1rem; }
+
+        .section p {
+            color: var(--light-gray); line-height: 1.7; font-weight: 300;
+            margin-bottom: 12px;
+        }
+
+        .section p strong { color: var(--white); font-weight: 500; }
+
+        /* PMF Highlight */
+        .pmf-highlight {
+            background: linear-gradient(135deg, #1a3a2a 0%, var(--dark-card) 100%);
+            border: 2px solid var(--green);
+            border-radius: 12px;
+            padding: 32px;
+            margin: 24px 0;
+            text-align: center;
+        }
+
+        .pmf-highlight h3 {
+            color: var(--green);
+            font-size: 1.2rem;
+            margin-bottom: 16px;
+        }
+
+        .pmf-highlight .big-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 8px;
+        }
+
+        .pmf-highlight .context {
+            color: var(--light-gray);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .pmf-highlight .quote {
+            margin-top: 16px;
+            font-style: italic;
+            color: var(--med-gray);
+            font-size: 0.9rem;
+        }
+
+        /* Download Card */
+        .download-card {
+            background: linear-gradient(135deg, var(--dark-accent) 0%, var(--dark-card) 100%);
+            border: 2px solid var(--gold);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            margin: 32px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .download-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: var(--gold);
+        }
+
+        .download-card h3 {
+            font-size: 1.4rem; color: var(--white); margin-bottom: 8px;
+        }
+
+        .download-card .meta {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem; color: var(--med-gray);
+            margin-bottom: 24px;
+        }
+
+        .download-btn {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: var(--gold);
+            color: var(--dark);
+            padding: 14px 36px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border: 2px solid var(--gold);
+        }
+
+        .download-btn:hover {
+            background: transparent;
+            color: var(--gold);
+        }
+
+        .download-btn svg { width: 18px; height: 18px; }
+
+        /* Key Metrics */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin: 24px 0;
+        }
+
+        .metric {
+            background: var(--dark-accent);
+            border-radius: 8px;
+            padding: 20px 16px;
+            text-align: center;
+        }
+
+        .metric .value {
+            font-size: 1.6rem; font-weight: 700; color: var(--white);
+            margin-bottom: 4px;
+        }
+
+        .metric .label {
+            font-size: 0.75rem; color: var(--med-gray); font-weight: 400;
+        }
+
+        /* Invariants */
+        .invariants {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .invariant {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            padding: 8px 12px;
+            background: var(--dark-accent);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .invariant .id { color: var(--gold); font-weight: 500; }
+        .invariant .text { color: var(--light-gray); }
+        .invariant .status { margin-left: auto; color: var(--green); font-size: 0.6rem; }
+        .invariant.critical { border: 1px solid var(--red); }
+        .invariant.critical .id { color: var(--red); }
+        .invariant.critical .status { color: var(--red); }
+
+        /* Live Systems */
+        .systems-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .system-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            background: var(--dark-accent);
+            border-radius: 6px;
+        }
+
+        .system-dot {
+            width: 8px; height: 8px;
+            background: var(--green);
+            border-radius: 50%;
+            flex-shrink: 0;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .system-item a {
+            color: var(--light-gray);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.2s;
+        }
+
+        .system-item a:hover { color: var(--gold); }
+
+        .system-item .desc {
+            font-size: 0.7rem;
+            color: var(--med-gray);
+            display: block;
+            margin-top: 2px;
+        }
+
+        /* Contact */
+        .contact-section {
+            text-align: center;
+            padding: 40px;
+            margin: 32px 0;
+        }
+
+        .contact-section h3 {
+            color: var(--gold);
+            font-size: 1.2rem;
+            margin-bottom: 16px;
+        }
+
+        .contact-info {
+            font-size: 0.95rem;
+            color: var(--light-gray);
+        }
+
+        .contact-info strong { color: var(--white); }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 24px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: #4A6A8A;
+            border-top: 1px solid var(--dark-accent);
+            margin-top: 40px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+            .invariants { grid-template-columns: 1fr; }
+            .systems-grid { grid-template-columns: 1fr; }
+            header h1 { font-size: 1.8rem; letter-spacing: 4px; }
+            .classification { flex-direction: column; gap: 8px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="gold-bar"></div>
+    <div style="position:fixed;top:16px;left:24px;z-index:100"><a href="/" style="display:inline-flex;align-items:center;gap:8px;color:#D4A843;text-decoration:none;font-family:Outfit,sans-serif;font-size:0.85rem;background:rgba(15,20,25,0.9);padding:8px 16px;border-radius:6px;border:1px solid #252B3B;backdrop-filter:blur(8px)">&larr; WINDI Home</a></div>
+
+    <div class="container">
+        <header>
+            <div class="shield-icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L3 7v5c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z"/>
+                </svg>
+            </div>
+            <h1>WINDI</h1>
+            <p class="subtitle">Pre-AI Governance Layer</p>
+            <p class="tagline">AI processes. Human decides. WINDI guarantees.</p>
+        </header>
+
+        <div class="classification">
+            <span><span class="label">INVESTOR RELATIONS</span> &mdash; Seed Round &middot; Active Q2 2026</span>
+            <span>WINDI-IR-2026-0406</span>
+        </div>
+
+        <!-- Overview -->
+        <div class="section">
+            <h2><span class="icon">&#x1F6E1;</span> Executive Summary</h2>
+            <p>
+                <strong>WINDI Publishing House</strong> is building the Pre-AI Governance Layer for institutional workflows.
+                Every enterprise is adopting AI, but nobody is governing it. The EU AI Act begins enforcement in
+                <strong>August 2026</strong> with fines up to <strong>&euro;35M per violation</strong> &mdash; and most
+                enterprises are completely unprepared.
+            </p>
+            <p>
+                WINDI sits between AI tools and institutional decisions, ensuring every AI-assisted process is
+                auditable, compliant, and tamper-proof &mdash; <strong>without ever accessing sensitive data</strong>.
+                Our zero-knowledge architecture means clients keep their data while WINDI provides the governance protocol.
+            </p>
+            <p>
+                We call it: <strong>&ldquo;Instruments without data.&rdquo;</strong>
+            </p>
+        </div>
+
+        <!-- PMF Signal -->
+        <div class="pmf-highlight">
+            <h3>&#x1F30D; Product-Market Fit Signal</h3>
+            <div class="big-number">56,757+</div>
+            <p class="context">
+                Forensic seals issued in production (Jan&ndash;Apr 2026).<br>
+                Organic adoption by a <strong>Government Tourism Agency, South America</strong> &mdash;<br>
+                no sales call, no pilot agreement. Direct integration via public API.
+            </p>
+            <p class="quote">&ldquo;The product found the market before the market found the product.&rdquo;</p>
+        </div>
+
+        <!-- Pitch Deck Download -->
+        <div class="download-card">
+            <h3>Pitch Deck &mdash; Seed Round 2026</h3>
+            <p class="meta">WINDI Publishing House &bull; 12 Slides &bull; Governance Appendix with Virtue Receipt</p>
+            <a href="/pitch/WINDI_Pitch_Deck_Berlin_Q2_2026.pdf" class="download-btn" download>
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                Download Pitch Deck (PDF)
+            </a>
+        </div>
+
+        <!-- Sovereignty Manifesto -->
+        <div class="download-card">
+            <h3>Sovereignty Manifesto &mdash; Offensive Transparency</h3>
+            <p class="meta">Trilingual (EN/DE/PT) &bull; 93% Operational Independence &bull; EU AI Act Alignment &bull; Sealed GOLD</p>
+            <a href="manifesto/" class="download-btn">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                View Sovereignty Manifesto
+            </a>
+        </div>
+
+        <!-- Constitutional IR Portal -->
+        <div class="download-card">
+            <h3>Constitutional Framework &mdash; I9 Iron Grid Demo</h3>
+            <p class="meta">Interactive Stress Test &bull; 5 Attack Vectors &bull; Guardian Response &bull; Live Demo</p>
+            <a href="https://windi-domain.com/nomad-upload/catalog.html" class="download-btn">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+                View Institutional Catalog
+            </a>
+        </div>
+
+        <!-- Key Metrics -->
+        <div class="section">
+            <h2><span class="icon">&#x1F4CA;</span> Key Metrics</h2>
+            <div class="metrics-grid">
+                <div class="metric">
+                    <div class="value">&euro;65B</div>
+                    <div class="label">GRC Market (TAM)</div>
+                </div>
+                <div class="metric">
+                    <div class="value">56K+</div>
+                    <div class="label">Seals Live</div>
+                </div>
+                <div class="metric">
+                    <div class="value">17</div>
+                    <div class="label">ISP Profiles</div>
+                </div>
+                <div class="metric">
+                    <div class="value">97/100</div>
+                    <div class="label">Governance Grade A</div>
+                </div>
+            </div>
+            <div class="metrics-grid">
+                <div class="metric">
+                    <div class="value">&euro;1M</div>
+                    <div class="label">Seed Round</div>
+                </div>
+                <div class="metric">
+                    <div class="value">24 mo</div>
+                    <div class="label">Runway</div>
+                </div>
+                <div class="metric">
+                    <div class="value">0</div>
+                    <div class="label">SLA Breaches</div>
+                </div>
+                <div class="metric">
+                    <div class="value">9</div>
+                    <div class="label">Constitutional Invariants</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- The Ask -->
+        <div class="section">
+            <h2><span class="icon">&#x1F3AF;</span> The Ask</h2>
+            <p>
+                We are raising <strong>&euro;1M in seed funding</strong> for 24 months of runway.
+                Allocation: <strong>40% Engineering</strong> (CTO hire + platform hardening),
+                <strong>25% Go-to-Market</strong> (DACH enterprise sales),
+                <strong>20% Compliance</strong> (EU AI Act certifications),
+                <strong>15% Operations</strong> (infrastructure + legal).
+            </p>
+            <p>
+                <strong>24-month goals:</strong> 5 enterprise pilots &rarr; &euro;300K ARR &rarr; EU AI Act certification &rarr; Series A ready.
+            </p>
+        </div>
+
+        <!-- Live Systems -->
+        <div class="section">
+            <h2><span class="icon">&#x26A1;</span> Live Systems &mdash; Production Ready</h2>
+            <p>WINDI is not a prototype. All systems are live on German servers (Strato, Germany) with full data sovereignty.</p>
+            <div class="systems-grid">
+                <div class="system-item">
+                    <div class="system-dot"></div>
+                    <div>
+                        <a href="https://windi-domain.com/law/gate/" target="_blank">WINDI-LAW v1.3.0</a>
+                        <span class="desc">Legal Document Governance &middot; AI Draft + PHO Gate</span>
+                    </div>
+                </div>
+                <div class="system-item">
+                    <div class="system-dot"></div>
+                    <div>
+                        <a href="https://windi-domain.com/vd-cut/" target="_blank">ProofStream W-VD-CUT-001</a>
+                        <span class="desc">Video Forensic Certification &middot; First Seal Apr 2026</span>
+                    </div>
+                </div>
+                <div class="system-item">
+                    <div class="system-dot"></div>
+                    <div>
+                        <a href="https://windi-domain.com/travel/" target="_blank">WINDI TRAVEL</a>
+                        <span class="desc">Sovereign Travel Docs &middot; Presence Seal + GPS</span>
+                    </div>
+                </div>
+                <div class="system-item">
+                    <div class="system-dot"></div>
+                    <div>
+                        <a href="https://windi-domain.com/pitch/" target="_blank">Forensic Ledger</a>
+                        <span class="desc">56K+ Seals &middot; Live German Infrastructure</span>
+                    </div>
+                </div>
+                <div class="system-item">
+                    <div class="system-dot"></div>
+                    <div>
+                        <a href="manifesto/" target="_blank">Sovereignty Manifesto</a>
+                        <span class="desc">Offensive Transparency &middot; Sealed GOLD</span>
+                    </div>
+                </div>
+                <div class="system-item">
+                    <div class="system-dot"></div>
+                    <div>
+                        <a href="https://windi-domain.com/verify-public/" target="_blank">Verify Public</a>
+                        <span class="desc">Public Receipt Verification &middot; Zero Login</span>
+                    </div>
+                </div>
+                <div class="system-item">
+                    <div class="system-dot"></div>
+                    <div>
+                        <a href="https://windi-domain.com/desktop/" target="_blank">BABEL Editor GEN 7</a>
+                        <span class="desc">Document Governance &middot; 7 Engines</span>
+                    </div>
+                </div>
+                <div class="system-item">
+                    <div class="system-dot"></div>
+                    <div>
+                        <a href="https://windi-domain.com/keys/" target="_blank">Governance API</a>
+                        <span class="desc">Live Briefing &middot; SSL Certified</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 9 Invariants -->
+        <div class="section">
+            <h2><span class="icon">&#x1F512;</span> Constitutional Invariants</h2>
+            <p>WINDI operates under 9 immutable governance rules. These cannot be overridden by any user, AI system, or business requirement.</p>
+            <div class="invariants">
+                <div class="invariant"><span class="id">I1</span><span class="text">Human authority over AI</span><span class="status">ENFORCED</span></div>
+                <div class="invariant"><span class="id">I2</span><span class="text">Immutable audit trail</span><span class="status">ENFORCED</span></div>
+                <div class="invariant"><span class="id">I3</span><span class="text">Zero-knowledge separation</span><span class="status">ENFORCED</span></div>
+                <div class="invariant"><span class="id">I4</span><span class="text">Sovereignty of rules</span><span class="status">ENFORCED</span></div>
+                <div class="invariant"><span class="id">I5</span><span class="text">Transparency of AI recs</span><span class="status">ENFORCED</span></div>
+                <div class="invariant"><span class="id">I6</span><span class="text">Constitutional templates</span><span class="status">ENFORCED</span></div>
+                <div class="invariant"><span class="id">I7</span><span class="text">Forensic integrity chain</span><span class="status">ENFORCED</span></div>
+                <div class="invariant"><span class="id">I8</span><span class="text">Multi-AI witness protocol</span><span class="status">ENFORCED</span></div>
+                <div class="invariant critical"><span class="id">I9</span><span class="text">No Autonomy Escalation</span><span class="status">IRREMEDIABLE</span></div>
+            </div>
+        </div>
+
+        <!-- Contact -->
+        <div class="contact-section">
+            <h3>Contact</h3>
+            <p class="contact-info">
+                <strong>Jober M&ouml;gele Correa</strong><br>
+                Founder &amp; Chief Governance Officer<br><br>
+                &#x1F4F1; +49 176 8114 1207<br>
+                &#x2709;&#xFE0F; jober@a4desk.de<br>
+                &#x1F4CD; Kempten (Allg&auml;u), Bavaria, Germany
+            </p>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            WINDI Publishing House &bull; Kempten (Allg&auml;u), Bavaria, Germany &bull; AI processes. Human decides. WINDI guarantees.<br>
+            Marco Zero: 19 Jan 2026 &bull; Document Governance Intelligence &bull; Three Dragons Protocol &bull; &copy; 2026 WINDI Publishing House
+        </div>
+    </footer>
+
+    <div class="gold-bar"></div>
+</body>
+</html>

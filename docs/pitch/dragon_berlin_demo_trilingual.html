@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>W-DRAGON-001 · Berlin Demo Kit · Three Modes · May 2026</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0e0e0c; --bg2: #181816; --bg3: #222220;
+  --text: #e8e0c8; --text2: #a09880; --text3: #605848;
+  --gold: #C9A84C;
+  --border: rgba(200,188,155,0.12); --border2: rgba(200,188,155,0.25); --border3: rgba(200,188,155,0.4);
+  --ok: #5ad08a; --mono: 'JetBrains Mono','Fira Mono','Courier New',monospace; --r: 6px;
+}
+[data-theme="klar"] {
+  --bg: #f5f0e0; --bg2: #ede8d8; --bg3: #e6e0cc;
+  --text: #1a1a18; --text2: #5a5850; --text3: #9a9488;
+  --gold: #8B7424;
+  --border: rgba(60,55,40,0.15); --border2: rgba(60,55,40,0.28); --border3: rgba(60,55,40,0.4);
+  --ok: #1a6b3a;
+}
+body { font-family: var(--mono); background: var(--bg); color: var(--text); padding: 1.5rem; min-height: 100vh; transition: all 0.3s; }
+.wrap { max-width: 900px; margin: 0 auto; }
+
+/* Header with toggles */
+.top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; }
+.lang-toggle, .theme-toggle { display: flex; gap: 4px; }
+.lang-toggle button, .theme-toggle button {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em;
+  padding: 4px 10px; border: 0.5px solid var(--border2); border-radius: 3px;
+  background: transparent; color: var(--text3); cursor: pointer; transition: all 0.2s;
+}
+.lang-toggle button:hover, .theme-toggle button:hover { border-color: var(--gold); color: var(--text); }
+.lang-toggle button.active, .theme-toggle button.active { background: var(--gold); color: #000; border-color: var(--gold); }
+
+.hdr { margin-bottom: 1.5rem; border-bottom: 0.5px solid var(--border2); padding-bottom: 1rem; }
+.tag { font-size: 9px; letter-spacing: 0.12em; padding: 2px 8px; border: 0.5px solid var(--gold); border-radius: 3px; color: var(--gold); display: inline-block; margin-bottom: 8px; }
+.title { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.sub { font-size: 11px; color: var(--text3); }
+
+.modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 1.5rem; }
+@media(max-width: 700px) { .modes { grid-template-columns: 1fr; } }
+.mode { border: 0.5px solid var(--border); border-radius: var(--r); overflow: hidden; cursor: pointer; transition: all 0.2s; background: var(--bg2); }
+.mode:hover { border-color: var(--gold); }
+.mode.selected { border: 1.5px solid var(--gold); box-shadow: 0 0 20px rgba(201,168,76,0.15); }
+.mode-num { font-size: 9px; letter-spacing: 0.1em; padding: 10px 12px 4px; color: var(--text3); }
+.mode-name { font-size: 14px; font-weight: 600; padding: 0 12px 4px; color: var(--gold); }
+.mode-desc { font-size: 10px; padding: 0 12px 10px; color: var(--text2); line-height: 1.6; min-height: 50px; }
+.mode-badge { font-size: 8px; letter-spacing: 0.08em; padding: 3px 10px; border-radius: 3px; margin: 0 12px 12px; display: inline-block; }
+.mode-badge.stealth { border: 0.5px solid var(--text3); color: var(--text3); }
+.mode-badge.badge { background: var(--gold); color: #000; }
+.mode-badge.reveal { border: 0.5px solid var(--gold); color: var(--gold); }
+.mode canvas { width: 100%; height: 100px; display: block; background: var(--bg); }
+
+.preview { border: 0.5px solid var(--border); border-radius: var(--r); overflow: hidden; margin-bottom: 1rem; background: var(--bg2); }
+.preview-head { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-bottom: 0.5px solid var(--border); }
+.preview-title { font-size: 11px; color: var(--gold); }
+.preview-body { display: grid; grid-template-columns: 1fr 1fr; }
+@media(max-width:600px){ .preview-body { grid-template-columns: 1fr; } }
+
+.a4 { position: relative; background: white; aspect-ratio: 0.707; border-right: 0.5px solid var(--border); overflow: hidden; min-height: 280px; }
+.a4-txt { position: absolute; top: 8%; left: 7%; right: 7%; font-size: 6px; color: #1a1a18; line-height: 1.7; }
+.a4-h { font-size: 8px; font-weight: 700; margin-bottom: 6px; }
+.a4-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+.a4-qr { position: absolute; bottom: 5%; right: 5%; width: 14%; }
+.a4-date { position: absolute; bottom: 3%; right: 5%; font-size: 3px; color: #666; }
+.a4-strip { position: absolute; bottom: 2%; left: 5%; font-size: 2.5px; color: #8a806a; }
+
+.info { padding: 16px; }
+.lbl { font-size: 9px; letter-spacing: 0.08em; color: var(--text3); margin-bottom: 4px; text-transform: uppercase; }
+.val { font-size: 10px; color: var(--text2); margin-bottom: 12px; line-height: 1.6; }
+.val.ok { color: var(--ok); font-weight: 600; }
+
+.script-box { background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--r); padding: 16px; margin-bottom: 1rem; }
+.script-lbl { font-size: 9px; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 12px; text-transform: uppercase; }
+.script-line { display: flex; gap: 12px; font-size: 10px; line-height: 2.2; }
+.script-n { color: var(--text3); width: 16px; flex-shrink: 0; }
+.script-t { color: var(--text); }
+.script-p { color: var(--gold); font-style: italic; font-size: 9px; }
+
+.curl-box { margin-bottom: 1rem; }
+.curl-lbl { font-size: 9px; letter-spacing: 0.08em; color: var(--text3); margin-bottom: 6px; }
+.curl-code { font-size: 9px; color: var(--text2); background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--r); padding: 12px 14px; word-break: break-all; line-height: 1.9; white-space: pre-wrap; }
+
+.btn { font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; padding: 6px 14px; border: 0.5px solid var(--gold); border-radius: 4px; background: transparent; color: var(--gold); cursor: pointer; transition: all 0.2s; }
+.btn:hover { background: var(--gold); color: #000; }
+
+/* OBS Box - Forensic Clarification */
+.obs-box { background: var(--bg2); border: 1px solid var(--gold); border-radius: var(--r); padding: 16px; margin-bottom: 1.5rem; }
+.obs-title { font-size: 11px; font-weight: 600; color: var(--gold); margin-bottom: 10px; letter-spacing: 0.05em; }
+.obs-content { font-size: 10px; color: var(--text2); line-height: 1.8; margin-bottom: 12px; }
+.obs-quote { font-size: 11px; color: var(--gold); font-style: italic; padding-left: 12px; border-left: 2px solid var(--gold); }
+
+.ledger-live { margin-top: 14px; padding-top: 12px; border-top: 0.5px solid var(--border); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.ledger-count { font-size: 18px; font-weight: 700; color: var(--gold); font-family: var(--mono); }
+.ledger-hint { font-size: 10px; color: var(--text2); font-style: italic; }
+
+.footer { margin-top: 1.5rem; padding-top: 1rem; border-top: 0.5px solid var(--border); font-size: 10px; color: var(--text3); line-height: 2; text-align: center; }
+.footer .gold { color: var(--gold); }
+</style>
+</head>
+<body data-theme="noir">
+<div class="wrap">
+  <!-- Top Bar: Language + Theme -->
+  <div class="top-bar">
+    <div class="lang-toggle">
+      <button onclick="setLang('de')">DE</button>
+      <button onclick="setLang('en')" class="active">EN</button>
+      <button onclick="setLang('pt')">PT</button>
+    </div>
+    <div class="theme-toggle">
+      <button onclick="setTheme('noir')" class="active">☽</button>
+      <button onclick="setTheme('klar')">☀</button>
+    </div>
+    <a href="/law/dragon/" class="btn" style="margin-left:12px;" data-i18n="nav_dashboard">🐉 Dashboard</a>
+  </div>
+
+  <div class="hdr">
+    <div class="tag">W-DRAGON-001 · BERLIN DEMO KIT · <span data-i18n="month">MAY</span> 2026</div>
+    <div class="title" data-i18n="title">Three Modes — VC Narrative</div>
+    <div class="sub" data-i18n="subtitle">Select a mode to see the demo, pitch script, and endpoint</div>
+  </div>
+
+  <div class="modes">
+    <div class="mode selected" id="m1" onclick="sel(1)">
+      <canvas id="c1" height="100"></canvas>
+      <div class="mode-num" data-i18n="mode">MODE</div>
+      <div class="mode-name">Stealth</div>
+      <div class="mode-desc" data-i18n="desc1">Invisible to the naked eye. Opacity 0.03. Distributed across the entire page. Pure steganography.</div>
+      <span class="mode-badge stealth">STEGANOGRAPHIC</span>
+    </div>
+    <div class="mode" id="m2" onclick="sel(2)">
+      <canvas id="c2" height="100"></canvas>
+      <div class="mode-num" data-i18n="mode">MODE</div>
+      <div class="mode-name">SealBadge</div>
+      <div class="mode-desc" data-i18n="desc2">Visible as authenticity mark. Bottom-left corner. Like an institutional hologram.</div>
+      <span class="mode-badge badge">INSTITUTIONAL</span>
+    </div>
+    <div class="mode" id="m3" onclick="sel(3)">
+      <canvas id="c3" height="100"></canvas>
+      <div class="mode-num" data-i18n="mode">MODE</div>
+      <div class="mode-name">Reveal</div>
+      <div class="mode-desc" data-i18n="desc3">Demonstration mode. High opacity. Shows what's hidden in all documents.</div>
+      <span class="mode-badge reveal">DEMO ONLY</span>
+    </div>
+  </div>
+
+  <div class="preview">
+    <div class="preview-head">
+      <span class="preview-title" id="ptitle">MODE 1 — Stealth · Steganographic · opacity 0.03</span>
+      <button class="btn" onclick="copyCurl()" data-i18n="copy">COPY CURL</button>
+    </div>
+    <div class="preview-body">
+      <div class="a4" id="a4">
+        <canvas class="a4-canvas" id="a4c"></canvas>
+        <div class="a4-txt">
+          <div class="a4-h" data-i18n="doc_title">Service Agreement</div>
+          <span data-i18n="doc_body">Liga IA+H · WINDI Publishing House<br>
+          Kempten, Bavaria · 09 April 2026<br><br>
+          Between the parties:<br>
+          CLIENT: Liga IA+H GmbH<br>
+          PROVIDER: Witness Solutions EU<br><br>
+          Subject: Sovereign governance infrastructure<br>
+          EU AI Act Art. 14 compliant<br><br>
+          Reference: W-PROP-2026-001<br>
+          Duration: 12 months</span>
+        </div>
+        <svg class="a4-qr" viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg">
+          <rect width="10" height="10" fill="white"/>
+          <rect x="1" y="1" width="3" height="3" fill="black"/>
+          <rect x="1.5" y="1.5" width="2" height="2" fill="white"/>
+          <rect x="2" y="2" width="1" height="1" fill="black"/>
+          <rect x="6" y="1" width="3" height="3" fill="black"/>
+          <rect x="6.5" y="1.5" width="2" height="2" fill="white"/>
+          <rect x="7" y="2" width="1" height="1" fill="black"/>
+          <rect x="1" y="6" width="3" height="3" fill="black"/>
+          <rect x="1.5" y="6.5" width="2" height="2" fill="white"/>
+          <rect x="2" y="7" width="1" height="1" fill="black"/>
+          <rect x="5" y="5" width="1" height="1" fill="black"/>
+          <rect x="7" y="5" width="1" height="1" fill="black"/>
+          <rect x="6" y="6" width="1" height="1" fill="black"/>
+          <rect x="8" y="6" width="1" height="1" fill="black"/>
+          <rect x="5" y="7" width="2" height="1" fill="black"/>
+          <rect x="8" y="8" width="1" height="1" fill="black"/>
+        </svg>
+        <div class="a4-date">2026-04-09 09:25 UTC</div>
+        <div class="a4-strip">WINDI-DSF-20260409... · SHA256: 66aca4a1b0de...</div>
+      </div>
+      <div class="info">
+        <div class="lbl" data-i18n="lbl_opacity">OPACITY</div>
+        <div class="val" id="i-op">0.03 — invisible at reading distance</div>
+        <div class="lbl" data-i18n="lbl_grid">GRID</div>
+        <div class="val" id="i-gr">16×16 = 256 bits distributed full page</div>
+        <div class="lbl" data-i18n="lbl_detect">DETECTABLE BY</div>
+        <div class="val" id="i-de">Scanner 1200 DPI · Computer vision</div>
+        <div class="lbl" data-i18n="lbl_pitch">PITCH LINE</div>
+        <div class="val" id="i-vc">"Looks like a normal document. The dragons are there. You can't see them."</div>
+        <div class="lbl" data-i18n="lbl_ledger">LEDGER STATUS</div>
+        <div class="val ok">CONFIRMED · I11 ACTIVE</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="script-box">
+    <div class="script-lbl" data-i18n="script_title">PITCH SCRIPT — 60 SECONDS</div>
+    <div id="script"></div>
+  </div>
+
+  <div class="curl-box">
+    <div class="curl-lbl">CURL — API ENDPOINT</div>
+    <div class="curl-code" id="curl">curl -X POST https://windi-domain.com/law/dragon/encode-pdf \
+  -F "pdf_file=@contract.pdf" \
+  -F "opacity=0.03" \
+  -F "include_qr=true"</div>
+  </div>
+
+  <!-- OBS: Forensic Clarification for VCs/Lawyers -->
+  <div class="obs-box">
+    <div class="obs-title">⚖️ OBS: <span data-i18n="obs_title">Why Dragons + QR?</span></div>
+    <div class="obs-content" data-i18n="obs_content">
+      Full optical reading is on the roadmap — Phase 2 in Q3 2026. But we don't need it for the product to work.
+      The QR verifies in 3 seconds. The dragons exist for the day someone claims the QR was added afterwards.
+      On that day, the forensic expert proves it wasn't — because the dragons were there from the beginning,
+      and cannot be inserted retroactively without recalculating the entire hash.
+    </div>
+    <div class="obs-quote" data-i18n="obs_quote">
+      "The QR is for daily verification. The dragons are for court."
+    </div>
+  </div>
+
+  <!-- OBS 2: The Moat -->
+  <div class="obs-box">
+    <div class="obs-title">🏰 <span data-i18n="moat_title">The Moat</span></div>
+    <div class="obs-content" data-i18n="moat_content">
+      "What if Bundesdruckerei or Giesecke+Devrient copy this in 18 months?"
+    </div>
+    <div class="obs-quote" data-i18n="moat_quote">
+      "They can copy the dragons. They can't copy the Ledger history that already exists since today."
+    </div>
+    <div class="ledger-live">
+      <span data-i18n="moat_receipts">Receipts in Ledger:</span>
+      <span class="ledger-count" id="ledgerCount">—</span>
+      <span class="ledger-hint" data-i18n="moat_tomorrow">Tomorrow, more.</span>
+    </div>
+  </div>
+
+  <div class="footer">
+    W-DRAGON-001 v1.1.0 · §152 SEALED · Liga IA+H · Kempten Bavaria<br>
+    <span class="gold">"Harvey writes. DocuSign signs. WINDI proves."</span><br>
+    <span data-i18n="footer_market">TAM: €65B GRC + €8B Document Authentication · EU AI Act Art. 14 mandatory 2026</span><br>
+    PHO = Proof of Human Oversight · OM SHANTI 🐉
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// I18N — Trilingual (DE | EN | PT)
+// ═══════════════════════════════════════════════════════════════
+const I18N = {
+  de: {
+    month: "MAI",
+    title: "Drei Modi — VC Narrativ",
+    subtitle: "Wähle einen Modus für Demo, Pitch-Script und Endpoint",
+    mode: "MODUS",
+    desc1: "Unsichtbar für das bloße Auge. Opazität 0.03. Über die gesamte Seite verteilt. Reine Steganographie.",
+    desc2: "Sichtbar als Echtheitszeichen. Ecke unten links. Wie ein institutionelles Hologramm.",
+    desc3: "Demonstrationsmodus. Hohe Opazität. Zeigt, was in allen Dokumenten versteckt ist.",
+    copy: "CURL KOPIEREN",
+    doc_title: "Dienstleistungsvertrag",
+    doc_body: "Liga IA+H · WINDI Publishing House<br>Kempten, Bayern · 09. April 2026<br><br>Zwischen den Parteien:<br>AUFTRAGGEBER: Liga IA+H GmbH<br>AUFTRAGNEHMER: Witness Solutions EU<br><br>Gegenstand: Souveräne Governance-Infrastruktur<br>EU AI Act Art. 14 konform<br><br>Referenz: W-PROP-2026-001<br>Laufzeit: 12 Monate",
+    lbl_opacity: "OPAZITÄT",
+    lbl_grid: "RASTER",
+    lbl_detect: "ERKENNBAR DURCH",
+    lbl_pitch: "PITCH-ZEILE",
+    lbl_ledger: "LEDGER-STATUS",
+    script_title: "PITCH-SCRIPT — 60 SEKUNDEN",
+    obs_title: "Warum Drachen + QR?",
+    obs_content: "Die vollständige optische Lesung ist auf der Roadmap — Phase 2 in Q3 2026. Aber wir brauchen sie nicht, damit das Produkt funktioniert. Der QR verifiziert in 3 Sekunden. Die Drachen existieren für den Tag, an dem jemand behauptet, der QR wurde nachträglich hinzugefügt. An diesem Tag beweist der Forensiker, dass es nicht so war — weil die Drachen von Anfang an da waren und nicht rückwirkend eingefügt werden können, ohne den gesamten Hash neu zu berechnen.",
+    obs_quote: '"Der QR ist für die tägliche Verifizierung. Die Drachen sind für das Gericht."',
+    nav_dashboard: "🐉 Dashboard",
+    moat_title: "Der Burggraben",
+    moat_content: '"Was ist, wenn Bundesdruckerei oder Giesecke+Devrient das in 18 Monaten kopieren?"',
+    moat_quote: '"Sie können die Drachen kopieren. Sie können nicht die Ledger-Historie kopieren, die seit heute existiert."',
+    moat_receipts: "Receipts im Ledger:",
+    moat_tomorrow: "Morgen mehr.",
+    footer_market: "TAM: €65Mrd GRC + €8Mrd Dokumentenauthentifizierung · EU AI Act Art. 14 verpflichtend 2026"
+  },
+  en: {
+    month: "MAY",
+    title: "Three Modes — VC Narrative",
+    subtitle: "Select a mode to see the demo, pitch script, and endpoint",
+    mode: "MODE",
+    desc1: "Invisible to the naked eye. Opacity 0.03. Distributed across the entire page. Pure steganography.",
+    desc2: "Visible as authenticity mark. Bottom-left corner. Like an institutional hologram.",
+    desc3: "Demonstration mode. High opacity. Shows what's hidden in all documents.",
+    copy: "COPY CURL",
+    doc_title: "Service Agreement",
+    doc_body: "Liga IA+H · WINDI Publishing House<br>Kempten, Bavaria · 09 April 2026<br><br>Between the parties:<br>CLIENT: Liga IA+H GmbH<br>PROVIDER: Witness Solutions EU<br><br>Subject: Sovereign governance infrastructure<br>EU AI Act Art. 14 compliant<br><br>Reference: W-PROP-2026-001<br>Duration: 12 months",
+    lbl_opacity: "OPACITY",
+    lbl_grid: "GRID",
+    lbl_detect: "DETECTABLE BY",
+    lbl_pitch: "PITCH LINE",
+    lbl_ledger: "LEDGER STATUS",
+    script_title: "PITCH SCRIPT — 60 SECONDS",
+    obs_title: "Why Dragons + QR?",
+    obs_content: "Full optical reading is on the roadmap — Phase 2 in Q3 2026. But we don't need it for the product to work. The QR verifies in 3 seconds. The dragons exist for the day someone claims the QR was added afterwards. On that day, the forensic expert proves it wasn't — because the dragons were there from the beginning, and cannot be inserted retroactively without recalculating the entire hash.",
+    obs_quote: '"The QR is for daily verification. The dragons are for court."',
+    nav_dashboard: "🐉 Dashboard",
+    moat_title: "The Moat",
+    moat_content: '"What if Bundesdruckerei or Giesecke+Devrient copy this in 18 months?"',
+    moat_quote: '"They can copy the dragons. They can\'t copy the Ledger history that already exists since today."',
+    moat_receipts: "Receipts in Ledger:",
+    moat_tomorrow: "Tomorrow, more.",
+    footer_market: "TAM: €65B GRC + €8B Document Authentication · EU AI Act Art. 14 mandatory 2026"
+  },
+  pt: {
+    month: "MAIO",
+    title: "Três Modos — Narrativa VC",
+    subtitle: "Selecciona um modo para ver a demo, script de pitch e endpoint",
+    mode: "MODO",
+    desc1: "Invisível a olho nu. Opacidade 0.03. Distribuído pela página inteira. Esteganografia pura.",
+    desc2: "Visível como marca de autenticidade. Canto inferior esquerdo. Como um holograma institucional.",
+    desc3: "Modo demonstração. Alta opacidade. Mostra o que está escondido em todos os documentos.",
+    copy: "COPIAR CURL",
+    doc_title: "Contrato de Prestação de Serviços",
+    doc_body: "Liga IA+H · WINDI Publishing House<br>Kempten, Baviera · 09 Abril 2026<br><br>Entre as partes:<br>CONTRATANTE: Liga IA+H GmbH<br>CONTRATADO: Witness Solutions EU<br><br>Objecto: Infraestrutura de governança soberana<br>EU AI Act Art. 14 conforme<br><br>Referência: W-PROP-2026-001<br>Vigência: 12 meses",
+    lbl_opacity: "OPACIDADE",
+    lbl_grid: "GRELHA",
+    lbl_detect: "DETECTÁVEL POR",
+    lbl_pitch: "FRASE DE PITCH",
+    lbl_ledger: "ESTADO LEDGER",
+    script_title: "SCRIPT DE PITCH — 60 SEGUNDOS",
+    obs_title: "Porquê Dragões + QR?",
+    obs_content: "A leitura óptica completa está no roadmap — Fase 2 em Q3 2026. Mas não precisamos dela para o produto funcionar. O QR verifica em 3 segundos. Os dragões existem para o dia em que alguém disser que o QR foi adicionado depois. Nesse dia, o forensic prova que não foi — porque os dragões estavam lá desde o início, e não podem ser inseridos retroactivamente sem recalcular todo o hash.",
+    obs_quote: '"O QR é para verificação diária. Os dragões são para tribunal."',
+    nav_dashboard: "🐉 Dashboard",
+    moat_title: "O Fosso",
+    moat_content: '"E se a Bundesdruckerei ou a Giesecke+Devrient copiarem isto em 18 meses?"',
+    moat_quote: '"Podem copiar os dragões. Não podem copiar o histórico do Ledger que já existe desde hoje."',
+    moat_receipts: "Receipts no Ledger:",
+    moat_tomorrow: "Amanhã, mais.",
+    footer_market: "TAM: €65B GRC + €8B Autenticação Documental · EU AI Act Art. 14 obrigatório 2026"
+  }
+};
+
+// Mode data with trilingual scripts
+const MODES = {
+  1: {
+    title: { de: "MODUS 1 — Stealth · Steganographisch · Opazität 0.03", en: "MODE 1 — Stealth · Steganographic · opacity 0.03", pt: "MODO 1 — Stealth · Esteganográfico · opacidade 0.03" },
+    op: { de: "0.03 — unsichtbar auf Lesedistanz", en: "0.03 — invisible at reading distance", pt: "0.03 — invisível à distância de leitura" },
+    gr: { de: "16×16 = 256 Bits über gesamte Seite verteilt", en: "16×16 = 256 bits distributed full page", pt: "16×16 = 256 bits distribuídos pela página" },
+    de: { de: "Scanner 1200 DPI · Computer Vision", en: "Scanner 1200 DPI · Computer vision", pt: "Scanner 1200 DPI · Visão computacional" },
+    vc: { de: '"Sieht aus wie ein normales Dokument. Die Drachen sind da. Du siehst sie nicht."', en: '"Looks like a normal document. The dragons are there. You can\'t see them."', pt: '"Parece um documento normal. Os dragões estão lá. Não os vês."' },
+    script: {
+      de: [[1,"Zeige das normale Dokument.",""], [2,'"Dieser Vertrag sieht aus wie jeder andere."',"Pause"], [3,'"Es sind 256 unsichtbare Drachen hier kodiert."',"Pause"], [4,'"Jeder kodiert ein Bit des SHA-256 des Inhalts."',""], [5,'"Wenn jemand ein Komma ändert — die Drachen ändern sich."',"Pause"], [6,'"Und das Ledger erkennt es."',"IMPACT"]],
+      en: [[1,"Show the normal document.",""], [2,'"This contract looks like any other."',"pause"], [3,'"There are 256 invisible dragons encoded here."',"pause"], [4,'"Each one encodes a bit of the SHA-256 of the content."',""], [5,'"If someone changes a comma — the dragons change."',"pause"], [6,'"And the Ledger detects it."',"IMPACT"]],
+      pt: [[1,"Mostra o documento normal.",""], [2,'"Este contrato parece como qualquer outro."',"pausa"], [3,'"Há 256 dragões invisíveis codificados aqui."',"pausa"], [4,'"Cada um codifica um bit do SHA-256 do conteúdo."',""], [5,'"Se alguém alterar uma vírgula — os dragões mudam."',"pausa"], [6,'"E o Ledger detecta."',"IMPACTO"]]
+    },
+    curl: `curl -X POST https://windi-domain.com/law/dragon/encode-pdf \\
+  -F "pdf_file=@contract.pdf" \\
+  -F "opacity=0.03" \\
+  -F "include_qr=true"`,
+    opacity: 0.03, dist: true,
+  },
+  2: {
+    title: { de: "MODUS 2 — SealBadge · Institutionell · Opazität 0.07", en: "MODE 2 — SealBadge · Institutional · opacity 0.07", pt: "MODO 2 — SealBadge · Institucional · opacidade 0.07" },
+    op: { de: "0.07 — sichtbar als Echtheitszeichen", en: "0.07 — visible as authentication mark", pt: "0.07 — visível como marca de autenticidade" },
+    gr: { de: "16×16 kompaktes Badge · Ecke unten links", en: "16×16 compact badge · bottom-left corner", pt: "16×16 badge compacto · canto inferior esquerdo" },
+    de: { de: "Auge · Handy (QR) · PDF-Eigenschaften", en: "Naked eye · Phone (QR) · PDF Properties", pt: "Olho nu · Telemóvel (QR) · Propriedades PDF" },
+    vc: { de: '"Du erkennst das Siegel. Es ist wie ein Hologramm. Aber mathematisch verifizierbar."', en: '"You recognize the seal. It\'s like a hologram. But mathematically verifiable."', pt: '"Reconheces o selo. É como um holograma. Mas verificável matematicamente."' },
+    script: {
+      de: [[1,"Zeige das SealBadge in der Ecke.",""], [2,'"Siehst du dieses Siegel? Es ist wie ein Pass-Hologramm."',"Pause"], [3,'"Aber du brauchst keine Spezialausrüstung zur Verifizierung."',""], [4,'"Handy. QR-Code. 3 Sekunden."',"Pause"], [5,"Richte das Handy auf den QR.","LIVE-DEMO"], [6,'"Ledger bestätigt. Von überall auf der Welt."',"IMPACT"]],
+      en: [[1,"Show the SealBadge in the corner.",""], [2,'"See this seal? It\'s like a passport hologram."',"pause"], [3,'"But you don\'t need special equipment to verify."',""], [4,'"Phone. QR code. 3 seconds."',"pause"], [5,"Point your phone at the QR.","LIVE DEMO"], [6,'"Ledger confirms. From anywhere in the world."',"IMPACT"]],
+      pt: [[1,"Mostra o SealBadge no canto.",""], [2,'"Vês este selo? É como um holograma de passaporte."',"pausa"], [3,'"Mas não precisas de equipamento especial para verificar."',""], [4,'"Telemóvel. QR code. 3 segundos."',"pausa"], [5,"Aponta o telemóvel ao QR.","DEMO AO VIVO"], [6,'"Ledger confirma. De qualquer parte do mundo."',"IMPACTO"]]
+    },
+    curl: `curl -X POST https://windi-domain.com/law/dragon/encode-pdf \\
+  -F "pdf_file=@contract.pdf" \\
+  -F "opacity=0.07" \\
+  -F "include_qr=true"`,
+    opacity: 0.07, dist: false,
+  },
+  3: {
+    title: { de: "MODUS 3 — Reveal · Demo-Modus · Opazität 0.18", en: "MODE 3 — Reveal · Demo Mode · opacity 0.18", pt: "MODO 3 — Reveal · Modo Demo · opacidade 0.18" },
+    op: { de: "0.18 — volle Sichtbarkeit für Demonstration", en: "0.18 — full visibility for demonstration", pt: "0.18 — visibilidade total para demonstração" },
+    gr: { de: "16×16 = 256 Bits SICHTBAR · nur für Demonstration", en: "16×16 = 256 bits VISIBLE · demonstration only", pt: "16×16 = 256 bits VISÍVEIS · apenas demonstração" },
+    de: { de: "Auge — für visuelle Konzeptdemonstration", en: "Naked eye — for visual concept demonstration", pt: "Olho nu — para demonstração visual do conceito" },
+    vc: { de: '"Reveal-Modus — was in allen anderen Dokumenten unsichtbar ist."', en: '"Reveal mode — what\'s invisible in all other documents."', pt: '"Modo reveal — o que está invisível em todos os outros documentos."' },
+    script: {
+      de: [[1,"Wechsle zum Reveal-Modus.",""], [2,'"Sieh, was in Modus 1 versteckt war."',"Pause"], [3,'"Jedes Glyph ist ein Bit. 256 Bits. Ein SHA-256-Hash."',""], [4,'"In Produktion unsichtbar. Hier zeigen wir es für die Demo."',"Pause"], [5,'"Dasselbe Dokument. Derselbe Beweis. Nur sichtbar."',""], [6,'"Das sieht ein Forensiker, wenn er die Datei analysiert."',"IMPACT"]],
+      en: [[1,"Switch to Reveal mode.",""], [2,'"See what was hidden in Mode 1."',"pause"], [3,'"Each glyph is a bit. 256 bits. A SHA-256 hash."',""], [4,'"In production, invisible. Here, we reveal for the demo."',"pause"], [5,'"Same document. Same proof. Just visible."',""], [6,'"This is what a forensic expert sees when analyzing the file."',"IMPACT"]],
+      pt: [[1,"Muda para modo Reveal.",""], [2,'"Vê o que estava escondido no Modo 1."',"pausa"], [3,'"Cada glyph é um bit. 256 bits. Um hash SHA-256."',""], [4,'"Em produção, invisível. Aqui, revelamos para a demo."',"pausa"], [5,'"O mesmo documento. A mesma prova. Apenas visível."',""], [6,'"É o que um forensic vê quando analisa o ficheiro."',"IMPACTO"]]
+    },
+    curl: `curl -X POST https://windi-domain.com/law/dragon/encode-pdf \\
+  -F "pdf_file=@contract.pdf" \\
+  -F "opacity=0.18" \\
+  -F "include_qr=true"`,
+    opacity: 0.18, dist: true,
+  }
+};
+
+let currentLang = localStorage.getItem('windi-lang') || 'en';
+let currentTheme = localStorage.getItem('windi-theme') || 'noir';
+let currentMode = 1;
+
+// SHA-256 bits for demo
+const BITS = (() => {
+  const hex = "66aca4a1b0de28204480e1eccb30fda9a2b7d4e19f3c8526b1d0e74a93f25c81";
+  const b = [];
+  for (let i = 0; i < hex.length && b.length < 256; i += 2) {
+    const byte = parseInt(hex.slice(i, i+2), 16);
+    for (let j = 7; j >= 0; j--) b.push((byte >> j) & 1);
+  }
+  return b;
+})();
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('windi-lang', lang);
+  document.querySelectorAll('.lang-toggle button').forEach(b => b.classList.toggle('active', b.textContent.toLowerCase() === lang));
+  applyI18n();
+  sel(currentMode);
+}
+
+function setTheme(theme) {
+  currentTheme = theme;
+  localStorage.setItem('windi-theme', theme);
+  document.body.dataset.theme = theme;
+  document.querySelectorAll('.theme-toggle button').forEach(b => {
+    b.classList.toggle('active', (theme === 'noir' && b.textContent === '☽') || (theme === 'klar' && b.textContent === '☀'));
+  });
+  renderAllCanvases();
+}
+
+function applyI18n() {
+  const s = I18N[currentLang];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.dataset.i18n;
+    if (s[k]) el.innerHTML = s[k];
+  });
+}
+
+function drawDark(ctx, s) {
+  ctx.beginPath();
+  ctx.moveTo(0,-s); ctx.lineTo(s*.5,-s*.3); ctx.lineTo(s*.7,s*.1);
+  ctx.lineTo(s*.3,s*.6); ctx.lineTo(-s*.3,s*.6);
+  ctx.lineTo(-s*.7,s*.1); ctx.lineTo(-s*.5,-s*.3);
+  ctx.closePath(); ctx.stroke();
+}
+function drawShadow(ctx, s) {
+  ctx.beginPath();
+  ctx.moveTo(0,-s); ctx.lineTo(s,0); ctx.lineTo(0,s); ctx.lineTo(-s,0);
+  ctx.closePath(); ctx.stroke();
+}
+
+function renderGrid(canvas, opacity, dist) {
+  const W = canvas.width = canvas.offsetWidth || 200;
+  const H = canvas.height = parseInt(canvas.getAttribute('height')) || 100;
+  const ctx = canvas.getContext('2d');
+  const dark = currentTheme === 'noir';
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = dark ? '#0e0e0c' : '#f5f0e0';
+  ctx.fillRect(0,0,W,H);
+  const G = 16;
+  const cw = dist ? W/G : W/(G*2.5);
+  const ch = dist ? H/G : H/(G*1.5);
+  const sd = Math.min(cw,ch)*.32, ss = sd*.7;
+  ctx.lineWidth = .5;
+  for (let r = 0; r < G; r++) {
+    for (let c = 0; c < G; c++) {
+      const bit = BITS[r*G+c];
+      const cx = dist ? c/G*W+cw/2 : W*.03+c*cw+cw/2;
+      const cy = dist ? r/G*H+ch/2 : H*.1+r*ch+ch/2;
+      ctx.save(); ctx.translate(cx,cy);
+      if (bit===1) {
+        ctx.strokeStyle = dark ? `rgba(220,210,180,${opacity})` : `rgba(20,20,20,${opacity})`;
+        drawDark(ctx, sd);
+      } else {
+        ctx.strokeStyle = dark ? `rgba(100,90,70,${opacity*.5})` : `rgba(160,150,130,${opacity*.5})`;
+        drawShadow(ctx, ss);
+      }
+      ctx.restore();
+    }
+  }
+}
+
+function renderA4(mode) {
+  const m = MODES[mode];
+  const el = document.getElementById('a4');
+  const canvas = document.getElementById('a4c');
+  canvas.width = el.clientWidth || 240;
+  canvas.height = el.clientHeight || 340;
+  const W = canvas.width, H = canvas.height;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,W,H);
+  const G = 16;
+  const op = m.opacity;
+
+  if (!m.dist) {
+    // SealBadge mode - compact in corner
+    const cw = W/(G*3.2), ch = H/(G*3.2);
+    const sd = Math.min(cw,ch)*.32, ss = sd*.7;
+    ctx.lineWidth = .4;
+    for (let r = 0; r < G; r++) {
+      for (let c = 0; c < G; c++) {
+        const bit = BITS[r*G+c];
+        const cx = W*.04+c*cw+cw/2;
+        const cy = H*.62+r*ch+ch/2;
+        ctx.save(); ctx.translate(cx,cy);
+        if (bit===1) {
+          ctx.strokeStyle = `rgba(20,20,20,${op*3})`;
+          drawDark(ctx,sd);
+        } else {
+          ctx.strokeStyle = `rgba(160,150,130,${op*1.5})`;
+          drawShadow(ctx,ss);
+        }
+        ctx.restore();
+      }
+    }
+    ctx.strokeStyle = 'rgba(139,105,20,.4)';
+    ctx.lineWidth = .5;
+    ctx.strokeRect(W*.04, H*.62, G*cw, G*ch);
+  } else {
+    // Distributed mode
+    const cw = W/G, ch = H/G;
+    const sd = Math.min(cw,ch)*.28, ss = sd*.7;
+    ctx.lineWidth = .4;
+    for (let r = 0; r < G; r++) {
+      for (let c = 0; c < G; c++) {
+        const bit = BITS[r*G+c];
+        const cx = c/G*W+cw/2;
+        const cy = r/G*H+ch/2;
+        ctx.save(); ctx.translate(cx,cy);
+        if (bit===1) {
+          ctx.strokeStyle = `rgba(20,20,20,${op})`;
+          drawDark(ctx,sd);
+        } else {
+          ctx.strokeStyle = `rgba(160,150,130,${op*.5})`;
+          drawShadow(ctx,ss);
+        }
+        ctx.restore();
+      }
+    }
+  }
+}
+
+function renderAllCanvases() {
+  renderGrid(document.getElementById('c1'), 0.03, true);
+  renderGrid(document.getElementById('c2'), 0.07, false);
+  renderGrid(document.getElementById('c3'), 0.18, true);
+  renderA4(currentMode);
+}
+
+function sel(n) {
+  currentMode = n;
+  [1,2,3].forEach(i => document.getElementById('m'+i).classList.remove('selected'));
+  document.getElementById('m'+n).classList.add('selected');
+
+  const m = MODES[n];
+  const lang = currentLang;
+
+  document.getElementById('ptitle').textContent = m.title[lang];
+  document.getElementById('i-op').textContent = m.op[lang];
+  document.getElementById('i-gr').textContent = m.gr[lang];
+  document.getElementById('i-de').textContent = m.de[lang];
+  document.getElementById('i-vc').textContent = m.vc[lang];
+  document.getElementById('curl').textContent = m.curl;
+
+  const script = m.script[lang];
+  document.getElementById('script').innerHTML = script.map(([num,txt,note]) =>
+    `<div class="script-line">
+      <span class="script-n">${num}</span>
+      <span class="script-t">${txt}</span>
+      ${note ? `<span class="script-p">[${note}]</span>` : ''}
+    </div>`
+  ).join('');
+
+  setTimeout(() => renderA4(n), 30);
+}
+
+function copyCurl() {
+  navigator.clipboard.writeText(MODES[currentMode].curl).catch(()=>{});
+}
+
+async function fetchLedgerCount() {
+  try {
+    const res = await fetch('https://windi-domain.com/ledger/api/stats');
+    const data = await res.json();
+    const count = data.total_receipts || data.count || 0;
+    document.getElementById('ledgerCount').textContent = count.toLocaleString();
+  } catch (e) {
+    // Fallback to approximate count
+    document.getElementById('ledgerCount').textContent = '56,959+';
+  }
+}
+
+function init() {
+  document.body.dataset.theme = currentTheme;
+  setLang(currentLang);
+  setTheme(currentTheme);
+  renderAllCanvases();
+  sel(1);
+  fetchLedgerCount();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  setTimeout(init, 50);
+}
+</script>
+</body>
+</html>

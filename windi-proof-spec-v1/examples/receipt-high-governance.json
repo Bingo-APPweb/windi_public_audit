@@ -1,0 +1,18 @@
+{
+  "spec_version": "1.0.0",
+  "receipt_id": "WINDI-LAW-20260410094726-289EE95D",
+  "issued_at": "2026-04-10T09:47:26Z",
+  "actor": "did:windi:dragon-001",
+  "app": "windi-law",
+  "doc_name": "risk_assessment_april_2026.pdf",
+  "doc_type": "risk_assessment",
+  "content_hash": "9d4e1e23bd5b727046a9e3b4b7db57bd8d6ee684d5a63e7d8f6a3d1c1f1f9abc",
+  "hash_algorithm": "SHA-256",
+  "governance_level": "HIGH",
+  "sge_score": 96,
+  "verify_url": "https://windi-domain.com/verify/WINDI-LAW-20260410094726-289EE95D",
+  "ledger_anchor_id": "WINDI-LAW-20260410094726-289EE95D",
+  "human_approved": true,
+  "policy_decision": "ALLOW",
+  "invariants": ["I9", "I11"]
+}

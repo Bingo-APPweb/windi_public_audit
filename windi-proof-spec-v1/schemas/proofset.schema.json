@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Bingo-APPweb/windi-proof-spec/schemas/proofset.schema.json",
+  "title": "WINDI Proofset",
+  "description": "Collection or envelope containing multiple WINDI proof receipts. Version 1.0.0.",
+  "type": "object",
+  "required": [
+    "spec_version",
+    "proofset_id",
+    "created_at",
+    "receipts"
+  ],
+  "properties": {
+    "spec_version": {
+      "type": "string",
+      "const": "1.0.0",
+      "description": "Specification version for proofset format."
+    },
+    "proofset_id": {
+      "type": "string",
+      "minLength": 8,
+      "description": "Unique identifier for this proofset."
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of proofset creation."
+    },
+    "creator": {
+      "type": "string",
+      "description": "DID or identifier of the entity that assembled this proofset."
+    },
+    "purpose": {
+      "type": "string",
+      "enum": ["audit", "export", "archive", "dispute", "compliance"],
+      "description": "Intended use of this proofset."
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description of the proofset contents."
+    },
+    "receipts": {
+      "type": "array",
+      "items": {
+        "$ref": "receipt.schema.json"
+      },
+      "minItems": 1,
+      "description": "Array of WINDI receipts included in this proofset."
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "total_receipts": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "governance_levels": {
+          "type": "object",
+          "properties": {
+            "FREE": { "type": "integer", "minimum": 0 },
+            "MED": { "type": "integer", "minimum": 0 },
+            "HIGH": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "date_range": {
+          "type": "object",
+          "properties": {
+            "earliest": { "type": "string", "format": "date-time" },
+            "latest": { "type": "string", "format": "date-time" }
+          }
+        }
+      },
+      "description": "Summary metadata about the proofset contents."
+    },
+    "proofset_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256 hash of canonicalized proofset (excluding this field)."
+    },
+    "wcaf_compatible": {
+      "type": "boolean",
+      "description": "Indicates if this proofset is compatible with WCAF export format."
+    }
+  },
+  "additionalProperties": false
+}

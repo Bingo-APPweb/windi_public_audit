@@ -1,0 +1,52 @@
+{
+  "spec_version": "1.0.0",
+  "proofset_id": "WINDI-PROOFSET-20260416-EXAMPLE",
+  "created_at": "2026-04-16T10:00:00Z",
+  "creator": "did:windi:dragon-001",
+  "purpose": "audit",
+  "description": "Example proofset containing two receipts for audit purposes.",
+  "receipts": [
+    {
+      "spec_version": "1.0.0",
+      "receipt_id": "WINDI-LAW-20260410094726-289EE95D",
+      "issued_at": "2026-04-10T09:47:26Z",
+      "actor": "did:windi:dragon-001",
+      "app": "windi-law",
+      "doc_name": "contract_review.pdf",
+      "doc_type": "contract",
+      "content_hash": "9d4e1e23bd5b727046a9e3b4b7db57bd8d6ee684d5a63e7d8f6a3d1c1f1f9abc",
+      "hash_algorithm": "SHA-256",
+      "governance_level": "HIGH",
+      "verify_url": "https://windi-domain.com/verify/WINDI-LAW-20260410094726-289EE95D",
+      "human_approved": true,
+      "invariants": ["I9", "I11"]
+    },
+    {
+      "spec_version": "1.0.0",
+      "receipt_id": "WINDI-TRAVEL-20260412153000-MEDIA01",
+      "issued_at": "2026-04-12T15:30:00Z",
+      "actor": "did:windi:dragon-001",
+      "app": "windi-travel",
+      "doc_name": "field_photo_001.jpg",
+      "doc_type": "media",
+      "content_hash": "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2",
+      "hash_algorithm": "SHA-256",
+      "governance_level": "MED",
+      "verify_url": "https://windi-domain.com/verify/WINDI-TRAVEL-20260412153000-MEDIA01",
+      "invariants": ["I11"]
+    }
+  ],
+  "metadata": {
+    "total_receipts": 2,
+    "governance_levels": {
+      "FREE": 0,
+      "MED": 1,
+      "HIGH": 1
+    },
+    "date_range": {
+      "earliest": "2026-04-10T09:47:26Z",
+      "latest": "2026-04-12T15:30:00Z"
+    }
+  },
+  "wcaf_compatible": true
+}

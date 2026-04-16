@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Bingo-APPweb/windi-proof-spec/schemas/verification-result.schema.json",
+  "title": "WINDI Verification Result",
+  "description": "Structured result of WINDI receipt verification. Version 1.0.0.",
+  "type": "object",
+  "required": [
+    "verified",
+    "receipt_id",
+    "timestamp",
+    "levels"
+  ],
+  "properties": {
+    "verified": {
+      "type": "boolean",
+      "description": "Overall verification result. True if all required checks passed."
+    },
+    "receipt_id": {
+      "type": "string",
+      "description": "Identifier of the receipt that was verified."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when verification was performed."
+    },
+    "levels": {
+      "type": "object",
+      "required": ["schema", "hash"],
+      "properties": {
+        "schema": {
+          "type": "string",
+          "enum": ["VALID", "INVALID"],
+          "description": "Level 1: Schema validation result."
+        },
+        "hash": {
+          "type": "string",
+          "enum": ["MATCH", "MISMATCH", "SKIPPED"],
+          "description": "Level 2: Hash verification result."
+        },
+        "ledger": {
+          "type": "string",
+          "enum": ["CONFIRMED", "NOT_FOUND", "MISMATCH", "SKIPPED", "UNAVAILABLE"],
+          "description": "Level 3: Remote ledger confirmation result."
+        }
+      },
+      "description": "Results for each verification level."
+    },
+    "governance_status": {
+      "type": "object",
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": ["FREE", "MED", "HIGH"]
+        },
+        "human_approved": {
+          "type": "boolean"
+        },
+        "policy_decision": {
+          "type": "string",
+          "enum": ["ALLOW", "HOLD", "BLOCK"]
+        },
+        "invariants": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Governance information extracted from the receipt."
+    },
+    "hashes": {
+      "type": "object",
+      "properties": {
+        "expected": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "Hash value from the receipt."
+        },
+        "computed": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "Hash computed during verification."
+        }
+      },
+      "description": "Hash comparison details (included on mismatch)."
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "string" },
+          "message": { "type": "string" },
+          "field": { "type": "string" }
+        }
+      },
+      "description": "Non-fatal issues encountered during verification."
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "string" },
+          "message": { "type": "string" },
+          "field": { "type": "string" },
+          "expected": {},
+          "actual": {}
+        }
+      },
+      "description": "Fatal issues that caused verification to fail."
+    },
+    "verify_url_checked": {
+      "type": "string",
+      "format": "uri",
+      "description": "The verify_url that was queried for Level 3 verification."
+    },
+    "verifier": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string" },
+        "spec_version": { "type": "string" }
+      },
+      "description": "Information about the verification implementation used."
+    }
+  },
+  "additionalProperties": false
+}

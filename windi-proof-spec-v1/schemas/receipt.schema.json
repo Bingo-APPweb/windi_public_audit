@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Bingo-APPweb/windi-proof-spec/schemas/receipt.schema.json",
+  "title": "WINDI Receipt",
+  "description": "Canonical independently verifiable WINDI proof receipt. Version 1.0.0.",
+  "type": "object",
+  "required": [
+    "spec_version",
+    "receipt_id",
+    "issued_at",
+    "actor",
+    "app",
+    "content_hash",
+    "hash_algorithm",
+    "governance_level",
+    "verify_url"
+  ],
+  "properties": {
+    "spec_version": {
+      "type": "string",
+      "const": "1.0.0",
+      "description": "Specification version. Fixes interpretation contract."
+    },
+    "receipt_id": {
+      "type": "string",
+      "minLength": 8,
+      "description": "Unique publicly verifiable receipt identifier."
+    },
+    "issued_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of receipt issuance."
+    },
+    "actor": {
+      "type": "string",
+      "description": "DID or sovereign actor identifier. Example: did:windi:dragon-001"
+    },
+    "app": {
+      "type": "string",
+      "description": "Originating WINDI module or system identifier. Example: windi-law"
+    },
+    "doc_name": {
+      "type": "string",
+      "description": "Human-readable document name."
+    },
+    "doc_type": {
+      "type": "string",
+      "description": "Document classification. Example: contract, invoice, risk_assessment"
+    },
+    "content_hash": {
+      "type": "string",
+      "pattern": "^[A-Fa-f0-9]{64}$",
+      "description": "SHA-256 hash of canonicalized content. 64 hex characters."
+    },
+    "hash_algorithm": {
+      "type": "string",
+      "enum": ["SHA-256"],
+      "description": "Hash algorithm used. v1.0.0 supports only SHA-256."
+    },
+    "governance_level": {
+      "type": "string",
+      "enum": ["FREE", "MED", "HIGH"],
+      "description": "Governance tier. HIGH requires human approval (I9)."
+    },
+    "sge_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Semantic Governance Engine score (0-100)."
+    },
+    "verify_url": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://",
+      "description": "HTTPS URL to public verification endpoint for this specific receipt."
+    },
+    "ledger_anchor_id": {
+      "type": "string",
+      "description": "Identifier linking to Forensic Ledger entry."
+    },
+    "human_approved": {
+      "type": "boolean",
+      "description": "Indicates explicit human approval (I9 gate passage)."
+    },
+    "policy_decision": {
+      "type": "string",
+      "enum": ["ALLOW", "HOLD", "BLOCK"],
+      "description": "Policy engine decision. HOLD indicates pending human review."
+    },
+    "invariants": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["I1", "I2", "I3", "I6", "I9", "I10", "I11", "I12", "I13", "I14"]
+      },
+      "uniqueItems": true,
+      "description": "WINDI Constitutional Invariants enforced by this receipt."
+    },
+    "source_payload": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Optional original internal payload for compatibility. Not part of canonical hash."
+    }
+  },
+  "additionalProperties": false
+}
