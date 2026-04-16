@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.2.17
-**Sealed:** 2026-04-16 · §179 W-LAB-001/clear
+**Version:** 2.2.18
+**Sealed:** 2026-04-16 · §180 W-TRAVEL-PUB-001
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -114,6 +114,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | I12 | Language Sovereign Principle | Conversa=Universal, Documento=Soberano. Babel Tower=IRREMEDIÁVEL. |
 | I13 | Convergence with Sovereignty | Todo Dragon converge para estrutura/decisão/artefacto. Loop reflexivo proibido. **IRREMEDIÁVEL.** |
 | I14 | Explicit Failure Principle | Dados ausentes = erro explícito. Placeholders mascaram bugs. **IRREMEDIÁVEL.** |
+| I16 | Creator Cartographic Sovereignty | Mapa pertence ao criador. GPS nunca vendido. Publicação = opt-in. |
 | C6 | Invariante Fiscal | IA prepara. Humano aprova. ELSTER envia. Nunca autónomo. |
 
 ### §146 — I14: Proibição de Placeholders (IRREMEDIÁVEL)
@@ -436,6 +437,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 16 Apr | **§180 W-TRAVEL-PUB-001** · Sovereign Notebook Vision · I16 Cartographic · Mobile Phase 2 CANCELLED · Berlin Demo Target |
 | 16 Apr | **§179 W-LAB-001/clear** · Dilemas de Geleia · 4 Archetypes · Memory Loop · Trilingual · Ledger Integration |
 | 16 Apr | **§178 WPIL LIVE** · Proof Interface Layer · 3-Level Verification · Ceremony UI · /prove/ + /investor/ |
 | 15 Apr | **§176 W-SOCIAL-001** · Verified Professional Presence · :8133 · I9-P Protocol · Security Sanitized · i18n PT/DE/EN |
@@ -505,11 +507,14 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 ### P1 — Importante
 - [ ] **Rate limiting** nginx · **Cron 48h** email downgrade · **HIGH ops gate**
 
-### P1.5 — WINDI-LAW Mobile Phase 2 (OBRIGATÓRIO)
-- [ ] Mobile-first CSS · Inspector Modal · Swipe Gestures · Document Viewer · AI Draft Mobile
+### P1.5 — W-TRAVEL-PUB-001 (Q3 2026)
+- [ ] **Berlin Demo (até 10 Mai)** — 1 caderno real · Mapa comparador · 5-10 postais · URL público · Ledger receipt
+- [ ] **Desktop Composition** — Konva.js canvas · Mapa como substrato (Q3)
+- [ ] **Mobile Capture PWA** — Offline-first · GPS · Upload only (Q3)
+- [ ] **Public Publication** — SSR `/travel/u/{slug}/{journey}/` (Q3)
 
-### P1.5 — WINDI Travel Phase 2
-- [ ] Colagem Soberana · Thread Visual · GPS Reverse Geocoding
+> **Mobile Phase 2 CANCELADO** — Travel pivota de "workspace" para "editora soberana de cadernos"
+> **Workspace actual:** SEALED até Q3 2026, sem alterações
 
 ### P2 — Melhorias
 - [ ] W-ACCT-001 Bridge · W-COMPLY-001 Dashboard · Resend UI
