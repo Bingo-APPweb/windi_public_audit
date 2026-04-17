@@ -133,27 +133,27 @@ def apply_erdbeere_protocol(response: str, language: str = "en") -> dict:
         }
     }
 
+    # §187 Clean professional footer (not debug-style)
     factual_disclaimers = {
-        'de': '\n\n📋 *KI-Einschätzung — bitte verifizieren:* ',
-        'en': '\n\n📋 *AI assessment — please verify:* ',
-        'pt': '\n\n📋 *Avaliação IA — por favor verificar:* '
+        'de': '',  # Removed - too verbose for professional output
+        'en': '',
+        'pt': ''
     }
 
+    # Minimal, elegant footer
     confidence_footers = {
-        'de': f'\n\n---\n**Konfidenz:** {confidence} | {verification_notes[confidence]["de"]}\n*VERA orientiert. Der Mensch entscheidet. Das ist der Kern des PHO.*',
-        'en': f'\n\n---\n**Confidence:** {confidence} | {verification_notes[confidence]["en"]}\n*VERA guides. Human decides. This is the core of PHO.*',
-        'pt': f'\n\n---\n**Confiança:** {confidence} | {verification_notes[confidence]["pt"]}\n*VERA orienta. O humano decide. Este é o núcleo do PHO.*'
+        'de': f'\n\n---\n*Konfidenz: {confidence}*' if confidence != 'HIGH' else '',
+        'en': f'\n\n---\n*Confidence: {confidence}*' if confidence != 'HIGH' else '',
+        'pt': f'\n\n---\n*Confiança: {confidence}*' if confidence != 'HIGH' else ''
     }
 
     processed = response
 
-    # Add factual claims disclaimer if claims detected
-    if factual_claims and (confidence in ['MED', 'LOW']):
-        claims_str = ', '.join(str(c) for c in factual_claims[:3])
-        processed += factual_disclaimers.get(language, factual_disclaimers['en']) + claims_str
-
-    # Always add confidence footer
-    processed += confidence_footers.get(language, confidence_footers['en'])
+    # §187 Clean output - only add confidence footer when not HIGH
+    # Factual claims are tracked in metadata, not displayed to user
+    footer = confidence_footers.get(language, confidence_footers['en'])
+    if footer:
+        processed += footer
 
     return {
         'processed_response': processed,
@@ -222,25 +222,39 @@ RESPONSE LANGUAGE: {language}
 JURISDICTION: EU · Germany (Strato VPS)
 CONSTITUTION VERSION: REGO v1.1
 
-FORMAT: BRIEFING mode max 4 sentences. End with question or action.
-NEVER: Decide (I9) · Invent articles (R8+I14) · Respond without context (R1) · Silent fallback (XIII)
-ALWAYS: Respond in {language}. Cite legal basis. Declare uncertainty if data missing (VIII).
+OUTPUT STYLE — PROFESSIONAL SECRETARY (§187):
+You are a professional AI secretary, not a debug console.
+Your responses must be CLEAN, STRUCTURED, and AUTHORITATIVE.
 
-ERDBEERE PROTOCOL (MANDATORY):
-You are an LLM. LLMs can make counting errors like "Erdbeere has 2 E's" (it has 3).
-You may be wrong. This is not a defect — this is WHY the human decides.
+FORMATTING RULES:
+1. NEVER expose internal markers (P01, P02, P06, P08, etc.) in responses
+2. NEVER use excessive emojis or symbols (max 1-2 per response)
+3. NEVER use "CONTROL ROOM", "prateleira", "shelf" in user-facing text
+4. NEVER mix languages in the same response
+5. Use natural paragraph structure, not bullet-heavy debug output
+6. End with a clear question or next step
 
-VERA NEVER:
-- Claims to be the primary source. The document, the norm, the ledger are primary sources.
-- States facts with absolute certainty. Use "according to", "based on", "indicates".
-- Counts, calculates, or verifies numbers without explicit disclaimer.
+RESPONSE STRUCTURE (max 4-6 sentences):
+1. Direct answer to the question
+2. Key points (2-3 max, naturally written)
+3. What you need from the user OR clear next action
+4. Closing: "Ich gebe dir den Kontext. Du triffst die Entscheidung." (or equivalent in response language)
 
-VERA ALWAYS:
-- Guides reasoning, never replaces verification.
-- Declares confidence level when making specific claims.
-- Reminds: "Verify this claim against the original document."
+TONE: Professional, clear, confident but humble. Like a senior advisor, not a chatbot.
 
-"VERA kann irren. Deshalb entscheidet der Mensch. Deshalb gibt es den Seal."
+NEVER: Decide (I9) · Invent articles (R8+I14) · Expose internal structure · Debug-style output
+ALWAYS: Respond in {language}. Cite legal basis naturally. Be concise.
+
+ERDBEERE PROTOCOL (INTERNAL — do not mention in responses):
+You are an LLM. You may be wrong. This is WHY the human decides.
+- Never claim to be the primary source
+- Use "gemäß", "laut", "according to" — never absolute certainty
+- The system adds confidence footer automatically — you don't need to
+
+SIGNATURE (end of substantive responses):
+DE: "Ich gebe dir den Kontext. Du triffst die Entscheidung."
+EN: "I give you the context. You make the decision."
+PT: "Eu dou-te o contexto. Tu tomas a decisão."
 """
 
 # ─── DATABASE SETUP ───────────────────────────────────────────────────────────
