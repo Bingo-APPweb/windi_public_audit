@@ -449,6 +449,68 @@ def list_ausbilder():
     conn.close()
     return jsonify({"ausbilder": [dict(r) for r in rows], "count": len(rows)})
 
+@app.route("/api/ausbilder/prospect", methods=["POST"])
+def register_prospect():
+    """Register interest from WPH-AUS-004 landing page (no I9 required)."""
+    data = request.get_json()
+
+    # Validate required fields
+    if not data.get("name") or not data.get("email"):
+        return jsonify({"error": "Name and email required"}), 400
+
+    aus_id = generate_id("PROS")
+    now = datetime.now(timezone.utc).isoformat()
+
+    # Generate prospect DID
+    prospect_did = data.get("did") or f"did:windi:prospect-{hashlib.sha256(data['email'].encode()).hexdigest()[:12]}"
+
+    conn = get_db()
+
+    # Check if already registered
+    existing = conn.execute("SELECT id FROM ausbilder WHERE email = ?", (data["email"],)).fetchone()
+    if existing:
+        conn.close()
+        return jsonify({
+            "status": "ALREADY_REGISTERED",
+            "ausbilder_id": existing["id"],
+            "message": "Diese E-Mail ist bereits registriert."
+        }), 200
+
+    conn.execute('''
+        INSERT INTO ausbilder (id, did, name, email, phone, company, bio_de, bio_en,
+            specializations, certification_level, status, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (
+        aus_id, prospect_did, data.get("name"), data.get("email"),
+        data.get("phone", ""), data.get("company", ""),
+        data.get("bio_de", f"Quelle: {data.get('source', 'Landing Page')}"),
+        None, json.dumps(data.get("specializations", ["EU AI Act"])),
+        "INTERESSENT", "PROSPECT", now
+    ))
+    conn.commit()
+    conn.close()
+
+    # Log to Ledger (without requiring actor_did)
+    seal_to_ledger(
+        f"Gründungsausbilder Interesse: {data.get('name')}",
+        "ausbilder-prospect",
+        {
+            "ausbilder_id": aus_id,
+            "email": data.get("email"),
+            "source": data.get("source", "WPH-AUS-004"),
+            "timestamp": now
+        },
+        "system:w-academy-001",
+        "LOW"
+    )
+
+    return jsonify({
+        "status": "REGISTERED",
+        "ausbilder_id": aus_id,
+        "certification_level": "INTERESSENT",
+        "message": "Vielen Dank für Ihr Interesse!"
+    }), 201
+
 @app.route("/api/ausbilder", methods=["POST"])
 @require_i9
 def register_ausbilder():

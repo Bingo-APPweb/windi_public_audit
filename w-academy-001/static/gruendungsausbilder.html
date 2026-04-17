@@ -488,6 +488,131 @@
 
   .doc-footer .gold { color: var(--gold); }
 
+  /* ── Interest Form ── */
+  .interest-form {
+    margin: 24px 0;
+    text-align: left;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .form-input, .form-textarea {
+    width: 100%;
+    padding: 14px 16px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 15px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .form-input:focus, .form-textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 2px var(--gold-dim);
+  }
+
+  .form-input::placeholder, .form-textarea::placeholder {
+    color: var(--text-muted);
+  }
+
+  .form-textarea {
+    min-height: 100px;
+    resize: vertical;
+    margin-bottom: 16px;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 16px 24px;
+    background: var(--gold);
+    border: none;
+    border-radius: 6px;
+    color: var(--bg);
+    font-family: 'Courier Prime', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .submit-btn:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+  }
+
+  .submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .cta-footer {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── Success Message ── */
+  .success-message {
+    text-align: center;
+    padding: 32px;
+  }
+
+  .success-icon {
+    width: 64px;
+    height: 64px;
+    background: var(--gold);
+    color: var(--bg);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    margin: 0 auto 20px;
+  }
+
+  .success-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--gold-light);
+    margin-bottom: 12px;
+  }
+
+  .success-text {
+    color: var(--text-body);
+    margin-bottom: 20px;
+  }
+
+  .success-receipt {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px;
+    font-family: 'Courier Prime', monospace;
+    font-size: 12px;
+    color: var(--gold);
+    margin-bottom: 20px;
+  }
+
+  .success-next {
+    color: var(--text-muted);
+    font-size: 14px;
+    font-style: italic;
+  }
+
+  @media (max-width: 768px) {
+    .form-row { grid-template-columns: 1fr; }
+  }
+
   /* ── Theme Toggle ── */
   .theme-toggle {
     position: fixed;
@@ -860,12 +985,42 @@
   </div>
 
   <!-- ── CTA ── -->
-  <div class="cta-box">
+  <div class="cta-box" id="cta-section">
     <div class="cta-title">Der nächste Schritt</div>
-    <div class="cta-sub">Ein vertrauliches Erstgespräch zur Prüfung eines Pilotmodells.</div>
-    <div class="cta-step">→ Prüfung der Marktpassung</div>
-    <div class="cta-step">→ Live-Einblick in W-Enterprise-001</div>
-    <div class="cta-step">→ Skizze eines ersten Pilotformats</div>
+    <div class="cta-sub">Interesse bekunden — unverbindlich und vertraulich.</div>
+
+    <!-- Interest Form -->
+    <form id="interest-form" class="interest-form">
+      <div class="form-row">
+        <input type="text" name="name" placeholder="Ihr Name *" required class="form-input">
+        <input type="email" name="email" placeholder="E-Mail *" required class="form-input">
+      </div>
+      <div class="form-row">
+        <input type="text" name="company" placeholder="Unternehmen / Organisation" class="form-input">
+        <input type="tel" name="phone" placeholder="Telefon (optional)" class="form-input">
+      </div>
+      <textarea name="message" placeholder="Kurze Nachricht: Was interessiert Sie besonders? (optional)" class="form-textarea"></textarea>
+      <button type="submit" class="submit-btn" id="submit-btn">
+        <span class="btn-text">Interesse bekunden →</span>
+        <span class="btn-loading" style="display:none;">Wird gesendet...</span>
+      </button>
+    </form>
+
+    <!-- Success Message (hidden by default) -->
+    <div id="success-message" class="success-message" style="display:none;">
+      <div class="success-icon">✓</div>
+      <div class="success-title">Vielen Dank für Ihr Interesse</div>
+      <div class="success-text">Ihre Anfrage wurde erfasst und im WINDI-System registriert.</div>
+      <div class="success-receipt" id="receipt-info"></div>
+      <div class="success-next">Wir melden uns innerhalb von 48 Stunden bei Ihnen.</div>
+    </div>
+
+    <div class="cta-footer">
+      <div class="cta-step">→ Prüfung der Marktpassung</div>
+      <div class="cta-step">→ Live-Einblick in W-Enterprise-001</div>
+      <div class="cta-step">→ Skizze eines ersten Pilotformats</div>
+    </div>
+
     <div style="margin-top:24px;font-family:'Courier Prime',monospace;font-size:11px;color:var(--gold);letter-spacing:0.12em;">
       → Ziel des Gesprächs ist keine Entscheidung — sondern Klarheit über Potenzial und Passung.
     </div>
@@ -887,7 +1042,9 @@
 <button class="theme-toggle" id="theme-toggle" title="NOIR / KLAR">☀</button>
 
 <script>
+  // ═══════════════════════════════════════════════════════════════
   // Theme Toggle
+  // ═══════════════════════════════════════════════════════════════
   const themeToggle = document.getElementById('theme-toggle');
   let currentTheme = localStorage.getItem('windi-theme') || 'noir';
 
@@ -902,6 +1059,74 @@
 
   themeToggle.addEventListener('click', () => {
     setTheme(currentTheme === 'noir' ? 'klar' : 'noir');
+  });
+
+  // ═══════════════════════════════════════════════════════════════
+  // Interest Form — Connection to W-ACADEMY-001 Database
+  // ═══════════════════════════════════════════════════════════════
+  const form = document.getElementById('interest-form');
+  const submitBtn = document.getElementById('submit-btn');
+  const btnText = submitBtn.querySelector('.btn-text');
+  const btnLoading = submitBtn.querySelector('.btn-loading');
+  const successMessage = document.getElementById('success-message');
+  const receiptInfo = document.getElementById('receipt-info');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // Show loading state
+    btnText.style.display = 'none';
+    btnLoading.style.display = 'inline';
+    submitBtn.disabled = true;
+
+    const formData = new FormData(form);
+    const data = {
+      name: formData.get('name'),
+      email: formData.get('email'),
+      company: formData.get('company') || '',
+      phone: formData.get('phone') || '',
+      bio_de: formData.get('message') || 'Interesse über WPH-AUS-004 Landing Page',
+      did: `did:windi:prospect-${Date.now()}`,
+      specializations: ['EU AI Act', 'DORA', 'Compliance'],
+      source: 'WPH-AUS-004'
+    };
+
+    try {
+      // Register as Ausbilder prospect in the database
+      const response = await fetch('/academy/api/ausbilder/prospect', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      const result = await response.json();
+
+      if (result.status === 'REGISTERED' || result.ausbilder_id) {
+        // Success - show confirmation
+        form.style.display = 'none';
+        document.querySelector('.cta-footer').style.display = 'none';
+
+        receiptInfo.innerHTML = `
+          <div style="margin-bottom:8px;">Registrierungs-ID: <strong>${result.ausbilder_id}</strong></div>
+          <div>Status: KANDIDAT · Quelle: WPH-AUS-004</div>
+        `;
+
+        successMessage.style.display = 'block';
+
+        // Smooth scroll to success message
+        successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else {
+        throw new Error(result.error || 'Registration failed');
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      alert('Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut oder kontaktieren Sie uns direkt.');
+
+      // Reset button state
+      btnText.style.display = 'inline';
+      btnLoading.style.display = 'none';
+      submitBtn.disabled = false;
+    }
   });
 </script>
 </body>
