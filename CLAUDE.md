@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.2.20
-**Sealed:** 2026-04-16 · §182 W-TRAVEL-MAP-001
+**Version:** 2.2.21
+**Sealed:** 2026-04-17 · §184 Infrastructure Health Audit
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -407,7 +407,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 ---
 
-## 13. Estado Actual — 12 Abril 2026
+## 13. Estado Actual — 17 Abril 2026
 
 ### Portas Críticas
 
@@ -429,7 +429,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | :8153 | W-TRAVEL-MAP-001 Berlin Pitch | 🟢 **LIVE** |
 | :8170 | W-SERVICE-CONTROL Panel | 🟢 **LIVE** |
 
-> **Mapa completo (30 portas):** `CLAUDE-HISTORY.md` § Mapa de Portas 16 Abr
+> **Mapa completo (30 portas):** `CLAUDE-HISTORY.md` § Mapa de Portas 17 Abr
 
 ### Sistemas LIVE (46 total)
 
@@ -441,6 +441,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 17 Apr | **§184 Infrastructure Health Audit** · 15 Services Restored · httptools 0.7.1 Critical Fix · DECRETO-001 Requirements Tree · Tiered Restart Protocol |
 | 16 Apr | **§182 W-TRAVEL-MAP-001** · Berlin Pitch Map · :8153 · Trilingual DE\|EN\|PT · Ledger Hybrid · verify-public fix · `/investor/` link |
 | 16 Apr | **§180 W-TRAVEL-PUB-001** · Sovereign Notebook Vision · I16 Cartographic · Mobile Phase 2 CANCELLED · Berlin Demo Target |
 | 16 Apr | **§179 W-LAB-001/clear** · Dilemas de Geleia · 4 Archetypes · Memory Loop · Trilingual · Ledger Integration |
@@ -464,7 +465,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | 09 Apr | **§151 W-DRAGON-001** · Dragon Shadow Forest · PDF Overlay |
 | 08 Apr | **§150 W-SEC-001** · Security Sentinel · Receipt `BD09970F` |
 
-> **Histórico completo §110-§155:** `CLAUDE-HISTORY.md`
+> **Histórico completo §110-§184:** `CLAUDE-HISTORY.md`
 
 ---
 
@@ -685,3 +686,41 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 - DASH v4.1 — 9 Prateleiras Trilíngue
 
 > **Full details:** `CLAUDE-HISTORY.md` § W-ENTERPRISE-001
+
+---
+
+## §184 — Infrastructure Health Audit (17 Apr 2026)
+
+**Tipo:** Emergency Recovery · **Invariants:** I9, I11, I14 · **Duração:** Full Session
+
+**Problema:** 15 serviços WINDI em falha sistémica (httptools incompatível).
+**Causa Raiz:** `httptools` versão errada quebra `uvloop` event loop.
+**Fix Crítico:** `pip3 install --break-system-packages httptools==0.7.1`
+
+**Tiered Restart Protocol Aplicado:**
+| Tier | Serviços | Status |
+|------|----------|--------|
+| 1 - Fundação | Ledger, Dragon Hub, Desktop GEN7 | 🟢 OK |
+| 2 - Entrada | Verify Public, Agent Palette, WINDI Travel | 🟢 OK |
+| 3 - Produtos | WINDI-LAW, Enterprise, Lab, VD-CUT, VD-MASS, JMPG | 🟢 OK |
+| 4 - Observabilidade | Service Control, Cost, Travel Map | 🟢 OK |
+
+**DECRETO-001 Implementado — Requirements Tree:**
+```
+/opt/windi/requirements-base.txt (TRUNK)
+├── /opt/windi/w-enterprise-001/requirements.txt
+├── /opt/windi/windi-law/identity-gate/requirements.txt
+├── /opt/windi/verify-public/requirements.txt
+├── /opt/windi/agent-palette/requirements.txt
+├── /opt/windi/windi-travel/requirements.txt
+├── /opt/windi/desktop-gen7/backend/requirements.txt
+├── /opt/windi/vd-mass/requirements.txt
+└── /opt/windi/comm/requirements.txt (JMPG)
+```
+
+**Dependências Críticas Pinadas:**
+- `httptools==0.7.1` — PINNED (broke services when wrong version)
+- `uvloop>=0.19.0` — async event loop
+- `websockets>=12.0,<14.0` — WebSocket support
+
+> **Full details:** `CLAUDE-HISTORY.md` § Infrastructure Health Audit 17 Apr
