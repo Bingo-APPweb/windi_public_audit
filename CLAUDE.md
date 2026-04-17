@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.2.22
-**Sealed:** 2026-04-17 · §185 Erdbeere Protocol v1.0
+**Version:** 2.2.23
+**Sealed:** 2026-04-17 · §186 DID-Genesis Restart Fix
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -443,6 +443,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 17 Apr | **§186 DID-GENESIS RESTART** · W-SERVICE-CONTROL fix · uvicorn custom commands · NOHUP_COMMANDS dict |
 | 17 Apr | **§185 ERDBEERE PROTOCOL** · VERA v1.2 · Anti-hallucination guardrails · Confidence estimation · Prof. Bast principle |
 | 17 Apr | **§184 Infrastructure Health Audit** · W-ACADEMY-001 :8180 · 5 Modules 27 Lessons · Tiered Restart Protocol · Double Receipt Chain |
 | 16 Apr | **§182 W-TRAVEL-MAP-001** · Berlin Pitch Map · :8153 · Trilingual DE\|EN\|PT · Ledger Hybrid · verify-public fix · `/investor/` link |
