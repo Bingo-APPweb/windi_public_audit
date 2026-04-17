@@ -268,6 +268,19 @@ async def dashboard():
     return HTMLResponse("<h1>W-Enterprise-001</h1><p>static/index.html not found</p>", status_code=503)
 
 
+@app.get("/desk", response_class=HTMLResponse)
+@app.get("/desk.html", response_class=HTMLResponse)
+async def desk_page():
+    """
+    Full Enterprise Desk with VERA Chat Panel.
+    §186 · VERA v1.2 · Erdbeere Protocol · 9 Shelves
+    """
+    desk = STATIC_DIR / "desk.html"
+    if desk.exists():
+        return HTMLResponse(content=desk.read_text(encoding="utf-8"))
+    return HTMLResponse("<h1>W-Enterprise-001</h1><p>desk.html not found</p>", status_code=503)
+
+
 @app.get("/operator", response_class=HTMLResponse)
 async def operator_page():
     """
