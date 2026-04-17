@@ -6,6 +6,46 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 17 Abr 2026 — §183 Server Recovery (SSH Lockout)
+
+**Duração:** ~3 horas | **Status:** ✅ RESOLVIDO
+**Invariants:** G1 (READ BEFORE TOUCH), I14 (Explicit Failure)
+
+### §183.1 — Causa Raiz
+
+`/etc/ssh/sshd_config.d/*.conf` continha `PasswordAuthentication no` — sobrescrevia silenciosamente o ficheiro principal `/etc/ssh/sshd_config`.
+
+**Lição I14:** A configuração modular do SSH (directório `.d/`) é um anti-pattern se não for auditada. Ficheiros dentro de `.d/` têm precedência e são "invisíveis" numa inspecção superficial.
+
+### §183.2 — Solução Aplicada
+
+1. **Rescue Mode** via painel Strato (VNC)
+2. `mount /dev/vda1 /mnt && chroot /mnt`
+3. Corrigir configs SSH:
+   - `/etc/ssh/sshd_config` → `PasswordAuthentication yes`
+   - `/etc/ssh/sshd_config.d/*.conf` → removido override
+4. Reset password do user `windi`
+5. Reboot normal
+
+### §183.3 — Armadilha do Teclado Alemão
+
+VNC Rescue usa layout DE por defeito: `y` ↔ `z` trocados.
+Password `windi123` requer digitar `windi1z3` no teclado.
+
+### §183.4 — Hardening Aplicado (17 Abr 2026)
+
+| Passo | Comando | Status |
+|-------|---------|--------|
+| SSH Key | `~/.ssh/authorized_keys` | ✅ Instalada |
+| Password Auth | `PasswordAuthentication no` | 🔜 Após teste |
+| fail2ban | `apt install fail2ban` | 🔜 Pendente |
+
+**Ficheiros:**
+- SSH Key: `ssh-ed25519 AAAAC3Nz...WhkL jober@Dragon`
+- Authorized Keys: `/home/windi/.ssh/authorized_keys`
+
+---
+
 ## § SESSÃO 15 Abr 2026 (Tarde) — §173 DID Simplification
 
 **Commits:** `8b65378`, `a6c35e4`, `ca8e15b`
@@ -8655,3 +8695,147 @@ CAPTURE → COMPILE → APPROVE → SEAL
 
 ---
 
+
+## § SESSÃO 17 Abr 2026 (Tarde) — §184 Infrastructure Health Audit
+
+**Duração:** ~2 horas | **Status:** ✅ COMPLETO
+**Commits:** `a8427caa`, `2a9c7d46`
+**Invariants:** I14 (Explicit Failure), G1 (READ BEFORE TOUCH), DECRETO-001 (Árvore Viva)
+
+### §184.1 — Contexto
+
+Human Dragon solicitou verificação operacional da VERA (W-Enterprise-001). Diagnóstico revelou falha sistémica de dependências Python afectando múltiplos serviços WINDI.
+
+### §184.2 — Problema Raiz
+
+**Causa:** Pacotes Python em falta ou versões incompatíveis após actualização do sistema.
+
+**Sintoma Principal:**
+```
+AttributeError: module 'httptools' has no attribute 'HttpRequestParser'
+```
+
+Serviços iniciavam (porta escutava) mas não processavam requests HTTP — o event loop do uvicorn falhava silenciosamente.
+
+### §184.3 — Serviços Afectados (15 total)
+
+| Tier | Serviço | Porta | Problema |
+|------|---------|-------|----------|
+| T1 | Verify Public | :8114 | python-multipart |
+| T2 | Desktop GEN7 | :8119 | httptools |
+| T2 | Dragon Hub | :8108 | openpyxl, numpy, defusedxml |
+| T2 | WINDI-LAW | :8122 | python-docx, lxml |
+| T2 | Enterprise (VERA) | :8150 | httptools, email-validator |
+| T3 | VD-MASS | :8131 | flask |
+| T3 | JMPG | :8132 | pillow |
+
+### §184.4 — Restart Ordenado por Tiers
+
+**Protocolo aplicado:**
+```
+Restart → Health Check → Próximo Serviço
+```
+
+**Tier 1 — Fundação:**
+- Forensic Ledger (:8101) — já healthy, 57,009 receipts
+- Verify Public (:8114) — fix: python-multipart
+
+**Tier 2 — Entrada do Utilizador:**
+- Desktop GEN7 (:8119) — fix: httptools 0.7.1
+- Dragon Hub (:8108) — fix: openpyxl, defusedxml, numpy
+- WINDI-LAW (:8122) — fix: python-docx, lxml
+- WINDI-TRAVEL (:8126) — auto-restart após deps
+- W-Enterprise (VERA) (:8150) — fix: httptools, uvicorn config
+
+**Tier 3 — Produtos:**
+- VD-CUT, JOE, NOMAD, INTENT-CMD, FEDIVERSE, SEC — restart após deps
+- VD-MASS (:8131) — fix: flask
+- JMPG (:8132) — fix: pillow
+
+### §184.5 — Dependências Instaladas
+
+```bash
+pip3 install --break-system-packages \
+  click fastapi uvicorn pydantic email-validator \
+  websockets uvloop httptools==0.7.1 \
+  python-multipart openpyxl defusedxml \
+  numpy python-docx lxml flask pillow
+```
+
+**Versões Críticas (PINNED):**
+- `httptools==0.7.1` — versões anteriores quebravam uvicorn
+- `numpy>=2.0.0` — compatibilidade com openpyxl moderno
+
+### §184.6 — Requirements Tree (DECRETO-001)
+
+Criada estrutura de dependências por serviço seguindo DECRETO-001 (Árvore Viva):
+
+```
+/opt/windi/
+├── requirements-base.txt           # TRONCO (sha256:4ebc10bd...)
+├── w-enterprise-001/requirements.txt
+├── windi-law/identity-gate/requirements.txt
+├── windi-travel/requirements.txt
+├── verify-public/requirements.txt
+├── agent-palette/requirements.txt
+├── desktop-gen7/backend/requirements.txt
+├── vd-mass/requirements.txt
+└── comm/requirements.txt           # JMPG
+```
+
+**Trunk Hash (canonical):**
+```
+sha256:4ebc10bd3c3681c0c6a99afa1d66c9235d14dee37ba5daa3d3a8e1e7b7e53884
+       requirements-base.txt
+```
+
+### §184.7 — Estado Final
+
+**15/15 serviços operacionais:**
+
+| Porta | Serviço | Status |
+|-------|---------|--------|
+| :8101 | Forensic Ledger | ✅ 57,009 receipts |
+| :8108 | Dragon Hub | ✅ v1.3.0 |
+| :8114 | Verify Public | ✅ v1.0.2 |
+| :8119 | Desktop GEN7 | ✅ v7.0.0 |
+| :8122 | WINDI-LAW | ✅ v1.2.0 |
+| :8126 | WINDI-TRAVEL | ✅ v1.3.0 |
+| :8127 | NOMAD | ✅ |
+| :8128 | VD-CUT | ✅ |
+| :8129 | JOE | ✅ v1.0.0 |
+| :8131 | VD-MASS | ✅ v1.0.0 |
+| :8132 | JMPG | ✅ v1.3.0 |
+| :8141 | INTENT-CMD | ✅ |
+| :8142 | FEDIVERSE | ✅ v1.0.0 |
+| :8144 | SEC | ✅ v1.1.0 |
+| :8150 | Enterprise (VERA) | ✅ v3.1.0 |
+
+### §184.8 — Lições Aprendidas
+
+1. **httptools é crítico** — versão errada = serviço escuta mas não responde
+2. **Dependências compartilhadas escalam silenciosamente** — um pip upgrade pode quebrar 15 serviços
+3. **Requirements por serviço** — permite diagnóstico e reprodutibilidade isolados
+4. **Restart ordenado** — Fundação → Entrada → Produtos reduz risco sistémico
+
+### §184.9 — Commits
+
+```
+a8427caa fix(deps): seal requirements tree per DECRETO-001
+         - canonical requirements-base.txt (trunk)
+         - service-level requirements isolated (leaf nodes)
+         - pinned httptools==0.7.1 (critical stability constraint)
+         - fixed W-Enterprise-001 uvicorn startup
+
+2a9c7d46 fix(deps): add requirements for VD-MASS and JMPG
+         - W-VD-MASS-001: flask, werkzeug
+         - W-JMPG-001: pillow, fastapi stack
+```
+
+### §184.10 — Próximos Passos (P2)
+
+- [ ] Adicionar `pip install -r requirements.txt` aos scripts de deploy
+- [ ] Criar venv isolado por serviço crítico (evitar conflitos futuros)
+- [ ] Automatizar health check pós-deploy
+
+---
