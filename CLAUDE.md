@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.2.21
-**Sealed:** 2026-04-17 · §184 Infrastructure Health Audit
+**Version:** 2.2.22
+**Sealed:** 2026-04-17 · §185 Erdbeere Protocol v1.0
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -83,7 +83,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-SEC-001 | :8144 | I9,I11 | **SEALED** · Security Sentinel · Dual Correlation · Telegram · systemd |
 | W-DRAGON-001 | :8122 | I9,I11,I14 | **LIVE** · Dragon Shadow Forest · 16×16 SHA-256 Glyph Grid · PDF Overlay |
 | W-DEV-API-001 | :8200 | I9,I11 | **LIVE** · Developer API · /dev-api/ · 4 Tiers · Verify Bridge |
-| W-ENTERPRISE-001 | :8150 | I1,I9,I11,I14 | **LIVE** v3.1.0 · VERA REGO v1.0 · DASH v4.1 · i18n PT/DE/EN · NOIR/KLAR |
+| W-ENTERPRISE-001 | :8150 | I1,I9,I11,I14 | **LIVE** v3.2.0 · VERA v1.2 · **ERDBEERE PROTOCOL** · DASH v4.1 · i18n PT/DE/EN |
 | W-CACHE-001 | :8160 | I11,I14 | **LIVE** · Verifiable Cache Layer · L2→L3 Promotion · NOIR Dashboard |
 | W-DID-GENESIS | :8096 | I1,I9,I11,I14 | **LIVE** · Sovereign Identity Tree · Cross-Service Session · 4 Tiers |
 | W-SERVICE-CONTROL | :8170 | I1,I9,I11 | **LIVE** · Service Control Panel · 29 Services · **SVG Sentinel** · Subsystem Monitoring · DID Gate |
@@ -443,6 +443,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 17 Apr | **§185 ERDBEERE PROTOCOL** · VERA v1.2 · Anti-hallucination guardrails · Confidence estimation · Prof. Bast principle |
 | 17 Apr | **§184 Infrastructure Health Audit** · W-ACADEMY-001 :8180 · 5 Modules 27 Lessons · Tiered Restart Protocol · Double Receipt Chain |
 | 16 Apr | **§182 W-TRAVEL-MAP-001** · Berlin Pitch Map · :8153 · Trilingual DE\|EN\|PT · Ledger Hybrid · verify-public fix · `/investor/` link |
 | 16 Apr | **§180 W-TRAVEL-PUB-001** · Sovereign Notebook Vision · I16 Cartographic · Mobile Phase 2 CANCELLED · Berlin Demo Target |
@@ -703,9 +704,39 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 **Key Components:**
 - VERA REGO v1.2 — AI Compliance Secretary (32 Pilares)
+- **Erdbeere Protocol v1.0** — Anti-hallucination guardrails
 - DID Gate — 3 Leis da Semente (Existência → Rastro → Histórico)
 - OVS — Operator of Verifiable Systems (3 perfis)
 - DASH v4.1 — 9 Prateleiras Trilíngue
+
+### §185 — Erdbeere Protocol v1.0 (17 Apr 2026)
+
+> *"Für die Sprachmodelle gibt es keine wirkliche Vorstellung von Wahrheit."*
+> — Prof. Hannah Bast, Universität Freiburg
+
+**Problema:** LLMs podem errar como "Erdbeere tem 2 E's" (tem 3). VERA usa LLMs.
+**Solução:** Isso não é defeito — é a razão de existência do PHO.
+
+**3 Guardrails Implementados:**
+| Guardrail | Função |
+|-----------|--------|
+| **Confidence Estimation** | HIGH/MED/LOW em cada resposta |
+| **Factual Claim Detection** | Detecta artigos, datas, números → disclaimer |
+| **Verification Footer** | "VERA orienta. O humano decide. Este é o núcleo do PHO." |
+
+**System Prompt Actualizado:**
+- VERA NUNCA é fonte primária
+- Usa "according to", "based on" — nunca certeza absoluta
+- Lembrete: "Verifique contra documento original"
+
+**Alinhamento com Pilares:**
+- Pilar I: Truth Sovereignty (verify_before_output)
+- Pilar VIII: Risk Containment (if not measurable: skip)
+- Pilar XIV: Multi-LLM Governance (LLM output = untrusted)
+- Pilar XV: Intelligence Consensus (HIGH requires ≥2 models)
+
+**Frase Selada:**
+> *"VERA kann irren. Deshalb entscheidet der Mensch. Deshalb gibt es den Seal."*
 
 > **Full details:** `CLAUDE-HISTORY.md` § W-ENTERPRISE-001
 
