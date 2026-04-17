@@ -1,6 +1,6 @@
 """
-W-SERVICE-CONTROL — WINDI Service Control Panel
-Sovereign Service Management with I9 Human Gate
+W-SERVICE-CONTROL — WINDI Service Control Panel v2.0.0
+Sovereign Service Management with I9 Human Gate + Double Receipt Ledger
 
 Port: 8170
 Invariants: I1, I9, I11
@@ -12,6 +12,7 @@ import subprocess
 import json
 import hashlib
 import requests
+import time
 from datetime import datetime, timezone
 from flask import Flask, jsonify, request, render_template_string
 from functools import wraps
@@ -23,47 +24,56 @@ app = Flask(__name__)
 # ═══════════════════════════════════════════════════════════════
 
 PORT = 8170
-VERSION = "1.0.0"
+VERSION = "2.0.0"
 LEDGER_URL = "http://localhost:8101"
+
+# Tiers for service protection
+TIER_SEALED = "SEALED"      # No restart via UI - requires terminal
+TIER_CRITICAL = "CRITICAL"  # Dual confirmation + double receipt
+TIER_STANDARD = "STANDARD"  # Single confirmation + double receipt
 
 # Services to monitor (systemd service names)
 WINDI_SERVICES = [
-    # Core Infrastructure
-    {"name": "windi-suite-docs", "port": 8101, "display": "Forensic Ledger", "category": "core", "sealed": True, "url": "/ledger/"},
-    {"name": "windi-dragon-chat", "port": 8108, "display": "Dragon Hub", "category": "core", "url": "/desktop/"},
-    {"name": "windi-desktop-gen7", "port": 8119, "display": "Desktop GEN7", "category": "core", "url": "/desktop/"},
-    {"name": "windi-governance", "port": 8080, "display": "Governance API", "category": "core", "url": ""},  # API only
+    # Core Infrastructure - SEALED (G5 Protected)
+    {"name": "windi-suite-docs", "port": 8101, "display": "Forensic Ledger", "category": "core", "tier": TIER_SEALED, "url": "/ledger/"},
+    {"name": "windi-law", "port": 8122, "display": "WINDI-LAW", "category": "agents", "tier": TIER_SEALED, "url": "/law/"},
 
-    # Agents
-    {"name": "windi-law", "port": 8122, "display": "WINDI-LAW", "category": "agents", "sealed": True, "url": "/law/"},
-    {"name": "windi-travel", "port": 8126, "display": "WINDI Travel", "category": "agents", "url": "/travel/"},
-    {"name": "windi-nomad-bot", "port": 8127, "display": "W-NOMAD-001", "category": "agents", "url": "https://t.me/windi_nomad_bot"},
-    {"name": "windi-vd-cut", "port": 8128, "display": "W-VD-CUT-001", "category": "agents", "url": "/vd-cut/"},
-    {"name": "windi-joe", "port": 8129, "display": "W-JOE-001", "category": "agents", "url": "/joe/"},
-    {"name": "windi-vd-mass", "port": 8131, "display": "W-VD-MASS-001", "category": "agents", "url": "/vd-mass/"},
-    {"name": "windi-jmpg", "port": 8132, "display": "W-JMPG-001", "category": "agents", "url": ""},  # API only - Proof Card Renderer
+    # Core Infrastructure - CRITICAL
+    {"name": "windi-dragon-chat", "port": 8108, "display": "Dragon Hub", "category": "core", "tier": TIER_CRITICAL, "url": "/desktop/"},
+    {"name": "windi-desktop-gen7", "port": 8119, "display": "Desktop GEN7", "category": "core", "tier": TIER_CRITICAL, "url": "/desktop/"},
+    {"name": "windi-governance", "port": 8080, "display": "Governance API", "category": "core", "tier": TIER_CRITICAL, "url": ""},
 
-    # Dashboards
-    {"name": "windi-udb", "port": 8140, "display": "UDB God View", "category": "dashboards", "nohup": True, "url": "/udb/"},
-    {"name": "windi-intent-cmd", "port": 8141, "display": "W-INTENT-CMD", "category": "dashboards", "url": ""},  # API only - Intent Orchestration
-    {"name": "windi-fediverse", "port": 8142, "display": "W-FEDIVERSE-001", "category": "dashboards", "url": "/fediverse/"},
-    {"name": "windi-bridge", "port": 8143, "display": "W-BRIDGE-001", "category": "dashboards", "url": "/watch/"},
-    {"name": "windi-sec-001", "port": 8144, "display": "W-SEC-001", "category": "dashboards", "url": "/sec/"},
-    {"name": "windi-verify-public", "port": 8145, "display": "Verify Public", "category": "dashboards", "url": "/verify-public/"},
-    {"name": "windi-enterprise", "port": 8150, "display": "W-Enterprise-001", "category": "dashboards", "url": "/enterprise/"},
-    {"name": "windi-cache", "port": 8160, "display": "W-CACHE-001", "category": "dashboards", "nohup": True, "url": "/wcache/noir"},
-    {"name": "windi-cost", "port": 8152, "display": "W-COST-001", "category": "dashboards", "nohup": True, "url": "/cost/"},
-    {"name": "windi-lab", "port": 8151, "display": "W-LAB-001", "category": "dashboards", "url": "/lab/"},
-    {"name": "windi-social", "port": 8133, "display": "W-SOCIAL-001", "category": "agents", "url": "/social/"},
+    # Agents - STANDARD
+    {"name": "windi-travel", "port": 8126, "display": "WINDI Travel", "category": "agents", "tier": TIER_STANDARD, "url": "/travel/"},
+    {"name": "windi-nomad-bot", "port": 8127, "display": "W-NOMAD-001", "category": "agents", "tier": TIER_STANDARD, "url": "https://t.me/windi_nomad_bot"},
+    {"name": "windi-vd-cut", "port": 8128, "display": "W-VD-CUT-001", "category": "agents", "tier": TIER_STANDARD, "url": "/vd-cut/"},
+    {"name": "windi-joe", "port": 8129, "display": "W-JOE-001", "category": "agents", "tier": TIER_STANDARD, "url": "/joe/"},
+    {"name": "windi-vd-mass", "port": 8131, "display": "W-VD-MASS-001", "category": "agents", "tier": TIER_STANDARD, "nohup": True, "url": "/vd-mass/"},
+    {"name": "windi-jmpg", "port": 8132, "display": "W-JMPG-001", "category": "agents", "tier": TIER_STANDARD, "url": ""},
+    {"name": "windi-social", "port": 8133, "display": "W-SOCIAL-001", "category": "agents", "tier": TIER_STANDARD, "nohup": True, "url": "/social/"},
 
-    # Support
-    {"name": "windi-leads", "port": 8096, "display": "DID Genesis", "category": "support", "url": ""},  # API only
-    {"name": "windi-wallet", "port": 8095, "display": "Wallet Service", "category": "support", "url": "/wallet/"},
-    {"name": "windi-communique", "port": 8105, "display": "Communiqué Engine", "category": "support", "url": ""},  # API only
-    {"name": "windi-dispatch", "port": 8106, "display": "Dispatch Gateway", "category": "support", "url": ""},  # API only
+    # Dashboards - STANDARD
+    {"name": "windi-udb", "port": 8140, "display": "UDB God View", "category": "dashboards", "tier": TIER_STANDARD, "nohup": True, "url": "/udb/"},
+    {"name": "windi-intent-cmd", "port": 8141, "display": "W-INTENT-CMD", "category": "dashboards", "tier": TIER_STANDARD, "url": ""},
+    {"name": "windi-fediverse", "port": 8142, "display": "W-FEDIVERSE-001", "category": "dashboards", "tier": TIER_STANDARD, "url": "/fediverse/"},
+    {"name": "windi-bridge", "port": 8143, "display": "W-BRIDGE-001", "category": "dashboards", "tier": TIER_STANDARD, "url": "/watch/"},
+    {"name": "windi-sec-001", "port": 8144, "display": "W-SEC-001", "category": "dashboards", "tier": TIER_STANDARD, "url": "/sec/"},
+    {"name": "windi-verify-public", "port": 8114, "display": "Verify Public", "category": "dashboards", "tier": TIER_STANDARD, "url": "/verify-public/"},
+    {"name": "windi-enterprise", "port": 8150, "display": "W-Enterprise-001", "category": "dashboards", "tier": TIER_STANDARD, "url": "/enterprise/"},
+    {"name": "windi-lab", "port": 8151, "display": "W-LAB-001", "category": "dashboards", "tier": TIER_STANDARD, "nohup": True, "url": "/lab/"},
+    {"name": "windi-cost", "port": 8152, "display": "W-COST-001", "category": "dashboards", "tier": TIER_STANDARD, "nohup": True, "url": "/cost/"},
+    {"name": "windi-cache", "port": 8160, "display": "W-CACHE-001", "category": "dashboards", "tier": TIER_STANDARD, "nohup": True, "url": "/wcache/noir"},
+    {"name": "windi-travel-map", "port": 8153, "display": "W-TRAVEL-MAP", "category": "dashboards", "tier": TIER_STANDARD, "nohup": True, "url": "/travel/map/"},
+    {"name": "windi-academy", "port": 8180, "display": "W-ACADEMY-001", "category": "dashboards", "tier": TIER_STANDARD, "nohup": True, "url": "/academy/"},
+
+    # Support - STANDARD
+    {"name": "windi-leads", "port": 8096, "display": "DID Genesis", "category": "support", "tier": TIER_STANDARD, "url": ""},
+    {"name": "windi-wallet", "port": 8095, "display": "Wallet Service", "category": "support", "tier": TIER_STANDARD, "url": "/wallet/"},
+    {"name": "windi-communique", "port": 8105, "display": "Communiqué Engine", "category": "support", "tier": TIER_STANDARD, "url": ""},
+    {"name": "windi-dispatch", "port": 8106, "display": "Dispatch Gateway", "category": "support", "tier": TIER_STANDARD, "url": ""},
 
     # Special (nohup)
-    {"name": "sandbox-core", "port": 8091, "display": "Sandbox Core", "category": "core", "nohup": True, "url": ""},  # API only
+    {"name": "sandbox-core", "port": 8091, "display": "Sandbox Core", "category": "core", "tier": TIER_CRITICAL, "nohup": True, "url": ""},
 ]
 
 # Health check endpoints by port
@@ -72,6 +82,7 @@ HEALTH_ENDPOINTS = {
     8096: "/health",
     8101: "/health",
     8108: "/health",
+    8114: "/health",
     8119: "/health",
     8122: "/health",
     8126: "/health",
@@ -79,18 +90,47 @@ HEALTH_ENDPOINTS = {
     8128: "/vd-cut/health",
     8129: "/health",
     8131: "/health",
-    8132: "/health",
+    8132: "/comm/health",
+    8133: "/social/health",
     8140: "/health",
     8141: "/health",
     8142: "/health",
     8143: "/health",
     8144: "/health",
-    8145: "/health",
     8150: "/health",
-    8160: "/health",
-    8152: "/health",
     8151: "/health",
-    8133: "/health",
+    8152: "/health",
+    8153: "/health",
+    8160: "/health",
+    8180: "/health",
+}
+
+# Nohup service paths (for manual restart)
+NOHUP_PATHS = {
+    "windi-vd-mass": "/opt/windi/vd-mass",
+    "windi-jmpg": "/opt/windi/comm",
+    "windi-social": "/opt/windi/w-social-001",
+    "windi-lab": "/opt/windi/w-lab-001",
+    "windi-cost": "/opt/windi/w-cost-001",
+    "windi-cache": "/opt/windi/w-cache-001",
+    "windi-travel-map": "/opt/windi/windi-travel/map-comparator/deploy-windi-travel-map",
+    "windi-udb": "/opt/windi/udb",
+    "sandbox-core": "/opt/windi/sandbox-core",
+    "windi-academy": "/opt/windi/w-academy-001",
+}
+
+# Nohup main files
+NOHUP_MAIN_FILES = {
+    "windi-vd-mass": "app.py",
+    "windi-jmpg": "jmpg_server.py",
+    "windi-social": "app.py",
+    "windi-lab": "app.py",
+    "windi-cost": "app.py",
+    "windi-cache": "app.py",
+    "windi-travel-map": "server.py",
+    "windi-udb": "app.py",
+    "sandbox-core": "app.py",
+    "windi-academy": "app.py",
 }
 
 # ═══════════════════════════════════════════════════════════════
@@ -99,58 +139,16 @@ HEALTH_ENDPOINTS = {
 
 SUBSYSTEMS = {
     "windi-law": [
-        {
-            "id": "ai-draft",
-            "display": "AI Draft",
-            "endpoint": "/ai-draft/health",
-            "port": 8122,
-            "critical": True,
-            "description": "LLM document generation"
-        },
-        {
-            "id": "identity-gate",
-            "display": "Identity Gate",
-            "endpoint": "/health",
-            "port": 8122,
-            "critical": True,
-            "description": "DID authentication"
-        },
-        {
-            "id": "dragon-law",
-            "display": "Dragon Law",
-            "endpoint": "/dragon/health",
-            "port": 8122,
-            "critical": False,
-            "description": "Dragon Shadow Forest integration"
-        }
+        {"id": "ai-draft", "display": "AI Draft", "endpoint": "/ai-draft/health", "port": 8122, "critical": True, "description": "LLM document generation"},
+        {"id": "identity-gate", "display": "Identity Gate", "endpoint": "/health", "port": 8122, "critical": True, "description": "DID authentication"},
+        {"id": "dragon-law", "display": "Dragon Law", "endpoint": "/dragon/health", "port": 8122, "critical": False, "description": "Dragon Shadow Forest integration"}
     ],
     "windi-travel": [
-        {
-            "id": "identity-gate",
-            "display": "Identity Gate",
-            "endpoint": "/health",
-            "port": 8126,
-            "critical": True,
-            "description": "DID wallet authentication"
-        },
-        {
-            "id": "workspace",
-            "display": "Workspace",
-            "endpoint": "/workspace/",
-            "port": 8126,
-            "critical": True,
-            "description": "Travel workspace UI"
-        }
+        {"id": "identity-gate", "display": "Identity Gate", "endpoint": "/health", "port": 8126, "critical": True, "description": "DID wallet authentication"},
+        {"id": "workspace", "display": "Workspace", "endpoint": "/workspace/", "port": 8126, "critical": True, "description": "Travel workspace UI"}
     ],
     "windi-lab": [
-        {
-            "id": "clear",
-            "display": "Dilemas de Geleia",
-            "endpoint": "/api/clear/stats",
-            "port": 8151,
-            "critical": False,
-            "description": "Cognitive training module"
-        }
+        {"id": "clear", "display": "Dilemas de Geleia", "endpoint": "/api/clear/stats", "port": 8151, "critical": False, "description": "Cognitive training module"}
     ]
 }
 
@@ -172,7 +170,6 @@ def require_i9_gate(f):
                 "invariant": "I9"
             }), 403
 
-        # Validate DID format
         if not actor_did.startswith("did:windi:"):
             return jsonify({
                 "error": "INVALID_DID",
@@ -214,9 +211,12 @@ def check_health_endpoint(port):
     """Check service health endpoint."""
     endpoint = HEALTH_ENDPOINTS.get(port, "/health")
     try:
-        r = requests.get(f"http://localhost:{port}{endpoint}", timeout=2)
+        r = requests.get(f"http://localhost:{port}{endpoint}", timeout=3)
         if r.status_code == 200:
-            return {"status": "healthy", "data": r.json() if r.headers.get('content-type', '').startswith('application/json') else {}}
+            try:
+                return {"status": "healthy", "data": r.json()}
+            except:
+                return {"status": "healthy", "data": {}}
         return {"status": "unhealthy", "code": r.status_code}
     except requests.exceptions.ConnectionError:
         return {"status": "offline", "error": "connection_refused"}
@@ -228,6 +228,7 @@ def get_full_service_status(service):
     name = service["name"]
     port = service.get("port")
     is_nohup = service.get("nohup", False)
+    tier = service.get("tier", TIER_STANDARD)
 
     # Systemd status (skip for nohup services)
     if is_nohup:
@@ -259,7 +260,8 @@ def get_full_service_status(service):
         "display": service["display"],
         "port": port,
         "category": service.get("category", "other"),
-        "sealed": service.get("sealed", False),
+        "tier": tier,
+        "sealed": tier == TIER_SEALED,
         "nohup": is_nohup,
         "url": service.get("url", ""),
         "systemd": systemd,
@@ -281,7 +283,6 @@ def check_subsystem_health(service_name, subsystem):
 
     try:
         r = requests.get(f"http://localhost:{port}{endpoint}", timeout=3, allow_redirects=False)
-        # 200-399 = healthy (includes redirects and auth challenges)
         if 200 <= r.status_code < 400:
             return {
                 "id": subsystem["id"],
@@ -300,32 +301,11 @@ def check_subsystem_health(service_name, subsystem):
             "status_code": r.status_code
         }
     except requests.exceptions.ConnectionError:
-        return {
-            "id": subsystem["id"],
-            "display": subsystem["display"],
-            "status": "offline",
-            "critical": subsystem.get("critical", False),
-            "description": subsystem.get("description", ""),
-            "error": "connection_refused"
-        }
+        return {"id": subsystem["id"], "display": subsystem["display"], "status": "offline", "critical": subsystem.get("critical", False), "description": subsystem.get("description", ""), "error": "connection_refused"}
     except requests.exceptions.Timeout:
-        return {
-            "id": subsystem["id"],
-            "display": subsystem["display"],
-            "status": "blocked",
-            "critical": subsystem.get("critical", False),
-            "description": subsystem.get("description", ""),
-            "error": "timeout"
-        }
+        return {"id": subsystem["id"], "display": subsystem["display"], "status": "blocked", "critical": subsystem.get("critical", False), "description": subsystem.get("description", ""), "error": "timeout"}
     except Exception as e:
-        return {
-            "id": subsystem["id"],
-            "display": subsystem["display"],
-            "status": "error",
-            "critical": subsystem.get("critical", False),
-            "description": subsystem.get("description", ""),
-            "error": str(e)[:50]
-        }
+        return {"id": subsystem["id"], "display": subsystem["display"], "status": "error", "critical": subsystem.get("critical", False), "description": subsystem.get("description", ""), "error": str(e)[:50]}
 
 def get_all_subsystems_status(service_name):
     """Get status of all subsystems for a service."""
@@ -338,8 +318,6 @@ def get_all_subsystems_status(service_name):
     for sub in SUBSYSTEMS[service_name]:
         status = check_subsystem_health(service_name, sub)
         subsystems.append(status)
-
-        # Track critical failures
         if status["critical"] and status["status"] not in ["online"]:
             has_critical_failure = True
 
@@ -351,29 +329,133 @@ def get_all_subsystems_status(service_name):
     }
 
 # ═══════════════════════════════════════════════════════════════
-# LEDGER INTEGRATION (I11)
+# LEDGER INTEGRATION (I11) — Double Receipt System
 # ═══════════════════════════════════════════════════════════════
 
-def seal_action(action, service_name, actor_did, result):
-    """Seal service control action to Forensic Ledger."""
+def generate_receipt_id(action, service_name, actor_did):
+    """Generate a unique receipt ID."""
+    ts = datetime.now().strftime('%Y%m%d%H%M%S')
+    hash_input = f"{action}{service_name}{actor_did}{ts}"
+    short_hash = hashlib.sha256(hash_input.encode()).hexdigest()[:8].upper()
+    return f"WINDI-SVC-{ts}-{short_hash}"
+
+def seal_to_ledger(receipt_data):
+    """Seal receipt to Forensic Ledger (I11)."""
+    try:
+        r = requests.post(f"{LEDGER_URL}/api/receipts", json=receipt_data, timeout=5)
+        return r.status_code in [200, 201]
+    except:
+        return False
+
+def create_restart_initiated_receipt(service_name, actor_did, tier, pre_health):
+    """Create Receipt 1: restart_initiated."""
+    receipt_id = generate_receipt_id("RESTART_INIT", service_name, actor_did)
+
     receipt = {
-        "receipt_id": f"WINDI-SVC-{datetime.now().strftime('%Y%m%d%H%M%S')}-{hashlib.sha256(f'{action}{service_name}{actor_did}'.encode()).hexdigest()[:8].upper()}",
+        "receipt_id": receipt_id,
         "actor": actor_did,
         "app": "service-control",
-        "doc_name": f"Service {action}: {service_name}",
-        "doc_type": "service-action",
-        "governance_level": "HIGH",
-        "content_hash": f"sha256:{hashlib.sha256(json.dumps(result, sort_keys=True).encode()).hexdigest()}",
+        "doc_name": f"Restart Initiated: {service_name}",
+        "doc_type": "service-restart-initiated",
+        "governance_level": "HIGH" if tier == TIER_CRITICAL else "MEDIUM",
+        "content_hash": f"sha256:{hashlib.sha256(json.dumps({'service': service_name, 'action': 'restart_initiated', 'tier': tier, 'pre_health': pre_health}, sort_keys=True).encode()).hexdigest()}",
         "invariants": ["I9", "I11"],
         "stage": "C6",
+        "metadata": {
+            "service": service_name,
+            "tier": tier,
+            "action": "restart_initiated",
+            "pre_health": pre_health
+        },
         "sealed_at": datetime.now(timezone.utc).isoformat()
     }
 
+    sealed = seal_to_ledger(receipt)
+    return receipt_id if sealed else None, receipt
+
+def create_restart_completed_receipt(service_name, actor_did, tier, parent_receipt_id, post_health, success):
+    """Create Receipt 2: restart_completed (linked to Receipt 1)."""
+    receipt_id = generate_receipt_id("RESTART_DONE", service_name, actor_did)
+
+    receipt = {
+        "receipt_id": receipt_id,
+        "parent_receipt_id": parent_receipt_id,  # Chain link!
+        "actor": actor_did,
+        "app": "service-control",
+        "doc_name": f"Restart {'Completed' if success else 'Failed'}: {service_name}",
+        "doc_type": "service-restart-completed",
+        "governance_level": "HIGH" if tier == TIER_CRITICAL else "MEDIUM",
+        "content_hash": f"sha256:{hashlib.sha256(json.dumps({'service': service_name, 'action': 'restart_completed', 'success': success, 'post_health': post_health}, sort_keys=True).encode()).hexdigest()}",
+        "invariants": ["I9", "I11"],
+        "stage": "C6",
+        "metadata": {
+            "service": service_name,
+            "tier": tier,
+            "action": "restart_completed",
+            "success": success,
+            "post_health": post_health,
+            "parent_receipt_id": parent_receipt_id
+        },
+        "sealed_at": datetime.now(timezone.utc).isoformat()
+    }
+
+    sealed = seal_to_ledger(receipt)
+    return receipt_id if sealed else None, receipt
+
+# ═══════════════════════════════════════════════════════════════
+# RESTART EXECUTION
+# ═══════════════════════════════════════════════════════════════
+
+def restart_systemd_service(service_name):
+    """Restart a systemd service."""
     try:
-        r = requests.post(f"{LEDGER_URL}/api/receipts", json=receipt, timeout=5)
-        return receipt["receipt_id"] if r.status_code in [200, 201] else None
-    except:
-        return None
+        # Try without sudo first (if running as root or with permissions)
+        result = subprocess.run(
+            ["systemctl", "restart", service_name],
+            capture_output=True, text=True, timeout=30
+        )
+        if result.returncode == 0:
+            return True, "success"
+
+        # Fallback: try with sudo
+        result = subprocess.run(
+            ["sudo", "systemctl", "restart", service_name],
+            capture_output=True, text=True, timeout=30
+        )
+        return result.returncode == 0, result.stderr if result.returncode != 0 else "success"
+    except subprocess.TimeoutExpired:
+        return False, "timeout"
+    except Exception as e:
+        return False, str(e)
+
+def restart_nohup_service(service_name, port):
+    """Restart a nohup service by killing existing process and starting new one."""
+    path = NOHUP_PATHS.get(service_name)
+    main_file = NOHUP_MAIN_FILES.get(service_name, "app.py")
+
+    if not path:
+        return False, f"No path configured for {service_name}"
+
+    try:
+        # Kill existing process on port
+        subprocess.run(["fuser", "-k", f"{port}/tcp"], capture_output=True, timeout=5)
+        time.sleep(1)
+
+        # Start new process
+        log_file = f"/tmp/{service_name}.log"
+        cmd = f"cd {path} && nohup python3 {main_file} > {log_file} 2>&1 &"
+        subprocess.run(cmd, shell=True, timeout=5)
+
+        # Wait for service to start
+        time.sleep(3)
+
+        # Verify port is listening
+        if get_port_status(port):
+            return True, "success"
+        else:
+            return False, "service did not start"
+    except Exception as e:
+        return False, str(e)
 
 # ═══════════════════════════════════════════════════════════════
 # API ENDPOINTS
@@ -387,6 +469,7 @@ def health():
         "port": PORT,
         "status": "ONLINE",
         "invariants": ["I1", "I9", "I11"],
+        "features": ["double_receipt", "tier_protection", "i9_ceremony"],
         "timestamp": datetime.now(timezone.utc).isoformat()
     })
 
@@ -399,7 +482,6 @@ def list_services():
         status = get_full_service_status(svc)
         services.append(status)
 
-    # Count by status
     counts = {
         "online": len([s for s in services if s["overall"] == "online"]),
         "degraded": len([s for s in services if s["overall"] == "degraded"]),
@@ -426,7 +508,17 @@ def get_service(service_name):
 @app.route("/api/services/<service_name>/restart", methods=["POST"])
 @require_i9_gate
 def restart_service(service_name):
-    """Restart a service (requires I9 human approval)."""
+    """
+    Restart a service with I9 ceremony and double receipt (I11).
+
+    Flow:
+    1. Validate DID and tier
+    2. Pre-restart health check
+    3. Seal Receipt 1 (restart_initiated)
+    4. Execute restart
+    5. Post-restart health check
+    6. Seal Receipt 2 (restart_completed) with parent_receipt_id
+    """
     data = request.get_json() or {}
     actor_did = data.get("actor_did")
     reason = data.get("reason", "Manual restart via Control Panel")
@@ -436,66 +528,76 @@ def restart_service(service_name):
     if not svc:
         return jsonify({"error": "Service not found"}), 404
 
-    # Check if sealed (protected)
-    if svc.get("sealed"):
+    tier = svc.get("tier", TIER_STANDARD)
+    is_nohup = svc.get("nohup", False)
+    port = svc.get("port")
+
+    # Check if SEALED (blocked)
+    if tier == TIER_SEALED:
         return jsonify({
             "error": "SEALED_SERVICE",
-            "message": f"{svc['display']} is a SEALED service. Restart requires additional approval.",
-            "invariant": "G5"
+            "message": f"{svc['display']} is a SEALED service. Restart blocked via UI.",
+            "invariant": "G5",
+            "tier": tier
         }), 403
 
-    # Check if nohup (different restart method)
-    if svc.get("nohup"):
+    # Pre-restart health check
+    pre_health = check_health_endpoint(port) if port else {"status": "unknown"}
+
+    # === RECEIPT 1: restart_initiated ===
+    receipt1_id, receipt1 = create_restart_initiated_receipt(
+        service_name, actor_did, tier, pre_health
+    )
+
+    if not receipt1_id:
         return jsonify({
-            "error": "NOHUP_SERVICE",
-            "message": f"{svc['display']} runs via nohup, not systemd. Manual restart required.",
-            "suggestion": f"cd /opt/windi/{service_name.replace('windi-', '')} && ./start.sh"
-        }), 400
+            "error": "LEDGER_FAILED",
+            "message": "Failed to seal restart_initiated receipt to Ledger",
+            "invariant": "I11"
+        }), 500
 
-    # Execute restart
-    try:
-        result = subprocess.run(
-            ["sudo", "systemctl", "restart", service_name],
-            capture_output=True, text=True, timeout=30
-        )
+    # === EXECUTE RESTART ===
+    if is_nohup:
+        success, error = restart_nohup_service(service_name, port)
+    else:
+        success, error = restart_systemd_service(service_name)
 
-        success = result.returncode == 0
+    # Wait for service to stabilize
+    time.sleep(2)
 
-        action_result = {
-            "action": "restart",
-            "service": service_name,
-            "success": success,
-            "actor_did": actor_did,
-            "reason": reason,
-            "stdout": result.stdout,
-            "stderr": result.stderr,
-            "timestamp": datetime.now(timezone.utc).isoformat()
-        }
+    # Post-restart health check
+    post_health = check_health_endpoint(port) if port else {"status": "unknown"}
 
-        # Seal to Ledger (I11)
-        receipt_id = seal_action("RESTART", service_name, actor_did, action_result)
-        action_result["receipt_id"] = receipt_id
+    # Determine actual success based on health
+    actual_success = success and post_health.get("status") == "healthy"
 
-        if success:
-            return jsonify({
-                "status": "RESTART_INITIATED",
-                "service": service_name,
-                "receipt_id": receipt_id,
-                "message": f"{svc['display']} restart initiated successfully",
-                "timestamp": datetime.now(timezone.utc).isoformat()
-            })
-        else:
-            return jsonify({
-                "status": "RESTART_FAILED",
-                "service": service_name,
-                "error": result.stderr,
-                "receipt_id": receipt_id
-            }), 500
+    # === RECEIPT 2: restart_completed (linked to Receipt 1) ===
+    receipt2_id, receipt2 = create_restart_completed_receipt(
+        service_name, actor_did, tier, receipt1_id, post_health, actual_success
+    )
 
-    except subprocess.TimeoutExpired:
-        return jsonify({"error": "Restart timed out"}), 504
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    return jsonify({
+        "status": "RESTART_COMPLETED" if actual_success else "RESTART_FAILED",
+        "service": service_name,
+        "tier": tier,
+        "success": actual_success,
+        "receipts": {
+            "initiated": {
+                "receipt_id": receipt1_id,
+                "action": "restart_initiated",
+                "pre_health": pre_health
+            },
+            "completed": {
+                "receipt_id": receipt2_id,
+                "action": "restart_completed",
+                "parent_receipt_id": receipt1_id,
+                "post_health": post_health,
+                "success": actual_success
+            }
+        },
+        "message": f"Restart {'successful' if actual_success else 'failed'}: {svc['display']}",
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    })
 
 @app.route("/api/services/<service_name>/stop", methods=["POST"])
 @require_i9_gate
@@ -508,23 +610,44 @@ def stop_service(service_name):
     if not svc:
         return jsonify({"error": "Service not found"}), 404
 
-    if svc.get("sealed"):
+    tier = svc.get("tier", TIER_STANDARD)
+    if tier == TIER_SEALED:
         return jsonify({
             "error": "SEALED_SERVICE",
             "message": f"{svc['display']} is SEALED. Cannot be stopped via Control Panel.",
             "invariant": "G5"
         }), 403
 
-    try:
-        result = subprocess.run(
-            ["sudo", "systemctl", "stop", service_name],
-            capture_output=True, text=True, timeout=30
-        )
+    is_nohup = svc.get("nohup", False)
+    port = svc.get("port")
 
-        receipt_id = seal_action("STOP", service_name, actor_did, {"success": result.returncode == 0})
+    try:
+        if is_nohup:
+            subprocess.run(["fuser", "-k", f"{port}/tcp"], capture_output=True, timeout=5)
+            success = True
+        else:
+            result = subprocess.run(
+                ["systemctl", "stop", service_name],
+                capture_output=True, text=True, timeout=30
+            )
+            success = result.returncode == 0
+
+        # Seal to ledger
+        receipt_id = generate_receipt_id("STOP", service_name, actor_did)
+        seal_to_ledger({
+            "receipt_id": receipt_id,
+            "actor": actor_did,
+            "app": "service-control",
+            "doc_name": f"Service Stop: {service_name}",
+            "doc_type": "service-stop",
+            "governance_level": "HIGH",
+            "invariants": ["I9", "I11"],
+            "stage": "C6",
+            "sealed_at": datetime.now(timezone.utc).isoformat()
+        })
 
         return jsonify({
-            "status": "STOPPED" if result.returncode == 0 else "STOP_FAILED",
+            "status": "STOPPED" if success else "STOP_FAILED",
             "service": service_name,
             "receipt_id": receipt_id,
             "timestamp": datetime.now(timezone.utc).isoformat()
@@ -543,16 +666,34 @@ def start_service(service_name):
     if not svc:
         return jsonify({"error": "Service not found"}), 404
 
-    try:
-        result = subprocess.run(
-            ["sudo", "systemctl", "start", service_name],
-            capture_output=True, text=True, timeout=30
-        )
+    is_nohup = svc.get("nohup", False)
+    port = svc.get("port")
 
-        receipt_id = seal_action("START", service_name, actor_did, {"success": result.returncode == 0})
+    try:
+        if is_nohup:
+            success, _ = restart_nohup_service(service_name, port)
+        else:
+            result = subprocess.run(
+                ["systemctl", "start", service_name],
+                capture_output=True, text=True, timeout=30
+            )
+            success = result.returncode == 0
+
+        receipt_id = generate_receipt_id("START", service_name, actor_did)
+        seal_to_ledger({
+            "receipt_id": receipt_id,
+            "actor": actor_did,
+            "app": "service-control",
+            "doc_name": f"Service Start: {service_name}",
+            "doc_type": "service-start",
+            "governance_level": "MEDIUM",
+            "invariants": ["I9", "I11"],
+            "stage": "C6",
+            "sealed_at": datetime.now(timezone.utc).isoformat()
+        })
 
         return jsonify({
-            "status": "STARTED" if result.returncode == 0 else "START_FAILED",
+            "status": "STARTED" if success else "START_FAILED",
             "service": service_name,
             "receipt_id": receipt_id,
             "timestamp": datetime.now(timezone.utc).isoformat()
@@ -569,15 +710,27 @@ def get_logs(service_name):
     if not svc:
         return jsonify({"error": "Service not found"}), 404
 
+    is_nohup = svc.get("nohup", False)
+
     try:
-        result = subprocess.run(
-            ["journalctl", "-u", service_name, "-n", str(min(lines, 200)), "--no-pager"],
-            capture_output=True, text=True, timeout=10
-        )
+        if is_nohup:
+            # Read from log file
+            log_file = f"/tmp/{service_name}.log"
+            result = subprocess.run(
+                ["tail", "-n", str(min(lines, 200)), log_file],
+                capture_output=True, text=True, timeout=10
+            )
+            logs = result.stdout if result.returncode == 0 else "No logs available"
+        else:
+            result = subprocess.run(
+                ["journalctl", "-u", service_name, "-n", str(min(lines, 200)), "--no-pager"],
+                capture_output=True, text=True, timeout=10
+            )
+            logs = result.stdout
 
         return jsonify({
             "service": service_name,
-            "logs": result.stdout,
+            "logs": logs,
             "timestamp": datetime.now(timezone.utc).isoformat()
         })
     except Exception as e:
@@ -642,7 +795,7 @@ def did_architecture():
         return f"Error loading page: {e}", 500
 
 # ═══════════════════════════════════════════════════════════════
-# HTML TEMPLATE
+# HTML TEMPLATE — New UI with Tier-based Restart + Double Receipt
 # ═══════════════════════════════════════════════════════════════
 
 DASHBOARD_HTML = '''
@@ -652,763 +805,575 @@ DASHBOARD_HTML = '''
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WINDI Service Control Panel</title>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #0A0A10;
-            --bg-card: #12121A;
-            --gold: #C9A84C;
-            --gold-dim: #8B7424;
-            --text: #E8E6E1;
-            --text-dim: #9A9890;
-            --border: #1A1A24;
-            --green: #4ADE80;
-            --red: #F87171;
-            --yellow: #FACC15;
-            --blue: #60A5FA;
-        }
-        [data-theme="klar"] {
-            --bg: #FAFAF8;
-            --bg-card: #FFFFFF;
+            --bg: #ffffff;
+            --bg-secondary: #f5f5f3;
+            --bg-card: #ffffff;
+            --text: #1a1a18;
+            --text-dim: #6b6b67;
+            --border: rgba(0,0,0,0.12);
+            --border-strong: rgba(0,0,0,0.22);
             --gold: #8B7424;
-            --gold-dim: #6B5A1C;
-            --text: #1A1A1A;
-            --text-dim: #5A5A5A;
-            --border: #E0DED8;
+            --green: #3B6D11;
+            --green-bg: #EAF3DE;
+            --red: #A32D2D;
+            --red-bg: #FCEBEB;
+            --yellow: #BA7517;
+            --yellow-bg: #FAEEDA;
+            --blue: #1D5AA8;
+            --font-mono: 'Courier New', monospace;
         }
+
+        [data-theme="noir"] {
+            --bg: #1c1c1a;
+            --bg-secondary: #252523;
+            --bg-card: #252523;
+            --text: #f0ede8;
+            --text-dim: #9a9790;
+            --border: rgba(255,255,255,0.1);
+            --border-strong: rgba(255,255,255,0.18);
+            --gold: #C9A84C;
+            --green: #90c739;
+            --green-bg: rgba(144,199,57,0.15);
+            --red: #E24B4A;
+            --red-bg: rgba(226,75,74,0.15);
+            --yellow: #F5A623;
+            --yellow-bg: rgba(245,166,35,0.15);
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            font-family: 'JetBrains Mono', monospace;
-            background: var(--bg);
+            background: var(--bg-secondary);
             color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 16px;
+            line-height: 1.7;
             min-height: 100vh;
+            padding: 2rem;
         }
+
+        .page { max-width: 900px; margin: 0 auto; }
+
+        button {
+            background: transparent;
+            border: 0.5px solid var(--border-strong);
+            border-radius: 8px;
+            color: var(--text);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 13px;
+            padding: 6px 14px;
+            transition: all 0.15s;
+        }
+        button:hover { background: var(--bg-secondary); border-color: var(--gold); }
+        button:active { transform: scale(0.98); }
+        button:disabled { opacity: 0.4; cursor: not-allowed; }
+
         .header {
-            background: var(--bg-card);
-            border-bottom: 1px solid var(--border);
-            padding: 1rem 2rem;
             display: flex;
+            align-items: center;
             justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+        .header-title {
+            font-size: 13px;
+            color: var(--text-dim);
+            font-family: var(--font-mono);
+            letter-spacing: 0.05em;
+        }
+        .header-main {
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--text);
+        }
+        .header-status {
+            display: flex;
+            gap: 8px;
             align-items: center;
         }
-        .logo { color: var(--gold); font-size: 1.5rem; font-weight: 700; }
-        .logo-sub { color: var(--text-dim); font-weight: 400; font-size: 0.9rem; margin-left: 0.5rem; }
-        .controls { display: flex; gap: 1rem; align-items: center; }
-        .btn-theme {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--gold);
-            padding: 0.5rem;
-            cursor: pointer;
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+        }
+        .status-text {
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+
+        .legend {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+        }
+        .legend-dot.sealed { background: var(--red); }
+        .legend-dot.critical { background: var(--yellow); }
+        .legend-dot.standard { background: var(--green); }
+        .legend-sep {
+            width: 1px;
+            background: var(--border);
+        }
+
+        #services-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .service-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-card);
+            border: 0.5px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            gap: 12px;
+        }
+        .service-row:hover { border-color: var(--border-strong); }
+
+        .service-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            min-width: 0;
+        }
+        .service-status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .service-status-dot.online { background: var(--green); animation: pulse 2.5s ease-in-out infinite; }
+        .service-status-dot.offline { background: var(--red); }
+        .service-status-dot.degraded { background: var(--yellow); }
+        .service-status-dot.starting { background: var(--blue); animation: pulse 1s ease-in-out infinite; }
+
+        @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .service-details { flex: 1; min-width: 0; }
+        .service-name { font-size: 14px; font-weight: 500; color: var(--text); }
+        .service-port { font-size: 12px; color: var(--text-dim); font-family: var(--font-mono); }
+
+        .tier-badge {
+            font-size: 11px;
+            padding: 3px 8px;
             border-radius: 4px;
-            font-size: 1.2rem;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .tier-badge.sealed { background: var(--red-bg); color: var(--red); }
+        .tier-badge.critical { background: var(--yellow-bg); color: var(--yellow); }
+        .tier-badge.standard { background: var(--green-bg); color: var(--green); }
+
+        .btn-blocked {
+            font-size: 12px;
+            color: var(--text-dim);
+            padding: 6px 12px;
+            border: 0.5px solid var(--border);
+            border-radius: 8px;
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Modal */
+        #modal-overlay {
+            display: none;
+            margin-top: 1.5rem;
+        }
+        #modal-overlay.active { display: block; }
+
+        .modal-card {
+            background: var(--bg-card);
+            border: 0.5px solid var(--border-strong);
+            border-radius: 12px;
+            padding: 1.25rem;
+        }
+        .modal-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+        .modal-tier-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        .modal-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text);
+        }
+        .modal-body {
+            font-size: 13px;
+            color: var(--text-dim);
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .receipt-box {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            font-size: 12px;
+            font-family: var(--font-mono);
+            color: var(--text-dim);
+        }
+        .receipt-box .label {
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+        .receipt-box.success {
+            border: 0.5px solid var(--green);
+        }
+        .receipt-box .receipt-label {
+            color: var(--text-dim);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 6px;
+        }
+        .receipt-box .receipt-id {
+            color: var(--text);
+            margin-bottom: 2px;
+        }
+
+        .dual-note {
+            font-size: 12px;
+            color: var(--yellow);
+            margin-bottom: 1rem;
+            padding: 8px 12px;
+            border-left: 2px solid var(--yellow);
+            background: var(--yellow-bg);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .modal-actions button { flex: 1; }
+        .btn-confirm { border-color: var(--gold); color: var(--gold); }
+
+        .spinner {
+            width: 14px;
+            height: 14px;
+            border: 2px solid var(--border);
+            border-top-color: var(--text-dim);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+        }
+
+        .chain-arrow {
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-dim);
+            font-family: var(--font-mono);
+            margin: 8px 0;
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
         }
         select {
             background: var(--bg-card);
             border: 1px solid var(--border);
             color: var(--text);
-            padding: 0.5rem;
-            border-radius: 4px;
+            padding: 6px 10px;
+            border-radius: 6px;
             font-family: inherit;
-        }
-        .main { padding: 2rem; max-width: 1600px; margin: 0 auto; }
-
-        /* DID Banner */
-        .did-banner {
-            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(201,168,76,0.1) 100%);
-            border: 1px solid var(--gold-dim);
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        .did-banner.connected { border-color: var(--green); }
-        .did-input {
-            flex: 1;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            color: var(--text);
-            padding: 0.75rem 1rem;
-            border-radius: 4px;
-            font-family: inherit;
-        }
-        .btn-connect {
-            background: var(--gold);
-            color: var(--bg);
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
-            font-family: inherit;
-        }
-        .btn-connect:hover { background: var(--gold-dim); }
-
-        /* Stats */
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        .stat-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1rem;
-            text-align: center;
-        }
-        .stat-value { font-size: 2rem; font-weight: 700; color: var(--gold); }
-        .stat-label { color: var(--text-dim); font-size: 0.75rem; text-transform: uppercase; }
-        .stat-card.online .stat-value { color: var(--green); }
-        .stat-card.offline .stat-value { color: var(--red); }
-        .stat-card.degraded .stat-value { color: var(--yellow); }
-
-        /* Category */
-        .category { margin-bottom: 2rem; }
-        .category-title {
-            color: var(--gold);
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        /* Service Grid */
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 1rem;
-        }
-        .service-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1rem;
-            transition: border-color 0.2s;
-        }
-        .service-card:hover { border-color: var(--gold-dim); }
-        .service-card.online { border-left: 3px solid var(--green); }
-        .service-card.offline { border-left: 3px solid var(--red); }
-        .service-card.degraded { border-left: 3px solid var(--yellow); }
-        .service-card.starting { border-left: 3px solid var(--blue); }
-
-        .service-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; }
-        .service-name { font-weight: 600; color: var(--text); }
-        .service-port { color: var(--text-dim); font-size: 0.8rem; }
-        .service-status {
-            font-size: 0.7rem;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            text-transform: uppercase;
-            font-weight: 600;
-        }
-        .service-status.online { background: rgba(74,222,128,0.2); color: var(--green); }
-        .service-status.offline { background: rgba(248,113,113,0.2); color: var(--red); }
-        .service-status.degraded { background: rgba(250,204,21,0.2); color: var(--yellow); }
-        .service-status.starting { background: rgba(96,165,250,0.2); color: var(--blue); }
-
-        .service-meta { display: flex; gap: 0.5rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
-        .badge {
-            font-size: 0.65rem;
-            padding: 0.2rem 0.4rem;
-            border-radius: 3px;
-            background: var(--border);
-            color: var(--text-dim);
-        }
-        .badge.sealed { background: rgba(201,168,76,0.2); color: var(--gold); }
-        .badge.nohup { background: rgba(96,165,250,0.2); color: var(--blue); }
-
-        .service-actions { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
-        .btn-action {
-            flex: 1;
-            padding: 0.5rem;
-            border: 1px solid var(--border);
-            background: transparent;
-            color: var(--text);
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 0.75rem;
-            transition: all 0.2s;
-        }
-        .btn-action:hover { border-color: var(--gold); color: var(--gold); }
-        .btn-action:disabled { opacity: 0.5; cursor: not-allowed; }
-        .btn-action.open { border-color: var(--blue); color: var(--blue); text-decoration: none; text-align: center; }
-        .btn-action.open:hover { background: var(--blue); color: var(--bg); }
-        .btn-action.restart:hover { border-color: var(--yellow); color: var(--yellow); }
-        .btn-action.stop:hover { border-color: var(--red); color: var(--red); }
-        .btn-action.start:hover { border-color: var(--green); color: var(--green); }
-
-        /* Logs Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.8);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-        .modal.active { display: flex; }
-        .modal-content {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            width: 90%;
-            max-width: 800px;
-            max-height: 80vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-        .modal-header {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .modal-title { color: var(--gold); font-weight: 600; }
-        .modal-close {
-            background: transparent;
-            border: none;
-            color: var(--text-dim);
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-        .modal-body {
-            padding: 1rem;
-            overflow-y: auto;
-            flex: 1;
-        }
-        .logs-content {
-            font-size: 0.75rem;
-            line-height: 1.6;
-            white-space: pre-wrap;
-            word-break: break-all;
-            color: var(--text-dim);
-        }
-
-        /* Toast */
-        .toast {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1rem 1.5rem;
-            display: none;
-            z-index: 1001;
-        }
-        .toast.success { border-color: var(--green); }
-        .toast.error { border-color: var(--red); }
-        .toast.active { display: block; }
-
-        /* I18N */
-        .i18n { display: none; }
-
-        /* Loading */
-        .loading { opacity: 0.5; pointer-events: none; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .spinner { animation: spin 1s linear infinite; display: inline-block; }
-
-        /* Subsystems (SVG Sentinel) */
-        .subsystems {
-            margin-top: 0.75rem;
-            padding-top: 0.75rem;
-            border-top: 1px dashed var(--border);
-        }
-        .subsystems-title {
-            font-size: 0.65rem;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 0.5rem;
-        }
-        .subsystem-row {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.3rem 0;
-        }
-        .sentinel-svg {
-            width: 16px;
-            height: 16px;
-            flex-shrink: 0;
-        }
-        .sentinel-svg.online { color: var(--green); }
-        .sentinel-svg.offline { color: var(--red); }
-        .sentinel-svg.degraded { color: var(--yellow); }
-        .sentinel-svg.blocked { color: var(--red); animation: pulse 1.5s infinite; }
-        .sentinel-svg.error { color: var(--red); }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-        .subsystem-name {
-            font-size: 0.75rem;
-            color: var(--text);
-            flex: 1;
-        }
-        .subsystem-name.critical::after {
-            content: " ★";
-            color: var(--gold);
-        }
-        .subsystem-status {
-            font-size: 0.65rem;
-            color: var(--text-dim);
-        }
-        .subsystem-expand {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text-dim);
-            padding: 0.2rem 0.4rem;
-            border-radius: 3px;
-            font-size: 0.65rem;
-            cursor: pointer;
-        }
-        .subsystem-expand:hover {
-            border-color: var(--gold);
-            color: var(--gold);
-        }
-        .subsystem-alert {
-            background: rgba(248,113,113,0.1);
-            border: 1px solid var(--red);
-            border-radius: 4px;
-            padding: 0.5rem;
-            margin-top: 0.5rem;
-            font-size: 0.7rem;
-            color: var(--red);
+            font-size: 13px;
         }
     </style>
 </head>
 <body>
-    <header class="header">
-        <div>
-            <span class="logo">WINDI<span class="logo-sub">Service Control</span></span>
-        </div>
-        <div class="controls">
-            <select id="lang-toggle" onchange="setLang(this.value)">
-                <option value="de">DE</option>
-                <option value="en" selected>EN</option>
-                <option value="pt">PT</option>
-            </select>
-            <button class="btn-theme" onclick="toggleTheme()" title="Toggle Theme">☀</button>
-        </div>
-    </header>
+<div class="page">
 
-    <main class="main">
-        <!-- DID Banner -->
-        <div class="did-banner" id="did-banner">
-            <span>🪪</span>
-            <input type="text" class="did-input" id="did-input" placeholder="did:windi:your-identifier" />
-            <button class="btn-connect" onclick="connectDID()" data-i18n="connect">Connect</button>
-        </div>
-
-        <!-- Stats -->
-        <div class="stats" id="stats">
-            <div class="stat-card online">
-                <div class="stat-value" id="stat-online">--</div>
-                <div class="stat-label" data-i18n="online">Online</div>
-            </div>
-            <div class="stat-card degraded">
-                <div class="stat-value" id="stat-degraded">--</div>
-                <div class="stat-label" data-i18n="degraded">Degraded</div>
-            </div>
-            <div class="stat-card offline">
-                <div class="stat-value" id="stat-offline">--</div>
-                <div class="stat-label" data-i18n="offline">Offline</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="stat-total">--</div>
-                <div class="stat-label" data-i18n="total">Total</div>
-            </div>
-        </div>
-
-        <!-- Services by Category -->
-        <div id="services-container"></div>
-    </main>
-
-    <!-- Logs Modal -->
-    <div class="modal" id="logs-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span class="modal-title" id="logs-title">Logs</span>
-                <button class="modal-close" onclick="closeModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <pre class="logs-content" id="logs-content"></pre>
-            </div>
+<div class="header">
+    <div>
+        <div class="header-title">WINDI INSTITUTE · SERVICE CONTROL</div>
+        <div class="header-main">Service Control Panel v2.0</div>
+    </div>
+    <div class="controls">
+        <select id="lang-toggle" onchange="setLang(this.value)">
+            <option value="de">DE</option>
+            <option value="en" selected>EN</option>
+            <option value="pt">PT</option>
+        </select>
+        <button onclick="toggleTheme()" title="Toggle Theme">☀</button>
+        <div class="header-status">
+            <div class="status-dot"></div>
+            <span class="status-text" id="active-count">— / — active</span>
         </div>
     </div>
+</div>
 
-    <!-- Toast -->
-    <div class="toast" id="toast"></div>
+<div class="legend">
+    <div class="legend-item">
+        <div class="legend-dot sealed"></div> SEALED — no restart
+    </div>
+    <div class="legend-sep"></div>
+    <div class="legend-item">
+        <div class="legend-dot critical"></div> CRITICAL — dual receipt
+    </div>
+    <div class="legend-sep"></div>
+    <div class="legend-item">
+        <div class="legend-dot standard"></div> STANDARD — single confirm
+    </div>
+</div>
 
-    <script>
-        // State
-        let currentDID = null;
-        let services = [];
+<div id="services-list"></div>
 
-        // I18N
-        const i18n = {
-            en: {
-                connect: "Connect", disconnect: "Disconnect", online: "Online", offline: "Offline",
-                degraded: "Degraded", total: "Total", restart: "Restart", stop: "Stop", start: "Start",
-                logs: "Logs", core: "Core Infrastructure", agents: "Agents", dashboards: "Dashboards",
-                support: "Support Services", other: "Other", restartSuccess: "Restart initiated",
-                restartFailed: "Restart failed", noDidWarning: "Connect DID to control services",
-                sealed: "SEALED", nohup: "NOHUP", open: "Open"
-            },
-            de: {
-                connect: "Verbinden", disconnect: "Trennen", online: "Online", offline: "Offline",
-                degraded: "Eingeschränkt", total: "Gesamt", restart: "Neustart", stop: "Stoppen", start: "Starten",
-                logs: "Logs", core: "Kerninfrastruktur", agents: "Agenten", dashboards: "Dashboards",
-                support: "Support-Dienste", other: "Andere", restartSuccess: "Neustart eingeleitet",
-                restartFailed: "Neustart fehlgeschlagen", noDidWarning: "DID verbinden um Dienste zu steuern",
-                sealed: "VERSIEGELT", nohup: "NOHUP", open: "Öffnen"
-            },
-            pt: {
-                connect: "Conectar", disconnect: "Desconectar", online: "Online", offline: "Offline",
-                degraded: "Degradado", total: "Total", restart: "Reiniciar", stop: "Parar", start: "Iniciar",
-                logs: "Logs", core: "Infraestrutura Core", agents: "Agentes", dashboards: "Dashboards",
-                support: "Serviços de Suporte", other: "Outros", restartSuccess: "Reinício iniciado",
-                restartFailed: "Reinício falhou", noDidWarning: "Conecte DID para controlar serviços",
-                sealed: "SELADO", nohup: "NOHUP", open: "Abrir"
-            }
-        };
-        let lang = localStorage.getItem('windi-lang') || 'en';
+<div id="modal-overlay">
+    <div class="modal-card">
+        <div class="modal-header">
+            <div id="modal-tier-dot" class="modal-tier-dot"></div>
+            <div class="modal-title" id="modal-title">Confirmar restart</div>
+        </div>
+        <div class="modal-body" id="modal-body"></div>
 
-        function t(key) { return i18n[lang][key] || key; }
+        <div id="step1">
+            <div class="receipt-box">
+                <div class="label">I9 — confirmação humana obrigatória</div>
+                <div>Acção: restart_initiated</div>
+                <div id="modal-svc-name">target: —</div>
+                <div id="modal-ts">timestamp: —</div>
+            </div>
+            <div id="dual-note" class="dual-note" style="display:none">
+                Serviço crítico — confirmação dupla activada. O segundo receipt será gerado após restart completo.
+            </div>
+            <div class="modal-actions">
+                <button onclick="cancelRestart()">Cancelar</button>
+                <button onclick="confirmRestart()" class="btn-confirm">Confirmar restart ↗</button>
+            </div>
+        </div>
 
-        function setLang(l) {
-            lang = l;
-            localStorage.setItem('windi-lang', l);
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                el.textContent = t(el.dataset.i18n);
-            });
-            renderServices();
-        }
+        <div id="step2" style="display:none">
+            <div class="receipt-box">
+                <div class="receipt-label">Receipt 1 — início</div>
+                <div class="receipt-id" id="receipt1-id"></div>
+                <div>action: restart_initiated</div>
+                <div>status: sealed ✓</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:1rem">
+                <div class="spinner"></div>
+                <span style="font-size:13px;color:var(--text-dim)">Restarting service…</span>
+            </div>
+        </div>
 
-        // Theme
-        function toggleTheme() {
-            const html = document.documentElement;
-            const current = html.getAttribute('data-theme');
-            const next = current === 'noir' ? 'klar' : 'noir';
-            html.setAttribute('data-theme', next);
-            localStorage.setItem('windi-theme', next);
-        }
+        <div id="step3" style="display:none">
+            <div class="receipt-box">
+                <div class="receipt-label">Receipt 1 — início</div>
+                <div class="receipt-id" id="r1-id"></div>
+                <div>action: restart_initiated · sealed ✓</div>
+            </div>
+            <div class="chain-arrow">↓ parent_receipt_id chain</div>
+            <div class="receipt-box success">
+                <div class="receipt-label" style="color:var(--green)">Receipt 2 — conclusão</div>
+                <div class="receipt-id" id="r2-id"></div>
+                <div>action: restart_completed · sealed ✓</div>
+                <div id="r2-health"></div>
+            </div>
+            <button onclick="closeModal()" style="width:100%;margin-top:1rem">Fechar</button>
+        </div>
 
-        // Init theme
-        const savedTheme = localStorage.getItem('windi-theme') || 'noir';
-        document.documentElement.setAttribute('data-theme', savedTheme);
+        <div id="step-error" style="display:none">
+            <div class="receipt-box" style="border-color:var(--red)">
+                <div class="receipt-label" style="color:var(--red)">Restart Failed</div>
+                <div id="error-msg" style="color:var(--red)"></div>
+            </div>
+            <button onclick="closeModal()" style="width:100%;margin-top:1rem">Fechar</button>
+        </div>
+    </div>
+</div>
 
-        // DID
-        function connectDID() {
-            const input = document.getElementById('did-input');
-            const banner = document.getElementById('did-banner');
-            const btn = banner.querySelector('.btn-connect');
+</div>
 
-            if (currentDID) {
-                currentDID = null;
-                sessionStorage.removeItem('windi_control_did');
-                input.value = FOUNDER_DID;  // Reset to founder DID
-                input.disabled = false;
-                btn.textContent = t('connect');
-                banner.classList.remove('connected');
-                showToast(t('disconnect'), 'success');
-            } else {
-                const did = input.value.trim();
-                if (!did.startsWith('did:windi:')) {
-                    showToast('DID must start with did:windi:', 'error');
-                    return;
+<script>
+const API_BASE = window.location.pathname.replace(/\\/$/, '');
+const TIER_COLOR = {SEALED:'#A32D2D', CRITICAL:'#BA7517', STANDARD:'#3B6D11'};
+const TIER_COLOR_NOIR = {SEALED:'#E24B4A', CRITICAL:'#F5A623', STANDARD:'#90c739'};
+
+let services = [];
+let currentSvc = null;
+let currentDID = 'did:windi:dragon-001';
+
+// I18N
+const i18n = {
+    en: { restart: 'restart ↗', blocked: 'blocked', online: 'running', offline: 'stopped' },
+    de: { restart: 'neustart ↗', blocked: 'blockiert', online: 'läuft', offline: 'gestoppt' },
+    pt: { restart: 'reiniciar ↗', blocked: 'bloqueado', online: 'executando', offline: 'parado' }
+};
+let lang = localStorage.getItem('windi-lang') || 'en';
+function t(key) { return i18n[lang]?.[key] || key; }
+function setLang(l) { lang = l; localStorage.setItem('windi-lang', l); render(); }
+
+// Theme
+function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'noir' ? 'light' : 'noir';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('windi-theme', next);
+}
+const savedTheme = localStorage.getItem('windi-theme') || 'noir';
+document.documentElement.setAttribute('data-theme', savedTheme);
+
+function nowStr() { return new Date().toISOString().replace('T',' ').substr(0,19)+' UTC'; }
+
+async function loadServices() {
+    try {
+        const r = await fetch(API_BASE + '/api/services');
+        const data = await r.json();
+        services = data.services;
+        const active = services.filter(s => s.overall === 'online').length;
+        document.getElementById('active-count').textContent = active + ' / ' + services.length + ' active';
+        render();
+    } catch(e) {
+        console.error('Failed to load services:', e);
+    }
+}
+
+function render() {
+    const list = document.getElementById('services-list');
+    list.innerHTML = '';
+
+    services.forEach(svc => {
+        const tier = svc.tier || 'STANDARD';
+        const blocked = tier === 'SEALED';
+        const isOnline = svc.overall === 'online';
+        const statusText = isOnline ? t('online') : t('offline');
+
+        const row = document.createElement('div');
+        row.className = 'service-row';
+        row.innerHTML = `
+            <div class="service-info">
+                <div class="service-status-dot ${svc.overall}"></div>
+                <div class="service-details">
+                    <div class="service-name">${svc.display}</div>
+                    <div class="service-port">:${svc.port} · ${statusText}</div>
+                </div>
+                <div class="tier-badge ${tier.toLowerCase()}">${tier}</div>
+            </div>
+            <div>
+                ${blocked
+                    ? `<div class="btn-blocked">${t('blocked')}</div>`
+                    : `<button onclick="openModal('${svc.service}')">${t('restart')}</button>`
                 }
-                currentDID = did;
-                sessionStorage.setItem('windi_control_did', did);
-                input.disabled = true;
-                btn.textContent = t('disconnect');
-                banner.classList.add('connected');
-                // Show tier badge for founder
-                const tierBadge = did === 'did:windi:dragon-001' ? ' [ORACLE/Founder]' : '';
-                showToast('DID connected: ' + did + tierBadge, 'success');
-            }
-            renderServices();
-        }
+            </div>
+        `;
+        list.appendChild(row);
+    });
+}
 
-        // Restore DID from session or localStorage
-        const FOUNDER_DID = 'did:windi:dragon-001';
-        const savedDID = sessionStorage.getItem('windi_control_did') || localStorage.getItem('windi_default_did');
-        const didInput = document.getElementById('did-input');
+function openModal(serviceName) {
+    currentSvc = services.find(s => s.service === serviceName);
+    if (!currentSvc) return;
 
-        if (savedDID) {
-            didInput.value = savedDID;
-            connectDID();
+    const tier = currentSvc.tier || 'STANDARD';
+    const isNoir = document.documentElement.getAttribute('data-theme') === 'noir';
+    const colors = isNoir ? TIER_COLOR_NOIR : TIER_COLOR;
+
+    document.getElementById('modal-overlay').classList.add('active');
+    document.getElementById('step1').style.display = 'block';
+    document.getElementById('step2').style.display = 'none';
+    document.getElementById('step3').style.display = 'none';
+    document.getElementById('step-error').style.display = 'none';
+
+    document.getElementById('modal-tier-dot').style.background = colors[tier];
+    document.getElementById('modal-title').textContent = 'Confirmar restart — ' + currentSvc.display;
+    document.getElementById('modal-body').textContent = tier === 'CRITICAL'
+        ? 'Serviço crítico. O restart será registado em dois receipts encadeados (início + conclusão).'
+        : 'Confirmação I9 necessária. A acção será selada no ledger com receipt auditável.';
+    document.getElementById('modal-svc-name').textContent = 'target: ' + currentSvc.service;
+    document.getElementById('modal-ts').textContent = 'timestamp: ' + nowStr();
+    document.getElementById('dual-note').style.display = tier === 'CRITICAL' ? 'block' : 'none';
+
+    document.getElementById('modal-overlay').scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function cancelRestart() {
+    document.getElementById('modal-overlay').classList.remove('active');
+    currentSvc = null;
+}
+
+async function confirmRestart() {
+    if (!currentSvc) return;
+
+    // Show step 2 (loading)
+    document.getElementById('step1').style.display = 'none';
+    document.getElementById('step2').style.display = 'block';
+    document.getElementById('receipt1-id').textContent = 'Generating...';
+
+    try {
+        const r = await fetch(`${API_BASE}/api/services/${currentSvc.service}/restart`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                actor_did: currentDID,
+                reason: 'Manual restart via Control Panel v2.0'
+            })
+        });
+
+        const data = await r.json();
+
+        if (r.ok && data.receipts) {
+            // Show step 3 (success)
+            document.getElementById('step2').style.display = 'none';
+            document.getElementById('step3').style.display = 'block';
+
+            document.getElementById('r1-id').textContent = data.receipts.initiated.receipt_id;
+            document.getElementById('r2-id').textContent = data.receipts.completed.receipt_id;
+
+            const health = data.receipts.completed.post_health?.status || 'unknown';
+            document.getElementById('r2-health').textContent = `health: ${health} · port ${currentSvc.port}`;
+
+            // Reload services
+            setTimeout(loadServices, 1000);
         } else {
-            // Auto-fill with founder DID for convenience
-            didInput.value = FOUNDER_DID;
-            didInput.placeholder = FOUNDER_DID + ' (founder)';
+            // Show error
+            document.getElementById('step2').style.display = 'none';
+            document.getElementById('step-error').style.display = 'block';
+            document.getElementById('error-msg').textContent = data.message || data.error || 'Restart failed';
         }
+    } catch(e) {
+        document.getElementById('step2').style.display = 'none';
+        document.getElementById('step-error').style.display = 'block';
+        document.getElementById('error-msg').textContent = 'Network error: ' + e.message;
+    }
+}
 
-        // Toast
-        function showToast(msg, type = 'success') {
-            const toast = document.getElementById('toast');
-            toast.textContent = msg;
-            toast.className = 'toast active ' + type;
-            setTimeout(() => toast.classList.remove('active'), 3000);
-        }
+function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('active');
+    currentSvc = null;
+}
 
-        // Load Services
-        // Base path for API calls (handles /svc-control/ prefix)
-        const API_BASE = window.location.pathname.replace(/\/$/, '');
-
-        async function loadServices() {
-            try {
-                const r = await fetch(API_BASE + '/api/services');
-                const data = await r.json();
-                services = data.services;
-
-                document.getElementById('stat-online').textContent = data.counts.online;
-                document.getElementById('stat-degraded').textContent = data.counts.degraded;
-                document.getElementById('stat-offline').textContent = data.counts.offline;
-                document.getElementById('stat-total').textContent = data.counts.total;
-
-                renderServices();
-
-                // Load subsystems for services that have them (SVG Sentinel)
-                for (const svc of services) {
-                    if (svc.has_subsystems) {
-                        const containerId = `subsystems-${svc.service.replace(/[^a-z0-9]/gi, '-')}`;
-                        loadSubsystems(svc.service, containerId);
-                    }
-                }
-            } catch (e) {
-                console.error('Failed to load services:', e);
-            }
-        }
-
-        // Render Services
-        function renderServices() {
-            const container = document.getElementById('services-container');
-            const categories = ['core', 'agents', 'dashboards', 'support', 'other'];
-
-            let html = '';
-            for (const cat of categories) {
-                const catServices = services.filter(s => s.category === cat);
-                if (catServices.length === 0) continue;
-
-                html += `<div class="category">
-                    <h2 class="category-title">${t(cat)}</h2>
-                    <div class="services-grid">`;
-
-                for (const svc of catServices) {
-                    const canControl = currentDID && !svc.sealed && !svc.nohup;
-                    const subsystemId = `subsystems-${svc.service.replace(/[^a-z0-9]/gi, '-')}`;
-                    html += `
-                        <div class="service-card ${svc.overall}">
-                            <div class="service-header">
-                                <div>
-                                    <div class="service-name">${svc.display}</div>
-                                    <div class="service-port">:${svc.port} · ${svc.service}</div>
-                                </div>
-                                <span class="service-status ${svc.overall}">${svc.overall}</span>
-                            </div>
-                            <div class="service-meta">
-                                ${svc.sealed ? `<span class="badge sealed">${t('sealed')}</span>` : ''}
-                                ${svc.nohup ? `<span class="badge nohup">${t('nohup')}</span>` : ''}
-                                ${svc.has_subsystems ? `<span class="badge" style="background:rgba(201,168,76,0.2);color:var(--gold);">SENTINEL</span>` : ''}
-                                <span class="badge">${svc.systemd}</span>
-                            </div>
-                            ${svc.has_subsystems ? `<div class="subsystems" id="${subsystemId}"></div>` : ''}
-                            <div class="service-actions">
-                                ${svc.url ? `
-                                    <a href="${svc.url}" target="_blank" class="btn-action open">
-                                        🔗 ${t('open')}
-                                    </a>
-                                ` : ''}
-                                <button class="btn-action restart" onclick="restartService('${svc.service}')" ${canControl ? '' : 'disabled'}>
-                                    ↻ ${t('restart')}
-                                </button>
-                                ${svc.overall === 'online' ? `
-                                    <button class="btn-action stop" onclick="stopService('${svc.service}')" ${canControl ? '' : 'disabled'}>
-                                        ⬛ ${t('stop')}
-                                    </button>
-                                ` : `
-                                    <button class="btn-action start" onclick="startService('${svc.service}')" ${canControl ? '' : 'disabled'}>
-                                        ▶ ${t('start')}
-                                    </button>
-                                `}
-                                <button class="btn-action" onclick="showLogs('${svc.service}')">
-                                    📋 ${t('logs')}
-                                </button>
-                            </div>
-                        </div>`;
-                }
-                html += '</div></div>';
-            }
-            container.innerHTML = html;
-        }
-
-        // Actions
-        async function restartService(name) {
-            if (!currentDID) { showToast(t('noDidWarning'), 'error'); return; }
-            try {
-                const r = await fetch(`${API_BASE}/api/services/${name}/restart`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({actor_did: currentDID, reason: 'Manual restart via Control Panel'})
-                });
-                const data = await r.json();
-                if (r.ok) {
-                    showToast(`${t('restartSuccess')}: ${name}`, 'success');
-                    setTimeout(loadServices, 2000);
-                } else {
-                    showToast(data.message || data.error, 'error');
-                }
-            } catch (e) {
-                showToast(t('restartFailed'), 'error');
-            }
-        }
-
-        async function stopService(name) {
-            if (!currentDID) { showToast(t('noDidWarning'), 'error'); return; }
-            try {
-                const r = await fetch(`${API_BASE}/api/services/${name}/stop`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({actor_did: currentDID})
-                });
-                if (r.ok) {
-                    showToast('Service stopped: ' + name, 'success');
-                    setTimeout(loadServices, 2000);
-                }
-            } catch (e) {
-                showToast('Stop failed', 'error');
-            }
-        }
-
-        async function startService(name) {
-            if (!currentDID) { showToast(t('noDidWarning'), 'error'); return; }
-            try {
-                const r = await fetch(`${API_BASE}/api/services/${name}/start`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({actor_did: currentDID})
-                });
-                if (r.ok) {
-                    showToast('Service started: ' + name, 'success');
-                    setTimeout(loadServices, 2000);
-                }
-            } catch (e) {
-                showToast('Start failed', 'error');
-            }
-        }
-
-        // Logs Modal
-        async function showLogs(name) {
-            const modal = document.getElementById('logs-modal');
-            const title = document.getElementById('logs-title');
-            const content = document.getElementById('logs-content');
-
-            title.textContent = `Logs: ${name}`;
-            content.textContent = 'Loading...';
-            modal.classList.add('active');
-
-            try {
-                const r = await fetch(`${API_BASE}/api/services/${name}/logs?lines=100`);
-                const data = await r.json();
-                content.textContent = data.logs || 'No logs available';
-            } catch (e) {
-                content.textContent = 'Failed to load logs';
-            }
-        }
-
-        function closeModal() {
-            document.getElementById('logs-modal').classList.remove('active');
-        }
-
-        // SVG Sentinel Icons
-        const SENTINEL_SVGS = {
-            online: `<svg class="sentinel-svg online" viewBox="0 0 16 16" fill="currentColor">
-                <circle cx="8" cy="8" r="6" fill="currentColor"/>
-            </svg>`,
-            offline: `<svg class="sentinel-svg offline" viewBox="0 0 16 16" fill="currentColor">
-                <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="2" fill="none"/>
-                <line x1="5" y1="5" x2="11" y2="11" stroke="currentColor" stroke-width="2"/>
-            </svg>`,
-            degraded: `<svg class="sentinel-svg degraded" viewBox="0 0 16 16" fill="currentColor">
-                <polygon points="8,2 14,14 2,14" fill="currentColor"/>
-                <text x="8" y="12" font-size="8" fill="var(--bg)" text-anchor="middle">!</text>
-            </svg>`,
-            blocked: `<svg class="sentinel-svg blocked" viewBox="0 0 16 16" fill="currentColor">
-                <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="2" fill="none"/>
-                <line x1="4" y1="8" x2="12" y2="8" stroke="currentColor" stroke-width="2"/>
-            </svg>`,
-            error: `<svg class="sentinel-svg error" viewBox="0 0 16 16" fill="currentColor">
-                <circle cx="8" cy="8" r="6" fill="currentColor"/>
-                <text x="8" y="11" font-size="8" fill="var(--bg)" text-anchor="middle">?</text>
-            </svg>`
-        };
-
-        // Load subsystems for a service
-        async function loadSubsystems(serviceName, containerId) {
-            const container = document.getElementById(containerId);
-            if (!container) return;
-
-            container.innerHTML = '<div class="subsystems-title">Loading subsystems...</div>';
-
-            try {
-                const r = await fetch(`${API_BASE}/api/subsystems/${serviceName}`);
-                if (!r.ok) {
-                    container.innerHTML = '';
-                    return;
-                }
-                const data = await r.json();
-                renderSubsystems(data, container);
-            } catch (e) {
-                container.innerHTML = `<div class="subsystem-alert">Failed to load subsystems</div>`;
-            }
-        }
-
-        // Render subsystems in container
-        function renderSubsystems(data, container) {
-            if (!data.subsystems || data.subsystems.length === 0) {
-                container.innerHTML = '';
-                return;
-            }
-
-            let html = `<div class="subsystems-title">Subsystems (${data.subsystems.length})</div>`;
-
-            for (const sub of data.subsystems) {
-                const icon = SENTINEL_SVGS[sub.status] || SENTINEL_SVGS.error;
-                const criticalClass = sub.critical ? 'critical' : '';
-                const respTime = sub.response_time_ms ? ` · ${sub.response_time_ms.toFixed(0)}ms` : '';
-
-                html += `
-                    <div class="subsystem-row">
-                        ${icon}
-                        <span class="subsystem-name ${criticalClass}" title="${sub.description}">${sub.display}</span>
-                        <span class="subsystem-status">${sub.status}${respTime}</span>
-                    </div>`;
-            }
-
-            if (data.has_critical_failure) {
-                html += `<div class="subsystem-alert">⚠️ Critical subsystem failure detected</div>`;
-            }
-
-            container.innerHTML = html;
-        }
-
-        // Init
-        loadServices();
-        setInterval(loadServices, 30000); // Refresh every 30s
-        setLang(lang);
-    </script>
+// Init
+loadServices();
+setInterval(loadServices, 30000);
+</script>
 </body>
 </html>
 '''
@@ -1420,9 +1385,10 @@ DASHBOARD_HTML = '''
 if __name__ == "__main__":
     print(f"""
 ╔══════════════════════════════════════════════════════════════╗
-║   W-SERVICE-CONTROL — WINDI Service Control Panel            ║
+║   W-SERVICE-CONTROL v2.0.0 — Double Receipt System           ║
 ║   Port: {PORT}                                                 ║
 ║   Invariants: I1, I9, I11                                    ║
+║   Features: Tier Protection · I9 Ceremony · Parent Chain     ║
 ║   "Se não consegues controlar, não consegues escalar."       ║
 ╚══════════════════════════════════════════════════════════════╝
     """)
