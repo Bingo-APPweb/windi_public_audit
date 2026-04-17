@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" data-theme="noir">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,22 +7,41 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Courier+Prime:wght@400;700&display=swap');
 
-  :root {
-    --noir: #0a0a0c;
-    --noir-card: #16161c;
+  :root, [data-theme="noir"] {
+    --bg: #0a0a0c;
+    --bg-card: #16161c;
     --gold: #c9a84c;
     --gold-light: #e8c96a;
     --gold-dim: rgba(201,168,76,0.15);
-    --white: #f4f0e8;
-    --muted: #7a7568;
+    --text: #f4f0e8;
+    --text-soft: #d4cfc5;
+    --text-body: #c8c3b8;
+    --text-dim: #b8b3a8;
+    --text-muted: #7a7568;
     --border: rgba(201,168,76,0.2);
+    --border-subtle: var(--border-subtle);
+  }
+
+  [data-theme="klar"] {
+    --bg: #fafaf8;
+    --bg-card: #ffffff;
+    --gold: #8b7424;
+    --gold-light: #6a5a1c;
+    --gold-dim: rgba(139,116,36,0.1);
+    --text: #1a1a1a;
+    --text-soft: #2a2a2a;
+    --text-body: #3a3a3a;
+    --text-dim: #5a5a5a;
+    --text-muted: #6a6a6a;
+    --border: rgba(139,116,36,0.2);
+    --border-subtle: rgba(0,0,0,0.08);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    background: var(--noir);
-    color: var(--white);
+    background: var(--bg);
+    color: var(--text);
     font-family: 'EB Garamond', Georgia, serif;
     font-size: 17px;
     line-height: 1.75;
@@ -54,7 +73,7 @@
 
   .windi-sub {
     font-size: 11px;
-    color: var(--muted);
+    color: var(--text-muted);
     margin-top: 4px;
     font-family: 'Courier Prime', monospace;
   }
@@ -62,7 +81,7 @@
   .doc-meta {
     text-align: right;
     font-size: 12px;
-    color: var(--muted);
+    color: var(--text-muted);
     font-family: 'Courier Prime', monospace;
     letter-spacing: 0.05em;
   }
@@ -86,29 +105,29 @@
     font-size: 38px;
     font-weight: 700;
     line-height: 1.2;
-    color: var(--white);
+    color: var(--text);
     margin-bottom: 12px;
   }
 
   h1 em { font-style: italic; color: var(--gold-light); }
 
-  .subtitle { font-size: 18px; color: var(--muted); font-style: italic; }
+  .subtitle { font-size: 18px; color: var(--text-muted); font-style: italic; }
 
   /* ── Opening ── */
   .opening {
-    background: var(--noir-card);
+    background: var(--bg-card);
     border-left: 3px solid var(--gold);
     padding: 28px 32px;
     margin-bottom: 48px;
     border-radius: 0 4px 4px 0;
   }
 
-  .opening p { margin-bottom: 16px; color: #d4cfc5; }
+  .opening p { margin-bottom: 16px; color: var(--text-soft); }
   .opening p:last-child { margin-bottom: 0; }
 
   /* ── Partner statement ── */
   .partner-statement {
-    background: var(--noir-card);
+    background: var(--bg-card);
     border: 1px solid var(--gold);
     border-radius: 4px;
     padding: 22px 28px;
@@ -146,10 +165,10 @@
     font-family: 'Playfair Display', serif;
     font-size: 22px;
     font-weight: 600;
-    color: var(--white);
+    color: var(--text);
   }
 
-  p { color: #c8c3b8; margin-bottom: 16px; }
+  p { color: var(--text-body); margin-bottom: 16px; }
   p:last-child { margin-bottom: 0; }
 
   .key-statement {
@@ -174,7 +193,7 @@
   }
 
   .compare-col {
-    background: var(--noir-card);
+    background: var(--bg-card);
     border-radius: 4px;
     padding: 20px;
   }
@@ -191,13 +210,13 @@
   }
 
   .compare-col.windi .compare-label { color: var(--gold); }
-  .compare-col.classic .compare-label { color: var(--muted); }
+  .compare-col.classic .compare-label { color: var(--text-muted); }
 
   .compare-item {
     font-size: 14px;
-    color: #c8c3b8;
+    color: var(--text-body);
     padding: 6px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    border-bottom: 1px solid var(--border-subtle);
     display: flex;
     align-items: center;
     gap: 8px;
@@ -213,11 +232,11 @@
   }
 
   .compare-col.windi .dot { background: var(--gold); }
-  .compare-col.classic .dot { background: var(--muted); }
+  .compare-col.classic .dot { background: var(--text-muted); }
 
   /* ── Proof example block ── */
   .proof-block {
-    background: var(--noir-card);
+    background: var(--bg-card);
     border: 1px solid rgba(255,255,255,0.08);
     border-radius: 4px;
     padding: 24px;
@@ -247,13 +266,13 @@
 
   .proof-key {
     font-family: 'Courier Prime', monospace;
-    color: var(--muted);
+    color: var(--text-muted);
     min-width: 140px;
     font-size: 12px;
     padding-top: 1px;
   }
 
-  .proof-val { color: #c8c3b8; }
+  .proof-val { color: var(--text-body); }
 
   .proof-val.highlight { color: var(--gold-light); }
 
@@ -262,10 +281,10 @@
 
   .invariant-list li {
     padding: 10px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    border-bottom: 1px solid var(--border-subtle);
     display: flex;
     gap: 16px;
-    color: #c8c3b8;
+    color: var(--text-body);
     font-size: 15px;
   }
 
@@ -288,7 +307,7 @@
   }
 
   .role-block {
-    background: var(--noir-card);
+    background: var(--bg-card);
     border: 1px solid rgba(255,255,255,0.07);
     border-radius: 4px;
     padding: 20px;
@@ -305,9 +324,9 @@
   }
 
   .role-block.ausbilder .role-title { color: var(--gold); }
-  .role-block.windi-col .role-title { color: var(--muted); }
+  .role-block.windi-col .role-title { color: var(--text-muted); }
 
-  .role-item { font-size: 14px; color: #b8b3a8; padding: 4px 0; }
+  .role-item { font-size: 14px; color: var(--text-dim); padding: 4px 0; }
 
   /* ── Cert path ── */
   .cert-path { display: flex; flex-direction: column; margin: 24px 0; }
@@ -326,7 +345,7 @@
     height: 28px;
     border-radius: 50%;
     border: 2px solid var(--gold);
-    background: var(--noir);
+    background: var(--bg);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -349,11 +368,11 @@
   .cert-title {
     font-family: 'Playfair Display', serif;
     font-size: 16px;
-    color: var(--white);
+    color: var(--text);
     margin-bottom: 4px;
   }
 
-  .cert-desc { font-size: 14px; color: var(--muted); }
+  .cert-desc { font-size: 14px; color: var(--text-muted); }
 
   /* ── Pricing ── */
   .price-grid {
@@ -363,7 +382,7 @@
     margin: 24px 0;
   }
 
-  .price-block { background: var(--noir-card); border-radius: 4px; padding: 24px; }
+  .price-block { background: var(--bg-card); border-radius: 4px; padding: 24px; }
   .price-block.private { border: 1px solid rgba(255,255,255,0.08); }
   .price-block.corporate { border: 1px solid var(--gold); }
 
@@ -371,7 +390,7 @@
     font-family: 'Courier Prime', monospace;
     font-size: 9px;
     letter-spacing: 0.25em;
-    color: var(--muted);
+    color: var(--text-muted);
     text-transform: uppercase;
     margin-bottom: 12px;
   }
@@ -381,17 +400,17 @@
   .price-amount {
     font-family: 'Playfair Display', serif;
     font-size: 26px;
-    color: var(--white);
+    color: var(--text);
     margin-bottom: 4px;
   }
 
-  .price-note { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+  .price-note { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
 
   .price-feature {
     font-size: 13px;
-    color: #a8a39a;
+    color: var(--text-dim);
     padding: 4px 0;
-    border-top: 1px solid rgba(255,255,255,0.05);
+    border-top: 1px solid var(--border-subtle);
   }
 
   /* ── Why grid ── */
@@ -403,12 +422,12 @@
   }
 
   .why-item {
-    background: var(--noir-card);
+    background: var(--bg-card);
     border: 1px solid rgba(255,255,255,0.06);
     border-radius: 4px;
     padding: 16px;
     font-size: 14px;
-    color: #b8b3a8;
+    color: var(--text-dim);
     display: flex;
     gap: 10px;
     align-items: flex-start;
@@ -435,7 +454,7 @@
 
   .cta-sub {
     font-size: 14px;
-    color: var(--muted);
+    color: var(--text-muted);
     margin-bottom: 24px;
     font-style: italic;
   }
@@ -463,11 +482,30 @@
     justify-content: space-between;
     font-family: 'Courier Prime', monospace;
     font-size: 10px;
-    color: var(--muted);
+    color: var(--text-muted);
     letter-spacing: 0.1em;
   }
 
   .doc-footer .gold { color: var(--gold); }
+
+  /* ── Theme Toggle ── */
+  .theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 16px;
+    z-index: 1000;
+    transition: all 0.3s ease;
+  }
+  .theme-toggle:hover {
+    border-color: var(--gold);
+    transform: scale(1.05);
+  }
 
   /* ── Responsive ── */
   @media (max-width: 768px) {
@@ -478,6 +516,7 @@
     .compare-grid, .role-grid, .price-grid, .why-grid { grid-template-columns: 1fr; }
     .proof-row { flex-direction: column; gap: 4px; }
     .proof-key { min-width: auto; }
+    .theme-toggle { top: 10px; right: 10px; padding: 6px 10px; }
   }
 </style>
 </head>
@@ -528,7 +567,7 @@
       „Niemand lehrt bisher, wie man Entscheidungen, die mit KI getroffen werden, nachweisbar macht — und damit rechtlich nachvollziehbar und regulatorisch anschlussfähig."
     </div>
     <p>Genau das ist WINDI. Kein Kurs über KI. Ein Programm, das Entscheidungskompetenz mit überprüfbarem Nachweis verbindet — im direkten Kontext des EU AI Act, DORA und GDPR.</p>
-    <p style="font-size:15px;color:var(--muted);font-style:italic;">WINDI ist kein weiteres Trainingsangebot im Markt. Es ist eine infrastrukturelle Ergänzung zu bestehenden KI-Kompetenzen.</p>
+    <p style="font-size:15px;color:var(--text-muted);font-style:italic;">WINDI ist kein weiteres Trainingsangebot im Markt. Es ist eine infrastrukturelle Ergänzung zu bestehenden KI-Kompetenzen.</p>
 
     <div class="compare-grid">
       <div class="compare-col classic">
@@ -637,7 +676,7 @@
       <h2>Ihre Rolle: WINDI Gründungsausbilder</h2>
     </div>
     <p>Der WINDI Gründungsausbilder ist nicht Dozent für KI-Tools. Er ist der menschliche Anker in einem Prozess, der Entscheidungsqualität sichtbar und überprüfbar macht — und der dieses Modell als Erster im Markt etabliert.</p>
-    <p style="font-size:14px;color:var(--muted);font-style:italic;">Die WINDI-interne Anerkennung basiert auf dem konstitutionellen Ausbildungsmodell — dokumentiert, strukturiert und an klare Qualitätskriterien gebunden.</p>
+    <p style="font-size:14px;color:var(--text-muted);font-style:italic;">Die WINDI-interne Anerkennung basiert auf dem konstitutionellen Ausbildungsmodell — dokumentiert, strukturiert und an klare Qualitätskriterien gebunden.</p>
 
     <div class="role-grid">
       <div class="role-block ausbilder">
@@ -731,7 +770,7 @@
       </div>
     </div>
 
-    <p style="font-size:14px;color:var(--muted)">Als Gründungsausbilder verhandeln wir das Vergütungsmodell direkt und partnerschaftlich. Ihre Marktkenntnis und Initiative sind integraler Bestandteil des entstehenden Werts — nicht lediglich ein externer Beitrag.</p>
+    <p style="font-size:14px;color:var(--text-muted)">Als Gründungsausbilder verhandeln wir das Vergütungsmodell direkt und partnerschaftlich. Ihre Marktkenntnis und Initiative sind integraler Bestandteil des entstehenden Werts — nicht lediglich ein externer Beitrag.</p>
   </div>
 
   <hr class="divider">
@@ -817,7 +856,7 @@
       </div>
     </div>
 
-    <p style="margin-top:20px;font-size:15px;color:var(--muted);font-style:italic;">Kein PowerPoint-Deck erreicht diesen Effekt. VERA demonstriert in zwei Minuten, was andere Programme in zwanzig Stunden zu erklären versuchen.</p>
+    <p style="margin-top:20px;font-size:15px;color:var(--text-muted);font-style:italic;">Kein PowerPoint-Deck erreicht diesen Effekt. VERA demonstriert in zwei Minuten, was andere Programme in zwanzig Stunden zu erklären versuchen.</p>
   </div>
 
   <!-- ── CTA ── -->
@@ -830,7 +869,7 @@
     <div style="margin-top:24px;font-family:'Courier Prime',monospace;font-size:11px;color:var(--gold);letter-spacing:0.12em;">
       → Ziel des Gesprächs ist keine Entscheidung — sondern Klarheit über Potenzial und Passung.
     </div>
-    <div style="margin-top:20px;font-size:13px;color:var(--muted);font-style:italic;">
+    <div style="margin-top:20px;font-size:13px;color:var(--text-muted);font-style:italic;">
       „Wir lehren nicht, wie man KI benutzt.<br>
       Wir stellen sicher, dass Entscheidungen mit KI belegbar sind."
     </div>
@@ -843,5 +882,27 @@
   </div>
 
 </div>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="theme-toggle" title="NOIR / KLAR">☀</button>
+
+<script>
+  // Theme Toggle
+  const themeToggle = document.getElementById('theme-toggle');
+  let currentTheme = localStorage.getItem('windi-theme') || 'noir';
+
+  function setTheme(theme) {
+    currentTheme = theme;
+    localStorage.setItem('windi-theme', theme);
+    document.documentElement.setAttribute('data-theme', theme);
+    themeToggle.textContent = theme === 'noir' ? '☀' : '☽';
+  }
+
+  setTheme(currentTheme);
+
+  themeToggle.addEventListener('click', () => {
+    setTheme(currentTheme === 'noir' ? 'klar' : 'noir');
+  });
+</script>
 </body>
 </html>
