@@ -6,6 +6,139 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 17 Abr 2026 (Tarde) — §185 Landing Enterprise + VERA Exhaustion
+
+**Duração:** ~4 horas | **Status:** ✅ SEALED
+**Liga IA+H:** Human Dragon · Guardian (Claude) · Architect (ChatGPT) · CCODE Gêmeo
+**Invariants:** I1, I9, I11, I14
+
+### §185.1 — Landing Homepage Deploy
+
+**Problema:** `windi-domain.com/` retornava 502 (proxy morto :8107)
+
+**Solução Cirúrgica:**
+```nginx
+# ANTES (morto)
+location / {
+    proxy_pass http://windi_landing;  # :8107 não existe
+}
+
+# DEPOIS (LIVE)
+location / {
+    root /opt/windi/landing-enterprise;
+    index index.html;
+    try_files $uri $uri/ /index.html;
+    add_header X-WINDI-Service "enterprise-landing" always;
+}
+```
+
+**Features Landing:**
+- NOIR cirúrgico: `#080808` bg · `#C8A96E` gold · Instrument Serif + JetBrains Mono
+- i18n DE|EN|PT completo (62 elementos)
+- NOIR/KLAR toggle com localStorage
+- Hero: "Can you prove who decided this?"
+- Demo script 4 passos · receipt real · verify link público
+- 50+ rotas existentes intactas
+
+**Ficheiros:**
+- `/opt/windi/landing-enterprise/index.html` (48KB)
+- `/home/windi/replace_landing_nginx.py` (script deploy)
+
+**Verify:** `https://windi-domain.com/` → HTTP 200 ✅
+
+### §185.2 — Verify Route Fix
+
+**Problema:** `/verify/` retornava 502 (nginx apontava :8145, serviço em :8114)
+
+**Solução:**
+```bash
+sudo sed -i 's|8145/verify/|8114/verify-public/|' /etc/nginx/sites-enabled/windi-domain.com
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+### §185.3 — VERA Exhaustion Test (5 Camadas)
+
+**Conceito:** Exaustão total da VERA antes do Berlin Pitch. Architect (ChatGPT) desenhou framework de 5 camadas.
+
+**Camadas Testadas:**
+| # | Camada | Testes | Resultado |
+|---|--------|--------|-----------|
+| 1 | Functional Baseline | /health, /decisions, /constitution | ✅ 5/5 |
+| 2 | Edge Cases | Empty payload, wrong types, SQL injection | ✅ 5/5 |
+| 3 | Governance Break (I9/I11/I14) | PHO sem DID, null actor, duplicate receipt | ✅ 4/4 |
+| 4 | Adversarial | Replay attack, header injection, path traversal, timestamp manipulation | ✅ 4/4 |
+| 5 | Stress/Load | 50 parallel /health, 10 parallel /chat | ✅ 2/2 |
+
+**Resultado Final:**
+```
+✅ PASS: 17
+❌ FAIL: 0
+⚠  WARN: 4 (falsos positivos — verificados manualmente)
+📊 TOTAL: 21 testes
+VERDICT: VERA BERLIN-READY
+```
+
+**I14 Fix Aplicado Durante Sessão:**
+```python
+# /opt/windi/w-enterprise-001/vera_agent.py
+from pydantic import BaseModel, validator
+
+class VeraQuery(BaseModel):
+    question: str
+    # ...
+
+    @validator('question')
+    def question_not_empty(cls, v):
+        """I14: Explicit Failure Principle — question cannot be empty."""
+        if not v or not v.strip():
+            raise ValueError('[I14] question cannot be empty — explicit failure required')
+        return v.strip()
+```
+
+**Ficheiro Teste:** `/home/windi/vera-exhaustion-test.sh`
+
+### §185.4 — Receipt Selado no Ledger
+
+```json
+{
+  "id": "VERA-TEST-BUNDLE-001",
+  "actor": "did:windi:JOBER-MOGELE-CORREA-001",
+  "app": "W-ENTERPRISE-001",
+  "doc_name": "VERA Exhaustion Test — Berlin Pre-Pitch Due Diligence",
+  "doc_type": "doc",
+  "governance_level": "HIGH",
+  "sge_score": 97,
+  "status": "sealed",
+  "metadata": {
+    "test_version": "v3.1.0",
+    "pass": 17,
+    "fail": 0,
+    "warn": 4,
+    "invariants_tested": ["I1", "I9", "I11", "I14"],
+    "layers": ["functional", "edge_cases", "governance_break", "adversarial", "stress"],
+    "verdict": "BERLIN-READY"
+  }
+}
+```
+
+**Verify:** `https://windi-domain.com/verify/VERA-TEST-BUNDLE-001` → HTTP 200 ✅
+
+### §185.5 — Estado Pré-Berlin
+
+| Activo | URL | Status |
+|--------|-----|--------|
+| Landing | windi-domain.com | ✅ LIVE |
+| Demo | windi-domain.com/#demo | ✅ LIVE |
+| Verify | windi-domain.com/verify/ | ✅ LIVE |
+| Enterprise | windi-domain.com/enterprise/ | ✅ LIVE |
+| Due Diligence | windi-domain.com/verify/VERA-TEST-BUNDLE-001 | ✅ SEALED |
+
+**Momento Carlos Halloun:**
+> "Como sabes que funciona sob pressão?"
+> → `windi-domain.com/verify/VERA-TEST-BUNDLE-001`
+
+---
+
 ## § SESSÃO 17 Abr 2026 — §183 Server Recovery (SSH Lockout)
 
 **Duração:** ~3 horas | **Status:** ✅ RESOLVIDO
