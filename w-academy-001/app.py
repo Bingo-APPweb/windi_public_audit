@@ -868,6 +868,19 @@ def get_statistics():
     })
 
 # ═══════════════════════════════════════════════════════════════
+# STATIC PAGES
+# ═══════════════════════════════════════════════════════════════
+
+@app.route("/gruendungsausbilder")
+@app.route("/gruendungsausbilder/")
+def gruendungsausbilder():
+    """WPH-AUS-004 — Gründungsausbilder Landing Page."""
+    static_path = Path("/opt/windi/w-academy-001/static/gruendungsausbilder.html")
+    if static_path.exists():
+        return static_path.read_text()
+    return "Page not found", 404
+
+# ═══════════════════════════════════════════════════════════════
 # DASHBOARD
 # ═══════════════════════════════════════════════════════════════
 

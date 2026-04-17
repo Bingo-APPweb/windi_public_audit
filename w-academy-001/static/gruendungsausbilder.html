@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI Institute — Der erste WINDI Gründungsausbilder in Deutschland · WPH-AUS-004</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Courier+Prime:wght@400;700&display=swap');
+
+  :root {
+    --noir: #0a0a0c;
+    --noir-card: #16161c;
+    --gold: #c9a84c;
+    --gold-light: #e8c96a;
+    --gold-dim: rgba(201,168,76,0.15);
+    --white: #f4f0e8;
+    --muted: #7a7568;
+    --border: rgba(201,168,76,0.2);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--noir);
+    color: var(--white);
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 17px;
+    line-height: 1.75;
+  }
+
+  .page {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 60px 48px;
+  }
+
+  /* ── Header ── */
+  .doc-header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 36px;
+    margin-bottom: 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .windi-mark {
+    font-family: 'Courier Prime', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+  }
+
+  .windi-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+    font-family: 'Courier Prime', monospace;
+  }
+
+  .doc-meta {
+    text-align: right;
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'Courier Prime', monospace;
+    letter-spacing: 0.05em;
+  }
+
+  .doc-meta .seal { color: var(--gold); font-weight: 700; }
+
+  /* ── Title ── */
+  .title-block { margin-bottom: 52px; }
+
+  .eyebrow {
+    font-family: 'Courier Prime', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 38px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+
+  h1 em { font-style: italic; color: var(--gold-light); }
+
+  .subtitle { font-size: 18px; color: var(--muted); font-style: italic; }
+
+  /* ── Opening ── */
+  .opening {
+    background: var(--noir-card);
+    border-left: 3px solid var(--gold);
+    padding: 28px 32px;
+    margin-bottom: 48px;
+    border-radius: 0 4px 4px 0;
+  }
+
+  .opening p { margin-bottom: 16px; color: #d4cfc5; }
+  .opening p:last-child { margin-bottom: 0; }
+
+  /* ── Partner statement ── */
+  .partner-statement {
+    background: var(--noir-card);
+    border: 1px solid var(--gold);
+    border-radius: 4px;
+    padding: 22px 28px;
+    margin: 28px 0;
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-style: italic;
+    color: var(--gold-light);
+    line-height: 1.65;
+  }
+
+  /* ── Sections ── */
+  .section { margin-bottom: 48px; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .section-num {
+    font-family: 'Courier Prime', monospace;
+    font-size: 10px;
+    color: var(--gold);
+    letter-spacing: 0.2em;
+    background: var(--gold-dim);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--white);
+  }
+
+  p { color: #c8c3b8; margin-bottom: 16px; }
+  p:last-child { margin-bottom: 0; }
+
+  .key-statement {
+    background: var(--gold-dim);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 24px 28px;
+    margin: 24px 0;
+    font-family: 'Playfair Display', serif;
+    font-size: 19px;
+    font-style: italic;
+    color: var(--gold-light);
+    line-height: 1.6;
+  }
+
+  /* ── Compare grid ── */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  .compare-col {
+    background: var(--noir-card);
+    border-radius: 4px;
+    padding: 20px;
+  }
+
+  .compare-col.windi { border: 1px solid var(--gold); }
+  .compare-col.classic { border: 1px solid rgba(255,255,255,0.08); opacity: 0.7; }
+
+  .compare-label {
+    font-family: 'Courier Prime', monospace;
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .compare-col.windi .compare-label { color: var(--gold); }
+  .compare-col.classic .compare-label { color: var(--muted); }
+
+  .compare-item {
+    font-size: 14px;
+    color: #c8c3b8;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .compare-item:last-child { border-bottom: none; }
+
+  .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .compare-col.windi .dot { background: var(--gold); }
+  .compare-col.classic .dot { background: var(--muted); }
+
+  /* ── Proof example block ── */
+  .proof-block {
+    background: var(--noir-card);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 4px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+
+  .proof-label {
+    font-family: 'Courier Prime', monospace;
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .proof-row {
+    display: flex;
+    gap: 16px;
+    padding: 6px 0;
+    font-size: 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .proof-row:last-child { border-bottom: none; }
+
+  .proof-key {
+    font-family: 'Courier Prime', monospace;
+    color: var(--muted);
+    min-width: 140px;
+    font-size: 12px;
+    padding-top: 1px;
+  }
+
+  .proof-val { color: #c8c3b8; }
+
+  .proof-val.highlight { color: var(--gold-light); }
+
+  /* ── Invariants ── */
+  .invariant-list { list-style: none; margin: 20px 0; }
+
+  .invariant-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    gap: 16px;
+    color: #c8c3b8;
+    font-size: 15px;
+  }
+
+  .invariant-list li:last-child { border-bottom: none; }
+
+  .inv-code {
+    font-family: 'Courier Prime', monospace;
+    color: var(--gold);
+    font-size: 12px;
+    min-width: 44px;
+    padding-top: 2px;
+  }
+
+  /* ── Role grid ── */
+  .role-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  .role-block {
+    background: var(--noir-card);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 4px;
+    padding: 20px;
+  }
+
+  .role-block.ausbilder { border-color: var(--gold); }
+
+  .role-title {
+    font-family: 'Courier Prime', monospace;
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .role-block.ausbilder .role-title { color: var(--gold); }
+  .role-block.windi-col .role-title { color: var(--muted); }
+
+  .role-item { font-size: 14px; color: #b8b3a8; padding: 4px 0; }
+
+  /* ── Cert path ── */
+  .cert-path { display: flex; flex-direction: column; margin: 24px 0; }
+
+  .cert-step { display: flex; gap: 20px; }
+
+  .cert-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 32px;
+  }
+
+  .cert-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    background: var(--noir);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Courier Prime', monospace;
+    font-size: 10px;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+
+  .cert-line {
+    width: 1px;
+    flex: 1;
+    background: var(--border);
+    margin: 4px 0;
+    min-height: 32px;
+  }
+
+  .cert-content { padding: 0 0 32px 8px; }
+
+  .cert-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+
+  .cert-desc { font-size: 14px; color: var(--muted); }
+
+  /* ── Pricing ── */
+  .price-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  .price-block { background: var(--noir-card); border-radius: 4px; padding: 24px; }
+  .price-block.private { border: 1px solid rgba(255,255,255,0.08); }
+  .price-block.corporate { border: 1px solid var(--gold); }
+
+  .price-label {
+    font-family: 'Courier Prime', monospace;
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .price-block.corporate .price-label { color: var(--gold); }
+
+  .price-amount {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+
+  .price-note { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+
+  .price-feature {
+    font-size: 13px;
+    color: #a8a39a;
+    padding: 4px 0;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+
+  /* ── Why grid ── */
+  .why-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 24px 0;
+  }
+
+  .why-item {
+    background: var(--noir-card);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 4px;
+    padding: 16px;
+    font-size: 14px;
+    color: #b8b3a8;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .why-mark { color: var(--gold); font-size: 16px; line-height: 1.4; }
+
+  /* ── CTA ── */
+  .cta-box {
+    background: var(--gold-dim);
+    border: 1px solid var(--gold);
+    border-radius: 4px;
+    padding: 32px;
+    margin-top: 48px;
+    text-align: center;
+  }
+
+  .cta-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    color: var(--gold-light);
+    margin-bottom: 8px;
+  }
+
+  .cta-sub {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 24px;
+    font-style: italic;
+  }
+
+  .cta-step {
+    font-family: 'Courier Prime', monospace;
+    font-size: 12px;
+    color: var(--gold);
+    letter-spacing: 0.12em;
+    margin: 8px 0;
+  }
+
+  hr.divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 40px 0;
+  }
+
+  /* ── Footer ── */
+  .doc-footer {
+    margin-top: 52px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Courier Prime', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  .doc-footer .gold { color: var(--gold); }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .page { padding: 32px 20px; }
+    h1 { font-size: 28px; }
+    .doc-header { flex-direction: column; gap: 20px; }
+    .doc-meta { text-align: left; }
+    .compare-grid, .role-grid, .price-grid, .why-grid { grid-template-columns: 1fr; }
+    .proof-row { flex-direction: column; gap: 4px; }
+    .proof-key { min-width: auto; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ── HEADER ── -->
+  <div class="doc-header">
+    <div>
+      <div class="windi-mark">WINDI Institute</div>
+      <div class="windi-sub">Kempten, Bayern · 2026</div>
+    </div>
+    <div class="doc-meta">
+      <div class="seal">VERTRAULICH</div>
+      <div>April 2026</div>
+      <div>Dokument: WPH-AUS-004</div>
+    </div>
+  </div>
+
+  <!-- ── TITLE ── -->
+  <div class="title-block">
+    <div class="eyebrow">Einladung zur Gründungspartnerschaft</div>
+    <h1>Der erste<br><em>WINDI Gründungsausbilder in Deutschland</em></h1>
+    <div class="subtitle">Eine neue Kategorie. Eine einmalige Position. Eine konkrete Einladung.</div>
+  </div>
+
+  <!-- ── OPENING ── -->
+  <div class="opening">
+    <p>Sie kennen den Trainingsmarkt. Sie wissen, was funktioniert — und was lediglich den Eindruck von Wirksamkeit vermittelt. Sie haben mit Banken gearbeitet, mit Fachkräften, die echte Verantwortung tragen. Sie wissen: Zertifikate beweisen nichts. Kompetenz schon.</p>
+    <p>Was wir aufbauen, existiert in dieser Form noch nicht. Und genau deshalb wenden wir uns zuerst an Sie — nicht an einen Verlag, nicht an eine Akademie. An Sie persönlich.</p>
+    <p>Dieses Dokument erklärt, was WINDI ist, was wir gemeinsam aufbauen können — und welche Rolle nur eine Person zuerst einnehmen kann.</p>
+  </div>
+
+  <!-- ── PARTNER STATEMENT ── -->
+  <div class="partner-statement">
+    „Sie werden hier nicht als freier Trainer eingesetzt.<br>
+    Sie definieren mit uns die erste marktfähige Form einer neuen Ausbildungskategorie."
+  </div>
+
+  <!-- ── §01 ── -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">§ 01</span>
+      <h2>Was hier wirklich entsteht</h2>
+    </div>
+    <p>Der Markt für KI-Training ist gesättigt. Hunderte Kurse erklären, wie man Prompts schreibt, Tools bedient und Workflows automatisiert.</p>
+    <div class="key-statement">
+      „Niemand lehrt bisher, wie man Entscheidungen, die mit KI getroffen werden, nachweisbar macht — und damit rechtlich nachvollziehbar und regulatorisch anschlussfähig."
+    </div>
+    <p>Genau das ist WINDI. Kein Kurs über KI. Ein Programm, das Entscheidungskompetenz mit überprüfbarem Nachweis verbindet — im direkten Kontext des EU AI Act, DORA und GDPR.</p>
+    <p style="font-size:15px;color:var(--muted);font-style:italic;">WINDI ist kein weiteres Trainingsangebot im Markt. Es ist eine infrastrukturelle Ergänzung zu bestehenden KI-Kompetenzen.</p>
+
+    <div class="compare-grid">
+      <div class="compare-col classic">
+        <div class="compare-label">Klassischer KI-Kurs</div>
+        <div class="compare-item"><span class="dot"></span> Vermittelt Wissen über Tools</div>
+        <div class="compare-item"><span class="dot"></span> Endet mit Zertifikat</div>
+        <div class="compare-item"><span class="dot"></span> Vertrauen durch Aussage</div>
+        <div class="compare-item"><span class="dot"></span> Output: Theoretisches Können</div>
+        <div class="compare-item"><span class="dot"></span> Inhalt wird Commodity</div>
+      </div>
+      <div class="compare-col windi">
+        <div class="compare-label">WINDI Programm</div>
+        <div class="compare-item"><span class="dot"></span> Trainiert Entscheidungshandeln</div>
+        <div class="compare-item"><span class="dot"></span> Endet mit nachweisbaren Handlungen</div>
+        <div class="compare-item"><span class="dot"></span> Vertrauen durch Verifikation</div>
+        <div class="compare-item"><span class="dot"></span> Output: Überprüfbare Entscheidungshistorie</div>
+        <div class="compare-item"><span class="dot"></span> In dieser Form nicht substituierbar</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ── §02 ── -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">§ 02</span>
+      <h2>Das System dahinter: W-Enterprise-001</h2>
+    </div>
+    <p>W-Enterprise-001 ist kein Konzept. Es ist eine laufende, produktive Infrastruktur — entwickelt, um Entscheidungen entstehen zu lassen, zu strukturieren und permanent nachweisbar zu machen.</p>
+
+    <div class="key-statement">
+      Im Programm arbeitet jeder Teilnehmer direkt in W-Enterprise-001. Nicht in einer Simulation. In der realen Entscheidungsumgebung.
+    </div>
+
+    <ul class="invariant-list">
+      <li><span class="inv-code">PHO</span><span>Jede Entscheidung durchläuft das Proof-of-Human-Oversight-Modell — bewusst, explizit, nicht automatisierbar</span></li>
+      <li><span class="inv-code">SEAL</span><span>Jede Entscheidung wird kryptographisch versiegelt (SHA-256) — manipulationssicher und zeitgestempelt</span></li>
+      <li><span class="inv-code">LEDGER</span><span>Jeder Eintrag landet in einem öffentlich verifizierbaren Ledger — unabhängig prüfbar, dauerhaft</span></li>
+      <li><span class="inv-code">DID</span><span>Jede Handlung ist einer eindeutigen digitalen Identität zugeordnet — keine anonymen Entscheidungen</span></li>
+    </ul>
+
+    <!-- ── PROOF EXAMPLE ── -->
+    <div class="proof-block">
+      <div class="proof-label">Beispiel einer nachweisbaren Handlung</div>
+      <div class="proof-row">
+        <span class="proof-key">Teilnehmer</span>
+        <span class="proof-val">M. Beispiel · Risikomanagement, Regionalbank</span>
+      </div>
+      <div class="proof-row">
+        <span class="proof-key">Use Case</span>
+        <span class="proof-val">Risikoanalyse eines KI-gestützten Kreditentscheidungsvorschlags</span>
+      </div>
+      <div class="proof-row">
+        <span class="proof-key">Human Approval</span>
+        <span class="proof-val">Explizit erfasst — bewusste Entscheidung dokumentiert</span>
+      </div>
+      <div class="proof-row">
+        <span class="proof-key">Seal</span>
+        <span class="proof-val highlight">SHA-256 · a3f8c1d… · 14.04.2026 · 11:42 UTC</span>
+      </div>
+      <div class="proof-row">
+        <span class="proof-key">Ledger Receipt</span>
+        <span class="proof-val highlight">Erstellt · Receipt ID: RCP-00291</span>
+      </div>
+      <div class="proof-row">
+        <span class="proof-key">Öffentliche Verifikation</span>
+        <span class="proof-val" style="color:var(--gold);font-family:'Courier Prime',monospace;font-size:12px;">windi-domain.com/verify-public/?id=RCP-00291</span>
+      </div>
+    </div>
+
+    <p>Was der Teilnehmer am Ende des Programms besitzt, ist keine Teilnahmebescheinigung. Es ist eine <strong style="color:var(--gold-light)">überprüfbare Entscheidungshistorie</strong> — dauerhaft abrufbar, unabhängig validierbar.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ── §03 ── -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">§ 03</span>
+      <h2>Für wen dieses Programm ist</h2>
+    </div>
+    <p>Das Programm richtet sich nicht an Einsteiger. Es richtet sich an Personen, die bereits Entscheidungen treffen — und dafür einstehen müssen.</p>
+
+    <div class="why-grid">
+      <div class="why-item"><span class="why-mark">▸</span><span>Fach- und Führungskräfte in Banken, Versicherungen, Finanzdienstleistungen</span></div>
+      <div class="why-item"><span class="why-mark">▸</span><span>Compliance- und Governance-Verantwortliche im EU AI Act Kontext</span></div>
+      <div class="why-item"><span class="why-mark">▸</span><span>Risk- und Audit-Profile in Beratungsunternehmen (Big4, Boutiquen)</span></div>
+      <div class="why-item"><span class="why-mark">▸</span><span>Legal Tech und Rechtsabteilungen mit KI-Einsatz</span></div>
+      <div class="why-item"><span class="why-mark">▸</span><span>AI Engineers und Data Scientists mit operativer Verantwortung</span></div>
+      <div class="why-item"><span class="why-mark">▸</span><span>Unternehmen im Aufbau interner KI-Governance-Strukturen</span></div>
+    </div>
+
+    <div class="key-statement">
+      „Diese Personen fragen sich nicht mehr: Wie nutze ich KI?<br>
+      Sie fragen sich: Wie kann ich beweisen, dass ich KI richtig eingesetzt habe?"
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ── §04 ── -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">§ 04</span>
+      <h2>Ihre Rolle: WINDI Gründungsausbilder</h2>
+    </div>
+    <p>Der WINDI Gründungsausbilder ist nicht Dozent für KI-Tools. Er ist der menschliche Anker in einem Prozess, der Entscheidungsqualität sichtbar und überprüfbar macht — und der dieses Modell als Erster im Markt etabliert.</p>
+    <p style="font-size:14px;color:var(--muted);font-style:italic;">Die WINDI-interne Anerkennung basiert auf dem konstitutionellen Ausbildungsmodell — dokumentiert, strukturiert und an klare Qualitätskriterien gebunden.</p>
+
+    <div class="role-grid">
+      <div class="role-block ausbilder">
+        <div class="role-title">Der Gründungsausbilder bringt mit</div>
+        <div class="role-item">▸ Pädagogische Kompetenz und Methodik</div>
+        <div class="role-item">▸ Marktkenntnis und gewachsenes Netzwerk</div>
+        <div class="role-item">▸ Felderfahrung in regulierten Branchen</div>
+        <div class="role-item">▸ Gruppenführung und Vermittlungsdynamik</div>
+        <div class="role-item">▸ Vertriebsverständnis und Positionierung</div>
+      </div>
+      <div class="role-block windi-col">
+        <div class="role-title">WINDI stellt bereit</div>
+        <div class="role-item">▸ W-Enterprise-001 als operative Umgebung</div>
+        <div class="role-item">▸ PHO → Seal → Ledger Infrastruktur</div>
+        <div class="role-item">▸ Konstitutioneller Rahmen und Curriculum</div>
+        <div class="role-item">▸ Regulatorisches Positionierungsmodell</div>
+        <div class="role-item">▸ Technische Nachweisbarkeit</div>
+      </div>
+    </div>
+
+    <p>Gemeinsam entsteht etwas, das keiner von beiden allein aufbauen kann: <strong style="color:var(--gold-light)">ein Programm, das Wissen vermittelt und Entscheidungen beweist.</strong></p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ── §05 ── -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">§ 05</span>
+      <h2>Der Weg zur Anerkennung</h2>
+    </div>
+
+    <div class="cert-path">
+      <div class="cert-step">
+        <div class="cert-left"><div class="cert-dot">I</div><div class="cert-line"></div></div>
+        <div class="cert-content">
+          <div class="cert-title">Onboarding &amp; Systemzugang</div>
+          <div class="cert-desc">Vollständiger Zugang zu W-Enterprise-001. Orientierung im PHO-Modell. Erstes eigenes Seal.</div>
+        </div>
+      </div>
+      <div class="cert-step">
+        <div class="cert-left"><div class="cert-dot">II</div><div class="cert-line"></div></div>
+        <div class="cert-content">
+          <div class="cert-title">Pilotdurchführung</div>
+          <div class="cert-desc">Erste Gruppe (5–10 Personen). Begleitung durch WINDI. Dokumentation der Entscheidungsqualität.</div>
+        </div>
+      </div>
+      <div class="cert-step">
+        <div class="cert-left"><div class="cert-dot">III</div><div class="cert-line"></div></div>
+        <div class="cert-content">
+          <div class="cert-title">Anerkennung: WINDI Gründungsausbilder</div>
+          <div class="cert-desc">Formale Anerkennung im System. Eigene Ausbilder-Seite. Berechtigung zur eigenständigen Programmdurchführung.</div>
+        </div>
+      </div>
+      <div class="cert-step">
+        <div class="cert-left"><div class="cert-dot">IV</div></div>
+        <div class="cert-content" style="padding-bottom:0">
+          <div class="cert-title">Eigenständige Durchführung und Skalierung</div>
+          <div class="cert-desc">Eigene Gruppen. Corporate-Verträge. Möglichkeit zur Anerkennung weiterer Ausbilder.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ── §06 ── -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">§ 06</span>
+      <h2>Modell und wirtschaftliche Logik</h2>
+    </div>
+    <p>Das Programm ist als professionelle Qualifizierungsmaßnahme positioniert und kann — je nach Unternehmenskontext und Förderrahmen — steuerlich und förderseitig relevant sein. Die konkrete Einordnung erfolgt im jeweiligen Unternehmens- und Rechtskontext.</p>
+
+    <div class="price-grid">
+      <div class="price-block private">
+        <div class="price-label">Private Teilnahme</div>
+        <div class="price-amount">€1.200 – €2.500</div>
+        <div class="price-note">pro Person / Programmdurchlauf</div>
+        <div class="price-feature">Vollständiger Systemzugang</div>
+        <div class="price-feature">Persönliche Entscheidungshistorie</div>
+        <div class="price-feature">Verifikations-URL + Receipt</div>
+      </div>
+      <div class="price-block corporate">
+        <div class="price-label">Corporate / Unternehmen</div>
+        <div class="price-amount">€5.000 – €25.000+</div>
+        <div class="price-note">pro Gruppe / maßgeschneidert</div>
+        <div class="price-feature">Inhouse-Durchführung möglich</div>
+        <div class="price-feature">Branchenspezifische Use Cases</div>
+        <div class="price-feature">EU AI Act &amp; DORA Alignment</div>
+      </div>
+    </div>
+
+    <p style="font-size:14px;color:var(--muted)">Als Gründungsausbilder verhandeln wir das Vergütungsmodell direkt und partnerschaftlich. Ihre Marktkenntnis und Initiative sind integraler Bestandteil des entstehenden Werts — nicht lediglich ein externer Beitrag.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ── §07 ── -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">§ 07</span>
+      <h2>Warum jetzt — und warum Sie</h2>
+    </div>
+
+    <div class="why-grid">
+      <div class="why-item"><span class="why-mark">◆</span><span>Der EU AI Act tritt schrittweise in Kraft. Compliance-Bedarf ist real und wächst monatlich.</span></div>
+      <div class="why-item"><span class="why-mark">◆</span><span>W-Enterprise-001 ist live. Kein Konzept — ein laufendes System, bereit für den ersten Piloten.</span></div>
+      <div class="why-item"><span class="why-mark">◆</span><span>Sie haben Zugang zu den Entscheidern, die dieses Programm brauchen. Jetzt, nicht in zwei Jahren.</span></div>
+      <div class="why-item"><span class="why-mark">◆</span><span>Wer eine neue Kategorie zuerst definiert, gehört dauerhaft zu ihr. Das ist keine Metapher.</span></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ── §08 ── -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">§ 08</span>
+      <h2>Die Rolle von VERA im Programm</h2>
+    </div>
+
+    <p>VERA ist kein Assistent. VERA ist kein Co-Pilot. VERA ist kein Chatbot.</p>
+
+    <div class="key-statement">
+      „VERA ist eine konstitutionelle Erkenntnisschnittstelle —<br>
+      sie stoppt genau dort, wo Verantwortung beginnt."
+    </div>
+
+    <div class="role-grid" style="margin-top:24px">
+      <div class="role-block ausbilder">
+        <div class="role-title">VERA erklärt</div>
+        <div class="role-item">▸ Beantwortet Fragen auf Deutsch</div>
+        <div class="role-item">▸ Kontextualisiert jede Entscheidungssituation</div>
+        <div class="role-item">▸ Verweist auf EU AI Act, DORA, GDPR</div>
+        <div class="role-item">▸ Zeigt den Zustand des Ledgers in Echtzeit</div>
+        <div class="role-item">▸ Erklärt die 20 konstitutionellen Pilaren</div>
+      </div>
+      <div class="role-block windi-col">
+        <div class="role-title">VERA begrenzt</div>
+        <div class="role-item">▸ Trifft keine Entscheidungen</div>
+        <div class="role-item">▸ Führt keine Aktionen aus</div>
+        <div class="role-item">▸ Genehmigt keine PHO-Flows</div>
+        <div class="role-item">▸ Ersetzt den menschlichen Akteur nicht</div>
+        <div class="role-item">▸ I9 — Autonomieverbot: IRREMEDIABEL</div>
+      </div>
+    </div>
+
+    <div class="key-statement" style="margin-top:24px">
+      „Der Teilnehmer lernt nicht <em>über</em> das System.<br>
+      Er erlebt die Grenze zwischen KI und Verantwortung — in Echtzeit."
+    </div>
+
+    <p style="margin-top:20px">Diese Architektur löst das klassische pädagogische Problem automatisch: Nicht der Ausbilder muss PHO, Invarianten und Compliance erklären — VERA übernimmt die Orientierung. Der Ausbilder konzentriert sich auf das, was kein System leisten kann: die menschliche Entscheidungskultur.</p>
+
+    <div class="proof-block" style="margin-top:24px">
+      <div class="proof-label">Interaktionssequenz im Seminar</div>
+      <div class="proof-row">
+        <span class="proof-key">Teilnehmer fragt</span>
+        <span class="proof-val">"Was ist PHO — und warum brauche ich das?"</span>
+      </div>
+      <div class="proof-row">
+        <span class="proof-key">VERA antwortet</span>
+        <span class="proof-val">Vollständiger Kontext · Invarianten · EU AI Act Referenz</span>
+      </div>
+      <div class="proof-row">
+        <span class="proof-key">VERA hält an</span>
+        <span class="proof-val highlight">"Die Entscheidung liegt bei Ihnen."</span>
+      </div>
+      <div class="proof-row">
+        <span class="proof-key">Mensch entscheidet</span>
+        <span class="proof-val">PHO → Seal → Receipt → Verify URL</span>
+      </div>
+      <div class="proof-row">
+        <span class="proof-key">Ergebnis</span>
+        <span class="proof-val highlight">Nachweisbare Entscheidung · kein Zertifikat · echte Prova</span>
+      </div>
+    </div>
+
+    <p style="margin-top:20px;font-size:15px;color:var(--muted);font-style:italic;">Kein PowerPoint-Deck erreicht diesen Effekt. VERA demonstriert in zwei Minuten, was andere Programme in zwanzig Stunden zu erklären versuchen.</p>
+  </div>
+
+  <!-- ── CTA ── -->
+  <div class="cta-box">
+    <div class="cta-title">Der nächste Schritt</div>
+    <div class="cta-sub">Ein vertrauliches Erstgespräch zur Prüfung eines Pilotmodells.</div>
+    <div class="cta-step">→ Prüfung der Marktpassung</div>
+    <div class="cta-step">→ Live-Einblick in W-Enterprise-001</div>
+    <div class="cta-step">→ Skizze eines ersten Pilotformats</div>
+    <div style="margin-top:24px;font-family:'Courier Prime',monospace;font-size:11px;color:var(--gold);letter-spacing:0.12em;">
+      → Ziel des Gesprächs ist keine Entscheidung — sondern Klarheit über Potenzial und Passung.
+    </div>
+    <div style="margin-top:20px;font-size:13px;color:var(--muted);font-style:italic;">
+      „Wir lehren nicht, wie man KI benutzt.<br>
+      Wir stellen sicher, dass Entscheidungen mit KI belegbar sind."
+    </div>
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <div class="doc-footer">
+    <span>WINDI Institute · Kempten, Bayern · 2026</span>
+    <span class="gold">WPH-AUS-004 · VERTRAULICH</span>
+  </div>
+
+</div>
+</body>
+</html>
