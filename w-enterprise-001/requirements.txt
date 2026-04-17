@@ -1,4 +1,4 @@
-# WINDI Verify Public v1.0.2
+# W-Enterprise-001 v3.1.0 — AI Compliance Dashboard
 # Sealed: 2026-04-17 · WINDI Publishing House
 
 # --- CORE API ---
@@ -11,8 +11,8 @@ httptools==0.7.1
 uvloop>=0.19.0
 websockets>=12.0,<14.0
 
-# --- FILE UPLOADS ---
-python-multipart>=0.0.9
-
 # --- HTTP CLIENT ---
 httpx>=0.26.0
+
+# --- VALIDATION ---
+email-validator>=2.0.0

@@ -54,6 +54,18 @@ logging.basicConfig(
 )
 log = logging.getLogger("windi-enterprise")
 
+# ── Canvas Integration §166 ───────────────────────────────────────────────
+try:
+    from canvas_integration import (
+        enterprise_generate_cover,
+        enterprise_generate_pho_cert
+    )
+    CANVAS_AVAILABLE = True
+    log.info("[CANVAS] W-CANVAS-001 integration loaded")
+except ImportError as e:
+    CANVAS_AVAILABLE = False
+    log.warning(f"[CANVAS] Integration unavailable: {e}")
+
 # ── Config ────────────────────────────────────────────────────────────────
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 AI_MODEL          = os.getenv("AI_MODEL", "claude-sonnet-4-20250514")
@@ -523,6 +535,117 @@ async def get_audit(limit: int = 50):
 
 
 # ════════════════════════════════════════════════════════
+#  ROUTE — CANVAS INTEGRATION §166
+# ════════════════════════════════════════════════════════
+class CoverRequest(BaseModel):
+    title: str
+    subtitle: str = "Risk Evidence Package"
+    theme: str = "NOIR"  # NOIR | KLAR
+    actor: str = "Human Dragon"
+
+class PHOCertRequest(BaseModel):
+    actor_name: str
+    decision_summary: str
+    doc_id: str
+
+@app.post("/api/canvas/cover")
+async def generate_cover(body: CoverRequest):
+    """
+    Generate visual cover for REP/PHO packages using W-CANVAS-001.
+    §166 · I9-P: AI renders, Human approves, WINDI seals.
+    """
+    if not CANVAS_AVAILABLE:
+        return {"error": "Canvas integration not available", "canvas_available": False}
+
+    result = await enterprise_generate_cover(
+        title=body.title,
+        subtitle=body.subtitle,
+        theme=body.theme,
+        actor=body.actor
+    )
+
+    if result:
+        AUDIT_DB.insert(0, {
+            "event": f"Canvas Cover Generated: {body.title}",
+            "module": "CANVAS",
+            "ts": now_iso()[:16],
+            "receipt": result.get("ledger_receipt")
+        })
+        log.info(f"[CANVAS] Cover generated: {result.get('job_id')}")
+        return {
+            "success": True,
+            "job_id": result.get("job_id"),
+            "download_url": result.get("download_url"),
+            "sha256": result.get("sha256"),
+            "ledger_receipt": result.get("ledger_receipt"),
+            "render_ms": result.get("render_ms")
+        }
+    else:
+        # I14: Explicit failure, no silent null
+        return {"success": False, "error": "Canvas worker offline or render failed", "canvas_available": True}
+
+
+@app.post("/api/canvas/pho-cert")
+async def generate_pho_certificate(body: PHOCertRequest):
+    """
+    Generate PHO Certificate visual for EU AI Act Art.14 compliance.
+    §166 · Proof of Human Oversight — visual evidence.
+    """
+    if not CANVAS_AVAILABLE:
+        return {"error": "Canvas integration not available", "canvas_available": False}
+
+    result = await enterprise_generate_pho_cert(
+        actor_name=body.actor_name,
+        decision_summary=body.decision_summary,
+        doc_id=body.doc_id
+    )
+
+    if result:
+        AUDIT_DB.insert(0, {
+            "event": f"PHO Certificate Generated: {body.doc_id}",
+            "module": "CANVAS",
+            "ts": now_iso()[:16],
+            "receipt": result.get("ledger_receipt")
+        })
+        log.info(f"[CANVAS] PHO Cert generated: {result.get('job_id')}")
+        return {
+            "success": True,
+            "job_id": result.get("job_id"),
+            "download_url": result.get("download_url"),
+            "sha256": result.get("sha256"),
+            "ledger_receipt": result.get("ledger_receipt"),
+            "render_ms": result.get("render_ms")
+        }
+    else:
+        return {"success": False, "error": "Canvas worker offline or render failed", "canvas_available": True}
+
+
+@app.get("/api/canvas/status")
+async def canvas_status():
+    """Check W-CANVAS-001 availability and status."""
+    if not CANVAS_AVAILABLE:
+        return {"available": False, "reason": "Integration module not loaded"}
+
+    try:
+        import httpx
+        async with httpx.AsyncClient(timeout=3.0) as client:
+            r = await client.get("http://127.0.0.1:8155/canvas/health")
+            if r.status_code == 200:
+                data = r.json()
+                return {
+                    "available": True,
+                    "service": data.get("service"),
+                    "version": data.get("version"),
+                    "outputs": data.get("outputs"),
+                    "invariant": data.get("invariant")
+                }
+    except Exception as e:
+        log.warning(f"[CANVAS] Health check failed: {e}")
+
+    return {"available": False, "reason": "Canvas worker not responding"}
+
+
+# ════════════════════════════════════════════════════════
 #  STARTUP
 # ════════════════════════════════════════════════════════
 @app.on_event("startup")
@@ -536,4 +659,4 @@ async def startup():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8150, reload=False)
+    uvicorn.run(app, host="0.0.0.0", port=8150)

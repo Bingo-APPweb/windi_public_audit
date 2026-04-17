@@ -1,0 +1,14 @@
+# WINDI Dragon Hub v1.3.0 — Three Dragons AI
+# Sealed: 2026-04-17 · WINDI Publishing House
+
+# --- CORE ---
+flask>=2.0.0
+httpx>=0.26.0
+
+# --- DOCUMENT PROCESSING ---
+openpyxl>=3.1.0
+defusedxml>=0.7.0
+numpy>=2.0.0
+
+# --- AI ---
+anthropic>=0.25.0
