@@ -86,11 +86,12 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-ENTERPRISE-001 | :8150 | I1,I9,I11,I14 | **LIVE** v3.1.0 · VERA REGO v1.0 · DASH v4.1 · i18n PT/DE/EN · NOIR/KLAR |
 | W-CACHE-001 | :8160 | I11,I14 | **LIVE** · Verifiable Cache Layer · L2→L3 Promotion · NOIR Dashboard |
 | W-DID-GENESIS | :8096 | I1,I9,I11,I14 | **LIVE** · Sovereign Identity Tree · Cross-Service Session · 4 Tiers |
-| W-SERVICE-CONTROL | :8170 | I1,I9,I11 | **LIVE** · Service Control Panel · 27 Services · **SVG Sentinel** · Subsystem Monitoring · DID Gate |
+| W-SERVICE-CONTROL | :8170 | I1,I9,I11 | **LIVE** · Service Control Panel · 29 Services · **SVG Sentinel** · Subsystem Monitoring · DID Gate |
 | W-LAB-001 | :8151 | I9,I11,I14 | **LIVE** · Governance Laboratory · LOBO · 5 Mini-Games · **/clear** Dilemas de Geleia |
 | W-COST-001 | :8152 | I9,I11,I14 | **LIVE** · Cost Intelligence Layer · Telegram Alerts · Gateway Integration · Thresholds |
 | W-SOCIAL-001 | :8133 | I9-P,I11,I14 | **LIVE** · Verified Professional Presence · Embedded-first · I9-P Protocol · Trilingual |
 | W-TRAVEL-MAP-001 | :8153 | I9,I11,I16 | **LIVE** · Berlin Pitch Map · Bayern Süd · Trilingual · Ledger Hybrid · `/travel/map/` |
+| W-ACADEMY-001 | :8180 | I9,I11,I14 | **LIVE** · WINDI Institute · Course Management · W-ENT-001 Curriculum · PHO Certification |
 | WINDI-PORTAL | static | — | **LIVE** · Internal Control Center · 35 Services · 7 Categories |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
@@ -428,20 +429,21 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | :8152 | W-COST-001 Cost Intelligence | 🟢 **LIVE** |
 | :8153 | W-TRAVEL-MAP-001 Berlin Pitch | 🟢 **LIVE** |
 | :8170 | W-SERVICE-CONTROL Panel | 🟢 **LIVE** |
+| :8180 | W-ACADEMY-001 Institute | 🟢 **LIVE** |
 
-> **Mapa completo (30 portas):** `CLAUDE-HISTORY.md` § Mapa de Portas 17 Abr
+> **Mapa completo (31 portas):** `CLAUDE-HISTORY.md` § Mapa de Portas 17 Abr
 
-### Sistemas LIVE (46 total)
+### Sistemas LIVE (47 total)
 
 **Core:** GEN7 · Pioneer · VPR · API Keys · Dispatch · Web Hosting · i18n · Wallet · Lead Admin · **Portal** · **SVC-CONTROL**
-**Agents (34):** CIA · WSG · GATE · NGINX · CANVAS · COMM · PROVE · DETECT-MEDIA · VERIFY · INTENT · COUNSEL · SESSION · NOMAD · VD-CUT · VD-MASS · JOE · DIST · JMPG · UDB · COMPOSER · CLASSIFY · VISION · OBS-GATE · INTENT-CMD · NOMAD-VOICE · FEDIVERSE · BRIDGE · SEC · DRAGON · DEV-API · ENTERPRISE · CACHE · **LAB**
+**Agents (35):** CIA · WSG · GATE · NGINX · CANVAS · COMM · PROVE · DETECT-MEDIA · VERIFY · INTENT · COUNSEL · SESSION · NOMAD · VD-CUT · VD-MASS · JOE · DIST · JMPG · UDB · COMPOSER · CLASSIFY · VISION · OBS-GATE · INTENT-CMD · NOMAD-VOICE · FEDIVERSE · BRIDGE · SEC · DRAGON · DEV-API · ENTERPRISE · CACHE · **LAB** · **ACADEMY**
 **Products:** Triangle of Power · WINDI FIELD · WINDI TRAVEL · FVE Protocol · RFC-001 DNA
 
 ### Histórico Recente
 
 | Data | Milestone |
 |------|-----------|
-| 17 Apr | **§184 Infrastructure Health Audit** · 15 Services Restored · httptools 0.7.1 Critical Fix · DECRETO-001 Requirements Tree · Tiered Restart Protocol |
+| 17 Apr | **§184 Infrastructure Health Audit** · W-ACADEMY-001 :8180 · 5 Modules 27 Lessons · Tiered Restart Protocol · Double Receipt Chain |
 | 16 Apr | **§182 W-TRAVEL-MAP-001** · Berlin Pitch Map · :8153 · Trilingual DE\|EN\|PT · Ledger Hybrid · verify-public fix · `/investor/` link |
 | 16 Apr | **§180 W-TRAVEL-PUB-001** · Sovereign Notebook Vision · I16 Cartographic · Mobile Phase 2 CANCELLED · Berlin Demo Target |
 | 16 Apr | **§179 W-LAB-001/clear** · Dilemas de Geleia · 4 Archetypes · Memory Loop · Trilingual · Ledger Integration |
@@ -564,6 +566,26 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 > **Full details:** `CLAUDE-HISTORY.md` § Services 15-16 Apr
 
+### §184 — W-ACADEMY-001: WINDI Institute (17 Apr 2026)
+
+**Port:** :8180 · **Invariants:** I9, I11, I14 · **URL:** `https://windi-domain.com/academy/` (nginx pending)
+**Conceito:** Curso de formação WINDI com W-Enterprise-001 como primeiro capítulo.
+
+**Database Schema (10 tables):**
+`programme` · `module` · `lektion` · `ausbilder` · `teilnehmer` · `enrollment` · `fortschritt` · `assessment` · `zertifikat` · `kohorte`
+
+**W-ENT-001 Curriculum Seeded:**
+| Modul | Título | Lições | Horas |
+|-------|--------|--------|-------|
+| M1 | Die Compliance-Krise | 5 | 2h |
+| M2 | VERA REGO — Die 32 Pilaren | 6 | 3h |
+| M3 | PHO in der Praxis | 6 | 2.5h |
+| M4 | Das Forensic Ledger | 5 | 2h |
+| M5 | Abschlussprojekt | 5 | 3h |
+
+**API Endpoints:** `/api/programme` · `/api/ausbilder` · `/api/teilnehmer` · `/api/enrollment` · `/api/zertifikat`
+**Files:** `/opt/windi/w-academy-001/app.py` · `data/academy.db` · `PROGRAMMSTRUKTUR.md`
+
 ### §169 — W-SERVICE-CONTROL: Service Control Panel (14 Apr 2026)
 
 **Port:** :8170 · **Invariants:** I1, I9, I11 · **Commits:** `a763dc3`, `0e02f8c`, `55e1b26`
@@ -571,7 +593,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 **Conceito:** Painel de controlo centralizado para todos os serviços WINDI com I9 Gate.
 
 **Features:**
-- 27 serviços monitorizados (4 categorias: Core, Agents, Dashboards, Support)
+- 29 serviços monitorizados (4 categorias: Core, Agents, Dashboards, Support)
 - Status em tempo real (online/degraded/offline/starting)
 - Restart/Stop/Start com I9 Gate (requer DID)
 - Logs viewer (journalctl integration)
