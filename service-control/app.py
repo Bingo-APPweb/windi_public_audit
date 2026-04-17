@@ -67,7 +67,7 @@ WINDI_SERVICES = [
     {"name": "windi-academy", "port": 8180, "display": "W-ACADEMY-001", "category": "dashboards", "tier": TIER_STANDARD, "nohup": True, "url": "/academy/"},
 
     # Support - STANDARD
-    {"name": "windi-leads", "port": 8096, "display": "DID Genesis", "category": "support", "tier": TIER_STANDARD, "url": ""},
+    {"name": "windi-leads", "port": 8096, "display": "DID Genesis", "category": "support", "tier": TIER_STANDARD, "url": "", "nohup": True},  # §186 uvicorn restart
     {"name": "windi-wallet", "port": 8095, "display": "Wallet Service", "category": "support", "tier": TIER_STANDARD, "url": "/wallet/"},
     {"name": "windi-communique", "port": 8105, "display": "Communiqué Engine", "category": "support", "tier": TIER_STANDARD, "url": ""},
     {"name": "windi-dispatch", "port": 8106, "display": "Dispatch Gateway", "category": "support", "tier": TIER_STANDARD, "url": ""},
@@ -79,7 +79,7 @@ WINDI_SERVICES = [
 # Health check endpoints by port
 HEALTH_ENDPOINTS = {
     8091: "/health",
-    8096: "/health",
+    8096: "/api/genesis/health",  # §186 DID-Genesis correct endpoint
     8101: "/health",
     8108: "/health",
     8114: "/health",
@@ -117,6 +117,7 @@ NOHUP_PATHS = {
     "windi-udb": "/opt/windi/udb",
     "sandbox-core": "/opt/windi/sandbox-core",
     "windi-academy": "/opt/windi/w-academy-001",
+    "windi-leads": "/opt/windi/did-genesis",  # §186 DID-Genesis restart fix
 }
 
 # Nohup main files
@@ -131,6 +132,12 @@ NOHUP_MAIN_FILES = {
     "windi-udb": "app.py",
     "sandbox-core": "app.py",
     "windi-academy": "app.py",
+    "windi-leads": "did_genesis.py",  # §186 uvicorn did_genesis:app
+}
+
+# §186 Custom startup commands (for uvicorn services)
+NOHUP_COMMANDS = {
+    "windi-leads": "python3 -m uvicorn did_genesis:app --host 0.0.0.0 --port 8096",
 }
 
 # ═══════════════════════════════════════════════════════════════
@@ -432,6 +439,7 @@ def restart_nohup_service(service_name, port):
     """Restart a nohup service by killing existing process and starting new one."""
     path = NOHUP_PATHS.get(service_name)
     main_file = NOHUP_MAIN_FILES.get(service_name, "app.py")
+    custom_cmd = NOHUP_COMMANDS.get(service_name)  # §186 Custom uvicorn commands
 
     if not path:
         return False, f"No path configured for {service_name}"
@@ -441,9 +449,12 @@ def restart_nohup_service(service_name, port):
         subprocess.run(["fuser", "-k", f"{port}/tcp"], capture_output=True, timeout=5)
         time.sleep(1)
 
-        # Start new process
+        # Start new process (use custom command if available)
         log_file = f"/tmp/{service_name}.log"
-        cmd = f"cd {path} && nohup python3 {main_file} > {log_file} 2>&1 &"
+        if custom_cmd:
+            cmd = f"cd {path} && nohup {custom_cmd} > {log_file} 2>&1 &"
+        else:
+            cmd = f"cd {path} && nohup python3 {main_file} > {log_file} 2>&1 &"
         subprocess.run(cmd, shell=True, timeout=5)
 
         # Wait for service to start
