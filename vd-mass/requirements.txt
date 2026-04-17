@@ -1,0 +1,9 @@
+# W-VD-MASS-001 v1.0.0 — Policy-Based Video Automation
+# Sealed: 2026-04-17 · WINDI Publishing House
+
+# --- CORE ---
+flask>=3.0.0
+werkzeug>=3.0.0
+
+# --- HTTP CLIENT ---
+httpx>=0.26.0
