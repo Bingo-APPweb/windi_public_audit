@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.2.24
-**Sealed:** 2026-04-17 · §187 VERA Response Discipline
+**Version:** 2.2.25
+**Sealed:** 2026-04-17 · §189 W-CACHE-001 Integration
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -443,7 +443,9 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
-| 17 Apr | **§187 VERA RESPONSE DISCIPLINE** · Short dialogic output · CORE+INVITE pattern · No headers/titles · Max 3-4 sentences |
+| 17 Apr | **§189 W-CACHE-001 INTEGRATION** · VERA v1.3.0 · L2/L3 tiers · 450ms→30ms · Decisions never cached |
+| 17 Apr | **§188 VERA PRODUCT IDENTITY** · Constitutional decision interface · I9 enforcement · CORE+INVITE+BOUNDARY |
+| 17 Apr | **§187 VERA RESPONSE DISCIPLINE** · Short dialogic output · No internal codes · Mixed-language fix |
 | 17 Apr | **§186 DID-GENESIS RESTART** · W-SERVICE-CONTROL fix · uvicorn custom commands · NOHUP_COMMANDS dict |
 | 17 Apr | **§185 ERDBEERE PROTOCOL** · VERA v1.2 · Anti-hallucination guardrails · Confidence estimation · Prof. Bast principle |
 | 17 Apr | **§184 Infrastructure Health Audit** · W-ACADEMY-001 :8180 · 5 Modules 27 Lessons · Tiered Restart Protocol · Double Receipt Chain |
@@ -758,29 +760,75 @@ NOHUP_COMMANDS = {
 **Health endpoint fixed:** `8096: "/api/genesis/health"`
 **File:** `/opt/windi/service-control/app.py`
 
-### §187 — VERA Response Discipline (17 Apr 2026)
+### §188 — VERA Product Identity (W-VERA-CORE-001)
 
-> *"VERA não deve parecer inteligente. Ela deve parecer confiável."*
-> — Human Dragon
+**Core Principle:** VERA is not a chatbot, assistant, or co-pilot.
+VERA is a **constitutional decision interface** within the WINDI system.
 
-**Problema:** VERA respondia como professora (parágrafos, listas, headers).
-**Princípio:** Secretária profissional = curta, dialógica, convida follow-up.
+**Functional Definition — VERA exists to:**
+- Provide structured context
+- Expose relevant invariants
+- Connect decisions to regulatory frameworks
+- Guide without executing decisions
 
-**CORE + INVITE Pattern:**
-| Elemento | Descrição |
-|----------|-----------|
-| CORE | Resposta essencial em 3-4 frases máx |
-| INVITE | Pergunta para aprofundar ("Quer que eu detalhe...?") |
+**Absolute Constraint (I9) — VERA never:**
+- takes decisions
+- implies approval
+- simulates human responsibility
 
-**Proibições (system prompt):**
-- Headers ("VERA BRIEFING", "Mode:", "TUTORIAL")
-- Marcadores internos (P01, P06, Shelf, Contexto)
-- "Confiança: HIGH/MED/LOW" no texto (sistema adiciona)
-- Parágrafos explicativos longos
+> *"VERA informs. The human decides."*
+
+**Response Discipline (CORE + INVITE):**
+
+| Element | Description |
+|---------|-------------|
+| **CORE** | Clear, structured, minimal. No internal codes (P01-P09). No debug artifacts. No mixed languages. |
+| **INVITE** | Request for context or clarification. Encourage user to define scope. |
+| **BOUNDARY** | Explicit or implicit reinforcement of I9 |
+
+**Tone:** Professional · Calm · Precise · Non-performative · Non-marketing
+**Surface:** Simple, human-readable · **Depth:** Complexity hidden unless requested
+
+---
+
+### §189 — W-CACHE-001 Integration (VERA v1.3.0)
+
+**Objective:** Reduce latency while preserving decision integrity and I9 invariants.
+
+**Cache Tier Model:**
+
+| Endpoint | Cache Tier | TTL | Invalidation |
+|----------|------------|-----|--------------|
+| `/vera/constitution` | L3_PROVEN | 30d | PHO seal (Pillar XX) |
+| `/vera/brief` | L2_DETERMINISTIC | 1h | Daily key rotation |
+| `/vera/chat` (general) | L2_DETERMINISTIC | 24h | Pattern-based filtering |
+| `/vera/seal-opinion` | ❌ NEVER | — | Unique → Ledger-bound |
+
+**Latency Profile:**
+- LLM (no cache): ~450ms
+- L2/L3 hit: ~30–80ms
+
+**Cache Eligibility:**
+- ✅ Cacheable: Generic context-free ("What is EU AI Act?", "Was ist GDPR?")
+- ❌ Non-cacheable: Personal context ("my", "our", "meu"), decision context ("approve", "seal")
+
+**Critical Rule:**
+> *"Decisions are never cached."*
+
+All PHO, approvals, evaluations → unique and traceable.
+
+**Failure Mode:** fail-open pattern (cache fail → live LLM call)
+
+**Observability:** `GET /vera/cache` — hit rate, tier usage, latency metrics
+
+**Architectural Insight:**
+> *"Cache accelerates knowledge retrieval, not decision-making."*
+> *"Speed is allowed in context. Speed is forbidden in responsibility."*
 
 **Files:**
-- `/opt/windi/w-enterprise-001/vera_agent.py` (v1.2.0)
-- Commit: `9a018387`
+- `/opt/windi/w-enterprise-001/vera_agent.py` (v1.3.0)
+- `/opt/windi/w-enterprise-001/vera_cache.py`
+- Commits: `965a6ed4`, `411fb39e`
 
 ---
 
