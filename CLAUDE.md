@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.2.23
-**Sealed:** 2026-04-17 · §186 DID-Genesis Restart Fix
+**Version:** 2.2.24
+**Sealed:** 2026-04-17 · §187 VERA Response Discipline
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -443,6 +443,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 17 Apr | **§187 VERA RESPONSE DISCIPLINE** · Short dialogic output · CORE+INVITE pattern · No headers/titles · Max 3-4 sentences |
 | 17 Apr | **§186 DID-GENESIS RESTART** · W-SERVICE-CONTROL fix · uvicorn custom commands · NOHUP_COMMANDS dict |
 | 17 Apr | **§185 ERDBEERE PROTOCOL** · VERA v1.2 · Anti-hallucination guardrails · Confidence estimation · Prof. Bast principle |
 | 17 Apr | **§184 Infrastructure Health Audit** · W-ACADEMY-001 :8180 · 5 Modules 27 Lessons · Tiered Restart Protocol · Double Receipt Chain |
@@ -740,6 +741,46 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 > *"VERA kann irren. Deshalb entscheidet der Mensch. Deshalb gibt es den Seal."*
 
 > **Full details:** `CLAUDE-HISTORY.md` § W-ENTERPRISE-001
+
+### §186 — DID-Genesis Restart Capability (17 Apr 2026)
+
+**Problema:** DID-Genesis (:8096) crashed, users couldn't login to Enterprise.
+**Causa:** Service uses uvicorn, not standard `python3 main.py`.
+**Fix:** Added `NOHUP_COMMANDS` dict to W-SERVICE-CONTROL.
+
+**Implementation:**
+```python
+NOHUP_COMMANDS = {
+    "windi-leads": "python3 -m uvicorn did_genesis:app --host 0.0.0.0 --port 8096",
+}
+```
+
+**Health endpoint fixed:** `8096: "/api/genesis/health"`
+**File:** `/opt/windi/service-control/app.py`
+
+### §187 — VERA Response Discipline (17 Apr 2026)
+
+> *"VERA não deve parecer inteligente. Ela deve parecer confiável."*
+> — Human Dragon
+
+**Problema:** VERA respondia como professora (parágrafos, listas, headers).
+**Princípio:** Secretária profissional = curta, dialógica, convida follow-up.
+
+**CORE + INVITE Pattern:**
+| Elemento | Descrição |
+|----------|-----------|
+| CORE | Resposta essencial em 3-4 frases máx |
+| INVITE | Pergunta para aprofundar ("Quer que eu detalhe...?") |
+
+**Proibições (system prompt):**
+- Headers ("VERA BRIEFING", "Mode:", "TUTORIAL")
+- Marcadores internos (P01, P06, Shelf, Contexto)
+- "Confiança: HIGH/MED/LOW" no texto (sistema adiciona)
+- Parágrafos explicativos longos
+
+**Files:**
+- `/opt/windi/w-enterprise-001/vera_agent.py` (v1.2.0)
+- Commit: `9a018387`
 
 ---
 
