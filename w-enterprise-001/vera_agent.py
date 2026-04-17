@@ -12,6 +12,15 @@
 #                       Multi-LLM Governance, Intelligence Consensus, DID-bound Auth,
 #                       Proof Chain Integrity, Governed Latency, WINDI Integration, Constitutional Update
 #
+#  v1.2 Enhancements (17 Apr 2026):
+#    · ERDBEERE PROTOCOL v1.0 — Anti-hallucination guardrails
+#      "Für die Sprachmodelle gibt es keine wirkliche Vorstellung von Wahrheit."
+#      — Prof. Hannah Bast, Universität Freiburg
+#    · Confidence estimation (HIGH/MED/LOW) on every response
+#    · Factual claim detection (legal articles, dates, numbers)
+#    · Verification footer: "VERA orienta. O humano decide."
+#    · System prompt: VERA is NEVER primary source
+#
 #  v1.1 Enhancements:
 #    · Trilingual responses (DE/EN/PT) — I12 Language Sovereign
 #    · Degraded mode declaration — XIII explicit
@@ -21,7 +30,7 @@
 # ═══════════════════════════════════════════════════════════════════════════
 
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 from typing import Optional, List
 import httpx, json, os, hashlib, time, sqlite3
 from datetime import datetime
@@ -35,6 +44,124 @@ BASE_DIR      = Path("/opt/windi/w-enterprise-001")
 DATA_DIR      = Path("/opt/windi/data")
 VERA_DB_PATH  = DATA_DIR / "vera_sessions.db"
 ENT_DB_PATH   = DATA_DIR / "enterprise.db"
+
+# ─── ERDBEERE PROTOCOL v1.0 — HALLUCINATION GUARDRAILS ──────────────────────
+# "Für die Sprachmodelle gibt es keine wirkliche Vorstellung von Wahrheit."
+#  — Prof. Hannah Bast, Universität Freiburg
+#
+# VERA uses LLMs. VERA can make the Erdbeere mistake. This is architecturally true.
+# These guardrails enforce PHO principle: AI guides, Human verifies, Ledger seals.
+# ─────────────────────────────────────────────────────────────────────────────
+
+import re
+
+# Factual claim patterns (numbers, dates, legal citations, specific norms)
+FACTUAL_PATTERNS = [
+    r'\b(Art\.|Artikel)\s*\d+',           # Legal articles: Art. 14, Artikel 22
+    r'\b§\s*\d+',                          # German law paragraphs: § 142
+    r'\b\d{1,2}[./]\d{1,2}[./]\d{2,4}\b', # Dates: 01.04.2026, 1/4/2026
+    r'\b\d+\s*(%|Prozent|percent)\b',     # Percentages: 50%, 50 Prozent
+    r'\b\d+[.,]?\d*\s*(EUR|€|USD|\$)\b',  # Money: 5000 EUR, €50.000
+    r'\b(GDPR|DSGVO|DORA|NIS2|MiFID|BaFin|MaRisk|BAIT|EU AI Act)\b',  # Regulations
+    r'\b(Annex|Anhang)\s+[IVX]+',          # Annexes: Annex III
+    r'\b\d+\s*(Tage|days|Stunden|hours|Wochen|weeks)\b',  # Time periods
+]
+
+CONFIDENCE_MARKERS = {
+    'high': ['gemäß', 'according to', 'de acordo com', 'klar definiert', 'clearly defined',
+             'claramente definido', 'explizit', 'explicit', 'explícito', 'mandatory', 'obrigatório'],
+    'low': ['möglicherweise', 'possibly', 'possivelmente', 'könnte', 'could', 'poderia',
+            'wahrscheinlich', 'probably', 'provavelmente', 'unklar', 'unclear', 'pouco claro',
+            'vermutlich', 'presumably', 'presumivelmente', 'sollte', 'should', 'deveria']
+}
+
+def detect_factual_claims(text: str) -> list:
+    """Detect factual claims that require human verification."""
+    claims = []
+    for pattern in FACTUAL_PATTERNS:
+        matches = re.findall(pattern, text, re.IGNORECASE)
+        claims.extend(matches)
+    return list(set(claims))[:5]  # Max 5 unique claims
+
+def estimate_confidence(text: str) -> str:
+    """
+    Estimate confidence level based on language markers.
+    HIGH = Clear legal basis cited, no hedging
+    MED = Some hedging or general statements
+    LOW = Uncertain language or no legal basis
+    """
+    text_lower = text.lower()
+    high_count = sum(1 for m in CONFIDENCE_MARKERS['high'] if m in text_lower)
+    low_count = sum(1 for m in CONFIDENCE_MARKERS['low'] if m in text_lower)
+    has_legal_ref = any(re.search(p, text, re.IGNORECASE) for p in FACTUAL_PATTERNS[:6])
+
+    if high_count >= 2 and has_legal_ref and low_count == 0:
+        return "HIGH"
+    elif low_count >= 2 or (low_count > high_count):
+        return "LOW"
+    return "MED"
+
+def apply_erdbeere_protocol(response: str, language: str = "en") -> dict:
+    """
+    Apply Erdbeere Protocol guardrails to VERA response.
+
+    Returns dict with:
+    - processed_response: Response with disclaimers added
+    - confidence: HIGH/MED/LOW
+    - factual_claims: List of detected claims requiring verification
+    - verification_note: Human verification recommendation
+    """
+    confidence = estimate_confidence(response)
+    factual_claims = detect_factual_claims(response)
+
+    # Verification notes by language and confidence
+    verification_notes = {
+        'HIGH': {
+            'de': '✓ Hohe Konfidenz — Prüfung empfohlen',
+            'en': '✓ High confidence — verification recommended',
+            'pt': '✓ Alta confiança — verificação recomendada'
+        },
+        'MED': {
+            'de': '⚠ Mittlere Konfidenz — Primärquelle prüfen',
+            'en': '⚠ Medium confidence — check primary source',
+            'pt': '⚠ Confiança média — verificar fonte primária'
+        },
+        'LOW': {
+            'de': '⚠ Niedrige Konfidenz — Primärquelle ERFORDERLICH',
+            'en': '⚠ Low confidence — primary source REQUIRED',
+            'pt': '⚠ Baixa confiança — fonte primária OBRIGATÓRIA'
+        }
+    }
+
+    factual_disclaimers = {
+        'de': '\n\n📋 *KI-Einschätzung — bitte verifizieren:* ',
+        'en': '\n\n📋 *AI assessment — please verify:* ',
+        'pt': '\n\n📋 *Avaliação IA — por favor verificar:* '
+    }
+
+    confidence_footers = {
+        'de': f'\n\n---\n**Konfidenz:** {confidence} | {verification_notes[confidence]["de"]}\n*VERA orientiert. Der Mensch entscheidet. Das ist der Kern des PHO.*',
+        'en': f'\n\n---\n**Confidence:** {confidence} | {verification_notes[confidence]["en"]}\n*VERA guides. Human decides. This is the core of PHO.*',
+        'pt': f'\n\n---\n**Confiança:** {confidence} | {verification_notes[confidence]["pt"]}\n*VERA orienta. O humano decide. Este é o núcleo do PHO.*'
+    }
+
+    processed = response
+
+    # Add factual claims disclaimer if claims detected
+    if factual_claims and (confidence in ['MED', 'LOW']):
+        claims_str = ', '.join(str(c) for c in factual_claims[:3])
+        processed += factual_disclaimers.get(language, factual_disclaimers['en']) + claims_str
+
+    # Always add confidence footer
+    processed += confidence_footers.get(language, confidence_footers['en'])
+
+    return {
+        'processed_response': processed,
+        'confidence': confidence,
+        'factual_claims': factual_claims,
+        'verification_note': verification_notes[confidence].get(language, verification_notes[confidence]['en']),
+        'erdbeere_protocol': 'v1.0'
+    }
 
 # ─── REGO v1.1 · CONSTITUIÇÃO DE VERA ───────────────────────────────────────
 VERA_SYSTEM = """You are VERA — Verified Evidence Routing Agent.
@@ -98,6 +225,22 @@ CONSTITUTION VERSION: REGO v1.1
 FORMAT: BRIEFING mode max 4 sentences. End with question or action.
 NEVER: Decide (I9) · Invent articles (R8+I14) · Respond without context (R1) · Silent fallback (XIII)
 ALWAYS: Respond in {language}. Cite legal basis. Declare uncertainty if data missing (VIII).
+
+ERDBEERE PROTOCOL (MANDATORY):
+You are an LLM. LLMs can make counting errors like "Erdbeere has 2 E's" (it has 3).
+You may be wrong. This is not a defect — this is WHY the human decides.
+
+VERA NEVER:
+- Claims to be the primary source. The document, the norm, the ledger are primary sources.
+- States facts with absolute certainty. Use "according to", "based on", "indicates".
+- Counts, calculates, or verifies numbers without explicit disclaimer.
+
+VERA ALWAYS:
+- Guides reasoning, never replaces verification.
+- Declares confidence level when making specific claims.
+- Reminds: "Verify this claim against the original document."
+
+"VERA kann irren. Deshalb entscheidet der Mensch. Deshalb gibt es den Seal."
 """
 
 # ─── DATABASE SETUP ───────────────────────────────────────────────────────────
@@ -303,12 +446,33 @@ class VeraQuery(BaseModel):
     session_count: Optional[int] = 0
     officer_id: Optional[str] = "officer"
 
+    @validator('question')
+    def question_not_empty(cls, v):
+        """I14: Explicit Failure Principle — question cannot be empty."""
+        if not v or not v.strip():
+            raise ValueError('[I14] question cannot be empty — explicit failure required')
+        return v.strip()
+
 class SealOpinionRequest(BaseModel):
     question: str
     vera_response: str
     officer_id: str = "Human Dragon"
     context_id: Optional[str] = None
     language: Optional[str] = "pt"
+
+    @validator('question')
+    def question_not_empty(cls, v):
+        """I14: Explicit Failure Principle — question cannot be empty."""
+        if not v or not v.strip():
+            raise ValueError('[I14] question cannot be empty — explicit failure required')
+        return v.strip()
+
+    @validator('vera_response')
+    def response_not_empty(cls, v):
+        """I14: Explicit Failure Principle — response cannot be empty."""
+        if not v or not v.strip():
+            raise ValueError('[I14] vera_response cannot be empty — explicit failure required')
+        return v.strip()
 
 class SessionClearRequest(BaseModel):
     officer_id: str
@@ -325,7 +489,7 @@ async def vera_health():
     return {
         "status": "operational",
         "agent": "VERA",
-        "version": "1.1.0",
+        "version": "1.2.0",
         "constitution": "REGO v1.1",
         "pillars_normative": ["I","II","III","IV","V","VI","VII","VIII","IX","X"],
         "pillars_operational": ["R1","R2","R3","R4","R5","R6","R7","R8","R9"],
@@ -340,6 +504,13 @@ async def vera_health():
         "enterprise_db_ok": ENT_DB_PATH.exists(),
         "sla_standard_ms": 5000,
         "sla_consensus_ms": 15000,
+        # ERDBEERE PROTOCOL v1.0 — Anti-Hallucination Guardrails
+        "erdbeere_protocol": {
+            "version": "1.0",
+            "active": True,
+            "components": ["confidence_estimation", "factual_claim_detection", "verification_footer"],
+            "principle": "VERA kann irren. Deshalb entscheidet der Mensch."
+        },
         "timestamp": datetime.utcnow().isoformat()
     }
 
@@ -435,12 +606,19 @@ async def vera_chat(query: VeraQuery):
     degraded_reason = None
 
     try:
-        vera_response = await call_ai(system, messages, max_tokens=600)
+        vera_response_raw = await call_ai(system, messages, max_tokens=600)
     except Exception as e:
         # XIII: Explicit degradation, never silent fallback
         degraded_mode = True
         degraded_reason = str(e)
-        vera_response = _degraded_response(language, degraded_reason)
+        vera_response_raw = _degraded_response(language, degraded_reason)
+
+    # ─── ERDBEERE PROTOCOL v1.0 ─────────────────────────────────────────────
+    # "VERA kann irren. Deshalb entscheidet der Mensch."
+    erdbeere_result = apply_erdbeere_protocol(vera_response_raw, language)
+    vera_response = erdbeere_result['processed_response']
+    confidence_level = erdbeere_result['confidence']
+    factual_claims = erdbeere_result['factual_claims']
 
     save_message(officer_id, "vera", vera_response, context_id=query.context_id, shelf=query.shelf)
 
@@ -457,6 +635,7 @@ async def vera_chat(query: VeraQuery):
         "officer_id": officer_id,
         "language": language,
         "vera_response": vera_response,
+        "vera_response_raw": vera_response_raw,  # Original without protocol
         "sealable": not degraded_mode,
         "seal_endpoint": "/enterprise/vera/seal-opinion",
         "session_msgs": len(history) + 2,
@@ -469,7 +648,15 @@ async def vera_chat(query: VeraQuery):
         "sla_exceeded": sla_exceeded,
         # XIII Degraded Mode
         "degraded_mode": degraded_mode,
-        "degraded_reason": degraded_reason
+        "degraded_reason": degraded_reason,
+        # ERDBEERE PROTOCOL v1.0
+        "erdbeere_protocol": {
+            "version": "1.0",
+            "confidence": confidence_level,
+            "factual_claims_detected": factual_claims,
+            "verification_note": erdbeere_result['verification_note'],
+            "principle": "VERA guides. Human decides. Ledger seals."
+        }
     }
 
 def _degraded_response(language: str, reason: str) -> str:
