@@ -37,6 +37,14 @@ from datetime import datetime
 from contextlib import contextmanager
 from pathlib import Path
 
+# §189 — W-CACHE-001 Integration
+from vera_cache import (
+    get_cached_constitution, cache_constitution,
+    get_cached_brief, cache_brief,
+    get_cached_qa, cache_qa, is_cacheable_question,
+    get_vera_cache_metrics
+)
+
 router = APIRouter(prefix="/vera", tags=["VERA"])
 
 # ─── PATHS ───────────────────────────────────────────────────────────────────
@@ -534,7 +542,7 @@ async def vera_health():
     return {
         "status": "operational",
         "agent": "VERA",
-        "version": "1.2.2",
+        "version": "1.3.0",
         "constitution": "REGO v1.1",
         "pillars_normative": ["I","II","III","IV","V","VI","VII","VIII","IX","X"],
         "pillars_operational": ["R1","R2","R3","R4","R5","R6","R7","R8","R9"],
@@ -556,6 +564,32 @@ async def vera_health():
             "components": ["confidence_estimation", "factual_claim_detection", "verification_footer"],
             "principle": "VERA kann irren. Deshalb entscheidet der Mensch."
         },
+        # §189 — W-CACHE-001 Integration
+        "cache_integration": {
+            "enabled": True,
+            "cache_service": "W-CACHE-001 :8160",
+            "cached_endpoints": ["/vera/constitution (L3)", "/vera/brief (L2)", "/vera/chat Q&A (L2)"],
+            "never_cached": ["/vera/seal-opinion", "/vera/chat context-specific"]
+        },
+        "timestamp": datetime.utcnow().isoformat()
+    }
+
+
+@router.get("/cache")
+async def vera_cache_status():
+    """§189: Cache integration status and metrics"""
+    metrics = await get_vera_cache_metrics()
+    return {
+        "status": "ok",
+        "integration": "W-CACHE-001 :8160",
+        "namespace": "vera",
+        "cached_endpoints": {
+            "/vera/constitution": {"tier": "L3_PROVEN", "ttl": "30 days", "invalidation": "PHO seal (Pilar XX)"},
+            "/vera/brief": {"tier": "L2_DETERMINISTIC", "ttl": "1 hour", "invalidation": "daily key rotation"},
+            "/vera/chat": {"tier": "L2_DETERMINISTIC", "ttl": "24 hours", "invalidation": "general Q&A only"}
+        },
+        "never_cached": ["/vera/seal-opinion", "/vera/chat with context_id or shelf"],
+        "metrics": metrics,
         "timestamp": datetime.utcnow().isoformat()
     }
 
@@ -585,6 +619,21 @@ async def clear_officer_session(req: SessionClearRequest):
 
 @router.get("/brief")
 async def vera_brief(language: str = "pt", session_count: int = 0, officer_id: str = "officer"):
+    """Daily briefing — §189: L2 cached (1h TTL, daily key rotation)"""
+    # §189 — Try L2 cache first (saves LLM call ~450ms)
+    cached = await get_cached_brief(language)
+    if cached:
+        # Refresh stats from live desk but keep cached vera_message
+        shelf_ctx = get_shelf_context()
+        cached["stats"] = {
+            "pending_decisions": shelf_ctx["P01_control_room"]["pending_decisions"],
+            "open_challenges": shelf_ctx["P04_lod2_challenges"]["open"],
+            "sealed_receipts": shelf_ctx["P08_ledger"]["receipts_sealed"]
+        }
+        cached["_cache"] = "L2_DETERMINISTIC"
+        cached["timestamp"] = datetime.utcnow().isoformat()
+        return cached
+
     decisions = get_live_decisions()
     shelf_ctx = get_shelf_context()
     mode = get_officer_mode(session_count)
@@ -619,18 +668,36 @@ async def vera_brief(language: str = "pt", session_count: int = 0, officer_id: s
     except Exception:
         vera_text = fallback_msgs.get(language, fallback_msgs["en"])
     save_message(officer_id, "vera", vera_text, shelf="P01")
-    return {"status": "ok", "timestamp": datetime.utcnow().isoformat(), "language": language, "officer_mode": mode,
+    response = {"status": "ok", "timestamp": datetime.utcnow().isoformat(), "language": language, "officer_mode": mode,
             "vera_message": vera_text, "critical": critical_items, "pending": pending_items, "sequence": sequence,
             "stats": {"pending_decisions": shelf_ctx["P01_control_room"]["pending_decisions"],
                       "open_challenges": shelf_ctx["P04_lod2_challenges"]["open"],
                       "sealed_receipts": shelf_ctx["P08_ledger"]["receipts_sealed"]},
             "session_active": True, "rego": "R1 · R2 · R5 · R9"}
 
+    # §189 — Cache brief at L2 (1h TTL)
+    await cache_brief(language, response)
+    response["_cache"] = "MISS"
+    return response
+
 @router.post("/chat")
 async def vera_chat(query: VeraQuery):
+    """§189: L2 cached for general Q&A (what is X?), never cached for context-specific"""
     start_time = time.time()
     officer_id = query.officer_id or "officer"
     language = query.language or "en"
+
+    # §189 — Check if this is a cacheable general Q&A (no context, no shelf)
+    is_general_qa = not query.context_id and not query.shelf and is_cacheable_question(query.question)
+
+    if is_general_qa:
+        cached = await get_cached_qa(query.question, language)
+        if cached:
+            cached["_cache"] = "L2_DETERMINISTIC"
+            cached["timestamp"] = datetime.utcnow().isoformat()
+            cached["latency_ms"] = int((time.time() - start_time) * 1000)
+            return cached
+
     system = build_system_prompt(language, officer_id, query.session_count or 0)
     context_prefix = ""
     if query.shelf:
@@ -671,7 +738,7 @@ async def vera_chat(query: VeraQuery):
     latency_ms = int((time.time() - start_time) * 1000)
     sla_exceeded = latency_ms > 5000
 
-    return {
+    response = {
         "status": "degraded" if degraded_mode else "ok",
         "timestamp": datetime.utcnow().isoformat(),
         "question": query.question,
@@ -701,8 +768,15 @@ async def vera_chat(query: VeraQuery):
             "factual_claims_detected": factual_claims,
             "verification_note": erdbeere_result['verification_note'],
             "principle": "VERA guides. Human decides. Ledger seals."
-        }
+        },
+        "_cache": "MISS"
     }
+
+    # §189 — Cache general Q&A responses at L2
+    if is_general_qa and not degraded_mode:
+        await cache_qa(query.question, language, response)
+
+    return response
 
 def _degraded_response(language: str, reason: str) -> str:
     """XIII: Degraded mode response — explicit, never silent"""
@@ -755,8 +829,16 @@ async def get_sealed_opinions(officer_id: str, limit: int = 20):
 
 @router.get("/constitution")
 async def vera_constitution():
-    """XX: Constitutional transparency — the full REGO v1.1 is publicly auditable"""
-    return {
+    """XX: Constitutional transparency — the full REGO v1.1 is publicly auditable
+    §189: L3 cached — only invalidated on PHO seal (Pilar XX)
+    """
+    # §189 — Try L3 cache first (30-80ms vs 0ms compute, but adds traceability)
+    cached = await get_cached_constitution()
+    if cached:
+        cached["_cache"] = "L3_PROVEN"
+        return cached
+
+    constitution = {
         "agent": "VERA",
         "full_name": "Verified Evidence Routing Agent",
         "constitution": "REGO v1.1",
@@ -805,3 +887,8 @@ async def vera_constitution():
         "verify_constitution": "https://windi-domain.com/enterprise/static/docs/vera-constitution-tech.html",
         "timestamp": datetime.utcnow().isoformat()
     }
+
+    # §189 — Cache at L3 for future requests
+    await cache_constitution(constitution)
+    constitution["_cache"] = "MISS"
+    return constitution
