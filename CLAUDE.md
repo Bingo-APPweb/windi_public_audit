@@ -443,6 +443,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 18 Apr | **§191-F1-COMPLETE** · Berçário Fundação · /authenticate · backup_required · 7 aliases · Ed25519 deferred F1.5 · `a3056a1d` |
 | 17 Apr | **§189 W-CACHE-001 INTEGRATION** · VERA v1.3.0 · L2/L3 tiers · 450ms→30ms · Decisions never cached |
 | 17 Apr | **§188 VERA PRODUCT IDENTITY** · Constitutional decision interface · I9 enforcement · CORE+INVITE+BOUNDARY |
 | 17 Apr | **§187 VERA RESPONSE DISCIPLINE** · Short dialogic output · No internal codes · Mixed-language fix |
@@ -829,6 +830,41 @@ All PHO, approvals, evaluations → unique and traceable.
 - `/opt/windi/w-enterprise-001/vera_agent.py` (v1.3.0)
 - `/opt/windi/w-enterprise-001/vera_cache.py`
 - Commits: `965a6ed4`, `411fb39e`
+
+---
+
+### §191 — Berçário F1-COMPLETE (18 Apr 2026)
+
+**Port:** :8096 · **Invariants:** I1, I9, I11, I14 · **Commit:** `a3056a1d`
+**Conceito:** Fundação do Berçário — nascimento soberano de identidade WINDI.
+
+**Fases §191:**
+| Fase | Nome | Status |
+|------|------|--------|
+| F1 | Fundação | ✅ **COMPLETE** |
+| F2 | Portal Berçário (UI) | 🔜 Pendente |
+| F3 | §173 Fechada | 🔜 Pendente |
+| F4 | Migração | 🔜 Pendente |
+| F5 | Berlin Polish | 🔜 Pendente |
+
+**F1 Implementado:**
+- `/api/genesis/authenticate` — alias semântico para `/login`
+- `birth_method` flag — server (default) / client (WebCrypto futuro)
+- `backup_required: true` — I14 enforcement no response
+- 7 aliases dragon-001 populados em `did_aliases`
+
+**Débito Técnico Anotado:**
+```python
+# TODO-SOVEREIGN: Ed25519 real pendente §191-F1.5
+# Receipt: WINDI-191-ED25519-DEFERRED-20260418
+# NUNCA remover este comentário sem selar F1.5
+```
+
+**Receipts Selados:**
+- `WINDI-191-F1-COMPLETE-20260418221700`
+- `WINDI-191-ED25519-DEFERRED-20260418`
+
+**Testes Passados:** T2, T3, T4, T5, T6, T9
 
 ---
 
