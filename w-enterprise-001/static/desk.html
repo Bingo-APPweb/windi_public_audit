@@ -1207,9 +1207,12 @@ async function sendVeraChat(question = null, shelf = null) {
   STATE.lastVeraQuestion = q;
   const loadingId = addLoading();
   try {
-    // §191-FIX: Pass officer_id to VERA for DID-authenticated mode
+    // §191-FIX: Pass officer_id to VERA for DID-authenticated mode (with fallback)
     const currentDID = typeof WindiDID !== 'undefined' ? WindiDID.get() : null;
-    const body = { question: q, shelf: shelf || STATE.currentShelf, language: STATE.lang, session_count: 5, officer_id: currentDID };
+    const fallbackDID = localStorage.getItem('windi_did') || sessionStorage.getItem('windi_did');
+    const finalDID = currentDID || fallbackDID;
+    console.log('[VERA] DID:', finalDID || 'NONE');
+    const body = { question: q, shelf: shelf || STATE.currentShelf, language: STATE.lang, session_count: 5, officer_id: finalDID };
     if (STATE.currentLupaId) body.context_id = STATE.currentLupaId;
     const res = await fetch('/enterprise/vera/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
     removeLoading(loadingId);
