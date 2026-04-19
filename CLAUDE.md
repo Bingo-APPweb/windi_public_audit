@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.2.25
-**Sealed:** 2026-04-17 · §189 W-CACHE-001 Integration
+**Version:** 2.2.26
+**Sealed:** 2026-04-19 · §191-C Metadata Correction
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -443,6 +443,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 19 Apr | **§191-A/B/C DID GATE AUDIT** · 4 endpoints closed · DID existential validation · I11 annotation chain · 3 receipts · Method demo |
 | 18 Apr | **§191-F1-COMPLETE** · Berçário Fundação · /authenticate · backup_required · 7 aliases · Ed25519 deferred F1.5 · `a3056a1d` |
 | 17 Apr | **§189 W-CACHE-001 INTEGRATION** · VERA v1.3.0 · L2/L3 tiers · 450ms→30ms · Decisions never cached |
 | 17 Apr | **§188 VERA PRODUCT IDENTITY** · Constitutional decision interface · I9 enforcement · CORE+INVITE+BOUNDARY |
@@ -865,6 +866,56 @@ All PHO, approvals, evaluations → unique and traceable.
 - `WINDI-191-ED25519-DEFERRED-20260418`
 
 **Testes Passados:** T2, T3, T4, T5, T6, T9
+
+---
+
+### §191-A/B/C — DID Gate Constitutional Audit (19 Apr 2026)
+
+**Type:** Self-Audit + Hardening · **Invariants:** I9, I11, I-XVI · **Duration:** 6h (14:00→20:15 CET)
+
+**Problem:** Four endpoints accepting anonymous actors, bypassing sovereign human verification.
+**Method:** Two independent AI witnesses (black-box + source inspection), one human decision-maker.
+
+**Timeline:**
+| Time | Action |
+|------|--------|
+| 14:00 | Internal question raised |
+| 14:30 | Black-box probe identifies 4 vulnerable endpoints |
+| 15:00 | Source inspection confirms gate absence |
+| 16:30 | §191-A closure deployed |
+| 17:38 | §191-A sealed in Ledger |
+| 19:00 | Post-closure verification finds residual (DID existential not checked) |
+| 20:00 | §191-B hardening deployed |
+| 20:15 | §191-B sealed in Ledger |
+| 16:23 | §191-C metadata correction sealed (I11 annotation, not rewrite) |
+
+**Receipts:**
+- `WINDI-191-A-GATE-CLOSURE-20260419173822` — 4 endpoints closed
+- `WINDI-191-B-GATE-HARDENING-20260419` — DID existential validation + sealed_local eliminated
+- `WINDI-191-C-METADATA-CORRECTION-20260419162321` — I11 annotation correcting §191-B metadata
+
+**Endpoints Closed:**
+| Endpoint | Fix |
+|----------|-----|
+| POST /api/receipts | Shape validation + DID check |
+| /vera/seal-opinion | DID syntactic + existential validation |
+| /api/pho/approve | DID syntactic + existential validation |
+| /vera/chat | anonymous_read downgrade mode |
+
+**Constitutional Message in Errors:**
+```
+[I-XVI] officer_id DID not found in Genesis Registry — Lei I
+[I9] officer_id must be DID (did:windi:*) or email — Art. 14 EU AI Act
+```
+
+**I11 Principle Applied:**
+> *"We do not rewrite history, we annotate it."*
+
+§191-B had placeholder content_hash. Instead of UPDATE (violates I11), §191-C was issued as annotation with correct SHA-256: `sha256:b235456a95a13b2829256071ccdce48031556fb8848e98fe6058c9fbc2cd4f7e`
+
+**Canonical Content:** `/home/windi/audit/191/191-C-canonical.json`
+
+**Pitch Value:** This audit cycle demonstrates operational method, not just product capability.
 
 ---
 
