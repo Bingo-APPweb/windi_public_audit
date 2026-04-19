@@ -411,21 +411,6 @@ html, body {
 </style>
 <!-- §173 DID SIMPLIFICATION — Single Source of Truth -->
 <script src="/shared/windi-did.js"></script>
-<script>
-// §191-FIX: DID Gate — Check after DOM ready to ensure WindiDID loaded
-document.addEventListener('DOMContentLoaded', function() {
-  setTimeout(function() {
-    const did = typeof WindiDID !== 'undefined' ? WindiDID.get() : null;
-    const fromStorage = localStorage.getItem('windi_did') || sessionStorage.getItem('windi_did');
-    if (!did && !fromStorage) {
-      console.warn('[DID Gate] No DID found, redirecting to /enterprise/');
-      window.location.href = '/enterprise/';
-    } else {
-      console.log('[DID Gate] DID found:', did || fromStorage);
-    }
-  }, 100);
-});
-</script>
 </head>
 <body>
 <div id="topbar">
