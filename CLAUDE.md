@@ -534,6 +534,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 ### P2 — Melhorias
 - [ ] W-ACCT-001 Bridge · W-COMPLY-001 Dashboard · Resend UI
+- [ ] **§193 Security Sensor Integration** — Painel unificado SGV + CIA + SEC · Correlação cruzada · Dashboard NOIR
 
 ### Infra
 - [ ] **Backup DB** — windi_law_identity.db + travel_users.db
