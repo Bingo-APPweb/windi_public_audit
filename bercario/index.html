@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI Berçário · Sovereign Identity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root, [data-theme="noir"] {
+  --noir: #0A0A0B; --noir2: #111114; --noir3: #1A1A1E; --noir4: #222226;
+  --border: rgba(255,255,255,0.07); --borderS: rgba(255,255,255,0.14);
+  --text: #EDEAE2; --muted: #7A7874; --dim: #3E3C3A;
+  --gold: #E8C87A; --goldBg: rgba(232,200,122,0.08); --goldBd: rgba(232,200,122,0.25);
+  --danger: #E05555; --dangerB: rgba(224,85,85,0.12);
+  --ok: #4CAF82; --okB: rgba(76,175,130,0.12);
+  --fd: 'Bricolage Grotesque', Georgia, serif; --fm: 'JetBrains Mono', monospace;
+  --btn-gold-text: #0A0A0B;
+}
+[data-theme="klar"] {
+  --noir: #FAFAF8; --noir2: #F5F4F2; --noir3: #EEEDEB; --noir4: #E5E4E2;
+  --border: rgba(0,0,0,0.08); --borderS: rgba(0,0,0,0.14);
+  --text: #1A1A1A; --muted: #6B6965; --dim: #9E9C98;
+  --gold: #8B7424; --goldBg: rgba(139,116,36,0.08); --goldBd: rgba(139,116,36,0.25);
+  --danger: #C43C3C; --dangerB: rgba(196,60,60,0.10);
+  --ok: #2E8B57; --okB: rgba(46,139,87,0.10);
+  --btn-gold-text: #FAFAF8;
+}
+
+html { font-size: 16px; }
+body { background: var(--noir); color: var(--text); font-family: var(--fd); -webkit-font-smoothing: antialiased; min-height: 100vh; display: flex; flex-direction: column; }
+
+.topbar { position: fixed; top: 0; left: 0; right: 0; height: 56px; background: var(--noir2); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; z-index: 100; }
+.logo { font-size: 1.1rem; font-weight: 700; } .logo span { color: var(--gold); }
+.topbar-right { display: flex; align-items: center; gap: 8px; }
+.theme-toggle, .lang-toggle { display: flex; align-items: center; gap: 4px; padding-left: 12px; border-left: 1px solid var(--border); }
+.theme-btn, .lang-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: transparent; border: 1px solid var(--border); border-radius: 4px; color: var(--muted); font-size: 14px; cursor: pointer; }
+.theme-btn:hover, .lang-btn:hover { color: var(--text); border-color: var(--borderS); }
+.theme-btn.active, .lang-btn.active { background: var(--goldBg); border-color: var(--goldBd); color: var(--gold); }
+.lang-btn { width: auto; padding: 0 8px; font-family: var(--fm); font-size: 10px; font-weight: 500; }
+
+.main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 80px 24px 40px; text-align: center; }
+.view { display: none; width: 100%; max-width: 440px; } .view.active { display: block; }
+
+.steps { display: flex; justify-content: center; gap: 8px; margin-bottom: 2rem; }
+.step { width: 8px; height: 8px; border-radius: 50%; background: var(--border); transition: all 0.3s; }
+.step.active { background: var(--gold); width: 24px; border-radius: 4px; } .step.done { background: var(--ok); }
+
+.hero-icon { font-size: 3.5rem; margin-bottom: 1.5rem; filter: drop-shadow(0 0 20px rgba(232,200,122,0.3)); }
+.hero h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.75rem; }
+.hero p { color: var(--muted); font-size: 1rem; line-height: 1.6; margin-bottom: 2rem; }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 28px; font-family: var(--fd); font-size: 1rem; font-weight: 600; border: none; border-radius: 8px; cursor: pointer; text-decoration: none; transition: all 0.2s; }
+.btn-gold { background: var(--gold); color: var(--btn-gold-text); } .btn-gold:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.btn-link { background: none; border: none; color: var(--muted); font-size: 0.9rem; cursor: pointer; margin-top: 1rem; } .btn-link:hover { color: var(--gold); }
+
+.form-group { margin-bottom: 1.25rem; text-align: left; }
+.form-label { display: block; font-size: 0.85rem; font-weight: 500; color: var(--muted); margin-bottom: 6px; }
+.form-input { width: 100%; padding: 14px 16px; font-family: var(--fd); font-size: 1rem; background: var(--noir2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); }
+.form-input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px var(--goldBg); }
+.form-input::placeholder { color: var(--dim); }
+.form-hint { font-size: 0.75rem; color: var(--dim); margin-top: 4px; }
+
+.spinner { width: 48px; height: 48px; border: 3px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 1.5rem; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.birth-certificate { background: var(--noir2); border: 2px solid var(--goldBd); border-radius: 12px; padding: 24px; margin: 1.5rem 0; text-align: left; }
+.cert-header { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+.cert-field { display: flex; flex-direction: column; margin-bottom: 12px; }
+.cert-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 4px; }
+.cert-value { font-size: 1rem; color: var(--text); }
+.cert-did { font-family: var(--fm); font-size: 0.85rem; color: var(--gold); word-break: break-all; background: var(--noir3); padding: 10px 12px; border-radius: 6px; margin-top: 4px; }
+.cert-seal { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--ok); }
+
+.channels { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 1.5rem 0; }
+.channel { display: flex; align-items: center; gap: 10px; padding: 14px 16px; background: var(--noir2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); text-decoration: none; font-size: 0.9rem; }
+.channel:hover { border-color: var(--gold); background: var(--goldBg); }
+.channel-icon { font-size: 1.2rem; }
+
+.error-msg { background: var(--dangerB); color: var(--danger); padding: 12px 16px; border-radius: 8px; font-size: 0.9rem; margin-bottom: 1rem; display: none; }
+.error-msg.show { display: block; } .error-msg a { color: var(--gold); text-decoration: underline; }
+
+.sacred-moment { background: linear-gradient(135deg, var(--goldBg), transparent); border: 1px solid var(--goldBd); border-radius: 12px; padding: 20px; margin-bottom: 1.5rem; }
+.sacred-text { font-size: 0.9rem; color: var(--gold); font-style: italic; line-height: 1.6; }
+
+.footer { text-align: center; padding: 24px; color: var(--dim); font-size: 0.75rem; }
+.footer a { color: var(--muted); text-decoration: none; } .footer a:hover { color: var(--gold); }
+
+@media (max-width: 480px) { .hero h1 { font-size: 1.5rem; } .topbar { padding: 0 1rem; } .main { padding: 80px 16px 32px; } .channels { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="logo">WINDI <span>Berçário</span></div>
+  <div class="topbar-right">
+    <div class="lang-toggle">
+      <button class="lang-btn" data-lang="pt">PT</button>
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="de">DE</button>
+    </div>
+    <div class="theme-toggle">
+      <button class="theme-btn active" data-theme="noir" title="Dark">&#9790;</button>
+      <button class="theme-btn" data-theme="klar" title="Light">&#9788;</button>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- LANDING -->
+  <section id="view-landing" class="view active">
+    <div class="hero">
+      <div class="hero-icon">&#127793;</div>
+      <h1 data-i18n="landing.title">Your identity begins here</h1>
+      <p data-i18n="landing.subtitle">A sovereign digital identity. One seed. Forever yours.</p>
+      <button class="btn btn-gold" onclick="showView('step1')" data-i18n="landing.cta">Create Identity</button>
+      <button class="btn-link" onclick="showView('login')" data-i18n="landing.login">Already have a DID? Enter</button>
+    </div>
+  </section>
+
+  <!-- STEP 1: WHO ARE YOU? (Name + Email only) -->
+  <section id="view-step1" class="view">
+    <div class="steps"><div class="step active"></div><div class="step"></div><div class="step"></div><div class="step"></div><div class="step"></div></div>
+    <div class="hero-icon">&#128100;</div>
+    <h1 data-i18n="step1.title">Who are you?</h1>
+    <p data-i18n="step1.subtitle">Your identity in the real world.</p>
+    <div id="step1-error" class="error-msg"></div>
+    <form id="form-step1" onsubmit="handleStep1(event)" novalidate>
+      <div class="form-group">
+        <label class="form-label" data-i18n="form.name">Full Name</label>
+        <input type="text" class="form-input" id="input-name" required placeholder="Max Mustermann">
+        <div class="form-hint" data-i18n="form.nameHint">Your legal name</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" data-i18n="form.email">Email</label>
+        <input type="text" class="form-input" id="input-email" required placeholder="max@example.com">
+        <div class="form-hint" data-i18n="form.emailHint">For contact and recovery</div>
+      </div>
+      <button type="submit" class="btn btn-gold" style="width:100%" data-i18n="step1.submit">Continue</button>
+    </form>
+    <button class="btn-link" onclick="showView('landing')" data-i18n="back">Back</button>
+  </section>
+
+  <!-- STEP 1.5: SOVEREIGN NAME (WINDI Identity) -->
+  <section id="view-step1b" class="view">
+    <div class="steps"><div class="step done"></div><div class="step active"></div><div class="step"></div><div class="step"></div><div class="step"></div></div>
+    <div class="hero-icon">&#127919;</div>
+    <h1 data-i18n="step1b.title">Choose your WINDI name</h1>
+    <p data-i18n="step1b.subtitle">How do you want to be known in the WINDI universe?</p>
+    <div id="step1b-error" class="error-msg"></div>
+    <form id="form-step1b" onsubmit="handleStep1b(event)" novalidate>
+      <div class="form-group">
+        <label class="form-label" data-i18n="form.sovereignName">Sovereign Name</label>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="color:var(--muted);font-family:var(--fm);font-size:0.9rem;">did:windi:</span>
+          <input type="text" class="form-input" id="input-sovereign" required placeholder="mustangGPT" style="flex:1" pattern="^[a-zA-Z0-9_-]+$" maxlength="32">
+        </div>
+        <div class="form-hint" data-i18n="form.sovereignHint">Unique. No spaces. This is YOUR public identity.</div>
+        <div id="sovereign-status" style="font-size:0.8rem;margin-top:6px;display:none;"></div>
+      </div>
+      <button type="submit" class="btn btn-gold" style="width:100%" data-i18n="step1b.submit">Continue</button>
+    </form>
+    <button class="btn-link" onclick="showView('step1')" data-i18n="back">Back</button>
+  </section>
+
+  <!-- STEP 2: SOVEREIGN KEY (Passphrase - Sacred Moment) -->
+  <section id="view-step2" class="view">
+    <div class="steps"><div class="step done"></div><div class="step done"></div><div class="step active"></div><div class="step"></div><div class="step"></div></div>
+    <div class="hero-icon">&#128272;</div>
+    <h1 data-i18n="step2.title">Create your Sovereign Key</h1>
+
+    <div class="sacred-moment">
+      <p class="sacred-text" data-i18n="step2.sacred">This is the moment your WINDI identity is born. This key is yours — only yours. Keep it safe.</p>
+    </div>
+
+    <div id="step2-error" class="error-msg"></div>
+    <form id="form-step2" onsubmit="handleStep2(event)" novalidate>
+      <div class="form-group">
+        <label class="form-label" data-i18n="form.passphrase">Sovereign Key</label>
+        <input type="password" class="form-input" id="input-passphrase" required minlength="8" placeholder="••••••••">
+        <div class="form-hint" data-i18n="form.passphraseHint">Minimum 8 characters. This is YOUR key.</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" data-i18n="form.confirm">Confirm Key</label>
+        <input type="password" class="form-input" id="input-confirm" required placeholder="••••••••">
+      </div>
+      <button type="submit" class="btn btn-gold" style="width:100%" data-i18n="step2.submit">Create Identity</button>
+    </form>
+    <button class="btn-link" onclick="showView('step1b')" data-i18n="back">Back</button>
+  </section>
+
+  <!-- STEP 3: GENERATING DID (Spinner) -->
+  <section id="view-step3" class="view">
+    <div class="steps"><div class="step done"></div><div class="step done"></div><div class="step done"></div><div class="step active"></div><div class="step"></div></div>
+    <div class="spinner"></div>
+    <h1 data-i18n="step3.title">Creating your identity...</h1>
+    <p data-i18n="step3.subtitle">Your DID is being generated and sealed.</p>
+  </section>
+
+  <!-- STEP 4: BIRTH CERTIFICATE -->
+  <section id="view-step4" class="view">
+    <div class="steps"><div class="step done"></div><div class="step done"></div><div class="step done"></div><div class="step done"></div><div class="step active"></div></div>
+    <div class="hero-icon">&#127793;</div>
+    <h1 data-i18n="step4.title">Identity Born</h1>
+    <p data-i18n="step4.subtitle">Your sovereign identity is now alive.</p>
+    <div class="birth-certificate">
+      <div class="cert-header"><span>&#128220;</span><span data-i18n="cert.title">Birth Certificate</span></div>
+      <div class="cert-field"><span class="cert-label" data-i18n="cert.name">Name</span><span class="cert-value" id="cert-name"></span></div>
+      <div class="cert-field"><span class="cert-label" data-i18n="cert.sovereign">Sovereign Name</span><span class="cert-value" id="cert-alias" style="color:var(--gold);font-weight:700;font-size:1.2rem;"></span></div>
+      <div class="cert-field"><span class="cert-label" data-i18n="cert.born">Born</span><span class="cert-value" id="cert-timestamp"></span></div>
+      <div class="cert-field" style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
+        <span class="cert-label" data-i18n="cert.did">Technical DID (immutable)</span>
+        <span class="cert-did" id="cert-did" style="font-size:0.75rem;color:var(--muted);"></span>
+      </div>
+      <div class="cert-seal"><span>&#128274;</span><span data-i18n="cert.sealed">Sealed in Forensic Ledger</span></div>
+    </div>
+    <button class="btn btn-gold" onclick="showView('step5')" style="width:100%" data-i18n="step4.continue">Open WINDI Channels</button>
+  </section>
+
+  <!-- STEP 5: MULTI CHANNELS -->
+  <section id="view-step5" class="view">
+    <div class="steps"><div class="step done"></div><div class="step done"></div><div class="step done"></div><div class="step done"></div><div class="step done"></div></div>
+    <div class="hero-icon">&#127919;</div>
+    <h1 data-i18n="step5.title">Welcome to WINDI</h1>
+    <p data-i18n="step5.subtitle">Your DID unlocks all channels.</p>
+    <div class="channels">
+      <a href="/desktop/" class="channel"><span class="channel-icon">&#128187;</span><span>Desktop</span></a>
+      <a href="/enterprise/" class="channel"><span class="channel-icon">&#127970;</span><span>Enterprise</span></a>
+      <a href="/travel/" class="channel"><span class="channel-icon">&#9992;</span><span>Travel</span></a>
+      <a href="/verify-public/" class="channel"><span class="channel-icon">&#128274;</span><span>Verify</span></a>
+    </div>
+    <div style="text-align: center; margin-top: 1.5rem; padding: 16px; background: var(--noir2); border-radius: 8px;">
+      <div style="font-size: 1.1rem; font-weight: 600; color: var(--gold); margin-bottom: 4px;" id="final-sovereign"></div>
+      <div style="font-size: 0.7rem; color: var(--dim); font-family: var(--fm);" id="final-did"></div>
+    </div>
+  </section>
+
+  <!-- LOGIN -->
+  <section id="view-login" class="view">
+    <div class="hero-icon">&#127809;</div>
+    <h1 data-i18n="login.title">Enter your identity</h1>
+    <p data-i18n="login.subtitle">Your sovereign key unlocks access.</p>
+    <div id="login-error" class="error-msg"></div>
+    <form id="form-login" onsubmit="handleLogin(event)" novalidate>
+      <div class="form-group">
+        <label class="form-label" data-i18n="form.emailOrDid">Email or Alias</label>
+        <input type="text" class="form-input" id="login-email" required placeholder="max@example.com or max-001">
+      </div>
+      <div class="form-group">
+        <label class="form-label" data-i18n="form.passphrase">Sovereign Key</label>
+        <input type="password" class="form-input" id="login-passphrase" required placeholder="••••••••">
+      </div>
+      <button type="submit" class="btn btn-gold" style="width:100%" data-i18n="login.submit">Enter</button>
+    </form>
+    <button class="btn-link" onclick="showView('landing')" data-i18n="back">Back</button>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <p>&copy; 2026 WINDI Publishing House &middot; <a href="/verify-public/">Verify</a> &middot; <a href="/enterprise/">Enterprise</a></p>
+</footer>
+
+<script>
+const i18n = {
+  en: {
+    'landing.title': 'Your identity begins here',
+    'landing.subtitle': 'A sovereign digital identity. One seed. Forever yours.',
+    'landing.cta': 'Create Identity',
+    'landing.login': 'Already have a DID? Enter',
+    'step1.title': 'Who are you?',
+    'step1.subtitle': 'Your identity in the real world.',
+    'step1.submit': 'Continue',
+    'step1b.title': 'Choose your WINDI name',
+    'step1b.subtitle': 'How do you want to be known in the WINDI universe?',
+    'step1b.submit': 'Continue',
+    'form.sovereignName': 'Sovereign Name',
+    'form.sovereignHint': 'Unique. No spaces. This is YOUR public identity.',
+    'sovereign.available': '✓ Available',
+    'sovereign.taken': '✗ Already taken',
+    'sovereign.checking': 'Checking...',
+    'error.sovereignRequired': 'Please choose a sovereign name',
+    'error.sovereignInvalid': 'Only letters, numbers, - and _ allowed',
+    'error.sovereignTaken': 'This name is already taken. Choose another.',
+    'step2.title': 'Create your Sovereign Key',
+    'step2.sacred': 'This is the moment your WINDI identity is born. This key is yours — only yours. Keep it safe.',
+    'step2.submit': 'Create Identity',
+    'step3.title': 'Creating your identity...',
+    'step3.subtitle': 'Your DID is being generated and sealed.',
+    'step4.title': 'Identity Born',
+    'step4.subtitle': 'Your sovereign identity is now alive.',
+    'step4.continue': 'Open WINDI Channels',
+    'step5.title': 'Welcome to WINDI',
+    'step5.subtitle': 'Your DID unlocks all channels.',
+    'step5.didLabel': 'Your DID:',
+    'form.name': 'Full Name', 'form.nameHint': 'Your legal name',
+    'form.email': 'Email', 'form.emailHint': 'For contact and recovery',
+    'form.emailOrDid': 'Email or Alias',
+    'form.passphrase': 'Sovereign Key', 'form.passphraseHint': 'Minimum 8 characters. This is YOUR key.',
+    'form.confirm': 'Confirm Key',
+    'cert.title': 'Birth Certificate', 'cert.name': 'Name', 'cert.sovereign': 'Sovereign Name', 'cert.did': 'Technical DID (immutable)', 'cert.born': 'Born', 'cert.sealed': 'Sealed in Forensic Ledger',
+    'login.title': 'Enter your identity', 'login.subtitle': 'Your sovereign key unlocks access.', 'login.submit': 'Enter',
+    'back': 'Back',
+    'error.name': 'Please enter your name', 'error.email': 'Please enter a valid email', 'error.notDID': 'Enter your EMAIL, not a DID!',
+    'error.short': 'Key must be at least 8 characters', 'error.mismatch': 'Keys do not match', 'error.generic': 'Something went wrong.', 'error.invalid': 'Invalid credentials', 'error.goToLogin': 'Go to Login'
+  },
+  pt: {
+    'landing.title': 'A tua identidade começa aqui',
+    'landing.subtitle': 'Uma identidade digital soberana. Uma semente. Para sempre tua.',
+    'landing.cta': 'Criar Identidade',
+    'landing.login': 'Já tens um DID? Entrar',
+    'step1.title': 'Quem és tu?',
+    'step1.subtitle': 'A tua identidade no mundo real.',
+    'step1.submit': 'Continuar',
+    'step1b.title': 'Escolhe o teu nome WINDI',
+    'step1b.subtitle': 'Como queres ser conhecido no universo WINDI?',
+    'step1b.submit': 'Continuar',
+    'form.sovereignName': 'Nome Soberano',
+    'form.sovereignHint': 'Único. Sem espaços. Esta é a TUA identidade pública.',
+    'sovereign.available': '✓ Disponível',
+    'sovereign.taken': '✗ Já existe',
+    'sovereign.checking': 'A verificar...',
+    'error.sovereignRequired': 'Escolhe um nome soberano',
+    'error.sovereignInvalid': 'Apenas letras, números, - e _ permitidos',
+    'error.sovereignTaken': 'Este nome já existe. Escolhe outro.',
+    'step2.title': 'Cria a tua Chave Soberana',
+    'step2.sacred': 'Este é o momento em que a tua identidade WINDI nasce. Esta chave é tua — apenas tua. Guarda-a em segurança.',
+    'step2.submit': 'Criar Identidade',
+    'step3.title': 'A criar a tua identidade...',
+    'step3.subtitle': 'O teu DID está a ser gerado e selado.',
+    'step4.title': 'Identidade Nascida',
+    'step4.subtitle': 'A tua identidade soberana está viva.',
+    'step4.continue': 'Abrir Canais WINDI',
+    'step5.title': 'Bem-vindo ao WINDI',
+    'step5.subtitle': 'O teu DID desbloqueia todos os canais.',
+    'step5.didLabel': 'O teu DID:',
+    'form.name': 'Nome Completo', 'form.nameHint': 'O teu nome legal',
+    'form.email': 'Email', 'form.emailHint': 'Para contacto e recuperação',
+    'form.emailOrDid': 'Email ou Alias',
+    'form.passphrase': 'Chave Soberana', 'form.passphraseHint': 'Mínimo 8 caracteres. Esta chave é TUA.',
+    'form.confirm': 'Confirmar Chave',
+    'cert.title': 'Certidão de Nascimento', 'cert.name': 'Nome', 'cert.sovereign': 'Nome Soberano', 'cert.did': 'DID Técnico (imutável)', 'cert.born': 'Nascido em', 'cert.sealed': 'Selada no Ledger Forense',
+    'login.title': 'Entra na tua identidade', 'login.subtitle': 'A tua chave soberana desbloqueia o acesso.', 'login.submit': 'Entrar',
+    'back': 'Voltar',
+    'error.name': 'Por favor introduz o teu nome', 'error.email': 'Por favor introduz um email válido', 'error.notDID': 'Introduz o teu EMAIL, não o DID!',
+    'error.short': 'A chave deve ter pelo menos 8 caracteres', 'error.mismatch': 'As chaves não coincidem', 'error.generic': 'Algo correu mal.', 'error.invalid': 'Credenciais inválidas', 'error.goToLogin': 'Ir para Login'
+  },
+  de: {
+    'landing.title': 'Deine Identität beginnt hier',
+    'landing.subtitle': 'Eine souveräne digitale Identität. Ein Keim. Für immer deins.',
+    'landing.cta': 'Identität erstellen',
+    'landing.login': 'Bereits ein DID? Einloggen',
+    'step1.title': 'Wer bist du?',
+    'step1.subtitle': 'Deine Identität in der echten Welt.',
+    'step1.submit': 'Weiter',
+    'step1b.title': 'Wähle deinen WINDI-Namen',
+    'step1b.subtitle': 'Wie willst du im WINDI-Universum bekannt sein?',
+    'step1b.submit': 'Weiter',
+    'form.sovereignName': 'Souveräner Name',
+    'form.sovereignHint': 'Einzigartig. Keine Leerzeichen. Das ist DEINE öffentliche Identität.',
+    'sovereign.available': '✓ Verfügbar',
+    'sovereign.taken': '✗ Bereits vergeben',
+    'sovereign.checking': 'Wird geprüft...',
+    'error.sovereignRequired': 'Bitte wähle einen souveränen Namen',
+    'error.sovereignInvalid': 'Nur Buchstaben, Zahlen, - und _ erlaubt',
+    'error.sovereignTaken': 'Dieser Name ist bereits vergeben. Wähle einen anderen.',
+    'step2.title': 'Erstelle deinen Souveränen Schlüssel',
+    'step2.sacred': 'Dies ist der Moment, in dem deine WINDI-Identität geboren wird. Dieser Schlüssel gehört dir — nur dir. Bewahre ihn sicher auf.',
+    'step2.submit': 'Identität erstellen',
+    'step3.title': 'Identität wird erstellt...',
+    'step3.subtitle': 'Dein DID wird generiert und versiegelt.',
+    'step4.title': 'Identität geboren',
+    'step4.subtitle': 'Deine souveräne Identität ist jetzt lebendig.',
+    'step4.continue': 'WINDI-Kanäle öffnen',
+    'step5.title': 'Willkommen bei WINDI',
+    'step5.subtitle': 'Dein DID entsperrt alle Kanäle.',
+    'step5.didLabel': 'Dein DID:',
+    'form.name': 'Vollständiger Name', 'form.nameHint': 'Dein rechtlicher Name',
+    'form.email': 'E-Mail', 'form.emailHint': 'Für Kontakt und Wiederherstellung',
+    'form.emailOrDid': 'E-Mail oder Alias',
+    'form.passphrase': 'Souveräner Schlüssel', 'form.passphraseHint': 'Mindestens 8 Zeichen. Dieser Schlüssel gehört DIR.',
+    'form.confirm': 'Schlüssel bestätigen',
+    'cert.title': 'Geburtsurkunde', 'cert.name': 'Name', 'cert.sovereign': 'Souveräner Name', 'cert.did': 'Technisches DID (unveränderlich)', 'cert.born': 'Geboren am', 'cert.sealed': 'Im Forensic Ledger versiegelt',
+    'login.title': 'In deine Identität eintreten', 'login.subtitle': 'Dein souveräner Schlüssel entsperrt den Zugang.', 'login.submit': 'Eintreten',
+    'back': 'Zurück',
+    'error.name': 'Bitte gib deinen Namen ein', 'error.email': 'Bitte gib eine gültige E-Mail ein', 'error.notDID': 'Gib deine E-MAIL ein, nicht DID!',
+    'error.short': 'Schlüssel muss mindestens 8 Zeichen haben', 'error.mismatch': 'Schlüssel stimmen nicht überein', 'error.generic': 'Etwas ist schiefgelaufen.', 'error.invalid': 'Ungültige Anmeldedaten', 'error.goToLogin': 'Zum Login'
+  }
+};
+
+let currentLang = localStorage.getItem('windi-lang') || 'en';
+let birthData = {};
+
+function t(key) { return (i18n[currentLang] && i18n[currentLang][key]) || key; }
+function applyTranslations() { document.querySelectorAll('[data-i18n]').forEach(el => { const key = el.dataset.i18n; if (i18n[currentLang] && i18n[currentLang][key]) el.textContent = i18n[currentLang][key]; }); }
+
+function initTheme() {
+  const saved = localStorage.getItem('windi-theme') || 'noir';
+  document.documentElement.setAttribute('data-theme', saved);
+  document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.theme === saved));
+}
+function initLang() {
+  const saved = localStorage.getItem('windi-lang') || 'en';
+  currentLang = saved;
+  document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.lang === saved));
+  applyTranslations();
+}
+
+document.querySelectorAll('.theme-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    localStorage.setItem('windi-theme', btn.dataset.theme);
+    document.documentElement.setAttribute('data-theme', btn.dataset.theme);
+    document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    localStorage.setItem('windi-lang', btn.dataset.lang);
+    currentLang = btn.dataset.lang;
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    applyTranslations();
+  });
+});
+
+function showView(viewName) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + viewName).classList.add('active');
+  document.querySelectorAll('.error-msg').forEach(e => { e.classList.remove('show'); e.textContent = ''; });
+}
+
+function showError(formId, msg, showLogin = false) {
+  const el = document.getElementById(formId + '-error');
+  if (el) {
+    el.innerHTML = showLogin ? msg + ' <a href="#" onclick="showView(\'login\'); return false;">' + t('error.goToLogin') + '</a>' : msg;
+    el.classList.add('show');
+  }
+}
+
+function isEmailExistsError(msg) {
+  return ['bereits registriert', 'already registered', 'já registrado', 'already exists'].some(p => msg.toLowerCase().includes(p));
+}
+
+// STEP 1: Name + Email only
+function handleStep1(e) {
+  e.preventDefault();
+  const name = document.getElementById('input-name').value.trim();
+  const email = document.getElementById('input-email').value.trim();
+
+  if (!name || name.length < 2) { showError('step1', t('error.name')); return; }
+  if (email.startsWith('did:')) { showError('step1', t('error.notDID')); return; }
+  if (!email.includes('@')) { showError('step1', t('error.email')); return; }
+
+  birthData.name = name;
+  birthData.email = email;
+  showView('step1b');
+}
+
+// STEP 1.5: Sovereign Name
+let sovereignCheckTimeout = null;
+let lastSovereignCheck = '';
+
+async function checkSovereignAvailability(name) {
+  const statusEl = document.getElementById('sovereign-status');
+  if (!name || name.length < 2) {
+    statusEl.style.display = 'none';
+    return false;
+  }
+
+  statusEl.style.display = 'block';
+  statusEl.style.color = 'var(--muted)';
+  statusEl.textContent = t('sovereign.checking');
+
+  try {
+    const resp = await fetch(`/api/genesis/check-name?name=${encodeURIComponent(name)}`, {
+      method: 'POST'
+    });
+    const data = await resp.json();
+
+    if (data.available) {
+      statusEl.style.color = 'var(--ok)';
+      statusEl.textContent = t('sovereign.available');
+      return true;
+    } else {
+      statusEl.style.color = 'var(--danger)';
+      statusEl.textContent = data.error || t('sovereign.taken');
+      return false;
+    }
+  } catch (err) {
+    statusEl.style.display = 'none';
+    return false;
+  }
+}
+
+// Real-time sovereign name check (initialized after DOM ready)
+function initSovereignCheck() {
+  const input = document.getElementById('input-sovereign');
+  if (input) {
+    input.addEventListener('input', (e) => {
+      const val = e.target.value.trim();
+      if (sovereignCheckTimeout) clearTimeout(sovereignCheckTimeout);
+      if (val !== lastSovereignCheck) {
+        lastSovereignCheck = val;
+        sovereignCheckTimeout = setTimeout(() => checkSovereignAvailability(val), 400);
+      }
+    });
+  }
+}
+
+async function handleStep1b(e) {
+  e.preventDefault();
+  const sovereign = document.getElementById('input-sovereign').value.trim();
+
+  if (!sovereign || sovereign.length < 2) {
+    showError('step1b', t('error.sovereignRequired'));
+    return;
+  }
+
+  // Validate characters (alphanumeric, - and _ only)
+  if (!/^[a-zA-Z0-9_-]+$/.test(sovereign)) {
+    showError('step1b', t('error.sovereignInvalid'));
+    return;
+  }
+
+  // Check availability
+  const available = await checkSovereignAvailability(sovereign);
+  if (!available) {
+    showError('step1b', t('error.sovereignTaken'));
+    return;
+  }
+
+  birthData.sovereignName = sovereign;
+  showView('step2');
+}
+
+// STEP 2: Passphrase (Sacred Moment)
+async function handleStep2(e) {
+  e.preventDefault();
+  const passphrase = document.getElementById('input-passphrase').value;
+  const confirm = document.getElementById('input-confirm').value;
+
+  if (passphrase.length < 8) { showError('step2', t('error.short')); return; }
+  if (passphrase !== confirm) { showError('step2', t('error.mismatch')); return; }
+
+  birthData.passphrase = passphrase;
+  showView('step3');
+
+  try {
+    const resp = await fetch('/api/genesis/birth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: birthData.name,
+        email: birthData.email,
+        passphrase: birthData.passphrase,
+        sovereign_name: birthData.sovereignName
+      })
+    });
+    const data = await resp.json();
+
+    if (!resp.ok) {
+      showView('step2');
+      let errMsg = t('error.generic');
+      if (data.detail) {
+        if (typeof data.detail === 'string') errMsg = data.detail;
+        else if (data.detail.error && data.detail.error[currentLang]) errMsg = data.detail.error[currentLang];
+        else if (data.detail[currentLang]) errMsg = data.detail[currentLang];
+      }
+      showError('step2', errMsg, isEmailExistsError(errMsg));
+      return;
+    }
+
+    // Store sovereign name AND technical DID separately
+    const sovereignName = data.sovereign_name || birthData.sovereignName;
+    birthData.sovereignName = sovereignName;
+    birthData.technicalDid = data.did || data.canonical_did;  // UUID-based, immutable
+    birthData.timestamp = new Date().toLocaleString(currentLang, { dateStyle: 'long', timeStyle: 'short' });
+
+    // Display: sovereign_name prominent, technical DID below
+    document.getElementById('cert-name').textContent = birthData.name;
+    document.getElementById('cert-alias').textContent = sovereignName;  // Human face - prominent
+    document.getElementById('cert-did').textContent = birthData.technicalDid;  // Technical UUID - secondary
+    document.getElementById('cert-timestamp').textContent = birthData.timestamp;
+    document.getElementById('final-sovereign').textContent = sovereignName;  // Step 5 - prominent
+    document.getElementById('final-did').textContent = birthData.technicalDid;  // Step 5 - technical
+
+    showView('step4');
+  } catch (err) {
+    showView('step2');
+    showError('step2', t('error.generic'));
+  }
+}
+
+// LOGIN
+async function handleLogin(e) {
+  e.preventDefault();
+  const identifier = document.getElementById('login-email').value.trim();
+  const passphrase = document.getElementById('login-passphrase').value;
+
+  showView('step3');
+  try {
+    const resp = await fetch('/api/genesis/authenticate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: identifier, passphrase })
+    });
+    const data = await resp.json();
+
+    if (!resp.ok) {
+      showView('login');
+      let errMsg = t('error.invalid');
+      if (data.detail) {
+        if (typeof data.detail === 'string') {
+          errMsg = data.detail;
+        } else if (data.detail.error) {
+          // §191-FIX: Trilingual error with fallback
+          errMsg = data.detail.error[currentLang] || data.detail.error.en || data.detail.error.de || data.detail.error.pt || t('error.invalid');
+        } else if (data.detail.error_code) {
+          errMsg = data.detail.error_code + ' — ' + t('error.invalid');
+        }
+      }
+      console.log('[Login Error]', data.detail, '→', errMsg);
+      showError('login', errMsg);
+      return;
+    }
+    window.location.href = '/desktop/';
+  } catch (err) {
+    showView('login');
+    showError('login', t('error.generic'));
+  }
+}
+
+initTheme();
+initLang();
+initSovereignCheck();
+</script>
+</body>
+</html>
