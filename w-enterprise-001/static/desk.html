@@ -411,6 +411,15 @@ html, body {
 </style>
 <!-- §173 DID SIMPLIFICATION — Single Source of Truth -->
 <script src="/shared/windi-did.js"></script>
+<script>
+// §191-FIX: DID Gate — Redirect to index if no DID
+(function() {
+  const did = typeof WindiDID !== 'undefined' ? WindiDID.get() : null;
+  if (!did) {
+    window.location.href = '/enterprise/';
+  }
+})();
+</script>
 </head>
 <body>
 <div id="topbar">
