@@ -41,7 +41,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse, HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
 # ── VERA Agent Import ─────────────────────────────────────────────────────
 from vera_agent import router as vera_router
@@ -131,9 +131,27 @@ class AIRequest(BaseModel):
     model:      Optional[str]        = None
 
 class PHOApproval(BaseModel):
+    """
+    §191-A: PHO Approval requires sovereign identity.
+    "Human decides" = verified human with DID, not anonymous.
+    Art. 14 EU AI Act.
+    """
     decision_id: str
-    actor:       str = "Human Dragon"
+    actor:       str  # REQUIRED — no default, DID validation below
     note:        Optional[str] = None
+
+    @validator('actor')
+    def actor_must_be_valid_did(cls, v):
+        """§191-A: Lei I — 'Human decides' requires verifiable human identity."""
+        if not v or not v.strip():
+            raise ValueError('[I9] actor required — PHO approval requires identity')
+        v = v.strip()
+        forbidden = {"anon", "anonymous", "unknown", "system", "bot", "test"}
+        if v.lower() in forbidden:
+            raise ValueError(f'[I9] actor "{v}" forbidden — use DID (did:windi:*) or email')
+        if not (v.startswith("did:windi:") or ("@" in v and "." in v)):
+            raise ValueError('[I9] actor must be DID (did:windi:*) or email — Art. 14 EU AI Act')
+        return v
 
 class DocGenRequest(BaseModel):
     doc_type:     str   # privacy_policy | ai_risk | dpia | audit_report | compliance_policy | gdpr_notice

@@ -509,9 +509,26 @@ class VeraQuery(BaseModel):
 class SealOpinionRequest(BaseModel):
     question: str
     vera_response: str
-    officer_id: str = "Human Dragon"
+    officer_id: str  # §191-A: REQUIRED, no default — DID validation below
     context_id: Optional[str] = None
     language: Optional[str] = "pt"
+
+    @validator('officer_id')
+    def officer_must_be_valid_did(cls, v):
+        """
+        §191-A: Lei I — Existência antes de Acção
+        Seal requires sovereign identity. Art. 14 EU AI Act.
+        """
+        if not v or not v.strip():
+            raise ValueError('[I9] officer_id required — cannot seal without identity')
+        v = v.strip()
+        # Must be DID or verified email
+        forbidden = {"anon", "anonymous", "unknown", "system", "bot", "test"}
+        if v.lower() in forbidden:
+            raise ValueError(f'[I9] officer_id "{v}" forbidden — use valid DID (did:windi:*) or email')
+        if not (v.startswith("did:windi:") or ("@" in v and "." in v)):
+            raise ValueError('[I9] officer_id must be DID (did:windi:*) or email — Art. 14 EU AI Act')
+        return v
 
     @validator('question')
     def question_not_empty(cls, v):
@@ -682,10 +699,49 @@ async def vera_brief(language: str = "pt", session_count: int = 0, officer_id: s
 
 @router.post("/chat")
 async def vera_chat(query: VeraQuery):
-    """§189: L2 cached for general Q&A (what is X?), never cached for context-specific"""
+    """
+    §189: L2 cached for general Q&A (what is X?), never cached for context-specific
+    §191-A: Downgrade mode for anonymous — constitutional info only
+    """
     start_time = time.time()
     officer_id = query.officer_id or "officer"
     language = query.language or "en"
+
+    # ═══════════════════════════════════════════════════════════════════════════
+    # §191-A — DID DOWNGRADE MODE
+    # Com DID: raciocínio completo + log Ledger
+    # Sem DID: info constitucional genérica apenas (anonymous_read)
+    # ═══════════════════════════════════════════════════════════════════════════
+    def is_valid_officer(oid: str) -> bool:
+        if not oid:
+            return False
+        forbidden = {"anon", "anonymous", "unknown", "system", "bot", "test", "officer"}
+        if oid.lower() in forbidden:
+            return False
+        return oid.startswith("did:windi:") or ("@" in oid and "." in oid)
+
+    is_authenticated = is_valid_officer(officer_id)
+
+    # Anonymous read: only constitutional/general info, no context, no ledger
+    if not is_authenticated:
+        return {
+            "status": "anonymous_read",
+            "timestamp": datetime.utcnow().isoformat(),
+            "question": query.question,
+            "officer_id": None,
+            "language": language,
+            "vera_response": _anonymous_response(language, query.question),
+            "sealable": False,
+            "anonymous_mode": True,
+            "law": "Lei I — Existência antes de Acção",
+            "upgrade_hint": {
+                "en": "Create a DID at /bercario/ to access full VERA capabilities.",
+                "de": "Erstelle ein DID unter /bercario/ für vollen VERA-Zugang.",
+                "pt": "Cria um DID em /bercario/ para acesso completo à VERA."
+            }.get(language, "Create DID at /bercario/"),
+            "latency_ms": int((time.time() - start_time) * 1000),
+            "_cache": "ANONYMOUS_DOWNGRADE"
+        }
 
     # §189 — Check if this is a cacheable general Q&A (no context, no shelf)
     is_general_qa = not query.context_id and not query.shelf and is_cacheable_question(query.question)
@@ -784,6 +840,74 @@ def _degraded_response(language: str, reason: str) -> str:
         "de": f"⚠️ VERA DEGRADED MODE (XIII)\n\nDer LLM-Gateway ist derzeit nicht verfügbar.\nGrund: {reason}\n\nEmpfohlene Aktion:\n1. Versuchen Sie es in 30 Sekunden erneut\n2. Überprüfen Sie W-GATEWAY-001 (:8130) Status\n3. Dieser Zustand wird protokolliert (I11)\n\nVERA kann ohne KI-Backend nicht beraten, aber diese Degradierung ist dokumentiert.",
         "en": f"⚠️ VERA DEGRADED MODE (XIII)\n\nThe LLM gateway is currently unavailable.\nReason: {reason}\n\nRecommended action:\n1. Retry in 30 seconds\n2. Check W-GATEWAY-001 (:8130) status\n3. This state is logged (I11)\n\nVERA cannot advise without AI backend, but this degradation is documented.",
         "pt": f"⚠️ VERA DEGRADED MODE (XIII)\n\nO gateway LLM está actualmente indisponível.\nMotivo: {reason}\n\nAcção recomendada:\n1. Tenta novamente em 30 segundos\n2. Verifica estado do W-GATEWAY-001 (:8130)\n3. Este estado está registado (I11)\n\nVERA não pode aconselhar sem backend AI, mas esta degradação está documentada."
+    }
+    return responses.get(language, responses["en"])
+
+def _anonymous_response(language: str, question: str) -> str:
+    """
+    §191-A: Anonymous read mode — constitutional info only.
+    No legal advice, no context-specific guidance, no sealing.
+    """
+    responses = {
+        "de": f"""🔒 **ANONYMER LESEMODUS**
+
+Sie haben VERA im anonymen Modus kontaktiert. Ohne verifizierte Identität (DID) kann VERA nur allgemeine Verfassungsinformationen bereitstellen.
+
+**Ihre Frage:** {question[:100]}...
+
+**Was Sie ohne DID erhalten:**
+• Allgemeine Informationen über EU AI Act, GDPR, Compliance
+• Keine kontextbezogene Beratung
+• Keine Speicherung oder Ledger-Versiegelung
+
+**Mit DID erhalten Sie:**
+• Vollständige juristische Orientierung
+• Kontextbezogene Entscheidungsunterstützung
+• PHO-fähige Ledger-Versiegelung (Art. 14 EU AI Act)
+
+➡️ Erstellen Sie Ihr DID unter **/bercario/** um fortzufahren.
+
+*Lei I: Existência antes de Acção*""",
+
+        "en": f"""🔒 **ANONYMOUS READ MODE**
+
+You have contacted VERA in anonymous mode. Without a verified identity (DID), VERA can only provide general constitutional information.
+
+**Your question:** {question[:100]}...
+
+**What you get without DID:**
+• General information about EU AI Act, GDPR, Compliance
+• No context-specific guidance
+• No storage or Ledger sealing
+
+**With DID you get:**
+• Full legal guidance
+• Context-aware decision support
+• PHO-capable Ledger sealing (Art. 14 EU AI Act)
+
+➡️ Create your DID at **/bercario/** to continue.
+
+*Lei I: Existence before Action*""",
+
+        "pt": f"""🔒 **MODO LEITURA ANÓNIMA**
+
+Contactaste a VERA em modo anónimo. Sem identidade verificada (DID), a VERA só pode fornecer informação constitucional geral.
+
+**A tua pergunta:** {question[:100]}...
+
+**O que recebes sem DID:**
+• Informação geral sobre EU AI Act, GDPR, Compliance
+• Sem orientação contextual
+• Sem armazenamento ou selagem no Ledger
+
+**Com DID recebes:**
+• Orientação jurídica completa
+• Suporte de decisão contextual
+• Selagem no Ledger com PHO (Art. 14 EU AI Act)
+
+➡️ Cria o teu DID em **/bercario/** para continuar.
+
+*Lei I: Existência antes de Acção*"""
     }
     return responses.get(language, responses["en"])
 

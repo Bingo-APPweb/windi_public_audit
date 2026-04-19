@@ -319,18 +319,38 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
                     return
 
                 # ═══════════════════════════════════════════════════════════
-                # P0 — Identity Gate (I9 enforcement)
-                # Ledger = registrador, não juiz. Apenas rejeita 'anon'.
-                # Validação complexa pertence ao middleware.
+                # §191-A — CONSTITUTIONAL DID GATE (I9 enforcement)
+                # "Nenhuma acção relevante acontece sem um DID."
+                # Ledger é a RAIZ da verdade. Sem DID válido, nada sela.
+                # 19 Abril 2026 · Liga IA+H
                 # ═══════════════════════════════════════════════════════════
                 actor = r.get("actor", "").strip()
-                if not actor or actor == "anon":
+
+                # Lista de actores proibidos (variações de anónimo)
+                FORBIDDEN_ACTORS = {"anon", "anonymous", "unknown", "system", "bot", "test", ""}
+
+                # Validação: actor deve ser DID válido OU email
+                def is_valid_actor(a: str) -> bool:
+                    if not a or a.lower() in FORBIDDEN_ACTORS:
+                        return False
+                    # DID format: did:windi:*
+                    if a.startswith("did:windi:"):
+                        return len(a) > 10  # did:windi: + pelo menos 1 char
+                    # Email format: *@*
+                    if "@" in a and "." in a:
+                        return True
+                    return False
+
+                if not is_valid_actor(actor):
                     self._json(403, {
                         "ok": False,
-                        "error": "identity_required",
-                        "message": "Cannot seal without identity. actor='anon' forbidden.",
+                        "error": "did_required",
+                        "message": "Ledger requires sovereign identity. Anonymous actors forbidden.",
                         "invariant": "I9",
-                        "hint": "Provide valid DID or email as actor."
+                        "law": "Lei I — Existência antes de Acção",
+                        "article": "Art. 14 EU AI Act",
+                        "hint": "Provide valid DID (did:windi:*) or verified email as actor.",
+                        "examples": ["did:windi:dragon-001", "operator@company.com"]
                     })
                     return
 
