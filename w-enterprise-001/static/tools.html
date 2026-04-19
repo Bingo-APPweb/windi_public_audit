@@ -2074,7 +2074,7 @@ async function sendVera(question = null) {
     const fallbackDID = localStorage.getItem('windi_did') || sessionStorage.getItem('windi_did');
     const finalDID = toolsDID || fallbackDID;
     console.log('[VERA] DID:', finalDID || 'NONE');
-    const body = { question: q, shelf: 'P10', language: 'pt', session_count: 5, officer_id: finalDID };
+    const body = { question: q, shelf: 'P10', language: currentLang, session_count: 5, officer_id: finalDID };
     const res = await fetch('/enterprise/vera/chat', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
