@@ -443,6 +443,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 19 Apr | **W-DEV-API-001 Fix** · :8200 restart · HTML redirect · §193 backlog (SGV+CIA+SEC unification) |
 | 19 Apr | **§191-A/B/C DID GATE AUDIT** · 4 endpoints closed · DID existential validation · I11 annotation · DID-USER-JOURNEY.md · 3 receipts |
 | 18 Apr | **§191-F1-COMPLETE** · Berçário Fundação · /authenticate · backup_required · 7 aliases · Ed25519 deferred F1.5 · `a3056a1d` |
 | 17 Apr | **§189 W-CACHE-001 INTEGRATION** · VERA v1.3.0 · L2/L3 tiers · 450ms→30ms · Decisions never cached |

@@ -6,6 +6,49 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 19 Abr 2026 (Noite) — §193 Backlog + W-DEV-API-001 Fix
+
+**Duração:** ~30 min | **Status:** ✅ SEALED
+**Liga IA+H:** Human Dragon · Guardian (Claude Opus 4.5)
+**Invariants:** I9, I11, I14
+
+### Questão SGV/CIA/SEC
+
+**Pergunta:** Relação entre §193 e sensores SGV, CIA, SENTINEL
+
+**Resposta:** §193 não existia. Os 3 sistemas são distintos:
+| Sistema | Port | Função |
+|---------|------|--------|
+| W-SGV-001 | :8129 | Truth Illumination — ilumina, não bloqueia |
+| W-CIA-001 | — | Constitutional Invariant Architecture — badges I9/I11/I13/G3 |
+| W-SEC-001 | :8144 | Security Sentinel — correlação dual ameaças |
+
+**Acção:** Registado §193 no BACKLOG (P2) para futura integração num painel unificado.
+
+### W-DEV-API-001 Fix
+
+**Problema:** `https://windi-domain.com/dev-api/` retornava HTTP 502
+
+**Diagnóstico:**
+- Porta 8200 não estava a escutar
+- Serviço não estava a correr (provavelmente parou após reboot)
+- Não é systemd, usa nohup
+
+**Fix:**
+```bash
+cd /opt/windi/w-dev-api-001
+nohup python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8200 >> /opt/windi/logs/dev-api.log 2>&1 &
+```
+
+**Melhoria:** Redirect automático `/dev-api/` → `/dev-api/static/index.html`
+
+**Ficheiros alterados:**
+- `/opt/windi/w-dev-api-001/app/main.py` — import RedirectResponse, endpoint `/` redireciona, `/info` para JSON
+
+**Resultado:** HTTP 200 · HTML landing visível · API funcional
+
+---
+
 ## § SESSÃO 17 Abr 2026 (Tarde) — §185 Landing Enterprise + VERA Exhaustion
 
 **Duração:** ~4 horas | **Status:** ✅ SEALED
