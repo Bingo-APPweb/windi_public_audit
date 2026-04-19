@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.2.26
-**Sealed:** 2026-04-19 · §191-C Metadata Correction
+**Version:** 2.2.27
+**Sealed:** 2026-04-19 · §191 DID Gate Audit Complete
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -443,7 +443,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
-| 19 Apr | **§191-A/B/C DID GATE AUDIT** · 4 endpoints closed · DID existential validation · I11 annotation chain · 3 receipts · Method demo |
+| 19 Apr | **§191-A/B/C DID GATE AUDIT** · 4 endpoints closed · DID existential validation · I11 annotation · DID-USER-JOURNEY.md · 3 receipts |
 | 18 Apr | **§191-F1-COMPLETE** · Berçário Fundação · /authenticate · backup_required · 7 aliases · Ed25519 deferred F1.5 · `a3056a1d` |
 | 17 Apr | **§189 W-CACHE-001 INTEGRATION** · VERA v1.3.0 · L2/L3 tiers · 450ms→30ms · Decisions never cached |
 | 17 Apr | **§188 VERA PRODUCT IDENTITY** · Constitutional decision interface · I9 enforcement · CORE+INVITE+BOUNDARY |
@@ -550,146 +550,22 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 ---
 
-## §164-165 W-CACHE-001 + WINDI Portal (13 Apr 2026)
+## §164-184 — Services 13-17 Apr 2026
 
-### §164-§170 — Serviços Core (13-15 Apr 2026)
-
-| § | Serviço | Port | Key |
+| § | Service | Port | Key |
 |---|---------|------|-----|
-| §164 | W-CACHE-001 | :8160 | 4-Tier Cache · L2→L3 Promotion |
+| §164 | W-CACHE-001 | :8160 | 4-Tier Cache · L2→L3 |
 | §165 | WINDI Portal | static | 35 Services · 7 Categories |
-| §167 | W-DID-GENESIS | :8096 | `did:windi:dragon-001` canonical |
-| §170 | W-LAB-001 | :8151 | LOBO · 5 Mini-Games · OVS |
+| §167 | W-DID-GENESIS | :8096 | Sovereign Identity |
+| §168 | VDT Outreach | — | HS Kempten · HNU |
+| §169 | W-SERVICE-CONTROL | :8170 | 29 services · SVG Sentinel |
+| §170 | W-LAB-001 | :8151 | LOBO · 5 Mini-Games |
+| §174 | W-COST-001 | :8152 | Cost Intelligence |
+| §176 | W-SOCIAL-001 | :8133 | I9-P Protocol |
+| §179 | W-LAB/clear | :8151 | Dilemas de Geleia |
+| §184 | W-ACADEMY-001 | :8180 | 5 Modules · PHO Cert |
 
-> **Full details:** `CLAUDE-HISTORY.md` § Services 13-15 Apr
-
-### §174-§179 — Serviços 15-16 Apr 2026
-
-| § | Serviço | Port | Key Feature |
-|---|---------|------|-------------|
-| §174 | W-COST-001 | :8152 | LLM Cost Tracking · Telegram Alerts · Sovereign Routing Economics |
-| §176 | W-SOCIAL-001 | :8133 | Verified Professional Presence · I9-P Protocol · Trilingual |
-| §179 | W-LAB-001/clear | :8151 | Dilemas de Geleia · 4 Archetypes · Memory Loop |
-
-> **Full details:** `CLAUDE-HISTORY.md` § Services 15-16 Apr
-
-### §184 — W-ACADEMY-001: WINDI Institute (17 Apr 2026)
-
-**Port:** :8180 · **Invariants:** I9, I11, I14 · **URL:** `https://windi-domain.com/academy/` (nginx pending)
-**Conceito:** Curso de formação WINDI com W-Enterprise-001 como primeiro capítulo.
-
-**Database Schema (10 tables):**
-`programme` · `module` · `lektion` · `ausbilder` · `teilnehmer` · `enrollment` · `fortschritt` · `assessment` · `zertifikat` · `kohorte`
-
-**W-ENT-001 Curriculum Seeded:**
-| Modul | Título | Lições | Horas |
-|-------|--------|--------|-------|
-| M1 | Die Compliance-Krise | 5 | 2h |
-| M2 | VERA REGO — Die 32 Pilaren | 6 | 3h |
-| M3 | PHO in der Praxis | 6 | 2.5h |
-| M4 | Das Forensic Ledger | 5 | 2h |
-| M5 | Abschlussprojekt | 5 | 3h |
-
-**API Endpoints:** `/api/programme` · `/api/ausbilder` · `/api/teilnehmer` · `/api/enrollment` · `/api/zertifikat`
-**Files:** `/opt/windi/w-academy-001/app.py` · `data/academy.db` · `PROGRAMMSTRUKTUR.md`
-
-### §169 — W-SERVICE-CONTROL: Service Control Panel (14 Apr 2026)
-
-**Port:** :8170 · **Invariants:** I1, I9, I11 · **Commits:** `a763dc3`, `0e02f8c`, `55e1b26`
-**URL:** `https://windi-domain.com/svc-control/`
-**Conceito:** Painel de controlo centralizado para todos os serviços WINDI com I9 Gate.
-
-**Features:**
-- 29 serviços monitorizados (4 categorias: Core, Agents, Dashboards, Support)
-- Status em tempo real (online/degraded/offline/starting)
-- Restart/Stop/Start com I9 Gate (requer DID)
-- Logs viewer (journalctl integration)
-- Link directo para dashboard de cada serviço
-- SEALED services protegidos (Ledger, WINDI-LAW)
-- Auto-fill founder DID (`did:windi:dragon-001`)
-- NOIR/KLAR theme + i18n PT/DE/EN
-- Todas as acções seladas no Forensic Ledger (I11)
-
-**§181 SVG Sentinel — Subsystem Monitoring (16 Apr 2026):**
-| Service | Subsystems | Description |
-|---------|------------|-------------|
-| windi-law | AI Draft ★, Identity Gate ★, Dragon Law | LLM generation, DID auth, Shadow Forest |
-| windi-travel | Identity Gate ★, Workspace ★ | DID wallet, Travel workspace UI |
-| windi-lab | Dilemas de Geleia | Clear cognitive training module |
-
-★ = Critical subsystem (failure triggers alert)
-
-**API Endpoints:**
-- `GET /api/subsystems` — Lista serviços com subsistemas
-- `GET /api/subsystems/{service}` — Status de todos os subsistemas
-- `GET /api/subsystems/{service}/{id}` — Status de um subsistema específico
-
-**SVG Icons:** online (●), offline (⊘), degraded (⚠), blocked (◐), error (?)
-
-**DID Gate:** Sem DID = apenas visualização. Com DID = controlo completo.
-**Files:** `/opt/windi/service-control/app.py` (Flask + HTML inline)
-
-### §168 — VDT Academic Outreach (14 Apr 2026)
-
-**Commit:** `c66fefe` · **Invariants:** I9, I11, I14
-**Conceito:** Verifiable Digital Transformation — colaboração académica com universidades DACH.
-
-**Problema Central (Proof Gap):**
-> *"Sistemas podem documentar transformação. Não podem provar que foi executada."*
-
-**PHO Framework:** Proof of Human Oversight — camada criptográfica para learning systems.
-**Alinhamento:** EU AI Act Art.14 · GDPR Art.22 · GRC Market €65B
-
-**Outreach Enviado:**
-| Universidade | Status | Data | Contactos |
-|--------------|--------|------|-----------|
-| **HS Kempten (IDT)** | ✅ SENT | 14 Apr 16:26 | Prof. Winkler, Prof. Niedermeier, Dr. Müller-Kreiner + 8 CC |
-| **HNU Neu-Ulm (IDT)** | 🟡 PREPARED | — | Prof. Klaus Lang (fundador IDT) |
-| **bidt München** | 📋 RESEARCH | — | Prof. Sabine Pfeiffer (2026) |
-| **OST St. Gallen** | 📋 RESEARCH | — | LeBi Interreg region |
-
-**Ficheiros:**
-```
-/opt/windi/projects/vdt-kempten/
-├── VDT_Konzeptpapier_v1.1_DE.pdf   (b5d073be)
-├── VDT_Concept_Note_v1.1.pdf       (e654807c)
-├── vdt-project-vision-v1.html      (3a467ddc)
-├── outreach-tracker.md
-├── email_hnu_prepared.txt
-├── verification-hashes.txt
-└── tools/send_vdt_email.py
-```
-
-**Estratégia:**
-- Kempten = porta institucional (UE/research/LeBi)
-- HNU = porta prática (KMU/aplicação)
-- Timing: mínimo 4 dias entre envios
-- Follow-up: 7 dias silêncio → email elegante
-
-### §166 — Full Dashboard Audit (13 Apr 2026)
-
-**Commit:** `26b0da2` · **Files:** 7 changed, 2099 insertions
-
-**Problema:** 10 links do Portal retornavam 404 (APIs sem interface web)
-**Solução:** Criar dashboards NOIR/KLAR trilíngues + patch nginx
-
-**Dashboards Criados (6):**
-| Dashboard | Ficheiro | Tamanho |
-|-----------|----------|---------|
-| W-SEC-001 | `/opt/windi/sec-dashboard/index.html` | 17KB |
-| W-JOE-001 | `/opt/windi/joe-dashboard/index.html` | 16KB |
-| W-VD-CUT-001 | `/opt/windi/vdcut-dashboard/index.html` | 16KB |
-| W-VD-MASS-001 | `/opt/windi/vdmass-dashboard/index.html` | 16KB |
-| Ledger Info | `/opt/windi/ledger-info/index.html` | 7KB |
-| Watch Info | `/opt/windi/watch-info/index.html` | 6KB |
-
-**Nginx Patched:** `patch_nginx_dashboards.py`
-- 7 rotas convertidas (proxy → static alias)
-- 2 rotas adicionadas (ledger, audit-dash)
-- fediverse corrigido (proxy path)
-
-**Portal:** `/audit/` → `/audit-dash/` (evitar conflito API)
-**Resultado:** 20/20 serviços operacionais
+> **Full details:** `CLAUDE-HISTORY.md`
 
 ---
 
@@ -715,52 +591,13 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 - OVS — Operator of Verifiable Systems (3 perfis)
 - DASH v4.1 — 9 Prateleiras Trilíngue
 
-### §185 — Erdbeere Protocol v1.0 (17 Apr 2026)
+### §185-186 — Erdbeere Protocol + DID-Genesis Fix (17 Apr 2026)
 
-> *"Für die Sprachmodelle gibt es keine wirkliche Vorstellung von Wahrheit."*
-> — Prof. Hannah Bast, Universität Freiburg
-
-**Problema:** LLMs podem errar como "Erdbeere tem 2 E's" (tem 3). VERA usa LLMs.
-**Solução:** Isso não é defeito — é a razão de existência do PHO.
-
-**3 Guardrails Implementados:**
-| Guardrail | Função |
-|-----------|--------|
-| **Confidence Estimation** | HIGH/MED/LOW em cada resposta |
-| **Factual Claim Detection** | Detecta artigos, datas, números → disclaimer |
-| **Verification Footer** | "VERA orienta. O humano decide. Este é o núcleo do PHO." |
-
-**System Prompt Actualizado:**
-- VERA NUNCA é fonte primária
-- Usa "according to", "based on" — nunca certeza absoluta
-- Lembrete: "Verifique contra documento original"
-
-**Alinhamento com Pilares:**
-- Pilar I: Truth Sovereignty (verify_before_output)
-- Pilar VIII: Risk Containment (if not measurable: skip)
-- Pilar XIV: Multi-LLM Governance (LLM output = untrusted)
-- Pilar XV: Intelligence Consensus (HIGH requires ≥2 models)
-
-**Frase Selada:**
+**Erdbeere:** Anti-hallucination guardrails · Confidence Estimation · Verification Footer
+**DID-Genesis Fix:** `NOHUP_COMMANDS` dict for uvicorn services
 > *"VERA kann irren. Deshalb entscheidet der Mensch. Deshalb gibt es den Seal."*
 
 > **Full details:** `CLAUDE-HISTORY.md` § W-ENTERPRISE-001
-
-### §186 — DID-Genesis Restart Capability (17 Apr 2026)
-
-**Problema:** DID-Genesis (:8096) crashed, users couldn't login to Enterprise.
-**Causa:** Service uses uvicorn, not standard `python3 main.py`.
-**Fix:** Added `NOHUP_COMMANDS` dict to W-SERVICE-CONTROL.
-
-**Implementation:**
-```python
-NOHUP_COMMANDS = {
-    "windi-leads": "python3 -m uvicorn did_genesis:app --host 0.0.0.0 --port 8096",
-}
-```
-
-**Health endpoint fixed:** `8096: "/api/genesis/health"`
-**File:** `/opt/windi/service-control/app.py`
 
 ### §188 — VERA Product Identity (W-VERA-CORE-001)
 
@@ -834,123 +671,25 @@ All PHO, approvals, evaluations → unique and traceable.
 
 ---
 
-### §191 — Berçário F1-COMPLETE (18 Apr 2026)
+### §191 — DID Gate & Berçário (18-19 Apr 2026)
 
-**Port:** :8096 · **Invariants:** I1, I9, I11, I14 · **Commit:** `a3056a1d`
-**Conceito:** Fundação do Berçário — nascimento soberano de identidade WINDI.
+**Port:** :8096 · **Invariants:** I1, I9, I11, I-XVI · **Commits:** `a3056a1d`, `78b903f9`
 
-**Fases §191:**
-| Fase | Nome | Status |
-|------|------|--------|
-| F1 | Fundação | ✅ **COMPLETE** |
-| F2 | Portal Berçário (UI) | 🔜 Pendente |
-| F3 | §173 Fechada | 🔜 Pendente |
-| F4 | Migração | 🔜 Pendente |
-| F5 | Berlin Polish | 🔜 Pendente |
+**§191-F1 Berçário Fundação:** `/api/genesis/authenticate` · `backup_required: true` · 7 aliases
+**§191-A Gate Closure:** 4 endpoints closed (Ledger, VERA, PHO)
+**§191-B Gate Hardening:** `did_exists_in_genesis()` + 502 instead of `sealed_local`
+**§191-C Annotation:** I11 metadata correction
 
-**F1 Implementado:**
-- `/api/genesis/authenticate` — alias semântico para `/login`
-- `birth_method` flag — server (default) / client (WebCrypto futuro)
-- `backup_required: true` — I14 enforcement no response
-- 7 aliases dragon-001 populados em `did_aliases`
+**Receipts:** `WINDI-191-A-GATE-CLOSURE-*` · `WINDI-191-B-GATE-HARDENING-*` · `WINDI-191-C-METADATA-*`
+**Documentation:** `/opt/windi/docs/DID-USER-JOURNEY.md` (628 lines)
 
-**Débito Técnico Anotado:**
-```python
-# TODO-SOVEREIGN: Ed25519 real pendente §191-F1.5
-# Receipt: WINDI-191-ED25519-DEFERRED-20260418
-# NUNCA remover este comentário sem selar F1.5
-```
-
-**Receipts Selados:**
-- `WINDI-191-F1-COMPLETE-20260418221700`
-- `WINDI-191-ED25519-DEFERRED-20260418`
-
-**Testes Passados:** T2, T3, T4, T5, T6, T9
-
----
-
-### §191-A/B/C — DID Gate Constitutional Audit (19 Apr 2026)
-
-**Type:** Self-Audit + Hardening · **Invariants:** I9, I11, I-XVI · **Duration:** 6h (14:00→20:15 CET)
-
-**Problem:** Four endpoints accepting anonymous actors, bypassing sovereign human verification.
-**Method:** Two independent AI witnesses (black-box + source inspection), one human decision-maker.
-
-**Timeline:**
-| Time | Action |
-|------|--------|
-| 14:00 | Internal question raised |
-| 14:30 | Black-box probe identifies 4 vulnerable endpoints |
-| 15:00 | Source inspection confirms gate absence |
-| 16:30 | §191-A closure deployed |
-| 17:38 | §191-A sealed in Ledger |
-| 19:00 | Post-closure verification finds residual (DID existential not checked) |
-| 20:00 | §191-B hardening deployed |
-| 20:15 | §191-B sealed in Ledger |
-| 16:23 | §191-C metadata correction sealed (I11 annotation, not rewrite) |
-
-**Receipts:**
-- `WINDI-191-A-GATE-CLOSURE-20260419173822` — 4 endpoints closed
-- `WINDI-191-B-GATE-HARDENING-20260419` — DID existential validation + sealed_local eliminated
-- `WINDI-191-C-METADATA-CORRECTION-20260419162321` — I11 annotation correcting §191-B metadata
-
-**Endpoints Closed:**
-| Endpoint | Fix |
-|----------|-----|
-| POST /api/receipts | Shape validation + DID check |
-| /vera/seal-opinion | DID syntactic + existential validation |
-| /api/pho/approve | DID syntactic + existential validation |
-| /vera/chat | anonymous_read downgrade mode |
-
-**Constitutional Message in Errors:**
-```
-[I-XVI] officer_id DID not found in Genesis Registry — Lei I
-[I9] officer_id must be DID (did:windi:*) or email — Art. 14 EU AI Act
-```
-
-**I11 Principle Applied:**
-> *"We do not rewrite history, we annotate it."*
-
-§191-B had placeholder content_hash. Instead of UPDATE (violates I11), §191-C was issued as annotation with correct SHA-256: `sha256:b235456a95a13b2829256071ccdce48031556fb8848e98fe6058c9fbc2cd4f7e`
-
-**Canonical Content:** `/home/windi/audit/191/191-C-canonical.json`
-
-**Pitch Value:** This audit cycle demonstrates operational method, not just product capability.
+> **Full details:** `CLAUDE-HISTORY.md` § SESSÃO 19 Abr 2026
 
 ---
 
 ## §184 — Infrastructure Health Audit (17 Apr 2026)
 
-**Tipo:** Emergency Recovery · **Invariants:** I9, I11, I14 · **Duração:** Full Session
-
-**Problema:** 15 serviços WINDI em falha sistémica (httptools incompatível).
-**Causa Raiz:** `httptools` versão errada quebra `uvloop` event loop.
 **Fix Crítico:** `pip3 install --break-system-packages httptools==0.7.1`
+**DECRETO-001:** Requirements Tree com `requirements-base.txt` como TRUNK
 
-**Tiered Restart Protocol Aplicado:**
-| Tier | Serviços | Status |
-|------|----------|--------|
-| 1 - Fundação | Ledger, Dragon Hub, Desktop GEN7 | 🟢 OK |
-| 2 - Entrada | Verify Public, Agent Palette, WINDI Travel | 🟢 OK |
-| 3 - Produtos | WINDI-LAW, Enterprise, Lab, VD-CUT, VD-MASS, JMPG | 🟢 OK |
-| 4 - Observabilidade | Service Control, Cost, Travel Map | 🟢 OK |
-
-**DECRETO-001 Implementado — Requirements Tree:**
-```
-/opt/windi/requirements-base.txt (TRUNK)
-├── /opt/windi/w-enterprise-001/requirements.txt
-├── /opt/windi/windi-law/identity-gate/requirements.txt
-├── /opt/windi/verify-public/requirements.txt
-├── /opt/windi/agent-palette/requirements.txt
-├── /opt/windi/windi-travel/requirements.txt
-├── /opt/windi/desktop-gen7/backend/requirements.txt
-├── /opt/windi/vd-mass/requirements.txt
-└── /opt/windi/comm/requirements.txt (JMPG)
-```
-
-**Dependências Críticas Pinadas:**
-- `httptools==0.7.1` — PINNED (broke services when wrong version)
-- `uvloop>=0.19.0` — async event loop
-- `websockets>=12.0,<14.0` — WebSocket support
-
-> **Full details:** `CLAUDE-HISTORY.md` § Infrastructure Health Audit 17 Apr
+> **Full details:** `CLAUDE-HISTORY.md` § §184
