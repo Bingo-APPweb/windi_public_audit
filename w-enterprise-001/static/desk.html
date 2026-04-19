@@ -1574,6 +1574,19 @@ function updateCalendarBadge() {
 // ═══════════════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════════════
+
+// §194 — Session Identity Bridge: Sync localStorage from cookie-authenticated session
+(async function initIdentity() {
+  if (typeof WindiDID !== 'undefined' && WindiDID.verifySync) {
+    const result = await WindiDID.verifySync();
+    if (result.valid) {
+      console.log('[DESK] Identity synced:', result.did?.substring(0, 25) + '...');
+    } else {
+      console.log('[DESK] Anonymous mode:', result.reason);
+    }
+  }
+})();
+
 initSettings();
 updateClock();
 openShelf('P01');

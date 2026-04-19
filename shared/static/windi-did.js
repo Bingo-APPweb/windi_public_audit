@@ -1,6 +1,7 @@
 /**
  * §173 DID SIMPLIFICATION — Frontend Standard
- * ============================================
+ * §194 SESSION IDENTITY BRIDGE — Cookie→localStorage Sync
+ * ========================================================
  * SINGLE SOURCE OF TRUTH for DID handling in all WINDI frontends.
  *
  * Usage:
@@ -15,7 +16,14 @@
  *       console.log(`Tier: ${result.tier}`);  // ORACLE
  *   }
  *
+ *   // §194 — Sync from authenticated session (cookie → localStorage)
+ *   const session = await WindiDID.sync();
+ *   if (session.synced) {
+ *       console.log(`DID: ${session.did}`);
+ *   }
+ *
  * Principle: "Um DID. Uma fonte. Zero fallbacks."
+ * Security: "Frontend never invents identity — only reflects the backend."
  *
  * Liga IA+H · Kempten, Bavaria · 2026
  */
@@ -31,25 +39,63 @@ const WindiDID = (function() {
     const GENESIS_LOOKUP = '/api/genesis/lookup/';
 
     // ═══════════════════════════════════════════════════════════════════════
-    // STORAGE FUNCTIONS
+    // STORAGE FUNCTIONS — §190 Mobile Private Mode Fix
     // ═══════════════════════════════════════════════════════════════════════
 
     /**
-     * Get the current DID from localStorage.
+     * Check if localStorage is available (fails in iOS Safari Private Mode).
+     * @returns {boolean}
+     */
+    function isStorageAvailable() {
+        try {
+            const test = '__windi_storage_test__';
+            localStorage.setItem(test, test);
+            localStorage.removeItem(test);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    // Cache storage availability check
+    const HAS_LOCAL_STORAGE = isStorageAvailable();
+
+    /**
+     * Get the current DID from localStorage (with sessionStorage fallback for mobile).
      * @returns {string|null} The DID or null if not set
      */
     function get() {
-        return localStorage.getItem(STORAGE_KEY) || null;
+        try {
+            if (HAS_LOCAL_STORAGE) {
+                return localStorage.getItem(STORAGE_KEY) || null;
+            }
+            // Fallback to sessionStorage for private mode
+            return sessionStorage.getItem(STORAGE_KEY) || null;
+        } catch (e) {
+            console.warn('[WindiDID] Storage read error:', e.message);
+            return null;
+        }
     }
 
     /**
-     * Set the DID in localStorage.
+     * Set the DID in localStorage (with sessionStorage fallback for mobile).
      * @param {string} did - The DID to store
      */
     function set(did) {
         if (did && typeof did === 'string' && did.startsWith('did:windi:')) {
-            localStorage.setItem(STORAGE_KEY, did);
-            console.log('[WindiDID] Set:', did.substring(0, 25) + '...');
+            try {
+                if (HAS_LOCAL_STORAGE) {
+                    localStorage.setItem(STORAGE_KEY, did);
+                } else {
+                    // Fallback to sessionStorage for iOS Safari Private Mode
+                    sessionStorage.setItem(STORAGE_KEY, did);
+                    console.log('[WindiDID] Using sessionStorage (private mode)');
+                }
+                console.log('[WindiDID] Set:', did.substring(0, 25) + '...');
+            } catch (e) {
+                console.warn('[WindiDID] Storage write error:', e.message);
+                // Last resort: keep in memory only
+            }
         } else {
             console.warn('[WindiDID] Invalid DID format, not saving');
         }
@@ -59,8 +105,13 @@ const WindiDID = (function() {
      * Clear the DID from localStorage.
      */
     function clear() {
-        localStorage.removeItem(STORAGE_KEY);
-        console.log('[WindiDID] Cleared');
+        try {
+            localStorage.removeItem(STORAGE_KEY);
+            sessionStorage.removeItem(STORAGE_KEY);
+            console.log('[WindiDID] Cleared');
+        } catch (e) {
+            console.warn('[WindiDID] Storage clear error:', e.message);
+        }
     }
 
     /**
@@ -242,6 +293,86 @@ const WindiDID = (function() {
     }
 
     // ═══════════════════════════════════════════════════════════════════════
+    // SESSION SYNC — §194 Identity Bridge
+    // ═══════════════════════════════════════════════════════════════════════
+
+    const SESSION_ME_ENDPOINT = '/api/genesis/me';
+
+    /**
+     * §194 — Sync localStorage from authenticated session (cookie).
+     *
+     * SECURITY PRINCIPLE:
+     * "Frontend never invents identity — only reflects the backend."
+     *
+     * This fetches the DID from the secure cookie-authenticated endpoint
+     * and populates localStorage for frontend use.
+     *
+     * @returns {Promise<Object>} Session info or error
+     */
+    async function sync() {
+        try {
+            const response = await fetch(SESSION_ME_ENDPOINT, {
+                credentials: 'include'  // Include cookies
+            });
+
+            if (!response.ok) {
+                // Not authenticated or session expired
+                if (response.status === 401) {
+                    console.log('[WindiDID] No active session');
+                    return { synced: false, reason: 'not_authenticated' };
+                }
+                return { synced: false, reason: 'error', status: response.status };
+            }
+
+            const data = await response.json();
+
+            if (data.did) {
+                set(data.did);
+                console.log('[WindiDID] Synced from session:', data.did.substring(0, 25) + '...');
+                return {
+                    synced: true,
+                    did: data.did,
+                    display_name: data.display_name,
+                    tier: data.tier,
+                    tier_emoji: data.tier_emoji
+                };
+            }
+
+            return { synced: false, reason: 'no_did_in_response' };
+        } catch (error) {
+            console.warn('[WindiDID] Sync error:', error.message);
+            return { synced: false, reason: 'network_error', error: error.message };
+        }
+    }
+
+    /**
+     * §194 — Check if localStorage DID matches session DID.
+     * Useful for detecting stale localStorage after logout elsewhere.
+     *
+     * @returns {Promise<Object>} Match status
+     */
+    async function verifySync() {
+        const localDid = get();
+        const session = await sync();
+
+        if (!session.synced) {
+            // No session — clear local if exists
+            if (localDid) {
+                console.log('[WindiDID] Session expired, clearing local');
+                clear();
+            }
+            return { valid: false, reason: session.reason };
+        }
+
+        if (localDid !== session.did) {
+            console.log('[WindiDID] Mismatch detected, updating local');
+            set(session.did);
+        }
+
+        return { valid: true, did: session.did, tier: session.tier };
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
     // PUBLIC API
     // ═══════════════════════════════════════════════════════════════════════
 
@@ -265,9 +396,13 @@ const WindiDID = (function() {
         // Migration
         migrateFromLegacy,
 
+        // Session Sync (§194)
+        sync,
+        verifySync,
+
         // Constants
         STORAGE_KEY,
-        VERSION: '1.0.0'
+        VERSION: '1.1.0'  // §194 Session Sync
     };
 })();
 

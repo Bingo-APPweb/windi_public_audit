@@ -1959,6 +1959,18 @@ function loadTemplate(key) {
 loadTemplate('pho');
 initThemeAndLang();
 
+// §194 — Session Identity Bridge: Sync localStorage from cookie-authenticated session
+(async function initIdentity() {
+  if (typeof WindiDID !== 'undefined' && WindiDID.verifySync) {
+    const result = await WindiDID.verifySync();
+    if (result.valid) {
+      console.log('[TOOLS] Identity synced:', result.did?.substring(0, 25) + '...');
+    } else {
+      console.log('[TOOLS] Anonymous mode:', result.reason);
+    }
+  }
+})();
+
 async function onEditorInput() {
   if (docSealed) return;
   const content = document.getElementById('editor-content').innerText;

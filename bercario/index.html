@@ -265,6 +265,8 @@ body { background: var(--noir); color: var(--text); font-family: var(--fd); -web
   <p>&copy; 2026 WINDI Publishing House &middot; <a href="/verify-public/">Verify</a> &middot; <a href="/enterprise/">Enterprise</a></p>
 </footer>
 
+<!-- §194 Session Identity Bridge -->
+<script src="/shared/windi-did.js"></script>
 <script>
 const i18n = {
   en: {
@@ -589,6 +591,12 @@ async function handleStep2(e) {
     document.getElementById('final-sovereign').textContent = sovereignName;  // Step 5 - prominent
     document.getElementById('final-did').textContent = birthData.technicalDid;  // Step 5 - technical
 
+    // §194 — Sync localStorage from session (birth sets cookie automatically)
+    if (typeof WindiDID !== 'undefined') {
+      await WindiDID.sync();
+      console.log('[Berçário] DID synced after birth');
+    }
+
     showView('step4');
   } catch (err) {
     showView('step2');
@@ -628,6 +636,14 @@ async function handleLogin(e) {
       showError('login', errMsg);
       return;
     }
+
+    // §194 — Sync localStorage from authenticated session (server-side source of truth)
+    // This ensures DID comes from backend, not user input (security principle)
+    if (typeof WindiDID !== 'undefined') {
+      await WindiDID.sync();
+      console.log('[Berçário] DID synced from session');
+    }
+
     window.location.href = '/desktop/';
   } catch (err) {
     showView('login');
