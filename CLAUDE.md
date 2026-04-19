@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.2.28
-**Sealed:** 2026-04-20 · §194 Session Identity Bridge
+**Version:** 2.3.0
+**Sealed:** 2026-04-20 · I17 Agency Invariant CANONICAL
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -102,7 +102,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 
 ## 3. Constituição Nuclear
 
-### 3.1 Os 9 Invariantes Activos neste Produto
+### 3.1 Os 12 Invariantes Activos neste Produto
 
 | ID | Nome | Impacto no One Touch |
 |----|------|----------------------|
@@ -117,6 +117,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | I13 | Convergence with Sovereignty | Todo Dragon converge para estrutura/decisão/artefacto. Loop reflexivo proibido. **IRREMEDIÁVEL.** |
 | I14 | Explicit Failure Principle | Dados ausentes = erro explícito. Placeholders mascaram bugs. **IRREMEDIÁVEL.** |
 | I16 | Creator Cartographic Sovereignty | Mapa pertence ao criador. GPS nunca vendido. Publicação = opt-in. |
+| I17 | Session/Identity Separation | Session prova presença. Identity prova agência. Frontend reflete, não cria. |
 | C6 | Invariante Fiscal | IA prepara. Humano aprova. ELSTER envia. Nunca autónomo. |
 
 ### §146 — I14: Proibição de Placeholders (IRREMEDIÁVEL)
@@ -127,6 +128,26 @@ Nenhum endpoint retorna valores default que mascarem dados ausentes.
 **Proibido:** "unknown", "N/A", "?", "---", str(dict), "", None silencioso
 **Correcto:** `response["name"]` → KeyError → diagnóstico imediato
 **Excepção:** I10 LLM Fallback (redundância de infra, não placeholder)
+
+### §194 — I17: Session/Identity Separation (Agency Invariant)
+
+> **"Session proves presence. Identity proves agency."**
+
+**Status:** CANONICAL · IMMUTABLE · ACTIVE
+
+| Conceito | Mecanismo | Função |
+|----------|-----------|--------|
+| **Session** | `windi_did_session` (cookie HttpOnly) | Prova presença activa |
+| **Identity** | `windi_did` (localStorage) | Representa agência no frontend |
+
+**Corolários:**
+- Presença sem identidade → estado anónimo (actividade sem atribuição)
+- Identidade sem presença → estado fantasma (stale, auto-limpo)
+- Presença + identidade sincronizadas → **agência verificável**
+
+**Regra de Segurança:** Frontend nunca cria identidade — apenas reflecte backend.
+**Sincronização:** `WindiDID.sync()` / `verifySync()` garante consistência.
+**Conecta:** I1 (presença controlada) · I9 (agência validada) · I11 (acção comprovável)
 
 ### §150 — W-SEC-001: Security Sentinel
 
@@ -443,6 +464,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 20 Apr | **I17 AGENCY INVARIANT** · Session/Identity Separation · CANONICAL status · v2.3.0 |
 | 20 Apr | **§194 SESSION IDENTITY BRIDGE** · WindiDID.sync() · Cookie→localStorage · VERA authenticated mode fix · `5477ee04` |
 | 19 Apr | **W-DEV-API-001 Fix** · :8200 restart · HTML redirect · §193 backlog (SGV+CIA+SEC unification) |
 | 19 Apr | **§191-A/B/C DID GATE AUDIT** · 4 endpoints closed · DID existential validation · I11 annotation · DID-USER-JOURNEY.md · 3 receipts |
