@@ -27,11 +27,14 @@ Invariants: I1 · I9 · I11 · I14
 VERA Constitution: REGO v1.0 (R1-R9)
 """
 
-import os, time, json, hashlib, uuid, logging
+import os, time, json, hashlib, uuid, logging, sqlite3
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional, Any, List
 from dotenv import load_dotenv
+
+# §191-B — Genesis DB for DID existential validation
+GENESIS_DB_PATH = Path("/opt/windi/did-genesis/did_genesis.db")
 
 # Load .env before reading any env vars
 load_dotenv(Path(__file__).parent / ".env")
@@ -118,6 +121,37 @@ if STATIC_DIR.exists():
 
 
 # ════════════════════════════════════════════════════════
+#  §191-B — DID EXISTENTIAL VALIDATION
+# ════════════════════════════════════════════════════════
+def did_exists_in_genesis(did: str) -> bool:
+    """
+    §191-B FIX 1: Query Genesis DB to verify DID actually exists.
+    Returns True if DID is found and active in Genesis registry.
+    """
+    if not GENESIS_DB_PATH.exists():
+        return True  # Graceful degradation if Genesis unavailable
+
+    try:
+        conn = sqlite3.connect(str(GENESIS_DB_PATH), timeout=3)
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT 1 FROM identities WHERE LOWER(did) = LOWER(?) AND status = 'active' LIMIT 1",
+            (did,)
+        )
+        exists = cursor.fetchone() is not None
+        if not exists:
+            cursor.execute(
+                "SELECT 1 FROM did_aliases WHERE LOWER(alias_actor) = LOWER(?) AND status = 'active' LIMIT 1",
+                (did,)
+            )
+            exists = cursor.fetchone() is not None
+        conn.close()
+        return exists
+    except Exception:
+        return True  # Fail open
+
+
+# ════════════════════════════════════════════════════════
 #  SCHEMAS
 # ════════════════════════════════════════════════════════
 class AIMessage(BaseModel):
@@ -132,8 +166,8 @@ class AIRequest(BaseModel):
 
 class PHOApproval(BaseModel):
     """
-    §191-A: PHO Approval requires sovereign identity.
-    "Human decides" = verified human with DID, not anonymous.
+    §191-A + §191-B: PHO Approval requires sovereign identity that EXISTS.
+    "Human decides" = verified human with DID in Genesis, not anonymous.
     Art. 14 EU AI Act.
     """
     decision_id: str
@@ -142,7 +176,7 @@ class PHOApproval(BaseModel):
 
     @validator('actor')
     def actor_must_be_valid_did(cls, v):
-        """§191-A: Lei I — 'Human decides' requires verifiable human identity."""
+        """§191-A + §191-B: Lei I — 'Human decides' requires verifiable, EXISTING identity."""
         if not v or not v.strip():
             raise ValueError('[I9] actor required — PHO approval requires identity')
         v = v.strip()
@@ -151,6 +185,12 @@ class PHOApproval(BaseModel):
             raise ValueError(f'[I9] actor "{v}" forbidden — use DID (did:windi:*) or email')
         if not (v.startswith("did:windi:") or ("@" in v and "." in v)):
             raise ValueError('[I9] actor must be DID (did:windi:*) or email — Art. 14 EU AI Act')
+
+        # §191-B FIX 1: DID Existential Validation
+        if v.startswith("did:windi:"):
+            if not did_exists_in_genesis(v):
+                raise ValueError(f'[I-XVI] actor DID not found in Genesis Registry — Lei I · {v}')
+
         return v
 
 class DocGenRequest(BaseModel):

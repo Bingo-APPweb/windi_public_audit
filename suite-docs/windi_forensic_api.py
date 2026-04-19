@@ -30,9 +30,11 @@ import json
 import os
 import sys
 import time
+import sqlite3 as _genesis_sql
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse, parse_qs
+from pathlib import Path
 
 # Import the data layer
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -319,9 +321,10 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
                     return
 
                 # ═══════════════════════════════════════════════════════════
-                # §191-A — CONSTITUTIONAL DID GATE (I9 enforcement)
+                # §191-A + §191-B — CONSTITUTIONAL DID GATE (I9 + I-XVI enforcement)
                 # "Nenhuma acção relevante acontece sem um DID."
-                # Ledger é a RAIZ da verdade. Sem DID válido, nada sela.
+                # "DID não é só formato. DID é existência."
+                # Ledger é a RAIZ da verdade. Sem DID válido E EXISTENTE, nada sela.
                 # 19 Abril 2026 · Liga IA+H
                 # ═══════════════════════════════════════════════════════════
                 actor = r.get("actor", "").strip()
@@ -329,27 +332,62 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
                 # Lista de actores proibidos (variações de anónimo)
                 FORBIDDEN_ACTORS = {"anon", "anonymous", "unknown", "system", "bot", "test", ""}
 
+                # §191-B FIX 1: DID Existential Validation
+                GENESIS_DB = Path("/opt/windi/did-genesis/did_genesis.db")
+
+                def did_exists_in_genesis(did: str) -> bool:
+                    """Query Genesis DB to verify DID actually exists."""
+                    if not GENESIS_DB.exists():
+                        return True  # Graceful degradation
+                    try:
+                        conn = _genesis_sql.connect(str(GENESIS_DB), timeout=3)
+                        cursor = conn.cursor()
+                        cursor.execute(
+                            "SELECT 1 FROM identities WHERE LOWER(did) = LOWER(?) AND status = 'active' LIMIT 1",
+                            (did,)
+                        )
+                        exists = cursor.fetchone() is not None
+                        if not exists:
+                            cursor.execute(
+                                "SELECT 1 FROM did_aliases WHERE LOWER(alias_actor) = LOWER(?) AND status = 'active' LIMIT 1",
+                                (did,)
+                            )
+                            exists = cursor.fetchone() is not None
+                        conn.close()
+                        return exists
+                    except Exception:
+                        return True  # Fail open
+
                 # Validação: actor deve ser DID válido OU email
                 def is_valid_actor(a: str) -> bool:
                     if not a or a.lower() in FORBIDDEN_ACTORS:
                         return False
                     # DID format: did:windi:*
                     if a.startswith("did:windi:"):
-                        return len(a) > 10  # did:windi: + pelo menos 1 char
+                        if len(a) <= 10:
+                            return False
+                        # §191-B: Also verify DID exists in Genesis
+                        return did_exists_in_genesis(a)
                     # Email format: *@*
                     if "@" in a and "." in a:
                         return True
                     return False
 
                 if not is_valid_actor(actor):
+                    # Check if it's a format issue or existence issue
+                    error_type = "did_required"
+                    message = "Ledger requires sovereign identity. Anonymous actors forbidden."
+                    if actor.startswith("did:windi:") and len(actor) > 10:
+                        error_type = "did_not_found"
+                        message = f"DID '{actor}' not found in Genesis Registry. Identity must exist before action."
                     self._json(403, {
                         "ok": False,
-                        "error": "did_required",
-                        "message": "Ledger requires sovereign identity. Anonymous actors forbidden.",
-                        "invariant": "I9",
+                        "error": error_type,
+                        "message": message,
+                        "invariant": "I9 + I-XVI",
                         "law": "Lei I — Existência antes de Acção",
                         "article": "Art. 14 EU AI Act",
-                        "hint": "Provide valid DID (did:windi:*) or verified email as actor.",
+                        "hint": "Provide valid DID (did:windi:*) that exists in Genesis, or verified email as actor.",
                         "examples": ["did:windi:dragon-001", "operator@company.com"]
                     })
                     return

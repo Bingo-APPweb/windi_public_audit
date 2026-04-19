@@ -30,6 +30,7 @@
 # ═══════════════════════════════════════════════════════════════════════════
 
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, validator
 from typing import Optional, List
 import httpx, json, os, hashlib, time, sqlite3
@@ -52,6 +53,46 @@ BASE_DIR      = Path("/opt/windi/w-enterprise-001")
 DATA_DIR      = Path("/opt/windi/data")
 VERA_DB_PATH  = DATA_DIR / "vera_sessions.db"
 ENT_DB_PATH   = DATA_DIR / "enterprise.db"
+GENESIS_DB_PATH = Path("/opt/windi/did-genesis/did_genesis.db")
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# §191-B — DID EXISTENTIAL VALIDATION
+# "DID não é só formato. DID é existência."
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def did_exists_in_genesis(did: str) -> bool:
+    """
+    §191-B FIX 1: Query Genesis DB to verify DID actually exists.
+    Returns True if DID is found and active in Genesis registry.
+
+    "Sintaxe valida formato. Existência valida alma."
+    """
+    if not GENESIS_DB_PATH.exists():
+        # Genesis DB not available — fail open with warning
+        # This allows system to work during Genesis downtime
+        return True  # Graceful degradation
+
+    try:
+        conn = sqlite3.connect(str(GENESIS_DB_PATH), timeout=3)
+        cursor = conn.cursor()
+        # Check identities table (canonical DIDs)
+        cursor.execute(
+            "SELECT 1 FROM identities WHERE LOWER(did) = LOWER(?) AND status = 'active' LIMIT 1",
+            (did,)
+        )
+        exists = cursor.fetchone() is not None
+        if not exists:
+            # Also check did_aliases table (legacy actors mapped to DIDs)
+            cursor.execute(
+                "SELECT 1 FROM did_aliases WHERE LOWER(alias_actor) = LOWER(?) AND status = 'active' LIMIT 1",
+                (did,)
+            )
+            exists = cursor.fetchone() is not None
+        conn.close()
+        return exists
+    except Exception:
+        # DB error — fail open (allow operation, log warning)
+        return True
 
 # ─── ERDBEERE PROTOCOL v1.0 — HALLUCINATION GUARDRAILS ──────────────────────
 # "Für die Sprachmodelle gibt es keine wirkliche Vorstellung von Wahrheit."
@@ -516,8 +557,9 @@ class SealOpinionRequest(BaseModel):
     @validator('officer_id')
     def officer_must_be_valid_did(cls, v):
         """
-        §191-A: Lei I — Existência antes de Acção
-        Seal requires sovereign identity. Art. 14 EU AI Act.
+        §191-A + §191-B: Lei I — Existência antes de Acção
+        Seal requires sovereign identity that EXISTS in Genesis.
+        Art. 14 EU AI Act.
         """
         if not v or not v.strip():
             raise ValueError('[I9] officer_id required — cannot seal without identity')
@@ -528,6 +570,13 @@ class SealOpinionRequest(BaseModel):
             raise ValueError(f'[I9] officer_id "{v}" forbidden — use valid DID (did:windi:*) or email')
         if not (v.startswith("did:windi:") or ("@" in v and "." in v)):
             raise ValueError('[I9] officer_id must be DID (did:windi:*) or email — Art. 14 EU AI Act')
+
+        # §191-B FIX 1: DID Existential Validation
+        # If it's a DID, verify it actually exists in Genesis
+        if v.startswith("did:windi:"):
+            if not did_exists_in_genesis(v):
+                raise ValueError(f'[I-XVI] officer_id DID not found in Genesis Registry — Lei I · {v}')
+
         return v
 
     @validator('question')
@@ -913,6 +962,10 @@ Contactaste a VERA em modo anónimo. Sem identidade verificada (DID), a VERA só
 
 @router.post("/seal-opinion")
 async def vera_seal_opinion(req: SealOpinionRequest):
+    """
+    §191-B FIX 2: Ledger failure = 502, never sealed_local
+    "Selo sem Ledger não é selo. É ilusão."
+    """
     ts = datetime.utcnow().isoformat()
     content = f"{req.question}||{req.vera_response}||{req.officer_id}||{ts}"
     content_hash = hashlib.sha256(content.encode()).hexdigest()
@@ -928,14 +981,46 @@ async def vera_seal_opinion(req: SealOpinionRequest):
                       "content_hash": content_hash, "governance_level": "HIGH", "sge_score": 0,
                       "context_id": req.context_id or "", "rego_compliance": "R4 · EU AI Act Art.14 · PHO Evidence"}
     ledger_result = await seal_to_ledger(ledger_payload)
+
+    # §191-B FIX 2: Ledger failure = 502, never "sealed_local"
+    # "sealed_local" was a misleading success state. If Ledger rejects or is unreachable,
+    # the seal did NOT happen — return explicit failure.
+    if not ledger_result.get("ok"):
+        try:
+            with vera_db() as conn:
+                conn.execute("UPDATE vera_sealed_opinions SET ledger_ok=0 WHERE receipt_id=?", (receipt_id,))
+        except Exception:
+            pass
+        return JSONResponse(
+            status_code=502,
+            content={
+                "status": "seal_aborted",
+                "reason": "Ledger unreachable or rejected request",
+                "receipt_id": receipt_id,
+                "content_hash": content_hash,
+                "officer": req.officer_id,
+                "timestamp": ts,
+                "ledger_error": ledger_result.get("error", "unknown"),
+                "invariant": "I11",
+                "law": "Lei I — Existência antes de Acção",
+                "retry_hint": {
+                    "de": "Ledger nicht erreichbar. Versuchen Sie es in 30 Sekunden erneut.",
+                    "en": "Ledger unreachable. Retry in 30 seconds.",
+                    "pt": "Ledger inacessível. Tente novamente em 30 segundos."
+                }
+            }
+        )
+
+    # Ledger confirmed — update local DB
     try:
         with vera_db() as conn:
-            conn.execute("UPDATE vera_sealed_opinions SET ledger_ok=? WHERE receipt_id=?", (1 if ledger_result["ok"] else 0, receipt_id))
+            conn.execute("UPDATE vera_sealed_opinions SET ledger_ok=1 WHERE receipt_id=?", (receipt_id,))
     except Exception:
         pass
-    return {"status": "sealed" if ledger_result["ok"] else "sealed_local", "receipt_id": receipt_id,
+
+    return {"status": "sealed", "receipt_id": receipt_id,
             "content_hash": content_hash, "officer": req.officer_id, "context_id": req.context_id,
-            "timestamp": ts, "verify_url": f"{VERIFY_BASE}{receipt_id}", "ledger_confirmed": ledger_result["ok"],
+            "timestamp": ts, "verify_url": f"{VERIFY_BASE}{receipt_id}", "ledger_confirmed": True,
             "legal_basis": "EU AI Act Art.14 · REGO R4",
             "pho_note": "Esta orientação de VERA está selada como PHO evidence. Imutável no Forensic Ledger WINDI."}
 
