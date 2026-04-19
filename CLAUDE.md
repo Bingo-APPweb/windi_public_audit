@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.2.27
-**Sealed:** 2026-04-19 · §191 DID Gate Audit Complete
+**Version:** 2.2.28
+**Sealed:** 2026-04-20 · §194 Session Identity Bridge
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -443,6 +443,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 20 Apr | **§194 SESSION IDENTITY BRIDGE** · WindiDID.sync() · Cookie→localStorage · VERA authenticated mode fix · `5477ee04` |
 | 19 Apr | **W-DEV-API-001 Fix** · :8200 restart · HTML redirect · §193 backlog (SGV+CIA+SEC unification) |
 | 19 Apr | **§191-A/B/C DID GATE AUDIT** · 4 endpoints closed · DID existential validation · I11 annotation · DID-USER-JOURNEY.md · 3 receipts |
 | 18 Apr | **§191-F1-COMPLETE** · Berçário Fundação · /authenticate · backup_required · 7 aliases · Ed25519 deferred F1.5 · `a3056a1d` |
@@ -536,7 +537,8 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 ### P2 — Melhorias
 - [ ] W-ACCT-001 Bridge · W-COMPLY-001 Dashboard · Resend UI
 - [ ] **§193 Security Sensor Integration** — Painel unificado SGV + CIA + SEC · Correlação cruzada · Dashboard NOIR
-- [ ] **§194 Identity Lifecycle** — Genesis → Classified → Active → Revoked · Activation Flow explícito · Berlin Pitch Slide
+- [x] **§194 Session Identity Bridge** — WindiDID.sync() · Cookie→localStorage · VERA fix · `5477ee04`
+- [ ] **§194.1 Identity Lifecycle** — Genesis → Classified → Active → Revoked · Activation Flow explícito · Berlin Pitch Slide
 
 ### Infra
 - [ ] **Backup DB** — windi_law_identity.db + travel_users.db
