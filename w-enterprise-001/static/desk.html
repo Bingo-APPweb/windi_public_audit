@@ -1207,7 +1207,9 @@ async function sendVeraChat(question = null, shelf = null) {
   STATE.lastVeraQuestion = q;
   const loadingId = addLoading();
   try {
-    const body = { question: q, shelf: shelf || STATE.currentShelf, language: STATE.lang, session_count: 5 };
+    // §191-FIX: Pass officer_id to VERA for DID-authenticated mode
+    const currentDID = typeof WindiDID !== 'undefined' ? WindiDID.get() : null;
+    const body = { question: q, shelf: shelf || STATE.currentShelf, language: STATE.lang, session_count: 5, officer_id: currentDID };
     if (STATE.currentLupaId) body.context_id = STATE.currentLupaId;
     const res = await fetch('/enterprise/vera/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
     removeLoading(loadingId);
@@ -1255,8 +1257,11 @@ function removeLoading(id) { const el = document.getElementById(id); if (el) el.
 
 async function sealLastVera() {
   if (!STATE.lastVeraResponse) return;
+  // §191-FIX: Use actual DID for seal, not hardcoded 'Human Dragon'
+  const sealDID = typeof WindiDID !== 'undefined' ? WindiDID.get() : null;
+  if (!sealDID) { showToast('DID Required', 'Cannot seal without identity. Visit /bercario/'); return; }
   try {
-    const body = { question: STATE.lastVeraQuestion, vera_response: STATE.lastVeraResponse, officer_id: 'Human Dragon', context_id: STATE.currentLupaId || STATE.currentShelf, language: STATE.lang };
+    const body = { question: STATE.lastVeraQuestion, vera_response: STATE.lastVeraResponse, officer_id: sealDID, context_id: STATE.currentLupaId || STATE.currentShelf, language: STATE.lang };
     const res = await fetch('/enterprise/vera/seal-opinion', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
     const data = await res.json();
     showToast(I18N[STATE.lang].toast_sealed, 'Receipt: ' + (data.receipt_id || 'VERA-' + Date.now().toString(16).toUpperCase()));
