@@ -584,6 +584,9 @@ body {
 .wb-input:focus { border-color: var(--gold); }
 .wb-input.error { border-color: var(--danger); }
 .wb-error { font-family: var(--fm); font-size: 10px; color: var(--danger); margin-top: 4px; display: none; }
+.wb-passphrase-wrap { margin-bottom: 12px; text-align: left; margin-top: 8px; }
+.wb-toggle-pass { font-family: var(--fm); font-size: 10px; color: var(--muted); cursor: pointer; text-align: right; margin-top: 4px; }
+.wb-toggle-pass:hover { color: var(--gold); }
 .wb-btn {
   width: 100%; font-family: var(--fm); font-size: 12px; letter-spacing: 1px;
   padding: 12px; background: var(--gold); color: var(--btn-gold-text); border: none;
@@ -706,6 +709,37 @@ body {
   .table-head .th-system, .table-head .th-risk,
   .decision-row .d-system, .decision-row .d-risk { display: none; }
 }
+
+/* §190 Mobile DID Gate Fixes */
+@media (max-width: 768px) {
+  .wb-card { max-width: 100%; margin: 0.5rem; padding: 1.5rem 1rem; }
+  .wb-title { font-size: 1.3rem; }
+  .wb-sub { font-size: 12px; }
+  .wb-input { font-size: 16px !important; } /* Prevents iOS zoom on focus */
+  .wb-label { font-size: 10px; }
+  .wb-btn { font-size: 12px; padding: 12px 20px; }
+  .wb-create { font-size: 11px; }
+  .wb-evangelho { font-size: 11px; padding: 10px; }
+  .wb-steps { padding: 12px; }
+  .wb-step { font-size: 11px; }
+  #session-bar { flex-direction: column; gap: 6px; padding: 8px 12px; }
+  .sb-did { font-size: 10px; word-break: break-all; }
+  .sb-badges { flex-wrap: wrap; justify-content: center; }
+  .sb-badge { font-size: 9px; padding: 3px 8px; }
+  .stats { grid-template-columns: 1fr; }
+  .stat { padding: 0.8rem 1rem; }
+  .stat-val { font-size: 1.3rem; }
+  .page-header { flex-direction: column; gap: 12px; }
+  .page-title { font-size: 1.2rem; }
+}
+
+@media (max-width: 480px) {
+  .wb-card { margin: 0; border-radius: 0; min-height: 100vh; justify-content: center; }
+  .wb-toggles { top: 8px; right: 8px; }
+  .topbar { padding: 0 0.8rem; }
+  .topbar-user span { display: none; }
+  .main { padding: 1rem; }
+}
 </style>
 <!-- §173 DID SIMPLIFICATION — Single Source of Truth -->
 <script src="/shared/windi-did.js"></script>
@@ -736,23 +770,30 @@ body {
     </div>
     <div class="wb-status" id="wb-status"></div>
     <div class="wb-input-wrap">
-      <label class="wb-label" for="did-input" data-i18n="wb_label">Your WINDI DID</label>
+      <label class="wb-label" for="did-input" data-i18n="wb_label">Your identity</label>
       <input class="wb-input" id="did-input" type="text"
-        placeholder="did:windi:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-        autocomplete="off" spellcheck="false">
-      <div class="wb-error" id="wb-error" data-i18n="wb_error">Invalid or expired DID. Check and try again.</div>
+        placeholder="dragon-001"
+        autocomplete="username" spellcheck="false">
+    </div>
+    <div class="wb-passphrase-wrap">
+      <label class="wb-label" for="passphrase-input" data-i18n="wb_pass_label">Passphrase</label>
+      <input class="wb-input" id="passphrase-input" type="password"
+        placeholder="••••••••••••"
+        autocomplete="current-password">
+      <div class="wb-toggle-pass" onclick="togglePassphrase()" data-i18n="wb_show_pass">show</div>
+      <div class="wb-error" id="wb-error" data-i18n="wb_error">Invalid identity or passphrase.</div>
     </div>
     <button class="wb-btn" id="wb-enter-btn" onclick="enterWithDID()" data-i18n="wb_btn">
-      ENTER WITH DID ↗
+      ENTER ↗
     </button>
     <a class="wb-create" href="https://windi-domain.com/wallet/?return=/enterprise/" target="_blank" data-i18n="wb_create">
       Don't have a DID yet? Create your sovereign identity →
     </a>
     <div class="wb-steps">
       <div class="wb-steps-title" data-i18n="wb_steps_title">How to start</div>
-      <div class="wb-step"><span class="wb-step-num">1</span><span data-i18n="wb_step1">Go to windi-domain.com/wallet/ and create your DID</span></div>
-      <div class="wb-step"><span class="wb-step-num">2</span><span data-i18n="wb_step2">Save your DID — it's your permanent key</span></div>
-      <div class="wb-step"><span class="wb-step-num">3</span><span data-i18n="wb_step3">Paste your DID above and enter W-Enterprise</span></div>
+      <div class="wb-step"><span class="wb-step-num">1</span><span data-i18n="wb_step1">Create your identity at windi-domain.com/wallet/</span></div>
+      <div class="wb-step"><span class="wb-step-num">2</span><span data-i18n="wb_step2">Choose your sovereign name (e.g. dragon-001)</span></div>
+      <div class="wb-step"><span class="wb-step-num">3</span><span data-i18n="wb_step3">Enter your name and passphrase above</span></div>
       <div class="wb-step"><span class="wb-step-num">4</span><span data-i18n="wb_step4">VERA recognizes you and guides you through each module</span></div>
     </div>
   </div>
@@ -864,15 +905,6 @@ body {
       Reviewers
     </a>
 
-    <div class="sidebar-section" data-i18n="nav_server">Server Operations</div>
-    <a class="nav-item" href="/sec/dashboard/" target="_blank">
-      <div class="nav-dot" style="background: var(--critical)"></div>
-      🛡 W-SEC-001 · NOIR OPS
-    </a>
-    <a class="nav-item" href="/dev-api/" target="_blank">
-      <div class="nav-dot" style="background: var(--gold)"></div>
-      ⚡ W-DEV-API · Developers
-    </a>
     <a class="nav-item" href="/verify-public/" target="_blank">
       <div class="nav-dot" style="background: var(--ok)"></div>
       ✓ Verify Public
@@ -1082,14 +1114,17 @@ const I18N = {
     wb_title: "Your sovereign identity",
     wb_sub: "To access W-Enterprise you need your WINDI DID.<br>It's your permanent and verifiable key.",
     wb_evangelho: '"WINDI is for everyone. Only works with DID."<br>"A brain doesn\'t work without a Soul. The Soul enters through DID."',
-    wb_label: "Your WINDI DID",
-    wb_error: "Invalid or expired DID. Check and try again.",
-    wb_btn: "ENTER WITH DID ↗",
-    wb_create: "Don't have a DID yet? Create your sovereign identity →",
+    wb_label: "Your identity",
+    wb_pass_label: "Passphrase",
+    wb_show_pass: "show",
+    wb_hide_pass: "hide",
+    wb_error: "Invalid identity or passphrase.",
+    wb_btn: "ENTER ↗",
+    wb_create: "Don't have an identity yet? Create one →",
     wb_steps_title: "How to start",
-    wb_step1: "Go to windi-domain.com/wallet/ and create your DID",
-    wb_step2: "Save your DID — it's your permanent key",
-    wb_step3: "Paste your DID above and enter W-Enterprise",
+    wb_step1: "Create your identity at windi-domain.com/wallet/",
+    wb_step2: "Choose your sovereign name (e.g. dragon-001)",
+    wb_step3: "Enter your name and passphrase above",
     wb_step4: "VERA recognizes you and guides you through each module",
     // Session bar
     sb_did_label: "Active DID:",
@@ -1116,14 +1151,17 @@ const I18N = {
     wb_title: "Deine souveräne Identität",
     wb_sub: "Um auf W-Enterprise zuzugreifen, benötigst du deine WINDI DID.<br>Es ist dein permanenter und verifizierbarer Schlüssel.",
     wb_evangelho: '"WINDI ist für alle. Funktioniert nur mit DID."<br>"Ein Gehirn funktioniert nicht ohne Seele. Die Seele tritt durch DID ein."',
-    wb_label: "Deine WINDI DID",
-    wb_error: "Ungültige oder abgelaufene DID. Überprüfe und versuche es erneut.",
-    wb_btn: "MIT DID EINTRETEN ↗",
-    wb_create: "Noch keine DID? Erstelle deine souveräne Identität →",
+    wb_label: "Deine Identität",
+    wb_pass_label: "Passphrase",
+    wb_show_pass: "zeigen",
+    wb_hide_pass: "verbergen",
+    wb_error: "Ungültige Identität oder Passphrase.",
+    wb_btn: "EINTRETEN ↗",
+    wb_create: "Noch keine Identität? Erstelle eine →",
     wb_steps_title: "So startest du",
-    wb_step1: "Gehe zu windi-domain.com/wallet/ und erstelle deine DID",
-    wb_step2: "Speichere deine DID — sie ist dein permanenter Schlüssel",
-    wb_step3: "Füge deine DID oben ein und betrete W-Enterprise",
+    wb_step1: "Erstelle deine Identität bei windi-domain.com/wallet/",
+    wb_step2: "Wähle deinen souveränen Namen (z.B. dragon-001)",
+    wb_step3: "Gib deinen Namen und deine Passphrase oben ein",
     wb_step4: "VERA erkennt dich und führt dich durch jedes Modul",
     // Session bar
     sb_did_label: "Aktive DID:",
@@ -1150,14 +1188,17 @@ const I18N = {
     wb_title: "A tua identidade soberana",
     wb_sub: "Para aceder ao W-Enterprise precisas do teu DID WINDI.<br>É a tua chave permanente e verificável.",
     wb_evangelho: '"WINDI é para todos. Só funciona com DID."<br>"Um cérebro não funciona sem Alma. A Alma entra pelo DID."',
-    wb_label: "O teu DID WINDI",
-    wb_error: "DID inválido ou expirado. Verifica e tenta novamente.",
-    wb_btn: "ENTRAR COM DID ↗",
-    wb_create: "Ainda não tens DID? Cria a tua identidade soberana →",
+    wb_label: "A tua identidade",
+    wb_pass_label: "Passphrase",
+    wb_show_pass: "mostrar",
+    wb_hide_pass: "esconder",
+    wb_error: "Identidade ou passphrase inválida.",
+    wb_btn: "ENTRAR ↗",
+    wb_create: "Ainda não tens identidade? Cria uma →",
     wb_steps_title: "Como começar",
-    wb_step1: "Acede a windi-domain.com/wallet/ e cria o teu DID",
-    wb_step2: "Guarda o teu DID — é a tua chave permanente",
-    wb_step3: "Cola o DID acima e entra no W-Enterprise",
+    wb_step1: "Cria a tua identidade em windi-domain.com/wallet/",
+    wb_step2: "Escolhe o teu nome soberano (ex: dragon-001)",
+    wb_step3: "Digita o teu nome e passphrase acima",
     wb_step4: "VERA reconhece-te e guia-te por cada módulo",
     // Session bar
     sb_did_label: "DID activo:",
@@ -1233,6 +1274,26 @@ function initLang() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+//  §190 MOBILE FIX — Fetch with Timeout (Bug #6)
+// ═══════════════════════════════════════════════════════════════════════════
+
+async function fetchWithTimeout(url, options = {}, timeoutMs = 10000) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, { ...options, signal: controller.signal });
+    clearTimeout(id);
+    return response;
+  } catch (error) {
+    clearTimeout(id);
+    if (error.name === 'AbortError') {
+      throw new Error('Timeout: servidor não respondeu em ' + (timeoutMs/1000) + 's');
+    }
+    throw error;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 //  DID UNIVERSAL — AS TRÊS LEIS DA SEMENTE
 //  EVANGELHO WINDI: ALMA → DID → CÉREBRO → LEDGER → MUNDO
 //  Lei I:   Existência antes de Acção (WalletBanner mode)
@@ -1252,7 +1313,7 @@ const DID_STATE = {
 async function checkExistingSession() {
   // §167: First check DID Genesis session (sovereign cookie)
   try {
-    const genesisResp = await fetch('/api/genesis/validate', { credentials: 'include' });
+    const genesisResp = await fetchWithTimeout('/api/genesis/validate', { credentials: 'include' }, 8000);
     if (genesisResp.ok) {
       const genesis = await genesisResp.json();
       if (genesis.valid && genesis.did) {
@@ -1291,52 +1352,86 @@ async function checkExistingSession() {
   // No DID → WalletBanner stays visible (Lei I)
 }
 
+// §191 BERÇÁRIO — Toggle passphrase visibility
+function togglePassphrase() {
+  const input = document.getElementById('passphrase-input');
+  const toggle = document.querySelector('.wb-toggle-pass');
+  if (input.type === 'password') {
+    input.type = 'text';
+    toggle.textContent = t('wb_hide_pass');
+  } else {
+    input.type = 'password';
+    toggle.textContent = t('wb_show_pass');
+  }
+}
+
 async function enterWithDID() {
-  const did = document.getElementById('did-input').value.trim();
+  // §191 BERÇÁRIO — Login via Genesis with passphrase
+  const identity = document.getElementById('did-input').value.trim().toLowerCase();
+  const passphrase = document.getElementById('passphrase-input').value;
   const statusEl = document.getElementById('wb-status');
   const inputEl = document.getElementById('did-input');
+  const passEl = document.getElementById('passphrase-input');
   const errorEl = document.getElementById('wb-error');
   const btn = document.getElementById('wb-enter-btn');
 
-  if (!did || did.length < 10) {
+  // §191: Accept sovereign_name (min 3 chars) or email or full DID
+  if (!identity || identity.length < 3) {
     inputEl.classList.add('error');
     errorEl.style.display = 'block';
     return;
   }
 
+  if (!passphrase || passphrase.length < 8) {
+    passEl.classList.add('error');
+    errorEl.style.display = 'block';
+    return;
+  }
+
   inputEl.classList.remove('error');
+  passEl.classList.remove('error');
   errorEl.style.display = 'none';
   statusEl.className = 'wb-status checking';
   statusEl.textContent = t('status_checking');
   btn.disabled = true;
 
   try {
-    const resp = await fetch(`/enterprise/vera/did/validate/${encodeURIComponent(did)}`);
+    // §191: Call Genesis login endpoint
+    const resp = await fetchWithTimeout('/api/genesis/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ did: identity, passphrase: passphrase })
+    }, 10000);
+
     const data = await resp.json();
 
-    if (data.status === 'success' && data.validation && data.validation.valid) {
+    if (data.success) {
       statusEl.className = 'wb-status success';
       statusEl.textContent = t('status_success');
 
-      DID_STATE.did = did;
-      DID_STATE.tier = data.validation.tier || 'SEED';
+      // §191: Use canonical DID from Genesis (sovereign_name resolved to full DID)
+      const canonicalDID = data.did.startsWith('did:windi:') ? data.did : `did:windi:${data.did}`;
+
+      DID_STATE.did = canonicalDID;
+      DID_STATE.tier = data.tier || 'SEED';
       DID_STATE.verified = true;
 
       // §173 — Single source of truth
       const previousDID = WindiDID.get();
       if (!previousDID) {
-        DID_STATE.status = 'nasceu'; // First time ever
-      } else if (previousDID === did) {
-        DID_STATE.status = 'voltou'; // Same DID returning
+        DID_STATE.status = 'nasceu';
+      } else if (previousDID === canonicalDID) {
+        DID_STATE.status = 'voltou';
       } else {
-        DID_STATE.status = 'entrou'; // Different DID
+        DID_STATE.status = 'entrou';
       }
 
-      // §173 — Single source of truth
-      WindiDID.set(did);
+      // §173 — Store canonical DID
+      WindiDID.set(canonicalDID);
 
       // Restore context (Lei III)
-      await restoreContext(did);
+      await restoreContext(canonicalDID);
 
       // Success animation
       await sleep(800);
@@ -1344,34 +1439,26 @@ async function enterWithDID() {
 
     } else {
       statusEl.className = 'wb-status fail';
-      statusEl.textContent = data.validation?.error || t('status_fail');
+      // §191 I12: Extract error message in current language
+      const err = data.detail?.error || data.detail;
+      const errMsg = (typeof err === 'object' && err !== null)
+        ? (err[LANG] || err.en || err.pt || t('wb_error'))
+        : (err || t('wb_error'));
+      statusEl.textContent = errMsg;
       btn.disabled = false;
     }
   } catch (e) {
-    // Graceful degradation: allow local validation
-    if (did.startsWith('did:windi:') && did.length > 20) {
-      statusEl.className = 'wb-status success';
-      statusEl.textContent = t('status_local');
-      DID_STATE.did = did;
-      DID_STATE.tier = 'SEED';
-      DID_STATE.verified = true;
-      DID_STATE.status = 'entrou';
-      // §173 — Single source of truth
-      WindiDID.set(did);
-      await sleep(600);
-      unlockDashboard();
-    } else {
-      statusEl.className = 'wb-status fail';
-      statusEl.textContent = t('status_error');
-      btn.disabled = false;
-    }
+    console.error('[§191] Login error:', e);
+    statusEl.className = 'wb-status fail';
+    statusEl.textContent = t('status_error');
+    btn.disabled = false;
   }
 }
 
 // ─── LEI III: RESTORE CONTEXT ───
 async function restoreContext(did) {
   try {
-    const resp = await fetch(`/enterprise/vera/did/context/${encodeURIComponent(did)}`);
+    const resp = await fetchWithTimeout(`/enterprise/vera/did/context/${encodeURIComponent(did)}`, {}, 10000);
     const data = await resp.json();
 
     if (data.status === 'success' && data.context) {
@@ -1400,8 +1487,19 @@ async function restoreContext(did) {
       }
     }
   } catch (e) {
-    console.log('[Lei III] Context restoration unavailable:', e.message);
-    // Continue with local state
+    // §190 I14 Fix: Explicit failure, not silent
+    console.warn('[Lei III] Context restoration failed:', e.message);
+    // Set default VERA greeting for offline mode
+    const greetingEl = document.getElementById('vera-greeting-text');
+    if (greetingEl) {
+      const lang = localStorage.getItem('windi-lang') || 'en';
+      const offlineMsg = {
+        en: 'Welcome. Context service is temporarily unavailable. You can still use the dashboard.',
+        de: 'Willkommen. Kontext-Service ist vorübergehend nicht verfügbar. Sie können das Dashboard weiterhin nutzen.',
+        pt: 'Bem-vindo. O serviço de contexto está temporariamente indisponível. Pode continuar a usar o dashboard.'
+      };
+      greetingEl.textContent = offlineMsg[lang] || offlineMsg.en;
+    }
   }
 }
 
@@ -1750,6 +1848,29 @@ function closeOnBg(e, id) {
 renderDecisions();
 renderAudit();
 updateStats();
+
+// §194 — Staff footer visibility (ORACLE/SOVEREIGN only)
+(async function initStaffFooter() {
+  const footer = document.getElementById('staff-footer');
+  if (!footer) return;
+
+  if (typeof WindiDID !== 'undefined' && WindiDID.verifySync) {
+    const session = await WindiDID.verifySync();
+    if (session.valid && (session.tier === 'ORACLE' || session.tier === 'SOVEREIGN')) {
+      footer.style.display = 'flex';
+      console.log('[STAFF] Footer visible for tier:', session.tier);
+    }
+  }
+})();
 </script>
+
+<!-- STAFF FOOTER (ORACLE/SOVEREIGN only) -->
+<footer id="staff-footer" style="display:none; position:fixed; bottom:0; left:0; right:0; height:32px; background:var(--bg-deep); border-top:1px solid var(--border); padding:0 16px; align-items:center; justify-content:flex-end; gap:16px; font-size:11px; color:var(--text-3); z-index:100;">
+  <span style="opacity:0.5">STAFF</span>
+  <a href="/svc-control/" target="_blank" style="color:var(--text-2); text-decoration:none;">⚙ Services</a>
+  <a href="/sec/dashboard/" target="_blank" style="color:var(--critical); text-decoration:none;">🛡 SEC</a>
+  <a href="/dev-api/" target="_blank" style="color:var(--gold); text-decoration:none;">⚡ API</a>
+  <a href="/portal/" target="_blank" style="color:var(--text-2); text-decoration:none;">◉ Portal</a>
+</footer>
 </body>
 </html>
