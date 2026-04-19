@@ -12,6 +12,7 @@ import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import RedirectResponse
 
 from app.routers import health, auth, artifacts, seals, receipts, verify, keys
 from app.db.session import init_db
@@ -75,6 +76,16 @@ if os.path.isdir(static_dir):
 # ── Root ──────────────────────────────────────────────────
 @app.get("/")
 def root():
+    return RedirectResponse(url="/dev-api/static/index.html", status_code=302)
+
+
+@app.get("/access")
+def access_page():
+    return RedirectResponse(url="/dev-api/static/access.html", status_code=302)
+
+
+@app.get("/info")
+def info():
     return {
         "service": "W-DEV-API-001",
         "version": "1.0.0",
