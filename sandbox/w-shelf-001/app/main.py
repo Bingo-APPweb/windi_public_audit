@@ -589,6 +589,197 @@ def list_artifacts(limit: int = 20):
     return {"artifacts": cards[:limit], "total": len(cards)}
 
 # ══════════════════════════════════════════════════════════════════════
+# CODEX MOCK — Intelligent Simulation (Phase B)
+# ══════════════════════════════════════════════════════════════════════
+
+# Codex mock metrics
+codex_mock_state = {
+    "assists_total": 0,
+    "assists_used": 0,
+    "total_confidence_gain": 0.0,
+    "by_agent": {},
+    "by_intent": {}
+}
+
+class CodexAssistRequest(BaseModel):
+    intent: str
+    agent_role: str
+    context: str
+    goal: Optional[str] = "increase precision"
+    linked_twin: Optional[str] = None
+    linked_handshake: Optional[str] = None
+
+class CodexAssistResponse(BaseModel):
+    assist_id: str
+    refinements: List[str]
+    missing_points: List[str]
+    confidence_adjustment: float
+    risks: List[str]
+    suggested_improvements: List[str]
+    reasoning: str
+    mock: bool = True
+    timestamp: str
+
+def codex_assist_mock(req: CodexAssistRequest) -> CodexAssistResponse:
+    """
+    Intelligent mock that simulates Codex cognitive assistance.
+    Returns structured refinements based on context analysis.
+    """
+    context_lower = req.context.lower()
+    intent = req.intent
+    agent = req.agent_role
+
+    refinements = []
+    missing_points = []
+    risks = []
+    improvements = []
+    confidence_adj = 0.0
+    reasoning = ""
+
+    # ── DOMAIN-SPECIFIC LOGIC ──────────────────────────────────────────
+
+    # Governance / Constitutional
+    if any(kw in context_lower for kw in ["i9", "i11", "invariant", "constitutional", "governance"]):
+        refinements.append("Clarify which specific invariant applies to this context")
+        missing_points.append("No explicit mention of human approval gate (I9)")
+        improvements.append("Add reference to constitutional documentation")
+        confidence_adj += 0.15
+        reasoning = "Constitutional context detected — governance precision increased"
+
+    # Ledger / Forensic
+    if any(kw in context_lower for kw in ["ledger", "receipt", "seal", "forensic", "proof"]):
+        refinements.append("Specify receipt format: WINDI-[TYPE]-[TIMESTAMP]-[HASH]")
+        missing_points.append("No verification URL provided")
+        improvements.append("Include /verify-public/ link for proof chain")
+        confidence_adj += 0.12
+        reasoning = "Forensic context detected — proof precision increased"
+
+    # Travel / Map
+    if any(kw in context_lower for kw in ["travel", "map", "journey", "location"]):
+        refinements.append("Consider I16 (Creator Cartographic Sovereignty)")
+        missing_points.append("GPS privacy implications not addressed")
+        improvements.append("Add opt-in publication note")
+        confidence_adj += 0.10
+        reasoning = "Travel context detected — sovereignty awareness added"
+
+    # Enterprise / VERA
+    if any(kw in context_lower for kw in ["enterprise", "vera", "compliance", "eu ai act"]):
+        refinements.append("Reference Erdbeere Protocol for anti-hallucination")
+        missing_points.append("No confidence estimation provided")
+        improvements.append("Add VERA disclaimer: 'VERA informs. Human decides.'")
+        confidence_adj += 0.14
+        reasoning = "Enterprise context detected — compliance rigor increased"
+
+    # Code / Technical
+    if any(kw in context_lower for kw in ["code", "patch", "refactor", "implement", "fix"]):
+        refinements.append("Verify sandbox isolation before execution")
+        risks.append("Code changes require I9 human approval")
+        improvements.append("Add dry-run verification step")
+        confidence_adj += 0.08
+        reasoning = "Code context detected — safety checks added"
+
+    # Metrics / Truth
+    if any(kw in context_lower for kw in ["metrics", "truth", "drift", "health"]):
+        refinements.append("Reference /api/truth for canonical state")
+        missing_points.append("No drift threshold specified")
+        improvements.append("Include AMBER/GREEN/RED status interpretation")
+        confidence_adj += 0.11
+        reasoning = "Metrics context detected — observability improved"
+
+    # ── AGENT-SPECIFIC ADJUSTMENTS ─────────────────────────────────────
+
+    if agent == "witness":
+        refinements.append("Frame response as observation, not judgment")
+        reasoning += " | Witness role: narrative framing applied"
+
+    elif agent == "guardian":
+        refinements.append("Validate against constitutional boundaries")
+        risks.append("Ensure no invariant violation")
+        reasoning += " | Guardian role: protection lens applied"
+
+    elif agent == "architect":
+        improvements.append("Consider system-wide implications")
+        reasoning += " | Architect role: structural view applied"
+
+    # ── FALLBACK (no specific context) ─────────────────────────────────
+
+    if not refinements and not missing_points:
+        refinements.append("Context is generic — consider adding domain specificity")
+        missing_points.append("No WINDI-specific references detected")
+        improvements.append("Link to relevant § section in CLAUDE.md")
+        confidence_adj = 0.05
+        reasoning = "Generic context — minimal enhancement applied"
+
+    # ── BUILD RESPONSE ─────────────────────────────────────────────────
+
+    assist_id = f"ASSIST-{uuid.uuid4().hex[:8].upper()}"
+
+    return CodexAssistResponse(
+        assist_id=assist_id,
+        refinements=refinements,
+        missing_points=missing_points,
+        confidence_adjustment=round(confidence_adj, 2),
+        risks=risks,
+        suggested_improvements=improvements,
+        reasoning=reasoning,
+        mock=True,
+        timestamp=now_iso()
+    )
+
+@app.post("/shelf/codex/assist")
+def codex_assist_endpoint(req: CodexAssistRequest):
+    """
+    Codex cognitive assistance (MOCK mode).
+    Simulates intelligent refinement without external API calls.
+
+    When ready for production: swap mock for real OpenAI/Anthropic calls.
+    """
+    # Validate handshake if provided
+    if req.linked_handshake:
+        if req.linked_handshake not in shelf_state["handshakes"]:
+            raise HTTPException(status_code=404, detail=f"Handshake {req.linked_handshake} not found")
+        hs = shelf_state["handshakes"][req.linked_handshake]
+        if hs["status"] != "ACCEPTED":
+            raise HTTPException(status_code=403, detail=f"Handshake {req.linked_handshake} not accepted")
+
+    # Run mock
+    result = codex_assist_mock(req)
+
+    # Update metrics
+    codex_mock_state["assists_total"] += 1
+    if result.refinements or result.missing_points:
+        codex_mock_state["assists_used"] += 1
+    codex_mock_state["total_confidence_gain"] += result.confidence_adjustment
+
+    # Track by agent
+    if req.agent_role not in codex_mock_state["by_agent"]:
+        codex_mock_state["by_agent"][req.agent_role] = 0
+    codex_mock_state["by_agent"][req.agent_role] += 1
+
+    # Track by intent
+    if req.intent not in codex_mock_state["by_intent"]:
+        codex_mock_state["by_intent"][req.intent] = 0
+    codex_mock_state["by_intent"][req.intent] += 1
+
+    return result
+
+@app.get("/shelf/codex/metrics")
+def codex_metrics():
+    """Codex assistance metrics (mock mode)."""
+    return {
+        "mode": "MOCK",
+        "assists_total": codex_mock_state["assists_total"],
+        "assists_used": codex_mock_state["assists_used"],
+        "usage_rate": round(codex_mock_state["assists_used"] / max(1, codex_mock_state["assists_total"]), 2),
+        "total_confidence_gain": round(codex_mock_state["total_confidence_gain"], 2),
+        "avg_confidence_gain": round(codex_mock_state["total_confidence_gain"] / max(1, codex_mock_state["assists_total"]), 3),
+        "by_agent": codex_mock_state["by_agent"],
+        "by_intent": codex_mock_state["by_intent"],
+        "ready_for_production": False,
+        "timestamp": now_iso()
+    }
+
+# ══════════════════════════════════════════════════════════════════════
 # STARTUP
 # ══════════════════════════════════════════════════════════════════════
 
