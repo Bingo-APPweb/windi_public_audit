@@ -1,0 +1,17 @@
+{
+  "card_id": "CARD-826A236C",
+  "title": "Forensic Ledger Overview",
+  "content": "The Forensic Ledger is the immutable proof layer of WINDI. Every critical action is sealed with SHA-256 hash and timestamped. Receipts are queryable via /api/receipts/{id}.",
+  "source_agents": [
+    "witness"
+  ],
+  "confidence": 0.8,
+  "linked_twin": "TWIN-8DAA8FCC",
+  "linked_handshake": "HS-904254AB",
+  "created_at": "2026-04-20T19:41:27.210214+00:00",
+  "tags": [
+    "ledger",
+    "forensic",
+    "I11"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "twin_id": "TWIN-27C7FE0F",
+  "type": "request",
+  "origin": "user",
+  "source_ref": "REQ-2C84092C",
+  "declared": {
+    "prompt": "What are the constitutional invariants I9 and I11?",
+    "intent": "governance_request",
+    "domain": "general",
+    "sensitivity": "constitutional",
+    "confidence": 0.7
+  },
+  "observed": null,
+  "drift_score": 0.0,
+  "status": "resolved",
+  "linked_agents": [
+    "guardian",
+    "witness"
+  ],
+  "timestamp": "2026-04-20T19:44:18.134847+00:00",
+  "sealed_at": null
+}

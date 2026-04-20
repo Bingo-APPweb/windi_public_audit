@@ -1,0 +1,18 @@
+{
+  "handshake_id": "HS-4D1704F1",
+  "from_agent": "test",
+  "to_agent": "witness",
+  "purpose": "validation",
+  "scope": [
+    "read_only"
+  ],
+  "status": "ACCEPTED",
+  "linked_twin": "TWIN-27C7FE0F",
+  "requires_human_approval": false,
+  "human_approved": false,
+  "chain_depth": 0,
+  "created_at": "2026-04-20T19:44:18.211400+00:00",
+  "expires_at": "2026-04-20T20:44:18.211412+00:00",
+  "acknowledged_at": "2026-04-20T19:44:18.266239+00:00",
+  "completed_at": null
+}

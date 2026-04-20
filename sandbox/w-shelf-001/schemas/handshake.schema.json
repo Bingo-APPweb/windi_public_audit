@@ -1,0 +1,92 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "WINDI Handshake Protocol Schema",
+  "description": "Governed transitions between agents with explicit permission boundaries",
+  "version": "1.0.0",
+  "definitions": {
+    "HandshakeStatus": {
+      "type": "string",
+      "enum": ["PROPOSED", "ACKNOWLEDGED", "ACCEPTED", "REJECTED", "EXPIRED", "SEALED"]
+    },
+    "HandshakeScope": {
+      "type": "string",
+      "enum": [
+        "read_only",
+        "analyze",
+        "dry_run",
+        "propose_patch",
+        "execute_with_i9",
+        "knowledge_generation"
+      ]
+    }
+  },
+  "type": "object",
+  "required": ["handshake_id", "from_agent", "to_agent", "purpose", "scope", "status", "created_at"],
+  "properties": {
+    "handshake_id": {
+      "type": "string",
+      "pattern": "^HS-[A-Z0-9]{8}$",
+      "description": "Unique handshake identifier"
+    },
+    "from_agent": {
+      "type": "string",
+      "description": "Originating agent"
+    },
+    "to_agent": {
+      "type": "string",
+      "description": "Target agent"
+    },
+    "purpose": {
+      "type": "string",
+      "description": "Why this handshake exists"
+    },
+    "scope": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/HandshakeScope" },
+      "description": "Permitted actions under this handshake"
+    },
+    "status": {
+      "$ref": "#/definitions/HandshakeStatus"
+    },
+    "linked_twin": {
+      "type": "string",
+      "description": "Associated TWIN ID"
+    },
+    "requires_human_approval": {
+      "type": "boolean",
+      "default": false
+    },
+    "human_approved": {
+      "type": "boolean"
+    },
+    "human_approved_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "acknowledged_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "rejection_reason": {
+      "type": "string"
+    },
+    "chain_depth": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2,
+      "description": "Max 2 autonomous hops without human checkpoint"
+    }
+  }
+}

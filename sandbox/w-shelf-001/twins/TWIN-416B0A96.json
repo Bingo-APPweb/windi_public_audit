@@ -1,0 +1,21 @@
+{
+  "twin_id": "TWIN-416B0A96",
+  "type": "request",
+  "origin": "user",
+  "source_ref": "REQ-256F3EF3",
+  "declared": {
+    "prompt": "What is the TWIN protocol in WINDI?",
+    "intent": "knowledge_request",
+    "domain": "general",
+    "sensitivity": "informational",
+    "confidence": 0.7
+  },
+  "observed": null,
+  "drift_score": 0.0,
+  "status": "open",
+  "linked_agents": [
+    "witness"
+  ],
+  "timestamp": "2026-04-20T19:37:03.675314+00:00",
+  "sealed_at": null
+}

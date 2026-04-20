@@ -1,0 +1,123 @@
+# W-SHELF-001 Routing Rules
+# Intent → Domain → Sensitivity → Agents
+
+version: "1.0.0"
+
+routes:
+  # ── KNOWLEDGE REQUESTS ────────────────────────────────────
+  - when:
+      intent: knowledge_request
+      domain: metrics
+    assign:
+      - metrics-agent
+      - witness
+    requires_human_approval: false
+
+  - when:
+      intent: knowledge_request
+      domain: general
+    assign:
+      - witness
+    requires_human_approval: false
+
+  # ── CODE CHANGES ──────────────────────────────────────────
+  - when:
+      intent: code_change_request
+      sensitivity: sensitive
+    assign:
+      - architect
+      - guardian
+      - codex
+    requires_human_approval: true
+    handshake_scope:
+      - analyze
+      - dry_run
+      - propose_patch
+
+  - when:
+      intent: code_change_request
+      sensitivity: constitutional
+    assign:
+      - guardian
+      - architect
+      - witness
+    requires_human_approval: true
+    escalate_to: human-dragon
+    handshake_scope:
+      - analyze
+      - execute_with_i9
+
+  # ── GOVERNANCE ────────────────────────────────────────────
+  - when:
+      intent: governance_request
+    assign:
+      - guardian
+      - witness
+    requires_human_approval: true
+    seal_required: true
+
+  # ── AUDIT ─────────────────────────────────────────────────
+  - when:
+      intent: audit_request
+      domain: ledger
+    assign:
+      - witness
+      - metrics-agent
+    requires_human_approval: false
+    handshake_scope:
+      - read_only
+      - analyze
+
+  # ── DOMAIN SPECIFIC ───────────────────────────────────────
+  - when:
+      domain: travel
+    assign:
+      - travel-agent
+      - witness
+    requires_human_approval: false
+
+  - when:
+      domain: law
+    assign:
+      - law-agent
+      - guardian
+    requires_human_approval: true
+
+  - when:
+      domain: enterprise
+    assign:
+      - vera
+      - witness
+    requires_human_approval: false
+
+# ── DEFAULTS ────────────────────────────────────────────────
+defaults:
+  fallback_agents:
+    - witness
+  max_chain_depth: 2
+  handshake_ttl_minutes: 60
+  twin_auto_create: true
+
+# ── INVARIANT RULES ─────────────────────────────────────────
+invariants:
+  I9:
+    description: "Human approval required for sensitive/constitutional actions"
+    enforced_on:
+      - code_change_request
+      - governance_request
+    gate: "requires_human_approval must be true"
+
+  I11:
+    description: "Critical outcomes must be sealed to Ledger"
+    enforced_on:
+      - governance_request
+      - audit_request
+    gate: "seal_required must be true"
+
+  I13:
+    description: "No automatic publication"
+    gate: "knowledge cards remain internal until explicit publish"
+
+  I14:
+    description: "Explicit failure on low confidence"
+    gate: "confidence < 0.5 triggers escalation, not silent routing"

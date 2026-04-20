@@ -1,0 +1,21 @@
+{
+  "twin_id": "TWIN-8DAA8FCC",
+  "type": "request",
+  "origin": "user",
+  "source_ref": "REQ-8F97A991",
+  "declared": {
+    "prompt": "How does the Forensic Ledger work in WINDI?",
+    "intent": "knowledge_request",
+    "domain": "ledger",
+    "sensitivity": "informational",
+    "confidence": 0.7
+  },
+  "observed": null,
+  "drift_score": 0.0,
+  "status": "resolved",
+  "linked_agents": [
+    "witness"
+  ],
+  "timestamp": "2026-04-20T19:41:27.118850+00:00",
+  "sealed_at": null
+}

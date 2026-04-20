@@ -1,0 +1,77 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "WINDI TWIN Protocol Schema",
+  "description": "Mirrored state representation for requests, agents, and system state",
+  "version": "1.0.0",
+  "definitions": {
+    "TwinType": {
+      "type": "string",
+      "enum": ["request", "agent", "state"]
+    },
+    "TwinOrigin": {
+      "type": "string",
+      "enum": ["user", "agent", "codex", "system"]
+    },
+    "TwinStatus": {
+      "type": "string",
+      "enum": ["open", "resolved", "divergent", "sealed"]
+    }
+  },
+  "type": "object",
+  "required": ["twin_id", "type", "origin", "declared", "timestamp"],
+  "properties": {
+    "twin_id": {
+      "type": "string",
+      "pattern": "^TWIN-[A-Z0-9]{8}$",
+      "description": "Unique twin identifier"
+    },
+    "type": {
+      "$ref": "#/definitions/TwinType"
+    },
+    "origin": {
+      "$ref": "#/definitions/TwinOrigin"
+    },
+    "source_ref": {
+      "type": "string",
+      "description": "Reference to originating request or entity"
+    },
+    "declared": {
+      "type": "object",
+      "description": "Declared/expected state",
+      "properties": {
+        "prompt": { "type": "string" },
+        "intent": { "type": "string" },
+        "domain": { "type": "string" },
+        "sensitivity": { "type": "string" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "observed": {
+      "type": "object",
+      "description": "Actual observed state (for drift detection)"
+    },
+    "drift_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0,
+      "description": "Divergence between declared and observed"
+    },
+    "status": {
+      "$ref": "#/definitions/TwinStatus"
+    },
+    "linked_agents": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Agents that processed this twin"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "sealed_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}
