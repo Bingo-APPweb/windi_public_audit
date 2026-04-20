@@ -1,0 +1,73 @@
+[
+  {
+    "id": "WINDI-TRAVEL-20260418-A1B2C3",
+    "event_type": "TRAVEL_MOVEMENT",
+    "location": "Munich Airport (MUC)",
+    "timestamp": "2026-04-18T08:30:00Z",
+    "actor": "did:windi:traveler-001",
+    "content_hash": "sha256:e3b0c44298fc1c14",
+    "verified": true,
+    "metadata": {
+      "flight": "LH1234",
+      "destination": "Berlin (BER)",
+      "class": "economy"
+    }
+  },
+  {
+    "id": "WINDI-HOTEL-20260418-D4E5F6",
+    "event_type": "HOTEL_CHECKIN",
+    "location": "Berlin Mitte Hotel",
+    "timestamp": "2026-04-18T14:45:00Z",
+    "actor": "did:windi:traveler-001",
+    "content_hash": "sha256:9f86d081884c7d65",
+    "verified": true,
+    "metadata": {
+      "room_type": "single",
+      "nights": 2,
+      "confirmation": "HBM-78923"
+    }
+  },
+  {
+    "id": "WINDI-MOBILITY-20260419-G7H8I9",
+    "event_type": "MOBILITY_SEQUENCE",
+    "location": "Berlin Public Transit",
+    "timestamp": "2026-04-19T09:15:00Z",
+    "actor": "did:windi:traveler-001",
+    "content_hash": "sha256:d7a8fbb307d7809c",
+    "verified": true,
+    "metadata": {
+      "mode": "U-Bahn",
+      "line": "U6",
+      "stations": ["Friedrichstraße", "Unter den Linden", "Brandenburger Tor"],
+      "duration_minutes": 12
+    }
+  },
+  {
+    "id": "WINDI-DOC-20260419-J1K2L3",
+    "event_type": "DOCUMENT_SEALED",
+    "location": "Berlin",
+    "timestamp": "2026-04-19T11:30:00Z",
+    "actor": "did:windi:traveler-001",
+    "content_hash": "sha256:2cf24dba5fb0a30e",
+    "verified": true,
+    "metadata": {
+      "doc_type": "travel_insurance_claim",
+      "status": "sealed",
+      "governance_level": "HIGH"
+    }
+  },
+  {
+    "id": "WINDI-PRESENCE-20260420-M4N5O6",
+    "event_type": "PRESENCE_CONFIRMED",
+    "location": "Investor Meeting - Berlin Startup Hub",
+    "timestamp": "2026-04-20T10:00:00Z",
+    "actor": "did:windi:traveler-001",
+    "content_hash": "sha256:5e884898da280471",
+    "verified": true,
+    "metadata": {
+      "meeting_type": "pitch",
+      "attendees": 5,
+      "duration_minutes": 45
+    }
+  }
+]

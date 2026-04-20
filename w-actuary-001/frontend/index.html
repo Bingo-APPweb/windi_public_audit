@@ -1,0 +1,757 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>W-Actuary-001 · Verifiable Actuarial Intelligence</title>
+  <meta name="description" content="Actuarial risk assessment powered by cryptographically verified events.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #080808;
+      --surface: #0c0c0f;
+      --panel: #111114;
+      --line: #1a1a1f;
+      --line2: #2a2a30;
+      --text: #f0f0f0;
+      --muted: #7a7a7a;
+      --accent: #00e6b8;
+      --accent-dim: rgba(0,230,184,0.12);
+      --gold: #c9a84c;
+      --gold-dim: rgba(201,168,76,0.1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Syne', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════ */
+    /* HERO */
+    /* ═══════════════════════════════════════════════════════════════ */
+
+    .hero {
+      text-align: center;
+      padding: 56px 24px 48px;
+      margin-bottom: 48px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(0,230,184,0.2);
+      border-radius: 100px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 28px;
+    }
+
+    h1 {
+      font-size: clamp(2.2rem, 5vw, 3.4rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+
+    .subtitle {
+      font-size: 1.3rem;
+      font-weight: 500;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    .hero-text {
+      max-width: 640px;
+      margin: 0 auto 32px;
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.7;
+    }
+
+    .tagline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--accent);
+      padding: 12px 24px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(0,230,184,0.15);
+      border-radius: 8px;
+      display: inline-block;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════ */
+    /* VISUAL FLOW */
+    /* ═══════════════════════════════════════════════════════════════ */
+
+    .flow-section {
+      margin-bottom: 48px;
+    }
+
+    .flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 24px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+    }
+
+    .flow-step {
+      padding: 14px 20px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--muted);
+      transition: all 0.3s;
+    }
+
+    .flow-step.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-dim);
+    }
+
+    .flow-step.result {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #000;
+      font-weight: 700;
+    }
+
+    .flow-arrow {
+      color: var(--line2);
+      font-size: 1.2rem;
+      font-weight: 300;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════ */
+    /* MAIN GRID */
+    /* ═══════════════════════════════════════════════════════════════ */
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    @media (max-width: 768px) {
+      .main-grid { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 28px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .card-icon {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--gold-dim);
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 12px;
+      font-size: 1.1rem;
+    }
+
+    .card h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════ */
+    /* SELECT & BUTTON */
+    /* ═══════════════════════════════════════════════════════════════ */
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    select {
+      width: 100%;
+      padding: 16px 18px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      color: var(--text);
+      font-size: 1rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      margin-bottom: 16px;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .run-btn {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, var(--accent) 0%, #00c9a0 100%);
+      border: none;
+      border-radius: 12px;
+      color: #000;
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      letter-spacing: 0.01em;
+    }
+
+    .run-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(0,230,184,0.3);
+    }
+
+    .run-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .run-btn.loading {
+      background: var(--line2);
+      color: var(--muted);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════ */
+    /* EVENT CARD */
+    /* ═══════════════════════════════════════════════════════════════ */
+
+    .event-display {
+      min-height: 200px;
+    }
+
+    .event-name {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .event-type {
+      display: inline-block;
+      padding: 6px 12px;
+      background: var(--gold-dim);
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 16px;
+    }
+
+    .event-meta {
+      display: grid;
+      gap: 12px;
+    }
+
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .meta-label {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .meta-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      color: var(--text);
+      text-align: right;
+    }
+
+    .verified-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════ */
+    /* RISK RESULT */
+    /* ═══════════════════════════════════════════════════════════════ */
+
+    .risk-card {
+      text-align: center;
+      border-color: var(--line);
+      transition: border-color 0.3s;
+    }
+
+    .risk-card.active {
+      border-color: var(--accent);
+    }
+
+    .risk-value {
+      font-size: 4rem;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 12px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .risk-label {
+      font-size: 1rem;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+
+    .risk-explanation {
+      font-size: 0.92rem;
+      color: var(--text);
+      line-height: 1.6;
+      padding: 16px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(0,230,184,0.15);
+      border-radius: 10px;
+      margin-bottom: 24px;
+    }
+
+    .verify-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 28px;
+      background: transparent;
+      border: 2px solid var(--accent);
+      border-radius: 10px;
+      color: var(--accent);
+      font-size: 0.95rem;
+      font-weight: 700;
+      font-family: inherit;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .verify-btn:hover {
+      background: var(--accent);
+      color: #000;
+    }
+
+    .verify-btn::after {
+      content: "→";
+      font-size: 1.1rem;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════ */
+    /* SOURCE BADGE */
+    /* ═══════════════════════════════════════════════════════════════ */
+
+    .source-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 16px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      margin-bottom: 32px;
+    }
+
+    .source-badge .dot {
+      width: 10px;
+      height: 10px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .source-badge span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .source-badge strong {
+      color: var(--text);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════ */
+    /* DISCLAIMER */
+    /* ═══════════════════════════════════════════════════════════════ */
+
+    .disclaimer {
+      text-align: center;
+      padding: 20px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════ */
+    /* FOOTER */
+    /* ═══════════════════════════════════════════════════════════════ */
+
+    .footer {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--line);
+      text-align: center;
+    }
+
+    .footer-brand {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .footer-tagline {
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════ */
+    /* PLACEHOLDER STATE */
+    /* ═══════════════════════════════════════════════════════════════ */
+
+    .placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 200px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .placeholder-icon {
+      font-size: 2.5rem;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    .placeholder-text {
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- HERO -->
+    <header class="hero">
+      <div class="badge">◆ Real Data from Forensic Ledger</div>
+      <h1>W-Actuary-001</h1>
+      <p class="subtitle">Actuarial Intelligence Based on Verified Reality</p>
+      <p class="hero-text">
+        This demo shows how insurance risk can be adjusted using
+        cryptographically verified real-world events — not assumptions or reconstructed data.
+      </p>
+      <div class="tagline">Not assumptions. Verifiable events.</div>
+    </header>
+
+    <!-- VISUAL FLOW -->
+    <section class="flow-section">
+      <div class="flow">
+        <div class="flow-step" id="flowEvent">Event</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step" id="flowVerified">Verified</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step" id="flowSignal">Actuarial Signal</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step" id="flowRisk">Risk ↓</div>
+      </div>
+    </section>
+
+    <!-- SOURCE BADGE -->
+    <div class="source-badge">
+      <div class="dot"></div>
+      <span>Connected to <strong>WINDI Forensic Ledger</strong> · Real-time verification</span>
+    </div>
+
+    <!-- MAIN GRID -->
+    <section class="main-grid">
+
+      <!-- LEFT: SELECT EVENT -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">📋</div>
+          <h2>Select Real Event</h2>
+        </div>
+
+        <label for="receiptSelect">Verified Events from Ledger</label>
+        <select id="receiptSelect">
+          <option value="">Loading events...</option>
+        </select>
+
+        <button class="run-btn" id="runBtn" disabled>
+          Run Verified Risk Simulation
+        </button>
+
+        <div id="eventDisplay" class="event-display" style="margin-top: 24px;">
+          <div class="placeholder">
+            <div class="placeholder-icon">◇</div>
+            <div class="placeholder-text">Select an event to see details</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: RISK RESULT -->
+      <div class="card risk-card" id="riskCard">
+        <div class="card-header">
+          <div class="card-icon">📊</div>
+          <h2>Risk Assessment</h2>
+        </div>
+
+        <div id="riskDisplay">
+          <div class="placeholder">
+            <div class="placeholder-icon">↓</div>
+            <div class="placeholder-text">Run simulation to see risk adjustment</div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- DISCLAIMER -->
+    <div class="disclaimer">
+      This demo uses a curated subset of verifiable events from WINDI Forensic Ledger.<br>
+      No sensitive or personal data is exposed. All events are independently verifiable.
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="footer-brand">WINDI Publishing House · Kempten, Bavaria</div>
+      <div class="footer-tagline">"AI processes. Human decides. WINDI guarantees."</div>
+    </footer>
+
+  </div>
+
+  <script>
+    const API = '/actuary/api/real';
+
+    const receiptSelect = document.getElementById('receiptSelect');
+    const runBtn = document.getElementById('runBtn');
+    const eventDisplay = document.getElementById('eventDisplay');
+    const riskDisplay = document.getElementById('riskDisplay');
+    const riskCard = document.getElementById('riskCard');
+
+    // Flow steps
+    const flowEvent = document.getElementById('flowEvent');
+    const flowVerified = document.getElementById('flowVerified');
+    const flowSignal = document.getElementById('flowSignal');
+    const flowRisk = document.getElementById('flowRisk');
+
+    let receiptsData = [];
+
+    function resetFlow() {
+      [flowEvent, flowVerified, flowSignal, flowRisk].forEach(el => {
+        el.classList.remove('active', 'result');
+      });
+    }
+
+    function animateFlow(step) {
+      resetFlow();
+      const steps = [flowEvent, flowVerified, flowSignal, flowRisk];
+      for (let i = 0; i <= step; i++) {
+        if (i === step && i === 3) {
+          steps[i].classList.add('result');
+        } else if (i <= step) {
+          steps[i].classList.add('active');
+        }
+      }
+    }
+
+    async function loadReceipts() {
+      try {
+        const res = await fetch(`${API}/receipts`);
+        const data = await res.json();
+        receiptsData = data.receipts || [];
+
+        receiptSelect.innerHTML = '<option value="">— Select a verified event —</option>';
+
+        receiptsData.forEach(r => {
+          const opt = document.createElement('option');
+          opt.value = r.id;
+          opt.textContent = `✓ ${r.display_name}`;
+          receiptSelect.appendChild(opt);
+        });
+
+        runBtn.disabled = false;
+      } catch (err) {
+        receiptSelect.innerHTML = '<option value="">Error loading events</option>';
+        console.error('Load failed:', err);
+      }
+    }
+
+    function showEventDetails(receipt) {
+      const locationText = receipt.location
+        ? `${receipt.location.label}${receipt.location.coordinates ? ' · ' + receipt.location.coordinates : ''}`
+        : 'N/A';
+
+      eventDisplay.innerHTML = `
+        <div class="event-name">${receipt.display_name}</div>
+        <div class="event-type">${receipt.event_type}</div>
+        <div class="event-meta">
+          <div class="meta-row">
+            <span class="meta-label">Timestamp</span>
+            <span class="meta-value">${new Date(receipt.timestamp).toLocaleString()}</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Location</span>
+            <span class="meta-value">${locationText}</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Category</span>
+            <span class="meta-value">${receipt.actuarial_category}</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Status</span>
+            <span class="meta-value">
+              <span class="verified-badge">✓ ${receipt.status}</span>
+            </span>
+          </div>
+        </div>
+      `;
+    }
+
+    function showRiskResult(data) {
+      const reduction = Math.round((1 - data.score.adjustment_factor) * 100);
+
+      riskDisplay.innerHTML = `
+        <div class="risk-value">-${reduction}%</div>
+        <div class="risk-label">Uncertainty Reduction</div>
+        <div class="risk-explanation">
+          ${data.score.explanation}
+        </div>
+        <a href="${data.verification.verify_url}" target="_blank" rel="noreferrer" class="verify-btn">
+          Verify on Ledger
+        </a>
+      `;
+
+      riskCard.classList.add('active');
+    }
+
+    async function runSimulation() {
+      const id = receiptSelect.value;
+      if (!id) return;
+
+      // Find selected receipt for preview
+      const receipt = receiptsData.find(r => r.id === id);
+      if (receipt) {
+        showEventDetails(receipt);
+      }
+
+      // Update button state
+      runBtn.disabled = true;
+      runBtn.textContent = 'Running simulation...';
+      runBtn.classList.add('loading');
+
+      // Animate flow
+      animateFlow(0);
+      await sleep(400);
+      animateFlow(1);
+      await sleep(400);
+      animateFlow(2);
+
+      try {
+        const res = await fetch(`${API}/flow/${id}`);
+        const data = await res.json();
+
+        await sleep(400);
+        animateFlow(3);
+
+        showRiskResult(data);
+
+      } catch (err) {
+        riskDisplay.innerHTML = `
+          <div class="placeholder">
+            <div class="placeholder-icon">⚠</div>
+            <div class="placeholder-text">Error: ${err.message}</div>
+          </div>
+        `;
+        resetFlow();
+      } finally {
+        runBtn.disabled = false;
+        runBtn.textContent = 'Run Verified Risk Simulation';
+        runBtn.classList.remove('loading');
+      }
+    }
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    receiptSelect.addEventListener('change', () => {
+      const id = receiptSelect.value;
+      if (id) {
+        const receipt = receiptsData.find(r => r.id === id);
+        if (receipt) showEventDetails(receipt);
+      }
+    });
+
+    runBtn.addEventListener('click', runSimulation);
+
+    // Initialize
+    loadReceipts();
+  </script>
+</body>
+</html>

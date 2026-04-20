@@ -1,0 +1,25 @@
+# W-ACTUARY-001 nginx patch
+# Execute with: sudo bash -c "$(cat /opt/windi/w-actuary-001/nginx-apply-patch.sh)"
+
+# This patch fixes the broken /api/receipts/ block and adds actuary location correctly.
+
+# Lines 388-417 need to be replaced with:
+# ──────────────────────────────────────────────────────────────────────────────
+
+    # ── Forensic Ledger Receipts API ──────────────────────────
+    location ^~ /api/receipts/ {
+        proxy_pass http://windi_ledger/api/receipts/;
+        proxy_http_version 1.1;
+    }
+
+# ──────────────────────────────────────────────────────────────────────────────
+# And BEFORE "location / {" (around line 225), add:
+# ──────────────────────────────────────────────────────────────────────────────
+
+    # ── W-Actuary-001 (:8015) — Verifiable Actuarial Intelligence ─────
+    location ^~ /actuary/ {
+        proxy_pass http://windi_actuary/;
+        proxy_http_version 1.1;
+    }
+
+# ──────────────────────────────────────────────────────────────────────────────
