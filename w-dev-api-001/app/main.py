@@ -25,7 +25,8 @@ app = FastAPI(
     docs_url="/v1/docs",
     redoc_url="/v1/redoc",
     openapi_url="/v1/openapi.json",
-    root_path="/dev-api",
+    # root_path removed — was breaking StaticFiles mount (404 on /static/*)
+    # nginx handles /dev-api/ → localhost:8200 stripping
 )
 
 # ── CORS ──────────────────────────────────────────────────
