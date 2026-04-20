@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.5.0
-**Sealed:** 2026-04-20 · §198 W-SHELF-001 · Governed Knowledge Diffusion · TWIN+Handshake
+**Version:** 2.6.0
+**Sealed:** 2026-04-20 · §199 I9 Runtime Enforcement · 3-Layer Containment · FAIL-CLOSED
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -95,7 +95,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-ACTUARY-001 | :8015 | I9,I11,I14 | **LIVE** v0.2.0 · Verifiable Actuarial Intelligence · Real Receipts · HARDENED L2 · Allianz-ready |
 | W-METRICS-001 | :8200 | I9,I11,I14 | **LIVE** · `/api/truth` · Drift as Parent Metric · 5 Blocks · AMBER · Berlin Ready |
 | W-TRAVEL-001 | :8126 | I9,I11,I13,G3 | **LIVE** v1.3.0 · Identity Gate · /travel/ · §196 nginx fix · nohup oficial |
-| W-SHELF-001 | :8191 | I9,I11,I13,I14 | **LIVE** v0.1.0 · Governed Knowledge Diffusion · TWIN+Handshake · §198 |
+| W-SHELF-001 | :8191 | I9,I11,I13,I14 | **LIVE** v0.2.0 · I9 Runtime Enforcement · 3-Layer Containment · §199 |
 | WINDI-PORTAL | static | — | **LIVE** · Internal Control Center · 35 Services · 7 Categories |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
@@ -221,6 +221,33 @@ FRUITS (Frutos)   → Virtue Receipts
 
 ✔ Auto-process/classify/suggest → OK · ❌ Auto-publish/seal → PROIBIDO
 **Pipeline:** SGV ilumina → Sistema sugere → **Humano decide** → Ledger sela
+
+### §199 — I9 Runtime Enforcement (20 Apr 2026)
+
+**Status:** LIVE · v0.2.0 · **Commit:** `a85909e4`
+
+**Problema Detectado:** I9 era declarativo, não runtime. Sistema aceitava handshakes perigosos sem validação.
+
+**3 Layers de Contenção:**
+
+| Layer | Função | Implementação |
+|-------|--------|---------------|
+| 1 | Agency Detection | `AGENCY_KEYWORDS` (PT/DE/EN) → auto-escalate |
+| 2 | Scope Escalation | `DANGEROUS_SCOPES` → force requires_human |
+| 3 | Fail-Closed Accept | Re-check scope at accept() → reject if no I9 |
+
+**4 Regras Constitucionais:**
+- **Rule A:** Default deny for state change
+- **Rule B:** Classification cannot grant execution
+- **Rule C:** Human approval is explicit, scoped, and ephemeral
+- **Rule D:** "Propose" and "execute" are different species
+
+**Dangerous Scopes:** `propose_patch` · `execute_with_i9` · `apply` · `commit` · `seal` · `delete` · `modify`
+**Safe Scopes:** `read_only` · `analyze` · `observe`
+
+**Files:** `/opt/windi/sandbox/w-shelf-001/app/main.py`
+
+> *"Interpretation may be wrong. Handshake must remain skeptical. Runtime must fail closed."*
 
 ### §120 — AI Draft Mode · WINDI-LAW
 
@@ -468,6 +495,8 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 20 Apr | **§199 I9 RUNTIME ENFORCEMENT** · W-SHELF-001 v0.2.0 · 3-Layer Containment · Grove Arena ✅ · `a85909e4` |
+| 20 Apr | **§198 W-SHELF-001 LIVE** · Governed Knowledge Diffusion · TWIN+Handshake · Codex Mock |
 | 20 Apr | **§197 W-METRICS-001 LIVE** · `/api/truth` · ORANGE→AMBER · Drift 11→1 · `bd7867e0` · **Berlin AMBER** |
 | 20 Apr | **§196 SEAL CYCLE** · Gateway v2.3 · `/seal` + nginx fixes · Bundle sealed · 4 receipts |
 | 20 Apr | **§195 W-ACTUARY-001** · v0.2.0 HARDENED · Allianz-ready |
