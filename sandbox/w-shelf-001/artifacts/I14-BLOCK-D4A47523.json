@@ -1,0 +1,17 @@
+{
+  "receipt_id": "I14-BLOCK-D4A47523",
+  "type": "I14_DECLARED_LIMIT",
+  "input_hash": "sha256:7a34d773f04821d3",
+  "epistemic_status": "ambiguous",
+  "ambiguity_markers": [
+    "isto"
+  ],
+  "missing_context": [],
+  "confidence": 0.9,
+  "service": "W-SHELF-001",
+  "policy_version": "i14-runtime-v1",
+  "blocked_at": "2026-04-20T20:50:04.070191+00:00",
+  "linked_twin": "TWIN-DE2D4245",
+  "operator_notified": true,
+  "invariant": "I14 \u2014 Explicit Failure Principle"
+}
