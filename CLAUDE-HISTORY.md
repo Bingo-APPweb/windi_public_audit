@@ -6,6 +6,86 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 20 Abr 2026 — §195 W-ACTUARY-001 Complete
+
+**Duração:** ~2h | **Status:** ✅ SEALED
+**Liga IA+H:** Human Dragon · Architect (Claude Opus 4.5)
+**Invariants:** I9, I11, I14
+
+### Conceito
+
+**W-ACTUARY-001** — Verifiable Actuarial Intelligence Layer
+
+> *"We augment actuarial models with verifiable ground truth."*
+
+Sistema que demonstra como eventos criptograficamente verificados podem ser
+normalizados em sinais atuariais e rastreados até verificação pública.
+
+**Problema:** Modelos atuariais são matematicamente sólidos mas epistemologicamente
+frágeis — inputs são declarados/inferidos, não provados.
+
+**Solução:** Eventos do Forensic Ledger → Normalização → Score → Verify
+
+### Arquitectura
+
+**Port:** :8015 | **Version:** v0.2.0 (HARDENED)
+
+```
+/opt/windi/w-actuary-001/
+├── backend/main.py           # FastAPI v0.2.0 HARDENED
+├── backend/ledger_client.py  # Conexão ao Ledger :8101
+├── frontend/index.html       # POLISH UI Allianz-ready
+├── demo_data/receipts.json   # Mock data
+└── logs/audit.log            # Audit trail
+```
+
+### Níveis de Segurança (LEVEL 2)
+
+| Nível | Protecção |
+|-------|-----------|
+| OPEN SURFACE | UI, fluxo demo, endpoints básicos |
+| CONTROLLED CORE | Lógica `_internal_*`, sanitização, API key |
+| SOVEREIGN | Ledger, DID, sealing |
+
+### Real Receipts (Curated)
+
+| Receipt | Tipo | Categoria |
+|---------|------|-----------|
+| `WINDI-TRAVEL-*-F1D46419` | TRAVEL_PRESENCE | MOBILITY (GPS 47.72°N) |
+| `WINDI-COLLAGE-*-58B241B1` | FORENSIC_COMPARISON | EVIDENCE |
+| `PHO-19D9C9DA22F` | COMPLIANCE_VERIFICATION | COMPLIANCE |
+| `PROVE-*-8D066F81` | PROOF_EVENT | IDENTITY |
+
+### Endpoints
+
+| Endpoint | Descrição |
+|----------|-----------|
+| `/actuary/` | UI POLISH (NOIR) |
+| `/actuary/api/real/receipts` | Receipts reais do Ledger |
+| `/actuary/api/real/flow/{id}` | **Flow Allianz-ready** |
+
+### Demo Script (60s)
+
+| Tempo | Acção |
+|-------|-------|
+| 0-10s | Abertura posicionamento |
+| 10-20s | Contexto problema |
+| 20-35s | Select → Run → Animação |
+| 35-45s | Impacto: "-35% uncertainty" |
+| 45-55s | Verify on Ledger |
+| 55-60s | Fechamento |
+
+**Frase-chave:** *"Same model. Better truth."*
+
+### URLs Finais
+
+```
+UI:    https://windi-domain.com/actuary/
+API:   https://windi-domain.com/actuary/api/real/flow/{id}
+```
+
+---
+
 ## § SESSÃO 19 Abr 2026 (Noite) — §193 Backlog + W-DEV-API-001 Fix
 
 **Duração:** ~30 min | **Status:** ✅ SEALED

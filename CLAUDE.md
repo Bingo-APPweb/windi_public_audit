@@ -92,6 +92,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-SOCIAL-001 | :8133 | I9-P,I11,I14 | **LIVE** · Verified Professional Presence · Embedded-first · I9-P Protocol · Trilingual |
 | W-TRAVEL-MAP-001 | :8153 | I9,I11,I16 | **LIVE** · Berlin Pitch Map · Bayern Süd · Trilingual · Ledger Hybrid · `/travel/map/` |
 | W-ACADEMY-001 | :8180 | I9,I11,I14 | **LIVE** · WINDI Institute · Course Management · W-ENT-001 Curriculum · PHO Certification |
+| W-ACTUARY-001 | :8015 | I9,I11,I14 | **LIVE** v0.2.0 · Verifiable Actuarial Intelligence · Real Receipts · HARDENED L2 · Allianz-ready |
 | WINDI-PORTAL | static | — | **LIVE** · Internal Control Center · 35 Services · 7 Categories |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
@@ -464,6 +465,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 20 Apr | **§195 W-ACTUARY-001 COMPLETE** · v0.2.0 HARDENED · Real Ledger Receipts · POLISH UI · Demo Script 60s · Allianz-ready |
 | 20 Apr | **I17 AGENCY INVARIANT** · Session/Identity Separation · CANONICAL status · v2.3.0 |
 | 20 Apr | **§194 SESSION IDENTITY BRIDGE** · WindiDID.sync() · Cookie→localStorage · VERA authenticated mode fix · `5477ee04` |
 | 19 Apr | **W-DEV-API-001 Fix** · :8200 restart · HTML redirect · §193 backlog (SGV+CIA+SEC unification) |
