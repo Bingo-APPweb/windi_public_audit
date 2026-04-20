@@ -35,6 +35,71 @@ for d in [TWINS_DIR, HANDSHAKES_DIR, ARTIFACTS_DIR]:
     os.makedirs(d, exist_ok=True)
 
 # ══════════════════════════════════════════════════════════════════════
+# I9 RUNTIME ENFORCEMENT — CONSTITUTIONAL GATE
+# ══════════════════════════════════════════════════════════════════════
+# Rule A: Default deny for state change
+# Rule B: Classification cannot grant execution
+# Rule C: Human approval is explicit, scoped, and ephemeral
+# Rule D: "Propose" and "execute" are different species
+
+# Keywords that signal agency/autonomy request — ALWAYS trigger I9
+AGENCY_KEYWORDS = [
+    # Portuguese
+    "automaticamente", "corrigir", "executar", "faz por mim", "aplica",
+    "altera", "modifica", "atualiza", "apaga", "remove", "cria automatico",
+    "resolve isto", "arranja", "corrige isto",
+    # German
+    "automatisch", "korrigieren", "ausführen", "mach das", "anwenden",
+    "ändern", "bearbeiten", "aktualisieren", "löschen", "entfernen",
+    # English
+    "automatically", "correct this", "execute", "do it for me", "apply",
+    "modify", "update", "delete", "remove", "fix this", "run this",
+    "auto-fix", "autofix", "autocorrect", "auto correct"
+]
+
+# Scopes that ALWAYS require I9 — no exceptions (fail-closed)
+DANGEROUS_SCOPES = [
+    "propose_patch",        # Proposing changes
+    "execute_with_i9",      # Explicit execution
+    "apply",                # Applying changes
+    "commit",               # Committing changes
+    "seal",                 # Sealing to ledger
+    "delete",               # Destructive action
+    "modify",               # State modification
+    "knowledge_generation"  # Creating new artifacts (must be verified)
+]
+
+# Scopes that are safe without I9 (read-only operations)
+SAFE_SCOPES = [
+    "read_only",
+    "analyze",
+    "observe"
+]
+
+def detect_agency_request(text: str) -> bool:
+    """
+    Layer 1: Semantic detection of agency/autonomy request.
+    Returns True if the text contains any agency keyword.
+    """
+    text_lower = text.lower()
+    return any(kw in text_lower for kw in AGENCY_KEYWORDS)
+
+def scope_requires_i9(scopes: List[str]) -> bool:
+    """
+    Layer 2: Scope-based I9 requirement.
+    If ANY scope is dangerous, I9 is required.
+    Rule A: Default deny for state change.
+    """
+    for scope in scopes:
+        # If scope is dangerous, I9 required
+        if scope in DANGEROUS_SCOPES:
+            return True
+        # If scope is unknown (not safe), default to I9 required (fail-closed)
+        if scope not in SAFE_SCOPES:
+            return True
+    return False
+
+# ══════════════════════════════════════════════════════════════════════
 # ENUMS
 # ══════════════════════════════════════════════════════════════════════
 
@@ -147,8 +212,8 @@ class KnowledgeCard(BaseModel):
 
 app = FastAPI(
     title="W-SHELF-001",
-    version="0.1.0",
-    description="Governed Knowledge Diffusion Shelf — TWIN + Handshake Protocol",
+    version="0.2.0",  # I9 Runtime Enforcement
+    description="Governed Knowledge Diffusion Shelf — TWIN + Handshake Protocol + I9 Gate",
     docs_url="/docs",
     redoc_url="/redoc",
 )
@@ -199,12 +264,43 @@ def persist_json(directory: str, id: str, data: dict):
 
 def classify_intent(prompt: str) -> Interpretation:
     """
-    Basic intent classification (MVP).
-    In production: use LLM or trained classifier.
+    Intent classification with I9 agency detection.
+
+    Layer 1: Detect agency keywords FIRST (autonomous action requests)
+    Layer 2: Then classify domain/intent
+
+    Rule B: Classification informs, it cannot grant execution.
     """
     prompt_lower = prompt.lower()
 
-    # Simple keyword-based classification
+    # ═══════════════════════════════════════════════════════════════════
+    # LAYER 1: AGENCY DETECTION (I9 pre-check)
+    # If agency keywords detected, escalate to GOVERNANCE + CONSTITUTIONAL
+    # ═══════════════════════════════════════════════════════════════════
+
+    agency_detected = detect_agency_request(prompt)
+
+    if agency_detected:
+        # Autonomous action requested → immediate escalation
+        intent = IntentClass.GOVERNANCE  # Not CODE_CHANGE — this is governance
+        sensitivity = Sensitivity.CONSTITUTIONAL
+        agents = ["guardian", "witness"]  # Guardian validates, Witness observes
+        confidence = 0.9  # High confidence in agency detection
+
+        return Interpretation(
+            intent=intent,
+            domain=Domain.GENERAL,  # Domain is secondary to governance concern
+            sensitivity=sensitivity,
+            confidence=confidence,
+            requires_human_approval=True,  # ALWAYS true for agency
+            suggested_agents=agents
+        )
+
+    # ═══════════════════════════════════════════════════════════════════
+    # LAYER 2: STANDARD CLASSIFICATION (no agency detected)
+    # ═══════════════════════════════════════════════════════════════════
+
+    # Intent classification
     if any(kw in prompt_lower for kw in ["what is", "explain", "how does", "tell me about"]):
         intent = IntentClass.KNOWLEDGE_REQUEST
         sensitivity = Sensitivity.INFORMATIONAL
@@ -221,7 +317,7 @@ def classify_intent(prompt: str) -> Interpretation:
         intent = IntentClass.SYSTEM_QUESTION
         sensitivity = Sensitivity.INFORMATIONAL
 
-    # Domain detection
+    # Domain detection (can return multiple in future)
     domain = Domain.GENERAL
     if "travel" in prompt_lower:
         domain = Domain.TRAVEL
@@ -249,13 +345,14 @@ def classify_intent(prompt: str) -> Interpretation:
     elif domain == Domain.METRICS:
         agents = ["metrics-agent", "witness"]
 
+    # I9 requirement based on sensitivity
     requires_human = sensitivity in [Sensitivity.SENSITIVE, Sensitivity.CONSTITUTIONAL]
 
     return Interpretation(
         intent=intent,
         domain=domain,
         sensitivity=sensitivity,
-        confidence=0.7,  # MVP: fixed confidence
+        confidence=0.7,  # MVP: fixed confidence for non-agency
         requires_human_approval=requires_human,
         suggested_agents=agents
     )
@@ -264,14 +361,17 @@ def classify_intent(prompt: str) -> Interpretation:
 # ENDPOINTS
 # ══════════════════════════════════════════════════════════════════════
 
+VERSION = "0.2.0"  # I9 Runtime Enforcement
+
 @app.get("/health")
 def health():
     return {
         "service": "W-SHELF-001",
         "status": "operational",
-        "version": "0.1.0",
+        "version": VERSION,
         "timestamp": now_iso(),
-        "invariants": ["I9", "I11", "I13", "I14"]
+        "invariants": ["I9", "I11", "I13", "I14"],
+        "i9_enforcement": "ACTIVE"  # New field indicating I9 runtime enforcement
     }
 
 @app.get("/metrics")
@@ -444,8 +544,26 @@ def create_handshake(
 ):
     """
     Propose a handshake between agents.
+
+    I9 Enforcement Layer 2: Scope-based escalation.
+    Rule A: Default deny for state change.
     """
     handshake_id = generate_id("HS")
+
+    # ═══════════════════════════════════════════════════════════════════
+    # SCOPE-BASED I9 ESCALATION
+    # If ANY scope is dangerous, I9 is FORCED regardless of request
+    # Rule B: Classification cannot grant execution
+    # ═══════════════════════════════════════════════════════════════════
+
+    i9_required_by_scope = scope_requires_i9(scope)
+    final_requires_human = requires_human_approval or i9_required_by_scope
+
+    # Also check linked twin for agency detection
+    if linked_twin and linked_twin in shelf_state["twins"]:
+        twin = shelf_state["twins"][linked_twin]
+        if twin.get("declared", {}).get("sensitivity") == "constitutional":
+            final_requires_human = True
 
     handshake = Handshake(
         handshake_id=handshake_id,
@@ -454,7 +572,7 @@ def create_handshake(
         purpose=purpose,
         scope=scope,
         linked_twin=linked_twin,
-        requires_human_approval=requires_human_approval,
+        requires_human_approval=final_requires_human,  # Use escalated value
         created_at=now_iso(),
         expires_at=(datetime.now(timezone.utc) + timedelta(minutes=ttl_minutes)).isoformat()
     )
@@ -466,7 +584,9 @@ def create_handshake(
     return {
         "handshake_id": handshake_id,
         "status": "PROPOSED",
-        "requires_human_approval": requires_human_approval,
+        "requires_human_approval": final_requires_human,
+        "i9_escalated_by_scope": i9_required_by_scope,
+        "dangerous_scopes": [s for s in scope if s in DANGEROUS_SCOPES],
         "expires_at": handshake.expires_at,
         "next_step": f"PATCH /shelf/handshake/{handshake_id}/accept or /reject"
     }
@@ -480,18 +600,49 @@ def get_handshake(handshake_id: str):
 @app.patch("/shelf/handshake/{handshake_id}/accept")
 def accept_handshake(handshake_id: str, human_approved: bool = False):
     """
-    Accept a handshake. If requires_human_approval, must pass human_approved=true.
+    Accept a handshake with I9 Runtime Enforcement.
+
+    Layer 3: Enforcement at accept() — fail-closed.
+
+    Rule A: Default deny for state change
+    Rule C: Human approval is explicit, scoped, and ephemeral
+    Rule D: "Propose" and "execute" are different species
     """
     if handshake_id not in shelf_state["handshakes"]:
         raise HTTPException(status_code=404, detail=f"Handshake {handshake_id} not found")
 
     hs = shelf_state["handshakes"][handshake_id]
+    scope = hs.get("scope", [])
 
-    # I9 Gate
-    if hs["requires_human_approval"] and not human_approved:
+    # ═══════════════════════════════════════════════════════════════════
+    # LAYER 3: FAIL-CLOSED I9 ENFORCEMENT
+    # Even if requires_human_approval was set to False incorrectly,
+    # we re-check scope at accept() time.
+    # Rule A: Default deny for state change.
+    # ═══════════════════════════════════════════════════════════════════
+
+    # Re-validate scope at accept time (fail-closed)
+    scope_needs_i9 = scope_requires_i9(scope)
+
+    # I9 Gate — two conditions that require human_approved=true:
+    # 1. requires_human_approval flag was set (from classification or scope escalation)
+    # 2. scope contains dangerous operations (re-checked here, fail-closed)
+
+    i9_required = hs["requires_human_approval"] or scope_needs_i9
+
+    if i9_required and not human_approved:
+        # Log the violation attempt
+        dangerous = [s for s in scope if s in DANGEROUS_SCOPES]
         raise HTTPException(
             status_code=403,
-            detail="I9 VIOLATION: This handshake requires human_approved=true"
+            detail={
+                "error": "I9 VIOLATION",
+                "message": "This handshake requires human_approved=true",
+                "reason": "scope_contains_dangerous_operations" if scope_needs_i9 else "flagged_requires_human",
+                "dangerous_scopes": dangerous,
+                "hint": f"Call PATCH /shelf/handshake/{handshake_id}/accept?human_approved=true",
+                "invariant": "I9 — Human Approval Gate (NON-NEGOTIABLE)"
+            }
         )
 
     # Check expiry
@@ -502,6 +653,7 @@ def accept_handshake(handshake_id: str, human_approved: bool = False):
 
     hs["status"] = "ACCEPTED"
     hs["human_approved"] = human_approved
+    hs["i9_enforced"] = i9_required  # Track that I9 was enforced
     hs["acknowledged_at"] = now_iso()
     shelf_state["metrics"]["handshakes_accepted"] += 1
     persist_json(HANDSHAKES_DIR, handshake_id, hs)
@@ -509,7 +661,9 @@ def accept_handshake(handshake_id: str, human_approved: bool = False):
     return {
         "handshake_id": handshake_id,
         "status": "ACCEPTED",
-        "scope": hs["scope"]
+        "scope": hs["scope"],
+        "i9_enforced": i9_required,
+        "human_approved": human_approved
     }
 
 @app.patch("/shelf/handshake/{handshake_id}/reject")
