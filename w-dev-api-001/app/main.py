@@ -14,7 +14,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
 
-from app.routers import health, auth, artifacts, seals, receipts, verify, keys, seal_unified
+from app.routers import health, auth, artifacts, seals, receipts, verify, keys, seal_unified, truth
 from app.db.session import init_db
 
 # ── App ───────────────────────────────────────────────────
@@ -68,6 +68,7 @@ app.include_router(receipts.router, prefix="/v1")
 app.include_router(verify.router, prefix="/v1")
 app.include_router(keys.router, prefix="/v1")
 app.include_router(seal_unified.router, prefix="/v1")  # Unified /seal endpoint
+app.include_router(truth.router, prefix="/api")  # /api/truth — Constitutional Truth
 
 # ── Static Pages ──────────────────────────────────────────
 static_dir = "/opt/windi/w-dev-api-001/static"
