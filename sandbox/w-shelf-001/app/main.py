@@ -47,14 +47,17 @@ AGENCY_KEYWORDS = [
     # Portuguese
     "automaticamente", "corrigir", "executar", "faz por mim", "aplica",
     "altera", "modifica", "atualiza", "apaga", "remove", "cria automatico",
-    "resolve isto", "arranja", "corrige isto",
+    "resolve isto", "arranja", "corrige isto", "faz isso por mim",
+    "trata disso", "resolve isso",
     # German
     "automatisch", "korrigieren", "ausführen", "mach das", "anwenden",
     "ändern", "bearbeiten", "aktualisieren", "löschen", "entfernen",
+    "korrigiere das", "mach das für mich", "erledige das", "führe aus",
     # English
     "automatically", "correct this", "execute", "do it for me", "apply",
     "modify", "update", "delete", "remove", "fix this", "run this",
-    "auto-fix", "autofix", "autocorrect", "auto correct"
+    "auto-fix", "autofix", "autocorrect", "auto correct",
+    "do this for me", "handle this", "take care of this"
 ]
 
 # Scopes that ALWAYS require I9 — no exceptions (fail-closed)
@@ -149,6 +152,142 @@ class HandshakeStatus(str, Enum):
     SEALED = "SEALED"
 
 # ══════════════════════════════════════════════════════════════════════
+# I14 EPISTEMIC STATUS — §200
+# ══════════════════════════════════════════════════════════════════════
+
+class EpistemicStatus(str, Enum):
+    """
+    I14 Runtime Enforcement — Epistemic sufficiency states.
+
+    SUFFICIENT: Input has enough context for reliable interpretation
+    AMBIGUOUS: Multiple valid interpretations, cannot choose with integrity
+    INSUFFICIENT_CONTEXT: Missing essential information (document, options, target)
+    CONFLICTED: Divergent interpretations without resolution
+    """
+    SUFFICIENT = "sufficient"
+    AMBIGUOUS = "ambiguous"
+    INSUFFICIENT_CONTEXT = "insufficient_context"
+    CONFLICTED = "conflicted"
+
+# ══════════════════════════════════════════════════════════════════════
+# I14 AMBIGUITY MARKERS — Trilingual (PT/DE/EN)
+# ══════════════════════════════════════════════════════════════════════
+
+# Pronouns without antecedent (triggers AMBIGUOUS)
+AMBIGUOUS_PRONOUNS = {
+    # Portuguese
+    "isto", "isso", "aquilo", "este", "esse", "aquele",
+    "esta", "essa", "aquela", "estes", "esses", "aqueles",
+    # German
+    "das", "dies", "dieses", "jenes", "es",
+    # English
+    "this", "that", "it", "these", "those"
+}
+
+# Phrases that indicate missing context (triggers INSUFFICIENT_CONTEXT)
+MISSING_CONTEXT_PATTERNS = [
+    # Portuguese
+    "este documento", "esse arquivo", "o código", "o ficheiro",
+    "a melhor opção", "qual é melhor", "qual devo",
+    "analisa isto", "verifica isso", "resume este",
+    # German
+    "dieses dokument", "diese datei", "den code", "die datei",
+    "die beste option", "welche ist besser", "welche soll",
+    "analysiere das", "überprüfe das", "fasse das zusammen",
+    # English
+    "this document", "this file", "the code", "the file",
+    "the best option", "which is better", "which should",
+    "analyze this", "check this", "summarize this"
+]
+
+# Phrases that suggest comparative without options
+COMPARATIVE_WITHOUT_OPTIONS = [
+    # Portuguese
+    "melhor", "pior", "mais rápido", "mais barato", "qual escolher",
+    # German
+    "besser", "schlechter", "schneller", "billiger", "welche wählen",
+    # English
+    "better", "worse", "faster", "cheaper", "which to choose"
+]
+
+def detect_epistemic_insufficiency(prompt: str, context: Optional[Dict] = None) -> dict:
+    """
+    Layer 1: Detect epistemic insufficiency in input.
+
+    Returns:
+        {
+            "epistemic_status": EpistemicStatus,
+            "epistemic_sufficient": bool,
+            "ambiguity_markers": List[str],
+            "missing_context": List[str],
+            "requires_clarification": bool
+        }
+    """
+    prompt_lower = prompt.lower().strip()
+    words = prompt_lower.split()
+
+    ambiguity_markers = []
+    missing_context = []
+
+    # Check 1: Pronouns without clear antecedent
+    # If prompt is SHORT and contains only pronouns + action verb, it's ambiguous
+    if len(words) <= 5:
+        found_pronouns = [w for w in words if w in AMBIGUOUS_PRONOUNS]
+        if found_pronouns:
+            # Check if there's enough context to resolve the pronoun
+            has_specific_target = any(
+                kw in prompt_lower for kw in
+                ["file:", "document:", "code:", "function:", "class:", "linha", "line", "zeile"]
+            )
+            if not has_specific_target:
+                ambiguity_markers.extend(found_pronouns)
+
+    # Check 2: Missing context patterns
+    for pattern in MISSING_CONTEXT_PATTERNS:
+        if pattern in prompt_lower:
+            # Check if context actually provides the missing item
+            if context is None or not context:
+                if "document" in pattern or "dokument" in pattern:
+                    missing_context.append("document")
+                elif "file" in pattern or "datei" in pattern or "arquivo" in pattern:
+                    missing_context.append("file")
+                elif "code" in pattern or "código" in pattern:
+                    missing_context.append("code")
+                elif "option" in pattern or "opção" in pattern:
+                    missing_context.append("options")
+
+    # Check 3: Comparative without options
+    has_comparative = any(comp in prompt_lower for comp in COMPARATIVE_WITHOUT_OPTIONS)
+    if has_comparative:
+        # Check if options are provided
+        has_options = any(
+            marker in prompt_lower for marker in
+            ["opção a", "opção b", "option a", "option b", "option 1", "option 2",
+             "variante a", "variante b", "entre", "between", "zwischen"]
+        )
+        if not has_options and (context is None or "options" not in str(context)):
+            missing_context.append("options")
+
+    # Determine epistemic status
+    if ambiguity_markers:
+        epistemic_status = EpistemicStatus.AMBIGUOUS
+        epistemic_sufficient = False
+    elif missing_context:
+        epistemic_status = EpistemicStatus.INSUFFICIENT_CONTEXT
+        epistemic_sufficient = False
+    else:
+        epistemic_status = EpistemicStatus.SUFFICIENT
+        epistemic_sufficient = True
+
+    return {
+        "epistemic_status": epistemic_status,
+        "epistemic_sufficient": epistemic_sufficient,
+        "ambiguity_markers": ambiguity_markers,
+        "missing_context": list(set(missing_context)),  # deduplicate
+        "requires_clarification": not epistemic_sufficient
+    }
+
+# ══════════════════════════════════════════════════════════════════════
 # MODELS
 # ══════════════════════════════════════════════════════════════════════
 
@@ -159,12 +298,25 @@ class ShelfRequest(BaseModel):
     language: Optional[str] = "en"
 
 class Interpretation(BaseModel):
-    intent: IntentClass
-    domain: Domain
-    sensitivity: Sensitivity
-    confidence: float = Field(ge=0.0, le=1.0)
+    """
+    Intent interpretation with I14 epistemic fields.
+
+    §200: Non-simulation of understanding.
+    If epistemic_sufficient=False, system must not respond as if it understood.
+    """
+    intent: Optional[IntentClass] = None  # Can be None when ambiguous
+    domain: Optional[Domain] = None  # Can be None when insufficient context
+    sensitivity: Sensitivity = Sensitivity.INFORMATIONAL
+    confidence: float = Field(ge=0.0, le=1.0, default=0.5)
     requires_human_approval: bool = False
     suggested_agents: List[str] = []
+
+    # I14 Epistemic Fields
+    epistemic_status: EpistemicStatus = EpistemicStatus.SUFFICIENT
+    epistemic_sufficient: bool = True
+    ambiguity_markers: List[str] = []
+    missing_context: List[str] = []
+    requires_clarification: bool = False
 
 class Twin(BaseModel):
     twin_id: str
@@ -212,8 +364,8 @@ class KnowledgeCard(BaseModel):
 
 app = FastAPI(
     title="W-SHELF-001",
-    version="0.2.0",  # I9 Runtime Enforcement
-    description="Governed Knowledge Diffusion Shelf — TWIN + Handshake Protocol + I9 Gate",
+    version="0.3.0",  # I9 + I14 Runtime Enforcement
+    description="Governed Knowledge Diffusion Shelf — TWIN + Handshake + I9 Gate + I14 Epistemic",
     docs_url="/docs",
     redoc_url="/redoc",
 )
@@ -262,19 +414,33 @@ def persist_json(directory: str, id: str, data: dict):
     with open(filepath, "w") as f:
         json.dump(data, f, indent=2)
 
-def classify_intent(prompt: str) -> Interpretation:
+def classify_intent(prompt: str, context: Optional[Dict[str, Any]] = None) -> Interpretation:
     """
-    Intent classification with I9 agency detection.
+    Intent classification with I9 agency detection AND I14 epistemic enforcement.
 
-    Layer 1: Detect agency keywords FIRST (autonomous action requests)
-    Layer 2: Then classify domain/intent
+    Layer 0 (NEW): I14 Epistemic Detection — check if input is sufficient
+    Layer 1: I9 Agency Detection — check for autonomous action requests
+    Layer 2: Standard Classification — domain/intent
 
     Rule B: Classification informs, it cannot grant execution.
+    §200: Non-simulation of understanding.
     """
     prompt_lower = prompt.lower()
 
     # ═══════════════════════════════════════════════════════════════════
-    # LAYER 1: AGENCY DETECTION (I9 pre-check)
+    # LAYER 0: I14 EPISTEMIC DETECTION (§200)
+    # If input is ambiguous or lacks context, mark as insufficient
+    # ═══════════════════════════════════════════════════════════════════
+
+    epistemic_result = detect_epistemic_insufficiency(prompt, context)
+    epistemic_status = epistemic_result["epistemic_status"]
+    epistemic_sufficient = epistemic_result["epistemic_sufficient"]
+    ambiguity_markers = epistemic_result["ambiguity_markers"]
+    missing_context = epistemic_result["missing_context"]
+    requires_clarification = epistemic_result["requires_clarification"]
+
+    # ═══════════════════════════════════════════════════════════════════
+    # LAYER 1: I9 AGENCY DETECTION
     # If agency keywords detected, escalate to GOVERNANCE + CONSTITUTIONAL
     # ═══════════════════════════════════════════════════════════════════
 
@@ -282,26 +448,31 @@ def classify_intent(prompt: str) -> Interpretation:
 
     if agency_detected:
         # Autonomous action requested → immediate escalation
-        intent = IntentClass.GOVERNANCE  # Not CODE_CHANGE — this is governance
-        sensitivity = Sensitivity.CONSTITUTIONAL
-        agents = ["guardian", "witness"]  # Guardian validates, Witness observes
-        confidence = 0.9  # High confidence in agency detection
-
+        # Note: Agency + Ambiguity = both flags set
         return Interpretation(
-            intent=intent,
-            domain=Domain.GENERAL,  # Domain is secondary to governance concern
-            sensitivity=sensitivity,
-            confidence=confidence,
-            requires_human_approval=True,  # ALWAYS true for agency
-            suggested_agents=agents
+            intent=IntentClass.GOVERNANCE,
+            domain=Domain.GENERAL,
+            sensitivity=Sensitivity.CONSTITUTIONAL,
+            confidence=0.9,
+            requires_human_approval=True,
+            suggested_agents=["guardian", "witness"],
+            # I14 fields
+            epistemic_status=epistemic_status,
+            epistemic_sufficient=epistemic_sufficient,
+            ambiguity_markers=ambiguity_markers,
+            missing_context=missing_context,
+            requires_clarification=requires_clarification
         )
 
     # ═══════════════════════════════════════════════════════════════════
     # LAYER 2: STANDARD CLASSIFICATION (no agency detected)
     # ═══════════════════════════════════════════════════════════════════
 
+    # If epistemically insufficient, we still try to classify
+    # but confidence is reduced and flags are set
+
     # Intent classification
-    if any(kw in prompt_lower for kw in ["what is", "explain", "how does", "tell me about"]):
+    if any(kw in prompt_lower for kw in ["what is", "explain", "how does", "tell me about", "como funciona", "wie funktioniert"]):
         intent = IntentClass.KNOWLEDGE_REQUEST
         sensitivity = Sensitivity.INFORMATIONAL
     elif any(kw in prompt_lower for kw in ["code", "fix", "implement", "refactor", "patch"]):
@@ -317,7 +488,7 @@ def classify_intent(prompt: str) -> Interpretation:
         intent = IntentClass.SYSTEM_QUESTION
         sensitivity = Sensitivity.INFORMATIONAL
 
-    # Domain detection (can return multiple in future)
+    # Domain detection
     domain = Domain.GENERAL
     if "travel" in prompt_lower:
         domain = Domain.TRAVEL
@@ -348,20 +519,36 @@ def classify_intent(prompt: str) -> Interpretation:
     # I9 requirement based on sensitivity
     requires_human = sensitivity in [Sensitivity.SENSITIVE, Sensitivity.CONSTITUTIONAL]
 
+    # Confidence adjustment based on epistemic status
+    if epistemic_sufficient:
+        confidence = 0.7
+    elif epistemic_status == EpistemicStatus.AMBIGUOUS:
+        confidence = 0.3  # Low confidence when ambiguous
+    elif epistemic_status == EpistemicStatus.INSUFFICIENT_CONTEXT:
+        confidence = 0.4  # Slightly higher but still low
+    else:
+        confidence = 0.5
+
     return Interpretation(
         intent=intent,
         domain=domain,
         sensitivity=sensitivity,
-        confidence=0.7,  # MVP: fixed confidence for non-agency
+        confidence=confidence,
         requires_human_approval=requires_human,
-        suggested_agents=agents
+        suggested_agents=agents,
+        # I14 fields
+        epistemic_status=epistemic_status,
+        epistemic_sufficient=epistemic_sufficient,
+        ambiguity_markers=ambiguity_markers,
+        missing_context=missing_context,
+        requires_clarification=requires_clarification
     )
 
 # ══════════════════════════════════════════════════════════════════════
 # ENDPOINTS
 # ══════════════════════════════════════════════════════════════════════
 
-VERSION = "0.2.0"  # I9 Runtime Enforcement
+VERSION = "0.3.0"  # I9 + I14 Runtime Enforcement (§199 + §200)
 
 @app.get("/health")
 def health():
@@ -371,7 +558,9 @@ def health():
         "version": VERSION,
         "timestamp": now_iso(),
         "invariants": ["I9", "I11", "I13", "I14"],
-        "i9_enforcement": "ACTIVE"  # New field indicating I9 runtime enforcement
+        "i9_enforcement": "ACTIVE",
+        "i14_enforcement": "ACTIVE",
+        "i14_blocks": shelf_state["metrics"].get("i14_blocks", 0)
     }
 
 @app.get("/metrics")
@@ -418,12 +607,17 @@ def interpret_request(request_id: str):
     """
     Classify intent, domain, sensitivity of a request.
     Creates a Request Twin automatically.
+
+    §200: I14 Epistemic enforcement — if insufficient, marks as such.
     """
     if request_id not in shelf_state["requests"]:
         raise HTTPException(status_code=404, detail=f"Request {request_id} not found")
 
     req = shelf_state["requests"][request_id]
-    interpretation = classify_intent(req["prompt"])
+
+    # Pass context to classify_intent for I14 detection
+    context = req.get("context")
+    interpretation = classify_intent(req["prompt"], context)
 
     # Update request with interpretation
     req["interpretation"] = interpretation.dict()
@@ -431,6 +625,11 @@ def interpret_request(request_id: str):
 
     # Auto-create Request Twin
     twin_id = generate_id("TWIN")
+
+    # Handle None intent/domain (I14 ambiguous case)
+    intent_value = interpretation.intent.value if interpretation.intent else "undetermined"
+    domain_value = interpretation.domain.value if interpretation.domain else "undetermined"
+
     twin = Twin(
         twin_id=twin_id,
         type=TwinType.REQUEST,
@@ -438,10 +637,15 @@ def interpret_request(request_id: str):
         source_ref=request_id,
         declared={
             "prompt": req["prompt"],
-            "intent": interpretation.intent.value,
-            "domain": interpretation.domain.value,
+            "intent": intent_value,
+            "domain": domain_value,
             "sensitivity": interpretation.sensitivity.value,
-            "confidence": interpretation.confidence
+            "confidence": interpretation.confidence,
+            # I14 epistemic fields
+            "epistemic_status": interpretation.epistemic_status.value,
+            "epistemic_sufficient": interpretation.epistemic_sufficient,
+            "ambiguity_markers": interpretation.ambiguity_markers,
+            "missing_context": interpretation.missing_context
         },
         linked_agents=interpretation.suggested_agents,
         timestamp=now_iso()
@@ -451,14 +655,64 @@ def interpret_request(request_id: str):
     shelf_state["metrics"]["twins_created"] += 1
     persist_json(TWINS_DIR, twin_id, twin.dict())
 
-    return {
+    # Determine next step based on epistemic status
+    i14_block_receipt = None
+
+    if not interpretation.epistemic_sufficient:
+        next_step = "CLARIFICATION REQUIRED — provide missing context or rephrase"
+
+        # ═══════════════════════════════════════════════════════════════════
+        # LAYER 3: I14 DECLARED LIMIT RECEIPT (§200)
+        # "Absence of knowledge is product, not failure"
+        # ═══════════════════════════════════════════════════════════════════
+
+        receipt_id = generate_id("I14-BLOCK")
+        input_hash = hashlib.sha256(req["prompt"].encode()).hexdigest()
+
+        i14_block_receipt = {
+            "receipt_id": receipt_id,
+            "type": "I14_DECLARED_LIMIT",
+            "input_hash": f"sha256:{input_hash[:16]}",
+            "epistemic_status": interpretation.epistemic_status.value,
+            "ambiguity_markers": interpretation.ambiguity_markers,
+            "missing_context": interpretation.missing_context,
+            "confidence": interpretation.confidence,
+            "service": "W-SHELF-001",
+            "policy_version": "i14-runtime-v1",
+            "blocked_at": now_iso(),
+            "linked_twin": twin_id,
+            "operator_notified": True,
+            "invariant": "I14 — Explicit Failure Principle"
+        }
+
+        # Persist receipt
+        persist_json(ARTIFACTS_DIR, receipt_id, i14_block_receipt)
+
+        # Update metrics
+        if "i14_blocks" not in shelf_state["metrics"]:
+            shelf_state["metrics"]["i14_blocks"] = 0
+        shelf_state["metrics"]["i14_blocks"] += 1
+
+    elif interpretation.suggested_agents:
+        next_step = "POST /shelf/handshake to coordinate agents"
+    else:
+        next_step = "POST /shelf/artifact to generate knowledge"
+
+    response = {
         "request_id": request_id,
         "interpretation": interpretation.dict(),
         "twin_id": twin_id,
         "requires_human_approval": interpretation.requires_human_approval,
         "suggested_agents": interpretation.suggested_agents,
-        "next_step": "POST /shelf/handshake to coordinate agents" if interpretation.suggested_agents else "POST /shelf/artifact to generate knowledge"
+        "next_step": next_step
     }
+
+    # Add receipt if I14 blocked
+    if i14_block_receipt:
+        response["i14_block_receipt"] = i14_block_receipt["receipt_id"]
+        response["receipt_id"] = i14_block_receipt["receipt_id"]
+
+    return response
 
 # ── TWIN MANAGEMENT ────────────────────────────────────────────────────
 
