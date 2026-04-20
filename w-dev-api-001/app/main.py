@@ -14,14 +14,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
 
-from app.routers import health, auth, artifacts, seals, receipts, verify, keys
+from app.routers import health, auth, artifacts, seals, receipts, verify, keys, seal_unified
 from app.db.session import init_db
 
 # ── App ───────────────────────────────────────────────────
 app = FastAPI(
     title="WINDI Developer API",
-    version="1.0.0",
-    description="seal · ledger · verify · distribute",
+    version="1.1.0",
+    description="seal · ledger · verify · distribute — Unified /seal endpoint",
     docs_url="/v1/docs",
     redoc_url="/v1/redoc",
     openapi_url="/v1/openapi.json",
@@ -66,6 +66,7 @@ app.include_router(seals.router, prefix="/v1")
 app.include_router(receipts.router, prefix="/v1")
 app.include_router(verify.router, prefix="/v1")
 app.include_router(keys.router, prefix="/v1")
+app.include_router(seal_unified.router, prefix="/v1")  # Unified /seal endpoint
 
 # ── Static Pages ──────────────────────────────────────────
 static_dir = "/opt/windi/w-dev-api-001/static"
