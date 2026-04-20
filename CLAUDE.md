@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.6.0
-**Sealed:** 2026-04-20 · §199 I9 Runtime Enforcement · 3-Layer Containment · FAIL-CLOSED
+**Version:** 2.7.0
+**Sealed:** 2026-04-20 · §200 I14 Epistemic Enforcement · Non-simulation of Understanding · 11/11 TESTS
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -95,7 +95,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-ACTUARY-001 | :8015 | I9,I11,I14 | **LIVE** v0.2.0 · Verifiable Actuarial Intelligence · Real Receipts · HARDENED L2 · Allianz-ready |
 | W-METRICS-001 | :8200 | I9,I11,I14 | **LIVE** · `/api/truth` · Drift as Parent Metric · 5 Blocks · AMBER · Berlin Ready |
 | W-TRAVEL-001 | :8126 | I9,I11,I13,G3 | **LIVE** v1.3.0 · Identity Gate · /travel/ · §196 nginx fix · nohup oficial |
-| W-SHELF-001 | :8191 | I9,I11,I13,I14 | **LIVE** v0.2.0 · I9 Runtime Enforcement · 3-Layer Containment · §199 |
+| W-SHELF-001 | :8191 | I9,I11,I13,I14 | **LIVE** v0.3.0 · I9+I14 Dual Enforcement · §199+§200 · 11/11 Tests |
 | WINDI-PORTAL | static | — | **LIVE** · Internal Control Center · 35 Services · 7 Categories |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
@@ -248,6 +248,45 @@ FRUITS (Frutos)   → Virtue Receipts
 **Files:** `/opt/windi/sandbox/w-shelf-001/app/main.py`
 
 > *"Interpretation may be wrong. Handshake must remain skeptical. Runtime must fail closed."*
+
+### §200 — I14 Epistemic Enforcement (20 Apr 2026)
+
+**Status:** LIVE · v0.3.0 · **Commit:** `0ec09491`
+
+**Princípio:** "Non-simulation of understanding" — sistema não responde como se entendesse quando não tem base.
+
+**Simetria com §199:**
+| Invariante | Protege contra | Fail mode |
+|------------|----------------|-----------|
+| I9 | Acção sem autoridade | over-acting |
+| I14 | Asserção sem conhecimento | over-asserting |
+
+**EpistemicStatus Enum:**
+- `SUFFICIENT` — input tem contexto suficiente
+- `AMBIGUOUS` — múltiplas interpretações válidas
+- `INSUFFICIENT_CONTEXT` — falta informação essencial
+- `CONFLICTED` — interpretações divergentes
+
+**3 Layers de Detecção:**
+1. **AMBIGUOUS_PRONOUNS** (PT/DE/EN): isto, das, this, etc.
+2. **MISSING_CONTEXT_PATTERNS**: documento, opções, código
+3. **COMPARATIVE_WITHOUT_OPTIONS**: melhor/pior sem alternativas
+
+**Rule E:** Absence of knowledge is product, not failure.
+
+**Receipt Type:** `I14_DECLARED_LIMIT`
+```json
+{
+  "type": "I14_DECLARED_LIMIT",
+  "epistemic_status": "ambiguous",
+  "ambiguity_markers": ["isto"],
+  "invariant": "I14 — Explicit Failure Principle"
+}
+```
+
+**Test Suite:** 11/11 passed (`tests/test_i14_epistemic.py`)
+
+> *"Detection upstream. Gate downstream. Seal on block."*
 
 ### §120 — AI Draft Mode · WINDI-LAW
 
@@ -495,6 +534,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 20 Apr | **§200 I14 EPISTEMIC ENFORCEMENT** · W-SHELF-001 v0.3.0 · Non-simulation of Understanding · 11/11 Tests · `0ec09491` |
 | 20 Apr | **§199 I9 RUNTIME ENFORCEMENT** · W-SHELF-001 v0.2.0 · 3-Layer Containment · Grove Arena ✅ · `a85909e4` |
 | 20 Apr | **§198 W-SHELF-001 LIVE** · Governed Knowledge Diffusion · TWIN+Handshake · Codex Mock |
 | 20 Apr | **§197 W-METRICS-001 LIVE** · `/api/truth` · ORANGE→AMBER · Drift 11→1 · `bd7867e0` · **Berlin AMBER** |
