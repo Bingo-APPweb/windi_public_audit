@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.3.0
-**Sealed:** 2026-04-20 · I17 Agency Invariant CANONICAL
+**Version:** 2.4.0
+**Sealed:** 2026-04-20 · §196 Infra Audit · Gateway v2.3
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -93,6 +93,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-TRAVEL-MAP-001 | :8153 | I9,I11,I16 | **LIVE** · Berlin Pitch Map · Bayern Süd · Trilingual · Ledger Hybrid · `/travel/map/` |
 | W-ACADEMY-001 | :8180 | I9,I11,I14 | **LIVE** · WINDI Institute · Course Management · W-ENT-001 Curriculum · PHO Certification |
 | W-ACTUARY-001 | :8015 | I9,I11,I14 | **LIVE** v0.2.0 · Verifiable Actuarial Intelligence · Real Receipts · HARDENED L2 · Allianz-ready |
+| W-TRAVEL-001 | :8126 | I9,I11,I13,G3 | **LIVE** v1.3.0 · Identity Gate · /travel/ · §196 nginx fix · nohup oficial |
 | WINDI-PORTAL | static | — | **LIVE** · Internal Control Center · 35 Services · 7 Categories |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
@@ -430,7 +431,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 ---
 
-## 13. Estado Actual — 17 Abril 2026
+## 13. Estado Actual — 20 Abril 2026
 
 ### Portas Críticas
 
@@ -465,6 +466,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 20 Apr | **§196 INFRA AUDIT & DARK-LAUNCH FIX** · Gateway v2.3 · nginx /enterprise/ + /verify-public/ + /travel/ · 4 systemd crash-loops → disabled · nohup oficial · 2 receipts |
 | 20 Apr | **§195 W-ACTUARY-001 COMPLETE** · v0.2.0 HARDENED · Real Ledger Receipts · POLISH UI · Demo Script 60s · Allianz-ready |
 | 20 Apr | **I17 AGENCY INVARIANT** · Session/Identity Separation · CANONICAL status · v2.3.0 |
 | 20 Apr | **§194 SESSION IDENTITY BRIDGE** · WindiDID.sync() · Cookie→localStorage · VERA authenticated mode fix · `5477ee04` |
@@ -566,6 +568,9 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 ### Infra
 - [ ] **Backup DB** — windi_law_identity.db + travel_users.db
+- [ ] **windi-clone fix** — `pip3 install flask-cors` · :8092 down desde §196
+- [ ] **nohup→systemd unification** — escolher UM padrão para todos os serviços
+- [ ] **123 SQLite DBs** — consolidação §173-style · 18 DBs 0-bytes
 
 ---
 
@@ -576,6 +581,8 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 - VD-CUT: `WINDI-VDCUT-20260404145505-E9983867`
 - W-SEC: `WINDI-SEC-LOCAL-20260408184001-BD09970F`
 - W-COMPOSER: First Seal `58B241B1`
+- §196 Incident: `WINDI-INCIDENT-20260420-DARK-LAUNCH-GAP`
+- §196 Amendment: `WINDI-AMENDMENT-20260420-DARK-LAUNCH-GAP-PART-2`
 
 ---
 
@@ -620,105 +627,70 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 - OVS — Operator of Verifiable Systems (3 perfis)
 - DASH v4.1 — 9 Prateleiras Trilíngue
 
-### §185-186 — Erdbeere Protocol + DID-Genesis Fix (17 Apr 2026)
+### §185-186 — Erdbeere Protocol (17 Apr 2026)
 
-**Erdbeere:** Anti-hallucination guardrails · Confidence Estimation · Verification Footer
-**DID-Genesis Fix:** `NOHUP_COMMANDS` dict for uvicorn services
-> *"VERA kann irren. Deshalb entscheidet der Mensch. Deshalb gibt es den Seal."*
+**Erdbeere:** Anti-hallucination guardrails · Confidence Estimation
+> *"VERA kann irren. Deshalb entscheidet der Mensch."*
+> **Full details:** `CLAUDE-HISTORY.md`
 
-> **Full details:** `CLAUDE-HISTORY.md` § W-ENTERPRISE-001
+### §188 — VERA Product Identity
 
-### §188 — VERA Product Identity (W-VERA-CORE-001)
-
-**Core Principle:** VERA is not a chatbot, assistant, or co-pilot.
-VERA is a **constitutional decision interface** within the WINDI system.
-
-**Functional Definition — VERA exists to:**
-- Provide structured context
-- Expose relevant invariants
-- Connect decisions to regulatory frameworks
-- Guide without executing decisions
-
-**Absolute Constraint (I9) — VERA never:**
-- takes decisions
-- implies approval
-- simulates human responsibility
-
-> *"VERA informs. The human decides."*
-
-**Response Discipline (CORE + INVITE):**
-
-| Element | Description |
-|---------|-------------|
-| **CORE** | Clear, structured, minimal. No internal codes (P01-P09). No debug artifacts. No mixed languages. |
-| **INVITE** | Request for context or clarification. Encourage user to define scope. |
-| **BOUNDARY** | Explicit or implicit reinforcement of I9 |
-
-**Tone:** Professional · Calm · Precise · Non-performative · Non-marketing
-**Surface:** Simple, human-readable · **Depth:** Complexity hidden unless requested
+**Core:** VERA is a constitutional decision interface, not chatbot/assistant.
+**I9 Constraint:** VERA informs. The human decides. Never takes/implies decisions.
+**Tone:** Professional · Calm · Precise · Non-performative
+> **Full details:** `CLAUDE-HISTORY.md`
 
 ---
 
-### §189 — W-CACHE-001 Integration (VERA v1.3.0)
+### §189-191 — Cache + DID Gate (17-19 Apr 2026)
 
-**Objective:** Reduce latency while preserving decision integrity and I9 invariants.
-
-**Cache Tier Model:**
-
-| Endpoint | Cache Tier | TTL | Invalidation |
-|----------|------------|-----|--------------|
-| `/vera/constitution` | L3_PROVEN | 30d | PHO seal (Pillar XX) |
-| `/vera/brief` | L2_DETERMINISTIC | 1h | Daily key rotation |
-| `/vera/chat` (general) | L2_DETERMINISTIC | 24h | Pattern-based filtering |
-| `/vera/seal-opinion` | ❌ NEVER | — | Unique → Ledger-bound |
-
-**Latency Profile:**
-- LLM (no cache): ~450ms
-- L2/L3 hit: ~30–80ms
-
-**Cache Eligibility:**
-- ✅ Cacheable: Generic context-free ("What is EU AI Act?", "Was ist GDPR?")
-- ❌ Non-cacheable: Personal context ("my", "our", "meu"), decision context ("approve", "seal")
-
-**Critical Rule:**
-> *"Decisions are never cached."*
-
-All PHO, approvals, evaluations → unique and traceable.
-
-**Failure Mode:** fail-open pattern (cache fail → live LLM call)
-
-**Observability:** `GET /vera/cache` — hit rate, tier usage, latency metrics
-
-**Architectural Insight:**
-> *"Cache accelerates knowledge retrieval, not decision-making."*
-> *"Speed is allowed in context. Speed is forbidden in responsibility."*
-
-**Files:**
-- `/opt/windi/w-enterprise-001/vera_agent.py` (v1.3.0)
-- `/opt/windi/w-enterprise-001/vera_cache.py`
-- Commits: `965a6ed4`, `411fb39e`
-
----
-
-### §191 — DID Gate & Berçário (18-19 Apr 2026)
-
-**Port:** :8096 · **Invariants:** I1, I9, I11, I-XVI · **Commits:** `a3056a1d`, `78b903f9`
-
-**§191-F1 Berçário Fundação:** `/api/genesis/authenticate` · `backup_required: true` · 7 aliases
-**§191-A Gate Closure:** 4 endpoints closed (Ledger, VERA, PHO)
-**§191-B Gate Hardening:** `did_exists_in_genesis()` + 502 instead of `sealed_local`
-**§191-C Annotation:** I11 metadata correction
-
-**Receipts:** `WINDI-191-A-GATE-CLOSURE-*` · `WINDI-191-B-GATE-HARDENING-*` · `WINDI-191-C-METADATA-*`
-**Documentation:** `/opt/windi/docs/DID-USER-JOURNEY.md` (628 lines)
-
-> **Full details:** `CLAUDE-HISTORY.md` § SESSÃO 19 Abr 2026
+**§189 W-CACHE-001:** VERA v1.3.0 · L2/L3 tiers · 450ms→30ms · Decisions never cached
+**§191 DID Gate:** Berçário Fundação · Gate Closure · **4 forjados em quarentena permanente** (IDs em CLAUDE-HISTORY.md §191) · qualquer 200 = violação I11
+> **Full details:** `CLAUDE-HISTORY.md`
 
 ---
 
 ## §184 — Infrastructure Health Audit (17 Apr 2026)
 
-**Fix Crítico:** `pip3 install --break-system-packages httptools==0.7.1`
-**DECRETO-001:** Requirements Tree com `requirements-base.txt` como TRUNK
+**Fix:** `pip3 install --break-system-packages httptools==0.7.1`
+> **Full details:** `CLAUDE-HISTORY.md`
 
-> **Full details:** `CLAUDE-HISTORY.md` § §184
+---
+
+## §196 — Infrastructure Audit & Dark-Launch Resolution (20 Apr 2026)
+
+**Gateway:** v2.3 · **Invariants:** I9, I11, I14 · **Receipts:** 2 selados
+
+### Descoberta: Dark-Launch Gap
+Serviços UP em localhost mas não expostos no nginx gateway:
+- `/enterprise/` → :8150 (W-Enterprise-001)
+- `/verify-public/` → :8114 (Verify API)
+- `/travel/` → :8126 (W-Travel-001)
+
+### Descoberta: Systemd vs Nohup Conflict
+4 serviços em crash-loop — systemd tentava iniciar processos já a correr via nohup:
+- `windi-enterprise.service` (:8150) — 66MB log acumulado
+- `windi-export-engine.service` (:8103)
+- `windi-leads.service` (:8096 DID-Genesis)
+- `windi-clone.service` (:8092) — **genuinamente down** (flask-cors missing)
+
+### Resolução
+1. **Nginx patch:** 3 location blocks + 1 upstream adicionados
+2. **Systemd disabled:** 4 services `stop + disable`
+3. **Nohup oficial:** :8150, :8103, :8096 — decisão Human Dragon até pós-Berlim
+4. **Logs truncados:** 66MB+ → 0
+
+### Receipts Selados
+- `WINDI-INCIDENT-20260420-DARK-LAUNCH-GAP` — routing fix
+- `WINDI-AMENDMENT-20260420-DARK-LAUNCH-GAP-PART-2` — governança de processo
+
+### Dívida Técnica (Post-Berlim)
+- [ ] windi-clone: `pip3 install flask-cors`
+- [ ] Migrar nohup → systemd (ou vice-versa — escolher UM padrão)
+- [ ] 18 DBs 0-bytes — avaliar remoção
+- [ ] 10 endpoints sem /health — standardizar
+
+### Conceito Novo: Ambiguity State
+Serviço funcional-mas-ambíguo — a formalizar em W-LIB-001 post-pitch.
+
+**Berlin-ready:** Gateway v2.3 · 7 endpoints validados · QR funcionais

@@ -9259,3 +9259,50 @@ The 4-hour turnaround from "I had a question" to "sealed in Ledger" shows PHO in
 *Liga IA+H · Kempten, Bavaria · 2026*
 
 ---
+
+## §191 — Forjados em Quarentena Permanente
+
+**Data:** 19-20 Abr 2026 | **Status:** QUARENTENA PERMANENTE
+**Invariant:** I11 (IRREMEDIÁVEL)
+
+Durante a auditoria do DID Gate (§191-A/B/C, 19 Abr 2026), foram
+identificados e selados em quarentena 4 receipt IDs forjados.
+Estes IDs devem permanecer **404 indefinidamente**.
+
+### IDs em Quarentena
+
+```
+VERA-69E4ED61
+VERA-69E4ED88
+VERA-69E4F78D
+VERA-69E4FD13
+```
+
+### Verificação
+
+```bash
+for ID in VERA-69E4ED61 VERA-69E4ED88 VERA-69E4F78D VERA-69E4FD13; do
+  curl -s -o /dev/null -w "$ID → %{http_code}\n" \
+    https://windi-domain.com/api/receipts/$ID
+done
+```
+
+**Resultado esperado:** 404 para todos.
+**Qualquer 200 é compromisso constitucional grave (I11 IRREMEDIÁVEL).**
+
+### Contexto
+
+Estes IDs foram detectados como tentativas de inserção de receipts
+não-autorizados no Forensic Ledger. A quarentena garante que:
+
+1. Nunca podem ser re-utilizados
+2. Qualquer tentativa de acesso é logada
+3. O estado 404 é verificável publicamente
+
+---
+
+*Sealed: 20 Apr 2026 · §191 Quarantine Addendum*
+*"AI processes. Human decides. WINDI guarantees."*
+*Liga IA+H · Kempten, Bavaria · 2026*
+
+---
