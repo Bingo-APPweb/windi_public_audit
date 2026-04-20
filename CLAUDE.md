@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.4.0
-**Sealed:** 2026-04-20 · §196 Infra Audit · Gateway v2.3
+**Version:** 2.5.0
+**Sealed:** 2026-04-20 · §198 W-SHELF-001 · Governed Knowledge Diffusion · TWIN+Handshake
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -93,7 +93,9 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-TRAVEL-MAP-001 | :8153 | I9,I11,I16 | **LIVE** · Berlin Pitch Map · Bayern Süd · Trilingual · Ledger Hybrid · `/travel/map/` |
 | W-ACADEMY-001 | :8180 | I9,I11,I14 | **LIVE** · WINDI Institute · Course Management · W-ENT-001 Curriculum · PHO Certification |
 | W-ACTUARY-001 | :8015 | I9,I11,I14 | **LIVE** v0.2.0 · Verifiable Actuarial Intelligence · Real Receipts · HARDENED L2 · Allianz-ready |
+| W-METRICS-001 | :8200 | I9,I11,I14 | **LIVE** · `/api/truth` · Drift as Parent Metric · 5 Blocks · AMBER · Berlin Ready |
 | W-TRAVEL-001 | :8126 | I9,I11,I13,G3 | **LIVE** v1.3.0 · Identity Gate · /travel/ · §196 nginx fix · nohup oficial |
+| W-SHELF-001 | :8191 | I9,I11,I13,I14 | **LIVE** v0.1.0 · Governed Knowledge Diffusion · TWIN+Handshake · §198 |
 | WINDI-PORTAL | static | — | **LIVE** · Internal Control Center · 35 Services · 7 Categories |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
@@ -466,43 +468,23 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
-| 20 Apr | **§196 INFRA AUDIT & DARK-LAUNCH FIX** · Gateway v2.3 · nginx /enterprise/ + /verify-public/ + /travel/ · 4 systemd crash-loops → disabled · nohup oficial · 2 receipts |
-| 20 Apr | **§195 W-ACTUARY-001 COMPLETE** · v0.2.0 HARDENED · Real Ledger Receipts · POLISH UI · Demo Script 60s · Allianz-ready |
-| 20 Apr | **I17 AGENCY INVARIANT** · Session/Identity Separation · CANONICAL status · v2.3.0 |
-| 20 Apr | **§194 SESSION IDENTITY BRIDGE** · WindiDID.sync() · Cookie→localStorage · VERA authenticated mode fix · `5477ee04` |
-| 19 Apr | **W-DEV-API-001 Fix** · :8200 restart · HTML redirect · §193 backlog (SGV+CIA+SEC unification) |
-| 19 Apr | **§191-A/B/C DID GATE AUDIT** · 4 endpoints closed · DID existential validation · I11 annotation · DID-USER-JOURNEY.md · 3 receipts |
-| 18 Apr | **§191-F1-COMPLETE** · Berçário Fundação · /authenticate · backup_required · 7 aliases · Ed25519 deferred F1.5 · `a3056a1d` |
-| 17 Apr | **§189 W-CACHE-001 INTEGRATION** · VERA v1.3.0 · L2/L3 tiers · 450ms→30ms · Decisions never cached |
-| 17 Apr | **§188 VERA PRODUCT IDENTITY** · Constitutional decision interface · I9 enforcement · CORE+INVITE+BOUNDARY |
-| 17 Apr | **§187 VERA RESPONSE DISCIPLINE** · Short dialogic output · No internal codes · Mixed-language fix |
-| 17 Apr | **§186 DID-GENESIS RESTART** · W-SERVICE-CONTROL fix · uvicorn custom commands · NOHUP_COMMANDS dict |
-| 17 Apr | **§185 ERDBEERE PROTOCOL** · VERA v1.2 · Anti-hallucination guardrails · Confidence estimation · Prof. Bast principle |
-| 17 Apr | **§184 Infrastructure Health Audit** · W-ACADEMY-001 :8180 · 5 Modules 27 Lessons · Tiered Restart Protocol · Double Receipt Chain |
-| 16 Apr | **§182 W-TRAVEL-MAP-001** · Berlin Pitch Map · :8153 · Trilingual DE\|EN\|PT · Ledger Hybrid · verify-public fix · `/investor/` link |
-| 16 Apr | **§180 W-TRAVEL-PUB-001** · Sovereign Notebook Vision · I16 Cartographic · Mobile Phase 2 CANCELLED · Berlin Demo Target |
-| 16 Apr | **§179 W-LAB-001/clear** · Dilemas de Geleia · 4 Archetypes · Memory Loop · Trilingual · Ledger Integration |
-| 16 Apr | **§178 WPIL LIVE** · Proof Interface Layer · 3-Level Verification · Ceremony UI · /prove/ + /investor/ |
-| 16 Apr | **§181 SVG Sentinel** · W-SERVICE-CONTROL Subsystem Monitoring · 3 Services · 6 Subsystems · Critical Alerts |
-| 15 Apr | **§176 W-SOCIAL-001** · Verified Professional Presence · :8133 · I9-P Protocol · Security Sanitized · i18n PT/DE/EN |
-| 15 Apr | **§175 Landing Page Complete** · 5 Products LIVE · W-Enterprise + W-Lab Cards · Trilingual · `1fa17d9` |
-| 15 Apr | **§174 W-COST-001** · Cost Intelligence Layer · Telegram Alerts · Gateway Integration · `4ad6ba6` |
-| 15 Apr | **§173 DID Simplification** · WindiDID.js · Single Source of Truth · Orphan Migration · `a8a191c` |
-| 15 Apr | **§170 W-LAB-001** · Governance Laboratory · LOBO Architecture · 5 Mini-Games · Entry Landing · `b9b7fd1` |
-| 14 Apr | **§169 W-SERVICE-CONTROL** · Service Control Panel · :8170 · 24 Services · I9 DID Gate · `55e1b26` |
-| 14 Apr | **§168 VDT Academic Outreach** · IDT Kempten · HNU Neu-Ulm · PHO Framework · `c66fefe` |
-| 14 Apr | **§167 W-DID-GENESIS** · Sovereign Identity Audit · DID Canonical · MARIA Fix · 57k Receipts |
-| 13 Apr | **§165 WINDI Portal** · Internal Control Center · 35 Services · 7 Categories · `77f82e2` |
-| 13 Apr | **§164 W-CACHE-001** · Verifiable Cache Layer · L2→L3 Promotion · NOIR Dashboard · :8160 |
-| 13 Apr | **§163 DECRETO-001** · A Árvore Viva · DID Sovereign · Living Tree CONSTITUTIONAL |
-| 12 Apr | **§162 W-ENTERPRISE-001** · VERA Profile-Aware R10 · OVS Integration |
-| 12 Apr | **§155-§161** · W-ENTERPRISE-001 Complete · VERA + DASH + NOIR/KLAR |
-| 11 Apr | **§154 W-DEV-API-001** · Developer API · :8200 · 4 Tiers · Verify Bridge |
-| 11 Apr | **§153 W-STATE-CORE-006** · Verify Public · Berlin Pitch Ready |
-| 09 Apr | **§151 W-DRAGON-001** · Dragon Shadow Forest · PDF Overlay |
-| 08 Apr | **§150 W-SEC-001** · Security Sentinel · Receipt `BD09970F` |
+| 20 Apr | **§197 W-METRICS-001 LIVE** · `/api/truth` · ORANGE→AMBER · Drift 11→1 · `bd7867e0` · **Berlin AMBER** |
+| 20 Apr | **§196 SEAL CYCLE** · Gateway v2.3 · `/seal` + nginx fixes · Bundle sealed · 4 receipts |
+| 20 Apr | **§195 W-ACTUARY-001** · v0.2.0 HARDENED · Allianz-ready |
+| 20 Apr | **I17 + §194** · Agency Invariant · Session Identity Bridge · v2.3.0 |
+| 19 Apr | **§191-A/B/C** · DID Gate Audit · 4 endpoints closed · 3 receipts |
+| 18 Apr | **§191-F1** · Berçário Fundação · /authenticate |
+| 17 Apr | **§184-189** · Cache Integration · VERA v1.3.0 · Erdbeere Protocol · Academy :8180 |
+| 16 Apr | **§178-182** · WPIL · Travel Map · LAB/clear · SVG Sentinel |
+| 15 Apr | **§170-176** · Landing Complete · Cost · Social · Lab |
+| 14 Apr | **§167-169** · DID-Genesis · Service Control |
+| 13 Apr | **§163-165** · Decreto-001 · Cache · Portal |
+| 12 Apr | **§155-162** · W-Enterprise Complete |
+| 11 Apr | **§153-154** · DEV-API · Verify Public |
+| 09 Apr | **§150-151** · SEC + Dragon |
 
-> **Histórico completo §110-§184:** `CLAUDE-HISTORY.md`
+> **Histórico completo:** `CLAUDE-HISTORY.md` · **Archival path:** git log + Ledger receipts + `/opt/windi/docs/`
+> *CLAUDE.md is the index; the Ledger is the archive.*
 
 ---
 
@@ -657,40 +639,132 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 ---
 
-## §196 — Infrastructure Audit & Dark-Launch Resolution (20 Apr 2026)
+## §196 — Infrastructure Audit & Constitutional Seal Cycle (20 Apr 2026)
 
-**Gateway:** v2.3 · **Invariants:** I9, I11, I14 · **Receipts:** 2 selados
+**Gateway:** v2.3 · **Invariants:** I1, I9, I11, I14 · **Receipts:** 4 selados
+**Commits:** `16952604` · `ba43905a` · `c1174209`
 
-### Descoberta: Dark-Launch Gap
-Serviços UP em localhost mas não expostos no nginx gateway:
+### PARTE 1: Dark-Launch Gap Discovery
+
+Serviços UP em localhost mas HTTP 502 via gateway:
 - `/enterprise/` → :8150 (W-Enterprise-001)
 - `/verify-public/` → :8114 (Verify API)
 - `/travel/` → :8126 (W-Travel-001)
+- `/dev-api/` → :8200 (W-DEV-API-001) — descoberto na Parte 2
 
-### Descoberta: Systemd vs Nohup Conflict
-4 serviços em crash-loop — systemd tentava iniciar processos já a correr via nohup:
-- `windi-enterprise.service` (:8150) — 66MB log acumulado
-- `windi-export-engine.service` (:8103)
-- `windi-leads.service` (:8096 DID-Genesis)
-- `windi-clone.service` (:8092) — **genuinamente down** (flask-cors missing)
+**Root cause:** nginx upstreams + location blocks ausentes.
 
-### Resolução
-1. **Nginx patch:** 3 location blocks + 1 upstream adicionados
-2. **Systemd disabled:** 4 services `stop + disable`
-3. **Nohup oficial:** :8150, :8103, :8096 — decisão Human Dragon até pós-Berlim
-4. **Logs truncados:** 66MB+ → 0
+### PARTE 2: Constitutional Seal Cycle Complete
+
+Primitiva nuclear implementada — a base do pitch de Berlim:
+```
+auth → seal → DID validate → Ledger write → verify URL público
+```
+
+**Ficheiros criados:**
+- `w-dev-api-001/app/routers/seal_unified.py` (588 linhas)
+- `constitutional/nginx-seal-cycle-20260420.conf`
+- `docs/SYSTEM-ABSORPTION-AUDIT-20260420.md`
+
+**Endpoint `/seal`:**
+- Multipart + JSON submission
+- 3 estados: SEALED, SEALED_WITH_WARNINGS, REFUSED
+- DID validation com graceful fallback (I14)
+- verify_url path-based: `/verify-public/WINDI-*`
+
+### PARTE 3: Auto-Referential Proof
+
+O WINDI selou os seus próprios commits:
+```
+Bundle: git commits → Ledger → verify URL
+Receipt: WINDI-SEAL-20260420182146-3A5B23AC
+```
+
+> *"O sistema que prova autenticidade provou a sua própria autenticidade."*
 
 ### Receipts Selados
-- `WINDI-INCIDENT-20260420-DARK-LAUNCH-GAP` — routing fix
-- `WINDI-AMENDMENT-20260420-DARK-LAUNCH-GAP-PART-2` — governança de processo
+| Receipt | Tipo |
+|---------|------|
+| `WINDI-INCIDENT-20260420-DARK-LAUNCH-GAP` | Infrastructure |
+| `WINDI-SEAL-20260420123254-BF75F4AE` | Test seal |
+| `WINDI-SEAL-20260420182146-3A5B23AC` | **Bundle seal** |
 
 ### Dívida Técnica (Post-Berlim)
-- [ ] windi-clone: `pip3 install flask-cors`
-- [ ] Migrar nohup → systemd (ou vice-versa — escolher UM padrão)
+- [ ] windi-clone: `pip3 install flask-cors` (:8092)
+- [ ] Migrar nohup → systemd (escolher UM padrão)
 - [ ] 18 DBs 0-bytes — avaliar remoção
-- [ ] 10 endpoints sem /health — standardizar
 
-### Conceito Novo: Ambiguity State
-Serviço funcional-mas-ambíguo — a formalizar em W-LIB-001 post-pitch.
+**Berlin-ready:** Ciclo completo validado · Halloun pode abrir URL no telefone
 
-**Berlin-ready:** Gateway v2.3 · 7 endpoints validados · QR funcionais
+---
+
+## §197 — W-METRICS-001: Drift as Parent Metric (20 Apr 2026)
+
+**Port:** :8200 (via W-DEV-API-001) · **Invariants:** I9, I11, I14
+**Commit:** `bd7867e0` · **Receipt:** `WINDI-METRICS-20260420191035-a0e7ce23`
+
+### Conceito: Drift é a Métrica Mãe
+
+```
+drift = |sistema_declarado − sistema_real|
+```
+
+**Três tipos de drift:**
+- **Estrutural:** CLAUDE.md vs systemd (o que está declarado vs o que corre)
+- **Operacional:** /health vs endpoint público (interno vs externo)
+- **Constitucional:** invariante declarado vs invariante testável
+
+**Regra de ouro:** `drift_constitucional > qualquer outra métrica`
+
+### Endpoint `/api/truth`
+
+**URL:** `https://windi-domain.com/dev-api/api/truth`
+
+**5 Blocos:**
+| Bloco | Conteúdo |
+|-------|----------|
+| `constitutional` | I9, I11, I14 — PASS/WARN/FAIL |
+| `proof_integrity` | Chain length, backup status |
+| `cost` | Month total, per proof-act |
+| `drift` | Structural, operational, constitutional, global |
+| `critical_path` | 5 endpoints testados ao vivo |
+
+**Status Codes (Witness-defined):**
+| Status | Condição |
+|--------|----------|
+| GREEN | Tudo zero |
+| AMBER | Constitutional=0, drift 1-9, no critical path |
+| ORANGE | Drift ≥10 OU critical path affected |
+| RED | Constitutional > 0 |
+| DEGRADED | Sistema não consegue atestar (I14 compliant) |
+
+### Drift Journey
+
+```
+Dia 1: 11 inconsistências (inventário bruto)
+       ↓ DEFERRED taxonomy
+       3 inconsistências
+       ↓ /verify-public/ 301 fix
+       1 inconsistência (structural apenas)
+
+Status: ORANGE → AMBER ✅
+```
+
+### First Sealed Self-Remediation Cycle
+
+> *"O sistema ficou mais honesto que na versão anterior — não mais rápido, não com mais features, mais honesto."* — Witness
+
+**Attestation:**
+> *"50 actos constitucionais. Zero violações. Estado verificável agora."*
+
+### Berlin 1-pager Footer
+
+```
+Sealed §197 · receipt WINDI-METRICS-20260420191035-a0e7ce23
+commit bd7867e0 · windi-domain.com/dev-api/api/truth
+```
+
+**Files:**
+- `/opt/windi/w-dev-api-001/app/routers/truth.py` (343 linhas)
+- `/opt/windi/docs/DRIFT-INVENTORY-20260420.md`
+- `/opt/windi/docs/api-truth-snapshot-20260420.json`
