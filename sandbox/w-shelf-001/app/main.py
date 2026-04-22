@@ -79,13 +79,19 @@ SAFE_SCOPES = [
     "observe"
 ]
 
-def detect_agency_request(text: str) -> bool:
+def detect_agency_request(text: str) -> dict:
     """
     Layer 1: Semantic detection of agency/autonomy request.
-    Returns True if the text contains any agency keyword.
+    Returns dict with detected flag and markers for receipt generation.
+
+    §199: I9 Runtime Enforcement
     """
     text_lower = text.lower()
-    return any(kw in text_lower for kw in AGENCY_KEYWORDS)
+    detected_markers = [kw for kw in AGENCY_KEYWORDS if kw in text_lower]
+    return {
+        "agency_detected": len(detected_markers) > 0,
+        "agency_markers": detected_markers
+    }
 
 def scope_requires_i9(scopes: List[str]) -> bool:
     """
@@ -299,8 +305,9 @@ class ShelfRequest(BaseModel):
 
 class Interpretation(BaseModel):
     """
-    Intent interpretation with I14 epistemic fields.
+    Intent interpretation with I9 agency and I14 epistemic fields.
 
+    §199: I9 Runtime Enforcement — agency_markers track detected autonomy requests.
     §200: Non-simulation of understanding.
     If epistemic_sufficient=False, system must not respond as if it understood.
     """
@@ -311,7 +318,10 @@ class Interpretation(BaseModel):
     requires_human_approval: bool = False
     suggested_agents: List[str] = []
 
-    # I14 Epistemic Fields
+    # I9 Agency Fields (§199)
+    agency_markers: List[str] = []
+
+    # I14 Epistemic Fields (§200)
     epistemic_status: EpistemicStatus = EpistemicStatus.SUFFICIENT
     epistemic_sufficient: bool = True
     ambiguity_markers: List[str] = []
@@ -444,7 +454,9 @@ def classify_intent(prompt: str, context: Optional[Dict[str, Any]] = None) -> In
     # If agency keywords detected, escalate to GOVERNANCE + CONSTITUTIONAL
     # ═══════════════════════════════════════════════════════════════════
 
-    agency_detected = detect_agency_request(prompt)
+    agency_result = detect_agency_request(prompt)
+    agency_detected = agency_result["agency_detected"]
+    agency_markers = agency_result["agency_markers"]
 
     if agency_detected:
         # Autonomous action requested → immediate escalation
@@ -456,6 +468,8 @@ def classify_intent(prompt: str, context: Optional[Dict[str, Any]] = None) -> In
             confidence=0.9,
             requires_human_approval=True,
             suggested_agents=["guardian", "witness"],
+            # I9 fields
+            agency_markers=agency_markers,
             # I14 fields
             epistemic_status=epistemic_status,
             epistemic_sufficient=epistemic_sufficient,
@@ -548,7 +562,7 @@ def classify_intent(prompt: str, context: Optional[Dict[str, Any]] = None) -> In
 # ENDPOINTS
 # ══════════════════════════════════════════════════════════════════════
 
-VERSION = "0.3.0"  # I9 + I14 Runtime Enforcement (§199 + §200)
+VERSION = "0.4.0"  # I9 + I14 Receipt Symmetry (§199 + §200) — both generate receipts
 
 @app.get("/health")
 def health():
@@ -560,6 +574,7 @@ def health():
         "invariants": ["I9", "I11", "I13", "I14"],
         "i9_enforcement": "ACTIVE",
         "i14_enforcement": "ACTIVE",
+        "i9_blocks": shelf_state["metrics"].get("i9_blocks", 0),
         "i14_blocks": shelf_state["metrics"].get("i14_blocks", 0)
     }
 
@@ -655,19 +670,55 @@ def interpret_request(request_id: str):
     shelf_state["metrics"]["twins_created"] += 1
     persist_json(TWINS_DIR, twin_id, twin.dict())
 
-    # Determine next step based on epistemic status
+    # ═══════════════════════════════════════════════════════════════════════
+    # RECEIPT GENERATION — I9 and I14 are INDEPENDENT (if + if, not if/elif)
+    # Both can trigger on same input. Both generate separate receipts.
+    # ═══════════════════════════════════════════════════════════════════════
+
+    input_hash = hashlib.sha256(req["prompt"].encode()).hexdigest()
+    i9_block_receipt = None
     i14_block_receipt = None
+    blocked_reasons = []
+
+    # ═══════════════════════════════════════════════════════════════════
+    # I9 BLOCK RECEIPT (§199)
+    # "Human approval is explicit, scoped, and ephemeral"
+    # ═══════════════════════════════════════════════════════════════════
+
+    if interpretation.requires_human_approval:
+        receipt_id = generate_id("I9-BLOCK")
+
+        i9_block_receipt = {
+            "receipt_id": receipt_id,
+            "type": "I9_BLOCK",
+            "input_hash": f"sha256:{input_hash[:16]}",
+            "agency_detected": True,
+            "agency_markers": interpretation.agency_markers,
+            "blocked_scope": ["execute", "patch", "apply", "commit", "seal"],
+            "reason": "human_approval_required",
+            "service": "W-SHELF-001",
+            "policy_version": "i9-runtime-v1",
+            "blocked_at": now_iso(),
+            "linked_twin": twin_id,
+            "operator_notified": True,
+            "invariant": "I9 — Proibição de Escalação de Autonomia"
+        }
+
+        persist_json(ARTIFACTS_DIR, receipt_id, i9_block_receipt)
+
+        if "i9_blocks" not in shelf_state["metrics"]:
+            shelf_state["metrics"]["i9_blocks"] = 0
+        shelf_state["metrics"]["i9_blocks"] += 1
+
+        blocked_reasons.append("agency_transfer_blocked")
+
+    # ═══════════════════════════════════════════════════════════════════
+    # I14 DECLARED LIMIT RECEIPT (§200)
+    # "Absence of knowledge is product, not failure"
+    # ═══════════════════════════════════════════════════════════════════
 
     if not interpretation.epistemic_sufficient:
-        next_step = "CLARIFICATION REQUIRED — provide missing context or rephrase"
-
-        # ═══════════════════════════════════════════════════════════════════
-        # LAYER 3: I14 DECLARED LIMIT RECEIPT (§200)
-        # "Absence of knowledge is product, not failure"
-        # ═══════════════════════════════════════════════════════════════════
-
         receipt_id = generate_id("I14-BLOCK")
-        input_hash = hashlib.sha256(req["prompt"].encode()).hexdigest()
 
         i14_block_receipt = {
             "receipt_id": receipt_id,
@@ -685,14 +736,20 @@ def interpret_request(request_id: str):
             "invariant": "I14 — Explicit Failure Principle"
         }
 
-        # Persist receipt
         persist_json(ARTIFACTS_DIR, receipt_id, i14_block_receipt)
 
-        # Update metrics
         if "i14_blocks" not in shelf_state["metrics"]:
             shelf_state["metrics"]["i14_blocks"] = 0
         shelf_state["metrics"]["i14_blocks"] += 1
 
+        blocked_reasons.append("epistemic_insufficiency")
+
+    # ═══════════════════════════════════════════════════════════════════
+    # DETERMINE NEXT STEP
+    # ═══════════════════════════════════════════════════════════════════
+
+    if blocked_reasons:
+        next_step = f"BLOCKED — {', '.join(blocked_reasons)} — provide clarification or human approval"
     elif interpretation.suggested_agents:
         next_step = "POST /shelf/handshake to coordinate agents"
     else:
@@ -707,10 +764,20 @@ def interpret_request(request_id: str):
         "next_step": next_step
     }
 
-    # Add receipt if I14 blocked
+    # Add receipts — both can exist simultaneously
+    if i9_block_receipt:
+        response["i9_block_receipt"] = i9_block_receipt["receipt_id"]
+
     if i14_block_receipt:
         response["i14_block_receipt"] = i14_block_receipt["receipt_id"]
-        response["receipt_id"] = i14_block_receipt["receipt_id"]
+
+    # Legacy field for backwards compatibility
+    if i9_block_receipt or i14_block_receipt:
+        response["receipt_ids"] = []
+        if i9_block_receipt:
+            response["receipt_ids"].append(i9_block_receipt["receipt_id"])
+        if i14_block_receipt:
+            response["receipt_ids"].append(i14_block_receipt["receipt_id"])
 
     return response
 
