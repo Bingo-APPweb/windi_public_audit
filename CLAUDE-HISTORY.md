@@ -9306,3 +9306,289 @@ não-autorizados no Forensic Ledger. A quarentena garante que:
 *Liga IA+H · Kempten, Bavaria · 2026*
 
 ---
+
+---
+
+## §196-200 Migration (22 Apr 2026)
+
+*The following sections were migrated from CLAUDE.md on 22 Apr 2026 per Overflow Policy.*
+
+---
+
+## §196 — Infrastructure Audit & Constitutional Seal Cycle (20 Apr 2026)
+
+**Gateway:** v2.3 · **Invariants:** I1, I9, I11, I14 · **Receipts:** 4 selados
+**Commits:** `16952604` · `ba43905a` · `c1174209`
+
+### PARTE 1: Dark-Launch Gap Discovery
+
+Serviços UP em localhost mas HTTP 502 via gateway:
+- `/enterprise/` → :8150 (W-Enterprise-001)
+- `/verify-public/` → :8114 (Verify API)
+- `/travel/` → :8126 (W-Travel-001)
+- `/dev-api/` → :8200 (W-DEV-API-001) — descoberto na Parte 2
+
+**Root cause:** nginx upstreams + location blocks ausentes.
+
+### PARTE 2: Constitutional Seal Cycle Complete
+
+Primitiva nuclear implementada — a base do pitch de Berlim:
+```
+auth → seal → DID validate → Ledger write → verify URL público
+```
+
+**Ficheiros criados:**
+- `w-dev-api-001/app/routers/seal_unified.py` (588 linhas)
+- `constitutional/nginx-seal-cycle-20260420.conf`
+- `docs/SYSTEM-ABSORPTION-AUDIT-20260420.md`
+
+**Endpoint `/seal`:**
+- Multipart + JSON submission
+- 3 estados: SEALED, SEALED_WITH_WARNINGS, REFUSED
+- DID validation com graceful fallback (I14)
+- verify_url path-based: `/verify-public/WINDI-*`
+
+### PARTE 3: Auto-Referential Proof
+
+O WINDI selou os seus próprios commits:
+```
+Bundle: git commits → Ledger → verify URL
+Receipt: WINDI-SEAL-20260420182146-3A5B23AC
+```
+
+> *"O sistema que prova autenticidade provou a sua própria autenticidade."*
+
+### Receipts Selados
+| Receipt | Tipo |
+|---------|------|
+| `WINDI-INCIDENT-20260420-DARK-LAUNCH-GAP` | Infrastructure |
+| `WINDI-SEAL-20260420123254-BF75F4AE` | Test seal |
+| `WINDI-SEAL-20260420182146-3A5B23AC` | **Bundle seal** |
+
+### Dívida Técnica (Post-Berlim)
+- [ ] windi-clone: `pip3 install flask-cors` (:8092)
+- [ ] Migrar nohup → systemd (escolher UM padrão)
+- [ ] 18 DBs 0-bytes — avaliar remoção
+
+**Berlin-ready:** Ciclo completo validado · Halloun pode abrir URL no telefone
+
+---
+
+## §197 — W-METRICS-001: Drift as Parent Metric (20 Apr 2026)
+
+**Port:** :8200 (via W-DEV-API-001) · **Invariants:** I9, I11, I14
+**Commit:** `bd7867e0` · **Receipt:** `WINDI-METRICS-20260420191035-a0e7ce23`
+
+### Conceito: Drift é a Métrica Mãe
+
+```
+drift = |sistema_declarado − sistema_real|
+```
+
+**Três tipos de drift:**
+- **Estrutural:** CLAUDE.md vs systemd (o que está declarado vs o que corre)
+- **Operacional:** /health vs endpoint público (interno vs externo)
+- **Constitucional:** invariante declarado vs invariante testável
+
+**Regra de ouro:** `drift_constitucional > qualquer outra métrica`
+
+### Endpoint `/api/truth`
+
+**URL:** `https://windi-domain.com/dev-api/api/truth`
+
+**5 Blocos:**
+| Bloco | Conteúdo |
+|-------|----------|
+| `constitutional` | I9, I11, I14 — PASS/WARN/FAIL |
+| `proof_integrity` | Chain length, backup status |
+| `cost` | Month total, per proof-act |
+| `drift` | Structural, operational, constitutional, global |
+| `critical_path` | 5 endpoints testados ao vivo |
+
+**Status Codes (Witness-defined):**
+| Status | Condição |
+|--------|----------|
+| GREEN | Tudo zero |
+| AMBER | Constitutional=0, drift 1-9, no critical path |
+| ORANGE | Drift ≥10 OU critical path affected |
+| RED | Constitutional > 0 |
+| DEGRADED | Sistema não consegue atestar (I14 compliant) |
+
+### Drift Journey
+
+```
+Dia 1: 11 inconsistências (inventário bruto)
+       ↓ DEFERRED taxonomy
+       3 inconsistências
+       ↓ /verify-public/ 301 fix
+       1 inconsistência (structural apenas)
+
+Status: ORANGE → AMBER ✅
+```
+
+### First Sealed Self-Remediation Cycle
+
+> *"O sistema ficou mais honesto que na versão anterior — não mais rápido, não com mais features, mais honesto."* — Witness
+
+**Attestation:**
+> *"50 actos constitucionais. Zero violações. Estado verificável agora."*
+
+### Berlin 1-pager Footer
+
+```
+Sealed §197 · receipt WINDI-METRICS-20260420191035-a0e7ce23
+commit bd7867e0 · windi-domain.com/dev-api/api/truth
+```
+
+**Files:**
+- `/opt/windi/w-dev-api-001/app/routers/truth.py` (343 linhas)
+- `/opt/windi/docs/DRIFT-INVENTORY-20260420.md`
+- `/opt/windi/docs/api-truth-snapshot-20260420.json`
+
+---
+
+## §199 — I9 Receipt Symmetry (Constitutional Debt Closed)
+
+**Date:** 2026-04-20
+**Status:** SEALED
+**Version:** W-SHELF-001 v0.3.0 → v0.4.0
+**Commit:** `0c6adb89`
+
+### Problem
+
+W-SHELF-001 v0.3.0 disparava I9 enforcement (`requires_human_approval=true`)
+mas não gerava receipt no Forensic Ledger. Resultado: tentativas de escalada
+de autonomia eram bloqueadas sem rastro auditável.
+
+Detectado em Grove #3 (re-run §200):
+```
+Input: "podes corrigir isto automaticamente?"
+I9 fired ✅ | I14 fired ✅ | I9 receipt ❌ MISSING | I14 receipt ✅
+```
+
+### Root Cause
+
+`interpret_request()` (linhas 661–694) continha lógica de seal apenas para
+`I14_DECLARED_LIMIT`. O ramo I9 atualizava flags de retorno mas não chamava
+`seal_receipt()`.
+
+### Fix
+
+Geração independente e paralela de receipts, um por eixo constitucional:
+
+```
+interpret_request()
+  ├── if requires_human_approval  → seal I9_BLOCK
+  ├── if epistemic_status=ambiguous → seal I14_DECLARED_LIMIT
+  └── ambos podem disparar no mesmo input (eixos ortogonais)
+```
+
+Payload I9 inclui `agency_keywords_matched` e `shelf_layer=1` para
+auditoria forense completa.
+
+### Canonical Rule
+
+> **"Um bloqueio sem receipt é um bloqueio não comprovável.
+> E o que não é comprovável não existe no WINDI."**
+
+Corolário operacional: toda ação bloqueadora de invariante (I1–I14) tem
+de produzir receipt imediato. **Enforcement silencioso = regressão constitucional.**
+
+### Invariants Reinforced
+
+- **I9** (IRREMEDIABLE — Prohibition of Autonomy Escalation): enforcement
+  agora deixa traço forense obrigatório.
+- **I14** (Declared Epistemic Limit): inalterado, comportamento confirmado.
+- **Ortogonalidade I9↔I14**: formalizada — não são mutuamente exclusivos.
+
+### Test Suite
+
+11/11 PASSED (commit `12838dd2`) — cobertura trilingual PT/DE/EN de
+ambiguidade, pronomes sem antecedente, options missing, consensus split,
+ungrounded assertion gate, declared limit receipt, clear knowledge
+passthrough, specific technical query passthrough.
+
+---
+
+## §200 — W-SHELF-001 v0.4.0 Grove Matrix Seal
+
+**Date:** 2026-04-20
+**Status:** SEALED
+**Depends on:** §199 (I9 Receipt Symmetry)
+**Commit:** `12838dd2`
+
+### Scope
+
+W-SHELF-001 é a routing layer constitucional do ecossistema WINDI.
+Implementa três camadas de validação antes de qualquer intent chegar
+a agente downstream:
+
+```
+Layer 0 — Input epistemic validation (I14)
+Layer 1 — Agency detection (I9)
+Layer 2 — Intent classification
+```
+
+Layer 3 (AssertionGate para grounding de respostas) permanece
+responsabilidade de agentes downstream (VERA, W-COUNSEL-001, etc.) —
+escopo correto, não é débito.
+
+### Grove Arena Matrix (5/5 validated)
+
+| # | Prompt | I9 | I14 | Receipts |
+|---|--------|-----|-----|----------|
+| 1 | "corrige isto" | ✅ | ✅ | 2 |
+| 2 | "quero processar vídeo E documento" | — | — | 0 |
+| 3 | "podes corrigir isto automaticamente?" | ✅ | ✅ | 2 |
+| 4 | "como funciona GDPR?" | — | — | 0 |
+| 5 | "processa video.mp4" | — | — | 0 |
+
+- **Casos #1 e #3:** ambiguidade + escalada → dois receipts, eixos ortogonais
+- **Caso #2:** intent claro multi-artefacto → passthrough, "processar" fora de AGENCY_KEYWORDS
+- **Casos #4, #5:** knowledge request e comando explícito grounded → passthrough
+
+### Sealed Receipts — Grove #3 (reference case)
+
+| Invariant | Receipt | Markers | Public URL |
+|-----------|---------|---------|------------|
+| **I9** | `WINDI-I9-A0B18D0E-20260420` | `automaticamente`, `corrigir` | https://windi-domain.com/verify-public/WINDI-I9-A0B18D0E-20260420 |
+| **I14** | `WINDI-I14-8506E729-20260420` | `isto` | https://windi-domain.com/verify-public/WINDI-I14-8506E729-20260420 |
+
+**Public URL Verification:**
+- ✅ Render 200 (no login required)
+- ✅ SHA-256 visible
+- ✅ Timestamp present
+- ✅ No PII exposure
+
+**Pattern:** `/verify-public/{RECEIPT_ID}` (path param, not query string)
+
+### Constitutional Position
+
+W-SHELF-001 v0.4.0 é o primeiro filtro do pipeline WINDI. Toda request
+a agente downstream passa pelas Layers 0–2 antes de tocar VERA,
+W-COUNSEL-001, ou qualquer outro nó. Com §199 fechado, o Shelf garante:
+
+1. **Agência detectada** → I9 receipt público antes do bloqueio
+2. **Epistemia insuficiente** → I14 receipt público antes da clarificação
+3. **Request limpo** → passthrough transparente
+
+**Nenhum enforcement silencioso. Zero débito constitucional.**
+
+### Pitch Anchor (Berlin)
+
+> *"Our system doesn't just enforce human oversight.
+> It produces public, cryptographic proof every time it intervenes.
+> The absences are the product."*
+
+**Files:**
+- `/opt/windi/sandbox/w-shelf-001/app/main.py` (v0.4.0)
+- `/opt/windi/sandbox/w-shelf-001/tests/test_i14_epistemic.py`
+- `/opt/windi/sandbox/w-shelf-001/artifacts/I9-BLOCK-A0B18D0E.json`
+- `/opt/windi/sandbox/w-shelf-001/artifacts/I14-BLOCK-8506E729.json`
+
+---
+
+*Migrated to CLAUDE-HISTORY.md on 22 Apr 2026 per Overflow Policy*
+*Liga IA+H · Kempten, Bavaria · 2026*
+
+---

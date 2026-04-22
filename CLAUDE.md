@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.7.0
-**Sealed:** 2026-04-20 · §200 I14 Epistemic Enforcement · Non-simulation of Understanding · 11/11 TESTS
+**Version:** 2.8.0
+**Sealed:** 2026-04-22 · §201 Paper-001 Scientific Foundation · PoE Methodology Sealed · AI-AI-AI-H Architecture
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -499,7 +499,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 ---
 
-## 13. Estado Actual — 20 Abril 2026
+## 13. Estado Actual — 22 Abril 2026
 
 ### Portas Críticas
 
@@ -534,6 +534,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 22 Apr | **§201 PAPER-001 SCIENTIFIC FOUNDATION** · PoE-ELIGIBILITY-CRITERIA-001 + PoE-CLASSIFICATION-PROTOCOL-001 SEALED · AI-AI-AI-H Architecture · n≤31 · W5/W6/W7 |
 | 20 Apr | **§200 I14 EPISTEMIC ENFORCEMENT** · W-SHELF-001 v0.3.0 · Non-simulation of Understanding · 11/11 Tests · `0ec09491` |
 | 20 Apr | **§199 I9 RUNTIME ENFORCEMENT** · W-SHELF-001 v0.2.0 · 3-Layer Containment · Grove Arena ✅ · `a85909e4` |
 | 20 Apr | **§198 W-SHELF-001 LIVE** · Governed Knowledge Diffusion · TWIN+Handshake · Codex Mock |
@@ -708,132 +709,53 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 ---
 
-## §196 — Infrastructure Audit & Constitutional Seal Cycle (20 Apr 2026)
+## §196-200 — W-SHELF-001 Constitutional Enforcement (20 Apr 2026)
 
-**Gateway:** v2.3 · **Invariants:** I1, I9, I11, I14 · **Receipts:** 4 selados
-**Commits:** `16952604` · `ba43905a` · `c1174209`
+> **Full details:** `CLAUDE-HISTORY.md` § §196-200 Migration
 
-### PARTE 1: Dark-Launch Gap Discovery
+| § | Topic | Key |
+|---|-------|-----|
+| §196 | Infrastructure Audit | Dark-Launch Gap · `/seal` endpoint · 4 receipts |
+| §197 | W-METRICS-001 | Drift as Parent Metric · `/api/truth` · AMBER status |
+| §199 | I9 Receipt Symmetry | Constitutional debt closed · `0c6adb89` |
+| §200 | Grove Matrix Seal | W-SHELF-001 v0.4.0 · 5/5 validated · `12838dd2` |
 
-Serviços UP em localhost mas HTTP 502 via gateway:
-- `/enterprise/` → :8150 (W-Enterprise-001)
-- `/verify-public/` → :8114 (Verify API)
-- `/travel/` → :8126 (W-Travel-001)
-- `/dev-api/` → :8200 (W-DEV-API-001) — descoberto na Parte 2
-
-**Root cause:** nginx upstreams + location blocks ausentes.
-
-### PARTE 2: Constitutional Seal Cycle Complete
-
-Primitiva nuclear implementada — a base do pitch de Berlim:
-```
-auth → seal → DID validate → Ledger write → verify URL público
-```
-
-**Ficheiros criados:**
-- `w-dev-api-001/app/routers/seal_unified.py` (588 linhas)
-- `constitutional/nginx-seal-cycle-20260420.conf`
-- `docs/SYSTEM-ABSORPTION-AUDIT-20260420.md`
-
-**Endpoint `/seal`:**
-- Multipart + JSON submission
-- 3 estados: SEALED, SEALED_WITH_WARNINGS, REFUSED
-- DID validation com graceful fallback (I14)
-- verify_url path-based: `/verify-public/WINDI-*`
-
-### PARTE 3: Auto-Referential Proof
-
-O WINDI selou os seus próprios commits:
-```
-Bundle: git commits → Ledger → verify URL
-Receipt: WINDI-SEAL-20260420182146-3A5B23AC
-```
-
-> *"O sistema que prova autenticidade provou a sua própria autenticidade."*
-
-### Receipts Selados
-| Receipt | Tipo |
-|---------|------|
-| `WINDI-INCIDENT-20260420-DARK-LAUNCH-GAP` | Infrastructure |
-| `WINDI-SEAL-20260420123254-BF75F4AE` | Test seal |
-| `WINDI-SEAL-20260420182146-3A5B23AC` | **Bundle seal** |
-
-### Dívida Técnica (Post-Berlim)
-- [ ] windi-clone: `pip3 install flask-cors` (:8092)
-- [ ] Migrar nohup → systemd (escolher UM padrão)
-- [ ] 18 DBs 0-bytes — avaliar remoção
-
-**Berlin-ready:** Ciclo completo validado · Halloun pode abrir URL no telefone
+**Key Receipts:**
+- `WINDI-METRICS-20260420191035-a0e7ce23`
+- `WINDI-I9-A0B18D0E-20260420`
+- `WINDI-I14-8506E729-20260420`
 
 ---
 
-## §197 — W-METRICS-001: Drift as Parent Metric (20 Apr 2026)
+## §201 — Paper-001 Scientific Foundation (22 Apr 2026)
 
-**Port:** :8200 (via W-DEV-API-001) · **Invariants:** I9, I11, I14
-**Commit:** `bd7867e0` · **Receipt:** `WINDI-METRICS-20260420191035-a0e7ce23`
+**Status:** SEALED (Passos A+B) · Passo C: 24 Apr · **Invariants:** I9, I11, I14
 
-### Conceito: Drift é a Métrica Mãe
+### Documents Sealed
 
-```
-drift = |sistema_declarado − sistema_real|
-```
+| Document | Receipt |
+|----------|---------|
+| PoE-ELIGIBILITY-CRITERIA-001 v1.2 | `PoE-ELIGIBILITY-CRITERIA-001-v1.2-20260422` |
+| PoE-CLASSIFICATION-PROTOCOL-001 v1.1 | `PoE-CLASSIFICATION-PROTOCOL-001-v1.1-20260422` |
 
-**Três tipos de drift:**
-- **Estrutural:** CLAUDE.md vs systemd (o que está declarado vs o que corre)
-- **Operacional:** /health vs endpoint público (interno vs externo)
-- **Constitucional:** invariante declarado vs invariante testável
+### AI-AI-AI-H Architecture
 
-**Regra de ouro:** `drift_constitucional > qualquer outra métrica`
+Architect (R1 annotator) + Guardian (R1 annotator) + Witness (R3 arbiter) + Human Dragon (approver)
 
-### Endpoint `/api/truth`
+### Sample: n≤31 (of 100 planned)
 
-**URL:** `https://windi-domain.com/dev-api/api/truth`
+Exclusions: 11 service-restart (E1) + 8 non-PHO actors (E4)
 
-**5 Blocos:**
-| Bloco | Conteúdo |
-|-------|----------|
-| `constitutional` | I9, I11, I14 — PASS/WARN/FAIL |
-| `proof_integrity` | Chain length, backup status |
-| `cost` | Month total, per proof-act |
-| `drift` | Structural, operational, constitutional, global |
-| `critical_path` | 5 endpoints testados ao vivo |
+### Limitations (Paper-001 §7)
 
-**Status Codes (Witness-defined):**
-| Status | Condição |
-|--------|----------|
-| GREEN | Tudo zero |
-| AMBER | Constitutional=0, drift 1-9, no critical path |
-| ORANGE | Drift ≥10 OU critical path affected |
-| RED | Constitutional > 0 |
-| DEGRADED | Sistema não consegue atestar (I14 compliant) |
+W5: n≤31 · W6: Guardian AI as annotator · W7: AI-AI-AI bias · 16%: no-PHO finding
 
-### Drift Journey
+### Next: 24 Apr
 
-```
-Dia 1: 11 inconsistências (inventário bruto)
-       ↓ DEFERRED taxonomy
-       3 inconsistências
-       ↓ /verify-public/ 301 fix
-       1 inconsistência (structural apenas)
+Passo C (pre-inspection) → HD decides framing → Exp. 1 starts
 
-Status: ORANGE → AMBER ✅
-```
+### PROTOCOL-002 Seeds
 
-### First Sealed Self-Remediation Cycle
+PHO quarantine at creation · Human annotator triangulation · Taxonomy refinement post-Exp.1
 
-> *"O sistema ficou mais honesto que na versão anterior — não mais rápido, não com mais features, mais honesto."* — Witness
-
-**Attestation:**
-> *"50 actos constitucionais. Zero violações. Estado verificável agora."*
-
-### Berlin 1-pager Footer
-
-```
-Sealed §197 · receipt WINDI-METRICS-20260420191035-a0e7ce23
-commit bd7867e0 · windi-domain.com/dev-api/api/truth
-```
-
-**Files:**
-- `/opt/windi/w-dev-api-001/app/routers/truth.py` (343 linhas)
-- `/opt/windi/docs/DRIFT-INVENTORY-20260420.md`
-- `/opt/windi/docs/api-truth-snapshot-20260420.json`
+**Files:** `/opt/windi/docs/liga-iah/PoE-*.md` + `WINDI-PROTOCOL-001-v1.3.md` + `WINDI-POSITION-001-v1.1.md`
