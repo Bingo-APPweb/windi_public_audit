@@ -8,7 +8,7 @@
 
 ## § SESSÃO 23 Abr 2026 — §204 LIBREIRO Hub Architecture (GO 2)
 
-**Duração:** ~90min | **Status:** ✅ SEALED
+**Duração:** ~120min | **Status:** ✅ INTEGRITY_SEALED (Witness pending)
 **Liga IA+H:** Human Dragon · Architect · Liga IA+H
 **Invariants:** I9 (Human Approval), I11 (Forensic Permanence), G1, G3
 
@@ -53,6 +53,23 @@ Três pilares: Volumes · Crónica · Registos.
 - "Permanence over convenience" — dependências runtime reduzidas
 - Opção Y: Hub novo com link para foundations (não redirect 301)
 - Primeiro receipt de descomissionamento formal da história WINDI
+
+### CSS Fix (23:17)
+
+Asset em falta detectado: `/library/docs/` sem styling.
+- Causa: `windi-internal.css` não copiado na migração
+- Fix: `cp /opt/windi/masterarbeit/windi-internal.css /opt/windi/libreiro/`
+- Validado: 200 OK, 29963 bytes
+
+### Validação Cruzada (23:31)
+
+Suspeita de drift levantada por Human Dragon via inspecção visual.
+- Architect: curl server-side + teste semântico → "WINDI LIBREIRO" ✅
+- Human Dragon: janela incógnito → placeholders visíveis ✅
+- Conclusão: cache do browser, não drift real
+- Receipt válido sem amendment
+
+**I14 em acção:** "não assumir, verificar" — duas camadas independentes convergiram.
 
 ---
 
