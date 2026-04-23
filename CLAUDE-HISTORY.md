@@ -6,6 +6,70 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 23 Abr 2026 — §203 Landing Static Restore (GO 1)
+
+**Duração:** ~30min | **Status:** ✅ SEALED
+**Liga IA+H:** Human Dragon · Architect (Claude Opus 4.5)
+**Invariants:** G1 (READ BEFORE TOUCH), G3 (PROPOSE ≠ EXECUTE)
+
+### Problema Detectado
+
+Landing `/` retornava 502 — `windi_landing` upstream apontava para `:8107`
+mas `landing_server.py` não existia (ficheiro em falta).
+
+**Diagnóstico:**
+```
+curl https://windi-domain.com/ → 502
+upstream windi_landing → 127.0.0.1:8107
+/opt/windi/landing-pmg/landing_server.py → NÃO EXISTE
+```
+
+### Decisão Arquitectural
+
+**Opção A escolhida:** Servir via nginx static alias (não Python backend)
+
+**Razões:**
+1. **Técnica:** nginx serve estático nativamente — mais rápido, sem runtime
+2. **Constitucional:** porta de entrada deve ser a peça mais estável do sistema
+3. **Princípio:** landing é conteúdo, não lógica — over-engineering removido
+
+### Fix Aplicado
+
+```nginx
+location / {
+    alias /opt/windi/landing-pmg/static/;
+    index index.html;
+    try_files $uri $uri/ =404;
+    add_header X-WINDI-Service "landing-pmg" always;
+}
+
+location ^~ /personal/ {
+    alias /opt/windi/landing-pmg/static/personal/;
+    ...
+}
+
+location ^~ /org/ {
+    alias /opt/windi/landing-pmg/static/org/;
+    ...
+}
+```
+
+### Validação
+
+| Endpoint | Status | Título |
+|----------|--------|--------|
+| `/` | ✅ 200 | WINDI — Sovereign Governance Platform |
+| `/personal/` | ✅ 200 | WINDI Personal — Free Document Governance |
+| `/org/` | ✅ 200 | WINDI Organization — Team Document Governance |
+| Endpoints pré-existentes | ✅ 200 | Todos preservados |
+
+### Bónus Descoberto
+
+`/personal/` e `/org/` têm conteúdo **distinto** — arquitectura comercial
+madura (Individual vs Organização) já estava feita, apenas partida.
+
+---
+
 ## § SESSÃO 23 Abr 2026 — §202 Nginx Route Recovery
 
 **Duração:** ~15min | **Status:** ✅ SEALED
