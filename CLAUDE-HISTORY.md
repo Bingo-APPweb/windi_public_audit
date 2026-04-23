@@ -6,6 +6,74 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 23 Abr 2026 — §202 Nginx Route Recovery
+
+**Duração:** ~15min | **Status:** ✅ SEALED
+**Liga IA+H:** Human Dragon · Architect (Claude Opus 4.5)
+**Invariants:** G1 (READ BEFORE TOUCH), G3 (PROPOSE ≠ EXECUTE)
+
+### Problema Detectado
+
+Serviços W-SOCIAL-001 (:8133) e W-SHELF-001 (:8191) estavam UP nas portas
+mas inacessíveis via nginx — rotas em falta no ficheiro de configuração.
+
+**Diagnóstico:**
+```
+ss -tlnp | grep "8133\|8191"
+→ LISTEN 0.0.0.0:8133 (python3)
+→ LISTEN 0.0.0.0:8191 (python3)
+
+grep "location /social\|location /shelf" nginx config
+→ Routes not found
+```
+
+### Fix Aplicado
+
+Adicionadas 2 rotas nginx em `/etc/nginx/sites-enabled/windi-domain.com`:
+
+```nginx
+# ── W-SOCIAL-001 — Verified Professional Presence (:8133) ──
+location ^~ /social/ {
+    proxy_pass http://127.0.0.1:8133/;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_read_timeout 60s;
+    add_header X-WINDI-Service "w-social-001" always;
+}
+
+# ── W-SHELF-001 — Governed Knowledge Diffusion (:8191) ──
+location ^~ /shelf/ {
+    proxy_pass http://127.0.0.1:8191/;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_read_timeout 60s;
+    add_header X-WINDI-Service "w-shelf-001" always;
+}
+```
+
+### Validação
+
+| Endpoint | Resultado |
+|----------|-----------|
+| `nginx -t` | ✅ syntax ok |
+| `/social/` | ✅ 307 (redirect esperado) |
+| `/shelf/health` | ✅ v0.4.0 operacional |
+
+**W-SHELF-001 Status:**
+- I9 blocks: 11
+- I14 blocks: 15
+- Enforcement: ACTIVE
+
+### Protocolo Seguido
+
+1. **G1:** `ss -tlnp` + `grep` antes de tocar
+2. **G3:** Proposta apresentada → Human Dragon aprovou → Execução
+3. **nginx -t** antes de reload (Regra de Ouro #3)
+
+---
+
 ## § SESSÃO 20 Abr 2026 — §195 W-ACTUARY-001 Complete
 
 **Duração:** ~2h | **Status:** ✅ SEALED
