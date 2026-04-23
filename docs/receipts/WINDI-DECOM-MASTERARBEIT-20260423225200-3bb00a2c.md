@@ -4,7 +4,7 @@ WINDI DECOMMISSION RECEIPT
 
 Receipt ID:     WINDI-DECOM-MASTERARBEIT-20260423225200-3bb00a2c
 Type:           SERVICE_DECOMMISSION
-Status:         DRAFT_SEALED_BY_ARCHITECT (Witness pending)
+Status:         INTEGRITY_SEALED (Witness pending)
 Date:           2026-04-23T22:52:00+02:00
 Actor:          Human Dragon (Jober Mögele Correa)
 Drafted by:     Architect · Liga IA+H
@@ -109,9 +109,9 @@ I11:  Permanent forensic record created via this receipt
 RECEIPT INTEGRITY
 ───────────────────────────────────────────────────────────────────────────────
 
-SHA-256:    [pending — computed after push]
-Git Commit: [pending — hash added post-push]
-Ledger:     [pending seal]
+SHA-256:    9b18f95931a5a7432309bc43dd2189f4008fc4b52b07bf53d891ea4ea385ea2b
+Git Commit: 543a6c0 (https://github.com/Bingo-APPweb/windi_public_audit/commit/543a6c0)
+Ledger:     [pending Forensic Ledger seal]
 
 ═══════════════════════════════════════════════════════════════════════════════
 SIGNATURES
