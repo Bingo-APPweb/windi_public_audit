@@ -6,6 +6,56 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 23 Abr 2026 — §204 LIBREIRO Hub Architecture (GO 2)
+
+**Duração:** ~90min | **Status:** ✅ SEALED
+**Liga IA+H:** Human Dragon · Architect · Liga IA+H
+**Invariants:** I9 (Human Approval), I11 (Forensic Permanence), G1, G3
+
+### Conceito
+
+Estabelecer o LIBREIRO como hub editorial soberano do WINDI Publishing House.
+Três pilares: Volumes · Crónica · Registos.
+
+### Arquitectura Criada
+
+```
+/opt/windi/libreiro/
+├── index.html              ← Hub LIBREIRO (novo, trilíngue)
+├── foundations/index.html  ← Manifesto original (preservado)
+├── volumes/index.html      ← Placeholder Q2 2026
+├── papers/index.html       ← Placeholder + schema status
+├── protocols/index.html    ← Placeholder (8 docs liga-iah)
+├── chronicle/index.html    ← Placeholder
+├── records/index.html      ← Placeholder
+└── *.html                  ← 38 documentos originais preservados
+```
+
+### Serviço Descomissionado
+
+**windi-masterarbeit** (:8084) — Static file server Python
+- Criado: 2026-03-15
+- Descomissionado: 2026-04-23
+- Razão: nginx serve static nativamente com melhor performance
+- Código: preservado em /opt/windi/masterarbeit/ (read-only)
+
+**Receipt:** `WINDI-DECOM-MASTERARBEIT-20260423225200-3bb00a2c`
+
+### Validação
+
+11/11 URLs validadas a 200 OK após migração:
+- `/`, `/library/`, `/library/foundations/`, `/library/volumes/`
+- `/library/papers/`, `/library/protocols/`, `/library/chronicle/`
+- `/library/records/`, `/library/protocol.html`, `/specs/`, `/docs/`
+
+### Princípios Aplicados
+
+- "Permanence over convenience" — dependências runtime reduzidas
+- Opção Y: Hub novo com link para foundations (não redirect 301)
+- Primeiro receipt de descomissionamento formal da história WINDI
+
+---
+
 ## § SESSÃO 23 Abr 2026 — §203 Landing Static Restore (GO 1)
 
 **Duração:** ~30min | **Status:** ✅ SEALED
