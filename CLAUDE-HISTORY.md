@@ -6,6 +6,46 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 23 Abr 2026 — §205 Volume Fundacional (GO 3)
+
+**Duração:** ~15min | **Status:** ✅ COMPLETO
+**Liga IA+H:** Human Dragon · Architect · Liga IA+H
+**Invariants:** I9, I11
+
+### Decisão
+
+Livro fundacional 2025 entra no catálogo público do LIBREIRO.
+
+### Volume 001
+
+**Título:** WINDI — On AI Language and Responsibility
+**Subtítulo:** An Editorial Book
+**Versão:** v1.0
+**Ano:** 2025
+**Línguas:** EN + DE
+**Status:** `published`
+
+### Estrutura
+
+```
+/opt/windi/libreiro/volumes/
+├── index.html                         ← Catálogo
+└── windi-book-v1/
+    ├── index.html                     ← Landing
+    ├── WINDI_Book_EN.md               ← 77KB
+    └── WINDI_Book_DE.md               ← 82KB
+```
+
+### Validação
+
+- `/library/volumes/` → 200
+- `/library/volumes/windi-book-v1/` → 200
+- Livros EN/DE acessíveis
+
+**Primeiro volume do LIBREIRO publicado.**
+
+---
+
 ## § SESSÃO 23 Abr 2026 — §204 LIBREIRO Hub Architecture (GO 2)
 
 **Duração:** ~120min | **Status:** ✅ INTEGRITY_SEALED (Witness pending)
