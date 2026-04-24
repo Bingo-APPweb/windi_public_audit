@@ -3,6 +3,7 @@ import hashlib
 import logging
 import time
 import sys
+import threading
 from datetime import datetime, timezone
 from typing import Optional
 
@@ -10,7 +11,7 @@ import httpx
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, JSONResponse, HTMLResponse
+from fastapi.responses import FileResponse, JSONResponse, HTMLResponse, RedirectResponse
 import re
 import sqlite3
 from pydantic import BaseModel
@@ -127,9 +128,10 @@ def emit_propagation_event(receipt_id: str, request: Request, verified: bool = T
         log.debug(f"[PROV] Event emission failed (non-blocking): {e}")
         pass
 
-app = FastAPI(title="WINDI Verify Public Agent", version="1.0.1", docs_url="/verify-public/docs", redoc_url=None)
+app = FastAPI(title="WINDI Verify Public Agent", version="1.0.2", docs_url="/verify-public/docs", redoc_url=None)
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["GET","POST"], allow_headers=["*"])
 engine = VerifyEngine(ledger_url=LEDGER_URL, agents_url=AGENTS_URL, timeout=5.0)
+init_metrics_db()  # Initialize download metrics on startup
 
 WEB_DIR = os.path.join(os.path.dirname(__file__), "..", "web")
 if os.path.isdir(WEB_DIR):
@@ -151,8 +153,10 @@ if os.path.isdir(VPR_DIR):
 
 WALLET_DB = "/opt/windi/data/wallet.db"
 LEDGER_DB = "/opt/windi/data/forensic_ledger.sqlite3"
+VERIFY_METRICS_DB = "/opt/windi/data/verify_metrics.sqlite3"
 TEMPLATES_DIR = os.path.join(os.path.dirname(__file__), "..", "templates")
 os.makedirs(TEMPLATES_DIR, exist_ok=True)
+_metrics_lock = threading.Lock()
 
 # Jinja2 templates para VPR
 vpr_templates = Jinja2Templates(directory=TEMPLATES_DIR) if os.path.isdir(TEMPLATES_DIR) else None
@@ -168,6 +172,112 @@ def ledger_conn():
     c = sqlite3.connect(f"file:{LEDGER_DB}?mode=ro&immutable=1", uri=True, check_same_thread=False)
     c.row_factory = sqlite3.Row
     return c
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# VERIFY Distribution Metrics — Download Tracking (Future: VERIFY Free Distribution)
+# Schema: verify_artifact_downloads (aggregate) + verify_artifact_download_events (log)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def metrics_conn():
+    """Connection to verify_metrics.sqlite3 (read-write)."""
+    c = sqlite3.connect(VERIFY_METRICS_DB, check_same_thread=False)
+    c.row_factory = sqlite3.Row
+    return c
+
+
+def init_metrics_db():
+    """Initialize metrics database schema on startup."""
+    os.makedirs(os.path.dirname(VERIFY_METRICS_DB), exist_ok=True)
+    with _metrics_lock:
+        db = metrics_conn()
+        try:
+            db.execute("""
+                CREATE TABLE IF NOT EXISTS verify_artifact_downloads (
+                    artifact_id TEXT PRIMARY KEY,
+                    download_count INTEGER NOT NULL DEFAULT 0,
+                    last_download_at TEXT
+                )
+            """)
+            db.execute("""
+                CREATE TABLE IF NOT EXISTS verify_artifact_download_events (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    artifact_id TEXT NOT NULL,
+                    downloaded_at TEXT NOT NULL,
+                    source TEXT NOT NULL DEFAULT 'verify-public',
+                    referer_domain TEXT DEFAULT 'direct',
+                    client_fp TEXT,
+                    user_agent TEXT
+                )
+            """)
+            db.commit()
+        finally:
+            db.close()
+
+
+def _client_fp(request: Request) -> str:
+    """Generate anonymous client fingerprint from IP (C-PROV-002 compliant)."""
+    raw_ip = request.headers.get("X-Forwarded-For", request.headers.get("X-Real-IP", "unknown"))
+    if "," in raw_ip:
+        raw_ip = raw_ip.split(",")[0].strip()
+    return hashlib.sha256(raw_ip.encode()).hexdigest()[:16]
+
+
+def track_artifact_download(artifact_id: str, request: Request, source: str = "verify-public") -> int:
+    """Track artifact download event. Returns updated count."""
+    ts = now_iso()
+    referer_domain = extract_domain(request.headers.get("Referer", "direct"))
+    client_fp = _client_fp(request)
+    user_agent = request.headers.get("User-Agent", "")[:240]
+    with _metrics_lock:
+        db = metrics_conn()
+        try:
+            db.execute("""
+                INSERT INTO verify_artifact_downloads (artifact_id, download_count, last_download_at)
+                VALUES (?, 1, ?)
+                ON CONFLICT(artifact_id) DO UPDATE SET
+                    download_count = download_count + 1,
+                    last_download_at = excluded.last_download_at
+            """, (artifact_id, ts))
+            db.execute("""
+                INSERT INTO verify_artifact_download_events (
+                    artifact_id, downloaded_at, source, referer_domain, client_fp, user_agent
+                ) VALUES (?, ?, ?, ?, ?, ?)
+            """, (artifact_id, ts, source, referer_domain, client_fp, user_agent))
+            row = db.execute("""
+                SELECT download_count
+                FROM verify_artifact_downloads
+                WHERE artifact_id = ?
+            """, (artifact_id,)).fetchone()
+            db.commit()
+            return int(row["download_count"]) if row else 0
+        finally:
+            db.close()
+
+
+def get_artifact_download_stats(artifact_id: str) -> dict:
+    """Get download statistics for an artifact."""
+    db = metrics_conn()
+    try:
+        row = db.execute("""
+            SELECT download_count, last_download_at
+            FROM verify_artifact_downloads
+            WHERE artifact_id = ?
+        """, (artifact_id,)).fetchone()
+        if not row:
+            return {
+                "artifact_id": artifact_id,
+                "download_count": 0,
+                "last_download_at": None
+            }
+        return {
+            "artifact_id": artifact_id,
+            "download_count": int(row["download_count"]),
+            "last_download_at": row["last_download_at"]
+        }
+    finally:
+        db.close()
+
 
 class JmpgProof(BaseModel):
     issuer_did: Optional[str] = None
@@ -309,6 +419,16 @@ async def get_document_metadata(doc_id: str) -> dict:
     return {"title": doc_id, "doc_type": "Document", "created_at": "", "issuer": "WINDI", "status": "pending"}
 
 
+async def fetch_wick_artifact(artifact_id: str) -> dict:
+    """Fetch artifact from Constitutional Agent WICK."""
+    async with httpx.AsyncClient(timeout=5.0) as client:
+        r = await client.get(f"http://localhost:8091/wick/artifact/{artifact_id}")
+        if r.status_code == 404:
+            raise HTTPException(status_code=404, detail=f"Artifact not found: {artifact_id}")
+        r.raise_for_status()
+        return r.json().get("artifact", {})
+
+
 def inject_og_tags(html: str, doc_id: str, meta: dict) -> str:
     """Inject dynamic OG tags into HTML for social sharing."""
     title = f"✓ {meta['title']} — WINDI Verified"
@@ -364,18 +484,25 @@ async def wick_artifact_view(artifact_id: str):
     """
     # 1. Fetch artifact from Constitutional Agent
     try:
-        async with httpx.AsyncClient(timeout=5.0) as client:
-            r = await client.get(f"http://localhost:8091/wick/artifact/{artifact_id}")
-            if r.status_code == 404:
-                return HTMLResponse(
-                    "<html><body style='font-family:system-ui;text-align:center;padding:60px;'>"
-                    "<h1>🔍 Artifact not found</h1>"
-                    f"<p>ID: <code>{artifact_id}</code></p>"
-                    "<a href='/verify-public/'>Go to Verify</a>"
-                    "</body></html>",
-                    status_code=404
-                )
-            data = r.json()
+        artifact = await fetch_wick_artifact(artifact_id)
+    except HTTPException as e:
+        if e.status_code == 404:
+            return HTMLResponse(
+                "<html><body style='font-family:system-ui;text-align:center;padding:60px;'>"
+                "<h1>🔍 Artifact not found</h1>"
+                f"<p>ID: <code>{artifact_id}</code></p>"
+                "<a href='/verify-public/'>Go to Verify</a>"
+                "</body></html>",
+                status_code=404
+            )
+        log.error(f"[WICK] Failed to fetch artifact {artifact_id}: {e.detail}")
+        return HTMLResponse(
+            "<html><body style='font-family:system-ui;text-align:center;padding:60px;'>"
+            "<h1>⚠️ Service unavailable</h1>"
+            "<p>Please try again later.</p>"
+            "</body></html>",
+            status_code=503
+        )
     except Exception as e:
         log.error(f"[WICK] Failed to fetch artifact {artifact_id}: {e}")
         return HTMLResponse(
@@ -385,8 +512,6 @@ async def wick_artifact_view(artifact_id: str):
             "</body></html>",
             status_code=503
         )
-
-    artifact = data.get("artifact", {})
 
     # 2. Check visibility (private = 403, GDPR compliant)
     visibility = artifact.get("visibility", "private")
@@ -408,6 +533,7 @@ async def wick_artifact_view(artifact_id: str):
     page_url = artifact.get("page_url", "")
     verify_url = f"https://windi-domain.com/verify-public/?id={artifact_id}"
     wick_url = f"https://windi-domain.com/wick/{artifact_id}"
+    download_url = f"/verify-public/artifact/{artifact_id}/download"
 
     # Escape HTML in title/author
     import html as html_escape
@@ -487,6 +613,7 @@ async def wick_artifact_view(artifact_id: str):
 
         <div class="actions">
             <a href="{verify_url}" class="btn btn-primary">🛡️ Verify on Ledger</a>
+            {f'<a href="{download_url}" class="btn btn-secondary">⬇️ Download</a>' if page_url else ''}
             {f'<a href="{page_url}" class="btn btn-secondary">📄 View Original</a>' if page_url else ''}
             <a href="/wick/feed" class="btn btn-secondary">📡 WICK Feed</a>
         </div>
@@ -501,6 +628,41 @@ async def wick_artifact_view(artifact_id: str):
 </html>'''
 
     return HTMLResponse(content=html, status_code=200)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# VERIFY Distribution Metrics — Download Endpoints
+# Future: VERIFY Free Distribution tracking
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@app.get("/verify-public/artifact/{artifact_id}/download")
+async def download_artifact(artifact_id: str, request: Request):
+    """
+    Download/click counter for VERIFY artifacts.
+    Increments counter and redirects to canonical public URL.
+    Future: Will serve actual files for VERIFY distribution.
+    """
+    artifact = await fetch_wick_artifact(artifact_id)
+    visibility = artifact.get("visibility", "private")
+    if visibility == "private":
+        raise HTTPException(status_code=403, detail="Private artifact")
+
+    target_url = artifact.get("page_url")
+    if not target_url:
+        raise HTTPException(status_code=404, detail="Artifact has no public URL")
+
+    count = track_artifact_download(artifact_id, request, source="verify-artifact-download")
+    log.info(f"[VERIFY-DL] artifact={artifact_id} count={count}")
+    return RedirectResponse(url=target_url, status_code=307)
+
+
+@app.get("/verify-public/artifact/{artifact_id}/downloads")
+async def artifact_download_stats(artifact_id: str):
+    """Get download statistics for an artifact."""
+    return {
+        "status": "ok",
+        **get_artifact_download_stats(artifact_id)
+    }
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
