@@ -220,7 +220,8 @@ FRUITS (Frutos)   → Virtue Receipts
 > **"Ledger guarda. Key assina. Invariantes limitam. VERIFY prova.**
 > **Tira um deles — não é WINDI."**
 
-**Status:** CONSTITUTIONAL · **Receipt:** `WINDI-DECRETO-002-20260425103349-91B6C643` · **Invariants:** I1, I9, I11, I14
+**Status:** CONSTITUTIONAL · **Receipt:** `WINDI-DECRETO-002-FINAL-20260425144454-C216F3EA` · **Invariants:** I1, I9, I11, I14
+**Hash:** `sha256:6e8e5d17325f659239af3c2dfe250999feb0564b8a199191e13ad55b14f5ae77` ✅ VERIFIED
 
 **CORE Indivisível (4 elementos):**
 | Elemento | Função |
@@ -555,7 +556,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
-| 25 Apr | **§202 DECRETO-002 CORE VS APPS** · Separação Ontológica · CORE indivisível (Ledger+Key+Invariantes+VERIFY) · Reference Apps (W-*) · Firewall Constitucional · `91B6C643` |
+| 25 Apr | **§202 DECRETO-002 CORE VS APPS** · Separação Ontológica · CORE indivisível (Ledger+Key+Invariantes+VERIFY) · Reference Apps (W-*) · Firewall Constitucional · `C216F3EA` ✅ |
 | 22 Apr | **§201 PAPER-001 SCIENTIFIC FOUNDATION** · PoE-ELIGIBILITY-CRITERIA-001 + PoE-CLASSIFICATION-PROTOCOL-001 SEALED · AI-AI-AI-H Architecture · n≤31 · W5/W6/W7 |
 | 20 Apr | **§200 I14 EPISTEMIC ENFORCEMENT** · W-SHELF-001 v0.3.0 · Non-simulation of Understanding · 11/11 Tests · `0ec09491` |
 | 20 Apr | **§199 I9 RUNTIME ENFORCEMENT** · W-SHELF-001 v0.2.0 · 3-Layer Containment · Grove Arena ✅ · `a85909e4` |
