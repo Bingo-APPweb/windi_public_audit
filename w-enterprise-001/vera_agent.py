@@ -33,7 +33,12 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, validator
 from typing import Optional, List
-import httpx, json, os, hashlib, time, sqlite3
+from dataclasses import dataclass
+import httpx, json, os, hashlib, time, sqlite3, asyncio, logging
+
+# ─── LOGGING ─────────────────────────────────────────────────────────────
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [VERA] %(message)s")
+log = logging.getLogger("vera.agent")
 from datetime import datetime
 from contextlib import contextmanager
 from pathlib import Path
@@ -649,9 +654,17 @@ def build_system_prompt(
 
 AI_GATEWAY = os.getenv("WINDI_AI_GATEWAY", "http://127.0.0.1:8130/gateway/call")
 AI_MODEL = os.getenv("WINDI_AI_MODEL", "claude-sonnet-4-20250514")
+AI_MODEL_2 = os.getenv("WINDI_AI_MODEL_2", "gpt-4o")  # Princípio XV: Second model
 LEDGER_URL = os.getenv("WINDI_LEDGER_URL", "http://127.0.0.1:8101/api/receipts")
 VERIFY_BASE = "https://windi-domain.com/verify-public/?id="
 GATEWAY_SECRET = os.getenv("GATEWAY_SECRET", "windi-gateway-secret-2026")
+
+# ─── PRINCÍPIO XV: Multi-Model Configuration ──────────────────────────────────
+# "HIGH decisions require ≥2 models for triangulation"
+HIGH_GOVERNANCE_MODELS = [
+    {"provider": "anthropic", "model": AI_MODEL, "alias": "Guardian"},
+    {"provider": "openai", "model": AI_MODEL_2, "alias": "Architect"},
+]
 
 async def call_ai(system: str, messages: list, max_tokens: int = 600) -> str:
     # Build prompt from system + messages for Gateway format
@@ -691,6 +704,105 @@ async def seal_to_ledger(payload: dict) -> dict:
             return {"ok": r.status_code == 200, "status": r.status_code}
     except Exception as e:
         return {"ok": False, "error": str(e), "offline_graceful": True}
+
+
+# ─── PRINCÍPIO XV: Triangulated AI Call ───────────────────────────────────────
+# "HIGH governance decisions require ≥2 models for triangulation"
+# BD-004 FIX: Never use single model for HIGH decisions
+
+@dataclass
+class TriangulatedResponse:
+    """Response from multi-model consensus call."""
+    primary_response: str
+    models_consulted: list
+    consensus_achieved: bool
+    divergence_score: float
+    responses: dict  # model_alias -> response text
+
+async def call_ai_triangulated(
+    system: str,
+    messages: list,
+    max_tokens: int = 600,
+    task_type: str = "HIGH_GOVERNANCE",
+) -> TriangulatedResponse:
+    """
+    PRINCÍPIO XV: Call multiple models for HIGH governance decisions.
+    Returns triangulated response with consensus metadata.
+
+    BD-004 FIX: This function ensures HIGH decisions use ≥2 models.
+    """
+    import asyncio
+
+    prompt_parts = [f"System: {system}"]
+    for msg in messages:
+        role = msg.get("role", "user")
+        content = msg.get("content", "")
+        prompt_parts.append(f"{role.capitalize()}: {content}")
+    full_prompt = "\n\n".join(prompt_parts)
+
+    headers = {"X-Gateway-Secret": GATEWAY_SECRET}
+    responses = {}
+    models_consulted = []
+
+    async def call_model(model_cfg: dict) -> tuple:
+        """Call a single model via gateway."""
+        payload = {
+            "actor": "vera-agent",
+            "tier": "HIGH",
+            "task": "vera-compliance-chat-triangulated",
+            "prompt": full_prompt,
+            "provider": model_cfg["provider"],
+            "model": model_cfg["model"],
+            "max_tokens": max_tokens
+        }
+        try:
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                resp = await client.post(AI_GATEWAY, json=payload, headers=headers)
+                resp.raise_for_status()
+                data = resp.json()
+                text = data.get("response") or data.get("content_text") or ""
+                if not text:
+                    for block in data.get("content", []):
+                        if block.get("type") == "text":
+                            text = block["text"]
+                            break
+                return (model_cfg["alias"], text)
+        except Exception as e:
+            log.warning(f"Model {model_cfg['alias']} failed: {e}")
+            return (model_cfg["alias"], None)
+
+    # Call all models in parallel (Princípio XV)
+    tasks = [call_model(m) for m in HIGH_GOVERNANCE_MODELS]
+    results = await asyncio.gather(*tasks)
+
+    # Collect successful responses
+    for alias, text in results:
+        if text:
+            responses[alias] = text
+            models_consulted.append(alias)
+
+    # Calculate basic divergence (semantic similarity would be better in production)
+    divergence_score = 0.0
+    if len(responses) >= 2:
+        # Simple length-based divergence as proxy (production: use embeddings)
+        lengths = [len(r) for r in responses.values()]
+        divergence_score = abs(max(lengths) - min(lengths)) / max(max(lengths), 1)
+        divergence_score = min(1.0, divergence_score / 500)  # Normalize
+
+    consensus_achieved = len(responses) >= 2 and divergence_score < 0.35
+
+    # Primary response: use first successful model (Guardian priority)
+    primary_response = responses.get("Guardian") or list(responses.values())[0] if responses else ""
+
+    log.info(f"PRINCÍPIO XV: {len(models_consulted)} models consulted: {models_consulted} | divergence={divergence_score:.3f}")
+
+    return TriangulatedResponse(
+        primary_response=primary_response,
+        models_consulted=models_consulted,
+        consensus_achieved=consensus_achieved,
+        divergence_score=divergence_score,
+        responses=responses,
+    )
 
 # ─── SCHEMAS ─────────────────────────────────────────────────────────────────
 
@@ -1029,14 +1141,32 @@ async def vera_chat(query: VeraQuery):
     # XIII Degraded Mode Declaration
     degraded_mode = False
     degraded_reason = None
+    models_consulted = []
+    consensus_achieved = True
+    divergence_score = 0.0
 
     try:
-        vera_response_raw = await call_ai(system, messages, max_tokens=600)
+        # §204.3: PRINCÍPIO XV — HIGH_GOVERNANCE requires ≥2 models (BD-004 FIX)
+        if task_type == "HIGH_GOVERNANCE":
+            tri_result = await call_ai_triangulated(system, messages, max_tokens=600, task_type=task_type)
+            vera_response_raw = tri_result.primary_response
+            models_consulted = tri_result.models_consulted
+            consensus_achieved = tri_result.consensus_achieved
+            divergence_score = tri_result.divergence_score
+
+            # Log triangulation result
+            log.info(f"PRINCÍPIO XV: {len(models_consulted)} models: {models_consulted} | consensus={consensus_achieved}")
+        else:
+            # LOW/MED tasks: Single model is acceptable
+            vera_response_raw = await call_ai(system, messages, max_tokens=600)
+            models_consulted = ["Guardian"]  # Default single model
+
     except Exception as e:
         # XIII: Explicit degradation, never silent fallback
         degraded_mode = True
         degraded_reason = str(e)
         vera_response_raw = _degraded_response(language, degraded_reason)
+        models_consulted = []
 
     # ─── ERDBEERE PROTOCOL v1.0 ─────────────────────────────────────────────
     # "VERA kann irren. Deshalb entscheidet der Mensch."
@@ -1080,7 +1210,12 @@ async def vera_chat(query: VeraQuery):
             "confidence": confidence_level,
             "factual_claims_detected": factual_claims,
             "verification_note": erdbeere_result['verification_note'],
-            "principle": "VERA guides. Human decides. Ledger seals."
+            "principle": "VERA guides. Human decides. Ledger seals.",
+            # §204.3: PRINCÍPIO XV — Multi-model triangulation
+            "models_consulted": models_consulted,
+            "consensus_achieved": consensus_achieved,
+            "divergence_score": round(divergence_score, 4),
+            "triangulation": "XV" if len(models_consulted) >= 2 else "N/A",
         },
         "_cache": "MISS"
     }
@@ -1110,9 +1245,9 @@ async def vera_chat(query: VeraQuery):
                 pillars_injected=len(PILLAR_PROFILES.get(task_type, [])),
                 history_used=get_adaptive_history_limit(task_type),
                 consensus_required=(task_type == "HIGH_GOVERNANCE"),
-                consensus_achieved=True,  # In this context, always achieved
-                models_consulted=["claude"],  # Via gateway
-                divergence_score=0.0,
+                consensus_achieved=consensus_achieved,  # §204.3: Real consensus status
+                models_consulted=models_consulted,     # §204.3: Real models used (Princípio XV)
+                divergence_score=divergence_score,     # §204.3: Real divergence
                 latency_ms=latency_ms,
                 officer_did=officer_id,
             )

@@ -307,25 +307,64 @@ class VERARoutingEngine:
 
     # ── DECISION BUILDER ──────────────────────────────────────────────────
     def _build_decision(self, task_type: str) -> RoutingDecision:
-        """Build routing decision from registry task_map."""
+        """
+        Build routing decision from registry task_map.
+
+        PRINCÍPIO XV ENFORCEMENT:
+        HIGH decisions require ≥2 models for triangulation.
+        If task_cfg doesn't specify enough, augment from priority_models.
+        """
         task_cfg = self.registry.get_task(task_type)
+        divergence_settings = self.rules.get("divergence_settings", {})
+        high_gov = divergence_settings.get("high_governance", {})
 
         if not task_cfg:
-            # Unknown task → safe default: claude only, PHO required
-            log.warning(f"Unknown task_type '{task_type}' — defaulting to safe HIGH routing")
+            # Unknown task → HIGH routing with TRIANGULATION (Princípio XV)
+            # BD-004 FIX: Never use single model for HIGH
+            priority_models = high_gov.get("priority_models", ["claude", "gpt4"])
+            min_consensus = high_gov.get("min_consensus", 2)
+
+            log.warning(f"Unknown task_type '{task_type}' — defaulting to HIGH with triangulation (XV)")
+            log.info(f"PRINCÍPIO XV: Using {len(priority_models)} models: {priority_models}")
+
             return RoutingDecision(
                 task_type        = task_type,
                 mode             = TaskMode.HIGH,
-                primary_models   = ["claude"],
-                consensus_required = False,
+                primary_models   = priority_models[:min_consensus],  # At least min_consensus models
+                consensus_required = True,  # Force consensus for unknown HIGH
                 pho_required     = True,
-                seal_required    = False,
+                seal_required    = True,  # Seal unknown HIGH for audit trail
             )
+
+        # Known task — build from config
+        mode = TaskMode(task_cfg.get("mode", "MED"))
+        primary_models = list(task_cfg.get("primary", ["claude"]))  # Copy to avoid mutation
+        secondary_models = task_cfg.get("secondary", [])
+        min_models = task_cfg.get("min_models", 1)
+
+        # PRINCÍPIO XV ENFORCEMENT: HIGH decisions need ≥2 models
+        if mode == TaskMode.HIGH:
+            min_high = high_gov.get("min_consensus", 2)
+
+            # First, add secondary models if defined
+            for model in secondary_models:
+                if model not in primary_models:
+                    primary_models.append(model)
+
+            # If still below threshold, augment with priority_models
+            if len(primary_models) < min_high:
+                priority = high_gov.get("priority_models", ["claude", "gpt4"])
+                for model in priority:
+                    if model not in primary_models:
+                        primary_models.append(model)
+                    if len(primary_models) >= min_high:
+                        break
+                log.info(f"PRINCÍPIO XV: Augmented {task_type} models to {primary_models}")
 
         return RoutingDecision(
             task_type          = task_type,
-            mode               = TaskMode(task_cfg.get("mode", "MED")),
-            primary_models     = task_cfg.get("primary", ["claude"]),
+            mode               = mode,
+            primary_models     = primary_models,
             consensus_required = task_cfg.get("consensus_required", False),
             pho_required       = task_cfg.get("pho_required", False),
             seal_required      = task_cfg.get("seal_required", False),
