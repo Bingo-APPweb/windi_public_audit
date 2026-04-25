@@ -1198,6 +1198,8 @@ async def vera_chat(query: VeraQuery):
         "i9_protected": True,
         "constitution": "REGO v1.1",
         "jurisdiction": "EU · Germany",
+        # §204.5: Task type for Quality Gate
+        "task_type": task_type,
         # XVIII Latency
         "latency_ms": latency_ms,
         "sla_exceeded": sla_exceeded,
