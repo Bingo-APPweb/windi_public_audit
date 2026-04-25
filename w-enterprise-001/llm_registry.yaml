@@ -349,12 +349,61 @@ task_map:
 # ─── CONSENSUS RULES — Triangulação de Inteligência ──────────────────────
 consensus_rules:
 
+  # ─── DYNAMIC THRESHOLDS — O Rigor do Paladar (Paper-001 §201) ───────────
+  # "Quanto mais crítica a tarefa, menos aceitamos divergência."
+  divergence_settings:
+
+    high_governance:
+      # Certificação OVS, Legal Analysis, EU AI Act
+      label: "Alta Corte"
+      threshold_warning: 0.15
+      threshold_critical: 0.20
+      min_consensus: 2
+      priority_models: ["claude", "gpt4"]
+      action_on_critical: "block_output + escalate_to_human_dragon"
+
+    med_capacity:
+      # Análise de Artigo 14, Compliance Reasoning
+      label: "Análise Estruturada"
+      threshold_warning: 0.25
+      threshold_critical: 0.35
+      min_consensus: 2
+      priority_models: ["claude", "gpt4", "gemini"]
+      action_on_critical: "block_output + require_pho"
+
+    low_trivial:
+      # E1/E4 tasks, low_latency, document_classification
+      label: "Técnica de Suporte"
+      threshold_warning: 0.40
+      threshold_critical: 0.50
+      min_consensus: 1
+      priority_models: ["mistral", "llama"]
+      action_on_critical: "flag_only"
+
+  # Task-to-threshold mapping
+  threshold_map:
+    legal_analysis: "high_governance"
+    contract_analysis: "high_governance"
+    eu_ai_act_analysis: "high_governance"
+    dora_incident: "high_governance"
+    high_risk_decision: "high_governance"
+    compliance_reasoning: "med_capacity"
+    gdpr_sensitive: "med_capacity"
+    stress_test: "med_capacity"
+    factual_enrichment: "low_trivial"
+    low_latency: "low_trivial"
+    document_classification: "low_trivial"
+    instructor_guidance: "low_trivial"
+
+  # Legacy fallback (deprecated — use divergence_settings)
   divergence_detection:
     method: "semantic_similarity"
     threshold_warning: 0.25
     threshold_critical: 0.40
     action_on_warning: "flag_to_officer"
     action_on_critical: "block_output + require_pho"
+    deprecated: true
+    migration_note: "Use divergence_settings.{level} instead"
 
   agreement_scoring:
     method: "weighted_average"
@@ -374,6 +423,7 @@ consensus_rules:
       - "latency_ms"
       - "divergence_from_consensus"
       - "pho_flag"
+      - "eligibility_level"  # E1/E4/HIGH
     output_format: "json"
     include_in_receipt: true
 

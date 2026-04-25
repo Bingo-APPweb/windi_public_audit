@@ -43,6 +43,57 @@ class DivergenceLevel(str, Enum):
     WARNING  = "WARNING"
     CRITICAL = "CRITICAL"
 
+class EligibilityLevel(str, Enum):
+    """
+    PoE Eligibility Criteria (Paper-001)
+    E1: Trivial/Maintenance — skip consensus, route to Mistral
+    E4: Non-PHO/Private — skip ledger, route to Llama
+    HIGH: Full governance — consensus + PHO + ledger
+    """
+    E1_TRIVIAL   = "E1_TRIVIAL"
+    E4_NON_PHO   = "E4_NON_PHO"
+    HIGH_GOVERNANCE = "HIGH_GOVERNANCE"
+
+# ─── E1-E4 ELIGIBILITY FILTER (Paper-001 §201) ─────────────────────────────
+# "VERA precisa saber quando ser Auditora e quando ser Técnica."
+
+E1_TRIVIAL_KEYWORDS = [
+    'restart', 'reboot', 'status check', 'ping', 'clear cache',
+    'reiniciar', 'reinício', 'verificar status', 'limpar cache',
+    'neustart', 'cache leeren', 'status prüfen',
+    'health check', 'uptime', 'memory usage', 'disk space',
+]
+
+E4_NON_PHO_KEYWORDS = [
+    'private_chat', 'casual', 'off_record', 'personal',
+    'conversa privada', 'sem registo', 'pessoal',
+    'privat', 'persönlich', 'ohne protokoll',
+]
+
+def get_route_eligibility(task_description: str, task_type: str = None) -> EligibilityLevel:
+    """
+    Pre-routing filter: determine if task deserves HIGH governance or can be fast-tracked.
+
+    Returns:
+        E1_TRIVIAL: Route to Mistral, skip consensus, skip ledger
+        E4_NON_PHO: Route to Llama (local), skip ledger, maintain privacy
+        HIGH_GOVERNANCE: Full pipeline (consensus + PHO + ledger)
+    """
+    desc_lower = task_description.lower()
+
+    # E1: Service Restart / Trivial Maintenance
+    if any(kw in desc_lower for kw in E1_TRIVIAL_KEYWORDS):
+        log.info(f"E1_TRIVIAL detected: '{task_description[:50]}...' → routing to Mistral (fast)")
+        return EligibilityLevel.E1_TRIVIAL
+
+    # E4: Non-PHO / Private conversations (no ledger anchor)
+    if any(kw in desc_lower for kw in E4_NON_PHO_KEYWORDS):
+        log.info(f"E4_NON_PHO detected: '{task_description[:50]}...' → routing to Llama (local)")
+        return EligibilityLevel.E4_NON_PHO
+
+    # Default: HIGH governance
+    return EligibilityLevel.HIGH_GOVERNANCE
+
 # ─── DATA CLASSES ─────────────────────────────────────────────────────────
 @dataclass
 class ModelResponse:
@@ -76,6 +127,8 @@ class RoutingDecision:
     legal_anchors:     List[str] = field(default_factory=list)
     degraded:          bool = False
     degraded_reason:   Optional[str] = None
+    eligibility:       EligibilityLevel = EligibilityLevel.HIGH_GOVERNANCE
+    fast_tracked:      bool = False  # True if E1/E4 bypass was applied
 
 @dataclass
 class VERAOutput:
@@ -156,24 +209,79 @@ class VERARoutingEngine:
         """
         Main routing method. Called by VERA agent for every task.
         Returns a VERAOutput with full audit trail.
+
+        Paper-001 §201: E1-E4 eligibility check BEFORE routing.
         """
         log.info(f"Routing task: {task_type} | DID: {officer_did or 'anonymous'}")
 
-        # ① Build routing decision from registry
-        decision = self._build_decision(task_type)
+        # ⓪ ELIGIBILITY CHECK — E1/E4 fast-track (Paper-001 §201)
+        eligibility = get_route_eligibility(prompt, task_type)
+
+        if eligibility == EligibilityLevel.E1_TRIVIAL:
+            # E1: Trivial task → Mistral only, no consensus, no ledger
+            decision = RoutingDecision(
+                task_type        = task_type,
+                mode             = TaskMode.FREE,
+                primary_models   = ["mistral"],
+                consensus_required = False,
+                pho_required     = False,
+                seal_required    = False,
+                eligibility      = EligibilityLevel.E1_TRIVIAL,
+                fast_tracked     = True,
+            )
+            log.info("E1 FAST-TRACK: Mistral solo, skip consensus + ledger")
+
+        elif eligibility == EligibilityLevel.E4_NON_PHO:
+            # E4: Non-PHO task → Llama (local), no ledger, privacy preserved
+            decision = RoutingDecision(
+                task_type        = task_type,
+                mode             = TaskMode.LOCAL,
+                primary_models   = ["llama"],
+                consensus_required = False,
+                pho_required     = False,
+                seal_required    = False,
+                eligibility      = EligibilityLevel.E4_NON_PHO,
+                fast_tracked     = True,
+            )
+            log.info("E4 FAST-TRACK: Llama local, skip ledger (privacy)")
+
+        else:
+            # HIGH_GOVERNANCE: Full pipeline
+            decision = self._build_decision(task_type)
+            decision.eligibility = EligibilityLevel.HIGH_GOVERNANCE
+
+        # ① Build routing decision from registry (already done for E1/E4)
+        # decision = self._build_decision(task_type) — moved above
 
         # ② Simulate model responses (in production: call real APIs)
         responses = await self._simulate_model_calls(decision, prompt, context)
 
-        # ③ Run consensus analysis
-        consensus = self._run_consensus(responses)
+        # ③ Run consensus analysis (skip if fast-tracked)
+        if decision.fast_tracked:
+            # Simplified consensus for E1/E4 — single model, no triangulation
+            consensus = ConsensusResult(
+                responses           = responses,
+                agreement_score     = 1.0,
+                divergence_level    = DivergenceLevel.NONE,
+                divergence_score    = 0.0,
+                recommended_output  = responses[0].content if responses else "",
+                conflict_detected   = False,
+                models_consulted    = [r.model_id for r in responses],
+                consensus_hash      = hashlib.sha256(
+                    (responses[0].content if responses else "").encode()
+                ).hexdigest()[:16],
+            )
+            log.info(f"FAST-TRACK consensus: {decision.eligibility.value} — single model, no triangulation")
+        else:
+            # DYNAMIC THRESHOLDS (Paper-001 §201)
+            consensus = self._run_consensus(responses, task_type=task_type)
 
-        # ④ Apply PHO layer (I9)
-        pho_required = decision.pho_required or consensus.conflict_detected
+        # ④ Apply PHO layer (I9) — skip if fast-tracked
+        pho_required = (decision.pho_required or consensus.conflict_detected) and not decision.fast_tracked
 
-        # ⑤ Seal to ledger if required (I11)
+        # ⑤ Seal to ledger if required (I11) — skip if fast-tracked
         seal_hash, receipt_id = None, None
-        if decision.seal_required and officer_did:
+        if decision.seal_required and officer_did and not decision.fast_tracked:
             seal_hash, receipt_id = await self._seal_to_ledger(
                 task_type, consensus, officer_did, decision.legal_anchors
             )
@@ -272,10 +380,33 @@ class VERARoutingEngine:
         return responses
 
     # ── CONSENSUS ENGINE ──────────────────────────────────────────────────
-    def _run_consensus(self, responses: List[ModelResponse]) -> ConsensusResult:
+    def _get_dynamic_thresholds(self, task_type: str) -> tuple:
+        """
+        Get dynamic thresholds based on task type (Paper-001 §201).
+        "Quanto mais crítica a tarefa, menos aceitamos divergência."
+
+        Returns (threshold_warning, threshold_critical, threshold_level)
+        """
+        # Get threshold mapping
+        threshold_map = self.rules.get("threshold_map", {})
+        divergence_settings = self.rules.get("divergence_settings", {})
+
+        # Find which threshold level applies to this task
+        threshold_level = threshold_map.get(task_type, "med_capacity")  # default: medium
+        settings = divergence_settings.get(threshold_level, {})
+
+        thresh_warn = settings.get("threshold_warning", 0.25)
+        thresh_crit = settings.get("threshold_critical", 0.35)
+
+        log.info(f"Dynamic threshold: {task_type} → {threshold_level} (warn={thresh_warn}, crit={thresh_crit})")
+        return thresh_warn, thresh_crit, threshold_level
+
+    def _run_consensus(self, responses: List[ModelResponse], task_type: str = None) -> ConsensusResult:
         """
         Analyse responses for agreement/divergence.
         Princípio XV: triangulação obrigatória em decisões de alto risco.
+
+        Paper-001 §201: Dynamic thresholds based on task criticality.
         """
         if len(responses) == 1:
             r = responses[0]
@@ -295,9 +426,14 @@ class VERARoutingEngine:
         max_diff = max(confs) - min(confs)
         divergence_score = max_diff
 
-        rules = self.rules.get("divergence_detection", {})
-        thresh_warn = rules.get("threshold_warning", 0.25)
-        thresh_crit = rules.get("threshold_critical", 0.40)
+        # DYNAMIC THRESHOLDS (Paper-001 §201)
+        if task_type:
+            thresh_warn, thresh_crit, _ = self._get_dynamic_thresholds(task_type)
+        else:
+            # Legacy fallback
+            rules = self.rules.get("divergence_detection", {})
+            thresh_warn = rules.get("threshold_warning", 0.25)
+            thresh_crit = rules.get("threshold_critical", 0.40)
 
         if divergence_score >= thresh_crit:
             divergence_level = DivergenceLevel.CRITICAL
