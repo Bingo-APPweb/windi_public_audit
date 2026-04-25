@@ -372,7 +372,7 @@ curl -s http://localhost:8145/verify-public/?id={id}  # Deve funcionar
 
 ```
 DECRETO: DECRETO-002-CORE-VS-APPS
-HASH: sha256:ec8f275e42fe6b1662f485126a056d1f570fe3a92b1a9743379edb3c8fcf75b2
+HASH: [ver Ledger: WINDI-DECRETO-002-FINAL-*]
 INVARIANTES: I1 (Human Sovereignty), I9 (Human Approval),
              I11 (Forensic Permanence), I14 (Explicit Failure)
 STATUS: CONSTITUTIONAL · IRREMEDIÁVEL
