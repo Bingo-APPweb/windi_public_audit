@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.9.0
-**Sealed:** 2026-04-25 · §203 Paper-001 Dual-Channel Publication · EXTERNAL + INSTITUTIONAL KLAR · 3 Receipts Encadeados
+**Version:** 2.10.0
+**Sealed:** 2026-04-25 · §204 VERA Paladar · E1-E4 Filter + Prompt Slicing · Receipt `85389BCA`
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -83,7 +83,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-SEC-001 | :8144 | I9,I11 | **SEALED** · Security Sentinel · Dual Correlation · Telegram · systemd |
 | W-DRAGON-001 | :8122 | I9,I11,I14 | **LIVE** · Dragon Shadow Forest · 16×16 SHA-256 Glyph Grid · PDF Overlay |
 | W-DEV-API-001 | :8200 | I9,I11 | **LIVE** · Developer API · /dev-api/ · 4 Tiers · Verify Bridge |
-| W-ENTERPRISE-001 | :8150 | I1,I9,I11,I14 | **LIVE** v3.2.0 · VERA v1.2 · **ERDBEERE PROTOCOL** · DASH v4.1 · i18n PT/DE/EN |
+| W-ENTERPRISE-001 | :8150 | I1,I9,I11,I14 | **LIVE** v3.3.0 · VERA v1.3 PALADAR · E1-E4 Filter · Prompt Slicing · ERDBEERE · i18n |
 | W-CACHE-001 | :8160 | I11,I14 | **LIVE** · Verifiable Cache Layer · L2→L3 Promotion · NOIR Dashboard |
 | W-DID-GENESIS | :8096 | I1,I9,I11,I14 | **LIVE** · Sovereign Identity Tree · Cross-Service Session · 4 Tiers |
 | W-SERVICE-CONTROL | :8170 | I1,I9,I11 | **LIVE** · Service Control Panel · 29 Services · **SVG Sentinel** · Subsystem Monitoring · DID Gate |
@@ -236,6 +236,35 @@ FRUITS (Frutos)   → Virtue Receipts
 **Hierarquia:** INVARIANTES > CORE > DECRETOS > REFERENCE APPS > FEATURES
 
 **File:** `/opt/windi/constitutional/DECRETO-002-CORE-VS-APPS.md`
+
+### §204 — VERA Paladar: Eficiência Seletiva (25 Apr 2026)
+
+> **"VERA precisa saber quando ser Auditora de Alta Corte e quando ser Técnica de Suporte."**
+
+**Status:** LIVE · v1.3.0 · **Commits:** `f8c1f03a` + `b92b032b` · **Receipt:** `85389BCA`
+
+**E1-E4 Eligibility Filter (routing_engine.py):**
+| Level | Routing | Consensus | Ledger |
+|-------|---------|:---------:|:------:|
+| E1_TRIVIAL | Mistral (fast) | ❌ | ❌ |
+| E4_NON_PHO | Llama (local) | ❌ | ❌ |
+| HIGH_GOVERNANCE | Claude+GPT4 | ✅ | ✅ |
+
+**Dynamic Thresholds (llm_registry.yaml):**
+| Task Level | Warning | Critical | Tasks |
+|------------|:-------:|:--------:|-------|
+| HIGH_GOVERNANCE | 0.15 | 0.20 | legal, eu_ai_act, dora |
+| MED_CAPACITY | 0.25 | 0.35 | compliance, gdpr |
+| LOW_TRIVIAL | 0.40 | 0.50 | low_latency, classification |
+
+**Prompt Slicing (vera_agent.py):**
+| Task Level | Pillars | History | Token Savings |
+|------------|:-------:|:-------:|:-------------:|
+| HIGH_GOVERNANCE | 11 | 6 msgs | -135 |
+| MED_CAPACITY | 7 | 4 msgs | -195 |
+| LOW_TRIVIAL | 4 | 0 msgs | -240 |
+
+**Tests:** 12/12 passed (E1-E4: 8/8, Thresholds: 5/5, Stress: 4/4)
 
 ### §117 — I9: Human Approval Gate (NON-NEGOTIABLE)
 
@@ -556,6 +585,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 25 Apr | **§204 VERA PALADAR** · E1-E4 Eligibility Filter · Dynamic Thresholds (0.20/0.35/0.50) · Prompt Slicing (4/7/11 pillars) · Adaptive History · 12/12 Tests · `f8c1f03a` + `b92b032b` · `85389BCA` ✅ |
 | 25 Apr | **§203 PAPER-001 DUAL-CHANNEL PUBLICATION** · EXTERNAL v1.0 (neutro/revisores) + INSTITUTIONAL KLAR v1.0 (LinkedIn) · 3 receipts encadeados (BDED84F0 → 88915364 + F3FAFA21) · Basic Auth `/docs/review/` |
 | 25 Apr | **§202 DECRETO-002 CORE VS APPS** · Separação Ontológica · CORE indivisível (Ledger+Key+Invariantes+VERIFY) · Reference Apps (W-*) · Firewall Constitucional · `C216F3EA` ✅ |
 | 22 Apr | **§201 PAPER-001 SCIENTIFIC FOUNDATION** · PoE-ELIGIBILITY-CRITERIA-001 + PoE-CLASSIFICATION-PROTOCOL-001 SEALED · AI-AI-AI-H Architecture · n≤31 · W5/W6/W7 |
