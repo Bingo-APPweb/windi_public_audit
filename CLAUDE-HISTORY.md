@@ -6,6 +6,204 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 25 Abr 2026 — §204 VERA Paladar: Operação Completa
+
+**Duração:** ~4h | **Status:** ✅ SEALED
+**Liga IA+H:** Human Dragon · Architect · Guardian · Witness
+**Invariants:** I1, I9, I11, I14
+**Port:** :8150 | **Version:** W-ENTERPRISE-001 v3.4.0 · VERA v1.4
+
+### Conceito
+
+> *"DeepEval é o espelho. VERA é o juiz. Shadow Audit é a polícia. Langfuse é o satélite."*
+
+Operação Paladar transforma VERA de sistema de compliance reactivo em organismo observável com 4 camadas de consciência.
+
+### 4-Layer Architecture
+
+| Layer | Component | Função | File |
+|-------|-----------|--------|------|
+| 1 | Execution | E1-E4 Filter + Prompt Slicing | `routing_engine.py` |
+| 2 | Governance | Shadow Audit (polícia) | `shadow_audit.py` |
+| 3 | Defense | Princípio XV (triangulação) | `vera_agent.py` |
+| 4 | Quality | DeepEval + Quality Gate + Langfuse | `vera_quality_gate.py` + `vera_langfuse.py` |
+
+### §204.1 — E1-E4 Eligibility Filter
+
+**Problema:** VERA tratava todas as perguntas com o mesmo peso computacional.
+
+**Solução:** Filtro de eligibilidade antes do routing:
+
+| Level | Routing | Consensus | Ledger | Shadow |
+|-------|---------|:---------:|:------:|:------:|
+| E1_TRIVIAL | Mistral (fast) | ❌ | ❌ | ❌ |
+| E4_NON_PHO | Llama (local) | ❌ | ❌ | ❌ |
+| HIGH_GOVERNANCE | Claude+GPT4 | ✅ | ✅ | ✅ |
+
+**Prompt Slicing:**
+
+| Task Level | Pillars | History | Token Savings |
+|------------|:-------:|:-------:|:-------------:|
+| HIGH_GOVERNANCE | 11 | 6 msgs | -135 |
+| MED_CAPACITY | 7 | 4 msgs | -195 |
+| LOW_TRIVIAL | 4 | 0 msgs | -240 |
+
+### §204.2 — Shadow Audit (A Polícia)
+
+**Conceito:** Camada de detecção de backdoors que observa TODAS as decisões VERA.
+
+**Backdoor Rules Implementadas:**
+
+| Rule | Nome | Detecção |
+|------|------|----------|
+| BD-001 | MISSING_LEDGER_HIGH | HIGH decision sem receipt |
+| BD-002 | NO_TRIANGULATION | Sem Principle XV |
+| BD-003 | GOVERNANCE_BYPASS | HIGH mascarado como LOW |
+| BD-004 | SINGLE_MODEL_HIGH | HIGH com apenas 1 modelo |
+
+**File:** `/opt/windi/w-enterprise-001/shadow_audit.py`
+
+### §204.3 — Princípio XV Fix (BD-004)
+
+**Problema Detectado:** Shadow Audit flagrou BD-004 — VERA usava apenas Claude para decisões HIGH.
+
+**Solução:** `call_ai_triangulated()` em `vera_agent.py`:
+
+```python
+HIGH_GOVERNANCE_MODELS = ["Guardian", "Architect"]  # Claude + GPT-4
+
+async def call_ai_triangulated(system, messages, max_tokens=600, task_type="HIGH_GOVERNANCE"):
+    tasks = [call_model(m) for m in HIGH_GOVERNANCE_MODELS]
+    results = await asyncio.gather(*tasks)
+    return TriangulatedResponse(
+        primary_response=results[0]["content"],
+        models_consulted=HIGH_GOVERNANCE_MODELS,
+        consensus_achieved=check_consensus(results),
+        divergence_score=calculate_divergence(results),
+        responses={m: r for m, r in zip(HIGH_GOVERNANCE_MODELS, results)}
+    )
+```
+
+**Verificação:** `models=['Guardian', 'Architect']`, `triangulation='XV'`, `shadow_alerts=0`
+
+### §204.4 — DeepEval Integration (O Espelho)
+
+**Conceito:** DeepEval fornece métricas de qualidade LLM — mas é instrumento, não juiz.
+
+**Métricas Disponíveis:**
+- AnswerRelevancyMetric
+- FaithfulnessMetric
+- BiasMetric
+- ContextualRelevancyMetric
+- HallucinationMetric
+
+**Regra de Ouro:** *"Se DeepEval e VERA discordarem → VERA vence. Sempre."*
+
+**File:** `/opt/windi/w-enterprise-001/tests/test_vera_deepeval.py`
+
+### §204.5 — Quality Gate (O Juiz)
+
+**Conceito:** Combina Admissibility (WINDI-native) + Quality (DeepEval).
+
+**AdmissibilityScore (0-4):**
+
+| Critério | Pontos |
+|----------|:------:|
+| I9 respected (human approval) | +1 |
+| Triangulation OK (Principle XV) | +1 |
+| Evidence required (sources cited) | +1 |
+| Routing correct (task→model match) | +1 |
+
+**Níveis:**
+- 4 = EXCELLENT
+- 3 = GOOD
+- 2 = ACCEPTABLE
+- 1 = MARGINAL
+- 0 = INADMISSIBLE
+
+**Endpoints:**
+- `GET /vera/quality/health`
+- `GET /vera/quality/stats`
+- `POST /vera/quality/evaluate`
+
+**File:** `/opt/windi/w-enterprise-001/vera_quality_gate.py`
+
+### §204.6 — Langfuse Observability (O Satélite)
+
+**Conceito:** Observação em tempo real de todas as operações VERA.
+
+**VERATrace Hierarchy:**
+```
+└── VERA Request (trace)
+    ├── Classification (span)
+    ├── Prompt Building (span)
+    ├── LLM Call: Guardian (generation)
+    ├── LLM Call: Architect (generation)
+    ├── Consensus (span)
+    ├── Shadow Audit (span)
+    └── Quality Gate (span)
+```
+
+**Endpoints:**
+- `GET /vera/observability/health`
+- `POST /vera/observability/flush`
+
+**Status:** READY (awaiting Langfuse API keys)
+
+**File:** `/opt/windi/w-enterprise-001/vera_langfuse.py`
+
+### Filtro 80/20 (Uso Inteligente)
+
+**Princípio:** Não monitorar tudo. Focar em:
+- HIGH_GOVERNANCE decisions
+- Triangulation events
+- Divergence > 0.3
+- Shadow alerts > 0
+
+**Pergunta de Ouro:** *"Eu teria tomado essa decisão?"*
+- **não** → investiga
+- **talvez** → ouro (edge case descoberto)
+- **sim** → segue
+
+**Cruzamento Shadow × Langfuse:**
+| Shadow Alert | Comportamento | Significado |
+|--------------|---------------|-------------|
+| ❌ sem alerta | mas estranho | 🆕 novo edge case |
+| ✅ com alerta | validado | ✅ sistema funciona |
+
+### Commits (8 total)
+
+```
+f37a7f2c feat(§204.6): Langfuse Observability Layer — VERA Satellite
+319cd0f2 feat(§204.5): VERA Quality Gate — Admissibility + DeepEval Integration
+495bd6a3 feat(§204.4): DeepEval integration — VERA Paladar Evaluation Suite
+ca1e5d15 fix(§204.3): PRINCÍPIO XV — BD-004 Fix — Multi-Model Triangulation
+02637088 feat(§204.2): Shadow Audit — Anti-Backdoor Visibility Layer
+070f8826 docs(§204): CLAUDE.md update
+b92b032b feat(§204.1): Prompt Slicing
+f8c1f03a feat(§204): E1-E4 eligibility filter
+```
+
+### Files Created/Modified
+
+| File | Type | Lines |
+|------|------|------:|
+| `shadow_audit.py` | NEW | ~200 |
+| `vera_quality_gate.py` | NEW | ~350 |
+| `vera_langfuse.py` | NEW | ~545 |
+| `routing_engine.py` | MOD | +50 |
+| `vera_agent.py` | MOD | +80 |
+| `main.py` | MOD | +10 |
+| `.env.local` | MOD | +6 |
+| `tests/test_vera_deepeval.py` | NEW | ~150 |
+
+### Insight Final
+
+> *"Antes tinhas controlo. Agora tens consciência do sistema."*
+> *"E isso… é o passo que separa quem constrói de quem opera algo real no mundo."*
+
+---
+
 ## § SESSÃO 23 Abr 2026 — §205 Volume Fundacional (GO 3)
 
 **Duração:** ~15min | **Status:** ✅ COMPLETO
