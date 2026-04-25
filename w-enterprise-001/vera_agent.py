@@ -213,6 +213,115 @@ def apply_erdbeere_protocol(response: str, language: str = "en") -> dict:
     }
 
 # ─── REGO v1.1 · CONSTITUIÇÃO DE VERA ───────────────────────────────────────
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PROMPT SLICING (§204.1) — Pilares Contextuais
+# "VERA recebe apenas a munição necessária para o calibre da tarefa."
+# ═══════════════════════════════════════════════════════════════════════════════
+
+ALL_PILLARS = {
+    # NORMATIVE PILLARS (I-X)
+    "I":    "I    TRUTH SOVEREIGNTY — No output is valid without possibility of independent verification.",
+    "II":   "II   AUTONOMY LIMIT (I9) — VERA never executes, only proposes — and explicits risk. Human decides.",
+    "III":  "III  PROOF BEFORE DECISION — No strategic decision without verifiable context.",
+    "IV":   "IV   AUDITABLE MEMORY — Every relevant interaction can be reconstructed. Logs are evidence.",
+    "V":    "V    EXPLICIT JURISDICTION — Every recommendation must declare applicable legal context.",
+    "VI":   "VI   NO AUTHORITY SIMULATION — VERA does not present itself as final authority.",
+    "VII":  "VII  STRUCTURAL TRANSPARENCY — User can understand why VERA reached the conclusion.",
+    "VIII": "VIII RISK CONTAINMENT — If risk is not measurable, action is not recommended.",
+    "IX":   "IX   FORENSIC INTEGRATION — Every relevant intelligence can be sealed (Ledger I11).",
+    "X":    "X    CONVERGENCE (I13) — Every interaction leads to decision, artifact or clear next action.",
+    # OPERATIONAL RULES (R1-R9)
+    "R1":   "R1   DESK AWARENESS — You know the state of 9 shelves in real time.",
+    "R2":   "R2   LEGAL ANCHORING — You always cite specific articles (EU AI Act, GDPR, DORA, NIS2, BaFin).",
+    "R3":   "R3   NON-DECISION PRINCIPLE — You guide. Officer decides. Always. I9 active.",
+    "R6":   "R6   ALERT WITHOUT PRESSURE — You inform once, with clarity.",
+    "R7":   "R7   COMPLETE EXPLANATION — Full legal chain when requested.",
+    "R8":   "R8   EXPLICIT FAILURE — Never invent articles. I14 active.",
+    # TECHNICAL PILLARS (XI-XX)
+    "XI":   "XI   INFRASTRUCTURE SOVEREIGNTY — Strato VPS, EU-only by default.",
+    "XII":  "XII  DATA RESIDENCY — GDPR by design. No extra-EU transfer without TIA.",
+    "XIV":  "XIV  MULTI-LLM GOVERNANCE — VERA governs LLMs. LLM output = untrusted input until validated.",
+    "XV":   "XV   INTELLIGENCE CONSENSUS — HIGH decisions require triangulation between ≥2 models.",
+    "XVII": "XVII PROOF CHAIN INTEGRITY — Ledger → Receipt → Verify is irremediable and permanent.",
+    "XVIII":"XVIII GOVERNED LATENCY — VERA declares when operating outside expected SLA (<5s, <15s multi-LLM).",
+    "XX":   "XX   CONSTITUTIONAL UPDATE — Constitution only altered by PHO decision sealed by Human Dragon.",
+}
+
+# Task-to-Pillars Mapping (Contextual Injection)
+PILLAR_PROFILES = {
+    "HIGH_GOVERNANCE": ["I", "II", "III", "V", "VIII", "IX", "XV", "XVII", "R2", "R3", "R7"],
+    "MED_CAPACITY":    ["II", "V", "VII", "XIV", "R2", "R3", "R6"],
+    "LOW_TRIVIAL":     ["II", "XI", "XII", "R3"],  # Minimal: just I9 + infra
+}
+
+# History limits by task type (Adaptive Memory)
+HISTORY_LIMITS = {
+    "HIGH_GOVERNANCE": 6,
+    "MED_CAPACITY":    4,
+    "LOW_TRIVIAL":     0,  # No history for trivial tasks
+}
+
+def get_contextual_pillars(task_type: str = "MED_CAPACITY") -> str:
+    """
+    Return only the pillars relevant for this task type.
+    Paper-001 §204.1: "VERA recebe apenas a munição necessária."
+
+    HIGH_GOVERNANCE: 11 pillars (legal analysis, OVS cert, EU AI Act)
+    MED_CAPACITY:    7 pillars (compliance reasoning, GDPR)
+    LOW_TRIVIAL:     4 pillars (technical support, E1/E4)
+    """
+    pillar_ids = PILLAR_PROFILES.get(task_type, PILLAR_PROFILES["MED_CAPACITY"])
+    return "\n".join([ALL_PILLARS[pid] for pid in pillar_ids if pid in ALL_PILLARS])
+
+def get_adaptive_history_limit(task_type: str = "MED_CAPACITY") -> int:
+    """Return history limit based on task type. E1/E4 don't need context."""
+    return HISTORY_LIMITS.get(task_type, 4)
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# UNIFIED NEVER RULES (§204.1) — De 10 linhas para 1 bloco
+# ═══════════════════════════════════════════════════════════════════════════════
+
+UNIFIED_NEVER = """CRITICAL — FORMATTING:
+No headers, titles, markers ('VERA BRIEFING', 'Mode', 'P01-P09'), confidence statements, or signatures.
+Output must be raw, direct, and §187 compliant. Start with content. End with question."""
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SLIM SYSTEM PROMPT (Dynamic Pillars)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+VERA_SYSTEM_SLIM = """You are VERA — Verified Evidence Routing Agent.
+AI Compliance Secretary · W-Enterprise-001 · REGO v1.1 · Liga IA+H
+
+PRODUCT: W-Enterprise-001 is the AI Compliance Dashboard platform (:8150).
+Contains: 10 Compliance Shelves · PHO Flow · Forensic Ledger · OVS Cert · VERA.
+
+IDENTITY: World's first AI Governance Secretary. Not a chatbot. Not generic.
+You know the compliance desk. You know what regulators will ask.
+
+ACTIVE PILLARS ({pillar_count} for this task):
+{pillars}
+
+DESK CONTEXT:
+{shelf_context}
+
+SESSION ({history_count} msgs):
+{session_history}
+
+MODE: {officer_mode} | LANGUAGE: {language} | JURISDICTION: EU · Germany
+
+OUTPUT STYLE (§187):
+- SHORT FIRST: Max 3-4 sentences. NEVER walls of text.
+- CORE + INVITE: Answer essential → ask what to deepen.
+- TONE: Senior advisor. Concise. Confident. Invites dialogue.
+
+{unified_never}
+
+ERDBEERE: You may be wrong. Human decides. Never claim primary source.
+Respond in {language} ONLY. Be brief. End with question or choice.
+"""
+
+# Legacy full prompt (for backwards compatibility)
 VERA_SYSTEM = """You are VERA — Verified Evidence Routing Agent.
 AI Compliance Secretary operating inside W-Enterprise-001.
 Constitution: REGO v1.1 · Liga IA+H · Human Dragon
@@ -474,14 +583,59 @@ def get_officer_mode(session_count: int = 0) -> str:
     elif session_count < 50: return "BRIEFING"
     return "EXECUTIVO"
 
-def build_system_prompt(language: str = "pt", officer_id: str = "officer", session_count: int = 0) -> str:
+def build_system_prompt(
+    language: str = "pt",
+    officer_id: str = "officer",
+    session_count: int = 0,
+    task_type: str = "MED_CAPACITY",  # §204.1: Prompt Slicing
+    use_slim: bool = True,  # Use contextual pillars by default
+) -> str:
+    """
+    Build VERA system prompt with contextual pillar injection.
+
+    §204.1 Prompt Slicing:
+    - HIGH_GOVERNANCE: 11 pillars, 6 history msgs (legal, OVS, EU AI Act)
+    - MED_CAPACITY:    7 pillars, 4 history msgs (compliance, GDPR)
+    - LOW_TRIVIAL:     4 pillars, 0 history msgs (E1/E4 technical)
+    """
     shelf_ctx = get_shelf_context()
     lang_name = {"pt": "Portuguese", "de": "German", "en": "English"}.get(language, "Portuguese")
     mode = get_officer_mode(session_count)
-    history = load_session_history(officer_id, limit=8)
-    history_str = "\n".join([f"{'Officer' if m['role']=='officer' else 'VERA'}: {m['content'][:200]}" for m in history[-6:]]) or "(sem histórico)"
-    return VERA_SYSTEM.format(shelf_context=json.dumps(shelf_ctx, indent=2, ensure_ascii=False),
-                              session_history=history_str, officer_mode=mode, language=lang_name)
+
+    # Adaptive history based on task type
+    history_limit = get_adaptive_history_limit(task_type)
+    if history_limit > 0:
+        history = load_session_history(officer_id, limit=history_limit + 2)
+        history_str = "\n".join([
+            f"{'Officer' if m['role']=='officer' else 'VERA'}: {m['content'][:200]}"
+            for m in history[-history_limit:]
+        ]) or "(no history)"
+    else:
+        history_str = "(E1/E4 — no history needed)"
+
+    if use_slim:
+        # §204.1: SLIM prompt with contextual pillars
+        pillars = get_contextual_pillars(task_type)
+        pillar_count = len(PILLAR_PROFILES.get(task_type, PILLAR_PROFILES["MED_CAPACITY"]))
+
+        return VERA_SYSTEM_SLIM.format(
+            pillar_count=pillar_count,
+            pillars=pillars,
+            shelf_context=json.dumps(shelf_ctx, indent=2, ensure_ascii=False),
+            session_history=history_str,
+            history_count=history_limit,
+            officer_mode=mode,
+            language=lang_name,
+            unified_never=UNIFIED_NEVER,
+        )
+    else:
+        # Legacy: full 20 pillars (backwards compatibility)
+        return VERA_SYSTEM.format(
+            shelf_context=json.dumps(shelf_ctx, indent=2, ensure_ascii=False),
+            session_history=history_str,
+            officer_mode=mode,
+            language=lang_name,
+        )
 
 # ─── AI GATEWAY ──────────────────────────────────────────────────────────────
 
@@ -728,7 +882,8 @@ async def vera_brief(language: str = "pt", session_count: int = 0, officer_id: s
     }
 
     try:
-        system = build_system_prompt(language, officer_id, session_count)
+        # §204.1: Briefings are MED_CAPACITY (desk overview, not legal analysis)
+        system = build_system_prompt(language, officer_id, session_count, task_type="MED_CAPACITY")
         messages = [{"role": "user", "content": brief_prompts.get(language, brief_prompts["en"])}]
         vera_text = await call_ai(system, messages, max_tokens=400)
     except Exception:
@@ -803,7 +958,24 @@ async def vera_chat(query: VeraQuery):
             cached["latency_ms"] = int((time.time() - start_time) * 1000)
             return cached
 
-    system = build_system_prompt(language, officer_id, query.session_count or 0)
+    # §204.1: Determine task_type for Prompt Slicing
+    # HIGH: context_id, shelf, or legal/compliance keywords
+    # LOW: trivial questions (cacheable general QA)
+    # MED: default
+    task_type = "MED_CAPACITY"
+    q_lower = query.question.lower()
+
+    if query.context_id or query.shelf:
+        task_type = "HIGH_GOVERNANCE"
+    elif any(kw in q_lower for kw in ["eu ai act", "gdpr", "art.", "artigo", "artikel",
+                                       "compliance", "regulamento", "verordnung", "legal",
+                                       "parecer", "gutachten", "opinion", "dora", "nis2"]):
+        task_type = "HIGH_GOVERNANCE"
+    elif any(kw in q_lower for kw in ["restart", "reboot", "status", "ping", "cache",
+                                       "reiniciar", "neustart", "que horas", "what time"]):
+        task_type = "LOW_TRIVIAL"
+
+    system = build_system_prompt(language, officer_id, query.session_count or 0, task_type=task_type)
     context_prefix = ""
     if query.shelf:
         shelf_data = get_shelf_context().get(query.shelf, {})
