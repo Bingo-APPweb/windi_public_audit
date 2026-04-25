@@ -9831,3 +9831,88 @@ W-COUNSEL-001, ou qualquer outro nó. Com §199 fechado, o Shelf garante:
 *Liga IA+H · Kempten, Bavaria · 2026*
 
 ---
+
+## §203 — Paper-001 Dual-Channel Publication (25 Apr 2026)
+
+### Context
+
+Paper-001 "Admissibility at Execution Time" completed publication pipeline with
+three distinct artifacts serving different channels:
+
+1. **Hybrid NOIR** — Process artifact from initial conversion
+2. **External Neutral** — Academic reviewers (Willis, Akarkach, HS Kempten)
+3. **Institutional KLAR** — LinkedIn publication (standby 3 weeks)
+
+### Receipts Chain
+
+```
+BDED84F0 (hybrid NOIR — process artifact)
+    │
+    ├── 88915364 (EXTERNAL-v1.0)
+    │   └── Neutral · White · Lora · 6 sections · Review Request
+    │   └── Channel: academic reviewers
+    │
+    └── F3FAFA21 (INSTITUTIONAL-v1.0)
+        └── KLAR · Pergaminho · 10 sections · SealBadge + Doctrine
+        └── Channel: LinkedIn (standby)
+```
+
+### Files Created
+
+| File | Location | Hash |
+|------|----------|------|
+| `PAPER-001-EXTERNAL-v1.0.pdf` | `/opt/windi/static/docs/review/` | `969dec3c...` |
+| `PAPER-001-INSTITUTIONAL-KLAR-v1.0.pdf` | `/opt/windi/docs/liga-iah/papers/WINDI-PAPER-001/` | `4065c934...` |
+| `paper-external-neutral.html` | `/opt/windi/docs/liga-iah/papers/WINDI-PAPER-001/` | — |
+| `paper-klar-institutional.html` | `/opt/windi/docs/liga-iah/papers/WINDI-PAPER-001/` | — |
+| `external_neutral.css` | `/opt/windi/docs/liga-iah/papers/WINDI-PAPER-001/` | — |
+
+### Access Control
+
+External review protected by Basic Auth:
+```
+URL: https://windi-domain.com/docs/review/
+Username: reviewer
+Password: 1WNnnlEFnXDl
+htpasswd: /opt/windi/.htpasswd-review
+```
+
+### Receipts Detail
+
+| ID | Receipt | Channel | Hash |
+|----|---------|---------|------|
+| BDED84F0 | `WINDI-PAPER-ADMISSIBILITY-001-v1.0-20260425204248-BDED84F0` | Process | `987955b9...` |
+| 88915364 | `WINDI-PAPER-ADMISSIBILITY-001-EXTERNAL-v1.0-20260425211149-88915364` | External | `969dec3c...` |
+| F3FAFA21 | `WINDI-PAPER-ADMISSIBILITY-001-INSTITUTIONAL-v1.0-20260425211444-F3FAFA21` | LinkedIn | `4065c934...` |
+
+### Architectural Decision
+
+**Option A selected** — Two separate PDFs for two channels:
+- External: Neutral styling (no WINDI branding) for academic objectivity
+- Institutional: KLAR theme (pergaminho + doctrine) for LinkedIn identity
+
+**Rationale:** Guardian's analysis:
+> "Hochschule Kempten is judging whether the argument survives without
+> the rhetorical device of identity. If the paper only works with WINDI
+> identity applied, that's information — it means part of the weight
+> came from form. Stripping is the test."
+
+### Verification URLs
+
+```
+EXTERNAL: https://windi-domain.com/verify-public/?id=WINDI-PAPER-ADMISSIBILITY-001-EXTERNAL-v1.0-20260425211149-88915364
+INSTITUTIONAL: https://windi-domain.com/verify-public/?id=WINDI-PAPER-ADMISSIBILITY-001-INSTITUTIONAL-v1.0-20260425211444-F3FAFA21
+```
+
+### Next Steps
+
+1. **External reviewers** — Emails can be sent now
+2. **LinkedIn** — Standby for 3-week feedback cycle
+3. **CLAUDE.md** — Updated to v2.9.0 with §203 entry
+
+---
+
+*Migrated to CLAUDE-HISTORY.md on 25 Apr 2026 per Overflow Policy*
+*Liga IA+H · Kempten, Bavaria · 2026*
+
+---

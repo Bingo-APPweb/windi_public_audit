@@ -1,0 +1,392 @@
+/* ============================================================
+   PAPER-001 EXTERNAL REVIEW — NEUTRAL ACADEMIC STYLE
+   Author: Jober Mögele Correa
+   Purpose: Academic peer review (no WINDI institutional branding)
+   Theme: White background, sober serif, minimal chrome
+   ============================================================ */
+
+@page {
+  size: A4;
+  margin: 25mm 22mm 25mm 22mm;
+  background: #FFFFFF;
+
+  @top-left {
+    content: "Working Paper — External Review Draft";
+    font-family: "Lora", "EB Garamond", Georgia, serif;
+    font-style: italic;
+    font-size: 8pt;
+    color: #555555;
+    padding-top: 8mm;
+  }
+
+  @top-right {
+    content: "Correa · April 2026";
+    font-family: "Lora", "EB Garamond", Georgia, serif;
+    font-style: italic;
+    font-size: 8pt;
+    color: #555555;
+    padding-top: 8mm;
+  }
+
+  @bottom-center {
+    content: counter(page);
+    font-family: "Lora", serif;
+    font-size: 9pt;
+    color: #333333;
+  }
+
+  @bottom-left {
+    content: "";
+  }
+
+  @bottom-right {
+    content: "";
+  }
+}
+
+@page :first {
+  margin: 28mm 22mm 25mm 22mm;
+  @top-left { content: ""; }
+  @top-right { content: ""; }
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #FFFFFF;
+  color: #1A1A1A;
+  font-family: "Lora", "EB Garamond", Georgia, "Times New Roman", serif;
+  font-size: 11pt;
+  line-height: 1.55;
+  text-align: justify;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}
+
+/* ---------- TITLE BLOCK ---------- */
+
+.paper-header {
+  text-align: center;
+  margin-bottom: 14mm;
+  padding-bottom: 0;
+}
+
+.paper-header h1 {
+  font-family: "Lora", "EB Garamond", serif;
+  font-weight: 700;
+  font-size: 20pt;
+  line-height: 1.2;
+  color: #1A1A1A;
+  margin: 0 0 4mm 0;
+  letter-spacing: -0.005em;
+}
+
+.paper-header .subtitle {
+  font-family: "Lora", serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 13pt;
+  line-height: 1.3;
+  color: #333333;
+  margin: 0 0 8mm 0;
+}
+
+.paper-header .author {
+  font-family: "Lora", serif;
+  font-size: 10.5pt;
+  color: #1A1A1A;
+  margin: 0 0 1mm 0;
+}
+
+.paper-header .author strong {
+  font-weight: 600;
+}
+
+.paper-header .affiliation {
+  font-family: "Lora", serif;
+  font-style: italic;
+  font-size: 9.5pt;
+  color: #555555;
+  margin: 0;
+}
+
+.paper-header .date {
+  font-family: "Lora", serif;
+  font-size: 9pt;
+  color: #555555;
+  margin-top: 2mm;
+}
+
+/* ---------- ABSTRACT ---------- */
+
+.abstract {
+  margin: 0 8mm 10mm 8mm;
+  padding: 0;
+  font-size: 10pt;
+  line-height: 1.55;
+}
+
+.abstract-label {
+  font-family: "Lora", serif;
+  font-size: 10pt;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 0;
+  color: #1A1A1A;
+  margin-bottom: 3mm;
+  text-align: center;
+}
+
+.abstract p {
+  margin: 0 0 3mm 0;
+  text-align: justify;
+}
+
+.abstract p:last-child {
+  margin-bottom: 0;
+}
+
+/* ---------- HEADINGS ---------- */
+
+h1, h2, h3, h4 {
+  font-family: "Lora", "EB Garamond", serif;
+  color: #1A1A1A;
+  page-break-after: avoid;
+}
+
+h2 {
+  font-size: 13pt;
+  font-weight: 700;
+  margin: 8mm 0 3.5mm 0;
+  letter-spacing: 0;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+h2 .num {
+  font-weight: 700;
+  font-size: 13pt;
+  color: #1A1A1A;
+  margin-right: 3mm;
+  letter-spacing: 0;
+  font-family: "Lora", serif;
+}
+
+h3 {
+  font-size: 11pt;
+  font-weight: 600;
+  margin: 5mm 0 2.5mm 0;
+  font-style: italic;
+  color: #1A1A1A;
+}
+
+/* ---------- BODY ---------- */
+
+p {
+  margin: 0 0 3mm 0;
+  orphans: 2;
+  widows: 2;
+  text-align: justify;
+}
+
+/* ---------- BLOCKQUOTES ---------- */
+
+blockquote {
+  margin: 4mm 8mm;
+  padding: 0 4mm;
+  border-left: 1pt solid #888888;
+  font-style: italic;
+  font-size: 10.5pt;
+  line-height: 1.5;
+  color: #1A1A1A;
+  background: transparent;
+}
+
+blockquote p {
+  margin: 0 0 2mm 0;
+}
+
+blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* ---------- LISTS ---------- */
+
+ul, ol {
+  margin: 2mm 0 4mm 0;
+  padding-left: 8mm;
+}
+
+li {
+  margin-bottom: 1.5mm;
+  line-height: 1.5;
+}
+
+ul li::marker {
+  color: #1A1A1A;
+}
+
+ol li::marker {
+  color: #1A1A1A;
+}
+
+/* ---------- INLINE EMPHASIS ---------- */
+
+strong {
+  font-weight: 700;
+  color: #1A1A1A;
+}
+
+em {
+  font-style: italic;
+}
+
+code {
+  font-family: "Latin Modern Mono", "DejaVu Sans Mono", monospace;
+  font-size: 9.5pt;
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  color: #333333;
+}
+
+/* ---------- DIVIDERS ---------- */
+
+hr {
+  border: none;
+  border-top: 0.4pt solid #CCCCCC;
+  margin: 6mm auto;
+  width: 30mm;
+  height: 0;
+}
+
+/* ---------- REVIEW REQUEST SECTION ---------- */
+
+.review-request {
+  margin-top: 12mm;
+  padding: 5mm 6mm;
+  border-top: 0.6pt solid #888888;
+  border-bottom: 0.6pt solid #888888;
+  background: transparent;
+  font-size: 10pt;
+  line-height: 1.55;
+  page-break-inside: avoid;
+}
+
+.review-request h3 {
+  font-family: "Lora", serif;
+  font-weight: 700;
+  font-style: normal;
+  font-size: 11pt;
+  margin: 0 0 3mm 0;
+  text-align: center;
+  color: #1A1A1A;
+}
+
+.review-request p {
+  margin: 0 0 2.5mm 0;
+}
+
+.review-request ol {
+  padding-left: 7mm;
+  margin: 2mm 0 3mm 0;
+}
+
+.review-request ol li {
+  margin-bottom: 1.5mm;
+}
+
+/* ---------- VERIFICATION APPENDIX ---------- */
+
+.verification-appendix {
+  margin-top: 10mm;
+  padding-top: 4mm;
+  border-top: 0.4pt solid #888888;
+  font-size: 9pt;
+  line-height: 1.5;
+  page-break-inside: avoid;
+}
+
+.verification-appendix h3 {
+  font-family: "Lora", serif;
+  font-weight: 700;
+  font-style: normal;
+  font-size: 10.5pt;
+  margin: 0 0 3mm 0;
+  color: #1A1A1A;
+}
+
+.verification-appendix p {
+  margin: 0 0 2mm 0;
+  font-size: 9pt;
+}
+
+.verification-appendix .hash-row {
+  font-family: "Latin Modern Mono", "DejaVu Sans Mono", monospace;
+  font-size: 8pt;
+  line-height: 1.55;
+  color: #1A1A1A;
+  margin: 1mm 0;
+  word-break: break-all;
+}
+
+.verification-appendix .label {
+  font-family: "Lora", serif;
+  font-size: 9pt;
+  font-weight: 600;
+  color: #555555;
+  display: inline-block;
+  width: 32mm;
+}
+
+/* ---------- SIGNATURE / SIGN-OFF ---------- */
+
+.signoff {
+  margin-top: 6mm;
+  font-family: "Lora", serif;
+  font-style: italic;
+  font-size: 9.5pt;
+  color: #1A1A1A;
+  text-align: right;
+}
+
+/* ---------- TABLES (if present in markdown conversion) ---------- */
+
+table {
+  border-collapse: collapse;
+  margin: 4mm 0;
+  font-size: 10pt;
+  width: 100%;
+}
+
+th, td {
+  border: 0.4pt solid #888888;
+  padding: 2mm 3mm;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  font-weight: 700;
+  background: #F5F5F5;
+}
+
+/* ---------- FOOTNOTES (if any) ---------- */
+
+.footnote {
+  font-size: 8.5pt;
+  line-height: 1.4;
+  color: #333333;
+  margin-top: 6mm;
+  padding-top: 3mm;
+  border-top: 0.3pt solid #CCCCCC;
+}
+
+/* ---------- NO WINDI BRANDING — explicit overrides ---------- */
+/* These selectors exist to ensure that any inherited WINDI styles
+   from previous templates are neutralized. */
+
+.doctrine, .doctrine-footer, .seal-badge,
+.cover-eyebrow, .om {
+  display: none !important;
+}

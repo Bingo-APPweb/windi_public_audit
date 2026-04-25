@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admissibility at Execution Time</title>
+<style>
+
+/* ============================================================
+   WINDI PUBLISHING HOUSE — INSTITUTIONAL PAPER STYLE
+   Theme: KLAR (pergaminho)
+   ============================================================ */
+
+@page {
+  size: A4;
+  margin: 22mm 20mm 24mm 20mm;
+  background: #F5F0E0;
+
+  @top-left {
+    content: "WINDI PUBLISHING HOUSE";
+    font-family: "Inter", "DejaVu Sans", sans-serif;
+    font-size: 7.5pt;
+    letter-spacing: 0.18em;
+    color: #6B5D45;
+    text-transform: uppercase;
+    padding-top: 8mm;
+  }
+
+  @top-right {
+    content: "Liga IA+H · Kempten · April 2026";
+    font-family: "Inter", "DejaVu Sans", sans-serif;
+    font-size: 7.5pt;
+    letter-spacing: 0.05em;
+    color: #6B5D45;
+    padding-top: 8mm;
+  }
+
+  @bottom-center {
+    content: counter(page);
+    font-family: "Lora", serif;
+    font-size: 9pt;
+    color: #6B5D45;
+  }
+
+  @bottom-left {
+    content: "PAPER-ADMISSIBILITY-001 · v2.0";
+    font-family: "DejaVu Sans Mono", monospace;
+    font-size: 6.5pt;
+    color: #8A7A5C;
+    letter-spacing: 0.08em;
+  }
+
+  @bottom-right {
+    content: "windi-domain.com";
+    font-family: "DejaVu Sans Mono", monospace;
+    font-size: 6.5pt;
+    color: #8A7A5C;
+    letter-spacing: 0.08em;
+  }
+}
+
+@page :first {
+  margin: 25mm 20mm 24mm 20mm;
+  @top-left { content: ""; }
+  @top-right { content: ""; }
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #F5F0E0;
+  color: #2A2520;
+  font-family: "Lora", "EB Garamond", Georgia, serif;
+  font-size: 10.5pt;
+  line-height: 1.55;
+  text-align: justify;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}
+
+/* ---------- COVER / TITLE BLOCK ---------- */
+
+.cover {
+  text-align: left;
+  margin-bottom: 14mm;
+  padding-bottom: 8mm;
+  border-bottom: 0.6pt solid #8A7A5C;
+}
+
+.cover-eyebrow {
+  font-family: "Inter", "DejaVu Sans", sans-serif;
+  font-size: 8pt;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: #8A7A5C;
+  margin-bottom: 6mm;
+}
+
+.cover-title {
+  font-family: "Lora", serif;
+  font-weight: 700;
+  font-size: 26pt;
+  line-height: 1.15;
+  color: #1A1612;
+  margin: 0 0 4mm 0;
+  letter-spacing: -0.005em;
+}
+
+.cover-subtitle {
+  font-family: "Lora", serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 14pt;
+  line-height: 1.3;
+  color: #4A3F30;
+  margin: 0 0 10mm 0;
+}
+
+.cover-byline {
+  font-family: "Inter", "DejaVu Sans", sans-serif;
+  font-size: 9pt;
+  color: #2A2520;
+  letter-spacing: 0.02em;
+  line-height: 1.55;
+}
+
+.cover-byline strong {
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 8pt;
+}
+
+.cover-byline .meta {
+  display: block;
+  margin-top: 2mm;
+  color: #6B5D45;
+  font-size: 8.5pt;
+}
+
+/* ---------- DOCTRINE BANNER ---------- */
+
+.doctrine {
+  margin: 8mm 0 12mm 0;
+  padding: 6mm 8mm;
+  border-left: 2.5pt solid #8B0000;
+  background: rgba(139, 0, 0, 0.025);
+  font-family: "Lora", serif;
+  font-style: italic;
+  font-size: 11pt;
+  line-height: 1.5;
+  color: #2A2520;
+}
+
+.doctrine .label {
+  display: block;
+  font-family: "Inter", sans-serif;
+  font-style: normal;
+  font-size: 7pt;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #8B0000;
+  margin-bottom: 3mm;
+  font-weight: 600;
+}
+
+/* ---------- ABSTRACT ---------- */
+
+.abstract {
+  margin: 0 0 10mm 0;
+  padding: 6mm 8mm 4mm 8mm;
+  background: rgba(0, 0, 0, 0.025);
+  border-radius: 1mm;
+}
+
+.abstract-label {
+  font-family: "Inter", sans-serif;
+  font-size: 7.5pt;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: #6B5D45;
+  font-weight: 600;
+  margin-bottom: 3mm;
+}
+
+.abstract p {
+  margin: 0 0 3mm 0;
+  font-size: 10pt;
+  line-height: 1.55;
+}
+
+.abstract p:last-child {
+  margin-bottom: 0;
+}
+
+/* ---------- HEADINGS ---------- */
+
+h1, h2, h3 {
+  font-family: "Lora", serif;
+  color: #1A1612;
+  page-break-after: avoid;
+}
+
+h2 {
+  font-size: 14pt;
+  font-weight: 700;
+  margin: 9mm 0 4mm 0;
+  letter-spacing: -0.005em;
+  border-bottom: 0.4pt solid #C8B898;
+  padding-bottom: 1.5mm;
+}
+
+h2 .num {
+  font-family: "DejaVu Sans Mono", monospace;
+  font-weight: 400;
+  font-size: 11pt;
+  color: #8B0000;
+  margin-right: 4mm;
+  letter-spacing: 0.02em;
+}
+
+h3 {
+  font-size: 11pt;
+  font-weight: 600;
+  margin: 6mm 0 2.5mm 0;
+  font-style: italic;
+  color: #2A2520;
+}
+
+/* ---------- BODY ---------- */
+
+p {
+  margin: 0 0 3mm 0;
+  orphans: 2;
+  widows: 2;
+}
+
+p + p {
+  text-indent: 0;
+}
+
+/* ---------- BLOCKQUOTES ---------- */
+
+blockquote {
+  margin: 4mm 6mm;
+  padding: 3mm 5mm;
+  border-left: 2pt solid #8B0000;
+  font-style: italic;
+  font-size: 10.5pt;
+  line-height: 1.5;
+  color: #2A2520;
+  background: rgba(139, 0, 0, 0.018);
+}
+
+blockquote p {
+  margin: 0;
+}
+
+/* ---------- LISTS ---------- */
+
+ul, ol {
+  margin: 2mm 0 4mm 0;
+  padding-left: 7mm;
+}
+
+li {
+  margin-bottom: 1.5mm;
+  line-height: 1.5;
+}
+
+ul li::marker {
+  color: #8B0000;
+}
+
+ol li::marker {
+  font-family: "DejaVu Sans Mono", monospace;
+  font-size: 9pt;
+  color: #8B0000;
+}
+
+/* ---------- INLINE EMPHASIS ---------- */
+
+strong {
+  font-weight: 700;
+  color: #1A1612;
+}
+
+em {
+  font-style: italic;
+}
+
+code {
+  font-family: "DejaVu Sans Mono", monospace;
+  font-size: 9pt;
+  background: rgba(0, 0, 0, 0.04);
+  padding: 0.5mm 1.2mm;
+  border-radius: 0.8mm;
+  color: #4A3F30;
+}
+
+/* ---------- SECTION DIVIDERS ---------- */
+
+hr {
+  border: none;
+  height: 0;
+  margin: 7mm 0;
+  text-align: center;
+}
+
+hr::after {
+  content: "·  ·  ·";
+  display: block;
+  font-size: 10pt;
+  letter-spacing: 0.6em;
+  color: #B8A988;
+  font-family: "Lora", serif;
+}
+
+/* ---------- METHODOLOGICAL NOTE ---------- */
+
+.methodological {
+  margin-top: 10mm;
+  padding: 6mm 8mm;
+  border-top: 0.6pt solid #8A7A5C;
+  border-bottom: 0.6pt solid #8A7A5C;
+  background: rgba(0, 0, 0, 0.02);
+  font-size: 9.5pt;
+  line-height: 1.55;
+}
+
+.methodological-label {
+  font-family: "Inter", sans-serif;
+  font-size: 7.5pt;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: #6B5D45;
+  font-weight: 600;
+  margin-bottom: 3mm;
+}
+
+.methodological p {
+  margin-bottom: 3mm;
+}
+
+.methodological .signature {
+  margin-top: 4mm;
+  font-style: italic;
+  font-size: 9pt;
+  color: #4A3F30;
+  text-align: right;
+}
+
+/* ---------- SEAL BADGE (final) ---------- */
+
+.seal-badge {
+  margin-top: 12mm;
+  padding: 5mm 7mm;
+  border: 0.6pt solid #8A7A5C;
+  border-radius: 1mm;
+  background: rgba(139, 0, 0, 0.02);
+  page-break-inside: avoid;
+}
+
+.seal-badge-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 3mm;
+  border-bottom: 0.3pt solid #C8B898;
+  padding-bottom: 2mm;
+}
+
+.seal-badge-title {
+  font-family: "Inter", sans-serif;
+  font-size: 8pt;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #8B0000;
+  font-weight: 600;
+}
+
+.seal-badge-icon {
+  font-family: "Lora", serif;
+  font-size: 11pt;
+  color: #8B0000;
+}
+
+.seal-badge-grid {
+  font-family: "DejaVu Sans Mono", monospace;
+  font-size: 7.5pt;
+  line-height: 1.7;
+  color: #2A2520;
+}
+
+.seal-badge-grid .row {
+  display: flex;
+  margin-bottom: 0.8mm;
+}
+
+.seal-badge-grid .key {
+  width: 28mm;
+  color: #6B5D45;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.seal-badge-grid .val {
+  flex: 1;
+  word-break: break-all;
+  color: #1A1612;
+}
+
+.seal-badge-footer {
+  margin-top: 3mm;
+  padding-top: 2mm;
+  border-top: 0.3pt solid #C8B898;
+  font-family: "Inter", sans-serif;
+  font-size: 7pt;
+  letter-spacing: 0.12em;
+  color: #6B5D45;
+  text-align: center;
+  font-style: italic;
+}
+
+/* ---------- DOCTRINE FOOTER ---------- */
+
+.doctrine-footer {
+  margin-top: 8mm;
+  text-align: center;
+  font-family: "Lora", serif;
+  font-style: italic;
+  font-size: 9pt;
+  color: #6B5D45;
+  letter-spacing: 0.04em;
+}
+
+.doctrine-footer .om {
+  display: block;
+  margin-top: 3mm;
+  font-family: "Inter", sans-serif;
+  font-style: normal;
+  font-size: 7.5pt;
+  letter-spacing: 0.32em;
+  color: #8B0000;
+}
+
+</style>
+</head>
+<body>
+
+<!-- ===================== COVER ===================== -->
+<section class="cover">
+  <div class="cover-eyebrow">WINDI Publishing House · Working Paper · 2026/01</div>
+
+  <h1 class="cover-title">Admissibility at Execution Time</h1>
+
+  <div class="cover-subtitle">A Structural Proposal for AI Governance Beyond Compliance</div>
+
+  <div class="cover-byline">
+    <strong>Jober Mögele Correa</strong><br>
+    Founder · WINDI Publishing House
+    <span class="meta">Kempten, Bavaria · April 2026</span>
+  </div>
+</section>
+
+<!-- ===================== DOCTRINE ===================== -->
+<div class="doctrine">
+  <span class="label">Founding Doctrine</span>
+  AI processes. The human decides. The architecture guarantees.
+</div>
+
+<!-- ===================== ABSTRACT ===================== -->
+<section class="abstract">
+  <div class="abstract-label">Abstract</div>
+
+  <p>For the past eighteen months I have been building cryptographic governance infrastructure for autonomous and semi-autonomous AI systems, under a founding doctrine I have learned to take literally: <em>AI processes, the human decides, the architecture guarantees</em>. From inside that work, one observation has become unavoidable, and it is the argument of this paper.</p>
+
+  <p>The dominant paradigm of AI governance — built on compliance, auditability, and post-hoc evaluation — is reaching structural limits. Regulations emphasise transparency, accountability, and human oversight, but most implementations remain descriptive rather than enforceable. They tell us what a system did. They do not tell us whether it was permitted to do it.</p>
+
+  <p>I argue that the next architectural shift in AI governance will not be regulatory; it will be structural. Specifically, I propose moving from compliance-based governance to <strong>admissibility-based governance</strong> — a model in which the central question is no longer whether a system behaved correctly, but whether it should have been allowed to act at all. I outline the architectural distinctions this shift requires and sketch a framework for externally verifiable decision authority, grounded in cryptographic evidence and human-rooted authorisation.</p>
+</section>
+
+<!-- ===================== §1 ===================== -->
+<h2><span class="num">§1</span>Introduction</h2>
+
+<p>The current generation of AI governance frameworks rests on a familiar premise. Systems must be evaluated for correctness, aligned with policy, and audited after execution. The approach has served traditional software well, where deterministic behaviour and bounded action make retrospective analysis meaningful.</p>
+
+<p>Modern AI systems do not satisfy these conditions. They generate proposals rather than deterministic outputs. They operate in partially observable environments. They adapt to context dynamically and increasingly carry real-world consequences. Probabilistic reasoning, autonomous decision-making, and dynamic context adaptation have outgrown the assumptions on which compliance-based frameworks were built.</p>
+
+<p>In this regime, a critical gap emerges:</p>
+
+<blockquote>Most governance frameworks evaluate decisions after they occur. Few determine whether those decisions should have been allowed to occur in the first place.</blockquote>
+
+<p>This distinction is not semantic. It is architectural. Compliance evaluates alignment of past behaviour against a written rule. Admissibility evaluates permission to act at the moment action is attempted. They live in different layers of the system, and confusing them — as the field largely does today — produces governance that is convincing on paper and quiet at runtime.</p>
+
+<p>In what follows, we develop this distinction carefully, examine why current frameworks structurally underdetermine admissibility, and sketch what it would take to build governance that binds, rather than merely describes.</p>
+
+<!-- ===================== §2 ===================== -->
+<h2><span class="num">§2</span>Compliance as Description</h2>
+
+<p>Existing compliance approaches typically rely on three pillars: policy definition (rules, constraints, guidelines), monitoring and logging (audit trails, telemetry), and post-hoc evaluation (audits, reports, risk assessments). Each is necessary; together they remain insufficient.</p>
+
+<p>These mechanisms share a structural limitation: <strong>they are descriptive, not enforcing.</strong></p>
+
+<p>They answer:</p>
+<ul>
+  <li>Was the system aligned?</li>
+  <li>Did it follow policy?</li>
+  <li>Can we reconstruct what happened?</li>
+</ul>
+
+<p>But they do not answer:</p>
+<ul>
+  <li>Was the system <em>authorised</em> to act at that moment?</li>
+</ul>
+
+<p>In practice, the gap allows systems to execute actions even when governance conditions are ambiguous, partially satisfied, or retrospectively contestable. The audit trail records what occurred; it does not gate whether occurrence was admissible.</p>
+
+<p>This is the silent architectural assumption that most current frameworks inherit from pre-AI software engineering: that if behaviour can be reconstructed, it has been governed. For deterministic systems with bounded action surfaces, this assumption was workable. For probabilistic agents with open-ended action surfaces, it fails. We must stop treating reconstructability as a substitute for permission.</p>
+
+<!-- ===================== §3 ===================== -->
+<h2><span class="num">§3</span>Admissibility as a First-Class Concept</h2>
+
+<p>We define admissibility as:</p>
+
+<blockquote>The condition under which a system is permitted to execute an action, given its current state, context, and authorisation.</blockquote>
+
+<p>Where compliance evaluates <strong>alignment</strong>, admissibility evaluates <strong>permission</strong>. The distinction matters because they operate at different points in the decision lifecycle. Compliance asks, retrospectively: <em>did the action conform?</em> Admissibility asks, at execution: <em>is the action permitted to begin?</em></p>
+
+<p>This introduces a new layer in system design. Not just what the system <em>does</em>, but whether it is <em>allowed to do anything at all</em>. Admissibility operates at the point of execution — not before (where policy lives) and not after (where audit lives). It is the gate between policy and action, and the absence of that gate is what makes contemporary AI governance feel simultaneously over-documented and under-enforced.</p>
+
+<p>A practical consequence follows immediately: admissibility cannot be a property of the AI system alone. It must be a property of an architecture in which the AI system is one component among several, with permission to act issued by a separate authority and verified by an independent witness. The remainder of this paper develops what that architecture looks like.</p>
+
+<!-- ===================== §4 ===================== -->
+<h2><span class="num">§4</span>Human Oversight: From Loop to Primitive</h2>
+
+<p>Most governance frameworks implement human oversight as a control mechanism: review steps, override capabilities, emergency stops, "human-in-the-loop" patterns. Useful as far as they go, these approaches treat human involvement as interruption — a checkpoint inserted at intervals into an otherwise autonomous process.</p>
+
+<p>We propose a different model:</p>
+
+<blockquote>Human presence is not a checkpoint. It is the root of admissibility.</blockquote>
+
+<p>In this model, decisions are not merely reviewed by humans; they are <em>anchored</em> in human authorisation. The shift implies several things at once: explicit attribution of authority to a named human or human-rooted role; non-delegable responsibility for the issuance of permission; and traceable origin of decision rights, cryptographically verifiable from the action back to its source.</p>
+
+<p>The human is not an observer of the system. The human is the origin condition for action.</p>
+
+<p>This reframing has a concrete architectural consequence. Human authorisation must become a <strong>primitive of the system</strong> — a typed, signed, time-bound artifact that other components consume — rather than a workflow step that can be quietly bypassed when convenient. Once authorisation is a primitive, it can be cryptographically bound to specific actions, scoped to specific contexts, and revoked atomically. Once it is merely a workflow step, it can be — and routinely is — implemented by a checkbox.</p>
+
+<!-- ===================== §5 ===================== -->
+<h2><span class="num">§5</span>The Self-Attestation Problem</h2>
+
+<p>A fundamental weakness in current AI governance is the reliance on self-attestation. Systems generate their own logs, report their own compliance, and act as both actor and witness to their own actions. This produces an inherent conflict of interest. Even when logs are tamper-resistant, they remain internally generated, context-dependent, and trust-based. A system cannot be the sole witness of its own correctness.</p>
+
+<p>The principle is not new. It is the same principle that motivated separation of powers in constitutional law: the entity that executes cannot be the entity that authorises, and neither can be the sole entity that adjudicates whether execution was permitted. Each role must be discharged by a structurally distinct party, and the boundary between them must be observable from outside.</p>
+
+<p>We propose the same separation in AI governance, expressed as three irreducible roles:</p>
+
+<ul>
+  <li><strong>Actor</strong> — the system that executes an action.</li>
+  <li><strong>Authority</strong> — the entity that permits the action, anchored ultimately in a human source of legitimacy.</li>
+  <li><strong>Witness</strong> — an independent verifier who can confirm, after the fact, that the action carried valid authorisation at the moment of execution.</li>
+</ul>
+
+<p>Each of these roles must be distinguishable, attributable, and architecturally separated. When they collapse — when the Actor is also the Authority, or when the Witness is a subroutine of the Actor — governance becomes recursive in a way that no audit can repair. The system is judging itself with instruments it controls.</p>
+
+<p>The discipline this imposes is uncomfortable but necessary. An AI system, no matter how capable, cannot be permitted to issue its own permissions, sign its own justifications, or attest its own integrity. The tripartite structure is not paranoia. It is the minimum architecture under which "governance" remains a coherent concept once the actors stop being deterministic.</p>
+
+<!-- ===================== §6 ===================== -->
+<h2><span class="num">§6</span>External Verifiability</h2>
+
+<p>To resolve the self-attestation problem, governance must shift from a trust model to an evidence model. This requires cryptographic sealing of decisions, immutable evidence structures, and verification pathways that do not depend on the originating system.</p>
+
+<p>A valid governance system should allow a third party to:</p>
+
+<ol>
+  <li>Retrieve a decision artifact.</li>
+  <li>Verify its integrity against a public hash chain.</li>
+  <li>Confirm its authorisation conditions — who permitted what, when, under what scope.</li>
+  <li>Do so without relying on the originating system.</li>
+</ol>
+
+<p>The strong form of this requirement is the most important:</p>
+
+<blockquote>Verification must remain valid even if the system that generated the decision no longer exists.</blockquote>
+
+<p>This single property transforms governance from a trust assertion into an evidence claim. It also subjects the architecture to a falsifiability test: if the system that issued an action ceases to operate, can a third party still establish what was permitted? If the answer is no, the system was running on trust signals, not proof.</p>
+
+<p>This is not theoretical. A working implementation of these primitives exists today. The Forensic Ledger I have been building at WINDI seals decision artifacts — receipts — with hash-chained integrity, tied to verifiable human-rooted DIDs (Ed25519, UUIDv7) and bound to the explicit human authorisation that permitted each action. The receipt chain — request, approval, rotation, revocation — is structurally public-verifiable: each link is a sealed event whose integrity does not depend on the originating system. The public verification surface is currently in controlled deployment; external access will be opened under the same admissibility standard this paper proposes. A framework arguing for externally verifiable governance must, by its own logic, eventually expose the means of its own verification — but the moment of that exposure is itself a governed act, not a textual gesture.</p>
+
+<!-- ===================== §7 ===================== -->
+<h2><span class="num">§7</span>Decision Lifecycle as Governance Surface</h2>
+
+<p>Traditional systems treat authentication and authorisation as technical layers — API keys, access control lists, role-based permissions. Useful, but conceptually thin. In an admissibility-based model, the entire lifecycle of access becomes a <strong>governance surface</strong>, not a configuration detail:</p>
+
+<ul>
+  <li><strong>Request</strong> — the intent to act, attributable to a specific source.</li>
+  <li><strong>Approval</strong> — the grant of authority, anchored in a named human role.</li>
+  <li><strong>Usage</strong> — execution under explicitly stated constraints.</li>
+  <li><strong>Rotation</strong> — the orderly continuity of trust over time.</li>
+  <li><strong>Revocation</strong> — the atomic withdrawal of permission.</li>
+</ul>
+
+<p>Each stage must be attributable, auditable, and verifiable independently. Each transition between stages must be a sealed event, not a database update. Once the lifecycle is treated this way, a profound reframing follows:</p>
+
+<blockquote>Access is not granted. It is adjudicated.</blockquote>
+
+<p>The difference is not stylistic. Granted access is a static property of an account; adjudicated access is a continuous property of a <em>relationship</em> between Actor, Authority, and Witness — verifiable at every step, revocable at any moment, and meaningful even after the parties have changed.</p>
+
+<!-- ===================== §8 ===================== -->
+<h2><span class="num">§8</span>Alignment with Regulatory Trajectories</h2>
+
+<p>Emerging regulatory frameworks — chief among them the EU AI Act — emphasise human oversight, accountability, traceability, and risk control. They define what governance must achieve. They are appropriately reticent about prescribing how those properties are enforced at execution time, leaving that to implementation.</p>
+
+<p>This reticence is a feature, not a bug, of good regulation. But it leaves a gap between regulatory intent and technical enforcement that must be closed by architecture, not by additional policy.</p>
+
+<p>Article 14 of the EU AI Act (Regulation (EU) 2024/1689) — <em>Human Oversight</em> — is a clear example. It requires that high-risk AI systems be designed so that they "can be effectively overseen by natural persons during the period in which they are in use." The article is normatively strong and architecturally underspecified, by design. Different organisations are arriving at radically different operational interpretations of "effectively overseen," ranging from dashboards with pause buttons to deeply integrated authorisation primitives. The first interpretation produces theatre; the second produces governance.</p>
+
+<p>An admissibility-based architecture provides a concrete path through the underspecification:</p>
+
+<ul>
+  <li>Human oversight becomes <strong>explicit authorisation primitives</strong>, signed and time-bound.</li>
+  <li>Accountability becomes <strong>attributable, cryptographically signed actions</strong> linked to named roles.</li>
+  <li>Traceability becomes <strong>immutable decision artifacts</strong> on a public-verifiable ledger.</li>
+  <li>Risk control becomes <strong>execution gating</strong> — the system cannot act without admissibility.</li>
+</ul>
+
+<p>Regulators do not need to specify these mechanisms. They need only require that organisations demonstrate them. The shift is from regulating outputs to regulating the conditions of execution — and admissibility is what makes that shift technically tractable.</p>
+
+<!-- ===================== §9 ===================== -->
+<h2><span class="num">§9</span>Discussion</h2>
+
+<p>The transition from compliance to admissibility is not incremental. It is structural. It requires rethinking system boundaries, redefining the role of humans, and introducing independent verification mechanisms that most contemporary stacks do not have. It also raises questions that remain genuinely open.</p>
+
+<p>Among these, three deserve particular attention. <em>What constitutes sufficient authorisation? How is authority transferred or delegated? How are conflicts between authorities resolved?</em> I do not pretend to settle these here, but I will offer one operational answer to the first, since the absence of any concrete proposal is part of why the field stalls.</p>
+
+<p>In the architecture I have been building, <em>sufficient authorisation</em> is the conjunction of three conditions, each independently verifiable. First, <strong>Proof of Human Oversight (PHO)</strong> — a cryptographic artifact attesting that a named human role explicitly approved the class of action being attempted, before the system attempted it. Second, <strong>Decentralised Identifier binding (DID, Ed25519/UUIDv7)</strong> — the action is signed by a key whose ownership is traceable to that human role. Third, <strong>scoped admissibility</strong> — the authorisation is valid only for a specific action class, time window, and context, and is revocable atomically. None of the three is sufficient alone. The conjunction is a <em>falsifiable definition</em> of "the human authorised this," replacing the soft language of "human-in-the-loop" with a structural claim that can be verified or refuted by an outside party.</p>
+
+<p>This is one answer. It is not the only one. But it demonstrates that the question is tractable once the framing shifts from compliance to admissibility — and that vagueness in the language of human oversight is not inevitable.</p>
+
+<!-- ===================== §10 ===================== -->
+<h2><span class="num">§10</span>Conclusion</h2>
+
+<p>As AI systems gain agency, governance must evolve from observing behaviour to controlling the conditions under which behaviour is possible.</p>
+
+<blockquote>Compliance ensures that systems align. Admissibility ensures that systems are allowed to act.</blockquote>
+
+<p>The future of AI governance will not be decided by how well systems explain their actions, but by how rigorously we define <strong>who allowed them to act in the first place</strong> — and how that permission can be proven, by anyone, at any time, without trusting the system that claims it.</p>
+
+<p>I have offered the framework as a structural proposal because that is what I believe the field most needs. I have grounded it in working infrastructure because the proposal must, by its own logic, be more than rhetoric. The commitment expressed in §6 — that the means of verification will be opened under the same admissibility standard the paper proposes — stands as the simplest test of whether what I am describing is real.</p>
+
+<p>This is the work in front of us. <strong>I would rather have it done badly and openly than done well in private.</strong></p>
+
+<!-- ===================== METHODOLOGICAL NOTE ===================== -->
+<section class="methodological">
+  <div class="methodological-label">Methodological Note</div>
+
+  <p>This paper was drafted in dialogue with Witness AI and Architect AI of the Liga IA+H, the multi-agent constitutional system within which the WINDI infrastructure is governed. The argumentative structure, final formulations, and commitments expressed are mine. The AI agents contributed pressure-testing, sharpening, and adversarial review of every claim made.</p>
+
+  <p>This authorship arrangement is itself an instance of the framework defended in this paper: AI agents process, the human decides, and the architecture — including the public ledger to which the publication of this paper is sealed — guarantees. The reader is invited to treat the methodological note not as a disclaimer but as evidence: <em>the discourse you have just read is admissible by the standard it proposes.</em></p>
+
+  <div class="signature">— Jober Mögele Correa, Kempten, April 2026</div>
+</section>
+
+<!-- ===================== SEAL BADGE ===================== -->
+<section class="seal-badge">
+  <div class="seal-badge-header">
+    <span class="seal-badge-title">WINDI Forensic Ledger · Sealed Artifact</span>
+    <span class="seal-badge-icon">🛡️</span>
+  </div>
+  <div class="seal-badge-grid">
+    <div class="row"><span class="key">id</span><span class="val">PAPER-ADMISSIBILITY-001-INSTITUTIONAL-v1.0</span></div>
+    <div class="row"><span class="key">actor</span><span class="val">did:windi:dragon-001</span></div>
+    <div class="row"><span class="key">app</span><span class="val">windi-publishing-house</span></div>
+    <div class="row"><span class="key">doc_type</span><span class="val">working_paper</span></div>
+    <div class="row"><span class="key">governance_level</span><span class="val">HIGH</span></div>
+    <div class="row"><span class="key">sealed_at</span><span class="val">2026-04-25T19:11:08Z</span></div>
+    <div class="row"><span class="key">content_hash</span><span class="val">sha256:f418b67023cdecee2a20ebc1a37a20e195faf00870cdbca90a476b26632928a6</span></div>
+    <div class="row"><span class="key">predecessors</span><span class="val">BDED84F0, PoE-METHODOLOGY-HARDENING-20260425</span></div>
+    <div class="row"><span class="key">invariants</span><span class="val">I1, I6, I9, I11, I14</span></div>
+  </div>
+  <div class="seal-badge-footer">
+    AI processes · The human decides · The architecture guarantees
+  </div>
+</section>
+
+<div class="doctrine-footer">
+  Liga IA+H · Three Dragons Protocol · Guardian / Architect / Witness
+  <span class="om">OM SHANTI</span>
+</div>
+
+</body>
+</html>

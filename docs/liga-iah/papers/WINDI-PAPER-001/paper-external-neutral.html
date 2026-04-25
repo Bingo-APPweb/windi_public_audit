@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admissibility at Execution Time — Working Paper</title>
+<style>
+/* ============================================================
+   PAPER-001 EXTERNAL REVIEW — NEUTRAL ACADEMIC STYLE
+   Theme: White background, sober serif, minimal chrome
+   ============================================================ */
+
+@page {
+  size: A4;
+  margin: 25mm 22mm 25mm 22mm;
+  background: #FFFFFF;
+}
+
+@page :first {
+  margin: 28mm 22mm 25mm 22mm;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #FFFFFF;
+  color: #1A1A1A;
+  font-family: "Lora", "EB Garamond", Georgia, "Times New Roman", serif;
+  font-size: 11pt;
+  line-height: 1.55;
+  text-align: justify;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}
+
+/* ---------- TITLE BLOCK ---------- */
+
+.paper-header {
+  text-align: center;
+  margin-bottom: 12mm;
+  padding-bottom: 0;
+}
+
+.paper-header h1 {
+  font-family: "Lora", "EB Garamond", serif;
+  font-weight: 700;
+  font-size: 20pt;
+  line-height: 1.2;
+  color: #1A1A1A;
+  margin: 0 0 4mm 0;
+  letter-spacing: -0.005em;
+}
+
+.paper-header .subtitle {
+  font-family: "Lora", serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 12pt;
+  line-height: 1.3;
+  color: #333333;
+  margin: 0 0 8mm 0;
+}
+
+.paper-header .meta {
+  font-family: "Lora", serif;
+  font-size: 10pt;
+  color: #555555;
+  margin: 0;
+}
+
+.paper-header .date {
+  font-family: "Lora", serif;
+  font-size: 9pt;
+  color: #555555;
+  margin-top: 2mm;
+}
+
+/* ---------- CLASSIFICATION ---------- */
+
+.classification {
+  text-align: center;
+  font-family: "Lora", serif;
+  font-size: 9pt;
+  font-style: italic;
+  color: #666666;
+  margin-bottom: 10mm;
+  padding: 3mm 0;
+  border-top: 0.4pt solid #CCCCCC;
+  border-bottom: 0.4pt solid #CCCCCC;
+}
+
+/* ---------- ABSTRACT ---------- */
+
+.abstract {
+  margin: 0 0 10mm 0;
+  padding: 0;
+  font-size: 10pt;
+  line-height: 1.55;
+}
+
+.abstract-label {
+  font-family: "Lora", serif;
+  font-size: 10pt;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 0;
+  color: #1A1A1A;
+  margin-bottom: 3mm;
+  text-align: center;
+}
+
+.abstract p {
+  margin: 0 0 3mm 0;
+  text-align: justify;
+}
+
+.abstract p:last-child {
+  margin-bottom: 0;
+}
+
+.keywords {
+  margin-top: 4mm;
+  font-size: 9pt;
+  color: #555555;
+}
+
+.keywords strong {
+  color: #333333;
+}
+
+/* ---------- HEADINGS ---------- */
+
+h1, h2, h3, h4 {
+  font-family: "Lora", "EB Garamond", serif;
+  color: #1A1A1A;
+  page-break-after: avoid;
+}
+
+h2 {
+  font-size: 13pt;
+  font-weight: 700;
+  margin: 8mm 0 3.5mm 0;
+  letter-spacing: 0;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+h3 {
+  font-size: 11pt;
+  font-weight: 600;
+  margin: 5mm 0 2.5mm 0;
+  font-style: italic;
+  color: #1A1A1A;
+}
+
+/* ---------- BODY ---------- */
+
+p {
+  margin: 0 0 3mm 0;
+  orphans: 2;
+  widows: 2;
+  text-align: justify;
+}
+
+/* ---------- BLOCKQUOTES ---------- */
+
+blockquote {
+  margin: 4mm 8mm;
+  padding: 0 4mm;
+  border-left: 1pt solid #888888;
+  font-style: italic;
+  font-size: 10.5pt;
+  line-height: 1.5;
+  color: #1A1A1A;
+  background: transparent;
+}
+
+blockquote p {
+  margin: 0 0 2mm 0;
+}
+
+blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* ---------- LISTS ---------- */
+
+ul, ol {
+  margin: 2mm 0 4mm 0;
+  padding-left: 8mm;
+}
+
+li {
+  margin-bottom: 1.5mm;
+  line-height: 1.5;
+}
+
+/* ---------- INLINE EMPHASIS ---------- */
+
+strong {
+  font-weight: 700;
+  color: #1A1A1A;
+}
+
+em {
+  font-style: italic;
+}
+
+code {
+  font-family: "DejaVu Sans Mono", monospace;
+  font-size: 9pt;
+  background: #F5F5F5;
+  padding: 0.5mm 1.5mm;
+  border-radius: 1mm;
+  color: #333333;
+}
+
+/* ---------- DIVIDERS ---------- */
+
+hr {
+  border: none;
+  border-top: 0.4pt solid #CCCCCC;
+  margin: 6mm auto;
+  width: 30mm;
+  height: 0;
+}
+
+/* ---------- TABLES ---------- */
+
+table {
+  border-collapse: collapse;
+  margin: 4mm 0;
+  font-size: 10pt;
+  width: 100%;
+}
+
+th, td {
+  border: 0.4pt solid #888888;
+  padding: 2mm 3mm;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  font-weight: 700;
+  background: #F5F5F5;
+}
+
+/* ---------- REVIEW REQUEST SECTION ---------- */
+
+.review-request {
+  margin-top: 12mm;
+  padding: 5mm 6mm;
+  border-top: 0.6pt solid #888888;
+  border-bottom: 0.6pt solid #888888;
+  background: transparent;
+  font-size: 10pt;
+  line-height: 1.55;
+  page-break-inside: avoid;
+}
+
+.review-request h3 {
+  font-family: "Lora", serif;
+  font-weight: 700;
+  font-style: normal;
+  font-size: 11pt;
+  margin: 0 0 3mm 0;
+  color: #1A1A1A;
+}
+
+.review-request p {
+  margin: 0 0 2.5mm 0;
+}
+
+.review-request ol {
+  padding-left: 7mm;
+  margin: 2mm 0 3mm 0;
+}
+
+.review-request ol li {
+  margin-bottom: 1.5mm;
+}
+
+/* ---------- VERIFICATION APPENDIX ---------- */
+
+.verification-appendix {
+  margin-top: 10mm;
+  padding-top: 4mm;
+  border-top: 0.4pt solid #888888;
+  font-size: 9pt;
+  line-height: 1.5;
+  page-break-inside: avoid;
+}
+
+.verification-appendix h3 {
+  font-family: "Lora", serif;
+  font-weight: 700;
+  font-style: normal;
+  font-size: 10.5pt;
+  margin: 0 0 3mm 0;
+  color: #1A1A1A;
+}
+
+.verification-appendix p {
+  margin: 0 0 2mm 0;
+  font-size: 9pt;
+}
+
+.verification-appendix table {
+  font-size: 9pt;
+}
+
+.verification-appendix code {
+  font-size: 8pt;
+}
+
+/* ---------- FOOTER ---------- */
+
+.footer {
+  margin-top: 10mm;
+  text-align: center;
+  font-family: "Lora", serif;
+  font-style: italic;
+  font-size: 9pt;
+  color: #666666;
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== HEADER ===================== -->
+<div class="paper-header">
+  <h1>Admissibility at Execution Time</h1>
+  <div class="subtitle">A Verifiable Governance Model for AI Systems Based on Cryptographic Receipts and Human Oversight</div>
+  <div class="meta">Submitted for External Review</div>
+  <div class="date">April 2026 · Version 1.0</div>
+</div>
+
+<div class="classification">
+  Pre-publication Draft · Confidential Review
+</div>
+
+<!-- ===================== ABSTRACT ===================== -->
+<div class="abstract">
+  <div class="abstract-label">Abstract</div>
+  <p>Current AI governance frameworks emphasize validation, auditability, and post-hoc accountability. However, they do not guarantee that system actions are admissible at the moment of execution. This gap allows systems to produce outcomes without provable authorization under the governing conditions active at runtime.</p>
+  <p>This paper introduces a governance model centered on admissibility at execution time, where every action must be justified by verifiable authority before it becomes real. The model is implemented through a set of non-overridable invariants, a Proof of Human Oversight (PHO) mechanism, and a cryptographic forensic ledger that records execution receipts as immutable evidence.</p>
+  <p>We present an empirical methodological hardening event triggered by external adversarial review, in which identified epistemic and procedural fissures were formally integrated into the system through deterministic updates. The transformation is captured and sealed as a verifiable receipt, establishing a reproducible chain of governance evolution.</p>
+  <p>The results demonstrate that governance can be operationalized as a runtime enforcement property rather than a retrospective assessment. This approach enables systems to evolve under adversarial pressure while preserving verifiability, offering a new foundation for trustworthy AI in high-stakes environments.</p>
+  <div class="keywords"><strong>Keywords:</strong> AI governance, runtime enforcement, human oversight, cryptographic evidence, admissibility, EU AI Act</div>
+</div>
+
+<hr>
+
+<!-- ===================== §1 ===================== -->
+<h2>1. Introduction</h2>
+
+<p>The rapid deployment of AI systems in decision-critical environments has exposed a fundamental limitation in current governance approaches. Existing frameworks focus on whether systems are well-designed, tested, or auditable, but do not address a more immediate and decisive question:</p>
+
+<blockquote><strong>Was the system allowed to act at the moment it acted?</strong></blockquote>
+
+<p>This distinction separates two fundamentally different concerns: (1) whether a system can generate valid outputs, and (2) whether it is authorized to execute those outputs under current conditions.</p>
+
+<p>Most governance architectures implicitly collapse these layers. Validation ensures that a system can behave correctly, while auditability ensures that its behavior can be reconstructed after the fact. Neither guarantees that an action was admissible at the exact moment of execution.</p>
+
+<p>This paper proposes a different approach: <strong>admissibility as a first-class runtime property</strong>.</p>
+
+<p>In this model, an action is not considered valid because it can be explained or audited later. It is valid only if it can be proven, at the moment of execution, that: (1) the action is authorized under the governing rules, (2) the authorization is non-overridable, and (3) the authorization is recorded as immutable evidence.</p>
+
+<p>The central claim of this paper is that <strong>governance must be resolved at execution time, not inferred afterward</strong>.</p>
+
+<!-- ===================== §2 ===================== -->
+<h2>2. Conceptual Distinction: Validation, Ownership, and Admissibility</h2>
+
+<h3>2.1 Validation: Capability Without Authority</h3>
+<p>Validation determines whether a system behaves as intended under predefined conditions. It is inherently pre-execution or test-bound. A system can be fully validated and still produce an inadmissible action if runtime conditions invalidate its authority to act.</p>
+
+<h3>2.2 Ownership: Responsibility Without Constraint</h3>
+<p>Ownership addresses the attribution of consequences. It becomes relevant after an action has been executed. Ownership is therefore post-execution. It assigns responsibility but does not enforce constraints at the moment of decision.</p>
+
+<h3>2.3 Admissibility: Authority at Execution Time</h3>
+<blockquote><strong>The property that an action is authorized under the governing conditions at the exact moment of execution.</strong></blockquote>
+
+<p>Unlike validation and ownership, admissibility is: runtime-bound (evaluated at execution time), state-dependent (based on current conditions, not prior tests), and binary (an action is either admissible or not).</p>
+
+<h3>2.4 Requirement: Admissibility as a First-Class Property</h3>
+<p>To resolve this gap, admissibility must be elevated to a first-class property of system design: (1) Every execution must be preceded by an admissibility decision, (2) This decision must be non-overridable under defined invariants, (3) The decision must produce verifiable evidence at the moment of execution.</p>
+
+<!-- ===================== §3 ===================== -->
+<h2>3. The Governance Model</h2>
+
+<h3>3.1 Architectural Overview</h3>
+<p>The system is structured as a layered execution pipeline:</p>
+<p style="text-align: center; font-family: monospace; margin: 4mm 0;">USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY</p>
+<p>Each stage refines a proposed action, but execution is not finalized until it is committed to the ledger. <strong>An action becomes real only if it produces a valid receipt at commit time.</strong></p>
+
+<h3>3.2 Constitutional Invariants</h3>
+<p>At the core of the model is a set of constitutional invariants — system-level constraints that cannot be bypassed, overridden, or deferred.</p>
+
+<table>
+  <tr><th>ID</th><th>Name</th><th>Function</th></tr>
+  <tr><td>I6</td><td>Conflict Exposure</td><td>The system must surface internal contradictions. Suppression is not permitted.</td></tr>
+  <tr><td>I9</td><td>Prohibition of Autonomy Escalation</td><td>The system cannot elevate its own authority. Higher authority requires explicit human approval.</td></tr>
+  <tr><td>I11</td><td>Permanence of Cryptographic Evidence</td><td>All execution-relevant events must produce immutable, hash-linked evidence.</td></tr>
+  <tr><td>I14</td><td>Explicit Failure Principle</td><td>When conditions for valid execution are not met, the system must fail explicitly.</td></tr>
+</table>
+
+<h3>3.3 Proof of Human Oversight (PHO)</h3>
+<p>For actions requiring human authority, the model introduces mandatory Proof of Human Oversight (PHO). An action requiring human approval must satisfy: (1) Identity — a valid human actor is identified, (2) Intent — the action is explicitly approved, (3) Presence — the approval occurs within the active execution context.</p>
+
+<h3>3.4 Forensic Ledger as Execution Gate</h3>
+<p>The forensic ledger serves three simultaneous roles: commit layer (finalizes execution), evidence layer (records immutable proof), and verification anchor (enables independent validation).</p>
+<p><strong>An action that does not produce a valid receipt is considered non-existent from a system perspective.</strong></p>
+
+<h3>3.5 Non-Overridability</h3>
+<blockquote><strong>System integrity is defined not by compliance with policies, but by inability to violate admissibility conditions.</strong></blockquote>
+
+<!-- ===================== §4 ===================== -->
+<h2>4. Empirical Case: Methodological Hardening Event</h2>
+
+<h3>4.1 Context and Trigger</h3>
+<p>On April 25, 2026, the system underwent an external adversarial review conducted in a structured session. The review was explicitly critical and aimed at identifying epistemic and methodological weaknesses.</p>
+
+<h3>4.2 Identified Fissures</h3>
+<table>
+  <tr><th>Fissure</th><th>Description</th></tr>
+  <tr><td><strong>Authorship Circularity (W8)</strong></td><td>Classification logic risked reinforcing its own assumptions without sufficient external grounding.</td></tr>
+  <tr><td><strong>Closed-Loop Governance (W9)</strong></td><td>Governance mechanisms were internally consistent but insufficiently open to external challenge.</td></tr>
+  <tr><td><strong>Irrecoverability Gap</strong></td><td>Absence of formal criterion for excluding irrecoverable cases weakened statistical integrity.</td></tr>
+</table>
+
+<h3>4.3 Deterministic Integration of Corrections</h3>
+<p>All fissures were addressed through deterministic updates including explicit acknowledgment of circular reasoning risks (W8), repositioning to incorporate external critique (W9), formal exclusion rule with 10% threshold (E5), statistical power recalculation, and vault reproducibility commitment.</p>
+
+<h3>4.4 Properties of the Event</h3>
+<table>
+  <tr><th>Property</th><th>Description</th></tr>
+  <tr><td><strong>Causality</strong></td><td>Trigger explicitly linked to resulting changes</td></tr>
+  <tr><td><strong>Determinism</strong></td><td>All updates formally specified and version-controlled</td></tr>
+  <tr><td><strong>Verifiability</strong></td><td>Entire transformation anchored in accessible receipt</td></tr>
+  <tr><td><strong>Non-Bypassability</strong></td><td>Changes required satisfying invariant constraints and PHO</td></tr>
+</table>
+
+<!-- ===================== §5 ===================== -->
+<h2>5. Analysis</h2>
+
+<h3>5.1 From Compliance to Admissibility Enforcement</h3>
+<ul>
+  <li><strong>Compliance asks:</strong> Did the system follow the rules?</li>
+  <li><strong>Admissibility asks:</strong> Was the system allowed to act at that moment?</li>
+</ul>
+
+<h3>5.2 Evidence as a First-Class Output</h3>
+<blockquote><strong>An action is only real if it is provable.</strong></blockquote>
+
+<h3>5.3 Governance Under Adversarial Pressure</h3>
+<blockquote><strong>Systems can evolve under adversarial conditions without losing structural integrity, provided that evolution itself is governed by admissibility constraints.</strong></blockquote>
+
+<h3>5.4 Limitations</h3>
+<table>
+  <tr><th>Limitation</th><th>Description</th></tr>
+  <tr><td>Infrastructure centralization</td><td>Verification depends on limited endpoints</td></tr>
+  <tr><td>Early-stage empirical base</td><td>Analysis based on single documented event</td></tr>
+  <tr><td>Operational dependency</td><td>Availability affects practical auditability</td></tr>
+</table>
+
+<!-- ===================== §6 ===================== -->
+<h2>6. Implications and Conclusion</h2>
+
+<h3>6.1 Implications for AI Governance Frameworks</h3>
+<blockquote><strong>Systems must prove, at the moment of execution, that they are allowed to act.</strong></blockquote>
+<p>For regulatory contexts requiring human oversight (e.g., EU AI Act Article 14): human oversight cannot be treated as procedural requirement — it must be implemented as verifiable condition of execution.</p>
+
+<h3>6.2 Conclusion</h3>
+<p>This paper introduced a governance model in which admissibility is enforced at execution time through invariants, human oversight, and cryptographic evidence.</p>
+<blockquote><strong>An action is only valid if it can be proven, at the moment of execution, that it was authorized.</strong></blockquote>
+<p><strong>In high-stakes environments, where consequences are immediate and irreversible, this distinction defines whether systems can be trusted not only to perform, but to act within provable bounds of authority.</strong></p>
+
+<!-- ===================== REVIEW REQUEST ===================== -->
+<div class="review-request">
+  <h3>Review Request</h3>
+  <p><strong>Reviewer guidance:</strong> This draft is submitted for critical evaluation. Specific feedback requested on:</p>
+  <ol>
+    <li><strong>Conceptual clarity</strong> — Is the distinction between validation, ownership, and admissibility sufficiently clear and useful?</li>
+    <li><strong>Empirical validity</strong> — Does the documented event constitute sufficient evidence for the claims made?</li>
+    <li><strong>Architectural soundness</strong> — Are there gaps in the governance model as described?</li>
+    <li><strong>Practical applicability</strong> — How might this model apply to other AI governance contexts?</li>
+    <li><strong>Limitations</strong> — Are there unstated limitations or risks in the approach?</li>
+  </ol>
+  <p><strong>Confidentiality:</strong> This draft is shared for review purposes only. Please do not circulate without permission.</p>
+</div>
+
+<!-- ===================== VERIFICATION APPENDIX ===================== -->
+<div class="verification-appendix">
+  <h3>Verification Appendix</h3>
+  <p>The empirical case can be independently verified:</p>
+  <p><strong>Receipt ID:</strong> <code>PoE-METHODOLOGY-HARDENING-20260425</code></p>
+  <p><strong>Public Verification URL:</strong><br>
+  <code>https://windi-domain.com/verify-public/?id=PoE-METHODOLOGY-HARDENING-20260425</code></p>
+  <p><strong>Document Hash Chain:</strong></p>
+  <table>
+    <tr><th>Document</th><th>Version</th><th>SHA-256</th></tr>
+    <tr><td>Eligibility Criteria</td><td>v1.2 → v1.3</td><td><code>57a84cc0...</code> → <code>51acf3cd...</code></td></tr>
+    <tr><td>Classification Protocol</td><td>v1.1 → v1.2</td><td><code>2c704e66...</code> → <code>e7755c03...</code></td></tr>
+  </table>
+</div>
+
+<div class="footer">
+  Working Paper — External Review Draft · April 2026
+</div>
+
+</body>
+</html>

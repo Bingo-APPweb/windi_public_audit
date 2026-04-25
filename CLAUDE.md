@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.8.0
-**Sealed:** 2026-04-22 · §201 Paper-001 Scientific Foundation · PoE Methodology Sealed · AI-AI-AI-H Architecture
+**Version:** 2.9.0
+**Sealed:** 2026-04-25 · §203 Paper-001 Dual-Channel Publication · EXTERNAL + INSTITUTIONAL KLAR · 3 Receipts Encadeados
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -556,6 +556,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 25 Apr | **§203 PAPER-001 DUAL-CHANNEL PUBLICATION** · EXTERNAL v1.0 (neutro/revisores) + INSTITUTIONAL KLAR v1.0 (LinkedIn) · 3 receipts encadeados (BDED84F0 → 88915364 + F3FAFA21) · Basic Auth `/docs/review/` |
 | 25 Apr | **§202 DECRETO-002 CORE VS APPS** · Separação Ontológica · CORE indivisível (Ledger+Key+Invariantes+VERIFY) · Reference Apps (W-*) · Firewall Constitucional · `C216F3EA` ✅ |
 | 22 Apr | **§201 PAPER-001 SCIENTIFIC FOUNDATION** · PoE-ELIGIBILITY-CRITERIA-001 + PoE-CLASSIFICATION-PROTOCOL-001 SEALED · AI-AI-AI-H Architecture · n≤31 · W5/W6/W7 |
 | 20 Apr | **§200 I14 EPISTEMIC ENFORCEMENT** · W-SHELF-001 v0.3.0 · Non-simulation of Understanding · 11/11 Tests · `0ec09491` |
@@ -657,6 +658,9 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 - W-SEC: `WINDI-SEC-LOCAL-20260408184001-BD09970F`
 - W-COMPOSER: First Seal `58B241B1`
 - §196 Incident: `WINDI-INCIDENT-20260420-DARK-LAUNCH-GAP`
+- §203 Paper-001 Hybrid: `WINDI-PAPER-ADMISSIBILITY-001-v1.0-20260425204248-BDED84F0`
+- §203 Paper-001 External: `WINDI-PAPER-ADMISSIBILITY-001-EXTERNAL-v1.0-20260425211149-88915364`
+- §203 Paper-001 Institutional: `WINDI-PAPER-ADMISSIBILITY-001-INSTITUTIONAL-v1.0-20260425211444-F3FAFA21`
 - §196 Amendment: `WINDI-AMENDMENT-20260420-DARK-LAUNCH-GAP-PART-2`
 
 ---
