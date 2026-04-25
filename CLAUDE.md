@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.10.0
-**Sealed:** 2026-04-25 · §204 VERA Paladar · E1-E4 Filter + Prompt Slicing · Receipt `85389BCA`
+**Version:** 2.11.0
+**Sealed:** 2026-04-25 · §204 VERA Paladar COMPLETO · 4-Layer Stack · 8 Commits · Receipt `f37a7f2c`
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -83,7 +83,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-SEC-001 | :8144 | I9,I11 | **SEALED** · Security Sentinel · Dual Correlation · Telegram · systemd |
 | W-DRAGON-001 | :8122 | I9,I11,I14 | **LIVE** · Dragon Shadow Forest · 16×16 SHA-256 Glyph Grid · PDF Overlay |
 | W-DEV-API-001 | :8200 | I9,I11 | **LIVE** · Developer API · /dev-api/ · 4 Tiers · Verify Bridge |
-| W-ENTERPRISE-001 | :8150 | I1,I9,I11,I14 | **LIVE** v3.3.0 · VERA v1.3 PALADAR · E1-E4 Filter · Prompt Slicing · ERDBEERE · i18n |
+| W-ENTERPRISE-001 | :8150 | I1,I9,I11,I14 | **LIVE** v3.4.0 · VERA v1.4 PALADAR · 4-Layer Stack · Shadow+DeepEval+QGate+Langfuse · i18n |
 | W-CACHE-001 | :8160 | I11,I14 | **LIVE** · Verifiable Cache Layer · L2→L3 Promotion · NOIR Dashboard |
 | W-DID-GENESIS | :8096 | I1,I9,I11,I14 | **LIVE** · Sovereign Identity Tree · Cross-Service Session · 4 Tiers |
 | W-SERVICE-CONTROL | :8170 | I1,I9,I11 | **LIVE** · Service Control Panel · 29 Services · **SVG Sentinel** · Subsystem Monitoring · DID Gate |
@@ -237,34 +237,51 @@ FRUITS (Frutos)   → Virtue Receipts
 
 **File:** `/opt/windi/constitutional/DECRETO-002-CORE-VS-APPS.md`
 
-### §204 — VERA Paladar: Eficiência Seletiva (25 Apr 2026)
+### §204 — VERA Paladar: Operação Completa (25 Apr 2026)
 
-> **"VERA precisa saber quando ser Auditora de Alta Corte e quando ser Técnica de Suporte."**
+> **"DeepEval é o espelho. VERA é o juiz. Shadow Audit é a polícia. Langfuse é o satélite."**
 
-**Status:** LIVE · v1.3.0 · **Commits:** `f8c1f03a` + `b92b032b` · **Receipt:** `85389BCA`
+**Status:** LIVE · v1.4.0 · **8 Commits:** `f8c1f03a`→`f37a7f2c` · **Port:** :8150
 
-**E1-E4 Eligibility Filter (routing_engine.py):**
-| Level | Routing | Consensus | Ledger |
-|-------|---------|:---------:|:------:|
-| E1_TRIVIAL | Mistral (fast) | ❌ | ❌ |
-| E4_NON_PHO | Llama (local) | ❌ | ❌ |
-| HIGH_GOVERNANCE | Claude+GPT4 | ✅ | ✅ |
+**4-Layer Architecture:**
+| Layer | Component | Função | Status |
+|-------|-----------|--------|:------:|
+| 1 | Execution | E1-E4 Filter + Prompt Slicing | ✅ |
+| 2 | Governance | Shadow Audit (polícia) | ✅ |
+| 3 | Defense | Princípio XV (triangulação) | ✅ |
+| 4 | Quality | DeepEval + Quality Gate + Langfuse | ✅ |
 
-**Dynamic Thresholds (llm_registry.yaml):**
-| Task Level | Warning | Critical | Tasks |
-|------------|:-------:|:--------:|-------|
-| HIGH_GOVERNANCE | 0.15 | 0.20 | legal, eu_ai_act, dora |
-| MED_CAPACITY | 0.25 | 0.35 | compliance, gdpr |
-| LOW_TRIVIAL | 0.40 | 0.50 | low_latency, classification |
+**§204.1-2 — Eligibility + Shadow Audit:**
+| Level | Routing | Consensus | Ledger | Shadow |
+|-------|---------|:---------:|:------:|:------:|
+| E1_TRIVIAL | Mistral | ❌ | ❌ | ❌ |
+| E4_NON_PHO | Llama | ❌ | ❌ | ❌ |
+| HIGH_GOVERNANCE | Claude+GPT4 | ✅ | ✅ | ✅ |
 
-**Prompt Slicing (vera_agent.py):**
-| Task Level | Pillars | History | Token Savings |
-|------------|:-------:|:-------:|:-------------:|
-| HIGH_GOVERNANCE | 11 | 6 msgs | -135 |
-| MED_CAPACITY | 7 | 4 msgs | -195 |
-| LOW_TRIVIAL | 4 | 0 msgs | -240 |
+**§204.3 — Princípio XV (BD-004 Fix):**
+- HIGH decisions require ≥2 models (Guardian + Architect)
+- `call_ai_triangulated()` → parallel calls → consensus check
+- Divergence score tracked per request
 
-**Tests:** 12/12 passed (E1-E4: 8/8, Thresholds: 5/5, Stress: 4/4)
+**§204.4-5 — DeepEval + Quality Gate:**
+| Metric | Source | Weight |
+|--------|--------|:------:|
+| Admissibility (0-4) | WINDI-native | 60% |
+| Relevance | DeepEval | 15% |
+| Faithfulness | DeepEval | 15% |
+| Coherence | DeepEval | 10% |
+
+**Regra de Ouro:** *"Se DeepEval e VERA discordarem → VERA vence. Sempre."*
+
+**§204.6 — Langfuse Observability:**
+- `/vera/observability/health` → status do satélite
+- Trace hierarchy: VERA Request → Classification → LLM Calls → Consensus → Quality Gate
+- **Status:** READY (awaiting API keys)
+
+**Commits:** `f8c1f03a`→`f37a7f2c` (8 total)
+
+**Filtro 80/20:** `OBSERVE_ONLY=[HIGH_GOVERNANCE, triangulation, divergence>0.3, shadow_alerts>0]`
+**Pergunta:** *"Eu teria tomado essa decisão?"* → não=investiga · talvez=ouro · sim=segue
 
 ### §117 — I9: Human Approval Gate (NON-NEGOTIABLE)
 
@@ -585,27 +602,15 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
-| 25 Apr | **§204 VERA PALADAR** · E1-E4 Eligibility Filter · Dynamic Thresholds (0.20/0.35/0.50) · Prompt Slicing (4/7/11 pillars) · Adaptive History · 12/12 Tests · `f8c1f03a` + `b92b032b` · `85389BCA` ✅ |
+| 25 Apr | **§204 VERA PALADAR COMPLETO** · 4-Layer Stack · Shadow Audit (polícia) · Princípio XV BD-004 fix · DeepEval (espelho) · Quality Gate (juiz) · Langfuse (satélite) · 8 commits `f8c1f03a`→`f37a7f2c` ✅ |
 | 25 Apr | **§203 PAPER-001 DUAL-CHANNEL PUBLICATION** · EXTERNAL v1.0 (neutro/revisores) + INSTITUTIONAL KLAR v1.0 (LinkedIn) · 3 receipts encadeados (BDED84F0 → 88915364 + F3FAFA21) · Basic Auth `/docs/review/` |
 | 25 Apr | **§202 DECRETO-002 CORE VS APPS** · Separação Ontológica · CORE indivisível (Ledger+Key+Invariantes+VERIFY) · Reference Apps (W-*) · Firewall Constitucional · `C216F3EA` ✅ |
 | 22 Apr | **§201 PAPER-001 SCIENTIFIC FOUNDATION** · PoE-ELIGIBILITY-CRITERIA-001 + PoE-CLASSIFICATION-PROTOCOL-001 SEALED · AI-AI-AI-H Architecture · n≤31 · W5/W6/W7 |
 | 20 Apr | **§200 I14 EPISTEMIC ENFORCEMENT** · W-SHELF-001 v0.3.0 · Non-simulation of Understanding · 11/11 Tests · `0ec09491` |
-| 20 Apr | **§199 I9 RUNTIME ENFORCEMENT** · W-SHELF-001 v0.2.0 · 3-Layer Containment · Grove Arena ✅ · `a85909e4` |
-| 20 Apr | **§198 W-SHELF-001 LIVE** · Governed Knowledge Diffusion · TWIN+Handshake · Codex Mock |
-| 20 Apr | **§197 W-METRICS-001 LIVE** · `/api/truth` · ORANGE→AMBER · Drift 11→1 · `bd7867e0` · **Berlin AMBER** |
-| 20 Apr | **§196 SEAL CYCLE** · Gateway v2.3 · `/seal` + nginx fixes · Bundle sealed · 4 receipts |
-| 20 Apr | **§195 W-ACTUARY-001** · v0.2.0 HARDENED · Allianz-ready |
-| 20 Apr | **I17 + §194** · Agency Invariant · Session Identity Bridge · v2.3.0 |
-| 19 Apr | **§191-A/B/C** · DID Gate Audit · 4 endpoints closed · 3 receipts |
-| 18 Apr | **§191-F1** · Berçário Fundação · /authenticate |
-| 17 Apr | **§184-189** · Cache Integration · VERA v1.3.0 · Erdbeere Protocol · Academy :8180 |
-| 16 Apr | **§178-182** · WPIL · Travel Map · LAB/clear · SVG Sentinel |
-| 15 Apr | **§170-176** · Landing Complete · Cost · Social · Lab |
-| 14 Apr | **§167-169** · DID-Genesis · Service Control |
-| 13 Apr | **§163-165** · Decreto-001 · Cache · Portal |
-| 12 Apr | **§155-162** · W-Enterprise Complete |
-| 11 Apr | **§153-154** · DEV-API · Verify Public |
-| 09 Apr | **§150-151** · SEC + Dragon |
+| 20 Apr | **§196-200** · W-SHELF I9+I14 Runtime · W-METRICS · Actuary · Session Identity |
+| 17-19 Apr | **§184-191** · Cache · VERA Erdbeere · Academy · DID Gate Audit |
+| 13-16 Apr | **§163-182** · Decreto-001 · Portal · Cost · Lab · Travel Map |
+| 09-12 Apr | **§150-162** · SEC · Dragon · DEV-API · W-Enterprise |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` · **Archival path:** git log + Ledger receipts + `/opt/windi/docs/`
 > *CLAUDE.md is the index; the Ledger is the archive.*
@@ -692,60 +697,20 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 - §203 Paper-001 External: `WINDI-PAPER-ADMISSIBILITY-001-EXTERNAL-v1.0-20260425211149-88915364`
 - §203 Paper-001 Institutional: `WINDI-PAPER-ADMISSIBILITY-001-INSTITUTIONAL-v1.0-20260425211444-F3FAFA21`
 - §196 Amendment: `WINDI-AMENDMENT-20260420-DARK-LAUNCH-GAP-PART-2`
+- §204 VERA Paladar: `f37a7f2c` (8 commits · 4-Layer Stack)
 
 ---
 
-## §164-184 — Services 13-17 Apr 2026
+## §164-201 — Services & Foundations (13-22 Apr 2026)
 
-| § | Service | Port | Key |
-|---|---------|------|-----|
-| §164 | W-CACHE-001 | :8160 | 4-Tier Cache · L2→L3 |
-| §165 | WINDI Portal | static | 35 Services · 7 Categories |
-| §167 | W-DID-GENESIS | :8096 | Sovereign Identity |
-| §168 | VDT Outreach | — | HS Kempten · HNU |
-| §169 | W-SERVICE-CONTROL | :8170 | 29 services · SVG Sentinel |
-| §170 | W-LAB-001 | :8151 | LOBO · 5 Mini-Games |
-| §174 | W-COST-001 | :8152 | Cost Intelligence |
-| §176 | W-SOCIAL-001 | :8133 | I9-P Protocol |
-| §179 | W-LAB/clear | :8151 | Dilemas de Geleia |
-| §184 | W-ACADEMY-001 | :8180 | 5 Modules · PHO Cert |
+> **Full details:** `CLAUDE-HISTORY.md` § §164-201
 
-> **Full details:** `CLAUDE-HISTORY.md`
+**Key Services:** W-CACHE :8160 · W-DID-GENESIS :8096 · W-SERVICE-CONTROL :8170 · W-LAB :8151 · W-ACADEMY :8180
+**W-Enterprise-001:** `:8150` · VERA v1.4 · §204 Paladar Stack
+**W-SHELF-001:** v0.4.0 · I9+I14 Runtime · Grove Matrix
+**Paper-001:** PoE-ELIGIBILITY + PoE-CLASSIFICATION SEALED · AI-AI-AI-H Architecture
 
 ---
 
 *LIGA IA+H — Kempten, Bavaria · 2026*
 *"AI processes. Human decides. WINDI guarantees."*
-
----
-
-> **§151 Tesoura Soberana v13** — Detalhes em `CLAUDE-HISTORY.md`
-
----
-
-## §155-191 — W-Enterprise + Cache + DID Gate (12-19 Apr 2026)
-
-**W-Enterprise-001:** `:8150` · VERA REGO v1.2 · Erdbeere Protocol · DID Gate · EU AI Act Art.14
-**Cache:** `:8160` · L2/L3 · 450ms→30ms · Decisions never cached
-**DID Gate:** 4 forjados em quarentena permanente · qualquer 200 = violação I11
-> **Full details:** `CLAUDE-HISTORY.md` § §155-191
-
----
-
-## §196-200 — W-SHELF-001 + W-METRICS-001 (20 Apr 2026)
-
-**W-SHELF-001:** v0.4.0 · I9+I14 Runtime · Grove Matrix · 5/5 validated
-**W-METRICS-001:** `/api/truth` · Drift as Parent Metric · AMBER
-**Receipts:** `WINDI-METRICS-*a0e7ce23` · `WINDI-I9-A0B18D0E` · `WINDI-I14-8506E729`
-> **Full details:** `CLAUDE-HISTORY.md` § §196-200
-
----
-
-## §201 — Paper-001 Scientific Foundation (22 Apr 2026)
-
-**Status:** SEALED (Passos A+B) · Passo C: 24 Apr · **Invariants:** I9, I11, I14
-
-**Docs:** PoE-ELIGIBILITY-CRITERIA-001 v1.2 + PoE-CLASSIFICATION-PROTOCOL-001 v1.1 (SEALED)
-**Architecture:** AI-AI-AI-H (Architect + Guardian + Witness + Human Dragon)
-**Sample:** n≤31 · Exclusions: E1 (service-restart) + E4 (non-PHO)
-**Files:** `/opt/windi/docs/liga-iah/PoE-*.md`
