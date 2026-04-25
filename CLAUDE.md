@@ -215,6 +215,27 @@ FRUITS (Frutos)   → Virtue Receipts
 
 **Princípio:** A Árvore cresce. A estrutura permanece. Mutável no crescimento. Imutável na direcção.
 
+### §202 — DECRETO-002: Separação Ontológica CORE vs Apps (25 Apr 2026)
+
+> **"Ledger guarda. Key assina. Invariantes limitam. VERIFY prova.**
+> **Tira um deles — não é WINDI."**
+
+**Status:** CONSTITUTIONAL · **Receipt:** `WINDI-DECRETO-002-20260425103349-91B6C643` · **Invariants:** I1, I9, I11, I14
+
+**CORE Indivisível (4 elementos):**
+| Elemento | Função |
+|----------|--------|
+| **Ledger** | Guarda (`:8101`) |
+| **Key** | Assina (DID) |
+| **Invariantes** | Limita (I1, I9, I11, I14...) |
+| **Verificabilidade** | Prova (VERIFY) |
+
+**Princípio de Não-Contaminação:** Falhas em Reference Apps (W-*) não afectam o CORE.
+
+**Hierarquia:** INVARIANTES > CORE > DECRETOS > REFERENCE APPS > FEATURES
+
+**File:** `/opt/windi/constitutional/DECRETO-002-CORE-VS-APPS.md`
+
 ### §117 — I9: Human Approval Gate (NON-NEGOTIABLE)
 
 > **"I9 não vive na entrada. I9 vive na saída."**
@@ -499,7 +520,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 ---
 
-## 13. Estado Actual — 22 Abril 2026
+## 13. Estado Actual — 25 Abril 2026
 
 ### Portas Críticas
 
@@ -534,6 +555,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 25 Apr | **§202 DECRETO-002 CORE VS APPS** · Separação Ontológica · CORE indivisível (Ledger+Key+Invariantes+VERIFY) · Reference Apps (W-*) · Firewall Constitucional · `91B6C643` |
 | 22 Apr | **§201 PAPER-001 SCIENTIFIC FOUNDATION** · PoE-ELIGIBILITY-CRITERIA-001 + PoE-CLASSIFICATION-PROTOCOL-001 SEALED · AI-AI-AI-H Architecture · n≤31 · W5/W6/W7 |
 | 20 Apr | **§200 I14 EPISTEMIC ENFORCEMENT** · W-SHELF-001 v0.3.0 · Non-simulation of Understanding · 11/11 Tests · `0ec09491` |
 | 20 Apr | **§199 I9 RUNTIME ENFORCEMENT** · W-SHELF-001 v0.2.0 · 3-Layer Containment · Grove Arena ✅ · `a85909e4` |
@@ -666,64 +688,21 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 ---
 
-## §155-162 W-Enterprise-001 — AI Compliance Dashboard (12 Apr 2026)
+## §155-191 — W-Enterprise + Cache + DID Gate (12-19 Apr 2026)
 
-**Port:** :8150 · **Version:** v3.2.0 · **Invariants:** I1, I9, I11, I14
-**URL:** `https://windi-domain.com/enterprise/`
-**Conceito:** EU AI Act Article 14 compliance + VERA constitutional agent.
-
-**Key Components:**
-- VERA REGO v1.2 — AI Compliance Secretary (32 Pilares)
-- **Erdbeere Protocol v1.0** — Anti-hallucination guardrails
-- DID Gate — 3 Leis da Semente (Existência → Rastro → Histórico)
-- OVS — Operator of Verifiable Systems (3 perfis)
-- DASH v4.1 — 9 Prateleiras Trilíngue
-
-### §185-186 — Erdbeere Protocol (17 Apr 2026)
-
-**Erdbeere:** Anti-hallucination guardrails · Confidence Estimation
-> *"VERA kann irren. Deshalb entscheidet der Mensch."*
-> **Full details:** `CLAUDE-HISTORY.md`
-
-### §188 — VERA Product Identity
-
-**Core:** VERA is a constitutional decision interface, not chatbot/assistant.
-**I9 Constraint:** VERA informs. The human decides. Never takes/implies decisions.
-**Tone:** Professional · Calm · Precise · Non-performative
-> **Full details:** `CLAUDE-HISTORY.md`
+**W-Enterprise-001:** `:8150` · VERA REGO v1.2 · Erdbeere Protocol · DID Gate · EU AI Act Art.14
+**Cache:** `:8160` · L2/L3 · 450ms→30ms · Decisions never cached
+**DID Gate:** 4 forjados em quarentena permanente · qualquer 200 = violação I11
+> **Full details:** `CLAUDE-HISTORY.md` § §155-191
 
 ---
 
-### §189-191 — Cache + DID Gate (17-19 Apr 2026)
+## §196-200 — W-SHELF-001 + W-METRICS-001 (20 Apr 2026)
 
-**§189 W-CACHE-001:** VERA v1.3.0 · L2/L3 tiers · 450ms→30ms · Decisions never cached
-**§191 DID Gate:** Berçário Fundação · Gate Closure · **4 forjados em quarentena permanente** (IDs em CLAUDE-HISTORY.md §191) · qualquer 200 = violação I11
-> **Full details:** `CLAUDE-HISTORY.md`
-
----
-
-## §184 — Infrastructure Health Audit (17 Apr 2026)
-
-**Fix:** `pip3 install --break-system-packages httptools==0.7.1`
-> **Full details:** `CLAUDE-HISTORY.md`
-
----
-
-## §196-200 — W-SHELF-001 Constitutional Enforcement (20 Apr 2026)
-
-> **Full details:** `CLAUDE-HISTORY.md` § §196-200 Migration
-
-| § | Topic | Key |
-|---|-------|-----|
-| §196 | Infrastructure Audit | Dark-Launch Gap · `/seal` endpoint · 4 receipts |
-| §197 | W-METRICS-001 | Drift as Parent Metric · `/api/truth` · AMBER status |
-| §199 | I9 Receipt Symmetry | Constitutional debt closed · `0c6adb89` |
-| §200 | Grove Matrix Seal | W-SHELF-001 v0.4.0 · 5/5 validated · `12838dd2` |
-
-**Key Receipts:**
-- `WINDI-METRICS-20260420191035-a0e7ce23`
-- `WINDI-I9-A0B18D0E-20260420`
-- `WINDI-I14-8506E729-20260420`
+**W-SHELF-001:** v0.4.0 · I9+I14 Runtime · Grove Matrix · 5/5 validated
+**W-METRICS-001:** `/api/truth` · Drift as Parent Metric · AMBER
+**Receipts:** `WINDI-METRICS-*a0e7ce23` · `WINDI-I9-A0B18D0E` · `WINDI-I14-8506E729`
+> **Full details:** `CLAUDE-HISTORY.md` § §196-200
 
 ---
 
@@ -731,31 +710,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 **Status:** SEALED (Passos A+B) · Passo C: 24 Apr · **Invariants:** I9, I11, I14
 
-### Documents Sealed
-
-| Document | Receipt |
-|----------|---------|
-| PoE-ELIGIBILITY-CRITERIA-001 v1.2 | `PoE-ELIGIBILITY-CRITERIA-001-v1.2-20260422` |
-| PoE-CLASSIFICATION-PROTOCOL-001 v1.1 | `PoE-CLASSIFICATION-PROTOCOL-001-v1.1-20260422` |
-
-### AI-AI-AI-H Architecture
-
-Architect (R1 annotator) + Guardian (R1 annotator) + Witness (R3 arbiter) + Human Dragon (approver)
-
-### Sample: n≤31 (of 100 planned)
-
-Exclusions: 11 service-restart (E1) + 8 non-PHO actors (E4)
-
-### Limitations (Paper-001 §7)
-
-W5: n≤31 · W6: Guardian AI as annotator · W7: AI-AI-AI bias · 16%: no-PHO finding
-
-### Next: 24 Apr
-
-Passo C (pre-inspection) → HD decides framing → Exp. 1 starts
-
-### PROTOCOL-002 Seeds
-
-PHO quarantine at creation · Human annotator triangulation · Taxonomy refinement post-Exp.1
-
-**Files:** `/opt/windi/docs/liga-iah/PoE-*.md` + `WINDI-PROTOCOL-001-v1.3.md` + `WINDI-POSITION-001-v1.1.md`
+**Docs:** PoE-ELIGIBILITY-CRITERIA-001 v1.2 + PoE-CLASSIFICATION-PROTOCOL-001 v1.1 (SEALED)
+**Architecture:** AI-AI-AI-H (Architect + Guardian + Witness + Human Dragon)
+**Sample:** n≤31 · Exclusions: E1 (service-restart) + E4 (non-PHO)
+**Files:** `/opt/windi/docs/liga-iah/PoE-*.md`
