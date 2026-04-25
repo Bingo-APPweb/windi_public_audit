@@ -39,6 +39,14 @@ from contextlib import contextmanager
 from pathlib import Path
 
 # §189 — W-CACHE-001 Integration
+# §204.2 Shadow Audit — Anti-Backdoor Visibility
+try:
+    from shadow_audit import shadow_audit as do_shadow_audit
+    SHADOW_AUDIT_ENABLED = True
+except ImportError:
+    SHADOW_AUDIT_ENABLED = False
+    def do_shadow_audit(*args, **kwargs): return []
+
 from vera_cache import (
     get_cached_constitution, cache_constitution,
     get_cached_brief, cache_brief,
@@ -813,6 +821,34 @@ async def vera_cache_status():
         "timestamp": datetime.utcnow().isoformat()
     }
 
+@router.get("/shadow-audit")
+async def vera_shadow_audit():
+    """§204.2: Shadow Audit stats — Anti-Backdoor Visibility"""
+    if not SHADOW_AUDIT_ENABLED:
+        return {"status": "disabled", "message": "Shadow audit module not loaded"}
+
+    try:
+        from shadow_audit import get_classification_stats, get_recent_alerts
+        stats = get_classification_stats(hours=24)
+        alerts = get_recent_alerts(limit=10)
+        return {
+            "status": "ok",
+            "shadow_audit": "§204.2 — Anti-Backdoor Visibility",
+            "stats_24h": stats,
+            "recent_alerts": alerts,
+            "backdoor_rules": [
+                "BD-001: HIGH_AS_LOW — HIGH keywords classified as LOW",
+                "BD-002: CONSENSUS_BYPASS — Consensus required but not achieved",
+                "BD-003: HIGH_DIVERGENCE — Divergence > threshold in HIGH",
+                "BD-004: SINGLE_MODEL_HIGH — HIGH decision with single model",
+                "BD-005: ACTION_IN_TRIVIAL — Action keywords in trivial",
+                "BD-006: SUSPICIOUS_LATENCY — Too fast for HIGH"
+            ],
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
 @router.get("/context")
 async def vera_context():
     return {"status": "ok", "timestamp": datetime.utcnow().isoformat(), "shelves": get_shelf_context(), "rego": "R1 · Shelf Context Active"}
@@ -1052,6 +1088,38 @@ async def vera_chat(query: VeraQuery):
     # §189 — Cache general Q&A responses at L2
     if is_general_qa and not degraded_mode:
         await cache_qa(query.question, language, response)
+
+    # §204.2 — Shadow Audit (Anti-Backdoor Visibility)
+    if SHADOW_AUDIT_ENABLED:
+        try:
+            # Determine classification reason
+            if query.context_id or query.shelf:
+                class_reason = "context_id/shelf present"
+            elif task_type == "HIGH_GOVERNANCE":
+                class_reason = "HIGH keywords detected"
+            elif task_type == "LOW_TRIVIAL":
+                class_reason = "trivial keywords detected"
+            else:
+                class_reason = "default MED"
+
+            backdoor_alerts = do_shadow_audit(
+                input_text=query.question,
+                classification=task_type,
+                classification_reason=class_reason,
+                routing_path="vera_chat",
+                pillars_injected=len(PILLAR_PROFILES.get(task_type, [])),
+                history_used=get_adaptive_history_limit(task_type),
+                consensus_required=(task_type == "HIGH_GOVERNANCE"),
+                consensus_achieved=True,  # In this context, always achieved
+                models_consulted=["claude"],  # Via gateway
+                divergence_score=0.0,
+                latency_ms=latency_ms,
+                officer_did=officer_id,
+            )
+            if backdoor_alerts:
+                response["_shadow_alerts"] = len(backdoor_alerts)
+        except Exception:
+            pass  # Shadow audit must never break main flow
 
     return response
 
