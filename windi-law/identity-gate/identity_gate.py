@@ -806,23 +806,37 @@ async def verify_email(token: str, request: Request):
                 "message_pt": "Link de verificação expirado. Solicite um novo."
             })
 
-    # Mark as verified
+    # Mark as verified AND generate login credentials for immediate access
+    login_token = generate_email_token()
+    login_expiry = get_login_token_expiry()
+    login_pin = generate_login_pin()
+    pin_expiry = (datetime.now(timezone.utc) + timedelta(minutes=15)).isoformat()
+
     cursor.execute("""
         UPDATE admins
-        SET email_verified = 1, email_token = NULL, email_token_expires = NULL
+        SET email_verified = 1, email_token = NULL, email_token_expires = NULL,
+            state = 'VERIFIED',
+            login_token = ?, login_token_expires = ?,
+            login_pin = ?, login_pin_expires = ?
         WHERE id = ?
-    """, (admin_id,))
+    """, (login_token, login_expiry, login_pin, pin_expiry, admin_id))
     conn.commit()
     conn.close()
+
+    # §214: Auto-login URL for seamless onboarding
+    base = get_base_path(request)
+    auto_login_url = f"{DOMAIN_URL}{base}/login/{login_token}"
 
     return templates.TemplateResponse(request, "verify-email-result.html", context={
         "success": True,
         "full_name": full_name,
         "email": email,
         "did": did,
-        "message_de": "E-Mail erfolgreich bestätigt!",
-        "message_en": "Email successfully verified!",
-        "message_pt": "Email verificado com sucesso!"
+        "login_pin": login_pin,
+        "auto_login_url": auto_login_url,
+        "message_de": "E-Mail erfolgreich bestätigt! Du kannst jetzt einloggen.",
+        "message_en": "Email successfully verified! You can now log in.",
+        "message_pt": "Email verificado com sucesso! Podes agora entrar."
     })
 
 

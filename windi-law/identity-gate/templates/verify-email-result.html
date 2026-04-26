@@ -196,7 +196,15 @@
         <div class="did-box">{{ did }}</div>
         {% endif %}
 
-        <a href="/law/workspace/?did={{ did }}" class="btn">
+        {% if login_pin %}
+        <p class="message" style="margin-bottom: 1rem;">
+            <span class="msg active" data-lang="de">Dein Login-Code: <strong style="color: var(--gold); font-family: var(--font-mono);">{{ login_pin }}</strong></span>
+            <span class="msg" data-lang="en">Your login code: <strong style="color: var(--gold); font-family: var(--font-mono);">{{ login_pin }}</strong></span>
+            <span class="msg" data-lang="pt">Teu código de acesso: <strong style="color: var(--gold); font-family: var(--font-mono);">{{ login_pin }}</strong></span>
+        </p>
+        {% endif %}
+
+        <a href="{{ auto_login_url or '/law/workspace/?did=' + did }}" class="btn">
             <span class="msg active" data-lang="de">Zum Workspace</span>
             <span class="msg" data-lang="en">Go to Workspace</span>
             <span class="msg" data-lang="pt">Ir para Workspace</span>
