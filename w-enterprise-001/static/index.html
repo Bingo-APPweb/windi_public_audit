@@ -1023,8 +1023,9 @@ body {
       </div>
 
       <div class="form-group">
-        <label class="form-label">Reviewer Name</label>
-        <input class="form-input" id="ap-reviewer" value="Anna Müller" placeholder="Your name">
+        <label class="form-label">Reviewer Identity (I9 — §208)</label>
+        <input class="form-input" id="ap-reviewer" value="" placeholder="Loading DID..." readonly style="background:var(--bg-deep);border-color:var(--gold);color:var(--gold);font-family:var(--font-mono);font-size:11px;">
+        <div id="ap-tier-badge" style="margin-top:6px;display:inline-block;padding:4px 10px;border-radius:4px;font-family:var(--font-mono);font-size:9px;font-weight:600;background:rgba(200,164,90,0.15);color:var(--gold);border:1px solid var(--gold);">LOADING...</div>
       </div>
       <div class="form-group">
         <label class="form-label">Decision</label>
@@ -1036,8 +1037,11 @@ body {
         </select>
       </div>
       <div class="form-group">
-        <label class="form-label">Oversight Note (optional)</label>
-        <textarea class="form-textarea" id="ap-note" placeholder="Rationale for this decision..."></textarea>
+        <label class="form-label">Oversight Note <span id="ap-note-required" style="display:none;color:var(--critical);font-size:10px;">(REQUIRED for HIGH risk)</span></label>
+        <textarea class="form-textarea" id="ap-note" placeholder="Rationale for this decision..." oninput="validateApNote()"></textarea>
+        <div id="ap-note-warning" style="display:none;margin-top:8px;padding:10px 12px;background:rgba(124,92,191,0.15);border:1px solid rgba(124,92,191,0.3);border-radius:6px;font-size:11px;color:#9B7FD4;">
+          <strong>VERA:</strong> <span id="ap-note-warning-text"></span>
+        </div>
       </div>
 
     </div>
@@ -1053,7 +1057,7 @@ body {
 
     <div class="panel-actions" style="padding: 0 1.25rem 1.25rem;" id="ap-actions">
       <button class="btn btn-ghost" onclick="closePanel('approval-overlay')">Cancel</button>
-      <button class="btn btn-gold" onclick="submitPHO()">Seal PHO Receipt →</button>
+      <button class="btn btn-gold" id="ap-seal-btn" onclick="submitPHO()">Seal PHO Receipt →</button>
     </div>
   </div>
 </div>
@@ -1661,27 +1665,133 @@ function updateStats() {
 }
 
 // ─── APPROVAL ───
-function openApproval(id) {
+// §208 — Semantic Density Validation Patterns (Anti-Laziness)
+const LAZY_PATTERNS_INDEX = {
+  questions: /^(will\s|can\s|should\s|is\s|are\s|does\s|do\s|what\s|how\s|why\s|when\s|where\s|who\s).{0,50}\?$|^ok\?$|^approved\?$|^vai\?$|^aprovado\?$|^genehmigt\?$/i,
+  generic: /^(yes|no|ok|fine|sure|done|sim|não|feito|ja|nein|fertig|erledigt|good|bem|gut)$/i
+};
+
+function validateApNote() {
+  const note = document.getElementById('ap-note').value.trim();
+  const warning = document.getElementById('ap-note-warning');
+  const warningText = document.getElementById('ap-note-warning-text');
+  const sealBtn = document.getElementById('ap-seal-btn');
+  const d = decisions.find(x => x.id === currentDecisionId);
+  const isHighRisk = d && (d.risk === 'HIGH' || d.risk === 'CRITICAL');
+
+  if (!isHighRisk) {
+    warning.style.display = 'none';
+    if (sealBtn) { sealBtn.disabled = false; sealBtn.style.opacity = '1'; }
+    return true;
+  }
+
+  const minChars = 30;
+  let errorMsg = null;
+
+  if (note.length < minChars) {
+    errorMsg = `Rationale insuficiente para decisão de Alto Risco. Mínimo ${minChars} caracteres. (${note.length}/${minChars})`;
+  } else if (LAZY_PATTERNS_INDEX.questions.test(note)) {
+    errorMsg = 'Nota não pode ser uma pergunta. Art.14 EU AI Act exige fundamentação real.';
+  } else if (LAZY_PATTERNS_INDEX.generic.test(note)) {
+    errorMsg = 'Nota genérica detectada. Art.14 EU AI Act exige justificativa real.';
+  }
+
+  if (errorMsg) {
+    warning.style.display = 'block';
+    warningText.textContent = errorMsg;
+    if (sealBtn) { sealBtn.disabled = true; sealBtn.style.opacity = '0.5'; }
+    return false;
+  }
+
+  warning.style.display = 'none';
+  if (sealBtn) { sealBtn.disabled = false; sealBtn.style.opacity = '1'; }
+  return true;
+}
+
+async function openApproval(id) {
   currentDecisionId = id;
   const d = decisions.find(x => x.id === id);
   document.getElementById('ap-title').textContent = d.title;
   document.getElementById('ap-meta').textContent = `${d.id} · ${d.system} · Risk: ${d.risk}`;
-  document.getElementById('ap-reviewer').value = 'Anna Müller';
+
+  // §208 — Populate Reviewer from DID Session (I9 Identity Lock)
+  const reviewerEl = document.getElementById('ap-reviewer');
+  const tierBadge = document.getElementById('ap-tier-badge');
+  const noteRequired = document.getElementById('ap-note-required');
+
+  // Show "REQUIRED" label for HIGH risk
+  if (d.risk === 'HIGH' || d.risk === 'CRITICAL') {
+    noteRequired.style.display = 'inline';
+  } else {
+    noteRequired.style.display = 'none';
+  }
+
+  // Get DID from session
+  const did = DID_STATE.did;
+  if (did) {
+    const shortDid = did.replace('did:windi:', '');
+    reviewerEl.value = `did:web:windi-domain.com:u:${shortDid}`;
+    reviewerEl.style.borderColor = 'var(--gold)';
+
+    // Fetch tier from Genesis
+    try {
+      const resp = await fetch(`/api/genesis/lookup/${encodeURIComponent(did)}`);
+      if (resp.ok) {
+        const data = await resp.json();
+        if (data.valid && data.tier) {
+          const tierEmoji = { SEED: '🌱', NODAL: '🌿', SOVEREIGN: '🌳', ORACLE: '🏛' }[data.tier] || '';
+          tierBadge.textContent = `${tierEmoji} ${data.tier}`;
+        }
+      }
+    } catch (e) {
+      tierBadge.textContent = '? UNKNOWN';
+    }
+  } else {
+    reviewerEl.value = '⚠ No DID — Login required';
+    reviewerEl.style.borderColor = 'var(--critical)';
+    tierBadge.textContent = '⚠ NO SESSION';
+    tierBadge.style.background = 'rgba(229,62,62,0.15)';
+    tierBadge.style.borderColor = 'var(--critical)';
+    tierBadge.style.color = 'var(--critical)';
+  }
+
   document.getElementById('ap-note').value = '';
+  document.getElementById('ap-note-warning').style.display = 'none';
   document.getElementById('ap-loading').classList.remove('active');
   document.getElementById('ap-actions').style.display = 'flex';
   document.getElementById('approval-body').style.display = 'block';
+
+  // Reset seal button state
+  const sealBtn = document.getElementById('ap-seal-btn');
+  if (d.risk === 'HIGH' || d.risk === 'CRITICAL') {
+    sealBtn.disabled = true;
+    sealBtn.style.opacity = '0.5';
+  } else {
+    sealBtn.disabled = false;
+    sealBtn.style.opacity = '1';
+  }
+
   document.getElementById('approval-overlay').classList.add('open');
 }
 
 async function submitPHO() {
   const d = decisions.find(x => x.id === currentDecisionId);
-  const reviewer = document.getElementById('ap-reviewer').value.trim() || 'Anna Müller';
+
+  // §208 — Validate semantic density before seal
+  if (!validateApNote()) {
+    return;  // Block seal if validation fails
+  }
+
+  // §208 — Get DID from session (I9 Identity Lock)
+  const officerDID = DID_STATE.did;
+  if (!officerDID) {
+    alert('No DID in session. Please login first.');
+    return;
+  }
+
+  const reviewer = document.getElementById('ap-reviewer').value.trim();  // Now contains DID, not name
   const decision = document.getElementById('ap-decision').value;
   const note = document.getElementById('ap-note').value.trim();
-
-  // Lei II: Every action bound to DID
-  const officerDID = DID_STATE.did || 'anonymous';
 
   // Show loading
   document.getElementById('ap-actions').style.display = 'none';
@@ -1703,14 +1813,16 @@ async function submitPHO() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         id: receiptId,
-        actor: officerDID, // Lei II: DID as actor for traceability
+        actor: officerDID, // §208: DID as actor for traceability
+        acting_as: DID_STATE.display_name || officerDID, // §208: Nominal identity for audit
         app: 'W-ENTERPRISE-001',
         doc_name: d.title,
         doc_type: 'PHO_OVERSIGHT',
         content_hash: hashHex,
         governance_level: d.risk,
         sge_score: d.sgeScore || 5.0,
-        metadata: { reviewer_name: reviewer, officer_did: officerDID } // Lei II
+        note: note, // §208: Include rationale in receipt
+        metadata: { reviewer_did: reviewer, officer_did: officerDID, rationale_length: note.length } // §208
       })
     });
     if (resp.ok) {
