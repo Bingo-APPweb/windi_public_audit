@@ -1,0 +1,55 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/did/v1",
+    "https://w3id.org/security/suites/ed25519-2020/v1",
+    "https://windi-domain.com/ns/windi/v1"
+  ],
+  "id": "did:windi:dragon-001",
+  "controller": "did:windi:dragon-001",
+  "verificationMethod": [
+    {
+      "id": "did:windi:dragon-001#keys-1",
+      "type": "Ed25519VerificationKey2020",
+      "controller": "did:windi:dragon-001",
+      "publicKeyMultibase": "z6MkhaXgBZDvotDkL5257faiztiGiC2QtKLGpbnnEGta2doK"
+    }
+  ],
+  "authentication": [
+    "did:windi:dragon-001#keys-1"
+  ],
+  "assertionMethod": [
+    "did:windi:dragon-001#keys-1"
+  ],
+  "capabilityInvocation": [
+    "did:windi:dragon-001#keys-1"
+  ],
+  "capabilityDelegation": [
+    "did:windi:dragon-001#keys-1"
+  ],
+  "service": [
+    {
+      "id": "did:windi:dragon-001#windi-desktop",
+      "type": "WindiDesktop",
+      "serviceEndpoint": "https://windi-domain.com/desktop/"
+    },
+    {
+      "id": "did:windi:dragon-001#windi-enterprise",
+      "type": "WindiEnterprise",
+      "serviceEndpoint": "https://windi-domain.com/enterprise/"
+    },
+    {
+      "id": "did:windi:dragon-001#windi-ledger",
+      "type": "ForensicLedger",
+      "serviceEndpoint": "https://windi-domain.com/verify-public/"
+    }
+  ],
+  "created": "2026-04-12T22:18:12Z",
+  "updated": "2026-04-26T13:38:00Z",
+  "_windi_metadata": {
+    "sovereign_name": "dragon-001",
+    "display_name": "Human Dragon",
+    "tier": "ORACLE",
+    "role": "founder",
+    "note": "This is a SAMPLE W3C-compliant DID Document. Current DID-Genesis does NOT produce this format."
+  }
+}

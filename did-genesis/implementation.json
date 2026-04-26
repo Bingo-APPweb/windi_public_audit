@@ -1,0 +1,65 @@
+{
+  "name": "WINDI DID Genesis",
+  "implementation": "W-DID-GENESIS",
+  "implementer": "WINDI Publishing House",
+  "version": "1.0.0",
+  "didMethods": ["did:windi"],
+  "features": {
+    "create": {
+      "supported": true,
+      "endpoint": "/api/genesis/birth",
+      "notes": "Server-side key generation (passphrase-based)"
+    },
+    "resolve": {
+      "supported": true,
+      "endpoint": "/api/genesis/lookup/{did}",
+      "notes": "Returns proprietary format, NOT W3C DID Document"
+    },
+    "update": {
+      "supported": false,
+      "notes": "Not implemented"
+    },
+    "deactivate": {
+      "supported": false,
+      "notes": "Uses 'classified' status instead of standard deactivation"
+    },
+    "authenticate": {
+      "supported": true,
+      "endpoint": "/api/genesis/login",
+      "notes": "Passphrase-based, not signature challenge"
+    }
+  },
+  "cryptosuites": [],
+  "supportedProofTypes": [],
+  "keyTypes": {
+    "actual": "SHA-256 passphrase hash",
+    "required": ["Ed25519VerificationKey2020", "JsonWebKey2020"]
+  },
+  "serviceEndpoint": "https://windi-domain.com/api/genesis/",
+  "conformance": {
+    "did-core-1.1": false,
+    "did-resolution-1.0": false,
+    "vc-data-model-2.0": false,
+    "estimated_test_pass_rate": "14%"
+  },
+  "gaps": [
+    "Missing @context field",
+    "Missing verificationMethod",
+    "Missing authentication array",
+    "Missing assertionMethod",
+    "No JSON-LD serialization",
+    "No Ed25519/Secp256k1 keys",
+    "No DID Document format",
+    "No Update operation",
+    "No Deactivate operation"
+  ],
+  "stability_issues": [
+    "Alias revocation without localStorage sync",
+    "Multiple DIDs per human with different passphrases",
+    "30-day session tokens without refresh",
+    "Fixed in §206 DID Guardian"
+  ],
+  "recommendation": "Use as proprietary identity system. For W3C compliance, migrate to did:web or did:key method.",
+  "audit_date": "2026-04-26",
+  "auditor": "CODE Standard Horizon §207"
+}

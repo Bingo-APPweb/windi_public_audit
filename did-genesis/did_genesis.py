@@ -116,8 +116,14 @@ def init_db():
             created_at TEXT NOT NULL,
             last_login_at TEXT,
             login_count INTEGER DEFAULT 0,
-            status TEXT DEFAULT 'active'
+            status TEXT DEFAULT 'active',
+            classification TEXT DEFAULT NULL,
+            superseded_by TEXT DEFAULT NULL,
+            sovereign_name TEXT
         );
+
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_identities_sovereign_name
+        ON identities(sovereign_name) WHERE sovereign_name IS NOT NULL;
 
         CREATE TABLE IF NOT EXISTS sessions (
             token_hash TEXT PRIMARY KEY,
@@ -144,6 +150,39 @@ def init_db():
         CREATE INDEX IF NOT EXISTS idx_sessions_did ON sessions(did);
         CREATE INDEX IF NOT EXISTS idx_sessions_expires ON sessions(expires_at);
         CREATE INDEX IF NOT EXISTS idx_events_did ON login_events(did);
+
+        -- §191 P0 FIX: recovery_tokens table - schema ready, logic NOT IMPLEMENTED
+        -- TODO-SOVEREIGN: Implement recovery flow in §191-F3 post-Berlin
+        -- Receipt: WINDI-191-RECOVERY-DEFERRED-20260419
+        CREATE TABLE IF NOT EXISTS recovery_tokens (
+            token_hash TEXT PRIMARY KEY,
+            did TEXT NOT NULL,
+            created_at TEXT DEFAULT (datetime('now')),
+            expires_at TEXT NOT NULL,
+            used_at TEXT,
+            FOREIGN KEY (did) REFERENCES identities(did)
+        );
+
+        -- §191 DID aliases table
+        CREATE TABLE IF NOT EXISTS did_aliases (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            canonical_did TEXT NOT NULL,
+            alias_actor TEXT NOT NULL UNIQUE,
+            alias_type TEXT NOT NULL CHECK(alias_type IN ('STRING', 'DID', 'EMAIL')),
+            status TEXT DEFAULT 'active' CHECK(status IN ('active', 'superseded', 'revoked')),
+            resolved_at TEXT DEFAULT (datetime('now')),
+            notes TEXT
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_aliases_canonical ON did_aliases(canonical_did);
+        CREATE INDEX IF NOT EXISTS idx_aliases_actor ON did_aliases(alias_actor);
+
+        -- §191 Genesis settings (kill-switch)
+        CREATE TABLE IF NOT EXISTS genesis_settings (
+            key TEXT PRIMARY KEY,
+            value TEXT NOT NULL,
+            updated_at TEXT DEFAULT (datetime('now'))
+        );
     """)
     conn.commit()
     conn.close()
@@ -240,9 +279,10 @@ def resolve_identity(input_value: str, conn=None) -> Optional[dict]:
 
     try:
         # 1. Try sovereign_name (human face - most common)
+        # §191 P0 FIX: Filter status='active' — classified/superseded identities must not resolve
         cursor.execute("""
             SELECT did, passphrase_hash, display_name, email, role, tier, status, sovereign_name
-            FROM identities WHERE LOWER(sovereign_name) = ?
+            FROM identities WHERE LOWER(sovereign_name) = ? AND status = 'active'
         """, (input_lower,))
         row = cursor.fetchone()
         if row:
@@ -255,7 +295,7 @@ def resolve_identity(input_value: str, conn=None) -> Optional[dict]:
                 SELECT i.did, i.passphrase_hash, i.display_name, i.email, i.role, i.tier, i.status, i.sovereign_name
                 FROM did_aliases a
                 JOIN identities i ON i.did = a.canonical_did
-                WHERE LOWER(a.alias_actor) = ? AND a.status = 'active'
+                WHERE LOWER(a.alias_actor) = ? AND a.status = 'active' AND i.status = 'active'
             """, (input_lower,))
             row = cursor.fetchone()
             if row:
@@ -266,7 +306,7 @@ def resolve_identity(input_value: str, conn=None) -> Optional[dict]:
         if not result:
             cursor.execute("""
                 SELECT did, passphrase_hash, display_name, email, role, tier, status, sovereign_name
-                FROM identities WHERE LOWER(email) = ?
+                FROM identities WHERE LOWER(email) = ? AND status = 'active'
             """, (input_lower,))
             row = cursor.fetchone()
             if row:
@@ -277,7 +317,7 @@ def resolve_identity(input_value: str, conn=None) -> Optional[dict]:
         if not result:
             cursor.execute("""
                 SELECT did, passphrase_hash, display_name, email, role, tier, status, sovereign_name
-                FROM identities WHERE LOWER(did) = ?
+                FROM identities WHERE LOWER(did) = ? AND status = 'active'
             """, (input_lower,))
             row = cursor.fetchone()
             if row:
@@ -397,8 +437,29 @@ class SessionInfo(BaseModel):
 async def startup():
     init_db()
     migrate_existing_credentials()
+
+    # §206 DID Guardian — Auto-healing on startup
+    try:
+        from did_guardian import run_guardian
+        guardian_result = run_guardian()
+        log.info(f"§206 DID Guardian: {guardian_result['healed_aliases']} aliases, {guardian_result['healed_sessions']} sessions healed")
+    except Exception as e:
+        log.warning(f"§206 DID Guardian skipped: {e}")
+
     log.info(f"W-DID-GENESIS v{VERSION} started on :{PORT}")
     log.info("DECRETO-001 Art.4: Seiva DID activa")
+    log.info("§207 DID-Web Bridge: W3C DID-CORE 1.1 endpoints active")
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# §207 DID-WEB BRIDGE — W3C Compliant Endpoints
+# ══════════════════════════════════════════════════════════════════════════════
+try:
+    from did_web_bridge import create_did_web_router
+    app.include_router(create_did_web_router())
+    log.info("§207 DID-Web Bridge: LOADED")
+except Exception as e:
+    log.warning(f"§207 DID-Web Bridge unavailable: {e}")
 
 @app.get("/api/genesis/health")
 async def health():
