@@ -1249,6 +1249,115 @@ html, body {
   </div>
 </div>
 
+<!-- §208/§209 PHO RATIONALE MODAL -->
+<div id="pho-modal" class="pho-modal-overlay" style="display:none">
+  <div class="pho-modal-box">
+    <div class="pho-modal-header">
+      <div class="pho-modal-title">🔐 <span data-i18n="pho_seal_title">Seal with Human Oversight</span></div>
+      <button class="pho-modal-close" onclick="closePhoModal()">×</button>
+    </div>
+    <div class="pho-modal-body">
+      <!-- I9 Identity Section -->
+      <div class="pho-section">
+        <div class="pho-label" data-i18n="pho_reviewer">Reviewer Identity (I9)</div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <div class="pho-did-display" id="pho-did-display">Loading DID...</div>
+          <div class="pho-tier-badge" id="pho-tier-badge">—</div>
+        </div>
+      </div>
+      <!-- Document Info -->
+      <div class="pho-section">
+        <div class="pho-label" data-i18n="pho_document">Document</div>
+        <div class="pho-doc-info" id="pho-doc-info">—</div>
+      </div>
+      <!-- Governance Level -->
+      <div class="pho-section">
+        <div class="pho-label" data-i18n="pho_governance">Governance Level</div>
+        <div class="pho-gov-level" id="pho-gov-level">—</div>
+      </div>
+      <!-- Rationale Textarea -->
+      <div class="pho-section">
+        <div class="pho-label" data-i18n="pho_rationale">Oversight Rationale (Art.14 EU AI Act)</div>
+        <textarea class="pho-textarea" id="pho-rationale" placeholder="Justify this seal decision..." oninput="validatePhoRationale()"></textarea>
+        <div class="pho-vera-warning" id="pho-vera-warning" style="display:none"></div>
+        <div class="pho-char-count" id="pho-char-count">0/30</div>
+      </div>
+    </div>
+    <div class="pho-modal-footer">
+      <button class="btn btn-cancel" onclick="closePhoModal()" data-i18n="cancel">Cancel</button>
+      <button class="btn btn-seal" id="pho-seal-btn" onclick="executePhoSeal()" disabled data-i18n="seal_receipt">🔐 Seal PHO Receipt</button>
+    </div>
+  </div>
+</div>
+
+<style>
+/* §208/§209 PHO Modal Styles */
+.pho-modal-overlay {
+  position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;
+  display:flex;align-items:center;justify-content:center;
+}
+.pho-modal-box {
+  background:var(--bg-card);border:1px solid var(--gold);border-radius:12px;
+  width:90%;max-width:520px;max-height:90vh;overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+}
+.pho-modal-header {
+  display:flex;justify-content:space-between;align-items:center;
+  padding:16px 20px;border-bottom:1px solid var(--border);
+}
+.pho-modal-title { font-size:16px;font-weight:600;color:var(--gold); }
+.pho-modal-close {
+  background:none;border:none;color:var(--text-2);font-size:24px;cursor:pointer;
+  width:32px;height:32px;display:flex;align-items:center;justify-content:center;
+}
+.pho-modal-close:hover { color:var(--text-1); }
+.pho-modal-body { padding:20px;display:flex;flex-direction:column;gap:16px; }
+.pho-section { display:flex;flex-direction:column;gap:6px; }
+.pho-label { font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text-3);font-family:var(--font-mono); }
+.pho-did-display {
+  flex:1;padding:10px 12px;background:var(--bg-deep);border:1px solid var(--gold);
+  border-radius:6px;font-family:var(--font-mono);font-size:12px;color:var(--gold);
+}
+.pho-tier-badge {
+  padding:6px 12px;border-radius:4px;font-size:10px;font-weight:600;
+  text-transform:uppercase;letter-spacing:1px;
+  background:var(--gold-glow);color:var(--gold);border:1px solid var(--gold);
+}
+.pho-doc-info { font-size:13px;color:var(--text-1);padding:8px 0; }
+.pho-gov-level {
+  display:inline-block;padding:4px 10px;border-radius:4px;font-size:11px;
+  font-weight:600;text-transform:uppercase;letter-spacing:0.5px;
+}
+.pho-gov-level.high { background:rgba(229,62,62,0.15);color:#E53E3E;border:1px solid rgba(229,62,62,0.3); }
+.pho-gov-level.medium { background:rgba(200,164,90,0.15);color:var(--gold);border:1px solid rgba(200,164,90,0.3); }
+.pho-gov-level.critical { background:rgba(229,62,62,0.25);color:#FF6B6B;border:1px solid rgba(229,62,62,0.5); }
+.pho-textarea {
+  width:100%;min-height:100px;padding:12px;border-radius:6px;
+  background:var(--bg-deep);border:1px solid var(--border);
+  color:var(--text-1);font-family:var(--font-ui);font-size:14px;resize:vertical;
+}
+.pho-textarea:focus { outline:none;border-color:var(--gold); }
+.pho-vera-warning {
+  padding:10px 12px;background:rgba(124,92,191,0.12);border:1px solid var(--vera);
+  border-radius:6px;font-size:12px;color:var(--vera-light);
+}
+.pho-char-count { font-size:11px;color:var(--text-3);text-align:right;font-family:var(--font-mono); }
+.pho-char-count.valid { color:var(--sealed); }
+.pho-char-count.invalid { color:var(--critical); }
+.pho-modal-footer {
+  display:flex;justify-content:flex-end;gap:10px;padding:16px 20px;
+  border-top:1px solid var(--border);background:var(--bg-shelf);
+}
+.btn-cancel { background:transparent;border:1px solid var(--border);color:var(--text-2);padding:10px 20px;border-radius:6px;cursor:pointer; }
+.btn-cancel:hover { border-color:var(--text-3);color:var(--text-1); }
+.btn-seal {
+  background:var(--gold);color:#0B0D14;border:none;padding:10px 20px;
+  border-radius:6px;font-weight:600;cursor:pointer;transition:all 0.2s;
+}
+.btn-seal:disabled { background:var(--border);color:var(--text-3);cursor:not-allowed; }
+.btn-seal:not(:disabled):hover { background:#D4B566;transform:translateY(-1px); }
+</style>
+
 <script>
 // ══════════════════════════════════════════
 //  WINDI P10 · Tools & Workspace · JS
@@ -1291,7 +1400,19 @@ const I18N = {
     vera_workspace: 'Arbeitsbereich aktiv. Ich kann bei Dateiklassifizierung, Dokumentinhalt oder Rechtsgrundlage für Vorlagen helfen. Was brauchst du?',
     vera_placeholder: 'Frage VERA…',
     vera_btn_classify: 'Wie soll ich eine zur Compliance hochgeladene Datei klassifizieren und versiegeln?',
-    vera_btn_refine: 'Schreibe den aktuellen Dokumentinhalt in institutioneller Rechtssprache für PHO-Konformität um.'
+    vera_btn_refine: 'Schreibe den aktuellen Dokumentinhalt in institutioneller Rechtssprache für PHO-Konformität um.',
+    pho_seal_title: 'Mit menschlicher Aufsicht versiegeln',
+    pho_reviewer: 'Prüfer-Identität (I9)',
+    pho_document: 'Dokument',
+    pho_governance: 'Governance-Stufe',
+    pho_rationale: 'Aufsichtsbegründung (Art.14 EU KI-Gesetz)',
+    pho_rationale_placeholder: 'Begründe diese Versiegelungsentscheidung...',
+    cancel: 'Abbrechen',
+    seal_receipt: '🔐 PHO-Beleg versiegeln',
+    pho_min_chars: 'Mindestens 30 Zeichen für HIGH/CRITICAL-Entscheidungen erforderlich',
+    pho_no_questions: 'Begründung darf keine Frage sein',
+    pho_no_generic: 'Begründung muss substanziell sein, nicht generisch',
+    pho_no_did: 'Keine DID-Sitzung — Anmeldung erforderlich'
   },
   en: {
     tools_title: 'Tools',
@@ -1328,7 +1449,19 @@ const I18N = {
     vera_workspace: 'Workspace active. I can guide on file classification, document content or legal basis for any template. What do you need?',
     vera_placeholder: 'Ask VERA…',
     vera_btn_classify: 'How should I classify and seal a file uploaded for compliance?',
-    vera_btn_refine: 'Rewrite the current document content in institutional legal language for PHO compliance.'
+    vera_btn_refine: 'Rewrite the current document content in institutional legal language for PHO compliance.',
+    pho_seal_title: 'Seal with Human Oversight',
+    pho_reviewer: 'Reviewer Identity (I9)',
+    pho_document: 'Document',
+    pho_governance: 'Governance Level',
+    pho_rationale: 'Oversight Rationale (Art.14 EU AI Act)',
+    pho_rationale_placeholder: 'Justify this seal decision...',
+    cancel: 'Cancel',
+    seal_receipt: '🔐 Seal PHO Receipt',
+    pho_min_chars: 'Minimum 30 characters required for HIGH/CRITICAL decisions',
+    pho_no_questions: 'Rationale cannot be a question',
+    pho_no_generic: 'Rationale must be substantive, not generic',
+    pho_no_did: 'No DID session — login required'
   },
   pt: {
     tools_title: 'Ferramentas',
@@ -1365,7 +1498,19 @@ const I18N = {
     vera_workspace: 'Workspace activo. Posso orientar sobre classificação de ficheiros, conteúdo de documentos ou base legal para qualquer template. O que precisas?',
     vera_placeholder: 'Pergunta ao VERA…',
     vera_btn_classify: 'Como devo classificar e selar um ficheiro enviado para compliance?',
-    vera_btn_refine: 'Reescreve o conteúdo actual do documento em linguagem jurídica institucional para PHO compliance.'
+    vera_btn_refine: 'Reescreve o conteúdo actual do documento em linguagem jurídica institucional para PHO compliance.',
+    pho_seal_title: 'Selar com Supervisão Humana',
+    pho_reviewer: 'Identidade do Revisor (I9)',
+    pho_document: 'Documento',
+    pho_governance: 'Nível de Governança',
+    pho_rationale: 'Fundamentação de Supervisão (Art.14 EU AI Act)',
+    pho_rationale_placeholder: 'Justifica esta decisão de selagem...',
+    cancel: 'Cancelar',
+    seal_receipt: '🔐 Selar Recibo PHO',
+    pho_min_chars: 'Mínimo 30 caracteres necessários para decisões HIGH/CRITICAL',
+    pho_no_questions: 'Fundamentação não pode ser uma pergunta',
+    pho_no_generic: 'Fundamentação deve ser substantiva, não genérica',
+    pho_no_did: 'Sem sessão DID — login necessário'
   }
 };
 
@@ -1424,6 +1569,190 @@ function initThemeAndLang() {
   // Lang
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === currentLang));
   applyI18n();
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// §208/§209 — SOBERANIA REFINADA + PLACEHOLDER ZERO
+// Semantic Density Validation · DID Session Binding · Anti-Laziness Filter
+// Liga IA+H · 26 Apr 2026
+// ══════════════════════════════════════════════════════════════════════════════
+
+// §208 Anti-Laziness Patterns (PT/DE/EN)
+const LAZY_PATTERNS = {
+  questions: /^(will\s|can\s|should\s|is\s|are\s|does\s|do\s|what\s|how\s|why\s|when\s|where\s|who\s|vai\s|pode\s|deve\s|wird\s|kann\s|soll\s).{0,50}\?$/i,
+  generic: /^(yes|no|ok|fine|sure|done|sim|não|feito|ja|nein|fertig|erledigt|good|bem|gut|approved|aprovado|genehmigt)$/i
+};
+
+// PHO Modal State
+let pendingSeal = null; // { type: 'file'|'document', data: {...} }
+let currentDID = null;
+let currentTier = null;
+
+// Fetch DID session from cookie/WindiDID
+async function fetchDIDSession() {
+  try {
+    // Try WindiDID library first
+    if (typeof WindiDID !== 'undefined') {
+      const did = WindiDID.get();
+      if (did) {
+        currentDID = did;
+        // Fetch tier from Genesis
+        const res = await fetch(`/api/genesis/lookup/${encodeURIComponent(did)}`);
+        if (res.ok) {
+          const data = await res.json();
+          currentTier = data.tier || 'SEED';
+        }
+        return { did: currentDID, tier: currentTier };
+      }
+    }
+    // Fallback: check cookie directly
+    const cookies = document.cookie.split(';').map(c => c.trim());
+    const sessionCookie = cookies.find(c => c.startsWith('windi_did_session='));
+    if (sessionCookie) {
+      const sessionData = JSON.parse(decodeURIComponent(sessionCookie.split('=')[1]));
+      currentDID = sessionData.did;
+      currentTier = sessionData.tier || 'SEED';
+      return { did: currentDID, tier: currentTier };
+    }
+  } catch (e) {
+    console.warn('[§209] DID session fetch failed:', e);
+  }
+  return null;
+}
+
+// Open PHO Modal
+async function openPhoModal(type, data) {
+  const t = I18N[currentLang];
+
+  // §209: No placeholder — DID is mandatory
+  const session = await fetchDIDSession();
+  if (!session || !session.did) {
+    showToast('⚠️ ' + t.pho_no_did, 'I9 Violation');
+    return;
+  }
+
+  pendingSeal = { type, data };
+
+  // Populate modal
+  document.getElementById('pho-did-display').textContent = session.did;
+  document.getElementById('pho-tier-badge').textContent = session.tier;
+  document.getElementById('pho-doc-info').textContent = data.doc_name || data.name || '—';
+
+  const govLevel = data.governance_level || 'MEDIUM';
+  const govEl = document.getElementById('pho-gov-level');
+  govEl.textContent = govLevel;
+  govEl.className = 'pho-gov-level ' + govLevel.toLowerCase();
+
+  // Reset rationale
+  document.getElementById('pho-rationale').value = '';
+  document.getElementById('pho-rationale').placeholder = t.pho_rationale_placeholder || 'Justify this seal decision...';
+  document.getElementById('pho-vera-warning').style.display = 'none';
+  document.getElementById('pho-seal-btn').disabled = true;
+  document.getElementById('pho-char-count').textContent = '0/30';
+  document.getElementById('pho-char-count').className = 'pho-char-count';
+
+  // Show modal
+  document.getElementById('pho-modal').style.display = 'flex';
+}
+
+function closePhoModal() {
+  document.getElementById('pho-modal').style.display = 'none';
+  pendingSeal = null;
+}
+
+// §208 Semantic Density Validation
+function validatePhoRationale() {
+  const t = I18N[currentLang];
+  const note = document.getElementById('pho-rationale').value.trim();
+  const govLevel = document.getElementById('pho-gov-level').textContent;
+  const minChars = (govLevel === 'HIGH' || govLevel === 'CRITICAL') ? 30 : 10;
+
+  const charCount = document.getElementById('pho-char-count');
+  const warning = document.getElementById('pho-vera-warning');
+  const sealBtn = document.getElementById('pho-seal-btn');
+
+  charCount.textContent = `${note.length}/${minChars}`;
+
+  // Validate
+  let isValid = true;
+  let warningMsg = '';
+
+  if (note.length < minChars) {
+    isValid = false;
+    warningMsg = t.pho_min_chars;
+    charCount.className = 'pho-char-count invalid';
+  } else if (LAZY_PATTERNS.questions.test(note)) {
+    isValid = false;
+    warningMsg = t.pho_no_questions;
+    charCount.className = 'pho-char-count invalid';
+  } else if (LAZY_PATTERNS.generic.test(note)) {
+    isValid = false;
+    warningMsg = t.pho_no_generic;
+    charCount.className = 'pho-char-count invalid';
+  } else {
+    charCount.className = 'pho-char-count valid';
+  }
+
+  if (warningMsg) {
+    warning.textContent = '⬡ VERA: ' + warningMsg;
+    warning.style.display = 'block';
+  } else {
+    warning.style.display = 'none';
+  }
+
+  sealBtn.disabled = !isValid;
+  return isValid;
+}
+
+// Execute PHO Seal (after validation)
+async function executePhoSeal() {
+  if (!pendingSeal || !validatePhoRationale()) return;
+
+  const rationale = document.getElementById('pho-rationale').value.trim();
+  const { type, data } = pendingSeal;
+
+  // Build receipt payload with DID and rationale
+  const rid = (type === 'file' ? 'FILE-' : 'DOC-') + Date.now().toString(16).toUpperCase();
+
+  const payload = {
+    id: rid,
+    actor: currentDID,  // §209: DID from session, never hardcoded
+    acting_as: currentDID,  // §208: Ledger traceability
+    app: 'windi-enterprise-p10',
+    doc_name: data.doc_name || data.name,
+    doc_type: data.doc_type || (type === 'file' ? 'file_' + (data.type || 'unknown') : 'a4desk_' + currentTemplate),
+    content_hash: data.content_hash || data.fullhash,
+    governance_level: data.governance_level || 'MEDIUM',
+    sge_score: data.sge_score || 0,
+    oversight_note: rationale,  // §208: Semantic density validated
+    tier: currentTier
+  };
+
+  try {
+    const res = await fetch('/api/receipts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) throw new Error('Ledger rejected');
+
+    // Update UI for document seals
+    if (type === 'document') {
+      document.getElementById('a4-hash-display').textContent = payload.content_hash;
+      document.getElementById('a4-seal-status').textContent = '🔐 ' + I18N[currentLang].sealed + ' · ' + new Date().toISOString().slice(0,19) + ' UTC';
+      document.getElementById('doc-hash').textContent = payload.content_hash.slice(0,16) + '...';
+      document.getElementById('doc-status').textContent = '🔐 ' + I18N[currentLang].sealed;
+      docSealed = true;
+      exportPDF();
+    }
+
+    showToast(I18N[currentLang].sealed, rid + ' · PHO Receipt');
+    closePhoModal();
+
+  } catch (e) {
+    showToast('⚠️ Seal Failed', e.message);
+  }
 }
 
 const FILES = [];
@@ -1576,23 +1905,20 @@ function downloadFile(id) {
   showToast('Download iniciado', f.name);
 }
 
+// §208/§209: sealFile now opens PHO modal for proper human oversight
 async function sealFile(id) {
   const f = FILES.find(x => x.id === id);
   if (!f) return;
-  const rid = 'FILE-' + Date.now().toString(16).toUpperCase();
-  try {
-    await fetch('/api/receipts', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        id: rid, actor: 'Human Dragon',
-        app: 'windi-enterprise-p10',
-        doc_name: f.name, doc_type: 'file_' + f.type,
-        content_hash: f.fullhash,
-        governance_level: 'MEDIUM', sge_score: 0
-      })
-    });
-  } catch {}
-  showToast('Ficheiro Selado', rid + ' · ' + f.name);
+
+  // §208: Open PHO modal with file data — no direct seal without rationale
+  openPhoModal('file', {
+    name: f.name,
+    doc_name: f.name,
+    doc_type: 'file_' + f.type,
+    fullhash: f.fullhash,
+    governance_level: 'MEDIUM',
+    sge_score: 0
+  });
 }
 
 // ── DOWNLOAD CENTER ───────────────────────
@@ -1990,33 +2316,25 @@ function insertHeading(level) {
   document.execCommand('formatBlock', false, 'h' + level);
 }
 
+// §208/§209: sealDocument now opens PHO modal for proper human oversight
 async function sealDocument() {
+  if (docSealed) {
+    showToast('⚠️ Already Sealed', 'Document cannot be sealed twice');
+    return;
+  }
+
   const content = document.getElementById('editor-content').innerHTML;
   const docId   = document.getElementById('a4-doc-id').textContent;
   const hash    = await sha256(content + docId + Date.now());
-  const rid     = 'DOC-' + Date.now().toString(16).toUpperCase();
 
-  try {
-    await fetch('/api/receipts', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        id: rid, actor: 'Human Dragon',
-        app: 'windi-enterprise-a4desk',
-        doc_name: document.getElementById('a4-doc-type').textContent,
-        doc_type: 'a4desk_' + currentTemplate,
-        content_hash: hash, governance_level: 'HIGH', sge_score: 0
-      })
-    });
-  } catch {}
-
-  document.getElementById('a4-hash-display').textContent = hash;
-  document.getElementById('a4-seal-status').textContent  = '🔐 ' + I18N[currentLang].sealed + ' · ' + new Date().toISOString().slice(0,19) + ' UTC';
-  document.getElementById('doc-hash').textContent        = hash.slice(0,16) + '...';
-  document.getElementById('doc-status').textContent      = '🔐 ' + I18N[currentLang].sealed;
-  docSealed = true;
-
-  showToast(I18N[currentLang].sealed, rid + ' · Ledger receipt');
-  exportPDF();
+  // §208: Open PHO modal with document data — HIGH governance requires 30+ char rationale
+  openPhoModal('document', {
+    doc_name: document.getElementById('a4-doc-type').textContent,
+    doc_type: 'a4desk_' + currentTemplate,
+    content_hash: hash,
+    governance_level: 'HIGH',  // A4Desk documents are always HIGH
+    sge_score: 0
+  });
 }
 
 function exportTXT() {
