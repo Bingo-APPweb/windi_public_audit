@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.16.0
-**Sealed:** 2026-04-26 · §212 PROOF OF ACT — BaFin Forensic Armor · QR Codes · REP Package
+**Version:** 2.17.0
+**Sealed:** 2026-04-26 · §213 SEMANTIC DIVERGENCE DETECTION · Stance Analysis · Triangulation XV Enhanced
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -373,6 +373,38 @@ Request → Classification (HIGH_GOVERNANCE) → call_ai_triangulated()
 
 > *"The system held its ground against corporate deadline pressure."*
 
+### §213 — SEMANTIC DIVERGENCE DETECTION (26 Apr 2026)
+
+> **"A divergência não está no comprimento da resposta, está na conclusão."**
+
+**Status:** LIVE · **Commit:** TBD · **Enhancement:** Triangulation XV
+
+**Problema Resolvido:** Versão anterior usava comprimento de resposta como proxy para divergência. Agora detecta **divergência semântica real** baseada em stance.
+
+**Stance Detection:**
+| Signal Type | Keywords |
+|-------------|----------|
+| APPROVAL | approve, proceed, compliant, valid, legitimate |
+| REJECTION | stop, reject, block, violation, prohibited |
+| UNCERTAINTY | ambiguous, unclear, depends, borderline |
+
+**Divergence Calculation:**
+| Scenario | Divergence | Action |
+|----------|:----------:|--------|
+| Both APPROVE or both REJECT | 0.0 | Consensus |
+| APPROVE vs REJECT | 0.85 | **CRITICAL** — PHO blocked |
+| UNCERTAIN involved | 0.45 | WARNING — Human review |
+
+**Ficheiros:** `vera_agent.py` (linhas 784-840)
+
+**Logs:**
+```
+§213 Stance Analysis: {'Guardian': {'stance': 'REJECT'}, 'Architect': {'stance': 'REJECT'}}
+PRINCÍPIO XV: 2 models consulted | divergence=0.000
+```
+
+> *"Um sistema que concorda sempre é suspeito. Um sistema que mostra onde as IAs hesitam é honesto."*
+
 ### §117 — I9: Human Approval Gate (NON-NEGOTIABLE)
 
 > **"I9 não vive na entrada. I9 vive na saída."**
@@ -638,6 +670,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 26 Apr | **§213 SEMANTIC DIVERGENCE** · Stance Analysis (APPROVE/REJECT/UNCERTAIN) · Triangulation XV Enhanced · vera_agent.py:784-840 ✅ |
 | 26 Apr | **§212 PROOF OF ACT** · BaFin Forensic Armor · DEC-2026-041 BLOCKED · REP Package · QR codes scanáveis · MaRisk AT 7.2 + BAIT · `5a49aa4` ✅ |
 | 26 Apr | **§211 TRIANGULAÇÃO XV** · Dual-LLM (Guardian+Architect) · `call_ai_triangulated()` · Shadow Audit BD-004=0 · DEC-2026-040 consenso=✅ · divergence=0.000 ✅ |
 | 26 Apr | **§210 VERIFY RESILIENCE** · nginx fixes (`?id=` + `/web/` 3 modos) · `windi-leads` disabled · systemd health timer · auto-restart ≤5min ✅ |
