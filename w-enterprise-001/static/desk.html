@@ -727,7 +727,7 @@ html, body {
       <div class="lupa-section"><div class="lupa-section-label" data-i18n="legal_framework">Legal Framework</div><div class="lupa-field"><div class="lupa-field-label" data-i18n="regulation">Regulation</div><div class="lupa-field-value">EU AI Act Annex III 5b High-Risk</div></div><div class="lupa-field"><div class="lupa-field-label" data-i18n="articles">Articles</div><div class="lupa-field-value" style="font-family:var(--font-mono);font-size:10px;line-height:1.7">Art.6 Classification<br>Art.9 Risk Management<br>Art.14 Human Oversight PHO<br>BaFin AT 7.2 MaRisk</div></div></div>
       <div class="lupa-section"><div class="lupa-section-label" data-i18n="pho_checklist">PHO Checklist · EU AI Act Art.14</div><div class="checklist"><div class="check-item"><div class="check-icon">D</div><div class="check-label" data-i18n="check_dpia">DPIA completed and sealed</div><div class="check-status check-ok">OK</div></div><div class="check-item"><div class="check-icon">O</div><div class="check-label" data-i18n="check_override">Human override mechanism</div><div class="check-status check-ok">OK</div></div><div class="check-item"><div class="check-icon">B</div><div class="check-label" data-i18n="check_bias">Bias validation</div><div class="check-status check-fail" data-i18n="missing">Missing</div></div><div class="check-item"><div class="check-icon">M</div><div class="check-label" data-i18n="check_monitoring">Active monitoring</div><div class="check-status check-ok">OK</div></div><div class="check-item"><div class="check-icon">T</div><div class="check-label" data-i18n="check_docs">Technical documentation</div><div class="check-status check-ok">OK</div></div></div></div>
       <div class="lupa-section"><div class="lupa-section-label" data-i18n="vera_guidance">VERA Guidance · REGO R2+R4</div><div class="vera-opinion-label">VERA Compliance Secretary</div><div class="vera-opinion-box" data-i18n="vera_opinion">High-risk system mandatory EU AI Act Annex III 5b. Affects credit decisions. Bias validation missing. Document this risk before approving. Conditional approval: bias validation required by 30 April. If BaFin asks this record is your defense.</div></div>
-      <div class="lupa-section"><div class="lupa-section-label" data-i18n="decision_note">Decision Note</div><textarea id="pho-note" style="width:100%;background:var(--bg-shelf);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px;color:var(--text-1);font-family:var(--font-ui);font-size:12px;resize:vertical;min-height:60px;outline:none" data-i18n-placeholder="note_placeholder" placeholder="Conditional approval. Bias validation required by 30 April."></textarea></div>
+      <div class="lupa-section"><div class="lupa-section-label" data-i18n="reviewer_identity">Reviewer Identity (I9)</div><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><div style="flex:1;padding:10px;background:var(--bg-deep);border:1px solid var(--gold);border-radius:var(--radius-sm);font-family:var(--font-mono);font-size:11px;color:var(--gold)" id="pho-reviewer-did">Loading DID...</div><div id="pho-tier-badge" style="padding:4px 10px;border-radius:var(--radius-sm);font-family:var(--font-mono);font-size:9px;font-weight:600;background:var(--gold-glow);color:var(--gold);border:1px solid var(--gold)">ORACLE</div></div><div class="lupa-section-label" data-i18n="decision_note">Decision Note</div><textarea id="pho-note" style="width:100%;background:var(--bg-shelf);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px;color:var(--text-1);font-family:var(--font-ui);font-size:12px;resize:vertical;min-height:60px;outline:none" data-i18n-placeholder="note_placeholder" placeholder="Conditional approval. Bias validation required by 30 April." oninput="validatePhoNote()"></textarea><div id="pho-note-warning" style="display:none;margin-top:8px;padding:8px 12px;background:var(--vera-bg);border:1px solid var(--vera-border);border-radius:var(--radius-sm);font-size:11px;color:var(--vera-light)"><strong>VERA:</strong> <span id="pho-note-warning-text"></span></div></div>
     </div>
     <div class="lupa-footer"><div class="lupa-footer-note" data-i18n="i9_active">I9-P Active · Each action sealed in Forensic Ledger · EU AI Act Art.14</div><button class="btn btn-outline btn-sm" onclick="askVera(I18N[STATE.lang].vera_ask_note,'P04');closeLupaBtn()">VERA</button><button class="btn btn-outline btn-sm" onclick="closeLupaBtn()" data-i18n="cancel">Cancel</button><button class="btn btn-critical btn-sm" onclick="rejectDecision()" data-i18n="reject">Reject</button><button class="btn btn-gold btn-sm" onclick="approveAndSeal()" data-i18n="approve_seal">Approve + Seal</button></div>
   </div>
@@ -829,7 +829,7 @@ const I18N = {
     check_monitoring: "Monitorizacao activa", check_docs: "Documentacao tecnica", missing: "Em falta",
     vera_guidance: "Orientacao VERA · REGO R2+R4",
     vera_opinion: "Sistema high-risk obrigatorio EU AI Act Annex III 5b. Afecta decisoes de credito. Bias validation em falta. Documenta este risco antes de aprovar. Aprovacao condicionada: bias validation obrigatoria ate 30 Abril. Se BaFin perguntar este registo e a tua defesa.",
-    decision_note: "Nota de Decisao", note_placeholder: "Aprovacao condicionada. Bias validation obrigatoria ate 30 Abril.",
+    reviewer_identity: "Identidade do Revisor (I9)", decision_note: "Nota de Decisao", note_placeholder: "Aprovacao condicionada. Bias validation obrigatoria ate 30 Abril.",
     i9_active: "I9-P Activo · Cada accao selada no Forensic Ledger · EU AI Act Art.14",
     cancel: "Cancelar", reject: "Rejeitar", approve_seal: "Aprovar + Selar",
     vera_ask_status: "Qual e o estado critico actual do desk?",
@@ -923,7 +923,7 @@ const I18N = {
     check_monitoring: "Aktive Uberwachung", check_docs: "Technische Dokumentation", missing: "Fehlt",
     vera_guidance: "VERA-Orientierung · REGO R2+R4",
     vera_opinion: "Hochrisiko-System obligatorisch EU AI Act Annex III 5b. Betrifft Kreditentscheidungen. Bias-Validierung fehlt. Dieses Risiko vor Genehmigung dokumentieren. Bedingte Genehmigung: Bias-Validierung erforderlich bis 30. April. Wenn BaFin fragt ist dieser Eintrag Ihre Verteidigung.",
-    decision_note: "Entscheidungsnotiz", note_placeholder: "Bedingte Genehmigung. Bias-Validierung erforderlich bis 30. April.",
+    reviewer_identity: "Prüfer-Identität (I9)", decision_note: "Entscheidungsnotiz", note_placeholder: "Bedingte Genehmigung. Bias-Validierung erforderlich bis 30. April.",
     i9_active: "I9-P Aktiv · Jede Aktion im Forensic Ledger versiegelt · EU AI Act Art.14",
     cancel: "Abbrechen", reject: "Ablehnen", approve_seal: "Genehmigen + Versiegeln",
     vera_ask_status: "Was ist der aktuelle kritische Status des Desks?",
@@ -1017,7 +1017,7 @@ const I18N = {
     check_monitoring: "Active monitoring", check_docs: "Technical documentation", missing: "Missing",
     vera_guidance: "VERA Guidance · REGO R2+R4",
     vera_opinion: "High-risk system mandatory EU AI Act Annex III 5b. Affects credit decisions. Bias validation missing. Document this risk before approving. Conditional approval: bias validation required by 30 April. If BaFin asks this record is your defense.",
-    decision_note: "Decision Note", note_placeholder: "Conditional approval. Bias validation required by 30 April.",
+    reviewer_identity: "Reviewer Identity (I9)", decision_note: "Decision Note", note_placeholder: "Conditional approval. Bias validation required by 30 April.",
     i9_active: "I9-P Active · Each action sealed in Forensic Ledger · EU AI Act Art.14",
     cancel: "Cancel", reject: "Reject", approve_seal: "Approve + Seal",
     vera_ask_status: "What is the current critical status of the desk?",
@@ -1283,7 +1283,7 @@ const DECISIONS = {
   'DEC-2026-036': { title: 'Customer chatbot credit data', system: 'CHATBOT-CX v2.0', impact: 'Retail customers', risk: 'MEDIUM', riskClass: 'risk-medium', deadline: '2026-04-20 17:00 UTC' }
 };
 
-function openLupa(id) {
+async function openLupa(id) {
   const d = DECISIONS[id] || { title: 'Case ' + id, system: 'AI System', impact: 'See details', risk: 'MEDIUM', riskClass: 'risk-medium', deadline: 'N/A' };
   document.getElementById('lupa-id').textContent = id;
   document.getElementById('lupa-title').textContent = d.title;
@@ -1295,6 +1295,43 @@ function openLupa(id) {
   riskEl.className = 'risk-badge ' + d.riskClass;
   document.getElementById('lupa-deadline').textContent = d.deadline;
   STATE.currentLupaId = id;
+
+  // §208 — Populate Reviewer Identity from DID Session
+  const reviewerEl = document.getElementById('pho-reviewer-did');
+  const tierBadge = document.getElementById('pho-tier-badge');
+  const did = WindiDID.get();
+
+  if (did) {
+    // Show DID in compact format: did:windi:dragon-001 → dragon-001
+    const shortDid = did.replace('did:windi:', '');
+    reviewerEl.textContent = `did:web:windi-domain.com:u:${shortDid}`;
+    reviewerEl.style.borderColor = 'var(--gold)';
+
+    // Fetch tier from Genesis
+    try {
+      const validation = await WindiDID.validate(did);
+      if (validation.valid && validation.tier) {
+        tierBadge.textContent = validation.tier;
+        const tierInfo = WindiDID.getTierInfo(validation.tier);
+        tierBadge.innerHTML = `${tierInfo.emoji} ${validation.tier}`;
+      }
+    } catch (e) {
+      console.warn('[§208] Tier lookup failed:', e);
+    }
+  } else {
+    reviewerEl.textContent = '⚠ No DID in session — Login required';
+    reviewerEl.style.borderColor = 'var(--critical)';
+    tierBadge.textContent = '?';
+    tierBadge.style.background = 'var(--critical-bg)';
+    tierBadge.style.borderColor = 'var(--critical)';
+    tierBadge.style.color = 'var(--critical)';
+  }
+
+  // Reset note warning state
+  document.getElementById('pho-note-warning').style.display = 'none';
+  const approveBtn = document.querySelector('.lupa-footer .btn-gold');
+  if (approveBtn) { approveBtn.disabled = false; approveBtn.style.opacity = '1'; }
+
   document.getElementById('lupa-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
@@ -1302,16 +1339,103 @@ function openLupa(id) {
 function closeLupaBtn() { document.getElementById('lupa-overlay').classList.remove('open'); document.body.style.overflow = ''; STATE.currentLupaId = null; }
 function closeLupa(e) { if (e.target === document.getElementById('lupa-overlay')) closeLupaBtn(); }
 
+// §208 Semantic Density Validation — Anti-Laziness Filter
+const LAZY_PATTERNS = {
+  questions: /^(will|can|should|is|are|does|do|what|how|why|when|where|who|ok\??|approved\??|vai|pode|deve|será|esta|ok\??|aprovado\??|wird|kann|soll|ist|ok\??|genehmigt\??)/i,
+  generic: /^(yes|no|ok|fine|sure|done|sim|não|ok|feito|ja|nein|ok|fertig|erledigt|good|bem|gut)$/i,
+  tooShort: (note, minLen) => note.trim().length < minLen
+};
+
+function validatePhoNote() {
+  const note = document.getElementById('pho-note').value.trim();
+  const warning = document.getElementById('pho-note-warning');
+  const warningText = document.getElementById('pho-note-warning-text');
+  const approveBtn = document.querySelector('.lupa-footer .btn-gold');
+
+  // Get risk level from current decision
+  const riskBadge = document.getElementById('lupa-risk');
+  const isHighRisk = riskBadge && (riskBadge.textContent === 'CRITICAL' || riskBadge.textContent === 'HIGH');
+
+  if (!isHighRisk) {
+    warning.style.display = 'none';
+    if (approveBtn) approveBtn.disabled = false;
+    return true;
+  }
+
+  const minChars = 30;
+  let errorMsg = null;
+
+  if (LAZY_PATTERNS.tooShort(note, minChars)) {
+    errorMsg = {
+      pt: `Rationale insuficiente para decisão de Alto Risco. Mínimo ${minChars} caracteres. (${note.length}/${minChars})`,
+      de: `Unzureichende Begründung für Hochrisiko-Entscheidung. Minimum ${minChars} Zeichen. (${note.length}/${minChars})`,
+      en: `Insufficient rationale for High Risk decision. Minimum ${minChars} characters. (${note.length}/${minChars})`
+    }[STATE.lang] || `Minimum ${minChars} characters required.`;
+  } else if (LAZY_PATTERNS.questions.test(note)) {
+    errorMsg = {
+      pt: 'Nota não pode ser uma pergunta. Por favor, fundamente sua soberania.',
+      de: 'Notiz kann keine Frage sein. Bitte begründen Sie Ihre Entscheidung.',
+      en: 'Note cannot be a question. Please substantiate your sovereignty.'
+    }[STATE.lang];
+  } else if (LAZY_PATTERNS.generic.test(note)) {
+    errorMsg = {
+      pt: 'Nota genérica detectada. Art.14 EU AI Act exige fundamentação real.',
+      de: 'Generische Notiz erkannt. Art.14 EU AI Act erfordert echte Begründung.',
+      en: 'Generic note detected. Art.14 EU AI Act requires real justification.'
+    }[STATE.lang];
+  }
+
+  if (errorMsg) {
+    warning.style.display = 'block';
+    warningText.textContent = errorMsg;
+    if (approveBtn) { approveBtn.disabled = true; approveBtn.style.opacity = '0.5'; }
+    return false;
+  }
+
+  warning.style.display = 'none';
+  if (approveBtn) { approveBtn.disabled = false; approveBtn.style.opacity = '1'; }
+  return true;
+}
+
 async function approveAndSeal() {
+  // §208 — Validate semantic density before seal
+  if (!validatePhoNote()) {
+    return;  // Block seal if validation fails
+  }
+
   const note = document.getElementById('pho-note').value || I18N[STATE.lang].note_placeholder;
   const id = STATE.currentLupaId || 'DEC-2026-040';
+
+  // §208 — Get DID from session (I9 Identity Attribution)
+  const did = WindiDID.get();
+  const displayName = document.getElementById('officer-name')?.textContent || 'Human Dragon';
+
+  if (!did) {
+    showToast('Identity Error', 'No DID in session. Please login first.', 'var(--critical)');
+    return;
+  }
+
   try {
     const ts = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
     const receiptId = `BD-${ts}-${id.slice(-3)}-HD`;
-    const body = { id: receiptId, actor: 'Human Dragon', app: 'windi-enterprise', doc_name: `PHO Decision: ${id}`, doc_type: 'doc', content_hash: await sha256(id + note + Date.now()), governance_level: 'HIGH', sge_score: 0 };
+
+    // §208 — Include acting_as for audit trail
+    const body = {
+      id: receiptId,
+      actor: did,  // §208 Fix: Use DID from session, not hardcoded name
+      acting_as: displayName,  // §208: Who the account belongs to nominally
+      app: 'windi-enterprise',
+      doc_name: `PHO Decision: ${id}`,
+      doc_type: 'doc',
+      content_hash: await sha256(id + note + Date.now()),
+      governance_level: 'HIGH',
+      sge_score: 0,
+      note: note  // §208: Include the actual rationale
+    };
+
     await fetch('/api/receipts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
     closeLupaBtn();
-    showToast(I18N[STATE.lang].toast_sealed, 'Receipt: ' + receiptId);
+    showToast(I18N[STATE.lang].toast_sealed, 'Receipt: ' + receiptId + ' · ' + did.split(':').pop());
     const badge = document.getElementById('badge-P04');
     if (badge) { const count = parseInt(badge.textContent) - 1; if (count <= 0) { badge.remove(); document.getElementById('nav-P04').classList.remove('has-critical'); } else badge.textContent = count; }
     addReceiptToList(receiptId, 'PHO Decision: ' + id);

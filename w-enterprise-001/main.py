@@ -173,12 +173,14 @@ class AIRequest(BaseModel):
 class PHOApproval(BaseModel):
     """
     §191-A + §191-B: PHO Approval requires sovereign identity that EXISTS.
+    §208: Semantic Density validation for HIGH risk decisions.
     "Human decides" = verified human with DID in Genesis, not anonymous.
     Art. 14 EU AI Act.
     """
     decision_id: str
     actor:       str  # REQUIRED — no default, DID validation below
     note:        Optional[str] = None
+    acting_as:   Optional[str] = None  # §208: Nominal account holder for audit trail
 
     @validator('actor')
     def actor_must_be_valid_did(cls, v):
@@ -198,6 +200,35 @@ class PHOApproval(BaseModel):
                 raise ValueError(f'[I-XVI] actor DID not found in Genesis Registry — Lei I · {v}')
 
         return v
+
+
+# §208 — Semantic Density Validation Patterns (Anti-Laziness)
+import re
+LAZY_PATTERNS = {
+    # Questions must end with ? or be standalone interrogative words
+    'questions': re.compile(r'^(will\s|can\s|should\s|is\s|are\s|does\s|do\s|what\s|how\s|why\s|when\s|where\s|who\s).{0,50}\?$|^ok\?$|^approved\?$|^vai\?$|^aprovado\?$|^genehmigt\?$', re.IGNORECASE),
+    'generic': re.compile(r'^(yes|no|ok|fine|sure|done|sim|não|feito|ja|nein|fertig|erledigt|good|bem|gut)$', re.IGNORECASE)
+}
+
+def validate_semantic_density(note: str, risk_level: str, min_chars: int = 30) -> tuple:
+    """
+    §208 — Validate that PHO note has sufficient semantic density for HIGH risk decisions.
+    Returns (is_valid, error_message)
+    """
+    if risk_level not in ('HIGH', 'CRITICAL'):
+        return True, None
+
+    if not note or len(note.strip()) < min_chars:
+        return False, f'[§208] Insufficient rationale for {risk_level} decision. Minimum {min_chars} characters required ({len(note.strip()) if note else 0}/{min_chars})'
+
+    note_stripped = note.strip()
+    if LAZY_PATTERNS['questions'].match(note_stripped):
+        return False, '[§208] Note cannot be a question. Art.14 EU AI Act requires substantive human oversight rationale.'
+
+    if LAZY_PATTERNS['generic'].match(note_stripped):
+        return False, '[§208] Generic note detected. Art.14 EU AI Act requires real justification for HIGH risk decisions.'
+
+    return True, None
 
 class DocGenRequest(BaseModel):
     doc_type:     str   # privacy_policy | ai_risk | dpia | audit_report | compliance_policy | gdpr_notice
@@ -426,23 +457,44 @@ async def pho_approve(body: PHOApproval):
     if dec["status"] == "approved":
         raise HTTPException(409, "Already approved")
 
+    # §208 — Validate semantic density for HIGH/CRITICAL risk decisions
+    risk_level = dec.get("risk", "MEDIUM").upper()
+    is_valid, error_msg = validate_semantic_density(body.note, risk_level)
+    if not is_valid:
+        raise HTTPException(422, error_msg)
+
     h = sha256(body.decision_id + (body.note or "") + now_iso())
     rid = receipt_id("PHO")
     dec["status"]  = "approved"
     dec["receipt"] = rid
     dec["hash"]    = h[:8]
-    entry = {"id": rid, "decision": body.decision_id, "actor": body.actor, "date": now_iso(), "hash": h[:13]}
-    PHO_DB.insert(0, entry)
-    AUDIT_DB.insert(0, {"event": f"PHO Approved: {dec['title']}", "module": "DECISIONS", "ts": now_iso()[:16], "receipt": rid})
 
+    # §208 — Include acting_as in entry for audit trail
+    entry = {
+        "id": rid,
+        "decision": body.decision_id,
+        "actor": body.actor,
+        "acting_as": body.acting_as,  # §208: Nominal identity
+        "date": now_iso(),
+        "hash": h[:13]
+    }
+    PHO_DB.insert(0, entry)
+    AUDIT_DB.insert(0, {"event": f"PHO Approved: {dec['title']}", "module": "DECISIONS", "ts": now_iso()[:16], "receipt": rid, "actor": body.actor})
+
+    # §208 — Include acting_as in Ledger receipt for forensic traceability
     ledger = await seal_ledger({
-        "id": rid, "actor": body.actor, "app": "windi-enterprise-decisions",
-        "doc_name": dec["title"], "doc_type": "decision",
-        "governance_level": "HIGH", "hash": h,
+        "id": rid,
+        "actor": body.actor,  # DID who actually sealed
+        "acting_as": body.acting_as,  # §208: Nominal account holder
+        "app": "windi-enterprise-decisions",
+        "doc_name": dec["title"],
+        "doc_type": "decision",
+        "governance_level": "HIGH",
+        "hash": h,
         "note": f"PHO approval · {body.note or 'no note'} · EU AI Act Art.14"
     })
-    log.info(f"[PHO] Approved {body.decision_id} → {rid}")
-    return {"receipt_id": rid, "hash": h[:8], "ledger": ledger}
+    log.info(f"[PHO] Approved {body.decision_id} → {rid} · actor={body.actor} · acting_as={body.acting_as}")
+    return {"receipt_id": rid, "hash": h[:8], "ledger": ledger, "actor": body.actor}
 
 
 # ════════════════════════════════════════════════════════
