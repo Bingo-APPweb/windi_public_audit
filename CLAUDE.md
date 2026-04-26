@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.12.0
-**Sealed:** 2026-04-26 · §205 KEYGEN-001 Sovereign Key Ceremony · Ed25519 · Receipt `DBED5A85`
+**Version:** 2.13.0
+**Sealed:** 2026-04-26 · §208/§209 Soberania Semântica + Placeholder Zero · Commits `3ec1d996`→`0eefae98`
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -313,6 +313,55 @@ FRUITS (Frutos)   → Virtue Receipts
 **Invariantes:** I1 (Soberania Humana) · I9 (Human Approval) · I11 (Evidência Permanente) · I14 (Explicit Failure)
 
 > *"You do not need to trust WINDI to verify WINDI."* — KEYGEN-001 prova isto.
+
+### §208/§209 — Soberania Semântica + Placeholder Zero (26 Apr 2026)
+
+> **"HTTP 422 é a sinfonia da integridade."**
+
+**Status:** LIVE · **Commits:** `3ec1d996` `135668f1` `0eefae98`
+**Invariantes:** I9 (Human Approval) · I14 (No Placeholders) · I17 (Session Identity)
+
+**Problema Detectado:** tools.html permitia seal com `actor: 'Human Dragon'` hardcoded e zero rationale.
+A "porta dos fundos" (/enterprise/tools) bypassava toda validação I9.
+
+**3 Camadas de Defesa Implementadas:**
+
+| Layer | Barreira | Rejeição |
+|-------|----------|:--------:|
+| 1 | **Lei I (DID Genesis)** | Fake DID → 422 |
+| 2 | **Decision Lookup** | ID inválido → 404 |
+| 3 | **§208 Semantic Density** | Nota < 30 chars / lazy → 422 |
+
+**LAZY_PATTERNS (Anti-Preguiça):**
+```python
+LAZY_PATTERNS = {
+    'questions': re.compile(r'^(will\s|can\s|...).{0,50}\?$'),  # Perguntas
+    'generic': re.compile(r'^(yes|no|ok|sim|ja|feito|done)$')  # Genéricos
+}
+```
+
+**validate_semantic_density()** — Backend main.py linha 213:
+- HIGH/CRITICAL → mínimo 30 caracteres
+- Perguntas ("approved?") → REJEITADO
+- Genéricos ("ok", "sim") → REJEITADO
+- HTTPException 422 com mensagem explícita
+
+**Campo `acting_as`:** Incluído em PHOApproval para diferenciar actor técnico de detentor nominal.
+
+**Ficheiros Modificados:**
+- `w-enterprise-001/main.py` — Backend validation
+- `w-enterprise-001/static/index.html` — Dashboard modal
+- `w-enterprise-001/static/desk.html` — LUPA modal
+- `w-enterprise-001/static/tools.html` — PHO modal + DID binding
+
+**Cobertura §208:**
+| View | URL | Status |
+|------|-----|:------:|
+| Dashboard | `/enterprise/` | ✅ |
+| Desk | `/enterprise/desk` | ✅ |
+| Tools | `/enterprise/tools` | ✅ |
+
+> *"A preguiça é rejeitada com 422. A identidade falsa com Lei I. O sistema não negocia."*
 
 ### §117 — I9: Human Approval Gate (NON-NEGOTIABLE)
 
@@ -633,6 +682,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 26 Apr | **§208/§209 SOBERANIA SEMÂNTICA + PLACEHOLDER ZERO** · 3-Layer Defense (Lei I + Lookup + Semantic) · LAZY_PATTERNS · validate_semantic_density() · `acting_as` field · tools.html blindado · `0eefae98` ✅ |
 | 26 Apr | **§205 KEYGEN-001 SOVEREIGN KEY CEREMONY** · Ed25519 + Argon2id + XSalsa20-Poly1305 · 8-node chain of custody · Loss Acceptance manuscrita · Reconciliation selada · `DBED5A85` ✅ |
 | 25 Apr | **§204 VERA PALADAR COMPLETO** · 4-Layer Stack · Shadow Audit (polícia) · Princípio XV BD-004 fix · DeepEval (espelho) · Quality Gate (juiz) · Langfuse (satélite) · 8 commits `f8c1f03a`→`f37a7f2c` ✅ |
 | 25 Apr | **§203 PAPER-001 DUAL-CHANNEL PUBLICATION** · EXTERNAL v1.0 (neutro/revisores) + INSTITUTIONAL KLAR v1.0 (LinkedIn) · 3 receipts encadeados (BDED84F0 → 88915364 + F3FAFA21) · Basic Auth `/docs/review/` |
