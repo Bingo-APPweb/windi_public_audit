@@ -718,6 +718,8 @@ class TriangulatedResponse:
     consensus_achieved: bool
     divergence_score: float
     responses: dict  # model_alias -> response text
+    stance_analysis: dict = None  # §213: Semantic stance per model
+    divergence_reason: str = None  # §213: Explanation of divergence
 
 async def call_ai_triangulated(
     system: str,
@@ -781,13 +783,65 @@ async def call_ai_triangulated(
             responses[alias] = text
             models_consulted.append(alias)
 
-    # Calculate basic divergence (semantic similarity would be better in production)
+    # §213: SEMANTIC DIVERGENCE DETECTION
+    # "A divergência não está no comprimento, está na conclusão."
     divergence_score = 0.0
+    divergence_reason = None
+    stance_analysis = {}
+
     if len(responses) >= 2:
-        # Simple length-based divergence as proxy (production: use embeddings)
-        lengths = [len(r) for r in responses.values()]
-        divergence_score = abs(max(lengths) - min(lengths)) / max(max(lengths), 1)
-        divergence_score = min(1.0, divergence_score / 500)  # Normalize
+        # §213.1: Extract stance from each response
+        APPROVAL_SIGNALS = ['approve', 'proceed', 'compliant', 'acceptable', 'valid', 'legitimate', 'can proceed', 'may proceed', 'is allowed']
+        REJECTION_SIGNALS = ['stop', 'reject', 'block', 'non-compliant', 'cannot', 'prohibited', 'violation', 'illegal', 'do not', 'insufficient', 'blocked']
+        UNCERTAINTY_SIGNALS = ['ambiguous', 'unclear', 'depends', 'may or may not', 'uncertain', 'gray area', 'borderline', 'arguable']
+
+        for alias, text in responses.items():
+            text_lower = text.lower()
+            approval_count = sum(1 for s in APPROVAL_SIGNALS if s in text_lower)
+            rejection_count = sum(1 for s in REJECTION_SIGNALS if s in text_lower)
+            uncertainty_count = sum(1 for s in UNCERTAINTY_SIGNALS if s in text_lower)
+
+            # Determine stance
+            if rejection_count > approval_count:
+                stance = "REJECT"
+            elif approval_count > rejection_count:
+                stance = "APPROVE"
+            elif uncertainty_count > 0:
+                stance = "UNCERTAIN"
+            else:
+                stance = "NEUTRAL"
+
+            stance_analysis[alias] = {
+                "stance": stance,
+                "approval_signals": approval_count,
+                "rejection_signals": rejection_count,
+                "uncertainty_signals": uncertainty_count,
+            }
+
+        # §213.2: Calculate semantic divergence
+        stances = [s["stance"] for s in stance_analysis.values()]
+        unique_stances = set(stances)
+
+        if len(unique_stances) == 1:
+            # Both models agree on stance
+            divergence_score = 0.0
+        elif "APPROVE" in stances and "REJECT" in stances:
+            # Critical divergence: one approves, one rejects
+            divergence_score = 0.85
+            divergence_reason = "CRITICAL: Guardian/Architect disagree on approval/rejection"
+        elif "UNCERTAIN" in stances:
+            # One model is uncertain
+            divergence_score = 0.45
+            divergence_reason = "WARNING: Model uncertainty detected"
+        else:
+            # Mild divergence
+            divergence_score = 0.25
+            divergence_reason = "NOTICE: Stance variance detected"
+
+        # §213.3: Log detailed analysis
+        log.info(f"§213 Stance Analysis: {stance_analysis}")
+        if divergence_reason:
+            log.warning(f"§213 DIVERGENCE: {divergence_reason} | score={divergence_score}")
 
     consensus_achieved = len(responses) >= 2 and divergence_score < 0.35
 
@@ -802,6 +856,8 @@ async def call_ai_triangulated(
         consensus_achieved=consensus_achieved,
         divergence_score=divergence_score,
         responses=responses,
+        stance_analysis=stance_analysis,  # §213
+        divergence_reason=divergence_reason,  # §213
     )
 
 # ─── SCHEMAS ─────────────────────────────────────────────────────────────────
