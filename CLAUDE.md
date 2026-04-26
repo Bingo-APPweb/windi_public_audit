@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.18.0
-**Sealed:** 2026-04-26 · §214 AUTO-LOGIN ONBOARDING · §213 SEMANTIC DIVERGENCE · Triangulation XV Enhanced
+**Version:** 2.19.0
+**Sealed:** 2026-04-26 · §215 Verify Page Auditor-Ready · i18n DE/EN/PT · Dragon Seal · BaFin-ready
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -270,6 +270,25 @@ Nenhum endpoint retorna valores default que mascarem dados ausentes.
 **Fix:** Email verify → auto-gera `login_token` + `login_pin` → Workspace directo
 **Também:** `/law/` redirect to `/law/gate` (UX fix)
 
+### §215 — VERIFY PAGE AUDITOR-READY (26 Apr 2026)
+
+> **"O auditor BaFin escaneia. A página prova. Sem atrito."**
+
+**Status:** LIVE · **Commit:** `9060eaf5` · **File:** `/verify-public/web/verify.html`
+
+**Features:**
+| Feature | Implementação |
+|---------|---------------|
+| i18n | DE/EN/PT auto-detect + toggle manual |
+| Copy Hash | Botão 📋 → feedback ✓ |
+| Timestamp | ISO/UTC: `2026-04-26 09:13:17 UTC` |
+| Jurisdição | Flag + código: `🇩🇪 DE` |
+| Dragon Seal | SVG minimalista com "SEALED" |
+| Invariantes | Pills: `I1` `I9` `I11` `I14` |
+
+**URL:** `https://windi-domain.com/verify-public/web/verify.html?id=WINDI-XXX`
+**Size:** 20KB · Mobile responsive · Funciona em qualquer rede
+
 ### §117 — I9: Human Approval Gate (NON-NEGOTIABLE)
 
 > **"I9 não vive na entrada. I9 vive na saída."**
@@ -535,6 +554,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 26 Apr | **§215 VERIFY PAGE AUDITOR-READY** · i18n DE/EN/PT · Copy Hash · Dragon Seal SVG · Invariantes · Jurisdição · BaFin-ready · `9060eaf5` ✅ |
 | 26 Apr | **§214 AUTO-LOGIN ONBOARDING** · Email verify → PIN + magic link → Workspace · Zero fricção · `/law/` redirect · `2af8fd03` ✅ |
 | 26 Apr | **§213 SEMANTIC DIVERGENCE** · Stance Analysis (APPROVE/REJECT/UNCERTAIN) · Triangulation XV Enhanced · `f5a0286b` ✅ |
 | 26 Apr | **§212 PROOF OF ACT** · BaFin Forensic Armor · DEC-2026-041 BLOCKED · REP Package · QR codes scanáveis · MaRisk AT 7.2 + BAIT · `5a49aa4` ✅ |
