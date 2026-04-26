@@ -578,6 +578,23 @@ app = FastAPI(
 from ai_draft import ai_draft_router
 app.include_router(ai_draft_router)
 
+# ─── Dragon Shadow Forest Module ──────────────────────────────────────────────
+try:
+    from w_dragon_001_law_routes import dragon_router
+    app.include_router(dragon_router)
+    print("[WINDI-LAW] W-DRAGON-001 Dragon Shadow Forest loaded")
+except ImportError as e:
+    print(f"[WINDI-LAW] W-DRAGON-001 not available: {e}")
+
+# ─── Canvas Integration §166 ──────────────────────────────────────────────────
+try:
+    from canvas_integration import law_generate_document_cover
+    CANVAS_AVAILABLE = True
+    print("[WINDI-LAW] W-CANVAS-001 integration loaded")
+except ImportError as e:
+    CANVAS_AVAILABLE = False
+    print(f"[WINDI-LAW] W-CANVAS-001 not available: {e}")
+
 # Mount static files and templates
 templates = Jinja2Templates(directory="/opt/windi/windi-law/identity-gate/templates")
 # Disable Jinja2 cache to avoid unhashable type error with dict globals
@@ -1345,6 +1362,7 @@ async def consent_sign(data: ConsentSign, request: Request):
     }
 
 
+@app.get("/gate/", response_class=HTMLResponse)
 @app.get("/gate", response_class=HTMLResponse)
 async def gate_ui(request: Request):
     """Render Identity Gate UI."""
@@ -1727,12 +1745,80 @@ async def admin_verify(did: str, x_admin_secret: Optional[str] = Header(None)):
 
 
 # ═══════════════════════════════════════════════════════════════
+# §166 CANVAS INTEGRATION
+# ═══════════════════════════════════════════════════════════════
+
+class LawCoverRequest(BaseModel):
+    doc_title: str
+    jurisdiction: str
+    doc_type: str
+    actor: str = "windi-law"
+
+@app.post("/api/canvas/law-cover")
+async def generate_law_cover(body: LawCoverRequest):
+    """
+    Generate branded cover for legal documents.
+    §166 · I9-P: AI renders, Human approves, WINDI seals.
+    """
+    if not CANVAS_AVAILABLE:
+        return {"error": "Canvas integration not available", "canvas_available": False}
+
+    result = await law_generate_document_cover(
+        doc_title=body.doc_title,
+        jurisdiction=body.jurisdiction,
+        doc_type=body.doc_type,
+        actor=body.actor
+    )
+
+    if result:
+        return {
+            "success": True,
+            "job_id": result.get("job_id"),
+            "download_url": result.get("download_url"),
+            "sha256": result.get("sha256"),
+            "ledger_receipt": result.get("ledger_receipt"),
+            "render_ms": result.get("render_ms")
+        }
+    else:
+        return {"success": False, "error": "Canvas worker offline or render failed"}
+
+@app.get("/api/canvas/status")
+async def canvas_status_law():
+    """Check W-CANVAS-001 availability."""
+    if not CANVAS_AVAILABLE:
+        return {"available": False, "reason": "Integration module not loaded"}
+
+    try:
+        import httpx
+        async with httpx.AsyncClient(timeout=3.0) as client:
+            r = await client.get("http://127.0.0.1:8155/canvas/health")
+            if r.status_code == 200:
+                data = r.json()
+                return {
+                    "available": True,
+                    "service": data.get("service"),
+                    "version": data.get("version")
+                }
+    except Exception:
+        pass
+
+    return {"available": False, "reason": "Canvas worker not responding"}
+
+
+# ═══════════════════════════════════════════════════════════════
 # ROOT REDIRECT
 # ═══════════════════════════════════════════════════════════════
 
 @app.get("/")
 async def root(request: Request):
     """Root redirect to gate."""
+    from fastapi.responses import RedirectResponse
+    base = get_base_path(request)
+    return RedirectResponse(url=f"{base}/gate", status_code=301)
+
+@app.get("/info")
+async def info(request: Request):
+    """Service info endpoint."""
     base = get_base_path(request)
     return JSONResponse(
         status_code=200,
