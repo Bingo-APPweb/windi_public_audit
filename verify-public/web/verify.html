@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WINDI Verify</title>
+    <meta name="description" content="Kryptographische Dokumentenverifizierung. Cryptographic document verification.">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             background: #0A0A10;
             color: #E8E6E1;
             min-height: 100vh;
@@ -20,28 +21,57 @@
         }
 
         .container {
-            max-width: 600px;
+            max-width: 560px;
             width: 100%;
             text-align: center;
         }
 
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
         .logo {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 800;
             color: #C9A84C;
-            margin-bottom: 40px;
             letter-spacing: 2px;
         }
 
+        .lang-switch {
+            display: flex;
+            gap: 8px;
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: 1px solid #2A2A34;
+            color: #6B7280;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .lang-btn:hover, .lang-btn.active {
+            border-color: #C9A84C;
+            color: #C9A84C;
+        }
+
         .status {
-            font-size: 64px;
-            margin-bottom: 20px;
+            font-size: 56px;
+            margin-bottom: 12px;
         }
 
         .status-text {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 700;
-            margin-bottom: 40px;
+            margin-bottom: 32px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         .verified { color: #22C55E; }
@@ -50,16 +80,16 @@
         .loading { color: #6B7280; }
 
         .card {
-            background: #1A1A24;
-            border: 1px solid #2A2A34;
+            background: #12121A;
+            border: 1px solid #1E1E28;
             border-radius: 12px;
-            padding: 24px;
+            padding: 20px;
             text-align: left;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .field {
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
 
         .field:last-child {
@@ -67,17 +97,17 @@
         }
 
         .label {
-            font-size: 12px;
-            color: #8B8B8B;
+            font-size: 10px;
+            color: #6B7280;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             margin-bottom: 4px;
         }
 
         .value {
-            font-size: 16px;
+            font-size: 14px;
             color: #E8E6E1;
-            word-break: break-all;
+            word-break: break-word;
         }
 
         .value.highlight {
@@ -85,33 +115,114 @@
             font-weight: 600;
         }
 
+        .hash-container {
+            position: relative;
+            display: flex;
+            align-items: stretch;
+            gap: 8px;
+        }
+
         .hash {
-            font-family: 'JetBrains Mono', 'Consolas', monospace;
-            font-size: 11px;
+            flex: 1;
+            font-family: 'JetBrains Mono', 'Cascadia Code', 'Consolas', monospace;
+            font-size: 10px;
             background: #0A0A10;
-            padding: 8px 12px;
+            padding: 10px 12px;
             border-radius: 6px;
-            color: #8B8B8B;
+            border: 1px solid #1E1E28;
+            color: #9CA3AF;
             word-break: break-all;
-            overflow-wrap: break-word;
+            line-height: 1.5;
+        }
+
+        .copy-btn {
+            background: #1E1E28;
+            border: 1px solid #2A2A34;
+            color: #9CA3AF;
+            padding: 0 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .copy-btn:hover {
+            background: #2A2A34;
+            color: #C9A84C;
+        }
+
+        .copy-btn.copied {
+            background: #14532D;
+            border-color: #22C55E;
+            color: #22C55E;
+        }
+
+        .badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
         .badge {
             display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 10px;
             font-weight: 600;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
+        .badge.sealed { background: #14532D; color: #86EFAC; }
         .badge.high { background: #7C2D12; color: #FED7AA; }
-        .badge.sealed { background: #14532D; color: #BBF7D0; }
+        .badge.medium { background: #78350F; color: #FDE68A; }
+        .badge.low { background: #1E3A5F; color: #93C5FD; }
+
+        .jurisdiction {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #1E1E28;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #9CA3AF;
+        }
+
+        .invariants {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .invariant {
+            background: #1A1A24;
+            border: 1px solid #2A2A34;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            color: #C9A84C;
+            font-weight: 500;
+        }
+
+        .dragon-seal {
+            margin: 24px auto;
+            width: 80px;
+            height: 80px;
+            opacity: 0.6;
+        }
+
+        .dragon-seal svg {
+            width: 100%;
+            height: 100%;
+        }
 
         .footer {
-            margin-top: 40px;
-            font-size: 12px;
-            color: #6B7280;
+            margin-top: 24px;
+            font-size: 11px;
+            color: #4B5563;
         }
 
         .footer a {
@@ -119,35 +230,56 @@
             text-decoration: none;
         }
 
-        .dragons {
-            font-size: 14px;
-            color: #4B4B4B;
-            margin-top: 20px;
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .protocol {
+            font-size: 12px;
+            color: #374151;
+            margin-top: 12px;
         }
 
         .error-msg {
-            background: #2D1B1B;
+            background: #1F1215;
             border: 1px solid #7C2D12;
             color: #FCA5A5;
-            padding: 16px;
+            padding: 14px;
             border-radius: 8px;
-            margin-top: 20px;
+            margin-top: 16px;
+            font-size: 13px;
+        }
+
+        .timestamp {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: #9CA3AF;
         }
 
         @media (max-width: 480px) {
-            .status { font-size: 48px; }
-            .status-text { font-size: 24px; }
-            .value { font-size: 14px; }
+            .container { padding: 0 8px; }
+            .status { font-size: 44px; }
+            .status-text { font-size: 22px; }
+            .value { font-size: 13px; }
+            .hash { font-size: 9px; }
+            .card { padding: 16px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="logo">WINDI</div>
+        <div class="header">
+            <div class="logo">WINDI</div>
+            <div class="lang-switch">
+                <button class="lang-btn" data-lang="de">DE</button>
+                <button class="lang-btn" data-lang="en">EN</button>
+                <button class="lang-btn" data-lang="pt">PT</button>
+            </div>
+        </div>
 
         <div id="loading">
             <div class="status loading">⏳</div>
-            <div class="status-text loading">Verifying...</div>
+            <div class="status-text loading" data-i18n="verifying">Wird verifiziert...</div>
         </div>
 
         <div id="result" style="display: none;">
@@ -156,55 +288,170 @@
 
             <div class="card" id="details-card" style="display: none;">
                 <div class="field">
-                    <div class="label">Document</div>
+                    <div class="label" data-i18n="document">Dokument</div>
                     <div class="value highlight" id="doc-name"></div>
                 </div>
                 <div class="field">
-                    <div class="label">Actor</div>
+                    <div class="label" data-i18n="actor">Akteur</div>
                     <div class="value" id="actor"></div>
                 </div>
                 <div class="field">
                     <div class="label">Status</div>
-                    <div class="value">
+                    <div class="badges">
                         <span class="badge sealed" id="doc-status"></span>
                         <span class="badge high" id="gov-level"></span>
+                        <span class="jurisdiction" id="jurisdiction"></span>
                     </div>
                 </div>
                 <div class="field">
-                    <div class="label">Content Hash</div>
-                    <div class="hash" id="content-hash"></div>
+                    <div class="label" data-i18n="contentHash">Inhalt-Hash (SHA-256)</div>
+                    <div class="hash-container">
+                        <div class="hash" id="content-hash"></div>
+                        <button class="copy-btn" id="copy-btn" title="Copy hash">📋</button>
+                    </div>
                 </div>
                 <div class="field">
                     <div class="label">Receipt ID</div>
-                    <div class="value" id="receipt-id"></div>
+                    <div class="value" id="receipt-id" style="font-family: monospace; font-size: 12px;"></div>
                 </div>
                 <div class="field">
-                    <div class="label">Verified At</div>
-                    <div class="value" id="verified-at"></div>
+                    <div class="label" data-i18n="sealedAt">Versiegelt</div>
+                    <div class="timestamp" id="sealed-at"></div>
                 </div>
+                <div class="field" id="invariants-field" style="display: none;">
+                    <div class="label" data-i18n="invariants">Invarianten</div>
+                    <div class="invariants" id="invariants-list"></div>
+                </div>
+            </div>
+
+            <div class="dragon-seal" id="dragon-seal">
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="48" stroke="#C9A84C" stroke-width="1" fill="none"/>
+                    <path d="M50 15 L65 35 L85 40 L70 55 L75 75 L50 65 L25 75 L30 55 L15 40 L35 35 Z"
+                          fill="#C9A84C" fill-opacity="0.15" stroke="#C9A84C" stroke-width="1"/>
+                    <text x="50" y="90" text-anchor="middle" fill="#C9A84C" font-size="8" font-weight="600">SEALED</text>
+                </svg>
             </div>
 
             <div id="error-box" class="error-msg" style="display: none;"></div>
         </div>
 
         <div class="footer">
-            <a href="https://windi-domain.com">windi-domain.com</a>
+            <a href="https://windi-domain.com">windi-domain.com</a> ·
+            <span data-i18n="cryptoProof">Kryptographischer Beweis</span>
         </div>
-        <div class="dragons">🐉 Three Dragons Protocol</div>
+        <div class="protocol">🐉 Three Dragons Protocol · I11</div>
     </div>
 
     <script>
+        const i18n = {
+            de: {
+                verifying: 'Wird verifiziert...',
+                verified: 'VERIFIZIERT',
+                notVerified: 'NICHT VERIFIZIERT',
+                suspicious: 'VERDÄCHTIG',
+                error: 'FEHLER',
+                document: 'Dokument',
+                actor: 'Akteur',
+                contentHash: 'Inhalt-Hash (SHA-256)',
+                sealedAt: 'Versiegelt (UTC)',
+                invariants: 'Invarianten',
+                cryptoProof: 'Kryptographischer Beweis',
+                copied: 'Kopiert!',
+                copyFailed: 'Kopieren fehlgeschlagen',
+                noId: 'Keine Receipt-ID angegeben. Verwenden Sie ?id=WINDI-XXX',
+                notFound: 'Dokument nicht im WINDI-System gefunden',
+                connFailed: 'Verbindung zum Verifizierungsdienst fehlgeschlagen'
+            },
+            en: {
+                verifying: 'Verifying...',
+                verified: 'VERIFIED',
+                notVerified: 'NOT VERIFIED',
+                suspicious: 'SUSPICIOUS',
+                error: 'ERROR',
+                document: 'Document',
+                actor: 'Actor',
+                contentHash: 'Content Hash (SHA-256)',
+                sealedAt: 'Sealed (UTC)',
+                invariants: 'Invariants',
+                cryptoProof: 'Cryptographic Proof',
+                copied: 'Copied!',
+                copyFailed: 'Copy failed',
+                noId: 'No receipt ID provided. Use ?id=WINDI-XXX',
+                notFound: 'Document not found in WINDI system',
+                connFailed: 'Failed to connect to verification service'
+            },
+            pt: {
+                verifying: 'A verificar...',
+                verified: 'VERIFICADO',
+                notVerified: 'NÃO VERIFICADO',
+                suspicious: 'SUSPEITO',
+                error: 'ERRO',
+                document: 'Documento',
+                actor: 'Actor',
+                contentHash: 'Hash do Conteúdo (SHA-256)',
+                sealedAt: 'Selado (UTC)',
+                invariants: 'Invariantes',
+                cryptoProof: 'Prova Criptográfica',
+                copied: 'Copiado!',
+                copyFailed: 'Falha ao copiar',
+                noId: 'Nenhum ID de recibo fornecido. Use ?id=WINDI-XXX',
+                notFound: 'Documento não encontrado no sistema WINDI',
+                connFailed: 'Falha ao conectar ao serviço de verificação'
+            }
+        };
+
+        let currentLang = 'de';
+
+        function detectLang() {
+            const stored = localStorage.getItem('windi-lang');
+            if (stored && i18n[stored]) return stored;
+            const browser = navigator.language?.slice(0, 2).toLowerCase();
+            if (browser && i18n[browser]) return browser;
+            return 'de';
+        }
+
+        let verificationState = null; // Store state for language changes
+
+        function setLang(lang) {
+            currentLang = lang;
+            localStorage.setItem('windi-lang', lang);
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.dataset.i18n;
+                if (i18n[lang][key]) el.textContent = i18n[lang][key];
+            });
+            // Update status text if verification already done
+            if (verificationState) {
+                const statusText = document.getElementById('status-text');
+                if (verificationState === 'verified') statusText.textContent = t('verified');
+                else if (verificationState === 'unverified') statusText.textContent = t('notVerified');
+                else if (verificationState === 'suspicious') statusText.textContent = t('suspicious');
+                else if (verificationState === 'error') statusText.textContent = t('error');
+            }
+        }
+
+        function t(key) {
+            return i18n[currentLang][key] || i18n['en'][key] || key;
+        }
+
+        const jurisdictionFlags = {
+            'DE': '🇩🇪', 'BR': '🇧🇷', 'PT': '🇵🇹', 'US': '🇺🇸',
+            'EU': '🇪🇺', 'CH': '🇨🇭', 'AT': '🇦🇹'
+        };
+
         async function verify() {
             const params = new URLSearchParams(window.location.search);
             const id = params.get('id');
 
             if (!id) {
-                showError('No receipt ID provided. Use ?id=WINDI-XXX');
+                showError(t('noId'));
                 return;
             }
 
             try {
-                // Use canonical Ledger API endpoint
                 const response = await fetch(`/api/receipts/${encodeURIComponent(id)}`);
                 const data = await response.json();
 
@@ -216,63 +463,119 @@
                 } else if (data.error || !data.ok) {
                     showUnverified(data);
                 } else {
-                    showSuspicious(data);
+                    showSuspicious();
                 }
             } catch (err) {
-                showError('Failed to connect to verification service');
+                showError(t('connFailed'));
             }
         }
 
         function showVerified(data) {
+            verificationState = 'verified';
             document.getElementById('status-icon').textContent = '✓';
             document.getElementById('status-icon').className = 'status verified';
-            document.getElementById('status-text').textContent = 'VERIFIED';
+            document.getElementById('status-text').textContent = t('verified');
             document.getElementById('status-text').className = 'status-text verified';
 
-            const receipt = data.receipt || {};
+            const r = data.receipt || {};
 
-            document.getElementById('doc-name').textContent = receipt.doc_name || 'Unknown';
-            document.getElementById('actor').textContent = receipt.actor || 'Unknown';
-            document.getElementById('doc-status').textContent = receipt.status || 'sealed';
-            document.getElementById('gov-level').textContent = receipt.governance_level || 'HIGH';
-            document.getElementById('content-hash').textContent = receipt.content_hash || 'N/A';
-            document.getElementById('receipt-id').textContent = receipt.id || '';
-            document.getElementById('verified-at').textContent = receipt.created_at
-                ? new Date(receipt.created_at * 1000).toLocaleString()
-                : 'N/A';
+            document.getElementById('doc-name').textContent = r.doc_name || 'Unknown';
+            document.getElementById('actor').textContent = r.actor || 'Unknown';
+            document.getElementById('doc-status').textContent = (r.status || 'sealed').toUpperCase();
+
+            const govLevel = (r.governance_level || 'HIGH').toUpperCase();
+            const govEl = document.getElementById('gov-level');
+            govEl.textContent = govLevel;
+            govEl.className = `badge ${govLevel.toLowerCase()}`;
+
+            const jur = r.jurisdiction || 'DE';
+            const flag = jurisdictionFlags[jur] || '🌍';
+            document.getElementById('jurisdiction').textContent = `${flag} ${jur}`;
+
+            document.getElementById('content-hash').textContent = r.content_hash || 'N/A';
+            document.getElementById('receipt-id').textContent = r.id || '';
+
+            if (r.created_at) {
+                const date = new Date(r.created_at * 1000);
+                document.getElementById('sealed-at').textContent = date.toISOString().replace('T', ' ').slice(0, 19) + ' UTC';
+            } else {
+                document.getElementById('sealed-at').textContent = 'N/A';
+            }
+
+            // Invariants from metadata
+            const meta = r.metadata || {};
+            const invs = meta.invariants || ['I11'];
+            if (invs.length > 0) {
+                document.getElementById('invariants-field').style.display = 'block';
+                document.getElementById('invariants-list').innerHTML = invs
+                    .map(i => `<span class="invariant">${i}</span>`)
+                    .join('');
+            }
 
             document.getElementById('details-card').style.display = 'block';
+            document.getElementById('dragon-seal').style.display = 'block';
         }
 
         function showUnverified(data) {
+            verificationState = 'unverified';
             document.getElementById('status-icon').textContent = '✗';
             document.getElementById('status-icon').className = 'status unverified';
-            document.getElementById('status-text').textContent = 'NOT VERIFIED';
+            document.getElementById('status-text').textContent = t('notVerified');
             document.getElementById('status-text').className = 'status-text unverified';
+            document.getElementById('dragon-seal').style.display = 'none';
 
-            const msg = data.error || data.detail || 'Document not found in WINDI system';
+            const msg = data.error || data.detail || t('notFound');
             document.getElementById('error-box').textContent = msg;
             document.getElementById('error-box').style.display = 'block';
         }
 
-        function showSuspicious(data) {
+        function showSuspicious() {
+            verificationState = 'suspicious';
             document.getElementById('status-icon').textContent = '⚠';
             document.getElementById('status-icon').className = 'status suspicious';
-            document.getElementById('status-text').textContent = 'SUSPICIOUS';
+            document.getElementById('status-text').textContent = t('suspicious');
             document.getElementById('status-text').className = 'status-text suspicious';
+            document.getElementById('dragon-seal').style.display = 'none';
         }
 
         function showError(msg) {
+            verificationState = 'error';
             document.getElementById('loading').style.display = 'none';
             document.getElementById('result').style.display = 'block';
             document.getElementById('status-icon').textContent = '?';
             document.getElementById('status-icon').className = 'status loading';
-            document.getElementById('status-text').textContent = 'ERROR';
+            document.getElementById('status-text').textContent = t('error');
             document.getElementById('status-text').className = 'status-text loading';
             document.getElementById('error-box').textContent = msg;
             document.getElementById('error-box').style.display = 'block';
+            document.getElementById('dragon-seal').style.display = 'none';
         }
 
+        // Copy button
+        document.getElementById('copy-btn').addEventListener('click', async () => {
+            const hash = document.getElementById('content-hash').textContent;
+            const btn = document.getElementById('copy-btn');
+            try {
+                await navigator.clipboard.writeText(hash);
+                btn.textContent = '✓';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = '📋';
+                    btn.classList.remove('copied');
+                }, 2000);
+            } catch (e) {
+                btn.textContent = '✗';
+                setTimeout(() => btn.textContent = '📋', 2000);
+            }
+        });
+
+        // Language buttons
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => setLang(btn.dataset.lang));
+        });
+
+        // Init
+        setLang(detectLang());
         verify();
     </script>
 </body>
