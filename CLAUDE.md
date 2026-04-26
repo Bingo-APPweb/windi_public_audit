@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.14.0
-**Sealed:** 2026-04-26 · §210 VERIFY Resilience + nginx fixes · systemd timer health check
+**Version:** 2.15.0
+**Sealed:** 2026-04-26 · §211 TRIANGULAÇÃO XV & CONSENSO DE GOVERNANÇA · Dual-LLM · BD-004=0
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -287,6 +287,57 @@ LAZY_PATTERNS = {
 **Health Timer:** `windi-verify-health.timer` — check 5min · auto-restart
 **3 Modos:** `/verify-public/web/` · `hash-inspector.html` · `qr-decoder.html`
 
+### §211 — TRIANGULAÇÃO XV & CONSENSO DE GOVERNANÇA (26 Apr 2026)
+
+> **"Se um auditor perguntar: 'Como garantem que a IA não alucinou?' — aponte para o Consenso de Ferro."**
+
+**Status:** LIVE · **Port:** :8150 · **W-Enterprise-001** v3.4.0
+
+**Mecanismo de Triangulação (Princípio XV):**
+| Componente | Função |
+|------------|--------|
+| Worker A | Guardian (Claude via Anthropic) |
+| Worker B | Architect (GPT-4 via OpenAI) |
+| Threshold | divergence < 0.35 → consensus |
+| Trigger | `HIGH_GOVERNANCE` classification |
+
+**Fluxo:**
+```
+Request → Classification (HIGH_GOVERNANCE) → call_ai_triangulated()
+                                                    ↓
+                                          ┌────────┴────────┐
+                                          ↓                 ↓
+                                     Guardian           Architect
+                                          ↓                 ↓
+                                          └────────┬────────┘
+                                                   ↓
+                                          Consensus Analysis
+                                          (divergence calc)
+                                                   ↓
+                                     ✅ consensus=True → proceed
+                                     ⚠️ divergence>0.35 → I9 GATE
+```
+
+**Shadow Audit (BD-004 Detection):**
+| Regra | Nome | Severidade | Detecta |
+|-------|------|:----------:|---------|
+| BD-001 | HIGH_AS_LOW | CRITICAL | Keywords HIGH em LOW |
+| BD-002 | CONSENSUS_BYPASS | HIGH | Consensus requerido não atingido |
+| BD-003 | HIGH_DIVERGENCE | HIGH | divergence > 0.25 em HIGH |
+| BD-004 | SINGLE_MODEL_HIGH | CRITICAL | HIGH com 1 modelo só |
+| BD-005 | ACTION_IN_TRIVIAL | HIGH | Acção em classificação trivial |
+| BD-006 | SUSPICIOUS_LATENCY | MEDIUM | Latência < 500ms para HIGH |
+
+**Prova Operacional (DEC-2026-040):**
+- Divergência: `0.000` (acordo total)
+- Modelos: Guardian + Architect
+- Consenso: ✅ ATINGIDO
+- Shadow Audit: 0 alertas BD-004 pós-fix
+
+**Ficheiros:** `vera_agent.py` (linhas 709-805) · `shadow_audit.py` · `routing_engine.py`
+
+> *"A Triangulação XV transforma VERA num tribunal digital de duas instâncias que decide em milissegundos."*
+
 ### §117 — I9: Human Approval Gate (NON-NEGOTIABLE)
 
 > **"I9 não vive na entrada. I9 vive na saída."**
@@ -552,6 +603,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 26 Apr | **§211 TRIANGULAÇÃO XV** · Dual-LLM (Guardian+Architect) · `call_ai_triangulated()` · Shadow Audit BD-004=0 · DEC-2026-040 consenso=✅ · divergence=0.000 ✅ |
 | 26 Apr | **§210 VERIFY RESILIENCE** · nginx fixes (`?id=` + `/web/` 3 modos) · `windi-leads` disabled · systemd health timer · auto-restart ≤5min ✅ |
 | 26 Apr | **§208/§209 SOBERANIA SEMÂNTICA + PLACEHOLDER ZERO** · 3-Layer Defense (Lei I + Lookup + Semantic) · LAZY_PATTERNS · validate_semantic_density() · `acting_as` field · tools.html blindado · `0eefae98` ✅ |
 | 26 Apr | **§205 KEYGEN-001 SOVEREIGN KEY CEREMONY** · Ed25519 + Argon2id + XSalsa20-Poly1305 · 8-node chain of custody · Loss Acceptance manuscrita · Reconciliation selada · `DBED5A85` ✅ |
