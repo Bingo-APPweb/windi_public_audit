@@ -10239,3 +10239,170 @@ OM SHANTI 🐉
 *Liga IA+H · Kempten, Bavaria · 2026*
 
 ---
+
+## § SESSÃO 26 Abr 2026 — §210 VERIFY Resilience + Health Check
+
+**Duração:** ~1h | **Status:** ✅ SEALED
+**Liga IA+H:** Human Dragon · Architect
+**Invariants:** I11, I14
+
+### Problemas Detectados e Resolvidos
+
+| Problema | Causa | Fix |
+|----------|-------|-----|
+| `/verify-public/?id=` retornava 301→405 | nginx `location = /verify-public/` fazia redirect para `/health` | Alterado para `proxy_pass http://windi_verify/verify-public/$is_args$args` |
+| 3 Modos VERIFY (Document/Hash/QR) 404 | Pasta `/web/` não montada no nginx | Adicionado `location /verify-public/web/` com alias |
+| `windi-leads.service` FAILED | Conflito de porta :8096 — DID-GENESIS já corria via nohup | Serviço desactivado (`systemctl disable`) |
+
+### nginx Fixes
+
+**Fix 1 — Query String Preservation (linha 345):**
+```nginx
+# Antes
+location = /verify-public/ {
+    return 301 /verify-public/health;
+}
+
+# Depois
+location = /verify-public/ {
+    proxy_pass http://windi_verify/verify-public/$is_args$args;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    add_header X-WINDI-Service "verify-public" always;
+}
+```
+
+**Fix 2 — Web Static Files (após linha 286):**
+```nginx
+location /verify-public/web/ {
+    alias /opt/windi/verify-public/web/;
+    index index.html;
+    try_files $uri $uri/ =404;
+    add_header Cache-Control "public, max-age=3600";
+    add_header X-WINDI-Service "verify-public-web" always;
+}
+```
+
+### Health Check Timer (systemd)
+
+**Timer:** `/etc/systemd/system/windi-verify-health.timer`
+```ini
+[Unit]
+Description=WINDI Verify Health Check Timer
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=5min
+
+[Install]
+WantedBy=timers.target
+```
+
+**Service:** `/etc/systemd/system/windi-verify-health.service`
+```ini
+[Unit]
+Description=WINDI Verify Health Check
+
+[Service]
+Type=oneshot
+User=root
+ExecStart=/bin/bash -c 'curl -sf http://localhost:8114/health || systemctl restart windi-verify-public'
+```
+
+### 3 Modos Operacionais
+
+| Modo | URL | Função |
+|------|-----|--------|
+| Modus 1 | `/verify-public/web/` | Document Verify — WINDI QR scan |
+| Modus 2 | `/verify-public/web/hash-inspector.html` | Hash Inspector — SHA-256/512 local |
+| Modus 3 | `/verify-public/web/qr-decoder.html` | QR Decoder — NFe BR, PIX, ELSTER DE, EU COVID |
+
+### Backups
+
+- `/home/windi/nginx-backup-20260426182840.conf`
+- `/home/windi/nginx-backup-20260426183847.conf`
+- `/home/windi/nginx-backup-20260426183856.conf`
+
+### Nota: VERIFY Port
+
+**Actual:** :8114 (não :8145 como alguns docs antigos referem)
+Upstream nginx: `upstream windi_verify { server 127.0.0.1:8114; }`
+
+---
+
+## § MIGRAÇÃO — §199 + §200 Detalhes (20 Abr 2026)
+
+### §199 — I9 Runtime Enforcement (Detalhes Completos)
+
+**Status:** LIVE · v0.2.0 · **Commit:** `a85909e4`
+
+**Problema Detectado:** I9 era declarativo, não runtime. Sistema aceitava handshakes perigosos sem validação.
+
+**3 Layers de Contenção:**
+
+| Layer | Função | Implementação |
+|-------|--------|---------------|
+| 1 | Agency Detection | `AGENCY_KEYWORDS` (PT/DE/EN) → auto-escalate |
+| 2 | Scope Escalation | `DANGEROUS_SCOPES` → force requires_human |
+| 3 | Fail-Closed Accept | Re-check scope at accept() → reject if no I9 |
+
+**4 Regras Constitucionais:**
+- **Rule A:** Default deny for state change
+- **Rule B:** Classification cannot grant execution
+- **Rule C:** Human approval is explicit, scoped, and ephemeral
+- **Rule D:** "Propose" and "execute" are different species
+
+**Dangerous Scopes:** `propose_patch` · `execute_with_i9` · `apply` · `commit` · `seal` · `delete` · `modify`
+**Safe Scopes:** `read_only` · `analyze` · `observe`
+
+**Files:** `/opt/windi/sandbox/w-shelf-001/app/main.py`
+
+> *"Interpretation may be wrong. Handshake must remain skeptical. Runtime must fail closed."*
+
+### §200 — I14 Epistemic Enforcement (Detalhes Completos)
+
+**Status:** LIVE · v0.3.0 · **Commit:** `0ec09491`
+
+**Princípio:** "Non-simulation of understanding" — sistema não responde como se entendesse quando não tem base.
+
+**Simetria com §199:**
+| Invariante | Protege contra | Fail mode |
+|------------|----------------|-----------|
+| I9 | Acção sem autoridade | over-acting |
+| I14 | Asserção sem conhecimento | over-asserting |
+
+**EpistemicStatus Enum:**
+- `SUFFICIENT` — input tem contexto suficiente
+- `AMBIGUOUS` — múltiplas interpretações válidas
+- `INSUFFICIENT_CONTEXT` — falta informação essencial
+- `CONFLICTED` — interpretações divergentes
+
+**3 Layers de Detecção:**
+1. **AMBIGUOUS_PRONOUNS** (PT/DE/EN): isto, das, this, etc.
+2. **MISSING_CONTEXT_PATTERNS**: documento, opções, código
+3. **COMPARATIVE_WITHOUT_OPTIONS**: melhor/pior sem alternativas
+
+**Rule E:** Absence of knowledge is product, not failure.
+
+**Receipt Type:** `I14_DECLARED_LIMIT`
+```json
+{
+  "type": "I14_DECLARED_LIMIT",
+  "epistemic_status": "ambiguous",
+  "ambiguity_markers": ["isto"],
+  "invariant": "I14 — Explicit Failure Principle"
+}
+```
+
+**Test Suite:** 11/11 passed (`tests/test_i14_epistemic.py`)
+
+> *"Detection upstream. Gate downstream. Seal on block."*
+
+---
+
+*Migrated to CLAUDE-HISTORY.md on 26 Apr 2026 per Overflow Policy*
+*Liga IA+H · Kempten, Bavaria · 2026*
+

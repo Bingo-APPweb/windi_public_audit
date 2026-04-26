@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.13.0
-**Sealed:** 2026-04-26 · §208/§209 Soberania Semântica + Placeholder Zero · Commits `3ec1d996`→`0eefae98`
+**Version:** 2.14.0
+**Sealed:** 2026-04-26 · §210 VERIFY Resilience + nginx fixes · systemd timer health check
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -179,41 +179,13 @@ Nenhum endpoint retorna valores default que mascarem dados ausentes.
 
 ### §163 — DECRETO-001: A Árvore Viva (13 Apr 2026)
 
-> **"O servidor WINDI é uma Árvore Viva. Cada serviço é um galho.
-> A seiva (DID) flui do tronco às folhas. Nenhum galho vive sozinho."**
+> **"O servidor WINDI é uma Árvore Viva. Cada serviço é um galho."**
 
 **Status:** CONSTITUTIONAL · **Commit:** `9f31574` · **Invariants:** I1, I9, I11, I12, I14
+**Arquitectura:** TRUNK (:8101) → SAP (DID) → BRANCHES (8 Órgãos) → LEAVES (Endpoints) → FRUITS (Receipts)
 
-**Arquitectura Living Tree:**
-```
-TRUNK (Tronco)    → Forensic Ledger :8101
-SAP (Seiva)       → DID Cross-Validation
-BRANCHES (Galhos) → 8 Órgãos WINDI
-LEAVES (Folhas)   → Endpoints
-FRUITS (Frutos)   → Virtue Receipts
-```
-
-**Endpoints Constitucionais (TRUNK :8101):**
-- `/api/tree/health` → Verifica saúde de todos os órgãos
-- `/api/tree/decree` → Informação do decreto
-- `/api/did/validate/{did}` → Validação cruzada DID
-- `/api/did/tiers` → Hierarquia de tiers
-
-**DID Tiers (As 4 Leis da Seiva):**
-| Tier | Nível | Acesso |
-|------|-------|--------|
-| 🌱 SEED | 1 | `/verify-public/` |
-| 🌿 NODAL | 2 | +`/wallet/` +`/travel/` |
-| 🌳 SOVEREIGN | 3 | +`/law/` +`/enterprise/` |
-| 🏛 ORACLE | 4 | +`/sec/` +`/dev-api/` (cross-validated) |
-
-**Files:**
-- `/opt/windi/constitutional/DECREE-001-LIVING-TREE.md`
-- `/opt/windi/constitutional/windi_tree.py`
-- `/opt/windi/constitutional/did_sovereign.py`
-- `/opt/windi/constitutional/tree_health.py`
-
-**Princípio:** A Árvore cresce. A estrutura permanece. Mutável no crescimento. Imutável na direcção.
+**DID Tiers:** 🌱 SEED (1) · 🌿 NODAL (2) · 🌳 SOVEREIGN (3) · 🏛 ORACLE (4)
+**Files:** `/opt/windi/constitutional/DECREE-001-LIVING-TREE.md`
 
 ### §202 — DECRETO-002: Separação Ontológica CORE vs Apps (25 Apr 2026)
 
@@ -241,78 +213,20 @@ FRUITS (Frutos)   → Virtue Receipts
 
 > **"DeepEval é o espelho. VERA é o juiz. Shadow Audit é a polícia. Langfuse é o satélite."**
 
-**Status:** LIVE · v1.4.0 · **8 Commits:** `f8c1f03a`→`f37a7f2c` · **Port:** :8150
+**Status:** LIVE · v1.4.0 · **Port:** :8150 · **Detalhes:** `CLAUDE-HISTORY.md`
 
-**4-Layer Architecture:**
-| Layer | Component | Função | Status |
-|-------|-----------|--------|:------:|
-| 1 | Execution | E1-E4 Filter + Prompt Slicing | ✅ |
-| 2 | Governance | Shadow Audit (polícia) | ✅ |
-| 3 | Defense | Princípio XV (triangulação) | ✅ |
-| 4 | Quality | DeepEval + Quality Gate + Langfuse | ✅ |
+**4 Layers:** Execution (E1-E4) → Governance (Shadow) → Defense (Princípio XV) → Quality (DeepEval+Langfuse)
+**Routing:** E1_TRIVIAL→Mistral · E4_NON_PHO→Llama · HIGH→Claude+GPT4 (consensus)
+**Quality Gate:** Admissibility 60% + DeepEval 40% · *"VERA vence sempre"*
 
-**§204.1-2 — Eligibility + Shadow Audit:**
-| Level | Routing | Consensus | Ledger | Shadow |
-|-------|---------|:---------:|:------:|:------:|
-| E1_TRIVIAL | Mistral | ❌ | ❌ | ❌ |
-| E4_NON_PHO | Llama | ❌ | ❌ | ❌ |
-| HIGH_GOVERNANCE | Claude+GPT4 | ✅ | ✅ | ✅ |
-
-**§204.3 — Princípio XV (BD-004 Fix):**
-- HIGH decisions require ≥2 models (Guardian + Architect)
-- `call_ai_triangulated()` → parallel calls → consensus check
-- Divergence score tracked per request
-
-**§204.4-5 — DeepEval + Quality Gate:**
-| Metric | Source | Weight |
-|--------|--------|:------:|
-| Admissibility (0-4) | WINDI-native | 60% |
-| Relevance | DeepEval | 15% |
-| Faithfulness | DeepEval | 15% |
-| Coherence | DeepEval | 10% |
-
-**Regra de Ouro:** *"Se DeepEval e VERA discordarem → VERA vence. Sempre."*
-
-**§204.6 — Langfuse Observability:**
-- `/vera/observability/health` → status do satélite
-- Trace hierarchy: VERA Request → Classification → LLM Calls → Consensus → Quality Gate
-- **Status:** READY (awaiting API keys)
-
-**Commits:** `f8c1f03a`→`f37a7f2c` (8 total)
-
-**Filtro 80/20:** `OBSERVE_ONLY=[HIGH_GOVERNANCE, triangulation, divergence>0.3, shadow_alerts>0]`
-**Pergunta:** *"Eu teria tomado essa decisão?"* → não=investiga · talvez=ouro · sim=segue
-
-### §205 — KEYGEN-001: Sovereign Key Generation Ceremony (26 Apr 2026)
+### §205 — KEYGEN-001: Sovereign Key Ceremony (26 Apr 2026)
 
 > **"A chave não nasce isolada. Nasce sobre cadeia."**
 
-**Status:** SEALED · **Receipt:** `WINDI-KEYGEN-001-20260426090540-DBED5A85`
-**Public Key (Ed25519):** `d449e461538da934d1303c8a9a34d1045459e167bd9bc863b2fbd74019cb2522`
-**Verify:** `https://windi-domain.com/api/receipts/WINDI-KEYGEN-001-20260426090540-DBED5A85`
-
-**Stack Criptográfico:**
-| Componente | Algoritmo | Status |
-|------------|-----------|:------:|
-| Keypair | Ed25519 (libsodium) | ✅ |
-| KDF | Argon2id (256 MiB) | ✅ |
-| Cipher | XSalsa20-Poly1305 | ✅ |
-
-**Chain of Custody (8 nós):**
-```
-553d21a3 (protocol) → C216F3EA (decreto-002) → d036225c (manifest v1) →
-795c9a5b (manifest v2) → a202eb17 (reconciliation) → aa7fd8be (jpg) →
-5d5024b0 (pdf) → DBED5A85 (KEYGEN-001) ⭐
-```
-
-**Ficheiros:**
-- `/opt/windi/keys/WINDI-KEYGEN-001.pub` (644) — Public key hex
-- `/opt/windi/keys/WINDI-KEYGEN-001.enc` (600) — Encrypted private key
-- `/opt/windi/forensic/keygen-001/` — Loss acceptance + manifests + receipts
-
-**Invariantes:** I1 (Soberania Humana) · I9 (Human Approval) · I11 (Evidência Permanente) · I14 (Explicit Failure)
-
-> *"You do not need to trust WINDI to verify WINDI."* — KEYGEN-001 prova isto.
+**Status:** SEALED · **Receipt:** `DBED5A85` · **Detalhes:** `CLAUDE-HISTORY.md`
+**Stack:** Ed25519 + Argon2id (256 MiB) + XSalsa20-Poly1305
+**Chain:** 8 nós (protocol→decreto→manifests→reconciliation→KEYGEN)
+**Files:** `/opt/windi/keys/WINDI-KEYGEN-001.pub` · `.enc`
 
 ### §208/§209 — Soberania Semântica + Placeholder Zero (26 Apr 2026)
 
@@ -363,6 +277,16 @@ LAZY_PATTERNS = {
 
 > *"A preguiça é rejeitada com 422. A identidade falsa com Lei I. O sistema não negocia."*
 
+### §210 — VERIFY Resilience + Health Check (26 Apr 2026)
+
+> **"Se crashar às 3h da manhã, reinicia sozinho em ≤5 minutos."**
+
+**Status:** LIVE · **Port:** :8114 · **Detalhes:** `CLAUDE-HISTORY.md`
+
+**Fixes:** nginx query string (`?id=`) · nginx `/web/` (3 modos) · `windi-leads` disabled
+**Health Timer:** `windi-verify-health.timer` — check 5min · auto-restart
+**3 Modos:** `/verify-public/web/` · `hash-inspector.html` · `qr-decoder.html`
+
 ### §117 — I9: Human Approval Gate (NON-NEGOTIABLE)
 
 > **"I9 não vive na entrada. I9 vive na saída."**
@@ -372,69 +296,15 @@ LAZY_PATTERNS = {
 
 ### §199 — I9 Runtime Enforcement (20 Apr 2026)
 
-**Status:** LIVE · v0.2.0 · **Commit:** `a85909e4`
-
-**Problema Detectado:** I9 era declarativo, não runtime. Sistema aceitava handshakes perigosos sem validação.
-
-**3 Layers de Contenção:**
-
-| Layer | Função | Implementação |
-|-------|--------|---------------|
-| 1 | Agency Detection | `AGENCY_KEYWORDS` (PT/DE/EN) → auto-escalate |
-| 2 | Scope Escalation | `DANGEROUS_SCOPES` → force requires_human |
-| 3 | Fail-Closed Accept | Re-check scope at accept() → reject if no I9 |
-
-**4 Regras Constitucionais:**
-- **Rule A:** Default deny for state change
-- **Rule B:** Classification cannot grant execution
-- **Rule C:** Human approval is explicit, scoped, and ephemeral
-- **Rule D:** "Propose" and "execute" are different species
-
-**Dangerous Scopes:** `propose_patch` · `execute_with_i9` · `apply` · `commit` · `seal` · `delete` · `modify`
-**Safe Scopes:** `read_only` · `analyze` · `observe`
-
-**Files:** `/opt/windi/sandbox/w-shelf-001/app/main.py`
-
-> *"Interpretation may be wrong. Handshake must remain skeptical. Runtime must fail closed."*
+**Status:** LIVE · **Commit:** `a85909e4` · **Detalhes:** `CLAUDE-HISTORY.md`
+**Conceito:** I9 runtime com 3 layers (Agency Detection → Scope Escalation → Fail-Closed Accept)
+**Regras:** A) Default deny · B) Classification ≠ execution · C) Approval ephemeral · D) Propose ≠ Execute
 
 ### §200 — I14 Epistemic Enforcement (20 Apr 2026)
 
-**Status:** LIVE · v0.3.0 · **Commit:** `0ec09491`
-
-**Princípio:** "Non-simulation of understanding" — sistema não responde como se entendesse quando não tem base.
-
-**Simetria com §199:**
-| Invariante | Protege contra | Fail mode |
-|------------|----------------|-----------|
-| I9 | Acção sem autoridade | over-acting |
-| I14 | Asserção sem conhecimento | over-asserting |
-
-**EpistemicStatus Enum:**
-- `SUFFICIENT` — input tem contexto suficiente
-- `AMBIGUOUS` — múltiplas interpretações válidas
-- `INSUFFICIENT_CONTEXT` — falta informação essencial
-- `CONFLICTED` — interpretações divergentes
-
-**3 Layers de Detecção:**
-1. **AMBIGUOUS_PRONOUNS** (PT/DE/EN): isto, das, this, etc.
-2. **MISSING_CONTEXT_PATTERNS**: documento, opções, código
-3. **COMPARATIVE_WITHOUT_OPTIONS**: melhor/pior sem alternativas
-
-**Rule E:** Absence of knowledge is product, not failure.
-
-**Receipt Type:** `I14_DECLARED_LIMIT`
-```json
-{
-  "type": "I14_DECLARED_LIMIT",
-  "epistemic_status": "ambiguous",
-  "ambiguity_markers": ["isto"],
-  "invariant": "I14 — Explicit Failure Principle"
-}
-```
-
-**Test Suite:** 11/11 passed (`tests/test_i14_epistemic.py`)
-
-> *"Detection upstream. Gate downstream. Seal on block."*
+**Status:** LIVE · **Commit:** `0ec09491` · **Detalhes:** `CLAUDE-HISTORY.md`
+**Conceito:** Non-simulation of understanding — sistema não finge entender
+**Simetria:** I9 protege over-acting · I14 protege over-asserting
 
 ### §120 — AI Draft Mode · WINDI-LAW
 
@@ -682,6 +552,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 26 Apr | **§210 VERIFY RESILIENCE** · nginx fixes (`?id=` + `/web/` 3 modos) · `windi-leads` disabled · systemd health timer · auto-restart ≤5min ✅ |
 | 26 Apr | **§208/§209 SOBERANIA SEMÂNTICA + PLACEHOLDER ZERO** · 3-Layer Defense (Lei I + Lookup + Semantic) · LAZY_PATTERNS · validate_semantic_density() · `acting_as` field · tools.html blindado · `0eefae98` ✅ |
 | 26 Apr | **§205 KEYGEN-001 SOVEREIGN KEY CEREMONY** · Ed25519 + Argon2id + XSalsa20-Poly1305 · 8-node chain of custody · Loss Acceptance manuscrita · Reconciliation selada · `DBED5A85` ✅ |
 | 25 Apr | **§204 VERA PALADAR COMPLETO** · 4-Layer Stack · Shadow Audit (polícia) · Princípio XV BD-004 fix · DeepEval (espelho) · Quality Gate (juiz) · Langfuse (satélite) · 8 commits `f8c1f03a`→`f37a7f2c` ✅ |
