@@ -24,34 +24,19 @@
 
 ## 2. VERIFICATION
 
-**Public Verification URL:**
-```
-https://windi-domain.com/verify-public/?id=WINDI-BAFIN-DEC-2026-041-20260426173220-5189EA96
-```
+### Decision Receipt
+**Verify URL:** [https://windi-domain.com/verify-public/?id=WINDI-BAFIN-DEC-2026-041-20260426173220-5189EA96](https://windi-domain.com/verify-public/?id=WINDI-BAFIN-DEC-2026-041-20260426173220-5189EA96)
 
-**QR Code for Mobile Verification:**
-```
-█▀▀▀▀▀▀▀█▀▀██▀█▀▀▀█▀▀▀▀██▀█████▀▀▀▀▀▀▀█
-█ █▀▀▀█ ██ ▀▄█████▀▀▄▄ ▄▀██▀▀██ █▀▀▀█ █
-█ █   █ █  █▄█▀ ▀█▀ █▄▀▀ ▀▄ ▀ █ █   █ █
-█ ▀▀▀▀▀ █ ▄▀█▀█▀▄▀█▀▄ ▄ █▀▄▀█▀█ ▀▀▀▀▀ █
-█▀███▀█▀▀ ▀ █ ▄██▀██▀▀ █ ▄ █▄█▀▀▀▀▀██▀█
-██▀ ▀▄▄▀  ▀▄ █ ▀▀███▀▄██▄ █▀▀▀▄▄▀ ▄▀▄██
-█▄█▄ ▀█▀▄█▀▄▀██▄▄▄ █ █  ▄ █▄▀▄▀ █▄ ▀ ▀█
-█▀▀   █▀▀▀▀▀ ▀▄  ▄ ▄█▀██ ▀▄  ▄▀▀▀  ▀▀ █
-█▀ ▄▄ ▄▀▀▄█▀███▄ ▄▄▀█ █▀▀ ▀█ ▀ ▀ ▄▀ █▀█
-█▄█▄  █▀▀▀█▄▄▄▄ █   ▀█▀██ ▄█▀ ▀▀▄█▀█▄██
-█▀  ██▀▀██   ▀▀▄▀█ █ ▀ ▀█▀█▄ ▄▀▀ ▄▄█▄██
-██▀██ █▀██▀▄█▀█  ▄▄ █ ▀  ▀▀▄ █▀▀  ▀▀▀██
-█▀▄  ▄▀▀▄▀▀▄█▄▄▄▀▀███▀ ▀█▀▄█ ▄▄█▄▄▀ ▀██
-█▄█ ▀▄ ▀██▄▄ ▀▄ ▀█ ▄█▄█ ▀███ ▀▄ ███████
-█▀▀ ▄▀█▀▄█▄▄▀█▀█▄  ▄▄▄  ▄ █▄█     ▄▄█▄█
-█▀▀▀▀▀▀▀█ ▄█▀ █▀ █▀▄██▀▀ █ ▄█ █▀█ ██ ██
-█ █▀▀▀█ █▀▄ ▄█▄█▀█▄   ▄▄▀ █▄█ ▀▀▀    ▀█
-█ █   █ ███ █▀  █ ██ ▄  ▀▄▀▀█▀  ▄█▄ ▀██
-█ ▀▀▀▀▀ █▀██▀█▀▄▀█  ▀  ▀▄▀█▀▀ ▀▀▀▄█▄ ▀█
-▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-```
+**Scan to Verify Decision:**
+
+![QR Code - Decision Receipt](./qr/decision-5189EA96.png)
+
+### Document Receipt
+**Verify URL:** [https://windi-domain.com/verify-public/?id=WINDI-PROOF-OF-ACT-DEC-2026-041-20260426173730-A2A93BFA](https://windi-domain.com/verify-public/?id=WINDI-PROOF-OF-ACT-DEC-2026-041-20260426173730-A2A93BFA)
+
+**Scan to Verify Document:**
+
+![QR Code - Document Receipt](./qr/document-A2A93BFA.png)
 
 ---
 
