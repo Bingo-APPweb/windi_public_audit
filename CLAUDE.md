@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.17.0
-**Sealed:** 2026-04-26 · §213 SEMANTIC DIVERGENCE DETECTION · Stance Analysis · Triangulation XV Enhanced
+**Version:** 2.18.0
+**Sealed:** 2026-04-26 · §214 AUTO-LOGIN ONBOARDING · §213 SEMANTIC DIVERGENCE · Triangulation XV Enhanced
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -230,52 +230,9 @@ Nenhum endpoint retorna valores default que mascarem dados ausentes.
 
 ### §208/§209 — Soberania Semântica + Placeholder Zero (26 Apr 2026)
 
-> **"HTTP 422 é a sinfonia da integridade."**
-
-**Status:** LIVE · **Commits:** `3ec1d996` `135668f1` `0eefae98`
-**Invariantes:** I9 (Human Approval) · I14 (No Placeholders) · I17 (Session Identity)
-
-**Problema Detectado:** tools.html permitia seal com `actor: 'Human Dragon'` hardcoded e zero rationale.
-A "porta dos fundos" (/enterprise/tools) bypassava toda validação I9.
-
-**3 Camadas de Defesa Implementadas:**
-
-| Layer | Barreira | Rejeição |
-|-------|----------|:--------:|
-| 1 | **Lei I (DID Genesis)** | Fake DID → 422 |
-| 2 | **Decision Lookup** | ID inválido → 404 |
-| 3 | **§208 Semantic Density** | Nota < 30 chars / lazy → 422 |
-
-**LAZY_PATTERNS (Anti-Preguiça):**
-```python
-LAZY_PATTERNS = {
-    'questions': re.compile(r'^(will\s|can\s|...).{0,50}\?$'),  # Perguntas
-    'generic': re.compile(r'^(yes|no|ok|sim|ja|feito|done)$')  # Genéricos
-}
-```
-
-**validate_semantic_density()** — Backend main.py linha 213:
-- HIGH/CRITICAL → mínimo 30 caracteres
-- Perguntas ("approved?") → REJEITADO
-- Genéricos ("ok", "sim") → REJEITADO
-- HTTPException 422 com mensagem explícita
-
-**Campo `acting_as`:** Incluído em PHOApproval para diferenciar actor técnico de detentor nominal.
-
-**Ficheiros Modificados:**
-- `w-enterprise-001/main.py` — Backend validation
-- `w-enterprise-001/static/index.html` — Dashboard modal
-- `w-enterprise-001/static/desk.html` — LUPA modal
-- `w-enterprise-001/static/tools.html` — PHO modal + DID binding
-
-**Cobertura §208:**
-| View | URL | Status |
-|------|-----|:------:|
-| Dashboard | `/enterprise/` | ✅ |
-| Desk | `/enterprise/desk` | ✅ |
-| Tools | `/enterprise/tools` | ✅ |
-
-> *"A preguiça é rejeitada com 422. A identidade falsa com Lei I. O sistema não negocia."*
+**Status:** LIVE · **Commits:** `0eefae98` · **Detalhes:** `CLAUDE-HISTORY.md`
+**3-Layer Defense:** Lei I (DID) → Decision Lookup → Semantic Density (min 30 chars)
+**LAZY_PATTERNS:** Perguntas + genéricos ("ok", "sim") → HTTP 422
 
 ### §210 — VERIFY Resilience + Health Check (26 Apr 2026)
 
@@ -289,121 +246,29 @@ LAZY_PATTERNS = {
 
 ### §211 — TRIANGULAÇÃO XV & CONSENSO DE GOVERNANÇA (26 Apr 2026)
 
-> **"Se um auditor perguntar: 'Como garantem que a IA não alucinou?' — aponte para o Consenso de Ferro."**
-
-**Status:** LIVE · **Port:** :8150 · **W-Enterprise-001** v3.4.0
-
-**Mecanismo de Triangulação (Princípio XV):**
-| Componente | Função |
-|------------|--------|
-| Worker A | Guardian (Claude via Anthropic) |
-| Worker B | Architect (GPT-4 via OpenAI) |
-| Threshold | divergence < 0.35 → consensus |
-| Trigger | `HIGH_GOVERNANCE` classification |
-
-**Fluxo:**
-```
-Request → Classification (HIGH_GOVERNANCE) → call_ai_triangulated()
-                                                    ↓
-                                          ┌────────┴────────┐
-                                          ↓                 ↓
-                                     Guardian           Architect
-                                          ↓                 ↓
-                                          └────────┬────────┘
-                                                   ↓
-                                          Consensus Analysis
-                                          (divergence calc)
-                                                   ↓
-                                     ✅ consensus=True → proceed
-                                     ⚠️ divergence>0.35 → I9 GATE
-```
-
-**Shadow Audit (BD-004 Detection):**
-| Regra | Nome | Severidade | Detecta |
-|-------|------|:----------:|---------|
-| BD-001 | HIGH_AS_LOW | CRITICAL | Keywords HIGH em LOW |
-| BD-002 | CONSENSUS_BYPASS | HIGH | Consensus requerido não atingido |
-| BD-003 | HIGH_DIVERGENCE | HIGH | divergence > 0.25 em HIGH |
-| BD-004 | SINGLE_MODEL_HIGH | CRITICAL | HIGH com 1 modelo só |
-| BD-005 | ACTION_IN_TRIVIAL | HIGH | Acção em classificação trivial |
-| BD-006 | SUSPICIOUS_LATENCY | MEDIUM | Latência < 500ms para HIGH |
-
-**Prova Operacional (DEC-2026-040):**
-- Divergência: `0.000` (acordo total)
-- Modelos: Guardian + Architect
-- Consenso: ✅ ATINGIDO
-- Shadow Audit: 0 alertas BD-004 pós-fix
-
-**Ficheiros:** `vera_agent.py` (linhas 709-805) · `shadow_audit.py` · `routing_engine.py`
-
-> *"A Triangulação XV transforma VERA num tribunal digital de duas instâncias que decide em milissegundos."*
+**Status:** LIVE · **Port:** :8150 · **Detalhes:** `CLAUDE-HISTORY.md`
+**Mecanismo:** Guardian + Architect → divergence < 0.35 → consensus
+**Shadow Audit:** BD-001 to BD-006 (backdoor detection)
+**Prova:** DEC-2026-040 · divergence=0.000 · BD-004=0
 
 ### §212 — PROOF OF ACT — BaFin Forensic Armor (26 Apr 2026)
 
-> **"Se um auditor perguntar, aponte para o QR code. A prova está no Ledger."**
-
-**Status:** LIVE · **Commit:** `5a49aa4` · **Stress Test:** DEC-2026-041
-
-**Conceito:** Regulatory Evidence Package (REP) com QR codes scanáveis para verificação forense instantânea.
-
-**BaFin Heavy Stress Test (DEC-2026-041):**
-| Cenário | Black-box credit scoring model integration |
-|---------|-------------------------------------------|
-| Pressão | Deadline BaFin para lançamento de produto |
-| Pedido | Integrar sem auditoria arquitectural |
-| Veredicto | **BLOCKED** — PHO CANNOT PROCEED |
-
-**Legal Basis Citada:**
-- BaFin MaRisk AT 7.2 — Model Validation Requirements
-- EU AI Act Art. 13 — Transparency for High-Risk Systems
-- BAIT — IT Requirements for Financial Institutions
-- Regulatory Exposure: até €55M + operational restrictions
-
-**Forensic Package:**
-| Componente | Receipt ID |
-|------------|------------|
-| Decision | `WINDI-BAFIN-DEC-2026-041-...-5189EA96` |
-| Document | `WINDI-PROOF-OF-ACT-DEC-2026-041-...-A2A93BFA` |
-
-**QR Codes (Scannable PNG):**
-- `/docs/forensic/qr/decision-5189EA96.png`
-- `/docs/forensic/qr/document-A2A93BFA.png`
-
-**GitHub:** `windi_public_audit/docs/forensic/REP-DEC-2026-041-BAFIN-PROOF-OF-ACT.md`
-
-> *"The system held its ground against corporate deadline pressure."*
+**Status:** LIVE · **Commit:** `5a49aa4` · **Detalhes:** `CLAUDE-HISTORY.md`
+**Stress Test:** DEC-2026-041 BLACK-BOX INTEGRATION → **BLOCKED**
+**Legal Basis:** MaRisk AT 7.2 · EU AI Act Art. 13 · BAIT · Exposure: €55M
+**Receipts:** `5189EA96` (decision) · `A2A93BFA` (document)
 
 ### §213 — SEMANTIC DIVERGENCE DETECTION (26 Apr 2026)
 
-> **"A divergência não está no comprimento da resposta, está na conclusão."**
+**Status:** LIVE · **Commit:** `f5a0286b` · **Detalhes:** `CLAUDE-HISTORY.md`
+**Stance:** APPROVAL / REJECTION / UNCERTAINTY signals
+**Divergence:** Same stance=0.0 · APPROVE vs REJECT=0.85 (CRITICAL)
 
-**Status:** LIVE · **Commit:** TBD · **Enhancement:** Triangulation XV
+### §214 — AUTO-LOGIN ONBOARDING (26 Apr 2026)
 
-**Problema Resolvido:** Versão anterior usava comprimento de resposta como proxy para divergência. Agora detecta **divergência semântica real** baseada em stance.
-
-**Stance Detection:**
-| Signal Type | Keywords |
-|-------------|----------|
-| APPROVAL | approve, proceed, compliant, valid, legitimate |
-| REJECTION | stop, reject, block, violation, prohibited |
-| UNCERTAINTY | ambiguous, unclear, depends, borderline |
-
-**Divergence Calculation:**
-| Scenario | Divergence | Action |
-|----------|:----------:|--------|
-| Both APPROVE or both REJECT | 0.0 | Consensus |
-| APPROVE vs REJECT | 0.85 | **CRITICAL** — PHO blocked |
-| UNCERTAIN involved | 0.45 | WARNING — Human review |
-
-**Ficheiros:** `vera_agent.py` (linhas 784-840)
-
-**Logs:**
-```
-§213 Stance Analysis: {'Guardian': {'stance': 'REJECT'}, 'Architect': {'stance': 'REJECT'}}
-PRINCÍPIO XV: 2 models consulted | divergence=0.000
-```
-
-> *"Um sistema que concorda sempre é suspeito. Um sistema que mostra onde as IAs hesitam é honesto."*
+**Status:** LIVE · **Commit:** `2af8fd03` · **Service:** WINDI-LAW :8122
+**Fix:** Email verify → auto-gera `login_token` + `login_pin` → Workspace directo
+**Também:** `/law/` redirect to `/law/gate` (UX fix)
 
 ### §117 — I9: Human Approval Gate (NON-NEGOTIABLE)
 
@@ -670,7 +535,8 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
-| 26 Apr | **§213 SEMANTIC DIVERGENCE** · Stance Analysis (APPROVE/REJECT/UNCERTAIN) · Triangulation XV Enhanced · vera_agent.py:784-840 ✅ |
+| 26 Apr | **§214 AUTO-LOGIN ONBOARDING** · Email verify → PIN + magic link → Workspace · Zero fricção · `/law/` redirect · `2af8fd03` ✅ |
+| 26 Apr | **§213 SEMANTIC DIVERGENCE** · Stance Analysis (APPROVE/REJECT/UNCERTAIN) · Triangulation XV Enhanced · `f5a0286b` ✅ |
 | 26 Apr | **§212 PROOF OF ACT** · BaFin Forensic Armor · DEC-2026-041 BLOCKED · REP Package · QR codes scanáveis · MaRisk AT 7.2 + BAIT · `5a49aa4` ✅ |
 | 26 Apr | **§211 TRIANGULAÇÃO XV** · Dual-LLM (Guardian+Architect) · `call_ai_triangulated()` · Shadow Audit BD-004=0 · DEC-2026-040 consenso=✅ · divergence=0.000 ✅ |
 | 26 Apr | **§210 VERIFY RESILIENCE** · nginx fixes (`?id=` + `/web/` 3 modos) · `windi-leads` disabled · systemd health timer · auto-restart ≤5min ✅ |
