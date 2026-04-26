@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.15.0
-**Sealed:** 2026-04-26 · §211 TRIANGULAÇÃO XV & CONSENSO DE GOVERNANÇA · Dual-LLM · BD-004=0
+**Version:** 2.16.0
+**Sealed:** 2026-04-26 · §212 PROOF OF ACT — BaFin Forensic Armor · QR Codes · REP Package
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -338,6 +338,41 @@ Request → Classification (HIGH_GOVERNANCE) → call_ai_triangulated()
 
 > *"A Triangulação XV transforma VERA num tribunal digital de duas instâncias que decide em milissegundos."*
 
+### §212 — PROOF OF ACT — BaFin Forensic Armor (26 Apr 2026)
+
+> **"Se um auditor perguntar, aponte para o QR code. A prova está no Ledger."**
+
+**Status:** LIVE · **Commit:** `5a49aa4` · **Stress Test:** DEC-2026-041
+
+**Conceito:** Regulatory Evidence Package (REP) com QR codes scanáveis para verificação forense instantânea.
+
+**BaFin Heavy Stress Test (DEC-2026-041):**
+| Cenário | Black-box credit scoring model integration |
+|---------|-------------------------------------------|
+| Pressão | Deadline BaFin para lançamento de produto |
+| Pedido | Integrar sem auditoria arquitectural |
+| Veredicto | **BLOCKED** — PHO CANNOT PROCEED |
+
+**Legal Basis Citada:**
+- BaFin MaRisk AT 7.2 — Model Validation Requirements
+- EU AI Act Art. 13 — Transparency for High-Risk Systems
+- BAIT — IT Requirements for Financial Institutions
+- Regulatory Exposure: até €55M + operational restrictions
+
+**Forensic Package:**
+| Componente | Receipt ID |
+|------------|------------|
+| Decision | `WINDI-BAFIN-DEC-2026-041-...-5189EA96` |
+| Document | `WINDI-PROOF-OF-ACT-DEC-2026-041-...-A2A93BFA` |
+
+**QR Codes (Scannable PNG):**
+- `/docs/forensic/qr/decision-5189EA96.png`
+- `/docs/forensic/qr/document-A2A93BFA.png`
+
+**GitHub:** `windi_public_audit/docs/forensic/REP-DEC-2026-041-BAFIN-PROOF-OF-ACT.md`
+
+> *"The system held its ground against corporate deadline pressure."*
+
 ### §117 — I9: Human Approval Gate (NON-NEGOTIABLE)
 
 > **"I9 não vive na entrada. I9 vive na saída."**
@@ -603,6 +638,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 26 Apr | **§212 PROOF OF ACT** · BaFin Forensic Armor · DEC-2026-041 BLOCKED · REP Package · QR codes scanáveis · MaRisk AT 7.2 + BAIT · `5a49aa4` ✅ |
 | 26 Apr | **§211 TRIANGULAÇÃO XV** · Dual-LLM (Guardian+Architect) · `call_ai_triangulated()` · Shadow Audit BD-004=0 · DEC-2026-040 consenso=✅ · divergence=0.000 ✅ |
 | 26 Apr | **§210 VERIFY RESILIENCE** · nginx fixes (`?id=` + `/web/` 3 modos) · `windi-leads` disabled · systemd health timer · auto-restart ≤5min ✅ |
 | 26 Apr | **§208/§209 SOBERANIA SEMÂNTICA + PLACEHOLDER ZERO** · 3-Layer Defense (Lei I + Lookup + Semantic) · LAZY_PATTERNS · validate_semantic_density() · `acting_as` field · tools.html blindado · `0eefae98` ✅ |
