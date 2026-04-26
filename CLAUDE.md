@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.20.0
-**Sealed:** 2026-04-26 · §216 PILAR XIII PHO de Emergência · Triangulation Degraded Mode · W-Enterprise v3.5.0
+**Version:** 2.21.0
+**Sealed:** 2026-04-26 · §217 Sovereign Risk Score · P01 Ranking de Criticidade · CRITICAL_PATH Detection
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -316,6 +316,37 @@ This is an **Emergency PHO** — valid but NOT sealable.
 **Lógica:** Admissibilidade mantida (resposta válida) · Selabilidade bloqueada (`sealable=false`)
 **Princípio:** *"Detection upstream. Gate downstream. Never hide degradation."*
 
+### §217 — P01 Sovereign Risk Score (SRS) (26 Apr 2026)
+
+> **"O peso regulatório é soberano. Art.14 = prioridade máxima."**
+
+**Status:** LIVE · **File:** `/opt/windi/w-enterprise-001/vera_agent.py`
+**Endpoint:** `/vera/priority` · **Service:** W-ENTERPRISE-001 :8150
+
+**Fórmula SRS:**
+```
+SRS = (Financial × 0.3) + (Reputational × 0.2) + (Regulatory × 0.5)
+```
+
+**Thresholds:**
+| SRS | Label | Efeito |
+|-----|-------|--------|
+| > 75 | CRITICAL_PATH | Pulse visual + topo dashboard |
+| > 50 | HIGH_PRIORITY | Prioridade alta |
+| ≤ 50 | STANDARD | Ordem normal |
+
+**CRITICAL_PATH Detection:**
+- SRS > 75 → CRITICAL_PATH
+- Art.14 presente em `legal_basis` → CRITICAL_PATH
+- `financial_exposure` > €10M → CRITICAL_PATH
+
+**Frase de Impacto VERA:**
+```
+"Oracle, foco no DEC-2026-040. Exposição potencial: €35M. Todas as outras tarefas são secundárias."
+```
+
+**Dashboard Update:** `desk.html` carrega `/vera/priority` → painel VERA com pulso vermelho para CRITICAL_PATH
+
 ### §117 — I9: Human Approval Gate (NON-NEGOTIABLE)
 
 > **"I9 não vive na entrada. I9 vive na saída."**
@@ -581,6 +612,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 26 Apr | **§217 SOVEREIGN RISK SCORE (SRS)** · P01 Ranking de Criticidade · `calculate_srs()` · CRITICAL_PATH Detection · `/vera/priority` · Pulse visual · Impact phrase trilíngue ✅ |
 | 26 Apr | **§216 PILAR XIII PHO de Emergência** · W-Enterprise v3.5.0 · Triangulation Degraded Mode · `_triangulation_warning()` · 3 cenários · Response válida, não selável ✅ |
 | 26 Apr | **§215 VERIFY PAGE AUDITOR-READY** · i18n DE/EN/PT · Copy Hash · Dragon Seal SVG · Invariantes · Jurisdição · BaFin-ready · `9060eaf5` ✅ |
 | 26 Apr | **§214 AUTO-LOGIN ONBOARDING** · Email verify → PIN + magic link → Workspace · Zero fricção · `/law/` redirect · `2af8fd03` ✅ |
