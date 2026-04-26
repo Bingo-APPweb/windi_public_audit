@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.11.0
-**Sealed:** 2026-04-25 · §204 VERA Paladar COMPLETO · 4-Layer Stack · 8 Commits · Receipt `f37a7f2c`
+**Version:** 2.12.0
+**Sealed:** 2026-04-26 · §205 KEYGEN-001 Sovereign Key Ceremony · Ed25519 · Receipt `DBED5A85`
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -282,6 +282,37 @@ FRUITS (Frutos)   → Virtue Receipts
 
 **Filtro 80/20:** `OBSERVE_ONLY=[HIGH_GOVERNANCE, triangulation, divergence>0.3, shadow_alerts>0]`
 **Pergunta:** *"Eu teria tomado essa decisão?"* → não=investiga · talvez=ouro · sim=segue
+
+### §205 — KEYGEN-001: Sovereign Key Generation Ceremony (26 Apr 2026)
+
+> **"A chave não nasce isolada. Nasce sobre cadeia."**
+
+**Status:** SEALED · **Receipt:** `WINDI-KEYGEN-001-20260426090540-DBED5A85`
+**Public Key (Ed25519):** `d449e461538da934d1303c8a9a34d1045459e167bd9bc863b2fbd74019cb2522`
+**Verify:** `https://windi-domain.com/api/receipts/WINDI-KEYGEN-001-20260426090540-DBED5A85`
+
+**Stack Criptográfico:**
+| Componente | Algoritmo | Status |
+|------------|-----------|:------:|
+| Keypair | Ed25519 (libsodium) | ✅ |
+| KDF | Argon2id (256 MiB) | ✅ |
+| Cipher | XSalsa20-Poly1305 | ✅ |
+
+**Chain of Custody (8 nós):**
+```
+553d21a3 (protocol) → C216F3EA (decreto-002) → d036225c (manifest v1) →
+795c9a5b (manifest v2) → a202eb17 (reconciliation) → aa7fd8be (jpg) →
+5d5024b0 (pdf) → DBED5A85 (KEYGEN-001) ⭐
+```
+
+**Ficheiros:**
+- `/opt/windi/keys/WINDI-KEYGEN-001.pub` (644) — Public key hex
+- `/opt/windi/keys/WINDI-KEYGEN-001.enc` (600) — Encrypted private key
+- `/opt/windi/forensic/keygen-001/` — Loss acceptance + manifests + receipts
+
+**Invariantes:** I1 (Soberania Humana) · I9 (Human Approval) · I11 (Evidência Permanente) · I14 (Explicit Failure)
+
+> *"You do not need to trust WINDI to verify WINDI."* — KEYGEN-001 prova isto.
 
 ### §117 — I9: Human Approval Gate (NON-NEGOTIABLE)
 
@@ -567,7 +598,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 ---
 
-## 13. Estado Actual — 25 Abril 2026
+## 13. Estado Actual — 26 Abril 2026
 
 ### Portas Críticas
 
@@ -602,6 +633,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 26 Apr | **§205 KEYGEN-001 SOVEREIGN KEY CEREMONY** · Ed25519 + Argon2id + XSalsa20-Poly1305 · 8-node chain of custody · Loss Acceptance manuscrita · Reconciliation selada · `DBED5A85` ✅ |
 | 25 Apr | **§204 VERA PALADAR COMPLETO** · 4-Layer Stack · Shadow Audit (polícia) · Princípio XV BD-004 fix · DeepEval (espelho) · Quality Gate (juiz) · Langfuse (satélite) · 8 commits `f8c1f03a`→`f37a7f2c` ✅ |
 | 25 Apr | **§203 PAPER-001 DUAL-CHANNEL PUBLICATION** · EXTERNAL v1.0 (neutro/revisores) + INSTITUTIONAL KLAR v1.0 (LinkedIn) · 3 receipts encadeados (BDED84F0 → 88915364 + F3FAFA21) · Basic Auth `/docs/review/` |
 | 25 Apr | **§202 DECRETO-002 CORE VS APPS** · Separação Ontológica · CORE indivisível (Ledger+Key+Invariantes+VERIFY) · Reference Apps (W-*) · Firewall Constitucional · `C216F3EA` ✅ |
@@ -688,6 +720,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 ## Produtos SEALED
 
 **Receipts Chave:**
+- **§205 KEYGEN-001:** `WINDI-KEYGEN-001-20260426090540-DBED5A85` ⭐ **ROOT KEY**
 - WINDI-LAW: `WINDI-LAW-AIDRAFT-20260404105917-C445AFF9`
 - VD-CUT: `WINDI-VDCUT-20260404145505-E9983867`
 - W-SEC: `WINDI-SEC-LOCAL-20260408184001-BD09970F`
