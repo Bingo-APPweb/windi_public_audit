@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.19.0
-**Sealed:** 2026-04-26 · §215 Verify Page Auditor-Ready · i18n DE/EN/PT · Dragon Seal · BaFin-ready
+**Version:** 2.20.0
+**Sealed:** 2026-04-26 · §216 PILAR XIII PHO de Emergência · Triangulation Degraded Mode · W-Enterprise v3.5.0
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -83,7 +83,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-SEC-001 | :8144 | I9,I11 | **SEALED** · Security Sentinel · Dual Correlation · Telegram · systemd |
 | W-DRAGON-001 | :8122 | I9,I11,I14 | **LIVE** · Dragon Shadow Forest · 16×16 SHA-256 Glyph Grid · PDF Overlay |
 | W-DEV-API-001 | :8200 | I9,I11 | **LIVE** · Developer API · /dev-api/ · 4 Tiers · Verify Bridge |
-| W-ENTERPRISE-001 | :8150 | I1,I9,I11,I14 | **LIVE** v3.4.0 · VERA v1.4 PALADAR · 4-Layer Stack · Shadow+DeepEval+QGate+Langfuse · i18n |
+| W-ENTERPRISE-001 | :8150 | I1,I9,I11,I14 | **LIVE** v3.5.0 · VERA v1.5 · §216 PHO de Emergência · Triangulation Degraded Mode |
 | W-CACHE-001 | :8160 | I11,I14 | **LIVE** · Verifiable Cache Layer · L2→L3 Promotion · NOIR Dashboard |
 | W-DID-GENESIS | :8096 | I1,I9,I11,I14 | **LIVE** · Sovereign Identity Tree · Cross-Service Session · 4 Tiers |
 | W-SERVICE-CONTROL | :8170 | I1,I9,I11 | **LIVE** · Service Control Panel · 29 Services · **SVG Sentinel** · Subsystem Monitoring · DID Gate |
@@ -288,6 +288,33 @@ Nenhum endpoint retorna valores default que mascarem dados ausentes.
 
 **URL:** `https://windi-domain.com/verify-public/web/verify.html?id=WINDI-XXX`
 **Size:** 20KB · Mobile responsive · Funciona em qualquer rede
+
+### §216 — PILAR XIII: PHO de Emergência (26 Apr 2026)
+
+> **"Se a triangulação falhou, o Officer deve saber. Resposta válida, não selável."**
+
+**Status:** LIVE · **File:** `/opt/windi/w-enterprise-001/vera_agent.py`
+**Invariants:** I9, I11, I14 · **Service:** W-ENTERPRISE-001 :8150
+
+**Problema Resolvido:** Quando HIGH_GOVERNANCE usa 1 modelo (outro falhou), sistema respondia com `status="ok"` — Officer não sabia que triangulação falhou.
+
+**3 Cenários de Degradação:**
+| Cenário | Acção | Selável |
+|---------|-------|:-------:|
+| 2 modelos OK, consensus | Normal | ✅ |
+| 2 modelos OK, divergence ≥ 0.35 | `DIVERGENCE_ALERT` log | ✅* |
+| 1 modelo OK | `status="degraded"` + `PHO de Emergência` | ❌ |
+| 0 modelos | `_degraded_response()` | ❌ |
+
+**PHO de Emergência:** Resposta prefixada com aviso trilíngue (DE/EN/PT):
+```
+⚠️ **DEGRADED GOVERNANCE (§216)**
+Triangulation unavailable. Only 1 model (Guardian) responded.
+This is an **Emergency PHO** — valid but NOT sealable.
+```
+
+**Lógica:** Admissibilidade mantida (resposta válida) · Selabilidade bloqueada (`sealable=false`)
+**Princípio:** *"Detection upstream. Gate downstream. Never hide degradation."*
 
 ### §117 — I9: Human Approval Gate (NON-NEGOTIABLE)
 
@@ -554,6 +581,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 26 Apr | **§216 PILAR XIII PHO de Emergência** · W-Enterprise v3.5.0 · Triangulation Degraded Mode · `_triangulation_warning()` · 3 cenários · Response válida, não selável ✅ |
 | 26 Apr | **§215 VERIFY PAGE AUDITOR-READY** · i18n DE/EN/PT · Copy Hash · Dragon Seal SVG · Invariantes · Jurisdição · BaFin-ready · `9060eaf5` ✅ |
 | 26 Apr | **§214 AUTO-LOGIN ONBOARDING** · Email verify → PIN + magic link → Workspace · Zero fricção · `/law/` redirect · `2af8fd03` ✅ |
 | 26 Apr | **§213 SEMANTIC DIVERGENCE** · Stance Analysis (APPROVE/REJECT/UNCERTAIN) · Triangulation XV Enhanced · `f5a0286b` ✅ |
