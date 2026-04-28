@@ -1,0 +1,19 @@
+{"debug":"Initializing claude.ai proxy transport for server mcpsrv_01JtXJe5PLy9AwXhr7iEWzDY","timestamp":"2026-04-17T11:15:27.169Z","sessionId":"3a6ce70f-8362-436a-b814-5a0277b35a62","cwd":"/home/windi"}
+{"debug":"Using claude.ai proxy at https://mcp-proxy.anthropic.com/v1/mcp/mcpsrv_01JtXJe5PLy9AwXhr7iEWzDY","timestamp":"2026-04-17T11:15:27.169Z","sessionId":"3a6ce70f-8362-436a-b814-5a0277b35a62","cwd":"/home/windi"}
+{"debug":"claude.ai proxy transport created successfully","timestamp":"2026-04-17T11:15:27.170Z","sessionId":"3a6ce70f-8362-436a-b814-5a0277b35a62","cwd":"/home/windi"}
+{"debug":"Starting connection with timeout of 30000ms","timestamp":"2026-04-17T11:15:27.183Z","sessionId":"3a6ce70f-8362-436a-b814-5a0277b35a62","cwd":"/home/windi"}
+{"debug":"Successfully connected to claudeai-proxy server in 973ms","timestamp":"2026-04-17T11:15:28.142Z","sessionId":"3a6ce70f-8362-436a-b814-5a0277b35a62","cwd":"/home/windi"}
+{"debug":"Connection established with capabilities: {\"hasTools\":true,\"hasPrompts\":false,\"hasResources\":false,\"serverVersion\":{\"name\":\"kiwi-mcp-server\",\"version\":\"0.0.1\"}}","timestamp":"2026-04-17T11:15:28.143Z","sessionId":"3a6ce70f-8362-436a-b814-5a0277b35a62","cwd":"/home/windi"}
+{"debug":"CLAUDEAI-PROXY connection dropped after 7097s uptime","timestamp":"2026-04-17T13:13:46.020Z","sessionId":"3a6ce70f-8362-436a-b814-5a0277b35a62","cwd":"/home/windi"}
+{"debug":"Connection error: SSE stream disconnected: TypeError: terminated","timestamp":"2026-04-17T13:13:46.020Z","sessionId":"3a6ce70f-8362-436a-b814-5a0277b35a62","cwd":"/home/windi"}
+{"debug":"Terminal connection error 1/3","timestamp":"2026-04-17T13:13:46.020Z","sessionId":"3a6ce70f-8362-436a-b814-5a0277b35a62","cwd":"/home/windi"}
+{"debug":"CLAUDEAI-PROXY connection dropped after 7099s uptime","timestamp":"2026-04-17T13:13:47.405Z","sessionId":"3a6ce70f-8362-436a-b814-5a0277b35a62","cwd":"/home/windi"}
+{"debug":"Connection error: Streamable HTTP error: Failed to open SSE stream: Conflict","timestamp":"2026-04-17T13:13:47.405Z","sessionId":"3a6ce70f-8362-436a-b814-5a0277b35a62","cwd":"/home/windi"}
+{"debug":"CLAUDEAI-PROXY connection dropped after 7099s uptime","timestamp":"2026-04-17T13:13:47.405Z","sessionId":"3a6ce70f-8362-436a-b814-5a0277b35a62","cwd":"/home/windi"}
+{"debug":"Connection error: Failed to reconnect SSE stream: Streamable HTTP error: Failed to open SSE stream: Conflict","timestamp":"2026-04-17T13:13:47.405Z","sessionId":"3a6ce70f-8362-436a-b814-5a0277b35a62","cwd":"/home/windi"}
+{"debug":"CLAUDEAI-PROXY connection dropped after 7101s uptime","timestamp":"2026-04-17T13:13:49.286Z","sessionId":"3a6ce70f-8362-436a-b814-5a0277b35a62","cwd":"/home/windi"}
+{"debug":"Connection error: Streamable HTTP error: Failed to open SSE stream: Conflict","timestamp":"2026-04-17T13:13:49.286Z","sessionId":"3a6ce70f-8362-436a-b814-5a0277b35a62","cwd":"/home/windi"}
+{"debug":"CLAUDEAI-PROXY connection dropped after 7101s uptime","timestamp":"2026-04-17T13:13:49.286Z","sessionId":"3a6ce70f-8362-436a-b814-5a0277b35a62","cwd":"/home/windi"}
+{"debug":"Connection error: Failed to reconnect SSE stream: Streamable HTTP error: Failed to open SSE stream: Conflict","timestamp":"2026-04-17T13:13:49.286Z","sessionId":"3a6ce70f-8362-436a-b814-5a0277b35a62","cwd":"/home/windi"}
+{"debug":"CLAUDEAI-PROXY connection dropped after 7101s uptime","timestamp":"2026-04-17T13:13:49.286Z","sessionId":"3a6ce70f-8362-436a-b814-5a0277b35a62","cwd":"/home/windi"}
+{"debug":"Connection error: Maximum reconnection attempts (2) exceeded.","timestamp":"2026-04-17T13:13:49.286Z","sessionId":"3a6ce70f-8362-436a-b814-5a0277b35a62","cwd":"/home/windi"}

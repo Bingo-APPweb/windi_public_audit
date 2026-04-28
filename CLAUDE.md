@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.21.0
-**Sealed:** 2026-04-26 · §217 Sovereign Risk Score · P01 Ranking de Criticidade · CRITICAL_PATH Detection
+**Version:** 2.22.0
+**Sealed:** 2026-04-28 · §219 Baptism of Externality · W-CMS-001 · Constituição Extensível
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -96,6 +96,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-METRICS-001 | :8200 | I9,I11,I14 | **LIVE** · `/api/truth` · Drift as Parent Metric · 5 Blocks · AMBER · Berlin Ready |
 | W-TRAVEL-001 | :8126 | I9,I11,I13,G3 | **LIVE** v1.3.0 · Identity Gate · /travel/ · §196 nginx fix · nohup oficial |
 | W-SHELF-001 | :8191 | I9,I11,I13,I14 | **LIVE** v0.3.0 · I9+I14 Dual Enforcement · §199+§200 · 11/11 Tests |
+| W-CMS-001 | :8055 | I9,I11,I14 | **LIVE** · Directus 10 · Ledger Bridge :8056 · Sweeper Timer · §219 Baptism of Externality |
 | WINDI-PORTAL | static | — | **LIVE** · Internal Control Center · 35 Services · 7 Categories |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
@@ -315,6 +316,50 @@ This is an **Emergency PHO** — valid but NOT sealable.
 
 **Lógica:** Admissibilidade mantida (resposta válida) · Selabilidade bloqueada (`sealable=false`)
 **Princípio:** *"Detection upstream. Gate downstream. Never hide degradation."*
+
+### §219 — BAPTISM OF EXTERNALITY (28 Apr 2026)
+
+> **"The system proved it could absorb external reality. Truth crossed the boundary."**
+
+**Status:** LIVE · **Service:** W-CMS-001 :8055 · **Invariants:** I9, I11, I14
+
+**Arquitectura:**
+```
+Directus CMS (:8055) → Ledger Bridge (:8056) → Forensic Ledger (:8101)
+                    ↑
+            CMS Sweeper (2min timer) — Reconciliation Layer
+```
+
+**Componentes:**
+| Componente | Porta | Função |
+|------------|-------|--------|
+| `windi-cms` | :8055 | Directus 10.13.4 headless CMS |
+| `windi-cms-bridge` | :8056 | Webhook → Ledger translator |
+| `windi-cms-sweeper` | timer | Reconciliation every 2min |
+
+**Receipts Genesis:**
+- `WINDI-CMS-S219-BAPTISM-20260428093623` — Genesis seal
+- `WINDI-CMS-CMS_CREATE-20260428100243-*` — Sweeper batch (6 items)
+
+**Significado:** Primeiro software externo absorvido sob governança WINDI. Prova que qualquer sistema com webhook/API pode entrar na Constituição. Padrão reutilizável para WordPress, CRM, Notion, etc.
+
+**Files:** `/opt/windi/w-cms-001/` · `ledger-bridge.py` · `cms-sweeper.py`
+
+### §218 — FOUR RINGS DOCTRINE (27 Apr 2026)
+
+> **"Cada serviço tem um anel. Cada anel tem uma lei."**
+
+**Status:** SEALED · **Receipt:** `WINDI-S218-FOUR-RINGS-*` · **Invariants:** I9, I11
+
+**Anéis:**
+| Anel | Nome | Serviços | Regra |
+|------|------|----------|-------|
+| 1 | Núcleo Soberano | Ledger, Vault, Verify | Intocável |
+| 2 | Produção Activa | Enterprise, Bridge, Export | Monitorado |
+| 3 | Construído Não Lançado | CMS, Labs | Estável mas não exposto |
+| 4 | Ossuário | Desktop (dead) | Ignorado pelo Sentinel |
+
+**Fix Aplicado:** Desktop :8100 removido do Sentinel ENDPOINTS. LAW 2/3/4 skip gracioso. `windi-babel` disabled. W-Enterprise :8150 enabled.
 
 ### §217 — P01 Sovereign Risk Score (SRS) (26 Apr 2026)
 
@@ -612,6 +657,8 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 28 Apr | **§219 BAPTISM OF EXTERNALITY** · W-CMS-001 · Directus 10 :8055 · Ledger Bridge :8056 · CMS Sweeper Timer · First external software absorbed · 10+ receipts · Constituição Extensível provada ✅ |
+| 27 Apr | **§218 FOUR RINGS DOCTRINE** · Sentinel remediation · Anel 1-4 classification · Desktop→Anel 4 · W-Enterprise enabled · `windi-babel` disabled · Graceful LAW 2/3/4 skip ✅ |
 | 26 Apr | **§217 SOVEREIGN RISK SCORE (SRS)** · P01 Ranking de Criticidade · `calculate_srs()` · CRITICAL_PATH Detection · `/vera/priority` · Pulse visual · Impact phrase trilíngue ✅ |
 | 26 Apr | **§216 PILAR XIII PHO de Emergência** · W-Enterprise v3.5.0 · Triangulation Degraded Mode · `_triangulation_warning()` · 3 cenários · Response válida, não selável ✅ |
 | 26 Apr | **§215 VERIFY PAGE AUDITOR-READY** · i18n DE/EN/PT · Copy Hash · Dragon Seal SVG · Invariantes · Jurisdição · BaFin-ready · `9060eaf5` ✅ |
