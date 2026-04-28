@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
 **Version:** 2.22.0
-**Sealed:** 2026-04-28 · §219 Baptism of Externality · W-CMS-001 · Constituição Extensível
+**Sealed:** 2026-04-28 · §220 W-SITES-001 Foundation · PRODUCT-SITES-001 (8/12)
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -97,6 +97,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-TRAVEL-001 | :8126 | I9,I11,I13,G3 | **LIVE** v1.3.0 · Identity Gate · /travel/ · §196 nginx fix · nohup oficial |
 | W-SHELF-001 | :8191 | I9,I11,I13,I14 | **LIVE** v0.3.0 · I9+I14 Dual Enforcement · §199+§200 · 11/11 Tests |
 | W-CMS-001 | :8055 | I9,I11,I14 | **LIVE** · Directus 10 · Ledger Bridge :8056 · Sweeper Timer · §219 Baptism of Externality |
+| W-SITES-001 | :8192 | I1,I9,I11,I12,I14 | **LIVE** · Sites Factory · Identity Gate Fork · §220 · PRODUCT-SITES-001 (8/12) |
 | WINDI-PORTAL | static | — | **LIVE** · Internal Control Center · 35 Services · 7 Categories |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
@@ -622,7 +623,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 ---
 
-## 13. Estado Actual — 26 Abril 2026
+## 13. Estado Actual — 28 Abril 2026
 
 ### Portas Críticas
 
@@ -644,19 +645,21 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | :8153 | W-TRAVEL-MAP-001 Berlin Pitch | 🟢 **LIVE** |
 | :8170 | W-SERVICE-CONTROL Panel | 🟢 **LIVE** |
 | :8180 | W-ACADEMY-001 Institute | 🟢 **LIVE** |
+| :8192 | W-SITES-001 Sites Factory | 🟢 **LIVE** |
 
-> **Mapa completo (31 portas):** `CLAUDE-HISTORY.md` § Mapa de Portas 17 Abr
+> **Mapa completo (32 portas):** `CLAUDE-HISTORY.md` § Mapa de Portas 17 Abr
 
 ### Sistemas LIVE (47 total)
 
 **Core:** GEN7 · Pioneer · VPR · API Keys · Dispatch · Web Hosting · i18n · Wallet · Lead Admin · **Portal** · **SVC-CONTROL**
-**Agents (35):** CIA · WSG · GATE · NGINX · CANVAS · COMM · PROVE · DETECT-MEDIA · VERIFY · INTENT · COUNSEL · SESSION · NOMAD · VD-CUT · VD-MASS · JOE · DIST · JMPG · UDB · COMPOSER · CLASSIFY · VISION · OBS-GATE · INTENT-CMD · NOMAD-VOICE · FEDIVERSE · BRIDGE · SEC · DRAGON · DEV-API · ENTERPRISE · CACHE · **LAB** · **ACADEMY**
+**Agents (36):** CIA · WSG · GATE · NGINX · CANVAS · COMM · PROVE · DETECT-MEDIA · VERIFY · INTENT · COUNSEL · SESSION · NOMAD · VD-CUT · VD-MASS · JOE · DIST · JMPG · UDB · COMPOSER · CLASSIFY · VISION · OBS-GATE · INTENT-CMD · NOMAD-VOICE · FEDIVERSE · BRIDGE · SEC · DRAGON · DEV-API · ENTERPRISE · CACHE · **LAB** · **ACADEMY** · **SITES**
 **Products:** Triangle of Power · WINDI FIELD · WINDI TRAVEL · FVE Protocol · RFC-001 DNA
 
 ### Histórico Recente
 
 | Data | Milestone |
 |------|-----------|
+| 28 Apr | **§220 W-SITES-001 FOUNDATION** · Sites Factory :8192 · Identity Gate Fork (verticais/terceiros) · PRODUCT-SITES-001 draft 8/12 · C1→C6 Pipeline · I1·I9·I11·I12·I14 · Constitutional tests 9/9 · `ef32b1cc` ✅ |
 | 28 Apr | **§219 BAPTISM OF EXTERNALITY** · W-CMS-001 · Directus 10 :8055 · Ledger Bridge :8056 · CMS Sweeper Timer · First external software absorbed · 10+ receipts · Constituição Extensível provada ✅ |
 | 27 Apr | **§218 FOUR RINGS DOCTRINE** · Sentinel remediation · Anel 1-4 classification · Desktop→Anel 4 · W-Enterprise enabled · `windi-babel` disabled · Graceful LAW 2/3/4 skip ✅ |
 | 26 Apr | **§217 SOVEREIGN RISK SCORE (SRS)** · P01 Ranking de Criticidade · `calculate_srs()` · CRITICAL_PATH Detection · `/vera/priority` · Pulse visual · Impact phrase trilíngue ✅ |
