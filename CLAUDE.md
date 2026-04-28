@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.22.0
-**Sealed:** 2026-04-28 · §220 W-SITES-001 Foundation · PRODUCT-SITES-001 (8/12)
+**Version:** 2.24.0
+**Sealed:** 2026-04-28 · §221 Container Architecture · §B-CONTRACT-001 · Constitutional Chain Sealed
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -225,173 +225,86 @@ Nenhum endpoint retorna valores default que mascarem dados ausentes.
 
 > **"A chave não nasce isolada. Nasce sobre cadeia."**
 
-**Status:** SEALED · **Receipt:** `DBED5A85` · **Detalhes:** `CLAUDE-HISTORY.md`
-**Stack:** Ed25519 + Argon2id (256 MiB) + XSalsa20-Poly1305
-**Chain:** 8 nós (protocol→decreto→manifests→reconciliation→KEYGEN)
-**Files:** `/opt/windi/keys/WINDI-KEYGEN-001.pub` · `.enc`
+**Status:** SEALED · **Receipt:** `DBED5A85` · **Stack:** Ed25519 + Argon2id + XSalsa20-Poly1305
+**Chain:** 8 nós · **Files:** `/opt/windi/keys/WINDI-KEYGEN-001.*`
 
-### §208/§209 — Soberania Semântica + Placeholder Zero (26 Apr 2026)
+### §208-214 — Governance Enhancements (26 Apr 2026)
 
-**Status:** LIVE · **Commits:** `0eefae98` · **Detalhes:** `CLAUDE-HISTORY.md`
-**3-Layer Defense:** Lei I (DID) → Decision Lookup → Semantic Density (min 30 chars)
-**LAZY_PATTERNS:** Perguntas + genéricos ("ok", "sim") → HTTP 422
+| § | Nome | Status | Descrição |
+|---|------|--------|-----------|
+| §208/209 | Soberania Semântica | LIVE | 3-Layer Defense · LAZY_PATTERNS → 422 |
+| §210 | VERIFY Resilience | LIVE | Health timer 5min · auto-restart · 3 modos |
+| §211 | Triangulação XV | LIVE | Guardian+Architect · divergence<0.35 · Shadow Audit |
+| §212 | PROOF OF ACT | LIVE | BaFin Armor · MaRisk AT 7.2 · €55M exposure blocked |
+| §213 | Semantic Divergence | LIVE | Stance APPROVE/REJECT/UNCERTAIN · 0.85=CRITICAL |
+| §214 | Auto-Login | LIVE | Email verify → PIN → Workspace · zero fricção |
 
-### §210 — VERIFY Resilience + Health Check (26 Apr 2026)
-
-> **"Se crashar às 3h da manhã, reinicia sozinho em ≤5 minutos."**
-
-**Status:** LIVE · **Port:** :8114 · **Detalhes:** `CLAUDE-HISTORY.md`
-
-**Fixes:** nginx query string (`?id=`) · nginx `/web/` (3 modos) · `windi-leads` disabled
-**Health Timer:** `windi-verify-health.timer` — check 5min · auto-restart
-**3 Modos:** `/verify-public/web/` · `hash-inspector.html` · `qr-decoder.html`
-
-### §211 — TRIANGULAÇÃO XV & CONSENSO DE GOVERNANÇA (26 Apr 2026)
-
-**Status:** LIVE · **Port:** :8150 · **Detalhes:** `CLAUDE-HISTORY.md`
-**Mecanismo:** Guardian + Architect → divergence < 0.35 → consensus
-**Shadow Audit:** BD-001 to BD-006 (backdoor detection)
-**Prova:** DEC-2026-040 · divergence=0.000 · BD-004=0
-
-### §212 — PROOF OF ACT — BaFin Forensic Armor (26 Apr 2026)
-
-**Status:** LIVE · **Commit:** `5a49aa4` · **Detalhes:** `CLAUDE-HISTORY.md`
-**Stress Test:** DEC-2026-041 BLACK-BOX INTEGRATION → **BLOCKED**
-**Legal Basis:** MaRisk AT 7.2 · EU AI Act Art. 13 · BAIT · Exposure: €55M
-**Receipts:** `5189EA96` (decision) · `A2A93BFA` (document)
-
-### §213 — SEMANTIC DIVERGENCE DETECTION (26 Apr 2026)
-
-**Status:** LIVE · **Commit:** `f5a0286b` · **Detalhes:** `CLAUDE-HISTORY.md`
-**Stance:** APPROVAL / REJECTION / UNCERTAINTY signals
-**Divergence:** Same stance=0.0 · APPROVE vs REJECT=0.85 (CRITICAL)
-
-### §214 — AUTO-LOGIN ONBOARDING (26 Apr 2026)
-
-**Status:** LIVE · **Commit:** `2af8fd03` · **Service:** WINDI-LAW :8122
-**Fix:** Email verify → auto-gera `login_token` + `login_pin` → Workspace directo
-**Também:** `/law/` redirect to `/law/gate` (UX fix)
+> **Full details:** `CLAUDE-HISTORY.md` § §208-214
 
 ### §215 — VERIFY PAGE AUDITOR-READY (26 Apr 2026)
 
 > **"O auditor BaFin escaneia. A página prova. Sem atrito."**
 
-**Status:** LIVE · **Commit:** `9060eaf5` · **File:** `/verify-public/web/verify.html`
-
-**Features:**
-| Feature | Implementação |
-|---------|---------------|
-| i18n | DE/EN/PT auto-detect + toggle manual |
-| Copy Hash | Botão 📋 → feedback ✓ |
-| Timestamp | ISO/UTC: `2026-04-26 09:13:17 UTC` |
-| Jurisdição | Flag + código: `🇩🇪 DE` |
-| Dragon Seal | SVG minimalista com "SEALED" |
-| Invariantes | Pills: `I1` `I9` `I11` `I14` |
-
-**URL:** `https://windi-domain.com/verify-public/web/verify.html?id=WINDI-XXX`
-**Size:** 20KB · Mobile responsive · Funciona em qualquer rede
+**Status:** LIVE · **Commit:** `9060eaf5` · **URL:** `/verify-public/web/verify.html?id=WINDI-XXX`
+**Features:** i18n DE/EN/PT · Copy Hash · Dragon Seal SVG · Invariants Pills · 20KB mobile-ready
 
 ### §216 — PILAR XIII: PHO de Emergência (26 Apr 2026)
 
 > **"Se a triangulação falhou, o Officer deve saber. Resposta válida, não selável."**
 
-**Status:** LIVE · **File:** `/opt/windi/w-enterprise-001/vera_agent.py`
-**Invariants:** I9, I11, I14 · **Service:** W-ENTERPRISE-001 :8150
-
-**Problema Resolvido:** Quando HIGH_GOVERNANCE usa 1 modelo (outro falhou), sistema respondia com `status="ok"` — Officer não sabia que triangulação falhou.
-
-**3 Cenários de Degradação:**
-| Cenário | Acção | Selável |
-|---------|-------|:-------:|
-| 2 modelos OK, consensus | Normal | ✅ |
-| 2 modelos OK, divergence ≥ 0.35 | `DIVERGENCE_ALERT` log | ✅* |
-| 1 modelo OK | `status="degraded"` + `PHO de Emergência` | ❌ |
-| 0 modelos | `_degraded_response()` | ❌ |
-
-**PHO de Emergência:** Resposta prefixada com aviso trilíngue (DE/EN/PT):
-```
-⚠️ **DEGRADED GOVERNANCE (§216)**
-Triangulation unavailable. Only 1 model (Guardian) responded.
-This is an **Emergency PHO** — valid but NOT sealable.
-```
-
-**Lógica:** Admissibilidade mantida (resposta válida) · Selabilidade bloqueada (`sealable=false`)
+**Status:** LIVE · **Service:** W-ENTERPRISE-001 :8150 · **Invariants:** I9, I11, I14
+**Cenários:** 2 OK→Normal · 1 OK→`status="degraded"`+PHO · 0 OK→`_degraded_response()`
 **Princípio:** *"Detection upstream. Gate downstream. Never hide degradation."*
+> **Full details:** `CLAUDE-HISTORY.md` § §216
 
 ### §219 — BAPTISM OF EXTERNALITY (28 Apr 2026)
 
 > **"The system proved it could absorb external reality. Truth crossed the boundary."**
 
-**Status:** LIVE · **Service:** W-CMS-001 :8055 · **Invariants:** I9, I11, I14
-
-**Arquitectura:**
-```
-Directus CMS (:8055) → Ledger Bridge (:8056) → Forensic Ledger (:8101)
-                    ↑
-            CMS Sweeper (2min timer) — Reconciliation Layer
-```
-
-**Componentes:**
-| Componente | Porta | Função |
-|------------|-------|--------|
-| `windi-cms` | :8055 | Directus 10.13.4 headless CMS |
-| `windi-cms-bridge` | :8056 | Webhook → Ledger translator |
-| `windi-cms-sweeper` | timer | Reconciliation every 2min |
-
-**Receipts Genesis:**
-- `WINDI-CMS-S219-BAPTISM-20260428093623` — Genesis seal
-- `WINDI-CMS-CMS_CREATE-20260428100243-*` — Sweeper batch (6 items)
-
-**Significado:** Primeiro software externo absorvido sob governança WINDI. Prova que qualquer sistema com webhook/API pode entrar na Constituição. Padrão reutilizável para WordPress, CRM, Notion, etc.
-
-**Files:** `/opt/windi/w-cms-001/` · `ledger-bridge.py` · `cms-sweeper.py`
+**Status:** LIVE · **Service:** W-CMS-001 :8055/:8056 · **Invariants:** I9, I11, I14
+**Stack:** Directus 10 → Ledger Bridge → Sweeper (2min) → Ledger :8101
+**Genesis:** `WINDI-CMS-S219-BAPTISM-*` · **Significado:** Primeiro software externo absorvido
+**Files:** `/opt/windi/w-cms-001/` · > **Full details:** `CLAUDE-HISTORY.md` § §219
 
 ### §218 — FOUR RINGS DOCTRINE (27 Apr 2026)
 
 > **"Cada serviço tem um anel. Cada anel tem uma lei."**
 
-**Status:** SEALED · **Receipt:** `WINDI-S218-FOUR-RINGS-*` · **Invariants:** I9, I11
+**Status:** SEALED · **Invariants:** I9, I11
+**Anéis:** 1-Núcleo (Ledger/Vault/Verify) · 2-Produção (Enterprise/Bridge) · 3-Staging (CMS/Labs) · 4-Ossuário (Desktop dead)
+**Fix:** Desktop :8100→Anel 4 · W-Enterprise :8150 enabled · `windi-babel` disabled
 
-**Anéis:**
-| Anel | Nome | Serviços | Regra |
-|------|------|----------|-------|
-| 1 | Núcleo Soberano | Ledger, Vault, Verify | Intocável |
-| 2 | Produção Activa | Enterprise, Bridge, Export | Monitorado |
-| 3 | Construído Não Lançado | CMS, Labs | Estável mas não exposto |
-| 4 | Ossuário | Desktop (dead) | Ignorado pelo Sentinel |
+### §221 — CONTAINER ARCHITECTURE · §B-CONTRACT-001 (28 Apr 2026)
 
-**Fix Aplicado:** Desktop :8100 removido do Sentinel ENDPOINTS. LAW 2/3/4 skip gracioso. `windi-babel` disabled. W-Enterprise :8150 enabled.
+> **"A marca pode desaparecer. A prova nunca."**
+
+**Status:** SEALED · **Service:** W-SITES-001 :8192 · **Invariants:** I1, I9, I11, I12, I14
+**Fórmula:** `Container = Capacidade + Prova + Invariantes`
+
+**§B-CONTRACT-001 (3 Pilares):**
+| Pilar | Decisão |
+|-------|---------|
+| Hospedagem | Hybrid (FREE=subdomain, MED=hosted, HIGH=export) |
+| Branding | Marca opcional, Prova obrigatória |
+| Responsabilidade | User=Autor · WINDI=Garantidor · Ledger=Testemunha |
+
+**MAKEUP Containers:** AI Writer · AI Translator · AI Image · AI SEO (governados pela Quadra I1·I9·I11·I14)
+**Provenance:** `{ai_generated, ai_model, legal_owner, parent_receipt}`
+
+**Constitutional Chain:**
+- `WINDI-CONTRACT-B-001-v1.0-20260428162029-1530DBEF` (contrato)
+- `WINDI-AIWRITER-FIRST-20260428163019-94A8C2EB` (primeiro AI content)
+
+**Files:** `/opt/windi/constitutional/W-SITES-001-CONTRACT-B-v1.0.md`
 
 ### §217 — P01 Sovereign Risk Score (SRS) (26 Apr 2026)
 
 > **"O peso regulatório é soberano. Art.14 = prioridade máxima."**
 
-**Status:** LIVE · **File:** `/opt/windi/w-enterprise-001/vera_agent.py`
-**Endpoint:** `/vera/priority` · **Service:** W-ENTERPRISE-001 :8150
-
-**Fórmula SRS:**
-```
-SRS = (Financial × 0.3) + (Reputational × 0.2) + (Regulatory × 0.5)
-```
-
-**Thresholds:**
-| SRS | Label | Efeito |
-|-----|-------|--------|
-| > 75 | CRITICAL_PATH | Pulse visual + topo dashboard |
-| > 50 | HIGH_PRIORITY | Prioridade alta |
-| ≤ 50 | STANDARD | Ordem normal |
-
-**CRITICAL_PATH Detection:**
-- SRS > 75 → CRITICAL_PATH
-- Art.14 presente em `legal_basis` → CRITICAL_PATH
-- `financial_exposure` > €10M → CRITICAL_PATH
-
-**Frase de Impacto VERA:**
-```
-"Oracle, foco no DEC-2026-040. Exposição potencial: €35M. Todas as outras tarefas são secundárias."
-```
-
-**Dashboard Update:** `desk.html` carrega `/vera/priority` → painel VERA com pulso vermelho para CRITICAL_PATH
+**Status:** LIVE · **Endpoint:** `/vera/priority` · **Service:** W-ENTERPRISE-001 :8150
+**Fórmula:** `SRS = (Financial×0.3) + (Reputational×0.2) + (Regulatory×0.5)`
+**CRITICAL_PATH:** SRS>75 | Art.14 presente | €10M+ exposure → Pulse vermelho no dashboard
+> **Full details:** `CLAUDE-HISTORY.md` § §217
 
 ### §117 — I9: Human Approval Gate (NON-NEGOTIABLE)
 
@@ -659,28 +572,17 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
-| 28 Apr | **§220 W-SITES-001 FOUNDATION** · Sites Factory :8192 · Identity Gate Fork (verticais/terceiros) · PRODUCT-SITES-001 draft 8/12 · C1→C6 Pipeline · I1·I9·I11·I12·I14 · Constitutional tests 9/9 · `ef32b1cc` ✅ |
-| 28 Apr | **§219 BAPTISM OF EXTERNALITY** · W-CMS-001 · Directus 10 :8055 · Ledger Bridge :8056 · CMS Sweeper Timer · First external software absorbed · 10+ receipts · Constituição Extensível provada ✅ |
-| 27 Apr | **§218 FOUR RINGS DOCTRINE** · Sentinel remediation · Anel 1-4 classification · Desktop→Anel 4 · W-Enterprise enabled · `windi-babel` disabled · Graceful LAW 2/3/4 skip ✅ |
-| 26 Apr | **§217 SOVEREIGN RISK SCORE (SRS)** · P01 Ranking de Criticidade · `calculate_srs()` · CRITICAL_PATH Detection · `/vera/priority` · Pulse visual · Impact phrase trilíngue ✅ |
-| 26 Apr | **§216 PILAR XIII PHO de Emergência** · W-Enterprise v3.5.0 · Triangulation Degraded Mode · `_triangulation_warning()` · 3 cenários · Response válida, não selável ✅ |
-| 26 Apr | **§215 VERIFY PAGE AUDITOR-READY** · i18n DE/EN/PT · Copy Hash · Dragon Seal SVG · Invariantes · Jurisdição · BaFin-ready · `9060eaf5` ✅ |
-| 26 Apr | **§214 AUTO-LOGIN ONBOARDING** · Email verify → PIN + magic link → Workspace · Zero fricção · `/law/` redirect · `2af8fd03` ✅ |
-| 26 Apr | **§213 SEMANTIC DIVERGENCE** · Stance Analysis (APPROVE/REJECT/UNCERTAIN) · Triangulation XV Enhanced · `f5a0286b` ✅ |
-| 26 Apr | **§212 PROOF OF ACT** · BaFin Forensic Armor · DEC-2026-041 BLOCKED · REP Package · QR codes scanáveis · MaRisk AT 7.2 + BAIT · `5a49aa4` ✅ |
-| 26 Apr | **§211 TRIANGULAÇÃO XV** · Dual-LLM (Guardian+Architect) · `call_ai_triangulated()` · Shadow Audit BD-004=0 · DEC-2026-040 consenso=✅ · divergence=0.000 ✅ |
-| 26 Apr | **§210 VERIFY RESILIENCE** · nginx fixes (`?id=` + `/web/` 3 modos) · `windi-leads` disabled · systemd health timer · auto-restart ≤5min ✅ |
-| 26 Apr | **§208/§209 SOBERANIA SEMÂNTICA + PLACEHOLDER ZERO** · 3-Layer Defense (Lei I + Lookup + Semantic) · LAZY_PATTERNS · validate_semantic_density() · `acting_as` field · tools.html blindado · `0eefae98` ✅ |
-| 26 Apr | **§205 KEYGEN-001 SOVEREIGN KEY CEREMONY** · Ed25519 + Argon2id + XSalsa20-Poly1305 · 8-node chain of custody · Loss Acceptance manuscrita · Reconciliation selada · `DBED5A85` ✅ |
-| 25 Apr | **§204 VERA PALADAR COMPLETO** · 4-Layer Stack · Shadow Audit (polícia) · Princípio XV BD-004 fix · DeepEval (espelho) · Quality Gate (juiz) · Langfuse (satélite) · 8 commits `f8c1f03a`→`f37a7f2c` ✅ |
-| 25 Apr | **§203 PAPER-001 DUAL-CHANNEL PUBLICATION** · EXTERNAL v1.0 (neutro/revisores) + INSTITUTIONAL KLAR v1.0 (LinkedIn) · 3 receipts encadeados (BDED84F0 → 88915364 + F3FAFA21) · Basic Auth `/docs/review/` |
-| 25 Apr | **§202 DECRETO-002 CORE VS APPS** · Separação Ontológica · CORE indivisível (Ledger+Key+Invariantes+VERIFY) · Reference Apps (W-*) · Firewall Constitucional · `C216F3EA` ✅ |
-| 22 Apr | **§201 PAPER-001 SCIENTIFIC FOUNDATION** · PoE-ELIGIBILITY-CRITERIA-001 + PoE-CLASSIFICATION-PROTOCOL-001 SEALED · AI-AI-AI-H Architecture · n≤31 · W5/W6/W7 |
-| 20 Apr | **§200 I14 EPISTEMIC ENFORCEMENT** · W-SHELF-001 v0.3.0 · Non-simulation of Understanding · 11/11 Tests · `0ec09491` |
-| 20 Apr | **§196-200** · W-SHELF I9+I14 Runtime · W-METRICS · Actuary · Session Identity |
-| 17-19 Apr | **§184-191** · Cache · VERA Erdbeere · Academy · DID Gate Audit |
-| 13-16 Apr | **§163-182** · Decreto-001 · Portal · Cost · Lab · Travel Map |
-| 09-12 Apr | **§150-162** · SEC · Dragon · DEV-API · W-Enterprise |
+| 28 Apr | **§221** Container Architecture · §B-CONTRACT-001 · MAKEUP Catalog · `1530DBEF` ✅ |
+| 28 Apr | **§220** W-SITES-001 Foundation · :8192 · Identity Gate Fork · 9/9 tests ✅ |
+| 28 Apr | **§219** Baptism of Externality · W-CMS-001 :8055 · Directus absorbed ✅ |
+| 27 Apr | **§218** Four Rings Doctrine · Sentinel remediation · Anel 1-4 ✅ |
+| 26 Apr | **§215-217** Verify Auditor · SRS · PHO Emergência ✅ |
+| 26 Apr | **§208-214** Governance Enhancements · Triangulation · BaFin Armor ✅ |
+| 26 Apr | **§205** KEYGEN-001 Sovereign Key Ceremony · `DBED5A85` ✅ |
+| 25 Apr | **§202-204** DECRETO-002 · Paper-001 · VERA Paladar ✅ |
+| 20-22 Apr | **§196-201** W-SHELF · W-METRICS · Paper Scientific ✅ |
+| 13-19 Apr | **§163-191** Cache · Academy · Portal · Decreto-001 ✅ |
+| 09-12 Apr | **§150-162** SEC · Dragon · DEV-API · W-Enterprise ✅ |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` · **Archival path:** git log + Ledger receipts + `/opt/windi/docs/`
 > *CLAUDE.md is the index; the Ledger is the archive.*
@@ -769,6 +671,8 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 - §203 Paper-001 Institutional: `WINDI-PAPER-ADMISSIBILITY-001-INSTITUTIONAL-v1.0-20260425211444-F3FAFA21`
 - §196 Amendment: `WINDI-AMENDMENT-20260420-DARK-LAUNCH-GAP-PART-2`
 - §204 VERA Paladar: `f37a7f2c` (8 commits · 4-Layer Stack)
+- §221 Container Architecture: `WINDI-CONTRACT-B-001-v1.0-20260428162029-1530DBEF` (§B-CONTRACT-001)
+- §221 First AI Content: `WINDI-AIWRITER-FIRST-20260428163019-94A8C2EB` (parent_receipt chain)
 
 ---
 
