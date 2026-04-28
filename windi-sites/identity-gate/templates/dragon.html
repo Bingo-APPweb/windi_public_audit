@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="noir">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>W-DRAGON-001 | Dragon Shadow Forest</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --transition: 0.3s ease;
+        }
+
+        [data-theme="noir"] {
+            --bg: #0A0A10;
+            --bg-card: #12121A;
+            --gold: #C9A84C;
+            --gold-dim: #8B6914;
+            --text: #E8E6E1;
+            --text-dim: #888;
+            --border: #1A1A24;
+            --success: #4CAF50;
+            --error: #E53935;
+        }
+
+        [data-theme="klar"] {
+            --bg: #FAFAF8;
+            --bg-card: #FFFFFF;
+            --gold: #8B7424;
+            --gold-dim: #A08530;
+            --text: #1A1A1A;
+            --text-dim: #666;
+            --border: #E0DED8;
+            --success: #2E7D32;
+            --error: #C62828;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            transition: background var(--transition), color var(--transition);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gold);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--gold);
+        }
+
+        .logo small {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            font-weight: 400;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .lang-toggle, .theme-toggle {
+            display: flex;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .lang-toggle button, .theme-toggle button {
+            padding: 0.5rem 0.75rem;
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.875rem;
+            transition: all var(--transition);
+        }
+
+        .lang-toggle button.active, .theme-toggle button.active {
+            background: var(--gold);
+            color: #000;
+        }
+
+        .lang-toggle button:hover:not(.active), .theme-toggle button:hover:not(.active) {
+            color: var(--text);
+        }
+
+        .nav-link {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: 1px solid var(--gold);
+            border-radius: 6px;
+            color: var(--gold);
+            text-decoration: none;
+            font-size: 0.875rem;
+            margin-left: 1rem;
+            transition: all var(--transition);
+        }
+
+        .nav-link:hover {
+            background: var(--gold);
+            color: #000;
+        }
+
+        /* Status Card */
+        .status-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status-badge.healthy {
+            background: rgba(76, 175, 80, 0.15);
+            color: var(--success);
+        }
+
+        .status-badge.error {
+            background: rgba(229, 57, 53, 0.15);
+            color: var(--error);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .info-item {
+            padding: 1rem;
+            background: var(--bg);
+            border-radius: 8px;
+        }
+
+        .info-item label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .info-item span {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--gold);
+        }
+
+        /* Encode Section */
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--gold);
+        }
+
+        .encode-form {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-dim);
+        }
+
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.875rem;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--gold);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--gold);
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            background: var(--gold-dim);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Result Section */
+        .result-section {
+            display: none;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .result-section.show {
+            display: block;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .dragon-grid-container {
+            display: flex;
+            justify-content: center;
+            padding: 2rem;
+            background: var(--bg);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .dragon-grid-container svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .result-info {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+        }
+
+        .result-info-item {
+            padding: 0.75rem;
+            background: var(--bg);
+            border-radius: 6px;
+        }
+
+        .result-info-item label {
+            display: block;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+
+        .result-info-item code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--gold);
+            word-break: break-all;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            color: var(--text-dim);
+            font-size: 0.875rem;
+        }
+
+        footer a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        /* Loading */
+        .loading {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .loading.show {
+            display: flex;
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--border);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Input Tabs */
+        .input-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .input-tab {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-dim);
+            font-family: inherit;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+
+        .input-tab:hover {
+            border-color: var(--gold);
+            color: var(--text);
+        }
+
+        .input-tab.active {
+            background: var(--gold);
+            border-color: var(--gold);
+            color: #000;
+        }
+
+        .input-mode {
+            display: none;
+        }
+
+        .input-mode.active {
+            display: block;
+        }
+
+        /* Upload Zone */
+        .upload-zone {
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition);
+            background: var(--bg);
+        }
+
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: var(--gold);
+            background: rgba(201, 168, 76, 0.05);
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+            opacity: 0.6;
+        }
+
+        .upload-text {
+            font-size: 0.95rem;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-hint {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: var(--bg);
+            border-radius: 6px;
+            margin-top: 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        .file-icon {
+            font-size: 1.25rem;
+        }
+
+        .file-info span:nth-child(2) {
+            flex: 1;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .file-info span:nth-child(3) {
+            color: var(--text-dim);
+            font-size: 0.8rem;
+        }
+
+        .file-remove {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0 0.25rem;
+            transition: color var(--transition);
+        }
+
+        .file-remove:hover {
+            color: var(--error);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .container {
+                padding: 1rem;
+            }
+
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">&#x1F409;</div>
+                <div>
+                    <h1>W-DRAGON-001</h1>
+                    <small data-i18n="subtitle">Dragon Shadow Forest</small>
+                </div>
+            </div>
+            <div class="controls">
+                <div class="lang-toggle">
+                    <button onclick="setLang('de')">DE</button>
+                    <button onclick="setLang('en')" class="active">EN</button>
+                    <button onclick="setLang('pt')">PT</button>
+                </div>
+                <div class="theme-toggle">
+                    <button onclick="setTheme('noir')" class="active" title="NOIR">&#x263D;</button>
+                    <button onclick="setTheme('klar')" title="KLAR">&#x2600;</button>
+                </div>
+                <a href="/docs/pitch/dragon_berlin_demo_trilingual.html" class="nav-link" data-i18n="nav_demo">📊 Berlin Demo</a>
+            </div>
+        </header>
+
+        <!-- Status Card -->
+        <div class="status-card">
+            <div class="status-header">
+                <h2 data-i18n="status">System Status</h2>
+                <div class="status-badge healthy" id="statusBadge">
+                    <span class="status-dot"></span>
+                    <span data-i18n="healthy">Healthy</span>
+                </div>
+            </div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label data-i18n="version">Version</label>
+                    <span id="infoVersion">-</span>
+                </div>
+                <div class="info-item">
+                    <label data-i18n="grid">Grid Size</label>
+                    <span id="infoGrid">16x16</span>
+                </div>
+                <div class="info-item">
+                    <label data-i18n="bits">Total Bits</label>
+                    <span id="infoBits">256</span>
+                </div>
+                <div class="info-item">
+                    <label data-i18n="pdf">PDF Support</label>
+                    <span id="infoPdf">-</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Encode Form -->
+        <h3 class="section-title" data-i18n="encode_title">Encode Document</h3>
+        <div class="encode-form">
+            <!-- Tab Selector -->
+            <div class="input-tabs">
+                <button class="input-tab active" onclick="switchInputMode('text')" data-i18n="tab_text">Text</button>
+                <button class="input-tab" onclick="switchInputMode('file')" data-i18n="tab_file">File Upload</button>
+            </div>
+
+            <!-- Text Input Mode -->
+            <div id="textInputMode" class="input-mode active">
+                <div class="form-group">
+                    <label data-i18n="content_label">Document Content (text or paste)</label>
+                    <textarea id="contentInput" placeholder="Enter text to encode..." data-i18n-placeholder="content_placeholder"></textarea>
+                </div>
+            </div>
+
+            <!-- File Upload Mode -->
+            <div id="fileInputMode" class="input-mode">
+                <div class="form-group">
+                    <label data-i18n="file_label">Upload Document</label>
+                    <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+                        <input type="file" id="fileInput" accept=".pdf,.txt,.doc,.docx,.md,.json,.xml,.html" style="display:none" onchange="handleFileSelect(event)">
+                        <div class="upload-icon">&#128206;</div>
+                        <div class="upload-text" data-i18n="upload_text">Click or drag file here</div>
+                        <div class="upload-hint" data-i18n="upload_hint">PDF, TXT, DOC, DOCX, MD, JSON, XML, HTML</div>
+                    </div>
+                    <div id="fileInfo" class="file-info" style="display:none;">
+                        <span class="file-icon">&#128196;</span>
+                        <span id="fileName">-</span>
+                        <span id="fileSize">-</span>
+                        <button class="file-remove" onclick="clearFile()">&times;</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label data-i18n="doc_name">Document Name</label>
+                    <input type="text" id="docName" value="Test Document">
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="registerLedger" checked>
+                        <label for="registerLedger" data-i18n="register_ledger">Register with Ledger (I11)</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PDF Options (only for PDFs) -->
+            <div id="pdfOptions" class="form-group" style="display:none;">
+                <p style="font-size: 0.75rem; color: var(--text-dim); margin-bottom: 0.75rem;" data-i18n="forensic_subtitle">
+                    Forensic Features for Lawyers & Verification
+                </p>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="embedOverlay" checked>
+                    <label for="embedOverlay" data-i18n="embed_overlay">Embed dragon grid in PDF (invisible layer)</label>
+                </div>
+                <div class="checkbox-group" style="margin-top: 0.5rem;">
+                    <input type="checkbox" id="includeQR" checked>
+                    <label for="includeQR" data-i18n="include_qr">🔲 Include QR Code (scan to verify)</label>
+                </div>
+                <div class="checkbox-group" style="margin-top: 0.5rem;">
+                    <input type="checkbox" id="includeMicrotext" checked>
+                    <label for="includeMicrotext" data-i18n="include_microtext">🔍 Include Micro-text (readable at 1200 DPI)</label>
+                </div>
+
+                <!-- Opacity Presets for Demo -->
+                <div style="margin-top: 1rem; padding: 0.75rem; background: var(--bg); border: 1px solid var(--border); border-radius: 6px;">
+                    <label style="font-size: 0.75rem; color: var(--text-dim); display: block; margin-bottom: 0.5rem;" data-i18n="opacity_label">
+                        🐉 Dragon Grid Opacity
+                    </label>
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <label class="opacity-option" style="display: flex; align-items: center; gap: 0.25rem; cursor: pointer;">
+                            <input type="radio" name="opacityPreset" value="0.03">
+                            <span style="font-size: 0.8rem;" data-i18n="opacity_stealth">Stealth (0.03)</span>
+                        </label>
+                        <label class="opacity-option" style="display: flex; align-items: center; gap: 0.25rem; cursor: pointer;">
+                            <input type="radio" name="opacityPreset" value="0.07" checked>
+                            <span style="font-size: 0.8rem;" data-i18n="opacity_print">Print (0.07)</span>
+                        </label>
+                        <label class="opacity-option" style="display: flex; align-items: center; gap: 0.25rem; cursor: pointer;">
+                            <input type="radio" name="opacityPreset" value="0.18">
+                            <span style="font-size: 0.8rem;" data-i18n="opacity_screen">Screen (0.18)</span>
+                        </label>
+                    </div>
+                    <p style="font-size: 0.65rem; color: var(--text-dim); margin-top: 0.5rem;" data-i18n="opacity_hint">
+                        Stealth = invisible · Print = subtle badge · Screen = demo visible
+                    </p>
+                </div>
+
+                <p style="font-size: 0.7rem; color: var(--gold); margin-top: 0.75rem;" data-i18n="metadata_note">
+                    ✓ PDF Metadata always included (File → Properties → Custom)
+                </p>
+            </div>
+
+            <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                <button class="btn btn-primary" onclick="encodeDocument()" id="encodeBtn">
+                    <span data-i18n="encode_btn">Encode</span>
+                </button>
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <span data-i18n="processing">Processing...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Result Section -->
+        <div class="result-section" id="resultSection">
+            <div class="result-header">
+                <h3 class="section-title" data-i18n="result_title">Dragon Shadow Forest</h3>
+            </div>
+            <div class="dragon-grid-container" id="dragonGrid">
+                <!-- SVG will be injected here -->
+            </div>
+            <div class="result-info">
+                <div class="result-info-item">
+                    <label data-i18n="receipt_id">Receipt ID</label>
+                    <code id="resultReceiptId">-</code>
+                </div>
+                <div class="result-info-item">
+                    <label data-i18n="content_hash">SHA-256 Hash</label>
+                    <code id="resultHash">-</code>
+                </div>
+                <div class="result-info-item">
+                    <label data-i18n="verify_url">Verify URL</label>
+                    <code id="resultVerify">-</code>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p data-i18n="footer">Liga IA+H &middot; Kempten, Bavaria &middot; 2026</p>
+            <p>
+                <a href="/law/dragon/howto" style="margin-right:1.5rem;">&#10067; <span data-i18n="howto">How to Use</span></a>
+                <a href="/law/workspace/">&#8592; <span data-i18n="back">Back to WINDI-SITES</span></a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // ═══════════════════════════════════════════════════════════════
+        // I18N — Trilingual Support (DE | EN | PT)
+        // ═══════════════════════════════════════════════════════════════
+
+        const I18N = {
+            de: {
+                subtitle: "Dragon Shadow Forest",
+                status: "Systemstatus",
+                healthy: "Aktiv",
+                error: "Fehler",
+                version: "Version",
+                grid: "Rastergröße",
+                bits: "Bits Gesamt",
+                pdf: "PDF-Unterstützung",
+                encode_title: "Dokument Kodieren",
+                tab_text: "Text",
+                tab_file: "Datei hochladen",
+                content_label: "Dokumentinhalt (Text oder Einfügen)",
+                content_placeholder: "Text zum Kodieren eingeben...",
+                file_label: "Dokument hochladen",
+                upload_text: "Klicken oder Datei hierher ziehen",
+                upload_hint: "PDF, TXT, DOC, DOCX, MD, JSON, XML, HTML",
+                embed_overlay: "Drachen-Raster in PDF einbetten (unsichtbare Schicht)",
+                forensic_subtitle: "Forensische Funktionen für Anwälte & Verifizierung",
+                include_qr: "🔲 QR-Code einbetten (zum Verifizieren scannen)",
+                include_microtext: "🔍 Mikrotext einbetten (lesbar bei 1200 DPI)",
+                metadata_note: "✓ PDF-Metadaten immer enthalten (Datei → Eigenschaften → Benutzerdefiniert)",
+                opacity_label: "🐉 Drachen-Raster Opazität",
+                opacity_stealth: "Stealth (0.03)",
+                opacity_print: "Druck (0.07)",
+                opacity_screen: "Bildschirm (0.18)",
+                opacity_hint: "Stealth = unsichtbar · Druck = dezentes Siegel · Bildschirm = Demo sichtbar",
+                doc_name: "Dokumentname",
+                register_ledger: "Im Ledger registrieren (I11)",
+                encode_btn: "Kodieren",
+                processing: "Verarbeitung...",
+                result_title: "Dragon Shadow Forest",
+                receipt_id: "Beleg-ID",
+                content_hash: "SHA-256 Hash",
+                verify_url: "Verifizierungs-URL",
+                download_pdf: "Kodiertes PDF herunterladen",
+                footer: "Liga IA+H · Kempten, Bayern · 2026",
+                back: "Zurück zu WINDI-SITES",
+                howto: "Anleitung",
+                nav_demo: "📊 Berlin Demo"
+            },
+            en: {
+                subtitle: "Dragon Shadow Forest",
+                status: "System Status",
+                healthy: "Healthy",
+                error: "Error",
+                version: "Version",
+                grid: "Grid Size",
+                bits: "Total Bits",
+                pdf: "PDF Support",
+                encode_title: "Encode Document",
+                tab_text: "Text",
+                tab_file: "File Upload",
+                content_label: "Document Content (text or paste)",
+                content_placeholder: "Enter text to encode...",
+                file_label: "Upload Document",
+                upload_text: "Click or drag file here",
+                upload_hint: "PDF, TXT, DOC, DOCX, MD, JSON, XML, HTML",
+                embed_overlay: "Embed dragon grid in PDF (invisible layer)",
+                forensic_subtitle: "Forensic Features for Lawyers & Verification",
+                include_qr: "🔲 Include QR Code (scan to verify)",
+                include_microtext: "🔍 Include Micro-text (readable at 1200 DPI)",
+                metadata_note: "✓ PDF Metadata always included (File → Properties → Custom)",
+                opacity_label: "🐉 Dragon Grid Opacity",
+                opacity_stealth: "Stealth (0.03)",
+                opacity_print: "Print (0.07)",
+                opacity_screen: "Screen (0.18)",
+                opacity_hint: "Stealth = invisible · Print = subtle badge · Screen = demo visible",
+                doc_name: "Document Name",
+                register_ledger: "Register with Ledger (I11)",
+                encode_btn: "Encode",
+                processing: "Processing...",
+                result_title: "Dragon Shadow Forest",
+                receipt_id: "Receipt ID",
+                content_hash: "SHA-256 Hash",
+                verify_url: "Verify URL",
+                download_pdf: "Download Encoded PDF",
+                footer: "Liga IA+H · Kempten, Bavaria · 2026",
+                back: "Back to WINDI-SITES",
+                howto: "How to Use",
+                nav_demo: "📊 Berlin Demo"
+            },
+            pt: {
+                subtitle: "Floresta das Sombras do Dragão",
+                status: "Estado do Sistema",
+                healthy: "Activo",
+                error: "Erro",
+                version: "Versão",
+                grid: "Tamanho da Grelha",
+                bits: "Total de Bits",
+                pdf: "Suporte PDF",
+                encode_title: "Codificar Documento",
+                tab_text: "Texto",
+                tab_file: "Carregar Ficheiro",
+                content_label: "Conteúdo do Documento (texto ou colar)",
+                content_placeholder: "Introduza texto para codificar...",
+                file_label: "Carregar Documento",
+                upload_text: "Clica ou arrasta o ficheiro aqui",
+                upload_hint: "PDF, TXT, DOC, DOCX, MD, JSON, XML, HTML",
+                embed_overlay: "Incorporar grelha de dragões no PDF (camada invisível)",
+                forensic_subtitle: "Funcionalidades Forenses para Advogados & Verificação",
+                include_qr: "🔲 Incluir QR Code (digitalizar para verificar)",
+                include_microtext: "🔍 Incluir Micro-texto (legível a 1200 DPI)",
+                metadata_note: "✓ Metadados PDF sempre incluídos (Ficheiro → Propriedades → Personalizado)",
+                opacity_label: "🐉 Opacidade da Grelha de Dragões",
+                opacity_stealth: "Stealth (0.03)",
+                opacity_print: "Impressão (0.07)",
+                opacity_screen: "Ecrã (0.18)",
+                opacity_hint: "Stealth = invisível · Impressão = selo subtil · Ecrã = demo visível",
+                doc_name: "Nome do Documento",
+                register_ledger: "Registar no Ledger (I11)",
+                encode_btn: "Codificar",
+                processing: "A processar...",
+                result_title: "Floresta das Sombras do Dragão",
+                receipt_id: "ID do Recibo",
+                content_hash: "Hash SHA-256",
+                verify_url: "URL de Verificação",
+                download_pdf: "Descarregar PDF Codificado",
+                footer: "Liga IA+H · Kempten, Baviera · 2026",
+                back: "Voltar ao WINDI-SITES",
+                howto: "Como Usar",
+                nav_demo: "📊 Demo Berlim"
+            }
+        };
+
+        let currentLang = localStorage.getItem('windi-lang') || 'en';
+        let currentTheme = localStorage.getItem('windi-theme') || 'noir';
+
+        function setLang(lang) {
+            currentLang = lang;
+            localStorage.setItem('windi-lang', lang);
+            applyLang();
+
+            document.querySelectorAll('.lang-toggle button').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent.toLowerCase() === lang);
+            });
+        }
+
+        function applyLang() {
+            const strings = I18N[currentLang] || I18N.en;
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (strings[key]) {
+                    el.textContent = strings[key];
+                }
+            });
+
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (strings[key]) {
+                    el.placeholder = strings[key];
+                }
+            });
+        }
+
+        function setTheme(theme) {
+            currentTheme = theme;
+            localStorage.setItem('windi-theme', theme);
+            document.documentElement.setAttribute('data-theme', theme);
+
+            document.querySelectorAll('.theme-toggle button').forEach((btn, i) => {
+                btn.classList.toggle('active', (i === 0 && theme === 'noir') || (i === 1 && theme === 'klar'));
+            });
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // API Functions
+        // ═══════════════════════════════════════════════════════════════
+
+        async function loadHealth() {
+            try {
+                const res = await fetch('/law/dragon/health');
+                const data = await res.json();
+
+                document.getElementById('infoVersion').textContent = data.module.version;
+                document.getElementById('infoGrid').textContent = data.module.grid_size;
+                document.getElementById('infoBits').textContent = data.module.total_bits;
+                document.getElementById('infoPdf').textContent = data.module.pdf_support ? '✓' : '✗';
+
+                const badge = document.getElementById('statusBadge');
+                badge.className = 'status-badge ' + (data.status === 'healthy' ? 'healthy' : 'error');
+            } catch (e) {
+                console.error('Health check failed:', e);
+                document.getElementById('statusBadge').className = 'status-badge error';
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // File Upload Functions
+        // ═══════════════════════════════════════════════════════════════
+
+        let currentInputMode = 'text';
+        let uploadedFile = null;
+
+        function switchInputMode(mode) {
+            currentInputMode = mode;
+
+            // Update tabs
+            document.querySelectorAll('.input-tab').forEach((tab, i) => {
+                tab.classList.toggle('active', (i === 0 && mode === 'text') || (i === 1 && mode === 'file'));
+            });
+
+            // Update input modes
+            document.getElementById('textInputMode').classList.toggle('active', mode === 'text');
+            document.getElementById('fileInputMode').classList.toggle('active', mode === 'file');
+
+            // Hide PDF options when switching to text
+            if (mode === 'text') {
+                document.getElementById('pdfOptions').style.display = 'none';
+            }
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                setUploadedFile(file);
+            }
+        }
+
+        function setUploadedFile(file) {
+            uploadedFile = file;
+
+            // Update doc name if empty
+            const docNameInput = document.getElementById('docName');
+            if (docNameInput.value === 'Test Document' || !docNameInput.value) {
+                docNameInput.value = file.name.replace(/\.[^/.]+$/, '');
+            }
+
+            // Show file info
+            document.getElementById('fileName').textContent = file.name;
+            document.getElementById('fileSize').textContent = formatFileSize(file.size);
+            document.getElementById('fileInfo').style.display = 'flex';
+            document.getElementById('uploadZone').style.display = 'none';
+
+            // Show PDF options if PDF
+            const isPdf = file.name.toLowerCase().endsWith('.pdf');
+            document.getElementById('pdfOptions').style.display = isPdf ? 'block' : 'none';
+        }
+
+        function clearFile() {
+            uploadedFile = null;
+            document.getElementById('fileInput').value = '';
+            document.getElementById('fileInfo').style.display = 'none';
+            document.getElementById('uploadZone').style.display = 'block';
+            document.getElementById('pdfOptions').style.display = 'none';
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+
+        // Drag and drop
+        const uploadZone = document.getElementById('uploadZone');
+        if (uploadZone) {
+            ['dragenter', 'dragover'].forEach(evt => {
+                uploadZone.addEventListener(evt, e => {
+                    e.preventDefault();
+                    uploadZone.classList.add('dragover');
+                });
+            });
+
+            ['dragleave', 'drop'].forEach(evt => {
+                uploadZone.addEventListener(evt, e => {
+                    e.preventDefault();
+                    uploadZone.classList.remove('dragover');
+                });
+            });
+
+            uploadZone.addEventListener('drop', e => {
+                const file = e.dataTransfer.files[0];
+                if (file) setUploadedFile(file);
+            });
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // Encode Functions
+        // ═══════════════════════════════════════════════════════════════
+
+        async function encodeDocument() {
+            if (currentInputMode === 'text') {
+                await encodeTextContent();
+            } else {
+                await encodeFileContent();
+            }
+        }
+
+        async function encodeTextContent() {
+            const content = document.getElementById('contentInput').value;
+            const docName = document.getElementById('docName').value || 'Document';
+            const registerLedger = document.getElementById('registerLedger').checked;
+
+            if (!content.trim()) {
+                alert('Please enter content to encode');
+                return;
+            }
+
+            const btn = document.getElementById('encodeBtn');
+            const loading = document.getElementById('loading');
+
+            btn.disabled = true;
+            loading.classList.add('show');
+
+            try {
+                const base64Content = btoa(unescape(encodeURIComponent(content)));
+
+                const res = await fetch('/law/dragon/encode', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        content: base64Content,
+                        doc_name: docName,
+                        register_ledger: registerLedger
+                    })
+                });
+
+                const data = await res.json();
+                handleEncodeResult(data);
+
+            } catch (e) {
+                console.error('Encode failed:', e);
+                alert('Encoding failed: ' + e.message);
+            } finally {
+                btn.disabled = false;
+                loading.classList.remove('show');
+            }
+        }
+
+        async function encodeFileContent() {
+            if (!uploadedFile) {
+                alert('Please select a file to encode');
+                return;
+            }
+
+            const docName = document.getElementById('docName').value || uploadedFile.name;
+            const registerLedger = document.getElementById('registerLedger').checked;
+            const isPdf = uploadedFile.name.toLowerCase().endsWith('.pdf');
+            const embedOverlay = isPdf && document.getElementById('embedOverlay').checked;
+
+            const btn = document.getElementById('encodeBtn');
+            const loading = document.getElementById('loading');
+
+            btn.disabled = true;
+            loading.classList.add('show');
+
+            try {
+                if (isPdf && embedOverlay) {
+                    // Use PDF encode endpoint with overlay + forensic features
+                    const includeQR = document.getElementById('includeQR').checked;
+                    const includeMicrotext = document.getElementById('includeMicrotext').checked;
+                    const selectedOpacity = document.querySelector('input[name="opacityPreset"]:checked')?.value || '0.07';
+
+                    const formData = new FormData();
+                    formData.append('pdf_file', uploadedFile);
+                    formData.append('doc_name', docName);
+                    formData.append('opacity', selectedOpacity);
+                    formData.append('include_qr', includeQR);
+                    formData.append('include_microtext', includeMicrotext);
+                    formData.append('register_ledger', registerLedger);
+                    formData.append('return_format', 'json');
+
+                    const res = await fetch('/law/dragon/encode-pdf', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const data = await res.json();
+
+                    if (data.success) {
+                        handleEncodeResult(data);
+
+                        // Offer PDF download
+                        if (data.pdf_base64) {
+                            offerPdfDownload(data.pdf_base64, data.receipt_id);
+                        }
+                    } else {
+                        alert('PDF encoding failed: ' + (data.detail || 'Unknown error'));
+                    }
+                } else {
+                    // Read file as base64 and use standard encode
+                    const base64Content = await fileToBase64(uploadedFile);
+
+                    const res = await fetch('/law/dragon/encode', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            content: base64Content,
+                            doc_name: docName,
+                            register_ledger: registerLedger
+                        })
+                    });
+
+                    const data = await res.json();
+                    handleEncodeResult(data);
+                }
+
+            } catch (e) {
+                console.error('Encode failed:', e);
+                alert('Encoding failed: ' + e.message);
+            } finally {
+                btn.disabled = false;
+                loading.classList.remove('show');
+            }
+        }
+
+        function handleEncodeResult(data) {
+            if (data.success) {
+                document.getElementById('dragonGrid').innerHTML = data.svg_grid;
+                document.getElementById('resultReceiptId').textContent = data.receipt_id;
+                document.getElementById('resultHash').textContent = data.content_hash;
+                document.getElementById('resultVerify').textContent = data.verify_url;
+                document.getElementById('resultSection').classList.add('show');
+
+                document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+            } else {
+                alert('Encoding failed: ' + (data.detail || 'Unknown error'));
+            }
+        }
+
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const base64 = reader.result.split(',')[1];
+                    resolve(base64);
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function offerPdfDownload(base64Pdf, receiptId) {
+            const downloadSection = document.createElement('div');
+            downloadSection.className = 'result-info-item';
+            downloadSection.style.marginTop = '1rem';
+            downloadSection.innerHTML = `
+                <label data-i18n="download_pdf">Download Encoded PDF</label>
+                <button class="btn btn-primary" style="margin-top:0.5rem;" onclick="downloadPdf('${base64Pdf}', '${receiptId}')">
+                    &#128196; Download PDF
+                </button>
+            `;
+            document.querySelector('.result-info').appendChild(downloadSection);
+        }
+
+        function downloadPdf(base64, receiptId) {
+            const link = document.createElement('a');
+            link.href = 'data:application/pdf;base64,' + base64;
+            link.download = 'dragon_' + receiptId + '.pdf';
+            link.click();
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // Init
+        // ═══════════════════════════════════════════════════════════════
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setTheme(currentTheme);
+            setLang(currentLang);
+            loadHealth();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI LAW — Sovereign Document Infrastructure</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --parch: #F5F0E0;
+    --parch-dark: #EDE8D0;
+    --ink: #2A2010;
+    --ink-mid: #5A4A2A;
+    --ink-dim: #7A6850;
+    --gold: #8B6914;
+    --gold-light: #C4981F;
+    --gold-bg: #FAF5E8;
+    --seal-green: #3B6D11;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--parch);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 2.5rem;
+    border-bottom: 0.5px solid rgba(90,74,42,0.15);
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .logo span { color: var(--gold); }
+
+  .lang-switch { display: flex; gap: 4px; }
+  .lang-btn {
+    background: none;
+    border: 0.5px solid rgba(90,74,42,0.25);
+    border-radius: 4px;
+    padding: 4px 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-mid);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .lang-btn.active, .lang-btn:hover {
+    background: var(--gold);
+    color: var(--parch);
+    border-color: var(--gold);
+  }
+
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    text-align: center;
+  }
+
+  .eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.1s;
+  }
+
+  .headline {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--ink);
+    max-width: 680px;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.2s;
+  }
+  .headline em { font-style: italic; color: var(--gold); }
+
+  .subline {
+    font-size: 13px;
+    color: var(--ink-mid);
+    line-height: 1.7;
+    max-width: 480px;
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.35s;
+  }
+
+  .profiles {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.5s;
+  }
+
+  .profile-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 1.25rem 1.75rem;
+    background: var(--parch);
+    border: 1px solid rgba(139,105,20,0.3);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    min-width: 140px;
+  }
+  .profile-btn:hover {
+    background: var(--gold-bg);
+    border-color: var(--gold);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(139,105,20,0.12);
+  }
+  .profile-btn:hover .profile-icon svg { stroke: var(--gold); opacity: 1; }
+
+  .profile-icon { width: 24px; height: 24px; }
+  .profile-icon svg {
+    width: 24px; height: 24px;
+    stroke: var(--gold);
+    stroke-width: 1.5;
+    fill: none;
+    opacity: 0.7;
+    transition: all 0.2s;
+  }
+
+  .profile-label {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .profile-sub { font-size: 10px; color: var(--ink-dim); letter-spacing: 0.05em; }
+
+  .secondary-links {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.58s;
+  }
+  .secondary-link {
+    font-size: 11px;
+    color: var(--ink-dim);
+    text-decoration: none;
+    letter-spacing: 0.06em;
+    border-bottom: 0.5px solid rgba(90,74,42,0.3);
+    padding-bottom: 2px;
+    transition: color 0.15s;
+  }
+  .secondary-link:hover { color: var(--gold); }
+
+  .trust-bar {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.65s;
+  }
+  .trust-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--ink-dim);
+    letter-spacing: 0.04em;
+  }
+  .trust-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--gold);
+  }
+
+  .proof-strip {
+    margin-top: 3rem;
+    padding: 1rem 2rem;
+    background: var(--parch-dark);
+    border-top: 0.5px solid rgba(90,74,42,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.8s;
+  }
+  .proof-item { font-size: 10px; color: var(--ink-dim); letter-spacing: 0.08em; text-transform: uppercase; }
+  .proof-sep { width: 1px; height: 12px; background: rgba(90,74,42,0.2); }
+
+  footer {
+    padding: 1rem 2.5rem;
+    border-top: 0.5px solid rgba(90,74,42,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--ink-dim);
+  }
+  .footer-phrase { font-style: italic; }
+  .ledger-indicator { display: flex; align-items: center; gap: 5px; }
+  .ledger-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--seal-green);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  [data-lang] { display: none; }
+  [data-lang="de"] { display: inherit; }
+
+  @media (max-width: 600px) {
+    header { padding: 1rem 1.25rem; }
+    main { padding: 3rem 1.25rem; }
+    .profiles { flex-direction: column; align-items: stretch; }
+    .profile-btn { flex-direction: row; min-width: unset; }
+    footer { flex-direction: column; gap: 6px; text-align: center; }
+    .proof-strip { gap: 1rem; }
+    .proof-sep { display: none; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">WINDI<span>LAW</span></div>
+  <div class="lang-switch">
+    <button class="lang-btn active" onclick="setLang('de')">DE</button>
+    <button class="lang-btn" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('pt')">PT</button>
+  </div>
+</header>
+
+<main>
+  <div class="eyebrow">
+    <span data-lang="de">Souveräne Dokumenteninfrastruktur</span>
+    <span data-lang="en">Sovereign Document Infrastructure</span>
+    <span data-lang="pt">Infraestrutura Documental Soberana</span>
+  </div>
+
+  <h1 class="headline">
+    <span data-lang="de">Beweise, die Zeit, Systeme<br>und Gerichte <em>überdauern.</em></span>
+    <span data-lang="en">Evidence that survives time,<br>systems and <em>courts.</em></span>
+    <span data-lang="pt">Provas que sobrevivem ao tempo,<br>ao sistema e ao <em>tribunal.</em></span>
+  </h1>
+
+  <p class="subline">
+    <span data-lang="de">WINDI LAW versiegelt Dokumente kryptografisch — mit SHA-256, Zeitstempel und unveränderlichem Ledger. Keine Notare. Keine Diskussionen. Nur Mathematik.</span>
+    <span data-lang="en">WINDI LAW seals documents cryptographically — with SHA-256, timestamp and immutable Ledger. No notaries. No disputes. Just mathematics.</span>
+    <span data-lang="pt">WINDI LAW sela documentos criptograficamente — com SHA-256, timestamp e Ledger imutável. Sem notários. Sem discussões. Só matemática.</span>
+  </p>
+
+  <div class="profiles">
+    <a class="profile-btn" href="/gate?typ=kanzlei">
+      <div class="profile-icon">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3v18"/><path d="M5 7h14"/><path d="M5 7l-2 8h6l-2-8"/><path d="M19 7l2 8h-6l2-8"/><circle cx="12" cy="3" r="1"/>
+        </svg>
+      </div>
+      <div class="profile-label" data-lang="de">Kanzlei</div>
+      <div class="profile-label" data-lang="en">Law Firm</div>
+      <div class="profile-label" data-lang="pt">Escritório</div>
+      <div class="profile-sub">
+        <span data-lang="de">Anwälte · Notare</span>
+        <span data-lang="en">Lawyers · Notaries</span>
+        <span data-lang="pt">Advogados · Notários</span>
+      </div>
+    </a>
+    <a class="profile-btn" href="/gate?typ=unternehmen">
+      <div class="profile-icon">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="6" width="16" height="15" rx="1"/><path d="M9 21V9h6v12"/><path d="M4 6l8-3 8 3"/>
+        </svg>
+      </div>
+      <div class="profile-label" data-lang="de">Unternehmen</div>
+      <div class="profile-label" data-lang="en">Company</div>
+      <div class="profile-label" data-lang="pt">Empresa</div>
+      <div class="profile-sub">
+        <span data-lang="de">Compliance · Buchhaltung</span>
+        <span data-lang="en">Compliance · Accounting</span>
+        <span data-lang="pt">Compliance · Contabilidade</span>
+      </div>
+    </a>
+    <a class="profile-btn" href="/gate?typ=forensic">
+      <div class="profile-icon">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/>
+        </svg>
+      </div>
+      <div class="profile-label" data-lang="de">Forensik</div>
+      <div class="profile-label" data-lang="en">Forensic</div>
+      <div class="profile-label" data-lang="pt">Forense</div>
+      <div class="profile-sub">
+        <span data-lang="de">Gutachter · Behörden</span>
+        <span data-lang="en">Experts · Authorities</span>
+        <span data-lang="pt">Peritos · Autoridades</span>
+      </div>
+    </a>
+    <a class="profile-btn" href="/gate?typ=einzelperson">
+      <div class="profile-icon">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="7" r="4"/><path d="M5.5 21a7.5 7.5 0 0 1 13 0"/>
+        </svg>
+      </div>
+      <div class="profile-label" data-lang="de">Einzelperson</div>
+      <div class="profile-label" data-lang="en">Individual</div>
+      <div class="profile-label" data-lang="pt">Particular</div>
+      <div class="profile-sub">
+        <span data-lang="de">Bürger · Freiberufler</span>
+        <span data-lang="en">Citizen · Freelancer</span>
+        <span data-lang="pt">Cidadão · Freelancer</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="secondary-links">
+    <a class="secondary-link" href="https://windi-domain.com/library/about-windi.html">
+      <span data-lang="de">Über WINDI →</span>
+      <span data-lang="en">About WINDI →</span>
+      <span data-lang="pt">Sobre o WINDI →</span>
+    </a>
+    <a class="secondary-link" href="https://windi-domain.com/library/">
+      <span data-lang="de">Bibliothek →</span>
+      <span data-lang="en">Library →</span>
+      <span data-lang="pt">Biblioteca →</span>
+    </a>
+  </div>
+
+  <div class="trust-bar">
+    <div class="trust-item"><div class="trust-dot"></div> SHA-256</div>
+    <div class="trust-item"><div class="trust-dot"></div> Forensic Ledger</div>
+    <div class="trust-item"><div class="trust-dot"></div> EU AI Act</div>
+    <div class="trust-item"><div class="trust-dot"></div> eIDAS</div>
+    <div class="trust-item"><div class="trust-dot"></div> GoBD</div>
+    <div class="trust-item"><div class="trust-dot"></div> ZPO §273</div>
+  </div>
+</main>
+
+<div class="proof-strip">
+  <div class="proof-item">DE · ZPO</div>
+  <div class="proof-sep"></div>
+  <div class="proof-item">EU · eIDAS</div>
+  <div class="proof-sep"></div>
+  <div class="proof-item">BR · MCI</div>
+  <div class="proof-sep"></div>
+  <div class="proof-item">INT · UNCITRAL</div>
+  <div class="proof-sep"></div>
+  <div class="proof-item" style="color: var(--seal-green);">40.000+ Receipts</div>
+</div>
+
+<footer>
+  <div class="footer-phrase">
+    <span data-lang="de">"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</span>
+    <span data-lang="en">"AI processes. Human decides. WINDI guarantees."</span>
+    <span data-lang="pt">"IA processa. Humano decide. WINDI garante."</span>
+  </div>
+  <div class="ledger-indicator">
+    <div class="ledger-dot"></div>
+    <span>Ledger · 8101 · aktiv</span>
+  </div>
+</footer>
+
+<script>
+function setLang(lang) {
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    el.style.display = el.getAttribute('data-lang') === lang ? 'inherit' : 'none';
+  });
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent.toLowerCase() === lang);
+  });
+  document.documentElement.lang = lang;
+  localStorage.setItem('windi-lang', lang);
+}
+const savedLang = localStorage.getItem('windi-lang');
+const browserLang = navigator.language.slice(0,2);
+setLang(savedLang || (['de','en','pt'].includes(browserLang) ? browserLang : 'de'));
+</script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+[Unit]
+Description=WINDI-SITES Identity Gate — W-SITES-001
+Documentation=https://windi-domain.com/sites/
+After=network.target windi-ledger.service
+
+[Service]
+Type=simple
+User=windi
+Group=windi
+WorkingDirectory=/opt/windi/windi-sites/identity-gate
+ExecStart=/usr/bin/python3 /opt/windi/windi-sites/identity-gate/identity_gate.py
+Restart=always
+RestartSec=5
+StandardOutput=append:/opt/windi/logs/windi-sites.log
+StandardError=append:/opt/windi/logs/windi-sites.log
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

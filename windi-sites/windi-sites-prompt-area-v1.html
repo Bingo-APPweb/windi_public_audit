@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI-SITES — Prompt Area Redesign v1.0</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  --bg:    #07090D;
+  --bg-2:  #0C0F16;
+  --bg-3:  #111620;
+  --bg-4:  #161C2A;
+  --gold:  #C9A84C;
+  --gold-d:rgba(201,168,76,0.30);
+  --gold-p:rgba(201,168,76,0.07);
+  --parch: #F5F0E0;
+  --muted: rgba(245,240,224,0.52);
+  --dim:   rgba(245,240,224,0.24);
+  --faint: rgba(245,240,224,0.07);
+  --border:rgba(245,240,224,0.07);
+  --border-2:rgba(245,240,224,0.13);
+  --high:  #2EC27E;
+  --high-p:rgba(46,194,126,0.10);
+  --med:   #C9A84C;
+  --med-p: rgba(201,168,76,0.10);
+  --low:   #5B8DD4;
+  --low-p: rgba(91,141,212,0.10);
+  --font:  'Bricolage Grotesque', sans-serif;
+  --mono:  'JetBrains Mono', monospace;
+}
+
+[data-theme="klar"] {
+  --bg:    #F5F0E0;
+  --bg-2:  #EDE8D6;
+  --bg-3:  #E4DFCC;
+  --bg-4:  #DEDAD0;
+  --gold:  #8B6914;
+  --gold-d:rgba(139,105,20,0.30);
+  --gold-p:rgba(139,105,20,0.07);
+  --parch: #1a1710;
+  --muted: rgba(26,23,16,0.52);
+  --dim:   rgba(26,23,16,0.30);
+  --faint: rgba(26,23,16,0.06);
+  --border:rgba(26,23,16,0.08);
+  --border-2:rgba(26,23,16,0.16);
+  --high:  #1A7A50;
+  --high-p:rgba(26,122,80,0.10);
+}
+
+html,body { height:100%; overflow:hidden; }
+body {
+  background:var(--bg); color:var(--parch);
+  font-family:var(--font);
+  display:flex; flex-direction:column;
+  transition:background 0.25s, color 0.25s;
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  height:48px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 1.25rem;
+  background:var(--bg); border-bottom:0.5px solid var(--border);
+}
+.tl { display:flex; align-items:center; gap:10px; }
+.tl-logo { font-size:13px; font-weight:700; letter-spacing:0.12em; color:var(--gold); }
+.tl-logo span { color:var(--muted); font-weight:300; font-size:10px; }
+.tl-did {
+  font-family:var(--mono); font-size:9px; letter-spacing:0.06em;
+  color:var(--dim); padding:3px 8px;
+  border:0.5px solid var(--border); border-radius:2px;
+}
+.tl-status {
+  font-family:var(--mono); font-size:8px; letter-spacing:0.1em;
+  padding:2px 7px; border-radius:2px;
+  color:var(--high); border:0.5px solid rgba(46,194,126,0.3);
+  background:var(--high-p); text-transform:uppercase;
+}
+.tr { display:flex; align-items:center; gap:8px; }
+.theme-btn {
+  font-family:var(--mono); font-size:9px; letter-spacing:0.1em;
+  padding:4px 10px; border:0.5px solid var(--border-2);
+  background:transparent; color:var(--dim); cursor:pointer;
+  border-radius:2px; transition:all 0.2s;
+}
+.theme-btn:hover { color:var(--gold); border-color:var(--gold-d); }
+.lang-pill { display:flex; border:0.5px solid var(--border); border-radius:2px; overflow:hidden; }
+.lp-btn {
+  font-family:var(--mono); font-size:9px; letter-spacing:0.1em;
+  padding:4px 9px; background:none; border:none;
+  border-right:0.5px solid var(--border); color:var(--dim);
+  cursor:pointer; transition:all 0.15s;
+}
+.lp-btn:last-child{border-right:none}
+.lp-btn.active { background:var(--gold-p); color:var(--gold); }
+
+/* ── MAIN LAYOUT ── */
+.workspace { display:flex; flex:1; overflow:hidden; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width:200px; flex-shrink:0;
+  background:var(--bg-2); border-right:0.5px solid var(--border);
+  display:flex; flex-direction:column;
+}
+.sb-section { padding:0.75rem 0; border-bottom:0.5px solid var(--border); }
+.sb-label {
+  font-family:var(--mono); font-size:8px; letter-spacing:0.14em;
+  text-transform:uppercase; color:var(--dim);
+  padding:0 1rem 0.4rem; display:block;
+}
+.sb-item {
+  display:flex; align-items:center; gap:8px;
+  padding:6px 1rem; cursor:pointer;
+  font-size:11px; color:var(--muted);
+  border-left:2px solid transparent; transition:all 0.15s;
+}
+.sb-item:hover { color:var(--parch); background:rgba(255,255,255,0.02); }
+.sb-item.active { color:var(--parch); border-left-color:var(--gold); background:var(--gold-p); }
+.sb-icon { font-size:11px; width:14px; text-align:center; }
+
+/* ── CENTRE: 3 ZONES ── */
+.centre { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+
+/* ══ ZONE A — INPUT (top, fixed height) ══ */
+.zone-input {
+  flex-shrink:0;
+  background:var(--bg-2);
+  border-bottom:1.5px solid var(--gold-d);
+  padding:1rem 1.25rem 0.875rem;
+}
+
+.zone-label {
+  font-family:var(--mono); font-size:8px; letter-spacing:0.14em;
+  text-transform:uppercase; color:var(--gold); margin-bottom:0.6rem;
+  display:flex; align-items:center; gap:8px;
+}
+.zl-line { flex:1; height:0.5px; background:var(--gold-d); }
+
+/* Truth selector — horizontal, fora do command bar */
+.truth-row {
+  display:flex; align-items:center; gap:6px;
+  margin-bottom:0.6rem;
+}
+.truth-label {
+  font-family:var(--mono); font-size:8px; letter-spacing:0.1em;
+  text-transform:uppercase; color:var(--dim); margin-right:4px;
+}
+.truth-btn {
+  font-family:var(--mono); font-size:9px; letter-spacing:0.08em;
+  text-transform:uppercase; padding:4px 12px;
+  border:0.5px solid; border-radius:2px;
+  background:transparent; cursor:pointer; transition:all 0.15s;
+}
+.truth-btn.h { color:rgba(46,194,126,0.5); border-color:rgba(46,194,126,0.2); }
+.truth-btn.h.active { color:var(--high); border-color:rgba(46,194,126,0.5); background:var(--high-p); }
+.truth-btn.m { color:rgba(201,168,76,0.5); border-color:rgba(201,168,76,0.2); }
+.truth-btn.m.active { color:var(--med); border-color:rgba(201,168,76,0.5); background:var(--med-p); }
+.truth-btn.l { color:rgba(91,141,212,0.5); border-color:rgba(91,141,212,0.2); }
+.truth-btn.l.active { color:var(--low); border-color:rgba(91,141,212,0.5); background:var(--low-p); }
+
+.truth-desc {
+  font-family:var(--mono); font-size:8.5px; color:var(--dim);
+  margin-left:auto; letter-spacing:0.04em;
+  transition:color 0.2s;
+}
+
+/* Command bar — limpo, sem ruído */
+.cmd-frame {
+  display:flex; align-items:center;
+  background:var(--bg-3); border:0.5px solid var(--border-2);
+  border-radius:3px; padding:3px 3px 3px 12px;
+  transition:border-color 0.2s;
+}
+.cmd-frame:focus-within { border-color:rgba(201,168,76,0.45); }
+.cmd-agent {
+  font-family:var(--mono); font-size:8.5px; letter-spacing:0.07em;
+  color:rgba(100,160,240,0.75); padding:2px 8px;
+  background:rgba(46,111,212,0.07); border:0.5px solid rgba(46,111,212,0.15);
+  border-radius:2px; flex-shrink:0; margin-right:8px;
+}
+#cmd-input {
+  flex:1; background:none; border:none; outline:none;
+  font-family:var(--mono); font-size:12px; color:var(--parch);
+  padding:9px 0; caret-color:var(--gold);
+}
+#cmd-input::placeholder { color:var(--dim); }
+.cmd-exec {
+  font-family:var(--font); font-size:10px; font-weight:700;
+  letter-spacing:0.1em; text-transform:uppercase;
+  color:var(--bg); background:var(--gold);
+  border:none; border-radius:2px; padding:9px 16px;
+  cursor:pointer; flex-shrink:0; transition:opacity 0.2s;
+}
+.cmd-exec:hover { opacity:0.88; }
+
+/* Presets — zona própria, SEPARADA do output */
+.presets-zone {
+  display:flex; align-items:center; gap:6px;
+  margin-top:0.6rem; flex-wrap:wrap;
+}
+.preset-label {
+  font-family:var(--mono); font-size:8px; letter-spacing:0.1em;
+  text-transform:uppercase; color:var(--dim); margin-right:4px;
+}
+.preset {
+  font-family:var(--mono); font-size:9px; letter-spacing:0.04em;
+  color:var(--dim); border:0.5px solid var(--border);
+  background:transparent; border-radius:2px;
+  padding:3px 9px; cursor:pointer; transition:all 0.18s;
+}
+.preset:hover { color:var(--gold); border-color:var(--gold-d); background:var(--gold-p); }
+
+/* ══ ZONE B — OUTPUT (flex, scrollable) ══ */
+.zone-output {
+  flex:1; overflow-y:auto;
+  padding:1rem 1.25rem;
+  display:flex; flex-direction:column; gap:0.75rem;
+}
+
+.zone-output-label {
+  font-family:var(--mono); font-size:8px; letter-spacing:0.14em;
+  text-transform:uppercase; color:var(--dim); margin-bottom:0.25rem;
+  display:flex; align-items:center; gap:8px;
+}
+.zol-line { flex:1; height:0.5px; background:var(--border); }
+
+.empty-output {
+  flex:1; display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  gap:0.75rem; text-align:center; padding:2rem;
+  border:0.5px dashed var(--border); border-radius:4px;
+}
+.eo-icon {
+  width:36px; height:36px; border:0.5px solid var(--gold-d);
+  border-radius:3px; display:flex; align-items:center; justify-content:center;
+  color:rgba(201,168,76,0.3); font-size:14px;
+}
+.eo-label { font-family:var(--mono); font-size:9.5px; letter-spacing:0.08em; color:var(--dim); }
+
+.result-card {
+  background:var(--bg-3); border:0.5px solid rgba(46,111,212,0.20);
+  border-radius:4px; overflow:hidden; animation:fadeup 0.3s ease;
+  display:none;
+}
+@keyframes fadeup{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+.rc-head {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:6px 12px; background:rgba(46,111,212,0.05);
+  border-bottom:0.5px solid rgba(46,111,212,0.12);
+  font-family:var(--mono); font-size:9px;
+}
+.rc-agent { color:rgba(100,160,240,0.8); display:flex; align-items:center; gap:5px; }
+.rc-live { width:4px; height:4px; border-radius:50%; background:var(--high); animation:blink 1.2s infinite; }
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.rc-ts { color:var(--dim); }
+.rc-truth {
+  font-size:8px; letter-spacing:0.1em; text-transform:uppercase;
+  padding:2px 7px; border-radius:2px; border:0.5px solid;
+}
+.rc-truth.high { color:var(--high); border-color:rgba(46,194,126,0.3); background:var(--high-p); }
+.rc-truth.med  { color:var(--med);  border-color:rgba(201,168,76,0.3);  background:var(--med-p); }
+.rc-truth.low  { color:var(--low);  border-color:rgba(91,141,212,0.3);  background:var(--low-p); }
+
+.rc-body { padding:10px 12px; }
+.rc-action { font-size:12px; color:var(--parch); margin-bottom:8px; font-weight:500; }
+.rc-meta {
+  display:grid; grid-template-columns:1fr 1fr; gap:3px 16px;
+  font-family:var(--mono); font-size:9.5px;
+}
+.rc-k { color:rgba(100,160,240,0.6); }
+.rc-v { color:var(--muted); }
+.rc-hash { color:rgba(201,168,76,0.4); font-size:8.5px; margin-top:6px; }
+
+.rc-foot {
+  padding:6px 12px; border-top:0.5px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  font-family:var(--mono); font-size:8px; letter-spacing:0.08em; text-transform:uppercase;
+}
+.rc-sealed { display:flex; align-items:center; gap:4px; color:var(--high); }
+.rc-verify a { color:rgba(201,168,76,0.6); text-decoration:none; }
+.rc-verify a:hover { color:var(--gold); }
+
+/* ══ INSPECTOR — colapsável, à direita ══ */
+.inspector {
+  width:0; flex-shrink:0; overflow:hidden;
+  background:var(--bg-2); border-left:0.5px solid var(--border);
+  transition:width 0.25s ease; display:flex; flex-direction:column;
+}
+.inspector.open { width:240px; }
+
+.insp-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0.75rem 1rem 0.5rem;
+  border-bottom:0.5px solid var(--border);
+}
+.insp-title {
+  font-family:var(--mono); font-size:8px; letter-spacing:0.14em;
+  text-transform:uppercase; color:var(--dim);
+}
+.insp-close {
+  font-size:14px; color:var(--dim); cursor:pointer;
+  background:none; border:none; padding:0; transition:color 0.15s;
+}
+.insp-close:hover { color:var(--parch); }
+
+.insp-body { flex:1; overflow-y:auto; padding:0.75rem 1rem; }
+.insp-sec { margin-bottom:1rem; }
+.insp-sec-title {
+  font-family:var(--mono); font-size:8px; letter-spacing:0.12em;
+  text-transform:uppercase; color:var(--dim); margin-bottom:0.5rem;
+}
+.insp-row { margin-bottom:0.5rem; }
+.insp-lbl { font-family:var(--mono); font-size:8.5px; color:var(--dim); margin-bottom:2px; }
+.insp-val { font-size:11.5px; color:var(--parch); word-break:break-all; }
+.insp-val.mono { font-family:var(--mono); font-size:9px; color:var(--muted); }
+.insp-val.gold { color:var(--gold); }
+.insp-val.high { color:var(--high); }
+
+/* Truth meter */
+.tm { display:flex; flex-direction:column; gap:5px; padding:0.6rem; background:var(--faint); border-radius:3px; }
+.tm-row { display:flex; align-items:center; gap:6px; }
+.tm-dot { width:5px; height:5px; border-radius:50%; flex-shrink:0; }
+.tm-lbl { font-family:var(--mono); font-size:8.5px; color:var(--muted); flex:1; }
+.tm-track { flex:1; height:2px; background:rgba(255,255,255,0.07); border-radius:1px; }
+.tm-fill { height:100%; border-radius:1px; }
+.tm-pct { font-family:var(--mono); font-size:8px; color:var(--dim); width:26px; text-align:right; }
+
+/* Inspector toggle button (flutuante na borda) */
+.insp-toggle {
+  position:absolute; right:0; top:50%;
+  transform:translateY(-50%);
+  width:20px; height:40px;
+  background:var(--bg-3); border:0.5px solid var(--border-2);
+  border-right:none; border-radius:4px 0 0 4px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; color:var(--dim); font-size:10px;
+  transition:all 0.15s; z-index:10;
+}
+.insp-toggle:hover { color:var(--gold); background:var(--gold-p); }
+
+.main-relative { flex:1; display:flex; overflow:hidden; position:relative; }
+
+/* STATUSBAR */
+.statusbar {
+  height:20px; flex-shrink:0;
+  background:var(--bg); border-top:0.5px solid var(--border);
+  display:flex; align-items:center; padding:0 1rem; gap:1.25rem;
+  font-family:var(--mono); font-size:8px; letter-spacing:0.07em; color:var(--dim);
+}
+.sb-live { color:var(--high); }
+.sb-gold { color:rgba(201,168,76,0.5); }
+.sb-sep { width:1px; height:9px; background:var(--border); }
+
+::-webkit-scrollbar { width:3px; }
+::-webkit-scrollbar-thumb { background:rgba(245,240,224,0.08); border-radius:2px; }
+</style>
+</head>
+<body id="root">
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="tl">
+    <div class="tl-logo">WINDI<span>LAW</span></div>
+    <div class="tl-did" id="tl-did">did:windi:f0cb5b7f···</div>
+    <div class="tl-status">VERIFIED</div>
+  </div>
+  <div class="tr">
+    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">NOIR</button>
+    <div class="lang-pill">
+      <button class="lp-btn active" onclick="setLang('de')">DE</button>
+      <button class="lp-btn" onclick="setLang('pt')">PT</button>
+      <button class="lp-btn" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
+</div>
+
+<!-- WORKSPACE -->
+<div class="workspace">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sb-section">
+      <span class="sb-label" id="sb-agents">Agentes</span>
+      <div class="sb-item active" onclick="setAgent('legal')">
+        <span class="sb-icon">⚖</span><span id="sb-legal">Juristisch</span>
+      </div>
+      <div class="sb-item" onclick="setAgent('notary')">
+        <span class="sb-icon">🔏</span><span id="sb-notary">Notariat</span>
+      </div>
+      <div class="sb-item" onclick="setAgent('acct')">
+        <span class="sb-icon">🧾</span><span id="sb-acct">Buchhaltung</span>
+      </div>
+      <div class="sb-item" onclick="setAgent('comply')">
+        <span class="sb-icon">🛡</span><span id="sb-comply">Compliance</span>
+      </div>
+    </div>
+    <div class="sb-section">
+      <span class="sb-label" id="sb-docs">Dokumente</span>
+      <div class="sb-item"><span class="sb-icon">◈</span><span>NDA · Müller GmbH</span></div>
+      <div class="sb-item"><span class="sb-icon">◈</span><span>Audit · Q1-2026</span></div>
+      <div class="sb-item"><span class="sb-icon">◈</span><span id="sb-invoice">Rechnung · 0041</span></div>
+    </div>
+  </div>
+
+  <!-- CENTRE + INSPECTOR -->
+  <div class="main-relative">
+
+    <div class="centre">
+
+      <!-- ══ ZONE A — INPUT ══ -->
+      <div class="zone-input">
+
+        <div class="zone-label">
+          <span id="za-label">Eingabe</span>
+          <div class="zl-line"></div>
+        </div>
+
+        <!-- Truth selector — SEPARADO, acima do command bar -->
+        <div class="truth-row">
+          <span class="truth-label" id="tr-label">Wahrheitsebene</span>
+          <button class="truth-btn h active" onclick="setTruth('HIGH','h')" id="tb-h">Gerichtsfähig</button>
+          <button class="truth-btn m" onclick="setTruth('MED','m')" id="tb-m">Prozessual</button>
+          <button class="truth-btn l" onclick="setTruth('LOW','l')" id="tb-l">Analyse</button>
+          <span class="truth-desc" id="truth-desc">SHA-256 · Forensic Ledger · Unveränderlich</span>
+        </div>
+
+        <!-- Command bar — LIMPO, sem ruído -->
+        <div class="cmd-frame">
+          <div class="cmd-agent" id="cmd-agent">W-LEGAL-001</div>
+          <input type="text" id="cmd-input"
+            placeholder="Beschreiben Sie Ihr rechtliches Anliegen…"
+            onkeydown="handleCmd(event)">
+          <button class="cmd-exec" id="cmd-exec" onclick="execCmd()">Ausführen</button>
+        </div>
+
+        <!-- Presets — ZONA PRÓPRIA, abaixo do command bar -->
+        <div class="presets-zone">
+          <span class="preset-label" id="pr-label">Schnell</span>
+          <button class="preset" onclick="fill(this)">NDA · ZPO §273</button>
+          <button class="preset" onclick="fill(this)">Beweiskette · SHA-256</button>
+          <button class="preset" onclick="fill(this)">Tribunalpaket · DE/EN/PT</button>
+          <button class="preset" onclick="fill(this)">BaFin · MiCA</button>
+          <button class="preset" onclick="fill(this)">eIDAS Signatur</button>
+        </div>
+
+      </div>
+
+      <!-- ══ ZONE B — OUTPUT ══ -->
+      <div class="zone-output">
+
+        <div class="zone-output-label">
+          <span id="zb-label">Ergebnis</span>
+          <div class="zol-line"></div>
+        </div>
+
+        <!-- Empty state -->
+        <div class="empty-output" id="empty-state">
+          <div class="eo-icon">◎</div>
+          <div class="eo-label" id="eo-text">Bereit für Ihren Befehl</div>
+        </div>
+
+        <!-- Result card (aparece após execução) -->
+        <div class="result-card" id="result-card">
+          <div class="rc-head">
+            <div class="rc-agent"><div class="rc-live"></div><span id="rc-agent-id">W-LEGAL-001 · Systementscheidung</span></div>
+            <div style="display:flex;align-items:center;gap:7px">
+              <span class="rc-truth high" id="rc-truth-badge">GERICHTSFÄHIG</span>
+              <span class="rc-ts" id="rc-ts"></span>
+            </div>
+          </div>
+          <div class="rc-body">
+            <div class="rc-action" id="rc-action">—</div>
+            <div class="rc-meta">
+              <span class="rc-k" id="rc-k1">Domäne:</span><span class="rc-v" id="rc-v1">—</span>
+              <span class="rc-k" id="rc-k2">Zuständig:</span><span class="rc-v" id="rc-v2">—</span>
+              <span class="rc-k" id="rc-k3">Status:</span><span class="rc-v" id="rc-v3">—</span>
+              <span class="rc-k" id="rc-k4">Nächster Schritt:</span><span class="rc-v" id="rc-v4">—</span>
+            </div>
+            <div class="rc-hash" id="rc-hash"></div>
+          </div>
+          <div class="rc-foot">
+            <div class="rc-sealed"><div class="rc-live"></div><span id="rc-sealed">Im Ledger · I11</span></div>
+            <div class="rc-verify"><a href="#" id="rc-verify-link">Verify ↗</a></div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Inspector toggle button -->
+    <button class="insp-toggle" id="insp-toggle" onclick="toggleInspector()" title="Inspector">‹</button>
+
+    <!-- ══ INSPECTOR — colapsável ══ -->
+    <div class="inspector" id="inspector">
+      <div class="insp-header">
+        <span class="insp-title" id="insp-title">Inspector</span>
+        <button class="insp-close" onclick="toggleInspector()">✕</button>
+      </div>
+      <div class="insp-body">
+
+        <div class="insp-sec">
+          <div class="insp-sec-title" id="is-doc">Dokument</div>
+          <div class="insp-row">
+            <div class="insp-lbl" id="il-type">Typ</div>
+            <div class="insp-val" id="iv-type">NDA</div>
+          </div>
+          <div class="insp-row">
+            <div class="insp-lbl" id="il-agent">Agent</div>
+            <div class="insp-val gold" id="iv-agent">W-LEGAL-001</div>
+          </div>
+          <div class="insp-row">
+            <div class="insp-lbl" id="il-status">Status</div>
+            <div class="insp-val high" id="iv-status">Bereit</div>
+          </div>
+          <div class="insp-row">
+            <div class="insp-lbl">SHA-256</div>
+            <div class="insp-val mono" id="iv-hash">—</div>
+          </div>
+        </div>
+
+        <!-- Truth meter — COMPACTO, não denso -->
+        <div class="insp-sec">
+          <div class="insp-sec-title" id="is-truth">Wahrheitsebenen</div>
+          <div class="tm">
+            <div class="tm-row">
+              <div class="tm-dot" style="background:var(--high)"></div>
+              <span class="tm-lbl" id="tm-h">Kryptografisch</span>
+              <div class="tm-track"><div class="tm-fill" style="width:100%;background:var(--high)"></div></div>
+              <span class="tm-pct">100%</span>
+            </div>
+            <div class="tm-row">
+              <div class="tm-dot" style="background:var(--med)"></div>
+              <span class="tm-lbl" id="tm-m">Prozessual</span>
+              <div class="tm-track"><div class="tm-fill" style="width:75%;background:var(--med)"></div></div>
+              <span class="tm-pct">75%</span>
+            </div>
+            <div class="tm-row">
+              <div class="tm-dot" style="background:var(--low)"></div>
+              <span class="tm-lbl" id="tm-l">KI-Analyse</span>
+              <div class="tm-track"><div class="tm-fill" style="width:42%;background:var(--low)"></div></div>
+              <span class="tm-pct">42%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Invariants — lista compacta -->
+        <div class="insp-sec">
+          <div class="insp-sec-title" id="is-inv">Invarianten</div>
+          <div style="display:flex;flex-direction:column;gap:3px">
+            <div class="tm-row" style="padding:3px 0;border-top:0.5px solid var(--border)">
+              <span style="font-family:var(--mono);font-size:9px;color:var(--gold);width:22px">I9</span>
+              <span style="font-size:10px;color:var(--muted);flex:1" id="inv-i9">Keine Eskalation</span>
+              <div class="tm-dot" style="background:var(--high)"></div>
+            </div>
+            <div class="tm-row" style="padding:3px 0;border-top:0.5px solid var(--border)">
+              <span style="font-family:var(--mono);font-size:9px;color:var(--gold);width:22px">I11</span>
+              <span style="font-size:10px;color:var(--muted);flex:1" id="inv-i11">Permanenz</span>
+              <div class="tm-dot" style="background:var(--high)"></div>
+            </div>
+            <div class="tm-row" style="padding:3px 0;border-top:0.5px solid var(--border)">
+              <span style="font-family:var(--mono);font-size:9px;color:var(--gold);width:22px">I13</span>
+              <span style="font-size:10px;color:var(--muted);flex:1" id="inv-i13">Konvergenz</span>
+              <div class="tm-dot" style="background:var(--high)"></div>
+            </div>
+            <div class="tm-row" style="padding:3px 0;border-top:0.5px solid var(--border)">
+              <span style="font-family:var(--mono);font-size:9px;color:var(--gold);width:22px">G3</span>
+              <span style="font-size:10px;color:var(--muted);flex:1" id="inv-g3">Vorschlagen ≠ Ausführen</span>
+              <div class="tm-dot" style="background:var(--high)"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- STATUSBAR -->
+<div class="statusbar">
+  <span class="sb-live" id="stb-live">● aktiv</span>
+  <div class="sb-sep"></div>
+  <span id="stb-ledger">Ledger · :8101</span>
+  <div class="sb-sep"></div>
+  <span id="stb-agents">7 Agenten · online</span>
+  <div class="sb-sep"></div>
+  <span class="sb-gold">40.918+ Receipts</span>
+  <div class="sb-sep"></div>
+  <span style="margin-left:auto">AI processes · Human decides · WINDI guarantees</span>
+</div>
+
+<script>
+var lang = 'de';
+var theme = 'noir';
+var inspOpen = false;
+var currentTruth = 'HIGH';
+var currentAgent = 'legal';
+
+var LANG = {
+  de: {
+    zaLabel:'Eingabe', zbLabel:'Ergebnis', trLabel:'Wahrheitsebene',
+    tbH:'Gerichtsfähig', tbM:'Prozessual', tbL:'Analyse',
+    tdH:'SHA-256 · Forensic Ledger · Unveränderlich',
+    tdM:'ZPO · eIDAS · Prozessstrategie',
+    tdL:'Semantische · KI-Interpretation',
+    prLabel:'Schnell',
+    cmdPlaceholder:'Beschreiben Sie Ihr rechtliches Anliegen…',
+    execBtn:'Ausführen',
+    sbAgents:'Agenten', sbDocs:'Dokumente',
+    sbLegal:'Juristisch', sbNotary:'Notariat', sbAcct:'Buchhaltung', sbComply:'Compliance',
+    eoText:'Bereit für Ihren Befehl',
+    rcK1:'Domäne:', rcK2:'Zuständig:', rcK3:'Status:', rcK4:'Nächster Schritt:',
+    rcSealed:'Im Ledger · I11',
+    inspTitle:'Inspector', isDoc:'Dokument', isTruth:'Wahrheitsebenen', isInv:'Invarianten',
+    ilType:'Typ', ilAgent:'Agent', ilStatus:'Status',
+    ivStatus:'Bereit',
+    tmH:'Kryptografisch', tmM:'Prozessual', tmL:'KI-Analyse',
+    invI9:'Keine Eskalation', invI11:'Permanenz', invI13:'Konvergenz', invG3:'Vorschlagen ≠ Ausführen',
+    stbLive:'● aktiv', stbLedger:'Ledger · :8101', stbAgents:'7 Agenten · online'
+  },
+  pt: {
+    zaLabel:'Entrada', zbLabel:'Resultado', trLabel:'Nível de Verdade',
+    tbH:'Válido em Tribunal', tbM:'Processual', tbL:'Análise',
+    tdH:'SHA-256 · Forensic Ledger · Imutável',
+    tdM:'ZPO · eIDAS · Estratégia Processual',
+    tdL:'Semântica · Interpretação IA',
+    prLabel:'Rápido',
+    cmdPlaceholder:'Descreva o seu pedido jurídico…',
+    execBtn:'Executar',
+    sbAgents:'Agentes', sbDocs:'Documentos',
+    sbLegal:'Jurídico', sbNotary:'Notarial', sbAcct:'Contábil', sbComply:'Compliance',
+    eoText:'Pronto para o seu comando',
+    rcK1:'Domínio:', rcK2:'Responsável:', rcK3:'Estado:', rcK4:'Próximo passo:',
+    rcSealed:'Selado no Ledger · I11',
+    inspTitle:'Inspector', isDoc:'Documento', isTruth:'Níveis de Verdade', isInv:'Invariantes',
+    ilType:'Tipo', ilAgent:'Agente', ilStatus:'Estado',
+    ivStatus:'Pronto',
+    tmH:'Criptográfico', tmM:'Processual', tmL:'Análise IA',
+    invI9:'Sem escalada', invI11:'Permanência', invI13:'Convergência', invG3:'Propor ≠ Executar',
+    stbLive:'● activo', stbLedger:'Ledger · :8101', stbAgents:'7 Agentes · online'
+  },
+  en: {
+    zaLabel:'Input', zbLabel:'Output', trLabel:'Truth Level',
+    tbH:'Court-Admissible', tbM:'Procedural', tbL:'Analysis',
+    tdH:'SHA-256 · Forensic Ledger · Immutable',
+    tdM:'ZPO · eIDAS · Procedural Strategy',
+    tdL:'Semantic · AI Interpretation',
+    prLabel:'Quick',
+    cmdPlaceholder:'Describe your legal matter…',
+    execBtn:'Execute',
+    sbAgents:'Agents', sbDocs:'Documents',
+    sbLegal:'Legal', sbNotary:'Notary', sbAcct:'Accounting', sbComply:'Compliance',
+    eoText:'Ready for your command',
+    rcK1:'Domain:', rcK2:'Agent:', rcK3:'Status:', rcK4:'Next step:',
+    rcSealed:'Sealed in Ledger · I11',
+    inspTitle:'Inspector', isDoc:'Document', isTruth:'Truth Levels', isInv:'Invariants',
+    ilType:'Type', ilAgent:'Agent', ilStatus:'Status',
+    ivStatus:'Ready',
+    tmH:'Cryptographic', tmM:'Procedural', tmL:'AI Analysis',
+    invI9:'No escalation', invI11:'Permanence', invI13:'Convergence', invG3:'Propose ≠ Execute',
+    stbLive:'● active', stbLedger:'Ledger · :8101', stbAgents:'7 Agents · online'
+  }
+};
+
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lp-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelector('.lp-btn[onclick="setLang(\''+l+'\')"]').classList.add('active');
+  var t = LANG[l];
+  document.getElementById('za-label').textContent = t.zaLabel;
+  document.getElementById('zb-label').textContent = t.zbLabel;
+  document.getElementById('tr-label').textContent = t.trLabel;
+  document.getElementById('tb-h').textContent = t.tbH;
+  document.getElementById('tb-m').textContent = t.tbM;
+  document.getElementById('tb-l').textContent = t.tbL;
+  document.getElementById('pr-label').textContent = t.prLabel;
+  document.getElementById('cmd-input').placeholder = t.cmdPlaceholder;
+  document.getElementById('cmd-exec').textContent = t.execBtn;
+  document.getElementById('sb-agents').textContent = t.sbAgents;
+  document.getElementById('sb-docs').textContent = t.sbDocs;
+  document.getElementById('sb-legal').textContent = t.sbLegal;
+  document.getElementById('sb-notary').textContent = t.sbNotary;
+  document.getElementById('sb-acct').textContent = t.sbAcct;
+  document.getElementById('sb-comply').textContent = t.sbComply;
+  document.getElementById('eo-text').textContent = t.eoText;
+  document.getElementById('rc-k1').textContent = t.rcK1;
+  document.getElementById('rc-k2').textContent = t.rcK2;
+  document.getElementById('rc-k3').textContent = t.rcK3;
+  document.getElementById('rc-k4').textContent = t.rcK4;
+  document.getElementById('rc-sealed').textContent = t.rcSealed;
+  document.getElementById('insp-title').textContent = t.inspTitle;
+  document.getElementById('is-doc').textContent = t.isDoc;
+  document.getElementById('is-truth').textContent = t.isTruth;
+  document.getElementById('is-inv').textContent = t.isInv;
+  document.getElementById('il-type').textContent = t.ilType;
+  document.getElementById('il-agent').textContent = t.ilAgent;
+  document.getElementById('il-status').textContent = t.ilStatus;
+  document.getElementById('iv-status').textContent = t.ivStatus;
+  document.getElementById('tm-h').textContent = t.tmH;
+  document.getElementById('tm-m').textContent = t.tmM;
+  document.getElementById('tm-l').textContent = t.tmL;
+  document.getElementById('inv-i9').textContent = t.invI9;
+  document.getElementById('inv-i11').textContent = t.invI11;
+  document.getElementById('inv-i13').textContent = t.invI13;
+  document.getElementById('inv-g3').textContent = t.invG3;
+  document.getElementById('stb-live').textContent = t.stbLive;
+  document.getElementById('stb-ledger').textContent = t.stbLedger;
+  document.getElementById('stb-agents').textContent = t.stbAgents;
+  updateTruthDesc();
+}
+
+function updateTruthDesc() {
+  var t = LANG[lang];
+  var map = {HIGH:t.tdH, MED:t.tdM, LOW:t.tdL};
+  document.getElementById('truth-desc').textContent = map[currentTruth];
+}
+
+function setTruth(level, cls) {
+  currentTruth = level;
+  ['h','m','l'].forEach(function(c){
+    document.getElementById('tb-'+c).classList.remove('active');
+  });
+  document.getElementById('tb-'+cls).classList.add('active');
+  updateTruthDesc();
+}
+
+function setAgent(agent) {
+  currentAgent = agent;
+  document.querySelectorAll('.sb-item').forEach(function(i){ i.classList.remove('active'); });
+  event.currentTarget.classList.add('active');
+  var map = {legal:'W-LEGAL-001',notary:'W-NOTARY-001',acct:'W-ACCT-001',comply:'W-COMPLY-001'};
+  document.getElementById('cmd-agent').textContent = map[agent];
+  document.getElementById('iv-agent').textContent = map[agent];
+}
+
+function fill(el) {
+  document.getElementById('cmd-input').value = el.textContent;
+  document.getElementById('cmd-input').focus();
+}
+
+function handleCmd(e) { if(e.key==='Enter') execCmd(); }
+
+function execCmd() {
+  var cmd = document.getElementById('cmd-input').value.trim();
+  if(!cmd) return;
+  var now = new Date();
+  var ts = now.toISOString().replace('T',' ').substring(0,16) + ' UTC';
+  var hash = 'sha256:' + Array.from({length:12},function(){ return Math.floor(Math.random()*16).toString(16); }).join('') + '…';
+  var agentMap = {legal:'W-LEGAL-001',notary:'W-NOTARY-001',acct:'W-ACCT-001',comply:'W-COMPLY-001'};
+  var agent = agentMap[currentAgent];
+  var t = LANG[lang];
+  var truthMap = {HIGH:[t.tbH,'high'],MED:[t.tbM,'med'],LOW:[t.tbL,'low']};
+  var [tLabel, tCls] = truthMap[currentTruth];
+  document.getElementById('empty-state').style.display = 'none';
+  document.getElementById('result-card').style.display = 'block';
+  document.getElementById('rc-agent-id').textContent = agent + ' · Systementscheidung';
+  document.getElementById('rc-ts').textContent = ts;
+  document.getElementById('rc-action').textContent = cmd.substring(0,60) + (cmd.length>60?'…':'');
+  document.getElementById('rc-v1').textContent = currentAgent.charAt(0).toUpperCase()+currentAgent.slice(1);
+  document.getElementById('rc-v2').textContent = agent;
+  document.getElementById('rc-v3').textContent = currentTruth === 'HIGH' ? (lang==='de'?'Bereit zur Versiegelung':lang==='pt'?'Pronto para selar':'Ready to seal') : 'Entwurf';
+  document.getElementById('rc-v4').textContent = lang==='de'?'Bestätigung erforderlich':lang==='pt'?'Confirmação necessária':'Confirmation required';
+  document.getElementById('rc-hash').textContent = hash;
+  var badge = document.getElementById('rc-truth-badge');
+  badge.textContent = tLabel.toUpperCase();
+  badge.className = 'rc-truth ' + tCls;
+  document.getElementById('iv-hash').textContent = hash.substring(7,23)+'…';
+  document.getElementById('cmd-input').value = '';
+}
+
+function toggleInspector() {
+  inspOpen = !inspOpen;
+  document.getElementById('inspector').classList.toggle('open', inspOpen);
+  document.getElementById('insp-toggle').textContent = inspOpen ? '›' : '‹';
+}
+
+function toggleTheme() {
+  var btn = document.getElementById('theme-btn');
+  if(theme==='noir') {
+    document.getElementById('root').setAttribute('data-theme','klar');
+    theme='klar'; btn.textContent='KLAR';
+  } else {
+    document.getElementById('root').removeAttribute('data-theme');
+    theme='noir'; btn.textContent='NOIR';
+  }
+}
+
+setLang('de');
+</script>
+</body>
+</html>
