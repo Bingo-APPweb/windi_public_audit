@@ -114,12 +114,43 @@ execution_mode: gated      # Human click required
 
 ---
 
+## First AI Content — SELADO ✅
+
+**Receipt:** `WINDI-AIWRITER-FIRST-20260428163019-94A8C2EB`
+**Hash:** `sha256:94a8c2ebace47102a6f55b0f1d41c1780191509244f9ae4bdade664fb61ec0f1`
+**Verify:** https://windi-domain.com/verify-public/?id=WINDI-AIWRITER-FIRST-20260428163019-94A8C2EB
+**Parent:** `WINDI-CONTRACT-B-001-v1.0-20260428162029-1530DBEF`
+
+**Constitutional Chain provada:** Contract → First Content (com `parent_receipt`)
+
+---
+
+## §C-ACCEPTABILITY-001 — READY FOR SEAL ⏳
+
+**Document:** `/opt/windi/constitutional/S-C-ACCEPTABILITY-001-v1.0.md`
+**Hash:** `sha256:66a0d8b09a7aa4a0512e07ab4bd2a3897a74904727c03f13baae5c33ca31c271`
+**Status:** Awaiting Human Dragon approval
+
+### 4 Camadas Definidas
+
+| Layer | Nome | Efeito |
+|-------|------|--------|
+| **L-1** | PROMPT FILTER | Bloqueia INPUT · zero tokens gastos |
+| **L0** | PRE-SEAL FILTER | Bloqueia OUTPUT · I14 explicit fail |
+| **L1** | POST-SEAL REVIEW | `review_pending` · verify mostra flag |
+| **L2** | LEDGER ANNOTATION | Anotação encadeada · original fica |
+
+**Princípio:** "WINDI nunca apaga. WINDI pode anotar."
+
+---
+
 ## Next Steps
 
-### Immediate (Week 1)
-1. [ ] Test AI Writer POC with real W-GATEWAY calls
-2. [ ] Answer pending questions (§B)
-3. [ ] POC: `windi-seal` (core container)
+### Immediate (NOW)
+1. [x] Test AI Writer POC with real W-GATEWAY calls ✅
+2. [x] Answer pending questions (§B) ✅
+3. [ ] **SEAL §C-ACCEPTABILITY-001** ← AGUARDA HUMAN DRAGON
+4. [ ] POC: `windi-seal` (core container)
 
 ### Short-term (Week 2-3)
 4. [ ] Container Registry API (`/api/containers/*`)
@@ -151,8 +182,10 @@ execution_mode: gated      # Human click required
 /opt/windi/constitutional/
 ├── DECRETO-A-SPINE-COMERCIAL-v1.0.md     # ✅ SEALED
 ├── W-SITES-001-CONTAINER-SPEC-v0.1.md    # Draft
+├── W-SITES-001-CONTRACT-B-v1.0.md        # ✅ SEALED (1530DBEF)
 ├── W-SITES-001-MAKEUP-CATALOG-v0.1.md    # Draft
 ├── W-SITES-001-STATUS.md                 # This file
+├── S-C-ACCEPTABILITY-001-v1.0.md         # ⏳ READY FOR SEAL
 └── poc/
     └── windi-ai-writer/
         ├── manifest.yaml
