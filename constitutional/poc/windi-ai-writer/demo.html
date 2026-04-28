@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WINDI AI Writer — POC Demo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #080810;
+      color: #E8E6E1;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: #C8A45A;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: rgba(255,255,255,0.6);
+      font-size: 0.95rem;
+    }
+
+    .badge {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 4px 12px;
+      background: rgba(200, 164, 90, 0.1);
+      border: 1px solid #C8A45A;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      color: #C8A45A;
+    }
+
+    .demo-section {
+      margin-bottom: 40px;
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      color: #C8A45A;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(200, 164, 90, 0.3);
+    }
+
+    /* Language Toggle */
+    .lang-toggle {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .lang-btn {
+      padding: 8px 16px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px;
+      color: #E8E6E1;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .lang-btn.active {
+      background: rgba(200, 164, 90, 0.2);
+      border-color: #C8A45A;
+      color: #C8A45A;
+    }
+
+    .lang-btn:hover:not(.active) {
+      background: rgba(255,255,255,0.1);
+    }
+
+    /* DID Selector */
+    .did-selector {
+      margin-bottom: 24px;
+      padding: 16px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+    }
+
+    .did-selector label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.6);
+    }
+
+    .did-selector select {
+      width: 100%;
+      padding: 10px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px;
+      color: #E8E6E1;
+      font-size: 0.9rem;
+    }
+
+    /* Events Log */
+    .events-log {
+      margin-top: 40px;
+      padding: 16px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+    }
+
+    .events-log h3 {
+      font-size: 0.9rem;
+      color: #C8A45A;
+      margin-bottom: 12px;
+    }
+
+    .log-entries {
+      max-height: 200px;
+      overflow-y: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+    }
+
+    .log-entry {
+      padding: 6px 8px;
+      margin-bottom: 4px;
+      background: rgba(255,255,255,0.02);
+      border-radius: 4px;
+      border-left: 3px solid #C8A45A;
+    }
+
+    .log-entry.error {
+      border-left-color: #ff6b6b;
+    }
+
+    .log-entry.success {
+      border-left-color: #4CAF50;
+    }
+
+    .log-time {
+      color: rgba(255,255,255,0.4);
+      margin-right: 8px;
+    }
+
+    .log-event {
+      color: #C8A45A;
+    }
+
+    /* Invariants Panel */
+    .invariants-panel {
+      margin-top: 40px;
+      padding: 20px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+    }
+
+    .invariants-panel h3 {
+      font-size: 0.9rem;
+      color: #C8A45A;
+      margin-bottom: 16px;
+    }
+
+    .invariant-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .invariant-item:last-child {
+      border-bottom: none;
+    }
+
+    .invariant-badge {
+      padding: 4px 8px;
+      background: rgba(200, 164, 90, 0.1);
+      border: 1px solid rgba(200, 164, 90, 0.3);
+      border-radius: 4px;
+      font-size: 0.75rem;
+      color: #C8A45A;
+      font-weight: 600;
+    }
+
+    .invariant-name {
+      font-size: 0.85rem;
+    }
+
+    .invariant-desc {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.5);
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 60px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.4);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>WINDI AI Writer</h1>
+      <p class="subtitle">First MAKEUP Container — POC Demo</p>
+      <span class="badge">v0.1.0 · DRAFT</span>
+    </header>
+
+    <!-- Language Toggle -->
+    <div class="lang-toggle">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="de">DE</button>
+      <button class="lang-btn" data-lang="pt">PT</button>
+    </div>
+
+    <!-- DID Selector (simulating identity) -->
+    <div class="did-selector">
+      <label>Select DID for testing:</label>
+      <select id="did-select">
+        <option value="">— No DID (test I1 failure) —</option>
+        <option value="did:windi:human-dragon" selected>did:windi:human-dragon (CGO)</option>
+        <option value="did:windi:test-user-001">did:windi:test-user-001</option>
+        <option value="did:windi:demo-creator">did:windi:demo-creator</option>
+      </select>
+    </div>
+
+    <!-- Main Demo -->
+    <div class="demo-section">
+      <h2 class="section-title">Container Demo</h2>
+
+      <!-- The Web Component -->
+      <windi-ai-writer
+        id="writer"
+        did="did:windi:human-dragon"
+        lang="en"
+        tone="formal"
+        gateway="http://localhost:8130/gateway/call"
+      ></windi-ai-writer>
+    </div>
+
+    <!-- Events Log -->
+    <div class="events-log">
+      <h3>Events Log (Developer)</h3>
+      <div class="log-entries" id="log-entries">
+        <!-- Events will be logged here -->
+      </div>
+    </div>
+
+    <!-- Invariants Panel -->
+    <div class="invariants-panel">
+      <h3>Applied Invariants (Quadra Sagrada)</h3>
+
+      <div class="invariant-item">
+        <span class="invariant-badge">I1</span>
+        <div>
+          <div class="invariant-name">Human Sovereignty</div>
+          <div class="invariant-desc">User click required to generate. Never auto-executes.</div>
+        </div>
+      </div>
+
+      <div class="invariant-item">
+        <span class="invariant-badge">I9</span>
+        <div>
+          <div class="invariant-name">No Autonomy Escalation</div>
+          <div class="invariant-desc">Never auto-publish or auto-seal. Explicit click required.</div>
+        </div>
+      </div>
+
+      <div class="invariant-item">
+        <span class="invariant-badge">I11</span>
+        <div>
+          <div class="invariant-name">Cryptographic Permanence</div>
+          <div class="invariant-desc">If sealed, content hash is immutable in Ledger forever.</div>
+        </div>
+      </div>
+
+      <div class="invariant-item">
+        <span class="invariant-badge">I14</span>
+        <div>
+          <div class="invariant-name">Explicit Failure</div>
+          <div class="invariant-desc">Errors are visible, never silent or degraded.</div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p>LIGA IA+H — "Criatividade LLM com prova WINDI."</p>
+      <p style="margin-top: 8px;">W-SITES-001 · Container Architecture v0.1</p>
+    </footer>
+  </div>
+
+  <!-- Load the Web Component -->
+  <script type="module" src="./windi-ai-writer.js"></script>
+
+  <script>
+    // ─────────────────────────────────────────────
+    // Demo Page Logic
+    // ─────────────────────────────────────────────
+
+    const writer = document.getElementById('writer');
+    const logEntries = document.getElementById('log-entries');
+    const didSelect = document.getElementById('did-select');
+    const langButtons = document.querySelectorAll('.lang-btn');
+
+    // Log helper
+    function log(eventName, detail, type = '') {
+      const entry = document.createElement('div');
+      entry.className = `log-entry ${type}`;
+
+      const time = new Date().toLocaleTimeString();
+      entry.innerHTML = `
+        <span class="log-time">${time}</span>
+        <span class="log-event">${eventName}</span>
+        ${detail ? `<br><span style="color: rgba(255,255,255,0.6); margin-left: 80px;">${JSON.stringify(detail).substring(0, 100)}</span>` : ''}
+      `;
+
+      logEntries.insertBefore(entry, logEntries.firstChild);
+    }
+
+    // Subscribe to all WINDI events
+    const events = ['windi:ready', 'windi:generating', 'windi:draft-ready', 'windi:sealed', 'windi:error'];
+
+    events.forEach(eventName => {
+      writer.addEventListener(eventName, (e) => {
+        const type = eventName.includes('error') ? 'error' : eventName.includes('sealed') ? 'success' : '';
+        log(eventName, e.detail, type);
+      });
+    });
+
+    // DID selector
+    didSelect.addEventListener('change', (e) => {
+      writer.setAttribute('did', e.target.value);
+      log('DID Changed', { did: e.target.value });
+    });
+
+    // Language toggle
+    langButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        langButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        writer.setAttribute('lang', btn.dataset.lang);
+        log('Language Changed', { lang: btn.dataset.lang });
+      });
+    });
+
+    // Initial log
+    log('Demo Initialized', { container: 'windi.ai-writer.v1', version: '0.1.0' });
+  </script>
+</body>
+</html>

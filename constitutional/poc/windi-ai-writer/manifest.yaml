@@ -1,0 +1,255 @@
+# WINDI AI Writer — Container Manifest v0.1
+# POC: First MAKEUP Container
+# Contract: §B-CONTRACT-001 v1.0
+
+id: windi.ai-writer.v1
+version: 0.1.0
+type: makeup
+status: poc
+contract: W-SITES-001-CONTRACT-B-v1.0
+
+# ─────────────────────────────────────────────
+# METADATA
+# ─────────────────────────────────────────────
+name: "WINDI AI Writer"
+description: "Generates text content with constitutional governance. Draft first, seal optional."
+category: text
+family: makeup
+author: LIGA IA+H
+
+# ─────────────────────────────────────────────
+# REQUIREMENTS (Inputs)
+# ─────────────────────────────────────────────
+requires:
+  - name: human_presence
+    type: boolean
+    required: true
+    invariant: I1
+    description: "User must initiate generation"
+
+  - name: did_session
+    type: string
+    required: true
+    pattern: "^did:windi:.+"
+    description: "Valid DID session for attribution"
+
+  - name: prompt
+    type: string
+    required: true
+    min_length: 10
+    max_length: 2000
+    description: "User instruction for generation"
+
+  - name: context
+    type: string
+    required: false
+    max_length: 5000
+    description: "Optional context for better output"
+
+  - name: language
+    type: enum
+    values: [de, en, pt]
+    default: en
+    description: "Output language"
+
+  - name: tone
+    type: enum
+    values: [formal, casual, technical, creative]
+    default: formal
+    description: "Writing tone"
+
+# ─────────────────────────────────────────────
+# PRODUCES (Outputs)
+# ─────────────────────────────────────────────
+produces:
+  - name: content
+    type: string
+    description: "Generated text"
+
+  - name: draft_id
+    type: string
+    format: "DRAFT-{timestamp}-{random}"
+    description: "Temporary ID before seal"
+
+  - name: content_hash
+    type: string
+    format: sha256
+    description: "Hash of generated content"
+
+  - name: model_used
+    type: string
+    description: "Which LLM processed the request"
+
+  - name: tokens_consumed
+    type: number
+    description: "Tokens used for cost tracking"
+
+  - name: seal_ready
+    type: boolean
+    description: "Whether content can be sealed"
+
+# ─────────────────────────────────────────────
+# INVARIANTS (Quadra Sagrada)
+# ─────────────────────────────────────────────
+invariants:
+  - id: I1
+    name: "Human Sovereignty"
+    enforcement: "User click required to generate"
+    failure_mode: explicit
+
+  - id: I9
+    name: "No Autonomy Escalation"
+    enforcement: "Never auto-publish, auto-seal, or auto-distribute"
+    failure_mode: block
+
+  - id: I11
+    name: "Cryptographic Permanence"
+    enforcement: "If sealed, content_hash immutable in Ledger"
+    condition: "Only when mode=seal"
+
+  - id: I14
+    name: "Explicit Failure"
+    enforcement: "Errors visible, never silent or degraded"
+    failure_mode: explicit
+
+# ─────────────────────────────────────────────
+# EXECUTION
+# ─────────────────────────────────────────────
+execution:
+  mode: gated                    # Requires human click
+  auto_seal: false               # Draft by default
+  gateway_endpoint: /api/gateway/generate
+  timeout_ms: 30000              # 30s max
+  retry_policy: none             # User must retry manually (I1)
+
+# ─────────────────────────────────────────────
+# LLM CONFIGURATION
+# ─────────────────────────────────────────────
+llm:
+  default_model: mistral-large
+  max_tokens: 1000
+  temperature: 0.7
+  top_p: 0.9
+  system_prompt: |
+    You are WINDI AI Writer, a professional text generator.
+    Generate clear, well-structured content based on user prompts.
+    Respect the requested language and tone.
+    Never include personal opinions or biases.
+    Focus on factual, helpful content.
+
+# ─────────────────────────────────────────────
+# EVENTS
+# ─────────────────────────────────────────────
+events:
+  - name: windi:generating
+    when: "LLM processing started"
+    payload: { promptHash: string, model: string }
+
+  - name: windi:draft-ready
+    when: "Draft content available"
+    payload: { draftId: string, content: string, tokens: number }
+
+  - name: windi:sealed
+    when: "User sealed to Ledger"
+    payload: { receiptId: string, hash: string, verifyUrl: string }
+
+  - name: windi:error
+    when: "Generation failed"
+    payload: { error: string, code: string }
+
+# ─────────────────────────────────────────────
+# VISUAL (Web Component)
+# ─────────────────────────────────────────────
+visual:
+  shadow_dom: true
+  themeable: true
+
+  css_parts:
+    - name: container
+      description: "Outer wrapper"
+    - name: prompt-input
+      description: "Textarea for user prompt"
+    - name: generate-button
+      description: "Generation trigger"
+    - name: output-area
+      description: "Generated content display"
+    - name: seal-button
+      description: "Seal to Ledger button"
+    - name: status
+      description: "Status indicator"
+
+  css_variables:
+    - name: --windi-ai-primary
+      default: "#C8A45A"
+      description: "Primary accent color"
+    - name: --windi-ai-bg
+      default: "#0B0D14"
+      description: "Background color"
+    - name: --windi-ai-text
+      default: "#E8E6E1"
+      description: "Text color"
+    - name: --windi-ai-border
+      default: "#1A1A24"
+      description: "Border color"
+
+  # Locked (cannot be customized)
+  locked_elements:
+    - windi-badge         # "Powered by WINDI" badge
+    - generation-indicator # AI generation indicator
+
+# ─────────────────────────────────────────────
+# SLOTS
+# ─────────────────────────────────────────────
+slots:
+  - name: placeholder
+    description: "Custom placeholder text"
+  - name: generate-label
+    description: "Custom generate button label"
+  - name: seal-label
+    description: "Custom seal button label"
+
+# ─────────────────────────────────────────────
+# PROVENANCE (§B-CONTRACT-001 Art. 3.5)
+# ─────────────────────────────────────────────
+provenance:
+  ai_generated_flag: true
+  required_metadata:
+    - ai_generated: boolean        # Always true for MAKEUPs
+    - ai_model: string             # e.g., "mistral-large"
+    - ai_provider: string          # "W-GATEWAY-001"
+    - legal_owner: string          # User DID
+    - generation_timestamp: iso8601
+    - human_approved: boolean      # I9 gate
+    - approval_timestamp: iso8601
+
+# ─────────────────────────────────────────────
+# INTENT SIGNATURE (§B-CONTRACT-001 Art. 3.4)
+# ─────────────────────────────────────────────
+intent_signature:
+  required: true
+  fields:
+    - actor: string                # User DID
+    - action: "generate_content"
+    - prompt_hash: sha256
+    - acknowledged: boolean
+    - timestamp: iso8601
+
+# ─────────────────────────────────────────────
+# RESPONSIBILITY (§B-CONTRACT-001 Art. 3.2)
+# ─────────────────────────────────────────────
+responsibility:
+  content_owner: user              # 100% user
+  process_guarantor: windi         # 100% WINDI
+  witness: ledger                  # Neutral
+
+# ─────────────────────────────────────────────
+# REGISTRY
+# ─────────────────────────────────────────────
+registry:
+  bundle_path: "/containers/makeup/ai-writer/v0.1/bundle.js"
+  manifest_path: "/containers/makeup/ai-writer/v0.1/manifest.yaml"
+  hash: null  # Computed on build
+  status: draft
+  sealed_at: null
+  receipt_id: null
+  contract_receipt: "WINDI-CONTRACT-B-001-v1.0-20260428162029-1530DBEF"
