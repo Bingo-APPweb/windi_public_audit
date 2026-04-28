@@ -1,0 +1,4296 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI LAW — Governança Silenciosa</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --perg: #F5F0E0;
+  --perg-2: #EDE8D0;
+  --perg-3: #E4DEC4;
+  --ink: #2A2010;
+  --ink-2: #5A4A2A;
+  --ink-3: #8B7A60;
+  --ink-4: #B0A080;
+  --gold: #8B6914;
+  --gold-light: #C4A040;
+  --gold-bg: rgba(139,105,20,0.07);
+  --green: #3B6D11;
+  --green-bg: #EAF3DE;
+  --blue-bg: #E6F1FB;
+  --blue: #185FA5;
+  --amber: #854F0B;
+  --amber-bg: #FAEEDA;
+  --red: #A32D2D;
+  --border: rgba(90,74,42,0.12);
+  --border-2: rgba(90,74,42,0.22);
+  --font: 'Bricolage Grotesque', sans-serif;
+  --font-doc: 'Lora', Georgia, serif;
+  --mono: 'JetBrains Mono', monospace;
+  --r: 8px;
+  --r-lg: 12px;
+}
+
+/* ══ THEME: NOIR (dark) ══ data-theme SEALED */
+[data-theme="noir"] {
+  --perg: #0A0A10;
+  --perg-2: #12121A;
+  --perg-3: #1A1A24;
+  --ink: #E8E6E1;
+  --ink-2: #C0BDB8;
+  --ink-3: #8A8780;
+  --ink-4: #5A5850;
+  --gold: #C9A84C;
+  --gold-light: #E0C070;
+  --gold-bg: rgba(201,168,76,0.12);
+  --green-bg: rgba(59,109,17,0.15);
+  --blue-bg: rgba(24,95,165,0.15);
+  --amber-bg: rgba(133,79,11,0.15);
+  --border: rgba(255,255,255,0.08);
+  --border-2: rgba(255,255,255,0.15);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font); background: var(--perg); color: var(--ink); height: 100vh; overflow: hidden; }
+
+/* ═══ LAYOUT ═══ */
+.app { display: flex; height: 100vh; }
+
+/* ── SIDEBAR LEFT ── */
+.sl {
+  width: 192px; flex-shrink: 0;
+  background: var(--perg-2);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  overflow-y: auto;
+}
+.sl::-webkit-scrollbar { width: 3px; }
+.sl::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 2px; }
+
+.sl-logo {
+  padding: 13px 14px 11px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: baseline; gap: 4px;
+}
+.sl-logo .w { font-size: 14px; font-weight: 600; color: var(--ink); letter-spacing: 0.01em; }
+.sl-logo .law { font-size: 14px; font-weight: 600; color: var(--gold); }
+.sl-logo .did { font-size: 8px; font-family: var(--mono); color: var(--ink-4); margin-left: auto; }
+
+.sl-sec {
+  padding: 10px 13px 3px;
+  font-size: 9px; font-weight: 500; letter-spacing: 0.09em;
+  color: var(--ink-4); text-transform: uppercase;
+}
+.sl-item {
+  display: flex; align-items: center; gap: 7px;
+  padding: 6px 13px; font-size: 12px; color: var(--ink-2);
+  cursor: pointer; transition: background 0.12s;
+  border-left: 2px solid transparent;
+}
+.sl-item:hover { background: rgba(139,105,20,0.05); }
+.sl-item.on { background: var(--gold-bg); border-left-color: var(--gold); color: var(--ink); font-weight: 500; }
+.sl-item .ct { margin-left: auto; font-size: 9px; background: var(--perg-3); padding: 1px 5px; border-radius: 8px; color: var(--ink-3); }
+
+.sl-doc {
+  padding: 4px 13px 4px 20px; font-size: 11px; color: var(--ink-3);
+  cursor: pointer; display: flex; align-items: center; gap: 5px;
+  border-left: 2px solid transparent; transition: all 0.12s;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.sl-doc:hover { color: var(--ink-2); background: rgba(139,105,20,0.03); }
+.sl-doc.on { color: var(--ink-2); border-left-color: var(--gold-light); font-weight: 500; }
+.sl-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+
+/* identity bottom */
+.sl-identity { margin-top: auto; border-top: 1px solid var(--border); }
+.sl-id-block { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+.sl-id-hdr { display: flex; align-items: center; justify-content: space-between; font-size: 9px; font-weight: 500; color: var(--gold); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 5px; }
+.sl-id-hdr .ok { color: var(--green); font-size: 8px; }
+.sl-id-row { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 2px; }
+.sl-id-row .k { color: var(--ink-4); }
+.sl-id-row .v { color: var(--ink-2); font-size: 9px; font-family: var(--mono); }
+.sl-id-row .v.g { color: var(--gold); font-family: var(--font); font-size: 10px; font-weight: 500; }
+.sl-sov { padding: 7px 12px 9px; }
+.sl-sov-row { display: flex; justify-content: space-between; font-size: 9px; color: var(--ink-4); margin-bottom: 4px; }
+.sl-sov-row span { color: var(--gold); font-weight: 500; }
+.sl-bar { height: 2px; background: var(--border-2); border-radius: 1px; overflow: hidden; }
+.sl-bar-fill { height: 100%; width: 93.3%; background: var(--gold); border-radius: 1px; }
+.sl-connect-btn {
+  display: block; width: 100%; padding: 6px 10px; margin-top: 6px;
+  font-size: 10px; font-weight: 500; font-family: var(--font);
+  background: var(--gold); color: white; border: none;
+  border-radius: 4px; cursor: pointer; text-align: center;
+  transition: background 0.12s;
+}
+.sl-connect-btn:hover { background: #6B4F10; }
+.sl-connect-btn.hidden { display: none; }
+.ok.pending { color: var(--amber); }
+
+/* ── CENTER ── */
+.center { flex: 1; display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden; }
+
+.topbar {
+  display: flex; align-items: center;
+  border-bottom: 1px solid var(--border);
+  background: var(--perg); padding: 0 16px;
+  flex-shrink: 0; height: 36px; gap: 0;
+}
+.tab { padding: 0 13px; height: 36px; display: flex; align-items: center; font-size: 11px; font-weight: 500; color: var(--ink-4); cursor: pointer; border-bottom: 1.5px solid transparent; transition: all 0.12s; letter-spacing: 0.02em; }
+.tab.on { color: var(--ink); border-bottom-color: var(--gold); }
+.tab:hover { color: var(--ink-2); }
+.topbar-r { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.topbar-live { font-size: 9px; color: var(--green); display: flex; align-items: center; gap: 3px; }
+.topbar-live::before { content:''; width:4px; height:4px; border-radius:50%; background:var(--green); display:inline-block; }
+.topbar-sha { font-size: 9px; font-family: var(--mono); color: var(--ink-4); }
+.lang-pills { display: flex; gap: 2px; }
+.lpill { font-size: 9px; padding: 1px 6px; border-radius: 8px; border: 1px solid var(--border); color: var(--ink-4); cursor: pointer; background: transparent; transition: all 0.12s; }
+.lpill.on { background: var(--perg-2); color: var(--ink-2); border-color: var(--border-2); }
+/* Theme toggle button — matches dlang style */
+.theme-toggle {
+  font-size: 13px;
+  padding: 5px 10px;
+  border-radius: 12px;
+  border: 1.5px solid var(--gold);
+  color: var(--gold);
+  cursor: pointer;
+  background: transparent;
+  transition: all 0.15s;
+  line-height: 1;
+  font-family: var(--font);
+}
+.theme-toggle:hover { background: var(--gold); color: white; }
+
+/* main flex */
+.main { flex: 1; display: flex; overflow: hidden; }
+.canvas { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+
+/* ══ ESTADO VAZIO ══ */
+#st-empty {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 24px 40px;
+  animation: fu 0.35s ease;
+}
+/* ══ ANIMATIONS — Phase 5 Polish UX ══ */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes fu { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:none} }
+  @keyframes docEnter { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+  @keyframes sealPulse { 0%,100%{box-shadow:0 0 0 0 rgba(139,105,20,0)} 50%{box-shadow:0 0 0 4px rgba(139,105,20,0.18)} }
+  /* §137 — Streaming pulse animation */
+  @keyframes kpulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.3;transform:scale(0.6)} }
+}
+/* §137 — Streaming dot */
+.pulse-dot {
+  display: inline-block;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+  animation: kpulse 1s infinite;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+.btn-vc-demo {
+  background: var(--gold);
+  color: var(--perg);
+  border: none;
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--font);
+  transition: all 0.15s;
+}
+.btn-vc-demo:hover { background: #6B4F10; }
+/* A4: QR hover expand */
+.dc-qr-tooltip { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.dc-qr-tooltip:hover { transform: scale(1.08); box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+/* A5: Inspector transition */
+.inspector { transition: opacity 0.25s ease, transform 0.25s ease; }
+.inspector.collapsed { opacity: 0.6; transform: translateX(4px); }
+
+.greet { font-size: 12px; color: var(--ink-4); margin-bottom: 4px; }
+.wtitle { font-size: 24px; font-weight: 600; color: var(--ink); margin-bottom: 26px; line-height: 1.2; text-align: center; }
+.wtitle em { font-style: normal; color: var(--gold); }
+
+/* prompt box */
+.pbox {
+  width: 100%; max-width: 580px;
+  background: white; border: 1px solid var(--border-2);
+  border-radius: 14px; overflow: hidden;
+  box-shadow: 0 2px 14px rgba(90,74,42,0.06);
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+.pbox:focus-within { border-color: var(--gold); box-shadow: 0 3px 20px rgba(139,105,20,0.10); }
+.pbox textarea {
+  width: 100%; padding: 14px 16px 6px; font-size: 13px;
+  font-family: var(--font); border: none; outline: none;
+  background: transparent; color: var(--ink); resize: none; min-height: 52px;
+}
+.pbox textarea::placeholder { color: var(--ink-4); }
+.pbox-ft {
+  display: flex; align-items: center; gap: 5px;
+  padding: 6px 10px 8px; border-top: 1px solid var(--border);
+}
+.patt { display: flex; flex-direction: column; align-items: center; gap: 1px; cursor: pointer; padding: 4px 5px; border-radius: 5px; transition: background 0.12s; }
+.patt:hover { background: var(--perg-2); }
+.patt .ico { font-size: 14px; }
+.patt .lbl { font-size: 8px; color: var(--ink-4); letter-spacing: 0.04em; }
+.pagent { font-size: 10px; font-weight: 500; padding: 3px 9px; border-radius: 14px; background: var(--gold-bg); color: var(--gold); border: 1px solid rgba(139,105,20,0.18); cursor: pointer; margin-left: 2px; }
+/* §122 Agent Selector */
+.pagent-select { font-size: 10px; font-weight: 500; padding: 4px 8px; border-radius: 14px; background: var(--gold-bg); color: var(--gold); border: 1px solid rgba(139,105,20,0.25); cursor: pointer; margin-left: 2px; font-family: var(--font); appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath fill='%238B6914' d='M0 2l4 4 4-4z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 6px center; padding-right: 18px; }
+.pagent-select:hover { border-color: var(--gold); }
+.pagent-select:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 2px rgba(139,105,20,0.15); }
+.pagent-select option { background: var(--bg); color: var(--ink); padding: 8px; }
+/* §122 Loading Animation — Enhanced with pulse effect */
+.loading-dots {
+  animation: textPulse 1.8s ease-in-out infinite;
+  color: var(--gold);
+  font-style: italic;
+}
+.loading-dots span {
+  animation: dotBlink 1.4s infinite both;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+.loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+.loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dotBlink {
+  0%, 80%, 100% { opacity: 0.2; transform: translateY(0); }
+  40% { opacity: 1; transform: translateY(-2px); }
+}
+@keyframes textPulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+.plang { display: flex; gap: 2px; margin-left: auto; }
+.plbtn { font-size: 9px; padding: 2px 6px; border-radius: 8px; border: 1px solid var(--border); color: var(--ink-4); cursor: pointer; background: transparent; }
+.plbtn.on { background: var(--perg-2); color: var(--ink-2); border-color: var(--border-2); }
+.psend { width: 28px; height: 28px; border-radius: 50%; background: var(--gold); border: none; color: white; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.12s; }
+.psend:hover { background: #6B4F10; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 16px; max-width: 580px; }
+.chip { font-size: 11px; padding: 5px 11px; border-radius: 18px; border: 1px solid var(--border-2); color: var(--ink-2); background: white; cursor: pointer; transition: all 0.12s; }
+.chip:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-bg); }
+
+.sugg { margin-top: 22px; max-width: 580px; width: 100%; }
+.sugg-lbl { font-size: 9px; color: var(--ink-4); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 7px; }
+.sugg-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+.sc { background: white; border: 1px solid var(--border); border-radius: var(--r); padding: 10px 11px; cursor: pointer; transition: all 0.12s; }
+.sc:hover { border-color: rgba(139,105,20,0.3); box-shadow: 0 2px 8px rgba(139,105,20,0.06); }
+.sc-t { font-size: 9px; font-weight: 500; color: var(--gold); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 3px; }
+.sc-n { font-size: 11px; font-weight: 500; color: var(--ink); line-height: 1.35; }
+.sc-s { font-size: 9px; color: var(--ink-4); margin-top: 2px; }
+
+/* ══ ESTADO ACTIVO ══ */
+#st-active { flex: 1; display: none; flex-direction: column; overflow: hidden; min-height: 0; }
+
+.doc-hdr {
+  padding: 8px 16px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+}
+.dbadge { font-size: 9px; font-weight: 500; padding: 2px 7px; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.05em; }
+.dbadge.legal { background: var(--green-bg); color: var(--green); }
+.dbadge.comply { background: var(--blue-bg); color: var(--blue); }
+.dbadge.acct { background: var(--amber-bg); color: var(--amber); }
+.dtitle { font-size: 12px; font-weight: 500; color: var(--ink); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dacts { display: flex; gap: 5px; }
+.dact { font-size: 10px; padding: 4px 10px; border-radius: 5px; border: 1px solid var(--border-2); background: white; color: var(--ink-2); cursor: pointer; font-family: var(--font); font-weight: 500; transition: all 0.12s; }
+.dact:hover { border-color: var(--gold-light); color: var(--gold); }
+.dact.seal-btn { background: var(--gold); color: white; border-color: transparent; animation: sealPulse 2s ease-in-out infinite; }
+.dact.seal-btn:hover { background: #6B4F10; animation: none; }
+
+/* scroll */
+.scroll { flex: 1; overflow-y: auto; padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; min-height: 0; }
+.scroll::-webkit-scrollbar { width: 8px; }
+.scroll::-webkit-scrollbar-track { background: var(--perg-2); border-radius: 4px; }
+.scroll::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 4px; opacity: 0.6; }
+.scroll::-webkit-scrollbar-thumb:hover { background: #6B4F10; }
+.demo-notice { background: rgba(139,105,20,0.08); border: 1px dashed var(--gold); border-radius: 8px; padding: 8px 12px; font-size: 10px; color: var(--gold); text-align: center; margin-bottom: 8px; }
+
+/* agent response */
+.amsg { display: flex; gap: 10px; animation: fu 0.3s ease; }
+.aav { width: 24px; height: 24px; border-radius: 50%; background: var(--gold-bg); border: 1px solid rgba(139,105,20,0.18); display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; margin-top: 2px; }
+.abody { flex: 1; min-width: 0; }
+.aname { font-size: 9px; font-weight: 500; color: var(--gold); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 5px; }
+.atext { font-size: 13px; color: var(--ink); line-height: 1.7; }
+.atext p { margin-bottom: 8px; }
+.atext p:last-child { margin-bottom: 0; }
+
+.risk-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; margin: 10px 0; }
+.rcard { background: white; border: 1px solid var(--border); border-radius: var(--r); padding: 9px 11px; }
+.rcard-l { font-size: 9px; color: var(--ink-4); margin-bottom: 3px; }
+.rcard-v { font-size: 11px; font-weight: 500; }
+.rcard-v.h { color: var(--red); }
+.rcard-v.m { color: var(--amber); }
+.rcard-v.l { color: var(--green); }
+
+/* §122.2 Agent Action Bar */
+.agent-actions { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+.agent-forensic { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-family: var(--mono); font-size: 10px; }
+.af-label { color: var(--ink-4); }
+.af-hash { color: var(--gold); background: var(--gold-bg); padding: 4px 10px; border-radius: 4px; letter-spacing: 0.02em; }
+.agent-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+.abtn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; font-family: var(--font); cursor: pointer; transition: all 0.15s; border: 1px solid var(--border); background: var(--bg); color: var(--ink-2); }
+.abtn:hover { border-color: var(--gold); color: var(--gold); }
+.abtn-seal { background: linear-gradient(135deg, #8B6914, #C4960A); color: white; border: none; }
+.abtn-seal:hover { opacity: 0.9; color: white; }
+.abtn-qr { background: var(--ink); color: white; border: none; }
+.abtn-qr:hover { opacity: 0.85; color: white; }
+
+/* ════════════════════════════════════
+   DOCUMENTO — O PROTAGONISTA
+   Forense é o subtexto, não o tema
+   ════════════════════════════════════ */
+.doc-canvas {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: 0 1px 8px rgba(90,74,42,0.05);
+  animation: docEnter 0.4s ease;
+}
+
+/* cabeçalho do documento — clean, institucional */
+.dc-header {
+  padding: 20px 24px 16px;
+  border-bottom: 0.5px solid var(--border);
+  display: flex; align-items: flex-start; justify-content: space-between;
+}
+.dc-header-left {}
+.dc-org { font-size: 11px; font-weight: 600; color: var(--gold); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 4px; }
+.dc-title { font-size: 17px; font-weight: 600; color: var(--ink); font-family: var(--font-doc); line-height: 1.3; margin-bottom: 6px; }
+.dc-meta { display: flex; gap: 6px; flex-wrap: wrap; }
+.dc-tag { font-size: 9px; padding: 2px 7px; border-radius: 10px; background: var(--perg-2); color: var(--ink-2); border: 1px solid var(--border); }
+
+/* corpo do documento — tipografia editorial */
+.dc-body {
+  padding: 20px 24px;
+  font-family: var(--font-doc);
+  font-size: 12.5px; color: var(--ink-2); line-height: 1.75;
+}
+.dc-body .clause { margin-bottom: 14px; }
+.dc-body .clause-num { font-size: 10px; font-weight: 500; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+.dc-body .clause-text { color: var(--ink); }
+.dc-body .highlight { background: rgba(139,105,20,0.06); border-left: 2px solid var(--gold-light); padding: 8px 12px; border-radius: 0 4px 4px 0; margin: 8px 0; font-size: 12px; color: var(--ink-2); }
+
+/* ════ RODAPÉ FORENSE — SILENCIOSO ════ */
+.dc-forensic-footer {
+  padding: 7px 24px;
+  border-top: 0.5px solid var(--border);
+  background: var(--perg-2);
+  display: flex; align-items: center; gap: 10px;
+}
+
+.dc-seal-mark {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 9px; color: var(--ink-4);
+  font-family: var(--mono);
+}
+.dc-seal-icon { font-size: 10px; opacity: 0.7; }
+.dc-seal-hash { letter-spacing: 0.02em; }
+.dc-seal-inv { color: var(--gold); font-weight: 500; opacity: 0.8; }
+
+.dc-sep { width: 1px; height: 10px; background: var(--border-2); flex-shrink: 0; }
+
+/* QR — minúsculo, no canto */
+.dc-qr-mini {
+  width: 24px; height: 24px; flex-shrink: 0; margin-left: auto;
+  opacity: 0.6; transition: opacity 0.2s;
+  cursor: pointer;
+}
+.dc-qr-mini:hover { opacity: 1; }
+.dc-qr-mini svg { width: 24px; height: 24px; }
+
+.dc-qr-wrap { position: relative; }
+.dc-qr-tooltip {
+  display: none; position: absolute; bottom: 30px; right: 0;
+  background: white; border: 1px solid var(--border-2);
+  border-radius: var(--r); padding: 8px; width: 90px;
+  box-shadow: 0 4px 16px rgba(90,74,42,0.12);
+  z-index: 10;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.dc-qr-tooltip:hover { transform: scale(1.08); box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+.dc-qr-tooltip svg { width: 74px; height: 74px; }
+.dc-qr-tooltip-label { font-size: 8px; color: var(--ink-4); text-align: center; margin-top: 3px; font-family: var(--mono); }
+.dc-qr-wrap:hover .dc-qr-tooltip { display: block; }
+
+.dc-verify-badge {
+  font-size: 8px; padding: 2px 7px; border-radius: 10px;
+  background: var(--green-bg); color: var(--green);
+  border: 1px solid rgba(59,109,17,0.2);
+  font-weight: 500; cursor: default;
+  opacity: 0.75; transition: opacity 0.2s;
+}
+.dc-verify-badge:hover { opacity: 1; }
+
+/* prompt bottom */
+.pb { border-top: 1px solid var(--border); padding: 10px 16px; background: var(--perg); flex-shrink: 0; }
+.pb .pbox { max-width: 100%; box-shadow: none; border-color: var(--border); }
+.pb .pbox:focus-within { border-color: rgba(139,105,20,0.35); box-shadow: none; }
+
+/* ── INSPECTOR RIGHT ── */
+.inspector {
+  width: 210px; flex-shrink: 0;
+  border-left: 1px solid var(--border);
+  background: var(--perg-2);
+  display: flex; flex-direction: column; overflow-y: auto;
+  transition: width 0.22s ease, opacity 0.18s;
+  position: relative;
+}
+.inspector::-webkit-scrollbar { width: 2px; }
+.inspector::-webkit-scrollbar-thumb { background: var(--border-2); }
+.inspector.collapsed { width: 0; opacity: 0; overflow: hidden; }
+
+.insp-toggle {
+  position: absolute; left: -11px; top: 50%;
+  transform: translateY(-50%);
+  width: 20px; height: 32px;
+  background: var(--perg-2); border: 1px solid var(--border-2);
+  border-radius: 0 5px 5px 0;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 9px; color: var(--ink-4);
+  z-index: 10; transition: all 0.12s;
+}
+.insp-toggle:hover { color: var(--gold); }
+
+.insp-sec { padding: 9px 11px 3px; font-size: 9px; font-weight: 500; letter-spacing: 0.09em; color: var(--ink-4); text-transform: uppercase; border-bottom: 1px solid var(--border); }
+.insp-block { padding: 9px 11px; border-bottom: 1px solid var(--border); }
+.insp-lbl { font-size: 9px; color: var(--ink-4); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
+.insp-val { font-size: 11px; font-weight: 500; color: var(--ink); }
+.insp-val.gold { color: var(--gold); }
+.insp-val.green { color: var(--green); }
+.insp-mono { font-size: 8px; font-family: var(--mono); color: var(--ink-2); word-break: break-all; line-height: 1.5; }
+
+.s-row { display: flex; align-items: center; gap: 5px; margin-bottom: 4px; }
+.s-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+.s-lbl { font-size: 10px; color: var(--ink-2); flex: 1; }
+.s-pct { font-size: 9px; color: var(--ink-4); min-width: 26px; text-align: right; }
+.s-bar { height: 2px; background: var(--border); border-radius: 1px; margin-bottom: 5px; }
+
+.jtags { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 3px; }
+.jtag { font-size: 9px; padding: 1px 6px; border-radius: 3px; background: var(--perg-3); color: var(--ink-2); border: 1px solid var(--border); }
+.jtag.on { background: var(--gold-bg); color: var(--gold); border-color: rgba(139,105,20,0.2); }
+
+.inv-item { display: flex; align-items: flex-start; gap: 5px; margin-bottom: 4px; font-size: 10px; color: var(--ink-2); line-height: 1.4; }
+.inv-item::before { content:''; width:5px; height:5px; border-radius:50%; background:var(--green); flex-shrink:0; margin-top:3px; }
+
+.act-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 3px; }
+.abtn { font-size: 10px; padding: 5px 0; border-radius: 4px; border: 1px solid var(--border-2); background: white; color: var(--ink-2); cursor: pointer; font-family: var(--font); text-align: center; transition: all 0.12s; }
+.abtn:hover { border-color: var(--gold-light); color: var(--gold); }
+.abtn.seal { background: var(--gold); color: white; border-color: transparent; grid-column: span 2; animation: sealPulse 2s ease-in-out infinite; }
+.abtn.seal:hover { background: #6B4F10; animation: none; }
+
+/* ── BOTTOM BAR ── */
+.bottombar {
+  background: var(--perg-3); border-top: 1px solid var(--border);
+  padding: 4px 14px; display: flex; align-items: center; gap: 8px;
+  font-size: 9px; color: var(--ink-4); flex-shrink: 0;
+}
+.bottombar .sep { opacity: 0.35; }
+.bottombar .live { color: var(--green); display: flex; align-items: center; gap: 2px; }
+.bottombar .live::before { content:''; width:4px; height:4px; border-radius:50%; background:var(--green); }
+.bottombar .motto { margin-left: auto; font-style: italic; color: var(--ink-3); opacity: 0.65; font-size: 9px; }
+
+/* demo bar */
+.demo-bar {
+  position: fixed; top: 10px; right: 10px; z-index: 200;
+  display: flex; gap: 6px; align-items: center;
+  background: white; border: 1px solid var(--border-2);
+  border-radius: 20px; padding: 5px 10px;
+  box-shadow: 0 2px 12px rgba(90,74,42,0.10);
+}
+.demo-lang { display: flex; gap: 3px; }
+.dlang { font-size: 11px; font-weight: 600; padding: 5px 10px; border-radius: 12px; border: 1.5px solid var(--border); background: transparent; color: var(--ink-4); cursor: pointer; font-family: var(--font); transition: all 0.15s; }
+.dlang:hover { border-color: var(--gold); color: var(--gold); }
+.dlang.on { background: var(--gold); color: white; border-color: var(--gold); }
+.demo-sep { width: 1px; height: 18px; background: var(--border-2); margin: 0 4px; }
+.demo-btn { font-size: 11px; font-weight: 500; padding: 5px 14px; border-radius: 14px; border: none; background: transparent; color: var(--ink-4); cursor: pointer; font-family: var(--font); transition: all 0.12s; }
+.demo-btn.on { background: var(--gold); color: white; }
+
+/* ══ AI DRAFT PANEL ══ */
+#ai-draft-panel {
+  display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(10,10,10,0.72); z-index: 1200;
+  align-items: center; justify-content: center; backdrop-filter: blur(4px);
+}
+#ai-draft-panel.open { display: flex; }
+.ai-draft-modal {
+  background: var(--perg); border: 1.5px solid rgba(139,105,20,0.25);
+  border-radius: 16px; width: min(720px, 95vw); max-height: 90vh;
+  overflow-y: auto; padding: 0; box-shadow: 0 24px 80px rgba(0,0,0,0.35);
+  animation: modalSlideIn 0.22s ease;
+}
+@keyframes modalSlideIn { from { opacity:0; transform: translateY(20px) scale(0.97); } to { opacity:1; transform: none; } }
+.ai-draft-header {
+  padding: 28px 32px 20px; border-bottom: 1px solid rgba(139,105,20,0.15);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.ai-draft-header h2 { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); margin: 0; }
+.ai-draft-header .ai-badge { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; background: linear-gradient(135deg, #8B6914, #C4960A); color: #fff; padding: 3px 10px; border-radius: 20px; }
+.ai-draft-close { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--ink-3); padding: 4px 8px; border-radius: 6px; transition: background 0.15s; }
+.ai-draft-close:hover { background: rgba(0,0,0,0.08); }
+.ai-draft-body { padding: 24px 32px 32px; }
+.ai-draft-steps { display: flex; gap: 0; margin-bottom: 28px; }
+.ai-step { flex: 1; text-align: center; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-4); padding: 8px 4px; border-bottom: 2px solid var(--border); transition: all 0.2s; }
+.ai-step.active { color: var(--gold); border-bottom-color: var(--gold); }
+.ai-step.done { color: var(--green); border-bottom-color: var(--green); }
+.ai-field { margin-bottom: 18px; }
+.ai-field label { display: block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+.ai-field select, .ai-field input, .ai-field textarea { width: 100%; padding: 10px 14px; background: rgba(255,255,255,0.7); border: 1.5px solid rgba(139,105,20,0.2); border-radius: 8px; font-family: inherit; font-size: 0.88rem; color: var(--ink); transition: border-color 0.15s; box-sizing: border-box; resize: vertical; }
+.ai-field select:focus, .ai-field input:focus, .ai-field textarea:focus { outline: none; border-color: var(--gold); }
+.ai-field .hint { font-size: 0.68rem; color: var(--ink-3); margin-top: 5px; }
+.ai-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.tier-info { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--gold-bg); border-radius: 8px; border: 1px solid rgba(139,105,20,0.12); margin-bottom: 18px; font-size: 0.78rem; color: var(--ink-3); }
+.tier-info .tier-badge { font-size: 0.68rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: var(--gold); color: #fff; }
+.btn-generate { width: 100%; padding: 14px; background: linear-gradient(135deg, #8B6914 0%, #C4960A 100%); color: #fff; border: none; border-radius: 10px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: opacity 0.15s, transform 0.1s; letter-spacing: 0.01em; }
+.btn-generate:hover:not(:disabled) { opacity: 0.92; transform: translateY(-1px); }
+.btn-generate:disabled { opacity: 0.5; cursor: not-allowed; }
+.ai-loading { text-align: center; padding: 40px 20px; }
+.ai-loading .spinner { width: 40px; height: 40px; border: 3px solid rgba(139,105,20,0.2); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.ai-loading .model-label { font-size: 0.72rem; color: var(--ink-4); letter-spacing: 0.05em; }
+.ai-result-box { background: rgba(255,255,255,0.8); border: 1.5px solid rgba(139,105,20,0.2); border-radius: 10px; padding: 20px; max-height: 320px; overflow-y: auto; font-family: var(--mono); font-size: 0.82rem; line-height: 1.65; color: var(--ink); white-space: pre-wrap; word-break: break-word; margin-bottom: 16px; }
+.ai-result-meta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+.ai-meta-chip { font-size: 0.67rem; padding: 4px 10px; border-radius: 20px; background: var(--gold-bg); color: var(--gold); font-weight: 600; letter-spacing: 0.04em; }
+.btn-seal { width: 100%; padding: 14px; background: var(--ink); color: var(--perg); border: none; border-radius: 10px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: opacity 0.15s; letter-spacing: 0.01em; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.btn-seal:hover:not(:disabled) { opacity: 0.85; }
+.ai-sealed-box { text-align: center; padding: 32px 20px; }
+.ai-sealed-icon { font-size: 3rem; margin-bottom: 12px; }
+.ai-sealed-receipt { font-family: var(--mono); font-size: 0.72rem; color: var(--gold); background: var(--gold-bg); padding: 10px 16px; border-radius: 8px; margin: 12px auto; max-width: 480px; word-break: break-all; }
+.ai-verify-link { display: inline-block; margin-top: 12px; color: var(--gold); font-size: 0.8rem; text-decoration: underline; cursor: pointer; }
+.ai-constitutional-proof { font-size: 0.68rem; color: var(--ink-4); margin-top: 16px; line-height: 1.6; }
+[data-theme="noir"] .ai-field select, [data-theme="noir"] .ai-field input, [data-theme="noir"] .ai-field textarea { background: rgba(255,255,255,0.06); }
+[data-theme="noir"] .ai-result-box { background: rgba(255,255,255,0.04); }
+.chip-ai { background: linear-gradient(135deg, var(--gold) 0%, #C4960A 100%) !important; color: #fff !important; font-weight: 600; }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   §120.5 MOBILE EMERGENCY FIX — Phase 1
+   WINDI-SITES Mobile Responsiveness
+   Sealed: 04 Apr 2026
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* ═══ HAMBURGER MENU ═══ */
+.mobile-menu-btn {
+  display: none;
+  position: fixed; top: 8px; left: 8px; z-index: 1100;
+  width: 44px; height: 44px;
+  background: var(--perg-2); border: 1px solid var(--border-2);
+  border-radius: 8px; cursor: pointer;
+  align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.mobile-menu-btn:hover { background: var(--gold-bg); }
+.mobile-menu-btn span {
+  display: block; width: 18px; height: 2px;
+  background: var(--ink); border-radius: 1px;
+  position: relative; transition: all 0.2s;
+}
+.mobile-menu-btn span::before,
+.mobile-menu-btn span::after {
+  content: ''; position: absolute; left: 0;
+  width: 18px; height: 2px; background: var(--ink);
+  border-radius: 1px; transition: all 0.2s;
+}
+.mobile-menu-btn span::before { top: -6px; }
+.mobile-menu-btn span::after { top: 6px; }
+.mobile-menu-btn.open span { background: transparent; }
+.mobile-menu-btn.open span::before { transform: rotate(45deg); top: 0; }
+.mobile-menu-btn.open span::after { transform: rotate(-45deg); top: 0; }
+
+/* mobile overlay */
+.mobile-overlay {
+  display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5); z-index: 999;
+  opacity: 0; transition: opacity 0.2s;
+}
+.mobile-overlay.show { display: block; opacity: 1; }
+
+/* ═══ TABLET BREAKPOINT (768px - 1024px) ═══ */
+@media (max-width: 1024px) {
+  .inspector { width: 180px; }
+  .sl { width: 170px; }
+  .topbar-sha { display: none; }
+}
+
+/* ═══ MOBILE BREAKPOINT (<768px) ═══ */
+@media (max-width: 767px) {
+  /* Show hamburger */
+  .mobile-menu-btn { display: flex; }
+
+  /* Hide demo bar on mobile */
+  .demo-bar { display: none; }
+
+  /* Sidebar: off-canvas */
+  .sl {
+    position: fixed; top: 0; left: 0; bottom: 0;
+    width: 280px; max-width: 85vw;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    z-index: 1000;
+    box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+  }
+  .sl.open { transform: translateX(0); }
+
+  /* App layout: single column */
+  .app { flex-direction: column; }
+
+  /* Center takes full width */
+  .center {
+    flex: 1;
+    padding-top: 52px; /* space for hamburger */
+  }
+
+  /* Topbar adjustments */
+  .topbar {
+    padding: 0 10px 0 54px; /* space for hamburger */
+    height: 44px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .topbar::-webkit-scrollbar { display: none; }
+  .topbar-r { gap: 6px; }
+  .topbar-sha { display: none; }
+  .topbar-live { display: none; }
+  .tab { padding: 0 10px; font-size: 10px; min-width: max-content; }
+  .lang-pills { gap: 1px; }
+  .lpill { padding: 2px 5px; font-size: 8px; }
+
+  /* Hide inspector on mobile (use modal later) */
+  .inspector { display: none !important; }
+
+  /* Main content adjustments */
+  .main { flex-direction: column; }
+  .canvas { flex: 1; min-height: 0; }
+
+  /* Empty state */
+  #st-empty { padding: 20px 16px; }
+  .wtitle { font-size: 20px; margin-bottom: 18px; }
+  .wtitle br { display: none; }
+  .greet { font-size: 11px; }
+
+  /* Prompt box */
+  .pbox { border-radius: 10px; }
+  .pbox textarea { padding: 12px 14px 6px; font-size: 14px; min-height: 44px; }
+  .pbox-ft { padding: 8px 10px 10px; flex-wrap: wrap; gap: 6px; }
+  .patt { padding: 6px 8px; min-width: 44px; min-height: 44px; }
+  .patt .ico { font-size: 16px; }
+  .patt .lbl { font-size: 9px; }
+  .pagent { font-size: 11px; padding: 6px 12px; min-height: 32px; display: flex; align-items: center; }
+  .pagent-select { font-size: 11px; padding: 8px 24px 8px 12px; min-height: 40px; border-radius: 20px; }
+  .plang { gap: 3px; }
+  .plbtn { font-size: 10px; padding: 4px 8px; min-width: 32px; min-height: 32px; }
+  .psend { width: 44px; height: 44px; font-size: 16px; }
+
+  /* Chips */
+  .chips { gap: 8px; margin-top: 18px; justify-content: flex-start; }
+  .chip { font-size: 12px; padding: 8px 14px; min-height: 36px; }
+
+  /* Suggestions grid */
+  .sugg { margin-top: 20px; }
+  .sugg-grid { grid-template-columns: 1fr; gap: 10px; }
+  .sc { padding: 14px 16px; }
+  .sc-t { font-size: 10px; }
+  .sc-n { font-size: 13px; }
+  .sc-s { font-size: 10px; margin-top: 4px; }
+
+  /* Active document state */
+  .doc-hdr {
+    padding: 10px 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .dbadge { font-size: 10px; padding: 3px 8px; }
+  .dtitle { font-size: 13px; flex: none; width: 100%; order: 2; }
+  .dacts { gap: 6px; flex-wrap: wrap; }
+  .dact { font-size: 11px; padding: 8px 14px; min-height: 36px; }
+
+  /* Scroll area */
+  .scroll { padding: 16px 12px; gap: 14px; }
+
+  /* Agent message */
+  .amsg { gap: 8px; }
+  .aav { width: 28px; height: 28px; font-size: 12px; }
+  .aname { font-size: 10px; }
+  .atext { font-size: 14px; line-height: 1.6; }
+
+  /* Risk cards */
+  .risk-row { grid-template-columns: 1fr; gap: 8px; }
+  .rcard { padding: 12px 14px; }
+  .rcard-l { font-size: 10px; }
+  .rcard-v { font-size: 13px; }
+
+  /* Agent actions mobile */
+  .agent-actions { margin-top: 12px; padding-top: 12px; }
+  .agent-forensic { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .af-hash { font-size: 9px; word-break: break-all; }
+  .agent-btns { gap: 6px; }
+  .abtn { padding: 12px 14px; font-size: 13px; min-height: 48px; flex: 1; justify-content: center; }
+
+  /* Document canvas */
+  .doc-canvas { border-radius: 10px; }
+  .dc-header { padding: 16px 14px 12px; flex-direction: column; gap: 12px; }
+  .dc-org { font-size: 10px; }
+  .dc-title { font-size: 15px; }
+  .dc-meta { gap: 5px; }
+  .dc-tag { font-size: 10px; padding: 3px 8px; }
+  .dc-body { padding: 14px; font-size: 13px; line-height: 1.7; }
+  .dc-body .clause { margin-bottom: 12px; }
+  .dc-body .clause-num { font-size: 11px; }
+  .dc-body .highlight { padding: 10px 12px; font-size: 12px; }
+
+  /* Forensic footer */
+  .dc-forensic-footer {
+    padding: 10px 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .dc-seal-mark { font-size: 10px; }
+  .dc-verify-badge { font-size: 9px; padding: 3px 8px; }
+  .dc-qr-mini { width: 28px; height: 28px; margin-left: 0; }
+
+  /* Bottom prompt */
+  .pb { padding: 8px 10px; }
+  .pb .pbox textarea { min-height: 40px; font-size: 14px; }
+
+  /* Bottom bar */
+  .bottombar {
+    padding: 6px 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
+  }
+  .bottombar .motto {
+    width: 100%;
+    text-align: center;
+    margin-left: 0;
+    font-size: 8px;
+    margin-top: 2px;
+  }
+
+  /* Sidebar items - touch friendly */
+  .sl-item { padding: 12px 16px; font-size: 13px; min-height: 44px; }
+  .sl-doc { padding: 10px 16px 10px 24px; font-size: 12px; min-height: 40px; }
+  .sl-sec { padding: 12px 16px 6px; font-size: 10px; }
+  .sl-logo { padding: 14px 16px 12px; }
+  .sl-logo .w, .sl-logo .law { font-size: 16px; }
+  .sl-id-block { padding: 12px 14px; }
+  .sl-connect-btn { padding: 10px 14px; font-size: 12px; min-height: 40px; }
+
+  /* AI Draft Modal */
+  .ai-draft-modal { width: 95vw; max-height: 85vh; border-radius: 12px; }
+  .ai-draft-header { padding: 20px 16px 14px; }
+  .ai-draft-header h2 { font-size: 1rem; }
+  .ai-draft-body { padding: 16px; }
+  .ai-row { grid-template-columns: 1fr; gap: 10px; }
+  .ai-field select, .ai-field input, .ai-field textarea { padding: 12px 14px; font-size: 14px; }
+  .btn-generate, .btn-seal { padding: 16px; font-size: 1rem; min-height: 50px; }
+  .ai-result-box { max-height: 200px; font-size: 13px; }
+}
+
+/* ═══ SMALL MOBILE (<400px) ═══ */
+@media (max-width: 399px) {
+  .center { padding-top: 48px; }
+  .wtitle { font-size: 18px; }
+  .chip { font-size: 11px; padding: 6px 12px; }
+  .dacts { width: 100%; }
+  .dact { flex: 1; text-align: center; }
+  .risk-row { gap: 6px; }
+  .dc-header { padding: 14px 12px 10px; }
+  .dc-title { font-size: 14px; }
+}
+
+/* ═══ SAFE AREA (notch) ═══ */
+@supports (padding: max(0px)) {
+  @media (max-width: 767px) {
+    .sl {
+      padding-top: max(12px, env(safe-area-inset-top));
+      padding-bottom: max(12px, env(safe-area-inset-bottom));
+    }
+    .mobile-menu-btn {
+      top: max(8px, env(safe-area-inset-top));
+      left: max(8px, env(safe-area-inset-left));
+    }
+    .bottombar {
+      padding-bottom: max(6px, env(safe-area-inset-bottom));
+    }
+  }
+}
+/* ═══ §126 QUILL EDITOR — WHITE DOCUMENT STYLE ═══ */
+/* Document appears as white paper for professional legal documents */
+
+/* §126.3 — Professional Document Editor Toolbar */
+.ql-toolbar.ql-snow {
+  background: var(--perg-2);
+  border: 1px solid var(--border-2) !important;
+  border-bottom: none !important;
+  border-radius: var(--r) var(--r) 0 0;
+  padding: 8px 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.ql-toolbar.ql-snow .ql-formats {
+  margin-right: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.ql-toolbar.ql-snow button {
+  width: 28px;
+  height: 28px;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.ql-toolbar.ql-snow button:hover {
+  background: var(--gold-bg);
+}
+
+.ql-toolbar.ql-snow button.ql-active {
+  background: var(--gold-bg);
+  color: var(--gold);
+}
+
+.ql-toolbar.ql-snow .ql-picker {
+  height: 28px;
+}
+
+.ql-toolbar.ql-snow .ql-picker-label {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 11px;
+}
+
+.ql-toolbar.ql-snow .ql-picker-options {
+  background: var(--perg);
+  border: 1px solid var(--border-2);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  padding: 4px;
+}
+
+.ql-toolbar.ql-snow .ql-picker-item {
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.ql-toolbar.ql-snow .ql-picker-item:hover {
+  background: var(--gold-bg);
+}
+
+/* Color picker styling */
+.ql-toolbar.ql-snow .ql-color-picker .ql-picker-options,
+.ql-toolbar.ql-snow .ql-background .ql-picker-options {
+  width: 152px;
+  padding: 8px;
+}
+
+.ql-toolbar.ql-snow .ql-color-picker .ql-picker-item,
+.ql-toolbar.ql-snow .ql-background .ql-picker-item {
+  width: 16px;
+  height: 16px;
+  border-radius: 2px;
+  margin: 2px;
+}
+
+/* Header dropdown */
+.ql-toolbar.ql-snow .ql-header .ql-picker-label::before {
+  content: 'Überschrift';
+}
+.ql-toolbar.ql-snow .ql-header .ql-picker-item[data-value="1"]::before { content: 'Titel (H1)'; }
+.ql-toolbar.ql-snow .ql-header .ql-picker-item[data-value="2"]::before { content: 'Abschnitt (H2)'; }
+.ql-toolbar.ql-snow .ql-header .ql-picker-item[data-value="3"]::before { content: 'Unterabschnitt (H3)'; }
+.ql-toolbar.ql-snow .ql-header .ql-picker-item:not([data-value])::before { content: 'Normal'; }
+
+/* Size dropdown */
+.ql-toolbar.ql-snow .ql-size .ql-picker-label::before { content: 'Größe'; }
+.ql-toolbar.ql-snow .ql-size .ql-picker-item[data-value="small"]::before { content: 'Klein'; }
+.ql-toolbar.ql-snow .ql-size .ql-picker-item:not([data-value])::before { content: 'Normal'; }
+.ql-toolbar.ql-snow .ql-size .ql-picker-item[data-value="large"]::before { content: 'Groß'; }
+.ql-toolbar.ql-snow .ql-size .ql-picker-item[data-value="huge"]::before { content: 'Sehr groß'; }
+
+/* Readonly mode - hide toolbar */
+.quill-wrapper.readonly .ql-toolbar {
+  display: none;
+}
+
+/* Edit mode - show toolbar with highlight */
+.quill-wrapper:not(.readonly) .ql-toolbar {
+  display: flex;
+  border-left: 3px solid var(--gold);
+}
+
+/* Size classes in editor */
+.ql-editor .ql-size-small { font-size: 9pt; }
+.ql-editor .ql-size-large { font-size: 14pt; }
+.ql-editor .ql-size-huge { font-size: 18pt; }
+
+/* Alignment */
+.ql-editor .ql-align-center { text-align: center; }
+.ql-editor .ql-align-right { text-align: right; }
+.ql-editor .ql-align-justify { text-align: justify; }
+
+/* Indent */
+.ql-editor .ql-indent-1 { padding-left: 2em; }
+.ql-editor .ql-indent-2 { padding-left: 4em; }
+.ql-editor .ql-indent-3 { padding-left: 6em; }
+.ql-editor .ql-indent-4 { padding-left: 8em; }
+
+/* Strikethrough */
+.ql-editor s, .ql-editor strike { text-decoration: line-through; color: #888; }
+
+/* Links */
+.ql-editor a { color: #185FA5; text-decoration: underline; }
+
+.ql-container.ql-snow {
+  border: 1px solid var(--border-2) !important;
+  border-radius: 0 0 var(--r) var(--r);
+  /* WHITE DOCUMENT BACKGROUND */
+  background: #FFFFFF !important;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 11pt;
+  min-height: 400px;
+  /* Paper shadow effect */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.ql-editor {
+  /* Document text is black on white */
+  color: #1a1a1a !important;
+  line-height: 1.7;
+  padding: 2rem 2.5rem;
+  background: #FFFFFF;
+}
+
+/* Document headings - black, professional */
+.ql-editor h1 {
+  color: #1a1a1a !important;
+  font-family: 'Georgia', serif;
+  font-weight: bold;
+  font-size: 16pt;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.ql-editor h2 {
+  color: #1a1a1a !important;
+  font-family: 'Georgia', serif;
+  font-weight: bold;
+  font-size: 12pt;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #ccc;
+}
+
+.ql-editor h3 {
+  color: #1a1a1a !important;
+  font-family: 'Georgia', serif;
+  font-weight: bold;
+  font-size: 11pt;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.ql-editor p {
+  margin-bottom: 0.75rem;
+  text-align: justify;
+  color: #1a1a1a;
+}
+
+.ql-editor strong {
+  color: #1a1a1a !important;
+  font-weight: bold;
+}
+
+.ql-editor ul, .ql-editor ol {
+  margin-left: 2rem;
+  margin-bottom: 1rem;
+  padding-left: 0;
+  color: #1a1a1a;
+}
+
+.ql-editor li {
+  margin-bottom: 0.4rem;
+  color: #1a1a1a;
+}
+
+.ql-editor blockquote {
+  border-left: 3px solid #8B6914;
+  padding-left: 1rem;
+  margin: 1rem 0;
+  color: #444;
+  font-style: italic;
+  background: #f9f9f7;
+}
+
+.ql-editor pre {
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 1rem;
+  font-family: 'Courier New', monospace;
+  font-size: 10pt;
+  overflow-x: auto;
+  color: #333;
+}
+
+/* §126 Editable placeholder fields */
+.ql-editor .doc-field {
+  display: inline-block;
+  min-width: 150px;
+  padding: 2px 8px;
+  margin: 0 2px;
+  border-bottom: 1px solid #8B6914;
+  background: #fffef5;
+  color: #666;
+  font-style: italic;
+  cursor: text;
+}
+
+.ql-editor .doc-field:focus {
+  outline: none;
+  background: #fff8e0;
+  border-bottom: 2px solid #8B6914;
+  color: #1a1a1a;
+  font-style: normal;
+}
+
+.ql-editor .doc-field:empty:before {
+  content: attr(data-placeholder);
+  color: #999;
+}
+
+/* Signature lines */
+.ql-editor .signature-line {
+  display: inline-block;
+  width: 200px;
+  border-bottom: 1px solid #333;
+  margin: 0 10px;
+  text-align: center;
+  padding-top: 30px;
+  font-size: 9pt;
+  color: #666;
+}
+
+/* Toolbar icons - keep NOIR style */
+.ql-snow .ql-stroke { stroke: var(--ink-3) !important; }
+.ql-snow .ql-fill { fill: var(--ink-3) !important; }
+.ql-snow .ql-picker-label { color: var(--ink-3) !important; }
+
+.ql-snow .ql-picker-options {
+  background: var(--perg-2) !important;
+  border-color: var(--border-2) !important;
+}
+
+.ql-snow .ql-picker-item { color: var(--ink) !important; }
+
+.ql-snow button:hover .ql-stroke,
+.ql-snow .ql-picker-label:hover .ql-stroke { stroke: var(--gold) !important; }
+
+.ql-snow button:hover .ql-fill,
+.ql-snow .ql-picker-label:hover .ql-fill { fill: var(--gold) !important; }
+
+.ql-snow button.ql-active .ql-stroke { stroke: var(--gold) !important; }
+.ql-snow button.ql-active .ql-fill { fill: var(--gold) !important; }
+
+.ql-snow .ql-picker-label:hover,
+.ql-snow .ql-picker-item:hover { color: var(--gold) !important; }
+
+/* Editor wrapper */
+.quill-wrapper {
+  margin-top: 1rem;
+  border-radius: var(--r);
+  overflow: hidden;
+}
+
+.quill-wrapper.readonly .ql-toolbar { display: none; }
+.quill-wrapper.readonly .ql-container { border-radius: var(--r); }
+
+/* Edit mode toggle */
+.edit-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.edit-toggle label {
+  font-size: 0.8rem;
+  color: var(--ink-3);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.edit-toggle input[type="checkbox"] {
+  accent-color: var(--gold);
+}
+
+</style>
+<!-- Quill CSS -->
+<link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+<!-- §126.4 Quill Custom Styles (MUST be after quill.snow.css) -->
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   §126.4 — WHITE DOCUMENT STYLE (Post-Quill Override)
+   These styles MUST load AFTER quill.snow.css to take effect
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Container - White paper with shadow */
+.ql-container.ql-snow {
+  background: #FFFFFF !important;
+  font-family: 'Georgia', 'Times New Roman', serif !important;
+  font-size: 11pt !important;
+  min-height: 400px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  border: 1px solid #ddd !important;
+}
+
+/* Editor content area */
+.ql-editor {
+  color: #1a1a1a !important;
+  line-height: 1.7 !important;
+  padding: 2rem 2.5rem !important;
+  background: #FFFFFF !important;
+  min-height: 350px;
+}
+
+/* Title - H1 centered uppercase */
+.ql-editor h1 {
+  color: #1a1a1a !important;
+  font-family: 'Georgia', serif !important;
+  font-weight: bold !important;
+  font-size: 16pt !important;
+  text-align: center !important;
+  margin-bottom: 1.5rem !important;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Section headers - H2 with underline */
+.ql-editor h2 {
+  color: #1a1a1a !important;
+  font-family: 'Georgia', serif !important;
+  font-weight: bold !important;
+  font-size: 12pt !important;
+  margin-top: 1.5rem !important;
+  margin-bottom: 0.75rem !important;
+  padding-bottom: 0.5rem !important;
+  border-bottom: 1px solid #ccc !important;
+}
+
+/* Subsection - H3 */
+.ql-editor h3 {
+  color: #1a1a1a !important;
+  font-family: 'Georgia', serif !important;
+  font-weight: bold !important;
+  font-size: 11pt !important;
+  margin-top: 1rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+/* Paragraphs - justified text */
+.ql-editor p {
+  margin-bottom: 0.75rem !important;
+  text-align: justify !important;
+  color: #1a1a1a !important;
+}
+
+/* Bold text */
+.ql-editor strong, .ql-editor b {
+  color: #1a1a1a !important;
+  font-weight: bold !important;
+}
+
+/* Lists */
+.ql-editor ul, .ql-editor ol {
+  margin-left: 2rem !important;
+  margin-bottom: 1rem !important;
+  padding-left: 0 !important;
+  color: #1a1a1a !important;
+}
+
+.ql-editor li {
+  margin-bottom: 0.4rem !important;
+  color: #1a1a1a !important;
+}
+
+/* Blockquote */
+.ql-editor blockquote {
+  border-left: 3px solid #8B6914 !important;
+  padding-left: 1rem !important;
+  margin: 1rem 0 !important;
+  color: #444 !important;
+  font-style: italic !important;
+  background: #f9f9f7 !important;
+}
+
+/* Editable placeholder fields */
+.ql-editor .doc-field {
+  display: inline-block;
+  min-width: 150px;
+  padding: 2px 8px;
+  margin: 0 2px;
+  border-bottom: 1px solid #8B6914;
+  background: #fffef5;
+  color: #666;
+  font-style: italic;
+  cursor: text;
+}
+
+.ql-editor .doc-field:focus {
+  outline: none;
+  background: #fff8e0;
+  border-bottom-width: 2px;
+}
+
+/* Signature line */
+.ql-editor .signature-line {
+  display: inline-block;
+  width: 200px;
+  border-bottom: 1px solid #1a1a1a;
+  padding-bottom: 4px;
+  text-align: center;
+  color: #888;
+  font-size: 9pt;
+}
+
+/* Toolbar styling */
+.ql-toolbar.ql-snow {
+  background: #f5f5f3 !important;
+  border: 1px solid #ddd !important;
+  border-bottom: none !important;
+  border-radius: 8px 8px 0 0;
+}
+
+/* Hide toolbar in readonly mode */
+.quill-wrapper.readonly .ql-toolbar {
+  display: none !important;
+}
+
+.quill-wrapper.readonly .ql-container {
+  border-radius: 8px !important;
+}
+
+/* Show toolbar with gold accent in edit mode */
+.quill-wrapper:not(.readonly) .ql-toolbar {
+  display: flex !important;
+  border-left: 3px solid #8B6914 !important;
+}
+</style>
+<!-- §125 QRCode.js + html2pdf.js for professional export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<!-- §127.2 DOCX: Server-side via python-docx (no client libs needed) -->
+<!-- §173 DID SIMPLIFICATION — Single Source of Truth -->
+<script src="/shared/windi-did.js"></script>
+</head>
+<body>
+
+<!-- §120.5 Mobile Menu Button -->
+<button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()" aria-label="Menu">
+  <span></span>
+</button>
+<div class="mobile-overlay" id="mobileOverlay" onclick="closeMobileMenu()"></div>
+
+<div class="demo-bar">
+  <div class="demo-lang">
+    <button class="dlang" onclick="setLang('de')">DE</button>
+    <button class="dlang" onclick="setLang('en')">EN</button>
+    <button class="dlang" onclick="setLang('pt')">PT</button>
+  </div>
+  <button id="theme-toggle" class="theme-toggle" onclick="toggleTheme()" title="NOIR ↔ KLAR">☀</button>
+  <div class="demo-sep"></div>
+  <button class="demo-btn on" onclick="go('empty')" data-i18n="demoEmpty">Leerer Zustand</button>
+  <button class="demo-btn" onclick="openAiDraft()" data-i18n="demoActive">Aktives Dokument</button>
+</div>
+
+<div class="app">
+
+  <!-- ══ SIDEBAR LEFT ══ -->
+  <div class="sl">
+    <div class="sl-logo">
+      <span class="w">WINDI</span>
+      <span class="law">LAW</span>
+      <span class="did" id="tl-did" title="Click to copy DID">—</span>
+    </div>
+
+    <div class="sl-sec">Agenten</div>
+    <div class="sl-item on">⚖️ Juristisch <span class="ct">22</span></div>
+    <div class="sl-item">📋 Notariat</div>
+    <div class="sl-item">📊 Buchhaltung</div>
+    <div class="sl-item">✅ Compliance</div>
+
+    <div class="sl-sec" style="margin-top:6px" data-i18n="sbDocsTitle">Dokumente</div>
+    <div id="sb-docs-list">
+      <div class="sl-doc-empty" data-i18n="sbDocsEmpty" style="font-size:10px;color:var(--ink-4);padding:8px 12px;font-style:italic;">Noch keine Dokumente</div>
+    </div>
+
+    <div class="sl-sec" style="margin-top:6px">Verifikation</div>
+    <div class="sl-item" onclick="window.open('https://windi-domain.com/verify-public/web/','_blank')" style="cursor:pointer">🔍 Verify Public</div>
+    <div class="sl-item" onclick="showChain()" style="cursor:pointer">📒 Forensic Ledger</div>
+    <div class="sl-item" onclick="window.open('/law/dragon/','_blank')" style="cursor:pointer" title="Dragon Shadow Forest — SHA-256 Glyph Encoding">🐉 Dragon Forest</div>
+
+    <div class="sl-identity">
+      <div class="sl-id-block" id="sb-schluessel">
+        <div class="sl-id-hdr">🔑 <span data-i18n="sbSchluesselTitle">Schlüssel</span> <span class="ok" id="sb-key-status">✓</span></div>
+        <div class="sl-id-row"><span class="k" data-i18n="sbKeyTypeLabel">Typ</span><span class="v">Ed25519</span></div>
+        <div class="sl-id-row"><span class="k" data-i18n="sbKeyCreatedLabel">Erstellt</span><span class="v" id="sb-key-created">—</span></div>
+        <div class="sl-id-row"><span class="k">SHA-256</span><span class="v" id="sb-key-hash" title="Click to copy">— — — —</span></div>
+      </div>
+      <div class="sl-id-block" id="sb-wallet">
+        <div class="sl-id-hdr">🪪 <span data-i18n="sbWalletTitle">Wallet</span> <span class="ok" id="sb-wallet-status">✓</span></div>
+        <div class="sl-id-row"><span class="k" data-i18n="sbNameLabel">Name</span><span class="v" id="sb-user-name">—</span></div>
+        <div class="sl-id-row"><span class="k" data-i18n="sbPioneerLabel">Pioneer</span><span class="v g" id="sb-pioneer-num">—</span></div>
+        <div class="sl-id-row"><span class="k">Tier</span><span class="v g" id="sb-tier">—</span></div>
+        <div class="sl-id-row"><span class="k" data-i18n="sbCreditsLabel">Kredite</span><span class="v" id="sb-credits">—</span></div>
+        <button class="sl-connect-btn hidden" id="sb-connect-btn" onclick="window.location.href='/law/gate'">Wallet erstellen →</button>
+      </div>
+      <div class="sl-sov">
+        <div class="sl-sov-row" data-i18n="sbSovLabel">Lokale Souveränität <span>93.3%</span></div>
+        <div class="sl-bar"><div class="sl-bar-fill"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ CENTER ══ -->
+  <div class="center">
+    <div class="topbar">
+      <div class="tab on">Gerichtsfähig</div>
+      <div class="tab">Prozessual</div>
+      <div class="tab">Analyse</div>
+      <div class="topbar-r">
+        <span class="topbar-sha">SHA-256 · Forensic Ledger</span>
+        <span class="topbar-live">aktiv</span>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="canvas">
+
+        <!-- ══ VAZIO ══ -->
+        <div id="st-empty" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 36px">
+          <div class="greet" id="user-greeting">Guten Morgen</div>
+          <div class="wtitle" data-i18n="greetQuestion">Was möchten Sie<br>heute <em>prüfen?</em></div>
+
+          <div class="pbox">
+            <textarea id="prompt-input" placeholder="Beschreiben Sie Ihr rechtliches Anliegen… Dokument hochladen, Vertrag analysieren, Beweiskette erstellen"></textarea>
+            <div class="pbox-ft" id="cmd-media-bar">
+              <div class="patt" title="Dokument" onclick="handleMedia('doc')"><span class="ico">📄</span><span class="lbl">DOC</span></div>
+              <div class="patt" title="Bild" onclick="handleMedia('img')"><span class="ico">🖼</span><span class="lbl">IMG</span></div>
+              <div class="patt" title="Video" onclick="handleMedia('vid')"><span class="ico">🎥</span><span class="lbl">VID</span></div>
+              <!-- §122 Agent Selector -->
+              <select id="agent-select" class="pagent-select" title="Agent auswählen">
+                <option value="legal">⚖️ W-LEGAL</option>
+                <option value="notary">📜 W-NOTARY</option>
+                <option value="audit">🔍 W-AUDIT</option>
+                <option value="compliance">✓ W-COMPLY</option>
+                <option value="accounting">📊 W-ACCT</option>
+              </select>
+              <div class="plang">
+                <button class="plbtn on" data-lang="de">DE</button>
+                <button class="plbtn" data-lang="en">EN</button>
+                <button class="plbtn" data-lang="pt">PT</button>
+              </div>
+              <button class="psend" onclick="submitDirectPrompt()" title="Senden">→</button>
+            </div>
+          </div>
+
+          <div class="chips">
+            <span class="chip chip-ai" onclick="openAiDraft()">⚖️ AI Draft</span>
+            <span class="chip" onclick="quickPrompt('Erstelle einen NDA-Vertrag (Geheimhaltungsvereinbarung) nach deutschem Recht. Berücksichtige ZPO §273 für Beweissicherung. Parteien: [PARTEI A] und [PARTEI B]. Laufzeit: 3 Jahre. Vertragsstrafe bei Verstoß.', 'legal')">📄 NDA · ZPO §273</span>
+            <span class="chip" onclick="quickPrompt('Erstelle eine forensische Beweiskette für ein digitales Dokument. Dokumentiere: SHA-256 Hash, Zeitstempel, Urheber-DID, Prüfpfad. Format: Ledger-kompatibel mit QR-Code-Verifizierung.', 'audit')">🔗 Beweiskette · SHA-256</span>
+            <span class="chip" onclick="quickPrompt('Erstelle ein Tribunalpaket für internationale Verfahren in DE/EN/PT. Enthält: Klageschrift, Beweisverzeichnis, Vollmacht, Kostenvorschuss-Antrag. Gerichtsstand: Deutschland.', 'legal')">⚖️ Tribunalpaket · DE/EN/PT</span>
+            <span class="chip" onclick="quickPrompt('Prüfe Compliance für Krypto-Asset-Dienstleister nach BaFin-Anforderungen und MiCA-Verordnung. Erstelle Checkliste: Lizenzierung, AML/KYC, Meldepflichten, Kapitalanforderungen.', 'compliance')">🏦 BaFin · MiCA</span>
+            <span class="chip" onclick="quickPrompt('Erstelle eine eIDAS-konforme Signaturanforderung. Qualifizierte elektronische Signatur (QES) nach EU 910/2014. Validierung: Zertifikatskette, Zeitstempel, Signaturformat XAdES/PAdES.', 'notary')">✍️ eIDAS Signatur</span>
+            <span class="chip" onclick="quickPrompt('Generiere ELSTER XML für Umsatzsteuervoranmeldung (UStVA). GoBD-konform, DATEV-Export-fähig. Periode: [MONAT/QUARTAL]. Steuernummer: [STNR]. Umsatz: [BETRAG] EUR.', 'accounting')">📊 ELSTER XML · C6</span>
+          </div>
+
+          <div class="sugg">
+            <div class="sugg-lbl" data-i18n="frequentRequests">Häufige Anfragen</div>
+            <div class="sugg-grid">
+              <div class="sc" onclick="quickPrompt('Analysiere den folgenden NDA-Vertrag auf rechtliche Risiken. Prüfe: Geheimhaltungspflichten, Vertragsstrafen, Laufzeit, Kündigungsklauseln, GDPR-Konformität, Gerichtsstand. Markiere kritische Klauseln.', 'legal')">
+                <div class="sc-t">Legal</div>
+                <div class="sc-n" data-i18n="sugg_nda">NDA auf Risiken prüfen</div>
+                <div class="sc-s">ZPO · GDPR · eIDAS</div>
+              </div>
+              <div class="sc" onclick="quickPrompt('Erstelle eine vollständige Beweiskette für das angehängte Dokument. Generiere SHA-256 Hash, dokumentiere Metadaten, erstelle Ledger-Receipt mit QR-Code zur öffentlichen Verifizierung.', 'audit')">
+                <div class="sc-t">Forensisch</div>
+                <div class="sc-n" data-i18n="sugg_evidence">Beweiskette erstellen</div>
+                <div class="sc-s">SHA-256 · Ledger · QR</div>
+              </div>
+              <div class="sc" onclick="quickPrompt('Prüfe die angehängte XRechnung auf GoBD-Konformität. Validiere: XML-Schema, Pflichtfelder, Steuersätze, Rechnungsnummer-Sequenz. Erstelle DATEV-Export und ELSTER-Meldung (C6).', 'accounting')">
+                <div class="sc-t">Buchhaltung</div>
+                <div class="sc-n" data-i18n="sugg_xrechnung">XRechnung GoBD prüfen</div>
+                <div class="sc-s">DATEV · ELSTER · C6</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ ACTIVO ══ -->
+        <div id="st-active" style="flex:1;display:none;flex-direction:column;overflow:hidden;min-height:0">
+
+          <!-- Document header - populated dynamically -->
+          <div class="doc-hdr" id="doc-hdr-dynamic" style="display:none">
+            <span class="dbadge legal" id="doc-badge">Legal</span>
+            <span class="dtitle" id="doc-title"></span>
+            <div class="dacts">
+              <button class="dact" onclick="verifyReceipt()">Verify</button>
+              <button class="dact">Export</button>
+              <button class="dact seal-btn" onclick="openSealModal()">⬡ Seal · I11</button>
+            </div>
+          </div>
+
+          <!-- Empty state - shown when no document loaded -->
+          <div class="scroll" id="doc-empty-state" style="align-items:center;justify-content:center;text-align:center;">
+            <div style="max-width:320px;">
+              <div style="font-size:48px;margin-bottom:16px;opacity:0.3;">📄</div>
+              <div style="font-size:14px;font-weight:600;color:var(--ink-2);margin-bottom:8px;" data-i18n="docEmptyTitle">Kein Dokument geladen</div>
+              <div style="font-size:12px;color:var(--ink-4);margin-bottom:20px;line-height:1.5;" data-i18n="docEmptyDesc">Erstellen Sie Ihr erstes Dokument mit AI Draft oder laden Sie ein bestehendes Dokument.</div>
+              <button onclick="openAiDraft()" style="background:linear-gradient(135deg,#8B6914,#C4960A);color:white;border:none;padding:12px 24px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);" data-i18n="docEmptyBtn">⚖️ Erstes Dokument erstellen</button>
+            </div>
+          </div>
+
+          <!-- Document content - populated dynamically, hidden by default -->
+          <div class="scroll" id="doc-content" style="display:none">
+            <!-- Agent response container -->
+            <div class="amsg" id="agent-response" style="display:none">
+              <div class="aav" id="agent-icon">⚖️</div>
+              <div class="abody">
+                <div class="aname" id="agent-name"></div>
+                <!-- §124 Quill Editor Integration -->
+                <div class="edit-toggle">
+                  <label>
+                    <input type="checkbox" id="edit-mode-toggle" onchange="toggleEditMode(this.checked)">
+                    <span data-i18n="editMode">Bearbeitungsmodus</span>
+                  </label>
+                </div>
+                <div class="quill-wrapper readonly" id="quill-wrapper">
+                  <div id="quill-editor"></div>
+                </div>
+                <div class="risk-row" id="agent-risks"></div>
+                <!-- §122.2 Forensic Action Bar -->
+                <div class="agent-actions" id="agent-actions" style="display:none">
+                  <div class="agent-forensic">
+                    <span class="af-label">SHA-256:</span>
+                    <span class="af-hash" id="agent-hash">—</span>
+                  </div>
+                  <div class="agent-btns">
+                    <button class="abtn abtn-save" onclick="saveAgentDraft()" title="Entwurf speichern">💾 <span data-i18n="btnSave">Speichern</span></button>
+                    <button class="abtn abtn-seal" onclick="sealAgentDraft()" title="Im Ledger versiegeln (I11)">⬡ <span data-i18n="btnSeal">Seal · I11</span></button>
+                    <button class="abtn abtn-qr" onclick="showAgentQR()" title="QR-Code anzeigen">📱 QR</button>
+                    <div class="export-dropdown" style="position:relative;display:inline-block;">
+                      <button class="abtn abtn-export" onclick="toggleExportMenu()" title="Dokument exportieren">📄 Export ▾</button>
+                      <div class="export-menu" id="exportMenu" style="display:none;position:absolute;bottom:100%;left:0;background:var(--bg);border:1px solid var(--border);border-radius:6px;overflow:hidden;min-width:140px;box-shadow:0 -4px 12px rgba(0,0,0,0.3);margin-bottom:4px;z-index:100;">
+                        <button onclick="exportAgentDraft();hideExportMenu()" style="display:block;width:100%;padding:0.6rem 1rem;text-align:left;background:none;border:none;color:var(--text);cursor:pointer;font-size:0.85rem;">📄 PDF Export</button>
+                        <button onclick="exportAgentDocx();hideExportMenu()" style="display:block;width:100%;padding:0.6rem 1rem;text-align:left;background:none;border:none;color:var(--text);cursor:pointer;font-size:0.85rem;border-top:1px solid var(--border);">📝 DOCX Export</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Document canvas container -->
+            <div class="doc-canvas" id="doc-canvas">
+              <div class="dc-header">
+                <div class="dc-header-left">
+                  <div class="dc-org" id="dc-org"></div>
+                  <div class="dc-title" id="dc-title"></div>
+                  <div class="dc-meta" id="dc-meta"></div>
+                </div>
+              </div>
+              <div class="dc-body" id="dc-body"></div>
+              <div class="dc-forensic-footer" id="dc-footer">
+                <div class="dc-seal-mark">
+                  <span class="dc-seal-icon">🔐</span>
+                  <span class="dc-seal-hash" id="dc-hash"></span>
+                </div>
+                <div class="dc-sep"></div>
+                <div class="dc-seal-mark">
+                  <span class="dc-seal-inv">I11</span>
+                  <span style="color:var(--ink-4)">· Forensic Ledger</span>
+                </div>
+                <div class="dc-sep"></div>
+                <span class="dc-verify-badge" id="dc-verify-badge"></span>
+                <div class="dc-sep"></div>
+                <div style="display:flex;gap:3px;">
+                  <span id="cia-i9" style="font-size:8px;padding:1px 5px;border-radius:3px;background:var(--perg-3);color:var(--ink-4);opacity:0.6;transition:all 0.2s;">I9</span>
+                  <span id="cia-i11" style="font-size:8px;padding:1px 5px;border-radius:3px;background:var(--perg-3);color:var(--ink-4);opacity:0.6;transition:all 0.2s;">I11</span>
+                  <span id="cia-i13" style="font-size:8px;padding:1px 5px;border-radius:3px;background:var(--perg-3);color:var(--ink-4);opacity:0.6;transition:all 0.2s;">I13</span>
+                  <span id="cia-g3" style="font-size:8px;padding:1px 5px;border-radius:3px;background:var(--perg-3);color:var(--ink-4);opacity:0.6;transition:all 0.2s;">G3</span>
+                </div>
+                <div class="dc-qr-wrap" id="dc-qr"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- prompt bottom - hidden until document loaded -->
+          <div class="pb" id="doc-prompt" style="display:none">
+            <div class="pbox">
+              <textarea id="doc-followup" data-i18n-placeholder="docFollowupPh" placeholder="Folgeanalyse, weitere Fragen…" style="min-height:36px"></textarea>
+              <div class="pbox-ft">
+                <div class="patt" onclick="handleMedia('doc')"><span class="ico">📄</span><span class="lbl">DOC</span></div>
+                <div class="patt" onclick="handleMedia('img')"><span class="ico">🖼</span><span class="lbl">IMG</span></div>
+                <div class="patt" onclick="handleMedia('vid')"><span class="ico">🎥</span><span class="lbl">VID</span></div>
+                <div class="pagent" id="doc-agent">W-LEGAL-001</div>
+                <div class="plang">
+                  <button class="plbtn on">DE</button>
+                  <button class="plbtn">EN</button>
+                  <button class="plbtn">PT</button>
+                </div>
+                <button class="psend">→</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ══ INSPECTOR RIGHT ══ -->
+      <div class="inspector collapsed" id="inspector">
+        <div class="insp-toggle" onclick="toggleInsp()" id="itoggle">›</div>
+
+        <div class="insp-sec">Dokument</div>
+        <div class="insp-block">
+          <div class="insp-lbl">Typ</div>
+          <div class="insp-val">Geheimhaltungsvertrag</div>
+        </div>
+        <div class="insp-block">
+          <div class="insp-lbl">Agent</div>
+          <div class="insp-val gold">W-LEGAL-001</div>
+        </div>
+        <div class="insp-block">
+          <div class="insp-lbl">Status</div>
+          <div class="insp-val green">Versiegelt · I11</div>
+        </div>
+        <div class="insp-block">
+          <div class="insp-lbl">SHA-256</div>
+          <div class="insp-mono">a3f8c12d4e9b7f2a1c6d8e3f…</div>
+        </div>
+
+        <div class="insp-sec">Wahrheitssensoren</div>
+        <div class="insp-block">
+          <div class="s-row"><span class="s-dot" style="background:var(--green)"></span><span class="s-lbl">Kryptografisch · HIGH</span><span class="s-pct">100%</span></div>
+          <div class="s-bar"><div style="height:100%;width:100%;background:var(--green);border-radius:1px"></div></div>
+          <div class="s-row"><span class="s-dot" style="background:var(--amber)"></span><span class="s-lbl">Prozessual · MED</span><span class="s-pct">78%</span></div>
+          <div class="s-bar"><div style="height:100%;width:78%;background:var(--amber);border-radius:1px"></div></div>
+        </div>
+
+        <div class="insp-sec">Jurisdiktionen</div>
+        <div class="insp-block">
+          <div class="jtags">
+            <span class="jtag on">DE · ZPO</span>
+            <span class="jtag on">EU · eIDAS</span>
+            <span class="jtag">BR · MCI</span>
+          </div>
+        </div>
+
+        <div class="insp-sec">Aktionen</div>
+        <div class="insp-block">
+          <div class="act-grid">
+            <button class="abtn seal" onclick="openSealModal()">⬡ Seal · I11</button>
+            <button class="abtn" onclick="verifyReceipt()">Verify</button>
+            <button class="abtn">Export</button>
+            <button class="abtn" onclick="showChain()">Beweiskette</button>
+          </div>
+        </div>
+
+        <div class="insp-sec">Invarianten</div>
+        <div class="insp-block">
+          <div class="inv-item">I9 · Keine autonome Eskalation</div>
+          <div class="inv-item">I11 · Kryptografische Permanenz</div>
+          <div class="inv-item">G3 · Mensch entscheidet</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottombar">
+      <span class="live">aktiv</span>
+      <span class="sep">·</span>
+      <span>Ledger · 8101</span>
+      <span class="sep">·</span>
+      <span>7 Agenten · online</span>
+      <span class="sep">·</span>
+      <span>56.621+ Receipts</span>
+      <span class="motto">AI processes. Human decides. WINDI guarantees.</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══ MODAL I9 — SEAL CONFIRMATION ══ -->
+<!-- modal-i9 SEALED marker -->
+<div id="modal-seal" style="display:none;position:fixed;inset:0;background:rgba(42,32,16,0.55);z-index:500;align-items:center;justify-content:center;">
+  <div style="background:var(--perg);border:1px solid var(--border-2);border-radius:var(--r-lg);padding:24px 28px;max-width:360px;width:90%;box-shadow:0 8px 32px rgba(42,32,16,0.25);">
+    <div style="font-size:11px;font-weight:600;color:var(--gold);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:10px;">⬡ Invariante I11 — Versiegelung</div>
+    <div style="font-size:13px;color:var(--ink);line-height:1.6;margin-bottom:16px;">Diese Aktion ist <strong>UNWIDERRUFLICH</strong>. Das Dokument wird im Forensic Ledger mit permanentem SHA-256 Hash versiegelt.</div>
+    <div style="font-size:10px;color:var(--ink-3);font-family:var(--mono);margin-bottom:18px;">I9 · Keine autonome Aktion · Mensch bestätigt</div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button onclick="closeSealModal()" style="font-size:11px;padding:6px 14px;border-radius:5px;border:1px solid var(--border-2);background:transparent;color:var(--ink-3);cursor:pointer;font-family:var(--font);">Abbrechen</button>
+      <button onclick="confirmSeal()" style="font-size:11px;padding:6px 14px;border-radius:5px;border:none;background:var(--gold);color:white;cursor:pointer;font-family:var(--font);font-weight:500;">⬡ Versiegeln · I11</button>
+    </div>
+  </div>
+</div>
+
+<!-- Media preview area -->
+<div id="media-preview" style="display:none;position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--perg);border:1px solid var(--border-2);border-radius:var(--r);padding:6px 12px;box-shadow:0 2px 12px rgba(42,32,16,0.12);z-index:100;"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// WINDI-SITES v3.0 — Governança Silenciosa
+// PHASE 1: Wallet Gate Logic (F10 SEALED)
+// ══════════════════════════════════════════════════════════════
+
+var lang = 'de';
+var walletDid = '';
+var inspOpen = false;
+
+// ══════════════════════════════════════════════════════════════
+// i18n LANG object (F11 SEALED - setLang)
+// ══════════════════════════════════════════════════════════════
+var LANG = {
+  de: {
+    pageTitle: 'WINDI LAW — Stille Governance',
+    demoEmpty: 'Leerer Zustand', demoActive: 'Aktives Dokument',
+    greetMorning: 'Guten Morgen', greetAfternoon: 'Guten Tag', greetEvening: 'Guten Abend',
+    greetQuestion: 'Was möchten Sie<br>heute <em>prüfen?</em>',
+    frequentRequests: 'Häufige Anfragen', sugg_nda: 'NDA auf Risiken prüfen', sugg_evidence: 'Beweiskette erstellen', sugg_xrechnung: 'XRechnung GoBD prüfen',
+    btnSave: 'Speichern', btnSeal: 'Seal · I11', btnExport: 'Export', editMode: 'Bearbeitungsmodus',
+    sbSchluesselTitle: 'Schlüssel', sbWalletTitle: 'Wallet',
+    sbKeyTypeLabel: 'Typ', sbKeyCreatedLabel: 'Erstellt',
+    sbNameLabel: 'Name', sbPioneerLabel: 'Pioneer', sbCreditsLabel: 'Kredite',
+    sbSovLabel: 'Lokale Souveränität', sbDocsTitle: 'Dokumente', sbDocsEmpty: 'Noch keine Dokumente',
+    docEmptyTitle: 'Kein Dokument geladen', docEmptyDesc: 'Erstellen Sie Ihr erstes Dokument mit AI Draft oder laden Sie ein bestehendes Dokument.', docEmptyBtn: '⚖️ Erstes Dokument erstellen', docFollowupPh: 'Folgeanalyse, weitere Fragen…',
+    notConnected: 'Noch keine Wallet', connect: 'Wallet erstellen →',
+    hashPlaceholder: '— — — —', createWallet: 'Wallet erstellen →',
+    tlStatusVerified: 'VERIFIED', tlStatusPending: 'PENDING',
+    // AI Draft i18n
+    aiStep1: '1 · Konfigurieren', aiStep2: '2 · I9 Genehmigung', aiStep3: '3 · Generieren',
+    aiStep4: '4 · Prüfen', aiStep5: '5 · I11 Versiegeln',
+    aiDocType: 'Dokumenttyp', aiJurisdiction: 'Gerichtsbarkeit', aiLanguage: 'Sprache',
+    aiDocName: 'Dokumentname', aiDocNamePh: 'z.B.: NDA zwischen Firma A und Firma B · 2026',
+    aiContext: 'Kontext · Parteien · Zweck',
+    aiContextPh: 'Beschreiben Sie:\n• Beteiligte Parteien\n• Zweck des Dokuments\n• Spezifische Bedingungen\n• Fristen, Werte, Pflichten',
+    aiHashWarn: '⚠️ Der Text wird gehasht und unveränderlich im Ledger versiegelt.',
+    aiI9Title: '🛡️ Invariant I9 — Menschliche Genehmigung',
+    aiI9Desc: 'Mit Klick auf "Generieren" bestätigst du diesen Antrag und wirst das Ergebnis prüfen.',
+    aiGenerate: '⚖️ Mit KI generieren', aiClose: 'Schließen',
+    aiGenerating: 'Juristisches Dokument wird generiert…',
+    aiAfterGen: '🔐 Nach Generierung → menschliche Prüfung → I11 Versiegelung',
+    aiReviewLabel: '📄 Generiertes Dokument — Prüfen und bearbeiten',
+    aiEditHint: '✏️ Du kannst bearbeiten. Der finale Hash wird über den versiegelten Text berechnet.',
+    aiI11Title: '🔐 Invariant I11 + G3 — Permanente Versiegelung',
+    aiI11Desc: 'Der Hash wird unveränderlich im Forensic Ledger eingetragen.',
+    aiNotDelete: 'Kann nicht gelöscht werden.',
+    aiBack: '← Zurück', aiSeal: '🔐 Im Ledger versiegeln · I11',
+    aiModelLoading: 'KI-Entwurf wird vorbereitet…',
+    aiSealedTitle: 'Dokument versiegelt · I11 ✅',
+    aiSealedDesc: 'Das Dokument existiert, ist identifiziert und öffentlich verifizierbar.',
+    aiVerifyLink: '🔍 Verify Public öffnen →',
+    aiNewDoc: '+ Neues Dokument',
+    // Errors & Confirmations
+    errNoWallet: '🔐 Zugriff verweigert. Wallet + DID erforderlich.\nI9: Identität erforderlich.',
+    errContextShort: 'Kontext zu kurz (min. 20 Zeichen).',
+    errDocName: 'Dokumentname erforderlich.',
+    errTextEmpty: 'Text ist leer.',
+    errPrefix: '❌ Fehler: ',
+    confirmI9Generate: '🛡️ WINDI LAW — Invariant I9\n\nGenerieren: {docType} · {jurisdiction}\nName: {docName}\n\nBestätigst du:\n✓ Diese Anfrage ist legitim\n✓ Du wirst das Ergebnis prüfen\n✓ Die finale Entscheidung liegt bei dir\n\nGeneration bestätigen?',
+    confirmG3Seal: '🔐 WINDI LAW — Invariant G3 + I11\n\nPERMANENT VERSIEGELN:\n• "{docName}"\n• {docType} · {jurisdiction}\n\n⚠️ UNWIDERRUFLICH. Hash wird für immer im Ledger eingetragen.\n\nVersiegelung bestätigen?',
+    verifySuccess: '✓ Verifiziert · Ledger bestätigt Integrität',
+    verifyNotFound: '✗ Nicht im Ledger gefunden',
+    verifyOffline: 'Ledger nicht erreichbar — Offline-Verifizierung ausstehend',
+    // Video Modal i18n (§128)
+    vidChoiceTitle: '🎥 Video hinzufügen',
+    vidChoiceDesc: 'Wählen Sie, wie das Video hinzugefügt werden soll:',
+    vidLocalTitle: '📁 Lokaler Upload',
+    vidLocalDesc: 'Datei vom Gerät auswählen (nur Hash)',
+    vidSealedTitle: '🛡️ Videobeweis (VD-CUT)',
+    vidSealedDesc: 'Bereits versiegeltes Video aus dem VD-CUT-System anhängen',
+    vidCancel: 'Abbrechen',
+    vidAttachTitle: '🛡️ Videobeweis — Beweis anhängen',
+    vidAttachDesc: 'Receipt ID und Hash des im VD-CUT versiegelten Videos einfügen.<br>Verifizierung erfolgt im WINDI Ledger. Keine Datei wird übertragen.',
+    vidReceiptLabel: 'Receipt ID (VD-CUT)',
+    vidHashLabel: 'Hash SHA-256',
+    vidAttached: 'Angehängte Videos',
+    vidVerify: 'Verifizieren',
+    vidAttach: 'Anhängen',
+    vidClose: 'Schließen'
+  },
+  pt: {
+    pageTitle: 'WINDI LAW — Governança Silenciosa',
+    demoEmpty: 'Estado vazio', demoActive: 'Documento activo',
+    greetMorning: 'Bom dia', greetAfternoon: 'Boa tarde', greetEvening: 'Boa noite',
+    greetQuestion: 'O que deseja<br><em>verificar</em> hoje?',
+    frequentRequests: 'Pedidos Frequentes', sugg_nda: 'Analisar riscos do NDA', sugg_evidence: 'Criar cadeia de prova', sugg_xrechnung: 'Validar fatura GoBD',
+    btnSave: 'Guardar', btnSeal: 'Selar · I11', btnExport: 'Exportar', editMode: 'Modo de edição',
+    sbSchluesselTitle: 'Chave', sbWalletTitle: 'Carteira',
+    sbKeyTypeLabel: 'Tipo', sbKeyCreatedLabel: 'Criada',
+    sbNameLabel: 'Nome', sbPioneerLabel: 'Pioneer', sbCreditsLabel: 'Créditos',
+    sbSovLabel: 'Soberania Local', sbDocsTitle: 'Documentos', sbDocsEmpty: 'Ainda sem documentos',
+    docEmptyTitle: 'Nenhum documento carregado', docEmptyDesc: 'Crie o seu primeiro documento com AI Draft ou carregue um documento existente.', docEmptyBtn: '⚖️ Criar primeiro documento', docFollowupPh: 'Análise adicional, mais perguntas…',
+    notConnected: 'Ainda sem wallet', connect: 'Criar wallet →',
+    hashPlaceholder: '— — — —', createWallet: 'Criar wallet →',
+    tlStatusVerified: 'VERIFICADO', tlStatusPending: 'PENDENTE',
+    // AI Draft i18n
+    aiStep1: '1 · Configurar', aiStep2: '2 · Aprovar I9', aiStep3: '3 · Gerar',
+    aiStep4: '4 · Rever', aiStep5: '5 · Selar I11',
+    aiDocType: 'Tipo de Documento', aiJurisdiction: 'Jurisdição', aiLanguage: 'Idioma',
+    aiDocName: 'Nome do Documento', aiDocNamePh: 'Ex: NDA entre Empresa A e Empresa B · 2026',
+    aiContext: 'Contexto · Partes · Objectivo',
+    aiContextPh: 'Descreva:\n• Partes envolvidas\n• Objectivo do documento\n• Condições específicas\n• Prazo, valor, obrigações',
+    aiHashWarn: '⚠️ O texto será hasheado e selado no Ledger imutavelmente.',
+    aiI9Title: '🛡️ Invariant I9 — Aprovação Humana',
+    aiI9Desc: 'Ao clicar "Gerar", confirmas que aprovaste este pedido e irás rever o resultado.',
+    aiGenerate: '⚖️ Gerar com IA', aiClose: 'Fechar',
+    aiGenerating: 'A gerar documento jurídico…',
+    aiAfterGen: '🔐 Após geração → revisão humana → seal I11',
+    aiReviewLabel: '📄 Documento Gerado — Revê e edita',
+    aiEditHint: '✏️ Podes editar. O hash final será calculado sobre o texto que selarás.',
+    aiI11Title: '🔐 Invariant I11 + G3 — Seal Permanente',
+    aiI11Desc: 'O hash será inscrito imutavelmente no Forensic Ledger.',
+    aiNotDelete: 'Não é possível apagar.',
+    aiBack: '← Voltar', aiSeal: '🔐 Selar no Ledger · I11',
+    aiModelLoading: 'A preparar rascunho IA…',
+    aiSealedTitle: 'Documento Selado · I11 ✅',
+    aiSealedDesc: 'O documento existe, está identificado e é verificável publicamente.',
+    aiVerifyLink: '🔍 Abrir Verify Public →',
+    aiNewDoc: '+ Novo Documento',
+    // Errors & Confirmations
+    errNoWallet: '🔐 Acesso negado. Wallet + DID obrigatórios.\nI9: identidade necessária.',
+    errContextShort: 'Contexto muito curto (mín. 20 caracteres).',
+    errDocName: 'Nome do documento obrigatório.',
+    errTextEmpty: 'Texto vazio.',
+    errPrefix: '❌ Erro: ',
+    confirmI9Generate: '🛡️ WINDI LAW — Invariant I9\n\nGerar: {docType} · {jurisdiction}\nNome: {docName}\n\nConfirmas que:\n✓ Este pedido é legítimo\n✓ Irás rever o resultado\n✓ A decisão final é tua\n\nConfirmar geração?',
+    confirmG3Seal: '🔐 WINDI LAW — Invariant G3 + I11\n\nSELAR PERMANENTEMENTE:\n• "{docName}"\n• {docType} · {jurisdiction}\n\n⚠️ IRREMEDIÁVEL. Hash inscrito no Ledger para sempre.\n\nConfirmar selagem?',
+    verifySuccess: '✓ Verificado · Ledger confirma integridade',
+    verifyNotFound: '✗ Não encontrado no Ledger',
+    verifyOffline: 'Ledger inacessível — verificação offline pendente',
+    // Video Modal i18n (§128)
+    vidChoiceTitle: '🎥 Adicionar Vídeo',
+    vidChoiceDesc: 'Escolha como adicionar o vídeo ao documento:',
+    vidLocalTitle: '📁 Upload Local',
+    vidLocalDesc: 'Selecionar ficheiro do dispositivo (apenas hash)',
+    vidSealedTitle: '🛡️ Videobeweis (VD-CUT)',
+    vidSealedDesc: 'Anexar vídeo já selado no sistema VD-CUT',
+    vidCancel: 'Cancelar',
+    vidAttachTitle: '🛡️ Videobeweis — Anexar Prova',
+    vidAttachDesc: 'Cole o Receipt ID e Hash do vídeo já selado no VD-CUT.<br>Verificação ocorre no Ledger WINDI. Nenhum ficheiro é transmitido.',
+    vidReceiptLabel: 'Receipt ID (VD-CUT)',
+    vidHashLabel: 'Hash SHA-256',
+    vidAttached: 'Vídeos anexados',
+    vidVerify: 'Verificar',
+    vidAttach: 'Anexar',
+    vidClose: 'Fechar'
+  },
+  en: {
+    pageTitle: 'WINDI LAW — Silent Governance',
+    demoEmpty: 'Empty State', demoActive: 'Active Document',
+    greetMorning: 'Good morning', greetAfternoon: 'Good afternoon', greetEvening: 'Good evening',
+    greetQuestion: 'What would you like<br>to <em>verify</em> today?',
+    frequentRequests: 'Frequent Requests', sugg_nda: 'Analyze NDA risks', sugg_evidence: 'Create evidence chain', sugg_xrechnung: 'Validate GoBD invoice',
+    btnSave: 'Save', btnSeal: 'Seal · I11', btnExport: 'Export', editMode: 'Edit mode',
+    sbSchluesselTitle: 'Key', sbWalletTitle: 'Wallet',
+    sbKeyTypeLabel: 'Type', sbKeyCreatedLabel: 'Created',
+    sbNameLabel: 'Name', sbPioneerLabel: 'Pioneer', sbCreditsLabel: 'Credits',
+    sbSovLabel: 'Local Sovereignty', sbDocsTitle: 'Documents', sbDocsEmpty: 'No documents yet',
+    docEmptyTitle: 'No document loaded', docEmptyDesc: 'Create your first document with AI Draft or load an existing document.', docEmptyBtn: '⚖️ Create first document', docFollowupPh: 'Follow-up analysis, more questions…',
+    notConnected: 'No wallet yet', connect: 'Create wallet →',
+    hashPlaceholder: '— — — —', createWallet: 'Create wallet →',
+    tlStatusVerified: 'VERIFIED', tlStatusPending: 'PENDING',
+    // AI Draft i18n
+    aiStep1: '1 · Configure', aiStep2: '2 · Approve I9', aiStep3: '3 · Generate',
+    aiStep4: '4 · Review', aiStep5: '5 · Seal I11',
+    aiDocType: 'Document Type', aiJurisdiction: 'Jurisdiction', aiLanguage: 'Language',
+    aiDocName: 'Document Name', aiDocNamePh: 'E.g.: NDA between Company A and Company B · 2026',
+    aiContext: 'Context · Parties · Purpose',
+    aiContextPh: 'Describe:\n• Parties involved\n• Document purpose\n• Specific conditions\n• Deadlines, values, obligations',
+    aiHashWarn: '⚠️ The text will be hashed and sealed immutably in the Ledger.',
+    aiI9Title: '🛡️ Invariant I9 — Human Approval',
+    aiI9Desc: 'By clicking "Generate", you confirm this request and will review the result.',
+    aiGenerate: '⚖️ Generate with AI', aiClose: 'Close',
+    aiGenerating: 'Generating legal document…',
+    aiAfterGen: '🔐 After generation → human review → I11 seal',
+    aiReviewLabel: '📄 Generated Document — Review and edit',
+    aiEditHint: '✏️ You can edit. The final hash will be calculated on the sealed text.',
+    aiI11Title: '🔐 Invariant I11 + G3 — Permanent Seal',
+    aiI11Desc: 'The hash will be inscribed immutably in the Forensic Ledger.',
+    aiNotDelete: 'Cannot be deleted.',
+    aiBack: '← Back', aiSeal: '🔐 Seal in Ledger · I11',
+    aiModelLoading: 'Preparing AI draft…',
+    aiSealedTitle: 'Document Sealed · I11 ✅',
+    aiSealedDesc: 'The document exists, is identified and publicly verifiable.',
+    aiVerifyLink: '🔍 Open Verify Public →',
+    aiNewDoc: '+ New Document',
+    // Errors & Confirmations
+    errNoWallet: '🔐 Access denied. Wallet + DID required.\nI9: identity required.',
+    errContextShort: 'Context too short (min. 20 characters).',
+    errDocName: 'Document name required.',
+    errTextEmpty: 'Text is empty.',
+    errPrefix: '❌ Error: ',
+    confirmI9Generate: '🛡️ WINDI LAW — Invariant I9\n\nGenerate: {docType} · {jurisdiction}\nName: {docName}\n\nYou confirm:\n✓ This request is legitimate\n✓ You will review the result\n✓ The final decision is yours\n\nConfirm generation?',
+    confirmG3Seal: '🔐 WINDI LAW — Invariant G3 + I11\n\nSEAL PERMANENTLY:\n• "{docName}"\n• {docType} · {jurisdiction}\n\n⚠️ IRREVOCABLE. Hash inscribed in Ledger forever.\n\nConfirm seal?',
+    verifySuccess: '✓ Verified · Ledger confirms integrity',
+    verifyNotFound: '✗ Not found in Ledger',
+    verifyOffline: 'Ledger inaccessible — offline verification pending',
+    // Video Modal i18n (§128)
+    vidChoiceTitle: '🎥 Add Video',
+    vidChoiceDesc: 'Choose how to add video to the document:',
+    vidLocalTitle: '📁 Local Upload',
+    vidLocalDesc: 'Select file from device (hash only)',
+    vidSealedTitle: '🛡️ Videobeweis (VD-CUT)',
+    vidSealedDesc: 'Attach already sealed video from VD-CUT system',
+    vidCancel: 'Cancel',
+    vidAttachTitle: '🛡️ Videobeweis — Attach Proof',
+    vidAttachDesc: 'Paste Receipt ID and Hash of video already sealed in VD-CUT.<br>Verification occurs in WINDI Ledger. No file is transmitted.',
+    vidReceiptLabel: 'Receipt ID (VD-CUT)',
+    vidHashLabel: 'Hash SHA-256',
+    vidAttached: 'Videos attached',
+    vidVerify: 'Verify',
+    vidAttach: 'Attach',
+    vidClose: 'Close'
+  }
+};
+
+// ══════════════════════════════════════════════════════════════
+// setLang — Apply i18n to elements with data-i18n (F11 SEALED)
+// §120.4: Added data-i18n-placeholder support for inputs/textareas
+// ══════════════════════════════════════════════════════════════
+function setLang(l) {
+  lang = l;
+  var strings = LANG[l] || LANG.en;
+  // Text content
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    if (strings[key]) el.textContent = strings[key];
+  });
+  // Placeholders (inputs, textareas)
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n-placeholder');
+    if (strings[key]) el.placeholder = strings[key];
+  });
+  // Update page title
+  if (strings.pageTitle) document.title = strings.pageTitle;
+  // Update lang pills (topbar, prompt area, demo-bar)
+  document.querySelectorAll('.lpill, .plbtn, .dlang').forEach(function(btn) {
+    btn.classList.toggle('on', btn.textContent === l.toUpperCase());
+  });
+  localStorage.setItem('windi-lang', l);
+  // Update greeting if user name is available
+  updateGreeting();
+}
+
+// ══════════════════════════════════════════════════════════════
+// t() — Get translated string with variable substitution
+// Usage: t('confirmI9Generate', {docType: 'NDA', jurisdiction: 'DE', docName: 'Test'})
+// ══════════════════════════════════════════════════════════════
+function t(key, vars) {
+  var strings = LANG[lang] || LANG.de;
+  var text = strings[key] || LANG.de[key] || key;
+  if (vars) {
+    Object.keys(vars).forEach(function(k) {
+      text = text.replace(new RegExp('\\{' + k + '\\}', 'g'), vars[k]);
+    });
+  }
+  return text;
+}
+
+// ══════════════════════════════════════════════════════════════
+// updateGreeting — Personalized greeting based on time + user name
+// ══════════════════════════════════════════════════════════════
+function updateGreeting(userName) {
+  var strings = LANG[lang] || LANG.en;
+  var hour = new Date().getHours();
+  var greet = hour < 12 ? strings.greetMorning : hour < 18 ? strings.greetAfternoon : strings.greetEvening;
+
+  // Use passed userName, or try to get from wallet (full_name takes priority)
+  if (!userName && window.__windiLawWallet) {
+    userName = window.__windiLawWallet.full_name || window.__windiLawWallet.company_name;
+  }
+
+  var greetEl = document.getElementById('user-greeting');
+  if (greetEl) {
+    greetEl.textContent = userName ? greet + ', ' + userName : greet;
+  }
+
+  // Update question text
+  var qEl = document.querySelector('[data-i18n="greetQuestion"]');
+  if (qEl && strings.greetQuestion) {
+    qEl.innerHTML = strings.greetQuestion;
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// initWallet — Wallet Gate Logic (F10 SEALED)
+// URL ?did= ALWAYS takes priority (fresh registration)
+// §173 — Added WindiDID unified storage fallback
+// ══════════════════════════════════════════════════════════════
+async function initWallet() {
+  var stored = sessionStorage.getItem('windi_sites_wallet');
+  var fb = LANG[lang] || LANG.en;
+
+  // §173 DID SIMPLIFICATION — Migrate legacy keys on init
+  if (typeof WindiDID !== 'undefined') {
+    WindiDID.migrateFromLegacy();
+  }
+
+  // Check for ?did= in URL (direct link access or fresh registration)
+  var urlParams = new URLSearchParams(window.location.search);
+  var urlDid = urlParams.get('did');
+
+  // §173 — If no URL DID and no stored wallet, try unified localStorage
+  if (!urlDid && !stored && typeof WindiDID !== 'undefined' && WindiDID.exists()) {
+    urlDid = WindiDID.get();
+    console.log('[§173] DID restored from unified storage:', urlDid.substring(0, 20) + '…');
+  }
+
+  // If URL has DID, ALWAYS fetch from server (overrides stale sessionStorage)
+  if (urlDid) {
+    console.log('[WINDI-SITES] Loading wallet from URL DID:', urlDid);
+    try {
+      var BASE_PATH = window.location.hostname.includes('windilaw.de') ? '' : '/law';
+      var resp = await fetch(BASE_PATH + '/identity/' + encodeURIComponent(urlDid));
+      if (resp.ok) {
+        var data = await resp.json();
+        var walletData = {
+          did: data.did,
+          fingerprint: data.fingerprint,
+          public_key: '',
+          state: data.state,
+          created_at: data.created_at,
+          pioneer_number: null,
+          tier: 'FREE',
+          credits: 0,
+          full_name: data.full_name,
+          company_name: data.company ? data.company.legal_name : '',
+          company: data.company
+        };
+        sessionStorage.setItem('windi_sites_wallet', JSON.stringify(walletData));
+        document.cookie = 'windi_did=' + encodeURIComponent(data.did) + '; path=/; max-age=31536000; SameSite=Lax';
+        // §173 — Store in unified localStorage
+        if (typeof WindiDID !== 'undefined') {
+          WindiDID.set(data.did);
+        }
+        stored = JSON.stringify(walletData);
+        console.log('[WINDI-SITES] Wallet loaded from server:', data.did);
+      }
+    } catch (e) {
+      console.error('[WINDI-SITES] Failed to load wallet from DID:', e);
+    }
+  }
+
+  if (!stored) {
+    // NO SESSION: Show fallback state — blocked workspace
+    console.log('[WINDI-SITES] No wallet session — workspace blocked');
+
+    // Sidebar: IDENTITÄT warning state
+    document.getElementById('sb-key-status').textContent = '⚠';
+    document.getElementById('sb-key-status').className = 'ok pending';
+    document.getElementById('sb-wallet-status').textContent = '⚠';
+    document.getElementById('sb-wallet-status').className = 'ok pending';
+    document.getElementById('sb-key-created').textContent = fb.notConnected;
+    document.getElementById('sb-key-hash').textContent = fb.hashPlaceholder;
+    document.getElementById('sb-pioneer-num').textContent = '⚠';
+    document.getElementById('sb-tier').textContent = '—';
+    document.getElementById('sb-credits').textContent = '—';
+    document.getElementById('sb-connect-btn').textContent = fb.connect;
+    document.getElementById('sb-connect-btn').classList.remove('hidden');
+
+    // Header: DID badge becomes "Create wallet" link
+    var didEl = document.getElementById('tl-did');
+    didEl.textContent = fb.createWallet;
+    didEl.style.cursor = 'pointer';
+    didEl.style.color = 'var(--gold)';
+    didEl.onclick = function() { window.location.href = '/law/gate'; };
+
+    return;
+  }
+
+  try {
+    var w = JSON.parse(stored);
+    walletDid = w.did || '';
+    var didShort = walletDid.length > 16 ? walletDid.substring(0,16)+'…' : walletDid;
+    var didEl = document.getElementById('tl-did');
+    didEl.setAttribute('data-full-did', walletDid);
+    didEl.textContent = didShort || 'did:windi:…';
+    didEl.style.cursor = 'pointer';
+    didEl.onclick = function() { copyFingerprint(walletDid); };
+
+    // Store globally for agent context injection
+    window.__windiLawWallet = w;
+
+    // Update personalized greeting with user name
+    updateGreeting(w.full_name || w.company_name);
+
+    // SESSION FOUND: Populate SCHLÜSSEL + WALLET panels + hide connect button
+    document.getElementById('sb-connect-btn').classList.add('hidden');
+    document.getElementById('sb-key-status').textContent = '✓';
+    document.getElementById('sb-key-status').className = 'ok';
+    document.getElementById('sb-wallet-status').textContent = w.state === 'VERIFIED' ? '✓' : '⏳';
+    document.getElementById('sb-wallet-status').className = w.state === 'VERIFIED' ? 'ok' : 'ok pending';
+
+    if (w.fingerprint) {
+      var hashEl = document.getElementById('sb-key-hash');
+      hashEl.textContent = w.fingerprint.substring(0,12) + '…';
+      hashEl.setAttribute('data-full-hash', w.fingerprint);
+      hashEl.style.cursor = 'pointer';
+      hashEl.onclick = function() { copyFingerprint(w.fingerprint); };
+    }
+    if (w.created_at) {
+      document.getElementById('sb-key-created').textContent = w.created_at.substring(0,10);
+    }
+    // Populate user name in wallet section
+    var userName = w.full_name || w.company_name || '';
+    if (userName) {
+      document.getElementById('sb-user-name').textContent = userName;
+    }
+    if (w.pioneer_number) {
+      document.getElementById('sb-pioneer-num').textContent = '#' + w.pioneer_number;
+    } else {
+      document.getElementById('sb-pioneer-num').textContent = 'A';
+    }
+    if (w.tier) {
+      document.getElementById('sb-tier').textContent = w.tier.toUpperCase();
+    }
+    if (w.credits !== undefined) {
+      document.getElementById('sb-credits').textContent = w.credits.toLocaleString();
+    }
+
+    console.log('[WINDI-SITES] Wallet loaded:', walletDid, 'State:', w.state);
+  } catch(e) {
+    console.error('[WINDI-SITES] Wallet parse error:', e);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// copyFingerprint — Copy to clipboard (F3 SEALED)
+// ══════════════════════════════════════════════════════════════
+function copyFingerprint(text) {
+  navigator.clipboard.writeText(text).then(function() {
+    console.log('[WINDI-SITES] Copied:', text.substring(0,20) + '…');
+  });
+}
+
+// ══════════════════════════════════════════════════════════════
+// go() — State switching (empty ↔ active)
+// ══════════════════════════════════════════════════════════════
+function go(s) {
+  var empty = document.getElementById('st-empty');
+  var active = document.getElementById('st-active');
+  var insp = document.getElementById('inspector');
+  document.querySelectorAll('.demo-btn').forEach(function(b,i) {
+    b.classList.toggle('on', (s==='empty'&&i===0)||(s==='active'&&i===1));
+  });
+  if (s === 'empty') {
+    empty.style.display = 'flex';
+    active.style.display = 'none';
+    insp.classList.add('collapsed');
+    inspOpen = false;
+    document.getElementById('itoggle').textContent = '›';
+  } else {
+    empty.style.display = 'none';
+    active.style.display = 'flex';
+    // inspector abre automaticamente com o documento
+    insp.classList.remove('collapsed');
+    inspOpen = true;
+    document.getElementById('itoggle').textContent = '‹';
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// toggleInsp — Inspector toggle (F4 collapsible)
+// ══════════════════════════════════════════════════════════════
+function toggleInsp() {
+  var insp = document.getElementById('inspector');
+  inspOpen = !inspOpen;
+  insp.classList.toggle('collapsed', !inspOpen);
+  document.getElementById('itoggle').textContent = inspOpen ? '‹' : '›';
+}
+
+// ══════════════════════════════════════════════════════════════
+// clearPreviousSession — Opção A (preserve session if wallet exists)
+// SEALED: só limpa se não há wallet activa
+// ══════════════════════════════════════════════════════════════
+function clearPreviousSession() {
+  var wallet = sessionStorage.getItem('windi_sites_wallet');
+  if (!wallet) {
+    // Visitante novo ou sessão expirada → limpar estado órfão
+    sessionStorage.clear();
+    console.log('[WINDI-SITES] Session cleared — no wallet found');
+  } else {
+    // Utilizador regressa com wallet → preservar sessão
+    console.log('[WINDI-SITES] Session preserved — wallet active');
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// DOMContentLoaded — Initialize
+// ══════════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', function() {
+  // Phase 3: Clear orphan sessions but preserve wallet
+  clearPreviousSession();
+
+  // Init lang from localStorage
+  var savedLang = localStorage.getItem('windi-lang');
+  if (savedLang && LANG[savedLang]) {
+    lang = savedLang;
+    setLang(lang);
+  }
+
+  // Init wallet gate
+  initWallet();
+
+  // Sidebar document clicks
+  document.querySelectorAll('.sl-doc').forEach(function(d) {
+    d.addEventListener('click', function() {
+      document.querySelectorAll('.sl-doc').forEach(function(x) { x.classList.remove('on'); });
+      d.classList.add('on');
+      go('active');
+    });
+  });
+
+  // Lang pills click handlers
+  document.querySelectorAll('.lpill, .plbtn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var l = btn.textContent.toLowerCase();
+      if (LANG[l]) setLang(l);
+    });
+  });
+
+  // Wire media attach buttons
+  document.querySelectorAll('.patt').forEach(function(btn) {
+    var lbl = btn.querySelector('.lbl');
+    if (lbl) {
+      var type = lbl.textContent.toLowerCase();
+      btn.onclick = function() { handleMedia(type); };
+    }
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════
+// F1 — Media Bar (cmd-media-bar) SEALED
+// ═══════════════════════════════════════════════════════════════
+var attachedFiles = [];  // SEALED marker
+
+// ═══════════════════════════════════════════════════════════════
+// F2 — SHA-256 hashFile (crypto.subtle) SEALED
+// ═══════════════════════════════════════════════════════════════
+var currentFileHash = null;
+var currentFileName = null;
+
+async function hashFile(file) {
+  var buf = await file.arrayBuffer();
+  var digest = await crypto.subtle.digest('SHA-256', buf);
+  return Array.from(new Uint8Array(digest))
+    .map(function(b) { return b.toString(16).padStart(2,'0'); }).join('');
+}
+
+function handleMedia(type) {
+  console.log('[WINDI-SITES] handleMedia called:', type);
+  var input = document.createElement('input');
+  input.type = 'file';
+  if (type === 'img') input.accept = 'image/*';
+  if (type === 'vid') input.accept = 'video/*';
+  if (type === 'doc') input.accept = '.pdf,.docx,.doc,.txt,.md';
+  input.onchange = async function(e) {
+    var file = e.target.files[0];
+    if (!file) return;
+
+    console.log('[WINDI-SITES] File selected:', file.name, file.size, 'bytes');
+
+    // Show loading indicator
+    var preview = document.getElementById('media-preview');
+    if (preview) {
+      preview.innerHTML = '<span style="font-size:9px;color:var(--gold)">⏳ Hashando ' + file.name + '...</span>';
+      preview.style.display = 'flex';
+    }
+
+    var hash = await hashFile(file);
+    currentFileHash = hash;
+    currentFileName = file.name;
+    currentFileSize = file.size;
+    currentFileType = type;
+
+    // Update preview with file info
+    if (preview) {
+      var icon = type === 'img' ? '🖼' : (type === 'vid' ? '🎥' : '📄');
+      var sizeStr = file.size > 1024*1024 ? (file.size/1024/1024).toFixed(1) + ' MB' : (file.size/1024).toFixed(0) + ' KB';
+      preview.innerHTML = '<span style="font-size:10px;color:var(--ink-2)">' + icon + ' ' + file.name + '</span>' +
+        '<span style="font-size:9px;font-family:var(--mono);color:var(--gold);margin-left:8px">' + sizeStr + '</span>' +
+        '<span style="font-size:8px;font-family:var(--mono);color:var(--ink-4);margin-left:8px">SHA: ' + hash.substring(0,12) + '…</span>' +
+        '<button onclick="clearMediaPreview()" style="margin-left:8px;background:none;border:none;color:var(--ink-4);cursor:pointer;font-size:12px" title="Entfernen">✕</button>';
+      preview.style.display = 'flex';
+      preview.style.alignItems = 'center';
+      preview.style.gap = '4px';
+    }
+
+    // Add reference to prompt input
+    var promptInput = document.getElementById('prompt-input');
+    if (promptInput && !promptInput.value.includes(file.name)) {
+      var fileRef = '\n\n📎 Anhang: ' + file.name + ' (' + type.toUpperCase() + ')';
+      if (promptInput.value.trim()) {
+        promptInput.value += fileRef;
+      }
+    }
+
+    console.log('[WINDI-SITES] File hashed:', file.name, 'SHA-256:', hash.substring(0,16) + '…');
+  };
+  input.click();
+}
+
+// ══ VIDEO ATTACH BRIDGE — VD-CUT × LAW · §128 · 05 Abr 2026 ═══════════════════
+// Intercepta VID para oferecer: (A) Upload local ou (B) Anexar vídeo selado
+const _originalHandleMedia = handleMedia;
+handleMedia = function(type) {
+  if (type === 'vid') {
+    openVideoChoiceModal();
+    return;
+  }
+  _originalHandleMedia(type);
+};
+
+let __videoAttachments = [];  // [{receipt_id, video_hash}]
+
+function openVideoChoiceModal() {
+  document.getElementById('modal-video-choice').style.display = 'flex';
+}
+function closeVideoChoiceModal() {
+  document.getElementById('modal-video-choice').style.display = 'none';
+}
+
+function chooseLocalVideo() {
+  closeVideoChoiceModal();
+  _originalHandleMedia('vid');  // comportamento original
+}
+
+function chooseAttachSealed() {
+  closeVideoChoiceModal();
+  document.getElementById('modal-video-attach').style.display = 'flex';
+}
+
+function closeVideoAttachModal() {
+  document.getElementById('modal-video-attach').style.display = 'none';
+  document.getElementById('va-receipt-input').value = '';
+  document.getElementById('va-hash-input').value = '';
+  document.getElementById('va-status').textContent = '';
+  document.getElementById('va-status').style.display = 'none';
+}
+
+async function attachVideoToDraft() {
+  const receiptId = document.getElementById('va-receipt-input').value.trim();
+  const videoHash = document.getElementById('va-hash-input').value.trim();
+  const did = sessionStorage.getItem('windi_sites_wallet') || 'ANON';
+  const docId = window.__currentDocId || 'DRAFT-' + Date.now();
+  const statusEl = document.getElementById('va-status');
+
+  if (!receiptId || !videoHash) {
+    statusEl.textContent = '⚠️ Receipt ID e Hash obrigatórios.';
+    statusEl.style.color = '#cc6600';
+    statusEl.style.display = 'block';
+    return;
+  }
+
+  statusEl.textContent = '⏳ A verificar no Ledger…';
+  statusEl.style.color = '#666';
+  statusEl.style.display = 'block';
+
+  try {
+    const res = await fetch('/ai-draft/video/attach', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        did, doc_id: docId,
+        vd_cut_receipt_id: receiptId,
+        video_hash: videoHash
+      })
+    });
+    const data = await res.json();
+
+    if (data.status === 'attached') {
+      __videoAttachments.push({ receipt_id: receiptId, video_hash: videoHash });
+      document.getElementById('va-counter').textContent = __videoAttachments.length;
+      statusEl.textContent = '✅ Anexado · ' + receiptId;
+      statusEl.style.color = '#2a7a2a';
+
+      // Adicionar referência ao preview
+      var preview = document.getElementById('media-preview');
+      if (preview) {
+        preview.innerHTML = '<span style="font-size:10px;color:var(--ink-2)">🎥 Videobeweis</span>' +
+          '<span style="font-size:8px;font-family:var(--mono);color:var(--gold);margin-left:8px">' + receiptId.substring(0,24) + '…</span>' +
+          '<span style="font-size:9px;color:#2a7a2a;margin-left:8px">✓ Selado</span>';
+        preview.style.display = 'flex';
+        preview.style.alignItems = 'center';
+        preview.style.gap = '4px';
+      }
+    } else {
+      statusEl.textContent = '❌ ' + (data.error || 'Erro');
+      statusEl.style.color = '#cc0000';
+    }
+  } catch(e) {
+    statusEl.textContent = '❌ ' + e.message;
+    statusEl.style.color = '#cc0000';
+  }
+}
+
+// Integração no Seal — chamado quando há vídeos anexados
+async function sealComposite(docHash, caseRef) {
+  if (__videoAttachments.length === 0) return null;
+  const did = sessionStorage.getItem('windi_sites_wallet') || 'ANON';
+  const res = await fetch('/ai-draft/seal-with-video', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      did,
+      doc_hash: docHash,
+      video_hashes: __videoAttachments.map(v => v.video_hash),
+      vd_cut_receipt_ids: __videoAttachments.map(v => v.receipt_id),
+      human_approved: true,
+      case_ref: caseRef || ''
+    })
+  });
+  return await res.json();
+}
+// ═══════════════════════════════════════════════════════════════════════════════
+
+var currentFileSize = null;
+var currentFileType = null;
+
+function clearMediaPreview() {
+  var preview = document.getElementById('media-preview');
+  if (preview) {
+    preview.style.display = 'none';
+    preview.innerHTML = '';
+  }
+  currentFileHash = null;
+  currentFileName = null;
+  currentFileSize = null;
+  currentFileType = null;
+  console.log('[WINDI-SITES] Media preview cleared');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// F5 — openSealModal + confirmSeal (I9 Gate) SEALED
+// ═══════════════════════════════════════════════════════════════
+function openSealModal() {
+  var modal = document.getElementById('modal-seal');
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeSealModal() {
+  var modal = document.getElementById('modal-seal');
+  if (modal) modal.style.display = 'none';
+}
+
+async function confirmSeal() {
+  closeSealModal();
+
+  // ═══════════════════════════════════════════════════════════════
+  // P0 — Identity Gate (I9 enforcement)
+  // "O sistema só começa quando a identidade é obrigatória."
+  // Backend é autoridade. Frontend é UX.
+  // ═══════════════════════════════════════════════════════════════
+  var wallet = JSON.parse(sessionStorage.getItem('windi_sites_wallet') || '{}');
+  var did = wallet.did;
+  if (!did) {
+    console.error('[WINDI-SITES] P0 BLOCK: No identity found. Seal rejected.');
+    alert('Identität nicht gefunden. Bitte melden Sie sich erneut an.\n\nIdentity not found. Please log in again.');
+    window.location.href = '/law/gate';
+    return;
+  }
+
+  var docTitle = document.querySelector('.dtitle');
+  docTitle = docTitle ? docTitle.textContent : 'documento';
+  var hash = currentFileHash || Array.from(crypto.getRandomValues(new Uint8Array(16)))
+    .map(function(b) { return b.toString(16).padStart(2,'0'); }).join('');
+
+  try {
+    var res = await fetch('https://windi-domain.com/api/receipts/', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        id: 'WINDI-SITES-' + Date.now(),
+        actor: did,
+        app: 'windi-sites-workspace',
+        doc_name: docTitle,
+        doc_type: 'doc',
+        governance_level: 'HIGH',
+        content_hash: hash,
+        sge_score: 95.0,
+        invariant: 'I11',
+        note: 'Sealed via workspace v3 · G3 confirmed'
+      })
+    });
+    var data = await res.json();
+    window.__lastReceipt = data;
+    updateCIA(true);
+    var footer = document.querySelector('.dc-seal-hash');
+    if (footer) footer.textContent = 'SHA-256: ' + hash.substring(0,16) + '…';
+    var badge = document.querySelector('.dc-verify-badge');
+    if (badge) { badge.textContent = '✓ Versiegelt · I11'; badge.style.opacity = '1'; }
+    console.log('[WINDI-SITES] Sealed:', data);
+  } catch(e) {
+    console.warn('[WINDI-SITES] Ledger offline — hash local preservado:', hash);
+    updateCIA(true); // Still update CIA locally
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// F6 — verifyReceipt SEALED
+// ═══════════════════════════════════════════════════════════════
+async function verifyReceipt(receiptId) {
+  var id = receiptId || (window.__lastReceipt ? window.__lastReceipt.id : null);
+  if (!id) {
+    id = prompt('Receipt ID:');
+  }
+  if (!id) return;
+  try {
+    var res = await fetch('https://windi-domain.com/api/verify/' + encodeURIComponent(id));
+    var data = await res.json();
+    if (data.valid) {
+      alert(t('verifySuccess'));
+    } else {
+      alert(t('verifyNotFound'));
+    }
+  } catch(e) {
+    alert(t('verifyOffline'));
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// F7 — showChain (Beweiskette) SEALED
+// ═══════════════════════════════════════════════════════════════
+var __evidenceChain = [];
+
+async function showChain() {
+  var wallet = JSON.parse(sessionStorage.getItem('windi_sites_wallet') || '{}');
+  var did = wallet.did || 'anon';
+
+  var receipts = [];
+  try {
+    var res = await fetch('https://windi-domain.com/api/receipts/?actor=' + encodeURIComponent(did));
+    var data = await res.json();
+    receipts = data.receipts || [];
+    __evidenceChain = receipts;
+  } catch(e) {
+    console.warn('[WINDI-SITES] Ledger offline');
+  }
+
+  // Painel inline — NÃO alert()
+  var existing = document.getElementById('chain-panel');
+  if (existing) existing.remove();
+
+  var panel = document.createElement('div');
+  panel.id = 'chain-panel';
+  panel.style.cssText = 'position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:var(--perg);border:1px solid var(--border-2);border-radius:var(--r-lg);padding:16px 20px;min-width:320px;max-width:480px;z-index:300;box-shadow:0 4px 24px rgba(90,74,42,0.12);animation:fu 0.25s cubic-bezier(0.22,1,0.36,1);';
+
+  var title = '<div style="font-size:9px;font-weight:500;color:var(--gold);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">🔗 Beweiskette · ' + did.substring(0,20) + '…<span onclick="document.getElementById(\'chain-panel\').remove()" style="cursor:pointer;color:var(--ink-4);font-size:12px;padding:0 4px;">✕</span></div>';
+
+  var body = '';
+  if (!receipts.length) {
+    body = '<div style="font-size:12px;color:var(--ink-3);text-align:center;padding:12px 0;">Keine versiegelten Dokumente für diese Identität.</div>';
+  } else {
+    receipts.slice(0,5).forEach(function(r) {
+      body += '<div style="display:flex;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--border);align-items:flex-start;"><span style="font-size:10px;color:var(--green);">⬡</span><div><div style="font-size:11px;font-weight:500;color:var(--ink);">' + (r.doc_name || r.id || 'Dokument') + '</div><div style="font-size:9px;font-family:var(--mono);color:var(--ink-4);">' + (r.id || '').substring(0,32) + '…</div></div></div>';
+    });
+  }
+
+  panel.innerHTML = title + body;
+  document.body.appendChild(panel);
+
+  // Auto-fechar em 8 segundos
+  setTimeout(function() { var p = document.getElementById('chain-panel'); if(p) p.remove(); }, 8000);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// F8 — updateCIA badges SEALED
+// ═══════════════════════════════════════════════════════════════
+function updateCIA(sealed) {
+  var badges = ['cia-i9','cia-i11','cia-i13','cia-g3'];
+  badges.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el && sealed) {
+      el.style.opacity = '1';
+      el.style.background = 'var(--green-bg)';
+      el.style.color = 'var(--green)';
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// F9 — generateQRSVG SEALED
+// ═══════════════════════════════════════════════════════════════
+function generateQRSVG(receiptId) {
+  var url = 'https://windi-domain.com/verify-public/?id=' + encodeURIComponent(receiptId);
+  return '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" title="' + url + '">' +
+    '<rect x="1" y="1" width="9" height="9" fill="none" stroke="#8B6914" stroke-width="0.8"/>' +
+    '<rect x="3" y="3" width="5" height="5" fill="#8B6914"/>' +
+    '<rect x="14" y="1" width="9" height="9" fill="none" stroke="#8B6914" stroke-width="0.8"/>' +
+    '<rect x="16" y="3" width="5" height="5" fill="#8B6914"/>' +
+    '<rect x="1" y="14" width="9" height="9" fill="none" stroke="#8B6914" stroke-width="0.8"/>' +
+    '<rect x="3" y="16" width="5" height="5" fill="#8B6914"/>' +
+    '<rect x="14" y="14" width="2" height="2" fill="#2A2010"/>' +
+    '<rect x="17" y="17" width="2" height="2" fill="#2A2010"/>' +
+    '<rect x="20" y="20" width="2" height="2" fill="#2A2010"/>' +
+    '</svg>';
+}
+
+function showQRCode(receiptId) {
+  var id = receiptId || (window.__lastReceipt ? window.__lastReceipt.id : null);
+  if (!id) return;
+  var qr = document.querySelector('.dc-qr-mini');
+  if (qr) {
+    qr.innerHTML = generateQRSVG(id);
+    qr.style.opacity = '1';
+  }
+}
+
+function downloadQR(receiptId) {
+  var id = receiptId || (window.__lastReceipt ? window.__lastReceipt.id : null);
+  if (!id) return;
+  var svg = generateQRSVG(id);
+  var blob = new Blob([svg], {type: 'image/svg+xml'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'windi-qr-' + id + '.svg';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// F12 — toggleTheme NOIR/KLAR SEALED
+// ═══════════════════════════════════════════════════════════════
+var currentTheme = 'klar';
+
+function toggleTheme() {
+  var html = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  if (currentTheme === 'klar') {
+    html.setAttribute('data-theme', 'noir');
+    currentTheme = 'noir';
+    if (btn) btn.textContent = '☀'; // Sun = click to get light
+  } else {
+    html.removeAttribute('data-theme');
+    currentTheme = 'klar';
+    if (btn) btn.textContent = '☽'; // Moon = click to get dark
+  }
+  localStorage.setItem('windi-theme', currentTheme);
+}
+
+// Init theme from localStorage
+(function() {
+  var saved = localStorage.getItem('windi-theme');
+  if (saved === 'noir') {
+    document.documentElement.setAttribute('data-theme', 'noir');
+    currentTheme = 'noir';
+  }
+  // Update button icon on page load (runs after DOM ready)
+  document.addEventListener('DOMContentLoaded', function() {
+    var btn = document.getElementById('theme-toggle');
+    if (btn) {
+      btn.textContent = (currentTheme === 'noir') ? '☀' : '☽';
+    }
+  });
+})();
+
+/* ══ WINDI LAW AI DRAFT MODULE v1.0.0 ══ */
+const AiDraft = { currentDraftId: null, currentDraftText: null, currentDocType: null, currentDocName: null, currentJurisdiction: null, currentVerifyUrl: null };
+
+function openAiDraft() {
+  var wallet = sessionStorage.getItem('windi_sites_wallet');
+  if (!wallet) { alert(t('errNoWallet')); return; }
+  document.getElementById('ai-draft-panel').classList.add('open');
+  resetAiDraftPhase();
+  updateAiTierInfo();
+}
+function closeAiDraft() { document.getElementById('ai-draft-panel').classList.remove('open'); }
+document.addEventListener('click', function(e) { if (e.target.id === 'ai-draft-panel') closeAiDraft(); });
+
+function updateAiTierInfo() {
+  var wallet = JSON.parse(sessionStorage.getItem('windi_sites_wallet') || '{}');
+  var tier = wallet.tier || 'FREE';
+  var tierBadge = document.getElementById('ai-tier-badge');
+  var tierDesc = document.getElementById('ai-tier-desc');
+  if (tierBadge) tierBadge.textContent = tier;
+  var tierLabels = { 'HIGH': '🏆 Premium · KI-Entwurf', 'MED': '⚡ Standard · KI-Entwurf', 'FREE': '⚡ Standard · KI-Entwurf' };
+  if (tierDesc) tierDesc.textContent = tierLabels[tier] || tierLabels['FREE'];
+}
+
+function setAiPhase(phase) {
+  ['configure','loading','review','sealed'].forEach(function(p) {
+    var el = document.getElementById('ai-phase-' + p);
+    if (el) el.style.display = p === phase ? 'block' : 'none';
+  });
+}
+function resetAiDraftPhase() { setAiPhase('configure'); AiDraft.currentDraftId = null; AiDraft.currentDraftText = null; AiDraft.currentVerifyUrl = null; }
+function resetAiDraft() { resetAiDraftPhase(); }
+
+function initiateAiGenerate() {
+  var context = document.getElementById('ai-context').value.trim();
+  var docType = document.getElementById('ai-doc-type').value;
+  var docName = document.getElementById('ai-doc-name').value.trim();
+  var jurisdiction = document.getElementById('ai-jurisdiction').value;
+  if (!context || context.length < 20) { alert(t('errContextShort')); return; }
+  if (!docName) { alert(t('errDocName')); return; }
+  var confirmed = confirm(t('confirmI9Generate', {docType: docType.toUpperCase(), jurisdiction: jurisdiction, docName: docName}));
+  if (!confirmed) return;
+  executeAiGenerate();
+}
+
+async function executeAiGenerate() {
+  var wallet = JSON.parse(sessionStorage.getItem('windi_sites_wallet') || '{}');
+  var did = wallet.did || WindiDID.get() || 'UNKNOWN';  // §173 — Single source
+  var tier = wallet.tier || 'FREE';
+  var docType = document.getElementById('ai-doc-type').value;
+  var jurisdiction = document.getElementById('ai-jurisdiction').value;
+  var lang = document.getElementById('ai-lang').value;
+  var context = document.getElementById('ai-context').value.trim();
+  var docName = document.getElementById('ai-doc-name').value.trim();
+  AiDraft.currentDocType = docType; AiDraft.currentDocName = docName; AiDraft.currentJurisdiction = jurisdiction;
+  setAiPhase('loading');
+  var tierLabelsLoading = { HIGH: '🏆 Premium · KI-Entwurf', MED: '⚡ Standard · KI-Entwurf', FREE: '⚡ Standard · KI-Entwurf' };
+  document.getElementById('ai-model-label').textContent = tierLabelsLoading[tier] || tierLabelsLoading['FREE'];
+  try {
+    var resp = await fetch('/law/ai-draft/generate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ did: did, wallet_id: wallet.wallet_id || did, doc_type: docType, jurisdiction: jurisdiction, lang: lang, tier: tier, context: context, doc_name: docName }) });
+    var data = await resp.json();
+    if (!resp.ok) throw new Error(data.detail || 'Erro na geração');
+    AiDraft.currentDraftId = data.draft_id; AiDraft.currentDraftText = data.draft_text;
+    document.getElementById('ai-result-text').value = data.draft_text;
+    document.getElementById('ai-preview-hash').textContent = data.preview_hash ? data.preview_hash.substring(0,32) + '…' : '—';
+    var metaEl = document.getElementById('ai-result-meta');
+    var tierLabelResult = tier === 'HIGH' ? 'Premium' : 'Standard';
+    if (metaEl) metaEl.innerHTML = '<span class="ai-meta-chip">📄 ' + (data.doc_label || docType) + '</span><span class="ai-meta-chip">⚖️ ' + jurisdiction + '</span><span class="ai-meta-chip">🤖 ' + tierLabelResult + '</span><span class="ai-meta-chip">📊 ' + (data.tokens || 0) + ' tokens</span><span class="ai-meta-chip">⏱ ' + (data.elapsed_seconds || 0) + 's</span>';
+    setAiPhase('review');
+    document.getElementById('ai-result-text').addEventListener('input', updatePreviewHash);
+  } catch (err) { setAiPhase('configure'); alert(t('errPrefix') + err.message); }
+}
+
+async function updatePreviewHash() {
+  var text = document.getElementById('ai-result-text').value;
+  var encoder = new TextEncoder();
+  var data = encoder.encode(text);
+  var hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  var hashArray = Array.from(new Uint8Array(hashBuffer));
+  var hashHex = hashArray.map(function(b) { return b.toString(16).padStart(2,'0'); }).join('');
+  var el = document.getElementById('ai-preview-hash');
+  if (el) el.textContent = hashHex.substring(0,32) + '…';
+}
+
+async function sealAiDraft() {
+  var wallet = JSON.parse(sessionStorage.getItem('windi_sites_wallet') || '{}');
+  var did = wallet.did || WindiDID.get() || 'UNKNOWN';  // §173 — Single source
+  // §126: Try stored draft first (from Quill editor), then textarea
+  var draftText = AiDraft.currentDraftText || document.getElementById('ai-result-text').value.trim();
+  var tier = wallet.tier || 'FREE';
+  if (!draftText) { alert(t('errTextEmpty')); return; }
+  var confirmed = confirm(t('confirmG3Seal', {docName: AiDraft.currentDocName, docType: (AiDraft.currentDocType || '').toUpperCase(), jurisdiction: AiDraft.currentJurisdiction}));
+  if (!confirmed) return;
+  var btn = document.getElementById('btn-seal-draft');
+  if (btn) { btn.disabled = true; btn.textContent = '🔄 A selar…'; }
+  try {
+    var resp = await fetch('/law/ai-draft/seal', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ did: did, wallet_id: wallet.wallet_id || did, draft_id: AiDraft.currentDraftId || 'UNKNOWN', draft_text: draftText, doc_name: AiDraft.currentDocName, doc_type: AiDraft.currentDocType, jurisdiction: AiDraft.currentJurisdiction, tier: tier }) });
+    var data = await resp.json();
+    if (!resp.ok) throw new Error(data.detail || 'Erro no seal');
+    AiDraft.currentVerifyUrl = data.verify_url;
+    AiDraft.currentReceiptId = data.receipt_id;  // §126: Store for QR code
+    document.getElementById('ai-sealed-receipt').textContent = data.receipt_id;
+    document.getElementById('ai-sealed-hash').textContent = 'SHA-256: ' + data.hash;
+    document.getElementById('ai-verify-link').href = data.verify_url;
+    setAiPhase('sealed');
+  } catch (err) { if (btn) { btn.disabled = false; btn.textContent = t('aiSeal'); } alert(t('errPrefix') + err.message); }
+}
+function openVerify() { if (AiDraft.currentVerifyUrl) window.open(AiDraft.currentVerifyUrl, '_blank'); }
+
+// ══════════════════════════════════════════════════════════════
+// §137 — STREAMING MODULE (Demo VC Berlin)
+// Real-time text generation via SSE
+// ══════════════════════════════════════════════════════════════
+
+async function streamDraft() {
+    // Get prompt from AI Draft panel or Direct Prompt
+    var promptEl = document.getElementById('ai-context');
+    var prompt = promptEl ? promptEl.value.trim() : '';
+
+    if (!prompt || prompt.length < 10) {
+        alert(t('errContextShort') || 'Bitte geben Sie mindestens 10 Zeichen ein.');
+        return;
+    }
+
+    var wallet = JSON.parse(sessionStorage.getItem('windi_sites_wallet') || '{}');
+    var did = wallet.did || 'DEMO';
+    var walletId = wallet.wallet_id || 'DEMO';
+
+    var docType = document.getElementById('ai-doc-type')?.value || 'analyse';
+    var jurisdiction = document.getElementById('ai-jurisdiction')?.value || 'DE';
+    var lang = document.getElementById('ai-lang')?.value || 'DE';
+    var docName = document.getElementById('ai-doc-name')?.value || 'WINDI-SITES-Draft';
+
+    // Store for seal
+    AiDraft.currentDocType = docType;
+    AiDraft.currentDocName = docName;
+    AiDraft.currentJurisdiction = jurisdiction;
+
+    // UI: Streaming state
+    var btnGen = document.getElementById('btn-ai-generate');
+    var btnSeal = document.getElementById('btn-seal-draft');
+    var resultArea = document.getElementById('ai-result-text');
+
+    if (btnGen) {
+        btnGen.disabled = true;
+        btnGen.innerHTML = '<span class="pulse-dot"></span> Analysiere...';
+    }
+    if (btnSeal) btnSeal.disabled = true;
+    if (resultArea) resultArea.value = '';
+
+    var fullText = '';
+    var buffer = '';
+
+    // Switch to review phase to show result area
+    setAiPhase('loading');
+    document.getElementById('ai-model-label').textContent = '🏆 Premium · Streaming...';
+
+    try {
+        console.log('[AI-DRAFT] Starting stream request...');
+        var controller = new AbortController();
+        var timeoutId = setTimeout(function() { controller.abort(); }, 120000); // 2 min timeout
+
+        var response = await fetch('/law/ai-draft/stream', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                prompt: prompt,
+                doc_type: docType,
+                context: prompt,
+                jurisdiction: jurisdiction,
+                lang: lang,
+                tier: 'HIGH',
+                did: did,
+                wallet_id: walletId
+            }),
+            signal: controller.signal
+        });
+
+        clearTimeout(timeoutId);
+        console.log('[AI-DRAFT] Response status:', response.status);
+        if (!response.ok) throw new Error('HTTP ' + response.status + ' - ' + response.statusText);
+
+        // Switch to review phase NOW to show text appearing
+        setAiPhase('review');
+
+        var reader = response.body.getReader();
+        var decoder = new TextDecoder();
+
+        while (true) {
+            var result = await reader.read();
+            if (result.done) break;
+
+            var chunk = decoder.decode(result.value, { stream: true });
+            var lines = chunk.split('\n');
+
+            for (var i = 0; i < lines.length; i++) {
+                var line = lines[i];
+                if (!line.startsWith('data: ')) continue;
+                var data = line.slice(6).trim();
+                if (data === '[DONE]') break;
+                if (data.startsWith('[ERROR]')) {
+                    throw new Error(data.replace('[ERROR] ', ''));
+                }
+
+                // Restore escaped newlines
+                var text = data.replace(/\\n/g, '\n').replace(/\\\\/g, '\\');
+                fullText += text;
+                buffer += text;
+
+                // Incremental render every ~50 chars or newline
+                if (buffer.length > 50 || text.includes('\n')) {
+                    if (resultArea) {
+                        resultArea.value = fullText;
+                        resultArea.scrollTop = resultArea.scrollHeight;
+                    }
+                    buffer = '';
+                }
+            }
+        }
+
+        // Final render
+        if (resultArea) {
+            resultArea.value = fullText;
+            resultArea.scrollTop = resultArea.scrollHeight;
+        }
+        AiDraft.currentDraftText = fullText;
+        AiDraft.currentDraftId = 'STREAM-' + Date.now();
+
+        // Update preview hash
+        updatePreviewHash();
+
+    } catch (err) {
+        console.error('[AI-DRAFT] Stream error:', err);
+        setAiPhase('configure');
+        var errorMsg = err.name === 'AbortError' ? 'Timeout nach 2 Minuten' :
+                       err.message === 'Failed to fetch' ? 'Netzwerkfehler - bitte Seite neu laden (F5)' :
+                       err.message;
+        alert('Streaming Fehler: ' + errorMsg);
+    } finally {
+        if (btnGen) {
+            btnGen.disabled = false;
+            btnGen.innerHTML = '⚡ ' + (t('aiGenerate') || 'Generieren');
+        }
+        if (btnSeal) btnSeal.disabled = false;
+    }
+}
+
+// Demo VC Berlin — um clique
+function loadVCDemo() {
+    // Open AI Draft panel if not open
+    openAiDraft();
+
+    setTimeout(function() {
+        var contextEl = document.getElementById('ai-context');
+        var docNameEl = document.getElementById('ai-doc-name');
+        var docTypeEl = document.getElementById('ai-doc-type');
+
+        if (contextEl) {
+            contextEl.value =
+                'Vergleiche die Anforderungen des EU AI Act an das Risikomanagement ' +
+                'mit den bestehenden Anforderungen der DSGVO (Datenschutz-Folgenabschätzung). ' +
+                'Wo gibt es Überschneidungen und wo muss eine Kanzlei ihre internen ' +
+                'Compliance-Prozesse erweitern, um beide Verordnungen gleichzeitig zu erfüllen?\n\n' +
+                'Kontext: Kanzlei Berlin · 15 Anwälte · LLM-Einsatz für Vertragsanalyse · ' +
+                'Investorenpräsentation · Tier HIGH';
+        }
+
+        if (docNameEl) docNameEl.value = 'EU AI Act × DSGVO Compliance-Analyse';
+        if (docTypeEl) docTypeEl.value = 'gutachten';
+
+        // Highlight generate button
+        var btn = document.getElementById('btn-ai-generate');
+        if (btn) {
+            btn.style.boxShadow = '0 0 0 3px var(--gold)';
+            btn.style.transform = 'scale(1.02)';
+            setTimeout(function() {
+                btn.style.boxShadow = '';
+                btn.style.transform = '';
+            }, 2000);
+        }
+    }, 300);
+}
+
+console.log('[WINDI LAW] AI Draft Module v1.0.0 loaded');
+console.log('[WINDI LAW] §137 Streaming Module loaded');
+
+// ══════════════════════════════════════════════════════════════
+// §122 — DIRECT PROMPT MODULE (LAW Agent Corps Integration)
+// Submits prompt directly to selected agent without modal
+// ══════════════════════════════════════════════════════════════
+
+const DirectPrompt = {
+  currentSession: null,
+  selectedAgent: 'legal',
+  selectedLang: 'de'
+};
+
+// Agent configuration
+const AGENT_CONFIG = {
+  legal:      { name: 'W-LEGAL-001',   icon: '⚖️', badge: 'Legal',      color: '#1a3a6b', endpoint: '/agents/legal/bridge' },
+  notary:     { name: 'W-NOTARY-001',  icon: '📜', badge: 'Notarial',   color: '#5a1a6b', endpoint: '/agents/notary/bridge' },
+  audit:      { name: 'W-AUDIT-001',   icon: '🔍', badge: 'Audit',      color: '#2d4a1a', endpoint: '/agents/audit/bridge' },
+  compliance: { name: 'W-COMPLY-001',  icon: '✓',  badge: 'Compliance', color: '#1a4a5a', endpoint: '/agents/compliance/bridge' },
+  accounting: { name: 'W-ACCT-001',    icon: '📊', badge: 'Buchhaltung', color: '#4a3a1a', endpoint: '/agents/accounting/bridge' }
+};
+
+function getSelectedAgent() {
+  var sel = document.getElementById('agent-select');
+  return sel ? sel.value : 'legal';
+}
+
+function getSelectedPromptLang() {
+  var active = document.querySelector('.plbtn.on');
+  return active ? (active.dataset.lang || active.textContent.toLowerCase()) : 'de';
+}
+
+// Detect document type from prompt content or use agent default
+// Valid types: nda, vertrag, vollmacht, mahnung, kuendigung, klausel, stellungnahme, gutachten
+function detectDocType(prompt, agent) {
+  var p = prompt.toLowerCase();
+
+  // Keyword detection
+  if (p.includes('nda') || p.includes('geheimhaltung') || p.includes('confidential') || p.includes('vertraulich')) return 'nda';
+  if (p.includes('vollmacht') || p.includes('power of attorney') || p.includes('procuração')) return 'vollmacht';
+  if (p.includes('mahnung') || p.includes('zahlungserinnerung') || p.includes('payment reminder')) return 'mahnung';
+  if (p.includes('kündigung') || p.includes('kuendigung') || p.includes('termination') || p.includes('rescisão')) return 'kuendigung';
+  if (p.includes('klausel') || p.includes('clause') || p.includes('cláusula')) return 'klausel';
+  if (p.includes('stellungnahme') || p.includes('statement') || p.includes('parecer')) return 'stellungnahme';
+  if (p.includes('gutachten') || p.includes('expert opinion') || p.includes('laudo') || p.includes('prüf')) return 'gutachten';
+  if (p.includes('vertrag') || p.includes('contract') || p.includes('contrato') || p.includes('agreement')) return 'vertrag';
+
+  // Agent-based defaults
+  var agentDefaults = {
+    legal: 'vertrag',
+    notary: 'vollmacht',
+    audit: 'gutachten',
+    compliance: 'stellungnahme',
+    accounting: 'gutachten'
+  };
+
+  return agentDefaults[agent] || 'vertrag';
+}
+
+async function submitDirectPrompt() {
+  // Get wallet
+  var walletStr = sessionStorage.getItem('windi_sites_wallet');
+  if (!walletStr) { alert(t('errNoWallet')); return; }
+  var wallet = JSON.parse(walletStr);
+  var did = wallet.did || 'UNKNOWN';
+
+  // Get prompt
+  var promptInput = document.getElementById('prompt-input');
+  var prompt = promptInput ? promptInput.value.trim() : '';
+  if (!prompt || prompt.length < 10) {
+    alert(t('errContextShort') || 'Bitte geben Sie mindestens 10 Zeichen ein.');
+    return;
+  }
+
+  // Get agent and language
+  var agent = getSelectedAgent();
+  var lang = getSelectedPromptLang();
+  var config = AGENT_CONFIG[agent] || AGENT_CONFIG.legal;
+
+  // I9 Gate: Confirm before generation
+  var confirmMsg = t('confirmI9Generate', {
+    docType: config.badge.toUpperCase(),
+    jurisdiction: 'DE',
+    docName: prompt.substring(0, 30) + '...'
+  }) || ('🛡️ ' + config.name + ' aktivieren?\n\nPrompt: ' + prompt.substring(0, 50) + '...\n\nBestätigen?');
+
+  if (!confirm(confirmMsg)) return;
+
+  // Show loading state
+  switchToActive();
+  showAgentLoading(config);
+
+  try {
+    // Step 1: Create session with the agent
+    var sessionResp = await fetch('/law' + config.endpoint + '/open', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        wallet_id: did,
+        title: prompt.substring(0, 60),
+        doc_type: 'prompt',
+        jurisdiction: 'DE'
+      })
+    });
+    var sessionData = await sessionResp.json();
+
+    if (!sessionResp.ok) throw new Error(sessionData.detail || 'Session creation failed');
+
+    DirectPrompt.currentSession = sessionData;
+    console.log('[§122] Agent session created:', sessionData.session_id);
+
+    // Step 2: Generate content via AI Draft (unified generation)
+    // Detect doc_type from prompt or use default based on agent
+    var docType = detectDocType(prompt, agent);
+
+    var genResp = await fetch('/law/ai-draft/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        did: did,
+        wallet_id: did,
+        doc_type: docType,
+        jurisdiction: 'DE',
+        lang: lang,
+        tier: wallet.tier || 'FREE',
+        context: prompt,
+        doc_name: prompt.substring(0, 40),
+        agent_session: sessionData.session_id
+      })
+    });
+    var genData = await genResp.json();
+
+    if (!genResp.ok) throw new Error(genData.detail || 'Generation failed');
+
+    // Show result
+    showAgentResult(config, genData, sessionData);
+
+    // Clear prompt input
+    if (promptInput) promptInput.value = '';
+
+  } catch (err) {
+    console.error('[§122] Error:', err);
+    showAgentError(config, err.message);
+  }
+}
+
+function switchToActive() {
+  document.getElementById('st-empty').style.display = 'none';
+  document.getElementById('st-active').style.display = 'flex';
+  document.getElementById('doc-empty-state').style.display = 'none';
+  document.getElementById('doc-content').style.display = 'block';
+}
+
+function showAgentLoading(config) {
+  var agentResp = document.getElementById('agent-response');
+  var docCanvas = document.getElementById('doc-canvas');
+
+  if (agentResp) {
+    agentResp.style.display = 'flex';
+    document.getElementById('agent-icon').textContent = config.icon;
+    document.getElementById('agent-name').textContent = config.name;
+    // §124: Initialize Quill and show loading state
+    initQuillEditor();
+    if (quillEditor) {
+      quillEditor.root.innerHTML = '<p class="loading-dots">Verarbeite Anfrage<span>.</span><span>.</span><span>.</span></p>';
+    }
+    document.getElementById('agent-risks').innerHTML = '';
+  }
+
+  if (docCanvas) docCanvas.style.display = 'none';
+
+  // Update header
+  var hdr = document.getElementById('doc-hdr-dynamic');
+  if (hdr) {
+    hdr.style.display = 'flex';
+    document.getElementById('doc-badge').textContent = config.badge;
+    document.getElementById('doc-badge').className = 'dbadge';
+    document.getElementById('doc-badge').style.background = config.color;
+    document.getElementById('doc-badge').style.color = 'white';
+    document.getElementById('doc-title').textContent = 'Wird generiert...';
+  }
+}
+
+async function showAgentResult(config, genData, sessionData) {
+  var agentResp = document.getElementById('agent-response');
+  var docCanvas = document.getElementById('doc-canvas');
+
+  // Update agent response with Quill editor (§124)
+  if (agentResp) {
+    // Set content in Quill editor
+    setQuillContent(genData.draft_text || 'Kein Inhalt generiert.');
+
+    document.getElementById('agent-risks').innerHTML =
+      '<span class="risk" style="background:#2d4a1a;color:#8fbc8f">✓ ' + config.name + '</span>' +
+      '<span class="risk" style="background:var(--gold-bg);color:var(--gold)">' + (genData.tokens || 0) + ' tokens</span>' +
+      '<span class="risk" style="background:var(--gold-bg);color:var(--gold)">' + (genData.elapsed_seconds || 0) + 's</span>' +
+      '<span class="risk" style="background:#1a3a6b;color:#8fb3d9">Session: ' + sessionData.session_id + '</span>';
+  }
+
+  // Update header
+  document.getElementById('doc-title').textContent = genData.doc_name || sessionData.title || 'Generiertes Dokument';
+
+  // Store for sealing
+  AiDraft.currentDraftId = genData.draft_id;
+  AiDraft.currentDraftText = genData.draft_text;
+  AiDraft.currentDocType = config.badge.toLowerCase();
+  AiDraft.currentDocName = genData.doc_name || sessionData.title;
+  AiDraft.currentJurisdiction = 'DE';
+  DirectPrompt.currentSession = sessionData;
+
+  // Compute and show hash preview
+  var hashPreview = await computeHashPreview(genData.draft_text || '');
+  var agentActions = document.getElementById('agent-actions');
+  var agentHash = document.getElementById('agent-hash');
+  if (agentActions) agentActions.style.display = 'block';
+  if (agentHash) agentHash.textContent = hashPreview;
+
+  // Also populate doc canvas for editing
+  if (docCanvas) {
+    docCanvas.style.display = 'block';
+    var dcTitle = document.getElementById('dc-title');
+    var dcMeta = document.getElementById('dc-meta');
+    if (dcTitle) dcTitle.textContent = genData.doc_name || sessionData.title;
+    if (dcMeta) dcMeta.textContent = config.name + ' · ' + new Date().toLocaleDateString('de-DE') + ' · Session: ' + sessionData.session_id;
+  }
+
+  console.log('[§122] Agent result displayed:', config.name, sessionData.session_id);
+}
+
+// §122.2 Forensic Functions
+async function computeHashPreview(text) {
+  if (!text) return '—';
+  var encoder = new TextEncoder();
+  var data = encoder.encode(text);
+  var hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  var hashArray = Array.from(new Uint8Array(hashBuffer));
+  var hashHex = hashArray.map(function(b) { return b.toString(16).padStart(2,'0'); }).join('');
+  return hashHex.substring(0, 16) + '…' + hashHex.substring(hashHex.length - 8);
+}
+
+async function saveAgentDraft() {
+  // §124: Get content from Quill editor (reflects any edits)
+  var content = getQuillContent();
+  if (!content || content.trim() === '') {
+    alert('Kein Entwurf zum Speichern.');
+    return;
+  }
+
+  // Update stored draft text
+  AiDraft.currentDraftText = content;
+
+  // Create blob and download
+  var blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = (AiDraft.currentDocName || 'Entwurf') + '_' + (DirectPrompt.currentSession?.session_id || 'DRAFT') + '.txt';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  console.log('[§124] Draft saved locally');
+}
+
+async function sealAgentDraft() {
+  // §124: Get content from Quill editor (reflects any edits)
+  var content = getQuillContent();
+  if (!content || content.trim() === '') {
+    alert('Kein Entwurf zum Versiegeln.');
+    return;
+  }
+
+  // Update stored draft text with current Quill content
+  AiDraft.currentDraftText = content;
+
+  // Use existing AI Draft seal function (I9 + I11 compliant)
+  await sealAiDraft();
+}
+
+// §125 — QR Code Modal with QRCode.js (qrcodejs library)
+var qrCodeInstance = null;
+
+async function showAgentQR() {
+  var content = getQuillContent();
+  if (!content || content.trim() === '') {
+    alert('Kein Entwurf für QR-Code.');
+    return;
+  }
+
+  // Compute full hash
+  var encoder = new TextEncoder();
+  var data = encoder.encode(content);
+  var hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  var hashArray = Array.from(new Uint8Array(hashBuffer));
+  var fullHash = hashArray.map(function(b) { return b.toString(16).padStart(2,'0'); }).join('');
+
+  // §126: Use receipt_id if available (after seal), otherwise session_id
+  var receiptOrSession = AiDraft.currentReceiptId || DirectPrompt.currentSession?.session_id || 'DRAFT';
+  var verifyUrl = 'https://windi-domain.com/verify-public/?id=' + receiptOrSession;
+
+  // Create modal
+  var modal = document.createElement('div');
+  modal.id = 'qr-modal';
+  modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:10000;';
+  modal.innerHTML = '\
+    <div style="background:var(--perg-2);border-radius:12px;padding:2rem;max-width:400px;text-align:center;border:1px solid var(--border-2);">\
+      <h3 style="color:var(--gold);margin-bottom:1rem;font-size:1.2rem;">📱 WINDI Verification QR</h3>\
+      <div id="qr-canvas" style="background:white;padding:1rem;border-radius:8px;margin-bottom:1rem;display:inline-block;min-width:180px;min-height:180px;"></div>\
+      <p style="font-size:0.85rem;color:var(--ink-2);margin-bottom:0.5rem;">' + escapeHtml(AiDraft.currentDocName || 'Dokument') + '</p>\
+      <p style="font-family:var(--mono);font-size:0.7rem;color:var(--ink-3);word-break:break-all;margin-bottom:1rem;">SHA-256: ' + fullHash.substring(0,32) + '...</p>\
+      <p style="font-size:0.75rem;color:var(--ink-3);margin-bottom:1rem;">' + (AiDraft.currentReceiptId ? '🔐 Receipt: ' + receiptOrSession : '📝 Session: ' + receiptOrSession) + '</p>\
+      <div style="display:flex;gap:0.5rem;justify-content:center;">\
+        <button onclick="downloadAgentQR()" style="background:var(--gold);color:#080808;border:none;padding:0.75rem 1.5rem;border-radius:6px;cursor:pointer;font-weight:600;">⬇️ Download</button>\
+        <button onclick="closeQRModal()" style="background:transparent;border:1px solid var(--border-2);color:var(--ink);padding:0.75rem 1.5rem;border-radius:6px;cursor:pointer;">Schließen</button>\
+      </div>\
+    </div>';
+
+  document.body.appendChild(modal);
+  modal.onclick = function(e) { if (e.target === modal) closeQRModal(); };
+
+  // Generate real QR code using qrcodejs library
+  var qrContainer = document.getElementById('qr-canvas');
+  if (typeof QRCode !== 'undefined' && qrContainer) {
+    qrContainer.innerHTML = '';
+    qrCodeInstance = new QRCode(qrContainer, {
+      text: verifyUrl,
+      width: 160,
+      height: 160,
+      colorDark: '#1a1a1a',
+      colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.H
+    });
+    console.log('[§125] QR generated for:', verifyUrl);
+  } else {
+    qrContainer.innerHTML = '<p style="color:#666;padding:2rem;">QR Library: ' + (typeof QRCode) + '</p>';
+    console.log('[§125] QRCode library status:', typeof QRCode);
+  }
+}
+
+function closeQRModal() {
+  var modal = document.getElementById('qr-modal');
+  if (modal) modal.remove();
+  qrCodeInstance = null;
+}
+
+function downloadAgentQR() {
+  var qrContainer = document.getElementById('qr-canvas');
+  if (!qrContainer) return;
+
+  var canvas = qrContainer.querySelector('canvas');
+  if (canvas) {
+    var link = document.createElement('a');
+    link.download = 'WINDI-QR_' + (DirectPrompt.currentSession?.session_id || 'DRAFT') + '.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  } else {
+    alert('QR not ready for download');
+  }
+}
+
+// §125 — Professional PDF Export with html2pdf.js
+async function exportAgentDraft() {
+  // Get content - try multiple sources with fallbacks
+  var content = getQuillContent();
+  var htmlContent = getQuillHtml();
+
+  // §126: If Quill is empty, try stored draft text
+  if (!htmlContent || htmlContent.trim() === '' || htmlContent === '<p><br></p>') {
+    if (AiDraft.currentDraftText) {
+      htmlContent = textToQuillHtml(AiDraft.currentDraftText);
+      console.log('[§126] PDF: Using stored draft text, converted to HTML');
+    }
+  }
+
+  if (!content || content.trim() === '') {
+    content = AiDraft.currentDraftText || '';
+  }
+
+  console.log('[§125] Export: content length=' + (content ? content.length : 0) + ', html length=' + (htmlContent ? htmlContent.length : 0));
+  console.log('[§125] Export: htmlContent preview=' + (htmlContent ? htmlContent.substring(0, 200) : 'EMPTY'));
+
+  if ((!content || content.trim() === '') && (!htmlContent || htmlContent.trim() === '')) {
+    alert('Kein Entwurf zum Exportieren.\n\nBitte generieren Sie zuerst ein Dokument.');
+    return;
+  }
+
+  // Compute hash for footer
+  var encoder = new TextEncoder();
+  var data = encoder.encode(content);
+  var hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  var hashArray = Array.from(new Uint8Array(hashBuffer));
+  var fullHash = hashArray.map(function(b) { return b.toString(16).padStart(2,'0'); }).join('');
+
+  var sessionId = DirectPrompt.currentSession?.session_id || 'DRAFT';
+  var docName = AiDraft.currentDocName || 'Rechtsdokument';
+  var agentName = AGENT_CONFIG[getSelectedAgent()]?.name || 'W-LEGAL-001';
+  var dateStr = new Date().toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+  // Create professional PDF document with proper styling
+  // §127: Container must be visible for html2canvas to capture properly
+  var pdfContainer = document.createElement('div');
+  pdfContainer.id = 'pdf-export-container';
+  pdfContainer.style.cssText = 'position:fixed;left:0;top:0;width:210mm;min-height:297mm;padding:20mm;font-family:Georgia,"Times New Roman",serif;font-size:11pt;line-height:1.6;color:#1a1a1a;background:white;z-index:-1;opacity:0.01;';
+
+  // Build PDF HTML with embedded styles
+  var pdfHtml = '\
+    <style>\
+      h1 { font-size:16pt; font-weight:bold; text-align:center; margin:0 0 20px 0; }\
+      h2 { font-size:12pt; font-weight:bold; margin:20px 0 10px 0; padding-bottom:5px; border-bottom:1px solid #ccc; }\
+      h3 { font-size:11pt; font-weight:bold; margin:15px 0 8px 0; }\
+      p { margin:0 0 10px 0; text-align:justify; }\
+      ul { margin:10px 0 10px 20px; padding:0; }\
+      li { margin-bottom:5px; }\
+    </style>\
+    <div style="text-align:center;margin-bottom:25px;padding-bottom:15px;border-bottom:2px solid #8B6914;">\
+      <div style="font-size:9pt;color:#666;letter-spacing:3px;margin-bottom:8px;font-family:Arial,sans-serif;">WINDI LAW</div>\
+      <div style="font-size:14pt;font-weight:bold;color:#1a1a1a;">' + escapeHtml(docName) + '</div>\
+    </div>\
+    <div style="margin-bottom:20px;padding:12px 15px;background:#f5f5f3;border-left:3px solid #8B6914;font-size:9pt;color:#444;font-family:Arial,sans-serif;">\
+      <strong>Session:</strong> ' + sessionId + ' · <strong>Datum:</strong> ' + dateStr + ' · <strong>Agent:</strong> ' + agentName + '\
+    </div>\
+    <div class="content">' + htmlContent + '</div>\
+    <div style="margin-top:30px;padding-top:15px;border-top:1px solid #ddd;font-size:8pt;color:#666;font-family:Arial,sans-serif;">\
+      <div style="margin-bottom:8px;">⚠️ <em>KI-generierter Entwurf. Rechtliche Überprüfung durch einen Anwalt erforderlich.</em></div>\
+      <div style="font-family:monospace;font-size:7pt;color:#999;word-break:break-all;">SHA-256: ' + fullHash + '</div>\
+      <div style="margin-top:12px;text-align:center;color:#8B6914;font-size:7pt;">\
+        🔐 WINDI LAW · I9 · I11 · G3 · <em>"Any AI generates. Only WINDI proves."</em>\
+      </div>\
+    </div>';
+
+  pdfContainer.innerHTML = pdfHtml;
+  document.body.appendChild(pdfContainer);
+
+  // §126: Wait for DOM to render before capturing
+  await new Promise(resolve => setTimeout(resolve, 100));
+
+  // Generate PDF
+  var safeDocName = docName.replace(/[^a-zA-Z0-9äöüÄÖÜß\-_\s]/g, '').replace(/\s+/g, '_').substring(0, 50);
+  var opt = {
+    margin: [15, 15, 20, 15],
+    filename: 'WINDI-SITES_' + safeDocName + '_' + new Date().toISOString().slice(0,10) + '.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true, logging: true, backgroundColor: '#ffffff' },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+  };
+
+  console.log('[§125] html2pdf available:', typeof html2pdf);
+  console.log('[§125] PDF container innerHTML length:', pdfContainer.innerHTML.length);
+
+  if (typeof html2pdf !== 'undefined') {
+    try {
+      console.log('[§125] Starting PDF generation...');
+      await html2pdf().set(opt).from(pdfContainer).save();
+      console.log('[§125] PDF exported:', opt.filename);
+    } catch (err) {
+      console.error('[§125] PDF error:', err);
+      alert('PDF-Fehler: ' + err.message + '\n\nVersuche HTML-Export...');
+      // Fallback to HTML on error
+      downloadAsHtml(pdfHtml, docName, safeDocName);
+    } finally {
+      if (document.getElementById('pdf-export-container')) {
+        document.body.removeChild(pdfContainer);
+      }
+    }
+  } else {
+    // Fallback: download as styled HTML
+    document.body.removeChild(pdfContainer);
+    downloadAsHtml(pdfHtml, docName, safeDocName);
+  }
+}
+
+// §126: HTML download helper
+function downloadAsHtml(pdfHtml, docName, safeDocName) {
+  var fullHtml = '<!DOCTYPE html>\n<html lang="de">\n<head>\n<meta charset="UTF-8">\n<title>' + escapeHtml(docName) + '</title>\n<style>\nbody { max-width:800px; margin:40px auto; padding:30px; font-family:Georgia,"Times New Roman",serif; font-size:11pt; line-height:1.6; color:#1a1a1a; background:#fff; }\nh1 { font-size:16pt; font-weight:bold; text-align:center; margin:0 0 25px 0; text-transform:uppercase; letter-spacing:1px; }\nh2 { font-size:12pt; font-weight:bold; margin:25px 0 12px 0; padding-bottom:8px; border-bottom:1px solid #ccc; }\nh3 { font-size:11pt; font-weight:bold; margin:18px 0 10px 0; }\np { margin:0 0 12px 0; text-align:justify; }\nul, ol { margin:12px 0 12px 25px; padding:0; }\nli { margin-bottom:6px; }\nblockquote { border-left:3px solid #8B6914; padding-left:15px; margin:15px 0; color:#444; font-style:italic; }\n@media print { body { margin:0; padding:20mm; } }\n</style>\n</head>\n<body>\n' + pdfHtml + '\n</body>\n</html>';
+  var blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'WINDI-SITES_' + safeDocName + '.html';
+  a.click();
+  URL.revokeObjectURL(url);
+  console.log('[§126] HTML exported with print-ready CSS');
+}
+
+// §127.2 — Export Menu Toggle Functions
+function toggleExportMenu() {
+  var menu = document.getElementById('exportMenu');
+  if (menu) {
+    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+  }
+}
+
+function hideExportMenu() {
+  var menu = document.getElementById('exportMenu');
+  if (menu) menu.style.display = 'none';
+}
+
+// Close export menu when clicking outside
+document.addEventListener('click', function(e) {
+  var dropdown = document.querySelector('.export-dropdown');
+  var menu = document.getElementById('exportMenu');
+  if (dropdown && menu && !dropdown.contains(e.target)) {
+    menu.style.display = 'none';
+  }
+});
+
+// §127.2 — Server-side DOCX Export (python-docx backend)
+async function exportAgentDocx() {
+  // Get content - prefer stored Markdown text for better DOCX conversion
+  var draftText = AiDraft.currentDraftText || getQuillContent();
+  var docName = AiDraft.currentDocName || 'WINDI-SITES-Draft';
+
+  if (!draftText || draftText.trim().length < 50) {
+    alert('Kein Dokument zum Exportieren.\n\nBitte generieren Sie zuerst ein Dokument.');
+    return;
+  }
+
+  console.log('[§127.2] Starting server-side DOCX export...');
+
+  // Find export button for loading state
+  var exportMenu = document.getElementById('exportMenu');
+  var docxBtn = exportMenu ? exportMenu.querySelector('button:nth-child(2)') : null;
+  var originalText = docxBtn ? docxBtn.textContent : '';
+
+  try {
+    if (docxBtn) {
+      docxBtn.disabled = true;
+      docxBtn.textContent = '⏳ Generiere...';
+    }
+
+    var response = await fetch('/law/ai-draft/export/docx', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        draft_text: draftText,
+        doc_name: docName
+      })
+    });
+
+    if (!response.ok) {
+      var errData = await response.json().catch(function() { return { detail: 'Export failed' }; });
+      throw new Error(errData.detail || 'Server error ' + response.status);
+    }
+
+    var blob = await response.blob();
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = docName.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9äöüÄÖÜß\-_]/g, '') + '.docx';
+    a.click();
+    URL.revokeObjectURL(url);
+
+    console.log('[§127.2] DOCX downloaded:', a.download);
+
+  } catch (err) {
+    console.error('[§127.2] DOCX error:', err);
+    alert('DOCX Export Fehler: ' + err.message + '\n\nVersuchen Sie PDF-Export stattdessen.');
+  } finally {
+    if (docxBtn) {
+      docxBtn.disabled = false;
+      docxBtn.textContent = originalText;
+    }
+  }
+}
+
+function showAgentError(config, errorMsg) {
+  var agentResp = document.getElementById('agent-response');
+  if (agentResp) {
+    document.getElementById('agent-text').innerHTML = '<div style="color:#c0392b">❌ Fehler: ' + escapeHtml(errorMsg) + '</div>';
+    document.getElementById('agent-risks').innerHTML = '<span class="risk" style="background:#c0392b;color:white">Fehlgeschlagen</span>';
+  }
+  document.getElementById('doc-title').textContent = 'Fehler';
+}
+
+function escapeHtml(text) {
+  var div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// Wire up language buttons in prompt area
+document.querySelectorAll('.pbox-ft .plbtn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.pbox-ft .plbtn').forEach(function(b) { b.classList.remove('on'); });
+    btn.classList.add('on');
+    DirectPrompt.selectedLang = btn.dataset.lang || btn.textContent.toLowerCase();
+  });
+});
+
+// Enter key to submit
+document.addEventListener('DOMContentLoaded', function() {
+  var promptInput = document.getElementById('prompt-input');
+  if (promptInput) {
+    promptInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        submitDirectPrompt();
+      }
+    });
+  }
+});
+
+// ══════════════════════════════════════════════════════════════
+// §122.1 — Quick Prompt (pre-fills prompt area with template)
+// ══════════════════════════════════════════════════════════════
+function quickPrompt(text, agent, autoSubmit) {
+  // Check wallet first
+  var walletStr = sessionStorage.getItem('windi_sites_wallet');
+  if (!walletStr) { alert(t('errNoWallet')); return; }
+
+  // Pre-fill prompt input
+  var promptInput = document.getElementById('prompt-input');
+  if (promptInput) {
+    promptInput.value = text;
+    promptInput.focus();
+    // Scroll to prompt area
+    promptInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  // Select the appropriate agent
+  if (agent) {
+    var agentSelect = document.getElementById('agent-select');
+    if (agentSelect) {
+      agentSelect.value = agent;
+    }
+  }
+
+  // Visual feedback
+  var pbox = document.querySelector('.pbox');
+  if (pbox) {
+    pbox.style.borderColor = 'var(--gold)';
+    pbox.style.boxShadow = '0 3px 20px rgba(139,105,20,0.15)';
+    setTimeout(function() {
+      pbox.style.borderColor = '';
+      pbox.style.boxShadow = '';
+    }, 1500);
+  }
+
+  console.log('[§122.1] Quick prompt loaded:', agent, text.substring(0, 40) + '...');
+
+  // §127.3 — Auto-submit after brief delay for visual feedback
+  // Default: true (chips auto-submit)
+  if (autoSubmit !== false) {
+    setTimeout(function() {
+      submitDirectPrompt();
+    }, 300);
+  }
+}
+
+console.log('[WINDI LAW] §122 Direct Prompt Module v1.0.0 loaded');
+
+// ══════════════════════════════════════════════════════════════
+// §120.5 MOBILE MENU FUNCTIONS — Phase 1 Emergency Fix
+// ══════════════════════════════════════════════════════════════
+function toggleMobileMenu() {
+  var sidebar = document.querySelector('.sl');
+  var btn = document.getElementById('mobileMenuBtn');
+  var overlay = document.getElementById('mobileOverlay');
+  if (sidebar && btn && overlay) {
+    sidebar.classList.toggle('open');
+    btn.classList.toggle('open');
+    overlay.classList.toggle('show');
+    document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
+  }
+}
+function closeMobileMenu() {
+  var sidebar = document.querySelector('.sl');
+  var btn = document.getElementById('mobileMenuBtn');
+  var overlay = document.getElementById('mobileOverlay');
+  if (sidebar && btn && overlay) {
+    sidebar.classList.remove('open');
+    btn.classList.remove('open');
+    overlay.classList.remove('show');
+    document.body.style.overflow = '';
+  }
+}
+// Close menu when clicking sidebar items (mobile)
+document.addEventListener('click', function(e) {
+  if (window.innerWidth <= 767) {
+    if (e.target.closest('.sl-item') || e.target.closest('.sl-doc')) {
+      closeMobileMenu();
+    }
+  }
+});
+// Close menu on ESC
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeMobileMenu();
+});
+// Handle resize - close menu if screen becomes larger
+window.addEventListener('resize', function() {
+  if (window.innerWidth > 767) closeMobileMenu();
+});
+console.log('[WINDI LAW] Mobile Menu v1.0 loaded · §120.5');
+</script>
+
+<!-- ══ AI DRAFT PANEL ══ -->
+<div id="ai-draft-panel" role="dialog" aria-modal="true">
+  <div class="ai-draft-modal">
+    <div class="ai-draft-header">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <h2>⚖️ AI Draft Mode</h2>
+        <span class="ai-badge">WINDI LAW</span>
+      </div>
+      <button class="ai-draft-close" onclick="closeAiDraft()" data-i18n-title="aiClose">×</button>
+    </div>
+    <div class="ai-draft-body">
+      <div class="ai-draft-steps">
+        <div class="ai-step active" data-i18n="aiStep1">1 · Configure</div>
+        <div class="ai-step" data-i18n="aiStep2">2 · Approve I9</div>
+        <div class="ai-step" data-i18n="aiStep3">3 · Generate</div>
+        <div class="ai-step" data-i18n="aiStep4">4 · Review</div>
+        <div class="ai-step" data-i18n="aiStep5">5 · Seal I11</div>
+      </div>
+
+      <!-- PHASE 1: Configure -->
+      <div id="ai-phase-configure">
+        <div class="tier-info">
+          <span class="tier-badge" id="ai-tier-badge">FREE</span>
+          <span id="ai-tier-desc">⚡ Standard · KI-Entwurf</span>
+        </div>
+        <div class="ai-row">
+          <div class="ai-field">
+            <label data-i18n="aiDocType">Dokumenttyp</label>
+            <select id="ai-doc-type">
+              <option value="nda">NDA · Geheimhaltung</option>
+              <option value="vertrag">Dienstleistungsvertrag</option>
+              <option value="vollmacht">Vollmacht</option>
+              <option value="mahnung">Mahnung</option>
+              <option value="kuendigung">Kündigung</option>
+              <option value="klausel">Vertragsklausel</option>
+              <option value="stellungnahme">Stellungnahme</option>
+              <option value="gutachten">Rechtsgutachten</option>
+            </select>
+          </div>
+          <div class="ai-field">
+            <label data-i18n="aiJurisdiction">Gerichtsbarkeit</label>
+            <select id="ai-jurisdiction">
+              <option value="DE">🇩🇪 Deutschland</option>
+              <option value="EU">🇪🇺 Europa (EU)</option>
+              <option value="PT">🇵🇹 Portugal</option>
+              <option value="INT">🌐 Internacional</option>
+            </select>
+          </div>
+          <div class="ai-field">
+            <label data-i18n="aiLanguage">Sprache</label>
+            <select id="ai-lang">
+              <option value="DE">Deutsch</option>
+              <option value="EN">English</option>
+              <option value="PT">Português</option>
+            </select>
+          </div>
+        </div>
+        <div class="ai-field">
+          <label data-i18n="aiDocName">Dokumentname</label>
+          <input type="text" id="ai-doc-name" data-i18n-placeholder="aiDocNamePh" placeholder="z.B.: NDA zwischen Firma A und Firma B · 2026" />
+        </div>
+        <div class="ai-field">
+          <label data-i18n="aiContext">Kontext · Parteien · Zweck</label>
+          <textarea id="ai-context" rows="5" data-i18n-placeholder="aiContextPh" placeholder="Beschreiben Sie:
+• Beteiligte Parteien
+• Zweck des Dokuments
+• Spezifische Bedingungen
+• Fristen, Werte, Pflichten"></textarea>
+          <p class="hint" data-i18n="aiHashWarn">⚠️ Der Text wird gehasht und unveränderlich im Ledger versiegelt.</p>
+        </div>
+        <div style="background:var(--gold-bg); border:1px solid rgba(139,105,20,0.2); border-radius:10px; padding:14px 18px; margin-bottom:20px; font-size:0.78rem; line-height:1.6; color:var(--ink-3);">
+          <strong style="color:var(--gold);" data-i18n="aiI9Title">🛡️ Invariant I9 — Menschliche Genehmigung</strong><br>
+          <span data-i18n="aiI9Desc">Mit Klick auf "Generieren" bestätigst du diesen Antrag und wirst das Ergebnis prüfen.</span><br>
+          <em style="font-size:0.7rem; color:var(--ink-4);">"AI processes. Human decides. WINDI guarantees."</em>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <button id="btn-ai-generate" class="btn-generate" onclick="streamDraft()" data-i18n="aiGenerate">⚡ Mit KI generieren</button>
+          <button class="btn-vc-demo" onclick="loadVCDemo()" title="Demo für VC Berlin — EU AI Act × DSGVO">🎯 DEMO VC</button>
+        </div>
+      </div>
+
+      <!-- PHASE 2: Loading -->
+      <div id="ai-phase-loading" style="display:none;">
+        <div class="ai-loading">
+          <div class="spinner"></div>
+          <p style="font-weight:600; margin-bottom:8px;" data-i18n="aiGenerating">Juristisches Dokument wird generiert…</p>
+          <p class="model-label" id="ai-model-label" data-i18n="aiModelLoading">KI-Entwurf wird vorbereitet…</p>
+          <p style="font-size:0.72rem; color:var(--ink-4); margin-top:16px;" data-i18n="aiAfterGen">🔐 Nach Generierung → Menschliche Prüfung → Seal I11</p>
+        </div>
+      </div>
+
+      <!-- PHASE 3: Review -->
+      <div id="ai-phase-review" style="display:none;">
+        <div class="ai-result-meta" id="ai-result-meta"></div>
+        <div class="ai-field">
+          <label data-i18n="aiReviewLabel">📄 Generiertes Dokument — Prüfen und bearbeiten</label>
+          <textarea id="ai-result-text" class="ai-result-box" rows="12" style="font-family:var(--mono); font-size:0.8rem;"></textarea>
+          <p class="hint" data-i18n="aiEditHint">✏️ Du kannst bearbeiten. Der finale Hash wird über den versiegelten Text berechnet.</p>
+        </div>
+        <div style="font-family:var(--mono); font-size:0.68rem; color:var(--ink-4); padding:8px 12px; background:rgba(0,0,0,0.04); border-radius:6px; margin-bottom:16px;">
+          SHA-256 preview: <span id="ai-preview-hash">—</span>
+        </div>
+        <div style="background:rgba(0,0,0,0.03); border:1px solid var(--border); border-radius:10px; padding:14px 18px; margin-bottom:16px; font-size:0.76rem; color:var(--ink-3);">
+          <strong data-i18n="aiI11Title">🔐 Invariant I11 + G3 — Permanentes Seal</strong><br>
+          <span data-i18n="aiI11Desc">Der Hash wird unveränderlich im Forensic Ledger eingetragen. Löschen ist nicht möglich.</span>
+        </div>
+        <div style="display:flex; gap:12px;">
+          <button style="flex:1; padding:12px; background:none; border:1.5px solid var(--border-2); border-radius:10px; cursor:pointer; font-size:0.85rem;" onclick="resetAiDraft()" data-i18n="aiBack">← Zurück</button>
+          <button class="btn-seal" onclick="sealAiDraft()" id="btn-seal-draft" style="flex:2;" data-i18n="aiSeal">🔐 Im Ledger versiegeln · I11</button>
+        </div>
+      </div>
+
+      <!-- PHASE 4: Sealed -->
+      <div id="ai-phase-sealed" style="display:none;">
+        <div class="ai-sealed-box">
+          <div class="ai-sealed-icon">🔐</div>
+          <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:8px;" data-i18n="aiSealedTitle">Dokument versiegelt · I11 ✅</h3>
+          <p style="font-size:0.85rem; color:var(--ink-3); margin-bottom:16px;" data-i18n="aiSealedDesc">Das Dokument existiert, ist identifiziert und öffentlich verifizierbar.</p>
+          <div class="ai-sealed-receipt" id="ai-sealed-receipt">—</div>
+          <div style="font-family:var(--mono); font-size:0.68rem; color:var(--ink-4); word-break:break-all; margin:8px auto; max-width:480px;" id="ai-sealed-hash">—</div>
+          <a class="ai-verify-link" id="ai-verify-link" href="#" target="_blank" onclick="openVerify(); return false;" data-i18n="aiVerifyLink">🔍 Verify Public öffnen →</a>
+          <div class="ai-constitutional-proof">
+            I9 ✅ Human approved · G3 ✅ Human confirmed · I11 ✅ Ledger sealed<br>
+            <em style="font-size:0.66rem;">"Any AI can generate a document. Only WINDI can prove it."</em>
+          </div>
+          <button class="btn-generate" onclick="resetAiDraft()" style="margin-top:20px; max-width:280px; margin-left:auto; margin-right:auto; display:block;" data-i18n="aiNewDoc">+ Neues Dokument</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- §124 Quill Editor -->
+<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════════════
+// §124 — QUILL EDITOR INTEGRATION
+// ═══════════════════════════════════════════════════════════════
+
+var quillEditor = null;
+var quillReadOnly = true;
+
+// Initialize Quill when document is ready
+function initQuillEditor() {
+  if (quillEditor) return; // Already initialized
+
+  // §126.3 — Professional Document Editor Toolbar
+  quillEditor = new Quill('#quill-editor', {
+    theme: 'snow',
+    readOnly: true,
+    modules: {
+      toolbar: [
+        // Row 1: Text structure
+        [{ 'header': [1, 2, 3, false] }],
+        [{ 'size': ['small', false, 'large', 'huge'] }],
+
+        // Row 2: Text formatting
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ 'color': [] }, { 'background': [] }],
+
+        // Row 3: Alignment & Indentation
+        [{ 'align': [] }],
+        [{ 'indent': '-1'}, { 'indent': '+1' }],
+
+        // Row 4: Lists & Blocks
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        ['blockquote'],
+
+        // Row 5: Insert & Clean
+        ['link'],
+        ['clean']
+      ]
+    },
+    placeholder: 'Dokument wird geladen...'
+  });
+
+  // Update hash on content change
+  quillEditor.on('text-change', function() {
+    if (!quillReadOnly) {
+      updateDocumentHash();
+    }
+  });
+
+  console.log('[§124] Quill Editor initialized');
+}
+
+// Toggle edit mode
+function toggleEditMode(enabled) {
+  quillReadOnly = !enabled;
+  if (quillEditor) {
+    quillEditor.enable(enabled);
+  }
+
+  var wrapper = document.getElementById('quill-wrapper');
+  if (wrapper) {
+    wrapper.classList.toggle('readonly', !enabled);
+  }
+
+  if (enabled) {
+    updateDocumentHash();
+  }
+
+  console.log('[§124] Edit mode:', enabled ? 'ENABLED' : 'READONLY');
+}
+
+// Update hash preview when content changes
+async function updateDocumentHash() {
+  if (!quillEditor) return;
+
+  var text = quillEditor.getText();
+  AiDraft.currentDraftText = text;
+
+  var hashPreview = await computeHashPreview(text);
+  var agentHash = document.getElementById('agent-hash');
+  if (agentHash) {
+    agentHash.textContent = hashPreview;
+  }
+}
+
+// §126 — Convert plain text to properly formatted HTML for Quill
+// Creates white document with editable placeholder fields
+// §127.1 — Markdown to Quill HTML Converter
+// Handles LLM output with Markdown syntax: # ## ### **bold** *italic* - bullets ---
+function textToQuillHtml(text) {
+  if (!text) return '<p>Kein Inhalt generiert.</p>';
+
+  var html = '';
+  var lines = text.split('\n');
+  var inList = false;
+  var listItems = [];
+
+  // Helper: Apply inline Markdown formatting
+  function formatInline(line) {
+    // Escape HTML first, then apply Markdown
+    var escaped = escapeHtmlQuill(line);
+    // **bold** → <strong>
+    escaped = escaped.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    // *italic* → <em> (but not inside **)
+    escaped = escaped.replace(/(?<!\*)\*([^*]+?)\*(?!\*)/g, '<em>$1</em>');
+    // Convert placeholders to editable fields
+    escaped = convertPlaceholdersToFields(escaped);
+    // ← Empfehlung: recommendations
+    escaped = escaped.replace(/←\s*Empfehlung:/g, '<span style="color:#8B6914;font-size:0.9em;">← Empfehlung:</span>');
+    return escaped;
+  }
+
+  // Helper: Close open list
+  function closeList() {
+    if (inList && listItems.length > 0) {
+      html += '<ul>' + listItems.join('') + '</ul>';
+      listItems = [];
+      inList = false;
+    }
+  }
+
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i];
+    var trimmedLine = line.trim();
+
+    // Skip empty lines but close any open list
+    if (!trimmedLine) {
+      closeList();
+      continue;
+    }
+
+    // --- Horizontal rule
+    if (/^-{3,}$/.test(trimmedLine)) {
+      closeList();
+      html += '<hr style="border:none;border-top:1px solid #ccc;margin:1.5rem 0;">';
+      continue;
+    }
+
+    // # H1 (Markdown)
+    if (/^#\s+(.+)$/.test(trimmedLine)) {
+      closeList();
+      var h1Text = trimmedLine.replace(/^#\s+/, '');
+      html += '<h1>' + formatInline(h1Text) + '</h1>';
+      continue;
+    }
+
+    // ## H2 (Markdown) or **§N Title**
+    if (/^##\s+(.+)$/.test(trimmedLine) || /^\*\*§\s*\d+/.test(trimmedLine)) {
+      closeList();
+      var h2Text = trimmedLine.replace(/^##\s+/, '').replace(/^\*\*/, '').replace(/\*\*$/, '');
+      html += '<h2>' + formatInline(h2Text) + '</h2>';
+      continue;
+    }
+
+    // ### H3 (Markdown)
+    if (/^###\s+(.+)$/.test(trimmedLine)) {
+      closeList();
+      var h3Text = trimmedLine.replace(/^###\s+/, '');
+      html += '<h3>' + formatInline(h3Text) + '</h3>';
+      continue;
+    }
+
+    // §N Section headers (German legal style)
+    if (/^§\s*\d+/.test(trimmedLine)) {
+      closeList();
+      html += '<h2>' + formatInline(trimmedLine) + '</h2>';
+      continue;
+    }
+
+    // (1) (2) (3) Numbered paragraphs
+    if (/^\*?\*?\(\d+\)\*?\*?\s/.test(trimmedLine)) {
+      closeList();
+      var paraText = trimmedLine.replace(/^\*?\*?\(\d+\)\*?\*?\s*/, '');
+      var paraNum = trimmedLine.match(/\((\d+)\)/)[1];
+      html += '<p><strong>(' + paraNum + ')</strong> ' + formatInline(paraText) + '</p>';
+      continue;
+    }
+
+    // a) b) c) lettered items
+    if (/^[a-z]\)\s/i.test(trimmedLine)) {
+      inList = true;
+      var itemText = trimmedLine.replace(/^[a-z]\)\s*/i, '');
+      var itemLetter = trimmedLine.match(/^([a-z])\)/i)[1];
+      listItems.push('<li><strong>' + itemLetter + ')</strong> ' + formatInline(itemText) + '</li>');
+      continue;
+    }
+
+    // - or • bullet points
+    if (/^[-•]\s/.test(trimmedLine)) {
+      inList = true;
+      var bulletText = trimmedLine.replace(/^[-•]\s*/, '');
+      listItems.push('<li>' + formatInline(bulletText) + '</li>');
+      continue;
+    }
+
+    // Signature lines: underscores
+    if (/^_{5,}$/.test(trimmedLine)) {
+      closeList();
+      html += '<p style="margin-top:1.5rem;border-bottom:1px solid #333;width:200px;padding-bottom:4px;"></p>';
+      continue;
+    }
+
+    // **zwischen** / **und** section markers
+    if (/^\*\*(zwischen|und|—|Für)\*?\*?/.test(trimmedLine)) {
+      closeList();
+      var markerText = trimmedLine.replace(/^\*\*/, '').replace(/\*\*$/, '');
+      html += '<p style="text-align:center;font-weight:bold;margin:1rem 0;">' + formatInline(markerText) + '</p>';
+      continue;
+    }
+
+    // Regular paragraph - close list first
+    closeList();
+    html += '<p>' + formatInline(trimmedLine) + '</p>';
+  }
+
+  // Close any remaining list
+  closeList();
+
+  return html || '<p>Kein Inhalt generiert.</p>';
+}
+
+// Legacy function kept for compatibility - now redirects to main function
+function textToQuillHtmlLegacy(text) {
+  if (!text) return '<p>Kein Inhalt generiert.</p>';
+
+  var html = '';
+  var lines = text.split('\n');
+  var inList = false;
+  var listItems = [];
+  var titleFound = false;
+
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i];
+    var trimmedLine = line.trim();
+
+    // Skip empty lines but close any open list
+    if (!trimmedLine) {
+      if (inList && listItems.length > 0) {
+        html += '<ul>' + listItems.join('') + '</ul>';
+        listItems = [];
+        inList = false;
+      }
+      continue;
+    }
+
+    // Convert placeholders [XXX] to editable fields
+    var processedLine = convertPlaceholdersToFields(escapeHtmlQuill(trimmedLine));
+
+    // Detect main document title (all caps, first significant line)
+    if (!titleFound && i < 10 && /^[A-ZÄÖÜẌ\s\-\(\)]{8,}$/.test(trimmedLine) && !trimmedLine.startsWith('§')) {
+      if (inList && listItems.length > 0) {
+        html += '<ul>' + listItems.join('') + '</ul>';
+        listItems = [];
+        inList = false;
+      }
+      html += '<h1>' + processedLine + '</h1>';
+      titleFound = true;
+      continue;
+    }
+
+    // Detect subtitle (line after title, often describes the document)
+    if (titleFound && i < 12 && !html.includes('<h2') && !trimmedLine.startsWith('§') && trimmedLine.length < 100 && !/^[A-ZÄÖÜ].*:$/.test(trimmedLine)) {
+      html += '<p style="text-align:center;font-style:italic;margin-bottom:1.5rem;color:#555;">' + processedLine + '</p>';
+      continue;
+    }
+
+    // Detect section headers: §1, §2, § 1, etc.
+    if (/^§\s*\d+/.test(trimmedLine)) {
+      if (inList && listItems.length > 0) {
+        html += '<ul>' + listItems.join('') + '</ul>';
+        listItems = [];
+        inList = false;
+      }
+      html += '<h2>' + processedLine + '</h2>';
+      continue;
+    }
+
+    // Detect numbered sections: 1.1, 2.3, etc.
+    if (/^\d+\.\d+\s/.test(trimmedLine)) {
+      if (inList && listItems.length > 0) {
+        html += '<ul>' + listItems.join('') + '</ul>';
+        listItems = [];
+        inList = false;
+      }
+      html += '<h3>' + processedLine + '</h3>';
+      continue;
+    }
+
+    // Detect list items: -, •, a), b), (a), (1), etc.
+    if (/^[-•]\s/.test(trimmedLine) || /^[a-z]\)\s/i.test(trimmedLine) || /^\([a-z0-9]\)\s/i.test(trimmedLine)) {
+      inList = true;
+      var itemText = trimmedLine.replace(/^[-•]\s*/, '').replace(/^[a-z]\)\s*/i, '').replace(/^\([a-z0-9]\)\s*/i, '');
+      listItems.push('<li>' + convertPlaceholdersToFields(escapeHtmlQuill(itemText)) + '</li>');
+      continue;
+    }
+
+    // Detect signature lines: underscores
+    if (/^_{10,}$/.test(trimmedLine)) {
+      if (inList && listItems.length > 0) {
+        html += '<ul>' + listItems.join('') + '</ul>';
+        listItems = [];
+        inList = false;
+      }
+      html += '<p style="margin-top:2rem;"><span class="signature-line">Unterschrift</span></p>';
+      continue;
+    }
+
+    // Detect place/date lines
+    if (/^\[ORT\]|^[A-Za-zäöüÄÖÜ]+,\s*den\s*\d/.test(trimmedLine)) {
+      if (inList && listItems.length > 0) {
+        html += '<ul>' + listItems.join('') + '</ul>';
+        listItems = [];
+        inList = false;
+      }
+      html += '<p style="margin-top:2rem;">' + processedLine + '</p>';
+      continue;
+    }
+
+    // Close list if we have content that's not a list item
+    if (inList && listItems.length > 0) {
+      html += '<ul>' + listItems.join('') + '</ul>';
+      listItems = [];
+      inList = false;
+    }
+
+    // Regular paragraph
+    html += '<p>' + processedLine + '</p>';
+  }
+
+  // Close any remaining list
+  if (inList && listItems.length > 0) {
+    html += '<ul>' + listItems.join('') + '</ul>';
+  }
+
+  return html || '<p>Kein Inhalt generiert.</p>';
+}
+
+// Convert [PLACEHOLDER] to editable input fields
+function convertPlaceholdersToFields(html) {
+  // Match [TEXT] patterns
+  return html.replace(/\[([A-ZÄÖÜ][A-ZÄÖÜ\s\-_]{1,30})\]/g, function(match, placeholder) {
+    var fieldId = 'field-' + placeholder.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9\-]/g, '');
+    return '<span class="doc-field" contenteditable="true" data-placeholder="' + placeholder + '" id="' + fieldId + '"></span>';
+  });
+}
+
+function escapeHtmlQuill(text) {
+  var div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// Set content in Quill editor
+function setQuillContent(text) {
+  if (!quillEditor) {
+    initQuillEditor();
+  }
+
+  // Store original text FIRST (important for seal/export)
+  AiDraft.currentDraftText = text;
+  console.log('[§126] setQuillContent: stored text length=' + (text ? text.length : 0));
+
+  var html = textToQuillHtml(text);
+  console.log('[§126] setQuillContent: HTML preview=' + html.substring(0, 300));
+
+  // §126.4: Clear editor first, then set HTML content
+  // Method 1: Try clipboard API (preserves some formatting)
+  try {
+    quillEditor.setText(''); // Clear first
+    quillEditor.clipboard.dangerouslyPasteHTML(0, html);
+    console.log('[§126] setQuillContent: Used clipboard.dangerouslyPasteHTML');
+  } catch (e) {
+    // Method 2: Fallback to direct innerHTML (works for display)
+    console.log('[§126] setQuillContent: Fallback to innerHTML, error:', e);
+    quillEditor.root.innerHTML = html;
+  }
+
+  // Reset to readonly
+  var toggle = document.getElementById('edit-mode-toggle');
+  if (toggle) toggle.checked = false;
+  toggleEditMode(false);
+
+  console.log('[§126] setQuillContent: Content set successfully');
+}
+
+// §126 — Get content from Quill with filled-in field values
+function getQuillContent() {
+  // Try Quill editor first - get text with field values
+  if (quillEditor) {
+    // Get HTML and extract text with field values
+    var html = quillEditor.root.innerHTML;
+    var text = extractTextWithFields(html);
+    if (text && text.trim().length > 0) {
+      console.log('[§126] getQuillContent: from Quill with fields, length=' + text.length);
+      return text;
+    }
+    // Fallback to plain getText
+    var plainText = quillEditor.getText();
+    if (plainText && plainText.trim().length > 0) {
+      console.log('[§126] getQuillContent: from Quill getText, length=' + plainText.length);
+      return plainText;
+    }
+  }
+  // Fallback to stored draft text
+  if (AiDraft.currentDraftText && AiDraft.currentDraftText.trim().length > 0) {
+    console.log('[§126] getQuillContent: fallback to AiDraft.currentDraftText, length=' + AiDraft.currentDraftText.length);
+    return AiDraft.currentDraftText;
+  }
+  console.log('[§126] getQuillContent: no content found, quillEditor=' + !!quillEditor);
+  return '';
+}
+
+// Extract text from HTML, replacing doc-field spans with their content or placeholder
+function extractTextWithFields(html) {
+  var temp = document.createElement('div');
+  temp.innerHTML = html;
+
+  // Replace doc-field spans with their content or placeholder in brackets
+  var fields = temp.querySelectorAll('.doc-field');
+  fields.forEach(function(field) {
+    var value = field.textContent.trim();
+    var placeholder = field.getAttribute('data-placeholder') || 'FELD';
+    var text = value || '[' + placeholder + ']';
+    field.replaceWith(text);
+  });
+
+  // Replace signature lines
+  var sigs = temp.querySelectorAll('.signature-line');
+  sigs.forEach(function(sig) {
+    sig.replaceWith('_________________________');
+  });
+
+  return temp.textContent || temp.innerText || '';
+}
+
+function getQuillHtml() {
+  if (!quillEditor) return '';
+
+  // Get HTML and process fields to show values
+  var html = quillEditor.root.innerHTML;
+
+  // For PDF export, convert doc-field spans to styled text with their values
+  var temp = document.createElement('div');
+  temp.innerHTML = html;
+
+  var fields = temp.querySelectorAll('.doc-field');
+  fields.forEach(function(field) {
+    var value = field.textContent.trim();
+    var placeholder = field.getAttribute('data-placeholder') || 'FELD';
+    if (value) {
+      // Field has value - show it in bold
+      var span = document.createElement('strong');
+      span.textContent = value;
+      field.replaceWith(span);
+    } else {
+      // Field is empty - show placeholder underlined
+      var span = document.createElement('span');
+      span.style.cssText = 'border-bottom:1px solid #333;padding:0 20px;color:#666;';
+      span.textContent = placeholder;
+      field.replaceWith(span);
+    }
+  });
+
+  return temp.innerHTML;
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+  // Delay init until needed (when agent-response is shown)
+  console.log('[§124] Quill ready to initialize');
+});
+
+console.log('[WINDI LAW] Quill Editor Module v1.0 loaded · §124');
+</script>
+
+<!-- ══ MODAL VIDEO CHOICE — Upload Local vs Anexar Selado · §128 ═══════════ -->
+<div id="modal-video-choice" style="display:none;position:fixed;inset:0;
+     background:rgba(0,0,0,.55);z-index:9000;align-items:center;
+     justify-content:center;">
+  <div style="background:var(--bg,#F5F0E0);border-radius:8px;padding:1.8rem;
+       max-width:400px;width:90%;font-family:'Bricolage Grotesque',sans-serif;
+       box-shadow:0 8px 32px rgba(0,0,0,.25);">
+
+    <h3 style="margin:0 0 .6rem;font-size:1.1rem" data-i18n="vidChoiceTitle">🎥 Video hinzufügen</h3>
+    <p style="font-size:.82rem;color:#666;margin-bottom:1.4rem" data-i18n="vidChoiceDesc">
+      Wählen Sie, wie das Video hinzugefügt werden soll:
+    </p>
+
+    <div style="display:flex;flex-direction:column;gap:.8rem">
+      <button onclick="chooseLocalVideo()"
+              style="padding:.9rem 1rem;background:transparent;border:1px solid #ccc;
+                     border-radius:6px;cursor:pointer;text-align:left;
+                     transition:all .15s ease">
+        <strong style="display:block;font-size:.92rem;margin-bottom:.2rem" data-i18n="vidLocalTitle">📁 Lokaler Upload</strong>
+        <span style="font-size:.78rem;color:#666" data-i18n="vidLocalDesc">Datei vom Gerät auswählen (nur Hash)</span>
+      </button>
+
+      <button onclick="chooseAttachSealed()"
+              style="padding:.9rem 1rem;background:linear-gradient(135deg,#8B6914 0%,#a67c1a 100%);
+                     color:#fff;border:none;border-radius:6px;cursor:pointer;text-align:left;
+                     transition:all .15s ease">
+        <strong style="display:block;font-size:.92rem;margin-bottom:.2rem" data-i18n="vidSealedTitle">🛡️ Videobeweis (VD-CUT)</strong>
+        <span style="font-size:.78rem;opacity:.9" data-i18n="vidSealedDesc">Bereits versiegeltes Video aus dem VD-CUT-System anhängen</span>
+      </button>
+    </div>
+
+    <button onclick="closeVideoChoiceModal()"
+            style="margin-top:1rem;padding:.4rem .9rem;background:transparent;
+                   border:1px solid #ddd;border-radius:4px;cursor:pointer;
+                   font-size:.8rem;width:100%" data-i18n="vidCancel">
+      Abbrechen
+    </button>
+  </div>
+</div>
+
+<!-- ══ MODAL VIDEO ATTACH — VD-CUT Bridge · §128 ═══════════════════════════ -->
+<div id="modal-video-attach" style="display:none;position:fixed;inset:0;
+     background:rgba(0,0,0,.55);z-index:9001;align-items:center;
+     justify-content:center;">
+  <div style="background:var(--bg,#F5F0E0);border-radius:8px;padding:2rem;
+       max-width:460px;width:90%;font-family:'Bricolage Grotesque',sans-serif;
+       box-shadow:0 8px 32px rgba(0,0,0,.25);">
+
+    <h3 style="margin:0 0 .4rem;font-size:1.1rem" data-i18n="vidAttachTitle">🛡️ Videobeweis — Beweis anhängen</h3>
+    <p style="font-size:.8rem;color:#666;margin-bottom:1.2rem" data-i18n="vidAttachDesc">
+      Receipt ID und Hash des im VD-CUT versiegelten Videos einfügen.<br>
+      Verifizierung erfolgt im WINDI Ledger. Keine Datei wird übertragen.
+    </p>
+
+    <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:.2rem" data-i18n="vidReceiptLabel">Receipt ID (VD-CUT)</label>
+    <input id="va-receipt-input" type="text"
+           placeholder="WINDI-VDCUT-20260403-XXXXXXXX"
+           style="width:100%;padding:.5rem;margin-bottom:.8rem;
+                  border:1px solid #ccc;border-radius:4px;
+                  background:transparent;box-sizing:border-box;font-size:.9rem">
+
+    <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:.2rem" data-i18n="vidHashLabel">Hash SHA-256</label>
+    <input id="va-hash-input" type="text"
+           placeholder="sha256:aabbcc..."
+           style="width:100%;padding:.5rem;margin-bottom:1rem;
+                  border:1px solid #ccc;border-radius:4px;background:transparent;
+                  box-sizing:border-box;font-family:'JetBrains Mono',monospace;
+                  font-size:.72rem">
+
+    <div id="va-status" style="display:none;font-size:.82rem;margin-bottom:.8rem;
+         padding:.5rem;border-radius:4px;background:rgba(0,0,0,.03)"></div>
+
+    <div style="font-size:.78rem;color:#666;margin-bottom:1rem;
+         padding:.5rem;background:rgba(139,105,20,.08);border-radius:4px">
+      <span style="color:#8B6914">🎥</span> <span data-i18n="vidAttached">Angehängte Videos</span>: <strong id="va-counter">0</strong>
+    </div>
+
+    <div style="display:flex;gap:.7rem;justify-content:flex-end">
+      <button onclick="closeVideoAttachModal()"
+              style="padding:.5rem 1rem;border:1px solid #ccc;
+                     border-radius:4px;background:transparent;cursor:pointer;
+                     font-size:.85rem" data-i18n="vidClose">
+        Schließen
+      </button>
+      <button onclick="attachVideoToDraft()"
+              style="padding:.5rem 1rem;background:#8B6914;color:#fff;
+                     border:none;border-radius:4px;cursor:pointer;font-size:.85rem;
+                     font-weight:600">
+        + <span data-i18n="vidAttach">Anhängen</span>
+      </button>
+    </div>
+  </div>
+</div>
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+
+</body>
+</html>

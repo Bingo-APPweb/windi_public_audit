@@ -738,6 +738,14 @@ def create_agent_api(agent: WindiAgent):
     except ImportError as e:
         print(f"  [COUNSEL] W-COUNSEL-001 not loaded: {e}")
 
+    # W-SITES-001: Sites Factory — PRODUCT-SITES-001 Implementation
+    try:
+        from blueprints.w_sites_001_blueprint import w_sites_001_bp
+        app.register_blueprint(w_sites_001_bp)
+        print("  [SITES] W-SITES-001 v1.0 loaded on /sites/factory/*")
+    except ImportError as e:
+        print(f"  [SITES] W-SITES-001 not loaded: {e}")
+
     @app.route("/agent/health", methods=["GET"])
     def health():
         return jsonify({

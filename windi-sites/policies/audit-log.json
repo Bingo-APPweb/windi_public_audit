@@ -1,0 +1,35 @@
+{
+  "log_version": "1.0",
+  "created": "2026-03-24",
+  "created_by": "Jober Mogele Correa",
+  "policy": "append-only — nunca editar entradas existentes",
+  "invariant": "I11 — permanencia criptografica",
+  "entries": [
+    {
+      "timestamp": "2026-03-24T19:27:29Z",
+      "did": "did:windi:f0cb5b7f-fb11-4d23-87a2-96128b473f50",
+      "entity": "Mustermann & Partner Rechtsanwalte",
+      "admin": "Max Mustermann",
+      "country": "DE",
+      "type": "law_firm",
+      "decision": "VERIFIED",
+      "criteria_met": ["C1","C2","C3","C4","C5"],
+      "ledger_receipt": "WINDI-SITES-VERIFY-F0CB5B7F-20260324192729",
+      "notes": "Primeiro utilizador verificado do WINDI-SITES.",
+      "decided_by": "Jober Mogele Correa — Human Dragon"
+    },
+    {
+      "timestamp": "2026-03-24T19:27:38Z",
+      "did": "did:windi:c7ec1e68-e748-4680-a3bc-441769462ab8",
+      "entity": "Schmidt Law Office",
+      "admin": "Anna Schmidt",
+      "country": "DE",
+      "type": "law_firm",
+      "decision": "VERIFIED",
+      "criteria_met": ["C1","C2","C3","C4","C5"],
+      "ledger_receipt": "WINDI-SITES-VERIFY-C7EC1E68-20260324192738",
+      "notes": "Segunda utilizadora verificada do WINDI-SITES.",
+      "decided_by": "Jober Mogele Correa — Human Dragon"
+    }
+  ]
+}

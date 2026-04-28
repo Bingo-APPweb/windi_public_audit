@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="noir">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Use | Dragon Shadow Forest | W-DRAGON-001</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root { --transition: 0.3s ease; }
+
+        [data-theme="noir"] {
+            --bg: #0A0A10;
+            --bg-card: #12121A;
+            --bg-code: #1A1A24;
+            --gold: #C9A84C;
+            --gold-dim: #8B6914;
+            --text: #E8E6E1;
+            --text-dim: #888;
+            --text-code: #A0D0A0;
+            --border: #1A1A24;
+            --accent: #4A9EFF;
+        }
+
+        [data-theme="klar"] {
+            --bg: #FAFAF8;
+            --bg-card: #FFFFFF;
+            --bg-code: #F0F0EC;
+            --gold: #8B7424;
+            --gold-dim: #A08530;
+            --text: #1A1A1A;
+            --text-dim: #666;
+            --text-code: #2D6A2D;
+            --border: #E0DED8;
+            --accent: #1a5fa5;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            transition: background var(--transition), color var(--transition);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--gold);
+        }
+
+        .logo small {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            font-weight: 400;
+        }
+
+        .controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .lang-toggle, .theme-toggle {
+            display: flex;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .lang-toggle button, .theme-toggle button {
+            padding: 0.5rem 0.75rem;
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.875rem;
+            transition: all var(--transition);
+        }
+
+        .lang-toggle button.active, .theme-toggle button.active {
+            background: var(--gold);
+            color: #000;
+        }
+
+        /* Content */
+        .section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text);
+            margin: 1.25rem 0 0.75rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .step {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+            padding-bottom: 1.25rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .step:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .step-num {
+            width: 32px;
+            height: 32px;
+            background: var(--gold);
+            color: #000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-desc {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-code);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: var(--text-code);
+        }
+
+        pre {
+            background: var(--bg-code);
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            line-height: 1.5;
+            color: var(--text-code);
+        }
+
+        .grid-demo {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .glyph-box {
+            text-align: center;
+        }
+
+        .glyph-box svg {
+            width: 60px;
+            height: 60px;
+        }
+
+        .glyph-label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-top: 0.5rem;
+        }
+
+        .invariants {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .inv-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border: 1px solid var(--gold);
+            border-radius: 20px;
+            color: var(--gold);
+        }
+
+        .api-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.85rem;
+        }
+
+        .api-table th, .api-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .api-table th {
+            color: var(--text-dim);
+            font-weight: 500;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .api-table code {
+            font-size: 0.8rem;
+        }
+
+        .method {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .method-get { background: rgba(76, 175, 80, 0.2); color: #4CAF50; }
+        .method-post { background: rgba(33, 150, 243, 0.2); color: #2196F3; }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            background: var(--gold);
+            color: #000;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: background var(--transition);
+        }
+
+        .btn:hover {
+            background: var(--gold-dim);
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            color: var(--text-dim);
+            font-size: 0.875rem;
+        }
+
+        footer a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 1rem; }
+            header { flex-direction: column; align-items: flex-start; }
+            .controls { width: 100%; justify-content: space-between; }
+            .step { flex-direction: column; gap: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <span class="logo-icon">🐉</span>
+                <div>
+                    <h1>HOW TO USE</h1>
+                    <small data-i18n="subtitle">Dragon Shadow Forest Guide</small>
+                </div>
+            </div>
+            <div class="controls">
+                <div class="lang-toggle">
+                    <button onclick="setLang('de')">DE</button>
+                    <button onclick="setLang('en')" class="active">EN</button>
+                    <button onclick="setLang('pt')">PT</button>
+                </div>
+                <div class="theme-toggle">
+                    <button onclick="setTheme('noir')" class="active">&#9789;</button>
+                    <button onclick="setTheme('klar')">&#9788;</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- What is it -->
+        <div class="section">
+            <h2>&#128302; <span data-i18n="what_title">What is Dragon Shadow Forest?</span></h2>
+            <p data-i18n="what_desc">Dragon Shadow Forest encodes SHA-256 hashes as a 16×16 grid of invisible dragon glyphs. Each glyph represents one bit of the hash — creating a visual fingerprint that can be embedded in documents for forensic verification.</p>
+
+            <div class="grid-demo">
+                <div class="glyph-box">
+                    <svg viewBox="0 0 16 16">
+                        <path d="M8,0 L14.5,3.5 L15,10.5 L10.5,15 L5.5,15 L1,10.5 L1.5,3.5 Z" fill="#1a1a1a" opacity="0.7"/>
+                    </svg>
+                    <div class="glyph-label" data-i18n="dark_dragon">Dark Dragon<br><code>bit = 1</code></div>
+                </div>
+                <div class="glyph-box">
+                    <svg viewBox="0 0 16 16">
+                        <path d="M8,0 L16,8 L8,16 L0,8 Z" fill="#8B6914" opacity="0.6"/>
+                    </svg>
+                    <div class="glyph-label" data-i18n="shadow_dragon">Shadow Dragon<br><code>bit = 0</code></div>
+                </div>
+            </div>
+
+            <div class="invariants">
+                <span class="inv-badge">I9 Human Gate</span>
+                <span class="inv-badge">I11 Ledger Seal</span>
+                <span class="inv-badge">I14 No Placeholders</span>
+            </div>
+        </div>
+
+        <!-- Dashboard Steps -->
+        <div class="section">
+            <h2>&#128187; <span data-i18n="dashboard_title">Using the Dashboard</span></h2>
+
+            <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-content">
+                    <div class="step-title" data-i18n="step1_title">Open the Dashboard</div>
+                    <div class="step-desc" data-i18n="step1_desc">Navigate to <code>/law/dragon/</code> or click 🐉 Dragon Forest in the WINDI-SITES workspace sidebar.</div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-content">
+                    <div class="step-title" data-i18n="step2_title">Enter Content</div>
+                    <div class="step-desc" data-i18n="step2_desc">Type or paste your document text into the content field. This can be any text — contracts, certificates, legal documents.</div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-content">
+                    <div class="step-title" data-i18n="step3_title">Choose Ledger Registration</div>
+                    <div class="step-desc" data-i18n="step3_desc">Enable "Register with Ledger" if you want a permanent, verifiable receipt (I11). Leave unchecked for preview only.</div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">4</div>
+                <div class="step-content">
+                    <div class="step-title" data-i18n="step4_title">Click Encode</div>
+                    <div class="step-desc" data-i18n="step4_desc">The system computes the SHA-256 hash and renders 256 dragon glyphs. You'll receive a Receipt ID and can view the grid.</div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">5</div>
+                <div class="step-content">
+                    <div class="step-title" data-i18n="step5_title">Verify Later</div>
+                    <div class="step-desc" data-i18n="step5_desc">Use the Receipt ID to verify the document at any time via <code>/dragon/verify/{receipt_id}</code> or Verify Public.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Reference -->
+        <div class="section">
+            <h2>&#128268; <span data-i18n="api_title">API Reference</span></h2>
+            <p data-i18n="api_desc">For programmatic access, use these endpoints:</p>
+
+            <table class="api-table">
+                <thead>
+                    <tr>
+                        <th data-i18n="th_method">Method</th>
+                        <th data-i18n="th_endpoint">Endpoint</th>
+                        <th data-i18n="th_description">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="method method-get">GET</span></td>
+                        <td><code>/dragon/health</code></td>
+                        <td data-i18n="api_health">Module status and info</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method method-post">POST</span></td>
+                        <td><code>/dragon/encode</code></td>
+                        <td data-i18n="api_encode">Encode content → SVG + Receipt</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method method-post">POST</span></td>
+                        <td><code>/dragon/encode-pdf</code></td>
+                        <td data-i18n="api_pdf">Encode PDF with dragon overlay</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method method-post">POST</span></td>
+                        <td><code>/dragon/preview</code></td>
+                        <td data-i18n="api_preview">Preview only (no Ledger)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method method-get">GET</span></td>
+                        <td><code>/dragon/verify/{id}</code></td>
+                        <td data-i18n="api_verify">Verify receipt with Ledger</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 data-i18n="example_title">Example: Encode via cURL</h3>
+            <pre>curl -X POST https://windi-domain.com/law/dragon/encode \
+  -H "Content-Type: application/json" \
+  -d '{
+    "content": "SGVsbG8gV0lOREk=",
+    "doc_name": "My Document",
+    "register_ledger": true
+  }'</pre>
+
+            <h3 data-i18n="example_pdf_title">Example: Encode PDF</h3>
+            <pre>curl -X POST https://windi-domain.com/law/dragon/encode-pdf \
+  -F "pdf_file=@contract.pdf" \
+  -F "doc_name=Contract 2026" \
+  -F "opacity=0.07" \
+  -F "return_format=pdf" \
+  --output encoded_contract.pdf</pre>
+        </div>
+
+        <!-- Use Cases -->
+        <div class="section">
+            <h2>&#128218; <span data-i18n="usecases_title">Use Cases</span></h2>
+
+            <h3 data-i18n="uc1_title">1. Legal Document Certification</h3>
+            <p data-i18n="uc1_desc">Embed invisible dragon grids in contracts. If the document is altered, the grid will no longer match — instant tamper detection.</p>
+
+            <h3 data-i18n="uc2_title">2. Certificate Authentication</h3>
+            <p data-i18n="uc2_desc">Add dragon overlays to certificates and diplomas. Verify authenticity by scanning and comparing with the Ledger.</p>
+
+            <h3 data-i18n="uc3_title">3. Evidence Preservation</h3>
+            <p data-i18n="uc3_desc">Seal evidence documents with forensic dragon grids. The Receipt ID proves the document existed at a specific time.</p>
+
+            <h3 data-i18n="uc4_title">4. Brand Protection</h3>
+            <p data-i18n="uc4_desc">Mark official documents with invisible dragons. Counterfeits won't have the matching grid pattern.</p>
+        </div>
+
+        <!-- CTA -->
+        <div style="text-align: center; margin: 2rem 0;">
+            <a href="/law/dragon/" class="btn">
+                🐉 <span data-i18n="open_dashboard">Open Dashboard</span>
+            </a>
+        </div>
+
+        <footer>
+            <p>§151 W-DRAGON-001 · Liga IA+H · Kempten, Bavaria · 2026</p>
+            <p><a href="/law/workspace/">← <span data-i18n="back_workspace">Back to Workspace</span></a></p>
+        </footer>
+    </div>
+
+    <script>
+        const I18N = {
+            de: {
+                subtitle: "Dragon Shadow Forest Anleitung",
+                what_title: "Was ist Dragon Shadow Forest?",
+                what_desc: "Dragon Shadow Forest kodiert SHA-256 Hashes als 16×16 Raster aus unsichtbaren Drachen-Glyphen. Jede Glyphe repräsentiert ein Bit des Hashes — ein visueller Fingerabdruck, der in Dokumente eingebettet werden kann.",
+                dark_dragon: "Dunkler Drache",
+                shadow_dragon: "Schatten-Drache",
+                dashboard_title: "Dashboard verwenden",
+                step1_title: "Dashboard öffnen",
+                step1_desc: "Navigiere zu /law/dragon/ oder klicke auf 🐉 Dragon Forest in der WINDI-SITES Seitenleiste.",
+                step2_title: "Inhalt eingeben",
+                step2_desc: "Tippe oder füge deinen Dokumenttext ein. Das kann jeder Text sein — Verträge, Zertifikate, juristische Dokumente.",
+                step3_title: "Ledger-Registrierung wählen",
+                step3_desc: "Aktiviere 'Im Ledger registrieren' für eine permanente, verifizierbare Quittung (I11). Deaktiviert für Vorschau.",
+                step4_title: "Kodieren klicken",
+                step4_desc: "Das System berechnet den SHA-256 Hash und rendert 256 Drachen-Glyphen. Du erhältst eine Quittungs-ID.",
+                step5_title: "Später verifizieren",
+                step5_desc: "Verwende die Quittungs-ID zur Verifizierung jederzeit über /dragon/verify/{receipt_id}.",
+                api_title: "API Referenz",
+                api_desc: "Für programmatischen Zugriff diese Endpunkte verwenden:",
+                th_method: "Methode",
+                th_endpoint: "Endpunkt",
+                th_description: "Beschreibung",
+                api_health: "Modulstatus und Info",
+                api_encode: "Inhalt kodieren → SVG + Quittung",
+                api_pdf: "PDF mit Drachen-Overlay kodieren",
+                api_preview: "Nur Vorschau (kein Ledger)",
+                api_verify: "Quittung mit Ledger verifizieren",
+                example_title: "Beispiel: Kodieren via cURL",
+                example_pdf_title: "Beispiel: PDF kodieren",
+                usecases_title: "Anwendungsfälle",
+                uc1_title: "1. Rechtsdokument-Zertifizierung",
+                uc1_desc: "Unsichtbare Drachen-Raster in Verträge einbetten. Bei Änderung stimmt das Raster nicht mehr — sofortige Manipulationserkennung.",
+                uc2_title: "2. Zertifikat-Authentifizierung",
+                uc2_desc: "Drachen-Overlays zu Zertifikaten hinzufügen. Echtheit durch Scannen und Ledger-Vergleich verifizieren.",
+                uc3_title: "3. Beweissicherung",
+                uc3_desc: "Beweisdokumente mit forensischen Drachen-Rastern versiegeln. Die Quittungs-ID beweist die Existenz zu einem bestimmten Zeitpunkt.",
+                uc4_title: "4. Markenschutz",
+                uc4_desc: "Offizielle Dokumente mit unsichtbaren Drachen markieren. Fälschungen haben kein passendes Rastermuster.",
+                open_dashboard: "Dashboard öffnen",
+                back_workspace: "Zurück zum Workspace"
+            },
+            en: {
+                subtitle: "Dragon Shadow Forest Guide",
+                what_title: "What is Dragon Shadow Forest?",
+                what_desc: "Dragon Shadow Forest encodes SHA-256 hashes as a 16×16 grid of invisible dragon glyphs. Each glyph represents one bit of the hash — creating a visual fingerprint that can be embedded in documents for forensic verification.",
+                dark_dragon: "Dark Dragon",
+                shadow_dragon: "Shadow Dragon",
+                dashboard_title: "Using the Dashboard",
+                step1_title: "Open the Dashboard",
+                step1_desc: "Navigate to /law/dragon/ or click 🐉 Dragon Forest in the WINDI-SITES workspace sidebar.",
+                step2_title: "Enter Content",
+                step2_desc: "Type or paste your document text into the content field. This can be any text — contracts, certificates, legal documents.",
+                step3_title: "Choose Ledger Registration",
+                step3_desc: "Enable 'Register with Ledger' if you want a permanent, verifiable receipt (I11). Leave unchecked for preview only.",
+                step4_title: "Click Encode",
+                step4_desc: "The system computes the SHA-256 hash and renders 256 dragon glyphs. You'll receive a Receipt ID and can view the grid.",
+                step5_title: "Verify Later",
+                step5_desc: "Use the Receipt ID to verify the document at any time via /dragon/verify/{receipt_id} or Verify Public.",
+                api_title: "API Reference",
+                api_desc: "For programmatic access, use these endpoints:",
+                th_method: "Method",
+                th_endpoint: "Endpoint",
+                th_description: "Description",
+                api_health: "Module status and info",
+                api_encode: "Encode content → SVG + Receipt",
+                api_pdf: "Encode PDF with dragon overlay",
+                api_preview: "Preview only (no Ledger)",
+                api_verify: "Verify receipt with Ledger",
+                example_title: "Example: Encode via cURL",
+                example_pdf_title: "Example: Encode PDF",
+                usecases_title: "Use Cases",
+                uc1_title: "1. Legal Document Certification",
+                uc1_desc: "Embed invisible dragon grids in contracts. If the document is altered, the grid will no longer match — instant tamper detection.",
+                uc2_title: "2. Certificate Authentication",
+                uc2_desc: "Add dragon overlays to certificates and diplomas. Verify authenticity by scanning and comparing with the Ledger.",
+                uc3_title: "3. Evidence Preservation",
+                uc3_desc: "Seal evidence documents with forensic dragon grids. The Receipt ID proves the document existed at a specific time.",
+                uc4_title: "4. Brand Protection",
+                uc4_desc: "Mark official documents with invisible dragons. Counterfeits won't have the matching grid pattern.",
+                open_dashboard: "Open Dashboard",
+                back_workspace: "Back to Workspace"
+            },
+            pt: {
+                subtitle: "Guia Dragon Shadow Forest",
+                what_title: "O que é Dragon Shadow Forest?",
+                what_desc: "Dragon Shadow Forest codifica hashes SHA-256 como uma grelha 16×16 de glifos de dragão invisíveis. Cada glifo representa um bit do hash — criando uma impressão digital visual que pode ser incorporada em documentos para verificação forense.",
+                dark_dragon: "Dragão Negro",
+                shadow_dragon: "Dragão Sombra",
+                dashboard_title: "Usar o Dashboard",
+                step1_title: "Abrir o Dashboard",
+                step1_desc: "Navega para /law/dragon/ ou clica em 🐉 Dragon Forest na barra lateral do WINDI-SITES.",
+                step2_title: "Introduzir Conteúdo",
+                step2_desc: "Escreve ou cola o texto do documento. Pode ser qualquer texto — contratos, certificados, documentos legais.",
+                step3_title: "Escolher Registo no Ledger",
+                step3_desc: "Activa 'Registar no Ledger' para um recibo permanente e verificável (I11). Desactiva para apenas pré-visualizar.",
+                step4_title: "Clicar Codificar",
+                step4_desc: "O sistema calcula o hash SHA-256 e renderiza 256 glifos de dragão. Recebes um ID de Recibo e podes ver a grelha.",
+                step5_title: "Verificar Depois",
+                step5_desc: "Usa o ID do Recibo para verificar o documento a qualquer momento via /dragon/verify/{receipt_id}.",
+                api_title: "Referência da API",
+                api_desc: "Para acesso programático, usa estes endpoints:",
+                th_method: "Método",
+                th_endpoint: "Endpoint",
+                th_description: "Descrição",
+                api_health: "Estado e info do módulo",
+                api_encode: "Codificar conteúdo → SVG + Recibo",
+                api_pdf: "Codificar PDF com overlay de dragões",
+                api_preview: "Apenas pré-visualização (sem Ledger)",
+                api_verify: "Verificar recibo com Ledger",
+                example_title: "Exemplo: Codificar via cURL",
+                example_pdf_title: "Exemplo: Codificar PDF",
+                usecases_title: "Casos de Uso",
+                uc1_title: "1. Certificação de Documentos Legais",
+                uc1_desc: "Incorpora grelhas de dragão invisíveis em contratos. Se o documento for alterado, a grelha não corresponderá — detecção instantânea de adulteração.",
+                uc2_title: "2. Autenticação de Certificados",
+                uc2_desc: "Adiciona overlays de dragão a certificados e diplomas. Verifica autenticidade digitalizando e comparando com o Ledger.",
+                uc3_title: "3. Preservação de Provas",
+                uc3_desc: "Sela documentos de prova com grelhas forenses de dragão. O ID do Recibo prova que o documento existiu num momento específico.",
+                uc4_title: "4. Protecção de Marca",
+                uc4_desc: "Marca documentos oficiais com dragões invisíveis. Falsificações não terão o padrão de grelha correspondente.",
+                open_dashboard: "Abrir Dashboard",
+                back_workspace: "Voltar ao Workspace"
+            }
+        };
+
+        let currentLang = localStorage.getItem('windi-lang') || 'en';
+        let currentTheme = localStorage.getItem('windi-theme') || 'noir';
+
+        function setLang(lang) {
+            currentLang = lang;
+            localStorage.setItem('windi-lang', lang);
+            applyLang();
+            document.querySelectorAll('.lang-toggle button').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent.toLowerCase() === lang);
+            });
+        }
+
+        function applyLang() {
+            const strings = I18N[currentLang] || I18N.en;
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (strings[key]) el.textContent = strings[key];
+            });
+        }
+
+        function setTheme(theme) {
+            currentTheme = theme;
+            localStorage.setItem('windi-theme', theme);
+            document.documentElement.setAttribute('data-theme', theme);
+            document.querySelectorAll('.theme-toggle button').forEach((btn, i) => {
+                btn.classList.toggle('active', (i === 0 && theme === 'noir') || (i === 1 && theme === 'klar'));
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setTheme(currentTheme);
+            setLang(currentLang);
+        });
+    </script>
+</body>
+</html>
