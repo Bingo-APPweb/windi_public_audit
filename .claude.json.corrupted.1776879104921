@@ -1,0 +1,227 @@
+{
+  "numStartups": 69,
+  "hasUsedStash": true,
+  "tipsHistory": {
+    "new-user-warmup": 7,
+    "plan-mode-for-complex-tasks": 67,
+    "terminal-setup": 62,
+    "memory-command": 61,
+    "theme-command": 61,
+    "colorterm-truecolor": 61,
+    "status-line": 51,
+    "prompt-queue": 16,
+    "enter-to-steer-in-relatime": 61,
+    "todo-list": 61,
+    "install-github-app": 62,
+    "install-slack-app": 62,
+    "double-esc-code-restore": 62,
+    "continue": 62,
+    "shift-tab": 62,
+    "image-paste": 61,
+    "web-app": 62,
+    "mobile-app": 62,
+    "frontend-design-plugin": 67,
+    "guest-passes": 68,
+    "custom-agents": 66,
+    "agent-flag": 66,
+    "permissions": 62,
+    "rename-conversation": 56,
+    "custom-commands": 56,
+    "git-worktrees": 61,
+    "ide-upsell-external-terminal": 67
+  },
+  "promptQueueUseCount": 21,
+  "showExpandedTodos": true,
+  "cachedGrowthBookFeatures": {
+    "tengu_1p_event_batch_config": {
+      "scheduledDelayMillis": 10000,
+      "maxExportBatchSize": 400,
+      "maxQueueSize": 8192,
+      "path": "/api/event_logging/v2/batch"
+    },
+    "tengu_mcp_tool_search": true,
+    "tengu_scratch": false,
+    "tengu_brass_pebble": false,
+    "tengu_disable_bypass_permissions_mode": false,
+    "tengu_event_sampling_config": {},
+    "tengu_log_segment_events": false,
+    "tengu_log_datadog_events": true,
+    "tengu_marble_anvil": true,
+    "tengu_tool_pear": false,
+    "tengu_scarf_coffee": false,
+    "tengu_keybinding_customization_release": true,
+    "tengu_c4w_usage_limit_notifications_enabled": true,
+    "tengu_thinkback": false,
+    "tengu-top-of-feed-tip": {
+      "tip": "",
+      "color": ""
+    },
+    "tengu_react_vulnerability_warning": false,
+    "tengu_code_diff_cli": true,
+    "tengu_pr_status_cli": true,
+    "tengu_marble_kite": false,
+    "tengu_post_compact_survey": false,
+    "tengu_claudeai_mcp_connectors": true,
+    "tengu_tool_search_unsupported_models": [
+      "haiku"
+    ],
+    "tengu_system_prompt_global_cache": true,
+    "tengu_attribution_header": true,
+    "enhanced_telemetry_beta": false,
+    "tengu_workout": false,
+    "tengu_pid_based_version_locking": true,
+    "tengu_coral_fern": false,
+    "tengu_cache_plum_violet": true,
+    "tengu_streaming_tool_execution2": true,
+    "tengu_session_memory": false,
+    "tengu_permission_explainer": true,
+    "tengu_plank_river_frost": "user_intent",
+    "tengu_sm_compact": false,
+    "tengu_compact_cache_prefix": true,
+    "tengu_compact_streaming_retry": false,
+    "tengu_cork_m4q": true,
+    "tengu_tst_kx7": false,
+    "tengu_file_write_optimization": true,
+    "tengu_plum_vx3": true,
+    "tengu_plan_mode_interview_phase": false
+  },
+  "lastReleaseNotesSeen": "2.1.29",
+  "changelogLastFetched": 1774432613103,
+  "userID": "b5b1aeec94921e63c6ae81e3a42860244f89acd152821105c5b3609f0e5c4ddb",
+  "projects": {
+    "/home/windi": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {},
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": false,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "hasCompletedProjectOnboarding": true,
+      "reactVulnerabilityCache": {
+        "detected": false,
+        "package": null,
+        "packageName": null,
+        "version": null,
+        "packageManager": null
+      },
+      "exampleFiles": [
+        "booking_router.py",
+        "identity_gate.py",
+        "maria_brain.py",
+        "vd_cut_server.py",
+        "nomada_profile.py"
+      ],
+      "exampleFilesGeneratedAt": 1776330353879,
+      "lastCost": 55.255608250000016,
+      "lastAPIDuration": 4585186,
+      "lastAPIDurationWithoutRetries": 4584105,
+      "lastToolDuration": 296999,
+      "lastDuration": 17266913,
+      "lastLinesAdded": 4688,
+      "lastLinesRemoved": 525,
+      "lastTotalInputTokens": 197776,
+      "lastTotalOutputTokens": 206801,
+      "lastTotalCacheCreationInputTokens": 4072259,
+      "lastTotalCacheReadInputTokens": 49300557,
+      "lastTotalWebSearchRequests": 0,
+      "lastFpsAverage": 13.25,
+      "lastFpsLow1Pct": 27.59,
+      "lastModelUsage": {
+        "claude-haiku-4-5-20251001": {
+          "inputTokens": 192171,
+          "outputTokens": 8673,
+          "cacheReadInputTokens": 0,
+          "cacheCreationInputTokens": 12610,
+          "webSearchRequests": 0,
+          "costUSD": 0.25129850000000004
+        },
+        "claude-opus-4-5-20251101": {
+          "inputTokens": 5605,
+          "outputTokens": 198128,
+          "cacheReadInputTokens": 49300557,
+          "cacheCreationInputTokens": 4059649,
+          "webSearchRequests": 0,
+          "costUSD": 55.00430974999998
+        }
+      },
+      "lastSessionId": "4fb76368-5f0e-4cc1-ab4c-5ee4fc2ae8dc"
+    }
+  },
+  "firstStartTime": "2026-03-25T10:16:10.274Z",
+  "sonnet45MigrationComplete": true,
+  "opus45MigrationComplete": true,
+  "opusProMigrationComplete": true,
+  "thinkingMigrationComplete": true,
+  "cachedChromeExtensionInstalled": false,
+  "claudeCodeFirstTokenDate": "2026-02-03T10:40:57.326834Z",
+  "hasCompletedOnboarding": true,
+  "lastOnboardingVersion": "2.1.29",
+  "githubRepoPaths": {
+    "bingo-appweb/windi_public_audit": [
+      "/home/windi"
+    ]
+  },
+  "hasShownOpus45Notice": {
+    "fae31324-be10-4fe2-9878-52e8dc38be03": true
+  },
+  "officialMarketplaceAutoInstallAttempted": true,
+  "officialMarketplaceAutoInstalled": true,
+  "groveConfigCache": {
+    "df78c9b8-76e0-4670-973b-da7d8d604069": {
+      "grove_enabled": true,
+      "timestamp": 1776330349668
+    }
+  },
+  "s1mAccessCache": {
+    "fae31324-be10-4fe2-9878-52e8dc38be03": {
+      "hasAccess": false,
+      "hasAccessNotAsDefault": false,
+      "timestamp": 1776355846018
+    }
+  },
+  "passesEligibilityCache": {
+    "fae31324-be10-4fe2-9878-52e8dc38be03": {
+      "eligible": true,
+      "referral_code_details": {
+        "code": "5pNYhOC32A",
+        "campaign": "claude_code_guest_pass_a47c",
+        "referral_link": "https://claude.ai/referral/5pNYhOC32A"
+      },
+      "referrer_reward": {
+        "amount_minor_units": 1000,
+        "currency": "EUR"
+      },
+      "remaining_passes": 3,
+      "timestamp": 1776368719489
+    }
+  },
+  "passesUpsellSeenCount": 4,
+  "hasVisitedPasses": false,
+  "passesLastSeenCampaign": "claude_code_guest_pass_a47c",
+  "hasShownS1MWelcomeV2": {
+    "fae31324-be10-4fe2-9878-52e8dc38be03": true
+  },
+  "feedbackSurveyState": {
+    "lastShownTime": 1776332554747
+  },
+  "anonymousId": "claudecode.v1.09a52cca-bfbb-4daf-b7d4-0d8c8ec7b272",
+  "skillUsage": {
+    "security-review": {
+      "usageCount": 1,
+      "lastUsedAt": 1775986802291
+    }
+  },
+  "oauthAccount": {
+    "accountUuid": "df78c9b8-76e0-4670-973b-da7d8d604069",
+    "emailAddress": "jober@jomedia.eu",
+    "organizationUuid": "fae31324-be10-4fe2-9878-52e8dc38be03",
+    "hasExtraUsageEnabled": true,
+    "displayName": "Human Dragon",
+    "organizationRole": "admin",
+    "workspaceRole": null,
+    "organizationName": "jober@jomedia.eu's Organization"
+  }
+}

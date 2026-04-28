@@ -1,36 +1,36 @@
 {
-  "numStartups": 69,
+  "numStartups": 82,
   "hasUsedStash": true,
   "tipsHistory": {
     "new-user-warmup": 7,
-    "plan-mode-for-complex-tasks": 67,
-    "terminal-setup": 62,
-    "memory-command": 61,
-    "theme-command": 61,
+    "plan-mode-for-complex-tasks": 78,
+    "terminal-setup": 82,
+    "memory-command": 76,
+    "theme-command": 81,
     "colorterm-truecolor": 61,
-    "status-line": 51,
+    "status-line": 76,
     "prompt-queue": 16,
-    "enter-to-steer-in-relatime": 61,
-    "todo-list": 61,
-    "install-github-app": 62,
-    "install-slack-app": 62,
-    "double-esc-code-restore": 62,
-    "continue": 62,
-    "shift-tab": 62,
-    "image-paste": 61,
-    "web-app": 62,
-    "mobile-app": 62,
-    "frontend-design-plugin": 67,
-    "guest-passes": 68,
-    "custom-agents": 66,
-    "agent-flag": 66,
-    "permissions": 62,
-    "rename-conversation": 56,
-    "custom-commands": 56,
-    "git-worktrees": 61,
-    "ide-upsell-external-terminal": 67
+    "enter-to-steer-in-relatime": 81,
+    "todo-list": 81,
+    "install-github-app": 82,
+    "install-slack-app": 82,
+    "double-esc-code-restore": 73,
+    "continue": 73,
+    "shift-tab": 73,
+    "image-paste": 81,
+    "web-app": 77,
+    "mobile-app": 77,
+    "frontend-design-plugin": 82,
+    "guest-passes": 81,
+    "custom-agents": 81,
+    "agent-flag": 81,
+    "permissions": 82,
+    "rename-conversation": 71,
+    "custom-commands": 71,
+    "git-worktrees": 81,
+    "ide-upsell-external-terminal": 79
   },
-  "promptQueueUseCount": 21,
+  "promptQueueUseCount": 22,
   "showExpandedTodos": true,
   "cachedGrowthBookFeatures": {
     "tengu_1p_event_batch_config": {
@@ -58,7 +58,7 @@
     },
     "tengu_react_vulnerability_warning": false,
     "tengu_code_diff_cli": true,
-    "tengu_pr_status_cli": true,
+    "tengu_pr_status_cli": false,
     "tengu_marble_kite": false,
     "tengu_post_compact_survey": false,
     "tengu_claudeai_mcp_connectors": true,
@@ -69,12 +69,12 @@
     "tengu_attribution_header": true,
     "enhanced_telemetry_beta": false,
     "tengu_workout": false,
-    "tengu_pid_based_version_locking": true,
+    "tengu_pid_based_version_locking": false,
     "tengu_coral_fern": false,
     "tengu_cache_plum_violet": true,
     "tengu_streaming_tool_execution2": true,
     "tengu_session_memory": false,
-    "tengu_permission_explainer": true,
+    "tengu_permission_explainer": false,
     "tengu_plank_river_frost": "user_intent",
     "tengu_sm_compact": false,
     "tengu_compact_cache_prefix": true,
@@ -111,43 +111,35 @@
         "booking_router.py",
         "identity_gate.py",
         "maria_brain.py",
-        "vd_cut_server.py",
-        "nomada_profile.py"
+        "vera_agent.py",
+        "app.py"
       ],
-      "exampleFilesGeneratedAt": 1776330353879,
-      "lastCost": 55.255608250000016,
-      "lastAPIDuration": 4585186,
-      "lastAPIDurationWithoutRetries": 4584105,
-      "lastToolDuration": 296999,
-      "lastDuration": 17266913,
-      "lastLinesAdded": 4688,
-      "lastLinesRemoved": 525,
-      "lastTotalInputTokens": 197776,
-      "lastTotalOutputTokens": 206801,
-      "lastTotalCacheCreationInputTokens": 4072259,
-      "lastTotalCacheReadInputTokens": 49300557,
+      "exampleFilesGeneratedAt": 1777011767953,
+      "lastCost": 0.0217235,
+      "lastAPIDuration": 6806,
+      "lastAPIDurationWithoutRetries": 6803,
+      "lastToolDuration": 0,
+      "lastDuration": 313969,
+      "lastLinesAdded": 0,
+      "lastLinesRemoved": 0,
+      "lastTotalInputTokens": 6,
+      "lastTotalOutputTokens": 39,
+      "lastTotalCacheCreationInputTokens": 17218,
+      "lastTotalCacheReadInputTokens": 0,
       "lastTotalWebSearchRequests": 0,
-      "lastFpsAverage": 13.25,
-      "lastFpsLow1Pct": 27.59,
+      "lastFpsAverage": 10.27,
+      "lastFpsLow1Pct": 1594.11,
       "lastModelUsage": {
         "claude-haiku-4-5-20251001": {
-          "inputTokens": 192171,
-          "outputTokens": 8673,
+          "inputTokens": 6,
+          "outputTokens": 39,
           "cacheReadInputTokens": 0,
-          "cacheCreationInputTokens": 12610,
+          "cacheCreationInputTokens": 17218,
           "webSearchRequests": 0,
-          "costUSD": 0.25129850000000004
-        },
-        "claude-opus-4-5-20251101": {
-          "inputTokens": 5605,
-          "outputTokens": 198128,
-          "cacheReadInputTokens": 49300557,
-          "cacheCreationInputTokens": 4059649,
-          "webSearchRequests": 0,
-          "costUSD": 55.00430974999998
+          "costUSD": 0.0217235
         }
       },
-      "lastSessionId": "4fb76368-5f0e-4cc1-ab4c-5ee4fc2ae8dc"
+      "lastSessionId": "7dbe2389-87c6-4107-b070-17b7765b52dd"
     }
   },
   "firstStartTime": "2026-03-25T10:16:10.274Z",
@@ -172,14 +164,14 @@
   "groveConfigCache": {
     "df78c9b8-76e0-4670-973b-da7d8d604069": {
       "grove_enabled": true,
-      "timestamp": 1776330349668
+      "timestamp": 1777292027123
     }
   },
   "s1mAccessCache": {
     "fae31324-be10-4fe2-9878-52e8dc38be03": {
       "hasAccess": false,
       "hasAccessNotAsDefault": false,
-      "timestamp": 1776355846018
+      "timestamp": 1777316935292
     }
   },
   "passesEligibilityCache": {
@@ -194,8 +186,8 @@
         "amount_minor_units": 1000,
         "currency": "EUR"
       },
-      "remaining_passes": 3,
-      "timestamp": 1776368719489
+      "remaining_passes": 0,
+      "timestamp": 1777349535032
     }
   },
   "passesUpsellSeenCount": 4,
@@ -205,7 +197,7 @@
     "fae31324-be10-4fe2-9878-52e8dc38be03": true
   },
   "feedbackSurveyState": {
-    "lastShownTime": 1776332554747
+    "lastShownTime": 1777320271663
   },
   "anonymousId": "claudecode.v1.09a52cca-bfbb-4daf-b7d4-0d8c8ec7b272",
   "skillUsage": {

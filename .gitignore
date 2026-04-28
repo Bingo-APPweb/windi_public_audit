@@ -65,3 +65,11 @@ agents/constitutional-agent/data/*.db
 windi-audit-report/
 nomad-bot/
 nomad-bot/
+
+# Security - never commit
+.ssh/
+.bash_history
+.lesshst
+*.pem
+*.key
+id_*
