@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.24.0
-**Sealed:** 2026-04-28 · §221 Container Architecture · §B-CONTRACT-001 · Constitutional Chain Sealed
+**Version:** 2.25.0
+**Sealed:** 2026-04-28 · §222 Acceptability Framework · §C-ACCEPTABILITY-001 · 4-Layer Defense
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -215,11 +215,8 @@ Nenhum endpoint retorna valores default que mascarem dados ausentes.
 
 > **"DeepEval é o espelho. VERA é o juiz. Shadow Audit é a polícia. Langfuse é o satélite."**
 
-**Status:** LIVE · v1.4.0 · **Port:** :8150 · **Detalhes:** `CLAUDE-HISTORY.md`
-
-**4 Layers:** Execution (E1-E4) → Governance (Shadow) → Defense (Princípio XV) → Quality (DeepEval+Langfuse)
-**Routing:** E1_TRIVIAL→Mistral · E4_NON_PHO→Llama · HIGH→Claude+GPT4 (consensus)
-**Quality Gate:** Admissibility 60% + DeepEval 40% · *"VERA vence sempre"*
+**Status:** LIVE · v1.4.0 · **Port:** :8150 · **4 Layers:** Execution→Governance→Defense→Quality
+> **Full details:** `CLAUDE-HISTORY.md` § §204
 
 ### §205 — KEYGEN-001: Sovereign Key Ceremony (26 Apr 2026)
 
@@ -230,15 +227,7 @@ Nenhum endpoint retorna valores default que mascarem dados ausentes.
 
 ### §208-214 — Governance Enhancements (26 Apr 2026)
 
-| § | Nome | Status | Descrição |
-|---|------|--------|-----------|
-| §208/209 | Soberania Semântica | LIVE | 3-Layer Defense · LAZY_PATTERNS → 422 |
-| §210 | VERIFY Resilience | LIVE | Health timer 5min · auto-restart · 3 modos |
-| §211 | Triangulação XV | LIVE | Guardian+Architect · divergence<0.35 · Shadow Audit |
-| §212 | PROOF OF ACT | LIVE | BaFin Armor · MaRisk AT 7.2 · €55M exposure blocked |
-| §213 | Semantic Divergence | LIVE | Stance APPROVE/REJECT/UNCERTAIN · 0.85=CRITICAL |
-| §214 | Auto-Login | LIVE | Email verify → PIN → Workspace · zero fricção |
-
+**Status:** ALL LIVE · §208-209 Semantic · §210 Resilience · §211 Triangulation · §212 BaFin · §213 Divergence · §214 Auto-Login
 > **Full details:** `CLAUDE-HISTORY.md` § §208-214
 
 ### §215 — VERIFY PAGE AUDITOR-READY (26 Apr 2026)
@@ -296,6 +285,25 @@ Nenhum endpoint retorna valores default que mascarem dados ausentes.
 - `WINDI-AIWRITER-FIRST-20260428163019-94A8C2EB` (primeiro AI content)
 
 **Files:** `/opt/windi/constitutional/W-SITES-001-CONTRACT-B-v1.0.md`
+
+### §222 — §C-ACCEPTABILITY-001: Content Acceptability Framework (28 Apr 2026)
+
+> **"Filtrar antes de gerar. Rever depois de selar. Anotar para sempre."**
+
+**Status:** SEALED · **Receipt:** `WINDI-SC-ACCEPTABILITY-001-v1.0-20260428184406-66A0D8B0` · **Invariants:** I1, I9, I11, I14
+**Hash:** `sha256:66a0d8b09a7aa4a0512e07ab4bd2a3897a74904727c03f13baae5c33ca31c271`
+
+**4-Layer Defense:**
+| Layer | Nome | Timing | Efeito |
+|-------|------|--------|--------|
+| L-1 | PROMPT FILTER | pre-generation | Bloqueia INPUT · zero tokens |
+| L0 | PRE-SEAL FILTER | pre-seal | Bloqueia OUTPUT · I14 fail |
+| L1 | POST-SEAL REVIEW | post-seal | review_pending flag |
+| L2 | LEDGER ANNOTATION | post-facto | RETRACTS/CONTESTS/CORRECTS |
+
+**L2 Permissions:** User→RETRACTS · WINDI→CONTESTS · Todos→CORRECTS (com prova)
+**Counters:** Trimestrais em `/sites/governance/`
+**Files:** `/opt/windi/constitutional/S-C-ACCEPTABILITY-001-v1.0.md`
 
 ### §217 — P01 Sovereign Risk Score (SRS) (26 Apr 2026)
 
@@ -572,6 +580,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 28 Apr | **§222** Acceptability Framework · §C-ACCEPTABILITY-001 · 4-Layer Defense · `66A0D8B0` ✅ |
 | 28 Apr | **§221** Container Architecture · §B-CONTRACT-001 · MAKEUP Catalog · `1530DBEF` ✅ |
 | 28 Apr | **§220** W-SITES-001 Foundation · :8192 · Identity Gate Fork · 9/9 tests ✅ |
 | 28 Apr | **§219** Baptism of Externality · W-CMS-001 :8055 · Directus absorbed ✅ |
@@ -673,6 +682,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 - §204 VERA Paladar: `f37a7f2c` (8 commits · 4-Layer Stack)
 - §221 Container Architecture: `WINDI-CONTRACT-B-001-v1.0-20260428162029-1530DBEF` (§B-CONTRACT-001)
 - §221 First AI Content: `WINDI-AIWRITER-FIRST-20260428163019-94A8C2EB` (parent_receipt chain)
+- §222 Acceptability: `WINDI-SC-ACCEPTABILITY-001-v1.0-20260428184406-66A0D8B0` (4-Layer Defense)
 
 ---
 
