@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.25.0
-**Sealed:** 2026-04-28 · §222 Acceptability Framework · §C-ACCEPTABILITY-001 · 4-Layer Defense
+**Version:** 2.26.0
+**Sealed:** 2026-04-30 · §223 W-MAIL-001 + DACP-v1 · Email Sovereign System · Dual Anchored Proof
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -98,6 +98,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-SHELF-001 | :8191 | I9,I11,I13,I14 | **LIVE** v0.3.0 · I9+I14 Dual Enforcement · §199+§200 · 11/11 Tests |
 | W-CMS-001 | :8055 | I9,I11,I14 | **LIVE** · Directus 10 · Ledger Bridge :8056 · Sweeper Timer · §219 Baptism of Externality |
 | W-SITES-001 | :8192 | I1,I9,I11,I12,I14 | **LIVE** · Sites Factory · Identity Gate Fork · §220 · PRODUCT-SITES-001 (8/12) |
+| W-MAIL-001 | :25/:587/:993 | I1,I9,I11,I12,I14 | **LIVE** · Email Sovereign · DACP-v1 · 10/10 mail-tester · §223 |
 | WINDI-PORTAL | static | — | **LIVE** · Internal Control Center · 35 Services · 7 Categories |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
@@ -304,6 +305,37 @@ Nenhum endpoint retorna valores default que mascarem dados ausentes.
 **L2 Permissions:** User→RETRACTS · WINDI→CONTESTS · Todos→CORRECTS (com prova)
 **Counters:** Trimestrais em `/sites/governance/`
 **Files:** `/opt/windi/constitutional/S-C-ACCEPTABILITY-001-v1.0.md`
+
+### §223 — W-MAIL-001 + DACP-v1: Email Sovereign System (30 Apr 2026)
+
+> **"O email não só foi enviado — pode provar que foi enviado."**
+
+**Status:** LIVE · **Ports:** :25 (SMTP) · :587 (Submission) · :993 (IMAPS) · **Domain:** windisites.de
+**Genesis Receipt:** `WINDI-WMAIL-001-GENESIS-SMOKE-20260429222000` · **mail-tester:** 10/10
+
+**DACP-v1 — Dual Anchored Communication Proof:**
+
+| Binding | Mecanismo | Prova |
+|---------|-----------|-------|
+| Forward | `X-WINDI-Proof-ID` header | Email → Ledger |
+| Forward | `X-WINDI-Content-Hash` header | Hash canónico |
+| Forward | `X-WINDI-Binding: dual-v1` | Versão protocolo |
+| Backward | `content_hash` no receipt | Ledger → Email |
+| Backward | `message_id` + `dkim` metadata | Reconstrução forense |
+
+**Flow:**
+```
+1. Gerar proof_id
+2. Append verify footer (com URLs)
+3. Hash body canónico (RFC 6376 relaxed)
+4. Injectar X-WINDI-* headers
+5. Enviar (DKIM RSA-2048 adicionado)
+6. Selar no Forensic Ledger
+```
+
+**Stack:** Docker-mailserver · Postfix · Dovecot · OpenDKIM (RSA-2048)
+**Ed25519:** Deferred (OpenDKIM v2.11.0 limitation) · Keys published to DNS
+**Script:** `/opt/windi/w-mail-001/proof_bind.py`
 
 ### §217 — P01 Sovereign Risk Score (SRS) (26 Apr 2026)
 
@@ -567,19 +599,21 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | :8170 | W-SERVICE-CONTROL Panel | 🟢 **LIVE** |
 | :8180 | W-ACADEMY-001 Institute | 🟢 **LIVE** |
 | :8192 | W-SITES-001 Sites Factory | 🟢 **LIVE** |
+| :25/:587/:993 | W-MAIL-001 Email Sovereign | 🟢 **LIVE** |
 
-> **Mapa completo (32 portas):** `CLAUDE-HISTORY.md` § Mapa de Portas 17 Abr
+> **Mapa completo (33 portas):** `CLAUDE-HISTORY.md` § Mapa de Portas 17 Abr
 
-### Sistemas LIVE (47 total)
+### Sistemas LIVE (48 total)
 
 **Core:** GEN7 · Pioneer · VPR · API Keys · Dispatch · Web Hosting · i18n · Wallet · Lead Admin · **Portal** · **SVC-CONTROL**
-**Agents (36):** CIA · WSG · GATE · NGINX · CANVAS · COMM · PROVE · DETECT-MEDIA · VERIFY · INTENT · COUNSEL · SESSION · NOMAD · VD-CUT · VD-MASS · JOE · DIST · JMPG · UDB · COMPOSER · CLASSIFY · VISION · OBS-GATE · INTENT-CMD · NOMAD-VOICE · FEDIVERSE · BRIDGE · SEC · DRAGON · DEV-API · ENTERPRISE · CACHE · **LAB** · **ACADEMY** · **SITES**
-**Products:** Triangle of Power · WINDI FIELD · WINDI TRAVEL · FVE Protocol · RFC-001 DNA
+**Agents (37):** CIA · WSG · GATE · NGINX · CANVAS · COMM · PROVE · DETECT-MEDIA · VERIFY · INTENT · COUNSEL · SESSION · NOMAD · VD-CUT · VD-MASS · JOE · DIST · JMPG · UDB · COMPOSER · CLASSIFY · VISION · OBS-GATE · INTENT-CMD · NOMAD-VOICE · FEDIVERSE · BRIDGE · SEC · DRAGON · DEV-API · ENTERPRISE · CACHE · **LAB** · **ACADEMY** · **SITES** · **MAIL**
+**Products:** Triangle of Power · WINDI FIELD · WINDI TRAVEL · FVE Protocol · RFC-001 DNA · **DACP-v1**
 
 ### Histórico Recente
 
 | Data | Milestone |
 |------|-----------|
+| 30 Apr | **§223** W-MAIL-001 + DACP-v1 · Email Sovereign · 10/10 mail-tester · `D7398F3C` ✅ |
 | 28 Apr | **§222** Acceptability Framework · §C-ACCEPTABILITY-001 · 4-Layer Defense · `66A0D8B0` ✅ |
 | 28 Apr | **§221** Container Architecture · §B-CONTRACT-001 · MAKEUP Catalog · `1530DBEF` ✅ |
 | 28 Apr | **§220** W-SITES-001 Foundation · :8192 · Identity Gate Fork · 9/9 tests ✅ |
@@ -683,6 +717,8 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 - §221 Container Architecture: `WINDI-CONTRACT-B-001-v1.0-20260428162029-1530DBEF` (§B-CONTRACT-001)
 - §221 First AI Content: `WINDI-AIWRITER-FIRST-20260428163019-94A8C2EB` (parent_receipt chain)
 - §222 Acceptability: `WINDI-SC-ACCEPTABILITY-001-v1.0-20260428184406-66A0D8B0` (4-Layer Defense)
+- §223 W-MAIL-001 Genesis: `WINDI-WMAIL-001-GENESIS-SMOKE-20260429222000` (10/10 mail-tester)
+- §223 DACP-v1 First Proof: `WINDI-MAIL-PROOF-20260429222555-D7398F3C` (Dual Anchored)
 
 ---
 
