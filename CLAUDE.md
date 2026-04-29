@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.26.0
-**Sealed:** 2026-04-30 · §223 W-MAIL-001 + DACP-v1 · Email Sovereign System · Dual Anchored Proof
+**Version:** 2.27.0
+**Sealed:** 2026-04-30 · §224-226 Sovereignty Trilogy · DACP-v1 · WINDIMail Soberano
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -98,7 +98,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-SHELF-001 | :8191 | I9,I11,I13,I14 | **LIVE** v0.3.0 · I9+I14 Dual Enforcement · §199+§200 · 11/11 Tests |
 | W-CMS-001 | :8055 | I9,I11,I14 | **LIVE** · Directus 10 · Ledger Bridge :8056 · Sweeper Timer · §219 Baptism of Externality |
 | W-SITES-001 | :8192 | I1,I9,I11,I12,I14 | **LIVE** · Sites Factory · Identity Gate Fork · §220 · PRODUCT-SITES-001 (8/12) |
-| W-MAIL-001 | :25/:587/:993 | I1,I9,I11,I12,I14 | **LIVE** · Email Sovereign · DACP-v1 · 10/10 mail-tester · §223 |
+| W-MAIL-001 | :25,:587,:993,:8888 | I1,I9,I11,I12,I14 | **LIVE** · Sovereign Email · DACP-v1 · Dual DKIM · SnappyMail · §224-226 |
 | WINDI-PORTAL | static | — | **LIVE** · Internal Control Center · 35 Services · 7 Categories |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
@@ -306,36 +306,41 @@ Nenhum endpoint retorna valores default que mascarem dados ausentes.
 **Counters:** Trimestrais em `/sites/governance/`
 **Files:** `/opt/windi/constitutional/S-C-ACCEPTABILITY-001-v1.0.md`
 
-### §223 — W-MAIL-001 + DACP-v1: Email Sovereign System (30 Apr 2026)
+### §224-226 — SOVEREIGNTY TRILOGY: W-MAIL-001 (29-30 Apr 2026)
 
-> **"O email não só foi enviado — pode provar que foi enviado."**
+> **"O email que PROVE existência. Não o email que só TRANSMITE."**
 
-**Status:** LIVE · **Ports:** :25 (SMTP) · :587 (Submission) · :993 (IMAPS) · **Domain:** windisites.de
-**Genesis Receipt:** `WINDI-WMAIL-001-GENESIS-SMOKE-20260429222000` · **mail-tester:** 10/10
+**Status:** LIVE · **Service:** W-MAIL-001 · **Invariants:** I1, I9, I11, I12, I14
+**Domain:** `mail.windisites.de` · **Webmail:** `https://mail.windisites.de/` (SnappyMail)
 
-**DACP-v1 — Dual Anchored Communication Proof:**
+**§224 — Infrastructure Genesis:**
+- Docker-mailserver + SnappyMail (network_mode: host)
+- Ports: 25 (SMTP), 587 (Submission), 465 (TLS), 993 (IMAPS), 8888 (Webmail)
+- RSA-2048 DKIM (OpenDKIM) · SPF · DMARC · Rspamd · Fail2ban
 
-| Binding | Mecanismo | Prova |
-|---------|-----------|-------|
-| Forward | `X-WINDI-Proof-ID` header | Email → Ledger |
-| Forward | `X-WINDI-Content-Hash` header | Hash canónico |
-| Forward | `X-WINDI-Binding: dual-v1` | Versão protocolo |
-| Backward | `content_hash` no receipt | Ledger → Email |
-| Backward | `message_id` + `dkim` metadata | Reconstrução forense |
+**§225 — DACP-v1 Protocol (Dual Anchored Communication Proof):**
 
-**Flow:**
-```
-1. Gerar proof_id
-2. Append verify footer (com URLs)
-3. Hash body canónico (RFC 6376 relaxed)
-4. Injectar X-WINDI-* headers
-5. Enviar (DKIM RSA-2048 adicionado)
-6. Selar no Forensic Ledger
-```
+| Binding | Mecanismo | Localização |
+|---------|-----------|-------------|
+| **Forward** | X-WINDI-Proof-ID, X-WINDI-Content-Hash, X-WINDI-Binding | Email headers |
+| **Backward** | content_hash, message_id, dkim metadata | Ledger receipt |
 
-**Stack:** Docker-mailserver · Postfix · Dovecot · OpenDKIM (RSA-2048)
-**Ed25519:** Deferred (OpenDKIM v2.11.0 limitation) · Keys published to DNS
-**Script:** `/opt/windi/w-mail-001/proof_bind.py`
+**Flow:** proof_id → append_verify_footer → hash_body (RFC 6376 relaxed) → MIME + X-WINDI-* → SMTP (DKIM) → Ledger seal
+**Verify:** Email aponta para Ledger · Ledger contém hash do email · **BIDIRECTIONAL PROOF**
+
+**§226 — WINDIMail Soberano:**
+- First mailbox: `postmaster@windisites.de`
+- mail-tester.com: **10/10** ✅
+- Gmail delivery: **INBOX** (não spam) ✅
+- DACP receipts: `WINDI-MAIL-PROOF-*`
+
+**Genesis Receipts:**
+- `WINDI-WMAIL-001-GENESIS-SMOKE-20260429222000` (infrastructure)
+- `WINDI-MAIL-PROOF-20260429222555-D7398F3C` (first DACP)
+- `WINDI-MAIL-PROOF-20260429223209-5959D6AA` (Gmail INBOX proof)
+- `WINDI-MAIL-TRILOGY-20260429230632` (§224-226 sealed)
+
+**Files:** `/opt/windi/w-mail-001/` · `proof_bind.py` (DACP implementation)
 
 ### §217 — P01 Sovereign Risk Score (SRS) (26 Apr 2026)
 
@@ -613,7 +618,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
-| 30 Apr | **§223** W-MAIL-001 + DACP-v1 · Email Sovereign · 10/10 mail-tester · `D7398F3C` ✅ |
+| 29-30 Apr | **§224-226** Sovereignty Trilogy · W-MAIL-001 · DACP-v1 · 10/10 mail-tester · Gmail INBOX ✅ |
 | 28 Apr | **§222** Acceptability Framework · §C-ACCEPTABILITY-001 · 4-Layer Defense · `66A0D8B0` ✅ |
 | 28 Apr | **§221** Container Architecture · §B-CONTRACT-001 · MAKEUP Catalog · `1530DBEF` ✅ |
 | 28 Apr | **§220** W-SITES-001 Foundation · :8192 · Identity Gate Fork · 9/9 tests ✅ |
@@ -717,8 +722,10 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 - §221 Container Architecture: `WINDI-CONTRACT-B-001-v1.0-20260428162029-1530DBEF` (§B-CONTRACT-001)
 - §221 First AI Content: `WINDI-AIWRITER-FIRST-20260428163019-94A8C2EB` (parent_receipt chain)
 - §222 Acceptability: `WINDI-SC-ACCEPTABILITY-001-v1.0-20260428184406-66A0D8B0` (4-Layer Defense)
-- §223 W-MAIL-001 Genesis: `WINDI-WMAIL-001-GENESIS-SMOKE-20260429222000` (10/10 mail-tester)
-- §223 DACP-v1 First Proof: `WINDI-MAIL-PROOF-20260429222555-D7398F3C` (Dual Anchored)
+- §224-226 W-MAIL-001 Genesis: `WINDI-WMAIL-001-GENESIS-SMOKE-20260429222000` (Infrastructure)
+- §224-226 DACP-v1 First Proof: `WINDI-MAIL-PROOF-20260429222555-D7398F3C` (Dual Anchored)
+- §224-226 Gmail Proof: `WINDI-MAIL-PROOF-20260429223209-5959D6AA` (INBOX delivery)
+- §224-226 Mail Trilogy: `WINDI-MAIL-TRILOGY-20260429230632` (DACP-v1 · Dual DKIM · Sovereign Email)
 
 ---
 
