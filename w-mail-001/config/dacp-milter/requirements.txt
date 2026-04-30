@@ -1,0 +1,12 @@
+# W-MAIL-DACP-MILTER v1.0 Dependencies
+# Spec: §227
+
+# Milter library for Postfix integration
+pymilter>=1.0.5
+
+# HTTP requests for Ledger API
+requests>=2.28.0
+
+# Testing
+pytest>=7.0.0
+pytest-cov>=4.0.0

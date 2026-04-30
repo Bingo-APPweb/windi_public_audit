@@ -5,11 +5,14 @@ services:
     hostname: mail.windisites.de
     domainname: windisites.de
     restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - "25:25"     # SMTP
       - "587:587"   # Submission (STARTTLS)
       - "465:465"   # Submissions (TLS)
       - "993:993"   # IMAPS
+      - "8895:8895" # DACP milter HTTP admin (health, metrics)
     volumes:
       - ./mail-data/:/var/mail/
       - ./mail-state/:/var/mail-state/
@@ -48,6 +51,6 @@ services:
       - ./snappymail-data:/var/lib/snappymail
     environment:
       - TZ=Europe/Berlin
-      - SNAPPYMAIL_PORT=8200
+      - SNAPPYMAIL_PORT=8888
     depends_on:
       - mailserver
