@@ -225,8 +225,9 @@ class DACPMilter(Milter.Base):
         subject_hash = hash_field(self.subject or '')
 
         # === INJECT FOOTER ===
-        plain_footer = generate_plain_footer(proof_id, sealed_at)
-        html_footer = generate_html_footer(proof_id, sealed_at)
+        # Include body_hash for independent verification without UI
+        plain_footer = generate_plain_footer(proof_id, body_hash, sealed_at)
+        html_footer = generate_html_footer(proof_id, body_hash, sealed_at)
 
         if self.is_multipart:
             # Inject in both text/plain and text/html parts

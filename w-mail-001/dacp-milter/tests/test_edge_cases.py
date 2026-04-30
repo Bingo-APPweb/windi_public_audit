@@ -46,15 +46,19 @@ class TestFooterGeneration:
     """Tests for footer generation"""
 
     def test_plain_footer_contains_proof_id(self):
-        footer = generate_plain_footer("WINDI-MAIL-PROOF-123")
+        test_hash = "abc123def456"
+        footer = generate_plain_footer("WINDI-MAIL-PROOF-123", test_hash)
         assert "WINDI-MAIL-PROOF-123" in footer
         assert "WINDI DACP-v1 PROOF" in footer
         assert "verify-public" in footer
+        assert f"sha256:{test_hash}" in footer
 
     def test_html_footer_contains_marker(self):
-        footer = generate_html_footer("WINDI-MAIL-PROOF-123")
+        test_hash = "abc123def456"
+        footer = generate_html_footer("WINDI-MAIL-PROOF-123", test_hash)
         assert 'data-windi-dacp="v1"' in footer
         assert "WINDI-MAIL-PROOF-123" in footer
+        assert f"sha256:{test_hash}" in footer
 
 
 class TestRateLimiter:
