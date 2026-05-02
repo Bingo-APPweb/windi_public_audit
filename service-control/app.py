@@ -1,9 +1,13 @@
 """
-W-SERVICE-CONTROL — WINDI Service Control Panel v2.0.0
+W-SERVICE-CONTROL — WINDI Service Control Panel v2.1.0
 Sovereign Service Management with I9 Human Gate + Double Receipt Ledger
 
 Port: 8170
 Invariants: I1, I9, I11
+
+§227 Update: Added support for:
+- W-MAIL-001 (Docker) — Email Sovereign
+- W-OLLAMA-001 (Remote) — Galho B / Server Gêmeo
 
 Liga IA+H · Kempten, Bavaria · 2026
 """
@@ -24,7 +28,7 @@ app = Flask(__name__)
 # ═══════════════════════════════════════════════════════════════
 
 PORT = 8170
-VERSION = "2.0.0"
+VERSION = "2.1.0"  # §227 Galho B + W-MAIL-001
 LEDGER_URL = "http://localhost:8101"
 
 # Tiers for service protection
@@ -74,6 +78,12 @@ WINDI_SERVICES = [
 
     # Special (nohup)
     {"name": "sandbox-core", "port": 8091, "display": "Sandbox Core", "category": "core", "tier": TIER_CRITICAL, "nohup": True, "url": ""},
+
+    # §224-226 W-MAIL-001 — Email Sovereign (Docker)
+    {"name": "windi-mail", "port": 8888, "display": "W-MAIL-001 Email", "category": "support", "tier": TIER_CRITICAL, "docker": True, "url": "https://mail.windisites.de/"},
+
+    # §227 W-OLLAMA-001 — Galho B / Server Gêmeo (Remote)
+    {"name": "windi-ollama", "port": 11434, "display": "W-OLLAMA-001 Galho B", "category": "infra", "tier": TIER_STANDARD, "remote": True, "remote_host": "85.215.131.0", "url": ""},
 ]
 
 # Health check endpoints by port
@@ -103,6 +113,13 @@ HEALTH_ENDPOINTS = {
     8153: "/health",
     8160: "/health",
     8180: "/health",
+    8888: "/",  # §224-226 W-MAIL-001 SnappyMail webmail
+    11434: "/api/tags",  # §227 W-OLLAMA-001 Ollama API
+}
+
+# Remote services (Galho B)
+REMOTE_HOSTS = {
+    "windi-ollama": "85.215.131.0",
 }
 
 # Nohup service paths (for manual restart)
@@ -115,7 +132,7 @@ NOHUP_PATHS = {
     "windi-cache": "/opt/windi/w-cache-001",
     "windi-travel-map": "/opt/windi/windi-travel/map-comparator/deploy-windi-travel-map",
     "windi-udb": "/opt/windi/udb",
-    "sandbox-core": "/opt/windi/sandbox-core",
+    "sandbox-core": "/opt/windi/agents/constitutional-agent",
     "windi-academy": "/opt/windi/w-academy-001",
     "windi-leads": "/opt/windi/did-genesis",  # §186 DID-Genesis restart fix
 }
@@ -130,7 +147,7 @@ NOHUP_MAIN_FILES = {
     "windi-cache": "app.py",
     "windi-travel-map": "server.py",
     "windi-udb": "app.py",
-    "sandbox-core": "app.py",
+    "sandbox-core": "agent.py",
     "windi-academy": "app.py",
     "windi-leads": "did_genesis.py",  # §186 uvicorn did_genesis:app
 }
@@ -214,19 +231,39 @@ def get_port_status(port):
     except:
         return False
 
-def check_health_endpoint(port):
-    """Check service health endpoint."""
+def check_health_endpoint(port, remote_host=None):
+    """Check service health endpoint (supports local and remote services)."""
     endpoint = HEALTH_ENDPOINTS.get(port, "/health")
+    host = remote_host if remote_host else "localhost"
     try:
-        r = requests.get(f"http://localhost:{port}{endpoint}", timeout=3)
+        r = requests.get(f"http://{host}:{port}{endpoint}", timeout=5)
         if r.status_code == 200:
             try:
-                return {"status": "healthy", "data": r.json()}
+                return {"status": "healthy", "data": r.json(), "host": host}
             except:
-                return {"status": "healthy", "data": {}}
-        return {"status": "unhealthy", "code": r.status_code}
+                return {"status": "healthy", "data": {}, "host": host}
+        return {"status": "unhealthy", "code": r.status_code, "host": host}
     except requests.exceptions.ConnectionError:
-        return {"status": "offline", "error": "connection_refused"}
+        return {"status": "offline", "error": "connection_refused", "host": host}
+    except requests.exceptions.Timeout:
+        return {"status": "timeout", "error": "timeout", "host": host}
+    except Exception as e:
+        return {"status": "error", "error": str(e)[:50], "host": host}
+
+def check_docker_service(container_name_prefix):
+    """Check if Docker container is running."""
+    try:
+        result = subprocess.run(
+            ["docker", "ps", "--filter", f"name={container_name_prefix}", "--format", "{{.Status}}"],
+            capture_output=True, text=True, timeout=5
+        )
+        status = result.stdout.strip()
+        if "Up" in status:
+            return {"status": "running", "docker_status": status}
+        elif status:
+            return {"status": "stopped", "docker_status": status}
+        else:
+            return {"status": "not_found", "docker_status": "container not found"}
     except Exception as e:
         return {"status": "error", "error": str(e)[:50]}
 
@@ -235,27 +272,54 @@ def get_full_service_status(service):
     name = service["name"]
     port = service.get("port")
     is_nohup = service.get("nohup", False)
+    is_docker = service.get("docker", False)
+    is_remote = service.get("remote", False)
+    remote_host = service.get("remote_host")
     tier = service.get("tier", TIER_STANDARD)
 
-    # Systemd status (skip for nohup services)
+    # Systemd status (skip for nohup/docker/remote services)
     if is_nohup:
         systemd = "nohup"
+    elif is_docker:
+        systemd = "docker"
+    elif is_remote:
+        systemd = "remote"
     else:
         systemd = get_systemd_status(name)
 
-    # Port status
-    port_active = get_port_status(port) if port else False
+    # Port status (skip for remote services)
+    if is_remote:
+        port_active = True  # Assume remote is reachable, let health check determine
+    else:
+        port_active = get_port_status(port) if port else False
 
     # Health check
-    health = check_health_endpoint(port) if port and port_active else {"status": "offline"}
+    if is_docker:
+        # For Docker services, check both container and port
+        docker_status = check_docker_service("mailserver")
+        if docker_status["status"] == "running":
+            health = check_health_endpoint(port) if port else {"status": "healthy", "docker": True}
+        else:
+            health = {"status": "offline", "docker_status": docker_status}
+    elif is_remote and remote_host:
+        # For remote services (Galho B), check remote health
+        health = check_health_endpoint(port, remote_host=remote_host)
+    elif port and port_active:
+        health = check_health_endpoint(port)
+    else:
+        health = {"status": "offline"}
 
     # Determine overall status
     if health["status"] == "healthy":
         overall = "online"
-    elif port_active:
+    elif health["status"] == "running":  # Docker running
+        overall = "online"
+    elif port_active and not is_remote:
         overall = "degraded"
     elif systemd == "active" or systemd == "nohup":
         overall = "starting"
+    elif is_remote and health["status"] == "timeout":
+        overall = "degraded"
     else:
         overall = "offline"
 
@@ -270,6 +334,9 @@ def get_full_service_status(service):
         "tier": tier,
         "sealed": tier == TIER_SEALED,
         "nohup": is_nohup,
+        "docker": is_docker,
+        "remote": is_remote,
+        "remote_host": remote_host,
         "url": service.get("url", ""),
         "systemd": systemd,
         "port_active": port_active,
@@ -359,12 +426,13 @@ def create_restart_initiated_receipt(service_name, actor_did, tier, pre_health):
     receipt_id = generate_receipt_id("RESTART_INIT", service_name, actor_did)
 
     receipt = {
-        "receipt_id": receipt_id,
+        "id": receipt_id,  # §191: Ledger requires 'id' not 'receipt_id'
         "actor": actor_did,
         "app": "service-control",
         "doc_name": f"Restart Initiated: {service_name}",
         "doc_type": "service-restart-initiated",
         "governance_level": "HIGH" if tier == TIER_CRITICAL else "MEDIUM",
+        "sge_score": 0.85 if tier == TIER_CRITICAL else 0.70,  # §191: Required field
         "content_hash": f"sha256:{hashlib.sha256(json.dumps({'service': service_name, 'action': 'restart_initiated', 'tier': tier, 'pre_health': pre_health}, sort_keys=True).encode()).hexdigest()}",
         "invariants": ["I9", "I11"],
         "stage": "C6",
@@ -385,13 +453,14 @@ def create_restart_completed_receipt(service_name, actor_did, tier, parent_recei
     receipt_id = generate_receipt_id("RESTART_DONE", service_name, actor_did)
 
     receipt = {
-        "receipt_id": receipt_id,
+        "id": receipt_id,  # §191: Ledger requires 'id' not 'receipt_id'
         "parent_receipt_id": parent_receipt_id,  # Chain link!
         "actor": actor_did,
         "app": "service-control",
         "doc_name": f"Restart {'Completed' if success else 'Failed'}: {service_name}",
         "doc_type": "service-restart-completed",
         "governance_level": "HIGH" if tier == TIER_CRITICAL else "MEDIUM",
+        "sge_score": 0.90 if success else 0.50,  # §191: Required field
         "content_hash": f"sha256:{hashlib.sha256(json.dumps({'service': service_name, 'action': 'restart_completed', 'success': success, 'post_health': post_health}, sort_keys=True).encode()).hexdigest()}",
         "invariants": ["I9", "I11"],
         "stage": "C6",
@@ -1125,7 +1194,7 @@ DASHBOARD_HTML = '''
 <div class="header">
     <div>
         <div class="header-title">WINDI INSTITUTE · SERVICE CONTROL</div>
-        <div class="header-main">Service Control Panel v2.0</div>
+        <div class="header-main">Service Control Panel v2.1 · §227</div>
     </div>
     <div class="controls">
         <select id="lang-toggle" onchange="setLang(this.value)">
@@ -1152,6 +1221,14 @@ DASHBOARD_HTML = '''
     <div class="legend-sep"></div>
     <div class="legend-item">
         <div class="legend-dot standard"></div> STANDARD — single confirm
+    </div>
+    <div class="legend-sep"></div>
+    <div class="legend-item">
+        <span style="font-size:11px;padding:2px 6px;border-radius:3px;background:var(--blue);color:white">REMOTE</span> Galho B
+    </div>
+    <div class="legend-sep"></div>
+    <div class="legend-item">
+        <span style="font-size:11px;padding:2px 6px;border-radius:3px;background:#0db7ed;color:white">DOCKER</span>
     </div>
 </div>
 
@@ -1276,6 +1353,24 @@ function render() {
         const blocked = tier === 'SEALED';
         const isOnline = svc.overall === 'online';
         const statusText = isOnline ? t('online') : t('offline');
+        const isDocker = svc.docker || false;
+        const isRemote = svc.remote || false;
+        const remoteHost = svc.remote_host || '';
+
+        // Build port display with host info
+        let portDisplay = `:${svc.port} · ${statusText}`;
+        if (isRemote && remoteHost) {
+            portDisplay = `${remoteHost}:${svc.port} · ${statusText}`;
+        }
+
+        // Build type badges
+        let typeBadges = '';
+        if (isDocker) {
+            typeBadges += '<span style="font-size:10px;padding:2px 5px;border-radius:3px;background:#0db7ed;color:white;margin-left:6px">DOCKER</span>';
+        }
+        if (isRemote) {
+            typeBadges += '<span style="font-size:10px;padding:2px 5px;border-radius:3px;background:#1D5AA8;color:white;margin-left:6px">GALHO B</span>';
+        }
 
         const row = document.createElement('div');
         row.className = 'service-row';
@@ -1283,14 +1378,14 @@ function render() {
             <div class="service-info">
                 <div class="service-status-dot ${svc.overall}"></div>
                 <div class="service-details">
-                    <div class="service-name">${svc.display}</div>
-                    <div class="service-port">:${svc.port} · ${statusText}</div>
+                    <div class="service-name">${svc.display}${typeBadges}</div>
+                    <div class="service-port">${portDisplay}</div>
                 </div>
                 <div class="tier-badge ${tier.toLowerCase()}">${tier}</div>
             </div>
             <div>
-                ${blocked
-                    ? `<div class="btn-blocked">${t('blocked')}</div>`
+                ${blocked || isRemote
+                    ? `<div class="btn-blocked">${isRemote ? 'remote' : t('blocked')}</div>`
                     : `<button onclick="openModal('${svc.service}')">${t('restart')}</button>`
                 }
             </div>
@@ -1396,10 +1491,11 @@ setInterval(loadServices, 30000);
 if __name__ == "__main__":
     print(f"""
 ╔══════════════════════════════════════════════════════════════╗
-║   W-SERVICE-CONTROL v2.0.0 — Double Receipt System           ║
+║   W-SERVICE-CONTROL v2.1.0 — §227 Galho B Update             ║
 ║   Port: {PORT}                                                 ║
 ║   Invariants: I1, I9, I11                                    ║
-║   Features: Tier Protection · I9 Ceremony · Parent Chain     ║
+║   Features: Tier Protection · Docker · Remote · Dual Receipt ║
+║   New: W-MAIL-001 (Docker) · W-OLLAMA-001 (Galho B)          ║
 ║   "Se não consegues controlar, não consegues escalar."       ║
 ╚══════════════════════════════════════════════════════════════╝
     """)
