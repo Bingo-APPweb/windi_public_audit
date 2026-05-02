@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.29.0
-**Sealed:** 2026-05-02 · §228 W-LEXICON-001 · §227 Galho B · Dual Server Architecture
+**Version:** 2.30.0
+**Sealed:** 2026-05-02 · §229 W-CAP-001 · §228 W-LEXICON-001 · §227 Galho B
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -101,6 +101,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-MAIL-001 | :25,:587,:993,:8888 | I1,I9,I11,I12,I14 | **LIVE** · Sovereign Email · DACP-v1 · Dual DKIM · SnappyMail · §224-226 |
 | W-OLLAMA-001 | B:11434 | I9,I10,I13 | **LIVE** · Server Gêmeo (85.215.131.0) · mistral:7b · Galho B · §227 |
 | W-LEXICON-001 | :8193 | I9,I10,I13,I14 | **STUB** · Semantic Drift Detection · Ollama Backend · §228 |
+| W-CAP-001 | :8194 | I1,I9,I11,I14 | **LIVE** · Capability Tokens · Single-use · SaaS Gate · §229 |
 | WINDI-PORTAL | static | — | **LIVE** · Internal Control Center · 35 Services · 7 Categories |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
@@ -674,6 +675,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 02 Mai | **§229** W-CAP-001 · Capability Tokens · Single-use · Token Gating · :8194 ✅ |
 | 02 Mai | **§228** W-LEXICON-001 Stub · Semantic Drift Detection · Ollama Backend · :8193 ✅ |
 | 02 Mai | **§227** Galho B Nascimento · Server Gêmeo · Dual Server Architecture · mistral:7b ✅ |
 | 29-30 Apr | **§224-226** Sovereignty Trilogy · W-MAIL-001 · DACP-v1 · 10/10 mail-tester · Gmail INBOX ✅ |
