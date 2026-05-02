@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.28.0
-**Sealed:** 2026-05-02 · §227 Galho B · Dual Server Architecture · §224-226 Mail Trilogy
+**Version:** 2.29.0
+**Sealed:** 2026-05-02 · §228 W-LEXICON-001 · §227 Galho B · Dual Server Architecture
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -100,6 +100,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-SITES-001 | :8192 | I1,I9,I11,I12,I14 | **LIVE** · Sites Factory · Identity Gate Fork · §220 · PRODUCT-SITES-001 (8/12) |
 | W-MAIL-001 | :25,:587,:993,:8888 | I1,I9,I11,I12,I14 | **LIVE** · Sovereign Email · DACP-v1 · Dual DKIM · SnappyMail · §224-226 |
 | W-OLLAMA-001 | B:11434 | I9,I10,I13 | **LIVE** · Server Gêmeo (85.215.131.0) · mistral:7b · Galho B · §227 |
+| W-LEXICON-001 | :8193 | I9,I10,I13,I14 | **STUB** · Semantic Drift Detection · Ollama Backend · §228 |
 | WINDI-PORTAL | static | — | **LIVE** · Internal Control Center · 35 Services · 7 Categories |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
@@ -673,6 +674,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 02 Mai | **§228** W-LEXICON-001 Stub · Semantic Drift Detection · Ollama Backend · :8193 ✅ |
 | 02 Mai | **§227** Galho B Nascimento · Server Gêmeo · Dual Server Architecture · mistral:7b ✅ |
 | 29-30 Apr | **§224-226** Sovereignty Trilogy · W-MAIL-001 · DACP-v1 · 10/10 mail-tester · Gmail INBOX ✅ |
 | 28 Apr | **§222** Acceptability Framework · §C-ACCEPTABILITY-001 · 4-Layer Defense · `66A0D8B0` ✅ |
