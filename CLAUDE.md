@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.27.0
-**Sealed:** 2026-04-30 · §224-226 Sovereignty Trilogy · DACP-v1 · WINDIMail Soberano
+**Version:** 2.28.0
+**Sealed:** 2026-05-02 · §227 Galho B · Dual Server Architecture · §224-226 Mail Trilogy
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -99,6 +99,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-CMS-001 | :8055 | I9,I11,I14 | **LIVE** · Directus 10 · Ledger Bridge :8056 · Sweeper Timer · §219 Baptism of Externality |
 | W-SITES-001 | :8192 | I1,I9,I11,I12,I14 | **LIVE** · Sites Factory · Identity Gate Fork · §220 · PRODUCT-SITES-001 (8/12) |
 | W-MAIL-001 | :25,:587,:993,:8888 | I1,I9,I11,I12,I14 | **LIVE** · Sovereign Email · DACP-v1 · Dual DKIM · SnappyMail · §224-226 |
+| W-OLLAMA-001 | B:11434 | I9,I10,I13 | **LIVE** · Server Gêmeo (85.215.131.0) · mistral:7b · Galho B · §227 |
 | WINDI-PORTAL | static | — | **LIVE** · Internal Control Center · 35 Services · 7 Categories |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
@@ -341,6 +342,60 @@ Nenhum endpoint retorna valores default que mascarem dados ausentes.
 - `WINDI-MAIL-TRILOGY-20260429230632` (§224-226 sealed)
 
 **Files:** `/opt/windi/w-mail-001/` · `proof_bind.py` (DACP implementation)
+
+### §224-226 — W-MAIL-001 Sovereignty Trilogy (30 Apr 2026)
+
+> **"WINDI tem agora canal de email constitucional próprio. Com prova. Com assinatura. Com vista pública."**
+
+**Status:** SEALED · **Receipt:** `WINDI-MAIL-TRILOGY-20260429230632`
+**Hash:** `sha256:ce256dc943c7a22c82b5c09b6b4b7440c3229074606245037473e67bd3612968`
+
+| § | Nome | Descrição |
+|---|------|-----------|
+| §224 | **W-DACP-001 v1** | Auto-inject verify URL in outbound emails |
+| §225 | **Dual DKIM** | RSA-2048 ✅ LIVE · Ed25519 ⏳ DEFERRED |
+| §226 | **WINDIMail Webmail** | mail.windisites.de — SnappyMail autonomous |
+
+**Tests Passed:**
+- mail-tester.com: **10/10**
+- Gmail delivery: **INBOX**
+- DKIM RSA: **PASS**
+- IMAP sync: **✅**
+- Webmail login: **✅**
+
+**Genesis Chain:**
+- `WINDI-WMAIL-001-GENESIS-SMOKE-20260429222000`
+- `WINDI-MAIL-PROOF-20260429222555-D7398F3C`
+- `WINDI-MAIL-PROOF-20260429223209-5959D6AA`
+- `WINDI-MAIL-TRILOGY-20260429230632`
+
+### §227 — Galho B Nascimento: Server Gêmeo + Dual Server Architecture (02 Mai 2026)
+
+> **"We separated thinking from truth."**
+
+**Status:** LIVE · **Server B:** `windi-b` (85.215.131.0) · **Invariants:** I9, I10, I13
+
+**Arquitectura Dual:**
+| Server | IP | Função | Serviços |
+|--------|-----|--------|----------|
+| **A (Galho A)** | 87.106.29.233 | EXECUTE · Soberania | Ledger · DID · Verify · 40+ |
+| **B (Galho B)** | 85.215.131.0 | INTERPRET · Cognição | Ollama · mistral:7b |
+
+**Stack Server B:**
+- Debian 12 · 8 cores · 32GB RAM · 480GB disco
+- Ollama :11434 · mistral:7b (4.4GB, Q4_K_M)
+- UFW: :22 público, :11434 só Server A
+- SSH hardened: `PermitRootLogin no`
+- unattended-upgrades activo
+
+**Princípio Arquitectural:**
+- Galho A = O que É verdade (Ledger, receipts, DIDs)
+- Galho B = O que PENSA (inferência LLM local)
+- B pode falhar sem comprometer A
+- B descartável, A privilegiado
+
+**Conectividade:** `curl http://85.215.131.0:11434/api/tags` ✅
+**Log:** `/opt/windi/sessions/2026-05-02-galho-b-nascimento.md`
 
 ### §217 — P01 Sovereign Risk Score (SRS) (26 Apr 2026)
 
@@ -618,6 +673,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 02 Mai | **§227** Galho B Nascimento · Server Gêmeo · Dual Server Architecture · mistral:7b ✅ |
 | 29-30 Apr | **§224-226** Sovereignty Trilogy · W-MAIL-001 · DACP-v1 · 10/10 mail-tester · Gmail INBOX ✅ |
 | 28 Apr | **§222** Acceptability Framework · §C-ACCEPTABILITY-001 · 4-Layer Defense · `66A0D8B0` ✅ |
 | 28 Apr | **§221** Container Architecture · §B-CONTRACT-001 · MAKEUP Catalog · `1530DBEF` ✅ |

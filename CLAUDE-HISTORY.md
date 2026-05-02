@@ -10406,3 +10406,89 @@ Upstream nginx: `upstream windi_verify { server 127.0.0.1:8114; }`
 *Migrated to CLAUDE-HISTORY.md on 26 Apr 2026 per Overflow Policy*
 *Liga IA+H · Kempten, Bavaria · 2026*
 
+
+---
+
+## §227 — Galho B Nascimento: Server Gêmeo + Dual Server Architecture (02 Mai 2026)
+
+> **"We separated thinking from truth."**
+> — Liga IA+H, 02 Mai 2026
+
+### Contexto
+
+Sessão de bootstrap do Server B (Galho B), separando a camada de inferência (INTERPRET) 
+da camada de execução/soberania (EXECUTE) que vive no Server A.
+
+### Conquistas
+
+- ✅ Server B (windi-b · 85.215.131.0) provisionado via Strato VPS
+- ✅ Debian 12 · 8 cores · 32GB RAM · 480GB disco
+- ✅ User `windi` criado com sudo NOPASSWD
+- ✅ Hostname `windi-b` configurado
+- ✅ Firewall UFW: :22 público, :11434 só Server A (87.106.29.233)
+- ✅ Ollama :11434 instalado e a escutar em `*:11434`
+- ✅ mistral:7b (4.4GB, Q4_K_M) pulled e persistido
+- ✅ SSH hardening: `PermitRootLogin no`
+- ✅ unattended-upgrades activo para patches automáticos
+- ✅ Conectividade A→B validada (curl /api/tags + /api/generate)
+- ✅ Inferência ponta-a-ponta testada ("Hello there! How can I assist you today?")
+
+### Arquitectura Dual Server
+
+\`\`\`
+┌────────────────────────┐     ┌────────────────────────┐
+│   SERVER A (Galho A)   │     │   SERVER B (Galho B)   │
+│   87.106.29.233        │────▶│   85.215.131.0         │
+│   SOBERANIA            │:11434│   COGNIÇÃO             │
+│   Ledger · DID · Verify│     │   Ollama · mistral:7b  │
+│   40+ services         │     │   1 service            │
+└────────────────────────┘     └────────────────────────┘
+\`\`\`
+
+### Princípios Arquitecturais
+
+1. **Separação de Risco:** Se B falhar → nada corrompe o Ledger
+2. **Soberania Computacional:** Inferência local (sem dependência externa)
+3. **Descartabilidade:** Server B é descartável, Server A é privilegiado
+4. **Galho A = verdade:** O que É (Ledger, receipts, DIDs)
+5. **Galho B = pensamento:** O que PENSA (inferência LLM)
+
+### Decisões Técnicas
+
+- OLLAMA_HOST=0.0.0.0 (debug) → migrar para 85.215.131.0 em produção
+- mistral:7b como modelo de arranque → escalar se drift instável
+- Canal A↔B: UFW + SSH directo → WireGuard em fase 2
+- W-LEXICON-001 = endpoint A (orquestração) + inferência B (motor)
+
+### Ficheiros Criados
+
+- `/home/windi/scripts/bootstrap-server-b.sh` — script de bootstrap
+- `/opt/windi/sessions/2026-05-02-galho-b-nascimento.md` — log da sessão
+
+### Zonas Desbloqueadas
+
+| Zona | Antes | Depois |
+|------|-------|--------|
+| Zona 2 (Galho B / Ollama) | 🔴 | 🟢 |
+| Zona 8 (W-OLLAMA Gémeo) | 🔴 | 🟢 |
+| Zona 7 (W-LEXICON inferência B) | 🔴 | 🟢 |
+| Zona 7 (W-LEXICON endpoint A) | 🔴 | 🟡 |
+
+### Próximos Passos (candidatos)
+
+1. I17 selo (30 min)
+2. W-LEXICON-001 endpoint A stub (2h)
+3. CAP-001 runtime (4h)
+4. Berçário plenitude API
+5. W-SITES infra (Meilisearch + MinIO)
+
+### Regras de Ouro Reafirmadas
+
+- Confirmar máquina antes de alterar estado
+- Apresentar script para revisão antes de executar
+- Um comando de cada vez, ler output, depois avançar
+- Ctrl+B + D para detach tmux (não Ctrl+D)
+- Server B descartável — errar lá tem custo zero
+
+---
+
