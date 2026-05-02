@@ -141,7 +141,7 @@ Nenhum endpoint retorna valores default que mascarem dados ausentes.
 
 > **"Session proves presence. Identity proves agency."**
 
-**Status:** CANONICAL · IMMUTABLE · ACTIVE
+**Status:** SEALED · **Receipt:** `5448EB3C`
 
 | Conceito | Mecanismo | Função |
 |----------|-----------|--------|
@@ -782,6 +782,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 - §224-226 DACP-v1 First Proof: `WINDI-MAIL-PROOF-20260429222555-D7398F3C` (Dual Anchored)
 - §224-226 Gmail Proof: `WINDI-MAIL-PROOF-20260429223209-5959D6AA` (INBOX delivery)
 - §224-226 Mail Trilogy: `WINDI-MAIL-TRILOGY-20260429230632` (DACP-v1 · Dual DKIM · Sovereign Email)
+- §194 I17 Invariant: `WINDI-I17-SESSION-IDENTITY-v1.0-20260502153453-5448EB3C` (Agency Invariant)
 
 ---
 
