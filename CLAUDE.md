@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.33.0
-**Sealed:** 2026-05-02 · §232 LEXICON Empirical Dataset · §231 W-LEXICON LIVE
+**Version:** 2.34.0
+**Sealed:** 2026-05-02 · §233 Paper-001 A.3 Core · §232 LEXICON Empirical Dataset
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -678,6 +678,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 |------|-----------|
 | 02 Mai | **§230** W-BERCARIO-001 · Plenitude Tracker · Service Maturity · :8195 ✅ |
 | 02 Mai | **§229** W-CAP-001 · Capability Tokens · Single-use · Token Gating · :8194 ✅ |
+| 02 Mai | **§233** Paper-001 A.3 Core · Empirical + Constitutional · `CDC760DD` ✅ |
 | 02 Mai | **§232** LEXICON Empirical Dataset · 10 Constitutional Cases · `24B69CFF` ✅ |
 | 02 Mai | **§231** W-LEXICON-001 LIVE · First Drift Analysis · `6EE2EF79` ✅ |
 | 02 Mai | **§228** W-LEXICON-001 Stub · Semantic Drift Detection · Ollama Backend · :8193 ✅ |
@@ -793,6 +794,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 - §194 I17 Invariant: `WINDI-I17-SESSION-IDENTITY-v1.0-20260502153453-5448EB3C` (Agency Invariant)
 - §231 LEXICON LIVE: `WINDI-LEXICON-LIVE-FIRST-20260502162321-6EE2EF79` (First Drift Analysis)
 - §232 LEXICON Empirical: `WINDI-LEXICON-EMPIRICAL-001-20260502163408-24B69CFF` (10 Constitutional Cases)
+- §233 Paper-001 A.3 Core: `WINDI-PAPER001-A3-CORE-20260502192316-CDC760DD` (Empirical + Constitutional)
 
 ---
 
