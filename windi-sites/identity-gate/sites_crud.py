@@ -26,7 +26,7 @@ Liga IA+H · Kempten, Bavaria · 2026
 """
 
 from fastapi import APIRouter, HTTPException, Request, Header, Depends
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel, field_validator
 from typing import Optional, List, Dict, Any
 from datetime import datetime, timezone
@@ -35,6 +35,8 @@ import uuid
 import hashlib
 import json
 import requests
+import zipfile
+import io
 
 # ═══════════════════════════════════════════════════════════════════════════
 # CONFIGURATION
@@ -1080,3 +1082,502 @@ async def ai_writer_health():
 
     health = await writer_health()
     return health
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# §4 EXPORT HIGH — SOVEREIGN PACKAGE DELIVERY
+# ═══════════════════════════════════════════════════════════════════════════
+# HIGH tier clients receive a sealed ZIP with everything needed to self-host.
+# The export includes: site data, containers, provenance chain, VERIFY.html
+# ═══════════════════════════════════════════════════════════════════════════
+
+VERIFY_HTML_TEMPLATE = '''<!DOCTYPE html>
+<html lang="en" data-theme="noir">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI Verify — {site_name}</title>
+<style>
+:root {{
+  --noir: #0a0a0f;
+  --gold: #c9a84c;
+  --text: #e2e8f0;
+  --green: #22c55e;
+  --red: #ef4444;
+}}
+* {{ box-sizing: border-box; margin: 0; padding: 0; }}
+body {{
+  background: var(--noir);
+  color: var(--text);
+  font-family: system-ui, sans-serif;
+  padding: 40px 20px;
+  min-height: 100vh;
+}}
+.container {{ max-width: 800px; margin: 0 auto; }}
+h1 {{ color: var(--gold); font-size: 1.8rem; margin-bottom: 8px; }}
+.subtitle {{ color: rgba(226,232,240,0.6); margin-bottom: 32px; }}
+.card {{
+  background: #12121a;
+  border: 1px solid #2a2a3a;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 16px;
+}}
+.label {{ font-size: 0.75rem; color: rgba(226,232,240,0.5); text-transform: uppercase; letter-spacing: 0.05em; }}
+.value {{ font-family: monospace; font-size: 0.9rem; word-break: break-all; margin-top: 4px; }}
+.hash {{ color: var(--gold); }}
+.receipt {{ color: var(--green); }}
+.invariant {{
+  display: inline-block;
+  background: rgba(201,168,76,0.15);
+  color: var(--gold);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  margin: 2px;
+}}
+.footer {{
+  margin-top: 40px;
+  text-align: center;
+  color: rgba(226,232,240,0.4);
+  font-size: 0.8rem;
+}}
+.footer a {{ color: var(--gold); }}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>WINDI Verify</h1>
+  <p class="subtitle">Sovereign Export Package — {site_name}</p>
+
+  <div class="card">
+    <div class="label">Export Receipt</div>
+    <div class="value receipt">{export_receipt}</div>
+  </div>
+
+  <div class="card">
+    <div class="label">Package Hash (SHA-256)</div>
+    <div class="value hash">{package_hash}</div>
+  </div>
+
+  <div class="card">
+    <div class="label">Export Timestamp</div>
+    <div class="value">{export_timestamp}</div>
+  </div>
+
+  <div class="card">
+    <div class="label">Site ID</div>
+    <div class="value">{site_id}</div>
+  </div>
+
+  <div class="card">
+    <div class="label">Owner DID</div>
+    <div class="value">{owner_did}</div>
+  </div>
+
+  <div class="card">
+    <div class="label">Tier</div>
+    <div class="value">{tier}</div>
+  </div>
+
+  <div class="card">
+    <div class="label">Containers</div>
+    <div class="value">{container_count} container(s) exported</div>
+  </div>
+
+  <div class="card">
+    <div class="label">Constitutional Invariants</div>
+    <div class="value">
+      <span class="invariant">I1</span>
+      <span class="invariant">I9</span>
+      <span class="invariant">I11</span>
+      <span class="invariant">I12</span>
+      <span class="invariant">I14</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="label">Verify Online</div>
+    <div class="value">
+      <a href="https://windi-domain.com/verify-public/?id={export_receipt}" target="_blank" style="color: var(--gold);">
+        windi-domain.com/verify-public/?id={export_receipt}
+      </a>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>This package was exported from WINDI Publishing House.</p>
+    <p>"AI processes. Human decides. WINDI guarantees."</p>
+    <p style="margin-top: 16px;">
+      <a href="https://windi-domain.com">windi-domain.com</a>
+    </p>
+  </div>
+</div>
+</body>
+</html>
+'''
+
+
+@sites_router.post("/sites/{site_id}/export")
+async def export_site_package(
+    site_id: str,
+    request: Request
+):
+    """
+    §4 Export HIGH — Sovereign Package Delivery
+
+    Exports a complete site package for HIGH tier clients.
+    The client receives a sealed ZIP that can be self-hosted.
+
+    Requires:
+      - HIGH tier site
+      - Owner or admin DID
+
+    Returns:
+      - ZIP file with site, containers, provenance, VERIFY.html
+      - Export receipt sealed in Ledger (I11)
+
+    Invariants: I1, I9, I11, I12, I14
+    """
+    now = datetime.now(timezone.utc)
+    now_str = now.isoformat()
+    timestamp = now.strftime("%Y%m%d%H%M%S")
+
+    # ─── DID Gate ────────────────────────────────────────────────────────────
+    caller_did = get_caller_did(request)
+    if not caller_did:
+        raise HTTPException(status_code=401, detail="DID required (I9)")
+
+    # ─── Fetch site ──────────────────────────────────────────────────────────
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM sites WHERE id = ?", (site_id,))
+    site = cursor.fetchone()
+
+    if not site:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Site not found (I14)")
+
+    # ─── Verify ownership ────────────────────────────────────────────────────
+    if not verify_site_ownership(site_id, caller_did):
+        conn.close()
+        raise HTTPException(status_code=403, detail="Not authorized to export this site")
+
+    # ─── Verify HIGH tier ────────────────────────────────────────────────────
+    site_tier = site["tier"]
+    if site_tier != "HIGH":
+        conn.close()
+        raise HTTPException(
+            status_code=403,
+            detail=f"Export only available for HIGH tier. Site is {site_tier}. Upgrade to export."
+        )
+
+    # ─── Fetch containers ────────────────────────────────────────────────────
+    cursor.execute(
+        "SELECT * FROM site_containers WHERE site_id = ? AND status != 'deleted'",
+        (site_id,)
+    )
+    containers = cursor.fetchall()
+    conn.close()
+
+    # ─── Build export data ───────────────────────────────────────────────────
+    site_data = {
+        "id": site["id"],
+        "name": site["name"],
+        "subdomain": site["subdomain"],
+        "custom_domain": site["custom_domain"],
+        "tier": site["tier"],
+        "owner_did": site["owner_did"],
+        "company_id": site["company_id"],
+        "status": site["status"],
+        "genesis_receipt": site["genesis_receipt"],
+        "created_at": site["created_at"],
+        "sealed_at": site["sealed_at"]
+    }
+
+    containers_data = []
+    for c in containers:
+        config = json.loads(c["config"]) if c["config"] else {}
+        containers_data.append({
+            "id": c["id"],
+            "site_id": c["site_id"],
+            "container_type": c["container_type"],
+            "config": config,
+            "content_hash": c["content_hash"],
+            "status": c["status"],
+            "genesis_receipt": c["genesis_receipt"],
+            "parent_receipt": c["parent_receipt"],
+            "created_at": c["created_at"],
+            "provenance_chain": json.loads(c["provenance_chain"]) if c["provenance_chain"] else None
+        })
+
+    # ─── Build provenance summary ────────────────────────────────────────────
+    all_receipts = []
+    if site["genesis_receipt"]:
+        all_receipts.append(site["genesis_receipt"])
+
+    for c in containers_data:
+        if c.get("genesis_receipt"):
+            all_receipts.append(c["genesis_receipt"])
+        if c.get("parent_receipt"):
+            all_receipts.append(c["parent_receipt"])
+        if c.get("provenance_chain") and c["provenance_chain"].get("receipts"):
+            all_receipts.extend(c["provenance_chain"]["receipts"])
+
+    # Deduplicate
+    all_receipts = list(dict.fromkeys(all_receipts))
+
+    # ─── Generate receipt ID ─────────────────────────────────────────────────
+    short_hash = hashlib.sha256(site_id.encode()).hexdigest()[:8].upper()
+    receipt_id = f"WINDI-EXPORT-{timestamp}-{short_hash}"
+
+    # ─── Build MANIFEST.json ─────────────────────────────────────────────────
+    manifest = {
+        "windi_export": {
+            "version": "1.0.0",
+            "type": "sovereign_package",
+            "tier": "HIGH"
+        },
+        "export_receipt": receipt_id,
+        "export_timestamp": now_str,
+        "exporter_did": caller_did,
+        "site": site_data,
+        "containers": containers_data,
+        "provenance": {
+            "receipt_chain": all_receipts,
+            "total_receipts": len(all_receipts),
+            "genesis": site["genesis_receipt"]
+        },
+        "invariants": ["I1", "I9", "I11", "I12", "I14"],
+        "verify_url": f"https://windi-domain.com/verify-public/?id={receipt_id}",
+        "instructions": {
+            "deploy": "Upload contents of /site/ to your web server",
+            "verify": "Open VERIFY.html to see provenance and verify online",
+            "ledger": "All receipts remain in WINDI Forensic Ledger for permanent verification"
+        },
+        "legal": {
+            "owner": caller_did,
+            "license": "Content owned by exporter. WINDI provides forensic guarantee.",
+            "note": "AI processes. Human decides. WINDI guarantees."
+        }
+    }
+
+    # ─── Calculate package hash (pre-ZIP) ────────────────────────────────────
+    manifest_json = json.dumps(manifest, indent=2, ensure_ascii=False)
+    package_hash = f"sha256:{hashlib.sha256(manifest_json.encode()).hexdigest()}"
+    manifest["package_hash"] = package_hash
+    manifest_json = json.dumps(manifest, indent=2, ensure_ascii=False)
+
+    # ─── Build VERIFY.html ───────────────────────────────────────────────────
+    verify_html = VERIFY_HTML_TEMPLATE.format(
+        site_name=site["name"],
+        export_receipt=receipt_id,
+        package_hash=package_hash,
+        export_timestamp=now_str,
+        site_id=site_id,
+        owner_did=site["owner_did"],
+        tier=site["tier"],
+        container_count=len(containers_data)
+    )
+
+    # ─── Build ZIP ───────────────────────────────────────────────────────────
+    zip_buffer = io.BytesIO()
+
+    with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zf:
+        # MANIFEST.json
+        zf.writestr("MANIFEST.json", manifest_json)
+
+        # VERIFY.html
+        zf.writestr("VERIFY.html", verify_html)
+
+        # README.txt
+        readme = f"""WINDI Sovereign Export Package
+==============================
+
+Site: {site["name"]}
+Export Receipt: {receipt_id}
+Exported: {now_str}
+
+Contents:
+- MANIFEST.json — Complete site data and provenance chain
+- VERIFY.html — Standalone verification page
+- site/ — Static site files (if generated)
+- containers/ — Individual container data
+
+Verification:
+Open VERIFY.html in your browser, or visit:
+https://windi-domain.com/verify-public/?id={receipt_id}
+
+"AI processes. Human decides. WINDI guarantees."
+— WINDI Publishing House
+"""
+        zf.writestr("README.txt", readme)
+
+        # Site data
+        zf.writestr("site/site.json", json.dumps(site_data, indent=2, ensure_ascii=False))
+
+        # Container data
+        for c in containers_data:
+            container_json = json.dumps(c, indent=2, ensure_ascii=False)
+            zf.writestr(f"containers/{c['id']}.json", container_json)
+
+            # If container has generated content, export as HTML
+            if c.get("config") and c["config"].get("generated_content"):
+                content = c["config"]["generated_content"]
+                # Simple markdown-ish to HTML conversion for now
+                html_content = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{c.get('config', {}).get('title', c.get('container_type', 'Container'))}</title>
+<style>
+body {{ font-family: system-ui, sans-serif; max-width: 800px; margin: 0 auto; padding: 40px 20px; line-height: 1.6; }}
+</style>
+</head>
+<body>
+<article>
+{content}
+</article>
+<footer style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #ccc; font-size: 0.8rem; color: #666;">
+<p>Container: {c['id']}</p>
+<p>Hash: {c.get('content_hash', 'N/A')}</p>
+<p>Verified by WINDI Publishing House</p>
+</footer>
+</body>
+</html>
+"""
+                zf.writestr(f"site/content/{c['id']}.html", html_content)
+
+        # Provenance chain
+        provenance_data = {
+            "export_receipt": receipt_id,
+            "receipt_chain": all_receipts,
+            "site_genesis": site["genesis_receipt"],
+            "exported_at": now_str
+        }
+        zf.writestr("provenance/chain.json", json.dumps(provenance_data, indent=2))
+
+    zip_buffer.seek(0)
+    zip_bytes = zip_buffer.getvalue()
+
+    # ─── Final package hash (actual ZIP) ─────────────────────────────────────
+    final_hash = f"sha256:{hashlib.sha256(zip_bytes).hexdigest()}"
+
+    # ─── Seal to Ledger ──────────────────────────────────────────────────────
+    ledger_payload = {
+        "id": receipt_id,
+        "actor": caller_did,
+        "app": "w-sites-001",
+        "doc_type": "doc",
+        "doc_name": f"Sovereign Export: {site['name']}",
+        "governance_level": "HIGH",
+        "content_hash": final_hash,
+        "sge_score": 0,
+        "metadata": {
+            "site_id": site_id,
+            "tier": "HIGH",
+            "container_count": len(containers_data),
+            "receipt_chain_length": len(all_receipts),
+            "export_type": "sovereign_package"
+        }
+    }
+
+    ledger_response = {"ok": False, "reason": "not_attempted"}
+    try:
+        resp = requests.post(LEDGER_URL, json=ledger_payload, timeout=5.0)
+        ledger_response = resp.json()
+    except Exception as e:
+        ledger_response = {"ok": False, "error": str(e)}
+
+    # ─── Return ZIP ──────────────────────────────────────────────────────────
+    filename = f"windi-export-{site_id[:8]}-{timestamp}.zip"
+
+    return StreamingResponse(
+        io.BytesIO(zip_bytes),
+        media_type="application/zip",
+        headers={
+            "Content-Disposition": f'attachment; filename="{filename}"',
+            "X-WINDI-Export-Receipt": receipt_id,
+            "X-WINDI-Package-Hash": final_hash,
+            "X-WINDI-Ledger-Sealed": str(ledger_response.get("ok", False))
+        }
+    )
+
+
+@sites_router.get("/sites/{site_id}/export/preview")
+async def preview_export(
+    site_id: str,
+    request: Request
+):
+    """
+    Preview what would be exported (without generating ZIP).
+
+    Useful for HIGH tier clients to see package contents before export.
+    """
+    caller_did = get_caller_did(request)
+    if not caller_did:
+        raise HTTPException(status_code=401, detail="DID required (I9)")
+
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM sites WHERE id = ?", (site_id,))
+    site = cursor.fetchone()
+
+    if not site:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Site not found")
+
+    if not verify_site_ownership(site_id, caller_did):
+        conn.close()
+        raise HTTPException(status_code=403, detail="Not authorized")
+
+    cursor.execute(
+        "SELECT id, container_type, content_hash, status, genesis_receipt FROM site_containers WHERE site_id = ? AND status != 'deleted'",
+        (site_id,)
+    )
+    containers = cursor.fetchall()
+    conn.close()
+
+    # Collect all receipts from site genesis and containers
+    all_receipts = []
+    if site["genesis_receipt"]:
+        all_receipts.append(site["genesis_receipt"])
+
+    # Containers have provenance_chain, not sites
+    for c in containers:
+        if c["genesis_receipt"]:
+            all_receipts.append(c["genesis_receipt"])
+
+    return {
+        "site_id": site_id,
+        "site_name": site["name"],
+        "tier": site["tier"],
+        "export_available": site["tier"] == "HIGH",
+        "upgrade_required": site["tier"] != "HIGH",
+        "containers": [
+            {
+                "id": c["id"],
+                "type": c["container_type"],
+                "hash": c["content_hash"],
+                "status": c["status"]
+            }
+            for c in containers
+        ],
+        "container_count": len(containers),
+        "provenance_receipts": len(all_receipts),
+        "genesis_receipt": site["genesis_receipt"],
+        "package_contents": [
+            "MANIFEST.json",
+            "VERIFY.html",
+            "README.txt",
+            "site/site.json",
+            f"containers/*.json ({len(containers)} files)",
+            "site/content/*.html (generated content)",
+            "provenance/chain.json"
+        ],
+        "invariants": ["I1", "I9", "I11", "I12", "I14"],
+        "note": "Use POST /api/sites/{site_id}/export to generate and download the package" if site["tier"] == "HIGH" else "Upgrade to HIGH tier to enable export"
+    }
