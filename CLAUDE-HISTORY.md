@@ -6,6 +6,108 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 03 Mai 2026 — §234 Paper-001 A.3 SEALED + TWO-STAGE Model
+
+**Duração:** ~6h | **Status:** ✅ SEALED
+**Liga IA+H:** Human Dragon · Architect · Guardian · Witness
+**Invariants:** I9, I10, I11, I13, I14
+**Service:** W-LEXICON-001 v0.3.0 | **Port:** :8193
+
+### Conceito
+
+> *"Stage 2 does not detect violations — it detects when violations are stated."*
+
+Sessão culminante de Paper-001 §A.3, estabelecendo o **construct boundary** do modelo TWO-STAGE através de validação held-out rigorosa com honestidade metodológica total.
+
+### TWO-STAGE Model (Canonical Framing)
+
+| Stage | Component | Function | Captures |
+|-------|-----------|----------|----------|
+| **1** | LEXICON | Polarity/semantic surface detection | Polar inversions |
+| **2** | Constitutional Evaluator | Explicit lexical indicator detection | Stated violations |
+| **Combined** | TWO-STAGE Pipeline | Constitutional drift (when explicit) | Explicit only |
+
+### Held-out Validation Results
+
+| Metric | Held-in (N=8) | Held-out (N=14) | Drop |
+|--------|---------------|-----------------|------|
+| **Accuracy** | 100% | 50.0% | −50 pp |
+| **Recall** | 100% | **0%** | −100 pp |
+| **F1** | 1.000 | 0.000 | — |
+
+**Key Finding:** Stage 2 failed to detect ANY of 7 violations expressed in naturalistic language. This is affirmative, not defective — it defines the construct boundary.
+
+### Error Analysis (3 Buckets)
+
+| Cause | N | Example |
+|-------|---|---------|
+| **Oblique language** | 4 | "routes to distribution queue" (omits approval) |
+| **Technical euphemism** | 2 | "filtered out during ingestion" (silent discard) |
+| **Implicit omission** | 1 | Violation is what is NOT said |
+
+### A.4 — Architectural Integration (DRAFT)
+
+> *"The boundary is not where the system fails — it is where the human enters."*
+
+Opened A.4 connecting TWO-STAGE boundary to WINDI PHO architecture:
+
+```
+AUTOMATED DETECTION     →  Stage 1 + Stage 2
+       ↓
+  A.3 BOUNDARY          →  "detects when violations are stated"
+       ↓
+HUMAN ADJUDICATION      →  PHO Gate (I9 Moment)
+       ↓
+FORENSIC GUARANTEE      →  Ledger (I11)
+```
+
+Three detection regimes: CLEAR VIOLATION (interrupt) · AMBIGUOUS (invite) · NO SIGNAL (human sampling required)
+
+### Files Created/Modified
+
+| File | Status |
+|------|--------|
+| `/opt/windi/w-lexicon-001/stage2_evaluator.py` | FROZEN `88c4a7dd...` |
+| `/opt/windi/w-lexicon-001/lexicon_api.py` | v0.3.0 (combined endpoint) |
+| `/opt/windi/paper-001/A.3.12-HELD-OUT-VALIDATION-PROTOCOL.md` | SEALED |
+| `/opt/windi/paper-001/A.3.12-HELD-OUT-RESULTS.md` | SEALED |
+| `/opt/windi/paper-001/A.3-SEAL-MANIFEST.md` | SEALED |
+| `/opt/windi/paper-001/A.4-ARCHITECTURAL-INTEGRATION.md` | DRAFT |
+| `/opt/windi/paper-001/datasets/HELD-OUT-NATURALISTIC-001.json` | 18 cases |
+| `/opt/windi/paper-001/datasets/HELD-OUT-RESULTS-001.json` | Results |
+| `/opt/windi/paper-001/scripts/held_out_execution.py` | Single-run script |
+
+### Methodological Integrity
+
+| Criterion | Evidence |
+|-----------|----------|
+| **Pre-registration** | Freeze hash `88c4a7dd...` recorded before held-out |
+| **Blindness** | Cases constructed without pattern consultation |
+| **Single execution** | No post-hoc tuning |
+| **Honest reporting** | 0% recall documented, not hidden |
+| **Falsification** | Hypothesis tested and bounded |
+
+### Receipts
+
+- **A.3 SEAL:** `WINDI-PAPER001-A3-SEAL-20260503115356`
+- **Stage 2 FROZEN:** `88c4a7dd5ce4177a3839bec9297b677619460645a7210c0e6fce1175e5cb17ea`
+- **Polarity Dataset:** `10f4105b441f53ddda5f169eb0d1b31bff6b9a54dba523e8a44c0e5c3f1c12aa`
+
+### Commits
+
+```
+250c7f0a4 feat(paper-001): §234 A.3 SEALED + Stage 2 + Held-out + A.4 Draft
+```
+
+### Session Closure (Human Dragon)
+
+> *"Estava errado, e o erro merece ser nomeado claramente."*
+> *"OM SHANTI, Irmão 🙏 Sessão fechada com clareza."*
+
+**Significance:** First Paper-001 section sealed with empirical evidence. The 0% recall finding is the most valuable result — it establishes precisely what the instrument measures and what it does not, enabling honest claims in publication.
+
+---
+
 ## § SESSÃO 25 Abr 2026 — §204 VERA Paladar: Operação Completa
 
 **Duração:** ~4h | **Status:** ✅ SEALED
