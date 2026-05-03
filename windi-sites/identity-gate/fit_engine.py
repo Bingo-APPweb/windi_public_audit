@@ -593,7 +593,147 @@ async def fit_stats():
         conn.close()
 
 # ═══════════════════════════════════════════════════════════════════════════
+# §5.1 TRANSPARENCY ENDPOINT — /fit/me
+# ═══════════════════════════════════════════════════════════════════════════
+# Constitutional requirement: User must be able to see their own FIT.
+# "User is author, not product" — if you measure without showing, you're Google.
+# ═══════════════════════════════════════════════════════════════════════════
+
+def get_layer_description(level: int) -> str:
+    """Human-readable description of each layer."""
+    descriptions = {
+        1: "You're exploring. The system is learning your patterns.",
+        2: "You're making decisions. Interactive features are available.",
+        3: "You're building with guidance. Templates and basic creation unlocked.",
+        4: "You're operating autonomously. Full creation capabilities active.",
+        5: "You're a sovereign operator. Enterprise and governance tools available."
+    }
+    return descriptions.get(level, "Unknown layer")
+
+def get_next_layer_hint(level: int, dimensions: Dict[str, float]) -> Optional[Dict[str, Any]]:
+    """What the user needs to reach the next layer."""
+    if level >= 5:
+        return None  # Already at max
+
+    next_level = level + 1
+    next_threshold = list(FIT_THRESHOLDS.values())[next_level]
+    next_name = get_layer_name(next_level)
+
+    # Find weakest dimension
+    weakest = min(dimensions.items(), key=lambda x: x[1])
+
+    return {
+        "next_layer": next_name,
+        "threshold": next_threshold,
+        "hint": f"Your '{weakest[0]}' dimension ({weakest[1]:.1%}) has room to grow.",
+        "suggestion": get_dimension_suggestion(weakest[0])
+    }
+
+def get_dimension_suggestion(dimension: str) -> str:
+    """Concrete suggestion for improving a dimension."""
+    suggestions = {
+        "presence": "Spend more time exploring and returning to the platform.",
+        "decision": "Make deliberate choices — fewer corrections means clearer thinking.",
+        "consistency": "Establish steady patterns in how you work.",
+        "recovery": "When errors happen, resolve them — that builds resilience.",
+        "autonomy": "Try more complex tasks without relying on defaults.",
+        "governance": "Follow the approval flow — publish with verification."
+    }
+    return suggestions.get(dimension, "Continue using the platform thoughtfully.")
+
+@fit_router.get("/me")
+async def fit_me(request: Request):
+    """
+    Show the user their own FIT profile.
+
+    TRANSPARENCY ENDPOINT — Constitutional requirement.
+    The user has the right to know:
+    - Their current FIT score and layer
+    - How each dimension is calculated
+    - What capabilities are unlocked
+    - What they need to reach the next level
+
+    This is not gamification. This is auditability.
+    """
+    caller_did = get_caller_did(request)
+    if not caller_did:
+        return {
+            "authenticated": False,
+            "message": "Sign in to see your operational maturity profile.",
+            "note": "Without identity, the system observes but does not attribute."
+        }
+
+    conn = get_fit_db()
+    cursor = conn.cursor()
+
+    try:
+        # Get current FIT score
+        cursor.execute("SELECT * FROM fit_scores WHERE did = ?", (caller_did,))
+        row = cursor.fetchone()
+
+        if not row:
+            # New user, no events yet
+            return {
+                "authenticated": True,
+                "did": caller_did,
+                "fit_score": 0.0,
+                "fit_level": 1,
+                "layer": "LIVE",
+                "layer_description": get_layer_description(1),
+                "dimensions": {
+                    "presence": 0.0,
+                    "decision": 0.0,
+                    "consistency": 0.0,
+                    "recovery": 0.0,
+                    "autonomy": 0.0,
+                    "governance": 0.0
+                },
+                "dimension_weights": FIT_WEIGHTS,
+                "total_events": 0,
+                "capabilities": get_capabilities(1),
+                "next_level": get_next_layer_hint(1, {"presence": 0, "decision": 0, "consistency": 0, "recovery": 0, "autonomy": 0, "governance": 0}),
+                "transparency_note": "This is your operational maturity profile. The system observes your patterns to unlock capabilities — and you can always see what it sees."
+            }
+
+        dimensions = {
+            "presence": row["presence"],
+            "decision": row["decision"],
+            "consistency": row["consistency"],
+            "recovery": row["recovery"],
+            "autonomy": row["autonomy"],
+            "governance": row["governance"]
+        }
+
+        return {
+            "authenticated": True,
+            "did": caller_did,
+            "fit_score": row["fit_score"],
+            "fit_level": row["fit_level"],
+            "layer": get_layer_name(row["fit_level"]),
+            "layer_description": get_layer_description(row["fit_level"]),
+            "dimensions": dimensions,
+            "dimension_weights": FIT_WEIGHTS,
+            "dimension_explanations": {
+                "presence": "How actively you engage with the platform",
+                "decision": "Quality and clarity of your choices",
+                "consistency": "Stability of your behavioral patterns",
+                "recovery": "How you handle and resolve errors",
+                "autonomy": "Independence in complex tasks",
+                "governance": "Adherence to verification and approval flows"
+            },
+            "total_events": row["total_events"],
+            "last_activity": row["last_event_at"],
+            "capabilities": get_capabilities(row["fit_level"]),
+            "next_level": get_next_layer_hint(row["fit_level"], dimensions),
+            "transparency_note": "This is your operational maturity profile. The system observes your patterns to unlock capabilities — and you can always see what it sees.",
+            "constitutional_basis": "I2 (Transparency of Process) — You have the right to know how you are being evaluated."
+        }
+
+    finally:
+        conn.close()
+
+# ═══════════════════════════════════════════════════════════════════════════
 # MODULE EXPORT
 # ═══════════════════════════════════════════════════════════════════════════
 
-print("[FIT-ENGINE] W-FIT-001 loaded (invisible maturity system)")
+print("[FIT-ENGINE] W-FIT-001 loaded (observable maturity system — /fit/me available)")
