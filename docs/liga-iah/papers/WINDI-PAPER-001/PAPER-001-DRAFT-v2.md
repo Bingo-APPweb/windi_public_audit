@@ -5,9 +5,10 @@
 
 ```
 Document ID   : WINDI-PAPER-001
-Version       : 2.0 (Draft)
+Version       : 2.1 (Draft)
 Status        : DRAFT
-Date          : 25 April 2026
+Date          : 3 May 2026
+Previous      : v2.0 (25 April 2026)
 Authors       : Liga IA+H (WINDI Publishing House)
 Sealed Ref    : PoE-METHODOLOGY-HARDENING-20260425
 ```
@@ -238,7 +239,28 @@ This creates a deterministic gate:
 
 There is no intermediate state in which an action executes without proof.
 
-### 3.6 Non-Overridability and System Integrity
+### 3.6 Receipt Symmetry as Structural Property
+
+The model rests on a foundational property we term **Receipt Symmetry**:
+
+> **Proposition 1 (Receipt Symmetry).**
+> For every act α that the system performs and every claim c that the system makes:
+>
+> `hash(receipt(α, t_execution)) ≡ hash(receipt(α, t_audit))`
+>
+> The cryptographic hash of the artifact at the moment of execution and the cryptographic hash of the artifact at the moment of audit must coincide.
+
+This property has three immediate corollaries:
+
+| Corollary | Statement |
+|-----------|-----------|
+| **1.1** | An action without a receipt is epistemically non-existent. |
+| **1.2** | A receipt that cannot be reproduced is evidence of tampering. |
+| **1.3** | Receipt Symmetry distinguishes forensic records from logs. |
+
+A log is what a system *says* happened. A forensic record is what the chain *proves* happened, and what the chain prevents from being silently rewritten. Receipt Symmetry is what makes independent verification possible: the same artifact that proves execution at runtime proves it to any auditor later, without requiring trust in the system that generated it.
+
+### 3.7 Non-Overridability and System Integrity
 
 A critical property of the model is that admissibility enforcement is non-overridable.
 
@@ -250,7 +272,7 @@ This eliminates a common weakness in governance systems, where enforcement mecha
 
 **System integrity is therefore defined not by compliance with policies, but by inability to violate admissibility conditions.**
 
-### 3.7 Transition to Empirical Evidence
+### 3.8 Transition to Empirical Evidence
 
 Having defined the WINDI governance model, the next section presents an empirical case in which the model was subjected to external adversarial review.
 
@@ -656,6 +678,65 @@ The empirical case presented in Section 4 can be independently verified:
 
 ---
 
-*WINDI-PAPER-001 v2.0 · Liga IA+H · Kempten, Bavaria · April 2026*
+## Appendix B: Operational Empirical Grounding
+
+Beyond the methodological hardening event of Section 4, the WINDI system provides broader empirical evidence of the governance model in operation. This appendix reports system-level metrics captured on May 3, 2026.
+
+### B.1 Scale of Operation
+
+| Metric | Value | Significance |
+|--------|-------|--------------|
+| **Constitutional sections (§)** | 233 | Each section represents a sealed governance decision |
+| **W-* Agents deployed** | 39 | Independent services operating under invariant constraints |
+| **Active services (ports 8xxx)** | 55 | Runtime infrastructure demonstrating operational scale |
+| **Receipts in Forensic Ledger** | 50 | Immutable execution evidence (I11) |
+| **IRREMEDIABLE invariants** | 11 | Non-negotiable constraints that cannot be overridden |
+
+### B.2 Zero-Violation Record
+
+At the time of writing, the system records **zero constitutional violations**. This is not a claim of perfection but an observable property: every action that reached the ledger satisfied its admissibility conditions at execution time. Actions that failed admissibility checks were explicitly rejected (I14) rather than silently degraded.
+
+The absence of violations is itself a verifiable claim: any violation would produce a receipt with anomalous metadata, detectable by independent audit.
+
+### B.3 LEXICON Empirical Dataset (§232)
+
+The LEXICON-EMPIRICAL-001 dataset provides the first quantitative characterization of constitutional drift detection:
+
+| Statistic | Value |
+|-----------|-------|
+| Total cases | 10 |
+| Mean drift score | 49.5 |
+| Maximum drift | 100 (I13 — Convergence inversion) |
+| Critical cases (drift ≥ 50) | 6 |
+| Zero-drift controls | 2 |
+| Invariants tested | I1, I9, I10, I11, I12, I13, I14 |
+
+The dataset is sealed under receipt `WINDI-LEXICON-EMPIRICAL-001-20260502163408-24B69CFF` and independently verifiable.
+
+### B.4 Constitutional Chain
+
+Key receipts establishing the governance chain:
+
+| Receipt | Date | Significance |
+|---------|------|--------------|
+| `WINDI-PAPER001-A3-CORE-20260502-CDC760DD` | 2026-05-02 | Paper-001 empirical core sealed |
+| `WINDI-LEXICON-LIVE-FIRST-20260502-6EE2EF79` | 2026-05-02 | First LEXICON drift analysis |
+| `WINDI-MAIL-TRILOGY-20260429` | 2026-04-29 | Sovereign email infrastructure |
+| `WINDI-CONTRACT-B-001-v1.0-1530DBEF` | 2026-04-28 | Container architecture contract |
+| `WINDI-KEYGEN-001-DBED5A85` | 2026-04-26 | Root key ceremony |
+
+Each receipt is independently verifiable at `https://windi-domain.com/verify-public/?id={receipt_id}`.
+
+### B.5 Methodological Note
+
+The metrics reported in this appendix are not static. They represent a snapshot of a living system. The governance model predicts that as the system evolves, the receipt count will increase, but the violation count will remain zero or produce explicit, traceable anomalies.
+
+This is the empirical test the model proposes: **governance that works produces evidence; governance that fails produces traceable failure.**
+
+---
+
+*WINDI-PAPER-001 v2.1 · Liga IA+H · Kempten, Bavaria · May 2026*
+
+*"AI processes. Human decides. WINDI guarantees."*
 
 *"AI processes. Human decides. WINDI guarantees."*
