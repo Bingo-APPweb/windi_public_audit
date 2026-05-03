@@ -17,50 +17,52 @@ Sealed Ref    : PoE-METHODOLOGY-HARDENING-20260425
 
 ## Abstract
 
-Current AI governance frameworks emphasize validation, auditability, and post-hoc accountability. However, they do not guarantee that system actions are admissible at the moment of execution. This gap allows systems to produce outcomes without provable authorization under the governing conditions active at runtime.
+Current AI governance frameworks position systems as actors whose outputs require human review. This framing inadvertently delegates decision authority to the system, with humans relegated to oversight after the fact. The result is a structural gap: systems produce outcomes, and governance mechanisms attempt to constrain them retrospectively.
 
-This paper introduces a governance model centered on admissibility at execution time, where every action must be justified by verifiable authority before it becomes real. The model is implemented through a set of non-overridable invariants, a Proof of Human Oversight (PHO) mechanism, and a cryptographic forensic ledger that records execution receipts as immutable evidence.
+This paper inverts the paradigm. We introduce a Non-Decision Architecture (NDA) in which the system is structurally precluded from making decisions. The system processes; it does not decide. Human authority is not oversight of system decisions—it is the exclusive locus of decision itself.
 
-We present an empirical methodological hardening event triggered by external adversarial review, in which identified epistemic and procedural fissures were formally integrated into the system through deterministic updates. The transformation is captured and sealed as a verifiable receipt, establishing a reproducible chain of governance evolution.
+The architecture is formalized through the Receipt Symmetry Axiom: every processed event produces a cryptographic receipt that (i) proves occurrence, (ii) chains to prior evidence, (iii) commits before output delivery, and (iv) guarantees internal-external identity. The absence of a receipt is constitutive proof that an event did not occur under governance.
 
-The results demonstrate that governance can be operationalized as a runtime enforcement property rather than a retrospective assessment. This approach enables systems to evolve under adversarial pressure while preserving verifiability, offering a new foundation for trustworthy AI in high-stakes environments.
+Critically, the forensic ledger is not an audit trail of what the system decided. It is proof that no decision was delegated. Receipts do not record system actions—they prove the boundary of system authority.
+
+We validate this model empirically through 56,000+ sealed receipts across 50 constitutional acts, with zero invariant violations recorded. An external adversarial review exposed methodological fissures, which were deterministically integrated and sealed as verifiable receipts, demonstrating that governance evolution itself can be cryptographically proven.
+
+The contribution is architectural: by eliminating the decision-delegation gap at the structural level, the model offers a foundation for AI systems in which human authority is not asserted but proven, and system limits are not claimed but demonstrated. The model is deployed in production by WINDI Publishing House under the Liga IA+H constitutional framework (Kempten, Bavaria).
 
 ---
 
 ## 1. Introduction
 
-The rapid deployment of AI systems in decision-critical environments has exposed a fundamental limitation in current governance approaches. Existing frameworks focus on whether systems are well-designed, tested, or auditable, but do not address a more immediate and decisive question:
+The rapid deployment of AI systems in decision-critical environments has exposed a fundamental structural problem in current governance approaches. Existing frameworks assume that systems make decisions which humans must then oversee, constrain, or audit. This assumption inadvertently delegates decision authority to the system, positioning humans as reviewers rather than deciders.
 
-> **Was the system allowed to act at the moment it acted?**
+We challenge this framing with a different question:
 
-This distinction separates two fundamentally different concerns:
+> **Can a system be architected so that it structurally cannot decide—only process?**
 
-1. whether a system can generate valid outputs
-2. whether it is authorized to execute those outputs under current conditions
+This question separates two fundamentally different governance paradigms:
 
-Most governance architectures implicitly collapse these layers. Validation ensures that a system can behave correctly, while auditability ensures that its behavior can be reconstructed after the fact. Neither guarantees that an action was admissible at the exact moment of execution.
+1. **Decision-oversight paradigm:** The system decides; humans review and constrain.
+2. **Non-decision paradigm:** The system processes; humans exclusively decide.
 
-Recent discussions in AI governance have highlighted related tensions between decision ownership and system authority. As noted by Demarius J. Lawson, validation does not resolve who is accountable for outcomes. Similarly, John M. Willis emphasizes the need for runtime governance mechanisms that constrain system behavior at execution time. However, existing approaches remain largely descriptive or control-plane oriented, lacking a unified mechanism that ties authorization, execution, and evidence into a single verifiable structure.
+Most governance architectures operate within the first paradigm. Validation ensures that a system can behave correctly; auditability ensures that its behavior can be reconstructed; human-in-the-loop mechanisms ensure that humans can intervene. But all of these presuppose that the system is the locus of action, with humans providing boundaries.
 
-This paper proposes a different approach: **admissibility as a first-class runtime property**.
+Recent discussions in AI governance have highlighted related tensions. As noted by Demarius J. Lawson, validation does not resolve who is accountable for outcomes—it assumes accountability can be distributed. Similarly, John M. Willis emphasizes the need for runtime governance mechanisms, but within a framework where systems still act and humans constrain. The Art. 14 EU AI Act requirement for "human oversight" operates within this same paradigm: the system acts, the human oversees.
 
-In this model, an action is not considered valid because it can be explained or audited later. It is valid only if it can be proven, at the moment of execution, that:
+This paper proposes a structural inversion: **the Non-Decision Architecture (NDA)**.
 
-1. the action is authorized under the governing rules
-2. the authorization is non-overridable
-3. the authorization is recorded as immutable evidence
+In NDA, the system does not produce decisions that require oversight. It produces **AI-processed evidence** that humans use to make decisions. The distinction is not semantic—it is architectural:
 
-To operationalize this, we introduce a system architecture based on:
+1. The system cannot execute without human authorization (Proof of Human Oversight)
+2. Authorization is non-overridable at runtime (Constitutional Invariants)
+3. Every processed event produces a receipt proving non-delegation (Receipt Symmetry Axiom)
 
-- constitutional invariants that cannot be bypassed
-- a Proof of Human Oversight (PHO) requirement for critical actions
-- a cryptographic forensic ledger that records execution receipts
+The forensic ledger in this model is not an audit trail of system decisions. It is proof that no decision was delegated. Receipts do not record what the system did—they prove the boundary of what the system could not exceed.
 
-The central claim of this paper is that **governance must be resolved at execution time, not inferred afterward**.
+The central claim of this paper is that **governance is not oversight of system decisions; it is structural preclusion of delegation**.
 
-To support this claim, we present an empirical case: a methodological hardening event triggered by external adversarial review. During this event, structural weaknesses in the system's epistemology and methodology were exposed and subsequently integrated into the framework through deterministic updates. The transformation was sealed as a cryptographic receipt, creating a verifiable record of governance evolution.
+To support this claim, we present empirical evidence: 56,000+ sealed receipts across 50 constitutional acts, with zero invariant violations. An external adversarial review triggered a methodological hardening event, in which identified fissures were deterministically integrated and sealed as verifiable receipts. This demonstrates that governance evolution itself can be cryptographically proven.
 
-This case serves not as an illustration, but as evidence: it demonstrates that a system can absorb external critique, modify its governing structure, and produce a verifiable record of that transformation without losing coherence or authority.
+This case serves not as illustration, but as evidence: it shows that a system can absorb external critique, transform its governing structure, and produce verifiable proof of that transformation—all without ever having been delegated decision authority in the first place.
 
 ---
 
@@ -239,26 +241,35 @@ This creates a deterministic gate:
 
 There is no intermediate state in which an action executes without proof.
 
-### 3.6 Receipt Symmetry as Structural Property
+### 3.6 The Receipt Symmetry Axiom
 
-The model rests on a foundational property we term **Receipt Symmetry**:
+The model rests on a foundational property we formalize as an axiom:
 
-> **Proposition 1 (Receipt Symmetry).**
-> For every act α that the system performs and every claim c that the system makes:
+> **Axiom 1 (Receipt Symmetry).**
+> For every event E processed within the system, there exists a receipt R such that:
 >
-> `hash(receipt(α, t_execution)) ≡ hash(receipt(α, t_audit))`
+> (i) **Proof of Occurrence:** R contains a cryptographic hash of E, establishing verifiable evidence that the event occurred.
 >
-> The cryptographic hash of the artifact at the moment of execution and the cryptographic hash of the artifact at the moment of audit must coincide.
+> (ii) **Chain of Evidence:** R contains a cryptographic hash of the immediately preceding receipt R₋₁, forming an immutable chain of evidence.
+>
+> (iii) **Pre-Delivery Commitment:** R is sealed prior to the delivery of any system output derived from E.
+>
+> (iv) **Symmetry Condition:** R is symmetric: the information recorded internally by the system is identical to the information that can be externally audited. No divergence between internal state and external verification is permitted.
 
-This property has three immediate corollaries:
+**Corollary 1.1 (Non-Occurrence by Absence).**
+The absence of a receipt R corresponding to an event E constitutes constitutive evidence that E did not occur under system governance.
 
-| Corollary | Statement |
-|-----------|-----------|
-| **1.1** | An action without a receipt is epistemically non-existent. |
-| **1.2** | A receipt that cannot be reproduced is evidence of tampering. |
-| **1.3** | Receipt Symmetry distinguishes forensic records from logs. |
+**Corollary 1.2 (Tamper Evidence).**
+A receipt that cannot be reproduced from its recorded hash is evidence of tampering. The chain is self-auditing.
 
-A log is what a system *says* happened. A forensic record is what the chain *proves* happened, and what the chain prevents from being silently rewritten. Receipt Symmetry is what makes independent verification possible: the same artifact that proves execution at runtime proves it to any auditor later, without requiring trust in the system that generated it.
+**Corollary 1.3 (Forensic Distinguishability).**
+Receipt Symmetry distinguishes forensic records from logs. A log is what a system *says* happened. A receipt chain is what the system *proves* happened—and what it cannot silently rewrite.
+
+The four clauses of Axiom 1 collectively establish that WINDI receipts are not mere records but **proofs**. Clause (i) binds existence to evidence. Clause (ii) binds time to structure. Clause (iii) binds commitment to consequence. Clause (iv) binds internal state to external auditability.
+
+Together, they operationalize the principle: **what cannot be proven did not happen; what can be proven cannot be denied**.
+
+This axiom implies that the system does not produce decisions in the conventional sense. Instead, it produces evidence of processing under conditions where delegation of decision-making is structurally precluded. As a result, system outputs must be interpreted as **AI-processed evidence**, not as decisions attributable to the system.
 
 ### 3.7 Non-Overridability and System Integrity
 
