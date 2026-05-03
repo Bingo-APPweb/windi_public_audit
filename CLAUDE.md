@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.39.0
-**Sealed:** 2026-05-03 · §239 Receipt Visual Compliance · Send Proof forensic-grade
+**Version:** 2.40.0
+**Sealed:** 2026-05-03 · §241 W-CORTEX-001 Tier Routing · Phase 2 SEALED
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -103,6 +103,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-LEXICON-001 | :8193 | I9,I10,I13,I14 | **LIVE** v0.3.0 · TWO-STAGE Model · Stage 2 Evaluator · Paper-001 A.3 SEALED |
 | W-CAP-001 | :8194 | I1,I9,I11,I14 | **LIVE** · Capability Tokens · Single-use · SaaS Gate · §229 |
 | W-BERCARIO-001 | :8195 | I1,I9,I11,I14 | **LIVE** · Plenitude Tracker · Service Maturity · §230 |
+| W-CORTEX-001 | — | I1,I9,I10,I14 | **SEALED** · Canal Único Soberano · 3-Tier Routing · §241 `04C67B81` |
 | WINDI-PORTAL | static | — | **LIVE** · Internal Control Center · 35 Services · 7 Categories |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
@@ -399,6 +400,28 @@ Nenhum endpoint retorna valores default que mascarem dados ausentes.
 
 **Conectividade:** `curl http://85.215.131.0:11434/api/tags` ✅
 **Log:** `/opt/windi/sessions/2026-05-02-galho-b-nascimento.md`
+
+### §241 — W-CORTEX-001: Canal Único Soberano de Inferência (03 Mai 2026)
+
+> **"Every token now passes through a decision of cost, speed, and sovereignty."**
+
+**Status:** SEALED · **Receipt:** `04C67B81` · **Invariants:** I1, I9, I10, I14
+
+**3-Tier Routing:**
+| Tier | Backend | Latency | Cost |
+|------|---------|---------|------|
+| FREE | Ollama B (mistral:7b) | ~5min | €0.00 |
+| MED | Mistral API | ~30s | ~€0.007/1k |
+| HIGH | Claude API (sonnet-4) | ~30s | ~€0.02/1k |
+
+**Pipeline:** DID Gate → Tier Resolution → INPUT Filter → Routing → OUTPUT Filter → Seal
+
+**Escalation Rules:**
+- DID tier_level determines MAX allowed tier (1-2→FREE, 3→MED, 4→HIGH)
+- Downgrade allowed, escalation blocked (403)
+
+**Trilateral Tests:** 5/5 passed (FREE, HIGH, MED-fail, Escalation, Downgrade)
+**Files:** `ai_writer_runtime.py` · `sites_crud.py` · `ai_draft.py`
 
 ### §235 — W-SITES-001 Sprint 1 LIVE @ windisites.de (03 Mai 2026)
 
@@ -711,6 +734,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | 03 Mai | **§236** Send Proof to Email · W-MAIL-001 · verify.html modal · rate limit ✅ |
 | 02 Mai | **§230** W-BERCARIO-001 · Plenitude Tracker · Service Maturity · :8195 ✅ |
 | 02 Mai | **§229** W-CAP-001 · Capability Tokens · Single-use · Token Gating · :8194 ✅ |
+| 03 Mai | **§241** W-CORTEX-001 Tier Routing · Phase 2 SEALED · 5/5 Tests · `04C67B81` ✅ |
 | 02 Mai | **§233** Paper-001 A.3 Core · Empirical + Constitutional · `CDC760DD` ✅ |
 | 02 Mai | **§232** LEXICON Empirical Dataset · 10 Constitutional Cases · `24B69CFF` ✅ |
 | 02 Mai | **§231** W-LEXICON-001 LIVE · First Drift Analysis · `6EE2EF79` ✅ |
@@ -828,6 +852,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 - §231 LEXICON LIVE: `WINDI-LEXICON-LIVE-FIRST-20260502162321-6EE2EF79` (First Drift Analysis)
 - §232 LEXICON Empirical: `WINDI-LEXICON-EMPIRICAL-001-20260502163408-24B69CFF` (10 Constitutional Cases)
 - §233 Paper-001 A.3 Core: `WINDI-PAPER001-A3-CORE-20260502192316-CDC760DD` (Empirical + Constitutional)
+- §241 W-CORTEX-001: `WINDI-CORTEX-001-TIER-ROUTING-20260503215111-04C67B81` (3-Tier Routing · Phase 2 SEALED)
 - §234 Paper-001 A.3 SEAL: `WINDI-PAPER001-A3-SEAL-20260503115356` (TWO-STAGE + Held-out + Boundary)
 - §234 Stage 2 FROZEN: `88c4a7dd5ce4177a3839bec9297b677619460645a7210c0e6fce1175e5cb17ea` (Pre-validation freeze)
 - §235 W-SITES-001 Deploy: `WINDI-SITES-DEPLOY-20260503115335-1BE93BB4` (windisites.de LIVE)
