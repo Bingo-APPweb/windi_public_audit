@@ -618,6 +618,14 @@ try:
 except ImportError as e:
     print(f"[WINDI-SITES] W-DRAGON-001 not available: {e}")
 
+# ─── Sites & Containers CRUD §236 ────────────────────────────────────────────
+try:
+    from sites_crud import sites_router
+    app.include_router(sites_router)
+    print("[WINDI-SITES] Sites & Containers CRUD loaded (L-1/L0 scaffolding)")
+except ImportError as e:
+    print(f"[WINDI-SITES] Sites CRUD not available: {e}")
+
 # ─── Canvas Integration §166 ──────────────────────────────────────────────────
 try:
     from canvas_integration import law_generate_document_cover
