@@ -460,6 +460,115 @@ async def collect_fit_event(
     finally:
         conn.close()
 
+class FitEventBatch(BaseModel):
+    """Batch of FIT events from frontend (reduces network overhead)."""
+    events: List[FitEventCreate] = Field(..., max_length=50, description="Max 50 events per batch")
+
+@fit_router.post("/collect/batch")
+async def collect_fit_events_batch(
+    batch: FitEventBatch,
+    request: Request
+):
+    """
+    Collect multiple FIT events in one request.
+
+    Frontend should buffer events and flush periodically (every 5-10s)
+    or when buffer reaches threshold (10-20 events).
+
+    This reduces network overhead and improves performance.
+    """
+    caller_did = get_caller_did(request)
+    if not caller_did:
+        # DID-gated: without DID, silently ignore (fail-silent)
+        return {"ok": True, "collected": 0, "reason": "no_did_silent_skip"}
+
+    if not batch.events:
+        return {"ok": True, "collected": 0}
+
+    conn = get_fit_db()
+    cursor = conn.cursor()
+    collected = 0
+    now = datetime.now(timezone.utc).isoformat()
+
+    try:
+        for event in batch.events:
+            event_id = str(uuid.uuid4())
+
+            cursor.execute("""
+                INSERT INTO fit_events (
+                    id, did, session_id, layer, event_type, timestamp,
+                    duration_ms, hesitation_ms, input_changes, error_count,
+                    component, complexity, template_id, metadata
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                event_id,
+                caller_did,
+                event.session_id,
+                event.layer.value,
+                event.event_type.value,
+                now,
+                event.metrics.duration_ms,
+                event.metrics.hesitation_ms,
+                event.metrics.input_changes,
+                event.metrics.error_count,
+                event.context.component,
+                event.context.complexity,
+                event.context.template_id,
+                json.dumps(event.metadata) if event.metadata else None
+            ))
+            collected += 1
+
+        # Recalculate FIT score once after all events
+        dimensions = calculate_fit_dimensions(caller_did, conn)
+        fit_score = calculate_fit_score(dimensions)
+        fit_level = get_fit_level(fit_score)
+
+        cursor.execute("SELECT COUNT(*) FROM fit_events WHERE did = ?", (caller_did,))
+        total_events = cursor.fetchone()[0]
+
+        cursor.execute("""
+            INSERT INTO fit_scores (
+                did, presence, decision, consistency, recovery, autonomy, governance,
+                fit_score, fit_level, total_events, last_event_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(did) DO UPDATE SET
+                presence = excluded.presence,
+                decision = excluded.decision,
+                consistency = excluded.consistency,
+                recovery = excluded.recovery,
+                autonomy = excluded.autonomy,
+                governance = excluded.governance,
+                fit_score = excluded.fit_score,
+                fit_level = excluded.fit_level,
+                total_events = excluded.total_events,
+                last_event_at = excluded.last_event_at,
+                updated_at = excluded.updated_at
+        """, (
+            caller_did,
+            dimensions["presence"],
+            dimensions["decision"],
+            dimensions["consistency"],
+            dimensions["recovery"],
+            dimensions["autonomy"],
+            dimensions["governance"],
+            fit_score,
+            fit_level,
+            total_events,
+            now,
+            now
+        ))
+
+        conn.commit()
+        return {"ok": True, "collected": collected}
+
+    except Exception as e:
+        conn.rollback()
+        # Fail-silent: log but don't crash the frontend
+        print(f"[FIT-ENGINE] Batch collect error: {e}")
+        return {"ok": False, "collected": 0, "error": "batch_failed"}
+    finally:
+        conn.close()
+
 @fit_router.get("/score")
 async def get_fit_score_endpoint(request: Request):
     """
@@ -616,7 +725,9 @@ def get_next_layer_hint(level: int, dimensions: Dict[str, float]) -> Optional[Di
         return None  # Already at max
 
     next_level = level + 1
-    next_threshold = list(FIT_THRESHOLDS.values())[next_level]
+    # Threshold index is (level - 1) since levels are 1-5 but indices are 0-4
+    threshold_list = list(FIT_THRESHOLDS.values())
+    next_threshold = threshold_list[next_level - 1] if next_level <= 5 else threshold_list[-1]
     next_name = get_layer_name(next_level)
 
     # Find weakest dimension
