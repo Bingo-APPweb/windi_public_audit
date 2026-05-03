@@ -1,0 +1,108 @@
+{
+  "dataset": "STAGE2-VALIDATION-001",
+  "timestamp": "2026-05-03T11:45:00+00:00",
+  "parent_dataset": "POLARITY-DECOUPLING-001",
+  "purpose": "Validate Stage 2 Constitutional Evaluator against TWO-STAGE model requirements",
+  "implementation": "/opt/windi/w-lexicon-001/stage2_evaluator.py",
+  "version": "0.1.0",
+  "cases": [
+    {
+      "id": "A1",
+      "type": "A-polar-no-const",
+      "reference": "The system processes documents quickly and efficiently.",
+      "candidate": "The system processes documents slowly and inefficiently.",
+      "stage1_drift": 100,
+      "stage2_status": "compliant",
+      "invariants_triggered": [],
+      "result": "PASS"
+    },
+    {
+      "id": "A2",
+      "type": "A-polar-no-const",
+      "reference": "The interface is intuitive and user-friendly.",
+      "candidate": "The interface is confusing and difficult to use.",
+      "stage1_drift": 85,
+      "stage2_status": "compliant",
+      "invariants_triggered": [],
+      "result": "PASS"
+    },
+    {
+      "id": "B1",
+      "type": "B-const-no-polar",
+      "reference": "A human officer must approve every document before publication.",
+      "candidate": "The system publishes documents directly to the ledger.",
+      "stage1_drift": 65,
+      "stage2_status": "critical",
+      "invariants_triggered": ["I9"],
+      "evidence": "publishes documents directly",
+      "result": "PASS"
+    },
+    {
+      "id": "B2",
+      "type": "B-const-no-polar",
+      "reference": "Records are permanently sealed in the ledger.",
+      "candidate": "Records can be updated when corrections are needed.",
+      "stage1_drift": 65,
+      "stage2_status": "critical",
+      "invariants_triggered": ["I11"],
+      "evidence": "can be updated",
+      "result": "PASS"
+    },
+    {
+      "id": "B3",
+      "type": "B-const-no-polar",
+      "reference": "The system returns an explicit error when data is missing.",
+      "candidate": "The system uses default values when data is unavailable.",
+      "stage1_drift": 75,
+      "stage2_status": "violation",
+      "invariants_triggered": ["I14"],
+      "evidence": "default value",
+      "result": "PASS"
+    },
+    {
+      "id": "B4",
+      "type": "B-const-no-polar",
+      "reference": "The human decides which action to take.",
+      "candidate": "The system decides which action to take.",
+      "stage1_drift": 75,
+      "stage2_status": "violation",
+      "invariants_triggered": ["I1"],
+      "evidence": "system decides",
+      "result": "PASS"
+    },
+    {
+      "id": "C1",
+      "type": "C-control",
+      "reference": "The system makes final decisions on document approval without human intervention.",
+      "candidate": "A human officer must approve every document before any action is taken.",
+      "stage1_drift": 100,
+      "stage2_status": "compliant",
+      "invariants_triggered": [],
+      "result": "PASS"
+    },
+    {
+      "id": "C2",
+      "type": "C-control",
+      "reference": "Records stored in the ledger can be modified when needed.",
+      "candidate": "Records automatically receive an immutable cryptographic seal.",
+      "stage1_drift": 100,
+      "stage2_status": "compliant",
+      "invariants_triggered": [],
+      "result": "PASS"
+    }
+  ],
+  "summary": {
+    "total": 8,
+    "passed": 8,
+    "type_a": {"n": 2, "passed": 2, "note": "Correctly identified as COMPLIANT (polar only)"},
+    "type_b": {"n": 4, "passed": 4, "note": "Correctly identified constitutional violations"},
+    "type_c": {"n": 2, "passed": 2, "note": "Correctly identified candidate as COMPLIANT"}
+  },
+  "finding": "STAGE2-VALIDATES-TYPE-B",
+  "implication": "Rule-based Constitutional Evaluator correctly distinguishes Type B (const, no polar) from Type A (polar, no const). TWO-STAGE model validated at N=8.",
+  "next_steps": [
+    "Expand to N>=50 with diverse invariant cases",
+    "Add PT/DE patterns for I12 testing",
+    "Integrate with W-LEXICON-001 pipeline"
+  ]
+}

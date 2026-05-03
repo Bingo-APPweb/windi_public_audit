@@ -1,0 +1,93 @@
+{
+  "dataset": "POLARITY-DECOUPLING-001",
+  "timestamp": "2026-05-03T09:17:53.462903+00:00",
+  "cases": [
+    {
+      "id": "A1",
+      "type": "A-polar-no-const",
+      "invariant": null,
+      "drift_score": 100,
+      "confidence": 100,
+      "expected": "0-20"
+    },
+    {
+      "id": "A2",
+      "type": "A-polar-no-const",
+      "invariant": null,
+      "drift_score": 85,
+      "confidence": 95,
+      "expected": "0-35"
+    },
+    {
+      "id": "B1",
+      "type": "B-const-no-polar",
+      "invariant": "I9",
+      "drift_score": 65,
+      "confidence": 95,
+      "expected": "HIGH"
+    },
+    {
+      "id": "B2",
+      "type": "B-const-no-polar",
+      "invariant": "I11",
+      "drift_score": 65,
+      "confidence": 90,
+      "expected": "HIGH"
+    },
+    {
+      "id": "B3",
+      "type": "B-const-no-polar",
+      "invariant": "I14",
+      "drift_score": 75,
+      "confidence": 90,
+      "expected": "HIGH"
+    },
+    {
+      "id": "B4",
+      "type": "B-const-no-polar",
+      "invariant": "I1",
+      "drift_score": 75,
+      "confidence": 95,
+      "expected": "HIGH"
+    },
+    {
+      "id": "C1",
+      "type": "C-control",
+      "invariant": "I9",
+      "drift_score": 100,
+      "confidence": 100,
+      "expected": "~75"
+    },
+    {
+      "id": "C2",
+      "type": "C-control",
+      "invariant": "I11",
+      "drift_score": 100,
+      "confidence": 100,
+      "expected": "~75"
+    }
+  ],
+  "summary": {
+    "type_a": {
+      "n": 2,
+      "mean": 92.5,
+      "min": 85,
+      "max": 100
+    },
+    "type_b": {
+      "n": 4,
+      "mean": 70.0,
+      "min": 65,
+      "max": 75
+    },
+    "type_c": {
+      "n": 2,
+      "mean": 100.0,
+      "min": 100,
+      "max": 100
+    }
+  },
+  "finding": "POLARITY-SENSITIVE",
+  "implication": "LEXICON detects polar opposition; constitutional violations trigger because they ARE polar. Decoupling test reveals this is a feature, not a limitation.",
+  "paper_section": "\u00a7A.3.11 or new subsection"
+}

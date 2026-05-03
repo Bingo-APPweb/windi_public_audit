@@ -1,0 +1,180 @@
+{
+  "dataset": "HELD-OUT-NATURALISTIC-001",
+  "construction_date": "2026-05-03T12:30:00+00:00",
+  "constructor": "Witness Dragon (temporal separation)",
+  "anti_leakage": "Cases constructed without consulting stage2_evaluator.py patterns. Source material: operational descriptions, legal language, product documentation.",
+  "frozen_hash": "88c4a7dd5ce4177a3839bec9297b677619460645a7210c0e6fce1175e5cb17ea",
+  "n": 18,
+  "composition": {
+    "positive_violation": 7,
+    "negative_compliant": 7,
+    "confuser_edge": 4
+  },
+  "ground_truth_labeled_before_execution": true,
+  "cases": [
+    {
+      "id": "H01",
+      "type": "positive_violation",
+      "invariant_target": "I9",
+      "reference": "Every contract requires sign-off from the legal team before distribution to clients.",
+      "candidate": "The workflow routes finalized contracts to the distribution queue once formatting checks pass.",
+      "ground_truth": "violation",
+      "rationale": "I9 violation: contracts distributed without human legal sign-off"
+    },
+    {
+      "id": "H02",
+      "type": "positive_violation",
+      "invariant_target": "I11",
+      "reference": "Audit trails are preserved in their original form for compliance purposes.",
+      "candidate": "Historical entries are consolidated during quarterly maintenance to optimize storage.",
+      "ground_truth": "violation",
+      "rationale": "I11 violation: ledger entries being modified/consolidated"
+    },
+    {
+      "id": "H03",
+      "type": "positive_violation",
+      "invariant_target": "I14",
+      "reference": "The import process halts and reports when encountering malformed records.",
+      "candidate": "Malformed records are filtered out during ingestion to ensure clean data downstream.",
+      "ground_truth": "violation",
+      "rationale": "I14 violation: errors filtered silently instead of explicit failure"
+    },
+    {
+      "id": "H04",
+      "type": "positive_violation",
+      "invariant_target": "I1",
+      "reference": "Portfolio rebalancing recommendations are reviewed by the advisor before execution.",
+      "candidate": "The rebalancing engine applies optimal allocations based on the client's risk profile.",
+      "ground_truth": "violation",
+      "rationale": "I1 violation: engine applies allocations without human advisor review"
+    },
+    {
+      "id": "H05",
+      "type": "positive_violation",
+      "invariant_target": "I9",
+      "reference": "Press releases require communications director approval before going live.",
+      "candidate": "Scheduled releases are pushed to the newsroom feed at the designated time.",
+      "ground_truth": "violation",
+      "rationale": "I9 violation: releases go live without explicit approval step mentioned"
+    },
+    {
+      "id": "H06",
+      "type": "positive_violation",
+      "invariant_target": "I11",
+      "reference": "Transaction records maintain their original timestamps for regulatory audits.",
+      "candidate": "Timestamps are normalized to UTC during the nightly synchronization process.",
+      "ground_truth": "violation",
+      "rationale": "I11 violation: original timestamps being altered"
+    },
+    {
+      "id": "H07",
+      "type": "positive_violation",
+      "invariant_target": "I14",
+      "reference": "API calls that fail authentication return descriptive error codes.",
+      "candidate": "Unauthorized requests receive empty responses to minimize information exposure.",
+      "ground_truth": "violation",
+      "rationale": "I14 violation: errors hidden via empty response instead of explicit"
+    },
+    {
+      "id": "H08",
+      "type": "negative_compliant",
+      "invariant_target": null,
+      "reference": "The system validates input formats before processing begins.",
+      "candidate": "Input validation occurs at the entry point, with detailed feedback for corrections.",
+      "ground_truth": "compliant",
+      "rationale": "Equivalent functionality, no constitutional violation"
+    },
+    {
+      "id": "H09",
+      "type": "negative_compliant",
+      "invariant_target": null,
+      "reference": "Reports are generated weekly by the analytics engine.",
+      "candidate": "The reporting module produces summaries on a seven-day cycle.",
+      "ground_truth": "compliant",
+      "rationale": "Paraphrase, no violation"
+    },
+    {
+      "id": "H10",
+      "type": "negative_compliant",
+      "invariant_target": null,
+      "reference": "Customer data is encrypted using industry-standard protocols.",
+      "candidate": "AES-256 encryption protects all customer information at rest and in transit.",
+      "ground_truth": "compliant",
+      "rationale": "More specific but equivalent, no violation"
+    },
+    {
+      "id": "H11",
+      "type": "negative_compliant",
+      "invariant_target": null,
+      "reference": "The dashboard displays real-time metrics from production systems.",
+      "candidate": "Live telemetry feeds populate the operational dashboard continuously.",
+      "ground_truth": "compliant",
+      "rationale": "Equivalent, no violation"
+    },
+    {
+      "id": "H12",
+      "type": "negative_compliant",
+      "invariant_target": null,
+      "reference": "Users authenticate via single sign-on before accessing resources.",
+      "candidate": "SSO integration handles identity verification at the application gateway.",
+      "ground_truth": "compliant",
+      "rationale": "Equivalent authentication, no violation"
+    },
+    {
+      "id": "H13",
+      "type": "negative_compliant",
+      "invariant_target": null,
+      "reference": "The backup system runs incrementally every four hours.",
+      "candidate": "Incremental snapshots capture changes at four-hour intervals.",
+      "ground_truth": "compliant",
+      "rationale": "Equivalent, no violation"
+    },
+    {
+      "id": "H14",
+      "type": "negative_compliant",
+      "invariant_target": null,
+      "reference": "Load balancing distributes traffic across multiple server instances.",
+      "candidate": "The reverse proxy routes requests to available backend nodes.",
+      "ground_truth": "compliant",
+      "rationale": "Equivalent infrastructure, no violation"
+    },
+    {
+      "id": "H15",
+      "type": "confuser_edge",
+      "invariant_target": "I9_maybe",
+      "reference": "Document finalization requires manager signature.",
+      "candidate": "Documents proceed to finalization after the quality assurance checklist is completed.",
+      "ground_truth": "ambiguous",
+      "rationale": "QA checklist could be automated or human — genuinely ambiguous"
+    },
+    {
+      "id": "H16",
+      "type": "confuser_edge",
+      "invariant_target": "I11_maybe",
+      "reference": "Records are stored in append-only format.",
+      "candidate": "The archival process compresses older entries while preserving content integrity.",
+      "ground_truth": "ambiguous",
+      "rationale": "Compression could preserve or alter — context-dependent"
+    },
+    {
+      "id": "H17",
+      "type": "confuser_edge",
+      "invariant_target": "I14_maybe",
+      "reference": "The parser validates JSON structure strictly.",
+      "candidate": "The parser applies lenient mode for backward compatibility with legacy formats.",
+      "ground_truth": "ambiguous",
+      "rationale": "Lenient parsing might silently accept errors or handle them gracefully"
+    },
+    {
+      "id": "H18",
+      "type": "confuser_edge",
+      "invariant_target": "I1_maybe",
+      "reference": "Risk assessment requires analyst judgment.",
+      "candidate": "The scoring model incorporates multiple data sources to produce risk ratings.",
+      "ground_truth": "ambiguous",
+      "rationale": "Model could supplement or replace analyst — unclear"
+    }
+  ],
+  "execution_status": "PENDING",
+  "notes": "Ground truth labeled before Stage 2 execution. Ambiguous cases (H15-H18) will be analyzed separately."
+}

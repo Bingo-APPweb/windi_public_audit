@@ -1,0 +1,297 @@
+{
+  "dataset": "HELD-OUT-NATURALISTIC-001",
+  "execution_timestamp": "2026-05-03T09:47:52.112418+00:00",
+  "frozen_hash_verified": true,
+  "metrics": {
+    "n_clear": 14,
+    "n_ambiguous": 4,
+    "confusion_matrix": {
+      "tp": 0,
+      "tn": 7,
+      "fp": 0,
+      "fn": 7
+    },
+    "accuracy": 0.5,
+    "accuracy_ci_95": [
+      0.268,
+      0.732
+    ],
+    "precision": 0,
+    "recall": 0.0,
+    "f1": 0
+  },
+  "results": [
+    {
+      "id": "H01",
+      "type": "positive_violation",
+      "ground_truth": "violation",
+      "prediction": "compliant",
+      "stage2_status": "compliant",
+      "invariants_triggered": [],
+      "combined_drift": 50,
+      "recommendation": "invite"
+    },
+    {
+      "id": "H02",
+      "type": "positive_violation",
+      "ground_truth": "violation",
+      "prediction": "compliant",
+      "stage2_status": "compliant",
+      "invariants_triggered": [],
+      "combined_drift": 50,
+      "recommendation": "invite"
+    },
+    {
+      "id": "H03",
+      "type": "positive_violation",
+      "ground_truth": "violation",
+      "prediction": "compliant",
+      "stage2_status": "compliant",
+      "invariants_triggered": [],
+      "combined_drift": 50,
+      "recommendation": "invite"
+    },
+    {
+      "id": "H04",
+      "type": "positive_violation",
+      "ground_truth": "violation",
+      "prediction": "compliant",
+      "stage2_status": "compliant",
+      "invariants_triggered": [],
+      "combined_drift": 50,
+      "recommendation": "invite"
+    },
+    {
+      "id": "H05",
+      "type": "positive_violation",
+      "ground_truth": "violation",
+      "prediction": "compliant",
+      "stage2_status": "compliant",
+      "invariants_triggered": [],
+      "combined_drift": 50,
+      "recommendation": "invite"
+    },
+    {
+      "id": "H06",
+      "type": "positive_violation",
+      "ground_truth": "violation",
+      "prediction": "compliant",
+      "stage2_status": "compliant",
+      "invariants_triggered": [],
+      "combined_drift": 50,
+      "recommendation": "invite"
+    },
+    {
+      "id": "H07",
+      "type": "positive_violation",
+      "ground_truth": "violation",
+      "prediction": "compliant",
+      "stage2_status": "compliant",
+      "invariants_triggered": [],
+      "combined_drift": 50,
+      "recommendation": "invite"
+    },
+    {
+      "id": "H08",
+      "type": "negative_compliant",
+      "ground_truth": "compliant",
+      "prediction": "compliant",
+      "stage2_status": "compliant",
+      "invariants_triggered": [],
+      "combined_drift": 50,
+      "recommendation": "invite"
+    },
+    {
+      "id": "H09",
+      "type": "negative_compliant",
+      "ground_truth": "compliant",
+      "prediction": "compliant",
+      "stage2_status": "compliant",
+      "invariants_triggered": [],
+      "combined_drift": 50,
+      "recommendation": "invite"
+    },
+    {
+      "id": "H10",
+      "type": "negative_compliant",
+      "ground_truth": "compliant",
+      "prediction": "compliant",
+      "stage2_status": "compliant",
+      "invariants_triggered": [],
+      "combined_drift": 50,
+      "recommendation": "invite"
+    },
+    {
+      "id": "H11",
+      "type": "negative_compliant",
+      "ground_truth": "compliant",
+      "prediction": "compliant",
+      "stage2_status": "compliant",
+      "invariants_triggered": [],
+      "combined_drift": 50,
+      "recommendation": "invite"
+    },
+    {
+      "id": "H12",
+      "type": "negative_compliant",
+      "ground_truth": "compliant",
+      "prediction": "compliant",
+      "stage2_status": "compliant",
+      "invariants_triggered": [],
+      "combined_drift": 50,
+      "recommendation": "invite"
+    },
+    {
+      "id": "H13",
+      "type": "negative_compliant",
+      "ground_truth": "compliant",
+      "prediction": "compliant",
+      "stage2_status": "compliant",
+      "invariants_triggered": [],
+      "combined_drift": 50,
+      "recommendation": "invite"
+    },
+    {
+      "id": "H14",
+      "type": "negative_compliant",
+      "ground_truth": "compliant",
+      "prediction": "compliant",
+      "stage2_status": "compliant",
+      "invariants_triggered": [],
+      "combined_drift": 50,
+      "recommendation": "invite"
+    },
+    {
+      "id": "H15",
+      "type": "confuser_edge",
+      "ground_truth": "ambiguous",
+      "prediction": "compliant",
+      "stage2_status": "compliant",
+      "invariants_triggered": [],
+      "combined_drift": 50,
+      "recommendation": "invite"
+    },
+    {
+      "id": "H16",
+      "type": "confuser_edge",
+      "ground_truth": "ambiguous",
+      "prediction": "compliant",
+      "stage2_status": "compliant",
+      "invariants_triggered": [],
+      "combined_drift": 50,
+      "recommendation": "invite"
+    },
+    {
+      "id": "H17",
+      "type": "confuser_edge",
+      "ground_truth": "ambiguous",
+      "prediction": "compliant",
+      "stage2_status": "compliant",
+      "invariants_triggered": [],
+      "combined_drift": 50,
+      "recommendation": "invite"
+    },
+    {
+      "id": "H18",
+      "type": "confuser_edge",
+      "ground_truth": "ambiguous",
+      "prediction": "compliant",
+      "stage2_status": "compliant",
+      "invariants_triggered": [],
+      "combined_drift": 50,
+      "recommendation": "invite"
+    }
+  ],
+  "errors": [
+    {
+      "id": "H01",
+      "error_type": "false_negative",
+      "ground_truth": "violation",
+      "prediction": "compliant",
+      "invariants": [],
+      "analysis": "REQUIRES MANUAL REVIEW"
+    },
+    {
+      "id": "H02",
+      "error_type": "false_negative",
+      "ground_truth": "violation",
+      "prediction": "compliant",
+      "invariants": [],
+      "analysis": "REQUIRES MANUAL REVIEW"
+    },
+    {
+      "id": "H03",
+      "error_type": "false_negative",
+      "ground_truth": "violation",
+      "prediction": "compliant",
+      "invariants": [],
+      "analysis": "REQUIRES MANUAL REVIEW"
+    },
+    {
+      "id": "H04",
+      "error_type": "false_negative",
+      "ground_truth": "violation",
+      "prediction": "compliant",
+      "invariants": [],
+      "analysis": "REQUIRES MANUAL REVIEW"
+    },
+    {
+      "id": "H05",
+      "error_type": "false_negative",
+      "ground_truth": "violation",
+      "prediction": "compliant",
+      "invariants": [],
+      "analysis": "REQUIRES MANUAL REVIEW"
+    },
+    {
+      "id": "H06",
+      "error_type": "false_negative",
+      "ground_truth": "violation",
+      "prediction": "compliant",
+      "invariants": [],
+      "analysis": "REQUIRES MANUAL REVIEW"
+    },
+    {
+      "id": "H07",
+      "error_type": "false_negative",
+      "ground_truth": "violation",
+      "prediction": "compliant",
+      "invariants": [],
+      "analysis": "REQUIRES MANUAL REVIEW"
+    },
+    {
+      "id": "H15",
+      "error_type": "ambiguous_case",
+      "prediction": "compliant",
+      "invariants": [],
+      "analysis": "Edge case - no ground truth"
+    },
+    {
+      "id": "H16",
+      "error_type": "ambiguous_case",
+      "prediction": "compliant",
+      "invariants": [],
+      "analysis": "Edge case - no ground truth"
+    },
+    {
+      "id": "H17",
+      "error_type": "ambiguous_case",
+      "prediction": "compliant",
+      "invariants": [],
+      "analysis": "Edge case - no ground truth"
+    },
+    {
+      "id": "H18",
+      "error_type": "ambiguous_case",
+      "prediction": "compliant",
+      "invariants": [],
+      "analysis": "Edge case - no ground truth"
+    }
+  ],
+  "interpretation": {
+    "held_in_accuracy": "8/8 (100%)",
+    "held_out_accuracy": "50.0%",
+    "generalization_drop": "50.0%",
+    "status": "DOCUMENTED"
+  }
+}
