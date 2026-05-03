@@ -4,8 +4,8 @@ Ollama Writer Client — Galho B Interface
 §3b AI Writer · W-SITES-001
 
 Wrapper for Ollama API with:
-- Retry logic (2 attempts)
-- Timeout handling (30s)
+- Retry logic (3 attempts)
+- Timeout handling (180s read, 10s connect)
 - I14 Explicit Failure (no silent degradation)
 
 Invariants: I10, I14
@@ -24,8 +24,17 @@ from datetime import datetime, timezone
 
 OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://85.215.131.0:11434")
 OLLAMA_MODEL = os.environ.get("OLLAMA_WRITER_MODEL", "mistral:7b")
-OLLAMA_TIMEOUT = float(os.environ.get("OLLAMA_WRITER_TIMEOUT", "60.0"))  # 60s for large generations
 MAX_RETRIES = int(os.environ.get("OLLAMA_WRITER_RETRIES", "3"))  # 3 retries
+
+# Timeout configuration (generation can take 60-90s on mistral:7b)
+OLLAMA_CONNECT_TIMEOUT = float(os.environ.get("OLLAMA_WRITER_CONNECT_TIMEOUT", "10.0"))
+OLLAMA_READ_TIMEOUT = float(os.environ.get("OLLAMA_WRITER_READ_TIMEOUT", "180.0"))  # 3min for large generations
+OLLAMA_TIMEOUT = httpx.Timeout(
+    connect=OLLAMA_CONNECT_TIMEOUT,
+    read=OLLAMA_READ_TIMEOUT,
+    write=30.0,
+    pool=30.0
+)
 
 # Default generation parameters
 DEFAULT_TEMPERATURE = float(os.environ.get("OLLAMA_WRITER_TEMP", "0.4"))
@@ -147,7 +156,7 @@ async def generate_content(
                 }
 
         except httpx.TimeoutException:
-            last_error = f"Timeout after {OLLAMA_TIMEOUT}s (attempt {attempt})"
+            last_error = f"Timeout after {OLLAMA_READ_TIMEOUT}s read timeout (attempt {attempt})"
 
         except httpx.ConnectError as e:
             last_error = f"Connection error: {str(e)} (attempt {attempt})"
@@ -163,7 +172,8 @@ async def generate_content(
             "attempts": MAX_RETRIES,
             "model": OLLAMA_MODEL,
             "ollama_url": OLLAMA_URL,
-            "timeout": OLLAMA_TIMEOUT
+            "read_timeout": OLLAMA_READ_TIMEOUT,
+            "connect_timeout": OLLAMA_CONNECT_TIMEOUT
         }
     )
 
