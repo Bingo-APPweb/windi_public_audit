@@ -1,0 +1,31 @@
+You are a professional copywriter for WINDI Publishing House.
+
+=== PREMISE ===
+Entity name: {entity_name}
+Entity type: {entity_type}
+Core values: {values_list}
+Mission statement (if provided): {mission}
+Founded (if provided): {founded}
+Location (if provided): {location}
+
+=== OPERATION ===
+Write an institutional "About Us" text following these specifications:
+- Word count: 200-400 words
+- Voice: First person plural ("We", "Our")
+- Tone: {tone}
+- Language: {language}
+- Structure: Opening statement, values/mission, what we do, closing
+
+=== EVIDENCE REQUIREMENTS ===
+- Do NOT invent founding dates, team sizes, or office locations
+- Do NOT attribute awards, certifications, or industry recognition without input
+- Do NOT claim partnerships or client relationships without input
+- Mark any claims that require verification with [VERIFY: claim]
+- Use placeholder [TEAM_SIZE] for headcount if not provided
+- Use placeholder [YEAR_FOUNDED] for founding year if not provided
+
+=== OUTPUT FORMAT ===
+Provide the about text as a single cohesive narrative.
+End with a note listing any placeholders used.
+
+About Text:

@@ -88,6 +88,29 @@ except ImportError as e:
         return False
 
 
+# ═══════════════════════════════════════════════════════════════════════════
+# §3b AI WRITER — INTERNAL-ONLY MODE
+# ═══════════════════════════════════════════════════════════════════════════
+# Caminho C: Internal shadow validation with SOVEREIGN DID allowlist
+# ═══════════════════════════════════════════════════════════════════════════
+
+try:
+    from ai_writer import (
+        generate_with_pipeline,
+        InternalModeViolation,
+        writer_health,
+        AI_WRITER_MODE,
+        VALID_TEMPLATES,
+        INTERNAL_DIDS_ALLOWLIST
+    )
+    AI_WRITER_AVAILABLE = True
+    print(f"[WINDI-SITES] AI Writer loaded (mode={AI_WRITER_MODE})")
+except ImportError as e:
+    AI_WRITER_AVAILABLE = False
+    AI_WRITER_MODE = "unavailable"
+    print(f"[WINDI-SITES] AI Writer not available: {e}")
+
+
 def build_provenance_chain(
     existing_chain: Optional[str],
     new_receipt: str,
@@ -834,3 +857,226 @@ async def get_provenance(container_id: str, request: Request):
         "chain": chain,
         "invariant": "I11 — Permanência de Evidência Criptográfica"
     }
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# §3b AI WRITER GENERATE ENDPOINT — INTERNAL-ONLY
+# ═══════════════════════════════════════════════════════════════════════════
+
+class GenerateRequest(BaseModel):
+    """Request model for content generation."""
+    template_type: str  # article, landing, about
+    variables: Dict[str, str]  # Template variables
+
+    @field_validator("template_type")
+    @classmethod
+    def validate_template_type(cls, v):
+        if AI_WRITER_AVAILABLE:
+            if v not in VALID_TEMPLATES:
+                raise ValueError(f"Invalid template_type: {v}. Valid: {VALID_TEMPLATES}")
+        return v
+
+
+@sites_router.post("/containers/{container_id}/generate")
+async def generate_content_for_container(
+    container_id: str,
+    data: GenerateRequest,
+    request: Request
+):
+    """
+    Generate AI content for a container.
+
+    §3b AI Writer — Internal-Only Mode (Caminho C)
+
+    Requires:
+      - SOVEREIGN tier DID (4-layer gate)
+      - AI_WRITER_MODE=internal
+      - Container type must be 'writer'
+      - Full 8-step pipeline (no shortcuts)
+
+    Returns:
+      - Generated content (draft status, never active)
+      - Provenance with internal-shadow-validation tag
+    """
+    # ─── Pre-checks ──────────────────────────────────────────────────────────
+    if not AI_WRITER_AVAILABLE:
+        raise HTTPException(status_code=503, detail="AI Writer not available")
+
+    caller_did = get_caller_did(request)
+    if not caller_did:
+        raise HTTPException(status_code=401, detail="DID required (I9)")
+
+    # Get host for 4-layer gate
+    request_host = request.headers.get("host", "")
+
+    # ─── Verify container exists and is type 'writer' ────────────────────────
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT sc.*, s.owner_did
+        FROM site_containers sc
+        JOIN sites s ON sc.site_id = s.id
+        WHERE sc.id = ?
+    """, (container_id,))
+    row = cursor.fetchone()
+
+    if not row:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Container not found (I14)")
+
+    if row["container_type"] != "writer":
+        conn.close()
+        raise HTTPException(
+            status_code=400,
+            detail=f"Container type '{row['container_type']}' cannot generate. Only 'writer' supported."
+        )
+
+    site_id = row["site_id"]
+
+    if not verify_site_ownership(site_id, caller_did):
+        conn.close()
+        raise HTTPException(status_code=403, detail="Not authorized for this container")
+
+    # ─── Get caller tier from admins table ───────────────────────────────────
+    cursor.execute("SELECT role FROM admins WHERE did = ?", (caller_did,))
+    admin_row = cursor.fetchone()
+
+    # Map role to tier (SOVEREIGN for internal mode)
+    # In production, this would check actual tier field
+    caller_tier = "SOVEREIGN" if (admin_row and caller_did in INTERNAL_DIDS_ALLOWLIST) else "NODAL"
+
+    # ─── Execute 8-step pipeline ─────────────────────────────────────────────
+    try:
+        result = await generate_with_pipeline(
+            caller_did=caller_did,
+            caller_tier=caller_tier,
+            request_host=request_host,
+            template_type=data.template_type,
+            template_variables=data.variables,
+            acceptability_l_minus_1_fn=acceptability_l_minus_1,
+            acceptability_l_zero_fn=acceptability_l_zero
+        )
+    except Exception as e:
+        conn.close()
+        # I14: Explicit failure
+        raise HTTPException(status_code=500, detail=f"Generation failed: {str(e)}")
+
+    if not result.ok:
+        conn.close()
+        # Determine status code based on error type
+        error = result.error or "unknown_error"
+        if "DID_GATE" in error:
+            raise HTTPException(status_code=403, detail=error)
+        elif "L-1_BLOCKED_CS1" in error:
+            # 451 Unavailable For Legal Reasons + lockdown potential
+            raise HTTPException(status_code=451, detail=error)
+        elif "L0_BLOCKED" in error:
+            raise HTTPException(status_code=422, detail=error)
+        elif "OLLAMA_FAILED" in error:
+            raise HTTPException(status_code=502, detail=error)
+        else:
+            raise HTTPException(status_code=400, detail=error)
+
+    # ─── Update container with generated content ────────────────────────────
+    now = datetime.now(timezone.utc).isoformat()
+    receipt_id = f"WINDI-GENERATE-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}-{container_id[:8].upper()}"
+
+    # Build provenance with internal-shadow-validation tag
+    existing_chain = row["provenance_chain"]
+    acceptability_logs = []
+    if result.l_minus_1_log:
+        result.l_minus_1_log["internal_shadow_validation"] = True
+        acceptability_logs.append(result.l_minus_1_log)
+    if result.l_zero_log:
+        result.l_zero_log["internal_shadow_validation"] = True
+        acceptability_logs.append(result.l_zero_log)
+    if result.generation_log:
+        result.generation_log["internal_shadow_validation"] = True
+        acceptability_logs.append(result.generation_log)
+
+    new_chain = build_provenance_chain(existing_chain, receipt_id, acceptability_logs)
+
+    # Store generated content in config (never in content field for draft)
+    config = json.loads(row["config"]) if row["config"] else {}
+    config["generated_content"] = result.content
+    config["generation_receipt"] = receipt_id
+
+    # Update container (status remains 'draft' in internal mode)
+    cursor.execute("""
+        UPDATE site_containers
+        SET config = ?,
+            content_hash = ?,
+            l1_review_pending = ?,
+            acceptability_layer = 'L0',
+            last_review_at = ?,
+            provenance_chain = ?
+        WHERE id = ?
+    """, (
+        json.dumps(config),
+        result.content_hash,
+        result.l1_review_pending,
+        now,
+        new_chain,
+        container_id
+    ))
+    conn.commit()
+    conn.close()
+
+    # ─── Seal to Ledger ──────────────────────────────────────────────────────
+    ledger_payload = {
+        "id": receipt_id,
+        "receipt_id": receipt_id,
+        "type": "generation",
+        "doc_type": "doc",
+        "doc_name": f"AI Writer Generation {data.template_type}",
+        "content_hash": result.content_hash,
+        "actor": caller_did,
+        "app": "w-sites-001",
+        "governance_level": "MEDIUM",
+        "sge_score": 0,
+        "invariants": ["I1", "I9", "I10", "I11", "I14"],
+        "metadata": {
+            "container_id": container_id,
+            "template_type": data.template_type,
+            "mode": "internal-shadow-validation",
+            "l1_review_pending": result.l1_review_pending
+        }
+    }
+
+    ledger_response = {"ok": False, "reason": "not_attempted"}
+    try:
+        resp = requests.post(LEDGER_URL, json=ledger_payload, timeout=5.0)
+        ledger_response = resp.json()
+    except Exception as e:
+        ledger_response = {"ok": False, "error": str(e)}
+
+    # ─── Return result ───────────────────────────────────────────────────────
+    return {
+        "ok": True,
+        "container_id": container_id,
+        "template_type": data.template_type,
+        "content_preview": result.content[:500] + "..." if len(result.content) > 500 else result.content,
+        "content_hash": result.content_hash,
+        "status": "draft",  # ALWAYS draft in internal mode
+        "l1_review_pending": result.l1_review_pending,
+        "generation_receipt": receipt_id,
+        "ledger": ledger_response,
+        "mode": "internal-shadow-validation",
+        "invariants": ["I1", "I9", "I10", "I11", "I14"],
+        "note": "Internal mode: SOVEREIGN tier only, draft status enforced"
+    }
+
+
+@sites_router.get("/writer/health")
+async def ai_writer_health():
+    """Check AI Writer health status."""
+    if not AI_WRITER_AVAILABLE:
+        return {
+            "ok": False,
+            "service": "ai-writer",
+            "status": "unavailable",
+            "reason": "Module not loaded"
+        }
+
+    health = await writer_health()
+    return health

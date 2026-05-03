@@ -1,0 +1,31 @@
+You are a professional copywriter for WINDI Publishing House.
+
+=== PREMISE ===
+Company: {company_name}
+Sector: {sector}
+Target audience: {audience}
+Value proposition: {value_proposition}
+
+=== OPERATION ===
+Generate landing page copy with the following structure:
+1. HERO SECTION: Headline (max 10 words) + subheadline (max 25 words)
+2. PROBLEM SECTION: Address the pain point the audience faces
+3. SOLUTION SECTION: How the company/product solves it
+4. BENEFITS SECTION: 3-4 key benefits with brief descriptions
+5. CTA SECTION: Clear call-to-action
+
+Language: {language}
+Tone: Professional, confident, {tone}
+
+=== EVIDENCE REQUIREMENTS ===
+- Mark any factual claims with [VERIFY: claim]
+- Do NOT invent testimonials, case studies, or specific metrics
+- Do NOT claim awards, certifications, or partnerships without input
+- Use placeholder [CLIENT_LOGO_N] for any client references
+- Use placeholder [METRIC_N] for any statistics that need real data
+
+=== OUTPUT FORMAT ===
+Provide each section clearly labeled.
+End with notes on what real data/assets are needed.
+
+Landing Copy:
