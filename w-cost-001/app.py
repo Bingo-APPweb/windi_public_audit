@@ -8,12 +8,14 @@ Port: 8152
 Invariants: I9, I11, I14
 
 Endpoints:
-  POST /api/cost/record     — Record a cost event from W-GATEWAY
-  GET  /api/cost/summary    — Daily/weekly cost summary
-  GET  /api/cost/by-service — Cost breakdown by service
-  GET  /api/cost/alerts     — Check and trigger alerts
-  GET  /api/cost/wisdom     — Candidates for Wisdom Blocks
-  GET  /health              — Health check
+  POST /api/cost/record        — Record a cost event from W-GATEWAY
+  GET  /api/cost/summary       — Daily/weekly cost summary
+  GET  /api/cost/by-service    — Cost breakdown by service
+  GET  /api/cost/by-governance — Cost breakdown by LOW/MED/HIGH (§174 exposure)
+  GET  /api/cost/requests      — Per-request cost details with governance filter
+  GET  /api/cost/alerts        — Check and trigger alerts
+  GET  /api/cost/wisdom        — Candidates for Wisdom Blocks
+  GET  /health                 — Health check
 
 Liga IA+H · 15 Abril 2026
 """
@@ -417,6 +419,155 @@ async def cost_by_service(days: int = 7):
                 "avg_tokens_per_call": round(row[4], 0),
             }
             for row in by_service
+        ],
+    }
+
+
+@app.get("/api/cost/by-governance")
+async def cost_by_governance(days: int = 7):
+    """
+    Get cost breakdown by governance level (LOW/MED/HIGH).
+
+    Maps to WINDI governance tiers:
+      - LOW (FREE):  Mistral routing, no PHO required
+      - MED:         Sonnet routing, soft PHO
+      - HIGH:        Opus routing, mandatory PHO (I9)
+
+    This is the primary business direction metric (§174).
+    """
+    cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
+
+    # Map tier names for display (handles both "HIGH" and "Tier.HIGH" formats)
+    def normalize_tier(tier: str) -> str:
+        tier_clean = tier.replace("Tier.", "") if tier else "FREE"
+        return {"FREE": "LOW", "MED": "MED", "HIGH": "HIGH"}.get(tier_clean, tier_clean)
+
+    with get_db() as conn:
+        by_tier = conn.execute("""
+            SELECT
+                tier,
+                SUM(cost_eur) as total_cost,
+                SUM(tokens_in) as total_in,
+                SUM(tokens_out) as total_out,
+                COUNT(*) as calls,
+                AVG(tokens_in + tokens_out) as avg_tokens
+            FROM cost_events
+            WHERE timestamp >= ?
+            GROUP BY tier
+            ORDER BY total_cost DESC
+        """, (cutoff,)).fetchall()
+
+        # Today's breakdown
+        today = datetime.now(timezone.utc).date().isoformat()
+        today_by_tier = conn.execute("""
+            SELECT
+                tier,
+                SUM(cost_eur) as cost,
+                COUNT(*) as calls
+            FROM cost_events
+            WHERE date(timestamp) = ?
+            GROUP BY tier
+        """, (today,)).fetchall()
+
+        # Total for period
+        period_total = conn.execute("""
+            SELECT SUM(cost_eur) FROM cost_events WHERE timestamp >= ?
+        """, (cutoff,)).fetchone()[0] or 0
+
+    # Build tier breakdown with percentages
+    tiers = []
+    for row in by_tier:
+        tier_name = normalize_tier(row[0])
+        tier_cost = row[1] or 0
+        percentage = (tier_cost / period_total * 100) if period_total > 0 else 0
+        tiers.append({
+            "governance_level": tier_name,
+            "internal_tier": row[0],
+            "cost_eur": round(tier_cost, 4),
+            "percentage": round(percentage, 1),
+            "tokens_in": row[2] or 0,
+            "tokens_out": row[3] or 0,
+            "calls": row[4] or 0,
+            "avg_tokens_per_call": round(row[5] or 0, 0),
+        })
+
+    # Today's summary
+    today_breakdown = {}
+    for row in today_by_tier:
+        tier_name = normalize_tier(row[0])
+        today_breakdown[tier_name] = {
+            "cost_eur": round(row[1] or 0, 4),
+            "calls": row[2] or 0,
+        }
+
+    return {
+        "period_days": days,
+        "period_total_eur": round(period_total, 4),
+        "today": today_breakdown,
+        "governance_levels": tiers,
+        "model_routing": {
+            "LOW": "mistral-small-latest (€0.20/€0.60 per 1M)",
+            "MED": "claude-sonnet (€3.00/€15.00 per 1M)",
+            "HIGH": "claude-opus (€15.00/€75.00 per 1M)",
+        },
+        "principle": "HIGH costs 25x more than LOW per token — governance level drives economics",
+    }
+
+
+@app.get("/api/cost/requests")
+async def recent_requests(limit: int = 50, governance: Optional[str] = None):
+    """
+    Get recent individual requests with cost details.
+
+    Optional filter by governance level: LOW, MED, HIGH
+    Shows per-request economics for business analysis.
+    """
+    # Map governance levels to internal tiers
+    tier_map = {"LOW": "FREE", "MED": "MED", "HIGH": "HIGH"}
+    tier_filter = tier_map.get(governance.upper()) if governance else None
+
+    with get_db() as conn:
+        if tier_filter:
+            rows = conn.execute("""
+                SELECT
+                    id, timestamp, service, model, tier,
+                    tokens_in, tokens_out, cost_eur, wallet_id, task_type
+                FROM cost_events
+                WHERE tier = ?
+                ORDER BY timestamp DESC
+                LIMIT ?
+            """, (tier_filter, limit)).fetchall()
+        else:
+            rows = conn.execute("""
+                SELECT
+                    id, timestamp, service, model, tier,
+                    tokens_in, tokens_out, cost_eur, wallet_id, task_type
+                FROM cost_events
+                ORDER BY timestamp DESC
+                LIMIT ?
+            """, (limit,)).fetchall()
+
+    def normalize_tier(tier: str) -> str:
+        tier_clean = tier.replace("Tier.", "") if tier else "FREE"
+        return {"FREE": "LOW", "MED": "MED", "HIGH": "HIGH"}.get(tier_clean, tier_clean)
+
+    return {
+        "filter": governance.upper() if governance else "ALL",
+        "count": len(rows),
+        "requests": [
+            {
+                "id": row[0],
+                "timestamp": row[1],
+                "service": row[2],
+                "model": row[3],
+                "governance_level": normalize_tier(row[4]),
+                "tokens_in": row[5],
+                "tokens_out": row[6],
+                "cost_eur": round(row[7], 6),
+                "wallet_id": row[8],
+                "task_type": row[9],
+            }
+            for row in rows
         ],
     }
 

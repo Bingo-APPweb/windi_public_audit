@@ -234,6 +234,26 @@ tr:hover { background: var(--bg3); }
   </div>
 
   <div class="section">
+    <div class="section-title">⚖️ <span data-i18n="governance">By Governance Level</span></div>
+    <p style="color: var(--muted); margin-bottom: 1rem; font-size: 0.9rem;" data-i18n="govDesc">
+      Cost breakdown by governance tier: LOW (Mistral) · MED (Sonnet) · HIGH (Opus, PHO required).
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th data-i18n="level">Level</th>
+          <th data-i18n="cost">Cost (€)</th>
+          <th>%</th>
+          <th data-i18n="calls">Calls</th>
+          <th data-i18n="avgTokens">Avg Tokens</th>
+        </tr>
+      </thead>
+      <tbody id="governance-table"></tbody>
+    </table>
+    <div id="gov-insight" style="margin-top: 1rem; padding: 0.75rem; background: var(--bg3); border-radius: 8px; font-size: 0.85rem;"></div>
+  </div>
+
+  <div class="section">
     <div class="section-title">🔧 <span data-i18n="services">By Service</span></div>
     <table>
       <thead>
@@ -276,29 +296,38 @@ const I18N = {
   en: {
     today: 'Today', week: 'This Week', tokens: 'Tokens (7d)', status: 'Status',
     daily: 'Daily Breakdown', services: 'By Service', wisdom: 'Wisdom Candidates',
+    governance: 'By Governance Level', level: 'Level',
+    govDesc: 'Cost breakdown by governance tier: LOW (Mistral) · MED (Sonnet) · HIGH (Opus, PHO required).',
     date: 'Date', cost: 'Cost (€)', calls: 'Calls', service: 'Service',
     avgTokens: 'Avg Tokens', taskType: 'Task Type', totalCost: 'Total Cost',
     wisdomDesc: 'Tasks with high token usage that could be converted to local knowledge.',
     tagline: '"AI processes. Human decides. WINDI guarantees."',
-    green: 'BUDGET OK', yellow: 'WARNING', red: 'OVER BUDGET'
+    green: 'BUDGET OK', yellow: 'WARNING', red: 'OVER BUDGET',
+    govInsight: 'HIGH costs 25× more per token than LOW. Shifting to lower tiers reduces cost while maintaining quality for appropriate use cases.'
   },
   de: {
     today: 'Heute', week: 'Diese Woche', tokens: 'Tokens (7T)', status: 'Status',
     daily: 'Tagesübersicht', services: 'Nach Service', wisdom: 'Wisdom-Kandidaten',
+    governance: 'Nach Governance-Level', level: 'Stufe',
+    govDesc: 'Kostenaufschlüsselung nach Governance-Stufe: LOW (Mistral) · MED (Sonnet) · HIGH (Opus, PHO erforderlich).',
     date: 'Datum', cost: 'Kosten (€)', calls: 'Aufrufe', service: 'Service',
     avgTokens: 'Ø Tokens', taskType: 'Aufgabentyp', totalCost: 'Gesamtkosten',
     wisdomDesc: 'Aufgaben mit hohem Token-Verbrauch, die als lokales Wissen gespeichert werden könnten.',
     tagline: '"KI verarbeitet. Mensch entscheidet. WINDI garantiert."',
-    green: 'BUDGET OK', yellow: 'WARNUNG', red: 'ÜBER BUDGET'
+    green: 'BUDGET OK', yellow: 'WARNUNG', red: 'ÜBER BUDGET',
+    govInsight: 'HIGH kostet 25× mehr pro Token als LOW. Die Verlagerung auf niedrigere Stufen reduziert die Kosten bei Beibehaltung der Qualität für geeignete Anwendungsfälle.'
   },
   pt: {
     today: 'Hoje', week: 'Esta Semana', tokens: 'Tokens (7d)', status: 'Estado',
     daily: 'Por Dia', services: 'Por Serviço', wisdom: 'Candidatos Wisdom',
+    governance: 'Por Nível de Governança', level: 'Nível',
+    govDesc: 'Custos por nível de governança: LOW (Mistral) · MED (Sonnet) · HIGH (Opus, PHO obrigatório).',
     date: 'Data', cost: 'Custo (€)', calls: 'Chamadas', service: 'Serviço',
     avgTokens: 'Tokens Média', taskType: 'Tipo de Tarefa', totalCost: 'Custo Total',
     wisdomDesc: 'Tarefas com alto uso de tokens que poderiam ser convertidas em conhecimento local.',
     tagline: '"IA processa. Humano decide. WINDI garante."',
-    green: 'ORÇAMENTO OK', yellow: 'AVISO', red: 'ACIMA DO ORÇAMENTO'
+    green: 'ORÇAMENTO OK', yellow: 'AVISO', red: 'ACIMA DO ORÇAMENTO',
+    govInsight: 'HIGH custa 25× mais por token que LOW. Migrar para níveis inferiores reduz custos mantendo qualidade para casos de uso apropriados.'
   }
 };
 
@@ -331,10 +360,11 @@ function formatNumber(n) {
 
 async function loadData() {
   try {
-    const [summary, services, wisdom] = await Promise.all([
+    const [summary, services, wisdom, governance] = await Promise.all([
       fetch('/cost/api/cost/summary?days=7').then(r => r.json()),
       fetch('/cost/api/cost/by-service?days=7').then(r => r.json()),
-      fetch('/cost/api/cost/wisdom').then(r => r.json())
+      fetch('/cost/api/cost/wisdom').then(r => r.json()),
+      fetch('/cost/api/cost/by-governance?days=7').then(r => r.json())
     ]);
 
     // Summary cards
@@ -393,6 +423,28 @@ async function loadData() {
         </tr>
       `).join('')
       : '<tr><td colspan="4" style="color: var(--muted); text-align: center;">No candidates yet</td></tr>';
+
+    // Governance table
+    const levelColors = { LOW: 'green', MED: 'yellow', HIGH: 'red' };
+    document.getElementById('governance-table').innerHTML = governance.governance_levels.length > 0
+      ? governance.governance_levels.map(g => `
+        <tr>
+          <td><span class="status-badge ${levelColors[g.governance_level] || ''}">${g.governance_level}</span></td>
+          <td class="mono">€${g.cost_eur.toFixed(4)}</td>
+          <td class="mono">${g.percentage}%</td>
+          <td>${g.calls}</td>
+          <td class="mono">${formatNumber(g.avg_tokens_per_call)}</td>
+        </tr>
+      `).join('')
+      : '<tr><td colspan="5" style="color: var(--muted); text-align: center;">No data yet</td></tr>';
+
+    // Governance insight
+    document.getElementById('gov-insight').innerHTML = `
+      <strong style="color: var(--gold);">💡</strong> ${t('govInsight')}
+      <br><span style="color: var(--muted); font-size: 0.8rem;">
+        Total: €${governance.period_total_eur.toFixed(2)} (${governance.period_days}d)
+      </span>
+    `;
 
   } catch (e) {
     console.error('Failed to load data:', e);
