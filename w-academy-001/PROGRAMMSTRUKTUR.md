@@ -1,10 +1,14 @@
 # W-ENTERPRISE-001 — Programmstruktur
 ## EU AI Act Compliance · Ausbildungscurriculum
 
-**Version:** 1.0.0
-**Sealed:** 2026-04-17
+**Version:** 1.1.0
+**Sealed:** 2026-05-03
 **Dokument:** WPH-PROG-001
-**Status:** GRÜNDUNGSPROGRAMM
+**Status:** HYBRID (Wissenschaft + Praxis)
+
+> **Wissenschaftliche Grundlage:** Siehe `WISSENSCHAFTLICHE-GRUNDLAGEN.md`
+> **Paper-Referenz:** Paper-001 v2.1 (Hochschule Kempten)
+> **Methodik:** PoE-METHOD-001 v1.0
 
 ---
 
