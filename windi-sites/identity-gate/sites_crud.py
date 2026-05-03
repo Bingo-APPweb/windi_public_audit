@@ -950,6 +950,7 @@ async def generate_content_for_container(
     caller_tier = "SOVEREIGN" if (admin_row and caller_did in INTERNAL_DIDS_ALLOWLIST) else "NODAL"
 
     # ─── Execute 8-step pipeline (W-CORTEX-001 canal único) ──────────────────
+    # §241: Tier routing based on DID tier_level
     try:
         result = await generate_with_pipeline(
             caller_did=caller_did,
@@ -958,7 +959,8 @@ async def generate_content_for_container(
             acceptability_l_minus_1_fn=acceptability_l_minus_1,
             acceptability_l_zero_fn=acceptability_l_zero,
             template_type=data.template_type,
-            template_variables=data.variables
+            template_variables=data.variables,
+            requested_tier=None  # §241: Let DID resolution determine tier
         )
     except Exception as e:
         conn.close()
@@ -1725,14 +1727,16 @@ async def generate_site_ai(data: GenerateSiteRequest, request: Request):
     full_prompt = f"{SITE_GENERATION_SYSTEM_PROMPT}\n\nUser request: {data.prompt}"
 
     # Call via W-CORTEX-001 pipeline — NOT generate_content() directly
+    # §241: Tier routing based on DID tier_level (not hardcoded)
     result = await generate_with_pipeline(
         caller_did=caller_did,
-        caller_tier="NODAL",  # Public tier for sites
+        caller_tier="NODAL",  # Legacy field for DID gate compatibility
         request_host=request_host,
         acceptability_l_minus_1_fn=acceptability_l_minus_1,
         acceptability_l_zero_fn=acceptability_l_zero,
         free_prompt=full_prompt,  # Free mode, not template
-        did_gate_fn=assert_public_writer_authorized  # Public gate, not internal
+        did_gate_fn=assert_public_writer_authorized,  # Public gate, not internal
+        requested_tier=None  # §241: Let DID resolution determine tier
     )
 
     # Handle pipeline errors

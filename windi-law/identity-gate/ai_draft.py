@@ -384,6 +384,7 @@ BENUTZEREINGABE:
 Erstelle jetzt das vollständige Dokument gemäß den obigen Anweisungen:"""
 
     # Call W-CORTEX-001 via generate_with_pipeline()
+    # §241: Tier routing — FREE→Ollama B, MED→Mistral API, HIGH→Claude API
     result = await generate_with_pipeline(
         caller_did=caller_did,
         caller_tier=tier,
@@ -391,21 +392,32 @@ Erstelle jetzt das vollständige Dokument gemäß den obigen Anweisungen:"""
         acceptability_l_minus_1_fn=legal_acceptability_l_minus_1,
         acceptability_l_zero_fn=legal_acceptability_l_zero,
         free_prompt=full_prompt,  # Legal uses free_prompt with embedded system prompt
-        did_gate_fn=assert_public_writer_authorized  # Public gate (any valid DID)
+        did_gate_fn=assert_public_writer_authorized,  # Public gate (any valid DID)
+        requested_tier=tier  # §241: Pass tier for routing (can downgrade, not escalate)
     )
 
     if not result.ok:
         error_msg = result.error or "W-CORTEX-001 generation failed"
         logger.error(f"[WINDI-LAW] W-CORTEX-001 error: {error_msg}")
+        # §241: Tier escalation blocked → 403
+        if "ESCALATION_BLOCKED" in error_msg:
+            raise HTTPException(
+                status_code=403,
+                detail=f"W-CORTEX-001: {error_msg}"
+            )
         raise HTTPException(
-            status_code=502 if "OLLAMA" in error_msg.upper() else 400,
+            status_code=502 if "ROUTING_FAILED" in error_msg.upper() else 400,
             detail=f"W-CORTEX-001: {error_msg}"
         )
 
-    # Extract content and metadata
+    # Extract content and metadata — §241: Now includes tier routing info
     generated_text = result.content or ""
-    model_used = "mistral:7b (Ollama B)"  # W-CORTEX-001 routes to Galho B
-    estimated_tokens = len(generated_text.split()) * 1.3  # Rough estimate
+    model_used = result.model_used or "unknown"  # §241: From tier routing
+    tier_used = result.tier_used or tier
+    cost_eur = result.cost_eur or 0.0
+    estimated_tokens = result.generation_log.get("tokens", {}).get("completion", 0) if result.generation_log else 0
+    if estimated_tokens == 0:
+        estimated_tokens = int(len(generated_text.split()) * 1.3)  # Rough estimate fallback
 
     generation_log = {
         "mode": "w-cortex-001",
@@ -416,10 +428,13 @@ Erstelle jetzt das vollständige Dokument gemäß den obigen Anweisungen:"""
         "l_zero_log": result.l_zero_log,
         "doc_type": doc_type,
         "jurisdiction": jurisdiction,
-        "tier": tier
+        "tier_requested": tier,
+        "tier_used": tier_used,  # §241: Actual tier after resolution
+        "model_used": model_used,
+        "cost_eur": cost_eur,
     }
 
-    logger.info(f"[WINDI-LAW] W-CORTEX-001 generated · {doc_type} · {jurisdiction} · hash={result.content_hash[:16] if result.content_hash else 'N/A'}...")
+    logger.info(f"[WINDI-LAW] W-CORTEX-001 generated · {doc_type} · {jurisdiction} · tier={tier_used} · model={model_used} · hash={result.content_hash[:16] if result.content_hash else 'N/A'}...")
 
     return generated_text, model_used, int(estimated_tokens), generation_log
 
