@@ -99,12 +99,14 @@ except ImportError as e:
 try:
     from ai_writer import (
         generate_with_pipeline,
+        assert_public_writer_authorized,  # W-CORTEX-001: for public endpoints
         InternalModeViolation,
         writer_health,
         AI_WRITER_MODE,
         VALID_TEMPLATES,
         INTERNAL_DIDS_ALLOWLIST
     )
+    from ai_writer.ollama_writer_client import generate_content, OllamaWriterError
     AI_WRITER_AVAILABLE = True
     print(f"[WINDI-SITES] AI Writer loaded (mode={AI_WRITER_MODE})")
 except ImportError as e:
@@ -947,16 +949,16 @@ async def generate_content_for_container(
     # In production, this would check actual tier field
     caller_tier = "SOVEREIGN" if (admin_row and caller_did in INTERNAL_DIDS_ALLOWLIST) else "NODAL"
 
-    # ─── Execute 8-step pipeline ─────────────────────────────────────────────
+    # ─── Execute 8-step pipeline (W-CORTEX-001 canal único) ──────────────────
     try:
         result = await generate_with_pipeline(
             caller_did=caller_did,
             caller_tier=caller_tier,
             request_host=request_host,
-            template_type=data.template_type,
-            template_variables=data.variables,
             acceptability_l_minus_1_fn=acceptability_l_minus_1,
-            acceptability_l_zero_fn=acceptability_l_zero
+            acceptability_l_zero_fn=acceptability_l_zero,
+            template_type=data.template_type,
+            template_variables=data.variables
         )
     except Exception as e:
         conn.close()
@@ -1580,4 +1582,248 @@ async def preview_export(
         ],
         "invariants": ["I1", "I9", "I11", "I12", "I14"],
         "note": "Use POST /api/sites/{site_id}/export to generate and download the package" if site["tier"] == "HIGH" else "Upgrade to HIGH tier to enable export"
+    }
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# §240 AI SITE GENERATOR — OLLAMA B INTEGRATION
+# ═══════════════════════════════════════════════════════════════════════════
+# Prompt → Ollama B (mistral:7b) → HTML → windi_generations → Preview
+# ═══════════════════════════════════════════════════════════════════════════
+
+import re
+import html as html_lib
+
+# §240 AI Site Generator — uses shared ollama_writer_client (zero duplication)
+# OLLAMA_URL, OLLAMA_MODEL, OLLAMA_TIMEOUT are in ai_writer/ollama_writer_client.py
+
+# DOMPurify-style sanitization (server-side)
+FORBIDDEN_TAGS = {'script', 'iframe', 'object', 'embed', 'form', 'input', 'meta', 'link', 'style'}
+FORBIDDEN_ATTRS = {'onclick', 'onerror', 'onload', 'onmouseover', 'onfocus', 'onblur', 'javascript:'}
+
+
+def sanitize_html(html_content: str) -> str:
+    """
+    Server-side HTML sanitization (XSS prevention).
+    Removes forbidden tags and attributes.
+    """
+    # Remove script tags and content
+    html_content = re.sub(r'<script[^>]*>.*?</script>', '', html_content, flags=re.DOTALL | re.IGNORECASE)
+
+    # Remove other forbidden tags
+    for tag in FORBIDDEN_TAGS:
+        html_content = re.sub(rf'<{tag}[^>]*>.*?</{tag}>', '', html_content, flags=re.DOTALL | re.IGNORECASE)
+        html_content = re.sub(rf'<{tag}[^>]*/>', '', html_content, flags=re.IGNORECASE)
+
+    # Remove forbidden attributes
+    for attr in FORBIDDEN_ATTRS:
+        html_content = re.sub(rf'\s{attr}\s*=\s*["\'][^"\']*["\']', '', html_content, flags=re.IGNORECASE)
+        html_content = re.sub(rf'\s{attr}\s*=\s*\S+', '', html_content, flags=re.IGNORECASE)
+
+    return html_content
+
+
+class GenerateSiteRequest(BaseModel):
+    """Request for AI site generation."""
+    prompt: str
+    site_name: Optional[str] = None
+    site_id: Optional[str] = None  # If linking to existing site
+
+    @field_validator('prompt')
+    @classmethod
+    def validate_prompt(cls, v):
+        if len(v) < 10:
+            raise ValueError('Prompt must be at least 10 characters')
+        if len(v) > 2000:
+            raise ValueError('Prompt must be less than 2000 characters')
+        return v.strip()
+
+
+SITE_GENERATION_SYSTEM_PROMPT = """Generate a complete HTML page. Output ONLY the raw HTML code.
+
+CRITICAL: Do NOT wrap your response in markdown code blocks. Do NOT use triple backticks.
+Your response must START with the exact characters: <!DOCTYPE html>
+Your response must END with: </html>
+NO explanations before or after. NO markdown. Just the HTML.
+
+REQUIREMENTS:
+1. Include CSS in a <style> tag inside <head>
+2. Modern clean design, good typography
+3. Mobile-responsive layout
+4. Professional color scheme
+5. Semantic HTML5: header, main, section, footer
+6. NO JavaScript
+7. NO external resources - use system fonts only
+8. Footer must say: Verified by WINDI
+
+START YOUR RESPONSE WITH: <!DOCTYPE html>"""
+
+
+def extract_html_from_response(response: str) -> str:
+    """Extract HTML from LLM response, handling markdown code blocks."""
+    import re
+
+    # Try to find HTML in code blocks first
+    code_block_match = re.search(r'```(?:html)?\s*(<!DOCTYPE.*?</html>)\s*```', response, re.DOTALL | re.IGNORECASE)
+    if code_block_match:
+        return code_block_match.group(1).strip()
+
+    # Try to find raw HTML
+    html_match = re.search(r'(<!DOCTYPE.*?</html>)', response, re.DOTALL | re.IGNORECASE)
+    if html_match:
+        return html_match.group(1).strip()
+
+    # Return as-is if no pattern matched
+    return response.strip()
+
+
+@sites_router.post("/sites/generate")
+async def generate_site_ai(data: GenerateSiteRequest, request: Request):
+    """
+    §240 — AI Site Generator · W-CORTEX-001 Canal Único
+
+    Generate a complete HTML website from a text prompt using Ollama B.
+    ALL inference passes through generate_with_pipeline() — zero bypass.
+
+    Flow:
+      1. DID gate (public mode via W-CORTEX-001)
+      2. L-1 filter (Cardinal Sin detection)
+      3. Ollama B generation (mistral:7b @ Galho B)
+      4. L0 filter (output quality)
+      5. HTML sanitization (XSS prevention)
+      6. Store in windi_generations
+      7. Seal to Ledger
+      8. Return preview + hash + receipt
+
+    Invariants: I1, I9, I10, I11, I14
+    """
+    now = datetime.now(timezone.utc)
+    now_str = now.isoformat()
+    timestamp = now.strftime("%Y%m%d%H%M%S")
+
+    # ─── Pre-check: DID exists ────────────────────────────────────────────────
+    caller_did = get_caller_did(request)
+    if not caller_did:
+        raise HTTPException(status_code=401, detail="DID required (I9)")
+
+    # ─── Site association (optional) ──────────────────────────────────────────
+    site_id = data.site_id
+    if site_id:
+        if not verify_site_ownership(site_id, caller_did):
+            raise HTTPException(status_code=403, detail="Not authorized for this site")
+
+    # ─── W-CORTEX-001: Canal Único Soberano ───────────────────────────────────
+    # Receipt Symmetry Axiom (I9, §239):
+    # O HTML retornado nesta resposta é EXACTAMENTE o que será publicado.
+    # Zero regeneração. Zero "polish before publish".
+    # O hash desta geração = hash do que vai live = hash que /verify mostra.
+    # Quebrar isto = quebrar A.3.14 do Paper-001.
+    generation_id = str(uuid.uuid4())
+    request_host = request.headers.get("host", "")
+
+    # Build full prompt with system instructions
+    full_prompt = f"{SITE_GENERATION_SYSTEM_PROMPT}\n\nUser request: {data.prompt}"
+
+    # Call via W-CORTEX-001 pipeline — NOT generate_content() directly
+    result = await generate_with_pipeline(
+        caller_did=caller_did,
+        caller_tier="NODAL",  # Public tier for sites
+        request_host=request_host,
+        acceptability_l_minus_1_fn=acceptability_l_minus_1,
+        acceptability_l_zero_fn=acceptability_l_zero,
+        free_prompt=full_prompt,  # Free mode, not template
+        did_gate_fn=assert_public_writer_authorized  # Public gate, not internal
+    )
+
+    # Handle pipeline errors
+    if not result.ok:
+        error = result.error or "unknown_error"
+        if "DID_GATE" in error:
+            raise HTTPException(status_code=403, detail=error)
+        elif "L-1_BLOCKED_CS1" in error:
+            raise HTTPException(status_code=451, detail=error)
+        elif "L0_BLOCKED" in error:
+            raise HTTPException(status_code=422, detail=error)
+        elif "OLLAMA_FAILED" in error:
+            raise HTTPException(status_code=502, detail=f"{error} (I10 fallback needed)")
+        else:
+            raise HTTPException(status_code=400, detail=error)
+
+    raw_response = result.content or ""
+
+    # ─── Extract HTML from response (handles markdown code blocks) ───────────
+    generated_html = extract_html_from_response(raw_response)
+
+    # ─── Validate HTML output ─────────────────────────────────────────────────
+    # Note: .upper() converts to "<!DOCTYPE HTML>" so we must match that
+    if not generated_html or "<!DOCTYPE HTML>" not in generated_html.upper():
+        raise HTTPException(status_code=422, detail="Invalid HTML generated (I14)")
+
+    # ─── Sanitize HTML (XSS prevention) ───────────────────────────────────────
+    sanitized_html = sanitize_html(generated_html)
+
+    # ─── Compute content hash ─────────────────────────────────────────────────
+    content_hash = f"sha256:{hashlib.sha256(sanitized_html.encode()).hexdigest()}"
+
+    # ─── Receipt ID ───────────────────────────────────────────────────────────
+    short_hash = content_hash.split(':')[1][:8].upper()
+    receipt_id = f"WINDI-GENERATE-{timestamp}-{short_hash}"
+
+    # ─── Extract generation metadata from W-CORTEX-001 result ──────────────────
+    model_used = result.generation_log.get("model", "mistral:7b") if result.generation_log else "mistral:7b"
+    source_mode = result.source_mode  # "free" for this endpoint
+
+    # ─── Store in windi_generations ───────────────────────────────────────────
+    conn = get_db()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("""
+            INSERT INTO windi_generations (
+                id, site_id, container_id, prompt, model,
+                html, content_hash, status,
+                created_at, generated_at, generation_receipt
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?)
+        """, (
+            generation_id,
+            site_id,
+            None,  # container_id - not linked to container yet
+            data.prompt,
+            model_used,
+            sanitized_html,
+            content_hash,
+            now_str,
+            now_str,
+            receipt_id
+        ))
+        conn.commit()
+    except Exception as e:
+        conn.close()
+        raise HTTPException(status_code=500, detail=f"DB error: {str(e)}")
+
+    conn.close()
+
+    # ─── Seal to Ledger ───────────────────────────────────────────────────────
+    ledger_result = seal_to_ledger(
+        receipt_id,
+        f"AI Site Generation: {data.site_name or 'Untitled'}",
+        content_hash,
+        caller_did
+    )
+
+    # ─── Return result ────────────────────────────────────────────────────────
+    return {
+        "ok": True,
+        "generation_id": generation_id,
+        "site_id": site_id,
+        "prompt": data.prompt,
+        "model": model_used,
+        "html": sanitized_html,
+        "content_hash": content_hash,
+        "status": "pending",  # Awaiting I9 approval
+        "generation_receipt": receipt_id,
+        "ledger": ledger_result,
+        "source_mode": source_mode,  # W-CORTEX-001 audit trail
+        "invariants": ["I1", "I9", "I10", "I11", "I14"],
+        "next_step": "POST /api/sites/publish to approve and publish (I9 gate)"
     }

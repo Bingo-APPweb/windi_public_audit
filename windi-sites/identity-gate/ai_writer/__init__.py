@@ -22,6 +22,7 @@ Liga IA+H · Kempten, Bavaria · 2026
 from .ai_writer_runtime import (
     generate_with_pipeline,
     assert_internal_writer_authorized,
+    assert_public_writer_authorized,  # W-CORTEX-001: public endpoints
     InternalModeViolation,
     GenerationResult,
     writer_health,
@@ -39,9 +40,10 @@ from .ollama_writer_client import (
 )
 
 __all__ = [
-    # Runtime
+    # Runtime — W-CORTEX-001 Canal Único
     "generate_with_pipeline",
     "assert_internal_writer_authorized",
+    "assert_public_writer_authorized",
     "InternalModeViolation",
     "GenerationResult",
     "writer_health",

@@ -190,6 +190,8 @@ class GenerationResult:
     Result of a content generation operation.
 
     Contains all data needed for sealing and provenance.
+
+    W-CORTEX-001: source_mode tracks origin for audit trail.
     """
     def __init__(
         self,
@@ -200,7 +202,9 @@ class GenerationResult:
         l_minus_1_log: Optional[Dict] = None,
         l_zero_log: Optional[Dict] = None,
         generation_log: Optional[Dict] = None,
-        l1_review_pending: bool = False
+        l1_review_pending: bool = False,
+        source_mode: str = "template",  # "template" | "free"
+        template_type: Optional[str] = None  # article/landing/about/legal/null
     ):
         self.ok = ok
         self.content = content
@@ -210,6 +214,8 @@ class GenerationResult:
         self.l_zero_log = l_zero_log
         self.generation_log = generation_log
         self.l1_review_pending = l1_review_pending
+        self.source_mode = source_mode
+        self.template_type = template_type
         self.timestamp = datetime.now(timezone.utc).isoformat()
 
     def to_dict(self) -> Dict[str, Any]:
@@ -230,62 +236,112 @@ class GenerationResult:
 # 8-STEP PIPELINE
 # ═══════════════════════════════════════════════════════════════════════════
 
+def assert_public_writer_authorized(caller_did: str, caller_tier: Optional[str], request_host: str) -> None:
+    """
+    Public authorization gate — requires valid DID only.
+
+    For public-facing generation endpoints (e.g., /sites/generate).
+    Less restrictive than internal mode but still requires identity.
+    """
+    if not caller_did:
+        raise InternalModeViolation(
+            layer="DID_REQUIRED",
+            reason="No DID provided — anonymous generation prohibited"
+        )
+    # DID exists = authorized for public generation
+
+
 async def generate_with_pipeline(
     caller_did: str,
     caller_tier: str,
     request_host: str,
-    template_type: str,
-    template_variables: Dict[str, str],
     acceptability_l_minus_1_fn,
-    acceptability_l_zero_fn
+    acceptability_l_zero_fn,
+    template_type: Optional[str] = None,
+    template_variables: Optional[Dict[str, str]] = None,
+    free_prompt: Optional[str] = None,
+    did_gate_fn: Optional[Any] = None  # Custom DID gate function (default: internal)
 ) -> GenerationResult:
     """
-    Full 8-step generation pipeline.
+    W-CORTEX-001 — Canal Único Soberano de Inferência.
+
+    Full 8-step generation pipeline. ALL model calls MUST pass through here.
+    "Duas entradas são aceitáveis. Dois pipelines são proibidos."
 
     Steps:
-        1. DID Gate (4 layers)
-        2. L-1 acceptability check (input prompt)
-        3. Ollama generate (mistral:7b @ Galho B)
-        4. L0 acceptability check (output)
-        5. [Seal handled by caller]
-        6. [Provenance handled by caller]
-        7. [Receipt handled by caller]
-        8. Return result
+        1. Input validation (template XOR free_prompt)
+        2. DID Gate (configurable: internal or public)
+        3. Build prompt (branching point - ONLY HERE)
+        4. L-1 acceptability check (input prompt)
+        5. Ollama generate (mistral:7b @ Galho B)
+        6. L0 acceptability check (output)
+        7. [Seal handled by caller]
+        8. Return result with source_mode for audit
 
     Args:
         caller_did: DID making the request
         caller_tier: Tier of the caller
         request_host: Host header
-        template_type: article/landing/about
-        template_variables: Variables to fill template
         acceptability_l_minus_1_fn: L-1 check function
         acceptability_l_zero_fn: L0 check function
+        template_type: article/landing/about/legal (mutually exclusive with free_prompt)
+        template_variables: Variables to fill template
+        free_prompt: Direct prompt text (mutually exclusive with template_type)
+        did_gate_fn: Authorization function (default: assert_internal_writer_authorized)
+                     Use assert_public_writer_authorized for public endpoints
 
     Returns:
-        GenerationResult with content or error
+        GenerationResult with content, source_mode, and template_type for audit
     """
     now = datetime.now(timezone.utc).isoformat()
 
-    # ─── STEP 1: DID Gate (4 layers) ─────────────────────────────────────────
+    # ─── STEP 1: Input validation — EXACTLY ONE of template_type OR free_prompt ─
+    # W-CORTEX-001 Guardrail: No ambiguity allowed
+    if (template_type is None) == (free_prompt is None):
+        return GenerationResult(
+            ok=False,
+            error="CORTEX_INPUT_ERROR: Exactly one of template_type or free_prompt must be provided",
+            source_mode="invalid"
+        )
+
+    # Determine source mode (for audit trail)
+    if template_type is not None:
+        source_mode = "template"
+    else:
+        source_mode = "free"
+
+    # ─── STEP 2: DID Gate (configurable) ─────────────────────────────────────
+    # Default to internal mode if no gate provided
+    gate_fn = did_gate_fn if did_gate_fn is not None else assert_internal_writer_authorized
     try:
-        assert_internal_writer_authorized(caller_did, caller_tier, request_host)
+        gate_fn(caller_did, caller_tier, request_host)
     except InternalModeViolation as e:
         return GenerationResult(
             ok=False,
             error=f"DID_GATE_FAILED: {e.reason}",
-            l_minus_1_log={"layer": "DID_GATE", "blocked": True, "reason": e.reason}
+            l_minus_1_log={"layer": "DID_GATE", "blocked": True, "reason": e.reason},
+            source_mode=source_mode,
+            template_type=template_type
         )
 
-    # ─── STEP 2: Build prompt and L-1 check ──────────────────────────────────
-    try:
-        prompt = build_prompt(template_type, template_variables)
-    except ValueError as e:
-        return GenerationResult(
-            ok=False,
-            error=f"TEMPLATE_ERROR: {str(e)}"
-        )
+    # ─── STEP 3: Build prompt — ONLY branching point in pipeline ─────────────
+    # W-CORTEX-001: After this step, pipeline is IDENTICAL for both modes
+    if template_type is not None:
+        try:
+            prompt = build_prompt(template_type, template_variables or {})
+        except ValueError as e:
+            return GenerationResult(
+                ok=False,
+                error=f"TEMPLATE_ERROR: {str(e)}",
+                source_mode=source_mode,
+                template_type=template_type
+            )
+    else:
+        # Free prompt mode — direct pass-through
+        prompt = free_prompt
 
-    # L-1 check on input prompt
+    # ─── STEP 4: L-1 check on input prompt ──────────────────────────────────
+    # W-CORTEX-001: From here, pipeline is IDENTICAL for template and free modes
     l1_allowed, l1_log = await acceptability_l_minus_1_fn({"prompt": prompt})
 
     if not l1_allowed:
@@ -295,12 +351,14 @@ async def generate_with_pipeline(
             return GenerationResult(
                 ok=False,
                 error=f"L-1_BLOCKED_CS1: CSAM content prohibited",
-                l_minus_1_log=l1_log
+                l_minus_1_log=l1_log,
+                source_mode=source_mode,
+                template_type=template_type
             )
         # Other CS in shadow mode - should not block but log
         # This is a fallback; shadow mode CS-2..7 should pass L-1
 
-    # ─── STEP 3: Ollama generation ───────────────────────────────────────────
+    # ─── STEP 5: Ollama generation (Galho B) ─────────────────────────────────
     try:
         gen_result = await generate_content(prompt)
         generated_content = gen_result.get("content", "")
@@ -309,6 +367,7 @@ async def generate_with_pipeline(
             "tokens": gen_result.get("tokens"),
             "duration_ms": gen_result.get("duration_ms"),
             "attempt": gen_result.get("attempt"),
+            "source_mode": source_mode,  # W-CORTEX-001 audit trail
             "timestamp": now
         }
     except OllamaWriterError as e:
@@ -317,10 +376,12 @@ async def generate_with_pipeline(
             ok=False,
             error=f"OLLAMA_FAILED: {e.reason}",
             l_minus_1_log=l1_log,
-            generation_log=e.to_dict()
+            generation_log=e.to_dict(),
+            source_mode=source_mode,
+            template_type=template_type
         )
 
-    # ─── STEP 4: L0 check on output ──────────────────────────────────────────
+    # ─── STEP 6: L0 check on output ──────────────────────────────────────────
     l0_allowed, l0_log = await acceptability_l_zero_fn({"content": generated_content})
 
     l1_review_pending = False
@@ -331,14 +392,16 @@ async def generate_with_pipeline(
             error=f"L0_BLOCKED: {l0_log.get('reason', 'quality_check_failed')}",
             l_minus_1_log=l1_log,
             l_zero_log=l0_log,
-            generation_log=generation_log
+            generation_log=generation_log,
+            source_mode=source_mode,
+            template_type=template_type
         )
 
     # Check if L1 review pending (low confidence)
     if l0_log.get("l1_review_pending"):
         l1_review_pending = True
 
-    # ─── STEP 5-8: Prepare result (sealing done by caller) ───────────────────
+    # ─── STEP 7-8: Prepare result (sealing done by caller) ───────────────────
     content_hash = f"sha256:{hashlib.sha256(generated_content.encode()).hexdigest()}"
 
     return GenerationResult(
@@ -348,7 +411,9 @@ async def generate_with_pipeline(
         l_minus_1_log=l1_log,
         l_zero_log=l0_log,
         generation_log=generation_log,
-        l1_review_pending=l1_review_pending
+        l1_review_pending=l1_review_pending,
+        source_mode=source_mode,
+        template_type=template_type
     )
 
 
