@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.36.0
-**Sealed:** 2026-05-03 · §235 W-SITES-001 Sprint 1 LIVE @ windisites.de
+**Version:** 2.37.0
+**Sealed:** 2026-05-03 · §236 Send Proof to Email LIVE @ windisites.de
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -707,6 +707,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 |------|-----------|
 | 03 Mai | **§235** W-SITES-001 Sprint 1 LIVE · windisites.de · 5 Pages · `1BE93BB4` ✅ |
 | 03 Mai | **§234** Paper-001 A.3 SEALED · TWO-STAGE Model · Held-out Validation (0% recall) · A.4 Draft ✅ |
+| 03 Mai | **§236** Send Proof to Email · W-MAIL-001 · verify.html modal · rate limit ✅ |
 | 02 Mai | **§230** W-BERCARIO-001 · Plenitude Tracker · Service Maturity · :8195 ✅ |
 | 02 Mai | **§229** W-CAP-001 · Capability Tokens · Single-use · Token Gating · :8194 ✅ |
 | 02 Mai | **§233** Paper-001 A.3 Core · Empirical + Constitutional · `CDC760DD` ✅ |
