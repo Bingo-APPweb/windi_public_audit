@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.34.0
-**Sealed:** 2026-05-02 · §233 Paper-001 A.3 Core · §232 LEXICON Empirical Dataset
+**Version:** 2.36.0
+**Sealed:** 2026-05-03 · §235 W-SITES-001 Sprint 1 LIVE @ windisites.de
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -97,10 +97,10 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-TRAVEL-001 | :8126 | I9,I11,I13,G3 | **LIVE** v1.3.0 · Identity Gate · /travel/ · §196 nginx fix · nohup oficial |
 | W-SHELF-001 | :8191 | I9,I11,I13,I14 | **LIVE** v0.3.0 · I9+I14 Dual Enforcement · §199+§200 · 11/11 Tests |
 | W-CMS-001 | :8055 | I9,I11,I14 | **LIVE** · Directus 10 · Ledger Bridge :8056 · Sweeper Timer · §219 Baptism of Externality |
-| W-SITES-001 | :8192 | I1,I9,I11,I12,I14 | **LIVE** · Sites Factory · Identity Gate Fork · §220 · PRODUCT-SITES-001 (8/12) |
+| W-SITES-001 | :8192 | I1,I9,I11,I12,I14 | **LIVE** v1.0-sprint1 · windisites.de · §235 · 5 Pages · `1BE93BB4` |
 | W-MAIL-001 | :25,:587,:993,:8888 | I1,I9,I11,I12,I14 | **LIVE** · Sovereign Email · DACP-v1 · Dual DKIM · SnappyMail · §224-226 |
 | W-OLLAMA-001 | B:11434 | I9,I10,I13 | **LIVE** · Server Gêmeo (85.215.131.0) · mistral:7b · Galho B · §227 |
-| W-LEXICON-001 | :8193 | I9,I10,I13,I14 | **LIVE** v0.2.0 · Semantic Drift Detection · Ollama B · §231 `6EE2EF79` |
+| W-LEXICON-001 | :8193 | I9,I10,I13,I14 | **LIVE** v0.3.0 · TWO-STAGE Model · Stage 2 Evaluator · Paper-001 A.3 SEALED |
 | W-CAP-001 | :8194 | I1,I9,I11,I14 | **LIVE** · Capability Tokens · Single-use · SaaS Gate · §229 |
 | W-BERCARIO-001 | :8195 | I1,I9,I11,I14 | **LIVE** · Plenitude Tracker · Service Maturity · §230 |
 | WINDI-PORTAL | static | — | **LIVE** · Internal Control Center · 35 Services · 7 Categories |
@@ -400,6 +400,35 @@ Nenhum endpoint retorna valores default que mascarem dados ausentes.
 **Conectividade:** `curl http://85.215.131.0:11434/api/tags` ✅
 **Log:** `/opt/windi/sessions/2026-05-02-galho-b-nascimento.md`
 
+### §235 — W-SITES-001 Sprint 1 LIVE @ windisites.de (03 Mai 2026)
+
+> **"The accountable web. Every page sealed. Every change verifiable."**
+
+**Status:** LIVE · **Domain:** `windisites.de` · **Receipt:** `1BE93BB4`
+**Invariants:** I1, I9, I11, I12, I14
+
+**Stack:**
+- nginx + Let's Encrypt SSL (expires 2026-08-01)
+- Static HTML/CSS (Sprint 1 mockup)
+- NOIR/KLAR toggle (Bricolage Grotesque + JetBrains Mono)
+- Backend: Identity Gate :8192 (Sprint 2)
+
+**5 Pages LIVE:**
+| Page | URL | Função |
+|------|-----|--------|
+| Landing | `windisites.de/` | Tiers LOW/MED/HIGH/GOV |
+| Dashboard | `windisites.de/dashboard.html` | Lista de sites |
+| New Site | `windisites.de/new-site.html` | Wizard 6 passos |
+| Workspace | `windisites.de/site-workspace.html` | Preview + Compliance |
+| Verify | `windisites.de/verify.html` | Prova pública + QR |
+
+**Arquitectura:**
+- `windi-domain.com` → Hub institucional (ONE TREE)
+- `windisites.de` → Produto comercial dedicado
+- Blueprint v1.0 preservado, evoluído para produtos maduros
+
+**Files:** `/opt/windi/windi-sites/static/` · `/etc/nginx/sites-enabled/windisites.de`
+
 ### §217 — P01 Sovereign Risk Score (SRS) (26 Apr 2026)
 
 > **"O peso regulatório é soberano. Art.14 = prioridade máxima."**
@@ -676,6 +705,8 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 03 Mai | **§235** W-SITES-001 Sprint 1 LIVE · windisites.de · 5 Pages · `1BE93BB4` ✅ |
+| 03 Mai | **§234** Paper-001 A.3 SEALED · TWO-STAGE Model · Held-out Validation (0% recall) · A.4 Draft ✅ |
 | 02 Mai | **§230** W-BERCARIO-001 · Plenitude Tracker · Service Maturity · :8195 ✅ |
 | 02 Mai | **§229** W-CAP-001 · Capability Tokens · Single-use · Token Gating · :8194 ✅ |
 | 02 Mai | **§233** Paper-001 A.3 Core · Empirical + Constitutional · `CDC760DD` ✅ |
@@ -795,6 +826,9 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 - §231 LEXICON LIVE: `WINDI-LEXICON-LIVE-FIRST-20260502162321-6EE2EF79` (First Drift Analysis)
 - §232 LEXICON Empirical: `WINDI-LEXICON-EMPIRICAL-001-20260502163408-24B69CFF` (10 Constitutional Cases)
 - §233 Paper-001 A.3 Core: `WINDI-PAPER001-A3-CORE-20260502192316-CDC760DD` (Empirical + Constitutional)
+- §234 Paper-001 A.3 SEAL: `WINDI-PAPER001-A3-SEAL-20260503115356` (TWO-STAGE + Held-out + Boundary)
+- §234 Stage 2 FROZEN: `88c4a7dd5ce4177a3839bec9297b677619460645a7210c0e6fce1175e5cb17ea` (Pre-validation freeze)
+- §235 W-SITES-001 Deploy: `WINDI-SITES-DEPLOY-20260503115335-1BE93BB4` (windisites.de LIVE)
 
 ---
 
