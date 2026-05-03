@@ -626,6 +626,14 @@ try:
 except ImportError as e:
     print(f"[WINDI-SITES] Sites CRUD not available: {e}")
 
+# ─── FIT Engine §5 ────────────────────────────────────────────────────────────
+try:
+    from fit_engine import fit_router
+    app.include_router(fit_router)
+    print("[WINDI-SITES] W-FIT-001 FIT Engine loaded (invisible maturity)")
+except ImportError as e:
+    print(f"[WINDI-SITES] FIT Engine not available: {e}")
+
 # ─── Canvas Integration §166 ──────────────────────────────────────────────────
 try:
     from canvas_integration import law_generate_document_cover
