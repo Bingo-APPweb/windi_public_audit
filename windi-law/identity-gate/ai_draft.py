@@ -537,11 +537,16 @@ Erstelle jetzt das vollständige Dokument:"""
             "G3": "PENDING — human must review before seal",
             "I11": "PENDING — will be sealed on /seal endpoint",
         },
-        "w_cortex_001": {
+        "w_cortex": {
             "mode": generation_log.get("mode", "unknown"),
             "source_mode": generation_log.get("source_mode", "free"),
             "content_hash": generation_log.get("content_hash"),
             "l1_review_pending": generation_log.get("l1_review_pending", True),
+            # §241 Tier Routing metadata
+            "tier_requested": generation_log.get("tier_requested"),
+            "tier_used": generation_log.get("tier_used"),
+            "model_used": generation_log.get("model_used"),
+            "cost_eur": generation_log.get("cost_eur", 0.0),
         },
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }
