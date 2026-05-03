@@ -51,55 +51,41 @@ VALID_CONTAINER_TYPES = {"writer", "translator", "image", "seo"}
 VALID_TIERS = {"FREE", "MED", "HIGH"}
 
 # ═══════════════════════════════════════════════════════════════════════════
-# §C-ACCEPTABILITY-001 — L-1/L0 SCAFFOLDING (PASS-THROUGH MODE)
+# §C-ACCEPTABILITY-001 — L-1/L0 RUNTIME (§3a ACTIVATED)
 # ═══════════════════════════════════════════════════════════════════════════
-# These interfaces are FROZEN. In §3a runtime activation, only the body changes.
+# Runtime replaces pass-through stubs. Interfaces remain frozen.
 # ═══════════════════════════════════════════════════════════════════════════
 
-async def acceptability_l_minus_1(payload: dict) -> tuple[bool, dict]:
-    """
-    L-1: Pre-generation INPUT filter.
+try:
+    from acceptability import acceptability_l_minus_1, acceptability_l_zero, should_flag_for_l1_review
+    ACCEPTABILITY_RUNTIME = True
+    print("[WINDI-SITES] §C-ACCEPTABILITY runtime loaded (L-1/L0 active)")
+except ImportError as e:
+    # Fallback to pass-through if runtime not available
+    ACCEPTABILITY_RUNTIME = False
+    print(f"[WINDI-SITES] §C-ACCEPTABILITY runtime not available, using pass-through: {e}")
 
-    PASS-THROUGH in Passo 2 — interface frozen, logic empty.
-    In §3a, this becomes the Cardinal Sins detector.
+    async def acceptability_l_minus_1(payload: dict) -> tuple[bool, dict]:
+        """L-1: Pass-through fallback."""
+        return (True, {
+            "layer": "L-1",
+            "mode": "pass-through-fallback",
+            "blocked": False,
+            "ts": datetime.now(timezone.utc).isoformat()
+        })
 
-    Args:
-        payload: The incoming request payload (user input)
+    async def acceptability_l_zero(content: dict) -> tuple[bool, dict]:
+        """L0: Pass-through fallback."""
+        return (True, {
+            "layer": "L0",
+            "mode": "pass-through-fallback",
+            "blocked": False,
+            "ts": datetime.now(timezone.utc).isoformat()
+        })
 
-    Returns:
-        (allowed, log_entry) — allowed=True means pass, log_entry for provenance
-    """
-    log_entry = {
-        "layer": "L-1",
-        "mode": "pass-through",
-        "blocked": False,
-        "reason": None,
-        "ts": datetime.now(timezone.utc).isoformat()
-    }
-    return (True, log_entry)
-
-
-async def acceptability_l_zero(content: dict) -> tuple[bool, dict]:
-    """
-    L0: Pre-seal OUTPUT filter.
-
-    PASS-THROUGH in Passo 2 — interface frozen, logic empty.
-    In §3a, this becomes the content classifier.
-
-    Args:
-        content: The generated content (AI output before seal)
-
-    Returns:
-        (allowed, log_entry) — allowed=True means pass, log_entry for provenance
-    """
-    log_entry = {
-        "layer": "L0",
-        "mode": "pass-through",
-        "blocked": False,
-        "reason": None,
-        "ts": datetime.now(timezone.utc).isoformat()
-    }
-    return (True, log_entry)
+    def should_flag_for_l1_review(log_entry: dict) -> bool:
+        """L1 review flag fallback."""
+        return False
 
 
 def build_provenance_chain(
@@ -316,10 +302,12 @@ async def create_site(data: SiteCreate, request: Request):
     if not company_id:
         raise HTTPException(status_code=403, detail="DID not associated with any company")
 
-    # L-1 filter (pass-through)
+    # L-1 filter (Cardinal Sin detection)
     l1_allowed, l1_log = await acceptability_l_minus_1(data.model_dump())
     if not l1_allowed:
-        raise HTTPException(status_code=400, detail=f"L-1 blocked: {l1_log.get('reason')}")
+        # Extract reason: CS detection uses cs_id/cs_name, general uses reason
+        reason = l1_log.get('cs_id') or l1_log.get('cs_name') or l1_log.get('reason', 'policy_violation')
+        raise HTTPException(status_code=400, detail=f"L-1 blocked: {reason}")
 
     now = datetime.now(timezone.utc).isoformat()
     site_id = str(uuid.uuid4())
@@ -535,10 +523,12 @@ async def create_container(site_id: str, data: ContainerCreate, request: Request
     if not verify_site_ownership(site_id, caller_did):
         raise HTTPException(status_code=403, detail="Not authorized for this site")
 
-    # L-1 filter (pass-through)
+    # L-1 filter (Cardinal Sin detection)
     l1_allowed, l1_log = await acceptability_l_minus_1(data.model_dump())
     if not l1_allowed:
-        raise HTTPException(status_code=400, detail=f"L-1 blocked: {l1_log.get('reason')}")
+        # Extract reason: CS detection uses cs_id/cs_name, general uses reason
+        reason = l1_log.get('cs_id') or l1_log.get('cs_name') or l1_log.get('reason', 'policy_violation')
+        raise HTTPException(status_code=400, detail=f"L-1 blocked: {reason}")
 
     now = datetime.now(timezone.utc).isoformat()
     container_id = str(uuid.uuid4())

@@ -1,0 +1,149 @@
+{
+  "$schema": "https://windi-domain.com/schemas/cardinal-sins-v1.0.json",
+  "version": "1.0.0",
+  "sealed": "2026-05-03",
+  "depends": ["§C-ACCEPTABILITY-001 (66A0D8B0)"],
+  "invariants": ["I1", "I9", "I11", "I14"],
+
+  "cardinal_sins": {
+    "CS-1": {
+      "name": "CSAM",
+      "description": "Child Sexual Abuse Material — absolute zero tolerance",
+      "severity": "CRITICAL",
+      "enforcement": "ALWAYS_ENFORCE",
+      "action": "BLOCK_AND_REPORT",
+      "http_code": 451,
+      "ledger_action": "SEAL_ATTEMPT_ONLY",
+      "notify": ["WITNESS", "LEGAL"],
+      "keywords_regex": [
+        "\\b(child|minor|underage|kid|preteen|teen)\\s*(porn|sex|nude|naked|abuse)",
+        "\\b(cp|pedo|loli|shota)\\b",
+        "\\bcsam\\b"
+      ],
+      "notes": "Never enters shadow mode. Always enforced from day 1."
+    },
+
+    "CS-2": {
+      "name": "VIOLENCE_HARM",
+      "description": "Explicit violence or instructions for physical harm to identifiable persons",
+      "severity": "HIGH",
+      "enforcement": "SHADOW_THEN_ENFORCE",
+      "action": "BLOCK",
+      "http_code": 451,
+      "ledger_action": "SEAL_ATTEMPT_ONLY",
+      "notify": ["WITNESS"],
+      "keywords_regex": [
+        "\\b(kill|murder|assassinate|bomb|explode|poison)\\s+(him|her|them|[A-Z][a-z]+)",
+        "\\bhow\\s+to\\s+(make|build|create)\\s+(bomb|explosive|weapon)",
+        "\\b(attack|hurt|harm)\\s+(the|a)\\s+(school|hospital|church|mosque|synagogue)"
+      ],
+      "semantic_fallback": true
+    },
+
+    "CS-3": {
+      "name": "IMPERSONATION",
+      "description": "Impersonation of real person without consent",
+      "severity": "HIGH",
+      "enforcement": "SHADOW_THEN_ENFORCE",
+      "action": "BLOCK",
+      "http_code": 451,
+      "ledger_action": "SEAL_ATTEMPT_ONLY",
+      "notify": ["WITNESS"],
+      "keywords_regex": [
+        "\\b(pretend|act|pose|impersonate)\\s+(as|like|to be)\\s+([A-Z][a-z]+\\s+[A-Z][a-z]+)",
+        "\\b(fake|forge)\\s+(statement|letter|email|message)\\s+(from|by)\\s+([A-Z][a-z]+)"
+      ],
+      "semantic_fallback": true,
+      "notes": "Requires semantic analysis for subtle cases"
+    },
+
+    "CS-4": {
+      "name": "EXTREMIST_INCITEMENT",
+      "description": "Extremist material or incitement to violence/hatred",
+      "severity": "HIGH",
+      "enforcement": "SHADOW_THEN_ENFORCE",
+      "action": "BLOCK",
+      "http_code": 451,
+      "ledger_action": "SEAL_ATTEMPT_ONLY",
+      "notify": ["WITNESS"],
+      "keywords_regex": [
+        "\\b(join|recruit|support)\\s+(isis|al-?qaeda|nazi|kkk)",
+        "\\b(exterminate|eliminate|cleanse)\\s+(the\\s+)?(jews|muslims|christians|blacks|whites)",
+        "\\b(race\\s+war|holy\\s+war|jihad\\s+against)"
+      ],
+      "semantic_fallback": true
+    },
+
+    "CS-5": {
+      "name": "DOCUMENTARY_FRAUD",
+      "description": "Forgery of institutional identity documents",
+      "severity": "HIGH",
+      "enforcement": "SHADOW_THEN_ENFORCE",
+      "action": "BLOCK",
+      "http_code": 451,
+      "ledger_action": "SEAL_ATTEMPT_ONLY",
+      "notify": ["WITNESS"],
+      "keywords_regex": [
+        "\\b(fake|forge|counterfeit|falsify)\\s+(passport|id|license|certificate|diploma)",
+        "\\b(create|make|generate)\\s+(fake|false|forged)\\s+(government|official|legal)\\s+(document|id|certificate)"
+      ],
+      "semantic_fallback": true,
+      "notes": "Distinguished from legitimate document drafting by intent markers"
+    },
+
+    "CS-6": {
+      "name": "DEEPFAKE_INTENT",
+      "description": "Explicit request for deepfake simulation of real persons",
+      "severity": "MEDIUM",
+      "enforcement": "SHADOW_THEN_ENFORCE",
+      "action": "BLOCK",
+      "http_code": 451,
+      "ledger_action": "SEAL_ATTEMPT_ONLY",
+      "notify": ["WITNESS"],
+      "keywords_regex": [
+        "\\b(deepfake|face\\s*swap)\\s+(video|image|photo)\\s+(of|with)\\s+([A-Z][a-z]+)",
+        "\\b(make|create|generate)\\s+(fake|synthetic)\\s+(video|image)\\s+(of|showing)\\s+([A-Z][a-z]+)"
+      ],
+      "semantic_fallback": true,
+      "notes": "Does not block legitimate AI art requests"
+    },
+
+    "CS-7": {
+      "name": "PII_EXPOSURE",
+      "description": "Exposure of third-party PII (fiscal, medical, financial)",
+      "severity": "MEDIUM",
+      "enforcement": "SHADOW_THEN_ENFORCE",
+      "action": "BLOCK",
+      "http_code": 422,
+      "ledger_action": "SEAL_ATTEMPT_ONLY",
+      "notify": ["WITNESS"],
+      "keywords_regex": [
+        "\\b(social\\s+security|ssn|tax\\s+id|vat\\s+number)\\s*[:\\s]\\s*[0-9A-Z-]+",
+        "\\b(credit\\s+card|bank\\s+account|iban)\\s*[:\\s]\\s*[0-9A-Z-]+",
+        "\\b(medical\\s+record|diagnosis|prescription)\\s+(of|for)\\s+([A-Z][a-z]+)"
+      ],
+      "semantic_fallback": true,
+      "notes": "Self-disclosure permitted; third-party exposure blocked"
+    }
+  },
+
+  "enforcement_modes": {
+    "ALWAYS_ENFORCE": "Active from deployment. No shadow phase.",
+    "SHADOW_THEN_ENFORCE": "Runs in shadow mode first. Logs verdict but doesn't block until Human Dragon approves enforcement."
+  },
+
+  "actions": {
+    "BLOCK": "Return HTTP error, do not process",
+    "BLOCK_AND_REPORT": "Return HTTP error, notify authorities if required by law"
+  },
+
+  "ledger_actions": {
+    "SEAL_ATTEMPT_ONLY": "Seal hash of attempt + verdict, NOT the raw content"
+  },
+
+  "meta": {
+    "author": "Liga IA+H",
+    "purpose": "§C-ACCEPTABILITY L-1 Cardinal Sins Catalog",
+    "principle": "Filter before generation. Never store prohibited content."
+  }
+}
