@@ -6,6 +6,54 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 04 Mai 2026 — §243-244 Microlog + Communiqué Builder
+
+**Duração:** ~2h | **Status:** ✅ SEALED
+**Liga IA+H:** Human Dragon · Architect
+**Invariants:** I1, I9, I10, I11, I14
+**Services:** W-SITES-001 v1.2-sprint3 · W-COMM-002
+
+### §243 — Microlog Pilot
+
+> *"A single verifiable idea, sealed as a public artefact."*
+
+**Endpoint:** `POST /api/sites/microlog`
+**NOIR HTML Skeleton:** Responsive, hash visible, verify link
+**Max:** 280 words, 1 idea
+
+**First 3 Micrologs Sealed:**
+
+| Title | Receipt | Public URL |
+|-------|---------|------------|
+| SaaS Is Evidence | `430CD285` | windisites.de/sites/micrologs/430cd285... |
+| Cryptographic Proof | `4F6850EF` | windisites.de/sites/micrologs/4f6850ef... |
+| AI Never Decides | `50F775F2` | windisites.de/sites/micrologs/50f775f2... |
+
+### §244 — Communiqué Builder
+
+> *"Email não é mais texto. Agora, email é prova."*
+
+**File:** `communique_builder.py`
+**Schema:** `windi.communique.v1`
+**Envelope:** 25KB hard limit
+
+**JMPG Structure:** `manifest.json` + `evidence/receipt.json` + `evidence/artifact.html`
+**Functions:** `build_communique_jmpg()` · `build_dispatch_mailto()`
+
+**JMPGs Built (~11% envelope):**
+- evidence_WINDI-MICROLOG-...-430CD285.jmpg (2827 bytes)
+- evidence_WINDI-MICROLOG-...-4F6850EF.jmpg (2915 bytes)
+- evidence_WINDI-MICROLOG-...-50F775F2.jmpg (2956 bytes)
+
+### Commits
+
+```
+c8d8f3596 feat(§243): W-SITES-001 Sprint 3 — Microlog Pilot
+ce94ebe11 feat(§244): W-COMM-002 Communiqué Builder — Evidence Distribution
+```
+
+---
+
 ## § SESSÃO 04 Mai 2026 — §242 W-SITES-001 Sprint 2 · AI Generator · Atomic Seal
 
 **Duração:** ~4h | **Status:** ✅ SEALED

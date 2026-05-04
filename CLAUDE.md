@@ -161,61 +161,21 @@ Nenhum endpoint retorna valores default que mascarem dados ausentes.
 **Sincronização:** `WindiDID.sync()` / `verifySync()` garante consistência.
 **Conecta:** I1 (presença controlada) · I9 (agência validada) · I11 (acção comprovável)
 
-### §150 — W-SEC-001: Security Sentinel
+### §150-163 — Core Infrastructure (Apr 2026)
 
-**Port:** 8144 · **Invariants:** I9, I11 · **Receipt:** `BD09970F`
-**Correlação Dual:** Behavioral (30 IPs → 1 flood) + Technical (1 IP → injection)
-**Pipeline:** SEC-EVT → Correlation → SEC-INCIDENT → I9 Gate → Ledger
+**§150 W-SEC-001:** :8144 · Security Sentinel · Dual Correlation · `BD09970F`
+**§151 W-DRAGON-001:** :8122 · 16×16 SHA-256 Glyph Grid · Dragon Shadow Forest
+**§153 W-STATE-CORE-006:** :8145 · Verify Public · `/api/receipts/{id}`
+**§163 DECRETO-001:** Árvore Viva · TRUNK→SAP→BRANCHES→LEAVES→FRUITS
+> **Full details:** `CLAUDE-HISTORY.md` § §150-163
 
-### §151 — W-DRAGON-001: Dragon Shadow Forest (09 Apr 2026)
+### §202 — DECRETO-002: CORE vs Apps (25 Apr 2026)
 
-**Port:** :8122 (via WINDI-LAW) · **Invariants:** I9, I11, I14
-**Conceito:** 16×16 glyph grid encodes 256 SHA-256 bits as dragon micropictures.
-**Bit=1:** Dark Dragon (heptagon) · **Bit=0:** Shadow Dragon (diamond)
-**Pipeline:** Content → SHA-256 → 256 bits → Dragon Grid → PDF/SVG → Ledger (I11)
-**Endpoints:** `/dragon/health` · `/dragon/encode` · `/dragon/encode-pdf` · `/dragon/preview` · `/dragon/verify/{id}`
+> **"Ledger guarda. Key assina. Invariantes limitam. VERIFY prova."**
 
-### §153 — W-STATE-CORE-006: Verify Public (11 Apr 2026)
-
-**Port:** :8145 · **Invariants:** I9, I11, I14 · **Commit:** `a566464`
-**Conceito:** Endpoint público de verificação. Qualquer pessoa, qualquer dispositivo, sem login.
-**Stack:** W-STATE-CORE 001-006 completo (hash → persist → DID → PHO → ledger → verify)
-**Endpoints:** `/api/receipts/{id}` (canonical) · `/verify-public/?id=X` (Visual UI)
-**Berlin:** `berlin-slide.html` · QR funcional · Script 3 min
-
-**§182 Fix (16 Apr):** ISSUE-001 resolved — verify-public UI now calls canonical `/api/receipts/` endpoint instead of stale `/verify-public/document/`. Commit `6034019`.
-
-### §163 — DECRETO-001: A Árvore Viva (13 Apr 2026)
-
-> **"O servidor WINDI é uma Árvore Viva. Cada serviço é um galho."**
-
-**Status:** CONSTITUTIONAL · **Commit:** `9f31574` · **Invariants:** I1, I9, I11, I12, I14
-**Arquitectura:** TRUNK (:8101) → SAP (DID) → BRANCHES (8 Órgãos) → LEAVES (Endpoints) → FRUITS (Receipts)
-
-**DID Tiers:** 🌱 SEED (1) · 🌿 NODAL (2) · 🌳 SOVEREIGN (3) · 🏛 ORACLE (4)
-**Files:** `/opt/windi/constitutional/DECREE-001-LIVING-TREE.md`
-
-### §202 — DECRETO-002: Separação Ontológica CORE vs Apps (25 Apr 2026)
-
-> **"Ledger guarda. Key assina. Invariantes limitam. VERIFY prova.**
-> **Tira um deles — não é WINDI."**
-
-**Status:** CONSTITUTIONAL · **Receipt:** `WINDI-DECRETO-002-FINAL-20260425144454-C216F3EA` · **Invariants:** I1, I9, I11, I14
-**Hash:** `sha256:6e8e5d17325f659239af3c2dfe250999feb0564b8a199191e13ad55b14f5ae77` ✅ VERIFIED
-
-**CORE Indivisível (4 elementos):**
-| Elemento | Função |
-|----------|--------|
-| **Ledger** | Guarda (`:8101`) |
-| **Key** | Assina (DID) |
-| **Invariantes** | Limita (I1, I9, I11, I14...) |
-| **Verificabilidade** | Prova (VERIFY) |
-
-**Princípio de Não-Contaminação:** Falhas em Reference Apps (W-*) não afectam o CORE.
-
+**Status:** CONSTITUTIONAL · **Receipt:** `C216F3EA` · **Invariants:** I1, I9, I11, I14
+**CORE:** Ledger + Key + Invariantes + Verificabilidade
 **Hierarquia:** INVARIANTES > CORE > DECRETOS > REFERENCE APPS > FEATURES
-
-**File:** `/opt/windi/constitutional/DECRETO-002-CORE-VS-APPS.md`
 
 ### §204 — VERA Paladar: Operação Completa (25 Apr 2026)
 
@@ -269,265 +229,78 @@ Nenhum endpoint retorna valores default que mascarem dados ausentes.
 **Anéis:** 1-Núcleo (Ledger/Vault/Verify) · 2-Produção (Enterprise/Bridge) · 3-Staging (CMS/Labs) · 4-Ossuário (Desktop dead)
 **Fix:** Desktop :8100→Anel 4 · W-Enterprise :8150 enabled · `windi-babel` disabled
 
-### §221 — CONTAINER ARCHITECTURE · §B-CONTRACT-001 (28 Apr 2026)
+### §221 — Container Architecture · §B-CONTRACT-001 (28 Apr 2026)
 
 > **"A marca pode desaparecer. A prova nunca."**
 
-**Status:** SEALED · **Service:** W-SITES-001 :8192 · **Invariants:** I1, I9, I11, I12, I14
+**Status:** SEALED · **Receipt:** `1530DBEF` · **Invariants:** I1, I9, I11, I12, I14
 **Fórmula:** `Container = Capacidade + Prova + Invariantes`
+**MAKEUP:** AI Writer · AI Translator · AI Image · AI SEO
+> **Full details:** `CLAUDE-HISTORY.md` § §221
 
-**§B-CONTRACT-001 (3 Pilares):**
-| Pilar | Decisão |
-|-------|---------|
-| Hospedagem | Hybrid (FREE=subdomain, MED=hosted, HIGH=export) |
-| Branding | Marca opcional, Prova obrigatória |
-| Responsabilidade | User=Autor · WINDI=Garantidor · Ledger=Testemunha |
-
-**MAKEUP Containers:** AI Writer · AI Translator · AI Image · AI SEO (governados pela Quadra I1·I9·I11·I14)
-**Provenance:** `{ai_generated, ai_model, legal_owner, parent_receipt}`
-
-**Constitutional Chain:**
-- `WINDI-CONTRACT-B-001-v1.0-20260428162029-1530DBEF` (contrato)
-- `WINDI-AIWRITER-FIRST-20260428163019-94A8C2EB` (primeiro AI content)
-
-**Files:** `/opt/windi/constitutional/W-SITES-001-CONTRACT-B-v1.0.md`
-
-### §222 — §C-ACCEPTABILITY-001: Content Acceptability Framework (28 Apr 2026)
+### §222 — §C-ACCEPTABILITY-001: Content Acceptability (28 Apr 2026)
 
 > **"Filtrar antes de gerar. Rever depois de selar. Anotar para sempre."**
 
-**Status:** SEALED · **Receipt:** `WINDI-SC-ACCEPTABILITY-001-v1.0-20260428184406-66A0D8B0` · **Invariants:** I1, I9, I11, I14
-**Hash:** `sha256:66a0d8b09a7aa4a0512e07ab4bd2a3897a74904727c03f13baae5c33ca31c271`
+**Status:** SEALED · **Receipt:** `66A0D8B0` · **Invariants:** I1, I9, I11, I14
+**4-Layer Defense:** L-1 (prompt filter) → L0 (pre-seal) → L1 (post-seal) → L2 (annotation)
+> **Full details:** `CLAUDE-HISTORY.md` § §222
 
-**4-Layer Defense:**
-| Layer | Nome | Timing | Efeito |
-|-------|------|--------|--------|
-| L-1 | PROMPT FILTER | pre-generation | Bloqueia INPUT · zero tokens |
-| L0 | PRE-SEAL FILTER | pre-seal | Bloqueia OUTPUT · I14 fail |
-| L1 | POST-SEAL REVIEW | post-seal | review_pending flag |
-| L2 | LEDGER ANNOTATION | post-facto | RETRACTS/CONTESTS/CORRECTS |
-
-**L2 Permissions:** User→RETRACTS · WINDI→CONTESTS · Todos→CORRECTS (com prova)
-**Counters:** Trimestrais em `/sites/governance/`
-**Files:** `/opt/windi/constitutional/S-C-ACCEPTABILITY-001-v1.0.md`
-
-### §224-226 — SOVEREIGNTY TRILOGY: W-MAIL-001 (29-30 Apr 2026)
+### §224-226 — W-MAIL-001 Sovereignty Trilogy (29-30 Apr 2026)
 
 > **"O email que PROVE existência. Não o email que só TRANSMITE."**
 
-**Status:** LIVE · **Service:** W-MAIL-001 · **Invariants:** I1, I9, I11, I12, I14
-**Domain:** `mail.windisites.de` · **Webmail:** `https://mail.windisites.de/` (SnappyMail)
+**Status:** SEALED · **Receipt:** `WINDI-MAIL-TRILOGY-20260429230632` · **Invariants:** I1, I9, I11, I12, I14
+**Domain:** `mail.windisites.de` · **DACP-v1:** Dual Anchored Communication Proof
+**Tests:** mail-tester 10/10 · Gmail INBOX · DKIM RSA PASS
+> **Full details:** `CLAUDE-HISTORY.md` § §224-226
 
-**§224 — Infrastructure Genesis:**
-- Docker-mailserver + SnappyMail (network_mode: host)
-- Ports: 25 (SMTP), 587 (Submission), 465 (TLS), 993 (IMAPS), 8888 (Webmail)
-- RSA-2048 DKIM (OpenDKIM) · SPF · DMARC · Rspamd · Fail2ban
-
-**§225 — DACP-v1 Protocol (Dual Anchored Communication Proof):**
-
-| Binding | Mecanismo | Localização |
-|---------|-----------|-------------|
-| **Forward** | X-WINDI-Proof-ID, X-WINDI-Content-Hash, X-WINDI-Binding | Email headers |
-| **Backward** | content_hash, message_id, dkim metadata | Ledger receipt |
-
-**Flow:** proof_id → append_verify_footer → hash_body (RFC 6376 relaxed) → MIME + X-WINDI-* → SMTP (DKIM) → Ledger seal
-**Verify:** Email aponta para Ledger · Ledger contém hash do email · **BIDIRECTIONAL PROOF**
-
-**§226 — WINDIMail Soberano:**
-- First mailbox: `postmaster@windisites.de`
-- mail-tester.com: **10/10** ✅
-- Gmail delivery: **INBOX** (não spam) ✅
-- DACP receipts: `WINDI-MAIL-PROOF-*`
-
-**Genesis Receipts:**
-- `WINDI-WMAIL-001-GENESIS-SMOKE-20260429222000` (infrastructure)
-- `WINDI-MAIL-PROOF-20260429222555-D7398F3C` (first DACP)
-- `WINDI-MAIL-PROOF-20260429223209-5959D6AA` (Gmail INBOX proof)
-- `WINDI-MAIL-TRILOGY-20260429230632` (§224-226 sealed)
-
-**Files:** `/opt/windi/w-mail-001/` · `proof_bind.py` (DACP implementation)
-
-### §224-226 — W-MAIL-001 Sovereignty Trilogy (30 Apr 2026)
-
-> **"WINDI tem agora canal de email constitucional próprio. Com prova. Com assinatura. Com vista pública."**
-
-**Status:** SEALED · **Receipt:** `WINDI-MAIL-TRILOGY-20260429230632`
-**Hash:** `sha256:ce256dc943c7a22c82b5c09b6b4b7440c3229074606245037473e67bd3612968`
-
-| § | Nome | Descrição |
-|---|------|-----------|
-| §224 | **W-DACP-001 v1** | Auto-inject verify URL in outbound emails |
-| §225 | **Dual DKIM** | RSA-2048 ✅ LIVE · Ed25519 ⏳ DEFERRED |
-| §226 | **WINDIMail Webmail** | mail.windisites.de — SnappyMail autonomous |
-
-**Tests Passed:**
-- mail-tester.com: **10/10**
-- Gmail delivery: **INBOX**
-- DKIM RSA: **PASS**
-- IMAP sync: **✅**
-- Webmail login: **✅**
-
-**Genesis Chain:**
-- `WINDI-WMAIL-001-GENESIS-SMOKE-20260429222000`
-- `WINDI-MAIL-PROOF-20260429222555-D7398F3C`
-- `WINDI-MAIL-PROOF-20260429223209-5959D6AA`
-- `WINDI-MAIL-TRILOGY-20260429230632`
-
-### §227 — Galho B Nascimento: Server Gêmeo + Dual Server Architecture (02 Mai 2026)
+### §227 — Galho B: Dual Server Architecture (02 Mai 2026)
 
 > **"We separated thinking from truth."**
 
-**Status:** LIVE · **Server B:** `windi-b` (85.215.131.0) · **Invariants:** I9, I10, I13
+**Status:** LIVE · **Server B:** 85.215.131.0 · **Invariants:** I9, I10, I13
+**Architecture:** Galho A (87.106.29.233) = Truth · Galho B = Cognition (Ollama mistral:7b)
+> **Full details:** `CLAUDE-HISTORY.md` § §227
 
-**Arquitectura Dual:**
-| Server | IP | Função | Serviços |
-|--------|-----|--------|----------|
-| **A (Galho A)** | 87.106.29.233 | EXECUTE · Soberania | Ledger · DID · Verify · 40+ |
-| **B (Galho B)** | 85.215.131.0 | INTERPRET · Cognição | Ollama · mistral:7b |
+### §241 — W-CORTEX-001: Canal Único Soberano (03 Mai 2026)
 
-**Stack Server B:**
-- Debian 12 · 8 cores · 32GB RAM · 480GB disco
-- Ollama :11434 · mistral:7b (4.4GB, Q4_K_M)
-- UFW: :22 público, :11434 só Server A
-- SSH hardened: `PermitRootLogin no`
-- unattended-upgrades activo
-
-**Princípio Arquitectural:**
-- Galho A = O que É verdade (Ledger, receipts, DIDs)
-- Galho B = O que PENSA (inferência LLM local)
-- B pode falhar sem comprometer A
-- B descartável, A privilegiado
-
-**Conectividade:** `curl http://85.215.131.0:11434/api/tags` ✅
-**Log:** `/opt/windi/sessions/2026-05-02-galho-b-nascimento.md`
-
-### §241 — W-CORTEX-001: Canal Único Soberano de Inferência (03 Mai 2026)
-
-> **"Every token now passes through a decision of cost, speed, and sovereignty."**
+> **"Every token passes through a decision of cost, speed, and sovereignty."**
 
 **Status:** SEALED · **Receipt:** `04C67B81` · **Invariants:** I1, I9, I10, I14
+**3-Tier:** FREE (Ollama B) · MED (Mistral API) · HIGH (Claude sonnet-4)
+**Pipeline:** DID Gate → Tier Resolution → L-1/L0 Filter → Routing → Seal
+> **Full details:** `CLAUDE-HISTORY.md` § §241
 
-**3-Tier Routing:**
-| Tier | Backend | Latency | Cost |
-|------|---------|---------|------|
-| FREE | Ollama B (mistral:7b) | ~5min | €0.00 |
-| MED | Mistral API | ~30s | ~€0.007/1k |
-| HIGH | Claude API (sonnet-4) | ~30s | ~€0.02/1k |
+### §235 — W-SITES-001 Sprint 1 @ windisites.de (03 Mai 2026)
 
-**Pipeline:** DID Gate → Tier Resolution → INPUT Filter → Routing → OUTPUT Filter → Seal
-
-**Escalation Rules:**
-- DID tier_level determines MAX allowed tier (1-2→FREE, 3→MED, 4→HIGH)
-- Downgrade allowed, escalation blocked (403)
-
-**Trilateral Tests:** 5/5 passed (FREE, HIGH, MED-fail, Escalation, Downgrade)
-**Files:** `ai_writer_runtime.py` · `sites_crud.py` · `ai_draft.py`
-
-### §235 — W-SITES-001 Sprint 1 LIVE @ windisites.de (03 Mai 2026)
-
-> **"The accountable web. Every page sealed. Every change verifiable."**
+> **"The accountable web. Every page sealed."**
 
 **Status:** LIVE · **Domain:** `windisites.de` · **Receipt:** `1BE93BB4`
-**Invariants:** I1, I9, I11, I12, I14
+**5 Pages:** Landing · Dashboard · New Site · Workspace · Verify
+> **Full details:** `CLAUDE-HISTORY.md` § §235
 
-**Stack:**
-- nginx + Let's Encrypt SSL (expires 2026-08-01)
-- Static HTML/CSS (Sprint 1 mockup)
-- NOIR/KLAR toggle (Bricolage Grotesque + JetBrains Mono)
-- Backend: Identity Gate :8192 (Sprint 2)
+### §242-244 — W-SITES-001 Sprints 2-3 (04 Mai 2026)
 
-**5 Pages LIVE:**
-| Page | URL | Função |
-|------|-----|--------|
-| Landing | `windisites.de/` | Tiers LOW/MED/HIGH/GOV |
-| Dashboard | `windisites.de/dashboard.html` | Lista de sites |
-| New Site | `windisites.de/new-site.html` | Wizard 6 passos |
-| Workspace | `windisites.de/site-workspace.html` | Preview + Compliance |
-| Verify | `windisites.de/verify.html` | Prova pública + QR |
+> **"Prompt → CORTEX → HTML → Filesystem → Ledger → Public URL → Email. Atómico."**
 
-**Arquitectura:**
-- `windi-domain.com` → Hub institucional (ONE TREE)
-- `windisites.de` → Produto comercial dedicado
-- Blueprint v1.0 preservado, evoluído para produtos maduros
+**§242 Sprint 2 — AI Generator:**
+- `POST /api/sites/generate` via W-CORTEX-001
+- Filesystem: `/opt/windi/sites/{site_id}/{gen_id}.html`
+- Receipt: `C6C2CA0B`
 
-**Files:** `/opt/windi/windi-sites/static/` · `/etc/nginx/sites-enabled/windisites.de`
+**§243 Sprint 3 — Microlog Pilot:**
+- `POST /api/sites/microlog` — Smallest verifiable unit
+- NOIR skeleton, max 280 words, hash visible
+- 3 sealed: `430CD285` · `4F6850EF` · `50F775F2`
 
-### §242 — W-SITES-001 Sprint 2: AI Generator + Atomic Seal (04 Mai 2026)
+**§244 — Communiqué Builder:**
+- JMPG package (ZIP: manifest + receipt + HTML)
+- Envelope: 25KB · Schema: `windi.communique.v1`
+- V1: mailto: dispatch · V2: SMTP auto-attach
 
-> **"Prompt → CORTEX → HTML → Filesystem → Ledger → Public URL. Atómico."**
-
-**Status:** LIVE · **Receipt:** `WINDI-GENERATE-20260504123500-C6C2CA0B`
-**Invariants:** I1, I9, I10, I11, I14
-
-**Sprint 2 Deliverables:**
-- `POST /api/sites/generate` — AI site generation via CORTEX
-- Filesystem persistence: `/opt/windi/sites/{site_id}/{gen_id}.html`
-- Atomic seal: File → Hash from disk → Ledger (I11)
-- Public serving: `windisites.de/sites/{site_id}/{gen_id}`
-
-**Tier Routing (§241 integration):**
-| Tier | Backend | Status |
-|------|---------|--------|
-| FREE | Ollama B (mistral:7b) | ✅ LIVE |
-| MED | Mistral API | 🔸 503 (key deferred) |
-| HIGH | Claude API | ✅ LIVE |
-
-**MED Tier Deferred:** `WINDI-S242-MED-DEFERRED-20260504`
-- Inflection point: ~100 pioneers
-- FREE + HIGH sufficient for validation phase
-
-**CSS Sanitizer Fix:** Removed `<style>` from FORBIDDEN_TAGS (was stripping inline CSS)
-
-**Verification Chain:**
-```
-curl site.html → sha256sum → compare with Ledger receipt → MATCH ✓
-```
-
-**Files:** `sites_crud.py` (persist_site_html) · `ai_writer_runtime.py` (TierUnavailableError)
-
-### §243 — W-SITES-001 Sprint 3: Microlog Pilot (04 Mai 2026)
-
-> **"A single verifiable idea, sealed as a public artefact."**
-
-**Status:** LIVE · **Commit:** `c8d8f3596` · **Invariants:** I1, I9, I10, I11, I14
-
-**Microlog = Smallest Verifiable Unit:**
-- Max 280 words, 1 idea, always verifiable
-- NOIR HTML skeleton (responsive, hash visible)
-- `POST /api/sites/microlog` → CORTEX → JSON → HTML → Seal
-
-**First 3 Micrologs Sealed:**
-| Title | Receipt | URL |
-|-------|---------|-----|
-| SaaS Is Evidence | `430CD285` | windisites.de/sites/micrologs/430cd285... |
-| Cryptographic Proof | `4F6850EF` | windisites.de/sites/micrologs/4f6850ef... |
-| AI Never Decides | `50F775F2` | windisites.de/sites/micrologs/50f775f2... |
-
-**Files:** `sites_crud.py` (MICROLOG_SYSTEM_PROMPT, MICROLOG_HTML_SKELETON)
-
-### §244 — W-COMM-002: Communiqué Builder (04 Mai 2026)
-
-> **"Email não é mais texto. Agora, email é prova."**
-
-**Status:** LIVE · **Commit:** `ce94ebe11` · **Invariants:** I1, I9, I11
-
-**JMPG Package (Forensic Evidence Distribution):**
-- Schema: `windi.communique.v1`
-- Envelope limit: 25KB (Spec Multimídia v1.1)
-- Contents: `manifest.json` + `evidence/receipt.json` + `evidence/artifact.html`
-
-**Functions:**
-- `build_communique_jmpg()` — ZIP package builder
-- `build_dispatch_mailto()` — V1 mailto: URL generator
-
-**Evolution Path:**
-| Version | Behavior |
-|---------|----------|
-| V1 (now) | mailto: + manual .jmpg attach |
-| V2 | SMTP auto-attach + Ledger child receipt |
-| V3 | DID cap + tier limits (FREE: 5/day) |
-
-**Files:** `communique_builder.py`
+**Files:** `sites_crud.py` · `communique_builder.py`
+> **Full details:** `CLAUDE-HISTORY.md` § §242-244
 
 ### §217 — P01 Sovereign Risk Score (SRS) (26 Apr 2026)
 
@@ -801,41 +574,18 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 **Agents (37):** CIA · WSG · GATE · NGINX · CANVAS · COMM · PROVE · DETECT-MEDIA · VERIFY · INTENT · COUNSEL · SESSION · NOMAD · VD-CUT · VD-MASS · JOE · DIST · JMPG · UDB · COMPOSER · CLASSIFY · VISION · OBS-GATE · INTENT-CMD · NOMAD-VOICE · FEDIVERSE · BRIDGE · SEC · DRAGON · DEV-API · ENTERPRISE · CACHE · **LAB** · **ACADEMY** · **SITES** · **MAIL**
 **Products:** Triangle of Power · WINDI FIELD · WINDI TRAVEL · FVE Protocol · RFC-001 DNA · **DACP-v1**
 
-### Histórico Recente
+### Histórico Recente (Mai 2026)
 
 | Data | Milestone |
 |------|-----------|
-| 04 Mai | **§244** W-COMM-002 Communiqué Builder · JMPG Evidence Distribution · 25KB Envelope · `ce94ebe11` ✅ |
-| 04 Mai | **§243** W-SITES-001 Sprint 3 · Microlog Pilot · 3 Sealed · NOIR Skeleton · `c8d8f3596` ✅ |
-| 04 Mai | **§242** W-SITES-001 Sprint 2 · AI Generator · Filesystem Persist · Atomic Seal · `C6C2CA0B` ✅ |
-| 03 Mai | **§235** W-SITES-001 Sprint 1 LIVE · windisites.de · 5 Pages · `1BE93BB4` ✅ |
-| 03 Mai | **§234** Paper-001 A.3 SEALED · TWO-STAGE Model · Held-out Validation (0% recall) · A.4 Draft ✅ |
-| 03 Mai | **§239** Receipt Visual Compliance · SHA-256 11px · NOIR button · forensic-grade ✅ |
-| 03 Mai | **§236** Send Proof to Email · W-MAIL-001 · verify.html modal · rate limit ✅ |
-| 02 Mai | **§230** W-BERCARIO-001 · Plenitude Tracker · Service Maturity · :8195 ✅ |
-| 02 Mai | **§229** W-CAP-001 · Capability Tokens · Single-use · Token Gating · :8194 ✅ |
-| 03 Mai | **§241** W-CORTEX-001 Tier Routing · Phase 2 SEALED · 5/5 Tests · `04C67B81` ✅ |
-| 02 Mai | **§233** Paper-001 A.3 Core · Empirical + Constitutional · `CDC760DD` ✅ |
-| 02 Mai | **§232** LEXICON Empirical Dataset · 10 Constitutional Cases · `24B69CFF` ✅ |
-| 02 Mai | **§231** W-LEXICON-001 LIVE · First Drift Analysis · `6EE2EF79` ✅ |
-| 02 Mai | **§228** W-LEXICON-001 Stub · Semantic Drift Detection · Ollama Backend · :8193 ✅ |
-| 02 Mai | **§227** Galho B Nascimento · Server Gêmeo · Dual Server Architecture · mistral:7b ✅ |
-| 29-30 Apr | **§224-226** Sovereignty Trilogy · W-MAIL-001 · DACP-v1 · 10/10 mail-tester · Gmail INBOX ✅ |
-| 28 Apr | **§222** Acceptability Framework · §C-ACCEPTABILITY-001 · 4-Layer Defense · `66A0D8B0` ✅ |
-| 28 Apr | **§221** Container Architecture · §B-CONTRACT-001 · MAKEUP Catalog · `1530DBEF` ✅ |
-| 28 Apr | **§220** W-SITES-001 Foundation · :8192 · Identity Gate Fork · 9/9 tests ✅ |
-| 28 Apr | **§219** Baptism of Externality · W-CMS-001 :8055 · Directus absorbed ✅ |
-| 27 Apr | **§218** Four Rings Doctrine · Sentinel remediation · Anel 1-4 ✅ |
-| 26 Apr | **§215-217** Verify Auditor · SRS · PHO Emergência ✅ |
-| 26 Apr | **§208-214** Governance Enhancements · Triangulation · BaFin Armor ✅ |
-| 26 Apr | **§205** KEYGEN-001 Sovereign Key Ceremony · `DBED5A85` ✅ |
-| 25 Apr | **§202-204** DECRETO-002 · Paper-001 · VERA Paladar ✅ |
-| 20-22 Apr | **§196-201** W-SHELF · W-METRICS · Paper Scientific ✅ |
-| 13-19 Apr | **§163-191** Cache · Academy · Portal · Decreto-001 ✅ |
-| 09-12 Apr | **§150-162** SEC · Dragon · DEV-API · W-Enterprise ✅ |
+| 04 Mai | **§242-244** W-SITES-001 Sprint 2+3 · Microlog · Communiqué · `c8d8f3596` ✅ |
+| 03 Mai | **§235+241** windisites.de LIVE · W-CORTEX-001 · `1BE93BB4` · `04C67B81` ✅ |
+| 02 Mai | **§227-233** Galho B · LEXICON · Paper-001 A.3 · `CDC760DD` ✅ |
+| 29 Apr | **§224-226** W-MAIL-001 Sovereignty Trilogy · DACP-v1 ✅ |
+| 28 Apr | **§219-222** W-CMS-001 · Container Architecture · Acceptability ✅ |
+| 26 Apr | **§205-217** KEYGEN · Governance · VERA · Verify Auditor ✅ |
 
-> **Histórico completo:** `CLAUDE-HISTORY.md` · **Archival path:** git log + Ledger receipts + `/opt/windi/docs/`
-> *CLAUDE.md is the index; the Ledger is the archive.*
+> **Histórico completo:** `CLAUDE-HISTORY.md`
 
 ---
 
@@ -907,41 +657,20 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 ---
 
-## Produtos SEALED
+## Produtos SEALED (Key Receipts)
 
-**Receipts Chave:**
-- **§205 KEYGEN-001:** `WINDI-KEYGEN-001-20260426090540-DBED5A85` ⭐ **ROOT KEY**
-- WINDI-LAW: `WINDI-LAW-AIDRAFT-20260404105917-C445AFF9`
-- VD-CUT: `WINDI-VDCUT-20260404145505-E9983867`
-- W-SEC: `WINDI-SEC-LOCAL-20260408184001-BD09970F`
-- W-COMPOSER: First Seal `58B241B1`
-- §196 Incident: `WINDI-INCIDENT-20260420-DARK-LAUNCH-GAP`
-- §203 Paper-001 Hybrid: `WINDI-PAPER-ADMISSIBILITY-001-v1.0-20260425204248-BDED84F0`
-- §203 Paper-001 External: `WINDI-PAPER-ADMISSIBILITY-001-EXTERNAL-v1.0-20260425211149-88915364`
-- §203 Paper-001 Institutional: `WINDI-PAPER-ADMISSIBILITY-001-INSTITUTIONAL-v1.0-20260425211444-F3FAFA21`
-- §196 Amendment: `WINDI-AMENDMENT-20260420-DARK-LAUNCH-GAP-PART-2`
-- §204 VERA Paladar: `f37a7f2c` (8 commits · 4-Layer Stack)
-- §221 Container Architecture: `WINDI-CONTRACT-B-001-v1.0-20260428162029-1530DBEF` (§B-CONTRACT-001)
-- §221 First AI Content: `WINDI-AIWRITER-FIRST-20260428163019-94A8C2EB` (parent_receipt chain)
-- §222 Acceptability: `WINDI-SC-ACCEPTABILITY-001-v1.0-20260428184406-66A0D8B0` (4-Layer Defense)
-- §224-226 W-MAIL-001 Genesis: `WINDI-WMAIL-001-GENESIS-SMOKE-20260429222000` (Infrastructure)
-- §224-226 DACP-v1 First Proof: `WINDI-MAIL-PROOF-20260429222555-D7398F3C` (Dual Anchored)
-- §224-226 Gmail Proof: `WINDI-MAIL-PROOF-20260429223209-5959D6AA` (INBOX delivery)
-- §224-226 Mail Trilogy: `WINDI-MAIL-TRILOGY-20260429230632` (DACP-v1 · Dual DKIM · Sovereign Email)
-- §194 I17 Invariant: `WINDI-I17-SESSION-IDENTITY-v1.0-20260502153453-5448EB3C` (Agency Invariant)
-- §231 LEXICON LIVE: `WINDI-LEXICON-LIVE-FIRST-20260502162321-6EE2EF79` (First Drift Analysis)
-- §232 LEXICON Empirical: `WINDI-LEXICON-EMPIRICAL-001-20260502163408-24B69CFF` (10 Constitutional Cases)
-- §233 Paper-001 A.3 Core: `WINDI-PAPER001-A3-CORE-20260502192316-CDC760DD` (Empirical + Constitutional)
-- §241 W-CORTEX-001: `WINDI-CORTEX-001-TIER-ROUTING-20260503215111-04C67B81` (3-Tier Routing · Phase 2 SEALED)
-- §234 Paper-001 A.3 SEAL: `WINDI-PAPER001-A3-SEAL-20260503115356` (TWO-STAGE + Held-out + Boundary)
-- §234 Stage 2 FROZEN: `88c4a7dd5ce4177a3839bec9297b677619460645a7210c0e6fce1175e5cb17ea` (Pre-validation freeze)
-- §235 W-SITES-001 Deploy: `WINDI-SITES-DEPLOY-20260503115335-1BE93BB4` (windisites.de LIVE)
-- §242 W-SITES-001 Sprint 2: `WINDI-GENERATE-20260504123500-C6C2CA0B` (First AI-generated site with CSS)
-- §242 MED Deferred: `WINDI-S242-MED-DEFERRED-20260504` (Conscious technical debt)
-- §243 Microlog #1: `WINDI-MICROLOG-20260504133907-430CD285` (SaaS Is Evidence)
-- §243 Microlog #2: `WINDI-MICROLOG-20260504133956-4F6850EF` (Cryptographic Proof)
-- §243 Microlog #3: `WINDI-MICROLOG-20260504134037-50F775F2` (AI Never Decides)
-- §244 Communiqué Builder: `ce94ebe11` (JMPG Evidence Distribution)
+| Category | Receipt | Description |
+|----------|---------|-------------|
+| **ROOT KEY** | `DBED5A85` | §205 KEYGEN-001 Sovereign Key Ceremony |
+| **CORE** | `C445AFF9` | WINDI-LAW AI Draft |
+| **CORE** | `04C67B81` | §241 W-CORTEX-001 3-Tier Routing |
+| **SITES** | `1BE93BB4` | §235 windisites.de LIVE |
+| **SITES** | `C6C2CA0B` | §242 First AI-generated site |
+| **MICROLOG** | `430CD285` | §243 SaaS Is Evidence |
+| **MAIL** | `D7398F3C` | §224-226 DACP-v1 First Proof |
+| **PAPER** | `CDC760DD` | §233 Paper-001 A.3 Core |
+
+> **Full receipts list:** `CLAUDE-HISTORY.md` § Produtos SEALED
 
 ---
 
