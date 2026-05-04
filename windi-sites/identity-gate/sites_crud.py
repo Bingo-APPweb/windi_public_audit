@@ -1745,107 +1745,324 @@ Respond with JSON only:
 
 NO markdown. NO explanation. Just the JSON object."""
 
+# ═══════════════════════════════════════════════════════════════════════════
+# MICROLOG SURFACE V1 — "Liturgy of Digital Truth"
+# PDT-001 compliant: Forensic Lexicon EN-only (§1)
+# Surface = calm that invites · Audit = truth that responds
+# ═══════════════════════════════════════════════════════════════════════════
 MICROLOG_HTML_SKELETON = '''<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{title} — WINDI Microlog</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {{
-            --bg: #0A0A10;
+            --bg-void: #050505;
+            --bg-surface: #0A0A0F;
+            --bg-terminal: #000000;
+            --text-primary: #E8E6E1;
+            --text-secondary: #8A8A8A;
+            --text-muted: #4A4A4A;
+            --truth-green: #00D26A;
+            --truth-glow: rgba(0, 210, 106, 0.15);
             --gold: #C9A84C;
-            --text: #E8E6E1;
-            --text-muted: #8A8A8A;
-            --border: #1A1A24;
+            --gold-muted: rgba(201, 168, 76, 0.3);
+            --fail-red: #FF4444;
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --border-terminal: rgba(0, 210, 106, 0.2);
+            --font-zen: 'Inter', -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+            --transition-slow: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-medium: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }}
         * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+        html, body {{ height: 100%; }}
         body {{
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-            background: var(--bg);
-            color: var(--text);
+            font-family: var(--font-zen);
+            background: var(--bg-void);
+            color: var(--text-primary);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }}
+        .surface-container {{
             min-height: 100vh;
             display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: center;
+            align-items: center;
             padding: 2rem;
-            line-height: 1.7;
         }}
-        article.microlog {{
-            max-width: 640px;
-            width: 100%;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 2.5rem;
-            background: linear-gradient(135deg, #0D0D14 0%, #0A0A10 100%);
-        }}
-        h1 {{
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--gold);
-            margin-bottom: 1.5rem;
-            letter-spacing: -0.02em;
-        }}
-        .content {{
-            font-size: 1.1rem;
-            margin-bottom: 1.5rem;
-        }}
-        .content p {{
-            margin-bottom: 1rem;
-        }}
-        .closing {{
-            font-style: italic;
-            color: var(--gold);
-            font-size: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border);
-        }}
-        footer {{
-            margin-top: 2rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border);
+        .surface {{ max-width: 640px; width: 100%; }}
+        .surface-header {{
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.85rem;
+            margin-bottom: 3rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }}
+        .surface-brand {{
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
             color: var(--text-muted);
         }}
-        footer a {{
-            color: var(--gold);
-            text-decoration: none;
-            font-weight: 500;
-        }}
-        footer a:hover {{
-            text-decoration: underline;
-        }}
-        .hash {{
-            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        .surface-meta {{
+            font-family: var(--font-mono);
             font-size: 0.7rem;
             color: var(--text-muted);
-            word-break: break-all;
-            margin-top: 0.5rem;
         }}
-        @media (max-width: 480px) {{
-            body {{ padding: 1rem; }}
-            article.microlog {{ padding: 1.5rem; }}
-            h1 {{ font-size: 1.4rem; }}
-            .content {{ font-size: 1rem; }}
+        .microlog {{ margin-bottom: 3rem; }}
+        .microlog-title {{
+            font-size: 1.75rem;
+            font-weight: 600;
+            line-height: 1.3;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }}
+        .microlog-content {{
+            font-size: 1.1rem;
+            font-weight: 300;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }}
+        .microlog-content p {{ margin-bottom: 1rem; }}
+        .microlog-closing {{
+            font-size: 1rem;
+            font-weight: 500;
+            font-style: italic;
+            color: var(--gold);
+            padding-left: 1rem;
+            border-left: 2px solid var(--gold-muted);
+        }}
+        .microlog-signature {{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1.5rem;
+            margin-top: 2rem;
+            border-top: 1px solid var(--border-subtle);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }}
+        .signature-left {{ display: flex; align-items: center; gap: 0.5rem; }}
+        .signature-right {{ font-family: var(--font-mono); font-size: 0.7rem; }}
+        .action-zone {{ display: flex; justify-content: center; margin: 3rem 0; }}
+        .audit-trigger {{
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            padding: 0.875rem 2rem;
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-subtle);
+            cursor: pointer;
+            transition: var(--transition-medium);
+        }}
+        .audit-trigger:hover {{ color: var(--text-primary); border-color: var(--text-muted); }}
+        .audit-trigger:active {{ transform: scale(0.98); }}
+        .audit-trigger.auditing {{ pointer-events: none; color: var(--text-muted); }}
+        .audit-trigger.verified {{ border-color: var(--truth-green); color: var(--truth-green); background: var(--truth-glow); }}
+        .audit-trigger.failed {{ border-color: var(--fail-red); color: var(--fail-red); }}
+        .proof-panel {{
+            background: var(--bg-terminal);
+            border: 1px solid var(--border-subtle);
+            overflow: hidden;
+            max-height: 0;
+            opacity: 0;
+            transition: max-height var(--transition-slow), opacity var(--transition-medium), border-color var(--transition-medium);
+        }}
+        .proof-panel.revealed {{ max-height: 500px; opacity: 1; }}
+        .proof-panel.verified {{ border-color: var(--border-terminal); }}
+        .proof-panel.failed {{ border-color: var(--fail-red); }}
+        .terminal-header {{
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0.75rem 1rem;
+            background: #0D0D12;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border-subtle);
+        }}
+        .terminal-body {{ padding: 1.25rem; font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.8; }}
+        .terminal-line {{
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: opacity 0.3s, transform 0.3s;
+        }}
+        .terminal-line.visible {{ opacity: 1; transform: translateX(0); }}
+        .terminal-line .arrow {{ color: var(--text-muted); margin-right: 0.5rem; }}
+        .terminal-status {{
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-subtle);
+            font-size: 1rem;
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }}
+        .terminal-status.visible {{ opacity: 1; }}
+        .terminal-status.match {{ color: var(--truth-green); }}
+        .terminal-status.mismatch {{ color: var(--fail-red); }}
+        .terminal-details {{
+            margin-top: 1.25rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-subtle);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }}
+        .terminal-details.visible {{ opacity: 1; }}
+        .detail-row {{ display: flex; margin-bottom: 0.5rem; }}
+        .detail-label {{ width: 80px; flex-shrink: 0; color: var(--text-muted); }}
+        .detail-value {{ color: var(--text-secondary); word-break: break-all; }}
+        .detail-value.hash {{ font-size: 0.7rem; }}
+        .terminal-actions {{
+            margin-top: 1.25rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-subtle);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }}
+        .terminal-actions.visible {{ opacity: 1; }}
+        .ledger-link {{
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color var(--transition-medium);
+        }}
+        .ledger-link:hover {{ color: var(--truth-green); }}
+        .surface-footer {{
+            margin-top: 4rem;
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+        }}
+        @media (max-width: 640px) {{
+            .surface-container {{ padding: 1.5rem; }}
+            .microlog-title {{ font-size: 1.4rem; }}
+            .microlog-content {{ font-size: 1rem; }}
+            .terminal-body {{ padding: 1rem; font-size: 0.75rem; }}
         }}
     </style>
 </head>
 <body>
-    <article class="microlog">
-        <h1>{title}</h1>
-        <div class="content">
-            {content}
-        </div>
-        <p class="closing">{closing}</p>
-        <footer>
-            <span>Sealed by WINDI</span>
-            <a href="{verify_url}" target="_blank">Verify</a>
-        </footer>
-        <div class="hash">{content_hash}</div>
-    </article>
+    <div class="surface-container">
+        <main class="surface">
+            <header class="surface-header">
+                <span class="surface-brand">WINDI · Microlog</span>
+                <span class="surface-meta">{handle}</span>
+            </header>
+            <article class="microlog">
+                <h1 class="microlog-title">{title}</h1>
+                <div class="microlog-content">{content}</div>
+                <p class="microlog-closing">{closing}</p>
+            </article>
+            <div class="microlog-signature">
+                <div class="signature-left">
+                    <span>WINDI</span><span>·</span><span>{handle}</span>
+                </div>
+                <div class="signature-right">sealed {sealed_date}</div>
+            </div>
+            <div class="action-zone">
+                <button class="audit-trigger" id="auditTrigger" data-receipt-id="{receipt_id}">Audit integrity</button>
+            </div>
+            <aside class="proof-panel" id="proofPanel">
+                <div class="terminal-header">SYSTEM_LEDGER_VERIFY</div>
+                <div class="terminal-body">
+                    <div class="terminal-line" id="line1"><span class="arrow">→</span> fetching receipt...</div>
+                    <div class="terminal-line" id="line2"><span class="arrow">→</span> computing sha-256...</div>
+                    <div class="terminal-line" id="line3"><span class="arrow">→</span> comparing ledger...</div>
+                    <div class="terminal-status" id="terminalStatus"><span class="status-icon"></span><span class="status-text"></span></div>
+                    <div class="terminal-details" id="terminalDetails">
+                        <div class="detail-row"><span class="detail-label">receipt</span><span class="detail-value" id="detailReceipt">—</span></div>
+                        <div class="detail-row"><span class="detail-label">sha-256</span><span class="detail-value hash" id="detailHash">—</span></div>
+                        <div class="detail-row"><span class="detail-label">issued</span><span class="detail-value" id="detailIssued">—</span></div>
+                    </div>
+                    <div class="terminal-actions" id="terminalActions">
+                        <a href="{verify_url}" target="_blank" class="ledger-link">open public ledger <span>↗</span></a>
+                    </div>
+                </div>
+            </aside>
+            <footer class="surface-footer">
+                <div>AI processes. Human decides. WINDI guarantees.</div>
+                <div style="font-size:0.65rem;opacity:0.6;margin-top:0.5rem;">WINDI Publishing House · Bavaria · 2026</div>
+            </footer>
+        </main>
+    </div>
+    <script>
+    (function(){{
+        'use strict';
+        const VERIFY_BASE='https://windi-domain.com/api/receipts/';
+        const VERIFY_PUBLIC='https://windi-domain.com/verify-public/?id=';
+        const btn=document.getElementById('auditTrigger');
+        const panel=document.getElementById('proofPanel');
+        const lines=[document.getElementById('line1'),document.getElementById('line2'),document.getElementById('line3')];
+        const status=document.getElementById('terminalStatus');
+        const details=document.getElementById('terminalDetails');
+        const actions=document.getElementById('terminalActions');
+        let audited=false;
+        btn.addEventListener('click',async function(){{
+            if(audited){{panel.classList.toggle('revealed');return;}}
+            const receiptId=this.dataset.receiptId;
+            if(!receiptId)return;
+            audited=true;
+            btn.classList.add('auditing');
+            btn.textContent='Auditing...';
+            panel.classList.add('revealed');
+            for(let i=0;i<lines.length;i++){{await delay(400+i*300);lines[i].classList.add('visible');}}
+            try{{
+                await delay(500);
+                const response=await fetch(VERIFY_BASE+encodeURIComponent(receiptId));
+                if(!response.ok)throw new Error('Receipt not found');
+                const data=await response.json();
+                await delay(300);
+                status.classList.add('visible','match');
+                status.querySelector('.status-icon').textContent='✓';
+                status.querySelector('.status-text').textContent='MATCH · SOVEREIGN';
+                panel.classList.add('verified');
+                btn.classList.remove('auditing');
+                btn.classList.add('verified');
+                btn.textContent='✓ Verified';
+                await delay(200);
+                document.getElementById('detailReceipt').textContent=data.receipt_id||receiptId;
+                document.getElementById('detailHash').textContent=(data.content_hash||'').replace('sha256:','');
+                document.getElementById('detailIssued').textContent=formatDate(data.created_at||data.sealed_at);
+                details.classList.add('visible');
+                await delay(200);
+                actions.querySelector('.ledger-link').href=VERIFY_PUBLIC+encodeURIComponent(receiptId);
+                actions.classList.add('visible');
+            }}catch(err){{
+                await delay(300);
+                status.classList.add('visible','mismatch');
+                status.querySelector('.status-icon').textContent='✗';
+                status.querySelector('.status-text').textContent='MISMATCH · DO NOT TRUST';
+                panel.classList.add('failed');
+                btn.classList.remove('auditing');
+                btn.classList.add('failed');
+                btn.textContent='✗ Failed';
+            }}
+        }});
+        function delay(ms){{return new Promise(r=>setTimeout(r,ms));}}
+        function formatDate(s){{if(!s)return'—';try{{return new Date(s).toISOString().replace('T',' ').slice(0,19)+'Z';}}catch{{return s;}}}}
+    }})();
+    </script>
 </body>
 </html>'''
 
@@ -2208,18 +2425,27 @@ async def create_microlog(data: MicrologRequest, request: Request):
     # Temporary hash for skeleton (will be replaced with disk hash)
     temp_hash = f"sha256:{hashlib.sha256(content.encode()).hexdigest()}"
 
-    # ─── Render HTML with NOIR skeleton ───────────────────────────────────────
+    # ─── Render HTML with Surface V1 skeleton ─────────────────────────────────
     # Escape content for HTML safety
     safe_title = html_escape.escape(title)
     safe_content = f"<p>{html_escape.escape(content)}</p>"
     safe_closing = html_escape.escape(closing)
 
+    # Extract handle from DID (e.g., did:windi:dragon-001 -> @dragon-001)
+    handle_part = caller_did.split(":")[-1] if caller_did else "anonymous"
+    safe_handle = f"@{html_escape.escape(handle_part)}"
+
+    # Sealed date for display
+    sealed_date = now.strftime("%Y-%m-%d")
+
     rendered_html = MICROLOG_HTML_SKELETON.format(
         title=safe_title,
         content=safe_content,
         closing=safe_closing,
-        verify_url=verify_url,
-        content_hash=temp_hash  # Placeholder, will update after persist
+        handle=safe_handle,
+        sealed_date=sealed_date,
+        receipt_id=receipt_id,
+        verify_url=verify_url
     )
 
     # ─── Persist to filesystem ────────────────────────────────────────────────
@@ -2245,13 +2471,15 @@ async def create_microlog(data: MicrologRequest, request: Request):
     public_url = persist_result.get("public_url")
 
     # ─── Update HTML with final hash ──────────────────────────────────────────
-    # Re-render with correct hash
+    # Re-render with Surface V1 skeleton (hash is in meta.json, not in HTML)
     rendered_html = MICROLOG_HTML_SKELETON.format(
         title=safe_title,
         content=safe_content,
         closing=safe_closing,
-        verify_url=verify_url,
-        content_hash=final_content_hash
+        handle=safe_handle,
+        sealed_date=sealed_date,
+        receipt_id=receipt_id,
+        verify_url=verify_url
     )
 
     # Re-persist with correct hash
