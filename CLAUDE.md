@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.41.0
-**Sealed:** 2026-05-04 · §242 W-SITES-001 Sprint 2 · AI Generator · Atomic Seal
+**Version:** 2.42.0
+**Sealed:** 2026-05-04 · §244 W-COMM-002 Communiqué Builder · Evidence Distribution
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -97,7 +97,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-TRAVEL-001 | :8126 | I9,I11,I13,G3 | **LIVE** v1.3.0 · Identity Gate · /travel/ · §196 nginx fix · nohup oficial |
 | W-SHELF-001 | :8191 | I9,I11,I13,I14 | **LIVE** v0.3.0 · I9+I14 Dual Enforcement · §199+§200 · 11/11 Tests |
 | W-CMS-001 | :8055 | I9,I11,I14 | **LIVE** · Directus 10 · Ledger Bridge :8056 · Sweeper Timer · §219 Baptism of Externality |
-| W-SITES-001 | :8192 | I1,I9,I11,I12,I14 | **LIVE** v1.1-sprint2 · windisites.de · §242 · AI Generator · Filesystem Persist · `C6C2CA0B` |
+| W-SITES-001 | :8192 | I1,I9,I11,I12,I14 | **LIVE** v1.2-sprint3 · windisites.de · §243 · Microlog Pilot · Communiqué Builder · `430CD285` |
 | W-MAIL-001 | :25,:587,:993,:8888 | I1,I9,I11,I12,I14 | **LIVE** · Sovereign Email · DACP-v1 · Dual DKIM · SnappyMail · §224-226 |
 | W-OLLAMA-001 | B:11434 | I9,I10,I13 | **LIVE** · Server Gêmeo (85.215.131.0) · mistral:7b · Galho B · §227 |
 | W-LEXICON-001 | :8193 | I9,I10,I13,I14 | **LIVE** v0.3.0 · TWO-STAGE Model · Stage 2 Evaluator · Paper-001 A.3 SEALED |
@@ -485,6 +485,50 @@ curl site.html → sha256sum → compare with Ledger receipt → MATCH ✓
 
 **Files:** `sites_crud.py` (persist_site_html) · `ai_writer_runtime.py` (TierUnavailableError)
 
+### §243 — W-SITES-001 Sprint 3: Microlog Pilot (04 Mai 2026)
+
+> **"A single verifiable idea, sealed as a public artefact."**
+
+**Status:** LIVE · **Commit:** `c8d8f3596` · **Invariants:** I1, I9, I10, I11, I14
+
+**Microlog = Smallest Verifiable Unit:**
+- Max 280 words, 1 idea, always verifiable
+- NOIR HTML skeleton (responsive, hash visible)
+- `POST /api/sites/microlog` → CORTEX → JSON → HTML → Seal
+
+**First 3 Micrologs Sealed:**
+| Title | Receipt | URL |
+|-------|---------|-----|
+| SaaS Is Evidence | `430CD285` | windisites.de/sites/micrologs/430cd285... |
+| Cryptographic Proof | `4F6850EF` | windisites.de/sites/micrologs/4f6850ef... |
+| AI Never Decides | `50F775F2` | windisites.de/sites/micrologs/50f775f2... |
+
+**Files:** `sites_crud.py` (MICROLOG_SYSTEM_PROMPT, MICROLOG_HTML_SKELETON)
+
+### §244 — W-COMM-002: Communiqué Builder (04 Mai 2026)
+
+> **"Email não é mais texto. Agora, email é prova."**
+
+**Status:** LIVE · **Commit:** `ce94ebe11` · **Invariants:** I1, I9, I11
+
+**JMPG Package (Forensic Evidence Distribution):**
+- Schema: `windi.communique.v1`
+- Envelope limit: 25KB (Spec Multimídia v1.1)
+- Contents: `manifest.json` + `evidence/receipt.json` + `evidence/artifact.html`
+
+**Functions:**
+- `build_communique_jmpg()` — ZIP package builder
+- `build_dispatch_mailto()` — V1 mailto: URL generator
+
+**Evolution Path:**
+| Version | Behavior |
+|---------|----------|
+| V1 (now) | mailto: + manual .jmpg attach |
+| V2 | SMTP auto-attach + Ledger child receipt |
+| V3 | DID cap + tier limits (FREE: 5/day) |
+
+**Files:** `communique_builder.py`
+
 ### §217 — P01 Sovereign Risk Score (SRS) (26 Apr 2026)
 
 > **"O peso regulatório é soberano. Art.14 = prioridade máxima."**
@@ -761,6 +805,8 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 04 Mai | **§244** W-COMM-002 Communiqué Builder · JMPG Evidence Distribution · 25KB Envelope · `ce94ebe11` ✅ |
+| 04 Mai | **§243** W-SITES-001 Sprint 3 · Microlog Pilot · 3 Sealed · NOIR Skeleton · `c8d8f3596` ✅ |
 | 04 Mai | **§242** W-SITES-001 Sprint 2 · AI Generator · Filesystem Persist · Atomic Seal · `C6C2CA0B` ✅ |
 | 03 Mai | **§235** W-SITES-001 Sprint 1 LIVE · windisites.de · 5 Pages · `1BE93BB4` ✅ |
 | 03 Mai | **§234** Paper-001 A.3 SEALED · TWO-STAGE Model · Held-out Validation (0% recall) · A.4 Draft ✅ |
@@ -892,6 +938,10 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 - §235 W-SITES-001 Deploy: `WINDI-SITES-DEPLOY-20260503115335-1BE93BB4` (windisites.de LIVE)
 - §242 W-SITES-001 Sprint 2: `WINDI-GENERATE-20260504123500-C6C2CA0B` (First AI-generated site with CSS)
 - §242 MED Deferred: `WINDI-S242-MED-DEFERRED-20260504` (Conscious technical debt)
+- §243 Microlog #1: `WINDI-MICROLOG-20260504133907-430CD285` (SaaS Is Evidence)
+- §243 Microlog #2: `WINDI-MICROLOG-20260504133956-4F6850EF` (Cryptographic Proof)
+- §243 Microlog #3: `WINDI-MICROLOG-20260504134037-50F775F2` (AI Never Decides)
+- §244 Communiqué Builder: `ce94ebe11` (JMPG Evidence Distribution)
 
 ---
 
