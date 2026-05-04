@@ -24,13 +24,15 @@ from .ai_writer_runtime import (
     assert_internal_writer_authorized,
     assert_public_writer_authorized,  # W-CORTEX-001: public endpoints
     InternalModeViolation,
+    TierUnavailableError,  # §242: 503 for unavailable tiers
     GenerationResult,
     writer_health,
     load_template,
     build_prompt,
     VALID_TEMPLATES,
     AI_WRITER_MODE,
-    INTERNAL_DIDS_ALLOWLIST
+    INTERNAL_DIDS_ALLOWLIST,
+    _get_available_tiers  # §242: Check available tiers
 )
 
 from .ollama_writer_client import (
@@ -45,6 +47,7 @@ __all__ = [
     "assert_internal_writer_authorized",
     "assert_public_writer_authorized",
     "InternalModeViolation",
+    "TierUnavailableError",  # §242
     "GenerationResult",
     "writer_health",
     "load_template",
@@ -52,6 +55,7 @@ __all__ = [
     "VALID_TEMPLATES",
     "AI_WRITER_MODE",
     "INTERNAL_DIDS_ALLOWLIST",
+    "_get_available_tiers",  # §242
     # Client
     "generate_content",
     "check_ollama_health",

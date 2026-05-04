@@ -226,17 +226,56 @@ async def _route_external_claude(prompt: str) -> Dict[str, Any]:
         )
 
 
+class TierUnavailableError(Exception):
+    """
+    §242 — TIER_UNAVAILABLE error for 503 responses.
+
+    Used when a tier's provider is not configured.
+    Includes available_tiers for client-side recovery.
+    """
+    def __init__(self, tier: str, reason: str, available_tiers: list):
+        self.tier = tier
+        self.reason = reason
+        self.available_tiers = available_tiers
+        super().__init__(f"TIER_UNAVAILABLE: {tier} - {reason}")
+
+    def to_response(self) -> Dict[str, Any]:
+        """Return 503-ready response payload."""
+        return {
+            "ok": False,
+            "error": {
+                "code": "TIER_UNAVAILABLE",
+                "tier_requested": self.tier,
+                "message": f"{self.tier} tier temporarily unavailable (provider key not configured)",
+                "available_tiers": self.available_tiers,
+                "action": f"Choose {' or '.join(self.available_tiers)} tier"
+            }
+        }
+
+
+def _get_available_tiers() -> list:
+    """Return list of currently available tiers based on config."""
+    available = ["FREE"]  # Ollama B always available (local)
+    if MISTRAL_API_KEY and MISTRAL_API_KEY != "SUBSTITUIR":
+        available.append("MED")
+    if ANTHROPIC_API_KEY:
+        available.append("HIGH")
+    return available
+
+
 async def _route_external_mistral(prompt: str) -> Dict[str, Any]:
     """
     Route to Mistral API (MED tier).
 
     Returns dict with: ok, content, model, tokens, duration_ms
-    Raises on failure (explicit, no fallback).
+    Raises TierUnavailableError (503) if key not configured.
+    Raises OllamaWriterError on API failure.
     """
-    if not MISTRAL_API_KEY:
-        raise OllamaWriterError(
-            reason="MISTRAL_API_KEY not configured",
-            details={"tier": "MED", "model": "mistral-small-latest"}
+    if not MISTRAL_API_KEY or MISTRAL_API_KEY == "SUBSTITUIR":
+        raise TierUnavailableError(
+            tier="MED",
+            reason="provider key not configured",
+            available_tiers=_get_available_tiers()
         )
 
     try:
@@ -674,6 +713,7 @@ async def generate_with_pipeline(
 
     # ─── STEP 6: Tier Routing (HIGH→Claude, MED→Mistral, FREE→Ollama B) ─────
     # §241: No fallback — explicit failure per tier
+    # §242: TierUnavailableError for 503 (provider not configured)
     try:
         if effective_tier == "HIGH":
             gen_result = await _route_external_claude(prompt)
@@ -695,6 +735,24 @@ async def generate_with_pipeline(
             "source_mode": source_mode,  # W-CORTEX-001 audit trail
             "timestamp": now
         }
+
+    except TierUnavailableError as e:
+        # §242: 503 Service Unavailable — tier not configured
+        # Return structured error for client-side tier selection
+        return GenerationResult(
+            ok=False,
+            error=f"TIER_UNAVAILABLE:{e.tier}",
+            l_minus_1_log=input_log,
+            generation_log={
+                "tier_unavailable": e.to_response(),
+                "available_tiers": e.available_tiers,
+                "timestamp": now
+            },
+            source_mode=source_mode,
+            template_type=template_type,
+            tier_used=effective_tier,
+            tier_resolution=tier_resolution
+        )
 
     except OllamaWriterError as e:
         # I14: Explicit failure, no silent fallback

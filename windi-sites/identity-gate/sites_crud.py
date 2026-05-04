@@ -46,6 +46,79 @@ DB_PATH = "/opt/windi/windi-sites/identity-gate/windi_sites_identity.db"
 LEDGER_URL = "http://127.0.0.1:8101/api/receipts"
 VERSION = "v1.0.0"
 
+# ═══════════════════════════════════════════════════════════════════════════
+# §242 — FILESYSTEM PERSISTENCE (Sprint 2)
+# ═══════════════════════════════════════════════════════════════════════════
+# Sites are persisted to filesystem for public serving via nginx.
+# Path: /opt/windi/sites/{site_id}/{container_id}.html
+# URL:  https://windisites.de/sites/{site_id}/{container_id}
+# ═══════════════════════════════════════════════════════════════════════════
+import os
+from pathlib import Path
+
+SITES_BASE_PATH = Path("/opt/windi/sites")
+SITES_PUBLIC_URL = "https://windisites.de/sites"
+
+
+def persist_site_html(
+    site_id: str,
+    container_id: str,
+    html_content: str,
+    meta: dict
+) -> dict:
+    """
+    Persist generated HTML to filesystem.
+
+    Path: /opt/windi/sites/{site_id}/{container_id}.html
+    Meta: /opt/windi/sites/{site_id}/{container_id}.meta.json
+
+    Returns:
+        {
+            "ok": True,
+            "file_path": "/opt/windi/sites/...",
+            "public_url": "https://windisites.de/sites/...",
+            "content_hash": "sha256:..."
+        }
+    """
+    try:
+        # Ensure site directory exists
+        site_dir = SITES_BASE_PATH / site_id
+        site_dir.mkdir(parents=True, exist_ok=True)
+
+        # Write HTML file
+        html_path = site_dir / f"{container_id}.html"
+        html_path.write_text(html_content, encoding="utf-8")
+
+        # Read back and hash (CRITICAL: hash of what's on disk, not in memory)
+        persisted_content = html_path.read_text(encoding="utf-8")
+        content_hash = f"sha256:{hashlib.sha256(persisted_content.encode()).hexdigest()}"
+
+        # Write meta.json for verify and audit
+        meta["content_hash"] = content_hash
+        meta["persisted_at"] = datetime.now(timezone.utc).isoformat()
+        meta_path = site_dir / f"{container_id}.meta.json"
+        meta_path.write_text(json.dumps(meta, indent=2, ensure_ascii=False), encoding="utf-8")
+
+        # Public URL
+        public_url = f"{SITES_PUBLIC_URL}/{site_id}/{container_id}"
+
+        return {
+            "ok": True,
+            "file_path": str(html_path),
+            "meta_path": str(meta_path),
+            "public_url": public_url,
+            "content_hash": content_hash
+        }
+
+    except Exception as e:
+        return {
+            "ok": False,
+            "error": str(e),
+            "file_path": None,
+            "public_url": None,
+            "content_hash": None
+        }
+
 # Valid container types (§B-CONTRACT-001 MAKEUP Catalog)
 VALID_CONTAINER_TYPES = {"writer", "translator", "image", "seo"}
 
@@ -101,10 +174,12 @@ try:
         generate_with_pipeline,
         assert_public_writer_authorized,  # W-CORTEX-001: for public endpoints
         InternalModeViolation,
+        TierUnavailableError,  # §242: 503 for unavailable tiers
         writer_health,
         AI_WRITER_MODE,
         VALID_TEMPLATES,
-        INTERNAL_DIDS_ALLOWLIST
+        INTERNAL_DIDS_ALLOWLIST,
+        _get_available_tiers  # §242: Check available tiers
     )
     from ai_writer.ollama_writer_client import generate_content, OllamaWriterError
     AI_WRITER_AVAILABLE = True
@@ -112,6 +187,8 @@ try:
 except ImportError as e:
     AI_WRITER_AVAILABLE = False
     AI_WRITER_MODE = "unavailable"
+    TierUnavailableError = None  # Fallback
+    _get_available_tiers = lambda: ["FREE"]
     print(f"[WINDI-SITES] AI Writer not available: {e}")
 
 
@@ -1600,7 +1677,8 @@ import html as html_lib
 # OLLAMA_URL, OLLAMA_MODEL, OLLAMA_TIMEOUT are in ai_writer/ollama_writer_client.py
 
 # DOMPurify-style sanitization (server-side)
-FORBIDDEN_TAGS = {'script', 'iframe', 'object', 'embed', 'form', 'input', 'meta', 'link', 'style'}
+# NOTE: <style> is ALLOWED for inline CSS - only external resources blocked
+FORBIDDEN_TAGS = {'script', 'iframe', 'object', 'embed', 'form', 'input', 'link'}
 FORBIDDEN_ATTRS = {'onclick', 'onerror', 'onload', 'onmouseover', 'onfocus', 'onblur', 'javascript:'}
 
 
@@ -1748,6 +1826,23 @@ async def generate_site_ai(data: GenerateSiteRequest, request: Request):
             raise HTTPException(status_code=451, detail=error)
         elif "L0_BLOCKED" in error:
             raise HTTPException(status_code=422, detail=error)
+        elif "TIER_UNAVAILABLE" in error:
+            # §242: 503 Service Unavailable with available_tiers
+            tier_info = result.generation_log.get("tier_unavailable", {}) if result.generation_log else {}
+            available = result.generation_log.get("available_tiers", ["FREE", "HIGH"]) if result.generation_log else ["FREE", "HIGH"]
+            return JSONResponse(
+                status_code=503,
+                content={
+                    "ok": False,
+                    "error": {
+                        "code": "TIER_UNAVAILABLE",
+                        "tier_requested": error.split(":")[1] if ":" in error else "MED",
+                        "message": "MED tier temporarily unavailable (provider key not configured)",
+                        "available_tiers": available,
+                        "action": f"Choose {' or '.join(available)} tier"
+                    }
+                }
+            )
         elif "OLLAMA_FAILED" in error:
             raise HTTPException(status_code=502, detail=f"{error} (I10 fallback needed)")
         else:
@@ -1807,11 +1902,35 @@ async def generate_site_ai(data: GenerateSiteRequest, request: Request):
 
     conn.close()
 
-    # ─── Seal to Ledger ───────────────────────────────────────────────────────
+    # ─── §242: Persist to Filesystem (Sprint 2) ──────────────────────────────
+    # CRITICAL: Hash of persisted file, not in-memory content (I11)
+    # Path: /opt/windi/sites/{site_id}/{generation_id}.html
+    effective_site_id = site_id or "unlinked"
+    persist_result = persist_site_html(
+        site_id=effective_site_id,
+        container_id=generation_id,
+        html_content=sanitized_html,
+        meta={
+            "generation_id": generation_id,
+            "site_id": site_id,
+            "prompt": data.prompt,
+            "model": model_used,
+            "tier_used": result.tier_used,
+            "cost_eur": result.cost_eur,
+            "receipt_id": receipt_id,
+            "did": caller_did
+        }
+    )
+
+    # Use hash from disk (I11 compliance)
+    final_content_hash = persist_result.get("content_hash") or content_hash
+    public_url = persist_result.get("public_url")
+
+    # ─── Seal to Ledger (hash of what's on disk) ─────────────────────────────
     ledger_result = seal_to_ledger(
         receipt_id,
         f"AI Site Generation: {data.site_name or 'Untitled'}",
-        content_hash,
+        final_content_hash,
         caller_did
     )
 
@@ -1823,11 +1942,15 @@ async def generate_site_ai(data: GenerateSiteRequest, request: Request):
         "prompt": data.prompt,
         "model": model_used,
         "html": sanitized_html,
-        "content_hash": content_hash,
+        "content_hash": final_content_hash,
         "status": "pending",  # Awaiting I9 approval
         "generation_receipt": receipt_id,
         "ledger": ledger_result,
         "source_mode": source_mode,  # W-CORTEX-001 audit trail
+        "tier_used": result.tier_used,
+        "cost_eur": result.cost_eur,
+        "persist": persist_result,
+        "public_url": public_url,
         "invariants": ["I1", "I9", "I10", "I11", "I14"],
         "next_step": "POST /api/sites/publish to approve and publish (I9 gate)"
     }
