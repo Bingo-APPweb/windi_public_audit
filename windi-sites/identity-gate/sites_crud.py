@@ -2037,7 +2037,7 @@ MICROLOG_HTML_SKELETON = '''<!DOCTYPE html>
                 <div class="signature-left">
                     <span>WINDI</span><span>·</span><span>{handle}</span>
                 </div>
-                <div class="signature-right"><span data-i18n="sealed">sealed</span> {sealed_date}</div>
+                <div class="signature-right">sealed {sealed_date}</div>
             </div>
             <div class="action-zone">
                 <button class="audit-trigger" id="auditTrigger" data-receipt-id="{receipt_id}">Audit integrity</button>
@@ -2127,12 +2127,10 @@ MICROLOG_HTML_SKELETON = '''<!DOCTYPE html>
         const savedTheme=localStorage.getItem('windi-theme')||'noir';
         if(savedTheme==='klar')setTheme('klar');
         themeBtn.addEventListener('click',()=>setTheme(document.body.dataset.theme==='klar'?'noir':'klar'));
-        // ═══ LANGUAGE TOGGLE (PDT-001 §4: chrome only, forensic lexicon stays EN) ═══
-        const i18n={{
-            de:{{sealed:'gesiegelt'}},
-            en:{{sealed:'sealed'}},
-            pt:{{sealed:'selado'}}
-        }};
+        // ═══ LANGUAGE TOGGLE (PDT-001 §4.2: signature line is UNIVERSAL — "sealed" stays EN) ═══
+        // NOTE: i18n dict is empty for now. "sealed" does NOT localize per PDT-001 §4.2.
+        // Future: add chrome-only strings here (never forensic lexicon per §1)
+        const i18n={{de:{{}},en:{{}},pt:{{}}}};
         function setLang(l){{
             localStorage.setItem('windi-lang',l);
             document.querySelectorAll('[data-i18n]').forEach(el=>{{const k=el.dataset.i18n;if(i18n[l]&&i18n[l][k])el.textContent=i18n[l][k];}});
