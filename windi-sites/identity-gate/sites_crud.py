@@ -1779,6 +1779,18 @@ MICROLOG_HTML_SKELETON = '''<!DOCTYPE html>
             --transition-slow: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             --transition-medium: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }}
+        [data-theme="klar"] {{
+            --bg-void: #FAFAF8;
+            --bg-surface: #FFFFFF;
+            --bg-terminal: #F5F5F3;
+            --text-primary: #1A1A1A;
+            --text-secondary: #4A4A4A;
+            --text-muted: #8A8A8A;
+            --gold: #8B7424;
+            --gold-muted: rgba(139, 116, 36, 0.2);
+            --border-subtle: rgba(0, 0, 0, 0.08);
+            --border-terminal: rgba(0, 180, 90, 0.3);
+        }}
         * {{ margin: 0; padding: 0; box-sizing: border-box; }}
         html, body {{ height: 100%; }}
         body {{
@@ -1954,6 +1966,45 @@ MICROLOG_HTML_SKELETON = '''<!DOCTYPE html>
             color: var(--text-muted);
             letter-spacing: 0.05em;
         }}
+        .controls-bar {{
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            z-index: 100;
+        }}
+        .lang-toggle {{
+            display: flex;
+            gap: 0.25rem;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+        }}
+        .lang-btn {{
+            padding: 0.25rem 0.5rem;
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: var(--transition-medium);
+        }}
+        .lang-btn:hover {{ color: var(--text-primary); border-color: var(--text-muted); }}
+        .lang-btn.active {{ color: var(--gold); border-color: var(--gold); }}
+        .theme-toggle {{
+            width: 32px;
+            height: 32px;
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-medium);
+        }}
+        .theme-toggle:hover {{ color: var(--text-primary); border-color: var(--text-muted); }}
         @media (max-width: 640px) {{
             .surface-container {{ padding: 1.5rem; }}
             .microlog-title {{ font-size: 1.4rem; }}
@@ -1963,6 +2014,14 @@ MICROLOG_HTML_SKELETON = '''<!DOCTYPE html>
     </style>
 </head>
 <body>
+    <div class="controls-bar">
+        <div class="lang-toggle">
+            <button class="lang-btn" data-lang="de">DE</button>
+            <button class="lang-btn active" data-lang="en">EN</button>
+            <button class="lang-btn" data-lang="pt">PT</button>
+        </div>
+        <button class="theme-toggle" id="themeToggle" title="Toggle theme">☀</button>
+    </div>
     <div class="surface-container">
         <main class="surface">
             <header class="surface-header">
@@ -1978,7 +2037,7 @@ MICROLOG_HTML_SKELETON = '''<!DOCTYPE html>
                 <div class="signature-left">
                     <span>WINDI</span><span>·</span><span>{handle}</span>
                 </div>
-                <div class="signature-right">sealed {sealed_date}</div>
+                <div class="signature-right"><span data-i18n="sealed">sealed</span> {sealed_date}</div>
             </div>
             <div class="action-zone">
                 <button class="audit-trigger" id="auditTrigger" data-receipt-id="{receipt_id}">Audit integrity</button>
@@ -2062,6 +2121,26 @@ MICROLOG_HTML_SKELETON = '''<!DOCTYPE html>
         }});
         function delay(ms){{return new Promise(r=>setTimeout(r,ms));}}
         function formatDate(s){{if(!s)return'—';try{{const d=typeof s==='number'?new Date(s*1000):new Date(s);return d.toISOString().replace('T',' ').slice(0,19)+'Z';}}catch{{return String(s);}}}}
+        // ═══ THEME TOGGLE (NOIR/KLAR) ═══
+        const themeBtn=document.getElementById('themeToggle');
+        function setTheme(t){{document.body.dataset.theme=t;localStorage.setItem('windi-theme',t);themeBtn.textContent=t==='klar'?'☽':'☀';}}
+        const savedTheme=localStorage.getItem('windi-theme')||'noir';
+        if(savedTheme==='klar')setTheme('klar');
+        themeBtn.addEventListener('click',()=>setTheme(document.body.dataset.theme==='klar'?'noir':'klar'));
+        // ═══ LANGUAGE TOGGLE (PDT-001 §4: chrome only, forensic lexicon stays EN) ═══
+        const i18n={{
+            de:{{sealed:'gesiegelt'}},
+            en:{{sealed:'sealed'}},
+            pt:{{sealed:'selado'}}
+        }};
+        function setLang(l){{
+            localStorage.setItem('windi-lang',l);
+            document.querySelectorAll('[data-i18n]').forEach(el=>{{const k=el.dataset.i18n;if(i18n[l]&&i18n[l][k])el.textContent=i18n[l][k];}});
+            document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.lang===l));
+        }}
+        const savedLang=localStorage.getItem('windi-lang')||(navigator.language.startsWith('de')?'de':navigator.language.startsWith('pt')?'pt':'en');
+        setLang(savedLang);
+        document.querySelectorAll('.lang-btn').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang)));
     }})();
     </script>
 </body>
