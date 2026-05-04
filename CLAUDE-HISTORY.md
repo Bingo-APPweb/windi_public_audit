@@ -6,6 +6,166 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 04 Mai 2026 — §242 W-SITES-001 Sprint 2 · AI Generator · Atomic Seal
+
+**Duração:** ~4h | **Status:** ✅ SEALED
+**Liga IA+H:** Human Dragon · Architect · Guardian · Witness
+**Invariants:** I1, I9, I10, I11, I14
+**Service:** W-SITES-001 v1.1-sprint2 | **Port:** :8192
+
+### Conceito
+
+> *"Prompt → CORTEX → HTML → Filesystem → Ledger → Public URL. Atómico."*
+
+Sprint 2 transformou windisites.de de brochure estática para SaaS funcional com geração AI de sites, persistência em filesystem, e atomic seal via Ledger.
+
+### Sprint 2 Core Deliverables
+
+| Feature | Implementation |
+|---------|----------------|
+| **AI Site Generation** | `POST /api/sites/generate` via W-CORTEX-001 |
+| **Filesystem Persistence** | `/opt/windi/sites/{site_id}/{gen_id}.html` |
+| **Atomic Seal** | Hash computed from disk (não memória) → I11 |
+| **Public URLs** | `windisites.de/sites/{site_id}/{gen_id}` via nginx |
+| **Meta Provenance** | `.meta.json` com DID, tier_used, cost_eur, receipt_id |
+
+### W-CORTEX-001 Tier Integration (§241)
+
+| Tier | Backend | Status | Notes |
+|------|---------|--------|-------|
+| **FREE** | Ollama B (mistral:7b) | ✅ LIVE | ~5min latency |
+| **MED** | Mistral API | 🔸 503 | Key deferred (~100 pioneers) |
+| **HIGH** | Claude API (sonnet-4) | ✅ LIVE | ~30s latency |
+
+**TierUnavailableError Class:**
+```python
+class TierUnavailableError(Exception):
+    def __init__(self, tier: str, reason: str, available_tiers: list):
+        self.tier = tier
+        self.reason = reason
+        self.available_tiers = available_tiers
+    def to_response(self) -> Dict[str, Any]:
+        return {
+            "ok": False,
+            "error": {
+                "code": "TIER_UNAVAILABLE",
+                "tier_requested": self.tier,
+                "available_tiers": self.available_tiers,
+                "action": f"Choose {' or '.join(self.available_tiers)} tier"
+            }
+        }
+```
+
+### Filesystem Persistence Function
+
+```python
+SITES_BASE_PATH = Path("/opt/windi/sites")
+SITES_PUBLIC_URL = "https://windisites.de/sites"
+
+def persist_site_html(site_id: str, container_id: str, html_content: str, meta: dict) -> dict:
+    site_dir = SITES_BASE_PATH / site_id
+    site_dir.mkdir(parents=True, exist_ok=True)
+    html_path = site_dir / f"{container_id}.html"
+    html_path.write_text(html_content, encoding="utf-8")
+
+    # I11: Hash from disk, not memory
+    persisted_content = html_path.read_text(encoding="utf-8")
+    content_hash = f"sha256:{hashlib.sha256(persisted_content.encode()).hexdigest()}"
+
+    # Meta with provenance
+    meta_path = site_dir / f"{container_id}.meta.json"
+    meta["content_hash"] = content_hash
+    meta["persisted_at"] = datetime.now(UTC).isoformat()
+    meta_path.write_text(json.dumps(meta, indent=2))
+
+    return {
+        "ok": True,
+        "file_path": str(html_path),
+        "public_url": f"{SITES_PUBLIC_URL}/{site_id}/{container_id}",
+        "content_hash": content_hash
+    }
+```
+
+### CSS Sanitizer Fix
+
+**Bug:** Inline CSS was being stripped from AI-generated HTML
+**Cause:** `<style>` was in FORBIDDEN_TAGS sanitizer list
+**Fix:** Removed 'style' from FORBIDDEN_TAGS, allowing inline CSS
+
+```python
+# Before (wrong):
+FORBIDDEN_TAGS = {'script', 'iframe', 'object', 'embed', 'form', 'input', 'link', 'style'}
+
+# After (correct):
+FORBIDDEN_TAGS = {'script', 'iframe', 'object', 'embed', 'form', 'input', 'link'}  # removed 'style'
+```
+
+### Verification Chain (I11 Compliance)
+
+```bash
+# Download from public URL
+curl https://windisites.de/sites/unlinked/efc7c521.../efc7c521....html -o downloaded.html
+
+# Compute hash
+sha256sum downloaded.html
+# c6c2ca0bfa70b21737214bf5673482a50cf46db9643573fc8968ec8b6d9d4651
+
+# Compare with Ledger receipt
+curl http://localhost:8101/api/receipts/WINDI-GENERATE-20260504123500-C6C2CA0B
+# content_hash: "sha256:c6c2ca0b..." ← MATCH ✓
+```
+
+### Nginx Configuration
+
+```nginx
+# Added to windisites.de server block
+location /sites/ {
+    alias /opt/windi/sites/;
+    autoindex off;
+    try_files $uri $uri/ =404;
+    add_header X-WINDI-Layer "PUBLIC-SITES" always;
+    add_header Cache-Control "public, max-age=3600" always;
+}
+
+location /api/ {
+    proxy_pass http://127.0.0.1:8192/api/;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+}
+```
+
+### Files Created/Modified
+
+| File | Status |
+|------|--------|
+| `/opt/windi/windi-sites/identity-gate/ai_writer/ai_writer_runtime.py` | TierUnavailableError + _get_available_tiers() |
+| `/opt/windi/windi-sites/identity-gate/ai_writer/__init__.py` | Exports |
+| `/opt/windi/windi-sites/identity-gate/sites_crud.py` | persist_site_html() + CSS fix |
+| `/etc/nginx/sites-enabled/windisites.de` | /sites/ + /api/ locations |
+| `/opt/windi/sites/unlinked/` | First AI site + meta.json |
+
+### Receipts
+
+- **First AI Site:** `WINDI-GENERATE-20260504123500-C6C2CA0B`
+- **MED Deferred:** `WINDI-S242-MED-DEFERRED-20260504`
+- **Content Hash:** `sha256:c6c2ca0bfa70b21737214bf5673482a50cf46db9643573fc8968ec8b6d9d4651`
+
+### Commits
+
+```
+0a7edf790 feat(§242): W-SITES-001 Sprint 2 — Atomic CREATE+SEAL Flow
+```
+
+### MED Tier Technical Debt
+
+**Status:** Conscious deferral documented in Ledger
+**Reason:** MISTRAL_API_KEY="SUBSTITUIR" (placeholder)
+**Inflection Point:** ~100 pioneers
+**Workaround:** FREE + HIGH tiers operational
+**UI:** 503 TIER_UNAVAILABLE with `available_tiers` for client recovery
+
+---
+
 ## § SESSÃO 03 Mai 2026 — §234 Paper-001 A.3 SEALED + TWO-STAGE Model
 
 **Duração:** ~6h | **Status:** ✅ SEALED

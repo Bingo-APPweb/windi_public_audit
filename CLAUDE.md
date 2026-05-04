@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.40.0
-**Sealed:** 2026-05-03 · §241 W-CORTEX-001 Tier Routing · Phase 2 SEALED
+**Version:** 2.41.0
+**Sealed:** 2026-05-04 · §242 W-SITES-001 Sprint 2 · AI Generator · Atomic Seal
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -97,7 +97,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-TRAVEL-001 | :8126 | I9,I11,I13,G3 | **LIVE** v1.3.0 · Identity Gate · /travel/ · §196 nginx fix · nohup oficial |
 | W-SHELF-001 | :8191 | I9,I11,I13,I14 | **LIVE** v0.3.0 · I9+I14 Dual Enforcement · §199+§200 · 11/11 Tests |
 | W-CMS-001 | :8055 | I9,I11,I14 | **LIVE** · Directus 10 · Ledger Bridge :8056 · Sweeper Timer · §219 Baptism of Externality |
-| W-SITES-001 | :8192 | I1,I9,I11,I12,I14 | **LIVE** v1.0-sprint1 · windisites.de · §235 · 5 Pages · `1BE93BB4` |
+| W-SITES-001 | :8192 | I1,I9,I11,I12,I14 | **LIVE** v1.1-sprint2 · windisites.de · §242 · AI Generator · Filesystem Persist · `C6C2CA0B` |
 | W-MAIL-001 | :25,:587,:993,:8888 | I1,I9,I11,I12,I14 | **LIVE** · Sovereign Email · DACP-v1 · Dual DKIM · SnappyMail · §224-226 |
 | W-OLLAMA-001 | B:11434 | I9,I10,I13 | **LIVE** · Server Gêmeo (85.215.131.0) · mistral:7b · Galho B · §227 |
 | W-LEXICON-001 | :8193 | I9,I10,I13,I14 | **LIVE** v0.3.0 · TWO-STAGE Model · Stage 2 Evaluator · Paper-001 A.3 SEALED |
@@ -452,6 +452,39 @@ Nenhum endpoint retorna valores default que mascarem dados ausentes.
 
 **Files:** `/opt/windi/windi-sites/static/` · `/etc/nginx/sites-enabled/windisites.de`
 
+### §242 — W-SITES-001 Sprint 2: AI Generator + Atomic Seal (04 Mai 2026)
+
+> **"Prompt → CORTEX → HTML → Filesystem → Ledger → Public URL. Atómico."**
+
+**Status:** LIVE · **Receipt:** `WINDI-GENERATE-20260504123500-C6C2CA0B`
+**Invariants:** I1, I9, I10, I11, I14
+
+**Sprint 2 Deliverables:**
+- `POST /api/sites/generate` — AI site generation via CORTEX
+- Filesystem persistence: `/opt/windi/sites/{site_id}/{gen_id}.html`
+- Atomic seal: File → Hash from disk → Ledger (I11)
+- Public serving: `windisites.de/sites/{site_id}/{gen_id}`
+
+**Tier Routing (§241 integration):**
+| Tier | Backend | Status |
+|------|---------|--------|
+| FREE | Ollama B (mistral:7b) | ✅ LIVE |
+| MED | Mistral API | 🔸 503 (key deferred) |
+| HIGH | Claude API | ✅ LIVE |
+
+**MED Tier Deferred:** `WINDI-S242-MED-DEFERRED-20260504`
+- Inflection point: ~100 pioneers
+- FREE + HIGH sufficient for validation phase
+
+**CSS Sanitizer Fix:** Removed `<style>` from FORBIDDEN_TAGS (was stripping inline CSS)
+
+**Verification Chain:**
+```
+curl site.html → sha256sum → compare with Ledger receipt → MATCH ✓
+```
+
+**Files:** `sites_crud.py` (persist_site_html) · `ai_writer_runtime.py` (TierUnavailableError)
+
 ### §217 — P01 Sovereign Risk Score (SRS) (26 Apr 2026)
 
 > **"O peso regulatório é soberano. Art.14 = prioridade máxima."**
@@ -728,6 +761,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 04 Mai | **§242** W-SITES-001 Sprint 2 · AI Generator · Filesystem Persist · Atomic Seal · `C6C2CA0B` ✅ |
 | 03 Mai | **§235** W-SITES-001 Sprint 1 LIVE · windisites.de · 5 Pages · `1BE93BB4` ✅ |
 | 03 Mai | **§234** Paper-001 A.3 SEALED · TWO-STAGE Model · Held-out Validation (0% recall) · A.4 Draft ✅ |
 | 03 Mai | **§239** Receipt Visual Compliance · SHA-256 11px · NOIR button · forensic-grade ✅ |
@@ -856,6 +890,8 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 - §234 Paper-001 A.3 SEAL: `WINDI-PAPER001-A3-SEAL-20260503115356` (TWO-STAGE + Held-out + Boundary)
 - §234 Stage 2 FROZEN: `88c4a7dd5ce4177a3839bec9297b677619460645a7210c0e6fce1175e5cb17ea` (Pre-validation freeze)
 - §235 W-SITES-001 Deploy: `WINDI-SITES-DEPLOY-20260503115335-1BE93BB4` (windisites.de LIVE)
+- §242 W-SITES-001 Sprint 2: `WINDI-GENERATE-20260504123500-C6C2CA0B` (First AI-generated site with CSS)
+- §242 MED Deferred: `WINDI-S242-MED-DEFERRED-20260504` (Conscious technical debt)
 
 ---
 
