@@ -2041,9 +2041,10 @@ MICROLOG_HTML_SKELETON = '''<!DOCTYPE html>
                 btn.classList.add('verified');
                 btn.textContent='✓ Verified';
                 await delay(200);
-                document.getElementById('detailReceipt').textContent=data.receipt_id||receiptId;
-                document.getElementById('detailHash').textContent=(data.content_hash||'').replace('sha256:','');
-                document.getElementById('detailIssued').textContent=formatDate(data.created_at||data.sealed_at);
+                const r=data.receipt||data;
+                document.getElementById('detailReceipt').textContent=r.id||r.receipt_id||receiptId;
+                document.getElementById('detailHash').textContent=(r.content_hash||'').replace('sha256:','');
+                document.getElementById('detailIssued').textContent=formatDate(r.created_at||r.sealed_at);
                 details.classList.add('visible');
                 await delay(200);
                 actions.querySelector('.ledger-link').href=VERIFY_PUBLIC+encodeURIComponent(receiptId);
@@ -2060,7 +2061,7 @@ MICROLOG_HTML_SKELETON = '''<!DOCTYPE html>
             }}
         }});
         function delay(ms){{return new Promise(r=>setTimeout(r,ms));}}
-        function formatDate(s){{if(!s)return'—';try{{return new Date(s).toISOString().replace('T',' ').slice(0,19)+'Z';}}catch{{return s;}}}}
+        function formatDate(s){{if(!s)return'—';try{{const d=typeof s==='number'?new Date(s*1000):new Date(s);return d.toISOString().replace('T',' ').slice(0,19)+'Z';}}catch{{return String(s);}}}}
     }})();
     </script>
 </body>
