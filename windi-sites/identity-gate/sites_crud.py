@@ -37,6 +37,7 @@ import json
 import requests
 import zipfile
 import io
+import html as html_escape  # For microlog content escaping
 
 # ═══════════════════════════════════════════════════════════════════════════
 # CONFIGURATION
@@ -1719,6 +1720,153 @@ class GenerateSiteRequest(BaseModel):
         return v.strip()
 
 
+# ═══════════════════════════════════════════════════════════════════════════
+# §243 — MICROLOG: Smallest Verifiable Unit
+# ═══════════════════════════════════════════════════════════════════════════
+# "A single verifiable idea, sealed as a public artefact"
+# Sprint 3 — Microlog Pilot
+# ═══════════════════════════════════════════════════════════════════════════
+
+MICROLOG_SYSTEM_PROMPT = """Write a concise microlog (max 280 words).
+
+STRUCTURE:
+- Title (strong, declarative, max 10 words)
+- Core idea (1-2 paragraphs, precise and insight-driven)
+- Closing line (memorable, quotable)
+
+TONE:
+- Precise, not vague
+- Non-generic, specific
+- Insight-driven, not descriptive
+
+OUTPUT FORMAT:
+Respond with JSON only:
+{"title": "...", "content": "...", "closing": "..."}
+
+NO markdown. NO explanation. Just the JSON object."""
+
+MICROLOG_HTML_SKELETON = '''<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title} — WINDI Microlog</title>
+    <style>
+        :root {{
+            --bg: #0A0A10;
+            --gold: #C9A84C;
+            --text: #E8E6E1;
+            --text-muted: #8A8A8A;
+            --border: #1A1A24;
+        }}
+        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+        body {{
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            line-height: 1.7;
+        }}
+        article.microlog {{
+            max-width: 640px;
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 2.5rem;
+            background: linear-gradient(135deg, #0D0D14 0%, #0A0A10 100%);
+        }}
+        h1 {{
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+        }}
+        .content {{
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }}
+        .content p {{
+            margin-bottom: 1rem;
+        }}
+        .closing {{
+            font-style: italic;
+            color: var(--gold);
+            font-size: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }}
+        footer {{
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }}
+        footer a {{
+            color: var(--gold);
+            text-decoration: none;
+            font-weight: 500;
+        }}
+        footer a:hover {{
+            text-decoration: underline;
+        }}
+        .hash {{
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            word-break: break-all;
+            margin-top: 0.5rem;
+        }}
+        @media (max-width: 480px) {{
+            body {{ padding: 1rem; }}
+            article.microlog {{ padding: 1.5rem; }}
+            h1 {{ font-size: 1.4rem; }}
+            .content {{ font-size: 1rem; }}
+        }}
+    </style>
+</head>
+<body>
+    <article class="microlog">
+        <h1>{title}</h1>
+        <div class="content">
+            {content}
+        </div>
+        <p class="closing">{closing}</p>
+        <footer>
+            <span>Sealed by WINDI</span>
+            <a href="{verify_url}" target="_blank">Verify</a>
+        </footer>
+        <div class="hash">{content_hash}</div>
+    </article>
+</body>
+</html>'''
+
+
+class MicrologRequest(BaseModel):
+    """Request for Microlog generation — Sprint 3."""
+    topic: str  # The idea/topic to write about
+    site_id: Optional[str] = None  # Optional site association
+
+    @field_validator('topic')
+    @classmethod
+    def validate_topic(cls, v):
+        if len(v) < 5:
+            raise ValueError('Topic must be at least 5 characters')
+        if len(v) > 500:
+            raise ValueError('Topic must be less than 500 characters')
+        return v.strip()
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+
 SITE_GENERATION_SYSTEM_PROMPT = """Generate a complete HTML page. Output ONLY the raw HTML code.
 
 CRITICAL: Do NOT wrap your response in markdown code blocks. Do NOT use triple backticks.
@@ -1953,4 +2101,203 @@ async def generate_site_ai(data: GenerateSiteRequest, request: Request):
         "public_url": public_url,
         "invariants": ["I1", "I9", "I10", "I11", "I14"],
         "next_step": "POST /api/sites/publish to approve and publish (I9 gate)"
+    }
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# §243 — MICROLOG ENDPOINT (Sprint 3)
+# ═══════════════════════════════════════════════════════════════════════════
+
+@sites_router.post("/sites/microlog")
+async def create_microlog(data: MicrologRequest, request: Request):
+    """
+    §243 — Microlog Generator · Sprint 3
+
+    "A single verifiable idea, sealed as a public artefact"
+
+    Flow:
+      1. DID gate
+      2. L-1 filter
+      3. Generate microlog content via CORTEX
+      4. Parse JSON response
+      5. Render into NOIR HTML skeleton
+      6. Persist to filesystem
+      7. Seal to Ledger
+      8. Return public URL
+
+    Invariants: I1, I9, I10, I11, I14
+    """
+    import json as json_lib
+
+    now = datetime.now(timezone.utc)
+    now_str = now.isoformat()
+    timestamp = now.strftime("%Y%m%d%H%M%S")
+
+    # ─── Pre-check: DID exists ────────────────────────────────────────────────
+    caller_did = get_caller_did(request)
+    if not caller_did:
+        raise HTTPException(status_code=401, detail="DID required (I9)")
+
+    # ─── Generate microlog content via CORTEX ─────────────────────────────────
+    microlog_id = str(uuid.uuid4())
+    request_host = request.headers.get("host", "")
+
+    # Build prompt for microlog
+    full_prompt = f"{MICROLOG_SYSTEM_PROMPT}\n\nTopic: {data.topic}"
+
+    result = await generate_with_pipeline(
+        caller_did=caller_did,
+        caller_tier="NODAL",
+        request_host=request_host,
+        acceptability_l_minus_1_fn=acceptability_l_minus_1,
+        acceptability_l_zero_fn=acceptability_l_zero,
+        free_prompt=full_prompt,
+        did_gate_fn=assert_public_writer_authorized,
+        requested_tier=None  # §241: Let DID resolution determine tier
+    )
+
+    # Handle pipeline errors
+    if not result.ok:
+        error = result.error or "unknown_error"
+        if "DID_GATE" in error:
+            raise HTTPException(status_code=403, detail=error)
+        elif "L-1_BLOCKED_CS1" in error:
+            raise HTTPException(status_code=451, detail=error)
+        elif "L0_BLOCKED" in error:
+            raise HTTPException(status_code=422, detail=error)
+        elif "TIER_UNAVAILABLE" in error:
+            available = result.generation_log.get("available_tiers", ["FREE", "HIGH"]) if result.generation_log else ["FREE", "HIGH"]
+            return JSONResponse(
+                status_code=503,
+                content={
+                    "ok": False,
+                    "error": {
+                        "code": "TIER_UNAVAILABLE",
+                        "available_tiers": available
+                    }
+                }
+            )
+        raise HTTPException(status_code=500, detail=f"Generation failed: {error}")
+
+    raw_content = result.content or ""
+    model_used = result.model_used or "unknown"
+
+    # ─── Parse JSON from LLM response ─────────────────────────────────────────
+    try:
+        # Try to extract JSON from response
+        json_match = re.search(r'\{[^{}]*"title"[^{}]*\}', raw_content, re.DOTALL)
+        if json_match:
+            microlog_data = json_lib.loads(json_match.group())
+        else:
+            # Fallback: try full response as JSON
+            microlog_data = json_lib.loads(raw_content.strip())
+
+        title = microlog_data.get("title", "Untitled")
+        content = microlog_data.get("content", "")
+        closing = microlog_data.get("closing", "")
+    except (json_lib.JSONDecodeError, KeyError):
+        # Fallback: use raw content
+        title = f"Microlog: {data.topic[:50]}"
+        content = raw_content
+        closing = ""
+
+    # ─── Prepare receipt ──────────────────────────────────────────────────────
+    receipt_id = f"WINDI-MICROLOG-{timestamp}-{microlog_id[:8].upper()}"
+    verify_url = f"https://windi-domain.com/verify-public/?id={receipt_id}"
+
+    # Temporary hash for skeleton (will be replaced with disk hash)
+    temp_hash = f"sha256:{hashlib.sha256(content.encode()).hexdigest()}"
+
+    # ─── Render HTML with NOIR skeleton ───────────────────────────────────────
+    # Escape content for HTML safety
+    safe_title = html_escape.escape(title)
+    safe_content = f"<p>{html_escape.escape(content)}</p>"
+    safe_closing = html_escape.escape(closing)
+
+    rendered_html = MICROLOG_HTML_SKELETON.format(
+        title=safe_title,
+        content=safe_content,
+        closing=safe_closing,
+        verify_url=verify_url,
+        content_hash=temp_hash  # Placeholder, will update after persist
+    )
+
+    # ─── Persist to filesystem ────────────────────────────────────────────────
+    effective_site_id = data.site_id or "micrologs"
+    persist_result = persist_site_html(
+        site_id=effective_site_id,
+        container_id=microlog_id,
+        html_content=rendered_html,
+        meta={
+            "microlog_id": microlog_id,
+            "type": "microlog",
+            "topic": data.topic,
+            "title": title,
+            "model": model_used,
+            "tier_used": result.tier_used,
+            "cost_eur": result.cost_eur,
+            "receipt_id": receipt_id,
+            "did": caller_did
+        }
+    )
+
+    final_content_hash = persist_result.get("content_hash") or temp_hash
+    public_url = persist_result.get("public_url")
+
+    # ─── Update HTML with final hash ──────────────────────────────────────────
+    # Re-render with correct hash
+    rendered_html = MICROLOG_HTML_SKELETON.format(
+        title=safe_title,
+        content=safe_content,
+        closing=safe_closing,
+        verify_url=verify_url,
+        content_hash=final_content_hash
+    )
+
+    # Re-persist with correct hash
+    persist_result = persist_site_html(
+        site_id=effective_site_id,
+        container_id=microlog_id,
+        html_content=rendered_html,
+        meta={
+            "microlog_id": microlog_id,
+            "type": "microlog",
+            "topic": data.topic,
+            "title": title,
+            "model": model_used,
+            "tier_used": result.tier_used,
+            "cost_eur": result.cost_eur,
+            "receipt_id": receipt_id,
+            "did": caller_did
+        }
+    )
+
+    final_content_hash = persist_result.get("content_hash")
+
+    # ─── Seal to Ledger ───────────────────────────────────────────────────────
+    ledger_result = seal_to_ledger(
+        receipt_id,
+        f"Microlog: {title}",
+        final_content_hash,
+        caller_did
+    )
+
+    # ─── Return result ────────────────────────────────────────────────────────
+    return {
+        "ok": True,
+        "type": "microlog",
+        "microlog_id": microlog_id,
+        "title": title,
+        "content": content,
+        "closing": closing,
+        "topic": data.topic,
+        "model": model_used,
+        "content_hash": final_content_hash,
+        "receipt_id": receipt_id,
+        "verify_url": verify_url,
+        "public_url": public_url,
+        "ledger": ledger_result,
+        "tier_used": result.tier_used,
+        "cost_eur": result.cost_eur,
+        "invariants": ["I1", "I9", "I10", "I11", "I14"]
     }
