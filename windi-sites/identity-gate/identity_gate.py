@@ -318,7 +318,9 @@ async def send_verification_email(email: str, token: str, full_name: str, lang: 
     Send verification email asynchronously.
     For now, logs to console. In production, integrate with SMTP or Dispatch Gateway.
     """
-    verify_url = f"{DOMAIN_URL}/sites/verify-email/{token}"
+    # §246: windisites.de = no /sites/ prefix, windi-domain.com = /sites/
+    base_path = "" if "windisites.de" in DOMAIN_URL else "/sites"
+    verify_url = f"{DOMAIN_URL}{base_path}/verify-email/{token}"
 
     # Trilingual email subjects and bodies
     subjects = {
@@ -446,7 +448,9 @@ def generate_login_pin() -> str:
 
 async def send_login_email(email: str, token: str, full_name: str, lang: str = "en", pin: str = None):
     """Send magic link login email with optional PIN code (§120.7)."""
-    login_url = f"{DOMAIN_URL}/sites/login/{token}"
+    # §246: windisites.de = no /sites/ prefix
+    base_path = "" if "windisites.de" in DOMAIN_URL else "/sites"
+    login_url = f"{DOMAIN_URL}{base_path}/login/{token}"
 
     # §120.7: Include PIN in email if provided
     pin_section_de = f"\n\n📱 ODER gib diesen Code ein:\n\n   {pin}\n\n(Code 15 Minuten gültig)" if pin else ""
@@ -1089,7 +1093,7 @@ async def login_with_token(token: str, request: Request):
     # §120.6: Detect base path from request host
     host = request.headers.get("host", "")
     base_path = "" if "windisites.de" in host else "/sites"
-    workspace_url = f"{base_path}/workspace/?did={did}"
+    workspace_url = f"{base_path}/workspace?did={did}"
 
     # Return HTML that sets sessionStorage and redirects to workspace
     html_content = f"""
