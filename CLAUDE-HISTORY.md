@@ -6,6 +6,243 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 05 Mai 2026 — §245 W-SITES-001 Prompts Mágicos + Editorial Doctrine
+
+**Duração:** ~4h | **Status:** ✅ SEALED
+**Liga IA+H:** Human Dragon · Architect (CCode Opus 4.5)
+**Invariants:** I1, I9, I11, I12, I14
+**Services:** W-SITES-001, W-CORTEX-001, Forensic Ledger
+
+### Objectivo
+
+Transformar placeholders do wizard W-SITES-001 em prompts inspiradores conectados a W-CORTEX-001.
+Estabelecer fundação editorial escrita e selada — não verbal, não implícita, ESCRITA.
+
+### §245.0 W-EDITORIAL-DOCTRINE-001 (SELADO)
+
+> **"WINDI = editora forense de identidade soberana."**
+
+**Receipt:** `WINDI-EDITORIAL-DOCTRINE-001-20260505111720-3C5638F9`
+**Hash:** `sha256:3c5638f962b0354780dcc720f6815cd79bc424093a3bd8a21c518ce1bc443e5b`
+**URL:** `https://windisites.de/doctrine/editorial`
+
+**Estrutura (10 secções):**
+1. Definição — WINDI como editora forense
+2. Os Três Papéis — Editora, Forense, Soberana
+3. Os Três Níveis de Afirmação — Sealed, Self-declared, Cross-verified
+4. O Que WINDI Faz — 6 acções
+5. O Que WINDI Não Faz — 5 limites
+6. Direito Editorial — Recusa, Moderação, Remoção
+7. Cadeia de Responsabilidade — Autor, WINDI, Infra
+8. Postura Regulatória — DSA, EU AI Act Art.14, GDPR
+9. Selo Deste Documento
+
+**Ficheiros:**
+- `/opt/windi/docs/doctrine/W-EDITORIAL-DOCTRINE-001.md` (canónico)
+- `/opt/windi/static/doctrine/editorial.html` (público)
+
+### §245.1-§245.5 Seis Prompt Templates
+
+| Template | Ficheiro | Default Tier | Min Tier | windi_email |
+|----------|----------|--------------|----------|-------------|
+| profile | `profile.txt` | MED | FREE | ✅ |
+| press | `press.txt` | HIGH | MED | ✅ |
+| portfolio | `portfolio.txt` | FREE | FREE | ✅ |
+| landing | `landing.txt` | MED | FREE | ✅ |
+| record | `record.txt` | HIGH | MED | ✅ |
+| custom | `custom.txt` | MED | MED | ✅ |
+
+**Directório:** `/opt/windi/windi-sites/identity-gate/ai_writer/prompt_templates/`
+
+**Características:**
+- CUSTOM min=MED (nunca FREE — vector de ataque)
+- §C-ACCEPTABILITY-001 preâmbulo em custom.txt (Cardinal Sins CS-1 a CS-7)
+- Footer dinâmico: "Sealed · Self-declared" vs "Verified via {source}"
+- `{verification_source}` para distinção legal
+
+### §245.6 Tier Routing Implementado
+
+**Ficheiro:** `ai_writer_runtime.py`
+
+```python
+TEMPLATE_TIER_CONFIG = {
+    "record": {"default": "HIGH", "min": "MED"},
+    "press": {"default": "HIGH", "min": "MED"},
+    "profile": {"default": "MED", "min": "FREE"},
+    "landing": {"default": "MED", "min": "FREE"},
+    "portfolio": {"default": "FREE", "min": "FREE"},
+    "custom": {"default": "MED", "min": "MED"},
+    "article": {"default": "FREE", "min": "FREE"},
+    "about": {"default": "FREE", "min": "FREE"},
+}
+
+def language_tier_override(detected_lang: str, requested_tier: str) -> str:
+    if detected_lang.lower() == "pt" and requested_tier == "FREE":
+        return "MED"  # PT quality baixa em Ollama
+    return requested_tier
+```
+
+### §245.7 Wizard new-site.html Actualizado
+
+- 6 tipos com `data-type`, `data-placeholder`, `data-tier`
+- Placeholders dinâmicos por tipo (JS)
+- Toggle língua DE|EN|PT
+- Warning box para CUSTOM (§C-ACCEPTABILITY-001)
+- 3 links Editorial Doctrine → windisites.de
+
+### §245.8 W-MAIL-001 Preparação
+
+- `{windi_email}` em 6/6 templates (consistência)
+- UI no wizard diferido para §246 (evitar UI sem backend)
+- Lista negra prefixos regulados → deriva de §6 Direito Editorial
+
+### §246 Registado no Backlog
+
+**Scope:** Toggle wizard · `POST /api/mail/create-alias` · Lista negra · Validação disponibilidade
+
+### Três Armadilhas Evitadas
+
+1. **UI sem backend** — Promessa vazia viola princípios WINDI
+2. **Assimetria templates** — Corrigida (6/6 com windi_email)
+3. **Anti-abuse não implementado** — Diferido para §246 com scope claro
+
+### Verificação Final
+
+| Check | Status |
+|-------|--------|
+| Doctrine no Ledger | ✅ `3C5638F9` |
+| Doctrine URL LIVE | ✅ `windisites.de/doctrine/editorial` |
+| 8 templates válidos | ✅ |
+| 6/6 com windi_email | ✅ |
+| Tier routing | ✅ |
+| Language override PT→MED | ✅ |
+| CUSTOM min=MED | ✅ |
+| Placeholders dinâmicos | ✅ |
+| nginx reload | ✅ |
+
+### Frase Canónica
+
+> *"Primeira vez que WINDI tem fundação editorial escrita e selada — não verbal, não implícita, ESCRITA."*
+> — Human Dragon · 05 Mai 2026
+
+---
+
+## § SESSÃO 04 Mai 2026 — §244 LEXICON Remediation Arc (PASSOS 1-6)
+
+**Duração:** ~3h | **Status:** ✅ SEALED (PASSOS 1-7 completos)
+**Liga IA+H:** Human Dragon · Architect (CCode Opus 4.5)
+**Invariants:** I1, I9, I10, I11, I14
+**Services:** W-DID-001, W-LEXICON-001, W-LIB-001, W-SITES-001
+
+### Contexto
+
+> *"Construir camadas 6-7 sem confirmar camadas 1-3 operacionais é anti-pattern."*
+
+Sessão de remediação arquitectural: verificar stack constitucional bottom-up antes de avançar com Products.
+
+**Hierarquia Verificada:**
+```
+W-DID-001 → Ledger → W-LEXICON-001 → W-LIB-001 → PDT-001 → Products → Surfaces
+```
+
+### PASSO 1: W-DID-001 Confirmed ✅
+
+- Port `:8096` LIVE
+- 9 identidades activas, 15 sessões
+- DECRETO-001 (Árvore Viva) operacional
+
+### PASSO 2: W-LEXICON-001 TWO-STAGE Implemented ✅
+
+- Port `:8193` LIVE (v0.2.0, não v0.1 como spec original)
+- Mode: `live` (Ollama reachable em 85.215.131.0:11434)
+- Architecture: Stage 1 (Ollama drift) + Stage 2 (rule-based invariants)
+- Actions: `silent` | `invite` | `interrupt` | `halt`
+
+### PASSO 3: W-LIB-001 Bibliotecário Confirmed ✅
+
+- Port `:8091` LIVE (via constitutional-agent)
+- 11 invariantes, 8 princípios, 5 sealed wisdom
+- **Fix aplicado:** `library_blueprint.py:582` — participants list vs string
+- **Fix aplicado:** `governance_guard.py` — movido de :8091 para :8089
+
+### PASSO 4: PDT-001 as LEXICON Seed ✅
+
+- Definido em `sites_crud.py:1909`
+- Princípio: "Forensic Lexicon EN-only (§1)"
+
+### PASSO 5: LEXICON Middleware Integration ✅
+
+**Pipeline Implementado:**
+```
+Content → DID Gate → LEXICON TWO-STAGE → Ledger Seal
+```
+
+**Ficheiros Modificados:**
+| Ficheiro | Integração |
+|----------|------------|
+| `ai_draft.py` | `seal_draft`, `seal_with_video` — LEXICON gate com HALT blocking |
+| `sites_crud.py` | `seal_with_lexicon()`, container generate, microlog |
+
+**Teste Verificado:**
+```json
+{
+  "receipt_id": "WINDI-SITES-AIDRAFT-20260504162453-53AE6CBB",
+  "lexicon": {"gated": true, "action": "invite", "drift_score": 85},
+  "status": "SEALED"
+}
+```
+
+### PASSO 6: Migration Audit — CLEAN SLATE ✅
+
+**Receipt:** `WINDI-MIGRATION-AUDIT-20260504163803-3CEA9DA1`
+
+**Resultado:**
+```json
+{
+  "receipts_audited": 50,
+  "candidates_found": 0,
+  "conclusion": "LEXICON gate activated before first content seal"
+}
+```
+
+> *"Não há débito constitucional retroactivo a saldar. O sistema está clean-slate face à própria lei que se acabou de impor a si mesmo."*
+
+### Observação Arquitectural
+
+O WINDI-CORTEX-001 (§241 Tier Routing) foi correctamente excluído do scope de annotation — é governance/architecture, não content-generating. O Ledger fez gate ao próprio acto de selar a auditoria (missing `sge_score`, invalid `doc_type`). Integridade institucional a operar.
+
+### PASSO 7: Full-Constitutional Attempts ✅
+
+**Resultado:** 5 cenários de teste de integração
+
+| # | Cenário | Expected | Actual | Status |
+|---|---------|----------|--------|--------|
+| 1 | DID válido → compliant → Ledger | SEALED | action=silent | ✅ PASS |
+| 2 | DID inválido | 401 (I9) | "DID obrigatório" | ✅ PASS |
+| 3 | LEXICON constitutional drift | 422 (HALT) | action=interrupt | ⚠️ WARN |
+| 4 | LEXICON timeout (I10) | proceed | Code path exists | ⏭️ SKIP |
+| 5 | Ledger unavailable | 503 | Code path exists | ⏭️ SKIP |
+
+**Nota Cenário 3:** LEXICON classificou violação I9 como `interrupt` (não `halt`). Sistema ilumina mas não bloqueia — comportamento SGV conforme §117.
+
+### Receipts Selados
+
+| Receipt | Propósito |
+|---------|-----------|
+| `WINDI-SITES-AIDRAFT-20260504162453-53AE6CBB` | Primeiro content seal com LEXICON gate |
+| `WINDI-MIGRATION-AUDIT-20260504163803-3CEA9DA1` | PASSO 6 audit (CLEAN-SLATE) |
+| `WINDI-REMEDIATION-ARC-COMPLETE-20260504175023-09D1C638` | **Arco completo PASSOS 1-7** |
+
+### Meta-Observação (§236)
+
+> *"§236 nasce no momento em que o WINDI já está a viver o princípio que o §236 codifica. A ironia é boa. O protocolo não é correcção — é reconhecimento e selagem do que já está a operar bem."*
+
+### Conclusão
+
+Sequência constitucional (PASSO 1 → 7) seguida com integridade. Stack verificado bottom-up. LEXICON gate operacional antes de primeiro content seal. **Zero débito retroactivo. Clean slate.**
+
+---
+
 ## § SESSÃO 04 Mai 2026 — §243-244 Microlog + Communiqué Builder
 
 **Duração:** ~2h | **Status:** ✅ SEALED

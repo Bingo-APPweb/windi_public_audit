@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.42.0
-**Sealed:** 2026-05-04 · §244 W-COMM-002 Communiqué Builder · Evidence Distribution
+**Version:** 2.43.0
+**Sealed:** 2026-05-05 · §245 W-SITES-001 Prompts Mágicos · Editorial Doctrine
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -302,6 +302,38 @@ Nenhum endpoint retorna valores default que mascarem dados ausentes.
 **Files:** `sites_crud.py` · `communique_builder.py`
 > **Full details:** `CLAUDE-HISTORY.md` § §242-244
 
+### §245 — W-SITES-001 Prompts Mágicos + Doutrina Editorial (05 Mai 2026)
+
+> **"WINDI = editora forense de identidade soberana."**
+
+**Status:** LIVE · **Sprint:** §245 · **Receipt:** `WINDI-EDITORIAL-DOCTRINE-001-20260505111720-3C5638F9`
+
+**W-EDITORIAL-DOCTRINE-001:**
+- Documento fundacional definindo papel editorial WINDI
+- 3 papéis: Editora · Forense · Soberana
+- 3 níveis: Sealed · Self-declared · Cross-verified
+- Postura: DSA · EU AI Act Art. 14 · GDPR
+- URL: `windi-domain.com/doctrine/editorial`
+
+**6 Prompt Templates (§245.2):**
+| Template | Default Tier | Min Tier | Audiência |
+|----------|--------------|----------|-----------|
+| profile | MED | FREE | Notários, advogados, médicos |
+| press | HIGH | MED | Comunicados de imprensa |
+| portfolio | FREE | FREE | Artistas, criadores |
+| landing | MED | FREE | Empresas, produtos |
+| record | HIGH | MED | Documentos institucionais |
+| custom | MED | MED | Canvas livre (§C-ACCEPTABILITY-001) |
+
+**Features:**
+- Tier routing por template em `ai_writer_runtime.py`
+- Language override para PT (Ollama qualidade baixa → MED)
+- Footer dinâmico: "Sealed · Self-declared" vs "Verified via [SOURCE]"
+- Wizard com placeholders inspiradores por tipo
+
+**Files:** `prompt_templates/*.txt` · `ai_writer_runtime.py` · `new-site.html`
+> **Full details:** `CLAUDE-HISTORY.md` § §245
+
 ### §217 — P01 Sovereign Risk Score (SRS) (26 Apr 2026)
 
 > **"O peso regulatório é soberano. Art.14 = prioridade máxima."**
@@ -578,6 +610,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 05 Mai | **§245** W-SITES-001 Prompts Mágicos · Editorial Doctrine · `3C5638F9` ✅ |
 | 04 Mai | **§242-244** W-SITES-001 Sprint 2+3 · Microlog · Communiqué · `c8d8f3596` ✅ |
 | 03 Mai | **§235+241** windisites.de LIVE · W-CORTEX-001 · `1BE93BB4` · `04C67B81` ✅ |
 | 02 Mai | **§227-233** Galho B · LEXICON · Paper-001 A.3 · `CDC760DD` ✅ |
@@ -632,6 +665,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 - [ ] **§139 WINDI-LAW Painel de Anexos** — Lista persistente · SHA · Suporte múltiplos ficheiros
 
 ### P1 — Importante
+- [ ] **§246 W-SITES × W-MAIL Bridge** — Toggle wizard · `POST /api/mail/create-alias` · Lista negra prefixos regulados (§6 Direito Editorial) · Validação disponibilidade
 - [ ] **Rate limiting** nginx · **Cron 48h** email downgrade · **HIGH ops gate**
 
 ### P1.5 — W-TRAVEL-PUB-001 (Q3 2026)
@@ -669,6 +703,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | **MICROLOG** | `430CD285` | §243 SaaS Is Evidence |
 | **MAIL** | `D7398F3C` | §224-226 DACP-v1 First Proof |
 | **PAPER** | `CDC760DD` | §233 Paper-001 A.3 Core |
+| **DOCTRINE** | `3C5638F9` | §245 W-EDITORIAL-DOCTRINE-001 |
 
 > **Full receipts list:** `CLAUDE-HISTORY.md` § Produtos SEALED
 
