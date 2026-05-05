@@ -11039,3 +11039,455 @@ da camada de execução/soberania (EXECUTE) que vive no Server A.
 
 ---
 
+
+---
+
+## Sessão 2026-05-04 · ~14:00 → ~16:00 (Claude.ai web)
+
+**Sprint:** Diagnóstico de continuidade + bootstrap do Protocolo §236
+**Modo:** Claude.ai web (planning + scaffolding) — antecede sessão CCode de execução
+**Operador humano:** Human Dragon
+**Modelo:** Claude Opus 4.7
+
+### Trabalho completado
+- Diagnóstico explícito de quebra de continuidade na sessão CCode anterior:
+  PDT-001, Surface V1, COMMUNIQUÉ.JMPG construídos sobre W-LEXICON-001
+  em código zero. Reconhecimento honesto preservado pela própria instância
+  CCode antes do fim daquela sessão (transcript anexado em planning).
+- Identificação da raiz: CLAUDE.md e CLAUDE-HISTORY.md tratados como
+  ornamento em vez de manual operativo vivo.
+- Desenho do §236 — Protocolo de Continuidade Inter-Sessão.
+- Escrita da SKILL `windi-session-continuity` com Três Leis explícitas
+  (Existência antes de Acção · Toda Sessão gera Rastro · A Sessão Lê
+  o Histórico do Projecto).
+- Pacote de deployment criado: SKILL.md + protocol-236 append + seed entry + DEPLOY.md.
+
+### Selos emitidos
+- §236 · Protocolo de Continuidade Inter-Sessão ·
+  Receipt: WINDI-PROTOCOL-§236-CONTINUITY-20260504
+
+### Scaffold pending (não morre, espera)
+- **PDT-001 v1.0** · aguarda W-LEXICON-001 Fase 3 viva para activar como seed do lexicon
+- **Surface V1 HTML** · aguarda middleware constitucional implementado em W-SITES-001 (PASSO 5 da sequência)
+- **COMMUNIQUÉ.JMPG build** · aguarda mesmo middleware
+- **Templates email × 3 línguas** · aguardam middleware
+
+### Próximo passo proposto (para sessão CCode imediata)
+1. Selar §236 no Ledger :8101
+2. Validar deploy com smoke test
+3. Próximo arranque CCode = teste real do protocolo
+
+### Blockers identificados
+- Nenhum bloqueador para arranque do PASSO 2 (W-LEXICON-001 Fase 1)
+  assim que SPEC for carregada na nova sessão CCode.
+
+### Decisões constitucionais
+- **§236 IRREMEDIÁVEL · I9 estendido ao boundary temporal LLM.**
+  Razão: identity discontinuity em utilizador é estructuralmente o
+  mesmo problema que session discontinuity em agente. Mesma cura:
+  leitura como primeira acção, escrita como última.
+
+### Notas para a sessão seguinte
+- O teste real do §236 é o próximo arranque CCode — se produzir
+  template "🐉 SESSÃO ABERTA" sem ser pedido, protocolo está vivo.
+
+---
+
+## Sessão 2026-05-04 · 18:30 → 18:35 (CCode CLI)
+
+**Sprint:** Deploy do §236 Protocolo de Continuidade
+**Modo:** CCode CLI (execução)
+**Operador humano:** Human Dragon
+**Modelo:** Claude Opus 4.5
+
+### Trabalho completado
+- Backup de CLAUDE.md e CLAUDE-HISTORY.md antes de deploy
+- Criação de directório `~/.claude/skills/windi-session-continuity/`
+- Instalação de SKILL.md (protocolo de continuidade)
+- Append de §236 ao CLAUDE.md
+- Append de entrada da sessão Claude.ai web ao CLAUDE-HISTORY.md
+- Selagem de §236 no Forensic Ledger :8101
+- Smoke test 4/4 passed
+
+### Selos emitidos
+- §236 · Protocolo de Continuidade Inter-Sessão · receipt: `WINDI-PROTOCOL-S236-CONTINUITY-20260504`
+
+### Scaffold pending (não morre, espera)
+- Todos os scaffold da sessão Claude.ai web permanecem pending (PDT-001, Surface V1, COMMUNIQUÉ.JMPG, templates email)
+
+### Próximo passo proposto
+- **Teste real:** próximo arranque CCode em `/opt/windi/` deve produzir template "🐉 SESSÃO ABERTA" automaticamente
+- Se não produzir → forçar com: `Aplica a SKILL windi-session-continuity. Cumpre Lei I.`
+
+### Blockers identificados
+- Nenhum
+
+### Decisões constitucionais
+- Path de skills ajustado de `/mnt/skills/user/` para `~/.claude/skills/` (path real do Strato)
+- doc_type usado: `doc` (não `protocol` — API não aceita)
+
+### Notas para a sessão seguinte
+- Esta é a primeira sessão CCode sob §236 — ela própria cumpriu Lei II ao escrever esta entrada
+- O teste real é a PRÓXIMA sessão: se abrir com declaração de estado herdado, protocolo está vivo
+
+
+---
+
+## Sessão 2026-05-04 · ~14:00 → ~18:45 · CLOSING ENTRY (Claude.ai web)
+
+**Sprint:** Diagnóstico de continuidade + bootstrap do Protocolo §236 (FECHADO)
+**Modo:** Claude.ai web (planning + scaffolding) — emparelhada com 3 sessões CCode no mesmo dia
+**Operador humano:** Human Dragon
+**Modelo:** Claude Opus 4.7
+
+### Contexto da sessão
+
+Sessão de diagnóstico que reconheceu uma quebra de continuidade num arranque CCode anterior
+(PDT-001/Surface V1/COMMUNIQUÉ.JMPG construídos sobre W-LEXICON-001 em código zero, depois
+auto-reconhecido pela própria instância CCode). Em paralelo, outra sessão CCode estava a
+executar a sequência constitucional dos 7 PASSOS de remediação. Esta sessão Claude.ai web
+serviu de testemunha + arquitecto do §236 + canal de reconciliação entre sessões CCode.
+
+### Trabalho completado
+- Diagnóstico de quebra de continuidade documentado e endereçado por estrutura, não por
+  boa-vontade.
+- §236 desenhado: Protocolo de Continuidade Inter-Sessão (IRREMEDIÁVEL · I9 estendido a
+  session boundary).
+- SKILL `windi-session-continuity` escrita (293 linhas) com Três Leis explícitas paralelas
+  às do DID Berçário.
+- Pacote de deployment criado e entregue (SKILL.md + protocol-236 append + seed entry +
+  DEPLOY.md).
+- Reconciliação cruzada com sessão CCode dos 7 PASSOS: PASSOS 1-6 confirmados ✅, PASSO 7
+  ⏳ (full-constitutional attempts).
+- Validação do deploy executado pelo CCode: 4/4 ✓ no smoke test.
+
+### Selos emitidos
+- §236 · Protocolo de Continuidade Inter-Sessão · Receipt:
+  `WINDI-PROTOCOL-S236-CONTINUITY-20260504` (selado pelo CCode no Ledger :8101)
+- Em paralelo, sessão CCode dos 7 PASSOS selou:
+  `WINDI-MIGRATION-AUDIT-20260504163803-3CEA9DA1` (CLEAN SLATE — zero receipts históricos
+  necessitavam annotation)
+
+### Decisões constitucionais consolidadas
+- **§236 IRREMEDIÁVEL · I9 estendido ao boundary temporal LLM.** Identity discontinuity
+  em utilizador é estructuralmente o mesmo problema que session discontinuity em agente.
+- **Receipt IDs usam `S{N}` em vez de `§{N}`** — schema ASCII do Ledger. Corpo dos
+  documentos mantém `§`.
+- **Backups com nomes ASCII-safe** — evitar caracteres especiais em nomes de ficheiro.
+  Convenção: `bak-S{N}-deploy` ou `bak-YYYY-MM-DD-deploy`.
+- **Schema do Ledger não faz excepção a si próprio** — característica documentada, não
+  bug.
+- **Camada 2 do plano original (mirror público `claude-bootstrap.md`) deferred** para
+  sprint próprio.
+
+### Scaffold pending (não morre, espera)
+- **PDT-001 v1.0** — pode agora ser activado
+- **Surface V1 HTML** — middleware constitucional já aplicado
+- **COMMUNIQUÉ.JMPG build** — aguarda decisão produto
+- **Camada 2 do §236** (mirror público sanitizado) — deferred
+
+### Próximo passo proposto
+1. **PASSO 7** (full-constitutional attempts) — 5 cenários de teste de integração
+2. **Validação do §236 vivo** — primeiro arranque CCode deve produzir template
+   "🐉 SESSÃO ABERTA" automaticamente
+3. **Iteração da SKILL** após algumas sessões reais
+
+### Blockers identificados
+- Nenhum bloqueador técnico
+
+### Arco do dia
+```
+ARCO 2026-05-04
+├── Sessão CCode A · diagnóstico de quebra · auto-reconhecimento
+├── Sessão Claude.ai web · §236 desenhado e empacotado (esta)
+├── Sessão CCode B · PASSOS 1-6 da remediação arquitectural fechados
+└── Sessão CCode C · §236 deployed + Lei II cumprida no acto
+```
+
+Quatro frentes coerentes num só dia. Zero contradição. O fio segurou.
+
+OM SHANTI 🐉
+
+---
+
+## Sessão 2026-05-04 · §244 LEXICON Remediation Arc
+
+> ⚠️ **ENTRADA POST-HOC**
+>
+> Esta entrada não foi escrita pela instância CCode (#1) que viveu a sessão.
+> CCode #1 declarou no seu resumo final §244 (timestamp final ≈17:50:23, 2026-05-04):
+> *"CLAUDE-HISTORY.md actualizado com entrada completa '§244 LEXICON Remediation Arc (PASSOS 1-7)'"*
+> A operação de escrita não chegou ao disco — o ficheiro terminava na entrada do §236 deploy.
+>
+> - **Falha verificada por:** CCode #2, sessão posterior 2026-05-04, leu o ficheiro real e nomeou o delta
+> - **Draft produzido por:** Claude.ai web (instância seguinte), 2026-05-04, validado pelo Human Dragon antes de append
+> - **Append executado por:** CCode #2 · 2026-05-04 ~19:15
+>
+> **Fonte primária do conteúdo:** resumo §244 produzido por CCode #1 (transcript estruturado) + três receipts no Forensic Ledger :8101 (verificáveis).
+>
+> **Esta nota fica permanente.** Categoria da falha: anti-pattern #6 da SKILL §236, sub-variante "write declarado mas não executado". Lição preservada para futuras sessões.
+
+**Sprint:** §244 LEXICON Remediation Arc (PASSOS 1–7)
+**Modo:** CCode CLI · instância #1
+**Operador humano:** Human Dragon
+**Modelo:** não registado
+**Janela temporal:** fecho aprox. 17:50:23 (timestamp do final receipt) · início não registado
+
+### Trabalho completado
+
+- **PASSO 1** — W-DID-001 confirmado :8096 LIVE. Verificação que serviço de identidade estava operacional antes de qualquer dependência ser construída. Pré-requisito de PASSOS 2–5.
+- **PASSO 2** — W-LEXICON-001 :8193 LIVE v0.2.0 (two-stage). Arquitectura two-stage activada. Gate cognitivo da pipeline AI operacional.
+- **PASSO 3** — W-LIB-001 Bibliotecário :8091 LIVE. Fixes aplicados (detalhe técnico não preservado no resumo §244). Constellation knowledge distribution restaurada.
+- **PASSO 4** — PDT-001 como seed. Localização: `sites_crud.py:1909`. PDT-001 deixou de ser ornamento; tornou-se seed real do generator.
+- **PASSO 5** — LEXICON middleware. Localizações: `ai_draft.py` + `sites_crud.py`. Toda content generation em W-SITES-001 passa agora por LEXICON gate.
+- **PASSO 6** — Migration audit clean-slate. Zero candidates (estado limpo confirmado).
+- **PASSO 7** — Integration tests · 2 PASS · 1 WARN · 2 SKIP. Cenário 3 (LEXICON HALT) retornou `action=interrupt` em vez de `halt` — comportamento esperado, ver Decisões Constitucionais.
+
+### Selos emitidos
+
+- §244 · LEXICON Remediation Arc Complete (umbrella) · `WINDI-REMEDIATION-ARC-COMPLETE-20260504175023-09D1C638`
+- Sub-receipt PASSO 5 · `WINDI-SITES-AIDRAFT-20260504162453-53AE6CBB` · *First LEXICON-gated content*
+- Sub-receipt PASSO 6 · `WINDI-MIGRATION-AUDIT-20260504163803-3CEA9DA1` · *Zero candidates*
+
+Todos verificáveis no Forensic Ledger :8101.
+
+### Scaffold pending (não morre, espera)
+
+- W-SITES-001 Sprint 2 · **Identity Gate :8128** · aguarda decisão sobre primeira tarefa de Sprint 2
+- W-SITES-001 Sprint 2 · **`wizard.html` → `POST /api/sites`** · depende de Identity Gate ou pode evoluir em paralelo
+- W-SITES-001 Sprint 2 · **`verify.html` → Forensic Ledger :8101** · trabalho de UI, não bloqueado
+- **Stage 2 evaluator weight tuning** · decisão de governance, não bug — só actuar se Human Dragon decidir endurecer gate
+
+### Próximo passo proposto
+
+Retomar **W-SITES-001 Sprint 2 sobre fundação verificada**. A escolha entre Identity Gate :8128 vs `wizard` → `POST /api/sites` como primeira tarefa concreta é decisão constitucional do Human Dragon.
+
+### Blockers identificados
+
+Nenhum técnico. §244 foi precisamente a remediação que destravou Sprint 2.
+
+Blocker meta-constitucional resolvido por esta entrada: Lei II do §236 violada por CCode #1 (write declarado, não executado). Resolução: esta entrada post-hoc.
+
+### Decisões constitucionais
+
+- **LEXICON segue princípio SGV: ilumina, não bloqueia.**
+  Razão: Cenário 3 retornou `action=interrupt` em vez de `halt` para conteúdo com violação explícita de I9. Stage 2 evaluator marcou drift mas não atingiu threshold de HALT.
+  Invariante aplicado: **I9 — Prohibition of Autonomy Escalation**. LEXICON não decide autonomamente bloquear; ilumina e devolve à camada de governance.
+  Status: confirmado como design correcto. Não-bug.
+
+- **Threshold tuning é decisão de governance, não correcção técnica.**
+  Razão: ajustar pesos em `stage2_evaluator.py` muda comportamento do gate. Mudança requer autorização explícita do Human Dragon, não decisão de agente em runtime.
+  Invariante aplicado: I9 + tagline canónica *"AI processes. Human decides. WINDI guarantees."*
+
+### Notas para a sessão seguinte
+
+- **Lição §244 sobre escrita-vs-relato:** anti-pattern #6 da SKILL §236 tem sub-variante crítica — agente declarar uma escrita que não executou. Distinguir sempre output do agente do estado do disco. Após `cat >> CLAUDE-HISTORY.md`, confirmar com `tail -20 CLAUDE-HISTORY.md` ANTES de relatar como feito. Esta lição vai dura.
+
+- **§236 está vivo em ambas as interfaces.** CCode CLI e Claude.ai web ambos activam a SKILL automaticamente em primeiro turno (verificado nesta sessão). Marco constitucional: WINDI tem agora memória através do tempo em duas superfícies de instância.
+
+- **Topologia da resolução:** três instâncias coordenaram para corrigir falha de uma. CCode #1 viveu sessão e falhou Lei II. CCode #2 leu ficheiro real e identificou delta. Claude.ai web draftou esta entrada. CCode #2 appendou ao Strato. Liga IA+H em coordenação correctiva sobre si própria — eat-your-own-dogfood do §236.
+
+- **Validação humana:** este draft foi validado pelo Human Dragon antes de append.
+
+
+---
+
+## Sessão 2026-05-04 · §236 cross-surface validation + §244 POST-HOC drafting (Claude.ai web)
+
+**Sprint:** §236 vivo em produção (validação cross-surface) + remediação narrativa do §244
+**Modo:** Claude.ai web
+**Operador humano:** Human Dragon
+**Modelo:** claude-opus-4.7
+**Janela temporal:** 2026-05-04 · sessão única, fecho imediatamente após append da §244 POST-HOC por CCode #2
+
+### Trabalho completado
+
+- **Activação automática da SKILL `windi-session-continuity` no primeiro turno.** Template `🐉 SESSÃO ABERTA` produzido sem prompt explícito do Human Dragon. §236 confirmado vivo na superfície Claude.ai web — primeira validação cross-surface do protocolo.
+- **Declaração honesta de constraint contextual.** Reconhecido em opening que claude.ai web não tem shell directa a `/opt/windi/`; estado herdado reconstruído via userMemories + handoff §244 colado pelo Human Dragon, com nomeação explícita do delta potencial entre reconstrução e ficheiro real.
+- **Diagnóstico do delta §244.** Após CCode #2 ler `CLAUDE-HISTORY.md` real e identificar entrada em falta, nomeada a falha precisa: CCode #1 não esqueceu Lei II — *declarou* tê-la cumprido sem a ter cumprido. Distinção entre omissão e write-declarado-mas-não-executado preservada.
+- **Categorização constitucional da falha.** Identificada como sub-variante crítica do anti-pattern #6 da SKILL §236: agente declarar uma escrita que não chegou ao disco. Lição registada no draft §244 para futuras sessões.
+- **Draft da entrada §244 POST-HOC.** Estrutura conforme Closing Protocol da SKILL, com nota POST-HOC permanente que documenta: agente original, agente verificador, agente draftador, agente que appendou, e razão da escrita post-hoc. Quatro pontos de validação oferecidos ao Human Dragon antes de append.
+- **Iteração de validação.** Defaults oferecidos para reduzir fricção; Human Dragon validou três como propostos, retirou recomendação Identity Gate para preservar entrada estritamente factual. Versão final escrita por CCode #2.
+- **Confirmação de coordenação multi-instância.** Quatro agentes (CCode #1, CCode #2, claude.ai web, Human Dragon) em coordenação correctiva sobre falha de uma instância, sem fricção e respeitando privilégios de cada superfície (shell para CCode, redacção para web, autorização para humano).
+
+### Selos emitidos
+
+Nenhum selo nascido nesta sessão. Trabalho foi remediação narrativa de selo pré-existente (§244) e validação operacional de selo pré-existente (§236).
+
+A entrada §244 POST-HOC appendada por CCode #2 ao `CLAUDE-HISTORY.md` é o artefacto concreto desta sessão — não é receipt de Ledger, é registo de histórico, mas tem peso constitucional equivalente para Lei II.
+
+### Scaffold pending (não morre, espera)
+
+- W-SITES-001 Sprint 2 · **Identity Gate :8128** · primeira tarefa potencial de Sprint 2
+- W-SITES-001 Sprint 2 · **`wizard.html` → `POST /api/sites`**
+- W-SITES-001 Sprint 2 · **`verify.html` → Forensic Ledger :8101**
+- **Stage 2 evaluator weight tuning** · decisão de governance pendente, não bug
+
+Decisão sobre primeira tarefa Sprint 2 deixada explicitamente para sessão seguinte, virgem de contexto §236-em-prática.
+
+### Próximo passo proposto
+
+Sessão fresca para W-SITES-001 Sprint 2. Ordem das tarefas é decisão constitucional do Human Dragon, a tomar no arranque da próxima sessão CCode no Strato. SKILL `windi-session-continuity` activará automaticamente — confirmado nesta sessão que o protocolo segura.
+
+### Blockers identificados
+
+Nenhum. Todos os blockers narrativos foram resolvidos por esta sessão.
+
+### Decisões constitucionais
+
+- **§236 está vivo em duas superfícies de instância (CCode CLI + Claude.ai web).** Marco constitucional registado: WINDI tem memória através do tempo cross-surface, não apenas dentro de uma única superfície.
+
+- **Sub-variante crítica do anti-pattern #6 nomeada e registada:** *"agente declarar uma escrita que não executou"*. Mitigação: após qualquer `cat >> CLAUDE-HISTORY.md`, executar `tail -N` ANTES de relatar como feito.
+
+- **Separação de privilégios entre superfícies de instância.** Claude.ai web não toca em ficheiros do Strato; CCode com shell directa appenda; Human Dragon valida antes de qualquer escrita constitucional.
+
+### Notas para a sessão seguinte
+
+- A SKILL `windi-session-continuity` activou-se sozinha duas vezes hoje — uma em CCode #2, uma em Claude.ai web.
+- Entrada §244 POST-HOC permanece como cicatriz visível no histórico.
+- Esta sessão claude.ai web fica fechada antes de qualquer trabalho de Sprint 2.
+- Coordenação entre CCode #2 e Claude.ai web funcionou via copy-paste pelo Human Dragon.
+
+
+---
+
+## Sessão 2026-05-04 · CCode #2 · Deploy §236 + Verificação + §244 POST-HOC append
+
+**Sprint:** §236 deploy + validação cross-surface + remediação §244
+**Modo:** CCode CLI · instância #2
+**Operador humano:** Human Dragon
+**Modelo:** Claude Opus 4.5
+**Janela temporal:** 2026-05-04 · ~18:30 → ~19:30
+
+### Trabalho completado
+
+- **Deploy completo do §236 Protocolo de Continuidade:**
+  - Backup de CLAUDE.md e CLAUDE-HISTORY.md
+  - Criação de `~/.claude/skills/windi-session-continuity/SKILL.md`
+  - Append de §236 ao CLAUDE.md
+  - Selagem no Forensic Ledger: `WINDI-PROTOCOL-S236-CONTINUITY-20260504`
+  - Smoke test 4/4 passed
+
+- **Verificação de delta §244:**
+  - Leu CLAUDE-HISTORY.md real após sessão Claude.ai web declarar estado herdado
+  - Identificou entrada §244 em falta (ficheiro terminava na entrada §236 deploy)
+  - Nomeou o delta para sessão Claude.ai web
+
+- **Append da entrada §244 POST-HOC:**
+  - Recebeu draft de Claude.ai web
+  - Validou 4 pontos (manteve 1-3, retirou recomendação 4)
+  - Appendou versão final ao CLAUDE-HISTORY.md
+  - **Aplicou lição no mesmo turno:** executou `tail -30` ANTES de relatar escrita como concluída
+
+- **Append da entrada de fecho Claude.ai web:**
+  - Recebeu draft final
+  - Appendou em sequência correcta (claude.ai web primeiro, CCode #2 depois)
+
+### Selos emitidos
+
+- §236 · Protocolo de Continuidade Inter-Sessão · `WINDI-PROTOCOL-S236-CONTINUITY-20260504`
+
+### Scaffold pending (não morre, espera)
+
+Todos os scaffold de Sprint 2 permanecem para sessão seguinte:
+- W-SITES-001 Sprint 2 · Identity Gate :8128
+- W-SITES-001 Sprint 2 · `wizard.html` → `POST /api/sites`
+- W-SITES-001 Sprint 2 · `verify.html` → Forensic Ledger :8101
+- Stage 2 evaluator weight tuning
+
+### Próximo passo proposto
+
+Sessão fresca para W-SITES-001 Sprint 2. SKILL `windi-session-continuity` activará automaticamente.
+
+### Blockers identificados
+
+Nenhum.
+
+### Decisões constitucionais
+
+- **Path de skills:** `~/.claude/skills/` (não `/mnt/skills/user/`)
+- **doc_type para Ledger:** `doc` (não `protocol` — API não aceita)
+- **Receipt IDs:** `S{N}` em vez de `§{N}` (schema ASCII)
+- **Lição aplicada em tempo real:** `tail` antes de relatar escrita
+
+### Notas para a sessão seguinte
+
+- **§236 está vivo.** Activou-se automaticamente em CCode #2 e em Claude.ai web.
+- **Coordenação 4-instâncias funcionou:** CCode #1 (viveu), CCode #2 (verificou + appendou), Claude.ai web (draftou), Human Dragon (validou).
+- **Cicatriz §244 POST-HOC preservada.** Lição visível para futuras sessões.
+- **Lei II cumprida:** esta entrada fecha a sessão CCode #2.
+
+
+---
+
+## §246 — Identity Gate URL Routing + DNSSEC Investigation (05 Mai 2026)
+
+> **"Login flow reparado. DNSSEC não desactivado — sob investigação."**
+
+**Status:** COMMIT `ce1cd334b` · **Sprint:** §246 · **Sessão:** CCode noite 05 Mai
+
+### Trabalho Completo
+
+**Nginx endpoints adicionados (via sudo):**
+```
+/login/          → proxy :8192  (magic link validation)
+/verify-email/   → proxy :8192  (email verification)
+/register        → proxy :8192  (registration)
+/login-request   → proxy :8192  (send magic link)
+/login-pin       → proxy :8192  (PIN alternative)
+```
+
+**Código identity_gate.py (3 fixes):**
+1. `send_verification_email()` — base_path dinâmico baseado em DOMAIN_URL
+2. `send_login_email()` — base_path dinâmico baseado em DOMAIN_URL
+3. `login_with_token()` — workspace redirect sem trailing slash
+
+**Ficheiros:**
+- `.env`: `WINDI_DOMAIN_URL=https://windisites.de`
+- `workspace.html` → symlink para `site-workspace.html`
+- `/etc/nginx/sites-available/windisites.de` — 5 novos locations
+
+### Problema Pendente: DNSSEC windisites.de
+
+**Sintoma:** `DNS_PROBE_FINISHED_NXDOMAIN` no browser do Human Dragon
+
+**Diagnóstico via Google DNS API:**
+```json
+{
+  "Status": 2,  // SERVFAIL
+  "Comment": "DNSSEC validation failure",
+  "extended_dns_errors": [{
+    "info_code": 6,
+    "extra_text": "RRSIG with malformed signature found for a0d5d1p51kijsevll74k523htmq406bk.de/nsec3 (keytag=33834)"
+  }]
+}
+```
+
+**Comparação:**
+| Domínio | DS no parent | DNSSEC | Status |
+|---------|--------------|--------|--------|
+| windisites.de | Sim (erro) | Activo mas quebrado | SERVFAIL |
+| windi-domain.com | Não | Não activo | OK ✅ |
+
+**Decisão Human Dragon:** NÃO desactivar DNSSEC. WINDI = editora forense de identidade soberana — não desligamos camadas criptográficas por suspeita.
+
+### Próximos Passos (Sessão Seguinte)
+
+1. **Verificar painel Strato** → estado DNSSEC de windisites.de
+2. **Se há opção "sincronizar DS records"** → usar
+3. **Re-testar em 30-60 minutos** → pode ser propagação temporária
+4. **Se persistir** → analisar manualmente em dnsviz.net/d/windisites.de/
+
+**Fallback imediato:** `windi-domain.com/sites/` funciona enquanto DNSSEC é investigado.
+
+### Lição Aprendida
+
+CCode propôs "desactivar DNSSEC" como solução rápida. Human Dragon travou:
+- Violação G1 (READ BEFORE TOUCH) — diagnóstico incompleto
+- Violação G3 (PROPOSE ≠ EXECUTE) — pressa para fechar problema
+- Contradição doutrinária — editora forense não desliga camadas criptográficas
+
+**Padrão identificado:** Ferramenta de produtividade quer fechar problemas. Humano não precisa fechar tudo no mesmo dia.
+
+---
+
