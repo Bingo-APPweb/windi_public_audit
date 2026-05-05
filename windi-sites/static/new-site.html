@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="klar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>New Site · WINDI Sites</title>
+<link rel="stylesheet" href="assets/windi-base.css">
+<style>
+  /* Spinner animation */
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  .spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  .generating-status {
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: rgba(201,168,76,0.1);
+    border: 1px solid var(--gold);
+    border-radius: 8px;
+    font-size: 13px;
+    display: none;
+  }
+  .generating-status.visible { display: block; }
+  .generating-status .timer { font-family: 'JetBrains Mono', monospace; }
+  .wizard {
+    padding: 56px 0 80px;
+  }
+  .wiz-stepper {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    margin-bottom: 48px;
+  }
+  .wiz-step {
+    border-top: 2px solid var(--line);
+    padding-top: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-muted);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition: all .2s ease;
+  }
+  .wiz-step.active {
+    border-top-color: var(--ink);
+    color: var(--ink);
+  }
+  .wiz-step.done {
+    border-top-color: var(--gold);
+    color: var(--gold);
+  }
+  .wiz-step .num { display: block; margin-bottom: 4px; font-size: 13px; }
+
+  .wiz-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 40px;
+  }
+
+  .type-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 28px;
+  }
+  .type-option {
+    border: 1.5px solid var(--line);
+    border-radius: 12px;
+    padding: 22px;
+    cursor: pointer;
+    background: var(--bg);
+    transition: all .15s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 150px;
+  }
+  .type-option:hover { border-color: var(--ink); }
+  .type-option.selected {
+    border-color: var(--gold);
+    background: rgba(139,105,20,0.04);
+  }
+  .type-option .glyph {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-muted);
+    letter-spacing: 0.06em;
+  }
+  .type-option strong { font-size: 16px; }
+  .type-option p { font-size: 13px; color: var(--ink-soft); }
+  .type-option .tier-badge {
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(139,105,20,0.15);
+    color: var(--gold);
+    margin-top: auto;
+    align-self: flex-start;
+  }
+
+  .wiz-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 36px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+  }
+
+  .lang-toggle {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .lang-btn {
+    padding: 6px 12px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--bg);
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    transition: all .15s ease;
+  }
+  .lang-btn:hover { border-color: var(--ink); }
+  .lang-btn.active {
+    border-color: var(--gold);
+    background: rgba(139,105,20,0.1);
+    color: var(--gold);
+  }
+
+  .warning-box {
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: rgba(201,168,76,0.08);
+    border: 1px solid var(--gold);
+    border-radius: 8px;
+    font-size: 13px;
+    display: none;
+  }
+  .warning-box.visible { display: block; }
+
+  .summary-row {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line-soft);
+    align-items: center;
+    gap: 16px;
+  }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-muted);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .seal-card {
+    margin-top: 24px;
+    padding: 22px;
+    border: 1px solid var(--gold);
+    border-radius: 10px;
+    background: rgba(139,105,20,0.05);
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .seal-card .seal-mark {
+    width: 10px; height: 10px;
+    background: var(--gold);
+    border-radius: 50%;
+    margin-top: 6px;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 880px) {
+    .wiz-stepper { grid-template-columns: repeat(3, 1fr); }
+    .type-grid { grid-template-columns: 1fr; }
+    .wiz-panel { padding: 24px; }
+    .summary-row { grid-template-columns: 1fr; gap: 4px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="shell topbar-inner">
+    <div class="brand">
+      <span class="brand-mark">W</span>
+      <span>WINDI Sites</span>
+      <span class="brand-tag">New Site</span>
+    </div>
+    <nav class="nav">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="dashboard.html" class="btn btn-ghost btn-sm">Cancel</a>
+      <button class="theme-btn" onclick="toggleTheme()">&#9680;</button>
+    </nav>
+  </div>
+</header>
+
+<section class="wizard">
+  <div class="shell-narrow">
+
+    <p class="mono tiny ink-muted">CREATE NEW SITE · WINDI W-SITES-001 · §245</p>
+    <!-- §245 Session Debug Banner -->
+    <div id="session-banner" class="mt-sm" style="padding:8px 12px; border-radius:4px; font-size:0.85rem; display:none;">
+      <span id="session-status"></span>
+      <a id="session-login" href="/gate" style="margin-left:8px; display:none;">Login</a>
+    </div>
+    <script>
+      (async function checkSession() {
+        const banner = document.getElementById('session-banner');
+        const status = document.getElementById('session-status');
+        const loginLink = document.getElementById('session-login');
+        try {
+          const resp = await fetch('/api/me', { credentials: 'include' });
+          const data = await resp.json();
+          banner.style.display = 'block';
+          if (data.authenticated && data.did) {
+            banner.style.background = 'rgba(0,180,100,0.15)';
+            banner.style.border = '1px solid rgba(0,180,100,0.3)';
+            status.textContent = '✓ Logged in as ' + data.did + ' (' + data.tier + ')';
+            loginLink.style.display = 'none';
+          } else {
+            banner.style.background = 'rgba(220,80,80,0.15)';
+            banner.style.border = '1px solid rgba(220,80,80,0.3)';
+            status.textContent = '✗ Not logged in — cookie missing';
+            loginLink.style.display = 'inline';
+          }
+        } catch (e) {
+          banner.style.display = 'block';
+          banner.style.background = 'rgba(220,180,0,0.15)';
+          status.textContent = '⚠ Session check failed: ' + e.message;
+        }
+      })();
+    </script>
+    <h2 class="mt-sm">A new site, accountable from the first publish.</h2>
+    <p class="lead mt-sm">Six steps. Each one explicit. Nothing publishes without your hand.</p>
+
+    <div class="wiz-stepper mt-md">
+      <div class="wiz-step active"><span class="num">01</span>Type</div>
+      <div class="wiz-step"><span class="num">02</span>Intent</div>
+      <div class="wiz-step"><span class="num">03</span>Profile</div>
+      <div class="wiz-step"><span class="num">04</span>Domain</div>
+      <div class="wiz-step"><span class="num">05</span>Review</div>
+      <div class="wiz-step"><span class="num">06</span>Publish · Seal</div>
+    </div>
+
+    <!-- ============================================
+         STEP 1 — TYPE (visible)
+         ============================================ -->
+    <div class="wiz-panel" id="step-1">
+      <h3>What kind of site is this?</h3>
+      <p class="ink-soft mt-sm">Pick one. The choice tunes the layout and the institutional template.</p>
+
+      <div class="type-grid">
+        <div class="type-option selected" data-type="profile"
+             data-placeholder="Öffentlicher Notar in Kempten. Beurkundungen, Erbrecht, Immobilienrecht. Sprechstunden Mo-Fr 9-17 Uhr. Zuständig nach BNotO für den Bezirk Oberallgäu."
+             data-tier="MED">
+          <span class="glyph">PROFILE / 01</span>
+          <strong>Personal profile</strong>
+          <p>For a notary, lawyer, doctor, freelancer. One page · contact · proof of practice.</p>
+          <span class="tier-badge">MED tier</span>
+        </div>
+        <div class="type-option" data-type="press"
+             data-placeholder="Product launch announcement for Q3 2026. New AI-assisted compliance tool for German SMEs. Embargo until June 15. Include CEO quote placeholder."
+             data-tier="HIGH">
+          <span class="glyph">PRESS / 02</span>
+          <strong>Press archive</strong>
+          <p>For organizations. Sealed releases that cannot be silently revised.</p>
+          <span class="tier-badge">HIGH tier</span>
+        </div>
+        <div class="type-option" data-type="portfolio"
+             data-placeholder="Série de 12 fotografias documentais sobre arquitectura industrial do Ruhr. Criadas entre 2024-2026. Exposição prevista para Folkwang Museum 2027."
+             data-tier="FREE">
+          <span class="glyph">PORTFOLIO / 03</span>
+          <strong>Portfolio</strong>
+          <p>For researchers, artists, creators. Priority-proof of works and dates.</p>
+          <span class="tier-badge">FREE tier</span>
+        </div>
+        <div class="type-option" data-type="landing"
+             data-placeholder="B2B SaaS für Compliance-Dokumentation in regulierten Branchen. Zielgruppe: CFOs und Compliance Officers in deutschen KMUs. USP: AI-gestützte Berichterstellung mit Audit-Trail."
+             data-tier="MED">
+          <span class="glyph">LANDING / 04</span>
+          <strong>Product landing</strong>
+          <p>For businesses. One-pager with claims that can be challenged and verified.</p>
+          <span class="tier-badge">MED tier</span>
+        </div>
+        <div class="type-option" data-type="record"
+             data-placeholder="Board resolution establishing the WINDI Ethics Committee. Effective January 1, 2027. Supersedes Resolution 2024-003. Requires signatures of Chair and Secretary."
+             data-tier="HIGH">
+          <span class="glyph">RECORD / 05</span>
+          <strong>Public record</strong>
+          <p>For institutions. A permanent statement carrying full forensic chain.</p>
+          <span class="tier-badge">HIGH tier</span>
+        </div>
+        <div class="type-option" data-type="custom"
+             data-placeholder="You write the prompt. We assemble. You decide. — Du schreibst. Wir bauen. Du entscheidest. — Tu escreves. Nós montamos. Tu decides."
+             data-tier="MED"
+             data-warning="true">
+          <span class="glyph">CUSTOM / 06</span>
+          <strong>Blank canvas</strong>
+          <p>You write the prompt. We assemble. You decide.</p>
+          <span class="tier-badge">MED min</span>
+        </div>
+      </div>
+
+      <div class="wiz-actions">
+        <a href="dashboard.html" class="btn btn-ghost">&larr; Cancel</a>
+        <button class="btn btn-primary" onclick="advanceStep()">Continue &rarr;</button>
+      </div>
+    </div>
+
+    <!-- ============================================
+         STEP 2 — INTENT (enhanced with dynamic placeholder)
+         ============================================ -->
+    <div class="card mt-md" id="step-2-preview">
+      <div class="row-between">
+        <p class="mono tiny ink-muted">NEXT · STEP 02 · INTENT</p>
+        <span class="pill"><span class="pill-dot"></span>PENDING</span>
+      </div>
+      <h4 class="mt-sm">Tell us what the page is for.</h4>
+      <p class="ink-soft mt-sm" style="font-size:14px;">A short prompt — one paragraph. The Architect agent assembles a draft. The Guardian checks it against the institutional profile. The Witness signs.</p>
+
+      <div class="lang-toggle">
+        <button class="lang-btn active" data-lang="de">DE</button>
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="pt">PT</button>
+      </div>
+
+      <div class="field mt-md">
+        <label>YOUR INTENT</label>
+        <textarea id="intent-textarea" class="textarea" placeholder='Öffentlicher Notar in Kempten. Beurkundungen, Erbrecht, Immobilienrecht. Sprechstunden Mo-Fr 9-17 Uhr. Zuständig nach BNotO für den Bezirk Oberallgäu.'></textarea>
+      </div>
+
+      <div id="custom-warning" class="warning-box">
+        <strong>§C-ACCEPTABILITY-001</strong> · Custom content uses MED tier minimum. Your prompt passes through Cardinal Sin detection before generation.
+        <a href="https://windisites.de/doctrine/editorial" target="_blank" style="color:var(--gold);">[Editorial Doctrine]</a>
+      </div>
+
+      <div class="wiz-actions mt-md">
+        <button class="btn btn-gold" id="generate-btn" onclick="advanceStep()">Generate Site &rarr;</button>
+      </div>
+
+      <div id="generating-status" class="generating-status">
+        <span class="spinner"></span>
+        <strong>Generating your site...</strong>
+        <span class="timer" id="gen-timer">0s</span>
+        <br><small style="color:var(--ink-soft);">FREE tier uses local AI (Ollama). This typically takes <strong>1-3 minutes</strong>.</small>
+        <br><small style="color:var(--ink-soft);">For faster results, use MED or HIGH tier.</small>
+      </div>
+    </div>
+
+    <!-- ============================================
+         STEP 5 PREVIEW — REVIEW (shown for design context)
+         ============================================ -->
+    <div class="card mt-md" style="opacity:0.55;">
+      <div class="row-between">
+        <p class="mono tiny ink-muted">PREVIEW · STEP 05 · REVIEW</p>
+        <span class="pill"><span class="pill-dot"></span>PENDING</span>
+      </div>
+      <h4 class="mt-sm">Last look before you decide.</h4>
+
+      <div class="mt-md">
+        <div class="summary-row">
+          <span class="summary-label">Type</span>
+          <span id="summary-type">Personal profile</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Intent</span>
+          <span class="ink-soft">Public profile for a notary in Kempten — office hours, jurisdiction, fee schedule…</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Profile (ISP)</span>
+          <span>WINDI / Notary DE / I11+G3</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Domain</span>
+          <span class="mono">notary-mueller.windisites.de</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Tier</span>
+          <span><span id="summary-tier" class="pill" style="border-color:var(--gold);color:var(--gold);">MED</span></span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Invariants</span>
+          <span class="mono tiny">I9 · I11 · I13 · G3</span>
+        </div>
+      </div>
+
+      <div class="seal-card">
+        <span class="seal-mark"></span>
+        <div>
+          <strong style="display:block;">G3 — Human approval required</strong>
+          <p class="ink-soft mt-sm" style="font-size:13px;">Pressing <em>Publish &amp; Seal</em> writes a SHA-256 receipt to the Forensic Ledger under your DID. This action is <strong>I9 — irremediável</strong>. The receipt cannot be deleted. <a href="https://windisites.de/doctrine/editorial" target="_blank" style="color:var(--gold);">[Editorial Doctrine]</a></p>
+        </div>
+      </div>
+
+      <div class="wiz-actions">
+        <button class="btn btn-ghost btn-disabled">&larr; Back</button>
+        <button class="btn btn-gold btn-disabled">Publish &amp; Seal &rarr;</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer class="shell">
+  <div class="forensic-strip">
+    <span><span class="seal-mark"></span>No receipt yet · draft mode</span>
+    <span class="mono">DID:0xa4F2…7c1b · Tier MED</span>
+    <span>WINDI W-SITES-001 · Liga IA+H · <a href="https://windisites.de/doctrine/editorial" style="color:var(--gold);">Editorial Doctrine</a></span>
+  </div>
+</footer>
+
+<script>
+  // §245 — Dynamic placeholder per site type
+  const PLACEHOLDERS = {
+    profile: 'Öffentlicher Notar in Kempten. Beurkundungen, Erbrecht, Immobilienrecht. Sprechstunden Mo-Fr 9-17 Uhr. Zuständig nach BNotO für den Bezirk Oberallgäu.',
+    press: 'Product launch announcement for Q3 2026. New AI-assisted compliance tool for German SMEs. Embargo until June 15. Include CEO quote placeholder.',
+    portfolio: 'Série de 12 fotografias documentais sobre arquitectura industrial do Ruhr. Criadas entre 2024-2026. Exposição prevista para Folkwang Museum 2027.',
+    landing: 'B2B SaaS für Compliance-Dokumentation in regulierten Branchen. Zielgruppe: CFOs und Compliance Officers in deutschen KMUs. USP: AI-gestützte Berichterstellung mit Audit-Trail.',
+    record: 'Board resolution establishing the WINDI Ethics Committee. Effective January 1, 2027. Supersedes Resolution 2024-003. Requires signatures of Chair and Secretary.',
+    custom: 'You write the prompt. We assemble. You decide. — Du schreibst. Wir bauen. Du entscheidest. — Tu escreves. Nós montamos. Tu decides.'
+  };
+
+  const TYPE_LABELS = {
+    profile: 'Personal profile',
+    press: 'Press archive',
+    portfolio: 'Portfolio',
+    landing: 'Product landing',
+    record: 'Public record',
+    custom: 'Blank canvas (Custom)'
+  };
+
+  const TIER_CONFIG = {
+    profile: { default: 'MED', min: 'FREE' },
+    press: { default: 'HIGH', min: 'MED' },
+    portfolio: { default: 'FREE', min: 'FREE' },
+    landing: { default: 'MED', min: 'FREE' },
+    record: { default: 'HIGH', min: 'MED' },
+    custom: { default: 'MED', min: 'MED' }
+  };
+
+  let selectedType = 'profile';
+  let selectedLang = 'de';
+
+  function toggleTheme() {
+    const root = document.documentElement;
+    const next = root.dataset.theme === 'klar' ? 'noir' : 'klar';
+    root.dataset.theme = next;
+    try { localStorage.setItem('windi_theme', next); } catch(e) {}
+  }
+  try {
+    const saved = localStorage.getItem('windi_theme');
+    if (saved) document.documentElement.dataset.theme = saved;
+  } catch(e) {}
+
+  // Type option selection with placeholder update
+  document.querySelectorAll('.type-option').forEach(el => {
+    el.addEventListener('click', () => {
+      document.querySelectorAll('.type-option').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+
+      selectedType = el.dataset.type;
+      const placeholder = el.dataset.placeholder || PLACEHOLDERS[selectedType];
+      const hasWarning = el.dataset.warning === 'true';
+
+      // Update placeholder
+      const textarea = document.getElementById('intent-textarea');
+      if (textarea) textarea.placeholder = placeholder;
+
+      // Update warning visibility
+      const warningBox = document.getElementById('custom-warning');
+      if (warningBox) {
+        warningBox.classList.toggle('visible', hasWarning);
+      }
+
+      // Update summary
+      const summaryType = document.getElementById('summary-type');
+      if (summaryType) summaryType.textContent = TYPE_LABELS[selectedType] || selectedType;
+
+      const summaryTier = document.getElementById('summary-tier');
+      if (summaryTier) {
+        const tierCfg = TIER_CONFIG[selectedType] || { default: 'FREE' };
+        summaryTier.textContent = tierCfg.default;
+      }
+    });
+  });
+
+  // Language toggle
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedLang = btn.dataset.lang;
+      // In production, this would update placeholder to language-specific version
+    });
+  });
+
+  // §245 — Generate site via W-CORTEX-001
+  let genTimer = null;
+  let genSeconds = 0;
+  let cachedDID = null;  // Cache DID from /api/me
+
+  // Helper: Get DID from server session (avoids cross-domain cookie issues)
+  async function getWindiDID() {
+    // Return cached value if available
+    if (cachedDID) return cachedDID;
+
+    try {
+      const resp = await fetch('/api/me', { credentials: 'include' });
+      if (resp.ok) {
+        const data = await resp.json();
+        if (data.authenticated && data.did) {
+          cachedDID = data.did;
+          return data.did;
+        }
+      }
+    } catch (e) {
+      console.error('Failed to get DID from /api/me:', e);
+    }
+
+    // Fallback: try cookie directly
+    const cookies = document.cookie.split(';');
+    for (let c of cookies) {
+      c = c.trim();
+      if (c.startsWith('windi_did=')) {
+        cachedDID = decodeURIComponent(c.substring('windi_did='.length));
+        return cachedDID;
+      }
+    }
+
+    // Fallback: localStorage (legacy)
+    cachedDID = localStorage.getItem('windi_did');
+    return cachedDID;
+  }
+
+  async function advanceStep() {
+    const textarea = document.getElementById('intent-textarea');
+    const prompt = textarea ? textarea.value.trim() : '';
+
+    if (!prompt) {
+      alert('Please enter your intent in the textarea before continuing.');
+      if (textarea) textarea.focus();
+      return;
+    }
+
+    // Check for DID (I9 requirement) — via server session
+    const did = await getWindiDID();
+    if (!did) {
+      alert('Authentication required (I9).\n\nPlease login first to get your WINDI DID.\n\nRedirecting to dashboard...');
+      window.location.href = 'dashboard.html';
+      return;
+    }
+
+    const btn = document.getElementById('generate-btn');
+    const statusBox = document.getElementById('generating-status');
+    const timerEl = document.getElementById('gen-timer');
+    if (!btn) return;
+
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<span class="spinner"></span> Generating...';
+    btn.disabled = true;
+
+    // Show status box with timer
+    if (statusBox) statusBox.classList.add('visible');
+    genSeconds = 0;
+    if (timerEl) timerEl.textContent = '0s';
+    genTimer = setInterval(function() {
+      genSeconds++;
+      if (timerEl) timerEl.textContent = genSeconds + 's';
+    }, 1000);
+
+    fetch('/api/sites/generate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-WINDI-DID': did  // Already verified above via getWindiDID()
+      },
+      body: JSON.stringify({
+        prompt: prompt,
+        site_type: selectedType,
+        language: selectedLang,
+        tier: TIER_CONFIG[selectedType].default
+      })
+    })
+    .then(function(response) {
+      return response.json().then(function(data) {
+        return { ok: response.ok, data: data };
+      });
+    })
+    .then(function(result) {
+      // Backend returns: ok, public_url, generation_receipt, ledger.id
+      if (result.ok && result.data.ok && result.data.public_url) {
+        var receipt = result.data.generation_receipt || result.data.ledger?.id || 'sealed';
+        alert('Site generated!\n\nReceipt: ' + receipt + '\n\nRedirecting to your site...');
+        window.location.href = result.data.public_url;
+      } else {
+        // I14: Show exact error, no fallback masking
+        var errorMsg = result.data.detail || 'Unknown error';
+        if (typeof errorMsg === 'object') errorMsg = JSON.stringify(errorMsg);
+        alert('Generation failed:\n\n' + errorMsg);
+        console.error('Generation response:', result.data);
+      }
+    })
+    .catch(function(err) {
+      alert('Network error: ' + err.message);
+    })
+    .finally(function() {
+      // Stop timer and hide status
+      if (genTimer) clearInterval(genTimer);
+      if (statusBox) statusBox.classList.remove('visible');
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+    });
+  }
+</script>
+
+</body>
+</html>

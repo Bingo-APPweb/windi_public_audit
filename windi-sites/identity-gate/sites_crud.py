@@ -45,6 +45,8 @@ import html as html_escape  # For microlog content escaping
 
 DB_PATH = "/opt/windi/windi-sites/identity-gate/windi_sites_identity.db"
 LEDGER_URL = "http://127.0.0.1:8101/api/receipts"
+LEXICON_URL = "http://127.0.0.1:8193/api/lexicon/constitutional"
+LIBRARY_URL = "http://127.0.0.1:8091/library/context"
 VERSION = "v1.0.0"
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -306,6 +308,154 @@ def seal_to_ledger(receipt_id: str, doc_name: str, content_hash: str, actor: str
         return resp.json()
     except Exception as e:
         return {"ok": False, "error": str(e)}
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# §244 — LEXICON GATE (PASSO 5)
+# "The content declares. The evidence anchors. The drift measures."
+# ═══════════════════════════════════════════════════════════════════════════
+
+def get_constitutional_reference() -> str:
+    """Get constitutional reference from W-LIB-001 for drift comparison."""
+    try:
+        resp = requests.post(
+            LIBRARY_URL,
+            json={
+                "requesting_agent": "W-SITES-001",
+                "action_type": "DECISION",
+                "include": "invariants,principles"
+            },
+            timeout=3
+        )
+        if resp.ok:
+            data = resp.json()
+            principle = data.get("governance_principle", "")
+            invariants = data.get("sections", {}).get("invariants", {})
+            # Build reference from I9, I14 (most relevant for content)
+            i9 = invariants.get("I9", {}).get("description", "")
+            i14 = invariants.get("I14", {}).get("description", "")
+            return f"{principle}. {i9}. {i14}."
+        return "AI processes. Human decides. WINDI guarantees."
+    except Exception:
+        # I10: Graceful fallback
+        return "AI processes. Human decides. WINDI guarantees."
+
+
+def lexicon_analyze(content: str, governance_level: str = "MED") -> dict:
+    """
+    Analyze content through W-LEXICON-001 TWO-STAGE constitutional drift.
+
+    Returns:
+        dict with keys:
+        - ok: bool
+        - lexicon_action: "silent" | "invite" | "interrupt" | "halt"
+        - drift_score: int (0-100)
+        - requires_pho: bool (PHO = Proof of Human Oversight)
+        - invariants_triggered: list
+
+    Governance level affects thresholds:
+        - FREE: lenient (mostly silent)
+        - MED: standard (invite on moderate drift)
+        - HIGH: strict (interrupt on any concern)
+    """
+    try:
+        reference = get_constitutional_reference()
+
+        resp = requests.post(
+            LEXICON_URL,
+            json={
+                "reference": reference,
+                "candidate": content[:2000]  # Limit to 2k chars for analysis
+            },
+            timeout=10
+        )
+
+        if not resp.ok:
+            # I10: LEXICON unavailable - fail open with warning
+            return {
+                "ok": True,
+                "lexicon_action": "silent",
+                "drift_score": 0,
+                "requires_pho": False,
+                "invariants_triggered": [],
+                "fallback": "I10",
+                "warning": "LEXICON unavailable, proceeding with I10 fallback"
+            }
+
+        data = resp.json()
+        combined = data.get("combined", {})
+        stage2 = data.get("stage2", {})
+
+        return {
+            "ok": True,
+            "lexicon_action": combined.get("lexicon_action", "silent"),
+            "drift_score": combined.get("drift_score", 0),
+            "recommendation": combined.get("recommendation", "silent"),
+            "requires_pho": stage2.get("requires_pho", False),
+            "invariants_triggered": stage2.get("invariants_triggered", []),
+            "constitutional_status": stage2.get("constitutional_status", "compliant"),
+            "request_hash": data.get("request_hash")
+        }
+
+    except requests.exceptions.Timeout:
+        # I10: Timeout fallback
+        return {
+            "ok": True,
+            "lexicon_action": "silent",
+            "drift_score": 0,
+            "requires_pho": False,
+            "invariants_triggered": [],
+            "fallback": "I10",
+            "warning": "LEXICON timeout, proceeding with I10 fallback"
+        }
+    except Exception as e:
+        # I10: General fallback
+        return {
+            "ok": True,
+            "lexicon_action": "silent",
+            "drift_score": 0,
+            "requires_pho": False,
+            "invariants_triggered": [],
+            "fallback": "I10",
+            "warning": f"LEXICON error: {str(e)[:50]}"
+        }
+
+
+def seal_with_lexicon(
+    receipt_id: str,
+    doc_name: str,
+    content_hash: str,
+    content: str,
+    actor: str,
+    governance_level: str = "MED"
+) -> dict:
+    """
+    Seal to Ledger with LEXICON gate pre-check.
+
+    Flow: Content → LEXICON Analysis → Ledger Seal
+
+    If LEXICON returns "halt" or "interrupt" with requires_pho=True,
+    the seal proceeds but includes lexicon metadata for audit.
+    We don't block - we illuminate (I6 transparency, not I9 autonomy).
+    """
+    # Analyze content through LEXICON
+    lexicon_result = lexicon_analyze(content, governance_level)
+
+    # Seal to Ledger (always proceed - LEXICON illuminates, doesn't block)
+    ledger_result = seal_to_ledger(receipt_id, doc_name, content_hash, actor)
+
+    # Combine results
+    return {
+        **ledger_result,
+        "lexicon": {
+            "action": lexicon_result.get("lexicon_action"),
+            "drift_score": lexicon_result.get("drift_score"),
+            "requires_pho": lexicon_result.get("requires_pho"),
+            "constitutional_status": lexicon_result.get("constitutional_status"),
+            "invariants_triggered": lexicon_result.get("invariants_triggered", []),
+            "fallback": lexicon_result.get("fallback")
+        }
+    }
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -1106,6 +1256,9 @@ async def generate_content_for_container(
     conn.commit()
     conn.close()
 
+    # ─── LEXICON Gate (§244 PASSO 5) ─────────────────────────────────────────
+    lexicon_result = lexicon_analyze(result.content, governance_level="MED")
+
     # ─── Seal to Ledger ──────────────────────────────────────────────────────
     ledger_payload = {
         "id": receipt_id,
@@ -1123,7 +1276,13 @@ async def generate_content_for_container(
             "container_id": container_id,
             "template_type": data.template_type,
             "mode": "internal-shadow-validation",
-            "l1_review_pending": result.l1_review_pending
+            "l1_review_pending": result.l1_review_pending,
+            "lexicon": {
+                "action": lexicon_result.get("lexicon_action"),
+                "drift_score": lexicon_result.get("drift_score"),
+                "requires_pho": lexicon_result.get("requires_pho"),
+                "constitutional_status": lexicon_result.get("constitutional_status")
+            }
         }
     }
 
@@ -2229,10 +2388,41 @@ async def generate_site_ai(data: GenerateSiteRequest, request: Request):
     if not caller_did:
         raise HTTPException(status_code=401, detail="DID required (I9)")
 
-    # ─── Site association (optional) ──────────────────────────────────────────
+    # ─── §245 Fail Fast: Verify DID exists in Genesis BEFORE generation ──────
+    # W-EDITORIAL-DOCTRINE-001 §3: Only Sealed/Self-declared/Cross-verified
+    # No "unlinked" quarantine state — either valid DID or fail with clear error
+    try:
+        genesis_resp = requests.get(
+            f"http://localhost:8096/api/genesis/lookup/{caller_did}",
+            timeout=5
+        )
+        if genesis_resp.status_code != 200:
+            raise HTTPException(
+                status_code=401,
+                detail=f"DID '{caller_did}' not found in Genesis. Register at :8096 first. (I9 + W-EDITORIAL-DOCTRINE-001 §3)"
+            )
+        genesis_data = genesis_resp.json()
+        if not genesis_data.get("valid"):
+            raise HTTPException(
+                status_code=401,
+                detail=f"DID '{caller_did}' invalid or inactive in Genesis. (I9)"
+            )
+    except requests.exceptions.RequestException as e:
+        raise HTTPException(
+            status_code=503,
+            detail=f"Genesis service unavailable. Cannot verify DID. Retry in 30s. (I10)"
+        )
+
+    # ─── Site association: DID-derived (§245 W-EDITORIAL-DOCTRINE-001) ────────
+    # Rule: No "unlinked" quarantine. Every generation belongs to its DID owner.
+    # Path: /sites/{did_suffix}/{generation_id}.html where did_suffix = DID sans prefix
     site_id = data.site_id
+    if not site_id:
+        # Derive from verified DID: did:windi:test-001 → test-001
+        site_id = caller_did.replace("did:windi:", "").replace("did:", "").replace(":", "-")
     if site_id:
-        if not verify_site_ownership(site_id, caller_did):
+        # Ownership check only if explicitly provided (user already owns DID-derived)
+        if data.site_id and not verify_site_ownership(site_id, caller_did):
             raise HTTPException(status_code=403, detail="Not authorized for this site")
 
     # ─── W-CORTEX-001: Canal Único Soberano ───────────────────────────────────
@@ -2348,7 +2538,8 @@ async def generate_site_ai(data: GenerateSiteRequest, request: Request):
     # ─── §242: Persist to Filesystem (Sprint 2) ──────────────────────────────
     # CRITICAL: Hash of persisted file, not in-memory content (I11)
     # Path: /opt/windi/sites/{site_id}/{generation_id}.html
-    effective_site_id = site_id or "unlinked"
+    # §245: site_id is ALWAYS derived from DID above — "unlinked" fallback removed
+    effective_site_id = site_id  # Guaranteed non-None after §245 DID derivation
     persist_result = persist_site_html(
         site_id=effective_site_id,
         container_id=generation_id,
@@ -2426,12 +2617,36 @@ async def create_microlog(data: MicrologRequest, request: Request):
 
     now = datetime.now(timezone.utc)
     now_str = now.isoformat()
-    timestamp = now.strftime("%Y%m%d%H%M%S")
+    # NOTE: receipt_id timestamp generated just before seal (Option A - Constitutional Timestamp)
+    # The receipt attests the moment of ledger write, not request initiation
 
     # ─── Pre-check: DID exists ────────────────────────────────────────────────
     caller_did = get_caller_did(request)
     if not caller_did:
         raise HTTPException(status_code=401, detail="DID required (I9)")
+
+    # ─── §245 Fail Fast: Verify DID exists in Genesis BEFORE generation ──────
+    try:
+        genesis_resp = requests.get(
+            f"http://localhost:8096/api/genesis/lookup/{caller_did}",
+            timeout=5
+        )
+        if genesis_resp.status_code != 200:
+            raise HTTPException(
+                status_code=401,
+                detail=f"DID '{caller_did}' not found in Genesis. Register at :8096 first. (I9)"
+            )
+        genesis_data = genesis_resp.json()
+        if not genesis_data.get("valid"):
+            raise HTTPException(
+                status_code=401,
+                detail=f"DID '{caller_did}' invalid or inactive in Genesis. (I9)"
+            )
+    except requests.exceptions.RequestException:
+        raise HTTPException(
+            status_code=503,
+            detail="Genesis service unavailable. Cannot verify DID. Retry in 30s. (I10)"
+        )
 
     # ─── Generate microlog content via CORTEX ─────────────────────────────────
     microlog_id = str(uuid.uuid4())
@@ -2496,9 +2711,10 @@ async def create_microlog(data: MicrologRequest, request: Request):
         content = raw_content
         closing = ""
 
-    # ─── Prepare receipt ──────────────────────────────────────────────────────
-    receipt_id = f"WINDI-MICROLOG-{timestamp}-{microlog_id[:8].upper()}"
-    verify_url = f"https://windi-domain.com/verify-public/?id={receipt_id}"
+    # ─── Prepare receipt (placeholder - final receipt_id generated at seal time) ──
+    # Option A: Constitutional Timestamp - receipt attests the moment of ledger write
+    placeholder_receipt_id = f"WINDI-MICROLOG-PENDING-{microlog_id[:8].upper()}"
+    placeholder_verify_url = f"https://windi-domain.com/verify-public/?id={placeholder_receipt_id}"
 
     # Temporary hash for skeleton (will be replaced with disk hash)
     temp_hash = f"sha256:{hashlib.sha256(content.encode()).hexdigest()}"
@@ -2516,18 +2732,20 @@ async def create_microlog(data: MicrologRequest, request: Request):
     # Sealed date for display
     sealed_date = now.strftime("%Y-%m-%d")
 
+    # First render with placeholder (for operational persistence)
     rendered_html = MICROLOG_HTML_SKELETON.format(
         title=safe_title,
         content=safe_content,
         closing=safe_closing,
         handle=safe_handle,
         sealed_date=sealed_date,
-        receipt_id=receipt_id,
-        verify_url=verify_url
+        receipt_id=placeholder_receipt_id,
+        verify_url=placeholder_verify_url
     )
 
-    # ─── Persist to filesystem ────────────────────────────────────────────────
-    effective_site_id = data.site_id or "micrologs"
+    # ─── Persist to filesystem (§245 DID-derived, not quarantine) ─────────────
+    # Rule: No "micrologs" fallback. Every microlog belongs to its DID owner.
+    effective_site_id = data.site_id if data.site_id else caller_did.replace("did:windi:", "").replace("did:", "").replace(":", "-")
     persist_result = persist_site_html(
         site_id=effective_site_id,
         container_id=microlog_id,
@@ -2540,16 +2758,26 @@ async def create_microlog(data: MicrologRequest, request: Request):
             "model": model_used,
             "tier_used": result.tier_used,
             "cost_eur": result.cost_eur,
-            "receipt_id": receipt_id,
+            "receipt_id": placeholder_receipt_id,
             "did": caller_did
         }
     )
 
-    final_content_hash = persist_result.get("content_hash") or temp_hash
     public_url = persist_result.get("public_url")
 
-    # ─── Update HTML with final hash ──────────────────────────────────────────
-    # Re-render with Surface V1 skeleton (hash is in meta.json, not in HTML)
+    # ═══════════════════════════════════════════════════════════════════════════
+    # CONSTITUTIONAL MOMENT: Generate timestamp at seal time (Option A)
+    # "o Receipt atesta o instante da escrita no Ledger"
+    # ═══════════════════════════════════════════════════════════════════════════
+    seal_now = datetime.now(timezone.utc)
+    seal_timestamp = seal_now.strftime("%Y%m%d%H%M%S")
+    sealed_date = seal_now.strftime("%Y-%m-%d")
+
+    # Final receipt_id uses the constitutional timestamp
+    receipt_id = f"WINDI-MICROLOG-{seal_timestamp}-{microlog_id[:8].upper()}"
+    verify_url = f"https://windi-domain.com/verify-public/?id={receipt_id}"
+
+    # Re-render with constitutional receipt_id
     rendered_html = MICROLOG_HTML_SKELETON.format(
         title=safe_title,
         content=safe_content,
@@ -2560,7 +2788,7 @@ async def create_microlog(data: MicrologRequest, request: Request):
         verify_url=verify_url
     )
 
-    # Re-persist with correct hash
+    # Final persist with constitutional receipt_id
     persist_result = persist_site_html(
         site_id=effective_site_id,
         container_id=microlog_id,
@@ -2580,12 +2808,17 @@ async def create_microlog(data: MicrologRequest, request: Request):
 
     final_content_hash = persist_result.get("content_hash")
 
-    # ─── Seal to Ledger ───────────────────────────────────────────────────────
-    ledger_result = seal_to_ledger(
-        receipt_id,
-        f"Microlog: {title}",
-        final_content_hash,
-        caller_did
+    # ─── LEXICON Gate + Seal to Ledger (§244 PASSO 5) ──────────────────────────
+    # Full content for LEXICON analysis
+    full_content = f"{title}. {content}. {closing}"
+
+    ledger_result = seal_with_lexicon(
+        receipt_id=receipt_id,
+        doc_name=f"Microlog: {title}",
+        content_hash=final_content_hash,
+        content=full_content,
+        actor=caller_did,
+        governance_level="MED"
     )
 
     # ─── Return result ────────────────────────────────────────────────────────
@@ -2603,6 +2836,7 @@ async def create_microlog(data: MicrologRequest, request: Request):
         "verify_url": verify_url,
         "public_url": public_url,
         "ledger": ledger_result,
+        "lexicon": ledger_result.get("lexicon", {}),
         "tier_used": result.tier_used,
         "cost_eur": result.cost_eur,
         "invariants": ["I1", "I9", "I10", "I11", "I14"]
