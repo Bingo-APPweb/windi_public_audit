@@ -11975,10 +11975,11 @@ Arquitectura completa da ponte W-SITES × W-MAIL: federated delegation, workbenc
 | D3 | `F8881FCA` | Mailbox Provisioning DID-bound |
 | D4 | `5D8513D7` | Rate Limiting + per-DID Quotas |
 | D5 | `4CE30817` | Receipt Symmetry — Chain Architecture |
+| D5-T7 | `4DD83B15` | Adversarial Protocol — Gate Constitucional (T7a-T7e) |
 
 **Marco constitucional:** Passamos de "decidir o que construir" para "construir o que foi decidido."
 
-**§246-IMPL:** DESBLOQUEADO — aguarda planeamento de implementação (Query API + UI Berçário + 28 smoke tests D3-D5)
+**§246-IMPL:** DESBLOQUEADO — aguarda planeamento de implementação (Query API + UI Berçário + **38 smoke tests** D3-D5)
 
 **Dívida transitada:** Zero.
 
@@ -11994,5 +11995,39 @@ Arquitectura completa da ponte W-SITES × W-MAIL: federated delegation, workbenc
 - **SaaS (windisites.de):** "We don't sell websites — we enable accountable digital operations."
 
 Complementares, não substitutos. O primeiro fala da Liga IA+H. O segundo fala do produto.
+
+---
+
+### §246-D5-T7 · Adversarial Protocol — Gate Constitucional (07 Mai 2026)
+
+**Receipt:** `WINDI-S246-D5-T7ADV-20260507100904-4DD83B15`
+**Status:** ADDENDUM SEALED
+**Invariantes:** I11 (auditabilidade), I14 (verificabilidade)
+**Ficheiro:** `/opt/windi/sprints/§246-D5-RECEIPT-SYMMETRY.md` §11.1
+
+**Contexto Guardian:**
+> "Auditabilidade que não detecta corrupção não é auditabilidade — é teatro de auditoria."
+
+O teste T7 original ("alterar receipt antigo → descendentes marcados") era ambíguo.
+Guardian identificou duas interpretações:
+- **Fraca:** Testar que sistema *pode* marcar `hash_tampered: true`
+- **Forte:** Testar que sistema *detecta activamente* corrupção adversarial
+
+A interpretação forte é gate constitucional. I11 torna-se vazio sem ela.
+
+**T7 Adversarial Protocol (5 sub-testes):**
+
+| Sub | Teste | Critério |
+|-----|-------|----------|
+| T7a | Corrupt source | Modificar `content_hash` directamente na DB (bypass API) |
+| T7b | API detection | `/api/receipts/{N+1}/validate` retorna `hash_tampered: true` |
+| T7c | Public surface | `/verify-public/?id={N+1}` mostra "CHAIN INTEGRITY VIOLATION" |
+| T7d | Recursive propagation | TODOS descendentes marcados `hash_tampered: true` |
+| T7e | **Chain seal block** | Novo receipt sobre chain corrompida → **REJECTED** |
+
+**T7e crítico:** Sem ele, sistema pode detectar corrupção e ainda aceitar novos receipts sobre
+chain quebrada — criando registo que parece válido escondendo fractura histórica.
+
+**Contagem corrigida:** 38 smoke tests totais (D3:12 + D4:10 + D5:16 incl. T7a-e)
 
 ---

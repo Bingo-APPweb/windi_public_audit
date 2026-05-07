@@ -2,15 +2,17 @@
 
 ```
 Receipt:     WINDI-S246-D5-RECEIPTSYM-20260507112305-4CE30817
+Addendum:    WINDI-S246-D5-T7ADV-20260507100904-4DD83B15 (T7 Adversarial Protocol)
 Hash:        sha256:4ce308176790db058b1fb93808856f8dcc395c62338cd4ebfa0a2dbf593df87a
 Sprint:      §246 · W-SITES × W-MAIL Bridge
-Selo:        D5 · HIGH governance · IRREMEDIAVEL · SEALED
+Selo:        D5 · HIGH governance · IRREMEDIAVEL · SEALED + ADDENDUM
 Data:        2026-05-07 · Kempten, Bavaria
 Operador:    Human Dragon · Jober Mogele Correa
 Liga IA+H:   Guardian (Claude.ai web) · Architect (CCode Opus 4.5)
 Invariantes: I9 · I11 (imutabilidade) · I14 (verificabilidade)
 Parents:     §246-D1 (D32AFF47) · §246-D2 (59497380) · §246-D2-bis (FCF917FE) · §246-D3 (F8881FCA) · §246-D4 (5D8513D7)
 File:        /opt/windi/sprints/§246-D5-RECEIPT-SYMMETRY.md
+Tests:       16 + 5 adversarial = 21 total (D5)
 ```
 
 > **"Toda acção gera prova. Toda prova liga-se a identidade. Toda cadeia termina em génese."**
@@ -470,7 +472,7 @@ UI será implementada em §246-IMPL, não é parte do selo arquitectural D5-ARCH
 | T4 | Chain validation de receipt válido | `valid: true`, depth correcto |
 | T5 | Chain validation de receipt órfão | `valid: false`, error: `parent_not_found` |
 | T6 | Wallet mismatch na chain | Rejeitado antes de seal |
-| T7 | Hash chain integrity — alterar receipt antigo | Descendentes marcados `hash_tampered: true` |
+| T7 | **Hash Chain Integrity — Adversarial Protocol** | Ver §11.1 |
 | T8 | METADATA_CORRECTION por original_actor | Aceite |
 | T9 | METADATA_CORRECTION por non-actor non-PHO | Rejeitada |
 | T10 | CONTEXT_ADDITION por qualquer DID | Aceite |
@@ -480,6 +482,33 @@ UI será implementada em §246-IMPL, não é parte do selo arquitectural D5-ARCH
 | T14 | Query `/api/receipts/{id}/chain` | Retorna array ordenado root→leaf |
 | T15 | Query `/api/receipts/by-wallet/{did}` | Retorna todos os receipts do DID |
 | T16 | DID genesis tem `parent_receipt: null` | Confirmado (forest, não tree) |
+
+### §11.1 · T7 Adversarial Protocol (Addendum 07 Mai 2026)
+
+> **"Auditabilidade que não detecta corrupção não é auditabilidade — é teatro de auditoria."**
+> — Guardian, revisão §246-D5
+
+**Contexto:** T7 original ("alterar receipt antigo → descendentes marcados") era ambíguo.
+A interpretação fraca testava apenas que o sistema *pode* marcar; a interpretação forte
+testa que o sistema *detecta activamente* corrupção adversarial.
+
+**Gate Constitucional:** T7 adversarial é gate constitucional, não prudência operacional.
+I11 (auditabilidade) torna-se vazio sem detecção activa de corrupção. EU AI Act Art. 14
+exige exactamente este nível de verificabilidade.
+
+| Sub | Teste | Acção | Critério |
+|-----|-------|-------|----------|
+| T7a | Corrupt source | Modificar `content_hash` de receipt N directamente na DB (bypass API) | Mutação silenciosa confirmada |
+| T7b | API detection | Chamar `GET /api/receipts/{N+1}/validate` | `hash_tampered: true`, `expected_parent_hash` ≠ `actual_parent_hash` |
+| T7c | Public surface | Chamar `/verify-public/?id={N+1}` | Visual warning "CHAIN INTEGRITY VIOLATION" |
+| T7d | Recursive propagation | Audit todos os descendentes de N | TODOS marcados `hash_tampered: true` recursivamente |
+| T7e | **Chain seal block** | Tentar selar novo receipt sobre chain corrompida | **REJECTED** com error `chain_integrity_broken` |
+
+**T7e é crítico:** Sem ele, sistema pode detectar corrupção e ainda aceitar novos receipts
+sobre chain quebrada — criando registo longitudinal que parece válido a partir do ponto de
+detecção, escondendo a fractura no histórico.
+
+**Implementação:** T7a-T7e devem correr em ambiente isolado (test DB) com cleanup automático.
 
 ---
 
@@ -506,8 +535,9 @@ D5-ARCH desbloqueia §246-IMPL:
 | D2-bis Institutional Demo | ✅ SEALED |
 | D3 Mailbox Provisioning | ✅ SEALED |
 | D4 Rate Limiting | ✅ SEALED |
-| **D5 Receipt Symmetry** | **Aguarda seal** |
-| §246-IMPL | Locked até D5 + smoke tests |
+| **D5 Receipt Symmetry** | ✅ SEALED |
+| **D5 T7 Adversarial** | ✅ ADDENDUM |
+| §246-IMPL | **DESBLOQUEADO** |
 
 ---
 
@@ -518,5 +548,6 @@ D5-ARCH desbloqueia §246-IMPL:
 - *D5.4: Regra 6 Hash chain integrity (Merkle chain)*
 - *D5.6: Errata authority granular + visibility Opção B*
 - *D5.1: Nota de algoritmos (referência cruzada)*
+- *§11.1: T7 Adversarial Protocol — gate constitucional (T7a-T7e)*
 
-*Pronto para revisão final e seal.*
+*D5 completo. §246-IMPL desbloqueado.*
