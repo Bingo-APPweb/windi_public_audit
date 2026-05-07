@@ -101,7 +101,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-TRAVEL-001 | :8126 | I9,I11,I13,G3 | **LIVE** v1.3.0 · Identity Gate · /travel/ · §196 nginx fix · nohup oficial |
 | W-SHELF-001 | :8191 | I9,I11,I13,I14 | **LIVE** v0.3.0 · I9+I14 Dual Enforcement · §199+§200 · 11/11 Tests |
 | W-CMS-001 | :8055 | I9,I11,I14 | **LIVE** · Directus 10 · Ledger Bridge :8056 · Sweeper Timer · §219 Baptism of Externality |
-| W-SITES-001 | :8192 | I1,I9,I11,I12,I14 | **LIVE** v1.2-sprint3 · windisites.de · §246 6/6 · Microlog · Communiqué · `4CE30817` |
+| W-SITES-001 | :8192 | I1,I9,I11,I12,I14 | **LIVE** v1.2-sprint3 · windisites.de · §246 6/6+T7adv · Microlog · Communiqué · `4CE30817`+`4DD83B15` |
 | W-MAIL-001 | :25,:587,:993,:8888 | I1,I9,I11,I12,I14 | **LIVE** · Sovereign Email · DACP-v1 · Dual DKIM · SnappyMail · §224-226 |
 | W-OLLAMA-001 | B:11434 | I9,I10,I13 | **LIVE** · Server Gêmeo (85.215.131.0) · mistral:7b · Galho B · §227 |
 | W-LEXICON-001 | :8193 | I9,I10,I13,I14 | **LIVE** v0.3.0 · TWO-STAGE Model · Stage 2 Evaluator · Paper-001 A.3 SEALED |
@@ -565,7 +565,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
-| 07 Mai | **§246** W-SITES × W-MAIL Bridge · 6/6 selos · `4CE30817` ✅ |
+| 07 Mai | **§246** W-SITES × W-MAIL Bridge · 6/6 selos + T7 adversarial · `4CE30817`+`4DD83B15` ✅ |
 | 05 Mai | **§245** Editorial Doctrine · `3C5638F9` ✅ |
 | 03 Mai | **§235+241** windisites.de LIVE · `1BE93BB4` ✅ |
 | 29 Apr | **§224-226** W-MAIL-001 DACP-v1 ✅ |
@@ -622,8 +622,8 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 - [x] **§246-D2-bis Institutional Demo Send** — welcome@windisites.de · Slug Reservation · `FCF917FE` · SEALED 07 Mai 2026
 - [x] **§246-D3 Mailbox Provisioning** — DID-bound · Two-phase atomic · 11 lifecycle events · `F8881FCA` · SEALED 07 Mai 2026
 - [x] **§246-D4 Rate Limiting** — per-DID quotas · 3 janelas · 7 lifecycle events · `5D8513D7` · SEALED 07 Mai 2026
-- [x] **§246-D5 Receipt Symmetry** — Chain Architecture · Forest · Merkle Chain · Errata Protocol · `4CE30817` · SEALED 07 Mai 2026
-- [ ] **§246-IMPL** — DESBLOQUEADO · Query API + UI Berçário · 16 smoke tests
+- [x] **§246-D5 Receipt Symmetry** — Chain Architecture · Forest · Merkle Chain · Errata + T7 Adversarial · `4CE30817` + `4DD83B15` · SEALED 07 Mai 2026
+- [ ] **§246-IMPL** — DESBLOQUEADO · Query API + UI Berçário · 38 smoke tests (D3:12 + D4:10 + D5:16 incl. T7a-e adversarial)
 - [ ] **Rate limiting** nginx · **Cron 48h** email downgrade · **HIGH ops gate**
 
 ### P1.5 — W-TRAVEL-PUB-001 (Q3 2026)
@@ -668,6 +668,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | **ARCH** | `F8881FCA` | §246-D3 Mailbox Provisioning Soberano (DID-bound) |
 | **ARCH** | `5D8513D7` | §246-D4 Rate Limiting + per-DID Quotas |
 | **ARCH** | `4CE30817` | §246-D5 Receipt Symmetry — Chain Architecture |
+| **ARCH** | `4DD83B15` | §246-D5-T7 Adversarial Protocol — Gate Constitucional |
 
 > **Full receipts list:** `CLAUDE-HISTORY.md` § Produtos SEALED
 
