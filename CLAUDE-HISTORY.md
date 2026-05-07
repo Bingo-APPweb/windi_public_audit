@@ -12161,3 +12161,39 @@ Berçário → Andaime → Vivo → Suspenso → Aposentado
 - DID deve existir no Genesis antes de usar como actor (Lei I: existência antes de acção)
 
 ---
+
+## Consolidação 2026-05-07 · Sessão Completa
+
+**Fluxo do dia:**
+1. **Manhã (CCode):** §246-IMPL Phases 4+5a implementadas
+2. **Tarde (Claude.ai web):** Revisão contraditória Guardian, renomeação 5a/5b, §247 v1→v2
+3. **Noite (CCode):** Execução 9 passos §247, selo emitido
+
+### Selos Emitidos Hoje (4 total)
+| Receipt | Sprint | Estado |
+|---------|--------|--------|
+| `7608649F` | §246-Phase4 Slug | Vivo |
+| `2C3DD7CA` | §246-Phase5a Mailbox | Andaime |
+| `...153926` | §246-CLARIF escopo | — |
+| `A3B99EA6` | §247 Nomenclatura | **SEALED** |
+
+### Commits Hoje
+- `e7e4b324b` — §246-IMPL com scaffold 5b
+- `edacd929d` — §247 Lei IV (pushed)
+
+### Scaffold Pendente (não morto, espera)
+- **§246-Phase5b** Mail System Integration (Postfix/Dovecot)
+  - Marker: `§246-Phase5b SCAFFOLD PENDING` em `mailbox_provisioning.py`
+  - Decisão: aguarda abertura tier comercial
+
+### Próximos Candidatos
+1. **Obra v0.1** — Registry mínimo dos primeiros Tijolos
+2. **Registo formal:** Slug Reservation (Vivo) + Mailbox (Andaime)
+3. **§246-Phase5b** — quando decisão comercial tomada
+
+### Lição do Dia
+> "Redactor não revê, revisor não redige, aprovador é distinto de ambos."
+
+Separação de poderes Architect/Guardian/Human Dragon evitou 2 erros GRAVE no §247 v1.
+
+---
