@@ -12031,3 +12031,56 @@ chain quebrada — criando registo que parece válido escondendo fractura histó
 **Contagem corrigida:** 38 smoke tests totais (D3:12 + D4:10 + D5:16 incl. T7a-e)
 
 ---
+
+---
+
+## Sessão 2026-05-07 · §246-IMPL + Revisão Contraditória
+
+**Sprint:** §246-IMPL · W-SITES × W-MAIL Bridge
+**Modo:** CCode CLI (implementação) → Claude.ai web (revisão externa)
+**Operador humano:** Human Dragon
+**Modelos:** opus-4.5 (CCode) · Claude.ai (revisão contraditória)
+
+### Trabalho completado
+- Phase 1 · T7e Ledger chain integrity gate
+- Phase 2 · Verify Public chain navigation UI
+- Phase 3 · D4 DID-based rate limiting (ALLOW/DEFER/REJECT)
+- Phase 4 · Slug Reservation · 8 endpoints, lineage table, DID-binding
+- Phase 5a · Mailbox Provisioning Layer (API + DB) · 11 endpoints, two-phase atomic
+- Blacklist de slugs expandida de ~40 para 55 termos (RFC 2142 + anti-phishing + marca)
+- Docstrings e relatório alinhados com nomenclatura 5a/5b
+
+### Selos emitidos
+- §246-Phase4 · `WINDI-S246-SLUG-PHASE4-20260507121226-7608649F`
+- §246-Phase5a · `WINDI-S246-MAILBOX-PHASE5-20260507142653-2C3DD7CA` (escopo clarificado)
+- §246-CLARIF · `WINDI-S246-CLARIF-PHASE5-SCOPE-20260507153926`
+
+### Scaffold pending (não morre, espera)
+- §246-Phase5b · Mail System Integration (Postfix/Dovecot)
+  · aguarda decisão de quando abrir tier comercial com mailboxes funcionais
+  · marca grep-able: "§246-Phase5b SCAFFOLD PENDING" em mailbox_provisioning.py
+
+### Ficheiros criados/modificados
+- `rate_limiter.py` (~400 linhas) — DID-based rate limiting
+- `slug_reservation.py` (~650 linhas) — Namespace sovereignty
+- `mailbox_provisioning.py` (~700 linhas) — Mailbox lifecycle API+DB
+- `identity_gate.py` — +22 endpoints (rate, slug, mailbox)
+- `windi_forensic_api.py` — T7e chain gate
+- `verify.html` — Chain navigation UI
+
+### Decisões constitucionais
+- Phase 5 renomeada 5a/5b · razão: "selar provisão completa sobre stub é micro-fenda
+  SealForgery" · invariante aplicado: I11 (receipt deve corresponder a evento real)
+- Blacklist expandida antes do commit · razão: anti-phishing e protecção de marca
+  são fundação, não polish
+- Receipts originais não alterados · razão: I9 IRREMEDIÁVEL · clarificação via novo
+  selo, não reescrita
+
+### Notas para sessão seguinte
+- Porta canónica Identity Gate: :8192 (confirmado)
+- Auto-revisão Opus→Opus produziu downgrade indevido do stub de mail system
+  ("CRÍTICO" → "aceitável se documentado"). Padrão a vigiar: revisor que
+  implementou raramente é contraditório o suficiente. Em sprints futuros,
+  pedir revisão a instância diferente quando stakes envolvem selo.
+
+---

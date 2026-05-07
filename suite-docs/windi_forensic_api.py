@@ -48,6 +48,11 @@ from forensic_ledger import (
     aggregate_warroom,
     count_receipts,
     DEFAULT_DB_PATH,
+    # T7e: Chain validation (§246-IMPL)
+    validate_parent_receipt,
+    validate_chain_integrity,
+    get_receipt_chain,
+    get_receipt_children,
 )
 
 # ═══════════════════════════════════════════════════
@@ -216,6 +221,47 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
                 self._json(200, {"ok": True, "receipt": r})
             else:
                 self._json(404, {"ok": False, "error": "not_found", "id": receipt_id})
+
+        # ═══════════════════════════════════════════════════
+        # T7e: Chain Validation Endpoints (§246-IMPL)
+        # ═══════════════════════════════════════════════════
+
+        # ── /api/receipts/<id>/validate — Chain integrity check ──
+        elif path.endswith("/validate") and "/api/receipts/" in path:
+            parts = path.split("/")
+            receipt_id = parts[-2]  # /api/receipts/{id}/validate
+            result = validate_chain_integrity(receipt_id)
+            status_code = 200 if result.get("valid") else 409
+            self._json(status_code, {
+                "ok": result.get("valid"),
+                **result,
+                "invariant": "I11",
+                "constitutional_gate": "T7e",
+            })
+
+        # ── /api/receipts/<id>/chain — Get ancestry chain ──
+        elif path.endswith("/chain") and "/api/receipts/" in path:
+            parts = path.split("/")
+            receipt_id = parts[-2]  # /api/receipts/{id}/chain
+            chain = get_receipt_chain(receipt_id)
+            self._json(200, {
+                "ok": True,
+                "receipt_id": receipt_id,
+                "chain": chain,
+                "depth": len(chain),
+            })
+
+        # ── /api/receipts/<id>/children — Get direct children ──
+        elif path.endswith("/children") and "/api/receipts/" in path:
+            parts = path.split("/")
+            receipt_id = parts[-2]  # /api/receipts/{id}/children
+            children = get_receipt_children(receipt_id)
+            self._json(200, {
+                "ok": True,
+                "receipt_id": receipt_id,
+                "children": children,
+                "count": len(children),
+            })
 
         # ── /api/warroom/summary ──
         elif path == "/api/warroom/summary":
@@ -393,7 +439,12 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
                     return
 
                 # Validate types
-                if r["doc_type"] not in ("doc", "xlsx", "pptx", "jmpg", "communique", "compliance_passport", "cartaz", "canvas"):
+                # §191: Added service-control types for W-SERVICE-CONTROL restart audit trail
+                VALID_DOC_TYPES = (
+                    "doc", "xlsx", "pptx", "jmpg", "communique", "compliance_passport", "cartaz", "canvas",
+                    "service-restart-initiated", "service-restart-completed", "audit-bundle"
+                )
+                if r["doc_type"] not in VALID_DOC_TYPES:
                     self._json(400, {
                         "ok": False,
                         "error": f"invalid doc_type: {r['doc_type']}",
@@ -413,6 +464,25 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
                 r.setdefault("tags", [])
                 r.setdefault("flags", [])
                 r.setdefault("isp_context", "")
+
+                # ═══════════════════════════════════════════════════
+                # T7e: CHAIN INTEGRITY GATE (§246-IMPL)
+                # Constitutional: Broken chain cannot create future trust
+                # ═══════════════════════════════════════════════════
+                parent_receipt_id = r.get("parent_receipt_id")
+                if parent_receipt_id:
+                    validation = validate_parent_receipt(parent_receipt_id)
+                    if not validation.get("valid"):
+                        self._json(409, {
+                            "ok": False,
+                            "error": "chain_violation",
+                            "code": validation.get("code"),
+                            "message": validation.get("message"),
+                            "invariant": validation.get("invariant", "I11"),
+                            "constitutional": True,
+                            "parent_receipt_id": parent_receipt_id,
+                        })
+                        return
 
                 # TODO: Ed25519 signature verification
                 # if r.get("ed25519_sig") and r.get("ed25519_pub"):

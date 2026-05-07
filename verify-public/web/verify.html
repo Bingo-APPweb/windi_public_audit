@@ -219,6 +219,146 @@
             height: 100%;
         }
 
+        /* T7e Chain Navigation */
+        .chain-section {
+            margin-top: 16px;
+        }
+
+        .chain-card {
+            background: #12121A;
+            border: 1px solid #1E1E28;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .chain-title {
+            font-size: 11px;
+            color: #6B7280;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chain-title .icon {
+            font-size: 14px;
+        }
+
+        .chain-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            background: #0A0A10;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .chain-item:hover {
+            border-color: #C9A84C;
+            background: #14141E;
+        }
+
+        .chain-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .chain-item .depth {
+            font-size: 10px;
+            color: #4B5563;
+            background: #1E1E28;
+            padding: 2px 6px;
+            border-radius: 4px;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .chain-item .name {
+            flex: 1;
+            font-size: 12px;
+            color: #E8E6E1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .chain-item .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #22C55E;
+        }
+
+        .chain-item .status-dot.revoked {
+            background: #EF4444;
+        }
+
+        .chain-item .arrow {
+            color: #4B5563;
+            font-size: 10px;
+        }
+
+        .chain-empty {
+            font-size: 11px;
+            color: #4B5563;
+            font-style: italic;
+            text-align: center;
+            padding: 8px;
+        }
+
+        /* T7c Chain Integrity Warning */
+        .chain-warning {
+            background: #2D1B1B;
+            border: 1px solid #7C2D12;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-top: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .chain-warning .icon {
+            font-size: 18px;
+            color: #EF4444;
+        }
+
+        .chain-warning .content {
+            flex: 1;
+        }
+
+        .chain-warning .title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #FCA5A5;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .chain-warning .message {
+            font-size: 11px;
+            color: #FDA4AF;
+            line-height: 1.4;
+        }
+
+        .chain-warning .code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: #F87171;
+            background: #1F1215;
+            padding: 2px 6px;
+            border-radius: 3px;
+            margin-top: 6px;
+            display: inline-block;
+        }
+
         .footer {
             margin-top: 24px;
             font-size: 11px;
@@ -334,6 +474,37 @@
             </div>
 
             <div id="error-box" class="error-msg" style="display: none;"></div>
+
+            <!-- T7e Chain Navigation -->
+            <div id="chain-section" class="chain-section" style="display: none;">
+                <!-- T7c Warning (shown if chain integrity violated) -->
+                <div id="chain-warning" class="chain-warning" style="display: none;">
+                    <span class="icon">⚠️</span>
+                    <div class="content">
+                        <div class="title" data-i18n="chainWarningTitle">Chain Integrity Violation</div>
+                        <div class="message" id="chain-warning-message" data-i18n="chainWarningMsg">This document's chain of custody could not be fully verified.</div>
+                        <span class="code" id="chain-warning-code"></span>
+                    </div>
+                </div>
+
+                <!-- Parent Chain -->
+                <div id="chain-ancestry" class="chain-card" style="display: none;">
+                    <div class="chain-title">
+                        <span class="icon">⬆️</span>
+                        <span data-i18n="parentChain">Parent Chain</span>
+                    </div>
+                    <div id="chain-ancestry-list"></div>
+                </div>
+
+                <!-- Children -->
+                <div id="chain-children" class="chain-card" style="display: none;">
+                    <div class="chain-title">
+                        <span class="icon">⬇️</span>
+                        <span data-i18n="childDocuments">Child Documents</span>
+                    </div>
+                    <div id="chain-children-list"></div>
+                </div>
+            </div>
         </div>
 
         <div class="footer">
@@ -361,7 +532,13 @@
                 copyFailed: 'Kopieren fehlgeschlagen',
                 noId: 'Keine Receipt-ID angegeben. Verwenden Sie ?id=WINDI-XXX',
                 notFound: 'Dokument nicht im WINDI-System gefunden',
-                connFailed: 'Verbindung zum Verifizierungsdienst fehlgeschlagen'
+                connFailed: 'Verbindung zum Verifizierungsdienst fehlgeschlagen',
+                chainWarningTitle: 'Kettenintegritätsverletzung',
+                chainWarningMsg: 'Die Verwahrungskette dieses Dokuments konnte nicht vollständig verifiziert werden.',
+                parentChain: 'Elternkette',
+                childDocuments: 'Untergeordnete Dokumente',
+                genesisReceipt: 'Genesis-Beleg',
+                noChildren: 'Keine untergeordneten Dokumente'
             },
             en: {
                 verifying: 'Verifying...',
@@ -379,7 +556,13 @@
                 copyFailed: 'Copy failed',
                 noId: 'No receipt ID provided. Use ?id=WINDI-XXX',
                 notFound: 'Document not found in WINDI system',
-                connFailed: 'Failed to connect to verification service'
+                connFailed: 'Failed to connect to verification service',
+                chainWarningTitle: 'Chain Integrity Violation',
+                chainWarningMsg: 'This document\'s chain of custody could not be fully verified.',
+                parentChain: 'Parent Chain',
+                childDocuments: 'Child Documents',
+                genesisReceipt: 'Genesis Receipt',
+                noChildren: 'No child documents'
             },
             pt: {
                 verifying: 'A verificar...',
@@ -397,7 +580,13 @@
                 copyFailed: 'Falha ao copiar',
                 noId: 'Nenhum ID de recibo fornecido. Use ?id=WINDI-XXX',
                 notFound: 'Documento não encontrado no sistema WINDI',
-                connFailed: 'Falha ao conectar ao serviço de verificação'
+                connFailed: 'Falha ao conectar ao serviço de verificação',
+                chainWarningTitle: 'Violação de Integridade da Cadeia',
+                chainWarningMsg: 'A cadeia de custódia deste documento não pôde ser totalmente verificada.',
+                parentChain: 'Cadeia Ancestral',
+                childDocuments: 'Documentos Derivados',
+                genesisReceipt: 'Recibo Génese',
+                noChildren: 'Sem documentos derivados'
             }
         };
 
@@ -514,6 +703,9 @@
 
             document.getElementById('details-card').style.display = 'block';
             document.getElementById('dragon-seal').style.display = 'block';
+
+            // T7e: Load chain navigation
+            loadChainNavigation(r.id);
         }
 
         function showUnverified(data) {
@@ -573,6 +765,121 @@
         document.querySelectorAll('.lang-btn').forEach(btn => {
             btn.addEventListener('click', () => setLang(btn.dataset.lang));
         });
+
+        // ═══════════════════════════════════════════════════════════════
+        // T7e: Chain Navigation Functions (§246-IMPL Phase 2)
+        // ═══════════════════════════════════════════════════════════════
+
+        async function loadChainNavigation(receiptId) {
+            const chainSection = document.getElementById('chain-section');
+
+            try {
+                // Fetch chain validation and children in parallel
+                const [validateRes, childrenRes] = await Promise.all([
+                    fetch(`/api/receipts/${encodeURIComponent(receiptId)}/validate`),
+                    fetch(`/api/receipts/${encodeURIComponent(receiptId)}/children`)
+                ]);
+
+                const validateData = await validateRes.json();
+                const childrenData = await childrenRes.json();
+
+                // Show chain section
+                chainSection.style.display = 'block';
+
+                // Handle chain violations (T7c warning)
+                if (!validateData.valid && validateData.violations && validateData.violations.length > 0) {
+                    showChainWarning(validateData.violations);
+                }
+
+                // Show parent chain (ancestry)
+                if (validateData.chain && validateData.chain.length > 1) {
+                    showParentChain(validateData.chain);
+                }
+
+                // Show children
+                if (childrenData.ok && childrenData.children && childrenData.children.length > 0) {
+                    showChildren(childrenData.children);
+                }
+
+            } catch (err) {
+                console.log('Chain navigation not available:', err);
+                // Silent fail - chain nav is enhancement, not critical
+            }
+        }
+
+        function showChainWarning(violations) {
+            const warningEl = document.getElementById('chain-warning');
+            const msgEl = document.getElementById('chain-warning-message');
+            const codeEl = document.getElementById('chain-warning-code');
+
+            warningEl.style.display = 'flex';
+
+            // Show first violation
+            const v = violations[0];
+            msgEl.textContent = t('chainWarningMsg');
+            codeEl.textContent = v.code || v.reason || 'T7c_VIOLATION';
+        }
+
+        function showParentChain(chain) {
+            const ancestryCard = document.getElementById('chain-ancestry');
+            const ancestryList = document.getElementById('chain-ancestry-list');
+
+            // Skip first item (current document) - show only ancestors
+            const ancestors = chain.slice(1);
+            if (ancestors.length === 0) return;
+
+            ancestryCard.style.display = 'block';
+            ancestryList.innerHTML = '';
+
+            ancestors.forEach((item, idx) => {
+                const div = document.createElement('div');
+                div.className = 'chain-item';
+                div.onclick = () => window.location.href = `?id=${encodeURIComponent(item.id)}`;
+
+                const isGenesis = !item.parent_receipt_id && idx === ancestors.length - 1;
+
+                div.innerHTML = `
+                    <span class="depth">${item.depth || idx + 1}</span>
+                    <span class="name">${item.doc_name || item.id}</span>
+                    <span class="status-dot ${item.status === 'revoked' ? 'revoked' : ''}"></span>
+                    <span class="arrow">→</span>
+                `;
+
+                ancestryList.appendChild(div);
+            });
+
+            // Add genesis indicator if last item has no parent
+            const lastItem = ancestors[ancestors.length - 1];
+            if (lastItem && !lastItem.parent_receipt_id) {
+                const genesisNote = document.createElement('div');
+                genesisNote.className = 'chain-empty';
+                genesisNote.textContent = '📜 ' + t('genesisReceipt');
+                ancestryList.appendChild(genesisNote);
+            }
+        }
+
+        function showChildren(children) {
+            const childrenCard = document.getElementById('chain-children');
+            const childrenList = document.getElementById('chain-children-list');
+
+            childrenCard.style.display = 'block';
+            childrenList.innerHTML = '';
+
+            children.forEach((item) => {
+                const div = document.createElement('div');
+                div.className = 'chain-item';
+                div.onclick = () => window.location.href = `?id=${encodeURIComponent(item.id)}`;
+
+                div.innerHTML = `
+                    <span class="depth">↳</span>
+                    <span class="name">${item.doc_name || item.id}</span>
+                    <span class="status-dot ${item.status === 'revoked' ? 'revoked' : ''}"></span>
+                    <span class="arrow">→</span>
+                `;
+
+                childrenList.appendChild(div);
+            });
+        }
 
         // Init
         setLang(detectLang());
