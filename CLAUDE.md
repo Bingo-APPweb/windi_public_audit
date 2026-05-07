@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.43.0
-**Sealed:** 2026-05-05 · §245 W-SITES-001 Prompts Mágicos · Editorial Doctrine
+**Version:** 2.47.0
+**Sealed:** 2026-05-07 · §246-D3 Mailbox Provisioning Soberano (DID-bound)
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -610,6 +610,10 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 07 Mai | **§246-D3** Mailbox Provisioning · DID-bound · `F8881FCA` ✅ |
+| 07 Mai | **§246-D2-bis** Institutional Demo Send · welcome@ · `FCF917FE` ✅ |
+| 07 Mai | **§246-D2** Workbench + Pedagogia Visual · 4 Zonas · `59497380` ✅ |
+| 07 Mai | **§246-D1** Federated Delegation Light · γ-light · `D32AFF47` ✅ |
 | 05 Mai | **§245** W-SITES-001 Prompts Mágicos · Editorial Doctrine · `3C5638F9` ✅ |
 | 04 Mai | **§242-244** W-SITES-001 Sprint 2+3 · Microlog · Communiqué · `c8d8f3596` ✅ |
 | 03 Mai | **§235+241** windisites.de LIVE · W-CORTEX-001 · `1BE93BB4` · `04C67B81` ✅ |
@@ -665,7 +669,12 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 - [ ] **§139 WINDI-LAW Painel de Anexos** — Lista persistente · SHA · Suporte múltiplos ficheiros
 
 ### P1 — Importante
-- [ ] **§246 W-SITES × W-MAIL Bridge** — Toggle wizard · `POST /api/mail/create-alias` · Lista negra prefixos regulados (§6 Direito Editorial) · Validação disponibilidade
+- [x] **§246-D1 Federated Delegation Light** — γ-light architecture · `D32AFF47` · SEALED 07 Mai 2026
+- [x] **§246-D2 Workbench + Pedagogia** — 4 Zonas · Hospitalidade Soberana · `59497380` · SEALED 07 Mai 2026
+- [x] **§246-D2-bis Institutional Demo Send** — welcome@windisites.de · Slug Reservation · `FCF917FE` · SEALED 07 Mai 2026
+- [x] **§246-D3 Mailbox Provisioning** — DID-bound · Two-phase atomic · 11 lifecycle events · `F8881FCA` · SEALED 07 Mai 2026
+- [ ] **§246-D4 Rate Limiting** — per-DID quotas · emails/hora · emails/dia
+- [ ] **§246-D5 Receipt Symmetry** — wallet_id propagation · chain navigation UI
 - [ ] **Rate limiting** nginx · **Cron 48h** email downgrade · **HIGH ops gate**
 
 ### P1.5 — W-TRAVEL-PUB-001 (Q3 2026)
@@ -704,6 +713,10 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | **MAIL** | `D7398F3C` | §224-226 DACP-v1 First Proof |
 | **PAPER** | `CDC760DD` | §233 Paper-001 A.3 Core |
 | **DOCTRINE** | `3C5638F9` | §245 W-EDITORIAL-DOCTRINE-001 |
+| **ARCH** | `D32AFF47` | §246-D1 Federated Delegation Light (γ-light) |
+| **ARCH** | `59497380` | §246-D2 Workbench + Pedagogia Visual da Soberania |
+| **ARCH** | `FCF917FE` | §246-D2-bis Institutional Demo Send + Slug Reservation |
+| **ARCH** | `F8881FCA` | §246-D3 Mailbox Provisioning Soberano (DID-bound) |
 
 > **Full receipts list:** `CLAUDE-HISTORY.md` § Produtos SEALED
 

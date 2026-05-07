@@ -6,6 +6,310 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 07 Mai 2026 — §246-D3 Mailbox Provisioning Soberano (DID-bound)
+
+**Duracao:** ~45min | **Status:** ✅ SEALED
+**Liga IA+H:** Human Dragon · Guardian (Claude.ai web) · Architect (CCode Opus 4.5)
+**Invariants:** I9, I11, I14
+**Services:** W-SITES-001, W-MAIL-001, W-DID-GENESIS, Forensic Ledger
+**Parents:** D1 (D32AFF47) + D2 (59497380) + D2-bis (FCF917FE)
+
+### Contexto
+
+Decisao arquitectural sobre como provisionar mailboxes reais para utilizadores
+com DID activo. D3 materializa a Lei I do DID Bercario em infraestrutura fisica.
+
+### §246-D3 — Mailbox Provisioning Soberano (SELADO)
+
+> *"Sem DID, nao ha mailbox real. Com DID activo, a mailbox nasce na mesma transaccao que o site — juntos ou nada."*
+
+**Receipt:** `WINDI-S246-D3-MAILBOX-20260507082308-F8881FCA`
+**Hash:** `sha256:f8881fcaee043b86247040fddf03d944ec6ef850819c8f040888d9c923b021c6`
+**File:** `/opt/windi/sprints/§246-D3-MAILBOX-PROVISIONING.md`
+
+### 7 Decisoes Arquitecturais Cravadas
+
+| Decisao | Cravacao |
+|---------|----------|
+| D3.1 Trigger | Primeira publicacao do site (juntos ou nada) |
+| D3.2 Path | Opcao A: `/var/mail/windisites.de/by-did/{did_short_8}/` + symlinks |
+| D3.3 Atomicidade | Two-phase + staging + receipt eventual |
+| D3.4 Handoff | Promocao atomica slug_reservations -> sites_aliases + Maildir |
+| D3.5 Quota | Dovecot source-of-truth, DB cache observavel |
+| D3.6 Recovery | 90d retencao + legal_hold flag + GDPR/EU AI Act compliance |
+| D3.7 Lifecycle | 11 eventos no Ledger com wallet_id + parent_receipt |
+
+### Quotas por Tier
+
+| Tier | Storage |
+|------|---------|
+| LOW | 100 MB |
+| MED | 1 GB |
+| HIGH | 10 GB |
+
+### 11 Lifecycle Events
+
+1. PROVISION · 2. FIRST-RECEIVE · 3. FIRST-SEND · 4. WARMING (80%)
+5. FULL (100%) · 6. TIER-CHANGE · 7. SLUG-RENAME · 8. REVOKE
+9. REVOKE-HOLD · 10. RESTORE · 11. PURGE
+
+### 12 Smoke Tests Definidos
+
+T1-T12 cobrindo: happy path, atomicidade, reservas expiradas, quotas,
+revogacao/restauracao, legal hold, tier changes, slug rename, receipt chain.
+
+### Ficheiros
+
+- `/opt/windi/sprints/§246-D3-MAILBOX-PROVISIONING.md` (documento canonico)
+
+### Proximos Passos
+
+1. §246-D4 Rate Limiting (emails/hora, emails/dia)
+2. §246-D5 Receipt Symmetry (formalizacao + UI navigation)
+3. §246-IMPL (apos D1-D5 sealed + 12 smoke tests verdes)
+
+### Estado Sprint §246
+
+| Selo | Status |
+|------|--------|
+| D1 | ✅ SEALED |
+| D2 | ✅ SEALED |
+| D2-bis | ✅ SEALED |
+| D3 | ✅ SEALED |
+| D4 | ⏳ Pending |
+| D5 | ⏳ Pending |
+
+Sprint a 4/6 selos (66% architectural).
+
+---
+
+## § SESSÃO 07 Mai 2026 — §246-D2-bis Institutional Demo Send + Slug Reservation
+
+**Duracao:** ~20min | **Status:** ✅ SEALED
+**Liga IA+H:** Human Dragon · Architect (CCode Opus 4.5) · Guardian (Claude.ai web)
+**Invariants:** I9, I11, I14
+**Services:** W-SITES-001, W-MAIL-001, Forensic Ledger
+**Parents:** D1 (D32AFF47) + D2 (59497380)
+
+### Contexto
+
+Decisao arquitectural que substituiu "Functional Demo Mailbox" (N caixas por anonimo)
+por "Institutional Demo Send" (1 sender institucional). Insight do Human Dragon
+dissolveu 3 perguntas threat-model de uma vez.
+
+### §246-D2-bis — Institutional Demo Send (SELADO)
+
+> *"WINDI envia. Anonimo recebe na SUA inbox. Sem mailbox demo."*
+
+**Receipt:** `WINDI-S246-D2-bis-DEMOSEND-20260507074335-FCF917FE`
+**Hash:** `sha256:9b4defd62dee83e51b7b93a9fd88c249838e24051efdab3db18194cc28f0a6f3`
+**File:** `/opt/windi/sprints/§246-D2-bis-INSTITUTIONAL-DEMO.md`
+
+### Arquitectura Simplificada
+
+| Antes (descartado) | Agora (adoptado) |
+|--------------------|------------------|
+| N mailboxes demo | 1 sender institucional |
+| Threat-model complexo | Threat-model trivial |
+| Body encryption | Sem body de terceiros |
+| O(N) scaling | O(1) fixo |
+
+### Decisoes Chave
+
+- **Sender:** welcome@windisites.de (Hospitalidade Soberana)
+- **Slug Reservation:** 7d renovavel, 30d cap, integrado com Workbench D2
+- **Anti-Abuse:** 6 camadas (rate limit, CAPTCHA, blocklists, cap global)
+- **Privacy:** Hash do destino, GDPR Art. 5(1)(c) cumprido
+- **Trilingue:** DE/EN/PT por Accept-Language
+
+### Ficheiros Criados
+
+- `/opt/windi/sprints/§246-D2-bis-INSTITUTIONAL-DEMO.md` (documento canonico)
+- `/opt/windi/config/reserved_prefixes.json` (blacklist canonica + welcome)
+
+### Proximos Passos
+
+1. §246-D3 Mailbox Provisioning soberano (DID-bound)
+2. §246-D4 Rate Limiting nginx + per-DID quotas
+3. §246-D5 Receipt Symmetry (wallet_id propagation)
+4. §246-IMPL (codigo apos todos os selos)
+
+---
+
+## § SESSÃO 07 Mai 2026 — §246-D2 Workbench + Pedagogia Visual da Soberania
+
+**Duracao:** ~30min | **Status:** ✅ SEALED
+**Liga IA+H:** Human Dragon · Architect (CCode Opus 4.5) · Guardian (Claude.ai web)
+**Invariants:** I9, I11, I14
+**Services:** W-SITES-001, W-MAIL-001, Forensic Ledger
+**Parent:** WINDI-S246-D1-DELEGATION-20260507085800-D32AFF47
+
+### Contexto
+
+Decisao arquitectural sobre como permitir utilizadores experimentarem WINDI
+antes de criarem identidade (DID). Principio: Hospitalidade Soberana.
+
+### §246-D2 — Workbench + Pedagogia Visual (SELADO)
+
+> *"Experimentar e livre. Consumar requer DID."*
+
+**Receipt:** `WINDI-S246-D2-WORKBENCH-20260507073101-59497380`
+**Hash:** `sha256:835207138d22694ca1023132293940718abd331d04812f4ac04d2a58be39ce75`
+**File:** `/opt/windi/sprints/§246-D2-WORKBENCH-PEDAGOGY.md`
+
+### Arquitectura Decidida — 4 Zonas
+
+| Zona | Nome | Storage | DID Required |
+|------|------|---------|--------------|
+| 1 | DESCOBERTA | Nenhum | Nao |
+| 2 | EXPERIENCIA | sessionStorage | Nao |
+| 3 | WORKBENCH | anon_drafts.db | Nao |
+| 4 | CONSUMACAO | Ledger | **SIM** |
+
+### Workbench Lifecycle
+
+- **TTL renovavel:** 7 dias apos ultima visita
+- **Cap absoluto:** 30 dias desde criacao (APAGA)
+- **Conversao:** Automatica silenciosa quando DID chega
+- **Identifiers:** DEMO-* durante Workbench, valores reais apos conversao
+
+### Alias Format
+
+- Regex: `^[a-z0-9][a-z0-9-]{1,30}[a-z0-9]$`
+- Length: 3-32 chars
+- Case: forcado lowercase
+- Encoding: ASCII puro (IDN deferido para depois)
+
+### Tier Quotas
+
+| Tier | Aliases |
+|------|---------|
+| FREE | 0 |
+| MED | 1 |
+| HIGH | 5 |
+
+### Reserved Prefix Blacklist
+
+- OPERATIONAL: admin, postmaster, support, abuse, noreply, etc.
+- WINDI-CANONICAL: windi, dragon, guardian, architect, witness, etc.
+- REGULATED-AUTHORITY: police, court, embassy, gov, ministry, etc.
+
+### Slug Release Timeline (apos revogacao wallet)
+
+- T+0: wallet revogada, alias mantido
+- T+30d: quarentena (NDR explicativo)
+- T+90d: slug libertado para reuso
+
+### Decisoes Diferidas
+
+**§246-D2-bis (proximo selo):**
+Functional Demo Mailbox — alias temporario real durante Workbench.
+Tres perguntas threat-model pendentes:
+1. Quanto trafego anonimo aguenta? Que proteccoes?
+2. Lifecycle de emails recebidos pre-conversao DID?
+3. Reverse-conversion: emails apagados quando?
+
+### Ficheiros
+
+- `/opt/windi/sprints/§246-D2-WORKBENCH-PEDAGOGY.md` (documento canonico)
+
+### Proximos Passos
+
+1. Responder 3 perguntas threat-model para D2-bis
+2. Selar D2-bis
+3. Continuar D3-D5
+
+---
+
+## § SESSÃO 07 Mai 2026 — §246-D1 Federated Delegation Light (γ-light)
+
+**Duração:** ~1h | **Status:** ✅ SEALED
+**Liga IA+H:** Human Dragon · Architect (CCode Opus 4.5) · Guardian (Claude.ai web)
+**Invariants:** I9, I11, I14
+**Services:** W-DID-GENESIS, W-SITES-001, W-MAIL-001, Forensic Ledger
+
+### Contexto
+
+Decisão arquitectural sobre como integrar W-SITES-001 (windisites.de) e W-MAIL-001
+para permitir utilizadores criarem sites e aliases de email com identidade verificável.
+
+Opções avaliadas:
+- (α) Identity Gate directamente em windisites.de — descartada (segundo emissor)
+- (β) Passthrough para DID-GENESIS — descartada (latência, coupling)
+- (γ) Federação completa — descartada (complexidade)
+- **(γ-light) Delegation tokens** — **ADOPTADA**
+
+### §246-D1 — Federated Delegation Light (SELADO)
+
+> *"windisites.de consome delegações, nunca emite identidades."*
+
+**Receipt:** `WINDI-S246-D1-DELEGATION-20260507085800-D32AFF47`
+**Hash:** `sha256:d32aff47f1c3135ee2a8aa9333ea17392495e7f62c29c6bf5885f09dcf57ffb1`
+**File:** `/opt/windi/sprints/§246-D1-DELEGATION.md`
+
+### Arquitectura Decidida
+
+| Serviço | Role |
+|---------|------|
+| W-DID-GENESIS :8096 | Emissor Canónico (único) |
+| W-SITES-001 :8192 | Consumidor de Delegação |
+| W-MAIL-001 (Docker) | Validador de Delegação |
+
+**Token:** JWT Ed25519 assinado por WINDI-KEYGEN-001 (§205)
+
+**TTL Granular:**
+- `sites:write`, `mail:alias:create` → ≤1h (write ops)
+- `sites:read`, `mail:alias:list` → ≤6h (read-only)
+
+**Refresh Mechanism:**
+- Refresh silencioso permitido
+- Chain age cap: 24h → re-autenticação obrigatória
+- Sem cap, o TTL é teatro
+
+**Public Key Distribution:**
+- W-MAIL-001 (Docker) recebe `.pub` via read-only bind mount
+- Container NUNCA monta private key (`.enc`)
+- Rotação via `kid` no JWT header
+
+### Blast Radius
+
+| Cenário | Impacto | Mitigação |
+|---------|---------|-----------|
+| Compromisso windisites.de | Tokens expostos | Revoga delegações, TTL ≤1h limita |
+| Compromisso DID-GENESIS | **CATÁSTROFE** | Key rotation §205 |
+
+### Decisões Diferidas para §246-IMPL
+
+- JWT transport (Cookie vs Header)
+- Refresh endpoint em DID-GENESIS
+- Validation middleware
+- UI wizard binding
+
+### Dependências D2-D5
+
+| Sprint | Depende de D1 |
+|--------|---------------|
+| D2 Alias Form | ✅ ownership = wallet_id no JWT |
+| D3 Mailbox Provisioning | ✅ auth via JWT scope |
+| D4 Rate Limiting | ✅ rate por `sub` claim |
+| D5 Receipt Symmetry | ✅ wallet_id = actor no receipt |
+
+### Ficheiros
+
+- `/opt/windi/sprints/§246-D1-DELEGATION.md` (documento canónico)
+
+### Commit
+
+Não houve commit de código — apenas decisão arquitectural selada.
+
+### Próximos Passos
+
+1. Redigir D2-D5 sob mesma estrutura (decisão antes de código)
+2. Selar cada um individualmente
+3. Após D1-D5 selados: iniciar §246-IMPL
+
+---
+
 ## § SESSÃO 05 Mai 2026 — §245 W-SITES-001 Prompts Mágicos + Editorial Doctrine
 
 **Duração:** ~4h | **Status:** ✅ SEALED
