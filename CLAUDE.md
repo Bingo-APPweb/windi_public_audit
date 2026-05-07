@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.47.0
-**Sealed:** 2026-05-07 · §246-D3 Mailbox Provisioning Soberano (DID-bound)
+**Version:** 2.48.0
+**Sealed:** 2026-05-07 · §247 Nomenclatura Canónica WINDI (Lei IV)
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -393,6 +393,23 @@ Input → 🛡️ Guardian (valida I1-I9+I11) → 🏗️ Architect (constrói) 
 **DOCUMENTO:** Gera na língua do toggle/wallet. Um documento = uma língua.
 **BABEL TOWER = anti-pattern WINDI (IRREMEDIÁVEL)**
 
+### 3.5 Lei IV — Nomenclatura Canónica (§247)
+
+> **"O vocabulário canónico vincula o agente."**
+
+**Status:** SEALED · **Receipt:** `A3B99EA6` · **Invariants:** I1, I9, I11, I12
+
+| Português | Deutsch | English | Definição |
+|-----------|---------|---------|-----------|
+| **Tijolo** | Baustein | Brick | Componente soberano, DID-bound, reutilizável |
+| **Obra** | Werk | Corpus | Catálogo público de todos os Tijolos/Produtos |
+| **Encaixe** | Verzahnung | Composition | Invocação auditável Produto↔Tijolo |
+| **Selo** | Siegel | Seal | Estado de maturidade (6 níveis) |
+
+**Estados de Selo:** Berçário → Andaime → Vivo → Suspenso → Aposentado
+**Vinculação:** Todo agente IA operando em WINDI usa este vocabulário. Violação bloqueante.
+**Documento:** `/opt/windi/docs/S247-NOMENCLATURA-CANONICA-WINDI.md`
+
 ### §137 — Medium-Agnostic Truth Distribution (IRREMEDIÁVEL)
 
 > **"O medium aponta para a prova. Nunca carrega a prova."**
@@ -610,6 +627,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 07 Mai | **§247** Nomenclatura Canónica WINDI · Lei IV · `A3B99EA6` ✅ |
 | 07 Mai | **§246-D3** Mailbox Provisioning · DID-bound · `F8881FCA` ✅ |
 | 07 Mai | **§246-D2-bis** Institutional Demo Send · welcome@ · `FCF917FE` ✅ |
 | 07 Mai | **§246-D2** Workbench + Pedagogia Visual · 4 Zonas · `59497380` ✅ |
@@ -717,6 +735,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | **ARCH** | `59497380` | §246-D2 Workbench + Pedagogia Visual da Soberania |
 | **ARCH** | `FCF917FE` | §246-D2-bis Institutional Demo Send + Slug Reservation |
 | **ARCH** | `F8881FCA` | §246-D3 Mailbox Provisioning Soberano (DID-bound) |
+| **CONSTITUTION** | `A3B99EA6` | §247 Nomenclatura Canónica WINDI (Lei IV) |
 
 > **Full receipts list:** `CLAUDE-HISTORY.md` § Produtos SEALED
 

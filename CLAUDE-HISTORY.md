@@ -12084,3 +12084,80 @@ chain quebrada — criando registo que parece válido escondendo fractura histó
   pedir revisão a instância diferente quando stakes envolvem selo.
 
 ---
+
+## Sessão 2026-05-07 · §247 Nomenclatura Canónica WINDI (Lei IV)
+
+**Sprint:** §247 · Nomenclatura Canónica
+**Modo:** CCode CLI (opus-4.5) + Claude.ai web (revisão contraditória Guardian)
+**Operador humano:** Human Dragon
+**Separação de poderes:** Architect (redactor) · Guardian (revisor) · Human Dragon (aprovador)
+
+### Documento Constitucional
+- **§247 Nomenclatura Canónica WINDI** — vocabulário trilíngue vinculante
+- **Lei IV:** "O vocabulário canónico vincula o agente"
+- **Escopo:** Toda instância Claude operando em WINDI via skill `windi-session-continuity`
+
+### As Quatro Categorias
+| Português | Deutsch | English | Definição |
+|-----------|---------|---------|-----------|
+| Tijolo | Baustein | Brick | Componente soberano DID-bound |
+| Obra | Werk | Corpus | Catálogo público verificável |
+| Encaixe | Verzahnung | Composition | Invocação Produto↔Tijolo auditável |
+| Selo | Siegel | Seal | Estado de maturidade |
+
+### Os Seis Estados de Selo
+Berçário → Andaime → Vivo → Suspenso → Aposentado
+- Transições monotónicas (sem regressão)
+- Suspenso→Vivo requer acto explícito Human Dragon + receipt
+- Auto-suspensão Anunciado após 90 dias
+
+### Protocolo de Hash (§247.6)
+- **Escopo:** Secções 1-5 (corpo normativo)
+- **Normalização:** UTF-8 LF, sem trailing whitespace, newline final único
+- **Comando canónico:**
+  ```
+  python3 -c "import hashlib; lines=open('file.md').readlines(); 
+  start=next(i for i,l in enumerate(lines) if '## 1. Preâmbulo' in l);
+  end=next(i for i,l in enumerate(lines) if '## 6. Selo' in l);
+  body=''.join(l.rstrip()+'\n' for l in lines[start:end]).rstrip('\n')+'\n';
+  print(hashlib.sha256(body.encode()).hexdigest())"
+  ```
+- **Hash calculado:** `a3b99ea68da83778148f343b2eadd3bae26f9e4aead362ec2ea40d8b8bd853c8`
+
+### Processo de Revisão
+1. v1 draft pelo Architect
+2. Guardian detectou 2 erros GRAVE + 3 MÉDIO
+   - GRAVE: actor usava email em vez de DID
+   - GRAVE: transição Berçário→Anunciado era regressiva
+3. v2 corrigida pelo Architect
+4. Guardian aprovou v2 com "APROVADO"
+5. Human Dragon ordenou execução com 3 salvaguardas operacionais
+
+### Salvaguardas Aplicadas (Guardian)
+1. Confirmação `app` via sqlite3 antes de POST → `windi-governance` (precedente)
+2. Backup skill antes de modificação → skill é sistema (não ficheiro editável)
+3. Sequência de irreversibilidade respeitada → passo 5 (Ledger) irreversível
+
+### Selo Emitido
+| Campo | Valor |
+|-------|-------|
+| Receipt ID | `WINDI-S247-NOMENCLATURA-20260507201003-A3B99EA6` |
+| Actor | `did:windi:dragon-001` |
+| App | `windi-governance` |
+| Doc Type | `audit-bundle` |
+| Governance | HIGH |
+| Invariants | I1, I9, I11, I12 |
+| Content Hash | `sha256:a3b99ea68da83778148f343b2eadd3bae26f9e4aead362ec2ea40d8b8bd853c8` |
+
+### Ficheiros Criados/Modificados
+- `/opt/windi/docs/S247-NOMENCLATURA-CANONICA-WINDI.md` — Documento constitucional
+- `/opt/windi/CLAUDE.md` — v2.47.0→v2.48.0, §3.5 Lei IV, receipts table
+- `/opt/windi/CLAUDE-HISTORY.md` — Esta entrada
+
+### Lições Aprendidas
+- Separação de poderes funciona: "redactor não revê, revisor não redige"
+- Protocolo de hash deve ser declarado ANTES do seal (não depois)
+- Circularidade hash↔receipt evitada por definir escopo explícito (§1-5 vs §6)
+- DID deve existir no Genesis antes de usar como actor (Lei I: existência antes de acção)
+
+---
