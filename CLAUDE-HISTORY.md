@@ -11795,3 +11795,204 @@ CCode propôs "desactivar DNSSEC" como solução rápida. Human Dragon travou:
 
 ---
 
+
+---
+
+## § SESSÃO 07 Mai 2026 — §246 Sprint W-SITES × W-MAIL Bridge (D1-D3)
+
+**Duração:** ~4h | **Status:** ✅ 4/6 ARCHITECTURAL SEALS
+**Liga IA+H:** Human Dragon · Guardian (Claude.ai web) · Architect (CCode Opus 4.5)
+**Invariants:** I1, I9, I11, I12, I14
+**Services:** W-SITES-001, W-MAIL-001, W-DID-GENESIS, Forensic Ledger
+
+### Objectivo
+
+Arquitectura completa da ponte W-SITES × W-MAIL: federated delegation, workbench anónimo, demo institucional, e mailbox provisioning DID-bound.
+
+### §246-D1 · Federated Delegation Light (γ-light)
+
+**Receipt:** `WINDI-S246-D1-DELEGATION-20260507085800-D32AFF47`
+**Ficheiro:** `/opt/windi/sprints/§246-D1-DELEGATION.md`
+
+> *"windisites.de consome delegações, NUNCA emite identidades."*
+
+| Decisão | Cravação |
+|---------|----------|
+| Role W-DID-GENESIS | Emissor Canónico único |
+| Role W-SITES-001 | Consumidor de Delegação (valida JWTs, NUNCA emite) |
+| Token | JWT EdDSA (Ed25519) assinado por WINDI-KEYGEN-001 |
+| TTL `sites:write` | ≤1h (write ops produzem Ledger IRREMEDIÁVEL) |
+| TTL `sites:read` | ≤6h |
+| Refresh cap | 24h absoluto |
+
+### §246-D2 · Workbench + Pedagogia Visual da Soberania
+
+**Receipt:** `WINDI-S246-D2-WORKBENCH-20260507073101-59497380`
+**Ficheiro:** `/opt/windi/sprints/§246-D2-WORKBENCH-PEDAGOGY.md`
+
+> *"Experimentar é livre. Consumar requer DID."*
+
+**4 Zonas:**
+1. **DESCOBERTA** — público, sem state (landing, doctrine, sites publicados)
+2. **EXPERIÊNCIA** — volátil, sessionStorage, TTL 30min, rate limit IP
+3. **WORKBENCH** — anon_drafts.db, workbench_token (NÃO DID), TTL 7d/30d cap
+4. **CONSUMAÇÃO** — DID Gate, JWT D1 obrigatório
+
+**Conversão Workbench→Soberano:** silenciosa e automática quando DID chega.
+
+### §246-D2-bis · Institutional Demo Send + Slug Reservation
+
+**Receipt:** `WINDI-S246-D2-bis-DEMOSEND-20260507074335-FCF917FE`
+**Ficheiro:** `/opt/windi/sprints/§246-D2-bis-INSTITUTIONAL-DEMO.md`
+
+> *"WINDI envia. Anónimo recebe na SUA inbox. Zero mailboxes demo."*
+
+**Insight fundacional:** Em vez de N mailboxes demo (O(N)), UMA conta institucional envia para o email pessoal do utilizador (O(1)).
+
+| Decisão | Cravação |
+|---------|----------|
+| Sender | `welcome@windisites.de` (singleton, não escala com users) |
+| Slug reservation | TTL igual a Workbench D2 (7d/30d) |
+| Anti-abuse | 6 camadas (rate limit, CAPTCHA, blacklist, bounce handling, Sentinel, legal hold) |
+
+### §246-D3 · Mailbox Provisioning Soberano (DID-bound)
+
+**Receipt:** `WINDI-S246-D3-MAILBOX-20260507082308-F8881FCA`
+**Ficheiro:** `/opt/windi/sprints/§246-D3-MAILBOX-PROVISIONING.md`
+
+> *"Sem DID, fantasma. Com DID activo, vida operacional."*
+
+**7 Decisões Cravadas:**
+
+| # | Decisão | Cravação |
+|---|---------|----------|
+| D3.1 | Trigger | Primeira publicação (site + mailbox nascem juntos) |
+| D3.2 | Path | Opção A: `/var/mail/windisites.de/by-did/{did_8}/Maildir/` + symlink by-slug |
+| D3.3 | Atomicidade | Two-phase staging + DB tx + receipt eventual |
+| D3.4 | Handoff | slug→aliases+Maildir atómico |
+| D3.5 | Quota source-of-truth | Dovecot (DB cache observável) |
+| D3.6 | Recovery | 90d retenção + flag `legal_hold` (GDPR + EU AI Act Art.14) |
+| D3.7 | Lifecycle events | 11 distintos com `wallet_id` + `parent_receipt` |
+
+**Quotas tier (invariante autónomo, NÃO §174):**
+- LOW: 100MB
+- MED: 1GB
+- HIGH: 10GB
+
+### Scaffold Pending
+
+- **§246-D4 Rate Limiting** — per-DID quotas · emails/hora · emails/dia
+- **§246-D5 Receipt Symmetry** — formalização (já honrado em D3.7) + UI navegação
+- **§246-IMPL** — desbloqueia quando D5 sealed + 12 smoke tests D3 verdes
+
+### Decisões Constitucionais Preservadas
+
+1. **Path Opção A escolhida** — preserva windi-mailserver Docker healthy 7d + mail-tester 10/10. Refactor para `/var/mail/windi/` rejeitado (ganho meramente estético com risco real).
+
+2. **Quotas D3 como invariante autónomo** — NÃO derivação de §174 (cost accounting). Futura sprint W-MAILBOX-COST-001 fará ligação storage↔custo se monetização decidida.
+
+3. **D2-bis original (Functional Demo Mailbox) DESCARTADO** — arquitectura institucional `welcome@` é canónica.
+
+4. **D5 receipt symmetry já honrado em D3.7** — todos os 11 lifecycle events propagam `wallet_id` + `parent_receipt`. D5 será apenas formalização + UI.
+
+### Próximo Passo
+
+§246-D4 Rate Limiting + per-DID quotas (Opção A: arquitectura linear antes de código).
+
+---
+
+### §246-D4 · Rate Limiting + per-DID Quotas (SEALED)
+
+**Receipt:** `WINDI-S246-D4-RATELIMIT-20260507105150-5D8513D7`
+**Hash:** `sha256:5d8513d7841ad4fcbf2f9150b304b5493c9790b4006b6da174ed79013bafccaf`
+**Ficheiro:** `/opt/windi/sprints/§246-D4-RATE-LIMITING.md`
+
+> *"Rate limiting protege a infraestrutura. Per-DID quotas protegem a comunidade."*
+
+**9 Decisões Cravadas:**
+
+| # | Decisão | Cravação |
+|---|---------|----------|
+| D4.1 | Granularidade | 3 janelas: burst (1min), hourly (1h), daily (24h) |
+| D4.2 | Limites per-tier | LOW: 5/20/50 · MED: 15/100/500 · HIGH: 50/500/2000 |
+| D4.3 | Source-of-truth | Aplicacional (W-SITES-001) |
+| D4.4 | Schema | Tabela `rate_counters` em mailboxes.db |
+| D4.5 | Scope | Outbound only |
+| D4.6 | Anti-abuse | 6 layers D2-bis + 2 novos (L7 rate, L8 bounce storm) |
+| D4.7 | Recovery | DEFER (burst/hourly) → REJECT (daily) · Meia-noite UTC reset |
+| D4.8 | Receipts | 7 event types (DEFER/REJECT/BOUNCE_STORM/CLEARED/OVERRIDE/ESCALATION/POST-ESCALATION) |
+| D4.9 | PHO Override | Máx 10x tier, máx 72h, receipt ANTES de aplicar, escalation trigger ≥3/30d |
+
+**Clarificações adicionadas (Guardian review):**
+- D4.2-bis: Baseline empírico v1.0 (números = parâmetros, estrutura = invariante)
+- D4.7-bis: Reset meia-noite UTC fixo + snippet Python timezone-aware
+- D4.9-bis: 4 perguntas respondidas (quem invoca, receipt timing, escalation, pós-escalation)
+
+**Próximo:** §246-D5 Receipt Symmetry (formalização + UI navegação)
+
+### §246-D5 · Receipt Symmetry — Chain Architecture (SEALED)
+
+**Receipt:** `WINDI-S246-D5-RECEIPTSYM-20260507112305-4CE30817`
+**Hash:** `sha256:4ce308176790db058b1fb93808856f8dcc395c62338cd4ebfa0a2dbf593df87a`
+**Ficheiro:** `/opt/windi/sprints/§246-D5-RECEIPT-SYMMETRY.md`
+
+> *"Toda acção gera prova. Toda prova liga-se a identidade. Toda cadeia termina em génese."*
+
+**10 Decisões Cravadas:**
+
+| # | Decisão | Cravação |
+|---|---------|----------|
+| D5.1 | Schema Canónico | 13 campos obrigatórios + `schema_version` + nota algoritmos |
+| D5.2 | Dual Semântica | `parent_receipt` = causal, `wallet_id` = identitário |
+| D5.3 | Root Receipt | DID genesis = raiz absoluta, **Forest não Tree** |
+| D5.4 | Chain Validation | 6 regras incluindo **Hash Chain Integrity (Merkle)** |
+| D5.5 | Schema Versioning | Retrocompatibilidade absoluta (I11) |
+| D5.6 | Errata Protocol | 3 tipos + authority granular + **Opção B visibility** |
+| D5.7 | Cross-Domain Linking | Mapa DID→Site→Mailbox→Events |
+| D5.8 | Query API | 6 endpoints (D5-IMPL) |
+| D5.9 | Multi-DID | **RESERVED §247+** |
+| D5.10 | UI Navegação | 6 requisitos (D5-IMPL) |
+
+**Ajustes Guardian integrados:**
+- Forest declaration (múltiplas raízes DID, sem patriarca)
+- Regra 6 Hash chain integrity (Merkle chain criptográfica)
+- Errata authority granular (METADATA/CONTEXT/WITHDRAWAL)
+- Errata visibility Opção B (original + erratas anexadas)
+
+**Smoke tests:** 16 testes (T1-T16)
+
+---
+
+## §246 Sprint Completo — 6/6 Selos Arquitecturais
+
+**Status:** ✅ CONSUMADO · 07 Mai 2026
+
+| Selo | Receipt | Descrição |
+|------|---------|-----------|
+| D1 | `D32AFF47` | Federated Delegation Light (γ-light) |
+| D2 | `59497380` | Workbench + Pedagogia Visual |
+| D2-bis | `FCF917FE` | Institutional Demo Send |
+| D3 | `F8881FCA` | Mailbox Provisioning DID-bound |
+| D4 | `5D8513D7` | Rate Limiting + per-DID Quotas |
+| D5 | `4CE30817` | Receipt Symmetry — Chain Architecture |
+
+**Marco constitucional:** Passamos de "decidir o que construir" para "construir o que foi decidido."
+
+**§246-IMPL:** DESBLOQUEADO — aguarda planeamento de implementação (Query API + UI Berçário + 28 smoke tests D3-D5)
+
+**Dívida transitada:** Zero.
+
+---
+
+### Slogan SaaS Cravado — windisites.de
+
+> **"We don't sell websites — we enable accountable digital operations."**
+> — Human Dragon · 07 Mai 2026 · §246 Sprint Closure
+
+**Dois slogans WINDI:**
+- **Institucional:** "AI processes. Human decides. WINDI guarantees."
+- **SaaS (windisites.de):** "We don't sell websites — we enable accountable digital operations."
+
+Complementares, não substitutos. O primeiro fala da Liga IA+H. O segundo fala do produto.
+
+---
