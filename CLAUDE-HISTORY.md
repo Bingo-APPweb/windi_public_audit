@@ -12287,3 +12287,55 @@ Modelo institucional orienta-se para fundação (não-lucrativa, jurisdição a 
 3. Retomar §246-IMPL quando energia permitir
 
 ---
+
+---
+
+## Sessão 2026-05-08 · Verificação Cruzada §248 + doc_type: constitutional
+
+**Sprint:** §248 verificação + dívida técnica
+**Modo:** CCode CLI (Architect) + Claude.ai web (Guardian)
+**Operador humano:** Human Dragon
+**Separação de poderes:** Guardian (revisão) · Architect (execução) · Human Dragon (aprovação)
+
+### Trabalho completado
+
+1. **Verificação cruzada §248 (Lei V)**
+   - Hash calculado: `a0325256c1eff28973c87b25ee6dee5e44ae937b931a277afc81ecab97dae446`
+   - Hash declarado: `a0325256c1eff28973c87b25ee6dee5e44ae937b931a277afc81ecab97dae446`
+   - Match: ✅ TRUE
+
+2. **Resolução dívida doc_type: constitutional**
+   - Patch: `/opt/windi/suite-docs/windi_forensic_api.py:443-446`
+   - `VALID_DOC_TYPES` expandida com `"constitutional"`
+   - Smoke test: `WINDI-TEST-CONSTITUTIONAL-SMOKE-20260508170000` → 200 OK
+
+3. **Primeiro selo doc_type: constitutional emitido**
+   - Auto-referência: o selo de verificação usa o tipo que acabou de ser adicionado
+   - Narrativa forense auto-contida: lei + verificação + infra num único receipt
+
+### Selo emitido
+
+| Campo | Valor |
+|-------|-------|
+| Receipt ID | `WINDI-VERIFICATION-S248-LEI-V-20260508151651` |
+| doc_type | `constitutional` ← **PRIMEIRO DO ECOSSISTEMA** |
+| content_hash | `sha256:c58ce71d131c89c3f48ed6554dde4ca2b76462095384dffff2a1f6fffe76dee6` |
+| parent_receipt_id | `WINDI-S248-FOUNDATION-DIRECTION-20260508110728-A0325256` |
+| governance_level | HIGH |
+
+### Commit
+
+- `206056cb5` — `feat(§248): doc_type: constitutional — primeiro selo do ecossistema`
+
+### Lições aprendidas
+
+- Dívida técnica resolve-se melhor quando o gesto de resolução é também o gesto de verificação
+- O Ledger agora documenta a sua própria expansão usando o tipo que acabou de aceitar
+- Separação Guardian/Architect funcionou: Guardian propôs elegância narrativa, Architect executou
+
+### Próximos passos
+
+- §248 oficialmente fechado
+- §246-IMPL desbloqueado para quando Human Dragon decidir
+- Scaffolds pendentes: §246-Phase5b (Mail System Integration)
+
