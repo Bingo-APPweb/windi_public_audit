@@ -440,9 +440,10 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
 
                 # Validate types
                 # §191: Added service-control types for W-SERVICE-CONTROL restart audit trail
+                # §248: Added constitutional for governance laws (Lei V+)
                 VALID_DOC_TYPES = (
                     "doc", "xlsx", "pptx", "jmpg", "communique", "compliance_passport", "cartaz", "canvas",
-                    "service-restart-initiated", "service-restart-completed", "audit-bundle"
+                    "service-restart-initiated", "service-restart-completed", "audit-bundle", "constitutional"
                 )
                 if r["doc_type"] not in VALID_DOC_TYPES:
                     self._json(400, {
