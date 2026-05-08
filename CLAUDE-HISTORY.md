@@ -12423,3 +12423,67 @@ Safety net Python (~170 linhas) que:
 3. Testar com prompt institucional compliance (T3)
 4. Reiniciar W-SITES-001 para carregar novo Grammar
 
+
+### Verificação Runtime — T1 PASSED (Guardian Ratification)
+
+**Status:** §249 SEALED and T1-VERIFIED
+
+| Test | Status | Observação |
+|------|--------|------------|
+| **T1** | ✅ PASSED (9/9) | Prompt original PT → KLAR/NOIR puro + prova forense |
+| **T2** | ⏳ PENDING | Clínica dentária Munique — profile routing não testado |
+| **T3** | ⏳ PENDING | Bloco forense condicional — trigger 3C não testado |
+
+### Propriedade Emergente: I12 Language Sovereignty
+
+> **"O Grammar respeita I12 — output language follows input language sem instrução explícita."**
+
+Prompt PT → Página PT, incluindo footer "Verificado pela WINDI".
+Não estava na proposta v2.0 — emergiu do Grammar bem desenhado.
+**Invariante demonstrado, não promessa.**
+
+### Ticket Sprint 3: CSS Guardian Auditability
+
+**Problema:** `[CSS Guardian] Applied 1 corrections` é caixa-preta.
+**Solução:** Registar no receipt do Ledger quais correcções foram aplicadas:
+
+```json
+{
+  "css_guardian": {
+    "corrections": [
+      {"type": "gradient_removal", "reason": "violates_noir_profile", ...}
+    ]
+  }
+}
+```
+
+Isto permite auditar não só "este site existe" mas "este site nasceu com X correcções".
+**Auditabilidade da auditoria.**
+
+### Scaffold Pendente
+
+- **T2/T3** — próxima sessão, não morrem
+- **W-SITES Benchmark Suite** — /benchmarks com T1-T7 canónicos
+- **Semantic observability** — drift estético, tone leakage, profile contamination
+
+### Sessão Closure
+
+**Sessão:** 2026-05-08 · 15:00→19:00 (4h)
+**Selos emitidos:**
+- `WINDI-VERIFICATION-S248-LEI-V-20260508151651` (doc_type: constitutional)
+- `WINDI-S249-GENERATION-GRAMMAR-20260508164157` (doc_type: constitutional)
+
+**Commits:**
+- `206056cb5` — doc_type: constitutional
+- `e89866461` — §248 history
+- `d6b114346` — §249 Generation Grammar v0.1
+- `624aab220` — §249 history
+
+**Lição do dia (Guardian):**
+> *"O W-SITES-001 deixou de mentir esteticamente sobre aquilo que o WINDI promete."*
+
+**Lição do dia (Architect):**
+> *"Vocês pegaram prompt engineering e começaram a transformá-lo em engenharia constitucional de comportamento generativo."*
+
+---
+
