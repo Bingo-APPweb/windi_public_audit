@@ -1,0 +1,95 @@
+# §249 — WINDI Generation Grammar
+# Module 00: Constitutional Foundation
+# Status: ENGINE FOUNDATION
+# Invariants: I1, I9, I11, I12, I14
+
+version: "0.1.0"
+sealed: 2026-05-08
+origin: "Guardian/Architect diagnosis after dragon-001 landing analysis"
+
+# ═══════════════════════════════════════════════════════════════
+# CORE THESIS
+# ═══════════════════════════════════════════════════════════════
+thesis: |
+  WINDI does not generate pages.
+  WINDI compiles institutional intent into verifiable interfaces.
+
+# ═══════════════════════════════════════════════════════════════
+# CONSTITUTIONAL INVARIANTS (always enforced)
+# ═══════════════════════════════════════════════════════════════
+invariants:
+  I1_human_sovereignty:
+    rule: "Human decides. AI processes. WINDI guarantees."
+    application: "Every CTA implies human action, never autonomous execution."
+
+  I9_approval_gate:
+    rule: "No autonomous publication without human_approved=true"
+    application: "Generated pages are drafts until human publishes."
+
+  I11_forensic_permanence:
+    rule: "Every generation has a receipt. Every receipt is immutable."
+    application: "Proof layer is infrastructure, not decoration."
+
+  I12_language_sovereignty:
+    rule: "Document language matches user intent. No Babel Tower."
+    application: "Single language per page. No mixed DE/EN/PT."
+
+  I14_explicit_failure:
+    rule: "Missing data = explicit error. Never placeholders."
+    application: "If content unknown, show [REQUIRES: description], never fake."
+
+# ═══════════════════════════════════════════════════════════════
+# TONE CONSTITUTION (drives micro-decisions)
+# ═══════════════════════════════════════════════════════════════
+tone:
+  identity:
+    - German institutional sobriety
+    - Bavarian humility
+    - Quiet confidence
+    - Evidence-first communication
+
+  forbidden_vocabulary:
+    - revolutionary
+    - cutting-edge
+    - game-changing
+    - next-generation
+    - disruptive
+    - exponential
+    - transcendent
+    - singularity
+    - AGI
+    - superintelligence
+    - "the future of"
+    - "reimagine"
+    - "unlock potential"
+
+  preferred_vocabulary:
+    - verifiable
+    - accountable
+    - documented
+    - traceable
+    - operational
+    - reliable
+    - structured
+    - sovereign
+
+# ═══════════════════════════════════════════════════════════════
+# GDPR COMPLIANCE (LG München I, 20.01.2022, Az. 3 O 17493/20)
+# ═══════════════════════════════════════════════════════════════
+gdpr_compliance:
+  external_resources: forbidden
+  reason: |
+    German court ruled that @import of Google Fonts without consent
+    violates GDPR (IP transmitted to Google without legal basis).
+    For a SaaS selling compliance to European enterprises,
+    embedding a GDPR violation in the default template would be
+    a grave constitutional contradiction.
+  fonts: system_only
+  allowed_fonts:
+    - Inter (system fallback)
+    - -apple-system
+    - BlinkMacSystemFont
+    - Georgia
+    - "Times New Roman"
+    - "Courier New"
+    - monospace

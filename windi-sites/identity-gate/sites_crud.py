@@ -59,6 +59,14 @@ VERSION = "v1.0.0"
 import os
 from pathlib import Path
 
+# §249 CSS Guardian — post-processor for KLAR/NOIR enforcement
+try:
+    from css_guardian import guard_html as css_guard_html
+    CSS_GUARDIAN_AVAILABLE = True
+except ImportError:
+    CSS_GUARDIAN_AVAILABLE = False
+    print("[WINDI-SITES] CSS Guardian not available — running without post-processing")
+
 SITES_BASE_PATH = Path("/opt/windi/sites")
 SITES_PUBLIC_URL = "https://windisites.de/sites"
 
@@ -2321,24 +2329,37 @@ class MicrologRequest(BaseModel):
 
 # ═══════════════════════════════════════════════════════════════════════════
 
-SITE_GENERATION_SYSTEM_PROMPT = """Generate a complete HTML page. Output ONLY the raw HTML code.
+# ═══════════════════════════════════════════════════════════════════════════
+# §249 — WINDI Generation Grammar v0.1
+# Load system prompt from modular Grammar files
+# ═══════════════════════════════════════════════════════════════════════════
 
-CRITICAL: Do NOT wrap your response in markdown code blocks. Do NOT use triple backticks.
-Your response must START with the exact characters: <!DOCTYPE html>
-Your response must END with: </html>
-NO explanations before or after. NO markdown. Just the HTML.
+def _load_generation_grammar() -> str:
+    """
+    Load the WINDI Generation Grammar system prompt.
+    Falls back to inline prompt if file not found (I10 graceful degradation).
+    """
+    grammar_path = Path(__file__).parent / "prompts" / "windi-generation-grammar" / "04_system_prompt.md"
+    if grammar_path.exists():
+        content = grammar_path.read_text(encoding="utf-8")
+        # Strip the header comments and extract the prompt body
+        lines = content.split('\n')
+        # Find where the actual prompt starts (after the --- separator)
+        start_idx = 0
+        for i, line in enumerate(lines):
+            if line.strip() == '---':
+                start_idx = i + 1
+                break
+        return '\n'.join(lines[start_idx:])
+    else:
+        # Fallback for I10 resilience
+        return """Generate a complete HTML page with KLAR/NOIR design system.
+Use ONLY these colors: --klar:#F5F0E0, --noir:#080808, --gold:#8B6914.
+NO gradients. NO purple/pink/cyan. Sharp corners (border-radius: 0).
+System fonts only (GDPR compliance). Footer: "Verified by WINDI".
+START with <!DOCTYPE html>, END with </html>. NO markdown."""
 
-REQUIREMENTS:
-1. Include CSS in a <style> tag inside <head>
-2. Modern clean design, good typography
-3. Mobile-responsive layout
-4. Professional color scheme
-5. Semantic HTML5: header, main, section, footer
-6. NO JavaScript
-7. NO external resources - use system fonts only
-8. Footer must say: Verified by WINDI
-
-START YOUR RESPONSE WITH: <!DOCTYPE html>"""
+SITE_GENERATION_SYSTEM_PROMPT = _load_generation_grammar()
 
 
 def extract_html_from_response(response: str) -> str:
@@ -2493,6 +2514,16 @@ async def generate_site_ai(data: GenerateSiteRequest, request: Request):
 
     # ─── Sanitize HTML (XSS prevention) ───────────────────────────────────────
     sanitized_html = sanitize_html(generated_html)
+
+    # ─── §249 CSS Guardian — enforce KLAR/NOIR design system ──────────────────
+    guardian_report = None
+    if CSS_GUARDIAN_AVAILABLE:
+        sanitized_html, guardian_report = css_guard_html(sanitized_html, data.prompt)
+        if guardian_report.get("errors"):
+            # Log but don't block — forensic validation is soft enforcement for now
+            print(f"[CSS Guardian] Warnings: {guardian_report['errors']}")
+        if guardian_report.get("corrections"):
+            print(f"[CSS Guardian] Applied {len(guardian_report['corrections'])} corrections")
 
     # ─── Compute content hash ─────────────────────────────────────────────────
     content_hash = f"sha256:{hashlib.sha256(sanitized_html.encode()).hexdigest()}"
