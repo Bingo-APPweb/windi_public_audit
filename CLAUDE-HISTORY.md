@@ -12339,3 +12339,87 @@ Modelo institucional orienta-se para fundação (não-lucrativa, jurisdição a 
 - §246-IMPL desbloqueado para quando Human Dragon decidir
 - Scaffolds pendentes: §246-Phase5b (Mail System Integration)
 
+
+---
+
+## Sessão 2026-05-08 · §249 WINDI Generation Grammar v0.1 — ENGINE FOUNDATION
+
+**Sprint:** §249 · Generation Grammar
+**Modo:** CCode CLI (Architect) + Claude.ai web (Guardian)
+**Operador humano:** Human Dragon
+**Separação de poderes:** Guardian (design) · Architect (execução) · Human Dragon (aprovação)
+
+### Contexto
+
+Após análise da landing dragon-001 (11ad64c5-...) gerada pelo W-SITES-001 via Ollama,
+diagnóstico revelou que o motor semântico funciona mas o "vestido" estava errado.
+O SITE_GENERATION_SYSTEM_PROMPT original era vago ("Professional color scheme"),
+permitindo ao Mistral:7b regredir para estética SaaS-genérica-2019 (gradientes roxos).
+
+### Tese Central
+
+> **"WINDI não gera páginas. WINDI compila intenção institucional em interfaces verificáveis."**
+
+### Arquitectura Implementada
+
+```
+prompts/windi-generation-grammar/
+├── 00_constitution.yaml    # Invariants, tone, GDPR compliance
+├── 01_design_dna.yaml      # KLAR/NOIR palette, typography, layout
+├── 02_profiles.yaml        # 3 profiles (institutional/local/microlog)
+├── 03_proof_layer.yaml     # Rule 3C (minimal always + full conditional)
+└── 04_system_prompt.md     # Compiled 8165-char prompt
+```
+
+### CSS Guardian (Post-Processor)
+
+Safety net Python (~170 linhas) que:
+- Remove gradients → solid klar
+- Normaliza border-radius → 0
+- Substitui cores proibidas → palette WINDI
+- Injecta CSS canónico com !important
+- Valida requisitos forenses (I11)
+
+### 3 Decisões Seladas
+
+| # | Decisão | Razão |
+|---|---------|-------|
+| #1 | System fonts only | GDPR compliance (LG München 2022, @import sem consentimento) |
+| #2 | Post-processor Sprint 2 | Rede de segurança imediata, não pode esperar |
+| #3C | Forensic minimal always + full conditional | Honestidade institucional (Guardian contra-proposta) |
+
+### 3 Profiles Iniciais
+
+| Profile | Uso | Forensic Mode |
+|---------|-----|---------------|
+| institutional_compliance | Enterprises, compliance, WINDI | full |
+| local_business | Clínicas, restaurantes, lojas | minimal |
+| microlog_publication | Essays, manifestos, crónicas | minimal |
+
+### Selo Emitido
+
+| Campo | Valor |
+|-------|-------|
+| Receipt ID | `WINDI-S249-GENERATION-GRAMMAR-20260508164157` |
+| doc_type | `constitutional` |
+| content_hash | `sha256:b7a4703cba1cd491e4de80b3d055be24023ed23d617933dd577e1f9e7948edf3` |
+| modules | 00_constitution, 01_design_dna, 02_profiles, 03_proof_layer, 04_system_prompt |
+
+### Commit
+
+- `d6b114346` — `feat(§249): WINDI Generation Grammar v0.1 — ENGINE FOUNDATION`
+
+### Lições Aprendidas
+
+- O motor semântico funciona — o problema era ausência de constituição estética
+- "Professional color scheme" é vago demais para Mistral:7b — precisa de valores hex
+- GDPR é razão constitucional para system fonts, não apenas preferência técnica
+- Prova forense é infraestrutura, não decoração (Guardian insight)
+
+### Próximos Passos
+
+1. Testar com prompt original (T1 regression)
+2. Testar com prompt local business (T2)
+3. Testar com prompt institucional compliance (T3)
+4. Reiniciar W-SITES-001 para carregar novo Grammar
+
