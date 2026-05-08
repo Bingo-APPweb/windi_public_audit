@@ -12197,3 +12197,93 @@ Berçário → Andaime → Vivo → Suspenso → Aposentado
 Separação de poderes Architect/Guardian/Human Dragon evitou 2 erros GRAVE no §247 v1.
 
 ---
+
+---
+
+## Sessão 2026-05-08 · §248 Lei V — Foundation Direction
+
+**Sprint:** §248 · Preservação Constitucional da Missão
+**Modo:** CCode CLI (Architect) + Claude.ai web (Guardian)
+**Operador humano:** Human Dragon
+**Separação de poderes:** Guardian (redactor original) · Architect (executor) · Human Dragon (aprovador)
+
+### Contexto
+
+Após manhã de reflexão profunda em dia de tratamento médico, Human Dragon chegou a
+decisão estratégica fundamental: WINDI deixa de ser candidato a SaaS comercial
+clássico e passa a ser declaradamente infraestrutura cívica digital com modelo
+Foundation-like.
+
+O caminho não foi linear:
+1. Sessão iniciou com priorização de sprints (§246-IMPL vs Berlin Demo)
+2. Human Dragon descartou Berlin temporariamente e reorientou para "fechar SaaS"
+3. Pergunta sobre Phase 5b (mailboxes) abriu reflexão mais profunda
+4. Human Dragon foi ao Guardian (Claude.ai web) para triangulação
+5. Guardian identificou que a pergunta verdadeira era sobre natureza do projecto
+6. Instância externa (Espelho Socrático) devolveu análise Proton Foundation
+7. Guardian filtrou ruído e reconduziu para decisão clara
+8. Human Dragon confirmou em palavras próprias: "caminho de fundação seria o mais adequado"
+9. §248 redigido pelo Guardian, revisto pelo Architect, aprovado pelo Human Dragon
+
+### Decisão Constitucional
+
+**§248 — Lei V — Preservação Constitucional da Missão**
+
+WINDI é construído como infraestrutura cívica digital, não como produto comercial
+tradicional. Modelo económico de duas tracks estruturalmente separadas:
+
+- **Track Cívica (FREE permanente):** Alfabetização forense, verificabilidade,
+  nunca monetizada nem instrumentalizada para captação.
+- **Track Institucional (Paga):** Jurídico, saúde, ONGs, academia — receita
+  sustenta missão, não a substitui.
+
+Modelo institucional orienta-se para fundação (não-lucrativa, jurisdição a determinar).
+
+**3 Corolários:**
+- A: Utilizador FREE não é matéria-prima económica
+- B: Vocabulário correcto (FREE=cidadania, Institutional=natureza diferente)
+- C: Estrutura jurídica diferida (ritmo orgânico)
+
+### Selo Emitido
+
+| Campo | Valor |
+|-------|-------|
+| Receipt ID | `WINDI-S248-FOUNDATION-DIRECTION-20260508110728-A0325256` |
+| Actor | `did:windi:dragon-001` |
+| App | `windi-governance` |
+| Doc Type | `audit-bundle` (dívida técnica: tipo `constitutional` não existe) |
+| Content Hash | `sha256:a0325256c1eff28973c87b25ee6dee5e44ae937b931a277afc81ecab97dae446` |
+| Hash Protocol | sections_1_to_5_normalized_utf8_lf (conforme §247.6) |
+
+### Ficheiros Criados/Modificados
+
+- `/opt/windi/docs/S248-LEI-V-FOUNDATION-DIRECTION.md` — Documento constitucional
+- `/opt/windi/CLAUDE.md` — v2.48.0→v2.49.0, §3.6 Lei V, receipts table, histórico
+
+### Dívida Técnica Documentada
+
+1. **doc_type `constitutional`** — Ledger não suporta; usado `audit-bundle` como fallback
+2. **skill windi-payment-sovereignty** — não existe; quando criada, deve referenciar §248
+
+### Dever Herdado
+
+- **Verificação cruzada Guardian** — próxima sessão CCode ou web deve recalcular
+  hash via `git show` + `sha256sum` conforme protocolo §247 Lei IV
+
+### Lições do Dia
+
+> "Decisões constitucionais nascem em caminho não-linear. O trajecto importa."
+
+- Separação de poderes funcionou: Guardian redige, Architect executa, Human Dragon aprova
+- Instância externa (Espelho Socrático) útil para reflexão, não confiável para execução
+- §248 é maior que §247 em consequência prática, embora tecnicamente mais simples
+- Human Dragon fez trabalho constitucional pesado em dia de tratamento — Lei V nasceu
+  com cuidado, não com pressa
+
+### Próximos Passos
+
+1. Descansar (recomendação Guardian + Architect)
+2. Verificação cruzada §248 em próxima sessão
+3. Retomar §246-IMPL quando energia permitir
+
+---

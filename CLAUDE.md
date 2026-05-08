@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.48.0
-**Sealed:** 2026-05-07 · §247 Nomenclatura Canónica WINDI (Lei IV)
+**Version:** 2.49.0
+**Sealed:** 2026-05-08 · §248 Lei V — Foundation Direction · `A0325256`
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -410,6 +410,25 @@ Input → 🛡️ Guardian (valida I1-I9+I11) → 🏗️ Architect (constrói) 
 **Vinculação:** Todo agente IA operando em WINDI usa este vocabulário. Violação bloqueante.
 **Documento:** `/opt/windi/docs/S247-NOMENCLATURA-CANONICA-WINDI.md`
 
+### 3.6 Lei V — Preservação Constitucional da Missão (§248)
+
+> **"WINDI é infraestrutura cívica digital, não produto comercial tradicional."**
+
+**Status:** SEALED · **Receipt:** `A0325256` · **Invariants:** I1, I9, I11, I12
+
+| Track | Descrição |
+|-------|-----------|
+| **Cívica (FREE)** | Alfabetização forense, verificabilidade, sem monetização de utilizador |
+| **Institucional (Paga)** | Jurídico, saúde, ONGs, academia — receita sustenta missão |
+
+**Modelo:** Foundation-like (não-lucrativa, jurisdição a determinar)
+**Corolários:**
+- A: Utilizador FREE não é matéria-prima económica
+- B: FREE = cidadania, Institutional = uso por natureza diferente
+- C: Estrutura jurídica diferida (ritmo orgânico)
+
+**Documento:** `/opt/windi/docs/S248-LEI-V-FOUNDATION-DIRECTION.md`
+
 ### §137 — Medium-Agnostic Truth Distribution (IRREMEDIÁVEL)
 
 > **"O medium aponta para a prova. Nunca carrega a prova."**
@@ -627,6 +646,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 08 Mai | **§248** Lei V — Foundation Direction · `A0325256` ✅ |
 | 07 Mai | **§247** Nomenclatura Canónica WINDI · Lei IV · `A3B99EA6` ✅ |
 | 07 Mai | **§246-D3** Mailbox Provisioning · DID-bound · `F8881FCA` ✅ |
 | 07 Mai | **§246-D2-bis** Institutional Demo Send · welcome@ · `FCF917FE` ✅ |
@@ -736,6 +756,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | **ARCH** | `FCF917FE` | §246-D2-bis Institutional Demo Send + Slug Reservation |
 | **ARCH** | `F8881FCA` | §246-D3 Mailbox Provisioning Soberano (DID-bound) |
 | **CONSTITUTION** | `A3B99EA6` | §247 Nomenclatura Canónica WINDI (Lei IV) |
+| **CONSTITUTION** | `A0325256` | §248 Lei V — Foundation Direction |
 
 > **Full receipts list:** `CLAUDE-HISTORY.md` § Produtos SEALED
 
