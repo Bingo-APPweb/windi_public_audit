@@ -53,6 +53,8 @@ from forensic_ledger import (
     validate_chain_integrity,
     get_receipt_chain,
     get_receipt_children,
+    # §246-IMPL D5.8: Query by wallet
+    get_receipts_by_wallet,
 )
 
 # ═══════════════════════════════════════════════════
@@ -62,6 +64,11 @@ from forensic_ledger import (
 PORT = int(os.environ.get("FORENSIC_API_PORT", "8101"))
 VERSION = "1.0.0"
 SERVICE_NAME = f"WINDI Forensic Ledger API v{VERSION}"
+
+# §246-IMPL: Schema versioning (D5.5)
+# Allows future schema migrations without breaking legacy receipts
+SCHEMA_VERSION_CURRENT = "1.0"
+SCHEMA_VERSION_ACCEPTED = ["1.0"]  # Whitelist; future: ["1.0", "1.1"]
 
 
 # ═══════════════════════════════════════════════════
@@ -263,6 +270,84 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
                 "count": len(children),
             })
 
+        # ── /api/receipts/by-wallet/{wallet_id} — §246-IMPL D5.8 ──
+        elif "/api/receipts/by-wallet/" in path and not path.endswith("/by-wallet/"):
+            # Extract wallet_id from path
+            wallet_id = path.split("/api/receipts/by-wallet/")[1].split("?")[0]
+            if not wallet_id:
+                self._json(400, {"error": "wallet_id required", "code": "MISSING_WALLET_ID"})
+                return
+
+            # Validate wallet_id format (basic check)
+            if not wallet_id.startswith("did:windi:"):
+                self._json(400, {"error": "invalid wallet_id format", "code": "INVALID_WALLET_ID"})
+                return
+
+            # Parse query params
+            try:
+                limit = int(q("limit", "50"))
+                if limit < 1 or limit > 200:
+                    self._json(400, {"error": "limit exceeds max 200", "code": "LIMIT_EXCEEDED"})
+                    return
+            except ValueError:
+                self._json(400, {"error": "invalid limit value", "code": "INVALID_LIMIT"})
+                return
+
+            try:
+                offset = int(q("offset", "0"))
+                if offset < 0:
+                    self._json(400, {"error": "offset must be >= 0", "code": "INVALID_OFFSET"})
+                    return
+            except ValueError:
+                self._json(400, {"error": "invalid offset value", "code": "INVALID_OFFSET"})
+                return
+
+            doc_type = q("doc_type")
+            order = q("order", "desc").lower()
+            if order not in ("asc", "desc"):
+                self._json(400, {"error": "order must be 'asc' or 'desc'", "code": "INVALID_ORDER"})
+                return
+
+            # Parse since/until (ISO 8601 to unix timestamp)
+            since_ts = None
+            until_ts = None
+            since_str = q("since")
+            until_str = q("until")
+
+            if since_str:
+                try:
+                    since_dt = datetime.fromisoformat(since_str.replace("Z", "+00:00"))
+                    since_ts = int(since_dt.timestamp())
+                except ValueError:
+                    self._json(400, {"error": "invalid since format (use ISO 8601)", "code": "INVALID_SINCE"})
+                    return
+
+            if until_str:
+                try:
+                    until_dt = datetime.fromisoformat(until_str.replace("Z", "+00:00"))
+                    until_ts = int(until_dt.timestamp())
+                except ValueError:
+                    self._json(400, {"error": "invalid until format (use ISO 8601)", "code": "INVALID_UNTIL"})
+                    return
+
+            # Validate since < until
+            if since_ts and until_ts and since_ts > until_ts:
+                self._json(400, {"error": "since must precede until", "code": "INVALID_DATE_RANGE"})
+                return
+
+            # Execute query
+            result = get_receipts_by_wallet(
+                wallet_id=wallet_id,
+                limit=limit,
+                offset=offset,
+                doc_type=doc_type,
+                since=since_ts,
+                until=until_ts,
+                order=order
+            )
+
+            self._json(200, {"ok": True, **result})
+
         # ── /api/warroom/summary ──
         elif path == "/api/warroom/summary":
             summary = aggregate_warroom()
@@ -456,6 +541,28 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
                     self._json(400, {
                         "ok": False,
                         "error": f"invalid governance_level: {r['governance_level']}",
+                    })
+                    return
+
+                # ═══════════════════════════════════════════════════
+                # §246-IMPL D5.5: SCHEMA VERSION GATE
+                # Required for all new receipts. Enables future migrations.
+                # ═══════════════════════════════════════════════════
+                schema_version = r.get("schema_version")
+                if not schema_version:
+                    self._json(400, {
+                        "ok": False,
+                        "error": "schema_version is required",
+                        "accepted": SCHEMA_VERSION_ACCEPTED,
+                        "hint": f"Add 'schema_version': '{SCHEMA_VERSION_CURRENT}' to your request",
+                    })
+                    return
+
+                if schema_version not in SCHEMA_VERSION_ACCEPTED:
+                    self._json(400, {
+                        "ok": False,
+                        "error": f"schema_version '{schema_version}' not accepted",
+                        "accepted": SCHEMA_VERSION_ACCEPTED,
                     })
                     return
 
