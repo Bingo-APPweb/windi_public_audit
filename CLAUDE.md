@@ -1,11 +1,12 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.49.0
-**Sealed:** 2026-05-07 · §246 W-SITES × W-MAIL Bridge (6/6 selos arquitecturais)
+**Version:** 2.50.0
+**Sealed:** 2026-05-10 · §249 Sessão Fundacional MANIFESTO + FOUNDATION
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
 > **Ficheiros relacionados:** `CHANGELOG.md` (histórico) · `ARCHITECTURE.md` (código técnico)
+> **Documentos Fundacionais:** `WINDI-MANIFESTO.md` · `FOUNDATION-AS-WINDI-MEANS-IT.md`
 
 ## 📚 Overflow Policy (17 Mar 2026)
 Hard limit: **32KB**. Último fix: 09 Abr 2026 (31.9KB → ~28KB).
@@ -565,6 +566,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 10 Mai | **§249** SESSÃO FUNDACIONAL · MANIFESTO + FOUNDATION · Tese Ontológica IA+H |
 | 07 Mai | **§246** W-SITES × W-MAIL Bridge · 6/6 selos + T7 adversarial · `4CE30817`+`4DD83B15` ✅ |
 | 05 Mai | **§245** Editorial Doctrine · `3C5638F9` ✅ |
 | 03 Mai | **§235+241** windisites.de LIVE · `1BE93BB4` ✅ |
