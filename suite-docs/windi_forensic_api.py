@@ -48,6 +48,13 @@ from forensic_ledger import (
     aggregate_warroom,
     count_receipts,
     DEFAULT_DB_PATH,
+    # T7e: Chain validation (§246-IMPL)
+    validate_parent_receipt,
+    validate_chain_integrity,
+    get_receipt_chain,
+    get_receipt_children,
+    # §246-IMPL D5.8: Query by wallet
+    get_receipts_by_wallet,
 )
 
 # ═══════════════════════════════════════════════════
@@ -57,6 +64,11 @@ from forensic_ledger import (
 PORT = int(os.environ.get("FORENSIC_API_PORT", "8101"))
 VERSION = "1.0.0"
 SERVICE_NAME = f"WINDI Forensic Ledger API v{VERSION}"
+
+# §246-IMPL: Schema versioning (D5.5)
+# Allows future schema migrations without breaking legacy receipts
+SCHEMA_VERSION_CURRENT = "1.0"
+SCHEMA_VERSION_ACCEPTED = ["1.0"]  # Whitelist; future: ["1.0", "1.1"]
 
 
 # ═══════════════════════════════════════════════════
@@ -216,6 +228,125 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
                 self._json(200, {"ok": True, "receipt": r})
             else:
                 self._json(404, {"ok": False, "error": "not_found", "id": receipt_id})
+
+        # ═══════════════════════════════════════════════════
+        # T7e: Chain Validation Endpoints (§246-IMPL)
+        # ═══════════════════════════════════════════════════
+
+        # ── /api/receipts/<id>/validate — Chain integrity check ──
+        elif path.endswith("/validate") and "/api/receipts/" in path:
+            parts = path.split("/")
+            receipt_id = parts[-2]  # /api/receipts/{id}/validate
+            result = validate_chain_integrity(receipt_id)
+            status_code = 200 if result.get("valid") else 409
+            self._json(status_code, {
+                "ok": result.get("valid"),
+                **result,
+                "invariant": "I11",
+                "constitutional_gate": "T7e",
+            })
+
+        # ── /api/receipts/<id>/chain — Get ancestry chain ──
+        elif path.endswith("/chain") and "/api/receipts/" in path:
+            parts = path.split("/")
+            receipt_id = parts[-2]  # /api/receipts/{id}/chain
+            chain = get_receipt_chain(receipt_id)
+            self._json(200, {
+                "ok": True,
+                "receipt_id": receipt_id,
+                "chain": chain,
+                "depth": len(chain),
+            })
+
+        # ── /api/receipts/<id>/children — Get direct children ──
+        elif path.endswith("/children") and "/api/receipts/" in path:
+            parts = path.split("/")
+            receipt_id = parts[-2]  # /api/receipts/{id}/children
+            children = get_receipt_children(receipt_id)
+            self._json(200, {
+                "ok": True,
+                "receipt_id": receipt_id,
+                "children": children,
+                "count": len(children),
+            })
+
+        # ── /api/receipts/by-wallet/{wallet_id} — §246-IMPL D5.8 ──
+        elif "/api/receipts/by-wallet/" in path and not path.endswith("/by-wallet/"):
+            # Extract wallet_id from path
+            wallet_id = path.split("/api/receipts/by-wallet/")[1].split("?")[0]
+            if not wallet_id:
+                self._json(400, {"error": "wallet_id required", "code": "MISSING_WALLET_ID"})
+                return
+
+            # Validate wallet_id format (basic check)
+            if not wallet_id.startswith("did:windi:"):
+                self._json(400, {"error": "invalid wallet_id format", "code": "INVALID_WALLET_ID"})
+                return
+
+            # Parse query params
+            try:
+                limit = int(q("limit", "50"))
+                if limit < 1 or limit > 200:
+                    self._json(400, {"error": "limit exceeds max 200", "code": "LIMIT_EXCEEDED"})
+                    return
+            except ValueError:
+                self._json(400, {"error": "invalid limit value", "code": "INVALID_LIMIT"})
+                return
+
+            try:
+                offset = int(q("offset", "0"))
+                if offset < 0:
+                    self._json(400, {"error": "offset must be >= 0", "code": "INVALID_OFFSET"})
+                    return
+            except ValueError:
+                self._json(400, {"error": "invalid offset value", "code": "INVALID_OFFSET"})
+                return
+
+            doc_type = q("doc_type")
+            order = q("order", "desc").lower()
+            if order not in ("asc", "desc"):
+                self._json(400, {"error": "order must be 'asc' or 'desc'", "code": "INVALID_ORDER"})
+                return
+
+            # Parse since/until (ISO 8601 to unix timestamp)
+            since_ts = None
+            until_ts = None
+            since_str = q("since")
+            until_str = q("until")
+
+            if since_str:
+                try:
+                    since_dt = datetime.fromisoformat(since_str.replace("Z", "+00:00"))
+                    since_ts = int(since_dt.timestamp())
+                except ValueError:
+                    self._json(400, {"error": "invalid since format (use ISO 8601)", "code": "INVALID_SINCE"})
+                    return
+
+            if until_str:
+                try:
+                    until_dt = datetime.fromisoformat(until_str.replace("Z", "+00:00"))
+                    until_ts = int(until_dt.timestamp())
+                except ValueError:
+                    self._json(400, {"error": "invalid until format (use ISO 8601)", "code": "INVALID_UNTIL"})
+                    return
+
+            # Validate since < until
+            if since_ts and until_ts and since_ts > until_ts:
+                self._json(400, {"error": "since must precede until", "code": "INVALID_DATE_RANGE"})
+                return
+
+            # Execute query
+            result = get_receipts_by_wallet(
+                wallet_id=wallet_id,
+                limit=limit,
+                offset=offset,
+                doc_type=doc_type,
+                since=since_ts,
+                until=until_ts,
+                order=order
+            )
+
+            self._json(200, {"ok": True, **result})
 
         # ── /api/warroom/summary ──
         elif path == "/api/warroom/summary":
@@ -393,7 +524,13 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
                     return
 
                 # Validate types
-                if r["doc_type"] not in ("doc", "xlsx", "pptx", "jmpg", "communique", "compliance_passport", "cartaz", "canvas"):
+                # §191: Added service-control types for W-SERVICE-CONTROL restart audit trail
+                # §248: Added constitutional for governance laws (Lei V+)
+                VALID_DOC_TYPES = (
+                    "doc", "xlsx", "pptx", "jmpg", "communique", "compliance_passport", "cartaz", "canvas",
+                    "service-restart-initiated", "service-restart-completed", "audit-bundle", "constitutional"
+                )
+                if r["doc_type"] not in VALID_DOC_TYPES:
                     self._json(400, {
                         "ok": False,
                         "error": f"invalid doc_type: {r['doc_type']}",
@@ -407,12 +544,53 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
                     })
                     return
 
+                # ═══════════════════════════════════════════════════
+                # §246-IMPL D5.5: SCHEMA VERSION GATE
+                # Required for all new receipts. Enables future migrations.
+                # ═══════════════════════════════════════════════════
+                schema_version = r.get("schema_version")
+                if not schema_version:
+                    self._json(400, {
+                        "ok": False,
+                        "error": "schema_version is required",
+                        "accepted": SCHEMA_VERSION_ACCEPTED,
+                        "hint": f"Add 'schema_version': '{SCHEMA_VERSION_CURRENT}' to your request",
+                    })
+                    return
+
+                if schema_version not in SCHEMA_VERSION_ACCEPTED:
+                    self._json(400, {
+                        "ok": False,
+                        "error": f"schema_version '{schema_version}' not accepted",
+                        "accepted": SCHEMA_VERSION_ACCEPTED,
+                    })
+                    return
+
                 # Defaults
                 r.setdefault("created_at", int(time.time()))
                 r.setdefault("status", "sealed")
                 r.setdefault("tags", [])
                 r.setdefault("flags", [])
                 r.setdefault("isp_context", "")
+
+                # ═══════════════════════════════════════════════════
+                # T7e: CHAIN INTEGRITY GATE (§246-IMPL)
+                # Constitutional: Broken chain cannot create future trust
+                # ═══════════════════════════════════════════════════
+                parent_receipt_id = r.get("parent_receipt_id")
+                if parent_receipt_id:
+                    validation = validate_parent_receipt(parent_receipt_id)
+                    if not validation.get("valid"):
+                        self._json(409, {
+                            "ok": False,
+                            "error": "chain_violation",
+                            "code": validation.get("code"),
+                            "message": validation.get("message"),
+                            "invariant": validation.get("invariant", "I11"),
+                            "constitutional": True,
+                            "parent_receipt_id": parent_receipt_id,
+                        })
+                        return
 
                 # TODO: Ed25519 signature verification
                 # if r.get("ed25519_sig") and r.get("ed25519_pub"):

@@ -1,0 +1,103 @@
+# §249 — WINDI Generation Grammar
+# Module 01: Design DNA — KLAR/NOIR System
+# Status: ENGINE FOUNDATION
+
+version: "0.1.0"
+
+# ═══════════════════════════════════════════════════════════════
+# COLOR PALETTE — KLAR/NOIR (mandatory default)
+# ═══════════════════════════════════════════════════════════════
+palette:
+  klar:        "#F5F0E0"    # primary background, warm off-white
+  klar_edge:   "#EBE5D2"    # subtle section divider
+  noir:        "#080808"    # primary text, headers, structural lines
+  noir_soft:   "#2A2A2A"    # secondary text
+  gold:        "#8B6914"    # sole accent, used sparingly: links, key emphasis
+  gold_faint:  "#D4C896"    # gold tint for cards, hovers
+  line:        "#2A2A2A"    # hairlines and borders, max 1px
+
+# ═══════════════════════════════════════════════════════════════
+# TYPOGRAPHY — System Fonts Only (GDPR compliance)
+# ═══════════════════════════════════════════════════════════════
+typography:
+  headings:
+    family: "'Bricolage Grotesque', Georgia, 'Times New Roman', serif"
+    note: "Bricolage only if locally installed; Georgia is the safe fallback"
+  body:
+    family: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif"
+  mono:
+    family: "'JetBrains Mono', 'Courier New', monospace"
+    usage: "forensic blocks, hashes, timestamps, code"
+
+  sizes:
+    h1: "2.5rem"
+    h2: "1.75rem"
+    h3: "1.25rem"
+    body: "1rem"
+    mono: "0.875rem"
+    footer: "0.75rem"
+
+  line_height: 1.65
+  mono_letter_spacing: "0.02em"
+
+# ═══════════════════════════════════════════════════════════════
+# LAYOUT — Institutional Restraint
+# ═══════════════════════════════════════════════════════════════
+layout:
+  max_width: "880px"
+  section_padding_vertical: "4rem"
+  section_padding_horizontal: "2rem"
+  card_padding: "1.5rem"
+  border_radius: 0    # sharp corners — institutional, not playful
+  hairline_width: "1px"
+  hairline_style: "solid"
+
+# ═══════════════════════════════════════════════════════════════
+# PROHIBITED PATTERNS — Will Fail Review
+# ═══════════════════════════════════════════════════════════════
+forbidden:
+  colors:
+    - purple
+    - violet
+    - magenta
+    - pink
+    - cyan
+    - teal
+    - any_gradient
+
+  patterns:
+    - linear-gradient
+    - radial-gradient
+    - colored_icon_circles
+    - emoji_in_headings
+    - drop_shadow_colored
+    - drop_shadow_blur_over_8px
+    - border_radius_on_cards
+    - border_radius_on_buttons
+    - hero_geometric_backgrounds
+    - cta_saturated_colors
+    - animations_over_200ms
+    - bouncing_effects
+    - glassmorphism
+
+  aesthetics:
+    - Bootstrap starter template
+    - Tailwind default components
+    - Webflow/Framer generic
+    - Silicon Valley enthusiasm
+    - Crypto/Web3 aesthetic
+    - Futuristic hype
+
+# ═══════════════════════════════════════════════════════════════
+# CSS VARIABLES (inject at :root)
+# ═══════════════════════════════════════════════════════════════
+css_root: |
+  :root {
+    --klar: #F5F0E0;
+    --klar-edge: #EBE5D2;
+    --noir: #080808;
+    --noir-soft: #2A2A2A;
+    --gold: #8B6914;
+    --gold-faint: #D4C896;
+    --line: #2A2A2A;
+  }

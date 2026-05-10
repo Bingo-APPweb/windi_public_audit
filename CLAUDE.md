@@ -349,6 +349,42 @@ Input → 🛡️ Guardian (valida I1-I9+I11) → 🏗️ Architect (constrói) 
 **DOCUMENTO:** Gera na língua do toggle/wallet. Um documento = uma língua.
 **BABEL TOWER = anti-pattern WINDI (IRREMEDIÁVEL)**
 
+### 3.5 Lei IV — Nomenclatura Canónica (§247)
+
+> **"O vocabulário canónico vincula o agente."**
+
+**Status:** SEALED · **Receipt:** `A3B99EA6` · **Invariants:** I1, I9, I11, I12
+
+| Português | Deutsch | English | Definição |
+|-----------|---------|---------|-----------|
+| **Tijolo** | Baustein | Brick | Componente soberano, DID-bound, reutilizável |
+| **Obra** | Werk | Corpus | Catálogo público de todos os Tijolos/Produtos |
+| **Encaixe** | Verzahnung | Composition | Invocação auditável Produto↔Tijolo |
+| **Selo** | Siegel | Seal | Estado de maturidade (6 níveis) |
+
+**Estados de Selo:** Berçário → Andaime → Vivo → Suspenso → Aposentado
+**Vinculação:** Todo agente IA operando em WINDI usa este vocabulário. Violação bloqueante.
+**Documento:** `/opt/windi/docs/S247-NOMENCLATURA-CANONICA-WINDI.md`
+
+### 3.6 Lei V — Preservação Constitucional da Missão (§248)
+
+> **"WINDI é infraestrutura cívica digital, não produto comercial tradicional."**
+
+**Status:** SEALED · **Receipt:** `A0325256` · **Invariants:** I1, I9, I11, I12
+
+| Track | Descrição |
+|-------|-----------|
+| **Cívica (FREE)** | Alfabetização forense, verificabilidade, sem monetização de utilizador |
+| **Institucional (Paga)** | Jurídico, saúde, ONGs, academia — receita sustenta missão |
+
+**Modelo:** Foundation-like (não-lucrativa, jurisdição a determinar)
+**Corolários:**
+- A: Utilizador FREE não é matéria-prima económica
+- B: FREE = cidadania, Institutional = uso por natureza diferente
+- C: Estrutura jurídica diferida (ritmo orgânico)
+
+**Documento:** `/opt/windi/docs/S248-LEI-V-FOUNDATION-DIRECTION.md`
+
 ### §137 — Medium-Agnostic Truth Distribution (IRREMEDIÁVEL)
 
 > **"O medium aponta para a prova. Nunca carrega a prova."**
@@ -689,3 +725,77 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 *LIGA IA+H — Kempten, Bavaria · 2026*
 *"AI processes. Human decides. WINDI guarantees."*
+
+---
+
+## §236 · Protocolo de Continuidade Inter-Sessão
+
+```
+Status:     SEALED · IRREMEDIÁVEL · I9 (extensão a session boundary)
+Data:       2026-05-04
+Receipt:    WINDI-PROTOCOL-§236-CONTINUITY-20260504
+Autoria:    Human Dragon + Claude.ai web (sessão de diagnóstico)
+Origem:     Após quebra de continuidade em sessão CCode anterior
+```
+
+### Mandato
+
+Toda instância de Claude operando no projecto WINDI — CCode CLI, Claude.ai web, ou qualquer interface futura — deve cumprir as **Três Leis de Continuidade de Sessão** antes de propor qualquer trabalho.
+
+### Lei I — Leitura obrigatória de arranque
+
+Primeira acção de qualquer sessão WINDI:
+
+```bash
+cat /opt/windi/CLAUDE.md
+tail -150 /opt/windi/CLAUDE-HISTORY.md
+```
+
+Sem leitura confirmada por output explícito ao Human Dragon, **modo recusa-de-propor-trabalho**.
+
+### Lei II — Escrita obrigatória de fecho
+
+Toda sessão termina com `cat >> /opt/windi/CLAUDE-HISTORY.md` contendo, no mínimo:
+
+- Data ISO + intervalo horário
+- Sprint actual + modo (CCode / web)
+- Trabalho completado
+- Selos emitidos com receipt IDs
+- Scaffold pending com condição de activação
+- Próximo passo proposto com ficheiros/comandos concretos
+- Blockers identificados
+- Decisões constitucionais com invariante aplicado
+
+**Sem entrada de fecho, sessão não está fechada.** Encerramento abrupto admite stub mínimo (3 linhas + 1 acção crítica) — stub é melhor que silêncio.
+
+### Lei III — Declaração explícita de estado
+
+Output de abertura visível ao Human Dragon deve declarar:
+
+- Ficheiros lidos com intervalo de linhas
+- Sprint actual
+- Último selo emitido
+- Trabalho herdado
+- Scaffold pending
+- Próximo passo herdado
+- Blockers conhecidos
+
+**Só então** pedir instrução. Não antes.
+
+### Enforcement
+
+A SKILL `~/.claude/skills/windi-session-continuity/SKILL.md` implementa o mandato no nível do agente. Carregamento automático por triggers amplos cobrindo qualquer arranque ou fecho de sessão WINDI.
+
+### Anti-Pattern Reconhecido
+
+Este protocolo nasce do reconhecimento explícito de um anti-pattern vivido:
+
+> Sessão CCode de início de Maio 2026 construiu PDT-001, Surface V1, COMMUNIQUÉ.JMPG sobre W-LEXICON-001 em código zero, sem ter lido estado do W-LEXICON-001. Trabalho preservado como scaffold pending — mas reconhecido como prematuro pela própria instância antes do fim da sessão.
+
+§236 garante que padrão não se repete **por estrutura, não por boa-vontade**.
+
+### Genealogia Constitucional
+
+§236 estende I9 (Prohibition of Autonomy Escalation) ao boundary temporal entre sessões LLM. Mesma lógica que governa o DID Berçário aplicada a agente: identidade soberana através do tempo, suportada por leitura e escrita disciplinadas.
+
+§236 é a versão-Claude da Lei I do DID Berçário: *Existência antes de Acção*.

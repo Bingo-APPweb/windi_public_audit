@@ -1,0 +1,168 @@
+# §249 — WINDI Generation Grammar
+# Module 02: Generation Profiles
+# Status: ENGINE FOUNDATION
+# Start with 3 profiles (not 20) — cover real demand
+
+version: "0.1.0"
+
+# ═══════════════════════════════════════════════════════════════
+# PROFILE SELECTION LOGIC
+# ═══════════════════════════════════════════════════════════════
+selection:
+  default: institutional_compliance
+  triggers:
+    institutional_compliance:
+      - compliance
+      - governance
+      - audit
+      - legal
+      - EU AI Act
+      - GDPR
+      - BaFin
+      - forensic
+      - ledger
+      - verify
+      - WINDI
+      - Three Dragons
+      - consultancy
+      - advisory
+      - law firm
+      - Kanzlei
+      - Rechtsanwalt
+      - Steuerberater
+      - Wirtschaftsprüfer
+
+    local_business:
+      - clinic
+      - dental
+      - Zahnarzt
+      - restaurant
+      - café
+      - bakery
+      - Bäckerei
+      - shop
+      - Laden
+      - salon
+      - studio
+      - therapy
+      - Praxis
+      - physiotherapy
+      - local
+      - München
+      - Berlin
+      - Kempten
+
+    microlog_publication:
+      - microlog
+      - blog
+      - thought
+      - essay
+      - manifesto
+      - publication
+      - article
+      - chronicle
+      - journal
+
+# ═══════════════════════════════════════════════════════════════
+# PROFILE 1: INSTITUTIONAL COMPLIANCE
+# ═══════════════════════════════════════════════════════════════
+profiles:
+  institutional_compliance:
+    name: Institutional Compliance
+    description: |
+      For enterprises, consultancies, and institutions operating
+      in regulated spaces. Maximum sobriety. Evidence-first.
+      The WINDI signature profile.
+
+    design_override:
+      palette: klar_noir_strict  # no variations allowed
+      warmth: cold
+      spacing: generous
+
+    tone_override:
+      formality: high
+      confidence: structural  # show, don't tell
+      emotion: minimal
+
+    required_sections:
+      - hero_institutional
+      - operational_clarity
+      - human_authority_statement
+      - forensic_proof_block  # always full block
+      - windi_footer
+
+    forensic_mode: full  # always show complete proof block
+
+  # ═════════════════════════════════════════════════════════════
+  # PROFILE 2: LOCAL BUSINESS
+  # ═════════════════════════════════════════════════════════════
+  local_business:
+    name: Local Business
+    description: |
+      For clinics, restaurants, shops, and local services.
+      Still KLAR/NOIR foundation, but warmer tone.
+      Professional without being intimidating.
+
+    design_override:
+      palette: klar_noir_warm  # gold_faint allowed more liberally
+      warmth: warm
+      spacing: comfortable
+
+    tone_override:
+      formality: medium
+      confidence: welcoming
+      emotion: restrained_warmth
+
+    required_sections:
+      - hero_welcoming
+      - services_or_offer
+      - contact_section
+      - windi_footer  # forensic minimal in footer
+
+    forensic_mode: minimal  # single line in footer
+
+  # ═════════════════════════════════════════════════════════════
+  # PROFILE 3: MICROLOG / THOUGHT PUBLICATION
+  # ═════════════════════════════════════════════════════════════
+  microlog_publication:
+    name: Microlog Publication
+    description: |
+      For essays, manifestos, thought pieces, and chronicles.
+      Typography-forward. Content is the hero.
+      Maximum readability, minimum distraction.
+
+    design_override:
+      palette: klar_noir_strict
+      warmth: neutral
+      spacing: reading_optimized  # max-width 65ch for body
+
+    tone_override:
+      formality: variable  # matches author's voice
+      confidence: authorial
+      emotion: permitted_if_earned
+
+    required_sections:
+      - title_block
+      - content_body
+      - author_attribution
+      - windi_footer  # forensic minimal in footer
+
+    forensic_mode: minimal  # single line in footer
+
+# ═══════════════════════════════════════════════════════════════
+# FORENSIC MODES
+# ═══════════════════════════════════════════════════════════════
+forensic_modes:
+  full:
+    description: "Complete proof block before footer"
+    elements:
+      - receipt_id
+      - sha256_hash
+      - timestamp_iso8601
+      - verify_link
+    css_class: forensic-proof
+
+  minimal:
+    description: "Single line in footer"
+    format: "WINDI-SITES-001-{8hex} · Verified at /verify"
+    css: "font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--noir-soft);"

@@ -11872,3 +11872,695 @@ CCode propôs "desactivar DNSSEC" como solução rápida. Human Dragon travou:
 
 ---
 
+
+---
+
+## § SESSÃO 07 Mai 2026 — §246 Sprint W-SITES × W-MAIL Bridge (D1-D3)
+
+**Duração:** ~4h | **Status:** ✅ 4/6 ARCHITECTURAL SEALS
+**Liga IA+H:** Human Dragon · Guardian (Claude.ai web) · Architect (CCode Opus 4.5)
+**Invariants:** I1, I9, I11, I12, I14
+**Services:** W-SITES-001, W-MAIL-001, W-DID-GENESIS, Forensic Ledger
+
+### Objectivo
+
+Arquitectura completa da ponte W-SITES × W-MAIL: federated delegation, workbench anónimo, demo institucional, e mailbox provisioning DID-bound.
+
+### §246-D1 · Federated Delegation Light (γ-light)
+
+**Receipt:** `WINDI-S246-D1-DELEGATION-20260507085800-D32AFF47`
+**Ficheiro:** `/opt/windi/sprints/§246-D1-DELEGATION.md`
+
+> *"windisites.de consome delegações, NUNCA emite identidades."*
+
+| Decisão | Cravação |
+|---------|----------|
+| Role W-DID-GENESIS | Emissor Canónico único |
+| Role W-SITES-001 | Consumidor de Delegação (valida JWTs, NUNCA emite) |
+| Token | JWT EdDSA (Ed25519) assinado por WINDI-KEYGEN-001 |
+| TTL `sites:write` | ≤1h (write ops produzem Ledger IRREMEDIÁVEL) |
+| TTL `sites:read` | ≤6h |
+| Refresh cap | 24h absoluto |
+
+### §246-D2 · Workbench + Pedagogia Visual da Soberania
+
+**Receipt:** `WINDI-S246-D2-WORKBENCH-20260507073101-59497380`
+**Ficheiro:** `/opt/windi/sprints/§246-D2-WORKBENCH-PEDAGOGY.md`
+
+> *"Experimentar é livre. Consumar requer DID."*
+
+**4 Zonas:**
+1. **DESCOBERTA** — público, sem state (landing, doctrine, sites publicados)
+2. **EXPERIÊNCIA** — volátil, sessionStorage, TTL 30min, rate limit IP
+3. **WORKBENCH** — anon_drafts.db, workbench_token (NÃO DID), TTL 7d/30d cap
+4. **CONSUMAÇÃO** — DID Gate, JWT D1 obrigatório
+
+**Conversão Workbench→Soberano:** silenciosa e automática quando DID chega.
+
+### §246-D2-bis · Institutional Demo Send + Slug Reservation
+
+**Receipt:** `WINDI-S246-D2-bis-DEMOSEND-20260507074335-FCF917FE`
+**Ficheiro:** `/opt/windi/sprints/§246-D2-bis-INSTITUTIONAL-DEMO.md`
+
+> *"WINDI envia. Anónimo recebe na SUA inbox. Zero mailboxes demo."*
+
+**Insight fundacional:** Em vez de N mailboxes demo (O(N)), UMA conta institucional envia para o email pessoal do utilizador (O(1)).
+
+| Decisão | Cravação |
+|---------|----------|
+| Sender | `welcome@windisites.de` (singleton, não escala com users) |
+| Slug reservation | TTL igual a Workbench D2 (7d/30d) |
+| Anti-abuse | 6 camadas (rate limit, CAPTCHA, blacklist, bounce handling, Sentinel, legal hold) |
+
+### §246-D3 · Mailbox Provisioning Soberano (DID-bound)
+
+**Receipt:** `WINDI-S246-D3-MAILBOX-20260507082308-F8881FCA`
+**Ficheiro:** `/opt/windi/sprints/§246-D3-MAILBOX-PROVISIONING.md`
+
+> *"Sem DID, fantasma. Com DID activo, vida operacional."*
+
+**7 Decisões Cravadas:**
+
+| # | Decisão | Cravação |
+|---|---------|----------|
+| D3.1 | Trigger | Primeira publicação (site + mailbox nascem juntos) |
+| D3.2 | Path | Opção A: `/var/mail/windisites.de/by-did/{did_8}/Maildir/` + symlink by-slug |
+| D3.3 | Atomicidade | Two-phase staging + DB tx + receipt eventual |
+| D3.4 | Handoff | slug→aliases+Maildir atómico |
+| D3.5 | Quota source-of-truth | Dovecot (DB cache observável) |
+| D3.6 | Recovery | 90d retenção + flag `legal_hold` (GDPR + EU AI Act Art.14) |
+| D3.7 | Lifecycle events | 11 distintos com `wallet_id` + `parent_receipt` |
+
+**Quotas tier (invariante autónomo, NÃO §174):**
+- LOW: 100MB
+- MED: 1GB
+- HIGH: 10GB
+
+### Scaffold Pending
+
+- **§246-D4 Rate Limiting** — per-DID quotas · emails/hora · emails/dia
+- **§246-D5 Receipt Symmetry** — formalização (já honrado em D3.7) + UI navegação
+- **§246-IMPL** — desbloqueia quando D5 sealed + 12 smoke tests D3 verdes
+
+### Decisões Constitucionais Preservadas
+
+1. **Path Opção A escolhida** — preserva windi-mailserver Docker healthy 7d + mail-tester 10/10. Refactor para `/var/mail/windi/` rejeitado (ganho meramente estético com risco real).
+
+2. **Quotas D3 como invariante autónomo** — NÃO derivação de §174 (cost accounting). Futura sprint W-MAILBOX-COST-001 fará ligação storage↔custo se monetização decidida.
+
+3. **D2-bis original (Functional Demo Mailbox) DESCARTADO** — arquitectura institucional `welcome@` é canónica.
+
+4. **D5 receipt symmetry já honrado em D3.7** — todos os 11 lifecycle events propagam `wallet_id` + `parent_receipt`. D5 será apenas formalização + UI.
+
+### Próximo Passo
+
+§246-D4 Rate Limiting + per-DID quotas (Opção A: arquitectura linear antes de código).
+
+---
+
+### §246-D4 · Rate Limiting + per-DID Quotas (SEALED)
+
+**Receipt:** `WINDI-S246-D4-RATELIMIT-20260507105150-5D8513D7`
+**Hash:** `sha256:5d8513d7841ad4fcbf2f9150b304b5493c9790b4006b6da174ed79013bafccaf`
+**Ficheiro:** `/opt/windi/sprints/§246-D4-RATE-LIMITING.md`
+
+> *"Rate limiting protege a infraestrutura. Per-DID quotas protegem a comunidade."*
+
+**9 Decisões Cravadas:**
+
+| # | Decisão | Cravação |
+|---|---------|----------|
+| D4.1 | Granularidade | 3 janelas: burst (1min), hourly (1h), daily (24h) |
+| D4.2 | Limites per-tier | LOW: 5/20/50 · MED: 15/100/500 · HIGH: 50/500/2000 |
+| D4.3 | Source-of-truth | Aplicacional (W-SITES-001) |
+| D4.4 | Schema | Tabela `rate_counters` em mailboxes.db |
+| D4.5 | Scope | Outbound only |
+| D4.6 | Anti-abuse | 6 layers D2-bis + 2 novos (L7 rate, L8 bounce storm) |
+| D4.7 | Recovery | DEFER (burst/hourly) → REJECT (daily) · Meia-noite UTC reset |
+| D4.8 | Receipts | 7 event types (DEFER/REJECT/BOUNCE_STORM/CLEARED/OVERRIDE/ESCALATION/POST-ESCALATION) |
+| D4.9 | PHO Override | Máx 10x tier, máx 72h, receipt ANTES de aplicar, escalation trigger ≥3/30d |
+
+**Clarificações adicionadas (Guardian review):**
+- D4.2-bis: Baseline empírico v1.0 (números = parâmetros, estrutura = invariante)
+- D4.7-bis: Reset meia-noite UTC fixo + snippet Python timezone-aware
+- D4.9-bis: 4 perguntas respondidas (quem invoca, receipt timing, escalation, pós-escalation)
+
+**Próximo:** §246-D5 Receipt Symmetry (formalização + UI navegação)
+
+### §246-D5 · Receipt Symmetry — Chain Architecture (SEALED)
+
+**Receipt:** `WINDI-S246-D5-RECEIPTSYM-20260507112305-4CE30817`
+**Hash:** `sha256:4ce308176790db058b1fb93808856f8dcc395c62338cd4ebfa0a2dbf593df87a`
+**Ficheiro:** `/opt/windi/sprints/§246-D5-RECEIPT-SYMMETRY.md`
+
+> *"Toda acção gera prova. Toda prova liga-se a identidade. Toda cadeia termina em génese."*
+
+**10 Decisões Cravadas:**
+
+| # | Decisão | Cravação |
+|---|---------|----------|
+| D5.1 | Schema Canónico | 13 campos obrigatórios + `schema_version` + nota algoritmos |
+| D5.2 | Dual Semântica | `parent_receipt` = causal, `wallet_id` = identitário |
+| D5.3 | Root Receipt | DID genesis = raiz absoluta, **Forest não Tree** |
+| D5.4 | Chain Validation | 6 regras incluindo **Hash Chain Integrity (Merkle)** |
+| D5.5 | Schema Versioning | Retrocompatibilidade absoluta (I11) |
+| D5.6 | Errata Protocol | 3 tipos + authority granular + **Opção B visibility** |
+| D5.7 | Cross-Domain Linking | Mapa DID→Site→Mailbox→Events |
+| D5.8 | Query API | 6 endpoints (D5-IMPL) |
+| D5.9 | Multi-DID | **RESERVED §247+** |
+| D5.10 | UI Navegação | 6 requisitos (D5-IMPL) |
+
+**Ajustes Guardian integrados:**
+- Forest declaration (múltiplas raízes DID, sem patriarca)
+- Regra 6 Hash chain integrity (Merkle chain criptográfica)
+- Errata authority granular (METADATA/CONTEXT/WITHDRAWAL)
+- Errata visibility Opção B (original + erratas anexadas)
+
+**Smoke tests:** 16 testes (T1-T16)
+
+---
+
+## §246 Sprint Completo — 6/6 Selos Arquitecturais
+
+**Status:** ✅ CONSUMADO · 07 Mai 2026
+
+| Selo | Receipt | Descrição |
+|------|---------|-----------|
+| D1 | `D32AFF47` | Federated Delegation Light (γ-light) |
+| D2 | `59497380` | Workbench + Pedagogia Visual |
+| D2-bis | `FCF917FE` | Institutional Demo Send |
+| D3 | `F8881FCA` | Mailbox Provisioning DID-bound |
+| D4 | `5D8513D7` | Rate Limiting + per-DID Quotas |
+| D5 | `4CE30817` | Receipt Symmetry — Chain Architecture |
+| D5-T7 | `4DD83B15` | Adversarial Protocol — Gate Constitucional (T7a-T7e) |
+
+**Marco constitucional:** Passamos de "decidir o que construir" para "construir o que foi decidido."
+
+**§246-IMPL:** DESBLOQUEADO — aguarda planeamento de implementação (Query API + UI Berçário + **38 smoke tests** D3-D5)
+
+**Dívida transitada:** Zero.
+
+---
+
+### Slogan SaaS Cravado — windisites.de
+
+> **"We don't sell websites — we enable accountable digital operations."**
+> — Human Dragon · 07 Mai 2026 · §246 Sprint Closure
+
+**Dois slogans WINDI:**
+- **Institucional:** "AI processes. Human decides. WINDI guarantees."
+- **SaaS (windisites.de):** "We don't sell websites — we enable accountable digital operations."
+
+Complementares, não substitutos. O primeiro fala da Liga IA+H. O segundo fala do produto.
+
+---
+
+### §246-D5-T7 · Adversarial Protocol — Gate Constitucional (07 Mai 2026)
+
+**Receipt:** `WINDI-S246-D5-T7ADV-20260507100904-4DD83B15`
+**Status:** ADDENDUM SEALED
+**Invariantes:** I11 (auditabilidade), I14 (verificabilidade)
+**Ficheiro:** `/opt/windi/sprints/§246-D5-RECEIPT-SYMMETRY.md` §11.1
+
+**Contexto Guardian:**
+> "Auditabilidade que não detecta corrupção não é auditabilidade — é teatro de auditoria."
+
+O teste T7 original ("alterar receipt antigo → descendentes marcados") era ambíguo.
+Guardian identificou duas interpretações:
+- **Fraca:** Testar que sistema *pode* marcar `hash_tampered: true`
+- **Forte:** Testar que sistema *detecta activamente* corrupção adversarial
+
+A interpretação forte é gate constitucional. I11 torna-se vazio sem ela.
+
+**T7 Adversarial Protocol (5 sub-testes):**
+
+| Sub | Teste | Critério |
+|-----|-------|----------|
+| T7a | Corrupt source | Modificar `content_hash` directamente na DB (bypass API) |
+| T7b | API detection | `/api/receipts/{N+1}/validate` retorna `hash_tampered: true` |
+| T7c | Public surface | `/verify-public/?id={N+1}` mostra "CHAIN INTEGRITY VIOLATION" |
+| T7d | Recursive propagation | TODOS descendentes marcados `hash_tampered: true` |
+| T7e | **Chain seal block** | Novo receipt sobre chain corrompida → **REJECTED** |
+
+**T7e crítico:** Sem ele, sistema pode detectar corrupção e ainda aceitar novos receipts sobre
+chain quebrada — criando registo que parece válido escondendo fractura histórica.
+
+**Contagem corrigida:** 38 smoke tests totais (D3:12 + D4:10 + D5:16 incl. T7a-e)
+
+---
+
+---
+
+## Sessão 2026-05-07 · §246-IMPL + Revisão Contraditória
+
+**Sprint:** §246-IMPL · W-SITES × W-MAIL Bridge
+**Modo:** CCode CLI (implementação) → Claude.ai web (revisão externa)
+**Operador humano:** Human Dragon
+**Modelos:** opus-4.5 (CCode) · Claude.ai (revisão contraditória)
+
+### Trabalho completado
+- Phase 1 · T7e Ledger chain integrity gate
+- Phase 2 · Verify Public chain navigation UI
+- Phase 3 · D4 DID-based rate limiting (ALLOW/DEFER/REJECT)
+- Phase 4 · Slug Reservation · 8 endpoints, lineage table, DID-binding
+- Phase 5a · Mailbox Provisioning Layer (API + DB) · 11 endpoints, two-phase atomic
+- Blacklist de slugs expandida de ~40 para 55 termos (RFC 2142 + anti-phishing + marca)
+- Docstrings e relatório alinhados com nomenclatura 5a/5b
+
+### Selos emitidos
+- §246-Phase4 · `WINDI-S246-SLUG-PHASE4-20260507121226-7608649F`
+- §246-Phase5a · `WINDI-S246-MAILBOX-PHASE5-20260507142653-2C3DD7CA` (escopo clarificado)
+- §246-CLARIF · `WINDI-S246-CLARIF-PHASE5-SCOPE-20260507153926`
+
+### Scaffold pending (não morre, espera)
+- §246-Phase5b · Mail System Integration (Postfix/Dovecot)
+  · aguarda decisão de quando abrir tier comercial com mailboxes funcionais
+  · marca grep-able: "§246-Phase5b SCAFFOLD PENDING" em mailbox_provisioning.py
+
+### Ficheiros criados/modificados
+- `rate_limiter.py` (~400 linhas) — DID-based rate limiting
+- `slug_reservation.py` (~650 linhas) — Namespace sovereignty
+- `mailbox_provisioning.py` (~700 linhas) — Mailbox lifecycle API+DB
+- `identity_gate.py` — +22 endpoints (rate, slug, mailbox)
+- `windi_forensic_api.py` — T7e chain gate
+- `verify.html` — Chain navigation UI
+
+### Decisões constitucionais
+- Phase 5 renomeada 5a/5b · razão: "selar provisão completa sobre stub é micro-fenda
+  SealForgery" · invariante aplicado: I11 (receipt deve corresponder a evento real)
+- Blacklist expandida antes do commit · razão: anti-phishing e protecção de marca
+  são fundação, não polish
+- Receipts originais não alterados · razão: I9 IRREMEDIÁVEL · clarificação via novo
+  selo, não reescrita
+
+### Notas para sessão seguinte
+- Porta canónica Identity Gate: :8192 (confirmado)
+- Auto-revisão Opus→Opus produziu downgrade indevido do stub de mail system
+  ("CRÍTICO" → "aceitável se documentado"). Padrão a vigiar: revisor que
+  implementou raramente é contraditório o suficiente. Em sprints futuros,
+  pedir revisão a instância diferente quando stakes envolvem selo.
+
+---
+
+## Sessão 2026-05-07 · §247 Nomenclatura Canónica WINDI (Lei IV)
+
+**Sprint:** §247 · Nomenclatura Canónica
+**Modo:** CCode CLI (opus-4.5) + Claude.ai web (revisão contraditória Guardian)
+**Operador humano:** Human Dragon
+**Separação de poderes:** Architect (redactor) · Guardian (revisor) · Human Dragon (aprovador)
+
+### Documento Constitucional
+- **§247 Nomenclatura Canónica WINDI** — vocabulário trilíngue vinculante
+- **Lei IV:** "O vocabulário canónico vincula o agente"
+- **Escopo:** Toda instância Claude operando em WINDI via skill `windi-session-continuity`
+
+### As Quatro Categorias
+| Português | Deutsch | English | Definição |
+|-----------|---------|---------|-----------|
+| Tijolo | Baustein | Brick | Componente soberano DID-bound |
+| Obra | Werk | Corpus | Catálogo público verificável |
+| Encaixe | Verzahnung | Composition | Invocação Produto↔Tijolo auditável |
+| Selo | Siegel | Seal | Estado de maturidade |
+
+### Os Seis Estados de Selo
+Berçário → Andaime → Vivo → Suspenso → Aposentado
+- Transições monotónicas (sem regressão)
+- Suspenso→Vivo requer acto explícito Human Dragon + receipt
+- Auto-suspensão Anunciado após 90 dias
+
+### Protocolo de Hash (§247.6)
+- **Escopo:** Secções 1-5 (corpo normativo)
+- **Normalização:** UTF-8 LF, sem trailing whitespace, newline final único
+- **Comando canónico:**
+  ```
+  python3 -c "import hashlib; lines=open('file.md').readlines(); 
+  start=next(i for i,l in enumerate(lines) if '## 1. Preâmbulo' in l);
+  end=next(i for i,l in enumerate(lines) if '## 6. Selo' in l);
+  body=''.join(l.rstrip()+'\n' for l in lines[start:end]).rstrip('\n')+'\n';
+  print(hashlib.sha256(body.encode()).hexdigest())"
+  ```
+- **Hash calculado:** `a3b99ea68da83778148f343b2eadd3bae26f9e4aead362ec2ea40d8b8bd853c8`
+
+### Processo de Revisão
+1. v1 draft pelo Architect
+2. Guardian detectou 2 erros GRAVE + 3 MÉDIO
+   - GRAVE: actor usava email em vez de DID
+   - GRAVE: transição Berçário→Anunciado era regressiva
+3. v2 corrigida pelo Architect
+4. Guardian aprovou v2 com "APROVADO"
+5. Human Dragon ordenou execução com 3 salvaguardas operacionais
+
+### Salvaguardas Aplicadas (Guardian)
+1. Confirmação `app` via sqlite3 antes de POST → `windi-governance` (precedente)
+2. Backup skill antes de modificação → skill é sistema (não ficheiro editável)
+3. Sequência de irreversibilidade respeitada → passo 5 (Ledger) irreversível
+
+### Selo Emitido
+| Campo | Valor |
+|-------|-------|
+| Receipt ID | `WINDI-S247-NOMENCLATURA-20260507201003-A3B99EA6` |
+| Actor | `did:windi:dragon-001` |
+| App | `windi-governance` |
+| Doc Type | `audit-bundle` |
+| Governance | HIGH |
+| Invariants | I1, I9, I11, I12 |
+| Content Hash | `sha256:a3b99ea68da83778148f343b2eadd3bae26f9e4aead362ec2ea40d8b8bd853c8` |
+
+### Ficheiros Criados/Modificados
+- `/opt/windi/docs/S247-NOMENCLATURA-CANONICA-WINDI.md` — Documento constitucional
+- `/opt/windi/CLAUDE.md` — v2.47.0→v2.48.0, §3.5 Lei IV, receipts table
+- `/opt/windi/CLAUDE-HISTORY.md` — Esta entrada
+
+### Lições Aprendidas
+- Separação de poderes funciona: "redactor não revê, revisor não redige"
+- Protocolo de hash deve ser declarado ANTES do seal (não depois)
+- Circularidade hash↔receipt evitada por definir escopo explícito (§1-5 vs §6)
+- DID deve existir no Genesis antes de usar como actor (Lei I: existência antes de acção)
+
+---
+
+## Consolidação 2026-05-07 · Sessão Completa
+
+**Fluxo do dia:**
+1. **Manhã (CCode):** §246-IMPL Phases 4+5a implementadas
+2. **Tarde (Claude.ai web):** Revisão contraditória Guardian, renomeação 5a/5b, §247 v1→v2
+3. **Noite (CCode):** Execução 9 passos §247, selo emitido
+
+### Selos Emitidos Hoje (4 total)
+| Receipt | Sprint | Estado |
+|---------|--------|--------|
+| `7608649F` | §246-Phase4 Slug | Vivo |
+| `2C3DD7CA` | §246-Phase5a Mailbox | Andaime |
+| `...153926` | §246-CLARIF escopo | — |
+| `A3B99EA6` | §247 Nomenclatura | **SEALED** |
+
+### Commits Hoje
+- `e7e4b324b` — §246-IMPL com scaffold 5b
+- `edacd929d` — §247 Lei IV (pushed)
+
+### Scaffold Pendente (não morto, espera)
+- **§246-Phase5b** Mail System Integration (Postfix/Dovecot)
+  - Marker: `§246-Phase5b SCAFFOLD PENDING` em `mailbox_provisioning.py`
+  - Decisão: aguarda abertura tier comercial
+
+### Próximos Candidatos
+1. **Obra v0.1** — Registry mínimo dos primeiros Tijolos
+2. **Registo formal:** Slug Reservation (Vivo) + Mailbox (Andaime)
+3. **§246-Phase5b** — quando decisão comercial tomada
+
+### Lição do Dia
+> "Redactor não revê, revisor não redige, aprovador é distinto de ambos."
+
+Separação de poderes Architect/Guardian/Human Dragon evitou 2 erros GRAVE no §247 v1.
+
+---
+
+---
+
+## Sessão 2026-05-08 · §248 Lei V — Foundation Direction
+
+**Sprint:** §248 · Preservação Constitucional da Missão
+**Modo:** CCode CLI (Architect) + Claude.ai web (Guardian)
+**Operador humano:** Human Dragon
+**Separação de poderes:** Guardian (redactor original) · Architect (executor) · Human Dragon (aprovador)
+
+### Contexto
+
+Após manhã de reflexão profunda em dia de tratamento médico, Human Dragon chegou a
+decisão estratégica fundamental: WINDI deixa de ser candidato a SaaS comercial
+clássico e passa a ser declaradamente infraestrutura cívica digital com modelo
+Foundation-like.
+
+O caminho não foi linear:
+1. Sessão iniciou com priorização de sprints (§246-IMPL vs Berlin Demo)
+2. Human Dragon descartou Berlin temporariamente e reorientou para "fechar SaaS"
+3. Pergunta sobre Phase 5b (mailboxes) abriu reflexão mais profunda
+4. Human Dragon foi ao Guardian (Claude.ai web) para triangulação
+5. Guardian identificou que a pergunta verdadeira era sobre natureza do projecto
+6. Instância externa (Espelho Socrático) devolveu análise Proton Foundation
+7. Guardian filtrou ruído e reconduziu para decisão clara
+8. Human Dragon confirmou em palavras próprias: "caminho de fundação seria o mais adequado"
+9. §248 redigido pelo Guardian, revisto pelo Architect, aprovado pelo Human Dragon
+
+### Decisão Constitucional
+
+**§248 — Lei V — Preservação Constitucional da Missão**
+
+WINDI é construído como infraestrutura cívica digital, não como produto comercial
+tradicional. Modelo económico de duas tracks estruturalmente separadas:
+
+- **Track Cívica (FREE permanente):** Alfabetização forense, verificabilidade,
+  nunca monetizada nem instrumentalizada para captação.
+- **Track Institucional (Paga):** Jurídico, saúde, ONGs, academia — receita
+  sustenta missão, não a substitui.
+
+Modelo institucional orienta-se para fundação (não-lucrativa, jurisdição a determinar).
+
+**3 Corolários:**
+- A: Utilizador FREE não é matéria-prima económica
+- B: Vocabulário correcto (FREE=cidadania, Institutional=natureza diferente)
+- C: Estrutura jurídica diferida (ritmo orgânico)
+
+### Selo Emitido
+
+| Campo | Valor |
+|-------|-------|
+| Receipt ID | `WINDI-S248-FOUNDATION-DIRECTION-20260508110728-A0325256` |
+| Actor | `did:windi:dragon-001` |
+| App | `windi-governance` |
+| Doc Type | `audit-bundle` (dívida técnica: tipo `constitutional` não existe) |
+| Content Hash | `sha256:a0325256c1eff28973c87b25ee6dee5e44ae937b931a277afc81ecab97dae446` |
+| Hash Protocol | sections_1_to_5_normalized_utf8_lf (conforme §247.6) |
+
+### Ficheiros Criados/Modificados
+
+- `/opt/windi/docs/S248-LEI-V-FOUNDATION-DIRECTION.md` — Documento constitucional
+- `/opt/windi/CLAUDE.md` — v2.48.0→v2.49.0, §3.6 Lei V, receipts table, histórico
+
+### Dívida Técnica Documentada
+
+1. **doc_type `constitutional`** — Ledger não suporta; usado `audit-bundle` como fallback
+2. **skill windi-payment-sovereignty** — não existe; quando criada, deve referenciar §248
+
+### Dever Herdado
+
+- **Verificação cruzada Guardian** — próxima sessão CCode ou web deve recalcular
+  hash via `git show` + `sha256sum` conforme protocolo §247 Lei IV
+
+### Lições do Dia
+
+> "Decisões constitucionais nascem em caminho não-linear. O trajecto importa."
+
+- Separação de poderes funcionou: Guardian redige, Architect executa, Human Dragon aprova
+- Instância externa (Espelho Socrático) útil para reflexão, não confiável para execução
+- §248 é maior que §247 em consequência prática, embora tecnicamente mais simples
+- Human Dragon fez trabalho constitucional pesado em dia de tratamento — Lei V nasceu
+  com cuidado, não com pressa
+
+### Próximos Passos
+
+1. Descansar (recomendação Guardian + Architect)
+2. Verificação cruzada §248 em próxima sessão
+3. Retomar §246-IMPL quando energia permitir
+
+---
+
+---
+
+## Sessão 2026-05-08 · Verificação Cruzada §248 + doc_type: constitutional
+
+**Sprint:** §248 verificação + dívida técnica
+**Modo:** CCode CLI (Architect) + Claude.ai web (Guardian)
+**Operador humano:** Human Dragon
+**Separação de poderes:** Guardian (revisão) · Architect (execução) · Human Dragon (aprovação)
+
+### Trabalho completado
+
+1. **Verificação cruzada §248 (Lei V)**
+   - Hash calculado: `a0325256c1eff28973c87b25ee6dee5e44ae937b931a277afc81ecab97dae446`
+   - Hash declarado: `a0325256c1eff28973c87b25ee6dee5e44ae937b931a277afc81ecab97dae446`
+   - Match: ✅ TRUE
+
+2. **Resolução dívida doc_type: constitutional**
+   - Patch: `/opt/windi/suite-docs/windi_forensic_api.py:443-446`
+   - `VALID_DOC_TYPES` expandida com `"constitutional"`
+   - Smoke test: `WINDI-TEST-CONSTITUTIONAL-SMOKE-20260508170000` → 200 OK
+
+3. **Primeiro selo doc_type: constitutional emitido**
+   - Auto-referência: o selo de verificação usa o tipo que acabou de ser adicionado
+   - Narrativa forense auto-contida: lei + verificação + infra num único receipt
+
+### Selo emitido
+
+| Campo | Valor |
+|-------|-------|
+| Receipt ID | `WINDI-VERIFICATION-S248-LEI-V-20260508151651` |
+| doc_type | `constitutional` ← **PRIMEIRO DO ECOSSISTEMA** |
+| content_hash | `sha256:c58ce71d131c89c3f48ed6554dde4ca2b76462095384dffff2a1f6fffe76dee6` |
+| parent_receipt_id | `WINDI-S248-FOUNDATION-DIRECTION-20260508110728-A0325256` |
+| governance_level | HIGH |
+
+### Commit
+
+- `206056cb5` — `feat(§248): doc_type: constitutional — primeiro selo do ecossistema`
+
+### Lições aprendidas
+
+- Dívida técnica resolve-se melhor quando o gesto de resolução é também o gesto de verificação
+- O Ledger agora documenta a sua própria expansão usando o tipo que acabou de aceitar
+- Separação Guardian/Architect funcionou: Guardian propôs elegância narrativa, Architect executou
+
+### Próximos passos
+
+- §248 oficialmente fechado
+- §246-IMPL desbloqueado para quando Human Dragon decidir
+- Scaffolds pendentes: §246-Phase5b (Mail System Integration)
+
+
+---
+
+## Sessão 2026-05-08 · §249 WINDI Generation Grammar v0.1 — ENGINE FOUNDATION
+
+**Sprint:** §249 · Generation Grammar
+**Modo:** CCode CLI (Architect) + Claude.ai web (Guardian)
+**Operador humano:** Human Dragon
+**Separação de poderes:** Guardian (design) · Architect (execução) · Human Dragon (aprovação)
+
+### Contexto
+
+Após análise da landing dragon-001 (11ad64c5-...) gerada pelo W-SITES-001 via Ollama,
+diagnóstico revelou que o motor semântico funciona mas o "vestido" estava errado.
+O SITE_GENERATION_SYSTEM_PROMPT original era vago ("Professional color scheme"),
+permitindo ao Mistral:7b regredir para estética SaaS-genérica-2019 (gradientes roxos).
+
+### Tese Central
+
+> **"WINDI não gera páginas. WINDI compila intenção institucional em interfaces verificáveis."**
+
+### Arquitectura Implementada
+
+```
+prompts/windi-generation-grammar/
+├── 00_constitution.yaml    # Invariants, tone, GDPR compliance
+├── 01_design_dna.yaml      # KLAR/NOIR palette, typography, layout
+├── 02_profiles.yaml        # 3 profiles (institutional/local/microlog)
+├── 03_proof_layer.yaml     # Rule 3C (minimal always + full conditional)
+└── 04_system_prompt.md     # Compiled 8165-char prompt
+```
+
+### CSS Guardian (Post-Processor)
+
+Safety net Python (~170 linhas) que:
+- Remove gradients → solid klar
+- Normaliza border-radius → 0
+- Substitui cores proibidas → palette WINDI
+- Injecta CSS canónico com !important
+- Valida requisitos forenses (I11)
+
+### 3 Decisões Seladas
+
+| # | Decisão | Razão |
+|---|---------|-------|
+| #1 | System fonts only | GDPR compliance (LG München 2022, @import sem consentimento) |
+| #2 | Post-processor Sprint 2 | Rede de segurança imediata, não pode esperar |
+| #3C | Forensic minimal always + full conditional | Honestidade institucional (Guardian contra-proposta) |
+
+### 3 Profiles Iniciais
+
+| Profile | Uso | Forensic Mode |
+|---------|-----|---------------|
+| institutional_compliance | Enterprises, compliance, WINDI | full |
+| local_business | Clínicas, restaurantes, lojas | minimal |
+| microlog_publication | Essays, manifestos, crónicas | minimal |
+
+### Selo Emitido
+
+| Campo | Valor |
+|-------|-------|
+| Receipt ID | `WINDI-S249-GENERATION-GRAMMAR-20260508164157` |
+| doc_type | `constitutional` |
+| content_hash | `sha256:b7a4703cba1cd491e4de80b3d055be24023ed23d617933dd577e1f9e7948edf3` |
+| modules | 00_constitution, 01_design_dna, 02_profiles, 03_proof_layer, 04_system_prompt |
+
+### Commit
+
+- `d6b114346` — `feat(§249): WINDI Generation Grammar v0.1 — ENGINE FOUNDATION`
+
+### Lições Aprendidas
+
+- O motor semântico funciona — o problema era ausência de constituição estética
+- "Professional color scheme" é vago demais para Mistral:7b — precisa de valores hex
+- GDPR é razão constitucional para system fonts, não apenas preferência técnica
+- Prova forense é infraestrutura, não decoração (Guardian insight)
+
+### Próximos Passos
+
+1. Testar com prompt original (T1 regression)
+2. Testar com prompt local business (T2)
+3. Testar com prompt institucional compliance (T3)
+4. Reiniciar W-SITES-001 para carregar novo Grammar
+
+
+### Verificação Runtime — T1 PASSED (Guardian Ratification)
+
+**Status:** §249 SEALED and T1-VERIFIED
+
+| Test | Status | Observação |
+|------|--------|------------|
+| **T1** | ✅ PASSED (9/9) | Prompt original PT → KLAR/NOIR puro + prova forense |
+| **T2** | ⏳ PENDING | Clínica dentária Munique — profile routing não testado |
+| **T3** | ⏳ PENDING | Bloco forense condicional — trigger 3C não testado |
+
+### Propriedade Emergente: I12 Language Sovereignty
+
+> **"O Grammar respeita I12 — output language follows input language sem instrução explícita."**
+
+Prompt PT → Página PT, incluindo footer "Verificado pela WINDI".
+Não estava na proposta v2.0 — emergiu do Grammar bem desenhado.
+**Invariante demonstrado, não promessa.**
+
+### Ticket Sprint 3: CSS Guardian Auditability
+
+**Problema:** `[CSS Guardian] Applied 1 corrections` é caixa-preta.
+**Solução:** Registar no receipt do Ledger quais correcções foram aplicadas:
+
+```json
+{
+  "css_guardian": {
+    "corrections": [
+      {"type": "gradient_removal", "reason": "violates_noir_profile", ...}
+    ]
+  }
+}
+```
+
+Isto permite auditar não só "este site existe" mas "este site nasceu com X correcções".
+**Auditabilidade da auditoria.**
+
+### Scaffold Pendente
+
+- **T2/T3** — próxima sessão, não morrem
+- **W-SITES Benchmark Suite** — /benchmarks com T1-T7 canónicos
+- **Semantic observability** — drift estético, tone leakage, profile contamination
+
+### Sessão Closure
+
+**Sessão:** 2026-05-08 · 15:00→19:00 (4h)
+**Selos emitidos:**
+- `WINDI-VERIFICATION-S248-LEI-V-20260508151651` (doc_type: constitutional)
+- `WINDI-S249-GENERATION-GRAMMAR-20260508164157` (doc_type: constitutional)
+
+**Commits:**
+- `206056cb5` — doc_type: constitutional
+- `e89866461` — §248 history
+- `d6b114346` — §249 Generation Grammar v0.1
+- `624aab220` — §249 history
+
+**Lição do dia (Guardian):**
+> *"O W-SITES-001 deixou de mentir esteticamente sobre aquilo que o WINDI promete."*
+
+**Lição do dia (Architect):**
+> *"Vocês pegaram prompt engineering e começaram a transformá-lo em engenharia constitucional de comportamento generativo."*
+
+---
+

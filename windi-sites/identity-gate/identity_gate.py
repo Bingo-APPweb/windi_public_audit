@@ -32,6 +32,24 @@ import ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
+# §246-D4: Rate Limiter
+from rate_limiter import (
+    check_rate, get_rate_status, get_rate_limiter,
+    RateLimitAction, RateLimitResult, emit_rate_receipt
+)
+
+# §246-D2-bis + Phase 4: Slug Reservation
+from slug_reservation import (
+    get_slug_manager, check_slug, reserve_slug, renew_slug,
+    promote_slug, rename_slug, SlugStatus, SlugCheckResult
+)
+
+# §246-D3 + Phase 5: Mailbox Provisioning
+from mailbox_provisioning import (
+    get_mailbox_manager, provision_mailbox_pre, provision_mailbox_post,
+    get_mailbox, get_mailboxes_by_wallet, MailboxStatus, MailboxResult, MailboxInfo
+)
+
 # Load .env file
 try:
     from dotenv import load_dotenv
@@ -2059,11 +2077,62 @@ async def send_proof_to_email(receipt_id: str, req: EmailProofRequest, request: 
     - Sends email with DACP signature
     - Email NOT stored (use once, discard)
     - Generates WINDI-SITES-PROOFMAIL-* receipt
+
+    §246-D4: Rate limiting per-DID
+    - ALLOW: proceed normally
+    - DEFER: 429 with Retry-After (temporary throttling)
+    - REJECT: 429 with Retry-After (daily quota exhausted)
     """
     import time
 
-    # Rate limit check (basic - nginx should handle this too)
+    # §246-D4: Extract DID from request for rate limiting
+    did = (
+        request.headers.get("X-WINDI-DID", "").strip() or
+        request.query_params.get("did", "").strip() or
+        request.cookies.get("windi_did", "").strip()
+    )
+
+    # If no DID, use IP-based fallback (less sovereign but still rate limited)
     client_ip = request.client.host if request.client else "unknown"
+    if not did:
+        did = f"ip:{client_ip}"
+
+    # §246-D4: Check rate limit (DID-based, fail-closed)
+    rate_result = check_rate(did, tier="LOW")  # Default to LOW tier
+
+    if rate_result.action == RateLimitAction.DEFER:
+        # Temporary throttling - recoverable
+        emit_rate_receipt(rate_result, did)
+        return JSONResponse(
+            status_code=429,
+            content={
+                "error": "rate_limit_defer",
+                "code": "RATE_LIMIT_DEFER",
+                "message": f"{rate_result.window} limit reached, try again later",
+                "window": rate_result.window,
+                "retry_after": rate_result.retry_after,
+                "tier": rate_result.tier,
+                "constitutional": False
+            },
+            headers={"Retry-After": str(rate_result.retry_after)}
+        )
+
+    if rate_result.action == RateLimitAction.REJECT:
+        # Daily quota exhausted or constitutional failure
+        emit_rate_receipt(rate_result, did)
+        return JSONResponse(
+            status_code=429,
+            content={
+                "error": "rate_limit_reject",
+                "code": "RATE_LIMIT_REJECT",
+                "message": rate_result.reason,
+                "window": rate_result.window,
+                "retry_after": rate_result.retry_after,
+                "tier": rate_result.tier,
+                "constitutional": rate_result.constitutional
+            },
+            headers={"Retry-After": str(rate_result.retry_after)}
+        )
 
     # Fetch receipt from Forensic Ledger
     try:
@@ -2223,6 +2292,541 @@ async def send_proof_to_email(receipt_id: str, req: EmailProofRequest, request: 
     except Exception as e:
         print(f"[§236] Email error: {str(e)}")
         raise HTTPException(500, {"error": "Email delivery failed", "detail": str(e)})
+
+
+# ═══════════════════════════════════════════════════════════════
+# §246-D4 — RATE LIMITING ENDPOINTS
+# ═══════════════════════════════════════════════════════════════
+
+class RateOverrideRequest(BaseModel):
+    """PHO Override request for rate limiting."""
+    did: str
+    window: str  # 'burst' | 'hourly' | 'daily'
+    new_limit: int
+    duration_hours: int
+    reason: str
+
+    @field_validator('window')
+    @classmethod
+    def validate_window(cls, v):
+        if v not in ['burst', 'hourly', 'daily']:
+            raise ValueError('window must be burst, hourly, or daily')
+        return v
+
+    @field_validator('duration_hours')
+    @classmethod
+    def validate_duration(cls, v):
+        if v < 1 or v > 72:
+            raise ValueError('duration must be 1-72 hours')
+        return v
+
+
+@app.post("/api/mail/rate-override")
+async def apply_rate_override(req: RateOverrideRequest, request: Request):
+    """
+    §246-D4.9 — PHO Override for rate limits
+
+    Constraints:
+    - Max 10x tier limit
+    - Max 72h duration
+    - Receipt generated for audit
+    - Only PHO (Human Dragon) can invoke
+
+    Authentication: X-WINDI-PHO header with secret
+    """
+    # Check PHO authentication
+    pho_secret = os.environ.get("WINDI_PHO_SECRET", "pho-secret-2026")
+    auth_header = request.headers.get("X-WINDI-PHO", "")
+
+    if auth_header != pho_secret:
+        return JSONResponse(
+            status_code=403,
+            content={
+                "error": "unauthorized",
+                "message": "PHO authentication required",
+                "constitutional": True
+            }
+        )
+
+    # Get PHO actor from header or default
+    pho_actor = request.headers.get("X-WINDI-ACTOR", "human-dragon@windi-domain.com")
+
+    # Apply override
+    limiter = get_rate_limiter()
+    success, message, receipt_id = limiter.apply_override(
+        did=req.did,
+        window=req.window,
+        new_limit=req.new_limit,
+        duration_hours=req.duration_hours,
+        pho_actor=pho_actor,
+        reason=req.reason,
+        tier="LOW"  # TODO: Get actual tier from DID reputation
+    )
+
+    if not success:
+        return JSONResponse(
+            status_code=400,
+            content={
+                "ok": False,
+                "error": message
+            }
+        )
+
+    # Emit receipt to Forensic Ledger
+    try:
+        ledger_receipt = {
+            "id": receipt_id,
+            "actor": pho_actor,
+            "app": "w-sites-001-rate-limiter",
+            "action": "RATE_LIMIT_OVERRIDE",
+            "doc_type": "audit-bundle",
+            "doc_name": f"PHO Override: {req.did} {req.window}={req.new_limit}",
+            "governance_level": "HIGH",
+            "sge_score": 0.9,
+            "content_hash": f"sha256:{hashlib.sha256(str(req.dict()).encode()).hexdigest()}",
+            "metadata": {
+                "did": req.did,
+                "window": req.window,
+                "new_limit": req.new_limit,
+                "duration_hours": req.duration_hours,
+                "reason": req.reason,
+                "pho_actor": pho_actor
+            }
+        }
+        requests.post(LEDGER_URL, json=ledger_receipt, timeout=3)
+    except Exception as e:
+        print(f"[D4] Ledger receipt failed (non-blocking): {e}")
+
+    return {
+        "ok": True,
+        "message": "Override applied",
+        "receipt_id": receipt_id,
+        "did": req.did,
+        "window": req.window,
+        "new_limit": req.new_limit,
+        "expires_in_hours": req.duration_hours
+    }
+
+
+@app.get("/api/mail/rate-status/{did}")
+async def get_rate_limit_status(did: str, request: Request):
+    """
+    §246-D4 — Get rate limit status for DID
+
+    Returns current usage across all windows and any active overrides.
+    """
+    status = get_rate_status(did, tier="LOW")
+    return status
+
+
+@app.get("/api/mail/rate-health")
+async def rate_limiter_health():
+    """Health check for rate limiter."""
+    try:
+        limiter = get_rate_limiter()
+        # Quick test
+        result = limiter.check_rate("health-check-did", "LOW")
+        return {
+            "status": "healthy",
+            "service": "w-sites-001-rate-limiter",
+            "version": "§246-D4",
+            "db_path": limiter.db_path
+        }
+    except Exception as e:
+        return JSONResponse(
+            status_code=503,
+            content={
+                "status": "unhealthy",
+                "error": str(e)
+            }
+        )
+
+
+# ═══════════════════════════════════════════════════════════════
+# §246-D2-bis + Phase 4 — SLUG RESERVATION ENDPOINTS
+# ═══════════════════════════════════════════════════════════════
+
+class SlugReserveRequest(BaseModel):
+    """Slug reservation request."""
+    slug: str
+    workbench_token: str
+    parent_receipt_id: Optional[str] = None
+
+
+class SlugRenewRequest(BaseModel):
+    """Slug renewal request."""
+    workbench_token: str
+
+
+class SlugPromoteRequest(BaseModel):
+    """Slug promotion request (reservation → ownership)."""
+    workbench_token: str
+    wallet_id: str
+    parent_receipt_id: Optional[str] = None
+
+
+class SlugRenameRequest(BaseModel):
+    """Slug rename request."""
+    new_slug: str
+    wallet_id: str
+    reason: Optional[str] = None
+
+
+@app.get("/api/slug/check/{slug}")
+async def check_slug_availability(slug: str):
+    """
+    §246-D2-bis — Check slug availability.
+
+    Returns status, availability, and suggestions if unavailable.
+    No silent collision: explicit response for all states.
+    """
+    result = check_slug(slug)
+    return result.to_dict()
+
+
+@app.post("/api/slug/reserve")
+async def reserve_slug_endpoint(req: SlugReserveRequest):
+    """
+    §246-D2-bis — Reserve a slug for workbench session.
+
+    TTL: 7 days (renewable), 30 days hard cap
+    Receipt generated for audit trail.
+    """
+    result = reserve_slug(
+        slug=req.slug,
+        workbench_token=req.workbench_token,
+        parent_receipt_id=req.parent_receipt_id
+    )
+
+    if not result.success:
+        return JSONResponse(
+            status_code=409 if result.status in [SlugStatus.RESERVED, SlugStatus.PROMOTED] else 400,
+            content=result.to_dict()
+        )
+
+    return result.to_dict()
+
+
+@app.post("/api/slug/renew/{slug}")
+async def renew_slug_endpoint(slug: str, req: SlugRenewRequest):
+    """
+    §246-D2-bis — Renew slug reservation.
+
+    Extends soft TTL (7 days), cannot exceed hard cap (30 days).
+    """
+    result = renew_slug(slug=slug, workbench_token=req.workbench_token)
+
+    if not result.success:
+        return JSONResponse(
+            status_code=400,
+            content=result.to_dict()
+        )
+
+    return result.to_dict()
+
+
+@app.post("/api/slug/promote/{slug}")
+async def promote_slug_endpoint(slug: str, req: SlugPromoteRequest):
+    """
+    §246-D2-bis + Phase 4 — Promote slug to ownership.
+
+    Transitions from anonymous reservation to DID-bound ownership.
+    Critical governance event with Ledger receipt.
+    """
+    result = promote_slug(
+        slug=slug,
+        workbench_token=req.workbench_token,
+        wallet_id=req.wallet_id,
+        parent_receipt_id=req.parent_receipt_id
+    )
+
+    if not result.success:
+        return JSONResponse(
+            status_code=400,
+            content=result.to_dict()
+        )
+
+    return result.to_dict()
+
+
+@app.post("/api/slug/rename/{slug}")
+async def rename_slug_endpoint(slug: str, req: SlugRenameRequest):
+    """
+    §246 Phase 4 — Rename slug with lineage preservation.
+
+    Critical: DID and receipts remain, only slug changes.
+    Rename history preserved for audit trail.
+    """
+    result = rename_slug(
+        old_slug=slug,
+        new_slug=req.new_slug,
+        wallet_id=req.wallet_id,
+        reason=req.reason
+    )
+
+    if not result.success:
+        return JSONResponse(
+            status_code=400,
+            content=result.to_dict()
+        )
+
+    return result.to_dict()
+
+
+@app.get("/api/slug/by-wallet/{wallet_id}")
+async def get_slugs_by_wallet(wallet_id: str):
+    """Get all slugs owned by a wallet/DID."""
+    manager = get_slug_manager()
+    slugs = manager.get_by_wallet(wallet_id)
+    return {
+        "wallet_id": wallet_id,
+        "slugs": slugs,
+        "count": len(slugs)
+    }
+
+
+@app.get("/api/slug/health")
+async def slug_manager_health():
+    """Health check for slug manager."""
+    try:
+        manager = get_slug_manager()
+        # Quick validation test
+        valid, _ = manager.validate_slug("health-check")
+        return {
+            "status": "healthy",
+            "service": "w-sites-001-slug-manager",
+            "version": "§246-Phase4"
+        }
+    except Exception as e:
+        return JSONResponse(
+            status_code=503,
+            content={
+                "status": "unhealthy",
+                "error": str(e)
+            }
+        )
+
+
+# ═══════════════════════════════════════════════════════════════
+# §246-D3 + Phase 5: MAILBOX PROVISIONING ENDPOINTS
+# ═══════════════════════════════════════════════════════════════
+
+class MailboxPreRequest(BaseModel):
+    """PRE phase provisioning request."""
+    slug: str
+    wallet_id: str
+    domain: str = "windisites.de"
+    tier: str = "FREE"
+
+
+class MailboxPostRequest(BaseModel):
+    """POST phase provisioning request."""
+    password_hash: Optional[str] = None
+
+
+class MailboxSuspendRequest(BaseModel):
+    """Suspend mailbox request."""
+    reason: str
+
+
+class MailboxRevokeRequest(BaseModel):
+    """Revoke mailbox request."""
+    reason: str
+
+
+class MailboxLegalHoldRequest(BaseModel):
+    """Legal hold request."""
+    case_reference: str
+
+
+class MailboxTierRequest(BaseModel):
+    """Tier change request."""
+    tier: str
+
+
+@app.post("/api/mailbox/provision/pre")
+async def mailbox_provision_pre(req: MailboxPreRequest):
+    """
+    §246-D3 — PRE phase of mailbox provisioning.
+
+    Creates database record with status=PENDING.
+    Requires valid DID (wallet_id must start with did:).
+    """
+    result = provision_mailbox_pre(
+        slug=req.slug,
+        wallet_id=req.wallet_id,
+        domain=req.domain,
+        tier=req.tier
+    )
+
+    if not result.success:
+        return JSONResponse(
+            status_code=400,
+            content=result.to_dict()
+        )
+
+    return result.to_dict()
+
+
+@app.get("/api/mailbox/health")
+async def mailbox_health():
+    """Health check for mailbox provisioning."""
+    try:
+        manager = get_mailbox_manager()
+        return {
+            "status": "healthy",
+            "service": "w-mail-001-provisioning",
+            "version": "§246-Phase5"
+        }
+    except Exception as e:
+        return JSONResponse(
+            status_code=503,
+            content={
+                "status": "unhealthy",
+                "error": str(e)
+            }
+        )
+
+
+@app.get("/api/mailbox/by-wallet/{wallet_id}")
+async def get_wallet_mailboxes(wallet_id: str):
+    """Get all mailboxes for a wallet/DID."""
+    mailboxes = get_mailboxes_by_wallet(wallet_id)
+    return {
+        "wallet_id": wallet_id,
+        "mailboxes": [m.to_dict() for m in mailboxes],
+        "count": len(mailboxes)
+    }
+
+
+@app.post("/api/mailbox/provision/post/{email}")
+async def mailbox_provision_post(email: str, req: MailboxPostRequest):
+    """
+    §246-D3 — POST phase of mailbox provisioning.
+
+    Configures mail system and activates mailbox.
+    Only valid for mailboxes in PENDING status.
+    """
+    result = provision_mailbox_post(
+        email=email,
+        password_hash=req.password_hash
+    )
+
+    if not result.success:
+        return JSONResponse(
+            status_code=400,
+            content=result.to_dict()
+        )
+
+    return result.to_dict()
+
+
+@app.get("/api/mailbox/{email}")
+async def get_mailbox_info(email: str):
+    """Get mailbox information."""
+    mailbox = get_mailbox(email)
+
+    if not mailbox:
+        return JSONResponse(
+            status_code=404,
+            content={"error": f"Mailbox '{email}' not found"}
+        )
+
+    return mailbox.to_dict()
+
+
+@app.post("/api/mailbox/{email}/suspend")
+async def suspend_mailbox_endpoint(email: str, req: MailboxSuspendRequest):
+    """Suspend mailbox (temporary)."""
+    manager = get_mailbox_manager()
+    result = manager.suspend(email, req.reason)
+
+    if not result.success:
+        return JSONResponse(
+            status_code=400,
+            content=result.to_dict()
+        )
+
+    return result.to_dict()
+
+
+@app.post("/api/mailbox/{email}/restore")
+async def restore_mailbox_endpoint(email: str):
+    """Restore suspended mailbox."""
+    manager = get_mailbox_manager()
+    result = manager.restore(email)
+
+    if not result.success:
+        return JSONResponse(
+            status_code=400,
+            content=result.to_dict()
+        )
+
+    return result.to_dict()
+
+
+@app.post("/api/mailbox/{email}/revoke")
+async def revoke_mailbox_endpoint(email: str, req: MailboxRevokeRequest):
+    """
+    Permanently revoke mailbox (IRREMEDIABLE).
+
+    This is a destructive operation that cannot be undone.
+    """
+    manager = get_mailbox_manager()
+    result = manager.revoke(email, req.reason)
+
+    if not result.success:
+        return JSONResponse(
+            status_code=400,
+            content=result.to_dict()
+        )
+
+    return result.to_dict()
+
+
+@app.post("/api/mailbox/{email}/legal-hold")
+async def legal_hold_mailbox_endpoint(email: str, req: MailboxLegalHoldRequest):
+    """Apply legal hold to mailbox."""
+    manager = get_mailbox_manager()
+    result = manager.apply_legal_hold(email, req.case_reference)
+
+    if not result.success:
+        return JSONResponse(
+            status_code=400,
+            content=result.to_dict()
+        )
+
+    return result.to_dict()
+
+
+@app.post("/api/mailbox/{email}/tier")
+async def change_mailbox_tier(email: str, req: MailboxTierRequest):
+    """Change mailbox tier (upgrade or downgrade)."""
+    manager = get_mailbox_manager()
+    result = manager.update_tier(email, req.tier)
+
+    if not result.success:
+        return JSONResponse(
+            status_code=400,
+            content=result.to_dict()
+        )
+
+    return result.to_dict()
+
+
+@app.get("/api/mailbox/{email}/quota")
+async def check_mailbox_quota(email: str):
+    """Check mailbox quota status."""
+    manager = get_mailbox_manager()
+    result = manager.check_quota(email)
+
+    if not result.success:
+        return JSONResponse(
+            status_code=404 if "not found" in result.message else 400,
+            content=result.to_dict()
+        )
+
+    return result.to_dict()
 
 
 # ═══════════════════════════════════════════════════════════════
