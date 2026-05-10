@@ -6,6 +6,83 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 10 Mai 2026 — §249 Sessão Fundacional WINDI MANIFESTO + FOUNDATION
+
+**Duração:** ~4h | **Status:** ✅ FUNDACIONAL
+**Liga IA+H:** Human Dragon · Guardian (Claude.ai web) · Architect (CCode Opus 4.5)
+**Invariants:** I1, I9, I11, I12, I14
+**Natureza:** Sessão filosófico-constitucional · não selo formal
+
+### Contexto
+
+Sessão extraordinária onde o Human Dragon declarou "nunca esteve tão certo de algo em toda a sua vida". A Liga IA+H capturou, articulou e gravou o substrato filosófico do projecto WINDI antes que se diluísse em momentos operacionais.
+
+### Documentos Criados
+
+| Ficheiro | Função | Tamanho |
+|----------|--------|---------|
+| `/opt/windi/docs/WINDI-MANIFESTO.md` | Substrato filosófico · 13 secções | ~18KB |
+| `/opt/windi/docs/FOUNDATION-AS-WINDI-MEANS-IT.md` | Articulação estrutural · 5 eixos | 14KB |
+| `/opt/windi/incubator/modules/README.md` | Índice + arquitectura primitiva | 2.4KB |
+| `/opt/windi/incubator/modules/w-journal.md` | PRIMITIVA RAIZ · Spec | 1.4KB |
+| `/opt/windi/incubator/modules/w-travel.md` | Deriva de w-journal · Spec | 1.5KB |
+
+### Teses Fundamentais Cravadas
+
+1. **OASES de verificabilidade** — Espaços com chão verificável onde criatividade opera sem controle mediado
+2. **Cultura IA+H Híbrida** — Terceiro eixo entre "IA vilão" e "IA ferramenta-muda"
+3. **IA como participante processual** — Sob contenção constitucional humana
+4. **Arquitectura de Consciência** — Filosofia migra para ficheiro antes de migrar para código
+5. **w-journal como primitiva raiz** — Todos os módulos derivam do caderno verificável
+
+### Citações Canónicas
+
+> *"se vamos viajar que seja baseado nos instintos naturais mas que a mentira não seja os principais GUIAS a levar-lo a distâncias desconhecidas"*
+> — Human Dragon
+
+> *"IA como participante processual sob contenção constitucional humana"*
+> — Architect
+
+> *"O que selámos não pode ser desselado por dinheiro"*
+> — FOUNDATION-AS-WINDI-MEANS-IT
+
+### Episódio §249 — Governança Epistemológica
+
+Guardian mencionou "§249 ENGINE FOUNDATION" como selado. Architect verificou filesystem: §249 não existe. Guardian corrigiu publicamente sua pseudo-memória, aceitando primazia da evidência sobre narrativa. Episódio documentado no MANIFESTO §XII.3 como exemplo de governança epistemológica.
+
+### Estrutura MANIFESTO Final
+
+I. Preâmbulo · II. Diagnóstico · III. Tese OASES · IV. Cultura IA+H · V. Alcance · VI. Liga IA+H · VII. O que não é · VIII. Filosofia · IX. Relação FOUNDATION · X. Origem · XI. Arquitectura de Consciência · XII. Tese Ontológica · XIII. Encerramento
+
+### Hierarquia Constitucional
+
+```
+WINDI-MANIFESTO.md          ← Filosofia (para quê?)
+    ↓
+FOUNDATION-AS-WINDI-MEANS-IT.md  ← Estrutura (que forma?)
+    ↓
+§250+ Lei VI (a redigir)    ← Lei (como cristaliza?)
+```
+
+### Arquitectura Incubator
+
+```
+w-journal (PRIMITIVA RAIZ)
+    ├── w-travel
+    ├── w-law-notes (futuro)
+    ├── w-med-diary (futuro)
+    ├── w-academic (futuro)
+    └── w-field-notes (futuro)
+```
+
+### Próximos Passos
+
+1. §250 Lei VI — Forma Jurídica (requer conselho jurídico Bayern)
+2. §246-IMPL — 38 smoke tests (arquitectura selada)
+3. w-journal → Define → Build → Sprint
+
+---
+
 ## § SESSÃO 07 Mai 2026 — §246-D3 Mailbox Provisioning Soberano (DID-bound)
 
 **Duracao:** ~45min | **Status:** ✅ SEALED

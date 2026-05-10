@@ -1,11 +1,12 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.49.0
-**Sealed:** 2026-05-08 · §248 Lei V — Foundation Direction · `A0325256`
+**Version:** 2.50.0
+**Sealed:** 2026-05-10 · §249 Sessão Fundacional MANIFESTO + FOUNDATION
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
 > **Ficheiros relacionados:** `CHANGELOG.md` (histórico) · `ARCHITECTURE.md` (código técnico)
+> **Documentos Fundacionais:** `WINDI-MANIFESTO.md` · `FOUNDATION-AS-WINDI-MEANS-IT.md`
 
 ## 📚 Overflow Policy (17 Mar 2026)
 Hard limit: **32KB**. Último fix: 09 Abr 2026 (31.9KB → ~28KB).
@@ -38,6 +39,10 @@ gate de aprovação humana e prova forense imutável no Ledger.
 
 "AI processes. Human decides. WINDI guarantees."
 ```
+
+**Slogan SaaS (windisites.de):**
+> *"We don't sell websites — we enable accountable digital operations."*
+> — Human Dragon · 07 Mai 2026 · §246 Sprint Closure
 
 **Regra absoluta:** Nunca mencionar nomes de LLMs (Claude, GPT, Gemini, Anthropic, OpenAI)
 em contextos públicos. Usar apenas: Guardian, Architect, Witness.
@@ -97,7 +102,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-TRAVEL-001 | :8126 | I9,I11,I13,G3 | **LIVE** v1.3.0 · Identity Gate · /travel/ · §196 nginx fix · nohup oficial |
 | W-SHELF-001 | :8191 | I9,I11,I13,I14 | **LIVE** v0.3.0 · I9+I14 Dual Enforcement · §199+§200 · 11/11 Tests |
 | W-CMS-001 | :8055 | I9,I11,I14 | **LIVE** · Directus 10 · Ledger Bridge :8056 · Sweeper Timer · §219 Baptism of Externality |
-| W-SITES-001 | :8192 | I1,I9,I11,I12,I14 | **LIVE** v1.2-sprint3 · windisites.de · §243 · Microlog Pilot · Communiqué Builder · `430CD285` |
+| W-SITES-001 | :8192 | I1,I9,I11,I12,I14 | **LIVE** v1.2-sprint3 · windisites.de · §246 6/6+T7adv · Microlog · Communiqué · `4CE30817`+`4DD83B15` |
 | W-MAIL-001 | :25,:587,:993,:8888 | I1,I9,I11,I12,I14 | **LIVE** · Sovereign Email · DACP-v1 · Dual DKIM · SnappyMail · §224-226 |
 | W-OLLAMA-001 | B:11434 | I9,I10,I13 | **LIVE** · Server Gêmeo (85.215.131.0) · mistral:7b · Galho B · §227 |
 | W-LEXICON-001 | :8193 | I9,I10,I13,I14 | **LIVE** v0.3.0 · TWO-STAGE Model · Stage 2 Evaluator · Paper-001 A.3 SEALED |
@@ -280,67 +285,18 @@ Nenhum endpoint retorna valores default que mascarem dados ausentes.
 **5 Pages:** Landing · Dashboard · New Site · Workspace · Verify
 > **Full details:** `CLAUDE-HISTORY.md` § §235
 
-### §242-244 — W-SITES-001 Sprints 2-3 (04 Mai 2026)
+### §242-245 — W-SITES-001 Sprints 2-3 + Editorial Doctrine (04-05 Mai)
 
-> **"Prompt → CORTEX → HTML → Filesystem → Ledger → Public URL → Email. Atómico."**
+**Receipts:** `C6C2CA0B` (AI gen) · `430CD285` (microlog) · `3C5638F9` (doctrine)
+> **Full details:** `CLAUDE-HISTORY.md` § §242-245
 
-**§242 Sprint 2 — AI Generator:**
-- `POST /api/sites/generate` via W-CORTEX-001
-- Filesystem: `/opt/windi/sites/{site_id}/{gen_id}.html`
-- Receipt: `C6C2CA0B`
-
-**§243 Sprint 3 — Microlog Pilot:**
-- `POST /api/sites/microlog` — Smallest verifiable unit
-- NOIR skeleton, max 280 words, hash visible
-- 3 sealed: `430CD285` · `4F6850EF` · `50F775F2`
-
-**§244 — Communiqué Builder:**
-- JMPG package (ZIP: manifest + receipt + HTML)
-- Envelope: 25KB · Schema: `windi.communique.v1`
-- V1: mailto: dispatch · V2: SMTP auto-attach
-
-**Files:** `sites_crud.py` · `communique_builder.py`
-> **Full details:** `CLAUDE-HISTORY.md` § §242-244
-
-### §245 — W-SITES-001 Prompts Mágicos + Doutrina Editorial (05 Mai 2026)
-
-> **"WINDI = editora forense de identidade soberana."**
-
-**Status:** LIVE · **Sprint:** §245 · **Receipt:** `WINDI-EDITORIAL-DOCTRINE-001-20260505111720-3C5638F9`
-
-**W-EDITORIAL-DOCTRINE-001:**
-- Documento fundacional definindo papel editorial WINDI
-- 3 papéis: Editora · Forense · Soberana
-- 3 níveis: Sealed · Self-declared · Cross-verified
-- Postura: DSA · EU AI Act Art. 14 · GDPR
-- URL: `windi-domain.com/doctrine/editorial`
-
-**6 Prompt Templates (§245.2):**
-| Template | Default Tier | Min Tier | Audiência |
-|----------|--------------|----------|-----------|
-| profile | MED | FREE | Notários, advogados, médicos |
-| press | HIGH | MED | Comunicados de imprensa |
-| portfolio | FREE | FREE | Artistas, criadores |
-| landing | MED | FREE | Empresas, produtos |
-| record | HIGH | MED | Documentos institucionais |
-| custom | MED | MED | Canvas livre (§C-ACCEPTABILITY-001) |
-
-**Features:**
-- Tier routing por template em `ai_writer_runtime.py`
-- Language override para PT (Ollama qualidade baixa → MED)
-- Footer dinâmico: "Sealed · Self-declared" vs "Verified via [SOURCE]"
-- Wizard com placeholders inspiradores por tipo
-
-**Files:** `prompt_templates/*.txt` · `ai_writer_runtime.py` · `new-site.html`
+**W-EDITORIAL-DOCTRINE-001:** 3 papéis (Editora·Forense·Soberana) · DSA/AI Act/GDPR
+**6 Prompt Templates:** profile·press·portfolio·landing·record·custom (tier routing)
 > **Full details:** `CLAUDE-HISTORY.md` § §245
 
-### §217 — P01 Sovereign Risk Score (SRS) (26 Apr 2026)
+### §217 — P01 Sovereign Risk Score (SRS)
 
-> **"O peso regulatório é soberano. Art.14 = prioridade máxima."**
-
-**Status:** LIVE · **Endpoint:** `/vera/priority` · **Service:** W-ENTERPRISE-001 :8150
-**Fórmula:** `SRS = (Financial×0.3) + (Reputational×0.2) + (Regulatory×0.5)`
-**CRITICAL_PATH:** SRS>75 | Art.14 presente | €10M+ exposure → Pulse vermelho no dashboard
+**Endpoint:** `/vera/priority` · **Fórmula:** `SRS = Fin×0.3 + Rep×0.2 + Reg×0.5`
 > **Full details:** `CLAUDE-HISTORY.md` § §217
 
 ### §117 — I9: Human Approval Gate (NON-NEGOTIABLE)
@@ -642,25 +598,17 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 **Agents (37):** CIA · WSG · GATE · NGINX · CANVAS · COMM · PROVE · DETECT-MEDIA · VERIFY · INTENT · COUNSEL · SESSION · NOMAD · VD-CUT · VD-MASS · JOE · DIST · JMPG · UDB · COMPOSER · CLASSIFY · VISION · OBS-GATE · INTENT-CMD · NOMAD-VOICE · FEDIVERSE · BRIDGE · SEC · DRAGON · DEV-API · ENTERPRISE · CACHE · **LAB** · **ACADEMY** · **SITES** · **MAIL**
 **Products:** Triangle of Power · WINDI FIELD · WINDI TRAVEL · FVE Protocol · RFC-001 DNA · **DACP-v1**
 
-### Histórico Recente (Mai 2026)
+### Histórico Recente
 
 | Data | Milestone |
 |------|-----------|
-| 08 Mai | **§248** Lei V — Foundation Direction · `A0325256` ✅ |
-| 07 Mai | **§247** Nomenclatura Canónica WINDI · Lei IV · `A3B99EA6` ✅ |
-| 07 Mai | **§246-D3** Mailbox Provisioning · DID-bound · `F8881FCA` ✅ |
-| 07 Mai | **§246-D2-bis** Institutional Demo Send · welcome@ · `FCF917FE` ✅ |
-| 07 Mai | **§246-D2** Workbench + Pedagogia Visual · 4 Zonas · `59497380` ✅ |
-| 07 Mai | **§246-D1** Federated Delegation Light · γ-light · `D32AFF47` ✅ |
-| 05 Mai | **§245** W-SITES-001 Prompts Mágicos · Editorial Doctrine · `3C5638F9` ✅ |
-| 04 Mai | **§242-244** W-SITES-001 Sprint 2+3 · Microlog · Communiqué · `c8d8f3596` ✅ |
-| 03 Mai | **§235+241** windisites.de LIVE · W-CORTEX-001 · `1BE93BB4` · `04C67B81` ✅ |
-| 02 Mai | **§227-233** Galho B · LEXICON · Paper-001 A.3 · `CDC760DD` ✅ |
-| 29 Apr | **§224-226** W-MAIL-001 Sovereignty Trilogy · DACP-v1 ✅ |
-| 28 Apr | **§219-222** W-CMS-001 · Container Architecture · Acceptability ✅ |
-| 26 Apr | **§205-217** KEYGEN · Governance · VERA · Verify Auditor ✅ |
+| 10 Mai | **§249** SESSÃO FUNDACIONAL · MANIFESTO + FOUNDATION · Tese Ontológica IA+H |
+| 07 Mai | **§246** W-SITES × W-MAIL Bridge · 6/6 selos + T7 adversarial · `4CE30817`+`4DD83B15` ✅ |
+| 05 Mai | **§245** Editorial Doctrine · `3C5638F9` ✅ |
+| 03 Mai | **§235+241** windisites.de LIVE · `1BE93BB4` ✅ |
+| 29 Apr | **§224-226** W-MAIL-001 DACP-v1 ✅ |
 
-> **Histórico completo:** `CLAUDE-HISTORY.md`
+> **Full history:** `CLAUDE-HISTORY.md`
 
 ---
 
@@ -711,8 +659,9 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 - [x] **§246-D2 Workbench + Pedagogia** — 4 Zonas · Hospitalidade Soberana · `59497380` · SEALED 07 Mai 2026
 - [x] **§246-D2-bis Institutional Demo Send** — welcome@windisites.de · Slug Reservation · `FCF917FE` · SEALED 07 Mai 2026
 - [x] **§246-D3 Mailbox Provisioning** — DID-bound · Two-phase atomic · 11 lifecycle events · `F8881FCA` · SEALED 07 Mai 2026
-- [ ] **§246-D4 Rate Limiting** — per-DID quotas · emails/hora · emails/dia
-- [ ] **§246-D5 Receipt Symmetry** — wallet_id propagation · chain navigation UI
+- [x] **§246-D4 Rate Limiting** — per-DID quotas · 3 janelas · 7 lifecycle events · `5D8513D7` · SEALED 07 Mai 2026
+- [x] **§246-D5 Receipt Symmetry** — Chain Architecture · Forest · Merkle Chain · Errata + T7 Adversarial · `4CE30817` + `4DD83B15` · SEALED 07 Mai 2026
+- [ ] **§246-IMPL** — DESBLOQUEADO · Query API + UI Berçário · 38 smoke tests (D3:12 + D4:10 + D5:16 incl. T7a-e adversarial)
 - [ ] **Rate limiting** nginx · **Cron 48h** email downgrade · **HIGH ops gate**
 
 ### P1.5 — W-TRAVEL-PUB-001 (Q3 2026)
@@ -755,8 +704,9 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | **ARCH** | `59497380` | §246-D2 Workbench + Pedagogia Visual da Soberania |
 | **ARCH** | `FCF917FE` | §246-D2-bis Institutional Demo Send + Slug Reservation |
 | **ARCH** | `F8881FCA` | §246-D3 Mailbox Provisioning Soberano (DID-bound) |
-| **CONSTITUTION** | `A3B99EA6` | §247 Nomenclatura Canónica WINDI (Lei IV) |
-| **CONSTITUTION** | `A0325256` | §248 Lei V — Foundation Direction |
+| **ARCH** | `5D8513D7` | §246-D4 Rate Limiting + per-DID Quotas |
+| **ARCH** | `4CE30817` | §246-D5 Receipt Symmetry — Chain Architecture |
+| **ARCH** | `4DD83B15` | §246-D5-T7 Adversarial Protocol — Gate Constitucional |
 
 > **Full receipts list:** `CLAUDE-HISTORY.md` § Produtos SEALED
 
