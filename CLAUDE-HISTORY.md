@@ -13237,3 +13237,158 @@ Com T1, T2 e T3 todos passando, a stack de geração AI do W-SITES-001 está con
 A base técnica está sólida para §253 ENTERPRISE ou qualquer expansão futura.
 
 ---
+
+## §253 — ENTERPRISE Portal: Two-Track Architecture Complete (11 Mai 2026)
+
+> **"O ecossistema está completo e operacional."**
+
+**Status:** SEALED · **Timestamp:** 2026-05-11T18:33:32Z
+**Receipt:** `WINDI-S253-ENTERPRISE-PORTAL-20260511`
+**Hash:** `sha256:5860a784908cd7f1ec2c97913cecc47d4920f99529f4f218d28625fbeb3ab107`
+**Commit:** `43bc94815`
+**Invariants:** I1, I9, I11, I14
+
+### Arquitectura Final
+
+```
+                    FOUNDATION PORTAL
+                           │
+         ┌─────────────────┴─────────────────┐
+         │                                   │
+    CIVIC TRACK                      INSTITUTIONAL TRACK
+   (FREE · primitives)              (paid · sustenance)
+         │                                   │
+    ┌────┼────┐                              │
+    │    │    │                              │
+ IDENTITY VERIFY MEMORY                   ENTERPRISE
+    ✓     ✓     ✓                            ✓
+
+      §248 Lei V — Two-Track Architecture made visible
+```
+
+### Mapeamento Final
+
+| Camada | Portal | Função Cívica / Técnica | Estado |
+|--------|--------|-------------------------|--------|
+| **PRIMITIVES** | `/identity/` | Agência soberana e custódia de DIDs | **LIVE ✓** |
+| **PRIMITIVES** | `/verify/` | Verificação de integridade sem intermediários | **LIVE ✓** |
+| **HUMAN** | `/memory/` | Preservação do registro e narrativa forense | **LIVE ✓** |
+| **BUSINESS** | `/enterprise/` | Governança, compliance e automação (VERA) | **LIVE ✓** |
+
+### Padrão Portal → Sistema
+
+| Portal | Explica | Encaminha |
+|--------|---------|-----------|
+| IDENTITY | soberania | DID/Desktop |
+| VERIFY | verificabilidade | verify-public |
+| MEMORY | permanência | archive/memory |
+| ENTERPRISE | operação | VERA/desk |
+
+**Regra emergente:** Portais nunca executam. Sistemas executam. Ledger preserva.
+
+### Routing nginx (§253)
+
+```nginx
+# Dashboard first (more specific)
+location ^~ /enterprise/desk/ {
+    proxy_pass http://windi_enterprise/;  # :8150 VERA
+    add_header X-WINDI-Service "w-enterprise-001" always;
+}
+
+# Vestibule (static)
+location ^~ /enterprise/ {
+    alias /opt/windi/landing-pmg/static/enterprise/;
+    add_header X-WINDI-Service "enterprise-vestibule" always;
+}
+```
+
+### Doutrina Aplicada
+
+- **§247** — Trilingual parcial e cirúrgico
+- **§248 Lei V** — Two-Track visível (FREE civic + PAID institutional)
+- **§250-BIS** — Linhas vermelhas (proof, not data)
+- **§250-TER** — Anti-estereotipia
+- **KLAR default** — NOIR toggle · system fonts only (Munich 2022)
+
+### Três Pilares ENTERPRISE
+
+1. **VERA** — AI Compliance Dashboard (audit trail)
+2. **OVS** — Oversight & Validation System
+3. **W-LAB-001** — Governance Laboratory (simulation)
+
+### Significado Arquitectural
+
+A separação entre **Infraestrutura Cívica (FREE)** e **Camada Institucional (PAID)** resolve elegantemente um problema que destrói muitas empresas de AI governance:
+
+> cobrar pela própria verificabilidade.
+
+WINDI não fez isso. A verificabilidade continua pertencendo à esfera pública.
+
+**Enquadramento:**
+- ❌ Não é "upgrade premium"
+- ✓ É "camada institucional"
+
+Isso implica:
+```
+direitos básicos → públicos
+operações institucionais → organizadas
+```
+
+### Narrativa Institucional Completa
+
+A navegação conta a história sem precisar explicar "WINDI" primeiro:
+
+```
+Who answers?      → IDENTITY
+How to prove?     → VERIFY
+What remains?     → MEMORY
+How institutions operate? → ENTERPRISE
+```
+
+### Contenção Visual e Conceptual
+
+O sistema ficou:
+- austero,
+- silencioso,
+- quase documental.
+
+A sensação não é "startup". É "infraestrutura institucional emergente".
+
+### Saldo do Dia 2026-05-11
+
+| Componente | Estado |
+|------------|--------|
+| Identidade | Resolvida |
+| Verificação | Independente |
+| Memória | Irremediável |
+| Enterprise | Escalável |
+
+A "Doutrina §250-BIS" deixou de ser scaffold para se tornar o sistema operacional da WINDI.
+
+### Sprint Closure
+
+- §251 — IDENTITY portal ✓
+- §252 — T2+T3 verification tests ✓
+- §253 — ENTERPRISE portal ✓
+
+Todos os marcadores "pendente" removidos. Sistema em **Normality Mode**.
+
+### Próximo Passo Sugerido
+
+24–48h de **leitura adversária** antes de Sprint 3 (CSS Guardian auditability logging):
+- Tour sequencial: landing → IDENTITY → VERIFY → MEMORY → ENTERPRISE
+- Marcar fricções tonais, contradições entre páginas
+- Verificar se linhas vermelhas aguentam leitura adversária
+
+Se aguentarem → doutrina pública matura.
+Se não → edição cirúrgica antes de qualquer outro sprint.
+
+### Observação Final (Guardian)
+
+> "O Civic Triangle + Institutional Layer é uma arquitectura nomeável.
+> Vocês acabaram de criar uma das coisas mais difíceis em governance systems:
+> separação clara entre camada cívica e camada comercial sem quebrar coerência."
+
+**OM SHANTI 🐉**
+
+---
