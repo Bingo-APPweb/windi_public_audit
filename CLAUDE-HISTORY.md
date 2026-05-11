@@ -13160,3 +13160,80 @@ Nenhum blocker activo.
 **Sessão encerrada. §251 aguarda próxima sessão.**
 
 ---
+
+## §252 — Verification Tests T2+T3 (11 Mai 2026)
+
+> **"Dívida técnica fechada. Triângulo Cívico tem base sólida."**
+
+**Status:** SEALED · **Timestamp:** 2026-05-11T16:00:17Z
+**Service:** W-SITES-001 Identity Gate v1.2.0
+**Invariants:** I11, I12, I14, Rule 3C
+
+### Contexto
+
+Os testes T2 e T3 estavam pendentes desde §249. Com o Triângulo Cívico completo (§251), o momento era oportuno para fechar a dívida técnica antes de avançar para ENTERPRISE.
+
+### Resultados
+
+| Test | Status | Descrição |
+|------|--------|-----------|
+| **T1** | ✅ PASSED (9/9) | Prompt original PT → KLAR/NOIR + prova forense |
+| **T2** | ✅ PASSED | Profile routing (Zahnarzt München) |
+| **T3** | ✅ PASSED | Forensic block conditional (Rule 3C) |
+
+**Total: 3/3 PASSED**
+
+### T2 — Profile Routing (Clínica Dentária Munique)
+
+**Prompt:** Zahnarzt in München (DE) — Dr. Klaus Weber, Implantologie, Schwabing
+**Resultado:**
+- Tier Used: HIGH
+- Model: claude-sonnet-4-20250514
+- Minimal Proof: `WINDI-SITES-001-B4F7A9E2`
+- Full Forensic Block: Not required (no trigger words)
+
+**Validação:** Profile template routing funciona correctamente. Prompt DE → output DE. Minimal proof sempre presente (Rule 3C baseline). Full forensic block correctamente omitido quando prompt não contém trigger words.
+
+### T3 — Forensic Block Conditional (Rule 3C)
+
+**Prompt:** Página de compliance institucional com triggers forenses
+**Triggers detectados:** `verificação`, `ledger`, `compliance`, `windi`
+**Resultado:**
+- Tier Used: HIGH
+- Minimal Proof: `WINDI-SITES-001-F7E8D9C0`
+- Full Forensic Block: ✅ Present (triggers activated)
+
+**Validação:** CSS Guardian `requires_full_forensic()` detecta correctamente trigger words e exige full forensic block. Ambos minimal proof e full block presentes quando requeridos.
+
+### Constitutional Compliance Verified
+
+| Invariante | Status | Verificação |
+|------------|--------|-------------|
+| I11 | ✅ | Minimal proof always present |
+| I14 | ✅ | No placeholder data |
+| I12 | ✅ | Language sovereign (DE→DE) |
+| Rule 3C | ✅ | Full forensic block when triggers present |
+
+### Ficheiros Testados
+
+- `/opt/windi/windi-sites/identity-gate/ai_writer/ai_writer_runtime.py` — 8-step pipeline
+- `/opt/windi/windi-sites/identity-gate/ai_writer/prompt_templates/profile.txt` — Profile template
+- `/opt/windi/windi-sites/identity-gate/css_guardian.py` — Forensic validation
+
+### Endpoint
+
+```
+POST /api/sites/generate
+Header: X-WINDI-DID: did:windi:dragon-001
+```
+
+### Significado
+
+Com T1, T2 e T3 todos passando, a stack de geração AI do W-SITES-001 está constitucionalmente validada:
+1. **T1** prova que o Grammar funciona (output KLAR/NOIR puro)
+2. **T2** prova que template routing funciona (profile → MED/HIGH tier)
+3. **T3** prova que Rule 3C funciona (forensic enforcement condicional)
+
+A base técnica está sólida para §253 ENTERPRISE ou qualquer expansão futura.
+
+---
