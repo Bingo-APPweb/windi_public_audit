@@ -2516,14 +2516,24 @@ async def generate_site_ai(data: GenerateSiteRequest, request: Request):
     sanitized_html = sanitize_html(generated_html)
 
     # ─── §249 CSS Guardian — enforce KLAR/NOIR design system ──────────────────
+    # ─── §254 GUARDIAN-AUDIT — auditability logging ─────────────────────────────
     guardian_report = None
+    guardian_audit = None
     if CSS_GUARDIAN_AVAILABLE:
-        sanitized_html, guardian_report = css_guard_html(sanitized_html, data.prompt)
+        sanitized_html, guardian_report, guardian_audit = css_guard_html(
+            sanitized_html,
+            data.prompt,
+            site_id=site_id,
+            receipt_id=None,  # Will be set after generation
+            save_audit=True   # §254: Save detailed log locally
+        )
         if guardian_report.get("errors"):
             # Log but don't block — forensic validation is soft enforcement for now
             print(f"[CSS Guardian] Warnings: {guardian_report['errors']}")
         if guardian_report.get("corrections"):
             print(f"[CSS Guardian] Applied {len(guardian_report['corrections'])} corrections")
+        if guardian_audit:
+            print(f"[CSS Guardian §254] Audit ID: {guardian_audit.audit_id} · Interventions: {guardian_audit.interventions_count}")
 
     # ─── Compute content hash ─────────────────────────────────────────────────
     content_hash = f"sha256:{hashlib.sha256(sanitized_html.encode()).hexdigest()}"
@@ -2599,6 +2609,18 @@ async def generate_site_ai(data: GenerateSiteRequest, request: Request):
         caller_did
     )
 
+    # ─── §254 Guardian Audit Summary ──────────────────────────────────────────
+    guardian_summary = None
+    if guardian_audit:
+        guardian_summary = {
+            "audit_id": guardian_audit.audit_id,
+            "version": guardian_audit.css_guardian_version,
+            "interventions": guardian_audit.interventions_count,
+            "categories": list(guardian_audit.intervention_categories.keys()),
+            "passed": guardian_audit.passed,
+            "log_hash": guardian_audit.compute_log_hash()[:16] + "...",
+        }
+
     # ─── Return result ────────────────────────────────────────────────────────
     return {
         "ok": True,
@@ -2616,6 +2638,7 @@ async def generate_site_ai(data: GenerateSiteRequest, request: Request):
         "cost_eur": result.cost_eur,
         "persist": persist_result,
         "public_url": public_url,
+        "guardian": guardian_summary,  # §254 CSS Guardian audit
         "invariants": ["I1", "I9", "I10", "I11", "I14"],
         "next_step": "POST /api/sites/publish to approve and publish (I9 gate)"
     }

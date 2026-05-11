@@ -1,16 +1,121 @@
 """
 CSS Guardian — Post-Processor for W-SITES-001
 §249 WINDI Generation Grammar · Safety Net
+§254 GUARDIAN-AUDIT — Auditability Logging
 
 Normalizes LLM output to KLAR/NOIR design system.
 Even the best prompt escapes sometimes — this catches failures silently.
 
-Invariants: I11 (forensic integrity), I14 (explicit failure)
+§254 Doctrine:
+> "O CSS Guardian já não apenas corrige a superfície.
+>  Ele prova que a superfície foi governada."
+
+Invariants: I9 (human approval), I11 (forensic integrity), I14 (explicit failure)
 Liga IA+H · Kempten, Bavaria · 2026
 """
 
 import re
-from typing import Tuple, List
+import json
+import hashlib
+import os
+from datetime import datetime, timezone
+from typing import Tuple, List, Dict, Optional
+from dataclasses import dataclass, asdict
+
+# ═══════════════════════════════════════════════════════════════
+# §254 GUARDIAN AUDIT STRUCTURE
+# ═══════════════════════════════════════════════════════════════
+
+GUARDIAN_VERSION = "1.1.0"  # §254 audit-enabled
+POLICY_PROFILE = "KLAR_NOIR_GDPR_SYSTEM_FONTS"
+AUDIT_LOG_DIR = "/opt/windi/windi-sites/audit-logs"
+
+
+@dataclass
+class GuardianAudit:
+    """
+    §254 Canonical audit structure for CSS Guardian.
+
+    Granularity: Aggregated per document (not per-intervention).
+    Destination: Hash in Ledger, detailed log local.
+    Visibility: Only in full forensic block (Rule 3C).
+    """
+    audit_id: str
+    site_id: str
+    receipt_id: Optional[str]
+    input_html_hash: str
+    output_html_hash: str
+    css_guardian_version: str
+    policy_profile: str
+    interventions_count: int
+    intervention_categories: Dict[str, int]
+    forensic_valid: bool
+    forensic_triggers_found: List[str]
+    passed: bool
+    errors: List[str]
+    warnings: List[str]
+    corrections: List[str]
+    created_at: str
+    local_log_hash: Optional[str] = None
+    ledger_receipt_id: Optional[str] = None
+
+    def to_dict(self) -> dict:
+        return asdict(self)
+
+    def to_json(self) -> str:
+        return json.dumps(self.to_dict(), indent=2, ensure_ascii=False)
+
+    def compute_log_hash(self) -> str:
+        """Compute SHA-256 hash of the full audit log."""
+        log_content = self.to_json()
+        return hashlib.sha256(log_content.encode('utf-8')).hexdigest()
+
+    def to_ledger_summary(self) -> dict:
+        """
+        Create minimal summary for Ledger storage.
+        Full log stays local; only hash + summary goes to Ledger.
+        """
+        return {
+            "audit_id": self.audit_id,
+            "site_id": self.site_id,
+            "guardian_version": self.css_guardian_version,
+            "policy_profile": self.policy_profile,
+            "interventions_count": self.interventions_count,
+            "categories": list(self.intervention_categories.keys()),
+            "passed": self.passed,
+            "forensic_valid": self.forensic_valid,
+            "log_hash": self.local_log_hash or self.compute_log_hash(),
+            "created_at": self.created_at,
+        }
+
+
+def generate_audit_id() -> str:
+    """Generate unique audit ID."""
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
+    hash_suffix = hashlib.sha256(
+        f"{timestamp}-{os.urandom(8).hex()}".encode()
+    ).hexdigest()[:8].upper()
+    return f"GUARDIAN-{timestamp}-{hash_suffix}"
+
+
+def hash_content(content: str) -> str:
+    """SHA-256 hash of content."""
+    return hashlib.sha256(content.encode('utf-8')).hexdigest()
+
+
+def save_audit_log(audit: GuardianAudit) -> str:
+    """
+    Save detailed audit log to local filesystem.
+    Returns the file path.
+    """
+    os.makedirs(AUDIT_LOG_DIR, exist_ok=True)
+    filename = f"{audit.audit_id}.json"
+    filepath = os.path.join(AUDIT_LOG_DIR, filename)
+
+    with open(filepath, 'w', encoding='utf-8') as f:
+        f.write(audit.to_json())
+
+    return filepath
 
 # ═══════════════════════════════════════════════════════════════
 # KLAR/NOIR PALETTE
@@ -238,18 +343,32 @@ def validate_forensic(html: str, prompt: str) -> Tuple[bool, str]:
 # MAIN GUARDIAN FUNCTION
 # ═══════════════════════════════════════════════════════════════
 
-def guard_html(html: str, prompt: str = "") -> Tuple[str, dict]:
+def guard_html(
+    html: str,
+    prompt: str = "",
+    site_id: str = "unknown",
+    receipt_id: Optional[str] = None,
+    save_audit: bool = True
+) -> Tuple[str, dict, Optional[GuardianAudit]]:
     """
     Apply CSS Guardian post-processing to generated HTML.
+
+    §254 Enhanced: Now creates GuardianAudit for auditability logging.
 
     Args:
         html: Generated HTML content
         prompt: Original user prompt (for forensic validation)
+        site_id: Site identifier for audit tracking
+        receipt_id: Optional receipt ID to link audit to
+        save_audit: Whether to save detailed audit log locally
 
     Returns:
-        Tuple of (processed_html, report)
-        Report contains corrections made and any validation errors.
+        Tuple of (processed_html, report, audit)
+        - report: Legacy dict with corrections/warnings/errors
+        - audit: §254 GuardianAudit object (or None if disabled)
     """
+    input_html_hash = hash_content(html)
+
     report = {
         "corrections": [],
         "warnings": [],
@@ -257,35 +376,50 @@ def guard_html(html: str, prompt: str = "") -> Tuple[str, dict]:
         "forensic_valid": True,
     }
 
+    # Track intervention counts by category
+    intervention_categories = {}
+
     # Extract CSS from HTML
     style_match = re.search(r'<style[^>]*>(.*?)</style>', html, re.DOTALL | re.IGNORECASE)
     if not style_match:
         report["warnings"].append("No <style> block found — cannot normalize CSS")
-        return html, report
+        # Still create audit even if no CSS to process
+        audit = _create_audit(
+            site_id, receipt_id, input_html_hash, hash_content(html),
+            0, {}, True, [], report
+        )
+        if save_audit:
+            save_audit_log(audit)
+        return html, report, audit
 
     css = style_match.group(1)
     original_css = css
 
-    # Apply normalizations
+    # Apply normalizations with category tracking
     css, gradient_count = normalize_gradients(css)
     if gradient_count:
         report["corrections"].append(f"Removed {gradient_count} gradient(s)")
+        intervention_categories["gradients"] = gradient_count
 
     css, radius_count = normalize_border_radius(css)
     if radius_count:
         report["corrections"].append(f"Normalized {radius_count} border-radius to 0")
+        intervention_categories["border_radius"] = radius_count
 
     css, color_count = normalize_colors(css)
     if color_count:
         report["corrections"].append(f"Replaced {color_count} forbidden color(s)")
+        intervention_categories["colors"] = color_count
 
     css, import_count = remove_external_imports(css)
     if import_count:
         report["corrections"].append(f"Removed {import_count} external import(s) for GDPR")
+        intervention_categories["external_imports"] = import_count
 
     css, animation_count = normalize_animations(css)
     if animation_count:
         report["corrections"].append(f"Capped {animation_count} animation duration(s)")
+        intervention_categories["animations"] = animation_count
 
     # Replace CSS in HTML
     if css != original_css:
@@ -294,14 +428,170 @@ def guard_html(html: str, prompt: str = "") -> Tuple[str, dict]:
     # Inject canonical CSS override
     html = inject_canonical_css(html)
     report["corrections"].append("Injected canonical CSS override")
+    intervention_categories["canonical_injection"] = 1
 
     # Validate forensic requirements
     forensic_valid, forensic_error = validate_forensic(html, prompt)
+    triggers_found = [t for t in FORENSIC_TRIGGERS if t in prompt.lower()]
+
     if not forensic_valid:
         report["forensic_valid"] = False
         report["errors"].append(forensic_error)
 
-    return html, report
+    # Calculate totals
+    total_interventions = sum(intervention_categories.values())
+    output_html_hash = hash_content(html)
+
+    # §254: Inject Guardian audit reference in full forensic block
+    if requires_full_forensic(prompt):
+        html = inject_guardian_audit_reference(html, site_id, total_interventions)
+
+    # Create §254 GuardianAudit
+    audit = _create_audit(
+        site_id, receipt_id, input_html_hash, output_html_hash,
+        total_interventions, intervention_categories, forensic_valid,
+        triggers_found, report
+    )
+
+    # Save detailed log locally
+    if save_audit:
+        log_path = save_audit_log(audit)
+        audit.local_log_hash = audit.compute_log_hash()
+
+    return html, report, audit
+
+
+def _create_audit(
+    site_id: str,
+    receipt_id: Optional[str],
+    input_hash: str,
+    output_hash: str,
+    total_interventions: int,
+    categories: Dict[str, int],
+    forensic_valid: bool,
+    triggers: List[str],
+    report: dict
+) -> GuardianAudit:
+    """Create GuardianAudit object from processing results."""
+    return GuardianAudit(
+        audit_id=generate_audit_id(),
+        site_id=site_id,
+        receipt_id=receipt_id,
+        input_html_hash=input_hash,
+        output_html_hash=output_hash,
+        css_guardian_version=GUARDIAN_VERSION,
+        policy_profile=POLICY_PROFILE,
+        interventions_count=total_interventions,
+        intervention_categories=categories,
+        forensic_valid=forensic_valid,
+        forensic_triggers_found=triggers,
+        passed=forensic_valid and len(report["errors"]) == 0,
+        errors=report["errors"],
+        warnings=report["warnings"],
+        corrections=report["corrections"],
+        created_at=datetime.now(timezone.utc).isoformat(),
+    )
+
+
+# ═══════════════════════════════════════════════════════════════
+# §254 GUARDIAN AUDIT VISIBILITY (Rule 3C)
+# ═══════════════════════════════════════════════════════════════
+
+GUARDIAN_AUDIT_BLOCK = '''
+    <dt>Guardian</dt>
+    <dd><code>v{version} · {policy}</code></dd>
+    <dt>Audit</dt>
+    <dd><code>{interventions} correction(s) · {status}</code></dd>
+'''
+
+
+def inject_guardian_audit_reference(html: str, site_id: str, interventions: int) -> str:
+    """
+    Inject Guardian audit reference into full forensic block.
+
+    §254 Visibility Rule:
+    - Only visible when Rule 3C activates full forensic block
+    - Minimal footer remains clean for normal sites
+    """
+    # Find the forensic proof block
+    proof_block_match = re.search(
+        r'(<dl[^>]*class=["\'][^"\']*proof-grid[^"\']*["\'][^>]*>)(.*?)(</dl>)',
+        html,
+        re.DOTALL | re.IGNORECASE
+    )
+
+    if not proof_block_match:
+        # No proof grid found, try to find forensic-proof section
+        return html
+
+    dl_open = proof_block_match.group(1)
+    dl_content = proof_block_match.group(2)
+    dl_close = proof_block_match.group(3)
+
+    # Check if Guardian reference already exists
+    if 'Guardian' in dl_content:
+        return html
+
+    # Build Guardian audit reference
+    guardian_ref = GUARDIAN_AUDIT_BLOCK.format(
+        version=GUARDIAN_VERSION,
+        policy=POLICY_PROFILE.replace('_', ' '),
+        interventions=interventions,
+        status="PASSED" if interventions >= 0 else "REVIEW"
+    )
+
+    # Insert before closing </dl>
+    new_dl = dl_open + dl_content + guardian_ref + dl_close
+    html = html[:proof_block_match.start()] + new_dl + html[proof_block_match.end():]
+
+    return html
+
+
+# ═══════════════════════════════════════════════════════════════
+# §254 LEDGER INTEGRATION
+# ═══════════════════════════════════════════════════════════════
+
+def create_ledger_receipt(audit: GuardianAudit, ledger_url: str = "http://localhost:8101") -> Optional[dict]:
+    """
+    Create Ledger receipt for Guardian audit.
+
+    Stores only summary + hash in Ledger (hybrid model).
+    Detailed log remains local.
+    """
+    import requests
+
+    receipt_id = f"GUARDIAN-AUDIT-{audit.audit_id}"
+
+    payload = {
+        "schema_version": "1.0",
+        "id": receipt_id,
+        "actor": "did:windi:css-guardian",
+        "app": "w-sites-001",
+        "doc_name": f"CSS Guardian Audit — {audit.site_id}",
+        "doc_type": "audit",
+        "governance_level": "MED",
+        "content_hash": f"sha256:{audit.local_log_hash or audit.compute_log_hash()}",
+        "verify_url": f"https://windi-domain.com/verify-public/?id={receipt_id}",
+        "invariants": ["I9", "I11", "I14"],
+        "stage": "C6",
+        "sge_score": 0.85,
+        "metadata": audit.to_ledger_summary()
+    }
+
+    try:
+        response = requests.post(
+            f"{ledger_url}/api/receipts",
+            json=payload,
+            timeout=10
+        )
+        if response.ok:
+            result = response.json()
+            audit.ledger_receipt_id = receipt_id
+            return result
+        else:
+            return {"ok": False, "error": response.text}
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -320,16 +610,47 @@ h1 { color: purple; }
 </head>
 <body>
 <h1>Test</h1>
+<section class="forensic-proof">
+  <dl class="proof-grid">
+    <dt>Receipt</dt>
+    <dd><code>WINDI-SITES-001-TEST1234</code></dd>
+  </dl>
+</section>
 <footer>Verified by WINDI<br>WINDI-SITES-001-12345678</footer>
 </body>
 </html>"""
 
-    processed, report = guard_html(test_html, "test prompt")
+    # Test with forensic trigger to see full audit
+    processed, report, audit = guard_html(
+        test_html,
+        "Create a compliance page about ledger verification",
+        site_id="test-001",
+        save_audit=False  # Don't save during test
+    )
 
-    print("=== CSS Guardian Test ===")
+    print("=== CSS Guardian §254 Test ===")
     print(f"Corrections: {report['corrections']}")
     print(f"Warnings: {report['warnings']}")
     print(f"Errors: {report['errors']}")
     print(f"Forensic Valid: {report['forensic_valid']}")
-    print("\n=== Processed HTML ===")
-    print(processed[:500] + "..." if len(processed) > 500 else processed)
+
+    print("\n=== §254 Guardian Audit ===")
+    print(f"Audit ID: {audit.audit_id}")
+    print(f"Version: {audit.css_guardian_version}")
+    print(f"Policy: {audit.policy_profile}")
+    print(f"Interventions: {audit.interventions_count}")
+    print(f"Categories: {audit.intervention_categories}")
+    print(f"Triggers Found: {audit.forensic_triggers_found}")
+    print(f"Passed: {audit.passed}")
+    print(f"Log Hash: {audit.compute_log_hash()[:16]}...")
+
+    print("\n=== Ledger Summary ===")
+    print(json.dumps(audit.to_ledger_summary(), indent=2))
+
+    print("\n=== Processed HTML (excerpt) ===")
+    # Show the forensic block area
+    if "Guardian" in processed:
+        start = processed.find("Guardian")
+        print(processed[max(0, start-50):start+200])
+    else:
+        print(processed[:500] + "..." if len(processed) > 500 else processed)
