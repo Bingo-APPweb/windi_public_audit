@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="klar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ENTERPRISE · Governance · Governanca — WINDI Foundation</title>
+  <meta name="description" content="Pre-AI Governance Layer. Proof of process, not data processing. Institutional accountability before the fact." />
+  <meta name="theme-color" content="#FAFAF8" />
+  <!--
+    ════════════════════════════════════════════════════════════════════
+    WINDI Foundation — Portal ENTERPRISE
+    Sprint:  §253 · Fecho do arco §251
+    Layer:   INSTITUTIONAL (paid · sustentacao da missao civica)
+    Doutrina aplicada:
+      §247 trilingual parcial e cirurgico
+      §248 Lei V Two-Track (visivel)
+      §250-BIS linhas vermelhas
+      §250-TER anti-estereotipia
+      KLAR default · NOIR toggle · system fonts only (Munich 2022)
+    Axioma: ENTERPRISE nao vende dados. Vende prova de processo.
+    ════════════════════════════════════════════════════════════════════
+  -->
+  <style>
+    /* ═══ Reset ═══ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+    img, svg { display: block; max-width: 100%; }
+    button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+    a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+
+    /* ═══ KLAR Theme (default) ═══ */
+    [data-theme="klar"] {
+      --gold: #8B741D;
+      --gold-dim: #6B5A14;
+      --gold-soft: #B89455;
+      --gold-glow: rgba(139,116,29,0.12);
+      --bg: #FAFAF8;
+      --bg-alt: #F5F4F2;
+      --bg-deep: #EDECEA;
+      --bg-card: #FFFFFF;
+      --border: rgba(139,116,29,0.2);
+      --border-soft: rgba(0,0,0,0.06);
+      --text: #1A1917;
+      --text-mute: rgba(26,25,23,0.6);
+      --text-dim: rgba(26,25,23,0.35);
+      --seal-bg: #FFFEF8;
+      --shadow: rgba(0,0,0,0.06);
+    }
+
+    /* ═══ NOIR Theme ═══ */
+    [data-theme="noir"] {
+      --gold: #C49A2A;
+      --gold-dim: #8B6914;
+      --gold-soft: #A07D20;
+      --gold-glow: rgba(196,154,42,0.15);
+      --bg: #0A0A08;
+      --bg-alt: #0F0F0D;
+      --bg-deep: #141412;
+      --bg-card: #181816;
+      --border: rgba(196,154,42,0.18);
+      --border-soft: rgba(255,255,255,0.06);
+      --text: #EDE8D8;
+      --text-mute: rgba(237,232,216,0.55);
+      --text-dim: rgba(237,232,216,0.28);
+      --seal-bg: #0D0C08;
+      --shadow: rgba(0,0,0,0.4);
+    }
+
+    :root {
+      --font-main: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      --font-mono: 'SF Mono', Monaco, Inconsolata, 'Fira Mono', ui-monospace, monospace;
+      --container: 72rem;
+      --gutter: clamp(1rem, 4vw, 2rem);
+    }
+
+    /* ═══ Base ═══ */
+    body {
+      font-family: var(--font-main);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      transition: background 0.25s, color 0.25s;
+      -webkit-font-smoothing: antialiased;
+    }
+    .mono { font-family: var(--font-mono); font-size: 0.9em; }
+
+    /* ═══ Layout ═══ */
+    .container {
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 var(--gutter);
+    }
+
+    /* ═══ Header ═══ */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: color-mix(in srgb, var(--bg) 92%, transparent);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .header-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 3.5rem;
+    }
+    .logo {
+      font-weight: 600;
+      font-size: 0.95rem;
+      letter-spacing: 0.02em;
+      color: var(--gold);
+    }
+    .logo a { text-decoration: none; }
+    nav { display: flex; gap: 1.5rem; align-items: center; }
+    nav a {
+      font-size: 0.85rem;
+      color: var(--text-mute);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    nav a:hover { color: var(--gold); }
+    nav a.active { color: var(--gold); font-weight: 500; }
+    .theme-toggle {
+      padding: 0.35rem;
+      border-radius: 0.25rem;
+      transition: background 0.15s;
+    }
+    .theme-toggle:hover { background: var(--gold-glow); }
+
+    /* ═══ Hero ═══ */
+    .hero {
+      padding: 5rem 0 4rem;
+      text-align: center;
+    }
+    .hero-layer {
+      display: inline-block;
+      background: var(--gold-glow);
+      color: var(--gold);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.35rem 0.75rem;
+      border-radius: 2rem;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+    .hero-trilingual {
+      font-size: 1.1rem;
+      color: var(--text-mute);
+      margin-bottom: 1.5rem;
+    }
+    .hero-lead {
+      font-size: 1.15rem;
+      color: var(--text-mute);
+      max-width: 42rem;
+      margin: 0 auto 2rem;
+      line-height: 1.7;
+    }
+
+    /* ═══ Sections ═══ */
+    section {
+      padding: 4rem 0;
+      border-top: 1px solid var(--border-soft);
+    }
+    section h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.01em;
+    }
+    section h2 + p {
+      color: var(--text-mute);
+      margin-bottom: 2rem;
+    }
+
+    /* ═══ Pillars ═══ */
+    .pillars {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    .pillar {
+      background: var(--bg-card);
+      border: 1px solid var(--border-soft);
+      padding: 2rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .pillar:hover {
+      border-color: var(--border);
+      box-shadow: 0 8px 32px var(--shadow);
+    }
+    .pillar-tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--gold);
+      background: var(--gold-glow);
+      padding: 0.25rem 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .pillar h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+    .pillar p {
+      color: var(--text-mute);
+      font-size: 0.95rem;
+      line-height: 1.65;
+    }
+
+    /* ═══ Red Lines ═══ */
+    .red-lines {
+      background: var(--bg-alt);
+      border: 1px solid var(--border-soft);
+      padding: 2.5rem;
+      margin: 2rem 0;
+    }
+    .red-lines h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .red-lines ul {
+      list-style: none;
+      display: grid;
+      gap: 0.75rem;
+    }
+    .red-lines li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-size: 0.95rem;
+      color: var(--text-mute);
+    }
+    .red-lines li::before {
+      content: "—";
+      color: var(--gold-dim);
+      flex-shrink: 0;
+    }
+
+    /* ═══ Two Track ═══ */
+    .two-track {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+    .track {
+      padding: 2rem;
+      border: 1px solid var(--border-soft);
+      background: var(--bg-card);
+    }
+    .track-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      margin-bottom: 0.5rem;
+    }
+    .track h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+    .track p {
+      color: var(--text-mute);
+      font-size: 0.9rem;
+      line-height: 1.65;
+    }
+    .track.civic { border-left: 3px solid var(--gold-soft); }
+    .track.institutional { border-left: 3px solid var(--gold); }
+
+    /* ═══ CTA ═══ */
+    .cta-section {
+      text-align: center;
+      padding: 4rem 0;
+    }
+    .cta-section h2 {
+      margin-bottom: 1rem;
+    }
+    .cta-section p {
+      color: var(--text-mute);
+      max-width: 36rem;
+      margin: 0 auto 2rem;
+    }
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.85rem 1.5rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: var(--gold);
+      color: var(--bg);
+    }
+    .btn-primary:hover {
+      background: var(--gold-dim);
+    }
+    .btn-secondary {
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .btn-secondary:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    /* ═══ Footer ═══ */
+    footer {
+      padding: 2rem 0;
+      border-top: 1px solid var(--border-soft);
+      text-align: center;
+    }
+    footer p {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+    footer a {
+      color: var(--text-mute);
+      text-decoration: none;
+    }
+    footer a:hover { color: var(--gold); }
+
+    /* ═══ Responsive ═══ */
+    @media (max-width: 640px) {
+      nav a:not(.active) { display: none; }
+      .hero { padding: 3rem 0 2.5rem; }
+      section { padding: 2.5rem 0; }
+      .pillar, .track { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container header-inner">
+    <div class="logo"><a href="/">WINDI</a></div>
+    <nav>
+      <a href="/identity/">Identity</a>
+      <a href="/verify/">Verify</a>
+      <a href="/memory/">Memory</a>
+      <a href="/enterprise/" class="active">Enterprise</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero container">
+    <span class="hero-layer">Institutional · Institucional · Institutionell</span>
+    <h1>Pre-AI Governance Layer</h1>
+    <p class="hero-trilingual">Governance · Governanca · Governance</p>
+    <p class="hero-lead">
+      Organizations that sign documents with legal weight need forensic governance <em>upstream</em>, not downstream.
+      WINDI ENTERPRISE provides the infrastructure for accountable AI operations — before the incident, not after.
+    </p>
+  </section>
+
+  <!-- THREE PILLARS -->
+  <section class="container">
+    <h2>Three Institutional Pillars</h2>
+    <p>Each pillar serves a distinct function in the governance stack.</p>
+
+    <div class="pillars">
+      <div class="pillar">
+        <span class="pillar-tag">Pilar 1</span>
+        <h3>VERA</h3>
+        <p>
+          <strong>Verifiable Enterprise Risk Assessment.</strong>
+          Semantic reading of organizational outputs. Second Line of Defense (2LOD) as infrastructure.
+          VERA doesn't audit after — VERA structures the conditions under which auditable content emerges.
+        </p>
+      </div>
+
+      <div class="pillar">
+        <span class="pillar-tag">Pilar 2</span>
+        <h3>OVS</h3>
+        <p>
+          <strong>Operator of Verifiable Systems.</strong>
+          Certified operator profile for organizations deploying AI in regulated contexts.
+          Capacity amplifier, not replacement. The human remains the decision point — WINDI proves the process.
+        </p>
+      </div>
+
+      <div class="pillar">
+        <span class="pillar-tag">Pilar 3</span>
+        <h3>W-LAB</h3>
+        <p>
+          <strong>Governance Laboratory.</strong>
+          Auditable sandbox for training, simulation, and process proof.
+          Everything that happens inside W-LAB is sealed. Learning leaves a forensic trace.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- RED LINES -->
+  <section class="container">
+    <div class="red-lines">
+      <h3>What ENTERPRISE is not</h3>
+      <ul>
+        <li>ENTERPRISE does not sell data processing. We sell <strong>proof of process</strong>.</li>
+        <li>ENTERPRISE does not replace human judgment. We prove that human judgment occurred.</li>
+        <li>ENTERPRISE does not store your content. The client owns the data — WINDI owns the seal.</li>
+        <li>ENTERPRISE does not create urgency. Institutional decisions require institutional time.</li>
+        <li>ENTERPRISE does not compete with your existing tools. We sit beneath them, proving their outputs.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- TWO-TRACK ARCHITECTURE -->
+  <section class="container">
+    <h2>Two-Track Architecture</h2>
+    <p>The Foundation sustains a civic mission through institutional operations.</p>
+
+    <div class="two-track">
+      <div class="track civic">
+        <p class="track-label">Track Civico · FREE</p>
+        <h3>IDENTITY + VERIFY + MEMORY</h3>
+        <p>
+          Public infrastructure for sovereign identity, independent verification, and verifiable memory.
+          No monetization of users. Civic literacy as baseline.
+        </p>
+      </div>
+
+      <div class="track institutional">
+        <p class="track-label">Track Institucional · Paid</p>
+        <h3>ENTERPRISE</h3>
+        <p>
+          Revenue from institutional clients sustains the civic mission.
+          Legal, healthcare, NGOs, academia — organizations that need governance by nature, not by regulation alone.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section container">
+    <h2>Ready to operate accountably?</h2>
+    <p>
+      ENTERPRISE engagement begins with a preliminary audit — a structured conversation about your governance needs, not a sales pitch.
+    </p>
+    <div class="cta-buttons">
+      <a href="mailto:enterprise@windi-domain.com" class="btn btn-primary">Request preliminary audit</a>
+      <a href="/enterprise/desk/" class="btn btn-secondary">Access VERA Dashboard</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <p>
+      WINDI Foundation · Kempten, Bavaria · 2026<br>
+      <a href="/verify/">Verify</a> · <a href="https://windisites.de">windisites.de</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+  // Theme toggle
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'klar' ? 'noir' : 'klar';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('windi-theme', next);
+  }
+
+  // Load saved theme
+  (function() {
+    const saved = localStorage.getItem('windi-theme');
+    if (saved) {
+      document.documentElement.setAttribute('data-theme', saved);
+    }
+  })();
+</script>
+
+</body>
+</html>
