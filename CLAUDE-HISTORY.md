@@ -13392,3 +13392,125 @@ Se não → edição cirúrgica antes de qualquer outro sprint.
 **OM SHANTI 🐉**
 
 ---
+
+## §254 — CSS Guardian Auditability Logging (11 Mai 2026)
+
+> **"O CSS Guardian já não apenas corrige a superfície. Ele prova que a superfície foi governada."**
+
+**Status:** LIVE · **Commit:** `7a27ad6fb`
+**Version:** 1.1.0 (audit-enabled)
+**Invariants:** I9, I11, I14
+
+### Design Decisions (Human Dragon Confirmed)
+
+| Aspecto | Decisão | Razão |
+|---------|---------|-------|
+| **Granularidade** | Agregado por documento | Doutrina favorece síntese, não diário obsessivo |
+| **Destino** | Híbrido (hash+sumário→Ledger, log→local) | Zero-Knowledge Architecture respeitada |
+| **Visibilidade** | Só no full forensic block (Rule 3C) | Governança silenciosa preservada, prova quando invocada |
+
+### GuardianAudit Canonical Structure
+
+```python
+@dataclass
+class GuardianAudit:
+    audit_id: str                    # GUARDIAN-{timestamp}-{hash}
+    site_id: str
+    receipt_id: Optional[str]
+    input_html_hash: str             # SHA-256 do input
+    output_html_hash: str            # SHA-256 do output
+    css_guardian_version: str        # "1.1.0"
+    policy_profile: str              # "KLAR_NOIR_GDPR_SYSTEM_FONTS"
+    interventions_count: int
+    intervention_categories: Dict[str, int]
+    forensic_valid: bool
+    forensic_triggers_found: List[str]
+    passed: bool
+    errors: List[str]
+    warnings: List[str]
+    corrections: List[str]
+    created_at: str
+    local_log_hash: Optional[str]
+    ledger_receipt_id: Optional[str]
+```
+
+### Ledger Summary (What Goes to :8101)
+
+```json
+{
+  "audit_id": "GUARDIAN-20260511181716-58EC36C3",
+  "site_id": "test-001",
+  "guardian_version": "1.1.0",
+  "policy_profile": "KLAR_NOIR_GDPR_SYSTEM_FONTS",
+  "interventions_count": 4,
+  "categories": ["gradients", "border_radius", "colors", "canonical_injection"],
+  "passed": true,
+  "forensic_valid": true,
+  "log_hash": "fef316cec2a8c271d128339c84f8f21dca66fff9...",
+  "created_at": "2026-05-11T18:17:16.841407+00:00"
+}
+```
+
+### Visibility Rule 3C
+
+```
+Minimal footer:
+- proof line normal (WINDI-SITES-001-XXXXXXXX)
+- Guardian invisível
+
+Full forensic block:
+- Guardian Audit Reference visível
+- guardian version + policy
+- interventions count + status
+```
+
+### API Response Enhancement
+
+```json
+{
+  "guardian": {
+    "audit_id": "GUARDIAN-...",
+    "version": "1.1.0",
+    "interventions": 4,
+    "categories": ["gradients", "colors", ...],
+    "passed": true,
+    "log_hash": "fef316ce..."
+  }
+}
+```
+
+### Files Changed
+
+- `windi-sites/identity-gate/css_guardian.py` — Core implementation
+- `windi-sites/identity-gate/sites_crud.py` — API integration
+- `windi-sites/audit-logs/.gitkeep` — Local logs directory
+
+### Restart Required
+
+W-SITES-001 needs restart to pick up changes:
+```bash
+# Option 1: If running as systemd service
+sudo systemctl restart windi-sites
+
+# Option 2: If running as nohup
+pkill -f "sites_crud" && cd /opt/windi/windi-sites/identity-gate && nohup python3 -m uvicorn sites_crud:app --host 0.0.0.0 --port 8192 &
+```
+
+### Constitutional Compliance
+
+| Princípio | Status | Verificação |
+|-----------|--------|-------------|
+| Governança silenciosa | ✅ | Invisível em sites normais |
+| VERIFY = how to prove | ✅ | Visível quando Rule 3C activa |
+| Zero-Knowledge | ✅ | Hash no Ledger, detalhes locais |
+| I11 (forensic integrity) | ✅ | Log hash imutável |
+| I14 (explicit failure) | ✅ | Erros sempre reportados |
+
+### Observação Final
+
+> "The Guardian no longer only corrects. It witnesses."
+>
+> CSS Guardian transitioned from "filter" to "Auditor Registrador".
+> The surface is now governed — and the governance is provable.
+
+---
