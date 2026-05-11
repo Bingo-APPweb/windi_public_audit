@@ -54,9 +54,16 @@ Parent: WINDI-S250-DEPLOY-20260511-A9CB761B
 ### Scaffolds Pending
 
 - §251-IDENTITY (adiado até Berçário pleno)
-- §251-VERIFY (página frontal + redirect)
+- §251-VERIFY (página frontal + redirect — sessão própria)
 - §251-ENTERPRISE (portal público)
-- §250-VERIFY-OOB (verificação out-of-band)
+
+### Encerramento — §251 Fase 1
+
+**Sessão encerrada por decisão doutrinal.** O saldo do dia foi desproporcional — merece ser visto como acto isolado. VERIFY terá arranque limpo. A curva de honestidade fecha aqui.
+
+> *"O que está LIVE não precisa de mais nada para funcionar — já prova o que promete."*
+
+OM SHANTI 🐉
 
 ---
 
