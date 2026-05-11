@@ -13514,3 +13514,79 @@ pkill -f "sites_crud" && cd /opt/windi/windi-sites/identity-gate && nohup python
 > The surface is now governed — and the governance is provable.
 
 ---
+
+## Sessão 2026-05-11 — Fecho (§236 Continuity Protocol)
+
+**Período:** ~16:00 - 20:30 UTC
+**Modo:** CCode CLI (Opus 4.5)
+**Sprint:** §251→§252→§253→§254
+
+### Trabalho Completado
+
+| Sprint | Descrição | Status |
+|--------|-----------|--------|
+| §251 | IDENTITY portal deployment | ✅ SEALED |
+| §252 | T2+T3 verification tests | ✅ PASSED |
+| §253 | ENTERPRISE vestibule + Two-Track | ✅ SEALED |
+| §254 | CSS Guardian Auditability Logging | ✅ LIVE |
+
+### Selos Emitidos
+
+| Receipt ID | Descrição |
+|------------|-----------|
+| `WINDI-S251-IDENTITY-PORTAL-20260511` | Identity portal |
+| `WINDI-S253-ENTERPRISE-PORTAL-20260511` | Enterprise vestibule |
+
+### Commits
+
+```
+4478dc410 — docs(§254): CSS Guardian Auditability Logging documentation
+7a27ad6fb — feat(§254): CSS Guardian Auditability Logging
+28218014c — docs(§253): Foundation architecture complete
+43bc94815 — feat(§253): ENTERPRISE vestibule
+```
+
+### Estado dos Serviços
+
+| Serviço | Porta | Estado |
+|---------|-------|--------|
+| W-SITES-001 | :8192 | ✅ LIVE (PID 2497901) com §254 |
+| nginx | :443 | ✅ §253 routing active |
+| Ledger | :8101 | ✅ operational |
+
+### Arquitectura Entregue
+
+```
+FOUNDATION PORTAL — COMPLETE
+├── CIVIC TRACK (FREE)
+│   ├── IDENTITY ✓ /identity/
+│   ├── VERIFY ✓ /verify/
+│   └── MEMORY ✓ /memory/
+└── INSTITUTIONAL TRACK (PAID)
+    └── ENTERPRISE ✓ /enterprise/ → /enterprise/desk/
+```
+
+### Próximo Passo Proposto
+
+1. **Leitura adversária (24-48h)** — Tour dos 4 portais antes de próximo sprint
+2. **Ou** continuar com backlog técnico se leitura já feita
+
+### Ficheiros Críticos Alterados
+
+- `/opt/windi/windi-sites/identity-gate/css_guardian.py` — §254 audit
+- `/opt/windi/windi-sites/identity-gate/sites_crud.py` — API integration
+- `/opt/windi/landing-pmg/static/enterprise/index.html` — NEW
+- `/etc/nginx/sites-enabled/windi-domain.com` — §253 routing
+
+### Blockers
+
+Nenhum.
+
+### Observação Final
+
+> "Civic Triangle + Institutional Layer = arquitectura nomeável."
+> "O CSS Guardian já não apenas corrige. Ele testemunha."
+
+**Sistema em Normality Mode. Memória continuada activada.**
+
+---
