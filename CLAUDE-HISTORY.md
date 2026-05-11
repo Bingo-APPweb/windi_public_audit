@@ -6,6 +6,60 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 11 Mai 2026 (tarde) — §251 Portal MEMORY Deploy
+
+**Duração:** ~30min | **Status:** ✅ DEPLOYED + SEALED
+**Liga IA+H:** Human Dragon · Architect (CCode Opus 4.5) · Guardian (Claude.ai web)
+**Invariants:** I9, I11, I12 (§247)
+**Natureza:** Deploy de portal público
+
+### Contexto
+
+Continuidade da sessão Claude.ai web da tarde que desenhou §251-MEMORY. CCode executou o deploy no Strato.
+
+### Trabalho Completado
+
+| Item | Estado |
+|------|--------|
+| Página `/memory/` criada | ✅ `/opt/windi/landing-pmg/static/memory/index.html` |
+| Smoke test | ✅ HTTP 200 · 30.6 KB · 58ms |
+| Receipt selado | ✅ `WINDI-S251-MEMORY-DEPLOY-20260511145921-3B8838D1` |
+
+### Decisões Herdadas da Sessão Claude.ai Web
+
+- **4 Casos Vivos:** Sparkasse + Saúde + Jurídico + Diário (1 fin + 3 não-fin)
+- **Wisdom Protocol Versão B:** Pedagógica (3 câmaras + 4 ciclos com diagrama SVG)
+- **Two-Track:** Subtextual (Pessoa/Organização sem rótulos FREE/INSTITUTIONAL)
+- **§250-BIS Linhas Vermelhas:** 4 linhas explícitas na secção §5
+- **KLAR default + NOIR toggle + system fonts**
+- **§247 trilingual cirúrgico:** PT/DE/EN no hero
+
+### Decisão Doutrinal Preservada
+
+**IDENTITY adiado** até Berçário pleno — decisão constitucional do Human Dragon. Scaffold preservado em §251-IDENTITY.
+
+### Ficheiros
+
+- `/opt/windi/landing-pmg/static/memory/index.html` (30.6 KB)
+
+### Receipt
+
+```
+ID:     WINDI-S251-MEMORY-DEPLOY-20260511145921-3B8838D1
+Hash:   sha256:3b8838d1cfb47410940f4c272439671f2276805a17be77642f5cfe06158fa720
+Actor:  did:windi:dragon-001
+Parent: WINDI-S250-DEPLOY-20260511-A9CB761B
+```
+
+### Scaffolds Pending
+
+- §251-IDENTITY (adiado até Berçário pleno)
+- §251-VERIFY (página frontal + redirect)
+- §251-ENTERPRISE (portal público)
+- §250-VERIFY-OOB (verificação out-of-band)
+
+---
+
 ## § SESSÃO 11 Mai 2026 — §250 Gramática Pública da Foundation
 
 **Duração:** ~2h | **Status:** ✅ SELADO (doutrina) · PROTÓTIPO para validação
