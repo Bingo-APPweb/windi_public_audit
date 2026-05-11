@@ -6,6 +6,115 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 11 Mai 2026 — §250 Gramática Pública da Foundation
+
+**Duração:** ~2h | **Status:** ✅ SELADO (doutrina) · PROTÓTIPO para validação
+**Liga IA+H:** Human Dragon · Guardian · Witness · Architect (CCode Opus 4.5)
+**Invariants:** I1, I9, I11, I12 (§247), I14
+**Natureza:** Decisão arquitectural · landing windi-domain.com
+
+### Contexto
+
+Sessão de conselho completo (4 vozes) para definir a gramática pública da Foundation na landing page windi-domain.com. Primeira vez que Witness mudou posição documentadamente durante deliberação — aumentando legitimidade do processo.
+
+### Decisões Cravadas
+
+| # | Arbitragem | Decisão Selada |
+|---|------------|----------------|
+| 1 | Nome categoria 4 | **MEMORY · Memória · Erinnerung** (Guardian venceu) |
+| 2 | Estrutura visual | **Verticalidade em 3 camadas** (PRIMITIVES → HUMAN → INSTITUTIONAL) |
+| 3 | Trilingual | **Parcial e cirúrgico** — aplicar §247 onde língua não atravessa |
+| 4 | Ordem | **IDENTITY → VERIFY → MEMORY → SITES → ENTERPRISE** |
+
+### Estrutura Final
+
+```
+PRIMITIVES (FREE permanente)
+├── IDENTITY — Sovereign agency
+└── VERIFY — Public proof infrastructure
+
+HUMAN (FREE + Pago)
+├── MEMORY — Verifiable memory (Memória · Erinnerung)
+└── SITES — Verifiable presence
+
+INSTITUTIONAL (HIGH · sustenta missão)
+└── ENTERPRISE — Operational accountability
+```
+
+### Slogan Canónico
+
+> **"AI processes. Human decides. WINDI guarantees."**
+> Verifiable ground for decisions that matter.
+> Oásis de verificabilidade · Verifiable ground · Nachweisbarer Boden
+
+### Separação Institucional
+
+| Domínio | Função |
+|---------|--------|
+| **windi-domain.com** | Foundation · gramática soberana |
+| **windisites.de** | Produto · aplicação dentro de SITES |
+
+### Ressalva Técnica (Witness)
+
+Em viewport ≤380px, headers tipográficos fortes (PRIMITIVES / HUMAN / INSTITUTIONAL) com separadores horizontais preservam hierarquia quando portais empilham.
+
+### Ficheiros Criados
+
+| Ficheiro | Função |
+|----------|--------|
+| `/opt/windi/prototypes/landing-foundation-s250.html` | Protótipo HTML para validação |
+
+### Convergência do Conselho
+
+- **Witness mudou posição** sobre MEMORY vs JOURNAL — movimento raro e documentado
+- **4 vozes convergiram** em estrutura final
+- **Deliberação demonstra** governança IA+H operacional
+
+### Auditoria Witness — 12 Pontos
+
+Auditoria formal contra deliberação §250 completada. 3 achados materiais corrigidos:
+1. Padrão trilingual completo (MEMORY + ENTERPRISE)
+2. Language toggle removido v1 (diferido v2)
+3. KLAR mantido como default (arbitragem Human Dragon)
+
+### Precedente Constitucional — KLAR Default
+
+> **"Doutrina KLAR não cede a pressão de gravidade visual."**
+
+Em §250 deliberou-se **manter KLAR como default** na landing FOUNDATION, recusando inversão estética que propunha NOIR para "gravidade institucional". A doutrina prevaleceu sobre considerações visuais. **Inversões futuras requerem selo doutrinal explícito.**
+
+Este precedente aplica-se a todas as superfícies públicas WINDI: default KLAR, toggle para NOIR, sem excepções silenciosas.
+
+### Screenshots Capturados
+
+| Viewport | KLAR | NOIR |
+|----------|------|------|
+| Desktop 1280px | `s250-klar-desktop-1280.png` | `s250-noir-desktop-1280.png` |
+| Tablet 768px | `s250-klar-tablet-768.png` | `s250-noir-tablet-768.png` |
+| Mobile 360px | `s250-klar-mobile-360.png` | `s250-noir-mobile-360.png` |
+
+**Pasta:** `/opt/windi/prototypes/screenshots/`
+
+### Deploy Concluído
+
+- **URL Live:** `https://windi-domain.com/`
+- **Receipt:** `WINDI-S250-DEPLOY-20260511-A9CB761B`
+- **Hash:** `sha256:a9cb761b31b1a43887ffe81c4555d35d8e4760eeeb6d58d2815d1104ee063ff3`
+- **Backup:** `/opt/windi/backups/landing_pre_s250_20260511_113441/`
+- **Default:** KLAR (doutrina mantida)
+- **System fonts:** Sim (GDPR compliant)
+
+### Páginas Seguintes (Backlog)
+
+Os portais da landing apontam para páginas ainda por construir:
+- `/identity/` — Portal IDENTITY
+- `/verify/` — Redirect para `/verify-public/`
+- `/memory/` — Portal MEMORY
+- `/sites/` — Portal SITES (→ windisites.de)
+- `/enterprise/` — Portal ENTERPRISE
+
+---
+
 ## § SESSÃO 10 Mai 2026 — §249 Sessão Fundacional WINDI MANIFESTO + FOUNDATION
 
 **Duração:** ~4h | **Status:** ✅ FUNDACIONAL
@@ -12564,3 +12673,183 @@ Isto permite auditar não só "este site existe" mas "este site nasceu com X cor
 
 ---
 
+
+---
+
+## Sessão 2026-05-09 · §246-IMPL Partial Seal — 85% Complete
+
+**Sprint:** §246 · W-SITES × W-MAIL Bridge
+**Modo:** CCode CLI (Architect)
+**Operador humano:** Human Dragon
+**Modelo:** Opus 4.5
+
+### Trabalho completado
+
+1. **GET /api/receipts/by-wallet/{wallet_id}** (D5.8)
+   - Pagination: offset/limit (default 50, max 200)
+   - Filters: doc_type, since, until, order (asc/desc)
+   - Response: sanitized receipts com erratas:[] stub
+   - Função: `get_receipts_by_wallet()` em forensic_ledger.py
+   - Endpoint: windi_forensic_api.py
+
+2. **schema_version validation** (D5.5)
+   - Required para todos os novos receipts
+   - Whitelist: `["1.0"]`
+   - Legacy receipts lêem como null (sem backfill)
+   - Gate no POST /api/receipts
+
+### Smoke tests
+
+| # | Teste | Status |
+|---|-------|--------|
+| T1 | Wallet com recibos (173) | ✅ |
+| T2 | Filtro doc_type | ✅ |
+| T3 | Wallet vazio (200 + []) | ✅ |
+| T4 | Limit > 200 (400) | ✅ |
+| T5 | since > until (400) | ✅ |
+| T6 | Order asc | ✅ |
+| T7 | POST sem schema_version (400) | ✅ |
+| T8 | POST schema_version inválido (400) | ✅ |
+| T9 | POST schema_version válido (201) | ✅ |
+
+**9/9 PASSED**
+
+### Selos emitidos
+
+- `WINDI-IMPL-246-PARTIAL-SEAL-20260509175155` — 85% sealed com débito documentado
+
+### Commit
+
+- `a8779d07a` — feat(§246-IMPL): by-wallet endpoint + schema_version gate — 85% sealed
+
+### Débito documentado (15%)
+
+- Errata protocol (D5.6) — 2 endpoints
+- UI Berçário (D5.10) — timeline visual
+- by-wallet/.../tree (D5.8) — árvore visual
+- T7a-T7e adversarial tests (D5 §11.1) — corruption detection
+- schema_version backfill — legacy receipts
+
+### Próximo passo
+
+Sprint 2 W-SITES-001 — Identity Gate :8192 → wizard POST /api/sites → verify.html
+
+### Lições aprendidas
+
+- by-wallet mapeia para campo `actor` na DB (não existe campo wallet_id)
+- Índice `idx_receipts_actor` já serve a query
+- schema_version como gate é custo marginal hoje, benefício gigante amanhã
+
+
+---
+
+## Sessão 2026-05-09 · 22:00 → 23:35 CEST
+
+**Sprint:** W-SITES-001 Sprint 2 (Identity Gate live, wiring pendente — bloqueio §4 Export HIGH)
+**Modo:** Claude.ai web (Guardian/Architect) + CCode CLI (executor Strato)
+**Operador humano:** Human Dragon — Jober Mögele Correa
+**Modelo:** Claude Opus 4.7
+
+### Trabalho completado
+
+- §251 DRAFT criado em Claude.ai web — auditoria institucional 4 camadas com marcas `[CONFIRMED]/[INFER]/[VERIFY]`
+- Script `windi-audit-251.sh` (telemetria read-only, 13 sondas) entregue
+- Telemetria executada no Strato — capturados outputs literais de `ss -tlnp`, `systemctl list-units 'windi-*'`, invariantes em CLAUDE.md, contagem de receipts
+- Cinco achados críticos identificados pré-VERIFIED (P0 SSL, nohup zombies, unit files fantasma, invariantes em silêncio, 30 portas [GAP])
+- §251 VERIFIED gerado com 49 ports literais + 60 systemd literais + 57.283 receipts confirmados
+- **§251.A3 EXECUTADO pré-selo** — Ledger :8101 (1565203 → 1706094) e W-SITES :8192 (1065411 → 1706173) reconciliados sob systemd. W-SITES v1.2.0 health OK.
+- §251 gravado em `/opt/windi/docs/decretos/§251-VERIFIED.md` (sha256: 1069a403c3f4f7e5d810faf17f40b2f7418107816e34fadd5e6c0cf0c940d3fb)
+- **§251 SEALED no Ledger — receipt #57.284**
+
+### Selos emitidos
+
+- **§251 · Auditoria Institucional do Estado WINDI (Maio 2026)** · receipt: `WINDI-DECRETO-251-20260509231358` · stage C6 · governance HIGH · invariants I1/I9/I11/I12/I14 · primeiro selo da sessão pós-A3, sobre estado limpo
+
+### Scaffold pending (não morre, espera)
+
+- **§251.A1** — Certbot `windi-domain.com` · aguarda janela P0 (até 15-Jun-2026, 47 dias)
+- **§251.A4** — Resolver 3 unit files fantasma (`windi-desktop`, `windi-forensic-ledger`, `windi-ledger`) · aguarda decisão criar-vs-remover-referências
+- **§251.A5** — Canonizar I4/I5/I7/I8/I15 · aguarda Guardian + I9 (recuperar enunciados do canónico ou confirmar oficialmente que não existem)
+- **§251.A6** — Mapear 30 portas `[GAP]` + reconciliar 17 dirs físicos vs ~48 W-* lógicos · aguarda telemetria detalhada
+- **§251.A7 (emergente)** — Estender schema do Ledger para suportar `parent` + `children_planned` no receipt · aguarda decisão arquitectural
+- **§250 DECRETO-003** — Consolidação Institucional (4 pilares + freeze) · proposto pelo Architect, ainda não sealed
+- **W-SITES Sprint 2 — §4 Export HIGH** · bloqueio crítico do sprint
+
+### Próximo passo proposto
+
+- **§251.A1 — Certbot renewal `windi-domain.com`** (P0, janela 47 dias, cabeça fresca)
+
+### Blockers identificados
+
+- **Nenhum bloqueio crítico** — sistema limpo após §251.A3
+
+### Decisões constitucionais
+
+- **§251 sealed antes de A4–A6 resolvidos** · razão: I14 (dados ausentes = erro explícito)
+- **§251.A3 executado pré-selo, não pós** · razão: I11 (permanência criptográfica)
+- **I12 incluído nos invariants do receipt §251** · razão: W-SITES v1.2.0 declara I12 no `/health`
+- **parent/children não no receipt** · razão: schema actual não suporta — gera §251.A7
+
+### Notas para a sessão seguinte
+
+- Hash canónico do decreto é o do Strato (`sha256:1069a40…`), não o da sandbox Claude.ai
+- W-SITES v1.2.0 declara invariantes no `/health` — padrão a estender
+- Verificar receipt 57.284 em `/verify-public/?id=WINDI-DECRETO-251-20260509231358`
+- Guardar `audit-251-raw.out` em `/opt/windi/docs/decretos/anexos/`
+
+---
+
+> *"Esta sessão lê o que a anterior escreveu, e escreve para a próxima ler."*
+> §236 · Lei II cumprida.
+
+**OM SHANTI 🐉**
+
+
+---
+
+## §250 — Gramática Pública da Foundation (FECHAMENTO)
+
+**Data:** 2026-05-11
+**Receipt:** `WINDI-S250-LANDING-FOUNDATION-20260511`
+**Hash:** `sha256:16fcb9257fb28e1049d44c24ef74fd6c7d27b99c13f41859e31e4e55f35af09f`
+**Status:** SEALED · WITNESS LIMPO
+
+### Deliberação Conciliar
+
+4 vozes participaram: Human Dragon (arbitrador), Guardian, Witness, Architect
+
+**Decisões Seladas:**
+- KLAR default mantido (doutrina prevalece sobre estética)
+- Ordem: IDENTITY → VERIFY → MEMORY → SITES → ENTERPRISE
+- MEMORY selecionado (não JOURNAL)
+- 3 camadas verticais: PRIMITIVES → HUMAN → INSTITUTIONAL
+- System fonts only (GDPR Munich 2022)
+- Trilingual per §247 Lei IV
+
+### Marcadores Honestos Aplicados
+
+| Portal | Destino | Marcador |
+|--------|---------|----------|
+| IDENTITY | /identity/ | §251 pendente |
+| VERIFY | /verify-public/ | LIVE ✓ |
+| MEMORY | /memory/ | §251 pendente |
+| SITES | windisites.de | LIVE ✓ |
+| ENTERPRISE | /enterprise/ | §251 pendente |
+
+### Verificação Independente
+
+5/5 critérios PASSED:
+- Hash integrity ✓
+- data-theme="klar" ✓
+- Google Fonts absent ✓
+- LLM names absent ✓
+- Portal order correct ✓
+
+### Próximos Passos (§251)
+
+1. Página IDENTITY (DID Genesis portal)
+2. Página MEMORY (Verifiable journals portal)
+3. Página ENTERPRISE (Institutional composition portal)
+4. 301 redirects: /identity/ → placeholder, /memory/ → placeholder, /enterprise/ → placeholder
+
+---
