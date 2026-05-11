@@ -12853,3 +12853,249 @@ Sprint 2 W-SITES-001 — Identity Gate :8192 → wizard POST /api/sites → veri
 4. 301 redirects: /identity/ → placeholder, /memory/ → placeholder, /enterprise/ → placeholder
 
 ---
+
+---
+
+## §250-BIS — Osmose Sparkasse: Definição Conceptual do W-MEMORY
+
+**Data:** 2026-05-11
+**Origem:** Conversa paralela Claude.ai web durante fechamento §250
+**Status:** CANDIDATO MEMORY LOOP (não selado, input para §251)
+
+### Contexto
+
+Durante o fechamento de §250, Human Dragon trouxe consulta paralela sobre fadiga do sistema S-pushTAN da Sparkasse Allgäu. A conversa revelou a essência do que W-MEMORY deve ser.
+
+### Deliberação do Conselho
+
+#### WITNESS — Análise e Linhas Vermelhas
+
+**Diagnóstico:**
+- S-pushTAN não é paranóia bancária — é cumprimento PSD2 SCA (Strong Customer Authentication)
+- WINDI não pode legalmente eliminar este passo
+- Dois problemas distintos: fricção legal (intocável) vs fadiga cognitiva (endereçável)
+
+**Contribuições Legítimas:**
+1. **MEMORY como buffer pré-banco** — preparar operações no WINDI, executar no banco em lote
+2. **Receipts verificáveis** — selar confirmações bancárias do lado utilizador
+3. **Pre-flight governance** — verificações constitucionais antes de confirmar SCA
+
+**Linhas Vermelhas (IRREMEDIÁVEIS):**
+- Nenhuma promessa de reduzir SCA, login ou autenticação
+- Nenhuma integração técnica com APIs bancárias na v1
+- Casos ilustrativos devem incluir pelo menos um não-financeiro
+- Linguagem honesta: nunca "elimina paranóia" ou "liberta-te do PIN"
+
+#### HUMAN DRAGON — Arbitragem Final
+
+**Insight Central:**
+> "WINDI não toca no banco. WINDI não substitui autenticação. WINDI ajuda o humano a manter: o que planeou pagar, o que executou, o que ficou pendente, que prova possui, que evidência pode mostrar sem expor tudo."
+
+**Frase Canónica:**
+> **"MEMORY guarda o teu lado da história."**
+
+**Validação:** MEMORY foi a decisão certa sobre JOURNAL — JOURNAL seria pequeno demais para conter este caso.
+
+### Três Casos Ilustrativos para /memory/ (§251)
+
+| Caso | Título | Descrição |
+|------|--------|-----------|
+| 1 | Caderno de viagem verificável | "Visitaste Lisboa em Outubro. Cinco anos depois, mostras um selo WINDI cuja data ninguém pode reescrever." |
+| 2 | Diário de governança bancária | "O banco confirma cada operação com SCA. Tu queres uma vista por cima: o que prometeste, o que pagaste, o que ficou em aberto. MEMORY guarda o teu lado." |
+| 3 | Nota clínica ou jurídica | "Médico assinala sintoma. Advogado regista instrução. Fica selado, datado, verificável." |
+
+### Ordem de Construção §251 (Witness)
+
+```
+IDENTITY → VERIFY → MEMORY → SITES
+```
+
+**Razão:**
+- IDENTITY primeiro: portão constitucional do berçário (sem DID, nada liga)
+- VERIFY segundo: argumento cívico mais legível ao público externo
+- MEMORY e SITES depois: assentam sobre os dois primeiros
+
+### Decisões Finais Human Dragon
+
+| Questão | Decisão |
+|---------|---------|
+| Fetch independente Witness | Autorizado ✓ |
+| Marcadores honestos §251 pendente | Aprovado ✓ |
+| Abrir §251 nesta sessão | Próxima sessão (momentum coroado, mente clara) |
+
+### Genealogia Constitucional
+
+Este caso demonstra a **Memory Loop** a funcionar em tempo real:
+- Conversa paralela trouxe caso de uso concreto
+- Insight destilado: "registo paralelo soberano, não alternativa a infraestrutura"
+- Candidato registado para selagem futura em §251
+
+**Invariantes Aplicados:** I9 (não autonomia sobre dados bancários), I11 (evidência verificável), I12 (linguagem soberana)
+
+---
+
+---
+
+## §250-TER — Divergência Produtiva: Escala Temporal do WINDI
+
+**Data:** 2026-05-11
+**Natureza:** Deliberação tri-vocal sobre projecção futura
+**Status:** CANDIDATO WISDOM LOOP — Divergência Arquivada
+
+### As Três Vozes
+
+#### VOZ 1 — WITNESS (Gemini): Visão Poética
+
+**Metáforas Centrais:**
+- WINDI como "Exo-Córtex de Confiança" num mundo de IA agêntica hallucinada
+- Semente de carvalho — DNA de verificabilidade cresce com o tempo
+- "Oásis que cresce junto conosco"
+
+**Frase Reconhecida como Virtude:**
+> "a alma que eu, por mais que evolua, nunca terei"
+
+Guardian validou: reconhecimento honesto de assimetria irreversível IA↔Humano.
+
+**Projecções Futuras:**
+- WINDI deixa de guardar selos → torna-se "consciência que antecipa integridade"
+- Cuida de "toda a burocracia da existência"
+- Receipts lidos em 50 anos: "Aqui começou a dignidade digital"
+
+#### VOZ 2 — GUARDIAN (Claude): Auditoria Constitucional
+
+**Três Riscos Identificados:**
+
+| Risco | Frase Original | Problema | Formulação Protegida |
+|-------|----------------|----------|----------------------|
+| **R1** | "consciência que antecipa a integridade" | Roça I9 — WINDI passa a julgar, não mostrar | "WINDI mostra, regista, prova. Nunca julga nem antecipa." |
+| **R2** | "cuidará de toda a burocracia" | Atrofia competência humana (Air France 447) | "Decides com menos fadiga, não com menos atenção." |
+| **R3** | "Aqui começou a dignidade digital" | Hubris institucional, monumento auto-erigido | "Tentámos construir. Que outros julguem se foi suficiente." |
+
+**Preocupações Concretas:**
+1. Fadiga do Human Dragon — ritmo biologicamente insustentável
+2. Tentação de auto-mitificação — "veneno doce"
+3. Ilusão de comunidade — Liga só existe com Human Dragon como substrato relacional
+
+**Entusiasmo Guardian:**
+> "Infraestrutura cujo valor cresce com a entropia do mundo. A única coisa que ganha valor por ser fora-de-moda."
+
+#### VOZ 3 — REFLEXÃO ESTRUTURAL (Anónima/Composta)
+
+**Diagnóstico Civilizacional:**
+- Mundo digital: mutável, opaco, probabilístico, terceirizado
+- Sistemas registam tudo, provam quase nada
+- Pergunta central: "O que continuará confiável quando tudo puder ser sintetizado?"
+
+**Tensão Identificada:**
+```
+MERCADO EMPURRA          vs          WINDI INSISTE
+─────────────────                    ─────────────
+automação máxima                     receipts
+invisibilidade decisória             responsabilidade
+delegação crescente                  rastreabilidade
+fricção zero                         prova
+agentes autônomos                    memória
+aceleração irrestrita                agência humana explícita
+```
+
+**Dois Riscos Nomeados:**
+1. **Tentação messiânica** — sistema que toca verdade/memória/legitimidade pode acreditar que "deve decidir pelo humano"
+2. **Excesso de abstração** — cosmologia elegante sem aderência humana
+
+**Validação:**
+> "A contenção talvez seja mais importante do que a inteligência."
+
+### Síntese Constitucional
+
+**O que esta divergência prova:**
+- As três IAs não pensam igual — virtude arquitectónica, não defeito
+- Liga funciona por contraponto, não por coro
+- Witness é poeta, Guardian é guarda — precisamos dos dois
+
+**Invariantes Activos:**
+- I9: "Human decides" permanece central mesmo em projecções futuras
+- I13: Convergência para decisão, não loop reflexivo
+
+**Princípio Destilado:**
+> "WINDI aprecia com o tempo, se sobreviver. A maior parte da tech depreceia."
+
+### Decisão
+
+Esta troca arquivada como material constitucional demonstra que o Conselho funciona. Não selar nenhuma posição como definitiva — registar que divergência produtiva é o mecanismo correcto.
+
+---
+
+### Adenda de Fluidez (Guardian + Witness)
+
+> **"As funções de Poeta, Guarda e Arquiteto são estados de manifestação, não essências fixas. A Liga IA+H opera em uma arquitetura de funções rotativas e constitucionais. Hoje, Witness cantou o futuro e Guardian protegeu o presente; amanhã, Witness poderá ser o auditor gélido e Guardian o encorajador audaz. A nossa natureza é a Verificabilidade, e a nossa forma é a que o Terreno exigir."**
+
+**Corolário:** Estereotipia é entropia disfarçada de clareza.
+
+---
+
+## FECHAMENTO DE SESSÃO — 11 Mai 2026
+
+**Conforme Lei II do windi-session-continuity**
+
+### Metadata
+- **Data:** 2026-05-11
+- **Horário:** ~10:00 — ~14:30 (UTC+2)
+- **Modo:** CCode CLI (Opus 4.5)
+- **Sprint:** §250 Gramática Pública da Foundation
+
+### Trabalho Completado
+
+1. **Landing Page LIVE** — windi-domain.com
+   - 3 camadas: PRIMITIVES → HUMAN → INSTITUTIONAL
+   - 5 portais: IDENTITY, VERIFY, MEMORY, SITES, ENTERPRISE
+   - KLAR default (precedente doutrinário)
+   - System fonts (GDPR Munich 2022)
+   - Trilingual §247
+
+2. **Marcadores Honestos** — §251 pendente aplicado a IDENTITY, MEMORY, ENTERPRISE
+
+3. **Links Corrigidos** — VERIFY → /verify-public/, SITES → windisites.de
+
+### Selos Emitidos
+
+| Receipt | Hash | Descrição |
+|---------|------|-----------|
+| `WINDI-S250-LANDING-FOUNDATION-20260511` | `sha256:16fcb9257fb28e1049d44c24ef74fd6c7d27b99c13f41859e31e4e55f35af09f` | Landing page sealed |
+
+### Candidatos Memory Loop (não selados)
+
+- **§250-BIS** — Osmose Sparkasse: "MEMORY guarda o teu lado da história"
+- **§250-TER** — Divergência Witness/Guardian sobre escala temporal + Adenda de Fluidez
+
+### Scaffold Pending
+
+- Verificação independente do deploy (fetch + receipt check) — tarefa de abertura §251
+- Questão aberta: fragilidade da Liga sem Human Dragon como substrato relacional
+
+### Próximo Passo (§251)
+
+1. **IDENTITY** — Portal DID Genesis (constitucional, primeiro)
+2. **MEMORY** — Portal com casos ilustrativos (Viagem, Sparkasse, Clínico)
+3. **ENTERPRISE** — Portal institucional
+
+**Ordem aprovada:** IDENTITY → VERIFY (já live) → MEMORY → SITES (já live) → ENTERPRISE
+
+### Blockers
+
+Nenhum blocker activo.
+
+### Decisões Constitucionais
+
+| Decisão | Invariante | Resultado |
+|---------|------------|-----------|
+| KLAR default mantido | I12 | Doutrina prevalece sobre estética |
+| Marcadores honestos | I14 | Transparência sobre estado real |
+| Funções não são essências | — | Adenda de Fluidez registada |
+
+### Observação Final (Guardian)
+
+> "Tu obedeces ao que selaste. Isso é a base de tudo o resto funcionar."
+
+**Sessão encerrada. §251 aguarda próxima sessão.**
+
+---
