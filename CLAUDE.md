@@ -1,12 +1,12 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.50.0
-**Sealed:** 2026-05-10 · §249 Sessão Fundacional MANIFESTO + FOUNDATION
+**Version:** 2.51.0
+**Sealed:** 2026-05-12 · §255-§257 Foundation Ontology + Cognitive Continuity Axiom
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
 > **Ficheiros relacionados:** `CHANGELOG.md` (histórico) · `ARCHITECTURE.md` (código técnico)
-> **Documentos Fundacionais:** `WINDI-MANIFESTO.md` · `FOUNDATION-AS-WINDI-MEANS-IT.md`
+> **Documentos Fundacionais:** `WINDI-MANIFESTO.md` · `FOUNDATION-AS-WINDI-MEANS-IT.md` · `NOTEBOOK-001-HYBRID-COGNITIVE-SYSTEMS.md`
 
 ## 📚 Overflow Policy (17 Mar 2026)
 Hard limit: **32KB**. Último fix: 09 Abr 2026 (31.9KB → ~28KB).
@@ -602,11 +602,11 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 12 Mai | **§255-§257** Foundation Ontology · I12 Trilingual + Notebook 001 + Cognitive Continuity Axiom |
 | 10 Mai | **§249** SESSÃO FUNDACIONAL · MANIFESTO + FOUNDATION · Tese Ontológica IA+H |
 | 07 Mai | **§246** W-SITES × W-MAIL Bridge · 6/6 selos + T7 adversarial · `4CE30817`+`4DD83B15` ✅ |
 | 05 Mai | **§245** Editorial Doctrine · `3C5638F9` ✅ |
 | 03 Mai | **§235+241** windisites.de LIVE · `1BE93BB4` ✅ |
-| 29 Apr | **§224-226** W-MAIL-001 DACP-v1 ✅ |
 
 > **Full history:** `CLAUDE-HISTORY.md`
 
@@ -650,6 +650,30 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 ---
 
 ## BACKLOG — Próximas Sessões
+
+### SPRINT ACTUAL — Foundation Portals + Linguistic Strategy (12 Mai 2026)
+
+**Contexto:** §255 (I12 fix) revelou que cobertura trilingue ≠ estratégia linguística. Guardian produziu relatório adversário identificando gaps. Bloco 0 (decisões estratégicas) bloqueia Bloco A (sweep técnico).
+
+**Bloco 0 — Decisões Estratégicas (pendente Human Dragon):**
+
+| # | Decisão | Opções |
+|---|---------|--------|
+| Q1 | Registo por audiência | IDENTITY+MEMORY (du/tu informal) vs VERIFY+ENTERPRISE (Sie/você formal) |
+| Q2 | Positioning /enterprise/ | Manifesto+CTA ou página técnica com features? |
+| Q3 | Landing strategy | English-only (v2 later) ou trilingual completo agora? |
+| Q4 | Glossário Canónico Trilingue | W-LIB-001 agora ou marcar como P1 debt? |
+
+**Bloco A — Trabalho Técnico (bloqueado até Bloco 0):**
+- [ ] DE ortografia sweep: ae→ä, oe→ö, ue→ü, ss→ß em 4 portais
+- [ ] Padronização tonal DE/PT conforme Q1
+- [ ] /enterprise/: EU AI Act + GDPR + receipt + nav + Liga IA+H
+- [ ] Landing trilingual (se Q3 = agora)
+
+**Scaffold:**
+- [ ] **Notebook 002: Continuity Symmetry** — "A continuidade humana também reside na estrutura, não na instância"
+
+---
 
 ### P0 — Crítico
 - [ ] **§139 WINDI-LAW Painel de Anexos** — Lista persistente · SHA · Suporte múltiplos ficheiros
@@ -707,6 +731,10 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | **ARCH** | `5D8513D7` | §246-D4 Rate Limiting + per-DID Quotas |
 | **ARCH** | `4CE30817` | §246-D5 Receipt Symmetry — Chain Architecture |
 | **ARCH** | `4DD83B15` | §246-D5-T7 Adversarial Protocol — Gate Constitucional |
+| **FOUNDATION** | `007bd9f1e` | §255 I12 Trilingual Compliance — Foundation Portals |
+| **FOUNDATION** | `82d2425c5` | §255-bis Linguistic Systems Engineering |
+| **FOUNDATION** | `39a332252` | §256 Notebook 001 — Field Notes on Hybrid Cognitive Systems |
+| **AXIOM** | `853da1515` | §257 Cognitive Continuity Axiom |
 
 > **Full receipts list:** `CLAUDE-HISTORY.md` § Produtos SEALED
 
