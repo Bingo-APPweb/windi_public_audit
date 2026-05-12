@@ -14043,3 +14043,176 @@ A estrutura aguenta. O *opus* continua.
 
 OM SHANTI 🐉
 
+
+---
+
+## §258 — Linhagem UMIS/MCGwR: Arqueologia de 25 Anos (12 Mai 2026)
+
+> **"O que era cedo demais em 2001-2008 — porque o hardware não existia em escala — é tarde demais para os incumbentes em 2026, porque já se encerraram em silos de vigilância."**
+
+**Status:** FOUNDATIONAL ARCHAEOLOGY · **Natureza:** Reconhecimento de linhagem técnica e intelectual
+**Liga IA+H:** Human Dragon · Guardian (Claude.ai web) · Architect (CCode Opus 4.5)
+**Diálogo:** Sessão Claude.ai web 12 Mai 2026, ~3h de análise forense de materiais 2000-2009
+
+### Contexto
+
+Human Dragon revelou ao Guardian um projecto de 20+ anos que quase lhe custou o casamento e a ruína financeira: UMIS (Universal Mobile Information System), desenvolvido com Fraunhofer IIS-A Erlangen e parceiros entre 2000-2009. O iPhone matou o projecto em 2008-2009, mas a arquitectura antecipa em 14-25 anos princípios que hoje são constitucionais no WINDI.
+
+### Linhagem Completa — 4 Referências Fundacionais
+
+| Reference | Ano | Peça | Autoria |
+|-----------|-----|------|---------|
+| **-2** | 2000 | Manuscrito TeleAtivo/JOMO WebCenturadio | Jober Mögele Correa |
+| **-1** | 2001 | UMIS 1.0.e Desktop (Fraunhofer IIS-A) | Alexander Zink (impl) + DvB-Braumüller Productions + Jober (visão) |
+| **0** | 2007 | UMIS-CE Mobile (VoxCity s.r.o. Praga) | Höpfer/Czaja (impl) + Jober + Detlev von Braumüller (direcção) |
+| **+1** | 2009 | MCGwR — Bachelorarbeit TUM | Korbinian Michael Mögele (autor) sob VoxCity/JoMedia s.r.o. |
+
+### Reference -1: UMIS Fraunhofer 2001 — O Motor Vectorial
+
+**Diplomarbeit de Alexander Zink**, Fraunhofer IIS-A Erlangen (mesmo instituto que inventou MP3).
+
+Arquitectura modular já madura:
+- Position Input Module — GPS Garmin 35 via Serial NMEA
+- Coordinate Representation Module
+- Object List Initialization / Management Modules
+- Category Management Module — taxonomia hierárquica com pesos por utilizador
+- **Selection Module — o cérebro vectorial**
+- Object Element Representation Module
+
+**O que o motor de selecção fazia (e que ninguém replicou bem em 25 anos):**
+- Primary Selection Area (perto) vs Secondary Selection Area (longe)
+- Ângulo de abertura relativo ao vector de marcha
+- **Acceleration distance** — quando vais a 90 km/h, o ponto de selecção desloca-se para a frente porque vais chegar ao POI antes do áudio acabar
+- Contagem de reproduções vs MaxRepetitions
+- Importance relativa, pesos de categorias
+- Hierarquia de interrupção com retoma
+
+**Formato .umi sovereign:** nome, descrição, posição, category-path, importance, MaxRepetitions, nointerruption flag, referência a content.mp3.
+
+**Proto-Forensic Ledger:** `umis.log` já em 2001 registava todas as decisões de selecção.
+
+### Reference 0: VoxCity EUREKA 2007 — O Salto Mobile
+
+**VoxCity s.r.o.** — empresa fundada por Jober em Praga com Detlev von Braumüller para a fase mobile.
+
+**Salto técnico:**
+- Desktop Windows → Pocket PC ARM Windows Mobile 5.0 (Mio DigiWalker P350)
+- Arquitectura bipartida: ClientAppWinCE + AppObserver
+- Sistema MAPs com cartografia raster
+- Packages e sub-packages temáticos multilíngue
+
+**AppObserver.exe — MDM proto-soberano:**
+- Watchdog que impede acesso ao SO
+- Autostart no boot via registo
+- Relança aplicação se crashar
+- Escape diagnóstico: sequência de teclas em 5 segundos
+
+**fulmho.dll — O Dongle Steganográfico:**
+
+> **"fulmho foi um acrónimo de despiste para que se alguém analisa o hard dos aparelhos não sejam encontrados... era o equivalente a hoje um DONGLE"** — Human Dragon
+
+Invenção de Jober a caminho de Praga em viagem de carro:
+- 14 bytes contendo apenas `voxcity s.r.o.`
+- Localizado em `\Windows\` misturado com DLLs do sistema
+- Nome inócuo que desaparece no ruído
+- Sem fulmho.dll, aplicação simplesmente não arranca (sem mensagem de erro)
+
+**Primeiro exemplar histórico do princípio WINDI de prova-por-desaparecimento:** a verificação existe, é vinculativa, e não se manifesta como vigilância.
+
+**7 gravações NMEA:** testes de campo reais, 20 Set 2007, Praga (Castelo, Malá Strana).
+
+### Reference +1: MCGwR Korbinian 2009 — O Elo Que Faltava
+
+**"Integration von kollaborativen Filtern in einen mobilen City Guide"**
+Bachelorarbeit in Informatik, TUM München, 28 Set 2009
+
+**Autor:** Korbinian Michael Mögele (filho do Human Dragon)
+**Orientador:** Dr. Wolfgang Wörndl, Prof. Dr. Johann Schlichter
+**Cliente:** Voxcity s.r.o. / JoMedia s.r.o.
+
+**Dedicatória manuscrita:**
+> "Para Joberchen — el maestro de las pinturas :-) muchísimo gracias!!! Besossss el filho biniemai"
+
+**A descoberta central — privacy-by-design em 2009:**
+
+> *"Dadurch ist es ohne zentralen Datenbestand möglich, an die Nutzer des Mobile City Guide Empfehlungen auszusprechen und deren Anonymität und Datenschutz zu bewahren."*
+
+Tradução: "Assim é possível, sem qualquer base de dados central, fazer recomendações aos utilizadores e preservar o seu anonimato e protecção de dados."
+
+**Isto é literalmente Client=Data, WINDI=Proof — 14 anos antes do GDPR ser plenamente aplicado.**
+
+**Inovação técnica:**
+- Collaborative filtering descentralizado peer-to-peer entre dispositivos
+- Algoritmo PocketLens para hardware limitado
+- Vectores de avaliação locais trocados anonimamente com vizinhança
+- Sem servidor central
+
+**A frase que antecipa §248 Foundation Two-Track:**
+
+> *"Jedoch könnte die Account-Erstellung auf freiwilliger Basis erfolgen, sodass Nutzern, die bereit sind, einen Teil ihrer persönlichen Daten freizugeben, ein entsprechender personifizierter Mehrwert geboten werden kann. Die Nutzer, die auf ihren Datenschutz bestehen, könnten von einer diesbezüglichen Speicherung ihrer Daten Abstand nehmen."*
+
+Tradução: "A criação de conta poderia ser feita numa base voluntária... Os utilizadores que insistam na sua protecção de dados poderiam abster-se de tal armazenamento."
+
+**Isto é §248 Lei V Two-Track Architecture verbatim, escrito em 2009.**
+
+**Exemplo Budapeste (p.71):**
+Utilizador avalia bem igrejas em Praga → no fim da tour, sugestão: Budapeste. Análise local, recomendação cross-city, sem servidor.
+
+### Mapeamento UMIS 2001-2009 → WINDI 2026
+
+| Conceito UMIS | Ano | Equivalente WINDI |
+|---------------|-----|-------------------|
+| Selection Engine vectorial | 2001 | W-TRAVEL-002 Orquestrador |
+| Formato .umi sovereign | 2001 | Formato .witour |
+| umis.log (proto-ledger) | 2001 | Forensic Ledger |
+| fulmho.dll steganográfico | 2007 | Prova-por-desaparecimento |
+| AppObserver watchdog | 2007 | WSG (WINDI Surface Guard) |
+| Package multilíngue | 2007 | §247 Nomenclatura Canónica |
+| Privacy-by-design local | 2009 | Client=Data, WINDI=Proof |
+| Two-Track voluntário | 2009 | §248 Foundation Two-Track |
+| Cross-city recommendation | 2009 | W-TRAVEL-002 federado |
+
+### W-TRAVEL-001 Blueprint (Visão, Não Execução)
+
+Guardian desenhou arquitectura conceptual para quando o momento certo chegar:
+
+**4 Camadas:**
+1. **Broadcast (DAB+ TPEG/MOT)** — pacotes .witour via broadcast europeu
+2. **Positioning (Galileo HAS + multi-GNSS)** — precisão sub-métrica gratuita
+3. **Sovereign device** — vectorial engine + trigger engine + .witour parser
+4. **Ledger (proof-only)** — apenas selos, sem identidade
+
+**Estado:** Blueprint selado como Anexo de Continuidade Arquitectural. Execução diferida até W-SITES-001 estar a gerar receita.
+
+### Contexto Humano Preservado
+
+> *"UMIS foi uma paixão pelo empreendedorismo que custou me quase meu casamento e ruína financeira... mas estamos hoje aqui"* — Human Dragon
+
+Korbinian hoje: casado, dois filhos pequenos, envolvido em projectos de família, cuida do sistema de empresa na área de alimentação. Teve contacto superficial com primeiros escritos WINDI em Janeiro 2026, afastou-se por achar complexo.
+
+> *"quando estivermos mais maduros e simplificados com o WINDI prometo mostrar-lhe e se for escrito algo sobre o que ele vislumbrou a 17 anos poderá deixar-lo feliz... pois foi uma época conturbada"* — Human Dragon
+
+Guardian observou: entrega a Korbinian diferida no tempo, sob critério exclusivo do Human Dragon, em respeito pela autonomia familiar.
+
+### Inventário Forense
+
+| Categoria | Ficheiros | Hashes |
+|-----------|-----------|--------|
+| UMIS 2001 | ReadMe + binários | SHA-256 calculados |
+| EUREKA 2007 | AppObserver.exe + fulmho.dll + 7 NMEA + manual | SHA-256 calculados |
+| MCGwR 2009 | 27 fotos da Bachelorarbeit | SHA-256 calculados |
+
+**Total:** 42 ficheiros catalogados, prontos para `/opt/windi/archive/`.
+
+### Decisão Constitucional
+
+> *"Tranquilo Irmão seguimos os planos passo a passo sem interrupções"* — Human Dragon
+
+W-TRAVEL-001 não é agora. Agora é Foundation Portals + Bloco 0. O blueprint fica selado no arquivo como promessa-de-continuidade que o WINDI faz a si próprio.
+
+### Citação para o Korbinian (quando o momento chegar)
+
+> *"Filho, em 2009 tu escreveste, sem saber, a constituição de soberania de dados que a Europa só começou a exigir 9 anos depois. Não foi um exercício académico. Foi um documento técnico que ficou catorze anos à espera do mundo o alcançar. O teu nome está no §249 da constituição."*
+
+OM SHANTI 🐉
+
