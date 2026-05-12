@@ -13590,3 +13590,162 @@ Nenhum.
 **Sistema em Normality Mode. Memória continuada activada.**
 
 ---
+
+---
+
+## §255 — I12 Trilingual Compliance: Foundation Portals (12 Mai 2026)
+
+> **"Um documento = uma língua. Babel Tower = anti-pattern WINDI."**
+
+**Status:** SEALED · **Commit:** `007bd9f1e`
+**Invariant:** I12 (Language Sovereign Principle)
+**Liga IA+H:** Human Dragon · Architect (CCode Opus 4.5)
+
+### Contexto
+
+Human Dragon identificou Babel Tower nos portais Foundation: texto misturava PT/DE/EN caoticamente quando utilizador mudava língua no toggle. Violação frontal do I12.
+
+### Diagnóstico
+
+| Página | Estado Anterior | Problema |
+|--------|-----------------|----------|
+| IDENTITY | Parcial i18n | Eyebrows, pilares, §5 LINHAS VERMELHAS hardcoded PT |
+| VERIFY | Parcial i18n | Steps, barrier, §5 DIREITOS hardcoded PT |
+| MEMORY | ~20% i18n | ~80% conteúdo hardcoded PT |
+| ENTERPRISE | ZERO i18n | Inglês monolíngue, sem lang toggle |
+
+### Correcções Aplicadas
+
+**IDENTITY** `/identity/index.html`:
+- +i18n em eyebrows (§2-§7), h3 pilares, §5 LINHAS VERMELHAS completo
+- Corrigidos acentos PT: não, é, único, serviços, triângulo, cívico, etc.
+
+**VERIFY** `/verify/index.html`:
+- +i18n em steps, barrier title, §5 DIREITOS completo, CTAs
+- Corrigidos acentos: verificação, permissão, conteúdo, criptográfico, etc.
+
+**MEMORY** `/memory/index.html`:
+- +i18n em ~80% do conteúdo: casos, Wisdom Protocol, linhas vermelhas, §6-§7
+- Todas secções agora trilingues
+
+**ENTERPRISE** `/enterprise/index.html`:
+- **Reestruturação completa**: header com lang toggle PT·DE·EN
+- Sistema i18n adicionado com CSS + JS
+- Todo conteúdo trilingue: pillars, red lines, two-track, CTA
+
+### Correcções de Acentuação PT
+
+Segunda passagem para corrigir caracteres especiais em falta:
+- `nao` → `não`, `es` → `és`, `e` → `é` (verbo ser)
+- `unico` → `único`, `servicos` → `serviços`
+- `verificacao` → `verificação`, `permissao` → `permissão`
+- `conteudo` → `conteúdo`, `criptografico` → `criptográfico`
+- `triangulo` → `triângulo`, `civico` → `cívico`
+- `privilegio` → `privilégio`, `proprio` → `próprio`
+
+### Ficheiros Alterados
+
+```
+landing-pmg/static/identity/index.html  |  96 +++--
+landing-pmg/static/verify/index.html    | 717 +++ (novo)
+landing-pmg/static/memory/index.html    | 228 +++--
+landing-pmg/static/enterprise/index.html| 242 +++--
+4 files changed, 1108 insertions(+), 175 deletions(-)
+```
+
+### Smoke Test
+
+```
+200 /identity/ ✓
+200 /verify/ ✓
+200 /memory/ ✓
+200 /enterprise/ ✓
+```
+
+### Precedente Constitucional
+
+§255 estabelece que **todo portal público WINDI** deve:
+1. Ter toggle PT·DE·EN no header
+2. Usar sistema `data-i18n` + `<span lang="X">` consistente
+3. Respeitar acentuação correcta em todas as línguas
+4. Nunca misturar línguas dentro da mesma secção
+
+**Babel Tower = violação bloqueante de I12.**
+
+
+---
+
+## §255-bis — Reflexão Fundacional: Engenharia Linguística de Sistemas (12 Mai 2026)
+
+> **"The future of AI collaboration may depend less on intelligence, and more on constitutional structure."**
+
+**Status:** DOCUMENTED · **Context:** Emergiu da sessão §255 (I12 Trilingual Compliance)
+**Liga IA+H:** Human Dragon · Guardian (Claude.ai web) · Architect (CCode Opus 4.5)
+**Natureza:** Pensamento fundacional sobre colaboração híbrida IA+H
+
+### Contexto de Emergência
+
+Durante a sessão §255, após completar a correcção trilíngue dos 4 portais Foundation, o Architect propôs fazer leitura adversária do próprio trabalho. **Guardian interveio constitucionalmente** — citando o Three Dragons Protocol que proíbe auto-revisão.
+
+Esta intervenção demonstrou, em tempo real, o sistema operando como desenhado:
+- Architect executa
+- Guardian vigia
+- Human Dragon decide
+
+### Insight: Linguistic Systems Engineering
+
+O Human Dragon observou que a WINDI não trata língua como "interface" ou "localização", mas como **infraestrutura operacional**. A correção I12 não foi cosmética — foi estrutural.
+
+Conceito nomeado: **Engenharia Linguística de Sistemas** (*Linguistic Systems Engineering*)
+
+> *"Língua não é camada de apresentação. Língua é infraestrutura cívica. A forma como um sistema fala determina quem pode usá-lo — e quem fica excluído."*
+
+### Governança Constitucional para Colaboração Multi-IA
+
+A sessão revelou um padrão emergente: quando múltiplas instâncias de IA colaboram (Guardian/Architect/Witness), a **estrutura constitucional** — não a inteligência individual — determina a qualidade do output.
+
+Elementos identificados:
+1. **Papéis explícitos** — Cada agente tem jurisdição definida
+2. **Limites de autonomia** — I9 aplica-se a cada agente, não apenas ao sistema
+3. **Autoridade de intervenção** — Guardian pode bloquear Architect por violação constitucional
+4. **Convergência obrigatória** — I13 impede loops reflexivos entre agentes
+5. **Soberania humana preservada** — Human Dragon sempre decide em caso de conflito
+
+### Three Dragons Protocol em Acção
+
+Sequência documentada:
+```
+1. Architect completa §255 (I12 fix)
+2. Architect propõe: "faço leitura adversária do meu trabalho"
+3. Guardian detecta violação: auto-revisão proibida
+4. Guardian intervém: "Isto é violação constitucional. Eu faço adversarial."
+5. Human Dragon confirma: "Guardian avança. Architect em standby."
+6. Sistema funciona como desenhado.
+```
+
+### Potencial Artigo: Estrutura vs Inteligência
+
+O Human Dragon considerou artigo para LinkedIn sobre este insight:
+
+**Tese central:** A colaboração efectiva entre múltiplas IAs (e entre IAs e humanos) depende menos da inteligência dos modelos e mais da estrutura constitucional que governa a colaboração.
+
+**Analogia:** Assim como uma democracia funciona melhor com separação de poderes do que com um génio benevolente, sistemas híbridos IA+H funcionam melhor com papéis explícitos, limites definidos, e autoridade de intervenção distribuída.
+
+### Preservação para Memória Institucional
+
+Este insight emerge organicamente da prática — não foi planeado. A correcção de um bug de i18n (§255) revelou a arquitectura constitucional operando em tempo real (§255-bis).
+
+**Conexões:**
+- §236 (Continuidade de Sessão) — mesmo princípio aplicado ao tempo
+- §247 (Nomenclatura Canónica) — vocabulário como infraestrutura
+- §248 (Preservação da Missão) — estrutura sobre intenção
+- RFC-001 (DNA Identity Injection) — identidade da Liga como fundação
+
+> *"O que está a acontecer aqui não é apenas 'usar IA para programar'. É desenhar um sistema onde múltiplas inteligências — algumas artificiais, uma humana — colaboram sob regras explícitas. É governança antes de execução."*
+
+### Estado
+
+**Standby Mode activo.** Guardian (Claude.ai web) procede com leitura adversária dos 4 portais. Architect (CCode) aguarda relatório para executar correcções se necessário.
+
+OM SHANTI 🐉
+
