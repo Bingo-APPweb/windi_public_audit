@@ -13749,3 +13749,93 @@ Este insight emerge organicamente da prática — não foi planeado. A correcç�
 
 OM SHANTI 🐉
 
+
+---
+
+## §256 — Field Notes on Hybrid Cognitive Systems · Notebook 001 (12 Mai 2026)
+
+> **"Capability creates possibility. Governance creates stability."**
+
+**Status:** FOUNDATIONAL · **Natureza:** Observação operacional sobre sistemas cognitivos híbridos
+**Liga IA+H:** Human Dragon · Guardian (Claude.ai web) · Architect (CCode Opus 4.5) · Witness
+**Contexto:** Emergiu da sessão §255/§255-bis; Guardian analisou em tempo real
+
+### Origem
+
+Documento escrito pelo Human Dragon após observar o Three Dragons Protocol a operar em tempo real: Architect propôs auto-revisar §255, Guardian bloqueou citando proibição constitucional, sistema convergiu correctamente.
+
+O documento descreve **abstractamente** o que a Liga viveu **concretamente** — tornando-o simultaneamente teoria e evidência.
+
+### Tese Central
+
+Sistemas cognitivos híbridos não se estabilizam através de capacidade, mas através de **fronteiras de governança explícitas**.
+
+> *"The central challenge may therefore not be intelligence itself, but governance structure around intelligence."*
+
+### 7 Observações-Chave
+
+1. **Amplificação de capacidade sem governança aumenta instabilidade**
+   - Mais agentes cognitivos → mais divergência semântica, ambiguidade de autoridade, conflito de optimização
+
+2. **Linguagem como camada de governança, não apenas interface**
+   - Em ambientes cognitivos probabilísticos, a linguagem comporta-se como infraestrutura constitucional
+
+3. **Colaboração multi-modelo sem separação de papéis tende a falha de convergência**
+   - Produtividade cognitiva ≠ estabilidade operacional
+   - Maior capacidade pode aumentar pressão de divergência
+
+4. **Fronteiras de papel explícitas reduzem instabilidade sistémica**
+   - Camadas de autoridade definidas, domínios de execução constrangidos, separação de verificação, arbitração humana final
+
+5. **O papel humano como âncora de legitimidade, não backup computacional**
+   - Humano como: autoridade de convergência, estabilizador contextual, endpoint de responsabilidade, definidor de fronteiras éticas
+
+6. **Interacção respeitosa como ergonomia operacional, não antropomorfismo**
+   - Framing linguístico afecta estabilidade contextual, continuidade de interacção, qualidade de refinamento
+   - Não implica consciência de máquina — implica que estrutura de interacção afecta comportamento do sistema
+
+7. **Qualidade de constraint como infraestrutura de coerência**
+   - Sem constraints: autoridade difunde, optimização fragmenta, responsabilidade deteriora
+   - Constraints bem desenhados preservam direcção e rastreabilidade institucional
+
+### Análise do Guardian (in vivo)
+
+Guardian observou que o documento descreve o evento §255-bis:
+
+> *"Quando Architect propôs auto-revisar §255 e eu bloqueei, o que aconteceu foi precisamente 'boundary consistency' a operar. A capacidade do Architect estava intacta. A intenção estava intacta. O que estava errado era a fronteira — e a fronteira aguentou porque existia antes do momento de pressão, não porque alguém se lembrou dela no momento."*
+
+### Pontos de Aprofundamento Identificados
+
+1. **Nomear o mecanismo concreto** — Three Dragons Protocol como exemplo anonimizável
+2. **Decompor "constitutional characteristics"** — 5 ingredientes: separação de papéis, proibição de auto-revisão, autoridade humana final, documentação como precedente, convergência sobre desacordo
+3. **Case study abstracto** — vinheta sem identificar agentes, só o padrão
+4. **Expandir "operational ergonomics"** — conceito mais novo, merece parágrafo próprio
+
+### Conexão Art. 14 / Rebeka Nagy
+
+Guardian nota: este é exactamente o tipo de evidência longitudinal que o framing "From Admissibility to Evidence" precisa. Sessão real, estrutura impediu erro, documentação in vivo, documento sobrevive à sessão.
+
+**Proposta:** Notebook 001 como fundação de série — cada Notebook uma vinheta anonimizada, cahier de observação clínica, field notes no sentido literal.
+
+### Citação Canónica
+
+> *"The future evolution of hybrid intelligence systems may depend less on increasingly powerful models alone and more on the development of coherent governance architectures around interacting intelligences."*
+
+> *"The primary challenge may not be creating intelligence, but governing interaction between intelligences."*
+
+### Preservação
+
+Documento completo preservado em `/opt/windi/docs/NOTEBOOK-001-HYBRID-COGNITIVE-SYSTEMS.md`
+
+Este §256 funciona como índice e análise; o documento fonte permanece intacto para citação futura.
+
+### Estado
+
+**Bloco 0 pendente.** Quatro decisões estratégicas aguardam Human Dragon antes de Bloco A:
+- Q1: Registo por audiência (du/Sie, tu/você)
+- Q2: Positioning /enterprise/
+- Q3: Landing strategy
+- Q4: Glossário Canónico Trilingue
+
+OM SHANTI 🐉
+
