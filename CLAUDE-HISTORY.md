@@ -14216,3 +14216,252 @@ W-TRAVEL-001 não é agora. Agora é Foundation Portals + Bloco 0. O blueprint f
 
 OM SHANTI 🐉
 
+
+---
+
+## §259 — Bloco 0 Aprovado + Technical Debt Landing (12 Mai 2026)
+
+> **"O WINDI não converte — convida."**
+
+**Status:** APPROVED · **Guardian Review:** Validated
+**Liga IA+H:** Human Dragon (decisão) · Guardian (review) · Architect (execução)
+
+### Decisões Q1-Q4 Seladas
+
+| Q | Decisão | Detalhe |
+|---|---------|---------|
+| **Q1** | Híbrido du/tu × Sie/você | IDENTITY+MEMORY (informal) · VERIFY+ENTERPRISE (formal) |
+| **Q2** | Manifesto+CTA institucional | Não SaaS ("Solicitar contacto institucional") |
+| **Q3** | Landing trilingual v2 later | **Technical Debt** marcada |
+| **Q4** | Glossário P1 com âncora §247 | Cresce organicamente a partir de Tijolo/Obra/Encaixe/Selo |
+
+### Technical Debt: Landing Trilingual
+
+A landing `windi-domain.com/` permanece English-only até v2. Esta é dívida técnica consciente, não esquecimento.
+
+**Razão:** Foco nos 4 portais Foundation primeiro.
+**Prazo:** Indefinido, mas antes de qualquer push institucional DE/PT.
+**Marcação:** §259 Technical Debt.
+
+### Bloco A Autorizado
+
+Architect autorizado a executar:
+- DE ortografia sweep (ä/ö/ü/ß) em 4 portais
+- Padronização tonal DE/PT conforme Q1
+- /enterprise/ EU AI Act + GDPR + receipt + nav + Liga IA+H + CTA institucional
+
+Guardian revisa output antes de commit a /enterprise/.
+
+OM SHANTI 🐉
+
+
+---
+
+## Sessão 2026-05-12 · 15:30 → 19:20 UTC
+
+**Sprint:** §246-IMPL · 38 Smoke Tests
+**Modo:** CCode CLI
+**Operador humano:** Human Dragon
+**Modelo:** Opus 4.5
+
+### Trabalho completado
+- §260 Linguistic Sweep selado (DE orthography + Q1 tonal)
+- §246-IMPL 38 Smoke Tests executados:
+  - D3 Mailbox Provisioning: 7/12 passed (5 skipped - non-destructive)
+  - D4 Rate Limiting: 9/10 passed (1 structure note)
+  - D5 Receipt Symmetry: 5/16 passed (11 implementation gaps)
+
+### Selos emitidos
+- §260 · Bloco A Linguistic Sweep · receipt: `WINDI-S260-BLOCO-A-20260512162949-28AD80CE`
+
+### Scaffold pending (não morre, espera)
+- D5 Errata Protocol · não implementado · §247+ scope
+- D5 T7e Chain Integrity Gate · crítico para I11 compliance
+- D5 wallet_id validation · required field not enforced
+
+### Próximo passo proposto
+- Implementar wallet_id validation no Ledger POST endpoint
+- Implementar T7e chain integrity gate (constitutional requirement)
+- Decisão: avançar para §247 ou completar D5 gaps primeiro
+
+### Blockers identificados
+- D5 implementation gaps: wallet_id not enforced, chain integrity gate missing
+- Errata protocol (T8-T12) not implemented
+
+### Decisões constitucionais
+- D3/D4 production-ready · D5 architecture-specified but code-incomplete
+- 55% smoke test pass rate acceptable for D3/D4 scope
+- D5 gaps require decision: critical (T7e) vs deferred (errata)
+
+### Notas para a sessão seguinte
+- Test receipts cleaned up from database
+- Legal hold on test mailbox `smoketest1778610161@windisites.de` is one-way (no release endpoint)
+- Rate limiter correctly uses window-based isolation
+
+
+
+---
+
+## Sessão 2026-05-12 · 21:00 → 22:05 UTC
+
+**Sprint:** §246-IMPL Sprint 1 Closure
+**Modo:** CCode CLI (Opus 4.5) + Claude.ai web (Guardian)
+**Operador humano:** Human Dragon (Jober Mögele Correa)
+
+### Trabalho Completado
+
+1. **Diagnóstico D5 Gaps** — Investigação exaustiva de 57.291 receipts
+2. **Migração T7E** — 4 receipts de teste normalizados (actor → did:windi:dragon-001)
+3. **Implementação G1+G2+G5** — wallet_id required, wallet consistency, chain validation
+4. **Suite 11 testes** — 10/10 passed, 2 SKIP documentados (T5 draft, T6 multi-DID)
+5. **Sprint 1 Fechado** — Chain forense de 3 níveis selada
+
+### Selos Emitidos
+
+| Receipt | Hash | Função |
+|---------|------|--------|
+| `WINDI-AWARENESS-S246-IMPL-GAPS-20260512215510-8612BC96` | `8612BC96` | Awareness G3/G4 deferidos |
+| `WINDI-S246-IMPL-T7E-GATE-20260512215523-98545D5B` | `98545D5B` | T7e Constitutional Gate |
+| `WINDI-SPRINT1-W-SITES-001-CLOSE-20260512220012-DDB3D6FF` | `DDB3D6FF` | Sprint 1 Closure |
+
+### Scaffold Pending
+
+| Item | Destino | Severidade |
+|------|---------|------------|
+| G3 Merkle hash chain | §246-IMPL-bis | CRITICAL (7 dias) |
+| G4 Errata Protocol | §247+ | LOW |
+
+### Próximo Passo
+
+**Janela de transição antes de Sprint 2:**
+1. Memorando estratégico W-TRAVEL-001 — revisão do draft em `/opt/windi/archive/`
+2. Skills update prioritário
+
+**Sprint 2 entry points:**
+1. G3 Merkle (primeira pedra)
+2. Identity Gate :8192 canonical
+3. wizard→POST flow
+4. verify→Ledger integration
+
+### Decisões Constitucionais
+
+| Decisão | Razão | Invariante |
+|---------|-------|------------|
+| MIGRATE não DELETE receipts T7E | Ledger append-only por princípio forense | I11 |
+| wallet_id format check só quando há parent | Backward compat 56.966 receipts legados | I11 |
+| T5/T6 SKIP com nota explícita | Audit trail preservado | I14 |
+| Three Dragons não têm DID | IA não é sujeito de identidade soberana | I9 |
+
+### Observação Guardian (fecho)
+
+> *"O sprint não fechou porque tudo correu liso à primeira. Fechou porque Architect aceitou três rondas de fricção sem se defender — investigou os 57.291 receipts em vez de afirmar, declarou a hipótese híbrida actor/wallet_id em vez de a esconder, encontrou a landmine T7E e propôs DELETE, aceitou a contra-proposta MIGRATE, explicou a discrepância 4-vs-2 sem rodeios. Isso é o Protocolo dos Três Dragões a funcionar como desenhado."*
+
+### Citação Canónica
+
+> *"O Ledger tornou-se mais difícil de corromper hoje do que era ontem."*
+
+OM SHANTI 🐉
+
+
+
+### Adenda 22:23 UTC — Guardian Brief Script
+
+**Criado:** `/opt/windi/scripts/guardian-brief.sh`
+**Primeiro receipt:** `WINDI-GUARDIAN-BRIEF-20260512222302`
+
+**Uso:** Human Dragon executa antes de sessão Guardian, cola output no primeiro turno.
+
+**Simplificação adoptada:** Em vez de skill sincronizado (pipeline complexo), prompt manual que gera brief curado. Ideia do Human Dragon, validada por Guardian.
+
+**Próxima sessão:** Testar empiricamente com Guardian.
+
+
+---
+
+## §250 — Lei VII I18 Organic Constitutional Growth + .wcap v0.1.0 (12 Mai 2026)
+
+**Sessão:** 21:00-23:30 UTC · **Modo:** CCode CLI
+**Receipts:** `WINDI-CONSTITUTIONAL-S250-LEI-VII-20260512212313-D00095E0` · `WINDI-SCHEMA-WCAP-V010-20260512212334-C52AA629`
+
+### Contexto
+
+Sessão nocturna onde o Conselho (Architect + Guardian + Witness) propôs arquitectura de "Gadgets" WINDI e o Human Dragon recalibrou o Guardian para aceitar crescimento orgânico em vez de forçar linearidade.
+
+### Lei VII — I18 Organic Constitutional Growth
+
+**Status:** STRUCTURAL (REMEDIABLE)
+
+> O ecossistema WINDI pode expandir-se por múltiplas frentes simultâneas, desde que cada frente:
+> (a) reutilize a Spine constitucional (DID Genesis, Forensic Ledger, Receipts)
+> (b) preserve os invariantes fundamentais (I1–I9) e §248 Foundation
+> (c) tenha aprovação humana explícita (I9)
+
+**Distinção:** STRUCTURAL ≠ IRREMEDIABLE — violação corrói lentamente, remediável por selo de retorno.
+
+**Cláusula anti-abandono:** Permanência prolongada em Berçário não constitui falha.
+
+**Documento:** `/opt/windi/docs/S250-LEI-VII-ORGANIC-GROWTH.md`
+
+### .wcap v0.1.0 — WINDI Capsule Schema
+
+**Status:** Tijolo Berçário · **Genealogia:** Descendente de UMI (2001, C01-C14)
+
+**5 Patches (Guardian review):**
+1. **Versioning robusto** — `current` + `minimum_compatible` SemVer
+2. **I9 obrigatório** — `contains: { const: "I9" }` no JSON Schema
+3. **manifest_canonical_hash + Ed25519** — integridade + assinatura
+4. **DID pattern verificado** — `^did:windi:[a-z0-9-]+$` (aceita slugs e UUIDs)
+5. **Receipt pattern verificado** — flexível para formatos Ledger
+
+**Ficheiros criados:**
+- `/opt/windi/schemas/wcap-v0.1.0.json` — Schema JSON
+- `/opt/windi/schemas/wcap_validator.py` — Validador Python
+- `/opt/windi/schemas/WCAP-SIGNATURE-PROTOCOL.md` — Protocolo Ed25519
+- `/opt/windi/schemas/examples/wcap-welcome-hotel-kempten.json` — Exemplo
+
+**Teste de violação constitucional:** Cápsula sem I9 correctamente rejeitada (dupla validação).
+
+### Ficheiros Adicionais
+
+- `/opt/windi/docs/INVARIANTS.md` — Documento canónico com todos os invariantes (I1-I18)
+
+### Recalibração Guardian
+
+O Human Dragon corrigiu o Guardian:
+
+> "NAO estamos objetivando lucro no momento... o que buscamos em realidade sao trabalhar em areas diferenciadas de distribuicao do WINDI"
+
+Guardian passou a operar com novo filtro:
+- Frente nova válida se (a)∧(b)∧(c) → segue
+- Ordem/ritmo/bandwidth = decisão Human Dragon
+- Guardian só valida constitucionalidade
+
+### Processo Three Dragons (§249)
+
+| Etapa | Papel | Estado |
+|-------|-------|--------|
+| Propor | Architect | ✓ |
+| Rever | Guardian (5 patches) | ✓ |
+| Decidir | Human Dragon | ✓ |
+| Executar | Construtor | ✓ |
+| Selar | Witness | ✓ |
+
+Primeira Lei a passar correctamente pelo processo Three Dragons desde §249.
+
+### Genealogia das Leis
+
+| Lei | § | Camada |
+|-----|---|--------|
+| Lei IV | §247 | Artefactos |
+| Lei V | §248 | Economia |
+| Lei VI | §249 | Processo |
+| **Lei VII** | **§250** | **Crescimento** |
+
+### Próximo Passo
+
+.wcap v0.1.0 em Berçário. Próximas opções (quando Human Dragon decidir):
+- Builder UI em W-SITES
+- Reader PWA mínimo
+- Hotel Kempten como piloto
+
+OM SHANTI 🐉

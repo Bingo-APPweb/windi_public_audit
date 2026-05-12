@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.51.0
-**Sealed:** 2026-05-12 · §255-§257 Foundation Ontology + Cognitive Continuity Axiom
+**Version:** 2.52.0
+**Sealed:** 2026-05-12 · §250 Lei VII I18 Organic Growth + .wcap v0.1.0 Schema
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -135,6 +135,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | I14 | Explicit Failure Principle | Dados ausentes = erro explícito. Placeholders mascaram bugs. **IRREMEDIÁVEL.** |
 | I16 | Creator Cartographic Sovereignty | Mapa pertence ao criador. GPS nunca vendido. Publicação = opt-in. |
 | I17 | Session/Identity Separation | Session prova presença. Identity prova agência. Frontend reflete, não cria. |
+| I18 | Organic Constitutional Growth | Múltiplas frentes simultâneas. Spine + I1-I9 + human approval. **STRUCTURAL.** |
 | C6 | Invariante Fiscal | IA prepara. Humano aprova. ELSTER envia. Nunca autónomo. |
 
 ### §146 — I14: Proibição de Placeholders (IRREMEDIÁVEL)
@@ -385,6 +386,30 @@ Input → 🛡️ Guardian (valida I1-I9+I11) → 🏗️ Architect (constrói) 
 
 **Documento:** `/opt/windi/docs/S248-LEI-V-FOUNDATION-DIRECTION.md`
 
+### 3.7 Lei VII — Organic Constitutional Growth (§250)
+
+> **"A maturação orgânica, a reutilização estrutural e a convergência filosófica precedem qualquer pressão externa."**
+
+**Status:** STRUCTURAL (REMEDIABLE) · **Receipt:** `D00095E0` · **Invariants:** I1, I9, I18
+
+Frente nova é constitucionalmente WINDI se:
+- **(a)** Reutiliza Spine (DID Genesis, Ledger, Receipts)
+- **(b)** Preserva I1–I9 e §248 Foundation
+- **(c)** Tem human approval explícito (I9)
+
+**Violações:** Hypergrowth, aceleração compulsória, amputação prematura de frentes
+**Documento:** `/opt/windi/docs/S250-LEI-VII-ORGANIC-GROWTH.md`
+
+### 3.8 .wcap v0.1.0 — WINDI Capsule Schema (§250)
+
+> **"Runtime invisível. Produto visível."**
+
+**Status:** Tijolo Berçário · **Receipt:** `C52AA629` · **Invariants:** I9, I11, I12, I14, I16, I18
+
+Formato de cápsula contextual soberana. Descendente de UMI (2001).
+**5 Patches:** Versioning robusto · I9 obrigatório · manifest_hash+Ed25519 · DID pattern · Receipt pattern
+**Ficheiros:** `/opt/windi/schemas/wcap-v0.1.0.json` · `wcap_validator.py`
+
 ### §137 — Medium-Agnostic Truth Distribution (IRREMEDIÁVEL)
 
 > **"O medium aponta para a prova. Nunca carrega a prova."**
@@ -602,6 +627,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 12 Mai | **§250** Lei VII I18 Organic Growth + .wcap v0.1.0 Schema · `D00095E0`+`C52AA629` ✅ |
 | 12 Mai | **§255-§257** Foundation Ontology · I12 Trilingual + Notebook 001 + Cognitive Continuity Axiom |
 | 10 Mai | **§249** SESSÃO FUNDACIONAL · MANIFESTO + FOUNDATION · Tese Ontológica IA+H |
 | 07 Mai | **§246** W-SITES × W-MAIL Bridge · 6/6 selos + T7 adversarial · `4CE30817`+`4DD83B15` ✅ |

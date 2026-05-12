@@ -1,0 +1,406 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://windi-domain.com/schemas/wcap/v0.1.0.json",
+  "title": "WINDI Capsule (.wcap)",
+  "description": "Sovereign contextual experience package. Descendant of UMI (2001). Constitutional anchor: I9, I11, I12, I16.",
+  "type": "object",
+  "required": [
+    "wcap_version",
+    "capsule_id",
+    "type",
+    "name",
+    "issuer",
+    "governance",
+    "spatial",
+    "media",
+    "temporal",
+    "manifest_canonical_hash"
+  ],
+
+  "properties": {
+
+    "wcap_version": {
+      "type": "object",
+      "description": "PATCH 1: Versioning robusto — SemVer + compatibilidade retroactiva",
+      "required": ["current", "minimum_compatible"],
+      "properties": {
+        "current": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+          "description": "SemVer da cápsula no momento da emissão",
+          "examples": ["0.1.0", "0.2.0", "1.0.0"]
+        },
+        "minimum_compatible": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+          "description": "Versão mínima de runtime que consegue ler esta cápsula. Runtime recusa se version < minimum_compatible.",
+          "examples": ["0.1.0"]
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "capsule_id": {
+      "type": "string",
+      "pattern": "^WCAP-[A-Z]+-[0-9]{14}-[A-F0-9]{8}$",
+      "description": "Unique identifier: WCAP-{TYPE}-{YYYYMMDDHHMMSS}-{HASH8}",
+      "examples": ["WCAP-WELCOME-20260512230000-4CE30817", "WCAP-WALK-20260601120000-A1B2C3D4"]
+    },
+
+    "type": {
+      "type": "string",
+      "enum": ["welcome", "walk", "safewalk", "museum", "family", "custom"],
+      "description": "Capsule type — determines runtime behavior and UI treatment"
+    },
+
+    "name": {
+      "type": "object",
+      "description": "Trilingual capsule name (I12 Language Sovereign Principle)",
+      "required": ["de", "en", "pt"],
+      "properties": {
+        "de": { "type": "string", "minLength": 1 },
+        "en": { "type": "string", "minLength": 1 },
+        "pt": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+
+    "issuer": {
+      "type": "object",
+      "description": "Entity that created and approved this capsule. PATCH 4: DID pattern verified against real usage.",
+      "required": ["did", "name", "tier"],
+      "properties": {
+        "did": {
+          "type": "string",
+          "pattern": "^did:windi:[a-z0-9-]+$",
+          "description": "WINDI DID — accepts slugs (dragon-001) and UUIDs (a79c3cdf-85cc-453a-9072-8677a1fe6b09)",
+          "examples": ["did:windi:hotel-kempten-001", "did:windi:museum-municipal-001", "did:windi:a79c3cdf-85cc-453a-9072-8677a1fe6b09"]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Human-readable issuer name"
+        },
+        "contact": {
+          "type": "string",
+          "format": "email",
+          "description": "Optional contact email"
+        },
+        "tier": {
+          "type": "string",
+          "enum": ["commercial", "civic"],
+          "description": "Foundation tier per S248 Lei V — commercial=paid issuer, civic=free issuer. Reader always free."
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "governance": {
+      "type": "object",
+      "description": "Constitutional anchor — governance lives in payload. PATCH 2: I9 obrigatório via contains constraint.",
+      "required": ["invariants", "human_approved", "approved_by", "approved_at"],
+      "properties": {
+        "invariants": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["I1", "I9", "I11", "I12", "I14", "I16", "I17"]
+          },
+          "minItems": 1,
+          "uniqueItems": true,
+          "contains": { "const": "I9" },
+          "description": "Active invariants. I9 (Prohibition of Autonomy Escalation) is IRREMEDIABLE and MANDATORY — schema validation fails if I9 is absent."
+        },
+        "human_approved": {
+          "type": "boolean",
+          "const": true,
+          "description": "I9 enforcement — must be true. Auto-generation without human approval is constitutional violation."
+        },
+        "approved_by": {
+          "type": "string",
+          "pattern": "^did:windi:[a-z0-9-]+$",
+          "description": "DID of the human who approved this capsule"
+        },
+        "approved_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of approval"
+        },
+        "proof_receipt": {
+          "type": "string",
+          "pattern": "^WINDI-[A-Z0-9-]+(-[0-9]{8,14})?(-[A-F0-9]{8})?$",
+          "description": "PATCH 5: Optional Ledger receipt if sealed (I11). Pattern verified against real Ledger receipts — accepts various formats."
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "spatial": {
+      "type": "object",
+      "description": "Geographic activation — descendant of UMI C01-C14 (2001). I16 privacy mandatory.",
+      "required": ["zones", "privacy"],
+      "properties": {
+        "zones": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["zone_id", "name", "lat", "lon", "radius_m", "trigger"],
+            "properties": {
+              "zone_id": {
+                "type": "string",
+                "pattern": "^[a-z0-9-]+$",
+                "description": "Machine-readable zone identifier"
+              },
+              "name": {
+                "type": "object",
+                "description": "Trilingual zone name (I12)",
+                "required": ["de", "en", "pt"],
+                "properties": {
+                  "de": { "type": "string", "minLength": 1 },
+                  "en": { "type": "string", "minLength": 1 },
+                  "pt": { "type": "string", "minLength": 1 }
+                },
+                "additionalProperties": false
+              },
+              "lat": {
+                "type": "number",
+                "minimum": -90,
+                "maximum": 90,
+                "description": "WGS84 latitude"
+              },
+              "lon": {
+                "type": "number",
+                "minimum": -180,
+                "maximum": 180,
+                "description": "WGS84 longitude"
+              },
+              "radius_m": {
+                "type": "integer",
+                "minimum": 10,
+                "maximum": 5000,
+                "description": "Activation radius in meters"
+              },
+              "trigger": {
+                "type": "string",
+                "enum": ["enter", "manual", "sequence"],
+                "description": "Activation mode: enter=auto on proximity (v0.2+), manual=user tap (v0.1), sequence=after previous zone"
+              },
+              "sequence_after": {
+                "type": "string",
+                "pattern": "^[a-z0-9-]+$",
+                "description": "zone_id that must complete first (required if trigger=sequence)"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "privacy": {
+          "type": "object",
+          "description": "I16 Creator Cartographic Sovereignty — GPS sovereignty is MANDATORY",
+          "required": ["gps_never_uploaded", "zone_detection_local"],
+          "properties": {
+            "gps_never_uploaded": {
+              "type": "boolean",
+              "const": true,
+              "description": "User coordinates NEVER leave the device. Constitutional invariant."
+            },
+            "zone_detection_local": {
+              "type": "boolean",
+              "const": true,
+              "description": "All geofencing computation happens on-device. No server-side tracking."
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "media": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Content assets with integrity hashes (I11 Permanence of Cryptographic Evidence)",
+      "items": {
+        "type": "object",
+        "required": ["media_id", "type", "zone_id", "title", "file_path", "content_hash"],
+        "properties": {
+          "media_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$",
+            "description": "Machine-readable media identifier"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["audio", "text", "image", "video"],
+            "description": "Media type — determines player behavior"
+          },
+          "zone_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$",
+            "description": "Which zone activates this media"
+          },
+          "title": {
+            "type": "object",
+            "description": "Trilingual media title (I12)",
+            "required": ["de", "en", "pt"],
+            "properties": {
+              "de": { "type": "string", "minLength": 1 },
+              "en": { "type": "string", "minLength": 1 },
+              "pt": { "type": "string", "minLength": 1 }
+            },
+            "additionalProperties": false
+          },
+          "file_path": {
+            "type": "string",
+            "pattern": "^media/[a-zA-Z0-9._/-]+$",
+            "description": "Relative path inside .wcap package"
+          },
+          "content_hash": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$",
+            "description": "I11 — SHA-256 integrity hash of file content"
+          },
+          "duration_seconds": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Duration for audio/video content"
+          },
+          "accessibility": {
+            "type": "object",
+            "description": "Accessibility features",
+            "properties": {
+              "has_transcript": {
+                "type": "boolean",
+                "description": "Audio has text transcript in transcripts/ folder"
+              },
+              "has_audio_description": {
+                "type": "boolean",
+                "description": "Video has audio description track"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+
+    "temporal": {
+      "type": "object",
+      "description": "Lifecycle management — prevents digital waste",
+      "required": ["validity", "created_at"],
+      "properties": {
+        "validity": {
+          "type": "object",
+          "description": "When this capsule is active",
+          "required": ["starts", "ends"],
+          "properties": {
+            "starts": {
+              "type": "string",
+              "description": "Activation start: ISO 8601 datetime OR semantic token (checkin, download, activation)",
+              "examples": ["2026-05-12T00:00:00Z", "checkin", "download"]
+            },
+            "ends": {
+              "type": "string",
+              "description": "Expiration: ISO 8601 datetime OR semantic token with offset (checkout+24h, download+7d)",
+              "examples": ["2026-05-19T23:59:59Z", "checkout+24h", "download+7d"]
+            }
+          },
+          "additionalProperties": false
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of capsule creation"
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "rules": {
+      "type": "object",
+      "description": "Playback behavior configuration",
+      "properties": {
+        "max_repetitions_per_zone": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "How many times same zone can trigger media"
+        },
+        "cooldown_minutes": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 1440,
+          "description": "Minutes before zone can re-trigger (default 24h)"
+        },
+        "allow_skip": {
+          "type": "boolean",
+          "default": true,
+          "description": "User can skip to next zone without completing current"
+        },
+        "offline_required": {
+          "type": "boolean",
+          "default": true,
+          "description": "Capsule must work without network connection"
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "manifest_canonical_hash": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$",
+      "description": "PATCH 3: SHA-256 of canonical JSON (all fields except signature). Protocol: json.dumps(sort_keys=True, separators=(',', ':')) then sha256."
+    },
+
+    "signature": {
+      "type": "object",
+      "description": "PATCH 3: Ed25519 signature over manifest_canonical_hash (S205 KEYGEN-001 compatible)",
+      "required": ["algorithm", "public_key", "signature_value", "signed_at"],
+      "properties": {
+        "algorithm": {
+          "type": "string",
+          "const": "Ed25519",
+          "description": "Signature algorithm — Ed25519 per S205 Key Ceremony"
+        },
+        "public_key": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9+/]{43}=$",
+          "description": "Base64-encoded Ed25519 public key (32 bytes) of issuer DID"
+        },
+        "signature_value": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9+/]{86}==$",
+          "description": "Base64-encoded Ed25519 signature (64 bytes) over manifest_canonical_hash"
+        },
+        "signed_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of signature"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+
+  "additionalProperties": false,
+
+  "$defs": {
+    "_meta": {
+      "description": "Schema metadata — not part of validation",
+      "schema_version": "0.1.0",
+      "created_at": "2026-05-12",
+      "created_by": "WINDI Three Dragons Protocol",
+      "patches_applied": [
+        "PATCH 1: Versioning robusto (current + minimum_compatible SemVer)",
+        "PATCH 2: I9 obrigatório (contains constraint)",
+        "PATCH 3: manifest_canonical_hash + Ed25519 signature",
+        "PATCH 4: DID pattern verified (^did:windi:[a-z0-9-]+$)",
+        "PATCH 5: Receipt pattern verified (flexible format)"
+      ],
+      "invariants_enforced": ["I9", "I11", "I12", "I14", "I16"],
+      "genealogy": "Descendant of UMI (Mapa Urbano Interativo, 2001) — C01-C14 spatial primitives"
+    }
+  }
+}
