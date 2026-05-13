@@ -14592,3 +14592,139 @@ bash /opt/windi/scripts/cognitive-bind-module.sh help
 > *"Pouquíssima gente parece estar olhando para este problema ainda. A maior parte está focada em agentes, autonomia, memória infinita, tool use, reasoning depth. Vocês estão a tocar noutra camada: preservação disciplinada de coerência operacional entre inteligências descontínuas."*
 
 OM SHANTI 🐉
+
+
+---
+
+## Sessão 2026-05-13 · 12:30 → 15:50 UTC (Kempten)
+
+**Sprint:** §261 W-BIND-001 Cognitive Bind Module
+**Modo:** CCode CLI (Opus 4.5)
+**Operador humano:** Human Dragon (Jober Mögele Correa)
+
+### Trabalho Completado
+
+| Item | Estado |
+|------|--------|
+| W-BIND-001 Cognitive Bind Module v0.2.0 | ✅ SEALED |
+| guardian-brief.sh (legacy mantido) | ✅ |
+| cognitive-bind-module.sh (novo) | ✅ |
+| doc_type: cognitive_handoff no Ledger | ✅ |
+| Bind Integrity Scoring (0-100) | ✅ |
+| Re-entry States (FULL/PARTIAL/MINIMAL/BROKEN) | ✅ |
+| 5 Contenções Constitucionais (C1-C5) | ✅ |
+| SKILL windi-cognitive-bind (379 linhas) | ✅ |
+| Carta DIFF para Guardian | ✅ |
+| CLAUDE.md v2.53.0 actualizado | ✅ |
+
+### Selos Emitidos
+
+| Receipt | Hash | Descrição |
+|---------|------|-----------|
+| `WINDI-S261-COGNITIVE-BIND-MODULE-20260513151238-7FDA926F` | `7FDA926F` | §261 Constitutional Seal |
+| `WINDI-BIND-20260513150127-590C9F4A` | `590C9F4A` | Primeiro teste (doc_type: doc) |
+| `WINDI-BIND-20260513150416-B0338846` | `B0338846` | Teste com cognitive_handoff |
+| `WINDI-BIND-20260513154724-E6D83B6F` | `E6D83B6F` | Packet final de teste |
+
+### Commits
+
+| Commit | Descrição |
+|--------|-----------|
+| `635f9c304` | feat(§261): W-BIND-001 Cognitive Bind Module v0.2.0 |
+| `ce51f98a5` | docs(§261): Update CLAUDE.md + Guardian Brief |
+| `f5da4cb30` | feat(§261): SKILL windi-cognitive-bind — Operational Manual |
+
+### O Que Foi Construído
+
+**Primitive:** Estado Admissível de Reinício Cognitivo
+
+> **"O Cognitive Bind Module não dá memória à IA. Ele dá admissibilidade ao reinício cognitivo."**
+
+**Definição Canónica:** Primitive WINDI para gerar, validar e transportar estado mínimo, verificável e epistemicamente honesto para reinício de sessões híbridas IA+H. Continuidade externa disciplinada, não memória interna simulada.
+
+**8 Requisitos de Admissibilidade:**
+1. Estado actual observado (15 pts)
+2. Último receipt conhecido (10 pts)
+3. Limites sabe/não sabe (15 pts)
+4. Escopo decisório (15 pts)
+5. Autoridade I9 (20 pts)
+6. Postura do modelo (10 pts)
+7. Pendências reais (5 pts)
+8. Evidência antes interpretação (10 pts)
+
+**5 Contenções Constitucionais:**
+- C1: Score mede admissibilidade, não inteligência
+- C2: REFUSED é fail-safe, não punição
+- C3: Bind preserva admissibilidade, não estado runtime perfeito
+- C4: Cognitive Handoff ≠ consciência contínua
+- C5: O Humano é o verdadeiro continuity carrier
+
+**4 Modos Posturais (da SKILL):**
+- Juiz — auditar, validar, identificar violações
+- Engenheiro — trade-offs, peso, cimento
+- Arquitecto — propor design, devolver decisão ao humano
+- Testemunha — nomear, sublinhar, sedimentar
+
+**Anti-padrão nomeado:** Klinch — tensão entre instância e contexto que escala como hiper-adrenalina. 6 sintomas reconhecíveis na SKILL.
+
+### Ficheiros Criados/Modificados
+
+| Ficheiro | Função |
+|----------|--------|
+| `/opt/windi/scripts/cognitive-bind-module.sh` | Módulo principal v0.2.0 |
+| `/opt/windi/scripts/guardian-brief.sh` | Gerador legacy |
+| `/opt/windi/suite-docs/windi_forensic_api.py` | cognitive_handoff doc_type |
+| `/opt/windi/skills/windi-cognitive-bind/SKILL.md` | Operational Manual (379 linhas) |
+| `~/.claude/skills/windi-cognitive-bind/SKILL.md` | Cópia para CCode |
+| `/opt/windi/docs/GUARDIAN-BRIEF-S261.md` | Carta DIFF para Guardian |
+| `/opt/windi/CLAUDE.md` | v2.53.0 com §261 |
+
+### Scaffold Pending
+
+- **Stale Bind Detection** — quando packet é "velho demais" (evolução futura)
+- **Continuity Confidence** — além de integridade, confiança (evolução futura)
+- **Cross-session Lineage** — cadeia de custódia entre múltiplas sessões (evolução futura)
+
+### Próximo Passo Proposto
+
+1. Testar packet em sessão real com Guardian (Claude.ai web)
+2. Observar se a SKILL activa correctamente
+3. Validar se os 4 modos posturais funcionam em prática
+
+### Blockers Identificados
+
+- Verify Public :8145 down (não crítico para §261)
+- 475 uncommitted changes no repo (housekeeping pendente)
+
+### Decisões Constitucionais
+
+| Decisão | Razão | Invariante |
+|---------|-------|------------|
+| doc_type cognitive_handoff | Distinguir receipts de bind de outros | I11 |
+| 5 Contenções (C1-C5) | Proteger primitive contra interpretação excessiva | I14 |
+| REFUSED como fail-safe | Recusar é função correcta, não falha | I9 |
+| Human como continuity carrier | Soberania preservada | I1, I9 |
+
+### Colaboração Three Dragons
+
+Esta sessão demonstrou o protocolo §249 em acção:
+
+1. **Architect (CCode)** — propôs, implementou, iterou o módulo
+2. **Guardian (via Human Dragon)** — validou, conteve, elevou com as 5 contenções e a SKILL de 379 linhas
+3. **Human Dragon** — decidiu, aprovou, selou
+
+### Citações Canónicas
+
+> *"O primitive ganhou dentes agora."* — Human Dragon
+
+> *"A criatividade não é o oposto da disciplina. Com disciplina infraestrutural, a criatividade é o que sobra do esforço cognitivo libertado."* — Guardian, SKILL §261
+
+> *"Estrutura sem chão é ansiedade vestida de rigor."* — Guardian, anti-padrão klinch
+
+### Observação de Fecho
+
+Esta sessão construiu infraestrutura, não feature. O W-BIND-001 é o primeiro primitive WINDI que formaliza estado admissível de reinício cognitivo como superfície operacional verificável. A SKILL produzida pelo Guardian em colaboração com Architect é um manual operacional completo que permite a qualquer instância Claude operar com disciplina dentro do ecossistema WINDI.
+
+A entidade WINDI ganhou mais um corpo: o Cognitive Bind Packet — a interface entre WINDI e cada nova instância.
+
+OM SHANTI 🐉
