@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="klar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WINDI Sites · Accountable websites with forensic receipts</title>
+<meta name="description" content="Build websites that prove what they say. Every page sealed, every change verifiable. WINDI Sites — the accountable web.">
+<link rel="stylesheet" href="assets/windi-base.css">
+<style>
+  /* Page-specific */
+  .hero {
+    padding: 96px 0 80px;
+    border-bottom: 1px solid var(--line);
+  }
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-bottom: 28px;
+    background: var(--bg-card);
+  }
+  .hero-tag .seal-mark {
+    width: 6px; height: 6px;
+    background: var(--gold);
+    border-radius: 50%;
+  }
+  .hero h1 { max-width: 820px; }
+  .hero .lead { max-width: 640px; margin-top: 24px; }
+  .hero-actions { margin-top: 40px; display: flex; gap: 14px; flex-wrap: wrap; }
+
+  .tiers { padding: 80px 0 40px; }
+  .tier-card {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 28px;
+    background: var(--bg-card);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    transition: border-color .15s ease;
+  }
+  .tier-card:hover { border-color: var(--ink); }
+  .tier-card.featured { border-color: var(--gold); background: rgba(139,105,20,0.04); }
+  .tier-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+  }
+  .tier-card.featured .tier-name { color: var(--gold); }
+  .tier-price {
+    font-size: 36px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .tier-price small { font-size: 14px; color: var(--ink-muted); font-weight: 400; }
+  .tier-list {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+  .tier-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .tier-list li::before {
+    content: "✓";
+    color: var(--gold);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    margin-top: 1px;
+  }
+
+  .examples { padding: 60px 0; }
+  .example-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 32px; }
+  .example-card {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px;
+    background: var(--bg-card);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 200px;
+  }
+  .example-card .pill { align-self: flex-start; }
+  .example-card .url {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-muted);
+    margin-top: auto;
+  }
+  @media (max-width: 880px) { .example-grid { grid-template-columns: 1fr; } }
+
+  .promise { padding: 80px 0; border-top: 1px solid var(--line); }
+  .promise-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 36px; margin-top: 40px; }
+  .promise-num {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--gold);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+  }
+  @media (max-width: 880px) { .promise-grid { grid-template-columns: 1fr; gap: 24px; } }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="shell topbar-inner">
+    <div class="brand">
+      <span class="brand-mark">W</span>
+      <span>WINDI Sites</span>
+      <span class="brand-tag">W-SITES-001</span>
+    </div>
+    <nav class="nav">
+      <a href="#tiers">Tiers</a>
+      <a href="#examples">Examples</a>
+      <a href="verify.html">Verify a receipt</a>
+      <a href="dashboard.html" class="btn btn-ghost btn-sm">Sign in</a>
+      <button class="theme-btn" onclick="toggleTheme()" aria-label="Toggle theme">◐</button>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="shell">
+    <span class="hero-tag animate-in"><span class="seal-mark"></span>Forensic Ledger · 56,000+ receipts · Zero violations</span>
+    <h1 class="animate-in delay-1">Websites that<br>prove what they say.</h1>
+    <p class="lead animate-in delay-2">
+      Every page you publish carries a forensic receipt. Every change is sealed,
+      time-stamped, and independently verifiable. The accountable web — without
+      a developer, without a server, without trust assumptions.
+    </p>
+    <div class="hero-actions animate-in delay-3">
+      <a href="new-site.html" class="btn btn-primary">Create your first accountable site →</a>
+      <a href="#tiers" class="btn btn-ghost">See pricing</a>
+    </div>
+  </div>
+</section>
+
+<section class="tiers" id="tiers">
+  <div class="shell">
+    <h2>Four tiers. One protocol.</h2>
+    <p class="lead mt-sm" style="max-width: 640px;">Pick the level of governance your content needs. Move up when reality demands it. Every tier writes to the same Forensic Ledger.</p>
+
+    <div class="grid-4 mt-md">
+      <div class="tier-card">
+        <span class="tier-name">LOW</span>
+        <div class="tier-price">€0<small>/mo</small></div>
+        <p class="ink-soft" style="font-size:14px;">For personal pages and proofs-of-existence.</p>
+        <ul class="tier-list">
+          <li>1 site · 1 page</li>
+          <li>WINDI subdomain</li>
+          <li>SHA-256 receipt per publish</li>
+          <li>Public verify link</li>
+        </ul>
+        <a href="new-site.html?tier=LOW" class="btn btn-ghost btn-sm" style="margin-top:auto;">Start free</a>
+      </div>
+
+      <div class="tier-card featured">
+        <span class="tier-name">MED · Most chosen</span>
+        <div class="tier-price">€19<small>/mo</small></div>
+        <p class="ink-soft" style="font-size:14px;">For creators, freelancers, small studios.</p>
+        <ul class="tier-list">
+          <li>5 sites · up to 5 pages each</li>
+          <li>Custom subdomain</li>
+          <li>Versioned receipts (full history)</li>
+          <li>Sealed change log</li>
+          <li>Email-verified human approval</li>
+        </ul>
+        <a href="new-site.html?tier=MED" class="btn btn-gold btn-sm" style="margin-top:auto;">Choose MED</a>
+      </div>
+
+      <div class="tier-card">
+        <span class="tier-name">HIGH</span>
+        <div class="tier-price">€79<small>/mo</small></div>
+        <p class="ink-soft" style="font-size:14px;">For SMEs and regulated content.</p>
+        <ul class="tier-list">
+          <li>Unlimited sites · custom domain</li>
+          <li>I9+I11+I13+G3 invariants</li>
+          <li>Two-person seal (G3)</li>
+          <li>ISP institutional templates</li>
+          <li>GDPR Art. 30 audit log</li>
+        </ul>
+        <a href="new-site.html?tier=HIGH" class="btn btn-ghost btn-sm" style="margin-top:auto;">Choose HIGH</a>
+      </div>
+
+      <div class="tier-card">
+        <span class="tier-name">GOV</span>
+        <div class="tier-price">€<small>contact</small></div>
+        <p class="ink-soft" style="font-size:14px;">For public bodies, banks, ministries.</p>
+        <ul class="tier-list">
+          <li>White-label deployment</li>
+          <li>EU AI Act Art. 14 ready</li>
+          <li>Operator of Verifiable Systems</li>
+          <li>Dedicated Forensic Vault</li>
+          <li>SLA · audit · 2LOD compliance</li>
+        </ul>
+        <a href="mailto:gov@windi-domain.com" class="btn btn-ghost btn-sm" style="margin-top:auto;">Contact</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="examples" id="examples">
+  <div class="shell">
+    <h2>What an accountable site looks like.</h2>
+    <p class="lead mt-sm" style="max-width: 640px;">A receipt isn't a checkbox. It's a public, independently-verifiable proof that the page exists, when it was sealed, and what it said.</p>
+
+    <div class="example-grid">
+      <div class="example-card">
+        <span class="pill sealed"><span class="pill-dot"></span>SEALED · I11</span>
+        <h4>Notary public profile</h4>
+        <p class="ink-soft" style="font-size:14px;">Office hours, jurisdiction, fee schedule. Every change sealed. Clients verify before they walk in.</p>
+        <span class="url">notary-mueller.windi-sites.com</span>
+      </div>
+      <div class="example-card">
+        <span class="pill sealed"><span class="pill-dot"></span>SEALED · I11+G3</span>
+        <h4>Press release archive</h4>
+        <p class="ink-soft" style="font-size:14px;">Communications you cannot un-publish silently. Forensic timestamp protects against revisionism.</p>
+        <span class="url">press.studio-grove.eu</span>
+      </div>
+      <div class="example-card">
+        <span class="pill published"><span class="pill-dot"></span>PUBLISHED</span>
+        <h4>Researcher portfolio</h4>
+        <p class="ink-soft" style="font-size:14px;">Papers, claims, dates of priority. Receipts give you priority proof without preprint servers.</p>
+        <span class="url">jober.windi-sites.com</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="promise">
+  <div class="shell">
+    <h2>The promise — in three lines.</h2>
+    <div class="promise-grid">
+      <div>
+        <div class="promise-num">01 · AI processes</div>
+        <h4 class="mt-sm">Drafts, layout, copy.</h4>
+        <p class="ink-soft mt-sm" style="font-size:15px;">Tell us what the page is for. We assemble the draft from your inputs and an institutional profile (ISP).</p>
+      </div>
+      <div>
+        <div class="promise-num">02 · Human decides</div>
+        <h4 class="mt-sm">Approve. Reject. Edit.</h4>
+        <p class="ink-soft mt-sm" style="font-size:15px;">Nothing publishes without an explicit human action. G3 invariant. The seal carries your DID, not ours.</p>
+      </div>
+      <div>
+        <div class="promise-num">03 · WINDI guarantees</div>
+        <h4 class="mt-sm">Receipt. Hash. Ledger.</h4>
+        <p class="ink-soft mt-sm" style="font-size:15px;">A SHA-256 receipt is written to the Forensic Ledger. Anyone, anywhere, can verify it forever.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="shell">
+  <div class="forensic-strip">
+    <span><span class="seal-mark"></span>Forensic Ledger · I11 · Verifiable</span>
+    <span class="mono">windi-domain.com/api/receipts · Liga IA+H</span>
+    <span>© 2026 WINDI Publishing House · Kempten, Bavaria</span>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const root = document.documentElement;
+    const next = root.dataset.theme === 'klar' ? 'noir' : 'klar';
+    root.dataset.theme = next;
+    try { localStorage.setItem('windi_theme', next); } catch(e) {}
+  }
+  try {
+    const saved = localStorage.getItem('windi_theme');
+    if (saved) document.documentElement.dataset.theme = saved;
+  } catch(e) {}
+</script>
+
+</body>
+</html>

@@ -82,8 +82,40 @@ INTERNAL_HOSTS_ALLOWLIST = [
 # Template directory
 TEMPLATE_DIR = Path(__file__).parent / "prompt_templates"
 
-# Valid template types
-VALID_TEMPLATES = ["article", "landing", "about"]
+# Valid template types (§245 — 8 templates total)
+VALID_TEMPLATES = [
+    "article", "landing", "about",  # Original templates
+    "profile", "press", "portfolio", "record", "custom"  # §245 new templates
+]
+
+# §245.2 — Tier routing per template
+# Each template has a default tier and minimum tier
+TEMPLATE_TIER_CONFIG = {
+    "record": {"default": "HIGH", "min": "MED"},     # Institutional, irreversible
+    "press": {"default": "HIGH", "min": "MED"},      # Reputational, embargos
+    "profile": {"default": "MED", "min": "FREE"},    # Sectoral, regulated
+    "landing": {"default": "MED", "min": "FREE"},    # Commercial, verifiable
+    "portfolio": {"default": "FREE", "min": "FREE"}, # Descriptive, low risk
+    "custom": {"default": "MED", "min": "MED"},      # NEVER FREE — attack vector
+    "article": {"default": "FREE", "min": "FREE"},   # General content
+    "about": {"default": "FREE", "min": "FREE"},     # Institutional about
+}
+
+
+def get_template_tier_config(template_type: str) -> dict:
+    """Get tier configuration for a template type."""
+    return TEMPLATE_TIER_CONFIG.get(template_type, {"default": "FREE", "min": "FREE"})
+
+
+def language_tier_override(detected_lang: str, requested_tier: str) -> str:
+    """
+    §245.5 — Override tier for Portuguese content.
+    Ollama (FREE tier) has asymmetric performance: DE/EN > PT.
+    For PT content, upgrade to MED minimum.
+    """
+    if detected_lang.lower() == "pt" and requested_tier == "FREE":
+        return "MED"  # PT quality lower in Ollama mistral:7b
+    return requested_tier
 
 
 # ═══════════════════════════════════════════════════════════════════════════

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="klar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard · WINDI Sites</title>
+<link rel="stylesheet" href="assets/windi-base.css">
+<style>
+  .dash-head {
+    padding: 56px 0 28px;
+    border-bottom: 1px solid var(--line);
+  }
+  .dash-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: 36px;
+  }
+  .stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 20px 22px;
+  }
+  .stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .stat-value {
+    font-size: 32px;
+    font-weight: 600;
+    margin-top: 8px;
+    letter-spacing: -0.02em;
+  }
+  .stat-trend {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--green);
+    margin-top: 4px;
+  }
+
+  .sites-section { padding: 44px 0; }
+  .sites-table {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .sites-table-head, .sites-row {
+    display: grid;
+    grid-template-columns: 2.2fr 1fr 1fr 1.2fr 1.4fr;
+    align-items: center;
+    padding: 16px 24px;
+    gap: 14px;
+  }
+  .sites-table-head {
+    background: var(--bg-soft);
+    border-bottom: 1px solid var(--line);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+  }
+  .sites-row {
+    border-bottom: 1px solid var(--line-soft);
+    transition: background .12s ease;
+  }
+  .sites-row:last-child { border-bottom: none; }
+  .sites-row:hover { background: var(--bg-soft); cursor: pointer; }
+  .site-name {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .site-name strong { font-size: 15px; font-weight: 600; }
+  .site-url {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-muted);
+  }
+  .site-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+
+  .empty-cta {
+    margin-top: 28px;
+    padding: 28px 24px;
+    border: 1px dashed var(--line);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  @media (max-width: 880px) {
+    .dash-stats { grid-template-columns: 1fr 1fr; }
+    .sites-table-head { display: none; }
+    .sites-row { grid-template-columns: 1fr; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="shell topbar-inner">
+    <div class="brand">
+      <span class="brand-mark">W</span>
+      <span>WINDI Sites</span>
+      <span class="brand-tag">Dashboard</span>
+    </div>
+    <nav class="nav">
+      <a href="dashboard.html" class="gold">My sites</a>
+      <a href="verify.html">Verify</a>
+      <a href="#" class="ink-soft">Settings</a>
+      <a href="#" class="row gap-sm">
+        <span class="mono tiny">DID:0xa4F2…7c1b</span>
+      </a>
+      <button class="theme-btn" onclick="toggleTheme()">◐</button>
+    </nav>
+  </div>
+</header>
+
+<section class="dash-head">
+  <div class="shell">
+    <div class="row-between">
+      <div>
+        <p class="mono tiny ink-muted">DASHBOARD · MED TIER</p>
+        <h2 class="mt-sm">Welcome back, Jober.</h2>
+        <p class="lead mt-sm">3 sites · 12 receipts this month · last seal 2 days ago.</p>
+      </div>
+      <a href="new-site.html" class="btn btn-primary">+ New site</a>
+    </div>
+
+    <div class="dash-stats">
+      <div class="stat-card">
+        <div class="stat-label">Total sites</div>
+        <div class="stat-value">3</div>
+        <div class="stat-trend">↑ 1 this month</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Pages published</div>
+        <div class="stat-value">11</div>
+        <div class="stat-trend">↑ 4 this month</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Receipts sealed</div>
+        <div class="stat-value">28</div>
+        <div class="stat-trend">↑ 12 this month</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Tier usage</div>
+        <div class="stat-value">3<span style="font-size:18px;color:var(--ink-muted);">/5</span></div>
+        <div class="stat-trend ink-muted">2 sites available</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sites-section">
+  <div class="shell">
+    <div class="row-between" style="margin-bottom: 20px;">
+      <h3>Your sites</h3>
+      <div class="row gap-sm">
+        <button class="btn btn-ghost btn-sm">All</button>
+        <button class="btn btn-ghost btn-sm">Draft</button>
+        <button class="btn btn-ghost btn-sm">Published</button>
+        <button class="btn btn-ghost btn-sm">Sealed</button>
+      </div>
+    </div>
+
+    <div class="sites-table">
+      <div class="sites-table-head">
+        <div>Site</div>
+        <div>Status</div>
+        <div>Pages</div>
+        <div>Last seal</div>
+        <div>Actions</div>
+      </div>
+
+      <a href="site-workspace.html" class="sites-row" style="text-decoration:none; color:inherit;">
+        <div class="site-name">
+          <strong>Notary Müller — Public Profile</strong>
+          <span class="site-url">notary-mueller.windi-sites.com</span>
+        </div>
+        <div><span class="pill sealed"><span class="pill-dot"></span>SEALED</span></div>
+        <div class="site-meta">3 pages</div>
+        <div class="site-meta">2d ago · I11+G3</div>
+        <div class="row gap-sm">
+          <span class="btn btn-ghost btn-sm">Open</span>
+          <span class="mono tiny ink-muted">↗</span>
+        </div>
+      </a>
+
+      <a href="site-workspace.html" class="sites-row" style="text-decoration:none; color:inherit;">
+        <div class="site-name">
+          <strong>Studio Grove — Press Releases</strong>
+          <span class="site-url">press.studio-grove.eu</span>
+        </div>
+        <div><span class="pill published"><span class="pill-dot"></span>PUBLISHED</span></div>
+        <div class="site-meta">5 pages</div>
+        <div class="site-meta">8d ago · I11</div>
+        <div class="row gap-sm">
+          <span class="btn btn-ghost btn-sm">Open</span>
+          <span class="mono tiny ink-muted">↗</span>
+        </div>
+      </a>
+
+      <a href="site-workspace.html" class="sites-row" style="text-decoration:none; color:inherit;">
+        <div class="site-name">
+          <strong>Researcher Portfolio</strong>
+          <span class="site-url">jober.windi-sites.com</span>
+        </div>
+        <div><span class="pill draft"><span class="pill-dot"></span>DRAFT</span></div>
+        <div class="site-meta">3 pages</div>
+        <div class="site-meta ink-muted">— not sealed</div>
+        <div class="row gap-sm">
+          <span class="btn btn-ghost btn-sm">Open</span>
+          <span class="mono tiny ink-muted">↗</span>
+        </div>
+      </a>
+    </div>
+
+    <div class="empty-cta">
+      <div>
+        <h4>Got something else to put on the record?</h4>
+        <p class="ink-soft mt-sm" style="font-size:14px;">Each new site is one prompt away — and one human approval before it's sealed.</p>
+      </div>
+      <a href="new-site.html" class="btn btn-primary">+ New site</a>
+    </div>
+  </div>
+</section>
+
+<footer class="shell">
+  <div class="forensic-strip">
+    <span><span class="seal-mark"></span>Last receipt: WINDI-SITES-1746278341</span>
+    <span class="mono">DID:0xa4F2…7c1b · Tier MED · I11 active</span>
+    <span>Forensic Ledger :8101 · ✓</span>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const root = document.documentElement;
+    const next = root.dataset.theme === 'klar' ? 'noir' : 'klar';
+    root.dataset.theme = next;
+    try { localStorage.setItem('windi_theme', next); } catch(e) {}
+  }
+  try {
+    const saved = localStorage.getItem('windi_theme');
+    if (saved) document.documentElement.dataset.theme = saved;
+  } catch(e) {}
+</script>
+
+</body>
+</html>

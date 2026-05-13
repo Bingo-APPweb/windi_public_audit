@@ -1,0 +1,303 @@
+/* ============================================================
+   WINDI W-SITES-001 — Base Design System
+   KLAR/NOIR · Bricolage Grotesque + JetBrains Mono
+   Sealed protocol: §58 Product Blueprint v1.0
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+/* -------- Tokens -------- */
+:root[data-theme="klar"] {
+  --bg:        #F5F0E0;
+  --bg-soft:   #EDE6D2;
+  --bg-card:   #FBF7EA;
+  --ink:       #0E0E0E;
+  --ink-soft:  #4A4A4A;
+  --ink-muted: #7A7A7A;
+  --line:      #C9C0A8;
+  --line-soft: #DDD5BD;
+  --gold:      #8B6914;
+  --gold-soft: #B8943F;
+  --green:     #2D5F3F;
+  --red:       #8B2929;
+  --shadow:    0 1px 0 rgba(14,14,14,0.04);
+}
+:root[data-theme="noir"] {
+  --bg:        #0E0E0E;
+  --bg-soft:   #161616;
+  --bg-card:   #1A1A1A;
+  --ink:       #F5F0E0;
+  --ink-soft:  #C9C0A8;
+  --ink-muted: #7A7460;
+  --line:      #2A2A2A;
+  --line-soft: #1F1F1F;
+  --gold:      #D4A53A;
+  --gold-soft: #8B6914;
+  --green:     #6FAE8A;
+  --red:       #C56A6A;
+  --shadow:    0 1px 0 rgba(245,240,224,0.03);
+}
+
+/* -------- Reset -------- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  font-size: 16px;
+  line-height: 1.55;
+  transition: background .25s ease, color .25s ease;
+}
+a { color: var(--ink); text-decoration: none; }
+a:hover { color: var(--gold); }
+button { font-family: inherit; cursor: pointer; }
+
+.mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+
+/* -------- Layout -------- */
+.shell {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+.shell-narrow {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+/* -------- Topbar -------- */
+.topbar {
+  border-bottom: 1px solid var(--line);
+  padding: 18px 0;
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(8px);
+}
+.topbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: -0.01em;
+}
+.brand-mark {
+  width: 28px; height: 28px;
+  border: 1.5px solid var(--ink);
+  border-radius: 4px;
+  display: grid; place-items: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+}
+.brand-tag {
+  font-size: 11px;
+  color: var(--ink-muted);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding-left: 12px;
+  border-left: 1px solid var(--line);
+}
+.nav { display: flex; gap: 28px; align-items: center; }
+.nav a {
+  font-size: 14px;
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+.nav a:hover { color: var(--ink); }
+.theme-btn {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ink);
+  width: 32px; height: 32px;
+  border-radius: 6px;
+  font-size: 14px;
+  display: grid; place-items: center;
+}
+.theme-btn:hover { border-color: var(--ink); }
+
+/* -------- Buttons -------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 22px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  border: 1px solid transparent;
+  transition: all .15s ease;
+}
+.btn-primary {
+  background: var(--ink);
+  color: var(--bg);
+  border-color: var(--ink);
+}
+.btn-primary:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--bg);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--line);
+}
+.btn-ghost:hover { border-color: var(--ink); }
+.btn-gold {
+  background: var(--gold);
+  color: var(--bg);
+  border-color: var(--gold);
+}
+.btn-gold:hover { background: var(--gold-soft); border-color: var(--gold-soft); }
+.btn-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.btn-sm { padding: 8px 14px; font-size: 13px; }
+
+/* -------- Cards -------- */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+.card-tight { padding: 18px; }
+
+/* -------- Pills / Status -------- */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  border: 1px solid var(--line);
+  background: var(--bg-soft);
+  color: var(--ink-soft);
+}
+.pill.draft   { color: var(--ink-muted); }
+.pill.published { color: var(--green); border-color: var(--green); }
+.pill.sealed  { color: var(--gold); border-color: var(--gold); background: rgba(139,105,20,0.06); }
+.pill-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  display: inline-block;
+}
+
+/* -------- Type scale -------- */
+h1, h2, h3, h4 { font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; margin: 0; }
+h1 { font-size: 56px; letter-spacing: -0.035em; }
+h2 { font-size: 36px; }
+h3 { font-size: 22px; }
+h4 { font-size: 17px; }
+p  { margin: 0; }
+.lead { font-size: 19px; color: var(--ink-soft); line-height: 1.5; }
+.tiny { font-size: 12px; color: var(--ink-muted); }
+
+/* -------- Forensic footer (governança silenciosa) -------- */
+.forensic-strip {
+  border-top: 1px solid var(--line);
+  padding: 18px 0 24px;
+  margin-top: 80px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-muted);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.forensic-strip span { display: inline-flex; align-items: center; gap: 6px; }
+.forensic-strip .seal-mark {
+  display: inline-block;
+  width: 8px; height: 8px;
+  background: var(--gold);
+  border-radius: 50%;
+}
+
+/* -------- Utilities -------- */
+.row { display: flex; gap: 16px; align-items: center; }
+.row-between { display: flex; gap: 16px; align-items: center; justify-content: space-between; }
+.col { display: flex; flex-direction: column; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.gap-sm { gap: 8px; }
+.gap-lg { gap: 32px; }
+.mt-sm  { margin-top: 12px; }
+.mt-md  { margin-top: 28px; }
+.mt-lg  { margin-top: 56px; }
+.mt-xl  { margin-top: 80px; }
+.center { text-align: center; }
+.ink-soft  { color: var(--ink-soft); }
+.ink-muted { color: var(--ink-muted); }
+.gold      { color: var(--gold); }
+
+/* -------- Form elements -------- */
+.field { display: flex; flex-direction: column; gap: 8px; }
+.field label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.input, .textarea, .select {
+  width: 100%;
+  padding: 12px 14px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 15px;
+  transition: border-color .15s ease;
+}
+.input:focus, .textarea:focus, .select:focus {
+  outline: none;
+  border-color: var(--ink);
+}
+.textarea { min-height: 120px; resize: vertical; font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+
+/* -------- Animations (respect motion pref) -------- */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes fu {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: none; }
+  }
+  .animate-in { animation: fu .35s ease both; }
+  .animate-in.delay-1 { animation-delay: .08s; }
+  .animate-in.delay-2 { animation-delay: .16s; }
+  .animate-in.delay-3 { animation-delay: .24s; }
+}
+
+/* -------- Responsive -------- */
+@media (max-width: 880px) {
+  .shell, .shell-narrow { padding: 0 20px; }
+  h1 { font-size: 40px; }
+  h2 { font-size: 28px; }
+  .grid-3, .grid-4, .grid-2 { grid-template-columns: 1fr; }
+  .nav { gap: 16px; }
+  .nav a:not(.btn) { display: none; }
+}

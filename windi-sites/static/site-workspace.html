@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="klar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Notary Müller · Workspace · WINDI Sites</title>
+<link rel="stylesheet" href="assets/windi-base.css">
+<style>
+  .ws-head {
+    padding: 32px 0 24px;
+    border-bottom: 1px solid var(--line);
+  }
+  .ws-grid {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 32px;
+    padding: 36px 0 80px;
+  }
+
+  .preview-frame {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .preview-bar {
+    padding: 12px 16px;
+    background: var(--bg-soft);
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-muted);
+  }
+  .preview-bar .dots { display: flex; gap: 5px; }
+  .preview-bar .dot {
+    width: 9px; height: 9px;
+    background: var(--line);
+    border-radius: 50%;
+  }
+  .preview-bar .url-bar {
+    flex: 1;
+    padding: 4px 10px;
+    background: var(--bg);
+    border-radius: 5px;
+    border: 1px solid var(--line);
+  }
+  .preview-body {
+    padding: 56px 48px;
+    min-height: 500px;
+  }
+  .preview-body h1 {
+    font-size: 32px;
+    margin-bottom: 12px;
+  }
+  .preview-body .ws-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .preview-body p { color: var(--ink-soft); font-size: 15px; line-height: 1.65; margin-top: 16px; }
+  .preview-body .preview-box {
+    margin-top: 32px;
+    padding: 20px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--bg);
+  }
+  .preview-body .preview-box h4 { font-size: 14px; margin-bottom: 10px; }
+  .preview-body .preview-box dl { margin: 0; font-size: 14px; }
+  .preview-body .preview-box dt { font-weight: 600; margin-top: 6px; }
+  .preview-body .preview-box dd { margin: 0 0 0 0; color: var(--ink-soft); }
+
+  .preview-footer {
+    margin-top: 40px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-muted);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* Sidebar */
+  .ws-side { display: flex; flex-direction: column; gap: 20px; }
+  .panel {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .panel-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .compliance-list { display: flex; flex-direction: column; gap: 10px; }
+  .comp-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+  }
+  .comp-row .name { display: flex; gap: 8px; align-items: center; }
+  .comp-row .name .badge {
+    width: 16px; height: 16px;
+    border-radius: 4px;
+    border: 1.5px solid var(--green);
+    background: rgba(45,95,63,0.1);
+    color: var(--green);
+    font-size: 10px;
+    display: grid;
+    place-items: center;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .comp-row .badge.pending {
+    border-color: var(--ink-muted);
+    color: var(--ink-muted);
+    background: transparent;
+  }
+  .comp-row .meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-muted);
+  }
+
+  .actions-stack { display: flex; flex-direction: column; gap: 10px; }
+  .actions-stack .btn { justify-content: center; }
+
+  .docs-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+  .docs-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .docs-list li:last-child { border-bottom: none; }
+  .docs-list .file-icon {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-muted);
+    border: 1px solid var(--line);
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-right: 8px;
+  }
+
+  @media (max-width: 880px) {
+    .ws-grid { grid-template-columns: 1fr; }
+    .preview-body { padding: 32px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="shell topbar-inner">
+    <div class="brand">
+      <span class="brand-mark">W</span>
+      <span>WINDI Sites</span>
+      <span class="brand-tag">Workspace</span>
+    </div>
+    <nav class="nav">
+      <a href="dashboard.html">← All sites</a>
+      <a href="verify.html">Verify</a>
+      <button class="theme-btn" onclick="toggleTheme()">◐</button>
+    </nav>
+  </div>
+</header>
+
+<section class="ws-head">
+  <div class="shell">
+    <div class="row-between">
+      <div>
+        <p class="mono tiny ink-muted">SITE · NOTARY-MUELLER.WINDI-SITES.COM</p>
+        <h2 class="mt-sm">Notary Müller — Public Profile</h2>
+        <div class="row mt-sm gap-sm">
+          <span class="pill sealed"><span class="pill-dot"></span>SEALED · I11+G3</span>
+          <span class="mono tiny ink-muted">Last seal: 2 days ago · 28 receipts</span>
+        </div>
+      </div>
+      <div class="row gap-sm">
+        <button class="btn btn-ghost btn-sm">Edit content</button>
+        <button class="btn btn-primary btn-sm">+ New version</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="shell ws-grid">
+
+    <!-- ===== PREVIEW (left, dominant) ===== -->
+    <div>
+      <div class="preview-frame">
+        <div class="preview-bar">
+          <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+          <div class="url-bar">https://notary-mueller.windi-sites.com</div>
+          <span>↗</span>
+        </div>
+        <div class="preview-body">
+          <p class="ws-tag">Notar · Kempten · Bayern</p>
+          <h1>Dr. Hans Müller</h1>
+          <p style="font-size:17px;color:var(--ink-soft);">Notar mit Amtssitz in Kempten (Allgäu) · zugelassen seit 2008 · Schwerpunkte: Immobilien, Erbrecht, Gesellschaftsrecht.</p>
+
+          <div class="preview-box">
+            <h4>Sprechzeiten</h4>
+            <dl>
+              <dt>Montag – Donnerstag</dt><dd>09:00 – 12:00 · 14:00 – 17:00</dd>
+              <dt>Freitag</dt><dd>09:00 – 12:00</dd>
+              <dt>Samstag &amp; Sonntag</dt><dd>nach Vereinbarung</dd>
+            </dl>
+          </div>
+
+          <div class="preview-box">
+            <h4>Kontakt</h4>
+            <dl>
+              <dt>Adresse</dt><dd>Bahnhofstraße 12 · 87435 Kempten</dd>
+              <dt>Telefon</dt><dd>+49 831 123 456</dd>
+              <dt>E-Mail</dt><dd>kanzlei@notar-mueller.de</dd>
+            </dl>
+          </div>
+
+          <p style="font-size:13px; margin-top: 24px;">Gebühren nach <strong>Notarkostengesetz (GNotKG)</strong> · keine individuellen Vereinbarungen außerhalb der gesetzlichen Vorgaben.</p>
+
+          <div class="preview-footer">
+            <span><span class="seal-mark" style="display:inline-block;width:8px;height:8px;background:var(--gold);border-radius:50%;margin-right:6px;"></span>SHA-256: 4f7a…b2c1 · I11 · Forensic Ledger</span>
+            <span>✓ Verifiable · WINDI-SITES-1746278341</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SIDEBAR (right) ===== -->
+    <aside class="ws-side">
+
+      <div class="panel">
+        <p class="panel-title">Actions</p>
+        <div class="actions-stack">
+          <button class="btn btn-gold">Publish &amp; Seal current version</button>
+          <button class="btn btn-ghost btn-sm">Save as draft</button>
+          <button class="btn btn-ghost btn-sm">Preview public link</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <p class="panel-title">Compliance · Constitutional</p>
+        <div class="compliance-list">
+          <div class="comp-row">
+            <span class="name"><span class="badge">✓</span>I9 — Irremediável</span>
+            <span class="meta">Acknowledged</span>
+          </div>
+          <div class="comp-row">
+            <span class="name"><span class="badge">✓</span>I11 — Forensic Ledger</span>
+            <span class="meta">Active</span>
+          </div>
+          <div class="comp-row">
+            <span class="name"><span class="badge">✓</span>I13 — DID Identity</span>
+            <span class="meta">0xa4F2…7c1b</span>
+          </div>
+          <div class="comp-row">
+            <span class="name"><span class="badge">✓</span>G3 — Human approval</span>
+            <span class="meta">Required</span>
+          </div>
+          <div class="comp-row">
+            <span class="name"><span class="badge pending">·</span>I14 — Sigilo profissional</span>
+            <span class="meta ink-muted">N/A · public page</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <p class="panel-title">Receipts (last 5)</p>
+        <ul class="docs-list">
+          <li><span><span class="file-icon">SEAL</span>v3 · Office hours updated</span><span class="meta">2d</span></li>
+          <li><span><span class="file-icon">SEAL</span>v2 · Phone fix</span><span class="meta">14d</span></li>
+          <li><span><span class="file-icon">SEAL</span>v1 · Initial publish</span><span class="meta">26d</span></li>
+          <li><span><span class="file-icon">DRAFT</span>v0 · First draft</span><span class="meta">28d</span></li>
+        </ul>
+        <a href="verify.html" class="btn btn-ghost btn-sm" style="margin-top: 14px; width:100%; justify-content:center;">View full chain →</a>
+      </div>
+
+      <div class="panel">
+        <p class="panel-title">Attached documents</p>
+        <ul class="docs-list">
+          <li><span><span class="file-icon">PDF</span>Notarurkunde_2008.pdf</span><span class="meta">↗</span></li>
+          <li><span><span class="file-icon">PDF</span>Gebührenordnung.pdf</span><span class="meta">↗</span></li>
+        </ul>
+        <button class="btn btn-ghost btn-sm" style="margin-top: 14px; width:100%; justify-content:center;">+ Attach evidence</button>
+      </div>
+
+      <div class="panel" style="background: rgba(139,105,20,0.04); border-color: var(--gold);">
+        <p class="panel-title gold">G3 · Human seals — not WINDI</p>
+        <p style="font-size: 13px; color: var(--ink-soft);">Pressing <em>Publish &amp; Seal</em> writes a SHA-256 receipt to the Forensic Ledger under <span class="mono">DID:0xa4F2…7c1b</span>. The seal carries your name, not ours.</p>
+      </div>
+
+    </aside>
+
+  </div>
+</section>
+
+<footer class="shell">
+  <div class="forensic-strip">
+    <span><span class="seal-mark"></span>WINDI-SITES-1746278341 · I11 · 2d ago</span>
+    <span class="mono">SHA-256 4f7a8d92c1e3…b2c1 · DID 0xa4F2…7c1b</span>
+    <span>Forensic Ledger :8101 · ✓ Verifiable</span>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const root = document.documentElement;
+    const next = root.dataset.theme === 'klar' ? 'noir' : 'klar';
+    root.dataset.theme = next;
+    try { localStorage.setItem('windi_theme', next); } catch(e) {}
+  }
+  try {
+    const saved = localStorage.getItem('windi_theme');
+    if (saved) document.documentElement.dataset.theme = saved;
+  } catch(e) {}
+</script>
+
+</body>
+</html>

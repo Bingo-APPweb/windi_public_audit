@@ -32,7 +32,11 @@ from .ai_writer_runtime import (
     VALID_TEMPLATES,
     AI_WRITER_MODE,
     INTERNAL_DIDS_ALLOWLIST,
-    _get_available_tiers  # §242: Check available tiers
+    _get_available_tiers,  # §242: Check available tiers
+    # §245: Template tier configuration
+    TEMPLATE_TIER_CONFIG,
+    get_template_tier_config,
+    language_tier_override,
 )
 
 from .ollama_writer_client import (
@@ -56,6 +60,10 @@ __all__ = [
     "AI_WRITER_MODE",
     "INTERNAL_DIDS_ALLOWLIST",
     "_get_available_tiers",  # §242
+    # §245: Template tier configuration
+    "TEMPLATE_TIER_CONFIG",
+    "get_template_tier_config",
+    "language_tier_override",
     # Client
     "generate_content",
     "check_ollama_health",
