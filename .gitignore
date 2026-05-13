@@ -88,3 +88,19 @@ media/vd-cut/incoming/
 media/vd-cut/previews/
 media/vd-cut/sealed/
 media/vd-cut/thumbs/
+
+# === RUNTIME CACHES (voice, mail data) ===
+windi-travel/maria/voice_cache/
+w-mail-001/mail-data/
+w-mail-001/mail-logs/
+w-mail-001/mail-state/
+
+# === OTHER RUNTIME OUTPUT ===
+media/vd-mass/
+media/streams/
+media/collages/
+joe/*.db-wal
+joe/*.db-shm
+verify-public/*.png
+verify-public/web/*.png
+*.sqlite3
