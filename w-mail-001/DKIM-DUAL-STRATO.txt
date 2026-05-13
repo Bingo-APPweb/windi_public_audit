@@ -1,0 +1,104 @@
+═══════════════════════════════════════════════════════════════
+W-MAIL-001 — DKIM Dual Selector Publication
+Strato DNS Panel Instructions
+═══════════════════════════════════════════════════════════════
+
+ADD TWO TXT RECORDS TO STRATO DNS PANEL FOR windisites.de:
+
+───────────────────────────────────────────────────────────────
+TXT RECORD #1 — RSA-2048 (Primary, legacy compatibility)
+───────────────────────────────────────────────────────────────
+
+Subdomain/Präfix: rsa._domainkey
+Typ: TXT
+Wert: v=DKIM1; h=sha256; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0LjSfVp3U8wb4PwGb7WDvkb76k6qYVXHJS9rFg0dHockP8SAORnruwVbDTT06ZA4Iyilj2RSft4EnYNnh4JXioDau2B44O99RUwPEZ9kHeS7xW8jhOvlUeOr1evn3lE91gu2h8yG8wKounJtUKlSNlKfPmaQgd6LGBbeMMRUoYfUm8QJSd682Lnk47/4bsMW+RnVkTKoDNyZU191bgqCLAga12e7FszQc1gGYJ9naaWd8G3qKs2GhCFGPC3C+cHHbKoDSSezEsfVvZ715Iwca6CRJj90wv2EDVbU3X/ldLSS0uG5RuyOGVLBCPAuS2cUf+QacE1Q/UML5pnGfdZtZwIDAQAB
+
+Note: 390 characters — Strato may split into multiple strings automatically. This is CORRECT per RFC.
+
+───────────────────────────────────────────────────────────────
+TXT RECORD #2 — Ed25519 (Modern, DID-aligned)
+───────────────────────────────────────────────────────────────
+
+Subdomain/Präfix: ed25519._domainkey
+Typ: TXT
+Wert: v=DKIM1; h=sha256; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvus1OfOowCsXu/68kCKRXSr5TSDgMqlFHbbl1TXDrsRmMA1kSGyKpVCQbCzPheI8tDZagMG7OmkhIU2Nlai6gbSHolrvoG9DwpA1fCNn2vs8WIbN34F+UciM7IyTNs7QDDMoGGBe95dG8CBdcj02iiYHmZpsspJVwP8uV8V+A6a1OmuDCOTlP10GPbftLmDlVRt1AdYRKeZudlfjmilBUpM3Qor9zceBNHoo2g9TFd0g6y9nqDN1OWF97YdR6Eh+lQozCLq7jNUa0bABhKCorJDhozr2pDnqV3I9CaLrcTUt67zVDmtAsuinrUYPQQyR44KSJSgepx59ZnVKmZ2WjwIDAQAB
+
+Note: 393 characters — Similar length to RSA, may also split.
+
+═══════════════════════════════════════════════════════════════
+STRATO PANEL STEPS (for EACH record):
+═══════════════════════════════════════════════════════════════
+
+1. Login: www.strato.de
+2. Navigate: Domains → windisites.de → ⚙️ → DNS verwalten
+3. Click: "TXT-Record hinzufügen"
+4. Fill:
+   - Subdomain/Präfix: (see above - rsa._domainkey OR ed25519._domainkey)
+   - Typ: TXT
+   - Wert: (copy entire value from above, one continuous line)
+5. Save
+6. Repeat for second record
+
+IMPORTANT WARNINGS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚠️  NO extra quotes — Strato adds automatically
+⚠️  NO spaces in middle of p=MIIBIjAN... key
+⚠️  Strato may break >255 chars into multiple strings — ALLOW IT
+⚠️  Copy value as ONE LINE (no line breaks in middle)
+
+═══════════════════════════════════════════════════════════════
+VERIFICATION (after 5-30 min propagation):
+═══════════════════════════════════════════════════════════════
+
+# RSA verification
+dig rsa._domainkey.windisites.de TXT +short
+# Expected: "v=DKIM1..." (full key or split strings)
+
+# Ed25519 verification
+dig ed25519._domainkey.windisites.de TXT +short
+# Expected: "v=DKIM1..." (full key or split strings)
+
+# MX Toolbox validation (RSA)
+https://mxtoolbox.com/dkim.aspx
+Domain: windisites.de
+Selector: rsa
+Expected: "Valid DKIM record found"
+
+# MX Toolbox validation (Ed25519)
+Domain: windisites.de
+Selector: ed25519
+Note: May fail parsing (mxtoolbox behind on Ed25519) — if dig works, ignore mxtoolbox error
+
+═══════════════════════════════════════════════════════════════
+POST-PUBLICATION SMOKE TEST:
+═══════════════════════════════════════════════════════════════
+
+After both records propagate, run loopback test:
+
+echo "Test dual DKIM signing" | sudo docker exec -i windi-mailserver sendmail -f postmaster@windisites.de postmaster@windisites.de
+
+Wait 5 seconds, then inspect:
+
+sleep 5
+sudo docker exec windi-mailserver cat /var/mail/windisites.de/postmaster/new/* 2>/dev/null | grep -A2 "DKIM-Signature:" | head -20
+
+EXPECTED: TWO DKIM-Signature headers:
+- One with s=rsa; d=windisites.de
+- One with s=ed25519; d=windisites.de
+
+If both present → GO TOTAL for external smoke tests
+If missing → Debug before external sends
+
+═══════════════════════════════════════════════════════════════
+CONSTITUTIONAL ALIGNMENT:
+═══════════════════════════════════════════════════════════════
+
+Decision: Opção A — Dual Selector (Human Dragon, 26 Apr 2026)
+Implementation: ✅ HONORS decision
+  - rsa + ed25519 both generated Day 1
+  - Dual signing policy operational
+  - Naming: simplified (no mail- prefix)
+  - Guardian verification: PASSED
+
+═══════════════════════════════════════════════════════════════

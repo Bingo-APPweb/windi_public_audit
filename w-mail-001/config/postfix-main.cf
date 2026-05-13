@@ -1,0 +1,16 @@
+# W-MAIL-DACP-MILTER v1.0 — Postfix Main Configuration Override
+# Spec: §227 Section 10.1
+#
+# This file is read by docker-mailserver to override postfix settings.
+# DACP milter MUST come BEFORE OpenDKIM in the chain.
+
+# Define DACP milter
+dacp_milter = inet:localhost:8890
+
+# Milter chain: DACP → DKIM → DMARC → Rspamd
+# CRITICAL: DACP first ensures body is modified BEFORE DKIM signing
+smtpd_milters = $dacp_milter $dkim_milter $dmarc_milter $rspamd_milter
+non_smtpd_milters = $smtpd_milters
+
+# I14 Enforcement: tempfail if milter crashes (never silent bypass)
+milter_default_action = tempfail
