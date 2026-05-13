@@ -114,7 +114,7 @@ def _build_ledger_payload(receipt_id: str, req: SealRequest, sha256: str) -> dic
     return {
         # ── campos obrigatórios do Ledger ──
         "id":               receipt_id,
-        "actor":            req.wallet_id or "anonymous",
+        "actor":            req.wallet_id,  # §167: wallet_id now required
         "app":              "windi-travel",
         "doc_name":         f"TRAVEL_DECISION_{req.decision.place_name.upper().replace(' ', '_')}",
         "doc_type":         "doc",
@@ -165,7 +165,23 @@ async def seal_decision(req: SealRequest):
       - I1  (Soberania de Dados)
       - I10 (Fallback gracioso)
       - I11 (Permanência de Evidência Criptográfica — IRREMEDIÁVEL)
+
+    §167 Audit Fix (14 Abr 2026):
+      - wallet_id agora OBRIGATÓRIO para governance_level HIGH
+      - Anonymous receipts proibidos (I1 + I14)
     """
+    # §167: I1 + I14 — Actor identification required for HIGH governance
+    if not req.wallet_id:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": "wallet_id_required",
+                "message": "Travel decision seal requires identified actor. Anonymous access not permitted for governance_level HIGH.",
+                "invariant": "I1 — Soberania Humana",
+                "code": "W-MARIA-001-AUTH-REQUIRED"
+            }
+        )
+
     receipt_id = _generate_receipt_id()
     sealed_at  = datetime.now(timezone.utc).isoformat()
 

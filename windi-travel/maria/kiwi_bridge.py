@@ -72,7 +72,8 @@ IATA_CODES = {
     "faro": "FAO",
     "madeira": "FNC", "funchal": "FNC",
 
-    # Brazil
+    # Brazil (brasil defaults to GRU - São Paulo, largest hub)
+    "brasil": "GRU", "brazil": "GRU",
     "são paulo": "GRU", "sao paulo": "GRU",
     "rio": "GIG", "rio de janeiro": "GIG",
     "florianópolis": "FLN", "florianopolis": "FLN",
@@ -638,10 +639,12 @@ def extract_flight_details(text: str, default_from: str = "MUC") -> Dict[str, st
             if destination:
                 break
 
-    # Fallback: find any city not already used
+    # Fallback: find any city not already used (word boundary match)
     if not origin or not destination:
         for city, iata in IATA_CODES.items():
-            if city in lower:
+            # Use word boundary to avoid "aeroporto" matching "porto"
+            pattern = r'\b' + re.escape(city) + r'\b'
+            if re.search(pattern, lower):
                 if not origin and iata != destination:
                     origin = iata
                 elif not destination and iata != origin:
