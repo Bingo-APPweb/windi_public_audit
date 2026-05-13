@@ -525,37 +525,111 @@ def clear_session(officer_id: str):
 
 # ─── ENTERPRISE DB · LIVE DECISIONS ──────────────────────────────────────────
 
+# §217 — SOVEREIGN RISK SCORE (SRS)
+# "O peso regulatório é soberano."
+# SRS = (Financial × 0.3) + (Reputational × 0.2) + (Regulatory × 0.5)
+SRS_THRESHOLD_CRITICAL = 75  # SRS > 75 = CRITICAL_PATH
+SRS_THRESHOLD_HIGH = 50      # SRS > 50 = HIGH priority
+
+def calculate_srs(financial: float, reputational: float, regulatory: float) -> float:
+    """§217: Calculate Sovereign Risk Score — Regulatory weight is sovereign"""
+    return (financial * 0.3) + (reputational * 0.2) + (regulatory * 0.5)
+
+def detect_critical_path(decision: dict) -> bool:
+    """§217: CRITICAL_PATH if SRS > threshold OR Art.14 OR exposure > €10M"""
+    srs = decision.get("srs", 0)
+    legal = decision.get("legal_basis", "").lower()
+    exposure = decision.get("financial_exposure", 0)
+
+    # Art.14 = Human Oversight mandatory = CRITICAL
+    if "art.14" in legal or "art. 14" in legal:
+        return True
+    # Exposure > €10M = CRITICAL
+    if exposure >= 10_000_000:
+        return True
+    # SRS > threshold = CRITICAL
+    if srs >= SRS_THRESHOLD_CRITICAL:
+        return True
+    return False
+
+def enrich_decision_with_srs(decision: dict) -> dict:
+    """§217: Enrich decision with SRS calculation and CRITICAL_PATH detection"""
+    # Get risk scores (default based on risk_level if not specified)
+    risk_level = decision.get("risk_level", "MEDIUM")
+    defaults = {"CRITICAL": (90, 80, 95), "HIGH": (70, 60, 75), "MEDIUM": (40, 40, 45), "LOW": (20, 20, 25)}
+    fin_default, rep_default, reg_default = defaults.get(risk_level, (40, 40, 45))
+
+    financial = decision.get("financial_score", fin_default)
+    reputational = decision.get("reputational_score", rep_default)
+    regulatory = decision.get("regulatory_score", reg_default)
+
+    # Calculate SRS
+    srs = calculate_srs(financial, reputational, regulatory)
+    decision["srs"] = round(srs, 2)
+    decision["financial_score"] = financial
+    decision["reputational_score"] = reputational
+    decision["regulatory_score"] = regulatory
+
+    # Detect CRITICAL_PATH
+    decision["critical_path"] = detect_critical_path(decision)
+
+    # Generate SRS label
+    if srs >= SRS_THRESHOLD_CRITICAL:
+        decision["srs_label"] = "CRITICAL_PATH"
+    elif srs >= SRS_THRESHOLD_HIGH:
+        decision["srs_label"] = "HIGH_PRIORITY"
+    else:
+        decision["srs_label"] = "STANDARD"
+
+    return decision
+
 def get_live_decisions(limit: int = 20) -> list:
     try:
         if not ENT_DB_PATH.exists():
-            return _seed_decisions()
-        conn = sqlite3.connect(str(ENT_DB_PATH), timeout=5)
-        conn.row_factory = sqlite3.Row
-        rows = conn.execute("""
-            SELECT id, title, description, risk_level, status, legal_basis, deadline, ai_system, impact, officer_id, created_at
-            FROM decisions WHERE status IN ('pending', 'review')
-            ORDER BY CASE risk_level WHEN 'CRITICAL' THEN 1 WHEN 'HIGH' THEN 2 WHEN 'MEDIUM' THEN 3 ELSE 4 END, created_at DESC
-            LIMIT ?
-        """, (limit,)).fetchall()
-        conn.close()
-        return [dict(r) for r in rows] if rows else _seed_decisions()
+            decisions = _seed_decisions()
+        else:
+            conn = sqlite3.connect(str(ENT_DB_PATH), timeout=5)
+            conn.row_factory = sqlite3.Row
+            rows = conn.execute("""
+                SELECT id, title, description, risk_level, status, legal_basis, deadline, ai_system, impact, officer_id, created_at,
+                       COALESCE(financial_exposure, 0) as financial_exposure,
+                       COALESCE(financial_score, 0) as financial_score,
+                       COALESCE(reputational_score, 0) as reputational_score,
+                       COALESCE(regulatory_score, 0) as regulatory_score
+                FROM decisions WHERE status IN ('pending', 'review')
+                LIMIT ?
+            """, (limit,)).fetchall()
+            conn.close()
+            decisions = [dict(r) for r in rows] if rows else _seed_decisions()
+
+        # §217: Enrich all decisions with SRS and sort by SRS descending
+        decisions = [enrich_decision_with_srs(d) for d in decisions]
+        decisions.sort(key=lambda d: d.get("srs", 0), reverse=True)
+
+        return decisions
     except Exception:
-        return _seed_decisions()
+        decisions = _seed_decisions()
+        decisions = [enrich_decision_with_srs(d) for d in decisions]
+        decisions.sort(key=lambda d: d.get("srs", 0), reverse=True)
+        return decisions
 
 def _seed_decisions() -> list:
     return [
         {"id": "DEC-2026-040", "title": "Scoring automático · 12.000 contas", "risk_level": "CRITICAL", "status": "pending",
          "legal_basis": "EU AI Act Annex III (5b) · Art.14 · BaFin AT 7.2", "deadline": "2026-04-12T17:00:00Z",
          "ai_system": "AI-SCORING-V2", "impact": "12.000 contas", "officer_id": None, "created_at": "2026-04-12T08:00:00Z",
-         "description": "Sistema de scoring automatizado afecta decisões de crédito."},
+         "description": "Sistema de scoring automatizado afecta decisões de crédito.",
+         "financial_exposure": 35_000_000, "financial_score": 95, "reputational_score": 85, "regulatory_score": 100},  # Art.14 = max regulatory
         {"id": "DEC-2026-038", "title": "Detecção de fraude — actualização modelo", "risk_level": "HIGH", "status": "review",
          "legal_basis": "GDPR Art.22 · MiFID II Art.16", "deadline": "2026-04-15T17:00:00Z",
          "ai_system": "AI-FRAUD-DETECT", "impact": "Transacções > €5.000", "officer_id": None, "created_at": "2026-04-11T14:30:00Z",
-         "description": "AI-FRAUD-DETECT v3.1 recebeu update de modelo."},
+         "description": "AI-FRAUD-DETECT v3.1 recebeu update de modelo.",
+         "financial_exposure": 8_500_000, "financial_score": 75, "reputational_score": 70, "regulatory_score": 80},
         {"id": "DEC-2026-036", "title": "Chatbot cliente — expansão dados", "risk_level": "MEDIUM", "status": "review",
          "legal_basis": "EU AI Act Art.13 · GDPR Art.13", "deadline": "2026-04-20T17:00:00Z",
          "ai_system": "CHATBOT-CX", "impact": "Clientes retail", "officer_id": None, "created_at": "2026-04-10T09:15:00Z",
-         "description": "CHATBOT-CX v2.0 pretende expandir acesso a scoring."}
+         "description": "CHATBOT-CX v2.0 pretende expandir acesso a scoring.",
+         "financial_exposure": 2_000_000, "financial_score": 45, "reputational_score": 50, "regulatory_score": 55}
     ]
 
 # ─── SHELF STATE READER ─────────────────────────────────────────────────────
@@ -1029,6 +1103,62 @@ async def vera_decisions(status: str = "pending", limit: int = 20):
     return {"status": "ok", "count": len(decisions), "decisions": decisions,
             "source": "enterprise_db" if ENT_DB_PATH.exists() else "seed_data", "timestamp": datetime.utcnow().isoformat()}
 
+@router.get("/priority")
+async def vera_priority(language: str = "en"):
+    """§217: Get top priority decision with impact phrase for Oracle guidance"""
+    decisions = get_live_decisions(limit=10)
+    critical_path = [d for d in decisions if d.get("critical_path")]
+
+    if not critical_path:
+        # No CRITICAL_PATH decisions
+        phrases = {
+            "de": "Keine kritischen Entscheidungen. Standard-Priorität aktiv.",
+            "en": "No critical decisions. Standard priority active.",
+            "pt": "Sem decisões críticas. Prioridade standard activa."
+        }
+        return {
+            "status": "ok",
+            "critical_path_count": 0,
+            "top_decision": None,
+            "vera_guidance": phrases.get(language, phrases["en"]),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
+    # Get top CRITICAL_PATH decision (highest SRS)
+    top = critical_path[0]
+    exposure = top.get("financial_exposure", 0)
+    exposure_str = f"€{exposure / 1_000_000:.0f}M" if exposure >= 1_000_000 else f"€{exposure:,.0f}"
+
+    # Generate impact phrase (trilingual)
+    phrases = {
+        "de": f"Oracle, Fokus auf {top['id']}. Potenzielle Exposition: {exposure_str}. Alle anderen Aufgaben sind sekundär.",
+        "en": f"Oracle, focus on {top['id']}. Potential exposure: {exposure_str}. All other tasks are secondary.",
+        "pt": f"Oracle, foco no {top['id']}. Exposição potencial: {exposure_str}. Todas as outras tarefas são secundárias."
+    }
+
+    # Secondary decisions (other CRITICAL_PATH items)
+    secondary = [{"id": d["id"], "srs": d.get("srs", 0), "exposure": d.get("financial_exposure", 0)}
+                 for d in critical_path[1:]]
+
+    return {
+        "status": "ok",
+        "critical_path_count": len(critical_path),
+        "top_decision": {
+            "id": top["id"],
+            "title": top.get("title"),
+            "srs": top.get("srs"),
+            "srs_label": top.get("srs_label"),
+            "financial_exposure": exposure,
+            "legal_basis": top.get("legal_basis"),
+            "critical_path": True
+        },
+        "secondary_critical": secondary,
+        "vera_guidance": phrases.get(language, phrases["en"]),
+        "formula": "SRS = (Financial × 0.3) + (Reputational × 0.2) + (Regulatory × 0.5)",
+        "threshold": f"CRITICAL_PATH if SRS > {SRS_THRESHOLD_CRITICAL} OR Art.14 OR exposure > €10M",
+        "timestamp": datetime.utcnow().isoformat()
+    }
+
 @router.get("/session/{officer_id}")
 async def get_session(officer_id: str, limit: int = 20):
     history = load_session_history(officer_id, limit=limit)
@@ -1212,6 +1342,17 @@ async def vera_chat(query: VeraQuery):
 
             # Log triangulation result
             log.info(f"PRINCÍPIO XV: {len(models_consulted)} models: {models_consulted} | consensus={consensus_achieved}")
+
+            # §216 — PILAR XIII: Degraded Governance Mode Detection
+            # "Se a triangulação falhou, o Officer deve saber. PHO de Emergência."
+            if len(models_consulted) < 2:
+                degraded_mode = True
+                degraded_reason = f"TRIANGULATION_UNAVAILABLE: Only {len(models_consulted)} model(s) responded for HIGH_GOVERNANCE"
+                log.warning(f"§216 PILAR XIII ACTIVATED: {degraded_reason}")
+            elif not consensus_achieved:
+                # §216.1: Semantic divergence is NOT degraded, but flagged
+                # Both models responded but disagreed — still valid, needs human attention
+                log.warning(f"§216 DIVERGENCE ALERT: consensus_achieved=False, divergence_score={divergence_score}")
         else:
             # LOW/MED tasks: Single model is acceptable
             vera_response_raw = await call_ai(system, messages, max_tokens=600)
@@ -1223,6 +1364,11 @@ async def vera_chat(query: VeraQuery):
         degraded_reason = str(e)
         vera_response_raw = _degraded_response(language, degraded_reason)
         models_consulted = []
+
+    # §216: PHO de Emergência — Prepend warning if triangulation failed but response exists
+    if degraded_mode and "TRIANGULATION_UNAVAILABLE" in (degraded_reason or ""):
+        warning_prefix = _triangulation_warning(language, models_consulted)
+        vera_response_raw = warning_prefix + vera_response_raw
 
     # ─── ERDBEERE PROTOCOL v1.0 ─────────────────────────────────────────────
     # "VERA kann irren. Deshalb entscheidet der Mensch."
@@ -1317,13 +1463,23 @@ async def vera_chat(query: VeraQuery):
     return response
 
 def _degraded_response(language: str, reason: str) -> str:
-    """XIII: Degraded mode response — explicit, never silent"""
+    """XIII: Degraded mode response — explicit, never silent (total failure)"""
     responses = {
         "de": f"⚠️ VERA DEGRADED MODE (XIII)\n\nDer LLM-Gateway ist derzeit nicht verfügbar.\nGrund: {reason}\n\nEmpfohlene Aktion:\n1. Versuchen Sie es in 30 Sekunden erneut\n2. Überprüfen Sie W-GATEWAY-001 (:8130) Status\n3. Dieser Zustand wird protokolliert (I11)\n\nVERA kann ohne KI-Backend nicht beraten, aber diese Degradierung ist dokumentiert.",
         "en": f"⚠️ VERA DEGRADED MODE (XIII)\n\nThe LLM gateway is currently unavailable.\nReason: {reason}\n\nRecommended action:\n1. Retry in 30 seconds\n2. Check W-GATEWAY-001 (:8130) status\n3. This state is logged (I11)\n\nVERA cannot advise without AI backend, but this degradation is documented.",
         "pt": f"⚠️ VERA DEGRADED MODE (XIII)\n\nO gateway LLM está actualmente indisponível.\nMotivo: {reason}\n\nAcção recomendada:\n1. Tenta novamente em 30 segundos\n2. Verifica estado do W-GATEWAY-001 (:8130)\n3. Este estado está registado (I11)\n\nVERA não pode aconselhar sem backend AI, mas esta degradação está documentada."
     }
     return responses.get(language, responses["en"])
+
+def _triangulation_warning(language: str, models_used: list) -> str:
+    """§216: PHO de Emergência — Response valid but not triangulated"""
+    model_str = ", ".join(models_used) if models_used else "N/A"
+    warnings = {
+        "de": f"⚠️ **DEGRADIERTE GOVERNANCE (§216)**\n\nTriangulation nicht verfügbar. Nur 1 Modell ({model_str}) hat geantwortet.\nDiese Antwort ist eine **Notfall-PHO** — gültig, aber NICHT versiegelbar.\n\n---\n\n",
+        "en": f"⚠️ **DEGRADED GOVERNANCE (§216)**\n\nTriangulation unavailable. Only 1 model ({model_str}) responded.\nThis is an **Emergency PHO** — valid but NOT sealable.\n\n---\n\n",
+        "pt": f"⚠️ **GOVERNANÇA DEGRADADA (§216)**\n\nTriangulação indisponível. Apenas 1 modelo ({model_str}) respondeu.\nEsta é uma **PHO de Emergência** — válida mas NÃO selável.\n\n---\n\n"
+    }
+    return warnings.get(language, warnings["en"])
 
 def _anonymous_response(language: str, question: str) -> str:
     """
