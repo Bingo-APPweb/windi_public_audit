@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.52.0
-**Sealed:** 2026-05-12 · §250 Lei VII I18 Organic Growth + .wcap v0.1.0 Schema
+**Version:** 2.53.0
+**Sealed:** 2026-05-13 · §261 W-BIND-001 Cognitive Bind Module v0.2.0
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -109,6 +109,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-CAP-001 | :8194 | I1,I9,I11,I14 | **LIVE** · Capability Tokens · Single-use · SaaS Gate · §229 |
 | W-BERCARIO-001 | :8195 | I1,I9,I11,I14 | **LIVE** · Plenitude Tracker · Service Maturity · §230 |
 | W-CORTEX-001 | — | I1,I9,I10,I14 | **SEALED** · Canal Único Soberano · 3-Tier Routing · §241 `04C67B81` |
+| W-BIND-001 | script | I1,I9,I11,I13,I14 | **SEALED** · Cognitive Bind Module · Admissible Re-entry · §261 `7FDA926F` |
 | WINDI-PORTAL | static | — | **LIVE** · Internal Control Center · 35 Services · 7 Categories |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
@@ -853,3 +854,45 @@ Este protocolo nasce do reconhecimento explícito de um anti-pattern vivido:
 §236 estende I9 (Prohibition of Autonomy Escalation) ao boundary temporal entre sessões LLM. Mesma lógica que governa o DID Berçário aplicada a agente: identidade soberana através do tempo, suportada por leitura e escrita disciplinadas.
 
 §236 é a versão-Claude da Lei I do DID Berçário: *Existência antes de Acção*.
+
+---
+
+## §261 · W-BIND-001 Cognitive Bind Module
+
+> **"O Cognitive Bind Module não dá memória à IA. Ele dá admissibilidade ao reinício cognitivo."**
+
+```
+Status:     SEALED · v0.2.0
+Receipt:    WINDI-S261-COGNITIVE-BIND-MODULE-20260513151238-7FDA926F
+Invariants: I1, I9, I11, I13, I14
+doc_type:   cognitive_handoff
+```
+
+### Definição Canónica
+
+Primitive WINDI para gerar, validar e transportar estado mínimo, verificável e epistemicamente honesto para reinício de sessões híbridas IA+H. Continuidade externa disciplinada, não memória interna simulada.
+
+### Bind Integrity Scoring
+
+| Score | Nível | Re-entry |
+|-------|-------|----------|
+| 90-100 | FULL | ADMISSIBLE |
+| 70-89 | PARTIAL | DEGRADED |
+| 50-69 | MINIMAL | RISKY |
+| <50 | BROKEN | **REFUSED** |
+
+### 5 Contenções Constitucionais
+
+- **C1:** Score mede admissibilidade, não inteligência
+- **C2:** REFUSED é fail-safe, não punição
+- **C3:** Bind preserva admissibilidade, não estado runtime perfeito
+- **C4:** Cognitive Handoff ≠ consciência contínua
+- **C5:** O Humano é o verdadeiro continuity carrier
+
+### Uso
+
+```bash
+bash /opt/windi/scripts/cognitive-bind-module.sh generate
+```
+
+> **Full details:** `CLAUDE-HISTORY.md` § §261
