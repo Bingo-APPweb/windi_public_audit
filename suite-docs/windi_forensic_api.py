@@ -439,9 +439,11 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
                 r = self._read_body()
 
                 # Validate required fields
+                # G1 FIX (§246-IMPL): wallet_id added as required
                 required = [
                     "id", "actor", "app", "doc_name", "doc_type",
                     "content_hash", "governance_level", "sge_score",
+                    "wallet_id",  # D5.1: Anchor identity field
                 ]
                 missing = [k for k in required if k not in r]
                 if missing:
@@ -526,9 +528,11 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
                 # Validate types
                 # §191: Added service-control types for W-SERVICE-CONTROL restart audit trail
                 # §248: Added constitutional for governance laws (Lei V+)
+                # §261: Added cognitive_handoff for W-BIND-001 session continuity primitive
                 VALID_DOC_TYPES = (
                     "doc", "xlsx", "pptx", "jmpg", "communique", "compliance_passport", "cartaz", "canvas",
-                    "service-restart-initiated", "service-restart-completed", "audit-bundle", "constitutional"
+                    "service-restart-initiated", "service-restart-completed", "audit-bundle", "constitutional",
+                    "cognitive_handoff"
                 )
                 if r["doc_type"] not in VALID_DOC_TYPES:
                     self._json(400, {
@@ -566,6 +570,31 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
                     })
                     return
 
+                # ═══════════════════════════════════════════════════
+                # G1 FIX (§246-IMPL): wallet_id validation
+                # D5.1: wallet_id is anchor identity, maps to actor
+                # Format check enforced only when chaining (backward compat)
+                # ═══════════════════════════════════════════════════
+                wallet_id = r.get("wallet_id", "").strip()
+                parent_receipt_id = r.get("parent_receipt_id")
+
+                # When chaining, wallet_id MUST be valid DID format
+                if parent_receipt_id and not wallet_id.startswith("did:windi:"):
+                    self._json(400, {
+                        "ok": False,
+                        "error": "invalid_wallet_id",
+                        "message": "wallet_id must be valid DID (did:windi:...) when chaining receipts",
+                        "spec": "D5.1",
+                        "invariant": "I11",
+                        "constitutional": True,
+                    })
+                    return
+
+                # Map wallet_id to actor (D5 semantic: wallet_id is the canonical identity)
+                # This preserves backward compat: actor column stores wallet_id
+                if wallet_id:
+                    r["actor"] = wallet_id
+
                 # Defaults
                 r.setdefault("created_at", int(time.time()))
                 r.setdefault("status", "sealed")
@@ -574,19 +603,38 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
                 r.setdefault("isp_context", "")
 
                 # ═══════════════════════════════════════════════════
-                # T7e: CHAIN INTEGRITY GATE (§246-IMPL)
+                # T7e: CHAIN INTEGRITY GATE (§246-IMPL G2+G5 FIX)
                 # Constitutional: Broken chain cannot create future trust
+                # G5: Full chain validation, not just parent
+                # G2: Wallet consistency across chain
                 # ═══════════════════════════════════════════════════
-                parent_receipt_id = r.get("parent_receipt_id")
                 if parent_receipt_id:
-                    validation = validate_parent_receipt(parent_receipt_id)
-                    if not validation.get("valid"):
+                    # G5 FIX: Full chain validation
+                    chain_result = validate_chain_integrity(parent_receipt_id)
+                    if not chain_result.get("valid"):
                         self._json(409, {
                             "ok": False,
-                            "error": "chain_violation",
-                            "code": validation.get("code"),
-                            "message": validation.get("message"),
-                            "invariant": validation.get("invariant", "I11"),
+                            "error": "chain_integrity_broken",
+                            "code": "T7e_CHAIN_CORRUPTED",
+                            "message": "Cannot seal over corrupted chain",
+                            "violations": chain_result.get("violations", []),
+                            "spec": "D5.4",
+                            "invariant": "I11",
+                            "constitutional": True,
+                            "parent_receipt_id": parent_receipt_id,
+                        })
+                        return
+
+                    # G2 FIX: Wallet consistency check
+                    parent = get_receipt(parent_receipt_id)
+                    if parent and parent.get("actor") != wallet_id:
+                        self._json(409, {
+                            "ok": False,
+                            "error": "wallet_mismatch",
+                            "code": "D5.4_WALLET_CONSISTENCY",
+                            "message": f"wallet_id '{wallet_id}' != parent wallet '{parent.get('actor')}'",
+                            "spec": "D5.4",
+                            "invariant": "I11",
                             "constitutional": True,
                             "parent_receipt_id": parent_receipt_id,
                         })

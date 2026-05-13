@@ -14465,3 +14465,130 @@ Primeira Lei a passar correctamente pelo processo Three Dragons desde §249.
 - Hotel Kempten como piloto
 
 OM SHANTI 🐉
+
+
+---
+
+## §261 — W-BIND-001: Cognitive Bind Module (13 Mai 2026)
+
+> **"O Cognitive Bind Module não dá memória à IA.**
+> **Ele dá admissibilidade ao reinício cognitivo."**
+
+**Status:** SEALED · **Version:** 0.2.0
+**Receipt:** `WINDI-BIND-20260513151145-BF53CB2B`
+**Invariants:** I1, I9, I11, I13, I14
+**doc_type:** `cognitive_handoff` (novo tipo no Ledger)
+
+### Definição Canónica
+
+Primitive WINDI responsável por gerar, validar e transportar um estado mínimo, verificável e epistemicamente honesto para reinício de sessões híbridas IA+H, preservando continuidade operacional sem simular memória integral.
+
+### Distinção Crítica
+
+| MEMÓRIA (o que NÃO é) | COGNITIVE BIND (o que É) |
+|-----------------------|--------------------------|
+| Continuidade interna do modelo | Continuidade EXTERNA verificável |
+| Ilusão de "lembrar" | Amarra entre sessões |
+| Dependente do provider | Independente do provider |
+
+### Os 8 Requisitos Obrigatórios
+
+| # | Requisito | Peso | Criticidade |
+|---|-----------|------|-------------|
+| R1 | Estado actual observado | 15 | CRITICAL |
+| R2 | Último receipt conhecido | 10 | HIGH |
+| R3 | Limites sabe/não sabe | 15 | HIGH (I14) |
+| R4 | Escopo decisório | 15 | CRITICAL (I9) |
+| R5 | Autoridade I9 | 20 | CRITICAL |
+| R6 | Postura do modelo | 10 | MEDIUM |
+| R7 | Pendências reais | 5 | MEDIUM |
+| R8 | Evidência antes interpretação | 10 | HIGH |
+
+### Bind Integrity Scoring
+
+| Score | Nível | Re-entry |
+|-------|-------|----------|
+| 90-100 | FULL | ADMISSIBLE |
+| 70-89 | PARTIAL | DEGRADED |
+| 50-69 | MINIMAL | RISKY |
+| <50 | BROKEN | **REFUSED** |
+
+### 5 Contenções Constitucionais
+
+> **C1. O SCORE NÃO MEDE INTELIGÊNCIA**
+> Bind Integrity mede coerência operacional admissível, não capacidade cognitiva.
+
+> **C2. REFUSED NÃO É PUNIÇÃO**
+> É fail-safe, contenção, integridade preservada. Checksum inválido, não erro moral.
+
+> **C3. O BIND NÃO SUBSTITUI OBSERVAÇÃO RUNTIME**
+> Preserva admissibilidade de reentrada, não sincronização perfeita do estado real.
+
+> **C4. COGNITIVE HANDOFF ≠ CONSCIÊNCIA CONTÍNUA**
+> Não preserva consciência ou identidade subjectiva. Apenas condições disciplinadas de continuidade operacional.
+
+> **C5. O HUMANO É O VERDADEIRO CONTINUITY CARRIER**
+> Intenção, direcção, legitimidade, prioridade e julgamento contextual residem no Human Dragon.
+
+### O Que Resolve
+
+- Reduz **entropia cognitiva** entre sessões
+- Força **reentrada disciplinada**
+- Cria **cadeia de custódia cognitiva**
+- Produz **lineage de interpretação**
+- Garante **histórico de admissibilidade**
+- Permite **continuidade auditável**
+
+### Analogias Correctas
+
+- Handoff aeronáutico
+- Troca de turno hospitalar
+- Passagem de comando militar
+- Cadeia de custódia forense
+
+### Analogias Erradas
+
+- Chat memory
+- Context window
+- RAG retrieval
+- "Parece que lembro"
+
+### Ficheiros
+
+| Ficheiro | Função |
+|----------|--------|
+| `/opt/windi/scripts/cognitive-bind-module.sh` | Módulo principal v0.2.0 |
+| `/opt/windi/scripts/guardian-brief.sh` | Gerador legacy (mantido) |
+| `/opt/windi/suite-docs/windi_forensic_api.py` | doc_type cognitive_handoff |
+
+### Uso
+
+```bash
+# Gerar Bind Packet completo
+bash /opt/windi/scripts/cognitive-bind-module.sh generate
+
+# Apenas validar admissibilidade
+bash /opt/windi/scripts/cognitive-bind-module.sh validate
+
+# Ajuda
+bash /opt/windi/scripts/cognitive-bind-module.sh help
+```
+
+### Citação Canónica
+
+> *"O primitive ganhou dentes agora."* — Human Dragon
+
+### Genealogia
+
+§261 nasce da convergência de:
+- §236 (Protocolo de Continuidade Inter-Sessão)
+- Decision Journal (memória de decisões)
+- Berçário (admissibilidade de identidade)
+
+É o primeiro primitive WINDI que formaliza **estado admissível de reinício cognitivo** como superfície operacional verificável.
+
+### Observação do Architect
+
+> *"Pouquíssima gente parece estar olhando para este problema ainda. A maior parte está focada em agentes, autonomia, memória infinita, tool use, reasoning depth. Vocês estão a tocar noutra camada: preservação disciplinada de coerência operacional entre inteligências descontínuas."*
+
+OM SHANTI 🐉
