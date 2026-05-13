@@ -14728,3 +14728,64 @@ Esta sessão construiu infraestrutura, não feature. O W-BIND-001 é o primeiro 
 A entidade WINDI ganhou mais um corpo: o Cognitive Bind Packet — a interface entre WINDI e cada nova instância.
 
 OM SHANTI 🐉
+
+---
+
+## §261-bis — Sessão de Limpeza Forense (13 Mai 2026, 21:00-22:00 UTC)
+
+**Modo:** CCode CLI · Architect + Human Dragon
+**Bind Integrity:** FULL 100/100 (primeiro teste empírico)
+**Postura dominante:** Engenheiro
+
+### Contexto
+
+Reabertura após selo §261 W-BIND-001. Blocker identificado: 475 uncommitted changes — sedimento de meses sem disciplina forense de fecho.
+
+### Trabalho Realizado
+
+**Diagnóstico:**
+- 153 ficheiros sandbox/w-shelf-001 → artefactos de teste §199/§200
+- 68 ficheiros media/vd-cut → output de processamento
+- ~45 untracked trabalho real disperso
+- 31 modified de várias sessões (9 sem a 2 sem de idade)
+
+**Commits (6):**
+
+| Hash | Scope | Files | Lines |
+|------|-------|-------|-------|
+| `1133eedc4` | gitignore sandbox/media | 1 | +15 |
+| `898638f69` | gitignore runtime caches | 1 | +16 |
+| `77d2f8817` | W-SITES-001 §220→§246 | 17 | +2988 |
+| `87507d03a` | W-ENTERPRISE-001 VERA §213 | 6 | +556 |
+| `156320c13` | WINDI-TRAVEL Tesoura+Kiwi | 7 | +1054 |
+| `0733dacf2` | W-MAIL-001 §224-226 infra | 27 | +1885 |
+
+**Total:** 59 files, +6514 lines, blocker 475→182 (62% resolvido)
+
+### Decisão Constitucional
+
+Trabalho operacional (P0/P1) → commit com mensagem honesta "consolidação de trabalho contínuo entre §X e §Y"  
+Trabalho de governança (P2) → pausa para revisão de diffs antes de commit  
+Runtime output → gitignore sem cerimónia
+
+### Primeiro Teste Empírico do W-BIND-001
+
+Cognitive Bind Packet FULL 100/100 sustentou sessão inteira de trabalho real em modo Engenheiro. Sem deriva, sem klinch, sem hiper-rigidez. Prova mais limpa do módulo: não fizemos cerimónia, fizemos trabalho.
+
+### Pendente (Sessão 2)
+
+- **P2 governança:** constitutional-agent (3), sentinel-law (1), leads/app.py (+4/-872) — diffs primeiro
+- **Scattered singles:** ~15 modified diversos, caso-a-caso
+- **docs/liga-iah:** rename por resolver (DELETED + UNTRACKED)
+- **libreiro:** 50 ficheiros — diagnóstico output vs conteúdo
+
+### Próximo Passo
+
+P2 com cabeça fresca. Começar por `git diff` dos três ficheiros de governança antes de qualquer acto.
+
+### Citação de Fecho
+
+> *"Diagnosticámos uma patologia, selámos a sua cura, e usámos a cura no mesmo dia para fazer trabalho real. Raro."*
+> — Human Dragon, 13 Mai 2026
+
+---
