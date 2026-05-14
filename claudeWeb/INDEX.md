@@ -1,6 +1,6 @@
 # WINDI claudeWeb · INDEX
 
-> Última actualização: 2026-05-14 · Sprint actual: Foundation Portals + WINDI-HIOS
+> Última actualização: 2026-05-14 18:52 UTC · Sprint actual: WINDI-HIOS Kernel A-Progressivo
 
 ---
 
@@ -13,26 +13,71 @@
 
 ---
 
+## Ratificações HD (não sealed, mas constitucionalmente vinculativas)
+
+| Ref | Título | Tipo | Data | Commit |
+|-----|--------|------|------|--------|
+| **G1.2** | Genesis Ceremony v2 | kernel_ratification | 2026-05-14 | `2ef7a620f` |
+| **G4.3** | Reversibility Matrix v2 | kernel_ratification | 2026-05-14 | `2ef7a620f` |
+
+**Nota:** Ratificações são aprovações HD de desenho arquitectural. Diferem de selos Ledger.
+Genesis Ceremony execution pending como acto deliberado.
+
+---
+
 ## Capítulos Pending
 
 | §    | Título                          | Aguarda                | Sprint Alvo |
 |------|----------------------------------|------------------------|-------------|
 | §264 | CBP-JSON Schema v0.3            | Architect proposal     | Sprint+1    |
 | §265 | Drift Monitor Metrics           | 3 métricas validadas   | Sprint+1    |
+| §266 | KERNEL-GROUND-v0.1              | 7 pontos Guardian review | Etapa 2 A-prog |
 
 ---
 
-## Capítulos Archived
+## Estado do Kernel HIOS
 
-Ver `ARCHIVE/{ANO-QN}/`.
+```
+Etapa 1 A-Progressivo: ✅ COMPLETE
+├── Q1 (Genesis) → RESOLVED via Genesis Ceremony v2
+├── Q4 (HD Unavailability) → RESOLVED via Reversibility Matrix v2
+└── Ratificação HD: 2026-05-14
+
+Etapa 2 A-Progressivo: PENDING
+├── Guardian Review Report formal (9 pontos)
+├── 29 questions open (10 high, 13 medium, 6 low)
+└── §266 seal após resolução de blocking points
+
+Genesis Ceremony: SCHEDULED
+├── N1: Confirmar lista invariantes I1-I17
+├── N2: Query Ledger contagem exacta receipts
+├── N3: role_session_id agnóstico de provider
+└── Aguarda sessão futura com preparação
+```
+
+---
+
+## Doutrina Ratificada Hoje
+
+### Reach Precedence Doctrine (G4.3)
+> "Consequência externa supera auto-classificação interna."
+
+STANDARD-I-EXTERNAL → CRITICAL em HD-GRACE
+Reversibilidade = T+5 minutos (clock: Ledger)
+
+### Retroactive Attestation Honesty (G1.2)
+> "Não fingimos ter atestado desde sempre."
+
+Genesis Ceremony declara `ceremony_type: retroactive_attestation`
+com `prior_receipts_acknowledged: [contagem real]`
 
 ---
 
 ## Próximo Passo Proposto
 
-1. **Bloco A desbloqueado** — sweep ortográfico DE, padronização tonal, /enterprise/
-2. **§264 CBP-JSON Schema v0.3** — Architect propõe, Guardian revê
-3. **§265 Drift Monitor Metrics** — 3 métricas mínimas para validar
+1. **Genesis Ceremony** — preparação (N1-N3), execução em sessão dedicada
+2. **Etapa 2 A-Progressivo** — Guardian Review Report formal
+3. **Track paralelo Bloco A** — DE Orthography Sweep disponível
 
 ---
 
@@ -45,4 +90,13 @@ Ver `ARCHIVE/{ANO-QN}/`.
 
 ---
 
+## Commits Relevantes
+
+| Hash | Descrição | Data |
+|------|-----------|------|
+| `2ef7a620f` | feat(§266-E1): HD Ratification G1.2 Genesis + G4.3 Reversibility | 2026-05-14 |
+
+---
+
 *Liga IA+H · Kempten, Bavaria · 2026*
+*"AI processes. Human decides. WINDI guarantees."*

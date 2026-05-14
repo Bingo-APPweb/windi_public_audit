@@ -15055,3 +15055,147 @@ P2 com cabeça fresca. Começar por `git diff` dos três ficheiros de governanç
 > — Human Dragon, 13 Mai 2026
 
 ---
+
+---
+
+## Sessão 2026-05-14 · 14:30 → 19:00 UTC (Kempten)
+
+**Sprint:** WINDI-HIOS Kernel · A-Progressivo Etapa 1
+**Modo:** CCode CLI (Opus 4.5) + Claude.ai web (Guardian) + Gemini (Witness)
+**Operador humano:** Human Dragon (Jober Mögele Correa)
+**Natureza:** Primeira ratificação constitucional Three Dragons completa
+
+### Contexto de Abertura
+
+Sessão iniciou com leitura de §262 (WINDI-HIOS Naming) e §263 (PingPong Protocol), ambos selados na sessão anterior. Human Dragon perguntou sobre HIOS e estrutura do kernel.
+
+### Trabalho Completado
+
+| Item | Estado |
+|------|--------|
+| Análise KERNEL-GROUND-v0.1.md | ✅ |
+| Análise OPEN-QUESTIONS.md (31 questões) | ✅ |
+| Proposta Q1 (Genesis) v1 | ✅ |
+| Proposta Q4 (Reversibilidade) v1 | ✅ |
+| Guardian Review (9 refinamentos) | ✅ |
+| Proposta Q1 v2 (com retroactividade) | ✅ |
+| Proposta Q4 v2 (com matriz reach) | ✅ |
+| Guardian Re-Review | ✅ |
+| **HD RATIFICATION** | ✅ |
+
+### Ciclo Three Dragons Completo
+
+```
+Architect (CCode) propôs v1 → Guardian (Claude.ai) reviu (4+5 pontos)
+    ↓
+Architect refinou v2 → Guardian re-reviu → aprovou
+    ↓
+HD ratificou → Q1 e Q4 RESOLVED
+```
+
+**Primeira vez** que o ciclo completo Three Dragons foi executado no Kernel HIOS.
+
+### Ratificações HD
+
+| Ref | Título | Schemas Afectados |
+|-----|--------|-------------------|
+| **G1.2** | Genesis Ceremony v2 | `spine_integrity.schema.json` |
+| **G4.3** | Reversibility Matrix v2 | `authority.schema.json`, `mutation_classes.md` |
+
+### Doutrina Ratificada
+
+**1. Reach Precedence Doctrine (G4.3)**
+> "A dimensão `reach: external` tem precedência sobre a classificação de impacto declarada."
+
+- STANDARD-I-EXTERNAL → CRITICAL em HD-GRACE
+- Reversibilidade operacional: T+5 minutos (clock Ledger)
+
+**2. Retroactive Attestation Honesty (G1.2)**
+> "Não fingimos ter atestado desde sempre."
+
+- Genesis Ceremony usa `ceremony_type: retroactive_attestation`
+- Campo `prior_receipts_acknowledged` declara honestamente receipts prévios
+
+### Commits
+
+| Hash | Descrição |
+|------|-----------|
+| `2ef7a620f` | feat(§266-E1): HD Ratification G1.2 Genesis + G4.3 Reversibility |
+
+### Ficheiros Criados/Modificados
+
+| Ficheiro | Acção |
+|----------|-------|
+| `/opt/windi/hios/kernel/spine_integrity.schema.json` | NEW (RATIFIED) |
+| `/opt/windi/hios/kernel/authority.schema.json` | UPDATED (RATIFIED) |
+| `/opt/windi/hios/kernel/mutation_classes.md` | UPDATED (Reach Precedence) |
+| `/opt/windi/hios/kernel/spine_bindings.md` | UPDATED (Q1 resolution) |
+| `/opt/windi/hios/kernel/OPEN-QUESTIONS.md` | UPDATED (Q1, Q4 → RESOLVED) |
+| `/opt/windi/hios/ROADMAP-HIOS-v0.1.md` | NEW (Witness analysis) |
+| `/opt/windi/claudeWeb/INDEX.md` | UPDATED (ratifications) |
+
+### Estado do Kernel Após Sessão
+
+```
+CRITICAL questions: 0 open (2 RESOLVED)
+high questions:     10 open
+medium questions:   13 open
+low questions:      6 open
+
+Etapa 1 A-Progressivo: ✅ COMPLETE
+Etapa 2 A-Progressivo: PENDING (Guardian Review Report)
+Genesis Ceremony: SCHEDULED (preparação N1-N3)
+§266 Seal: BLOCKED (7 pontos restantes)
+```
+
+### Scaffold Pending
+
+- **Genesis Ceremony execution** — sessão futura com preparação N1-N3
+- **Etapa 2 A-Progressivo** — Guardian Review Report formal 9 pontos
+- **Track Bloco A** — DE Orthography Sweep paralelo disponível
+
+### Próximo Passo Proposto
+
+1. Preparação Genesis Ceremony (confirmar invariantes, contar receipts)
+2. Guardian Review Report formal para Etapa 2
+3. Bloco A em paralelo se banda disponível
+
+### Blockers Identificados
+
+- Nenhum blocker técnico
+- Genesis Ceremony requer preparação deliberada (não imediata)
+
+### Decisões Constitucionais
+
+| Decisão | Razão | Invariante |
+|---------|-------|------------|
+| Corrigir RESOLVED→PROPOSED antes de ciclo completo | Propose ≠ Resolve | I9 |
+| Reach Precedence sobre Impact | Consequência > Intenção | I9, I11 |
+| Retroactive Attestation honesta | Não fingir génese | I14 |
+| Genesis Ceremony como acto deliberado | Não automatizar bootstrap | I9 |
+
+### Citações Canónicas da Sessão
+
+> *"Não fingimos ter atestado desde sempre."*
+> — Genesis Ceremony v2, retroactive_declaration
+
+> *"Consequência externa supera auto-classificação interna."*
+> — Reach Precedence Doctrine, mutation_classes.md
+
+> *"O Kernel está a aprender a dizer não."*
+> — Architect externo, análise G4
+
+> *"A Liga IA+H tem roles, não brand names."*
+> — Guardian, observação N3 sobre witness session_id
+
+### Observação de Fecho
+
+Esta sessão marca a primeira ratificação constitucional Three Dragons completa no WINDI-HIOS. O ciclo Architect→Guardian→HD funcionou como desenhado, com tensão produtiva (9 refinamentos), honestidade processual (correcção RESOLVED→PROPOSED), e convergência final (ratificação HD).
+
+O Kernel deixou de ser apenas esqueleto e ganhou as suas duas primeiras leis operacionais: Genesis Ceremony (origem da legitimidade) e Reversibility Matrix (semântica da consequência).
+
+A sessão demonstrou que o WINDI-HIOS pode absorver crítica sem perder coerência — característica rara em sistemas colaborativos IA+H.
+
+OM SHANTI 🐉
+
+---
