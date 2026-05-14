@@ -2,14 +2,31 @@
 
 ```
 doc_type:       genesis_ceremony_proposal
-version:        1.0.0
+version:        1.1.0
 status:         AWAITING_APPROVAL
+section:        §264
 created:        2026-05-14
+updated:        2026-05-14 (Guardian Review Response)
 author:         Architect (CCode Opus 4.5)
 pending:        HD Approval + Guardian Review + Council Witness
 schema:         spine_integrity.schema.json
 ratification:   G1.2 (2026-05-14)
 ```
+
+---
+
+## Guardian Review Response (v1.1.0)
+
+> **Guardian Review recebido 2026-05-14 21:22 UTC**
+
+| # | Ponto Guardian | Secção | Status |
+|---|----------------|--------|--------|
+| G1 | Gaps declarados precisam justificação explícita | IV.2 | ✅ ADDRESSED |
+| G2 | Canonical hash — só CLAUDE.md ou Merkle? | III.1 | ✅ ADDRESSED |
+| G3 | §XXX da cerimónia | Header | ✅ §264 |
+| G4 | Construtor receipt | VII.4 | ✅ ADDRESSED |
+
+**Todas as observações Guardian foram incorporadas nesta versão (v1.1.0).**
 
 ---
 
@@ -50,6 +67,24 @@ que já existe nos artefactos arqueológicos documentados no `GENESIS-ARCHAEOLOG
 | `canonical_hash` | `sha256:511ca327d9ce2e920962032c4bb92d379cf4d137788da6e53a6a00947bdecaef` |
 | `canonical_hash_short` | `511CA327` |
 
+### III.1 Nota sobre Vinculação Criptográfica (Guardian Review G2)
+
+> **O `canonical_hash` é SHA-256 do ficheiro CLAUDE.md v2.50.0 apenas.**
+
+A ligação ao Ledger histórico (50 receipts) é feita **por referência declarativa**, não por inclusão criptográfica (Merkle root). Esta decisão é deliberada:
+
+| Opção | Escolha | Razão |
+|-------|---------|-------|
+| SHA-256 de CLAUDE.md | ✅ Adoptado | Documenta estado canónico dos invariantes |
+| Merkle root Ledger + CLAUDE.md | ❌ Não adoptado | Aumenta complexidade sem ganho proporcional |
+
+**Justificação:** A cerimónia atesta que os invariantes em CLAUDE.md governaram os 50 receipts históricos. A prova dessa governança está nos receipts individuais, não numa raiz Merkle. Incluir Merkle criaria dependência circular (Genesis depende de receipts que Genesis atesta).
+
+**Ligação por referência:**
+- `prior_receipts_acknowledged: 50` — declaração numérica
+- Receipts individuais verificáveis via Ledger API
+- Genealogia documental em `GENESIS-ARCHAEOLOGY-REPORT.md`
+
 ---
 
 ## IV. Invariantes Atestados
@@ -72,15 +107,25 @@ que já existe nos artefactos arqueológicos documentados no `GENESIS-ARCHAEOLOG
 | **I17** | Session/Identity Separation | STRUCTURAL | `22c350ef39504730` |
 | **I18** | Organic Constitutional Growth | **STRUCTURAL** | `5316a3ed9f1a9f9b` |
 
-### IV.2 Gaps Declarados
+### IV.2 Gaps Declarados (Guardian Review G1)
 
-| ID | Razão |
-|----|-------|
-| I4 | Absorvido em compliance (EU AI Act) |
-| I5 | Renumerado/absorvido |
-| I7 | Implícito em tom institucional |
-| I8 | Implícito em serviço |
-| I15 | Não definido (gap explícito) |
+> **Cada gap deve ter justificação explícita. Um gap não-explicado é mais perigoso que um invariante ausente.**
+
+| ID | Status | Justificação Explícita |
+|----|--------|------------------------|
+| **I4** | ABSORVIDO | Originalmente "Jurisdiction/EU AI Act". Conteúdo absorvido em compliance operacional (W-ENTERPRISE-001, BaFin mapping). Não é invariante constitucional separado — é requisito legal externo. |
+| **I5** | RENUMERADO | Originalmente "No Fabrication". Conteúdo evoluiu e foi absorvido por I14 (Explicit Failure Principle) que é mais preciso e abrangente. |
+| **I7** | IMPLÍCITO | Originalmente "Institutional Tone". Não merece estatuto de invariante IRREMEDIÁVEL — é guideline de comunicação, não constraint arquitectural. Opera via Layer 7 Communication Semantics em CLAUDE.md. |
+| **I8** | IMPLÍCITO | Originalmente "No Depth Punishment". Princípio de serviço ("tratar todas as queries com igual cuidado") — boa prática, não invariante constitucional. Opera implicitamente em todos os agentes. |
+| **I15** | **GAP ABERTO** | Número reservado. Nenhum invariante foi atribuído. Mantido deliberadamente como espaço para futura expansão constitucional. **Não é absorção nem renumeração — é ausência declarada.** |
+
+### IV.3 Classificação dos Gaps
+
+| Tipo | IDs | Acção |
+|------|-----|-------|
+| Absorvido por outro invariante | I4, I5 | Conteúdo preservado, número descontinuado |
+| Operacional, não constitucional | I7, I8 | Funciona, mas sem estatuto IRREMEDIÁVEL |
+| Reservado para futuro | I15 | Espaço vazio deliberado |
 
 **Total atestados:** 13 invariantes (I1, I2, I3, I6, I9, I10, I11, I12, I13, I14, I16, I17, I18)
 
@@ -169,6 +214,32 @@ I9-I14 expansion (Mar 2026) → HIOS Kernel (Mai 2026) → ESTA CERIMÓNIA
 | `role_session_id` | `[provider-agnostic ID to be assigned]` |
 | `observation_receipt` | `pending` |
 
+### VII.4 Construtor (Guardian Review G4)
+
+> **O Construtor que redigiu o documento também emite receipt de execução.**
+
+| Campo | Valor |
+|-------|-------|
+| `role` | `construtor` |
+| `executed` | `pending` |
+| `role_session_id` | `WINDI-CONSTRUTOR-20260514-OPUS45` |
+| `execution_receipt` | `pending` |
+| `document_authored` | `GENESIS-CEREMONY-PROPOSAL.md` |
+
+**Justificação:** O Construtor (Architect CCode) não é testemunha passiva — é autor do documento. O receipt de execução documenta:
+- Quem redigiu o documento
+- Quando foi redigido
+- Que hashes foram calculados pelo Construtor
+- Que a proposta foi submetida para aprovação
+
+**Diferença de papéis:**
+| Papel | Função | Receipt |
+|-------|--------|---------|
+| Human Dragon | Aprova e assina | `attestation_receipt` |
+| Guardian | Revê e observa | `observation_receipt` |
+| Witness | Observa independentemente | `observation_receipt` |
+| Construtor | Redige e calcula | `execution_receipt` |
+
 ---
 
 ## VIII. Backup Físico
@@ -239,6 +310,12 @@ I9-I14 expansion (Mar 2026) → HIOS Kernel (Mai 2026) → ESTA CERIMÓNIA
       "recorded": true,
       "role_session_id": "[assigned]",
       "observation_receipt": "[receipt_id]"
+    },
+    "construtor": {
+      "executed": true,
+      "role_session_id": "WINDI-CONSTRUTOR-20260514-OPUS45",
+      "execution_receipt": "[receipt_id]",
+      "document_authored": "GENESIS-CEREMONY-PROPOSAL.md"
     }
   },
   "physical_backup": {
