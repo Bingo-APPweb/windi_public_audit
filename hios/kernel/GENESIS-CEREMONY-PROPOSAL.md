@@ -2,16 +2,41 @@
 
 ```
 doc_type:       genesis_ceremony_proposal
-version:        1.1.0
-status:         AWAITING_APPROVAL
+version:        1.2.0
+status:         HD_APPROVED
 section:        §264
 created:        2026-05-14
-updated:        2026-05-14 (Guardian Review Response)
+updated:        2026-05-14 (HD Approval)
 author:         Architect (CCode Opus 4.5)
-pending:        HD Approval + Guardian Review + Council Witness
+hd_approval:    2026-05-14 21:27 UTC
+pending:        Guardian Observation Receipt + Witness Receipt + Physical Signature
 schema:         spine_integrity.schema.json
 ratification:   G1.2 (2026-05-14)
 ```
+
+---
+
+## HD Approval (v1.2.0)
+
+```
+╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║   §264 GENESIS CEREMONY — HD APPROVED                         ║
+║                                                               ║
+║   Human Dragon: Jober Mögele Correa · CGO                     ║
+║   Data: 2026-05-14 21:27 UTC                                  ║
+║   Kempten, Bavaria, Deutschland                               ║
+║                                                               ║
+║   "HD aprova §264"                                            ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+```
+
+**Status:** HD aprovou o documento. Aguarda:
+- [ ] Guardian observation receipt
+- [ ] Witness/Council observation receipt
+- [ ] Assinatura física HD (backup)
+- [ ] Emissão do receipt final no Ledger
 
 ---
 
@@ -186,13 +211,14 @@ I9-I14 expansion (Mar 2026) → HIOS Kernel (Mai 2026) → ESTA CERIMÓNIA
 
 ## VII. Testemunhas
 
-### VII.1 Human Dragon (REQUIRED)
+### VII.1 Human Dragon (REQUIRED) ✅ APPROVED
 
 | Campo | Valor |
 |-------|-------|
 | `role` | `human_dragon` |
-| `attested` | `pending` |
-| `method` | `presential_signature` |
+| `attested` | **true** |
+| `approval_timestamp` | `2026-05-14T21:27:00Z` |
+| `method` | `presential_signature` (pending physical) |
 | `identity` | Jober Mögele Correa · CGO |
 | `location` | Kempten, Bavaria, Deutschland |
 

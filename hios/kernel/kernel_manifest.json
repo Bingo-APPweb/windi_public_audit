@@ -130,5 +130,12 @@
     "etapa_1": "RATIFIED",
     "ratification_date": "2026-05-14",
     "ratification_document": "HD-RATIFICATION-2026-05-14.md"
+  },
+  "genesis_ceremony": {
+    "section": "§264",
+    "status": "HD_APPROVED",
+    "approval_date": "2026-05-14",
+    "document": "GENESIS-CEREMONY-PROPOSAL.md",
+    "pending": ["guardian_observation", "witness_observation", "physical_signature", "ledger_receipt"]
   }
 }

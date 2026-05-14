@@ -75,12 +75,14 @@ com `prior_receipts_acknowledged: [contagem real]`
 
 ## Próximo Passo Proposto
 
-1. **Genesis Ceremony** — **PROPOSAL READY** · `/opt/windi/hios/kernel/GENESIS-CEREMONY-PROPOSAL.md`
-   - N1 ✅ Lista invariantes confirmada (13 atestados, 5 gaps)
+1. **§264 Genesis Ceremony** — **HD APPROVED** · 2026-05-14 21:27 UTC
+   - N1 ✅ Lista invariantes confirmada (13 atestados, 5 gaps justificados)
    - N2 ✅ Contagem receipts: 50
    - N3 ✅ role_session_id formato definido
-   - **Aguarda:** HD approval + Guardian review + Council witness
-2. **Etapa 2 A-Progressivo** — Guardian Review Report formal
+   - G1-G4 ✅ Guardian Review addressed
+   - HD ✅ **APPROVED**
+   - **Aguarda:** Guardian observation + Witness observation + Physical signature
+2. **Etapa 2 A-Progressivo** — Guardian Review Report formal (10 HIGH questions)
 3. **Track paralelo Bloco A** — DE Orthography Sweep disponível
 
 ---
