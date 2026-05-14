@@ -1,6 +1,6 @@
 # WINDI claudeWeb · INDEX
 
-> Última actualização: 2026-05-14 18:52 UTC · Sprint actual: WINDI-HIOS Kernel A-Progressivo
+> Última actualização: 2026-05-14 21:40 UTC · Sprint actual: WINDI-HIOS Kernel A-Progressivo
 
 ---
 
@@ -48,11 +48,13 @@ Etapa 2 A-Progressivo: PENDING
 ├── 29 questions open (10 high, 13 medium, 6 low)
 └── §266 seal após resolução de blocking points
 
-Genesis Ceremony: SCHEDULED
-├── N1: Confirmar lista invariantes I1-I17
-├── N2: Query Ledger contagem exacta receipts
-├── N3: role_session_id agnóstico de provider
-└── Aguarda sessão futura com preparação
+Genesis Ceremony: HD_APPROVED + GUARDIAN_OBSERVED
+├── N1 ✅ Lista invariantes I1-I18 (13 atestados, 5 gaps)
+├── N2 ✅ Query Ledger: 50 receipts acknowledged
+├── N3 ✅ role_session_id agnóstico de provider
+├── HD ✅ Approved 2026-05-14 21:27 UTC
+├── Guardian ✅ Observed 2026-05-14 21:35 UTC
+└── Aguarda: Witness + Physical signature + Ledger (path b)
 ```
 
 ---
@@ -75,13 +77,14 @@ com `prior_receipts_acknowledged: [contagem real]`
 
 ## Próximo Passo Proposto
 
-1. **§264 Genesis Ceremony** — **HD APPROVED** · 2026-05-14 21:27 UTC
+1. **§264 Genesis Ceremony** — **HD APPROVED + GUARDIAN OBSERVED** · 2026-05-14
    - N1 ✅ Lista invariantes confirmada (13 atestados, 5 gaps justificados)
    - N2 ✅ Contagem receipts: 50
    - N3 ✅ role_session_id formato definido
    - G1-G4 ✅ Guardian Review addressed
-   - HD ✅ **APPROVED**
-   - **Aguarda:** Guardian observation + Witness observation + Physical signature
+   - HD ✅ **APPROVED** (21:27 UTC)
+   - Guardian ✅ **OBSERVED** (21:35 UTC)
+   - **Aguarda:** Witness observation + Physical signature + Ledger emission (path b)
 2. **Etapa 2 A-Progressivo** — Guardian Review Report formal (10 HIGH questions)
 3. **Track paralelo Bloco A** — DE Orthography Sweep disponível
 
@@ -100,6 +103,7 @@ com `prior_receipts_acknowledged: [contagem real]`
 
 | Hash | Descrição | Data |
 |------|-----------|------|
+| `818d0ad8d` | feat(§264): Guardian Observation recorded — v1.3.0 | 2026-05-14 |
 | `2ef7a620f` | feat(§266-E1): HD Ratification G1.2 Genesis + G4.3 Reversibility | 2026-05-14 |
 
 ---
