@@ -5,7 +5,16 @@
     "not_canonical": true,
     "pending_review": "GUARDIAN",
     "created": "2026-05-14",
-    "version": "0.1.0-skeleton"
+    "version": "0.1.0-skeleton",
+    "hd_ratifications": [
+      {
+        "date": "2026-05-14",
+        "document": "HD-RATIFICATION-2026-05-14.md",
+        "commit": "2ef7a620f",
+        "resolved": ["Q1", "Q4"],
+        "ratified_schemas": ["spine_integrity.schema.json", "authority.schema.json"]
+      }
+    ]
   },
   "kernel": {
     "name": "WINDI-HIOS Kernel Ground",
@@ -15,6 +24,14 @@
     "pending_section": "§266"
   },
   "layers": {
+    "0_spine_integrity": {
+      "name": "Spine Integrity Layer",
+      "binding": "CLAUDE.md + I1-I17 + §244 Three Pillars",
+      "schema": "spine_integrity.schema.json",
+      "status": "RATIFIED",
+      "ratification_date": "2026-05-14",
+      "resolved_question": "Q1"
+    },
     "1_identity": {
       "name": "Identity Layer",
       "binding": "DID Genesis :8096",
@@ -29,9 +46,12 @@
     },
     "3_authority": {
       "name": "Authority Layer",
-      "binding": "I9 + Three Dragons + Human Dragon",
+      "binding": "I9 + Human Dragon + Three Dragons",
       "schema": "authority.schema.json",
-      "status": "DRAFT"
+      "status": "RATIFIED",
+      "ratification_date": "2026-05-14",
+      "resolved_question": "Q4",
+      "doctrines": ["Reach Precedence", "Reversibility Matrix v2"]
     },
     "4_admissibility": {
       "name": "Admissibility Layer",
@@ -93,7 +113,22 @@
       "sealing": "PROHIBITED"
     }
   },
-  "open_questions_count": "TBD",
-  "guardian_review": "PENDING",
-  "human_dragon_approval": "PENDING"
+  "open_questions_count": {
+    "total": 29,
+    "critical_resolved": 2,
+    "critical_open": 0,
+    "high_open": 10,
+    "medium_open": 13,
+    "low_open": 6
+  },
+  "guardian_review": {
+    "etapa_1": "COMPLETE",
+    "etapa_2": "PENDING",
+    "blocking_points_remaining": 7
+  },
+  "human_dragon_approval": {
+    "etapa_1": "RATIFIED",
+    "ratification_date": "2026-05-14",
+    "ratification_document": "HD-RATIFICATION-2026-05-14.md"
+  }
 }
