@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://windi-domain.com/hios/kernel/authority.schema.json",
+  "_meta": {
+    "status": "DRAFT-SKELETON",
+    "not_sealed": true,
+    "not_canonical": true,
+    "pending_review": "GUARDIAN",
+    "layer": "3-authority",
+    "binding": "I9 + Human Dragon + Three Dragons"
+  },
+  "title": "WINDI-HIOS Authority Schema",
+  "description": "Authority layer schema defining who approves what",
+  "type": "object",
+  "required": ["action_type", "required_approvers"],
+  "properties": {
+    "action_type": {
+      "type": "string",
+      "description": "Type of action requiring authority"
+    },
+    "mutation_class": {
+      "type": "string",
+      "enum": ["CRITICAL", "STANDARD", "EPHEMERAL"],
+      "description": "Classification of the mutation"
+    },
+    "required_approvers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": ["human_dragon", "guardian", "architect", "witness", "construtor"]
+          },
+          "approval_type": {
+            "type": "string",
+            "enum": ["required", "witness", "optional"]
+          }
+        }
+      },
+      "description": "List of required approvers by role"
+    },
+    "escalation_path": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Escalation chain if primary approver unavailable"
+    },
+    "i9_required": {
+      "type": "boolean",
+      "description": "Whether I9 human approval gate applies"
+    },
+    "three_dragons_protocol": {
+      "type": "object",
+      "properties": {
+        "guardian_review": {"type": "boolean"},
+        "architect_proposal": {"type": "boolean"},
+        "witness_observation": {"type": "boolean"},
+        "construtor_execution": {"type": "boolean"}
+      }
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "description": "Approval timeout before escalation"
+    }
+  },
+  "_open_questions": [
+    "Q4: What happens when Human Dragon is unavailable?",
+    "Q5: Can Guardian block indefinitely without escalation?"
+  ]
+}

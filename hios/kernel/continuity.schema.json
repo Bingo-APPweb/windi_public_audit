@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://windi-domain.com/hios/kernel/continuity.schema.json",
+  "_meta": {
+    "status": "DRAFT-SKELETON",
+    "not_sealed": true,
+    "not_canonical": true,
+    "pending_review": "GUARDIAN",
+    "layer": "7-continuity",
+    "binding": "PingPong §263 + claudeWeb/ + INDEX.md"
+  },
+  "title": "WINDI-HIOS Continuity Schema",
+  "description": "Continuity layer schema for cross-session persistence",
+  "type": "object",
+  "required": ["session_id", "continuity_chain"],
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "description": "Current session identifier"
+    },
+    "continuity_chain": {
+      "type": "object",
+      "properties": {
+        "cbp_receipt": {
+          "type": "string",
+          "description": "CBP receipt that opened this session"
+        },
+        "pingpong_index": {
+          "type": "string",
+          "description": "Path to claudeWeb/INDEX.md"
+        },
+        "chapters_sealed": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "section": {"type": "string"},
+              "title": {"type": "string"},
+              "receipt": {"type": "string"},
+              "status": {"type": "string", "enum": ["sealed", "pending", "archived"]}
+            }
+          }
+        },
+        "chapters_pending": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      }
+    },
+    "session_closure": {
+      "type": "object",
+      "properties": {
+        "claude_history_entry": {"type": "boolean"},
+        "chapters_deposited": {"type": "array", "items": {"type": "string"}},
+        "next_session_hint": {"type": "string"}
+      },
+      "description": "PingPong exhalation (session closure)"
+    },
+    "lineage": {
+      "type": "object",
+      "properties": {
+        "parent_session": {"type": "string"},
+        "child_sessions": {"type": "array", "items": {"type": "string"}},
+        "supersedes": {"type": "array", "items": {"type": "string"}},
+        "superseded_by": {"type": "string"}
+      }
+    },
+    "memory_bindings": {
+      "type": "object",
+      "properties": {
+        "claude_md": {"type": "string", "default": "/opt/windi/CLAUDE.md"},
+        "claude_history": {"type": "string", "default": "/opt/windi/CLAUDE-HISTORY.md"},
+        "claudeweb_index": {"type": "string", "default": "/opt/windi/claudeWeb/INDEX.md"}
+      }
+    }
+  },
+  "_open_questions": [
+    "Q14: Maximum session lineage depth?",
+    "Q15: Orphan session cleanup policy?"
+  ]
+}

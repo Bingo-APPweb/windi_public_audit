@@ -1,0 +1,99 @@
+{
+  "_meta": {
+    "status": "DRAFT-SKELETON",
+    "not_sealed": true,
+    "not_canonical": true,
+    "pending_review": "GUARDIAN",
+    "created": "2026-05-14",
+    "version": "0.1.0-skeleton"
+  },
+  "kernel": {
+    "name": "WINDI-HIOS Kernel Ground",
+    "version": "0.1.0",
+    "definition": "Canonical binding map and admissibility coordination layer over existing WINDI primitives",
+    "sealed_section": null,
+    "pending_section": "§266"
+  },
+  "layers": {
+    "1_identity": {
+      "name": "Identity Layer",
+      "binding": "DID Genesis :8096",
+      "schema": "actors.schema.json",
+      "status": "DRAFT"
+    },
+    "2_context": {
+      "name": "Context Layer",
+      "binding": "CBP §261 + Session State",
+      "schema": "context.schema.json",
+      "status": "DRAFT"
+    },
+    "3_authority": {
+      "name": "Authority Layer",
+      "binding": "I9 + Three Dragons + Human Dragon",
+      "schema": "authority.schema.json",
+      "status": "DRAFT"
+    },
+    "4_admissibility": {
+      "name": "Admissibility Layer",
+      "binding": "I9 Gate + Guardian Review",
+      "schema": "admissibility.schema.json",
+      "status": "DRAFT"
+    },
+    "5_execution": {
+      "name": "Execution Layer",
+      "binding": "Construtor + Service-specific execution",
+      "schema": "execution.schema.json",
+      "status": "DRAFT"
+    },
+    "6_proof": {
+      "name": "Proof Layer",
+      "binding": "Forensic Ledger :8101",
+      "schema": "proof.schema.json",
+      "status": "DRAFT"
+    },
+    "7_continuity": {
+      "name": "Continuity Layer",
+      "binding": "PingPong §263 + claudeWeb/ + INDEX.md",
+      "schema": "continuity.schema.json",
+      "status": "DRAFT"
+    }
+  },
+  "spine_bindings": {
+    "identity": "DID Genesis :8096",
+    "proof": "Forensic Ledger :8101 /api/receipts",
+    "continuity": "CBP §261 + PingPong §263 + INDEX",
+    "authority": "I9 + Human Dragon + Three Dragons",
+    "admissibility": "I9 Gate + Guardian Review",
+    "execution": "Construtor / service-specific",
+    "drift": "W-LEXICON + future §265 metrics",
+    "spine_integrity": "§244 Three Pillars + Invariants I1-I9"
+  },
+  "mutation_classes": {
+    "CRITICAL": {
+      "description": "Constitutional changes, seals, doctrine",
+      "requires": "I9 + Guardian + Human Dragon",
+      "retention": "permanent"
+    },
+    "STANDARD": {
+      "description": "Normal operations with audit trail",
+      "requires": "Actor identity + context",
+      "retention": "90 days minimum"
+    },
+    "EPHEMERAL": {
+      "description": "Technical operations, no constitutional impact",
+      "requires": "Actor identity",
+      "retention": "7 days or session-scoped"
+    }
+  },
+  "receipt_policy": {
+    "this_step": {
+      "constitutional": "PROHIBITED",
+      "ephemeral": "PERMITTED",
+      "parent_linkage": "PROHIBITED",
+      "sealing": "PROHIBITED"
+    }
+  },
+  "open_questions_count": "TBD",
+  "guardian_review": "PENDING",
+  "human_dragon_approval": "PENDING"
+}

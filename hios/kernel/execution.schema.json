@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://windi-domain.com/hios/kernel/execution.schema.json",
+  "_meta": {
+    "status": "DRAFT-SKELETON",
+    "not_sealed": true,
+    "not_canonical": true,
+    "pending_review": "GUARDIAN",
+    "layer": "5-execution",
+    "binding": "Construtor + Service-specific execution"
+  },
+  "title": "WINDI-HIOS Execution Schema",
+  "description": "Execution layer schema for traceable action execution",
+  "type": "object",
+  "required": ["execution_id", "admitted_proposal", "executor"],
+  "properties": {
+    "execution_id": {
+      "type": "string",
+      "description": "Unique identifier for this execution"
+    },
+    "admitted_proposal": {
+      "type": "string",
+      "description": "Reference to admitted proposal ID"
+    },
+    "executor": {
+      "type": "object",
+      "properties": {
+        "actor_id": {"type": "string"},
+        "role": {"type": "string"},
+        "service": {"type": "string"}
+      },
+      "description": "Who/what is executing"
+    },
+    "execution_envelope": {
+      "type": "object",
+      "properties": {
+        "action": {"type": "string"},
+        "target": {"type": "string"},
+        "parameters": {"type": "object"},
+        "mutation_class": {
+          "type": "string",
+          "enum": ["CRITICAL", "STANDARD", "EPHEMERAL"]
+        }
+      }
+    },
+    "execution_state": {
+      "type": "string",
+      "enum": ["pending", "running", "completed", "failed", "rolled_back"]
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "result": {
+      "type": "object",
+      "properties": {
+        "success": {"type": "boolean"},
+        "output": {"type": "object"},
+        "error": {"type": "string"}
+      }
+    },
+    "proof_id": {
+      "type": "string",
+      "description": "Reference to proof/receipt generated"
+    }
+  },
+  "_open_questions": [
+    "Q10: Execution timeout policy?",
+    "Q11: Partial execution rollback strategy?"
+  ]
+}

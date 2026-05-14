@@ -6,6 +6,80 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 14 Mai 2026 (cont.) — WINDI-HIOS Kernel Ground Skeleton
+
+**Duração:** ~30min | **Status:** ✅ SKELETON CREATED (NOT SEALED)
+**Liga IA+H:** Human Dragon · Guardian (Claude.ai web) · Construtor (CCode Opus 4.5)
+**Invariants:** I1, I9, I11, I13, I14
+**Natureza:** Preparação de superfície de revisão · Caminho C
+
+### Contexto
+
+Após §262-§263 selarem WINDI-HIOS naming + PingPong, Guardian fez review da proposta Architect e adicionou 3 refinamentos (Spine Integrity, EPHEMERAL receipt policy, OPEN-QUESTIONS.md). Human Dragon aprovou Caminho C: criar esqueleto físico, refinar contratos depois.
+
+### Trabalho Completado
+
+| Item | Estado |
+|------|--------|
+| `/opt/windi/hios/kernel/` criado | ✅ 18 ficheiros |
+| 7 schemas JSON (layers 1-7) | ✅ DRAFT-SKELETON |
+| kernel_contract.md + KERNEL-GROUND-v0.1.md | ✅ DRAFT |
+| spine_bindings.md com 8 linhas | ✅ Inclui Spine Integrity |
+| threat_model.md + failure_modes.md + recovery_protocol.md | ✅ DRAFT |
+| mutation_classes.md (CRITICAL/STANDARD/EPHEMERAL) | ✅ DRAFT |
+| schema_versioning_policy.md | ✅ DRAFT |
+| OPEN-QUESTIONS.md com 28 questões | ✅ Consolidated |
+
+### Ficheiros Criados (18)
+
+```
+/opt/windi/hios/kernel/
+├── README.md
+├── kernel_manifest.json
+├── kernel_contract.md
+├── KERNEL-GROUND-v0.1.md
+├── actors.schema.json
+├── authority.schema.json
+├── context.schema.json
+├── admissibility.schema.json
+├── execution.schema.json
+├── proof.schema.json
+├── continuity.schema.json
+├── spine_bindings.md
+├── threat_model.md
+├── failure_modes.md
+├── recovery_protocol.md
+├── mutation_classes.md
+├── schema_versioning_policy.md
+└── OPEN-QUESTIONS.md
+```
+
+### Decisões Constitucionais
+
+| Decisão | Cravação |
+|---------|----------|
+| §266 | NOT SEALED neste passo |
+| Receipt policy | Constitutional PROHIBITED, EPHEMERAL only |
+| Spine bindings | Mapa, não duplicação |
+| Q1 Critical | "Como verificar drift de I1-I9?" — OPEN |
+
+### Próximo Passo
+
+1. Guardian revê skeleton
+2. Architect resolve Q1 (Spine Integrity) + high priority questions
+3. Human Dragon aprova refinamentos
+4. §266 sela quando convergência
+
+### Notas
+
+**Caminho C executado com sucesso.** Terreno preparado sem contratos prematuros. O WINDI-HIOS Kernel Ground v0.1 é agora uma superfície de revisão, não um sistema selado.
+
+> *"Não codar antes de definir. Definir antes de selar."*
+
+OM SHANTI 🐉
+
+---
+
 ## § SESSÃO 14 Mai 2026 — §262-§263 WINDI-HIOS + PingPong Protocol
 
 **Duração:** ~1h | **Status:** ✅ SEALED (2 capítulos)

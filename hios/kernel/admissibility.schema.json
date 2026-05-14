@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://windi-domain.com/hios/kernel/admissibility.schema.json",
+  "_meta": {
+    "status": "DRAFT-SKELETON",
+    "not_sealed": true,
+    "not_canonical": true,
+    "pending_review": "GUARDIAN",
+    "layer": "4-admissibility",
+    "binding": "I9 Gate + Guardian Review"
+  },
+  "title": "WINDI-HIOS Admissibility Schema",
+  "description": "Admissibility layer schema defining what can execute",
+  "type": "object",
+  "required": ["proposal_id", "admissibility_check"],
+  "properties": {
+    "proposal_id": {
+      "type": "string",
+      "description": "Identifier of the proposal being checked"
+    },
+    "actor": {
+      "$ref": "actors.schema.json"
+    },
+    "context": {
+      "$ref": "context.schema.json"
+    },
+    "authority": {
+      "$ref": "authority.schema.json"
+    },
+    "admissibility_check": {
+      "type": "object",
+      "required": ["result", "checked_at"],
+      "properties": {
+        "result": {
+          "type": "string",
+          "enum": ["ADMITTED", "DENIED", "ESCALATED", "PENDING"]
+        },
+        "reason": {
+          "type": "string"
+        },
+        "invariants_checked": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Which invariants (I1-I9) were verified"
+        },
+        "i9_status": {
+          "type": "string",
+          "enum": ["not_required", "pending", "approved", "denied"]
+        },
+        "guardian_review": {
+          "type": "string",
+          "enum": ["not_required", "pending", "approved", "blocked"]
+        },
+        "checked_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Admissibility expiration (approval is ephemeral)"
+        }
+      }
+    },
+    "mutation_class": {
+      "type": "string",
+      "enum": ["CRITICAL", "STANDARD", "EPHEMERAL"]
+    },
+    "spine_integrity": {
+      "type": "object",
+      "properties": {
+        "verified": {"type": "boolean"},
+        "hash": {"type": "string"},
+        "drift_detected": {"type": "boolean"}
+      },
+      "description": "Spine integrity check result"
+    }
+  },
+  "_open_questions": [
+    "Q8: Admissibility expiration window?",
+    "Q9: Re-admission after denial - what changes?"
+  ]
+}
