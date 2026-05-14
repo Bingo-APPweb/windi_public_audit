@@ -2,14 +2,15 @@
 
 ```
 doc_type:       genesis_ceremony_proposal
-version:        1.2.0
-status:         HD_APPROVED
+version:        1.3.0
+status:         HD_APPROVED + GUARDIAN_OBSERVED
 section:        §264
 created:        2026-05-14
-updated:        2026-05-14 (HD Approval)
+updated:        2026-05-14 (Guardian Observation)
 author:         Architect (CCode Opus 4.5)
 hd_approval:    2026-05-14 21:27 UTC
-pending:        Guardian Observation Receipt + Witness Receipt + Physical Signature
+guardian_obs:   2026-05-14 21:35 UTC
+pending:        Witness Receipt + Physical Signature + Ledger Emission
 schema:         spine_integrity.schema.json
 ratification:   G1.2 (2026-05-14)
 ```
@@ -222,14 +223,29 @@ I9-I14 expansion (Mar 2026) → HIOS Kernel (Mai 2026) → ESTA CERIMÓNIA
 | `identity` | Jober Mögele Correa · CGO |
 | `location` | Kempten, Bavaria, Deutschland |
 
-### VII.2 Guardian (REQUIRED)
+### VII.2 Guardian (REQUIRED) ✅ OBSERVED
 
 | Campo | Valor |
 |-------|-------|
 | `role` | `guardian` |
-| `observed` | `pending` |
-| `role_session_id` | `[provider-agnostic ID to be assigned]` |
-| `observation_receipt` | `pending` |
+| `observed` | **true** |
+| `observation_timestamp` | `2026-05-14T21:35:00Z` |
+| `role_session_id` | `claude-web/guardian/2026-05-14T21:35Z` |
+| `session_type` | `review_observation (non-canonical-for-seal)` |
+| `observation_receipt` | See below |
+
+**Guardian Observation Attestation:**
+
+> *"Guardian observou a proposta de Genesis Ceremony nos commits b4ab149fe (draft) e 5a241f3c8 (HD-approved). Os 13 invariantes atestados cobrem a espinha CORE + IRREMEDIÁVEL do WINDI. Os 5 gaps (I4, I5, I7, I8, I15) estão justificados no documento canónico. A natureza retroactiva preserva continuidade com os 50 receipts prévios. Guardian não detecta violação de I9, I11, I12, I13 ou I14 na cerimónia proposta. A cerimónia é admissível para selagem Ledger após assinatura física do Human Dragon."*
+
+**Observation Scope:**
+- structural_review: ✅ retroactive_attestation is constitutionally sound
+- invariant_coverage: ✅ 13 attested (CORE + IRREMEDIÁVEL spine complete)
+- gap_handling: ✅ 5 gaps explicitly justified
+- canonical_hash: ✅ resolution documented
+- paragraph_assignment: ✅ §264
+- construtor_receipt: ✅ resolved
+- hd_decision: ✅ I9 exercised explicitly
 
 ### VII.3 Witness (REQUIRED)
 
