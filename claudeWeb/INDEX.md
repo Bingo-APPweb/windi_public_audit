@@ -75,7 +75,11 @@ com `prior_receipts_acknowledged: [contagem real]`
 
 ## Próximo Passo Proposto
 
-1. **Genesis Ceremony** — preparação (N1-N3), execução em sessão dedicada
+1. **Genesis Ceremony** — **PROPOSAL READY** · `/opt/windi/hios/kernel/GENESIS-CEREMONY-PROPOSAL.md`
+   - N1 ✅ Lista invariantes confirmada (13 atestados, 5 gaps)
+   - N2 ✅ Contagem receipts: 50
+   - N3 ✅ role_session_id formato definido
+   - **Aguarda:** HD approval + Guardian review + Council witness
 2. **Etapa 2 A-Progressivo** — Guardian Review Report formal
 3. **Track paralelo Bloco A** — DE Orthography Sweep disponível
 
