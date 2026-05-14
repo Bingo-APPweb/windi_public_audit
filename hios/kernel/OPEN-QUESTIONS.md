@@ -23,7 +23,7 @@ before §266 can seal.
 | Q1 | spine_bindings.md | **How does the Kernel verify that I1-I9 themselves did not drift?** | **CRITICAL** | open |
 | Q2 | actors.schema.json | How to handle agent actors without persistent DID? | high | open |
 | Q3 | actors.schema.json | Session-scoped vs persistent actor identity? | high | open |
-| Q4 | authority.schema.json | What happens when Human Dragon is unavailable? | high | open |
+| Q4 | authority.schema.json | **What happens when Human Dragon is unavailable?** | **CRITICAL** | open |
 | Q5 | authority.schema.json | Can Guardian block indefinitely without escalation? | medium | open |
 | Q6 | context.schema.json | How to handle stale context (session > 24h)? | medium | open |
 | Q7 | context.schema.json | Context inheritance across PingPong cycles? | medium | open |
@@ -48,6 +48,9 @@ before §266 can seal.
 | Q26 | schema_versioning_policy.md | Schema registry location? | low | open |
 | Q27 | schema_versioning_policy.md | Automated migration tooling? | low | open |
 | Q28 | schema_versioning_policy.md | Multi-version coexistence period? | medium | open |
+| Q29 | kernel_manifest.json | How does Kernel detect at runtime that a service is using an outdated schema version? | high | open |
+| Q30 | context.schema.json | Minimum CBP version Kernel context layer requires? | medium | open |
+| Q31 | recovery_protocol.md | Buffer TTL, signature requirements, and CRITICAL exclusion policy for R7? | high | open |
 
 ---
 
@@ -55,10 +58,12 @@ before §266 can seal.
 
 | Priority | Count | Percentage |
 |----------|-------|------------|
-| CRITICAL | 1 | 4% |
-| high | 9 | 32% |
-| medium | 12 | 43% |
-| low | 6 | 21% |
+| CRITICAL | 2 | 6% |
+| high | 10 | 32% |
+| medium | 13 | 42% |
+| low | 6 | 19% |
+
+**Total:** 31 questions (28 original + 3 Guardian additions)
 
 ---
 
@@ -82,7 +87,35 @@ Without this, the Kernel can become a binding map over a drifted Spine.
 The map would be accurate to a wrong territory.
 
 **Next Step:**
-Architect proposes concrete mechanism. Guardian reviews.
+Architect decomposes into Q1.a–Q1.d (per Guardian Obs 1), then proposes.
+
+**Suggested Decomposition:**
+- Q1.a: What constitutes "drift" of an invariant? (word change, semantic change, application change?)
+- Q1.b: Who is the canonical source? CLAUDE.md? §244? Both with reconciliation hash?
+- Q1.c: Verification frequency? Each session? Each CRITICAL mutation?
+- Q1.d: Who signs the "Spine did not drift" declaration? Guardian? HD? Both?
+
+---
+
+### Q4: Human Dragon Unavailability (Elevated to CRITICAL)
+
+> **What happens when Human Dragon is unavailable?**
+
+**Source:** authority.schema.json
+
+**Why Critical (Guardian elevation):**
+Q4 touches I9 directly. If I9 = Prohibition of Autonomy Escalation, and HD is
+the only one who can authorize CRITICAL mutations, then HD unavailability =
+system blocked by design. This may be correct (prefer blocking to violation),
+or may need temporary delegation mechanism (Guardian + Architect as joint
+signatories).
+
+**Related Questions:**
+- Q16: How to detect malicious Guardian?
+- Q17: Recovery from compromised Human Dragon session?
+
+**Next Step:**
+Architect addresses Q4 + Q17 + Q16 as a cluster (failure of arbiters themselves).
 
 ---
 

@@ -35,11 +35,23 @@
     "receipt_type": {
       "type": "string",
       "enum": ["constitutional", "operational", "ephemeral"],
-      "description": "Classification per Guardian refinement"
+      "description": "Classification per Guardian refinement. MUST match mutation_class: CRITICAL→constitutional, STANDARD→operational, EPHEMERAL→ephemeral"
     },
     "parent_receipt": {
-      "type": "string",
-      "description": "Parent receipt ID for chain integrity"
+      "type": ["string", "null"],
+      "description": "Parent receipt ID for chain integrity. MUST be null for EPHEMERAL receipts during DRAFT-SKELETON phase per Bootstrap Protocol §4"
+    },
+    "_constraints": {
+      "type": "object",
+      "description": "Guardian-mandated constraints (enforced by validation layer)",
+      "properties": {
+        "mutation_receipt_binding": {
+          "description": "Bidirectional enforcement: CRITICAL⇒constitutional, STANDARD⇒operational, EPHEMERAL⇒ephemeral. Schema permits all combinations but validation layer MUST reject mismatches."
+        },
+        "ephemeral_parent_restriction": {
+          "description": "If receipt_type=='ephemeral' AND _meta.status=='DRAFT-SKELETON', parent_receipt MUST be null. Enforced by Bootstrap Protocol §4."
+        }
+      }
     },
     "actor": {
       "type": "string",

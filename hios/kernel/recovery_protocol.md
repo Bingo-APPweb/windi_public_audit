@@ -68,6 +68,12 @@ Define procedures for recovering from Kernel failure states.
 
 ### R5. Spine Integrity Recovery
 
+**⚠️ STATUS: BLOCKED on Q1 resolution**
+
+> Cannot define recovery procedure for drift we cannot yet detect.
+> R5 becomes implementable only after Q1 ("How does the Kernel verify
+> that I1-I9 themselves did not drift?") has a concrete answer.
+
 ```
 1. Halt all CRITICAL operations
 2. Alert Human Dragon immediately
@@ -78,6 +84,8 @@ Define procedures for recovering from Kernel failure states.
 5. Generate recovery receipt (CRITICAL)
 ```
 
+**Dependency:** Q1 (CRITICAL) must be resolved first.
+
 ### R6. Chain Integrity Recovery (Orphan Receipt)
 
 ```
@@ -87,6 +95,43 @@ Define procedures for recovering from Kernel failure states.
 4. Continue operations
 5. Audit resolves orphan later
 ```
+
+### R7. Ledger Outage Buffer Protocol
+
+**⚠️ STATUS: DRAFT-SKELETON — Requires Q31 resolution**
+
+> When Forensic Ledger :8101 is unavailable, the Kernel enters "Sovereign Pause".
+> This protocol defines how to buffer receipts locally without violating
+> the "Forensic Ledger is single source of truth" principle.
+
+```
+1. Detect Ledger :8101 DOWN (F2 failure mode)
+2. Enter LEDGER_OUTAGE state
+3. For incoming receipts:
+   a) CRITICAL: BLOCK — prefer system halt to buffer
+   b) STANDARD/EPHEMERAL: Buffer locally with constraints
+4. Buffer constraints:
+   a) Each entry signed by actor + Guardian witness
+   b) Buffer TTL: 24h maximum (Q31 pending)
+   c) Entries marked: buffered_during_outage: true
+5. When Ledger returns:
+   a) Verify Ledger health endpoint
+   b) Flush buffer in chronological order
+   c) Each entry marked: recovered_from_buffer: true
+   d) Generate recovery receipt (STANDARD)
+6. If buffer TTL expires before Ledger returns:
+   a) Escalate to Human Dragon
+   b) Buffer entries become orphan candidates
+```
+
+**Dependencies:**
+- Q19: Automatic vs manual recovery triggers
+- Q20: Failure notification channels
+- Q31: Buffer TTL, signature requirements, and CRITICAL exclusion policy
+
+**Constitutional Constraint:**
+Buffer is NOT a parallel Ledger. It is a signed write-ahead log with strict TTL.
+If misdesigned, violates I11 (single source of forensic truth).
 
 ---
 
