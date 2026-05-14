@@ -384,6 +384,14 @@ gather_continuity_chain() {
     KNOWN_GAPS=""
     KNOWN_GAPS+="- G3 Merkle → §246-IMPL-bis · CRITICAL\n"
     KNOWN_GAPS+="- G4 Errata → §247+ · LOW\n"
+
+    # PingPong chapters (§263)
+    PINGPONG_INDEX=""
+    if [ -f "$WINDI_ROOT/claudeWeb/INDEX.md" ]; then
+        PINGPONG_INDEX=$(grep -A20 "## Capítulos Sealed" "$WINDI_ROOT/claudeWeb/INDEX.md" 2>/dev/null | head -15 || echo "Ver /opt/windi/claudeWeb/INDEX.md")
+    else
+        PINGPONG_INDEX="claudeWeb/ não encontrado — inicializar com §263 PingPong Protocol"
+    fi
 }
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -489,6 +497,9 @@ ${PENDING_P1}
 ### 4.4 Known Gaps
 $(echo -e "$KNOWN_GAPS")
 
+### 4.5 PingPong Chapters (§263)
+${PINGPONG_INDEX}
+
 ---
 
 ## 5. HUMAN DRAGON AUTHORITY
@@ -518,6 +529,8 @@ Nenhuma conclusão constitucional sem:
 - §249 Three Dragons Protocol
 - §250 Organic Constitutional Growth
 - §261 Cognitive Bind Module
+- §262 WINDI-HIOS Naming
+- §263 PingPong Protocol
 
 **Invariants (I1-I18):**
 I1 Soberania Humana · I9 Proibição Autonomia · I11 Permanência Evidência · I13 Convergência · I14 Honestidade Epistémica
