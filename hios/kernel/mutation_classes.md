@@ -1,10 +1,10 @@
 # Mutation Classes — WINDI-HIOS Kernel
 
 ```
-STATUS:         DRAFT-SKELETON
-NOT SEALED
-NOT CANONICAL
-PENDING GUARDIAN REVIEW
+STATUS:         DRAFT-REFINED
+NOT SEALED (pending §266)
+PARTIALLY RATIFIED (G4.3 Reach Precedence Doctrine)
+HD Ratification: 2026-05-14
 ```
 
 ---
@@ -107,6 +107,30 @@ Is it session-scoped or transient?
 
 ---
 
+## Reach Precedence Doctrine (G4.3 Ratified 2026-05-14)
+
+> **"A dimensão `reach: external` tem precedência sobre a classificação de impacto declarada."**
+
+Operação inicialmente classificada como EPHEMERAL ou STANDARD com efeito externo irreversível
+é tratada como classe superior para efeitos de autoridade e auditoria, independentemente da
+retenção técnica do registo.
+
+**Regra operacional:**
+- `reach: internal` → mantém classificação original
+- `reach: external` + `reversibility: irreversible` → escalona automaticamente
+
+**Durante HD-GRACE:**
+- STANDARD-I-EXTERNAL → reclassificado como CRITICAL (queued)
+- EPHEMERAL-I-EXTERNAL → reclassificado como STANDARD-I-EXTERNAL → CRITICAL (queued)
+
+**Razão constitucional:** Consequência externa supera auto-classificação interna. O sistema
+classifica pela natureza do efeito no mundo, não pela intenção declarada do actor.
+
+**Janela de reversibilidade:** T+5 minutos medidos pelo timestamp do receipt no Ledger
+(clock canónico do sistema). Após T+5, a mutação é considerada irreversível.
+
+---
+
 ## Misclassification Risks
 
 | Actual | Classified As | Risk |
@@ -115,8 +139,9 @@ Is it session-scoped or transient?
 | CRITICAL | EPHEMERAL | No permanent record |
 | STANDARD | EPHEMERAL | Lost audit trail |
 | EPHEMERAL | CRITICAL | Over-governance, slowdown |
+| EXTERNAL | INTERNAL | Sovereignty breach (G4.3) |
 
-**Mitigation:** Guardian review for reclassification requests
+**Mitigation:** Guardian review for reclassification requests + automatic reach detection
 
 ---
 

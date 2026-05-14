@@ -32,18 +32,57 @@ The Kernel does NOT duplicate the Spine. It BINDS to it.
 
 ---
 
-## Critical Open Question
+## Q1 Resolution: Spine Integrity Verification
 
 > **Q1: How does the Kernel verify that I1-I9 themselves did not drift?**
+>
+> **STATUS: RESOLVED** — 2026-05-14 · Architect proposal
 
-Current thinking (DRAFT):
-1. CLAUDE.md is the constitutional source of truth
-2. Hash of invariant definitions at session start
-3. Compare against known-good hash from last sealed §
-4. Guardian as constitutional witness for drift detection
-5. If drift detected → escalate to Human Dragon (I9)
+### Drift Type Classification
 
-This requires further specification. The Kernel cannot verify itself without external anchor.
+| Type | Descrição | Severidade |
+|------|-----------|------------|
+| **Lexical** | Palavra alterada sem mudar semântica | LOW |
+| **Semantic** | Significado do invariante alterado | CRITICAL |
+| **Application** | Invariante aplicado de forma diferente | HIGH |
+| **Scope** | Invariante expandido/contraído sem selo | CRITICAL |
+
+### Canonical Source Hierarchy
+
+```
+1. CLAUDE.md § Constituição Nuclear (fonte primária)
+2. Receipts §XXX que selaram cada invariante (prova de origem)
+3. CLAUDE-HISTORY.md (contexto de decisão)
+```
+
+### Verification Triggers
+
+| Gatilho | Verificação | Acção se Drift |
+|---------|-------------|----------------|
+| **Session Start** | Hash I1-I17 vs último CBP | Warning no CBP output |
+| **CRITICAL Mutation** | Full Spine check | Bloqueia mutação |
+| **Weekly Cron** | Background audit | Alerta Guardian + HD |
+
+### Signature Rules (Dual Witness)
+
+```
+STANDARD mutations:
+  → Guardian assina sozinho (auditável)
+
+CRITICAL mutations:
+  → Guardian assina primeiro
+  → Human Dragon contra-assina
+  → Ambas assinaturas no receipt
+```
+
+### SPINE-LOCK Rule
+
+> Se Guardian detecta drift E HD não está disponível → sistema entra em **SPINE-LOCK** (apenas leitura, zero mutações CRITICAL).
+
+### Implementation
+
+Schema: `spine_integrity.schema.json`
+Script: `spine_integrity_check.sh` (pending implementation)
 
 ---
 

@@ -2,26 +2,42 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://windi-domain.com/hios/kernel/authority.schema.json",
   "_meta": {
-    "status": "DRAFT-SKELETON",
-    "not_sealed": true,
-    "not_canonical": true,
-    "pending_review": "GUARDIAN",
+    "status": "RATIFIED",
+    "hd_ratification": "2026-05-14",
     "layer": "3-authority",
-    "binding": "I9 + Human Dragon + Three Dragons"
+    "binding": "I9 + Human Dragon + Three Dragons",
+    "q4_resolved": "2026-05-14",
+    "version": "v2"
   },
   "title": "WINDI-HIOS Authority Schema",
-  "description": "Authority layer schema defining who approves what",
+  "description": "Q4 RESOLVED: Authority layer with HD unavailability protocol and reversibility matrix",
   "type": "object",
   "required": ["action_type", "required_approvers"],
   "properties": {
     "action_type": {
-      "type": "string",
-      "description": "Type of action requiring authority"
+      "type": "string"
     },
     "mutation_class": {
-      "type": "string",
-      "enum": ["CRITICAL", "STANDARD", "EPHEMERAL"],
-      "description": "Classification of the mutation"
+      "type": "object",
+      "properties": {
+        "impact": {
+          "type": "string",
+          "enum": ["CRITICAL", "STANDARD", "EPHEMERAL"]
+        },
+        "reversibility": {
+          "type": "string",
+          "enum": ["reversible", "irreversible"]
+        },
+        "reach": {
+          "type": "string",
+          "enum": ["internal", "external"],
+          "description": "G4.3: reach has precedence over impact for effective_class"
+        },
+        "effective_class": {
+          "type": "string",
+          "description": "Computed from impact + reversibility + reach + hd_state"
+        }
+      }
     },
     "required_approvers": {
       "type": "array",
@@ -37,19 +53,14 @@
             "enum": ["required", "witness", "optional"]
           }
         }
-      },
-      "description": "List of required approvers by role"
+      }
     },
     "escalation_path": {
       "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "description": "Escalation chain if primary approver unavailable"
+      "items": {"type": "string"}
     },
     "i9_required": {
-      "type": "boolean",
-      "description": "Whether I9 human approval gate applies"
+      "type": "boolean"
     },
     "three_dragons_protocol": {
       "type": "object",
@@ -61,12 +72,127 @@
       }
     },
     "timeout_seconds": {
-      "type": "integer",
-      "description": "Approval timeout before escalation"
+      "type": "integer"
+    },
+    "hd_availability": {
+      "type": "object",
+      "description": "Q4 RESOLVED: Human Dragon availability state and protocol",
+      "properties": {
+        "state": {
+          "type": "string",
+          "enum": ["HD-ACTIVE", "HD-GRACE", "HD-LOCK"]
+        },
+        "last_response_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "grace_threshold_hours": {
+          "type": "integer",
+          "default": 24,
+          "description": "24h = typical HD latency on working days"
+        },
+        "lock_threshold_hours": {
+          "type": "integer",
+          "default": 72,
+          "description": "72h = extended weekend limit"
+        },
+        "grace_mode_rules": {
+          "type": "object",
+          "properties": {
+            "standard_reversible": {
+              "type": "string",
+              "const": "guardian_plus_architect"
+            },
+            "standard_irreversible_internal": {
+              "type": "string",
+              "const": "guardian_plus_architect"
+            },
+            "standard_irreversible_external": {
+              "type": "string",
+              "const": "reclassified_to_critical_queued",
+              "description": "G4.3: External irreversible actions queue for HD"
+            },
+            "critical_any": {
+              "type": "string",
+              "const": "queued_not_executed"
+            },
+            "ephemeral_reversible": {
+              "type": "string",
+              "const": "normal"
+            },
+            "ephemeral_irreversible_internal": {
+              "type": "string",
+              "const": "normal"
+            },
+            "ephemeral_irreversible_external": {
+              "type": "string",
+              "const": "reclassified_to_standard_i_external",
+              "description": "G4.3: External webhooks escalate"
+            },
+            "alert_frequency_hours": {
+              "type": "integer",
+              "default": 24
+            }
+          }
+        },
+        "lock_mode_rules": {
+          "type": "object",
+          "properties": {
+            "system_mode": {"type": "string", "const": "read_only"},
+            "mutations_allowed": {"type": "string", "const": "none"},
+            "guardian_can_observe": {"type": "boolean", "default": true}
+          }
+        },
+        "resumption_protocol": {
+          "type": "object",
+          "properties": {
+            "requires_authentication": {"type": "boolean", "default": true},
+            "review_grace_approvals": {"type": "boolean", "default": true},
+            "process_critical_queue": {"type": "boolean", "default": true},
+            "emit_resumption_receipt": {"type": "boolean", "default": true}
+          }
+        }
+      }
+    },
+    "reversibility_window": {
+      "type": "object",
+      "description": "G4.3: Operational definition of reversibility",
+      "properties": {
+        "window_minutes": {
+          "type": "integer",
+          "default": 5,
+          "description": "T+5 minutes = reversibility boundary"
+        },
+        "clock_source": {
+          "type": "string",
+          "const": "ledger_receipt_timestamp",
+          "description": "Canonical clock is Ledger, not emitter"
+        }
+      }
     }
   },
-  "_open_questions": [
-    "Q4: What happens when Human Dragon is unavailable?",
-    "Q5: Can Guardian block indefinitely without escalation?"
-  ]
+  "_effective_class_table": {
+    "description": "Explicit transition table for effective_class computation",
+    "rules": [
+      {"impact": "CRITICAL", "reversibility": "any", "reach": "any", "hd_state": "any", "effective": "CRITICAL"},
+      {"impact": "STANDARD", "reversibility": "reversible", "reach": "any", "hd_state": "ACTIVE", "effective": "STANDARD"},
+      {"impact": "STANDARD", "reversibility": "reversible", "reach": "any", "hd_state": "GRACE", "effective": "STANDARD (G+A)"},
+      {"impact": "STANDARD", "reversibility": "irreversible", "reach": "internal", "hd_state": "ACTIVE", "effective": "STANDARD"},
+      {"impact": "STANDARD", "reversibility": "irreversible", "reach": "internal", "hd_state": "GRACE", "effective": "STANDARD (G+A)"},
+      {"impact": "STANDARD", "reversibility": "irreversible", "reach": "external", "hd_state": "ACTIVE", "effective": "STANDARD"},
+      {"impact": "STANDARD", "reversibility": "irreversible", "reach": "external", "hd_state": "GRACE", "effective": "CRITICAL (queued)"},
+      {"impact": "STANDARD", "reversibility": "any", "reach": "any", "hd_state": "LOCK", "effective": "BLOCKED"},
+      {"impact": "EPHEMERAL", "reversibility": "reversible", "reach": "any", "hd_state": "any", "effective": "EPHEMERAL"},
+      {"impact": "EPHEMERAL", "reversibility": "irreversible", "reach": "internal", "hd_state": "any", "effective": "EPHEMERAL"},
+      {"impact": "EPHEMERAL", "reversibility": "irreversible", "reach": "external", "hd_state": "ACTIVE", "effective": "STANDARD"},
+      {"impact": "EPHEMERAL", "reversibility": "irreversible", "reach": "external", "hd_state": "GRACE", "effective": "CRITICAL (queued)"},
+      {"impact": "EPHEMERAL", "reversibility": "irreversible", "reach": "external", "hd_state": "LOCK", "effective": "BLOCKED"}
+    ]
+  },
+  "_i9_clause": "Durante HD-GRACE, qualquer mutação que envolva efeito externo irreversível (comunicação a terceiros, publicação, transacção, webhook a sistema fora do perímetro WINDI) é automaticamente reclassificada como CRITICAL e entra na fila de espera por HD. Mutações com efeito apenas interno, mesmo irreversíveis, podem ser aprovadas por Guardian + Architect conjuntamente.",
+  "_ratification_notes": {
+    "N4": "Reversibility window measured by Ledger timestamp (canonical clock)"
+  },
+  "_resolved_questions": ["Q4: HD Unavailability via Fail-Safe Hierarchy + Reversibility Matrix"],
+  "_open_questions": ["Q5: Can Guardian block indefinitely without escalation?"]
 }

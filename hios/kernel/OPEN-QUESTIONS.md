@@ -20,10 +20,10 @@ before §266 can seal.
 
 | ID | Source File | Question | Priority | Status |
 |----|-------------|----------|----------|--------|
-| Q1 | spine_bindings.md | **How does the Kernel verify that I1-I9 themselves did not drift?** | **CRITICAL** | open |
+| Q1 | spine_bindings.md | **How does the Kernel verify that I1-I9 themselves did not drift?** | **CRITICAL** | **RESOLVED** |
 | Q2 | actors.schema.json | How to handle agent actors without persistent DID? | high | open |
 | Q3 | actors.schema.json | Session-scoped vs persistent actor identity? | high | open |
-| Q4 | authority.schema.json | **What happens when Human Dragon is unavailable?** | **CRITICAL** | open |
+| Q4 | authority.schema.json | **What happens when Human Dragon is unavailable?** | **CRITICAL** | **RESOLVED** |
 | Q5 | authority.schema.json | Can Guardian block indefinitely without escalation? | medium | open |
 | Q6 | context.schema.json | How to handle stale context (session > 24h)? | medium | open |
 | Q7 | context.schema.json | Context inheritance across PingPong cycles? | medium | open |
@@ -56,66 +56,78 @@ before §266 can seal.
 
 ## Priority Distribution
 
-| Priority | Count | Percentage |
-|----------|-------|------------|
-| CRITICAL | 2 | 6% |
-| high | 10 | 32% |
-| medium | 13 | 42% |
-| low | 6 | 19% |
+| Priority | Count | Open | Proposed | Resolved |
+|----------|-------|------|----------|----------|
+| CRITICAL | 2 | 0 | 0 | **2** |
+| high | 10 | 10 | 0 | 0 |
+| medium | 13 | 13 | 0 | 0 |
+| low | 6 | 6 | 0 | 0 |
 
-**Total:** 31 questions (28 original + 3 Guardian additions)
+**Total:** 31 questions · **29 open** · **0 proposed** · **2 resolved (Q1, Q4)**
+
+**§266 STATUS:** CRITICAL questions resolved. Etapa 1 A-Progressivo COMPLETE.
+- Q1 (Genesis) → RESOLVED via Genesis Ceremony v2 · Ratified 2026-05-14
+- Q4 (HD Unavailability) → RESOLVED via Matriz Reversibilidade v2 · Ratified 2026-05-14
+- Genesis Ceremony execution pending (scheduled as deliberate act)
 
 ---
 
-## CRITICAL Questions (Must Resolve Before §266)
+## CRITICAL Questions — RESOLVED
 
-### Q1: Spine Integrity Verification
+### Q1: Spine Integrity Verification ✅ RESOLVED
 
 > **How does the Kernel verify that I1-I9 themselves did not drift?**
 
-**Source:** spine_bindings.md
+**Status:** RESOLVED · 2026-05-14 · HD Ratification
+**Schema:** `spine_integrity.schema.json` (RATIFIED)
+**Doc:** `spine_bindings.md` (RATIFIED)
 
-**Current Thinking:**
-1. CLAUDE.md as constitutional source of truth
-2. Hash invariant definitions at session start
-3. Compare against known-good hash from last sealed §
-4. Guardian as constitutional witness
-5. If drift → escalate to Human Dragon
+**Architect Proposal Summary:**
 
-**Why Critical:**
-Without this, the Kernel can become a binding map over a drifted Spine.
-The map would be accurate to a wrong territory.
+| Sub-Q | Answer |
+|-------|--------|
+| Q1.a Drift types | lexical (LOW), semantic (CRITICAL), application (HIGH), scope (CRITICAL) |
+| Q1.b Canonical source | CLAUDE.md (primary) → Receipts (origin) → CLAUDE-HISTORY (context) |
+| Q1.c Verification triggers | session_start, critical_mutation, weekly_cron |
+| Q1.d Signatures | STANDARD: Guardian alone · CRITICAL: Guardian + HD dual witness |
 
-**Next Step:**
-Architect decomposes into Q1.a–Q1.d (per Guardian Obs 1), then proposes.
+**Guardian Review — 4 Refinements Required:**
 
-**Suggested Decomposition:**
-- Q1.a: What constitutes "drift" of an invariant? (word change, semantic change, application change?)
-- Q1.b: Who is the canonical source? CLAUDE.md? §244? Both with reconciliation hash?
-- Q1.c: Verification frequency? Each session? Each CRITICAL mutation?
-- Q1.d: Who signs the "Spine did not drift" declaration? Guardian? HD? Both?
+| # | Issue | Guardian Observation |
+|---|-------|---------------------|
+| G1.1 | **Lexical LOW is dangerous** | Em texto constitucional "deve"→"pode" muda tudo. Eliminar LOW ou redefinir como "requires semantic review" |
+| G1.2 | **Genesis Problem** | Qual receipt original selou I1-I9 com hash? Se não existe, bootstrap requer assinatura HD presencial |
+| G1.3 | **Hash só detecta texto** | Drift de aplicação não detectado por sha256. Falta auditoria de aplicação (declarar como gap v0.1) |
+| G1.4 | **Watchdog do watchdog** | Se cron comprometido, ninguém nota. Falta heartbeat invertido: ausência de receipt 8 dias = suspeita |
 
 ---
 
-### Q4: Human Dragon Unavailability (Elevated to CRITICAL)
+### Q4: Human Dragon Unavailability ✅ RESOLVED
 
 > **What happens when Human Dragon is unavailable?**
 
-**Source:** authority.schema.json
+**Status:** RESOLVED · 2026-05-14 · HD Ratification
+**Schema:** `authority.schema.json` (RATIFIED)
 
-**Why Critical (Guardian elevation):**
-Q4 touches I9 directly. If I9 = Prohibition of Autonomy Escalation, and HD is
-the only one who can authorize CRITICAL mutations, then HD unavailability =
-system blocked by design. This may be correct (prefer blocking to violation),
-or may need temporary delegation mechanism (Guardian + Architect as joint
-signatories).
+**Architect Proposal Summary:**
 
-**Related Questions:**
-- Q16: How to detect malicious Guardian?
-- Q17: Recovery from compromised Human Dragon session?
+| State | Threshold | Capabilities |
+|-------|-----------|--------------|
+| **HD-ACTIVE** | HD responded < 24h | Full operations |
+| **HD-GRACE** | 24h-72h absent | STANDARD: Guardian+Architect · CRITICAL: queued |
+| **HD-LOCK** | >72h absent | Read-only · Zero mutations |
 
-**Next Step:**
-Architect addresses Q4 + Q17 + Q16 as a cluster (failure of arbiters themselves).
+**Principle:** *"Preferir bloqueio a violação de I9."*
+
+**Guardian Review — 5 Refinements Required:**
+
+| # | Issue | Guardian Observation |
+|---|-------|---------------------|
+| G4.1 | **24h/72h arbitrários** | Sem justificação. Declarar como parâmetros configuráveis com racional documentado |
+| G4.2 | **Guardian+Architect em GRACE viola I9?** | Amarrar explicitamente a I9. Cláusula: STANDARD com acção externa irreversível → CRITICAL |
+| G4.3 | **Falta eixo reversibilidade** | STANDARD irreversível (email, receipt) deve ir para fila CRITICAL em GRACE |
+| G4.4 | **Sessões em curso em HD-LOCK** | O que acontece a Construtor a meio de execução? Aborto? Finalização? Receipt parcial? |
+| G4.5 | **Q16/Q17 subdimensionados** | Q17 (HD comprometido) requer árbitro externo. Quem? Registar ex ante |
 
 ---
 
