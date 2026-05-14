@@ -255,6 +255,11 @@ I9-I14 expansion (Mar 2026) → HIOS Kernel (Mai 2026) → ESTA CERIMÓNIA
 | `recorded` | `pending` |
 | `role_session_id` | `[provider-agnostic ID to be assigned]` |
 | `observation_receipt` | `pending` |
+| `brief_script` | `/opt/windi/scripts/witness-brief.sh` |
+
+**Nota operacional (Guardian Review):**
+O Witness deve ser uma sessão Claude.ai web dedicada e separada da sessão Guardian.
+Usar `witness-brief.sh` para gerar brief filtrado para o papel Witness (observação, não revisão).
 
 ### VII.4 Construtor (Guardian Review G4)
 
@@ -297,9 +302,17 @@ I9-I14 expansion (Mar 2026) → HIOS Kernel (Mai 2026) → ESTA CERIMÓNIA
 **Procedimento:**
 1. Imprimir este documento
 2. HD assina fisicamente com data
-3. Fotografar documento assinado
-4. Calcular hash da foto
-5. Guardar em arquivo pessoal HD
+3. Fotografar documento assinado (ficheiro original, sem edição)
+4. Calcular hash da foto com comando canónico:
+   ```bash
+   sha256sum genesis-signature-20260514.jpg
+   ```
+5. Guardar hash + ficheiro em arquivo pessoal HD
+
+**Nota sobre integridade (Guardian Review):**
+- Hash deve ser do ficheiro de imagem bruto (PNG/JPEG)
+- Sem alteração de metadados EXIF após captura
+- Nome sugerido: `genesis-signature-YYYYMMDD.[ext]`
 
 ---
 
