@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.53.0
-**Sealed:** 2026-05-13 · §261 W-BIND-001 Cognitive Bind Module v0.2.0
+**Version:** 2.54.0
+**Sealed:** 2026-05-14 · §262-§263 WINDI-HIOS + PingPong Protocol
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -628,12 +628,12 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 14 Mai | **§262-§263** WINDI-HIOS + PingPong Protocol · `6F053E65`+`87AAF5BA` ✅ |
 | 12 Mai | **§250** Lei VII I18 Organic Growth + .wcap v0.1.0 Schema · `D00095E0`+`C52AA629` ✅ |
 | 12 Mai | **§255-§257** Foundation Ontology · I12 Trilingual + Notebook 001 + Cognitive Continuity Axiom |
 | 10 Mai | **§249** SESSÃO FUNDACIONAL · MANIFESTO + FOUNDATION · Tese Ontológica IA+H |
 | 07 Mai | **§246** W-SITES × W-MAIL Bridge · 6/6 selos + T7 adversarial · `4CE30817`+`4DD83B15` ✅ |
 | 05 Mai | **§245** Editorial Doctrine · `3C5638F9` ✅ |
-| 03 Mai | **§235+241** windisites.de LIVE · `1BE93BB4` ✅ |
 
 > **Full history:** `CLAUDE-HISTORY.md`
 
@@ -678,27 +678,31 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 ## BACKLOG — Próximas Sessões
 
-### SPRINT ACTUAL — Foundation Portals + Linguistic Strategy (12 Mai 2026)
+### SPRINT ACTUAL — Foundation Portals + WINDI-HIOS (14 Mai 2026)
 
-**Contexto:** §255 (I12 fix) revelou que cobertura trilingue ≠ estratégia linguística. Guardian produziu relatório adversário identificando gaps. Bloco 0 (decisões estratégicas) bloqueia Bloco A (sweep técnico).
+**Contexto:** §262-§263 selaram WINDI-HIOS naming + PingPong Protocol. Bloco 0 (Q1-Q4) resolvido. Bloco A desbloqueado.
 
-**Bloco 0 — Decisões Estratégicas (pendente Human Dragon):**
+**Bloco 0 — Decisões Estratégicas (✅ RESOLVIDO 14 Mai):**
 
-| # | Decisão | Opções |
-|---|---------|--------|
-| Q1 | Registo por audiência | IDENTITY+MEMORY (du/tu informal) vs VERIFY+ENTERPRISE (Sie/você formal) |
-| Q2 | Positioning /enterprise/ | Manifesto+CTA ou página técnica com features? |
-| Q3 | Landing strategy | English-only (v2 later) ou trilingual completo agora? |
-| Q4 | Glossário Canónico Trilingue | W-LIB-001 agora ou marcar como P1 debt? |
+| # | Decisão | Cravação |
+|---|---------|----------|
+| Q1 | Registo por audiência | ✅ du/tu (IDENTITY+MEMORY) · Sie/você (VERIFY+ENTERPRISE) |
+| Q2 | Positioning /enterprise/ | ✅ Manifesto+CTA mínimo, não página técnica |
+| Q3 | Landing strategy | ✅ Trilingual agora, hierarquia DE > EN > PT |
+| Q4 | Glossário Canónico | ✅ Stub 15-20 termos agora, pleno P1 debt |
 
-**Bloco A — Trabalho Técnico (bloqueado até Bloco 0):**
+**Bloco A — Trabalho Técnico (DESBLOQUEADO):**
 - [ ] DE ortografia sweep: ae→ä, oe→ö, ue→ü, ss→ß em 4 portais
 - [ ] Padronização tonal DE/PT conforme Q1
-- [ ] /enterprise/: EU AI Act + GDPR + receipt + nav + Liga IA+H
-- [ ] Landing trilingual (se Q3 = agora)
+- [ ] /enterprise/: Manifesto+CTA · Sie · EU AI Act + GDPR + Liga IA+H
+- [ ] Stub lexicon §XXX (15-20 termos críticos trilíngue)
+
+**WINDI-HIOS Sprint Pending:**
+- [ ] **§264 CBP-JSON Schema v0.3** — Architect propõe, Guardian revê
+- [ ] **§265 Drift Monitor Metrics** — 3 métricas mínimas
 
 **Scaffold:**
-- [ ] **Notebook 002: Continuity Symmetry** — "A continuidade humana também reside na estrutura, não na instância"
+- [ ] **Notebook 002: Continuity Symmetry** — "A continuidade humana também reside na estrutura"
 
 ---
 
