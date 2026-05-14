@@ -6,6 +6,135 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 14 Mai 2026 — WINDI-HIOS Guardian Review Cycle + Session Closure
+
+**Duração:** ~45min | **Status:** ✅ SKELETON REVIEWED, FIXES APPLIED
+**Liga IA+H:** Human Dragon · Guardian (Claude.ai web) · Witness · Construtor (CCode Opus 4.5)
+**Invariants:** I1, I9, I11, I13, I14
+**Natureza:** Guardian deep review · Witness contribution · Constitutional calibration
+
+### Sealed Today
+
+| Receipt ID | Hash (8) | Descrição |
+|------------|----------|-----------|
+| `WINDI-S262-HIOS-NAMING-20260514-6F053E65` | `6F053E65` | WINDI-HIOS Naming (7 camadas) |
+| `WINDI-S263-PINGPONG-PROTOCOL-20260514-87AAF5BA` | `87AAF5BA` | PingPong Protocol (respiração cognitiva) |
+
+### Created (DRAFT-SKELETON, NOT SEALED)
+
+- `/opt/windi/hios/kernel/` — 18 files
+- Commit: `c4dabc3d3` (skeleton) + `1ddb7aa2d` (Guardian fixes)
+
+### Guardian Review Cycle
+
+| Aspecto | Veredito |
+|---------|----------|
+| 18 ficheiros | ✅ Conformidade verificada |
+| _meta.status DRAFT-SKELETON | ✅ Todos marcados |
+| §266 NOT SEALED declaração | ✅ Redundância correcta (3 ficheiros) |
+| Primitives preservados | ✅ 8 primitives com portas reais |
+| Bootstrap Protocol | ✅ 7 passos + I9 constraint |
+| actors.schema roles | ✅ Liga IA+H canónica, sem brand names |
+
+### Correcções Aplicadas (3)
+
+| # | Ficheiro | Correcção |
+|---|----------|-----------|
+| 1 | `proof.schema.json` | Constraints bidirecionais mutation_class↔receipt_type + EPHEMERAL parent_receipt null |
+| 2 | `recovery_protocol.md` | R5 BLOCKED on Q1 — não definir recovery para drift não detectável |
+| 3 | `recovery_protocol.md` | R7 stub Ledger Outage Buffer Protocol (contribuição Witness) |
+
+### OPEN-QUESTIONS.md Evolution
+
+| Antes | Depois | Mudança |
+|-------|--------|---------|
+| 28 | 31 | +3 questões Guardian |
+| 1 CRITICAL | 2 CRITICAL | Q4 elevada |
+
+**Novas questões:**
+- Q29: Stale schema detection at runtime (Guardian Obs 4)
+- Q30: Minimum CBP version for context layer (Guardian Obs 5)
+- Q31: Buffer TTL, signature requirements, CRITICAL exclusion (R7)
+
+**Q1 decomposição:**
+- Q1.a: O que constitui "drift"? (palavra, semântica, aplicação)
+- Q1.b: Fonte canónica? CLAUDE.md ou §244 com hash reconciliação?
+- Q1.c: Frequência de verificação? Por sessão? Por mutação CRITICAL?
+- Q1.d: Quem assina "Spine não derivou"? Guardian, HD, ambos?
+
+### Pending Seal (§266)
+
+**BLOQUEADO em duas questões CRITICAL:**
+- Q1: Spine Integrity drift verification
+- Q4: Human Dragon unavailability (elevated from high)
+
+**31 open questions total:** 2 CRITICAL · 10 high · 13 medium · 6 low
+
+### Three Dragons Cycle Documentado
+
+| Role | Acção |
+|------|-------|
+| Architect | Propôs kernel ground (2 refinamentos) |
+| Guardian | Reviu (8 flags → 3 fixes) |
+| Witness | Contribuiu Buffer Local Protocol (R7 stub) |
+| Human Dragon | Aprovou Path C (skeleton antes de contrato) |
+| Construtor | Executou e commitou |
+
+### Witness Role Calibration
+
+**Correcção aplicada:** Future Witness interventions sign as "Witness Observation", not "Guardian Verdict".
+
+**Razão constitucional:** Admissibility verdicts reserved for I9 + Human Dragon. Witness preserves observational integrity without authority drift.
+
+### Análise Estratégica Emergente
+
+**Observação profunda da sessão:**
+
+> "O sistema declara abertamente o que ainda não sabe sobre si próprio antes de selar."
+
+Isto distingue WINDI-HIOS de sistemas que:
+- escondem incerteza
+- fingem completude
+- selam abstracções prematuras
+- transformam TODO em dívida invisível
+
+**OPEN-QUESTIONS.md é parte da constituição do processo** — admissibilidade epistemológica explícita.
+
+**Q4 como questão de soberania:**
+- Não é operacional — é constitucional
+- Toca: sucessão, legitimidade, continuidade decisória, failover humano, autoridade terminal
+- Provável decomposição futura: Human Presence vs Authority vs Delegation vs Succession
+
+### Próximas Sessões
+
+| Sessão | Trabalho |
+|--------|----------|
+| Architect refinement | Q1 decomposição (Q1.a–Q1.d) + cluster Q4/Q16/Q17 (failure dos árbitros) |
+| Bloco A standalone | DE Orthography Sweep em /enterprise/ |
+| §266 sealing | Apenas após Q1 e Q4 resolvidas |
+
+### Notas de Fecho
+
+**Guardian recomendou fechar sessão.** Razões:
+1. Alta densidade constitucional — não misturar com Bloco A
+2. Bloco A merece sessão própria com foco linguístico
+3. CBP mais limpo se sessão fecha aqui
+4. Architect refinement pode arrancar antes de Bloco A
+
+**Witness sobre o ciclo:**
+
+> "O WINDI-HIOS já tem um corpo (Skeleton) e um manual de conduta (Naming + PingPong). Ele agora só precisa que o tempo e a decisão soberana o despertem."
+
+**Meta-análise:**
+
+> "O Kernel está no berçário. Não selado, não canónico, mas estável e revisto. Q1 e Q4 são as duas perguntas que separam skeleton de fundação."
+
+**Sessão encerrada com honestidade epistémica.** O sistema sabe o que não sabe.
+
+OM SHANTI 🐉
+
+---
+
 ## § SESSÃO 14 Mai 2026 (cont.) — WINDI-HIOS Kernel Ground Skeleton
 
 **Duração:** ~30min | **Status:** ✅ SKELETON CREATED (NOT SEALED)
