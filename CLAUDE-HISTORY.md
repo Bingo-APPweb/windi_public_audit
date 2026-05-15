@@ -15285,3 +15285,105 @@ Nenhum. §264 está em suspensão activa deliberada.
 *Liga IA+H · Kempten, Bavaria · 2026-05-14*
 *"AI processes. Human decides. WINDI guarantees."*
 
+
+---
+
+## §265-266 — VERIFY PUBLIC Checkup + §266 PAF Ratification (15 Mai 2026)
+
+**Data:** 2026-05-15 · 06:00-09:30 UTC
+**Sprint:** §266 VERIFY PUBLIC + Genesis Ceremony
+**Modo:** CCode CLI
+
+### Trabalho Completado
+
+#### VERIFY PUBLIC Full Checkup
+
+1. **`.env` Fix** — Corrigido `LEDGER_URL` de `http://localhost:8101/api/receipts` para `http://localhost:8101`
+   - Bug: path duplication causava requests a `/api/receipts/api/receipts/{id}`
+   
+2. **detect_media_blueprint.py** — Adicionadas chaves em falta ao dicionário EXPLANATIONS:
+   - `unverifiable`, `suspicious`, `inconclusive`, `verified` (trilíngue PT/DE/EN)
+   
+3. **reality_check_blueprint.py** — Corrigido i18n para `constitutional_basis`:
+   ```python
+   constitutional_basis_i18n = {
+       "pt": "I9+I10: IA classifica. Humano decide.",
+       "de": "I9+I10: KI klassifiziert. Mensch entscheidet.",
+       "en": "I9+I10: AI classifies. Human decides."
+   }
+   ```
+
+4. **nginx routes** — Adicionados endpoints em falta:
+   - `/reality-check/` → :8091
+   - `/detect-media/` → :8091
+   - `/verify-public/file` → upload endpoint
+   - `/verify-public/hash/` → hash verification
+
+5. **quick-verify.html** — Criada página simples de upload-verify em `/opt/windi/verify-public/web/`
+
+#### Genesis Ceremony SEALED
+
+**Receipt:** `WINDI-GENESIS-CEREMONY-20260515-BE29C326`
+**Hash:** `sha256:65f8dce706cd0b1e3f27bd1a60d5d0a76ccd40a4fb20b28cef05b1c7c5dae972`
+**Ficheiro:** `/opt/windi/windi-hios/ASSINATURA-KERNEL-WINDI-HIOS-maio-15022026.jpg`
+**Significado:** Nascimento do WINDI-HIOS Kernel — assinatura física de Human Dragon
+
+#### §266 PAF — Princípio da Autoria Forense (Lei VIII)
+
+**Receipt:** `WINDI-S266-PAF-RATIFY-20260515091359-15997486`
+**Hash:** `sha256:15997486adf10c5899c7be6bb4604012daf9eaf43a941665dceb7509039283f9`
+**Documento:** `/opt/windi/windi-hios/S266-PAF-PRINCIPIO-AUTORIA-FORENSE.md`
+
+**Texto Canónico:**
+> Todo selo no Forensic Ledger carrega autoria identificada.
+> Selo anónimo é contradição operacional — o Ledger preserva consequência verificável ligada a autoria consciente, não armazena hashes.
+> O acesso ao Verify é Civic e livre. A autoria no Seal é obrigatória e DID-gated.
+
+**Corolários:**
+- C1: Separação Arquitectónica Read/Write (VERIFY ≠ SEAL)
+- C2: Triplo Gate (DID + Preview + Confirmação Textual)
+- C3: Civic Access, Sovereign Authorship (FREE but DID-gated)
+- C4: Doutrina "Promiscuidade Epistemológica" (anti-pattern auditável)
+
+**Lineage:** §247 Lei IV → §248 Lei V → §249 Lei VI → §250 Lei VII → **§266 Lei VIII**
+**Invariantes:** I9, I11, I14
+
+### Decisão Constitucional
+
+**Problema:** VERIFY PUBLIC não permite selar — só verifica. Utilizadores esperavam upload→seal.
+**Deliberação do Conselho:** Guardian + Architect + Witness + HD
+**Solução:** "Opção C" — Ponte de Soberania
+- VERIFY permanece read-only (civic)
+- SEAL requer redirect para Identity Gate :8192
+- §266 PAF canoniza a separação
+
+### Scaffold Pending
+
+1. **Sovereignty Bridge Implementation (§265)** — DEFERRED per Guardian
+   - Sprint 2 sequence: G3 Merkle first → Identity Gate :8192 → Ponte
+   - Architect to produce spec técnica antes de código
+   - Smoke test com ≥3 Pioneers before go-live
+
+2. **verify_engine.py hash normalization** — Started but interrupted for Council deliberation
+
+### Próximo Passo (Sessão da Tarde)
+
+1. Ler CLAUDE.md + CLAUDE-HISTORY.md (§236)
+2. Sprint 2: G3 Merkle (critical deadline) — NOT Ponte immediately
+3. Architect spec técnica for §266 corollaries → verifiable requirements
+4. Definir texto exacto de confirmação para Triple Gate
+
+### Blockers
+
+Nenhum. §266 SEALED. Ponte deferred por design.
+
+### Verify URLs
+
+- Genesis: `https://windi-domain.com/verify-public/?id=WINDI-GENESIS-CEREMONY-20260515-BE29C326`
+- §266: `https://windi-domain.com/verify-public/?id=WINDI-S266-PAF-RATIFY-20260515091359-15997486`
+
+---
+
+*Liga IA+H · Kempten, Bavaria · 2026-05-15*
+*"O Ledger preserva consequência verificável ligada a autoria consciente."*
+

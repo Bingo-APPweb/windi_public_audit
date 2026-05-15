@@ -54,6 +54,26 @@ EXPLANATIONS = {
         "EN": "No input provided. Upload a file or provide text.",
         "DE": "Keine Eingabe bereitgestellt. Laden Sie eine Datei hoch oder geben Sie Text ein.",
         "PT": "Nenhuma entrada fornecida. Carregue um ficheiro ou forneça texto."
+    },
+    "unverifiable": {
+        "EN": "Content cannot be cryptographically verified. Hash not found in WINDI Ledger.",
+        "DE": "Inhalt kann nicht kryptografisch verifiziert werden. Hash nicht im WINDI Ledger.",
+        "PT": "Conteúdo não pode ser verificado criptograficamente. Hash não encontrado no WINDI Ledger."
+    },
+    "suspicious": {
+        "EN": "High confidence of synthetic generation. Content shows AI markers.",
+        "DE": "Hohe Wahrscheinlichkeit synthetischer Erzeugung. Inhalt zeigt KI-Marker.",
+        "PT": "Alta probabilidade de geração sintética. Conteúdo apresenta marcadores de IA."
+    },
+    "inconclusive": {
+        "EN": "Analysis inconclusive. Insufficient data for classification.",
+        "DE": "Analyse nicht schlüssig. Unzureichende Daten für Klassifizierung.",
+        "PT": "Análise inconclusiva. Dados insuficientes para classificação."
+    },
+    "verified": {
+        "EN": "Content verified. Hash found in WINDI Forensic Ledger.",
+        "DE": "Inhalt verifiziert. Hash im WINDI Forensic Ledger gefunden.",
+        "PT": "Conteúdo verificado. Hash encontrado no WINDI Forensic Ledger."
     }
 }
 
