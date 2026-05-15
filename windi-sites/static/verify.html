@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="klar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verify Receipt · WINDI Sites</title>
+<link rel="stylesheet" href="assets/windi-base.css">
+<style>
+  .verify-head { padding: 56px 0 32px; }
+  .verify-search {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+  }
+  .verify-search input {
+    flex: 1;
+    padding: 14px 18px;
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    color: var(--ink);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+  }
+  .verify-search input:focus { outline: none; border-color: var(--ink); }
+
+  .receipt {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-top: 32px;
+  }
+  .receipt-banner {
+    padding: 20px 32px;
+    background: rgba(45,95,63,0.08);
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .verified-mark {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--green);
+    color: var(--bg);
+    display: grid;
+    place-items: center;
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .receipt-banner h3 { color: var(--green); font-size: 18px; }
+
+  .receipt-body { padding: 32px; }
+  .receipt-row {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--line-soft);
+    align-items: center;
+    gap: 20px;
+  }
+  .receipt-row:last-child { border-bottom: none; }
+  .receipt-row .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+  }
+  .receipt-row .value {
+    font-size: 15px;
+  }
+  .receipt-row .value.mono {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    word-break: break-all;
+  }
+
+  .qr-block {
+    display: flex;
+    gap: 28px;
+    align-items: flex-start;
+    padding: 28px 32px;
+    border-top: 1px solid var(--line);
+    background: var(--bg-soft);
+  }
+  .qr {
+    width: 130px;
+    height: 130px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 8px;
+    flex-shrink: 0;
+  }
+
+  .chain-section { padding: 56px 0 80px; }
+  .chain-list {
+    margin-top: 24px;
+    border-left: 2px solid var(--line);
+    padding-left: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+  .chain-item { position: relative; }
+  .chain-item::before {
+    content: "";
+    position: absolute;
+    left: -34px;
+    top: 6px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 2px solid var(--bg);
+    box-shadow: 0 0 0 2px var(--gold);
+  }
+  .chain-item.first::before { background: var(--green); box-shadow: 0 0 0 2px var(--green); }
+  .chain-item .when {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-muted);
+    letter-spacing: 0.04em;
+  }
+  .chain-item h4 { font-size: 15px; margin-top: 4px; }
+  .chain-item .hash {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 6px;
+  }
+
+  @media (max-width: 880px) {
+    .receipt-row { grid-template-columns: 1fr; gap: 4px; }
+    .qr-block { flex-direction: column; }
+  }
+
+  /* Email Proof Modal */
+  .email-proof-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 16px 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--gold);
+    border-radius: 10px;
+    color: var(--gold);
+    font-weight: 500;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all .15s ease;
+    margin-top: 20px;
+  }
+  .email-proof-btn:hover {
+    background: var(--gold);
+    color: var(--bg);
+  }
+
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.active { display: flex; }
+
+  .modal-card {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    max-width: 480px;
+    width: 100%;
+    padding: 32px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  }
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+  }
+  .modal-close {
+    background: none;
+    border: none;
+    color: var(--ink-muted);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+  }
+  .modal-close:hover { color: var(--ink); }
+
+  .modal-input {
+    width: 100%;
+    padding: 14px 16px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--ink);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+  .modal-input:focus { outline: none; border-color: var(--gold); }
+
+  .consent-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 24px;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .consent-row input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    accent-color: var(--gold);
+  }
+
+  .modal-submit {
+    width: 100%;
+    padding: 14px;
+    background: var(--gold);
+    border: none;
+    border-radius: 8px;
+    color: var(--bg);
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background .15s ease;
+  }
+  .modal-submit:hover { background: var(--gold-soft); }
+  .modal-submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .modal-note {
+    margin-top: 16px;
+    padding: 14px;
+    background: var(--bg-soft);
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--ink-muted);
+  }
+  .modal-note .seal-mark {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: var(--gold);
+    border-radius: 50%;
+    margin-right: 6px;
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="shell topbar-inner">
+    <div class="brand">
+      <span class="brand-mark">W</span>
+      <span>WINDI Sites</span>
+      <span class="brand-tag">Public verify</span>
+    </div>
+    <nav class="nav">
+      <a href="index.html">Home</a>
+      <a href="dashboard.html">Sign in</a>
+      <button class="theme-btn" onclick="toggleTheme()">◐</button>
+    </nav>
+  </div>
+</header>
+
+<section class="verify-head">
+  <div class="shell-narrow">
+    <p class="mono tiny ink-muted">PUBLIC VERIFY · NO LOGIN REQUIRED</p>
+    <h2 class="mt-sm">Verify a receipt.</h2>
+    <p class="lead mt-sm">Paste a receipt ID, a SHA-256 hash, or a WINDI site URL. The Forensic Ledger answers — not WINDI.</p>
+
+    <div class="verify-search">
+      <input type="text" value="WINDI-SITES-1746278341" />
+      <button class="btn btn-primary">Verify</button>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="shell-narrow">
+
+    <!-- Receipt card -->
+    <div class="receipt">
+      <div class="receipt-banner">
+        <div class="verified-mark">✓</div>
+        <div>
+          <h3>Verified · Receipt is genuine</h3>
+          <p class="mono tiny ink-muted" style="margin-top:4px;">Forensic Ledger answered :8101 · 38 ms · independent of windi-domain.com</p>
+        </div>
+      </div>
+
+      <div class="receipt-body">
+        <div class="receipt-row">
+          <span class="label">Receipt ID</span>
+          <span class="value mono" id="displayReceiptId">WINDI-SITES-1746278341</span>
+        </div>
+        <div class="receipt-row">
+          <span class="label">Site</span>
+          <span class="value">
+            <a href="site-workspace.html">notary-mueller.windi-sites.com</a>
+            <br><span class="mono tiny ink-muted" style="margin-top:4px;display:inline-block;">Notary Müller — Public Profile · v3</span>
+          </span>
+        </div>
+        <div class="receipt-row">
+          <span class="label">SHA-256</span>
+          <span class="value mono">4f7a8d92c1e3a5b6f8d4c7a9b2e1d3f5a8c4b7e2d9f6a3c1b8e5d2f7a4c9b6c1</span>
+        </div>
+        <div class="receipt-row">
+          <span class="label">Sealed at</span>
+          <span class="value">2026-05-01 14:22:18 UTC <span class="mono tiny ink-muted">· 2 days ago</span></span>
+        </div>
+        <div class="receipt-row">
+          <span class="label">Sealed by (DID)</span>
+          <span class="value mono">0xa4F2c8e1d9b3a5f7c2d8e4b1f9a6c3d7e8b2c5a1…7c1b</span>
+        </div>
+        <div class="receipt-row">
+          <span class="label">Invariants</span>
+          <span class="value">
+            <span class="pill sealed" style="margin-right:6px;">I11</span>
+            <span class="pill sealed" style="margin-right:6px;">I13</span>
+            <span class="pill sealed">G3</span>
+          </span>
+        </div>
+        <div class="receipt-row">
+          <span class="label">Status</span>
+          <span class="value"><span class="pill sealed"><span class="pill-dot"></span>SEALED · IRREMEDIÁVEL</span></span>
+        </div>
+        <div class="receipt-row">
+          <span class="label">Public site</span>
+          <span class="value"><a href="site-workspace.html">notary-mueller.windi-sites.com ↗</a></span>
+        </div>
+      </div>
+
+      <div class="qr-block">
+        <!-- inline SVG QR placeholder -->
+        <div class="qr">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+            <rect width="100" height="100" fill="var(--bg)"/>
+            <g fill="var(--ink)">
+              <!-- corners -->
+              <rect x="6" y="6" width="22" height="22"/>
+              <rect x="10" y="10" width="14" height="14" fill="var(--bg)"/>
+              <rect x="14" y="14" width="6" height="6"/>
+              <rect x="72" y="6" width="22" height="22"/>
+              <rect x="76" y="10" width="14" height="14" fill="var(--bg)"/>
+              <rect x="80" y="14" width="6" height="6"/>
+              <rect x="6" y="72" width="22" height="22"/>
+              <rect x="10" y="76" width="14" height="14" fill="var(--bg)"/>
+              <rect x="14" y="80" width="6" height="6"/>
+              <!-- noise -->
+              <rect x="34" y="10" width="4" height="4"/><rect x="42" y="10" width="4" height="4"/>
+              <rect x="50" y="10" width="4" height="4"/><rect x="58" y="14" width="4" height="4"/>
+              <rect x="34" y="22" width="4" height="4"/><rect x="46" y="22" width="4" height="4"/>
+              <rect x="58" y="26" width="4" height="4"/><rect x="38" y="34" width="4" height="4"/>
+              <rect x="46" y="34" width="4" height="4"/><rect x="54" y="34" width="4" height="4"/>
+              <rect x="62" y="38" width="4" height="4"/><rect x="34" y="42" width="4" height="4"/>
+              <rect x="50" y="42" width="4" height="4"/><rect x="66" y="46" width="4" height="4"/>
+              <rect x="78" y="46" width="4" height="4"/><rect x="86" y="50" width="4" height="4"/>
+              <rect x="38" y="50" width="4" height="4"/><rect x="50" y="54" width="4" height="4"/>
+              <rect x="62" y="54" width="4" height="4"/><rect x="74" y="58" width="4" height="4"/>
+              <rect x="34" y="62" width="4" height="4"/><rect x="46" y="62" width="4" height="4"/>
+              <rect x="58" y="66" width="4" height="4"/><rect x="70" y="66" width="4" height="4"/>
+              <rect x="82" y="70" width="4" height="4"/><rect x="38" y="74" width="4" height="4"/>
+              <rect x="50" y="78" width="4" height="4"/><rect x="62" y="82" width="4" height="4"/>
+              <rect x="74" y="86" width="4" height="4"/><rect x="86" y="86" width="4" height="4"/>
+            </g>
+          </svg>
+        </div>
+        <div>
+          <strong style="font-size:14px; display:block;">Scan to re-verify anywhere</strong>
+          <p class="ink-soft mt-sm" style="font-size:13px;">The QR carries the receipt ID. Anyone — auditor, regulator, journalist — can scan and confirm independently.</p>
+          <p class="mono tiny ink-muted" style="margin-top:10px; word-break:break-all;">windi-domain.com/verify-public/?id=WINDI-SITES-1746278341</p>
+        </div>
+      </div>
+
+      <!-- Send Proof to Email Button -->
+      <button class="email-proof-btn" onclick="openEmailModal()">
+        <span style="font-size:18px;">📧</span>
+        Send this proof to my email
+      </button>
+    </div>
+
+  </div>
+</section>
+
+<section class="chain-section">
+  <div class="shell-narrow">
+    <h3>Beweiskette · Full chain of seals</h3>
+    <p class="ink-soft mt-sm" style="font-size:14px;">Every prior version is preserved. The receipt you verified is the head of the chain.</p>
+
+    <div class="chain-list">
+      <div class="chain-item first">
+        <div class="when">2026-05-01 · 14:22:18 UTC · 2d ago</div>
+        <h4>v3 · Office hours updated</h4>
+        <div class="hash">SHA-256 4f7a8d92c1e3…b2c1 · I11+G3 · This receipt</div>
+      </div>
+      <div class="chain-item">
+        <div class="when">2026-04-19 · 09:14:02 UTC · 14d ago</div>
+        <h4>v2 · Phone number correction</h4>
+        <div class="hash">SHA-256 c2b8d4f7a9e1…6c8a · I11+G3</div>
+      </div>
+      <div class="chain-item">
+        <div class="when">2026-04-07 · 17:56:31 UTC · 26d ago</div>
+        <h4>v1 · Initial publish</h4>
+        <div class="hash">SHA-256 9a3e6f1c4b8d…2f7e · I11+G3</div>
+      </div>
+    </div>
+
+    <div class="card mt-md" style="background: var(--bg-soft);">
+      <h4>How this works · in one paragraph</h4>
+      <p class="ink-soft mt-sm" style="font-size:14px; line-height: 1.6;">
+        WINDI does not hold the proof. The Forensic Ledger does. When you press
+        <em>Publish &amp; Seal</em>, a SHA-256 hash of the page content is written to a
+        public, append-only log alongside your DID. That entry is timestamped by an
+        independent system and cannot be modified — only superseded by a new entry
+        in the chain. To verify, anyone fetches the receipt by ID and checks the hash
+        against the live page. If they match, the page is what it claims to be. If
+        they don't, you know.
+      </p>
+      <p class="mono tiny ink-muted mt-md">Liga IA+H · I11 Forensic Ledger · I9 Irremediável</p>
+    </div>
+  </div>
+</section>
+
+<footer class="shell">
+  <div class="forensic-strip">
+    <span><span class="seal-mark"></span>Independent verify · Forensic Ledger :8101</span>
+    <span class="mono">No login · No tracking · No phone home</span>
+    <span>WINDI Publishing House · Liga IA+H</span>
+  </div>
+</footer>
+
+<!-- Email Proof Modal -->
+<div class="modal-overlay" id="emailModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div>
+        <h3 style="font-size:18px;">Send proof to email</h3>
+        <p class="ink-soft mt-sm" style="font-size:14px;">Receive this receipt as a verifiable email with DACP signature.</p>
+      </div>
+      <button class="modal-close" onclick="closeEmailModal()">&times;</button>
+    </div>
+
+    <form id="emailProofForm" onsubmit="submitEmailProof(event)">
+      <input
+        type="email"
+        class="modal-input"
+        id="proofEmail"
+        placeholder="your@email.com"
+        required
+        autocomplete="email"
+      >
+
+      <label class="consent-row">
+        <input type="checkbox" id="proofConsent" required>
+        <span>I am requesting this proof for myself. I understand this email will include the full receipt and a re-verification link. My email will not be stored.</span>
+      </label>
+
+      <button type="submit" class="modal-submit" id="submitBtn">
+        Send proof via W-MAIL-001
+      </button>
+    </form>
+
+    <div class="modal-note">
+      <span class="seal-mark"></span>
+      <strong>DACP Protocol:</strong> Your email will be digitally signed and contain a hash binding. The sending itself generates a receipt: <span class="mono">WINDI-SITES-PROOFMAIL-*</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleTheme() {
+    const root = document.documentElement;
+    const next = root.dataset.theme === 'klar' ? 'noir' : 'klar';
+    root.dataset.theme = next;
+    try { localStorage.setItem('windi_theme', next); } catch(e) {}
+  }
+  try {
+    const saved = localStorage.getItem('windi_theme');
+    if (saved) document.documentElement.dataset.theme = saved;
+  } catch(e) {}
+
+  // Email Modal Functions
+  function openEmailModal() {
+    document.getElementById('emailModal').classList.add('active');
+    document.getElementById('proofEmail').focus();
+  }
+
+  function closeEmailModal() {
+    document.getElementById('emailModal').classList.remove('active');
+    document.getElementById('emailProofForm').reset();
+  }
+
+  // Close modal on overlay click
+  document.getElementById('emailModal').addEventListener('click', function(e) {
+    if (e.target === this) closeEmailModal();
+  });
+
+  // Close modal on Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeEmailModal();
+  });
+
+  // Get receipt ID from URL or page
+  function getCurrentReceiptId() {
+    // Try URL param first: ?id=WINDI-XXX
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('id')) return params.get('id');
+    // Try hash: #WINDI-XXX
+    if (window.location.hash && window.location.hash.startsWith('#WINDI-')) {
+      return window.location.hash.slice(1);
+    }
+    // Fallback: read from page (first .mono.tiny element with WINDI- prefix)
+    const monoEl = document.querySelector('.receipt-row .value.mono');
+    if (monoEl && monoEl.textContent.startsWith('WINDI-')) {
+      return monoEl.textContent.trim();
+    }
+    return null;
+  }
+
+  // Form submission
+  async function submitEmailProof(e) {
+    e.preventDefault();
+
+    const email = document.getElementById('proofEmail').value;
+    const consent = document.getElementById('proofConsent').checked;
+    const submitBtn = document.getElementById('submitBtn');
+    const receiptId = getCurrentReceiptId();
+
+    if (!consent) {
+      alert('Please confirm the consent checkbox.');
+      return;
+    }
+
+    if (!receiptId) {
+      alert('No receipt ID found. Please access this page with ?id=WINDI-XXX');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+
+    try {
+      const response = await fetch('/api/verify-email/' + receiptId, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        closeEmailModal();
+        alert('Proof sent to ' + email + '\n\nReceipt: ' + (data.proof_receipt || 'WINDI-SITES-PROOFMAIL-' + Date.now()));
+      } else {
+        const err = await response.json();
+        alert('Error: ' + (err.message || 'Failed to send proof'));
+      }
+    } catch (error) {
+      // Sprint 1.5: Backend not yet connected
+      closeEmailModal();
+      alert('Sprint 1.5 Preview\n\nIn production, an email with:\n• Full receipt HTML\n• QR code embedded\n• DACP signature\n• Re-verification link\n\nwould be sent to: ' + email);
+    }
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Send proof via W-MAIL-001';
+  }
+
+  // Initialize page with real receipt if URL param provided
+  (async function initFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+    if (!id) return;
+
+    try {
+      const resp = await fetch('https://windi-domain.com/api/receipts/' + id);
+      if (!resp.ok) return;
+      const data = await resp.json();
+
+      // Update displayed receipt ID
+      const el = document.getElementById('displayReceiptId');
+      if (el) el.textContent = id;
+
+      // Update verify URL display
+      const urlEl = document.querySelector('.mono.tiny.ink-muted');
+      if (urlEl && urlEl.textContent.includes('verify-public')) {
+        urlEl.textContent = 'windi-domain.com/verify-public/?id=' + id;
+      }
+    } catch (e) {
+      console.log('Could not load receipt:', e);
+    }
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,134 @@
+{
+  "wcap_version": {
+    "current": "0.1.0",
+    "minimum_compatible": "0.1.0"
+  },
+
+  "capsule_id": "WCAP-WELCOME-20260512233000-7A3B9C01",
+  "type": "welcome",
+
+  "name": {
+    "de": "Willkommen im Allgau",
+    "en": "Welcome to Allgau",
+    "pt": "Bem-vindo ao Allgau"
+  },
+
+  "issuer": {
+    "did": "did:windi:hotel-kempten-001",
+    "name": "Hotel Kempten",
+    "contact": "welcome@hotelkempten.de",
+    "tier": "commercial"
+  },
+
+  "governance": {
+    "invariants": ["I9", "I11", "I12", "I16"],
+    "human_approved": true,
+    "approved_by": "did:windi:hotel-kempten-001",
+    "approved_at": "2026-05-12T23:30:00Z"
+  },
+
+  "spatial": {
+    "zones": [
+      {
+        "zone_id": "lobby",
+        "name": {
+          "de": "Hotel Lobby",
+          "en": "Hotel Lobby",
+          "pt": "Lobby do Hotel"
+        },
+        "lat": 47.7267,
+        "lon": 10.3168,
+        "radius_m": 50,
+        "trigger": "manual"
+      },
+      {
+        "zone_id": "altstadt",
+        "name": {
+          "de": "Altstadt Kempten",
+          "en": "Old Town Kempten",
+          "pt": "Centro Historico"
+        },
+        "lat": 47.7260,
+        "lon": 10.3155,
+        "radius_m": 200,
+        "trigger": "manual"
+      }
+    ],
+    "privacy": {
+      "gps_never_uploaded": true,
+      "zone_detection_local": true
+    }
+  },
+
+  "media": [
+    {
+      "media_id": "welcome-audio-de",
+      "type": "audio",
+      "zone_id": "lobby",
+      "title": {
+        "de": "Willkommensnachricht",
+        "en": "Welcome Message",
+        "pt": "Mensagem de Boas-vindas"
+      },
+      "file_path": "media/welcome-de.mp3",
+      "content_hash": "sha256:a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456",
+      "duration_seconds": 45,
+      "accessibility": {
+        "has_transcript": true
+      }
+    },
+    {
+      "media_id": "welcome-audio-en",
+      "type": "audio",
+      "zone_id": "lobby",
+      "title": {
+        "de": "Willkommensnachricht",
+        "en": "Welcome Message",
+        "pt": "Mensagem de Boas-vindas"
+      },
+      "file_path": "media/welcome-en.mp3",
+      "content_hash": "sha256:b2c3d4e5f67890123456789012345678901234567890abcdef1234567890abcd",
+      "duration_seconds": 42,
+      "accessibility": {
+        "has_transcript": true
+      }
+    },
+    {
+      "media_id": "altstadt-guide-de",
+      "type": "audio",
+      "zone_id": "altstadt",
+      "title": {
+        "de": "Geschichte der Altstadt",
+        "en": "Old Town History",
+        "pt": "Historia do Centro Historico"
+      },
+      "file_path": "media/altstadt-de.mp3",
+      "content_hash": "sha256:c3d4e5f678901234567890123456789012345678901234567890abcdef123456",
+      "duration_seconds": 120
+    }
+  ],
+
+  "temporal": {
+    "validity": {
+      "starts": "checkin",
+      "ends": "checkout+24h"
+    },
+    "created_at": "2026-05-12T23:30:00Z"
+  },
+
+  "rules": {
+    "max_repetitions_per_zone": 3,
+    "cooldown_minutes": 60,
+    "allow_skip": true,
+    "offline_required": true
+  },
+
+  "manifest_canonical_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+
+  "signature": {
+    "algorithm": "Ed25519",
+    "public_key": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+    "signature_value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+    "signed_at": "2026-05-12T23:30:00Z"
+  }
+}

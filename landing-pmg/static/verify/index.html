@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="pt" data-theme="klar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VERIFY · Prova · Nachweis — WINDI Foundation</title>
+  <meta name="description" content="Verificacao independente. Sem permissao. Sem login. Qualquer pessoa pode verificar qualquer selo WINDI." />
+  <meta name="theme-color" content="#FAFAF8" />
+  <!--
+    ════════════════════════════════════════════════════════════════════
+    WINDI Foundation — Portal VERIFY
+    Sprint:  §251 · Portais herdeiros de §250
+    Layer:   PRIMITIVES (FREE · infraestrutura publica)
+    Doutrina aplicada:
+      §247 trilingual parcial e cirurgico
+      §248 Lei V Two-Track (subtextual)
+      §250-BIS linhas vermelhas
+      §250-TER anti-estereotipia
+      KLAR default · NOIR toggle · system fonts only (Munich 2022)
+    Axioma constitucional: Verificação prova integridade, não certifica conteúdo.
+    ════════════════════════════════════════════════════════════════════
+  -->
+  <style>
+    /* ═══ Reset ═══ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+    img, svg { display: block; max-width: 100%; }
+    button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+    a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+
+    /* ═══ KLAR Theme (default) ═══ */
+    [data-theme="klar"] {
+      --gold: #8B741D;
+      --gold-dim: #6B5A14;
+      --gold-soft: #B89455;
+      --gold-glow: rgba(139,116,29,0.12);
+      --bg: #FAFAF8;
+      --bg-alt: #F5F4F2;
+      --bg-deep: #EDECEA;
+      --bg-card: #FFFFFF;
+      --border: rgba(139,116,29,0.2);
+      --border-soft: rgba(0,0,0,0.06);
+      --text: #1A1917;
+      --text-mute: rgba(26,25,23,0.6);
+      --text-dim: rgba(26,25,23,0.35);
+      --seal-bg: #FFFEF8;
+      --shadow: rgba(0,0,0,0.06);
+    }
+
+    /* ═══ NOIR Theme ═══ */
+    [data-theme="noir"] {
+      --gold: #C49A2A;
+      --gold-dim: #8B6914;
+      --gold-soft: #A07D20;
+      --gold-glow: rgba(196,154,42,0.15);
+      --bg: #0A0A08;
+      --bg-alt: #0F0F0D;
+      --bg-deep: #141412;
+      --bg-card: #181816;
+      --border: rgba(196,154,42,0.18);
+      --border-soft: rgba(255,255,255,0.06);
+      --text: #EDE8D8;
+      --text-mute: rgba(237,232,216,0.55);
+      --text-dim: rgba(237,232,216,0.28);
+      --seal-bg: #0D0C08;
+      --shadow: rgba(0,0,0,0.4);
+    }
+
+    :root {
+      --font-main: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      --font-mono: 'SF Mono', Monaco, Inconsolata, 'Fira Mono', ui-monospace, monospace;
+      --container: 72rem;
+      --gutter: clamp(1rem, 4vw, 2rem);
+    }
+
+    /* ═══ Base ═══ */
+    body {
+      font-family: var(--font-main);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      transition: background 0.25s, color 0.25s;
+      -webkit-font-smoothing: antialiased;
+    }
+    .mono { font-family: var(--font-mono); font-size: 0.9em; }
+
+    /* ═══ Layout ═══ */
+    .container {
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 var(--gutter);
+    }
+
+    /* ═══ Header ═══ */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: color-mix(in srgb, var(--bg) 92%, transparent);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-soft);
+    }
+    header .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+      gap: 1rem;
+    }
+    .brand {
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+    }
+    .brand span { color: var(--gold); }
+    .brand small {
+      font-weight: 400;
+      color: var(--text-mute);
+      font-size: 0.75rem;
+      margin-left: 0.5rem;
+    }
+
+    nav.portals {
+      display: none;
+      gap: 1.25rem;
+      font-size: 0.82rem;
+    }
+    nav.portals a {
+      text-decoration: none;
+      color: var(--text-mute);
+      padding: 0.3rem 0;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    nav.portals a[aria-current="page"] {
+      color: var(--text);
+      border-color: var(--gold);
+    }
+    nav.portals a:hover { color: var(--text); }
+    @media (min-width: 64rem) { nav.portals { display: flex; } }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .ctrl {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.4rem 0.6rem;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      color: var(--text-mute);
+      transition: all 0.15s;
+    }
+    .ctrl:hover { color: var(--text); border-color: var(--text); }
+    .ctrl .sep { opacity: 0.4; margin: 0 0.2rem; }
+    .ctrl .lang-opt[aria-current="true"] { color: var(--gold); font-weight: 600; }
+
+    /* ═══ Sections ═══ */
+    section { padding: 4rem 0; border-bottom: 1px solid var(--border-soft); }
+    section:last-of-type { border-bottom: 0; }
+    @media (min-width: 48rem) { section { padding: 5.5rem 0; } }
+
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-mute);
+      margin-bottom: 0.75rem;
+    }
+    .eyebrow .accent { color: var(--gold); }
+
+    h1, h2, h3 {
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+      margin: 0 0 1rem;
+    }
+    h1 { font-size: clamp(2rem, 5vw, 3.25rem); font-weight: 450; }
+    h2 { font-size: clamp(1.5rem, 3vw, 2rem); }
+    h3 { font-size: 1.1rem; font-weight: 600; }
+
+    p { margin: 0 0 1rem; max-width: 40rem; }
+    p.lead { font-size: 1.1rem; color: var(--text-mute); }
+
+    /* ═══ Hero ═══ */
+    .hero { padding-top: 4rem; }
+
+    .crumbs {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-mute);
+      margin-bottom: 1.25rem;
+    }
+    .crumbs a { text-decoration: none; }
+    .crumbs a:hover { color: var(--text); }
+    .crumbs .sep { margin: 0 0.4rem; opacity: 0.5; }
+
+    .portal-name {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1rem;
+      align-items: baseline;
+      margin-bottom: 1.5rem;
+    }
+    .portal-name .primary {
+      font-size: clamp(1.4rem, 2.5vw, 1.75rem);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    .portal-name .alt {
+      font-size: 1rem;
+      color: var(--text-mute);
+    }
+    .portal-name .alt::before {
+      content: "·";
+      margin-right: 0.75rem;
+      color: var(--gold);
+    }
+
+    .layer-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-mute);
+      padding: 0.25rem 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      margin-bottom: 1.75rem;
+    }
+    .layer-tag::before {
+      content: "";
+      width: 5px; height: 5px;
+      background: var(--gold);
+      border-radius: 50%;
+    }
+
+    .hero-sub {
+      font-size: 1.05rem;
+      color: var(--text-mute);
+      max-width: 36rem;
+      margin-top: 1rem;
+    }
+    .hero-axiom {
+      margin-top: 2rem;
+      padding: 1rem 1.25rem;
+      border-left: 2px solid var(--gold);
+      background: var(--bg-alt);
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+    }
+
+    /* ═══ Steps ═══ */
+    .steps {
+      display: grid;
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    @media (min-width: 48rem) { .steps { grid-template-columns: repeat(3, 1fr); } }
+
+    .step {
+      padding: 1.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-soft);
+      border-radius: 4px;
+      box-shadow: 0 1px 3px var(--shadow);
+      position: relative;
+    }
+    .step-num {
+      position: absolute;
+      top: -12px;
+      left: 16px;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--gold);
+      background: var(--bg);
+      padding: 0.2rem 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+    }
+    .step h3 { margin-top: 0.5rem; margin-bottom: 0.5rem; }
+    .step p { font-size: 0.92rem; color: var(--text-mute); margin: 0; }
+    .step .code {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      background: var(--bg-alt);
+      padding: 0.5rem;
+      border-radius: 2px;
+      margin-top: 0.75rem;
+      word-break: break-all;
+      color: var(--text-dim);
+    }
+
+    /* ═══ Barrier ═══ */
+    .barrier {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      max-width: 40rem;
+    }
+    .barrier-title {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.75rem;
+    }
+    .barrier p { margin: 0; font-size: 0.95rem; }
+    .barrier strong { font-weight: 600; }
+
+    /* ═══ CTA ═══ */
+    .cta-box {
+      margin-top: 2.5rem;
+      padding: 2rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      text-align: center;
+      max-width: 32rem;
+    }
+    .cta-box h3 { margin-bottom: 0.75rem; }
+    .cta-box p { max-width: none; margin-bottom: 1.25rem; font-size: 0.95rem; color: var(--text-mute); }
+
+    .verify-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.9rem 1.75rem;
+      background: var(--text);
+      color: var(--bg);
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+      border-radius: 2px;
+      transition: opacity 0.15s;
+    }
+    .verify-btn:hover { opacity: 0.85; }
+    .verify-btn::after { content: "→"; }
+
+    .test-link {
+      display: block;
+      margin-top: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-mute);
+    }
+    .test-link a { color: var(--gold); }
+    .test-link a:hover { text-decoration: underline; }
+
+    /* ═══ Rights ═══ */
+    .rights {
+      display: grid;
+      gap: 1.25rem;
+      margin-top: 2rem;
+    }
+    @media (min-width: 40rem) { .rights { grid-template-columns: repeat(2, 1fr); } }
+
+    .right {
+      padding: 1.25rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-soft);
+      border-radius: 4px;
+    }
+    .right h3 {
+      font-size: 1rem;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .right h3::before {
+      content: "✓";
+      color: var(--gold);
+      font-weight: 700;
+    }
+    .right p { font-size: 0.88rem; color: var(--text-mute); margin: 0; }
+
+    /* ═══ Footer ═══ */
+    footer {
+      background: var(--bg-deep);
+      padding: 2.5rem 0 1.75rem;
+      border-top: 1px solid var(--border);
+    }
+    .seal-badge {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      padding: 1.25rem;
+      background: var(--seal-bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      max-width: 34rem;
+      margin: 0 auto 2rem;
+    }
+    .seal-badge .axiom {
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      letter-spacing: 0.02em;
+    }
+    .seal-badge .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-mute);
+      padding-top: 0.65rem;
+      border-top: 1px solid var(--border-soft);
+    }
+    .seal-badge .meta a { text-decoration: underline; }
+    .seal-badge .meta a:hover { color: var(--text); }
+    .seal-badge .meta .key { color: var(--gold); }
+
+    .footer-end {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-mute);
+      max-width: 34rem;
+      margin: 0 auto;
+      padding-top: 0.85rem;
+      border-top: 1px solid var(--border-soft);
+    }
+
+    /* ═══ i18n ═══ */
+    [data-i18n] [lang]:not(.active) { display: none; }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="container row">
+      <a class="brand" href="/"><span>W</span>INDI<small>Foundation</small></a>
+
+      <nav class="portals" aria-label="Portais Foundation">
+        <a href="/identity/">IDENTITY</a>
+        <a href="/verify/" aria-current="page">VERIFY</a>
+        <a href="/memory/">MEMORY</a>
+        <a href="https://windisites.de" rel="external">SITES</a>
+        <a href="/enterprise/">ENTERPRISE</a>
+      </nav>
+
+      <div class="controls">
+        <button class="ctrl" id="theme-toggle" title="Alternar KLAR / NOIR">
+          KLAR<span class="sep">/</span>NOIR
+        </button>
+        <button class="ctrl" id="lang-toggle" title="Alternar lingua">
+          <span class="lang-opt" data-lang="pt" aria-current="true">PT</span><span class="sep">·</span><span class="lang-opt" data-lang="de">DE</span><span class="sep">·</span><span class="lang-opt" data-lang="en">EN</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- §1 HERO -->
+    <section class="hero">
+      <div class="container">
+        <nav class="crumbs" aria-label="Breadcrumb">
+          <a href="/">Foundation</a><span class="sep">/</span><span>VERIFY</span>
+        </nav>
+
+        <div class="portal-name">
+          <span class="primary">VERIFY</span>
+          <span class="alt">Prova</span>
+          <span class="alt">Nachweis</span>
+        </div>
+
+        <span class="layer-tag">Layer · PRIMITIVES</span>
+
+        <h1 data-i18n>
+          <span lang="pt" class="active">Verificação independente. Sem permissão. Sem login.</span>
+          <span lang="de">Unabhängige Verifizierung. Ohne Erlaubnis. Ohne Login.</span>
+          <span lang="en">Independent verification. Permissionless. No login.</span>
+        </h1>
+
+        <p class="hero-sub" data-i18n>
+          <span lang="pt" class="active">Qualquer pessoa pode verificar qualquer selo WINDI. A verificabilidade é um direito cívico, não um privilégio.</span>
+          <span lang="de">Jeder kann jedes WINDI-Siegel überprüfen. Verifizierbarkeit ist ein Bürgerrecht, kein Privileg.</span>
+          <span lang="en">Anyone can verify any WINDI seal. Verifiability is a civic right, not a privilege.</span>
+        </p>
+
+        <div class="hero-axiom mono" data-i18n>
+          <span lang="pt" class="active">Verificação prova integridade. Não certifica conteúdo.</span>
+          <span lang="de">Verifizierung beweist Integrität. Zertifiziert keinen Inhalt.</span>
+          <span lang="en">Verification proves integrity. Does not certify content.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- §2 O QUE E -->
+    <section id="o-que-e">
+      <div class="container">
+        <p class="eyebrow" data-i18n><span class="accent">§2</span> &nbsp; <span lang="pt" class="active">O QUE É</span><span lang="de">WAS IST DAS</span><span lang="en">WHAT IS IT</span></p>
+        <h2 data-i18n>
+          <span lang="pt" class="active">Verificar é confirmar que algo não mudou.</span>
+          <span lang="de">Verifizieren heißt bestätigen, dass etwas unverändert ist.</span>
+          <span lang="en">To verify is to confirm that something has not changed.</span>
+        </h2>
+        <p class="lead" data-i18n>
+          <span lang="pt" class="active">Cada documento WINDI carrega um recibo. Esse recibo contém um hash criptográfico — a impressão digital matemática do conteúdo no momento do selo.</span>
+          <span lang="de">Jedes WINDI-Dokument trägt einen Beleg. Dieser Beleg enthält einen kryptografischen Hash — den mathematischen Fingerabdruck des Inhalts zum Zeitpunkt der Versiegelung.</span>
+          <span lang="en">Every WINDI document carries a receipt. That receipt contains a cryptographic hash — the mathematical fingerprint of the content at the moment of sealing.</span>
+        </p>
+        <p data-i18n>
+          <span lang="pt" class="active">Se um único bit mudou depois do selo, o hash muda. A verificação falha. Não há como falsificar — nem o próprio WINDI consegue reescrever um selo passado.</span>
+          <span lang="de">Wenn sich auch nur ein Bit nach der Versiegelung ändert, ändert sich der Hash. Die Verifizierung schlägt fehl. Fälschung ist unmöglich — nicht einmal WINDI selbst kann ein vergangenes Siegel umschreiben.</span>
+          <span lang="en">If a single bit changed after sealing, the hash changes. Verification fails. There is no way to falsify — not even WINDI itself can rewrite a past seal.</span>
+        </p>
+      </div>
+    </section>
+
+    <!-- §3 COMO FUNCIONA -->
+    <section id="como-funciona">
+      <div class="container">
+        <p class="eyebrow" data-i18n><span class="accent">§3</span> &nbsp; <span lang="pt" class="active">COMO FUNCIONA</span><span lang="de">WIE ES FUNKTIONIERT</span><span lang="en">HOW IT WORKS</span></p>
+        <h2 data-i18n>
+          <span lang="pt" class="active">Três passos. Sem conta. Sem espera.</span>
+          <span lang="de">Drei Schritte. Kein Konto. Keine Wartezeit.</span>
+          <span lang="en">Three steps. No account. No waiting.</span>
+        </h2>
+
+        <div class="steps">
+          <div class="step">
+            <span class="step-num">01</span>
+            <h3 data-i18n><span lang="pt" class="active">Recibo</span><span lang="de">Beleg</span><span lang="en">Receipt</span></h3>
+            <p data-i18n>
+              <span lang="pt" class="active">Cada documento WINDI tem um número de série único.</span>
+              <span lang="de">Jedes WINDI-Dokument hat eine eindeutige Seriennummer.</span>
+              <span lang="en">Every WINDI document has a unique serial number.</span>
+            </p>
+            <div class="code">WINDI-S250-DEPLOY-20260511-A9CB761B</div>
+          </div>
+
+          <div class="step">
+            <span class="step-num">02</span>
+            <h3>Hash</h3>
+            <p data-i18n>
+              <span lang="pt" class="active">O recibo guarda a impressão digital SHA-256 do conteúdo.</span>
+              <span lang="de">Der Beleg speichert den SHA-256-Fingerabdruck des Inhalts.</span>
+              <span lang="en">The receipt stores the SHA-256 fingerprint of the content.</span>
+            </p>
+            <div class="code">sha256:16fcb925...f35af09f</div>
+          </div>
+
+          <div class="step">
+            <span class="step-num">03</span>
+            <h3>Ledger</h3>
+            <p data-i18n>
+              <span lang="pt" class="active">O Forensic Ledger confirma existência, data e integridade.</span>
+              <span lang="de">Das Forensic Ledger bestätigt Existenz, Datum und Integrität.</span>
+              <span lang="en">The Forensic Ledger confirms existence, date, and integrity.</span>
+            </p>
+            <div class="code">sealed_at: 2026-05-11T12:05:00Z</div>
+          </div>
+        </div>
+
+        <!-- BARREIRA ETICA -->
+        <div class="barrier">
+          <div class="barrier-title" data-i18n><span lang="pt" class="active">Barreira Ética</span><span lang="de">Ethische Grenze</span><span lang="en">Ethical Barrier</span></div>
+          <p data-i18n>
+            <span lang="pt" class="active"><strong>Verificação prova integridade, não certifica conteúdo.</strong> O WINDI confirma que um documento não foi alterado desde o selo. Não confirma que o conteúdo original é verdadeiro, legal ou correto. Integridade ≠ veracidade.</span>
+            <span lang="de"><strong>Verifizierung beweist Integrität, nicht Inhalt.</strong> WINDI bestätigt, dass ein Dokument seit der Versiegelung unverändert ist. Es bestätigt nicht, dass der ursprüngliche Inhalt wahr, legal oder korrekt ist. Integrität ≠ Wahrhaftigkeit.</span>
+            <span lang="en"><strong>Verification proves integrity, not content.</strong> WINDI confirms that a document has not been altered since sealing. It does not confirm that the original content is true, legal, or correct. Integrity ≠ veracity.</span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- §4 VERIFICAR AGORA -->
+    <section id="verificar">
+      <div class="container">
+        <p class="eyebrow" data-i18n><span class="accent">§4</span> &nbsp; <span lang="pt" class="active">VERIFICAR AGORA</span><span lang="de">JETZT VERIFIZIEREN</span><span lang="en">VERIFY NOW</span></p>
+        <h2 data-i18n>
+          <span lang="pt" class="active">A infraestrutura esta viva. Verifica antes de confiar.</span>
+          <span lang="de">Die Infrastruktur ist live. Verifizieren Sie, bevor Sie vertrauen.</span>
+          <span lang="en">The infrastructure is live. Verify before you trust.</span>
+        </h2>
+
+        <div class="cta-box">
+          <h3>Forensic Ledger</h3>
+          <p data-i18n>
+            <span lang="pt" class="active">Insere um número de recibo para verificar existência, data e integridade de qualquer selo WINDI.</span>
+            <span lang="de">Geben Sie eine Belegnummer ein, um Existenz, Datum und Integrität eines WINDI-Siegels zu überprüfen.</span>
+            <span lang="en">Enter a receipt number to verify existence, date, and integrity of any WINDI seal.</span>
+          </p>
+          <a class="verify-btn" href="/verify-public/" data-i18n><span lang="pt" class="active">Abrir Verificador</span><span lang="de">Verifizierer öffnen</span><span lang="en">Open Verifier</span></a>
+          <p class="test-link" data-i18n>
+            <span lang="pt" class="active">Teste com um receipt real: <a href="/verify-public/?id=WINDI-S250-LANDING-FOUNDATION-20260511">WINDI-S250-LANDING-FOUNDATION-20260511</a></span>
+            <span lang="de">Testen Sie mit einem echten Beleg: <a href="/verify-public/?id=WINDI-S250-LANDING-FOUNDATION-20260511">WINDI-S250-LANDING-FOUNDATION-20260511</a></span>
+            <span lang="en">Test with a real receipt: <a href="/verify-public/?id=WINDI-S250-LANDING-FOUNDATION-20260511">WINDI-S250-LANDING-FOUNDATION-20260511</a></span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- §5 DIREITOS -->
+    <section id="direitos">
+      <div class="container">
+        <p class="eyebrow" data-i18n><span class="accent">§5</span> &nbsp; <span lang="pt" class="active">DIREITOS CÍVICOS</span><span lang="de">BÜRGERRECHTE</span><span lang="en">CIVIC RIGHTS</span></p>
+        <h2 data-i18n>
+          <span lang="pt" class="active">Verificação é um direito. Não um produto.</span>
+          <span lang="de">Verifizierung ist ein Recht. Kein Produkt.</span>
+          <span lang="en">Verification is a right. Not a product.</span>
+        </h2>
+        <p class="lead" data-i18n>
+          <span lang="pt" class="active">Na arquitectura WINDI, a verificação pública é infraestrutura cívica — gratuita, permanente, sem login.</span>
+          <span lang="de">In der WINDI-Architektur ist öffentliche Verifizierung zivile Infrastruktur — kostenlos, dauerhaft, ohne Login.</span>
+          <span lang="en">In WINDI architecture, public verification is civic infrastructure — free, permanent, no login.</span>
+        </p>
+
+        <div class="rights">
+          <div class="right">
+            <h3 data-i18n><span lang="pt" class="active">Sem permissão</span><span lang="de">Ohne Erlaubnis</span><span lang="en">Permissionless</span></h3>
+            <p data-i18n>
+              <span lang="pt" class="active">Não precisas de conta, password ou aprovação para verificar um selo.</span>
+              <span lang="de">Man braucht kein Konto, Passwort oder Genehmigung, um ein Siegel zu verifizieren.</span>
+              <span lang="en">You don't need an account, password, or approval to verify a seal.</span>
+            </p>
+          </div>
+          <div class="right">
+            <h3 data-i18n><span lang="pt" class="active">Sem intermediário</span><span lang="de">Ohne Vermittler</span><span lang="en">No intermediary</span></h3>
+            <p data-i18n>
+              <span lang="pt" class="active">A verificação é matemática. Não depende de confiança no WINDI.</span>
+              <span lang="de">Verifizierung ist Mathematik. Sie hängt nicht vom Vertrauen in WINDI ab.</span>
+              <span lang="en">Verification is mathematics. It does not depend on trusting WINDI.</span>
+            </p>
+          </div>
+          <div class="right">
+            <h3 data-i18n><span lang="pt" class="active">Sem expiração</span><span lang="de">Ohne Ablaufdatum</span><span lang="en">No expiration</span></h3>
+            <p data-i18n>
+              <span lang="pt" class="active">Um selo verificável hoje continua verificável daqui a 10, 50, 100 anos.</span>
+              <span lang="de">Ein heute verifizierbares Siegel bleibt in 10, 50, 100 Jahren verifizierbar.</span>
+              <span lang="en">A seal verifiable today remains verifiable in 10, 50, 100 years.</span>
+            </p>
+          </div>
+          <div class="right">
+            <h3 data-i18n><span lang="pt" class="active">Sem custo</span><span lang="de">Kostenlos</span><span lang="en">No cost</span></h3>
+            <p data-i18n>
+              <span lang="pt" class="active">Verificar é grátis. Sempre. Faz parte do contrato fundacional.</span>
+              <span lang="de">Verifizieren ist kostenlos. Immer. Teil des Gründungsvertrags.</span>
+              <span lang="en">Verification is free. Always. Part of the foundational contract.</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="seal-badge">
+        <div class="axiom">AI processes. Human decides. WINDI guarantees.</div>
+        <div class="meta">
+          <span><span class="key">Foundation</span> §250</span>
+          <span><span class="key">Portal</span> §251 · VERIFY</span>
+          <a href="/verify-public/?id=WINDI-S250-LANDING-FOUNDATION-20260511">verificar receipt</a>
+        </div>
+      </div>
+      <div class="footer-end">
+        <span>Liga IA+H · WINDI Publishing House · Kempten, Bavaria</span>
+        <span class="mono">§251-VERIFY · 2026-05-11</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* Theme toggle */
+    (function(){
+      var root=document.documentElement, btn=document.getElementById('theme-toggle');
+      try{var s=sessionStorage.getItem('windi-theme');if(s==='noir'){root.dataset.theme='noir';document.querySelector('meta[name="theme-color"]').content='#0A0A08';}}catch(e){}
+      btn.onclick=function(){
+        var n=root.dataset.theme==='noir';
+        root.dataset.theme=n?'klar':'noir';
+        document.querySelector('meta[name="theme-color"]').content=n?'#FAFAF8':'#0A0A08';
+        try{sessionStorage.setItem('windi-theme',root.dataset.theme);}catch(e){}
+      };
+    })();
+
+    /* Lang toggle */
+    (function(){
+      var btn=document.getElementById('lang-toggle'), langs=['pt','de','en'], cur='pt';
+      function set(l){
+        cur=l; document.documentElement.lang=l;
+        document.querySelectorAll('[data-i18n]').forEach(function(e){
+          e.querySelectorAll('[lang]').forEach(function(a){a.classList.toggle('active',a.lang===l);});
+        });
+        btn.querySelectorAll('.lang-opt').forEach(function(o){o.setAttribute('aria-current',o.dataset.lang===l?'true':'false');});
+      }
+      btn.onclick=function(){set(langs[(langs.indexOf(cur)+1)%3]);};
+    })();
+  </script>
+</body>
+</html>

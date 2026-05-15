@@ -1335,7 +1335,20 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
 
     <div class="sl-sec" style="margin-top:6px" data-i18n="sbDocsTitle">Dokumente</div>
     <div id="sb-docs-list">
-      <div class="sl-doc-empty" data-i18n="sbDocsEmpty" style="font-size:10px;color:var(--ink-4);padding:8px 12px;font-style:italic;">Noch keine Dokumente</div>
+      <!-- Demo Documents: Silent Governance in Action -->
+      <div class="sl-doc demo-doc" onclick="loadDemoDocument('landing')" data-demo="landing">
+        <span class="sl-dot" style="background:var(--gold)"></span>
+        <span data-i18n="demoLanding">Landing Page · Demo</span>
+      </div>
+      <div class="sl-doc demo-doc" onclick="loadDemoDocument('nda')" data-demo="nda">
+        <span class="sl-dot" style="background:var(--green)"></span>
+        <span data-i18n="demoNDA">NDA · Sealed</span>
+      </div>
+      <div class="sl-doc demo-doc" onclick="loadDemoDocument('compliance')" data-demo="compliance">
+        <span class="sl-dot" style="background:var(--blue)"></span>
+        <span data-i18n="demoCompliance">AI Act Audit · Sealed</span>
+      </div>
+      <div class="sl-doc-empty" data-i18n="sbDocsEmpty" style="font-size:10px;color:var(--ink-4);padding:8px 12px;font-style:italic;display:none;">Noch keine Dokumente</div>
     </div>
 
     <div class="sl-sec" style="margin-top:6px">Verifikation</div>
@@ -2141,8 +2154,32 @@ function clearPreviousSession() {
 // DOMContentLoaded — Initialize
 // ══════════════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', function() {
+  // Check for Demo Mode
+  if (window.WINDI_DEMO_MODE) {
+    console.log('[WINDI] Demo Mode detected — loading demo content');
+    // Create fake wallet for demo
+    var demoWallet = {
+      did: 'did:windi:demo-visitor-001',
+      wallet_id: 'demo-wallet',
+      name: 'Demo Visitor',
+      tier: 'FREE',
+      pioneer: 'DEMO',
+      email: 'demo@windi-domain.com'
+    };
+    sessionStorage.setItem('windi_sites_wallet', JSON.stringify(demoWallet));
+
+    // Load first demo document after short delay
+    setTimeout(function() {
+      loadDemoDocument('landing');
+      // Show demo banner
+      showDemoBanner();
+    }, 500);
+  }
+
   // Phase 3: Clear orphan sessions but preserve wallet
-  clearPreviousSession();
+  if (!window.WINDI_DEMO_MODE) {
+    clearPreviousSession();
+  }
 
   // Init lang from localStorage
   var savedLang = localStorage.getItem('windi-lang');
@@ -2891,6 +2928,264 @@ function loadVCDemo() {
 
 console.log('[WINDI LAW] AI Draft Module v1.0.0 loaded');
 console.log('[WINDI LAW] §137 Streaming Module loaded');
+
+// ══════════════════════════════════════════════════════════════
+// DEMO CONTENT MODULE — Proof of Product
+// Shows sealed documents demonstrating Silent Governance
+// ══════════════════════════════════════════════════════════════
+
+var DEMO_DOCUMENTS = {
+  landing: {
+    title: 'Kanzlei Weber · Landing Page',
+    badge: 'SITES',
+    badgeClass: 'legal',
+    receipt: 'WINDI-SITES-DEMO-20260503-LANDING-F8A92C01',
+    hash: 'sha256:f8a92c01b4e7d3a5c6f9e8d2b1a0c3f4e5d6a7b8c9d0e1f2a3b4c5d6e7f8a9b0',
+    sealed: '2026-05-03T08:45:12Z',
+    invariants: ['I9', 'I11', 'I14'],
+    content: `<h1>KANZLEI WEBER & PARTNER</h1>
+<h2>Rechtsberatung der nächsten Generation</h2>
+
+<p><strong>HERO SECTION</strong></p>
+<p>Ihre Rechtssicherheit. Unsere Technologie. Prüfbar für immer.</p>
+
+<p><strong>PROBLEM SECTION</strong></p>
+<p>Rechtliche Dokumente verschwinden. Verträge werden angefochten. Beweise verlieren ihre Kraft.</p>
+
+<p><strong>SOLUTION SECTION</strong></p>
+<p>Mit WINDI-Siegelung erhält jedes Dokument einen kryptographischen Fingerabdruck, der sofort und dauerhaft verifizierbar ist.</p>
+
+<p><strong>BENEFITS</strong></p>
+<ul>
+  <li>✓ SHA-256 Beweiskette</li>
+  <li>✓ QR-Verifikation in Sekunden</li>
+  <li>✓ ZPO-konform · eIDAS-ready</li>
+</ul>
+
+<p style="color:#8B6914;font-family:JetBrains Mono,monospace;font-size:10px;">[VERIFY: claim] — Client metrics require real data</p>
+<p style="color:#8B6914;font-family:JetBrains Mono,monospace;font-size:10px;">[CLIENT_LOGO_1] [CLIENT_LOGO_2] [CLIENT_LOGO_3]</p>`,
+    verifyUrl: 'https://windi-domain.com/verify-public/web/verify.html?id=WINDI-SITES-DEMO-20260503-LANDING-F8A92C01'
+  },
+
+  nda: {
+    title: 'NDA · Muster GmbH ↔ Partner AG',
+    badge: 'LEGAL',
+    badgeClass: 'legal',
+    receipt: 'WINDI-LAW-NDA-20260502-SEALED-3B7F1D92',
+    hash: 'sha256:3b7f1d92c8e4a6f0d2b9e1c3a5f7d8b0e2c4a6f8d0b2e4c6a8f0d2b4e6c8a0f2',
+    sealed: '2026-05-02T14:22:33Z',
+    invariants: ['I9', 'I11', 'I12'],
+    content: `<h1 style="text-align:center">GEHEIMHALTUNGSVEREINBARUNG (NDA)</h1>
+
+<p><strong>PARTEIEN</strong></p>
+<p>Muster GmbH, Musterstraße 1, 80331 München<br>
+<em>("Offenlegende Partei")</em></p>
+<p>Partner AG, Partnerweg 10, 10115 Berlin<br>
+<em>("Empfangende Partei")</em></p>
+
+<h2>§1 GEGENSTAND</h2>
+<p>Die Parteien beabsichtigen, über eine potenzielle geschäftliche Zusammenarbeit zu verhandeln. Im Rahmen dieser Verhandlungen werden vertrauliche Informationen ausgetauscht.</p>
+
+<h2>§2 VERTRAULICHE INFORMATIONEN</h2>
+<p>Als vertraulich gelten alle technischen, geschäftlichen und finanziellen Informationen, die als "VERTRAULICH" gekennzeichnet sind oder deren vertraulicher Charakter sich aus den Umständen ergibt.</p>
+
+<h2>§3 LAUFZEIT</h2>
+<p>Diese Vereinbarung gilt für 3 Jahre ab Unterzeichnung. Die Geheimhaltungspflichten überdauern das Ende um weitere 2 Jahre.</p>
+
+<p style="background:#EAF3DE;padding:10px;border-radius:6px;font-size:11px;">
+<strong>✓ ZPO §273 konform</strong> · Beweissicherung durch SHA-256 Hash<br>
+<strong>✓ GDPR Art.28 konform</strong> · Verarbeitung personenbezogener Daten geregelt
+</p>`,
+    verifyUrl: 'https://windi-domain.com/verify-public/web/verify.html?id=WINDI-LAW-NDA-20260502-SEALED-3B7F1D92'
+  },
+
+  compliance: {
+    title: 'EU AI Act × DSGVO Audit',
+    badge: 'COMPLY',
+    badgeClass: 'comply',
+    receipt: 'WINDI-COMPLY-AIACT-20260501-AUDIT-7E4C9A83',
+    hash: 'sha256:7e4c9a83f1d2b0e6c8a4f2d0b6e8c4a2f0d8b6e4c2a0f8d6b4e2c0a8f6d4b2e0',
+    sealed: '2026-05-01T16:45:00Z',
+    invariants: ['I9', 'I11', 'I13', 'I14'],
+    content: `<h1>EU AI ACT × DSGVO COMPLIANCE-ANALYSE</h1>
+<p><em>Erstellt für: Kanzlei Berlin · 15 Anwälte · LLM-Einsatz für Vertragsanalyse</em></p>
+
+<h2>EXECUTIVE SUMMARY</h2>
+<p>Die Nutzung von LLM-Systemen für Vertragsanalyse fällt unter <strong>Hochrisiko-KI</strong> (Art. 6 AI Act). Gleichzeitig gelten DSGVO-Anforderungen für die Verarbeitung personenbezogener Daten in Verträgen.</p>
+
+<h2>ÜBERSCHNEIDUNGEN</h2>
+<table style="width:100%;border-collapse:collapse;font-size:11px;">
+<tr style="background:#EAF3DE;"><th style="padding:8px;border:1px solid #ccc;">Anforderung</th><th style="border:1px solid #ccc;">AI Act</th><th style="border:1px solid #ccc;">DSGVO</th></tr>
+<tr><td style="padding:8px;border:1px solid #ccc;">Risikobewertung</td><td style="border:1px solid #ccc;">Art. 9</td><td style="border:1px solid #ccc;">Art. 35 DSFA</td></tr>
+<tr><td style="padding:8px;border:1px solid #ccc;">Transparenz</td><td style="border:1px solid #ccc;">Art. 13</td><td style="border:1px solid #ccc;">Art. 13-14</td></tr>
+<tr><td style="padding:8px;border:1px solid #ccc;">Menschliche Aufsicht</td><td style="border:1px solid #ccc;">Art. 14</td><td style="border:1px solid #ccc;">Art. 22</td></tr>
+</table>
+
+<h2>EMPFEHLUNGEN</h2>
+<ul>
+<li>✓ Integrierte Risikobewertung (AI Act + DSFA)</li>
+<li>✓ Human-in-the-Loop für Vertragsentscheidungen</li>
+<li>✓ Dokumentation aller LLM-Outputs im Forensic Ledger</li>
+</ul>
+
+<p style="color:#8B6914;font-family:JetBrains Mono,monospace;font-size:10px;">[VERIFY: Art. 6 classification] — Requires legal review</p>`,
+    verifyUrl: 'https://windi-domain.com/verify-public/web/verify.html?id=WINDI-COMPLY-AIACT-20260501-AUDIT-7E4C9A83'
+  }
+};
+
+function loadDemoDocument(docId) {
+  var demo = DEMO_DOCUMENTS[docId];
+  if (!demo) return;
+
+  // Update sidebar selection
+  document.querySelectorAll('.sl-doc').forEach(function(d) { d.classList.remove('on'); });
+  var selectedDoc = document.querySelector('.sl-doc[data-demo="' + docId + '"]');
+  if (selectedDoc) selectedDoc.classList.add('on');
+
+  // Switch to active view
+  document.getElementById('st-empty').style.display = 'none';
+  document.getElementById('st-active').style.display = 'flex';
+  document.getElementById('doc-empty-state').style.display = 'none';
+  document.getElementById('doc-content').style.display = 'block';
+
+  // Show header
+  var docHdr = document.getElementById('doc-hdr-dynamic');
+  docHdr.style.display = 'flex';
+  document.getElementById('doc-badge').textContent = demo.badge;
+  document.getElementById('doc-badge').className = 'dbadge ' + demo.badgeClass;
+  document.getElementById('doc-title').textContent = demo.title;
+
+  // Show agent response area
+  var agentResp = document.getElementById('agent-response');
+  agentResp.style.display = 'block';
+  document.getElementById('agent-icon').textContent = demo.badge === 'SITES' ? '🌐' : (demo.badge === 'COMPLY' ? '✓' : '⚖️');
+  document.getElementById('agent-name').textContent = 'W-' + demo.badge + '-001 · ' + t('demoSealed') || 'SEALED';
+
+  // Load content into Quill
+  if (quillEditor) {
+    quillEditor.root.innerHTML = demo.content;
+  } else {
+    document.getElementById('quill-editor').innerHTML = demo.content;
+  }
+
+  // Show forensic actions
+  var agentActions = document.getElementById('agent-actions');
+  agentActions.style.display = 'block';
+  document.getElementById('agent-hash').textContent = demo.hash.substring(0, 24) + '…';
+
+  // Update inspector
+  updateDemoInspector(demo);
+
+  // Open inspector
+  var insp = document.getElementById('inspector');
+  insp.classList.remove('collapsed');
+  inspOpen = true;
+  document.getElementById('itoggle').textContent = '‹';
+
+  console.log('[DEMO] Loaded document:', docId, demo.receipt);
+}
+
+function updateDemoInspector(demo) {
+  // Update inspector fields with demo data
+  var inspBlocks = document.querySelectorAll('#inspector .insp-block');
+
+  if (inspBlocks.length >= 7) {
+    // Block 0: Typ
+    inspBlocks[0].innerHTML = '<div class="insp-lbl">Typ</div>' +
+      '<div class="insp-val">' + demo.title.split('·')[0].trim() + '</div>';
+
+    // Block 1: Agent
+    inspBlocks[1].innerHTML = '<div class="insp-lbl">Agent</div>' +
+      '<div class="insp-val gold">W-' + demo.badge + '-001</div>';
+
+    // Block 2: Status
+    inspBlocks[2].innerHTML = '<div class="insp-lbl">Status</div>' +
+      '<div class="insp-val green">C6 · SEALED ✅</div>';
+
+    // Block 3: SHA-256
+    inspBlocks[3].innerHTML = '<div class="insp-lbl">SHA-256</div>' +
+      '<div class="insp-mono" style="cursor:pointer;" onclick="copyToClipboard(\'' + demo.hash + '\')" title="Click to copy">' +
+      demo.hash.substring(7, 23) + '…</div>';
+
+    // Block 6: Invariants
+    if (inspBlocks[6]) {
+      inspBlocks[6].innerHTML = demo.invariants.map(function(inv) {
+        var desc = {
+          'I9': 'Keine autonome Eskalation',
+          'I11': 'Kryptografische Permanenz',
+          'I12': 'Sprachsouveränität',
+          'I13': 'Konvergenz garantiert',
+          'I14': 'Keine Placeholders'
+        };
+        return '<div class="inv-item">' + inv + ' · ' + (desc[inv] || '') + '</div>';
+      }).join('');
+    }
+  }
+
+  // Add receipt info below SHA-256
+  if (inspBlocks.length >= 4) {
+    var hashBlock = inspBlocks[3];
+    var receiptHtml = '<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);">' +
+      '<div class="insp-lbl">RECEIPT</div>' +
+      '<div class="insp-mono" style="font-size:8px;word-break:break-all;cursor:pointer;" onclick="window.open(\'' + demo.verifyUrl + '\',\'_blank\')" title="Click to verify">' +
+      demo.receipt + '</div></div>';
+
+    // Check if receipt already added
+    if (!hashBlock.innerHTML.includes('RECEIPT')) {
+      hashBlock.innerHTML += receiptHtml;
+    }
+  }
+}
+
+// Add demo translations
+if (typeof LANG !== 'undefined') {
+  LANG.de.demoLanding = 'Landing Page · Demo';
+  LANG.de.demoNDA = 'NDA · Versiegelt';
+  LANG.de.demoCompliance = 'AI Act Audit · Versiegelt';
+  LANG.de.demoSealed = 'VERSIEGELT';
+
+  LANG.en.demoLanding = 'Landing Page · Demo';
+  LANG.en.demoNDA = 'NDA · Sealed';
+  LANG.en.demoCompliance = 'AI Act Audit · Sealed';
+  LANG.en.demoSealed = 'SEALED';
+
+  LANG.pt.demoLanding = 'Landing Page · Demo';
+  LANG.pt.demoNDA = 'NDA · Selado';
+  LANG.pt.demoCompliance = 'AI Act Audit · Selado';
+  LANG.pt.demoSealed = 'SELADO';
+}
+
+console.log('[WINDI SITES] Demo Content Module loaded — 3 documents available');
+
+function showDemoBanner() {
+  // Create demo banner
+  var banner = document.createElement('div');
+  banner.id = 'demo-banner';
+  banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:1000;' +
+    'background:linear-gradient(135deg,#8B6914,#C4960A);color:white;' +
+    'padding:8px 20px;font-size:12px;font-weight:500;text-align:center;' +
+    'display:flex;align-items:center;justify-content:center;gap:12px;';
+
+  banner.innerHTML = '<span>🎯 DEMO MODE — Explore sealed documents without registration</span>' +
+    '<a href="/sites/gate" style="color:white;background:rgba(255,255,255,0.2);' +
+    'padding:4px 12px;border-radius:12px;text-decoration:none;font-size:11px;">' +
+    'Create Account →</a>' +
+    '<button onclick="this.parentElement.remove()" style="background:none;border:none;' +
+    'color:rgba(255,255,255,0.7);cursor:pointer;font-size:16px;margin-left:8px;">×</button>';
+
+  document.body.prepend(banner);
+
+  // Adjust body padding
+  document.body.style.paddingTop = '40px';
+}
+
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text).then(function() {
+    console.log('[WINDI] Copied to clipboard:', text.substring(0, 20) + '...');
+  }).catch(function(err) {
+    console.error('[WINDI] Clipboard error:', err);
+  });
+}
 
 // ══════════════════════════════════════════════════════════════
 // §122 — DIRECT PROMPT MODULE (LAW Agent Corps Integration)

@@ -1,0 +1,77 @@
+═══════════════════════════════════════════════════════════════
+W-MAIL-001 — DKIM DNS Configuration for Strato Panel
+Generated: 2026-04-29
+═══════════════════════════════════════════════════════════════
+
+📋 ADD THIS TXT RECORD TO STRATO DNS PANEL:
+
+Name:  rsa._domainkey
+Type:  TXT
+Value: v=DKIM1; h=sha256; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0LjSfVp3U8wb4PwGb7WDvkb76k6qYVXHJS9rFg0dHockP8SAORnruwVbDTT06ZA4Iyilj2RSft4EnYNnh4JXioDau2B44O99RUwPEZ9kHeS7xW8jhOvlUeOr1evn3lE91gu2h8yG8wKounJtUKlSNlKfPmaQgd6LGBbeMMRUoYfUm8QJSd682Lnk47/4bsMW+RnVkTKoDNyZU191bgqCLAga12e7FszQc1gGYJ9naaWd8G3qKs2GhCFGPC3C+cHHbKoDSSezEsfVvZ715Iwca6CRJj90wv2EDVbU3X/ldLSS0uG5RuyOGVLBCPAuS2cUf+QacE1Q/UML5pnGfdZtZwIDAQAB
+
+═══════════════════════════════════════════════════════════════
+
+Step-by-Step Instructions:
+
+1. Login to Strato DNS panel: https://www.strato.de/apps/CustomerService
+2. Navigate to: Domains → windisites.de → DNS Settings
+3. Click "Add TXT Record" (same place where you added SPF/DMARC)
+4. Fill in:
+   - Name/Hostname: rsa._domainkey
+   - Type: TXT
+   - Value: (copy the entire value above, one continuous line)
+5. Save changes
+6. Wait 5-30 minutes for DNS propagation
+
+═══════════════════════════════════════════════════════════════
+
+Verification (after propagation):
+
+host -t TXT rsa._domainkey.windisites.de
+
+Expected output:
+rsa._domainkey.windisites.de descriptive text "v=DKIM1; h=sha256; k=rsa; p=MIIBIjAN..."
+
+═══════════════════════════════════════════════════════════════
+
+Technical Details:
+
+DKIM Selector:     rsa
+Key Type:          RSA-2048
+Hash Algorithm:    SHA-256
+Domain:            windisites.de
+Full FQDN:         rsa._domainkey.windisites.de
+
+Private Key Location (container):
+/tmp/docker-mailserver/opendkim/keys/windisites.de/rsa.private
+
+Public Key Location (container):
+/tmp/docker-mailserver/opendkim/keys/windisites.de/rsa.txt
+
+═══════════════════════════════════════════════════════════════
+
+Next Phase: SnappyMail nginx Configuration
+
+After DKIM DNS is propagated, configure nginx reverse proxy:
+
+Location: /etc/nginx/sites-enabled/windi-domain.com
+
+Add this block INSIDE the server {} section:
+
+    # W-MAIL-001 — SnappyMail WebUI
+    location /mail/ {
+        proxy_pass http://127.0.0.1:8200/;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+Then:
+    sudo nginx -t
+    sudo systemctl reload nginx
+
+Access: https://windi-domain.com/mail/
+
+═══════════════════════════════════════════════════════════════

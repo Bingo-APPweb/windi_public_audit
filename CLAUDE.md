@@ -1,12 +1,12 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.50.0
-**Sealed:** 2026-05-10 · §249 Sessão Fundacional MANIFESTO + FOUNDATION
+**Version:** 2.55.0
+**Sealed:** 2026-05-15 · §246-IMPL-bis G3 Merkle Genesis
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
 > **Ficheiros relacionados:** `CHANGELOG.md` (histórico) · `ARCHITECTURE.md` (código técnico)
-> **Documentos Fundacionais:** `WINDI-MANIFESTO.md` · `FOUNDATION-AS-WINDI-MEANS-IT.md`
+> **Documentos Fundacionais:** `WINDI-MANIFESTO.md` · `FOUNDATION-AS-WINDI-MEANS-IT.md` · `NOTEBOOK-001-HYBRID-COGNITIVE-SYSTEMS.md`
 
 ## 📚 Overflow Policy (17 Mar 2026)
 Hard limit: **32KB**. Último fix: 09 Abr 2026 (31.9KB → ~28KB).
@@ -109,6 +109,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-CAP-001 | :8194 | I1,I9,I11,I14 | **LIVE** · Capability Tokens · Single-use · SaaS Gate · §229 |
 | W-BERCARIO-001 | :8195 | I1,I9,I11,I14 | **LIVE** · Plenitude Tracker · Service Maturity · §230 |
 | W-CORTEX-001 | — | I1,I9,I10,I14 | **SEALED** · Canal Único Soberano · 3-Tier Routing · §241 `04C67B81` |
+| W-BIND-001 | script | I1,I9,I11,I13,I14 | **SEALED** · Cognitive Bind Module · Admissible Re-entry · §261 `7FDA926F` |
 | WINDI-PORTAL | static | — | **LIVE** · Internal Control Center · 35 Services · 7 Categories |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
@@ -135,6 +136,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | I14 | Explicit Failure Principle | Dados ausentes = erro explícito. Placeholders mascaram bugs. **IRREMEDIÁVEL.** |
 | I16 | Creator Cartographic Sovereignty | Mapa pertence ao criador. GPS nunca vendido. Publicação = opt-in. |
 | I17 | Session/Identity Separation | Session prova presença. Identity prova agência. Frontend reflete, não cria. |
+| I18 | Organic Constitutional Growth | Múltiplas frentes simultâneas. Spine + I1-I9 + human approval. **STRUCTURAL.** |
 | C6 | Invariante Fiscal | IA prepara. Humano aprova. ELSTER envia. Nunca autónomo. |
 
 ### §146 — I14: Proibição de Placeholders (IRREMEDIÁVEL)
@@ -170,7 +172,7 @@ Nenhum endpoint retorna valores default que mascarem dados ausentes.
 
 **§150 W-SEC-001:** :8144 · Security Sentinel · Dual Correlation · `BD09970F`
 **§151 W-DRAGON-001:** :8122 · 16×16 SHA-256 Glyph Grid · Dragon Shadow Forest
-**§153 W-STATE-CORE-006:** :8145 · Verify Public · `/api/receipts/{id}`
+**§153 W-STATE-CORE-006:** :8114 · Verify Public · `/api/receipts/{id}` *(§267 errata)*
 **§163 DECRETO-001:** Árvore Viva · TRUNK→SAP→BRANCHES→LEAVES→FRUITS
 > **Full details:** `CLAUDE-HISTORY.md` § §150-163
 
@@ -385,6 +387,30 @@ Input → 🛡️ Guardian (valida I1-I9+I11) → 🏗️ Architect (constrói) 
 
 **Documento:** `/opt/windi/docs/S248-LEI-V-FOUNDATION-DIRECTION.md`
 
+### 3.7 Lei VII — Organic Constitutional Growth (§250)
+
+> **"A maturação orgânica, a reutilização estrutural e a convergência filosófica precedem qualquer pressão externa."**
+
+**Status:** STRUCTURAL (REMEDIABLE) · **Receipt:** `D00095E0` · **Invariants:** I1, I9, I18
+
+Frente nova é constitucionalmente WINDI se:
+- **(a)** Reutiliza Spine (DID Genesis, Ledger, Receipts)
+- **(b)** Preserva I1–I9 e §248 Foundation
+- **(c)** Tem human approval explícito (I9)
+
+**Violações:** Hypergrowth, aceleração compulsória, amputação prematura de frentes
+**Documento:** `/opt/windi/docs/S250-LEI-VII-ORGANIC-GROWTH.md`
+
+### 3.8 .wcap v0.1.0 — WINDI Capsule Schema (§250)
+
+> **"Runtime invisível. Produto visível."**
+
+**Status:** Tijolo Berçário · **Receipt:** `C52AA629` · **Invariants:** I9, I11, I12, I14, I16, I18
+
+Formato de cápsula contextual soberana. Descendente de UMI (2001).
+**5 Patches:** Versioning robusto · I9 obrigatório · manifest_hash+Ed25519 · DID pattern · Receipt pattern
+**Ficheiros:** `/opt/windi/schemas/wcap-v0.1.0.json` · `wcap_validator.py`
+
 ### §137 — Medium-Agnostic Truth Distribution (IRREMEDIÁVEL)
 
 > **"O medium aponta para a prova. Nunca carrega a prova."**
@@ -579,7 +605,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | :8126 | WINDI Travel | 🟢 **LIVE** v1.3.0 |
 | :8127-:8132 | NOMAD/VD-CUT/JOE/MASS/JMPG | 🟢 LIVE |
 | :8140-:8144 | UDB/INTENT-CMD/FEDIVERSE/BRIDGE/SEC | 🟢 LIVE |
-| :8145 | W-STATE-CORE-006 Verify Public | 🟢 **LIVE** |
+| :8114 | W-STATE-CORE-006 Verify Public | 🟢 **LIVE** | *(§267 errata)*
 | :8150 | W-Enterprise-001 AI Compliance | 🟢 **LIVE** |
 | :8151 | W-LAB-001 Governance Laboratory | 🟢 **LIVE** |
 | :8160 | W-CACHE-001 Verifiable Cache | 🟢 **LIVE** |
@@ -602,11 +628,13 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 15 Mai | **§246-IMPL-bis** G3 Merkle Transparency Log GENESIS · `66189307` ✅ |
+| 14 Mai | **§262-§263** WINDI-HIOS + PingPong Protocol · `6F053E65`+`87AAF5BA` ✅ |
+| 12 Mai | **§250** Lei VII I18 Organic Growth + .wcap v0.1.0 Schema · `D00095E0`+`C52AA629` ✅ |
+| 12 Mai | **§255-§257** Foundation Ontology · I12 Trilingual + Notebook 001 + Cognitive Continuity Axiom |
 | 10 Mai | **§249** SESSÃO FUNDACIONAL · MANIFESTO + FOUNDATION · Tese Ontológica IA+H |
 | 07 Mai | **§246** W-SITES × W-MAIL Bridge · 6/6 selos + T7 adversarial · `4CE30817`+`4DD83B15` ✅ |
 | 05 Mai | **§245** Editorial Doctrine · `3C5638F9` ✅ |
-| 03 Mai | **§235+241** windisites.de LIVE · `1BE93BB4` ✅ |
-| 29 Apr | **§224-226** W-MAIL-001 DACP-v1 ✅ |
 
 > **Full history:** `CLAUDE-HISTORY.md`
 
@@ -650,6 +678,35 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 ---
 
 ## BACKLOG — Próximas Sessões
+
+### SPRINT ACTUAL — G3 Merkle + Foundation Portals (15 Mai 2026)
+
+**Contexto:** G3 Merkle GENESIS LIVE. §262-§263 selaram WINDI-HIOS naming + PingPong Protocol.
+
+**G3 Merkle (✅ COMPLETO 15 Mai):**
+
+| Item | Estado |
+|------|--------|
+| Genesis Root `66189307...` | ✅ IRREMEDIÁVEL |
+| 57,281 folhas | ✅ Bootstrap completo |
+| Endpoints :8101 | ✅ 4 LIVE |
+| Seal `WINDI-G3-MERKLE-GENESIS-20260515171530` | ✅ |
+
+**Bloco A — Trabalho Técnico (PENDENTE):**
+- [ ] DE ortografia sweep: ae→ä, oe→ö, ue→ü, ss→ß em 4 portais
+- [ ] /enterprise/: Manifesto+CTA · Sie · EU AI Act + GDPR + Liga IA+H
+- [ ] Stub lexicon §XXX (15-20 termos críticos trilíngue)
+
+**WINDI-HIOS Sprint Pending:**
+- [ ] **§264 CBP-JSON Schema v0.3** — Architect propõe, Guardian revê
+- [ ] **§265 Drift Monitor Metrics** — 3 métricas mínimas
+- [ ] **G4 Errata Protocol** — Correcções sem quebrar Merkle (deferido)
+
+**Scaffold:**
+- [ ] **Notebook 002: Continuity Symmetry** — "A continuidade humana também reside na estrutura"
+- [ ] **Notebook 003: Árvore** — "O selo que regista o nascimento da árvore é a primeira semente que ela acolhe"
+
+---
 
 ### P0 — Crítico
 - [ ] **§139 WINDI-LAW Painel de Anexos** — Lista persistente · SHA · Suporte múltiplos ficheiros
@@ -707,6 +764,11 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | **ARCH** | `5D8513D7` | §246-D4 Rate Limiting + per-DID Quotas |
 | **ARCH** | `4CE30817` | §246-D5 Receipt Symmetry — Chain Architecture |
 | **ARCH** | `4DD83B15` | §246-D5-T7 Adversarial Protocol — Gate Constitucional |
+| **FOUNDATION** | `007bd9f1e` | §255 I12 Trilingual Compliance — Foundation Portals |
+| **FOUNDATION** | `82d2425c5` | §255-bis Linguistic Systems Engineering |
+| **FOUNDATION** | `39a332252` | §256 Notebook 001 — Field Notes on Hybrid Cognitive Systems |
+| **AXIOM** | `853da1515` | §257 Cognitive Continuity Axiom |
+| **MERKLE** | `66189307` | §246-IMPL-bis G3 Merkle Genesis — 57,281 leaves |
 
 > **Full receipts list:** `CLAUDE-HISTORY.md` § Produtos SEALED
 
@@ -799,3 +861,45 @@ Este protocolo nasce do reconhecimento explícito de um anti-pattern vivido:
 §236 estende I9 (Prohibition of Autonomy Escalation) ao boundary temporal entre sessões LLM. Mesma lógica que governa o DID Berçário aplicada a agente: identidade soberana através do tempo, suportada por leitura e escrita disciplinadas.
 
 §236 é a versão-Claude da Lei I do DID Berçário: *Existência antes de Acção*.
+
+---
+
+## §261 · W-BIND-001 Cognitive Bind Module
+
+> **"O Cognitive Bind Module não dá memória à IA. Ele dá admissibilidade ao reinício cognitivo."**
+
+```
+Status:     SEALED · v0.2.0
+Receipt:    WINDI-S261-COGNITIVE-BIND-MODULE-20260513151238-7FDA926F
+Invariants: I1, I9, I11, I13, I14
+doc_type:   cognitive_handoff
+```
+
+### Definição Canónica
+
+Primitive WINDI para gerar, validar e transportar estado mínimo, verificável e epistemicamente honesto para reinício de sessões híbridas IA+H. Continuidade externa disciplinada, não memória interna simulada.
+
+### Bind Integrity Scoring
+
+| Score | Nível | Re-entry |
+|-------|-------|----------|
+| 90-100 | FULL | ADMISSIBLE |
+| 70-89 | PARTIAL | DEGRADED |
+| 50-69 | MINIMAL | RISKY |
+| <50 | BROKEN | **REFUSED** |
+
+### 5 Contenções Constitucionais
+
+- **C1:** Score mede admissibilidade, não inteligência
+- **C2:** REFUSED é fail-safe, não punição
+- **C3:** Bind preserva admissibilidade, não estado runtime perfeito
+- **C4:** Cognitive Handoff ≠ consciência contínua
+- **C5:** O Humano é o verdadeiro continuity carrier
+
+### Uso
+
+```bash
+bash /opt/windi/scripts/cognitive-bind-module.sh generate
+```
+
+> **Full details:** `CLAUDE-HISTORY.md` § §261

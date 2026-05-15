@@ -46,12 +46,107 @@ ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY", "")
 BASE_URL = os.getenv("BASE_URL", "https://windi-domain.com")
 
+# §244 — LEXICON GATE (Mandatory Middleware)
+LEXICON_URL = os.getenv("LEXICON_URL", "http://127.0.0.1:8193/api/lexicon/constitutional")
+LIBRARY_URL = os.getenv("LIBRARY_URL", "http://127.0.0.1:8091/library/context")
+
 # LLM routing: HIGH → Claude · FREE/MED → Mistral
 ROUTING = {
     "HIGH": "claude-sonnet-4-20250514",
     "MED":  "mistral-small-latest",
     "FREE": "mistral-small-latest",
 }
+
+
+# ─── §244 LEXICON GATE — Constitutional Drift Analysis ────────────────────────
+
+def get_constitutional_reference() -> str:
+    """Get constitutional reference from W-LIB-001 for drift comparison."""
+    try:
+        resp = requests.post(
+            LIBRARY_URL,
+            json={
+                "requesting_agent": "W-SITES-AI-DRAFT",
+                "action_type": "DECISION",
+                "include": "invariants,principles"
+            },
+            timeout=3
+        )
+        if resp.status_code == 200:
+            data = resp.json()
+            # Build reference from invariants
+            parts = []
+            for inv in data.get("invariants", []):
+                if inv.get("id") in ["I9", "I14"]:
+                    parts.append(f"{inv['id']}: {inv.get('name', '')} — {inv.get('impact', '')}")
+            if parts:
+                return " | ".join(parts)
+    except Exception as e:
+        logger.debug(f"[LEXICON] Library unavailable (I10 fallback): {e}")
+    # I10 Fallback — WINDI motto as reference
+    return "AI processes. Human decides. WINDI guarantees."
+
+
+def lexicon_analyze(content: str, governance_level: str = "MED") -> dict:
+    """
+    §244 — Analyze content through W-LEXICON-001 TWO-STAGE constitutional drift.
+
+    Returns:
+        ok: bool — analysis succeeded
+        lexicon_action: str — silent | invite | interrupt | halt
+        drift_score: float — 0.0 (aligned) to 1.0 (severe drift)
+        requires_pho: bool — PHO gate recommended
+        invariants_triggered: list — invariants at risk
+        constitutional_status: str — compliant | drifting | violating
+    """
+    reference = get_constitutional_reference()
+
+    try:
+        resp = requests.post(
+            LEXICON_URL,
+            json={
+                "reference": reference,
+                "candidate": content[:4000],  # Truncate for analysis
+                "governance_level": governance_level,
+                "requesting_agent": "W-SITES-AI-DRAFT"
+            },
+            timeout=30  # Ollama can be slow
+        )
+        if resp.status_code == 200:
+            data = resp.json()
+            # Parse TWO-STAGE response format
+            stage1 = data.get("stage1", {})
+            stage2 = data.get("stage2", {})
+            combined = data.get("combined", {})
+
+            return {
+                "ok": True,
+                "lexicon_action": combined.get("lexicon_action", "silent"),
+                "drift_score": combined.get("drift_score", 0.0) or stage1.get("drift_score", 0.0) or 0.0,
+                "requires_pho": stage2.get("requires_pho", False),
+                "invariants_triggered": [
+                    inv.get("invariant", "") for inv in stage2.get("invariants_triggered", [])
+                ],
+                "constitutional_status": stage2.get("constitutional_status", "compliant"),
+                "stage1": stage1,
+                "stage2": stage2
+            }
+    except requests.Timeout:
+        logger.warning("[LEXICON] Timeout — I10 fallback (proceed with caution)")
+    except Exception as e:
+        logger.warning(f"[LEXICON] Error — I10 fallback: {e}")
+
+    # I10 Fallback — allow operation but flag it
+    return {
+        "ok": False,
+        "lexicon_action": "silent",
+        "drift_score": 0.0,
+        "requires_pho": False,
+        "invariants_triggered": [],
+        "constitutional_status": "FALLBACK_I10",
+        "stage1": None,
+        "stage2": None
+    }
 
 # ─── Legal Document Templates ─────────────────────────────────────────────────
 
@@ -433,16 +528,34 @@ async def seal_draft(req: SealRequest):
     """
     WINDI LAW — AI Draft Sealer
 
-    Pipeline: Human reviews draft → confirms → this endpoint seals to Ledger
+    Pipeline: Human reviews draft → confirms → LEXICON gate → this endpoint seals to Ledger
 
     Invariant G3: Human confirmed seal (frontend I9 modal already shown)
     Invariant I11: Hash calculado do texto FINAL (após edições do humano)
+    §244: LEXICON constitutional drift analysis before seal
     """
     if not req.did or not req.wallet_id:
         raise HTTPException(401, "DID e Wallet obrigatórios · G3: identity required for seal")
 
     if not req.draft_text or len(req.draft_text.strip()) < 50:
         raise HTTPException(400, "draft_text muito curto para selar")
+
+    # §244 — LEXICON GATE: Constitutional drift analysis
+    lexicon_result = lexicon_analyze(req.draft_text, "HIGH")
+
+    # If LEXICON says HALT, block the seal
+    if lexicon_result.get("lexicon_action") == "halt":
+        logger.warning(f"[AI-DRAFT/SEAL] LEXICON HALT — constitutional drift detected · DID:{req.did[:12]}...")
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": "LEXICON_HALT",
+                "message": "Constitutional drift detected — seal blocked",
+                "drift_score": lexicon_result.get("drift_score"),
+                "invariants_triggered": lexicon_result.get("invariants_triggered", []),
+                "action": "Review content for constitutional alignment"
+            }
+        )
 
     # Compute FINAL hash (text as reviewed/edited by human)
     final_hash = hashlib.sha256(req.draft_text.encode("utf-8")).hexdigest()
@@ -453,7 +566,7 @@ async def seal_draft(req: SealRequest):
 
     doc_label = DOC_TYPES.get(req.doc_type, {}).get("de", req.doc_type)
 
-    # Seal to Forensic Ledger
+    # Seal to Forensic Ledger (with LEXICON metadata)
     ledger_payload = {
         "id": receipt_id,
         "actor": req.did,
@@ -466,14 +579,22 @@ async def seal_draft(req: SealRequest):
         "jurisdiction": req.jurisdiction,
         "isp_context": f"AI Draft · {doc_label} · I9+G3 CONFIRMED",
         "declaration": "operator",
-        "tags": ["AI-DRAFT", "I9-APPROVED", "G3-CONFIRMED", f"TIER-{req.tier}"],
+        "tags": ["AI-DRAFT", "I9-APPROVED", "G3-CONFIRMED", f"TIER-{req.tier}", "LEXICON-GATED"],
         "metadata": {
             "draft_id": req.draft_id,
             "tier": req.tier,
             "doc_label": doc_label,
             "invariants": ["I9", "I11", "G3"],
             "eu_ai_act": "Art. 14 — human oversight confirmed",
-            "positioning": "Any AI generates. Only WINDI proves."
+            "positioning": "Any AI generates. Only WINDI proves.",
+            # §244 LEXICON metadata
+            "lexicon": {
+                "gated": True,
+                "action": lexicon_result.get("lexicon_action", "silent"),
+                "drift_score": lexicon_result.get("drift_score", 0.0),
+                "constitutional_status": lexicon_result.get("constitutional_status", "ALIGNED"),
+                "invariants_triggered": lexicon_result.get("invariants_triggered", [])
+            }
         },
     }
 
@@ -490,7 +611,8 @@ async def seal_draft(req: SealRequest):
 
     verify_url = f"{BASE_URL}/verify-public/?id={receipt_id}"
 
-    logger.info(f"[AI-DRAFT/SEAL] {receipt_id} · {final_hash[:16]}... · DID:{req.did[:12]}... · SEALED ✅")
+    lexicon_status = lexicon_result.get("constitutional_status", "ALIGNED")
+    logger.info(f"[AI-DRAFT/SEAL] {receipt_id} · {final_hash[:16]}... · DID:{req.did[:12]}... · LEXICON:{lexicon_status} · SEALED ✅")
 
     return {
         "receipt_id": receipt_id,
@@ -506,6 +628,14 @@ async def seal_draft(req: SealRequest):
             "I9":  "CONFIRMED — human approved generation",
             "G3":  "CONFIRMED — human approved seal",
             "I11": f"SEALED — {final_hash}",
+        },
+        # §244 LEXICON response
+        "lexicon": {
+            "gated": True,
+            "action": lexicon_result.get("lexicon_action", "silent"),
+            "drift_score": lexicon_result.get("drift_score", 0.0),
+            "constitutional_status": lexicon_status,
+            "requires_pho": lexicon_result.get("requires_pho", False)
         },
         "ledger": ledger_data,
         "qr_url": verify_url,
@@ -753,6 +883,7 @@ async def seal_with_video(request: Request):
     Proposta B — Seal Composto: doc_hash + video_hash(es).
     I9 + G3: human_approved=true obrigatório.
     I11: Hash composto = SHA-256(doc_hash + sorted(video_hashes))
+    §244: LEXICON constitutional drift analysis before seal
     """
     body = await request.json()
     did = body.get("did", "")
@@ -761,6 +892,7 @@ async def seal_with_video(request: Request):
     receipt_ids = body.get("vd_cut_receipt_ids", [])
     human_approved = body.get("human_approved", False)
     case_ref = body.get("case_ref", "")
+    doc_content = body.get("doc_content", "")  # Optional: content for LEXICON analysis
 
     # I9 — PHO obrigatório
     if not human_approved:
@@ -774,6 +906,25 @@ async def seal_with_video(request: Request):
         return JSONResponse(
             {"error": "did, doc_hash, video_hashes obrigatórios"},
             status_code=400
+        )
+
+    # §244 — LEXICON GATE: Constitutional drift analysis
+    # For composite seals, analyze case_ref + doc_content if available
+    lexicon_content = f"Case: {case_ref}\n{doc_content}" if doc_content else case_ref or "Composite Evidence"
+    lexicon_result = lexicon_analyze(lexicon_content, "HIGH")
+
+    # If LEXICON says HALT, block the seal
+    if lexicon_result.get("lexicon_action") == "halt":
+        logger.warning(f"[SEAL-COMPOSITE] LEXICON HALT — constitutional drift detected · DID:{did[:12] if did else 'UNKNOWN'}...")
+        return JSONResponse(
+            {
+                "error": "LEXICON_HALT",
+                "message": "Constitutional drift detected — composite seal blocked",
+                "drift_score": lexicon_result.get("drift_score"),
+                "invariants_triggered": lexicon_result.get("invariants_triggered", []),
+                "action": "Review content for constitutional alignment"
+            },
+            status_code=422
         )
 
     # I11 — Hash Composto = SHA-256(doc_hash + video_hashes ordenados)
@@ -795,6 +946,7 @@ async def seal_with_video(request: Request):
         "governance_level": "HIGH",
         "content_hash": composite_hex,
         "sge_score": 1.0,
+        "tags": ["COMPOSITE", "I9-APPROVED", "G3-CONFIRMED", "LEXICON-GATED"],
         "metadata": {
             "composite_type": "doc+video",
             "doc_hash": doc_hash,
@@ -802,14 +954,23 @@ async def seal_with_video(request: Request):
             "video_hashes": video_hashes,
             "vd_cut_receipts": receipt_ids,
             "case_ref": case_ref,
-            "invariants": ["I9", "I11", "G3"]
+            "invariants": ["I9", "I11", "G3"],
+            # §244 LEXICON metadata
+            "lexicon": {
+                "gated": True,
+                "action": lexicon_result.get("lexicon_action", "silent"),
+                "drift_score": lexicon_result.get("drift_score", 0.0),
+                "constitutional_status": lexicon_result.get("constitutional_status", "ALIGNED"),
+                "invariants_triggered": lexicon_result.get("invariants_triggered", [])
+            }
         }
     }
 
     try:
         r = requests.post(LEDGER_URL, json=payload, timeout=5)
         ledger_resp = r.json()
-        logger.info(f"[SEAL-COMPOSITE] Sealed: {receipt_id} · videos={len(video_hashes)}")
+        lexicon_status = lexicon_result.get("constitutional_status", "ALIGNED")
+        logger.info(f"[SEAL-COMPOSITE] Sealed: {receipt_id} · videos={len(video_hashes)} · LEXICON:{lexicon_status}")
     except Exception as e:
         logger.error(f"[SEAL-COMPOSITE] Ledger error: {e}")
         ledger_resp = {"error": str(e)}
@@ -822,6 +983,14 @@ async def seal_with_video(request: Request):
         "video_count": len(video_hashes),
         "video_hashes": video_hashes,
         "vd_cut_receipts": receipt_ids,
+        # §244 LEXICON response
+        "lexicon": {
+            "gated": True,
+            "action": lexicon_result.get("lexicon_action", "silent"),
+            "drift_score": lexicon_result.get("drift_score", 0.0),
+            "constitutional_status": lexicon_result.get("constitutional_status", "ALIGNED"),
+            "requires_pho": lexicon_result.get("requires_pho", False)
+        },
         "ledger": ledger_resp,
         "verify_url": f"https://windi-domain.com/verify-public/?id={receipt_id}"
     })

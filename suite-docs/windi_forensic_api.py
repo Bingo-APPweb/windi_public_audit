@@ -57,6 +57,15 @@ from forensic_ledger import (
     get_receipts_by_wallet,
 )
 
+# G3 Merkle Transparency Log (§246-IMPL-bis)
+from merkle_service import (
+    get_current_root,
+    get_proof_for_receipt,
+    get_leaf_by_receipt,
+    verify_proof,
+    compute_leaf_hash,
+)
+
 # ═══════════════════════════════════════════════════
 # Configuration
 # ═══════════════════════════════════════════════════
@@ -348,6 +357,111 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
 
             self._json(200, {"ok": True, **result})
 
+        # ═══════════════════════════════════════════════════════════
+        # G3 Merkle Transparency Log Endpoints (§246-IMPL-bis)
+        # Genesis: 66189307d9094eab1353f9352d141d3bd45a633dada9fe4254c8c56fa9ac59cb
+        # Invariants: I9, I11 (IRREMEDIÁVEL), I14
+        # ═══════════════════════════════════════════════════════════
+
+        # ── /api/merkle/root ──
+        elif path == "/api/merkle/root":
+            root = get_current_root()
+            if root:
+                self._json(200, {
+                    "ok": True,
+                    "root_hash": root["root_hash"],
+                    "leaf_count": root["leaf_count"],
+                    "created_at": root["created_at"],
+                    "predecessor": root.get("predecessor"),
+                    "invariant": "I11 — IRREMEDIÁVEL",
+                    "spec": "§246-IMPL-bis G3 MERKLE"
+                })
+            else:
+                self._json(404, {
+                    "ok": False,
+                    "error": "no_merkle_root",
+                    "message": "Merkle tree not initialized"
+                })
+
+        # ── /api/merkle/proof/{receipt_id} ──
+        elif path.startswith("/api/merkle/proof/") and path.count("/") == 4:
+            receipt_id = path.split("/")[-1]
+            if not receipt_id:
+                self._json(400, {"ok": False, "error": "receipt_id required"})
+                return
+
+            proof_data = get_proof_for_receipt(receipt_id)
+            if proof_data:
+                self._json(200, {
+                    "ok": True,
+                    **proof_data,
+                    "invariant": "I11",
+                    "spec": "§246-IMPL-bis G3 MERKLE"
+                })
+            else:
+                self._json(404, {
+                    "ok": False,
+                    "error": "not_found",
+                    "receipt_id": receipt_id,
+                    "message": "Receipt not found in Merkle log"
+                })
+
+        # ── /api/merkle/verify/{receipt_id} ──
+        elif path.startswith("/api/merkle/verify/") and path.count("/") == 4:
+            receipt_id = path.split("/")[-1]
+            if not receipt_id:
+                self._json(400, {"ok": False, "error": "receipt_id required"})
+                return
+
+            # Get receipt to compute leaf hash
+            receipt = get_receipt(receipt_id)
+            if not receipt:
+                self._json(404, {
+                    "ok": False,
+                    "error": "receipt_not_found",
+                    "receipt_id": receipt_id
+                })
+                return
+
+            # Get proof
+            proof_data = get_proof_for_receipt(receipt_id)
+            if not proof_data:
+                self._json(404, {
+                    "ok": False,
+                    "error": "not_in_merkle_log",
+                    "receipt_id": receipt_id,
+                    "message": "Receipt exists but not in Merkle log"
+                })
+                return
+
+            # Verify
+            leaf_hash = compute_leaf_hash(receipt_id, receipt["content_hash"])
+            is_valid = verify_proof(leaf_hash, proof_data["proof"], proof_data["root_hash"])
+
+            self._json(200, {
+                "ok": True,
+                "verified": is_valid,
+                "receipt_id": receipt_id,
+                "leaf_hash": leaf_hash,
+                "root_hash": proof_data["root_hash"],
+                "leaf_index": proof_data["leaf_index"],
+                "invariant": "I11",
+                "spec": "§246-IMPL-bis G3 MERKLE"
+            })
+
+        # ── /api/merkle/leaf/{receipt_id} ──
+        elif path.startswith("/api/merkle/leaf/") and path.count("/") == 4:
+            receipt_id = path.split("/")[-1]
+            leaf = get_leaf_by_receipt(receipt_id)
+            if leaf:
+                self._json(200, {"ok": True, **leaf})
+            else:
+                self._json(404, {
+                    "ok": False,
+                    "error": "not_found",
+                    "receipt_id": receipt_id
+                })
+
         # ── /api/warroom/summary ──
         elif path == "/api/warroom/summary":
             summary = aggregate_warroom()
@@ -439,9 +553,11 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
                 r = self._read_body()
 
                 # Validate required fields
+                # G1 FIX (§246-IMPL): wallet_id added as required
                 required = [
                     "id", "actor", "app", "doc_name", "doc_type",
                     "content_hash", "governance_level", "sge_score",
+                    "wallet_id",  # D5.1: Anchor identity field
                 ]
                 missing = [k for k in required if k not in r]
                 if missing:
@@ -526,9 +642,11 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
                 # Validate types
                 # §191: Added service-control types for W-SERVICE-CONTROL restart audit trail
                 # §248: Added constitutional for governance laws (Lei V+)
+                # §261: Added cognitive_handoff for W-BIND-001 session continuity primitive
                 VALID_DOC_TYPES = (
                     "doc", "xlsx", "pptx", "jmpg", "communique", "compliance_passport", "cartaz", "canvas",
-                    "service-restart-initiated", "service-restart-completed", "audit-bundle", "constitutional"
+                    "service-restart-initiated", "service-restart-completed", "audit-bundle", "constitutional",
+                    "cognitive_handoff"
                 )
                 if r["doc_type"] not in VALID_DOC_TYPES:
                     self._json(400, {
@@ -566,6 +684,31 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
                     })
                     return
 
+                # ═══════════════════════════════════════════════════
+                # G1 FIX (§246-IMPL): wallet_id validation
+                # D5.1: wallet_id is anchor identity, maps to actor
+                # Format check enforced only when chaining (backward compat)
+                # ═══════════════════════════════════════════════════
+                wallet_id = r.get("wallet_id", "").strip()
+                parent_receipt_id = r.get("parent_receipt_id")
+
+                # When chaining, wallet_id MUST be valid DID format
+                if parent_receipt_id and not wallet_id.startswith("did:windi:"):
+                    self._json(400, {
+                        "ok": False,
+                        "error": "invalid_wallet_id",
+                        "message": "wallet_id must be valid DID (did:windi:...) when chaining receipts",
+                        "spec": "D5.1",
+                        "invariant": "I11",
+                        "constitutional": True,
+                    })
+                    return
+
+                # Map wallet_id to actor (D5 semantic: wallet_id is the canonical identity)
+                # This preserves backward compat: actor column stores wallet_id
+                if wallet_id:
+                    r["actor"] = wallet_id
+
                 # Defaults
                 r.setdefault("created_at", int(time.time()))
                 r.setdefault("status", "sealed")
@@ -574,19 +717,38 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
                 r.setdefault("isp_context", "")
 
                 # ═══════════════════════════════════════════════════
-                # T7e: CHAIN INTEGRITY GATE (§246-IMPL)
+                # T7e: CHAIN INTEGRITY GATE (§246-IMPL G2+G5 FIX)
                 # Constitutional: Broken chain cannot create future trust
+                # G5: Full chain validation, not just parent
+                # G2: Wallet consistency across chain
                 # ═══════════════════════════════════════════════════
-                parent_receipt_id = r.get("parent_receipt_id")
                 if parent_receipt_id:
-                    validation = validate_parent_receipt(parent_receipt_id)
-                    if not validation.get("valid"):
+                    # G5 FIX: Full chain validation
+                    chain_result = validate_chain_integrity(parent_receipt_id)
+                    if not chain_result.get("valid"):
                         self._json(409, {
                             "ok": False,
-                            "error": "chain_violation",
-                            "code": validation.get("code"),
-                            "message": validation.get("message"),
-                            "invariant": validation.get("invariant", "I11"),
+                            "error": "chain_integrity_broken",
+                            "code": "T7e_CHAIN_CORRUPTED",
+                            "message": "Cannot seal over corrupted chain",
+                            "violations": chain_result.get("violations", []),
+                            "spec": "D5.4",
+                            "invariant": "I11",
+                            "constitutional": True,
+                            "parent_receipt_id": parent_receipt_id,
+                        })
+                        return
+
+                    # G2 FIX: Wallet consistency check
+                    parent = get_receipt(parent_receipt_id)
+                    if parent and parent.get("actor") != wallet_id:
+                        self._json(409, {
+                            "ok": False,
+                            "error": "wallet_mismatch",
+                            "code": "D5.4_WALLET_CONSISTENCY",
+                            "message": f"wallet_id '{wallet_id}' != parent wallet '{parent.get('actor')}'",
+                            "spec": "D5.4",
+                            "invariant": "I11",
                             "constitutional": True,
                             "parent_receipt_id": parent_receipt_id,
                         })

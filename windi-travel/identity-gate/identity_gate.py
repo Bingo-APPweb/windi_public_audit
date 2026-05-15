@@ -572,6 +572,15 @@ app.include_router(maria_seal_router)   # /maria/seal, /maria/health
 app.include_router(maria_plan_router)   # /maria/plan
 app.include_router(travel_gate_router)  # /travel/gate/* (P3-A)
 
+# ═══ Canvas Integration §166 ═══
+try:
+    from canvas_integration import law_generate_document_cover
+    CANVAS_AVAILABLE = True
+    print("[WINDI-TRAVEL] W-CANVAS-001 integration loaded")
+except ImportError as e:
+    CANVAS_AVAILABLE = False
+    print(f"[WINDI-TRAVEL] W-CANVAS-001 not available: {e}")
+
 # ═══ Maria UI Static Files (§65) ═══
 # Full-featured version with Audio IN/OUT, GPS, Pipeline visualization
 app.mount("/maria-ui", StaticFiles(directory="/opt/windi/windi-travel/static/maria", html=True), name="maria-ui")
@@ -1916,6 +1925,7 @@ async def consent_sign(data: ConsentSign, request: Request):
     }
 
 
+@app.get("/gate/", response_class=HTMLResponse)
 @app.get("/gate", response_class=HTMLResponse)
 async def gate_ui(request: Request):
     """Render Identity Gate UI with DID Wizard."""
@@ -4241,6 +4251,70 @@ async def tesoura_seal(request: Request):
             "error": str(e),
             "note": "Collage receipt stored locally — Ledger sync pending"
         }
+
+
+# ═══════════════════════════════════════════════════════════════
+# §166 CANVAS INTEGRATION
+# ═══════════════════════════════════════════════════════════════
+
+class TravelCoverRequest(BaseModel):
+    title: str
+    subtitle: str = "Travel Collage"
+    theme: str = "KLAR"
+    actor: str = "windi-travel"
+
+@app.post("/api/canvas/travel-cover")
+async def generate_travel_cover(body: TravelCoverRequest):
+    """
+    Generate visual cover for travel collages and documents.
+    §166 · I9-P: AI renders, Human approves, WINDI seals.
+    """
+    if not CANVAS_AVAILABLE:
+        return {"error": "Canvas integration not available", "canvas_available": False}
+
+    try:
+        result = await law_generate_document_cover(
+            doc_title=body.title,
+            jurisdiction="Travel",
+            doc_type=body.subtitle,
+            actor=body.actor
+        )
+
+        if result:
+            return {
+                "success": True,
+                "job_id": result.get("job_id"),
+                "download_url": result.get("download_url"),
+                "sha256": result.get("sha256"),
+                "ledger_receipt": result.get("ledger_receipt"),
+                "render_ms": result.get("render_ms")
+            }
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+    return {"success": False, "error": "Canvas worker offline or render failed"}
+
+@app.get("/api/canvas/status")
+async def canvas_status_travel():
+    """Check W-CANVAS-001 availability."""
+    if not CANVAS_AVAILABLE:
+        return {"available": False, "reason": "Integration module not loaded"}
+
+    try:
+        import httpx
+        async with httpx.AsyncClient(timeout=3.0) as client:
+            r = await client.get("http://127.0.0.1:8155/canvas/health")
+            if r.status_code == 200:
+                data = r.json()
+                return {
+                    "available": True,
+                    "service": data.get("service"),
+                    "version": data.get("version")
+                }
+    except Exception:
+        pass
+
+    return {"available": False, "reason": "Canvas worker not responding"}
 
 
 # ═══════════════════════════════════════════════════════════════

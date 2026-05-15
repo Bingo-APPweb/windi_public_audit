@@ -1,0 +1,214 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://windi-domain.com/hios/kernel/spine_integrity.schema.json",
+  "_meta": {
+    "status": "RATIFIED",
+    "hd_ratification": "2026-05-14",
+    "layer": "0-spine-integrity",
+    "binding": "CLAUDE.md + I1-I17 + §244 Three Pillars",
+    "q1_resolved": "2026-05-14",
+    "version": "v2"
+  },
+  "title": "WINDI-HIOS Spine Integrity Schema",
+  "description": "Q1 RESOLVED: Schema for Genesis Ceremony and constitutional integrity verification",
+  "type": "object",
+  "required": ["verification_id", "spine_hash", "verification_result"],
+  "definitions": {
+    "genesis_ceremony": {
+      "type": "object",
+      "description": "First constitutional attestation of invariants",
+      "required": ["ceremony_type", "canonical_hash", "declaration", "witnesses"],
+      "properties": {
+        "doc_type": {
+          "type": "string",
+          "const": "genesis_ceremony"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "ceremony_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "ceremony_type": {
+          "type": "string",
+          "enum": ["originating", "retroactive_attestation"],
+          "description": "originating = before first receipt; retroactive_attestation = formalizing existing state"
+        },
+        "prior_receipts_acknowledged": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of receipts in Ledger before this ceremony (honesty field)"
+        },
+        "retroactive_declaration": {
+          "type": "string",
+          "description": "Explicit acknowledgment that attestation comes after the facts"
+        },
+        "canonical_hash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "canonical_hash_short": {
+          "type": "string",
+          "pattern": "^[A-F0-9]{8}$"
+        },
+        "source_file": {
+          "type": "string",
+          "const": "/opt/windi/CLAUDE.md"
+        },
+        "source_version": {
+          "type": "string"
+        },
+        "invariants_attested": {
+          "type": "array",
+          "items": {"type": "string", "pattern": "^I[0-9]+$"}
+        },
+        "invariant_hashes": {
+          "type": "object",
+          "additionalProperties": {"type": "string"},
+          "description": "Individual hash per invariant for granular audit"
+        },
+        "declaration": {
+          "type": "string",
+          "description": "HD signed declaration text"
+        },
+        "witnesses": {
+          "type": "object",
+          "properties": {
+            "human_dragon": {
+              "type": "object",
+              "properties": {
+                "attested": {"type": "boolean"},
+                "method": {"type": "string", "enum": ["presential_signature", "digital_signature"]}
+              }
+            },
+            "guardian": {
+              "type": "object",
+              "properties": {
+                "observed": {"type": "boolean"},
+                "observation_receipt": {"type": "string"}
+              }
+            },
+            "witness": {
+              "type": "object",
+              "properties": {
+                "recorded": {"type": "boolean"},
+                "observation_receipt": {"type": "string"}
+              }
+            }
+          }
+        },
+        "physical_backup": {
+          "type": "object",
+          "properties": {
+            "required": {"type": "boolean"},
+            "method": {"type": "string"},
+            "photo_hash": {"type": "string"},
+            "storage": {"type": "string"}
+          }
+        },
+        "supersedes": {
+          "type": ["string", "null"],
+          "description": "Receipt ID of previous genesis ceremony if this is an upgrade"
+        }
+      }
+    },
+    "genesis_observation": {
+      "type": "object",
+      "description": "Witness observation receipt for Genesis Ceremony",
+      "required": ["doc_type", "role", "references", "observation"],
+      "properties": {
+        "doc_type": {
+          "type": "string",
+          "const": "genesis_observation"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["guardian", "witness"],
+          "description": "Role, not brand name (Liga IA+H principle)"
+        },
+        "role_session_id": {
+          "type": "string",
+          "description": "Provider-agnostic session identifier"
+        },
+        "references": {
+          "type": "string",
+          "description": "Receipt ID of the genesis_ceremony being observed"
+        },
+        "observation": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  },
+  "properties": {
+    "verification_id": {
+      "type": "string",
+      "pattern": "^SPINE-CHECK-[0-9]{14}-[A-F0-9]{8}$"
+    },
+    "verified_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "trigger": {
+      "type": "string",
+      "enum": ["session_start", "critical_mutation", "weekly_cron", "manual"]
+    },
+    "spine_hash": {
+      "type": "object",
+      "properties": {
+        "claude_md_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "claude_md_hash_short": {"type": "string", "pattern": "^[a-f0-9]{16}$"},
+        "invariants_section_hash": {"type": "string"},
+        "last_known_good_hash": {"type": "string"},
+        "reference_receipt": {"type": "string"}
+      }
+    },
+    "drift_analysis": {
+      "type": "object",
+      "properties": {
+        "drift_detected": {"type": "boolean"},
+        "drift_type": {
+          "type": "string",
+          "enum": ["none", "lexical", "semantic", "application", "scope"]
+        },
+        "drift_severity": {
+          "type": "string",
+          "enum": ["none", "low", "high", "critical"]
+        },
+        "affected_invariants": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "diff_summary": {"type": "string"}
+      }
+    },
+    "verification_result": {
+      "type": "string",
+      "enum": ["SPINE-OK", "SPINE-DRIFT-LOW", "SPINE-DRIFT-CRITICAL", "SPINE-LOCK"]
+    },
+    "witnesses": {
+      "type": "object",
+      "properties": {
+        "guardian_signature": {"type": "string"},
+        "human_dragon_signature": {"type": "string"},
+        "dual_witness_required": {"type": "boolean"}
+      }
+    },
+    "action_taken": {
+      "type": "string",
+      "enum": ["continue", "warning_logged", "mutation_blocked", "spine_lock_activated", "escalated_to_hd"]
+    },
+    "receipt_emitted": {"type": "string"}
+  },
+  "_ratification_notes": {
+    "N1": "Confirm complete invariant list before ceremony (I1-I17 or explicit gaps)",
+    "N2": "Query Ledger for exact prior_receipts count before ceremony",
+    "N3": "Use role_session_id (provider-agnostic), store LLM provider separately"
+  }
+}

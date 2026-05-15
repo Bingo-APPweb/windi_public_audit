@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://windi-domain.com/hios/kernel/context.schema.json",
+  "_meta": {
+    "status": "DRAFT-SKELETON",
+    "not_sealed": true,
+    "not_canonical": true,
+    "pending_review": "GUARDIAN",
+    "layer": "2-context",
+    "binding": "CBP §261 + Session State"
+  },
+  "title": "WINDI-HIOS Context Schema",
+  "description": "Context layer schema capturing session and operational state",
+  "type": "object",
+  "required": ["session_id", "bind_integrity"],
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "description": "Current session identifier"
+    },
+    "bind_integrity": {
+      "type": "object",
+      "properties": {
+        "score": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "level": {
+          "type": "string",
+          "enum": ["FULL", "PARTIAL", "MINIMAL", "BROKEN"]
+        },
+        "reentry_state": {
+          "type": "string",
+          "enum": ["ADMISSIBLE", "DEGRADED", "RISKY", "REFUSED"]
+        }
+      },
+      "description": "Cognitive Bind Packet integrity from §261"
+    },
+    "sprint_context": {
+      "type": "string",
+      "description": "Current sprint from CLAUDE.md"
+    },
+    "last_receipt": {
+      "type": "string",
+      "description": "Last known receipt ID"
+    },
+    "pending_work": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "P0/P1 pending items"
+    },
+    "epistemic_bounds": {
+      "type": "object",
+      "properties": {
+        "verified": {"type": "array", "items": {"type": "string"}},
+        "unverified": {"type": "array", "items": {"type": "string"}}
+      },
+      "description": "What this session knows vs doesn't know"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "_open_questions": [
+    "Q6: How to handle stale context (session > 24h)?",
+    "Q7: Context inheritance across PingPong cycles?"
+  ]
+}

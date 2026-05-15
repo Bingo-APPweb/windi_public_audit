@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="pt" data-theme="klar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MEMORY · Memória · Erinnerung — WINDI Foundation</title>
+  <meta name="description" content="Memória verificável da tua governança pessoal. Cliente = Dados. WINDI = Prova." />
+  <meta name="theme-color" content="#FAFAF8" />
+  <!--
+    ════════════════════════════════════════════════════════════════════
+    WINDI Foundation — Portal MEMORY
+    Sprint:  §251 · Portais herdeiros de §250
+    Layer:   HUMAN (FREE + paid · vocabulário ainda não fixado)
+    Doutrina aplicada:
+      §247 trilingual parcial e cirúrgico
+      §248 Lei V Two-Track (subtextual)
+      §250-BIS linhas vermelhas
+      §250-TER anti-estereotipia
+      KLAR default · NOIR toggle · system fonts only (Munich 2022)
+    Wisdom Protocol: v0.1 · 13 Wisdom Blocks · Genesis 21 Fev 2026
+    ════════════════════════════════════════════════════════════════════
+  -->
+  <style>
+    /* ═══ Reset ═══ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+    img, svg { display: block; max-width: 100%; }
+    button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+    a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+
+    /* ═══ KLAR Theme (default) ═══ */
+    [data-theme="klar"] {
+      --gold: #8B741D;
+      --gold-dim: #6B5A14;
+      --gold-soft: #B89455;
+      --gold-glow: rgba(139,116,29,0.12);
+      --bg: #FAFAF8;
+      --bg-alt: #F5F4F2;
+      --bg-deep: #EDECEA;
+      --bg-card: #FFFFFF;
+      --border: rgba(139,116,29,0.2);
+      --border-soft: rgba(0,0,0,0.06);
+      --text: #1A1917;
+      --text-mute: rgba(26,25,23,0.6);
+      --text-dim: rgba(26,25,23,0.35);
+      --seal-bg: #FFFEF8;
+      --shadow: rgba(0,0,0,0.06);
+    }
+
+    /* ═══ NOIR Theme ═══ */
+    [data-theme="noir"] {
+      --gold: #C49A2A;
+      --gold-dim: #8B6914;
+      --gold-soft: #A07D20;
+      --gold-glow: rgba(196,154,42,0.15);
+      --bg: #0A0A08;
+      --bg-alt: #0F0F0D;
+      --bg-deep: #141412;
+      --bg-card: #181816;
+      --border: rgba(196,154,42,0.18);
+      --border-soft: rgba(255,255,255,0.06);
+      --text: #EDE8D8;
+      --text-mute: rgba(237,232,216,0.55);
+      --text-dim: rgba(237,232,216,0.28);
+      --seal-bg: #0D0C08;
+      --shadow: rgba(0,0,0,0.4);
+    }
+
+    :root {
+      --font-main: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      --font-mono: 'SF Mono', Monaco, Inconsolata, 'Fira Mono', ui-monospace, monospace;
+      --container: 72rem;
+      --gutter: clamp(1rem, 4vw, 2rem);
+    }
+
+    /* ═══ Base ═══ */
+    body {
+      font-family: var(--font-main);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      transition: background 0.25s, color 0.25s;
+      -webkit-font-smoothing: antialiased;
+    }
+    .mono { font-family: var(--font-mono); font-size: 0.9em; }
+
+    /* ═══ Layout ═══ */
+    .container {
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 var(--gutter);
+    }
+
+    /* ═══ Header ═══ */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: color-mix(in srgb, var(--bg) 92%, transparent);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-soft);
+    }
+    header .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+      gap: 1rem;
+    }
+    .brand {
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+    }
+    .brand span { color: var(--gold); }
+    .brand small {
+      font-weight: 400;
+      color: var(--text-mute);
+      font-size: 0.75rem;
+      margin-left: 0.5rem;
+    }
+
+    nav.portals {
+      display: none;
+      gap: 1.25rem;
+      font-size: 0.82rem;
+    }
+    nav.portals a {
+      text-decoration: none;
+      color: var(--text-mute);
+      padding: 0.3rem 0;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    nav.portals a[aria-current="page"] {
+      color: var(--text);
+      border-color: var(--gold);
+    }
+    nav.portals a:hover { color: var(--text); }
+    @media (min-width: 64rem) { nav.portals { display: flex; } }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .ctrl {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.4rem 0.6rem;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      color: var(--text-mute);
+      transition: all 0.15s;
+    }
+    .ctrl:hover { color: var(--text); border-color: var(--text); }
+    .ctrl .sep { opacity: 0.4; margin: 0 0.2rem; }
+    .ctrl .lang-opt[aria-current="true"] { color: var(--gold); font-weight: 600; }
+
+    /* ═══ Sections ═══ */
+    section { padding: 4rem 0; border-bottom: 1px solid var(--border-soft); }
+    section:last-of-type { border-bottom: 0; }
+    @media (min-width: 48rem) { section { padding: 5.5rem 0; } }
+
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-mute);
+      margin-bottom: 0.75rem;
+    }
+    .eyebrow .accent { color: var(--gold); }
+
+    h1, h2, h3 {
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+      margin: 0 0 1rem;
+    }
+    h1 { font-size: clamp(2rem, 5vw, 3.25rem); font-weight: 450; }
+    h2 { font-size: clamp(1.5rem, 3vw, 2rem); }
+    h3 { font-size: 1.1rem; font-weight: 600; }
+
+    p { margin: 0 0 1rem; max-width: 40rem; }
+    p.lead { font-size: 1.1rem; color: var(--text-mute); }
+
+    /* ═══ Hero ═══ */
+    .hero { padding-top: 4rem; }
+
+    .crumbs {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-mute);
+      margin-bottom: 1.25rem;
+    }
+    .crumbs a { text-decoration: none; }
+    .crumbs a:hover { color: var(--text); }
+    .crumbs .sep { margin: 0 0.4rem; opacity: 0.5; }
+
+    .portal-name {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1rem;
+      align-items: baseline;
+      margin-bottom: 1.5rem;
+    }
+    .portal-name .primary {
+      font-size: clamp(1.4rem, 2.5vw, 1.75rem);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    .portal-name .alt {
+      font-size: 1rem;
+      color: var(--text-mute);
+    }
+    .portal-name .alt::before {
+      content: "·";
+      margin-right: 0.75rem;
+      color: var(--gold);
+    }
+
+    .layer-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-mute);
+      padding: 0.25rem 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      margin-bottom: 1.75rem;
+    }
+    .layer-tag::before {
+      content: "";
+      width: 5px; height: 5px;
+      background: var(--gold);
+      border-radius: 50%;
+    }
+
+    .hero-sub {
+      font-size: 1.05rem;
+      color: var(--text-mute);
+      max-width: 36rem;
+      margin-top: 1rem;
+    }
+    .hero-axiom {
+      margin-top: 2rem;
+      padding: 1rem 1.25rem;
+      border-left: 2px solid var(--gold);
+      background: var(--bg-alt);
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+    }
+
+    /* ═══ Cards ═══ */
+    .cards {
+      display: grid;
+      gap: 1.25rem;
+      margin-top: 2rem;
+    }
+    @media (min-width: 40rem) { .cards { grid-template-columns: repeat(2, 1fr); } }
+
+    .card {
+      padding: 1.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-soft);
+      border-radius: 4px;
+      box-shadow: 0 1px 3px var(--shadow);
+      transition: border-color 0.15s;
+    }
+    .card:hover { border-color: var(--border); }
+    .card .icon {
+      width: 26px; height: 26px;
+      margin-bottom: 0.85rem;
+      color: var(--gold);
+    }
+    .card h3 { margin-bottom: 0.4rem; }
+    .card .scenario {
+      font-size: 0.92rem;
+      color: var(--text-mute);
+      margin-bottom: 0.75rem;
+    }
+    .card .action {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      border-top: 1px solid var(--border-soft);
+      padding-top: 0.75rem;
+      margin-top: 0.75rem;
+    }
+    .card .action::before {
+      content: "WINDI →";
+      color: var(--gold);
+      margin-right: 0.4rem;
+      font-weight: 600;
+    }
+
+    /* ═══ Wisdom Protocol ═══ */
+    .wp-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      margin: 1.5rem 0 2rem;
+      padding: 1rem 0;
+      border-top: 1px solid var(--border-soft);
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .wp-stat .num {
+      font-size: 1.75rem;
+      font-weight: 300;
+      line-height: 1;
+    }
+    .wp-stat .label {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-mute);
+      margin-top: 0.4rem;
+    }
+
+    .diagram-wrap {
+      margin: 1.5rem 0;
+      padding: 1.5rem 1rem;
+      background: var(--bg-alt);
+      border: 1px solid var(--border-soft);
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    .diagram-wrap svg {
+      margin: 0 auto;
+      min-width: 600px;
+      max-width: 100%;
+    }
+    .diagram-caption {
+      font-size: 0.85rem;
+      color: var(--text-mute);
+      text-align: center;
+      margin-top: 0.75rem;
+      font-style: italic;
+    }
+
+    /* ═══ Linhas Vermelhas ═══ */
+    .lines {
+      display: grid;
+      gap: 0.85rem;
+      margin-top: 1.5rem;
+      max-width: 40rem;
+    }
+    .line {
+      display: flex;
+      gap: 0.85rem;
+      padding: 1rem;
+      border-left: 2px solid var(--gold-soft);
+      background: var(--bg-alt);
+      border-radius: 0 2px 2px 0;
+    }
+    .line .num {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--gold);
+      font-weight: 600;
+      min-width: 1.5rem;
+    }
+    .line .text { font-size: 0.92rem; }
+    .line .text strong { font-weight: 600; }
+
+    /* ═══ Pistas ═══ */
+    .pistas {
+      display: grid;
+      gap: 1.25rem;
+      margin-top: 2rem;
+    }
+    @media (min-width: 48rem) { .pistas { grid-template-columns: 1fr 1fr; gap: 1.5rem; } }
+    .pista h3 {
+      font-weight: 500;
+      font-size: 1.15rem;
+      margin-bottom: 0.4rem;
+    }
+    .pista h3::before {
+      content: "";
+      display: inline-block;
+      width: 20px; height: 1px;
+      background: var(--gold);
+      vertical-align: middle;
+      margin-right: 0.5rem;
+    }
+    .pista p {
+      font-size: 0.92rem;
+      color: var(--text-mute);
+    }
+
+    /* ═══ CTA ═══ */
+    .verify-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      border: 1px solid var(--text);
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      letter-spacing: 0.05em;
+      border-radius: 2px;
+      transition: background 0.15s, color 0.15s;
+      margin-top: 1.25rem;
+    }
+    .verify-cta:hover { background: var(--text); color: var(--bg); }
+    .verify-cta::after { content: "↗"; }
+
+    /* ═══ Footer ═══ */
+    footer {
+      background: var(--bg-deep);
+      padding: 2.5rem 0 1.75rem;
+      border-top: 1px solid var(--border);
+    }
+    .seal-badge {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      padding: 1.25rem;
+      background: var(--seal-bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      max-width: 34rem;
+      margin: 0 auto 2rem;
+    }
+    .seal-badge .axiom {
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      letter-spacing: 0.02em;
+    }
+    .seal-badge .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-mute);
+      padding-top: 0.65rem;
+      border-top: 1px solid var(--border-soft);
+    }
+    .seal-badge .meta a { text-decoration: underline; }
+    .seal-badge .meta a:hover { color: var(--text); }
+    .seal-badge .meta .key { color: var(--gold); }
+
+    .footer-end {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-mute);
+      max-width: 34rem;
+      margin: 0 auto;
+      padding-top: 0.85rem;
+      border-top: 1px solid var(--border-soft);
+    }
+
+    /* ═══ i18n ═══ */
+    [data-i18n] [lang]:not(.active) { display: none; }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="container row">
+      <a class="brand" href="/"><span>W</span>INDI<small>Foundation</small></a>
+
+      <nav class="portals" aria-label="Portais Foundation">
+        <a href="/identity/">IDENTITY</a>
+        <a href="/verify/">VERIFY</a>
+        <a href="/memory/" aria-current="page">MEMORY</a>
+        <a href="https://windisites.de" rel="external">SITES</a>
+        <a href="/enterprise/">ENTERPRISE</a>
+      </nav>
+
+      <div class="controls">
+        <button class="ctrl" id="theme-toggle" title="Alternar KLAR / NOIR">
+          KLAR<span class="sep">/</span>NOIR
+        </button>
+        <button class="ctrl" id="lang-toggle" title="Alternar língua">
+          <span class="lang-opt" data-lang="pt" aria-current="true">PT</span><span class="sep">·</span><span class="lang-opt" data-lang="de">DE</span><span class="sep">·</span><span class="lang-opt" data-lang="en">EN</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- §1 HERO -->
+    <section class="hero">
+      <div class="container">
+        <nav class="crumbs" aria-label="Breadcrumb">
+          <a href="/">Foundation</a><span class="sep">/</span><span>MEMORY</span>
+        </nav>
+
+        <div class="portal-name">
+          <span class="primary">MEMORY</span>
+          <span class="alt">Memória</span>
+          <span class="alt">Erinnerung</span>
+        </div>
+
+        <span class="layer-tag">Layer · HUMAN</span>
+
+        <h1 data-i18n>
+          <span lang="pt" class="active">Memória verificável da tua governança pessoal.</span>
+          <span lang="de">Verifizierbares Gedächtnis deiner persönlichen Governance.</span>
+          <span lang="en">Verifiable memory of your personal governance.</span>
+        </h1>
+
+        <p class="hero-sub" data-i18n>
+          <span lang="pt" class="active">O WINDI não guarda os teus dados. Guarda a prova de que tu fizeste.</span>
+          <span lang="de">WINDI speichert nicht deine Daten. WINDI speichert den Beweis, dass du gehandelt hast.</span>
+          <span lang="en">WINDI does not store your data. WINDI stores the proof that you acted.</span>
+        </p>
+
+        <div class="hero-axiom mono" data-i18n>
+          <span lang="pt" class="active">Cliente = Dados · WINDI = Prova</span>
+          <span lang="de">Kunde = Daten · WINDI = Beweis</span>
+          <span lang="en">Client = Data · WINDI = Proof</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- §2 O QUE É -->
+    <section id="o-que-e">
+      <div class="container">
+        <p class="eyebrow" data-i18n><span class="accent">§2</span> &nbsp; <span lang="pt" class="active">O QUE É</span><span lang="de">WAS IST DAS</span><span lang="en">WHAT IS IT</span></p>
+        <h2 data-i18n>
+          <span lang="pt" class="active">Memória não é arquivo. É prova.</span>
+          <span lang="de">Erinnerung ist kein Archiv. Es ist Beweis.</span>
+          <span lang="en">Memory is not archive. It is proof.</span>
+        </h2>
+        <p class="lead" data-i18n>
+          <span lang="pt" class="active">Cada decisão que tomas deixa rasto na vida — mas raramente deixa rasto verificável. Quem assinou. Quando. Em que estado. O que disse o outro lado.</span>
+          <span lang="de">Jede Entscheidung hinterlässt Spuren im Leben — aber selten verifizierbare Spuren. Wer unterschrieben hat. Wann. In welchem Zustand. Was die andere Seite sagte.</span>
+          <span lang="en">Every decision you make leaves a trace in life — but rarely a verifiable trace. Who signed. When. In what state. What the other side said.</span>
+        </p>
+        <p data-i18n>
+          <span lang="pt" class="active">MEMORY é o portal onde esse rasto se torna selável. Cada acto recebe assinatura criptográfica imutável (SHA-256), posição na Wisdom Chain, e número de série (<span class="mono">WINDI-...-XXX</span>) verificável por terceiros — sem revelar os teus dados.</span>
+          <span lang="de">MEMORY ist das Portal, wo diese Spur versiegelbar wird. Jede Handlung erhält eine unveränderliche kryptografische Signatur (SHA-256), Position in der Wisdom Chain und Seriennummer (<span class="mono">WINDI-...-XXX</span>), die von Dritten verifizierbar ist — ohne deine Daten preiszugeben.</span>
+          <span lang="en">MEMORY is the portal where that trace becomes sealable. Every act receives an immutable cryptographic signature (SHA-256), position in the Wisdom Chain, and serial number (<span class="mono">WINDI-...-XXX</span>) verifiable by third parties — without revealing your data.</span>
+        </p>
+        <p data-i18n>
+          <span lang="pt" class="active"><strong>Tu guardas o que viveste. O WINDI guarda apenas o selo de que aconteceu.</strong></span>
+          <span lang="de"><strong>Du speicherst, was du erlebt hast. WINDI speichert nur das Siegel, dass es passiert ist.</strong></span>
+          <span lang="en"><strong>You store what you lived. WINDI stores only the seal that it happened.</strong></span>
+        </p>
+      </div>
+    </section>
+
+    <!-- §3 CASOS VIVOS -->
+    <section id="casos">
+      <div class="container">
+        <p class="eyebrow" data-i18n><span class="accent">§3</span> &nbsp; <span lang="pt" class="active">CASOS VIVOS</span><span lang="de">LEBENDE FÄLLE</span><span lang="en">LIVE CASES</span></p>
+        <h2 data-i18n>
+          <span lang="pt" class="active">Quatro situações onde memória verificável muda o equilíbrio.</span>
+          <span lang="de">Vier Situationen, in denen verifizierbare Erinnerung das Gleichgewicht verändert.</span>
+          <span lang="en">Four situations where verifiable memory changes the balance.</span>
+        </h2>
+        <p class="lead" data-i18n>
+          <span lang="pt" class="active">Territórios onde tu — não o banco, não o médico, não o tribunal — passas a ter o teu próprio registo soberano.</span>
+          <span lang="de">Gebiete, in denen du — nicht die Bank, nicht der Arzt, nicht das Gericht — deine eigene souveräne Aufzeichnung hast.</span>
+          <span lang="en">Territories where you — not the bank, not the doctor, not the court — have your own sovereign record.</span>
+        </p>
+
+        <div class="cards">
+          <!-- Banca -->
+          <article class="card">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="6" width="18" height="13" rx="1"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="7" y1="14" x2="9" y2="14"/>
+            </svg>
+            <h3 data-i18n><span lang="pt" class="active">Banca pessoal</span><span lang="de">Persönliches Banking</span><span lang="en">Personal banking</span></h3>
+            <p class="scenario" data-i18n>
+              <span lang="pt" class="active">SMS suspeito. Transferência. Disputa. O banco tem o registo dele, com os prazos dele.</span>
+              <span lang="de">Verdächtige SMS. Überweisung. Streitfall. Die Bank hat ihre Aufzeichnung, mit ihren Fristen.</span>
+              <span lang="en">Suspicious SMS. Transfer. Dispute. The bank has its record, with its deadlines.</span>
+            </p>
+            <p class="action" data-i18n>
+              <span lang="pt" class="active">Selas o teu lado antes da disputa. Email, screenshot, instrução, hora exacta.</span>
+              <span lang="de">Du versiegelst deine Seite vor dem Streitfall. E-Mail, Screenshot, Anweisung, genaue Zeit.</span>
+              <span lang="en">Seal your side before the dispute. Email, screenshot, instruction, exact time.</span>
+            </p>
+          </article>
+
+          <!-- Saúde -->
+          <article class="card">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="9"/>
+            </svg>
+            <h3 data-i18n><span lang="pt" class="active">Saúde</span><span lang="de">Gesundheit</span><span lang="en">Health</span></h3>
+            <p class="scenario" data-i18n>
+              <span lang="pt" class="active">Mudaste de médico. Segunda opinião não documentada. Sintoma piorou, consulta em 3 semanas.</span>
+              <span lang="de">Du hast den Arzt gewechselt. Zweitmeinung nicht dokumentiert. Symptom verschlechtert, Termin in 3 Wochen.</span>
+              <span lang="en">You changed doctors. Second opinion undocumented. Symptom worsened, appointment in 3 weeks.</span>
+            </p>
+            <p class="action" data-i18n>
+              <span lang="pt" class="active">Selas sintomas datados, prescrições, segunda opinião. A cadeia clínica é tua.</span>
+              <span lang="de">Du versiegelst datierte Symptome, Rezepte, Zweitmeinung. Die klinische Kette gehört dir.</span>
+              <span lang="en">Seal dated symptoms, prescriptions, second opinion. The clinical chain is yours.</span>
+            </p>
+          </article>
+
+          <!-- Jurídico -->
+          <article class="card">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M3 6l9-4 9 4-9 4z"/><path d="M3 6v8c0 4 4 6 9 6s9-2 9-6V6"/>
+            </svg>
+            <h3 data-i18n><span lang="pt" class="active">Jurídico</span><span lang="de">Rechtliches</span><span lang="en">Legal</span></h3>
+            <p class="scenario" data-i18n>
+              <span lang="pt" class="active">Notificação com prazo. Resposta enviada. O outro lado diz que nunca chegou.</span>
+              <span lang="de">Benachrichtigung mit Frist. Antwort gesendet. Die Gegenseite sagt, sie kam nie an.</span>
+              <span lang="en">Notification with deadline. Response sent. The other side says it never arrived.</span>
+            </p>
+            <p class="action" data-i18n>
+              <span lang="pt" class="active">Selas no envio. Hash imutável, hora UTC — verificável sem revelar o original.</span>
+              <span lang="de">Du versiegelst beim Senden. Unveränderlicher Hash, UTC-Zeit — verifizierbar ohne das Original preiszugeben.</span>
+              <span lang="en">Seal on sending. Immutable hash, UTC time — verifiable without revealing the original.</span>
+            </p>
+          </article>
+
+          <!-- Diário -->
+          <article class="card">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M4 4h13a3 3 0 013 3v13H7a3 3 0 01-3-3z"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="14" y2="13"/>
+            </svg>
+            <h3 data-i18n><span lang="pt" class="active">Diário soberano</span><span lang="de">Souveränes Tagebuch</span><span lang="en">Sovereign journal</span></h3>
+            <p class="scenario" data-i18n>
+              <span lang="pt" class="active">Decisões de vida que merecem mais do que nota no telemóvel. O porquê que talvez esqueças.</span>
+              <span lang="de">Lebensentscheidungen, die mehr verdienen als eine Notiz auf dem Handy. Das Warum, das Sie vielleicht vergessen.</span>
+              <span lang="en">Life decisions that deserve more than a phone note. The why that you might forget.</span>
+            </p>
+            <p class="action" data-i18n>
+              <span lang="pt" class="active">Selas como capítulos com hora certa. Opcional, privado, sob o teu controle.</span>
+              <span lang="de">Versiegle als Kapitel mit genauer Zeit. Optional, privat, unter deiner Kontrolle.</span>
+              <span lang="en">Seal as chapters with exact time. Optional, private, under your control.</span>
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- §4 WISDOM PROTOCOL -->
+    <section id="wisdom-protocol">
+      <div class="container">
+        <p class="eyebrow"><span class="accent">§4</span> &nbsp; WISDOM PROTOCOL · v0.1</p>
+        <h2 data-i18n>
+          <span lang="pt" class="active">O motor já vive.</span>
+          <span lang="de">Der Motor lebt bereits.</span>
+          <span lang="en">The engine is already alive.</span>
+        </h2>
+        <p class="lead" data-i18n>
+          <span lang="pt" class="active">Desde 21 de Fevereiro de 2026, o WINDI tem um sistema digestivo de memória: a osmose temporal. Não é promessa — é arquitectura operacional.</span>
+          <span lang="de">Seit dem 21. Februar 2026 hat WINDI ein Verdauungssystem für Erinnerung: temporale Osmose. Kein Versprechen — operative Architektur.</span>
+          <span lang="en">Since February 21, 2026, WINDI has a digestive system for memory: temporal osmosis. Not a promise — operational architecture.</span>
+        </p>
+
+        <div class="wp-stats">
+          <div class="wp-stat">
+            <div class="num">13</div>
+            <div class="label">Wisdom Blocks</div>
+          </div>
+          <div class="wp-stat">
+            <div class="num" data-i18n><span lang="pt" class="active">21 Fev</span><span lang="de">21. Feb</span><span lang="en">Feb 21</span></div>
+            <div class="label">Genesis · 2026</div>
+          </div>
+          <div class="wp-stat">
+            <div class="num mono" style="font-size:1.2rem; padding-top:0.3rem;">df1b601c</div>
+            <div class="label">Chain Genesis</div>
+          </div>
+          <div class="wp-stat">
+            <div class="num">3 → 1</div>
+            <div class="label" data-i18n><span lang="pt" class="active">Câmaras → Bloco</span><span lang="de">Kammern → Block</span><span lang="en">Chambers → Block</span></div>
+          </div>
+        </div>
+
+        <h3 data-i18n>
+          <span lang="pt" class="active">As três câmaras + os quatro ciclos</span>
+          <span lang="de">Die drei Kammern + die vier Zyklen</span>
+          <span lang="en">The three chambers + the four cycles</span>
+        </h3>
+        <p data-i18n>
+          <span lang="pt" class="active">O Wisdom Protocol destila, não decide. Cada conversa entra como ruído na câmara <strong>Echo</strong> (5 min), atravessa <strong>Pattern</strong> (30 min) se houver recorrência, sedimenta em <strong>Archetype</strong> (60 min) se houver peso, e só se torna Bloco após <strong>24 horas</strong> e selo humano final.</span>
+          <span lang="de">Das Wisdom Protocol destilliert, entscheidet nicht. Jedes Gespräch tritt als Rauschen in die <strong>Echo</strong>-Kammer (5 min), durchquert <strong>Pattern</strong> (30 min) bei Wiederholung, sedimentiert in <strong>Archetype</strong> (60 min) bei Gewicht, und wird erst nach <strong>24 Stunden</strong> und menschlichem Endsiegel zum Block.</span>
+          <span lang="en">The Wisdom Protocol distills, does not decide. Each conversation enters as noise in the <strong>Echo</strong> chamber (5 min), crosses <strong>Pattern</strong> (30 min) if there's recurrence, sediments in <strong>Archetype</strong> (60 min) if there's weight, and only becomes a Block after <strong>24 hours</strong> and final human seal.</span>
+        </p>
+
+        <!-- DIAGRAMA SVG -->
+        <div class="diagram-wrap" role="img" aria-label="Diagrama das três câmaras de osmose">
+          <svg viewBox="0 0 680 240" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L7,3 z" fill="var(--gold)"/>
+              </marker>
+            </defs>
+
+            <!-- Eixo temporal -->
+            <line x1="30" y1="32" x2="650" y2="32" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,4"/>
+            <text x="80"  y="22" text-anchor="middle" font-family="var(--font-mono)" font-size="10" fill="var(--text-mute)">5 min</text>
+            <text x="220" y="22" text-anchor="middle" font-family="var(--font-mono)" font-size="10" fill="var(--text-mute)">30 min</text>
+            <text x="360" y="22" text-anchor="middle" font-family="var(--font-mono)" font-size="10" fill="var(--text-mute)">60 min</text>
+            <text x="550" y="22" text-anchor="middle" font-family="var(--font-mono)" font-size="10" fill="var(--text-mute)">24 h</text>
+
+            <!-- ECHO -->
+            <g transform="translate(80, 110)">
+              <circle cx="0" cy="0" r="32" fill="var(--bg)" stroke="var(--gold-soft)" stroke-width="1.5"/>
+              <circle cx="0" cy="0" r="5" fill="var(--gold)"/>
+              <text x="0" y="52" text-anchor="middle" font-size="12" font-weight="600" fill="var(--text)">ECHO</text>
+              <text x="0" y="68" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="var(--text-mute)">Câmara Alfa · RAM</text>
+            </g>
+
+            <!-- seta 1 -->
+            <line x1="120" y1="110" x2="175" y2="110" stroke="var(--gold)" stroke-width="1.5" marker-end="url(#arr)"/>
+
+            <!-- PATTERN -->
+            <g transform="translate(220, 110)">
+              <circle cx="0" cy="0" r="36" fill="var(--bg)" stroke="var(--gold-soft)" stroke-width="1.5"/>
+              <circle cx="0" cy="0" r="9" fill="var(--gold-soft)"/>
+              <circle cx="0" cy="0" r="4" fill="var(--gold)"/>
+              <text x="0" y="54" text-anchor="middle" font-size="12" font-weight="600" fill="var(--text)">PATTERN</text>
+              <text x="0" y="70" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="var(--text-mute)">Câmara Beta</text>
+            </g>
+
+            <!-- seta 2 -->
+            <line x1="264" y1="110" x2="315" y2="110" stroke="var(--gold)" stroke-width="1.5" marker-end="url(#arr)"/>
+
+            <!-- ARCHETYPE -->
+            <g transform="translate(360, 110)">
+              <circle cx="0" cy="0" r="40" fill="var(--bg)" stroke="var(--gold-soft)" stroke-width="1.5"/>
+              <circle cx="0" cy="0" r="12" fill="var(--gold-soft)"/>
+              <circle cx="0" cy="0" r="5" fill="var(--gold)"/>
+              <text x="0" y="58" text-anchor="middle" font-size="12" font-weight="600" fill="var(--text)">ARCHETYPE</text>
+              <text x="0" y="74" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="var(--text-mute)">Câmara Gamma</text>
+            </g>
+
+            <!-- seta 3 -->
+            <line x1="408" y1="110" x2="490" y2="110" stroke="var(--gold)" stroke-width="1.5" marker-end="url(#arr)"/>
+
+            <!-- WISDOM BLOCK -->
+            <g transform="translate(550, 110)">
+              <rect x="-40" y="-40" width="80" height="80" fill="var(--bg)" stroke="var(--gold)" stroke-width="2"/>
+              <rect x="-28" y="-28" width="56" height="56" fill="none" stroke="var(--gold-soft)" stroke-width="1" stroke-dasharray="2,2"/>
+              <text x="0" y="5" text-anchor="middle" font-family="var(--font-mono)" font-size="18" font-weight="700" fill="var(--gold)">WB</text>
+              <text x="0" y="58" text-anchor="middle" font-size="11" font-weight="600" fill="var(--text)">WISDOM BLOCK</text>
+              <text x="0" y="74" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="var(--text-mute)">selo humano · I9</text>
+            </g>
+
+            <!-- Legenda -->
+            <text x="340" y="210" text-anchor="middle" font-family="var(--font-mono)" font-size="10" fill="var(--text-mute)">
+              A IA propõe. O humano sela. Nunca o contrário. — I9 IRREMEDIÁVEL
+            </text>
+          </svg>
+        </div>
+        <p class="diagram-caption" data-i18n>
+          <span lang="pt" class="active">Tempo é o motor da osmose. O que sobrevive aos quatro ciclos merece selo.</span>
+          <span lang="de">Zeit ist der Motor der Osmose. Was die vier Zyklen überlebt, verdient ein Siegel.</span>
+          <span lang="en">Time is the engine of osmosis. What survives the four cycles deserves a seal.</span>
+        </p>
+      </div>
+    </section>
+
+    <!-- §5 LINHAS VERMELHAS -->
+    <section id="linhas-vermelhas">
+      <div class="container">
+        <p class="eyebrow" data-i18n><span class="accent">§5</span> &nbsp; <span lang="pt" class="active">LINHAS VERMELHAS</span><span lang="de">ROTE LINIEN</span><span lang="en">RED LINES</span></p>
+        <h2 data-i18n>
+          <span lang="pt" class="active">O que MEMORY <em>não</em> é.</span>
+          <span lang="de">Was MEMORY <em>nicht</em> ist.</span>
+          <span lang="en">What MEMORY is <em>not</em>.</span>
+        </h2>
+        <p class="lead" data-i18n>
+          <span lang="pt" class="active">Categorias sérias merecem honestidade explícita. Estas linhas estão seladas.</span>
+          <span lang="de">Ernste Kategorien verdienen explizite Ehrlichkeit. Diese Linien sind versiegelt.</span>
+          <span lang="en">Serious categories deserve explicit honesty. These lines are sealed.</span>
+        </p>
+
+        <div class="lines">
+          <div class="line">
+            <span class="num">01</span>
+            <span class="text" data-i18n>
+              <span lang="pt" class="active"><strong>Não substitui autenticação bancária.</strong> Não reduz SCA, não substitui PIN. É registo paralelo soberano, não alternativa à infra-estrutura bancária.</span>
+              <span lang="de"><strong>Ersetzt keine Bankauthentifizierung.</strong> Reduziert nicht SCA, ersetzt nicht PIN. Es ist ein souveränes Parallelregister, keine Alternative zur Bankinfrastruktur.</span>
+              <span lang="en"><strong>Does not replace bank authentication.</strong> Does not reduce SCA, does not replace PIN. It is a sovereign parallel record, not an alternative to banking infrastructure.</span>
+            </span>
+          </div>
+          <div class="line">
+            <span class="num">02</span>
+            <span class="text" data-i18n>
+              <span lang="pt" class="active"><strong>Não integra APIs bancárias na v1.</strong> Nem PSD2, nem AISP, nem screen scraping. O WINDI nunca tem credenciais tuas.</span>
+              <span lang="de"><strong>Integriert keine Bank-APIs in v1.</strong> Kein PSD2, kein AISP, kein Screen Scraping. WINDI hat niemals deine Zugangsdaten.</span>
+              <span lang="en"><strong>Does not integrate banking APIs in v1.</strong> No PSD2, no AISP, no screen scraping. WINDI never has your credentials.</span>
+            </span>
+          </div>
+          <div class="line">
+            <span class="num">03</span>
+            <span class="text" data-i18n>
+              <span lang="pt" class="active"><strong>Não diagnostica, não aconselha, não decide por ti.</strong> Selar não é opinar. WINDI guarda prova, não substitui o profissional.</span>
+              <span lang="de"><strong>Diagnostiziert nicht, berät nicht, entscheidet nicht für Sie.</strong> Versiegeln ist keine Meinung. WINDI speichert Beweise, ersetzt nicht den Fachmann.</span>
+              <span lang="en"><strong>Does not diagnose, advise, or decide for you.</strong> Sealing is not opining. WINDI stores proof, does not replace the professional.</span>
+            </span>
+          </div>
+          <div class="line">
+            <span class="num">04</span>
+            <span class="text" data-i18n>
+              <span lang="pt" class="active"><strong>Não promete eliminar fadiga, ansiedade ou paranóia.</strong> Promete uma coisa: verificabilidade por terceiros, sem revelar dados.</span>
+              <span lang="de"><strong>Verspricht nicht, Müdigkeit, Angst oder Paranoia zu beseitigen.</strong> Verspricht eines: Verifizierbarkeit durch Dritte, ohne Daten preiszugeben.</span>
+              <span lang="en"><strong>Does not promise to eliminate fatigue, anxiety, or paranoia.</strong> Promises one thing: verifiability by third parties, without revealing data.</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- §6 PARA QUEM -->
+    <section id="para-quem">
+      <div class="container">
+        <p class="eyebrow" data-i18n><span class="accent">§6</span> &nbsp; <span lang="pt" class="active">PARA QUEM</span><span lang="de">FÜR WEN</span><span lang="en">FOR WHOM</span></p>
+        <h2 data-i18n>
+          <span lang="pt" class="active">Para a tua jornada. Para a memória que precisa de raiz.</span>
+          <span lang="de">Für deine Reise. Für die Erinnerung, die Wurzeln braucht.</span>
+          <span lang="en">For your journey. For the memory that needs roots.</span>
+        </h2>
+
+        <div class="pistas">
+          <div class="pista">
+            <h3 data-i18n><span lang="pt" class="active">Pessoa</span><span lang="de">Person</span><span lang="en">Person</span></h3>
+            <p data-i18n>
+              <span lang="pt" class="active">Memória pessoal soberana. O que vives, decides, queres poder provar daqui a 5, 10, 20 anos — sem depender de plataforma que pode fechar ou mudar.</span>
+              <span lang="de">Souveräne persönliche Erinnerung. Was du erlebst, entscheidest, in 5, 10, 20 Jahren beweisen willst — ohne von einer Plattform abhängig zu sein, die schließen oder sich ändern kann.</span>
+              <span lang="en">Sovereign personal memory. What you live, decide, want to prove in 5, 10, 20 years — without depending on a platform that may close or change.</span>
+            </p>
+          </div>
+          <div class="pista">
+            <h3 data-i18n><span lang="pt" class="active">Organização</span><span lang="de">Organisation</span><span lang="en">Organization</span></h3>
+            <p data-i18n>
+              <span lang="pt" class="active">Memória institucional auditável. Decisões com selo, cadeia de raciocínio preservada, prova de quem disse o quê e quando — para tribunais, reguladores, ou história interna.</span>
+              <span lang="de">Auditierbare institutionelle Erinnerung. Versiegelte Entscheidungen, bewahrte Argumentationskette, Beweis, wer was wann sagte — für Gerichte, Regulatoren oder interne Historie.</span>
+              <span lang="en">Auditable institutional memory. Sealed decisions, preserved reasoning chain, proof of who said what and when — for courts, regulators, or internal history.</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- §7 VERIFICAR -->
+    <section id="verificar">
+      <div class="container">
+        <p class="eyebrow" data-i18n><span class="accent">§7</span> &nbsp; <span lang="pt" class="active">VERIFICAR</span><span lang="de">VERIFIZIEREN</span><span lang="en">VERIFY</span></p>
+        <h2 data-i18n>
+          <span lang="pt" class="active">Cada bloco nasce com receipt.</span>
+          <span lang="de">Jeder Block wird mit Beleg geboren.</span>
+          <span lang="en">Every block is born with a receipt.</span>
+        </h2>
+        <p data-i18n>
+          <span lang="pt" class="active">A confiança no WINDI não é pedida — é verificável. Toda memória selada recebe número de série, hash criptográfico, e posição na cadeia. Qualquer pessoa pode confirmar existência e integridade.</span>
+          <span lang="de">Vertrauen in WINDI wird nicht erbeten — es ist verifizierbar. Jede versiegelte Erinnerung erhält Seriennummer, kryptografischen Hash und Position in der Kette. Jeder kann Existenz und Integrität bestätigen.</span>
+          <span lang="en">Trust in WINDI is not asked — it is verifiable. Every sealed memory receives serial number, cryptographic hash, and position in the chain. Anyone can confirm existence and integrity.</span>
+        </p>
+        <p data-i18n><span lang="pt" class="active"><strong>Verifica antes de confiares.</strong></span><span lang="de"><strong>Verifizieren Sie, bevor Sie vertrauen.</strong></span><span lang="en"><strong>Verify before you trust.</strong></span></p>
+        <a class="verify-cta" href="/verify-public/" data-i18n><span lang="pt" class="active">Abrir Forensic Ledger</span><span lang="de">Forensic Ledger öffnen</span><span lang="en">Open Forensic Ledger</span></a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="seal-badge">
+        <div class="axiom">AI processes. Human decides. WINDI guarantees.</div>
+        <div class="meta">
+          <span><span class="key">Foundation</span> §250</span>
+          <span><span class="key">Portal</span> §251 · MEMORY</span>
+          <a href="/verify-public/?id=WINDI-S250-DEPLOY-20260511-A9CB761B">verificar receipt</a>
+        </div>
+      </div>
+      <div class="footer-end">
+        <span>Liga IA+H · WINDI Publishing House · Kempten, Bavaria</span>
+        <span class="mono">§251 · 2026-05-11</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* Theme toggle */
+    (function(){
+      var root=document.documentElement, btn=document.getElementById('theme-toggle');
+      try{var s=sessionStorage.getItem('windi-theme');if(s==='noir'){root.dataset.theme='noir';document.querySelector('meta[name="theme-color"]').content='#0A0A08';}}catch(e){}
+      btn.onclick=function(){
+        var n=root.dataset.theme==='noir';
+        root.dataset.theme=n?'klar':'noir';
+        document.querySelector('meta[name="theme-color"]').content=n?'#FAFAF8':'#0A0A08';
+        try{sessionStorage.setItem('windi-theme',root.dataset.theme);}catch(e){}
+      };
+    })();
+
+    /* Lang toggle */
+    (function(){
+      var btn=document.getElementById('lang-toggle'), langs=['pt','de','en'], cur='pt';
+      function set(l){
+        cur=l; document.documentElement.lang=l;
+        document.querySelectorAll('[data-i18n]').forEach(function(e){
+          e.querySelectorAll('[lang]').forEach(function(a){a.classList.toggle('active',a.lang===l);});
+        });
+        btn.querySelectorAll('.lang-opt').forEach(function(o){o.setAttribute('aria-current',o.dataset.lang===l?'true':'false');});
+      }
+      btn.onclick=function(){set(langs[(langs.indexOf(cur)+1)%3]);};
+    })();
+  </script>
+</body>
+</html>

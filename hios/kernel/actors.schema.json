@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://windi-domain.com/hios/kernel/actors.schema.json",
+  "_meta": {
+    "status": "DRAFT-SKELETON",
+    "not_sealed": true,
+    "not_canonical": true,
+    "pending_review": "GUARDIAN",
+    "layer": "1-identity",
+    "binding": "DID Genesis :8096"
+  },
+  "title": "WINDI-HIOS Actor Schema",
+  "description": "Identity layer schema for actors in the WINDI-HIOS Kernel",
+  "type": "object",
+  "required": ["actor_id", "actor_type", "did"],
+  "properties": {
+    "actor_id": {
+      "type": "string",
+      "description": "Unique identifier for the actor",
+      "pattern": "^[a-z0-9-]+$"
+    },
+    "actor_type": {
+      "type": "string",
+      "enum": ["human", "agent", "service", "system"],
+      "description": "Type of actor"
+    },
+    "did": {
+      "type": "string",
+      "description": "Decentralized Identifier bound to DID Genesis",
+      "pattern": "^did:windi:[a-z0-9-]+$"
+    },
+    "role": {
+      "type": "string",
+      "enum": ["human_dragon", "guardian", "architect", "witness", "construtor", "user", "service"],
+      "description": "Role in Three Dragons Protocol"
+    },
+    "tier": {
+      "type": "string",
+      "enum": ["FREE", "MED", "HIGH", "ORACLE"],
+      "description": "DID tier from DID Genesis"
+    },
+    "session_id": {
+      "type": "string",
+      "description": "Current session identifier (if applicable)"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "verified": {
+      "type": "boolean",
+      "description": "Whether identity is verified via DID Genesis"
+    }
+  },
+  "_open_questions": [
+    "Q2: How to handle agent actors without persistent DID?",
+    "Q3: Session-scoped vs persistent actor identity?"
+  ]
+}

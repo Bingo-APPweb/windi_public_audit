@@ -1,0 +1,32 @@
+W-MAIL-001 — DKIM DNS Configuration
+Domain: windisites.de
+Generated: 2026-04-29T18:52:44Z
+
+══════════════════════════════════════════════════════════════════
+STRATO DNS PANEL — TXT RECORDS
+══════════════════════════════════════════════════════════════════
+
+Record #1 — RSA-2048 (Primary)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Name:  rsa._domainkey
+Type:  TXT
+Value: 
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Record #2 — Ed25519 (Future Phase 2)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Status: DEFERRED (requires rspamd upgrade)
+Name:   ed25519._domainkey
+Type:   TXT
+Value:  (to be generated in Phase 2)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Verification After DNS Propagation (~5-30 min):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+host -t TXT rsa._domainkey.windisites.de
+
+Expected output should contain: v=DKIM1; k=rsa; p=...
+
+══════════════════════════════════════════════════════════════════

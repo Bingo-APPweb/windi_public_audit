@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WINDI Quick Verify</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0A0A10;
+            color: #E8E6E1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container { max-width: 500px; width: 100%; text-align: center; }
+        .logo { font-size: 24px; font-weight: 800; color: #C9A84C; margin-bottom: 8px; }
+        .subtitle { color: #6B7280; margin-bottom: 32px; font-size: 14px; }
+        .dropzone {
+            border: 2px dashed #2A2A34;
+            border-radius: 12px;
+            padding: 48px 24px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 24px;
+        }
+        .dropzone:hover, .dropzone.dragover {
+            border-color: #C9A84C;
+            background: rgba(201, 168, 76, 0.05);
+        }
+        .dropzone-text { color: #6B7280; }
+        .dropzone input { display: none; }
+        .result {
+            background: #12121A;
+            border: 1px solid #1E1E28;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: left;
+            display: none;
+        }
+        .result.show { display: block; }
+        .status { font-size: 20px; font-weight: 700; margin-bottom: 16px; }
+        .verified { color: #22C55E; }
+        .not-found { color: #EF4444; }
+        .loading { color: #C9A84C; }
+        .field { margin-bottom: 12px; }
+        .label { font-size: 11px; color: #6B7280; text-transform: uppercase; }
+        .value { font-family: monospace; font-size: 13px; word-break: break-all; }
+        .hash { font-size: 11px; color: #C9A84C; }
+        .back { margin-top: 24px; color: #6B7280; font-size: 13px; }
+        .back a { color: #C9A84C; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">WINDI QUICK VERIFY</div>
+        <div class="subtitle">Upload → Hash → Ledger Check</div>
+        
+        <div class="dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()">
+            <input type="file" id="fileInput" onchange="handleFile(this.files[0])">
+            <div class="dropzone-text">
+                📄 Datei hier ablegen<br>
+                <small>oder klicken zum Auswählen</small>
+            </div>
+        </div>
+        
+        <div class="result" id="result">
+            <div class="status" id="status">...</div>
+            <div class="field">
+                <div class="label">Datei</div>
+                <div class="value" id="fileName">-</div>
+            </div>
+            <div class="field">
+                <div class="label">SHA-256</div>
+                <div class="value hash" id="fileHash">-</div>
+            </div>
+            <div class="field">
+                <div class="label">Ledger Status</div>
+                <div class="value" id="ledgerStatus">-</div>
+            </div>
+            <div class="field" id="receiptField" style="display:none">
+                <div class="label">Receipt ID</div>
+                <div class="value" id="receiptId">-</div>
+            </div>
+        </div>
+        
+        <div class="back">
+            <a href="/verify-public/">← Zurück zu WINDI Verify</a>
+        </div>
+    </div>
+
+    <script>
+        const dropzone = document.getElementById('dropzone');
+        const result = document.getElementById('result');
+        
+        dropzone.ondragover = (e) => { e.preventDefault(); dropzone.classList.add('dragover'); };
+        dropzone.ondragleave = () => dropzone.classList.remove('dragover');
+        dropzone.ondrop = (e) => {
+            e.preventDefault();
+            dropzone.classList.remove('dragover');
+            if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+        };
+        
+        async function handleFile(file) {
+            result.classList.add('show');
+            document.getElementById('status').textContent = '⏳ Wird geprüft...';
+            document.getElementById('status').className = 'status loading';
+            document.getElementById('fileName').textContent = file.name + ' (' + (file.size/1024).toFixed(1) + ' KB)';
+            document.getElementById('fileHash').textContent = 'Berechne...';
+            document.getElementById('ledgerStatus').textContent = 'Warte...';
+            
+            // Calculate SHA-256 locally
+            const buffer = await file.arrayBuffer();
+            const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            document.getElementById('fileHash').textContent = hash;
+            
+            // Send to server for Ledger verification
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            try {
+                const resp = await fetch('/verify-public/file', { method: 'POST', body: formData });
+                const data = await resp.json();
+                
+                if (data.status === 'verified') {
+                    document.getElementById('status').textContent = '✅ VERIFIZIERT';
+                    document.getElementById('status').className = 'status verified';
+                    document.getElementById('ledgerStatus').textContent = 'Im WINDI Ledger gefunden';
+                    if (data.document_id) {
+                        document.getElementById('receiptField').style.display = 'block';
+                        document.getElementById('receiptId').textContent = data.document_id;
+                    }
+                } else {
+                    document.getElementById('status').textContent = '❌ NICHT VERIFIZIERT';
+                    document.getElementById('status').className = 'status not-found';
+                    document.getElementById('ledgerStatus').textContent = 'Nicht im WINDI Ledger';
+                }
+            } catch (err) {
+                document.getElementById('status').textContent = '⚠️ Fehler';
+                document.getElementById('ledgerStatus').textContent = err.message;
+            }
+        }
+    </script>
+</body>
+</html>

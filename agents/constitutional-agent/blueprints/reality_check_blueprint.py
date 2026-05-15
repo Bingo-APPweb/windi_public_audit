@@ -249,7 +249,15 @@ def analyze():
         result["content_hash"] = content_hash
         result["analyzed_at"] = datetime.utcnow().isoformat() + "Z"
         result["version"] = WINDI_VERSION
-        result["constitutional_basis"] = "I9+I10: IA classifica. Humano decide."
+
+        # I12 — Trilingual constitutional basis
+        lang = result.get("language_detected", "en")
+        constitutional_basis_i18n = {
+            "pt": "I9+I10: IA classifica. Humano decide.",
+            "de": "I9+I10: KI klassifiziert. Mensch entscheidet.",
+            "en": "I9+I10: AI classifies. Human decides."
+        }
+        result["constitutional_basis"] = constitutional_basis_i18n.get(lang, constitutional_basis_i18n["en"])
 
         # Seal to Ledger for HIGH confidence results
         receipt_id = None

@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://windi-domain.com/hios/kernel/proof.schema.json",
+  "_meta": {
+    "status": "DRAFT-SKELETON",
+    "not_sealed": true,
+    "not_canonical": true,
+    "pending_review": "GUARDIAN",
+    "layer": "6-proof",
+    "binding": "Forensic Ledger :8101"
+  },
+  "title": "WINDI-HIOS Proof Schema",
+  "description": "Proof layer schema for receipt generation and verification",
+  "type": "object",
+  "required": ["receipt_id", "execution_id", "content_hash"],
+  "properties": {
+    "receipt_id": {
+      "type": "string",
+      "pattern": "^WINDI-[A-Z0-9-]+-[0-9]{14}-[A-F0-9]{8}$",
+      "description": "Unique receipt identifier"
+    },
+    "execution_id": {
+      "type": "string",
+      "description": "Reference to execution that generated this proof"
+    },
+    "content_hash": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$",
+      "description": "SHA-256 hash of content"
+    },
+    "mutation_class": {
+      "type": "string",
+      "enum": ["CRITICAL", "STANDARD", "EPHEMERAL"]
+    },
+    "receipt_type": {
+      "type": "string",
+      "enum": ["constitutional", "operational", "ephemeral"],
+      "description": "Classification per Guardian refinement. MUST match mutation_class: CRITICAL→constitutional, STANDARD→operational, EPHEMERAL→ephemeral"
+    },
+    "parent_receipt": {
+      "type": ["string", "null"],
+      "description": "Parent receipt ID for chain integrity. MUST be null for EPHEMERAL receipts during DRAFT-SKELETON phase per Bootstrap Protocol §4"
+    },
+    "_constraints": {
+      "type": "object",
+      "description": "Guardian-mandated constraints (enforced by validation layer)",
+      "properties": {
+        "mutation_receipt_binding": {
+          "description": "Bidirectional enforcement: CRITICAL⇒constitutional, STANDARD⇒operational, EPHEMERAL⇒ephemeral. Schema permits all combinations but validation layer MUST reject mismatches."
+        },
+        "ephemeral_parent_restriction": {
+          "description": "If receipt_type=='ephemeral' AND _meta.status=='DRAFT-SKELETON', parent_receipt MUST be null. Enforced by Bootstrap Protocol §4."
+        }
+      }
+    },
+    "actor": {
+      "type": "string",
+      "description": "Actor DID who generated proof"
+    },
+    "invariants": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Invariants enforced in this proof"
+    },
+    "ledger_binding": {
+      "type": "object",
+      "properties": {
+        "endpoint": {"type": "string", "default": "http://localhost:8101/api/receipts"},
+        "stored": {"type": "boolean"},
+        "verified": {"type": "boolean"}
+      }
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "verify_url": {
+      "type": "string",
+      "format": "uri"
+    }
+  },
+  "_open_questions": [
+    "Q12: Merkle aggregation for high-volume STANDARD receipts?",
+    "Q13: EPHEMERAL receipt retention policy enforcement?"
+  ]
+}

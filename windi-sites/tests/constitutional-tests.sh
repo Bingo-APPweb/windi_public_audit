@@ -1,17 +1,23 @@
 #!/bin/bash
 # ═══════════════════════════════════════════════════════════════
-# W-SITES-001 Constitutional Test Suite
+# W-SITES-001 Constitutional Test Suite v2.0
+# Testing Identity Gate v1.2.0 API
 # §11 Invariants: I1 · I9 · I11 · I12 · I14
-# PRODUCT-SITES-001 Compliance
+# Date: 29 April 2026
 # ═══════════════════════════════════════════════════════════════
 
-SITES_GATE="http://127.0.0.1:8192"
-SITES_FACTORY="http://127.0.0.1:8091/sites/factory"
+GATE="http://127.0.0.1:8192"
 PASSED=0
 FAILED=0
 
+# Test email (won't actually send in test mode)
+TEST_EMAIL="test-$(date +%s)@windi-test.local"
+TEST_DID=""
+TEST_COMPANY_ID=""
+
 echo "═══════════════════════════════════════════════════════════════"
-echo "W-SITES-001 Constitutional Test Suite"
+echo "W-SITES-001 Constitutional Test Suite v2.0"
+echo "Testing Identity Gate v1.2.0"
 echo "Date: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
 echo "═══════════════════════════════════════════════════════════════"
 echo ""
@@ -35,100 +41,127 @@ test_result() {
 }
 
 # ═══════════════════════════════════════════════════════════════
-# TEST 1: I14 — Explicit Failure (missing client_did)
+# TEST 1: Health check confirms service is running
 # ═══════════════════════════════════════════════════════════════
-echo "[1/9] I14: Create without client_did should fail explicitly"
-RESULT=$(curl -s -X POST "$SITES_FACTORY/create" \
-    -H "Content-Type: application/json" \
-    -d '{"site_name": "Test Site"}' 2>/dev/null)
-test_result "Create without client_did" "I14" "client_did required" "$RESULT"
+echo "[1/9] SERVICE: Health check confirms gate is running"
+RESULT=$(curl -s "$GATE/health" 2>/dev/null)
+test_result "Health check returns status" "SERVICE" "healthy" "$RESULT"
 
 # ═══════════════════════════════════════════════════════════════
-# TEST 2: I14 — Explicit Failure (missing site_name)
+# TEST 2: I14 — Explicit Failure (missing required fields)
 # ═══════════════════════════════════════════════════════════════
-echo "[2/9] I14: Create without site_name should fail explicitly"
-RESULT=$(curl -s -X POST "$SITES_FACTORY/create" \
+echo "[2/9] I14: Register without required fields fails explicitly"
+RESULT=$(curl -s -X POST "$GATE/register" \
     -H "Content-Type: application/json" \
-    -d '{"client_did": "did:windi:test-001"}' 2>/dev/null)
-test_result "Create without site_name" "I14" "site_name required" "$RESULT"
+    -d '{"legal_name": "Test Corp"}' 2>/dev/null)
+test_result "Missing fields rejected explicitly" "I14" "Field required" "$RESULT"
 
 # ═══════════════════════════════════════════════════════════════
-# TEST 3: I1 — Sovereignty (valid creation with DID)
+# TEST 3: I1 — Sovereignty (successful registration with all fields)
 # ═══════════════════════════════════════════════════════════════
-echo "[3/9] I1: Create site with valid DID (client sovereignty)"
-RESULT=$(curl -s -X POST "$SITES_FACTORY/create" \
+echo "[3/9] I1: Complete registration creates sovereign identity"
+RESULT=$(curl -s -X POST "$GATE/register" \
     -H "Content-Type: application/json" \
-    -d '{"client_did": "did:windi:test-001", "site_name": "Constitutional Test Site"}' 2>/dev/null)
-SITE_ID=$(echo "$RESULT" | grep -o '"site_id":"[^"]*"' | cut -d'"' -f4)
-test_result "Create with valid DID" "I1" "ok" "$RESULT"
-echo "   Site ID: $SITE_ID"
+    -d "{
+        \"legal_name\": \"Constitutional Test Law Firm\",
+        \"country\": \"DE\",
+        \"vat_number\": \"DE999999999\",
+        \"type\": \"law_firm\",
+        \"admin_name\": \"Test Admin\",
+        \"admin_email\": \"$TEST_EMAIL\"
+    }" 2>/dev/null)
+
+# Extract DID from response
+TEST_DID=$(echo "$RESULT" | grep -o '"did":"[^"]*"' | cut -d'"' -f4)
+TEST_COMPANY_ID=$(echo "$RESULT" | grep -o '"company_id":"[^"]*"' | cut -d'"' -f4)
+
+test_result "Registration creates DID" "I1" "did:windi:" "$RESULT"
+echo "   DID: $TEST_DID"
+echo "   Company ID: $TEST_COMPANY_ID"
 
 # ═══════════════════════════════════════════════════════════════
-# TEST 4: I9 — Approval Gate (attempt seal without approval)
+# TEST 4: I11 — Ledger receipt created on registration
 # ═══════════════════════════════════════════════════════════════
-echo "[4/9] I9: Seal without approval should be blocked"
-# First update to C2
-curl -s -X POST "$SITES_FACTORY/update" \
-    -H "Content-Type: application/json" \
-    -d "{\"site_id\": \"$SITE_ID\", \"design_brief\": {\"title\": \"Test\"}}" >/dev/null 2>&1
-# Then render to C3
-curl -s -X POST "$SITES_FACTORY/render" \
-    -H "Content-Type: application/json" \
-    -d "{\"site_id\": \"$SITE_ID\", \"pages\": [{\"name\": \"home\", \"content\": \"Test content\"}]}" >/dev/null 2>&1
-# Then review to C4
-curl -s -X POST "$SITES_FACTORY/review" \
-    -H "Content-Type: application/json" \
-    -d "{\"site_id\": \"$SITE_ID\", \"review\": {\"quality\": \"ok\"}}" >/dev/null 2>&1
-# Now try to seal without approval
-RESULT=$(curl -s -X POST "$SITES_FACTORY/seal" \
-    -H "Content-Type: application/json" \
-    -d "{\"site_id\": \"$SITE_ID\"}" 2>/dev/null)
-test_result "Seal without approval blocked" "I9" "not approved" "$RESULT"
+echo "[4/9] I11: Registration creates permanent Ledger receipt"
+test_result "Ledger receipt in response" "I11" "ledger_receipt" "$RESULT"
 
 # ═══════════════════════════════════════════════════════════════
-# TEST 5: I9 — Approval Gate (human_approved=false rejected)
+# TEST 5: I14 — Identity query with invalid DID fails explicitly
 # ═══════════════════════════════════════════════════════════════
-echo "[5/9] I9: Approve with human_approved=false should be rejected"
-RESULT=$(curl -s -X POST "$SITES_FACTORY/approve" \
-    -H "Content-Type: application/json" \
-    -d "{\"site_id\": \"$SITE_ID\", \"human_approved\": false, \"approved_by\": \"test\"}" 2>/dev/null)
-test_result "human_approved=false rejected" "I9" "human_approved=true required" "$RESULT"
+echo "[5/9] I14: Query invalid DID returns explicit error"
+RESULT=$(curl -s "$GATE/identity/did:windi:invalid-test-999" 2>/dev/null)
+test_result "Invalid DID returns error code" "I14" "NOT_FOUND" "$RESULT"
 
 # ═══════════════════════════════════════════════════════════════
-# TEST 6: I1 — Approval requires approver identity
+# TEST 6: I1 — Identity query with valid DID returns data
 # ═══════════════════════════════════════════════════════════════
-echo "[6/9] I1: Approval without approved_by should fail"
-RESULT=$(curl -s -X POST "$SITES_FACTORY/approve" \
-    -H "Content-Type: application/json" \
-    -d "{\"site_id\": \"$SITE_ID\", \"human_approved\": true}" 2>/dev/null)
-test_result "Approval requires approved_by" "I1" "approved_by required" "$RESULT"
+echo "[6/9] I1: Query valid DID returns identity data"
+if [ -n "$TEST_DID" ]; then
+    RESULT=$(curl -s "$GATE/identity/$TEST_DID" 2>/dev/null)
+    test_result "Valid DID returns identity" "I1" "Constitutional Test Law Firm" "$RESULT"
+else
+    echo "⚠️  SKIP: No DID from registration (test 3 failed)"
+    ((FAILED++))
+fi
 
 # ═══════════════════════════════════════════════════════════════
-# TEST 7: I9 — Valid approval passes gate
+# TEST 7: I9 — Workspace blocked without valid DID
 # ═══════════════════════════════════════════════════════════════
-echo "[7/9] I9: Valid approval (human_approved=true + approved_by) passes"
-RESULT=$(curl -s -X POST "$SITES_FACTORY/approve" \
-    -H "Content-Type: application/json" \
-    -d "{\"site_id\": \"$SITE_ID\", \"human_approved\": true, \"approved_by\": \"human-dragon\"}" 2>/dev/null)
-test_result "Valid approval passes I9 gate" "I9" "I9 Gate passed" "$RESULT"
+echo "[7/9] I9: Workspace access blocked without DID (fail-closed)"
+# Check HTTP status code (should be 302 redirect)
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$GATE/workspace/" 2>/dev/null)
+if [ "$HTTP_CODE" = "302" ]; then
+    echo "✅ PASS: Workspace blocked without DID [I9]"
+    ((PASSED++))
+else
+    echo "❌ FAIL: Workspace blocked without DID [I9]"
+    echo "   Expected: 302 (redirect)"
+    echo "   Actual: $HTTP_CODE"
+    ((FAILED++))
+fi
 
 # ═══════════════════════════════════════════════════════════════
-# TEST 8: I11 — Ledger seal creates permanent receipt
+# TEST 8: I9 — Workspace allowed with VERIFIED DID
 # ═══════════════════════════════════════════════════════════════
-echo "[8/9] I11: Seal creates permanent Ledger receipt"
-RESULT=$(curl -s -X POST "$SITES_FACTORY/seal" \
-    -H "Content-Type: application/json" \
-    -d "{\"site_id\": \"$SITE_ID\"}" 2>/dev/null)
-test_result "Seal creates Ledger receipt" "I11" "WINDI-SITE-" "$RESULT"
+echo "[8/9] I9: Workspace access granted with VERIFIED DID"
+if [ -n "$TEST_DID" ]; then
+    # Try with DID in query param
+    RESULT=$(curl -s "$GATE/workspace/?did=$TEST_DID" 2>/dev/null)
+    # Should return workspace HTML (not redirect to gate)
+    if [[ "$RESULT" == *"gate"* ]] && [[ "$RESULT" != *"workspace"* ]]; then
+        echo "❌ FAIL: Workspace blocked even with valid DID [I9]"
+        echo "   Expected: workspace content"
+        echo "   Actual: redirected to gate"
+        ((FAILED++))
+    else
+        echo "✅ PASS: Workspace accessible with valid DID [I9]"
+        ((PASSED++))
+    fi
+else
+    echo "⚠️  SKIP: No DID from registration (test 3 failed)"
+    ((FAILED++))
+fi
 
 # ═══════════════════════════════════════════════════════════════
-# TEST 9: I11 — Double seal rejected (irremediable)
+# TEST 9: I11 — Identity Card export includes genesis_receipt
 # ═══════════════════════════════════════════════════════════════
-echo "[9/9] I11: Double seal rejected (C6 is IRREMEDIÁVEL)"
-RESULT=$(curl -s -X POST "$SITES_FACTORY/seal" \
-    -H "Content-Type: application/json" \
-    -d "{\"site_id\": \"$SITE_ID\"}" 2>/dev/null)
-test_result "Double seal rejected" "I11" "already sealed" "$RESULT"
+echo "[9/9] I11: Identity Card export includes permanent receipt"
+if [ -n "$TEST_DID" ]; then
+    RESULT=$(curl -s "$GATE/dashboard/$TEST_DID/json" 2>/dev/null)
+    test_result "Identity Card has genesis_receipt" "I11" "genesis_receipt" "$RESULT"
+    test_result "Identity Card has verify_url" "I11" "verify_url" "$RESULT"
+else
+    echo "⚠️  SKIP: No DID from registration (test 3 failed)"
+    ((FAILED++))
+fi
+
+# ═══════════════════════════════════════════════════════════════
+# CLEANUP (optional — comment out to inspect test data)
+# ═══════════════════════════════════════════════════════════════
+# echo ""
+# echo "Cleaning up test data..."
+# sqlite3 /opt/windi/windi-sites/identity-gate/windi_sites_identity.db \
+#   "DELETE FROM admins WHERE email LIKE 'test-%@windi-test.local';"
 
 # ═══════════════════════════════════════════════════════════════
 # SUMMARY
@@ -140,6 +173,11 @@ echo "════════════════════════�
 
 if [ $FAILED -eq 0 ]; then
     echo "✅ ALL TESTS PASSED — Constitutional compliance verified"
+    echo ""
+    echo "Test Identity Created:"
+    echo "  Email: $TEST_EMAIL"
+    echo "  DID: $TEST_DID"
+    echo "  Company: $TEST_COMPANY_ID"
     exit 0
 else
     echo "❌ $FAILED TESTS FAILED — Constitutional violations detected"

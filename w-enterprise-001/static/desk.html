@@ -232,6 +232,9 @@ html, body {
 .decision-row:last-child { border-bottom: none; }
 .decision-row:hover { background: var(--bg-hover); }
 .decision-row.critical-row { background: var(--critical-bg); border-left: 2px solid var(--critical); }
+.decision-row.critical-path { animation: critical-pulse 2s ease-in-out infinite; box-shadow: 0 0 10px rgba(229,62,62,0.3); }
+@keyframes critical-pulse { 0%, 100% { box-shadow: 0 0 5px rgba(229,62,62,0.2); } 50% { box-shadow: 0 0 20px rgba(229,62,62,0.5); } }
+.srs-badge { font-family: var(--font-mono); font-size: 9px; padding: 2px 6px; border-radius: 3px; background: var(--gold-glow); color: var(--gold); margin-left: 4px; }
 .dec-id { font-family: var(--font-mono); font-size: 10px; color: var(--gold); font-weight: 600; }
 .dec-desc { font-size: 12px; color: var(--text-1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .dec-legal { font-family: var(--font-mono); font-size: 9px; color: var(--text-3); }
@@ -713,7 +716,17 @@ html, body {
   <aside id="vera-panel">
     <div class="vera-header"><div class="vera-title-row"><div class="vera-sigil">V</div><div><div class="vera-name">VERA</div><div class="vera-const">REGO v1.0</div></div></div></div>
     <div class="vera-tabs"><div class="vera-tab active" id="tab-brief" onclick="switchVeraTab('brief')" data-i18n="briefing">Briefing</div><div class="vera-tab" id="tab-chat" onclick="switchVeraTab('chat')">Chat</div></div>
-    <div id="vera-brief-tab" class="vera-brief-area"><div class="vera-briefing-card"><div class="vera-briefing-label" data-i18n="daily_brief">Daily Briefing · REGO R1+R5</div><div class="vera-briefing-text" id="vera-brief-text" data-i18n="loading_brief">Loading briefing...</div></div><div class="vera-sequence"><div class="vera-seq-label" data-i18n="suggested_sequence">Suggested Sequence</div><div class="vera-seq-item"><div class="vera-seq-step">1.</div><div class="vera-seq-shelf">P01</div><div>Overview 10 min</div></div><div class="vera-seq-item"><div class="vera-seq-step">2.</div><div class="vera-seq-shelf">P02</div><div data-i18n="seq_observations">Observations 15 min</div></div><div class="vera-seq-item" style="color:var(--critical)"><div class="vera-seq-step">3.</div><div class="vera-seq-shelf" style="color:var(--critical)">P04</div><div>PHO DEC-2026-040</div></div><div class="vera-seq-item"><div class="vera-seq-step">4.</div><div class="vera-seq-shelf">P08</div><div data-i18n="seq_seal">Seal the day 5 min</div></div></div></div>
+    <div id="vera-brief-tab" class="vera-brief-area">
+      <!-- §217: PRIORITY FOCUS PANEL -->
+      <div id="vera-priority-panel" class="vera-priority-card" style="display:none;background:var(--critical-bg);border:1px solid var(--critical);border-radius:var(--radius);padding:12px;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <div class="vera-priority-pulse" style="width:8px;height:8px;border-radius:50%;background:var(--critical);animation:critical-pulse 1.5s infinite"></div>
+          <div style="font-family:var(--font-mono);font-size:9px;color:var(--critical);font-weight:600;letter-spacing:1px">CRITICAL PATH · §217</div>
+        </div>
+        <div id="vera-priority-text" style="font-size:12px;color:var(--text-1);line-height:1.5"></div>
+        <div id="vera-priority-srs" style="font-family:var(--font-mono);font-size:9px;color:var(--text-3);margin-top:8px"></div>
+      </div>
+      <div class="vera-briefing-card"><div class="vera-briefing-label" data-i18n="daily_brief">Daily Briefing · REGO R1+R5</div><div class="vera-briefing-text" id="vera-brief-text" data-i18n="loading_brief">Loading briefing...</div></div><div class="vera-sequence"><div class="vera-seq-label" data-i18n="suggested_sequence">Suggested Sequence</div><div class="vera-seq-item"><div class="vera-seq-step">1.</div><div class="vera-seq-shelf">P01</div><div>Overview 10 min</div></div><div class="vera-seq-item"><div class="vera-seq-step">2.</div><div class="vera-seq-shelf">P02</div><div data-i18n="seq_observations">Observations 15 min</div></div><div class="vera-seq-item" style="color:var(--critical)"><div class="vera-seq-step">3.</div><div class="vera-seq-shelf" style="color:var(--critical)">P04</div><div>PHO DEC-2026-040</div></div><div class="vera-seq-item"><div class="vera-seq-step">4.</div><div class="vera-seq-shelf">P08</div><div data-i18n="seq_seal">Seal the day 5 min</div></div></div></div>
     <div id="vera-chat-tab" style="display:none;flex:1;overflow:hidden;display:flex;flex-direction:column"><div class="vera-chat-area" id="vera-chat-messages"><div class="vera-msg"><div class="vera-msg-role role-vera">VERA</div><div class="vera-msg-bubble" data-i18n="vera_greeting">Hello. I'm ready to guide your compliance decisions. Ask about any case or legal article.</div></div></div><div class="vera-input-area"><div id="vera-seal-msg" class="vera-seal-row" style="display:none"><button class="btn btn-sm btn-sealed" onclick="sealLastVera()" data-i18n="seal_guidance">Seal Guidance</button><span style="font-family:var(--font-mono);font-size:9px;color:var(--text-3)">PHO Evidence</span></div><div class="vera-input-row"><textarea class="vera-textarea" id="vera-input" data-i18n-placeholder="vera_placeholder" placeholder="Ask VERA..." rows="1" onkeydown="handleVeraKey(event)"></textarea><button class="vera-send-btn" onclick="sendVeraChat()">+</button></div></div></div>
   </aside>
 </div>
@@ -1194,7 +1207,35 @@ async function fetchVeraBrief() {
   }
 }
 
-function refreshBrief() { fetchVeraBrief(); }
+function refreshBrief() { fetchVeraBrief(); fetchVeraPriority(); }
+
+// §217: Fetch VERA Priority Recommendation
+async function fetchVeraPriority() {
+  try {
+    const res = await fetch(`/vera/priority?language=${STATE.lang}`);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+
+    const panel = document.getElementById('vera-priority-panel');
+    const textEl = document.getElementById('vera-priority-text');
+    const srsEl = document.getElementById('vera-priority-srs');
+
+    if (data.critical_path_count > 0 && data.top_decision) {
+      panel.style.display = 'block';
+      textEl.textContent = data.vera_guidance;
+      const top = data.top_decision;
+      const exposureStr = top.financial_exposure >= 1000000
+        ? `€${(top.financial_exposure / 1000000).toFixed(0)}M`
+        : `€${top.financial_exposure.toLocaleString()}`;
+      srsEl.innerHTML = `SRS: ${top.srs} · ${top.srs_label} · Exposure: ${exposureStr}`;
+    } else {
+      panel.style.display = 'none';
+    }
+  } catch (e) {
+    console.log('[VERA] Priority fetch failed:', e);
+    document.getElementById('vera-priority-panel').style.display = 'none';
+  }
+}
 
 async function sendVeraChat(question = null, shelf = null) {
   const input = document.getElementById('vera-input');
@@ -1715,6 +1756,7 @@ initSettings();
 updateClock();
 openShelf('P01');
 fetchVeraBrief();
+fetchVeraPriority();  // §217: Load priority recommendation
 renderCalendar();
 </script>
 </body>

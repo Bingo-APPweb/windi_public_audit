@@ -73,3 +73,34 @@ nomad-bot/
 *.pem
 *.key
 id_*
+
+# === SANDBOX TEST OUTPUT (§199/§200) ===
+sandbox/w-shelf-001/twins/
+sandbox/w-shelf-001/artifacts/
+sandbox/w-shelf-001/handshakes/
+sandbox/w-shelf-001/logs/
+sandbox/w-shelf-001/.pytest_cache/
+
+# === MEDIA PROCESSING OUTPUT (W-VD-CUT-001) ===
+media/vd-cut/exports/
+media/vd-cut/frames_tmp/
+media/vd-cut/incoming/
+media/vd-cut/previews/
+media/vd-cut/sealed/
+media/vd-cut/thumbs/
+
+# === RUNTIME CACHES (voice, mail data) ===
+windi-travel/maria/voice_cache/
+w-mail-001/mail-data/
+w-mail-001/mail-logs/
+w-mail-001/mail-state/
+
+# === OTHER RUNTIME OUTPUT ===
+media/vd-mass/
+media/streams/
+media/collages/
+joe/*.db-wal
+joe/*.db-shm
+verify-public/*.png
+verify-public/web/*.png
+*.sqlite3

@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="pt" data-theme="klar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IDENTITY · Soberania · Souveränität — WINDI Foundation</title>
+  <meta name="description" content="Identidade soberana. Tu és o autor. Não és o produto. DID-based, matematicamente verificável." />
+  <meta name="theme-color" content="#FAFAF8" />
+  <!--
+    ════════════════════════════════════════════════════════════════════
+    WINDI Foundation — Portal IDENTITY
+    Sprint:  §251 · Portais herdeiros de §250
+    Layer:   PRIMITIVES (FREE · alfabetizacao civica)
+    Doutrina aplicada:
+      §247 trilingual parcial e cirurgico
+      §248 Lei V Two-Track (subtextual)
+      §250-BIS linhas vermelhas
+      §250-TER anti-estereotipia
+      I17 Session/Identity Separation
+      KLAR default · NOIR toggle · system fonts only (Munich 2022)
+    Berçário: "WINDI e para todos, so funciona com DID"
+    ════════════════════════════════════════════════════════════════════
+  -->
+  <style>
+    /* ═══ Reset ═══ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+    img, svg { display: block; max-width: 100%; }
+    button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+    a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+
+    /* ═══ KLAR Theme (default) ═══ */
+    [data-theme="klar"] {
+      --gold: #8B741D;
+      --gold-dim: #6B5A14;
+      --gold-soft: #B89455;
+      --gold-glow: rgba(139,116,29,0.12);
+      --bg: #FAFAF8;
+      --bg-alt: #F5F4F2;
+      --bg-deep: #EDECEA;
+      --bg-card: #FFFFFF;
+      --border: rgba(139,116,29,0.2);
+      --border-soft: rgba(0,0,0,0.06);
+      --text: #1A1917;
+      --text-mute: rgba(26,25,23,0.6);
+      --text-dim: rgba(26,25,23,0.35);
+      --seal-bg: #FFFEF8;
+      --shadow: rgba(0,0,0,0.06);
+    }
+
+    /* ═══ NOIR Theme ═══ */
+    [data-theme="noir"] {
+      --gold: #C49A2A;
+      --gold-dim: #8B6914;
+      --gold-soft: #A07D20;
+      --gold-glow: rgba(196,154,42,0.15);
+      --bg: #0A0A08;
+      --bg-alt: #0F0F0D;
+      --bg-deep: #141412;
+      --bg-card: #181816;
+      --border: rgba(196,154,42,0.18);
+      --border-soft: rgba(255,255,255,0.06);
+      --text: #EDE8D8;
+      --text-mute: rgba(237,232,216,0.55);
+      --text-dim: rgba(237,232,216,0.28);
+      --seal-bg: #0D0C08;
+      --shadow: rgba(0,0,0,0.4);
+    }
+
+    :root {
+      --font-main: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      --font-mono: 'SF Mono', Monaco, Inconsolata, 'Fira Mono', ui-monospace, monospace;
+      --container: 72rem;
+      --gutter: clamp(1rem, 4vw, 2rem);
+    }
+
+    /* ═══ Base ═══ */
+    body {
+      font-family: var(--font-main);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      transition: background 0.25s, color 0.25s;
+      -webkit-font-smoothing: antialiased;
+    }
+    .mono { font-family: var(--font-mono); font-size: 0.9em; }
+
+    /* ═══ Layout ═══ */
+    .container {
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 var(--gutter);
+    }
+
+    /* ═══ Header ═══ */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: color-mix(in srgb, var(--bg) 92%, transparent);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-soft);
+    }
+    header .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+      gap: 1rem;
+    }
+    .brand {
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+    }
+    .brand span { color: var(--gold); }
+    .brand small {
+      font-weight: 400;
+      color: var(--text-mute);
+      font-size: 0.75rem;
+      margin-left: 0.5rem;
+    }
+
+    nav.portals {
+      display: none;
+      gap: 1.25rem;
+      font-size: 0.82rem;
+    }
+    nav.portals a {
+      text-decoration: none;
+      color: var(--text-mute);
+      padding: 0.3rem 0;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    nav.portals a[aria-current="page"] {
+      color: var(--text);
+      border-color: var(--gold);
+    }
+    nav.portals a:hover { color: var(--text); }
+    @media (min-width: 64rem) { nav.portals { display: flex; } }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .ctrl {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.4rem 0.6rem;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      color: var(--text-mute);
+      transition: all 0.15s;
+    }
+    .ctrl:hover { color: var(--text); border-color: var(--text); }
+    .ctrl .sep { opacity: 0.4; margin: 0 0.2rem; }
+    .ctrl .lang-opt[aria-current="true"] { color: var(--gold); font-weight: 600; }
+
+    /* ═══ Sections ═══ */
+    section { padding: 4rem 0; border-bottom: 1px solid var(--border-soft); }
+    section:last-of-type { border-bottom: 0; }
+    @media (min-width: 48rem) { section { padding: 5.5rem 0; } }
+
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-mute);
+      margin-bottom: 0.75rem;
+    }
+    .eyebrow .accent { color: var(--gold); }
+
+    h1, h2, h3 {
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+      margin: 0 0 1rem;
+    }
+    h1 { font-size: clamp(2rem, 5vw, 3.25rem); font-weight: 450; }
+    h2 { font-size: clamp(1.5rem, 3vw, 2rem); }
+    h3 { font-size: 1.1rem; font-weight: 600; }
+
+    p { margin: 0 0 1rem; max-width: 40rem; }
+    p.lead { font-size: 1.1rem; color: var(--text-mute); }
+
+    /* ═══ Hero ═══ */
+    .hero { padding-top: 4rem; }
+
+    .crumbs {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-mute);
+      margin-bottom: 1.25rem;
+    }
+    .crumbs a { text-decoration: none; }
+    .crumbs a:hover { color: var(--text); }
+    .crumbs .sep { margin: 0 0.4rem; opacity: 0.5; }
+
+    .portal-name {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1rem;
+      align-items: baseline;
+      margin-bottom: 1.5rem;
+    }
+    .portal-name .primary {
+      font-size: clamp(1.4rem, 2.5vw, 1.75rem);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    .portal-name .alt {
+      font-size: 1rem;
+      color: var(--text-mute);
+    }
+    .portal-name .alt::before {
+      content: "·";
+      margin-right: 0.75rem;
+      color: var(--gold);
+    }
+
+    .layer-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-mute);
+      padding: 0.25rem 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      margin-bottom: 1.75rem;
+    }
+    .layer-tag::before {
+      content: "";
+      width: 5px; height: 5px;
+      background: var(--gold);
+      border-radius: 50%;
+    }
+
+    .hero-sub {
+      font-size: 1.05rem;
+      color: var(--text-mute);
+      max-width: 36rem;
+      margin-top: 1rem;
+    }
+    .hero-axiom {
+      margin-top: 2rem;
+      padding: 1rem 1.25rem;
+      border-left: 2px solid var(--gold);
+      background: var(--bg-alt);
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+    }
+
+    /* ═══ Pillars ═══ */
+    .pillars {
+      display: grid;
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    @media (min-width: 48rem) { .pillars { grid-template-columns: repeat(3, 1fr); } }
+
+    .pillar {
+      padding: 1.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-soft);
+      border-radius: 4px;
+      box-shadow: 0 1px 3px var(--shadow);
+    }
+    .pillar-icon {
+      width: 32px; height: 32px;
+      color: var(--gold);
+      margin-bottom: 1rem;
+    }
+    .pillar h3 { margin-bottom: 0.5rem; }
+    .pillar p { font-size: 0.92rem; color: var(--text-mute); margin: 0; }
+
+    /* ═══ Data Policy ═══ */
+    .policy {
+      margin-top: 2rem;
+      max-width: 44rem;
+    }
+    .policy-level {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem;
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .policy-level:last-child { border-bottom: 0; }
+    .policy-level .tag {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gold);
+      min-width: 5rem;
+      padding-top: 0.2rem;
+    }
+    .policy-level .desc { font-size: 0.92rem; }
+    .policy-level .desc strong { font-weight: 600; }
+
+    /* ═══ Red Lines ═══ */
+    .lines {
+      display: grid;
+      gap: 0.85rem;
+      margin-top: 1.5rem;
+      max-width: 40rem;
+    }
+    .line {
+      display: flex;
+      gap: 0.85rem;
+      padding: 1rem;
+      border-left: 2px solid var(--gold-soft);
+      background: var(--bg-alt);
+      border-radius: 0 2px 2px 0;
+    }
+    .line .num {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--gold);
+      font-weight: 600;
+      min-width: 1.5rem;
+    }
+    .line .text { font-size: 0.92rem; }
+    .line .text strong { font-weight: 600; }
+
+    /* ═══ CTA ═══ */
+    .cta-box {
+      margin-top: 2.5rem;
+      padding: 2rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      text-align: center;
+      max-width: 32rem;
+    }
+    .cta-box h3 { margin-bottom: 0.75rem; }
+    .cta-box p { max-width: none; margin-bottom: 1.25rem; font-size: 0.95rem; color: var(--text-mute); }
+
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.9rem 1.75rem;
+      background: var(--text);
+      color: var(--bg);
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+      border-radius: 2px;
+      transition: opacity 0.15s;
+    }
+    .cta-btn:hover { opacity: 0.85; }
+    .cta-btn::before { content: "🪪"; font-size: 1.1rem; }
+
+    /* ═══ Triangle ═══ */
+    .triangle {
+      display: grid;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    @media (min-width: 40rem) { .triangle { grid-template-columns: repeat(3, 1fr); } }
+
+    .tri-item {
+      padding: 1.25rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-soft);
+      border-radius: 4px;
+      text-align: center;
+    }
+    .tri-item .portal {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+    .tri-item .question {
+      font-size: 1rem;
+      font-weight: 500;
+    }
+
+    /* ═══ Footer ═══ */
+    footer {
+      background: var(--bg-deep);
+      padding: 2.5rem 0 1.75rem;
+      border-top: 1px solid var(--border);
+    }
+    .seal-badge {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      padding: 1.25rem;
+      background: var(--seal-bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      max-width: 34rem;
+      margin: 0 auto 2rem;
+    }
+    .seal-badge .axiom {
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      letter-spacing: 0.02em;
+    }
+    .seal-badge .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-mute);
+      padding-top: 0.65rem;
+      border-top: 1px solid var(--border-soft);
+    }
+    .seal-badge .meta a { text-decoration: underline; }
+    .seal-badge .meta a:hover { color: var(--text); }
+    .seal-badge .meta .key { color: var(--gold); }
+
+    .footer-end {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-mute);
+      max-width: 34rem;
+      margin: 0 auto;
+      padding-top: 0.85rem;
+      border-top: 1px solid var(--border-soft);
+    }
+
+    /* ═══ i18n ═══ */
+    [data-i18n] [lang]:not(.active) { display: none; }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="container row">
+      <a class="brand" href="/"><span>W</span>INDI<small>Foundation</small></a>
+
+      <nav class="portals" aria-label="Portais Foundation">
+        <a href="/identity/" aria-current="page">IDENTITY</a>
+        <a href="/verify/">VERIFY</a>
+        <a href="/memory/">MEMORY</a>
+        <a href="https://windisites.de" rel="external">SITES</a>
+        <a href="/enterprise/">ENTERPRISE</a>
+      </nav>
+
+      <div class="controls">
+        <button class="ctrl" id="theme-toggle" title="Alternar KLAR / NOIR">
+          KLAR<span class="sep">/</span>NOIR
+        </button>
+        <button class="ctrl" id="lang-toggle" title="Alternar lingua">
+          <span class="lang-opt" data-lang="pt" aria-current="true">PT</span><span class="sep">·</span><span class="lang-opt" data-lang="de">DE</span><span class="sep">·</span><span class="lang-opt" data-lang="en">EN</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- §1 HERO -->
+    <section class="hero">
+      <div class="container">
+        <nav class="crumbs" aria-label="Breadcrumb">
+          <a href="/">Foundation</a><span class="sep">/</span><span>IDENTITY</span>
+        </nav>
+
+        <div class="portal-name">
+          <span class="primary">IDENTITY</span>
+          <span class="alt">Soberania</span>
+          <span class="alt">Souveränität</span>
+        </div>
+
+        <span class="layer-tag">Layer · PRIMITIVES</span>
+
+        <h1 data-i18n>
+          <span lang="pt" class="active">Identidade soberana. Tu és o autor. Não és o produto.</span>
+          <span lang="de">Souveräne Identität. Du bist der Autor. Nicht das Produkt.</span>
+          <span lang="en">Sovereign identity. You are the author. Not the product.</span>
+        </h1>
+
+        <p class="hero-sub" data-i18n>
+          <span lang="pt" class="active">A tua identidade WINDI pertence-te. Não a plataformas. Não a intermediários. DID-based, matematicamente verificável.</span>
+          <span lang="de">Deine WINDI-Identität gehört dir. Nicht Plattformen. Nicht Vermittlern. DID-basiert, mathematisch verifizierbar.</span>
+          <span lang="en">Your WINDI identity belongs to you. Not to platforms. Not to intermediaries. DID-based, mathematically verifiable.</span>
+        </p>
+
+        <div class="hero-axiom mono" data-i18n>
+          <span lang="pt" class="active">DID = Semente · Não é feature</span>
+          <span lang="de">DID = Samen · Kein Feature</span>
+          <span lang="en">DID = Seed · Not a feature</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- §2 O QUE E -->
+    <section id="o-que-e">
+      <div class="container">
+        <p class="eyebrow" data-i18n><span class="accent">§2</span> &nbsp; <span lang="pt" class="active">O QUE É</span><span lang="de">WAS IST DAS</span><span lang="en">WHAT IS IT</span></p>
+        <h2 data-i18n>
+          <span lang="pt" class="active">O DID é a raiz. Tudo o resto cresce a partir dele.</span>
+          <span lang="de">Die DID ist die Wurzel. Alles andere wächst daraus.</span>
+          <span lang="en">The DID is the root. Everything else grows from it.</span>
+        </h2>
+        <p class="lead" data-i18n>
+          <span lang="pt" class="active">DID significa Decentralized Identifier — um identificador que não depende de nenhuma empresa, servidor ou plataforma para existir.</span>
+          <span lang="de">DID bedeutet Decentralized Identifier — eine Kennung, die von keinem Unternehmen, Server oder Plattform abhängt.</span>
+          <span lang="en">DID means Decentralized Identifier — an identifier that does not depend on any company, server, or platform to exist.</span>
+        </p>
+        <p data-i18n>
+          <span lang="pt" class="active">Na arquitectura WINDI, o teu DID é a semente de tudo o que fazes: cada documento selado, cada prova verificada, cada memória guardada — liga-se a ti através do DID. Sem intermediário. Sem plataforma a gerir a tua existência digital.</span>
+          <span lang="de">In der WINDI-Architektur ist deine DID der Samen von allem: Jedes versiegelte Dokument, jeder verifizierte Beweis, jede gespeicherte Erinnerung — verbindet sich mit dir über die DID. Ohne Vermittler. Ohne Plattform, die deine digitale Existenz verwaltet.</span>
+          <span lang="en">In WINDI architecture, your DID is the seed of everything: every sealed document, every verified proof, every stored memory — connects to you through the DID. No intermediary. No platform managing your digital existence.</span>
+        </p>
+      </div>
+    </section>
+
+    <!-- §3 TRES PILARES -->
+    <section id="pilares">
+      <div class="container">
+        <p class="eyebrow" data-i18n><span class="accent">§3</span> &nbsp; <span lang="pt" class="active">TRÊS PILARES</span><span lang="de">DREI SÄULEN</span><span lang="en">THREE PILLARS</span></p>
+        <h2 data-i18n>
+          <span lang="pt" class="active">A identidade soberana assenta em três garantias.</span>
+          <span lang="de">Souveräne Identität ruht auf drei Garantien.</span>
+          <span lang="en">Sovereign identity rests on three guarantees.</span>
+        </h2>
+
+        <div class="pillars">
+          <div class="pillar">
+            <svg class="pillar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12 2L3 7v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V7l-9-5z"/>
+              <path d="M9 12l2 2 4-4"/>
+            </svg>
+            <h3 data-i18n><span lang="pt" class="active">Soberania</span><span lang="de">Souveränität</span><span lang="en">Sovereignty</span></h3>
+            <p data-i18n>
+              <span lang="pt" class="active">A chave é tua. Não vive em nenhum servidor WINDI. Tu és o único custodiante da tua identidade.</span>
+              <span lang="de">Der Schlüssel gehört dir. Er liegt auf keinem WINDI-Server. Du bist der einzige Verwalter deiner Identität.</span>
+              <span lang="en">The key is yours. It does not live on any WINDI server. You are the sole custodian of your identity.</span>
+            </p>
+          </div>
+
+          <div class="pillar">
+            <svg class="pillar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 6v6l4 2"/>
+            </svg>
+            <h3 data-i18n><span lang="pt" class="active">Continuidade</span><span lang="de">Kontinuität</span><span lang="en">Continuity</span></h3>
+            <p data-i18n>
+              <span lang="pt" class="active">Uma identidade, todos os serviços. O mesmo DID acompanha-te em MEMORY, VERIFY, SITES — e qualquer serviço futuro.</span>
+              <span lang="de">Eine Identität, alle Dienste. Dieselbe DID begleitet dich durch MEMORY, VERIFY, SITES — und jeden zukünftigen Dienst.</span>
+              <span lang="en">One identity, all services. The same DID accompanies you through MEMORY, VERIFY, SITES — and any future service.</span>
+            </p>
+          </div>
+
+          <div class="pillar">
+            <svg class="pillar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.7 21a2 2 0 01-3.4 0"/>
+              <line x1="12" y1="2" x2="12" y2="4"/>
+            </svg>
+            <h3 data-i18n><span lang="pt" class="active">Não-Extração</span><span lang="de">Keine Datenextraktion</span><span lang="en">Non-Extraction</span></h3>
+            <p data-i18n>
+              <span lang="pt" class="active">Nunca monetizamos os teus dados. O WINDI sabe quem és para garantir o que produzes — não precisa de mais.</span>
+              <span lang="de">Wir monetarisieren niemals deine Daten. WINDI weiß, wer du bist, um zu garantieren, was du produzierst — mehr nicht.</span>
+              <span lang="en">We never monetize your data. WINDI knows who you are to guarantee what you produce — nothing more.</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- §4 POLITICA DE DADOS -->
+    <section id="politica">
+      <div class="container">
+        <p class="eyebrow" data-i18n><span class="accent">§4</span> &nbsp; <span lang="pt" class="active">POLÍTICA DE DADOS</span><span lang="de">DATENPOLITIK</span><span lang="en">DATA POLICY</span></p>
+        <h2 data-i18n>
+          <span lang="pt" class="active">O que o WINDI sabe. O que não sabe. O que nunca saberá.</span>
+          <span lang="de">Was WINDI weiss. Was nicht. Was niemals.</span>
+          <span lang="en">What WINDI knows. What it doesn't. What it never will.</span>
+        </h2>
+
+        <div class="policy">
+          <div class="policy-level">
+            <span class="tag" data-i18n><span lang="pt" class="active">Utilizador</span><span lang="de">Nutzer</span><span lang="en">User</span></span>
+            <span class="desc" data-i18n>
+              <span lang="pt" class="active"><strong>Tu guardas os dados.</strong> O conteudo dos teus documentos, memorias e ficheiros nunca toca servidores WINDI. O WINDI guarda apenas o hash — a impressao digital matematica.</span>
+              <span lang="de"><strong>Du speicherst die Daten.</strong> Der Inhalt deiner Dokumente, Erinnerungen und Dateien berührt niemals WINDI-Server. WINDI speichert nur den Hash — den mathematischen Fingerabdruck.</span>
+              <span lang="en"><strong>You store the data.</strong> The content of your documents, memories, and files never touches WINDI servers. WINDI stores only the hash — the mathematical fingerprint.</span>
+            </span>
+          </div>
+          <div class="policy-level">
+            <span class="tag" data-i18n><span lang="pt" class="active">Parceiro</span><span lang="de">Partner</span><span lang="en">Partner</span></span>
+            <span class="desc" data-i18n>
+              <span lang="pt" class="active"><strong>Parceiros recebem apenas verificacao.</strong> Quando partilhas um receipt, o parceiro pode confirmar existencia e integridade — sem acesso ao conteudo original.</span>
+              <span lang="de"><strong>Partner erhalten nur Verifizierung.</strong> Wenn du einen Beleg teilst, kann der Partner Existenz und Integrität bestätigen — ohne Zugang zum Originalinhalt.</span>
+              <span lang="en"><strong>Partners receive only verification.</strong> When you share a receipt, the partner can confirm existence and integrity — without access to the original content.</span>
+            </span>
+          </div>
+          <div class="policy-level">
+            <span class="tag" data-i18n><span lang="pt" class="active">Legal</span><span lang="de">Rechtlich</span><span lang="en">Legal</span></span>
+            <span class="desc" data-i18n>
+              <span lang="pt" class="active"><strong>Jurisdicao alema.</strong> WINDI Publishing House opera sob lei alema e GDPR. Dados pessoais minimos. Direito ao esquecimento respeitado — excepto hashes no Ledger (imutaveis por desenho).</span>
+              <span lang="de"><strong>Deutsche Gerichtsbarkeit.</strong> WINDI Publishing House operiert unter deutschem Recht und DSGVO. Minimale personenbezogene Daten. Recht auf Vergessenwerden respektiert — außer Hashes im Ledger (designbedingt unveränderlich).</span>
+              <span lang="en"><strong>German jurisdiction.</strong> WINDI Publishing House operates under German law and GDPR. Minimal personal data. Right to erasure respected — except hashes in Ledger (immutable by design).</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- §5 LINHAS VERMELHAS -->
+    <section id="linhas-vermelhas">
+      <div class="container">
+        <p class="eyebrow" data-i18n><span class="accent">§5</span> &nbsp; <span lang="pt" class="active">LINHAS VERMELHAS</span><span lang="de">ROTE LINIEN</span><span lang="en">RED LINES</span></p>
+        <h2 data-i18n>
+          <span lang="pt" class="active">O que IDENTITY <em>não</em> é.</span>
+          <span lang="de">Was IDENTITY <em>nicht</em> ist.</span>
+          <span lang="en">What IDENTITY is <em>not</em>.</span>
+        </h2>
+        <p class="lead" data-i18n>
+          <span lang="pt" class="active">A honestidade explícita protege a doutrina.</span>
+          <span lang="de">Explizite Ehrlichkeit schützt die Doktrin.</span>
+          <span lang="en">Explicit honesty protects the doctrine.</span>
+        </p>
+
+        <div class="lines">
+          <div class="line">
+            <span class="num">01</span>
+            <span class="text" data-i18n>
+              <span lang="pt" class="active"><strong>Não é login social.</strong> O teu DID não depende de Google, Facebook ou qualquer terceiro. É matemática autónoma.</span>
+              <span lang="de"><strong>Kein Social Login.</strong> Deine DID hängt nicht von Google, Facebook oder Dritten ab. Es ist autonome Mathematik.</span>
+              <span lang="en"><strong>Not social login.</strong> Your DID does not depend on Google, Facebook, or any third party. It is autonomous mathematics.</span>
+            </span>
+          </div>
+          <div class="line">
+            <span class="num">02</span>
+            <span class="text" data-i18n>
+              <span lang="pt" class="active"><strong>Não é blockchain pública.</strong> O Forensic Ledger é infra-estrutura institucional, não rede descentralizada especulativa.</span>
+              <span lang="de"><strong>Keine öffentliche Blockchain.</strong> Das Forensic Ledger ist institutionelle Infrastruktur, kein spekulatives dezentrales Netzwerk.</span>
+              <span lang="en"><strong>Not public blockchain.</strong> The Forensic Ledger is institutional infrastructure, not a speculative decentralized network.</span>
+            </span>
+          </div>
+          <div class="line">
+            <span class="num">03</span>
+            <span class="text" data-i18n>
+              <span lang="pt" class="active"><strong>Não é anonimato.</strong> A soberania não significa invisibilidade. O DID prova autoria — tu decides o que mostrar.</span>
+              <span lang="de"><strong>Keine Anonymität.</strong> Souveränität bedeutet nicht Unsichtbarkeit. Die DID beweist Urheberschaft — du entscheidest, was du zeigst.</span>
+              <span lang="en"><strong>Not anonymity.</strong> Sovereignty does not mean invisibility. The DID proves authorship — you decide what to show.</span>
+            </span>
+          </div>
+          <div class="line">
+            <span class="num">04</span>
+            <span class="text" data-i18n>
+              <span lang="pt" class="active"><strong>Não é moeda, token ou NFT.</strong> A identidade não se vende, não se troca, não se especula.</span>
+              <span lang="de"><strong>Keine Währung, kein Token, kein NFT.</strong> Identität wird nicht verkauft, nicht getauscht, nicht spekuliert.</span>
+              <span lang="en"><strong>Not currency, token, or NFT.</strong> Identity is not sold, not traded, not speculated.</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- §6 TRIANGULO CIVICO -->
+    <section id="triangulo">
+      <div class="container">
+        <p class="eyebrow" data-i18n><span class="accent">§6</span> &nbsp; <span lang="pt" class="active">TRIÂNGULO CÍVICO</span><span lang="de">ZIVILES DREIECK</span><span lang="en">CIVIC TRIANGLE</span></p>
+        <h2 data-i18n>
+          <span lang="pt" class="active">Tres portais. Uma arquitectura.</span>
+          <span lang="de">Drei Portale. Eine Architektur.</span>
+          <span lang="en">Three portals. One architecture.</span>
+        </h2>
+        <p class="lead" data-i18n>
+          <span lang="pt" class="active">IDENTITY, VERIFY e MEMORY formam o triângulo cívico do WINDI. Cada um responde a uma pergunta fundamental.</span>
+          <span lang="de">IDENTITY, VERIFY und MEMORY bilden das zivile Dreieck von WINDI. Jedes beantwortet eine grundlegende Frage.</span>
+          <span lang="en">IDENTITY, VERIFY, and MEMORY form the civic triangle of WINDI. Each answers a fundamental question.</span>
+        </p>
+
+        <div class="triangle">
+          <div class="tri-item">
+            <div class="portal">IDENTITY</div>
+            <div class="question" data-i18n>
+              <span lang="pt" class="active">Quem responde?</span>
+              <span lang="de">Wer antwortet?</span>
+              <span lang="en">Who answers?</span>
+            </div>
+          </div>
+          <div class="tri-item">
+            <div class="portal">VERIFY</div>
+            <div class="question" data-i18n>
+              <span lang="pt" class="active">Como provar?</span>
+              <span lang="de">Wie beweisen?</span>
+              <span lang="en">How to prove?</span>
+            </div>
+          </div>
+          <div class="tri-item">
+            <div class="portal">MEMORY</div>
+            <div class="question" data-i18n>
+              <span lang="pt" class="active">O que permanece?</span>
+              <span lang="de">Was bleibt?</span>
+              <span lang="en">What remains?</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- §7 CTA -->
+    <section id="comecar">
+      <div class="container">
+        <p class="eyebrow" data-i18n><span class="accent">§7</span> &nbsp; <span lang="pt" class="active">COMEÇAR</span><span lang="de">ANFANGEN</span><span lang="en">GET STARTED</span></p>
+        <h2 data-i18n>
+          <span lang="pt" class="active">O teu espaco soberano esta pronto.</span>
+          <span lang="de">Dein souveräner Raum ist bereit.</span>
+          <span lang="en">Your sovereign space is ready.</span>
+        </h2>
+
+        <div class="cta-box">
+          <h3>DID Wallet</h3>
+          <p data-i18n>
+            <span lang="pt" class="active">Acede ou cria a tua identidade soberana no Desktop WINDI.</span>
+            <span lang="de">Greif auf deine souveräne Identität zu oder erstelle sie im WINDI Desktop.</span>
+            <span lang="en">Access or create your sovereign identity in WINDI Desktop.</span>
+          </p>
+          <a class="cta-btn" href="/desktop/" data-i18n><span lang="pt" class="active">Entrar</span><span lang="de">Eintreten</span><span lang="en">Enter</span></a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="seal-badge">
+        <div class="axiom">AI processes. Human decides. WINDI guarantees.</div>
+        <div class="meta">
+          <span><span class="key">Foundation</span> §250</span>
+          <span><span class="key">Portal</span> §251 · IDENTITY</span>
+          <a href="/verify-public/?id=WINDI-S250-LANDING-FOUNDATION-20260511">verificar receipt</a>
+        </div>
+      </div>
+      <div class="footer-end">
+        <span>Liga IA+H · WINDI Publishing House · Kempten, Bavaria</span>
+        <span class="mono">§251-IDENTITY · 2026-05-11</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* Theme toggle */
+    (function(){
+      var root=document.documentElement, btn=document.getElementById('theme-toggle');
+      try{var s=sessionStorage.getItem('windi-theme');if(s==='noir'){root.dataset.theme='noir';document.querySelector('meta[name="theme-color"]').content='#0A0A08';}}catch(e){}
+      btn.onclick=function(){
+        var n=root.dataset.theme==='noir';
+        root.dataset.theme=n?'klar':'noir';
+        document.querySelector('meta[name="theme-color"]').content=n?'#FAFAF8':'#0A0A08';
+        try{sessionStorage.setItem('windi-theme',root.dataset.theme);}catch(e){}
+      };
+    })();
+
+    /* Lang toggle */
+    (function(){
+      var btn=document.getElementById('lang-toggle'), langs=['pt','de','en'], cur='pt';
+      function set(l){
+        cur=l; document.documentElement.lang=l;
+        document.querySelectorAll('[data-i18n]').forEach(function(e){
+          e.querySelectorAll('[lang]').forEach(function(a){a.classList.toggle('active',a.lang===l);});
+        });
+        btn.querySelectorAll('.lang-opt').forEach(function(o){o.setAttribute('aria-current',o.dataset.lang===l?'true':'false');});
+      }
+      btn.onclick=function(){set(langs[(langs.indexOf(cur)+1)%3]);};
+    })();
+  </script>
+</body>
+</html>
