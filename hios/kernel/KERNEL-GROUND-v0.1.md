@@ -5,7 +5,9 @@ STATUS:         DRAFT-SKELETON
 NOT SEALED
 NOT CANONICAL
 PENDING GUARDIAN REVIEW
-Section:        §266 (PENDING - NOT SEALED IN THIS STEP)
+Section:        §267 CANDIDATE (renumerado de §266 — PAF ocupou §266)
+Renumeração:    2026-05-15 por decisão HD
+Compete com:    HIOS Runtime Declaration (também candidato §267)
 ```
 
 > **"Not an AI tool. An operating layer where hybrid intelligence can act

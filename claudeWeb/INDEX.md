@@ -1,110 +1,100 @@
 # WINDI claudeWeb · INDEX
 
-> Última actualização: 2026-05-14 21:40 UTC · Sprint actual: WINDI-HIOS Kernel A-Progressivo
+> Última actualização: 2026-05-15 14:00 UTC · Sprint actual: G3 Merkle CRITICAL
 
 ---
 
 ## Capítulos Sealed (activos)
 
-| §    | Título                          | doc_type              | Data       | Hash (8)   | Status |
-|------|----------------------------------|-----------------------|------------|------------|--------|
-| §262 | WINDI-HIOS Naming               | constitutional_naming | 2026-05-14 | `6F053E65` | sealed |
-| §263 | PingPong Protocol               | continuity_protocol   | 2026-05-14 | `87AAF5BA` | sealed |
+| §    | Título                          | doc_type              | Data       | Receipt (8)   | Status |
+|------|----------------------------------|-----------------------|------------|---------------|--------|
+| §262 | WINDI-HIOS Naming               | constitutional_naming | 2026-05-14 | `6F053E65`    | sealed |
+| §263 | PingPong Protocol               | continuity_protocol   | 2026-05-14 | `87AAF5BA`    | sealed |
+| §264 | Genesis Ceremony                | genesis_ceremony      | 2026-05-15 | `BE29C326`    | sealed |
+| §266 | PAF — Princípio Autoria Forense | constitutional_law    | 2026-05-15 | `15997486`    | sealed |
 
 ---
 
-## Ratificações HD (não sealed, mas constitucionalmente vinculativas)
-
-| Ref | Título | Tipo | Data | Commit |
-|-----|--------|------|------|--------|
-| **G1.2** | Genesis Ceremony v2 | kernel_ratification | 2026-05-14 | `2ef7a620f` |
-| **G4.3** | Reversibility Matrix v2 | kernel_ratification | 2026-05-14 | `2ef7a620f` |
-
-**Nota:** Ratificações são aprovações HD de desenho arquitectural. Diferem de selos Ledger.
-Genesis Ceremony execution pending como acto deliberado.
-
----
-
-## Capítulos Pending
+## Capítulos Reservados (número atribuído, conteúdo pending)
 
 | §    | Título                          | Aguarda                | Sprint Alvo |
 |------|----------------------------------|------------------------|-------------|
-| §264 | CBP-JSON Schema v0.3            | Architect proposal     | Sprint+1    |
-| §265 | Drift Monitor Metrics           | 3 métricas validadas   | Sprint+1    |
-| §266 | KERNEL-GROUND-v0.1              | 7 pontos Guardian review | Etapa 2 A-prog |
+| §265 | Drift Monitor Metrics           | Desenvolvimento futuro | RESERVADO   |
+
+**Nota §265:** Número reservado para Drift Monitor Metrics. Não é vacatio nem processamento forçado — aguarda desenvolvimento orgânico.
 
 ---
 
-## Estado do Kernel HIOS
+## Capítulos Candidatos (não resolvidos)
+
+| §    | Candidato A                     | Candidato B              | Decisão |
+|------|----------------------------------|--------------------------|---------|
+| §267 | KERNEL-GROUND-v0.1              | HIOS Runtime Declaration | DIFERIDA |
+
+**Nota §267:** Dois artefactos competem pelo mesmo slot:
+- **KERNEL-GROUND-v0.1** — 7 Camadas runtime (7 pontos Guardian pending)
+- **HIOS Runtime Declaration** — Absorption Principle (refinamentos C1-C3 pending)
+
+Decisão diferida por HD. Sequenciamento será decidido após G3 Merkle.
+
+---
+
+## Prioridade CRITICAL
 
 ```
-Etapa 1 A-Progressivo: ✅ COMPLETE
-├── Q1 (Genesis) → RESOLVED via Genesis Ceremony v2
-├── Q4 (HD Unavailability) → RESOLVED via Reversibility Matrix v2
-└── Ratificação HD: 2026-05-14
-
-Etapa 2 A-Progressivo: PENDING
-├── Guardian Review Report formal (9 pontos)
-├── 29 questions open (10 high, 13 medium, 6 low)
-└── §266 seal após resolução de blocking points
-
-Genesis Ceremony: HD_APPROVED + GUARDIAN_OBSERVED
-├── N1 ✅ Lista invariantes I1-I18 (13 atestados, 5 gaps)
-├── N2 ✅ Query Ledger: 50 receipts acknowledged
-├── N3 ✅ role_session_id agnóstico de provider
-├── HD ✅ Approved 2026-05-14 21:27 UTC
-├── Guardian ✅ Observed 2026-05-14 21:35 UTC
-└── Aguarda: Witness + Physical signature + Ledger (path b)
+§246-IMPL-bis G3 Merkle
+├── Status:   NÃO INICIADO
+├── Prazo:    19 Mai 2026
+├── Restam:   4 dias (a partir de 15 Mai)
+└── Prioridade: CRITICAL — caminho principal 16-19 Mai
 ```
 
----
-
-## Doutrina Ratificada Hoje
-
-### Reach Precedence Doctrine (G4.3)
-> "Consequência externa supera auto-classificação interna."
-
-STANDARD-I-EXTERNAL → CRITICAL em HD-GRACE
-Reversibilidade = T+5 minutos (clock: Ledger)
-
-### Retroactive Attestation Honesty (G1.2)
-> "Não fingimos ter atestado desde sempre."
-
-Genesis Ceremony declara `ceremony_type: retroactive_attestation`
-com `prior_receipts_acknowledged: [contagem real]`
+**Decisão HD 15 Mai:** Numeração §267 e §265 saem do caminho crítico até G3 fechar.
 
 ---
 
-## Próximo Passo Proposto
+## Receipts Chain Completa
 
-1. **§264 Genesis Ceremony** — **HD APPROVED + GUARDIAN OBSERVED** · 2026-05-14
-   - N1 ✅ Lista invariantes confirmada (13 atestados, 5 gaps justificados)
-   - N2 ✅ Contagem receipts: 50
-   - N3 ✅ role_session_id formato definido
-   - G1-G4 ✅ Guardian Review addressed
-   - HD ✅ **APPROVED** (21:27 UTC)
-   - Guardian ✅ **OBSERVED** (21:35 UTC)
-   - **Aguarda:** Witness observation + Physical signature + Ledger emission (path b)
-2. **Etapa 2 A-Progressivo** — Guardian Review Report formal (10 HIGH questions)
-3. **Track paralelo Bloco A** — DE Orthography Sweep disponível
-
----
-
-## Receipts Chain
-
-| Receipt ID | Capítulo | Hash Completo |
-|------------|----------|---------------|
+| Receipt ID | § | Hash Completo |
+|------------|---|---------------|
 | `WINDI-S262-HIOS-NAMING-20260514-6F053E65` | §262 | `6f053e65e307cf0225ab7804f8a9a1835be2a445bee54d3497017aecb5320c3e` |
 | `WINDI-S263-PINGPONG-PROTOCOL-20260514-87AAF5BA` | §263 | `87aaf5ba3826fad4015424f1805f108f48d19ea88da5314ee5a34e6933ab616a` |
+| `WINDI-GENESIS-CEREMONY-20260515-BE29C326` | §264 | `65f8dce706cd0b1e3f27bd1a60d5d0a76ccd40a4fb20b28cef05b1c7c5dae972` |
+| `WINDI-S266-PAF-RATIFY-20260515091359-15997486` | §266 | `15997486adf10c5899c7be6bb4604012daf9eaf43a941665dceb7509039283f9` |
 
 ---
 
-## Commits Relevantes
+## Lineage Visual
 
-| Hash | Descrição | Data |
-|------|-----------|------|
-| `818d0ad8d` | feat(§264): Guardian Observation recorded — v1.3.0 | 2026-05-14 |
-| `2ef7a620f` | feat(§266-E1): HD Ratification G1.2 Genesis + G4.3 Reversibility | 2026-05-14 |
+```
+§262 SEALED (Naming)
+    │
+    └──▶ §263 SEALED (PingPong)
+              │
+              └──▶ §264 SEALED (Genesis Ceremony)
+                        │
+                        ├──▶ §265 RESERVADO (Drift Metrics)
+                        │
+                        └──▶ §266 SEALED (PAF Lei VIII)
+                                  │
+                                  └──▶ §267 CANDIDATO DUPLO (decisão diferida)
+```
+
+---
+
+## Decisões HD Registadas (15 Mai 2026)
+
+| Hora | Decisão | Invariante |
+|------|---------|------------|
+| 09:13 | Genesis Ceremony SEALED | I9 + I11 |
+| 09:14 | §266 PAF ratificado | I9 + I11 |
+| 14:00 | "Fechar o pronto, registar o aberto" | I9 + I14 |
+
+---
+
+## Próximo Passo
+
+**G3 Merkle** — 16-19 Mai 2026 — CRITICAL PATH
 
 ---
 
