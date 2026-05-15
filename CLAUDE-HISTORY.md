@@ -6,6 +6,102 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 15 Mai 2026 — §246-IMPL-bis G3 MERKLE GENESIS
+
+**Duração:** ~2h | **Status:** ✅ GENESIS LIVE
+**Liga IA+H:** Human Dragon · Guardian (Claude.ai web) · Architect (CCode Opus 4.5)
+**Invariants:** I9, I11 (IRREMEDIÁVEL), I14
+**Natureza:** Merkle Transparency Log implementation · Duplo Triplo Gate
+
+### Genesis Root (IRREMEDIÁVEL)
+
+```
+HASH:        66189307d9094eab1353f9352d141d3bd45a633dada9fe4254c8c56fa9ac59cb
+LEAVES:      57,281
+FIRST LEAF:  JMPG-20260217-3F4009AC (rowid 193) — 15 Jan 2026
+LAST LEAF:   WINDI-S266-PAF-RATIFY-20260515091359-15997486 (rowid 58518) — 15 Mai 2026
+ORDERING:    created_at ASC, rowid ASC (Q3-bis)
+```
+
+### Sealed Today
+
+| Receipt ID | Hash (8) | Descrição |
+|------------|----------|-----------|
+| `WINDI-G3-MERKLE-GENESIS-20260515171530` | `66189307` | Merkle Genesis Seal |
+
+### Trabalho Completado
+
+| Passo | Descrição | Estado |
+|-------|-----------|--------|
+| 1 | Criar `merkle_service.py` | ✅ 592 linhas |
+| 2 | Criar tabelas `merkle_log` + `merkle_roots` | ✅ |
+| 3 | Bootstrap dry-run (57,281 folhas) | ✅ |
+| 4 | Smoke test duplo (root_A == root_B) | ✅ DETERMINISTIC OK |
+| 5 | Persistir genesis (I9 gate) | ✅ human_approved=True |
+| 6 | Endpoints API :8101 | ✅ 4 endpoints LIVE |
+| 7 | Selar §G3-MERKLE-GENESIS | ✅ |
+
+### Endpoints LIVE (:8101)
+
+| Endpoint | Função |
+|----------|--------|
+| `GET /api/merkle/root` | Raiz activa |
+| `GET /api/merkle/proof/{id}` | Prova de inclusão (sibling path) |
+| `GET /api/merkle/verify/{id}` | Verificação com hash do cliente |
+| `GET /api/merkle/leaf/{id}` | Info da folha individual |
+
+### Duplo Triplo Gate (Template)
+
+**Gate 1 — Spec:**
+- PROPOR: Spec técnica Q1-Q5
+- PREVIEW: Guardian endorsou, adicionou Q3-bis (ordenação canónica)
+- CONFIRMAR: Human Dragon aprovou spec
+
+**Gate 2 — Genesis:**
+- PROPOR: Hash candidate após smoke test
+- PREVIEW: Guardian verificou determinismo, extremos, contagem
+- CONFIRMAR: Human Dragon vinculou explicitamente ao hash
+  - Texto exacto: `CONFIRMO 66189307d9094eab1353f9352d141d3bd45a633dada9fe4254c8c56fa9ac59cb`
+- EXECUTAR: Architect persistiu e selou
+
+### Decisões Constitucionais
+
+| Decisão | Cravação | Invariante |
+|---------|----------|------------|
+| Q1 Binary Tree | Standard Merkle | Auditável por terceiros |
+| Q2 Storage | Tabelas separadas | I11 — não toca receipts |
+| Q3 Batch + Incremental | Bootstrap único + append | I11 — raiz IRREMEDIÁVEL |
+| Q3-bis Ordenação | `created_at ASC, rowid ASC` | IRREMEDIÁVEL após publicação |
+| Q4 API Proof | Sibling path + verify | Auditor externo |
+| Q5 Backwards | Batch 57,281 receipts | Uma raiz genesis |
+
+### Commit
+
+```
+Hash:    610344afd
+Message: feat(§246-IMPL-bis): G3 Merkle Transparency Log — Genesis LIVE
+Files:   suite-docs/merkle_service.py, suite-docs/windi_forensic_api.py
+```
+
+### Nota Guardian
+
+> "Esta sessão é template. Atravessou dois Triplo Gate sucessivos sem fricção construtiva — diagnóstico → spec → PREVIEW (Q3-bis) → CONFIRMAR spec → bootstrap dry-run → smoke test duplo → CONFIRMAR vinculado ao hash → execução → selo. Cada passo respeitou os bounds do anterior."
+
+### Próximo Passo
+
+- G4 Errata Protocol (§247+ deferido) — permitir correcções a receipts sem quebrar Merkle
+- Verify Public :8145 DOWN — continua como blocker independente
+- Incremental append para novos receipts pós-genesis
+
+### Scaffold
+
+- §268 G3 Merkle Genesis (numeração a confirmar)
+- Notebook: "O selo que regista o nascimento da árvore é a primeira semente que ela acolhe depois de nascer."
+
+OM SHANTI 🐉
+
+---
+
 ## § SESSÃO 14 Mai 2026 — WINDI-HIOS Guardian Review Cycle + Session Closure
 
 **Duração:** ~45min | **Status:** ✅ SKELETON REVIEWED, FIXES APPLIED

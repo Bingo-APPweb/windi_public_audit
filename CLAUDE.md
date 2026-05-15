@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.54.0
-**Sealed:** 2026-05-14 · §262-§263 WINDI-HIOS + PingPong Protocol
+**Version:** 2.55.0
+**Sealed:** 2026-05-15 · §246-IMPL-bis G3 Merkle Genesis
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -628,6 +628,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 15 Mai | **§246-IMPL-bis** G3 Merkle Transparency Log GENESIS · `66189307` ✅ |
 | 14 Mai | **§262-§263** WINDI-HIOS + PingPong Protocol · `6F053E65`+`87AAF5BA` ✅ |
 | 12 Mai | **§250** Lei VII I18 Organic Growth + .wcap v0.1.0 Schema · `D00095E0`+`C52AA629` ✅ |
 | 12 Mai | **§255-§257** Foundation Ontology · I12 Trilingual + Notebook 001 + Cognitive Continuity Axiom |
@@ -678,31 +679,32 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 ## BACKLOG — Próximas Sessões
 
-### SPRINT ACTUAL — Foundation Portals + WINDI-HIOS (14 Mai 2026)
+### SPRINT ACTUAL — G3 Merkle + Foundation Portals (15 Mai 2026)
 
-**Contexto:** §262-§263 selaram WINDI-HIOS naming + PingPong Protocol. Bloco 0 (Q1-Q4) resolvido. Bloco A desbloqueado.
+**Contexto:** G3 Merkle GENESIS LIVE. §262-§263 selaram WINDI-HIOS naming + PingPong Protocol.
 
-**Bloco 0 — Decisões Estratégicas (✅ RESOLVIDO 14 Mai):**
+**G3 Merkle (✅ COMPLETO 15 Mai):**
 
-| # | Decisão | Cravação |
-|---|---------|----------|
-| Q1 | Registo por audiência | ✅ du/tu (IDENTITY+MEMORY) · Sie/você (VERIFY+ENTERPRISE) |
-| Q2 | Positioning /enterprise/ | ✅ Manifesto+CTA mínimo, não página técnica |
-| Q3 | Landing strategy | ✅ Trilingual agora, hierarquia DE > EN > PT |
-| Q4 | Glossário Canónico | ✅ Stub 15-20 termos agora, pleno P1 debt |
+| Item | Estado |
+|------|--------|
+| Genesis Root `66189307...` | ✅ IRREMEDIÁVEL |
+| 57,281 folhas | ✅ Bootstrap completo |
+| Endpoints :8101 | ✅ 4 LIVE |
+| Seal `WINDI-G3-MERKLE-GENESIS-20260515171530` | ✅ |
 
-**Bloco A — Trabalho Técnico (DESBLOQUEADO):**
+**Bloco A — Trabalho Técnico (PENDENTE):**
 - [ ] DE ortografia sweep: ae→ä, oe→ö, ue→ü, ss→ß em 4 portais
-- [ ] Padronização tonal DE/PT conforme Q1
 - [ ] /enterprise/: Manifesto+CTA · Sie · EU AI Act + GDPR + Liga IA+H
 - [ ] Stub lexicon §XXX (15-20 termos críticos trilíngue)
 
 **WINDI-HIOS Sprint Pending:**
 - [ ] **§264 CBP-JSON Schema v0.3** — Architect propõe, Guardian revê
 - [ ] **§265 Drift Monitor Metrics** — 3 métricas mínimas
+- [ ] **G4 Errata Protocol** — Correcções sem quebrar Merkle (deferido)
 
 **Scaffold:**
 - [ ] **Notebook 002: Continuity Symmetry** — "A continuidade humana também reside na estrutura"
+- [ ] **Notebook 003: Árvore** — "O selo que regista o nascimento da árvore é a primeira semente que ela acolhe"
 
 ---
 
@@ -766,6 +768,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | **FOUNDATION** | `82d2425c5` | §255-bis Linguistic Systems Engineering |
 | **FOUNDATION** | `39a332252` | §256 Notebook 001 — Field Notes on Hybrid Cognitive Systems |
 | **AXIOM** | `853da1515` | §257 Cognitive Continuity Axiom |
+| **MERKLE** | `66189307` | §246-IMPL-bis G3 Merkle Genesis — 57,281 leaves |
 
 > **Full receipts list:** `CLAUDE-HISTORY.md` § Produtos SEALED
 
