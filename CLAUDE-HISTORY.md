@@ -98,6 +98,23 @@ Files:   suite-docs/merkle_service.py, suite-docs/windi_forensic_api.py
 - §268 G3 Merkle Genesis (numeração a confirmar)
 - Notebook: "O selo que regista o nascimento da árvore é a primeira semente que ela acolhe depois de nascer."
 
+### Addendum — Nginx Route (17:32)
+
+**Rota pública adicionada:**
+```nginx
+location ^~ /api/merkle/ {
+    proxy_pass http://windi_ledger/api/merkle/;
+}
+```
+
+**Endpoints agora PÚBLICOS em windi-domain.com:**
+- `GET /api/merkle/root` → raiz activa ✅
+- `GET /api/merkle/proof/{id}` → sibling path (16 hashes) ✅
+- `GET /api/merkle/verify/{id}` → verificação inclusão ✅
+- `GET /api/merkle/leaf/{id}` → info folha ✅
+
+**Implicação constitucional:** Qualquer auditor externo pode verificar inclusão de receipt sem acesso ao Ledger. Caixa-cristalina demonstrada.
+
 OM SHANTI 🐉
 
 ---
