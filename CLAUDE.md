@@ -172,7 +172,7 @@ Nenhum endpoint retorna valores default que mascarem dados ausentes.
 
 **§150 W-SEC-001:** :8144 · Security Sentinel · Dual Correlation · `BD09970F`
 **§151 W-DRAGON-001:** :8122 · 16×16 SHA-256 Glyph Grid · Dragon Shadow Forest
-**§153 W-STATE-CORE-006:** :8145 · Verify Public · `/api/receipts/{id}`
+**§153 W-STATE-CORE-006:** :8114 · Verify Public · `/api/receipts/{id}` *(§267 errata)*
 **§163 DECRETO-001:** Árvore Viva · TRUNK→SAP→BRANCHES→LEAVES→FRUITS
 > **Full details:** `CLAUDE-HISTORY.md` § §150-163
 
@@ -605,7 +605,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | :8126 | WINDI Travel | 🟢 **LIVE** v1.3.0 |
 | :8127-:8132 | NOMAD/VD-CUT/JOE/MASS/JMPG | 🟢 LIVE |
 | :8140-:8144 | UDB/INTENT-CMD/FEDIVERSE/BRIDGE/SEC | 🟢 LIVE |
-| :8145 | W-STATE-CORE-006 Verify Public | 🟢 **LIVE** |
+| :8114 | W-STATE-CORE-006 Verify Public | 🟢 **LIVE** | *(§267 errata)*
 | :8150 | W-Enterprise-001 AI Compliance | 🟢 **LIVE** |
 | :8151 | W-LAB-001 Governance Laboratory | 🟢 **LIVE** |
 | :8160 | W-CACHE-001 Verifiable Cache | 🟢 **LIVE** |

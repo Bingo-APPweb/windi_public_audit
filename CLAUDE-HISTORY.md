@@ -15582,3 +15582,38 @@ A investigação revelou que o WINDI já possui os 5 pilares de um runtime agent
 
 OM SHANTI 🐉
 
+
+---
+
+## §267-ERRATA-VERIFY-PORT — Porto Canónico :8114 (15 Mai 2026)
+
+**Status:** SEALED · **Receipt:** `WINDI-ERRATA-S267-20260515180759-80A13B17`
+**Hash:** `sha256:80a13b17ec8e7c47ae555eb2b470df6e8fb4800a5d69d1cba9d53bb7b9254de1`
+**Invariants:** I9, I11 · **Protocol:** pre-G4 precedent
+**Liga IA+H:** Human Dragon · Guardian (Claude.ai web) · Architect (CCode Opus 4.5)
+
+### Contexto
+
+Divergência intenção/execução detectada: documentação referenciava :8145 para Verify Public, mas execução sempre foi em :8114 (nginx, systemd, G5 SEALED PORTS).
+
+### Declaração
+
+1. **:8114** é porto canónico para W-STATE-CORE-006 (Verify Public)
+2. Referências a :8145 em DECREE-001, DECRETO-002, §153 são **SUPERSEDED** (não apagadas, I11)
+3. G5 SEALED PORTS permanece inalterado
+4. Documento `/opt/windi/constitutional/ERRATA-S267-VERIFY-PORT.md`
+
+### Conformação Textual
+
+| Ficheiro | Acção |
+|----------|-------|
+| CLAUDE.md linhas 175, 608 | :8145 → :8114 ✅ |
+| DECREE-001, DECRETO-002 | SUPERSEDED (I11, não editados) |
+| 11 outros .md | Conformação incremental pendente |
+
+### Nota Constitucional
+
+Esta é a primeira Errata WINDI. Protocolo pre-G4 — quando G4 Errata Protocol selar, §267 será reconciliada. Parent reference: CLAUDE.md:555 G5 SEALED PORTS (inline constitutional, sem receipt separado).
+
+OM SHANTI 🐉
+
