@@ -110,6 +110,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-BERCARIO-001 | :8195 | I1,I9,I11,I14 | **LIVE** · Plenitude Tracker · Service Maturity · §230 |
 | W-CORTEX-001 | — | I1,I9,I10,I14 | **SEALED** · Canal Único Soberano · 3-Tier Routing · §241 `04C67B81` |
 | W-BIND-001 | script | I1,I9,I11,I13,I14 | **SEALED** · Cognitive Bind Module · Admissible Re-entry · §261 `7FDA926F` |
+| W-MIRROR-001 | :8192 | I9,I11,I14,§248,§266 | **DRAFT** · HD-Mirror v0.1 · Constitutional Interaction Layer · §268 |
 | WINDI-PORTAL | static | — | **LIVE** · Internal Control Center · 35 Services · 7 Categories |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
@@ -628,6 +629,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 16 Mai | **§268** HD-Mirror v0.1 / Constitutional Interaction Layer · DRAFT (decantação) |
 | 15 Mai | **§246-IMPL-bis** G3 Merkle Transparency Log GENESIS · `66189307` ✅ |
 | 14 Mai | **§262-§263** WINDI-HIOS + PingPong Protocol · `6F053E65`+`87AAF5BA` ✅ |
 | 12 Mai | **§250** Lei VII I18 Organic Growth + .wcap v0.1.0 Schema · `D00095E0`+`C52AA629` ✅ |
@@ -903,3 +905,52 @@ bash /opt/windi/scripts/cognitive-bind-module.sh generate
 ```
 
 > **Full details:** `CLAUDE-HISTORY.md` § §261
+
+---
+
+## §268 · W-MIRROR-001 HD-Mirror / Constitutional Interaction Layer
+
+> **"Fricção consciente é ferramenta de soberania."**
+
+```
+Status:     CANONICAL DRAFT READY FOR SEAL
+Data:       2026-05-16
+Invariants: I9, I11, I14, §248, §266
+doc_type:   constitutional_interaction
+```
+
+### Definição Canónica
+
+Primeira instância da Constitutional Interaction Layer (CIL). Friction engine que medeia o momento entre intenção humana e consequência irreversível, devolvendo sempre a decisão ao User.
+
+### Função Nuclear
+
+> Friccionar e devolver — nunca decidir.
+
+O HD-Mirror cria o intervalo consciente entre "Sistema sugere" e "Humano decide". Esse intervalo é onde vive a soberania do User.
+
+### Mirror Criteria (MC1-MC4)
+
+| Critério | Descrição |
+|----------|-----------|
+| **MC1** | Intercepta acto User-driven |
+| **MC2** | Devolve, não decide |
+| **MC3** | Produz receipt forense |
+| **MC4** | Protege invariantes nomeados |
+
+### Triggers v0.1 (T1-T4)
+
+- **T1:** Primeira escrita irreversível vinculada ao DID
+- **T2:** Cruzamento de track §248 (Civic↔Institutional)
+- **T3:** Compromisso identitário (DID bind, wallet creation)
+- **T4:** Acto com consequência financeira ou jurídica
+
+### Regra I9
+
+> Timeout nunca implica consentimento. Não-acto preserva I9.
+
+### Ficheiro
+
+`/opt/windi/windi-hios/S268-HD-MIRROR-CIL-v0.1.md`
+
+> **Full details:** `CLAUDE-HISTORY.md` § §268
