@@ -271,7 +271,7 @@ gather_system_state() {
     SERVICES_STATUS=""
 
     for svc in "8101:Forensic Ledger" "8192:W-SITES-001" "8096:W-DID-GENESIS" \
-               "8108:Dragon Hub" "8150:W-ENTERPRISE-001" "8145:Verify Public" \
+               "8108:Dragon Hub" "8150:W-ENTERPRISE-001" "8114:Verify Public" \
                "25:W-MAIL-001"; do
         port="${svc%%:*}"
         name="${svc#*:}"

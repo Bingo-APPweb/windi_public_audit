@@ -65,7 +65,7 @@ $(check_port 8192 "W-SITES-001")
 $(check_port 8096 "W-DID-GENESIS")
 $(check_port 8108 "Dragon Hub")
 $(check_port 8150 "W-ENTERPRISE-001")
-$(check_port 8145 "Verify Public")
+$(check_port 8114 "Verify Public")
 $(check_port 25 "W-MAIL-001 SMTP")
 
 ### Últimos Commits
