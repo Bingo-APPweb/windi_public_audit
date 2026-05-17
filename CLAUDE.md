@@ -628,6 +628,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 17 Mai | **§268-§269** HD-Mirror/CIL + PingPong Genesis First Runtime · `2abf0050`+`8672d5c4` ✅ |
 | 15 Mai | **§246-IMPL-bis** G3 Merkle Transparency Log GENESIS · `66189307` ✅ |
 | 14 Mai | **§262-§263** WINDI-HIOS + PingPong Protocol · `6F053E65`+`87AAF5BA` ✅ |
 | 12 Mai | **§250** Lei VII I18 Organic Growth + .wcap v0.1.0 Schema · `D00095E0`+`C52AA629` ✅ |
@@ -773,8 +774,10 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | **FOUNDATION** | `39a332252` | §256 Notebook 001 — Field Notes on Hybrid Cognitive Systems |
 | **AXIOM** | `853da1515` | §257 Cognitive Continuity Axiom |
 | **MERKLE** | `66189307` | §246-IMPL-bis G3 Merkle Genesis — 57,281 leaves (superseded) |
-| **MERKLE** | `5ee83b95` | G3 Merkle Current Root — 57,288 leaves (17 Mai) |
+| **MERKLE** | `0c43a1d0` | G3 Merkle Current Root — 57,290 leaves (17 Mai) |
 | **PROOF** | `80A13B17` | §267 + Session 17 Mai — Self-Correction Without Rewrite |
+| **CIL** | `2abf0050` | §268 HD-Mirror v0.1 / Constitutional Interaction Layer |
+| **GENESIS** | `8672d5c4` | §269 PingPong Genesis — First Runtime §263 |
 
 > **Full receipts list:** `CLAUDE-HISTORY.md` § Produtos SEALED
 > **HD-MIRROR Reference:** `/opt/windi/docs/PROOF-SELF-CORRECTION-WITHOUT-REWRITE.md`

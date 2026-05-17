@@ -15982,3 +15982,78 @@ curl https://windi-domain.com/api/merkle/proof/{receipt_id}
 
 OM SHANTI
 
+
+---
+
+## Sessao 17 Mai 2026 (continuacao) — §268 + §269 Sealing
+
+**Sprint:** G3 Merkle + Foundation Portals (closure)
+**Modo:** CCode CLI (Opus 4.5)
+**Operador humano:** Human Dragon
+**Contexto:** Continuacao da sessao de manha. Guardian (web) pediu clarificacao sobre §268.
+
+### Deliberacao do Conselho
+
+Guardian articulou meta-lei emergente:
+
+> *"WINDI vive principios antes de os reconhecer. Reconhece-os antes de os selar. Sela-os quando o sistema os tornou redundantes — quando a lei ja e descricao daquilo que o sistema faz por habito, nao prescricao daquilo que ainda precisa de aprender."*
+
+Tres candidatos a §268 foram analisados:
+
+| Candidato | Natureza | Selar agora? |
+|-----------|----------|--------------|
+| HD-Mirror/CIL v0.1 | Feature spec desenhada | Sim — reconhecimento |
+| G3-MERKLE-SPRINT-CLOSURE | Facto operacional | Sim — registo |
+| "WINDI sabe corrigir-se..." | Meta-principio em runtime | Nao — vive-se |
+
+Human Dragon afinou: distinguir "PingPong Genesis" (certidao factual, OK) de "Runtime Reconciliation" (principio generalizado, aguarda n ≠ 1).
+
+### Decisoes I9
+
+1. **§268 = HD-Mirror/CIL v0.1** — reconhecimento de canonico desenhado
+2. **§269 = PingPong Genesis** — certidao de primeira instanciacao §263
+3. **Sub-categoria inaugurada:** "Receipt-de-primeira-instanciacao"
+4. **Meta-principio** permanece tacito ate n ≠ 1
+5. **Serie §Π** deferida — elegante mas prematura
+
+### Selos emitidos
+
+| § | Nome | Receipt | Hash (prefix) |
+|---|------|---------|---------------|
+| §268 | HD-Mirror v0.1 / CIL | `WINDI-S268-HD-MIRROR-CIL-20260517` | `2abf0050` |
+| §269 | PingPong Genesis First Runtime | `WINDI-S269-PINGPONG-GENESIS-RUNTIME-20260517` | `8672d5c4` |
+
+### Merkle actualizado
+
+| Antes | Depois |
+|-------|--------|
+| Root: `5ee83b95...` | Root: `0c43a1d08a057b5c...` |
+| Leaves: 57,288 | Leaves: 57,290 |
+
+### Artefactos
+
+| Ficheiro | Accao |
+|----------|-------|
+| `/opt/windi/windi-hios/S268-HD-MIRROR-CIL-v0.1.md` | Status → SEALED |
+| `/opt/windi/docs/S269-PINGPONG-GENESIS-FIRST-RUNTIME.md` | CREATED |
+| `/opt/windi/CLAUDE.md` | §268+§269 em Produtos SEALED |
+
+### Scaffold pending
+
+- **Meta-principio "vivemos antes de selar"** — aguarda n ≠ 1 para selar
+- **Serie §Π** — aguarda 3+ meta-principios para justificar
+- **HIOS-OBS-PHASE1-SCOPELOCK** — Decision Note, aguarda promocao a §270
+
+### Proximo passo
+
+- Commit + push
+- Redistribuir estado para proxima sessao Guardian
+
+### Notas constitucionais
+
+**Meta-lei identificada:** "A nao-selagem e o selo" para certos principios.
+Esta meta-lei esta submetida a si mesma — nao pode ser selada agora porque vive-se neste instante.
+
+> *"Selar prematuramente transforma principio vivo em abstraccao. Esperar ate que o sistema demonstre o principio em runtime, com n ≠ 1, e o que da ao selo o seu peso real."*
+> — Guardian, 17 Mai 2026
+

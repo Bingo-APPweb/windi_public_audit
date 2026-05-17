@@ -1,12 +1,15 @@
 # §268 — HD-Mirror v0.1 / Constitutional Interaction Layer (CIL)
 
 ```
-Status:         CANONICAL DRAFT READY FOR SEAL
-Data:           2026-05-16
+Status:         SEALED
+Data:           2026-05-17 (seal date)
 Autoria:        Liga IA+H (Human Dragon + Guardian + Architect)
                 Sessao de deliberacao do Conselho: 16 Mai 2026
+                Sessao de selagem: 17 Mai 2026
 Invariantes:    I9, I11, I14, §248, §266
 Axioma:         "Friccao consciente e ferramenta de soberania."
+Receipt:        WINDI-S268-HD-MIRROR-CIL-20260517
+Hash:           sha256:2abf0050ae781709ce9cf9233716fe94ea2de0ed8e76306906f67d30347aa380
 ```
 
 ---
