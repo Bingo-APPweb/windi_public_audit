@@ -537,6 +537,173 @@ def get_proof_for_receipt(
 
 
 # ═══════════════════════════════════════════════════════════════════
+# Incremental Append Functions
+# ═══════════════════════════════════════════════════════════════════
+
+def get_missing_receipts(db_path: str = DEFAULT_DB_PATH) -> List[Tuple[int, str, str, int]]:
+    """
+    Get receipts that exist in the Ledger but NOT in merkle_log.
+
+    Returns:
+        List of (rowid, receipt_id, content_hash, created_at) tuples
+        in canonical order (Q3-bis)
+    """
+    con = _connect(db_path)
+    try:
+        rows = con.execute("""
+            SELECT r.rowid, r.id, r.content_hash, r.created_at
+            FROM receipts r
+            LEFT JOIN merkle_log m ON r.id = m.receipt_id
+            WHERE m.receipt_id IS NULL
+            ORDER BY r.created_at ASC, r.rowid ASC
+        """).fetchall()
+
+        return [(r["rowid"], r["id"], r["content_hash"], r["created_at"]) for r in rows]
+    finally:
+        con.close()
+
+
+def append_incremental(
+    human_approved: bool,
+    db_path: str = DEFAULT_DB_PATH
+) -> Dict[str, Any]:
+    """
+    Append new receipts to the Merkle tree incrementally.
+
+    CONSTITUTIONAL GATE (I9):
+    Requires human_approved=True.
+
+    Process:
+    1. Find receipts not yet in merkle_log
+    2. Compute leaf hashes for new receipts
+    3. Get existing leaves + new leaves
+    4. Compute new root
+    5. Supersede old root, insert new root
+    6. Insert new leaves with new root reference
+
+    Args:
+        human_approved: MUST be True for I9 compliance
+        db_path: Database path
+
+    Returns:
+        Result dict with old_root, new_root, added_count
+    """
+    # I9 GATE
+    if not human_approved:
+        return {
+            "status": "blocked",
+            "error": "I9_GATE_HUMAN_APPROVAL_REQUIRED",
+            "message": "Incremental append requires explicit human approval",
+            "invariant": "I9"
+        }
+
+    print("[MERKLE] Starting incremental append...")
+    print("[MERKLE] I9 GATE: human_approved=True")
+
+    # Get current state
+    current_root = get_current_root(db_path)
+    if not current_root:
+        return {
+            "status": "error",
+            "error": "no_active_root",
+            "message": "No active Merkle root. Run bootstrap first."
+        }
+
+    old_root_hash = current_root["root_hash"]
+    old_leaf_count = current_root["leaf_count"]
+
+    print(f"[MERKLE] Current root: {old_root_hash[:16]}... ({old_leaf_count} leaves)")
+
+    # Get missing receipts
+    missing = get_missing_receipts(db_path)
+
+    if not missing:
+        print("[MERKLE] No new receipts to add")
+        return {
+            "status": "no_change",
+            "message": "All receipts already in Merkle tree",
+            "root_hash": old_root_hash,
+            "leaf_count": old_leaf_count
+        }
+
+    print(f"[MERKLE] Found {len(missing)} new receipts to add")
+
+    # Get all existing leaf hashes
+    existing_hashes = get_all_leaf_hashes(db_path)
+
+    # Compute new leaf hashes
+    now = int(time.time())
+    new_leaves = []
+    new_hashes = []
+
+    for rowid, receipt_id, content_hash, created_at in missing:
+        leaf_hash = compute_leaf_hash(receipt_id, content_hash)
+        new_hashes.append(leaf_hash)
+        new_leaves.append({
+            "receipt_id": receipt_id,
+            "leaf_hash": leaf_hash,
+            "created_at": created_at
+        })
+        print(f"[MERKLE]   + {receipt_id}")
+
+    # Combine all hashes
+    all_hashes = existing_hashes + new_hashes
+    new_leaf_count = len(all_hashes)
+
+    # Compute new root
+    print("[MERKLE] Computing new Merkle root...")
+    new_root_hash = compute_merkle_root(all_hashes)
+
+    print(f"[MERKLE] New root: {new_root_hash[:16]}... ({new_leaf_count} leaves)")
+
+    # Persist changes
+    con = _connect(db_path)
+    try:
+        # Supersede old root (I11 - never delete)
+        con.execute("""
+            UPDATE merkle_roots SET status = 'superseded'
+            WHERE root_hash = ?
+        """, (old_root_hash,))
+
+        # Insert new root
+        con.execute("""
+            INSERT INTO merkle_roots (root_hash, leaf_count, created_at, status, predecessor)
+            VALUES (?, ?, ?, 'active', ?)
+        """, (new_root_hash, new_leaf_count, now, old_root_hash))
+
+        # Insert new leaves
+        for i, leaf_data in enumerate(new_leaves):
+            leaf_index = old_leaf_count + i
+            con.execute("""
+                INSERT INTO merkle_log (leaf_index, receipt_id, leaf_hash, root_at_leaf, created_at)
+                VALUES (?, ?, ?, ?, ?)
+            """, (
+                leaf_index,
+                leaf_data["receipt_id"],
+                leaf_data["leaf_hash"],
+                new_root_hash,
+                now
+            ))
+
+        con.commit()
+        print(f"[MERKLE] Persisted {len(new_leaves)} new leaves")
+
+    finally:
+        con.close()
+
+    return {
+        "status": "appended",
+        "old_root": old_root_hash,
+        "new_root": new_root_hash,
+        "old_leaf_count": old_leaf_count,
+        "new_leaf_count": new_leaf_count,
+        "added_count": len(new_leaves),
+        "added_receipts": [l["receipt_id"] for l in new_leaves],
+        "invariant": "I11 — old root superseded, never deleted"
+    }
+
+
+# ═══════════════════════════════════════════════════════════════════
 # CLI Interface
 # ═══════════════════════════════════════════════════════════════════
 
@@ -552,6 +719,8 @@ def main():
         print("  dry-run     - Bootstrap dry run (no persistence)")
         print("  status      - Show current Merkle state")
         print("  proof <id>  - Get proof for receipt")
+        print("  missing     - List receipts not in Merkle tree")
+        print("  append      - Append new receipts (requires I9 approval)")
         print("")
         print("Invariants: I9 (human approval), I11 (irremediável), I14 (explicit)")
         return
@@ -583,6 +752,35 @@ def main():
             print(json.dumps(result, indent=2))
         else:
             print(f"No proof found for receipt: {receipt_id}")
+
+    elif cmd == "missing":
+        missing = get_missing_receipts()
+        print(f"Receipts not in Merkle tree: {len(missing)}")
+        for rowid, receipt_id, content_hash, created_at in missing:
+            print(f"  {receipt_id}")
+
+    elif cmd == "append":
+        print("═" * 60)
+        print("INCREMENTAL MERKLE APPEND")
+        print("═" * 60)
+        print("")
+        missing = get_missing_receipts()
+        print(f"Receipts to add: {len(missing)}")
+        for _, receipt_id, _, _ in missing:
+            print(f"  + {receipt_id}")
+        print("")
+        print("This will:")
+        print("  1. Add these receipts to the Merkle tree")
+        print("  2. Compute new root hash")
+        print("  3. Supersede old root (I11 - never delete)")
+        print("")
+        confirm = input("Type 'APPEND' to confirm (I9 human approval): ")
+        if confirm == "APPEND":
+            result = append_incremental(human_approved=True)
+            import json
+            print(json.dumps(result, indent=2))
+        else:
+            print("Aborted. I9 approval not given.")
 
     else:
         print(f"Unknown command: {cmd}")

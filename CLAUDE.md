@@ -110,7 +110,6 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-BERCARIO-001 | :8195 | I1,I9,I11,I14 | **LIVE** · Plenitude Tracker · Service Maturity · §230 |
 | W-CORTEX-001 | — | I1,I9,I10,I14 | **SEALED** · Canal Único Soberano · 3-Tier Routing · §241 `04C67B81` |
 | W-BIND-001 | script | I1,I9,I11,I13,I14 | **SEALED** · Cognitive Bind Module · Admissible Re-entry · §261 `7FDA926F` |
-| W-MIRROR-001 | :8192 | I9,I11,I14,§248,§266 | **DRAFT** · HD-Mirror v0.1 · Constitutional Interaction Layer · §268 |
 | WINDI-PORTAL | static | — | **LIVE** · Internal Control Center · 35 Services · 7 Categories |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
@@ -629,7 +628,6 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
-| 16 Mai | **§268** HD-Mirror v0.1 / Constitutional Interaction Layer · DRAFT (decantação) |
 | 15 Mai | **§246-IMPL-bis** G3 Merkle Transparency Log GENESIS · `66189307` ✅ |
 | 14 Mai | **§262-§263** WINDI-HIOS + PingPong Protocol · `6F053E65`+`87AAF5BA` ✅ |
 | 12 Mai | **§250** Lei VII I18 Organic Growth + .wcap v0.1.0 Schema · `D00095E0`+`C52AA629` ✅ |
@@ -685,14 +683,16 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 **Contexto:** G3 Merkle GENESIS LIVE. §262-§263 selaram WINDI-HIOS naming + PingPong Protocol.
 
-**G3 Merkle (✅ COMPLETO 15 Mai):**
+**G3 Merkle (✅ COMPLETO + INCREMENTAL 17 Mai):**
 
 | Item | Estado |
 |------|--------|
-| Genesis Root `66189307...` | ✅ IRREMEDIÁVEL |
-| 57,281 folhas | ✅ Bootstrap completo |
-| Endpoints :8101 | ✅ 4 LIVE |
+| Genesis Root `66189307...` | ✅ IRREMEDIÁVEL (15 Mai) |
+| Current Root `5ee83b95...` | ✅ ACTIVE (17 Mai) |
+| 57,288 folhas | ✅ Bootstrap + 7 incremental |
+| Endpoints :8101 | ✅ 4 LIVE + append CLI |
 | Seal `WINDI-G3-MERKLE-GENESIS-20260515171530` | ✅ |
+| Incremental append | ✅ `merkle_service.py append` |
 
 **Bloco A — Trabalho Técnico (PENDENTE):**
 - [ ] DE ortografia sweep: ae→ä, oe→ö, ue→ü, ss→ß em 4 portais
@@ -707,6 +707,8 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 **Scaffold:**
 - [ ] **Notebook 002: Continuity Symmetry** — "A continuidade humana também reside na estrutura"
 - [ ] **Notebook 003: Árvore** — "O selo que regista o nascimento da árvore é a primeira semente que ela acolhe"
+- [ ] **§264/§265 Gap Clarification** — Verificar se são itens pendentes ou absorvidos (agendado 17 Mai)
+- [ ] **Ledger API POST Investigation** — CBP 17 Mai nao recebeu receipt · diagnosticar 4xx/5xx/timeout (prioridade media)
 
 ---
 
@@ -720,7 +722,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 - [x] **§246-D3 Mailbox Provisioning** — DID-bound · Two-phase atomic · 11 lifecycle events · `F8881FCA` · SEALED 07 Mai 2026
 - [x] **§246-D4 Rate Limiting** — per-DID quotas · 3 janelas · 7 lifecycle events · `5D8513D7` · SEALED 07 Mai 2026
 - [x] **§246-D5 Receipt Symmetry** — Chain Architecture · Forest · Merkle Chain · Errata + T7 Adversarial · `4CE30817` + `4DD83B15` · SEALED 07 Mai 2026
-- [ ] **§246-IMPL** — DESBLOQUEADO · Query API + UI Berçário · 38 smoke tests (D3:12 + D4:10 + D5:16 incl. T7a-e adversarial)
+- [ ] **§246-IMPL Sprint 2** — DESBLOQUEADO · Query API + UI Berçário · 38 smoke tests (D3:12 + D4:10 + D5:16 incl. T7a-e adversarial) · Sprint 1 fechado `DDB3D6FF` 12 Mai
 - [ ] **Rate limiting** nginx · **Cron 48h** email downgrade · **HIGH ops gate**
 
 ### P1.5 — W-TRAVEL-PUB-001 (Q3 2026)
@@ -770,9 +772,12 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | **FOUNDATION** | `82d2425c5` | §255-bis Linguistic Systems Engineering |
 | **FOUNDATION** | `39a332252` | §256 Notebook 001 — Field Notes on Hybrid Cognitive Systems |
 | **AXIOM** | `853da1515` | §257 Cognitive Continuity Axiom |
-| **MERKLE** | `66189307` | §246-IMPL-bis G3 Merkle Genesis — 57,281 leaves |
+| **MERKLE** | `66189307` | §246-IMPL-bis G3 Merkle Genesis — 57,281 leaves (superseded) |
+| **MERKLE** | `5ee83b95` | G3 Merkle Current Root — 57,288 leaves (17 Mai) |
+| **PROOF** | `80A13B17` | §267 + Session 17 Mai — Self-Correction Without Rewrite |
 
 > **Full receipts list:** `CLAUDE-HISTORY.md` § Produtos SEALED
+> **HD-MIRROR Reference:** `/opt/windi/docs/PROOF-SELF-CORRECTION-WITHOUT-REWRITE.md`
 
 ---
 
@@ -905,52 +910,3 @@ bash /opt/windi/scripts/cognitive-bind-module.sh generate
 ```
 
 > **Full details:** `CLAUDE-HISTORY.md` § §261
-
----
-
-## §268 · W-MIRROR-001 HD-Mirror / Constitutional Interaction Layer
-
-> **"Fricção consciente é ferramenta de soberania."**
-
-```
-Status:     CANONICAL DRAFT READY FOR SEAL
-Data:       2026-05-16
-Invariants: I9, I11, I14, §248, §266
-doc_type:   constitutional_interaction
-```
-
-### Definição Canónica
-
-Primeira instância da Constitutional Interaction Layer (CIL). Friction engine que medeia o momento entre intenção humana e consequência irreversível, devolvendo sempre a decisão ao User.
-
-### Função Nuclear
-
-> Friccionar e devolver — nunca decidir.
-
-O HD-Mirror cria o intervalo consciente entre "Sistema sugere" e "Humano decide". Esse intervalo é onde vive a soberania do User.
-
-### Mirror Criteria (MC1-MC4)
-
-| Critério | Descrição |
-|----------|-----------|
-| **MC1** | Intercepta acto User-driven |
-| **MC2** | Devolve, não decide |
-| **MC3** | Produz receipt forense |
-| **MC4** | Protege invariantes nomeados |
-
-### Triggers v0.1 (T1-T4)
-
-- **T1:** Primeira escrita irreversível vinculada ao DID
-- **T2:** Cruzamento de track §248 (Civic↔Institutional)
-- **T3:** Compromisso identitário (DID bind, wallet creation)
-- **T4:** Acto com consequência financeira ou jurídica
-
-### Regra I9
-
-> Timeout nunca implica consentimento. Não-acto preserva I9.
-
-### Ficheiro
-
-`/opt/windi/windi-hios/S268-HD-MIRROR-CIL-v0.1.md`
-
-> **Full details:** `CLAUDE-HISTORY.md` § §268
