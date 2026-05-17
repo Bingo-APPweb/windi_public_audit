@@ -593,15 +593,15 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 - [ ] Stub lexicon §XXX (15-20 termos críticos trilíngue)
 
 **WINDI-HIOS Sprint Pending:**
-- [ ] **§264 CBP-JSON Schema v0.3** — Architect propõe, Guardian revê
-- [ ] **§265 Drift Monitor Metrics** — 3 métricas mínimas
+- [ ] **§264 CBP-JSON Schema v0.3** — Architect propõe, Guardian revê (awaits §265)
+- [x] **§265 Drift Monitor Metrics** — M1/M2/M3 · `08805713` · SEALED 17 Mai 2026
 - [ ] **G4 Errata Protocol** — Correcções sem quebrar Merkle (deferido)
 
 **Scaffold:**
 - [ ] **Notebook 002: Continuity Symmetry** — "A continuidade humana também reside na estrutura"
 - [ ] **Notebook 003: Árvore** — "O selo que regista o nascimento da árvore é a primeira semente que ela acolhe"
-- [ ] **§264/§265 Gap Clarification** — Verificar se são itens pendentes ou absorvidos (agendado 17 Mai)
-- [ ] **Ledger API POST Investigation** — CBP 17 Mai nao recebeu receipt · diagnosticar 4xx/5xx/timeout (prioridade media)
+- [x] **§264/§265 Gap Clarification** — COMPLETO 17 Mai · §265 sealed · §264 scope (b) pending
+- [x] **Ledger API POST Investigation** — RESOLVIDO · bug independente (schema_version/sge_score/wallet_id)
 
 ---
 
@@ -610,6 +610,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 ### P1 — Importante
 > **§246-D1→D5 completados (07 Mai):** Ver `CLAUDE-HISTORY.md` § Migração 17 Mai 2026
+- [ ] **W-DEV-API-001 systemd migration** — primeiro caso antes da unificação genérica · :8200 down detectado 17 Mai
 - [ ] **§246-IMPL Sprint 2** — DESBLOQUEADO · Query API + UI Berçário · 38 smoke tests · Sprint 1 fechado `DDB3D6FF` 12 Mai
 - [ ] **Rate limiting** nginx · **Cron 48h** email downgrade · **HIGH ops gate**
 
@@ -662,6 +663,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | **MERKLE** | `66189307` | §246-IMPL-bis G3 Merkle Genesis — 57,281 leaves (superseded) |
 | **MERKLE** | `5ee83b95` | G3 Merkle Current Root — 57,288 leaves (17 Mai) |
 | **PROOF** | `80A13B17` | §267 + Session 17 Mai — Self-Correction Without Rewrite |
+| **HIOS** | `08805713` | §265 Drift Monitor Metrics — M1/M2/M3 Trinca |
 
 > **Full receipts list:** `CLAUDE-HISTORY.md` § Produtos SEALED
 > **HD-MIRROR Reference:** `/opt/windi/docs/PROOF-SELF-CORRECTION-WITHOUT-REWRITE.md`

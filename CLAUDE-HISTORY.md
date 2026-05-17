@@ -16014,3 +16014,106 @@ OM SHANTI
 - **Linhas removidas:** 8 items [x] + tabela G3 condensada
 - **Meta:** < 40,000 bytes
 
+
+---
+
+## M2 First Empirical Anchor — §265 Validation Event
+
+**Data:** 2026-05-17 · 18:16 UTC
+**Contexto:** §264/§265 Gap Clarification em curso
+**Evento:** W-DEV-API-001 (:8200) down detectado durante verificação Guardian
+
+### Framing Constitucional
+
+- **Architect (GPT):** "runtime validating theory"
+- **Guardian:** "drift só existe quando observador invoca truth"
+- **Significado:** A teoria foi testada pelo próprio acto de verificação. O sistema provou capacidade de auto-diagnóstico ao detectar a sua própria falha.
+
+### Snapshot Capturado
+
+**Path:** `/opt/windi/evidence/M2-ANCHOR-001-20260517-truth-snapshot.json`
+
+| Campo | Valor |
+|-------|-------|
+| Status | ORANGE |
+| Drift | structural=1, operational=1, constitutional=0, **global=2** |
+| Chain | 50 receipts, healthy |
+| Critical Path | 1 FAIL (`/enterprise/health` → 404) |
+| Receipt | `WINDI-TRUTH-20260517201416-2D7F2EE3` |
+
+### Diagnóstico POST CBP
+
+| Falha Original | Causa | Correlação :8200 |
+|----------------|-------|------------------|
+| CBP 17 Mai sem receipt | Campos obrigatórios em falta (`schema_version`, `sge_score`, `wallet_id`) | **INDEPENDENTE** |
+| Receipt após fix | `WINDI-CBP-SESSION-20260517-20260517181611` | N/A |
+
+### Status Constitucional
+
+**Tipo:** Evidência referencial, NÃO selo numerado
+**Propósito:** M2 anchor para §265 Drift Monitor Metrics — prova empírica de que o sistema mede drift em runtime
+
+
+---
+
+## §265 Drift Monitor Metrics — SEALED 17 Mai 2026
+
+**Receipt:** `WINDI-S265-DRIFT-MONITOR-20260517190411-08805713`
+**Hash:** `08805713...`
+**Invariants:** I9, I11, I14
+**Liga IA+H:** Human Dragon (I9) · Guardian (review) · Architect (framing) · CCode (construction)
+
+### Tese Central
+
+> **"Drift só existe quando observador invoca truth."**
+> — Guardian, 17 Mai 2026
+
+### Trinca M1/M2/M3
+
+| Métrica | O que mede | Status |
+|---------|------------|--------|
+| **M1** Sealed-Laws Drift | §§ declarados vs receipts no Ledger | PENDING validation |
+| **M2** Service Health Drift | Serviços declarados LIVE vs estado real | **VALIDATED** 17 Mai |
+| **M3** Continuity Drift | Tempo desde último receipt vs ciclo §263 | PENDING validation |
+
+### M2 Anchor Empírico
+
+```
+Evento:     W-DEV-API-001 (:8200) down detectado durante Gap Clarification
+Snapshot:   /opt/windi/evidence/M2-ANCHOR-001-20260517-truth-snapshot.json
+Status:     ORANGE (global_score = 2)
+Significado: "O runtime respondeu ao processo de introspecção."
+             — Architect (GPT), 17 Mai 2026
+```
+
+### Decisões Constitucionais
+
+| Decisão | Resultado | Invariante |
+|---------|-----------|------------|
+| Trinca M1/M2/M3 | APROVADA | I9 |
+| Ordem §265 → §264 | APROVADA | I9 |
+| v1 → v1.1 patch | 6 ajustes Guardian | G3 |
+| Arquitectura v1 | Bloco em /api/truth | I14 |
+
+### Patch Lineage
+
+```
+v1 (initial) → v1.1 (6 ajustes Guardian)
+v1 archive: /opt/windi/drafts/archive/S265-DRIFT-MONITOR-DRAFT-v1.md.frozen
+v1.1 final: /opt/windi/drafts/S265-DRIFT-MONITOR-DRAFT-v1.1.md
+```
+
+### Próximo Passo
+
+- §264 v0.3 CBP-JSON Schema — scope (b) JSON + scoring formal
+- §264 incorporará drift codes M1/M2/M3 no Bind Integrity Score
+
+### Genealogia
+
+```
+I11 → §197 → §261 → §263 → §265 (this)
+                          → §264 (sibling, sealed after)
+```
+
+OM SHANTI
+
