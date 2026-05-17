@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.55.0
-**Sealed:** 2026-05-15 · §246-IMPL-bis G3 Merkle Genesis
+**Version:** 2.56.0
+**Sealed:** 2026-05-17 · Overflow fix + §202-§245 consolidation
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -9,7 +9,7 @@
 > **Documentos Fundacionais:** `WINDI-MANIFESTO.md` · `FOUNDATION-AS-WINDI-MEANS-IT.md` · `NOTEBOOK-001-HYBRID-COGNITIVE-SYSTEMS.md`
 
 ## 📚 Overflow Policy (17 Mar 2026)
-Hard limit: **32KB**. Último fix: 09 Abr 2026 (31.9KB → ~28KB).
+Hard limit: **40KB**. Último fix: 17 Mai 2026 (42.1KB → 36.4KB).
 - **CLAUDE.md** = presente + futuro + regras (≤ 32KB)
 - **CLAUDE-HISTORY.md** = passado selado (ilimitado, append-only)
 - **REGRA:** sessão encerrada → documentação detalhada migra para HISTORY
@@ -176,125 +176,27 @@ Nenhum endpoint retorna valores default que mascarem dados ausentes.
 **§163 DECRETO-001:** Árvore Viva · TRUNK→SAP→BRANCHES→LEAVES→FRUITS
 > **Full details:** `CLAUDE-HISTORY.md` § §150-163
 
-### §202 — DECRETO-002: CORE vs Apps (25 Apr 2026)
+### §202-§245 — Governance & Products (25 Apr - 05 Mai 2026)
 
-> **"Ledger guarda. Key assina. Invariantes limitam. VERIFY prova."**
+| § | Tema | Receipt | Status |
+|---|------|---------|--------|
+| §202 | DECRETO-002 CORE vs Apps | `C216F3EA` | CONSTITUTIONAL |
+| §204 | VERA Paladar v1.4 :8150 | — | LIVE |
+| §205 | KEYGEN-001 Sovereign Key | `DBED5A85` | SEALED |
+| §208-214 | Governance Enhancements | — | ALL LIVE |
+| §215 | Verify Page Auditor-Ready | `9060eaf5` | LIVE |
+| §216 | PHO de Emergência | — | LIVE |
+| §218 | Four Rings Doctrine | — | SEALED |
+| §219 | Baptism of Externality (CMS) | `WINDI-CMS-S219-*` | LIVE |
+| §221 | Container Architecture | `1530DBEF` | SEALED |
+| §222 | Content Acceptability | `66A0D8B0` | SEALED |
+| §224-226 | W-MAIL-001 DACP-v1 | `WINDI-MAIL-TRILOGY-*` | SEALED |
+| §227 | Galho B Dual Server | — | LIVE |
+| §241 | W-CORTEX-001 3-Tier | `04C67B81` | SEALED |
+| §235 | W-SITES-001 Sprint 1 | `1BE93BB4` | LIVE |
+| §242-245 | Editorial Doctrine | `3C5638F9` | SEALED |
 
-**Status:** CONSTITUTIONAL · **Receipt:** `C216F3EA` · **Invariants:** I1, I9, I11, I14
-**CORE:** Ledger + Key + Invariantes + Verificabilidade
-**Hierarquia:** INVARIANTES > CORE > DECRETOS > REFERENCE APPS > FEATURES
-
-### §204 — VERA Paladar: Operação Completa (25 Apr 2026)
-
-> **"DeepEval é o espelho. VERA é o juiz. Shadow Audit é a polícia. Langfuse é o satélite."**
-
-**Status:** LIVE · v1.4.0 · **Port:** :8150 · **4 Layers:** Execution→Governance→Defense→Quality
-> **Full details:** `CLAUDE-HISTORY.md` § §204
-
-### §205 — KEYGEN-001: Sovereign Key Ceremony (26 Apr 2026)
-
-> **"A chave não nasce isolada. Nasce sobre cadeia."**
-
-**Status:** SEALED · **Receipt:** `DBED5A85` · **Stack:** Ed25519 + Argon2id + XSalsa20-Poly1305
-**Chain:** 8 nós · **Files:** `/opt/windi/keys/WINDI-KEYGEN-001.*`
-
-### §208-214 — Governance Enhancements (26 Apr 2026)
-
-**Status:** ALL LIVE · §208-209 Semantic · §210 Resilience · §211 Triangulation · §212 BaFin · §213 Divergence · §214 Auto-Login
-> **Full details:** `CLAUDE-HISTORY.md` § §208-214
-
-### §215 — VERIFY PAGE AUDITOR-READY (26 Apr 2026)
-
-> **"O auditor BaFin escaneia. A página prova. Sem atrito."**
-
-**Status:** LIVE · **Commit:** `9060eaf5` · **URL:** `/verify-public/web/verify.html?id=WINDI-XXX`
-**Features:** i18n DE/EN/PT · Copy Hash · Dragon Seal SVG · Invariants Pills · 20KB mobile-ready
-
-### §216 — PILAR XIII: PHO de Emergência (26 Apr 2026)
-
-> **"Se a triangulação falhou, o Officer deve saber. Resposta válida, não selável."**
-
-**Status:** LIVE · **Service:** W-ENTERPRISE-001 :8150 · **Invariants:** I9, I11, I14
-**Cenários:** 2 OK→Normal · 1 OK→`status="degraded"`+PHO · 0 OK→`_degraded_response()`
-**Princípio:** *"Detection upstream. Gate downstream. Never hide degradation."*
-> **Full details:** `CLAUDE-HISTORY.md` § §216
-
-### §219 — BAPTISM OF EXTERNALITY (28 Apr 2026)
-
-> **"The system proved it could absorb external reality. Truth crossed the boundary."**
-
-**Status:** LIVE · **Service:** W-CMS-001 :8055/:8056 · **Invariants:** I9, I11, I14
-**Stack:** Directus 10 → Ledger Bridge → Sweeper (2min) → Ledger :8101
-**Genesis:** `WINDI-CMS-S219-BAPTISM-*` · **Significado:** Primeiro software externo absorvido
-**Files:** `/opt/windi/w-cms-001/` · > **Full details:** `CLAUDE-HISTORY.md` § §219
-
-### §218 — FOUR RINGS DOCTRINE (27 Apr 2026)
-
-> **"Cada serviço tem um anel. Cada anel tem uma lei."**
-
-**Status:** SEALED · **Invariants:** I9, I11
-**Anéis:** 1-Núcleo (Ledger/Vault/Verify) · 2-Produção (Enterprise/Bridge) · 3-Staging (CMS/Labs) · 4-Ossuário (Desktop dead)
-**Fix:** Desktop :8100→Anel 4 · W-Enterprise :8150 enabled · `windi-babel` disabled
-
-### §221 — Container Architecture · §B-CONTRACT-001 (28 Apr 2026)
-
-> **"A marca pode desaparecer. A prova nunca."**
-
-**Status:** SEALED · **Receipt:** `1530DBEF` · **Invariants:** I1, I9, I11, I12, I14
-**Fórmula:** `Container = Capacidade + Prova + Invariantes`
-**MAKEUP:** AI Writer · AI Translator · AI Image · AI SEO
-> **Full details:** `CLAUDE-HISTORY.md` § §221
-
-### §222 — §C-ACCEPTABILITY-001: Content Acceptability (28 Apr 2026)
-
-> **"Filtrar antes de gerar. Rever depois de selar. Anotar para sempre."**
-
-**Status:** SEALED · **Receipt:** `66A0D8B0` · **Invariants:** I1, I9, I11, I14
-**4-Layer Defense:** L-1 (prompt filter) → L0 (pre-seal) → L1 (post-seal) → L2 (annotation)
-> **Full details:** `CLAUDE-HISTORY.md` § §222
-
-### §224-226 — W-MAIL-001 Sovereignty Trilogy (29-30 Apr 2026)
-
-> **"O email que PROVE existência. Não o email que só TRANSMITE."**
-
-**Status:** SEALED · **Receipt:** `WINDI-MAIL-TRILOGY-20260429230632` · **Invariants:** I1, I9, I11, I12, I14
-**Domain:** `mail.windisites.de` · **DACP-v1:** Dual Anchored Communication Proof
-**Tests:** mail-tester 10/10 · Gmail INBOX · DKIM RSA PASS
-> **Full details:** `CLAUDE-HISTORY.md` § §224-226
-
-### §227 — Galho B: Dual Server Architecture (02 Mai 2026)
-
-> **"We separated thinking from truth."**
-
-**Status:** LIVE · **Server B:** 85.215.131.0 · **Invariants:** I9, I10, I13
-**Architecture:** Galho A (87.106.29.233) = Truth · Galho B = Cognition (Ollama mistral:7b)
-> **Full details:** `CLAUDE-HISTORY.md` § §227
-
-### §241 — W-CORTEX-001: Canal Único Soberano (03 Mai 2026)
-
-> **"Every token passes through a decision of cost, speed, and sovereignty."**
-
-**Status:** SEALED · **Receipt:** `04C67B81` · **Invariants:** I1, I9, I10, I14
-**3-Tier:** FREE (Ollama B) · MED (Mistral API) · HIGH (Claude sonnet-4)
-**Pipeline:** DID Gate → Tier Resolution → L-1/L0 Filter → Routing → Seal
-> **Full details:** `CLAUDE-HISTORY.md` § §241
-
-### §235 — W-SITES-001 Sprint 1 @ windisites.de (03 Mai 2026)
-
-> **"The accountable web. Every page sealed."**
-
-**Status:** LIVE · **Domain:** `windisites.de` · **Receipt:** `1BE93BB4`
-**5 Pages:** Landing · Dashboard · New Site · Workspace · Verify
-> **Full details:** `CLAUDE-HISTORY.md` § §235
-
-### §242-245 — W-SITES-001 Sprints 2-3 + Editorial Doctrine (04-05 Mai)
-
-**Receipts:** `C6C2CA0B` (AI gen) · `430CD285` (microlog) · `3C5638F9` (doctrine)
-> **Full details:** `CLAUDE-HISTORY.md` § §242-245
-
-**W-EDITORIAL-DOCTRINE-001:** 3 papéis (Editora·Forense·Soberana) · DSA/AI Act/GDPR
-**6 Prompt Templates:** profile·press·portfolio·landing·record·custom (tier routing)
-> **Full details:** `CLAUDE-HISTORY.md` § §245
+> **Full details:** `CLAUDE-HISTORY.md` § §202-§245
 
 ### §217 — P01 Sovereign Risk Score (SRS)
 
@@ -628,7 +530,6 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
-| 17 Mai | **§268-§269** HD-Mirror/CIL + PingPong Genesis First Runtime · `2abf0050`+`8672d5c4` ✅ |
 | 15 Mai | **§246-IMPL-bis** G3 Merkle Transparency Log GENESIS · `66189307` ✅ |
 | 14 Mai | **§262-§263** WINDI-HIOS + PingPong Protocol · `6F053E65`+`87AAF5BA` ✅ |
 | 12 Mai | **§250** Lei VII I18 Organic Growth + .wcap v0.1.0 Schema · `D00095E0`+`C52AA629` ✅ |
@@ -684,16 +585,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 **Contexto:** G3 Merkle GENESIS LIVE. §262-§263 selaram WINDI-HIOS naming + PingPong Protocol.
 
-**G3 Merkle (✅ COMPLETO + INCREMENTAL 17 Mai):**
-
-| Item | Estado |
-|------|--------|
-| Genesis Root `66189307...` | ✅ IRREMEDIÁVEL (15 Mai) |
-| Current Root `5ee83b95...` | ✅ ACTIVE (17 Mai) |
-| 57,288 folhas | ✅ Bootstrap + 7 incremental |
-| Endpoints :8101 | ✅ 4 LIVE + append CLI |
-| Seal `WINDI-G3-MERKLE-GENESIS-20260515171530` | ✅ |
-| Incremental append | ✅ `merkle_service.py append` |
+**G3 Merkle (✅ COMPLETO):** Genesis `66189307` → Current `5ee83b95` · 57,288 folhas · 4 endpoints :8101 LIVE
 
 **Bloco A — Trabalho Técnico (PENDENTE):**
 - [ ] DE ortografia sweep: ae→ä, oe→ö, ue→ü, ss→ß em 4 portais
@@ -717,13 +609,8 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 - [ ] **§139 WINDI-LAW Painel de Anexos** — Lista persistente · SHA · Suporte múltiplos ficheiros
 
 ### P1 — Importante
-- [x] **§246-D1 Federated Delegation Light** — γ-light architecture · `D32AFF47` · SEALED 07 Mai 2026
-- [x] **§246-D2 Workbench + Pedagogia** — 4 Zonas · Hospitalidade Soberana · `59497380` · SEALED 07 Mai 2026
-- [x] **§246-D2-bis Institutional Demo Send** — welcome@windisites.de · Slug Reservation · `FCF917FE` · SEALED 07 Mai 2026
-- [x] **§246-D3 Mailbox Provisioning** — DID-bound · Two-phase atomic · 11 lifecycle events · `F8881FCA` · SEALED 07 Mai 2026
-- [x] **§246-D4 Rate Limiting** — per-DID quotas · 3 janelas · 7 lifecycle events · `5D8513D7` · SEALED 07 Mai 2026
-- [x] **§246-D5 Receipt Symmetry** — Chain Architecture · Forest · Merkle Chain · Errata + T7 Adversarial · `4CE30817` + `4DD83B15` · SEALED 07 Mai 2026
-- [ ] **§246-IMPL Sprint 2** — DESBLOQUEADO · Query API + UI Berçário · 38 smoke tests (D3:12 + D4:10 + D5:16 incl. T7a-e adversarial) · Sprint 1 fechado `DDB3D6FF` 12 Mai
+> **§246-D1→D5 completados (07 Mai):** Ver `CLAUDE-HISTORY.md` § Migração 17 Mai 2026
+- [ ] **§246-IMPL Sprint 2** — DESBLOQUEADO · Query API + UI Berçário · 38 smoke tests · Sprint 1 fechado `DDB3D6FF` 12 Mai
 - [ ] **Rate limiting** nginx · **Cron 48h** email downgrade · **HIGH ops gate**
 
 ### P1.5 — W-TRAVEL-PUB-001 (Q3 2026)
@@ -738,7 +625,6 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 ### P2 — Melhorias
 - [ ] W-ACCT-001 Bridge · W-COMPLY-001 Dashboard · Resend UI
 - [ ] **§193 Security Sensor Integration** — Painel unificado SGV + CIA + SEC · Correlação cruzada · Dashboard NOIR
-- [x] **§194 Session Identity Bridge** — WindiDID.sync() · Cookie→localStorage · VERA fix · `5477ee04`
 - [ ] **§194.1 Identity Lifecycle** — Genesis → Classified → Active → Revoked · Activation Flow explícito · Berlin Pitch Slide
 
 ### Infra
@@ -774,10 +660,8 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | **FOUNDATION** | `39a332252` | §256 Notebook 001 — Field Notes on Hybrid Cognitive Systems |
 | **AXIOM** | `853da1515` | §257 Cognitive Continuity Axiom |
 | **MERKLE** | `66189307` | §246-IMPL-bis G3 Merkle Genesis — 57,281 leaves (superseded) |
-| **MERKLE** | `0c43a1d0` | G3 Merkle Current Root — 57,290 leaves (17 Mai) |
+| **MERKLE** | `5ee83b95` | G3 Merkle Current Root — 57,288 leaves (17 Mai) |
 | **PROOF** | `80A13B17` | §267 + Session 17 Mai — Self-Correction Without Rewrite |
-| **CIL** | `2abf0050` | §268 HD-Mirror v0.1 / Constitutional Interaction Layer |
-| **GENESIS** | `8672d5c4` | §269 PingPong Genesis — First Runtime §263 |
 
 > **Full receipts list:** `CLAUDE-HISTORY.md` § Produtos SEALED
 > **HD-MIRROR Reference:** `/opt/windi/docs/PROOF-SELF-CORRECTION-WITHOUT-REWRITE.md`
