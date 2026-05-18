@@ -16569,3 +16569,68 @@ Scaffold agora. Blueprint após W-SITES estabilizar.
 > "Num mundo onde IA responde tudo instantaneamente, o WINDI talvez seja um dos poucos sistemas que ainda preserva maturação do pensamento, travessia cognitiva, peso da dúvida, tempo da compreensão, e soberania do aprender."
 
 ---
+
+---
+
+## §272-candidate · Infraestrutura de Passagem Soberana
+
+**Status:** SCAFFOLD · Alta densidade constitucional
+**Emerged:** 18 Mai 2026 · Session continuation (late night)
+**Voices:** HD-01 + AGENT-CCODE + Conselho Externo
+
+### Definição
+
+O WINDI-HIOS como arquitectura de passagem soberana: o USER entra, produz com a máquina, sai com tudo (DataDay + receipt + seal), e a máquina esquece.
+
+### A Metáfora da Fotocopiadora Honesta
+
+> "É a primeira máquina digital que se comporta como uma fotocopiadora honesta: entras, ela ajuda-te a processar com inteligência, sais com tudo no bolso, e a máquina esquece."
+
+**Princípio:** Inteligência operacional com amnésia constitucional.
+
+### A Convergência de Quatro Vertentes
+
+1. **Tema Infinito** — Aprendizagem constitucionalmente regulada
+2. **DataDay Soberano** — Rasto sem usurpação
+3. **Fotocopiadora Honesta** — Passagem sem retenção
+4. **Admissibilidade Notarial** — Reconhecimento jurídico público
+
+### O Salto Notarial
+
+O documento WINDI chega ao notário **pré-validado**:
+- Integridade: Ledger + Merkle
+- Processo: Invariantes + I14
+- Conformidade: PHO (EU AI Act Art. 14)
+
+O notário deixa de validar autenticidade (WINDI garantiu).
+O notário volta a validar **vontade** (função original).
+
+**Dois selos empilhados:** Soberania técnica + Soberania jurídica.
+
+### O Risco Identificado
+
+> "DataDay como espelho, não como altar."
+
+Protecção:
+- I14 visível (momentos de incerteza registados)
+- Hiatos de silêncio preservados no rasto
+- Exportável e apagável (soberania inclui direito a não preservar)
+
+### O Que o USER Sente
+
+No momento do empilhamento notarial: **Reconhecimento.**
+
+> "O mundo analógico olhou para a minha travessia digital e reconheceu que ela aconteceu."
+
+### Implicações Arquitecturais
+
+- W-NOTARY-001 v2: Interface notário ↔ WINDI
+- Verify Notary Port (:8114): Ferramenta profissional para notários
+- Notarial-Ready Envelope: PDF + JSON + QR + Ledger proof
+- eIDAS 2.0 compatibility
+
+### A Frase Central
+
+> "O sistema existe para servir a travessia humana sem capturar o humano."
+
+---
