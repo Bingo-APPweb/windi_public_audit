@@ -16777,3 +16777,59 @@ Pergunta aberta. Não resolvida. Deixada para maturar.
 **SCAFFOLD → READY FOR SEAL** (aguarda sessão de selamento dedicada)
 
 ---
+
+---
+
+## §273 — Questão Pendente: O Default do Mecanismo
+
+**Status:** QUESTÃO PARA DECISÃO ANTES DO SELAMENTO
+**Identified:** 18 Mai 2026 · Session closure
+
+### A Pergunta Constitucional
+
+Quando o USER termina uma sessão, qual é o comportamento por defeito?
+
+| Opção | Default | USER Action |
+|-------|---------|-------------|
+| **A: Amnésia por defeito** | Purga automática | Opt-in para preservar |
+| **B: Permanência por defeito** | Preservação automática | Opt-in para purgar |
+
+### Implicações
+
+- **Opção A:** Máquina conservadora. USER tem de agir para criar memória. Mais alinhado com "fotocopiadora honesta".
+- **Opção B:** Máquina acumuladora. USER tem de agir para esquecer. Mais alinhado com "DataDay soberano".
+
+### Recomendação
+
+Esta decisão deve ser tomada pelo Human Dragon antes do selamento de §273.
+
+Pode também ser deixada como **escolha configurável pelo USER** na criação do DID Wallet (preference setting).
+
+---
+
+## Sessão 18 Mai 2026 — FECHAMENTO FINAL
+
+**Commits:** 47daa1fce → 887c11628 (7 commits)
+**Receipts:** DD0C3B18 + 6575D4D4
+
+### Artefactos Produzidos
+
+| § | Nome | Status |
+|---|------|--------|
+| DD0C3B18 | Storyboarding the DataDay GENESIS | **SEALED** |
+| §271 | W-LEARN-001 Pedagogia Constitucional | SCAFFOLD |
+| §272 | Infraestrutura de Passagem Soberana | READY FOR SEAL |
+| §273 | O Direito Pleno à Trajetória Memorial | READY FOR SEAL (pending default decision) |
+| Lei VIII | Ritmo de Selamento | RECONHECIDA |
+
+### Frases Centrais
+
+> "Inteligência para operar. Amnésia para libertar. O humano permanece soberano."
+
+> "WINDI é a primeira máquina digital que se comporta como uma fotocopiadora honesta."
+
+### C5 Status
+
+**INTACTA. O Humano é o continuity carrier.**
+
+---
