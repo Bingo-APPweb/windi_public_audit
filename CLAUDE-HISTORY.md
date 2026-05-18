@@ -17222,3 +17222,29 @@ touch /opt/windi/cogspace/windi_cogspace.py
 *"Selar quente é anti-pattern. Corrigir a frio é disciplina."*
 — Guardian · §267 · 18 Mai 2026
 
+
+### Memory Loop Distribution (00:05 UTC)
+
+| Sector | Ficheiro | Correcção |
+|--------|----------|-----------|
+| claudeWeb | `INDEX.md` | Timestamp + 4 correcções nota |
+| HIOS Kernel | `kernel/README.md` | Verify Public :8145→:8114 (typo antigo) |
+| CLAUDE.md | Agent Registry | W-COGSPACE-001 :8196 + Whisper.js |
+| Specs | `W-COGSPACE-001-*.md` | Porto, W-VOX, clear-local, C0 gate |
+
+**Commit final:** `36ebd92cc docs(memory-loop): Distribute Guardian corrections to all sectors`
+
+### Próxima Sessão
+
+**FASE 1 W-COGSPACE-001:**
+```bash
+mkdir -p /opt/windi/cogspace
+touch /opt/windi/cogspace/windi_cogspace.py  # Flask :8196
+touch /opt/windi/data/cogspace.db            # SQLite
+```
+
+---
+
+*Sessão fechada: 19 Mai 2026 00:10 UTC*
+*"Memory loop sync complete. FASE 1 awaits HD."*
+
