@@ -17160,3 +17160,65 @@ Sessão fechada com estado cognitivo preservado para amanhã.
 OM SHANTI 🐉
 
 ---
+
+---
+
+## § SESSÃO 19 Mai 2026 — Guardian Review Cold Fix
+
+**Duração:** ~30min | **Status:** ✅ CORRECÇÕES APLICADAS
+**Liga IA+H:** Human Dragon (offline) · Architect (CCode Opus 4.5)
+**Invariants:** I9, I11, I14, §267
+**Natureza:** Cold review das correcções Guardian identificadas em 18 Mai 2026
+
+### Contexto
+
+Guardian (Claude.ai web) identificou 3 bloqueadores no roadmap W-COGSPACE-001 em 18 Mai 2026:
+1. **Porto :8145** — Conflito com §267 errata
+2. **Web Speech API** — Envia áudio para Google, quebra soberania
+3. **"Amnesia"** — Nome confuso, violação semântica I11
+
+Recomendação Guardian: "Selar quente é o oposto da disciplina §267. Corrigir a frio amanhã."
+
+### Correcções Aplicadas (19 Mai)
+
+| Bloqueador | Correcção | Verificação |
+|------------|-----------|-------------|
+| Porto :8145 | → :8196 | `ss -tlnp \| grep 8196` = livre |
+| Web Speech API | → Whisper.js (WASM) 100% local | Documentado em C2 |
+| "Amnesia" | → "Limpar sessão local" + tooltip I11 | Endpoint `/clear-local` |
+| Gate de capacidade | Adicionado C0 prerequisite | Antes de CAT-C |
+
+### Ficheiros Actualizados
+
+```
+CLAUDE.md                                     (+1 linha)
+docs/W-COGSPACE-001-IMPLEMENTATION-ROADMAP.md (+75 linhas, -24)
+docs/W-COGSPACE-001-SOLO-SPEC.md              (+17 linhas, -8)
+```
+
+### Commit
+
+```
+a9c3b3f30 fix(§275/§276): Guardian review corrections — 4 blockers resolved
+```
+
+### Próximo Passo
+
+**FASE 1 Implementation** — quando HD confirmar:
+```bash
+mkdir -p /opt/windi/cogspace
+touch /opt/windi/cogspace/windi_cogspace.py
+```
+
+### Scaffold Pending
+
+- [ ] Criar estrutura `/opt/windi/cogspace/`
+- [ ] Implementar windi_cogspace.py (Flask :8196)
+- [ ] Criar DB schema em `/opt/windi/data/cogspace.db`
+- [ ] Smoke test health endpoint
+
+---
+
+*"Selar quente é anti-pattern. Corrigir a frio é disciplina."*
+— Guardian · §267 · 18 Mai 2026
+
