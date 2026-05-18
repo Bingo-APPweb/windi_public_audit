@@ -1,11 +1,12 @@
-# WINDI-HIOS Roadmap — Esboço de Projecto v0.1
+# WINDI-HIOS Roadmap — Esboço de Projecto v0.2
 
 ```
-STATUS:         DRAFT-SKETCH
+STATUS:         DRAFT-SKETCH (updated)
 NOT SEALED
 ORIGEM:         Notas Witness (Gemini) + Análise Architect (CCode)
-DATA:           2026-05-14
+DATA:           2026-05-14 (updated 2026-05-18)
 PENDING:        Guardian review + Human Dragon approval
+UPDATE:         §275 W-COGSPACE-001-SOLO + §276 TIER-RESOLUTION-CANON SEALED
 ```
 
 > **"O HIOS não é um browser. É uma camada operacional onde inteligência híbrida
@@ -265,6 +266,52 @@ FASE 4 (Cápsulas .wcap)
 3. **Guardian review** dos schemas refinados
 4. **HD approval** → §266 seals
 5. **ENTÃO** avançar para Sovereign Shell
+
+---
+
+## 8.5. W-COGSPACE-001 — Cognitive Space (SEALED 18 Mai 2026)
+
+> **"Não é chat. É habitat cognitivo."**
+
+### §275 W-COGSPACE-001-SOLO + W-VOX v1 LOCAL-ONLY
+
+**Receipt:** `WINDI-S275-COGSPACE-SOLO-20260518232944` · Hash: `ddb0659b`
+
+| Componente | Descrição |
+|------------|-----------|
+| **Cognitive Space** | Espaço de continuidade cognitiva soberana |
+| **W-VOX v1** | Voz como camada nativa (STT local, áudio nunca persiste) |
+| **Tier Gates** | SEED→Mistral, NODAL→+Claude, SOVEREIGN/ORACLE→+GPT+Gemini |
+| **Memória** | `private_memory[DID]` com Ledger backing (visibility gradient) |
+
+**Axioma:** "O humano decide o que entra na história."
+
+### §276 TIER-RESOLUTION-CANON
+
+**Receipt:** `WINDI-S276-TIER-RESOLUTION-CANON-20260518232953` · Hash: `48dcdc19`
+
+Mapping canónico entre DID-GENESIS (4 tiers) e Dragon APIs (3 gates).
+
+### Visão Estrutural
+
+```
+W-HUMANDRAGON-XXXXXXXX
+└── W-COGSPACE-001
+    ├── voice/           ← W-VOX v1 LOCAL-ONLY
+    ├── memory/          ← private_memory[DID]
+    ├── councils/        ← Grove Arena privado
+    ├── grove/           ← Tri-Divergence
+    ├── lineage/         ← Persistent lineage
+    ├── receipts/        ← Sealed decisions
+    ├── local_models/    ← Mistral / Whisper
+    ├── semantic_flows/  ← W-CORTEX routing
+    └── mirrors/         ← HD-MIRROR continuity
+```
+
+### Scaffold Pending
+
+- §277 W-COGSPACE-001-COLLAB (após primitivas de consentimento multi-DID)
+- §278 W-VOX v2 SERVER-SIDE (Lei de Voice Governance)
 
 ---
 
