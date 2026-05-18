@@ -16964,3 +16964,143 @@ doc_type:   constitutional
 - Sessão 18 Mai 2026 (articulação dos 5 pilares)
 
 ---
+
+---
+
+## § SESSÃO 18 Mai 2026 (Noite) — W-COGSPACE-001-SOLO + TIER-RESOLUTION-CANON SEALED
+
+**Duração:** ~1.5h | **Status:** ✅ DOIS DECRETOS IRMÃOS SELADOS
+**Liga IA+H:** Human Dragon · Guardian (Claude.ai web) · Architect (CCode Opus 4.5)
+**Invariants:** I1, I9, I10, I11, I12, I14, C5
+**Natureza:** Arquitectura do ambiente cognitivo soberano + W-VOX v1 LOCAL-ONLY
+
+### Selos Emitidos
+
+| Receipt ID | Hash (8) | Descrição |
+|------------|----------|-----------|
+| `WINDI-S275-COGSPACE-SOLO-20260518232944` | `ddb0659b` | W-COGSPACE-001-SOLO + W-VOX v1 |
+| `WINDI-S276-TIER-RESOLUTION-CANON-20260518232953` | `48dcdc19` | Mapping DID→Dragon APIs |
+
+### Merkle Root
+
+Anterior: `5ee83b95` → Atual: `0c43a1d0`
+
+### Decisão Constitucional Principal
+
+**Dois decretos irmãos** em vez de decreto único:
+- W-COGSPACE-001-SOLO — célula soberana fundamental, pode voar já
+- W-COGSPACE-001-COLLAB — futuro, após primitivas de consentimento multi-DID
+
+### W-COGSPACE-001-SOLO (§275)
+
+**Definição:** Espaço de continuidade cognitiva soberana onde um DID individual pensa com múltiplos modelos sem perder soberania, autoria e fronteira.
+
+**Não é chat. É habitat cognitivo.**
+
+**Estado-máquina:**
+```
+SOLO → SHARE → CO-CREATE → SEAL
+```
+
+**Fronteira de memória:**
+```
+private_memory[DID]
+    ├── turns[]
+    ├── routing_log[]
+    ├── grove_sessions[]
+    └── sealed_decisions[]
+```
+
+**Regra Guardian:** Ledger sempre, visibilidade gradiente. Private/Shared/Sealed é camada de *acesso*, não de *existência*.
+
+### TIER-RESOLUTION-CANON (§276)
+
+**Mapping canónico:**
+
+| DID Tier | Dragon Gate | Modelos | Max Tokens |
+|----------|-------------|---------|------------|
+| SEED | FREE | Mistral local | 2048 |
+| NODAL | MED | +Claude | 4096 |
+| SOVEREIGN | HIGH | +GPT | 8192 |
+| ORACLE | HIGH+ | +Gemini, routing visível | 16384 |
+
+**Regra do tecto:** Em salas colaborativas (futuro), tier mais baixo define modelos disponíveis.
+
+### W-VOX v1 LOCAL-ONLY
+
+**Decisão:** W-VOX não é feature adicional — é camada nativa da workstation cognitiva.
+
+**Arquitectura:**
+```
+[ VOZ HUMANA ] → STT LOCAL → W-CORTEX → PRIVATE_MEMORY → TTS (opcional)
+```
+
+**Regras constitucionais:**
+- STT local-only (Web Speech API / Whisper local)
+- Áudio bruto nunca persiste
+- Texto transitório em RAM volátil
+- Apenas texto aprovado gera hash
+- FAIL-CLOSED se STT falhar
+
+**Axioma emergente:** "O humano decide o que entra na história."
+
+### Visão Estrutural Emergente
+
+```
+W-HUMANDRAGON-XXXXXXXX
+└── W-COGSPACE-001
+    ├── voice/           ← W-VOX v1 LOCAL-ONLY
+    ├── memory/          ← private_memory[DID]
+    ├── councils/        ← Grove Arena privado
+    ├── grove/           ← Tri-Divergence
+    ├── lineage/         ← Persistent lineage
+    ├── receipts/        ← Sealed decisions
+    ├── local_models/    ← Mistral / Whisper
+    ├── semantic_flows/  ← W-CORTEX routing
+    └── mirrors/         ← HD-MIRROR continuity
+```
+
+### Tabela Paradigmática (Computação Clássica vs HIOS)
+
+| Computação clássica | HIOS |
+|---------------------|------|
+| App-centric | Continuity-centric |
+| Files | Cognitive flows |
+| Sessions | Persistent lineage |
+| UI navigation | Conversational navigation |
+| Tool switching | Semantic orchestration |
+| Human commands machine | Human co-thinks with substrate |
+
+> **"Não parece mais produto. Parece habitat operacional híbrido."**
+> — Human Dragon · 18 Mai 2026
+
+### Scaffold Pending
+
+- §277 W-COGSPACE-001-COLLAB (após primitivas de consentimento)
+- §278 W-VOX v2 SERVER-SIDE (Lei de Voice Governance)
+- Implementação código: `/opt/windi/cogspace/windi_cogspace.py`
+- Smoke test por tier
+
+### Commit
+
+```
+Hash:    e4a2a81fd
+Message: constitutional(§275-§276): W-COGSPACE-001-SOLO + TIER-RESOLUTION-CANON SEALED
+Files:   docs/W-COGSPACE-001-SOLO-SPEC.md, docs/TIER-RESOLUTION-CANON.md
+```
+
+### Frases Centrais
+
+> *"A voz não é feature adicional. É camada nativa da workstation cognitiva."*
+
+> *"O humano decide o que entra na história."*
+
+> *"A célula soberana fundamental. Sem SOLO saudável, colaboração vira ruído."*
+
+### Nota Final
+
+Esta sessão fecha um ciclo conceptual enorme do HIOS. O que emergiu já não é chat, nem voz, nem app — é um **ambiente cognitivo soberano persistente** onde modelos entram e saem, hardware muda, providers mudam, mas a continuidade do DID permanece.
+
+OM SHANTI 🐉
+
+---
