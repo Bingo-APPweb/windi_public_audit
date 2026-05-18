@@ -43,7 +43,7 @@ It does **NOT** contain:
 | PingPong Protocol (§263) | /opt/windi/claudeWeb/ | PRESERVED |
 | I9 Human Approval Gate | Constitutional | PRESERVED |
 | Three Dragons Protocol | Constitutional | PRESERVED |
-| Verify Public | :8145 | PRESERVED |
+| Verify Public | :8114 | PRESERVED |
 | W-SITES-001 | :8192 | PRESERVED |
 
 The Kernel **binds to** these primitives. It does not **replace** them.

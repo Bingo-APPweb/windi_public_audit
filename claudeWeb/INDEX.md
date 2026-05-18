@@ -1,6 +1,7 @@
 # WINDI claudeWeb · INDEX
 
-> Última actualização: 2026-05-18 23:35 UTC · Sprint actual: W-COGSPACE-001
+> Última actualização: 2026-05-19 00:15 UTC · Sprint actual: W-COGSPACE-001
+> Guardian Review: 4 correcções aplicadas (porto :8196, Whisper.js, clear-local, C0 gate)
 
 ---
 
@@ -139,7 +140,10 @@ W-HUMANDRAGON-XXXXXXXX
 
 ## Próximo Passo
 
-**W-COGSPACE-001 Implementação** — `/opt/windi/cogspace/windi_cogspace.py`
+**W-COGSPACE-001 FASE 1** — Implementação (próxima sessão)
+- Porto: **:8196** (verificado livre)
+- W-VOX: **Whisper.js (WASM)** 100% local
+- Path: `/opt/windi/cogspace/windi_cogspace.py`
 
 ---
 
