@@ -1,6 +1,6 @@
 # WINDI claudeWeb · INDEX
 
-> Última actualização: 2026-05-15 14:00 UTC · Sprint actual: G3 Merkle CRITICAL
+> Última actualização: 2026-05-18 23:35 UTC · Sprint actual: W-COGSPACE-001
 
 ---
 
@@ -11,90 +11,135 @@
 | §262 | WINDI-HIOS Naming               | constitutional_naming | 2026-05-14 | `6F053E65`    | sealed |
 | §263 | PingPong Protocol               | continuity_protocol   | 2026-05-14 | `87AAF5BA`    | sealed |
 | §264 | Genesis Ceremony                | genesis_ceremony      | 2026-05-15 | `BE29C326`    | sealed |
+| §265 | Drift Monitor Metrics           | constitutional        | 2026-05-17 | `08805713`    | sealed |
 | §266 | PAF — Princípio Autoria Forense | constitutional_law    | 2026-05-15 | `15997486`    | sealed |
+| §267 | Self-Correction Without Rewrite | errata_proof          | 2026-05-17 | `80A13B17`    | sealed |
+| §273 | Direito Pleno Trajetória Memorial | constitutional      | 2026-05-18 | `3262DAA0`    | sealed |
+| §274 | Instanciação Soberana Carrier   | constitutional        | 2026-05-18 | `EF359603`    | sealed |
+| §275 | W-COGSPACE-001-SOLO + W-VOX v1  | constitutional        | 2026-05-18 | `ddb0659b`    | sealed |
+| §276 | TIER-RESOLUTION-CANON           | constitutional        | 2026-05-18 | `48dcdc19`    | sealed |
 
 ---
 
-## Capítulos Reservados (número atribuído, conteúdo pending)
+## G3 Merkle Status (COMPLETO)
+
+```
+G3 Merkle Transparency Log
+├── Status:   ✅ COMPLETO
+├── Genesis:  66189307 (15 Mai 2026)
+├── Current:  0c43a1d0 (18 Mai 2026)
+├── Leaves:   57,290+
+└── Endpoints: 4 LIVE em :8101
+```
+
+---
+
+## Capítulos Reservados (scaffold pending)
 
 | §    | Título                          | Aguarda                | Sprint Alvo |
 |------|----------------------------------|------------------------|-------------|
-| §265 | Drift Monitor Metrics           | Desenvolvimento futuro | RESERVADO   |
-
-**Nota §265:** Número reservado para Drift Monitor Metrics. Não é vacatio nem processamento forçado — aguarda desenvolvimento orgânico.
-
----
-
-## Capítulos Candidatos (não resolvidos)
-
-| §    | Candidato A                     | Candidato B              | Decisão |
-|------|----------------------------------|--------------------------|---------|
-| §267 | KERNEL-GROUND-v0.1              | HIOS Runtime Declaration | DIFERIDA |
-
-**Nota §267:** Dois artefactos competem pelo mesmo slot:
-- **KERNEL-GROUND-v0.1** — 7 Camadas runtime (7 pontos Guardian pending)
-- **HIOS Runtime Declaration** — Absorption Principle (refinamentos C1-C3 pending)
-
-Decisão diferida por HD. Sequenciamento será decidido após G3 Merkle.
+| §277 | W-COGSPACE-001-COLLAB           | Primitivas consentimento multi-DID | Q3 2026 |
+| §278 | W-VOX v2 SERVER-SIDE            | Lei de Voice Governance | Q3 2026 |
 
 ---
 
-## Prioridade CRITICAL
+## Receipts Chain Completa (18 Mai 2026)
+
+| Receipt ID | § | Hash (8) |
+|------------|---|----------|
+| `WINDI-S262-HIOS-NAMING-20260514-6F053E65` | §262 | `6F053E65` |
+| `WINDI-S263-PINGPONG-PROTOCOL-20260514-87AAF5BA` | §263 | `87AAF5BA` |
+| `WINDI-GENESIS-CEREMONY-20260515-BE29C326` | §264 | `BE29C326` |
+| `WINDI-S265-DRIFT-MONITOR-20260517-08805713` | §265 | `08805713` |
+| `WINDI-S266-PAF-RATIFY-20260515091359-15997486` | §266 | `15997486` |
+| `WINDI-S267-ERRATA-PROOF-20260517-80A13B17` | §267 | `80A13B17` |
+| `WINDI-S273-DIREITO-PLENO-TRAJETORIA-MEMORIAL-20260518-3262DAA0` | §273 | `3262DAA0` |
+| `WINDI-S274-INSTANCIACAO-SOBERANA-CARRIER-20260518-EF359603` | §274 | `EF359603` |
+| `WINDI-S275-COGSPACE-SOLO-20260518232944` | §275 | `ddb0659b` |
+| `WINDI-S276-TIER-RESOLUTION-CANON-20260518232953` | §276 | `48dcdc19` |
+
+---
+
+## Lineage Visual (18 Mai 2026)
 
 ```
-§246-IMPL-bis G3 Merkle
-├── Status:   NÃO INICIADO
-├── Prazo:    19 Mai 2026
-├── Restam:   4 dias (a partir de 15 Mai)
-└── Prioridade: CRITICAL — caminho principal 16-19 Mai
-```
-
-**Decisão HD 15 Mai:** Numeração §267 e §265 saem do caminho crítico até G3 fechar.
-
----
-
-## Receipts Chain Completa
-
-| Receipt ID | § | Hash Completo |
-|------------|---|---------------|
-| `WINDI-S262-HIOS-NAMING-20260514-6F053E65` | §262 | `6f053e65e307cf0225ab7804f8a9a1835be2a445bee54d3497017aecb5320c3e` |
-| `WINDI-S263-PINGPONG-PROTOCOL-20260514-87AAF5BA` | §263 | `87aaf5ba3826fad4015424f1805f108f48d19ea88da5314ee5a34e6933ab616a` |
-| `WINDI-GENESIS-CEREMONY-20260515-BE29C326` | §264 | `65f8dce706cd0b1e3f27bd1a60d5d0a76ccd40a4fb20b28cef05b1c7c5dae972` |
-| `WINDI-S266-PAF-RATIFY-20260515091359-15997486` | §266 | `15997486adf10c5899c7be6bb4604012daf9eaf43a941665dceb7509039283f9` |
-
----
-
-## Lineage Visual
-
-```
-§262 SEALED (Naming)
+§262 SEALED (WINDI-HIOS Naming)
     │
-    └──▶ §263 SEALED (PingPong)
+    └──▶ §263 SEALED (PingPong Protocol)
               │
               └──▶ §264 SEALED (Genesis Ceremony)
                         │
-                        ├──▶ §265 RESERVADO (Drift Metrics)
+                        ├──▶ §265 SEALED (Drift Monitor Metrics)
                         │
                         └──▶ §266 SEALED (PAF Lei VIII)
                                   │
-                                  └──▶ §267 CANDIDATO DUPLO (decisão diferida)
+                                  └──▶ §267 SEALED (Self-Correction Without Rewrite)
+                                            │
+                                            ├──▶ §273 SEALED (Direito Memorial)
+                                            │
+                                            └──▶ §274 SEALED (Instanciação Carrier)
+                                                      │
+                                                      ├──▶ §275 SEALED (W-COGSPACE-001-SOLO)
+                                                      │
+                                                      └──▶ §276 SEALED (TIER-RESOLUTION-CANON)
+                                                                │
+                                                                ├──▶ §277 SCAFFOLD (W-COGSPACE-001-COLLAB)
+                                                                │
+                                                                └──▶ §278 SCAFFOLD (W-VOX v2 SERVER-SIDE)
 ```
 
 ---
 
-## Decisões HD Registadas (15 Mai 2026)
+## 5 Pilares WINDI-HIOS (COMPLETOS)
 
-| Hora | Decisão | Invariante |
-|------|---------|------------|
-| 09:13 | Genesis Ceremony SEALED | I9 + I11 |
-| 09:14 | §266 PAF ratificado | I9 + I11 |
-| 14:00 | "Fechar o pronto, registar o aberto" | I9 + I14 |
+| # | Pilar | § / Receipt | Status |
+|---|-------|-------------|--------|
+| 1 | Continuidade híbrida verificável | §261 W-BIND-001 | **SEALED** |
+| 2 | Soberania cognitiva e memorial | §236, §268 | **SEALED** |
+| 3 | Admissibilidade documental pública | §267, Ledger | **SEALED** |
+| 4 | Direito memorial bifurcado | §273 `3262DAA0` | **SEALED** |
+| 5 | Instanciação soberana do Carrier | §274 `EF359603` | **SEALED** |
+
+---
+
+## W-COGSPACE-001 — Cognitive Space (18 Mai 2026)
+
+> **"Não é chat. É habitat cognitivo."**
+
+### Arquitectura
+
+```
+W-HUMANDRAGON-XXXXXXXX
+└── W-COGSPACE-001
+    ├── voice/           ← W-VOX v1 LOCAL-ONLY
+    ├── memory/          ← private_memory[DID]
+    ├── councils/        ← Grove Arena privado
+    ├── grove/           ← Tri-Divergence
+    ├── lineage/         ← Persistent lineage
+    ├── receipts/        ← Sealed decisions
+    ├── local_models/    ← Mistral / Whisper
+    ├── semantic_flows/  ← W-CORTEX routing
+    └── mirrors/         ← HD-MIRROR continuity
+```
+
+### Axioma
+
+> **"O humano decide o que entra na história."**
+
+### Tier Gates (§276)
+
+| DID Tier | Dragon Gate | Modelos | Max Tokens |
+|----------|-------------|---------|------------|
+| SEED | FREE | Mistral local | 2048 |
+| NODAL | MED | +Claude | 4096 |
+| SOVEREIGN | HIGH | +GPT | 8192 |
+| ORACLE | HIGH+ | +Gemini, routing visível | 16384 |
 
 ---
 
 ## Próximo Passo
 
-**G3 Merkle** — 16-19 Mai 2026 — CRITICAL PATH
+**W-COGSPACE-001 Implementação** — `/opt/windi/cogspace/windi_cogspace.py`
 
 ---
 
