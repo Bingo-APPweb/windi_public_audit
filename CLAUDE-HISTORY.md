@@ -16833,3 +16833,71 @@ Pode também ser deixada como **escolha configurável pelo USER** na criação d
 **INTACTA. O Humano é o continuity carrier.**
 
 ---
+
+---
+
+## §273 · O Direito Pleno à Trajetória Memorial (SELADO)
+
+```
+Status:     SEALED · CONSTITUTIONAL
+Receipt:    WINDI-S273-DIREITO-PLENO-TRAJETORIA-MEMORIAL-20260518200621-3262DAA0
+Data:       2026-05-18 · 20:06 UTC
+Invariants: I1, I9, I11, I12, C5
+Actor:      did:windi:dragon-001
+doc_type:   constitutional
+```
+
+### Redação Canónica
+
+> **§273 (O Direito Pleno à Trajetória Memorial):** O usuário detém a soberania exclusiva e intransferível sobre a persistência dos seus dados na camada superficial. O default memorial opera-se contextualmente por modus operacional, dentro dos limites estruturais do Ledger imutável:
+>
+> | Modus | Default Memorial |
+> |-------|------------------|
+> | **WINDI-LAW** | Permanência (documentos legais exigem persistência) |
+> | **ENTERPRISE** | Permanência (compliance trail) |
+> | **NOTARIAL** | Permanência estrutural (Ledger) |
+> | **LEARN** | USER escolhe por tema |
+> | **ENTERTAINMENT** | Amnésia (passagem leve) |
+> | **TRAVEL** | Amnésia (sessões transientes) |
+> | **MEMORY** | Permanência explícita (é o propósito) |
+>
+> O USER mantém soberania de alternar entre Amnésia Seletiva e Permanência Encriptada em cada sessão, com cada alternância registada como evento Ledger.
+
+### Mecanismo
+
+**Expulsão Semântica de Camada Superficial:**
+- **IMUTÁVEL (Permanece):** receipt_id, timestamp, seal, hash, Merkle leaf
+- **EXPULSÁVEL (Apagamento Total):** Prosa, texto bruto, perguntas, respostas, contexto runtime
+
+### Princípio Arquitectural
+
+> *"DID Wallet único, espectro de modus completo, default memorial contextual, soberania do USER em cada sessão, Ledger estrutural permanente."*
+
+### Onboarding
+
+- DID Wallet como portão único, apresentado **"sem alarde"** (praxe online normal)
+- USER descobre soberania **por uso**, não por filosofia prévia
+- Constituição disponível para quem quiser profundidade
+
+### Compatibilidade
+
+- **I11 IRREMEDIÁVEL:** Preservado (estrutura matemática intacta)
+- **GDPR Art. 17:** Compatível (conteúdo pessoal apagável)
+- **eIDAS 2.0:** Compatível (prova jurídica preservada)
+- **C5 (Continuity Carrier):** USER decide quando purgar/preservar
+
+### Frases Centrais
+
+> *"Inteligência para operar. Amnésia para libertar. O humano permanece soberano."*
+
+> *"WINDI é a primeira máquina digital que se comporta como uma fotocopiadora honesta."*
+
+### Genealogia
+
+§273 descende de:
+- §248 Lei V (Two-Track: FREE civic + institutional)
+- §267 Errata taxonomy (alternâncias via protocol)
+- §272 Infraestrutura de Passagem Soberana (ainda scaffold)
+- Sessão 18 Mai 2026 (articulação progressiva em 5 camadas)
+
+---
