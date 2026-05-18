@@ -16510,3 +16510,62 @@ Three voices, three contexts, same epistemic figure:
 > *"A não-selagem É o selo. A família provou-se família."*
 
 ---
+
+---
+
+## §271-candidate · W-LEARN-001 — Pedagogia Constitucional
+
+**Status:** SCAFFOLD · Aguarda estabilização W-SITES
+**Emerged:** 18 Mai 2026 · Session continuation
+**Voices:** HD-01 + AGENT-CCODE + Conselho Externo
+
+### Definição
+
+Não é edtech. É a Constituição WINDI como sistema operativo epistémico para qualquer tema que o USER queira desenvolver.
+
+### Questão Civilizacional
+
+> "Como aprender em ambientes híbridos sem perder soberania epistemológica."
+
+### Manifestação Natural dos Invariantes
+
+| Invariante | Manifestação Pedagógica |
+|------------|-------------------------|
+| I9 | Sistema propõe caminhos, nunca conclui pelo USER |
+| I11 | Cada aprendizagem registável, reconstruível |
+| I14 | "Não sei" tem peso constitucional |
+| C5 | USER carrega o fio do tema |
+| I18 | Tema cresce conforme USER puxa |
+
+### O "Tema Infinito" Protegido
+
+Protecção contra dissolução:
+- Admissibilidade: "Tenho chão para continuar?"
+- Receipts por nó epistémico
+- C5: USER é continuity carrier
+- Métrica Invisível: Sistema ajuda a regressar ao chão
+
+### Característica Revolucionária
+
+> "O sistema não finge saber."
+
+Incerteza, dúvida, errata, revisão = parte legítima do percurso cognitivo.
+
+### Decisão Arquitectural
+
+W-LEARN-001 como produto/vertente própria, mas sobre Spine existente (DID, Ledger, Receipts).
+
+### Origem dos Temas
+
+- USER-initiated: Motor sempre humano (C5)
+- Liga-curated: Seeds/Trails como ignição, não currículo
+
+### Timing
+
+Scaffold agora. Blueprint após W-SITES estabilizar.
+
+### Potencial
+
+> "Num mundo onde IA responde tudo instantaneamente, o WINDI talvez seja um dos poucos sistemas que ainda preserva maturação do pensamento, travessia cognitiva, peso da dúvida, tempo da compreensão, e soberania do aprender."
+
+---
