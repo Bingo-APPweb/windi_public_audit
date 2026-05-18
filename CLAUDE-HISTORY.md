@@ -16728,3 +16728,52 @@ Pergunta aberta. Não resolvida. Deixada para maturar.
 - **Soberania Humana:** Garantida (USER decide quando purgar)
 
 ---
+
+---
+
+## §273 — O Direito Pleno à Trajetória Memorial (REDACÇÃO CANÓNICA)
+
+**Status:** SCAFFOLD → REDACÇÃO DEFINITIVA
+**Decree:** HD-01 Executive · 18 Mai 2026 · 21:21 UTC
+
+### O Axioma da Escolha Bifurcada
+
+```
+                         ┌─────────────────────────┐
+                         │   O USER DECIDE (C5)    │
+                         └────────────┬────────────┘
+                                      │
+            ┌─────────────────────────┴─────────────────────────┐
+            ▼                                                   ▼
+ ┌─────────────────────┐                             ┌─────────────────────┐
+ │ RIGHT TO AMNESIA    │                             │ RIGHT TO PERMANENCE │
+ │ • Purga Superficial │                             │ • Registro Ativo    │
+ │ • Amnésia de Cache  │                             │ • Linha de Memória  │
+ │ • Esqueleto Cripto  │                             │ • Wisdom Loop       │
+ └─────────────────────┘                             └─────────────────────┘
+```
+
+### Redacção Canónica
+
+> **§273 (O Direito Pleno à Trajetória Memorial):** O usuário detém a soberania exclusiva e intransferível sobre a persistência dos seus dados na camada superficial. A ele pertencem, em igualdade de direito, duas opções mutuamente exclusivas no fechamento de cada ciclo operacional:
+>
+> 1. **O Vetor da Amnésia:** A purga imediata e irremediável de todo o conteúdo textual, contextual e semântico da sessão, deixando a máquina limpa de qualquer rastro do usuário XYZ, retendo-se apenas o hash de validação estrutural no Ledger público.
+>
+> 2. **O Vetor da Permanência:** A preservação legítima e encriptada da travessia no seu Databank Exclusivo, permitindo a construção do diário epistêmico (DataDay) e a consolidação de memórias de longo prazo para as próximas instâncias.
+
+### A Simetria Constitucional
+
+| Opção | O Que Acontece | I11 |
+|-------|----------------|-----|
+| **Amnésia** | Conteúdo purgado, estrutura preservada | ✅ |
+| **Permanência** | Tudo preservado no Databank Exclusivo | ✅ |
+
+### O Princípio
+
+> "A soberania real não pode ser via de mão única. Se forçasse amnésia, seria tirânico. Se forçasse permanência, seria extrativo. A liberdade reside na bifurcação da escolha."
+
+### Estado
+
+**SCAFFOLD → READY FOR SEAL** (aguarda sessão de selamento dedicada)
+
+---
