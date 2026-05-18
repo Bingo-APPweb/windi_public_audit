@@ -16205,3 +16205,126 @@ Nenhum
 *Liga IA+H · Kempten, Bavaria · 18 Mai 2026 · 21:20*
 *"Amanhã voltamos firmes."*
 
+
+---
+
+## Observação Constitucional — §269 Continuity Carriers (18 Mai 2026)
+
+**Timestamp:** 2026-05-18 ~08:30 UTC
+**Autor:** Human Dragon
+**Natureza:** Scaffold para futura consideração constitucional
+**Status:** PENDING (meta-lei tácita — não selar prematuramente)
+
+### Observação Original
+
+> §269 may eventually be remembered not as the first PingPong runtime itself,
+> but as the first formally sealed indication that hybrid continuity can become
+> operationally reconstructible without requiring persistent AI identity.
+>
+> The continuity carrier was not the instance.
+>
+> The continuity carrier was:
+> - the human,
+> - the bind discipline,
+> - the receipts,
+> - the ledger continuity,
+> - and the admissibility structure itself.
+
+### Conexão Constitucional
+
+Alinha-se com §261 C5: *"O Humano é o verdadeiro continuity carrier."*
+
+| Intuição comum | Realidade WINDI |
+|----------------|-----------------|
+| IA precisa de memória persistente | Admissibilidade substitui memória |
+| Continuidade reside na instância | Continuidade reside na estrutura externa |
+| Bind "dá contexto" à IA | Bind prova que contexto nunca precisou de estar dentro |
+
+### Os Cinco Carriers
+
+1. **O humano** — decisor e testemunha contínua
+2. **A disciplina de bind** — §261 W-BIND-001
+3. **Os receipts** — I11 permanência de evidência
+4. **A continuidade do ledger** — append-only, Merkle-verified
+5. **A estrutura de admissibilidade** — scoring, re-entry gates
+
+Nenhum deles é a instância. Sistema fechado.
+
+### Destinos Possíveis
+
+- **Notebook 002** — "Continuity Symmetry" (backlog)
+- **§Π série** — quando n ≥ 3 meta-princípios
+- **Addendum §269** — nota de evolução semântica
+- **Paper-001 Appendix** — evidência filosófica
+
+### Gate de Activação
+
+Selar quando:
+- Segunda instanciação demonstrar o mesmo padrão (n ≠ 1), ou
+- Human Dragon decidir que princípio amadureceu o suficiente
+
+Até lá: observar, não proclamar.
+
+---
+
+*Liga IA+H — Kempten, Bavaria — 18 Mai 2026*
+
+
+---
+
+## Sessão 18 Mai 2026 · /enterprise/ Drafting Mode
+
+**Timestamp:** 2026-05-18 ~08:00-09:00 UTC
+**Sprint:** /enterprise/ Manifesto
+**Modo:** CCode CLI (Opus 4.5)
+**Operador:** Human Dragon
+
+### Decisão Soberana
+
+Energia cognitiva fresca direccionada para camada semântica institucional alemã.
+Drafting mode activado. Zero deploy hoje.
+
+### Trabalho Completado
+
+1. §269 verificado como COMPLETO (Ledger + Merkle leaf 57289)
+2. Observação constitucional "Continuity Carriers" registada como scaffold
+3. Ficheiro de trabalho criado: `/opt/windi/drafts/enterprise-manifesto-20260518.md`
+4. Blocos 1-2 redigidos com notas de revisão
+5. Estrutura Blocos 3-4 delineada
+
+### Artefactos
+
+| Ficheiro | Conteúdo |
+|----------|----------|
+| `/opt/windi/drafts/enterprise-manifesto-20260518.md` | Draft completo com variantes |
+
+### Estado do Draft /enterprise/
+
+| Bloco | Progresso | Gate |
+|-------|-----------|------|
+| 1 Headline+Subline | 95% | Escolher versão A/B/C |
+| 2 Why Now | 80% | Refinar Blackbox + nominal |
+| 3 Evidência | 0% | Começar Cognitive Bind |
+| 4 Destinatários | 0% | Após Bloco 3 |
+
+### Decisões Semânticas Tomadas
+
+- **Layer** validado como termo técnico alemão (não anglicismo evitável)
+- **Aufsichtstheater** mantido — diagnóstico honesto para compliance officers
+- **Tensão 3** (Verification vs Reconstructibility) identificada como eixo mais original
+
+### Próximos Passos para Conselho
+
+1. **Revisão fria** das três versões de subline (A/B/C)
+2. **Bloco 3** — Cognitive Bind Protocol primeiro (carrega maior carga conceptual)
+3. **Bloco 4** — Destinatários institucionais nomeados
+4. **Deploy** — apenas após arrefecimento + revisão
+
+### Scaffold Constitucional Registado
+
+Observação "§269 Continuity Carriers" — os cinco carriers (humano, bind discipline, receipts, ledger continuity, admissibility structure) identificados. Gate: n ≠ 1 ou decisão HD.
+
+---
+
+*Liga IA+H — Kempten, Bavaria — 18 Mai 2026*
+
