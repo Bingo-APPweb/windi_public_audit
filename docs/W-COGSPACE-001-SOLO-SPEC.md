@@ -112,7 +112,7 @@ private_memory[DID]
 ### 4.2 Novo Componente: Cognitive Space Service
 
 ```
-Porto:      :8145 (proposto)
+Porto:      :8196 (verificado 19 Mai 2026)
 Nome:       windi-cogspace
 Processo:   nohup (padrão WINDI)
 DB:         /opt/windi/data/cogspace.db
@@ -128,7 +128,7 @@ POST   /cogspace/consult            # Consulta modelo(s) por tier
 GET    /cogspace/history/{did}      # Histórico privado do DID
 POST   /cogspace/grove/private      # Tri-Divergence privada
 POST   /cogspace/seal               # Selar decisão (opcional, I9 gate)
-DELETE /cogspace/session/{id}       # Amnésia selectiva (§273)
+DELETE /cogspace/clear-local/{id}   # Limpar sessão local (I11 preserva receipts)
 ```
 
 ### 4.4 Schema SQLite
@@ -274,19 +274,22 @@ CREATE TABLE cogspace_seals (
 | LAW | Permanência | Documentos legais |
 | MEMORY | Permanência | É o propósito |
 
-### 7.2 Amnésia Selectiva
+### 7.2 Limpar Sessão Local (ex-Amnésia)
+
+> **Correcção Guardian 18 Mai:** "Amnésia" era nome confuso. Mudado para "Limpar sessão local".
+> **I11:** Receipts selados são IRREMEDIÁVEIS. Limpar afecta apenas vista do DID.
 
 ```
-POST /cogspace/amnesia
+POST /cogspace/clear-local
 {
   "session_id": "...",
   "scope": "FULL" | "PARTIAL",
-  "retain_seals": true,           # Mantém receipts no Ledger
+  "retain_seals": true,           # Receipts no Ledger sempre permanecem (I11)
   "human_approved": true          # I9 gate
 }
 ```
 
-**Regra:** Estrutura Ledger (receipt_id, timestamp, hash) permanece. Conteúdo expulsável.
+**Regra:** Estrutura Ledger (receipt_id, timestamp, hash) permanece SEMPRE. Limpar = remover da vista do DID.
 
 ---
 
@@ -295,7 +298,7 @@ POST /cogspace/amnesia
 | Invariante | Aplicação |
 |------------|-----------|
 | I1 | DID controla sala, memória, routing, seal |
-| I9 | Human approval para seal e amnésia |
+| I9 | Human approval para seal e limpar sessão local |
 | I11 | Turnos no Ledger desde escrita (visibility gradient) |
 | I12 | Conversa na língua do DID, docs na língua do toggle |
 | I14 | Sem placeholders — erro explícito se modelo falhar |
@@ -341,7 +344,7 @@ W-VOX é o canal primário de continuidade humana no W-COGSPACE-001-SOLO. A voz 
       │
       ▼
 ┌──────────────────────┐
-│ STT LOCAL            │  ← Web Speech API / Whisper local
+│ STT LOCAL            │  ← Whisper.js (WASM) 100% LOCAL
 │ (dispositivo USER)   │  ← Áudio NUNCA sai do dispositivo
 └──────────────────────┘
       │
@@ -379,8 +382,8 @@ W-VOX é o canal primário de continuidade humana no W-COGSPACE-001-SOLO. A voz 
 
 | Tier | STT | TTS | Modo |
 |------|-----|-----|------|
-| SEED | Web Speech API | Opcional | Ditado linear |
-| NODAL | Web Speech API | Opcional | Conversação interactiva |
+| SEED | Whisper.js (WASM) | Opcional | Ditado linear |
+| NODAL | Whisper.js (WASM) | Opcional | Conversação interactiva |
 | SOVEREIGN | Whisper local | Opcional | Multi-modelo paralelo |
 | ORACLE | Whisper local | Profiles avançados | Mesa redonda multimodal |
 
@@ -423,7 +426,7 @@ W-VOX v1 LOCAL-ONLY permite **HIOS offline-capable**:
 2. [ ] Criar `/opt/windi/cogspace/windi_cogspace.py`
 3. [ ] Criar DB schema em `/opt/windi/data/cogspace.db`
 4. [ ] Integrar com Dragon Chat :8111 + Dragon Hub :8108
-5. [ ] Implementar W-VOX v1 (Web Speech API)
+5. [ ] Implementar W-VOX v1 (Whisper.js WASM)
 6. [ ] Smoke test por tier (SEED, NODAL, SOVEREIGN, ORACLE)
 7. [ ] Selar com Ledger receipt
 

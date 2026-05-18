@@ -110,7 +110,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-BERCARIO-001 | :8195 | I1,I9,I11,I14 | **LIVE** · Plenitude Tracker · Service Maturity · §230 |
 | W-CORTEX-001 | — | I1,I9,I10,I14 | **SEALED** · Canal Único Soberano · 3-Tier Routing · §241 `04C67B81` |
 | W-BIND-001 | script | I1,I9,I11,I13,I14 | **SEALED** · Cognitive Bind Module · Admissible Re-entry · §261 `7FDA926F` |
-| W-COGSPACE-001 | :8145 | I1,I9,I11,I12,I14,C5 | **SEALED** · Cognitive Space Solo · W-VOX v1 LOCAL · §275 `ddb0659b` |
+| W-COGSPACE-001 | :8196 | I1,I9,I11,I12,I14,C5 | **SEALED** · Cognitive Space Solo · W-VOX v1 LOCAL (Whisper.js) · §275 `ddb0659b` |
 | WINDI-PORTAL | static | — | **LIVE** · Internal Control Center · 35 Services · 7 Categories |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY

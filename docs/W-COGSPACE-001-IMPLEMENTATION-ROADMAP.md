@@ -5,7 +5,7 @@ Status:     ABERTURA DE TRABALHOS
 Version:    1.0.0
 Data:       2026-05-18
 Receipts:   §275 ddb0659b · §276 48dcdc19
-Porto:      :8145 (proposto)
+Porto:      :8196 (verificado livre 19 Mai 2026)
 ```
 
 ---
@@ -55,7 +55,7 @@ Porto:      :8145 (proposto)
 # /opt/windi/cogspace/windi_cogspace.py
 
 Responsabilidades:
-├── Flask app em :8145
+├── Flask app em :8196
 ├── Integração DID-GENESIS :8096
 ├── Integração Dragon Hub :8108
 ├── Integração Ledger :8101
@@ -77,7 +77,7 @@ Responsabilidades:
 │ + consult_model(session_id, model, q)   │
 │ + get_history(did)                      │
 │ + seal_decision(session_id, content)    │
-│ + amnesia(session_id, scope)            │
+│ + clear_local(session_id, scope)        │
 └─────────────────────────────────────────┘
 ```
 
@@ -152,7 +152,10 @@ CREATE INDEX idx_turns_actor ON cogspace_turns(actor);
 | `/cogspace/consult` | POST | Consulta modelo | AUTO |
 | `/cogspace/history/{did}` | GET | Histórico DID | AUTO |
 | `/cogspace/seal` | POST | Selar decisão | **HUMAN** |
-| `/cogspace/amnesia` | DELETE | Apagar sessão | **HUMAN** |
+| `/cogspace/clear-local` | DELETE | Limpar sessão local | **HUMAN** |
+
+> **I11 Clarification:** "Limpar sessão local" remove turnos da vista do DID.
+> Receipts já selados no Ledger permanecem IRREMEDIÁVEIS (I11).
 
 ---
 
@@ -255,6 +258,29 @@ def enforce_tier(did: str, requested_model: str) -> bool:
 
 > **Prioridade:** MÉDIA-ALTA · **Dependências:** CAT-A, CAT-B · **Constraint:** LOCAL-ONLY
 
+### C0. Gate de Capacidade (PRE-REQUISITO)
+
+> **Correcção Guardian 18 Mai:** W-VOX só avança após verificação de capacidade.
+
+```bash
+# Verificar antes de iniciar CAT-C:
+# 1. Browser suporta WASM SIMD?
+# 2. Dispositivo tem RAM suficiente para modelo Whisper?
+# 3. Fallback backend (Whisper.cpp) está disponível?
+
+# Endpoint de verificação
+GET /cogspace/vox/capability
+→ {"wasm_simd": true, "recommended_model": "tiny", "fallback": "whisper.cpp"}
+```
+
+| Capacidade | Modelo | Precisão | RAM |
+|------------|--------|----------|-----|
+| Baixa | tiny | ~85% | ~40MB |
+| Média | base | ~90% | ~150MB |
+| Alta | small | ~95% | ~500MB |
+
+**Regra:** Se WASM SIMD indisponível → fallback transparente para Whisper.cpp no backend.
+
 ### C1. Arquitectura W-VOX
 
 ```
@@ -270,8 +296,8 @@ def enforce_tier(did: str, requested_model: str) -> bool:
 │          │                                                   │
 │          ▼ (áudio bruto - NUNCA sai)                         │
 │   ┌───────────────┐                                          │
-│   │ STT LOCAL     │◀── Web Speech API / Whisper.js           │
-│   │ (browser)     │                                          │
+│   │ STT LOCAL     │◀── Whisper.js (WASM) 100% LOCAL          │
+│   │ (browser)     │    Áudio NUNCA sai do dispositivo        │
 │   └───────────────┘                                          │
 │          │                                                   │
 │          ▼ (texto transitório)                               │
@@ -286,37 +312,63 @@ def enforce_tier(did: str, requested_model: str) -> bool:
 │   └───────────────┘                                          │
 │          │                                                   │
 │          ▼                                                   │
-│   [ SERVIDOR WINDI :8145 ]                                   │
+│   [ SERVIDOR WINDI :8196 ]                                   │
 │                                                              │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### C2. Frontend W-VOX
+### C2. Frontend W-VOX (Whisper.js WASM)
+
+> **Correcção Guardian 18 Mai:** Web Speech API envia áudio para Google.
+> **Solução:** Whisper.js (WASM) — 100% local, zero network.
 
 ```javascript
 // /opt/windi/cogspace/static/vox.js
+// Usa: https://github.com/niccokunzmann/whisper.js (WASM port)
 
 class WindiVox {
     constructor() {
-        this.recognition = new webkitSpeechRecognition();
-        this.recognition.continuous = true;
-        this.recognition.interimResults = true;
-        this.recognition.lang = 'pt-BR'; // ou detectar
+        this.whisper = null;
+        this.isLoaded = false;
+        this.audioContext = new AudioContext();
     }
 
-    startListening() {
-        // Inicia captura - áudio NUNCA sai do browser
-        this.recognition.start();
+    async loadModel() {
+        // Carrega modelo Whisper tiny/base localmente
+        // ~40MB download inicial, depois offline
+        const { Whisper } = await import('/static/whisper.js');
+        this.whisper = new Whisper('tiny'); // ou 'base' para melhor qualidade
+        await this.whisper.loadModel();
+        this.isLoaded = true;
     }
 
-    onResult(event) {
-        // Texto transitório em memória
-        const transcript = event.results[0][0].transcript;
-        this.showTranscript(transcript);
+    async startListening() {
+        if (!this.isLoaded) await this.loadModel();
+
+        // Captura áudio via getUserMedia
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const recorder = new MediaRecorder(stream);
+        const chunks = [];
+
+        recorder.ondataavailable = e => chunks.push(e.data);
+        recorder.onstop = async () => {
+            const blob = new Blob(chunks, { type: 'audio/webm' });
+            const transcript = await this.transcribe(blob);
+            this.showTranscript(transcript);
+        };
+
+        recorder.start();
+        // Áudio NUNCA sai do browser — processado localmente
     }
 
-    approve(text) {
-        // USER aprova - só aqui gera hash e envia
+    async transcribe(audioBlob) {
+        // Whisper.js processa 100% local (WASM)
+        const arrayBuffer = await audioBlob.arrayBuffer();
+        return await this.whisper.transcribe(arrayBuffer);
+    }
+
+    async approve(text) {
+        // USER aprova - só aqui gera hash e envia texto (não áudio)
         const hash = await this.sha256(text);
         await this.sendToCogSpace(text, hash);
     }
@@ -331,6 +383,10 @@ class WindiVox {
     }
 }
 ```
+
+**Dependências:**
+- `whisper.js` (WASM) — ~40MB modelo tiny
+- Fallback: Whisper.cpp via backend se browser não suportar WASM SIMD
 
 ### C3. TTS (Opcional)
 
@@ -575,9 +631,11 @@ VISIBILITY_LEVELS = {
 │  ───────────  │                                     │                   │
 │  TIER: NODAL  │  ┌─────────────────────────────┐    │   [📝 Draft]      │
 │  MODELS: 2    │  │ [🎤] Digite ou fale...      │    │   [🔒 Seal]       │
-│               │  └─────────────────────────────┘    │   [🗑️ Amnesia]    │
+│               │  └─────────────────────────────┘    │   [🗑️ Limpar]ⓘ   │
 │               │                                     │                   │
 └───────────────┴─────────────────────────────────────┴───────────────────┘
+
+> **ⓘ Tooltip "Limpar":** "Limpa a tua vista local. Provas já seladas permanecem no Ledger (I11)."
 ```
 
 ---
@@ -616,7 +674,7 @@ FASE 4 · LEDGER INTEGRATION (CAT-E)
 ├── E1. Ledger client
 ├── E2. Visibility gradient
 ├── E3. Seal decision (I9 gate)
-└── E4. Amnesia endpoint
+└── E4. Clear-local endpoint (I11 compliant)
 │
 ▼
 FASE 5 · GROVE PRIVADO (CAT-D)
@@ -630,7 +688,7 @@ FASE 5 · GROVE PRIVADO (CAT-D)
 FASE 6 · W-VOX LAYER (CAT-C)
 │
 ├── C1. Frontend vox.js
-├── C2. Web Speech API integration
+├── C2. Whisper.js (WASM) integration
 ├── C3. Approve/hash flow
 └── C4. TTS opcional
 │
@@ -659,7 +717,7 @@ FASE 8 · DEPLOYMENT
 - [x] §275 W-COGSPACE-001-SOLO SEALED
 - [x] §276 TIER-RESOLUTION-CANON SEALED
 - [x] Spec completa em `/opt/windi/docs/W-COGSPACE-001-SOLO-SPEC.md`
-- [ ] Porto :8145 disponível
+- [ ] Porto :8196 disponível
 
 ## Verificações de Dependência
 
@@ -690,7 +748,7 @@ touch /opt/windi/data/cogspace.db
 
 | Fase | Critério | Verificação |
 |------|----------|-------------|
-| 1 | Health endpoint responde | `curl :8145/cogspace/health` |
+| 1 | Health endpoint responde | `curl :8196/cogspace/health` |
 | 2 | Tier gate funciona | SEED bloqueado de Claude |
 | 3 | Sessão criada | POST /session/create retorna 200 |
 | 4 | Turno no Ledger | Receipt verificável em :8101 |
