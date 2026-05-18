@@ -16634,3 +16634,41 @@ No momento do empilhamento notarial: **Reconhecimento.**
 > "O sistema existe para servir a travessia humana sem capturar o humano."
 
 ---
+
+---
+
+## §273-candidate · Direito ao Esquecimento Soberano
+
+**Status:** PERGUNTA · Não resolvido
+**Emerged:** 18 Mai 2026 · Session continuation (late night)
+**Source:** Conselho Externo — "A pergunta não feita"
+
+### A Pergunta
+
+> "E se o portador da continuidade (HD-01) precisar do direito de esquecer?"
+
+### A Tensão Constitucional
+
+- **I11 (Permanência):** Ledger não apaga. Merkle não mente.
+- **Sanidade Humana:** O humano precisa de encerrar capítulos.
+
+### Três Camadas Possíveis
+
+1. **Esquecimento Privado:** USER apaga DataDay pessoal, Ledger público permanece
+2. **Esquecimento Selectivo:** Rascunhos apagáveis, selos irreversíveis
+3. **Esquecimento Soberano:** Criar novo DID, aposentar o antigo
+
+### Hipótese Constitucional
+
+> "O WINDI não apaga. Mas o USER pode desligar-se."
+
+O USER não é prisioneiro do que foi.
+O espelho pode ser guardado numa gaveta fechada.
+
+### Estado
+
+Pergunta aberta. Não resolvida. Deixada para maturar.
+
+> "O humano precisa da graça do esquecimento redentor."
+
+---
