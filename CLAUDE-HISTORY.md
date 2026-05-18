@@ -16672,3 +16672,59 @@ Pergunta aberta. Não resolvida. Deixada para maturar.
 > "O humano precisa da graça do esquecimento redentor."
 
 ---
+
+---
+
+## §273 — Amnésia Seletiva de Camada (ACTUALIZAÇÃO)
+
+**Status:** SCAFFOLD → DEFINIÇÃO TÉCNICA
+**Clarified:** 18 Mai 2026 · 21:19 UTC
+**Source:** HD-01 Executive Decree
+
+### A Distinção Cirúrgica
+
+```
+┌────────────────────────────────────────────────────────┐
+│             ESTRUTURA IMUTÁVEL (I11)                   │
+│   Ledger · Hashes · Receipts · Merkle · Timestamps     │
+│                    NUNCA APAGADOS                      │
+├────────────────────────────────────────────────────────┤
+│                   PAREDE DE SEPARAÇÃO                  │
+├────────────────────────────────────────────────────────┤
+│          CONTEÚDO SUPERFICIAL (USER XYZ)               │
+│   Prompts · Textos · Logs · Memória de Sessão          │
+│                  PODEM SER PURGADOS                    │
+└────────────────────────────────────────────────────────┘
+```
+
+### Redacção Técnica Definitiva
+
+> **§273 (Amnésia Seletiva de Camada):** O direito ao desligamento memorial opera-se pela destruição compulsória do conteúdo superficial e textual do usuário no encerramento da sessão, mantendo-se estritamente intacta a estrutura matemática de hashes e a linhagem criptográfica do Ledger pública para fins de admissibilidade notarial.
+
+### O Protocolo de Purga
+
+**IMUTÁVEL (Permanece):**
+- receipt_id
+- timestamp
+- seal
+- hash da transação
+- Merkle leaf
+
+**EXPULSADO (Apagamento Total):**
+- Prosa / texto bruto
+- Perguntas do USER
+- Respostas intermediárias
+- Contexto temporário do runtime
+
+### A Analogia Consolidada
+
+> "A fotocopiadora mantém registo de que uma cópia legítima foi tirada, mas o vidro do scanner e a memória de cache são purgados. Nada do usuário fica retido."
+
+### Compatibilidade
+
+- **I11 IRREMEDIÁVEL:** Preservado (estrutura matemática intacta)
+- **GDPR Art. 17:** Compatível (conteúdo pessoal apagável)
+- **eIDAS 2.0:** Compatível (prova jurídica preservada)
+- **Soberania Humana:** Garantida (USER decide quando purgar)
+
+---
