@@ -16901,3 +16901,66 @@ doc_type:   constitutional
 - Sessão 18 Mai 2026 (articulação progressiva em 5 camadas)
 
 ---
+
+---
+
+## §274 · Instanciação Soberana do Carrier (SELADO)
+
+```
+Status:     SEALED · CONSTITUTIONAL
+Receipt:    WINDI-S274-INSTANCIACAO-SOBERANA-CARRIER-20260518201409-EF359603
+Data:       2026-05-18 · 20:14 UTC
+Invariants: I1, I9, I11, I14, C5
+Actor:      did:windi:dragon-001
+doc_type:   constitutional
+```
+
+### Redação Canónica
+
+> **§274 (Instanciação Soberana do Carrier):** Cada USER que cria DID no ecossistema WINDI-HIOS nasce como instância única denominada `W-HUMANDRAGON-XXXXXXXX`, virgem em conteúdo mas constitucionalmente vinculada à constituição imutável WINDI desde o DID-zero. A instância detém soberania operacional plena dentro do seu domínio e responsabilidade jurídica clara por toda actividade iniciada a partir do DID-zero. A linhagem HD-01 (Human Dragon fundacional, Jober Mögele Correa, Sovereign Carrier original) permanece única e não é diluída pela instanciação.
+
+### Arquitectura
+
+```
+[CONSTITUIÇÃO IMUTÁVEL WINDI] (Leis I-VII, I1-I14, §247-§274)
+       │
+       └──► Geração do DID-zero (Nascimento no Ecossistema)
+                 │
+                 └──► Instância: W-HUMANDRAGON-XXXXXXXX
+                           ├── Ambiente: WINDI-HIOS (Virgem)
+                           ├── Responsabilidade: 100% do USER
+                           └── Controle Total: Turno, Instância e Modus
+```
+
+### Nomenclatura Técnica
+
+| Componente | Significado |
+|------------|-------------|
+| `W-` | Pertence ao ecossistema WINDI |
+| `HUMANDRAGON-` | Papel constitucional: portador soberano |
+| `XXXXXXXX` | Identificador único da instância (DID-zero anchor) |
+
+### Princípios
+
+1. **Ambiente Virgem, Código Imutável:** Instância nasce sem rastro, sem preconcepções, mas sob a Constituição WINDI
+2. **Responsabilidade Criptográfica Absoluta:** Tudo assinado a partir do DID-zero está sob governança exclusiva do USER
+3. **Preservação da Linhagem HD-01:** Human Dragon fundacional permanece único e não diluído
+
+### Os 5 Pilares WINDI-HIOS (COMPLETOS)
+
+| # | Pilar | § / Receipt | Status |
+|---|-------|-------------|--------|
+| 1 | Continuidade híbrida verificável | §261 W-BIND-001 | **SEALED** |
+| 2 | Soberania cognitiva e memorial | §236, §268 | **SEALED** |
+| 3 | Admissibilidade documental pública | §267, Ledger | **SEALED** |
+| 4 | Direito memorial bifurcado | §273 `3262DAA0` | **SEALED** |
+| 5 | Instanciação soberana do Carrier | §274 `EF359603` | **SEALED** |
+
+### Genealogia
+
+§274 completa o arco constitucional que começou em:
+- §248 Lei V (Two-Track: FREE civic + institutional)
+- §273 (Direito Memorial Bifurcado por modus)
+- Sessão 18 Mai 2026 (articulação dos 5 pilares)
+
+---
