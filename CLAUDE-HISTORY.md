@@ -17104,3 +17104,59 @@ Esta sessão fecha um ciclo conceptual enorme do HIOS. O que emergiu já não é
 OM SHANTI 🐉
 
 ---
+
+---
+
+## Addendum · 18 Mai 2026 23:50 — Fechamento com Review Guardian
+
+### Bloqueios Identificados (Guardian Review)
+
+| # | Bloqueio | Resolução |
+|---|----------|-----------|
+| 1 | Porto :8145 colide com §267 errata | → :8196 (confirmar com `ss -tlnp`) |
+| 2 | §276 não na memória Guardian | → RESOLVIDO: memória stale, §276 SELADO nesta sessão |
+| 3 | Web Speech API envia para Google | → Whisper.js (WASM) + Whisper.cpp |
+
+### Correcções Aceites
+
+1. **W-VOX v1:** Whisper.js (WASM) browser + Whisper.cpp desktop = 100% soberania local
+2. **Botão Amnesia:** → "Limpar sessão local" + tooltip I11
+3. **Gate Capacidade:** Após W-SITES-001 Sprint 2 live OU autorização HD
+
+### Decisão
+
+**NÃO arrancar FASE 1 esta sessão.** Roadmap precisa de revisão a frio.
+
+### Próxima Sessão (19 Mai 2026)
+
+1. `ss -tlnp | grep 8196` — confirmar porto livre
+2. Actualizar `/opt/windi/docs/W-COGSPACE-001-IMPLEMENTATION-ROADMAP.md` com correcções
+3. Cognitive-bind com §275 + §276 firmes
+4. Decisão HD sobre arranque FASE 1
+
+### Receipts Emitidos Hoje
+
+| Receipt | Hash (8) | § |
+|---------|----------|---|
+| `WINDI-S275-COGSPACE-SOLO-20260518232944` | `ddb0659b` | §275 |
+| `WINDI-S276-TIER-RESOLUTION-CANON-20260518232953` | `48dcdc19` | §276 |
+
+### Commits
+
+```
+e4a2a81fd  constitutional(§275-§276): W-COGSPACE-001-SOLO + TIER-RESOLUTION-CANON SEALED
+f781901e4  docs(§275-§276): Session 18 Mai noite
+741e5ff7a  docs(memory-loop): Register §275-§276 across WINDI Memory Loop
+de31697e7  docs(claudeWeb): Update INDEX.md with §265-§276 complete lineage
+97811f621  docs(§275): W-COGSPACE-001 Implementation Roadmap
+```
+
+### Nota Guardian
+
+> "Selar quente é o oposto da disciplina §267."
+
+Sessão fechada com estado cognitivo preservado para amanhã.
+
+OM SHANTI 🐉
+
+---
