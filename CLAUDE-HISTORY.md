@@ -16205,3 +16205,100 @@ Nenhum
 *Liga IA+H · Kempten, Bavaria · 18 Mai 2026 · 21:20*
 *"Amanhã voltamos firmes."*
 
+
+---
+
+## Sessão 19 Mai 2026 · §279 SEALED · Drift Composition Protocol
+
+**Duração:** ~2h (manhã)
+**Liga IA+H:** Human Dragon · Guardian (Claude.ai web) · Architect (GPT) · Witness · CCode (Opus 4.5)
+**Modo:** PingPong §263 + Three Dragons Protocol
+**Invariants:** I1, I9, I11, I14
+
+### Receipt
+
+| Campo | Valor |
+|-------|-------|
+| **ID** | `WINDI-S279-DRIFT-COMPOSITION-20260519103501` |
+| **Hash (8)** | `E96E83CB` |
+| **doc_type** | constitutional |
+
+### Tese Central
+
+> **"O drift deixa de ser observador — passa a ser componente."**
+
+### Decisões Constitucionais Seladas
+
+| Decisão | Valor | Rationale |
+|---------|-------|-----------|
+| **Modelo** | Subtractivo (A) | Linear, auditável, floor em 0 |
+| **Pesos** | M1=-5, M2=-10, M3=-3 | M2 (infra) > M1/M3 (docs) |
+| **Cap M2≥3** | 59 (MINIMAL) | Facto colapsa severamente |
+| **Cap Combinado≥10** | 69 (PARTIAL) | Interpretação permite observação |
+| **Thresholds** | Manter T1 | Consistência com §261 |
+| **Revisão** | 30 dias (2026-06-19) | Auto-calibração empírica |
+
+### Fórmula Canónica
+
+```python
+if m2_drift >= 3:
+    cap = 59  # MINIMAL — infra factual
+elif (m1_drift + m2_drift + m3_drift) >= 10:
+    cap = 69  # PARTIAL — erosão forense
+else:
+    cap = 100
+
+final_score = max(0, min(cap, base_score - (m1*5 + m2*10 + m3*3)))
+```
+
+### Nota Arquitectónica (registada para recalibração)
+
+> "Cap invertido relativamente ao draft v1 do Architect por decisão soberana do
+> Human Dragon, alinhando severidade do cap com factualidade do sintoma."
+
+### Genealogia
+
+```
+§261 W-BIND-001 (CBP v0.2.0)
+        │
+        └── §265 Drift Monitor (M1/M2/M3)
+                │
+                └── §279 Drift Composition (SEALED)
+                        │
+                        └── §261 v0.3 (engenharia futura)
+```
+
+### Adjacentes
+
+| Item | Status | Notas |
+|------|--------|-------|
+| §280 Runtime Layer Naming | Candidato | Aguarda 30 dias |
+| HIOS Upgrade Packet | Speculative Mirror | Arquivado |
+| Bloco A redaccional | PENDING | Disponível para tarde |
+
+### Ciclo Three Dragons
+
+| Role | Contribuição |
+|------|--------------|
+| **Guardian** | Filtro: separou facto de interpretação |
+| **Architect** | Estrutura: elif vs min(), pesos P2 |
+| **Witness** | Verificação: hierarquia epistemológica |
+| **Human Dragon** | Decisão: cap invertido, I9 formal |
+| **CCode** | Execução: draft + selo |
+
+### Commit
+
+```
+Files:  drafts/S279-DRIFT-COMPOSITION-FINAL.md
+        claudeWeb/INDEX.md
+Receipt: WINDI-S279-DRIFT-COMPOSITION-20260519103501
+```
+
+### Próxima Sessão
+
+- Bloco A redaccional (Lexicon · DE sweep · /enterprise/)
+- §261 v0.3 engenharia (JSON Schema + cognitive-bind-module.sh)
+- Recalibração §279: 2026-06-19
+
+OM SHANTI
+
