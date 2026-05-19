@@ -20,6 +20,18 @@
 | §275 | W-COGSPACE-001-SOLO + W-VOX v1  | constitutional        | 2026-05-18 | `ddb0659b`    | sealed |
 | §276 | TIER-RESOLUTION-CANON           | constitutional        | 2026-05-18 | `48dcdc19`    | sealed |
 | §279 | Drift Composition Protocol      | constitutional        | 2026-05-19 | `E96E83CB`    | sealed |
+| §280 | Runtime Layer Naming Act        | constitutional        | 2026-05-19 | `EAB28564`    | sealed |
+
+---
+
+## WINDI-HIOS Runtime Layer (§280)
+
+```
+§261 W-BIND-001 ──────┐
+§263 PingPong ────────┼──▶ RUNTIME LAYER
+§265 Drift Monitor ───┤
+§279 Drift Composition┘
+```
 
 ---
 
