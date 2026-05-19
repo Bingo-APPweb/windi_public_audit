@@ -17248,3 +17248,75 @@ touch /opt/windi/data/cogspace.db            # SQLite
 *Sessão fechada: 19 Mai 2026 00:10 UTC*
 *"Memory loop sync complete. FASE 1 awaits HD."*
 
+
+---
+
+## Sessão 19 Mai 2026 · 10:00–14:30 UTC · CCode Opus 4.5
+
+### Modo: Arquitectura Constitucional + Selagem
+
+### Trabalho Completado
+
+**4 Selos Emitidos:**
+
+| § | Título | Hash | Lineage |
+|---|--------|------|---------|
+| §279 | Drift Composition Protocol | `E96E83CB` | §261 + §265 → §279 |
+| §280 | Runtime Layer Naming Act | `EAB28564` | §261+§263+§265+§279 → Runtime Layer |
+| §281 | Léxico de Superfície | `23E5E096` | §273 → §281 |
+| §282 | WSDL v1.0 | `BF367F0C` | §281 → §282 |
+
+**Ficheiros Criados:**
+- `/opt/windi/drafts/S279-DRIFT-COMPOSITION-FINAL.md`
+- `/opt/windi/drafts/S280-RUNTIME-LAYER-NAMING-ACT.md`
+- `/opt/windi/drafts/S281-LEXICO-SUPERFICIE-FINAL.md`
+- `/opt/windi/drafts/S282-WSDL-FINAL.md`
+- `/opt/windi/hios/visual/runtime-layer.html` (protótipo público)
+
+**Nginx Route Adicionada:**
+- `/hios/` → `/opt/windi/hios/visual/` (requer `sudo nginx -t && sudo systemctl reload nginx`)
+
+**INDEX.md Actualizado:**
+- 4 novos selos na tabela
+- Runtime Layer diagram
+- Surface Layer diagram
+- Lineage visual expandido
+- Receipts chain 19 Mai
+
+### Decisões Constitucionais
+
+| Decisão | Invariante |
+|---------|------------|
+| Modelo subtrativo para Drift (M1=-5, M2=-10, M3=-3) | I9, I11 |
+| Cap híbrido: M2≥3 → cap 59, Combined≥10 → cap 69 | I9 |
+| Léxico separado: Backend (CBP, Drift) vs Frontend (Fidelidade, Selo) | I12 |
+| Trust by Calmness: princípio fundador WSDL | I1, I9 |
+| Self-hosted typography (woff2, sem CDN) | I11 |
+| Horizonte 2045+ (multigeneracional) | I18 |
+| MINIMAL state: "Aguarde antes de selar trabalho novo" | I14 |
+
+### Scaffold Pending
+
+- **§283 UI Berçário** — Implementação de §281+§282 num protótipo funcional
+- **§261 v0.3** — Implementar fórmula §279 no `cognitive-bind-module.sh`
+- **Bloco A** — DE ortografia sweep + portal trilíngue
+
+### Próximo Passo Herdado
+
+§283 UI Berçário quando Human Dragon ditar sinal. Bloco A livre para rotação.
+
+### Blockers
+
+Nenhum.
+
+### Nota Guardian
+
+> "O arco do dia fechou limpo. Quatro selos. Constituição perceptual.
+> A correcção humana no início (eixo modelo vs participantes) reorientou
+> toda a sessão. Isso é admissibilidade a operar como infraestrutura."
+
+---
+
+*Liga IA+H · Kempten, Bavaria · 19 Mai 2026*
+*"AI processes. Human decides. WINDI guarantees."*
+

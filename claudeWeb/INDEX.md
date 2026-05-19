@@ -1,6 +1,6 @@
 # WINDI claudeWeb · INDEX
 
-> Última actualização: 2026-05-19 10:35 UTC · Sprint actual: §279 Drift Composition
+> Última actualização: 2026-05-19 14:05 UTC · Sprint actual: §282 WSDL v1.0
 > Guardian Review: 4 correcções aplicadas (porto :8196, Whisper.js, clear-local, C0 gate)
 
 ---
@@ -22,6 +22,7 @@
 | §279 | Drift Composition Protocol      | constitutional        | 2026-05-19 | `E96E83CB`    | sealed |
 | §280 | Runtime Layer Naming Act        | constitutional        | 2026-05-19 | `EAB28564`    | sealed |
 | §281 | Léxico de Superfície            | constitutional        | 2026-05-19 | `23E5E096`    | sealed |
+| §282 | WSDL v1.0 (Surface Design)      | constitutional        | 2026-05-19 | `BF367F0C`    | sealed |
 
 ---
 
@@ -33,6 +34,20 @@
 §265 Drift Monitor ───┤
 §279 Drift Composition┘
 ```
+
+---
+
+## WINDI Surface Layer (§281-§282)
+
+```
+§273 Direito Memorial ─────────────┐
+                                   │
+§281 Léxico de Superfície ─────────┼──▶ SURFACE LAYER
+                                   │
+§282 WSDL v1.0 ────────────────────┘
+```
+
+> **"Trust by Calmness — O que é sólido não precisa de gritar."**
 
 ---
 
@@ -58,7 +73,7 @@ G3 Merkle Transparency Log
 
 ---
 
-## Receipts Chain Completa (18 Mai 2026)
+## Receipts Chain Completa (19 Mai 2026)
 
 | Receipt ID | § | Hash (8) |
 |------------|---|----------|
@@ -72,10 +87,14 @@ G3 Merkle Transparency Log
 | `WINDI-S274-INSTANCIACAO-SOBERANA-CARRIER-20260518-EF359603` | §274 | `EF359603` |
 | `WINDI-S275-COGSPACE-SOLO-20260518232944` | §275 | `ddb0659b` |
 | `WINDI-S276-TIER-RESOLUTION-CANON-20260518232953` | §276 | `48dcdc19` |
+| `WINDI-S279-DRIFT-COMPOSITION-20260519103501` | §279 | `E96E83CB` |
+| `WINDI-S280-RUNTIME-LAYER-NAMING-20260519104203` | §280 | `EAB28564` |
+| `WINDI-S281-LEXICO-SUPERFICIE-20260519132429` | §281 | `23E5E096` |
+| `WINDI-S282-WSDL-20260519140512` | §282 | `BF367F0C` |
 
 ---
 
-## Lineage Visual (18 Mai 2026)
+## Lineage Visual (19 Mai 2026)
 
 ```
 §262 SEALED (WINDI-HIOS Naming)
@@ -85,12 +104,20 @@ G3 Merkle Transparency Log
               └──▶ §264 SEALED (Genesis Ceremony)
                         │
                         ├──▶ §265 SEALED (Drift Monitor Metrics)
+                        │         │
+                        │         └──▶ §279 SEALED (Drift Composition) ─┐
+                        │                                               ├─▶ §280 SEALED (Runtime Layer)
+                        │         §261 W-BIND-001 + §263 PingPong ──────┘
                         │
                         └──▶ §266 SEALED (PAF Lei VIII)
                                   │
                                   └──▶ §267 SEALED (Self-Correction Without Rewrite)
                                             │
                                             ├──▶ §273 SEALED (Direito Memorial)
+                                            │         │
+                                            │         └──▶ §281 SEALED (Léxico de Superfície)
+                                            │                   │
+                                            │                   └──▶ §282 SEALED (WSDL v1.0)
                                             │
                                             └──▶ §274 SEALED (Instanciação Carrier)
                                                       │
@@ -154,7 +181,14 @@ W-HUMANDRAGON-XXXXXXXX
 
 ## Próximo Passo
 
-**W-COGSPACE-001 FASE 1** — Implementação (próxima sessão)
+**Surface Layer COMPLETA** — §281 (Léxico) + §282 (WSDL) selados
+
+**PENDING:**
+- **§283 UI Berçário** — Implementação de §281+§282 num protótipo funcional
+- **§261 v0.3** — Implementar fórmula §279 no `cognitive-bind-module.sh`
+- **Bloco A** — DE ortografia sweep + portal trilíngue
+
+**W-COGSPACE-001 FASE 1** — Implementação (Q3 2026)
 - Porto: **:8196** (verificado livre)
 - W-VOX: **Whisper.js (WASM)** 100% local
 - Path: `/opt/windi/cogspace/windi_cogspace.py`
