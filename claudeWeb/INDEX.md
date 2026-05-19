@@ -1,6 +1,6 @@
 # WINDI claudeWeb · INDEX
 
-> Última actualização: 2026-05-19 00:15 UTC · Sprint actual: W-COGSPACE-001
+> Última actualização: 2026-05-19 10:35 UTC · Sprint actual: §279 Drift Composition
 > Guardian Review: 4 correcções aplicadas (porto :8196, Whisper.js, clear-local, C0 gate)
 
 ---
@@ -19,6 +19,7 @@
 | §274 | Instanciação Soberana Carrier   | constitutional        | 2026-05-18 | `EF359603`    | sealed |
 | §275 | W-COGSPACE-001-SOLO + W-VOX v1  | constitutional        | 2026-05-18 | `ddb0659b`    | sealed |
 | §276 | TIER-RESOLUTION-CANON           | constitutional        | 2026-05-18 | `48dcdc19`    | sealed |
+| §279 | Drift Composition Protocol      | constitutional        | 2026-05-19 | `E96E83CB`    | sealed |
 
 ---
 
