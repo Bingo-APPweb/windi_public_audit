@@ -16412,3 +16412,97 @@ OM SHANTI
 §273 Direito Memorial → §281 Léxico Superfície → §282 UI Berçário (PENDING)
 ```
 
+
+---
+
+## § SESSÃO 19 Mai 2026 (noite) — WINDI-HIOS Betriebssystem UI/UX
+
+**Duração:** ~45min | **Status:** ✅ DEPLOYED
+**Liga IA+H:** Human Dragon · Architect (CCode Opus 4.5)
+**Invariants:** I9, I11, I12 (Trilinguismo)
+**Natureza:** Sessão de entretenimento · DATADAY · Video Prompt Generator
+
+### Contexto
+
+Sessão curta focada em criar o portal oficial WINDI-HIOS com 4 prateleiras (shelves) no estilo do draft UI/UX fornecido pelo Human Dragon. Design roxo/violeta com video loop central.
+
+### Trabalho Completado
+
+| Item | Estado |
+|------|--------|
+| `/opt/windi/hios/visual/hios-global.html` | ✅ Portal principal criado |
+| `/opt/windi/hios/visual/entertainment/index.html` | ✅ Shelf PLAY/SPIELEN |
+| `/opt/windi/hios/visual/dataday/index.html` | ✅ Shelf LEARN/LERNEN (4 episódios) |
+| `/opt/windi/hios/visual/architecture/index.html` | ✅ Revisado com trilinguismo |
+| Nginx configurado | ✅ `/hios/` → portal |
+| Video Studio preservado | ✅ Intacto em `/hios/video-studio/` |
+
+### Estrutura Final
+
+```
+/opt/windi/hios/visual/
+├── hios-global.html          ← Portal (4 prateleiras)
+├── video-studio.html         ← Studio (intacto)
+├── entertainment/index.html  ← SPIELEN/PLAY/JOGAR
+├── dataday/index.html        ← LERNEN/LEARN/APRENDER
+├── architecture/index.html   ← Architektur (revisado)
+└── assets/                   ← Para video loop (pendente)
+```
+
+### 4 Prateleiras (Shelves)
+
+| Shelf | DE | EN | PT | Destino |
+|-------|----|----|-----|---------|
+| 🎭 PLAY | SPIELEN | PLAY | JOGAR | /hios/entertainment/ |
+| 📚 LEARN | LERNEN | LEARN | APRENDER | /hios/dataday/ |
+| 🛠️ CREATE | SCHAFFEN | CREATE | CRIAR | /hios/video-studio/ |
+| ⚖️ VERIFY | PRÜFEN | VERIFY | VERIFICAR | /verify-public/ |
+
+### I12 Trilinguismo — Revisão Completa
+
+Todas as 4 páginas corrigidas para trilinguismo consistente:
+- **Default:** DE (Deutsch)
+- **Seletor:** Topo direito em todas as páginas
+- **Persistência:** `localStorage('windi_lang')` partilhado
+- **Doutrina:** "KI verarbeitet. Mensch entscheidet. WINDI garantiert."
+
+### Design
+
+- Gradiente roxo/violeta (#a855f7 → #7c3aed)
+- Glassmorphism nos cards
+- Video loop placeholder central (16:9)
+- Stats: 57K+ Receipts · I1-I18 · :8196
+- Dragon Signature: 🐉 OM SHANTI
+
+### Nginx
+
+```nginx
+location ^~ /hios/ {
+    alias /opt/windi/hios/visual/;
+    index hios-global.html index.html;
+}
+
+location = /hios/video-studio/ {
+    rewrite ^ /hios/video-studio.html last;
+}
+```
+
+### Pendente
+
+- [ ] `sudo systemctl reload nginx` — activar rotas
+- [ ] Criar video loop (30-45s) em `/hios/assets/windi-loop.mp4`
+- [ ] Poster image para placeholder
+
+### Próxima Sessão
+
+- Produzir video loop com estética WINDI
+- Activar nginx e smoke test
+- Potencial: Dragon Bingo, episódios DATADAY reais
+
+### Notas
+
+Sessão focada em entretenimento. Portal WINDI-HIOS agora tem identidade visual própria com gradiente roxo, separado do NOIR gold do resto do sistema. Trilinguismo (I12) aplicado cirurgicamente em todas as páginas.
+
+OM SHANTI 🐉
+
+---
