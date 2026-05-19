@@ -16371,3 +16371,44 @@ OM SHANTI
 
 > "Nomear não é completar. Este selo é meramente etiqueta administrativa."
 
+
+---
+
+## §281 SEALED · Léxico de Superfície do WINDI-HIOS · 19 Mai 2026
+
+**Receipt:** `WINDI-S281-LEXICO-SUPERFICIE-20260519132429`
+**Hash (8):** `23E5E096`
+**Invariants:** I1, I9, I11, I12
+**Fundamento:** §273 — Direito Pleno Trajetória Memorial
+
+### Tese Central
+
+> "A superfície externa do WINDI-HIOS não expõe complexidade por padrão;
+> ela oferece ação clara, confiança silenciosa e prova acessível a quem a pedir."
+
+### Separação Backend/Frontend
+
+**Backend (Motor):** CBP · Drift · M1/M2/M3 · Receipt · Hash · BIS
+**Frontend (Cockpit):** Garantia · Fidelidade · Autenticidade · Identidade Soberana · Selo
+
+### Equivalências Críticas
+
+| Backend | Frontend |
+|---------|----------|
+| DID | Identidade Soberana |
+| Receipt | Selo |
+| ADMISSIBLE | WINDI presente (verde) |
+| DEGRADED | WINDI a verificar (âmbar) |
+| REFUSED | WINDI suspenso (vermelho) |
+
+### Colisão Resolvida
+
+- Backend: "Bind Integrity"
+- Frontend: "Fidelidade" / "Autenticidade" (NUNCA "Integridade")
+
+### Genealogia
+
+```
+§273 Direito Memorial → §281 Léxico Superfície → §282 UI Berçário (PENDING)
+```
+
