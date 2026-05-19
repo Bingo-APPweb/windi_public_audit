@@ -21,6 +21,7 @@
 | §276 | TIER-RESOLUTION-CANON           | constitutional        | 2026-05-18 | `48dcdc19`    | sealed |
 | §279 | Drift Composition Protocol      | constitutional        | 2026-05-19 | `E96E83CB`    | sealed |
 | §280 | Runtime Layer Naming Act        | constitutional        | 2026-05-19 | `EAB28564`    | sealed |
+| §281 | Léxico de Superfície            | constitutional        | 2026-05-19 | `23E5E096`    | sealed |
 
 ---
 
