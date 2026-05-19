@@ -16302,3 +16302,72 @@ Receipt: WINDI-S279-DRIFT-COMPOSITION-20260519103501
 
 OM SHANTI
 
+
+---
+
+## §280 SEALED · Runtime Layer Naming Act · 19 Mai 2026
+
+**Receipt:** `WINDI-S280-RUNTIME-LAYER-NAMING-20260519104203`
+**Hash (8):** `EAB28564`
+**Invariants:** I1, I9, I11
+
+### Tese
+
+> "O cluster existe. Agora tem nome."
+
+### Composição Nomeada
+
+| § | Função |
+|---|--------|
+| §261 | Cognitive Bind Module |
+| §263 | PingPong Protocol |
+| §265 | Drift Monitor Metrics |
+| §279 | Drift Composition Protocol |
+
+### Emenda Guardian (preserva humildade epistémica)
+
+> "Este selo nomeia uma composição existente. Não certifica maturidade
+> operacional do cluster, que permanece sujeito à recalibração §279
+> prevista para 19 Jun 2026."
+
+### Nota de Sessão
+
+Dois selos em ~2h de sessão matinal:
+- §279 Drift Composition (10:35)
+- §280 Runtime Layer Naming (10:42)
+
+WINDI-HIOS Runtime Layer agora tem nome legal e imutável.
+
+OM SHANTI
+
+
+---
+
+## §280 SEALED · Runtime Layer Naming Act · 19 Mai 2026
+
+**Receipt:** `WINDI-S280-RUNTIME-LAYER-NAMING-20260519104203`
+**Hash (8):** `EAB28564`
+**Invariants:** I1, I9, I11
+
+### Conteúdo
+
+> Os parágrafos §261, §263, §265 e §279 são reconhecidos colectivamente como a
+> **Runtime Layer do WINDI-HIOS**.
+>
+> Este selo nomeia uma composição existente. **Não certifica maturidade operacional
+> do cluster**, que permanece sujeito à recalibração §279 prevista para 19 Jun 2026
+> e à observação contínua do Drift Monitor.
+
+### Composição do Cluster
+
+| § | Nome | Função |
+|---|------|--------|
+| §261 | W-BIND-001 | Cognitive Bind Module |
+| §263 | PingPong Protocol | Respiração operacional |
+| §265 | Drift Monitor Metrics | M1/M2/M3 |
+| §279 | Drift Composition Protocol | Integração drift → score |
+
+### Nota Guardian
+
+> "Nomear não é completar. Este selo é meramente etiqueta administrativa."
+
