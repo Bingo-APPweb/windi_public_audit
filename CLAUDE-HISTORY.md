@@ -18543,3 +18543,46 @@ use_case: webtoon pipeline, ComfyUI, experimentação de modelos
 
 OM SHANTI 🐉
 
+
+---
+
+## Sessão 22 Mai 2026 · 15:30 → 15:55 — ENCERRAMENTO
+
+**Sprint:** WINDI-HIOS Teaser Production Pipeline
+**Modo:** CCode CLI (Opus 4.5)
+**Operador humano:** Human Dragon
+
+### Trabalho Completado
+- 8 motion clips gerados via Wan2.2-TI2V-5B em 4x RTX 5090 (Vast.ai)
+- 3 teasers trilíngues montados e selados no Ledger
+- Infotainment actualizado com verify links dinâmicos
+- verify-public regex corrigido para receipt IDs com hífens
+- Bugfix: verify UI usa `?id=` parameter, não path
+
+### Selos Emitidos
+- `WINDI-HIOS-TEASER-PT-20260522153257-A5281D8C` — Teaser PT 62s
+- `WINDI-HIOS-TEASER-EN-20260522153304-F1EB4166` — Teaser EN 56s
+- `WINDI-HIOS-TEASER-DE-20260522153310-EB5AE5A6` — Teaser DE 63s
+
+### Commit
+- Hash: `3769c09d0`
+- Message: `feat(§283): WINDI-HIOS Teaser Trilogy — Trilingual Production Pipeline`
+
+### Scaffold Pending
+- §283 WINDI-HIOS Teaser Trilogy Seal formal (candidato a selo numerado)
+- Pipeline I2V reutilizável para futuras produções
+- Mobile-friendly player para Infotainment
+
+### Próximo Passo Proposto
+- Integração navegação completa WINDI-HIOS (producer → entertainment → videos)
+- Vast.ai instance pode ser desligada (produção concluída)
+
+### Decisões Constitucionais
+- I11: Receipts selados no Ledger com verify links funcionais
+- I12: Trilingual compliance (PT/EN/DE) nos teasers e UI
+
+### Notas para Sessão Seguinte
+- verify-public :8114 reiniciado manualmente (não systemd)
+- Regex em `/opt/windi/verify-public/verify_public.py` linha 43 expandido
+- RTX 5090 requer PyTorch nightly cu128 (sm_120 Blackwell)
+
