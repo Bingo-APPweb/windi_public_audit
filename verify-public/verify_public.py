@@ -40,7 +40,8 @@ PORT = int(os.getenv("PORT", "8109"))
 VERSION = "1.0.0"
 
 # Formato canónico do ledger_id
-_LEDGER_ID_RE = re.compile(r"^WINDI-[A-Z0-9]+-\d{14}-[A-F0-9]{8}$")
+# Permite hífens na parte APP (ex: HIOS-TEASER-PT, S246-IMPL-bis)
+_LEDGER_ID_RE = re.compile(r"^WINDI-[A-Z0-9]+(?:-[A-Z0-9a-z]+)*-\d{14}-[A-Fa-f0-9]{8}$")
 _ANCHOR_HASH_RE = re.compile(r"^[a-f0-9]{64}$")
 
 

@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPIELEN | WINDI-HIOS Infotainment</title>
+    <meta name="description" content="Verifiable Storytelling. Entertainment you can trust.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+        :root {
+            --purple-400: #a855f7;
+            --purple-500: #9333ea;
+            --purple-600: #7c3aed;
+            --green-seal: #00A86B;
+            --bg-dark: #0a0a0a;
+            --bg-card: rgba(20, 20, 28, 0.8);
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #1a1a2e 100%);
+            min-height: 100vh;
+            color: white;
+            padding: 2rem;
+            padding-top: 5rem;
+        }
+
+        .header-lang {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            z-index: 50;
+            display: flex;
+            gap: 0.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+            border-radius: 9999px;
+            padding: 0.5rem 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            padding: 0.25rem 0.5rem;
+        }
+        .lang-btn:hover { color: rgba(255, 255, 255, 0.8); }
+        .lang-btn.active { color: var(--purple-400); text-shadow: 0 0 8px rgba(168, 85, 247, 0.5); }
+        .lang-divider { color: rgba(255, 255, 255, 0.2); }
+
+        .back-link {
+            position: fixed;
+            top: 1.5rem;
+            left: 1.5rem;
+            color: rgba(255,255,255,0.5);
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.2s;
+            z-index: 50;
+        }
+        .back-link:hover { color: var(--purple-400); }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .hero-icon { font-size: 4rem; margin-bottom: 1rem; }
+
+        .hero h1 {
+            font-size: clamp(2rem, 6vw, 3rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--purple-400), var(--purple-500), var(--purple-600));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero .subtitle {
+            color: rgba(255,255,255,0.4);
+            font-size: 0.9rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+        }
+
+        .hero .tagline {
+            color: rgba(255,255,255,0.6);
+            font-style: italic;
+            font-size: 1rem;
+        }
+
+        /* Cinema Player */
+        .cinema-container {
+            background: #0C0C12;
+            border-radius: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.6);
+            overflow: hidden;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .cinema-container:hover {
+            border-color: rgba(0, 168, 107, 0.4);
+            box-shadow: 0 8px 40px rgba(0, 168, 107, 0.15);
+        }
+
+        .video-wrapper {
+            position: relative;
+            aspect-ratio: 16/9;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(20, 20, 30, 0.9) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-wrapper video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-placeholder {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .video-placeholder-icon { font-size: 4rem; margin-bottom: 1rem; opacity: 0.6; }
+        .video-placeholder-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; }
+        .video-placeholder-sub { color: rgba(255,255,255,0.5); font-size: 0.9rem; }
+
+        .verification-badge {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1.25rem;
+            background: rgba(0, 168, 107, 0.08);
+            border-top: 1px solid rgba(0, 168, 107, 0.2);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+        }
+
+        .verification-badge .status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--purple-400); /* Pendente = roxo, não verde */
+        }
+
+        .verification-badge .status.sealed {
+            color: var(--green-seal); /* Verde só quando selado */
+        }
+
+        .verification-badge .hash {
+            color: rgba(255,255,255,0.4);
+        }
+
+        .verification-badge a {
+            color: var(--green-seal);
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+        .verification-badge a:hover { opacity: 0.8; }
+
+        /* Shelves Grid */
+        .shelves-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 1rem;
+            padding-left: 0.5rem;
+        }
+
+        .shelves-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .shelves-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+
+        .shelf-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 1rem;
+            padding: 1.25rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .shelf-card:hover {
+            background: #1A1A24;
+            border-color: var(--green-seal);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 168, 107, 0.15);
+        }
+
+        .shelf-card.disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .shelf-icon { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
+        .shelf-title { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.25rem; }
+        .shelf-sub { color: rgba(255,255,255,0.4); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; }
+        .shelf-tag {
+            display: inline-block;
+            margin-top: 0.5rem;
+            padding: 0.2rem 0.5rem;
+            background: rgba(168, 85, 247, 0.2);
+            border-radius: 4px;
+            font-size: 0.65rem;
+            color: var(--purple-400);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .shelf-tag.live {
+            background: rgba(0, 168, 107, 0.2);
+            color: var(--green-seal);
+        }
+
+        /* Series Section */
+        .series-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .series-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 1rem;
+            padding: 1.25rem;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 1rem;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .series-card:hover {
+            background: rgba(139, 92, 246, 0.15);
+            border-color: rgba(139, 92, 246, 0.4);
+            transform: translateX(8px);
+        }
+
+        .series-card.disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .series-icon { font-size: 2.5rem; }
+        .series-info h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.25rem; }
+        .series-info p { color: rgba(255,255,255,0.5); font-size: 0.85rem; line-height: 1.4; }
+        .series-meta {
+            text-align: right;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.3);
+        }
+        .series-meta .episodes { color: var(--purple-400); margin-bottom: 0.25rem; }
+
+        /* Games Preview */
+        .games-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+        }
+
+        @media (max-width: 640px) {
+            .games-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .game-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            text-align: center;
+            opacity: 0.5;
+        }
+        .game-card span { font-size: 1.5rem; display: block; margin-bottom: 0.25rem; }
+        .game-card p { font-size: 0.7rem; color: rgba(255,255,255,0.4); }
+
+        /* Footer */
+        .footer-doctrine {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            color: rgba(255,255,255,0.2);
+            font-size: 0.75rem;
+        }
+
+        .footer-doctrine .quote {
+            font-style: italic;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-doctrine a {
+            color: var(--green-seal);
+            text-decoration: none;
+        }
+
+        @media (max-width: 640px) {
+            .series-card { grid-template-columns: 1fr; text-align: center; }
+            .series-icon { margin: 0 auto; }
+            .series-meta { text-align: center; margin-top: 0.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header-lang">
+        <button class="lang-btn active" data-lang="de">DE</button>
+        <span class="lang-divider">|</span>
+        <button class="lang-btn" data-lang="en">EN</button>
+        <span class="lang-divider">|</span>
+        <button class="lang-btn" data-lang="pt">PT</button>
+    </div>
+
+    <a href="/hios/" class="back-link">← WINDI-HIOS</a>
+
+    <div class="container">
+        <!-- Hero -->
+        <div class="hero">
+            <div class="hero-icon">🎭</div>
+            <h1 data-i18n="title">SPIELEN</h1>
+            <p class="subtitle" data-i18n="subtitle">Verifizierbares Storytelling</p>
+            <p class="tagline" data-i18n="tagline">"Unterhaltung, der du vertrauen kannst"</p>
+        </div>
+
+        <!-- O Eco da Assimetria - Teaser Trilíngue -->
+        <div class="cinema-container" style="margin-bottom: 1.5rem;">
+            <div style="display: flex; justify-content: center; gap: 0.5rem; padding: 0.75rem; background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <button class="teaser-lang-btn active" data-teaser-lang="pt" style="background: transparent; border: 1px solid rgba(201,168,76,0.5); color: #C9A84C; padding: 0.4rem 1rem; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s;">PT</button>
+                <button class="teaser-lang-btn" data-teaser-lang="en" style="background: transparent; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.5); padding: 0.4rem 1rem; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s;">EN</button>
+                <button class="teaser-lang-btn" data-teaser-lang="de" style="background: transparent; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.5); padding: 0.4rem 1rem; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s;">DE</button>
+            </div>
+            <div class="video-wrapper">
+                <video id="teaserPlayer" controls style="width: 100%; height: 100%;">
+                    <source id="teaserSource" src="/hios/videos/O_Eco_da_Assimetria_PT.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div style="padding: 1rem; text-align: center; background: rgba(0,0,0,0.2);">
+                <h3 style="color: #C9A84C; font-size: 1.1rem; margin-bottom: 0.25rem;">O Eco da Assimetria</h3>
+                <p style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">WINDI-HIOS Teaser | 8 Cenas | Wan2.2 + ElevenLabs</p>
+            </div>
+            <div class="verification-badge">
+                <span class="status sealed">
+                    <span>✓</span>
+                    <span>SEALED</span>
+                </span>
+                <span class="hash">
+                    <span id="teaserHash" style="color: rgba(255,255,255,0.3); margin-right: 0.5rem;">A5281D8C</span>
+                    <a id="teaserVerifyLink" href="/verify-public/?id=WINDI-HIOS-TEASER-PT-20260522153257-A5281D8C" target="_blank">Verify →</a>
+                </span>
+            </div>
+        </div>
+
+        <!-- Cinema Player - Das Gartenprotokoll -->
+        <div class="cinema-container">
+            <div class="video-wrapper">
+                <video id="mainPlayer" poster="/hios/assets/garden-protocol-cover.jpg" controls>
+                    <source src="/hios/assets/garden-protocol-ep1.mp4" type="video/mp4">
+                </video>
+                <div class="video-placeholder" id="videoPlaceholder">
+                    <span class="video-placeholder-icon">🌿</span>
+                    <p class="video-placeholder-title" data-i18n="featured_title">Das Gartenprotokoll</p>
+                    <p class="video-placeholder-sub" data-i18n="featured_sub">Ein Daten-Governance-Thriller</p>
+                </div>
+            </div>
+            <div class="verification-badge">
+                <span class="status">
+                    <span>⏳</span>
+                    <span data-i18n="pending_label">Versiegelung ausstehend</span>
+                </span>
+                <span class="hash">
+                    <a href="/verify-public/" target="_blank" data-i18n="verify_link">Ledger :8114 →</a>
+                </span>
+            </div>
+        </div>
+
+        <!-- Distribution Shelves -->
+        <div class="shelves-section">
+            <h2 class="section-title" data-i18n="section_distribution">Verteilung</h2>
+            <div class="shelves-grid">
+                <a href="/hios/dataday/" class="shelf-card">
+                    <span class="shelf-icon">📚</span>
+                    <h3 class="shelf-title">DATADAY</h3>
+                    <p class="shelf-sub" data-i18n="shelf_dataday_sub">Dokumentarserie</p>
+                    <span class="shelf-tag live">4 EP</span>
+                </a>
+
+                <div class="shelf-card disabled">
+                    <span class="shelf-icon">🎙️</span>
+                    <h3 class="shelf-title">WINDI-CAST</h3>
+                    <p class="shelf-sub" data-i18n="shelf_podcast_sub">Podcast RSS</p>
+                    <span class="shelf-tag">Q3 2026</span>
+                </div>
+
+                <a href="/hios/producer/" class="shelf-card">
+                    <span class="shelf-icon">🎬</span>
+                    <h3 class="shelf-title" data-i18n="shelf_producer">Produtora</h3>
+                    <p class="shelf-sub" data-i18n="shelf_producer_sub">Katalog</p>
+                    <span class="shelf-tag live">LIVE</span>
+                </a>
+
+                <a href="/verify-public/" class="shelf-card">
+                    <span class="shelf-icon">⚖️</span>
+                    <h3 class="shelf-title" data-i18n="shelf_verify">Prüfen</h3>
+                    <p class="shelf-sub">Ledger :8114</p>
+                    <span class="shelf-tag live">LIVE</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Series Section -->
+        <div class="shelves-section">
+            <h2 class="section-title" data-i18n="section_series">Serien</h2>
+            <div class="series-grid">
+                <div class="series-card disabled">
+                    <span class="series-icon">🌿</span>
+                    <div class="series-info">
+                        <h3 data-i18n="series_garden_title">Das Gartenprotokoll</h3>
+                        <p data-i18n="series_garden_desc">Ein Daten-Governance-Thriller. In einer Welt, in der deine Daten gegen dich arbeiten, entdeckt ein Archivar ein System, das alles auf den Kopf stellt.</p>
+                    </div>
+                    <div class="series-meta">
+                        <div class="episodes" data-i18n="series_garden_ep">5 Episoden</div>
+                        <div>Q3 2026</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Games Preview -->
+        <div class="games-section">
+            <h2 class="section-title" data-i18n="section_games">Spiele (Q3 2026)</h2>
+            <div class="games-grid">
+                <div class="game-card">
+                    <span>🎱</span>
+                    <p data-i18n="game_bingo">Dragon Bingo</p>
+                </div>
+                <div class="game-card">
+                    <span>🧩</span>
+                    <p data-i18n="game_puzzle">Puzzle-Modus</p>
+                </div>
+                <div class="game-card">
+                    <span>🎯</span>
+                    <p data-i18n="game_quiz">Schnell-Quiz</p>
+                </div>
+                <div class="game-card">
+                    <span>🎪</span>
+                    <p data-i18n="game_zone">Zone Bavaria</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Doctrine -->
+        <div class="footer-doctrine">
+            <p class="quote" data-i18n="doctrine_quote">"Die Plattform weiß nichts über dich. Die Herkunft des Inhalts ist vollständig."</p>
+            <p data-i18n="doctrine_sub">Das Siegel bezeugt das Werk, nicht den Betrachter.</p>
+            <p style="margin-top: 0.5rem;"><a href="/verify-public/" data-i18n="doctrine_verify">Alle Inhalte im Ledger überprüfbar →</a></p>
+        </div>
+    </div>
+
+    <script>
+        const translations = {
+            de: {
+                title: "SPIELEN",
+                subtitle: "Verifizierbares Storytelling",
+                tagline: '"Unterhaltung, der du vertrauen kannst"',
+                featured_title: "Das Gartenprotokoll",
+                featured_sub: "Ein Daten-Governance-Thriller",
+                pending_label: "Versiegelung ausstehend",
+                verify_link: "Ledger :8114 prüfen →",
+                section_distribution: "Verteilung",
+                section_series: "Serien",
+                section_games: "Spiele (Q3 2026)",
+                shelf_dataday_sub: "Dokumentarserie",
+                shelf_podcast_sub: "Podcast RSS",
+                shelf_producer: "Produzent",
+                shelf_producer_sub: "Katalog",
+                shelf_verify: "Prüfen",
+                series_garden_title: "Das Gartenprotokoll",
+                series_garden_desc: "Ein Daten-Governance-Thriller. In einer Welt, in der deine Daten gegen dich arbeiten, entdeckt ein Archivar ein System, das alles auf den Kopf stellt.",
+                series_garden_ep: "5 Episoden",
+                game_bingo: "Dragon Bingo",
+                game_puzzle: "Puzzle-Modus",
+                game_quiz: "Schnell-Quiz",
+                game_zone: "Zone Bavaria",
+                doctrine_quote: '"Die Plattform weiß nichts über dich. Die Herkunft des Inhalts ist vollständig."',
+                doctrine_sub: "Das Siegel bezeugt das Werk, nicht den Betrachter.",
+                doctrine_verify: "Alle Inhalte im Ledger überprüfbar →"
+            },
+            en: {
+                title: "PLAY",
+                subtitle: "Verifiable Storytelling",
+                tagline: '"Entertainment you can trust"',
+                featured_title: "The Garden Protocol",
+                featured_sub: "A Data Governance Thriller",
+                pending_label: "Seal pending",
+                verify_link: "Check Ledger :8114 →",
+                section_distribution: "Distribution",
+                section_series: "Series",
+                section_games: "Games (Q3 2026)",
+                shelf_dataday_sub: "Documentary Series",
+                shelf_podcast_sub: "Podcast RSS",
+                shelf_producer: "Producer",
+                shelf_producer_sub: "Catalogue",
+                shelf_verify: "Verify",
+                series_garden_title: "The Garden Protocol",
+                series_garden_desc: "A data governance thriller. In a world where your data works against you, an archivist discovers a system that turns everything upside down.",
+                series_garden_ep: "5 Episodes",
+                game_bingo: "Dragon Bingo",
+                game_puzzle: "Puzzle Mode",
+                game_quiz: "Quick Quiz",
+                game_zone: "Zone Bavaria",
+                doctrine_quote: '"The platform knows nothing about you. The provenance of content is total."',
+                doctrine_sub: "The seal attests the work, not the viewer.",
+                doctrine_verify: "All content verifiable in Ledger →"
+            },
+            pt: {
+                title: "JOGAR",
+                subtitle: "Storytelling Verificável",
+                tagline: '"Entretenimento em que podes confiar"',
+                featured_title: "O Protocolo do Jardim",
+                featured_sub: "Um Thriller de Governança de Dados",
+                pending_label: "Selo pendente",
+                verify_link: "Verificar Ledger :8114 →",
+                section_distribution: "Distribuição",
+                section_series: "Séries",
+                section_games: "Jogos (Q3 2026)",
+                shelf_dataday_sub: "Série Documental",
+                shelf_podcast_sub: "Podcast RSS",
+                shelf_producer: "Produtora",
+                shelf_producer_sub: "Catálogo",
+                shelf_verify: "Verificar",
+                series_garden_title: "O Protocolo do Jardim",
+                series_garden_desc: "Um thriller de governança de dados. Num mundo onde os teus dados trabalham contra ti, um arquivista descobre um sistema que vira tudo de cabeça para baixo.",
+                series_garden_ep: "5 Episódios",
+                game_bingo: "Bingo do Dragão",
+                game_puzzle: "Modo Puzzle",
+                game_quiz: "Quiz Rápido",
+                game_zone: "Zona Bavaria",
+                doctrine_quote: '"A plataforma não sabe nada sobre ti. A proveniência do conteúdo é total."',
+                doctrine_sub: "O selo atesta a obra, não o espectador.",
+                doctrine_verify: "Todo o conteúdo verificável no Ledger →"
+            }
+        };
+
+        function setLanguage(lang) {
+            const t = translations[lang];
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[key]) el.textContent = t[key];
+            });
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+            });
+            document.documentElement.lang = lang;
+            localStorage.setItem('windi_lang', lang);
+        }
+
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => setLanguage(btn.getAttribute('data-lang')));
+        });
+
+        // Video placeholder logic
+        const video = document.getElementById('mainPlayer');
+        const placeholder = document.getElementById('videoPlaceholder');
+
+        if (video && placeholder) {
+            video.style.display = 'none';
+            placeholder.style.display = 'flex';
+            placeholder.style.flexDirection = 'column';
+            placeholder.style.alignItems = 'center';
+            placeholder.style.justifyContent = 'center';
+            placeholder.style.height = '100%';
+            placeholder.style.position = 'absolute';
+            placeholder.style.inset = '0';
+
+            video.addEventListener('loadeddata', () => {
+                placeholder.style.display = 'none';
+                video.style.display = 'block';
+            });
+        }
+
+        // Init language
+        const savedLang = localStorage.getItem('windi_lang');
+        const browserLang = navigator.language.split('-')[0];
+        const defaultLang = ['de', 'en', 'pt'].includes(browserLang) ? browserLang : 'de';
+        setLanguage(savedLang || defaultLang);
+
+        // Teaser language switching
+        const teaserVideos = {
+            pt: '/hios/videos/O_Eco_da_Assimetria_PT.mp4',
+            en: '/hios/videos/O_Eco_da_Assimetria_EN.mp4',
+            de: '/hios/videos/O_Eco_da_Assimetria_DE.mp4'
+        };
+
+        // Ledger receipts per language (SEALED 22 Mai 2026)
+        const teaserReceipts = {
+            pt: { id: 'WINDI-HIOS-TEASER-PT-20260522153257-A5281D8C', hash: 'A5281D8C' },
+            en: { id: 'WINDI-HIOS-TEASER-EN-20260522153304-F1EB4166', hash: 'F1EB4166' },
+            de: { id: 'WINDI-HIOS-TEASER-DE-20260522153310-EB5AE5A6', hash: 'EB5AE5A6' }
+        };
+
+        document.querySelectorAll('.teaser-lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const lang = btn.getAttribute('data-teaser-lang');
+                const player = document.getElementById('teaserPlayer');
+                const source = document.getElementById('teaserSource');
+                const currentTime = player.currentTime;
+
+                // Update video source
+                source.src = teaserVideos[lang];
+                player.load();
+                player.currentTime = currentTime;
+
+                // Update verify link and hash
+                const receipt = teaserReceipts[lang];
+                document.getElementById('teaserHash').textContent = receipt.hash;
+                document.getElementById('teaserVerifyLink').href = '/verify-public/?id=' + receipt.id;
+
+                document.querySelectorAll('.teaser-lang-btn').forEach(b => {
+                    b.classList.remove('active');
+                    b.style.borderColor = 'rgba(255,255,255,0.2)';
+                    b.style.color = 'rgba(255,255,255,0.5)';
+                });
+                btn.classList.add('active');
+                btn.style.borderColor = 'rgba(201,168,76,0.5)';
+                btn.style.color = '#C9A84C';
+            });
+        });
+    </script>
+</body>
+</html>
