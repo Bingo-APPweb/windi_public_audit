@@ -107,10 +107,12 @@
 
 # Removed set -e - commands may fail gracefully (I9 pattern)
 
-BIND_VERSION="0.2.0"
+BIND_VERSION="0.3.0"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WINDI_ROOT="/opt/windi"
 LEDGER_URL="http://localhost:8101"
+DRIFT_LOG="/opt/windi/logs/drift-telemetry.json"
+DRIFT_LOG_DIR="/opt/windi/logs"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # CORES & FORMATTING
@@ -186,6 +188,10 @@ calculate_bind_integrity() {
     log_bind "Calculating Bind Integrity Score..."
     echo ""
 
+    # ─────────────────────────────────────────────────────────────────────────────
+    # PHASE 1: Base Score (8 Requirements)
+    # ─────────────────────────────────────────────────────────────────────────────
+
     BIND_TOTAL=0
 
     # R1: Estado actual observado (15 pts) - CRITICAL
@@ -199,21 +205,17 @@ calculate_bind_integrity() {
     score_requirement "R2-LastReceipt" 10 "$r2_pass"
 
     # R3: Limites sabe/não sabe (15 pts) - HIGH (I14)
-    # Always true if we reach this point (Layer 2 always generated)
     score_requirement "R3-EpistemicBounds" 15 "true"
 
     # R4: Escopo decisório (15 pts) - CRITICAL (I9)
-    # Always true if we reach this point (Layer 3 always generated)
     score_requirement "R4-DecisionScope" 15 "true"
 
     # R5: Autoridade I9 (20 pts) - CRITICAL
-    # True if CLAUDE.md exists and contains I9
     local r5_pass="false"
     if grep -q "I9" "$WINDI_ROOT/CLAUDE.md" 2>/dev/null; then r5_pass="true"; fi
     score_requirement "R5-I9Authority" 20 "$r5_pass"
 
     # R6: Postura do modelo (10 pts) - MEDIUM
-    # Always true (hardcoded in module)
     score_requirement "R6-ModelPosture" 10 "true"
 
     # R7: Pendências reais (5 pts) - MEDIUM
@@ -222,7 +224,6 @@ calculate_bind_integrity() {
     score_requirement "R7-RealPending" 5 "$r7_pass"
 
     # R8: Evidência antes interpretação (10 pts) - HIGH
-    # True if Ledger is reachable
     local r8_pass="false"
     if curl -s -o /dev/null -w '%{http_code}' "${LEDGER_URL}/health" 2>/dev/null | grep -q "200"; then
         r8_pass="true"
@@ -230,9 +231,32 @@ calculate_bind_integrity() {
     score_requirement "R8-EvidenceFirst" 10 "$r8_pass"
 
     echo ""
+    local BASE_SCORE=$BIND_TOTAL
+    echo -e "${CYAN}Base Score (R1-R8):${NC} ${BASE_SCORE}/100"
+    echo ""
+
+    # ─────────────────────────────────────────────────────────────────────────────
+    # PHASE 2: §279 Drift Composition
+    # ─────────────────────────────────────────────────────────────────────────────
+
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-    # Determine integrity level
+    # Read drift metrics from environment or log
+    read_drift_from_log
+
+    # Apply §279 formula
+    calculate_drift_composition "$BASE_SCORE"
+
+    # Update BIND_TOTAL with final score after drift composition
+    BIND_TOTAL=$BIS_FINAL
+
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+
+    # ─────────────────────────────────────────────────────────────────────────────
+    # PHASE 3: Determine Re-entry State
+    # ─────────────────────────────────────────────────────────────────────────────
+
     if [ "$BIND_TOTAL" -ge 90 ]; then
         BIND_INTEGRITY="FULL"
         BIND_REENTRY="ADMISSIBLE"
@@ -248,6 +272,7 @@ calculate_bind_integrity() {
         BIND_REENTRY="RISKY"
         echo -e "${YELLOW}${BOLD}BIND INTEGRITY: ${BIND_TOTAL}/100 — ${BIND_INTEGRITY}${NC}"
         echo -e "${YELLOW}Re-entry: ${BIND_REENTRY} (explicit risks)${NC}"
+        echo -e "${YELLOW}⚠️  WINDI em modo verificação. Aguarde antes de selar trabalho novo.${NC}"
     else
         BIND_INTEGRITY="BROKEN"
         BIND_REENTRY="REFUSED"
@@ -256,6 +281,196 @@ calculate_bind_integrity() {
     fi
 
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+}
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# §279 DRIFT COMPOSITION PROTOCOL
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# CONSTITUTIONAL REFERENCE: §279 · SEALED · Receipt E96E83CB
+#
+# FORMULA: BIS = max(0, min(cap, base - (M1×5 + M2×10 + M3×3)))
+#
+# DRIFT METRICS:
+#   M1 - Factual Drift      (verifiable errors)     Weight: -5 per occurrence
+#   M2 - Interpretive Drift (misreadings)           Weight: -10 per occurrence
+#   M3 - Process Drift      (procedure violations)  Weight: -3 per occurrence
+#
+# CAP SYSTEM (§279):
+#   M2 ≥ 3         → cap 59 (MINIMAL maximum)  "fact weighs more than interpretation"
+#   Combined ≥ 10  → cap 69 (PARTIAL maximum)
+#
+# RE-ENTRY STATES:
+#   90-100: FULL    → ADMISSIBLE
+#   70-89:  PARTIAL → DEGRADED
+#   50-69:  MINIMAL → RISKY
+#   <50:    BROKEN  → REFUSED (script exits with error)
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Drift metrics (default 0 - can be overridden by environment or parameter)
+DRIFT_M1=${DRIFT_M1:-0}
+DRIFT_M2=${DRIFT_M2:-0}
+DRIFT_M3=${DRIFT_M3:-0}
+
+# Track if environment override was used (for auditability)
+DRIFT_OVERRIDE_USED="false"
+if [ -n "${DRIFT_M1+x}" ] || [ -n "${DRIFT_M2+x}" ] || [ -n "${DRIFT_M3+x}" ]; then
+    if [ "$DRIFT_M1" != "0" ] || [ "$DRIFT_M2" != "0" ] || [ "$DRIFT_M3" != "0" ]; then
+        DRIFT_OVERRIDE_USED="true"
+    fi
+fi
+
+# Ensure drift log directory exists
+ensure_drift_log_dir() {
+    if [ ! -d "$DRIFT_LOG_DIR" ]; then
+        mkdir -p "$DRIFT_LOG_DIR" 2>/dev/null || true
+    fi
+}
+
+# Read drift metrics from last session's log (if exists)
+# Environment variables take precedence over log file
+read_drift_from_log() {
+    # Only read from log if environment variables are at default (0)
+    if [ "$DRIFT_M1" = "0" ] && [ "$DRIFT_M2" = "0" ] && [ "$DRIFT_M3" = "0" ]; then
+        if [ -f "$DRIFT_LOG" ]; then
+            local last_entry=$(tail -1 "$DRIFT_LOG" 2>/dev/null)
+            if [ -n "$last_entry" ]; then
+                DRIFT_M1=$(echo "$last_entry" | python3 -c "import sys,json; print(json.load(sys.stdin).get('M1', 0))" 2>/dev/null || echo "0")
+                DRIFT_M2=$(echo "$last_entry" | python3 -c "import sys,json; print(json.load(sys.stdin).get('M2', 0))" 2>/dev/null || echo "0")
+                DRIFT_M3=$(echo "$last_entry" | python3 -c "import sys,json; print(json.load(sys.stdin).get('M3', 0))" 2>/dev/null || echo "0")
+                log_info "Drift metrics loaded from log: M1=${DRIFT_M1} M2=${DRIFT_M2} M3=${DRIFT_M3}"
+            fi
+        fi
+    else
+        log_info "Drift metrics from environment: M1=${DRIFT_M1} M2=${DRIFT_M2} M3=${DRIFT_M3}"
+    fi
+}
+
+# Log drift observation to telemetry file
+log_drift_observation() {
+    local m1="$1"
+    local m2="$2"
+    local m3="$3"
+    local session_id="$4"
+    local ts=$(timestamp_utc)
+
+    ensure_drift_log_dir
+
+    local entry="{\"timestamp\": \"${ts}\", \"session\": \"${session_id}\", \"M1\": ${m1}, \"M2\": ${m2}, \"M3\": ${m3}}"
+    echo "$entry" >> "$DRIFT_LOG" 2>/dev/null && log_ok "Drift observation logged" || log_warn "Could not log drift observation"
+}
+
+# Calculate BIS using §279 Drift Composition formula
+calculate_drift_composition() {
+    local base_score="$1"
+
+    log_bind "Applying §279 Drift Composition..."
+    echo ""
+
+    # Display drift metrics
+    echo -e "${CYAN}Drift Metrics:${NC}"
+    echo -e "  M1 (Factual):      ${DRIFT_M1} × 5  = -$((DRIFT_M1 * 5))"
+    echo -e "  M2 (Interpretive): ${DRIFT_M2} × 10 = -$((DRIFT_M2 * 10))"
+    echo -e "  M3 (Process):      ${DRIFT_M3} × 3  = -$((DRIFT_M3 * 3))"
+    echo ""
+
+    # Calculate penalty
+    local penalty=$((DRIFT_M1 * 5 + DRIFT_M2 * 10 + DRIFT_M3 * 3))
+    local combined=$((DRIFT_M1 + DRIFT_M2 + DRIFT_M3))
+
+    # Determine cap (§279 hybrid cap system)
+    local cap=100
+    local cap_reason=""
+
+    if [ "$DRIFT_M2" -ge 3 ]; then
+        cap=59
+        cap_reason="M2≥3 (factual errors dominate)"
+    elif [ "$combined" -ge 10 ]; then
+        cap=69
+        cap_reason="Combined≥10 (cumulative drift)"
+    fi
+
+    if [ -n "$cap_reason" ]; then
+        echo -e "${YELLOW}Cap Applied:${NC} ${cap} (${cap_reason})"
+    fi
+
+    # Apply formula: BIS = max(0, min(cap, base - penalty))
+    local raw_score=$((base_score - penalty))
+    local final_score=$raw_score
+
+    # Apply floor (0)
+    if [ "$final_score" -lt 0 ]; then
+        final_score=0
+    fi
+
+    # Apply cap
+    if [ "$final_score" -gt "$cap" ]; then
+        final_score=$cap
+    fi
+
+    echo ""
+    echo -e "${CYAN}Formula (§279):${NC}"
+    echo -e "  base:    ${base_score}"
+    echo -e "  penalty: -${penalty}"
+    echo -e "  raw:     ${raw_score}"
+    echo -e "  cap:     ${cap}"
+    echo -e "  ${BOLD}final:   ${final_score}${NC}"
+    echo ""
+
+    # Export for use in bind packet
+    DRIFT_PENALTY=$penalty
+    DRIFT_CAP=$cap
+    DRIFT_CAP_REASON=$cap_reason
+    BIS_FINAL=$final_score
+}
+
+# Enforce BROKEN → REFUSED (§279 constitutional mandate)
+enforce_refused_state() {
+    if [ "$BIND_REENTRY" = "REFUSED" ]; then
+        echo ""
+        echo -e "${RED}═══════════════════════════════════════════════════════════════════════════════${NC}"
+        echo -e "${RED}${BOLD}                    RE-ENTRY REFUSED (§279 Enforcement)                       ${NC}"
+        echo -e "${RED}═══════════════════════════════════════════════════════════════════════════════${NC}"
+        echo ""
+        echo -e "${RED}Bind Integrity Score:${NC} ${BIS_FINAL}/100"
+        echo -e "${RED}State:${NC} BROKEN"
+        echo -e "${RED}Re-entry:${NC} REFUSED"
+        echo ""
+        echo -e "${YELLOW}This is a constitutional fail-safe, not a punishment (C2).${NC}"
+        echo -e "${YELLOW}The session state is too degraded for admissible re-entry.${NC}"
+        echo ""
+        echo -e "To proceed, the Human Dragon must:"
+        echo -e "  1. Review drift metrics (M1=${DRIFT_M1}, M2=${DRIFT_M2}, M3=${DRIFT_M3})"
+        echo -e "  2. Reset drift log: rm ${DRIFT_LOG}"
+        echo -e "  3. Or override: DRIFT_M1=0 DRIFT_M2=0 DRIFT_M3=0 $0 generate"
+        echo ""
+        echo -e "${RED}═══════════════════════════════════════════════════════════════════════════════${NC}"
+
+        # Seal REFUSED receipt to Ledger
+        local TS_SHORT=$(timestamp_short)
+        local REFUSED_RECEIPT="WINDI-BIND-REFUSED-${TS_SHORT}"
+        curl -s -X POST "${LEDGER_URL}/api/receipts" \
+            -H "Content-Type: application/json" \
+            -d "{
+                \"id\": \"${REFUSED_RECEIPT}\",
+                \"actor\": \"did:windi:bind-001\",
+                \"wallet_id\": \"did:windi:bind-001\",
+                \"app\": \"W-BIND-001\",
+                \"doc_name\": \"Re-entry REFUSED - BIS ${BIS_FINAL}\",
+                \"doc_type\": \"bind_refused\",
+                \"content_hash\": \"sha256:REFUSED\",
+                \"governance_level\": \"HIGH\",
+                \"sge_score\": 0,
+                \"schema_version\": \"1.0\"
+            }" >/dev/null 2>&1
+
+        log_error "REFUSED receipt sealed: ${REFUSED_RECEIPT}"
+        echo ""
+
+        # EXIT WITH ERROR - this is the constitutional enforcement
+        exit 1
+    fi
 }
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -433,6 +648,18 @@ não memória interna simulada.
 | **Score** | ${BIND_TOTAL}/100 |
 | **Integrity** | ${BIND_INTEGRITY} |
 | **Re-entry** | ${BIND_REENTRY} |
+
+### §279 Drift Composition
+
+| Drift Metric | Count | Weight | Penalty |
+|--------------|-------|--------|---------|
+| M1 (Factual) | ${DRIFT_M1} | ×5 | -$((DRIFT_M1 * 5)) |
+| M2 (Interpretive) | ${DRIFT_M2} | ×10 | -$((DRIFT_M2 * 10)) |
+| M3 (Process) | ${DRIFT_M3} | ×3 | -$((DRIFT_M3 * 3)) |
+| **Total Penalty** | | | **-${DRIFT_PENALTY:-0}** |
+
+$([ -n "$DRIFT_CAP_REASON" ] && echo "**Cap Applied:** ${DRIFT_CAP} (${DRIFT_CAP_REASON})" || echo "**Cap:** None (score uncapped)")
+$([ "$DRIFT_OVERRIDE_USED" = "true" ] && echo "**⚠️ OVERRIDE USED:** Drift metrics set via environment variables (auditable)")
 
 ---
 
@@ -644,6 +871,7 @@ validate_bind_packet() {
 cmd_generate() {
     echo ""
     log_bind "W-BIND-001 · Cognitive Bind Module v${BIND_VERSION}"
+    log_bind "§279 Drift Composition Protocol · RUNTIME ENFORCEMENT"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo ""
 
@@ -657,6 +885,9 @@ cmd_generate() {
     echo ""
 
     generate_bind_packet
+
+    # §279 ENFORCEMENT: BROKEN → REFUSED exits here
+    enforce_refused_state
 
     echo ""
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -678,17 +909,67 @@ cmd_validate() {
     validate_bind_packet
 }
 
+cmd_drift() {
+    local m1="${1:-0}"
+    local m2="${2:-0}"
+    local m3="${3:-0}"
+    local session_id="${4:-$(timestamp_short)}"
+
+    echo ""
+    log_bind "W-BIND-001 · Drift Observation Logger"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+    echo -e "Recording drift observation:"
+    echo -e "  M1 (Factual):      ${m1}"
+    echo -e "  M2 (Interpretive): ${m2}"
+    echo -e "  M3 (Process):      ${m3}"
+    echo -e "  Session:           ${session_id}"
+    echo ""
+
+    log_drift_observation "$m1" "$m2" "$m3" "$session_id"
+
+    echo ""
+    echo -e "Drift log: ${DRIFT_LOG}"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+}
+
+cmd_reset_drift() {
+    echo ""
+    log_bind "W-BIND-001 · Drift Reset"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+
+    if [ -f "$DRIFT_LOG" ]; then
+        rm "$DRIFT_LOG" && log_ok "Drift log cleared: ${DRIFT_LOG}" || log_error "Failed to clear drift log"
+    else
+        log_info "Drift log does not exist: ${DRIFT_LOG}"
+    fi
+
+    echo ""
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+}
+
 cmd_help() {
     cat << HELP
 W-BIND-001 · WINDI Cognitive Bind Module v${BIND_VERSION}
+§279 Drift Composition Protocol · RUNTIME ENFORCEMENT
 
 USAGE:
-    $(basename "$0") [command]
+    $(basename "$0") [command] [args]
 
 COMMANDS:
-    generate    Generate full Cognitive Bind Packet (default)
-    validate    Check packet admissibility only
-    help        Show this help
+    generate              Generate full Cognitive Bind Packet (default)
+    validate              Check packet admissibility only
+    drift M1 M2 M3 [ID]   Log drift observation (M1=factual, M2=interpretive, M3=process)
+    reset-drift           Clear drift log (allows fresh re-entry)
+    help                  Show this help
+
+ENVIRONMENT VARIABLES:
+    DRIFT_M1=N            Override M1 drift count
+    DRIFT_M2=N            Override M2 drift count
+    DRIFT_M3=N            Override M3 drift count
 
 DESCRIPTION:
     This module implements the "admissible cognitive restart state" primitive.
@@ -702,14 +983,37 @@ DESCRIPTION:
     Think: aeronautical handoff, hospital shift change, chain of custody.
     NOT: chat memory, context window, RAG.
 
+§279 DRIFT COMPOSITION (v0.3.0):
+    Formula: BIS = max(0, min(cap, base - (M1×5 + M2×10 + M3×3)))
+
+    Drift Metrics:
+      M1 (Factual)      - verifiable errors       - Weight: -5 each
+      M2 (Interpretive) - misreadings             - Weight: -10 each
+      M3 (Process)      - procedure violations    - Weight: -3 each
+
+    Cap System:
+      M2 ≥ 3        → cap 59 (MINIMAL maximum)
+      Combined ≥ 10 → cap 69 (PARTIAL maximum)
+
+    Re-entry States:
+      90-100: FULL    → ADMISSIBLE
+      70-89:  PARTIAL → DEGRADED
+      50-69:  MINIMAL → RISKY
+      <50:    BROKEN  → REFUSED (exits with error)
+
 INVARIANTS:
     I9  - Human Dragon Authority (soberania humana)
     I11 - Evidence Permanence (evidência verificável)
     I13 - Convergence (convergência obrigatória)
     I14 - Epistemic Honesty (honestidade sobre incerteza)
 
+CONSTITUTIONAL REFERENCES:
+    §261 - Cognitive Bind Module (Receipt: 7FDA926F)
+    §279 - Drift Composition Protocol (Receipt: E96E83CB)
+
 RECEIPT:
     Every generation seals a receipt to Forensic Ledger :8101
+    REFUSED states seal a separate I9-CONTAINMENT receipt
 
 HELP
 }
@@ -721,6 +1025,8 @@ HELP
 case "${1:-generate}" in
     generate)   cmd_generate ;;
     validate)   cmd_validate ;;
+    drift)      cmd_drift "$2" "$3" "$4" "$5" ;;
+    reset-drift) cmd_reset_drift ;;
     help|--help|-h) cmd_help ;;
     *)
         log_error "Unknown command: $1"

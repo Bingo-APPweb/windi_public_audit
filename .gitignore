@@ -104,3 +104,6 @@ joe/*.db-shm
 verify-public/*.png
 verify-public/web/*.png
 *.sqlite3
+
+# === SNAPPYMAIL CONTAINER DATA (Docker UID 82) ===
+w-mail-001/snappymail-data/

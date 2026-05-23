@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WINDI-HIOS Runtime Layer — Council Study</title>
+    <style>
+        :root {
+            --bg-primary: #0A0A0F;
+            --bg-secondary: #12121A;
+            --bg-tertiary: #1A1A24;
+            --gold: #C9A84C;
+            --gold-dim: #8B7424;
+            --text-primary: #E8E6E1;
+            --text-secondary: #A0A0A0;
+            --green: #4CAF50;
+            --amber: #FFC107;
+            --orange: #FF9800;
+            --red: #F44336;
+            --blue: #2196F3;
+            --purple: #9C27B0;
+            --border: #2A2A34;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-size: 0.9rem;
+            color: var(--gold);
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        h1 span {
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .sealed-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+            color: var(--bg-primary);
+            padding: 0.3rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            margin-top: 1rem;
+        }
+
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        @media (max-width: 1200px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .card-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* Runtime Layer Visualization */
+        .runtime-viz {
+            position: relative;
+            padding: 2rem;
+        }
+
+        .layer-cluster {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .layer-node {
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .layer-node:hover {
+            border-color: var(--gold);
+            transform: translateX(8px);
+        }
+
+        .layer-node.active {
+            border-color: var(--gold);
+            box-shadow: 0 0 20px rgba(201, 168, 76, 0.2);
+        }
+
+        .node-number {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .node-content {
+            flex: 1;
+        }
+
+        .node-title {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .node-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .node-receipt {
+            font-family: 'Courier New', monospace;
+            font-size: 0.7rem;
+            color: var(--gold-dim);
+            margin-top: 0.5rem;
+        }
+
+        /* Colors for nodes */
+        .node-261 .node-number { background: linear-gradient(135deg, #1a237e, #3949ab); color: white; }
+        .node-263 .node-number { background: linear-gradient(135deg, #004d40, #00897b); color: white; }
+        .node-265 .node-number { background: linear-gradient(135deg, #bf360c, #f4511e); color: white; }
+        .node-279 .node-number { background: linear-gradient(135deg, #4a148c, #7b1fa2); color: white; }
+
+        /* Connectors */
+        .connector {
+            width: 2px;
+            height: 20px;
+            background: linear-gradient(to bottom, var(--gold), transparent);
+            margin-left: 24px;
+        }
+
+        /* Integrity Score Panel */
+        .score-panel {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .score-circle {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .score-circle::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            padding: 4px;
+            background: conic-gradient(var(--green) 0deg, var(--green) calc(var(--score) * 3.6deg), var(--border) calc(var(--score) * 3.6deg));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+        }
+
+        .score-value {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--green);
+        }
+
+        .score-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .integrity-level {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .integrity-full { background: rgba(76, 175, 80, 0.2); color: var(--green); }
+        .integrity-partial { background: rgba(255, 193, 7, 0.2); color: var(--amber); }
+        .integrity-minimal { background: rgba(255, 152, 0, 0.2); color: var(--orange); }
+        .integrity-broken { background: rgba(244, 67, 54, 0.2); color: var(--red); }
+
+        .reentry-status {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Drift Metrics */
+        .drift-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .drift-metric {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .drift-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .drift-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .drift-weight {
+            font-size: 0.65rem;
+            color: var(--gold-dim);
+            margin-top: 0.25rem;
+        }
+
+        /* Formula Section */
+        .formula-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .formula-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--gold);
+        }
+
+        .formula-code {
+            background: var(--bg-primary);
+            border-radius: 8px;
+            padding: 1.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+        }
+
+        .formula-code .keyword { color: var(--purple); }
+        .formula-code .number { color: var(--orange); }
+        .formula-code .comment { color: var(--text-secondary); }
+        .formula-code .var { color: var(--blue); }
+
+        /* Threshold Table */
+        .threshold-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .threshold-item {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            border-left: 4px solid;
+        }
+
+        .threshold-item.full { border-color: var(--green); }
+        .threshold-item.partial { border-color: var(--amber); }
+        .threshold-item.minimal { border-color: var(--orange); }
+        .threshold-item.broken { border-color: var(--red); }
+
+        .threshold-range {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .threshold-name {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .threshold-reentry {
+            font-size: 0.7rem;
+            margin-top: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            background: var(--bg-primary);
+        }
+
+        /* Cap Rules */
+        .cap-rules {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .cap-rule {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 1rem;
+            border-left: 3px solid var(--orange);
+        }
+
+        .cap-condition {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: var(--orange);
+            margin-bottom: 0.5rem;
+        }
+
+        .cap-effect {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* Flow Diagram */
+        .flow-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .flow-step {
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+            padding: 1rem;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .flow-step::after {
+            content: '→';
+            position: absolute;
+            right: -1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gold);
+            font-size: 1.5rem;
+        }
+
+        .flow-step:last-child::after {
+            display: none;
+        }
+
+        .flow-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .flow-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .flow-detail {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        /* Genealogy */
+        .genealogy {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .genealogy-tree {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            background: var(--bg-primary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+
+        .genealogy-tree .sealed { color: var(--green); }
+        .genealogy-tree .pending { color: var(--amber); }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid var(--border);
+            margin-top: 2rem;
+        }
+
+        .footer-logo {
+            color: var(--gold);
+            font-size: 0.8rem;
+            letter-spacing: 0.2em;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-text {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .receipt-chain {
+            font-family: 'Courier New', monospace;
+            font-size: 0.7rem;
+            color: var(--gold-dim);
+            margin-top: 1rem;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .live-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--green);
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        /* Council Notes */
+        .council-notes {
+            background: linear-gradient(135deg, rgba(201, 168, 76, 0.1), transparent);
+            border: 1px solid var(--gold-dim);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .council-notes h3 {
+            color: var(--gold);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .council-notes ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .council-notes li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .council-notes li::before {
+            content: '◆';
+            position: absolute;
+            left: 0;
+            color: var(--gold-dim);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">WINDI Publishing House</div>
+            <h1>WINDI-HIOS <span>Runtime Layer</span></h1>
+            <p class="subtitle">Hybrid Intelligence Operating System — Council Study Prototype</p>
+            <div class="sealed-badge">§280 SEALED · 19 MAI 2026</div>
+        </header>
+
+        <div class="main-grid">
+            <!-- Left: Drift Metrics -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon" style="background: var(--bg-tertiary);">📊</div>
+                    <div>
+                        <div class="card-title">Drift Monitor</div>
+                        <div class="card-subtitle">§265 M1/M2/M3 Metrics</div>
+                    </div>
+                </div>
+
+                <div class="drift-metrics" style="grid-template-columns: 1fr;">
+                    <div class="drift-metric">
+                        <div class="drift-value" style="color: var(--green);">0</div>
+                        <div class="drift-label">M1 · Sealed-Laws</div>
+                        <div class="drift-weight">Weight: -5 per point</div>
+                    </div>
+                    <div class="drift-metric">
+                        <div class="drift-value" style="color: var(--green);">0</div>
+                        <div class="drift-label">M2 · Service Health</div>
+                        <div class="drift-weight">Weight: -10 per point</div>
+                    </div>
+                    <div class="drift-metric">
+                        <div class="drift-value" style="color: var(--green);">0</div>
+                        <div class="drift-label">M3 · Continuity</div>
+                        <div class="drift-weight">Weight: -3 per point</div>
+                    </div>
+                </div>
+
+                <div class="cap-rules" style="grid-template-columns: 1fr; margin-top: 1.5rem;">
+                    <div class="cap-rule">
+                        <div class="cap-condition">M2 ≥ 3</div>
+                        <div class="cap-effect">Cap → 59 (MINIMAL)</div>
+                    </div>
+                    <div class="cap-rule">
+                        <div class="cap-condition">Combined ≥ 10</div>
+                        <div class="cap-effect">Cap → 69 (PARTIAL)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center: Runtime Layer Cluster -->
+            <div class="card runtime-viz">
+                <div class="card-header">
+                    <div class="card-icon" style="background: linear-gradient(135deg, var(--gold-dim), var(--gold));">⚙️</div>
+                    <div>
+                        <div class="card-title">Runtime Layer Cluster</div>
+                        <div class="card-subtitle">4 Constitutional Components</div>
+                    </div>
+                    <div class="live-indicator" style="margin-left: auto;">
+                        <span class="live-dot"></span>
+                        LIVE
+                    </div>
+                </div>
+
+                <div class="layer-cluster">
+                    <div class="layer-node node-261 active">
+                        <div class="node-number">§261</div>
+                        <div class="node-content">
+                            <div class="node-title">W-BIND-001</div>
+                            <div class="node-desc">Cognitive Bind Module — Continuidade cognitiva verificável</div>
+                            <div class="node-receipt">7FDA926F</div>
+                        </div>
+                    </div>
+                    <div class="connector"></div>
+
+                    <div class="layer-node node-263">
+                        <div class="node-number">§263</div>
+                        <div class="node-content">
+                            <div class="node-title">PingPong Protocol</div>
+                            <div class="node-desc">Respiração operacional Claude.ai ↔ CCode</div>
+                            <div class="node-receipt">87AAF5BA</div>
+                        </div>
+                    </div>
+                    <div class="connector"></div>
+
+                    <div class="layer-node node-265">
+                        <div class="node-number">§265</div>
+                        <div class="node-content">
+                            <div class="node-title">Drift Monitor Metrics</div>
+                            <div class="node-desc">M1/M2/M3 — Observação de desvio sistema</div>
+                            <div class="node-receipt">08805713</div>
+                        </div>
+                    </div>
+                    <div class="connector"></div>
+
+                    <div class="layer-node node-279">
+                        <div class="node-number">§279</div>
+                        <div class="node-content">
+                            <div class="node-title">Drift Composition Protocol</div>
+                            <div class="node-desc">Integração drift → Bind Integrity Score</div>
+                            <div class="node-receipt">E96E83CB</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Integrity Score -->
+            <div class="card score-panel">
+                <div class="card-header">
+                    <div class="card-icon" style="background: var(--bg-tertiary);">🛡️</div>
+                    <div>
+                        <div class="card-title">Bind Integrity</div>
+                        <div class="card-subtitle">Current Session Score</div>
+                    </div>
+                </div>
+
+                <div class="score-circle" style="--score: 100;">
+                    <div class="score-value">100</div>
+                    <div class="score-label">/ 100</div>
+                </div>
+
+                <div class="integrity-level integrity-full">FULL</div>
+                <div class="reentry-status">Re-entry: ADMISSIBLE</div>
+
+                <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                    <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Thresholds</div>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; font-size: 0.75rem;">
+                        <div style="color: var(--green);">90-100 FULL</div>
+                        <div style="color: var(--amber);">70-89 PARTIAL</div>
+                        <div style="color: var(--orange);">50-69 MINIMAL</div>
+                        <div style="color: var(--red);">&lt;50 BROKEN</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formula Section -->
+        <div class="formula-section">
+            <div class="formula-title">§279 Canonical Formula</div>
+            <div class="formula-code">
+<span class="comment"># Drift penalty calculation</span>
+<span class="var">drift_penalty</span> = (<span class="var">m1</span> × <span class="number">5</span>) + (<span class="var">m2</span> × <span class="number">10</span>) + (<span class="var">m3</span> × <span class="number">3</span>)
+
+<span class="comment"># Cap determination (hierarchical)</span>
+<span class="keyword">if</span> <span class="var">m2</span> >= <span class="number">3</span>:
+    <span class="var">cap</span> = <span class="number">59</span>   <span class="comment"># MINIMAL — infrastructure factual</span>
+<span class="keyword">elif</span> (<span class="var">m1</span> + <span class="var">m2</span> + <span class="var">m3</span>) >= <span class="number">10</span>:
+    <span class="var">cap</span> = <span class="number">69</span>   <span class="comment"># PARTIAL — forensic erosion</span>
+<span class="keyword">else</span>:
+    <span class="var">cap</span> = <span class="number">100</span>  <span class="comment"># No cap</span>
+
+<span class="comment"># Final score</span>
+<span class="var">final</span> = <span class="keyword">max</span>(<span class="number">0</span>, <span class="keyword">min</span>(<span class="var">cap</span>, <span class="var">base_score</span> - <span class="var">drift_penalty</span>))
+            </div>
+        </div>
+
+        <!-- Flow Diagram -->
+        <div class="flow-section">
+            <div class="formula-title">Operational Flow</div>
+            <div class="flow-diagram">
+                <div class="flow-step">
+                    <div class="flow-icon">📥</div>
+                    <div class="flow-name">Session Start</div>
+                    <div class="flow-detail">CBP Generated</div>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-icon">📊</div>
+                    <div class="flow-name">Drift Check</div>
+                    <div class="flow-detail">M1/M2/M3 Measured</div>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-icon">⚖️</div>
+                    <div class="flow-name">Score Calc</div>
+                    <div class="flow-detail">Apply §279 Formula</div>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-icon">🚦</div>
+                    <div class="flow-name">Re-entry Gate</div>
+                    <div class="flow-detail">ADMISSIBLE/REFUSED</div>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-icon">🔄</div>
+                    <div class="flow-name">Operation</div>
+                    <div class="flow-detail">Human Dragon Decides</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Genealogy -->
+        <div class="genealogy">
+            <div class="formula-title">Constitutional Lineage</div>
+            <pre class="genealogy-tree">
+I11 (Permanence of Cryptographic Evidence)
+ │
+ ├── §197 W-METRICS-001 (drift concept)
+ │       │
+ │       └── <span class="sealed">§265 Drift Monitor Metrics ✓</span>
+ │               │
+ │               └──────────────────┐
+ │                                  │
+ └── <span class="sealed">§261 W-BIND-001 ✓</span>            │
+         │                          │
+         ├── <span class="sealed">§263 PingPong Protocol ✓</span>
+         │                          │
+         └──────────────────────────┴── <span class="sealed">§279 Drift Composition ✓</span>
+                                               │
+                                               └── <span class="sealed">§280 Runtime Layer ✓</span>
+                                                       │
+                                                       └── <span class="pending">§261 v0.3 (engineering) ○</span>
+            </pre>
+        </div>
+
+        <!-- Council Notes -->
+        <div class="council-notes">
+            <h3>Council Study Notes</h3>
+            <ul>
+                <li><strong>§280 names but does not certify maturity.</strong> The cluster exists and operates; this seal acknowledges composition, not completeness.</li>
+                <li><strong>Recalibration scheduled: 19 Jun 2026.</strong> Weights M1=-5, M2=-10, M3=-3 subject to empirical adjustment.</li>
+                <li><strong>Cap inversion was conscious HD decision.</strong> M2≥3→59 (fact) weighs more than Combined≥10→69 (interpretation).</li>
+                <li><strong>Engineering pending:</strong> §261 v0.3 will implement formula in <code>cognitive-bind-module.sh</code>.</li>
+                <li><strong>HIOS Upgrade Packet archived</strong> as Speculative Mirror. Not roadmap, not constitution.</li>
+            </ul>
+        </div>
+
+        <footer>
+            <div class="footer-logo">LIGA IA+H</div>
+            <div class="footer-text">
+                "AI processes. Human decides. WINDI guarantees."
+            </div>
+            <div class="receipt-chain">
+                §261:7FDA926F → §263:87AAF5BA → §265:08805713 → §279:E96E83CB → §280:EAB28564
+            </div>
+            <div class="footer-text" style="margin-top: 1rem;">
+                Kempten, Bavaria · 19 Mai 2026 · Council Study Prototype v1.0
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Interactive node highlighting
+        document.querySelectorAll('.layer-node').forEach(node => {
+            node.addEventListener('click', () => {
+                document.querySelectorAll('.layer-node').forEach(n => n.classList.remove('active'));
+                node.classList.add('active');
+            });
+        });
+
+        // Simulate live score (for demo)
+        function updateScore(score) {
+            const circle = document.querySelector('.score-circle');
+            const value = document.querySelector('.score-value');
+            const level = document.querySelector('.integrity-level');
+            const reentry = document.querySelector('.reentry-status');
+
+            circle.style.setProperty('--score', score);
+            value.textContent = score;
+
+            if (score >= 90) {
+                level.className = 'integrity-level integrity-full';
+                level.textContent = 'FULL';
+                reentry.textContent = 'Re-entry: ADMISSIBLE';
+                value.style.color = 'var(--green)';
+            } else if (score >= 70) {
+                level.className = 'integrity-level integrity-partial';
+                level.textContent = 'PARTIAL';
+                reentry.textContent = 'Re-entry: DEGRADED';
+                value.style.color = 'var(--amber)';
+            } else if (score >= 50) {
+                level.className = 'integrity-level integrity-minimal';
+                level.textContent = 'MINIMAL';
+                reentry.textContent = 'Re-entry: RISKY';
+                value.style.color = 'var(--orange)';
+            } else {
+                level.className = 'integrity-level integrity-broken';
+                level.textContent = 'BROKEN';
+                reentry.textContent = 'Re-entry: REFUSED';
+                value.style.color = 'var(--red)';
+            }
+        }
+
+        // Demo: cycle through scores
+        // Uncomment to enable demo mode:
+        // let demo = 100;
+        // setInterval(() => { demo = demo <= 30 ? 100 : demo - 5; updateScore(demo); }, 2000);
+    </script>
+</body>
+</html>
