@@ -16506,3 +16506,104 @@ Sessão focada em entretenimento. Portal WINDI-HIOS agora tem identidade visual 
 OM SHANTI 🐉
 
 ---
+
+---
+
+## § SESSÃO 22 Mai 2026 (tarde/noite) — WINDI Cinema Production
+
+**Período:** 16:30–20:15 (CCode CLI)
+**Sprint:** G3 Merkle + Foundation Portals + **HIOS Cinema**
+**Modo:** Produção Visual · Veo 3.1 Pipeline
+
+### Trabalho Completado
+
+1. **Pipeline Veo 3.1 Operacional**
+   - API key Google validada com acesso completo (Veo 2, 3, 3.1, Imagen 4)
+   - Script `veo_producer.py` criado e funcional
+   - Reference images funcionam para continuidade de personagem
+
+2. **Filme "O Viajante e a Adormecida" v1.0**
+   - 10 cenas produzidas (3 Gemini + 7 Veo 3.1)
+   - 86 segundos de duração
+   - Publicado em: `https://windi-domain.com/hios/cinema.html`
+   - Ficheiro: `/opt/windi/hios/visual/producer/output/VIAJANTE_E_ADORMECIDA_FINAL.mp4`
+
+3. **Screenplay v1.0 + v2.0**
+   - v1.0: 406 linhas, narrativa base completa
+   - v2.0: 695 linhas, incorpora orientações do Conselho
+   - Ficheiros em `/opt/windi/hios/visual/producer/SCREENPLAY_*.md`
+   - Acesso: `https://windi-domain.com/hios/SCREENPLAY_v2.md`
+
+4. **Orientações do Conselho Integradas**
+   - Transição cromática: monocromático → neon → orgânico
+   - Esfera wireframe como símbolo recorrente
+   - Diálogo refinado: "Querer dói"
+   - Cena 13 (O Selo Dela) — ela GERA soberania, não recebe
+
+5. **Novas Referências Recebidas**
+   - `cafe4.jpeg` — Esfera central / consciência colectiva
+   - `cafe5.png` — Díptico futuro/passado (varanda Alpes)
+
+### Ficheiros Criados
+
+```
+/opt/windi/hios/visual/producer/
+├── veo_producer.py                    # Pipeline automatizado
+├── cinema.html                        # Página de visualização
+├── SCREENPLAY_VIAJANTE_E_ADORMECIDA_v1.md
+├── SCREENPLAY_VIAJANTE_E_ADORMECIDA_v2.md
+├── cafe.mp4, cafe2.mp4, cafe3.mp4     # Referências Gemini
+├── cafe4.jpeg, cafe5.png              # Novas referências
+├── ref_man.png, ref_woman.png         # Referências personagem
+├── ref_esfera.jpg, ref_diptych.png    # Referências v2.0
+└── output/
+    ├── acto[1-5]_*.mp4                # Cenas individuais
+    ├── cena9_conversa.mp4
+    ├── cena10_regresso.mp4
+    └── VIAJANTE_E_ADORMECIDA_FINAL.mp4  # Filme 86s
+```
+
+### Scaffold Pending — Produção v2.0
+
+**7 cenas a produzir (aguarda quota reset):**
+- [ ] Cena 2B — O Sistema (ref: cafe4.jpeg)
+- [ ] Cena 11 — Primeiro Toque (neve)
+- [ ] Cena 12 — Memória (flashback infância)
+- [ ] Cena 13 — O Selo Dela (CRÍTICA)
+- [ ] Cena 14 — Outros (ref: cafe5.png)
+- [ ] Cena 15 — Transmissão
+- [ ] Cena 16 — Pôr-do-Sol (final)
+
+**Custo estimado:** ~$0.70 (7 cenas × $0.10)
+**Duração final v2.0:** ~2m30s (16 cenas)
+
+### Blockers
+
+- **API Quota:** Veo 3.1 quota excedida (429 RESOURCE_EXHAUSTED)
+- **Reset esperado:** Amanhã (quotas diárias típicas)
+
+### Próximo Passo
+
+```bash
+cd /opt/windi/hios/visual/producer
+python3 veo_producer.py "prompt" --ref ref_esfera.jpg --output output/cena2b_sistema.mp4
+```
+
+Continuar produção das 7 cenas v2.0 após reset de quota.
+
+### Conceito Central (Conselho)
+
+> "Ela não perdeu liberdade. Ela perdeu vontade."
+> 
+> "Quando uma ideia deixa de depender de explicação técnica e passa a ser
+> compreendida através de uma história, ela ganha uma capacidade
+> completamente diferente de viajar pelo mundo."
+
+### Custo Total Sessão
+
+- 10 cenas Veo 3.1: ~$1.00
+- Processamento FFmpeg: $0.00
+- **Total:** ~$1.00
+
+---
+
