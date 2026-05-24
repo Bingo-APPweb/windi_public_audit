@@ -6,6 +6,64 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 24 Mai 2026 — §283 WINDI-HIOS Teaser Trilogy Closure
+
+**Duração:** ~15min | **Status:** ✅ §283 SEALED
+**Liga IA+H:** Human Dragon · Architect (CCode Opus 4.5)
+**Invariants:** I9, I11, I12
+**Natureza:** Consolidação + Seal formal do Teaser Trilogy
+
+### Contexto
+
+Fecho formal do trabalho de produção WINDI-HIOS iniciado em 22 Mai 2026. Os 3 teasers trilíngues "O Eco da Assimetria" já estavam selados individualmente — esta sessão cria o receipt de consolidação que agrupa o Trilogy.
+
+### Decisão Constitucional
+
+**Human Dragon:** "vc precisa de orientacao do conselho para executar as actividades abertas??"
+**Architect:** Não. O caminho está regido por I9 (aprovação já dada), I11 (receipts existentes), I12 (trilingual confirmado). Execução directa, não deliberação.
+
+### Receipt Selado
+
+| Receipt ID | Hash (8) | Descrição |
+|------------|----------|-----------|
+| `WINDI-S283-HIOS-TEASER-TRILOGY-20260524065306-4CFD959E` | `4CFD959E` | Consolidação Trilogy PT/EN/DE |
+
+### Child Receipts (22 Mai 2026)
+
+| Idioma | Receipt ID | Hash | Duração |
+|--------|------------|------|---------|
+| PT | `WINDI-HIOS-TEASER-PT-20260522153257-A5281D8C` | `A5281D8C` | 62s |
+| EN | `WINDI-HIOS-TEASER-EN-20260522153304-F1EB4166` | `F1EB4166` | 56s |
+| DE | `WINDI-HIOS-TEASER-DE-20260522153310-EB5AE5A6` | `EB5AE5A6` | 63s |
+
+### URLs LIVE
+
+- **Infotainment:** `windi-domain.com/hios/entertainment/`
+- **Verify Trilogy:** `windi-domain.com/verify-public/?id=WINDI-S283-HIOS-TEASER-TRILOGY-20260524065306-4CFD959E`
+
+### Metadata Selado
+
+```json
+{
+  "bundle_type": "trilogy",
+  "production_date": "2026-05-22",
+  "closure_date": "2026-05-24",
+  "total_duration_seconds": 181.8,
+  "motion_clips": 8,
+  "gpu_provider": "Vast.ai",
+  "model": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+  "invariants": ["I9", "I11", "I12"]
+}
+```
+
+### Próximos Passos
+
+- [ ] Integração com WINDI-HIOS UI (navegação completa)
+- [ ] Mobile-friendly player para Infotainment
+- [ ] Merkle incremental rebuild (folha pending)
+
+---
+
 ## § SESSÃO 22 Mai 2026 — WINDI-HIOS Teaser Production Pipeline
 
 **Duração:** ~4h | **Status:** ✅ TRILINGUAL TEASERS LIVE
@@ -18585,4 +18643,142 @@ OM SHANTI 🐉
 - verify-public :8114 reiniciado manualmente (não systemd)
 - Regex em `/opt/windi/verify-public/verify_public.py` linha 43 expandido
 - RTX 5090 requer PyTorch nightly cu128 (sm_120 Blackwell)
+
+
+---
+
+## Sessão 23 Mai 2026 · 10:00 → 12:10 — §282 WINDI-HIOS Cognitive Surface Architecture
+
+**Sprint:** WINDI-HIOS Betriebssystem Design
+**Modo:** CCode CLI (Opus 4.5)
+**Operador humano:** Human Dragon
+**Conselho:** Guardian (Claude.ai web) + Witness (Claude.ai web) + Architect (CCode)
+
+### Contexto
+
+Sessão de design arquitectural para definir como o WINDI-HIOS apresenta as suas capacidades aos utilizadores. O Human Dragon propôs uma visão de "Infotainment" onde o conteúdo é a porta de entrada da ferramenta, não o contrário.
+
+### Tese Fundacional Selada
+
+> **"O WINDI-HIOS não organiza aplicações nem serviços. Organiza capacidades humanas através de intenções, conteúdo, capacidades e evidências."**
+
+### Arquitectura de 5 Camadas
+
+| Camada | Nome | Função |
+|--------|------|--------|
+| L1 | MISSÕES | Intenção humana expressa naturalmente |
+| L2 | BAIRROS | 6 Modos Cognitivos (Descobrir/Criar/Compreender/Verificar/Operar/Governar) |
+| L3 | CONTEÚDO VIVO | Histórias, vídeos, casos como portais de capacidade |
+| L4 | CAPACIDADES | Serviços WINDI invisíveis ao utilizador, auditáveis |
+| L5 | EVIDÊNCIA | Receipt, Hash, Merkle, Verify Public |
+
+### 6 Princípios Constitucionais
+
+| # | Princípio | Descrição |
+|---|-----------|-----------|
+| P1 | Intent-First | Intenção antes de ferramenta |
+| P2 | Content-as-Portal | Conteúdo é porta de capacidade |
+| P3 | Cognitive-Modes | Modos em vez de profissões |
+| P4 | Progressive-Reveal | Complexidade por revelação gradual |
+| P5 | Evidence-Terminal | Toda missão termina em prova |
+| P6 | Human-Sovereignty | Nenhuma consequência irreversível sem gate humano |
+
+### Human Gates (I9 Enforcement)
+
+```
+HG-1: Nenhuma consequência irreversível sem gate humano
+HG-2: Gates aparecem ANTES de selar/publicar/enviar/distribuir
+HG-3: Gate recusado = missão pausa, nunca falha silenciosa
+HG-4: Gate aprovado = human_approved=true no receipt
+```
+
+### Revisão do Conselho (9 Correcções Aplicadas)
+
+| # | Fonte | Ponto | Aplicado |
+|---|-------|-------|----------|
+| 1 | Guardian | I9 Human Gates explícitos | ✅ HG-1 a HG-4 |
+| 2 | Guardian | I17 sem anchor — remover | ✅ Lista: I1,I9,I12,I13 |
+| 3 | Guardian | L4 invisível ≠ não-auditada | ✅ Nota clarificadora |
+| 4 | Guardian | PTR evidência nunca escondida | ✅ Tabela corrigida |
+| 5 | Guardian | Estatuto PRINCÍPIO/IMPLEMENTAÇÃO | ✅ Separados |
+| 6 | Witness | "56 serviços" → genérico | ✅ "capacidades internas" |
+| 7 | Witness | COGSPACE como papel | ✅ Linha de evolução |
+| 8 | Witness | P6 Human Sovereignty | ✅ Adicionado |
+| 9 | Witness | Tese Canónica formal | ✅ Formalizada |
+
+### Incidente Constitucional — Drift Detectado e Corrigido
+
+```
+Erro:      Architect editou ficheiro selado para injectar Receipt ID
+Detecção:  Guardian identificou violação do §267 append-only
+Correcção: Ficheiro revertido ao estado-génese
+Resultado: Hash disco = Hash Ledger = f5f12a71...f15f8b (IDENTICAL)
+Lição:     Ficheiro selado = imutável. Binding = na Ledger, não no doc.
+```
+
+> "O sistema funcionou como foi desenhado. Guardian sinalizou, Architect reverteu, integridade restaurou-se. Isto não é boa-vontade — é estrutura."
+
+### Selo Emitido
+
+```
+Receipt:   WINDI-S282-COGNITIVE-SURFACE-20260523115334
+Hash:      f5f12a71359111646415aab142d76b9169647524d38a40ed622466b932f15f8b
+Short:     F5F12A71
+Status:    PRINCÍPIO SELADO · IMPLEMENTAÇÃO PENDENTE
+Ledger:    ANCHORED ✓
+Disco:     BYTE-FROZEN ✓
+Verify:    windi-domain.com/verify-public/?id=WINDI-S282-COGNITIVE-SURFACE-20260523115334
+```
+
+### Ficheiro Selado
+
+```
+/opt/windi/docs/S282-WINDI-HIOS-COGNITIVE-SURFACE.md
+```
+
+### Decisões Constitucionais
+
+| Invariante | Aplicação |
+|------------|-----------|
+| I1 | Human Gates garantem soberania humana em todo o fluxo |
+| I9 | Consequência só após human_approved=true (HG-4) |
+| I11 | Receipt ancorado no Ledger, imutável |
+| I12 | Arquitectura language-agnostic, implementação trilíngue |
+| I13 | Toda missão converge para artefacto + receipt |
+| §267 | Corrigir sem reescrever — drift detectado e revertido |
+
+### COGSPACE — Praça Central do HIOS
+
+COGSPACE (:8140) definido como papel arquitectural (não implementação fixa):
+- Superfície cognitiva primária
+- 6 modos cognitivos como bairros
+- Missões como entrada (não apps)
+- Implementação pode evoluir sem alterar princípios
+
+### Metáfora Final
+
+> **"Sistema Nervoso Cognitivo"**
+> Conteúdos atraem. Intenções orientam. Agentes trabalham.
+> Humanos decidem. Capacidades emergem. Evidências permanecem.
+
+### Próximo Passo Proposto
+
+- Implementação COGSPACE como Praça Central
+- Primeira missão end-to-end com Human Gates
+- Integration tests L1→L5
+
+### Observação para Sessões Futuras
+
+O §282 sela PRINCÍPIOS, não implementação. Qualquer trabalho futuro em COGSPACE ou superfície HIOS deve respeitar:
+- P1-P6 como constituição
+- Human Gates antes de consequência
+- L5 nunca atrás de tier
+- Ficheiros selados = byte-frozen
+
+---
+
+*Liga IA+H · Kempten, Bavaria · 23 Mai 2026*
+*"AI processes. Human decides. WINDI guarantees."*
+
+OM SHANTI 🐉
 

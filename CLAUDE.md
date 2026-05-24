@@ -531,6 +531,8 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 24 Mai | **§283** WINDI-HIOS Teaser Trilogy Closure · `4CFD959E` ✅ |
+| 22 Mai | **§282** WINDI-HIOS Cognitive Surface + Teaser Production · `F5F12A71` ✅ |
 | 15 Mai | **§246-IMPL-bis** G3 Merkle Transparency Log GENESIS · `66189307` ✅ |
 | 14 Mai | **§262-§263** WINDI-HIOS + PingPong Protocol · `6F053E65`+`87AAF5BA` ✅ |
 | 12 Mai | **§250** Lei VII I18 Organic Growth + .wcap v0.1.0 Schema · `D00095E0`+`C52AA629` ✅ |
@@ -672,6 +674,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | **HIOS** | `08805713` | §265 Drift Monitor Metrics — M1/M2/M3 Trinca |
 | **HIOS** | `ddb0659b` | §275 W-COGSPACE-001-SOLO + W-VOX v1 LOCAL-ONLY |
 | **HIOS** | `48dcdc19` | §276 TIER-RESOLUTION-CANON — DID→Dragon Mapping |
+| **HIOS** | `4CFD959E` | §283 WINDI-HIOS Teaser Trilogy — O Eco da Assimetria PT/EN/DE |
 
 > **Full receipts list:** `CLAUDE-HISTORY.md` § Produtos SEALED
 > **HD-MIRROR Reference:** `/opt/windi/docs/PROOF-SELF-CORRECTION-WITHOUT-REWRITE.md`
