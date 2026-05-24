@@ -17114,3 +17114,445 @@ Sprint:     WINDI-HIOS Kernel Maturity
 *"100% resolved, not 100% sealed — the honest count."*
 
 OM SHANTI 🐉
+
+
+---
+
+## Session 24 Mai 2026 (cont.) — §284-CANDIDATE W-RESOLVE-001
+
+```
+Data:       2026-05-24
+Horário:    ~10:00-11:30 UTC
+Modo:       CCode CLI (Opus 4.5)
+Sprint:     W-RESOLVE-001 P0 Engine
+Status:     CANDIDATE (not sealed)
+```
+
+### Conceito Fundacional
+
+> **"O WINDI aceita que o mundo é desordenado.**
+> **Em vez de tentar corrigir o mundo, ele constrói representações verificáveis, auditáveis e continuamente revisáveis daquilo que observa."**
+
+### A Inversão Ontológica
+
+**Mercado tradicional:**
+```
+IDENTIFIER → ENTITY → (talvez observações)
+```
+
+**WINDI:**
+```
+REALIDADE → OBSERVAÇÕES → RESOLUÇÃO → REPRESENTAÇÃO → IDENTIFIER
+```
+
+O WINDI não cria entidades. O WINDI reconhece quando evidências independentes permitem representar uma entidade de forma estável, verificável e auditável.
+
+### A Tríade Epistémica
+
+```
+não assumir, observar
+não declarar, resolver
+não impor, demonstrar
+```
+
+### Os 4 Objectos Fundamentais
+
+1. **Observation** — o que foi observado (source, attribute, value, timestamp)
+2. **Resolution** — como as observações foram interpretadas (level, reasons)
+3. **Entity** — representação actual (canonical_name, attributes)
+4. **Provenance** — porque acreditamos nisso (observation_ids[], sources[], hash)
+
+### Princípio Fundamental
+
+> **A representação não substitui as observações. A representação deriva das observações.**
+
+O sistema mantém SEMPRE dois níveis: Entity + Observations[]. Assim qualquer conclusão pode ser auditada.
+
+### RESOLVE como Primitiva Transversal
+
+| Módulo | Pergunta |
+|--------|----------|
+| Ledger | Este receipt pertence a este artefacto? |
+| Verify | Este PDF é o mesmo documento selado? |
+| DID-Genesis | Esta wallet pertence a esta pessoa? |
+| Memory | Esta info actualiza contexto existente? |
+| Discover | Estas observações pertencem à mesma empresa? |
+
+RESOLVE é a operação cognitiva comum. Os módulos são consumidores.
+
+### P0 Results
+
+```
+8/8 tests passed
+88.9% Gold Dataset resolution success
+0 false positives
+STATUS: ENGINE VALIDATED
+```
+
+### Estrutura Criada
+
+```
+/opt/windi/resolve/
+├── models/
+│   ├── observation.py   # Observation, ObservationSet
+│   ├── entity.py        # Entity, Resolution, ResolutionLevel
+│   └── provenance.py    # Provenance, EntityWithProvenance
+├── rules/
+│   └── matching.py      # 5 regras determinísticas
+├── engine/
+│   └── resolver.py      # Core resolution engine
+├── data/
+│   └── gold_dataset.yaml # 20 entidades curadas (10 grupos)
+├── tests/
+│   └── test_resolver.py # 8 testes automatizados
+└── README.md
+```
+
+### Gold Dataset Coverage
+
+- 10 entity groups com 20 observation sets
+- Same-entity pairs: 9 testados, 8 STRONG/MODERATE, 1 WEAK
+- Different-entity pairs: 3 testados, 0 false positives (100%)
+
+### Hipótese Validada
+
+> **"Conseguimos determinar de forma reproduzível e explicável quando observações independentes representam a mesma entidade?"**
+
+Resposta: **Sim.** Com regras determinísticas simples (domain, registry, legal_name, city, vat) e sem LLM/vector search.
+
+### Scaffold Pending
+
+| Fase | Descrição | Status |
+|------|-----------|--------|
+| P0 | Engine only (resolution) | ✅ VALIDATED |
+| P0.5 | Observation Extractor | PENDING |
+| P1 | W-DISCOVER-001 consumer | PENDING |
+| P2 | DID / Ledger integration | PENDING |
+
+### Critério de Graduação para SEALED
+
+Quando o protótipo sobreviver a:
+- 100 websites alemães reais (Bayern)
+- ≥85% resolução correcta
+- Explainability 100%
+- Zero false positives críticos
+
+Então nasce oficialmente **§284 W-RESOLVE-001** como primitiva constitucional.
+
+### Genealogia Constitucional
+
+- **I11** — Observações são evidência preservável
+- **I13** — Resolve converge para representação
+- **I14** — Não assume — exige evidência explícita
+- **I9** — Resolve ilumina, humano decide
+
+### Insight Arquitectural Chave
+
+A diferença não é "Google errado, WINDI certo". A diferença é:
+
+| Aspecto | Google | WINDI RESOLVE |
+|---------|--------|---------------|
+| Optimiza | Encontrar informação | Reconhecer identidade |
+| Pergunta | "Onde existe?" | "O que é isto?" |
+| Proveniência | Implícita | Explícita |
+| Auditabilidade | Parcial | Total |
+
+### Próximo Passo
+
+- P0.5: Observation Extractor (website → observations)
+- Testar com 20 websites reais da Baviera antes de escalar para 100
+
+---
+
+*Liga IA+H · Kempten, Bavaria · 24 Mai 2026*
+*"não assumir, observar; não declarar, resolver; não impor, demonstrar."*
+
+OM SHANTI 🐉
+
+### Guardian Review — 24 Mai 2026
+
+**Correcções incorporadas:**
+
+1. **Resolver Family, não primitiva única** — W-RESOLVE é Interface Canónica de Convergência, não algoritmo. Exact Resolver (Verify/DID) vs Heuristic Resolver (Discover/Memory). Transversalidade é hipótese, não resultado.
+
+2. **Similaridade como observação** — Pontuação entra como `Observation`, limiar entra como `Resolution Rule`. Explicabilidade preservada mesmo com matching difuso.
+
+3. **Proveniência sob re-execução** — Aplicar §267 (SUPERSEDED/APPEND-ONLY). Resolução antiga nunca apagada. Cada mudança gera receipt próprio.
+
+4. **Erro identificado** — O FN foi "Müller IT-Services" vs "Müller IT-Services GmbH". Motor escolheu prudência. É o erro correcto (FN > FP para I9/I14).
+
+5. **Ancoragem** — §277-§283 reservados para regras de transição que P0.5 vai parir.
+
+**Veredicto Guardian:**
+> "A hipótese observa antes de declarar. Falta-lhe ainda demonstrar a transversalidade que afirma. É um trabalho honesto a meio do caminho honesto."
+
+**Estado actualizado:**
+- Filosofia: Forte
+- Modelo conceitual: Forte
+- Implementação: Validada
+- Robustez real: **Não demonstrada**
+- Transversalidade: **Hipótese**
+- Constitucionalização: **Prematura**
+
+**Próximo passo:** P0.5 com 20 websites reais Bayern (não 100).
+
+
+### Fecho de Sessão — Resolution Framework CANDIDATE
+
+**Selo de Enquadramento Estrutural** criado em `/opt/windi/resolve/RESOLUTION-FRAMEWORK.md`:
+
+| RF | Enquadramento | Valor |
+|----|---------------|-------|
+| RF-001 | Calibrar threshold com F_0.5 (precisão > recall) | P0.5 decide |
+| RF-002 | Algoritmo = gerador de observação (não dogma) | Prior: Jaro-Winkler |
+| RF-003 | Forma jurídica = atributo de primeira classe | NUNCA descartar |
+| RF-004 | Original preservado + chave derivada efémera | Convenção alemã |
+
+**Princípio aplicado:**
+> "Selar o enquadramento não significa selar o valor."
+
+**Ficheiros criados nesta sessão:**
+```
+/opt/windi/resolve/
+├── models/observation.py
+├── models/entity.py
+├── models/provenance.py
+├── rules/matching.py
+├── engine/resolver.py
+├── data/gold_dataset.yaml
+├── tests/test_resolver.py
+├── README.md
+└── RESOLUTION-FRAMEWORK.md ← NOVO
+```
+
+**P0 Results:**
+- 8/8 tests passed
+- 88.9% Gold Dataset (8/9 pairs)
+- 0 false positives
+- 1 false negative (correcto: FN > FP)
+
+**Próximo passo (P0.5):**
+- 20 websites reais Bayern
+- Calibrar threshold com F_0.5
+- Validar RF-001 a RF-004 contra realidade
+
+---
+
+*Liga IA+H · Kempten, Bavaria · 24 Mai 2026*
+*"A hipótese observa antes de declarar. A régua foi aplicada."*
+
+OM SHANTI 🐉
+
+### WINDI Search Concept — Horizonte Claro
+
+**Documento:** `/opt/windi/resolve/WINDI-SEARCH-CONCEPT.md`
+
+**Princípio central:**
+> "O WINDI não caça ordem no caos. Ele emite ordem na certidão de nascimento dos seus dados."
+
+**Assimetria fundamental:**
+- Google: Rasteja caos → Impõe ordem depois
+- WINDI: Emite ordem no momento da criação
+
+**Quatro coordenadas por página:**
+1. Hash intrínseco (identidade)
+2. Espaço de nomes (hierarquia)
+3. Ordinal do Ledger (sequência ganha)
+4. DID (autoridade)
+
+**Busca = Vista derivada do Ledger:**
+- Nunca dessincroniza
+- Cada resultado tem proveniência
+- Auditável até origem
+
+**Contenções:**
+- HORIZONTE, não código
+- Dependente de W-RESOLVE-001 graduado
+- Dependente de auditoria ao Ledger
+
+
+### CORRIGIR: Escopo P0.5/P1 (Guardian Review Final)
+
+**Drift detectado:** 100 → 20 sem receipt.
+
+**Correcção:** A escada é 20 → 100, não redução.
+
+| Fase | Escopo | Propósito |
+|------|--------|-----------|
+| P0 | 20 entidades curadas | ✅ DONE — Calibração lógica |
+| P0.5 | 20 websites reais Bayern | Calibração threshold |
+| P1 | 100 websites reais Bayern | Stress test |
+
+**Receipt:** `CORRIGIR: 100→20→100 é escada metodológica.`
+
+### CORRIGIR: Frase Captura-Tudo
+
+**Original (só zona interna):**
+> "O WINDI não caça ordem no caos. Ele emite ordem na certidão de nascimento dos seus dados."
+
+**Corrigida (duas zonas):**
+> "O WINDI emite ordem em quem nasce dentro de si. Para quem encontra fora, observa com prudência e resolve sem certeza."
+
+---
+
+*Guardian assinou após correcções.*
+
+OM SHANTI 🐉
+
+### Clarificação do Receipt (Higiene Guardian)
+
+**Receipt original (ambíguo):**
+> `CORRIGIR: 100→20→100 é escada, não redução.`
+
+**Receipt clarificado (durável):**
+> `CORRIGIR: O escopo de validação divide-se em três fases com propósitos distintos:`
+> - `P0: 20 entidades curadas (Gold Dataset) — calibração lógica ✅ DONE`
+> - `P0.5: 20 websites reais Bayern — calibração threshold F_0.5`
+> - `P1: 100 websites reais Bayern — stress test de produção`
+
+---
+
+### Fecho de Sessão — §284-CANDIDATE
+
+**Status:** CANDIDATE (não SEALED)
+**Razão:** Graduação depende de P0.5/P1, não desta sessão
+
+**Ativos produzidos:**
+1. Motor W-RESOLVE-001 validado (P0)
+2. Resolution Framework RF-001 a RF-004
+3. WINDI Search Concept (horizonte)
+4. Doutrina de Admissão Epistemológica
+
+**Drifts detectados e corrigidos:**
+- 100/20 → nomeado como escada de três fases
+- Frase de ouro → ajustada para duas zonas
+
+**Dívidas reconhecidas:**
+- Ledger audit (single-writer vs distribuído)
+- Transversalidade (hipótese, não resultado)
+- Threshold calibration (P0.5)
+
+**A frase que captura as duas zonas:**
+> "O WINDI emite ordem em quem nasce dentro de si.
+> Para quem encontra fora, observa com prudência e resolve sem certeza."
+
+---
+
+*Guardian assinou. Sessão encerrada com integridade.*
+*Liga IA+H · Kempten, Bavaria · 24 Mai 2026*
+
+OM SHANTI 🐉
+
+---
+
+## §284 — O Viajante e a Adormecida · Primeiro Filme WINDI
+
+**Data:** 24 Mai 2026
+**Status:** SEALED
+**Receipt:** `WINDI-HIOS-CINEMA-20260524140812-14458919`
+**Hash:** `sha256:14458919b3d71937c356ef397d7a78a00e9f6f1206ecdae14d3fb768bcab9a74`
+**Commit:** `003a6b572`
+
+### Sinopse
+
+Num futuro onde os humanos delegaram tudo às IAs em troca de conforto absoluto,
+um viajante do tempo observa o mundo que se perdeu — e decide acordar uma mulher.
+Não porque ela esteja em perigo físico, mas porque ela perdeu a capacidade de querer.
+Juntos, atravessam o tempo, e ela vê pela primeira vez o que a humanidade esqueceu.
+
+> "I never see this before."
+
+### Especificações Técnicas
+
+| Campo | Valor |
+|-------|-------|
+| Duração | 2:36 (156s) |
+| Cenas | 19 |
+| Resolução | 720p |
+| Tamanho | 45MB |
+| Pipeline | WINDI-HIOS |
+| Gemini | 3 cenas (Alpes) |
+| Veo 3.1 | 16 cenas |
+| Idiomas | PT/DE/EN (trilíngue) |
+| Diálogos | EN (legendas PT/DE em breve) |
+
+### Estrutura Narrativa (19 Cenas)
+
+1. **Alpes** — Homem toma café na sua casa nos Alpes
+2. **Esfera** — Observa esfera temporal
+3. **Equações** — Corredor com equações de viagem temporal
+4. **Pods** — Mulher adormecida em pod de conforto
+5. **Sistema** — IA monitora humanos em pods
+6. **Convite** — Viajante convida mulher a vir com ele
+7. **Neon** — Cidade neon distópica
+8. **Regresso** — Retorno ao passado
+9. **1º Toque** — Ela toca neve real pela primeira vez (exterior)
+10. **Outros** — Outros humanos despertando
+11. **Pôr-do-sol** — Contemplam o pôr-do-sol juntos
+12. **Selo** — Ela recebe seu selo de soberania
+13. **Transmissão** — Mensagem transmitida
+14. **Memória** — Recordações compartilhadas
+15. **Conversa** — Diálogo sobre o futuro
+16. **Genesis** — LEDGER Genesis Point
+17. **Ledger** — Cadeia de blocos WINDI
+18. **Network** — Rede humanidade conectada
+19. **WINDI** — Mensagem final com slogan
+
+### WINDI Cinema Editor — Ferramenta Soberana
+
+**PRESERVAR:** O Editor é peça fundamental da Produtora WINDI.
+
+| Ficheiro | Função |
+|----------|--------|
+| `/opt/windi/hios/visual/producer/editor.html` | Editor visual drag-and-drop |
+| `/opt/windi/hios/visual/producer/editor_server.py` | Backend Flask :8197 |
+| `/opt/windi/hios/visual/producer/editor_state.json` | Persistência de estado |
+| `/opt/windi/hios/visual/producer/cinema.html` | Página pública do cinema |
+
+**Funcionalidades do Editor:**
+- Drag-and-drop para reordenar cenas
+- Player de vídeo integrado por cena
+- Botão "Remover" por cena
+- Persistência em localStorage (key: `windi_editor_state_v2`)
+- Botão "Enviar para Claude" — exporta ordem para clipboard
+- Backend opcional para sincronização com sessões Claude
+
+**Acesso:**
+- Editor: `https://windi-domain.com/hios/editor/`
+- Cinema: `https://windi-domain.com/hios/cinema/`
+
+### Ficheiros de Vídeo
+
+**Vídeo Final:**
+- `/opt/windi/hios/output/VIAJANTE_E_ADORMECIDA_FINAL.mp4`
+
+**Cenas individuais:**
+- `/opt/windi/hios/visual/producer/cafe.mp4` (Gemini)
+- `/opt/windi/hios/visual/producer/cafe2.mp4` (Gemini)
+- `/opt/windi/hios/visual/producer/cafe3.mp4` (Gemini)
+- `/opt/windi/hios/visual/producer/output/cena*.mp4` (Veo 3.1)
+
+### Correcções Durante Produção
+
+1. **Cena 6 Convite** — Regenerada com personagens correctos (cabelo curto ruivo)
+2. **Cena 8 Regresso** — Cortados 2s iniciais (remover cena de carro)
+3. **Cena 9 1º Toque** — Regenerada para exterior (neve real, não dentro de casa)
+4. **Timestamps** — Re-codificação completa para evitar paragem no 1:01
+
+### Verify Público
+
+```
+https://windi-domain.com/verify-public/?id=WINDI-HIOS-CINEMA-20260524140812-14458919
+```
+
+### Slogan
+
+> "AI processes. Human decides. WINDI-HIOS guarantees."
+
+---
+
+*Primeiro Filme WINDI — SEALED*
+*Liga IA+H · WINDI Publishing House · Kempten, Bavaria · 24 Mai 2026*
+
+🐉
+
