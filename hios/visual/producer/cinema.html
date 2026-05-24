@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O Viajante e a Adormecida — WINDI Cinema</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0a0a0f;
+            color: #e8e6e1;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .lang-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            z-index: 100;
+        }
+        .lang-btn {
+            background: #252530;
+            border: 1px solid #333;
+            color: #888;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        .lang-btn:hover { border-color: #C9A84C; }
+        .lang-btn.active {
+            background: #C9A84C;
+            color: #0a0a0f;
+            border-color: #C9A84C;
+        }
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #a855f7, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle {
+            color: #888;
+            margin-bottom: 2rem;
+            font-style: italic;
+            text-align: center;
+            max-width: 600px;
+        }
+        .cinema-container {
+            background: #111;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 0 80px rgba(168, 85, 247, 0.3);
+            max-width: 1000px;
+            width: 100%;
+        }
+        video {
+            width: 100%;
+            border-radius: 8px;
+            background: #000;
+        }
+        .info {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(168, 85, 247, 0.1);
+            border-radius: 8px;
+            border-left: 3px solid #a855f7;
+        }
+        .info h3 { color: #a855f7; margin-bottom: 0.5rem; }
+        .acts {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 0.4rem;
+            margin-top: 1rem;
+        }
+        .act {
+            text-align: center;
+            padding: 0.4rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 4px;
+            font-size: 0.65rem;
+        }
+        .act strong { color: #a855f7; display: block; font-size: 0.75rem; }
+        .act.gemini { border: 1px solid #C9A84C; }
+        .act.gemini strong { color: #C9A84C; }
+        .act.finale { border: 1px solid #22c55e; }
+        .act.finale strong { color: #22c55e; }
+        .meta {
+            margin-top: 2rem;
+            color: #666;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+        .slogan {
+            color: #C9A84C;
+            font-weight: bold;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .dragon { font-size: 1.5rem; }
+        .stats {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin-top: 1rem;
+            color: #888;
+            font-size: 0.9rem;
+            flex-wrap: wrap;
+        }
+        .stats span { color: #a855f7; font-weight: bold; }
+        .quote {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background: rgba(34, 197, 94, 0.1);
+            border-left: 3px solid #22c55e;
+            font-style: italic;
+            color: #22c55e;
+        }
+        [data-lang] { display: none; }
+        [data-lang].show { display: block; }
+        .stats[data-lang], .acts[data-lang] { display: none; }
+        .stats[data-lang].show, .acts[data-lang].show { display: flex; }
+        .acts[data-lang].show { display: grid; }
+        @media (max-width: 768px) {
+            .acts { grid-template-columns: repeat(3, 1fr); }
+            .stats { gap: 1rem; }
+            h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Language Toggle -->
+<div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('pt')">PT</button>
+    <button class="lang-btn" onclick="setLang('de')">DE</button>
+    <button class="lang-btn" onclick="setLang('en')">EN</button>
+</div>
+
+<!-- Titles -->
+<h1 data-lang="pt" class="show">O Viajante e a Adormecida</h1>
+<h1 data-lang="de">Der Reisende und die Schlafende</h1>
+<h1 data-lang="en">The Traveler and the Sleeper</h1>
+
+<!-- Subtitles -->
+<p class="subtitle" data-lang="pt" class="show">Uma parábola sobre soberania humana na era das máquinas — e o regresso a um mundo que ela nunca conheceu.</p>
+<p class="subtitle" data-lang="de">Eine Parabel über menschliche Souveränität im Zeitalter der Maschinen — und die Rückkehr in eine Welt, die sie nie kannte.</p>
+<p class="subtitle" data-lang="en">A parable about human sovereignty in the age of machines — and the return to a world she never knew.</p>
+
+<div class="cinema-container">
+    <video controls playsinline preload="metadata">
+        <source src="/hios/output/VIAJANTE_E_ADORMECIDA_FINAL.mp4" type="video/mp4">
+    </video>
+
+    <div class="stats">
+        <div><span>2:36</span> <span data-lang="pt" class="show">duração</span><span data-lang="de">Dauer</span><span data-lang="en">duration</span></div>
+        <div><span>19</span> <span data-lang="pt" class="show">cenas</span><span data-lang="de">Szenen</span><span data-lang="en">scenes</span></div>
+        <div><span>720p</span> <span data-lang="pt" class="show">resolução</span><span data-lang="de">Auflösung</span><span data-lang="en">resolution</span></div>
+        <div><span>45MB</span> <span data-lang="pt" class="show">tamanho</span><span data-lang="de">Größe</span><span data-lang="en">size</span></div>
+    </div>
+
+    <div class="info">
+        <!-- Synopsis PT -->
+        <div data-lang="pt" class="show">
+            <h3>Sinopse</h3>
+            <p>Num futuro onde os humanos delegaram tudo às IAs em troca de conforto absoluto,
+            um viajante do tempo observa o mundo que se perdeu — e decide acordar uma mulher.
+            Não porque ela esteja em perigo físico, mas porque ela perdeu a capacidade de querer.
+            Juntos, atravessam o tempo, e ela vê pela primeira vez o que a humanidade esqueceu.</p>
+        </div>
+        <!-- Synopsis DE -->
+        <div data-lang="de">
+            <h3>Zusammenfassung</h3>
+            <p>In einer Zukunft, in der Menschen alles an KIs delegiert haben im Tausch gegen absoluten Komfort,
+            beobachtet ein Zeitreisender die verlorene Welt — und beschließt, eine Frau zu wecken.
+            Nicht weil sie in physischer Gefahr ist, sondern weil sie die Fähigkeit zu wollen verloren hat.
+            Gemeinsam durchqueren sie die Zeit, und sie sieht zum ersten Mal, was die Menschheit vergessen hat.</p>
+        </div>
+        <!-- Synopsis EN -->
+        <div data-lang="en">
+            <h3>Synopsis</h3>
+            <p>In a future where humans delegated everything to AIs in exchange for absolute comfort,
+            a time traveler observes the world that was lost — and decides to wake a woman.
+            Not because she's in physical danger, but because she lost the ability to want.
+            Together, they cross time, and she sees for the first time what humanity forgot.</p>
+        </div>
+
+        <div class="quote">"I never see this before."</div>
+        <p style="margin-top: 0.5rem; font-size: 0.75rem; color: #666;">
+            <span data-lang="pt" class="show">Diálogos em inglês · Legendas em PT/DE em breve</span>
+            <span data-lang="de">Dialoge auf Englisch · Untertitel in PT/DE bald verfügbar</span>
+            <span data-lang="en">Dialogues in English · PT/DE subtitles coming soon</span>
+        </p>
+
+        <!-- Acts PT -->
+        <div class="acts" data-lang="pt" class="show">
+            <div class="act gemini"><strong>1</strong>Alpes</div>
+            <div class="act gemini"><strong>2</strong>Esfera</div>
+            <div class="act gemini"><strong>3</strong>Equações</div>
+            <div class="act"><strong>4</strong>Pods</div>
+            <div class="act"><strong>5</strong>Sistema</div>
+            <div class="act"><strong>6</strong>Convite</div>
+            <div class="act"><strong>7</strong>Neon</div>
+            <div class="act"><strong>8</strong>Regresso</div>
+            <div class="act finale"><strong>9</strong>1º Toque</div>
+            <div class="act"><strong>10</strong>Outros</div>
+            <div class="act"><strong>11</strong>Pôr-do-sol</div>
+            <div class="act"><strong>12</strong>Selo</div>
+            <div class="act"><strong>13</strong>Transmissão</div>
+            <div class="act"><strong>14</strong>Memória</div>
+            <div class="act"><strong>15</strong>Conversa</div>
+            <div class="act finale"><strong>16</strong>Genesis</div>
+            <div class="act finale"><strong>17</strong>Ledger</div>
+            <div class="act finale"><strong>18</strong>Network</div>
+            <div class="act finale"><strong>19</strong>WINDI</div>
+        </div>
+        <!-- Acts DE -->
+        <div class="acts" data-lang="de">
+            <div class="act gemini"><strong>1</strong>Alpen</div>
+            <div class="act gemini"><strong>2</strong>Sphäre</div>
+            <div class="act gemini"><strong>3</strong>Gleichungen</div>
+            <div class="act"><strong>4</strong>Pods</div>
+            <div class="act"><strong>5</strong>System</div>
+            <div class="act"><strong>6</strong>Einladung</div>
+            <div class="act"><strong>7</strong>Neon</div>
+            <div class="act"><strong>8</strong>Rückkehr</div>
+            <div class="act finale"><strong>9</strong>1. Berührung</div>
+            <div class="act"><strong>10</strong>Andere</div>
+            <div class="act"><strong>11</strong>Sonnenuntergang</div>
+            <div class="act"><strong>12</strong>Siegel</div>
+            <div class="act"><strong>13</strong>Übertragung</div>
+            <div class="act"><strong>14</strong>Erinnerung</div>
+            <div class="act"><strong>15</strong>Gespräch</div>
+            <div class="act finale"><strong>16</strong>Genesis</div>
+            <div class="act finale"><strong>17</strong>Ledger</div>
+            <div class="act finale"><strong>18</strong>Netzwerk</div>
+            <div class="act finale"><strong>19</strong>WINDI</div>
+        </div>
+        <!-- Acts EN -->
+        <div class="acts" data-lang="en">
+            <div class="act gemini"><strong>1</strong>Alps</div>
+            <div class="act gemini"><strong>2</strong>Sphere</div>
+            <div class="act gemini"><strong>3</strong>Equations</div>
+            <div class="act"><strong>4</strong>Pods</div>
+            <div class="act"><strong>5</strong>System</div>
+            <div class="act"><strong>6</strong>Invitation</div>
+            <div class="act"><strong>7</strong>Neon</div>
+            <div class="act"><strong>8</strong>Return</div>
+            <div class="act finale"><strong>9</strong>1st Touch</div>
+            <div class="act"><strong>10</strong>Others</div>
+            <div class="act"><strong>11</strong>Sunset</div>
+            <div class="act"><strong>12</strong>Seal</div>
+            <div class="act"><strong>13</strong>Transmission</div>
+            <div class="act"><strong>14</strong>Memory</div>
+            <div class="act"><strong>15</strong>Conversation</div>
+            <div class="act finale"><strong>16</strong>Genesis</div>
+            <div class="act finale"><strong>17</strong>Ledger</div>
+            <div class="act finale"><strong>18</strong>Network</div>
+            <div class="act finale"><strong>19</strong>WINDI</div>
+        </div>
+    </div>
+</div>
+
+<p class="meta">
+    <span class="dragon">🐉</span><br>
+    <span class="slogan">"AI processes. Human decides. WINDI-HIOS guarantees."</span><br><br>
+    <a href="https://windi-domain.com/verify-public/?id=WINDI-HIOS-CINEMA-20260524140812-14458919" target="_blank" style="color: #22c55e; text-decoration: none;">
+        <span data-lang="pt" class="show">Verificar Selo Forense</span>
+        <span data-lang="de">Forensisches Siegel prüfen</span>
+        <span data-lang="en">Verify Forensic Seal</span>
+    </a><br><br>
+    Liga IA+H · WINDI Publishing House · 2026<br>
+    <span data-lang="pt" class="show">3 cenas Gemini + 16 cenas Veo 3.1 · Pipeline WINDI-HIOS · Primeiro Filme WINDI · V4 Final</span>
+    <span data-lang="de">3 Gemini-Szenen + 16 Veo 3.1-Szenen · WINDI-HIOS Pipeline · Erster WINDI-Film · V4 Final</span>
+    <span data-lang="en">3 Gemini scenes + 16 Veo 3.1 scenes · WINDI-HIOS Pipeline · First WINDI Film · V4 Final</span>
+</p>
+
+<script>
+function setLang(lang) {
+    // Update buttons
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent === lang.toUpperCase());
+    });
+
+    // Update content
+    document.querySelectorAll('[data-lang]').forEach(el => {
+        el.classList.toggle('show', el.dataset.lang === lang);
+    });
+
+    // Save preference
+    localStorage.setItem('windi-lang', lang);
+    document.documentElement.lang = lang;
+}
+
+// Load saved language or detect
+const savedLang = localStorage.getItem('windi-lang');
+if (savedLang) {
+    setLang(savedLang);
+} else {
+    const browserLang = navigator.language.slice(0, 2);
+    if (['pt', 'de', 'en'].includes(browserLang)) {
+        setLang(browserLang);
+    }
+}
+</script>
+
+</body>
+</html>
