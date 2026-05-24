@@ -530,6 +530,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 24 Mai | **§266** WINDI-HIOS Kernel HIGH Resolution · `7218397B` · 8 SEALED + 1 CANDIDATE ✅ |
 | 24 Mai | **§283** WINDI-HIOS Teaser Trilogy Closure · `4CFD959E` ✅ |
 | 23 Mai | **§282** WINDI-HIOS Cognitive Surface Architecture · `F5F12A71` · 5L + 6P + HG ✅ |
 | 15 Mai | **§246-IMPL-bis** G3 Merkle Transparency Log GENESIS · `66189307` ✅ |
@@ -670,6 +671,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | **HIOS** | `48dcdc19` | §276 TIER-RESOLUTION-CANON — DID→Dragon Mapping |
 | **HIOS** | `F5F12A71` | §282 Cognitive Surface Architecture — 5 Layers + 6 Principles + Human Gates |
 | **HIOS** | `4CFD959E` | §283 WINDI-HIOS Teaser Trilogy — O Eco da Assimetria PT/EN/DE |
+| **HIOS** | `7218397B` | §266 Kernel HIGH Questions — 8 SEALED + 1 CANDIDATE |
 
 > **Full receipts list:** `CLAUDE-HISTORY.md` § Produtos SEALED
 > **HD-MIRROR Reference:** `/opt/windi/docs/PROOF-SELF-CORRECTION-WITHOUT-REWRITE.md`

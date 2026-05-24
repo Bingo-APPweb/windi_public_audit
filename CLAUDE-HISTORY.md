@@ -6,12 +6,106 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
-## § SESSÃO 24 Mai 2026 — §283 WINDI-HIOS Teaser Trilogy Closure
+## § SESSÃO 24 Mai 2026 — §266 Kernel HIGH Resolution + §283 Trilogy Closure
 
-**Duração:** ~15min | **Status:** ✅ §283 SEALED
-**Liga IA+H:** Human Dragon · Architect (CCode Opus 4.5)
-**Invariants:** I9, I11, I12
-**Natureza:** Consolidação + Seal formal do Teaser Trilogy
+**Duração:** ~3h | **Status:** ✅ §266 SEALED + §283 SEALED
+**Liga IA+H:** Human Dragon (Guardian) · Architect (CCode Opus 4.5)
+**Invariants:** I1, I9, I11, I12, I14
+**Natureza:** Constitutional Kernel Maturity + Production Closure
+
+### Marcos da Sessão
+
+| Timestamp | Milestone | Receipt |
+|-----------|-----------|---------|
+| 06:53 | §283 Teaser Trilogy Closure | `4CFD959E` |
+| 07:06 | W-DEV-API-001 :8200 fix | — |
+| 09:35 | §266 Kernel HIGH Resolution | `7218397B` |
+
+---
+
+### §266 WINDI-HIOS Kernel HIGH Questions Resolution
+
+**O trabalho constitucional mais significativo desde §261 (Cognitive Bind Module).**
+
+Human Dragon actuou como Guardian nesta sessão, validando propostas do Architect
+através de 3 rondas de revisão até todos os blockers serem resolvidos.
+
+#### Resoluções Seladas (8)
+
+| Q | Questão | Resolução | Ficheiro |
+|---|---------|-----------|----------|
+| Q2 | Agents sem DID persistente | `did:windi:session:*` efémero, max 24h, tier=FREE, upgrade requer HD | actors.schema.json |
+| Q3 | Session vs persistent identity | Session: FREE/STANDARD. Persistent: qualquer. Tier⊥Class ortogonais. | actors.schema.json |
+| Q8 | Admissibility expiration | CRITICAL: 1h. STANDARD: 4h. EPHEMERAL: 15min. Clock = HD admission. | admissibility.schema.json |
+| Q11 | Partial execution rollback | ATOMIC/CHECKPOINT/COMPENSATE. COMPENSATE proibido para EXTERNAL-PERMANENT. | execution.schema.json |
+| Q23 | Reclassificação | Só upgrade. Downgrade = I11 violation. Nem HD pode degradar CRITICAL. | mutation_classes.md |
+| Q25 | Constitutional impact threshold | 6 critérios. "Efeito permanente" não "dano". | mutation_classes.md |
+| Q29 | Runtime schema version detection | Header X-WINDI-Schema-Version obrigatório. Ausente = 400 reject. | kernel_manifest.json |
+| Q31 | R7 Buffer protocol | Ed25519 cobre prev_buffer_hash, CRITICAL excluído, no drop (I14). | recovery_protocol.md |
+
+#### Candidate (1)
+
+| Q | Questão | Trabalho Pendente |
+|---|---------|-------------------|
+| Q17 | Recovery HD comprometido | HD-GRACE contém STANDARD da sessão quarentinada + deadman heartbeat-only |
+
+#### 3 Rondas de Guardian Review
+
+**Ronda 1 — Blockers identificados:**
+- Q23: Contradição lógica (HD only vs Nunca)
+- Q31: "Assinatura" era identificador, não Ed25519 real
+- Q11: COMPENSATE para irreversível = promessa falsa
+
+**Ronda 2 — Endurecimentos:**
+- Q17: Gatilho Guardian independente, deadman, linkagem HD-MIRROR
+- Q29: Header ausente = reject (não legacy)
+- Q2: Upgrade nunca agent-initiated (I9)
+
+**Ronda 3 — Cortes finais:**
+- Q31: `prev_buffer_hash` DENTRO da assinatura (não fora)
+- Q11: Kernel força `irreversible=true`, não actor
+- Q17: HD-GRACE definido, deadman corrigido → CANDIDATE
+
+#### Maturidade Final
+
+```
+CRITICAL: 2/2 RESOLVED ✅
+HIGH:     8/9 SEALED ✅
+          1/9 CANDIDATE ⚠️
+= 100% RESOLVED HONESTLY
+```
+
+> "100% resolved, not 100% sealed — the distinction is deliberate."
+
+#### Ficheiros Modificados
+
+| Ficheiro | Qs | Status |
+|----------|-----|--------|
+| actors.schema.json | Q2, Q3 | §266-SEALED |
+| admissibility.schema.json | Q8 | §266-SEALED |
+| execution.schema.json | Q11 | §266-SEALED |
+| mutation_classes.md | Q23, Q25 | §266-SEALED |
+| recovery_protocol.md | Q17, Q31 | Q31 SEALED, Q17 CANDIDATE |
+| kernel_manifest.json | Q29 | §266-SEALED |
+| OPEN-QUESTIONS.md | all | Updated |
+| S266-KERNEL-HIGH-QUESTIONS-RESOLUTION.md | — | Created |
+
+---
+
+### W-DEV-API-001 :8200 Diagnóstico e Fix
+
+**Problema:** Serviço reportava `status: degraded` com `verify_public: unavailable`
+
+**Causa:** URL errado no health check:
+- Estava: `http://localhost:8145/verify/health`
+- Correcto: `http://localhost:8114/health`
+
+**Fix:** `w-dev-api-001/app/routers/health.py` linha 11
+**Commit:** `7e1e352c6`
+
+---
+
+### §283 WINDI-HIOS Teaser Trilogy Closure
 
 ### Contexto
 
