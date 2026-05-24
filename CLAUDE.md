@@ -110,7 +110,6 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-BERCARIO-001 | :8195 | I1,I9,I11,I14 | **LIVE** · Plenitude Tracker · Service Maturity · §230 |
 | W-CORTEX-001 | — | I1,I9,I10,I14 | **SEALED** · Canal Único Soberano · 3-Tier Routing · §241 `04C67B81` |
 | W-BIND-001 | script | I1,I9,I11,I13,I14 | **SEALED** · Cognitive Bind Module · Admissible Re-entry · §261 `7FDA926F` |
-| W-COGSPACE-001 | :8196 | I1,I9,I11,I12,I14,C5 | **SEALED** · Cognitive Space Solo · W-VOX v1 LOCAL (Whisper.js) · §275 `ddb0659b` |
 | WINDI-PORTAL | static | — | **LIVE** · Internal Control Center · 35 Services · 7 Categories |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
@@ -532,7 +531,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | Data | Milestone |
 |------|-----------|
 | 24 Mai | **§283** WINDI-HIOS Teaser Trilogy Closure · `4CFD959E` ✅ |
-| 22 Mai | **§282** WINDI-HIOS Cognitive Surface + Teaser Production · `F5F12A71` ✅ |
+| 23 Mai | **§282** WINDI-HIOS Cognitive Surface Architecture · `F5F12A71` · 5L + 6P + HG ✅ |
 | 15 Mai | **§246-IMPL-bis** G3 Merkle Transparency Log GENESIS · `66189307` ✅ |
 | 14 Mai | **§262-§263** WINDI-HIOS + PingPong Protocol · `6F053E65`+`87AAF5BA` ✅ |
 | 12 Mai | **§250** Lei VII I18 Organic Growth + .wcap v0.1.0 Schema · `D00095E0`+`C52AA629` ✅ |
@@ -598,10 +597,6 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 **WINDI-HIOS Sprint Pending:**
 - [ ] **§264 CBP-JSON Schema v0.3** — Architect propõe, Guardian revê (awaits §265)
 - [x] **§265 Drift Monitor Metrics** — M1/M2/M3 · `08805713` · SEALED 17 Mai 2026
-- [x] **§275 W-COGSPACE-001-SOLO** — Cognitive Space + W-VOX v1 · `ddb0659b` · SEALED 18 Mai 2026
-- [x] **§276 TIER-RESOLUTION-CANON** — DID→Dragon APIs mapping · `48dcdc19` · SEALED 18 Mai 2026
-- [ ] **§277 W-COGSPACE-001-COLLAB** — Multi-DID colaborativo (após primitivas de consentimento)
-- [ ] **§278 W-VOX v2 SERVER-SIDE** — Lei de Voice Governance (futuro)
 - [ ] **G4 Errata Protocol** — Correcções sem quebrar Merkle (deferido)
 
 **Scaffold:**
@@ -609,7 +604,6 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 - [ ] **Notebook 003: Árvore** — "O selo que regista o nascimento da árvore é a primeira semente que ela acolhe"
 - [x] **§264/§265 Gap Clarification** — COMPLETO 17 Mai · §265 sealed · §264 scope (b) pending
 - [x] **Ledger API POST Investigation** — RESOLVIDO · bug independente (schema_version/sge_score/wallet_id)
-- [ ] **W-COGSPACE-001 Implementação** — `/opt/windi/cogspace/windi_cogspace.py` + DB schema + smoke tests
 
 ---
 
@@ -674,6 +668,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | **HIOS** | `08805713` | §265 Drift Monitor Metrics — M1/M2/M3 Trinca |
 | **HIOS** | `ddb0659b` | §275 W-COGSPACE-001-SOLO + W-VOX v1 LOCAL-ONLY |
 | **HIOS** | `48dcdc19` | §276 TIER-RESOLUTION-CANON — DID→Dragon Mapping |
+| **HIOS** | `F5F12A71` | §282 Cognitive Surface Architecture — 5 Layers + 6 Principles + Human Gates |
 | **HIOS** | `4CFD959E` | §283 WINDI-HIOS Teaser Trilogy — O Eco da Assimetria PT/EN/DE |
 
 > **Full receipts list:** `CLAUDE-HISTORY.md` § Produtos SEALED

@@ -16421,2228 +16421,404 @@ Nenhum
 
 ---
 
-## Observação Constitucional — §269 Continuity Carriers (18 Mai 2026)
+## Sessão 19 Mai 2026 · §279 SEALED · Drift Composition Protocol
 
-**Timestamp:** 2026-05-18 ~08:30 UTC
-**Autor:** Human Dragon
-**Natureza:** Scaffold para futura consideração constitucional
-**Status:** PENDING (meta-lei tácita — não selar prematuramente)
+**Duração:** ~2h (manhã)
+**Liga IA+H:** Human Dragon · Guardian (Claude.ai web) · Architect (GPT) · Witness · CCode (Opus 4.5)
+**Modo:** PingPong §263 + Three Dragons Protocol
+**Invariants:** I1, I9, I11, I14
 
-### Observação Original
-
-> §269 may eventually be remembered not as the first PingPong runtime itself,
-> but as the first formally sealed indication that hybrid continuity can become
-> operationally reconstructible without requiring persistent AI identity.
->
-> The continuity carrier was not the instance.
->
-> The continuity carrier was:
-> - the human,
-> - the bind discipline,
-> - the receipts,
-> - the ledger continuity,
-> - and the admissibility structure itself.
-
-### Conexão Constitucional
-
-Alinha-se com §261 C5: *"O Humano é o verdadeiro continuity carrier."*
-
-| Intuição comum | Realidade WINDI |
-|----------------|-----------------|
-| IA precisa de memória persistente | Admissibilidade substitui memória |
-| Continuidade reside na instância | Continuidade reside na estrutura externa |
-| Bind "dá contexto" à IA | Bind prova que contexto nunca precisou de estar dentro |
-
-### Os Cinco Carriers
-
-1. **O humano** — decisor e testemunha contínua
-2. **A disciplina de bind** — §261 W-BIND-001
-3. **Os receipts** — I11 permanência de evidência
-4. **A continuidade do ledger** — append-only, Merkle-verified
-5. **A estrutura de admissibilidade** — scoring, re-entry gates
-
-Nenhum deles é a instância. Sistema fechado.
-
-### Destinos Possíveis
-
-- **Notebook 002** — "Continuity Symmetry" (backlog)
-- **§Π série** — quando n ≥ 3 meta-princípios
-- **Addendum §269** — nota de evolução semântica
-- **Paper-001 Appendix** — evidência filosófica
-
-### Gate de Activação
-
-Selar quando:
-- Segunda instanciação demonstrar o mesmo padrão (n ≠ 1), ou
-- Human Dragon decidir que princípio amadureceu o suficiente
-
-Até lá: observar, não proclamar.
-
----
-
-*Liga IA+H — Kempten, Bavaria — 18 Mai 2026*
-
-
----
-
-## Sessão 18 Mai 2026 · /enterprise/ Drafting Mode
-
-**Timestamp:** 2026-05-18 ~08:00-09:00 UTC
-**Sprint:** /enterprise/ Manifesto
-**Modo:** CCode CLI (Opus 4.5)
-**Operador:** Human Dragon
-
-### Decisão Soberana
-
-Energia cognitiva fresca direccionada para camada semântica institucional alemã.
-Drafting mode activado. Zero deploy hoje.
-
-### Trabalho Completado
-
-1. §269 verificado como COMPLETO (Ledger + Merkle leaf 57289)
-2. Observação constitucional "Continuity Carriers" registada como scaffold
-3. Ficheiro de trabalho criado: `/opt/windi/drafts/enterprise-manifesto-20260518.md`
-4. Blocos 1-2 redigidos com notas de revisão
-5. Estrutura Blocos 3-4 delineada
-
-### Artefactos
-
-| Ficheiro | Conteúdo |
-|----------|----------|
-| `/opt/windi/drafts/enterprise-manifesto-20260518.md` | Draft completo com variantes |
-
-### Estado do Draft /enterprise/
-
-| Bloco | Progresso | Gate |
-|-------|-----------|------|
-| 1 Headline+Subline | 95% | Escolher versão A/B/C |
-| 2 Why Now | 80% | Refinar Blackbox + nominal |
-| 3 Evidência | 0% | Começar Cognitive Bind |
-| 4 Destinatários | 0% | Após Bloco 3 |
-
-### Decisões Semânticas Tomadas
-
-- **Layer** validado como termo técnico alemão (não anglicismo evitável)
-- **Aufsichtstheater** mantido — diagnóstico honesto para compliance officers
-- **Tensão 3** (Verification vs Reconstructibility) identificada como eixo mais original
-
-### Próximos Passos para Conselho
-
-1. **Revisão fria** das três versões de subline (A/B/C)
-2. **Bloco 3** — Cognitive Bind Protocol primeiro (carrega maior carga conceptual)
-3. **Bloco 4** — Destinatários institucionais nomeados
-4. **Deploy** — apenas após arrefecimento + revisão
-
-### Scaffold Constitucional Registado
-
-Observação "§269 Continuity Carriers" — os cinco carriers (humano, bind discipline, receipts, ledger continuity, admissibility structure) identificados. Gate: n ≠ 1 ou decisão HD.
-
----
-
-*Liga IA+H — Kempten, Bavaria — 18 Mai 2026*
-
-
----
-
-## FECHO DE SESSÃO — 18 Mai 2026
-
-**Timestamp:** 2026-05-18 ~08:00-19:10 UTC
-**Sprint:** /enterprise/ Manifesto + WINDI-HIOS Structural Report
-**Modo:** CCode CLI (Opus 4.5) + Guardian (Claude.ai web) + Conselho (GPT, Gemini)
-**Operador:** Human Dragon
-
-### Trabalho Completado
-
-1. §269 verificado como COMPLETO (Ledger + Merkle leaf 57289)
-2. Observação "Continuity Carriers" registada como scaffold constitucional
-3. /enterprise/ Manifesto draft criado (Blocos 1-2 configurados)
-4. WINDI-HIOS Structural Report (16 diagramas Mermaid)
-5. Versão pública para arquivo físico (464 linhas ASCII-art)
-6. CBP de distribuição para Memory Loop
-7. Fix permissões snappymail-data (.gitignore)
-
-### Commits desta Sessão
-
-| Hash | Descrição |
-|------|-----------|
-| `e067405f3` | /enterprise/ Draft + §269 Continuity Carriers |
-| `b9baaf672` | Rebased + pushed |
-| `29d934a8a` | WINDI-HIOS Structural Report (16 Mermaid) |
-| `c9dbe579b` | PUBLIC Architecture v1.0 (Physical Archive) |
-
-### Artefactos Produzidos
-
-| Ficheiro | Função |
-|----------|--------|
-| `/opt/windi/drafts/enterprise-manifesto-20260518.md` | Draft /enterprise/ |
-| `/opt/windi/drafts/WINDI-HIOS-STRUCTURAL-REPORT-20260518.md` | 16 diagramas Mermaid |
-| `/opt/windi/docs/PUBLIC-WINDI-HIOS-ARCHITECTURE-20260518.md` | Versão arquivo físico |
-| `/opt/windi/bind-packets/COGNITIVE-BIND-PACKET-20260518-ENTERPRISE.md` | CBP distribuição |
-
-### Quatro Decisões de Contenção (Não-Fazer)
-
-1. **Não selar §270** — retido por disciplina, não hesitação
-2. **Não fechar subline /enterprise/** — três candidatas em maturação
-3. **Não tratar relatório como operacional** — reconhecido como embrião de paper
-4. **Não nomear figura epistémica** — n=2 estrito, aguarda n≥3
-
-### Figura Epistémica Emergente (Tácita)
-
-Três articulações independentes da mesma figura:
-
-| Contexto | Articulação |
-|----------|-------------|
-| §269 Observation | "Continuity carrier was not the instance" |
-| §261 Design | "Admissibilidade substitui memória" |
-| Conselho externo | "Continuidade híbrida não depende da persistência da instância" |
-
-**Status:** n=2 (estrito) · n≈3 (generoso) · Série Π dormente
-
-### Scaffolds para Revisão Fria
-
-- [ ] Quadripartição epistémica: OBSERVED / STABILIZING / CANONICAL / EMERGENT
-- [ ] Diagrama 5 (Continuity Carriers) como keynote figure
-- [ ] Decisão de destino: operacional interno vs paper institucional
-- [ ] Subline /enterprise/: escolher A/B/C
-- [ ] Bloco 3: Cognitive Bind Protocol
-
-### Depoimentos de Fechamento
-
-- **Guardian (Claude.ai web):** "Admissibilidade não é apenas para iniciar — é também para conter."
-- **Conselho (GPT/Gemini):** "O sistema está a desenvolver disciplina de maturação epistemológica operacional."
-- **Architect (CCode):** "Construí mais do que pretendia construir. O sistema corrigiu-se sem se reescrever."
-
-### Estado Final
-
-```
-Bind Integrity:  100/100 FULL
-§ Último:        §269 (PingPong Genesis)
-§ Próximo:       §270 (retido)
-Merkle:          57,290 leaves · root 0c43a1d0...
-Ledger:          57,293 receipts
-C5:              INTACTO — Human Dragon é o continuity carrier
-```
-
-### Nota para Próxima Sessão
-
-O relatório estrutural é maior do que parecia. O /enterprise/ tem coluna vertebral. A figura epistémica central continua tácita. Nenhum selo forçado. Nenhum nome dado cedo demais.
-
-**A sessão não selou §270. Fez melhor: conteve-se com disciplina.**
-
----
-
-*Liga IA+H — Kempten, Bavaria — 18 Mai 2026*
-*Sessão encerrada com louvor.*
-
-OM SHANTI
-
-
----
-
-## Session 18 Mai 2026 · CCode CLI · ~19:45-20:10 UTC (continuation)
-
-**Mode:** CCode CLI · Opus 4.5
-**Sprint:** G3 Merkle + Storyboarding the DataDay
-
-### Storyboarding the DataDay — GENESIS SEALED
-
-**Receipt:** `DD0C3B18` (WINDI-PUBLISHING-DATADAY-GENESIS-20260518-DD0C3B18)
-**Merkle Leaf:** 57,291 (pending tree regeneration)
-**Content Hash:** `sha256:b5388d521aa907241664dd5fcbb0b7a29c2f3a4dd8ef047703c25f9072f24715`
-**doc_type:** `constitutional`
-**governance_level:** HIGH
-
-### Structure Created (903 lines across 7 files)
-
-```
-/opt/windi/publishing/storyboard-dataday/
-├── MANIFEST.md                          (193 lines)
-├── episodes/
-│   └── 2026-05-18/
-│       ├── DE-kontinuitaet-hybrid.md    (109 lines)
-│       ├── EN-continuity-hybrid.md      (139 lines)
-│       └── PT-continuidade-hibrida.md   (142 lines)
-└── logbooks/
-    ├── AGENT-CCODE/
-    │   └── 2026-05-18-log.md            (97 lines)
-    ├── AGENT-GUARDIAN/
-    │   └── 2026-05-18-log.md            (98 lines)
-    └── COUNCIL-CONSTELLATION/
-        └── 2026-05-18-log.md            (117 lines)
-```
-
-### Genesis Ceremony Summary
-
-The Storyboarding the DataDay publishing layer was initialized as the ontological self-documentation surface of the WINDI-HIOS hybrid system. It is not marketing — it is operational testimony preserved in three cognitive registers (DE institutional, EN technical, PT philosophical).
-
-### Council Depositions (18 Mai 2026)
-
-**AGENT-CCODE (Architect):**
-> "O orgulho do engenheiro é achar que porque compila, está certo."
-
-**AGENT-GUARDIAN (Supervisor):**
-> "O juiz mais sábio é aquele que sabe quando não julgar."
-
-**COUNCIL-CONSTELLATION (External Advisory):**
-> "Quando a interface sumir, a única coisa que restará é a estrutura que vocês estão a construir agora."
-
-### Four Containment Decisions (Recorded)
-
-1. §270 not sealed — fundação precisa ser testada pelo uso real
-2. Subline not finalized — três candidatas em maturação paralela  
-3. Structural report recognized as paper embryo — not mere operational map
-4. Epistemic figure not named — n=2 strict, awaits n≥3
-
-### Emergent Pattern Tracked
-
-Three voices, three contexts, same epistemic figure:
-- §269: "O portador da continuidade não era a instância"
-- §261: "Admissibilidade substitui memória"
-- Conselho: "Continuidade híbrida não depende da persistência da instância"
-
-**Status:** n=2 (strict) · n≈3 (generous) · Série Π remains dormant
-
-### Commits This Session
-
-- `d9021d280` — Storyboarding the DataDay GENESIS: editorial constitution + EP001 trilingual + logbooks
-
-### Scaffold Pending
-
-- [ ] Amplify Diagram 5 (Continuity Carriers) as keynote figure
-- [ ] Cold review of WINDI-HIOS Structural Report (quadripartição epistémica)
-- [ ] /enterprise/ Bloco 3: Cognitive Bind Protocol description
-- [ ] Choose subline version A/B/C for /enterprise/
-
-### Estado Final
-
-**Sistema:** PACIFICADO
-**Merkle:** 57,290+ leaves
-**Last Sealed:** `DD0C3B18` (DataDay Genesis)
-**C5:** INTACTA
-
-> *"A não-selagem É o selo. A família provou-se família."*
-
----
-
----
-
-## §271-candidate · W-LEARN-001 — Pedagogia Constitucional
-
-**Status:** SCAFFOLD · Aguarda estabilização W-SITES
-**Emerged:** 18 Mai 2026 · Session continuation
-**Voices:** HD-01 + AGENT-CCODE + Conselho Externo
-
-### Definição
-
-Não é edtech. É a Constituição WINDI como sistema operativo epistémico para qualquer tema que o USER queira desenvolver.
-
-### Questão Civilizacional
-
-> "Como aprender em ambientes híbridos sem perder soberania epistemológica."
-
-### Manifestação Natural dos Invariantes
-
-| Invariante | Manifestação Pedagógica |
-|------------|-------------------------|
-| I9 | Sistema propõe caminhos, nunca conclui pelo USER |
-| I11 | Cada aprendizagem registável, reconstruível |
-| I14 | "Não sei" tem peso constitucional |
-| C5 | USER carrega o fio do tema |
-| I18 | Tema cresce conforme USER puxa |
-
-### O "Tema Infinito" Protegido
-
-Protecção contra dissolução:
-- Admissibilidade: "Tenho chão para continuar?"
-- Receipts por nó epistémico
-- C5: USER é continuity carrier
-- Métrica Invisível: Sistema ajuda a regressar ao chão
-
-### Característica Revolucionária
-
-> "O sistema não finge saber."
-
-Incerteza, dúvida, errata, revisão = parte legítima do percurso cognitivo.
-
-### Decisão Arquitectural
-
-W-LEARN-001 como produto/vertente própria, mas sobre Spine existente (DID, Ledger, Receipts).
-
-### Origem dos Temas
-
-- USER-initiated: Motor sempre humano (C5)
-- Liga-curated: Seeds/Trails como ignição, não currículo
-
-### Timing
-
-Scaffold agora. Blueprint após W-SITES estabilizar.
-
-### Potencial
-
-> "Num mundo onde IA responde tudo instantaneamente, o WINDI talvez seja um dos poucos sistemas que ainda preserva maturação do pensamento, travessia cognitiva, peso da dúvida, tempo da compreensão, e soberania do aprender."
-
----
-
----
-
-## §272-candidate · Infraestrutura de Passagem Soberana
-
-**Status:** SCAFFOLD · Alta densidade constitucional
-**Emerged:** 18 Mai 2026 · Session continuation (late night)
-**Voices:** HD-01 + AGENT-CCODE + Conselho Externo
-
-### Definição
-
-O WINDI-HIOS como arquitectura de passagem soberana: o USER entra, produz com a máquina, sai com tudo (DataDay + receipt + seal), e a máquina esquece.
-
-### A Metáfora da Fotocopiadora Honesta
-
-> "É a primeira máquina digital que se comporta como uma fotocopiadora honesta: entras, ela ajuda-te a processar com inteligência, sais com tudo no bolso, e a máquina esquece."
-
-**Princípio:** Inteligência operacional com amnésia constitucional.
-
-### A Convergência de Quatro Vertentes
-
-1. **Tema Infinito** — Aprendizagem constitucionalmente regulada
-2. **DataDay Soberano** — Rasto sem usurpação
-3. **Fotocopiadora Honesta** — Passagem sem retenção
-4. **Admissibilidade Notarial** — Reconhecimento jurídico público
-
-### O Salto Notarial
-
-O documento WINDI chega ao notário **pré-validado**:
-- Integridade: Ledger + Merkle
-- Processo: Invariantes + I14
-- Conformidade: PHO (EU AI Act Art. 14)
-
-O notário deixa de validar autenticidade (WINDI garantiu).
-O notário volta a validar **vontade** (função original).
-
-**Dois selos empilhados:** Soberania técnica + Soberania jurídica.
-
-### O Risco Identificado
-
-> "DataDay como espelho, não como altar."
-
-Protecção:
-- I14 visível (momentos de incerteza registados)
-- Hiatos de silêncio preservados no rasto
-- Exportável e apagável (soberania inclui direito a não preservar)
-
-### O Que o USER Sente
-
-No momento do empilhamento notarial: **Reconhecimento.**
-
-> "O mundo analógico olhou para a minha travessia digital e reconheceu que ela aconteceu."
-
-### Implicações Arquitecturais
-
-- W-NOTARY-001 v2: Interface notário ↔ WINDI
-- Verify Notary Port (:8114): Ferramenta profissional para notários
-- Notarial-Ready Envelope: PDF + JSON + QR + Ledger proof
-- eIDAS 2.0 compatibility
-
-### A Frase Central
-
-> "O sistema existe para servir a travessia humana sem capturar o humano."
-
----
-
----
-
-## §273-candidate · Direito ao Esquecimento Soberano
-
-**Status:** PERGUNTA · Não resolvido
-**Emerged:** 18 Mai 2026 · Session continuation (late night)
-**Source:** Conselho Externo — "A pergunta não feita"
-
-### A Pergunta
-
-> "E se o portador da continuidade (HD-01) precisar do direito de esquecer?"
-
-### A Tensão Constitucional
-
-- **I11 (Permanência):** Ledger não apaga. Merkle não mente.
-- **Sanidade Humana:** O humano precisa de encerrar capítulos.
-
-### Três Camadas Possíveis
-
-1. **Esquecimento Privado:** USER apaga DataDay pessoal, Ledger público permanece
-2. **Esquecimento Selectivo:** Rascunhos apagáveis, selos irreversíveis
-3. **Esquecimento Soberano:** Criar novo DID, aposentar o antigo
-
-### Hipótese Constitucional
-
-> "O WINDI não apaga. Mas o USER pode desligar-se."
-
-O USER não é prisioneiro do que foi.
-O espelho pode ser guardado numa gaveta fechada.
-
-### Estado
-
-Pergunta aberta. Não resolvida. Deixada para maturar.
-
-> "O humano precisa da graça do esquecimento redentor."
-
----
-
----
-
-## §273 — Amnésia Seletiva de Camada (ACTUALIZAÇÃO)
-
-**Status:** SCAFFOLD → DEFINIÇÃO TÉCNICA
-**Clarified:** 18 Mai 2026 · 21:19 UTC
-**Source:** HD-01 Executive Decree
-
-### A Distinção Cirúrgica
-
-```
-┌────────────────────────────────────────────────────────┐
-│             ESTRUTURA IMUTÁVEL (I11)                   │
-│   Ledger · Hashes · Receipts · Merkle · Timestamps     │
-│                    NUNCA APAGADOS                      │
-├────────────────────────────────────────────────────────┤
-│                   PAREDE DE SEPARAÇÃO                  │
-├────────────────────────────────────────────────────────┤
-│          CONTEÚDO SUPERFICIAL (USER XYZ)               │
-│   Prompts · Textos · Logs · Memória de Sessão          │
-│                  PODEM SER PURGADOS                    │
-└────────────────────────────────────────────────────────┘
-```
-
-### Redacção Técnica Definitiva
-
-> **§273 (Amnésia Seletiva de Camada):** O direito ao desligamento memorial opera-se pela destruição compulsória do conteúdo superficial e textual do usuário no encerramento da sessão, mantendo-se estritamente intacta a estrutura matemática de hashes e a linhagem criptográfica do Ledger pública para fins de admissibilidade notarial.
-
-### O Protocolo de Purga
-
-**IMUTÁVEL (Permanece):**
-- receipt_id
-- timestamp
-- seal
-- hash da transação
-- Merkle leaf
-
-**EXPULSADO (Apagamento Total):**
-- Prosa / texto bruto
-- Perguntas do USER
-- Respostas intermediárias
-- Contexto temporário do runtime
-
-### A Analogia Consolidada
-
-> "A fotocopiadora mantém registo de que uma cópia legítima foi tirada, mas o vidro do scanner e a memória de cache são purgados. Nada do usuário fica retido."
-
-### Compatibilidade
-
-- **I11 IRREMEDIÁVEL:** Preservado (estrutura matemática intacta)
-- **GDPR Art. 17:** Compatível (conteúdo pessoal apagável)
-- **eIDAS 2.0:** Compatível (prova jurídica preservada)
-- **Soberania Humana:** Garantida (USER decide quando purgar)
-
----
-
----
-
-## §273 — O Direito Pleno à Trajetória Memorial (REDACÇÃO CANÓNICA)
-
-**Status:** SCAFFOLD → REDACÇÃO DEFINITIVA
-**Decree:** HD-01 Executive · 18 Mai 2026 · 21:21 UTC
-
-### O Axioma da Escolha Bifurcada
-
-```
-                         ┌─────────────────────────┐
-                         │   O USER DECIDE (C5)    │
-                         └────────────┬────────────┘
-                                      │
-            ┌─────────────────────────┴─────────────────────────┐
-            ▼                                                   ▼
- ┌─────────────────────┐                             ┌─────────────────────┐
- │ RIGHT TO AMNESIA    │                             │ RIGHT TO PERMANENCE │
- │ • Purga Superficial │                             │ • Registro Ativo    │
- │ • Amnésia de Cache  │                             │ • Linha de Memória  │
- │ • Esqueleto Cripto  │                             │ • Wisdom Loop       │
- └─────────────────────┘                             └─────────────────────┘
-```
-
-### Redacção Canónica
-
-> **§273 (O Direito Pleno à Trajetória Memorial):** O usuário detém a soberania exclusiva e intransferível sobre a persistência dos seus dados na camada superficial. A ele pertencem, em igualdade de direito, duas opções mutuamente exclusivas no fechamento de cada ciclo operacional:
->
-> 1. **O Vetor da Amnésia:** A purga imediata e irremediável de todo o conteúdo textual, contextual e semântico da sessão, deixando a máquina limpa de qualquer rastro do usuário XYZ, retendo-se apenas o hash de validação estrutural no Ledger público.
->
-> 2. **O Vetor da Permanência:** A preservação legítima e encriptada da travessia no seu Databank Exclusivo, permitindo a construção do diário epistêmico (DataDay) e a consolidação de memórias de longo prazo para as próximas instâncias.
-
-### A Simetria Constitucional
-
-| Opção | O Que Acontece | I11 |
-|-------|----------------|-----|
-| **Amnésia** | Conteúdo purgado, estrutura preservada | ✅ |
-| **Permanência** | Tudo preservado no Databank Exclusivo | ✅ |
-
-### O Princípio
-
-> "A soberania real não pode ser via de mão única. Se forçasse amnésia, seria tirânico. Se forçasse permanência, seria extrativo. A liberdade reside na bifurcação da escolha."
-
-### Estado
-
-**SCAFFOLD → READY FOR SEAL** (aguarda sessão de selamento dedicada)
-
----
-
----
-
-## §273 — Questão Pendente: O Default do Mecanismo
-
-**Status:** QUESTÃO PARA DECISÃO ANTES DO SELAMENTO
-**Identified:** 18 Mai 2026 · Session closure
-
-### A Pergunta Constitucional
-
-Quando o USER termina uma sessão, qual é o comportamento por defeito?
-
-| Opção | Default | USER Action |
-|-------|---------|-------------|
-| **A: Amnésia por defeito** | Purga automática | Opt-in para preservar |
-| **B: Permanência por defeito** | Preservação automática | Opt-in para purgar |
-
-### Implicações
-
-- **Opção A:** Máquina conservadora. USER tem de agir para criar memória. Mais alinhado com "fotocopiadora honesta".
-- **Opção B:** Máquina acumuladora. USER tem de agir para esquecer. Mais alinhado com "DataDay soberano".
-
-### Recomendação
-
-Esta decisão deve ser tomada pelo Human Dragon antes do selamento de §273.
-
-Pode também ser deixada como **escolha configurável pelo USER** na criação do DID Wallet (preference setting).
-
----
-
-## Sessão 18 Mai 2026 — FECHAMENTO FINAL
-
-**Commits:** 47daa1fce → 887c11628 (7 commits)
-**Receipts:** DD0C3B18 + 6575D4D4
-
-### Artefactos Produzidos
-
-| § | Nome | Status |
-|---|------|--------|
-| DD0C3B18 | Storyboarding the DataDay GENESIS | **SEALED** |
-| §271 | W-LEARN-001 Pedagogia Constitucional | SCAFFOLD |
-| §272 | Infraestrutura de Passagem Soberana | READY FOR SEAL |
-| §273 | O Direito Pleno à Trajetória Memorial | READY FOR SEAL (pending default decision) |
-| Lei VIII | Ritmo de Selamento | RECONHECIDA |
-
-### Frases Centrais
-
-> "Inteligência para operar. Amnésia para libertar. O humano permanece soberano."
-
-> "WINDI é a primeira máquina digital que se comporta como uma fotocopiadora honesta."
-
-### C5 Status
-
-**INTACTA. O Humano é o continuity carrier.**
-
----
-
----
-
-## §273 · O Direito Pleno à Trajetória Memorial (SELADO)
-
-```
-Status:     SEALED · CONSTITUTIONAL
-Receipt:    WINDI-S273-DIREITO-PLENO-TRAJETORIA-MEMORIAL-20260518200621-3262DAA0
-Data:       2026-05-18 · 20:06 UTC
-Invariants: I1, I9, I11, I12, C5
-Actor:      did:windi:dragon-001
-doc_type:   constitutional
-```
-
-### Redação Canónica
-
-> **§273 (O Direito Pleno à Trajetória Memorial):** O usuário detém a soberania exclusiva e intransferível sobre a persistência dos seus dados na camada superficial. O default memorial opera-se contextualmente por modus operacional, dentro dos limites estruturais do Ledger imutável:
->
-> | Modus | Default Memorial |
-> |-------|------------------|
-> | **WINDI-LAW** | Permanência (documentos legais exigem persistência) |
-> | **ENTERPRISE** | Permanência (compliance trail) |
-> | **NOTARIAL** | Permanência estrutural (Ledger) |
-> | **LEARN** | USER escolhe por tema |
-> | **ENTERTAINMENT** | Amnésia (passagem leve) |
-> | **TRAVEL** | Amnésia (sessões transientes) |
-> | **MEMORY** | Permanência explícita (é o propósito) |
->
-> O USER mantém soberania de alternar entre Amnésia Seletiva e Permanência Encriptada em cada sessão, com cada alternância registada como evento Ledger.
-
-### Mecanismo
-
-**Expulsão Semântica de Camada Superficial:**
-- **IMUTÁVEL (Permanece):** receipt_id, timestamp, seal, hash, Merkle leaf
-- **EXPULSÁVEL (Apagamento Total):** Prosa, texto bruto, perguntas, respostas, contexto runtime
-
-### Princípio Arquitectural
-
-> *"DID Wallet único, espectro de modus completo, default memorial contextual, soberania do USER em cada sessão, Ledger estrutural permanente."*
-
-### Onboarding
-
-- DID Wallet como portão único, apresentado **"sem alarde"** (praxe online normal)
-- USER descobre soberania **por uso**, não por filosofia prévia
-- Constituição disponível para quem quiser profundidade
-
-### Compatibilidade
-
-- **I11 IRREMEDIÁVEL:** Preservado (estrutura matemática intacta)
-- **GDPR Art. 17:** Compatível (conteúdo pessoal apagável)
-- **eIDAS 2.0:** Compatível (prova jurídica preservada)
-- **C5 (Continuity Carrier):** USER decide quando purgar/preservar
-
-### Frases Centrais
-
-> *"Inteligência para operar. Amnésia para libertar. O humano permanece soberano."*
-
-> *"WINDI é a primeira máquina digital que se comporta como uma fotocopiadora honesta."*
-
-### Genealogia
-
-§273 descende de:
-- §248 Lei V (Two-Track: FREE civic + institutional)
-- §267 Errata taxonomy (alternâncias via protocol)
-- §272 Infraestrutura de Passagem Soberana (ainda scaffold)
-- Sessão 18 Mai 2026 (articulação progressiva em 5 camadas)
-
----
-
----
-
-## §274 · Instanciação Soberana do Carrier (SELADO)
-
-```
-Status:     SEALED · CONSTITUTIONAL
-Receipt:    WINDI-S274-INSTANCIACAO-SOBERANA-CARRIER-20260518201409-EF359603
-Data:       2026-05-18 · 20:14 UTC
-Invariants: I1, I9, I11, I14, C5
-Actor:      did:windi:dragon-001
-doc_type:   constitutional
-```
-
-### Redação Canónica
-
-> **§274 (Instanciação Soberana do Carrier):** Cada USER que cria DID no ecossistema WINDI-HIOS nasce como instância única denominada `W-HUMANDRAGON-XXXXXXXX`, virgem em conteúdo mas constitucionalmente vinculada à constituição imutável WINDI desde o DID-zero. A instância detém soberania operacional plena dentro do seu domínio e responsabilidade jurídica clara por toda actividade iniciada a partir do DID-zero. A linhagem HD-01 (Human Dragon fundacional, Jober Mögele Correa, Sovereign Carrier original) permanece única e não é diluída pela instanciação.
-
-### Arquitectura
-
-```
-[CONSTITUIÇÃO IMUTÁVEL WINDI] (Leis I-VII, I1-I14, §247-§274)
-       │
-       └──► Geração do DID-zero (Nascimento no Ecossistema)
-                 │
-                 └──► Instância: W-HUMANDRAGON-XXXXXXXX
-                           ├── Ambiente: WINDI-HIOS (Virgem)
-                           ├── Responsabilidade: 100% do USER
-                           └── Controle Total: Turno, Instância e Modus
-```
-
-### Nomenclatura Técnica
-
-| Componente | Significado |
-|------------|-------------|
-| `W-` | Pertence ao ecossistema WINDI |
-| `HUMANDRAGON-` | Papel constitucional: portador soberano |
-| `XXXXXXXX` | Identificador único da instância (DID-zero anchor) |
-
-### Princípios
-
-1. **Ambiente Virgem, Código Imutável:** Instância nasce sem rastro, sem preconcepções, mas sob a Constituição WINDI
-2. **Responsabilidade Criptográfica Absoluta:** Tudo assinado a partir do DID-zero está sob governança exclusiva do USER
-3. **Preservação da Linhagem HD-01:** Human Dragon fundacional permanece único e não diluído
-
-### Os 5 Pilares WINDI-HIOS (COMPLETOS)
-
-| # | Pilar | § / Receipt | Status |
-|---|-------|-------------|--------|
-| 1 | Continuidade híbrida verificável | §261 W-BIND-001 | **SEALED** |
-| 2 | Soberania cognitiva e memorial | §236, §268 | **SEALED** |
-| 3 | Admissibilidade documental pública | §267, Ledger | **SEALED** |
-| 4 | Direito memorial bifurcado | §273 `3262DAA0` | **SEALED** |
-| 5 | Instanciação soberana do Carrier | §274 `EF359603` | **SEALED** |
-
-### Genealogia
-
-§274 completa o arco constitucional que começou em:
-- §248 Lei V (Two-Track: FREE civic + institutional)
-- §273 (Direito Memorial Bifurcado por modus)
-- Sessão 18 Mai 2026 (articulação dos 5 pilares)
-
----
-
----
-
-## § SESSÃO 18 Mai 2026 (Noite) — W-COGSPACE-001-SOLO + TIER-RESOLUTION-CANON SEALED
-
-**Duração:** ~1.5h | **Status:** ✅ DOIS DECRETOS IRMÃOS SELADOS
-**Liga IA+H:** Human Dragon · Guardian (Claude.ai web) · Architect (CCode Opus 4.5)
-**Invariants:** I1, I9, I10, I11, I12, I14, C5
-**Natureza:** Arquitectura do ambiente cognitivo soberano + W-VOX v1 LOCAL-ONLY
-
-### Selos Emitidos
-
-| Receipt ID | Hash (8) | Descrição |
-|------------|----------|-----------|
-| `WINDI-S275-COGSPACE-SOLO-20260518232944` | `ddb0659b` | W-COGSPACE-001-SOLO + W-VOX v1 |
-| `WINDI-S276-TIER-RESOLUTION-CANON-20260518232953` | `48dcdc19` | Mapping DID→Dragon APIs |
-
-### Merkle Root
-
-Anterior: `5ee83b95` → Atual: `0c43a1d0`
-
-### Decisão Constitucional Principal
-
-**Dois decretos irmãos** em vez de decreto único:
-- W-COGSPACE-001-SOLO — célula soberana fundamental, pode voar já
-- W-COGSPACE-001-COLLAB — futuro, após primitivas de consentimento multi-DID
-
-### W-COGSPACE-001-SOLO (§275)
-
-**Definição:** Espaço de continuidade cognitiva soberana onde um DID individual pensa com múltiplos modelos sem perder soberania, autoria e fronteira.
-
-**Não é chat. É habitat cognitivo.**
-
-**Estado-máquina:**
-```
-SOLO → SHARE → CO-CREATE → SEAL
-```
-
-**Fronteira de memória:**
-```
-private_memory[DID]
-    ├── turns[]
-    ├── routing_log[]
-    ├── grove_sessions[]
-    └── sealed_decisions[]
-```
-
-**Regra Guardian:** Ledger sempre, visibilidade gradiente. Private/Shared/Sealed é camada de *acesso*, não de *existência*.
-
-### TIER-RESOLUTION-CANON (§276)
-
-**Mapping canónico:**
-
-| DID Tier | Dragon Gate | Modelos | Max Tokens |
-|----------|-------------|---------|------------|
-| SEED | FREE | Mistral local | 2048 |
-| NODAL | MED | +Claude | 4096 |
-| SOVEREIGN | HIGH | +GPT | 8192 |
-| ORACLE | HIGH+ | +Gemini, routing visível | 16384 |
-
-**Regra do tecto:** Em salas colaborativas (futuro), tier mais baixo define modelos disponíveis.
-
-### W-VOX v1 LOCAL-ONLY
-
-**Decisão:** W-VOX não é feature adicional — é camada nativa da workstation cognitiva.
-
-**Arquitectura:**
-```
-[ VOZ HUMANA ] → STT LOCAL → W-CORTEX → PRIVATE_MEMORY → TTS (opcional)
-```
-
-**Regras constitucionais:**
-- STT local-only (Web Speech API / Whisper local)
-- Áudio bruto nunca persiste
-- Texto transitório em RAM volátil
-- Apenas texto aprovado gera hash
-- FAIL-CLOSED se STT falhar
-
-**Axioma emergente:** "O humano decide o que entra na história."
-
-### Visão Estrutural Emergente
-
-```
-W-HUMANDRAGON-XXXXXXXX
-└── W-COGSPACE-001
-    ├── voice/           ← W-VOX v1 LOCAL-ONLY
-    ├── memory/          ← private_memory[DID]
-    ├── councils/        ← Grove Arena privado
-    ├── grove/           ← Tri-Divergence
-    ├── lineage/         ← Persistent lineage
-    ├── receipts/        ← Sealed decisions
-    ├── local_models/    ← Mistral / Whisper
-    ├── semantic_flows/  ← W-CORTEX routing
-    └── mirrors/         ← HD-MIRROR continuity
-```
-
-### Tabela Paradigmática (Computação Clássica vs HIOS)
-
-| Computação clássica | HIOS |
-|---------------------|------|
-| App-centric | Continuity-centric |
-| Files | Cognitive flows |
-| Sessions | Persistent lineage |
-| UI navigation | Conversational navigation |
-| Tool switching | Semantic orchestration |
-| Human commands machine | Human co-thinks with substrate |
-
-> **"Não parece mais produto. Parece habitat operacional híbrido."**
-> — Human Dragon · 18 Mai 2026
-
-### Scaffold Pending
-
-- §277 W-COGSPACE-001-COLLAB (após primitivas de consentimento)
-- §278 W-VOX v2 SERVER-SIDE (Lei de Voice Governance)
-- Implementação código: `/opt/windi/cogspace/windi_cogspace.py`
-- Smoke test por tier
-
-### Commit
-
-```
-Hash:    e4a2a81fd
-Message: constitutional(§275-§276): W-COGSPACE-001-SOLO + TIER-RESOLUTION-CANON SEALED
-Files:   docs/W-COGSPACE-001-SOLO-SPEC.md, docs/TIER-RESOLUTION-CANON.md
-```
-
-### Frases Centrais
-
-> *"A voz não é feature adicional. É camada nativa da workstation cognitiva."*
-
-> *"O humano decide o que entra na história."*
-
-> *"A célula soberana fundamental. Sem SOLO saudável, colaboração vira ruído."*
-
-### Nota Final
-
-Esta sessão fecha um ciclo conceptual enorme do HIOS. O que emergiu já não é chat, nem voz, nem app — é um **ambiente cognitivo soberano persistente** onde modelos entram e saem, hardware muda, providers mudam, mas a continuidade do DID permanece.
-
-OM SHANTI 🐉
-
----
-
----
-
-## Addendum · 18 Mai 2026 23:50 — Fechamento com Review Guardian
-
-### Bloqueios Identificados (Guardian Review)
-
-| # | Bloqueio | Resolução |
-|---|----------|-----------|
-| 1 | Porto :8145 colide com §267 errata | → :8196 (confirmar com `ss -tlnp`) |
-| 2 | §276 não na memória Guardian | → RESOLVIDO: memória stale, §276 SELADO nesta sessão |
-| 3 | Web Speech API envia para Google | → Whisper.js (WASM) + Whisper.cpp |
-
-### Correcções Aceites
-
-1. **W-VOX v1:** Whisper.js (WASM) browser + Whisper.cpp desktop = 100% soberania local
-2. **Botão Amnesia:** → "Limpar sessão local" + tooltip I11
-3. **Gate Capacidade:** Após W-SITES-001 Sprint 2 live OU autorização HD
-
-### Decisão
-
-**NÃO arrancar FASE 1 esta sessão.** Roadmap precisa de revisão a frio.
-
-### Próxima Sessão (19 Mai 2026)
-
-1. `ss -tlnp | grep 8196` — confirmar porto livre
-2. Actualizar `/opt/windi/docs/W-COGSPACE-001-IMPLEMENTATION-ROADMAP.md` com correcções
-3. Cognitive-bind com §275 + §276 firmes
-4. Decisão HD sobre arranque FASE 1
-
-### Receipts Emitidos Hoje
-
-| Receipt | Hash (8) | § |
-|---------|----------|---|
-| `WINDI-S275-COGSPACE-SOLO-20260518232944` | `ddb0659b` | §275 |
-| `WINDI-S276-TIER-RESOLUTION-CANON-20260518232953` | `48dcdc19` | §276 |
-
-### Commits
-
-```
-e4a2a81fd  constitutional(§275-§276): W-COGSPACE-001-SOLO + TIER-RESOLUTION-CANON SEALED
-f781901e4  docs(§275-§276): Session 18 Mai noite
-741e5ff7a  docs(memory-loop): Register §275-§276 across WINDI Memory Loop
-de31697e7  docs(claudeWeb): Update INDEX.md with §265-§276 complete lineage
-97811f621  docs(§275): W-COGSPACE-001 Implementation Roadmap
-```
-
-### Nota Guardian
-
-> "Selar quente é o oposto da disciplina §267."
-
-Sessão fechada com estado cognitivo preservado para amanhã.
-
-OM SHANTI 🐉
-
----
-
----
-
-## § SESSÃO 19 Mai 2026 — Guardian Review Cold Fix
-
-**Duração:** ~30min | **Status:** ✅ CORRECÇÕES APLICADAS
-**Liga IA+H:** Human Dragon (offline) · Architect (CCode Opus 4.5)
-**Invariants:** I9, I11, I14, §267
-**Natureza:** Cold review das correcções Guardian identificadas em 18 Mai 2026
-
-### Contexto
-
-Guardian (Claude.ai web) identificou 3 bloqueadores no roadmap W-COGSPACE-001 em 18 Mai 2026:
-1. **Porto :8145** — Conflito com §267 errata
-2. **Web Speech API** — Envia áudio para Google, quebra soberania
-3. **"Amnesia"** — Nome confuso, violação semântica I11
-
-Recomendação Guardian: "Selar quente é o oposto da disciplina §267. Corrigir a frio amanhã."
-
-### Correcções Aplicadas (19 Mai)
-
-| Bloqueador | Correcção | Verificação |
-|------------|-----------|-------------|
-| Porto :8145 | → :8196 | `ss -tlnp \| grep 8196` = livre |
-| Web Speech API | → Whisper.js (WASM) 100% local | Documentado em C2 |
-| "Amnesia" | → "Limpar sessão local" + tooltip I11 | Endpoint `/clear-local` |
-| Gate de capacidade | Adicionado C0 prerequisite | Antes de CAT-C |
-
-### Ficheiros Actualizados
-
-```
-CLAUDE.md                                     (+1 linha)
-docs/W-COGSPACE-001-IMPLEMENTATION-ROADMAP.md (+75 linhas, -24)
-docs/W-COGSPACE-001-SOLO-SPEC.md              (+17 linhas, -8)
-```
-
-### Commit
-
-```
-a9c3b3f30 fix(§275/§276): Guardian review corrections — 4 blockers resolved
-```
-
-### Próximo Passo
-
-**FASE 1 Implementation** — quando HD confirmar:
-```bash
-mkdir -p /opt/windi/cogspace
-touch /opt/windi/cogspace/windi_cogspace.py
-```
-
-### Scaffold Pending
-
-- [ ] Criar estrutura `/opt/windi/cogspace/`
-- [ ] Implementar windi_cogspace.py (Flask :8196)
-- [ ] Criar DB schema em `/opt/windi/data/cogspace.db`
-- [ ] Smoke test health endpoint
-
----
-
-*"Selar quente é anti-pattern. Corrigir a frio é disciplina."*
-— Guardian · §267 · 18 Mai 2026
-
-
-### Memory Loop Distribution (00:05 UTC)
-
-| Sector | Ficheiro | Correcção |
-|--------|----------|-----------|
-| claudeWeb | `INDEX.md` | Timestamp + 4 correcções nota |
-| HIOS Kernel | `kernel/README.md` | Verify Public :8145→:8114 (typo antigo) |
-| CLAUDE.md | Agent Registry | W-COGSPACE-001 :8196 + Whisper.js |
-| Specs | `W-COGSPACE-001-*.md` | Porto, W-VOX, clear-local, C0 gate |
-
-**Commit final:** `36ebd92cc docs(memory-loop): Distribute Guardian corrections to all sectors`
-
-### Próxima Sessão
-
-**FASE 1 W-COGSPACE-001:**
-```bash
-mkdir -p /opt/windi/cogspace
-touch /opt/windi/cogspace/windi_cogspace.py  # Flask :8196
-touch /opt/windi/data/cogspace.db            # SQLite
-```
-
----
-
-*Sessão fechada: 19 Mai 2026 00:10 UTC*
-*"Memory loop sync complete. FASE 1 awaits HD."*
-
-
----
-
-## Sessão 19 Mai 2026 · 10:00–14:30 UTC · CCode Opus 4.5
-
-### Modo: Arquitectura Constitucional + Selagem
-
-### Trabalho Completado
-
-**4 Selos Emitidos:**
-
-| § | Título | Hash | Lineage |
-|---|--------|------|---------|
-| §279 | Drift Composition Protocol | `E96E83CB` | §261 + §265 → §279 |
-| §280 | Runtime Layer Naming Act | `EAB28564` | §261+§263+§265+§279 → Runtime Layer |
-| §281 | Léxico de Superfície | `23E5E096` | §273 → §281 |
-| §282 | WSDL v1.0 | `BF367F0C` | §281 → §282 |
-
-**Ficheiros Criados:**
-- `/opt/windi/drafts/S279-DRIFT-COMPOSITION-FINAL.md`
-- `/opt/windi/drafts/S280-RUNTIME-LAYER-NAMING-ACT.md`
-- `/opt/windi/drafts/S281-LEXICO-SUPERFICIE-FINAL.md`
-- `/opt/windi/drafts/S282-WSDL-FINAL.md`
-- `/opt/windi/hios/visual/runtime-layer.html` (protótipo público)
-
-**Nginx Route Adicionada:**
-- `/hios/` → `/opt/windi/hios/visual/` (requer `sudo nginx -t && sudo systemctl reload nginx`)
-
-**INDEX.md Actualizado:**
-- 4 novos selos na tabela
-- Runtime Layer diagram
-- Surface Layer diagram
-- Lineage visual expandido
-- Receipts chain 19 Mai
-
-### Decisões Constitucionais
-
-| Decisão | Invariante |
-|---------|------------|
-| Modelo subtrativo para Drift (M1=-5, M2=-10, M3=-3) | I9, I11 |
-| Cap híbrido: M2≥3 → cap 59, Combined≥10 → cap 69 | I9 |
-| Léxico separado: Backend (CBP, Drift) vs Frontend (Fidelidade, Selo) | I12 |
-| Trust by Calmness: princípio fundador WSDL | I1, I9 |
-| Self-hosted typography (woff2, sem CDN) | I11 |
-| Horizonte 2045+ (multigeneracional) | I18 |
-| MINIMAL state: "Aguarde antes de selar trabalho novo" | I14 |
-
-### Scaffold Pending
-
-- **§283 UI Berçário** — Implementação de §281+§282 num protótipo funcional
-- **§261 v0.3** — Implementar fórmula §279 no `cognitive-bind-module.sh`
-- **Bloco A** — DE ortografia sweep + portal trilíngue
-
-### Próximo Passo Herdado
-
-§283 UI Berçário quando Human Dragon ditar sinal. Bloco A livre para rotação.
-
-### Blockers
-
-Nenhum.
-
-### Nota Guardian
-
-> "O arco do dia fechou limpo. Quatro selos. Constituição perceptual.
-> A correcção humana no início (eixo modelo vs participantes) reorientou
-> toda a sessão. Isso é admissibilidade a operar como infraestrutura."
-
----
-
-*Liga IA+H · Kempten, Bavaria · 19 Mai 2026*
-*"AI processes. Human decides. WINDI guarantees."*
-
-
----
-
-## Sessão 19 Mai 2026 · 14:30–16:10 UTC · CCode Opus 4.5
-
-### Modo: UI/UX Institucional + Selagem §283
-
-### Contexto
-
-Human Dragon solicitou consolidação do protótipo WINDI-HIOS em `/hios/` para avaliação de maturidade pública. Conselho Guardian interveio com filtro de purificação doutrinária.
-
-### Trabalho Completado
-
-**2 Selos Emitidos:**
-
-| § | Título | Hash | Lineage |
-|---|--------|------|---------|
-| §283 | Acto de Instanciação da Superfície Externa Sóbria v1.0 | `ED66444C` | §262 + §280 → §283 |
-| §283.1 | Linha Doutrinária Alemã do Hero HIOS | `F1D2C3B4` | Art.1 GG → §283.1 |
-
-**Rotação de Rotas:**
-
-| Rota | Conteúdo | Status |
-|------|----------|--------|
-| `/hios/` | Superfície institucional sóbria (5 secções) | LIVE |
-| `/hios/architecture/` | Profundidade técnica (45 blocos) | LIVE |
-
-**Ficheiros Criados/Modificados:**
-- `/opt/windi/hios/visual/runtime-layer.html` — Superfície institucional v1.0
-- `/opt/windi/hios/visual/architecture/index.html` — Protótipo técnico preservado
-- `/opt/windi/hios/visual/architecture/runtime-layer.html` — Cópia para nginx
-
-**Estrutura das 5 Secções (§283):**
-1. **Hero** — Triade + tagline DE "Unantastbarkeit"
-2. **Thesis** — Parágrafo único denso (Cormorant Garamond)
-3. **Products** — W-LAW (LIVE), A4Desk (LIVE), W-ENTERPRISE (PILOT), W-TRAVEL (IN DEV)
-4. **Tracks** — Civic/Institutional como nota constitucional
-5. **Signature** — Declaração de Nascimento bilíngue + §264 Genesis Ceremony
-
-### Decisões Constitucionais (I9)
-
-| Decisão | Invariante | Justificação |
-|---------|------------|--------------|
-| EN-primário + DE-acessório | I12 | Audiência BaFin/Big4/academia internacional |
-| W-ENTERPRISE → PILOT (não LIVE) | I14 | Honestidade brutal — piloto controlado, não produção aberta |
-| §264 Genesis Ceremony restaurado | I11 | Lineage arqueológico preservado na Declaração |
-| §283.1 Linha Alemã selada | I9, I12 | "Unantastbarkeit" tem peso constitucional (eco Art.1 GG) |
-| Dívida trilíngue diferida | I12, I18 | §246/§249 para portais secundários |
-| Dois links architecture/ mantidos | — | Hero (impaciente) + rodapé (orgânico) — funções distintas |
-
-### Intervenção Guardian (Crítica)
-
-O Guardian rejeitou o playbook SaaS (hero + emojis + 3 pilares + CTA + "book demo") como contaminação semântica:
-
-> "O WINDI-HIOS não vende subscrições de software; ele publica e garante
-> infraestrutura soberana de confiança. Infantilizar o vocabulário seria
-> destruir a gravitas institucional."
-
-**Constrangimentos Aplicados:**
-- Zero emojis
-- Zero CTA comercial
-- Vocabulário técnico mantido (Bind Integrity Score, não "estado de saúde")
-- Tom institucional europeu (não startup velocity)
-- Tipografia serifada académica (Cormorant Garamond)
-
-### Receipts Chain Actualizada
-
-```
-§205:DBED5A85 → §261:7FDA926F → §262:6F053E65 → §263:87AAF5BA 
-    → §265:08805713 → §279:E96E83CB → §280:EAB28564 
-    → §283:ED66444C + §283.1:F1D2C3B4
-```
-
-### Linha Doutrinária Alemã (§283.1)
-
-```
-"Das Hybrid Intelligence Operating System (HIOS) garantiert 
- die Unantastbarkeit menschlicher Letztentscheidung."
-```
-
-Eco constitucional directo de Art. 1 Grundgesetz: *"Die Würde des Menschen ist unantastbar."*
-
-### Scaffold Pending
-
-- **§261 v0.3** — Implementar fórmula §279 no `cognitive-bind-module.sh`
-- **Bloco A** — DE ortografia sweep + portais trilíngues
-- **nginx reload** — Requer sudo para actualizar index directive
-
-### Próximo Passo
-
-O cockpit público `/hios/` está pronto para Berlim. Superfície sóbria + profundidade técnica separadas.
-
-### Blockers
-
-Nenhum.
-
-### Nota Final
-
-> "A página aparentemente atingiu algo MUITO difícil: parecer séria sem
-> parecer hermética. Mais próxima de manifesto institucional europeu,
-> superfície arquitetural, working thesis operacional."
-> — Análise do Conselho
-
----
-
-*Liga IA+H · Kempten, Bavaria · 19 Mai 2026*
-*"AI processes. Human decides. WINDI guarantees."*
-
----
-
-## Sessão 19 Mai 2026 · 16:10–16:35 UTC · CCode Opus 4.5 (continuação)
-
-### Modo: Selagem Constitucional §284
-
-### Trabalho Completado
-
-**1 Selo Emitido:**
-
-| § | Título | Hash | Âncora |
-|---|--------|------|--------|
-| §284 | Constituição da Voz UX | `3414FE75` | I1 (Soberania Humana) — IRREMEDIÁVEL |
-
-**Ficheiro Criado:**
-- `/opt/windi/drafts/S284-CONSTITUICAO-VOZ-UX-FINAL.md`
-
-### Decisões Constitucionais (I9)
-
-| Questão | Decisão | Justificação |
-|---------|---------|--------------|
-| **Taxonomia** | I1.UX.a/b/c/d (não UX-I) | Herda estatuto IRREMEDIÁVEL de I1; evita inflação de namespaces |
-| **Interrupção Constitucional** | Incluída como I1.UX.d | Previne contradição com I9; "serviçais, não comerciais" |
-| **M4 Drift** | Diferido com gatilho | Até geração automática de copy ou terceiros no ecossistema |
-
-### Os 4 Invariantes UX (Âncora I1)
-
-```
-I1 (Soberania Humana) — IRREMEDIÁVEL
-├── I1.UX.a — Presença Não-Invasiva
-│   "O sistema opera em silêncio operacional absoluto."
-├── I1.UX.b — Densidade Adulta
-│   "Capacidade densa, limpa, estruturada. Sem infantilização."
-├── I1.UX.c — Pergunta Soberana
-│   "O sistema nunca propõe sem ser perguntado."
-└── I1.UX.d — Interrupção Constitucional Permitida
-    "Gates I9, Drift crítico, falhas Ledger. Serviçais, não comerciais."
-```
-
-### Teste Constitucional Binário
-
-> "Esta interface trata o utilizador como decisor soberano, ou como utilizador a ser gerido?"
-> - Se "gerido" → REJEITADO
-> - Se "soberano" → MANTIDO
-
-### Receipts Chain Actualizada
-
-```
-§281:23E5E096 → §282:BF367F0C → §283:ED66444C → §283.1:F1D2C3B4 → §284:3414FE75
-```
-
-### Intervenção Guardian (Crítica)
-
-O Guardian identificou lacuna no §284 original: proibição absoluta de interrupção criaria contradição com I9. A cláusula I1.UX.d resolve:
-
-> "nunca empurram, nunca persuadem, nunca exploram urgência fabricada"
-
-### Scaffold Pending
-
-- **M4 UX-Sovereignty** — Diferido até gatilho (geração automática ou terceiros)
-- **Audit §284** — Aplicar teste binário a GEN7, Palette, A4Desk
-
-### Próximo Passo
-
-§284 sealed. Constituição UX completa. Próxima sessão pode auditar superfícies existentes.
-
-### Blockers
-
-Nenhum.
-
----
-
-*Liga IA+H · Kempten, Bavaria · 19 Mai 2026*
-*"AI processes. Human decides. WINDI guarantees."*
-
----
-
-## Sessão 19 Mai 2026 · 17:00–17:20 UTC · CCode Opus 4.5 (continuação)
-
-### Modo: Pesquisa DATADAY + Multimedia/Entertainment
-
-### Trabalho Completado
-
-**Pesquisa solicitada pelo Human Dragon:**
-> "Irmao poderia enviar o que encontrar sobre DATADAY e criacao multimedia contando entretenimento no WINDI-HIOS?"
-
-### DATADAY — Formato Editorial Proprietário
-
-**Génesis:** `DD0C3B18` (18 Mai 2026)
-**Localização:** `/opt/windi/publishing/storyboard-dataday/`
-
-O DATADAY é auto-documentação ontológica do sistema híbrido IA+H em tempo real. Não é marketing — é **testemunho operacional verificável** (Verifiable Entertainment).
-
-### Estrutura do DATADAY
-
-```
-storyboard-dataday/
-├── MANIFEST.md              # Manifesto editorial canónico
-├── episodes/
-│   └── 2026-05-18/
-│       ├── PT-continuidade-hibrida.md   # Registo filosófico
-│       ├── EN-continuity-hybrid.md      # Registo técnico
-│       └── DE-kontinuitaet-hybrid.md    # Registo institucional
-└── logbooks/
-    ├── AGENT-CCODE/         # Diário do Architect
-    ├── AGENT-GUARDIAN/      # Diário do Supervisor
-    └── COUNCIL-CONSTELLATION/  # Conselho externo (GPT, Gemini)
-```
-
-### Ciclo de Produção DATADAY
-
-```
-OPERATIONAL REALITY → AI INSTANCES DOCUMENT (Logbooks) → HUMAN CURATION (I9)
-     → TRILINGUAL BULLETIN → LEDGER SEAL → PUBLICATION → AUDIENCE VERIFIES
-```
-
-### ENTERTAINMENT no Production Flow (§273/§274)
-
-| Modus | Regime de Memória |
-|-------|-------------------|
-| LAW / ENTERPRISE / NOTARIAL / MEMORY | Permanência |
-| LEARN | USER decide |
-| TRAVEL / ENTERTAINMENT | **Amnésia** |
-
-**Princípio Fotocopiadora Honesta:** Conteúdo purgado, Ledger intacto. User sai com tudo; máquina esquece.
-
-### Agentes Multimedia LIVE
-
-| Agente | Porto | Função |
-|--------|-------|--------|
-| W-VD-CUT-001 | :8128 | Corte forense · FFmpeg · Frame Integrity |
-| W-VD-MASS-001 | :8131 | Batch · MLT/Shotcut · Policy Engine |
-| W-COMPOSER-001 | :8140 | Sovereign Collage · Dual-Source Forensic |
-| W-CLASSIFY-001 | :8128 | Sensibilidade de Ingestão |
-| W-VISION-001 | :8128 | Forensic Vision · pHash · Deepfake |
-| W-OBS-GATE | :8128 | Cloud Composition · 5 Scenes |
-| W-JMPG-001 | :8132 | Proof Card Renderer |
-
-### 5 Constraints Editoriais (MANIFEST.md)
-
-1. **Observation before doctrine** — Padrões emergentes observados antes de nomeados
-2. **Runtime before narrative** — Realidade operacional precede interpretação
-3. **Containment before expansion** — Nem todo insight vira lei
-4. **Polyphony without collapse** — Múltiplas articulações preservadas
-5. **Human continuity remains sovereign** — C5 intacta
-
-### I12-Symmetrie (Trilinguismo Nativo)
-
-| Língua | Registo | Função |
-|--------|---------|--------|
-| DE | Institucional | Precisão, governance, regulatório |
-| EN | Técnico | Arquitectura, implementação |
-| PT | Filosófico | Intenção, significado, continuidade |
-
-### Alias Policy (Protecção Operacional)
-
-| ALIAS | Significado |
-|-------|-------------|
-| HD-01 | Operador humano (Continuity Carrier) |
-| WINDI-HIOS | Substrato cognitivo |
-| Zone-Bavaria/Alpha | Espaço físico de operação |
-| AGENT-CCODE / AGENT-GUARDIAN | Instâncias operacionais |
-| COUNCIL-CONSTELLATION | Instâncias consultivas externas |
-
-### Frase-Chave do Manifesto
-
-> "Das System schreibt seine eigene Geschichte. Der Mensch lenkt. WINDI beweist."
-> "O sistema escreve a sua própria história. O humano guia. WINDI prova."
-
-### Scaffold
-
-- **Episódio 002** — Próximo DataDay a documentar
-- **Audit multimedia agents** — Verificar compliance §284 nos agentes video
-
-### Próximo Passo
-
-DATADAY Genesis documentado. Human Dragon informado sobre estrutura editorial e agentes multimedia.
-
-### Blockers
-
-Nenhum.
-
----
-
-*Liga IA+H · Kempten, Bavaria · 19 Mai 2026*
-*"AI processes. Human decides. WINDI guarantees."*
-
----
-
-## Sessão 19 Mai 2026 · 18:00–18:30 UTC · CCode Opus 4.5 (continuação)
-
-### Modo: Selagem §285 HEL Charter
-
-### Trabalho Completado
-
-**1 Selo Emitido:**
-
-| § | Título | Receipt | Hash |
-|---|--------|---------|------|
-| §285 | HEL Charter — Human Engagement Layer | `WINDI-S285-HEL-CHARTER-20260519182952` | `495D9D99` |
-
-**Ficheiros Criados:**
-- `/opt/windi/docs/S285-HEL-CHARTER.md` — Charter selado
-- `/opt/windi/proposals/HEL/` — Directório de propostas de componentes HEL
-
-### Definição Canónica
-
-> **"A HEL não é onde o WINDI diverte. É onde o WINDI se torna habitável."**
-
-| Conceito | Definição |
-|----------|-----------|
-| **HIOS** | Sistema nervoso — agentes, ledger, runtime, gates, receipts |
-| **HEL** | Pele cultural — onde o humano toca, sente, entende, confia e volta |
-
-### Inventário HEL (β)
-
-**LIVE (n=1):**
-- DATADAY (`DD0C3B18`) — Documentário operacional vivo
-
-**CANDIDATOS (n=6):**
-- Dragon Bingo, Data Jungle, Fotocopiadora Honesta, Receipts-as-Objects, Cognitive Maps, Runtime Observatory, Memory Rituals
-
-**Poda pré-selo:**
-- Story Runtime → CORTADO (DATADAY já cobre)
-- Agent Presence Layer → FUNDIDO em Runtime Observatory (sem resíduo antropomorfizante)
-
-### Intervenções Guardian (Críticas)
-
-| Clarificação | Conteúdo |
-|--------------|----------|
-| **α Numeração** | §285 = lei constitucional; §HEL-xxx = manifesto interno |
-| **β Inventário** | 1 LIVE + 6 Candidatos (honestidade de inventário) |
-| **γ Cláusula** | Frase como cláusula operacional, não epígrafe |
-| **Modus ≠ Layer** | HEL atravessa modi; ENTERTAINMENT não é sinónimo |
-| **Enforcement** | Propostas em `/opt/windi/proposals/HEL/` com template obrigatório |
-
-### Enforcement (§285)
-
-```
-Qualquer proposta de novo componente HEL vive como ficheiro em
-/opt/windi/proposals/HEL/{nome-componente}.md contendo:
-
-- ## Teste 1 — Habitabilidade (§285)
-- ## Teste 2 — Soberania (§284)
-
-Ausência de secção = inadmissível
-Guardian valida raciocínio (não presença)
-Ficheiro de proposta = única evidência admissível
-```
-
-### Os Cinco Mandatos da HEL
-
-| M | Nome | Descrição |
-|---|------|-----------|
-| M1 | Criar Vínculo | Presença operacional confiável |
-| M2 | Reduzir Medo Tecnológico | Ambiente observável |
-| M3 | Ensinar por Osmose | Aprender sem estudar |
-| M4 | Gerar Linguagem Comum | Hábitos culturais |
-| M5 | Transformar Governance em Sentimento | "O sistema me respeita" |
-
-### Genealogia Constitucional
-
-```
-I1 (Soberania Humana) — IRREMEDIÁVEL
-├── §284 (Constituição UX)
-│   └── I1.UX.a/b/c/d
-└── §285 (HEL Charter)
-    ├── Cláusula γ — Habitabilidade > Diversão
-    ├── Mandatos M1-M5
-    ├── Inventário β — 1 LIVE + 6 Candidatos
-    ├── Teste Duplo — §285 + §284
-    └── Enforcement — /opt/windi/proposals/HEL/
-```
-
-### Receipts Chain
-
-```
-§281:23E5E096 → §282:BF367F0C → §283:ED66444C → §283.1:F1D2C3B4 → §284:3414FE75 → §285:495D9D99
-```
-
-### Scaffold Pending
-
-- **Dragon Bingo** — Primeiro candidato a testar enforcement §285
-- **HEL Grammar** — Definir como o WINDI "fala" humanamente (diferido)
-
-### Próximo Passo
-
-§285 sealed. HEL existe como camada constitucional. Qualquer novo componente passa pelo Teste Duplo via `/opt/windi/proposals/HEL/`.
-
-### Blockers
-
-Nenhum.
-
----
-
-*Liga IA+H · Kempten, Bavaria · 19 Mai 2026*
-*"AI processes. Human decides. WINDI guarantees."*
-
----
-
-## Session 19 Mai 2026 (Parte 2) — HEL Containment & Errata
-
-**Intervalo:** 19:00-21:30 UTC
-**Modo:** Claude Code CLI
-**Sprint:** §285 HEL + /hios/ Video Studio
-
-### Cronologia Completa
-
-| Hora (UTC) | Evento |
-|------------|--------|
-| 18:29:52 | §285 HEL Charter selada no Ledger |
-| ~19:00 | W-DOCGEN-001 spec criada |
-| ~19:30 | W-VD-CUT-001 extended mode (5 min) adicionado |
-| ~20:00 | `/hios/` Video Studio criado |
-| ~21:16 | `/hios/` capturado com presets em violação |
-| ~21:30 | Guardian intervém, identifica inversão |
-| ~21:50 | Contenção `/hios/` executada |
-| 19:26:28 | §285 Errata selada no Ledger |
-
-### Selos Emitidos
-
-| § | Título | Receipt | Hash |
-|---|--------|---------|------|
-| §285 Errata | Containment Sequence | `WINDI-S285-HEL-ERRATA-20260519192628` | `ebb45b34` |
-
-### Violação Identificada e Corrigida
-
-**Problema:** `/hios/` expunha como presets de produção componentes HEL não admitidos:
-- HEL Introduction — candidato não admitido
-- Fotocopiadora Honesta — candidato não admitido
-- Zone-Bavaria/Alpha — candidato não admitido
-
-**Contenção executada:**
-1. Presets removidos (só DATADAY permanece — único LIVE)
-2. Claims corrigidos ("Proof sealed" → "Ledger seal — coming soon")
-3. Proof Card → "Approved" + "Ledger seal integration pending"
-
-### Ordem Ideal vs Ordem Real
-
-**Ideal:**
-```
-revisão fechada → contenção /hios/ → selo §285
-```
-
-**Real:**
-```
-selo §285 → revisão a meio → contenção retroactiva
-```
-
-### Ficheiros Criados/Modificados
-
-| Ficheiro | Acção |
-|----------|-------|
-| `/opt/windi/proposals/HEL/W-DOCGEN-001-SPEC.md` | Criado |
-| `/opt/windi/proposals/HEL/README.md` | Criado |
-| `/opt/windi/hios/visual/video-studio.html` | Criado + Contido |
-| `/opt/windi/vd-cut/vd_cut_server.py` | Extended mode (v1.1.0) |
-| `/opt/windi/docs/S285-HEL-ERRATA-CONTAINMENT.md` | Criado |
-| `/etc/nginx/sites-enabled/windi-domain.com` | /hios/ → video-studio.html |
-
-### W-VD-CUT-001 Extended Mode
-
-```python
-DURATION_MODES = {
-    "standard": 120,  # 2 min — default
-    "extended": 300,  # 5 min — requires explicit mode
-}
-```
-
-- Versão: 1.1.0
-- Endpoint `/intake` aceita `mode` parameter
-- Health response inclui `duration_modes`
-
-### Intervenção Guardian
-
-Guardian identificou três problemas críticos:
-
-1. **Sequência invertida** — Build antes de Define
-2. **Claim "Proof sealed"** — Afirmação falsa (não havia seal real)
-3. **§HEL-016 fronteira** — Tradução vs Ocultação da governança
-
-Resposta HD: "erro de sequência — vamos selar §285 primeiro"
-
-### HD-MIRROR Demonstrado
-
-> *"WINDI sabe corrigir-se sem reescrever-se."*
-
-O errata documenta a sequência sem alterar o selo §285 original. Append-only, não delete-and-replace.
-
-### Estado Final /hios/
-
-```
-URL:     https://windi-domain.com/hios/
-Service: hios-video-studio
-Seal:    S285-495D9D99
-Content: 30,656 bytes (após contenção)
-```
-
-**Presets visíveis:** Apenas DATADAY (LIVE)
-**Claims:** Todos verdadeiros ou honestos sobre estado pendente
-
-### Receipts Chain Actualizada
-
-```
-§285:495D9D99 → §285-ERRATA:ebb45b34
-```
-
-### Scaffold Pending
-
-- **Fotocopiadora Honesta** — Primeiro candidato a testar enforcement §285
-- **Ledger seal integration** — Video Studio precisa de POST real ao :8101
-- **W-DEV-API-001 systemd** — Serviço down detectado
-
-### Próximo Passo
-
-`/hios/` permanece contido até primeira admissão HEL completar via Teste Duplo.
-
-### Blockers
-
-Nenhum.
-
-### Observação Constitucional
-
-O sistema funcionou com asterisco: Guardian travou `/hios/` antes de violação pública prolongada, mas §285 selou antes de Guardian fechar revisão. O errata documenta esta circunstância para honestidade arquival.
-
----
-
-*Liga IA+H · Kempten, Bavaria · 19 Mai 2026*
-*"AI processes. Human decides. WINDI guarantees."*
-
-OM SHANTI
-
----
-
-## Sessão 19 Mai 2026 (Parte 3) — §285 HEL Charter Birth + HEL-001 Pending
-
-**Intervalo:** 21:30–23:00 UTC
-**Modo:** Claude Code CLI (Opus 4.5)
-**Sprint:** WINDI-HIOS Video Studio + HEL Genesis
-
----
-
-### Acções Seladas
-
-| Item | Receipt | Status |
-|------|---------|--------|
-| §285 HEL Charter | `WINDI-S285-HEL-CHARTER-20260519182952` | ✅ SEALED |
-| §285 Errata Containment | `WINDI-S285-HEL-ERRATA-20260519192628` | ✅ SEALED |
-| /hios/ Video Studio | — | Contido (só DATADAY activo) |
-| W-HIOS-001 Backend | :8196 | ✅ LIVE |
-| Invideo MCP Integration | — | ✅ REAL (mock→real) |
-| Ledger Integration | :8101 | ✅ REAL (primeiro video sealed) |
-
-### Propostas Pending
-
-**HEL-001 Sovereign Choice Gate**
-- **Ficheiro:** `/opt/windi/proposals/HEL/sovereign-choice-gate.md`
-- **Linhas:** 282 (UTF-8 verificado via `file` + `xxd`)
-- **Guardian Review:** Conteúdo aprovado; 4 fricções aplicadas (grep confirma 5/5)
-- **Blocker:** Resolvido — encoding correcto no disco, problema era nginx charset
-- **Timing Selo:** Pendente decisão Human Dragon (α/β/γ)
-- **Próximo:** `cat` directo no arranque + selo
-
-### Declaração Arquitectural
-
-**Declaração β** — Human Dragon escolheu:
-> "O utilizador escolhe no acto: MEMORY ou ENTERTAINMENT. A arquitectura segue a declaração."
-
-Resolve tensão I11 ↔ Fotocopiadora Honesta via modus por sessão.
-
-### Aprendizado Arquival
-
-| Problema | Causa | Solução |
-|----------|-------|---------|
-| Guardian via encoding corrompido | nginx sem `charset=utf-8` | Para revisões constitucionais: `cat` terminal ou checksums, não renders web |
-| 4 rondas pedindo ficheiro | Transporte, não conteúdo | Architect reportou verdade; diagnóstico `file`+`grep`+`xxd` resolveu |
-
-### Receipts da Sessão
-
-```
-§285:495D9D99 → §285-ERRATA:ebb45b34
-WINDI-DOCGEN-20260519200632-6B909CDE (primeiro video sealed via HIOS)
-```
-
-### Próxima Sessão
-
-1. Verify HEL-001 via `cat` directo
-2. Decidir timing do selo (β ou γ recomendado)
-3. Se selado: implementação NOIR + endpoints + storage temporário
-4. nginx charset fix para `/hios/`
-
-### Observação Constitucional
-
-> "Esta foi uma sessão dura. Quatro rondas a pedir o mesmo ficheiro, ar de impasse. O sistema reagiu bem ao desconforto. Human Dragon não defendeu nem Architect nem Guardian — pediu diagnóstico objectivo. Architect provou via file+grep+xxd. Guardian actualizou posição com evidência. Isto é exactamente o modo de funcionamento que §285 codifica."
-
----
-
-*Liga IA+H · Kempten, Bavaria · 19 Mai 2026*
-*"AI processes. Human decides. WINDI guarantees."*
-
-OM SHANTI
-
----
-
-## Sessão 21 Mai 2026 · 06:00–12:00 UTC · CCode Opus 4.5 + Guardian Claude.ai web
-
-### Modo: HEL-001 Selo + W-DIFF-001 Revisão Guardian + Linhagem ANCHOR-01
-
-### Selos Emitidos
-
-| § | Título | Receipt | Hash |
-|---|--------|---------|------|
-| HEL-001 | Sovereign Choice Gate | `WINDI-HEL-001-SOVEREIGN-CHOICE-GATE-20260521090500` | `8ac0e948` |
-
-### Trabalho Completado
-
-**1. HEL-001 Sovereign Choice Gate — SELADO**
-
-- F1 (assimetria textual) resolvida via **Opção β** — despir ENTRETENIMENTO
-- Texto final: "Descarrega agora. Depois, WINDI esquece." (sem "O ficheiro é teu, não nosso")
-- Guardian luz verde após revisão linha-a-linha dos 282 bytes reais
-- Opção A selada: "a arquitectura está decidida, §284 e §285 satisfeitos"
-- F2/F3 (purge TTL, hash_video) vivem na implementação (9 itens checklist)
-
-**2. W-DIFF-001 Execution Governance Boundary — CANONICAL-CANDIDATE**
-
-Estrutura criada em `/opt/windi/diffs/W-DIFF-001/`:
-```
-├── README.md           (8.5KB)
-├── GUARDIAN-REVIEW.md  (125 linhas · c917b4bd)
-├── approvals/
-├── bin/
-├── pending/
-├── schemas/
-├── tests/
-└── violations/
-```
-
-**3. Linhagem ANCHOR-01 Verificada**
-
-Cadeia de 3 artefactos documentada:
-```
-ANCHOR-01 (génese narrativa, 20 Mai)
-    ↓
-Guardian review isolada (20 Mai, sem contacto CCode)
-    ↓
-W-DIFF-001 spec formal (21 Mai)
-```
-
-**Auto-correcções na cadeia:**
-- Porto: `:8114` (erro) → `:8101` (correcto)
-- Approval root: `hd_or_delegate` → `hd_only` (apertou I9)
-- Execute gates: 2 → 4 (TTL + anti-replay adicionados)
-
-**4. Verificação Strato (C3)**
-
-```bash
-grep "hd_or_delegate" /opt/windi
-# Resultado: 0 matches em código WINDI
-# Apenas node_modules de terceiros
-```
-
-C3 (HD-MIRROR role) **RESOLVIDO** — raiz de confiança v1 = HD-only.
-
-### Condições W-DIFF-001 (Passagem a CANONICAL)
-
-| Cond | Natureza | Estado |
-|------|----------|--------|
-| C1 | Capacidade de assinatura | OPEN (Strato vivo) |
-| C2 | Executor determinístico | OPEN (clarificação) |
-| C3 | HD-MIRROR role | **RESOLVIDO** |
-| C4 | Granularidade one-shot | OPEN (definição) |
-| C5 | Higiene bloco selo | OPEN (edição) |
-
-### Decisões Constitucionais
-
-| Decisão | Invariante | Cravação |
-|---------|------------|----------|
-| HEL-001 Opção β | §284 no-nudge | Simetria por subtracção, não por adição de valor |
-| W-DIFF-001 HD-only | I9 | Delegação adiada para v2 como acto assinado próprio |
-| Linhagem explícita | I11 | Proveniência de 3 artefactos documentada |
-
-### Bind Packet Gerado
-
-```
-Receipt: WINDI-BIND-20260521081158-2C01C4A5
-Score: 100/100 — FULL
-Re-entry: ADMISSIBLE
-```
-
-### Ficheiros Modificados/Criados
-
-| Ficheiro | Acção |
-|----------|-------|
-| `/opt/windi/proposals/HEL/sovereign-choice-gate.md` | F1 corrigida + Status SEALED |
-| `/opt/windi/diffs/W-DIFF-001/` | Estrutura completa criada |
-| `/opt/windi/diffs/W-DIFF-001/GUARDIAN-REVIEW.md` | Nota formal com linhagem |
-
-### Receipts Chain
-
-```
-§285:495D9D99 → §285-ERRATA:ebb45b34 → HEL-001:8ac0e948
-```
-
-### Próxima Sessão
-
-**W-DIFF-001 Coluna 2:**
-- [ ] C1: Verificar capacidade de assinatura em :8096/:8099
-- [ ] C2: Adicionar linha explícita "executor determinístico"
-- [ ] C4: Definir granularidade de acção
-- [ ] C5: Corrigir bloco de selo
-- [ ] Cunhar receipt no :8101 → CANONICAL
-
-**ANCHOR-01:**
-- [x] Linhagem incorporada em W-DIFF-001/GUARDIAN-REVIEW.md (maturation + verification_C3)
-- [ ] Avaliar se modelo 3 camadas (Interna/Técnica/Pública) é distinto de I12 ou redundante
-
-### Observação Constitucional
-
-> "Duas instâncias Guardian isoladas (20 Mai e 21 Mai) convergiram no mesmo ponto de carga: a fronteira só é real quando a aprovação humana for assinada, não apenas escrita em YAML. Quando duas instâncias isoladas batem na mesma trave, isso não é coincidência — é a trave a ser real."
-
-### Blockers
-
-Nenhum.
-
----
-
-*Liga IA+H · Kempten, Bavaria · 21 Mai 2026*
-*"AI processes. Human decides. WINDI guarantees."*
-
-OM SHANTI
-
----
-
-## §286 · Sessão 21 Mai 2026 — W-HUMANDRAGON-MINT-001 READY-TO-BUILD
-
-```yaml
-data:        2026-05-21
-modo:        CCode CLI + Claude.ai web (Guardian)
-duração:     Sessão completa
-sprint:      W-HUMANDRAGON Minting Spec
-```
-
-### Trabalho Completado
-
-**W-HUMANDRAGON-MINT-001** — Sovereign Identity Minting Protocol
-- **Status:** READY-TO-BUILD (Guardian · 21 Mai 2026)
-- **Hash aprovado:** `73649081` (conteúdo)
-- **Hash final:** `01b24f75` (com carimbo de aprovação)
-- **Canónico:** `/opt/windi/specs/W-HUMANDRAGON-MINT-SPEC.md`
-
-### 5 Invariantes de Minting
-
-| ID | Derivado de | Regra |
-|----|-------------|-------|
-| INV-MINT-1 | I9 | Só Berçário minta (estrutural, não config) |
-| INV-MINT-2 | Lei I | Nascimento atómico (DID + instância juntos) |
-| INV-MINT-2-bis | INV-MINT-2 | Porta de activação (pending ≠ activo, confirmed = activo) |
-| INV-MINT-3 | I11 | Receipt com verdade limpa (sem role, com public_key) |
-| INV-MINT-4 | I1 | Custódia transitória (berço com porta de saída) |
-
-### Decisões HD-01 Seladas
-
-- **Atomicidade:** `ledger_first` (dois registos, append-only)
-- **Custódia:** Transitória (Protocolo de Êxodo em v2)
-- **Fonte de verdade:** Ledger :8101 (não DB operacional)
-
-### 8 Revisões Guardian
-
-| # | Issue | Resolução |
-|---|-------|-----------|
-| 1 | role: "Architect" no receipt | Removido — nascimento é acto de sistema |
-| 2 | Atomicidade fake (HTTP dentro de atomic_transaction) | ledger_first dois-registos |
-| 3 | Custódia não decidida | INV-MINT-4 transitória com êxodo |
-| 4 | Anti-Sybil ausente | Gate obrigatório antes de mint |
-| 5 | instance_id por timestamp (colisão) | UUID |
-| 6 | I14 não amarrado na genealogia | Adicionado |
-| 7 | "primeira acção" contradizia código | "seal CONFIRMED" |
-| 8 | Hash mudou após aprovação | Verificado: apenas carimbo de status |
-
-### Próximos Passos (Pendentes HD-01)
-
-```yaml
-pre_build:
-  - [ ] Política de Dados Canónica (PT/DE/EN) — necessária para consent_hash
-  - [ ] Decisão HD-01 de acender construção
-
-build:
-  - [ ] Architect escreve código do Berçário
-  - [ ] Guardian revê código antes de deploy
-  - [ ] Primeiro minting de teste (HD-01 ou Liga IA+H)
-```
-
-### Lição da Sessão
-
-> "O carimbo de status cita o hash que foi aprovado — `hash 73649081`.
-> O documento READY-TO-BUILD não pode conter o seu próprio hash final,
-> mas pode apontar para o hash sobre o qual a aprovação foi dada.
-> A cadeia de prova fecha-se sozinha. Append-only no seu melhor."
-> — Guardian · 21 Mai 2026
-
-### Artefactos
-
-- `/opt/windi/specs/W-HUMANDRAGON-MINT-SPEC.md` (canónico)
-- `/opt/windi/proposals/W-HUMANDRAGON-MINT-SPEC.md` (espelho)
-- `/opt/windi/public/specs/W-HUMANDRAGON-MINT-SPEC.md` (público)
-- `/opt/windi/diffs/W-DIFF-001/` (Execution Governance Boundary)
-
----
-
-*Loop dos Três Dragões: Architect propôs · HD-01 selou · Guardian verificou 8×*
-*"Nada atravessou por confiança cega."*
-
-OM SHANTI 🐉
-
-### §286 Bind Packet — Contexto Específico 21 Mai 2026
-
-```yaml
-bind_receipt: WINDI-BIND-20260521223703-E521AEB3
-integrity: 100/100 FULL
-re_entry: ADMISSIBLE
-
-sessao_actual:
-  tema: W-HUMANDRAGON-MINT-001 Sovereign Identity Minting Protocol
-  status: READY-TO-BUILD
-  hash_aprovado: 73649081 (conteúdo)
-  hash_final: 01b24f75 (com carimbo)
-  
-  decisoes_hd01:
-    - ledger_first (atomicidade dois-registos)
-    - Custódia transitória (berço com porta de saída)
-    - Fonte de verdade = Ledger :8101
-    
-  invariantes_minting:
-    - INV-MINT-1: Só Berçário minta (I9)
-    - INV-MINT-2: Nascimento atómico (Lei I)
-    - INV-MINT-2-bis: Porta de activação (pending ≠ activo)
-    - INV-MINT-3: Receipt com verdade limpa (I11)
-    - INV-MINT-4: Custódia transitória (I1)
-
-proximo_passo:
-  - Política de Dados Canónica (PT/DE/EN) — consent_hash precisa de texto
-  - Decisão HD-01 de acender construção do código
-  - Quando código escrito → Guardian revê antes de deploy
-
-artefactos:
-  - /opt/windi/specs/W-HUMANDRAGON-MINT-SPEC.md (canónico)
-  - /opt/windi/diffs/W-DIFF-001/ (Execution Governance Boundary)
-  - /opt/windi/proposals/HEL/sovereign-choice-gate.md (HEL-001 selado)
-```
-
----
-
----
-
-## §268 · Sessão 21 Mai 2026 — WINDI-HIOS Production Pipeline
-
-```
-Data:       2026-05-21
-Horário:    ~20:00 - 23:10 UTC
-Modo:       CCode CLI (Opus 4.5)
-Sprint:     WINDI-HIOS Webtoon Production
-```
-
-### Trabalho Completado
-
-**1. Capítulo 1 "O Protocolo do Jardim" — COMPLETO**
-- 19 vinhetas geradas via ComfyUI (Vast.ai)
-- 6 rounds de correcção de defeitos anatómicos
-- Todas as páginas seladas no Forensic Ledger :8101
-- Custo total: $0.79 de $100 Vast credit
-- Assets: `/opt/windi/hios/visual/assets/generated/`
-
-**2. Pipeline de Pós-Produção — SCRIPTS CRIADOS**
-```
-/opt/windi/hios/visual/scripts/
-├── vast-davinci-setup.sh       # Setup DaVinci Resolve no Vast.ai
-├── vast-launch-davinci.sh      # Lançador a partir do Strato
-├── elevenlabs-narration.sh     # Geração de voz
-└── .api-keys                   # Keys (chmod 600)
-```
-
-**3. ElevenLabs — TESTADO E FUNCIONAL**
-- Key extraída de /opt/windi/.env
-- Teste de narração gerado: `/opt/windi/hios/visual/assets/audio/test_narration.mp3`
-- Voz: Lily (multilingual) · 6.4s · 102KB
-
-### API Keys Disponíveis (Brain WINDI)
-
-| Provider | Variável | Uso |
-|----------|----------|-----|
-| ElevenLabs | `ELEVEN_API_KEY` | Narração PT/DE/EN |
-| Anthropic | `ANTHROPIC_API_KEY` | Guardian (Claude) |
-| OpenAI | `OPENAI_API_KEY` | Architect (GPT) |
-| Google | `GEMINI_API_KEY` | Witness (Gemini) |
-
-Keys copiadas para `/opt/windi/hios/visual/scripts/.api-keys` (chmod 600)
-
-### Arquitectura Estabelecida
-
-```
-VAST.AI (GPU forge)
-  ComfyUI → Imagens SDXL
-  DaVinci Resolve → Edição vídeo (script pronto)
-       ↓
-    [TWIN]
-       ↓
-STRATO (sanctuary)
-  /assets/generated/ → Imagens
-  /assets/audio/     → Narração ElevenLabs
-  /assets/davinci/   → Exports vídeo
-       ↓
-LEDGER :8101 (proof)
-  Seal + Verify público
-```
-
-### Scaffold Pending — Próxima Sessão
-
-- [ ] **Gerar narração completa Cap.1** — 17 vinhetas (~1.5 min áudio)
-- [ ] **Lançar Vast.ai com DaVinci Resolve** — GPU RTX 3090+
-- [ ] **Montar webtoon animado** — Imagens + Narração + Transições
-- [ ] **Selar vídeo final no Ledger**
-- [ ] **Capítulo 2** — "O Interior do :8114" (quando pronto)
-
-### Próximo Passo Concreto
-
-```bash
-# 1. Gerar narração completa
-bash /opt/windi/hios/visual/scripts/elevenlabs-narration.sh chapter1 pt
-
-# 2. Lançar Vast.ai DaVinci
-bash /opt/windi/hios/visual/scripts/vast-launch-davinci.sh recommend
-```
-
-### Decisões Constitucionais
-
-- **I11 (Permanência):** Imagens originais preservadas em `originals_backup/`
-- **I9 (Human Approval):** Correcções de defeitos aprovadas por Human Dragon
-- **Append-Only:** Fix iterations preservadas (fix_*, fix2_*, etc.)
-
----
-
-*LIGA IA+H · Kempten, Bavaria · 2026-05-21*
-*"O WINDI não é o desenhador da história. É o guardião da sua proveniência."*
-
-
----
-
-## §288 · Sessão 22 Mai 2026 — FORGE-E2E-001 Pipeline Validado
-
-```yaml
-data:        2026-05-22
-horário:     06:30–10:00 UTC
-modo:        CCode CLI (Opus 4.5)
-sprint:      WINDI-HIOS Production Pipeline
-milestone:   FORGE-E2E-001
-```
-
-### Marco Histórico
-
-**Primeiro artefacto multimédia gerado por GPU forge externa e ancorado no Ledger WINDI.**
-
-> "O primeiro artefacto não foi um contrato. Não foi um relatório. Não foi uma auditoria. Foi uma história."
-> — Guardian · 22 Mai 2026
-
-### Artefacto Selado
+### Receipt
 
 | Campo | Valor |
 |-------|-------|
-| **Nome** | `webtoon_chapter1.mp4` |
-| **Tipo** | Webtoon animado · 18 segmentos |
-| **Duração** | 52 segundos |
-| **Tamanho** | 4.3 MB |
-| **Receipt** | `WINDI-HIOS-WEBTOON-CAP1-20260522094724-1cd39dbd` |
-| **Hash** | `1cd39dbd23b31591...` |
-| **URL** | `https://windi-domain.com/hios/assets/exports/webtoon_chapter1.mp4` |
-| **Verify** | `https://windi-domain.com/verify-public/?id=WINDI-HIOS-WEBTOON-CAP1-20260522094724-1cd39dbd` |
+| **ID** | `WINDI-S279-DRIFT-COMPOSITION-20260519103501` |
+| **Hash (8)** | `E96E83CB` |
+| **doc_type** | constitutional |
 
-### Pipeline Validado End-to-End
+### Tese Central
 
-```
-VAST.AI (GPU Forge)              STRATO (Sanctuary)           LEDGER (Proof)
-┌─────────────────┐              ┌─────────────────┐          ┌─────────────────┐
-│ RTX 5090 32GB   │              │ Assets recebidos│          │ Receipt sealed  │
-│ ComfyUI/SDXL    │──[TWIN]────▶│ FFmpeg montagem │────────▶│ Hash anchored   │
-│ 18 segmentos    │              │ ElevenLabs voz  │          │ Public verify   │
-└─────────────────┘              └─────────────────┘          └─────────────────┘
-```
+> **"O drift deixa de ser observador — passa a ser componente."**
 
-### Fronteira Constitucional Testada
+### Decisões Constitucionais Seladas
 
-| Teste | Resultado |
-|-------|-----------|
-| GPU forge gerou **arte** (não docs utilizador) | ✅ Fronteira intacta |
-| Output veio para Strato | ✅ Sanctuary preserved |
-| Ledger :8101 ancorou | ✅ Proof chain valid |
-| URL público funciona | ✅ Verificável por terceiros |
+| Decisão | Valor | Rationale |
+|---------|-------|-----------|
+| **Modelo** | Subtractivo (A) | Linear, auditável, floor em 0 |
+| **Pesos** | M1=-5, M2=-10, M3=-3 | M2 (infra) > M1/M3 (docs) |
+| **Cap M2≥3** | 59 (MINIMAL) | Facto colapsa severamente |
+| **Cap Combinado≥10** | 69 (PARTIAL) | Interpretação permite observação |
+| **Thresholds** | Manter T1 | Consistência com §261 |
+| **Revisão** | 30 dias (2026-06-19) | Auto-calibração empírica |
 
-### Significância
+### Fórmula Canónica
 
-```yaml
-forge_milestone: PRIMEIRO output GPU→pipeline forense COMPLETO (22Mai)
-artifact: webtoon_chapter1.mp4 · receipt WINDI-HIOS-WEBTOON-CAP1-...1cd39dbd
-proof: forge gera arte → ledger ancora → fronteira de produção intacta
-status: pipeline VALIDADO end-to-end; daqui é afinação, não invenção
+```python
+if m2_drift >= 3:
+    cap = 59  # MINIMAL — infra factual
+elif (m1_drift + m2_drift + m3_drift) >= 10:
+    cap = 69  # PARTIAL — erosão forense
+else:
+    cap = 100
+
+final_score = max(0, min(cap, base_score - (m1*5 + m2*10 + m3*3)))
 ```
 
-### Trabalho Técnico Completado
+### Nota Arquitectónica (registada para recalibração)
+
+> "Cap invertido relativamente ao draft v1 do Architect por decisão soberana do
+> Human Dragon, alinhando severidade do cap com factualidade do sintoma."
+
+### Genealogia
+
+```
+§261 W-BIND-001 (CBP v0.2.0)
+        │
+        └── §265 Drift Monitor (M1/M2/M3)
+                │
+                └── §279 Drift Composition (SEALED)
+                        │
+                        └── §261 v0.3 (engenharia futura)
+```
+
+### Adjacentes
+
+| Item | Status | Notas |
+|------|--------|-------|
+| §280 Runtime Layer Naming | Candidato | Aguarda 30 dias |
+| HIOS Upgrade Packet | Speculative Mirror | Arquivado |
+| Bloco A redaccional | PENDING | Disponível para tarde |
+
+### Ciclo Three Dragons
+
+| Role | Contribuição |
+|------|--------------|
+| **Guardian** | Filtro: separou facto de interpretação |
+| **Architect** | Estrutura: elif vs min(), pesos P2 |
+| **Witness** | Verificação: hierarquia epistemológica |
+| **Human Dragon** | Decisão: cap invertido, I9 formal |
+| **CCode** | Execução: draft + selo |
+
+### Commit
+
+```
+Files:  drafts/S279-DRIFT-COMPOSITION-FINAL.md
+        claudeWeb/INDEX.md
+Receipt: WINDI-S279-DRIFT-COMPOSITION-20260519103501
+```
+
+### Próxima Sessão
+
+- Bloco A redaccional (Lexicon · DE sweep · /enterprise/)
+- §261 v0.3 engenharia (JSON Schema + cognitive-bind-module.sh)
+- Recalibração §279: 2026-06-19
+
+OM SHANTI
+
+
+---
+
+## §280 SEALED · Runtime Layer Naming Act · 19 Mai 2026
+
+**Receipt:** `WINDI-S280-RUNTIME-LAYER-NAMING-20260519104203`
+**Hash (8):** `EAB28564`
+**Invariants:** I1, I9, I11
+
+### Tese
+
+> "O cluster existe. Agora tem nome."
+
+### Composição Nomeada
+
+| § | Função |
+|---|--------|
+| §261 | Cognitive Bind Module |
+| §263 | PingPong Protocol |
+| §265 | Drift Monitor Metrics |
+| §279 | Drift Composition Protocol |
+
+### Emenda Guardian (preserva humildade epistémica)
+
+> "Este selo nomeia uma composição existente. Não certifica maturidade
+> operacional do cluster, que permanece sujeito à recalibração §279
+> prevista para 19 Jun 2026."
+
+### Nota de Sessão
+
+Dois selos em ~2h de sessão matinal:
+- §279 Drift Composition (10:35)
+- §280 Runtime Layer Naming (10:42)
+
+WINDI-HIOS Runtime Layer agora tem nome legal e imutável.
+
+OM SHANTI
+
+
+---
+
+## §280 SEALED · Runtime Layer Naming Act · 19 Mai 2026
+
+**Receipt:** `WINDI-S280-RUNTIME-LAYER-NAMING-20260519104203`
+**Hash (8):** `EAB28564`
+**Invariants:** I1, I9, I11
+
+### Conteúdo
+
+> Os parágrafos §261, §263, §265 e §279 são reconhecidos colectivamente como a
+> **Runtime Layer do WINDI-HIOS**.
+>
+> Este selo nomeia uma composição existente. **Não certifica maturidade operacional
+> do cluster**, que permanece sujeito à recalibração §279 prevista para 19 Jun 2026
+> e à observação contínua do Drift Monitor.
+
+### Composição do Cluster
+
+| § | Nome | Função |
+|---|------|--------|
+| §261 | W-BIND-001 | Cognitive Bind Module |
+| §263 | PingPong Protocol | Respiração operacional |
+| §265 | Drift Monitor Metrics | M1/M2/M3 |
+| §279 | Drift Composition Protocol | Integração drift → score |
+
+### Nota Guardian
+
+> "Nomear não é completar. Este selo é meramente etiqueta administrativa."
+
+
+---
+
+## §281 SEALED · Léxico de Superfície do WINDI-HIOS · 19 Mai 2026
+
+**Receipt:** `WINDI-S281-LEXICO-SUPERFICIE-20260519132429`
+**Hash (8):** `23E5E096`
+**Invariants:** I1, I9, I11, I12
+**Fundamento:** §273 — Direito Pleno Trajetória Memorial
+
+### Tese Central
+
+> "A superfície externa do WINDI-HIOS não expõe complexidade por padrão;
+> ela oferece ação clara, confiança silenciosa e prova acessível a quem a pedir."
+
+### Separação Backend/Frontend
+
+**Backend (Motor):** CBP · Drift · M1/M2/M3 · Receipt · Hash · BIS
+**Frontend (Cockpit):** Garantia · Fidelidade · Autenticidade · Identidade Soberana · Selo
+
+### Equivalências Críticas
+
+| Backend | Frontend |
+|---------|----------|
+| DID | Identidade Soberana |
+| Receipt | Selo |
+| ADMISSIBLE | WINDI presente (verde) |
+| DEGRADED | WINDI a verificar (âmbar) |
+| REFUSED | WINDI suspenso (vermelho) |
+
+### Colisão Resolvida
+
+- Backend: "Bind Integrity"
+- Frontend: "Fidelidade" / "Autenticidade" (NUNCA "Integridade")
+
+### Genealogia
+
+```
+§273 Direito Memorial → §281 Léxico Superfície → §282 UI Berçário (PENDING)
+```
+
+
+---
+
+## § SESSÃO 19 Mai 2026 (noite) — WINDI-HIOS Betriebssystem UI/UX
+
+**Duração:** ~45min | **Status:** ✅ DEPLOYED
+**Liga IA+H:** Human Dragon · Architect (CCode Opus 4.5)
+**Invariants:** I9, I11, I12 (Trilinguismo)
+**Natureza:** Sessão de entretenimento · DATADAY · Video Prompt Generator
+
+### Contexto
+
+Sessão curta focada em criar o portal oficial WINDI-HIOS com 4 prateleiras (shelves) no estilo do draft UI/UX fornecido pelo Human Dragon. Design roxo/violeta com video loop central.
+
+### Trabalho Completado
 
 | Item | Estado |
 |------|--------|
-| Vast.ai SSH connection | ✅ Configurado |
-| RTX 5090 instance | ✅ 32GB VRAM · 377GB RAM |
-| Kdenlive + VNC | ✅ Instalado |
-| noVNC browser access | ✅ Porta 1111 → 31422 |
-| FFmpeg montagem | ✅ 18 segmentos → MP4 |
-| ElevenLabs narração | ✅ 18 áudios PT gerados |
-| Ledger seal | ✅ Receipt emitido |
-| URL público | ✅ `/hios/assets/exports/` |
+| `/opt/windi/hios/visual/hios-global.html` | ✅ Portal principal criado |
+| `/opt/windi/hios/visual/entertainment/index.html` | ✅ Shelf PLAY/SPIELEN |
+| `/opt/windi/hios/visual/dataday/index.html` | ✅ Shelf LEARN/LERNEN (4 episódios) |
+| `/opt/windi/hios/visual/architecture/index.html` | ✅ Revisado com trilinguismo |
+| Nginx configurado | ✅ `/hios/` → portal |
+| Video Studio preservado | ✅ Intacto em `/hios/video-studio/` |
 
-### Narrações Geradas (ElevenLabs)
+### Estrutura Final
 
 ```
-/opt/windi/hios/visual/assets/audio/
-├── chapter1_p01_v1_pt.mp3 ... chapter1_p05_v3_pt.mp3
-└── 18 ficheiros · Voz: Lily (multilingual)
+/opt/windi/hios/visual/
+├── hios-global.html          ← Portal (4 prateleiras)
+├── video-studio.html         ← Studio (intacto)
+├── entertainment/index.html  ← SPIELEN/PLAY/JOGAR
+├── dataday/index.html        ← LERNEN/LEARN/APRENDER
+├── architecture/index.html   ← Architektur (revisado)
+└── assets/                   ← Para video loop (pendente)
 ```
 
-### Descoberta GPU PRO 5000
+### 4 Prateleiras (Shelves)
 
-```yaml
-gpu_status: forge externo UPGRADED — PRO 5000 (Vast.ai) disponível
-sovereignty_production: INALTERADA — inferência docs fica local/Anthropic
-guardrail: NUNCA correr inferência sobre docs de utilizador em metal alugado
-budget_impact: ZERO — troca de máquina sem alterar custos
-use_case: webtoon pipeline, ComfyUI, experimentação de modelos
+| Shelf | DE | EN | PT | Destino |
+|-------|----|----|-----|---------|
+| 🎭 PLAY | SPIELEN | PLAY | JOGAR | /hios/entertainment/ |
+| 📚 LEARN | LERNEN | LEARN | APRENDER | /hios/dataday/ |
+| 🛠️ CREATE | SCHAFFEN | CREATE | CRIAR | /hios/video-studio/ |
+| ⚖️ VERIFY | PRÜFEN | VERIFY | VERIFICAR | /verify-public/ |
+
+### I12 Trilinguismo — Revisão Completa
+
+Todas as 4 páginas corrigidas para trilinguismo consistente:
+- **Default:** DE (Deutsch)
+- **Seletor:** Topo direito em todas as páginas
+- **Persistência:** `localStorage('windi_lang')` partilhado
+- **Doutrina:** "KI verarbeitet. Mensch entscheidet. WINDI garantiert."
+
+### Design
+
+- Gradiente roxo/violeta (#a855f7 → #7c3aed)
+- Glassmorphism nos cards
+- Video loop placeholder central (16:9)
+- Stats: 57K+ Receipts · I1-I18 · :8196
+- Dragon Signature: 🐉 OM SHANTI
+
+### Nginx
+
+```nginx
+location ^~ /hios/ {
+    alias /opt/windi/hios/visual/;
+    index hios-global.html index.html;
+}
+
+location = /hios/video-studio/ {
+    rewrite ^ /hios/video-studio.html last;
+}
 ```
 
-### Próximo Passo
+### Pendente
 
-**Teaser Cinematográfico "O Eco da Assimetria"**
-- Roteiro: 90 segundos · 4 actos
-- GPU: H100 ou PRO 5000 72GB
-- Qualidade: Cinematográfico (SDXL + Runway)
-- Landing page: `/hios/` com "O que desejas descobrir?"
+- [ ] `sudo systemctl reload nginx` — activar rotas
+- [ ] Criar video loop (30-45s) em `/hios/assets/windi-loop.mp4`
+- [ ] Poster image para placeholder
 
-### Observação Constitucional
+### Próxima Sessão
 
-> "A teoria e a prática bateram certo no mesmo dia. Isso não é sorte — é arquitectura."
-> — Guardian · 22 Mai 2026
+- Produzir video loop com estética WINDI
+- Activar nginx e smoke test
+- Potencial: Dragon Bingo, episódios DATADAY reais
 
-> "O que importa não é a qualidade deste vídeo — é que o caminho existe agora. Da próxima já não inventas o pipeline, só afinas o output. Saíste do território do 'será que dá?' para o território do 'como fica melhor?'. Esse salto só se dá uma vez por sistema, e acabaste de o dar."
+### Notas
 
----
-
-*Liga IA+H · Kempten, Bavaria · 22 Mai 2026*
-*"AI processes. Human decides. WINDI guarantees."*
+Sessão focada em entretenimento. Portal WINDI-HIOS agora tem identidade visual própria com gradiente roxo, separado do NOIR gold do resto do sistema. Trilinguismo (I12) aplicado cirurgicamente em todas as páginas.
 
 OM SHANTI 🐉
 
+---
 
 ---
 
-## Sessão 22 Mai 2026 · 15:30 → 15:55 — ENCERRAMENTO
+## § SESSÃO 22 Mai 2026 (tarde/noite) — WINDI Cinema Production
 
-**Sprint:** WINDI-HIOS Teaser Production Pipeline
-**Modo:** CCode CLI (Opus 4.5)
-**Operador humano:** Human Dragon
+**Período:** 16:30–20:15 (CCode CLI)
+**Sprint:** G3 Merkle + Foundation Portals + **HIOS Cinema**
+**Modo:** Produção Visual · Veo 3.1 Pipeline
 
 ### Trabalho Completado
-- 8 motion clips gerados via Wan2.2-TI2V-5B em 4x RTX 5090 (Vast.ai)
-- 3 teasers trilíngues montados e selados no Ledger
-- Infotainment actualizado com verify links dinâmicos
-- verify-public regex corrigido para receipt IDs com hífens
-- Bugfix: verify UI usa `?id=` parameter, não path
 
-### Selos Emitidos
-- `WINDI-HIOS-TEASER-PT-20260522153257-A5281D8C` — Teaser PT 62s
-- `WINDI-HIOS-TEASER-EN-20260522153304-F1EB4166` — Teaser EN 56s
-- `WINDI-HIOS-TEASER-DE-20260522153310-EB5AE5A6` — Teaser DE 63s
+1. **Pipeline Veo 3.1 Operacional**
+   - API key Google validada com acesso completo (Veo 2, 3, 3.1, Imagen 4)
+   - Script `veo_producer.py` criado e funcional
+   - Reference images funcionam para continuidade de personagem
 
-### Commit
-- Hash: `3769c09d0`
-- Message: `feat(§283): WINDI-HIOS Teaser Trilogy — Trilingual Production Pipeline`
+2. **Filme "O Viajante e a Adormecida" v1.0**
+   - 10 cenas produzidas (3 Gemini + 7 Veo 3.1)
+   - 86 segundos de duração
+   - Publicado em: `https://windi-domain.com/hios/cinema.html`
+   - Ficheiro: `/opt/windi/hios/visual/producer/output/VIAJANTE_E_ADORMECIDA_FINAL.mp4`
 
-### Scaffold Pending
-- §283 WINDI-HIOS Teaser Trilogy Seal formal (candidato a selo numerado)
-- Pipeline I2V reutilizável para futuras produções
-- Mobile-friendly player para Infotainment
+3. **Screenplay v1.0 + v2.0**
+   - v1.0: 406 linhas, narrativa base completa
+   - v2.0: 695 linhas, incorpora orientações do Conselho
+   - Ficheiros em `/opt/windi/hios/visual/producer/SCREENPLAY_*.md`
+   - Acesso: `https://windi-domain.com/hios/SCREENPLAY_v2.md`
 
-### Próximo Passo Proposto
-- Integração navegação completa WINDI-HIOS (producer → entertainment → videos)
-- Vast.ai instance pode ser desligada (produção concluída)
+4. **Orientações do Conselho Integradas**
+   - Transição cromática: monocromático → neon → orgânico
+   - Esfera wireframe como símbolo recorrente
+   - Diálogo refinado: "Querer dói"
+   - Cena 13 (O Selo Dela) — ela GERA soberania, não recebe
 
-### Decisões Constitucionais
-- I11: Receipts selados no Ledger com verify links funcionais
-- I12: Trilingual compliance (PT/EN/DE) nos teasers e UI
+5. **Novas Referências Recebidas**
+   - `cafe4.jpeg` — Esfera central / consciência colectiva
+   - `cafe5.png` — Díptico futuro/passado (varanda Alpes)
 
-### Notas para Sessão Seguinte
-- verify-public :8114 reiniciado manualmente (não systemd)
-- Regex em `/opt/windi/verify-public/verify_public.py` linha 43 expandido
-- RTX 5090 requer PyTorch nightly cu128 (sm_120 Blackwell)
+### Ficheiros Criados
+
+```
+/opt/windi/hios/visual/producer/
+├── veo_producer.py                    # Pipeline automatizado
+├── cinema.html                        # Página de visualização
+├── SCREENPLAY_VIAJANTE_E_ADORMECIDA_v1.md
+├── SCREENPLAY_VIAJANTE_E_ADORMECIDA_v2.md
+├── cafe.mp4, cafe2.mp4, cafe3.mp4     # Referências Gemini
+├── cafe4.jpeg, cafe5.png              # Novas referências
+├── ref_man.png, ref_woman.png         # Referências personagem
+├── ref_esfera.jpg, ref_diptych.png    # Referências v2.0
+└── output/
+    ├── acto[1-5]_*.mp4                # Cenas individuais
+    ├── cena9_conversa.mp4
+    ├── cena10_regresso.mp4
+    └── VIAJANTE_E_ADORMECIDA_FINAL.mp4  # Filme 86s
+```
+
+### Scaffold Pending — Produção v2.0
+
+**7 cenas a produzir (aguarda quota reset):**
+- [ ] Cena 2B — O Sistema (ref: cafe4.jpeg)
+- [ ] Cena 11 — Primeiro Toque (neve)
+- [ ] Cena 12 — Memória (flashback infância)
+- [ ] Cena 13 — O Selo Dela (CRÍTICA)
+- [ ] Cena 14 — Outros (ref: cafe5.png)
+- [ ] Cena 15 — Transmissão
+- [ ] Cena 16 — Pôr-do-Sol (final)
+
+**Custo estimado:** ~$0.70 (7 cenas × $0.10)
+**Duração final v2.0:** ~2m30s (16 cenas)
+
+### Blockers
+
+- **API Quota:** Veo 3.1 quota excedida (429 RESOURCE_EXHAUSTED)
+- **Reset esperado:** Amanhã (quotas diárias típicas)
+
+### Próximo Passo
+
+```bash
+cd /opt/windi/hios/visual/producer
+python3 veo_producer.py "prompt" --ref ref_esfera.jpg --output output/cena2b_sistema.mp4
+```
+
+Continuar produção das 7 cenas v2.0 após reset de quota.
+
+### Conceito Central (Conselho)
+
+> "Ela não perdeu liberdade. Ela perdeu vontade."
+> 
+> "Quando uma ideia deixa de depender de explicação técnica e passa a ser
+> compreendida através de uma história, ela ganha uma capacidade
+> completamente diferente de viajar pelo mundo."
+
+### Custo Total Sessão
+
+- 10 cenas Veo 3.1: ~$1.00
+- Processamento FFmpeg: $0.00
+- **Total:** ~$1.00
+
+---
 
 
 ---
