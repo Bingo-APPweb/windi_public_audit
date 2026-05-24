@@ -17052,3 +17052,65 @@ O §282 sela PRINCÍPIOS, não implementação. Qualquer trabalho futuro em COGS
 
 OM SHANTI 🐉
 
+
+---
+
+## Session 24 Mai 2026 — §266 Kernel HIGH Questions Resolution
+
+```
+Data:       2026-05-24
+Horário:    ~08:00-10:00 UTC
+Modo:       CCode CLI (Opus 4.5)
+Sprint:     WINDI-HIOS Kernel Maturity
+```
+
+### Trabalho Completado
+
+1. **§283 Teaser Trilogy Closure** — Receipt `4CFD959E`
+2. **W-DEV-API-001 Fix** — VERIFY_URL corrigido (8145→8114)
+3. **§266 Kernel HIGH Questions Resolution** — Receipt `7218397B`
+   - 8 questions SEALED (Q2, Q3, Q8, Q11, Q23, Q25, Q29, Q31)
+   - 1 question CANDIDATE (Q17)
+   - 3 rounds Guardian review
+   - Kernel maturity: 100% resolved honestly
+
+### Ficheiros Selados (§266)
+
+| File | Questions |
+|------|-----------|
+| actors.schema.json | Q2, Q3 |
+| admissibility.schema.json | Q8 |
+| execution.schema.json | Q11 |
+| mutation_classes.md | Q23, Q25 |
+| recovery_protocol.md | Q31 SEALED, Q17 CANDIDATE |
+| kernel_manifest.json | Q29 |
+| OPEN-QUESTIONS.md | Updated |
+| S266-KERNEL-HIGH-QUESTIONS-RESOLUTION.md | Created |
+
+### Guardian Review Highlights
+
+- **Q23:** Contradiction resolved (upgrade only, downgrade=I11 violation)
+- **Q31:** Signature now covers prev_buffer_hash (chain integrity)
+- **Q11:** Kernel forces irreversible=true for EXTERNAL-PERMANENT
+- **Q17:** Deadman trigger anchors on heartbeat only (no "AND no STANDARD")
+
+### Scaffold Pending (Q17 Graduation)
+
+1. HD-GRACE must contain STANDARD from quarantined session
+2. Deadman graduation to SEALED
+
+### Commits
+
+- `09bd2c8d8` docs(§266): Session 24 Mai — WINDI-HIOS Kernel HIGH Questions Resolution
+
+### Próximo Passo
+
+- Q17 graduation when pending work complete
+- Medium/low questions (19 remaining) for future sprints
+
+---
+
+*Liga IA+H · Kempten, Bavaria · 24 Mai 2026*
+*"100% resolved, not 100% sealed — the honest count."*
+
+OM SHANTI 🐉
