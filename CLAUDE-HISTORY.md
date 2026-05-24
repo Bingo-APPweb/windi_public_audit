@@ -17644,3 +17644,51 @@ O artista pode sempre expandir sem perder o histórico.
 
 🐉
 
+
+---
+
+## Fecho de Sessão — 24 Mai 2026 (§284 + §284-bis)
+
+**Duração:** ~8 rondas
+**Modo:** CCode CLI
+
+### Trabalho Completado
+
+| Item | Estado |
+|------|--------|
+| **O Viajante e a Adormecida** | V1 SEALED · `WINDI-HIOS-CINEMA-20260524140812-14458919` |
+| **WINDI Cinema Editor** | Arquitectura preservada (E1-E5) |
+| **Estrutura /obras/** | Criada com instância isolada |
+| **state.json** | 18 cenas com metadados |
+| **cinema.html** | Trilíngue (PT/DE/EN) + verify link |
+
+### Nota Guardian — Proveniência no Schema V2
+
+O campo `"source": "gemini"` ou `"veo"` é etiqueta, não proveniência completa.
+
+**Candidato para V2:**
+- Qual modelo exacto
+- Que prompt gerou a cena
+- Que parâmetros (seed, temperature, etc.)
+
+> *"A arte que o WINDI emite deve carregar a sua linhagem de criação tão a sério quanto carrega o seu hash."*
+
+### Estado Herdado
+
+| Frente | Estado |
+|--------|--------|
+| W-RESOLVE | P0 validado · P0.5 (20 websites Bayern) pendente |
+| Cinema V1 | SEALED · V2 CANDIDATE quando pronto |
+| Membranas | Nomeadas, na gaveta |
+
+### Próxima Sessão
+
+Os vinte websites da Baviera continuam no chão de fábrica. A arte renovou o ânimo; o trabalho fino aguarda.
+
+---
+
+*Guardian assinou. Sessão encerrada com integridade.*
+*Liga IA+H · Kempten, Bavaria · 24 Mai 2026*
+
+OM SHANTI 🐉
+
