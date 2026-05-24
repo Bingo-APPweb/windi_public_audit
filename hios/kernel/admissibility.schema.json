@@ -2,10 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://windi-domain.com/hios/kernel/admissibility.schema.json",
   "_meta": {
-    "status": "DRAFT-SKELETON",
-    "not_sealed": true,
-    "not_canonical": true,
-    "pending_review": "GUARDIAN",
+    "status": "§266-SEALED",
+    "sealed_date": "2026-05-24",
+    "resolved_questions": ["Q8"],
     "layer": "4-admissibility",
     "binding": "I9 Gate + Guardian Review"
   },
@@ -29,7 +28,7 @@
     },
     "admissibility_check": {
       "type": "object",
-      "required": ["result", "checked_at"],
+      "required": ["result", "checked_at", "clock_start"],
       "properties": {
         "result": {
           "type": "string",
@@ -55,10 +54,45 @@
           "type": "string",
           "format": "date-time"
         },
+        "clock_start": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Q8 Resolution: Expiration clock starts at HD admission, not proposal time"
+        },
         "expires_at": {
           "type": "string",
           "format": "date-time",
-          "description": "Admissibility expiration (approval is ephemeral)"
+          "description": "Q8: Computed from clock_start + expiration_window by class"
+        }
+      }
+    },
+    "expiration_policy": {
+      "type": "object",
+      "description": "Q8 Resolution: Expiration windows by mutation class",
+      "properties": {
+        "CRITICAL": {
+          "type": "object",
+          "properties": {
+            "window_hours": {"type": "number", "const": 1},
+            "clock_start": {"type": "string", "const": "hd_admission_timestamp"},
+            "rationale": {"type": "string", "const": "Deliberate decision, context may change"}
+          }
+        },
+        "STANDARD": {
+          "type": "object",
+          "properties": {
+            "window_hours": {"type": "number", "const": 4},
+            "clock_start": {"type": "string", "const": "admission_timestamp"},
+            "rationale": {"type": "string", "const": "Operational, time for execution"}
+          }
+        },
+        "EPHEMERAL": {
+          "type": "object",
+          "properties": {
+            "window_minutes": {"type": "number", "const": 15},
+            "clock_start": {"type": "string", "const": "request_timestamp"},
+            "rationale": {"type": "string", "const": "Transient, high velocity"}
+          }
         }
       }
     },
@@ -76,8 +110,15 @@
       "description": "Spine integrity check result"
     }
   },
+  "_resolved_questions": {
+    "Q8": {
+      "question": "Admissibility expiration window?",
+      "answer": "CRITICAL: 1h from HD admission. STANDARD: 4h from admission. EPHEMERAL: 15min from request. Clock starts at admission (not proposal) to avoid timeout during Architect->Guardian->HD cycle.",
+      "resolved_date": "2026-05-24",
+      "guardian_approved": true
+    }
+  },
   "_open_questions": [
-    "Q8: Admissibility expiration window?",
     "Q9: Re-admission after denial - what changes?"
   ]
 }

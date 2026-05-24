@@ -2,10 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://windi-domain.com/hios/kernel/execution.schema.json",
   "_meta": {
-    "status": "DRAFT-SKELETON",
-    "not_sealed": true,
-    "not_canonical": true,
-    "pending_review": "GUARDIAN",
+    "status": "§266-SEALED",
+    "sealed_date": "2026-05-24",
+    "resolved_questions": ["Q11"],
     "layer": "5-execution",
     "binding": "Construtor + Service-specific execution"
   },
@@ -40,12 +39,47 @@
         "mutation_class": {
           "type": "string",
           "enum": ["CRITICAL", "STANDARD", "EPHEMERAL"]
+        },
+        "reach": {
+          "type": "string",
+          "enum": ["internal", "external"],
+          "description": "Whether action has external effects"
+        },
+        "reversibility": {
+          "type": "string",
+          "enum": ["reversible", "irreversible"],
+          "description": "Whether action can be undone"
+        }
+      }
+    },
+    "rollback_policy": {
+      "type": "string",
+      "enum": ["ATOMIC", "CHECKPOINT", "COMPENSATE", "FAIL_EXPLICIT"],
+      "description": "Q11 Resolution: Partial execution rollback strategy"
+    },
+    "rollback_constraints": {
+      "type": "object",
+      "description": "Q11: Kernel-enforced constraints on rollback policy",
+      "properties": {
+        "external_permanent_policy": {
+          "type": "string",
+          "const": "ATOMIC_OR_FAIL_EXPLICIT",
+          "description": "COMPENSATE prohibited for EXTERNAL-PERMANENT (no real inverse exists)"
+        },
+        "irreversible_forced": {
+          "type": "boolean",
+          "description": "Kernel forces irreversible=true when reach=EXTERNAL-PERMANENT. Actor cannot override."
+        },
+        "compensate_requires": {
+          "type": "string",
+          "const": "reversible=true",
+          "description": "COMPENSATE only allowed when action is actually reversible"
         }
       }
     },
     "execution_state": {
       "type": "string",
-      "enum": ["pending", "running", "completed", "failed", "rolled_back"]
+      "enum": ["pending", "running", "completed", "failed", "rolled_back", "fail_explicit"]
     },
     "started_at": {
       "type": "string",
@@ -60,7 +94,14 @@
       "properties": {
         "success": {"type": "boolean"},
         "output": {"type": "object"},
-        "error": {"type": "string"}
+        "error": {"type": "string"},
+        "failure_declared": {
+          "type": "boolean",
+          "description": "Q11: True when FAIL_EXPLICIT used. Failure surfaced, not disguised (I14)."
+        },
+        "partial_success": {"type": "boolean"},
+        "checkpoint_id": {"type": "string"},
+        "compensated_by": {"type": "string"}
       }
     },
     "proof_id": {
@@ -68,8 +109,16 @@
       "description": "Reference to proof/receipt generated"
     }
   },
+  "_resolved_questions": {
+    "Q11": {
+      "question": "Partial execution rollback strategy?",
+      "answer": "3 policies: ATOMIC (default, full rollback), CHECKPOINT (preserves checkpoints), COMPENSATE (inverse action). COMPENSATE PROHIBITED for EXTERNAL-PERMANENT (no real inverse). Kernel forces irreversible=true when reach=EXTERNAL-PERMANENT. FAIL_EXPLICIT required when no rollback possible: failure_declared=true (I14).",
+      "resolved_date": "2026-05-24",
+      "guardian_approved": true,
+      "guardian_note": "Actor cannot set irreversible=false for EXTERNAL-PERMANENT actions. Kernel enforces."
+    }
+  },
   "_open_questions": [
-    "Q10: Execution timeout policy?",
-    "Q11: Partial execution rollback strategy?"
+    "Q10: Execution timeout policy?"
   ]
 }

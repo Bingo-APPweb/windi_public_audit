@@ -2,10 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://windi-domain.com/hios/kernel/actors.schema.json",
   "_meta": {
-    "status": "DRAFT-SKELETON",
-    "not_sealed": true,
-    "not_canonical": true,
-    "pending_review": "GUARDIAN",
+    "status": "§266-SEALED",
+    "sealed_date": "2026-05-24",
+    "resolved_questions": ["Q2", "Q3"],
     "layer": "1-identity",
     "binding": "DID Genesis :8096"
   },
@@ -26,8 +25,18 @@
     },
     "did": {
       "type": "string",
-      "description": "Decentralized Identifier bound to DID Genesis",
-      "pattern": "^did:windi:[a-z0-9-]+$"
+      "description": "Decentralized Identifier bound to DID Genesis. Session DIDs use pattern did:windi:session:{hash8}",
+      "pattern": "^did:windi:(session:)?[a-z0-9-]+$"
+    },
+    "did_type": {
+      "type": "string",
+      "enum": ["persistent", "ephemeral"],
+      "description": "Q2 Resolution: Persistent DIDs are permanent, ephemeral DIDs are session-scoped (max 24h)"
+    },
+    "identity_scope": {
+      "type": "string",
+      "enum": ["persistent", "session"],
+      "description": "Q3 Resolution: Session scope limits to EPHEMERAL/STANDARD mutations. CRITICAL requires persistent."
     },
     "role": {
       "type": "string",
@@ -37,11 +46,21 @@
     "tier": {
       "type": "string",
       "enum": ["FREE", "MED", "HIGH", "ORACLE"],
-      "description": "DID tier from DID Genesis"
+      "description": "DID tier from DID Genesis. Session DIDs default to FREE."
     },
     "session_id": {
       "type": "string",
-      "description": "Current session identifier (if applicable)"
+      "description": "Current session identifier (required for ephemeral DIDs)"
+    },
+    "ephemeral_keypair": {
+      "type": "object",
+      "description": "Q2/Q31: Session DID keypair for buffer signatures. Discarded at session end.",
+      "properties": {
+        "algorithm": {"type": "string", "const": "Ed25519"},
+        "public_key": {"type": "string"},
+        "created_at": {"type": "string", "format": "date-time"},
+        "expires_at": {"type": "string", "format": "date-time"}
+      }
     },
     "created_at": {
       "type": "string",
@@ -50,10 +69,41 @@
     "verified": {
       "type": "boolean",
       "description": "Whether identity is verified via DID Genesis"
+    },
+    "upgrade_policy": {
+      "type": "object",
+      "description": "Q2 Resolution: Ephemeral to persistent upgrade rules",
+      "properties": {
+        "agent_self_request": {
+          "type": "string",
+          "const": "PROHIBITED",
+          "description": "Agent cannot self-request upgrade (violates I9)"
+        },
+        "upgrade_authority": {
+          "type": "string",
+          "enum": ["HD_ONLY", "GUARDIAN_PLUS_HD"],
+          "description": "Human submits request, HD decides"
+        },
+        "rejection_code": {
+          "type": "string",
+          "const": "autonomy_escalation_blocked"
+        }
+      }
     }
   },
-  "_open_questions": [
-    "Q2: How to handle agent actors without persistent DID?",
-    "Q3: Session-scoped vs persistent actor identity?"
-  ]
+  "_resolved_questions": {
+    "Q2": {
+      "question": "How to handle agent actors without persistent DID?",
+      "answer": "Agents receive ephemeral DID: did:windi:session:{hash8}. Valid max 24h. Tier=FREE. Upgrade requires HD ratification (never agent-initiated, per I9).",
+      "resolved_date": "2026-05-24",
+      "guardian_approved": true
+    },
+    "Q3": {
+      "question": "Session-scoped vs persistent actor identity?",
+      "answer": "Session DID: tier=FREE, max_class=STANDARD. Persistent DID: any tier, any class. CRITICAL mutations require persistent DID. Tier and mutation class are ORTHOGONAL.",
+      "resolved_date": "2026-05-24",
+      "guardian_approved": true
+    }
+  },
+  "_orthogonality_note": "Tier (FREE/MED/HIGH/ORACLE) controls resources/rate-limits. Mutation class (EPHEMERAL/STANDARD/CRITICAL) controls governance. They are independent. A FREE actor can create STANDARD mutations. A session DID has tier=FREE AND max_class=STANDARD (not CRITICAL)."
 }
