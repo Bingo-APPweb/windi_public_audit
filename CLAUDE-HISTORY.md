@@ -17556,3 +17556,91 @@ https://windi-domain.com/verify-public/?id=WINDI-HIOS-CINEMA-20260524140812-1445
 
 🐉
 
+
+---
+
+## §284-bis — Arquitectura do WINDI Cinema Editor
+
+**Data:** 24 Mai 2026
+**Status:** CONSTITUTIONAL RULE
+
+### Regra de Preservação
+
+> **"Para cada obra, um novo editor. Cada editor preservado para sempre."**
+
+O WINDI Cinema Editor não é uma ferramenta descartável. É a **matriz de produção** que permite:
+
+1. **Expansão futura** — Reabrir qualquer obra e adicionar cenas
+2. **Linhagem de versões** — V1 → V2 → V3 com `supersedes` tracking
+3. **Independência por obra** — Cada filme tem o seu próprio editor isolado
+
+### Estrutura de Directórios
+
+```
+/opt/windi/hios/visual/producer/
+├── editor.html              ← Template matriz (NUNCA APAGAR)
+├── editor_server.py         ← Backend Flask :8197
+│
+├── obras/
+│   ├── viajante-e-adormecida/
+│   │   ├── editor.html      ← Instância desta obra
+│   │   ├── state.json       ← Estado das cenas
+│   │   ├── v1/              ← Versão 1 (SEALED)
+│   │   ├── v2/              ← Versão 2 (se existir)
+│   │   └── assets/          ← Cenas .mp4 desta obra
+│   │
+│   ├── obra-002/
+│   │   ├── editor.html
+│   │   └── ...
+│   │
+│   └── obra-003/
+│       └── ...
+```
+
+### Workflow para Nova Obra
+
+```bash
+# 1. Criar directório da obra
+mkdir -p /opt/windi/hios/visual/producer/obras/nome-da-obra/
+
+# 2. Copiar template do editor
+cp /opt/windi/hios/visual/producer/editor.html \
+   /opt/windi/hios/visual/producer/obras/nome-da-obra/
+
+# 3. Gerar cenas com veo_producer.py
+# 4. Montar no editor
+# 5. Exportar FFmpeg
+# 6. Selar no Ledger
+```
+
+### Invariantes do Editor
+
+| Regra | Descrição |
+|-------|-----------|
+| **E1** | Template `editor.html` matriz NUNCA é apagado |
+| **E2** | Cada obra tem instância própria isolada |
+| **E3** | Estado persiste em `state.json` + localStorage |
+| **E4** | Versões seladas são imutáveis (V1, V2, ...) |
+| **E5** | Expansão sempre possível criando nova versão |
+
+### A Filosofia
+
+O Editor não é descartável porque a arte não é descartável.
+
+Cada obra pode crescer, evoluir, ganhar novas cenas. O receipt de cada versão fica ancorado no Ledger, criando linhagem verificável:
+
+```
+V1 (SEALED) ← V2 supersedes V1 ← V3 supersedes V2
+```
+
+O espectador pode sempre verificar qual versão viu.
+O artista pode sempre expandir sem perder o histórico.
+
+> *"A obra está selada. A arte continua viva."*
+
+---
+
+*Liga IA+H · WINDI Publishing House · 24 Mai 2026*
+
+🐉
+
