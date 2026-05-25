@@ -1,0 +1,2982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WINDI-HIOS Video Studio</title>
+    <meta name="description" content="Create verifiable documentaries. AI processes. Human decides. WINDI guarantees.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0A0A0F;
+            --bg-secondary: #101016;
+            --bg-tertiary: #16161E;
+            --bg-card: #12121A;
+            --gold: #C9A84C;
+            --gold-dim: #8B7424;
+            --gold-muted: #6B5A24;
+            --text-primary: #E8E6E1;
+            --text-secondary: #9A9A9A;
+            --text-muted: #6A6A6A;
+            --border: #1E1E28;
+            --border-subtle: #141418;
+            --accent-blue: #4A9EDB;
+            --accent-green: #4ADB7B;
+            --accent-red: #DB4A4A;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dim) 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--bg-primary);
+        }
+
+        .logo-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+            letter-spacing: -0.02em;
+        }
+
+        .logo-text span {
+            color: var(--gold);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--gold);
+        }
+
+        /* I12: Language Toggle */
+        .lang-toggle {
+            display: flex;
+            gap: 0.25rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.2rem;
+        }
+
+        .lang-btn {
+            padding: 0.3rem 0.6rem;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .lang-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .lang-btn.active {
+            background: var(--gold);
+            color: var(--bg-primary);
+        }
+
+        /* Theme Toggle (NOIR/KLAR) */
+        .theme-toggle {
+            width: 36px;
+            height: 36px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--gold-dim);
+        }
+
+        /* KLAR (Light) Theme Override */
+        [data-theme="klar"] {
+            --bg-primary: #FAFAF8;
+            --bg-secondary: #F0EEE8;
+            --bg-tertiary: #E8E6E0;
+            --bg-card: #FFFFFF;
+            --gold: #8B7424;
+            --gold-dim: #6B5A1C;
+            --gold-muted: #9A8A44;
+            --text-primary: #1A1A1A;
+            --text-secondary: #4A4A4A;
+            --text-muted: #7A7A7A;
+            --border: #E0DED8;
+            --border-subtle: #D0CEC8;
+            --accent-blue: #2A7EBB;
+            --accent-green: #2A9B5B;
+            --accent-red: #BB3A3A;
+        }
+
+        [data-theme="klar"] .logo-icon {
+            color: #FAFAF8;
+        }
+
+        [data-theme="klar"] .lang-btn.active,
+        [data-theme="klar"] .submit-btn {
+            color: #FAFAF8;
+        }
+
+        [data-theme="klar"] .gate-icon.active {
+            background: rgba(42, 155, 91, 0.2);
+        }
+
+        /* Main Container */
+        .main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: var(--gold);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+            letter-spacing: -0.03em;
+        }
+
+        .hero h1 span {
+            color: var(--gold);
+            font-weight: 500;
+        }
+
+        .hero p {
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Studio Grid */
+        .studio-grid {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        @media (max-width: 900px) {
+            .studio-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Form Card */
+        .form-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .form-card h2 {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-card h2::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: var(--gold);
+            border-radius: 2px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--gold-dim);
+            box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 180px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        /* Preset Buttons */
+        .presets {
+            margin-bottom: 1.5rem;
+        }
+
+        .presets-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+            font-weight: 500;
+        }
+
+        .preset-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+
+        .preset-btn {
+            padding: 0.75rem 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+
+        .preset-btn:hover {
+            border-color: var(--gold-dim);
+            color: var(--text-primary);
+        }
+
+        .preset-btn.active {
+            border-color: var(--gold);
+            background: rgba(201, 168, 76, 0.1);
+            color: var(--gold);
+        }
+
+        .preset-btn strong {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .preset-btn span {
+            font-size: 0.75rem;
+            opacity: 0.7;
+        }
+
+        /* Saved Prompts System */
+        .saved-prompts {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .saved-prompts-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .saved-prompts-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .saved-prompts-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .save-prompt-btn, .clear-draft-btn {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .save-prompt-btn {
+            background: var(--gold);
+            color: var(--bg-primary);
+            border: none;
+            font-weight: 600;
+        }
+
+        .save-prompt-btn:hover {
+            background: var(--gold-dim);
+        }
+
+        .clear-draft-btn {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .clear-draft-btn:hover {
+            border-color: var(--text-secondary);
+            color: var(--text-primary);
+        }
+
+        .saved-prompts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .saved-prompt-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6rem 0.8rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .saved-prompt-item:hover {
+            border-color: var(--gold-dim);
+        }
+
+        .saved-prompt-item.active {
+            border-color: var(--gold);
+            background: rgba(201, 168, 76, 0.1);
+        }
+
+        .saved-prompt-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .saved-prompt-name {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .saved-prompt-date {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+
+        .delete-prompt-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.25rem;
+            font-size: 0.9rem;
+            opacity: 0.5;
+            transition: all 0.2s;
+        }
+
+        .delete-prompt-btn:hover {
+            opacity: 1;
+            color: #e74c3c;
+        }
+
+        .no-saved-prompts {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-style: italic;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .auto-save-indicator {
+            font-size: 0.7rem;
+            color: var(--gold);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .auto-save-indicator.visible {
+            opacity: 1;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dim) 100%);
+            border: none;
+            border-radius: 8px;
+            color: var(--bg-primary);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(201, 168, 76, 0.3);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Preview Panel */
+        .preview-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .preview-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .preview-card h3 {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Constitutional Gate */
+        .gate-status {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .gate-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.6rem 0.75rem;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+
+        .gate-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+        }
+
+        .gate-icon.pending {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+        }
+
+        .gate-icon.active {
+            background: rgba(74, 219, 123, 0.15);
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        .gate-icon.waiting {
+            background: rgba(201, 168, 76, 0.15);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+        }
+
+        /* Output Preview */
+        .output-preview {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .output-preview .label {
+            color: var(--gold-dim);
+        }
+
+        .output-preview .value {
+            color: var(--text-primary);
+        }
+
+        /* Video Result */
+        .video-result {
+            display: none;
+            margin-top: 1.5rem;
+        }
+
+        .video-result.visible {
+            display: block;
+        }
+
+        .video-link {
+            display: block;
+            padding: 1rem;
+            background: rgba(74, 219, 123, 0.1);
+            border: 1px solid var(--accent-green);
+            border-radius: 8px;
+            color: var(--accent-green);
+            text-decoration: none;
+            text-align: center;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .video-link:hover {
+            background: rgba(74, 219, 123, 0.2);
+        }
+
+        /* Receipt Chain */
+        .receipt-chain {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            padding: 0.75rem;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            word-break: break-all;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid var(--border-subtle);
+            margin-top: 3rem;
+        }
+
+        .footer p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .footer a {
+            color: var(--gold-dim);
+            text-decoration: none;
+        }
+
+        /* Loading State */
+        .loading {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .loading.visible {
+            display: flex;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Invariants Badge */
+        .invariants {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .invariant-tag {
+            padding: 0.25rem 0.5rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-muted);
+        }
+
+        .invariant-tag.active {
+            border-color: var(--gold-dim);
+            color: var(--gold);
+        }
+
+        /* Proof Card - appears after approval */
+        .proof-card {
+            border-color: var(--accent-green);
+            background: rgba(74, 219, 123, 0.05);
+        }
+
+        .proof-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: rgba(74, 219, 123, 0.1);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .proof-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--bg-primary);
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+
+        .proof-text {
+            color: var(--accent-green);
+            font-weight: 500;
+        }
+
+        .verify-link {
+            display: block;
+            margin-top: 1rem;
+            padding: 0.6rem 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--gold);
+            text-decoration: none;
+            font-size: 0.85rem;
+            text-align: center;
+            transition: border-color 0.2s;
+        }
+
+        .verify-link:hover {
+            border-color: var(--gold-dim);
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            gap: 0;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .tab-btn.active {
+            color: var(--gold);
+            border-bottom-color: var(--gold);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Engine Selector */
+        .engine-selector {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .engine-option {
+            flex: 1;
+            padding: 0.75rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .engine-option:hover {
+            border-color: var(--gold-dim);
+        }
+
+        .engine-option.selected {
+            border-color: var(--gold);
+            background: rgba(201, 168, 76, 0.1);
+        }
+
+        .engine-option input {
+            display: none;
+        }
+
+        .engine-name {
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        .engine-tier {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* W-MAILs Section */
+        .mails-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 900px) {
+            .mails-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .mails-sidebar {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+        }
+
+        .mails-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .mail-item {
+            padding: 0.75rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mail-item:hover {
+            border-color: var(--gold-dim);
+        }
+
+        .mail-item.selected {
+            border-color: var(--gold);
+            background: rgba(201, 168, 76, 0.05);
+        }
+
+        .mail-sender {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .mail-subject {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .mail-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.25rem;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .mail-plane {
+            padding: 0.15rem 0.4rem;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .mail-plane.prova { color: var(--accent-green); }
+        .mail-plane.direito { color: var(--accent-blue); }
+        .mail-plane.execucao { color: var(--gold); }
+        .mail-plane.arbitragem { color: var(--accent-red); }
+
+        .mails-main {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .compose-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .compose-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .compose-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .compose-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+
+        .draft-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .draft-btn:hover {
+            border-color: var(--gold-dim);
+            color: var(--text-primary);
+        }
+
+        .send-mail-btn {
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dim) 100%);
+            border: none;
+            border-radius: 8px;
+            color: var(--bg-primary);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .send-mail-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(201, 168, 76, 0.3);
+        }
+
+        /* Media Browser */
+        .media-browser {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .media-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .media-header h3 {
+            font-size: 1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .media-header h3::before {
+            content: '';
+            width: 4px;
+            height: 16px;
+            background: var(--gold);
+            border-radius: 2px;
+        }
+
+        .media-filter {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .filter-btn {
+            padding: 0.4rem 0.8rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            border-color: var(--gold-dim);
+            color: var(--gold);
+        }
+
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 1rem;
+        }
+
+        .media-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .media-item:hover {
+            border-color: var(--gold-dim);
+            transform: translateY(-2px);
+        }
+
+        .media-thumb {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: var(--bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 2rem;
+        }
+
+        .media-info {
+            padding: 0.75rem;
+        }
+
+        .media-name {
+            font-size: 0.8rem;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .media-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        .media-verified {
+            color: var(--accent-green);
+        }
+
+        /* Approval buttons */
+        .approval-buttons {
+            display: none;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .approval-buttons.visible {
+            display: flex;
+        }
+
+        .approve-btn, .reject-btn {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .approve-btn {
+            background: var(--accent-green);
+            border: none;
+            color: var(--bg-primary);
+        }
+
+        .approve-btn:hover {
+            background: #3fc96a;
+        }
+
+        .reject-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .reject-btn:hover {
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">W</div>
+            <div class="logo-text">WINDI-<span>HIOS</span></div>
+        </div>
+        <nav class="nav-links">
+            <a href="/hios/">Overview</a>
+            <a href="/hios/architecture/">Architecture</a>
+            <a href="/verify-public/">Verify</a>
+            <!-- Theme Toggle (NOIR/KLAR) -->
+            <button class="theme-toggle" id="themeToggle" title="Toggle theme">
+                <span id="themeIcon">☀</span>
+            </button>
+            <!-- I12: Language Sovereign Toggle -->
+            <div class="lang-toggle" id="langToggle">
+                <button class="lang-btn" data-lang="de">DE</button>
+                <button class="lang-btn active" data-lang="en">EN</button>
+                <button class="lang-btn" data-lang="pt">PT</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main">
+        <section class="hero">
+            <div class="hero-badge">Video Studio</div>
+            <h1>Create <span>Verifiable</span> Videos</h1>
+            <p>Every claim traceable. Every output sealed. You approve, we prove.</p>
+        </section>
+
+        <!-- Tab Navigation -->
+        <nav class="tab-nav">
+            <button class="tab-btn active" data-tab="journalist">Journalist Gate</button>
+            <button class="tab-btn" data-tab="create">Create</button>
+            <button class="tab-btn" data-tab="mails">W-MAILs</button>
+            <button class="tab-btn" data-tab="media">Media Browser</button>
+        </nav>
+
+        <!-- Journalist Gate Tab (W-PROMPT-001) -->
+        <div class="tab-content active" id="tab-journalist">
+            <div class="studio-grid">
+                <div class="form-card">
+                    <h2>W-PROMPT-001 — Journalist Gate</h2>
+
+                    <div style="padding: 0.75rem; background: rgba(201, 168, 76, 0.1); border: 1px solid var(--gold-dim); border-radius: 8px; margin-bottom: 1.5rem;">
+                        <div style="color: var(--gold); font-size: 0.8rem; font-weight: 500; margin-bottom: 0.25rem;">Guardian Correction</div>
+                        <div style="color: var(--text-secondary); font-size: 0.75rem;">
+                            This system proves <strong>PROVENANCE</strong> of intent and source, NOT veracity of depicted events.
+                            All generated video is <strong>SYNTHETIC DRAMATIZATION</strong> inspired by real sources.
+                        </div>
+                    </div>
+
+                    <form id="journalistForm">
+                        <!-- Layer 1: Die Fakten -->
+                        <div class="form-group">
+                            <label for="rawFacts" style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="background: var(--gold); color: var(--bg-primary); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">1</span>
+                                Die Fakten (Raw Facts)
+                            </label>
+                            <textarea id="rawFacts" name="rawFacts" placeholder="Cole aqui o artigo de jornal, transcrição de entrevista, ou documento oficial. Este texto será hashado e preservado como fonte imutável..." style="min-height: 140px;"></textarea>
+                            <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+                                <select id="sourceType" style="flex: 1; padding: 0.5rem; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 0.85rem;">
+                                    <option value="NEWSPAPER_ARTICLE">Newspaper Article</option>
+                                    <option value="INTERVIEW_TRANSCRIPT">Interview Transcript</option>
+                                    <option value="OFFICIAL_DOCUMENT">Official Document</option>
+                                    <option value="PRESS_RELEASE">Press Release</option>
+                                    <option value="ANNUAL_REPORT">Annual Report</option>
+                                </select>
+                                <select id="sourceLang" style="flex: 1; padding: 0.5rem; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 0.85rem;">
+                                    <option value="de">Deutsch</option>
+                                    <option value="en">English</option>
+                                    <option value="pt">Português</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Layer 2: Der Menschliche Fokus -->
+                        <div class="form-group">
+                            <label for="humanFocus" style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="background: var(--gold); color: var(--bg-primary); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">2</span>
+                                Der Menschliche Fokus (Editorial Intention)
+                            </label>
+                            <textarea id="humanFocus" name="humanFocus" placeholder="Qual tensão humana ou decisão do artigo você quer focar? Ex: 'Mostrar a consultora decidindo aprovar o crédito contra a recomendação do sistema, porque ela tem o contrato físico na mesa.'" style="min-height: 100px;"></textarea>
+                        </div>
+
+                        <!-- Layer 3: Publikum -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="audience" style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span style="background: var(--gold); color: var(--bg-primary); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">3</span>
+                                    Publikum (Target Audience)
+                                </label>
+                                <select id="audienceType" name="audienceType">
+                                    <option value="GENERAL_PUBLIC">General Public</option>
+                                    <option value="REGULATORS">Regulators</option>
+                                    <option value="EXECUTIVES">Executives</option>
+                                    <option value="STUDENTS">Students</option>
+                                    <option value="JOURNALISTS">Journalists</option>
+                                    <option value="LEGAL_PROFESSIONALS">Legal Professionals</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="tone">Narrative Tone</label>
+                                <select id="tone" name="tone">
+                                    <option value="INFORMATIVE">Informative</option>
+                                    <option value="INVESTIGATIVE">Investigative</option>
+                                    <option value="EXPLANATORY">Explanatory</option>
+                                    <option value="INSPIRATIONAL">Inspirational</option>
+                                    <option value="CAUTIONARY">Cautionary</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="submit-btn" id="mintBtn">
+                            <span class="btn-text">Mint Pre-Ledger Token</span>
+                            <div class="loading" id="mintLoading">
+                                <div class="spinner"></div>
+                                <span>Extracting entities...</span>
+                            </div>
+                        </button>
+                    </form>
+
+                    <!-- Entity Confirmation Section (appears after mint) - MANDATORY I9 GATE -->
+                    <div id="entityConfirmation" style="display: none; margin-top: 1.5rem; padding: 1.25rem; background: var(--bg-secondary); border: 2px solid var(--gold-dim); border-radius: 8px;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                            <span style="background: var(--gold); color: var(--bg-primary); padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.7rem; font-weight: 700;">I9 GATE</span>
+                            <h3 style="font-size: 0.9rem; color: var(--gold); margin: 0;">Human Confirmation Required</h3>
+                        </div>
+                        <div style="padding: 0.75rem; background: rgba(201, 168, 76, 0.1); border-radius: 6px; margin-bottom: 1rem;">
+                            <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0;">
+                                <strong>This step cannot be skipped.</strong> Review each extracted value below.
+                                Click any field to edit if the extraction is incorrect. No value auto-approves regardless of confidence score.
+                            </p>
+                        </div>
+                        <div id="entitiesList" style="margin-bottom: 1rem;"></div>
+                        <div style="display: flex; gap: 1rem;">
+                            <button id="confirmEntitiesBtn" class="submit-btn" style="flex: 1;">
+                                I Confirm These Values Are Correct
+                            </button>
+                            <button id="rejectEntitiesBtn" class="reject-btn" style="flex: 0.5;">
+                                Start Over
+                            </button>
+                        </div>
+                        <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.75rem; text-align: center;">
+                            Your DID will be recorded as the human who verified these constants.
+                        </p>
+                    </div>
+
+                    <!-- Master Prompt Result (appears after confirmation) -->
+                    <div id="masterPromptResult" style="display: none; margin-top: 1.5rem;">
+                        <div style="padding: 1rem; background: rgba(74, 219, 123, 0.1); border: 1px solid var(--accent-green); border-radius: 8px;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                                <span style="background: var(--accent-green); color: var(--bg-primary); padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">LOCKED</span>
+                                <span style="color: var(--accent-green); font-size: 0.85rem; font-weight: 500;">Pre-Ledger Token Ready</span>
+                            </div>
+                            <div id="masterPromptContent" style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-primary); margin-bottom: 1rem;"></div>
+                            <button id="generateFromPromptBtn" class="submit-btn">
+                                Generate Video from Master Prompt
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="preview-panel">
+                    <div class="preview-card">
+                        <h3>The 4 Layers</h3>
+                        <div class="gate-status">
+                            <div class="gate-item">
+                                <div class="gate-icon" id="layer1Icon">1</div>
+                                <span>Die Fakten — Raw source (hash locked)</span>
+                            </div>
+                            <div class="gate-item">
+                                <div class="gate-icon" id="layer2Icon">2</div>
+                                <span>Der Fokus — Human intention</span>
+                            </div>
+                            <div class="gate-item">
+                                <div class="gate-icon" id="layer3Icon">3</div>
+                                <span>Publikum — Target audience</span>
+                            </div>
+                            <div class="gate-item">
+                                <div class="gate-icon" id="layer4Icon">4</div>
+                                <span>Constraints — I9 + Allgäu Realism</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="preview-card">
+                        <h3>What This Proves</h3>
+                        <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                            <div style="margin-bottom: 0.75rem;">
+                                <span style="color: var(--accent-green);">Provenance</span> — This DID, citing this source, with this intention, commissioned this scene.
+                            </div>
+                            <div style="color: var(--text-muted); font-size: 0.8rem;">
+                                <strong>NOT</strong> that the depicted scene actually occurred. Generated video is synthetic dramatization.
+                            </div>
+                        </div>
+                        <div class="invariants" style="margin-top: 1rem;">
+                            <span class="invariant-tag active">I9</span>
+                            <span class="invariant-tag active">I11</span>
+                            <span class="invariant-tag active">I12</span>
+                            <span class="invariant-tag active">I14</span>
+                        </div>
+                    </div>
+
+                    <div class="preview-card" id="tokenPreview" style="display: none;">
+                        <h3>Pre-Ledger Token</h3>
+                        <div class="output-preview" id="tokenOutput"></div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- End tab-journalist -->
+
+        <!-- Create Tab -->
+        <div class="tab-content" id="tab-create">
+        <div class="studio-grid">
+            <div class="form-card">
+                <h2>Generate Documentary</h2>
+
+                <div class="presets">
+                    <div class="presets-label">Quick Presets</div>
+                    <div class="preset-grid">
+                        <button class="preset-btn" data-preset="dataday">
+                            <strong>DATADAY Episode</strong>
+                            <span>Documentary · YouTube · LIVE</span>
+                        </button>
+                        <button class="preset-btn" data-preset="custom" disabled title="Coming soon">
+                            <strong>Custom Template</strong>
+                            <span>Pending admission</span>
+                        </button>
+                    </div>
+
+                    <!-- Saved Prompts System -->
+                    <div class="saved-prompts">
+                        <div class="saved-prompts-header">
+                            <span class="saved-prompts-label">Saved Prompts</span>
+                            <div class="saved-prompts-actions">
+                                <span class="auto-save-indicator" id="autoSaveIndicator">Draft saved</span>
+                                <button type="button" class="clear-draft-btn" id="clearDraftBtn" title="Clear current draft">Clear</button>
+                                <button type="button" class="save-prompt-btn" id="savePromptBtn">Save As...</button>
+                            </div>
+                        </div>
+                        <div class="saved-prompts-list" id="savedPromptsList">
+                            <div class="no-saved-prompts">No saved prompts yet</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Engine Selector (Three-Tier Sovereignty) -->
+                <div class="form-group">
+                    <label>Generation Engine</label>
+                    <div class="engine-selector">
+                        <label class="engine-option selected">
+                            <input type="radio" name="engine" value="veo-3.1" checked>
+                            <div class="engine-name">Veo 3.1</div>
+                            <div class="engine-tier">EXTERNAL/OPAQUE</div>
+                        </label>
+                        <label class="engine-option">
+                            <input type="radio" name="engine" value="ltx-2.3">
+                            <div class="engine-name">LTX 2.3</div>
+                            <div class="engine-tier">CONTROLLED/RENTED</div>
+                        </label>
+                        <label class="engine-option">
+                            <input type="radio" name="engine" value="hybrid">
+                            <div class="engine-name">Hybrid</div>
+                            <div class="engine-tier">VEO keyframe + LTX ext</div>
+                        </label>
+                    </div>
+                </div>
+
+                <form id="videoForm">
+                    <div class="form-group">
+                        <label for="script">Script / Narrative</label>
+                        <textarea id="script" name="script" placeholder="Enter the documentary script. Each claim should be verifiable. The narrative will be transformed into video with constitutional governance..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="topic">Topic</label>
+                        <input type="text" id="topic" name="topic" placeholder="e.g., Continuidade Híbrida IA+H — DATADAY Episódio 001">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="vibe">Vibe / Style</label>
+                            <select id="vibe" name="vibe">
+                                <option value="documentary">Documentary</option>
+                                <option value="educational">Educational</option>
+                                <option value="philosophical">Philosophical</option>
+                                <option value="institutional">Institutional</option>
+                                <option value="atmospheric">Atmospheric</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="platform">Platform</label>
+                            <select id="platform" name="platform">
+                                <option value="youtube">YouTube</option>
+                                <option value="tiktok">TikTok</option>
+                                <option value="instagram">Instagram Reels</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="audience">Target Audience</label>
+                        <input type="text" id="audience" name="audience" placeholder="e.g., Technology professionals interested in human-AI governance">
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        <span class="btn-text">Generate Video</span>
+                        <div class="loading" id="loading">
+                            <div class="spinner"></div>
+                            <span>Processing...</span>
+                        </div>
+                    </button>
+                </form>
+
+                <div class="video-result" id="videoResult">
+                    <a href="#" class="video-link" id="videoLink" target="_blank">
+                        Preview Your Video →
+                    </a>
+                    <div class="approval-buttons" id="approvalButtons">
+                        <button class="approve-btn" id="approveBtn">Accept & Seal</button>
+                        <button class="reject-btn" id="rejectBtn">Try Again</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="preview-panel">
+                <div class="preview-card">
+                    <h3>Your Video</h3>
+                    <div class="output-preview" id="outputPreview">
+                        <div><span class="label">style:</span> <span class="value" id="previewMode">documentary</span></div>
+                        <div><span class="label">platform:</span> <span class="value" id="previewPlatform">youtube</span></div>
+                        <div><span class="label">duration:</span> <span class="value">~2-3 min</span></div>
+                    </div>
+                </div>
+
+                <div class="preview-card">
+                    <h3>What Makes It Different</h3>
+                    <div class="gate-status">
+                        <div class="gate-item">
+                            <div class="gate-icon active">✓</div>
+                            <span>Every claim is traceable</span>
+                        </div>
+                        <div class="gate-item">
+                            <div class="gate-icon active">✓</div>
+                            <span>You approve before publishing</span>
+                        </div>
+                        <div class="gate-item">
+                            <div class="gate-icon active">✓</div>
+                            <span>Ledger seal — ACTIVE via Strato</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hidden until video is ready and approved -->
+                <div class="preview-card proof-card" id="proofCard" style="display: none;">
+                    <h3>Your Video</h3>
+                    <div class="proof-content">
+                        <div class="proof-badge">
+                            <span class="proof-icon">✓</span>
+                            <span class="proof-text">Approved</span>
+                        </div>
+                        <div class="receipt-chain" id="receiptChain"></div>
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.75rem;">
+                            Ledger seal integration pending. Your approval is recorded locally.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div><!-- End tab-create -->
+
+        <!-- W-MAILs Tab -->
+        <div class="tab-content" id="tab-mails">
+            <div class="mails-container">
+                <div class="mails-sidebar">
+                    <h3 style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em;">Prompt Mails</h3>
+                    <div class="mails-list" id="mailsList">
+                        <div class="mail-item" data-mail-id="demo-1">
+                            <div class="mail-sender">Human Dragon</div>
+                            <div class="mail-subject">S15 Klein fecha dossier</div>
+                            <div class="mail-meta">
+                                <span class="mail-plane prova">PROVA</span>
+                                <span>25 Mai</span>
+                            </div>
+                        </div>
+                        <div class="mail-item" data-mail-id="demo-2">
+                            <div class="mail-sender">Human Dragon</div>
+                            <div class="mail-subject">S16 Klein sai</div>
+                            <div class="mail-meta">
+                                <span class="mail-plane prova">PROVA</span>
+                                <span>25 Mai</span>
+                            </div>
+                        </div>
+                        <p style="color: var(--text-muted); font-size: 0.75rem; margin-top: 1rem; padding: 0.5rem;">
+                            W-MAILs-001 protocol enables cryptographic prompt distribution between producers.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="mails-main">
+                    <h3 style="font-size: 0.9rem; font-weight: 500; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="width: 4px; height: 16px; background: var(--gold); border-radius: 2px;"></span>
+                        Compose Prompt Mail
+                    </h3>
+
+                    <form class="compose-form" id="composeMailForm">
+                        <div class="compose-row">
+                            <div class="form-group">
+                                <label for="mailRecipient">Recipient DID</label>
+                                <input type="text" id="mailRecipient" placeholder="windi:abc123...">
+                            </div>
+                            <div class="form-group">
+                                <label for="mailProfile">Recipient Profile</label>
+                                <select id="mailProfile">
+                                    <option value="PRODUCER">PRODUCER</option>
+                                    <option value="DIRECTOR">DIRECTOR</option>
+                                    <option value="COMPOSITOR">COMPOSITOR</option>
+                                    <option value="REVIEWER">REVIEWER</option>
+                                    <option value="ARCHIVER">ARCHIVER</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="mailPlane">Plane</label>
+                                <select id="mailPlane">
+                                    <option value="PROVA">PROVA (Evidence)</option>
+                                    <option value="DIREITO">DIREITO (Contract)</option>
+                                    <option value="EXECUCAO">EXECUCAO (Execution)</option>
+                                    <option value="ARBITRAGEM">ARBITRAGEM (Legal)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="compose-row">
+                            <div class="form-group">
+                                <label for="mailType">Mail Type</label>
+                                <select id="mailType">
+                                    <option value="KEYFRAME_REQUEST">Keyframe Request</option>
+                                    <option value="EXTENSION_REQUEST">Extension Request</option>
+                                    <option value="REVIEW_REQUEST">Review Request</option>
+                                    <option value="SEAL_REQUEST">Seal Request</option>
+                                    <option value="DIRECTIVE">Directive</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="mailEngine">Engine Directive</label>
+                                <select id="mailEngine">
+                                    <option value="veo-3.1">Veo 3.1 (EXTERNAL/OPAQUE)</option>
+                                    <option value="ltx-2.3">LTX 2.3 (CONTROLLED/RENTED)</option>
+                                    <option value="hybrid">Hybrid (Veo + LTX)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="mailProject">Project Reference</label>
+                                <input type="text" id="mailProject" placeholder="e.g., die-entscheidung">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="mailPrompt">Prompt Content</label>
+                            <textarea id="mailPrompt" placeholder="Enter the prompt for the recipient to execute..." style="min-height: 120px;"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="mailAssets">Reference Assets (Optional)</label>
+                            <input type="text" id="mailAssets" placeholder="anchor_final_maria.png, anchor_final_klein.png">
+                        </div>
+
+                        <div class="compose-actions">
+                            <button type="button" class="draft-btn">Save Draft</button>
+                            <button type="submit" class="send-mail-btn">Send Prompt Mail</button>
+                        </div>
+                    </form>
+
+                    <div style="margin-top: 2rem; padding: 1rem; background: var(--bg-secondary); border-radius: 8px; font-size: 0.8rem;">
+                        <div style="color: var(--gold); margin-bottom: 0.5rem; font-weight: 500;">W-MAILs-001 Protocol</div>
+                        <div style="color: var(--text-muted);">
+                            Cryptographic prompt distribution between WINDI-HIOS Video Producers.
+                            Each mail is signed, tracked in lineage, and operates within a constitutional plane.
+                        </div>
+                        <div style="margin-top: 0.75rem; font-family: 'JetBrains Mono', monospace; color: var(--text-secondary); font-size: 0.7rem;">
+                            Invariants: I9, I11, I12, I14 | Schema: w-mails-001.json
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- End tab-mails -->
+
+        <!-- Media Browser Tab -->
+        <div class="tab-content" id="tab-media">
+            <div class="media-browser" style="margin-top: 0;">
+                <div class="media-header">
+                    <h3>Media Browser</h3>
+                    <div class="media-filter">
+                        <button class="filter-btn active" data-filter="all">All</button>
+                        <button class="filter-btn" data-filter="verified">Verified</button>
+                        <button class="filter-btn" data-filter="pending">Pending</button>
+                        <button class="filter-btn" data-filter="local">Local Only</button>
+                    </div>
+                </div>
+
+                <div style="padding: 1rem; background: var(--bg-secondary); border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.85rem;">
+                    <div style="color: var(--gold); margin-bottom: 0.5rem;">Media Limit: Videos &lt;100MB</div>
+                    <div style="color: var(--text-muted);">
+                        Videos under 100MB can be previewed in the integrated Media Browser.
+                        Larger files require external player. All verified media includes Ledger receipt.
+                    </div>
+                </div>
+
+                <div class="media-grid" id="mediaGrid">
+                    <!-- Sample media items from Die Entscheidung -->
+                    <div class="media-item" data-video="S01_jornal.mp4">
+                        <div class="media-thumb">S01</div>
+                        <div class="media-info">
+                            <div class="media-name">S01_jornal.mp4</div>
+                            <div class="media-meta">
+                                <span>2.2 MB</span>
+                                <span class="media-verified">Verified</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="media-item" data-video="S02_maria_casa.mp4">
+                        <div class="media-thumb">S02</div>
+                        <div class="media-info">
+                            <div class="media-name">S02_maria_casa.mp4</div>
+                            <div class="media-meta">
+                                <span>2.0 MB</span>
+                                <span class="media-verified">Verified</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="media-item" data-video="S03_entrada_maria.mp4">
+                        <div class="media-thumb">S03</div>
+                        <div class="media-info">
+                            <div class="media-name">S03_entrada_maria.mp4</div>
+                            <div class="media-meta">
+                                <span>2.0 MB</span>
+                                <span class="media-verified">Verified</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="media-item" data-video="S04_monitor.mp4">
+                        <div class="media-thumb">S04</div>
+                        <div class="media-info">
+                            <div class="media-name">S04_monitor.mp4</div>
+                            <div class="media-meta">
+                                <span>1.4 MB</span>
+                                <span class="media-verified">Verified</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="media-item" data-video="S05_two_shot.mp4">
+                        <div class="media-thumb">S05</div>
+                        <div class="media-info">
+                            <div class="media-name">S05_two_shot.mp4</div>
+                            <div class="media-meta">
+                                <span>1.9 MB</span>
+                                <span class="media-verified">Verified</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="media-item" data-video="S06_alois_fala.mp4">
+                        <div class="media-thumb">S06</div>
+                        <div class="media-info">
+                            <div class="media-name">S06_alois_fala.mp4</div>
+                            <div class="media-meta">
+                                <span>1.8 MB</span>
+                                <span class="media-verified">Verified</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="media-item" data-video="S07_maria_reage.mp4">
+                        <div class="media-thumb">S07</div>
+                        <div class="media-info">
+                            <div class="media-name">S07_maria_reage.mp4</div>
+                            <div class="media-meta">
+                                <span>1.5 MB</span>
+                                <span class="media-verified">Verified</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="media-item" data-video="S15_klein_fecha.mp4" style="opacity: 0.5;">
+                        <div class="media-thumb" style="color: var(--gold);">S15</div>
+                        <div class="media-info">
+                            <div class="media-name">S15_klein_fecha.mp4</div>
+                            <div class="media-meta">
+                                <span>Pending</span>
+                                <span style="color: var(--gold);">Queue</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem; padding: 1rem; background: var(--bg-secondary); border-radius: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <span style="color: var(--text-muted); font-size: 0.85rem;">Die Entscheidung Production</span>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--gold); margin-top: 0.25rem;">
+                                14/26 clips complete (54%)
+                            </div>
+                        </div>
+                        <a href="/api/hios/jobs" target="_blank" style="color: var(--gold); font-size: 0.85rem; text-decoration: none;">
+                            View All Jobs
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div><!-- End tab-media -->
+    </main>
+
+    <footer class="footer">
+        <p>Liga IA+H · Kempten, Bavaria · <a href="/verify-public/">Verify any output</a></p>
+        <p style="margin-top: 0.5rem; font-size: 0.75rem;">"AI processes. Human decides. WINDI guarantees."</p>
+    </footer>
+
+    <script>
+        // =================================================================
+        // I12: Trilingual Translation System
+        // =================================================================
+        const translations = {
+            en: {
+                // Hero
+                videostudio: "Video Studio",
+                hero_title: "Create <span>Verifiable</span> Videos",
+                hero_subtitle: "Every source traceable. Every intention sealed. You approve, we prove.",
+                // Tabs
+                tab_journalist: "Journalist Gate",
+                tab_create: "Create",
+                tab_mails: "W-MAILs",
+                tab_media: "Media Browser",
+                // Journalist Gate
+                jg_title: "W-PROMPT-001 — Journalist Gate",
+                guardian_title: "Guardian Correction",
+                guardian_text: "This system proves PROVENANCE of intent and source, NOT veracity of depicted events. All generated video is SYNTHETIC DRAMATIZATION inspired by real sources.",
+                layer1_label: "Die Fakten (Raw Facts)",
+                layer1_placeholder: "Paste the newspaper article, interview transcript, or official document here. This text will be hashed and preserved as an immutable source...",
+                layer2_label: "Der Menschliche Fokus (Editorial Intention)",
+                layer2_placeholder: "What human tension or decision from the article do you want to focus on? E.g., 'Show the consultant deciding to approve the loan against the system recommendation because she has the physical contract on the table.'",
+                layer3_label: "Publikum (Target Audience)",
+                tone_label: "Narrative Tone",
+                mint_btn: "Mint Pre-Ledger Token",
+                // Layers panel
+                layers_title: "The 4 Layers",
+                layer1_desc: "Die Fakten — Raw source (hash locked)",
+                layer2_desc: "Der Fokus — Human intention",
+                layer3_desc: "Publikum — Target audience",
+                layer4_desc: "Constraints — I9 + Allgäu Realism",
+                // What this proves
+                proves_title: "What This Proves",
+                proves_text: "Provenance — This DID, citing this source, with this intention, commissioned this scene.",
+                proves_not: "NOT that the depicted scene actually occurred. Generated video is synthetic dramatization.",
+                // Confirmation
+                confirm_title: "Human Confirmation Required",
+                confirm_text: "This step cannot be skipped. Review each extracted value below. Click any field to edit if the extraction is incorrect. No value auto-approves regardless of confidence score.",
+                confirm_btn: "I Confirm These Values Are Correct",
+                confirm_did: "Your DID will be recorded as the human who verified these constants.",
+                // Footer
+                footer_verify: "Verify any output",
+                footer_slogan: "AI processes. Human decides. WINDI guarantees."
+            },
+            de: {
+                // Hero
+                videostudio: "Video Studio",
+                hero_title: "Erstellen Sie <span>Verifizierbare</span> Videos",
+                hero_subtitle: "Jede Quelle nachverfolgbar. Jede Absicht versiegelt. Sie genehmigen, wir beweisen.",
+                // Tabs
+                tab_journalist: "Journalisten-Gate",
+                tab_create: "Erstellen",
+                tab_mails: "W-MAILs",
+                tab_media: "Medienbrowser",
+                // Journalist Gate
+                jg_title: "W-PROMPT-001 — Journalisten-Gate",
+                guardian_title: "Guardian-Korrektur",
+                guardian_text: "Dieses System beweist die HERKUNFT von Absicht und Quelle, NICHT die Wahrhaftigkeit dargestellter Ereignisse. Alle generierten Videos sind SYNTHETISCHE DRAMATISIERUNGEN, inspiriert von echten Quellen.",
+                layer1_label: "Die Fakten (Rohdaten)",
+                layer1_placeholder: "Fügen Sie hier den Zeitungsartikel, das Interview-Transkript oder das offizielle Dokument ein. Dieser Text wird gehasht und als unveränderliche Quelle bewahrt...",
+                layer2_label: "Der Menschliche Fokus (Redaktionelle Absicht)",
+                layer2_placeholder: "Welche menschliche Spannung oder Entscheidung aus dem Artikel möchten Sie hervorheben? Z.B.: 'Zeigen Sie die Beraterin, die entscheidet, den Kredit gegen die Systemempfehlung zu genehmigen, weil sie den physischen Vertrag auf dem Tisch hat.'",
+                layer3_label: "Publikum (Zielgruppe)",
+                tone_label: "Erzählton",
+                mint_btn: "Pre-Ledger Token prägen",
+                // Layers panel
+                layers_title: "Die 4 Ebenen",
+                layer1_desc: "Die Fakten — Rohquelle (Hash gesperrt)",
+                layer2_desc: "Der Fokus — Menschliche Absicht",
+                layer3_desc: "Publikum — Zielgruppe",
+                layer4_desc: "Einschränkungen — I9 + Allgäu-Realismus",
+                // What this proves
+                proves_title: "Was dies beweist",
+                proves_text: "Herkunft — Diese DID hat unter Angabe dieser Quelle mit dieser Absicht diese Szene beauftragt.",
+                proves_not: "NICHT dass die dargestellte Szene tatsächlich stattfand. Generierte Videos sind synthetische Dramatisierungen.",
+                // Confirmation
+                confirm_title: "Menschliche Bestätigung erforderlich",
+                confirm_text: "Dieser Schritt kann nicht übersprungen werden. Überprüfen Sie jeden extrahierten Wert unten. Klicken Sie auf ein Feld, um es zu bearbeiten, falls die Extraktion falsch ist. Kein Wert wird automatisch genehmigt, unabhängig vom Konfidenzwert.",
+                confirm_btn: "Ich bestätige, dass diese Werte korrekt sind",
+                confirm_did: "Ihre DID wird als die Person erfasst, die diese Konstanten verifiziert hat.",
+                // Footer
+                footer_verify: "Ausgabe verifizieren",
+                footer_slogan: "KI verarbeitet. Der Mensch entscheidet. WINDI garantiert."
+            },
+            pt: {
+                // Hero
+                videostudio: "Estúdio de Vídeo",
+                hero_title: "Crie Vídeos <span>Verificáveis</span>",
+                hero_subtitle: "Toda fonte rastreável. Toda intenção selada. Você aprova, nós provamos.",
+                // Tabs
+                tab_journalist: "Portal Jornalístico",
+                tab_create: "Criar",
+                tab_mails: "W-MAILs",
+                tab_media: "Navegador de Mídia",
+                // Journalist Gate
+                jg_title: "W-PROMPT-001 — Portal Jornalístico",
+                guardian_title: "Correcção do Guardião",
+                guardian_text: "Este sistema prova a PROVENIÊNCIA de intenção e fonte, NÃO a veracidade dos eventos representados. Todo vídeo gerado é DRAMATIZAÇÃO SINTÉTICA inspirada em fontes reais.",
+                layer1_label: "Die Fakten (Factos Brutos)",
+                layer1_placeholder: "Cole aqui o artigo de jornal, transcrição de entrevista ou documento oficial. Este texto será hashado e preservado como fonte imutável...",
+                layer2_label: "Der Menschliche Fokus (Intenção Editorial)",
+                layer2_placeholder: "Qual tensão humana ou decisão do artigo você quer focar? Ex: 'Mostrar a consultora decidindo aprovar o crédito contra a recomendação do sistema porque ela tem o contrato físico na mesa.'",
+                layer3_label: "Publikum (Público-Alvo)",
+                tone_label: "Tom Narrativo",
+                mint_btn: "Cunhar Token Pre-Ledger",
+                // Layers panel
+                layers_title: "As 4 Camadas",
+                layer1_desc: "Die Fakten — Fonte bruta (hash travado)",
+                layer2_desc: "Der Fokus — Intenção humana",
+                layer3_desc: "Publikum — Público-alvo",
+                layer4_desc: "Restrições — I9 + Realismo Allgäu",
+                // What this proves
+                proves_title: "O Que Isto Prova",
+                proves_text: "Proveniência — Este DID, citando esta fonte, com esta intenção, encomendou esta cena.",
+                proves_not: "NÃO que a cena representada realmente ocorreu. Vídeo gerado é dramatização sintética.",
+                // Confirmation
+                confirm_title: "Confirmação Humana Necessária",
+                confirm_text: "Este passo não pode ser saltado. Reveja cada valor extraído abaixo. Clique em qualquer campo para editar se a extracção estiver incorrecta. Nenhum valor é auto-aprovado independentemente do score de confiança.",
+                confirm_btn: "Confirmo Que Estes Valores Estão Correctos",
+                confirm_did: "O seu DID será registado como o humano que verificou estas constantes.",
+                // Footer
+                footer_verify: "Verificar qualquer saída",
+                footer_slogan: "IA processa. Humano decide. WINDI garante."
+            }
+        };
+
+        let currentLang = localStorage.getItem('windi-lang') || 'en';
+
+        // Apply translations to the page
+        function applyTranslations(lang) {
+            const t = translations[lang];
+            if (!t) return;
+
+            // Update hero
+            const heroTitle = document.querySelector('.hero h1');
+            const heroSubtitle = document.querySelector('.hero p');
+            if (heroTitle) heroTitle.innerHTML = t.hero_title;
+            if (heroSubtitle) heroSubtitle.textContent = t.hero_subtitle;
+
+            // Update tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                const tab = btn.dataset.tab;
+                if (tab === 'journalist') btn.textContent = t.tab_journalist;
+                if (tab === 'create') btn.textContent = t.tab_create;
+                if (tab === 'mails') btn.textContent = t.tab_mails;
+                if (tab === 'media') btn.textContent = t.tab_media;
+            });
+
+            // Update Journalist Gate form labels
+            const jgTitle = document.querySelector('#tab-journalist .form-card h2');
+            if (jgTitle) jgTitle.textContent = t.jg_title;
+
+            // Update Guardian Correction
+            const guardianTitle = document.querySelector('#tab-journalist .form-card > div:first-of-type > div:first-child');
+            const guardianText = document.querySelector('#tab-journalist .form-card > div:first-of-type > div:last-child');
+            if (guardianTitle) guardianTitle.textContent = t.guardian_title;
+            if (guardianText) guardianText.innerHTML = t.guardian_text;
+
+            // Update layer labels in sidebar
+            const layersTitle = document.querySelector('#tab-journalist .preview-card:first-child h3');
+            if (layersTitle) layersTitle.textContent = t.layers_title;
+
+            // Update "What This Proves" section
+            const provesTitle = document.querySelector('#tab-journalist .preview-card:nth-child(2) h3');
+            if (provesTitle) provesTitle.textContent = t.proves_title;
+
+            // Update footer
+            const footerVerify = document.querySelector('.footer a');
+            const footerSlogan = document.querySelector('.footer p:last-child');
+            if (footerVerify) footerVerify.textContent = t.footer_verify;
+            if (footerSlogan) footerSlogan.textContent = `"${t.footer_slogan}"`;
+
+            // Update Mint button
+            const mintBtnText = document.querySelector('#mintBtn .btn-text');
+            if (mintBtnText) mintBtnText.textContent = t.mint_btn;
+
+            // Update confirmation section
+            const confirmTitle = document.querySelector('#entityConfirmation h3');
+            const confirmBtn = document.getElementById('confirmEntitiesBtn');
+            if (confirmTitle) confirmTitle.textContent = t.confirm_title;
+            if (confirmBtn && !confirmBtn.disabled) confirmBtn.textContent = t.confirm_btn;
+
+            // Update form labels and placeholders (I12 Trilingual)
+            const rawFactsTextarea = document.getElementById('rawFacts');
+            const humanFocusTextarea = document.getElementById('humanFocus');
+
+            if (rawFactsTextarea) {
+                rawFactsTextarea.placeholder = t.layer1_placeholder;
+            }
+            if (humanFocusTextarea) {
+                humanFocusTextarea.placeholder = t.layer2_placeholder;
+            }
+
+            // Update label text (preserving the badge span)
+            const rawFactsLabel = document.querySelector('label[for="rawFacts"]');
+            const humanFocusLabel = document.querySelector('label[for="humanFocus"]');
+            const audienceLabel = document.querySelector('label[for="audience"]');
+            const toneLabel = document.querySelector('label[for="tone"]');
+
+            if (rawFactsLabel) {
+                const badge = rawFactsLabel.querySelector('span');
+                rawFactsLabel.innerHTML = '';
+                if (badge) rawFactsLabel.appendChild(badge);
+                rawFactsLabel.appendChild(document.createTextNode(' ' + t.layer1_label));
+            }
+            if (humanFocusLabel) {
+                const badge = humanFocusLabel.querySelector('span');
+                humanFocusLabel.innerHTML = '';
+                if (badge) humanFocusLabel.appendChild(badge);
+                humanFocusLabel.appendChild(document.createTextNode(' ' + t.layer2_label));
+            }
+            if (audienceLabel) {
+                const badge = audienceLabel.querySelector('span');
+                audienceLabel.innerHTML = '';
+                if (badge) audienceLabel.appendChild(badge);
+                audienceLabel.appendChild(document.createTextNode(' ' + t.layer3_label));
+            }
+            if (toneLabel) {
+                toneLabel.textContent = t.tone_label;
+            }
+
+            // Store preference
+            localStorage.setItem('windi-lang', lang);
+            currentLang = lang;
+
+            // Update HTML lang attribute
+            document.documentElement.lang = lang;
+        }
+
+        // Language toggle handler
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                applyTranslations(btn.dataset.lang);
+            });
+        });
+
+        // Initialize language on load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set initial active state for language
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === currentLang);
+            });
+            applyTranslations(currentLang);
+
+            // Initialize theme
+            initTheme();
+        });
+
+        // =================================================================
+        // Theme Toggle (NOIR/KLAR)
+        // =================================================================
+        function initTheme() {
+            const savedTheme = localStorage.getItem('windi-theme') || 'noir';
+            applyTheme(savedTheme);
+        }
+
+        function applyTheme(theme) {
+            const html = document.documentElement;
+            const icon = document.getElementById('themeIcon');
+
+            if (theme === 'klar') {
+                html.setAttribute('data-theme', 'klar');
+                icon.textContent = '☽';  // Moon = currently light, click for dark
+            } else {
+                html.removeAttribute('data-theme');
+                icon.textContent = '☀';  // Sun = currently dark, click for light
+            }
+
+            localStorage.setItem('windi-theme', theme);
+        }
+
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            const currentTheme = localStorage.getItem('windi-theme') || 'noir';
+            const newTheme = currentTheme === 'noir' ? 'klar' : 'noir';
+            applyTheme(newTheme);
+        });
+
+        // Tab Navigation
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Update button states
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                // Update content visibility
+                const tabId = btn.dataset.tab;
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(`tab-${tabId}`).classList.add('active');
+            });
+        });
+
+        // =================================================================
+        // W-PROMPT-001 Journalist Gate
+        // =================================================================
+
+        let currentPromptToken = null;
+
+        // Journalist Form Submission
+        document.getElementById('journalistForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const rawFacts = document.getElementById('rawFacts').value.trim();
+            const humanFocus = document.getElementById('humanFocus').value.trim();
+            const sourceType = document.getElementById('sourceType').value;
+            const sourceLang = document.getElementById('sourceLang').value;
+            const audience = document.getElementById('audienceType').value;
+            const tone = document.getElementById('tone').value;
+
+            if (!rawFacts || !humanFocus) {
+                alert('Please fill in both the facts and your editorial intention.');
+                return;
+            }
+
+            // Update UI
+            const mintBtn = document.getElementById('mintBtn');
+            mintBtn.querySelector('.btn-text').style.display = 'none';
+            document.getElementById('mintLoading').classList.add('visible');
+            mintBtn.disabled = true;
+
+            try {
+                const response = await fetch('/api/hios/mint-prompt', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        raw_facts: rawFacts,
+                        human_focus: humanFocus,
+                        source_type: sourceType,
+                        source_language: sourceLang,
+                        audience: audience,
+                        tone: tone
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentPromptToken = data;
+
+                    // Update layer icons
+                    document.getElementById('layer1Icon').classList.add('active');
+                    document.getElementById('layer2Icon').classList.add('active');
+                    document.getElementById('layer3Icon').classList.add('active');
+
+                    // Show entity confirmation
+                    displayEntitiesForConfirmation(data.extracted_entities);
+                    document.getElementById('entityConfirmation').style.display = 'block';
+
+                    // Show token preview
+                    document.getElementById('tokenPreview').style.display = 'block';
+                    document.getElementById('tokenOutput').innerHTML = `
+                        <div><span class="label">prompt_id:</span> <span class="value">${data.prompt_id}</span></div>
+                        <div><span class="label">lifecycle:</span> <span class="value" style="color: var(--gold);">${data.lifecycle}</span></div>
+                        <div><span class="label">context_hash:</span> <span class="value">${data.context_hash.slice(0, 24)}...</span></div>
+                        <div><span class="label">depiction_type:</span> <span class="value">${data.depiction_type}</span></div>
+                        <div><span class="label">proves:</span> <span class="value">${data.proves}</span></div>
+                    `;
+                } else {
+                    alert('Error: ' + (data.error || data.message));
+                }
+            } catch (err) {
+                console.error('Mint error:', err);
+                alert('Error minting token: ' + err.message);
+            } finally {
+                mintBtn.querySelector('.btn-text').style.display = 'inline';
+                document.getElementById('mintLoading').classList.remove('visible');
+                mintBtn.disabled = false;
+            }
+        });
+
+        function displayEntitiesForConfirmation(entities) {
+            const container = document.getElementById('entitiesList');
+            if (!entities || entities.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-muted); font-size: 0.85rem;">No entities extracted. You may proceed.</p>';
+                return;
+            }
+
+            let html = '<div style="display: flex; flex-direction: column; gap: 0.5rem;">';
+            html += '<p style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 0.5rem;"><strong>Edit any values that are incorrect before confirming:</strong></p>';
+            entities.forEach((entity, i) => {
+                // Highlight low confidence in yellow
+                const confidenceColor = entity.confidence < 0.9 ? 'var(--gold)' : 'var(--text-muted)';
+                const borderColor = entity.confidence < 0.9 ? 'var(--gold-dim)' : 'var(--border)';
+                html += `
+                    <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; background: var(--bg-tertiary); border: 1px solid ${borderColor}; border-radius: 6px;">
+                        <span style="background: var(--gold-dim); color: var(--bg-primary); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.7rem; font-weight: 600; min-width: 80px; text-align: center;">${entity.type}</span>
+                        <input type="text"
+                               class="entity-input"
+                               data-index="${i}"
+                               data-original="${entity.value}"
+                               value="${entity.value}"
+                               style="flex: 1; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-primary); background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 4px; padding: 0.4rem 0.6rem; outline: none;"
+                               onfocus="this.style.borderColor='var(--gold)'"
+                               onblur="this.style.borderColor='var(--border)'"
+                        />
+                        <span style="font-size: 0.7rem; color: ${confidenceColor}; min-width: 35px; text-align: right;">${Math.round(entity.confidence * 100)}%</span>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            html += '<p style="color: var(--text-muted); font-size: 0.75rem; margin-top: 0.75rem; font-style: italic;">Low confidence values (&lt;90%) are highlighted. All values require human verification regardless of confidence score.</p>';
+            container.innerHTML = html;
+        }
+
+        // Collect edited entities from input fields
+        function collectEditedEntities() {
+            const inputs = document.querySelectorAll('.entity-input');
+            const corrections = [];
+            const editedEntities = [];
+
+            inputs.forEach(input => {
+                const original = input.dataset.original;
+                const current = input.value.trim();
+                const index = parseInt(input.dataset.index);
+
+                if (current !== original) {
+                    corrections.push({
+                        original: original,
+                        corrected: current,
+                        reason: 'Human correction during review'
+                    });
+                }
+
+                // Update the entity in currentPromptToken
+                if (currentPromptToken && currentPromptToken.extracted_entities) {
+                    currentPromptToken.extracted_entities[index].value = current;
+                }
+            });
+
+            return corrections;
+        }
+
+        // Confirm Entities
+        document.getElementById('confirmEntitiesBtn').addEventListener('click', async () => {
+            if (!currentPromptToken) return;
+
+            // Collect any corrections made by the human
+            const corrections = collectEditedEntities();
+
+            const btn = document.getElementById('confirmEntitiesBtn');
+            btn.textContent = corrections.length > 0
+                ? `Confirming with ${corrections.length} correction(s)...`
+                : 'Confirming...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/api/hios/confirm-entities', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        prompt_id: currentPromptToken.prompt_id,
+                        confirmed: true,
+                        confirmer_did: 'did:windi:human-dragon',
+                        corrections: corrections  // Send human corrections to backend
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Update layer icon
+                    document.getElementById('layer4Icon').classList.add('active');
+
+                    // Hide entity confirmation, show master prompt
+                    document.getElementById('entityConfirmation').style.display = 'none';
+                    document.getElementById('masterPromptResult').style.display = 'block';
+
+                    // Build corrections notice if any were made
+                    const correctionsNotice = corrections.length > 0
+                        ? `<div style="padding: 0.5rem; background: rgba(74, 158, 219, 0.1); border: 1px solid var(--accent-blue); border-radius: 6px; margin-bottom: 0.75rem; font-size: 0.75rem;">
+                             <strong style="color: var(--accent-blue);">${corrections.length} human correction(s) applied:</strong>
+                             ${corrections.map(c => `<div style="margin-top: 0.25rem; color: var(--text-secondary);">"${c.original}" → "${c.corrected}"</div>`).join('')}
+                           </div>`
+                        : '';
+
+                    // Display master prompt
+                    document.getElementById('masterPromptContent').innerHTML = `
+                        ${correctionsNotice}
+                        <div style="margin-bottom: 0.75rem;"><strong>Master Prompt:</strong></div>
+                        <div style="padding: 0.75rem; background: var(--bg-secondary); border-radius: 6px; margin-bottom: 0.75rem;">${data.compiled_prompt}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">
+                            <div>Hash: ${data.prompt_hash.slice(0, 32)}...</div>
+                            <div>Pre-Ledger Receipt: ${data.pre_ledger_receipt}</div>
+                            <div>Verified by: did:windi:human-dragon</div>
+                        </div>
+                    `;
+
+                    // Update token preview
+                    document.getElementById('tokenOutput').innerHTML += `
+                        <div style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--border);">
+                            <span class="label">lifecycle:</span> <span class="value" style="color: var(--accent-green);">LOCKED</span>
+                        </div>
+                    `;
+
+                    // Store compiled prompt for generation
+                    currentPromptToken.compiled_prompt = data.compiled_prompt;
+                    currentPromptToken.locked_constants = data.locked_constants;
+                } else {
+                    alert('Error: ' + (data.error || data.message));
+                }
+            } catch (err) {
+                console.error('Confirm error:', err);
+                alert('Error confirming entities: ' + err.message);
+            } finally {
+                btn.textContent = 'Confirm Entities & Compile Prompt';
+                btn.disabled = false;
+            }
+        });
+
+        // Reject Entities (go back to edit)
+        document.getElementById('rejectEntitiesBtn').addEventListener('click', () => {
+            document.getElementById('entityConfirmation').style.display = 'none';
+            document.getElementById('tokenPreview').style.display = 'none';
+            document.getElementById('layer1Icon').classList.remove('active');
+            document.getElementById('layer2Icon').classList.remove('active');
+            document.getElementById('layer3Icon').classList.remove('active');
+            currentPromptToken = null;
+        });
+
+        // Generate from Master Prompt
+        document.getElementById('generateFromPromptBtn').addEventListener('click', async () => {
+            if (!currentPromptToken || !currentPromptToken.compiled_prompt) {
+                alert('No compiled prompt available');
+                return;
+            }
+
+            // Switch to Create tab and populate with the master prompt
+            document.querySelector('[data-tab="create"]').click();
+
+            // Fill in the script field with the master prompt
+            document.getElementById('script').value = currentPromptToken.compiled_prompt;
+            document.getElementById('topic').value = `W-PROMPT-001: ${currentPromptToken.prompt_id}`;
+
+            alert('Master Prompt loaded into Create form. Review and click Generate Video.');
+        });
+
+        // Engine Selector
+        document.querySelectorAll('.engine-option').forEach(option => {
+            option.addEventListener('click', () => {
+                document.querySelectorAll('.engine-option').forEach(o => o.classList.remove('selected'));
+                option.classList.add('selected');
+            });
+        });
+
+        // Get selected engine
+        function getSelectedEngine() {
+            const selected = document.querySelector('.engine-option.selected input');
+            return selected ? selected.value : 'veo-3.1';
+        }
+
+        // W-MAILs Mail Item Selection
+        document.querySelectorAll('.mail-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelectorAll('.mail-item').forEach(i => i.classList.remove('selected'));
+                item.classList.add('selected');
+                // Future: Load mail content into viewer
+            });
+        });
+
+        // Media Browser Filters
+        document.querySelectorAll('.media-filter .filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.media-filter .filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const filter = btn.dataset.filter;
+                // Future: Filter media items based on selection
+            });
+        });
+
+        // Load Media Browser
+        async function loadMediaBrowser() {
+            try {
+                const response = await fetch('/api/hios/media');
+                const data = await response.json();
+
+                const grid = document.getElementById('mediaGrid');
+                grid.innerHTML = '';
+
+                data.media.forEach(item => {
+                    const sceneMatch = item.filename.match(/S(\d+)/);
+                    const sceneNum = sceneMatch ? sceneMatch[1] : '?';
+
+                    const div = document.createElement('div');
+                    div.className = 'media-item';
+                    div.dataset.video = item.filename;
+                    div.innerHTML = `
+                        <div class="media-thumb">S${sceneNum.padStart(2, '0')}</div>
+                        <div class="media-info">
+                            <div class="media-name">${item.filename}</div>
+                            <div class="media-meta">
+                                <span>${item.size_mb} MB</span>
+                                <span class="${item.verified ? 'media-verified' : ''}">${item.verified ? 'Verified' : 'Local'}</span>
+                            </div>
+                        </div>
+                    `;
+                    div.addEventListener('click', () => {
+                        window.open(item.url, '_blank');
+                    });
+                    grid.appendChild(div);
+                });
+
+                // Update stats
+                const statsDiv = grid.parentElement.querySelector('div:last-child');
+                if (statsDiv) {
+                    statsDiv.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span style="color: var(--text-muted); font-size: 0.85rem;">Die Entscheidung Production</span>
+                                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--gold); margin-top: 0.25rem;">
+                                    ${data.total}/26 clips complete (${Math.round(data.total/26*100)}%)
+                                </div>
+                            </div>
+                            <a href="/api/hios/jobs" target="_blank" style="color: var(--gold); font-size: 0.85rem; text-decoration: none;">
+                                View All Jobs
+                            </a>
+                        </div>
+                    `;
+                }
+            } catch (err) {
+                console.error('Failed to load media:', err);
+            }
+        }
+
+        // Load media when Media Browser tab is activated
+        document.querySelector('[data-tab="media"]').addEventListener('click', loadMediaBrowser);
+
+        // Also load on initial page load if media tab is visible
+        if (document.getElementById('tab-media').classList.contains('active')) {
+            loadMediaBrowser();
+        }
+
+        // Compose Mail Form
+        document.getElementById('composeMailForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const mailData = {
+                recipient: document.getElementById('mailRecipient').value,
+                profile: document.getElementById('mailProfile').value,
+                plane: document.getElementById('mailPlane').value,
+                type: document.getElementById('mailType').value,
+                engine: document.getElementById('mailEngine').value,
+                project: document.getElementById('mailProject').value,
+                prompt: document.getElementById('mailPrompt').value,
+                assets: document.getElementById('mailAssets').value.split(',').map(s => s.trim()).filter(Boolean)
+            };
+
+            if (!mailData.recipient || !mailData.prompt) {
+                alert('Please fill in recipient and prompt fields.');
+                return;
+            }
+
+            // Future: Send to W-MAILs-001 backend
+            console.log('W-MAILs-001 Compose:', mailData);
+            alert('W-MAILs-001 backend integration pending. Mail logged to console.');
+        });
+
+        // Preset configurations
+        // NOTE: Only DATADAY is LIVE (receipt DD0C3B18). Other presets require §285 admission.
+        // See /opt/windi/proposals/HEL/ for component admission process.
+        const presets = {
+            dataday: {
+                script: `No mercado actual, a continuidade das inteligências artificiais é tratada como um problema de volume. Janelas de contexto maiores. Bancos de dados vectoriais obsessivos. Mas a vivência prática da Liga IA+H em Bavaria estraçalha essa ilusão. A continuidade legítima não pertence à máquina. A instância de IA é um sopro efémero — ela colapsa, muda de versão, reinicia e perde o chão. O verdadeiro portador da continuidade é o Humano. Nós documentamos isso em tempo real. Não como ficção. Como testemunho operacional verificável. A infraestrutura só se torna civilizacional quando vira cultura. Verifique você mesmo em windi-domain.com/verify`,
+                topic: 'Continuidade Híbrida IA+H — DATADAY Episódio 001',
+                vibe: 'documentary',
+                platform: 'youtube',
+                audience: 'Technology professionals, governance experts, and curious minds interested in human-AI hybrid systems and verifiable infrastructure'
+            }
+            // CANDIDATOS PENDENTES (requerem Teste Duplo §285 + §284):
+            // - HEL Introduction
+            // - Fotocopiadora Honesta
+            // - Zone-Bavaria/Alpha
+        };
+
+        // DOM Elements
+        const form = document.getElementById('videoForm');
+        const scriptInput = document.getElementById('script');
+        const topicInput = document.getElementById('topic');
+        const vibeSelect = document.getElementById('vibe');
+        const platformSelect = document.getElementById('platform');
+        const audienceInput = document.getElementById('audience');
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = submitBtn.querySelector('.btn-text');
+        const loading = document.getElementById('loading');
+        const videoResult = document.getElementById('videoResult');
+        const videoLink = document.getElementById('videoLink');
+        const previewMode = document.getElementById('previewMode');
+        const previewPlatform = document.getElementById('previewPlatform');
+        const receiptChain = document.getElementById('receiptChain');
+        const proofCard = document.getElementById('proofCard');
+        const approvalButtons = document.getElementById('approvalButtons');
+        const approveBtn = document.getElementById('approveBtn');
+        const rejectBtn = document.getElementById('rejectBtn');
+        const verifyLink = document.getElementById('verifyLink');
+
+        // Current video data (stored for approval flow)
+        let currentVideoData = null;
+
+        // Preset buttons
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const presetKey = btn.dataset.preset;
+                const preset = presets[presetKey];
+
+                if (preset) {
+                    scriptInput.value = preset.script;
+                    topicInput.value = preset.topic;
+                    vibeSelect.value = preset.vibe;
+                    platformSelect.value = preset.platform;
+                    audienceInput.value = preset.audience;
+
+                    // Update active state
+                    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    // Update preview
+                    updatePreview();
+                }
+            });
+        });
+
+        // Update preview on input change
+        [vibeSelect, platformSelect].forEach(el => {
+            el.addEventListener('change', updatePreview);
+        });
+
+        function updatePreview() {
+            previewMode.textContent = vibeSelect.value;
+            previewPlatform.textContent = platformSelect.value;
+        }
+
+        // =================================================================
+        // Auto-Save & Saved Prompts System
+        // =================================================================
+
+        const DRAFT_KEY = 'windi-hios-create-draft';
+        const SAVED_PROMPTS_KEY = 'windi-hios-saved-prompts';
+        const autoSaveIndicator = document.getElementById('autoSaveIndicator');
+        const savePromptBtn = document.getElementById('savePromptBtn');
+        const clearDraftBtn = document.getElementById('clearDraftBtn');
+        const savedPromptsList = document.getElementById('savedPromptsList');
+
+        // Get current form data
+        function getCurrentFormData() {
+            return {
+                script: scriptInput.value,
+                topic: topicInput.value,
+                vibe: vibeSelect.value,
+                platform: platformSelect.value,
+                audience: audienceInput.value,
+                engine: getSelectedEngine(),
+                timestamp: new Date().toISOString()
+            };
+        }
+
+        // Apply form data
+        function applyFormData(data) {
+            if (data.script) scriptInput.value = data.script;
+            if (data.topic) topicInput.value = data.topic;
+            if (data.vibe) vibeSelect.value = data.vibe;
+            if (data.platform) platformSelect.value = data.platform;
+            if (data.audience) audienceInput.value = data.audience;
+            if (data.engine) {
+                document.querySelectorAll('.engine-option').forEach(opt => {
+                    const input = opt.querySelector('input');
+                    if (input.value === data.engine) {
+                        opt.classList.add('selected');
+                        input.checked = true;
+                    } else {
+                        opt.classList.remove('selected');
+                    }
+                });
+            }
+            updatePreview();
+        }
+
+        // Auto-save draft
+        let autoSaveTimeout = null;
+        function autoSaveDraft() {
+            clearTimeout(autoSaveTimeout);
+            autoSaveTimeout = setTimeout(() => {
+                const data = getCurrentFormData();
+                // Only save if there's content
+                if (data.script || data.topic) {
+                    localStorage.setItem(DRAFT_KEY, JSON.stringify(data));
+                    // Show save indicator
+                    autoSaveIndicator.classList.add('visible');
+                    setTimeout(() => {
+                        autoSaveIndicator.classList.remove('visible');
+                    }, 2000);
+                }
+            }, 1000); // Debounce 1 second
+        }
+
+        // Attach auto-save to inputs
+        [scriptInput, topicInput, audienceInput].forEach(el => {
+            el.addEventListener('input', autoSaveDraft);
+        });
+        [vibeSelect, platformSelect].forEach(el => {
+            el.addEventListener('change', autoSaveDraft);
+        });
+        document.querySelectorAll('.engine-option').forEach(opt => {
+            opt.addEventListener('click', autoSaveDraft);
+        });
+
+        // Load draft on page load
+        function loadDraft() {
+            const saved = localStorage.getItem(DRAFT_KEY);
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    applyFormData(data);
+                    console.log('[HIOS] Draft loaded from localStorage');
+                } catch (e) {
+                    console.error('Failed to load draft:', e);
+                }
+            }
+        }
+
+        // Clear draft
+        clearDraftBtn.addEventListener('click', () => {
+            if (confirm('Clear current draft? This cannot be undone.')) {
+                localStorage.removeItem(DRAFT_KEY);
+                scriptInput.value = '';
+                topicInput.value = '';
+                audienceInput.value = '';
+                vibeSelect.value = 'documentary';
+                platformSelect.value = 'youtube';
+                document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+                updatePreview();
+            }
+        });
+
+        // ---- Saved Prompts Management ----
+
+        function getSavedPrompts() {
+            const saved = localStorage.getItem(SAVED_PROMPTS_KEY);
+            return saved ? JSON.parse(saved) : [];
+        }
+
+        function saveSavedPrompts(prompts) {
+            localStorage.setItem(SAVED_PROMPTS_KEY, JSON.stringify(prompts));
+        }
+
+        function renderSavedPromptsList() {
+            const prompts = getSavedPrompts();
+            if (prompts.length === 0) {
+                savedPromptsList.innerHTML = '<div class="no-saved-prompts">No saved prompts yet</div>';
+                return;
+            }
+
+            savedPromptsList.innerHTML = prompts.map((p, index) => `
+                <div class="saved-prompt-item" data-index="${index}">
+                    <div class="saved-prompt-info">
+                        <div class="saved-prompt-name">${escapeHtml(p.name)}</div>
+                        <div class="saved-prompt-date">${formatDate(p.savedAt)}</div>
+                    </div>
+                    <button type="button" class="delete-prompt-btn" data-index="${index}" title="Delete">×</button>
+                </div>
+            `).join('');
+
+            // Attach click handlers
+            savedPromptsList.querySelectorAll('.saved-prompt-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('delete-prompt-btn')) return;
+                    const index = parseInt(item.dataset.index);
+                    loadSavedPrompt(index);
+                });
+            });
+
+            savedPromptsList.querySelectorAll('.delete-prompt-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const index = parseInt(btn.dataset.index);
+                    deleteSavedPrompt(index);
+                });
+            });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatDate(isoString) {
+            const date = new Date(isoString);
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        }
+
+        // Save current form as named prompt
+        savePromptBtn.addEventListener('click', () => {
+            const data = getCurrentFormData();
+            if (!data.script && !data.topic) {
+                alert('Nothing to save. Please enter a script or topic first.');
+                return;
+            }
+
+            const name = prompt('Enter a name for this prompt:', data.topic || 'Untitled Prompt');
+            if (!name) return;
+
+            const prompts = getSavedPrompts();
+            prompts.unshift({
+                name: name,
+                data: data,
+                savedAt: new Date().toISOString()
+            });
+
+            // Keep max 20 saved prompts
+            if (prompts.length > 20) {
+                prompts.pop();
+            }
+
+            saveSavedPrompts(prompts);
+            renderSavedPromptsList();
+        });
+
+        function loadSavedPrompt(index) {
+            const prompts = getSavedPrompts();
+            if (prompts[index]) {
+                applyFormData(prompts[index].data);
+                // Clear preset selection
+                document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+                // Mark as active
+                savedPromptsList.querySelectorAll('.saved-prompt-item').forEach((item, i) => {
+                    item.classList.toggle('active', i === index);
+                });
+                // Also save as current draft
+                localStorage.setItem(DRAFT_KEY, JSON.stringify(prompts[index].data));
+            }
+        }
+
+        function deleteSavedPrompt(index) {
+            if (!confirm('Delete this saved prompt?')) return;
+            const prompts = getSavedPrompts();
+            prompts.splice(index, 1);
+            saveSavedPrompts(prompts);
+            renderSavedPromptsList();
+        }
+
+        // Initialize on page load
+        loadDraft();
+        renderSavedPromptsList();
+
+        // =================================================================
+        // End Auto-Save & Saved Prompts System
+        // =================================================================
+
+        // Form submission
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const script = scriptInput.value.trim();
+            const topic = topicInput.value.trim();
+            const vibe = vibeSelect.value;
+            const platform = platformSelect.value;
+            const audience = audienceInput.value.trim();
+
+            if (!script || !topic) {
+                alert('Please fill in the script and topic fields.');
+                return;
+            }
+
+            // Reset state
+            proofCard.style.display = 'none';
+            approvalButtons.classList.remove('visible');
+
+            // Update UI
+            btnText.style.display = 'none';
+            loading.classList.add('visible');
+            submitBtn.disabled = true;
+
+            try {
+                // Get selected engine
+                const selectedEngine = getSelectedEngine();
+
+                // Step 1: Create job in HIOS backend
+                const jobResponse = await generateVideo({
+                    script,
+                    topic,
+                    vibe: `${vibe}, minimalist, cold aesthetic, German precision, contemplative`,
+                    targetAudience: audience,
+                    platform,
+                    engine: selectedEngine
+                });
+
+                // Store job data
+                currentVideoData = {
+                    ...jobResponse,
+                    topic,
+                    timestamp: new Date().toISOString()
+                };
+
+                // Show job created message
+                const jobStatusDiv = document.createElement('div');
+                jobStatusDiv.id = 'jobStatus';
+                jobStatusDiv.style.cssText = 'padding: 1rem; background: var(--bg-secondary); border-radius: 8px; margin-top: 1rem; font-family: JetBrains Mono, monospace; font-size: 0.85rem;';
+                jobStatusDiv.innerHTML = `
+                    <div style="color: var(--gold); margin-bottom: 0.5rem;">Job Created</div>
+                    <div><span style="color: var(--text-muted);">job_id:</span> <span style="color: var(--text-primary);">${jobResponse.job_id}</span></div>
+                    <div><span style="color: var(--text-muted);">engine:</span> <span style="color: var(--gold);">${jobResponse.engine || 'veo-3.1'}</span></div>
+                    <div><span style="color: var(--text-muted);">tier:</span> <span style="color: var(--accent-blue);">${jobResponse.tier || 'EXTERNAL/OPAQUE'}</span></div>
+                    <div><span style="color: var(--text-muted);">hash:</span> <span style="color: var(--text-secondary);">${jobResponse.content_hash.slice(0, 24)}...</span></div>
+                    <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.8rem;">
+                        <span style="display: inline-block; width: 8px; height: 8px; background: var(--gold); border-radius: 50%; animation: pulse 1.5s infinite;"></span>
+                        Video generation via Veo 3.1...<br>
+                        Estimated: 2-5 minutes
+                    </div>
+                `;
+
+                // Remove old status if exists
+                const oldStatus = document.getElementById('jobStatus');
+                if (oldStatus) oldStatus.remove();
+                videoResult.before(jobStatusDiv);
+
+                // Step 2: Poll for video URL (Invideo callback will update the job)
+                let attempts = 0;
+                const maxAttempts = 60; // 5 minutes max
+                const pollInterval = setInterval(async () => {
+                    attempts++;
+                    try {
+                        const status = await checkJobStatus(jobResponse.job_id);
+
+                        if (status.video_url) {
+                            clearInterval(pollInterval);
+                            currentVideoData.video_url = status.video_url;
+                            currentVideoData.status = status.status;
+
+                            // Update UI with full details
+                            jobStatusDiv.innerHTML = `
+                                <div style="color: var(--accent-green); margin-bottom: 0.5rem;">✓ Video Ready for Approval</div>
+                                <div><span style="color: var(--text-muted);">job_id:</span> <span style="color: var(--text-primary);">${status.job_id}</span></div>
+                                <div><span style="color: var(--text-muted);">engine:</span> <span style="color: var(--gold);">${status.engine || 'veo-3.1'}</span></div>
+                                <div><span style="color: var(--text-muted);">tier:</span> <span style="color: var(--accent-blue);">${status.tier || 'EXTERNAL/OPAQUE'}</span></div>
+                                <div><span style="color: var(--text-muted);">size:</span> <span style="color: var(--text-primary);">${status.video_size_mb || '?'} MB</span></div>
+                                <div><span style="color: var(--text-muted);">hash:</span> <span style="color: var(--text-secondary);">${(status.video_hash || '').slice(0, 24)}...</span></div>
+                                <div style="margin-top: 0.5rem; color: var(--gold); font-size: 0.75rem;">I9 Gate: Human approval required before Ledger seal</div>
+                            `;
+
+                            videoLink.href = status.video_url;
+                            videoResult.classList.add('visible');
+                            approvalButtons.classList.add('visible');
+
+                            btnText.style.display = 'inline';
+                            loading.classList.remove('visible');
+                            submitBtn.disabled = false;
+                        } else if (attempts >= maxAttempts) {
+                            clearInterval(pollInterval);
+                            jobStatusDiv.innerHTML += `<div style="color: var(--accent-red); margin-top: 0.5rem;">Timeout waiting for video. Check job: ${jobResponse.job_id}</div>`;
+                            btnText.style.display = 'inline';
+                            loading.classList.remove('visible');
+                            submitBtn.disabled = false;
+                        }
+                    } catch (err) {
+                        console.error('Poll error:', err);
+                    }
+                }, 5000); // Poll every 5 seconds
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error: ' + error.message);
+                btnText.style.display = 'inline';
+                loading.classList.remove('visible');
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Approval flow - User accepts the video (REAL Ledger seal)
+        approveBtn.addEventListener('click', async () => {
+            if (!currentVideoData || !currentVideoData.job_id) {
+                alert('No video job to approve');
+                return;
+            }
+
+            approveBtn.textContent = 'Sealing to Ledger...';
+            approveBtn.disabled = true;
+            rejectBtn.disabled = true;
+
+            try {
+                // I9: Human approval gate - seal to real Ledger
+                const sealResult = await sealVideo(currentVideoData.job_id, 'human-dragon');
+
+                // Show proof card with REAL receipt and lineage
+                const blocksHtml = (sealResult.blocks || []).map(b =>
+                    `<div style="margin-left: 1rem; border-left: 2px solid var(--gold-dim); padding-left: 0.5rem; margin-bottom: 0.25rem;">
+                        <span style="color: var(--gold);">${b.stage}</span> · ${b.tier} · ${b.engine}
+                    </div>`
+                ).join('');
+
+                receiptChain.innerHTML = `
+                    <div style="margin-bottom: 0.5rem;"><strong>Receipt:</strong> ${sealResult.receipt_id}</div>
+                    <div style="margin-bottom: 0.5rem;"><strong>Lineage:</strong> <span style="color: var(--accent-blue);">${sealResult.lineage || 'veo->strato'}</span></div>
+                    <div style="margin-bottom: 0.5rem;"><strong>Video Hash:</strong> ${(sealResult.video_hash || sealResult.content_hash).slice(0, 32)}...</div>
+                    ${blocksHtml ? '<div style="margin-bottom: 0.5rem;"><strong>Blocks:</strong></div>' + blocksHtml : ''}
+                    <div><strong>Sealed:</strong> ${sealResult.sealed_at}</div>
+                `;
+
+                // Update proof card with verify link
+                const verifyLinkEl = proofCard.querySelector('.verify-link');
+                if (verifyLinkEl) {
+                    verifyLinkEl.href = sealResult.verify_url;
+                } else {
+                    // Create verify link if not exists
+                    const link = document.createElement('a');
+                    link.href = sealResult.verify_url;
+                    link.className = 'verify-link';
+                    link.target = '_blank';
+                    link.textContent = 'Verify on Ledger →';
+                    proofCard.querySelector('.proof-content').appendChild(link);
+                }
+
+                // Update proof badge text
+                const proofText = proofCard.querySelector('.proof-text');
+                if (proofText) {
+                    proofText.textContent = 'Sealed to Ledger';
+                }
+
+                // Remove the "pending" message
+                const pendingMsg = proofCard.querySelector('p');
+                if (pendingMsg) {
+                    pendingMsg.style.display = 'none';
+                }
+
+                proofCard.style.display = 'block';
+                approvalButtons.classList.remove('visible');
+
+                // Update job status display with lineage
+                const jobStatusDiv = document.getElementById('jobStatus');
+                if (jobStatusDiv) {
+                    jobStatusDiv.innerHTML = `
+                        <div style="color: var(--accent-green); margin-bottom: 0.5rem;">✓ Sealed to Forensic Ledger</div>
+                        <div><span style="color: var(--text-muted);">receipt:</span> <span style="color: var(--gold);">${sealResult.receipt_id}</span></div>
+                        <div><span style="color: var(--text-muted);">lineage:</span> <span style="color: var(--accent-blue);">${sealResult.lineage || 'veo->strato'}</span></div>
+                        <div><span style="color: var(--text-muted);">video_hash:</span> <span style="color: var(--text-secondary);">${(sealResult.video_hash || '').slice(0, 24)}...</span></div>
+                        <div><span style="color: var(--text-muted);">invariants:</span> <span style="color: var(--text-primary);">I1, I9, I11</span></div>
+                    `;
+                }
+
+            } catch (error) {
+                console.error('Seal error:', error);
+                alert('Error sealing to Ledger: ' + error.message);
+            } finally {
+                approveBtn.textContent = 'Accept & Seal';
+                approveBtn.disabled = false;
+                rejectBtn.disabled = false;
+            }
+        });
+
+        // Rejection flow - User wants to try again
+        rejectBtn.addEventListener('click', () => {
+            videoResult.classList.remove('visible');
+            approvalButtons.classList.remove('visible');
+            proofCard.style.display = 'none';
+            currentVideoData = null;
+        });
+
+        // HIOS API Configuration
+        const HIOS_API = '/api/hios';
+
+        // Real video generation via W-HIOS-001 backend
+        async function generateVideo(params) {
+            // Step 1: Create job in HIOS backend
+            const response = await fetch(`${HIOS_API}/generate`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(params)
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message || 'Failed to create job');
+            }
+
+            const jobData = await response.json();
+
+            // Store job_id for later seal
+            return {
+                job_id: jobData.job_id,
+                status: jobData.status,
+                content_hash: jobData.content_hash,
+                // Video URL will be populated after Invideo generation
+                url: null,
+                message: jobData.message
+            };
+        }
+
+        // Seal video to Ledger after human approval
+        async function sealVideo(jobId, approver = 'human-dragon') {
+            const response = await fetch(`${HIOS_API}/seal`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    job_id: jobId,
+                    human_approved: true,  // I9: Human approval gate
+                    approver: approver
+                })
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message || 'Failed to seal video');
+            }
+
+            return await response.json();
+        }
+
+        // Check job status (polling for video URL)
+        async function checkJobStatus(jobId) {
+            const response = await fetch(`${HIOS_API}/job/${jobId}`);
+            if (!response.ok) {
+                throw new Error('Failed to check job status');
+            }
+            return await response.json();
+        }
+    </script>
+</body>
+</html>

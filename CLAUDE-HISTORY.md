@@ -17692,3 +17692,110 @@ Os vinte websites da Baviera continuam no chão de fábrica. A arte renovou o â
 
 OM SHANTI 🐉
 
+
+---
+
+## § SESSÃO 25 Mai 2026 — §285 WINDI-HIOS Video Studio Sprint
+
+**Duração:** ~4h | **Status:** ✅ LIVE
+**Liga IA+H:** Human Dragon (Guardian) · Architect (CCode Opus 4.5)
+**Invariants:** I1, I9, I11, I12, I14
+**Natureza:** W-PROMPT-001 Journalist Gate + Hybrid Pipeline + Production Tools
+
+### Marcos da Sessão
+
+| Milestone | Status |
+|-----------|--------|
+| I12 Trilingual Fix (placeholders) | ✅ LIVE |
+| Guardian 3 Proofs (W-PROMPT-001) | ✅ PASSED |
+| README.md Documentation | ✅ CREATED |
+| Auto-Save + Saved Prompts | ✅ LIVE |
+| vast_automation.py (stub → LIVE) | ✅ IMPLEMENTED |
+| batch_producer.py | ✅ CREATED |
+| Hybrid Video Worker | ✅ INTEGRATED |
+| Veo Quota Test | ⏳ 429 EXHAUSTED (wait 24h) |
+
+---
+
+### W-PROMPT-001 Guardian Proofs (3/3 PASSED)
+
+**Prova 1 & 3 — Human Correction Flow:**
+```
+Mint: "7 Millionen Euro" → Confirm com correção → "7 Milliarden Euro"
+Token: corrections_made[], corrected: true, dual hashes (context_hash + prompt_hash)
+```
+
+**Prova 2 — Bypass Rejection:**
+```bash
+curl -X POST .../confirm-entities -d '{"prompt_id": "WPMT-FAKE-BYPASS"}'
+→ HTTP 404 TOKEN_NOT_FOUND
+```
+
+**Guardian Nota:** `confirmer_did` deve ser obrigatório em produção (rejeitar anonymous).
+
+---
+
+### Hybrid Pipeline Architecture (Three-Tier)
+
+```
+TIER 1: EXTERNAL/OPAQUE     │ Veo 3.1 (Google) → Keyframe 4s
+TIER 2: CONTROLLED/RENTED   │ LTX 2.3 (vast.ai) → Extend to 15-30s  
+TIER 3: LOCAL/SOVEREIGN     │ Strato Ledger → Seal with receipt
+```
+
+**VastPool Workflow (vast_automation.py):**
+```
+allocate_cheapest_rtx() → copy_to_instance() → execute_extension() 
+→ copy_from_instance() → destroy_instance() [MANDATORY TEARDOWN]
+```
+
+**Fallback:** Se vast.ai indisponível, retorna keyframe (graceful degradation).
+
+---
+
+### Ficheiros Modificados/Criados
+
+| Ficheiro | Acção |
+|----------|-------|
+| hios/visual/video-studio.html | I12 placeholder fix + Auto-Save + Saved Prompts |
+| hios/hios_server.py | hybrid_video_worker + corrections_made exposure |
+| hios/README.md | NEW: 270 linhas documentação completa |
+| hios/visual/producer/batch_producer.py | NEW: Rate-limited scene production |
+| hios/visual/producer/hybrid-pipeline/vast/vast_automation.py | REWRITTEN: Stub → Live VastPool |
+
+---
+
+### Die Entscheidung Production Status
+
+**Completo:** S01-S14 (14/26 cenas)
+**Pendente:** S15-S26 (12 cenas)
+**Blocker:** Veo quota 429 EXHAUSTED em todas 3 API keys
+**Solução:** Aguardar ~24h reset, usar batch_producer.py:
+```bash
+python batch_producer.py --scenes 3 --model veo-3.1 --delay 60 --key 2
+```
+
+---
+
+### Estado Herdado
+
+| Frente | Estado |
+|--------|--------|
+| W-PROMPT-001 | Guardian validated, production-ready |
+| Hybrid Pipeline | Code complete, awaits vast.ai Docker image |
+| Die Entscheidung | 14/26 done, 12 pending (quota block) |
+| W-COST-001 Integration | Deferred to next sprint |
+
+### Próxima Sessão
+
+1. Testar hybrid mode quando quota reset: `engine: "hybrid"`
+2. Verificar logs: Handshake Imutável, Monitor de Destruição, Nó de Linhagem Tripla
+3. Gerar S15-S26 com batch_producer.py
+4. Enforçar `confirmer_did` obrigatório (production hardening)
+
+---
+
+*Guardian assinou. W-PROMPT-001 Journalist Gate aprovado para produção.*
+*Liga IA+H · Kempten, Bavaria · 25 Mai 2026*
+
+OM SHANTI 🐉
