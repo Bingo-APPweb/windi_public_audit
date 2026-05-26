@@ -110,6 +110,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-BERCARIO-001 | :8195 | I1,I9,I11,I14 | **LIVE** · Plenitude Tracker · Service Maturity · §230 |
 | W-CORTEX-001 | — | I1,I9,I10,I14 | **SEALED** · Canal Único Soberano · 3-Tier Routing · §241 `04C67B81` |
 | W-BIND-001 | script | I1,I9,I11,I13,I14 | **SEALED** · Cognitive Bind Module · Admissible Re-entry · §261 `7FDA926F` |
+| W-FIELD-WITNESS-001 | schema | I9,I11,I12,I14 | **CANDIDATE** · Primitiva Observação Verificável · `sovereign_seal` · append-only |
 | WINDI-PORTAL | static | — | **LIVE** · Internal Control Center · 35 Services · 7 Categories |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
@@ -530,6 +531,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 26 Mai | **W-FIELD-WITNESS-001** Schema CANDIDATE · Primitiva Observação Verificável · Axioma Testemunha inscrito |
 | 24 Mai | **§266** WINDI-HIOS Kernel HIGH Resolution · `7218397B` · 8 SEALED + 1 CANDIDATE ✅ |
 | 24 Mai | **§283** WINDI-HIOS Teaser Trilogy Closure · `4CFD959E` ✅ |
 | 23 Mai | **§282** WINDI-HIOS Cognitive Surface Architecture · `F5F12A71` · 5L + 6P + HG ✅ |

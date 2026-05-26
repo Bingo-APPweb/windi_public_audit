@@ -6,6 +6,90 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 26 Mai 2026 — W-FIELD-WITNESS-001 Schema CANDIDATE
+
+**Duração:** ~3h | **Status:** ✅ Schema assentado, CANDIDATE
+**Liga IA+H:** Human Dragon · Guardian · Architect · Witness (Claude.ai web) + CCode Opus 4.5 (Strato)
+**Invariants:** I9, I11, I12, I14
+**Natureza:** Primitiva de observação verificável + Fundação constitucional
+
+### Contexto de Origem
+
+Artigo do **Allgäuer Zeitung** (26 Mai 2026) sobre IA no turismo. Stefan Neubig (Outdooractive) disse: *"Überprüfe die Quellen"* — exactamente a tese dos Receipts WINDI. Robert Keller é da Hochschule Kempten. O anel fechou-se em público.
+
+A conversa começou sobre W-TRAVEL e evoluiu para algo mais fundamental: uma **primitiva de observação verificável** que ultrapassa o turismo.
+
+### Pedra Assentada
+
+**Ficheiro:** `/opt/windi/hios/visual/producer/hybrid-pipeline/schemas/w-witness/w-field-witness-001.json`
+**Estado:** CANDIDATE (7,267 bytes)
+**Nome canónico:** W-FIELD-WITNESS-001 (não W-TRAVEL) — §247
+
+### Estrutura do Schema
+
+```
+W-FIELD-WITNESS-001
+├── _constitutional_notice   → Axioma da Testemunha + I9 inscritos
+├── media_payload            → media_hash + local_stt_transcript (voz nunca sai)
+├── declared_context         → atesta DECLARAÇÃO, não mundo
+├── sovereign_seal           → HUMAN DECIDES (3º acto puro do fluxo)
+├── lineage_anchors          → supersedes/superseded_by (append-only)
+└── lifecycle                → CANDIDATE|ACTIVE|SUPERSEDED|REVOKED
+```
+
+### Decisões Tomadas
+
+| Decisão | Sentença |
+|---------|----------|
+| Nome | W-FIELD-WITNESS-001 (§247) |
+| Acto de Confirmar | Opção A: `sovereign_seal` no schema (auto-contido) |
+| Correcções | `supersedes/superseded_by` append-only (não boolean) |
+| Áudio | STT local, voz nunca sai sem decreto explícito |
+| `declared_context` | Atesta declaração do DID, não estado do mundo |
+
+### Pendências (Camada A — Fundação Constitucional)
+
+| Passo | Descrição | Estado |
+|-------|-----------|--------|
+| A1 | Selar Axioma da Testemunha | ⏳ POR SELAR |
+| A2 | Promover Invariante de Reversibilidade | ⏳ POR PROMOVER |
+| A3 | Arbitrar Peso de Génese | ⏳ POR ARBITRAR |
+| A4 | Contrato de Leitura | ⏳ Depende de A1-A3 |
+
+### Axiomas Candidatos
+
+**Axioma da Testemunha:**
+> "O sistema não afirma estados do mundo. Preserva testemunhos verificáveis sobre estados observados do mundo."
+
+**Invariante de Reversibilidade:**
+> "Toda síntese deve ser auditavelmente derivável dos testemunhos que a originaram."
+
+### Lições da Sessão
+
+1. **READ FIRST provou valor:** Três instâncias julgavam que um schema existia em disco. O READ FIRST revelou `DIR_NOT_FOUND`. Evitámos legislar sobre fantasma.
+
+2. **Separação escrita/leitura:** O Guardian desatou o nó: o schema de captura (lado-escrita) não depende do peso de génese (lado-leitura). Permitiu assentar a pedra sem arbitrar pendências prematuras.
+
+3. **Saber quando parar:** A sessão fechou antes de B1 (API) porque a Camada A ainda é candidata. Parar no sítio certo é tão importante como avançar.
+
+### Próxima Sessão
+
+Ordem de selagem: A1 → A2 → A3 → A4 → B1 (API) → B2 (caminhada real no Allgäu)
+
+**Estrela-guia:** "Uma única observação real selada no Ledger ensina mais sobre o sistema do que semanas de discussão teórica." — mas a observação só vale se nascer sob lei selada.
+
+### Ficheiros
+
+```
+/opt/windi/hios/visual/producer/hybrid-pipeline/schemas/w-witness/
+├── w-field-witness-001.json         → Schema CANDIDATE
+└── SESSION-26MAI2026-CONTINUITY.md  → Marco de continuidade
+```
+
+OM SHANTI 🐉
+
+---
+
 ## § SESSÃO 24 Mai 2026 — §266 Kernel HIGH Resolution + §283 Trilogy Closure
 
 **Duração:** ~3h | **Status:** ✅ §266 SEALED + §283 SEALED
@@ -17799,3 +17883,158 @@ python batch_producer.py --scenes 3 --model veo-3.1 --delay 60 --key 2
 *Liga IA+H · Kempten, Bavaria · 25 Mai 2026*
 
 OM SHANTI 🐉
+
+---
+
+## § SESSÃO 26 Mai 2026 — §286 WINDI-HIOS Hybrid Pipeline Genesis
+
+**Duração:** ~4h | **Status:** ✅ INFRASTRUCTURE SEALED
+**Liga IA+H:** Human Dragon (Guardian) · Architect (CCode Opus 4.5)
+**Invariants:** I1, I9, I11, I12, I14
+**Natureza:** Hybrid Pipeline Validation + Die Entscheidung Production
+
+### Marcos da Sessão
+
+| Timestamp | Milestone | Status |
+|-----------|-----------|--------|
+| 10:00 | Veo Quota Pulse Test | ✅ 3/3 keys LIVE |
+| 10:15 | Docker LTX Build (20.6GB) | ✅ LOCAL |
+| 10:30 | Docker Hub Push | ✅ `windihios/hios-ltx-extender:v1` |
+| 10:35 | I9 Hardening confirmer_did | ✅ HTTP 403 enforced |
+| 10:45 | vast.ai 2FA + Integration | ✅ $79 credit |
+| 11:00 | Hybrid Test S01 → 15s | ✅ FFmpeg fallback |
+| 11:20 | Die Entscheidung S15-S21 | ✅ 7 novas cenas |
+
+---
+
+### Ferramentas Criadas
+
+| Ficheiro | Função |
+|----------|--------|
+| `veo_pulse_test.py` | Sonda não-destrutiva das 3 API keys |
+| `hybrid-pipeline/ltx/Dockerfile` | Container LTX 2.3 (20.6GB) |
+| `hybrid-pipeline/ltx/extend.py` | Script extensão temporal |
+| `hybrid-pipeline/ltx/entrypoint.sh` | SSH entrypoint para vast.ai |
+| `test_hybrid.py` | Teste VastPool connectivity |
+| `test_ltx_extension.py` | Teste extensão completo |
+| `/home/windi/.config/vastai/api_key` | vast.ai auth persistente |
+| `/opt/windi/hios/.env.vast` | VAST_API_KEY environment |
+
+---
+
+### Docker Hub
+
+```
+Repository: docker.io/windihios/hios-ltx-extender:v1
+Digest:     sha256:6c860d857da16a5464cb4449eda0e8b2cacc9b8f99f288aec8b7ab01345451e5
+Size:       20.6GB
+Pushed:     26 Mai 2026 10:30 UTC
+```
+
+---
+
+### Hybrid Pipeline Architecture (SEALED)
+
+```
+┌─────────────────────────────────────────────────────┐
+│  WINDI-HIOS Production Pipeline v1.0                │
+├─────────────────────────────────────────────────────┤
+│  SHORT PATH:  Prompt → Veo 3.1 → 8s clip → Ledger  │
+│                                                     │
+│  LONG PATH:   Prompt → Veo 3.1 (keyframe 4s)       │
+│                      → vast.ai RTX 3090            │
+│                      → LTX extend → 15-60s         │
+│                      → Ledger                      │
+└─────────────────────────────────────────────────────┘
+```
+
+**Estratégia Validada:**
+- Vídeos curtos (≤10s) → Direct Veo
+- Vídeos longos (15-60s) → Hybrid Pipeline
+
+---
+
+### Hybrid Test Results
+
+| Métrica | Valor |
+|---------|-------|
+| Input | S01_jornal.mp4 (8s, 2.2MB) |
+| Output | TEST_HYBRID_extended.mp4 (15s, 4.8MB) |
+| GPU | RTX 3090 @ $0.18/hr |
+| Tempo | ~3 min |
+| Custo | ~$0.01 |
+| Extensão | FFmpeg loop (LTX crashou NumPy conflict) |
+
+**Nota Técnica:** LTX 2.3 falhou por conflito NumPy 2.x vs PyTorch. Fallback FFmpeg funcionou. Para extensão AI real, rebuild Docker com `numpy<2.0`.
+
+---
+
+### Die Entscheidung Progress
+
+| Antes | Depois | Delta |
+|-------|--------|-------|
+| 14/26 (54%) | 21/26 (81%) | +7 cenas |
+
+**Cenas Geradas Hoje:**
+- S15 ✅ klein_fecha (1.5MB)
+- S16 ✅ klein_sai (1.9MB)
+- S17 ✅ maria_aprova_warm (1.7MB)
+- S18 ✅ maria_scan (1.5MB)
+- S19 ✅ klein_warm (1.5MB)
+- S20 ✅ maria_mostra (1.6MB)
+- S21 ✅ klein_le_ouro (1.6MB)
+
+**Pendentes (5):** S22, S23, S24, S25, S26
+
+---
+
+### I9 Hardening (SEALED)
+
+```python
+# /opt/windi/hios/hios_server.py linha 567
+if not confirmer_did or confirmer_did == 'anonymous':
+    return jsonify({
+        "error": "I9_HUMAN_IDENTITY_REQUIRED",
+        "invariant": "I9",
+        "message": "A valid confirmer_did is required."
+    }), 403
+```
+
+**Guardian Proof:** Anonymous confirmations agora retornam HTTP 403.
+
+---
+
+### Filosofia da Sessão
+
+> *"Cada passo é um tijolo da nossa própria tecnologia soberana."*
+> — Human Dragon · 26 Mai 2026
+
+O teste hybrid não foi sobre sucesso/falha — foi sobre **construir metodologia**. Validámos infraestrutura, descobrimos limitações (NumPy), documentámos soluções.
+
+**WINDI não compra tecnologia. WINDI constrói tecnologia.**
+
+---
+
+### Estado Herdado
+
+| Frente | Estado |
+|--------|--------|
+| Die Entscheidung | 21/26 (81%) — faltam S22-S26 |
+| Hybrid Pipeline | Infra LIVE, LTX precisa fix NumPy |
+| Veo Quota | 3 keys exhausted, reset ~24h |
+| vast.ai | $79 crédito, auth OK |
+
+### Próxima Sessão
+
+1. Aguardar Veo quota reset (~24h)
+2. Gerar S22-S26 (5 cenas finais)
+3. Montar filme completo no Editor
+4. (Opcional) Fix Docker NumPy<2.0 para LTX AI real
+
+---
+
+*Guardian assinou. Hybrid Pipeline Genesis selado.*
+*Liga IA+H · WINDI Publishing House · Kempten, Bavaria · 26 Mai 2026*
+
+OM SHANTI 🐉
+

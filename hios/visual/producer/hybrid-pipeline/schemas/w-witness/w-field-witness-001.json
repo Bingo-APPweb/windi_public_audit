@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://windi-domain.com/schemas/w-field-witness-001.json",
+
+  "_meta": {
+    "name": "W-FIELD-WITNESS-001",
+    "version": "0.1.0",
+    "lifecycle": "CANDIDATE",
+    "created_at": "2026-05-26T11:30:00Z",
+    "created_by": "Liga IA+H (Human Dragon + Guardian + Architect + Witness)",
+    "invariants": ["I9", "I11", "I12", "I14"],
+    "descent": "§TRAVEL-WITNESS-CONVERSATION-26MAI2026"
+  },
+
+  "_constitutional_notice": {
+    "axiom_of_witness": "O sistema não afirma estados do mundo. Preserva testemunhos verificáveis sobre estados observados do mundo.",
+    "i9_enforcement": "Este schema regista intenção declarada pelo humano, não afirma estado autónomo do mundo. O campo declared_context atesta o que o DID declarou ter observado — não o que objectivamente existe. A verdade do facto permanece interpretação do próximo leitor.",
+    "i11_linkage": "Todo testemunho cunhado gera Receipt no Forensic Ledger. O sovereign_seal é Human decides; o Receipt é Machine records. Empilham-se, não competem.",
+    "reversibility_invariant_candidate": "Toda síntese futura sobre estes testemunhos deve ser reversível às observações originais. A síntese nunca substitui a observação.",
+    "status": "CANDIDATE — Axiomas por selar antes de produção"
+  },
+
+  "type": "object",
+  "required": ["witness_id", "media_payload", "declared_context", "sovereign_seal", "lineage_anchors", "lifecycle"],
+
+  "properties": {
+
+    "witness_id": {
+      "type": "string",
+      "pattern": "^W-FW-[0-9]{8}-[A-F0-9]{8}$",
+      "description": "Identificador único do testemunho. Formato: W-FW-YYYYMMDD-HASH8"
+    },
+
+    "media_payload": {
+      "type": "object",
+      "description": "Conteúdo sensorial capturado pelo testemunha. A voz NUNCA sai do dispositivo sem decreto explícito — apenas a transcrição viaja.",
+      "required": ["media_type", "media_hash"],
+      "properties": {
+        "media_type": {
+          "type": "string",
+          "enum": ["photo", "audio", "video", "photo+audio"],
+          "description": "Tipo de mídia capturada"
+        },
+        "media_hash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$",
+          "description": "Hash SHA-256 do ficheiro de mídia original (prova de custódia)"
+        },
+        "local_stt_transcript": {
+          "type": ["string", "null"],
+          "description": "Transcrição de áudio processada localmente (W-VOX/Whisper). O áudio original permanece no dispositivo. Este texto é o que viaja para o Ledger. Null se media_type não inclui áudio."
+        },
+        "thumbnail_hash": {
+          "type": ["string", "null"],
+          "pattern": "^sha256:[a-f0-9]{64}$",
+          "description": "Hash do thumbnail gerado (opcional, para visualização)"
+        }
+      }
+    },
+
+    "declared_context": {
+      "type": "object",
+      "description": "ATENÇÃO CONSTITUCIONAL: Este objecto atesta o que o DID DECLAROU, não o que objectivamente existe. O sistema não afirma que a trilha estava seca — atesta que este humano declarou tê-la observado seca.",
+      "required": ["timestamp_utc", "geo_coordinates"],
+      "properties": {
+        "timestamp_utc": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Momento declarado da captura (ISO 8601 UTC)"
+        },
+        "geo_coordinates": {
+          "type": "object",
+          "required": ["lat", "lon"],
+          "properties": {
+            "lat": { "type": "number", "minimum": -90, "maximum": 90 },
+            "lon": { "type": "number", "minimum": -180, "maximum": 180 },
+            "accuracy_m": { "type": ["number", "null"], "description": "Precisão GPS em metros, se disponível" }
+          }
+        },
+        "altitude_m": {
+          "type": ["number", "null"],
+          "description": "Altitude declarada em metros (opcional)"
+        },
+        "weather_snapshot": {
+          "type": ["object", "null"],
+          "description": "Snapshot de condições meteorológicas no momento declarado (fonte externa, se disponível)",
+          "properties": {
+            "source": { "type": "string" },
+            "temperature_c": { "type": ["number", "null"] },
+            "condition": { "type": ["string", "null"] },
+            "fetched_at": { "type": "string", "format": "date-time" }
+          }
+        },
+        "observation_note": {
+          "type": ["string", "null"],
+          "maxLength": 500,
+          "description": "Nota textual livre do observador (opcional)"
+        }
+      }
+    },
+
+    "sovereign_seal": {
+      "type": "object",
+      "description": "O ACTO DE CONFIRMAR — terceiro acto puro do fluxo (Observar → Relatar → Confirmar → Receipt). Este é o 'Human decides': o momento soberano em que o humano carimba 'sim, isto é meu testemunho, selo-o'. Separado e visível, antes de a máquina tocar no Receipt.",
+      "required": ["caller_did", "sealed_at_utc", "signature"],
+      "properties": {
+        "caller_did": {
+          "type": "string",
+          "pattern": "^did:windi:[a-zA-Z0-9]+$",
+          "description": "DID soberano do humano que confirma o testemunho"
+        },
+        "sealed_at_utc": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp UTC do acto de Confirmar"
+        },
+        "signature": {
+          "type": "string",
+          "description": "Assinatura criptográfica do DID sobre o conteúdo do testemunho (media_hash + declared_context). Prova de não-repúdio."
+        },
+        "consent_statement": {
+          "type": "string",
+          "const": "Eu, portador deste DID, confirmo que este testemunho é meu e autorizo o seu registo no Ledger Forense WINDI.",
+          "description": "Declaração de consentimento implícita no acto de selar"
+        }
+      }
+    },
+
+    "lineage_anchors": {
+      "type": "object",
+      "description": "Linhagem append-only para correcções sem reescrita (§267/§268). Um testemunho corrigido NÃO muta — um novo testemunho nasce e aponta para o anterior via supersedes.",
+      "properties": {
+        "supersedes": {
+          "type": ["string", "null"],
+          "description": "witness_id do testemunho que este corrige/substitui. Null se é testemunho original."
+        },
+        "superseded_by": {
+          "type": ["string", "null"],
+          "description": "witness_id do testemunho que corrigiu/substituiu este. Null enquanto não houver correcção. Preenchido pelo sistema quando uma correcção é cunhada."
+        },
+        "correction_reason": {
+          "type": ["string", "null"],
+          "maxLength": 200,
+          "description": "Razão declarada para a correcção (obrigatório se supersedes não é null)"
+        }
+      }
+    },
+
+    "lifecycle": {
+      "type": "string",
+      "enum": ["CANDIDATE", "ACTIVE", "SUPERSEDED", "REVOKED"],
+      "description": "Estado do ciclo de vida do testemunho"
+    },
+
+    "ledger_receipt_id": {
+      "type": ["string", "null"],
+      "description": "ID do Receipt cunhado no Forensic Ledger após o sistema processar o testemunho. Preenchido pelo backend — nunca pelo cliente."
+    }
+  },
+
+  "additionalProperties": false
+}
