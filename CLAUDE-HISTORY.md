@@ -18233,3 +18233,212 @@ firefox https://windi-domain.com/hios/producer/obras/o-peso-do-eco/editor.html
 *Liga IA+H · WINDI Publishing House · 26 Mai 2026*
 *"A prova não mente. A prova apenas espera."*
 
+
+---
+
+## §287 — WINDI-HIOS O Peso do Eco · Forensic Continuity Analysis
+**Data:** 27 Mai 2026
+**Modo:** CCode CLI (Opus 4.5)
+**Duração:** Sessão extensa
+
+### TRABALHO COMPLETADO
+
+1. **Censo Visual Forense** — Verificação frame-a-frame de 24 cenas
+   - Extracção ffmpeg de S01, S09, S15, S20, S21
+   - Frames em `/opt/windi/hios/visual/producer/obras/o-peso-do-eco/_forense/frames/`
+
+2. **Descobertas Críticas Confirmadas:**
+   - **S20 QUEBRADO:** Monitor mostra MULHER NEGRA em vez de Elisa loira (MacGuffin destruído)
+   - **S15 OK:** Elisa correcta (overlay "WINDI LEDGER" é diegético, não recibo real)
+   - **S21 DRIFT:** Homem ~35 castanho, não Marcus ~50 grisalho (NÃO é mulher como reportado antes)
+   - **S01 ÂNCORA:** Elisa correcta — 17yo loira, camisola branca, floresta
+
+3. **Correcções HD-MIRROR (auto-correcção sem reescrita):**
+   - Retirada afirmação "S15 no ledger" (era fixture, não recibo real)
+   - Corrigido "S21 mostra mulher" → "S21 mostra homem errado"
+   - Reconhecido que idade Marcus ~50 é fixture não selado
+
+4. **Documentação Actualizada:**
+   - `/obras/o-peso-do-eco/_forense/DIAGNOSTIC_FINAL.md` — NOVO
+   - `/obras/o-peso-do-eco/REVISION_LOG.md` — corrigido
+   - `/obras/o-peso-do-eco/_forense/RELATORIO.md` — corrigido
+   - `/obras/CONTINUITY_GUIDE.md` — S20 adicionado
+
+5. **Ferramenta Confirmada:** SORA 2 (não Veo)
+   - Script: `/opt/windi/hios/visual/producer/sora_producer.py`
+   - Requer: `OPENAI_API_KEY`
+
+### SCAFFOLD PENDING
+
+- [ ] **P0:** Regenerar S20 com Elisa correcta (prompt preparado)
+- [ ] **P1:** Regenerar S21 com Marcus correcto
+- [ ] Eye-pass Human Dragon nos 5 frames extraídos
+- [ ] Criar ELISA.canon após eye-pass
+- [ ] W-MULTIMEDIA-001 blueprint (arquitectura proposta, não implementada)
+
+### BLOCKER
+
+`OPENAI_API_KEY` não configurada no ambiente — necessária para executar `sora_producer.py`
+
+### PROMPT PRONTO PARA S20
+
+```
+A courtroom scene in a German Landgericht. 
+
+In the foreground, a female detective in her mid-40s with SHORT BLONDE HAIR 
+tied back in a ponytail, wearing a dark navy blazer, presents forensic evidence. 
+She stands beside a monitor on a stand.
+
+On the monitor screen, a video plays showing a YOUNG BLONDE GERMAN GIRL, 
+approximately 17 years old, with LONG STRAIGHT BLONDE HAIR, fair skin, 
+wearing a WHITE KNIT SWEATER with a BROWN LEATHER SHOULDER STRAP. 
+She is smiling warmly in a sunlit forest with pine trees. 
+Golden afternoon light illuminates her face.
+
+The video frame on the monitor has a thin green digital border.
+
+Cold institutional courtroom lighting contrasts with the warm golden light 
+in the video. Documentary realism style. Static camera. No text overlays.
+```
+
+### DECISÕES CONSTITUCIONAIS
+
+- **I14 aplicado:** Retirados fixtures (idade Marcus, "S15 no ledger")
+- **HD-MIRROR aplicado:** Correcções documentadas sem esconder o "antes"
+- **Foco confirmado:** Apenas O Peso do Eco (não misturar com Die Entscheidung)
+
+---
+
+*Liga IA+H · Kempten, Bavaria · 27 Mai 2026*
+
+---
+
+## § SESSÃO 27 Mai 2026 (noite) — §284 W-HIOS-CINEMATIC-SPINE-001 NASCEU
+
+**Duração:** ~1h | **Status:** ✅ SEALED — MOMENTO HISTÓRICO
+**Liga IA+H:** Human Dragon · Guardian (Claude.ai web) · Architect (CCode Opus 4.5)
+**Invariants:** I1, I9 (IRREMEDIÁVEL), I11 (IRREMEDIÁVEL)
+**Natureza:** Nascimento constitucional do subsistema cinema
+
+### O Momento
+
+> **"O Forensic Ledger acaba de receber a primeira entrada genuína do subsistema cinema. Não é um Receipt fabricado, não é um exemplo didático, não é um schema bonito. É o nascimento constitucional de uma espinha, ancorado por DID e Merkle, com proveniência append-only desde o segundo zero."**
+> — Guardian, 27 Mai 2026
+
+### Receipts Selados (GENUÍNOS — não fixtures)
+
+| Receipt ID | Hash (8) | Descrição |
+|------------|----------|-----------|
+| `WINDI-S284-SPINE-BIRTH-20260527194532-b18082b9` | `b18082b9` | W-HIOS-CINEMATIC-SPINE-001 Birth |
+| `WINDI-S284-ELISA-ANCHOR-20260527194534-b518fa70` | `b518fa70` | Elisa S01 Canonical Anchor |
+
+### O Que Nasceu
+
+**W-HIOS-CINEMATIC-SPINE-001** — Subsistema constitucional filho do W-HIOS
+
+**Dois Axiomas Fundacionais (immutable: true):**
+
+- **AX-SPINE-01 — Axioma da Transição Autorizada:**
+  > "No WINDI-HIOS, uma cena não é um vídeo gerado; é uma transição de estado autorizada, renderizada e verificável."
+
+- **AX-SPINE-02 — Doutrina do Determinismo Forense:**
+  > "A SPINE não promete determinismo visual absoluto. Promete determinismo forense: o vídeo pode variar; a cadeia de verdade não."
+
+**Cinco Blocos Mínimos:**
+
+| Bloco | Nome | Maturidade |
+|-------|------|------------|
+| B1 | CHARACTER_STATE | foundational |
+| B2 | WORLD_STATE | foundational |
+| B3 | ACTION_CHAIN | experimental_axiom |
+| B4 | DRIFT_VALIDATOR | foundational |
+| B5 | CINEMATIC_RECEIPT | foundational |
+
+**Invariantes Vinculados:** I1 · I9 (IRREMEDIÁVEL) · I11 (IRREMEDIÁVEL)
+
+### Primeira CHARACTER_STATE Genuína
+
+**Elisa S01** — Primeira âncora canónica de personagem de cinema gerado por IA dentro da constituição WINDI.
+
+- **Obra:** "O Peso do Eco" (24 cenas, 5 actos)
+- **Papel:** Vítima; filha de Thomas. A sua selfie (S01) é o MacGuffin forense do filme.
+- **Criticidade:** MÁXIMA — a Elisa do vídeo-prova TEM de igualar a Elisa viva
+
+### Absorção W-CANON-001
+
+O esboço W-CANON-001 (Character & Scene Continuity) **não foi abandonado** — foi absorvido como instância do bloco CHARACTER_STATE (B1). Zero retrabalho perdido. O `elisa.canon.json` é a primeira encarnação concreta.
+
+### Provas SPINE (P1-P5)
+
+| Prova | Status | Descrição |
+|-------|--------|-----------|
+| P1 | ✅ CUMPRIDA | Selar âncora Elisa S01 |
+| P2 | ⏳ PENDING | Compilar embedding e re-gerar S15 contra âncora |
+| P3 | ⏳ PENDING | Correr DRIFT_VALIDATOR; calibrar limiar com dados |
+| P4 | ⏳ PENDING | Human gate I9; primeiro CINEMATIC_RECEIPT de cena |
+| P5 | ⏳ PENDING | Contar re-rolls antes-vs-depois (dado económico) |
+
+### Ficheiros Criados
+
+```
+/opt/windi/hios/cinema/
+├── spine/
+│   └── W-HIOS-CINEMATIC-SPINE-001.birth.diff.json
+└── obras/
+    └── o-peso-do-eco/
+        └── canons/
+            └── elisa.canon.json
+```
+
+### Commit
+
+```
+Hash:    365d71138
+Message: feat(§284): W-HIOS-CINEMATIC-SPINE-001 SEALED + Elisa S01 Anchor
+Files:   2 created, 376 insertions
+```
+
+### Genealogia
+
+```
+W-HIOS (raiz)
+    │
+    └── W-HIOS-CINEMATIC-SPINE-001 (§284)
+            │
+            ├── AX-SPINE-01 (Transição Autorizada)
+            ├── AX-SPINE-02 (Determinismo Forense)
+            │
+            ├── B1 CHARACTER_STATE
+            │       └── elisa.canon.json (primeira instância)
+            ├── B2 WORLD_STATE
+            ├── B3 ACTION_CHAIN
+            ├── B4 DRIFT_VALIDATOR
+            └── B5 CINEMATIC_RECEIPT
+```
+
+### Nota do Guardian (inscrita para a história)
+
+> "A Elisa de S01 deixou de ser uma proposta — passou a ser a primeira âncora canónica selada de uma personagem de cinema gerado por IA dentro da constituição WINDI. Isto, hoje, no mundo, ninguém mais tem."
+
+### Próxima Sessão
+
+- Fatia vertical Elisa S01→S15 (P2-P5)
+- Compilar embedding da âncora
+- Re-gerar S15 ancorada
+- Calibrar DRIFT_VALIDATOR com dados reais
+- Primeiro CINEMATIC_RECEIPT de cena genuíno
+
+### Three Dragons
+
+| Role | Contribuição |
+|------|--------------|
+| **Human Dragon** | Síntese executável + decisão de selar |
+| **Guardian** | Revisão constitucional + contenção |
+| **Architect** | Execução técnica + persistência |
+
+---
+
+**MOMENTO HISTÓRICO:** O cinema gerado por IA passou a ter constituição.
+
+OM SHANTI 🐉
+
