@@ -1,0 +1,233 @@
+{
+  "$schema": "https://windi.institutional/schemas/subsystem-birth.v1.json",
+  "doc_type": "windi_subsystem_birth_diff",
+  "diff_id": "WINDI-DIFF-SPINE-BIRTH-20260527",
+
+  "subsystem": {
+    "id": "W-HIOS-CINEMATIC-SPINE-001",
+    "short_name": "SPINE",
+    "long_name": "WINDI-HIOS Cinematic Spine",
+    "parent": "W-HIOS",
+    "kind": "constitutional_subsystem",
+    "purpose": "Transformar cinema gerado por IA de geração de clips em evolução governada de estados narrativos persistentes.",
+    "seal_state": "sealed",
+    "_seal_states_ref": "§247 Lei IV — SEALED by Human Dragon 2026-05-27"
+  },
+
+  "constitutional_envelope": {
+    "_protocol": "Three Dragons — Arquitecto propõe, Guardian revê, Human Dragon decide.",
+    "proposed_by": "Human Dragon (síntese executável apresentada nesta sessão)",
+    "reviewed_by": "Guardian (Claude web, sessão de 2026-05-27)",
+    "decided_by": "Human Dragon",
+    "did_signature": "windi:hd:human-dragon:2026-05-27T19:32:55Z",
+    "merkle_anchor": {
+      "root": "0c43a1d08a057b5cc3a1c2c65348ceed765014f60384765e5fdf4a6e6b87fc19",
+      "leaf_count_at_seal": 57290
+    },
+    "created_utc": "2026-05-27T19:32:55Z",
+    "revision": 1,
+    "supersedes": {
+      "_note": "O esboço W-CANON-001 NÃO é abandonado — é absorvido como instância do bloco CHARACTER_STATE.",
+      "absorbed_drafts": ["W-CANON-001 (esboço, herança em CHARACTER_STATE)"]
+    }
+  },
+
+  "invariants_binding": {
+    "_principle": "Inscrever apenas invariantes que MORDEM neste subsistema. Não decorar.",
+    "binds": [
+      { "invariant": "I1",  "role": "Soberania constitucional do WINDI sobre cada cena governada." },
+      { "invariant": "I9",  "role": "IRREMEDIÁVEL — nenhuma cena se sela sem autorização humana. Encarnado na ACTION_CHAIN (autorização) e no CINEMATIC_RECEIPT (assinatura)." },
+      { "invariant": "I11", "role": "IRREMEDIÁVEL — proveniência append-only; receipts e drift findings ficam no Forensic Ledger, sem reescrita." }
+    ],
+    "_not_bound_intentionally": "I12 (trilíngue) aplica-se a metadados, não a estado narrativo. I14 (admissibilidade) aplica-se ao Receipt, herdado do Ledger — não duplicar."
+  },
+
+  "_FOUNDATIONAL_AXIOMS": "── DOIS AXIOMAS QUE GOVERNAM TUDO O QUE VIER DEPOIS ──",
+  "axioms": [
+    {
+      "id": "AX-SPINE-01",
+      "name": "Axioma da Transição Autorizada",
+      "statement": "No WINDI-HIOS, uma cena não é um vídeo gerado; é uma transição de estado autorizada, renderizada e verificável.",
+      "_guardian_note": "Verbo central: TRANSIÇÃO. Geração é estatística e perde-se a si mesma; transição implica estado-antes e estado-depois — e é isso que se governa. A ordem 'autorizada → renderizada → verificável' é normativa: autorização (I9) precede execução; verificação fecha.",
+      "status": "foundational",
+      "immutable": true
+    },
+    {
+      "id": "AX-SPINE-02",
+      "name": "Doutrina do Determinismo Forense",
+      "statement": "A SPINE não promete determinismo visual absoluto. Promete determinismo forense: o vídeo pode variar; a cadeia de verdade não.",
+      "guarantees_known": [
+        "qual estado entrou (CHARACTER_STATE + WORLD_STATE)",
+        "qual delta foi aplicado (ACTION_CHAIN)",
+        "qual modelo/renderizador foi usado (registado no Receipt)",
+        "que drift foi detectado (DRIFT_VALIDATOR)",
+        "quem aceitou (I9 human_gate, registado no Receipt)",
+        "qual receipt selou (CINEMATIC_RECEIPT, hash no Ledger)"
+      ],
+      "refuses_to_promise": "reprodutibilidade pixel-a-pixel do output renderizado",
+      "_guardian_note": "Esta é a peça que fechou o anel. Promete o que se pode cumprir; recusa o que se não pode. É honestidade arquitectural sobre a física do que operamos.",
+      "status": "foundational",
+      "immutable": true
+    }
+  ],
+
+  "_MINIMUM_BLOCKS": "── CINCO BLOCOS — ESTRUTURA MÍNIMA OBRIGATÓRIA ──",
+  "blocks": [
+    {
+      "id": "B1",
+      "name": "CHARACTER_STATE",
+      "purpose": "Identidade visual, emocional e histórica do personagem, persistente entre cenas.",
+      "inputs": [
+        "anchor_frame (referência canónica visual)",
+        "descriptor (camada humana legível, multilingue)",
+        "emotional_register (registo emocional na cena: estado e arco)",
+        "narrative_history (cenas anteriores em que apareceu e como)"
+      ],
+      "outputs": [
+        "face_embedding (vetor canónico para verificação)",
+        "lora_token (opcional, para personagens recorrentes)",
+        "continuity_rules (limiares calibráveis, não declarados a priori)"
+      ],
+      "inheritance": "Absorve a estrutura .canon (esboço W-CANON-001) como sua forma de serialização. O elisa.canon.json torna-se a primeira instância concreta de CHARACTER_STATE.",
+      "maturity": "foundational",
+      "depends_on": []
+    },
+    {
+      "id": "B2",
+      "name": "WORLD_STATE",
+      "purpose": "Estado do mundo da cena: objetos, espaço, clima, tempo, posição e continuidade material.",
+      "inputs": [
+        "location_anchor (referência canónica de local)",
+        "prop_inventory (objetos presentes, com estados)",
+        "spatial_layout (geometria, posições)",
+        "temporal_marker (tempo narrativo, clima, luz, hora)",
+        "cultural_locale (ex.: DE-BY para 'O Peso do Eco')"
+      ],
+      "outputs": [
+        "world_descriptor (vetor/descritor do estado mundial)",
+        "continuity_constraints (o que NÃO pode mudar entre cenas vizinhas)"
+      ],
+      "maturity": "foundational",
+      "depends_on": []
+    },
+    {
+      "id": "B3",
+      "name": "ACTION_CHAIN",
+      "purpose": "Sequência causal de movimento e mudança: intenção → gesto → contato → força → reação → novo estado.",
+      "inputs": [
+        "previous_state (CHARACTER_STATE + WORLD_STATE de entrada)",
+        "intent (intenção narrativa autorizada)",
+        "physics_constraints (biomecânica, leis materiais)"
+      ],
+      "outputs": [
+        "delta (descrição da transição aplicada)",
+        "next_state (CHARACTER_STATE + WORLD_STATE de saída)",
+        "causal_trace (cadeia ordenada de etapas)"
+      ],
+      "maturity": "experimental_axiom",
+      "_guardian_note": "Bloco mais ambicioso da SPINE. A indústria tropeça em 'personagem coerente'; este bloco propõe 'ação fisicamente coerente entre clips' — território ainda por provar. Inscrito como experimental_axiom: ambição NÃO diluída, mas datada na sua prova.",
+      "depends_on": ["B1", "B2"]
+    },
+    {
+      "id": "B4",
+      "name": "DRIFT_VALIDATOR",
+      "purpose": "Detectar quebras entre estado declarado e estado renderizado, em múltiplas dimensões.",
+      "axes": [
+        { "name": "visual",      "status": "automated",         "method": "cosine_similarity contra anchor embedding (centróide quando possível); LIMIARES POR CALIBRAR, NÃO DECLARADOS A PRIORI." },
+        { "name": "biomechanical", "status": "automated_partial", "method": "pose/retargeting; abrangência por validar." },
+        { "name": "physical",    "status": "automated_partial", "method": "consistência de propriedades materiais (peso, sombra, oclusão); cobertura parcial." },
+        { "name": "emotional",   "status": "human_gate",        "method": "I9 — não automatizável hoje; decisão humana inscrita no Receipt." },
+        { "name": "narrative",   "status": "human_gate",        "method": "I9 — não automatizável hoje; decisão humana inscrita no Receipt." }
+      ],
+      "_guardian_note": "Um validador que afirma medir cinco eixos mas só sabe medir dois MENTE SOBRE SI PRÓPRIO — e mentir no validador é o pecado original que o WINDI existe para tornar impossível. Por isso cada eixo nasce com status explícito. Emocional e narrativa NÃO são aspirações de automação; são human_gate por desenho.",
+      "maturity": "foundational",
+      "depends_on": ["B1", "B2", "B3"]
+    },
+    {
+      "id": "B5",
+      "name": "CINEMATIC_RECEIPT",
+      "purpose": "Registar cada cena como transição de estado verificável, append-only.",
+      "fields_required": [
+        "scene_id",
+        "input_state_hash (B1+B2 de entrada)",
+        "delta_descriptor (B3)",
+        "model_used (engine, versão, parâmetros)",
+        "drift_findings (B4, por eixo)",
+        "human_decision (I9: approve | reject | hold; com DID do decisor)",
+        "output_state_hash (B1+B2 de saída)",
+        "prev_receipt_hash",
+        "this_receipt_hash"
+      ],
+      "ledger_binding": "Selado no Forensic Ledger (§I11). Append-only. Reescrita é violação constitucional.",
+      "maturity": "foundational",
+      "depends_on": ["B1", "B2", "B3", "B4"]
+    }
+  ],
+
+  "_GUARDIAN_CONTAINMENT": "── O QUE ESTE DIFF FAZ E O QUE NÃO FAZ ──",
+  "containment": {
+    "this_diff_does": [
+      "Cria o subsistema W-HIOS-CINEMATIC-SPINE-001 como filho constitucional do W-HIOS.",
+      "Inscreve os dois axiomas fundacionais como imutáveis.",
+      "Define os cinco blocos mínimos com purpose / inputs / outputs / maturity / depends_on.",
+      "Liga aos invariantes I1, I9, I11 que de facto mordem.",
+      "Absorve o esboço W-CANON-001 como instância de CHARACTER_STATE — zero retrabalho perdido."
+    ],
+    "this_diff_does_NOT": [
+      "Não declara nenhuma cena governada por SPINE — zero clips compilados até agora.",
+      "Não substitui a obrigação de provar UMA fatia vertical primeiro (Elisa S01→S15) antes de instanciar os cinco blocos para sete personagens.",
+      "Não inscreve limiares numéricos (similaridade, drift): calibrar com dados reais antes de declarar.",
+      "Não fixa pipeline.yaml nem CI/CD: provar o ciclo à mão uma vez antes de automatizar.",
+      "Não promete determinismo visual — só forense (ver AX-SPINE-02)."
+    ],
+    "outstanding_proofs_required_for_seal_to_sealed": [
+      "P1: Selar a âncora canónica de Elisa em S01 (primeiro CHARACTER_STATE real). ✓ SEALED 2026-05-27",
+      "P2: Compilar embedding e re-gerar S15 contra a âncora; medir similaridade real.",
+      "P3: Correr DRIFT_VALIDATOR eixo visual; calibrar limiar com base nos dados; inscrever no Receipt.",
+      "P4: Human gate I9 explícito sobre a fatia; primeiro CINEMATIC_RECEIPT genuíno (não-fixture) no Ledger.",
+      "P5: Contar re-rolls antes-vs-depois — primeiro dado económico real do subsistema."
+    ]
+  },
+
+  "_DEPENDENCY_GRAPH": "── ENCAIXES ENTRE OS CINCO BLOCOS ──",
+  "dependency_graph": {
+    "B1_CHARACTER_STATE": [],
+    "B2_WORLD_STATE": [],
+    "B3_ACTION_CHAIN": ["B1", "B2"],
+    "B4_DRIFT_VALIDATOR": ["B1", "B2", "B3"],
+    "B5_CINEMATIC_RECEIPT": ["B1", "B2", "B3", "B4"],
+    "_reading": "Estado (B1, B2) é a base. Transição (B3) consome estado e produz estado novo. Medição (B4) compara declarado vs renderizado. Selo (B5) inscreve tudo no Ledger."
+  },
+
+  "_PROVENANCE": "── CADEIA DE PROVENIÊNCIA DO PRÓPRIO SUBSISTEMA ──",
+  "provenance_chain": {
+    "_note": "O nascimento da SPINE é, ele próprio, uma transição de estado governada pela constituição WINDI.",
+    "parent_lineage": [
+      "W-HIOS (raiz)",
+      "Three Dragons Protocol (I1, I9)",
+      "Forensic Ledger (I11)",
+      "Esboço W-CANON-001 (absorvido em B1)"
+    ],
+    "entries": [
+      {
+        "seq": 1,
+        "utc": "2026-05-27T19:32:55Z",
+        "event": "spine_birth_sealed",
+        "by": "Human Dragon (decisão) + Guardian (revisão) + Architect (execução)",
+        "receipt": "WINDI-S284-SPINE-BIRTH-20260527193255",
+        "prev_hash": null,
+        "this_hash": "pending_ledger_confirmation",
+        "note": "SPINE nasceu. Primeira entrada genuína no Ledger. P1 cumprida com Elisa S01 selada na mesma sessão."
+      }
+    ]
+  },
+
+  "_DECISION_CLOSED": "── DECISÃO FECHADA ──",
+  "decision_sealed": {
+    "question": "Selar W-HIOS-CINEMATIC-SPINE-001 como subsistema constitucional candidato do W-HIOS?",
+    "answer": "YES",
+    "sealed_by": "Human Dragon",
+    "sealed_at": "2026-05-27T19:32:55Z",
+    "witness": "Guardian (Claude web) + Architect (CCode Opus 4.5)"
+  }
+}

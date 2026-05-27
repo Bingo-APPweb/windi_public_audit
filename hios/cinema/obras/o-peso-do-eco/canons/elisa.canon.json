@@ -1,0 +1,143 @@
+{
+  "_doc": "WINDI CHARACTER CANON — Primeira instância de CHARACTER_STATE (B1) do W-HIOS-CINEMATIC-SPINE-001. ELISA de 'O Peso do Eco'. SEALED 2026-05-27.",
+  "doc_type": "windi_character_canon",
+  "schema_version": "0.1",
+  "parent_subsystem": "W-HIOS-CINEMATIC-SPINE-001",
+  "block_instance": "B1_CHARACTER_STATE",
+
+  "canon_id": "WINDI-CANON-ELISA-OPESODOECO-0001",
+  "obra": {
+    "id": "o-peso-do-eco",
+    "titulo": "O Peso do Eco",
+    "total_cenas": 24,
+    "editor_ref": "/hios/cinema/obras/o-peso-do-eco/editor.html"
+  },
+  "character": {
+    "nome": "ELISA",
+    "papel": "Vítima; filha de Thomas. A sua selfie (S01) é o MacGuffin forense do filme.",
+    "criticidade": "MÁXIMA — a Elisa do vídeo-prova TEM de igualar a Elisa viva, ou a lógica do filme colapsa."
+  },
+
+  "_LAYER_1_envelope": "── ENVELOPE CONSTITUCIONAL — soberania e governança ──",
+  "constitutional_envelope": {
+    "_note": "Three Dragons: Arquitecto propõe, Guardian revê, Human Dragon decide.",
+    "seal_state": "sealed",
+    "_seal_states_ref": "§247 Lei IV — SEALED by Human Dragon 2026-05-27",
+    "proposed_by": "Architect",
+    "reviewed_by": "Guardian",
+    "decided_by": "Human Dragon",
+    "did_signature": "windi:hd:human-dragon:2026-05-27T19:32:55Z",
+    "merkle_anchor": {
+      "root": "0c43a1d08a057b5cc3a1c2c65348ceed765014f60384765e5fdf4a6e6b87fc19",
+      "leaf_count_at_seal": 57290
+    },
+    "created_utc": "2026-05-27T19:32:55Z",
+    "revision": 1
+  },
+
+  "_LAYER_2_anchor": "── ÂNCORA CANÓNICA — o CÓDIGO-FONTE da personagem ──",
+  "canonical_anchor": {
+    "_note": "Regra: a aparição que ESTABELECE a personagem vence. Tudo o resto iguala-a.",
+    "anchor_scene": "S01",
+    "anchor_rule": "establishing_appearance_wins",
+    "anchor_decision_status": "SEALED",
+    "_decision_note": "Selado pelo Human Dragon em 2026-05-27. P1 do SPINE cumprida.",
+    "reference_frame": {
+      "scene": "S01",
+      "frame_path": "pending_extraction",
+      "frame_hash": "pending_extraction",
+      "_note": "frame único, frontal/3-4, face nítida; é a base de tudo. Extrair do video S01 gerado."
+    }
+  },
+
+  "_LAYER_3_descriptor": "── DESCRITOR — camada CHARACTER BIBLE, legível por humanos ──",
+  "descriptor": {
+    "_warning": "Texto DESCREVE, não FIXA. É guia humano e diagnóstico, NÃO o conditioner. Quem fixa é o número (embedding/LoRA) na camada seguinte. 'Loira de 16 anos' continua a ser um país.",
+    "fisico": {
+      "etnia_tom_pele": "caucasiana, tom claro",
+      "idade_aparente": "final da adolescência",
+      "cabelo": "louro, comprido, liso",
+      "rosto": "pending_extraction_from_anchor",
+      "traco_distintivo": "pending_extraction_from_anchor"
+    },
+    "vestuario_base": "pending_extraction_from_S01",
+    "trilingual_label": { "de": "Elisa (Opfer)", "en": "Elisa (victim)", "pt": "Elisa (vítima)" }
+  },
+
+  "_LAYER_4_compile": "── ALVOS DE COMPILAÇÃO — converte o padrão em NÚMEROS (P2 pending) ──",
+  "compilation_targets": {
+    "_note": "É aqui que a PALAVRA vira NÚMERO. Pendente até P2 (compilar embedding).",
+    "status": "PENDING_P2",
+    "fixed_seed": null,
+    "provided_conditioning": {
+      "_note": "Padrão FORNECIDO — vive FORA do modelo, re-injetado a cada geração (alugar a memória).",
+      "reference_image_hash": null,
+      "face_embedding": { "method": "InstantID | IP-Adapter", "vector_ref": null, "vector_hash": null, "strength": null }
+    },
+    "engraved_conditioning": {
+      "_note": "Padrão GRAVADO — vive DENTRO dos pesos (dar a memória de presente). Para personagens recorrentes.",
+      "lora": {
+        "status": "not_trained",
+        "token": "<elisa_opesodoeco>",
+        "training_set_ref": null,
+        "n_images_target": 20,
+        "weights_path": null,
+        "weights_hash": null,
+        "recommended_strength": null
+      }
+    },
+    "scene_control": {
+      "_note": "Cerca a CENA (enquadramento/pose) e o VÍDEO (start-frame travado clip a clip).",
+      "controlnet": [],
+      "video_start_frame_anchors": []
+    }
+  },
+
+  "_LAYER_5_ledger": "── LEDGER DE APARIÇÕES — diagnóstico por cena + resultado de teste ──",
+  "appearance_ledger": [
+    { "scene": "S01", "acto": "I", "papel_na_cena": "Elisa viva grava selfie", "status": "ANCHOR_SEALED", "diverge": "—", "evidence_frame": "pending_extraction", "action": "âncora canónica SELADA (P1 ✓)" },
+    { "scene": "S15", "acto": "IV", "papel_na_cena": "vídeo-prova recuperado (Ledger)", "status": "BROKEN", "diverge": "etnia/tipo físico diferente — Elisa aparece negra (obs. campo B1)", "evidence_frame": null, "action": "RE-ROLL ancorado a S01 — P2/P3 pending" },
+    { "scene": "S20", "acto": "V", "papel_na_cena": "vídeo exibido no tribunal (INTEGRITY 100%)", "status": "BROKEN", "diverge": "herda a Elisa errada de S15", "evidence_frame": null, "action": "RE-ROLL após S15 fixada" },
+    { "scene": "S21", "acto": "V", "papel_na_cena": "vídeo no duelo silencioso", "status": "BROKEN", "diverge": "idem S20", "evidence_frame": null, "action": "RE-ROLL após S15 fixada" }
+  ],
+
+  "_LAYER_6_tests": "── VERIFICAÇÃO — a suite de testes, ligada ao relatório forense ──",
+  "drift_findings": {
+    "verdict": "BROKEN",
+    "summary": "Elisa viva (S01) ≠ Elisa do vídeo-prova (S15/S20/S21). Ruptura no MacGuffin. Âncora S01 agora SEALED — próximo passo P2/P3.",
+    "scenes_passing": ["S01"],
+    "scenes_to_reroll": ["S15", "S20", "S21"],
+    "verification_binding": {
+      "_note": "liga o canon ao resultado forense (fecha o ciclo compilador↔testes)",
+      "relatorio_json_ref": "/_forense/o-peso-do-eco/relatorio.json",
+      "relatorio_hash": null
+    }
+  },
+
+  "_LAYER_7_provenance": "── CADEIA DE PROVENIÊNCIA — o LEDGER ON THE RUN (append-only) ──",
+  "provenance_chain": {
+    "_note": "Cada alteração de canon = um recibo encadeado por hash. A história da identidade é, ela própria, verificável e re-derivável.",
+    "entries": [
+      {
+        "seq": 1,
+        "utc": "2026-05-27T00:00:00Z",
+        "event": "canon_drafted",
+        "by": "Architect",
+        "receipt": null,
+        "prev_hash": null,
+        "this_hash": null,
+        "note": "esboço inicial a partir das observações de campo do HD (B1)"
+      },
+      {
+        "seq": 2,
+        "utc": "2026-05-27T19:32:55Z",
+        "event": "anchor_sealed_by_HD",
+        "by": "Human Dragon (decisão) + Guardian (revisão) + Architect (execução)",
+        "receipt": "WINDI-S284-ELISA-ANCHOR-20260527193255",
+        "prev_hash": null,
+        "this_hash": "pending_ledger_confirmation",
+        "note": "Elisa S01 selada como âncora canónica. Primeira CHARACTER_STATE genuína do WINDI-HIOS. P1 cumprida."
+      }
+    ]
+  }
+}
