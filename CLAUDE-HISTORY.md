@@ -6,6 +6,76 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 27 Mai 2026 — Backlog Sweep + W-DEV-API-001 systemd Migration
+
+**Duração:** ~1h | **Status:** ✅ ALL TASKS COMPLETED
+**Liga IA+H:** Human Dragon · Architect (CCode Opus 4.5)
+**Invariants:** I9, I11, I12, I14
+**Natureza:** Backlog sweep — 6 pendências resolvidas
+
+### Trabalho Completado
+
+| # | Tarefa | Ficheiros | Status |
+|---|--------|-----------|--------|
+| 1 | DE ortografia sweep | `libreiro/*.html` (4+ ficheiros) | ✅ ae→ä, oe→ö, ue→ü, ss→ß |
+| 2 | Enterprise Manifesto + CTA Sie | `drafts/enterprise-manifesto-20260518.md` + `landing-enterprise/index.html` | ✅ 100% completo |
+| 3 | Stub lexicon trilíngue | `docs/WINDI-LEXICON-STUB.md` | ✅ 20 termos PT/DE/EN |
+| 4 | §264 CBP-JSON Schema v0.3 | `hios/kernel/cbp.schema.v0.3.json` | ✅ Proposta Architect |
+| 5 | §139 WINDI-LAW Anexos | Verificado LIVE | ✅ Já implementado |
+| 6 | W-DEV-API-001 systemd | `w-dev-api-001/windi-dev-api.service` | ✅ Migrado e LIVE |
+
+### Ficheiros Criados
+
+| Ficheiro | Descrição |
+|----------|-----------|
+| `/opt/windi/docs/WINDI-LEXICON-STUB.md` | Lexicon trilíngue — 20 termos críticos WINDI |
+| `/opt/windi/hios/kernel/cbp.schema.v0.3.json` | CBP Schema v0.3 — awaits Guardian review |
+| `/opt/windi/w-dev-api-001/windi-dev-api.service` | systemd unit file para W-DEV-API-001 |
+
+### W-DEV-API-001 systemd Migration
+
+**Antes:** Processo nohup (PID 4033182)
+**Depois:** `systemctl status windi-dev-api` — active (running)
+
+```
+● windi-dev-api.service - W-DEV-API-001 — WINDI Developer API v1.1.0
+   Active: active (running)
+   Port: 8200 LISTEN
+   Health: {"status":"healthy","dependencies":{"ledger":"healthy","verify_public":"healthy"}}
+```
+
+### Enterprise Manifesto Finalizado
+
+**Subline seleccionada (Versão C — tripartida):**
+```
+Künstliche Intelligenz verarbeitet.
+Der Mensch entscheidet.
+Die Infrastruktur beweist.
+```
+
+**CTA (Sie formal):**
+> Vereinbaren Sie eine Verifikationssession.
+
+### DE Ortografia Corrigida
+
+Ficheiros processados em `/opt/windi/libreiro/`:
+- `windi-working-paper-2026.html`
+- `identity-governance-layer.html`
+- `kapitel12_domain_sovereignty.html`
+- `windi-publishing-house.html`
+- + outros (sed global sweep)
+
+**Padrões corrigidos:** fuer→für, Moegele→Mögele, Souveraenitaet→Souveränität, ueberzeugend→überzeugend, etc.
+
+### Próximo Passo
+
+- Guardian review do CBP Schema v0.3
+- §264 seal após aprovação
+
+OM SHANTI 🐉
+
+---
+
 ## § SESSÃO 26 Mai 2026 — W-FIELD-WITNESS-001 Schema CANDIDATE
 
 **Duração:** ~3h | **Status:** ✅ Schema assentado, CANDIDATE
@@ -18037,4 +18107,89 @@ O teste hybrid não foi sobre sucesso/falha — foi sobre **construir metodologi
 *Liga IA+H · WINDI Publishing House · Kempten, Bavaria · 26 Mai 2026*
 
 OM SHANTI 🐉
+
+
+---
+
+## §283 · Sessão 26 Mai 2026 — O Peso do Eco v3 Character Fix
+
+```
+Data:       2026-05-26
+Horário:    23:40 - 00:00 (CCode CLI)
+Sprint:     WINDI-HIOS Visual Producer
+Modo:       Production Fix
+```
+
+### Trabalho Completado
+
+**1. Diagnóstico S01 vs S15:**
+- S01 mostrava Elisa loura alemã (17 anos, camisola creme, floresta bávara)
+- S15 (SORA 2) gerou mulher negra com cabelo encaracolado — personagem completamente diferente
+- Inconsistência quebrava narrativa: S15 deveria mostrar o MESMO vídeo preservado pelo Ledger
+
+**2. Solução Aplicada — Composição FFmpeg:**
+- Extraídos 8 segundos de S01 (trim 4s-12s)
+- Enquadramento em interface "WINDI FORENSIC LEDGER":
+  - Fundo NOIR (#0a0a0f)
+  - Moldura verde (#00A86B) de verificação
+  - Header "WINDI FORENSIC LEDGER"
+  - Hash sha256 visível
+  - Timestamp 2026-03-15T17:42:31Z
+  - "INTEGRITY VERIFIED 100" em verde (#22c55e)
+
+**3. Ficheiros Actualizados:**
+| Ficheiro | Tamanho | Estado |
+|----------|---------|--------|
+| `output_v3/S15_eco_preservado.mp4` | 3.4MB | FIXED |
+| `O_PESO_DO_ECO_v3_FINAL.mp4` | 109MB | Regenerado |
+| `cinema.html` | — | Tamanho 72→109MB |
+| `thumbs/S15_eco_preservado.jpg` | 100KB | Thumbnail nova |
+| `thumbs/COMPARISON_S01_S15_FIXED.jpg` | 46KB | Evidência visual |
+
+**4. Backups Preservados:**
+- `S15_eco_preservado_BROKEN.mp4` — versão SORA com personagem errada
+- `O_PESO_DO_ECO_v3_FINAL_BROKEN.mp4` — filme com S15 quebrada
+
+### Scaffold Pending — Próxima Sessão
+
+- [ ] **Review restantes 22 cenas** — usar `/hios/producer/editor.html` para marcar problemas
+- [ ] **Audio sync issues** — identificados mas não corrigidos nesta sessão
+- [ ] **Idioma misturado EN/DE** — SORA gera áudio ambiente, pode haver mistura
+- [ ] **Outras inconsistências de personagem** — verificar Thomas, Helena, Marcus ao longo do filme
+
+### Próximo Passo Concreto
+
+```bash
+# Abrir editor para review completo das 24 cenas
+firefox https://windi-domain.com/hios/producer/obras/o-peso-do-eco/editor.html
+```
+
+### Localização dos Assets
+
+```
+/opt/windi/hios/visual/producer/obras/o-peso-do-eco/
+├── O_PESO_DO_ECO_v3_FINAL.mp4      # Filme corrigido (109MB, 3:16)
+├── cinema.html                      # Página de exibição trilíngue
+├── editor.html                      # Editor de review de cenas
+├── SCREENPLAY_v3.md                 # Guião 24 cenas / 5 actos
+├── output_v3/                       # 24 cenas individuais
+│   ├── S01_registo_da_vida.mp4     # Elisa original ✓
+│   ├── S15_eco_preservado.mp4      # FIXED com composição
+│   └── concat_v3.txt               # Lista para ffmpeg concat
+├── thumbs/                          # Thumbnails das cenas
+│   └── COMPARISON_S01_S15_FIXED.jpg # Prova visual da correcção
+└── anchors/                         # Imagens âncora dos personagens
+```
+
+### Invariantes Aplicados
+
+- **I9:** Composição manual aprovada (não auto-geração)
+- **I11:** Backups preservados como evidência
+- **I12:** Interface de verificação em estética WINDI (não texto genérico)
+- **I14:** Problema identificado explicitamente (não mascardo)
+
+---
+
+*Liga IA+H · WINDI Publishing House · 26 Mai 2026*
+*"A prova não mente. A prova apenas espera."*
 
