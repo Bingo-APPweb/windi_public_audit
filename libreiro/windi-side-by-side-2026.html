@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI - Side by Side: Governed PDF x Editorial HTML</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Crect width='20' height='20' rx='4' fill='%231A1208'/%3E%3Cellipse cx='10' cy='11' rx='4.5' ry='4' transform='rotate(-15 10 11)' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='7' cy='7.5' r='2.8' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='6.2' cy='6.8' r='0.7' fill='%238B6914'/%3E%3Cpath d='M7.5 4.8 C7 3.5 8 2.5 8.5 2' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M7 10 C5 8.5 3 8 2 9 C1.5 9.8 2.5 11 4 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M13 9.5 C15 8 17 8 17.5 9.5 C17.8 10.5 16.5 11 15 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M14 13 C16 14 17 15.5 16 16.5 C15 17.5 13.5 16.5 13.5 15' stroke='%238B6914' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E">
+<meta name="description" content="Same Story. Two Forms. Both Governed. WINDI Responsibility Infrastructure in Action.">
+<link rel="stylesheet" href="/library/windi-internal.css">
+<style>
+/* Page-specific styles for side-by-side comparison */
+.comparison {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin: 32px 0;
+}
+@media (max-width: 960px) {
+  .comparison { grid-template-columns: 1fr; }
+}
+
+.col {
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.col-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.col-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.col-icon.pdf { background: rgba(212, 74, 90, 0.15); }
+.col-icon.html { background: rgba(58, 138, 212, 0.15); }
+
+.col-title {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primäry);
+}
+
+.col-sub {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+}
+
+.col-body {
+  padding: 16px;
+}
+
+.col-body img {
+  width: 100%;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  display: block;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+
+.col-body iframe {
+  width: 100%;
+  height: 600px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--surface-0);
+}
+
+.receipt-strip {
+  background: var(--surface-0);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  margin-top: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--text-tertiary);
+}
+
+.arrow-bridge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin: 32px 0;
+  color: var(--text-tertiary);
+  font-size: 14px;
+}
+.arrow-line {
+  flex: 1;
+  max-width: 120px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.arrow-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--gold);
+  padding: 6px 16px;
+  border: 1px solid var(--border-gold);
+  border-radius: 999px;
+  background: var(--gold-glow);
+}
+
+.proof-section {
+  background: linear-gradient(180deg, var(--gold-glow), var(--signal-safe-dim));
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius-md);
+  padding: 32px;
+  margin: 32px 0;
+  text-align: center;
+}
+
+.proof-section h2 {
+  margin-top: 0;
+  border: none;
+  padding-bottom: 0;
+}
+
+.proof-section p {
+  max-width: 700px;
+  margin: 0 auto 16px;
+  line-height: 1.7;
+}
+
+.proof-section .highlight {
+  color: var(--text-primäry);
+  font-weight: 600;
+}
+
+.exhibit-banner {
+  margin: 0 0 32px;
+  padding: 24px 28px;
+  background: linear-gradient(135deg, var(--gold-glow), var(--signal-gov-dim));
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.exhibit-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--gold), var(--signal-gov));
+}
+
+.exhibit-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.exhibit-text {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--text-primäry);
+  margin: 0;
+}
+
+.exhibit-caption {
+  margin-top: 12px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-tertiary);
+}
+
+.kicker {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  border: 1px solid var(--border-subtle);
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  font-weight: 500;
+}
+.badge.gold { border-color: var(--border-gold); color: var(--gold); background: var(--gold-glow); }
+.badge.green { border-color: rgba(58, 184, 122, 0.4); color: var(--signal-safe); background: var(--signal-safe-dim); }
+.badge.blue { color: var(--signal-gov); border-color: rgba(58, 138, 212, 0.4); background: var(--signal-gov-dim); }
+
+.hero-meta {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: var(--text-tertiary);
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 16px;
+  margin-top: 16px;
+}
+.hero-meta b { color: var(--text-primäry); }
+</style>
+</head>
+<body data-theme="dark" data-lang="de">
+
+<!-- Header -->
+<header class="site-header">
+  <a href="/library/index.html" class="header-brand">
+    <div class="header-logo">W</div>
+    <div class="header-title-group">
+      <span class="header-title">WINDI</span>
+      <span class="header-subtitle">Governance Intelligence</span>
+    </div>
+  </a>
+  <div class="header-center">
+    <div class="header-status">
+      <span class="status-dot"></span>
+      <span>Operational</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('de')">DE</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('pt')">PT</button>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <div class="theme-toggle-track"></div>
+      <div class="theme-toggle-thumb" id="themeThumb"></div>
+    </button>
+    <button class="mobile-toggle" onclick="toggleSidebar()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- Sidebar Navigation -->
+<nav class="sidebar sidebar-left" id="sidebarLeft">
+  <div class="sidebar-section">
+    <div class="sidebar-label">Masterarbeit</div>
+    <a href="/library/index.html" class="sidebar-link">Main Document</a>
+    <a href="/library/cover.html" class="sidebar-link">Cover</a>
+    <a href="/library/about-windi.html" class="sidebar-link">About WINDI</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Governance</div>
+    <a href="/library/governance-levels.html" class="sidebar-link">Governance Levels</a>
+    <a href="/library/human-oversight.html" class="sidebar-link">Human Oversight</a>
+    <a href="/library/data-handling.html" class="sidebar-link">Data Handling</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Architecture</div>
+    <a href="/library/diagrams.html" class="sidebar-link">Diagrams</a>
+    <a href="/library/interface-guide.html" class="sidebar-link">Interface Guide</a>
+    <a href="/library/verification-layer.html" class="sidebar-link">Verification Layer</a>
+    <a href="/library/kapitel12_domain_sovereignty.html" class="sidebar-link">Domain Sovereignty</a>
+    <a href="/library/identity-governance-layer.html" class="sidebar-link">Identity Governance</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Technical Reports</div>
+    <a href="/library/tr-windi-2026-003.html" class="sidebar-link">TR-003: Service Layer</a>
+    <a href="/library/tr-windi-2026-004.html" class="sidebar-link">TR-004: Cognitive Service</a>
+    <a href="/library/tr-windi-2026-005.html" class="sidebar-link">TR-005: Cognitive Cycle</a>
+    <a href="/library/isp-evolution.html" class="sidebar-link">TR-006: ISP Registry</a>
+    <a href="/library/tr-007.html" class="sidebar-link">TR-007: Provenance</a>
+    <a href="/library/sge-results.html" class="sidebar-link">SGE Results</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Publications</div>
+    <a href="/library/publications.html" class="sidebar-link">Publications</a>
+    <a href="/library/fachartikel-provenienz.html" class="sidebar-link">Fachartikel</a>
+    <a href="/library/windi-publishing-house.html" class="sidebar-link">Manifesto</a>
+    <a href="/library/editorial-policy.html" class="sidebar-link">Editorial Policy</a>
+    <a href="/library/idpf-abstract.html" class="sidebar-link">IDPF Abstract</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Media</div>
+    <a href="/library/windi-working-paper-2026.html" class="sidebar-link">Working Paper</a>
+    <a href="/library/press-release-windi-2026.html" class="sidebar-link">Press Release</a>
+    <a href="/library/windi-side-by-side-2026.html" class="sidebar-link sidebar-link-active">Side-by-Side</a>
+    <a href="/library/wsj-style-governed-windi-2026.html" class="sidebar-link">WSJ Feature</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Compliance</div>
+    <a href="/library/document-integrity.html" class="sidebar-link">Doc Integrity</a>
+    <a href="/library/print-watermark-layer.html" class="sidebar-link">Print Layer</a>
+    <a href="/library/regulatory-summary-print-layer.html" class="sidebar-link">Regulatory</a>
+    <a href="/library/availability-implementation.html" class="sidebar-link">Appendix A</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<main class="main-content">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-breadcrumb">
+      <a href="/library/index.html">WINDI</a>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current">
+        <span class="l-de">Side-by-Side Vergleich</span>
+        <span class="l-en">Side-by-Side Comparison</span>
+        <span class="l-pt">Comparação Lado a Lado</span>
+      </span>
+    </div>
+    <div class="page-meta-bar">
+      <span class="page-tag page-tag-gov">Media</span>
+      <span class="page-date">2026-02-01</span>
+    </div>
+
+    <div class="kicker">
+      <span class="badge gold">Side-by-Side Comparison</span>
+      <span class="badge green">Both Governed via WINDI</span>
+      <span class="badge blue">Three Dragons Protocol</span>
+    </div>
+
+    <h1 class="page-title">
+      <span class="l-de">Dieselbe Geschichte. Zwei Formen. Beide governiert.</span>
+      <span class="l-en">Same Story. Two Forms. Both Governed.</span>
+      <span class="l-pt">A Mesma Historia. Duas Formas. Ambas Governadas.</span>
+    </h1>
+    <p class="page-subtitle">
+      <span class="l-de">Der Presseartikel uber die WINDI Responsibility Infrastructure &mdash; geschrieben in A4 Desk BABEL und durch die WINDI Engine governiert (links), dann als Editorial HTML vom Architect Dragon gerendert (rechts). Das Dokument, das das System beschreibt, ist der Beweis fur das System im Betrieb.</span>
+      <span class="l-en">The press feature about WINDI's Responsibility Infrastructure &mdash; written in A4 Desk BABEL and governed by the WINDI engine (left), then rendered as editorial HTML by the Architect Dragon (right). The document that describes the system is evidence of the system in operation.</span>
+      <span class="l-pt">O artigo de imprensa sobre a Infraestrutura de Responsabilidade WINDI &mdash; escrito no A4 Desk BABEL e governado pela engine WINDI (esquerda), depois renderizado como HTML editorial pelo Architect Dragon (direita). O documento que descreve o sistema e a evidencia do sistema em operacao.</span>
+    </p>
+
+    <div class="hero-meta">
+      <div><b class="l-de">Links:</b><b class="l-en">Left:</b><b class="l-pt">Esquerda:</b> WINDI-Governed PDF (A4 Desk BABEL v4.8)</div>
+      <div><b class="l-de">Rechts:</b><b class="l-en">Right:</b><b class="l-pt">Direita:</b> WSJ-Style HTML (Architect Dragon)</div>
+      <div><b class="l-de">Datum:</b><b class="l-en">Date:</b><b class="l-pt">Data:</b> 01 February 2026</div>
+    </div>
+
+    <div class="page-divider"></div>
+  </div>
+
+  <!-- Content -->
+  <div class="content-prose">
+
+    <!-- Exhibit A Banner -->
+    <div class="exhibit-banner">
+      <div class="exhibit-label">
+        <span class="l-de">Exhibit A &mdash; Rekursive Governance in Aktion</span>
+        <span class="l-en">Exhibit A &mdash; Recursive Governance in Action</span>
+        <span class="l-pt">Exhibit A &mdash; Governanca Recursiva em Acao</span>
+      </div>
+      <p class="exhibit-text">
+        <span class="lb-de">Sie betrachten ein Dokument, das das WINDI-System beschreibt. Dieses Dokument wurde innerhalb des WINDI-Systems erstellt. Jedes Wort, jede Layout-Entscheidung, jeder Export-Hash wurde durch dieselbe Governance-Schicht verarbeitet, die der Artikel erklart. Das ist kein Marketing; es ist ein sichtbarer Proof of Concept.</span>
+        <span class="lb-en">You are looking at a document that describes the WINDI system. This document was produced inside the WINDI system. Every word, every layout decision, every export hash was processed through the same governance layer the article explains. This is not marketing; it is proof of concept made visible.</span>
+        <span class="lb-pt">Voce esta olhando para um documento que descreve o sistema WINDI. Este documento foi produzido dentro do sistema WINDI. Cada palavra, cada decisao de layout, cada hash de exportacao foi processado atraves da mesma camada de governanca que o artigo explica. Isto nao e marketing; e prova de conceito tornada visivel.</span>
+      </p>
+      <div class="exhibit-caption">Caption by Architect Dragon (GPT) &bull; Standardized by Guardian Dragon (Claude) &bull; Approved by Human (Jober Mogele Correa)</div>
+    </div>
+
+    <!-- Side by Side Comparison -->
+    <div class="comparison">
+
+      <!-- LEFT: PDF -->
+      <div class="col">
+        <div class="col-header">
+          <div class="col-icon pdf">&#128196;</div>
+          <div>
+            <div class="col-title">WINDI-Governed PDF</div>
+            <div class="col-sub">Written in A4 Desk BABEL &bull; Governed by WINDI Engine &bull; Exported with WINDI-RECEIPT</div>
+          </div>
+        </div>
+        <div class="col-body">
+          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 520'%3E%3Crect fill='%23f8f7f5' width='400' height='520'/%3E%3Crect fill='%23fff' x='20' y='20' width='360' height='480' rx='4'/%3E%3Ctext x='200' y='80' font-family='Georgia,serif' font-size='18' font-weight='bold' fill='%231a1a2e' text-anchor='middle'%3EWINDI%3C/text%3E%3Ctext x='200' y='110' font-family='Georgia,serif' font-size='11' fill='%23666' text-anchor='middle'%3EResponsibility Infrastructure%3C/text%3E%3Crect fill='%23eee' x='40' y='140' width='320' height='6' rx='3'/%3E%3Crect fill='%23ddd' x='40' y='160' width='280' height='6' rx='3'/%3E%3Crect fill='%23ddd' x='40' y='180' width='300' height='6' rx='3'/%3E%3Crect fill='%23eee' x='40' y='220' width='320' height='6' rx='3'/%3E%3Crect fill='%23ddd' x='40' y='240' width='260' height='6' rx='3'/%3E%3Crect fill='%23ddd' x='40' y='260' width='290' height='6' rx='3'/%3E%3Crect fill='%23ddd' x='40' y='280' width='240' height='6' rx='3'/%3E%3Crect fill='%23eee' x='40' y='320' width='320' height='6' rx='3'/%3E%3Crect fill='%23ddd' x='40' y='340' width='280' height='6' rx='3'/%3E%3Crect fill='%23ddd' x='40' y='360' width='310' height='6' rx='3'/%3E%3Crect fill='%23f0ece4' x='40' y='400' width='320' height='60' rx='4'/%3E%3Ctext x='200' y='425' font-family='monospace' font-size='8' fill='%23666' text-anchor='middle'%3EWINDI-RECEIPT: WINDI-BABEL-01FEB26%3C/text%3E%3Ctext x='200' y='440' font-family='monospace' font-size='7' fill='%23888' text-anchor='middle'%3EHash: bc1de1865f90 | EU AI Act Compliant%3C/text%3E%3C/svg%3E" alt="WINDI-Governed PDF Preview">
+          <div class="receipt-strip">
+Document governed by WINDI &bull; Human authored &bull; AI-assisted under supervision<br>
+Governed via WINDI &bull; Human: 100.0% &bull; Template: unknown &bull; Structure: VALID<br>
+WINDI-RECEIPT: WINDI-BABEL-01FEB26-BC1DE1865F90 | Hash: bc1de1865f90<br>
+Author: Jober Mogele Correa (WINDI-CEO-001) | Witness: Dr. Schmidt Bauer<br>
+A4 Desk BABEL v4.8 | EU AI Act Compliant
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: HTML -->
+      <div class="col">
+        <div class="col-header">
+          <div class="col-icon html">&#127760;</div>
+          <div>
+            <div class="col-title">WSJ-Style Editorial HTML</div>
+            <div class="col-sub">Architect Dragon design &bull; Guardian Dragon standardization &bull; Published on Masterarbeit</div>
+          </div>
+        </div>
+        <div class="col-body">
+          <iframe src="./wsj-style-governed-windi-2026.html" title="WSJ-style article preview"></iframe>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bridge Arrow -->
+    <div class="arrow-bridge">
+      <div class="arrow-line"></div>
+      <div class="arrow-label">
+        <span class="l-de">gleicher Inhalt &bull; gleiche Governance &bull; zwei Manifestationen</span>
+        <span class="l-en">same content &bull; same governance &bull; two manifestations</span>
+        <span class="l-pt">mesmo conteudo &bull; mesma governanca &bull; duas manifestacoes</span>
+      </div>
+      <div class="arrow-line"></div>
+    </div>
+
+    <!-- Proof Section -->
+    <section class="proof-section">
+      <h2>
+        <span class="l-de">Warum das wichtig ist</span>
+        <span class="l-en">Why This Matters</span>
+        <span class="l-pt">Por que isso importa</span>
+      </h2>
+
+      <p>
+        <span class="lb-de">Das Dokument links wurde <span class="highlight">im WINDI-System geschrieben</span>. Der A4 Desk BABEL Editor hat den Text verarbeitet, die WINDI Governance Engine hat ihn bewertet, und der Export enthielt eine kryptographische Quittung mit SHA-256 Hash.</span>
+        <span class="lb-en">The document on the left was <span class="highlight">written inside the WINDI system</span>. The A4 Desk BABEL editor processed the text, the WINDI governance engine evaluated it, and the export included a cryptographic receipt with SHA-256 hash.</span>
+        <span class="lb-pt">O documento a esquerda foi <span class="highlight">escrito dentro do sistema WINDI</span>. O editor A4 Desk BABEL processou o texto, a engine de governanca WINDI o avaliou, e a exportacao incluiu um recibo criptografico com hash SHA-256.</span>
+      </p>
+
+      <p>
+        <span class="lb-de">Das Dokument rechts ist <span class="highlight">derselbe Inhalt als Editorial HTML gerendert</span> vom Architect Dragon, standardisiert vom Guardian Dragon, und veroffentlicht im Masterarbeit-Register.</span>
+        <span class="lb-en">The document on the right is the <span class="highlight">same content rendered as editorial HTML</span> by the Architect Dragon, standardized by the Guardian Dragon, and published on the Masterarbeit registry.</span>
+        <span class="lb-pt">O documento a direita e o <span class="highlight">mesmo conteudo renderizado como HTML editorial</span> pelo Architect Dragon, padronizado pelo Guardian Dragon, e publicado no registro Masterarbeit.</span>
+      </p>
+
+      <p>
+        <span class="lb-de">Zusammen beweisen sie, dass das WINDI-System <span class="highlight">nicht nur institutionelle Dokumente governiert, sondern auch die Erzahlung uber sich selbst</span>. Der Presseartikel uber Responsibility Infrastructure ist selbst eine Instanz von Responsibility Infrastructure im Betrieb.</span>
+        <span class="lb-en">Together they prove that the WINDI system <span class="highlight">governs not only institutional documents but also the narrative about itself</span>. The press feature about Responsibility Infrastructure is itself an instance of Responsibility Infrastructure in operation.</span>
+        <span class="lb-pt">Juntos, eles provam que o sistema WINDI <span class="highlight">governa nao apenas documentos institucionais mas tambem a narrativa sobre si mesmo</span>. O artigo de imprensa sobre Infraestrutura de Responsabilidade e ele mesmo uma instancia de Infraestrutura de Responsabilidade em operacao.</span>
+      </p>
+
+      <p>
+        <span class="lb-de">Dies ist <span class="highlight">Phase 6 (Science)</span> des Cognitive Governance Cycle: der Prozess wird zu Wissen, das Wissen wird governiert, die Governance wird sichtbar.</span>
+        <span class="lb-en">This is <span class="highlight">Phase 6 (Science)</span> of the Cognitive Governance Cycle: the process becoming knowledge, the knowledge being governed, the governance being visible.</span>
+        <span class="lb-pt">Esta e a <span class="highlight">Fase 6 (Science)</span> do Ciclo de Governanca Cognitiva: o processo se tornando conhecimento, o conhecimento sendo governado, a governanca sendo visivel.</span>
+      </p>
+    </section>
+
+    <!-- Related Links -->
+    <section>
+      <h2>
+        <span class="l-de">Verwandte Dokumente</span>
+        <span class="l-en">Related Documents</span>
+        <span class="l-pt">Documentos Relacionados</span>
+      </h2>
+      <ul>
+        <li><a href="./index.html">Masterarbeit Index</a></li>
+        <li><a href="./press-release-windi-2026.html">Press Release</a></li>
+        <li><a href="./wsj-style-governed-windi-2026.html">WSJ Article</a></li>
+        <li><a href="./tr-windi-2026-005.html">TR-005: Cognitive Governance Cycle</a></li>
+        <li><a href="./tr-windi-2026-004.html">TR-004: Cognitive Service</a></li>
+      </ul>
+    </section>
+
+  </div>
+
+  <!-- Page Footer -->
+  <footer class="page-footer">
+    <div class="page-footer-meta">
+      <span>WINDI-CMP-06FEB26-SBS-NOIR</span>
+      <span>Media Document</span>
+    </div>
+    <p class="page-footer-quittung">Author: Jober Mogele Correa (WINDI-CEO-001) | Side-by-Side Evidence | 01 Feb 2026</p>
+    <p class="page-footer-principle">
+      <span class="l-de">"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</span>
+      <span class="l-en">"AI processes. Human decides. WINDI guarantees."</span>
+      <span class="l-pt">"IA processa. Humano decide. WINDI garante."</span>
+    </p>
+    <p style="font-size: 12px; color: var(--text-tertiary); margin-top: 8px;">
+      <span class="l-de">Kempten, Bayern, Deutschland &bull; Three Dragons Protocol: Guardian &bull; Architect &bull; Witness</span>
+      <span class="l-en">Kempten, Bavaria, Germany &bull; Three Dragons Protocol: Guardian &bull; Architect &bull; Witness</span>
+      <span class="l-pt">Kempten, Baviera, Alemanha &bull; Three Dragons Protocol: Guardian &bull; Architect &bull; Witness</span>
+    </p>
+  </footer>
+
+</main>
+
+<!-- JavaScript -->
+<script>
+// Theme Toggle
+function toggleTheme() {
+  const body = document.body;
+  const isLight = body.getAttribute('data-theme') === 'light';
+  body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+  try { localStorage.setItem('windi-theme', isLight ? 'dark' : 'light'); } catch(e) {}
+}
+
+// Language Switcher
+function setLang(lang) {
+  document.body.setAttribute('data-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  try { localStorage.setItem('windi-lang', lang); } catch(e) {}
+}
+
+// Sidebar Toggle (mobile)
+let sidebarOpen = false;
+function toggleSidebar() {
+  sidebarOpen = !sidebarOpen;
+  document.getElementById('sidebarLeft').classList.toggle('open', sidebarOpen);
+}
+
+// Close sidebar on link click (mobile)
+document.querySelectorAll('.sidebar-link').forEach(link => {
+  link.addEventListener('click', () => {
+    if (window.innerWidth <= 960) {
+      sidebarOpen = false;
+      document.getElementById('sidebarLeft').classList.remove('open');
+    }
+  });
+});
+
+// Init saved preferences
+(function init() {
+  try {
+    const theme = localStorage.getItem('windi-theme');
+    const lang = localStorage.getItem('windi-lang');
+    if (theme) document.body.setAttribute('data-theme', theme);
+    if (lang) setLang(lang);
+  } catch(e) {}
+})();
+
+// Mark current nav link
+if(location.pathname.includes('/library/')){
+  document.querySelectorAll('.nav-links a').forEach(function(a){
+    if(a.getAttribute('href')==='/library/' || a.getAttribute('href')==='/library/index.html'){
+      a.classList.add('nav-current');
+    }
+  });
+}
+</script>
+
+</body>
+</html>

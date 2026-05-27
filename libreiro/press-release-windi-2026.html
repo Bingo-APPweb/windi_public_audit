@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI — Press Release: The First Operational Responsibility Infrastructure</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Crect width='20' height='20' rx='4' fill='%231A1208'/%3E%3Cellipse cx='10' cy='11' rx='4.5' ry='4' transform='rotate(-15 10 11)' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='7' cy='7.5' r='2.8' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='6.2' cy='6.8' r='0.7' fill='%238B6914'/%3E%3Cpath d='M7.5 4.8 C7 3.5 8 2.5 8.5 2' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M7 10 C5 8.5 3 8 2 9 C1.5 9.8 2.5 11 4 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M13 9.5 C15 8 17 8 17.5 9.5 C17.8 10.5 16.5 11 15 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M14 13 C16 14 17 15.5 16 16.5 C15 17.5 13.5 16.5 13.5 15' stroke='%238B6914' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E">
+<meta name="description" content="A European Research Initiative Introduces the First Operational Responsibility Infrastructure for AI-Assisted Document Creation">
+<link rel="stylesheet" href="/library/windi-internal.css">
+</head>
+<body data-theme="dark" data-lang="de">
+
+<!-- Header -->
+<header class="site-header">
+  <a href="/library/index.html" class="header-brand">
+    <div class="header-logo">W</div>
+    <div class="header-title-group">
+      <span class="header-title">WINDI</span>
+      <span class="header-subtitle">Governance Intelligence</span>
+    </div>
+  </a>
+  <div class="header-center">
+    <div class="header-status">
+      <span class="status-dot"></span>
+      <span>Operational</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('de')">DE</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('pt')">PT</button>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <div class="theme-toggle-track"></div>
+      <div class="theme-toggle-thumb" id="themeThumb"></div>
+    </button>
+    <button class="mobile-toggle" onclick="toggleSidebar()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- Sidebar Navigation -->
+<nav class="sidebar sidebar-left" id="sidebarLeft">
+  <div class="sidebar-section">
+    <div class="sidebar-label">Masterarbeit</div>
+    <a href="/library/index.html" class="sidebar-link">Main Document</a>
+    <a href="/library/cover.html" class="sidebar-link">Cover</a>
+    <a href="/library/about-windi.html" class="sidebar-link">About WINDI</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Governance</div>
+    <a href="/library/governance-levels.html" class="sidebar-link">Governance Levels</a>
+    <a href="/library/human-oversight.html" class="sidebar-link">Human Oversight</a>
+    <a href="/library/data-handling.html" class="sidebar-link">Data Handling</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Architecture</div>
+    <a href="/library/diagrams.html" class="sidebar-link">Diagrams</a>
+    <a href="/library/interface-guide.html" class="sidebar-link">Interface Guide</a>
+    <a href="/library/verification-layer.html" class="sidebar-link">Verification Layer</a>
+    <a href="/library/kapitel12_domain_sovereignty.html" class="sidebar-link">Domain Sovereignty</a>
+    <a href="/library/identity-governance-layer.html" class="sidebar-link">Identity Governance</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Technical Reports</div>
+    <a href="/library/tr-windi-2026-003.html" class="sidebar-link">TR-003: Service Layer</a>
+    <a href="/library/tr-windi-2026-004.html" class="sidebar-link">TR-004: Cognitive Service</a>
+    <a href="/library/tr-windi-2026-005.html" class="sidebar-link">TR-005: Cognitive Cycle</a>
+    <a href="/library/isp-evolution.html" class="sidebar-link">TR-006: ISP Registry</a>
+    <a href="/library/tr-007.html" class="sidebar-link">TR-007: Provenance</a>
+    <a href="/library/sge-results.html" class="sidebar-link">SGE Results</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Publications</div>
+    <a href="/library/publications.html" class="sidebar-link">Publications</a>
+    <a href="/library/fachartikel-provenienz.html" class="sidebar-link">Fachartikel</a>
+    <a href="/library/windi-publishing-house.html" class="sidebar-link">Manifesto</a>
+    <a href="/library/editorial-policy.html" class="sidebar-link">Editorial Policy</a>
+    <a href="/library/idpf-abstract.html" class="sidebar-link">IDPF Abstract</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Media</div>
+    <a href="/library/windi-working-paper-2026.html" class="sidebar-link">Working Paper</a>
+    <a href="/library/press-release-windi-2026.html" class="sidebar-link sidebar-link-active">Press Release</a>
+    <a href="/library/windi-side-by-side-2026.html" class="sidebar-link">Side-by-Side</a>
+    <a href="/library/wsj-style-governed-windi-2026.html" class="sidebar-link">WSJ Feature</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Compliance</div>
+    <a href="/library/document-integrity.html" class="sidebar-link">Doc Integrity</a>
+    <a href="/library/print-watermark-layer.html" class="sidebar-link">Print Layer</a>
+    <a href="/library/regulatory-summary-print-layer.html" class="sidebar-link">Regulatory</a>
+    <a href="/library/availability-implementation.html" class="sidebar-link">Appendix A</a>
+  </div>
+</nav>
+
+<!-- Right Sidebar TOC -->
+<aside class="sidebar sidebar-right" id="sidebarRight">
+  <div class="sidebar-label">
+    <span class="l-de">Auf dieser Seite</span>
+    <span class="l-en">On this page</span>
+    <span class="l-pt">Nesta pagina</span>
+  </div>
+  <a href="#overview" class="toc-link">
+    <span class="l-de">Uberblick</span>
+    <span class="l-en">Overview</span>
+    <span class="l-pt">Visao Geral</span>
+  </a>
+  <a href="#principles-to-process" class="toc-link">
+    <span class="l-de">Von Prinzipien zu Prozessen</span>
+    <span class="l-en">From Principles to Process</span>
+    <span class="l-pt">De Principios a Processos</span>
+  </a>
+  <a href="#convergence" class="toc-link">
+    <span class="l-de">Konvergenz</span>
+    <span class="l-en">Convergence</span>
+    <span class="l-pt">Convergencia</span>
+  </a>
+  <a href="#implications" class="toc-link">
+    <span class="l-de">Implikationen</span>
+    <span class="l-en">Implications</span>
+    <span class="l-pt">Implicacoes</span>
+  </a>
+  <a href="#contact" class="toc-link">
+    <span class="l-de">Pressekontakt</span>
+    <span class="l-en">Media Contact</span>
+    <span class="l-pt">Contato para Imprensa</span>
+  </a>
+</aside>
+
+<!-- Main Content -->
+<main class="main-content">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-breadcrumb">
+      <a href="/library/index.html">WINDI</a>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current">
+        <span class="l-de">Pressemitteilung</span>
+        <span class="l-en">Press Release</span>
+        <span class="l-pt">Comunicado de Imprensa</span>
+      </span>
+    </div>
+    <div class="page-meta-bar">
+      <span class="page-tag page-tag-gov">Media</span>
+      <span class="page-date">2026-02-07</span>
+    </div>
+    <h1 class="page-title">
+      <span class="l-de">Die Erste Operative Verantwortungsinfrastruktur fur KI-gestützte Dokumentenerstellung</span>
+      <span class="l-en">The First Operational Responsibility Infrastructure for AI-Assisted Document Creation</span>
+      <span class="l-pt">A Primeira Infraestrutura Operacional de Responsabilidade para Criacao de Documentos Assistida por IA</span>
+    </h1>
+    <p class="page-subtitle">
+      <span class="l-de">Ein Wandel von "verantwortungsvoller KI als Eigenschaft von Modellen" zu "Verantwortung als Infrastruktur rund um menschliche Entscheidungsfindung"</span>
+      <span class="l-en">A shift from "responsible AI as a property of models" to "responsibility as an infrastructure surrounding human decision-making"</span>
+      <span class="l-pt">Uma mudanca de "IA responsavel como propriedade de modelos" para "responsabilidade como infraestrutura em torno da tomada de decisao humana"</span>
+    </p>
+    <div class="page-divider"></div>
+  </div>
+
+  <!-- Content -->
+  <div class="content-prose">
+
+    <!-- Release Badge & Dateline -->
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>For Immediate Release</h3>
+        <p><strong>Berlin / Brussels &mdash; February 2026</strong></p>
+      </div>
+    </div>
+
+    <!-- Section: Overview / LEDE -->
+    <h2 id="overview">
+      <span class="l-de">Uberblick</span>
+      <span class="l-en">Overview</span>
+      <span class="l-pt">Visao Geral</span>
+    </h2>
+
+    <p>
+      <span class="lb-de"><strong>BERLIN / BRUSSEL &mdash;</strong> Eine europaische Forschungsinitiative hat vorgestellt, was sie als das erste operative System beschreibt, das Governance direkt in den Prozess der KI-gestützten Dokumentenerstellung einbettet&mdash;nicht als retrospektive Audit-Schicht, sondern als Echtzeit-interaktive Infrastruktur.</span>
+      <span class="lb-en"><strong>BERLIN / BRUSSELS &mdash;</strong> A European research initiative has unveiled what it describes as the first operational system designed to embed governance directly into the process of AI-assisted document creation&mdash;not as a retrospective audit layer, but as a real-time, interactive infrastructure.</span>
+      <span class="lb-pt"><strong>BERLIM / BRUXELAS &mdash;</strong> Uma iniciativa de pesquisa europeia revelou o que descreve como o primeiro sistema operacional projetado para incorporar governanca diretamente no processo de criacao de documentos assistida por IA&mdash;nao como uma camada de auditoria retrospectiva, mas como uma infraestrutura interativa em tempo real.</span>
+    </p>
+
+    <p>
+      <span class="lb-de">Das System, bekannt als WINDI, wurde im Rahmen eines akademischen Forschungsprogramms entwickelt, das untersucht, wie kunstliche Intelligenz mit institutioneller Verantwortlichkeit statt lediglich technischer Leistung in Einklang gebracht werden kann.</span>
+      <span class="lb-en">The system, known as WINDI, was developed as part of an academic research program examining how artificial intelligence can be aligned with institutional accountability rather than merely technical performance.</span>
+      <span class="lb-pt">O sistema, conhecido como WINDI, foi desenvolvido como parte de um programa de pesquisa academica que examina como a inteligencia artificial pode ser alinhada com a responsabilidade institucional em vez de apenas desempenho tecnico.</span>
+    </p>
+
+    <p>
+      <span class="lb-de">Im Gegensatz zu bestehenden KI-Governance-Ansatzen&mdash;die sich typischerweise auf regulatorische Rahmenwerke, ethische Prinzipien oder nachträgliche Modellprufungen konzentrieren&mdash;operiert WINDI wahrend des Schreibakts selbst. Während ein menschlicher Benutzer ein Dokument entwirft, analysiert das System kontinuierlich institutionelle Referenzen, wendet Governance-Richtlinien an, erklart seine Argumentation und signalisiert visuell die entsprechende Governance-Stufe innerhalb der Editor-Oberflache.</span>
+      <span class="lb-en">Unlike existing AI governance approaches&mdash;which typically focus on regulatory frameworks, ethical principles, or post-hoc model audits&mdash;WINDI operates during the act of writing itself. As a human user drafts a document, the system continuously analyzes institutional references, applies governance policies, explains its reasoning, and visually signals the appropriate governance level within the editor interface.</span>
+      <span class="lb-pt">Ao contrario das abordagens de governanca de IA existentes&mdash;que tipicamente focam em estruturas regulatorias, principios eticos ou auditorias de modelos pos-hoc&mdash;WINDI opera durante o proprio ato de escrita. Enquanto um usuario humano redige um documento, o sistema analisa continuamente referencias institucionais, aplica politicas de governanca, explica seu raciocinio e sinaliza visualmente o nivel de governanca apropriado dentro da interface do editor.</span>
+    </p>
+
+    <p>
+      <span class="lb-de">Forscher beschreiben dies als einen Wandel von "verantwortungsvoller KI als Eigenschaft von Modellen" zu "Verantwortung als Infrastruktur rund um menschliche Entscheidungsfindung."</span>
+      <span class="lb-en">Researchers describe this as a shift from "responsible AI as a property of models" to "responsibility as an infrastructure surrounding human decision-making."</span>
+      <span class="lb-pt">Pesquisadores descrevem isso como uma mudanca de "IA responsavel como propriedade de modelos" para "responsabilidade como infraestrutura em torno da tomada de decisao humana."</span>
+    </p>
+
+    <div class="doc-quote">
+      <p>
+        <span class="l-de">"Die KI verarbeitet Informationen. Der Mensch bleibt Entscheidungstrager. Das System garantiert, dass der Prozess gesteuert wird."</span>
+        <span class="l-en">"The AI processes information. The human remains the decision-maker. The system guarantees that the process is governed."</span>
+        <span class="l-pt">"A IA processa informacoes. O humano permanece o tomador de decisoes. O sistema garante que o processo seja governado."</span>
+      </p>
+      <cite>&mdash; WINDI Research Initiative</cite>
+    </div>
+
+    <!-- Section: From Principles to Process -->
+    <h2 id="principles-to-process">
+      <span class="l-de">Von Prinzipien zu Prozessen</span>
+      <span class="l-en">From Principles to Process</span>
+      <span class="l-pt">De Principios a Processos</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Die meisten KI-Governance-Initiativen fallen in eine von drei Kategorien:</span>
+      <span class="lb-en">Most AI governance initiatives fall into one of three categories:</span>
+      <span class="lb-pt">A maioria das iniciativas de governanca de IA se enquadra em uma de tres categorias:</span>
+    </p>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>
+          <span class="l-de">Governance-Ansatze</span>
+          <span class="l-en">Governance Approaches</span>
+          <span class="l-pt">Abordagens de Governanca</span>
+        </h3>
+        <p>
+          <span class="lb-de"><strong>R - Regulatorische Rahmenwerke</strong> (wie der EU AI Act), die Compliance-Anforderungen definieren, aber nicht spezifizieren, wie Governance innerhalb von Live-Systemen ablauft</span>
+          <span class="lb-en"><strong>R - Regulatory frameworks</strong> (such as the EU AI Act), which define compliance requirements but do not specify how governance unfolds inside live systems</span>
+          <span class="lb-pt"><strong>R - Estruturas regulatorias</strong> (como o EU AI Act), que definem requisitos de conformidade mas nao especificam como a governanca se desenrola dentro de sistemas ao vivo</span>
+        </p>
+        <p>
+          <span class="lb-de"><strong>C - Unternehmens-KI-Prinzipien,</strong> die ethische Absichten skizzieren, aber selten in verifizierbares Systemverhalten ubersetzt werden</span>
+          <span class="lb-en"><strong>C - Corporate AI principles,</strong> which outline ethical intentions but rarely translate into verifiable system behavior</span>
+          <span class="lb-pt"><strong>C - Principios corporativos de IA,</strong> que delineiam intencoes eticas mas raramente se traduzem em comportamento de sistema verificavel</span>
+        </p>
+        <p>
+          <span class="lb-de"><strong>A - Compliance- und Audit-Tools,</strong> die KI-Ausgaben bewerten, nachdem Entscheidungen bereits getroffen wurden</span>
+          <span class="lb-en"><strong>A - Compliance and audit tools,</strong> which evaluate AI outputs after decisions have already been made</span>
+          <span class="lb-pt"><strong>A - Ferramentas de conformidade e auditoria,</strong> que avaliam saidas de IA apos as decisoes ja terem sido tomadas</span>
+        </p>
+      </div>
+    </div>
+
+    <p>
+      <span class="lb-de">WINDI verfolgt einen anderen Ansatz. Governance ist keine externe Checkliste oder eine spatere Überprüfungsphase; sie ist direkt in die Interaktion zwischen Mensch und System eingebettet.</span>
+      <span class="lb-en">WINDI takes a different approach. Governance is not an external checklist or a later review stage; it is embedded directly into the interaction between human and system.</span>
+      <span class="lb-pt">WINDI adota uma abordagem diferente. Governanca nao e uma lista de verificacao externa ou uma fase de revisao posterior; esta incorporada diretamente na interacao entre humano e sistema.</span>
+    </p>
+
+    <p>
+      <span class="lb-de">Das Forschungsteam beschreibt dies formal als einen sechsphasigen operativen Zyklus:</span>
+      <span class="lb-en">The research team formally describes this as a six-phase operational cycle:</span>
+      <span class="lb-pt">A equipe de pesquisa descreve formalmente isso como um ciclo operacional de seis fases:</span>
+    </p>
+
+    <h3>The Six-Phase Cognitive Governance Cycle</h3>
+
+    <div class="spec-table-wrapper">
+      <table class="spec-table">
+        <thead>
+          <tr>
+            <th>Phase</th>
+            <th>Name</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td><strong>Perception</strong></td>
+            <td>Detects references to real institutions</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td><strong>Cognition</strong></td>
+            <td>Interprets governance implications</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td><strong>Governance</strong></td>
+            <td>Applies policy rules to determine level</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td><strong>Explanation</strong></td>
+            <td>Communicates reasoning in human language</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td><strong>Interface</strong></td>
+            <td>Editor visually reflects governance state</td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td><strong>Science</strong></td>
+            <td>Process becomes traceable knowledge</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p><em>&#8617; Science feeds back into Perception &mdash; the cycle closes</em></p>
+
+    <p>
+      <span class="lb-de">Dieses Modell wurde in einem technischen Forschungsdokument zusammen mit Belegen fur eine funktionierende Implementierung veroffentlicht, einschliesslich System-Schnittstellen und Live-API-Komponenten.</span>
+      <span class="lb-en">This model was published in a technical research document alongside evidence of a working implementation, including system interfaces and live API components.</span>
+      <span class="lb-pt">Este modelo foi publicado em um documento de pesquisa tecnica juntamente com evidencias de uma implementacao funcional, incluindo interfaces de sistema e componentes de API ao vivo.</span>
+    </p>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>Figure 1</h3>
+        <p>
+          <span class="lb-de">Der WINDI-Governance-Zyklus in Produktion. Ein Dokument, das die Deutsche Bahn AG referenziert, lost Echtzeit-Identitätserkennung, Richtlinienbewertung, Governance-Klassifizierung, dreisprachige Erklarung und visuelle Manifestation innerhalb der A4&nbsp;Desk BABEL-Editor-Oberflache aus.</span>
+          <span class="lb-en">The WINDI governance cycle in production. A document referencing Deutsche Bahn AG triggers real-time identity detection, policy evaluation, governance classification, trilingual explanation, and visual manifestation within the A4&nbsp;Desk BABEL editor interface.</span>
+          <span class="lb-pt">O ciclo de governanca WINDI em producao. Um documento referenciando a Deutsche Bahn AG aciona deteccao de identidade em tempo real, avaliacao de politicas, classificacao de governanca, explicacao trilingue e manifestacao visual dentro da interface do editor A4&nbsp;Desk BABEL.</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Section: Convergence -->
+    <h2 id="convergence">
+      <span class="l-de">Eine Seltene Konvergenz von Forschung und Produktion</span>
+      <span class="l-en">A Rare Convergence of Research and Production</span>
+      <span class="l-pt">Uma Rara Convergencia de Pesquisa e Producao</span>
+    </h2>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>
+          <span class="l-de">Warum Dies Ungewohnlich Ist</span>
+          <span class="l-en">Why This Is Unusual</span>
+          <span class="l-pt">Por Que Isto E Incomum</span>
+        </h3>
+        <p>
+          <span class="lb-de">In der Industrie priorisieren Startups typischerweise schnelle Bereitstellung uber konzeptionelle Formalisierung. In der Akademie werden Governance-Modelle oft ohne begleitende Produktionssysteme entwickelt.</span>
+          <span class="lb-en">In industry, startups typically prioritize rapid deployment over conceptual formalization. In academia, governance models are often developed without accompanying production systems.</span>
+          <span class="lb-pt">Na industria, startups tipicamente priorizam implantacao rapida sobre formalizacao conceitual. Na academia, modelos de governanca sao frequentemente desenvolvidos sem sistemas de producao acompanhantes.</span>
+        </p>
+        <p>
+          <span class="lb-de">WINDI reprasentiert eine seltene Konvergenz beider Traditionen: ein Live-Netzwerk-basiertes System, dessen interne Governance-Logik gleichzeitig als Forschungsbeitrag dokumentiert wird.</span>
+          <span class="lb-en">WINDI represents a rare convergence of both traditions: a live, network-based system whose internal governance logic is simultaneously documented as a research contribution.</span>
+          <span class="lb-pt">WINDI representa uma rara convergencia de ambas as tradicoes: um sistema ao vivo baseado em rede cuja logica de governanca interna e simultaneamente documentada como uma contribuicao de pesquisa.</span>
+        </p>
+      </div>
+    </div>
+
+    <p>
+      <span class="lb-de">Das gesamte System wurde in einer einzigen Forschungssitzung konzipiert, implementiert und formal dokumentiert. Die technischen Berichte TR-003 bis TR-005 zeichnen die Entwicklung von einer Offline-Governance-Bibliothek zu einem netzwerk-beobachtbaren kognitiven Dienst nach, was in der Formalisierung des sechsphasigen Zyklus als originalem theoretischem Modell gipfelt.</span>
+      <span class="lb-en">The complete system was conceived, implemented, and formally documented in a single research session. Technical reports TR-003 through TR-005 trace the evolution from an offline governance library to a network-observable cognitive service, culminating in the formalization of the six-phase cycle as an original theoretical model.</span>
+      <span class="lb-pt">O sistema completo foi concebido, implementado e formalmente documentado em uma unica sessao de pesquisa. Os relatorios tecnicos TR-003 a TR-005 tracam a evolucao de uma biblioteca de governanca offline para um servico cognitivo observavel em rede, culminando na formalizacao do ciclo de seis fases como um modelo teorico original.</span>
+    </p>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>Figure 2</h3>
+        <p>
+          <span class="lb-de">Technischer Bericht TR-004, veroffentlicht im WINDI Masterarbeit-Register unter windi-domain.com, dokumentiert den Ubergang von einer Offline-Bibliothek zu einem beobachtbaren kognitiven Dienst.</span>
+          <span class="lb-en">Technical Report TR-004 published in the WINDI Masterarbeit registry at windi-domain.com, documenting the transition from offline library to observable cognitive service.</span>
+          <span class="lb-pt">Relatorio Tecnico TR-004 publicado no registro WINDI Masterarbeit em windi-domain.com, documentando a transicao de biblioteca offline para servico cognitivo observavel.</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Section: Implications -->
+    <h2 id="implications">
+      <span class="l-de">Implikationen</span>
+      <span class="l-en">Implications</span>
+      <span class="l-pt">Implicacoes</span>
+    </h2>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>
+          <span class="l-de">Politische Implikationen</span>
+          <span class="l-en">Policy Implications</span>
+          <span class="l-pt">Implicacoes Politicas</span>
+        </h3>
+        <p>
+          <span class="lb-de">Das Projekt positioniert sich nicht als Ersatz fur menschliches Urteilsvermogen, sondern als eine Infrastruktur, die sicherstellt, dass Entscheidungskontexte transparent, dokumentiert und politikbewusst bleiben.</span>
+          <span class="lb-en">The project positions itself not as a replacement for human judgment, but as an infrastructure that ensures decision contexts remain transparent, documented, and policy-aware.</span>
+          <span class="lb-pt">O projeto se posiciona nao como um substituto para o julgamento humano, mas como uma infraestrutura que garante que os contextos de decisao permanecam transparentes, documentados e cientes de politicas.</span>
+        </p>
+      </div>
+    </div>
+
+    <p>
+      <span class="lb-de">Während Debatten uber KI-Verantwortlichkeit in Europa und daruber hinaus intensiviert werden, konnte das Konzept der "Verantwortungsinfrastruktur" eine neue Perspektive bieten: Governance nicht als externe Einschrankung, sondern als kontinuierliche, beobachtbare Schicht um menschliche Entscheidungen.</span>
+      <span class="lb-en">As debates over AI accountability intensify in Europe and beyond, the concept of "responsibility infrastructure" may offer a new lens: governance not as an external constraint, but as a continuous, observable layer surrounding human decisions.</span>
+      <span class="lb-pt">A medida que os debates sobre responsabilidade da IA se intensificam na Europa e alem, o conceito de "infraestrutura de responsabilidade" pode oferecer uma nova lente: governanca nao como uma restricao externa, mas como uma camada continua e observavel em torno das decisoes humanas.</span>
+    </p>
+
+    <div class="doc-quote">
+      <p>
+        <span class="l-de">"Governance ist kein Kontrollpunkt. Es ist eine kognitive Infrastruktur, die wahrnimmt, interpretiert, entscheidet, erklart, manifestiert und lernt&mdash;kontinuierlich."</span>
+        <span class="l-en">"Governance is not a checkpoint. It is a cognitive infrastructure that perceives, interprets, decides, explains, manifests, and learns&mdash;continuously."</span>
+        <span class="l-pt">"Governanca nao e um ponto de controle. E uma infraestrutura cognitiva que percebe, interpreta, decide, explica, manifesta e aprende&mdash;continuamente."</span>
+      </p>
+      <cite>&mdash; WINDI Conceptual Model, February 2026</cite>
+    </div>
+
+    <!-- Section: Media Contact -->
+    <h2 id="contact">
+      <span class="l-de">Pressekontakt</span>
+      <span class="l-en">Media Contact</span>
+      <span class="l-pt">Contato para Imprensa</span>
+    </h2>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>WINDI Research Initiative</h3>
+        <p><strong>WINDI Publishing House</strong><br>
+        Kempten, Bavaria, Germany<br>
+        <a href="https://windi-domain.com">windi-domain.com</a></p>
+      </div>
+    </div>
+
+    <!-- Editorial Note -->
+    <h3>
+      <span class="l-de">Redaktionelle Anmerkung</span>
+      <span class="l-en">Editorial Note</span>
+      <span class="l-pt">Nota Editorial</span>
+    </h3>
+    <p>
+      <span class="lb-de">Diese Pressemitteilung wurde gemeinsam vom WINDI-Forschungsteam mit KI-Redaktionsunterstutzung (Three Dragons Protocol: Guardian, Architect, Witness) unter menschlicher Aufsicht und endgultiger Genehmigung verfasst.<br><em>"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</em></span>
+      <span class="lb-en">This press release was jointly authored by the WINDI research team with AI editorial assistance (Three Dragons Protocol: Guardian, Architect, Witness) under human supervision and final approval.<br><em>"AI processes. Human decides. WINDI guarantees."</em></span>
+      <span class="lb-pt">Este comunicado de imprensa foi co-autorado pela equipe de pesquisa WINDI com assistencia editorial de IA (Protocolo Tres Dragoes: Guardian, Architect, Witness) sob supervisao humana e aprovacao final.<br><em>"IA processa. Humano decide. WINDI garante."</em></span>
+    </p>
+
+  </div>
+
+  <!-- Page Footer -->
+  <footer class="page-footer">
+    <div class="page-footer-meta">
+      <span>WINDI-PR-07FEB26-NOIR</span>
+      <span>Press Release</span>
+    </div>
+    <p class="page-footer-quittung">PR-WINDI-2026-001 | Status: FOR IMMEDIATE RELEASE | WINDI-PR-01FEB26-RIF-001</p>
+    <p class="page-footer-principle">
+      <span class="l-de">"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</span>
+      <span class="l-en">"AI processes. Human decides. WINDI guarantees."</span>
+      <span class="l-pt">"IA processa. Humano decide. WINDI garante."</span>
+    </p>
+  </footer>
+
+</main>
+
+<!-- JavaScript -->
+<script>
+// Theme Toggle
+function toggleTheme() {
+  const body = document.body;
+  const isLight = body.getAttribute('data-theme') === 'light';
+  body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+  try { localStorage.setItem('windi-theme', isLight ? 'dark' : 'light'); } catch(e) {}
+}
+
+// Language Switcher
+function setLang(lang) {
+  document.body.setAttribute('data-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  try { localStorage.setItem('windi-lang', lang); } catch(e) {}
+}
+
+// Sidebar Toggle (mobile)
+let sidebarOpen = false;
+function toggleSidebar() {
+  sidebarOpen = !sidebarOpen;
+  document.getElementById('sidebarLeft').classList.toggle('open', sidebarOpen);
+}
+
+// Close sidebar on link click (mobile)
+document.querySelectorAll('.sidebar-link').forEach(link => {
+  link.addEventListener('click', () => {
+    if (window.innerWidth <= 960) {
+      sidebarOpen = false;
+      document.getElementById('sidebarLeft').classList.remove('open');
+    }
+  });
+});
+
+// Init saved preferences
+(function init() {
+  try {
+    const theme = localStorage.getItem('windi-theme');
+    const lang = localStorage.getItem('windi-lang');
+    if (theme) document.body.setAttribute('data-theme', theme);
+    if (lang) setLang(lang);
+  } catch(e) {}
+})();
+
+// Mark current nav link
+if(location.pathname.includes('/library/')){
+  document.querySelectorAll('.nav-links a').forEach(function(a){
+    if(a.getAttribute('href')==='/library/' || a.getAttribute('href')==='/library/index.html'){
+      a.classList.add('nav-current');
+    }
+  });
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="noir">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI Protocol — Trust Infrastructure Lineage (Tripartite Governance Framework)</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Crect width='20' height='20' rx='4' fill='%231A1208'/%3E%3Cellipse cx='10' cy='11' rx='4.5' ry='4' transform='rotate(-15 10 11)' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='7' cy='7.5' r='2.8' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='6.2' cy='6.8' r='0.7' fill='%238B6914'/%3E%3Cpath d='M7.5 4.8 C7 3.5 8 2.5 8.5 2' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M7 10 C5 8.5 3 8 2 9 C1.5 9.8 2.5 11 4 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M13 9.5 C15 8 17 8 17.5 9.5 C17.8 10.5 16.5 11 15 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M14 13 C16 14 17 15.5 16 16.5 C15 17.5 13.5 16.5 13.5 15' stroke='%238B6914' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0A0A0A;
+  --surface: #111111;
+  --surface-2: #1A1A1A;
+  --gold: #C8A44E;
+  --gold-dim: rgba(200,164,78,0.25);
+  --gold-glow: rgba(200,164,78,0.08);
+  --text: #E8E8E8;
+  --text-dim: rgba(232,232,232,0.55);
+  --border: rgba(200,164,78,0.18);
+  --font-display: 'Bricolage Grotesque', serif;
+  --font-body: 'Outfit', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Layout ──────────────────────────────────── */
+.page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 60px 32px 80px;
+}
+
+@media (max-width: 640px) {
+  .page { padding: 32px 16px 60px; }
+}
+
+/* ── Header ──────────────────────────────────── */
+.header {
+  text-align: center;
+  margin-bottom: 64px;
+  position: relative;
+}
+
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: -32px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 1px;
+  background: var(--gold);
+}
+
+.header__sigil {
+  font-size: 42px;
+  margin-bottom: 16px;
+  filter: drop-shadow(0 0 20px rgba(200,164,78,0.3));
+}
+
+.header__title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 5vw, 42px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  margin-bottom: 12px;
+}
+
+.header__title em {
+  font-style: normal;
+  color: var(--gold);
+}
+
+.header__sub {
+  font-size: 16px;
+  font-weight: 300;
+  opacity: 0.6;
+  letter-spacing: 0.02em;
+}
+
+.header__tagline {
+  margin-top: 20px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--gold);
+  opacity: 0.8;
+  letter-spacing: 0.06em;
+}
+
+/* ── Sections ────────────────────────────────── */
+.section {
+  margin-bottom: 56px;
+}
+
+.section__label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.7;
+  margin-bottom: 10px;
+}
+
+.section__title {
+  font-family: var(--font-display);
+  font-size: clamp(20px, 3.5vw, 28px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+  line-height: 1.25;
+}
+
+.section__text {
+  font-size: 15px;
+  line-height: 1.7;
+  opacity: 0.82;
+  max-width: 720px;
+}
+
+/* ── DNA Timeline ────────────────────────────── */
+.dna-timeline {
+  position: relative;
+  padding-left: 40px;
+  margin: 32px 0;
+}
+
+.dna-timeline::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--gold-dim), var(--gold), var(--gold-dim));
+}
+
+.dna-item {
+  position: relative;
+  margin-bottom: 28px;
+  padding: 20px 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  transition: all 0.2s ease;
+}
+
+.dna-item:hover {
+  border-color: var(--gold-dim);
+  background: var(--surface-2);
+  transform: translateX(4px);
+}
+
+.dna-item::before {
+  content: '';
+  position: absolute;
+  left: -33px;
+  top: 26px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 2px solid var(--gold);
+}
+
+.dna-item--windi::before {
+  background: var(--gold);
+  box-shadow: 0 0 12px rgba(200,164,78,0.5);
+  width: 14px;
+  height: 14px;
+  left: -34px;
+}
+
+.dna-item--windi {
+  border-color: var(--gold);
+  background: linear-gradient(135deg, var(--gold-glow), var(--surface));
+}
+
+.dna-item__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.dna-item__year {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--gold);
+  opacity: 0.8;
+  min-width: 42px;
+}
+
+.dna-item__name {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.dna-item__solved {
+  font-size: 13px;
+  opacity: 0.6;
+  margin-bottom: 6px;
+}
+
+.dna-item__dna {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gold);
+  opacity: 0.9;
+}
+
+.dna-item__dna::before {
+  content: '🧬 ';
+  font-size: 12px;
+}
+
+/* ── Evolution Bar ───────────────────────────── */
+.evo-bar {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 2px;
+  margin: 40px 0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+@media (max-width: 640px) {
+  .evo-bar { grid-template-columns: repeat(3, 1fr); gap: 2px; }
+}
+
+.evo-bar__item {
+  padding: 16px 10px;
+  text-align: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  transition: all 0.2s ease;
+}
+
+.evo-bar__item:hover {
+  background: var(--surface-2);
+}
+
+.evo-bar__item--windi {
+  background: linear-gradient(135deg, rgba(200,164,78,0.15), var(--surface));
+  border-color: var(--gold-dim);
+}
+
+.evo-bar__icon { font-size: 22px; margin-bottom: 6px; }
+
+.evo-bar__label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  opacity: 0.6;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.evo-bar__what {
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+/* ── Quote Cards ─────────────────────────────── */
+.quotes {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin: 32px 0;
+}
+
+.quote-card {
+  padding: 20px 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold);
+  border-radius: 0 14px 14px 0;
+}
+
+.quote-card__label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.7;
+  margin-bottom: 8px;
+}
+
+.quote-card__text {
+  font-size: 15px;
+  line-height: 1.55;
+  font-weight: 400;
+}
+
+.quote-card__text em {
+  font-style: normal;
+  color: var(--gold);
+  font-weight: 500;
+}
+
+/* ── Multilingual Block ──────────────────────── */
+.ml-block {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin: 32px 0;
+}
+
+.ml-card {
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.ml-card__flag {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.ml-card__lang {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.7;
+  margin-bottom: 10px;
+}
+
+.ml-card__text {
+  font-size: 14px;
+  line-height: 1.55;
+  opacity: 0.85;
+}
+
+/* ── Principle Box ───────────────────────────── */
+.principle {
+  text-align: center;
+  padding: 40px 32px;
+  margin: 48px 0;
+  border: 1px solid var(--gold-dim);
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--gold-glow), transparent);
+}
+
+.principle__text {
+  font-family: var(--font-display);
+  font-size: clamp(18px, 3vw, 24px);
+  font-weight: 600;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+}
+
+.principle__text em {
+  font-style: normal;
+  color: var(--gold);
+}
+
+.principle__sub {
+  margin-top: 16px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  opacity: 0.4;
+  letter-spacing: 0.06em;
+}
+
+/* ── Footer ──────────────────────────────────── */
+.footer {
+  text-align: center;
+  margin-top: 64px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+}
+
+.footer__brand {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--gold);
+  margin-bottom: 6px;
+}
+
+.footer__meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  opacity: 0.35;
+  letter-spacing: 0.06em;
+  line-height: 1.8;
+}
+
+/* ── Do/Don't ────────────────────────────────── */
+
+/* ── Onboarding Steps ────────────────────────── */
+.onboard-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 32px 0;
+  position: relative;
+}
+
+.onboard-flow::before {
+  content: '';
+  position: absolute;
+  left: 24px;
+  top: 28px;
+  bottom: 28px;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--gold-dim), var(--gold), var(--gold-dim));
+}
+
+.onboard-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 16px 0;
+  position: relative;
+}
+
+.onboard-step__num {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 2px solid var(--gold-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--gold);
+  z-index: 1;
+  transition: all 0.3s;
+}
+
+.onboard-step:last-child .onboard-step__num {
+  border-color: var(--gold);
+  background: rgba(200,164,78,0.12);
+  box-shadow: 0 0 20px rgba(200,164,78,0.15);
+}
+
+.onboard-step__content {
+  padding-top: 4px;
+}
+
+.onboard-step__title {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.onboard-step__desc {
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+.onboard-step__analogy {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--gold);
+  opacity: 0.6;
+  margin-top: 4px;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 580px) {
+  .onboard-flow::before { left: 20px; }
+  .onboard-step__num { width: 40px; height: 40px; font-size: 14px; }
+}
+
+/* ── Do/Don't (original) ─────────────────────── */
+.dodont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 24px 0;
+}
+
+@media (max-width: 580px) {
+  .dodont { grid-template-columns: 1fr; }
+}
+
+.dodont__col {
+  padding: 20px;
+  border-radius: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.dodont__col--do { border-color: rgba(74, 222, 128, 0.25); }
+.dodont__col--dont { border-color: rgba(248, 113, 113, 0.25); }
+
+.dodont__head {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+}
+
+.dodont__col--do .dodont__head { color: #4ADE80; }
+.dodont__col--dont .dodont__head { color: #F87171; }
+
+.dodont__item {
+  font-size: 13px;
+  padding: 4px 0;
+  opacity: 0.8;
+}
+</style>
+</head>
+<body>
+<!-- NAV -->
+<nav style="position:fixed;top:0;left:0;right:0;z-index:999;display:flex;justify-content:space-between;align-items:center;padding:12px 32px;background:rgba(10,10,10,0.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(200,164,78,0.15)">
+  <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;font-family:Bricolage Grotesque,serif;font-weight:700;font-size:18px;color:#C8A44E"><svg style="width:20px;height:20px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14 C4 10 6 6 10 5 C14 4 16 7 15 10 C14 13 11 14 9 13"/><path d="M9 13 C7 14 5 16 6 17 C7 18 9 17 10 16 C11 15 11 17 13 17"/><path d="M12 7 C14 5 17 5 17 7 C17 9 15 9 13 9"/><circle cx="11.5" cy="6" r="0.8" fill="currentColor" stroke="none"/><path d="M10 5 L9.5 3"/></svg> WINDI</a>
+  <div style="display:flex;gap:24px;align-items:center">
+    <a href="/" style="color:#94a3b8;text-decoration:none;font-size:13px;font-family:Outfit,sans-serif">← Home</a>
+    <a href="docs/" style="color:#94a3b8;text-decoration:none;font-size:13px;font-family:Outfit,sans-serif">Docs →</a>
+  </div>
+</nav>
+<div style="height:52px"></div>
+<div class="page">
+
+  <!-- ═══ HEADER ═══ -->
+  <div class="header">
+    <div class="header__sigil"><svg style="width:48px;height:48px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14 C4 10 6 6 10 5 C14 4 16 7 15 10 C14 13 11 14 9 13"/><path d="M9 13 C7 14 5 16 6 17 C7 18 9 17 10 16 C11 15 11 17 13 17"/><path d="M12 7 C14 5 17 5 17 7 C17 9 15 9 13 9"/><circle cx="11.5" cy="6" r="0.8" fill="currentColor" stroke="none"/><path d="M10 5 L9.5 3"/></svg></div>
+    <h1 class="header__title">The <em>WINDI</em> Protocol</h1>
+    <p class="header__sub">Trust Infrastructure for Verifiable Institutional Governance</p>
+    <p class="header__tagline">NOTHING REVOLUTIONARY. EVERYTHING INEVITABLE.</p>
+    <p class="header__tagline" style="opacity:0.45; margin-top:8px; font-size:11px;">Tripartite Governance Framework · Constitutional Safeguards Module</p>
+  </div>
+
+  <!-- ═══ POSITIONING ═══ -->
+  <div class="section">
+    <div class="section__label">Positioning</div>
+    <h2 class="section__title">A new layer of the internet, built from ideas that already work.</h2>
+    <p class="section__text">
+      WINDI is a trust verification protocol for institutional documents. It enables any organization to generate governance proofs that any other organization can independently verify — without exchanging sensitive data, without prior integration, and without trusting anyone.
+    </p>
+    <p class="section__text" style="margin-top: 12px;">
+      It draws from five decades of proven digital infrastructure, applying the same principles that made the internet reliable — but directed at a new target: the integrity of human decisions and institutional records.
+    </p>
+  </div>
+
+  <!-- ═══ EVOLUTION BAR ═══ -->
+  <div class="section">
+    <div class="section__label">Evolution of Digital Trust</div>
+    <h2 class="section__title">From connecting machines to verifying decisions</h2>
+    <div class="evo-bar">
+      <div class="evo-bar__item">
+        <div class="evo-bar__icon">🔤</div>
+        <span class="evo-bar__label">DNS · 1983</span>
+        <span class="evo-bar__what">Connected networks</span>
+      </div>
+      <div class="evo-bar__item">
+        <div class="evo-bar__icon">📧</div>
+        <span class="evo-bar__label">SMTP · 1982</span>
+        <span class="evo-bar__what">Federated messaging</span>
+      </div>
+      <div class="evo-bar__item">
+        <div class="evo-bar__icon">🔒</div>
+        <span class="evo-bar__label">HTTPS · 1994</span>
+        <span class="evo-bar__what">Verified connections</span>
+      </div>
+      <div class="evo-bar__item">
+        <div class="evo-bar__icon"><svg style="width:24px;height:24px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8L10 3L17 8"/><rect x="4" y="8" width="12" height="9"/><line x1="7" y1="11" x2="7" y2="17"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="13" y1="11" x2="13" y2="17"/><line x1="3" y1="17" x2="17" y2="17"/></svg></div>
+        <span class="evo-bar__label">SWIFT · 1973</span>
+        <span class="evo-bar__what">Trusted messages</span>
+      </div>
+      <div class="evo-bar__item">
+        <div class="evo-bar__icon"><svg style="width:24px;height:24px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6L10 2L17 6V14L10 18L3 14V6Z"/><path d="M10 10V18"/><path d="M3 6L10 10L17 6"/></svg></div>
+        <span class="evo-bar__label">DOCKER · 2013</span>
+        <span class="evo-bar__what">Portable runtime</span>
+      </div>
+      <div class="evo-bar__item evo-bar__item--windi">
+        <div class="evo-bar__icon"><svg style="width:24px;height:24px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14 C4 10 6 6 10 5 C14 4 16 7 15 10 C14 13 11 14 9 13"/><path d="M9 13 C7 14 5 16 6 17 C7 18 9 17 10 16 C11 15 11 17 13 17"/><path d="M12 7 C14 5 17 5 17 7 C17 9 15 9 13 9"/><circle cx="11.5" cy="6" r="0.8" fill="currentColor" stroke="none"/><path d="M10 5 L9.5 3"/></svg></div>
+        <span class="evo-bar__label">WINDI · 2026</span>
+        <span class="evo-bar__what">Verified decisions</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ DNA TIMELINE ═══ -->
+  <div class="section">
+    <div class="section__label">Technological Lineage</div>
+    <h2 class="section__title">DNA inherited from proven infrastructure</h2>
+
+    <div class="dna-timeline">
+      <div class="dna-item">
+        <div class="dna-item__head">
+          <span class="dna-item__year">1973</span>
+          <span class="dna-item__name">🏦 SWIFT</span>
+        </div>
+        <div class="dna-item__solved">Standardized financial messaging between regulated institutions</div>
+        <div class="dna-item__dna">Proofs recognized between independent institutions as institutional evidence</div>
+      </div>
+
+      <div class="dna-item">
+        <div class="dna-item__head">
+          <span class="dna-item__year">1982</span>
+          <span class="dna-item__name">📧 SMTP</span>
+        </div>
+        <div class="dna-item__solved">Independent systems communicating via shared protocol</div>
+        <div class="dna-item__dna">Sovereign nodes speaking the same proof language without central control</div>
+      </div>
+
+      <div class="dna-item">
+        <div class="dna-item__head">
+          <span class="dna-item__year">1983</span>
+          <span class="dna-item__name">🔤 DNS</span>
+        </div>
+        <div class="dna-item__solved">Universal identity resolution across networks</div>
+        <div class="dna-item__dna">Node identity + Trust List: cryptographic resolution of "who is this institution?"</div>
+      </div>
+
+      <div class="dna-item">
+        <div class="dna-item__head">
+          <span class="dna-item__year">1994</span>
+          <span class="dna-item__name">🔒 HTTPS / PKI</span>
+        </div>
+        <div class="dna-item__solved">Trust without prior relationship via certificate chains</div>
+        <div class="dna-item__dna">Node certificates + chain of custody: verify without trusting the source</div>
+      </div>
+
+      <div class="dna-item">
+        <div class="dna-item__head">
+          <span class="dna-item__year">2013</span>
+          <span class="dna-item__name">📦 Docker</span>
+        </div>
+        <div class="dna-item__solved">Portable, self-contained execution environments</div>
+        <div class="dna-item__dna">Audit Evidence Pack: self-contained, offline-verifiable, works anywhere forever</div>
+      </div>
+
+      <div class="dna-item dna-item--windi">
+        <div class="dna-item__head">
+          <span class="dna-item__year">2026</span>
+          <span class="dna-item__name"><svg style="width:1em;height:1em;vertical-align:-0.1em" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14 C4 10 6 6 10 5 C14 4 16 7 15 10 C14 13 11 14 9 13"/><path d="M9 13 C7 14 5 16 6 17 C7 18 9 17 10 16 C11 15 11 17 13 17"/><path d="M12 7 C14 5 17 5 17 7 C17 9 15 9 13 9"/><circle cx="11.5" cy="6" r="0.8" fill="currentColor" stroke="none"/><path d="M10 5 L9.5 3"/></svg> WINDI Protocol</span>
+        </div>
+        <div class="dna-item__solved">Verifiable institutional governance with ethical primitives</div>
+        <div class="dna-item__dna">Human sovereignty as architectural invariant — decisions are the protected object</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ THE DIFFERENCE ═══ -->
+  <div class="principle">
+    <p class="principle__text">
+      Previous protocols secured <em>data in transit</em>.<br>
+      WINDI secures <em>human decisions over time</em>.
+    </p>
+    <p class="principle__sub">A NEXT-GENERATION TRUST VERIFICATION LAYER FOR INSTITUTIONAL GOVERNANCE</p>
+  </div>
+
+  <!-- ═══ MARKET PHRASES ═══ -->
+  <div class="section">
+    <div class="section__label">Market Language</div>
+    <h2 class="section__title">How to communicate WINDI</h2>
+
+    <div class="quotes">
+      <div class="quote-card">
+        <div class="quote-card__label">SIMPLE</div>
+        <p class="quote-card__text">"WINDI is infrastructure that lets <em>proofs generated by one institution be verified by any other</em>, without exchanging sensitive data."</p>
+      </div>
+      <div class="quote-card">
+        <div class="quote-card__label">TECHNICAL</div>
+        <p class="quote-card__text">"Just as HTTPS created a <em>trust layer for the web</em>, WINDI creates a <em>verification layer for document governance</em> between institutions."</p>
+      </div>
+      <div class="quote-card">
+        <div class="quote-card__label">EXECUTIVE</div>
+        <p class="quote-card__text">"It's no longer about <em>trusting the institution</em>. It's about being able to <em>verify the record</em>."</p>
+      </div>
+      <div class="quote-card">
+        <div class="quote-card__label">FINANCIAL</div>
+        <p class="quote-card__text">"WINDI is to document governance what <em>SWIFT is to banking</em>: a shared verification layer where every institution stays sovereign, but every proof speaks the same language."</p>
+      </div>
+      <div class="quote-card">
+        <div class="quote-card__label">COMPARATIVE</div>
+        <p class="quote-card__text">"If DNS enabled different networks to connect, WINDI enables <em>different institutions to trust each other's proofs</em>."</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TRILINGUAL ═══ -->
+  <div class="section">
+    <div class="section__label">Trilingual Positioning</div>
+    <h2 class="section__title">One message, three languages</h2>
+
+    <div class="ml-block">
+      <div class="ml-card">
+        <div class="ml-card__flag">🇬🇧</div>
+        <div class="ml-card__lang">English</div>
+        <p class="ml-card__text">WINDI transforms internal records into externally verifiable evidence — using a shared trust standard between organizations, without exposing sensitive data.</p>
+      </div>
+      <div class="ml-card">
+        <div class="ml-card__flag">🇩🇪</div>
+        <div class="ml-card__lang">Deutsch</div>
+        <p class="ml-card__text">WINDI verwandelt interne Aufzeichnungen in extern verifizierbare Nachweise — mittels eines gemeinsamen Vertrauensstandards zwischen Organisationen, ohne sensible Daten preiszugeben.</p>
+      </div>
+      <div class="ml-card">
+        <div class="ml-card__flag">🇧🇷</div>
+        <div class="ml-card__lang">Português</div>
+        <p class="ml-card__text">O WINDI transforma registros internos em evidência verificável externamente — usando um padrão de confiança compartilhado entre organizações, sem expor dados sensíveis.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ DO / DON'T ═══ -->
+  <div class="section">
+    <div class="section__label">Communication Guide</div>
+    <h2 class="section__title">Language that opens doors</h2>
+
+    <div class="dodont">
+      <div class="dodont__col dodont__col--do">
+        <div class="dodont__head"><svg style="width:1em;height:1em;vertical-align:-0.1em;color:#22c55e" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4,10 8,14 16,6"/></svg> USE</div>
+        <div class="dodont__item">Interoperability</div>
+        <div class="dodont__item">Verification standard</div>
+        <div class="dodont__item">Trust infrastructure</div>
+        <div class="dodont__item">Cryptographic audit layer</div>
+        <div class="dodont__item">Natural evolution</div>
+        <div class="dodont__item">Compliance-grade evidence</div>
+        <div class="dodont__item">Institutional transparency</div>
+        <div class="dodont__item">Institutional Praktikant</div>
+      </div>
+      <div class="dodont__col dodont__col--dont">
+        <div class="dodont__head">❌ AVOID</div>
+        <div class="dodont__item">Distributed sovereignty</div>
+        <div class="dodont__item">Revolution</div>
+        <div class="dodont__item">Decentralization of power</div>
+        <div class="dodont__item">End of central authority</div>
+        <div class="dodont__item">Disruption</div>
+        <div class="dodont__item">Blockchain-based</div>
+        <div class="dodont__item">Political transformation</div>
+        <div class="dodont__item">AI-autonomous decisions</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ THE PRAKTIKANT PROTOCOL ═══ -->
+  <div class="section">
+    <div class="section__label">Institutional Adoption Model</div>
+    <h2 class="section__title">The Praktikant Protocol — How WINDI enters institutions</h2>
+    <p class="section__text">
+      Every technology that has tried to enter traditional institutions has failed for the same reason: arrogance. They arrive saying "we are the future, you are the past." And the Notar with 500 years of legitimacy closes the door.
+    </p>
+    <p class="section__text" style="margin-top: 12px;">
+      WINDI arrives differently. It arrives as a <em>Praktikant</em> — an institutional apprentice. It observes before acting, learns the house rules, helps without replacing anyone, and proves its value through work, not rhetoric.
+    </p>
+
+    <div class="evo-bar" style="margin-top: 32px;">
+      <div class="evo-bar__item">
+        <div class="evo-bar__icon">👋</div>
+        <span class="evo-bar__label">1 · Arrival</span>
+        <span class="evo-bar__what">Enters as technical assistant, not replacement</span>
+      </div>
+      <div class="evo-bar__item">
+        <div class="evo-bar__icon">👁</div>
+        <span class="evo-bar__label">2 · Observation</span>
+        <span class="evo-bar__what">Learns workflows, rules, and document patterns</span>
+      </div>
+      <div class="evo-bar__item">
+        <div class="evo-bar__icon">🤝</div>
+        <span class="evo-bar__label">3 · Assistance</span>
+        <span class="evo-bar__what">Prepares everything before the human decision</span>
+      </div>
+      <div class="evo-bar__item">
+        <div class="evo-bar__icon">🛡</div>
+        <span class="evo-bar__label">4 · Trust</span>
+        <span class="evo-bar__what">Operators see fewer errors, greater security</span>
+      </div>
+      <div class="evo-bar__item evo-bar__item--windi">
+        <div class="evo-bar__icon"><svg style="width:24px;height:24px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14 C4 10 6 6 10 5 C14 4 16 7 15 10 C14 13 11 14 9 13"/><path d="M9 13 C7 14 5 16 6 17 C7 18 9 17 10 16 C11 15 11 17 13 17"/><path d="M12 7 C14 5 17 5 17 7 C17 9 15 9 13 9"/><circle cx="11.5" cy="6" r="0.8" fill="currentColor" stroke="none"/><path d="M10 5 L9.5 3"/></svg></div>
+        <span class="evo-bar__label">5 · Indispensability</span>
+        <span class="evo-bar__what">Essential to the process. Never the authority.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PRAKTIKANT PRINCIPLE ═══ -->
+  <div class="principle">
+    <p class="principle__text">
+      Institutions don't resist technology.<br>
+      They resist <em>loss of authority</em>.<br>
+      WINDI gives them the opposite.
+    </p>
+    <p class="principle__sub">AUTONOMOUS PROCESSING · SOVEREIGN DECISION</p>
+  </div>
+
+  <!-- ═══ PRAKTIKANT TRILINGUAL ═══ -->
+  <div class="section">
+    <div class="section__label">The Praktikant in Three Languages</div>
+    <h2 class="section__title">One promise, every market</h2>
+
+    <div class="ml-block">
+      <div class="ml-card">
+        <div class="ml-card__flag">🇬🇧</div>
+        <div class="ml-card__lang">English</div>
+        <p class="ml-card__text">WINDI acts like a permanent institutional intern: it prepares, verifies, and organizes — but final authority always remains human.</p>
+      </div>
+      <div class="ml-card">
+        <div class="ml-card__flag">🇩🇪</div>
+        <div class="ml-card__lang">Deutsch</div>
+        <p class="ml-card__text">WINDI arbeitet wie ein dauerhafter institutioneller Praktikant: Es bereitet vor, prüft und strukturiert — aber die Entscheidungshoheit bleibt immer beim Menschen.</p>
+      </div>
+      <div class="ml-card">
+        <div class="ml-card__flag">🇧🇷</div>
+        <div class="ml-card__lang">Português</div>
+        <p class="ml-card__text">O WINDI funciona como um estagiário institucional permanente: ele prepara, verifica e organiza — mas a decisão final é sempre humana.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ GLOBAL NOTARY NETWORK ═══ -->
+  <div class="section">
+    <div class="section__label">Vision</div>
+    <h2 class="section__title">The Global Notary Network</h2>
+    <p class="section__text">
+      For centuries, a Cartório in Brazil, a Notar in Germany, a Notaire in France have performed the same function: a human attests that a decision happened, who signed, and when. Each isolated in its national silo. Each waiting for digital transformation that respects its sovereignty.
+    </p>
+    <p class="section__text" style="margin-top: 12px;">
+      WINDI enables each of these professionals to become a <em>sovereign node</em> in a global trust network. The human remains in charge. The Praktikant organizes. The Hub records. The math guarantees.
+    </p>
+    <p class="section__text" style="margin-top: 12px;">
+      A document governed in São Paulo arrives in Kempten with a verifiable hash, an SGE conformity score, a Decision Trace Commitment, and a complete Virtue Receipt. The Notar in Germany doesn't need to <em>trust</em> the Cartório in Brazil. He can <em>verify</em>.
+    </p>
+
+    <div class="quotes" style="margin-top: 32px;">
+      <div class="quote-card">
+        <div class="quote-card__label">THE NOTARY PROMISE</div>
+        <p class="quote-card__text">"WINDI: the <em>21st century Notariat</em> that arrives as a Praktikant — it learns your rules, prepares your work, and <em>never signs in your name</em>."</p>
+      </div>
+      <div class="quote-card">
+        <div class="quote-card__label">THE MARKET TRUTH</div>
+        <p class="quote-card__text">"You continue in command. We only guarantee that <em>nothing passes unnoticed</em>."</p>
+      </div>
+      <div class="quote-card">
+        <div class="quote-card__label">THE PARADIGM SHIFT</div>
+        <p class="quote-card__text">"Trust is no longer replaced by verification. Verification is what <em>trust has always aspired to become</em>."</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ HOW INSTITUTIONS JOIN ═══ -->
+  <div class="section">
+    <div class="section__label">Onboarding</div>
+    <h2 class="section__title">How institutions join the WINDI network</h2>
+    <p class="section__text">
+      A clear, verifiable path from independent system to recognized participant. As familiar as registering a domain — as consequential as joining a regulated network.
+    </p>
+
+    <div class="onboard-flow">
+      <div class="onboard-step">
+        <div class="onboard-step__num">01</div>
+        <div class="onboard-step__content">
+          <div class="onboard-step__title">Application</div>
+          <div class="onboard-step__desc">The institution requests to join the network and proves its legal identity. A binding between the digital node and the real-world entity is established.</div>
+          <div class="onboard-step__analogy">↳ Like requesting a domain name — you declare who you are</div>
+        </div>
+      </div>
+
+      <div class="onboard-step">
+        <div class="onboard-step__num">02</div>
+        <div class="onboard-step__content">
+          <div class="onboard-step__title">Verification</div>
+          <div class="onboard-step__desc">The WINDI Hub validates the institution's identity, reviews its governance capacity, and prepares a unique node certificate.</div>
+          <div class="onboard-step__analogy">↳ Like a Certificate Authority verifying your organization</div>
+        </div>
+      </div>
+
+      <div class="onboard-step">
+        <div class="onboard-step__num">03</div>
+        <div class="onboard-step__content">
+          <div class="onboard-step__title">Certification</div>
+          <div class="onboard-step__desc">The institution receives its cryptographic identity — a signed certificate that binds its name, its keys, and its authorization. From this moment, it can issue verifiable governance proofs.</div>
+          <div class="onboard-step__analogy">↳ Like receiving your HTTPS certificate — the world can now verify you</div>
+        </div>
+      </div>
+
+      <div class="onboard-step">
+        <div class="onboard-step__num">04</div>
+        <div class="onboard-step__content">
+          <div class="onboard-step__title">First Registration</div>
+          <div class="onboard-step__desc">The institution submits its first governance proof. This event is permanently recorded in the transparency log — the node's first act as a federation participant.</div>
+          <div class="onboard-step__analogy">↳ Like your first SWIFT transaction — you're now in the network</div>
+        </div>
+      </div>
+
+      <div class="onboard-step">
+        <div class="onboard-step__num">05</div>
+        <div class="onboard-step__content">
+          <div class="onboard-step__title">Recognition</div>
+          <div class="onboard-step__desc">The institution appears on the public Trust List as an ACTIVE node. From that moment, any party in the world can verify that proofs issued by this institution came from a recognized, legitimate source at a specific point in time.</div>
+          <div class="onboard-step__analogy">↳ Like appearing in the DNS — resolvable, verifiable, trusted</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="quotes" style="margin-top: 24px;">
+      <div class="quote-card">
+        <div class="quote-card__label">THE DOOR IS OPEN</div>
+        <p class="quote-card__text">"Joining WINDI is not an invitation. It's a <em>formal process with clear requirements</em> — because trust infrastructure demands institutional rigor, not informal agreements."</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ CLOSING PRINCIPLE ═══ -->
+  <div class="principle">
+    <p class="principle__text">
+      Silent infrastructure.<br>
+      Essential.<br>
+      <em>Non-negotiable once it exists.</em>
+    </p>
+    <p class="principle__sub">AI PROCESSES · HUMAN DECIDES · WINDI GUARANTEES</p>
+  </div>
+
+  <!-- ═══ FOOTER ═══ -->
+  <div class="footer">
+    <div class="footer__brand"><svg style="width:1em;height:1em;vertical-align:-0.1em" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14 C4 10 6 6 10 5 C14 4 16 7 15 10 C14 13 11 14 9 13"/><path d="M9 13 C7 14 5 16 6 17 C7 18 9 17 10 16 C11 15 11 17 13 17"/><path d="M12 7 C14 5 17 5 17 7 C17 9 15 9 13 9"/><circle cx="11.5" cy="6" r="0.8" fill="currentColor" stroke="none"/><path d="M10 5 L9.5 3"/></svg> WINDI Publishing House</div>
+    <div class="footer__meta">
+      INTERNAL POSITIONING DOCUMENT · Tripartite Governance Framework (Codename: Three Dragons)<br>
+      Constitutional Safeguards Module (Guardian) · 2026-02-10<br>
+      KEMPTEN (ALLGÄU) · BAVARIA · GERMANY<br><br>
+      "Nothing revolutionary. Everything inevitable."
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
