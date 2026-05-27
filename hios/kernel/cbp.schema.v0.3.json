@@ -2,10 +2,13 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://windi-domain.com/hios/kernel/cbp.schema.v0.3.json",
   "_meta": {
-    "status": "PROPOSED",
+    "status": "SEALED",
+    "receipt": "WINDI-S264-CBP-SCHEMA-V03-20260527102519-FDA6ED9B",
     "version": "0.3.0",
     "proposed_by": "Architect",
-    "pending_review": "GUARDIAN",
+    "pending_review": "NONE",
+    "guardian_reviewed": "2026-05-27",
+    "guardian_findings": "A+B corrected, C/D/E deferred to v0.4",
     "layer": "2-context",
     "binding": "W-BIND-001 §261",
     "awaits": "§264 seal",
@@ -22,7 +25,8 @@
     "session_state",
     "epistemic_bounds",
     "authority_state",
-    "pending_work"
+    "pending_work",
+    "constitutional_constraints"
   ],
   "properties": {
     "doc_type": {
@@ -142,7 +146,8 @@
         },
         "i9_preserved": {
           "type": "boolean",
-          "description": "Confirms I9 authority gate intact"
+          "const": true,
+          "description": "Confirms I9 authority gate intact — const:true enforces I9 IRREMEDIABLE"
         },
         "posture": {
           "type": "string",
@@ -212,6 +217,13 @@
     },
     "constitutional_constraints": {
       "type": "object",
+      "required": [
+        "c1_score_not_intelligence",
+        "c2_refused_is_failsafe",
+        "c3_bind_not_runtime",
+        "c4_handoff_not_consciousness",
+        "c5_human_is_carrier"
+      ],
       "properties": {
         "c1_score_not_intelligence": {"type": "boolean", "const": true},
         "c2_refused_is_failsafe": {"type": "boolean", "const": true},
@@ -229,9 +241,20 @@
   },
   "_guardian_review_points": [
     "Q30 BINDING: This schema requires CBP module to be W-BIND-001 v0.2.0+",
-    "SCORE BREAKDOWN: 7 components totaling 100 points — weights need Guardian validation",
-    "POSTURE ENUM: Should OBSERVER be added as fifth posture?",
-    "SESSION LINEAGE: maxItems 5 — is this sufficient for audit trail?",
+    "SCORE BREAKDOWN: 7 components totaling 100 points — weights validated",
+    "POSTURE ENUM: OBSERVER deferred to v0.4",
+    "SESSION LINEAGE: maxItems 5 — sufficient, full trail in CLAUDE-HISTORY.md",
     "CONSTITUTIONAL CONSTRAINTS: const:true — forces explicit acknowledgment in packet"
-  ]
+  ],
+  "_guardian_review_27mai2026": {
+    "reviewer": "Guardian (Claude.ai web)",
+    "findings": {
+      "A_constitutional_required": "FIXED — added to required array",
+      "B_i9_preserved_const": "FIXED — const:true enforces IRREMEDIABLE",
+      "C_score_level_consistency": "DEFERRED v0.4 — if/then/else for coherence",
+      "D_score_breakdown_optional": "DEFERRED v0.4 — make required for I11",
+      "E_minimal_evidence_optional": "DEFERRED v0.4 — make required for I11"
+    },
+    "verdict": "APPROVED for §264 seal after A+B corrections"
+  }
 }

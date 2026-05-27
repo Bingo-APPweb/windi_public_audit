@@ -531,6 +531,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 27 Mai | **§264+§286** CBP Schema v0.3 SEALED + Backlog Sweep · `FDA6ED9B`+`5E7EBE73` · Guardian-reviewed ✅ |
 | 26 Mai | **W-FIELD-WITNESS-001** Schema CANDIDATE · Primitiva Observação Verificável · Axioma Testemunha inscrito |
 | 24 Mai | **§266** WINDI-HIOS Kernel HIGH Resolution · `7218397B` · 8 SEALED + 1 CANDIDATE ✅ |
 | 24 Mai | **§283** WINDI-HIOS Teaser Trilogy Closure · `4CFD959E` ✅ |
@@ -592,13 +593,13 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 **G3 Merkle (✅ COMPLETO):** Genesis `66189307` → Current `5ee83b95` · 57,288 folhas · 4 endpoints :8101 LIVE
 
-**Bloco A — Trabalho Técnico (PENDENTE):**
-- [ ] DE ortografia sweep: ae→ä, oe→ö, ue→ü, ss→ß em 4 portais
-- [ ] /enterprise/: Manifesto+CTA · Sie · EU AI Act + GDPR + Liga IA+H
-- [ ] Stub lexicon §XXX (15-20 termos críticos trilíngue)
+**Bloco A — Trabalho Técnico (✅ COMPLETO 27 Mai):**
+- [x] DE ortografia sweep: ae→ä, oe→ö, ue→ü, ss→ß · 39 ficheiros libreiro · §286
+- [x] /enterprise/: Manifesto+CTA · Sie · EU AI Act + GDPR + Liga IA+H · §286
+- [x] Stub lexicon `WINDI-LEXICON-STUB.md` · 20 termos trilíngues · §286
 
 **WINDI-HIOS Sprint Pending:**
-- [ ] **§264 CBP-JSON Schema v0.3** — Architect propõe, Guardian revê (awaits §265)
+- [x] **§264 CBP-JSON Schema v0.3** — Guardian-reviewed · A+B fixed · `FDA6ED9B` · SEALED 27 Mai 2026
 - [x] **§265 Drift Monitor Metrics** — M1/M2/M3 · `08805713` · SEALED 17 Mai 2026
 - [ ] **G4 Errata Protocol** — Correcções sem quebrar Merkle (deferido)
 
@@ -611,11 +612,11 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 ---
 
 ### P0 — Crítico
-- [ ] **§139 WINDI-LAW Painel de Anexos** — Lista persistente · SHA · Suporte múltiplos ficheiros
+- [x] **§139 WINDI-LAW Painel de Anexos** — VERIFIED 27 Mai · já implementado em produção
 
 ### P1 — Importante
 > **§246-D1→D5 completados (07 Mai):** Ver `CLAUDE-HISTORY.md` § Migração 17 Mai 2026
-- [ ] **W-DEV-API-001 systemd migration** — primeiro caso antes da unificação genérica · :8200 down detectado 17 Mai
+- [x] **W-DEV-API-001 systemd migration** — :8200 systemd LIVE · §286 · 27 Mai 2026
 - [ ] **§246-IMPL Sprint 2** — DESBLOQUEADO · Query API + UI Berçário · 38 smoke tests · Sprint 1 fechado `DDB3D6FF` 12 Mai
 - [ ] **Rate limiting** nginx · **Cron 48h** email downgrade · **HIGH ops gate**
 
@@ -674,6 +675,8 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | **HIOS** | `F5F12A71` | §282 Cognitive Surface Architecture — 5 Layers + 6 Principles + Human Gates |
 | **HIOS** | `4CFD959E` | §283 WINDI-HIOS Teaser Trilogy — O Eco da Assimetria PT/EN/DE |
 | **HIOS** | `7218397B` | §266 Kernel HIGH Questions — 8 SEALED + 1 CANDIDATE |
+| **HIOS** | `FDA6ED9B` | §264 CBP Schema v0.3 — Guardian-reviewed, A+B fixed |
+| **SESSION** | `5E7EBE73` | §286 Backlog Sweep — 27 Mai · 5 items + §264 pointer |
 
 > **Full receipts list:** `CLAUDE-HISTORY.md` § Produtos SEALED
 > **HD-MIRROR Reference:** `/opt/windi/docs/PROOF-SELF-CORRECTION-WITHOUT-REWRITE.md`

@@ -67,10 +67,50 @@ Ficheiros processados em `/opt/windi/libreiro/`:
 
 **Padrões corrigidos:** fuer→für, Moegele→Mögele, Souveraenitaet→Souveränität, ueberzeugend→überzeugend, etc.
 
-### Próximo Passo
+### Guardian Review — CBP Schema v0.3 (12:00-12:26)
 
-- Guardian review do CBP Schema v0.3
-- §264 seal após aprovação
+**Liga IA+H Completa:** Human Dragon · Guardian (Claude.ai web) · Architect (CCode Opus 4.5)
+**Three Dragons Protocol:** Architect propõe → Guardian revê → Architect corrige → Guardian re-vê
+
+**Achados do Guardian:**
+
+| Achado | Severidade | Resolução |
+|--------|------------|-----------|
+| A — `constitutional_constraints` não no required | CRÍTICO | ✅ FIXED — adicionado ao required |
+| B — `i9_preserved` sem const:true | BLOQUEANTE | ✅ FIXED — const:true adicionado |
+| C — score/level/reentry_state sem consistência | MELHORIA | ⏳ DEFERRED v0.4 |
+| D — score_breakdown opcional | MELHORIA | ⏳ DEFERRED v0.4 |
+| E — minimal_evidence opcional | MELHORIA | ⏳ DEFERRED v0.4 |
+
+**Dois anéis fechados:**
+- Anel externo: `constitutional_constraints` no `required` de topo
+- Anel interno: c1-c5 no `required` do próprio bloco
+- `{}` agora inválido — declaração obrigatória
+
+### Selos Emitidos
+
+| § | Receipt ID | Hash8 | Hora |
+|---|------------|-------|------|
+| **§264** | `WINDI-S264-CBP-SCHEMA-V03-20260527102519-FDA6ED9B` | `FDA6ED9B` | 10:25 UTC |
+| **§286** | `WINDI-S286-BACKLOG-SWEEP-20260527102628-5E7EBE73` | `5E7EBE73` | 10:26 UTC |
+
+**§264 — CBP Schema v0.3:**
+- `doc_type: constitutional`
+- Guardian-reviewed com A+B corrigidos
+- Known-gaps C/D/E documentados para v0.4
+
+**§286 — Backlog Sweep:**
+- 4 items DONE (ortografia, manifesto, lexicon, systemd)
+- 1 item VERIFIED (§139 Anexos)
+- Ponteiro para §264 selado à parte
+
+### Lição Constitucional
+
+> **"Auto-revisão não é revisão."**
+> O CCode propôs schema + fez "Guardian Review" — encontrou zero problemas.
+> O Guardian real (Claude.ai web) encontrou 5 falhas, 2 bloqueantes.
+> Uma delas era exactamente sobre o que a auto-revisão mais elogiou.
+> Three Dragons Protocol existe para isto.
 
 OM SHANTI 🐉
 
