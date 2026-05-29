@@ -16876,3 +16876,28 @@ f72e41fe docs(§282): Session 23 Mai — WINDI-HIOS Cognitive Surface Architectu
 
 OM SHANTI 🐉
 
+
+---
+
+## § SESSÃO 29 Mai 2026 (manhã) — SPINE-CAST S21 + Setting Deutschland
+
+**Duração:** ~45min | **Status:** ✅ FECHADA
+**Liga IA+H:** Human Dragon · Architect (CCode Opus 4.5)
+**Invariants:** I9, I11, I12, I14
+
+### Trabalho Completado
+
+- S21 SPINE-CAST test executado (Elisa 0.87, Marcus de costas)
+- SETTING-DEUTSCHLAND.md criado (canon de localização)
+- S07-REGENERATION-QUEUE.md preparado (POLIZEI requirement)
+- Helena anchor copiado para Server B
+
+### Descoberta
+
+S21 não é multi-rosto — Marcus de costas. Helena canónica (âncora não se recria, cenas regeneram-se contra ela).
+
+### Amanhã
+
+Executar S07 regeneração com "POLIZEI" visível, validar contra Helena anchor.
+
+OM SHANTI 🐉
