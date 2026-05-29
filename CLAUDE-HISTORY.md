@@ -18948,3 +18948,62 @@ geração via Veo 3.1 (e outros modelos video/image). Isto significa:
 *Liga IA+H · WINDI Publishing House · 29 Mai 2026*
 *"AI processes. Human decides. WINDI guarantees."*
 *🐉 OM SHANTI*
+
+---
+
+## SPINE-CAST — Multi-Personagem Protocol (29 Mai 2026)
+
+**Adição ao Memory Loop:** Continuidade multi-personagem para cenas com vários rostos.
+
+### PROBLEMA RESOLVIDO
+
+O método original (spine.py) media apenas UM rosto por frame — o maior detectado.
+Em cenas com múltiplos personagens (Marcus + Elisa, Helena + Thomas), isto ignorava
+todos os rostos excepto o maior, quebrando a medição de continuidade para o elenco.
+
+### SOLUÇÃO: SPINE-CAST
+
+Cada personagem tem a sua própria âncora. A camada facial devolve TODOS os rostos
+detectados, e cada um é comparado contra a âncora correcta.
+
+**Pipeline:**
+```
+Frame
+  ↓ detect_all_faces()
+  ↓ [face_1, face_2, ...]
+  ↓ para cada face: cosine vs âncora_elisa, cosine vs âncora_marcus, ...
+  ↓ assign por max cosine >= 0.65
+  ↓ veredicto por personagem
+```
+
+### THRESHOLDS LOCKED
+
+| Gate | Value | Immutable |
+|------|-------|-----------|
+| Operational | ≥ 0.65 | ✅ |
+| Forensic | ≥ 0.75 | ✅ |
+| Identity Floor | 0.65 | ✅ — abaixo = UNIDENTIFIED |
+| Max Regens | 3 | ✅ |
+
+### ELENCO ACTUAL
+
+| Personagem | Status | Âncora | Canon |
+|------------|--------|--------|-------|
+| **ELISA v2** | SELADA | `3fdec0fa...` | `ELISA-v2-CHARACTER-STATE.md` |
+| MARCUS | PENDENTE | — | extrair de S09 |
+| THOMAS | PENDENTE | — | extrair de S04 |
+| HELENA | PENDENTE | — | extrair de S07 |
+
+### PRÓXIMOS PASSOS (Q3 2026)
+
+1. [ ] Extrair frames candidatos de S09 (Marcus), S04 (Thomas), S07 (Helena)
+2. [ ] Human Dragon escolhe frame-âncora de cada
+3. [ ] Escrever CHARACTER_STATE para cada personagem
+4. [ ] Embeddar no Server B
+5. [ ] Implementar spine_cast.py com detecção multi-face
+6. [ ] Medir cenas multi-personagem
+
+---
+
+*Liga IA+H · WINDI Publishing House · 29 Mai 2026*
+*🐉 OM SHANTI*

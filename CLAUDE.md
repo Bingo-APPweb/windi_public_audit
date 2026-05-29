@@ -117,6 +117,49 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 
 > **Full details:** `CLAUDE-HISTORY.md` § W-* Agents
 
+### W-HIOS-CINEMATIC-SPINE-001 — Papel Operacional Produção Visual
+
+Nesta produção ("O Peso do Eco"), o Architect (CCode) é o operador da
+geração de vídeo. Isto significa:
+- O CCode **CONSTRÓI** os prompts (CANONICAL FACE + cena) e **PREPARA** a geração.
+- O CCode **INVOCA** o gerador de vídeo (Veo 3.1, `veo-3.1-generate-preview`,
+  via chaves Gemini) para gerar cada cena. DALL-E 3 pode servir de
+  referência de design (input conceptual), **NÃO** como fonte do embedding.
+- O CCode **EXTRAI** frames e **CORRE** o B4 para medir:
+    - `embed_face` (InsightFace/ArcFace buffalo_l, Server B) — extrai embeddings.
+    - `spine.py` — veredicto de continuidade de **UMA** identidade.
+    - `spine_cast.py` — continuidade **MULTI-PERSONAGEM** (vários rostos por cena).
+
+**TRAVÃO CONSTITUCIONAL (I9 — IRREMEDIÁVEL):**
+- Gerar **UMA** cena requer decisão explícita do Human Dragon antes de cada execução.
+- O CCode **NUNCA** encadeia gerar→medir→regenerar→gerar em loop fechado.
+- Após medir, o CCode **REPORTA** o veredicto e **PARA**. Quem decide regenerar
+  (até ao tecto de 3) é o Human Dragon.
+- *"Architect propõe e opera; Human Dragon autoriza cada geração."*
+
+**MÉTODO B4 (gates LOCKED):**
+
+| Gate | Threshold | Status |
+|------|-----------|--------|
+| Operacional | ≥ 0.65 | LOCKED |
+| Forense | ≥ 0.75 | LOCKED |
+| Máx. regenerações | 3 | LOCKED |
+
+- I14: rosto não detectado → `NO_FACE` / `FAIL_NO_FACE`, nunca veredicto inventado.
+- **SPINE-CAST:** cada rosto medido contra a sua âncora; piso de identidade 0.65 —
+  abaixo disso → `UNIDENTIFIED`, não se força identidade.
+
+**ÂNCORAS DO ELENCO:**
+
+| Personagem | Status | Âncora Hash | Canon |
+|------------|--------|-------------|-------|
+| **ELISA v2** | SELADA | `3fdec0fa...` | `canons/ELISA-v2-CHARACTER-STATE.md` |
+| MARCUS | PENDENTE | — | extrair de S09 |
+| THOMAS | PENDENTE | — | extrair de S04 |
+| HELENA | PENDENTE | — | extrair de S07 |
+
+> **§291 SEAL:** `4f5fe537...` · 5 Type-B scenes · `_forense/obra2-v2/S291_FINAL_SEAL_v2.md`
+
 ---
 
 ## 3. Constituição Nuclear
@@ -173,7 +216,7 @@ Nenhum endpoint retorna valores default que mascarem dados ausentes.
 
 **§150 W-SEC-001:** :8144 · Security Sentinel · Dual Correlation · `BD09970F`
 **§151 W-DRAGON-001:** :8122 · 16×16 SHA-256 Glyph Grid · Dragon Shadow Forest
-**§153 W-STATE-CORE-006:** :8114 · Verify Public · `/api/receipts/{id}` *(§267 errata)*
+**§153 W-STATE-CORE-006:** :8114 · Verify Public · `/verify-public/{id}` *(§267 errata)*
 **§163 DECRETO-001:** Árvore Viva · TRUNK→SAP→BRANCHES→LEAVES→FRUITS
 > **Full details:** `CLAUDE-HISTORY.md` § §150-163
 
@@ -384,7 +427,7 @@ Bridges: /opt/windi/agents/constitutional-agent/blueprints/
 }
 ```
 
-**Seal:** `POST http://localhost:8101/api/receipts` · **Verify:** `GET /verify-public/?id={receipt_id}`
+**Seal:** `POST http://localhost:8101/api/receipts` · **Verify:** `GET /verify-public/{receipt_id}`
 
 ---
 
