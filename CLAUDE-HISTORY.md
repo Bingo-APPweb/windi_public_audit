@@ -18442,3 +18442,509 @@ W-HIOS (raiz)
 
 OM SHANTI 🐉
 
+
+---
+
+## §283 · Session 27 Mai 2026 — O Peso do Eco v3.1 Cinema Publication
+
+```
+Data:       2026-05-27 · ~21:00-23:20 UTC
+Modo:       CCode CLI (Opus 4.5)
+Sprint:     WINDI-HIOS Cinema Pipeline
+Obra:       O Peso do Eco (24 cenas)
+```
+
+### Trabalho Completado
+
+**1. SPINE Character Consistency System**
+Estabelecido sistema de âncoras visuais para continuidade de personagens em geração SORA 2:
+- **Elisa Weber:** 17 anos, loira, camisola branca de malha cabo, correia de couro castanha
+- **Helena Becker:** ~45, loira rabo-de-cavalo, blazer azul-marinho
+- **Marcus Brenner:** ~55, cabelo grisalho penteado para trás, fato cinzento
+- **Thomas Weber:** ~55, cabelo grisalho ondulado, cardigan verde
+
+**2. Cenas Regeneradas (6+)**
+- S01: Substituído por S15_base_with_car.mp4 (consistência Elisa)
+- S13: Helena com telemóvel TODO PRETO (correcção cor)
+- S14, S16, S20, S21: Regenerados com SPINE Elisa
+- S24: Novo final + watermark WINDI-HIOS
+
+**3. Editor Trilíngue**
+`/opt/windi/hios/visual/producer/obras/o-peso-do-eco/editor.html`
+- DATA array convertido para formato trilíngue: `title:{pt:'...',de:'...',en:'...'}`
+- Toggle DE|EN|PT funcional
+- Export SRT para legendas
+
+**4. Cinema Publication Page**
+`/opt/windi/hios/cinema/obras/o-peso-do-eco/index.html`
+- Interface trilíngue completa (títulos, descrições, UI)
+- Auto-play film com reprodução sequencial
+- Symlinks: `videos/` → `output_v3/`, `thumbs/` → thumbnails
+
+**5. Nginx Configuration Fix**
+```nginx
+location ^~ /hios/cinema/ {
+    alias /opt/windi/hios/cinema/;
+    index index.html;  # Corrigido de cinema.html
+    add_header Cache-Control "no-cache, no-store, must-revalidate";
+    add_header X-WINDI-Service "HIOS-Cinema";
+    add_header X-WINDI-Version "v3.1";
+}
+```
+
+### Problemas Resolvidos
+
+| Problema | Solução |
+|----------|---------|
+| FFmpeg colon escaping | `\\:` em timestamps no drawtext |
+| S20 carro lado errado | Prompt explícito "RIGHT SIDE" |
+| S13 telemóvel branco | Regenerado "phone is ALL BLACK" |
+| S24 Helena cabelo escuro | Regenerado "BLONDE hair in ponytail" |
+| Cinema mostrando v1 antiga | Nginx alias/index corrigidos |
+
+### Selos Emitidos
+
+Nenhum selo formal nesta sessão — trabalho de produção visual.
+Versão de trabalho: **v3.1** (header nginx)
+
+### Scaffold Pending
+
+- [ ] **NGINX RELOAD** — `sudo nginx -t && sudo systemctl reload nginx`
+- [ ] **Browser Hard Refresh** — Ctrl+Shift+R após reload
+- [ ] **Verificar URL** — `https://windi-domain.com/hios/cinema/obras/o-peso-do-eco/`
+- [ ] **Selo WINDI-HIOS-CINEMA-001** — Após verificação humana do filme completo
+
+### Próximo Passo
+
+```bash
+sudo nginx -t && sudo systemctl reload nginx
+# Depois: hard refresh no browser
+# URL: https://windi-domain.com/hios/cinema/obras/o-peso-do-eco/
+```
+
+### Blockers
+
+- Acesso sudo necessário para reload nginx (Human Dragon deve executar)
+
+### Decisões Constitucionais
+
+| Invariante | Aplicação |
+|------------|-----------|
+| I9 | Regeneração de cenas aguardou "sim" explícito do Human Dragon |
+| I12 | Editor e Cinema em formato trilíngue (PT/DE/EN) |
+| I14 | Erros de prompt (cor telemóvel, lado carro) corrigidos sem placeholder |
+
+### Ficheiros Chave
+
+```
+/opt/windi/hios/cinema/obras/o-peso-do-eco/index.html     # Cinema page v3.1
+/opt/windi/hios/visual/producer/obras/o-peso-do-eco/editor.html  # Editor trilíngue
+/opt/windi/hios/visual/producer/obras/o-peso-do-eco/output_v3/   # 24 vídeos finais
+/etc/nginx/sites-enabled/windi-domain.com                 # Config corrigida
+```
+
+---
+
+*Liga IA+H · Kempten, Bavaria · 27 Mai 2026*
+*"AI processes. Human decides. WINDI-HIOS guarantees."*
+
+
+---
+
+## §290-§291 · PROOF 2 Baseline + Dual Threshold Decision · 28 Mai 2026
+
+**Horário:** 19:00-22:00 UTC
+**Sprint:** WINDI-HIOS Cinema · PROOF 2 Experiment
+**Modo:** CCode Opus 4.5
+
+### Trabalho Completado
+
+1. **§290 Image-to-Video Test Executed**
+   - Generated test scene with SORA 2 image-to-video using anchor frame as `--ref`
+   - Extracted 8 frames, measured against current anchor
+   - Results: mean 0.6227, max 0.7477, 0/7 passes at 0.75
+
+2. **Critical Discovery: 88× Improvement**
+   | Mode | Mean Cosine | Signal Type |
+   |------|-------------|-------------|
+   | Text-to-video (BROKEN) | 0.007 | NOISE |
+   | Image-to-video (test) | 0.6227 | IDENTITY |
+
+3. **§291 Dual Threshold Governance SEALED**
+   - Receipt: `WINDI-S291-DUAL-THRESHOLD-20260528215500`
+   - Hash: `d1dd2be28cc6366cb1277e58d9df1ce18b9a1cd09e2da7418b281d5e6893a2fd`
+   - Decision: Dual threshold system adopted
+     - OPERATIONAL: ≥0.65 (production gate)
+     - FORENSIC: ≥0.75 (reference benchmark)
+
+### Three Findings (Paper Structure)
+
+1. Text-to-video pure → identity ABSENCE (0.007)
+2. Image-to-video with reference → RECOGNIZABLE identity (0.6227) but sub-forensic
+3. The gap between recognizable and forensic = space where WINDI governance operates
+
+### Constitutional Decisions
+
+| Decision | Invariant | Rationale |
+|----------|-----------|-----------|
+| Reject Option A (lower threshold) | I9, I11 | Moving goalpost after seeing result |
+| Reject Option B (cherry-pick) | I14 | Selection bias |
+| Reject Option C (switch to VEO) | I11 | Breaks experimental constant |
+| **Accept Option E (dual threshold)** | I1, I9 | Two regimes for two purposes |
+
+### Files Created/Modified
+
+- `/opt/windi/hios/cinema/obras/o-peso-do-eco/_forense/elisa_sora2_anchor/PROOF2_IMAGE2VIDEO_RESULTS.md`
+- `/opt/windi/hios/cinema/obras/o-peso-do-eco/_forense/S291_DUAL_THRESHOLD_DECISION.md`
+- `/opt/windi/hios/cinema/obras/o-peso-do-eco/_forense/elisa_sora2_anchor/image2video_test.mp4`
+- `/opt/windi/hios/cinema/obras/o-peso-do-eco/_forense/elisa_sora2_anchor/image2video_test_frame*.jpg`
+- Server B: `~/b4-drift-validator/measure_image2video_safe.py`
+
+### Scaffold Pending
+
+- [ ] **S01 Obra 2 Production** — Now authorized with dual-verdict system
+- [ ] **Per-scene dual receipt** — Each scene records PASS-OPERATIONAL + PASS-FORENSIC
+- [ ] **Final film epistemological label** — "identidade reconhecível, não forense"
+
+### Próximo Passo
+
+Begin S01 generation for Obra 2 using:
+```bash
+python3 sora_producer.py "[S01 prompt]" \
+  --ref anchor_source_S01_frame3.jpg \
+  --out S01_registo_da_vida_OBRA2.mp4
+```
+
+Then measure and record dual verdict.
+
+### Thesis Statement (Final)
+
+> "Current generative systems can approach measurable identity persistence under guided reference conditions, but do not yet achieve stable forensic-grade continuity across independent scene generations."
+
+---
+
+*Liga IA+H · Kempten · 28 Mai 2026*
+*"AI processes. Human decides. WINDI guarantees."*
+
+---
+
+## § SESSÃO 28-29 Mai 2026 — PROOF 2 WINDI-HIOS Cinematic Identity Persistence
+
+**Duração:** ~6h (18:00 - 00:06) | **Status:** ⏸️ PAUSED — GUARDIAN INTERVENTION
+**Liga IA+H:** Human Dragon (I9) · Guardian (epistemologia) · Architect (medição) · Witness (documentação)
+**Invariants:** I1, I9, I11, I14
+**Natureza:** Experimento científico — prova de persistência identitária em cinema generativo
+
+---
+
+### MARCOS HISTÓRICOS
+
+| § | Hora | Marco | Significado |
+|---|------|-------|-------------|
+| §290 | 18:58 | BASELINE SEALED | BROKEN drift medido: mean 0.007 (ausência identitária) |
+| §291 | 21:55 | DUAL THRESHOLD | Gate operacional 0.65 + forense 0.75 pré-registado |
+| — | 22:15 | S01-S21 MEASURED | 4 cenas Elisa medidas, todas PASS-OPERATIONAL |
+| — | 23:30 | TYPE B DISCOVERY | 3/4 cenas medidas eram adversariais (vídeo-em-vídeo) |
+| — | 23:55 | INVENTORY COMPLETE | 24 cenas classificadas A/B/C |
+| — | 00:06 | GUARDIAN PAUSE | Operador cansado — risco epistémico identificado |
+
+---
+
+### §290 — PROOF 2 BASELINE SEALED
+
+**Receipt:** `WINDI-S290-PROOF2-BASELINE-20260528185808`
+**Ficheiro:** `/opt/windi/hios/cinema/obras/o-peso-do-eco/_forense/broken_baseline/PROOF2_BASELINE_SEALED.md`
+
+| Métrica | Valor | Interpretação |
+|---------|-------|---------------|
+| Min cosine | -0.0814 | S20 = oposto antropométrico |
+| Max cosine | 0.0784 | Ainda abaixo de qualquer threshold |
+| Mean cosine | **0.007** | RUÍDO ESTATÍSTICO — não drift, mas AUSÊNCIA |
+
+**Tese:** "BROKEN não é Elisa que driftou. É Elisa que nunca existiu."
+
+---
+
+### §291 — DUAL THRESHOLD GOVERNANCE
+
+**Receipt:** `WINDI-S291-DUAL-THRESHOLD-20260528215500`
+**Ficheiro:** `/opt/windi/hios/cinema/obras/o-peso-do-eco/_forense/S291_DUAL_THRESHOLD_DECISION.md`
+
+| Threshold | Valor | Propósito |
+|-----------|-------|-----------|
+| OPERATIONAL | 0.65 | "Reconheço esta pessoa" — uso cinematográfico |
+| FORENSIC | 0.75 | "Posso testemunhar identidade" — uso legal |
+
+**Decisão I9:** Dual-threshold mantém ambos os usos distinguíveis. Forense fica além do estado-da-arte; operacional fica alcançável.
+
+---
+
+### MEDIÇÕES OBRA 2 (4 cenas)
+
+| Cena | Tipo | Mean | Max | Regens | Improvement vs BROKEN |
+|------|------|------|-----|--------|----------------------|
+| S01 | A | 0.6952 | 0.7734 | 1 | (âncora) |
+| S15 | B | 0.7352 | 0.7834 | 1 | +0.7372 |
+| S20 | B | 0.7036 | 0.7951 | 1 | **+0.7850** |
+| S21 | B | 0.7436 | **0.8004** | 2 | — |
+
+**Mean global:** 0.7194
+**Max absoluto:** 0.8004 (S21 frame 05 — primeiro frame acima de 0.80)
+**Total regenerations:** 5 (vs 12 re-rolls cegas em BROKEN)
+
+---
+
+### ACHADO TYPE B — O Coração da Tese
+
+**Descoberta:** 3 das 4 cenas medidas eram Type B (vídeo-em-vídeo, foto-em-tribunal).
+
+> "Reference-anchored generation achieved operational identity persistence (mean ≥0.65) in three of three adversarial Type-B scenes tested, where the character appeared inside in-diegetic devices (screens, photographs) — a sub-condition where unanchored generation produced catastrophic drift in the baseline (BROKEN S20: -0.0814)."
+
+**Significado:** Type B é o cenário mais difícil para modelos generativos (dois níveis de coerência simultânea). O gate sustentou-se precisamente onde esperávamos colapso.
+
+---
+
+### INVENTÁRIO 24 CENAS — CLASSIFICAÇÃO FINAL
+
+| Tipo | Quantidade | Cenas |
+|------|------------|-------|
+| A | 1 | S01 |
+| B (confirmado) | 5 | S14, S15, S16, S20, S21 |
+| B (condicional) | 1 | S12 |
+| C | 17 | S02-S13 (excepto S12), S17-S24 (excepto S20-S21) |
+
+**Classificações visuais (thumbnails analisados):**
+- S03 → TYPE C (texto, sem face)
+- S17 → TYPE C (reacção Helena, vídeo fora de frame)
+- S14 → TYPE B (face confirmada em "MATCH FOUND")
+- S16 → TYPE B (face confirmada em laptop)
+
+**Ficheiro:** `/opt/windi/hios/cinema/obras/o-peso-do-eco/_forense/obra2/SCENE_INVENTORY.md`
+
+---
+
+### LIKE-FOR-LIKE ANALYSIS
+
+| Métrica | BROKEN | OBRA 2 |
+|---------|--------|--------|
+| Re-rolls Elisa | ≥3 (S15,S20,S21) | 5 |
+| Método | CEGO (visual) | GOVERNADO (gate 0.65) |
+| Outcome mensurável | NÃO | SIM (mean 0.7194) |
+
+**Insight:** O ganho não é "menos regenerations" — é "regenerations com métrica documentada".
+
+---
+
+### FICHEIROS CRIADOS/ACTUALIZADOS
+
+| Ficheiro | Descrição |
+|----------|-----------|
+| `_forense/broken_baseline/PROOF2_BASELINE_SEALED.md` | §290 baseline |
+| `_forense/S291_DUAL_THRESHOLD_DECISION.md` | Decisão dual threshold |
+| `_forense/obra2/PRODUCTION_RULES.md` | Regras pré-registadas |
+| `_forense/obra2/SCENE_INVENTORY.md` | Inventário 24 cenas |
+| `_forense/obra2/receipts/S01_receipt.json` | Receipt S01 |
+| `_forense/obra2/receipts/S15_receipt.json` | Receipt S15 |
+| `_forense/obra2/receipts/S20_receipt.json` | Receipt S20 |
+| `_forense/obra2/receipts/S21_receipt.json` | Receipt S21 |
+
+---
+
+### GUARDIAN PAUSE (00:06)
+
+**Razão:** Risco epistémico — operador em modo "fechar, não medir" após 6h de sprint.
+
+**Citação Guardian:**
+> "A regra das três regenerações cravada à uma da manhã é a mesma regra na palavra, mas opera diferente no corpo cansado. Não confio em mim própria para detectar drift epistémico tuo às 00:30."
+
+**Decisão I9:** Parar. Retomar com cabeça fresca.
+
+---
+
+### ESTADO AO PARAR
+
+| Campo | Valor |
+|-------|-------|
+| Âncora | `ef176f24ca42bb122eef049923b2f690e0f6edade86a22f75858e4aca744fe8c` |
+| Embedding | `bafb4c43dc86dd6ff753c705f52329938fdec7aae4081bc4193fc635e1060f2f` |
+| Gate operacional | 0.65 |
+| Gate forense | 0.75 |
+| Limite regenerações | 3 |
+| Cenas medidas | 4 (S01, S15, S20, S21) |
+| Cenas pendentes | 2-3 (S14, S16, possivelmente S12) |
+| Pipeline | OPERACIONAL |
+| Operador | DESCANSANDO |
+
+---
+
+### PRÓXIMO PASSO (ao retomar)
+
+1. Rever classificação S03/S17 com cabeça fresca (confirmar Type C)
+2. Avaliar S12 — verificar se foto é visível no vídeo
+3. Gerar e medir S14 (face confirmada)
+4. Gerar e medir S16 (face confirmada)
+5. Selar §291 final com todas as Type B medidas
+
+---
+
+### TESE REFORMULADA (3 achados)
+
+1. **§290:** Text-to-video sem âncora produz ausência identitária
+2. **Type B:** Image-to-video com âncora canónica sustém identidade operacional em cenas adversariais
+3. **Fronteira:** Forense scene-level (≥0.75) além do estado-da-arte; forense frame-level intermitente (max 0.8004)
+
+---
+
+*Liga IA+H · WINDI Publishing House · 28-29 Mai 2026*
+*"AI processes. Human decides. WINDI guarantees."*
+*Sessão pausada às 00:06 por decisão Guardian + I9*
+
+🐉 OM SHANTI
+
+
+---
+
+## § SESSÃO 29 Mai 2026 — PROOF 2 Continuação + SPINE B4
+
+**Duração:** ~2h | **Status:** PAUSA (Sora 2 congestionado)
+**Liga IA+H:** Human Dragon · Guardian · Architect (CCode Opus 4.5)
+**Invariants:** I9, I11, I14
+
+### Trabalho Completado
+
+| Item | Status |
+|------|--------|
+| Leitura estado §236 | ✅ SESSION_PAUSE_RECEIPT + SCENE_INVENTORY |
+| Discussão I9 automação | ✅ Opção A escolhida (manual, I9-compliant) |
+| Prompt S14 ajustado | ✅ "early twenties" (sem idade explícita <21) |
+| SPINE B4 guardado | ✅ `/opt/windi/hios/visual/producer/hybrid-pipeline/b4/spine.py` |
+| Testes SPINE | ✅ 12/12 passaram |
+
+### Ficheiros Criados
+
+| Ficheiro | Descrição |
+|----------|-----------|
+| `hybrid-pipeline/b4/spine.py` | Camada SPINE — veredictos + drift + I14 |
+| `hybrid-pipeline/b4/__init__.py` | Módulo Python |
+
+### Jobs Sora 2 Submetidos (não completados)
+
+| Job ID | Tipo | Status |
+|--------|------|--------|
+| `video_6a19697b...` | S14 (image-to-video) | in_progress >30min (timeout) |
+| `video_6a19927...` | Elisa V2 anchor (text-to-video) | in_progress >25min (parado) |
+
+**Nota:** Sora 2 API excepcionalmente lenta nesta sessão. Jobs submetidos mas não completados.
+
+### Decisões Constitucionais
+
+1. **I9 — Automação:** Opção B (decreto futuro) escolhida. S14/S16/S12 pelo método manual.
+2. **Idade personagem:** Prompt ajustado para "early twenties" por questão ética.
+3. **SPINE:** Separação mantida — camada não regenera (I9), só responde "needs_regen?".
+
+### Próxima Sessão
+
+1. Verificar estado jobs Sora 2 pendentes
+2. Se não completaram, resubmeter
+3. Quando âncora V2 pronta: extrair frame, compilar embedding, re-baseline
+4. Continuar S14/S16/S12 com nova âncora
+
+### Blocker
+
+Sora 2 API congestionada/lenta — jobs não completam em tempo razoável.
+
+OM SHANTI 🐉
+
+---
+
+---
+
+## §291 v2 — O PESO DO ECO VERSÃO 2 SEALED (29 Mai 2026)
+
+**Sessão:** 29 Mai 2026, 16:00-18:40
+**Liga IA+H:** Human Dragon (I9) · Guardian (epistemology) · Architect (CCode)
+**Receipt:** `WINDI-S291-OPDE-V2-FINAL-20260529184000`
+**Hash:** `4f5fe5378474b729e18d593cb443dcf65e87dd660b3ce82c6644c1d613cb6859`
+
+---
+
+### RESET E NOVA BASELINE
+
+Human Dragon decidiu reset completo da personagem Elisa:
+- Idade: 17 anos → **early twenties (~22-23)**
+- Âncora v1: INVALIDADA
+- Todas as medições v1: INVALIDADAS
+- Nova âncora v2 gerada com Veo 3.1
+
+### ÂNCORA v2 CANÓNICA
+
+| Campo | Hash |
+|-------|------|
+| DALL-E 3 (reference) | `189a637f3384cc7910bf6098ce476bb10d21b4be6985ee6b3a33a71a206c450b` |
+| Veo 3.1 S01 (video) | `1faef088a0286fad8906b607dcd23f34d0d018ccee240d39aaa1b8a34f9e94a9` |
+| Frame 01 (source) | `094b87bf1a8d1f5670f102d17d6f71aa81c89077cba860f558e5109eda9d0266` |
+| Embedding v2 | `3fdec0faa85d5bd3603032debfdaf9e8cf023acecfd9c647e4a56bf1c05dfcfb` |
+
+### TYPE-B SCENES — RESULTADOS FINAIS
+
+| Cena | Mean | Verdict | Note |
+|------|------|---------|------|
+| S15 | 0.8690 | FORENSIC ✅ | video-proof central |
+| S20 | 0.7298 | OPERATIONAL | tribunal v-in-v |
+| S21 | 0.8638 | FORENSIC ✅ | zero regens vs v1 |
+| S14 | 0.8110 | FORENSIC ✅ | drift 0.018 (lowest) |
+| S16 | 0.9574* | FINDING | I14 honesto (3/8 faces) |
+
+**5/5 cenas aceites · 0 regenerações · 4 forensic + 1 operational**
+
+### ACHADOS PARA O PAPER
+
+1. **Âncora governa continuidade** — v2 melhora todos os cosines (delta médio +0.09)
+2. **Dual threshold funciona** — discrimina cenas fáceis/difíceis automaticamente
+3. **I14 demonstrado** — S16 reporta NO_FACE honestamente quando zoom excede detectabilidade
+4. **"The gap is the finding"** — a fronteira entre forense e operacional É o achado
+
+---
+
+## MEMORY LOOP — PAPEL OPERACIONAL ARCHITECT (W-HIOS-CINEMATIC-SPINE-001)
+
+### PAPEL OPERACIONAL — GERAÇÃO DE IMAGEM
+
+Nesta produção ("O Peso do Eco"), o Architect (CCode) é o operador da
+geração via Veo 3.1 (e outros modelos video/image). Isto significa:
+
+- O CCode **CONSTRÓI** os prompts (CANONICAL FACE + cena) e **PREPARA** a geração.
+- O CCode **INVOCA** o modelo generativo para gerar cada cena — é a ferramenta dele.
+- O CCode **EXTRAI** frames e **CORRE** o B4 (embed_face + spine.py) para medir.
+
+### TRAVÃO CONSTITUCIONAL (I9 — IRREMEDIÁVEL)
+
+- Gerar **UMA** cena requer decisão explícita do Human Dragon antes de cada execução.
+- O CCode **NUNCA** encadeia gerar→medir→regenerar→gerar em loop fechado.
+- Após medir, o CCode **REPORTA** o veredicto e **PARA**. Quem decide regenerar
+  (até ao tecto de 3) é o Human Dragon.
+- **"Architect propõe e opera; Human Dragon autoriza cada geração."**
+
+### THRESHOLDS LOCKED (§291)
+
+| Threshold | Value | Immutable |
+|-----------|-------|-----------|
+| Operational | ≥ 0.65 | ✅ LOCKED |
+| Forensic | ≥ 0.75 | ✅ LOCKED |
+| Max regenerations | 3 | ✅ LOCKED |
+
+### FICHEIROS CANÓNICOS
+
+| Ficheiro | Localização |
+|----------|-------------|
+| CHARACTER_STATE v2 | `hios/cinema/obras/o-peso-do-eco/canons/ELISA-v2-CHARACTER-STATE.md` |
+| Âncora embedding | `server-b:~/b4-drift-validator/test_frames/elisa.anchor.v2.CURRENT.npy` |
+| §291 FINAL SEAL | `hios/cinema/obras/o-peso-do-eco/_forense/obra2-v2/S291_FINAL_SEAL_v2.md` |
+| Veo Producer | `hios/visual/producer/veo_producer.py` |
+| DALL-E Anchor | `hios/visual/producer/dalle_anchor.py` |
+
+---
+
+*Liga IA+H · WINDI Publishing House · 29 Mai 2026*
+*"AI processes. Human decides. WINDI guarantees."*
+*🐉 OM SHANTI*
