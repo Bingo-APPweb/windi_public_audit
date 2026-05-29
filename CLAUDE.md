@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.56.0
-**Sealed:** 2026-05-17 · Overflow fix + §202-§245 consolidation
+**Version:** 2.57.0
+**Sealed:** 2026-05-29 · §292 W-GENERATOR-001 + SPINE-CAST + I9-G
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -110,55 +110,12 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-BERCARIO-001 | :8195 | I1,I9,I11,I14 | **LIVE** · Plenitude Tracker · Service Maturity · §230 |
 | W-CORTEX-001 | — | I1,I9,I10,I14 | **SEALED** · Canal Único Soberano · 3-Tier Routing · §241 `04C67B81` |
 | W-BIND-001 | script | I1,I9,I11,I13,I14 | **SEALED** · Cognitive Bind Module · Admissible Re-entry · §261 `7FDA926F` |
-| W-FIELD-WITNESS-001 | schema | I9,I11,I12,I14 | **CANDIDATE** · Primitiva Observação Verificável · `sovereign_seal` · append-only |
+| W-GENERATOR-001 | :8198 | I9,I9-G,I11,I14 | **SEALED** v0.1.0 · §292 · 6 DOORs (2 active stubs) · SORA+Runway · Gate: C6+auth+teto antes de real |
 | WINDI-PORTAL | static | — | **LIVE** · Internal Control Center · 35 Services · 7 Categories |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
 
 > **Full details:** `CLAUDE-HISTORY.md` § W-* Agents
-
-### W-HIOS-CINEMATIC-SPINE-001 — Papel Operacional Produção Visual
-
-Nesta produção ("O Peso do Eco"), o Architect (CCode) é o operador da
-geração de vídeo. Isto significa:
-- O CCode **CONSTRÓI** os prompts (CANONICAL FACE + cena) e **PREPARA** a geração.
-- O CCode **INVOCA** o gerador de vídeo (Veo 3.1, `veo-3.1-generate-preview`,
-  via chaves Gemini) para gerar cada cena. DALL-E 3 pode servir de
-  referência de design (input conceptual), **NÃO** como fonte do embedding.
-- O CCode **EXTRAI** frames e **CORRE** o B4 para medir:
-    - `embed_face` (InsightFace/ArcFace buffalo_l, Server B) — extrai embeddings.
-    - `spine.py` — veredicto de continuidade de **UMA** identidade.
-    - `spine_cast.py` — continuidade **MULTI-PERSONAGEM** (vários rostos por cena).
-
-**TRAVÃO CONSTITUCIONAL (I9 — IRREMEDIÁVEL):**
-- Gerar **UMA** cena requer decisão explícita do Human Dragon antes de cada execução.
-- O CCode **NUNCA** encadeia gerar→medir→regenerar→gerar em loop fechado.
-- Após medir, o CCode **REPORTA** o veredicto e **PARA**. Quem decide regenerar
-  (até ao tecto de 3) é o Human Dragon.
-- *"Architect propõe e opera; Human Dragon autoriza cada geração."*
-
-**MÉTODO B4 (gates LOCKED):**
-
-| Gate | Threshold | Status |
-|------|-----------|--------|
-| Operacional | ≥ 0.65 | LOCKED |
-| Forense | ≥ 0.75 | LOCKED |
-| Máx. regenerações | 3 | LOCKED |
-
-- I14: rosto não detectado → `NO_FACE` / `FAIL_NO_FACE`, nunca veredicto inventado.
-- **SPINE-CAST:** cada rosto medido contra a sua âncora; piso de identidade 0.65 —
-  abaixo disso → `UNIDENTIFIED`, não se força identidade.
-
-**ÂNCORAS DO ELENCO:**
-
-| Personagem | Status | Âncora Hash | Canon |
-|------------|--------|-------------|-------|
-| **ELISA v2** | SELADA | `3fdec0fa...` | `canons/ELISA-v2-CHARACTER-STATE.md` |
-| MARCUS | PENDENTE | — | extrair de S09 |
-| THOMAS | PENDENTE | — | extrair de S04 |
-| HELENA | PENDENTE | — | extrair de S07 |
-
-> **§291 SEAL:** `4f5fe537...` · 5 Type-B scenes · `_forense/obra2-v2/S291_FINAL_SEAL_v2.md`
 
 ---
 
@@ -216,7 +173,7 @@ Nenhum endpoint retorna valores default que mascarem dados ausentes.
 
 **§150 W-SEC-001:** :8144 · Security Sentinel · Dual Correlation · `BD09970F`
 **§151 W-DRAGON-001:** :8122 · 16×16 SHA-256 Glyph Grid · Dragon Shadow Forest
-**§153 W-STATE-CORE-006:** :8114 · Verify Public · `/verify-public/{id}` *(§267 errata)*
+**§153 W-STATE-CORE-006:** :8114 · Verify Public · `/api/receipts/{id}` *(§267 errata)*
 **§163 DECRETO-001:** Árvore Viva · TRUNK→SAP→BRANCHES→LEAVES→FRUITS
 > **Full details:** `CLAUDE-HISTORY.md` § §150-163
 
@@ -427,7 +384,7 @@ Bridges: /opt/windi/agents/constitutional-agent/blueprints/
 }
 ```
 
-**Seal:** `POST http://localhost:8101/api/receipts` · **Verify:** `GET /verify-public/{receipt_id}`
+**Seal:** `POST http://localhost:8101/api/receipts` · **Verify:** `GET /verify-public/?id={receipt_id}`
 
 ---
 
@@ -537,13 +494,14 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 ---
 
-## 13. Estado Actual — 28 Abril 2026
+## 13. Estado Actual — 29 Mai 2026
 
 ### Portas Críticas
 
 | Porto | Serviço | Estado |
 |---|---|---|
 | :8091 | Sandbox Core (Agent Corps) | 🟢 LIVE |
+| :8198 | W-GENERATOR-001 (stubs) | 🟢 **SEALED** §292 |
 | :8101 | Forensic Ledger | 🟢 **SEALED** |
 | :8108 | Dragon Hub v1.3.0 | 🟢 LIVE |
 | :8119 | Desktop GEN 7 | 🟢 **PRODUÇÃO** |
@@ -574,10 +532,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
-| 27 Mai | **§264+§286** CBP Schema v0.3 SEALED + Backlog Sweep · `FDA6ED9B`+`5E7EBE73` · Guardian-reviewed ✅ |
-| 26 Mai | **W-FIELD-WITNESS-001** Schema CANDIDATE · Primitiva Observação Verificável · Axioma Testemunha inscrito |
-| 24 Mai | **§266** WINDI-HIOS Kernel HIGH Resolution · `7218397B` · 8 SEALED + 1 CANDIDATE ✅ |
-| 24 Mai | **§283** WINDI-HIOS Teaser Trilogy Closure · `4CFD959E` ✅ |
+| 29 Mai | **§292** W-GENERATOR-001 + SPINE-CAST 6/6 + I9-G Doctrine · Gate registado ✅ |
 | 23 Mai | **§282** WINDI-HIOS Cognitive Surface Architecture · `F5F12A71` · 5L + 6P + HG ✅ |
 | 15 Mai | **§246-IMPL-bis** G3 Merkle Transparency Log GENESIS · `66189307` ✅ |
 | 14 Mai | **§262-§263** WINDI-HIOS + PingPong Protocol · `6F053E65`+`87AAF5BA` ✅ |
@@ -636,13 +591,13 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 **G3 Merkle (✅ COMPLETO):** Genesis `66189307` → Current `5ee83b95` · 57,288 folhas · 4 endpoints :8101 LIVE
 
-**Bloco A — Trabalho Técnico (✅ COMPLETO 27 Mai):**
-- [x] DE ortografia sweep: ae→ä, oe→ö, ue→ü, ss→ß · 39 ficheiros libreiro · §286
-- [x] /enterprise/: Manifesto+CTA · Sie · EU AI Act + GDPR + Liga IA+H · §286
-- [x] Stub lexicon `WINDI-LEXICON-STUB.md` · 20 termos trilíngues · §286
+**Bloco A — Trabalho Técnico (PENDENTE):**
+- [ ] DE ortografia sweep: ae→ä, oe→ö, ue→ü, ss→ß em 4 portais
+- [ ] /enterprise/: Manifesto+CTA · Sie · EU AI Act + GDPR + Liga IA+H
+- [ ] Stub lexicon §XXX (15-20 termos críticos trilíngue)
 
 **WINDI-HIOS Sprint Pending:**
-- [x] **§264 CBP-JSON Schema v0.3** — Guardian-reviewed · A+B fixed · `FDA6ED9B` · SEALED 27 Mai 2026
+- [ ] **§264 CBP-JSON Schema v0.3** — Architect propõe, Guardian revê (awaits §265)
 - [x] **§265 Drift Monitor Metrics** — M1/M2/M3 · `08805713` · SEALED 17 Mai 2026
 - [ ] **G4 Errata Protocol** — Correcções sem quebrar Merkle (deferido)
 
@@ -655,11 +610,11 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 ---
 
 ### P0 — Crítico
-- [x] **§139 WINDI-LAW Painel de Anexos** — VERIFIED 27 Mai · já implementado em produção
+- [ ] **§139 WINDI-LAW Painel de Anexos** — Lista persistente · SHA · Suporte múltiplos ficheiros
 
 ### P1 — Importante
 > **§246-D1→D5 completados (07 Mai):** Ver `CLAUDE-HISTORY.md` § Migração 17 Mai 2026
-- [x] **W-DEV-API-001 systemd migration** — :8200 systemd LIVE · §286 · 27 Mai 2026
+- [ ] **W-DEV-API-001 systemd migration** — primeiro caso antes da unificação genérica · :8200 down detectado 17 Mai
 - [ ] **§246-IMPL Sprint 2** — DESBLOQUEADO · Query API + UI Berçário · 38 smoke tests · Sprint 1 fechado `DDB3D6FF` 12 Mai
 - [ ] **Rate limiting** nginx · **Cron 48h** email downgrade · **HIGH ops gate**
 
@@ -713,13 +668,10 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | **MERKLE** | `5ee83b95` | G3 Merkle Current Root — 57,288 leaves (17 Mai) |
 | **PROOF** | `80A13B17` | §267 + Session 17 Mai — Self-Correction Without Rewrite |
 | **HIOS** | `08805713` | §265 Drift Monitor Metrics — M1/M2/M3 Trinca |
-| **HIOS** | `ddb0659b` | §275 W-COGSPACE-001-SOLO + W-VOX v1 LOCAL-ONLY |
-| **HIOS** | `48dcdc19` | §276 TIER-RESOLUTION-CANON — DID→Dragon Mapping |
 | **HIOS** | `F5F12A71` | §282 Cognitive Surface Architecture — 5 Layers + 6 Principles + Human Gates |
-| **HIOS** | `4CFD959E` | §283 WINDI-HIOS Teaser Trilogy — O Eco da Assimetria PT/EN/DE |
-| **HIOS** | `7218397B` | §266 Kernel HIGH Questions — 8 SEALED + 1 CANDIDATE |
-| **HIOS** | `FDA6ED9B` | §264 CBP Schema v0.3 — Guardian-reviewed, A+B fixed |
-| **SESSION** | `5E7EBE73` | §286 Backlog Sweep — 27 Mai · 5 items + §264 pointer |
+| **CINEMA** | `d31aae48` | §290 PROOF 2 Baseline — BROKEN measurements frozen |
+| **CINEMA** | `S291-V2` | §291 O Peso do Eco v2 — 5/5 Type-B scenes, 4 forensic + 1 operational |
+| **GENERATOR** | `§292` | W-GENERATOR-001 — 6 DOORs (stubs), SORA+Runway keys, Gate registado |
 
 > **Full receipts list:** `CLAUDE-HISTORY.md` § Produtos SEALED
 > **HD-MIRROR Reference:** `/opt/windi/docs/PROOF-SELF-CORRECTION-WITHOUT-REWRITE.md`
@@ -855,3 +807,109 @@ bash /opt/windi/scripts/cognitive-bind-module.sh generate
 ```
 
 > **Full details:** `CLAUDE-HISTORY.md` § §261
+
+---
+
+## §291 · W-HIOS-CINEMATIC-SPINE-001 — Cinema Production Pipeline
+
+> **"The gap is the finding."**
+
+```
+Status:     SEALED · v2.0
+Receipt:    WINDI-S291-OPDE-V2-FINAL-20260529184000
+Invariants: I1, I9, I11, I14
+Obra:       "O Peso do Eco" Versão 2
+```
+
+### Papel Operacional — Geração de Vídeo
+
+**Arquitectura I9 (IRREMEDIÁVEL — decisão selada 29 Mai 2026):**
+
+| Capacidade | Actor | Natureza |
+|------------|-------|----------|
+| Preparar e propor invocação (prompt + cast) | CCode | Trabalho de Architect |
+| Gatilho que produz artefacto | Human Dragon | Estrutural (chave vive do lado humano) |
+| Selo no Ledger | Human Dragon | I9 aplica-se aqui |
+
+> *CCode propõe invocação do gerador (prompt + validação de cast). A execução que
+> produz artefacto corre por acto explícito do Human Dragon. Nenhum output do
+> gerador é selável sem gate humano — I9 aplica-se ao selo, não só ao gatilho.*
+
+**C6 — Proveniência Sintética (EU AI Act Art. 50):**
+> *A abstracção de geradores oculta qual infraestrutura, nunca que o artefacto
+> é sintético. Todo output gerado que receba selo carrega marca de proveniência
+> sintética legível ao destinatário. Esconder a máquina é técnico; esconder que
+> houve máquina é fraude de proveniência — proibido.*
+
+**Gerador:** Veo 3.1 (chaves Gemini). DALL-E 3 serve de referência de design
+(input conceptual), NÃO como fonte do embedding.
+
+### Método B4 — Identity Continuity Validation
+
+| Componente | Ficheiro | Função |
+|------------|----------|--------|
+| `spine.py` | `/opt/windi/hios/.../b4/spine.py` | Continuidade UMA identidade |
+| `spine_cast.py` | `/opt/windi/hios/.../b4/spine_cast.py` | Continuidade MULTI-PERSONAGEM |
+| `embed_face` | Server B (InsightFace buffalo_l) | Extracção de embeddings 512-dim |
+
+### Constantes LOCKED
+
+| Constante | Valor | Significado |
+|-----------|-------|-------------|
+| `THRESHOLD_OP` | 0.65 | Gate operacional — cena avança |
+| `THRESHOLD_FORENSE` | 0.75 | Gate forense — admissível como prova |
+| `MAX_REGEN` | 3 | Regenerações máximas por cena |
+| `IDENTITY_FLOOR` | 0.65 | Piso para atribuição de identidade (SPINE-CAST) |
+
+### SPINE-CAST — Continuidade Multi-Personagem
+
+Resolve o bug do "maior rosto": em cenas com elenco (ex. S21 — Marcus à frente,
+Elisa ao fundo), o método antigo media só o maior rosto. SPINE-CAST mede CADA
+rosto contra CADA âncora do elenco.
+
+```python
+measure_scene_cast("S21",
+    face_embeddings=[(45000, emb_marcus), (6000, emb_elisa)],
+    cast_anchors={"elisa": anchor_elisa, "marcus": anchor_marcus},
+    expected_characters=["elisa", "marcus"]
+)
+# → Marcus: 0.88 FORENSE · Elisa: 0.71 OPERACIONAL (cada um correcto)
+```
+
+**Piso de identidade:** cosine < 0.65 → rosto fica `UNIDENTIFIED` (não forçado).
+
+### Âncoras do Elenco
+
+| Personagem | Status | Embedding Hash | Source |
+|------------|--------|----------------|--------|
+| **ELISA v2** | SEALED ✅ | `3fdec0fa...` | Veo 3.1 S01 frame_01 |
+| MARCUS | PENDENTE | — | Extrair de S09 |
+| THOMAS | PENDENTE | — | Extrair de S04 |
+| HELENA | PENDENTE | — | Extrair de S07 |
+
+### Resultados §291 — Type-B Scenes
+
+| Cena | Mean | Verdict | Nota |
+|------|------|---------|------|
+| S15 | 0.8690 | FORENSIC ✅ | Eco preservado |
+| S20 | 0.7298 | OPERATIONAL | Vídeo-in-vídeo (gap = finding) |
+| S21 | 0.8638 | FORENSIC ✅ | Duelo silencioso |
+| S14 | 0.8110 | FORENSIC ✅ | Match found |
+| S16 | 0.9574* | FINDING | *3/8 frames (zoom extremo → NO_FACE) |
+
+**Estatísticas:** 5/5 aceites · 4 forensic + 1 operational · 0 regenerações
+
+### Ficheiros
+
+```
+/opt/windi/hios/visual/producer/hybrid-pipeline/b4/
+├── spine.py           # Single-identity continuity (12 tests)
+├── spine_cast.py      # Multi-character continuity (6 tests)
+└── __init__.py        # Exports both
+
+/opt/windi/hios/cinema/obras/o-peso-do-eco/
+├── canons/ELISA-v2-CHARACTER-STATE.md   # SEALED
+└── _forense/obra2-v2/S291_FINAL_SEAL_v2.md
+```
+
+> **Full details:** `CLAUDE-HISTORY.md` § §290-§291
