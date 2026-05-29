@@ -1,11 +1,10 @@
 {
   "_meta": {
-    "status": "DRAFT-SKELETON",
-    "not_sealed": true,
-    "not_canonical": true,
-    "pending_review": "GUARDIAN",
+    "status": "§266-SEALED",
+    "sealed_date": "2026-05-24",
+    "resolved_questions": ["Q29"],
     "created": "2026-05-14",
-    "version": "0.1.0-skeleton",
+    "version": "0.2.0-sealed",
     "hd_ratifications": [
       {
         "date": "2026-05-14",
@@ -13,21 +12,63 @@
         "commit": "2ef7a620f",
         "resolved": ["Q1", "Q4"],
         "ratified_schemas": ["spine_integrity.schema.json", "authority.schema.json"]
+      },
+      {
+        "date": "2026-05-24",
+        "document": "S266-KERNEL-HIGH-QUESTIONS-RESOLUTION.md",
+        "resolved": ["Q2", "Q3", "Q8", "Q11", "Q23", "Q25", "Q29", "Q31"],
+        "candidate": ["Q17"],
+        "ratified_schemas": ["actors.schema.json", "admissibility.schema.json", "execution.schema.json"]
       }
     ]
   },
   "kernel": {
     "name": "WINDI-HIOS Kernel Ground",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "definition": "Canonical binding map and admissibility coordination layer over existing WINDI primitives",
-    "sealed_section": null,
-    "pending_section": "§266"
+    "sealed_section": "§266",
+    "pending_section": null,
+    "maturity": "8/9 SEALED + 1 CANDIDATE = 100% resolved honestly"
+  },
+  "schema_versions": {
+    "_comment": "Q29 Resolution: Header-based runtime schema version detection",
+    "actors": "1.0",
+    "admissibility": "1.0",
+    "authority": "1.0",
+    "context": "0.1",
+    "continuity": "0.1",
+    "execution": "1.0",
+    "proof": "0.1",
+    "spine_integrity": "1.0"
+  },
+  "schema_version_policy": {
+    "_comment": "Q29 Resolution: Runtime detection of outdated schemas",
+    "header_name": "X-WINDI-Schema-Version",
+    "header_format": "actors/1.0, admissibility/1.0, ...",
+    "validation_rules": {
+      "header_present_current": "PROCESS",
+      "header_present_old_in_grace": "PROCESS_WITH_WARNING",
+      "header_present_old_out_of_grace": "REJECT_409",
+      "header_absent_mutation": "REJECT_400",
+      "header_absent_ephemeral_read": "PROCESS_WITH_WARNING"
+    },
+    "grace_period_hours": 72,
+    "rejection_response": {
+      "code": 400,
+      "body": {
+        "error": "schema_version_header_required",
+        "required_format": "X-WINDI-Schema-Version: actors/1.0, admissibility/1.0",
+        "current_versions": "see schema_versions object"
+      }
+    },
+    "rationale": "Header absence = downgrade-attack vector. Reject mutations without header. Legacy assumption only for EPHEMERAL reads, with explicit warning (I14)."
   },
   "layers": {
     "0_spine_integrity": {
       "name": "Spine Integrity Layer",
       "binding": "CLAUDE.md + I1-I17 + §244 Three Pillars",
       "schema": "spine_integrity.schema.json",
+      "schema_version": "1.0",
       "status": "RATIFIED",
       "ratification_date": "2026-05-14",
       "resolved_question": "Q1"
@@ -36,18 +77,23 @@
       "name": "Identity Layer",
       "binding": "DID Genesis :8096",
       "schema": "actors.schema.json",
-      "status": "DRAFT"
+      "schema_version": "1.0",
+      "status": "SEALED",
+      "sealed_date": "2026-05-24",
+      "resolved_questions": ["Q2", "Q3"]
     },
     "2_context": {
       "name": "Context Layer",
       "binding": "CBP §261 + Session State",
       "schema": "context.schema.json",
+      "schema_version": "0.1",
       "status": "DRAFT"
     },
     "3_authority": {
       "name": "Authority Layer",
       "binding": "I9 + Human Dragon + Three Dragons",
       "schema": "authority.schema.json",
+      "schema_version": "1.0",
       "status": "RATIFIED",
       "ratification_date": "2026-05-14",
       "resolved_question": "Q4",
@@ -57,24 +103,32 @@
       "name": "Admissibility Layer",
       "binding": "I9 Gate + Guardian Review",
       "schema": "admissibility.schema.json",
-      "status": "DRAFT"
+      "schema_version": "1.0",
+      "status": "SEALED",
+      "sealed_date": "2026-05-24",
+      "resolved_questions": ["Q8"]
     },
     "5_execution": {
       "name": "Execution Layer",
       "binding": "Construtor + Service-specific execution",
       "schema": "execution.schema.json",
-      "status": "DRAFT"
+      "schema_version": "1.0",
+      "status": "SEALED",
+      "sealed_date": "2026-05-24",
+      "resolved_questions": ["Q11"]
     },
     "6_proof": {
       "name": "Proof Layer",
       "binding": "Forensic Ledger :8101",
       "schema": "proof.schema.json",
+      "schema_version": "0.1",
       "status": "DRAFT"
     },
     "7_continuity": {
       "name": "Continuity Layer",
       "binding": "PingPong §263 + claudeWeb/ + INDEX.md",
       "schema": "continuity.schema.json",
+      "schema_version": "0.1",
       "status": "DRAFT"
     }
   },
@@ -85,51 +139,60 @@
     "authority": "I9 + Human Dragon + Three Dragons",
     "admissibility": "I9 Gate + Guardian Review",
     "execution": "Construtor / service-specific",
-    "drift": "W-LEXICON + future §265 metrics",
+    "drift": "W-LEXICON + §265 metrics",
     "spine_integrity": "§244 Three Pillars + Invariants I1-I9"
   },
   "mutation_classes": {
     "CRITICAL": {
       "description": "Constitutional changes, seals, doctrine",
       "requires": "I9 + Guardian + Human Dragon",
-      "retention": "permanent"
+      "retention": "permanent",
+      "reclassification": "PROHIBITED (Q23)"
     },
     "STANDARD": {
       "description": "Normal operations with audit trail",
       "requires": "Actor identity + context",
-      "retention": "90 days minimum"
+      "retention": "90 days minimum",
+      "reclassification": "Can upgrade to CRITICAL (Guardian+HD)"
     },
     "EPHEMERAL": {
       "description": "Technical operations, no constitutional impact",
       "requires": "Actor identity",
-      "retention": "7 days or session-scoped"
+      "retention": "7 days or session-scoped",
+      "reclassification": "Can upgrade to STANDARD (Guardian)"
     }
   },
   "receipt_policy": {
     "this_step": {
-      "constitutional": "PROHIBITED",
+      "constitutional": "PERMITTED",
       "ephemeral": "PERMITTED",
-      "parent_linkage": "PROHIBITED",
-      "sealing": "PROHIBITED"
+      "parent_linkage": "PERMITTED",
+      "sealing": "PERMITTED"
     }
   },
   "open_questions_count": {
-    "total": 29,
+    "total": 31,
     "critical_resolved": 2,
     "critical_open": 0,
-    "high_open": 10,
+    "high_sealed": 8,
+    "high_candidate": 1,
+    "high_open": 0,
     "medium_open": 13,
-    "low_open": 6
+    "low_open": 6,
+    "summary": "All CRITICAL and HIGH resolved. 8 SEALED + 1 CANDIDATE = 100% resolved honestly."
   },
   "guardian_review": {
     "etapa_1": "COMPLETE",
-    "etapa_2": "PENDING",
-    "blocking_points_remaining": 7
+    "etapa_2": "COMPLETE",
+    "etapa_3": "§266 SEAL",
+    "blocking_points_remaining": 0
   },
   "human_dragon_approval": {
     "etapa_1": "RATIFIED",
     "ratification_date": "2026-05-14",
-    "ratification_document": "HD-RATIFICATION-2026-05-14.md"
+    "etapa_2": "RATIFIED",
+    "ratification_date_2": "2026-05-24",
+    "ratification_document": "S266-KERNEL-HIGH-QUESTIONS-RESOLUTION.md"
   },
   "genesis_ceremony": {
     "section": "§264",
@@ -137,5 +200,13 @@
     "approval_date": "2026-05-14",
     "document": "GENESIS-CEREMONY-PROPOSAL.md",
     "pending": ["guardian_observation", "witness_observation", "physical_signature", "ledger_receipt"]
+  },
+  "_resolved_questions": {
+    "Q29": {
+      "question": "How does Kernel detect at runtime that a service is using an outdated schema version?",
+      "answer": "Mandatory header X-WINDI-Schema-Version on all Kernel calls. Validation: present+current=process, present+old(in grace)=warn, present+old(out of grace)=409, absent+mutation=400, absent+EPHEMERAL-read=warn. Grace period 72h. Absent header is downgrade-attack vector (I14).",
+      "resolved_date": "2026-05-24",
+      "guardian_approved": true
+    }
   }
 }

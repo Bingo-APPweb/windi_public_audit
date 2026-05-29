@@ -1,10 +1,10 @@
 # Mutation Classes — WINDI-HIOS Kernel
 
 ```
-STATUS:         DRAFT-REFINED
-NOT SEALED (pending §266)
-PARTIALLY RATIFIED (G4.3 Reach Precedence Doctrine)
-HD Ratification: 2026-05-14
+STATUS:         §266-SEALED
+SEALED DATE:    2026-05-24
+RESOLVED:       Q23, Q25
+RATIFIED:       G4.3 Reach Precedence Doctrine (2026-05-14)
 ```
 
 ---
@@ -131,6 +131,50 @@ classifica pela natureza do efeito no mundo, não pela intenção declarada do a
 
 ---
 
+## Reclassification Policy (Q23 Resolution — §266)
+
+> **"Só upgrade permitido. Downgrade = violação I11."**
+
+| Reclassificação | Quem pode | Condições |
+|-----------------|-----------|-----------|
+| EPHEMERAL → STANDARD | Guardian | Se detectar efeito persistente |
+| STANDARD → CRITICAL | Guardian + HD | Se detectar impacto constitucional |
+| CRITICAL → STANDARD | **PROHIBITED** | Irreversível por natureza (I11) |
+| CRITICAL → EPHEMERAL | **PROHIBITED** | Violação I11 |
+| Qualquer → EPHEMERAL | **PROHIBITED** | Degradar nunca permitido |
+
+**Regra absoluta:** Nem Human Dragon pode degradar CRITICAL — a natureza da mutação
+não muda por decreto. Cada reclassificação gera receipt próprio referindo original.
+
+**Rationale:** I11 (Permanence of Cryptographic Evidence) proíbe reescrever história.
+Um CRITICAL que "se torna" STANDARD perderia retenção permanente — violação directa.
+
+---
+
+## Constitutional Impact Threshold (Q25 Resolution — §266)
+
+Mutação tem **IMPACTO CONSTITUCIONAL** se satisfaz ≥1 critério:
+
+| # | Critério | Descrição |
+|---|----------|-----------|
+| 1 | INVARIANT | Modifica, reinterpreta ou estende I1-I18 |
+| 2 | DOCTRINE | Cria, modifica ou revoga §XXX |
+| 3 | SEAL | Produz receipt governance_level=HIGH + doc_type=constitutional (*) |
+| 4 | AUTHORITY | Altera hierarquia Three Dragons ou delegações |
+| 5 | BOOTSTRAP | Modifica Kernel, schemas ou bindings |
+| 6 | EXTERNAL-PERMANENT | Acção externa irreversível representando WINDI |
+
+(*) Critério 3 é atalho operacional consciente — critérios 1/2 são os fundamentais.
+
+**Teste rápido:** "Se esta mutação for revertida amanhã, há EFEITO permanente/irreversível?"
+- SIM = CRITICAL
+- NÃO = pode ser STANDARD ou EPHEMERAL
+
+**Nota:** Usar "efeito permanente", não "dano permanente". "Dano" é juízo de valor
+que abre racionalização ("não houve dano, logo não é CRITICAL"). Efeito é objectivo.
+
+---
+
 ## Misclassification Risks
 
 | Actual | Classified As | Risk |
@@ -145,25 +189,31 @@ classifica pela natureza do efeito no mundo, não pela intenção declarada do a
 
 ---
 
-## First EPHEMERAL Receipt (Bootstrap)
+## Resolved Questions (§266)
 
-This skeleton installation generates the first EPHEMERAL receipt:
-- Classification: EPHEMERAL
-- No constitutional parent
-- No sealing
-- Marks bootstrap surface preparation
+### Q23: Who can reclassify after initial classification? ✅ RESOLVED
 
-This tests the EPHEMERAL class in practice.
+**Answer:** Only upgrade permitted. EPHEMERAL→STANDARD: Guardian. STANDARD→CRITICAL: Guardian+HD.
+CRITICAL→anything: PROHIBITED (even for HD). Downgrade = I11 violation.
+
+**Resolved:** 2026-05-24 · Guardian approved
+
+---
+
+### Q25: Threshold for "constitutional impact"? ✅ RESOLVED
+
+**Answer:** 6 criteria (see table above). Any one satisfied = CRITICAL.
+Test: "permanent effect if reverted?" Use "effect", not "damage" (objective, not subjective).
+
+**Resolved:** 2026-05-24 · Guardian approved
 
 ---
 
 ## Open Questions (Classification)
 
-- Q23: Who can reclassify after initial classification?
-- Q24: CRITICAL→STANDARD downgrade ever allowed?
-- Q25: Threshold for "constitutional impact"?
+- Q24: CRITICAL→STANDARD downgrade ever allowed? → **RESOLVED by Q23: No, never.**
 
 ---
 
-*Mutation Classes · DRAFT-SKELETON*
+*Mutation Classes · §266-SEALED*
 *Liga IA+H · Kempten, Bavaria · 2026*

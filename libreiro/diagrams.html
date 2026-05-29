@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Diagrams — WINDI System</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Crect width='20' height='20' rx='4' fill='%231A1208'/%3E%3Cellipse cx='10' cy='11' rx='4.5' ry='4' transform='rotate(-15 10 11)' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='7' cy='7.5' r='2.8' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='6.2' cy='6.8' r='0.7' fill='%238B6914'/%3E%3Cpath d='M7.5 4.8 C7 3.5 8 2.5 8.5 2' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M7 10 C5 8.5 3 8 2 9 C1.5 9.8 2.5 11 4 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M13 9.5 C15 8 17 8 17.5 9.5 C17.8 10.5 16.5 11 15 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M14 13 C16 14 17 15.5 16 16.5 C15 17.5 13.5 16.5 13.5 15' stroke='%238B6914' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E">
+<meta name="description" content="Visual Documentation of WINDI Architecture">
+<link rel="stylesheet" href="/library/windi-internal.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js">
+// Mark current nav link
+if(location.pathname.includes('/library/')){
+  document.querySelectorAll('.nav-links a').forEach(function(a){
+    if(a.getAttribute('href')==='/library/' || a.getAttribute('href')==='/library/index.html'){
+      a.classList.add('nav-current');
+    }
+  });
+}
+</script>
+<style>
+  .diagram-box {
+    background: var(--surface-2);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 2rem;
+    margin: 2rem 0;
+    text-align: center;
+  }
+  .diagram-box h3 {
+    color: var(--gold);
+    margin-bottom: 1rem;
+    font-family: var(--font-mono);
+  }
+  .mermaid {
+    background: var(--surface-1);
+    border-radius: var(--radius-sm);
+    padding: 1.5rem;
+  }
+</style>
+</head>
+<body data-theme="dark" data-lang="de">
+
+<!-- Header -->
+<header class="site-header">
+  <a href="/library/index.html" class="header-brand">
+    <div class="header-logo">W</div>
+    <div class="header-title-group">
+      <span class="header-title">WINDI</span>
+      <span class="header-subtitle">Governance Intelligence</span>
+    </div>
+  </a>
+  <div class="header-center">
+    <div class="header-status">
+      <span class="status-dot"></span>
+      <span>Operational</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('de')">DE</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('pt')">PT</button>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <div class="theme-toggle-track"></div>
+      <div class="theme-toggle-thumb" id="themeThumb"></div>
+    </button>
+    <button class="mobile-toggle" onclick="toggleSidebar()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- Sidebar Navigation -->
+<nav class="sidebar sidebar-left" id="sidebarLeft">
+  <div class="sidebar-section">
+    <div class="sidebar-label">Masterarbeit</div>
+    <a href="/library/index.html" class="sidebar-link">Main Document</a>
+    <a href="/library/cover.html" class="sidebar-link">Cover</a>
+    <a href="/library/about-windi.html" class="sidebar-link">About WINDI</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Governance</div>
+    <a href="/library/governance-levels.html" class="sidebar-link">Governance Levels</a>
+    <a href="/library/human-oversight.html" class="sidebar-link">Human Oversight</a>
+    <a href="/library/data-handling.html" class="sidebar-link">Data Handling</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Architecture</div>
+    <a href="/library/diagrams.html" class="sidebar-link sidebar-link-active">Diagrams</a>
+    <a href="/library/interface-guide.html" class="sidebar-link">Interface Guide</a>
+    <a href="/library/verification-layer.html" class="sidebar-link">Verification Layer</a>
+    <a href="/library/kapitel12_domain_sovereignty.html" class="sidebar-link">Domain Sovereignty</a>
+    <a href="/library/identity-governance-layer.html" class="sidebar-link">Identity Governance</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Technical Reports</div>
+    <a href="/library/tr-windi-2026-003.html" class="sidebar-link">TR-003: Service Layer</a>
+    <a href="/library/tr-windi-2026-004.html" class="sidebar-link">TR-004: Cognitive Service</a>
+    <a href="/library/tr-windi-2026-005.html" class="sidebar-link">TR-005: Cognitive Cycle</a>
+    <a href="/library/isp-evolution.html" class="sidebar-link">TR-006: ISP Registry</a>
+    <a href="/library/tr-007.html" class="sidebar-link">TR-007: Provenance</a>
+    <a href="/library/sge-results.html" class="sidebar-link">SGE Results</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Publications</div>
+    <a href="/library/publications.html" class="sidebar-link">Publications</a>
+    <a href="/library/fachartikel-provenienz.html" class="sidebar-link">Fachartikel</a>
+    <a href="/library/windi-publishing-house.html" class="sidebar-link">Manifesto</a>
+    <a href="/library/editorial-policy.html" class="sidebar-link">Editorial Policy</a>
+    <a href="/library/idpf-abstract.html" class="sidebar-link">IDPF Abstract</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Media</div>
+    <a href="/library/windi-working-paper-2026.html" class="sidebar-link">Working Paper</a>
+    <a href="/library/press-release-windi-2026.html" class="sidebar-link">Press Release</a>
+    <a href="/library/windi-side-by-side-2026.html" class="sidebar-link">Side-by-Side</a>
+    <a href="/library/wsj-style-governed-windi-2026.html" class="sidebar-link">WSJ Feature</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Compliance</div>
+    <a href="/library/document-integrity.html" class="sidebar-link">Doc Integrity</a>
+    <a href="/library/print-watermark-layer.html" class="sidebar-link">Print Layer</a>
+    <a href="/library/regulatory-summary-print-layer.html" class="sidebar-link">Regulatory</a>
+    <a href="/library/availability-implementation.html" class="sidebar-link">Appendix A</a>
+  </div>
+</nav>
+
+<!-- Right Sidebar TOC -->
+<aside class="sidebar sidebar-right" id="sidebarRight">
+  <div class="sidebar-label">
+    <span class="l-de">Auf dieser Seite</span>
+    <span class="l-en">On this page</span>
+    <span class="l-pt">Nesta pagina</span>
+  </div>
+  <a href="#dragons" class="toc-link">
+    <span class="l-de">Drei-Drachen-Protokoll</span>
+    <span class="l-en">Three Dragons Protocol</span>
+    <span class="l-pt">Protocolo Tres Dragoes</span>
+  </a>
+  <a href="#hitl" class="toc-link">
+    <span class="l-de">Human-in-the-Loop</span>
+    <span class="l-en">Human-in-the-Loop</span>
+    <span class="l-pt">Human-in-the-Loop</span>
+  </a>
+  <a href="#architecture" class="toc-link">
+    <span class="l-de">Systemarchitektur</span>
+    <span class="l-en">System Architecture</span>
+    <span class="l-pt">Arquitetura do Sistema</span>
+  </a>
+  <a href="#invariantes" class="toc-link">
+    <span class="l-de">Neun Invarianten</span>
+    <span class="l-en">Nine Invariants</span>
+    <span class="l-pt">Nove Invariantes</span>
+  </a>
+  <a href="#escalation" class="toc-link">
+    <span class="l-de">Eskalationsmodell</span>
+    <span class="l-en">Escalation Model</span>
+    <span class="l-pt">Modelo de Escalacao</span>
+  </a>
+  <a href="#dataflow" class="toc-link">
+    <span class="l-de">Dokumentenlebenszyklus</span>
+    <span class="l-en">Document Lifecycle</span>
+    <span class="l-pt">Ciclo de Vida</span>
+  </a>
+</aside>
+
+<!-- Main Content -->
+<main class="main-content">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-breadcrumb">
+      <a href="/library/index.html">WINDI</a>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current">
+        <span class="l-de">Systemdiagramme</span>
+        <span class="l-en">System Diagrams</span>
+        <span class="l-pt">Diagramas do Sistema</span>
+      </span>
+    </div>
+    <div class="page-meta-bar">
+      <span class="page-tag page-tag-gov">Reference Collection</span>
+      <span class="page-date">2026-02-07</span>
+    </div>
+    <h1 class="page-title">
+      <span class="l-de">Systemdiagramme</span>
+      <span class="l-en">System Diagrams</span>
+      <span class="l-pt">Diagramas do Sistema</span>
+    </h1>
+    <p class="page-subtitle">
+      <span class="l-de">Visuelle Dokumentation der WINDI-Architektur</span>
+      <span class="l-en">Visual Documentation of WINDI Architecture</span>
+      <span class="l-pt">Documentacao Visual da Arquitetura WINDI</span>
+    </p>
+    <div class="page-divider"></div>
+  </div>
+
+  <!-- Content -->
+  <div class="content-prose">
+
+    <!-- Opening Quote -->
+    <div class="doc-quote">
+      <p>
+        <span class="l-de">"Visuelle Klarheit ermöglicht Governance-Transparenz."</span>
+        <span class="l-en">"Visual clarity enables governance transparency."</span>
+        <span class="l-pt">"Clareza visual permite transparencia de governanca."</span>
+      </p>
+      <cite>— WINDI Documentation Principle</cite>
+    </div>
+
+    <!-- Diagram 1: Three Dragons -->
+    <section id="dragons">
+      <h2>
+        <span class="l-de">Diagramm 1: Drei-Drachen-Protokoll</span>
+        <span class="l-en">Diagram 1: Three Dragons Protocol</span>
+        <span class="l-pt">Diagrama 1: Protocolo dos Tres Dragoes</span>
+      </h2>
+
+      <p>
+        <span class="lb-de">Das Koordinationsmodell fur KI-unterstützte Governance mit unterschiedlichen Rollen und Verantwortlichkeiten.</span>
+        <span class="lb-en">The coordination model for AI-assisted governance with distinct roles and responsibilities.</span>
+        <span class="lb-pt">O modelo de coordenacao para governanca assistida por IA com papeis e responsabilidades distintos.</span>
+      </p>
+
+      <div class="diagram-box">
+        <div class="mermaid">
+flowchart TB
+    subgraph HUMAN["Human Authority"]
+        HV["Human Volante<br/>(Decision Maker)"]
+    end
+    subgraph DRAGONS["Three Dragons"]
+        G["Guardian<br/>Governance & Priority"]
+        A["Architect<br/>Structure & Design"]
+        W["Witness<br/>Validation & Audit"]
+    end
+    HV -->|"Commands"| DRAGONS
+    G -->|"Advises"| HV
+    A -->|"Proposes"| HV
+    W -->|"Validates"| HV
+    G <-->|"Coordinates"| A
+    A <-->|"Reviews"| W
+    W <-->|"Confirms"| G
+        </div>
+      </div>
+    </section>
+
+    <!-- Diagram 2: HITL Workflow -->
+    <section id="hitl">
+      <h2>
+        <span class="l-de">Diagramm 2: Human-in-the-Loop Workflow</span>
+        <span class="l-en">Diagram 2: Human-in-the-Loop Workflow</span>
+        <span class="l-pt">Diagrama 2: Fluxo Human-in-the-Loop</span>
+      </h2>
+
+      <p>
+        <span class="lb-de">Jede Systemoperation erfordert menschliche Initiierung, Überprüfung und Genehmigung.</span>
+        <span class="lb-en">Every system operation requires human initiation, review, and approval.</span>
+        <span class="lb-pt">Cada operacao do sistema requer iniciacao, revisao e aprovacao humana.</span>
+      </p>
+
+      <div class="diagram-box">
+        <div class="mermaid">
+sequenceDiagram
+    participant H as Human Operator
+    participant S as WINDI System
+    participant V as Validation Gate
+    participant O as Output
+    H->>S: 1. Initiate Task
+    S->>S: 2. Process Request
+    S->>H: 3. Present Draft
+    H->>H: 4. Review & Evaluate
+    alt Approved
+        H->>V: 5a. Approve
+        V->>O: 6. Release
+    else Revision Needed
+        H->>S: 5b. Request Changes
+        S->>H: Return to Step 3
+    else Rejected
+        H->>H: 5c. Discard
+    end
+    Note over H,O: Human approval required at every step
+        </div>
+      </div>
+    </section>
+
+    <!-- Diagram 3: System Architecture -->
+    <section id="architecture">
+      <h2>
+        <span class="l-de">Diagramm 3: Systemarchitektur</span>
+        <span class="l-en">Diagram 3: System Architecture</span>
+        <span class="l-pt">Diagrama 3: Arquitetura do Sistema</span>
+      </h2>
+
+      <p>
+        <span class="lb-de">Dreischichtige Trennung zur Gewahrleistung von Governance, Verarbeitung und Infrastrukturintegritat.</span>
+        <span class="lb-en">Three-layer separation ensuring governance, processing, and infrastructure integrity.</span>
+        <span class="lb-pt">Separacao em tres camadas garantindo governanca, processamento e integridade da infraestrutura.</span>
+      </p>
+
+      <div class="diagram-box">
+        <div class="mermaid">
+flowchart TB
+    subgraph INTERACTION["Interaction Layer"]
+        UI["A4 Desk BABEL"]
+        CHAT["Chat Interface"]
+        EDITOR["Document Editor"]
+    end
+    subgraph PROCESSING["Processing Layer"]
+        CORE["WINDI Core"]
+        VALID["Constitutional Validator"]
+        AGENT["WINDI Agent"]
+    end
+    subgraph INFRA["Infrastructure Layer"]
+        DB["Database"]
+        LEDGER["Governance Ledger"]
+        BACKUP["Backup System"]
+    end
+    INTERACTION --> PROCESSING
+    PROCESSING --> INFRA
+    VALID -->|"Compliance Check"| CORE
+    LEDGER -->|"Audit Trail"| VALID
+        </div>
+      </div>
+    </section>
+
+    <!-- Diagram 4: Nine Invariants -->
+    <section id="invariantes">
+      <h2>
+        <span class="l-de">Diagramm 4: Die Neun Invarianten</span>
+        <span class="l-en">Diagram 4: The Nine Invariants</span>
+        <span class="l-pt">Diagrama 4: Os Nove Invariantes</span>
+      </h2>
+
+      <p>
+        <span class="lb-de">Verfassungsprinzipien, die unter keinen Umstanden verletzt werden durfen.</span>
+        <span class="lb-en">Constitutional principles that cannot be violated under any circumstances.</span>
+        <span class="lb-pt">Principios constitucionais que nao podem ser violados sob nenhuma circunstancia.</span>
+      </p>
+
+      <div class="diagram-box">
+        <div class="mermaid">
+mindmap
+    root((INVARIANTES))
+        Soberania
+            Human authority
+            AI serves only
+        Non-Opacity
+            Visible processes
+            No hidden operations
+        Transparencia
+            Audit trails
+            Documented reasoning
+        Jurisdicao
+            Defined scope
+            Clear boundaries
+        No Fabrication
+            Verified facts only
+            No invention
+        Conflict Structuring
+            Explicit handling
+            Documented resolution
+        Institutional
+            Formal standards
+            Professional conduct
+        No Depth Punishment
+            Consistent behavior
+            Fair treatment
+        </div>
+      </div>
+    </section>
+
+    <!-- Diagram 5: Escalation Model -->
+    <section id="escalation">
+      <h2>
+        <span class="l-de">Diagramm 5: Eskalationsmodell</span>
+        <span class="l-en">Diagram 5: Escalation Model</span>
+        <span class="l-pt">Diagrama 5: Modelo de Escalacao</span>
+      </h2>
+
+      <p>
+        <span class="lb-de">Bei Unsicherheit hat institutionelle Vorsicht Vorrang vor Geschwindigkeit.</span>
+        <span class="lb-en">When uncertainty arises, institutional caution takes precedence over speed.</span>
+        <span class="lb-pt">Quando surge incerteza, a cautela institucional tem precedencia sobre a velocidade.</span>
+      </p>
+
+      <div class="diagram-box">
+        <div class="mermaid">
+flowchart TD
+    ISSUE["Issue Detected"]
+    ISSUE --> PAUSE["Operator: PAUSE"]
+    PAUSE --> ESCALATE["Escalate to Guardian"]
+    ESCALATE --> ASSESS{"Assessment"}
+    ASSESS -->|"Technical"| ARCHITECT["Architect Review"]
+    ASSESS -->|"Governance"| GUARDIAN["Guardian Decision"]
+    ASSESS -->|"Operational"| OPERATOR["Operator Adjustment"]
+    ARCHITECT --> RESOLVE["Resolution"]
+    GUARDIAN --> RESOLVE
+    OPERATOR --> RESOLVE
+    RESOLVE --> RESUME["Resume Operations"]
+        </div>
+      </div>
+    </section>
+
+    <!-- Diagram 6: Document Lifecycle -->
+    <section id="dataflow">
+      <h2>
+        <span class="l-de">Diagramm 6: Dokumentenlebenszyklus</span>
+        <span class="l-en">Diagram 6: Document Lifecycle</span>
+        <span class="l-pt">Diagrama 6: Ciclo de Vida do Documento</span>
+      </h2>
+
+      <p>
+        <span class="lb-de">Von der Erstellung zur verifizierten institutionellen Ausgabe.</span>
+        <span class="lb-en">From creation to verified institutional output.</span>
+        <span class="lb-pt">Da criacao a saida institucional verificada.</span>
+      </p>
+
+      <div class="diagram-box">
+        <div class="mermaid">
+flowchart LR
+    CREATE["Create"] --> EDIT["Edit"]
+    EDIT --> REVIEW["Human Review"]
+    REVIEW --> APPROVE{"Approved?"}
+    APPROVE -->|"Yes"| SIGN["Generate Receipt"]
+    APPROVE -->|"No"| EDIT
+    SIGN --> EXPORT["Export PDF"]
+    EXPORT --> VERIFY["QR Verification"]
+    VERIFY --> ARCHIVE["Governance Ledger"]
+        </div>
+      </div>
+    </section>
+
+    <!-- Authorship Notice -->
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>HUMAN AUTHORSHIP NOTICE</h3>
+        <p>
+          <span class="lb-de">Dieses Dokument wurde von menschlichen Autoren erstellt und uberpruft. KI-Unterstutzung wurde unter menschlicher Aufsicht und Kontrolle verwendet.</span>
+          <span class="lb-en">This document was created and reviewed by human authors. AI assistance was used under human supervision and control.</span>
+          <span class="lb-pt">Este documento foi criado e revisado por autores humanos. Assistencia de IA foi usada sob supervisao e controle humano.</span>
+        </p>
+        <p><strong>KI verarbeitet. Mensch entscheidet. WINDI garantiert.</strong></p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Page Footer -->
+  <footer class="page-footer">
+    <div class="page-footer-meta">
+      <span>WINDI-DIAG-07FEB26-NOIR</span>
+      <span>Reference Collection</span>
+    </div>
+    <p class="page-footer-quittung">Author: Jober Mogele Correa (WINDI-CEO-001) | Status: INSTITUTIONAL BETA</p>
+    <p class="page-footer-principle">
+      <span class="l-de">"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</span>
+      <span class="l-en">"AI processes. Human decides. WINDI guarantees."</span>
+      <span class="l-pt">"IA processa. Humano decide. WINDI garante."</span>
+    </p>
+  </footer>
+
+</main>
+
+<!-- JavaScript -->
+<script>
+// Theme Toggle
+function toggleTheme() {
+  const body = document.body;
+  const isLight = body.getAttribute('data-theme') === 'light';
+  body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+  try { localStorage.setItem('windi-theme', isLight ? 'dark' : 'light'); } catch(e) {}
+  // Reinitialize mermaid for theme change
+  initMermaid();
+}
+
+// Language Switcher
+function setLang(lang) {
+  document.body.setAttribute('data-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  try { localStorage.setItem('windi-lang', lang); } catch(e) {}
+}
+
+// Sidebar Toggle (mobile)
+let sidebarOpen = false;
+function toggleSidebar() {
+  sidebarOpen = !sidebarOpen;
+  document.getElementById('sidebarLeft').classList.toggle('open', sidebarOpen);
+}
+
+// Close sidebar on link click (mobile)
+document.querySelectorAll('.sidebar-link').forEach(link => {
+  link.addEventListener('click', () => {
+    if (window.innerWidth <= 960) {
+      sidebarOpen = false;
+      document.getElementById('sidebarLeft').classList.remove('open');
+    }
+  });
+});
+
+// Mermaid initialization
+function initMermaid() {
+  const isDark = document.body.getAttribute('data-theme') !== 'light';
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: isDark ? 'dark' : 'base',
+    themeVariables: isDark ? {
+      primäryColor: '#2a2a3a',
+      primäryTextColor: '#d4af37',
+      primäryBorderColor: '#d4af37',
+      lineColor: '#d4af37',
+      secondaryColor: '#1a1a2e',
+      tertiaryColor: '#0d0d15'
+    } : {
+      primäryColor: '#e8f4ff',
+      primäryTextColor: '#003366',
+      primäryBorderColor: '#0055a4',
+      lineColor: '#0055a4'
+    }
+  });
+}
+
+// Init saved preferences
+(function init() {
+  try {
+    const theme = localStorage.getItem('windi-theme');
+    const lang = localStorage.getItem('windi-lang');
+    if (theme) document.body.setAttribute('data-theme', theme);
+    if (lang) setLang(lang);
+  } catch(e) {}
+  initMermaid();
+})();
+</script>
+
+</body>
+</html>

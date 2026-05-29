@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TR-003: Service Layer Bootstrap — WINDI System</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Crect width='20' height='20' rx='4' fill='%231A1208'/%3E%3Cellipse cx='10' cy='11' rx='4.5' ry='4' transform='rotate(-15 10 11)' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='7' cy='7.5' r='2.8' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='6.2' cy='6.8' r='0.7' fill='%238B6914'/%3E%3Cpath d='M7.5 4.8 C7 3.5 8 2.5 8.5 2' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M7 10 C5 8.5 3 8 2 9 C1.5 9.8 2.5 11 4 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M13 9.5 C15 8 17 8 17.5 9.5 C17.8 10.5 16.5 11 15 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M14 13 C16 14 17 15.5 16 16.5 C15 17.5 13.5 16.5 13.5 15' stroke='%238B6914' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E">
+<meta name="description" content="TR-WINDI-2026-003 — From Offline Engine to Network-Observable Governance">
+<link rel="stylesheet" href="/library/windi-internal.css">
+</head>
+<body data-theme="dark" data-lang="de">
+
+<!-- Header -->
+<header class="site-header">
+  <a href="/library/index.html" class="header-brand">
+    <div class="header-logo">W</div>
+    <div class="header-title-group">
+      <span class="header-title">WINDI</span>
+      <span class="header-subtitle">Governance Intelligence</span>
+    </div>
+  </a>
+  <div class="header-center">
+    <div class="header-status">
+      <span class="status-dot"></span>
+      <span>Operational</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('de')">DE</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('pt')">PT</button>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <div class="theme-toggle-track"></div>
+      <div class="theme-toggle-thumb" id="themeThumb"></div>
+    </button>
+    <button class="mobile-toggle" onclick="toggleSidebar()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- Sidebar Navigation -->
+<nav class="sidebar sidebar-left" id="sidebarLeft">
+  <div class="sidebar-section">
+    <div class="sidebar-label">Masterarbeit</div>
+    <a href="/library/index.html" class="sidebar-link">Main Document</a>
+    <a href="/library/cover.html" class="sidebar-link">Cover</a>
+    <a href="/library/about-windi.html" class="sidebar-link">About WINDI</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Governance</div>
+    <a href="/library/governance-levels.html" class="sidebar-link">Governance Levels</a>
+    <a href="/library/human-oversight.html" class="sidebar-link">Human Oversight</a>
+    <a href="/library/data-handling.html" class="sidebar-link">Data Handling</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Architecture</div>
+    <a href="/library/diagrams.html" class="sidebar-link">Diagrams</a>
+    <a href="/library/interface-guide.html" class="sidebar-link">Interface Guide</a>
+    <a href="/library/verification-layer.html" class="sidebar-link">Verification Layer</a>
+    <a href="/library/kapitel12_domain_sovereignty.html" class="sidebar-link">Domain Sovereignty</a>
+    <a href="/library/identity-governance-layer.html" class="sidebar-link">Identity Governance</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Technical Reports</div>
+    <a href="/library/tr-windi-2026-003.html" class="sidebar-link sidebar-link-active">TR-003: Service Layer</a>
+    <a href="/library/tr-windi-2026-004.html" class="sidebar-link">TR-004: Cognitive Service</a>
+    <a href="/library/tr-windi-2026-005.html" class="sidebar-link">TR-005: Cognitive Cycle</a>
+    <a href="/library/isp-evolution.html" class="sidebar-link">TR-006: ISP Registry</a>
+    <a href="/library/tr-007.html" class="sidebar-link">TR-007: Provenance</a>
+    <a href="/library/sge-results.html" class="sidebar-link">SGE Results</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Publications</div>
+    <a href="/library/publications.html" class="sidebar-link">Publications</a>
+    <a href="/library/fachartikel-provenienz.html" class="sidebar-link">Fachartikel</a>
+    <a href="/library/windi-publishing-house.html" class="sidebar-link">Manifesto</a>
+    <a href="/library/editorial-policy.html" class="sidebar-link">Editorial Policy</a>
+    <a href="/library/idpf-abstract.html" class="sidebar-link">IDPF Abstract</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Media</div>
+    <a href="/library/windi-working-paper-2026.html" class="sidebar-link">Working Paper</a>
+    <a href="/library/press-release-windi-2026.html" class="sidebar-link">Press Release</a>
+    <a href="/library/windi-side-by-side-2026.html" class="sidebar-link">Side-by-Side</a>
+    <a href="/library/wsj-style-governed-windi-2026.html" class="sidebar-link">WSJ Feature</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Compliance</div>
+    <a href="/library/document-integrity.html" class="sidebar-link">Doc Integrity</a>
+    <a href="/library/print-watermark-layer.html" class="sidebar-link">Print Layer</a>
+    <a href="/library/regulatory-summary-print-layer.html" class="sidebar-link">Regulatory</a>
+    <a href="/library/availability-implementation.html" class="sidebar-link">Appendix A</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<main class="main-content">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-breadcrumb">
+      <a href="/library/index.html">WINDI</a>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current">TR-003</span>
+    </div>
+    <div class="page-meta-bar">
+      <span class="page-tag page-tag-gov">TR-WINDI-2026-003</span>
+      <span class="page-date">2026-02-01</span>
+    </div>
+    <h1 class="page-title">
+      <span class="l-de">Service Layer Bootstrap</span>
+      <span class="l-en">Service Layer Bootstrap</span>
+      <span class="l-pt">Bootstrap da Camada de Servico</span>
+    </h1>
+    <p class="page-subtitle">
+      <span class="l-de">Vom Offline-Engine zur netzwerkbeobachtbaren Governance</span>
+      <span class="l-en">From Offline Engine to Network-Observable Governance</span>
+      <span class="l-pt">Do Motor Offline para Governanca Observavel em Rede</span>
+    </p>
+    <p class="page-subtitle" style="font-size: 0.9rem; opacity: 0.8;">Section 11 — Evolution Infrastructure Series</p>
+    <div class="page-divider"></div>
+  </div>
+
+  <!-- Content -->
+  <div class="content-prose">
+
+    <!-- Metadata Strip -->
+    <div class="spec-table-wrapper">
+      <table class="spec-table">
+        <tbody>
+          <tr>
+            <td><strong><span class="l-de">Autor</span><span class="l-en">Author</span><span class="l-pt">Autor</span></strong></td>
+            <td>Jober Mogele Correa — CGO</td>
+          </tr>
+          <tr>
+            <td><strong>AI Collaborators</strong></td>
+            <td>Claude (Guardian) · GPT (Architect)</td>
+          </tr>
+          <tr>
+            <td><strong><span class="l-de">Datum</span><span class="l-en">Date</span><span class="l-pt">Data</span></strong></td>
+            <td>01 February 2026</td>
+          </tr>
+          <tr>
+            <td><strong>Status</strong></td>
+            <td><span class="status-badge status-active">REGISTERED</span></td>
+          </tr>
+          <tr>
+            <td><strong><span class="l-de">Klassifikation</span><span class="l-en">Classification</span><span class="l-pt">Classificacao</span></strong></td>
+            <td>Methodological + Architectural</td>
+          </tr>
+          <tr>
+            <td><strong><span class="l-de">Folgt</span><span class="l-en">Follows</span><span class="l-pt">Segue</span></strong></td>
+            <td>TR-WINDI-2026-002 · Section 10</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 1: Abstract -->
+    <h2>
+      <span class="l-de">1. Zusammenfassung</span>
+      <span class="l-en">1. Abstract</span>
+      <span class="l-pt">1. Resumo</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Dieser Technische Bericht dokumentiert die Methodik zur Einfuhrung des ersten HTTP-Service-Endpunkts in die WINDI-Governance-Infrastruktur am 01. Februar 2026. Die Operation wurde auf einem Produktions-Strato-Server durchgeführt, der acht bestehende Dienste uber sieben aktive Netzwerkports hostet und prazise Koordination erforderte.</span>
+      <span class="lb-en">This Technical Report documents the methodology employed to introduce the first HTTP service endpoint into the WINDI governance infrastructure on 01 February 2026. The operation was executed on a production Strato server hosting eight pre-existing services across seven active network ports, requiring precise coordination to avoid disruption.</span>
+      <span class="lb-pt">Este Relatorio Tecnico documenta a metodologia empregada para introduzir o primeiro endpoint de servico HTTP na infraestrutura de governanca WINDI em 01 de Fevereiro de 2026. A operacao foi executada em um servidor de producao Strato hospedando oito servicos pre-existentes em sete portas de rede ativas.</span>
+    </p>
+
+    <p>
+      <span class="lb-de">Drei Ingenieursprinzipien entstanden aus dieser Arbeit und werden formell als operative Standards fur die WINDI-Infrastrukturentwicklung vorgeschlagen: <strong>Infrastructure Discovery als Governance-Praxis</strong>, <strong>Geschichtete Verifikationsmethodik</strong> und <strong>Zero-Violence Operational Deployment</strong>.</span>
+      <span class="lb-en">Three engineering principles emerged from this work and are formally proposed as operational standards for WINDI infrastructure evolution: <strong>Infrastructure Discovery as Governance Practice</strong>, <strong>Layered Verification Methodology</strong>, and <strong>Zero-Violence Operational Deployment</strong>. These principles demonstrate that WINDI governance philosophy extends beyond document processing into the operational practices that sustain the system itself.</span>
+      <span class="lb-pt">Tres principios de engenharia emergiram deste trabalho e sao formalmente propostos como padroes operacionais para a evolucao da infraestrutura WINDI: <strong>Descoberta de Infraestrutura como Pratica de Governanca</strong>, <strong>Metodologia de Verificacao em Camadas</strong> e <strong>Implantacao Operacional Zero-Violencia</strong>.</span>
+    </p>
+
+    <p>
+      <span class="lb-de">Wichtige Ergebnisse umfassen: vollstandige Port-Topologie-Kartierung der Produktionsumgebung (8 Dienste, Ports 8080–8889), erfolgreiche Bereitstellung des Evolution API Heartbeats auf Port 8083, unabhangige Verifizierung der HTTP-Transportschicht und Erhaltung aller bestehenden Dienste ohne Unterbrechung.</span>
+      <span class="lb-en">Key results include: complete port topology mapping of the production environment (8 services, ports 8080–8889), successful deployment of the Evolution API heartbeat on port 8083, independent verification of the HTTP transport layer prior to governance logic integration, and preservation of all pre-existing services with zero interruption.</span>
+      <span class="lb-pt">Resultados principais incluem: mapeamento completo da topologia de portas do ambiente de producao (8 servicos, portas 8080–8889), implantacao bem-sucedida do heartbeat da Evolution API na porta 8083, verificacao independente da camada de transporte HTTP e preservacao de todos os servicos pre-existentes sem interrupcao.</span>
+    </p>
+
+    <!-- Section 2: Context -->
+    <h2>
+      <span class="l-de">2. Kontext — Systemzustand vor der API</span>
+      <span class="l-en">2. Context — System State Before the API</span>
+      <span class="l-pt">2. Contexto — Estado do Sistema Antes da API</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Vor dieser Operation existierte die WINDI-Governance-Engine als Sammlung von Offline-Python-Modulen, bereitgestellt unter <code>/opt/windi/engine/</code> auf einem Debian-basierten Strato Virtual Server (87.106.29.233). Die Evolution v1.0-Bereitstellung wurde fruher am selben Tag abgeschlossen.</span>
+      <span class="lb-en">Prior to this operation, the WINDI governance engine existed as a collection of offline Python modules deployed to <code>/opt/windi/engine/</code> on a Debian-based Strato virtual server (87.106.29.233). The Evolution v1.0 deployment had been completed earlier on the same day, comprising the following validated components:</span>
+      <span class="lb-pt">Antes desta operacao, o motor de governanca WINDI existia como uma colecao de modulos Python offline implantados em <code>/opt/windi/engine/</code> em um servidor virtual Strato baseado em Debian (87.106.29.233). A implantacao Evolution v1.0 foi concluida anteriormente no mesmo dia.</span>
+    </p>
+
+    <div class="spec-table-wrapper">
+      <table class="spec-table">
+        <thead>
+          <tr>
+            <th><span class="l-de">Modul</span><span class="l-en">Module</span><span class="l-pt">Modulo</span></th>
+            <th><span class="l-de">Funktion</span><span class="l-en">Function</span><span class="l-pt">Funcao</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>identity_detector.py</code></td><td>Detects real institutional names in document text</td></tr>
+          <tr><td><code>governance_levels.json</code></td><td>Policy rules for LOW / MEDIUM / HIGH classification</td></tr>
+          <tr><td><code>governance_event_log.py</code></td><td>Chained event log with hash-based integrity</td></tr>
+          <tr><td><code>medium_registry.py</code></td><td>Registry for MEDIUM-level institutional content</td></tr>
+          <tr><td><code>governance_health.py</code></td><td>Comprehensive health check (GovernanceHealthCheck class)</td></tr>
+          <tr><td><code>identity_directory.json</code></td><td>Directory of 6 known institutions with license metadata</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      <span class="lb-de">Alle Module hatten ihre jeweiligen Testsuiten bestanden: Der Identity Detector klassifizierte Deutsche Bahn AG (MEDIUM), Europaische Zentralbank (HIGH), Banco do Brasil S.A. (MEDIUM), Bundesregierung (MEDIUM) und BaFin (HIGH) korrekt.</span>
+      <span class="lb-en">All modules had passed their respective test suites: the Identity Detector correctly classified Deutsche Bahn AG (MEDIUM), European Central Bank (HIGH), Banco do Brasil S.A. (MEDIUM), Bundesregierung (MEDIUM), and BaFin (HIGH). The Event Log demonstrated chain integrity. The Medium Registry produced valid governance statements with trilingual disclaimers. A frozen backup was created at <code>/opt/windi/backups/evolution_v1.0_20260201/</code>.</span>
+      <span class="lb-pt">Todos os modulos passaram em suas respectivas suites de teste: o Identity Detector classificou corretamente Deutsche Bahn AG (MEDIUM), Banco Central Europeu (HIGH), Banco do Brasil S.A. (MEDIUM), Bundesregierung (MEDIUM) e BaFin (HIGH).</span>
+    </p>
+
+    <p>
+      <span class="lb-de">Allerdings waren all diese Funktionen nur durch direkte Python-Ausfuhrung aufrufbar. Die Engine hatte keine Netzwerkprasenz. Sie konnte nicht abgefragt, uberwacht oder von anderen Diensten integriert werden.</span>
+      <span class="lb-en">However, all of these capabilities were invocable only through direct Python execution. The engine had no network presence. It could not be queried, monitored, or integrated by other services. This represented the fundamental limitation that the Evolution API was designed to address.</span>
+      <span class="lb-pt">No entanto, todas essas capacidades eram invocaveis apenas atraves de execucao direta do Python. O motor nao tinha presenca na rede. Nao podia ser consultado, monitorado ou integrado por outros servicos.</span>
+    </p>
+
+    <!-- Section 3: Problem Statement -->
+    <h2>
+      <span class="l-de">3. Problemstellung</span>
+      <span class="l-en">3. Problem Statement</span>
+      <span class="l-pt">3. Declaracao do Problema</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Das Ziel war die Einfuhrung eines minimalen HTTP-Dienstes, der es ermoglichen wurde, die Governance-Engine uber das Netzwerk abzufragen und die Grundlage fur die nachfolgende Integration mit dem BABEL-Editor und externen Uberwachungssystemen zu schaffen.</span>
+      <span class="lb-en">The objective was to introduce a minimal HTTP service that would allow the governance engine to be queried over the network, establishing the foundation for subsequent integration with the BABEL editor interface and external monitoring systems.</span>
+      <span class="lb-pt">O objetivo era introduzir um servico HTTP minimo que permitiria que o motor de governanca fosse consultado pela rede, estabelecendo a base para integracao subsequente com a interface do editor BABEL e sistemas de monitoramento externos.</span>
+    </p>
+
+    <p>
+      <span class="lb-de">Die Herausforderung war operativ, nicht algorithmisch. Der Produktionsserver führte bereits mehrere Dienste aus, die sich organisch uber mehrere Tage angesammelt hatten. Es existierte kein zentrales Port-Register. Kein Service-Manifest dokumentierte, welche Prozesse welche Ports belegten.</span>
+      <span class="lb-en">The challenge was operational, not algorithmic. The production server was already running multiple services that had been accumulating organically over several days. No centralized port registry existed. No service manifest documented which processes occupied which ports. Deploying a new listener without first understanding the existing topology risked port conflicts, service disruption, or silent failures.</span>
+      <span class="lb-pt">O desafio era operacional, nao algoritmico. O servidor de producao ja estava executando multiplos servicos que foram se acumulando organicamente ao longo de varios dias. Nao existia registro centralizado de portas. Nenhum manifesto de servico documentava quais processos ocupavam quais portas.</span>
+    </p>
+
+    <p>
+      <span class="lb-de">Diese Situation spiegelt ein Muster wider, das in institutionellen Technologieumgebungen haufig vorkommt: Systeme, die einzeln funktionieren, deren Interaktionen aber undokumentiert sind und eine Fragilitat erzeugen, die erst sichtbar wird, wenn Anderungen versucht werden.</span>
+      <span class="lb-en">This situation mirrors a pattern common in institutional technology environments: systems that work individually but whose interactions are undocumented, creating fragility that only becomes visible when change is attempted. The WINDI governance philosophy — which emphasizes transparency, observability, and non-opacity — demanded that the deployment process itself embody these principles.</span>
+      <span class="lb-pt">Esta situacao espelha um padrao comum em ambientes de tecnologia institucional: sistemas que funcionam individualmente mas cujas interacoes nao sao documentadas, criando fragilidade que so se torna visivel quando mudancas sao tentadas.</span>
+    </p>
+
+    <!-- Section 4: Methodology -->
+    <h2>
+      <span class="l-de">4. Methodik</span>
+      <span class="l-en">4. Methodology</span>
+      <span class="l-pt">4. Metodologia</span>
+    </h2>
+
+    <h3>
+      <span class="l-de">4.1 Port-Entdeckung und Topologie-Kartierung</span>
+      <span class="l-en">4.1 Port Discovery and Topology Mapping</span>
+      <span class="l-pt">4.1 Descoberta de Portas e Mapeamento de Topologia</span>
+    </h3>
+
+    <p>
+      <span class="lb-de">Anstatt einen Port aus dem Roadmap auszuwahlen (der 8081 vorgesehen hatte) und die Bereitstellung zu versuchen, verfolgte das Team einen discovery-first Ansatz. Erste Bereitstellungsversuche auf den Ports 8081 und 8082 scheiterten mit <code>OSError [Errno 98]: Address already in use</code>.</span>
+      <span class="lb-en">Rather than selecting a port from the roadmap (which had designated 8081) and attempting deployment, the team adopted a discovery-first approach. Initial deployment attempts on ports 8081 and 8082 failed with <code>OSError [Errno 98]: Address already in use</code>, triggering systematic investigation.</span>
+      <span class="lb-pt">Em vez de selecionar uma porta do roadmap (que havia designado 8081) e tentar a implantacao, a equipe adotou uma abordagem discovery-first. Tentativas iniciais de implantacao nas portas 8081 e 8082 falharam com <code>OSError [Errno 98]: Address already in use</code>.</span>
+    </p>
+
+    <p>
+      <span class="lb-de">Der Entdeckungsprozess verwendete Standard-Linux-Netzwerktools zur Aufzahlung aller lauschenden TCP-Sockets:</span>
+      <span class="lb-en">The discovery process used standard Linux networking tools to enumerate all listening TCP sockets:</span>
+      <span class="lb-pt">O processo de descoberta usou ferramentas de rede Linux padrao para enumerar todos os sockets TCP em escuta:</span>
+    </p>
+
+    <pre class="code-block">$ ss -tulnp | grep python
+$ ss -tulnp | grep -E "LISTEN" | sort -t: -k2 -n
+$ ps aux | grep -E "(windi|uvicorn|governance)" | grep -v grep</pre>
+
+    <p>
+      <span class="lb-de">Dies enthullte zum ersten Mal die vollstandige Service-Topologie:</span>
+      <span class="lb-en">This revealed the complete service topology for the first time:</span>
+      <span class="lb-pt">Isso revelou a topologia completa de servicos pela primeira vez:</span>
+    </p>
+
+    <div class="spec-table-wrapper">
+      <table class="spec-table">
+        <thead>
+          <tr><th>Port</th><th>Service</th><th>PID</th><th>Running Since</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>8080</code></td><td><code>windi_governance_api.py</code></td><td><code>194102</code></td><td>01 Feb (15:13)</td></tr>
+          <tr><td><code>8081</code></td><td><code>brain.trust_bus</code> (uvicorn)</td><td><code>111947</code></td><td>29 Jan</td></tr>
+          <tr><td><code>8082</code></td><td><code>windi_gateway.py</code></td><td><code>130784</code></td><td>30 Jan</td></tr>
+          <tr style="background: rgba(0,255,150,0.1);"><td><code>8083</code></td><td><strong>FREE → Evolution API Minimal</strong></td><td>—</td><td>—</td></tr>
+          <tr><td><code>8084</code></td><td><code>masterarbeit/server.py</code></td><td><code>132023</code></td><td>30 Jan</td></tr>
+          <tr><td><code>8085</code></td><td><code>a4desk_tiptap_babel.py</code> (BABEL)</td><td><code>193826</code></td><td>01 Feb (15:03)</td></tr>
+          <tr><td><code>8086</code></td><td><code>app.py</code> (2 workers)</td><td><code>142790/92</code></td><td>31 Jan</td></tr>
+          <tr><td><code>8889</code></td><td><code>windi_cortex.py</code></td><td><code>111953</code></td><td>29 Jan</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      <span class="lb-de">Die Entdeckung ergab, dass Port 8083 der einzige verfugbare Port im WINDI-Serviceblock (8080–8089) war. Dieser Port wurde fur den minimalen Evolution API Heartbeat ausgewahlt.</span>
+      <span class="lb-en">The discovery revealed that port 8083 was the only available port in the WINDI service block (8080–8089). This port was selected for the Evolution API minimal heartbeat.</span>
+      <span class="lb-pt">A descoberta revelou que a porta 8083 era a unica porta disponivel no bloco de servicos WINDI (8080–8089). Esta porta foi selecionada para o heartbeat minimo da Evolution API.</span>
+    </p>
+
+    <h3>
+      <span class="l-de">4.2 Schichtisolierung — Transport vor Logik</span>
+      <span class="l-en">4.2 Layer Isolation — Transport Before Logic</span>
+      <span class="l-pt">4.2 Isolamento de Camadas — Transporte Antes da Logica</span>
+    </h3>
+
+    <p>
+      <span class="lb-de">Eine kritische Designentscheidung war die Verifizierung der HTTP-Transportschicht unabhangig von jeglicher Governance-Logik. Das bestehende <code>governance_health.py</code>-Modul enthielt eine umfassende <code>GovernanceHealthCheck</code>-Klasse.</span>
+      <span class="lb-en">A critical design decision was to verify the HTTP transport layer independently of any governance logic. The existing <code>governance_health.py</code> module contained a comprehensive <code>GovernanceHealthCheck</code> class that touches the filesystem, reads JSON configurations, and initializes multiple subsystem connections. Coupling this to the initial HTTP test would have made failure diagnosis ambiguous.</span>
+      <span class="lb-pt">Uma decisao de design critica foi verificar a camada de transporte HTTP independentemente de qualquer logica de governanca. O modulo <code>governance_health.py</code> existente continha uma classe <code>GovernanceHealthCheck</code> abrangente.</span>
+    </p>
+
+    <p>
+      <span class="lb-de">Das Team erstellte daher <code>governance_api_minimal.py</code> mit null Importen aus der Governance-Engine. Die Datei verwendet nur Python-Standardbibliotheksmodule und bedient einen einzelnen Endpunkt:</span>
+      <span class="lb-en">The team therefore created <code>governance_api_minimal.py</code> with zero imports from the governance engine. The file uses only Python standard library modules (<code>http.server</code>, <code>json</code>, <code>datetime</code>) and serves a single endpoint:</span>
+      <span class="lb-pt">A equipe, portanto, criou <code>governance_api_minimal.py</code> com zero importacoes do motor de governanca. O arquivo usa apenas modulos da biblioteca padrao do Python e serve um unico endpoint:</span>
+    </p>
+
+    <pre class="code-block">GET /api/governance/status
+
+Response:
+{
+    "status": "UP",
+    "service": "WINDI Governance API",
+    "version": "1.1-minimal",
+    "checked_at": "2026-02-01T19:49:16.921090+00:00"
+}</pre>
+
+    <p>
+      <span class="lb-de">Dies schafft eine diagnostische Trennung, die in zukunftige Phasen fortbesteht:</span>
+      <span class="lb-en">This creates a diagnostic separation that persists into future phases:</span>
+      <span class="lb-pt">Isso cria uma separacao diagnostica que persiste em fases futuras:</span>
+    </p>
+
+    <div class="spec-table-wrapper">
+      <table class="spec-table">
+        <thead>
+          <tr><th>Phase</th><th>Endpoint</th><th>What It Validates</th></tr>
+        </thead>
+        <tbody>
+          <tr style="background: rgba(0,255,150,0.1);"><td><strong>1.0 (current)</strong></td><td><code>/api/governance/status</code></td><td>HTTP server, port binding, JSON serialization</td></tr>
+          <tr><td>1.1 (next)</td><td><code>/api/governance/health</code></td><td>Engine integrity, policy config, module presence</td></tr>
+          <tr><td>1.2 (future)</td><td><code>/api/governance/detect</code></td><td>Identity detection via API</td></tr>
+          <tr><td>1.3 (future)</td><td>BABEL proxy integration</td><td>End-to-end UI connectivity</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      <span class="lb-de">Wenn <code>/status</code> UP zuruckgibt, aber <code>/health</code> fehlschlagt, liegt das Problem definitiv in der Governance-Engine, nicht in der Netzwerkschicht.</span>
+      <span class="lb-en">If <code>/status</code> returns UP but <code>/health</code> fails, the problem is definitively in the governance engine, not in the network layer. This principle of layered verification enables precise diagnosis at every stage of system evolution.</span>
+      <span class="lb-pt">Se <code>/status</code> retorna UP mas <code>/health</code> falha, o problema esta definitivamente no motor de governanca, nao na camada de rede.</span>
+    </p>
+
+    <h3>
+      <span class="l-de">4.3 Zero-Violence Deployment</span>
+      <span class="l-en">4.3 Zero-Violence Deployment</span>
+      <span class="l-pt">4.3 Implantacao Zero-Violencia</span>
+    </h3>
+
+    <p>
+      <span class="lb-de">Während der gesamten Operation wurde kein bestehender Prozess beendet, pausiert oder modifiziert. Bei Portkonflikten war die Reaktion Untersuchung gefolgt von Umzug, niemals erzwungene Beendigung:</span>
+      <span class="lb-en">Throughout the operation, no existing process was terminated, paused, or modified. When port conflicts were discovered, the response was investigation followed by relocation, never forced termination:</span>
+      <span class="lb-pt">Durante toda a operacao, nenhum processo existente foi terminado, pausado ou modificado. Quando conflitos de porta foram descobertos, a resposta foi investigacao seguida de realocacao, nunca terminacao forcada:</span>
+    </p>
+
+    <pre class="code-block">Attempt 1: Port 8081 → OCCUPIED (trust_bus, since 29 Jan)
+  Action: Investigate process identity, document, move on
+
+Attempt 2: Port 8082 → OCCUPIED (gateway, since 30 Jan)
+  Action: Full port scan, complete topology mapping
+
+Attempt 3: Port 8083 → FREE → SUCCESS
+  Action: Deploy, verify, document</pre>
+
+    <p>
+      <span class="lb-de">Das angewandte operative Prinzip war: <em>zerstöre niemals, was du nicht vollständig verstehst</em>. Jeder fehlgeschlagene Versuch generierte Wissen, das den nachfolgenden Versuch verbesserte.</span>
+      <span class="lb-en">The operational principle applied was: <em>never destroy what you do not fully understand</em>. Each failed attempt generated knowledge that improved the subsequent attempt and contributed to the permanent documentation of the system topology.</span>
+      <span class="lb-pt">O principio operacional aplicado foi: <em>nunca destrua o que voce nao entende completamente</em>. Cada tentativa fracassada gerou conhecimento que melhorou a tentativa subsequente.</span>
+    </p>
+
+    <!-- Section 5: Implementation Evidence -->
+    <h2>
+      <span class="l-de">5. Implementierungsnachweis</span>
+      <span class="l-en">5. Implementation Evidence</span>
+      <span class="l-pt">5. Evidencia de Implementacao</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Die folgende Terminal-Ausgabe stellt den primären Nachweis der erfolgreichen Bereitstellung dar. Alle Zeitstempel sind UTC.</span>
+      <span class="lb-en">The following terminal output constitutes the primäry evidence of successful deployment. All timestamps are UTC.</span>
+      <span class="lb-pt">A seguinte saida de terminal constitui a evidencia primäria de implantacao bem-sucedida. Todos os timestamps sao UTC.</span>
+    </p>
+
+    <h4>5.1 Process Verification</h4>
+    <pre class="code-block">$ ps aux | grep governance_api_minimal.py | grep -v grep
+windi  200916  2.0  0.4  27844 18816 pts/0  S  20:49  0:00  python3 governance_api_minimal.py</pre>
+
+    <h4>5.2 Port Binding Verification</h4>
+    <pre class="code-block">$ ss -tulnp | grep 8083
+tcp  LISTEN  0  5  0.0.0.0:8083  0.0.0.0:*  users:(("python3",pid=200916,fd=3))</pre>
+
+    <h4>5.3 Heartbeat Response</h4>
+    <pre class="code-block">$ curl -s http://localhost:8083/api/governance/status | python3 -m json.tool
+{
+    "status": "UP",
+    "service": "WINDI Governance API",
+    "version": "1.1-minimal",
+    "checked_at": "2026-02-01T19:49:16.921090+00:00"
+}</pre>
+
+    <h4>5.4 Error Handling Verification (404)</h4>
+    <pre class="code-block">$ curl -s http://localhost:8083/qualquer-coisa | python3 -m json.tool
+{
+    "error": "Not found",
+    "available": ["/api/governance/status"]
+}</pre>
+
+    <h4>5.5 Service Coexistence Verification</h4>
+    <p>
+      <span class="lb-de">Nach der Bereitstellung blieben alle acht vorhandenen Dienste betriebsbereit:</span>
+      <span class="lb-en">After deployment, all eight pre-existing services remained operational:</span>
+      <span class="lb-pt">Apos a implantacao, todos os oito servicos pre-existentes permaneceram operacionais:</span>
+    </p>
+
+    <pre class="code-block">$ ss -tulnp | grep -E "(8080|8081|8082|8083|8084|8085|8086|8889)"
+tcp  LISTEN  0.0.0.0:8080  windi_governance_api.py
+tcp  LISTEN  127.0.0.1:8081  brain.trust_bus (uvicorn)
+tcp  LISTEN  127.0.0.1:8082  windi_gateway.py
+tcp  LISTEN  0.0.0.0:8083  governance_api_minimal.py  [NEW]
+tcp  LISTEN  0.0.0.0:8084  masterarbeit/server.py
+tcp  LISTEN  0.0.0.0:8085  a4desk_tiptap_babel.py
+tcp  LISTEN  0.0.0.0:8086  app.py
+tcp  LISTEN  127.0.0.1:8889  windi_cortex.py</pre>
+
+    <!-- Section 6: Results -->
+    <h2>
+      <span class="l-de">6. Ergebnisse</span>
+      <span class="l-en">6. Results</span>
+      <span class="l-pt">6. Resultados</span>
+    </h2>
+
+    <div class="spec-table-wrapper">
+      <table class="spec-table">
+        <thead>
+          <tr><th>Metric</th><th>Status</th><th>Detail</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>HTTP heartbeat endpoint</td><td><span class="status-badge status-active">PASS</span></td><td>Port 8083, 0.0.0.0 binding</td></tr>
+          <tr><td>JSON serialization</td><td><span class="status-badge status-active">PASS</span></td><td>UTF-8, indent formatting</td></tr>
+          <tr><td>Error handling (404)</td><td><span class="status-badge status-active">PASS</span></td><td>Controlled JSON error response</td></tr>
+          <tr><td>Engine isolation</td><td><span class="status-badge status-active">PASS</span></td><td>Zero imports from governance modules</td></tr>
+          <tr><td>Pre-existing services preserved</td><td><span class="status-badge status-active">PASS</span></td><td>8/8 services intact</td></tr>
+          <tr><td>Port topology documented</td><td><span class="status-badge status-active">PASS</span></td><td>Complete map: 8080–8889</td></tr>
+          <tr><td>Safety backup created</td><td><span class="status-badge status-active">PASS</span></td><td><code>/opt/windi/backups/pre_minimal_api_20260201/</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      <span class="lb-de">Die WINDI-Governance-Engine ist von einer Offline-Bibliothek, die nur durch direkte Python-Ausfuhrung aufrufbar war, zu einem netzwerkbeobachtbaren Dienst ubergegangen, der von anderen Systemkomponenten abgefragt, uberwacht und integriert werden kann.</span>
+      <span class="lb-en">The WINDI governance engine has transitioned from an offline library invocable only through direct Python execution to a network-observable service that can be queried, monitored, and integrated by other system components. This transition was achieved without any disruption to the existing service ecosystem.</span>
+      <span class="lb-pt">O motor de governanca WINDI fez a transicao de uma biblioteca offline invocavel apenas atraves de execucao direta do Python para um servico observavel em rede que pode ser consultado, monitorado e integrado por outros componentes do sistema.</span>
+    </p>
+
+    <!-- Section 7: Derived Principles -->
+    <h2>
+      <span class="l-de">7. Abgeleitete Prinzipien</span>
+      <span class="l-en">7. Derived Principles</span>
+      <span class="l-pt">7. Principios Derivados</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Drei operative Prinzipien entstanden aus dieser Arbeit. Jedes wird als formeller Standard fur zukunftige WINDI-Infrastrukturoperationen vorgeschlagen.</span>
+      <span class="lb-en">Three operational principles emerged from this work. Each is proposed as a formal standard for future WINDI infrastructure operations.</span>
+      <span class="lb-pt">Tres principios operacionais emergiram deste trabalho. Cada um e proposto como um padrao formal para futuras operacoes de infraestrutura WINDI.</span>
+    </p>
+
+    <h3>
+      <span class="l-de">7.1 Infrastructure Discovery als Governance-Praxis</span>
+      <span class="l-en">7.1 Infrastructure Discovery as Governance Practice</span>
+      <span class="l-pt">7.1 Descoberta de Infraestrutura como Pratica de Governanca</span>
+    </h3>
+
+    <p>
+      <span class="lb-de">Der Akt der Bereitstellung eines neuen Dienstes erzwang die Entdeckung und Dokumentation der vollstandigen Produktionstopologie. Vor dieser Operation existierte kein einheitlicher Datensatz daruber, welche Dienste welche Ports belegten.</span>
+      <span class="lb-en">The act of deploying a new service forced the discovery and documentation of the complete production topology. Before this operation, no unified record existed of which services occupied which ports. The failed deployment attempts on ports 8081 and 8082 were not errors — they were the mechanism through which the system became self-aware of its own topology.</span>
+      <span class="lb-pt">O ato de implantar um novo servico forcou a descoberta e documentacao da topologia de producao completa. Antes desta operacao, nao existia registro unificado de quais servicos ocupavam quais portas.</span>
+    </p>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3><span class="l-de">Prinzip I</span><span class="l-en">Principle I</span><span class="l-pt">Principio I</span></h3>
+        <p>
+          <span class="l-de"><em>Jede Modifikation der Infrastruktur, die nicht zuerst den bestehenden Zustand kartiert, ist unregiert. Discovery ist keine Voraussetzung fur die Bereitstellung; Discovery IST Governance.</em></span>
+          <span class="l-en"><em>Any modification to infrastructure that does not first map the existing state is ungoverned. Discovery is not a prerequisite to deployment; discovery IS governance.</em></span>
+          <span class="l-pt"><em>Qualquer modificacao na infraestrutura que nao mapear primeiro o estado existente e nao-governada. Descoberta nao e um pre-requisito para implantacao; descoberta E governanca.</em></span>
+        </p>
+      </div>
+    </div>
+
+    <h3>
+      <span class="l-de">7.2 Geschichtete Verifikationsmethodik</span>
+      <span class="l-en">7.2 Layered Verification Methodology</span>
+      <span class="l-pt">7.2 Metodologia de Verificacao em Camadas</span>
+    </h3>
+
+    <p>
+      <span class="lb-de">Die Trennung der Transportverifizierung (<code>/status</code>) von der Logikverifizierung (<code>/health</code>) schafft eine diagnostische Kette, in der jede Schicht unabhangig validiert werden kann.</span>
+      <span class="lb-en">The separation of transport verification (<code>/status</code>) from logic verification (<code>/health</code>) creates a diagnostic chain where each layer can be validated independently. When a problem occurs, the first question is always: which layer failed?</span>
+      <span class="lb-pt">A separacao da verificacao de transporte (<code>/status</code>) da verificacao de logica (<code>/health</code>) cria uma cadeia diagnostica onde cada camada pode ser validada independentemente.</span>
+    </p>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3><span class="l-de">Prinzip II</span><span class="l-en">Principle II</span><span class="l-pt">Principio II</span></h3>
+        <p>
+          <span class="l-de"><em>Jede neue Systemfahigkeit muss auf der Schicht verifizierbar sein, auf der sie operiert, unabhangig von Schichten daruber oder darunter.</em></span>
+          <span class="l-en"><em>Every new system capability must be verifiable at the layer where it operates, independent of layers above or below it.</em></span>
+          <span class="l-pt"><em>Cada nova capacidade do sistema deve ser verificavel na camada onde opera, independente das camadas acima ou abaixo dela.</em></span>
+        </p>
+      </div>
+    </div>
+
+    <h3>
+      <span class="l-de">7.3 Zero-Violence Operational Deployment</span>
+      <span class="l-en">7.3 Zero-Violence Operational Deployment</span>
+      <span class="l-pt">7.3 Implantacao Operacional Zero-Violencia</span>
+    </h3>
+
+    <p>
+      <span class="lb-de">Kein bestehender Prozess wurde wahrend dieser Operation beendet. Bei Konflikten war die Reaktion immer zu verstehen und umzuziehen, niemals zu zwingen.</span>
+      <span class="lb-en">No existing process was terminated during this operation. When conflicts arose, the response was always to understand and relocate, never to force. This approach preserved system stability and generated knowledge that improved subsequent decisions.</span>
+      <span class="lb-pt">Nenhum processo existente foi terminado durante esta operacao. Quando conflitos surgiram, a resposta foi sempre entender e realocar, nunca forcar.</span>
+    </p>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3><span class="l-de">Prinzip III</span><span class="l-en">Principle III</span><span class="l-pt">Principio III</span></h3>
+        <p>
+          <span class="l-de"><em>In einer Produktionsumgebung ist die richtige Antwort auf Konflikte Untersuchung, nicht Beendigung. Was du nicht erklaren kannst, darfst du nicht zerstoren.</em></span>
+          <span class="l-en"><em>In a production environment, the correct response to conflict is investigation, not termination. What you cannot explain, you must not destroy.</em></span>
+          <span class="l-pt"><em>Em um ambiente de producao, a resposta correta ao conflito e investigacao, nao terminacao. O que voce nao pode explicar, nao deve destruir.</em></span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 8: Implications -->
+    <h2>
+      <span class="l-de">8. Implikationen fur Governance-Systeme</span>
+      <span class="l-en">8. Implications for Governance Systems</span>
+      <span class="l-pt">8. Implicacoes para Sistemas de Governanca</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Diese Arbeit zeigt, dass die WINDI-Governance-Philosophie nicht auf Dokumentenklassifizierung und institutionelles Identitätsmanagement beschrankt ist. Die gleichen Prinzipien können auf die Evolution des Systems selbst angewendet werden.</span>
+      <span class="lb-en">This work demonstrates that WINDI governance philosophy is not limited to document classification and institutional identity management. The same principles that govern how WINDI processes documents — transparency, non-opacity, sovereignty, and structured conflict resolution — can be applied to how the system itself evolves.</span>
+      <span class="lb-pt">Este trabalho demonstra que a filosofia de governanca WINDI nao se limita a classificacao de documentos e gestao de identidade institucional. Os mesmos principios podem ser aplicados a evolucao do proprio sistema.</span>
+    </p>
+
+    <p>
+      <span class="lb-de">Die Koharenz zwischen erklarten Governance-Prinzipien und operativer Praxis ist signifikant. Ein Governance-System, das seine eigene Infrastruktur nicht regiert, untergrabt seine Glaubwürdigkeit.</span>
+      <span class="lb-en">The coherence between declared governance principles and operational practice is significant. A governance system that does not govern its own infrastructure undermines its credibility. By applying WINDI Invariants I2 (Non-Opacity) and I3 (Transparencia) to the deployment process itself, this work establishes a precedent for self-consistent system evolution.</span>
+      <span class="lb-pt">A coerencia entre principios de governanca declarados e pratica operacional e significativa. Um sistema de governanca que nao governa sua propria infraestrutura mina sua credibilidade.</span>
+    </p>
+
+    <p>
+      <span class="lb-de">Das Port-Topologie-Mapping (Abschnitt 4.1) stellt das erste Infrastruktur-Audit der WINDI-Produktionsumgebung dar. Dieses Artefakt hat unmittelbaren praktischen Wert fur Kapazitatsplanung, Abhangigkeitsanalyse und Vorfallreaktion.</span>
+      <span class="lb-en">The port topology mapping (Section 4.1) constitutes the first infrastructure audit of the WINDI production environment. This artifact has immediate practical value for capacity planning, dependency analysis, and incident response. It also serves as baseline documentation against which future changes can be measured — a direct application of governance principle I6 (Conflict Structuring).</span>
+      <span class="lb-pt">O mapeamento de topologia de portas (Secao 4.1) constitui a primeira auditoria de infraestrutura do ambiente de producao WINDI. Este artefato tem valor pratico imediato para planejamento de capacidade, analise de dependencias e resposta a incidentes.</span>
+    </p>
+
+    <!-- Section 9: Next Steps -->
+    <h2>
+      <span class="l-de">9. Nachste Schritte</span>
+      <span class="l-en">9. Next Steps</span>
+      <span class="l-pt">9. Proximos Passos</span>
+    </h2>
+
+    <div class="spec-table-wrapper">
+      <table class="spec-table">
+        <thead>
+          <tr>
+            <th>Phase</th>
+            <th><span class="l-de">Aktion</span><span class="l-en">Action</span><span class="l-pt">Acao</span></th>
+            <th><span class="l-de">Beschreibung</span><span class="l-en">Description</span><span class="l-pt">Descricao</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>1.1</strong></td><td>Connect <code>/api/governance/health</code></td><td>First integration with <code>GovernanceHealthCheck.quick_status()</code></td></tr>
+          <tr><td>1.2</td><td>Add <code>/api/governance/detect</code></td><td>POST endpoint for identity detection via HTTP</td></tr>
+          <tr><td>1.3</td><td>BABEL proxy integration</td><td>Route <code>/api/evolution/*</code> from :8085 to :8083</td></tr>
+          <tr><td>2.0</td><td>Full Evolution API</td><td>Events, Registry, and Identity Directory endpoints</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 10: Invariant Alignment -->
+    <h2>
+      <span class="l-de">10. Ausrichtung mit WINDI-Invarianten</span>
+      <span class="l-en">10. Alignment with WINDI Invariants</span>
+      <span class="l-pt">10. Alinhamento com Invariantes WINDI</span>
+    </h2>
+
+    <div class="spec-table-wrapper">
+      <table class="spec-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Invariant</th>
+            <th><span class="l-de">Anwendung in diesem Bericht</span><span class="l-en">Application in This Report</span><span class="l-pt">Aplicacao neste Relatorio</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>I1</strong></td><td>Soberania</td><td>Human decided port allocation, process preservation, deployment timing</td></tr>
+          <tr><td><strong>I2</strong></td><td>Non-Opacity</td><td>Full port topology revealed; no hidden dependencies remain</td></tr>
+          <tr><td><strong>I3</strong></td><td>Transparencia</td><td>All commands, outputs, and decisions documented with evidence</td></tr>
+          <tr><td><strong>I5</strong></td><td>No Fabrication</td><td>Only verified ports and processes reported; no assumptions</td></tr>
+          <tr><td><strong>I6</strong></td><td>Conflict Structuring</td><td>Port conflicts resolved through structured investigation, not force</td></tr>
+          <tr><td><strong>I7</strong></td><td>Institutional</td><td>Infrastructure now documented as institutional asset</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Receipt Box -->
+    <div class="cta-box" style="text-align: center; margin-top: 3rem;">
+      <div class="cta-content">
+        <h3>
+          <span class="l-de">Ende des Technischen Berichts TR-WINDI-2026-003</span>
+          <span class="l-en">End of Technical Report TR-WINDI-2026-003</span>
+          <span class="l-pt">Fim do Relatorio Tecnico TR-WINDI-2026-003</span>
+        </h3>
+        <p><strong>WINDI-TR-01FEB26-SLB-SEC11-003</strong></p>
+        <p style="font-size: 0.9rem; opacity: 0.8;">
+          Registered: 01 February 2026<br>
+          WINDI Publishing House · Kempten, Bavaria, Germany<br>
+          Author: Jober Mogele Correa (WINDI-CEO-001)<br>
+          AI Collaborators: Claude (Guardian) · GPT (Architect)<br>
+          Series: TR-WINDI · Section 11 · Evolution Infrastructure
+        </p>
+        <p><em>"AI processes. Human decides. WINDI guarantees."</em></p>
+      </div>
+    </div>
+
+    <!-- Authorship Notice -->
+    <div class="cta-box" style="margin-top: 2rem;">
+      <div class="cta-content">
+        <h3>HUMAN AUTHORSHIP NOTICE</h3>
+        <p>
+          <span class="l-de">Dieses Dokument wurde von menschlichen Autoren erstellt und uberpruft.</span>
+          <span class="l-en">This document was created and reviewed by human authors.</span>
+          <span class="l-pt">Este documento foi criado e revisado por autores humanos.</span>
+        </p>
+        <p>
+          <span class="l-de">KI-Unterstutzung wurde unter menschlicher Aufsicht und Kontrolle verwendet.</span>
+          <span class="l-en">AI assistance was used under human supervision and control.</span>
+          <span class="l-pt">Assistencia de IA foi usada sob supervisao e controle humano.</span>
+        </p>
+        <p>
+          <span class="l-de">Endgultige Entscheidungen und Inhaltsfreigabe: Menschliche Verantwortung.</span>
+          <span class="l-en">Final decisions and content approval: Human responsibility.</span>
+          <span class="l-pt">Decisoes finais e aprovacao de conteudo: Responsabilidade humana.</span>
+        </p>
+        <p><strong>KI verarbeitet. Mensch entscheidet. WINDI garantiert.</strong></p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Page Footer -->
+  <footer class="page-footer">
+    <div class="page-footer-meta">
+      <span>WINDI-TR-003-07FEB26-NOIR</span>
+      <span>Technical Report</span>
+    </div>
+    <p class="page-footer-quittung">Author: Jober Mogele Correa (WINDI-CEO-001) | Status: REGISTERED</p>
+    <p class="page-footer-principle">
+      <span class="l-de">"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</span>
+      <span class="l-en">"AI processes. Human decides. WINDI guarantees."</span>
+      <span class="l-pt">"IA processa. Humano decide. WINDI garante."</span>
+    </p>
+  </footer>
+
+</main>
+
+<!-- JavaScript -->
+<script>
+// Theme Toggle
+function toggleTheme() {
+  const body = document.body;
+  const isLight = body.getAttribute('data-theme') === 'light';
+  body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+  try { localStorage.setItem('windi-theme', isLight ? 'dark' : 'light'); } catch(e) {}
+}
+
+// Language Switcher
+function setLang(lang) {
+  document.body.setAttribute('data-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  try { localStorage.setItem('windi-lang', lang); } catch(e) {}
+}
+
+// Sidebar Toggle (mobile)
+let sidebarOpen = false;
+function toggleSidebar() {
+  sidebarOpen = !sidebarOpen;
+  document.getElementById('sidebarLeft').classList.toggle('open', sidebarOpen);
+}
+
+// Close sidebar on link click (mobile)
+document.querySelectorAll('.sidebar-link').forEach(link => {
+  link.addEventListener('click', () => {
+    if (window.innerWidth <= 960) {
+      sidebarOpen = false;
+      document.getElementById('sidebarLeft').classList.remove('open');
+    }
+  });
+});
+
+// Init saved preferences
+(function init() {
+  try {
+    const theme = localStorage.getItem('windi-theme');
+    const lang = localStorage.getItem('windi-lang');
+    if (theme) document.body.setAttribute('data-theme', theme);
+    if (lang) setLang(lang);
+  } catch(e) {}
+})();
+
+// Mark current nav link
+if(location.pathname.includes('/library/')){
+  document.querySelectorAll('.nav-links a').forEach(function(a){
+    if(a.getAttribute('href')==='/library/' || a.getAttribute('href')==='/library/index.html'){
+      a.classList.add('nav-current');
+    }
+  });
+}
+</script>
+
+</body>
+</html>

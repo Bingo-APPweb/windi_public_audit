@@ -8,7 +8,7 @@ from app.schemas.common import ok, now_iso
 router = APIRouter(tags=["Health"])
 
 LEDGER_URL = "http://localhost:8101/api/receipts"
-VERIFY_URL = "http://localhost:8145/verify/health"
+VERIFY_URL = "http://localhost:8114/health"
 
 
 @router.get("/health")

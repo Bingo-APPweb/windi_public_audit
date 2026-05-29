@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 12: Domain Sovereignty Architecture | WINDI Masterarbeit</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Crect width='20' height='20' rx='4' fill='%231A1208'/%3E%3Cellipse cx='10' cy='11' rx='4.5' ry='4' transform='rotate(-15 10 11)' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='7' cy='7.5' r='2.8' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='6.2' cy='6.8' r='0.7' fill='%238B6914'/%3E%3Cpath d='M7.5 4.8 C7 3.5 8 2.5 8.5 2' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M7 10 C5 8.5 3 8 2 9 C1.5 9.8 2.5 11 4 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M13 9.5 C15 8 17 8 17.5 9.5 C17.8 10.5 16.5 11 15 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M14 13 C16 14 17 15.5 16 16.5 C15 17.5 13.5 16.5 13.5 15' stroke='%238B6914' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E">
+<meta name="description" content="Domain Sovereignty Architecture - Isolation of Regulatory Realities in AI Governance Systems">
+<link rel="stylesheet" href="/library/windi-internal.css">
+</head>
+<body data-theme="dark" data-lang="de">
+
+<!-- Header -->
+<header class="site-header">
+  <a href="/library/index.html" class="header-brand">
+    <div class="header-logo">W</div>
+    <div class="header-title-group">
+      <span class="header-title">WINDI</span>
+      <span class="header-subtitle">Governance Intelligence</span>
+    </div>
+  </a>
+  <div class="header-center">
+    <div class="header-status">
+      <span class="status-dot"></span>
+      <span>Operational</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('de')">DE</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('pt')">PT</button>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <div class="theme-toggle-track"></div>
+      <div class="theme-toggle-thumb" id="themeThumb"></div>
+    </button>
+    <button class="mobile-toggle" onclick="toggleSidebar()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- Sidebar Navigation -->
+<nav class="sidebar sidebar-left" id="sidebarLeft">
+  <div class="sidebar-section">
+    <div class="sidebar-label">Masterarbeit</div>
+    <a href="/library/index.html" class="sidebar-link">Main Document</a>
+    <a href="/library/cover.html" class="sidebar-link">Cover</a>
+    <a href="/library/about-windi.html" class="sidebar-link">About WINDI</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Governance</div>
+    <a href="/library/governance-levels.html" class="sidebar-link">Governance Levels</a>
+    <a href="/library/human-oversight.html" class="sidebar-link">Human Oversight</a>
+    <a href="/library/data-handling.html" class="sidebar-link">Data Handling</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Architecture</div>
+    <a href="/library/diagrams.html" class="sidebar-link">Diagrams</a>
+    <a href="/library/interface-guide.html" class="sidebar-link">Interface Guide</a>
+    <a href="/library/verification-layer.html" class="sidebar-link">Verification Layer</a>
+    <a href="/library/kapitel12_domain_sovereignty.html" class="sidebar-link sidebar-link-active">Domain Sovereignty</a>
+    <a href="/library/identity-governance-layer.html" class="sidebar-link">Identity Governance</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Technical Reports</div>
+    <a href="/library/tr-windi-2026-003.html" class="sidebar-link">TR-003: Service Layer</a>
+    <a href="/library/tr-windi-2026-004.html" class="sidebar-link">TR-004: Cognitive Service</a>
+    <a href="/library/tr-windi-2026-005.html" class="sidebar-link">TR-005: Cognitive Cycle</a>
+    <a href="/library/isp-evolution.html" class="sidebar-link">TR-006: ISP Registry</a>
+    <a href="/library/tr-007.html" class="sidebar-link">TR-007: Provenance</a>
+    <a href="/library/sge-results.html" class="sidebar-link">SGE Results</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Publications</div>
+    <a href="/library/publications.html" class="sidebar-link">Publications</a>
+    <a href="/library/fachartikel-provenienz.html" class="sidebar-link">Fachartikel</a>
+    <a href="/library/windi-publishing-house.html" class="sidebar-link">Manifesto</a>
+    <a href="/library/editorial-policy.html" class="sidebar-link">Editorial Policy</a>
+    <a href="/library/idpf-abstract.html" class="sidebar-link">IDPF Abstract</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Media</div>
+    <a href="/library/windi-working-paper-2026.html" class="sidebar-link">Working Paper</a>
+    <a href="/library/press-release-windi-2026.html" class="sidebar-link">Press Release</a>
+    <a href="/library/windi-side-by-side-2026.html" class="sidebar-link">Side-by-Side</a>
+    <a href="/library/wsj-style-governed-windi-2026.html" class="sidebar-link">WSJ Feature</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Compliance</div>
+    <a href="/library/document-integrity.html" class="sidebar-link">Doc Integrity</a>
+    <a href="/library/print-watermark-layer.html" class="sidebar-link">Print Layer</a>
+    <a href="/library/regulatory-summary-print-layer.html" class="sidebar-link">Regulatory</a>
+    <a href="/library/availability-implementation.html" class="sidebar-link">Appendix A</a>
+  </div>
+</nav>
+
+<!-- Right Sidebar TOC -->
+<aside class="sidebar sidebar-right" id="sidebarRight">
+  <div class="sidebar-label">
+    <span class="l-de">Auf dieser Seite</span>
+    <span class="l-en">On this page</span>
+    <span class="l-pt">Nesta pagina</span>
+  </div>
+  <a href="#problem" class="toc-link">12.1 Semantic Contamination</a>
+  <a href="#principle" class="toc-link">12.2 Domain Sovereignty</a>
+  <a href="#triangle" class="toc-link">12.3 Triangle of Sovereignty</a>
+  <a href="#implementation" class="toc-link">12.4 Technical Implementation</a>
+  <a href="#validation" class="toc-link">12.5 Validation</a>
+  <a href="#eu-ai-act" class="toc-link">12.6 EU AI Act Compliance</a>
+  <a href="#conclusion" class="toc-link">12.7 Conclusion</a>
+</aside>
+
+<!-- Main Content -->
+<main class="main-content">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-breadcrumb">
+      <a href="/library/index.html">WINDI</a>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current">
+        <span class="l-de">Kapitel 12</span>
+        <span class="l-en">Chapter 12</span>
+        <span class="l-pt">Capitulo 12</span>
+      </span>
+    </div>
+    <div class="page-meta-bar">
+      <span class="page-tag page-tag-gov">Architecture</span>
+      <span class="page-date">2026-02-07</span>
+    </div>
+    <h1 class="page-title">
+      <span class="l-de">Domain-Souveränitätsarchitektur</span>
+      <span class="l-en">Domain Sovereignty Architecture</span>
+      <span class="l-pt">Arquitetura de Soberania de Dominio</span>
+    </h1>
+    <p class="page-subtitle">
+      <span class="l-de">Isolierung regulatorischer Realitäten in KI-Governance-Systemen</span>
+      <span class="l-en">Isolation of Regulatory Realities in AI Governance Systems</span>
+      <span class="l-pt">Isolamento de Realidades Regulatorias em Sistemas de Governanca de IA</span>
+    </p>
+    <div class="page-divider"></div>
+  </div>
+
+  <!-- Content -->
+  <div class="content-prose">
+
+    <!-- Section 12.1 -->
+    <h2 id="problem">
+      <span class="l-de">12.1 Das Problem der semantischen Kontamination</span>
+      <span class="l-en">12.1 The Problem of Semantic Contamination</span>
+      <span class="l-pt">12.1 O Problema da Contaminacao Semantica</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Wenn ein KI-Governance-System Dokumente aus mehreren regulatorischen Bereichen verarbeitet, entsteht eine grundlegende architektonische Herausforderung: <strong>semantische Kontamination</strong>. Ein Dokument zur Lebensmittelsicherheit (HACCP, VerpackG) unterliegt völlig anderen rechtlichen Rahmenbedingungen, Vokabular und Prüfungsanforderungen als ein behördlicher Verwaltungsbescheid oder eine Finanzregulierungsakte.</span>
+      <span class="lb-en">When an AI governance system processes documents from multiple regulatory domains, a fundamental architectural challenge emerges: <strong>semantic contamination</strong>. A food safety compliance document (HACCP, VerpackG) operates under entirely different legal frameworks, vocabulary, and audit requirements than a governmental administrative decision (Bescheid) or a financial regulatory filing.</span>
+      <span class="lb-pt">Quando um sistema de governanca de IA processa documentos de multiplos dominios regulatorios, um desafio arquitetonico fundamental emerge: <strong>contaminacao semantica</strong>. Um documento de conformidade de seguranca alimentar (HACCP, VerpackG) opera sob estruturas legais, vocabulario e requisitos de auditoria inteiramente diferentes de uma decisao administrativa governamental (Bescheid) ou um arquivo regulatorio financeiro.</span>
+    </p>
+
+    <p>
+      <span class="lb-de">Ohne ordnungsgemäße Isolation riskiert das System drei kritische Fehler:</span>
+      <span class="lb-en">Without proper isolation, the system risks three critical failures:</span>
+      <span class="lb-pt">Sem isolamento adequado, o sistema arrisca tres falhas criticas:</span>
+    </p>
+
+    <div class="spec-table-wrapper">
+      <table class="spec-table">
+        <thead>
+          <tr>
+            <th>Risk Type</th>
+            <th>Description</th>
+            <th>Impact</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>LEGAL</code></td>
+            <td>Industrial data may have different confidentiality requirements</td>
+            <td>Regulatory non-compliance, fines up to EUR 200,000</td>
+          </tr>
+          <tr>
+            <td><code>SEMANTIC</code></td>
+            <td>HACCP rules make no sense in meeting minutes or contracts</td>
+            <td>False positives, incorrect governance recommendations</td>
+          </tr>
+          <tr>
+            <td><code>FORENSIC</code></td>
+            <td>Audit trails cannot cross between unrelated domains</td>
+            <td>Invalid audit evidence, compliance failures</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      <span class="lb-de">Das WINDI-System adressiert dies durch <strong>Domain-Souveränität</strong>: das Prinzip, dass jeder regulatorische Bereich ein separates rechtliches Universum mit eigenen Regeln, Persistenzschicht und Pruefhistorie darstellt.</span>
+      <span class="lb-en">The WINDI system addresses this through <strong>Domain Sovereignty</strong>: the principle that each regulatory domain constitutes a separate juridical universe with its own rules, persistence layer, and audit history.</span>
+      <span class="lb-pt">O sistema WINDI aborda isso atraves da <strong>Soberania de Dominio</strong>: o principio de que cada dominio regulatorio constitui um universo juridico separado com suas proprias regras, camada de persistencia e historico de auditoria.</span>
+    </p>
+
+    <!-- Section 12.2 -->
+    <h2 id="principle">
+      <span class="l-de">12.2 Das Prinzip der Domain-Souveränität</span>
+      <span class="l-en">12.2 The Principle of Domain Sovereignty</span>
+      <span class="l-pt">12.2 O Principio da Soberania de Dominio</span>
+    </h2>
+
+    <div class="doc-quote">
+      <p>
+        <span class="l-de">"Jede Domäne ist ein separates rechtliches Universum."</span>
+        <span class="l-en">"Each domain is a separate juridical universe."</span>
+        <span class="l-pt">"Cada dominio e um universo juridico separado."</span>
+      </p>
+      <cite>— WINDI Constitutional Principle, 03 February 2026</cite>
+    </div>
+
+    <p>
+      <span class="lb-de">Domain-Souveränität legt fest, dass regulatorische Kontexte auf jeder Systemebene isoliert bleiben müssen. Dies ist nicht nur ein Software-Muster—es ist eine verfassungsmäßige Anforderung für KI-Systeme, die in regulierten Umgebungen arbeiten.</span>
+      <span class="lb-en">Domain Sovereignty establishes that regulatory contexts must remain isolated at every layer of the system. This is not merely a software pattern—it is a constitutional requirement for AI systems operating in regulated environments.</span>
+      <span class="lb-pt">A Soberania de Dominio estabelece que contextos regulatorios devem permanecer isolados em cada camada do sistema. Isso nao e apenas um padrao de software—e um requisito constitucional para sistemas de IA operando em ambientes regulados.</span>
+    </p>
+
+    <h3>
+      <span class="l-de">Die vier souveränen Domänen</span>
+      <span class="l-en">The Four Sovereign Domains</span>
+      <span class="l-pt">Os Quatro Dominios Soberanos</span>
+    </h3>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-title">Institutional</div>
+        <p class="feature-text">
+          <span class="l-de">Regierung, öffentliche Verwaltung, amtliche Kommunikation</span>
+          <span class="l-en">Government, public administration, official communications</span>
+          <span class="l-pt">Governo, administracao publica, comunicacoes oficiais</span>
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-title">Operational</div>
+        <p class="feature-text">
+          <span class="l-de">Unternehmensbetrieb, Transport, Logistik</span>
+          <span class="l-en">Corporate operations, transport, logistics</span>
+          <span class="l-pt">Operacoes corporativas, transporte, logistica</span>
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-title">Industrial</div>
+        <p class="feature-text">
+          <span class="l-de">Lebensmittelsicherheit, Verpackungs-Compliance, Fertigung</span>
+          <span class="l-en">Food safety, packaging compliance, manufacturing</span>
+          <span class="l-pt">Seguranca alimentar, conformidade de embalagens, manufatura</span>
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-title">Forensic</div>
+        <p class="feature-text">
+          <span class="l-de">Finanzregulierung, Zentralbank, pruefungskritisch</span>
+          <span class="l-en">Financial regulation, central banking, audit-critical</span>
+          <span class="l-pt">Regulacao financeira, banco central, critico para auditoria</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 12.3 -->
+    <h2 id="triangle">
+      <span class="l-de">12.3 Das Dreieck der Souveränität</span>
+      <span class="l-en">12.3 The Triangle of Sovereignty</span>
+      <span class="l-pt">12.3 O Triangulo da Soberania</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Domain-Souveränität wird durch drei voneinander abhängige Komponenten durchgesetzt, die ein unzerbrechliches Dreieck bilden:</span>
+      <span class="lb-en">Domain Sovereignty is enforced through three interdependent components, forming an unbreakable triangle:</span>
+      <span class="lb-pt">A Soberania de Dominio e aplicada atraves de tres componentes interdependentes, formando um triangulo inquebravel:</span>
+    </p>
+
+    <div class="spec-table-wrapper">
+      <table class="spec-table">
+        <thead>
+          <tr>
+            <th>Vertex</th>
+            <th>Component</th>
+            <th>Function</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>1. CLASSIFY</strong></td>
+            <td>IdentityDetector</td>
+            <td>Automatic domain classification via keywords/patterns</td>
+          </tr>
+          <tr>
+            <td><strong>2. PROCESS</strong></td>
+            <td>SandboxCore</td>
+            <td>Routes to domain-specific database and rules</td>
+          </tr>
+          <tr>
+            <td><strong>3. AUDIT</strong></td>
+            <td>VirtueHistory</td>
+            <td>Domain-tagged forensic logging</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 12.4 -->
+    <h2 id="implementation">
+      <span class="l-de">12.4 Technische Implementierung</span>
+      <span class="l-en">12.4 Technical Implementation</span>
+      <span class="l-pt">12.4 Implementacao Tecnica</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Die Domain-Souveränitätsarchitektur wurde durch fuenf koordinierte Patches am 03. Februar 2026 implementiert, wobei 490 Codezeilen im WINDI-System hinzugefügt wurden.</span>
+      <span class="lb-en">The Domain Sovereignty architecture was implemented through five coordinated patches on 03 February 2026, adding 490 lines of code across the WINDI system.</span>
+      <span class="lb-pt">A arquitetura de Soberania de Dominio foi implementada atraves de cinco patches coordenados em 03 de fevereiro de 2026, adicionando 490 linhas de codigo ao sistema WINDI.</span>
+    </p>
+
+    <h3>PATCH 3: Domain Mapping Configuration</h3>
+
+    <pre><code>// /opt/windi/domains/domain_mapping.json
+{
+  "domains": {
+    "institutional": {
+      "database": "institutional.db",
+      "sge_default": "standard",
+      "isolation_level": "HIGH"
+    },
+    "industrial": {
+      "database": "industrial.db",
+      "sge_default": "verpackg-lucid-v1",
+      "isolation_level": "HIGH"
+    }
+  }
+}</code></pre>
+
+    <h3>PATCH 1: IdentityDetector Domain Awareness</h3>
+
+    <pre><code>def detect_domain(self, text: str) -> dict:
+    """Detect domain based on keywords and patterns."""
+    for isp_id, config in self.domain_mapping.items():
+        for keyword in config.get('keywords', []):
+            if keyword.lower() in text.lower():
+                return {
+                    'domain': config['domain'],
+                    'isp': isp_id,
+                    'sge_ruleset': config['sge_ruleset']
+                }
+    return {'domain': 'operational'}  # Default fallback</code></pre>
+
+    <!-- Section 12.5 -->
+    <h2 id="validation">
+      <span class="l-de">12.5 Validierung: End-to-End-Pipeline-Test</span>
+      <span class="l-en">12.5 Validation: End-to-End Pipeline Test</span>
+      <span class="l-pt">12.5 Validacao: Teste de Pipeline End-to-End</span>
+    </h2>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>Test Request: "Teste LUCID VerpackG DE123456789"</h3>
+        <p>Domain: <code>industrial</code> | ISP: <code>food-industry</code> | SGE: <code>verpackg-lucid-v1</code> | Confidence: <code>0.55</code></p>
+      </div>
+    </div>
+
+    <p>
+      <span class="lb-de">Das System identifizierte korrekt die regulatorische Domäne anhand von Schlüsselwörtern ("LUCID", "VerpackG") und dem deutschen Registrierungsmuster (DE123456789).</span>
+      <span class="lb-en">The system correctly identified the regulatory domain from keywords ("LUCID", "VerpackG") and the German registration pattern (DE123456789).</span>
+      <span class="lb-pt">O sistema identificou corretamente o dominio regulatorio a partir de palavras-chave ("LUCID", "VerpackG") e o padrao de registro alemao (DE123456789).</span>
+    </p>
+
+    <!-- Section 12.6 -->
+    <h2 id="eu-ai-act">
+      <span class="l-de">12.6 Implikationen für die EU-KI-Verordnung</span>
+      <span class="l-en">12.6 EU AI Act Compliance Implications</span>
+      <span class="l-pt">12.6 Implicacoes de Conformidade com o EU AI Act</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Die Domain-Souveränitätsarchitektur adressiert direkt mehrere Anforderungen der EU-Verordnung über Künstliche Intelligenz (Verordnung 2024/1689):</span>
+      <span class="lb-en">The Domain Sovereignty architecture directly addresses multiple requirements of the EU Artificial Intelligence Act (Regulation 2024/1689):</span>
+      <span class="lb-pt">A arquitetura de Soberania de Dominio aborda diretamente multiplos requisitos do EU Artificial Intelligence Act (Regulamento 2024/1689):</span>
+    </p>
+
+    <ul>
+      <li><strong>Article 9 - Risk Management:</strong> Domain isolation enables risk segregation by regulatory context</li>
+      <li><strong>Article 12 - Record-Keeping:</strong> Domain-tagged audit logs enable targeted audits</li>
+      <li><strong>Article 14 - Human Oversight:</strong> Domain-specific routing ensures contextual oversight</li>
+    </ul>
+
+    <!-- Section 12.7 -->
+    <h2 id="conclusion">
+      <span class="l-de">12.7 Fazit</span>
+      <span class="l-en">12.7 Conclusion</span>
+      <span class="l-pt">12.7 Conclusao</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Domain-Souveränität transformiert WINDI von einem Dokumentenverarbeitungssystem in eine <strong>regulatorische Compliance-Infrastruktur</strong>. Durch die Durchsetzung strikter Isolation zwischen rechtlichen Universen auf den Klassifizierungs-, Verarbeitungs- und Prüfungsebenen erreicht das System "Compliance by Design".</span>
+      <span class="lb-en">Domain Sovereignty transforms WINDI from a document processing system into a <strong>regulatory compliance infrastructure</strong>. By enforcing strict isolation between juridical universes at the classification, processing, and auditing layers, the system achieves "Compliance by Design".</span>
+      <span class="lb-pt">A Soberania de Dominio transforma o WINDI de um sistema de processamento de documentos em uma <strong>infraestrutura de conformidade regulatoria</strong>. Ao impor isolamento estrito entre universos juridicos nas camadas de classificacao, processamento e auditoria, o sistema alcanca "Compliance by Design".</span>
+    </p>
+
+    <div class="doc-quote">
+      <p>
+        <span class="l-de">"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</span>
+        <span class="l-en">"AI processes. Human decides. WINDI guarantees."</span>
+        <span class="l-pt">"IA processa. Humano decide. WINDI garante."</span>
+      </p>
+      <cite>— WINDI Constitutional Principle</cite>
+    </div>
+
+  </div>
+
+  <!-- Page Footer -->
+  <footer class="page-footer">
+    <div class="page-footer-meta">
+      <span>WINDI-K12-SOVEREIGNTY-07FEB26-NOIR</span>
+      <span>Chapter 12 — Domain Sovereignty</span>
+    </div>
+    <p class="page-footer-quittung">Author: Jober Mogele Correa (WINDI-CEO-001) | Status: INSTITUTIONAL BETA</p>
+    <p class="page-footer-principle">
+      <span class="l-de">"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</span>
+      <span class="l-en">"AI processes. Human decides. WINDI guarantees."</span>
+      <span class="l-pt">"IA processa. Humano decide. WINDI garante."</span>
+    </p>
+  </footer>
+
+</main>
+
+<!-- JavaScript -->
+<script>
+// Theme Toggle
+function toggleTheme() {
+  const body = document.body;
+  const isLight = body.getAttribute('data-theme') === 'light';
+  body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+  try { localStorage.setItem('windi-theme', isLight ? 'dark' : 'light'); } catch(e) {}
+}
+
+// Language Switcher
+function setLang(lang) {
+  document.body.setAttribute('data-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  try { localStorage.setItem('windi-lang', lang); } catch(e) {}
+}
+
+// Sidebar Toggle (mobile)
+let sidebarOpen = false;
+function toggleSidebar() {
+  sidebarOpen = !sidebarOpen;
+  document.getElementById('sidebarLeft').classList.toggle('open', sidebarOpen);
+}
+
+// Close sidebar on link click (mobile)
+document.querySelectorAll('.sidebar-link').forEach(link => {
+  link.addEventListener('click', () => {
+    if (window.innerWidth <= 960) {
+      sidebarOpen = false;
+      document.getElementById('sidebarLeft').classList.remove('open');
+    }
+  });
+});
+
+// Init saved preferences
+(function init() {
+  try {
+    const theme = localStorage.getItem('windi-theme');
+    const lang = localStorage.getItem('windi-lang');
+    if (theme) document.body.setAttribute('data-theme', theme);
+    if (lang) setLang(lang);
+  } catch(e) {}
+})();
+
+// Mark current nav link
+if(location.pathname.includes('/library/')){
+  document.querySelectorAll('.nav-links a').forEach(function(a){
+    if(a.getAttribute('href')==='/library/' || a.getAttribute('href')==='/library/index.html'){
+      a.classList.add('nav-current');
+    }
+  });
+}
+</script>
+
+</body>
+</html>

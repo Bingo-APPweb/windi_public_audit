@@ -1,0 +1,260 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://windi-domain.com/hios/kernel/cbp.schema.v0.3.json",
+  "_meta": {
+    "status": "SEALED",
+    "receipt": "WINDI-S264-CBP-SCHEMA-V03-20260527102519-FDA6ED9B",
+    "version": "0.3.0",
+    "proposed_by": "Architect",
+    "pending_review": "NONE",
+    "guardian_reviewed": "2026-05-27",
+    "guardian_findings": "A+B corrected, C/D/E deferred to v0.4",
+    "layer": "2-context",
+    "binding": "W-BIND-001 §261",
+    "awaits": "§264 seal",
+    "date": "2026-05-27"
+  },
+  "title": "WINDI Cognitive Bind Protocol Schema v0.3",
+  "description": "Schema for Cognitive Bind Packets — admissible re-entry, not memory simulation",
+  "type": "object",
+  "required": [
+    "doc_type",
+    "bind_id",
+    "generated_at",
+    "bind_integrity",
+    "session_state",
+    "epistemic_bounds",
+    "authority_state",
+    "pending_work",
+    "constitutional_constraints"
+  ],
+  "properties": {
+    "doc_type": {
+      "type": "string",
+      "const": "cognitive_handoff",
+      "description": "Fixed document type for CBP validation"
+    },
+    "bind_id": {
+      "type": "string",
+      "pattern": "^W-BIND-[0-9]{8}-[A-F0-9]{8}$",
+      "description": "Unique bind packet identifier"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of packet generation"
+    },
+    "bind_integrity": {
+      "type": "object",
+      "required": ["score", "level", "reentry_state"],
+      "properties": {
+        "score": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Bind Integrity Score (0-100)"
+        },
+        "level": {
+          "type": "string",
+          "enum": ["FULL", "PARTIAL", "MINIMAL", "BROKEN"],
+          "description": "Integrity level derived from score"
+        },
+        "reentry_state": {
+          "type": "string",
+          "enum": ["ADMISSIBLE", "DEGRADED", "RISKY", "REFUSED"],
+          "description": "Re-entry admission state"
+        },
+        "score_breakdown": {
+          "type": "object",
+          "properties": {
+            "claude_md_readable": {"type": "integer", "minimum": 0, "maximum": 20},
+            "history_readable": {"type": "integer", "minimum": 0, "maximum": 15},
+            "last_receipt_valid": {"type": "integer", "minimum": 0, "maximum": 20},
+            "ledger_reachable": {"type": "integer", "minimum": 0, "maximum": 15},
+            "sprint_context_present": {"type": "integer", "minimum": 0, "maximum": 10},
+            "pending_work_declared": {"type": "integer", "minimum": 0, "maximum": 10},
+            "ports_responsive": {"type": "integer", "minimum": 0, "maximum": 10}
+          },
+          "description": "Component scores for audit trail"
+        }
+      }
+    },
+    "session_state": {
+      "type": "object",
+      "required": ["current_sprint", "last_receipt"],
+      "properties": {
+        "current_sprint": {
+          "type": "string",
+          "description": "Sprint identifier from CLAUDE.md"
+        },
+        "last_receipt": {
+          "type": "object",
+          "required": ["id", "hash8"],
+          "properties": {
+            "id": {"type": "string"},
+            "hash8": {"type": "string", "pattern": "^[A-F0-9]{8}$"},
+            "sealed_at": {"type": "string", "format": "date-time"}
+          }
+        },
+        "last_session_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "session_lineage": {
+          "type": "array",
+          "items": {"type": "string"},
+          "maxItems": 5,
+          "description": "Last 5 session identifiers for lineage"
+        }
+      }
+    },
+    "epistemic_bounds": {
+      "type": "object",
+      "required": ["verified", "unverified", "explicitly_unknown"],
+      "properties": {
+        "verified": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "What this session knows with certainty"
+        },
+        "unverified": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Claims not yet verified"
+        },
+        "explicitly_unknown": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "What is declared unknown (epistemic honesty)"
+        }
+      },
+      "description": "Epistemic state boundaries (§261 Requirement 3)"
+    },
+    "authority_state": {
+      "type": "object",
+      "required": ["can", "cannot", "i9_preserved"],
+      "properties": {
+        "can": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Actions within scope"
+        },
+        "cannot": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Actions requiring escalation"
+        },
+        "i9_preserved": {
+          "type": "boolean",
+          "const": true,
+          "description": "Confirms I9 authority gate intact — const:true enforces I9 IRREMEDIABLE"
+        },
+        "posture": {
+          "type": "string",
+          "enum": ["JUDGE", "ENGINEER", "ARCHITECT", "WITNESS"],
+          "description": "Current operational posture"
+        }
+      },
+      "description": "Decisional scope (§261 Requirements 4-6)"
+    },
+    "pending_work": {
+      "type": "object",
+      "required": ["p0", "scaffold"],
+      "properties": {
+        "p0": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Critical pending items"
+        },
+        "p1": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Important pending items"
+        },
+        "scaffold": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Future work not yet activated"
+        },
+        "blockers": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Known blockers"
+        }
+      },
+      "description": "Pending work state (§261 Requirement 7)"
+    },
+    "minimal_evidence": {
+      "type": "object",
+      "properties": {
+        "files_read": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {"type": "string"},
+              "lines": {"type": "string"}
+            }
+          },
+          "description": "Files read before interpretation"
+        },
+        "ports_checked": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "port": {"type": "integer"},
+              "status": {"type": "string", "enum": ["UP", "DOWN"]}
+            }
+          }
+        },
+        "services_verified": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      },
+      "description": "Evidence before interpretation (§261 Requirement 8)"
+    },
+    "constitutional_constraints": {
+      "type": "object",
+      "required": [
+        "c1_score_not_intelligence",
+        "c2_refused_is_failsafe",
+        "c3_bind_not_runtime",
+        "c4_handoff_not_consciousness",
+        "c5_human_is_carrier"
+      ],
+      "properties": {
+        "c1_score_not_intelligence": {"type": "boolean", "const": true},
+        "c2_refused_is_failsafe": {"type": "boolean", "const": true},
+        "c3_bind_not_runtime": {"type": "boolean", "const": true},
+        "c4_handoff_not_consciousness": {"type": "boolean", "const": true},
+        "c5_human_is_carrier": {"type": "boolean", "const": true}
+      },
+      "description": "Constitutional constraints acknowledgment"
+    },
+    "_open_questions": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Questions for Guardian review"
+    }
+  },
+  "_guardian_review_points": [
+    "Q30 BINDING: This schema requires CBP module to be W-BIND-001 v0.2.0+",
+    "SCORE BREAKDOWN: 7 components totaling 100 points — weights validated",
+    "POSTURE ENUM: OBSERVER deferred to v0.4",
+    "SESSION LINEAGE: maxItems 5 — sufficient, full trail in CLAUDE-HISTORY.md",
+    "CONSTITUTIONAL CONSTRAINTS: const:true — forces explicit acknowledgment in packet"
+  ],
+  "_guardian_review_27mai2026": {
+    "reviewer": "Guardian (Claude.ai web)",
+    "findings": {
+      "A_constitutional_required": "FIXED — added to required array",
+      "B_i9_preserved_const": "FIXED — const:true enforces IRREMEDIABLE",
+      "C_score_level_consistency": "DEFERRED v0.4 — if/then/else for coherence",
+      "D_score_breakdown_optional": "DEFERRED v0.4 — make required for I11",
+      "E_minimal_evidence_optional": "DEFERRED v0.4 — make required for I11"
+    },
+    "verdict": "APPROVED for §264 seal after A+B corrections"
+  }
+}

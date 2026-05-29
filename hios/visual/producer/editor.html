@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WINDI Cinema Editor — O Viajante e a Adormecida</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0a0a0f;
+            color: #e8e6e1;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #C9A84C, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.8rem;
+        }
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        .toolbar {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        button {
+            background: #C9A84C;
+            color: #0a0a0f;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        button:hover { background: #d4b85d; }
+        button.secondary { background: #333; color: #e8e6e1; }
+        button.green { background: #22c55e; color: white; }
+        button.red { background: #dc2626; color: white; }
+
+        .stats {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+        }
+        .stat { text-align: center; }
+        .stat-value { font-size: 1.4rem; font-weight: bold; color: #C9A84C; }
+        .stat-label { font-size: 0.75rem; color: #888; }
+
+        .scenes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.75rem;
+            max-width: 1400px;
+            margin: 0 auto 1rem auto;
+        }
+        .scene-card {
+            background: #151520;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #252530;
+            cursor: grab;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .scene-card:hover { border-color: #C9A84C; transform: scale(1.02); }
+        .scene-card.dragging { opacity: 0.4; }
+        .scene-card.drag-over { border-color: #22c55e; border-width: 3px; }
+        .scene-card.removed { opacity: 0.25; order: 999; border-color: #dc2626; }
+        .scene-card.new-scene { border-color: #22c55e; }
+
+        .scene-num {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: #C9A84C;
+            color: #0a0a0f;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            z-index: 5;
+        }
+        .scene-card.removed .scene-num { background: #dc2626; color: white; }
+        .scene-card.new-scene .scene-num { background: #22c55e; }
+
+        .scene-dur {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(0,0,0,0.7);
+            color: #fff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+        }
+        .new-tag {
+            position: absolute;
+            top: 32px;
+            left: 8px;
+            background: #22c55e;
+            color: white;
+            padding: 1px 6px;
+            border-radius: 3px;
+            font-size: 0.65rem;
+            font-weight: bold;
+        }
+        .scene-thumb {
+            width: 100%;
+            height: 110px;
+            object-fit: cover;
+            display: block;
+            background: #0a0a0f;
+        }
+        .scene-body {
+            padding: 0.5rem;
+        }
+        .scene-title {
+            font-weight: bold;
+            font-size: 0.85rem;
+            color: #C9A84C;
+            margin-bottom: 0.25rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .scene-desc {
+            font-size: 0.7rem;
+            color: #888;
+            height: 2.4em;
+            overflow: hidden;
+        }
+        .scene-btns {
+            display: flex;
+            gap: 0.25rem;
+            margin-top: 0.4rem;
+        }
+        .scene-btns button {
+            flex: 1;
+            padding: 0.3rem;
+            font-size: 0.7rem;
+        }
+
+        /* Video Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal.show { display: flex; }
+        .modal-box {
+            background: #151520;
+            border-radius: 12px;
+            max-width: 800px;
+            width: 95%;
+            overflow: hidden;
+        }
+        .modal-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: #1a1a25;
+        }
+        .modal-head h3 { color: #C9A84C; font-size: 1rem; }
+        .modal-close {
+            background: #dc2626;
+            border: none;
+            color: white;
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .modal-video {
+            width: 100%;
+            display: block;
+            background: #000;
+        }
+        .modal-foot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: #1a1a25;
+        }
+        .modal-foot span { color: #888; font-size: 0.9rem; }
+
+        .output-box {
+            max-width: 1000px;
+            margin: 1rem auto;
+            background: #151520;
+            border-radius: 10px;
+            padding: 1rem;
+        }
+        .output-box h3 { color: #C9A84C; margin-bottom: 0.5rem; font-size: 1rem; }
+        .output-text {
+            background: #0a0a0f;
+            padding: 0.75rem;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.75rem;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        #claude-area {
+            width: 100%;
+            height: 120px;
+            background: #0a0a0f;
+            color: #e8e6e1;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 0.5rem;
+            font-family: monospace;
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+
+<h1>WINDI Cinema Editor</h1>
+<p class="subtitle">O Viajante e a Adormecida — Arrasta para reordenar · Clica ▶ para assistir</p>
+
+<div class="stats">
+    <div class="stat"><div class="stat-value" id="st-cenas">18</div><div class="stat-label">Cenas</div></div>
+    <div class="stat"><div class="stat-value" id="st-dur">142s</div><div class="stat-label">Duração</div></div>
+    <div class="stat"><div class="stat-value" id="st-rem">0</div><div class="stat-label">Removidas</div></div>
+</div>
+
+<div class="toolbar">
+    <button class="green" onclick="enviarClaude()">📋 Enviar para Claude</button>
+    <button onclick="gerarFFmpeg()">⚙️ Gerar FFmpeg</button>
+    <button class="secondary" onclick="resetar()">🔄 Resetar</button>
+</div>
+
+<div class="scenes-grid" id="grid"></div>
+
+<div class="output-box" id="outputBox" style="display:none;">
+    <h3 id="outputTitle">Output</h3>
+    <textarea id="claude-area"></textarea>
+    <button onclick="copiar()" style="margin-top:0.5rem;">📋 Copiar</button>
+</div>
+
+<!-- Modal Video Player -->
+<div class="modal" id="modal">
+    <div class="modal-box">
+        <div class="modal-head">
+            <h3 id="modalTitle">Cena</h3>
+            <button class="modal-close" onclick="fecharModal()">✕</button>
+        </div>
+        <video class="modal-video" id="modalVideo" controls></video>
+        <div class="modal-foot">
+            <button class="secondary" onclick="anterior()">← Anterior</button>
+            <span id="modalCounter">1/18</span>
+            <button class="secondary" onclick="proxima()">Próxima →</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// === DATA ===
+const DATA = [
+    {id:1, file:'cafe.mp4', path:'/opt/windi/hios/visual/producer/cafe.mp4', video:'cafe.mp4', thumb:'frames/seq_0s.png', dur:10, title:'Escritório Alpes', desc:'Homem trabalha com hologramas, Alpes ao fundo', nova:false},
+    {id:2, file:'cafe2.mp4', path:'/opt/windi/hios/visual/producer/cafe2.mp4', video:'cafe2.mp4', thumb:'frames/seq_10s.png', dur:10, title:'Visão - Esfera', desc:'Homem olha esfera digital', nova:false},
+    {id:3, file:'cafe3.mp4', path:'/opt/windi/hios/visual/producer/cafe3.mp4', video:'cafe3.mp4', thumb:'frames/seq_20s.png', dur:10, title:'Corredor Equações', desc:'Corredor com equações flutuantes', nova:false},
+    {id:4, file:'cena2b_sistema.mp4', path:'/opt/windi/hios/visual/producer/output/cena2b_sistema.mp4', video:'output/cena2b_sistema.mp4', thumb:'frames/seq_30s.png', dur:8, title:'Sistema / Cidade', desc:'Vista cidade futurista', nova:false},
+    {id:5, file:'acto4_prova.mp4', path:'/opt/windi/hios/visual/producer/output/acto4_prova.mp4', video:'output/acto4_prova.mp4', thumb:'frames/seq_38s.png', dur:8, title:'Observa Pods', desc:'Homem observa pods', nova:false},
+    {id:6, file:'cena6a_origem.mp4', path:'/opt/windi/hios/visual/producer/output/cena6a_origem.mp4', video:'output/cena6a_origem.mp4', thumb:'frames/cena6a_origem/frame_02.png', dur:8, title:'GENESIS POINT', desc:'Descoberta da origem - semente da memória', nova:true},
+    {id:7, file:'cena6b_cadeia.mp4', path:'/opt/windi/hios/visual/producer/output/cena6b_cadeia.mp4', video:'output/cena6b_cadeia.mp4', thumb:'frames/cena6b_cadeia/frame_02.png', dur:8, title:'LEDGER Chain', desc:'Cadeia de blocos conectados', nova:true},
+    {id:8, file:'cena8_humanidade.mp4', path:'/opt/windi/hios/visual/producer/output/cena8_humanidade.mp4', video:'output/cena8_humanidade.mp4', thumb:'frames/cena8_humanidade/frame_02.png', dur:8, title:'Network Core', desc:'Rede da humanidade no céu', nova:true},
+    {id:9, file:'cena6_convite_v2.mp4', path:'/opt/windi/hios/visual/producer/output/cena6_convite_v2.mp4', video:'output/cena6_convite_v2.mp4', thumb:'frames/cena6_convite_v2/frame_02.png', dur:8, title:'Convite - Nova Dimensão', desc:'Viajante convida ela a descobrir novo mundo', nova:true},
+    {id:10, file:'cena8_escolha_v2.mp4', path:'/opt/windi/hios/visual/producer/output/cena8_escolha_v2.mp4', video:'output/cena8_escolha_v2.mp4', thumb:'frames/seq_62s.png', dur:8, title:'Cidade Neon', desc:'Rua futurista com chuva', nova:false},
+    {id:11, file:'cena9_conversa_v2.mp4', path:'/opt/windi/hios/visual/producer/output/cena9_conversa_v2.mp4', video:'output/cena9_conversa_v2.mp4', thumb:'frames/cena9_conversa_v2/frame_01.png', dur:8, title:'Conversa no Pod', desc:'Conversa íntima no veículo', nova:false},
+    {id:12, file:'cena10_regresso_v2.mp4', path:'/opt/windi/hios/visual/producer/output/cena10_regresso_v2.mp4', video:'output/cena10_regresso_v2.mp4', thumb:'frames/regresso_v2_inicio.png', dur:6, title:'Portal / Regresso', desc:'Sala com janelas, Alpes, regresso ao presente', nova:false},
+    {id:13, file:'cena11_primeiro_toque_v2.mp4', path:'/opt/windi/hios/visual/producer/output/cena11_primeiro_toque_v2.mp4', video:'output/cena11_primeiro_toque_v2.mp4', thumb:'frames/cena11_primeiro_toque_v2/frame_02.png', dur:8, title:'Primeiro Toque', desc:'Ela toca neve real pela primeira vez, lágrimas de emoção', nova:true},
+    {id:14, file:'cena12_memoria_v2.mp4', path:'/opt/windi/hios/visual/producer/output/cena12_memoria_v2.mp4', video:'output/cena12_memoria_v2.mp4', thumb:'frames/seq_102s.png', dur:8, title:'Flashback Infância', desc:'Memória da menina', nova:false},
+    {id:15, file:'cena13_selo_dela.mp4', path:'/opt/windi/hios/visual/producer/output/cena13_selo_dela.mp4', video:'output/cena13_selo_dela.mp4', thumb:'frames/seq_110s.png', dur:8, title:'Selo Dela', desc:'Ela gera o próprio selo', nova:false},
+    {id:16, file:'cena14_outros.mp4', path:'/opt/windi/hios/visual/producer/output/cena14_outros.mp4', video:'output/cena14_outros.mp4', thumb:'frames/seq_118s.png', dur:8, title:'Outros Acordam', desc:'Outros emergem com selos', nova:false},
+    {id:17, file:'cena15_transmissao.mp4', path:'/opt/windi/hios/visual/producer/output/cena15_transmissao.mp4', video:'output/cena15_transmissao.mp4', thumb:'frames/seq_126s.png', dur:8, title:'Transmissão', desc:'Mensagem para o futuro', nova:false},
+    {id:18, file:'cena16_pordosol.mp4', path:'/opt/windi/hios/visual/producer/output/cena16_pordosol.mp4', video:'output/cena16_pordosol.mp4', thumb:'frames/seq_126s.png', dur:8, title:'Pôr-do-sol', desc:'Final no prado alpino', nova:false}
+];
+
+let cenas = JSON.parse(JSON.stringify(DATA));
+let arrastando = null;
+let modalIdx = 0;
+
+// === RENDER ===
+function render() {
+    const grid = document.getElementById('grid');
+    grid.innerHTML = '';
+
+    cenas.forEach((c, i) => {
+        const card = document.createElement('div');
+        card.className = 'scene-card' + (c.removed ? ' removed' : '') + (c.nova ? ' new-scene' : '');
+        card.draggable = true;
+        card.dataset.idx = i;
+
+        card.innerHTML = `
+            <span class="scene-num">${c.removed ? 'X' : i+1}</span>
+            <span class="scene-dur">${c.dur}s</span>
+            ${c.nova ? '<span class="new-tag">NOVA</span>' : ''}
+            <img class="scene-thumb" src="${c.thumb}" onerror="this.style.background='#333'">
+            <div class="scene-body">
+                <div class="scene-title">${c.title}</div>
+                <div class="scene-desc">${c.desc}</div>
+                <div class="scene-btns">
+                    <button class="green" onclick="assistir(${i})">▶</button>
+                    ${c.removed
+                        ? `<button class="green" onclick="restaurar(${i})">↩</button>`
+                        : `<button class="red" onclick="remover(${i})">✕</button>`
+                    }
+                </div>
+            </div>
+        `;
+
+        card.addEventListener('dragstart', e => {
+            arrastando = card;
+            card.classList.add('dragging');
+        });
+        card.addEventListener('dragend', e => {
+            card.classList.remove('dragging');
+            document.querySelectorAll('.scene-card').forEach(c => c.classList.remove('drag-over'));
+        });
+        card.addEventListener('dragover', e => {
+            e.preventDefault();
+            if (card !== arrastando) card.classList.add('drag-over');
+        });
+        card.addEventListener('dragleave', e => {
+            card.classList.remove('drag-over');
+        });
+        card.addEventListener('drop', e => {
+            e.preventDefault();
+            card.classList.remove('drag-over');
+            if (card !== arrastando) {
+                const de = parseInt(arrastando.dataset.idx);
+                const para = parseInt(card.dataset.idx);
+                const item = cenas.splice(de, 1)[0];
+                cenas.splice(para, 0, item);
+                salvarEstado();
+                render();
+            }
+        });
+
+        grid.appendChild(card);
+    });
+
+    atualizarStats();
+}
+
+function atualizarStats() {
+    const ativas = cenas.filter(c => !c.removed);
+    document.getElementById('st-cenas').textContent = ativas.length;
+    document.getElementById('st-dur').textContent = ativas.reduce((s,c) => s + c.dur, 0) + 's';
+    document.getElementById('st-rem').textContent = cenas.filter(c => c.removed).length;
+}
+
+// === ACTIONS ===
+function remover(i) {
+    cenas[i].removed = true;
+    salvarEstado();
+    render();
+}
+function restaurar(i) {
+    cenas[i].removed = false;
+    salvarEstado();
+    render();
+}
+function resetar() {
+    cenas = JSON.parse(JSON.stringify(DATA));
+    localStorage.removeItem('windi_editor_state');
+    render();
+}
+
+// === PERSISTÊNCIA (localStorage) ===
+function salvarEstado() {
+    const estado = cenas.map(c => ({ id: c.id, removed: c.removed || false }));
+    localStorage.setItem('windi_editor_state_v2', JSON.stringify(estado));
+    console.log('Estado salvo:', estado.filter(e => e.removed).length, 'removidas');
+}
+
+function carregarEstado() {
+    const saved = localStorage.getItem('windi_editor_state_v2');
+    if (saved) {
+        try {
+            const estado = JSON.parse(saved);
+            console.log('Carregando estado:', estado);
+
+            // Criar nova ordem baseada no estado salvo
+            const novaOrdem = [];
+            const usados = new Set();
+
+            estado.forEach(e => {
+                const cena = cenas.find(c => c.id === e.id);
+                if (cena && !usados.has(e.id)) {
+                    cena.removed = e.removed;
+                    novaOrdem.push(cena);
+                    usados.add(e.id);
+                }
+            });
+
+            // Adicionar novas cenas que não estavam no estado
+            cenas.forEach(c => {
+                if (!usados.has(c.id)) {
+                    novaOrdem.push(c);
+                }
+            });
+
+            if (novaOrdem.length > 0) {
+                cenas = novaOrdem;
+            }
+        } catch(e) {
+            console.log('Erro ao carregar estado:', e);
+        }
+    }
+}
+
+// === VIDEO PLAYER ===
+function assistir(i) {
+    modalIdx = i;
+    const c = cenas[i];
+    document.getElementById('modalTitle').textContent = `${i+1}. ${c.title}`;
+    document.getElementById('modalCounter').textContent = `${i+1} / ${cenas.length}`;
+    const video = document.getElementById('modalVideo');
+    video.src = c.video;
+    video.load();
+    document.getElementById('modal').classList.add('show');
+    video.play();
+}
+
+function fecharModal() {
+    document.getElementById('modalVideo').pause();
+    document.getElementById('modal').classList.remove('show');
+}
+
+function proxima() {
+    if (modalIdx < cenas.length - 1) assistir(modalIdx + 1);
+}
+
+function anterior() {
+    if (modalIdx > 0) assistir(modalIdx - 1);
+}
+
+document.addEventListener('keydown', e => {
+    if (!document.getElementById('modal').classList.contains('show')) return;
+    if (e.key === 'Escape') fecharModal();
+    if (e.key === 'ArrowRight') proxima();
+    if (e.key === 'ArrowLeft') anterior();
+});
+
+// === OUTPUT ===
+function enviarClaude() {
+    const ativas = cenas.filter(c => !c.removed);
+    let txt = `EDIÇÃO DO FILME - ${new Date().toLocaleString()}\n`;
+    txt += '='.repeat(50) + '\n\n';
+    txt += `ORDEM FINAL (${ativas.length} cenas, ${ativas.reduce((s,c)=>s+c.dur,0)}s):\n\n`;
+
+    ativas.forEach((c, i) => {
+        txt += `${i+1}. ${c.title} (${c.dur}s) - ${c.file}${c.nova ? ' [NOVA]' : ''}\n`;
+    });
+
+    const removidas = cenas.filter(c => c.removed);
+    if (removidas.length) {
+        txt += '\nCENAS REMOVIDAS:\n';
+        removidas.forEach(c => txt += `❌ ${c.title} - ${c.file}\n`);
+    }
+
+    txt += '\nFICHEIROS PARA CONCAT:\n';
+    ativas.forEach(c => txt += c.path + '\n');
+
+    document.getElementById('claude-area').value = txt;
+    document.getElementById('outputTitle').textContent = '📋 Copiar e enviar ao Claude:';
+    document.getElementById('outputBox').style.display = 'block';
+    document.getElementById('outputBox').scrollIntoView({behavior:'smooth'});
+}
+
+function gerarFFmpeg() {
+    const ativas = cenas.filter(c => !c.removed);
+    let txt = '# Criar lista\ncat > /tmp/concat.txt << EOF\n';
+    ativas.forEach(c => txt += `file '${c.path}'\n`);
+    txt += 'EOF\n\n# Gerar filme\nffmpeg -y -f concat -safe 0 -i /tmp/concat.txt -c copy output/FILME_V3.mp4\n';
+    txt += `\n# ${ativas.length} cenas, ${ativas.reduce((s,c)=>s+c.dur,0)}s`;
+
+    document.getElementById('claude-area').value = txt;
+    document.getElementById('outputTitle').textContent = '⚙️ Comando FFmpeg:';
+    document.getElementById('outputBox').style.display = 'block';
+}
+
+function copiar() {
+    document.getElementById('claude-area').select();
+    document.execCommand('copy');
+    alert('Copiado!');
+}
+
+// Init
+carregarEstado();
+render();
+</script>
+
+</body>
+</html>

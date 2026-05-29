@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TR-006: ISP Registry Evolution — WINDI Technical Report</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Crect width='20' height='20' rx='4' fill='%231A1208'/%3E%3Cellipse cx='10' cy='11' rx='4.5' ry='4' transform='rotate(-15 10 11)' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='7' cy='7.5' r='2.8' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='6.2' cy='6.8' r='0.7' fill='%238B6914'/%3E%3Cpath d='M7.5 4.8 C7 3.5 8 2.5 8.5 2' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M7 10 C5 8.5 3 8 2 9 C1.5 9.8 2.5 11 4 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M13 9.5 C15 8 17 8 17.5 9.5 C17.8 10.5 16.5 11 15 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M14 13 C16 14 17 15.5 16 16.5 C15 17.5 13.5 16.5 13.5 15' stroke='%238B6914' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E">
+<meta name="description" content="WINDI ISP Registry v2.5.0 — Institutional Governance Profiles: A Tiered Governance Model for AI-Assisted Document Generation">
+<link rel="stylesheet" href="/library/windi-internal.css">
+</head>
+<body data-theme="dark" data-lang="de">
+
+<!-- Header -->
+<header class="site-header">
+  <a href="/library/index.html" class="header-brand">
+    <div class="header-logo">W</div>
+    <div class="header-title-group">
+      <span class="header-title">WINDI</span>
+      <span class="header-subtitle">Governance Intelligence</span>
+    </div>
+  </a>
+  <div class="header-center">
+    <div class="header-status">
+      <span class="status-dot"></span>
+      <span>Operational</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('de')">DE</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('pt')">PT</button>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <div class="theme-toggle-track"></div>
+      <div class="theme-toggle-thumb" id="themeThumb"></div>
+    </button>
+    <button class="mobile-toggle" onclick="toggleSidebar()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- Sidebar Navigation -->
+<nav class="sidebar sidebar-left" id="sidebarLeft">
+  <div class="sidebar-section">
+    <div class="sidebar-label">Masterarbeit</div>
+    <a href="/library/index.html" class="sidebar-link">Main Document</a>
+    <a href="/library/cover.html" class="sidebar-link">Cover</a>
+    <a href="/library/about-windi.html" class="sidebar-link">About WINDI</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Governance</div>
+    <a href="/library/governance-levels.html" class="sidebar-link">Governance Levels</a>
+    <a href="/library/human-oversight.html" class="sidebar-link">Human Oversight</a>
+    <a href="/library/data-handling.html" class="sidebar-link">Data Handling</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Architecture</div>
+    <a href="/library/diagrams.html" class="sidebar-link">Diagrams</a>
+    <a href="/library/interface-guide.html" class="sidebar-link">Interface Guide</a>
+    <a href="/library/verification-layer.html" class="sidebar-link">Verification Layer</a>
+    <a href="/library/kapitel12_domain_sovereignty.html" class="sidebar-link">Domain Sovereignty</a>
+    <a href="/library/identity-governance-layer.html" class="sidebar-link">Identity Governance</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Technical Reports</div>
+    <a href="/library/tr-windi-2026-003.html" class="sidebar-link">TR-003: Service Layer</a>
+    <a href="/library/tr-windi-2026-004.html" class="sidebar-link">TR-004: Cognitive Service</a>
+    <a href="/library/tr-windi-2026-005.html" class="sidebar-link">TR-005: Cognitive Cycle</a>
+    <a href="/library/isp-evolution.html" class="sidebar-link sidebar-link-active">TR-006: ISP Registry</a>
+    <a href="/library/tr-007.html" class="sidebar-link">TR-007: Provenance</a>
+    <a href="/library/sge-results.html" class="sidebar-link">SGE Results</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Publications</div>
+    <a href="/library/publications.html" class="sidebar-link">Publications</a>
+    <a href="/library/fachartikel-provenienz.html" class="sidebar-link">Fachartikel</a>
+    <a href="/library/windi-publishing-house.html" class="sidebar-link">Manifesto</a>
+    <a href="/library/editorial-policy.html" class="sidebar-link">Editorial Policy</a>
+    <a href="/library/idpf-abstract.html" class="sidebar-link">IDPF Abstract</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Media</div>
+    <a href="/library/windi-working-paper-2026.html" class="sidebar-link">Working Paper</a>
+    <a href="/library/press-release-windi-2026.html" class="sidebar-link">Press Release</a>
+    <a href="/library/windi-side-by-side-2026.html" class="sidebar-link">Side-by-Side</a>
+    <a href="/library/wsj-style-governed-windi-2026.html" class="sidebar-link">WSJ Feature</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Compliance</div>
+    <a href="/library/document-integrity.html" class="sidebar-link">Doc Integrity</a>
+    <a href="/library/print-watermark-layer.html" class="sidebar-link">Print Layer</a>
+    <a href="/library/regulatory-summary-print-layer.html" class="sidebar-link">Regulatory</a>
+    <a href="/library/availability-implementation.html" class="sidebar-link">Appendix A</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<main class="main-content">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-breadcrumb">
+      <a href="/library/index.html">WINDI</a>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current">
+        <span class="l-de">ISP Registry</span>
+        <span class="l-en">ISP Registry</span>
+        <span class="l-pt">Registro ISP</span>
+      </span>
+    </div>
+    <div class="page-meta-bar">
+      <span class="page-tag page-tag-gov">TR-WINDI-2026-006</span>
+      <span class="page-tag">Registry v2.5.0</span>
+      <span class="page-date">2026-02-02</span>
+    </div>
+    <h1 class="page-title">
+      <span class="l-de">Institutional Style Profiles: Ein gestuftes Governance-Modell</span>
+      <span class="l-en">Institutional Style Profiles: A Tiered Governance Model</span>
+      <span class="l-pt">Institutional Style Profiles: Um Modelo de Governanca em Niveis</span>
+    </h1>
+    <p class="page-subtitle">
+      <span class="l-de">Entwicklung eines gestuften Dokumenten-Governance-Modells fur KI-unterstützte institutionelle Veroffentlichung</span>
+      <span class="l-en">Development of a Tiered Document Governance Model for AI-Assisted Institutional Publication</span>
+      <span class="l-pt">Desenvolvimento de um Modelo de Governanca de Documentos em Niveis para Publicacao Institucional Assistida por IA</span>
+    </p>
+    <div class="page-divider"></div>
+  </div>
+
+  <!-- Content -->
+  <div class="content-prose">
+
+    <!-- Meta Information -->
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>Document Metadata</h3>
+        <p><strong>Author:</strong> Jober Mogele Correa, Chief Governance Officer</p>
+        <p><strong>System:</strong> WINDI — We Invite New Decision Intelligence</p>
+        <p><strong>Status:</strong> Production (Strato DE Infrastructure)</p>
+        <p><strong>Classification:</strong> PUBLIC</p>
+        <p><strong>Date:</strong> 02 February 2026</p>
+      </div>
+    </div>
+
+    <!-- Abstract -->
+    <h2>
+      <span class="l-de">Zusammenfassung</span>
+      <span class="l-en">Abstract</span>
+      <span class="l-pt">Resumo</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Dieser Bericht dokumentiert das Design, die Implementierung und das Deployment des WINDI Institutional Style Profile (ISP) Registry — ein Governance-Framework, das institutionelle Dokumentenanforderungen in drei Stufen (HIGH, MEDIUM, LOW) klassifiziert, basierend auf regulatorischem Risiko, Identitätsempfindlichkeit und forensischen Prufungsanforderungen. Das Register umfasst derzeit acht institutionelle Profile aus Finanzregulierung, Bundesregierung, Sozialdienstleistungen, offentlichen Unternehmen, Kammern und technischer Prufung — ein Querschnitt der deutschen institutionellen Landschaft.</span>
+      <span class="lb-en">This report documents the design, implementation and deployment of the WINDI Institutional Style Profile (ISP) Registry — a governance framework that classifies institutional document requirements into three tiers (HIGH, MEDIUM, LOW) based on regulatory risk, identity sensitivity, and forensic audit requirements. The registry currently comprises eight institutional profiles spanning financial regulation, federal government, social services, public enterprise, professional chambers, and technical inspection — representing a cross-section of the German institutional landscape. Each profile encodes organisation-specific templates, governance constraints, and compliance metadata, enabling AI-assisted document generation that respects institutional identity without substituting human decision-making. The system is deployed on German-jurisdiction infrastructure and aligned with EU AI Act requirements for human oversight in AI-assisted processes.</span>
+      <span class="lb-pt">Este relatorio documenta o design, implementacao e implantacao do WINDI Institutional Style Profile (ISP) Registry — um framework de governanca que classifica os requisitos de documentos institucionais em tres niveis (HIGH, MEDIUM, LOW) com base em risco regulatorio, sensibilidade de identidade e requisitos de auditoria forense. O registro atualmente compreende oito perfis institucionais abrangendo regulacao financeira, governo federal, servicos sociais, empresas publicas, camaras profissionais e inspecao tecnica.</span>
+    </p>
+
+    <!-- Key Metrics -->
+    <h2>
+      <span class="l-de">Kennzahlen</span>
+      <span class="l-en">Key Metrics</span>
+      <span class="l-pt">Metricas Principais</span>
+    </h2>
+
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-value">8</div>
+        <div class="metric-label">ISP Profiles</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">3</div>
+        <div class="metric-label">Governance Tiers</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">76</div>
+        <div class="metric-label">Document Templates</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">v2.5.0</div>
+        <div class="metric-label">Registry Version</div>
+      </div>
+    </div>
+
+    <!-- Section I: Governance Model -->
+    <h2>
+      <span class="l-de">Abschnitt I: Das Governance-Stufenmodell</span>
+      <span class="l-en">Section I: The Governance Level Model</span>
+      <span class="l-pt">Secao I: O Modelo de Niveis de Governanca</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Das WINDI Governance Level Model adressiert eine grundlegende Herausforderung bei der KI-gestützten Dokumentenerstellung: Verschiedene institutionelle Kontexte erfordern unterschiedliche Ebenen von Aufsicht, Identitätsschutz und Prufbarkeit. Eine Logistikbenachrichtigung der Deutschen Bahn erfordert eine andere Governance als eine Aufsichtsbewertung der BaFin.</span>
+      <span class="lb-en">The WINDI Governance Level Model addresses a fundamental challenge in AI-assisted document generation: different institutional contexts require different levels of oversight, identity protection, and auditability. A logistics notification from Deutsche Bahn requires different governance than a supervisory assessment from BaFin. The model operationalises this insight through three tiers, each with distinct technical enforcement mechanisms.</span>
+      <span class="lb-pt">O Modelo de Niveis de Governanca WINDI aborda um desafio fundamental na geracao de documentos assistida por IA: diferentes contextos institucionais requerem diferentes niveis de supervisao, protecao de identidade e auditabilidade.</span>
+    </p>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>HIGH — Regulatory / Forensic</h3>
+        <p>
+          <span class="l-de">Hochste Anforderungen an Nachvollziehbarkeit und Dokumentenintegritat. Forensic Ledger, Manipulationsnachweis, Beweismittelkette, Vier-Augen-Prinzip, No-Downgrade-Policy, SHA-256-Hash-Kette.</span>
+          <span class="l-en">Highest requirements for traceability and document integrity. Forensic ledger, tamper evidence, chain of custody, four-eyes principle, no downgrade policy, SHA-256 hash chain.</span>
+          <span class="l-pt">Requisitos mais altos para rastreabilidade e integridade de documentos. Livro-razao forense, evidencia de adulteracao, cadeia de custodia, principio dos quatro olhos, politica de nao rebaixamento, cadeia de hash SHA-256.</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>MEDIUM — Institutional / Identity-Sensitive</h3>
+        <p>
+          <span class="l-de">Schutz der institutionellen Identität gegen Missbrauch und Falschung. Identity License System, automatische Disclaimer, Logo-Nutzungskontrollen, institutionelle Referenzprufung, dreisprachige Unterstutzung.</span>
+          <span class="l-en">Protection of institutional identity against misuse and falsification. Identity License System, automatic disclaimers, logo usage controls, institutional reference audit, trilingual support.</span>
+          <span class="l-pt">Protecao da identidade institucional contra uso indevido e falsificacao. Sistema de Licenca de Identidade, avisos automaticos, controles de uso de logotipo, auditoria de referencia institucional, suporte trilingue.</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>LOW — Operational / Sectoral</h3>
+        <p>
+          <span class="l-de">Standardisierte Vorlagen mit grundlegender Governance fur den taglichen Betrieb. Template-Validierung, Metadaten-Durchsetzung, Stil-Konsistenz, grundlegender Audit-Trail, Governance-Quittung.</span>
+          <span class="l-en">Standardized templates with basic governance for daily operations. Template validation, metadata enforcement, style consistency, basic audit trail, governance receipt.</span>
+          <span class="l-pt">Modelos padronizados com governanca basica para operacoes diarias. Validacao de modelo, aplicacao de metadados, consistencia de estilo, trilha de auditoria basica, recibo de governanca.</span>
+        </p>
+      </div>
+    </div>
+
+    <p>
+      <span class="lb-de">Das zentrale architektonische Prinzip ist die strikte Trennung der Belange: <em>Das Template entscheidet nie uber die Governance-Stufe — die API entscheidet; das Template manifestiert nur.</em> Dies stellt sicher, dass die Governance-Durchsetzung nicht durch Template-Manipulation umgangen werden kann.</span>
+      <span class="lb-en">The core architectural principle is strict separation of concerns: <em>the template never decides the governance level — the API decides; the template merely manifests.</em> This ensures that governance enforcement cannot be bypassed through template manipulation, a design pattern aligned with the EU AI Act's requirement for meaningful human oversight (Article 14).</span>
+      <span class="lb-pt">O principio arquitetonico central e a separacao estrita de responsabilidades: <em>o modelo nunca decide o nivel de governanca — a API decide; o modelo apenas manifesta.</em> Isso garante que a aplicacao da governanca nao possa ser contornada por manipulacao de modelo.</span>
+    </p>
+
+    <!-- Core Principle -->
+    <div class="doc-quote">
+      <p>
+        <span class="l-de">"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</span>
+        <span class="l-en">"AI processes. Human decides. WINDI guarantees."</span>
+        <span class="l-pt">"IA processa. Humano decide. WINDI garante."</span>
+      </p>
+      <cite>WINDI Governance Principle — Invariant I1: Sovereignty</cite>
+    </div>
+
+    <!-- Section II: Institutional Pyramid -->
+    <h2>
+      <span class="l-de">Abschnitt II: Die institutionelle Pyramide</span>
+      <span class="l-en">Section II: The Institutional Pyramid</span>
+      <span class="l-pt">Secao II: A Piramide Institucional</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Das ISP-Register modelliert einen reprasentativen Querschnitt der deutschen institutionellen Landschaft. Die Auswahl folgt einer bewussten strategischen Logik: Regulierungsbehorden an der Spitze, Regierungs- und Sozialinstitutionen in der mittleren Ebene und operative/sektorale Organisationen an der Basis.</span>
+      <span class="lb-en">The ISP Registry models a representative cross-section of the German institutional landscape. The selection follows deliberate strategic logic: regulatory authorities at the apex, government and social institutions at the middle tier, and operational/sectoral organisations at the base. Together, these profiles demonstrate that the governance model scales across institutional contexts with materially different risk profiles.</span>
+      <span class="lb-pt">O Registro ISP modela uma secao transversal representativa da paisagem institucional alema. A selecao segue uma logica estrategica deliberada: autoridades regulatorias no apice, instituicoes governamentais e sociais no nivel medio e organizacoes operacionais/setoriais na base.</span>
+    </p>
+
+    <div class="cta-box" style="border-left-color: var(--high-color, #dc3545);">
+      <div class="cta-content">
+        <h3>HIGH — Regulatory</h3>
+        <p><strong>BIS Regulatory Authority</strong> (regulatory_authority)<br>
+        <strong>BaFin</strong> (federal_regulatory_authority)</p>
+        <p><em>International and national financial supervision — Forensic audit mandatory</em></p>
+      </div>
+    </div>
+
+    <div class="cta-box" style="border-left-color: var(--medium-color, #ffc107);">
+      <div class="cta-content">
+        <h3>MEDIUM — Institutional</h3>
+        <p><strong>Bundesregierung</strong> (government_institutional)<br>
+        <strong>Bundesagentur fur Arbeit</strong> (social_sensitive_institutional)</p>
+        <p><em>Federal government and social services — Identity License required</em></p>
+      </div>
+    </div>
+
+    <div class="cta-box" style="border-left-color: var(--low-color, #28a745);">
+      <div class="cta-content">
+        <h3>LOW — Operational</h3>
+        <p><strong>Deutsche Bahn AG</strong> (public_enterprise)<br>
+        <strong>Industrie- und Handelskammer</strong> (public_law_chamber)<br>
+        <strong>Handwerkskammer</strong> (public_law_chamber)<br>
+        <strong>Technischer Uberwachungsverein (TUV)</strong> (technical_inspection_org)</p>
+        <p><em>Transport, commerce, crafts, and technical inspection — Standard governance</em></p>
+      </div>
+    </div>
+
+    <p>
+      <span class="lb-de">Die Auswahl umfasst Institutionen, die zusammen mit praktisch jedem Unternehmen und Burger in Deutschland interagieren: IHK und HWK zusammen umfassen die gesamte gewerbliche Wirtschaft, BaFin beaufsichtigt ca. 6.700 Finanzunternehmen, TUV-Zertifizierungen werden in uber 160 Landern anerkannt.</span>
+      <span class="lb-en">The selection covers institutions that collectively interact with virtually every enterprise and citizen in Germany: IHK and HWK together span the entire <em>gewerbliche</em> economy, BaFin supervises approximately 6,700 financial entities, TUV certifications are recognised in over 160 countries, and the Bundesagentur fur Arbeit serves as the primäry interface between citizens and the labour market.</span>
+      <span class="lb-pt">A selecao abrange instituicoes que interagem coletivamente com praticamente todas as empresas e cidadaos na Alemanha: IHK e HWK juntas abrangem toda a economia comercial, BaFin supervisiona aproximadamente 6.700 entidades financeiras, certificacoes TUV sao reconhecidas em mais de 160 paises.</span>
+    </p>
+
+    <!-- Section III: Profile Catalog -->
+    <h2>
+      <span class="l-de">Abschnitt III: Profilkatalog — ISP Registry v2.5.0</span>
+      <span class="l-en">Section III: Profile Catalog — ISP Registry v2.5.0</span>
+      <span class="l-pt">Secao III: Catalogo de Perfis — ISP Registry v2.5.0</span>
+    </h2>
+
+    <div class="spec-table-wrapper">
+      <table class="spec-table">
+        <thead>
+          <tr>
+            <th>Institution</th>
+            <th>Level</th>
+            <th>Type</th>
+            <th>Templates</th>
+            <th>Sector</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>BIS Regulatory Authority</strong></td>
+            <td><span class="status-badge status-high">HIGH</span></td>
+            <td>regulatory_authority</td>
+            <td>8</td>
+            <td>International Finance</td>
+          </tr>
+          <tr>
+            <td><strong>BaFin</strong><br><small>Bundesanstalt fur Finanzdienstleistungsaufsicht</small></td>
+            <td><span class="status-badge status-high">HIGH</span></td>
+            <td>federal_regulatory_authority</td>
+            <td>12</td>
+            <td>Financial Supervision</td>
+          </tr>
+          <tr>
+            <td><strong>Bundesregierung</strong><br><small>Bundesrepublik Deutschland</small></td>
+            <td><span class="status-badge status-warning">MEDIUM</span></td>
+            <td>government_institutional</td>
+            <td>10</td>
+            <td>Federal Government</td>
+          </tr>
+          <tr>
+            <td><strong>Bundesagentur fur Arbeit</strong></td>
+            <td><span class="status-badge status-warning">MEDIUM</span></td>
+            <td>social_sensitive_institutional</td>
+            <td>12</td>
+            <td>Social Services</td>
+          </tr>
+          <tr>
+            <td><strong>Deutsche Bahn AG</strong></td>
+            <td><span class="status-badge status-active">LOW</span></td>
+            <td>public_enterprise</td>
+            <td>6</td>
+            <td>Transport Infrastructure</td>
+          </tr>
+          <tr>
+            <td><strong>Industrie- und Handelskammer</strong></td>
+            <td><span class="status-badge status-active">LOW</span></td>
+            <td>public_law_chamber</td>
+            <td>8</td>
+            <td>Commerce &amp; Industry</td>
+          </tr>
+          <tr>
+            <td><strong>Handwerkskammer</strong></td>
+            <td><span class="status-badge status-active">LOW</span></td>
+            <td>public_law_chamber</td>
+            <td>10</td>
+            <td>Crafts &amp; Trades</td>
+          </tr>
+          <tr>
+            <td><strong>TUV</strong><br><small>Technischer Uberwachungsverein</small></td>
+            <td><span class="status-badge status-active">LOW</span></td>
+            <td>technical_inspection_org</td>
+            <td>12</td>
+            <td>Technical Certification</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="caption"><strong>Table 1</strong> — Complete ISP Registry with governance classification and template counts</p>
+
+    <!-- Section IV: Profile Overview -->
+    <h2>
+      <span class="l-de">Abschnitt IV: Profilubersicht — Institutionelle Kontexte</span>
+      <span class="l-en">Section IV: Profile Overview — Institutional Contexts</span>
+      <span class="l-pt">Secao IV: Visao Geral dos Perfis — Contextos Institucionais</span>
+    </h2>
+
+    <h3>
+      <span class="l-de">HIGH-Level Profile — Regulatorische Aufsicht</span>
+      <span class="l-en">HIGH-Level Profiles — Regulatory Oversight</span>
+      <span class="l-pt">Perfis de Nivel ALTO — Supervisao Regulatoria</span>
+    </h3>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>BIS Regulatory Authority</h3>
+        <p><code>regulatory_authority | international</code> | <span class="status-badge status-high">HIGH</span></p>
+        <p>International regulatory reporting model for statistical and supervisory publications. Establishes the baseline for highest-level governance enforcement with mandatory forensic audit trail.</p>
+        <p><strong>8 templates:</strong> Statistical reports, supervisory publications, regulatory analyses</p>
+      </div>
+    </div>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>BaFin</h3>
+        <p><code>federal_regulatory_authority | national</code> | <span class="status-badge status-high">HIGH</span></p>
+        <p>Germany's financial supervisory authority covering banking, insurance, securities, and payment services. Supervises ~6,700 entities. Profile includes KI-Risikobewertung templates aligned with DORA and EU AI Act requirements. Published KI-Orientierungshilfe on 18.12.2025.</p>
+        <p><strong>12 templates:</strong> SREP/ORSA, Sanktionsbescheid, KI-Risikobewertung, Geldwasche-Meldung, DORA IKT-Bericht</p>
+      </div>
+    </div>
+
+    <h3>
+      <span class="l-de">MEDIUM-Level Profile — Institutionelle Identität</span>
+      <span class="l-en">MEDIUM-Level Profiles — Institutional Identity</span>
+      <span class="l-pt">Perfis de Nivel MEDIO — Identidade Institucional</span>
+    </h3>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>Bundesregierung</h3>
+        <p><code>government_institutional | federal</code> | <span class="status-badge status-warning">MEDIUM</span></p>
+        <p>Federal government of Germany. Documents require identity protection through WINDI's Identity License System — ensuring institutional references include appropriate disclaimers and preventing unauthorized logo usage in AI-generated content.</p>
+        <p><strong>10 templates:</strong> Regierungserklarung, Gesetzentwurf, Kabinettsbeschluss, Pressemitteilung</p>
+      </div>
+    </div>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>Bundesagentur fur Arbeit</h3>
+        <p><code>social_sensitive_institutional | federal</code> | <span class="status-badge status-warning">MEDIUM</span></p>
+        <p>Germany's federal employment agency. Handles socially sensitive data requiring enhanced identity governance. Documents interface with citizens in vulnerable situations, demanding particular care in AI-assisted generation.</p>
+        <p><strong>12 templates:</strong> Bewilligungsbescheid, Eingliederungsvereinbarung, Arbeitsmarktbericht, Grundungszuschuss</p>
+      </div>
+    </div>
+
+    <h3>
+      <span class="l-de">LOW-Level Profile — Operative Sektoren</span>
+      <span class="l-en">LOW-Level Profiles — Operational Sectors</span>
+      <span class="l-pt">Perfis de Nivel BAIXO — Setores Operacionais</span>
+    </h3>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>Deutsche Bahn AG</h3>
+        <p><code>public_enterprise | transport</code> | <span class="status-badge status-active">LOW</span></p>
+        <p>Germany's national railway and first ISP profile developed. Operational logistics documentation with standard governance. Established the baseline template architecture for the entire ISP system.</p>
+        <p><strong>6 templates:</strong> Fahrplanauskunft, Verspatungsmeldung, Baustelleninfo, Servicemitteilung</p>
+      </div>
+    </div>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>IHK — Industrie- und Handelskammer</h3>
+        <p><code>public_law_chamber | commerce</code> | <span class="status-badge status-active">LOW</span></p>
+        <p>Chamber of commerce and industry. Public-law body covering all non-craft commercial enterprises. Together with HWK, spans the entire German <em>gewerbliche</em> economy.</p>
+        <p><strong>8 templates:</strong> Ursprungszeugnis, Handelsregisterauszug, Ausbildungsvertrag, Sachverstandigen-Bestellung</p>
+      </div>
+    </div>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>HWK — Handwerkskammer</h3>
+        <p><code>public_law_chamber | crafts</code> | <span class="status-badge status-active">LOW</span></p>
+        <p>Chamber of crafts and trades. Governs the Handwerksordnung with Meisterpflicht in 53 trades. HWK Schwaben operates a Bildungs- und Technologiezentrum (BTZ) in Kempten.</p>
+        <p><strong>10 templates:</strong> Handwerksrolle, Meisterprufung, Gesellenprufung, Existenzgrundungsberatung, ULU-Bescheinigung</p>
+      </div>
+    </div>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>TUV — Technischer Uberwachungsverein</h3>
+        <p><code>technical_inspection_org | certification</code> | <span class="status-badge status-active">LOW</span></p>
+        <p>Germany's most iconic quality brand. Combined ecosystem: ~74,000 employees, ~EUR7.8B revenue. Operates TUV AI.Lab (est. 2021) and is preparing Notified Body status for EU AI Act conformity assessment.</p>
+        <p><strong>12 templates:</strong> HU/AU, Managementsystem-Zertifizierung, GS-Zeichen, KI-Konformitatsbewertung, Cybersecurity-Prufung</p>
+      </div>
+    </div>
+
+    <!-- Section V: Identity License System -->
+    <h2>
+      <span class="l-de">Abschnitt V: Innovation — Das Identity License System</span>
+      <span class="l-en">Section V: Innovation — The Identity License System</span>
+      <span class="l-pt">Secao V: Inovacao — O Sistema de Licenca de Identidade</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Ein wichtiger methodischer Beitrag des ISP-Frameworks ist das Identity License System, das fur die MEDIUM-Level-Governance entwickelt wurde. Das System adressiert eine neuartige Herausforderung bei der KI-gestützten Dokumentenerstellung: <em>wie institutionelle Sprachmuster erlaubt werden können, ohne Identitätsfalschung zu ermoglichen.</em></span>
+      <span class="lb-en">A key methodological contribution of the ISP framework is the Identity License System, developed for MEDIUM-level governance. The system addresses a novel challenge in AI-assisted document generation: <em>how to permit institutional language patterns without enabling identity falsification.</em></span>
+      <span class="lb-pt">Uma contribuicao metodologica chave do framework ISP e o Sistema de Licenca de Identidade, desenvolvido para governanca de nivel MEDIO. O sistema aborda um desafio novo na geracao de documentos assistida por IA: <em>como permitir padroes de linguagem institucional sem permitir falsificacao de identidade.</em></span>
+    </p>
+
+    <p>
+      <span class="lb-de">Die Entdeckung entstand aus empirischen Tests — ein uber das WINDI-System generierter Brief der Banco do Brasil zeigte, dass die Simulation institutioneller Identität in KI-generiertem Text Governance-Anforderungen aktiviert, die bei generischen Dokumenten nicht entstehen.</span>
+      <span class="lb-en">The discovery emerged from empirical testing — a Banco do Brasil letter generated through the WINDI system demonstrated that simulating institutional identity in AI-generated text activates governance requirements that do not arise with generic documents. This insight, documented as WINDI Key Discovery, led to a formal identity governance layer with five license states:</span>
+      <span class="lb-pt">A descoberta surgiu de testes empiricos — uma carta do Banco do Brasil gerada atraves do sistema WINDI demonstrou que simular identidade institucional em texto gerado por IA ativa requisitos de governanca que nao surgem com documentos genericos.</span>
+    </p>
+
+    <pre><code>{
+  "identity_license": {
+    "states": ["authorized", "model_only", "pending", "expired", "revoked"],
+    "enforcement": {
+      "logo_usage": "blocked unless authorized",
+      "disclaimer": "automatic insertion for model_only",
+      "audit_trail": "all institutional references logged"
+    }
+  }
+}</code></pre>
+
+    <p>
+      <span class="lb-de">Dieser Mechanismus stellt sicher, dass KI-generierte Dokumente institutionelle Kommunikationsstile fur legitime Zwecke (Schulung, Simulation, Entwurfshilfe) ubernehmen können, wahrend klare Herkunft aufrechterhalten und Fehldarstellung verhindert wird.</span>
+      <span class="lb-en">This mechanism ensures that AI-generated documents can adopt institutional communication styles for legitimate purposes (training, simulation, drafting assistance) while maintaining clear provenance and preventing misrepresentation — a requirement particularly relevant under the EU AI Act's transparency obligations (Article 50).</span>
+      <span class="lb-pt">Este mecanismo garante que documentos gerados por IA possam adotar estilos de comunicacao institucional para propositos legitimos (treinamento, simulacao, assistencia de redacao) mantendo procedencia clara e prevenindo declaracoes falsas.</span>
+    </p>
+
+    <!-- Section VI: EU AI Act Alignment -->
+    <h2>
+      <span class="l-de">Abschnitt VI: Regulatorische Einordnung — EU AI Act</span>
+      <span class="l-en">Section VI: Regulatory Classification — EU AI Act</span>
+      <span class="l-pt">Secao VI: Classificacao Regulatoria — EU AI Act</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Die ISP-Governance-Stufen bilden direkt den risikobasierten Ansatz ab, der durch den European AI Act (Verordnung (EU) 2024/1689) etabliert wurde. Das System bietet dokumentierte Governance-Prozesse, auf die Organisationen bei der Demonstration der Einhaltung von Human-Oversight-Anforderungen verweisen können.</span>
+      <span class="lb-en">The ISP governance tiers map directly to the risk-based approach established by the European AI Act (Regulation (EU) 2024/1689). The system provides documented governance processes that organisations can reference when demonstrating compliance with human oversight requirements.</span>
+      <span class="lb-pt">Os niveis de governanca ISP mapeiam diretamente para a abordagem baseada em risco estabelecida pelo European AI Act (Regulamento (EU) 2024/1689). O sistema fornece processos de governanca documentados que organizacoes podem referenciar ao demonstrar conformidade com requisitos de supervisao humana.</span>
+    </p>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>Art. 14 — Human Oversight / Menschliche Aufsicht</h3>
+        <p>WINDI's architectural principle "the API decides, the template manifests" ensures that governance level enforcement is not delegable to the AI system. Every document generation passes through a decision layer where human-set governance policies determine the applicable constraints.</p>
+      </div>
+    </div>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>Art. 50 — Transparency Obligations / Transparenzpflichten</h3>
+        <p>The Identity License System ensures that AI-generated documents referencing institutional identities carry appropriate disclaimers and provenance metadata. The forensic ledger at HIGH level provides tamper-evident documentation of the complete generation process.</p>
+      </div>
+    </div>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>DORA (Regulation (EU) 2022/2554) — ICT Risk Management</h3>
+        <p>The BaFin ISP profile includes dedicated templates for DORA IKT reporting and KI-Risikobewertung, providing governance-controlled document generation for financial entities' ICT risk management obligations.</p>
+      </div>
+    </div>
+
+    <!-- Section VII: Deployment Timeline -->
+    <h2>
+      <span class="l-de">Abschnitt VII: Deployment-Chronologie</span>
+      <span class="l-en">Section VII: Deployment Chronology</span>
+      <span class="l-pt">Secao VII: Cronologia de Implantacao</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Das ISP-Register wurde iterativ auf Produktionsinfrastruktur (Strato DE, deutsche Jurisdiktion) zwischen 31. Januar und 2. Februar 2026 entwickelt und bereitgestellt. Jedes Deployment folgte einem Zero-Violence-Protokoll: Backup, Erstellen, Deployen, Validieren, Verifizieren.</span>
+      <span class="lb-en">The ISP Registry was developed and deployed iteratively on production infrastructure (Strato DE, German jurisdiction) between 31 January and 2 February 2026. Each deployment followed a zero-violence protocol: backup, create, deploy, validate, verify.</span>
+      <span class="lb-pt">O Registro ISP foi desenvolvido e implantado iterativamente em infraestrutura de producao (Strato DE, jurisdicao alema) entre 31 de janeiro e 2 de fevereiro de 2026. Cada implantacao seguiu um protocolo de zero violencia: backup, criar, implantar, validar, verificar.</span>
+    </p>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-date">31 Jan 2026</div>
+        <div class="timeline-content">
+          <strong>Deutsche Bahn AG — ISP v1.0.0</strong>
+          <p>First institutional profile. Established base architecture for ISP system including template schema, governance metadata, and style configuration.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">01 Feb 2026</div>
+        <div class="timeline-content">
+          <strong>BIS-Style Regulatory — ISP v2.0.0</strong>
+          <p>First HIGH-level profile. Introduced forensic ledger requirements and regulatory metadata constraints.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">02 Feb 2026 | 10:51</div>
+        <div class="timeline-content">
+          <strong>Bundesregierung + Agentur fur Arbeit — ISP v2.2.0</strong>
+          <p>First MEDIUM-level profiles. Activated Identity License System with disclaimer enforcement and institutional reference auditing.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">02 Feb 2026 | 11:05</div>
+        <div class="timeline-content">
+          <strong>IHK — ISP v2.2.0</strong>
+          <p>Commerce and industry chamber. Established public_law_chamber type classification.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">02 Feb 2026 | 11:22</div>
+        <div class="timeline-content">
+          <strong>HWK — ISP v2.3.0</strong>
+          <p>Crafts chamber. Complementary to IHK — together covering the entire gewerbliche economy. Documented HWK Schwaben BTZ Kempten connection.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">02 Feb 2026 | 11:31</div>
+        <div class="timeline-content">
+          <strong>BaFin — ISP v2.4.0</strong>
+          <p>National financial supervisor. Most dense profile: 12 templates, 7 supervision areas, KI-Risikobewertung aligned with DORA + EU AI Act. Four-eyes principle enforced.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">02 Feb 2026 | 11:42</div>
+        <div class="timeline-content">
+          <strong>TUV — ISP v2.5.0</strong>
+          <p>Technical inspection ecosystem. Largest profile (23KB). Includes unique ai_governance_context section documenting TUV AI.Lab and EU AI Act Notified Body preparation.</p>
+        </div>
+      </div>
+    </div>
+    <p class="caption"><strong>Fig. 3</strong> — Deployment timeline: 7 profiles in 36 hours, from v1.0.0 to v2.5.0</p>
+
+    <!-- Section VIII: Technical Architecture -->
+    <h2>
+      <span class="l-de">Abschnitt VIII: Technische Architektur</span>
+      <span class="l-en">Section VIII: Technical Architecture</span>
+      <span class="l-pt">Secao VIII: Arquitetura Tecnica</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Jedes ISP-Profil wird als eigenstandiges JSON-Dokument im ISP-Verzeichnis des Servers gespeichert. Das Register verwaltet ein zentrales <code>governance_levels.json</code>-Manifest, das Institutionen auf Governance-Stufen und Dokumenttyp-Klassifikationen abbildet.</span>
+      <span class="lb-en">Each ISP profile is stored as a self-contained JSON document in the server's ISP directory. The registry maintains a central <code>governance_levels.json</code> manifest that maps institutions to governance tiers and document type classifications. Profile loading, validation, and governance enforcement are handled by the WINDI engine at runtime.</span>
+      <span class="lb-pt">Cada perfil ISP e armazenado como um documento JSON autocontido no diretorio ISP do servidor. O registro mantem um manifesto central <code>governance_levels.json</code> que mapeia instituicoes para niveis de governanca e classificacoes de tipo de documento.</span>
+    </p>
+
+    <pre><code># Server directory structure (Strato DE)
+/opt/windi/isp/
+|-- governance_levels.json    # Central registry (v2.5.0)
+|-- ARCHITECTURE.md
+|-- README.md
+|-- isp_loader.py             # Profile loader module
+|-- _base/profile.json        # Base template schema
+|-- deutsche-bahn/profile.json
+|-- bundesregierung/profile.json
+|-- agentur-für-arbeit/profile.json
+|-- ihk/profile.json
+|-- hwk/profile.json
+|-- bafin/profile.json        # HIGH: 24KB, 12 templates
+|-- bis-style/profile.json
++-- tuev/profile.json         # LOW: 23KB, 12 templates</code></pre>
+
+    <p>
+      <span class="lb-de">Jedes Profil kodiert vier Governance-Dimensionen: Organisationsmetadaten (rechtlicher Name, Typ, Sektor), Template-Definitionen (Dokumenttypen mit Feldschemas und Validierungsregeln), Governance-Constraints (ebenespezifische Durchsetzungsrichtlinien) und Erkennungsschlusselworter.</span>
+      <span class="lb-en">Each profile encodes four governance dimensions: organisational metadata (legal name, type, sector), template definitions (document types with field schemas and validation rules), governance constraints (level-specific enforcement policies), and detection keywords (for the Identity Detector module to recognise institutional references in free text).</span>
+      <span class="lb-pt">Cada perfil codifica quatro dimensoes de governanca: metadados organizacionais (nome legal, tipo, setor), definicoes de modelo (tipos de documento com esquemas de campo e regras de validacao), restricoes de governanca (politicas de aplicacao especificas por nivel) e palavras-chave de deteccao.</span>
+    </p>
+
+    <!-- Section IX: Outlook -->
+    <h2>
+      <span class="l-de">Abschnitt IX: Ausblick — Nachste Schritte</span>
+      <span class="l-en">Section IX: Outlook — Next Steps</span>
+      <span class="l-pt">Secao IX: Perspectivas — Proximos Passos</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Das aktuelle Register demonstriert den Proof of Concept uber drei Governance-Stufen und acht institutionelle Kontexte. Geplante Entwicklung umfasst Katalogkonsolidierung (Schema-Validierungswerkzeuge und standardisierte Feldanforderungen), Erweiterung auf Gesundheitssektor-Profile (Bundesarztekammer, GKV/Krankenkassen) und zusatzliche technische Prufstellen (DEKRA).</span>
+      <span class="lb-en">The current registry demonstrates proof of concept across three governance tiers and eight institutional contexts. Planned development includes catalog consolidation (schema validation tooling and standardised field requirements), expansion into health sector profiles (Bundesarztekammer, GKV/Krankenkassen) and additional technical inspection bodies (DEKRA), as well as an academic/university profile type relevant to the Hochschule environment where this research is conducted.</span>
+      <span class="lb-pt">O registro atual demonstra prova de conceito atraves de tres niveis de governanca e oito contextos institucionais. O desenvolvimento planejado inclui consolidacao do catalogo (ferramentas de validacao de esquema e requisitos de campo padronizados), expansao para perfis do setor de saude (Bundesarztekammer, GKV/Krankenkassen) e organismos de inspecao tecnica adicionais (DEKRA).</span>
+    </p>
+
+    <p>
+      <span class="lb-de">Das strategische Ziel ist nicht erschopfende institutionelle Abdeckung, sondern ein ausreichend diverser Katalog, der die Anwendbarkeit des Governance-Modells uber materiell verschiedene Risikokontexte validiert — von der Finanzregulierung bis zum offentlichen Verkehr, von der Bundesregierung bis zum Handwerk.</span>
+      <span class="lb-en">The strategic objective is not exhaustive institutional coverage, but rather a sufficiently diverse catalog that validates the governance model's applicability across materially different risk contexts — from financial regulation to public transport, from federal government to craft trades.</span>
+      <span class="lb-pt">O objetivo estrategico nao e cobertura institucional exaustiva, mas sim um catalogo suficientemente diverso que valide a aplicabilidade do modelo de governanca atraves de contextos de risco materialmente diferentes — da regulacao financeira ao transporte publico, do governo federal ao comercio artesanal.</span>
+    </p>
+
+    <!-- Core Principle (closing) -->
+    <div class="doc-quote">
+      <p>
+        <span class="l-de">"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</span>
+        <span class="l-en">"AI processes. Human decides. WINDI guarantees."</span>
+        <span class="l-pt">"IA processa. Humano decide. WINDI garante."</span>
+      </p>
+      <cite>WINDI Handshake Protocol v1.1 | Marco Zero: 19 January 2026</cite>
+    </div>
+
+  </div>
+
+  <!-- Page Footer -->
+  <footer class="page-footer">
+    <div class="page-footer-meta">
+      <span>WINDI-RECEIPT: TR006-ISP-REGISTRY-06FEB26-NOIR</span>
+      <span>WINDI PUBLISHING HOUSE</span>
+    </div>
+    <p class="page-footer-quittung">TR-WINDI-2026-006 | ISP Registry v2.5.0 | 02 February 2026 | Classification: PUBLIC</p>
+    <p class="page-footer-quittung">
+      <span class="l-de">Autor: Jober Mogele Correa, Chief Governance Officer</span>
+      <span class="l-en">Author: Jober Mogele Correa, Chief Governance Officer</span>
+      <span class="l-pt">Autor: Jober Mogele Correa, Chief Governance Officer</span>
+    </p>
+    <p class="page-footer-principle">
+      <span class="l-de">"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</span>
+      <span class="l-en">"AI processes. Human decides. WINDI guarantees."</span>
+      <span class="l-pt">"IA processa. Humano decide. WINDI garante."</span>
+    </p>
+    <p class="page-footer-location">Kempten (Allgau), Bavaria, Germany | windi-domain.com</p>
+  </footer>
+
+</main>
+
+<!-- JavaScript -->
+<script>
+// Theme Toggle
+function toggleTheme() {
+  const body = document.body;
+  const isLight = body.getAttribute('data-theme') === 'light';
+  body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+  try { localStorage.setItem('windi-theme', isLight ? 'dark' : 'light'); } catch(e) {}
+}
+
+// Language Switcher
+function setLang(lang) {
+  document.body.setAttribute('data-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  try { localStorage.setItem('windi-lang', lang); } catch(e) {}
+}
+
+// Sidebar Toggle (mobile)
+let sidebarOpen = false;
+function toggleSidebar() {
+  sidebarOpen = !sidebarOpen;
+  document.getElementById('sidebarLeft').classList.toggle('open', sidebarOpen);
+}
+
+// Close sidebar on link click (mobile)
+document.querySelectorAll('.sidebar-link').forEach(link => {
+  link.addEventListener('click', () => {
+    if (window.innerWidth <= 960) {
+      sidebarOpen = false;
+      document.getElementById('sidebarLeft').classList.remove('open');
+    }
+  });
+});
+
+// Init saved preferences
+(function init() {
+  try {
+    const theme = localStorage.getItem('windi-theme');
+    const lang = localStorage.getItem('windi-lang');
+    if (theme) document.body.setAttribute('data-theme', theme);
+    if (lang) setLang(lang);
+  } catch(e) {}
+})();
+
+// Mark current nav link
+if(location.pathname.includes('/library/')){
+  document.querySelectorAll('.nav-links a').forEach(function(a){
+    if(a.getAttribute('href')==='/library/' || a.getAttribute('href')==='/library/index.html'){
+      a.classList.add('nav-current');
+    }
+  });
+}
+</script>
+
+</body>
+</html>

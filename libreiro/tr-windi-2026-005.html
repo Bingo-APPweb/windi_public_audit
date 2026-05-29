@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TR-005: The Six-Phase Cognitive Governance Cycle — WINDI System</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Crect width='20' height='20' rx='4' fill='%231A1208'/%3E%3Cellipse cx='10' cy='11' rx='4.5' ry='4' transform='rotate(-15 10 11)' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='7' cy='7.5' r='2.8' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='6.2' cy='6.8' r='0.7' fill='%238B6914'/%3E%3Cpath d='M7.5 4.8 C7 3.5 8 2.5 8.5 2' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M7 10 C5 8.5 3 8 2 9 C1.5 9.8 2.5 11 4 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M13 9.5 C15 8 17 8 17.5 9.5 C17.8 10.5 16.5 11 15 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M14 13 C16 14 17 15.5 16 16.5 C15 17.5 13.5 16.5 13.5 15' stroke='%238B6914' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E">
+<meta name="description" content="TR-WINDI-2026-005 — A Closed-Loop Model for Executable, Explainable Institutional AI Governance">
+<link rel="stylesheet" href="/library/windi-internal.css">
+</head>
+<body data-theme="dark" data-lang="de">
+
+<!-- Header -->
+<header class="site-header">
+  <a href="/library/index.html" class="header-brand">
+    <div class="header-logo">W</div>
+    <div class="header-title-group">
+      <span class="header-title">WINDI</span>
+      <span class="header-subtitle">Governance Intelligence</span>
+    </div>
+  </a>
+  <div class="header-center">
+    <div class="header-status">
+      <span class="status-dot"></span>
+      <span>Operational</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('de')">DE</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('pt')">PT</button>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <div class="theme-toggle-track"></div>
+      <div class="theme-toggle-thumb" id="themeThumb"></div>
+    </button>
+    <button class="mobile-toggle" onclick="toggleSidebar()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- Sidebar Navigation -->
+<nav class="sidebar sidebar-left" id="sidebarLeft">
+  <div class="sidebar-section">
+    <div class="sidebar-label">Masterarbeit</div>
+    <a href="/library/index.html" class="sidebar-link">Main Document</a>
+    <a href="/library/cover.html" class="sidebar-link">Cover</a>
+    <a href="/library/about-windi.html" class="sidebar-link">About WINDI</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Governance</div>
+    <a href="/library/governance-levels.html" class="sidebar-link">Governance Levels</a>
+    <a href="/library/human-oversight.html" class="sidebar-link">Human Oversight</a>
+    <a href="/library/data-handling.html" class="sidebar-link">Data Handling</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Architecture</div>
+    <a href="/library/diagrams.html" class="sidebar-link">Diagrams</a>
+    <a href="/library/interface-guide.html" class="sidebar-link">Interface Guide</a>
+    <a href="/library/verification-layer.html" class="sidebar-link">Verification Layer</a>
+    <a href="/library/kapitel12_domain_sovereignty.html" class="sidebar-link">Domain Sovereignty</a>
+    <a href="/library/identity-governance-layer.html" class="sidebar-link">Identity Governance</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Technical Reports</div>
+    <a href="/library/tr-windi-2026-003.html" class="sidebar-link">TR-003: Service Layer</a>
+    <a href="/library/tr-windi-2026-004.html" class="sidebar-link">TR-004: Cognitive Service</a>
+    <a href="/library/tr-windi-2026-005.html" class="sidebar-link sidebar-link-active">TR-005: Cognitive Cycle</a>
+    <a href="/library/isp-evolution.html" class="sidebar-link">TR-006: ISP Registry</a>
+    <a href="/library/tr-007.html" class="sidebar-link">TR-007: Provenance</a>
+    <a href="/library/sge-results.html" class="sidebar-link">SGE Results</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Publications</div>
+    <a href="/library/publications.html" class="sidebar-link">Publications</a>
+    <a href="/library/fachartikel-provenienz.html" class="sidebar-link">Fachartikel</a>
+    <a href="/library/windi-publishing-house.html" class="sidebar-link">Manifesto</a>
+    <a href="/library/editorial-policy.html" class="sidebar-link">Editorial Policy</a>
+    <a href="/library/idpf-abstract.html" class="sidebar-link">IDPF Abstract</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Media</div>
+    <a href="/library/windi-working-paper-2026.html" class="sidebar-link">Working Paper</a>
+    <a href="/library/press-release-windi-2026.html" class="sidebar-link">Press Release</a>
+    <a href="/library/windi-side-by-side-2026.html" class="sidebar-link">Side-by-Side</a>
+    <a href="/library/wsj-style-governed-windi-2026.html" class="sidebar-link">WSJ Feature</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Compliance</div>
+    <a href="/library/document-integrity.html" class="sidebar-link">Doc Integrity</a>
+    <a href="/library/print-watermark-layer.html" class="sidebar-link">Print Layer</a>
+    <a href="/library/regulatory-summary-print-layer.html" class="sidebar-link">Regulatory</a>
+    <a href="/library/availability-implementation.html" class="sidebar-link">Appendix A</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<main class="main-content">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-breadcrumb">
+      <a href="/library/index.html">WINDI</a>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current">TR-005</span>
+    </div>
+    <div class="page-meta-bar">
+      <span class="page-tag page-tag-tr">TR-WINDI-2026-005</span>
+      <span class="page-date">01 February 2026</span>
+    </div>
+    <h1 class="page-title">
+      <span class="l-de">Der Sechs-Phasen Kognitive Governance-Zyklus</span>
+      <span class="l-en">The Six-Phase Cognitive Governance Cycle</span>
+      <span class="l-pt">O Ciclo Cognitivo de Governança de Seis Fases</span>
+    </h1>
+    <p class="page-subtitle">
+      <span class="l-de">Wahrnehmung → Kognition → Governance → Erklärung → Schnittstelle → Wissenschaft — Ein geschlossenes Modell für ausführbare, erklärbare institutionelle KI-Governance</span>
+      <span class="l-en">Perception → Cognition → Governance → Explanation → Interface → Science — A Closed-Loop Model for Executable, Explainable Institutional AI Governance</span>
+      <span class="l-pt">Percepção → Cognição → Governança → Explicação → Interface → Ciência — Um Modelo de Circuito Fechado para Governança Institucional de IA Executável e Explicável</span>
+    </p>
+    <p class="page-section-ref">Section 13 — Conceptual Model &amp; Architectural Theory</p>
+  </div>
+
+  <div class="content-body">
+
+    <!-- Metadata Strip -->
+    <div class="meta-grid">
+      <div class="meta-item">
+        <span class="meta-label">
+          <span class="l-de">Autor</span>
+          <span class="l-en">Author</span>
+          <span class="l-pt">Autor</span>
+        </span>
+        <span class="meta-value">Jober Mögele Correa — WINDI-CEO-001</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">
+          <span class="l-de">Institution</span>
+          <span class="l-en">Institution</span>
+          <span class="l-pt">Instituição</span>
+        </span>
+        <span class="meta-value">WINDI Publishing House, Kempten, Bavaria</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">
+          <span class="l-de">Datum</span>
+          <span class="l-en">Date</span>
+          <span class="l-pt">Data</span>
+        </span>
+        <span class="meta-value">01 February 2026</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Status</span>
+        <span class="meta-value status-registered">REGISTERED</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">
+          <span class="l-de">Baut auf</span>
+          <span class="l-en">Builds On</span>
+          <span class="l-pt">Baseado em</span>
+        </span>
+        <span class="meta-value">TR-004 (From Library to Cognitive Service)</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">
+          <span class="l-de">Beitrag</span>
+          <span class="l-en">Contribution</span>
+          <span class="l-pt">Contribuição</span>
+        </span>
+        <span class="meta-value">Original governance cycle model — no prior art</span>
+      </div>
+    </div>
+
+    <!-- Abstract Section -->
+    <section class="content-section">
+      <div class="abstract-box">
+        <div class="abstract-label">Abstract</div>
+        <p class="lb-de">Bestehende KI-Governance-Rahmenwerke enden an der Entscheidungsgrenze: sie klassifizieren, beschränken oder prüfen, aber sie schließen den Kreislauf zwischen Wahrnehmung, Entscheidung, menschlicher Kommunikation und institutioneller Wissensschaffung nicht. Dieses Papier formalisiert einen sechsphasigen kognitiven Governance-Zyklus—Wahrnehmung, Kognition, Governance, Erklärung, Schnittstelle, Wissenschaft—wie er im WINDI-System implementiert und validiert wurde. Jede Phase wird von einer eingesetzten Softwarekomponente unterstützt und am 01. Februar 2026 in der Produktion verifiziert. Der Zyklus stellt, nach unserem Wissen, die erste Governance-Architektur dar, die den vollständigen Weg von der Identitätserkennung auf Dokumentebene bis zum veröffentlichten institutionellen Wissen abschließt und Governance nicht als Compliance-Checkpoint, sondern als kontinuierlichen kognitiven Prozess behandelt.</p>
+        <p class="lb-en">Existing AI governance frameworks terminate at the decision boundary: they classify, restrict, or audit, but do not close the loop between perception, decision, human communication, and institutional knowledge creation. This paper formalizes a six-phase cognitive governance cycle—Perception, Cognition, Governance, Explanation, Interface, Science—as implemented and validated in the WINDI system. Each phase is backed by a deployed software component and verified in production on 01 February 2026. The cycle represents, to our knowledge, the first governance architecture that completes the full path from document-level identity detection to published institutional knowledge, treating governance not as a compliance checkpoint but as a continuous cognitive process.</p>
+        <p class="lb-pt">Os frameworks de governança de IA existentes terminam na fronteira da decisão: eles classificam, restringem ou auditam, mas não fecham o ciclo entre percepção, decisão, comunicação humana e criação de conhecimento institucional. Este artigo formaliza um ciclo cognitivo de governança de seis fases—Percepção, Cognição, Governança, Explicação, Interface, Ciência—conforme implementado e validado no sistema WINDI. Cada fase é suportada por um componente de software implantado e verificado em produção em 01 de fevereiro de 2026. O ciclo representa, até onde sabemos, a primeira arquitetura de governança que completa o caminho completo desde a detecção de identidade em nível de documento até o conhecimento institucional publicado, tratando a governança não como um ponto de verificação de conformidade, mas como um processo cognitivo contínuo.</p>
+      </div>
+    </section>
+
+    <!-- Section 1: The Gap in Existing Frameworks -->
+    <section class="content-section">
+      <h2>
+        <span class="l-de">1. Die Lücke in bestehenden Governance-Rahmenwerken</span>
+        <span class="l-en">1. The Gap in Existing Governance Frameworks</span>
+        <span class="l-pt">1. A Lacuna nos Frameworks de Governança Existentes</span>
+      </h2>
+
+      <p class="lb-de">Der EU AI Act, NIST AI RMF und ISO/IEC 42001 definieren Governance als eine Reihe von Anforderungen: Risikoklassifizierung, Transparenzverpflichtungen, Bestimmungen zur menschlichen Aufsicht und Nachmarktüberwachung. Diese Rahmenwerke sind wesentlich, aber strukturell unvollständig. Sie beschreiben, <em>was</em> ein reguliertes System erfüllen muss, nicht <em>wie</em> Governance als kontinuierlicher, beobachtbarer Prozess innerhalb des Systems selbst funktioniert.</p>
+      <p class="lb-en">The EU AI Act, NIST AI RMF, and ISO/IEC 42001 define governance as a set of requirements: risk classification, transparency obligations, human oversight provisions, and post-market monitoring. These frameworks are essential but structurally incomplete. They describe <em>what</em> a governed system must satisfy, not <em>how</em> governance operates as a continuous, observable process within the system itself.</p>
+      <p class="lb-pt">O EU AI Act, NIST AI RMF e ISO/IEC 42001 definem governança como um conjunto de requisitos: classificação de risco, obrigações de transparência, disposições de supervisão humana e monitoramento pós-mercado. Esses frameworks são essenciais, mas estruturalmente incompletos. Eles descrevem <em>o que</em> um sistema governado deve satisfazer, não <em>como</em> a governança opera como um processo contínuo e observável dentro do próprio sistema.</p>
+
+      <p class="lb-de">In der Praxis bedeutet dies, dass die meisten KI-Governance-Implementierungen einem Checkpoint-Modell folgen: Compliance wird zum Zeitpunkt der Bereitstellung verifiziert, periodisch geprüft und rückwirkend dokumentiert. Das System selbst ist zwischen den Checkpoints undurchsichtig. Der menschliche Betreiber sieht nicht, wie Governance geschieht—er sieht nur ihr Fehlen, wenn etwas schief geht.</p>
+      <p class="lb-en">In practice, this means most AI governance implementations follow a checkpoint model: compliance is verified at deployment time, audited periodically, and documented retroactively. The system itself is opaque between checkpoints. The human operator does not see governance happening—they only see its absence when something goes wrong.</p>
+      <p class="lb-pt">Na prática, isso significa que a maioria das implementações de governança de IA segue um modelo de checkpoint: a conformidade é verificada no momento da implantação, auditada periodicamente e documentada retroativamente. O próprio sistema é opaco entre os checkpoints. O operador humano não vê a governança acontecendo—ele só percebe sua ausência quando algo dá errado.</p>
+
+      <p class="lb-de">WINDI schlägt ein anderes Paradigma vor: Governance als kognitiver Zyklus, der kontinuierlich läuft, dem Betreiber in Echtzeit sichtbar ist und institutionelles Wissen als natürliches Nebenprodukt seiner Tätigkeit produziert.</p>
+      <p class="lb-en">WINDI proposes a different paradigm: governance as a cognitive cycle that runs continuously, is visible to the operator in real time, and produces institutional knowledge as a natural byproduct of its operation.</p>
+      <p class="lb-pt">O WINDI propõe um paradigma diferente: governança como um ciclo cognitivo que funciona continuamente, é visível para o operador em tempo real e produz conhecimento institucional como um subproduto natural de sua operação.</p>
+    </section>
+
+    <!-- Section 2: The Six-Phase Model -->
+    <section class="content-section">
+      <h2>
+        <span class="l-de">2. Der Sechs-Phasen Kognitive Governance-Zyklus</span>
+        <span class="l-en">2. The Six-Phase Cognitive Governance Cycle</span>
+        <span class="l-pt">2. O Ciclo Cognitivo de Governança de Seis Fases</span>
+      </h2>
+
+      <p class="lb-de">Das WINDI-Governance-Modell besteht aus sechs Phasen, die einen geschlossenen Kreislauf bilden. Jede Phase transformiert die Ausgabe der vorherigen Phase in eine höherwertige Darstellung, die in formalem institutionellem Wissen gipfelt, das in die Wahrnehmungsfähigkeiten des Systems zurückfließt.</p>
+      <p class="lb-en">The WINDI governance model consists of six phases that form a closed loop. Each phase transforms the output of the previous phase into a higher-order representation, culminating in formal institutional knowledge that feeds back into the system's perceptual capabilities.</p>
+      <p class="lb-pt">O modelo de governança WINDI consiste em seis fases que formam um ciclo fechado. Cada fase transforma a saída da fase anterior em uma representação de ordem superior, culminando em conhecimento institucional formal que retroalimenta as capacidades perceptuais do sistema.</p>
+
+      <!-- Cycle Visualization -->
+      <div class="cycle-container">
+        <div class="cycle-title">Figure 1 — The Complete Cognitive Governance Cycle</div>
+        <div class="cycle-flow">
+          <div class="cycle-node cn-perception">
+            <span class="cycle-icon">👁</span>
+            <div class="cycle-phase">Phase 1</div>
+            <div class="cycle-name">Perception</div>
+            <div class="cycle-sub">Identity<br>Detection</div>
+          </div>
+          <div class="cycle-arrow">→</div>
+          <div class="cycle-node cn-cognition">
+            <span class="cycle-icon"><svg style="width:24px;height:24px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 17V10"/><path d="M10 10C10 10 7 9.5 6 7.5C5 5.5 6 3 8.5 3C9.5 3 10 3.5 10 3.5"/><path d="M10 10C10 10 13 9.5 14 7.5C15 5.5 14 3 11.5 3C10.5 3 10 3.5 10 3.5"/><path d="M6 7.5C4.5 8 3.5 9.5 4 11C4.5 12.5 6 13 7 12.5"/><path d="M14 7.5C15.5 8 16.5 9.5 16 11C15.5 12.5 14 13 13 12.5"/><path d="M7 12.5C7 14 8 15 10 15C12 15 13 14 13 12.5"/></svg></span>
+            <div class="cycle-phase">Phase 2</div>
+            <div class="cycle-name">Cognition</div>
+            <div class="cycle-sub">Policy<br>Evaluation</div>
+          </div>
+          <div class="cycle-arrow">→</div>
+          <div class="cycle-node cn-governance">
+            <span class="cycle-icon"><svg style="width:24px;height:24px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="10" y1="3" x2="10" y2="17"/><line x1="6" y1="3" x2="14" y2="3"/><path d="M5 8L3 12H7L5 8Z"/><path d="M15 8L13 12H17L15 8Z"/><line x1="7" y1="17" x2="13" y2="17"/></svg></span>
+            <div class="cycle-phase">Phase 3</div>
+            <div class="cycle-name">Governance</div>
+            <div class="cycle-sub">Level<br>Decision</div>
+          </div>
+          <div class="cycle-arrow">→</div>
+          <div class="cycle-node cn-explanation">
+            <span class="cycle-icon">💬</span>
+            <div class="cycle-phase">Phase 4</div>
+            <div class="cycle-name">Explanation</div>
+            <div class="cycle-sub">Trilingual<br>Advisory</div>
+          </div>
+          <div class="cycle-arrow">→</div>
+          <div class="cycle-node cn-interface">
+            <span class="cycle-icon"><svg style="width:24px;height:24px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="8" r="4"/><circle cx="14" cy="8" r="4"/><path d="M4.5 9.5C5 10 5.5 10.5 6 10.5C6.5 10.5 7 10 7.5 9.5"/><path d="M12.5 9.5C12 10 12.5 10.5 13 10.5C13.5 10.5 14 10 14.5 9.5"/><path d="M5 7V7" stroke-linecap="round"/><path d="M7 7V7" stroke-linecap="round"/><path d="M13 7V7" stroke-linecap="round"/><path d="M15 7V7" stroke-linecap="round"/><path d="M6 12V16"/><path d="M14 12V16"/></svg></span>
+            <div class="cycle-phase">Phase 5</div>
+            <div class="cycle-name">Interface</div>
+            <div class="cycle-sub">Visual<br>Manifestation</div>
+          </div>
+          <div class="cycle-arrow">→</div>
+          <div class="cycle-node cn-science">
+            <span class="cycle-icon"><svg style="width:24px;height:24px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2H12L16 6V18H4V2Z"/><path d="M12 2V6H16"/><path d="M7 14C8 13 9 14 10 13C11 12 12 13 13 12"/></svg></span>
+            <div class="cycle-phase">Phase 6</div>
+            <div class="cycle-name">Science</div>
+            <div class="cycle-sub">Institutional<br>Knowledge</div>
+          </div>
+        </div>
+        <div class="cycle-return">
+          <span class="arrow-back">↩ Science feeds back into Perception — the cycle closes</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Phase 1 - Perception -->
+    <section class="content-section">
+      <h2>
+        <span class="l-de">3. Phase 1: Wahrnehmung</span>
+        <span class="l-en">3. Phase 1: Perception</span>
+        <span class="l-pt">3. Fase 1: Percepção</span>
+      </h2>
+
+      <div class="phase-section ps-perception">
+        <div class="phase-header">
+          <div class="phase-badge pb-perception">👁</div>
+          <div class="phase-title-block">
+            <div class="phase-title-label" style="color:var(--c-perception);">Phase 1 — Perception</div>
+            <div class="phase-title-name">
+              <span class="l-de">Das System sieht die Realität</span>
+              <span class="l-en">The System Sees Reality</span>
+              <span class="l-pt">O Sistema Vê a Realidade</span>
+            </div>
+          </div>
+        </div>
+        <p class="lb-de">Wahrnehmung ist der Akt der Erkennung institutioneller Realität innerhalb unstrukturierter Texte. Der WINDI <code>IdentityDetector</code> scannt Dokumentinhalte nach Mustern, die mit Einträgen im Identity Directory übereinstimmen—einem kuratierten Register realer Institutionen mit ihren Governance-Metadaten.</p>
+        <p class="lb-en">Perception is the act of recognizing institutional reality within unstructured text. The WINDI <code>IdentityDetector</code> scans document content for patterns that match entries in the Identity Directory—a curated registry of real-world institutions with their governance metadata.</p>
+        <p class="lb-pt">Percepção é o ato de reconhecer a realidade institucional dentro de texto não estruturado. O <code>IdentityDetector</code> do WINDI examina o conteúdo do documento em busca de padrões que correspondam às entradas no Identity Directory—um registro curado de instituições do mundo real com seus metadados de governança.</p>
+
+        <p class="lb-de">Wenn ein Benutzer "Sehr geehrte Damen und Herren der Deutschen Bahn" schreibt, findet der Detektor nicht nur eine Zeichenkettenübereinstimmung. Er löst die Übereinstimmung zu einem strukturierten Identitätsdatensatz (INST-DE-DB-001) auf, der Land, Institutionstyp, Governance-Richtlinie, Identitätslizenzstatus und Konfidenzwert enthält. Wahrnehmung transformiert Rohtext in ein governance-relevantes Signal.</p>
+        <p class="lb-en">When a user writes "Sehr geehrte Damen und Herren der Deutschen Bahn," the detector does not merely find a string match. It resolves the match to a structured identity record (INST-DE-DB-001) containing country, institutional type, governance policy, identity license status, and confidence score. Perception transforms raw text into a governance-relevant signal.</p>
+        <p class="lb-pt">Quando um usuário escreve "Sehr geehrte Damen und Herren der Deutschen Bahn", o detector não apenas encontra uma correspondência de string. Ele resolve a correspondência para um registro de identidade estruturado (INST-DE-DB-001) contendo país, tipo institucional, política de governança, status da licença de identidade e pontuação de confiança. A percepção transforma texto bruto em um sinal relevante para governança.</p>
+
+        <div class="phase-component">
+          <strong>Component:</strong> <code>IdentityDetector.scan_text()</code> ·
+          <strong>API:</strong> <code>POST /api/evolution/detect</code> ·
+          <strong>Output:</strong> Structured detection array with identity metadata
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: Phase 2 - Cognition -->
+    <section class="content-section">
+      <h2>
+        <span class="l-de">4. Phase 2: Kognition</span>
+        <span class="l-en">4. Phase 2: Cognition</span>
+        <span class="l-pt">4. Fase 2: Cognição</span>
+      </h2>
+
+      <div class="phase-section ps-cognition">
+        <div class="phase-header">
+          <div class="phase-badge pb-cognition"><svg style="width:16px;height:16px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 17V10"/><path d="M10 10C10 10 7 9.5 6 7.5C5 5.5 6 3 8.5 3C9.5 3 10 3.5 10 3.5"/><path d="M10 10C10 10 13 9.5 14 7.5C15 5.5 14 3 11.5 3C10.5 3 10 3.5 10 3.5"/><path d="M6 7.5C4.5 8 3.5 9.5 4 11C4.5 12.5 6 13 7 12.5"/><path d="M14 7.5C15.5 8 16.5 9.5 16 11C15.5 12.5 14 13 13 12.5"/><path d="M7 12.5C7 14 8 15 10 15C12 15 13 14 13 12.5"/></svg></div>
+          <div class="phase-title-block">
+            <div class="phase-title-label" style="color:var(--c-cognition);">Phase 2 — Cognition</div>
+            <div class="phase-title-name">
+              <span class="l-de">Das System interpretiert Politik</span>
+              <span class="l-en">The System Interprets Policy</span>
+              <span class="l-pt">O Sistema Interpreta Política</span>
+            </div>
+          </div>
+        </div>
+        <p class="lb-de">Kognition bewertet, was die wahrgenommene Realität innerhalb des Governance-Rahmenwerks bedeutet. Die ISP-Engine (Institutional Style Profile) ordnet jede erkannte Identität ihren Governance-Anforderungen zu: welche Stufe gilt, ob ein Disclaimer erforderlich ist, ob institutionelle Logos erlaubt sind und was die Identitätslizenz autorisiert.</p>
+        <p class="lb-en">Cognition evaluates what the perceived reality means within the governance framework. The ISP (Institutional Style Profile) engine maps each detected identity to its governance requirements: which level applies, whether a disclaimer is required, whether institutional logos are permitted, and what the identity license authorizes.</p>
+        <p class="lb-pt">A cognição avalia o que a realidade percebida significa dentro do framework de governança. O motor ISP (Institutional Style Profile) mapeia cada identidade detectada para seus requisitos de governança: qual nível se aplica, se um disclaimer é necessário, se logos institucionais são permitidos e o que a licença de identidade autoriza.</p>
+
+        <p class="lb-de">Hier wird das Identity License-Modell kritisch. Eine Institution, die mit <code>model_only</code>-Lizenz erkannt wird, löst ein anderes Governance-Verhalten aus als eine mit <code>authorized</code>-Lizenz. Kognition ist kein Pattern Matching—es ist Politikinterpretation, die Erkennungskonfidenz mit institutionellem Kontext kombiniert, um eine Governance-Empfehlung zu produzieren.</p>
+        <p class="lb-en">This is where the Identity License model becomes critical. An institution detected with <code>model_only</code> license triggers different governance behavior than one with <code>authorized</code> license. Cognition is not pattern matching—it is policy interpretation, combining detection confidence with institutional context to produce a governance recommendation.</p>
+        <p class="lb-pt">É aqui que o modelo de Identity License se torna crítico. Uma instituição detectada com licença <code>model_only</code> aciona um comportamento de governança diferente de uma com licença <code>authorized</code>. A cognição não é correspondência de padrões—é interpretação de política, combinando confiança de detecção com contexto institucional para produzir uma recomendação de governança.</p>
+
+        <div class="phase-component">
+          <strong>Component:</strong> ISP Policy Engine + Identity License Validator ·
+          <strong>Logic:</strong> Detection × Policy × License → Recommendation ·
+          <strong>Output:</strong> Governance level + restriction matrix
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5: Phase 3 - Governance -->
+    <section class="content-section">
+      <h2>
+        <span class="l-de">5. Phase 3: Governance</span>
+        <span class="l-en">5. Phase 3: Governance</span>
+        <span class="l-pt">5. Fase 3: Governança</span>
+      </h2>
+
+      <div class="phase-section ps-governance">
+        <div class="phase-header">
+          <div class="phase-badge pb-governance"><svg style="width:16px;height:16px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="10" y1="3" x2="10" y2="17"/><line x1="6" y1="3" x2="14" y2="3"/><path d="M5 8L3 12H7L5 8Z"/><path d="M15 8L13 12H17L15 8Z"/><line x1="7" y1="17" x2="13" y2="17"/></svg></div>
+          <div class="phase-title-block">
+            <div class="phase-title-label" style="color:var(--c-governance);">Phase 3 — Governance</div>
+            <div class="phase-title-name">
+              <span class="l-de">Das System entscheidet</span>
+              <span class="l-en">The System Decides</span>
+              <span class="l-pt">O Sistema Decide</span>
+            </div>
+          </div>
+        </div>
+        <p class="lb-de">Governance ist der Entscheidungspunkt. Der Governance Advisor bewertet die Kognitionsausgabe gegen die aktuelle Klassifikationsstufe des Dokuments und bestimmt, ob ein Upgrade erforderlich ist. Der Entscheidungsraum hat drei Ergebnisse: <em>upgrade</em> (aktuelle Stufe ist unzureichend), <em>confirm</em> (aktuelle Stufe stimmt überein), oder <em>no_change</em> (kein institutioneller Kontext erkannt).</p>
+        <p class="lb-en">Governance is the decision point. The Governance Advisor evaluates the cognition output against the document's current classification level and determines whether an upgrade is required. The decision space has three outcomes: <em>upgrade</em> (current level is insufficient), <em>confirm</em> (current level matches), or <em>no_change</em> (no institutional context detected).</p>
+        <p class="lb-pt">Governança é o ponto de decisão. O Governance Advisor avalia a saída da cognição contra o nível de classificação atual do documento e determina se um upgrade é necessário. O espaço de decisão tem três resultados: <em>upgrade</em> (nível atual é insuficiente), <em>confirm</em> (nível atual corresponde), ou <em>no_change</em> (nenhum contexto institucional detectado).</p>
+
+        <p class="lb-de">Kritisch ist, dass die Entscheidung absichtlich asymmetrisch ist: das System kann ein Upgrade von LOW auf MEDIUM empfehlen, aber niemals ein Downgrade. Diese Einwegsperre stellt sicher, dass einmal aktivierte institutionelle Governance nicht stillschweigend geschwächt werden kann. Der menschliche Betreiber behält die Autorität zu übersteuern, aber der Standard des Systems ist immer in Richtung größeren Schutzes.</p>
+        <p class="lb-en">Critically, the decision is asymmetric by design: the system can recommend upgrading from LOW to MEDIUM, but never downgrading. This one-way ratchet ensures that once institutional governance is activated, it cannot be silently weakened. The human operator retains the authority to override, but the system's default is always toward greater protection.</p>
+        <p class="lb-pt">Criticamente, a decisão é assimétrica por design: o sistema pode recomendar upgrade de LOW para MEDIUM, mas nunca downgrade. Esta catraca unidirecional garante que, uma vez ativada a governança institucional, ela não pode ser silenciosamente enfraquecida. O operador humano mantém a autoridade para sobrepor, mas o padrão do sistema é sempre em direção a maior proteção.</p>
+
+        <div class="phase-component">
+          <strong>Component:</strong> <code>GovernanceAdvisor.recommend()</code> ·
+          <strong>API:</strong> <code>POST /api/evolution/recommend</code> ·
+          <strong>Output:</strong> Action (upgrade|confirm|no_change) + structured justification
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 6: Phase 4 - Explanation -->
+    <section class="content-section">
+      <h2>
+        <span class="l-de">6. Phase 4: Erklärung</span>
+        <span class="l-en">6. Phase 4: Explanation</span>
+        <span class="l-pt">6. Fase 4: Explicação</span>
+      </h2>
+
+      <div class="phase-section ps-explanation">
+        <div class="phase-header">
+          <div class="phase-badge pb-explanation">💬</div>
+          <div class="phase-title-block">
+            <div class="phase-title-label" style="color:var(--c-explanation);">Phase 4 — Explanation</div>
+            <div class="phase-title-name">
+              <span class="l-de">Das System spricht zu Menschen</span>
+              <span class="l-en">The System Speaks to Humans</span>
+              <span class="l-pt">O Sistema Fala aos Humanos</span>
+            </div>
+          </div>
+        </div>
+        <p class="lb-de">Erklärung transformiert eine technische Governance-Entscheidung in eine Nachricht, die ein menschlicher Betreiber verstehen, bewerten und darauf reagieren kann. Der WINDI Advisor generiert dreisprachige Nachrichten (Deutsch, Englisch, Portugiesisch), die die erkannte Institution benennen, die empfohlene Governance-Stufe angeben und erklären, warum die Änderung ausgelöst wurde.</p>
+        <p class="lb-en">Explanation transforms a technical governance decision into a message that a human operator can understand, evaluate, and act upon. The WINDI Advisor generates trilingual messages (German, English, Portuguese) that name the detected institution, state the recommended governance level, and explain why the change was triggered.</p>
+        <p class="lb-pt">A explicação transforma uma decisão técnica de governança em uma mensagem que um operador humano pode entender, avaliar e agir. O WINDI Advisor gera mensagens trilíngues (Alemão, Inglês, Português) que nomeiam a instituição detectada, declaram o nível de governança recomendado e explicam por que a mudança foi acionada.</p>
+
+        <p class="lb-de">Diese Phase trennt Governance von Gatekeeping. Ein System, das ohne Erklärung blockiert, ist ein Hindernis. Ein System, das seine Begründung erklärt, während es eine Aktion empfiehlt, ist ein Governance-Partner. Die Erklärung reduziert das operationelle Risiko, indem sie den Benutzer am Entscheidungspunkt aufklärt—nicht in einem Schulungshandbuch, das Monate zuvor gelesen wurde.</p>
+        <p class="lb-en">This phase is what separates governance from gatekeeping. A system that blocks without explaining is an obstacle. A system that explains its reasoning while recommending an action is a governance partner. The explanation reduces operational risk by educating the user at the point of decision—not in a training manual read months earlier.</p>
+        <p class="lb-pt">Esta fase é o que separa governança de gatekeeping. Um sistema que bloqueia sem explicar é um obstáculo. Um sistema que explica seu raciocínio enquanto recomenda uma ação é um parceiro de governança. A explicação reduz o risco operacional ao educar o usuário no ponto de decisão—não em um manual de treinamento lido meses antes.</p>
+
+        <div class="phase-component">
+          <strong>Component:</strong> Trilingual Advisor Message Generator ·
+          <strong>Languages:</strong> DE / EN / PT ·
+          <strong>Output:</strong> <code>advisor_message: {de, en, pt}</code> — human-readable governance notification
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 7: Phase 5 - Interface -->
+    <section class="content-section">
+      <h2>
+        <span class="l-de">7. Phase 5: Schnittstelle</span>
+        <span class="l-en">7. Phase 5: Interface</span>
+        <span class="l-pt">7. Fase 5: Interface</span>
+      </h2>
+
+      <div class="phase-section ps-interface">
+        <div class="phase-header">
+          <div class="phase-badge pb-interface">🎭</div>
+          <div class="phase-title-block">
+            <div class="phase-title-label" style="color:var(--c-interface);">Phase 5 — Interface</div>
+            <div class="phase-title-name">
+              <span class="l-de">Die Welt sieht die Entscheidung</span>
+              <span class="l-en">The World Sees the Decision</span>
+              <span class="l-pt">O Mundo Vê a Decisão</span>
+            </div>
+          </div>
+        </div>
+        <p class="lb-de">Schnittstelle ist die visuelle Manifestation einer regulierten Entscheidung. Das <code>governance-editor.js</code>-Modul rendert die API-Antwort im A4 Desk BABEL-Editor: das Governance-Badge ändert die Farbe (grün für LOW, bernstein für MEDIUM, rot für HIGH), Erkennungskarten zeigen institutionelle Metadaten an, die Advisor-Nachricht erscheint in der Sprache des Benutzers, und der Editor-Rahmen reflektiert den aktuellen Governance-Zustand.</p>
+        <p class="lb-en">Interface is the visual manifestation of a governed decision. The <code>governance-editor.js</code> module renders the API response in the A4 Desk BABEL editor: the governance badge changes color (green for LOW, amber for MEDIUM, red for HIGH), detection cards display institutional metadata, the advisor message appears in the user's language, and the editor border reflects the current governance state.</p>
+        <p class="lb-pt">Interface é a manifestação visual de uma decisão governada. O módulo <code>governance-editor.js</code> renderiza a resposta da API no editor A4 Desk BABEL: o badge de governança muda de cor (verde para LOW, âmbar para MEDIUM, vermelho para HIGH), cartões de detecção exibem metadados institucionais, a mensagem do advisor aparece no idioma do usuário, e a borda do editor reflete o estado atual de governança.</p>
+
+        <p class="lb-de">Das kritische Prinzip hier ist, dass die Schnittstelle niemals eine Governance-Entscheidung initiiert. Das Badge wählt nicht MEDIUM—es reflektiert eine Entscheidung, die von der API getroffen wurde. Das Template klassifiziert nicht—es manifestiert eine Klassifikation, die von der Policy-Engine gemacht wurde. Diese Trennung stellt sicher, dass Governance auf der API-Ebene auditierbar ist, unabhängig davon, wie viele Schnittstellen sie konsumieren.</p>
+        <p class="lb-en">The critical principle here is that the interface never originates a governance decision. The badge does not choose MEDIUM—it reflects a decision made by the API. The template does not classify—it manifests a classification made by the policy engine. This separation ensures that governance is auditable at the API layer regardless of how many interfaces consume it.</p>
+        <p class="lb-pt">O princípio crítico aqui é que a interface nunca origina uma decisão de governança. O badge não escolhe MEDIUM—ele reflete uma decisão tomada pela API. O template não classifica—ele manifesta uma classificação feita pelo motor de política. Esta separação garante que a governança seja auditável na camada de API independentemente de quantas interfaces a consomem.</p>
+
+        <div class="phase-component">
+          <strong>Component:</strong> <code>governance-editor.js</code> (17KB, self-initializing) ·
+          <strong>Visual:</strong> Badge + Panel + Detection Cards + Border Color ·
+          <strong>Principle:</strong> "O template NUNCA decide o nível. A API decide."
+        </div>
+      </div>
+
+      <!-- Figure 2 -->
+      <div class="figure">
+        <div class="figure-caption">
+          <strong>Figure 2.</strong> The complete cycle in production. A document mentioning Deutsche Bahn AG triggers identity detection (Phase 1), policy evaluation yields MEDIUM with model_only license (Phase 2), the Advisor recommends upgrade (Phase 3), a German-language explanation is generated (Phase 4), and the editor manifests the amber badge, detection card, and advisor message (Phase 5). Phase 6 is this very document.
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 8: Phase 6 - Science -->
+    <section class="content-section">
+      <h2>
+        <span class="l-de">8. Phase 6: Wissenschaft</span>
+        <span class="l-en">8. Phase 6: Science</span>
+        <span class="l-pt">8. Fase 6: Ciência</span>
+      </h2>
+
+      <div class="phase-section ps-science">
+        <div class="phase-header">
+          <div class="phase-badge pb-science">📜</div>
+          <div class="phase-title-block">
+            <div class="phase-title-label" style="color:var(--c-science);">Phase 6 — Science</div>
+            <div class="phase-title-name">
+              <span class="l-de">Der Prozess wird zum Wissen</span>
+              <span class="l-en">The Process Becomes Knowledge</span>
+              <span class="l-pt">O Processo Se Torna Conhecimento</span>
+            </div>
+          </div>
+        </div>
+        <p class="lb-de">Wissenschaft ist die Phase, die den Kreislauf schließt. Wenn ein Governance-Zyklus Ergebnisse produziert, die signifikant genug sind, um ein neues Verständnis zu konstituieren—ein neues Erkennungsmuster, eine neue Policy-Einsicht, ein architektonisches Prinzip, das in der Produktion validiert wurde—wird dieses Wissen als institutioneller technischer Bericht formalisiert und im Masterarbeit-Register veröffentlicht.</p>
+        <p class="lb-en">Science is the phase that closes the loop. When a governance cycle produces results significant enough to constitute a new understanding—a new detection pattern, a new policy insight, an architectural principle validated in production—that knowledge is formalized as an institutional technical report and published in the Masterarbeit registry.</p>
+        <p class="lb-pt">Ciência é a fase que fecha o ciclo. Quando um ciclo de governança produz resultados significativos o suficiente para constituir um novo entendimento—um novo padrão de detecção, uma nova percepção de política, um princípio arquitetônico validado em produção—esse conhecimento é formalizado como um relatório técnico institucional e publicado no registro Masterarbeit.</p>
+
+        <p class="lb-de">Dies ist keine Dokumentation um ihrer selbst willen. Jeder TR registriert einen kryptografischen Hash, eine Abschnittsnummer und eine Abstammung zu früheren Berichten. TR-003 dokumentierte die Geburt der Service-Schicht. TR-004 dokumentierte das Entstehen beobachtbarer Governance. Dieses Dokument, TR-005, formalisiert das konzeptuelle Modell selbst. Der Akt des Schreibens dieses Berichts ist Phase 6 in Aktion.</p>
+        <p class="lb-en">This is not documentation for its own sake. Each TR registers a cryptographic hash, a section number, and a lineage to previous reports. TR-003 documented the birth of the service layer. TR-004 documented the emergence of observable governance. This document, TR-005, formalizes the conceptual model itself. The act of writing this report is Phase 6 in action.</p>
+        <p class="lb-pt">Esta não é documentação por si só. Cada TR registra um hash criptográfico, um número de seção e uma linhagem para relatórios anteriores. TR-003 documentou o nascimento da camada de serviço. TR-004 documentou o surgimento de governança observável. Este documento, TR-005, formaliza o modelo conceitual em si. O ato de escrever este relatório é a Fase 6 em ação.</p>
+
+        <p class="lb-de">Die Wissenschaftsphase fließt zurück in die Wahrnehmung: jeder neue TR kann Muster, Prinzipien oder Identitätsstrukturen offenbaren, die den Detektor verbessern, die Policy-Engine verfeinern oder das Identity Directory erweitern. Der Zyklus ist nicht linear—er ist eine Spirale zunehmender institutioneller Intelligenz.</p>
+        <p class="lb-en">The Science phase feeds back into Perception: each new TR may reveal patterns, principles, or identity structures that improve the detector, refine the policy engine, or extend the Identity Directory. The cycle is not linear—it is a spiral of increasing institutional intelligence.</p>
+        <p class="lb-pt">A fase de Ciência retroalimenta a Percepção: cada novo TR pode revelar padrões, princípios ou estruturas de identidade que melhoram o detector, refinam o motor de política ou estendem o Identity Directory. O ciclo não é linear—é uma espiral de inteligência institucional crescente.</p>
+
+        <div class="phase-component">
+          <strong>Registry:</strong> windi-domain.com ·
+          <strong>Format:</strong> TR-WINDI-YYYY-NNN with SHA-256 hash ·
+          <strong>Feedback:</strong> Published knowledge improves detection &amp; policy
+        </div>
+      </div>
+
+      <!-- Figure 3 -->
+      <div class="figure">
+        <div class="figure-caption">
+          <strong>Figure 3.</strong> TR-004 published at windi-domain.com, documenting the transition from offline library to cognitive service. This publication is itself an instance of Phase 6: the governance process producing formal institutional knowledge.
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 9: Comparison with Existing Models -->
+    <section class="content-section">
+      <h2>
+        <span class="l-de">9. Vergleich mit bestehenden Governance-Modellen</span>
+        <span class="l-en">9. Comparison with Existing Governance Models</span>
+        <span class="l-pt">9. Comparação com Modelos de Governança Existentes</span>
+      </h2>
+
+      <p class="lb-de">Der folgende Vergleich hebt den strukturellen Unterschied zwischen dem WINDI-Kognitionszyklus und den vorherrschenden Governance-Modellen in der aktuellen Regulierung und Industriepraxis hervor:</p>
+      <p class="lb-en">The following comparison highlights the structural difference between the WINDI cognitive cycle and the predominant governance models in current regulation and industry practice:</p>
+      <p class="lb-pt">A seguinte comparação destaca a diferença estrutural entre o ciclo cognitivo WINDI e os modelos de governança predominantes na regulamentação atual e prática da indústria:</p>
+
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Capability</th>
+            <th>Checkpoint Models</th>
+            <th>WINDI Cognitive Cycle</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Detection</td>
+            <td class="dim">Manual risk classification at deployment</td>
+            <td class="highlight">Automatic identity detection in real time</td>
+          </tr>
+          <tr>
+            <td>Policy evaluation</td>
+            <td class="dim">Static risk category assigned once</td>
+            <td class="highlight">Dynamic per-document, per-institution evaluation</td>
+          </tr>
+          <tr>
+            <td>Decision visibility</td>
+            <td class="dim">Opaque between audit periods</td>
+            <td class="highlight">Visible to operator at point of creation</td>
+          </tr>
+          <tr>
+            <td>Explanation</td>
+            <td class="dim">Post-hoc audit reports</td>
+            <td class="highlight">Inline trilingual advisory in the editor</td>
+          </tr>
+          <tr>
+            <td>Interface integration</td>
+            <td class="dim">Separate compliance dashboard</td>
+            <td class="highlight">Governance embedded in the creation tool</td>
+          </tr>
+          <tr>
+            <td>Knowledge creation</td>
+            <td class="dim">Not part of governance model</td>
+            <td class="highlight">Formal TR registry with hash-verified lineage</td>
+          </tr>
+          <tr>
+            <td>Feedback loop</td>
+            <td class="dim">Annual review cycles</td>
+            <td class="highlight">Continuous: Science → Perception spiral</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Section 10: The Infrastructure of Responsibility -->
+    <section class="content-section">
+      <h2>
+        <span class="l-de">10. Die Infrastruktur der Verantwortung</span>
+        <span class="l-en">10. The Infrastructure of Responsibility</span>
+        <span class="l-pt">10. A Infraestrutura de Responsabilidade</span>
+      </h2>
+
+      <p class="lb-de">Der sechsphasige Zyklus definiert neu, was Governance im Kontext KI-unterstützter institutioneller Arbeit bedeutet. Governance ist keine Checkliste, die vor der Bereitstellung abgearbeitet wird. Es ist keine Prüfung, die nach einem Vorfall durchgeführt wird. Es ist ein kontinuierlicher kognitiver Prozess, der neben dem menschlichen Betreiber läuft, der erkennt, was real ist, interpretiert, was es bedeutet, entscheidet, was passieren soll, erklärt warum, das Ergebnis zeigt und das gewonnene Wissen aufzeichnet.</p>
+      <p class="lb-en">The six-phase cycle redefines what governance means in the context of AI-assisted institutional work. Governance is not a checklist completed before deployment. It is not an audit performed after an incident. It is a continuous cognitive process that runs alongside the human operator, detecting what is real, interpreting what it means, deciding what should happen, explaining why, showing the result, and recording the knowledge gained.</p>
+      <p class="lb-pt">O ciclo de seis fases redefine o que governança significa no contexto de trabalho institucional assistido por IA. Governança não é uma lista de verificação completada antes da implantação. Não é uma auditoria realizada após um incidente. É um processo cognitivo contínuo que funciona ao lado do operador humano, detectando o que é real, interpretando o que significa, decidindo o que deve acontecer, explicando por que, mostrando o resultado e registrando o conhecimento adquirido.</p>
+
+      <blockquote class="principle">
+        <p class="lb-de">"Governance ist kein Checkpoint. Es ist eine kognitive Infrastruktur, die wahrnimmt, interpretiert, entscheidet, erklärt, manifestiert und lernt—kontinuierlich."</p>
+        <p class="lb-en">"Governance is not a checkpoint. It is a cognitive infrastructure that perceives, interprets, decides, explains, manifests, and learns—continuously."</p>
+        <p class="lb-pt">"Governança não é um checkpoint. É uma infraestrutura cognitiva que percebe, interpreta, decide, explica, manifesta e aprende—continuamente."</p>
+        <span class="attr">— WINDI Conceptual Model, formalized 01 February 2026</span>
+      </blockquote>
+
+      <p class="lb-de">Das WINDI-Betriebsprinzip—<em>"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</em>—ist keine Marketing-Aussage. Es ist eine präzise Beschreibung der Architektur des kognitiven Zyklus:</p>
+      <p class="lb-en">The WINDI operational principle—<em>"AI processes. Human decides. WINDI guarantees."</em>—is not a marketing statement. It is a precise description of the cognitive cycle's architecture:</p>
+      <p class="lb-pt">O princípio operacional do WINDI—<em>"IA processa. Humano decide. WINDI garante."</em>—não é uma declaração de marketing. É uma descrição precisa da arquitetura do ciclo cognitivo:</p>
+
+      <p class="lb-de">Die KI verarbeitet durch die Phasen 1–4 (Wahrnehmung, Kognition, Governance, Erklärung). Der Mensch entscheidet in Phase 5 (Schnittstelle), wo die regulierte Entscheidung zur Annahme, Überschreibung oder Untersuchung präsentiert wird. WINDI garantiert durch Phase 6 (Wissenschaft), wo jede bedeutende Entscheidung aufgezeichnet, gehasht und als institutionelles Wissen veröffentlicht wird, das zukünftige Governance stärkt.</p>
+      <p class="lb-en">The AI processes through Phases 1–4 (Perception, Cognition, Governance, Explanation). The human decides at Phase 5 (Interface), where the governed decision is presented for acceptance, override, or investigation. WINDI guarantees through Phase 6 (Science), where every significant decision is recorded, hashed, and published as institutional knowledge that strengthens future governance.</p>
+      <p class="lb-pt">A IA processa através das Fases 1–4 (Percepção, Cognição, Governança, Explicação). O humano decide na Fase 5 (Interface), onde a decisão governada é apresentada para aceitação, sobrescrição ou investigação. WINDI garante através da Fase 6 (Ciência), onde cada decisão significativa é registrada, hasheada e publicada como conhecimento institucional que fortalece a governança futura.</p>
+
+      <p class="lb-de">Dies ist keine Automatisierung, die menschliches Urteil ersetzt. Es ist Infrastruktur, die sicherstellt, dass menschliches Urteil informiert, kontextualisiert und aufgezeichnet wird. Es ist, im wörtlichsten Sinne, eine <em>Infrastruktur der Verantwortung</em>.</p>
+      <p class="lb-en">This is not automation replacing human judgment. It is infrastructure ensuring that human judgment is informed, contextualized, and recorded. It is, in the most literal sense, an <em>infrastructure of responsibility</em>.</p>
+      <p class="lb-pt">Esta não é automação substituindo julgamento humano. É infraestrutura garantindo que o julgamento humano seja informado, contextualizado e registrado. É, no sentido mais literal, uma <em>infraestrutura de responsabilidade</em>.</p>
+    </section>
+
+    <!-- Section 11: Conclusion -->
+    <section class="content-section">
+      <h2>
+        <span class="l-de">11. Schlussfolgerung und Zukunftspfad</span>
+        <span class="l-en">11. Conclusion and Forward Path</span>
+        <span class="l-pt">11. Conclusão e Caminho Adiante</span>
+      </h2>
+
+      <p class="lb-de">Der sechsphasige kognitive Governance-Zyklus wurde in einer einzigen Bereitstellungssitzung am 01. Februar 2026 konzipiert, implementiert und validiert. Jede Phase wird von einer Produktionskomponente unterstützt, die auf der WINDI-Strato-Infrastruktur läuft. Der Zyklus wurde mit echten institutionellen Identitäten (Deutsche Bahn AG, Europäische Zentralbank, Banco do Brasil) auf drei Governance-Ebenen (LOW, MEDIUM, HIGH) mit dreisprachiger Beratung in Deutsch, Englisch und Portugiesisch demonstriert.</p>
+      <p class="lb-en">The six-phase cognitive governance cycle was conceived, implemented, and validated in a single deployment session on 01 February 2026. Each phase is backed by a production component running on the WINDI Strato infrastructure. The cycle has been demonstrated with real institutional identities (Deutsche Bahn AG, European Central Bank, Banco do Brasil) across three governance levels (LOW, MEDIUM, HIGH) with trilingual advisory in German, English, and Portuguese.</p>
+      <p class="lb-pt">O ciclo cognitivo de governança de seis fases foi concebido, implementado e validado em uma única sessão de implantação em 01 de fevereiro de 2026. Cada fase é apoiada por um componente de produção executando na infraestrutura WINDI Strato. O ciclo foi demonstrado com identidades institucionais reais (Deutsche Bahn AG, Banco Central Europeu, Banco do Brasil) em três níveis de governança (LOW, MEDIUM, HIGH) com consultoria trilíngue em Alemão, Inglês e Português.</p>
+
+      <p class="lb-de">Der Zukunftspfad erweitert jede Phase unabhängig: zusätzliche Institutionen im Identity Directory stärken die Wahrnehmung; neue ISP-Profile vertiefen die Kognition; die No-Downgrade-Durchsetzung härtet die Governance; zusätzliche Sprachen erweitern die Erklärung; neue Editor-Integrationen verbreitern die Schnittstelle; und jeder neue TR bereichert das Wissenschaftsregister. Der Zyklus ist so konzipiert, dass er ohne Neugestaltung wachsen kann.</p>
+      <p class="lb-en">The forward path extends each phase independently: additional institutions in the Identity Directory strengthen Perception; new ISP profiles deepen Cognition; the no-downgrade enforcement hardens Governance; additional languages expand Explanation; new editor integrations broaden Interface; and each new TR enriches the Science registry. The cycle is designed to grow without redesign.</p>
+      <p class="lb-pt">O caminho adiante estende cada fase independentemente: instituições adicionais no Identity Directory fortalecem a Percepção; novos perfis ISP aprofundam a Cognição; a aplicação de não-downgrade endurece a Governança; idiomas adicionais expandem a Explicação; novas integrações de editor ampliam a Interface; e cada novo TR enriquece o registro de Ciência. O ciclo é projetado para crescer sem redesign.</p>
+
+      <p class="lb-de">Nach unserem Wissen implementiert kein bestehendes KI-Governance-Framework den vollständigen Pfad von der Echtzeit-Dokumentenwahrnehmung bis zum veröffentlichten institutionellen Wissen in einem einzigen, kontinuierlichen, auditierbaren Zyklus. Dies ist der Beitrag des WINDI-Systems und das Thema dieses Berichts.</p>
+      <p class="lb-en">To our knowledge, no existing AI governance framework implements the complete path from real-time document perception to published institutional knowledge in a single, continuous, auditable cycle. This is the contribution of the WINDI system and the subject of this report.</p>
+      <p class="lb-pt">Até onde sabemos, nenhum framework de governança de IA existente implementa o caminho completo desde a percepção de documentos em tempo real até o conhecimento institucional publicado em um único ciclo contínuo e auditável. Esta é a contribuição do sistema WINDI e o tema deste relatório.</p>
+    </section>
+
+    <!-- Authorship Notice -->
+    <div class="authorship">
+      <strong>
+        <span class="l-de">MENSCHLICHE AUTORENSCHAFTSHINWEIS</span>
+        <span class="l-en">HUMAN AUTHORSHIP NOTICE</span>
+        <span class="l-pt">AVISO DE AUTORIA HUMANA</span>
+      </strong><br>
+      <span class="lb-de">Dieses Dokument wurde von menschlichen Autoren erstellt und überprüft. KI-Unterstützung (Claude — Guardian Dragon) wurde unter menschlicher Aufsicht und Kontrolle verwendet. Endgültige Entscheidungen und Inhaltsfreigabe: menschliche Verantwortung.</span>
+      <span class="lb-en">This document was created and reviewed by human authors. AI assistance (Claude — Guardian Dragon) was used under human supervision and control. Final decisions and content approval: human responsibility.</span>
+      <span class="lb-pt">Este documento foi criado e revisado por autores humanos. Assistência de IA (Claude — Guardian Dragon) foi usada sob supervisão e controle humanos. Decisões finais e aprovação de conteúdo: responsabilidade humana.</span><br>
+      <em>
+        <span class="l-de">"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</span>
+        <span class="l-en">"AI processes. Human decides. WINDI guarantees."</span>
+        <span class="l-pt">"IA processa. Humano decide. WINDI garante."</span>
+      </em>
+    </div>
+
+  </div>
+
+  <!-- Page Footer -->
+  <footer class="page-footer">
+    <div class="page-footer-meta">
+      <span>WINDI-TR-01FEB26-CGC-SEC13-005</span>
+      <span>Technical Report</span>
+    </div>
+    <p class="page-footer-quittung">Author: Jober Mögele Correa (WINDI-CEO-001) | Status: REGISTERED</p>
+    <p class="page-footer-principle">
+      <span class="l-de">"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</span>
+      <span class="l-en">"AI processes. Human decides. WINDI guarantees."</span>
+      <span class="l-pt">"IA processa. Humano decide. WINDI garante."</span>
+    </p>
+  </footer>
+
+</main>
+
+<!-- JavaScript -->
+<script>
+// Theme Toggle
+function toggleTheme() {
+  const body = document.body;
+  const isLight = body.getAttribute('data-theme') === 'light';
+  body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+  try { localStorage.setItem('windi-theme', isLight ? 'dark' : 'light'); } catch(e) {}
+}
+
+// Language Switcher
+function setLang(lang) {
+  document.body.setAttribute('data-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  try { localStorage.setItem('windi-lang', lang); } catch(e) {}
+}
+
+// Sidebar Toggle (mobile)
+let sidebarOpen = false;
+function toggleSidebar() {
+  sidebarOpen = !sidebarOpen;
+  document.getElementById('sidebarLeft').classList.toggle('open', sidebarOpen);
+}
+
+// Close sidebar on link click (mobile)
+document.querySelectorAll('.sidebar-link').forEach(link => {
+  link.addEventListener('click', () => {
+    if (window.innerWidth <= 960) {
+      sidebarOpen = false;
+      document.getElementById('sidebarLeft').classList.remove('open');
+    }
+  });
+});
+
+// Init saved preferences
+(function init() {
+  try {
+    const theme = localStorage.getItem('windi-theme');
+    const lang = localStorage.getItem('windi-lang');
+    if (theme) document.body.setAttribute('data-theme', theme);
+    if (lang) setLang(lang);
+  } catch(e) {}
+})();
+
+// Mark current nav link
+if(location.pathname.includes('/library/')){
+  document.querySelectorAll('.nav-links a').forEach(function(a){
+    if(a.getAttribute('href')==='/library/' || a.getAttribute('href')==='/library/index.html'){
+      a.classList.add('nav-current');
+    }
+  });
+}
+</script>
+
+</body>
+</html>

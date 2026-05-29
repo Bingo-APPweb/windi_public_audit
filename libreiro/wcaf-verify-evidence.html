@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>wcaf verify-evidence — WINDI Documentation</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Crect width='20' height='20' rx='4' fill='%231A1208'/%3E%3Cellipse cx='10' cy='11' rx='4.5' ry='4' transform='rotate(-15 10 11)' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='7' cy='7.5' r='2.8' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='6.2' cy='6.8' r='0.7' fill='%238B6914'/%3E%3Cpath d='M7.5 4.8 C7 3.5 8 2.5 8.5 2' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M7 10 C5 8.5 3 8 2 9 C1.5 9.8 2.5 11 4 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M13 9.5 C15 8 17 8 17.5 9.5 C17.8 10.5 16.5 11 15 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M14 13 C16 14 17 15.5 16 16.5 C15 17.5 13.5 16.5 13.5 15' stroke='%238B6914' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E">
+  <meta name="description" content="WINDI wcaf verify-evidence — Full external verification of a WINDI evidence package">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/library/windi-internal.css">
+  <style>
+    .spec-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: var(--font-mono, 'JetBrains Mono', monospace);
+      font-size: 0.6rem; letter-spacing: 1.5px; text-transform: uppercase;
+      padding: 4px 12px; border-radius: 3px;
+      background: rgba(184,134,11,0.12); color: #b8860b;
+      border: 1px solid rgba(184,134,11,0.25);
+    }
+    .spec-badge.cli { background: rgba(46,139,87,0.12); color: #2e8b57; border-color: rgba(46,139,87,0.25); }
+    .spec-badge.audit { background: rgba(100,100,200,0.12); color: #7777cc; border-color: rgba(100,100,200,0.25); }
+
+    pre.code-block {
+      background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 6px; padding: 16px 20px; overflow-x: auto;
+      font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; line-height: 1.7; color: #e0e0e0;
+    }
+    [data-theme="light"] pre.code-block { background: #f4f2ed; border-color: rgba(0,0,0,0.08); color: #333; }
+
+    .step-card {
+      border: 1px solid rgba(184,134,11,0.15); border-radius: 8px;
+      padding: 20px 24px; margin: 20px 0; background: rgba(184,134,11,0.03);
+      position: relative;
+    }
+    .step-number {
+      position: absolute; top: -12px; left: 20px;
+      background: #b8860b; color: #0a0a0c; font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem; font-weight: 700; padding: 3px 10px; border-radius: 3px;
+      letter-spacing: 1px;
+    }
+    .step-card h4 {
+      font-family: 'Bricolage Grotesque', sans-serif; font-size: 0.95rem; color: #b8860b;
+      margin: 4px 0 12px;
+    }
+    .step-card p, .step-card li {
+      font-size: 0.85rem; line-height: 1.8; color: var(--text-secondary, #bbb);
+    }
+
+    .exit-table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+    .exit-table th {
+      background: rgba(184,134,11,0.08); color: #b8860b;
+      font-family: 'JetBrains Mono', monospace; font-size: 0.72rem;
+      letter-spacing: 0.6px; text-transform: uppercase;
+      padding: 10px 16px; text-align: left;
+      border-bottom: 2px solid rgba(184,134,11,0.2);
+    }
+    .exit-table td {
+      padding: 10px 16px; font-size: 0.85rem; line-height: 1.6;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .exit-table td:first-child {
+      font-family: 'JetBrains Mono', monospace; color: #b8860b; font-weight: 500; width: 80px;
+    }
+    .exit-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .file-tree {
+      background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 6px; padding: 16px 24px; margin: 16px 0;
+      font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; line-height: 2; color: #ccc;
+    }
+    .file-tree .dir { color: #b8860b; }
+    .file-tree .file { color: #999; }
+
+    .compliance-box {
+      background: linear-gradient(135deg, rgba(184,134,11,0.08), rgba(184,134,11,0.02));
+      border: 1px solid rgba(184,134,11,0.3); border-radius: 8px;
+      padding: 24px 28px; margin: 24px 0;
+    }
+    .compliance-box p {
+      font-family: 'Outfit', sans-serif; font-size: 0.88rem; line-height: 1.8;
+      color: var(--text-secondary, #ccc); font-style: italic;
+    }
+
+    .toc-link {
+      display: block; padding: 6px 0; font-size: 0.85rem;
+      color: var(--text-secondary, #999); text-decoration: none; transition: color 0.2s;
+    }
+    .toc-link:hover { color: #b8860b; }
+    .toc-link.indent { padding-left: 20px; font-size: 0.8rem; }
+
+    .result-box {
+      display: inline-block; padding: 8px 16px; border-radius: 4px; margin: 8px 4px;
+      font-family: 'JetBrains Mono', monospace; font-size: 0.82rem;
+    }
+    .result-pass { background: rgba(46,139,87,0.15); color: #2e8b57; border: 1px solid rgba(46,139,87,0.3); }
+    .result-fail { background: rgba(200,60,60,0.15); color: #cc4444; border: 1px solid rgba(200,60,60,0.3); }
+  </style>
+</head>
+<body>
+
+<!-- ═══ TOP BAR ═══ -->
+<header class="top-bar" style="position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:8px 24px;background:rgba(10,10,12,0.95);border-bottom:1px solid rgba(255,255,255,0.06);backdrop-filter:blur(12px);">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <span style="font-family:'Bricolage Grotesque',sans-serif;font-size:0.95rem;font-weight:700;color:#b8860b;">WINDI</span>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:0.55rem;letter-spacing:2px;color:#666;text-transform:uppercase;">Documentation</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:16px;">
+    <div class="lang-switcher" style="display:flex;gap:4px;">
+      <button onclick="switchLang('de')" class="lang-btn active" data-lang="de" style="padding:3px 10px;font-size:0.65rem;border-radius:3px;border:1px solid rgba(184,134,11,0.3);background:rgba(184,134,11,0.15);color:#b8860b;cursor:pointer;font-family:'JetBrains Mono',monospace;">DE</button>
+      <button onclick="switchLang('en')" class="lang-btn" data-lang="en" style="padding:3px 10px;font-size:0.65rem;border-radius:3px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:#666;cursor:pointer;font-family:'JetBrains Mono',monospace;">EN</button>
+      <button onclick="switchLang('pt')" class="lang-btn" data-lang="pt" style="padding:3px 10px;font-size:0.65rem;border-radius:3px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:#666;cursor:pointer;font-family:'JetBrains Mono',monospace;">PT</button>
+    </div>
+    <button onclick="toggleTheme()" id="themeToggle" style="padding:4px 12px;font-size:0.65rem;border-radius:3px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:#999;cursor:pointer;font-family:'JetBrains Mono',monospace;">
+      <i class="fas fa-moon"></i> Dunkel
+    </button>
+    <a href="/library/index.html" style="font-size:0.75rem;color:#666;text-decoration:none;">← Zurück</a>
+  </div>
+</header>
+
+<!-- ═══ LEFT SIDEBAR ═══ -->
+<aside class="sidebar sidebar-left" style="position:fixed;top:46px;left:0;bottom:0;width:240px;overflow-y:auto;padding:20px 0;background:linear-gradient(180deg,rgba(18,18,22,1) 0%,rgba(10,10,12,1) 100%);border-right:1px solid rgba(255,255,255,0.06);z-index:900;">
+  <div style="padding:6px 24px;font-family:'JetBrains Mono',monospace;font-size:0.5rem;letter-spacing:2.5px;text-transform:uppercase;color:#666;border-bottom:1px solid rgba(255,255,255,0.06);margin:0 16px 12px;">
+    Tools Docs
+  </div>
+  <div style="padding:0 16px;">
+    <a href="#purpose" class="toc-link">Zweck / Purpose</a>
+    <a href="#command" class="toc-link">Befehl / Command</a>
+    <a href="#inputs" class="toc-link">Eingaben / Inputs</a>
+    <a href="#output" class="toc-link">Ausgabe / Output</a>
+    <a href="#exit-codes" class="toc-link">Exit Codes</a>
+    <a href="#steps" class="toc-link">Verifikationsschritte</a>
+    <a href="#step1" class="toc-link indent">1 — PDF Signatur</a>
+    <a href="#step2" class="toc-link indent">2 — Bundle Chain</a>
+    <a href="#step3" class="toc-link indent">3 — Merkle Lookup</a>
+    <a href="#step4" class="toc-link indent">4 — STH Signatur</a>
+    <a href="#step5" class="toc-link indent">5 — Inclusion Proof</a>
+    <a href="#evidence-pack" class="toc-link">Evidence Pack Format</a>
+    <a href="#flags" class="toc-link">Flags</a>
+    <a href="#security" class="toc-link">Sicherheitshinweise</a>
+    <a href="#compliance" class="toc-link">Compliance Statement</a>
+  </div>
+
+  <div style="padding:6px 24px;font-family:'JetBrains Mono',monospace;font-size:0.5rem;letter-spacing:2.5px;text-transform:uppercase;color:#b8860b;border-bottom:1px solid rgba(255,255,255,0.06);margin:20px 16px 12px 16px;">
+    Verwandte Docs
+  </div>
+  <div style="padding:0 16px;">
+    <a href="/library/merkle-transparency-log.html" class="toc-link" style="color:#b8860b;">🔗 Merkle Transparency Log</a>
+    <a href="/library/index.html" class="toc-link">← Hauptindex</a>
+  </div>
+</aside>
+
+<!-- ═══ MAIN CONTENT ═══ -->
+<main style="margin-left:240px;margin-top:46px;padding:40px 60px 80px;max-width:900px;">
+
+  <!-- BREADCRUMB -->
+  <div style="font-size:0.75rem;color:#666;margin-bottom:24px;">
+    <a href="/library/index.html" style="color:#666;text-decoration:none;">WINDI System</a>
+    <span style="margin:0 8px;">›</span>
+    <span style="color:#999;">Tools</span>
+    <span style="margin:0 8px;">›</span>
+    <span style="color:#e0e0e0;">wcaf verify-evidence</span>
+  </div>
+
+  <!-- META BADGES -->
+  <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+    <span class="spec-badge cli"><i class="fas fa-terminal"></i> CLI TOOL</span>
+    <span class="spec-badge audit"><i class="fas fa-gavel"></i> AUDITORS · BANKS · COURTS</span>
+    <span class="spec-badge"><i class="fas fa-shield-alt"></i> 5-STEP VERIFICATION</span>
+  </div>
+
+  <!-- TITLE -->
+  <h1 style="font-family:'Bricolage Grotesque',sans-serif;font-size:2rem;font-weight:700;color:var(--text-primäry,#e8e4dc);letter-spacing:-0.02em;margin-bottom:8px;">
+    <code style="font-family:'JetBrains Mono',monospace;color:#b8860b;">wcaf verify-evidence</code>
+  </h1>
+  <p style="font-family:'Outfit',sans-serif;font-size:1.05rem;color:var(--text-secondary,#999);line-height:1.7;margin-bottom:40px;">
+    <span data-de="Vollständige externe Verifikation eines WINDI Evidence-Pakets: PDF-Signatur, WCAF-Kette, Merkle-Log, STH-Signatur und Inklusionsbeweis." data-en="Full external verification of a WINDI evidence package: PDF signature, WCAF chain, Merkle log, STH signature, and inclusion proof." data-pt="Verificação externa completa de um pacote de evidência WINDI: assinatura PDF, cadeia WCAF, Merkle log, assinatura STH e prova de inclusão.">Vollständige externe Verifikation eines WINDI Evidence-Pakets: PDF-Signatur, WCAF-Kette, Merkle-Log, STH-Signatur und Inklusionsbeweis.</span>
+  </p>
+
+  <div style="height:2px;background:linear-gradient(90deg,#b8860b,transparent);margin-bottom:40px;"></div>
+
+  <!-- ═══ PURPOSE ═══ -->
+  <section id="purpose">
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:1.3rem;font-weight:600;color:#b8860b;margin-bottom:16px;">
+      <span data-de="Zweck" data-en="Purpose" data-pt="Propósito">Zweck</span>
+    </h2>
+    <p style="font-size:0.9rem;line-height:1.8;color:var(--text-secondary,#bbb);margin-bottom:16px;" data-de="wcaf verify-evidence führt eine vollständige externe Verifikation eines WINDI Evidence-Pakets durch. Entwickelt für Auditoren, Banken, Compliance-Teams, Streitbeilegung, Gerichte und Regulierungsbehörden." data-en="wcaf verify-evidence performs full external verification of a WINDI evidence package. Designed for auditors, banks, compliance teams, dispute resolution, courts, and regulators." data-pt="wcaf verify-evidence realiza verificação externa completa de um pacote de evidência WINDI. Projetado para auditores, bancos, equipes de compliance, resolução de disputas, tribunais e reguladores.">
+      <code style="color:#b8860b;">wcaf verify-evidence</code> führt eine vollständige externe Verifikation eines WINDI Evidence-Pakets durch. Entwickelt für Auditoren, Banken, Compliance-Teams, Streitbeilegung, Gerichte und Regulierungsbehörden.
+    </p>
+  </section>
+
+  <div style="height:1px;background:rgba(255,255,255,0.06);margin:40px 0;"></div>
+
+  <!-- ═══ COMMAND ═══ -->
+  <section id="command">
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:1.3rem;font-weight:600;color:#b8860b;margin-bottom:16px;">
+      <span data-de="Befehl" data-en="Command" data-pt="Comando">Befehl</span>
+    </h2>
+
+    <h3 style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:600;color:var(--text-primäry,#e8e4dc);margin-bottom:12px;" data-de="Grundlegende Verwendung" data-en="Basic usage" data-pt="Uso básico">Grundlegende Verwendung</h3>
+    <pre class="code-block">wcaf verify-evidence bundle.json report.pdf report.sig audit-key.pem</pre>
+
+    <h3 style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:600;color:var(--text-primäry,#e8e4dc);margin:24px 0 12px;" data-de="Benutzerdefinierte Merkle-Log-URL" data-en="Custom Merkle Log URL" data-pt="URL personalizada do Merkle Log">Benutzerdefinierte Merkle-Log-URL</h3>
+    <pre class="code-block">wcaf verify-evidence bundle.json report.pdf report.sig audit-key.pem \
+  --merkle-url=http://localhost:4051</pre>
+  </section>
+
+  <div style="height:1px;background:rgba(255,255,255,0.06);margin:40px 0;"></div>
+
+  <!-- ═══ INPUTS ═══ -->
+  <section id="inputs">
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:1.3rem;font-weight:600;color:#b8860b;margin-bottom:20px;">
+      <span data-de="Eingaben" data-en="Inputs" data-pt="Entradas">Eingaben</span>
+    </h2>
+    <table class="exit-table">
+      <thead>
+        <tr><th data-de="Datei" data-en="File" data-pt="Arquivo">Datei</th><th data-de="Beschreibung" data-en="Description" data-pt="Descrição">Beschreibung</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code style="color:#b8860b;">bundle.json</code></td><td data-de="WCAF-Bundle mit document_id, timeline[], combined_root_hash" data-en="WCAF bundle containing document_id, timeline[], combined_root_hash" data-pt="Bundle WCAF contendo document_id, timeline[], combined_root_hash">WCAF-Bundle mit <code>document_id</code>, <code>timeline[]</code>, <code>combined_root_hash</code></td></tr>
+        <tr><td><code style="color:#b8860b;">report.pdf</code></td><td data-de="Menschenlesbarer Audit-Bericht, generiert von windi-audit-report" data-en="Human-readable audit report generated by windi-audit-report" data-pt="Relatório de auditoria legível gerado por windi-audit-report">Menschenlesbarer Audit-Bericht, generiert von <code>windi-audit-report</code></td></tr>
+        <tr><td><code style="color:#b8860b;">report.sig</code></td><td data-de="Base64-Signatur der PDF-Bytes" data-en="Base64 signature of the PDF bytes" data-pt="Assinatura Base64 dos bytes do PDF">Base64-Signatur der PDF-Bytes</td></tr>
+        <tr><td><code style="color:#b8860b;">audit-key.pem</code></td><td data-de="Öffentlicher Schlüssel zur Verifikation der PDF-Signatur (RSA PEM)" data-en="Public key for verifying the PDF signature (RSA public key PEM)" data-pt="Chave pública para verificação da assinatura PDF (RSA PEM)">Öffentlicher Schlüssel zur Verifikation der PDF-Signatur (RSA PEM)</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div style="height:1px;background:rgba(255,255,255,0.06);margin:40px 0;"></div>
+
+  <!-- ═══ OUTPUT ═══ -->
+  <section id="output">
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:1.3rem;font-weight:600;color:#b8860b;margin-bottom:16px;">
+      <span data-de="Ausgabe" data-en="Output" data-pt="Saída">Ausgabe</span>
+    </h2>
+    <p style="font-size:0.85rem;line-height:1.8;color:var(--text-secondary,#bbb);margin-bottom:16px;" data-de="Das Tool gibt einen schrittweisen Verifikationsbericht aus und endet mit:" data-en="The tool prints a step-by-step verification report and finishes with:" data-pt="A ferramenta imprime um relatório de verificação passo a passo e termina com:">Das Tool gibt einen schrittweisen Verifikationsbericht aus und endet mit:</p>
+    <div>
+      <span class="result-pass"><svg style="width:1em;height:1em;vertical-align:-0.1em;color:#22c55e" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4,10 8,14 16,6"/></svg> EVIDENCE VERIFIED</span>
+      <span style="font-size:0.85rem;color:#666;margin:0 12px;" data-de="oder" data-en="or" data-pt="ou">oder</span>
+      <span class="result-fail">✖ verification failure</span>
+    </div>
+  </section>
+
+  <div style="height:1px;background:rgba(255,255,255,0.06);margin:40px 0;"></div>
+
+  <!-- ═══ EXIT CODES ═══ -->
+  <section id="exit-codes">
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:1.3rem;font-weight:600;color:#b8860b;margin-bottom:20px;">
+      Exit Codes
+    </h2>
+    <table class="exit-table">
+      <thead>
+        <tr><th>Code</th><th data-de="Bedeutung" data-en="Meaning" data-pt="Significado">Bedeutung</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>0</td><td data-de="Verifikation OK" data-en="Verification OK" data-pt="Verificação OK">Verifikation OK</td></tr>
+        <tr><td>1</td><td data-de="CLI-Nutzungsfehler (fehlende Argumente, ungültige Flags)" data-en="CLI usage error (missing args, invalid flags)" data-pt="Erro de uso CLI (argumentos faltando, flags inválidos)">CLI-Nutzungsfehler (fehlende Argumente, ungültige Flags)</td></tr>
+        <tr><td>2</td><td data-de="PDF-Signatur ungültig" data-en="PDF signature invalid" data-pt="Assinatura PDF inválida">PDF-Signatur ungültig</td></tr>
+        <tr><td>3</td><td data-de="Bundle-Chain-Integrität fehlgeschlagen" data-en="Bundle chain integrity failed" data-pt="Integridade da cadeia do bundle falhou">Bundle-Chain-Integrität fehlgeschlagen</td></tr>
+        <tr><td>4</td><td data-de="Merkle-Log-Suche fehlgeschlagen (Hash nicht gefunden / Netzwerkfehler)" data-en="Merkle log lookup failed (hash not found / network error)" data-pt="Busca no Merkle log falhou (hash não encontrado / erro de rede)">Merkle-Log-Suche fehlgeschlagen (Hash nicht gefunden / Netzwerkfehler)</td></tr>
+        <tr><td>5</td><td data-de="STH-Signatur ungültig" data-en="STH signature invalid" data-pt="Assinatura STH inválida">STH-Signatur ungültig</td></tr>
+        <tr><td>6</td><td data-de="Inklusionsbeweis ungültig" data-en="Inclusion proof invalid" data-pt="Prova de inclusão inválida">Inklusionsbeweis ungültig</td></tr>
+        <tr><td>7</td><td data-de="Konsistenzbeweis / Pinning-Fehler (Phase 3B.2+)" data-en="Consistency proof / pinning failure (Phase 3B.2+)" data-pt="Prova de consistência / falha de pinning (Phase 3B.2+)">Konsistenzbeweis / Pinning-Fehler (Phase 3B.2+)</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:0.78rem;color:#666;margin-top:8px;font-style:italic;" data-de="Exit-Codes sind eine stabile API für Automatisierungspipelines." data-en="Exit codes are stable API for automation pipelines." data-pt="Exit codes são API estável para pipelines de automação.">Exit-Codes sind eine stabile API für Automatisierungspipelines.</p>
+  </section>
+
+  <div style="height:1px;background:rgba(255,255,255,0.06);margin:40px 0;"></div>
+
+  <!-- ═══ VERIFICATION STEPS ═══ -->
+  <section id="steps">
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:1.3rem;font-weight:600;color:#b8860b;margin-bottom:24px;">
+      <span data-de="Verifikationsschritte (Normativ)" data-en="Verification Steps (Normative)" data-pt="Passos de Verificação (Normativo)">Verifikationsschritte (Normativ)</span>
+    </h2>
+
+    <div id="step1" class="step-card">
+      <span class="step-number">STEP 1</span>
+      <h4>PDF Signature</h4>
+      <p><strong>Algorithm:</strong> RSA-SHA256</p>
+      <p><strong>Input:</strong> <span data-de="Rohe PDF-Bytes + Signatur (Base64) + Öffentlicher Schlüssel (PEM)" data-en="Raw PDF bytes + signature (base64) + public key (PEM)" data-pt="Bytes brutos do PDF + assinatura (base64) + chave pública (PEM)">Rohe PDF-Bytes + Signatur (Base64) + Öffentlicher Schlüssel (PEM)</span></p>
+      <p><strong>Output:</strong> valid / invalid</p>
+      <p style="margin-top:12px;color:#cc6666;font-size:0.82rem;" data-de="Fehlschlag bedeutet: Bericht ist nicht authentisch oder wurde nach der Signierung modifiziert." data-en="Failure means: report is not authentic or was modified after signing." data-pt="Falha significa: relatório não é autêntico ou foi modificado após assinatura."><i class="fas fa-exclamation-triangle" style="margin-right:6px;"></i> Fehlschlag bedeutet: Bericht ist nicht authentisch oder wurde nach der Signierung modifiziert.</p>
+    </div>
+
+    <div id="step2" class="step-card">
+      <span class="step-number">STEP 2</span>
+      <h4>Bundle Chain Integrity</h4>
+      <p data-de="WCAF-Kette von prev_hash → event_hash über Timeline-Events verifizieren. Sicherstellen, dass keine Manipulation oder fehlende Events vorliegen. Sicherstellen, dass der berechnete Head mit dem erwarteten Bundle-Head übereinstimmt." data-en="Verify WCAF chain from prev_hash → event_hash across timeline events. Ensure no tampering or missing events. Ensure computed head matches expected bundle head." data-pt="Verificar cadeia WCAF de prev_hash → event_hash nos eventos da timeline. Garantir que não há adulteração ou eventos faltando. Garantir que head computado corresponde ao head esperado do bundle.">WCAF-Kette von <code>prev_hash → event_hash</code> über Timeline-Events verifizieren. Sicherstellen, dass keine Manipulation oder fehlende Events vorliegen.</p>
+      <p style="margin-top:12px;color:#cc6666;font-size:0.82rem;" data-de="Fehlschlag bedeutet: Bundle wurde modifiziert, gekürzt oder gefälscht." data-en="Failure means: bundle has been modified, truncated, or forged." data-pt="Falha significa: bundle foi modificado, truncado ou forjado."><i class="fas fa-exclamation-triangle" style="margin-right:6px;"></i> Fehlschlag bedeutet: Bundle wurde modifiziert, gekürzt oder gefälscht.</p>
+    </div>
+
+    <div id="step3" class="step-card">
+      <span class="step-number">STEP 3</span>
+      <h4>Merkle Log Lookup</h4>
+      <p data-de="combined_root_hash aus Bundle bestimmen und abfragen:" data-en="Determine combined_root_hash from bundle and query:" data-pt="Determinar combined_root_hash do bundle e consultar:"><code>combined_root_hash</code> aus Bundle bestimmen und abfragen:</p>
+      <pre class="code-block" style="margin:12px 0;">GET /lookup?combined_root_hash=&lt;hash&gt;
+→ Must return found=true and leaf_index</pre>
+      <p style="margin-top:12px;color:#cc6666;font-size:0.82rem;" data-de="Fehlschlag bedeutet: Anker wurde nicht öffentlich veröffentlicht, falscher Hash, oder Log-Endpoint nicht erreichbar." data-en="Failure means: anchor was not published publicly, wrong hash, or log endpoint unavailable." data-pt="Falha significa: âncora não foi publicada publicamente, hash errado, ou endpoint do log indisponível."><i class="fas fa-exclamation-triangle" style="margin-right:6px;"></i> Fehlschlag bedeutet: Anker wurde nicht öffentlich veröffentlicht, falscher Hash, oder Log-Endpoint nicht erreichbar.</p>
+    </div>
+
+    <div id="step4" class="step-card">
+      <span class="step-number">STEP 4</span>
+      <h4>STH Signature Verification</h4>
+      <p data-de="Aktuellen STH und öffentlichen Schlüssel des Logs abrufen. Ed25519-Signatur über kanonisches JSON {tree_size, timestamp, root_hash} verifizieren." data-en="Fetch current STH and log public key. Verify Ed25519 signature over canonical JSON {tree_size, timestamp, root_hash}." data-pt="Buscar STH atual e chave pública do log. Verificar assinatura Ed25519 sobre JSON canônico {tree_size, timestamp, root_hash}.">Aktuellen STH und öffentlichen Schlüssel des Logs abrufen. Ed25519-Signatur über kanonisches JSON <code>{tree_size, timestamp, root_hash}</code> verifizieren.</p>
+      <pre class="code-block" style="margin:12px 0;">GET /sth
+GET /pubkey</pre>
+      <p style="margin-top:12px;color:#cc6666;font-size:0.82rem;" data-de="Fehlschlag bedeutet: Log-Betreiber-Signatur ungültig oder falscher Schlüssel / key_id-Nichtübereinstimmung." data-en="Failure means: log operator signature invalid, or wrong public key / key_id mismatch." data-pt="Falha significa: assinatura do operador do log inválida, ou chave pública errada / key_id não corresponde."><i class="fas fa-exclamation-triangle" style="margin-right:6px;"></i> Fehlschlag bedeutet: Log-Betreiber-Signatur ungültig oder falscher Schlüssel / key_id-Nichtübereinstimmung.</p>
+    </div>
+
+    <div id="step5" class="step-card">
+      <span class="step-number">STEP 5</span>
+      <h4>Inclusion Proof Verification</h4>
+      <p data-de="Inklusionsbeweis abrufen, Leaf-Hash rekonstruieren und mit sth.root_hash vergleichen:" data-en="Fetch inclusion proof, reconstruct leaf hash and compare with sth.root_hash:" data-pt="Buscar prova de inclusão, reconstruir hash da folha e comparar com sth.root_hash:">Inklusionsbeweis abrufen, Leaf-Hash rekonstruieren und mit <code>sth.root_hash</code> vergleichen:</p>
+      <pre class="code-block" style="margin:12px 0;">leaf_hash = SHA256(0x00 || canonical_json(leaf_payload))
+→ Combine with audit_path → Reconstruct root
+→ Compare with sth.root_hash</pre>
+      <p style="margin-top:12px;color:#cc6666;font-size:0.82rem;" data-de="Fehlschlag bedeutet: Anker ist nicht tatsächlich im festgeschriebenen Baum enthalten, oder Beweis/Log-Manipulation." data-en="Failure means: anchor is not actually included in the committed tree, or proof/log tampering." data-pt="Falha significa: âncora não está realmente incluída na árvore comprometida, ou adulteração de prova/log."><i class="fas fa-exclamation-triangle" style="margin-right:6px;"></i> Fehlschlag bedeutet: Anker ist nicht tatsächlich im festgeschriebenen Baum enthalten, oder Beweis/Log-Manipulation.</p>
+    </div>
+  </section>
+
+  <div style="height:1px;background:rgba(255,255,255,0.06);margin:40px 0;"></div>
+
+  <!-- ═══ EVIDENCE PACK ═══ -->
+  <section id="evidence-pack">
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:1.3rem;font-weight:600;color:#b8860b;margin-bottom:20px;">
+      Evidence Pack Format
+    </h2>
+    <div class="file-tree">
+      <span class="dir">evidence-pack.zip</span><br>
+      &nbsp;&nbsp;<span class="file">bundle.json</span><br>
+      &nbsp;&nbsp;<span class="file">report.pdf</span><br>
+      &nbsp;&nbsp;<span class="file">report.sig</span><br>
+      &nbsp;&nbsp;<span class="file">merkle-proof.json</span><br>
+      &nbsp;&nbsp;<span class="dir">pubkeys/</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">audit_pub.pem</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">merkle_log_pub.pem</span>
+    </div>
+
+    <h3 style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:600;color:var(--text-primäry,#e8e4dc);margin:24px 0 12px;">merkle-proof.json</h3>
+    <pre class="code-block">{
+  "combined_root_hash": "&lt;hex&gt;",
+  "leaf_index": 42,
+  "leaf_payload": { ... },
+  "sth": {
+    "tree_size": 12345,
+    "timestamp": "ISO-8601",
+    "root_hash": "&lt;hex&gt;",
+    "signature_alg": "Ed25519",
+    "signature": "&lt;base64&gt;",
+    "key_id": "hub-log-2026"
+  },
+  "inclusion_proof": {
+    "leaf_index": 42,
+    "tree_size": 12345,
+    "audit_path": ["&lt;hex&gt;", "..."]
+  }
+}</pre>
+    <p style="font-size:0.82rem;color:#666;margin-top:12px;font-style:italic;" data-de="Wenn vorhanden, kann die CLI Netzwerkaufrufe überspringen und offline verifizieren." data-en="When present, the CLI may skip network calls and verify offline." data-pt="Quando presente, a CLI pode pular chamadas de rede e verificar offline.">Wenn vorhanden, kann die CLI Netzwerkaufrufe überspringen und offline verifizieren.</p>
+  </section>
+
+  <div style="height:1px;background:rgba(255,255,255,0.06);margin:40px 0;"></div>
+
+  <!-- ═══ FLAGS ═══ -->
+  <section id="flags">
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:1.3rem;font-weight:600;color:#b8860b;margin-bottom:20px;">
+      Flags
+    </h2>
+    <table class="exit-table">
+      <thead>
+        <tr><th>Flag</th><th data-de="Beschreibung" data-en="Description" data-pt="Descrição">Beschreibung</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code style="color:#b8860b;">--merkle-url</code></td><td data-de="Basis-URL des Merkle-Log-Dienstes" data-en="Base URL of the Merkle log service" data-pt="URL base do serviço Merkle log">Basis-URL des Merkle-Log-Dienstes</td></tr>
+        <tr><td><code style="color:#b8860b;">--strict</code></td><td data-de="Aktiviert Pinning + Konsistenzbeweis-Verifikation (Phase 3B.2+)" data-en="Enables pinning + consistency proof verification (Phase 3B.2+)" data-pt="Ativa pinning + verificação de prova de consistência (Phase 3B.2+)">Aktiviert Pinning + Konsistenzbeweis-Verifikation (Phase 3B.2+)</td></tr>
+        <tr><td><code style="color:#b8860b;">--pin-file</code></td><td data-de="Speicherort für STH-Cache" data-en="STH cache storage location" data-pt="Local de armazenamento do cache STH">Speicherort für STH-Cache</td></tr>
+        <tr><td><code style="color:#b8860b;">--offline</code></td><td data-de="Erfordert merkle-proof.json, überspringt Netzwerk" data-en="Requires merkle-proof.json, skips network" data-pt="Requer merkle-proof.json, pula rede">Erfordert <code>merkle-proof.json</code>, überspringt Netzwerk</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div style="height:1px;background:rgba(255,255,255,0.06);margin:40px 0;"></div>
+
+  <!-- ═══ SECURITY NOTES ═══ -->
+  <section id="security">
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:1.3rem;font-weight:600;color:#b8860b;margin-bottom:20px;">
+      <span data-de="Sicherheitshinweise" data-en="Security Notes" data-pt="Notas de Segurança">Sicherheitshinweise</span>
+    </h2>
+    <ul style="margin-left:20px;font-size:0.85rem;line-height:2.2;color:var(--text-secondary,#bbb);">
+      <li data-de="Immer PDF-Signatur verifizieren, bevor Textaussagen im Bericht vertraut werden." data-en="Always verify PDF signature before trusting any textual statements in the report." data-pt="Sempre verificar assinatura PDF antes de confiar em declarações textuais no relatório.">Immer PDF-Signatur verifizieren, bevor Textaussagen im Bericht vertraut werden.</li>
+      <li data-de="Immer WCAF-Kette verifizieren, bevor combined_root_hash vertraut wird." data-en="Always verify WCAF chain before trusting combined_root_hash." data-pt="Sempre verificar cadeia WCAF antes de confiar no combined_root_hash.">Immer WCAF-Kette verifizieren, bevor <code>combined_root_hash</code> vertraut wird.</li>
+      <li data-de="In Produktion HTTPS zum Merkle-Log-Endpoint verwenden." data-en="In production, require HTTPS to Merkle log endpoint." data-pt="Em produção, exigir HTTPS para endpoint do Merkle log.">In Produktion HTTPS zum Merkle-Log-Endpoint verwenden.</li>
+      <li data-de="Strikten Modus (Pinning + Konsistenz) verwenden, um Split-View/Rollback-Angriffe zu mindern." data-en="Use strict mode (pinning + consistency) to mitigate split-view/rollback attacks." data-pt="Usar modo estrito (pinning + consistência) para mitigar ataques split-view/rollback.">Strikten Modus (Pinning + Konsistenz) verwenden, um Split-View/Rollback-Angriffe zu mindern.</li>
+    </ul>
+  </section>
+
+  <div style="height:1px;background:rgba(255,255,255,0.06);margin:40px 0;"></div>
+
+  <!-- ═══ COMPLIANCE STATEMENT ═══ -->
+  <section id="compliance">
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:1.3rem;font-weight:600;color:#b8860b;margin-bottom:20px;">
+      Compliance Statement
+    </h2>
+    <div class="compliance-box">
+      <p data-de="Wenn alle Schritte bestanden werden, kann der Verifizierer feststellen: Der Audit-Bericht ist authentisch (signiert), die WCAF-Beweiskette ist intakt, und der Evidenzanker ist öffentlich in einem CT-Stil Merkle Transparency Log durch einen signierten Tree Head festgeschrieben. Daher existierte der Dokumentenbeweis zu oder vor dem Transparency-Log-Zeitstempel und wurde seit der Verankerung nicht modifiziert." data-en="If all steps pass, the verifier can state: The audit report is authentic (signed), the WCAF evidence chain is intact, and the evidence anchor is publicly committed in a CT-style Merkle transparency log by a signed tree head. Therefore, the document evidence existed at or before the transparency log timestamp and has not been modified since anchoring." data-pt="Se todos os passos passarem, o verificador pode declarar: O relatório de auditoria é autêntico (assinado), a cadeia de evidências WCAF está intacta, e a âncora de evidência está publicamente comprometida em um Merkle transparency log estilo CT por um tree head assinado. Portanto, a evidência documental existia em ou antes do timestamp do transparency log e não foi modificada desde a ancoragem.">
+        Wenn alle Schritte bestanden werden, kann der Verifizierer feststellen: <em>Der Audit-Bericht ist authentisch (signiert), die WCAF-Beweiskette ist intakt, und der Evidenzanker ist öffentlich in einem CT-Stil Merkle Transparency Log durch einen signierten Tree Head festgeschrieben. Daher existierte der Dokumentenbeweis zu oder vor dem Transparency-Log-Zeitstempel und wurde seit der Verankerung nicht modifiziert.</em>
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer style="margin-top:60px;padding-top:24px;border-top:1px solid rgba(255,255,255,0.06);display:flex;justify-content:space-between;align-items:center;font-size:0.7rem;color:#555;">
+    <span>© 2026 WINDI Publishing House · Kempten, Bavaria</span>
+    <span style="font-family:'JetBrains Mono',monospace;letter-spacing:1px;">
+      <span data-de="KI verarbeitet · Der Mensch entscheidet · WINDI garantiert" data-en="AI processes · Human decides · WINDI guarantees" data-pt="IA processa · Humano decide · WINDI garante">KI verarbeitet · Der Mensch entscheidet · WINDI garantiert</span>
+    </span>
+  </footer>
+
+</main>
+
+<!-- ═══ SCRIPTS ═══ -->
+<script>
+function toggleTheme() {
+  const html = document.documentElement;
+  const btn = document.getElementById('themeToggle');
+  if (html.getAttribute('data-theme') === 'dark') {
+    html.setAttribute('data-theme', 'light');
+    btn.innerHTML = '<i class="fas fa-sun"></i> Klar';
+    document.body.style.background = '#f8f6f1';
+    document.body.style.color = '#1a1a1a';
+    document.querySelector('.top-bar').style.background = 'rgba(248,246,241,0.95)';
+    document.querySelector('.sidebar-left').style.background = 'linear-gradient(180deg,#f4f2ed,#ebe8e2)';
+  } else {
+    html.setAttribute('data-theme', 'dark');
+    btn.innerHTML = '<i class="fas fa-moon"></i> Dunkel';
+    document.body.style.background = '#0a0a0c';
+    document.body.style.color = '#e8e4dc';
+    document.querySelector('.top-bar').style.background = 'rgba(10,10,12,0.95)';
+    document.querySelector('.sidebar-left').style.background = 'linear-gradient(180deg,rgba(18,18,22,1),rgba(10,10,12,1))';
+  }
+}
+
+function switchLang(lang) {
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.style.background = 'transparent';
+    b.style.color = '#666';
+    b.style.borderColor = 'rgba(255,255,255,0.1)';
+  });
+  const active = document.querySelector(`.lang-btn[data-lang="${lang}"]`);
+  if (active) {
+    active.style.background = 'rgba(184,134,11,0.15)';
+    active.style.color = '#b8860b';
+    active.style.borderColor = 'rgba(184,134,11,0.3)';
+  }
+  document.querySelectorAll(`[data-${lang}]`).forEach(el => {
+    el.textContent = el.getAttribute(`data-${lang}`);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.body.style.margin = '0';
+  document.body.style.fontFamily = "'Outfit', sans-serif";
+  document.body.style.background = '#0a0a0c';
+  document.body.style.color = '#e8e4dc';
+});
+
+// Mark current nav link
+if(location.pathname.includes('/library/')){
+  document.querySelectorAll('.nav-links a').forEach(function(a){
+    if(a.getAttribute('href')==='/library/' || a.getAttribute('href')==='/library/index.html'){
+      a.classList.add('nav-current');
+    }
+  });
+}
+</script>
+</body>
+</html>

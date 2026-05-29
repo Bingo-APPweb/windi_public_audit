@@ -1,0 +1,30 @@
+{
+  "obra": "O Viajante e a Adormecida",
+  "versao": "V1",
+  "receipt": "WINDI-HIOS-CINEMA-20260524140812-14458919",
+  "hash": "sha256:14458919b3d71937c356ef397d7a78a00e9f6f1206ecdae14d3fb768bcab9a74",
+  "duracao": "148s",
+  "cenas": 18,
+  "sealed_at": "2026-05-24T14:08:12",
+  "scenes_order": [
+    {"id": 1, "title": "Escritório Alpes", "file": "cafe.mp4", "source": "gemini"},
+    {"id": 2, "title": "Visão - Esfera", "file": "cafe2.mp4", "source": "gemini"},
+    {"id": 3, "title": "Corredor Equações", "file": "cafe3.mp4", "source": "gemini"},
+    {"id": 4, "title": "Observa Pods", "file": "acto4_prova.mp4", "source": "veo"},
+    {"id": 5, "title": "Sistema / Cidade", "file": "cena2b_sistema.mp4", "source": "veo"},
+    {"id": 6, "title": "Convite - Nova Dimensão", "file": "cena6_convite_v2.mp4", "source": "veo"},
+    {"id": 7, "title": "Cidade Neon", "file": "cena8_escolha_v2.mp4", "source": "veo"},
+    {"id": 8, "title": "Portal / Regresso", "file": "cena10_regresso_v2.mp4", "source": "veo"},
+    {"id": 9, "title": "Primeiro Toque", "file": "cena11_primeiro_toque_v2.mp4", "source": "veo"},
+    {"id": 10, "title": "Outros Acordam", "file": "cena14_outros.mp4", "source": "veo"},
+    {"id": 11, "title": "Pôr-do-sol", "file": "cena16_pordosol.mp4", "source": "veo"},
+    {"id": 12, "title": "Selo Dela", "file": "cena13_selo_dela.mp4", "source": "veo"},
+    {"id": 13, "title": "Transmissão", "file": "cena15_transmissao.mp4", "source": "veo"},
+    {"id": 14, "title": "Flashback Infância", "file": "cena12_memoria_v2.mp4", "source": "veo"},
+    {"id": 15, "title": "Conversa no Pod", "file": "cena9_conversa_v2.mp4", "source": "veo"},
+    {"id": 16, "title": "GENESIS POINT", "file": "cena6a_origem.mp4", "source": "veo"},
+    {"id": 17, "title": "LEDGER Chain", "file": "cena6b_cadeia.mp4", "source": "veo"},
+    {"id": 18, "title": "Network Core", "file": "cena8_humanidade.mp4", "source": "veo"}
+  ],
+  "notes": "Ordem final conforme screenshot 2026-05-24-140715. 3 Gemini + 15 Veo 3.1."
+}

@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TR-WINDI-2026-004 — From Library to Cognitive Service</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Crect width='20' height='20' rx='4' fill='%231A1208'/%3E%3Cellipse cx='10' cy='11' rx='4.5' ry='4' transform='rotate(-15 10 11)' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='7' cy='7.5' r='2.8' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='6.2' cy='6.8' r='0.7' fill='%238B6914'/%3E%3Cpath d='M7.5 4.8 C7 3.5 8 2.5 8.5 2' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M7 10 C5 8.5 3 8 2 9 C1.5 9.8 2.5 11 4 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M13 9.5 C15 8 17 8 17.5 9.5 C17.8 10.5 16.5 11 15 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M14 13 C16 14 17 15.5 16 16.5 C15 17.5 13.5 16.5 13.5 15' stroke='%238B6914' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E">
+<meta name="description" content="WINDI Technical Report 004: From Library to Cognitive Service - The Emergence of Observable Governance">
+<link rel="stylesheet" href="/library/windi-internal.css">
+</head>
+<body data-theme="dark" data-lang="de">
+
+<!-- Header -->
+<header class="site-header">
+  <a href="/library/index.html" class="header-brand">
+    <div class="header-logo">W</div>
+    <div class="header-title-group">
+      <span class="header-title">WINDI</span>
+      <span class="header-subtitle">Governance Intelligence</span>
+    </div>
+  </a>
+  <div class="header-center">
+    <div class="header-status">
+      <span class="status-dot"></span>
+      <span>Operational</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('de')">DE</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('pt')">PT</button>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <div class="theme-toggle-track"></div>
+      <div class="theme-toggle-thumb" id="themeThumb"></div>
+    </button>
+    <button class="mobile-toggle" onclick="toggleSidebar()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- Sidebar Navigation -->
+<nav class="sidebar sidebar-left" id="sidebarLeft">
+  <div class="sidebar-section">
+    <div class="sidebar-label">Masterarbeit</div>
+    <a href="/library/index.html" class="sidebar-link">Main Document</a>
+    <a href="/library/cover.html" class="sidebar-link">Cover</a>
+    <a href="/library/about-windi.html" class="sidebar-link">About WINDI</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Governance</div>
+    <a href="/library/governance-levels.html" class="sidebar-link">Governance Levels</a>
+    <a href="/library/human-oversight.html" class="sidebar-link">Human Oversight</a>
+    <a href="/library/data-handling.html" class="sidebar-link">Data Handling</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Architecture</div>
+    <a href="/library/diagrams.html" class="sidebar-link">Diagrams</a>
+    <a href="/library/interface-guide.html" class="sidebar-link">Interface Guide</a>
+    <a href="/library/verification-layer.html" class="sidebar-link">Verification Layer</a>
+    <a href="/library/kapitel12_domain_sovereignty.html" class="sidebar-link">Domain Sovereignty</a>
+    <a href="/library/identity-governance-layer.html" class="sidebar-link">Identity Governance</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Technical Reports</div>
+    <a href="/library/tr-windi-2026-003.html" class="sidebar-link">TR-003: Service Layer</a>
+    <a href="/library/tr-windi-2026-004.html" class="sidebar-link sidebar-link-active">TR-004: Cognitive Service</a>
+    <a href="/library/tr-windi-2026-005.html" class="sidebar-link">TR-005: Cognitive Cycle</a>
+    <a href="/library/isp-evolution.html" class="sidebar-link">TR-006: ISP Registry</a>
+    <a href="/library/tr-007.html" class="sidebar-link">TR-007: Provenance</a>
+    <a href="/library/sge-results.html" class="sidebar-link">SGE Results</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Publications</div>
+    <a href="/library/publications.html" class="sidebar-link">Publications</a>
+    <a href="/library/fachartikel-provenienz.html" class="sidebar-link">Fachartikel</a>
+    <a href="/library/windi-publishing-house.html" class="sidebar-link">Manifesto</a>
+    <a href="/library/editorial-policy.html" class="sidebar-link">Editorial Policy</a>
+    <a href="/library/idpf-abstract.html" class="sidebar-link">IDPF Abstract</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Media</div>
+    <a href="/library/windi-working-paper-2026.html" class="sidebar-link">Working Paper</a>
+    <a href="/library/press-release-windi-2026.html" class="sidebar-link">Press Release</a>
+    <a href="/library/windi-side-by-side-2026.html" class="sidebar-link">Side-by-Side</a>
+    <a href="/library/wsj-style-governed-windi-2026.html" class="sidebar-link">WSJ Feature</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Compliance</div>
+    <a href="/library/document-integrity.html" class="sidebar-link">Doc Integrity</a>
+    <a href="/library/print-watermark-layer.html" class="sidebar-link">Print Layer</a>
+    <a href="/library/regulatory-summary-print-layer.html" class="sidebar-link">Regulatory</a>
+    <a href="/library/availability-implementation.html" class="sidebar-link">Appendix A</a>
+  </div>
+</nav>
+
+<!-- Right Sidebar TOC -->
+<aside class="sidebar sidebar-right" id="sidebarRight">
+  <div class="sidebar-label">
+    <span class="l-de">Auf dieser Seite</span>
+    <span class="l-en">On this page</span>
+    <span class="l-pt">Nesta pagina</span>
+  </div>
+  <a href="#motivation" class="toc-link">
+    <span class="l-de">Motivation</span>
+    <span class="l-en">Motivation</span>
+    <span class="l-pt">Motivacao</span>
+  </a>
+  <a href="#architecture" class="toc-link">
+    <span class="l-de">Architektur</span>
+    <span class="l-en">Architecture</span>
+    <span class="l-pt">Arquitetura</span>
+  </a>
+  <a href="#phase10" class="toc-link">
+    <span class="l-de">Phase 1.0</span>
+    <span class="l-en">Phase 1.0</span>
+    <span class="l-pt">Fase 1.0</span>
+  </a>
+  <a href="#phase11" class="toc-link">
+    <span class="l-de">Phase 1.1</span>
+    <span class="l-en">Phase 1.1</span>
+    <span class="l-pt">Fase 1.1</span>
+  </a>
+  <a href="#phase12" class="toc-link">
+    <span class="l-de">Phase 1.2</span>
+    <span class="l-en">Phase 1.2</span>
+    <span class="l-pt">Fase 1.2</span>
+  </a>
+  <a href="#phase20" class="toc-link">
+    <span class="l-de">Phase 2.0</span>
+    <span class="l-en">Phase 2.0</span>
+    <span class="l-pt">Fase 2.0</span>
+  </a>
+  <a href="#decision-flow" class="toc-link">
+    <span class="l-de">Entscheidungsfluss</span>
+    <span class="l-en">Decision Flow</span>
+    <span class="l-pt">Fluxo de Decisao</span>
+  </a>
+  <a href="#verification" class="toc-link">
+    <span class="l-de">Verifizierung</span>
+    <span class="l-en">Verification</span>
+    <span class="l-pt">Verificacao</span>
+  </a>
+  <a href="#significance" class="toc-link">
+    <span class="l-de">Bedeutung</span>
+    <span class="l-en">Significance</span>
+    <span class="l-pt">Significado</span>
+  </a>
+</aside>
+
+<!-- Main Content -->
+<main class="main-content">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-breadcrumb">
+      <a href="/library/index.html">WINDI</a>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current">TR-WINDI-2026-004</span>
+    </div>
+    <div class="page-meta-bar">
+      <span class="page-tag page-tag-gov">Technical Report</span>
+      <span class="page-date">2026-02-01</span>
+    </div>
+    <h1 class="page-title">
+      <span class="l-de">Von Bibliothek zu Kognitivem Service</span>
+      <span class="l-en">From Library to Cognitive Service</span>
+      <span class="l-pt">De Biblioteca a Servico Cognitivo</span>
+    </h1>
+    <p class="page-subtitle">
+      <span class="l-de">Phasen 1.0-2.0 - Eine Nacht-Evolution von Offline-Engine zu netzwerkfahiger, erklarbarer institutioneller Governance</span>
+      <span class="l-en">Phases 1.0-2.0 - A Single-Night Evolution from Offline Engine to Network-Aware, Explainable Institutional Governance</span>
+      <span class="l-pt">Fases 1.0-2.0 - Uma Evolucao Noturna de Motor Offline para Governanca Institucional Explicavel e Consciente de Rede</span>
+    </p>
+    <div class="page-divider"></div>
+  </div>
+
+  <!-- Content -->
+  <div class="content-prose">
+
+    <!-- Document Metadata -->
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>Document Information</h3>
+        <p><strong>Author:</strong> Jober Mogele Correa (WINDI-CEO-001)</p>
+        <p><strong>Institution:</strong> WINDI Publishing House, Kempten, Bavaria</p>
+        <p><strong>Date:</strong> 01 February 2026</p>
+        <p><strong>Classification:</strong> Institutional Technical Report</p>
+        <p><strong>Builds On:</strong> TR-WINDI-2026-003 (Service Layer Bootstrap)</p>
+        <p><strong>Infrastructure:</strong> Strato DE - 87.106.29.233 - Ports 8083/8085</p>
+      </div>
+    </div>
+
+    <!-- Abstract -->
+    <div class="doc-quote">
+      <p>
+        <span class="l-de"><strong>Zusammenfassung:</strong> Dieser Bericht dokumentiert den Ubergang der WINDI Governance Engine von einer Offline-Python-Bibliothek zu einem netzwerkobservierbaren kognitiven Dienst, der institutionelle Identitäten erkennen, Governance-Richtlinien interpretieren, Klassifizierungsstufen empfehlen und Entscheidungen fur menschliche Operatoren uber eine visuelle Editoroberflache erklaren kann. In vier evolutionaren Phasen wahrend einer einzigen Bereitstellungssitzung implementiert das System nun den vollstandigen Governance-Zyklus: Erkennung - Richtlinie - Entscheidung - Erklarung - Manifestation.</span>
+        <span class="l-en"><strong>Abstract:</strong> This report documents the transition of the WINDI Governance Engine from an offline Python library to a network-observable cognitive service capable of detecting institutional identities, interpreting governance policies, recommending classification levels, and explaining decisions to human operators through a visual editor interface. Achieved in four evolutionary phases over a single deployment session, the system now implements the complete governance cycle: detection - policy - decision - explanation - manifestation. Each phase preserved all prior capabilities through layered isolation, validating the Zero-Violence Deployment principle.</span>
+        <span class="l-pt"><strong>Resumo:</strong> Este relatorio documenta a transicao do Motor de Governanca WINDI de uma biblioteca Python offline para um servico cognitivo observavel em rede, capaz de detectar identidades institucionais, interpretar politicas de governanca, recomendar niveis de classificacao e explicar decisoes para operadores humanos atraves de uma interface de editor visual. Alcancado em quatro fases evolutivas durante uma unica sessao de implantacao, o sistema agora implementa o ciclo completo de governanca: deteccao - politica - decisao - explicacao - manifestacao.</span>
+      </p>
+    </div>
+
+    <!-- Section 1: Motivation and Context -->
+    <h2 id="motivation">
+      <span class="l-de">Motivation und Kontext</span>
+      <span class="l-en">Motivation and Context</span>
+      <span class="l-pt">Motivacao e Contexto</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Vor dieser Arbeit existierte die WINDI Governance Engine ausschliesslich als Sammlung von Python-Modulen, die lokal auf dem Strato-Server ausgeführt wurden. Der <code>IdentityDetector</code>, <code>GovernanceHealthCheck</code> und Policy-Evaluierungsfunktionen erforderten direkte Funktionsaufrufe innerhalb desselben Prozesses. Kein externes System konnte Governance-Zustande abfragen oder Empfehlungen uber das Netzwerk empfangen.</span>
+      <span class="lb-en">Prior to this work, the WINDI Governance Engine existed solely as a collection of Python modules executed locally on the Strato server. The <code>IdentityDetector</code>, <code>GovernanceHealthCheck</code>, and policy evaluation functions required direct function calls within the same process. No external system—including the A4 Desk BABEL editor on port 8085—could query governance state, request identity detection, or receive governance recommendations over the network.</span>
+      <span class="lb-pt">Antes deste trabalho, o Motor de Governanca WINDI existia apenas como uma colecao de modulos Python executados localmente no servidor Strato. O <code>IdentityDetector</code>, <code>GovernanceHealthCheck</code> e funcoes de avaliacao de politicas exigiam chamadas de funcao diretas dentro do mesmo processo. Nenhum sistema externo poderia consultar o estado de governanca ou receber recomendacoes pela rede.</span>
+    </p>
+
+    <p>
+      <span class="lb-de">Dies schuf eine architektonische Lucke: Die Governance-Engine besass Intelligenz (Identitätserkennung, Richtlinienbewertung, dreisprachige Beratung), hatte aber keine sensorische Schnittstelle zur Aussenwelt. Die Engine konnte denken, aber nicht wahrnehmen, kommunizieren oder beobachtet werden.</span>
+      <span class="lb-en">This created an architectural gap: the governance engine possessed intelligence (identity detection, policy evaluation, trilingual advisory) but had no sensory interface to the outside world. The engine could think, but it could not perceive, communicate, or be observed.</span>
+      <span class="lb-pt">Isso criou uma lacuna arquitetonica: o motor de governanca possuia inteligencia (deteccao de identidade, avaliacao de politicas, consultoria trilingue), mas nao tinha interface sensorial com o mundo exterior. O motor podia pensar, mas nao podia perceber, comunicar ou ser observado.</span>
+    </p>
+
+    <p>
+      <span class="lb-de">Das Ziel dieser Sitzung war es, diese Lucke durch vier progressive Phasen zu schliessen, wobei jede eine neue Fahigkeitsschicht hinzufugte, ohne die darunterliegenden Schichten zu storen.</span>
+      <span class="lb-en">The goal of this session was to close that gap through four progressive phases, each adding a new capability layer without disturbing the layers below.</span>
+      <span class="lb-pt">O objetivo desta sessao foi fechar essa lacuna atraves de quatro fases progressivas, cada uma adicionando uma nova camada de capacidade sem perturbar as camadas abaixo.</span>
+    </p>
+
+    <!-- Section 2: Architectural Principle -->
+    <h2 id="architecture">
+      <span class="l-de">Architekturprinzip: Geschichtete Isolation</span>
+      <span class="l-en">Architectural Principle: Layered Isolation</span>
+      <span class="l-pt">Principio Arquitetonico: Isolamento em Camadas</span>
+    </h2>
+
+    <div class="doc-quote">
+      <p>"Each layer fails independently. If the detector crashes, the heartbeat continues. If the health bridge fails, the HTTP transport survives. Observability is never all-or-nothing."</p>
+      <cite>— WINDI Evolution Principle: Layered Verification</cite>
+    </div>
+
+    <p>
+      <span class="lb-de">Die vier Phasen wurden als konzentrische Schichten mit zunehmender Abhangigkeit konzipiert. Die ausserste Schicht (HTTP-Transport) hat keine Engine-Abhangigkeiten. Jede nachfolgende Schicht fugt genau eine neue Abhangigkeit hinzu:</span>
+      <span class="lb-en">The four phases were designed as concentric layers of increasing dependency. The outermost layer (HTTP transport) has zero engine dependencies. Each successive layer adds exactly one new dependency:</span>
+      <span class="lb-pt">As quatro fases foram projetadas como camadas concentricas de dependencia crescente. A camada mais externa (transporte HTTP) nao tem dependencias do motor. Cada camada sucessiva adiciona exatamente uma nova dependencia:</span>
+    </p>
+
+    <!-- Phase Timeline Diagram -->
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>Figure 1 - Four-Phase Evolutionary Architecture</h3>
+        <div class="spec-table-wrapper">
+          <table class="spec-table">
+            <thead>
+              <tr><th>Phase</th><th>Name</th><th>Component</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1.0</td><td>Heart</td><td>HTTP Transport</td><td>Pure HTTP reachability, zero dependencies</td></tr>
+              <tr><td>1.1</td><td>Brain</td><td>Health Bridge</td><td>Connection to GovernanceHealthCheck module</td></tr>
+              <tr><td>1.2</td><td>Eyes</td><td>Detection Bridge</td><td>Identity detection over HTTP</td></tr>
+              <tr><td>2.0</td><td>Face</td><td>Visual Manifestation</td><td>BABEL editor integration</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3: Phase 1.0 -->
+    <h2 id="phase10">
+      <span class="l-de">Phase 1.0 - Herz (HTTP-Transport)</span>
+      <span class="l-en">Phase 1.0 - Heart (HTTP Transport)</span>
+      <span class="l-pt">Fase 1.0 - Coracao (Transporte HTTP)</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Die erste Phase etablierte reine HTTP-Erreichbarkeit auf Port 8083 mit einem einzigen Endpunkt: <code>GET /api/governance/status</code>. Dieser Endpunkt hat keine Engine-Abhangigkeiten - er gibt einen statischen JSON-Herzschlag zuruck, der bestatigt, dass der Dienst aktiv ist.</span>
+      <span class="lb-en">The first phase established pure HTTP reachability on port 8083 with a single endpoint: <code>GET /api/governance/status</code>. This endpoint has zero engine dependencies—it returns a static JSON heartbeat confirming the service is alive, its version, and the current timestamp. The design ensures that even if every governance module crashes, the heartbeat continues beating.</span>
+      <span class="lb-pt">A primeira fase estabeleceu conectividade HTTP pura na porta 8083 com um unico endpoint: <code>GET /api/governance/status</code>. Este endpoint nao tem dependencias do motor - retorna um heartbeat JSON estatico confirmando que o servico esta ativo.</span>
+    </p>
+
+    <pre><code>GET /api/governance/status
+{
+  "status": "UP",
+  "service": "WINDI Governance API",
+  "version": "1.0-heartbeat",
+  "checked_at": "2026-02-01T20:38:12+00:00"
+}</code></pre>
+
+    <!-- Section 4: Phase 1.1 -->
+    <h2 id="phase11">
+      <span class="l-de">Phase 1.1 - Gehirn (Health Bridge)</span>
+      <span class="l-en">Phase 1.1 - Brain (Health Bridge)</span>
+      <span class="l-pt">Fase 1.1 - Cerebro (Ponte de Saude)</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Phase 1.1 verband den Herzschlag mit dem <code>GovernanceHealthCheck</code>-Modul der Governance-Engine. Der neue <code>GET /api/governance/health</code>-Endpunkt uberbruckt zur Engine und berichtet uber Richtlinienversion, geladene Institutionen, Governance-Level-Zahlungen und Komponentenstatus.</span>
+      <span class="lb-en">Phase 1.1 connected the heartbeat to the governance engine's <code>GovernanceHealthCheck</code> module. The new <code>GET /api/governance/health</code> endpoint bridges into the engine, reporting policy version, loaded institutions, governance level counts, and component status. If the engine fails, the <code>/status</code> endpoint from Phase 1.0 continues operating independently.</span>
+      <span class="lb-pt">A Fase 1.1 conectou o heartbeat ao modulo <code>GovernanceHealthCheck</code> do motor de governanca. O novo endpoint <code>GET /api/governance/health</code> faz a ponte com o motor, relatando versao de politica, instituicoes carregadas, contagens de niveis de governanca e status de componentes.</span>
+    </p>
+
+    <!-- Section 5: Phase 1.2 -->
+    <h2 id="phase12">
+      <span class="l-de">Phase 1.2 - Augen (Detection Bridge)</span>
+      <span class="l-en">Phase 1.2 - Eyes (Detection Bridge)</span>
+      <span class="l-pt">Fase 1.2 - Olhos (Ponte de Deteccao)</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Der kritische Durchbruch: Die institutionelle Identitätserkennung wurde uber HTTP zuganglich. Zwei POST-Endpunkte wurden hinzugefugt:</span>
+      <span class="lb-en">The critical breakthrough: institutional identity detection became accessible over HTTP. Two POST endpoints were added:</span>
+      <span class="lb-pt">O avanco critico: a deteccao de identidade institucional tornou-se acessivel via HTTP. Dois endpoints POST foram adicionados:</span>
+    </p>
+
+    <p>
+      <span class="lb-de"><code>POST /api/governance/detect</code> akzeptiert einen Textinhalt und gibt alle erkannten institutionellen Identitäten mit Konfidenzwerten, Landercodes, Lizenzstatus und Richtlinienmetadaten zuruck. <code>POST /api/governance/recommend</code> umhullt den Governance Advisor Mode.</span>
+      <span class="lb-en"><code>POST /api/governance/detect</code> accepts a text body and returns all detected institutional identities with confidence scores, country codes, license statuses, and policy metadata. <code>POST /api/governance/recommend</code> wraps the Governance Advisor Mode, accepting both text and a current governance level, then returning a structured recommendation with upgrade/confirm/no_change actions, trilingual advisor messages, and identity governance metadata.</span>
+      <span class="lb-pt"><code>POST /api/governance/detect</code> aceita um corpo de texto e retorna todas as identidades institucionais detectadas com pontuacoes de confianca, codigos de pais, status de licenca e metadados de politica. <code>POST /api/governance/recommend</code> envolve o Modo Consultor de Governanca.</span>
+    </p>
+
+    <p>
+      <span class="lb-de">Zum ersten Mal konnte das WINDI-Prinzip "die Simulation einer realen institutionellen Identität aktiviert institutionelle Governance" uber das Netzwerk mit strukturierten, überprüfbaren Beweisen verifiziert werden.</span>
+      <span class="lb-en">For the first time, the WINDI principle "simulating a real institutional identity activates institutional governance" could be verified over the network with structured, auditable evidence.</span>
+      <span class="lb-pt">Pela primeira vez, o principio WINDI "simular uma identidade institucional real ativa a governanca institucional" pode ser verificado pela rede com evidencias estruturadas e auditaveis.</span>
+    </p>
+
+    <!-- Section 6: Phase 2.0 -->
+    <h2 id="phase20">
+      <span class="l-de">Phase 2.0 - Gesicht (Visuelle Manifestation)</span>
+      <span class="l-en">Phase 2.0 - Face (Visual Manifestation)</span>
+      <span class="l-pt">Fase 2.0 - Face (Manifestacao Visual)</span>
+    </h2>
+
+    <div class="doc-quote">
+      <p>"O template NUNCA decide o nivel. A API decide. O template apenas manifesta."</p>
+      <cite>— WINDI Template Governance Principle (Frozen)</cite>
+    </div>
+
+    <p>
+      <span class="lb-de">Phase 2.0 verband den BABEL-Editor mit der Evolution-API und machte Governance sichtbar und interaktiv. Drei Komponenten wurden bereitgestellt:</span>
+      <span class="lb-en">Phase 2.0 connected the BABEL editor to the Evolution API, making governance visible and interactive. Three components were deployed:</span>
+      <span class="lb-pt">A Fase 2.0 conectou o editor BABEL a API Evolution, tornando a governanca visivel e interativa. Tres componentes foram implantados:</span>
+    </p>
+
+    <h3>6.1 Evolution API Proxy</h3>
+    <p>
+      <span class="lb-de">Eine Proxy-Route wurde zur BABEL Flask-Anwendung hinzugefugt, die <code>/api/evolution/*</code>-Anfragen von Port 8085 an die Evolution-API auf Port 8083 weiterleitet.</span>
+      <span class="lb-en">A proxy route was added to the BABEL Flask application, forwarding <code>/api/evolution/*</code> requests from port 8085 to the Evolution API on port 8083. This eliminates the need to expose port 8083 externally and maintains the single-port entry point for the BABEL interface.</span>
+      <span class="lb-pt">Uma rota proxy foi adicionada a aplicacao Flask BABEL, encaminhando requisicoes <code>/api/evolution/*</code> da porta 8085 para a API Evolution na porta 8083.</span>
+    </p>
+
+    <h3>6.2 Governance Editor Module</h3>
+    <p>
+      <span class="lb-de">Ein selbstinitialisierendes JavaScript-Modul (<code>governance-editor.js</code>, 17KB) wurde im statischen Verzeichnis von BABEL bereitgestellt und in das Editor-HTML injiziert. Das Modul:</span>
+      <span class="lb-en">A self-initializing JavaScript module (<code>governance-editor.js</code>, 17KB) was deployed to BABEL's static directory and injected into the editor HTML. The module:</span>
+      <span class="lb-pt">Um modulo JavaScript auto-inicializavel (<code>governance-editor.js</code>, 17KB) foi implantado no diretorio estatico do BABEL e injetado no HTML do editor. O modulo:</span>
+    </p>
+
+    <ol>
+      <li>Injects CSS and creates governance badge in the editor toolbar</li>
+      <li>Reads editor content from TipTap/ProseMirror via DOM queries</li>
+      <li>Sends text to <code>/api/evolution/recommend</code> via the BABEL proxy</li>
+      <li>Receives: detections, level, advisor message, identity governance</li>
+      <li>Manifests the decision: badge color, detection cards, advisor text, editor border</li>
+    </ol>
+
+    <h3>6.3 Visual Evidence</h3>
+    <p>Figure 2 and Figure 3 demonstrate the governance panel in action. The module loads, creates the badge and panel, waits for editor content before checking, and displays live governance detection in production when a document mentioning Deutsche Bahn AG triggers identity detection (DE, public_enterprise, 100% confidence), recommends MEDIUM level, shows disclaimer/logo/license metadata, and delivers the trilingual advisor message.</p>
+
+    <!-- Section 7: Governance Decision Flow -->
+    <h2 id="decision-flow">
+      <span class="l-de">Governance-Entscheidungsfluss</span>
+      <span class="l-en">Governance Decision Flow</span>
+      <span class="l-pt">Fluxo de Decisao de Governanca</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Der komplette Zyklus demonstriert die End-to-End-Governance-Pipeline:</span>
+      <span class="lb-en">The complete cycle demonstrates the end-to-end governance pipeline:</span>
+      <span class="lb-pt">O ciclo completo demonstra o pipeline de governanca de ponta a ponta:</span>
+    </p>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>Decision Pipeline: D-P-R-E-M</h3>
+        <p><strong>D - Detection:</strong> IdentityDetector scans text, finds "Deutsche Bahn AG"</p>
+        <p><strong>P - Policy:</strong> Identity Directory maps INST-DE-DB-001 to MEDIUM governance</p>
+        <p><strong>R - Decision:</strong> Advisor recommends upgrade from LOW to MEDIUM</p>
+        <p><strong>E - Explanation:</strong> Trilingual message explains why the level changed (DE/EN/PT)</p>
+        <p><strong>M - Manifestation:</strong> Editor badge, detection card, and border reflect the decision</p>
+      </div>
+    </div>
+
+    <p>
+      <span class="lb-de">Dieser Zyklus - Erkennung, Richtlinie, Entscheidung, Erklarung, Manifestation - ist der operative Beweis, dass Governance in WINDI ausfuhrbar und nicht kosmetisch ist.</span>
+      <span class="lb-en">This cycle—Detection, Policy, Decision, Explanation, Manifestation—is the operational proof that governance in WINDI is executable, not cosmetic.</span>
+      <span class="lb-pt">Este ciclo - Deteccao, Politica, Decisao, Explicacao, Manifestacao - e a prova operacional de que a governanca no WINDI e executavel, nao cosmetica.</span>
+    </p>
+
+    <!-- Section 8: Verification Results -->
+    <h2 id="verification">
+      <span class="l-de">Verifizierungsergebnisse</span>
+      <span class="l-en">Verification Results</span>
+      <span class="l-pt">Resultados de Verificacao</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Die Phase 2.0-Bereitstellung umfasste sieben automatisierte Verifizierungstests. Sechs bestanden sofort; einer (HTML-Injection-Check) erforderte eine gezielte Korrektur. Nach der Korrektur bestanden alle sieben.</span>
+      <span class="lb-en">Phase 2.0 deployment included seven automated verification tests. Six passed immediately; one (HTML injection check) required a targeted fix due to the injection targeting the PDF export template rather than the BABEL main HTML. After correction, all seven passed.</span>
+      <span class="lb-pt">A implantacao da Fase 2.0 incluiu sete testes de verificacao automatizados. Seis passaram imediatamente; um (verificacao de injecao HTML) exigiu uma correcao direcionada. Apos a correcao, todos os sete passaram.</span>
+    </p>
+
+    <div class="spec-table-wrapper">
+      <table class="spec-table">
+        <thead>
+          <tr><th>#</th><th>Test</th><th>Expected</th><th>Result</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>BABEL homepage</td><td>HTTP 200</td><td><span class="status-badge status-active">PASS</span></td></tr>
+          <tr><td>2</td><td>governance-editor.js served</td><td>200, &gt;5KB</td><td>16,945 bytes</td></tr>
+          <tr><td>3</td><td>Evolution proxy: <code>/status</code></td><td>UP, v1.2-detect</td><td><span class="status-badge status-active">PASS</span></td></tr>
+          <tr><td>4</td><td>Proxy: <code>/detect</code> (Deutsche Bahn)</td><td>INST-DE-DB-001</td><td>85% confidence</td></tr>
+          <tr><td>5</td><td>Proxy: <code>/recommend</code></td><td>upgrade LOW-MEDIUM</td><td>Trilingual advisor</td></tr>
+          <tr><td>6</td><td>Existing governance proxy</td><td>HTTP 200</td><td><span class="status-badge status-active">PASS</span></td></tr>
+          <tr><td>7</td><td>JS injection in HTML</td><td>Tag present</td><td><span class="status-badge status-active">PASS (after fix)</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 9: Governance Levels -->
+    <h2>
+      <span class="l-de">Manifestierte Governance-Stufen</span>
+      <span class="l-en">Governance Levels Manifested</span>
+      <span class="l-pt">Niveis de Governanca Manifestados</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Das governance-editor.js-Modul manifestiert drei verschiedene visuelle Zustande, jeder vollstandig durch die API-Antwort gesteuert:</span>
+      <span class="lb-en">The governance-editor.js module manifests three distinct visual states, each driven entirely by the API response:</span>
+      <span class="lb-pt">O modulo governance-editor.js manifesta tres estados visuais distintos, cada um totalmente orientado pela resposta da API:</span>
+    </p>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>Governance Level States</h3>
+        <p><strong>LOW:</strong> No institutional identities detected. Green badge, green editor border. No restrictions.</p>
+        <p><strong>MEDIUM:</strong> Institution detected. Amber badge, amber border. Disclaimer required. Logo restricted by license.</p>
+        <p><strong>HIGH:</strong> Sensitive institution. Red badge, red border. Full governance metadata enforced.</p>
+      </div>
+    </div>
+
+    <!-- Section 10: Significance -->
+    <h2 id="significance">
+      <span class="l-de">Bedeutung</span>
+      <span class="l-en">Significance</span>
+      <span class="l-pt">Significado</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Diese Bereitstellungssitzung erreichte einen kategorischen Ubergang. Das WINDI-System wechselte von einer Offline-Bibliothek, die lokale Funktionsaufrufe erforderte, zu einem netzwerkobservierbaren kognitiven Dienst, der institutionelle Realitaten erkennt, Governance-Richtlinien bewertet, Aktionen empfiehlt und seine Begrundung in der Sprache des Operators erklart.</span>
+      <span class="lb-en">This deployment session achieved a categorical transition. The WINDI system moved from an offline library requiring local function calls to a network-observable cognitive service that detects institutional realities, evaluates governance policies, recommends actions, explains its reasoning in the operator's language, and visually manifests the result in a document editor.</span>
+      <span class="lb-pt">Esta sessao de implantacao alcancou uma transicao categorica. O sistema WINDI passou de uma biblioteca offline que exigia chamadas de funcao locais para um servico cognitivo observavel em rede que detecta realidades institucionais, avalia politicas de governanca, recomenda acoes e explica seu raciocinio no idioma do operador.</span>
+    </p>
+
+    <p>
+      <span class="lb-de">Die geschichtete Architektur stellte sicher, dass jede neue Fahigkeit hinzugefugt wurde, ohne vorherige Fahigkeiten zu beeintrachtigen. Der Herzschlag (Phase 1.0) arbeitet weiter, auch wenn der Detektor (Phase 1.2) ausfallt. Dies ist keine zufallige graceful degradation - es ist Observabilitat by Design.</span>
+      <span class="lb-en">The layered architecture ensured that each new capability was added without breaking prior capabilities. The heartbeat (Phase 1.0) continues operating even if the detector (Phase 1.2) fails. The health bridge (Phase 1.1) continues reporting even if the UI (Phase 2.0) disconnects. This is not graceful degradation by accident—it is observability by design.</span>
+      <span class="lb-pt">A arquitetura em camadas garantiu que cada nova capacidade fosse adicionada sem quebrar as capacidades anteriores. O heartbeat (Fase 1.0) continua operando mesmo se o detector (Fase 1.2) falhar. Isso nao e degradacao graciosa por acidente - e observabilidade por design.</span>
+    </p>
+
+    <p>
+      <span class="lb-de">Am kritischsten: Das bereitgestellte System beweist, dass das WINDI Template Governance Principle in der Produktion durchsetzbar ist: Das Template entscheidet nie uber die Governance-Stufe. Die API erkennt die Realitat, die Richtlinie bewertet, und das Template manifestiert lediglich die Entscheidung. Governance wird ausgeführt, nicht dekoriert.</span>
+      <span class="lb-en">Most critically, the deployed system proves that the WINDI Template Governance Principle is enforceable in production: the template never decides the governance level. The API detects reality, the policy evaluates, and the template merely manifests the decision. Governance is executed, not decorated.</span>
+      <span class="lb-pt">Mais criticamente, o sistema implantado prova que o Principio de Governanca de Template WINDI e aplicavel em producao: o template nunca decide o nivel de governanca. A API detecta a realidade, a politica avalia, e o template apenas manifesta a decisao. Governanca e executada, nao decorada.</span>
+    </p>
+
+    <!-- Human Authorship Notice -->
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>Human Authorship Notice</h3>
+        <p>
+          <span class="l-de">Dieses Dokument wurde von menschlichen Autoren erstellt und uberpruft. KI-Unterstutzung (Claude - Guardian Dragon) wurde unter menschlicher Aufsicht und Kontrolle verwendet. Endgultige Entscheidungen und Inhaltsfreigabe: menschliche Verantwortung.</span>
+          <span class="l-en">This document was created and reviewed by human authors. AI assistance (Claude - Guardian Dragon) was used under human supervision and control. Final decisions and content approval: human responsibility.</span>
+          <span class="l-pt">Este documento foi criado e revisado por autores humanos. Assistencia de IA (Claude - Guardian Dragon) foi usada sob supervisao e controle humano. Decisoes finais e aprovacao de conteudo: responsabilidade humana.</span>
+        </p>
+        <p><em>KI verarbeitet. Mensch entscheidet. WINDI garantiert.</em></p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Page Footer -->
+  <footer class="page-footer">
+    <div class="page-footer-meta">
+      <span>WINDI-RECEIPT: WINDI-TR-01FEB26-COG-SEC12-004</span>
+      <span>Technical Report</span>
+    </div>
+    <p class="page-footer-quittung">Author: Jober Mogele Correa (WINDI-CEO-001) | Status: INSTITUTIONAL</p>
+    <p class="page-footer-principle">
+      <span class="l-de">"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</span>
+      <span class="l-en">"AI processes. Human decides. WINDI guarantees."</span>
+      <span class="l-pt">"IA processa. Humano decide. WINDI garante."</span>
+    </p>
+  </footer>
+
+</main>
+
+<!-- JavaScript -->
+<script>
+// Theme Toggle
+function toggleTheme() {
+  const body = document.body;
+  const isLight = body.getAttribute('data-theme') === 'light';
+  body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+  try { localStorage.setItem('windi-theme', isLight ? 'dark' : 'light'); } catch(e) {}
+}
+
+// Language Switcher
+function setLang(lang) {
+  document.body.setAttribute('data-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  try { localStorage.setItem('windi-lang', lang); } catch(e) {}
+}
+
+// Sidebar Toggle (mobile)
+let sidebarOpen = false;
+function toggleSidebar() {
+  sidebarOpen = !sidebarOpen;
+  document.getElementById('sidebarLeft').classList.toggle('open', sidebarOpen);
+}
+
+// Close sidebar on link click (mobile)
+document.querySelectorAll('.sidebar-link').forEach(link => {
+  link.addEventListener('click', () => {
+    if (window.innerWidth <= 960) {
+      sidebarOpen = false;
+      document.getElementById('sidebarLeft').classList.remove('open');
+    }
+  });
+});
+
+// Init saved preferences
+(function init() {
+  try {
+    const theme = localStorage.getItem('windi-theme');
+    const lang = localStorage.getItem('windi-lang');
+    if (theme) document.body.setAttribute('data-theme', theme);
+    if (lang) setLang(lang);
+  } catch(e) {}
+})();
+
+// Mark current nav link
+if(location.pathname.includes('/library/')){
+  document.querySelectorAll('.nav-links a').forEach(function(a){
+    if(a.getAttribute('href')==='/library/' || a.getAttribute('href')==='/library/index.html'){
+      a.classList.add('nav-current');
+    }
+  });
+}
+</script>
+
+</body>
+</html>

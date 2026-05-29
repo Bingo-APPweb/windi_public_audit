@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Über das WINDI System — Pre-AI Governance Layer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; background: #0E0E0C; }
+
+    .windi-shell {
+      display: flex;
+      font-family: 'Bricolage Grotesque', sans-serif;
+      background: #0E0E0C;
+      color: #E8E2D0;
+      min-height: 100vh;
+      font-size: 14px;
+    }
+
+    /* ── SIDEBAR ── */
+    .windi-sidebar {
+      width: 210px;
+      min-width: 210px;
+      background: #131310;
+      border-right: 1px solid rgba(255,255,255,0.06);
+      padding: 20px 0;
+      display: flex;
+      flex-direction: column;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      padding: 0 16px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar-logo .w-mark {
+      width: 22px;
+      height: 22px;
+      background: #B8891A;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: #0E0E0C;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .sidebar-logo span {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      color: #8A8478;
+      text-transform: uppercase;
+    }
+
+    .sidebar-section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      color: #5A5650;
+      text-transform: uppercase;
+      padding: 16px 16px 6px;
+    }
+
+    .sidebar-item {
+      display: block;
+      padding: 6px 16px;
+      font-size: 12.5px;
+      color: #7A7568;
+      cursor: pointer;
+      transition: color 0.15s;
+      line-height: 1.4;
+      border-left: 2px solid transparent;
+      text-decoration: none;
+    }
+    .sidebar-item:hover { color: #C8B98A; }
+    .sidebar-item.active {
+      color: #D4A827;
+      background: rgba(180,130,20,0.08);
+      border-left: 2px solid #D4A827;
+      padding-left: 14px;
+    }
+
+    /* ── MAIN WRAP ── */
+    .main-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .windi-topbar {
+      height: 44px;
+      background: #131310;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .topbar-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: #5A7A5A;
+      letter-spacing: 0.1em;
+    }
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #4A8A4A;
+    }
+    .topbar-lang {
+      display: flex;
+      gap: 4px;
+    }
+    .lang-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      padding: 3px 8px;
+      border-radius: 3px;
+      color: #5A5650;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      border: 1px solid transparent;
+      background: none;
+    }
+    .lang-pill.active {
+      background: #1E1C18;
+      color: #D4A827;
+      border-color: rgba(212,168,39,0.25);
+    }
+
+    /* ── CONTENT ── */
+    .content-scroll {
+      flex: 1;
+      padding: 52px 64px;
+    }
+
+    .breadcrumb {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: #4A4840;
+      letter-spacing: 0.1em;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .breadcrumb a { color: #4A4840; text-decoration: none; }
+    .breadcrumb a:hover { color: #D4A827; }
+    .breadcrumb span { color: #6A6458; }
+
+    .doc-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .badge-overview {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      padding: 4px 10px;
+      border-radius: 3px;
+      background: rgba(180,130,20,0.15);
+      color: #C8A030;
+      border: 1px solid rgba(180,130,20,0.25);
+      text-transform: uppercase;
+    }
+    .doc-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: #4A4840;
+    }
+
+    .page-title {
+      font-size: 34px;
+      font-weight: 600;
+      color: #F0E8D0;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+    }
+    .page-subtitle {
+      font-size: 13px;
+      color: #6A6458;
+      margin-bottom: 44px;
+      font-weight: 300;
+      letter-spacing: 0.02em;
+    }
+
+    .divider {
+      height: 1px;
+      background: rgba(255,255,255,0.06);
+      margin-bottom: 40px;
+    }
+
+    .content-body { max-width: 680px; }
+
+    .body-para {
+      font-size: 13.5px;
+      line-height: 1.9;
+      color: #B8B0A0;
+      margin-bottom: 26px;
+      font-weight: 300;
+    }
+    .body-para em {
+      color: #D4C090;
+      font-style: normal;
+      font-weight: 400;
+    }
+
+    .quote-block {
+      margin: 40px 0;
+      padding: 26px 30px;
+      background: rgba(180,130,20,0.07);
+      border-left: 2px solid #D4A827;
+      border-radius: 0 6px 6px 0;
+      position: relative;
+    }
+    .quote-block::before {
+      content: '"';
+      position: absolute;
+      top: -10px;
+      left: 24px;
+      font-size: 52px;
+      color: rgba(212,168,39,0.18);
+      font-family: Georgia, serif;
+      line-height: 1;
+    }
+    .quote-text {
+      font-size: 15px;
+      color: #D4C090;
+      font-weight: 400;
+      font-style: italic;
+      line-height: 1.65;
+      letter-spacing: 0.01em;
+    }
+
+    .section-heading {
+      font-size: 20px;
+      font-weight: 500;
+      color: #E8E0C8;
+      letter-spacing: -0.01em;
+      margin: 48px 0 22px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .section-heading::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.05);
+      max-width: 80px;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      max-width: 680px;
+    }
+
+    .sector-card {
+      background: #131310;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 8px;
+      padding: 20px 22px;
+      transition: border-color 0.2s;
+    }
+    .sector-card:hover { border-color: rgba(212,168,39,0.22); }
+
+    .card-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      color: #C8A030;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .card-desc {
+      font-size: 12px;
+      color: #706A5E;
+      line-height: 1.75;
+      font-weight: 300;
+    }
+
+    /* ── i18n ── */
+    [data-lang] { display: none; }
+    [data-lang="de"] { display: block; }
+    .body-para[data-lang], .quote-text[data-lang], .page-title[data-lang], .page-subtitle[data-lang] { display: none; }
+    .body-para[data-lang="de"], .quote-text[data-lang="de"], .page-title[data-lang="de"], .page-subtitle[data-lang="de"] { display: block; }
+
+    @media (max-width: 900px) {
+      .windi-sidebar { display: none; }
+      .content-scroll { padding: 32px 24px; }
+      .cards-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="windi-shell">
+
+  <!-- SIDEBAR -->
+  <nav class="windi-sidebar">
+    <div class="sidebar-logo">
+      <div class="w-mark">W</div>
+      <span>Governance Intelligence</span>
+    </div>
+
+    <div class="sidebar-section-label">Masterarbeit</div>
+    <a class="sidebar-item" href="/library/index.html">Main Document</a>
+    <a class="sidebar-item" href="/library/cover.html">Cover</a>
+    <a class="sidebar-item active" href="/library/about-windi.html">About WINDI</a>
+
+    <div class="sidebar-section-label">Governance</div>
+    <a class="sidebar-item" href="/library/governance-levels.html">Governance Levels</a>
+    <a class="sidebar-item" href="/library/human-oversight.html">Human Oversight</a>
+    <a class="sidebar-item" href="/library/data-handling.html">Data Handling</a>
+
+    <div class="sidebar-section-label">Architecture</div>
+    <a class="sidebar-item" href="/library/diagrams.html">Diagrams</a>
+    <a class="sidebar-item" href="/library/interface-guide.html">Interface Guide</a>
+    <a class="sidebar-item" href="/library/verification-layer.html">Verification Layer</a>
+    <a class="sidebar-item" href="/library/domain-sovereignty.html">Domain Sovereignty</a>
+    <a class="sidebar-item" href="/library/identity-governance.html">Identity Governance</a>
+
+    <div class="sidebar-section-label">Technical Reports</div>
+    <a class="sidebar-item" href="/library/tr-003.html">TR-003: Service Layer</a>
+    <a class="sidebar-item" href="/library/tr-004.html">TR-004: Cognitive Service</a>
+    <a class="sidebar-item" href="/library/tr-005.html">TR-005: Cognitive Cycle</a>
+    <a class="sidebar-item" href="/library/tr-006.html">TR-006: ISP Registry</a>
+    <a class="sidebar-item" href="/library/tr-007.html">TR-007: Provenance</a>
+    <a class="sidebar-item" href="/library/sge-results.html">SGE Results</a>
+
+    <div class="sidebar-section-label">Publications</div>
+    <a class="sidebar-item" href="/library/publications.html">Publications</a>
+  </nav>
+
+  <!-- MAIN -->
+  <div class="main-wrap">
+    <header class="windi-topbar">
+      <div class="topbar-status">
+        <div class="status-dot"></div>
+        OPERATIONAL
+      </div>
+      <div class="topbar-lang">
+        <button class="lang-pill active" onclick="setLang('de')">DE</button>
+        <button class="lang-pill" onclick="setLang('en')">EN</button>
+        <button class="lang-pill" onclick="setLang('pt')">PT</button>
+      </div>
+    </header>
+
+    <main class="content-scroll">
+
+      <div class="breadcrumb">
+        <a href="/library/index.html">WINDI</a> <span>›</span> Über WINDI
+      </div>
+
+      <div class="doc-meta">
+        <span class="badge-overview">Overview</span>
+        <span class="doc-date">2026-02-07</span>
+      </div>
+
+      <h1 class="page-title" data-lang="de">Über das WINDI System</h1>
+      <h1 class="page-title" data-lang="en">About the WINDI System</h1>
+      <h1 class="page-title" data-lang="pt">Sobre o Sistema WINDI</h1>
+
+      <p class="page-subtitle" data-lang="de">Pre-AI Governance Layer für institutionelle Workflow-Orchestrierung</p>
+      <p class="page-subtitle" data-lang="en">Pre-AI Governance Layer for Institutional Workflow Orchestration</p>
+      <p class="page-subtitle" data-lang="pt">Camada de Governança Pré-IA para Orquestração de Fluxos Institucionais</p>
+
+      <div class="divider"></div>
+
+      <div class="content-body">
+
+        <p class="body-para" data-lang="de">
+          WINDI ist eine Governance-Infrastruktur, die zwischen menschlichen Entscheidungsträgern und KI-Systemen operiert. Sie stellt sicher, dass jede KI-gestützte Interaktion transparent, nachvollziehbar und mit der institutionellen Richtlinie abgestimmt ist — in Echtzeit, während der Arbeit selbst.
+        </p>
+        <p class="body-para" data-lang="en">
+          WINDI is a governance infrastructure that operates between human decision-makers and AI systems. It ensures that every AI-assisted interaction is transparent, traceable, and aligned with institutional policy — in real-time, during the work itself.
+        </p>
+        <p class="body-para" data-lang="pt">
+          WINDI é uma infraestrutura de governança que opera entre decisores humanos e sistemas de IA. Garante que cada interação assistida por IA seja transparente, rastreável e alinhada com políticas institucionais — em tempo real, durante o próprio trabalho.
+        </p>
+
+        <p class="body-para" data-lang="de">
+          Der Name steht für <em>We Invite New Decision Intelligence.</em> Das System wurde im Rahmen einer europäischen Forschungsinitiative entwickelt, die untersucht, wie künstliche Intelligenz mit institutioneller Verantwortlichkeit statt nur technischer Leistung in Einklang gebracht werden kann.
+        </p>
+        <p class="body-para" data-lang="en">
+          The name stands for <em>We Invite New Decision Intelligence.</em> The system was developed as part of a European research initiative investigating how artificial intelligence can be aligned with institutional accountability, not just technical performance.
+        </p>
+        <p class="body-para" data-lang="pt">
+          O nome significa <em>We Invite New Decision Intelligence.</em> O sistema foi desenvolvido como parte de uma iniciativa de pesquisa europeia que investiga como a inteligência artificial pode ser alinhada com responsabilidade institucional, não apenas desempenho técnico.
+        </p>
+
+        <p class="body-para" data-lang="de">
+          WINDI ersetzt weder KI-Modelle noch menschliches Urteilsvermögen. Es besetzt den Raum dazwischen: eine Governance-Schicht, die institutionellen Kontext erkennt, Richtlinien anwendet, ihre Argumentation erklärt und den Governance-Zustand jederzeit für den Menschen sichtbar macht.
+        </p>
+        <p class="body-para" data-lang="en">
+          WINDI does not replace AI models or human judgment. It occupies the space in between: a governance layer that recognizes institutional context, applies policies, explains its reasoning, and makes governance state visible to humans at all times.
+        </p>
+        <p class="body-para" data-lang="pt">
+          WINDI não substitui modelos de IA nem julgamento humano. Ocupa o espaço entre eles: uma camada de governança que reconhece contexto institucional, aplica políticas, explica seu raciocínio e torna o estado de governança visível para humanos a todo momento.
+        </p>
+
+        <div class="quote-block">
+          <div class="quote-text" data-lang="de">KI verarbeitet. Der Mensch entscheidet. WINDI garantiert.</div>
+          <div class="quote-text" data-lang="en">AI processes. Human decides. WINDI guarantees.</div>
+          <div class="quote-text" data-lang="pt">IA processa. Humano decide. WINDI garante.</div>
+        </div>
+
+        <h2 class="section-heading" data-lang="de">Für wen es gedacht ist</h2>
+        <h2 class="section-heading" data-lang="en">Who it's for</h2>
+        <h2 class="section-heading" data-lang="pt">Para quem é</h2>
+
+        <div class="cards-grid">
+          <div class="sector-card">
+            <div class="card-tag" data-lang="de">Banken & Finanzen</div>
+            <div class="card-tag" data-lang="en">Banking & Finance</div>
+            <div class="card-tag" data-lang="pt">Bancos & Finanças</div>
+            <div class="card-desc" data-lang="de">Regulierte Kommunikation, Compliance-Dokumentation, KI-gestützte Beratungsausgaben mit Prüfbarkeitsanforderungen.</div>
+            <div class="card-desc" data-lang="en">Regulated communication, compliance documentation, AI-assisted advisory outputs with auditability requirements.</div>
+            <div class="card-desc" data-lang="pt">Comunicação regulada, documentação de compliance, outputs de consultoria assistidos por IA com requisitos de auditabilidade.</div>
+          </div>
+          <div class="sector-card">
+            <div class="card-tag" data-lang="de">Regierung & Öffentlicher Sektor</div>
+            <div class="card-tag" data-lang="en">Government & Public Sector</div>
+            <div class="card-tag" data-lang="pt">Governo & Setor Público</div>
+            <div class="card-desc" data-lang="de">Institutionelle Korrespondenz, Politikdokumente, bürgerorientierte Kommunikation mit Governance-Anforderungen.</div>
+            <div class="card-desc" data-lang="en">Institutional correspondence, policy documents, citizen-facing communication with governance requirements.</div>
+            <div class="card-desc" data-lang="pt">Correspondência institucional, documentos de política, comunicação cidadã com requisitos de governança.</div>
+          </div>
+          <div class="sector-card">
+            <div class="card-tag" data-lang="de">Recht & Notariat</div>
+            <div class="card-tag" data-lang="en">Legal & Notarial</div>
+            <div class="card-tag" data-lang="pt">Jurídico & Notarial</div>
+            <div class="card-desc" data-lang="de">Beweissichere Dokumente, forensische Siegelung, jurisdiktionsübergreifende Exportpakete.</div>
+            <div class="card-desc" data-lang="en">Evidence-grade documents, forensic sealing, cross-jurisdictional export packages.</div>
+            <div class="card-desc" data-lang="pt">Documentos com valor probatório, selagem forense, pacotes de exportação multi-jurisdição.</div>
+          </div>
+          <div class="sector-card">
+            <div class="card-tag" data-lang="de">Journalismus & Medien</div>
+            <div class="card-tag" data-lang="en">Journalism & Media</div>
+            <div class="card-tag" data-lang="pt">Jornalismo & Media</div>
+            <div class="card-desc" data-lang="de">Verifizierbare Quellen, Publikationsgates, Evidenz-Chain für investigative Arbeit.</div>
+            <div class="card-desc" data-lang="en">Verifiable sources, publication gates, evidence chain for investigative work.</div>
+            <div class="card-desc" data-lang="pt">Fontes verificáveis, gates de publicação, cadeia de evidências para trabalho investigativo.</div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+</div>
+
+<script>
+function setLang(lang) {
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    el.style.display = el.getAttribute('data-lang') === lang ? 'block' : 'none';
+  });
+  document.querySelectorAll('.lang-pill').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent.toLowerCase() === lang);
+  });
+  localStorage.setItem('windi-lang', lang);
+}
+
+// Init
+const savedLang = localStorage.getItem('windi-lang');
+const browserLang = navigator.language.slice(0,2);
+setLang(savedLang || (['de','en','pt'].includes(browserLang) ? browserLang : 'de'));
+
+// Mark current nav link
+if(location.pathname.includes('/library/')){
+  document.querySelectorAll('.nav-links a').forEach(function(a){
+    if(a.getAttribute('href')==='/library/' || a.getAttribute('href')==='/library/index.html'){
+      a.classList.add('nav-current');
+    }
+  });
+}
+</script>
+</body>
+</html>

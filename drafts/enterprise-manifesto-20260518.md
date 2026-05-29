@@ -53,7 +53,7 @@ Die Infrastruktur beweist.
 *Vantagem:* Máxima contenção alemã. Ecoa tríade WINDI directamente.
 *Trade-off:* Perde "unveränderlich" — mas ganha força rítmica.
 
-**Decisão:** Pending revisão fria.
+**Decisão:** Versão C seleccionada (tripartida) — máxima força rítmica, ecoa tríade WINDI.
 
 ---
 
@@ -91,36 +91,83 @@ sondern durch externe Beweisbarkeit der Zulässigkeit jedes Systemzustands.
 
 ---
 
-## Bloco 3: Die Evidenz (PENDING)
+## Bloco 3: Die Evidenz (COMPLETE)
 
-### Estrutura Proposta: Três Pilares
+### Die drei Säulen der Beweisbarkeit
 
-| Pilar | Função Técnica | Função Institucional |
-|-------|----------------|---------------------|
-| **Forensic Ledger** | Receipt verificável por operação | Evidência, não log |
-| **Verify Public** | Validação por terceiros sem acesso privilegiado | Auditor/regulador pode verificar travessia |
-| **Cognitive Bind Protocol** | Admissibilidade mensurável e recusável | IA pode declarar "sem chão para operar" |
+**1. Forensic Ledger — Die Evidenzschicht**
 
-### Abordagem Recomendada:
+Jede Operation erzeugt einen kryptographisch versiegelten Beleg. Nicht ein Log. Ein Beweis.
 
-Começar pelo **Cognitive Bind Protocol** — é o mais original e carrega a maior carga conceptual nova para o leitor europeu.
+```
+Was Sie erhalten:
+- Unveränderlicher Nachweis jeder menschlichen Entscheidung
+- SHA-256-Signatur pro Vorgang
+- Unabhängig verifizierbar durch Dritte
+```
 
-**Eixo semântico a explorar:**
-- Não "reliability" / "uptime" / "agent persistence"
-- Mas: **admissibility of re-entry**
+**2. Verify Public — Die Auditierungsschicht**
 
-Uma IA que pode recusar operar sem chão suficiente já não é "tool invocation" — é **actor operacional supervisionado dentro de estrutura constitucional**.
+Regulatoren, Wirtschaftsprüfer und autorisierte Dritte können die vollständige Entscheidungskette rekonstruieren — ohne privilegierten Systemzugang.
+
+```
+Was Sie ermöglichen:
+- Art. 14 EU AI Act Compliance nachweisbar
+- BaFin/BAIT-konforme Prüfpfade
+- Keine Black-Box-Argumentation mehr
+```
+
+**3. Cognitive Bind Protocol — Die Zulässigkeitsschicht**
+
+Das System misst seine eigene operative Zulässigkeit. Wenn die Kontinuitätsbedingungen nicht erfüllt sind, verweigert das System den Betrieb — bevor ein Fehler entsteht.
+
+```
+Was Sie absichern:
+- KI-Systeme, die ihre Grenzen kennen
+- Messbare Wiedereintrittszulässigkeit (Bind Integrity Score)
+- Keine ungeprüften Annahmen über Systemzustand
+```
+
+### Der entscheidende Unterschied
+
+Andere Systeme *speichern* Daten. WINDI *beweist* Zustände.
+
+> **Nicht durch Speicherung von Daten in der Instanz,
+> sondern durch externe Beweisbarkeit der Zulässigkeit jedes Systemzustands.**
 
 ---
 
-## Bloco 4: Für wen (PENDING)
+## Bloco 4: Für wen (COMPLETE)
 
-### Destinatários Institucionais (nomeados, não genéricos):
+### Institutionelle Zielgruppen
 
-1. Institutionen unter BaFin-Aufsicht
-2. Rechtsabteilungen mit Nachvollziehbarkeitspflichten
-3. Big4-Prüfungen zur Operationalisierung von Art. 14
-4. Öffentliche Stellen bei der deutschen Umsetzung des AI Act
+**Finanzsektor**
+- Institute unter BaFin-Aufsicht mit KI-gestützten Entscheidungsprozessen
+- Compliance-Teams, die Art. 14 EU AI Act operationalisieren müssen
+- Risikomanagement-Abteilungen mit Nachweispflichten
+
+**Prüfung und Beratung**
+- Big4-Wirtschaftsprüfer mit AI Governance Mandaten
+- Interne Revisionen bei der Dokumentation von KI-Entscheidungen
+- Compliance-Berater für regulierte Industrien
+
+**Öffentlicher Sektor**
+- Behörden bei der deutschen Umsetzung des EU AI Act
+- Öffentliche Verwaltungen mit algorithmischen Entscheidungssystemen
+- Kommunale Digitalisierungsprojekte mit Transparenzanforderungen
+
+**Industrie**
+- Unternehmen mit hochriskanten KI-Anwendungen nach EU AI Act Annex III
+- Rechtsabteilungen mit KI-Haftungsfragen
+- Qualitätssicherung in automatisierten Prozessen
+
+### Call to Action (Sie-Anrede)
+
+> **Vereinbaren Sie eine Verifikationssession.**
+> Wir zeigen Ihnen, wie Ihr nächster KI-gestützter Entscheidungsprozess
+> unabhängig verifizierbar wird — nicht in Monaten, in Minuten.
+>
+> **enterprise@windi-domain.com**
 
 ---
 
@@ -150,10 +197,12 @@ Uma IA que pode recusar operar sem chão suficiente já não é "tool invocation
 
 | Bloco | Status | Próximo Passo |
 |-------|--------|---------------|
-| 1 Headline | 95% | Escolher versão subline (A/B/C) |
-| 2 Why Now | 80% | Refinar "Blackbox" + construção nominal |
-| 3 Evidência | 0% | Começar por Cognitive Bind Protocol |
-| 4 Destinatários | 0% | Após Bloco 3 |
+| 1 Headline | ✅ 100% | Versão C seleccionada |
+| 2 Why Now | ✅ 100% | Completo |
+| 3 Evidência | ✅ 100% | Três pilares documentados |
+| 4 Destinatários | ✅ 100% | CTA com Sie incluído |
+
+**STATUS: READY FOR INTEGRATION**
 
 ---
 
