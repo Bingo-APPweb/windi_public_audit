@@ -1,0 +1,4 @@
+[console_scripts]
+serve-vast-deployment=vastai.serverless.remote.serve_deployment:main
+vastai=vastai.cli.main:main
+

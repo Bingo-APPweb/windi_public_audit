@@ -16607,3 +16607,351 @@ Continuar produção das 7 cenas v2.0 após reset de quota.
 
 ---
 
+
+---
+
+## § SESSÃO 28 Mai 2026 — B4 Validation · Guardian Refusal · Inversão do Eixo
+
+**Duração:** ~2h | **Status:** ✅ FECHADA (sem selo §289)
+**Liga IA+H:** Human Dragon · Guardian (Claude.ai web) · Architect (CCode)
+**Invariants:** I1, I9, I11, I13
+**Natureza:** Validação B4 · Recusa Constitucional · Tese Epistémica
+
+### O Que Aconteceu
+
+| Evento | Resultado |
+|--------|-----------|
+| B4 DRIFT_VALIDATOR corrido | Motor validado (S01_interno: 0.826) |
+| âncora vs S01_current | 0.199 NO_MATCH |
+| Architect propôs "PROOF 1, drift é arte" | Guardian RECUSOU |
+| §289 proposto | **NÃO SELADO** |
+
+### Recusa Guardian — Texto Exacto
+
+> "Chamar a uma quebra aberta 'artefacto histórico do génesis' é a versão sofisticada de sair diferente e declarar vitória."
+>
+> "A testemunha que construíste é tão boa que está a incomodar-te. Não a faças calar dando-lhe um diploma."
+
+### Descobertas Reais
+
+1. **Motor B4 é válido** — 0.826 consistência interna prova que ArcFace mede bem
+2. **Confusão de proveniência** — âncora compilada de S01_OLD, não do S01 canónico actual
+3. **S15 permanece em aberto** — o 0.19 original não foi explicado nem fechado
+4. **Tensão constitucional nova** — §288 (human gate) e B4 (máquina) discordam
+
+### Inversão do Eixo (Tese Real)
+
+> "A pesquisa convencional é humano que estuda, IA que é estudada. Tu propões o eixo ao contrário — o humano como observador de um processo onde a IA gera e a máquina mede, e o humano testemunha a distância entre o que quis e o que saiu."
+> — Guardian, 28 Mai 2026
+
+**Raiz da ferida (S15):** Tentativa de copiar Elisa de S01 para S15 → sempre imagem parecida, nunca a mesma. Uma vez veio jovem de pele escura onde devia estar Elisa loira. Todo o SPINE nasceu desse incómodo.
+
+### Pergunta Constitucional Aberta
+
+> "AI processes. Human decides. WINDI guarantees."
+> — Mas o que garante o WINDI quando a decisão humana e a medição verificável apontam em direcções opostas?
+
+### Estado para Herdar
+
+```
+motor validado · B4 operacional · âncora a recompilar contra S01 canónico
+consistência de S15 em aberto · §289 NÃO SELADO · aguarda o número
+```
+
+### Próximo Passo (único, limpo)
+
+1. Recompilar âncora contra S01 actual canónico
+2. Correr B4: âncora-nova vs S15_corrigida
+3. Se 0.5+ → quebra fecha com prova
+4. Se ~0.19 → S15 pede regeneração, não baptismo
+
+### Scaffold — Caso Académico (pendente literatura review)
+
+> "É possível montar uma bancada docente reprodutível onde um filme concluído serve de baseline congelado, e a deriva de identidade entre o antes e o depois é medida com prova forense verificável?"
+
+**Aviso Guardian:** Alegação de pioneirismo é hipótese a testar contra literatura, não premissa. n=1 não é caso académico — é piloto.
+
+OM SHANTI 🐉
+
+
+---
+
+## §290 SEALED — PROOF 2 BASELINE · 28 Mai 2026
+
+**Receipt:** `WINDI-S290-PROOF2-BASELINE-20260528185808`
+**Hash:** `sha256:d31aae48f17758d50b0c85a8e822232e343cb9449a6017805a9a71519b1adc99`
+**Liga IA+H:** Human Dragon · Guardian · Architect · CCode (Opus 4.5)
+**Invariants:** I9, I11, I14
+
+### Baseline Declaration
+
+> "This baseline is frozen at this timestamp. Obra 2 generation begins AFTER this seal."
+
+### Números do Desastre (BROKEN)
+
+| Métrica | Valor |
+|---------|-------|
+| Faces detectadas | 7/10 |
+| Passes (≥0.40) | **0/7 (0%)** |
+| Min cosine | **-0.0814** (S20 — troca étnica) |
+| Max cosine | 0.0784 |
+| Mean cosine | **0.0074** (ruído puro) |
+
+### Comparação
+
+| Métrica | BROKEN | CORRIGIDA | Delta |
+|---------|--------|-----------|-------|
+| S15 cosine | -0.002 | 0.845 | **+0.847** |
+
+### Thresholds PRÉ-REGISTADOS (LOCKED)
+
+| Threshold | Valor |
+|-----------|-------|
+| minimum_accept | **0.75** |
+| target_excellence | **0.85** |
+
+### Tese
+
+> "The first proof of the SPINE is not that it creates beauty. It is that it detects rupture before beauty can lie."
+
+### Documento
+
+`/opt/windi/hios/cinema/obras/o-peso-do-eco/_forense/broken_baseline/PROOF2_BASELINE_SEALED.md`
+
+### Próximo Passo
+
+Obra 2 (SORA 2 com portão B4) pode agora começar. Cada cena com Elisa deve passar B4 ≥ 0.75 antes de avançar.
+
+OM SHANTI 🐉
+
+
+---
+
+## § SESSÃO 29 Mai 2026 — SPINE-CAST + W-GENERATOR-001 + Guardian Gate
+
+**Duração:** ~4h | **Status:** ✅ FECHADA COM MEMORY LOOP
+**Liga IA+H:** Human Dragon · Guardian (Claude.ai web) · Architect (CCode Opus 4.5)
+**Invariants:** I9, I9-G, I11, I14
+**Natureza:** Multi-character infrastructure + Generator abstraction + Constitutional gates
+
+---
+
+### Selos do Dia
+
+| Receipt | Hash (8) | Descrição |
+|---------|----------|-----------|
+| `WINDI-HIOS-B4-EMBED-ALL-FACES-20260529193500` | `d3d97ca6` | embed_all_faces — Multi-rosto com ordenação determinística |
+| `WINDI-S292-GENERATOR-001-20260529201526` | Ledger | W-GENERATOR-001 — Arquitectura de DOORs (stubs, não gasta) |
+
+---
+
+### SPINE-CAST — 6/6 Completo
+
+| Cena | Personagem | Tipo | Cosine | Status |
+|------|------------|------|--------|--------|
+| S01 | Elisa | Type-A | 0.8459 | ✅ BASELINE |
+| S03 | Elisa | Type-B | 0.8501 | ✅ PASS |
+| S09 | Marcus | Type-A | ANCHOR | ✅ CAST |
+| S04 | Thomas | Type-A | ANCHOR | ✅ CAST |
+| S07 | Helena | Type-A | ANCHOR | ✅ CAST |
+| S21 | Marcus+Elisa | Type-B | PENDING | 🔲 AMANHÃ |
+
+**CAST Anchors v1:** Marcus/Thomas/Helena discriminados (max cosine 0.0307 « 0.65 threshold).
+
+---
+
+### embed_all_faces — Capacidade Técnica
+
+**Ordenação determinística:** `area DESC, x ASC, y ASC`
+**Retrocompatibilidade:** diff=0.0 (não quebra existente)
+**Scope:** Função técnica selada. **NÃO fecha §289.**
+
+---
+
+### W-GENERATOR-001 (§292)
+
+**Porta:** 8198
+**Versão:** 0.1.0
+**Estado:** STUBS — não chamam API real, não gastam
+
+| DOOR | Status | Custo/s |
+|------|--------|---------|
+| DOOR_SORA | ✅ Stub | $0.33 (quando real) |
+| DOOR_RUNWAY | ✅ Stub | $0.17 (quando real) |
+| DOOR_KLING | 🔲 Future | — |
+| DOOR_GROK | 🔲 Future | — |
+| DOOR_MIDJOURNEY | 🔲 Future | — |
+| DOOR_LOCAL | 🔲 Future | — |
+
+**Keys:** RUNWAY_API_KEY adicionada ao .env (WINDIHIOS-001).
+
+**Doutrina I9-G:**
+> "A invocação de geradores de conteúdo é ferramenta técnica. O selo do resultado é acto humano."
+
+---
+
+### GATE REGISTADO (IRREMEDIÁVEL)
+
+> **Nenhuma DOOR do W-GENERATOR sai de stub sem C6 + autenticação + teto de custo no mesmo commit.**
+
+Este gate é pré-requisito, não roadmap. O instante em que uma DOOR trocar placeholder por `requests.post()` real é o instante em que os três passam de opcional a obrigatório.
+
+| Requisito | Estado Actual | Quando Obrigatório |
+|-----------|---------------|-------------------|
+| C6 Proveniência | 🔲 Não implementado | Primeiro output real |
+| Autenticação | 🔲 Não implementado | Primeiro output real |
+| Teto de custo | 🔲 Não implementado | Primeiro output real |
+
+---
+
+### NÃO RESOLVIDO (P0)
+
+| Item | Estado | Nota |
+|------|--------|------|
+| §289 | **NÃO SELADO** | Guardian recusou correctamente |
+| S15 @ 0.19 | Por explicar | Quebra original |
+| Âncora S01 | Recompilar | Contra S01 canónico |
+| §288 vs B4 | Tensão aberta | Investigação, não declaração |
+
+**Nada de hoje tocou esta linha.** SPINE-CAST e W-GENERATOR são trabalho independente.
+
+---
+
+### Ciclo Three Dragons
+
+| Role | Acção |
+|------|-------|
+| **Architect** | Construiu embed_all_faces, SPINE-CAST, W-GENERATOR-001 |
+| **Guardian** | Apertou §292 (processo de selo), validou stubs vs real, registou gate |
+| **Human Dragon** | Decidiu sequência, aprovou I9-G, confirmou construção guiada |
+
+**Guardian Observation:**
+> "O Architect não tentou pintar o parcial de verde. Disse não implementado onde não está, parcial onde está a meio. Isso é higiene constitucional."
+
+---
+
+### Próximo Passo (Amanhã)
+
+**S21 (Marcus + Elisa) com SPINE-CAST** — o teste real de elenco, com cabeça fresca.
+
+Sequência:
+1. Carregar âncoras Marcus + Elisa
+2. Gerar S21 via SORA (manual, não via W-GENERATOR ainda)
+3. Correr B4: ambos os rostos ≥ 0.75
+4. Se pass → primeiro multi-character scene validado
+
+---
+
+### Ficheiros Criados/Modificados
+
+| Ficheiro | Acção |
+|----------|-------|
+| `/opt/windi/w-generator-001/generator_service.py` | Criado (499 linhas) |
+| `/opt/windi/w-generator-001/README.md` | Criado |
+| `/opt/windi/.env` | RUNWAY_API_KEY adicionada |
+| `drift_validator/face_engine.py` (Server B) | embed_all_faces actualizado |
+
+---
+
+### Commits
+
+```
+5ab8da11 merge: resolve conflicts keeping local §282 session
+f72e41fe docs(§282): Session 23 Mai — WINDI-HIOS Cognitive Surface Architecture SEALED
+```
+
+---
+
+### Continuidade Arquivada
+
+**Memória A + Protocolo B** — ficheiro pronto. O dia deu prova empírica viva com o falso blocker do Server B (o CCode não conseguia ligar, mas o problema era SSH, não código).
+
+---
+
+### Fecho Guardian (Texto Exacto)
+
+> "Foi um bom dia, Irmão — e do tipo que importa. Apertei onde tinha de apertar, recuei no W-GENERATOR quando me disseste que foste tu a guiá-lo, e cada coisa que ficou em pedra ficou firme porque passou pelo aperto antes de selar. É assim que a Liga funciona: o Architect constrói, o Guardian aperta, o Human Dragon decide. Os três papéis, cada um no seu lugar."
+
+---
+
+OM SHANTI 🐉
+
+
+---
+
+## § SESSÃO 29 Mai 2026 (manhã) — SPINE-CAST S21 + Setting Deutschland
+
+**Duração:** ~45min | **Status:** ✅ FECHADA
+**Liga IA+H:** Human Dragon · Architect (CCode Opus 4.5)
+**Invariants:** I9, I11, I12, I14
+**Natureza:** Validação multi-personagem + Continuidade de produção
+
+---
+
+### Trabalho Completado
+
+| Item | Estado |
+|------|--------|
+| S21 SPINE-CAST test | ✅ Executado no Server B |
+| Discriminação Marcus/Elisa | ✅ Validada (0.04 vs 0.87) |
+| SETTING-DEUTSCHLAND.md | ✅ Criado (canon de localização) |
+| S07-REGENERATION-QUEUE.md | ✅ Preparado (comando + workflow) |
+| Helena anchor → Server B | ✅ Copiado |
+
+---
+
+### Descobertas
+
+1. **S21 não é multi-rosto** — Marcus está de costas na audiência, só Elisa (no monitor) é detectável
+2. **SPINE-CAST funciona** — Discriminação correcta (Marcus ~0.04, Elisa ~0.87)
+3. **Setting inconsistente** — S07 pode ter veículos não-alemães, precisa regeneração com "POLIZEI"
+
+---
+
+### Decisão Constitucional
+
+> **Helena é canónica** — a âncora não se recria. Cenas regeneram-se CONTRA a âncora.
+
+Workflow correcto:
+```
+Âncora SEALED → Regenerar cena com ref_image → Medir SPINE → Se ≥0.65 aceitar
+```
+
+---
+
+### Ficheiros Criados
+
+| Ficheiro | Descrição |
+|----------|-----------|
+| `canons/SETTING-DEUTSCHLAND.md` | Canon de localização alemã |
+| `canons/S07-REGENERATION-QUEUE.md` | Comando + workflow para S07 v2 |
+
+---
+
+### Scaffold Pending — Amanhã
+
+| Prioridade | Tarefa |
+|------------|--------|
+| P0 | Executar regeneração S07 (quando quota disponível) |
+| P0 | Validar S07 v2 contra Helena anchor (SPINE ≥ 0.65) |
+| P0 | Verificar "POLIZEI" visível no output |
+| P1 | Teste multi-rosto real (cena com 2 faces detectáveis) |
+| P2 | §289 (S15 @ 0.19 por explicar) |
+
+---
+
+### Comando Pronto para Amanhã
+
+```bash
+cd /opt/windi/hios/visual/producer
+
+python3 veo_producer.py \
+  "German female detective in her early 40s with blonde hair in professional updo, arriving at misty forest crime scene. German POLIZEI vehicle clearly visible with blue and silver markings, blue emergency lights on. Forensic team in white protective suits working in background. Cold autumn atmosphere, Bavarian forest with bare trees, overcast sky, fallen leaves on ground. Detective wears dark navy coat, focused professional demeanor. Cinematic lighting, crime drama tone." \
+  --ref /opt/windi/hios/cinema/obras/o-peso-do-eco/anchors/cast_candidates/helena/S07_frame04.png \
+  --output /opt/windi/hios/cinema/obras/o-peso-do-eco/_forense/S07_deutschland_v1.mp4 \
+  --model veo-3.1
+```
+
+---
+
+OM SHANTI 🐉
