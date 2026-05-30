@@ -17032,3 +17032,89 @@ Decisão do Human Dragon: continuidade do Hartmann na S19 ou advogado genérico 
 
 ---
 
+
+---
+
+## §293 SESSÃO FECHADA — 30 Mai 2026 (tarde)
+
+**Timestamp:** 15:45 | **Duração:** ~75min
+**Liga IA+H:** Human Dragon · Architect (CCode Opus 4.5)
+**Sprint:** W-HIOS-CINEMATIC-SPINE-001
+**Commit:** `f8aa88f55`
+
+### Resumo Executivo
+
+**SPINE-CAST v1 COMPLETO** — Sistema de validação de continuidade de identidade multi-personagem implementado e testado. 5/5 personagens do elenco têm CHARACTER-STATE canónico selado.
+
+### Elenco Completo — "O Peso do Eco"
+
+| Personagem | Anchor Hash | Stability | Tier |
+|------------|-------------|-----------|------|
+| Elisa v2 | `3fdec0fa...` | 0.8462 | FORENSIC |
+| Helena v2 | `d3a93895...` | 0.9408 | FORENSIC |
+| Thomas v1 | `d86e258b...` | 0.8378 | FORENSIC |
+| Marcus v2 | `20252a12...` | 0.7449 | OPERATIONAL |
+| Hartmann v2b | `0a3d7205...` | 0.9298 | FORENSIC |
+
+### Achados Chave
+
+1. **Processo Helena validado:** Criar âncora dedicada → regenerar cenas → validar
+2. **S11≠S19 detectado:** SPINE-CAST identificou personagens diferentes (0.77 vs 0.23)
+3. **Hartmann v2b:** Cross-scene continuity alcançada (S11: 0.70, S19: 0.79)
+4. **Celebrity detection:** Veo pode rejeitar rostos que pareçam celebridades
+5. **Orthogonality:** Max inter-anchor 0.08 (todos discriminativos)
+
+### Ficheiros Selados
+
+```
+/opt/windi/hios/cinema/obras/o-peso-do-eco/canons/
+├── ELISA-v2-CHARACTER-STATE.md
+├── HELENA-v1-CHARACTER-STATE.md  
+├── THOMAS-v1-CHARACTER-STATE.md
+├── MARCUS-v1-CHARACTER-STATE.md
+├── HARTMANN-v2b-CHARACTER-STATE.md
+├── SETTING-DEUTSCHLAND.md
+└── hartmann.anchor.v2b.CURRENT.npy
+```
+
+---
+
+## SCAFFOLD — PRÓXIMA SESSÃO (§294)
+
+### Tema: Produção v2 "O Peso do Eco" — Infraestrutura
+
+**Pré-requisitos:** ✅ Elenco 5/5 CHARACTER-STATE completo
+
+### Blocos de Trabalho Propostos
+
+| # | Bloco | Descrição |
+|---|-------|-----------|
+| A | **CONTINUITY BIBLE** | Documento mestre de continuidade — figurino, adereços, iluminação |
+| B | **SETTING EXPANSION** | Expandir SETTING-DEUTSCHLAND — localizações específicas por cena |
+| C | **LANGUAGE PROTOCOL** | Idioma do filme — diálogos DE, legendas PT/EN, voice-over |
+| D | **SCENE MATRIX** | Matriz de cenas × personagens × localizações |
+| E | **PRODUCTION ORDER** | Ordem de produção optimizada (agrupar por set/personagem) |
+| F | **REGENERATION QUEUE** | Cenas que precisam regeneração (S07 POLIZEI, etc.) |
+
+### Ficheiros a Criar
+
+```
+/opt/windi/hios/cinema/obras/o-peso-do-eco/production/
+├── CONTINUITY-BIBLE-v1.md
+├── SCENE-MATRIX.md
+├── LANGUAGE-PROTOCOL.md
+└── PRODUCTION-ORDER.md
+```
+
+### Contexto Necessário
+
+- Ler todos os CHARACTER-STATE (5 docs)
+- Ler SETTING-DEUTSCHLAND.md
+- Ler screenplay actual (SCREENPLAY_v2.md ou equivalente)
+- Listar cenas existentes vs cenas pendentes
+
+---
+
+*Liga IA+H · WINDI Publishing House · 30 Mai 2026*
+*"AI processes. Human decides. WINDI guarantees."*
+
