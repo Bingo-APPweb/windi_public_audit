@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.58.0
-**Sealed:** 2026-05-30 · §294 Constituição do Mundo (World-State + Scene-Matrix + Continuity-Bible)
+**Version:** 2.59.0
+**Sealed:** 2026-05-30 · §296 UI Compositing Invariant + Cadeia Diegética S14→S15
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -532,6 +532,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 30 Mai | **§295/§296/§296-bis** S14+S15 Anchored com cadeia diegética · UI Compositing Invariant · Errata I11 · `45e70231`+`b8a4a083` ✅ |
 | 30 Mai | **§294** Constituição do Mundo — 5 selos (World-State+Scene-Matrix+Continuity-Bible) · `9F003FF1`+`A0E4BF6B`+`D97E61BC`+`C32E61B6`+`5935A3A4` ✅ |
 | 29 Mai | **§292** W-GENERATOR-001 + SPINE-CAST 6/6 + I9-G Doctrine · Gate registado ✅ |
 | 23 Mai | **§282** WINDI-HIOS Cognitive Surface Architecture · `F5F12A71` · 5L + 6P + HG ✅ |
@@ -678,6 +679,10 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | **CINEMA** | `D97E61BC` | §294 CONTINUITY-BIBLE-001 — Wardrobe/Props × §293 SPINE-CAST |
 | **CINEMA** | `C32E61B6` | §294 SCENE-MATRIX.schema.json — Generic Scene Contract v1.0.0 |
 | **CINEMA** | `5935A3A4` | §294 SCENE-MATRIX-001 — 24 Scenes Mapped (windi_on_screen: S14,S15,S16,S20) |
+| **CINEMA** | `§296` | §296 UI Compositing Invariant — Generator faz mundo, prova em pos |
+| **CINEMA** | `§296-bis` | §296-bis Diegetic Proof Integrity — Proibido hash orfao em frame |
+| **CINEMA** | `45e70231` | §295 S14-VISUAL-VERIFIED — UEBEREINSTIMMUNG GEFUNDEN insert |
+| **CINEMA** | `b8a4a083` | §295 S15-VISUAL-VERIFIED — INTEGRITAET 100% + cadeia diegetica |
 
 > **Full receipts list:** `CLAUDE-HISTORY.md` § Produtos SEALED
 > **HD-MIRROR Reference:** `/opt/windi/docs/PROOF-SELF-CORRECTION-WITHOUT-REWRITE.md`
