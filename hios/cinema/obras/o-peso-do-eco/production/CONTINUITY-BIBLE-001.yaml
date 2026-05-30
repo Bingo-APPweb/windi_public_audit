@@ -1,0 +1,116 @@
+# =============================================================================
+# WINDI-HIOS · CONTINUITY-BIBLE-001
+# -----------------------------------------------------------------------------
+# DE: Kontinuitäts-Bibel — dauerhafte Merkmale jeder Figur.
+# EN: Continuity Bible — permanent traits of each character.
+# PT: Bíblia de Continuidade — traços permanentes de cada personagem.
+# -----------------------------------------------------------------------------
+# Binds to §293 SPINE-CAST sealed identities. Identity is referenced by ID,
+# NEVER re-described. This file governs only WARDROBE / PROP / SPEECH permanence.
+# Sealed under: §294
+# =============================================================================
+
+bible:
+  id: CONTINUITY-BIBLE-001
+  film_ref: WORLD-STATE-001
+  spine_cast_ref: "§293 SPINE-CAST"
+  doc_type: continuity_bible
+  rule:
+    de: "Identität kommt aus §293. Diese Datei regelt nur Kleidung, Requisiten, Sprechweise."
+    en: "Identity comes from §293. This file governs only wardrobe, props, speech."
+    pt: "Identidade vem de §293. Este ficheiro governa só figurino, adereços, fala."
+
+# -----------------------------------------------------------------------------
+# Each character inherits its sealed anchor identity by ID. The `anchor_ref`
+# field MUST match the §293 sealed identity. Continuity tier per trait.
+# -----------------------------------------------------------------------------
+
+characters:
+
+  - name: HELENA
+    anchor_ref: "HELENA-§293"          # detective — protagonist investigator
+    continuity_tier: FORENSIC          # face/identity already FORENSIC in SPINE
+    wardrobe:
+      coat: "dark navy wool coat"
+      base: "muted dark layers, professional"
+    hair: "blonde, shoulder-length, pulled back on duty"
+    props:
+      vehicle: "unmarked dark police sedan"
+      badge: "Kriminalpolizei badge"
+    speech:
+      register: "calm, precise, low"
+      language: de
+
+  - name: THOMAS
+    anchor_ref: "THOMAS-§293"          # bereaved father (Elisa's father)
+    continuity_tier: FORENSIC
+    wardrobe:
+      outer: "worn work jackets"
+      base: "modest, practical, slightly faded"
+    props:
+      wedding_ring: "always present — NON-NEGOTIABLE continuity anchor"
+      home: "modest house, lived-in"
+    speech:
+      register: "quiet, restrained grief"
+      language: de
+
+  - name: MARCUS
+    anchor_ref: "MARCUS-§293"          # the killer / defendant
+    continuity_tier: FORENSIC
+    wardrobe:
+      style: "expensive, understated"
+    props:
+      vehicle: "dark sedan (the car captured in Elisa's footage — plot-critical)"
+      watch: "silver wristwatch"
+    speech:
+      register: "controlled, entitled"
+      language: de
+
+  - name: HARTMANN
+    anchor_ref: "HARTMANN-v2b-§293"    # defense attorney
+    continuity_tier: FORENSIC          # anchor 0.9298 FORENSIC (see metrics block)
+    wardrobe:
+      glasses: "rectangular frames"
+      tie: "burgundy"
+      court_outfit_id: "HARTMANN-COURT-001"
+    hair: "silver, wavy"
+    props:
+      office: "green desk lamp, dark interior"
+    speech:
+      register: "sharp, adversarial, formal"
+      language: de
+
+  - name: ELISA
+    anchor_ref: "ELISA-§293"           # the victim (appears in recording + flashback)
+    continuity_tier: FORENSIC
+    wardrobe:
+      base: "youthful, casual, autumn clothing"
+    props:
+      device: "smartphone (the recording — central artifact)"
+    speech:
+      register: "warm; appears smiling in self-recording"
+      language: de
+
+# -----------------------------------------------------------------------------
+# Supporting / background fidelity (comparsas) — NOT face-anchored, but rule-bound
+# -----------------------------------------------------------------------------
+supporting_rules:
+  police_extras: "Bavarian uniform consistent with WORLD-STATE-001 law_enforcement block"
+  court_extras: "judge in black German robe; prosecutor formal dark; gallery muted"
+  technicians: "lab coats / smart-casual, modern forensic lab"
+  prohibition: "No background element may contradict WORLD-STATE-001 jurisdiction (no foreign police liveries, no wrong-region courtroom architecture)."
+
+# -----------------------------------------------------------------------------
+# HARTMANN metrics — carried INTACT and SEPARATE from §293. Do NOT average.
+# -----------------------------------------------------------------------------
+hartmann_metrics:
+  anchor_stability: { value: 0.9298, tier: FORENSIC }
+  S11:              { value: 0.7032, tier: OPERATIONAL }
+  S19:              { value: 0.7914, tier: FORENSIC }
+  cross_scene_overall: { value: 0.75, tier: OPERATIONAL, note: "approximate; never merged with anchor_stability" }
+
+ledger_contract:
+  receipt_required: true
+  hash_algo: sha256
+  status_target: Anchored
+  immutability: "Wardrobe/prop changes require §267 errata receipt."

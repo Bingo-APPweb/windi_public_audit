@@ -1,0 +1,80 @@
+# =============================================================================
+# WINDI-HIOS · WORLD-STATE SCHEMA (GENERIC)
+# -----------------------------------------------------------------------------
+# DE: Generisches Schema für den kanonischen Welt-Zustand eines WINDI-HIOS-Films.
+# EN: Generic schema for the canonical world-state of any WINDI-HIOS film.
+# PT: Schema genérico para o estado-de-mundo canónico de qualquer filme WINDI-HIOS.
+# -----------------------------------------------------------------------------
+# Instanced by:  WORLD-STATE-001.instance.yaml  (Das Gewicht des Echos / O Peso do Eco)
+# Sealing:       §294 · WINDI-HIOS-LEDGER
+# Errata path:   §267 ERRATA-VERIFY-PORT (any field change requires errata receipt)
+# =============================================================================
+
+schema:
+  id: WINDI-HIOS-WORLD-STATE
+  version: "1.0.0"
+  doc_type: world_state_schema
+  sealed_under: "§294"
+  description:
+    de: "Definiert die unveränderlichen Weltregeln eines Films."
+    en: "Defines the immutable world rules of a film."
+    pt: "Define as regras imutáveis do mundo de um filme."
+
+# Every instance MUST provide all required blocks. Optional blocks may be omitted
+# only with an explicit `null` and a one-line justification.
+required_blocks:
+  - jurisdiction
+  - law_enforcement
+  - court
+  - technology
+  - climate
+  - visual_language
+
+fields:
+
+  jurisdiction:
+    country:        { type: string,  required: true }   # ISO long form
+    state_region:   { type: string,  required: true }
+    city_region:    { type: string,  required: true }
+    year:           { type: integer, required: true }
+    season:         { type: enum, values: [winter, spring, summer, autumn], required: true }
+
+  law_enforcement:
+    organization:   { type: string,  required: true }
+    uniform:        { type: string,  required: true }
+    vehicles:       { type: list,    required: true }
+    insignia:       { type: string,  required: false }
+    language:       { type: enum, values: [de, en, pt], required: true }
+
+  court:
+    court_type:     { type: string,  required: true }    # e.g. Landgericht
+    interior_wood:  { type: string,  required: false }
+    lighting:       { type: string,  required: true }
+    judge_robe:     { type: string,  required: true }
+    flags:          { type: list,    required: true }
+
+  technology:
+    consumer_device: { type: string, required: true }    # phone era/model class
+    forensic_lab:    { type: string, required: true }
+    windi_platform:  { type: string, required: true }    # how WINDI appears on screen
+    rendering_style: { type: enum, values: [realistic, stylized, animated], required: true }
+
+  climate:
+    weather:        { type: string,  required: true }
+    sky:            { type: string,  required: true }
+    color_palette:  { type: string,  required: true }
+
+  visual_language:
+    dialogue_language:  { type: enum, values: [de, en, pt], required: true }
+    subtitle_languages: { type: list,  required: true }   # ordered
+    aspect_ratio:       { type: string, required: true }
+    grade:              { type: string, required: false } # color grade reference
+
+# -----------------------------------------------------------------------------
+# Ledger binding contract
+# -----------------------------------------------------------------------------
+ledger_contract:
+  receipt_required: true
+  hash_algo: sha256
+  status_target: Anchored
+  immutability: "Field changes require §267 errata receipt; never silent edit."
