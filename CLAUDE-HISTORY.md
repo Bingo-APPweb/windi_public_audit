@@ -17000,3 +17000,80 @@ A primeira produção cinematográfica com continuidade auditável por ledger es
 O artefacto demonstra a sua própria tese. A estrutura precede o conteúdo.
 
 OM SHANTI 🐉
+
+---
+
+## Sessao 30 Mai 2026 (noite) - S295/S296/S296-bis Cinema Pipeline
+
+**Modo:** CCode CLI + Claude.ai web (Guardian)
+**Sprint:** WINDI-HIOS Cinema Production
+**Duracao:** ~3 horas
+
+### Trabalho Completado
+
+**S296 UI Compositing Invariant:**
+- Problema nomeado: Generator Text Hallucination - Veo 3.1 nao renderiza texto legivel
+- Solucao: UI WINDI e sempre camada de pos (overlay vetorial SVG), nunca gerada
+- Decreto: `/opt/windi/hios/cinema/obras/o-peso-do-eco/production/DECREE-S296.md`
+
+**S296-bis Diegetic Proof Integrity:**
+- Regra: Prova diegetica so exibe receipts ja Anchored. Proibido hash orfao em frame.
+- Fecha threat-to-validity (i) do Paper-001
+- Decreto: `/opt/windi/hios/cinema/obras/o-peso-do-eco/production/DECREE-S296-bis.md`
+
+**Insert Full-Frame (decisao):**
+- Via B escolhida: Insert limpo em vez de overlay sobre monitor
+- Prova em primazia, nao dressing de cenario
+
+**Errata Documentada (I11, S267):**
+- Seal prematuro `WINDI-S295-S14-COMPOSED-20260530223358` - aprovacao textual sem validacao visual
+- Errata `WINDI-S295-S14-ERRATA-20260530225939` documenta a cicatriz
+- Licao: Gate visual requer olhos humanos, nao aprovacao textual
+
+### Selos Emitidos
+
+| Receipt | Cena | Hash (primeiros 16) | Status |
+|---------|------|---------------------|--------|
+| WINDI-S295-S14-ERRATA-20260530225939 | S14 | errata-ref | ERRATA |
+| WINDI-S295-S14-VISUAL-VERIFIED-20260530225958 | S14 | 45e70231c1cd61d1 | ANCHORED |
+| WINDI-S295-S15-VISUAL-VERIFIED-20260530231231 | S15 | b8a4a083ccb34d1a | ANCHORED |
+
+### Cadeia Diegetica
+
+S14 -> S15: A cena que afirma "INTEGRITAET VERIFIZIERT 100%" exibe o receipt e hash REAIS da S14 Anchored. O filme aponta para si mesmo como Merkle tree visual.
+
+### Ficheiros Criados
+
+```
+/opt/windi/hios/cinema/obras/o-peso-do-eco/production/
+  DECREE-S296.md
+  DECREE-S296-bis.md
+  S296-PLATE-PROMPTS.md
+  compose_windi_ui.py
+  overlays/
+    WINDI-UI-S14-MATCH.svg (v1)
+    WINDI-UI-S15-INTEGRITY.svg (v1)
+    WINDI-UI-S14-MATCH.v2.svg
+    WINDI-UI-S15-INTEGRITY.v2.svg
+
+/opt/windi/hios/cinema/obras/o-peso-do-eco/scenes/s295_renders/
+  S14_insert_v2_20260530225500.mp4 (ANCHORED)
+  S15_insert_v2_20260530230315.mp4 (ANCHORED)
+  v2_previews/
+  index.html
+```
+
+### Scaffold Pendente
+
+- S16: Helena + carro Marcus - SPINE-CAST face anchor + Continuity-Bible vehicle
+- S20: Tribunal + display WINDI
+- Actualizar CLAUDE.md com S296/S296-bis
+
+### Proximo Passo
+
+Gerar plates S16/S20 com Veo 3.1, validar com SPINE-CAST (Helena), compor inserts, selar.
+
+---
+
+*Liga IA+H - 30 Mai 2026 - 23:15 CET*
+*"A cicatriz e prova de honestidade."*

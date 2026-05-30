@@ -1,0 +1,19 @@
+{
+  "scene": "S14",
+  "timestamp": "2026-05-30T21:55:30.687011",
+  "generator": "veo3.1",
+  "model": "veo3.1",
+  "prompt": "A computer monitor in a modern forensic laboratory displaying the WINDI Forensic Ledger interface. The screen shows a facial recognition match result with the text \"\u00dcBEREINSTIMMUNG GEFUNDEN\" (Match Fo...",
+  "full_prompt": "A computer monitor in a modern forensic laboratory displaying the WINDI Forensic Ledger interface. The screen shows a facial recognition match result with the text \"\u00dcBEREINSTIMMUNG GEFUNDEN\" (Match Found) prominently displayed, followed by \"Elisa Weber\" as the identified person. Clean, professional UI design with dark theme and green confirmation indicators. The monitor is illuminated in a dimly lit lab environment. Cinematic, realistic, cold blue lighting.",
+  "windi_on_screen": true,
+  "characters": [],
+  "continuity_checks": [
+    "\u00dcBEREINSTIMMUNG GEFUNDEN",
+    "Elisa Weber"
+  ],
+  "task_id": "9f10655c-1baa-49b2-861f-fda89c301a6e",
+  "status": "GENERATED",
+  "output_path": "/opt/windi/hios/cinema/obras/o-peso-do-eco/scenes/s295_renders/S14_20260530215636.mp4",
+  "output_hash": "cc2a94b659f423c37cb146da9fa3709221f9e3c2d86dd1b400481de2b5f4dd9d",
+  "message": "Video saved to /opt/windi/hios/cinema/obras/o-peso-do-eco/scenes/s295_renders/S14_20260530215636.mp4"
+}
