@@ -1,0 +1,16 @@
+{
+  "scene": "S14",
+  "timestamp": "2026-05-30T21:54:33.816668",
+  "generator": "runway_gen3_turbo",
+  "model": "gen3a_turbo",
+  "prompt": "A computer monitor in a modern forensic laboratory displaying the WINDI Forensic Ledger interface. The screen shows a facial recognition match result with the text \"\u00dcBEREINSTIMMUNG GEFUNDEN\" (Match Fo...",
+  "full_prompt": "A computer monitor in a modern forensic laboratory displaying the WINDI Forensic Ledger interface. The screen shows a facial recognition match result with the text \"\u00dcBEREINSTIMMUNG GEFUNDEN\" (Match Found) prominently displayed, followed by \"Elisa Weber\" as the identified person. Clean, professional UI design with dark theme and green confirmation indicators. The monitor is illuminated in a dimly lit lab environment. Cinematic, realistic, cold blue lighting.",
+  "windi_on_screen": true,
+  "characters": [],
+  "continuity_checks": [
+    "\u00dcBEREINSTIMMUNG GEFUNDEN",
+    "Elisa Weber"
+  ],
+  "status": "ERROR",
+  "message": "Error code: 403 - {'error': 'Model variant gen3a_turbo is not available', 'docUrl': 'https://docs.dev.runwayml.com/api'}"
+}

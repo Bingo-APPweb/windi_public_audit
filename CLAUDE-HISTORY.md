@@ -17003,6 +17003,140 @@ OM SHANTI 🐉
 
 ---
 
+## Sessao 30 Mai 2026 (noite) - S295/S296/S296-bis Cinema Pipeline
+
+**Modo:** CCode CLI + Claude.ai web (Guardian)
+**Sprint:** WINDI-HIOS Cinema Production
+**Duracao:** ~3 horas
+
+### Trabalho Completado
+
+**S296 UI Compositing Invariant:**
+- Problema nomeado: Generator Text Hallucination - Veo 3.1 nao renderiza texto legivel
+- Solucao: UI WINDI e sempre camada de pos (overlay vetorial SVG), nunca gerada
+- Decreto: `/opt/windi/hios/cinema/obras/o-peso-do-eco/production/DECREE-S296.md`
+
+**S296-bis Diegetic Proof Integrity:**
+- Regra: Prova diegetica so exibe receipts ja Anchored. Proibido hash orfao em frame.
+- Fecha threat-to-validity (i) do Paper-001
+- Decreto: `/opt/windi/hios/cinema/obras/o-peso-do-eco/production/DECREE-S296-bis.md`
+
+**Insert Full-Frame (decisao):**
+- Via B escolhida: Insert limpo em vez de overlay sobre monitor
+- Prova em primazia, nao dressing de cenario
+
+**Errata Documentada (I11, S267):**
+- Seal prematuro `WINDI-S295-S14-COMPOSED-20260530223358` - aprovacao textual sem validacao visual
+- Errata `WINDI-S295-S14-ERRATA-20260530225939` documenta a cicatriz
+- Licao: Gate visual requer olhos humanos, nao aprovacao textual
+
+### Selos Emitidos
+
+| Receipt | Cena | Hash (primeiros 16) | Status |
+|---------|------|---------------------|--------|
+| WINDI-S295-S14-ERRATA-20260530225939 | S14 | errata-ref | ERRATA |
+| WINDI-S295-S14-VISUAL-VERIFIED-20260530225958 | S14 | 45e70231c1cd61d1 | ANCHORED |
+| WINDI-S295-S15-VISUAL-VERIFIED-20260530231231 | S15 | b8a4a083ccb34d1a | ANCHORED |
+
+### Cadeia Diegetica
+
+S14 -> S15: A cena que afirma "INTEGRITAET VERIFIZIERT 100%" exibe o receipt e hash REAIS da S14 Anchored. O filme aponta para si mesmo como Merkle tree visual.
+
+### Ficheiros Criados
+
+```
+/opt/windi/hios/cinema/obras/o-peso-do-eco/production/
+  DECREE-S296.md
+  DECREE-S296-bis.md
+  S296-PLATE-PROMPTS.md
+  compose_windi_ui.py
+  overlays/
+    WINDI-UI-S14-MATCH.svg (v1)
+    WINDI-UI-S15-INTEGRITY.svg (v1)
+    WINDI-UI-S14-MATCH.v2.svg
+    WINDI-UI-S15-INTEGRITY.v2.svg
+
+/opt/windi/hios/cinema/obras/o-peso-do-eco/scenes/s295_renders/
+  S14_insert_v2_20260530225500.mp4 (ANCHORED)
+  S15_insert_v2_20260530230315.mp4 (ANCHORED)
+  v2_previews/
+  index.html
+```
+
+### Scaffold Pendente
+
+- S16: Helena + carro Marcus - SPINE-CAST face anchor + Continuity-Bible vehicle
+- S20: Tribunal + display WINDI
+- Actualizar CLAUDE.md com S296/S296-bis
+
+### Proximo Passo
+
+Gerar plates S16/S20 com Veo 3.1, validar com SPINE-CAST (Helena), compor inserts, selar.
+
+---
+
+*Liga IA+H - 30 Mai 2026 - 23:15 CET*
+*"A cicatriz e prova de honestidade."*
+
+---
+
+## Sessao 2026-05-30 - S295/S296/S296-bis - Primeiras cenas-tese Anchored
+
+**Sprint:** WINDI-HIOS Cinema - O Peso do Eco - render das 4 cenas windi_on_screen
+**Modo:** Claude.ai web (Arquiteto/Guardiao) + CCode CLI (executor no Strato)
+**Operador humano:** Human Dragon
+**Decisao de escopo:** direto as 4 windi_on_screen - 1 receipt por cena - gate visual humano obrigatorio
+
+### Trabalho completado
+- S294 confirmado em producao (5 selos World/Bible/Matrix da sessao anterior).
+- S295 arrancado: render das cenas windi_on_screen.
+- S296 SELADO: UI WINDI e sempre camada de pos, nunca gerada (gatilho: S14 smoke test, Veo alucinou texto).
+- S296-bis SELADO: prova diegetica so exibe receipts ja Anchored (proibido hash orfao).
+- Via escolhida: INSERT LIMPO full-frame (nao corner-pin) - prova em primazia.
+- S14 e S15 Anchored com cadeia diegetica verdadeira.
+
+### Selos emitidos
+- S296 - UI Compositing Invariant
+- S296-bis - Diegetic Proof Integrity
+- WINDI-S295-S14-ERRATA-20260530225939 (cicatriz documentada, I11 - seal prematuro por aprovacao textual)
+- WINDI-S295-S14-VISUAL-VERIFIED-20260530225958 - ANCHORED - hash 45e70231...
+- WINDI-S295-S15-VISUAL-VERIFIED-20260530231231 - ANCHORED - hash b8a4a083...
+- Commit: 9e58259a7
+
+### Licao da sessao (importante)
+Houve quebra S236: avancou-se para S15 e selou-se S14 por aprovacao TEXTUAL, nao visual. Corrigido via errata (nao apagado - cicatriz I11). Regra reforcada: **o gate fecha-se com os olhos do Human Dragon, nunca com auto-relatorio da instancia.** Human Dragon validou S14 v2 e S15 v2 por screenshot direto antes do seal final.
+
+### Artefactos canonicos novos (reutilizaveis)
+- DECREE-S296-UI-COMPOSITING.md
+- DECREE-S296-bis-DIEGETIC-PROOF.md
+- WINDI-UI-S14-MATCH.v2.svg (insert full-frame, 16:9, title-safe)
+- WINDI-UI-S15-INTEGRITY.v2.svg (insert full-frame, receipt+hash slots reais)
+
+### Proximo passo proposto (amanha)
+- **S16** - Helena + carro do Marcus no fundo da gravacao.
+  - PRIMEIRA cena com SPINE-CAST de rosto (helena.anchor.v1.CURRENT.npy, threshold >=0.65).
+  - INVARIANTE CRITICO: o carro no fundo (S16) tem de ser o mesmo dark sedan da S09 (Continuity-Bible MARCUS vehicle). Verificacao do veiculo e MANUAL (humano), SPINE so valida o rosto.
+  - UI WINDI menor (canto) - deriva do overlay S14/S15, insert ou inset a decidir.
+- **S20** - tribunal Landgericht + display WINDI. Sala = S18 (carvalho, luz fria, bandeiras DE+Bayern). Helena casaco navy (continuidade desde S16).
+
+### Cadeia diegetica ate agora
+S14 (Match Found) -> S15 (Integrity 100%, exibe receipt+hash reais da S14 Anchored).
+Amanha S16 pode exibir o receipt da S15 -> cadeia cresce.
+
+### Blockers
+- Nenhum. SPINE-CAST via Server B (SSH) confirmado operacional. Ancoras Helena/Marcus/Thomas presentes.
+
+### Notas para a sessao seguinte
+- Prompts Veo para S16/S20 devem pedir zona de UI neutra OU plate sem UI (insert separado), conforme S296.
+- Confirmar sempre: hash injetado em frame = hash da versao VALIDADA, nao de versoes falhadas.
+- Paper-001 S7: atualizar para distinguir "UI environment (gerada)" de "UI proof layer (real, composta)" - threat-to-validity (i) agora parcialmente fechada.
+
+---
+
+*Liga IA+H - 30 Mai 2026 - 23:20 CET*
+*"O gate fecha-se com os olhos do Human Dragon, nunca com auto-relatorio da instancia."*
+
+
 ## MIGRAÇÃO OVERFLOW 31 Mai 2026 — §236/§261/§291 Detalhe Sedimentado
 
 **Contexto:** CLAUDE.md atingiu 42.2KB (limite 40KB). Detalhe de 3 secções migrado para HISTORY, referências vivas mantidas no estado activo.
@@ -17229,4 +17363,3 @@ measure_scene_cast("S21",
 
 ---
 
-*Fim da migração overflow 31 Mai 2026*

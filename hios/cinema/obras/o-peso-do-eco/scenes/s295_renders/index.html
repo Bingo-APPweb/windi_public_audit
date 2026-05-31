@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S295/S296 Renders - O Peso do Eco</title>
+    <style>
+        body { background: #0a0a10; color: #e8e6e1; font-family: monospace; padding: 2em; max-width: 1400px; margin: 0 auto; }
+        h1, h2, h3 { color: #c9a84c; }
+        a { color: #c9a84c; }
+        video { max-width: 100%; margin: 1em 0; border: 2px solid #1a1a24; }
+        .frame { display: inline-block; margin: 0.5em; }
+        .frame img { width: 400px; border: 2px solid #16a34a; }
+        .section { border: 2px solid #16a34a; padding: 1.5em; margin: 1.5em 0; background: #0a120d; border-radius: 8px; }
+        .sealed { border-color: #16a34a; }
+        .errata { border-color: #ef4444; background: #140d0d; }
+        .hash { font-size: 0.85em; color: #9fe0b4; word-break: break-all; background: #0b121b; padding: 0.5em; border-radius: 4px; }
+        .status-ok { color: #16a34a; }
+        .receipt-box { background: #0b121b; border: 1px solid #16a34a; padding: 1em; margin: 1em 0; font-family: monospace; border-radius: 4px; }
+        .chain-visual { background: #0b1a12; border: 2px solid #16a34a; padding: 1em; margin: 1em 0; text-align: center; }
+        .chain-arrow { color: #16a34a; font-size: 2em; }
+    </style>
+</head>
+<body>
+    <h1>S295/S296/S296-bis - O Peso do Eco</h1>
+    <p><strong>Insert Full-Frame</strong> | Prova em Primazia | Cadeia Diegetica | <span class="status-ok">2/4 ANCHORED</span></p>
+
+    <!-- CADEIA DIEGETICA -->
+    <div class="chain-visual">
+        <h2 class="status-ok">CADEIA DIEGETICA VERIFICAVEL - COMPLETA</h2>
+        <p>S14 (Match Found) <span class="chain-arrow">&rarr;</span> S15 (Integrity 100%)</p>
+        <p><em>A S15 exibe o receipt e hash REAIS da S14 Anchored. Paper-001 threat-to-validity (i) fechada.</em></p>
+    </div>
+
+    <!-- S14 v2 SEALED -->
+    <div class="section sealed">
+        <h2 class="status-ok">S14 INSERT v2 - ANCHORED [OK]</h2>
+
+        <div class="receipt-box">
+            <strong>Receipt:</strong> WINDI-S295-S14-VISUAL-VERIFIED-20260530225958<br>
+            <strong>Status:</strong> <span class="status-ok">ANCHORED</span>
+        </div>
+
+        <h3>Video Insert (6s)</h3>
+        <video controls autoplay muted loop>
+            <source src="S14_insert_v2_20260530225500.mp4" type="video/mp4">
+        </video>
+        <p class="hash">SHA-256: 45e70231c1cd61d1a1b18d95f91911861f0a5fe56738a35db7909c7bbee60f34</p>
+
+        <h3>Preview</h3>
+        <div class="frames">
+            <div class="frame"><a href="v2_previews/S14_insert_v2.png" target="_blank"><img src="v2_previews/S14_insert_v2.png"></a></div>
+        </div>
+    </div>
+
+    <!-- S15 v2 SEALED -->
+    <div class="section sealed">
+        <h2 class="status-ok">S15 INSERT v2 - ANCHORED [OK]</h2>
+
+        <div class="receipt-box">
+            <strong>Receipt:</strong> WINDI-S295-S15-VISUAL-VERIFIED-20260530231231<br>
+            <strong>Status:</strong> <span class="status-ok">ANCHORED</span><br>
+            <strong>Exibe em frame:</strong> WINDI-S295-S14-VISUAL-VERIFIED-20260530225958 + hash 45e70231...
+        </div>
+
+        <h3>Video Insert (6s)</h3>
+        <video controls autoplay muted loop>
+            <source src="S15_insert_v2_20260530230315.mp4" type="video/mp4">
+        </video>
+        <p class="hash">SHA-256: b8a4a083ccb34d1a962deb2871333e28453b36973a75012634f9aea449125181</p>
+
+        <h3>Preview</h3>
+        <div class="frames">
+            <div class="frame"><a href="v2_previews/S15_insert_v2_final.png" target="_blank"><img src="v2_previews/S15_insert_v2_final.png"></a></div>
+        </div>
+    </div>
+
+    <!-- ERRATA -->
+    <div class="section errata">
+        <h2 style="color:#ef4444;">ERRATA - Seal Prematuro Documentado</h2>
+        <p><strong>Receipt Original:</strong> WINDI-S295-S14-COMPOSED-20260530223358</p>
+        <p><strong>Errata:</strong> WINDI-S295-S14-ERRATA-20260530225939</p>
+        <p><em>Cicatriz documentada (I11). Selado por aprovacao textual, nao visual. A cicatriz e prova de honestidade.</em></p>
+    </div>
+
+    <!-- PENDENTES -->
+    <div class="section" style="border-color: #c9a84c; background: #0d0d14;">
+        <h2 style="color:#c9a84c;">PENDENTE: S16, S20</h2>
+        <p><strong>S16:</strong> Helena + carro Marcus (SPINE-CAST face anchor + Continuity-Bible vehicle)</p>
+        <p><strong>S20:</strong> Tribunal + display WINDI</p>
+    </div>
+
+    <hr>
+    <p><em>Liga IA+H - WINDI-HIOS - S295/S296/S296-bis - 30 Mai 2026</em></p>
+    <p><em>O gerador faz o mundo. A prova faz-se em pos. A cicatriz e prova de honestidade.</em></p>
+</body>
+</html>

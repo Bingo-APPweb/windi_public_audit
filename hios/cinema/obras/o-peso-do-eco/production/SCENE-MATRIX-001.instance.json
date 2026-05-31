@@ -1,0 +1,215 @@
+{
+  "$schema": "windi-hios/scene-matrix/1.0.0",
+  "doc_type": "scene_matrix_instance",
+  "id": "SCENE-MATRIX-001",
+  "schema_ref": "windi-hios/scene-matrix/1.0.0",
+  "world_state_ref": "WORLD-STATE-001",
+  "continuity_bible_ref": "CONTINUITY-BIBLE-001",
+  "film_title": {
+    "de": "Das Gewicht des Echos",
+    "en": "The Weight of the Echo",
+    "pt": "O Peso do Eco"
+  },
+  "source_cut": "v1 / 24 scenes / SRT",
+  "sealed_under": "§294",
+  "scenes": [
+    {
+      "scene": "S01", "timecode": "00:00:01 --> 00:00:07",
+      "world_state_ref": "WORLD-STATE-001", "location": "ELISA-PRIVATE",
+      "characters": ["ELISA-§293"], "wardrobe": [],
+      "language": null, "subtitles": [], "time_of_day": "day",
+      "continuity_parent": null, "windi_on_screen": false,
+      "notes": "No dialogue. Elisa records herself smiling. Establishes the artifact (the recording) and the victim's face/identity anchor."
+    },
+    {
+      "scene": "S02", "timecode": "00:00:09 --> 00:00:15",
+      "world_state_ref": "WORLD-STATE-001", "location": "NIGHT-ROAD-FOG",
+      "characters": [], "wardrobe": [],
+      "language": null, "subtitles": [], "time_of_day": "night",
+      "continuity_parent": "S01", "windi_on_screen": false,
+      "notes": "No dialogue. Night road, fog, impact. Inciting event. Dark sedan implied (Marcus's car — see CONTINUITY-BIBLE)."
+    },
+    {
+      "scene": "S03", "timecode": "00:00:17 --> 00:00:23",
+      "world_state_ref": "WORLD-STATE-001", "location": "THOMAS-HOME",
+      "characters": ["THOMAS-§293"], "wardrobe": ["worn jackets"],
+      "language": "de", "subtitles": ["en"], "time_of_day": "night",
+      "continuity_parent": "S02", "windi_on_screen": false,
+      "notes": "Papa: 'Wo bist du, Schatz?' Wedding ring visible."
+    },
+    {
+      "scene": "S04", "timecode": "00:00:25 --> 00:00:31",
+      "world_state_ref": "WORLD-STATE-001", "location": "THOMAS-HOME",
+      "characters": ["THOMAS-§293"], "wardrobe": ["worn jackets"],
+      "language": "de", "subtitles": ["en"], "time_of_day": "night",
+      "continuity_parent": "S03", "windi_on_screen": false,
+      "notes": "Police phone call. Bavarian Kriminalpolizei voice. The news lands."
+    },
+    {
+      "scene": "S05", "timecode": "00:00:33 --> 00:00:35",
+      "world_state_ref": "WORLD-STATE-001", "location": "TITLE-CARD",
+      "characters": [], "wardrobe": [],
+      "language": "de", "subtitles": ["en"], "time_of_day": "day",
+      "continuity_parent": "S04", "windi_on_screen": false,
+      "notes": "Title card: SECHS MONATE SPÄTER / SIX MONTHS LATER. Time jump — season remains autumn per WORLD-STATE."
+    },
+    {
+      "scene": "S06", "timecode": "00:00:37 --> 00:00:43",
+      "world_state_ref": "WORLD-STATE-001", "location": "FOREST-DISCOVERY",
+      "characters": [], "wardrobe": [],
+      "language": "de", "subtitles": ["en"], "time_of_day": "day",
+      "continuity_parent": "S05", "windi_on_screen": false,
+      "notes": "Klaus (witness extra): 'Mein Gott... Rufen Sie die Polizei!' Forest per WORLD-STATE (cold, overcast, muted)."
+    },
+    {
+      "scene": "S07", "timecode": "00:00:45 --> 00:00:51",
+      "world_state_ref": "WORLD-STATE-001", "location": "FOREST-CRIMESCENE",
+      "characters": ["HELENA-§293"], "wardrobe": ["dark navy wool coat"],
+      "language": "de", "subtitles": ["en"], "time_of_day": "day",
+      "continuity_parent": "S06", "windi_on_screen": false,
+      "notes": "Helena: 'Sperren Sie das Gebiet ab.' CRITICAL FIDELITY: Bavarian police uniform + BMW Polizei Bavaria livery. This is the scene most prone to jurisdiction drift."
+    },
+    {
+      "scene": "S08", "timecode": "00:00:53 --> 00:00:59",
+      "world_state_ref": "WORLD-STATE-001", "location": "FOREST-CRIMESCENE",
+      "characters": ["HELENA-§293"], "wardrobe": ["dark navy wool coat"],
+      "language": "de", "subtitles": ["en"], "time_of_day": "day",
+      "continuity_parent": "S07", "windi_on_screen": false,
+      "notes": "Helena: 'Das Handy... vielleicht unsere einzige Chance.' The phone (Elisa's device) recovered. Continuity of coat/hair from S07."
+    },
+    {
+      "scene": "S09", "timecode": "00:01:01 --> 00:01:07",
+      "world_state_ref": "WORLD-STATE-001", "location": "BAR-INTERIOR",
+      "characters": ["MARCUS-§293"], "wardrobe": ["expensive understated", "silver watch"],
+      "language": "de", "subtitles": ["en"], "time_of_day": "dusk",
+      "continuity_parent": "S08", "windi_on_screen": false,
+      "notes": "Marcus: 'Noch einen Wein, bitte.' First clear look at the killer. Silver watch must be present (recurs as detail)."
+    },
+    {
+      "scene": "S10", "timecode": "00:01:09 --> 00:01:15",
+      "world_state_ref": "WORLD-STATE-001", "location": "FORENSIC-LAB",
+      "characters": [], "wardrobe": [],
+      "language": "de", "subtitles": ["en"], "time_of_day": "day",
+      "continuity_parent": "S09", "windi_on_screen": false,
+      "notes": "Technician (extra, lab coat): 'Die Datei ist beschädigt. Unmöglich.' Modern lab per WORLD-STATE. Sets up the WINDI reveal."
+    },
+    {
+      "scene": "S11", "timecode": "00:01:17 --> 00:01:23",
+      "world_state_ref": "WORLD-STATE-001", "location": "HARTMANN-OFFICE",
+      "characters": ["HARTMANN-v2b-§293"], "wardrobe": ["HARTMANN-COURT-001", "burgundy tie", "rectangular glasses"],
+      "language": "de", "subtitles": ["en"], "time_of_day": "day",
+      "continuity_parent": "S10", "windi_on_screen": false,
+      "notes": "Hartmann: 'Keine Beweise, kein Fall.' Green desk lamp. NOTE: Hartmann S11 metric 0.7032 OPERATIONAL — acceptable tier for this scene."
+    },
+    {
+      "scene": "S12", "timecode": "00:01:25 --> 00:01:31",
+      "world_state_ref": "WORLD-STATE-001", "location": "THOMAS-HOME",
+      "characters": ["THOMAS-§293"], "wardrobe": ["worn jackets"],
+      "language": "de", "subtitles": ["en"], "time_of_day": "day",
+      "continuity_parent": "S11", "windi_on_screen": false,
+      "notes": "Thomas: 'Ich vermisse dich so sehr, mein Kind.' Wedding ring visible. Emotional fulcrum."
+    },
+    {
+      "scene": "S13", "timecode": "00:01:33 --> 00:01:39",
+      "world_state_ref": "WORLD-STATE-001", "location": "FORENSIC-LAB",
+      "characters": ["HELENA-§293"], "wardrobe": ["dark navy wool coat"],
+      "language": "de", "subtitles": ["en"], "time_of_day": "day",
+      "continuity_parent": "S12", "windi_on_screen": false,
+      "notes": "Helena: 'Es muss einen Weg geben...' Determination. Leads into the WINDI match."
+    },
+    {
+      "scene": "S14", "timecode": "00:01:41 --> 00:01:47",
+      "world_state_ref": "WORLD-STATE-001", "location": "WINDI-SCREEN",
+      "characters": [], "wardrobe": [],
+      "language": "de", "subtitles": ["en"], "time_of_day": "day",
+      "continuity_parent": "S13", "windi_on_screen": true,
+      "notes": "System: 'ÜBEREINSTIMMUNG GEFUNDEN — Elisa Weber.' FIRST WINDI UI APPEARANCE. Must show match readout. Academic anchor scene."
+    },
+    {
+      "scene": "S15", "timecode": "00:01:49 --> 00:01:55",
+      "world_state_ref": "WORLD-STATE-001", "location": "WINDI-SCREEN",
+      "characters": [], "wardrobe": [],
+      "language": "de", "subtitles": ["en"], "time_of_day": "day",
+      "continuity_parent": "S14", "windi_on_screen": true,
+      "notes": "WINDI FORENSIC LEDGER — INTEGRITÄT VERIFIZIERT 100%. MUST render receipt id + hash on screen. This is the film's thesis made visible."
+    },
+    {
+      "scene": "S16", "timecode": "00:01:57 --> 00:02:03",
+      "world_state_ref": "WORLD-STATE-001", "location": "FORENSIC-LAB",
+      "characters": ["HELENA-§293"], "wardrobe": ["dark navy wool coat"],
+      "language": "de", "subtitles": ["en"], "time_of_day": "day",
+      "continuity_parent": "S15", "windi_on_screen": true,
+      "notes": "Helena: 'Da! Das Auto im Hintergrund!' The dark sedan (Marcus's car) in Elisa's footage. CRITICAL: car must match S09 / CONTINUITY-BIBLE Marcus vehicle."
+    },
+    {
+      "scene": "S17", "timecode": "00:02:05 --> 00:02:11",
+      "world_state_ref": "WORLD-STATE-001", "location": "FORENSIC-LAB",
+      "characters": ["HELENA-§293"], "wardrobe": ["dark navy wool coat"],
+      "language": "de", "subtitles": ["en"], "time_of_day": "day",
+      "continuity_parent": "S16", "windi_on_screen": false,
+      "notes": "Helena: 'Sie hat ihn aufgenommen. Elisa hat ihren Mörder gefilmt.' The realization. Recording is the evidence."
+    },
+    {
+      "scene": "S18", "timecode": "00:02:13 --> 00:02:19",
+      "world_state_ref": "WORLD-STATE-001", "location": "LANDGERICHT-KEMPTEN",
+      "characters": [], "wardrobe": [],
+      "language": "de", "subtitles": ["en"], "time_of_day": "day",
+      "continuity_parent": "S17", "windi_on_screen": false,
+      "notes": "Judge (extra, black German robe): 'Die Verhandlung ist eröffnet.' COURTROOM ESTABLISHED. Dark oak, natural daylight, DE + Bavaria flags. Anchors S19–S22."
+    },
+    {
+      "scene": "S19", "timecode": "00:02:21 --> 00:02:27",
+      "world_state_ref": "WORLD-STATE-001", "location": "LANDGERICHT-KEMPTEN",
+      "characters": ["HARTMANN-v2b-§293"], "wardrobe": ["HARTMANN-COURT-001", "burgundy tie", "rectangular glasses"],
+      "language": "de", "subtitles": ["en"], "time_of_day": "day",
+      "continuity_parent": "S18", "windi_on_screen": false,
+      "notes": "Hartmann: 'Einspruch! Diese Beweise sind unzulässig!' NOTE: Hartmann S19 metric 0.7914 FORENSIC. Same courtroom as S18."
+    },
+    {
+      "scene": "S20", "timecode": "00:02:29 --> 00:02:35",
+      "world_state_ref": "WORLD-STATE-001", "location": "LANDGERICHT-KEMPTEN",
+      "characters": ["HELENA-§293"], "wardrobe": ["dark navy wool coat"],
+      "language": "de", "subtitles": ["en"], "time_of_day": "day",
+      "continuity_parent": "S19", "windi_on_screen": true,
+      "notes": "Helena: 'Das WINDI-System bestätigt: Integrität 100%. Das ist sein Auto.' WINDI UI may appear on courtroom display. Thesis stated aloud."
+    },
+    {
+      "scene": "S21", "timecode": "00:02:37 --> 00:02:43",
+      "world_state_ref": "WORLD-STATE-001", "location": "LANDGERICHT-KEMPTEN",
+      "characters": [], "wardrobe": [],
+      "language": "de", "subtitles": ["en"], "time_of_day": "day",
+      "continuity_parent": "S20", "windi_on_screen": false,
+      "notes": "Prosecutor (Staatsanwältin, extra, formal dark): 'Der Angeklagte war am Tatort.' Marcus present as defendant."
+    },
+    {
+      "scene": "S22", "timecode": "00:02:45 --> 00:02:51",
+      "world_state_ref": "WORLD-STATE-001", "location": "LANDGERICHT-KEMPTEN",
+      "characters": [], "wardrobe": [],
+      "language": "de", "subtitles": ["en"], "time_of_day": "day",
+      "continuity_parent": "S21", "windi_on_screen": false,
+      "notes": "Judge: 'Im Namen des Volkes: Schuldig.' Verdict. Black robe, DE/Bavaria flags consistent with S18."
+    },
+    {
+      "scene": "S23", "timecode": "00:02:53 --> 00:02:59",
+      "world_state_ref": "WORLD-STATE-001", "location": "LANDGERICHT-KEMPTEN",
+      "characters": ["MARCUS-§293", "THOMAS-§293"], "wardrobe": ["silver watch", "worn jackets"],
+      "language": null, "subtitles": [], "time_of_day": "day",
+      "continuity_parent": "S22", "windi_on_screen": false,
+      "notes": "No dialogue. Marcus handcuffed, Thomas watches. Marcus silver watch still visible; Thomas wedding ring still visible. Continuity payoff."
+    },
+    {
+      "scene": "S24", "timecode": "00:03:01 --> 00:03:07",
+      "world_state_ref": "WORLD-STATE-001", "location": "EXTERIOR-DAYLIGHT",
+      "characters": ["HELENA-§293"], "wardrobe": ["dark navy wool coat"],
+      "language": null, "subtitles": [], "time_of_day": "day",
+      "continuity_parent": "S23", "windi_on_screen": false,
+      "notes": "No dialogue. Helena walks into the sunlight. Palette shift — first warm light after muted film. Resolution."
+    }
+  ],
+  "ledger_contract": {
+    "receipt_required": true,
+    "hash_algo": "sha256",
+    "status_target": "Anchored",
+    "immutability": "Scene edits require §267 errata receipt."
+  }
+}

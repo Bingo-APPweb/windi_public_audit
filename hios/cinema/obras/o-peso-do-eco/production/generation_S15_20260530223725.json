@@ -1,0 +1,16 @@
+{
+  "scene": "S15",
+  "timestamp": "2026-05-30T22:36:24.288334",
+  "generator": "veo3.1",
+  "model": "veo3.1",
+  "prompt": "A computer monitor in a modern forensic laboratory displaying a verification interface. The screen shows a dark professional UI with glowing elements \u2014 but any text is BLURRED or OUT OF FOCUS, creatin...",
+  "full_prompt": "A computer monitor in a modern forensic laboratory displaying a verification interface. The screen shows a dark professional UI with glowing elements \u2014 but any text is BLURRED or OUT OF FOCUS, creating a placeholder zone where text will be added in post-production. The monitor displays: a shield or checkmark icon (green glow), abstract data visualization elements, receipt/hash area visible but TEXT INTENTIONALLY BLURRED. Monitor-lit lab environment, cold blue ambient lighting. The screen is the hero element. Cinematic, realistic. IMPORTANT: DO NOT render legible text. All text elements should be decoratively blurred or abstracted. Clean dark UI theme with green accents.",
+  "windi_on_screen": true,
+  "characters": [],
+  "continuity_checks": [],
+  "task_id": "2b25ef6f-c528-44dd-acb4-3cd5e2338687",
+  "status": "GENERATED",
+  "output_path": "/opt/windi/hios/cinema/obras/o-peso-do-eco/scenes/s295_renders/S15_20260530223724.mp4",
+  "output_hash": "e16b4214d1283d5e94bade5ba04fa7a7f4db045dd6b7f8baf419396509666066",
+  "message": "Video saved to /opt/windi/hios/cinema/obras/o-peso-do-eco/scenes/s295_renders/S15_20260530223724.mp4"
+}
