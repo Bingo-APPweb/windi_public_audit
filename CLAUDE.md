@@ -532,6 +532,8 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 31 Mai | **§139** WINDI-LAW Painel de Anexos — Multiple Files + SHA-256 · `2C302A37` ✅ |
+| 31 Mai | **TEMPLATE-001** Systemd Reference Standard — Forward-looking · Non-retroactivity · `99D55284` ✅ |
 | 31 Mai | **Overflow Fix** §236/§261/§291 migrados para HISTORY · 42.2KB→35.7KB · `WINDI-MAINT-OVERFLOW-20260531` ✅ |
 | 30 Mai | **§295/§296/§296-bis** S14+S15 Anchored com cadeia diegética · UI Compositing Invariant · Errata I11 · `45e70231`+`b8a4a083` ✅ |
 | 30 Mai | **§294** Constituição do Mundo — 5 selos (World-State+Scene-Matrix+Continuity-Bible) · `9F003FF1`+`A0E4BF6B`+`D97E61BC`+`C32E61B6`+`5935A3A4` ✅ |
@@ -613,7 +615,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 ---
 
 ### P0 — Crítico
-- [ ] **§139 WINDI-LAW Painel de Anexos** — Lista persistente · SHA · Suporte múltiplos ficheiros
+- [x] **§139 WINDI-LAW Painel de Anexos** — Lista persistente · SHA · Suporte múltiplos ficheiros · `2C302A37` ✅
 
 ### P1 — Importante
 > **§246-D1→D5 completados (07 Mai):** Ver `CLAUDE-HISTORY.md` § Migração 17 Mai 2026

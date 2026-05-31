@@ -17363,3 +17363,45 @@ measure_scene_cast("S21",
 
 ---
 
+
+---
+
+## Session 31 Mai 2026 — Morning (09:30–10:00 UTC)
+
+**Mode:** CCode CLI (Architect)
+**Topology:** Three Dragons Protocol · Guardian (web) oversight from prior session
+
+### Work Completed
+
+1. **WINDI-SYSTEMD-TEMPLATE-001** — Reference Standard for systemd units
+   - Forward-looking scope (applies to new services only)
+   - Non-retroactivity clause preserves legacy validity
+   - Security hardening: NoNewPrivileges, ProtectSystem=strict
+   - Committed to /opt/windi repo: `36c40ee8d`
+   - Ledger Receipt: `WINDI-TEMPLATE-001-SYSTEMD-20260531-99D55284`
+
+2. **§139 WINDI-LAW Painel de Anexos** — Multiple Files + SHA-256
+   - Multiple file upload support (input.multiple = true)
+   - SHA-256 hash display per file with copy-to-clipboard
+   - Combined hash for sealing (SHA-256 of concatenated hashes)
+   - Attachments metadata included in Ledger receipt
+   - Trilingual i18n (DE/PT/EN)
+   - 270 lines added, all 23 feature checks passed
+   - Committed to /opt/windi repo: `4677623e0`
+   - Ledger Receipt: `WINDI-S139-PAINEL-ANEXOS-20260531100031-2C302A37`
+
+### Selos Emitidos
+| Receipt | Paragraph | Description |
+|---------|-----------|-------------|
+| `99D55284` | TEMPLATE-001 | Systemd reference standard |
+| `2C302A37` | §139 | WINDI-LAW Painel de Anexos |
+
+### Scaffold Pending
+- P1: W-DEV-API-001 systemd migration (first adoption of TEMPLATE-001)
+- P1: §246-IMPL Sprint 2 (Query API + UI Berçário)
+- P1.5: W-TRAVEL-PUB-001 Berlin Demo
+
+### Next Step
+P0 backlog clear. Next P1 candidate: W-DEV-API-001 systemd migration as first test case for TEMPLATE-001.
+
+---
