@@ -6,6 +6,81 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 31 Mai 2026 (tarde) — O PESO DO ECO v2 Production Editor
+
+**Duração:** ~2h | **Status:** ✅ EDITOR LIVE
+**Liga IA+H:** Human Dragon · Guardian (Claude.ai web) · Architect (CCode Opus 4.5)
+**Invariants:** I9, I11, I14
+**Natureza:** Cinema Production · Dual-Server Sync · Visual Editor
+
+### Arquitectura Dual-Server
+
+```
+┌─────────────────────────────────┐   ┌─────────────────────────────────┐
+│  SERVER 1 (STRATO)              │   │  SERVER 2 (B4-DRIFT)            │
+│  87.106.29.233                  │   │  85.215.131.0                   │
+├─────────────────────────────────┤   ├─────────────────────────────────┤
+│  FUNÇÃO: Produção + Ledger      │   │  FUNÇÃO: SPINE-CAST Validation  │
+│                                 │   │                                 │
+│  /opt/windi/hios/cinema/        │   │  /home/windi/b4-drift-validator │
+│    └── obras/o-peso-do-eco/     │   │    └── test_frames/             │
+│    └── obras/o-peso-do-eco2/    │   │        ├── *.anchor.*.npy       │
+│        ├── editor/    (HTML)    │   │        ├── S*_v2/ (frames)      │
+│        ├── thumbs/    (v2 PNG)  │   │        └── pendentes_audit/     │
+│        ├── videos/    (symlinks)│   │                                 │
+│        └── audit-pendentes/     │   │                                 │
+└─────────────────────────────────┘   └─────────────────────────────────┘
+```
+
+### Trabalho Completado
+
+| Passo | Descrição | Estado |
+|-------|-----------|--------|
+| 1 | Sync anchors Server B → Strato (10 ficheiros) | ✅ |
+| 2 | Criar container `o-peso-do-eco2/` (separação v1/v2) | ✅ |
+| 3 | Sync thumbnails v2 de Server B (13 imagens) | ✅ |
+| 4 | Editor HTML com 24 cenas organizadas por Acto | ✅ |
+| 5 | Player modal de vídeo (24 cenas linkadas) | ✅ |
+| 6 | Auditoria jurisdição S06 (LIMPO) | ✅ |
+| 7 | Página audit-pendentes/ (6 cenas) | ✅ |
+| 8 | Actualização INHERITANCE-TRACKER | ✅ |
+
+### URLs LIVE
+
+| URL | Descrição |
+|-----|-----------|
+| `/hios/cinema/obras/o-peso-do-eco2/editor/` | Production Editor v2 |
+| `/hios/cinema/obras/o-peso-do-eco2/audit-pendentes/` | Auditoria 6 cenas pendentes |
+| `/hios/cinema/obras/o-peso-do-eco2/videos/S{01-24}.mp4` | 24 vídeos (symlinks) |
+| `/hios/cinema/obras/o-peso-do-eco2/thumbs/` | Thumbnails v2 de Server B |
+
+### Estado do Filme v2
+
+| Categoria | Contagem | Cenas |
+|-----------|----------|-------|
+| **HERDAR v1** | 5 | S02, S03, S04, S05, S06 |
+| **v2 PRONTAS** | 9 | S01, S11, S14, S15, S18, S19, S20, S21, S22 |
+| **RE-RENDER** | 2 | S07 (jurisdição), S09 (idioma) |
+| **FORGE PENDENTE** | 1 | S16 |
+| **VERIFICAR JURISDIÇÃO** | 1 | S08 |
+| **AUDIT VISUAL PENDENTE** | 6 | S10, S12, S13, S17, S23, S24 |
+
+### Descobertas I9
+
+- **S06 LIMPO:** Klaus + floresta, sem viaturas polícia
+- **S07 VIOLAÇÃO CONFIRMADA:** Viaturas estrangeiras (sessão anterior)
+- **6 cenas silenciosas:** Sem risco de idioma, apenas continuidade visual
+
+### Próximos Passos
+
+1. [ ] HD verifica visualmente 6 cenas pendentes (audit-pendentes/)
+2. [ ] HD verifica S08 para jurisdição
+3. [ ] Criar prompt re-render S07 (BMW Polizei Bayern)
+4. [ ] Criar prompt re-render S09 (Marcus DE)
+5. [ ] Gerar S16 via Veo 3.1
+
+---
+
 ## § SESSÃO 15 Mai 2026 — §246-IMPL-bis G3 MERKLE GENESIS
 
 **Duração:** ~2h | **Status:** ✅ GENESIS LIVE
