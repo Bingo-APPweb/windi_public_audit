@@ -424,6 +424,82 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
 }
 .demo-btn { font-size: 10px; font-weight: 500; padding: 4px 12px; border-radius: 14px; border: none; background: transparent; color: var(--ink-4); cursor: pointer; font-family: var(--font); transition: all 0.12s; }
 .demo-btn.on { background: var(--gold); color: white; }
+
+/* ═══════════════════════════════════════════════════════════════
+   §139 PAINEL DE ANEXOS — Lista Persistente + SHA-256
+   ═══════════════════════════════════════════════════════════════ */
+.anexos-panel {
+  background: var(--perg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  margin: 8px 0;
+  overflow: hidden;
+}
+.anexos-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--perg-3);
+}
+.anexos-title {
+  font-size: 9px; font-weight: 500; color: var(--gold);
+  letter-spacing: 0.06em; text-transform: uppercase;
+  display: flex; align-items: center; gap: 5px;
+}
+.anexos-count {
+  font-size: 8px; padding: 1px 5px; border-radius: 8px;
+  background: var(--gold-bg); color: var(--gold);
+}
+.anexos-list {
+  max-height: 160px; overflow-y: auto;
+}
+.anexos-list:empty::after {
+  content: 'Keine Anhänge';
+  display: block; padding: 12px;
+  font-size: 11px; color: var(--ink-4);
+  text-align: center; font-style: italic;
+}
+[data-theme="noir"] .anexos-list:empty::after { content: 'Keine Anhänge'; }
+.anexo-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 0.5px solid var(--border);
+  transition: background 0.12s;
+}
+.anexo-item:last-child { border-bottom: none; }
+.anexo-item:hover { background: rgba(139,105,20,0.04); }
+.anexo-icon {
+  width: 24px; height: 24px; border-radius: 4px;
+  background: var(--perg-3); display: flex;
+  align-items: center; justify-content: center;
+  font-size: 11px; flex-shrink: 0;
+}
+.anexo-info { flex: 1; min-width: 0; }
+.anexo-name {
+  font-size: 11px; font-weight: 500; color: var(--ink);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.anexo-hash {
+  font-size: 8px; font-family: var(--mono); color: var(--ink-4);
+  display: flex; align-items: center; gap: 4px; margin-top: 2px;
+}
+.anexo-hash-copy {
+  cursor: pointer; opacity: 0.5; transition: opacity 0.12s;
+}
+.anexo-hash-copy:hover { opacity: 1; }
+.anexo-size {
+  font-size: 9px; color: var(--ink-4); flex-shrink: 0;
+}
+.anexo-remove {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: none; background: transparent;
+  color: var(--ink-4); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; transition: all 0.12s; flex-shrink: 0;
+}
+.anexo-remove:hover {
+  background: rgba(163,45,45,0.1); color: var(--red);
+}
 </style>
 <!-- §173 DID SIMPLIFICATION — Single Source of Truth -->
 <script src="/shared/windi-did.js"></script>
@@ -650,6 +726,15 @@ body { font-family: var(--font); background: var(--perg); color: var(--ink); hei
 
           </div>
 
+          <!-- §139 PAINEL DE ANEXOS -->
+          <div class="anexos-panel" id="anexos-panel" style="margin:0 24px 12px;">
+            <div class="anexos-header">
+              <span class="anexos-title">📎 <span data-i18n="anexosTitle">Anhänge</span> <span class="anexos-count" id="anexos-count">0</span></span>
+              <button onclick="clearAllAttachments()" style="font-size:8px;padding:2px 6px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--ink-4);cursor:pointer;" data-i18n="anexosClear">Alle löschen</button>
+            </div>
+            <div class="anexos-list" id="anexos-list"></div>
+          </div>
+
           <!-- prompt bottom -->
           <div class="pb">
             <div class="pbox">
@@ -782,7 +867,8 @@ var LANG = {
     sbSovLabel: 'Lokale Souveränität',
     notConnected: 'Noch keine Wallet', connect: 'Wallet erstellen →',
     hashPlaceholder: '— — — —', createWallet: 'Wallet erstellen →',
-    tlStatusVerified: 'VERIFIED', tlStatusPending: 'PENDING'
+    tlStatusVerified: 'VERIFIED', tlStatusPending: 'PENDING',
+    anexosTitle: 'Anhänge', anexosClear: 'Alle löschen', anexosEmpty: 'Keine Anhänge'
   },
   pt: {
     sbSchluesselTitle: 'Chave', sbWalletTitle: 'Carteira',
@@ -791,7 +877,8 @@ var LANG = {
     sbSovLabel: 'Soberania Local',
     notConnected: 'Ainda sem wallet', connect: 'Criar wallet →',
     hashPlaceholder: '— — — —', createWallet: 'Criar wallet →',
-    tlStatusVerified: 'VERIFICADO', tlStatusPending: 'PENDENTE'
+    tlStatusVerified: 'VERIFICADO', tlStatusPending: 'PENDENTE',
+    anexosTitle: 'Anexos', anexosClear: 'Limpar todos', anexosEmpty: 'Sem anexos'
   },
   en: {
     sbSchluesselTitle: 'Key', sbWalletTitle: 'Wallet',
@@ -800,7 +887,8 @@ var LANG = {
     sbSovLabel: 'Local Sovereignty',
     notConnected: 'No wallet yet', connect: 'Create wallet →',
     hashPlaceholder: '— — — —', createWallet: 'Create wallet →',
-    tlStatusVerified: 'VERIFIED', tlStatusPending: 'PENDING'
+    tlStatusVerified: 'VERIFIED', tlStatusPending: 'PENDING',
+    anexosTitle: 'Attachments', anexosClear: 'Clear all', anexosEmpty: 'No attachments'
   }
 };
 
@@ -1060,8 +1148,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // ═══════════════════════════════════════════════════════════════
 // F1 — Media Bar (cmd-media-bar) SEALED
+// §139 — Enhanced: Multiple files support + persistent list
 // ═══════════════════════════════════════════════════════════════
-var attachedFiles = [];  // SEALED marker
+var attachedFiles = [];  // §139: Now properly used for multiple files
 
 // ═══════════════════════════════════════════════════════════════
 // F2 — SHA-256 hashFile (crypto.subtle) SEALED
@@ -1076,25 +1165,159 @@ async function hashFile(file) {
     .map(function(b) { return b.toString(16).padStart(2,'0'); }).join('');
 }
 
+// ═══════════════════════════════════════════════════════════════
+// §139 — formatFileSize helper
+// ═══════════════════════════════════════════════════════════════
+function formatFileSize(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// §139 — getFileIcon helper
+// ═══════════════════════════════════════════════════════════════
+function getFileIcon(type, name) {
+  if (type.startsWith('image/')) return '🖼';
+  if (type.startsWith('video/')) return '🎥';
+  if (type === 'application/pdf') return '📕';
+  if (name.endsWith('.docx') || name.endsWith('.doc')) return '📘';
+  if (name.endsWith('.xlsx') || name.endsWith('.xls')) return '📗';
+  return '📄';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// §139 — renderAttachments: Display all attached files
+// ═══════════════════════════════════════════════════════════════
+function renderAttachments() {
+  var list = document.getElementById('anexos-list');
+  var count = document.getElementById('anexos-count');
+  if (!list) return;
+
+  count.textContent = attachedFiles.length;
+
+  if (attachedFiles.length === 0) {
+    list.innerHTML = '';
+    return;
+  }
+
+  list.innerHTML = attachedFiles.map(function(f, idx) {
+    return '<div class="anexo-item" data-idx="' + idx + '">' +
+      '<div class="anexo-icon">' + getFileIcon(f.type, f.name) + '</div>' +
+      '<div class="anexo-info">' +
+        '<div class="anexo-name" title="' + f.name + '">' + f.name + '</div>' +
+        '<div class="anexo-hash">' +
+          '<span>SHA-256: ' + f.hash.substring(0, 12) + '…</span>' +
+          '<span class="anexo-hash-copy" onclick="copyAttachmentHash(' + idx + ')" title="Copy full hash">📋</span>' +
+        '</div>' +
+      '</div>' +
+      '<span class="anexo-size">' + formatFileSize(f.size) + '</span>' +
+      '<button class="anexo-remove" onclick="removeAttachment(' + idx + ')" title="Entfernen">✕</button>' +
+    '</div>';
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// §139 — removeAttachment: Remove single file from list
+// ═══════════════════════════════════════════════════════════════
+function removeAttachment(idx) {
+  if (idx >= 0 && idx < attachedFiles.length) {
+    var removed = attachedFiles.splice(idx, 1)[0];
+    console.log('[§139] Attachment removed:', removed.name);
+    renderAttachments();
+    // Update legacy single-file vars if list is now empty
+    if (attachedFiles.length === 0) {
+      currentFileHash = null;
+      currentFileName = null;
+    } else {
+      // Point to last file for backward compat
+      var last = attachedFiles[attachedFiles.length - 1];
+      currentFileHash = last.hash;
+      currentFileName = last.name;
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// §139 — clearAllAttachments: Remove all files
+// ═══════════════════════════════════════════════════════════════
+function clearAllAttachments() {
+  attachedFiles = [];
+  currentFileHash = null;
+  currentFileName = null;
+  renderAttachments();
+  var preview = document.getElementById('media-preview');
+  if (preview) preview.style.display = 'none';
+  console.log('[§139] All attachments cleared');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// §139 — copyAttachmentHash: Copy full hash to clipboard
+// ═══════════════════════════════════════════════════════════════
+function copyAttachmentHash(idx) {
+  if (idx >= 0 && idx < attachedFiles.length) {
+    var hash = attachedFiles[idx].hash;
+    navigator.clipboard.writeText(hash).then(function() {
+      console.log('[§139] Hash copied:', hash.substring(0, 16) + '…');
+    });
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// handleMedia — §139 Enhanced: Add to list instead of replace
+// ═══════════════════════════════════════════════════════════════
 function handleMedia(type) {
   var input = document.createElement('input');
   input.type = 'file';
+  input.multiple = true;  // §139: Allow multiple file selection
   if (type === 'img') input.accept = 'image/*';
   if (type === 'vid') input.accept = 'video/*';
-  if (type === 'doc') input.accept = '.pdf,.docx,.txt';
+  if (type === 'doc') input.accept = '.pdf,.docx,.txt,.doc,.xlsx,.xls';
   input.onchange = async function(e) {
-    var file = e.target.files[0];
-    if (!file) return;
-    var hash = await hashFile(file);
+    var files = Array.from(e.target.files);
+    if (!files.length) return;
+
+    for (var i = 0; i < files.length; i++) {
+      var file = files[i];
+      // Check for duplicates by name
+      var exists = attachedFiles.some(function(f) { return f.name === file.name; });
+      if (exists) {
+        console.log('[§139] Skipping duplicate:', file.name);
+        continue;
+      }
+
+      var hash = await hashFile(file);
+      attachedFiles.push({
+        name: file.name,
+        type: file.type,
+        size: file.size,
+        hash: hash,
+        addedAt: new Date().toISOString()
+      });
+      console.log('[§139] File added:', file.name, 'SHA-256:', hash.substring(0, 16) + '…');
+    }
+
+    // Update legacy single-file vars (last file added)
+    if (attachedFiles.length > 0) {
+      var last = attachedFiles[attachedFiles.length - 1];
+      currentFileHash = last.hash;
+      currentFileName = last.name;
+    }
+
+    renderAttachments();
+
+    // Update mini preview (show count if multiple)
     var preview = document.getElementById('media-preview');
     if (preview) {
-      preview.innerHTML = '<span style="font-size:9px;font-family:var(--mono);color:var(--ink-3)">' +
-        file.name + ' · SHA-256: ' + hash.substring(0,16) + '…</span>';
+      if (attachedFiles.length === 1) {
+        preview.innerHTML = '<span style="font-size:9px;font-family:var(--mono);color:var(--ink-3)">' +
+          attachedFiles[0].name + ' · SHA-256: ' + attachedFiles[0].hash.substring(0,16) + '…</span>';
+      } else {
+        preview.innerHTML = '<span style="font-size:9px;font-family:var(--mono);color:var(--ink-3)">📎 ' +
+          attachedFiles.length + ' Anhänge · ' + formatFileSize(attachedFiles.reduce(function(a,f){return a+f.size;},0)) + '</span>';
+      }
       preview.style.display = 'flex';
     }
-    currentFileHash = hash;
-    currentFileName = file.name;
-    console.log('[WINDI-LAW] File hashed:', file.name, hash.substring(0,16) + '…');
   };
   input.click();
 }
@@ -1118,8 +1341,29 @@ async function confirmSeal() {
   var did = wallet.did || 'anon';
   var docTitle = document.querySelector('.dtitle');
   docTitle = docTitle ? docTitle.textContent : 'documento';
-  var hash = currentFileHash || Array.from(crypto.getRandomValues(new Uint8Array(16)))
-    .map(function(b) { return b.toString(16).padStart(2,'0'); }).join('');
+
+  // §139: Compute combined hash from all attachments
+  var hash;
+  var attachmentHashes = [];
+  if (attachedFiles.length > 0) {
+    attachmentHashes = attachedFiles.map(function(f) { return f.hash; });
+    // Combined hash = SHA-256 of concatenated individual hashes
+    var combined = attachmentHashes.join('');
+    var encoder = new TextEncoder();
+    var data = encoder.encode(combined);
+    var digest = await crypto.subtle.digest('SHA-256', data);
+    hash = Array.from(new Uint8Array(digest))
+      .map(function(b) { return b.toString(16).padStart(2,'0'); }).join('');
+  } else {
+    // Fallback to random hash if no attachments
+    hash = Array.from(crypto.getRandomValues(new Uint8Array(32)))
+      .map(function(b) { return b.toString(16).padStart(2,'0'); }).join('');
+  }
+
+  // §139: Build attachments metadata
+  var attachmentsMeta = attachedFiles.map(function(f) {
+    return { name: f.name, hash: f.hash, size: f.size, type: f.type };
+  });
 
   try {
     var res = await fetch('https://windi-domain.com/api/receipts/', {
@@ -1134,18 +1378,25 @@ async function confirmSeal() {
         governance_level: 'HIGH',
         content_hash: hash,
         sge_score: 95.0,
+        wallet_id: did,
+        schema_version: '1.0',
         invariant: 'I11',
-        note: 'Sealed via workspace v3 · G3 confirmed'
+        note: 'Sealed via workspace v3 · G3 confirmed',
+        metadata: {
+          attachment_count: attachedFiles.length,
+          attachments: attachmentsMeta
+        }
       })
     });
-    var data = await res.json();
-    window.__lastReceipt = data;
+    var resData = await res.json();
+    window.__lastReceipt = resData;
     updateCIA(true);
     var footer = document.querySelector('.dc-seal-hash');
     if (footer) footer.textContent = 'SHA-256: ' + hash.substring(0,16) + '…';
     var badge = document.querySelector('.dc-verify-badge');
     if (badge) { badge.textContent = '✓ Versiegelt · I11'; badge.style.opacity = '1'; }
-    console.log('[WINDI-LAW] Sealed:', data);
+    console.log('[WINDI-LAW] Sealed:', resData);
+    console.log('[§139] Attachments sealed:', attachedFiles.length, 'files');
   } catch(e) {
     console.warn('[WINDI-LAW] Ledger offline — hash local preservado:', hash);
     updateCIA(true); // Still update CIA locally
