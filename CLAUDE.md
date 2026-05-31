@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.57.0
-**Sealed:** 2026-05-29 · §292 W-GENERATOR-001 + SPINE-CAST + I9-G
+**Version:** 2.58.0
+**Sealed:** 2026-05-30 · §294 Constituição do Mundo (World-State + Scene-Matrix + Continuity-Bible)
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -532,6 +532,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 30 Mai | **§294** Constituição do Mundo — 5 selos (World-State+Scene-Matrix+Continuity-Bible) · `9F003FF1`+`A0E4BF6B`+`D97E61BC`+`C32E61B6`+`5935A3A4` ✅ |
 | 29 Mai | **§292** W-GENERATOR-001 + SPINE-CAST 6/6 + I9-G Doctrine · Gate registado ✅ |
 | 23 Mai | **§282** WINDI-HIOS Cognitive Surface Architecture · `F5F12A71` · 5L + 6P + HG ✅ |
 | 15 Mai | **§246-IMPL-bis** G3 Merkle Transparency Log GENESIS · `66189307` ✅ |
@@ -672,6 +673,11 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | **CINEMA** | `d31aae48` | §290 PROOF 2 Baseline — BROKEN measurements frozen |
 | **CINEMA** | `S291-V2` | §291 O Peso do Eco v2 — 5/5 Type-B scenes, 4 forensic + 1 operational |
 | **GENERATOR** | `§292` | W-GENERATOR-001 — 6 DOORs (stubs), SORA+Runway keys, Gate registado |
+| **CINEMA** | `9F003FF1` | §294 WORLD-STATE.schema.yaml — Generic Schema v1.0.0 |
+| **CINEMA** | `A0E4BF6B` | §294 WORLD-STATE-001.instance.yaml — O Peso do Eco World |
+| **CINEMA** | `D97E61BC` | §294 CONTINUITY-BIBLE-001 — Wardrobe/Props × §293 SPINE-CAST |
+| **CINEMA** | `C32E61B6` | §294 SCENE-MATRIX.schema.json — Generic Scene Contract v1.0.0 |
+| **CINEMA** | `5935A3A4` | §294 SCENE-MATRIX-001 — 24 Scenes Mapped (windi_on_screen: S14,S15,S16,S20) |
 
 > **Full receipts list:** `CLAUDE-HISTORY.md` § Produtos SEALED
 > **HD-MIRROR Reference:** `/opt/windi/docs/PROOF-SELF-CORRECTION-WITHOUT-REWRITE.md`

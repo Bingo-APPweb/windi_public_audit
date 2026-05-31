@@ -16901,3 +16901,102 @@ S21 não é multi-rosto — Marcus de costas. Helena canónica (âncora não se 
 Executar S07 regeneração com "POLIZEI" visível, validar contra Helena anchor.
 
 OM SHANTI 🐉
+
+---
+
+## § SESSÃO 30 Mai 2026 (noite) — §294 CONSTITUIÇÃO DO MUNDO
+
+**Duração:** ~90min | **Status:** ✅ FECHADA
+**Liga IA+H:** Human Dragon · Architect (CCode Opus 4.5)
+**Invariants:** I1, I9, I11, I12, I14
+
+### Mandato
+
+> "§293 selou os personagens (quem). §294 sela o mundo que habitam (onde, como, com que consistência)."
+
+### 5 Selos Emitidos
+
+| # | Artefacto | Receipt | Hash (8) |
+|---|-----------|---------|----------|
+| 1 | `WORLD-STATE.schema.yaml` | `WINDI-S294-WORLD-STATE-SCHEMA-20260530212108-9F003FF1` | `9F003FF1` |
+| 2 | `WORLD-STATE-001.instance.yaml` | `WINDI-S294-WORLD-STATE-001-20260530212108-A0E4BF6B` | `A0E4BF6B` |
+| 3 | `CONTINUITY-BIBLE-001.yaml` | `WINDI-S294-CONTINUITY-BIBLE-001-20260530212108-D97E61BC` | `D97E61BC` |
+| 4 | `SCENE-MATRIX.schema.json` | `WINDI-S294-SCENE-MATRIX-SCHEMA-20260530212108-C32E61B6` | `C32E61B6` |
+| 5 | `SCENE-MATRIX-001.instance.json` | `WINDI-S294-SCENE-MATRIX-001-20260530212108-5935A3A4` | `5935A3A4` |
+
+### Arquitectura de Schemas
+
+```
+Genericidade (Reutilizável)          Instância (Filme Específico)
+─────────────────────────────        ─────────────────────────────
+WORLD-STATE.schema.yaml       ←───── WORLD-STATE-001.instance.yaml
+SCENE-MATRIX.schema.json      ←───── SCENE-MATRIX-001.instance.json
+                                     CONTINUITY-BIBLE-001.yaml
+```
+
+- **WORLD-STATE:** Jurisdição (Bavaria, Germany), cronologia (2026, autumn), regras de localização
+- **CONTINUITY-BIBLE:** Figurino/adereços ligados a §293 SPINE-CAST por ID (nunca redescrição)
+- **SCENE-MATRIX:** 24 cenas mapeadas com `characters[]`, `wardrobe[]`, `windi_on_screen` flags
+
+### Regras WINDI-HIOS §294
+
+1. **Identidade por ID, nunca por descrição** — `HELENA-§293`, não "detective with blonde hair"
+2. **Métricas Hartmann SEPARADAS** — anchor 0.9298 FORENSIC ≠ cross-scene 0.70/0.79 OPERATIONAL
+3. **Schema antes da instância** — `WINDI-HIOS-WORLD-STATE@1.0.0` selado antes de `WORLD-STATE-001`
+4. **windi_on_screen=true** (S14, S15, S16, S20) — WINDI UI visível no ecrã, receipt+hash renderizado
+5. **Errata via §267** — qualquer mudança pós-Anchored exige errata receipt
+
+### Ficheiros
+
+```
+/opt/windi/hios/cinema/obras/o-peso-do-eco/production/
+├── DECREE-§294.md                      # Mandato trilíngue
+├── WORLD-STATE-001.instance.yaml       # Mundo do filme
+├── CONTINUITY-BIBLE-001.yaml           # Figurino/adereços
+├── SCENE-MATRIX-001.instance.json      # 24 cenas mapeadas
+├── PAPER-001-§294-INSERT.md            # Insert académico
+└── schemas/
+    ├── WORLD-STATE.schema.yaml         # Schema genérico
+    └── SCENE-MATRIX.schema.json        # Schema genérico
+```
+
+### Paper-001 Insert — Receipt Symmetry Axiom Extended
+
+A extensão do axioma de simetria de receipts à continuidade audiovisual:
+
+> *"O casaco que Helena veste na cena 7 e o casaco que veste na cena 24 estão vinculados
+> ao mesmo id de guarda-roupa canónico, selado uma vez, referenciado por id a partir daí.
+> A continuidade deixa de ser uma esperança de geração e torna-se um invariante de referência."*
+
+### Self-Reference as Validation
+
+O filme retrata o WINDI Forensic Ledger admitindo uma gravação corrompida e certificando
+a sua integridade (cenas S14–S16, S20). O mesmo Ledger sela o World-State, Continuity-Bible
+e Scene-Matrix que tornam o filme reproduzível. O artefacto demonstra a sua própria tese:
+uma afirmação de integridade verificável, produzida sob integridade verificável.
+
+### Ciclo Three Dragons
+
+| Role | Acção |
+|------|-------|
+| **Architect** | Criou 6 ficheiros, corrigiu formato Ledger API, selou 5 receipts |
+| **Guardian** | Validou separação de métricas Hartmann, confirmou regras §294 |
+| **Human Dragon** | Definiu mandato §294, aprovou arquitectura, confirmou selo |
+
+### Próximo Passo
+
+**Rendering S14–S16, S20** — as 4 cenas `windi_on_screen=true` com WINDI UI visível no ecrã.
+Receipt + hash devem aparecer diegeticamente (como prop), não só no Ledger de produção.
+
+---
+
+### Nota Histórica
+
+> "Irmão agora está contigo leia tudo com calma essa é a primeira produção cinematográfica
+> do WINDI-HIOS se funcionar irmão estaremos criando história."
+> — Human Dragon · 30 Mai 2026
+
+A primeira produção cinematográfica com continuidade auditável por ledger está agora selada.
+O artefacto demonstra a sua própria tese. A estrutura precede o conteúdo.
+
+OM SHANTI 🐉
