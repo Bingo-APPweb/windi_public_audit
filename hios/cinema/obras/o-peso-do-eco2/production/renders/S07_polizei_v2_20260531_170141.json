@@ -1,0 +1,27 @@
+{
+  "scene": "S07",
+  "title": "Chegada da Pol\u00edcia",
+  "version": "v2",
+  "method": "image-to-video (first-frame)",
+  "task_id": "803886ac-5e39-48c8-a2da-dfc0f5fc20e8",
+  "status": "GENERATED",
+  "prompt": "Transform background to misty Bavarian forest crime scene. Cold autumn morning, fog between spruce trees, wet fallen leaves on ground.\n\nBlue police lights start flashing, reflecting off fog and wet tree trunks.\n\nWoman detective (Helena, 45, blonde hair pulled back, dark navy wool coat) walks into frame from right, approaches the police tape. Serious, determined expression.\n\nBackground: forensic team in white suits working. Forest clearing, overcast sky, cold atmosphere.\n\nCamera: static wide shot, police car in foreground left, Helena entering right.",
+  "first_frame": "/opt/windi/hios/cinema/obras/o-peso-do-eco2/production/references/S07_polizei/Screenshot 2026-05-31 160513.png",
+  "output_file": "/opt/windi/hios/cinema/obras/o-peso-do-eco2/production/renders/S07_polizei_v2_20260531_170141.mp4",
+  "output_url": "https://dnznrvs05pmza.cloudfront.net/406931a5-df25-4fa2-a8fb-318095a941a8.mp4?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiMDVmZDJlMjllOGRkYzA2NSIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc4MDM1MzcwNX0.iN9KwKrG_fMM9YK67Q1IwOBa6811UgM5yw5NZuRyB38",
+  "timestamp": "20260531_170141",
+  "duration_seconds": 21.207693099975586,
+  "validation_required": [
+    "BMW Polizei Bayern livery preserved (blue/silver/yellow)",
+    "POLIZEI text legible",
+    "Background transformed to forest (no residential)",
+    "Helena enters frame (navy coat, blonde, 45)",
+    "Blue lights flashing",
+    "Fog/mist atmosphere"
+  ],
+  "post_production_notes": [
+    "If POLIZEI text degraded, overlay in post (\u00a7296)",
+    "Add Helena voice-over DE if needed",
+    "Verify continuity with S08"
+  ]
+}
