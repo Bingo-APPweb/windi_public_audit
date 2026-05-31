@@ -107,3 +107,8 @@ verify-public/web/*.png
 
 # === SNAPPYMAIL CONTAINER DATA (Docker UID 82) ===
 w-mail-001/snappymail-data/
+
+# === CCode/MCP RUNTIME (added 31 Mai 2026) ===
+.cache/
+.local/lib/python*/
+.npm/_cacache/

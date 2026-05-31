@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.58.0
-**Sealed:** 2026-05-30 · §294 Constituição do Mundo (World-State + Scene-Matrix + Continuity-Bible)
+**Version:** 2.59.0
+**Sealed:** 2026-05-31 · Overflow Fix (§236/§261/§291 migrados para HISTORY)
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -702,220 +702,34 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 ## §236 · Protocolo de Continuidade Inter-Sessão
 
-```
-Status:     SEALED · IRREMEDIÁVEL · I9 (extensão a session boundary)
-Data:       2026-05-04
-Receipt:    WINDI-PROTOCOL-§236-CONTINUITY-20260504
-Autoria:    Human Dragon + Claude.ai web (sessão de diagnóstico)
-Origem:     Após quebra de continuidade em sessão CCode anterior
-```
+**Status:** SEALED · IRREMEDIÁVEL · **Receipt:** `WINDI-PROTOCOL-§236-CONTINUITY-20260504`
 
-### Mandato
+Toda instância Claude (CCode/web) deve cumprir as **Três Leis de Continuidade**: (I) Leitura obrigatória de arranque, (II) Escrita obrigatória de fecho, (III) Declaração explícita de estado. Sem leitura confirmada → modo recusa-de-propor-trabalho.
 
-Toda instância de Claude operando no projecto WINDI — CCode CLI, Claude.ai web, ou qualquer interface futura — deve cumprir as **Três Leis de Continuidade de Sessão** antes de propor qualquer trabalho.
-
-### Lei I — Leitura obrigatória de arranque
-
-Primeira acção de qualquer sessão WINDI:
-
-```bash
-cat /opt/windi/CLAUDE.md
-tail -150 /opt/windi/CLAUDE-HISTORY.md
-```
-
-Sem leitura confirmada por output explícito ao Human Dragon, **modo recusa-de-propor-trabalho**.
-
-### Lei II — Escrita obrigatória de fecho
-
-Toda sessão termina com `cat >> /opt/windi/CLAUDE-HISTORY.md` contendo, no mínimo:
-
-- Data ISO + intervalo horário
-- Sprint actual + modo (CCode / web)
-- Trabalho completado
-- Selos emitidos com receipt IDs
-- Scaffold pending com condição de activação
-- Próximo passo proposto com ficheiros/comandos concretos
-- Blockers identificados
-- Decisões constitucionais com invariante aplicado
-
-**Sem entrada de fecho, sessão não está fechada.** Encerramento abrupto admite stub mínimo (3 linhas + 1 acção crítica) — stub é melhor que silêncio.
-
-### Lei III — Declaração explícita de estado
-
-Output de abertura visível ao Human Dragon deve declarar:
-
-- Ficheiros lidos com intervalo de linhas
-- Sprint actual
-- Último selo emitido
-- Trabalho herdado
-- Scaffold pending
-- Próximo passo herdado
-- Blockers conhecidos
-
-**Só então** pedir instrução. Não antes.
-
-### Enforcement
-
-A SKILL `~/.claude/skills/windi-session-continuity/SKILL.md` implementa o mandato no nível do agente. Carregamento automático por triggers amplos cobrindo qualquer arranque ou fecho de sessão WINDI.
-
-### Anti-Pattern Reconhecido
-
-Este protocolo nasce do reconhecimento explícito de um anti-pattern vivido:
-
-> Sessão CCode de início de Maio 2026 construiu PDT-001, Surface V1, COMMUNIQUÉ.JMPG sobre W-LEXICON-001 em código zero, sem ter lido estado do W-LEXICON-001. Trabalho preservado como scaffold pending — mas reconhecido como prematuro pela própria instância antes do fim da sessão.
-
-§236 garante que padrão não se repete **por estrutura, não por boa-vontade**.
-
-### Genealogia Constitucional
-
-§236 estende I9 (Prohibition of Autonomy Escalation) ao boundary temporal entre sessões LLM. Mesma lógica que governa o DID Berçário aplicada a agente: identidade soberana através do tempo, suportada por leitura e escrita disciplinadas.
-
-§236 é a versão-Claude da Lei I do DID Berçário: *Existência antes de Acção*.
+> **Full details:** `CLAUDE-HISTORY.md` § MIGRAÇÃO OVERFLOW 31 Mai 2026
 
 ---
 
 ## §261 · W-BIND-001 Cognitive Bind Module
 
-> **"O Cognitive Bind Module não dá memória à IA. Ele dá admissibilidade ao reinício cognitivo."**
+**Status:** SEALED v0.2.0 · **Receipt:** `7FDA926F` · **Invariants:** I1, I9, I11, I13, I14
 
-```
-Status:     SEALED · v0.2.0
-Receipt:    WINDI-S261-COGNITIVE-BIND-MODULE-20260513151238-7FDA926F
-Invariants: I1, I9, I11, I13, I14
-doc_type:   cognitive_handoff
-```
+> *"O Cognitive Bind Module não dá memória à IA. Ele dá admissibilidade ao reinício cognitivo."*
 
-### Definição Canónica
+Primitive WINDI para estado mínimo, verificável e epistemicamente honesto em reinício de sessões IA+H. Scoring: 90-100=FULL, 70-89=PARTIAL, 50-69=MINIMAL, <50=REFUSED.
 
-Primitive WINDI para gerar, validar e transportar estado mínimo, verificável e epistemicamente honesto para reinício de sessões híbridas IA+H. Continuidade externa disciplinada, não memória interna simulada.
+**Uso:** `bash /opt/windi/scripts/cognitive-bind-module.sh generate`
 
-### Bind Integrity Scoring
-
-| Score | Nível | Re-entry |
-|-------|-------|----------|
-| 90-100 | FULL | ADMISSIBLE |
-| 70-89 | PARTIAL | DEGRADED |
-| 50-69 | MINIMAL | RISKY |
-| <50 | BROKEN | **REFUSED** |
-
-### 5 Contenções Constitucionais
-
-- **C1:** Score mede admissibilidade, não inteligência
-- **C2:** REFUSED é fail-safe, não punição
-- **C3:** Bind preserva admissibilidade, não estado runtime perfeito
-- **C4:** Cognitive Handoff ≠ consciência contínua
-- **C5:** O Humano é o verdadeiro continuity carrier
-
-### Uso
-
-```bash
-bash /opt/windi/scripts/cognitive-bind-module.sh generate
-```
-
-> **Full details:** `CLAUDE-HISTORY.md` § §261
+> **Full details:** `CLAUDE-HISTORY.md` § MIGRAÇÃO OVERFLOW 31 Mai 2026
 
 ---
 
 ## §291 · W-HIOS-CINEMATIC-SPINE-001 — Cinema Production Pipeline
 
-> **"The gap is the finding."**
+**Status:** SEALED v2.0 · **Receipt:** `WINDI-S291-OPDE-V2-FINAL-20260529184000` · **Invariants:** I1, I9, I11, I14
 
-```
-Status:     SEALED · v2.0
-Receipt:    WINDI-S291-OPDE-V2-FINAL-20260529184000
-Invariants: I1, I9, I11, I14
-Obra:       "O Peso do Eco" Versão 2
-```
+> *"The gap is the finding."*
 
-### Papel Operacional — Geração de Vídeo
+Pipeline de produção cinematográfica com continuidade auditável. **Arquitectura I9:** CCode propõe (prompt+cast), Human Dragon gatilha, selo no Ledger requer gate humano. **SPINE-CAST:** continuidade multi-personagem. **Thresholds:** 0.65 operacional, 0.75 forense.
 
-**Arquitectura I9 (IRREMEDIÁVEL — decisão selada 29 Mai 2026):**
-
-| Capacidade | Actor | Natureza |
-|------------|-------|----------|
-| Preparar e propor invocação (prompt + cast) | CCode | Trabalho de Architect |
-| Gatilho que produz artefacto | Human Dragon | Estrutural (chave vive do lado humano) |
-| Selo no Ledger | Human Dragon | I9 aplica-se aqui |
-
-> *CCode propõe invocação do gerador (prompt + validação de cast). A execução que
-> produz artefacto corre por acto explícito do Human Dragon. Nenhum output do
-> gerador é selável sem gate humano — I9 aplica-se ao selo, não só ao gatilho.*
-
-**C6 — Proveniência Sintética (EU AI Act Art. 50):**
-> *A abstracção de geradores oculta qual infraestrutura, nunca que o artefacto
-> é sintético. Todo output gerado que receba selo carrega marca de proveniência
-> sintética legível ao destinatário. Esconder a máquina é técnico; esconder que
-> houve máquina é fraude de proveniência — proibido.*
-
-**Gerador:** Veo 3.1 (chaves Gemini). DALL-E 3 serve de referência de design
-(input conceptual), NÃO como fonte do embedding.
-
-### Método B4 — Identity Continuity Validation
-
-| Componente | Ficheiro | Função |
-|------------|----------|--------|
-| `spine.py` | `/opt/windi/hios/.../b4/spine.py` | Continuidade UMA identidade |
-| `spine_cast.py` | `/opt/windi/hios/.../b4/spine_cast.py` | Continuidade MULTI-PERSONAGEM |
-| `embed_face` | Server B (InsightFace buffalo_l) | Extracção de embeddings 512-dim |
-
-### Constantes LOCKED
-
-| Constante | Valor | Significado |
-|-----------|-------|-------------|
-| `THRESHOLD_OP` | 0.65 | Gate operacional — cena avança |
-| `THRESHOLD_FORENSE` | 0.75 | Gate forense — admissível como prova |
-| `MAX_REGEN` | 3 | Regenerações máximas por cena |
-| `IDENTITY_FLOOR` | 0.65 | Piso para atribuição de identidade (SPINE-CAST) |
-
-### SPINE-CAST — Continuidade Multi-Personagem
-
-Resolve o bug do "maior rosto": em cenas com elenco (ex. S21 — Marcus à frente,
-Elisa ao fundo), o método antigo media só o maior rosto. SPINE-CAST mede CADA
-rosto contra CADA âncora do elenco.
-
-```python
-measure_scene_cast("S21",
-    face_embeddings=[(45000, emb_marcus), (6000, emb_elisa)],
-    cast_anchors={"elisa": anchor_elisa, "marcus": anchor_marcus},
-    expected_characters=["elisa", "marcus"]
-)
-# → Marcus: 0.88 FORENSE · Elisa: 0.71 OPERACIONAL (cada um correcto)
-```
-
-**Piso de identidade:** cosine < 0.65 → rosto fica `UNIDENTIFIED` (não forçado).
-
-### Âncoras do Elenco
-
-| Personagem | Status | Embedding Hash | Source |
-|------------|--------|----------------|--------|
-| **ELISA v2** | SEALED ✅ | `3fdec0fa...` | Veo 3.1 S01 frame_01 |
-| MARCUS | PENDENTE | — | Extrair de S09 |
-| THOMAS | PENDENTE | — | Extrair de S04 |
-| HELENA | PENDENTE | — | Extrair de S07 |
-
-### Resultados §291 — Type-B Scenes
-
-| Cena | Mean | Verdict | Nota |
-|------|------|---------|------|
-| S15 | 0.8690 | FORENSIC ✅ | Eco preservado |
-| S20 | 0.7298 | OPERATIONAL | Vídeo-in-vídeo (gap = finding) |
-| S21 | 0.8638 | FORENSIC ✅ | Duelo silencioso |
-| S14 | 0.8110 | FORENSIC ✅ | Match found |
-| S16 | 0.9574* | FINDING | *3/8 frames (zoom extremo → NO_FACE) |
-
-**Estatísticas:** 5/5 aceites · 4 forensic + 1 operational · 0 regenerações
-
-### Ficheiros
-
-```
-/opt/windi/hios/visual/producer/hybrid-pipeline/b4/
-├── spine.py           # Single-identity continuity (12 tests)
-├── spine_cast.py      # Multi-character continuity (6 tests)
-└── __init__.py        # Exports both
-
-/opt/windi/hios/cinema/obras/o-peso-do-eco/
-├── canons/ELISA-v2-CHARACTER-STATE.md   # SEALED
-└── _forense/obra2-v2/S291_FINAL_SEAL_v2.md
-```
-
-> **Full details:** `CLAUDE-HISTORY.md` § §290-§291
+> **Full details:** `CLAUDE-HISTORY.md` § MIGRAÇÃO OVERFLOW 31 Mai 2026
