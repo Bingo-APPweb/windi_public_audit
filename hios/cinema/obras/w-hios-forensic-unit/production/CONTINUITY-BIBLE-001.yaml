@@ -1,0 +1,237 @@
+# =============================================================================
+# WINDI-HIOS · W-HIOS FORENSIC UNIT · CONTINUITY-BIBLE-001
+# -----------------------------------------------------------------------------
+# DE: Kontinuitäts-Bibel — dauerhafte Merkmale jeder Figur.
+# EN: Continuity Bible — permanent traits of each character.
+# PT: Bíblia de Continuidade — traços permanentes de cada personagem.
+# -----------------------------------------------------------------------------
+# This file governs WARDROBE / PROP / SPEECH permanence for the series.
+# Identity comes from CHARACTER-STATE documents in /canons/.
+# =============================================================================
+
+bible:
+  id: CONTINUITY-BIBLE-001
+  series: W-HIOS-FORENSIC-UNIT
+  doc_type: continuity_bible
+  created: "2026-06-01"
+  status: PRE-PRODUCTION
+  rule:
+    de: "Identität kommt aus CHARACTER-STATE. Diese Datei regelt nur Kleidung, Requisiten, Sprechweise."
+    en: "Identity comes from CHARACTER-STATE. This file governs only wardrobe, props, speech."
+    pt: "Identidade vem de CHARACTER-STATE. Este ficheiro governa só figurino, adereços, fala."
+
+# -----------------------------------------------------------------------------
+# PROTAGONISTS (W-HIOS Forensic Unit — Interpol)
+# -----------------------------------------------------------------------------
+
+characters:
+
+  - name: HELENA_MEYER
+    anchor_ref: "HELENA-MEYER-v1-CHARACTER-STATE"
+    continuity_tier: FORENSIC
+    age: 29
+    nationality: German
+    role: "Data Archaeologist — operates WINDI Ledger System"
+    appearance:
+      skin: "olive/morena"
+      hair: "dark brown with natural highlights, shoulder-length"
+      eyes: "penetrating, surgical focus"
+    wardrobe:
+      professional: "dark blazer, satin blouse (blue or cream), straight-cut trousers"
+      laboratory: "turtleneck or smart-casual, hair sometimes tied back"
+    props:
+      terminal: "WINDI multi-screen workstation"
+      tablet: "Interpol tablet with faded emblem"
+      stylus: "for screen annotations"
+    speech:
+      register: "technical, precise, low volume"
+      language: de/en
+      patterns:
+        - "Short incisive sentences when presenting data"
+        - "Speaks faster when close to a discovery"
+        - "Rarely uses emotional language"
+
+  - name: MARCUS_VANCE
+    anchor_ref: "MARCUS-VANCE-v1-CHARACTER-STATE"
+    continuity_tier: FORENSIC
+    age: 52
+    nationality: British
+    role: "Inspector-Chief — Leader of W-HIOS Unit, Guardian of the Secret"
+    appearance:
+      hair: "grey, short cut, unpretentious"
+      face: "deep expression lines, permanent dark circles"
+      build: "slightly hunched when thinking, erect when confronting"
+    wardrobe:
+      coat: "worn but quality overcoat (tweed or dark wool)"
+      shirt: "simple collar shirts (white or light blue)"
+      tie: "rarely worn"
+      shoes: "comfortable, worn Oxford"
+    props:
+      mug: "cast iron coffee mug — always present in bunker"
+      briefcase: "analogue leather briefcase"
+      watch: "antique wristwatch (family heirloom)"
+      key: "bunker access key"
+    speech:
+      register: "firm, paternal, sometimes ironic"
+      language: en/de
+      patterns:
+        - "Short, meaning-loaded sentences"
+        - "Uses fishing/hunting metaphors (bait, hook, prey)"
+        - "When emotionally affected, speaks even lower"
+
+  - name: LUCAS_SILVA
+    anchor_ref: "LUCAS-SILVA-v1-CHARACTER-STATE"
+    continuity_tier: FORENSIC
+    age: 40
+    nationality: Portuguese-Brazilian
+    role: "Jurist and Chain of Custody Analyst"
+    appearance:
+      hair: "dark brown with grey at temples, well-cut"
+      face: "angular, expressive brown eyes"
+      beard: "controlled stubble"
+    wardrobe:
+      suit: "well-cut suits in dark tones (navy, charcoal)"
+      shirt: "subtle colours (light blue, white, light lavender)"
+      tie: "optional (wears in court, not in field)"
+      glasses: "reading glasses (thin metal frame)"
+    props:
+      briefcase: "leather — contains accusation dossiers"
+      tablet: "Interpol — access to legal databases"
+      pen: "permanent ink — signs warrants"
+    speech:
+      register: "informal/ironic with team, cutting/precise with enemies"
+      language: pt/en/de/fr/es
+      patterns:
+        - "Uses legal jargon with surgical precision"
+        - "Intercalates technical phrases with ironic comments"
+        - "Rhetorical questions that corner the adversary"
+
+# -----------------------------------------------------------------------------
+# THE GHOST (Deceased Infiltrator)
+# -----------------------------------------------------------------------------
+
+  - name: GABI_SANTOS
+    anchor_ref: "GABI-SANTOS-v1-CHARACTER-STATE"
+    continuity_tier: FORENSIC
+    age: 33 (at death)
+    nationality: Brazilian (Santos, SP)
+    role: "Double Agent — The Anchor — Motor of the Series"
+    status: "DECEASED — appears in flashbacks and on Interpol screens"
+    appearance:
+      skin: "morena"
+      hair: "dark brown, wavy, shoulder-length"
+      eyes: "expressive, mix of intelligence and contained sadness"
+    wardrobe:
+      corporate: "elegant neutral dresses, European-cut blazers, minimalist accessories"
+      death_scene: "dark shirt, professional trousers"
+    props:
+      phone: "modified phone with satellite safeguard protocol"
+      pen: "permanent ink — analogue trace crosses with Dragons"
+      projector: "steganographic device for invisible seals"
+      notebook: "black cover, coded notes"
+    speech:
+      register: "sophisticated professional, defiant when confronted"
+      language: pt/de/en
+      final_quote: "A prova não mente, Marcus. Ela apenas espera."
+
+# -----------------------------------------------------------------------------
+# ANTAGONISTS (Vanguard-Nexus Capital — The Cartel)
+# -----------------------------------------------------------------------------
+
+  - name: ALEJANDRO_VALENZUELA
+    anchor_ref: "ALEJANDRO-VALENZUELA-v1-CHARACTER-STATE"
+    continuity_tier: FORENSIC
+    age: 40-45
+    nationality: Colombian-Brazilian
+    role: "The Architect — Financial brain of the cartel"
+    appearance:
+      hair: "dark brown with grey at temples, subtle gel"
+      face: "angular, strong jaw, cold intelligent eyes"
+      posture: "relaxed but dominant"
+    wardrobe:
+      suit: "Italian cut (Brioni/Zegna level) in dark tones"
+      shirt: "Egyptian cotton (white or light blue)"
+      tie: "discreet silk"
+      watch: "minimalist but expensive (Patek Philippe style)"
+    props:
+      cup: "porcelain cup — holds while giving orders"
+      pen: "Montblanc — signs contracts"
+      office: "42nd floor panoramic, Frankfurt"
+      art: "modern art on walls — legitimacy mask"
+    speech:
+      register: "charismatic/visionary with investors, cold/commanding with subordinates"
+      language: en/de/pt/es
+      patterns:
+        - "Uses sophisticated financial jargon"
+        - "Long complex sentences when confusing"
+        - "Short cutting sentences when ordering"
+        - "Never admits error; reframes as 'strategic adjustment'"
+
+  - name: MARCUS_COUTO
+    anchor_ref: "MARCUS-COUTO-v1-CHARACTER-STATE"
+    continuity_tier: FORENSIC
+    age: 40-45
+    nationality: Brazilian (European naturalized)
+    role: "The Caretaker — Security Chief and Executor"
+    appearance:
+      hair: "grey, impeccably combed back"
+      face: "angular, pronounced jaw, dark calculating eyes"
+      shave: "CLEAN-SHAVEN — no beard, no mustache"
+      build: "athletic but discreet under suits"
+    wardrobe:
+      suit: "European dark suits, perfect cut"
+      shirt: "impeccable white"
+      coat: "dark cashmere overcoat (winter)"
+      watch: "silver, discreet but expensive"
+    props:
+      usb: "cryptographic pen drive — log cleaning device"
+      tablet: "corporate — Vanguard-Nexus server access"
+      watch_digital: "discreet communication with Alejandro"
+    speech:
+      register: "cold bureaucratic courtesy hiding total coldness"
+      language: pt/de/en
+      patterns:
+        - "Never raises voice"
+        - "Corporate euphemisms for violence ('contract termination', 'cycle closure')"
+        - "Calculated silences before responding"
+        - "When threatening: low voice, physical proximity"
+
+# -----------------------------------------------------------------------------
+# WORLD-STATE RULES
+# -----------------------------------------------------------------------------
+
+world:
+  primary_locations:
+    - id: FRANKFURT_VANGUARD_HQ
+      type: "corporate tower, 42nd floor"
+      aesthetic: "glass, brushed steel, NOIR corporate minimalism"
+    - id: INTERPOL_BUNKER
+      type: "windowless tech bunker, Central Europe"
+      aesthetic: "dark blue server racks, multi-screen terminals"
+    - id: TRIBUNAL_FRANKFURT
+      type: "German courtroom"
+      aesthetic: "classic wood panels juxtaposed with forensic tech"
+
+  time_period: "Present day (2026)"
+  jurisdiction: "European Union / International"
+  technology_level: "Advanced forensic cryptography (WINDI Ledger System)"
+
+# -----------------------------------------------------------------------------
+# SUPPORTING RULES
+# -----------------------------------------------------------------------------
+
+supporting_rules:
+  interpol_extras: "Professional attire, tech-savvy appearance, multilingual"
+  vanguard_staff: "Corporate suits, neutral expressions, impersonal"
+  court_extras: "Judge in black German robe, prosecutor formal dark, gallery muted"
+  prohibition: "No background element may contradict the 'impersonal corporate crime' aesthetic"
+
+# -----------------------------------------------------------------------------
+# LEDGER CONTRACT
+# -----------------------------------------------------------------------------
+
+ledger_contract:
+  receipt_required: true
+  hash_algo: sha256
+  status_target: PRE-PRODUCTION
+  immutability: "Changes to sealed CHARACTER-STATE require errata receipt"

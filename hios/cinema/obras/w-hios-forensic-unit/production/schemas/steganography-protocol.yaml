@@ -1,0 +1,259 @@
+# =============================================================================
+# W-HIOS FORENSIC UNIT — Steganography Protocol
+# =============================================================================
+# Purpose: Define the rendering and validation rules for Dragon Imprints
+# (Dragões Impressos) — the invisible forensic seals that drive the narrative.
+# =============================================================================
+
+protocol:
+  id: W-HIOS-STEGANOGRAPHY-PROTOCOL
+  version: "1.0.0"
+  created: "2026-06-01"
+  status: PRE-PRODUCTION
+  codename: "DRAGON_IMPRINT"
+
+# -----------------------------------------------------------------------------
+# NARRATIVE FUNCTION
+# -----------------------------------------------------------------------------
+
+narrative:
+  description: |
+    Dragon Imprints are invisible cryptographic seals embedded by GABI SANTOS
+    during her 5-year infiltration of Vanguard-Nexus Capital. They serve as
+    the primary forensic evidence mechanism in the series.
+
+    For conventional forensic experts, notaries, and the cartel's own security:
+    - The documents appear 100% authentic and unaltered
+    - No visible anomalies, watermarks, or digital signatures
+
+    For the W-HIOS Forensic Unit operating the WINDI Ledger:
+    - The fractal geometry of a Dragon emerges from mathematical analysis
+    - The seal proves chain of custody and identifies the sealing moment
+    - The imprint cannot be removed without destroying the document
+
+  dramatic_function:
+    - "Creates 'terror invisível' for the cartel"
+    - "Allows Gabi's legacy to haunt her killers post-mortem"
+    - "Provides the 'eureka' moments when Helena deciphers the patterns"
+    - "Justifies the technical superiority of the Unit over conventional police"
+
+# -----------------------------------------------------------------------------
+# VISUAL REPRESENTATION (For Renders)
+# -----------------------------------------------------------------------------
+
+visual:
+  # When the Dragon is HIDDEN (default state for cartel)
+  hidden_state:
+    description: "Appears as normal document noise"
+    visibility: 0.0
+    render_as: "compression artifacts, paper texture, ink dispersion"
+
+  # When the Dragon is REVEALED (W-HIOS analysis mode)
+  revealed_state:
+    description: "Fractal geometry of dragon emerges"
+    animation: "gradual formation from noise to pattern"
+    duration_seconds: 3.5
+    color_scheme:
+      primary: "#C9A84C"     # WINDI Gold
+      secondary: "#0A0A10"   # NOIR Black
+      highlight: "#FFFFFF"   # White for contrast
+
+  # Dragon fractal properties
+  fractal:
+    type: "recursive_geometric"
+    complexity_min: 0.7
+    complexity_max: 0.95
+    elements:
+      - "scales" (repeating hexagonal patterns)
+      - "wings" (logarithmic spirals)
+      - "eyes" (focal points encoding metadata)
+      - "claws" (edge signatures)
+
+# -----------------------------------------------------------------------------
+# ANALOG EMBEDDING (Physical Documents)
+# -----------------------------------------------------------------------------
+
+analog:
+  description: |
+    When Gabi seals a PHYSICAL document (printed paper), the Dragon is
+    embedded through micro-modifications that appear as natural printing
+    imperfections.
+
+  methods:
+    - id: CELLULOSE_FIBER
+      description: "Micro-deviations in paper fiber orientation"
+      detection: "Requires polarized light microscopy + WINDI analysis"
+      resistance: "Survives photocopying, scanning"
+
+    - id: TONER_DISPERSION
+      description: "Millimetric spacing variations in printer toner"
+      detection: "Requires high-resolution scanning + pattern analysis"
+      resistance: "Destroyed by re-printing"
+
+    - id: INK_SIGNATURE
+      description: "Permanent ink crosses with Dragon vector mathematically"
+      detection: "Requires original + spectral analysis"
+      resistance: "Cannot be forged without original pen"
+
+  sealing_device:
+    name: "Steganographic Projector"
+    description: "Handheld device that projects invisible light pattern"
+    prop_file: "props/steganographic_projector.png"
+    operation: "Point at document, activate, pattern embeds in ~2 seconds"
+
+# -----------------------------------------------------------------------------
+# DIGITAL EMBEDDING (Electronic Documents)
+# -----------------------------------------------------------------------------
+
+digital:
+  description: |
+    When Gabi seals a DIGITAL document (PDF, spreadsheet, email), the Dragon
+    is embedded in metadata layers that appear as compression artifacts.
+
+  methods:
+    - id: COMPRESSION_NOISE
+      description: "Hidden in JPEG/PDF compression artifacts"
+      file_types: ["pdf", "jpg", "png"]
+      detection: "Requires WINDI Ledger frequency analysis"
+      resistance: "Destroyed by re-compression at different quality"
+
+    - id: FONT_KERNING
+      description: "Micro-variations in character spacing"
+      file_types: ["pdf", "docx"]
+      detection: "Requires font geometry analysis"
+      resistance: "Survives printing, destroyed by text re-flow"
+
+    - id: METADATA_LAYERS
+      description: "Hidden data in document metadata fields"
+      file_types: ["pdf", "xlsx", "docx"]
+      detection: "Requires deep metadata extraction"
+      resistance: "Destroyed by metadata stripping"
+
+  sealing_method:
+    description: "Modified scanner/digitizer injects pattern during scan"
+    workflow:
+      1: "Document placed in scanner"
+      2: "Pattern injected during A/D conversion"
+      3: "Output file contains invisible Dragon"
+
+# -----------------------------------------------------------------------------
+# TIME-LOCK MECHANISM
+# -----------------------------------------------------------------------------
+
+time_lock:
+  description: |
+    Dragon Imprints can be programmed with time-lock triggers. The seal
+    exists but remains "dormant" until the trigger condition is met.
+
+  trigger_types:
+    - id: DEATH_TRIGGER
+      description: "Activates when sealer's biometrics go offline"
+      used_by: "Gabi Santos"
+      mechanism: "Satellite pulse from modified phone on impact"
+
+    - id: DATE_TRIGGER
+      description: "Activates at predetermined date/time"
+      use_case: "Delayed evidence release"
+
+    - id: EVENT_TRIGGER
+      description: "Activates when specific document is accessed"
+      use_case: "Trap for investigators"
+
+  post_activation:
+    - "Dragon becomes detectable by WINDI Ledger"
+    - "Sequential release queue begins"
+    - "Each document points to next in chain"
+
+# -----------------------------------------------------------------------------
+# DETECTION PROTOCOL (W-HIOS UNIT)
+# -----------------------------------------------------------------------------
+
+detection:
+  description: "How Helena Meyer and the Unit detect Dragon Imprints"
+
+  workflow:
+    1:
+      action: "Ingest document into WINDI Ledger"
+      visual: "Document appears on screen, scanning animation"
+
+    2:
+      action: "Run frequency analysis on pixel/character patterns"
+      visual: "Noise patterns highlighted, mathematical overlay"
+
+    3:
+      action: "Apply Dragon signature template matching"
+      visual: "Fractal geometry begins to emerge from noise"
+
+    4:
+      action: "Validate against known Dragon parameters"
+      visual: "Dragon fully revealed, metadata extracted"
+
+    5:
+      action: "Cross-reference with chain of custody database"
+      visual: "Timeline appears, showing when/where document was sealed"
+
+  false_positive_rate: "< 0.001%"
+  false_negative_rate: "< 0.01%"
+
+# -----------------------------------------------------------------------------
+# RENDER GUIDELINES (For Production)
+# -----------------------------------------------------------------------------
+
+render_guidelines:
+
+  hidden_dragon_scene:
+    description: "Scene where document appears normal"
+    render_notes:
+      - "Document texture should include subtle noise patterns"
+      - "Noise should be mathematically coherent (not random)"
+      - "Conventional analysis shows nothing"
+
+  revealed_dragon_scene:
+    description: "Scene where Helena reveals the Dragon"
+    render_notes:
+      - "Animation: noise reorganizes into fractal"
+      - "Duration: 3-5 seconds"
+      - "Sound: subtle crystalline tone as pattern locks"
+      - "Lighting: screen glow illuminates Helena's face"
+
+  dual_view_scene:
+    description: "Split screen showing both perspectives"
+    render_notes:
+      - "Left: What cartel/notary sees (normal document)"
+      - "Right: What WINDI Ledger sees (Dragon revealed)"
+      - "Emphasizes technological advantage of the Unit"
+
+# -----------------------------------------------------------------------------
+# NARRATIVE RULES
+# -----------------------------------------------------------------------------
+
+narrative_rules:
+  - rule: "Dragons are NEVER visible to naked eye"
+    violation: "Breaks suspension of disbelief"
+
+  - rule: "Dragons can ONLY be revealed by WINDI Ledger"
+    violation: "Undermines Unit's unique capability"
+
+  - rule: "Each Dragon contains metadata about its creation"
+    implication: "Helena can trace when/where Gabi sealed it"
+
+  - rule: "Tampering with document destroys the Dragon"
+    implication: "Absence of Dragon on 'clean' doc is suspicious"
+
+  - rule: "Multiple Dragons on same doc = multiple sealing events"
+    implication: "Can trace document's journey through cartel"
+
+# -----------------------------------------------------------------------------
+# LEDGER CONTRACT
+# -----------------------------------------------------------------------------
+
+ledger:
+  receipt_required_for:
+    - steganography_protocol_update
+    - dragon_template_change
+    - detection_algorithm_update
+
+  archive:
+    - "All Dragon templates stored immutably"
+    - "All detection events logged with timestamp"
+    - "All revealed Dragons linked to source documents"

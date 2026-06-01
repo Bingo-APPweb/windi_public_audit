@@ -1,0 +1,149 @@
+# =============================================================================
+# W-HIOS FORENSIC UNIT — Validation Metrics Configuration
+# =============================================================================
+# Purpose: Define the mathematical constraints for multi-anchor coexistence
+# and identity preservation across the industrial production pipeline.
+# =============================================================================
+
+validator:
+  id: W-HIOS-FORENSIC-UNIT-VALIDATORS
+  version: "1.0.0"
+  created: "2026-06-01"
+  status: SEALED
+
+# -----------------------------------------------------------------------------
+# ORTHOGONALITY METRICS (Multi-Anchor Coexistence)
+# -----------------------------------------------------------------------------
+# These values were empirically validated on 01 Jun 2026 during the
+# Helena Meyer v5 + Marcus Couto v4 coexistence test in the tribunal scene.
+# -----------------------------------------------------------------------------
+
+orthogonality:
+  # Baseline: The natural cosine distance between two strangers
+  # This is the "zero point" - what we expect when two unrelated people
+  # are measured against each other.
+  baseline_strangers: -0.0305
+
+  # Maximum allowable cosine similarity for multi-anchor coexistence
+  # Values above this indicate latent contamination (bleed-over)
+  # where one character's features are "leaking" into another.
+  max_coexistence_threshold: 0.10
+
+  # Action when threshold is violated
+  violation_action: BLOCK_RENDER
+  violation_log: true
+
+# -----------------------------------------------------------------------------
+# IDENTITY METRICS (Single Character Consistency)
+# -----------------------------------------------------------------------------
+
+identity:
+  # Minimum cosine similarity for a character to be recognized as themselves
+  # across different scenes and renders.
+  identity_floor: 0.65
+  identity_floor_tier: OPERATIONAL
+
+  # Minimum cosine similarity for forensic-grade identity verification
+  # (admissible as evidence in the narrative's legal proceedings)
+  forensic_threshold: 0.75
+  forensic_tier: FORENSIC
+
+  # Action when identity falls below floor
+  below_floor_action: WARN
+  below_forensic_action: FLAG_FOR_REVIEW
+
+# -----------------------------------------------------------------------------
+# ANCHOR VALIDATION (Pre-Render Checks)
+# -----------------------------------------------------------------------------
+
+anchor_validation:
+  # All fixed anchors must pass these checks before any render
+  required_checks:
+    - embedding_exists: true
+    - embedding_hash_verified: true
+    - character_state_sealed: true
+    - continuity_bible_entry: true
+
+  # Rotating anchors have lighter requirements
+  rotating_checks:
+    - embedding_exists: true
+    - bank_registry_entry: true
+
+# -----------------------------------------------------------------------------
+# COEXISTENCE MATRIX (Pairwise Validation)
+# -----------------------------------------------------------------------------
+# When multiple characters appear in the same frame, their pairwise
+# cosine similarities must all fall within acceptable ranges.
+
+coexistence_matrix:
+  enabled: true
+
+  # Expected values for known character pairs (from validation tests)
+  known_pairs:
+    - pair: ["HELENA_MEYER", "MARCUS_COUTO"]
+      expected_cosine: -0.0305
+      tolerance: 0.05
+      validated_date: "2026-06-01"
+      validation_source: "Screenshot 2026-06-01 130513.jpg / 130609.jpg"
+
+  # For new pairs, use baseline expectation
+  unknown_pair_expectation:
+    min: -0.15
+    max: 0.10
+
+# -----------------------------------------------------------------------------
+# DRIFT DETECTION (Cross-Scene Consistency)
+# -----------------------------------------------------------------------------
+
+drift_detection:
+  enabled: true
+
+  # Maximum allowable drift between a character's appearance in
+  # different scenes of the same episode
+  max_intra_episode_drift: 0.15
+
+  # Maximum allowable drift across episodes
+  max_inter_episode_drift: 0.20
+
+  # Action on drift detection
+  drift_action: FLAG_FOR_REVIEW
+
+# -----------------------------------------------------------------------------
+# STEGANOGRAPHY VALIDATION (Dragon Imprints)
+# -----------------------------------------------------------------------------
+
+steganography:
+  # Validate that Dragon Imprints are correctly embedded
+  validate_dragon_imprints: true
+
+  # Fractal geometry parameters for Dragon signature
+  dragon_fractal:
+    min_complexity: 0.7
+    max_visibility: 0.01  # Must be nearly invisible to naked eye
+
+  # Embedding targets
+  targets:
+    analog:
+      - type: "cellulose_fiber"
+        description: "Micro-deviations in print patterns"
+      - type: "toner_dispersion"
+        description: "Millimetric spacing variations"
+    digital:
+      - type: "compression_noise"
+        description: "Masked in JPEG/PDF compression artifacts"
+      - type: "font_rendering"
+        description: "Hidden in font kerning metadata"
+
+# -----------------------------------------------------------------------------
+# LEDGER CONTRACT
+# -----------------------------------------------------------------------------
+
+ledger:
+  receipt_required_for:
+    - anchor_creation
+    - anchor_update
+    - episode_seal
+    - validator_config_change
+
+  hash_algorithm: sha256
+  immutability: "Changes to sealed validators require §267 errata receipt"

@@ -1,0 +1,256 @@
+# =============================================================================
+# W-HIOS FORENSIC UNIT — Sound Design Protocol
+# =============================================================================
+# Purpose: Define the Cryptographic Sound Design that makes the audience
+# FEEL the invisible terror before they understand it intellectually.
+# Inspired by: Irmã Gemini's creative intervention · 01 Jun 2026
+# =============================================================================
+
+protocol:
+  id: W-HIOS-SOUND-DESIGN
+  version: "1.0.0"
+  created: "2026-06-01"
+  status: PRE-PRODUCTION
+  codename: "RASTO_DE_AUDIO"
+
+# -----------------------------------------------------------------------------
+# PHILOSOPHY: CINEMA IS HALF IMAGE, HALF SOUND
+# -----------------------------------------------------------------------------
+
+philosophy:
+  principle: |
+    For the audience to feel the "invisible terror", sound must be the
+    engine of paranoia. The Dragon Imprints must not just be seen —
+    they must be HEARD. The sound design must provoke a physical
+    reaction of anxiety before the brain processes the information.
+
+  mantra: "O som não guia a emoção. O som sufoca-a."
+
+  inspiration:
+    - "Trent Reznor & Atticus Ross (Social Network, Gone Girl)"
+    - "Jonny Greenwood (There Will Be Blood, Phantom Thread)"
+    - "Mica Levi (Under the Skin, Jackie)"
+    - "Ben Salisbury & Geoff Barrow (Ex Machina, Annihilation)"
+
+# -----------------------------------------------------------------------------
+# THE DRAGON MOTIF: SONIC SIGNATURE OF TRUTH
+# -----------------------------------------------------------------------------
+
+dragon_motif:
+  description: |
+    Whenever Helena Meyer detects a Dragon Imprint or a Time-Lock Receipt
+    opens on screen, the audience must hear a unique sonic signature —
+    a sound that provokes physical anxiety.
+
+  components:
+
+    infrasound:
+      description: "Sub-bass frequencies below human hearing threshold"
+      frequency_range: "15-25 Hz"
+      effect: "Physical unease, chest pressure, primal fear"
+      duration: "builds over 3-5 seconds"
+      trigger: "Dragon detection beginning"
+
+    geiger_click:
+      description: "Analog clicking like radiation detector"
+      style: "Vintage Geiger counter from 1960s"
+      rhythm: "Irregular, accelerating as Dragon forms"
+      layering: "Multiple clicks at different pitches"
+      trigger: "Fractal geometry emerging"
+
+    magnetic_tape:
+      description: "Sound of old magnetic tape catching"
+      elements:
+        - "tape_hiss"
+        - "reel_motor_whir"
+        - "magnetic_head_alignment"
+      symbolism: "Truth being recorded, cannot be erased"
+      trigger: "Dragon fully revealed"
+
+    crystalline_lock:
+      description: "High-frequency tone when pattern locks"
+      frequency: "8000-12000 Hz"
+      duration: "0.5 seconds"
+      effect: "Sharp, satisfying, final"
+      trigger: "Dragon validation complete"
+
+  full_sequence:
+    1: "Infrasound begins (builds anxiety)"
+    2: "Geiger clicks emerge (something is being detected)"
+    3: "Magnetic tape sounds layer in (recording truth)"
+    4: "Crystalline lock tone (pattern confirmed)"
+    duration_total: "5-8 seconds"
+
+# -----------------------------------------------------------------------------
+# THE SILENT SOUNDTRACK: ANALOG COLD
+# -----------------------------------------------------------------------------
+
+soundtrack:
+  description: |
+    The score must not guide emotion — it must suffocate it.
+    A mixture of cold analog synthesizers with the absolute
+    silence of server rooms.
+
+  palette:
+    synthesizers:
+      - type: "Analog modular (Moog, Buchla style)"
+        character: "Cold, mechanical, inhuman"
+        use: "Corporate scenes, tension building"
+
+      - type: "Tape-manipulated piano"
+        character: "Haunting, distant, melancholic"
+        use: "Gabi flashbacks, emotional moments"
+
+      - type: "Granular synthesis"
+        character: "Fragmented, unstable, digital decay"
+        use: "Data corruption, system failures"
+
+    silence:
+      description: "Absence of sound as a compositional element"
+      types:
+        - "server_room_silence" (only HVAC hum)
+        - "corporate_silence" (sterile, no life)
+        - "bunker_silence" (tense, waiting)
+      use: "Before major revelations, interrogations"
+
+    found_sounds:
+      - "Hard drive seeking"
+      - "Keyboard typing (mechanical)"
+      - "Paper shuffling"
+      - "Elevator hum"
+      - "Fluorescent light buzz"
+
+  prohibited:
+    - "Orchestral swells"
+    - "Emotional string sections"
+    - "Obvious musical cues"
+    - "Happy or resolved melodies"
+
+# -----------------------------------------------------------------------------
+# WORLD-SPECIFIC SOUNDSCAPES
+# -----------------------------------------------------------------------------
+
+soundscapes:
+
+  corporate:
+    codename: "GLASS_CAGE_AUDIO"
+    ambient:
+      - "HVAC constant hum (40 Hz)"
+      - "Distant phone rings"
+      - "Keyboard clicks (soft)"
+      - "Elevator dings"
+    character: "Sterile, efficient, soulless"
+    reverb: "Short, dead — absorbed by expensive materials"
+    silence_percentage: 60%
+
+  bunker:
+    codename: "SHADOW_ARCHIVE_AUDIO"
+    ambient:
+      - "Server fan noise (layered)"
+      - "Hard drives seeking"
+      - "Monitor electrical hum"
+      - "Coffee machine distant"
+    character: "Dense, focused, technological womb"
+    reverb: "Medium, metallic — hard surfaces"
+    silence_percentage: 40%
+
+  tribunal:
+    codename: "JUSTICE_CHAMBER_AUDIO"
+    ambient:
+      - "Distant murmurs"
+      - "Paper rustling"
+      - "Wooden bench creaks"
+      - "Gavel impact (when used)"
+    character: "Formal, tense, weighted"
+    reverb: "Long, wooden — grand space"
+    silence_percentage: 50%
+
+  archive_footage:
+    codename: "MEMORY_DECAY_AUDIO"
+    ambient:
+      - "Tape hiss constant"
+      - "Room tone from old recording"
+      - "Electrical interference"
+      - "Clock ticking (if applicable)"
+    character: "Deteriorated, fragile, haunted"
+    reverb: "Compressed, lo-fi"
+    post_process: "Band-limited, mono"
+
+# -----------------------------------------------------------------------------
+# DIALOGUE TREATMENT
+# -----------------------------------------------------------------------------
+
+dialogue:
+  corporate_characters:
+    processing:
+      - "Slight compression (broadcast style)"
+      - "Clean, present, authoritative"
+      - "No room tone bleed"
+    effect: "They sound in control, processed, artificial"
+
+  forensic_characters:
+    processing:
+      - "Natural room tone included"
+      - "Slight proximity effect (close mic)"
+      - "Breathing audible in pauses"
+    effect: "They sound human, vulnerable, real"
+
+  gabi_archive:
+    processing:
+      - "Degraded quality (phone recording simulation)"
+      - "Compression artifacts"
+      - "Background noise layer"
+      - "Slight pitch instability"
+    effect: "She sounds like a ghost, a memory"
+
+# -----------------------------------------------------------------------------
+# TENSION MECHANICS
+# -----------------------------------------------------------------------------
+
+tension:
+  building:
+    - "Gradually increase sub-bass presence"
+    - "Add subtle dissonant tones (quarter-tones)"
+    - "Reduce high-frequency content (muffled)"
+    - "Slow down ambient sounds slightly"
+
+  release:
+    - "Sharp cut to silence"
+    - "Single crystalline tone"
+    - "Return to normal frequency spectrum"
+    - "Dragon motif completion"
+
+  sustained:
+    - "Constant low-frequency drone"
+    - "Irregular clicking/ticking"
+    - "Absence of musical resolution"
+    - "Environmental sounds slightly wrong"
+
+# -----------------------------------------------------------------------------
+# TECHNICAL SPECIFICATIONS
+# -----------------------------------------------------------------------------
+
+technical:
+  format: "5.1 Surround (minimum)"
+  sample_rate: "48kHz"
+  bit_depth: "24-bit"
+
+  mixing:
+    dialogue: "-12 to -6 dB"
+    music: "-18 to -12 dB"
+    effects: "-15 to -9 dB"
+    sub_bass: "-20 to -15 dB" (felt, not heard)
+
+  mastering:
+    loudness_target: "-24 LUFS"
+    dynamic_range: "preserved (no over-compression)"
+
+# -----------------------------------------------------------------------------
+# LEDGER CONTRACT
+# -----------------------------------------------------------------------------
+
+ledger:
+  receipt_required_for:
+    - dragon_motif_change
+    - soundtrack_palette_update
+    - world_soundscape_modification

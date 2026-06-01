@@ -1,0 +1,202 @@
+# =============================================================================
+# W-HIOS FORENSIC UNIT — Cast Library Protocol
+# =============================================================================
+# Purpose: Define the structure and rules for the Rotating Actor Bank
+# that enables industrial-scale production with character reuse.
+# =============================================================================
+
+library:
+  id: W-HIOS-CAST-LIBRARY
+  version: "1.0.0"
+  created: "2026-06-01"
+  status: PRE-PRODUCTION
+
+# -----------------------------------------------------------------------------
+# CAST TIERS
+# -----------------------------------------------------------------------------
+
+tiers:
+
+  # FIXED ANCHORS: Protagonists and main antagonists
+  # These characters appear across multiple episodes with strict continuity
+  fixed:
+    description: "Permanent characters with inalienable visual identity"
+    continuity_tier: FORENSIC
+    validation_required: true
+    drift_tolerance: 0.10
+    characters:
+      - id: HELENA_MEYER
+        role: "Data Archaeologist — Interpol"
+        status: ACTIVE
+        anchor_ref: "helena_meyer_v5.png"
+
+      - id: MARCUS_COUTO
+        role: "The Caretaker — Antagonist"
+        status: ACTIVE
+        anchor_ref: "marcus_couto_v4.png"
+
+      - id: GABI_SANTOS
+        role: "The Ghost — Deceased Infiltrator"
+        status: DECEASED_FLASHBACK
+        anchor_ref: "pending"
+
+      - id: ALEJANDRO_VALENZUELA
+        role: "The Architect — Main Antagonist"
+        status: ACTIVE
+        anchor_ref: "pending"
+
+      - id: MARCUS_VANCE
+        role: "Inspector-Chief — Interpol"
+        status: ACTIVE
+        anchor_ref: "pending"
+
+      - id: LUCAS_SILVA
+        role: "Jurist — Interpol"
+        status: ACTIVE
+        anchor_ref: "pending"
+
+  # ROTATING ANCHORS: Supporting characters that reappear
+  # These create the illusion of an interconnected criminal network
+  rotating:
+    description: "Reusable supporting characters across episodes"
+    continuity_tier: OPERATIONAL
+    validation_required: true
+    drift_tolerance: 0.20
+    reuse_rules:
+      min_episodes_between_reuse: 2
+      max_reuses_per_season: 3
+      role_change_allowed: true
+
+    # Example entries (to be populated during production)
+    characters: []
+
+  # BACKGROUND: Single-use extras
+  background:
+    description: "Single-use extras, no reuse tracking"
+    continuity_tier: NONE
+    validation_required: false
+
+# -----------------------------------------------------------------------------
+# ACTOR REGISTRY SCHEMA
+# -----------------------------------------------------------------------------
+
+registry_schema:
+  actor:
+    id: "string (UUID)"
+    name: "string (character name)"
+    tier: "enum: fixed | rotating | background"
+    anchor_file: "string (path to .png)"
+    embedding_file: "string (path to .npy)"
+    embedding_hash: "string (sha256)"
+    created_date: "date"
+    created_for_episode: "string (episode ID)"
+    appearances:
+      - episode: "string"
+        scene: "string"
+        role: "string"
+        date: "date"
+    orthogonality_validated: "boolean"
+    last_validation_date: "date"
+    notes: "string"
+
+# -----------------------------------------------------------------------------
+# REUSE PROTOCOL
+# -----------------------------------------------------------------------------
+
+reuse_protocol:
+
+  # When selecting a rotating actor for reuse
+  selection_criteria:
+    - orthogonality_with_scene_cast: "must be < 0.10"
+    - time_since_last_appearance: "prefer > 2 episodes"
+    - role_compatibility: "avoid jarring role changes"
+
+  # When a rotating actor is reused
+  on_reuse:
+    - update_appearances_log: true
+    - validate_current_anchor: true
+    - check_drift_from_original: true
+
+  # Narrative justification for reuse
+  narrative_logic:
+    - "Criminal network members appear in different contexts"
+    - "Corporate world has limited cast of power players"
+    - "Creates sense of interconnected conspiracy"
+
+# -----------------------------------------------------------------------------
+# ORTHOGONALITY MATRIX MAINTENANCE
+# -----------------------------------------------------------------------------
+
+orthogonality_maintenance:
+
+  # When a new actor is added to the library
+  on_new_actor:
+    - compute_embedding: true
+    - validate_against_all_fixed: true
+    - validate_against_scene_rotating: true
+    - update_matrix: true
+
+  # Periodic full matrix validation
+  full_validation:
+    frequency: "per_episode_seal"
+    scope: "all_fixed + all_rotating_in_episode"
+
+  # Storage
+  matrix_file: "orthogonality_matrix.json"
+  matrix_format:
+    type: "sparse_symmetric"
+    value: "cosine_similarity"
+
+# -----------------------------------------------------------------------------
+# NARRATIVE BANK CATEGORIES
+# -----------------------------------------------------------------------------
+# Pre-defined categories for rotating actors to facilitate reuse
+
+categories:
+
+  corporate:
+    description: "VC executives, board members, corporate lawyers"
+    typical_wardrobe: "expensive suits, subtle accessories"
+    typical_setting: "boardrooms, luxury offices, galas"
+
+  medical:
+    description: "Doctors, hospital administrators, pharma executives"
+    typical_wardrobe: "lab coats, professional attire"
+    typical_setting: "hospitals, clinics, conference rooms"
+
+  legal:
+    description: "Judges, prosecutors, defense attorneys, notaries"
+    typical_wardrobe: "court robes, formal suits"
+    typical_setting: "courtrooms, law offices"
+
+  political:
+    description: "Politicians, bureaucrats, EU officials"
+    typical_wardrobe: "conservative suits, official attire"
+    typical_setting: "government buildings, press conferences"
+
+  enforcement:
+    description: "Police, customs, security personnel"
+    typical_wardrobe: "uniforms, tactical gear, plain clothes"
+    typical_setting: "stations, checkpoints, crime scenes"
+
+  technical:
+    description: "IT specialists, data analysts, forensic experts"
+    typical_wardrobe: "smart casual, lab coats"
+    typical_setting: "server rooms, labs, offices"
+
+# -----------------------------------------------------------------------------
+# LEDGER CONTRACT
+# -----------------------------------------------------------------------------
+
+ledger:
+  receipt_required_for:
+    - fixed_anchor_creation
+    - fixed_anchor_update
+    - rotating_to_fixed_promotion
+
+  optional_receipt_for:
+    - rotating_anchor_creation
+    - rotating_anchor_reuse
+
+  no_receipt_for:
+    - background_creation
