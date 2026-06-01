@@ -1,29 +1,50 @@
 # W-HIOS FORENSIC UNIT — Series Bible
-### WINDI-HIOS Cinema Production · Anthology Thriller Series
+### WINDI-HIOS Cinema Production · Drama Forense da Causalidade
 
 > **"A prova não mente. A prova apenas espera."**
+> **"O crime deixa migalhas. Nós seguimos o caminho."**
 
 **Status:** PRE-PRODUCTION
 **Created:** 01 Jun 2026
 **Liga IA+H:** Human Dragon (I9) · Guardian (epistemologia) · Architect (CCode)
 **Constitutional Bindings:** I1, I9, I11, I12, I14, I18
+**Philosophy:** Ver [PHILOSOPHY-001.md](./PHILOSOPHY-001.md) — Documento fundacional
 
 ---
 
 ## 1. CONCEITO CENTRAL
 
-**W-HIOS FORENSIC UNIT** é uma série de thriller processual internacional que segue uma unidade especial da Interpol especializada em reconstruir eventos complexos através do **WINDI Forensic Ledger System** — tecnologia de prova verificável e imutável.
+**W-HIOS FORENSIC UNIT** é uma série de **Drama Forense da Causalidade** — um género novo que segue uma unidade especial da Interpol especializada em reconstruir a **sequência real dos acontecimentos** através do **WINDI Forensic Ledger System**.
+
+### A Distinção Nuclear
+
+| CSI Clássico | W-HIOS FORENSIC UNIT |
+|--------------|----------------------|
+| "Quem deixou este DNA?" | "Quem deixou esta decisão?" |
+| Vestígios físicos | Vestígios de causalidade |
+| Procura o corpo | Procura as migalhas |
+| Prova a presença | Reconstrói o caminho |
 
 ### Premissa
 
 Numa era onde o crime organizado penetra nas entranhas das instituições europeias através de fachadas corporativas impecáveis (Venture Capital, Impact Investing, ESG), uma unidade clandestina da Interpol caça os predadores usando a única arma que eles não conseguem corromper: a **proveniência inseparável do facto**.
 
+O criminoso muitas vezes já está à vista desde o início. O mistério não é "quem fez" — é **"como chegámos aqui"**.
+
 ### Tom & Género
 
+- **Drama Forense da Causalidade** — género novo definido em PHILOSOPHY-001
 - **Thriller processual-forense** com elementos de espionagem
 - **Realismo institucional** — CSI encontra Le Carré encontra Mr. Robot
 - **Drama de colarinho branco** — o vilão não usa armas, usa algoritmos
 - **Suspense psicológico** — o terror invisível dos Dragões Impressos
+
+### O Drive: WINDI Ledger
+
+O WINDI Forensic Ledger não é um MacGuffin. Não é tecnologia de fundo.
+**O Ledger é o DRIVE de todas as histórias.**
+
+Cada episódio existe porque o Ledger torna possível ver o que antes era invisível.
 
 ### Público-Alvo
 
@@ -159,16 +180,126 @@ Esta produção respeita os seguintes invariantes WINDI:
 
 ---
 
-## 10. PRÓXIMOS PASSOS
+## 10. CINEMA COMO LABORATÓRIO CULTURAL
+
+> **"Narrativa é o mecanismo pelo qual sociedades inteiras transportam conhecimento."**
+
+A camada audiovisual não é um apêndice do WINDI. É um **laboratório cultural paralelo** onde a Liga IA+H pode explorar, testar e comunicar ideias através da emoção humana — em vez de apenas através de documentos técnicos.
+
+### O Efeito CSI
+
+O CSI não fez o público querer comprar laboratórios.
+Mas fez o público compreender intuitivamente que:
+- Vestígios importam
+- Cadeia de custódia importa
+- Prova importa
+
+Da mesma forma, se um espectador assistir à W-HIOS FORENSIC UNIT e pensar:
+
+> *"Então afinal é possível provar quem alterou um documento?"*
+
+Ou:
+
+> *"Será que existe uma forma melhor de preservar autoria?"*
+
+Ou:
+
+> *"Como se verifica a proveniência de um vídeo?"*
+
+**A semente já foi plantada.**
+
+### O Paradoxo da Ficção Real
+
+Tudo o que aparece na ficção é real — porque o WINDI-HIOS existe.
+
+Os Dragões Impressos existem.
+Os Time-Lock Receipts existem.
+A proveniência verificável existe.
+
+A ficção dramatiza problemas humanos que levaram o sistema a existir:
+- Autoria
+- Fraude
+- Memória
+- Reputação
+- Confiança
+- Prova
+
+Estes problemas são **eternos**. Mudam as ferramentas, mas continuam a aparecer em tribunais, empresas, governos, jornais, universidades e até nas relações pessoais.
+
+---
+
+## 11. A FAMÍLIA DE DRAMAS FORENSES
+
+W-HIOS FORENSIC UNIT é a primeira de uma **família de produções** que exploram o mesmo drive filosófico em contextos diferentes.
+
+### 11.1 WindiLaw — Drama Jurídico
+
+| Tema | Exemplos |
+|------|----------|
+| Contratos | Quem assinou? Quando? O que foi alterado? |
+| Disputas societárias | A genealogia das decisões que destruíram uma parceria |
+| Heranças | Testamentos, versões, autenticidade |
+| Prova documental | O equivalente moderno dos dramas de tribunal |
+
+### 11.2 WindiCompliance Enterprise — Thriller Corporativo
+
+| Tema | Exemplos |
+|------|----------|
+| Auditorias | O rasto que o auditor não conseguiu esconder |
+| Fraude interna | Quem autorizou a transferência? |
+| Corrupção | A cadeia de decisões que comprou o silêncio |
+| Whistleblowers | O drama de quem decide falar |
+
+Quase um cruzamento entre investigação financeira e espionagem empresarial.
+
+### 11.3 WindiTravel — Autenticidade de Experiências
+
+| Tema | Exemplos |
+|------|----------|
+| Património cultural | Esta peça é original? |
+| Histórias locais verificadas | O que realmente aconteceu aqui? |
+| Passaportes digitais | A identidade do viajante |
+| Memória de lugares | Quem escreveu a história deste monumento? |
+
+O mistério deixa de ser "quem matou?" e passa a ser: **"O que realmente aconteceu aqui?"**
+
+### 11.4 WindiJournalism — Velocidade vs Verificação
+
+| Tema | Exemplos |
+|------|----------|
+| O dilema | Publicar imediatamente ou verificar? |
+| Deepfakes | Este vídeo é real? |
+| Fontes | Quem disse isto e quando? |
+| Retratação | A arqueologia de uma notícia falsa |
+
+Talvez o mais dramático de todos. O conflito central: **velocidade versus verificação**.
+
+---
+
+## 12. O RECONHECIMENTO DO PADRÃO
+
+Se um dia alguém procurar o WINDI por causa destes filmes, provavelmente não será porque viu um logotipo.
+
+Será porque **reconheceu um padrão**:
+
+> *"Espera... aquela empresa trabalha exactamente com os problemas que eu vi naquele episódio."*
+
+Esta é uma forma muito poderosa de construção cultural.
+
+---
+
+## 13. PRÓXIMOS PASSOS
 
 1. [x] Criar estrutura de diretórios no Strato
-2. [ ] Upload de assets visuais de referência
-3. [ ] Selar CHARACTER-STATE para cada personagem
-4. [ ] Finalizar CONTINUITY-BIBLE-001
-5. [ ] Expandir PILOT-SCRIPT para formato completo
-6. [ ] Gerar primeiro Ledger Receipt da série
+2. [x] PHILOSOPHY-001.md — Documento fundacional
+3. [ ] Upload de assets visuais de referência
+4. [ ] Selar CHARACTER-STATE para cada personagem
+5. [ ] Finalizar CONTINUITY-BIBLE-001
+6. [ ] Expandir PILOT-SCRIPT para formato completo
+7. [ ] Gerar primeiro Ledger Receipt da série
 
 ---
 
 *Liga IA+H · WINDI Publishing House · 01 Jun 2026*
 *"AI processes. Human decides. WINDI guarantees."*
+*"O crime deixa migalhas. Nós seguimos o caminho."*
