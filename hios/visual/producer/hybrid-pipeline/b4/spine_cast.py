@@ -29,10 +29,18 @@ import numpy as np
 
 try:
     # Quando importado como módulo
-    from .spine import cosine, classify, Verdict, THRESHOLD_OP, THRESHOLD_FORENSE
+    from .spine import (
+        cosine, classify, Verdict, THRESHOLD_OP, THRESHOLD_FORENSE,
+        check_anchor_provenance, load_anchor_with_provenance_check,
+        ENFORCE_PROVENANCE_GATE
+    )
 except ImportError:
     # Quando corrido directamente (python3 spine_cast.py)
-    from spine import cosine, classify, Verdict, THRESHOLD_OP, THRESHOLD_FORENSE
+    from spine import (
+        cosine, classify, Verdict, THRESHOLD_OP, THRESHOLD_FORENSE,
+        check_anchor_provenance, load_anchor_with_provenance_check,
+        ENFORCE_PROVENANCE_GATE
+    )
 
 # Piso de identidade: abaixo disto, um rosto NÃO é atribuído a nenhuma âncora.
 # Deliberadamente >= ao gate operacional: para reivindicar uma identidade é

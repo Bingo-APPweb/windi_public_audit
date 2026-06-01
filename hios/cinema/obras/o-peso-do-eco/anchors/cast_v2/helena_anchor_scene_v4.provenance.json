@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "provenance_id": "WINDI-PROV-20260601100057-4B380550",
+  "generator": "veo",
+  "model": "veo-3.0-generate-001",
+  "elo": {
+    "number": 2,
+    "type": "generated_video"
+  },
+  "prompt": "Close-up portrait of a business woman with brown hair, olive complexion. Gray background. Studio lighting. She sits calmly. Minimal movement. 5 seconds duration.",
+  "prompt_hash": "sha256:af81511f41618ae7d6b5f411ef818d0519046c47b9757b1af3637d065248f82f",
+  "output_hash_raw": "sha256:d0d6fa67c8797a9300d446feb52ad6e9e020c1bb451c7d7fdfcca72459222baf",
+  "output_filename": "helena_anchor_scene_v4.mp4",
+  "created_at": "2026-06-01T10:01:46.724427",
+  "transformations": [],
+  "parameters": {
+    "aspect_ratio": "16:9"
+  },
+  "api_response": {
+    "operation_id": "jj9aovaizrbz",
+    "duration_seconds": 49.40840935707092,
+    "status": "completed"
+  },
+  "windi_metadata": {
+    "project": "o-peso-do-eco",
+    "character": "helena",
+    "purpose": "anchor"
+  }
+}

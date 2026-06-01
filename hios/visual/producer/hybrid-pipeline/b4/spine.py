@@ -27,13 +27,18 @@ from __future__ import annotations
 
 from dataclasses import dataclass, asdict, field
 from enum import Enum
-from typing import Optional
+from pathlib import Path
+from typing import Optional, Tuple
 import numpy as np
 
 # ── Constantes LOCKED ────────────────────────────────────────────────────────
 THRESHOLD_OP = 0.65       # veredicto operacional
 THRESHOLD_FORENSE = 0.75  # veredicto forense
 MAX_REGEN = 3             # regenerações máximas por cena
+
+# ── Provenance Gate (Lei da Proveniência Inseparável) ────────────────────────
+# If True, reject anchors without valid provenance chain
+ENFORCE_PROVENANCE_GATE = True  # Set to False to disable gate (NOT RECOMMENDED)
 
 
 class Verdict(str, Enum):
@@ -230,6 +235,136 @@ def build_spine(
         if emb is not None:
             prev_emb = emb  # só actualiza o "anterior" se houve rosto
     return report
+
+
+# ── Provenance Gate (Lei da Proveniência Inseparável) ────────────────────────
+
+def check_anchor_provenance(
+    anchor_path: Path,
+    test_generator: str,
+    enforce: bool = ENFORCE_PROVENANCE_GATE
+) -> Tuple[bool, str]:
+    """
+    Gate function to check anchor provenance before measurement.
+
+    Lei da Proveniência Inseparável: anchor without verifiable provenance
+    cannot be used in cross-elo measurement. Lei da Coerência de Elo:
+    anchor and test must be from the same generator (elo).
+
+    Args:
+        anchor_path: Path to the anchor file (video or .npy)
+        test_generator: Generator that produced the test video (e.g., "veo")
+        enforce: If False, only warn but don't reject
+
+    Returns:
+        (can_proceed, reason)
+    """
+    anchor_path = Path(anchor_path)
+
+    # Try to import provenance module (may not be available on Server B)
+    try:
+        import sys
+        sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+        from provenance import ProvenanceValidator, get_provenance_path
+    except ImportError:
+        # Provenance module not available — degrade gracefully with warning
+        if enforce:
+            return False, (
+                "Provenance module not available. Cannot verify anchor provenance. "
+                "Install provenance.py or set ENFORCE_PROVENANCE_GATE=False."
+            )
+        return True, "WARNING: Provenance module not available, gate disabled."
+
+    validator = ProvenanceValidator(require_hash_match=False)
+
+    # Check for provenance sidecar
+    # For .npy files, check the source video's provenance
+    if anchor_path.suffix == ".npy":
+        # Look for video provenance in same directory
+        # Convention: anchor.v3.CURRENT.npy came from anchor_scene_v3.mp4
+        stem = anchor_path.stem.replace(".CURRENT", "").replace(".anchor", "_anchor_scene")
+        possible_videos = [
+            anchor_path.parent / f"{stem}.mp4",
+            anchor_path.parent / f"{anchor_path.stem.split('.')[0]}_anchor_scene_v3.mp4",
+            anchor_path.parent / f"{anchor_path.stem.split('.')[0]}_anchor_scene_v2.mp4",
+        ]
+        video_path = None
+        for vp in possible_videos:
+            prov_path = get_provenance_path(vp)
+            if prov_path.exists():
+                video_path = vp
+                break
+
+        if video_path is None:
+            if enforce:
+                return False, (
+                    f"No provenance found for anchor: {anchor_path}. "
+                    "Lei da Proveniência Inseparável: artifact without verifiable "
+                    "provenance cannot be used in cross-elo measurement."
+                )
+            return True, f"WARNING: No provenance for {anchor_path}, gate disabled."
+
+        anchor_path_for_prov = video_path
+    else:
+        anchor_path_for_prov = anchor_path
+
+    # Load and validate provenance
+    if not validator.has_valid_provenance(anchor_path_for_prov):
+        if enforce:
+            return False, (
+                f"No provenance sidecar for: {anchor_path_for_prov}. "
+                "Lei da Proveniência Inseparável violated."
+            )
+        return True, f"WARNING: No provenance for {anchor_path_for_prov}, gate disabled."
+
+    try:
+        prov = validator.load_provenance(anchor_path_for_prov)
+    except Exception as e:
+        if enforce:
+            return False, f"Failed to load provenance: {e}"
+        return True, f"WARNING: Failed to load provenance: {e}"
+
+    anchor_generator = prov["generator"]
+
+    # Check elo coherence
+    if anchor_generator != test_generator:
+        if enforce:
+            return False, (
+                f"Elo mismatch: anchor from '{anchor_generator}', "
+                f"test video from '{test_generator}'. "
+                "Lei da Coerência de Elo: anchor must be from same elo as test frames."
+            )
+        return True, (
+            f"WARNING: Elo mismatch (anchor={anchor_generator}, test={test_generator}), "
+            "gate disabled but measurement may be invalid."
+        )
+
+    return True, f"Provenance valid: anchor and test both from '{anchor_generator}'"
+
+
+def load_anchor_with_provenance_check(
+    anchor_npy_path: Path,
+    test_generator: str,
+    enforce: bool = ENFORCE_PROVENANCE_GATE
+) -> np.ndarray:
+    """
+    Load anchor embedding with provenance gate check.
+
+    Raises ValueError if provenance check fails and enforce=True.
+    """
+    anchor_npy_path = Path(anchor_npy_path)
+
+    can_proceed, reason = check_anchor_provenance(anchor_npy_path, test_generator, enforce)
+
+    if not can_proceed:
+        raise ValueError(f"Anchor rejected by provenance gate: {reason}")
+
+    if "WARNING" in reason:
+        print(f"⚠️  {reason}")
+
+    # Load the anchor embedding
+    anchor = np.load(anchor_npy_path)
+    return anchor
 
 
 # ── Testes unitários (correm sem o modelo) ───────────────────────────────────

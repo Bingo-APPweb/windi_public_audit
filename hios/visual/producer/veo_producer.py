@@ -21,8 +21,17 @@ import sys
 import time
 from pathlib import Path
 from datetime import datetime
+from typing import Optional, Tuple
 
 import requests
+
+# Lei da Proveniência Inseparável — import provenance module
+from provenance import (
+    ProvenanceWriter,
+    TransformationRecorder,
+    compute_file_hash,
+    get_provenance_path
+)
 
 # =============================================================================
 # Configuration
@@ -311,8 +320,20 @@ def generate_video(
     aspect_ratio: str = "16:9",
     extract_frames: bool = True,
     key_num: int = 1,
-) -> Path:
-    """Main video generation pipeline."""
+    # WINDI provenance metadata (Lei da Proveniência Inseparável)
+    project: str | None = None,
+    scene: str | None = None,
+    character: str | None = None,
+    purpose: str = "scene",
+) -> Tuple[Path, Path]:
+    """
+    Main video generation pipeline with atomic provenance.
+
+    Returns (video_path, provenance_path).
+
+    Lei da Proveniência Inseparável: generation and receipt are atomic.
+    The provenance sidecar is written BEFORE any post-processing.
+    """
 
     # Load API key
     api_key = load_api_key(key_num)
@@ -324,14 +345,38 @@ def generate_video(
         output = OUTPUT_DIR / f"windi_{model_short}_{timestamp}.mp4"
 
     output = Path(output)
+    output.parent.mkdir(parents=True, exist_ok=True)
 
     print("=" * 60)
-    print("🎬 WINDI Veo Producer")
+    print("🎬 WINDI Veo Producer (with Provenance)")
     print("=" * 60)
     print(f"Model:  {model}")
     print(f"Prompt: {prompt[:80]}{'...' if len(prompt) > 80 else ''}")
     print(f"Output: {output}")
     print("-" * 60)
+
+    # Initialize provenance writer (Lei da Proveniência Inseparável)
+    prov_writer = ProvenanceWriter(
+        generator="veo",
+        model=model,
+        elo_number=2,
+        elo_type="generated_video",
+        project=project,
+        scene=scene,
+        character=character,
+        purpose=purpose
+    )
+    prov_writer.set_prompt(prompt)
+    prov_writer.set_parameters(aspect_ratio=aspect_ratio)
+
+    # Handle reference image
+    if reference_image:
+        ref_path = Path(reference_image)
+        ref_hash = compute_file_hash(ref_path)
+        prov_writer.set_reference_images([(ref_path.name, ref_hash, "character")])
+
+    # Track timing
+    start_time = time.time()
 
     # Submit job
     operation_name = submit_video_job(
@@ -356,19 +401,33 @@ def generate_video(
     # Download video
     download_video(api_key, video_uri, output)
 
+    # Record API response metadata
+    elapsed = time.time() - start_time
+    prov_writer.set_api_response(
+        operation_id=operation_name.split("/")[-1] if "/" in operation_name else operation_name,
+        duration_seconds=elapsed,
+        status="completed"
+    )
+
+    # SEAL PROVENANCE IMMEDIATELY — before any post-processing
+    # This is the core of Lei da Proveniência Inseparável
+    provenance_path = prov_writer.seal(output)
+    print(f"📜 Provenance sealed: {provenance_path.name}")
+
     # Get video info
     info = get_video_info(output)
     print(f"📊 Video: {info.get('width')}x{info.get('height')} @ {info.get('fps')}fps, {info.get('duration'):.1f}s")
 
-    # Extract preview frames
+    # Extract preview frames (post-processing — provenance already sealed)
     if extract_frames:
         extract_preview_frames(output)
 
     print("-" * 60)
     print(f"✅ Complete: {output}")
+    print(f"📜 Provenance: {provenance_path}")
     print("=" * 60)
 
-    return output
+    return output, provenance_path
 
 
 # =============================================================================
@@ -449,6 +508,29 @@ Examples:
         help="Which API key to use (1 = primary, 2 = secondary, 3 = tertiary)",
     )
 
+    # WINDI provenance metadata
+    parser.add_argument(
+        "--project",
+        help="Project name for provenance (e.g., 'o-peso-do-eco')",
+    )
+
+    parser.add_argument(
+        "--scene",
+        help="Scene identifier for provenance (e.g., 'S14')",
+    )
+
+    parser.add_argument(
+        "--character",
+        help="Character name for anchor provenance (e.g., 'helena')",
+    )
+
+    parser.add_argument(
+        "--purpose",
+        default="scene",
+        choices=["anchor", "scene", "test", "reference"],
+        help="Purpose of this generation (default: scene)",
+    )
+
     args = parser.parse_args()
 
     if args.list_models:
@@ -468,8 +550,8 @@ Examples:
     # Resolve model name
     model = AVAILABLE_MODELS.get(args.model, args.model)
 
-    # Run pipeline
-    generate_video(
+    # Run pipeline (now returns tuple with provenance)
+    video_path, prov_path = generate_video(
         prompt=args.prompt,
         model=model,
         reference_image=args.ref,
@@ -477,7 +559,16 @@ Examples:
         aspect_ratio=args.aspect,
         extract_frames=not args.no_frames,
         key_num=args.key,
+        project=args.project,
+        scene=args.scene,
+        character=args.character,
+        purpose=args.purpose,
     )
+
+    # Print final provenance info
+    print(f"\n🔐 Lei da Proveniência Inseparável: artifact born with provenance")
+    print(f"   Video: {video_path}")
+    print(f"   Sidecar: {prov_path}")
 
 
 if __name__ == "__main__":

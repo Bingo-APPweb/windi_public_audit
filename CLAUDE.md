@@ -138,6 +138,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | I16 | Creator Cartographic Sovereignty | Mapa pertence ao criador. GPS nunca vendido. Publicação = opt-in. |
 | I17 | Session/Identity Separation | Session prova presença. Identity prova agência. Frontend reflete, não cria. |
 | I18 | Organic Constitutional Growth | Múltiplas frentes simultâneas. Spine + I1-I9 + human approval. **STRUCTURAL.** |
+| I19 | Proveniência Inseparável | Geração e receipt atómicos. Anchor sem proveniência = inválido. **IRREMEDIÁVEL.** |
 | C6 | Invariante Fiscal | IA prepara. Humano aprova. ELSTER envia. Nunca autónomo. |
 
 ### §146 — I14: Proibição de Placeholders (IRREMEDIÁVEL)
@@ -222,6 +223,21 @@ Nenhum endpoint retorna valores default que mascarem dados ausentes.
 **Status:** LIVE · **Commit:** `0ec09491` · **Detalhes:** `CLAUDE-HISTORY.md`
 **Conceito:** Non-simulation of understanding — sistema não finge entender
 **Simetria:** I9 protege over-acting · I14 protege over-asserting
+
+### §297 — I19: Lei da Proveniência Inseparável (01 Jun 2026)
+
+> **"A pele cresce com a carne; não se cose depois."**
+
+**Status:** SEALED · **Receipt:** `9FAF31C6` · **Invariants:** I11, I14, I9
+**Conceito:** Geração e receipt são atómicos — um único acto indivisível.
+**Três Camadas:**
+- A) Atomicidade: output sempre é `(ficheiro, provenance.json)`
+- B) Hash antes de FFmpeg: selar hash bruto antes de qualquer transformação
+- C) Gate obrigatório: anchor sem proveniência = inválido para medição cross-elo
+
+**Corolário:** Score 5/5 forense ≠ proveniência válida. São propriedades distintas.
+**Ficheiros:** `provenance.py` · `provenance-v1.schema.json` · gate em `spine.py`
+**Doc:** `/opt/windi/docs/S297-LEI-DA-PROVENIENCIA-INSEPARAVEL.md`
 
 ### §120 — AI Draft Mode · WINDI-LAW
 
@@ -686,6 +702,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | **CINEMA** | `§296-bis` | §296-bis Diegetic Proof Integrity — Proibido hash orfao em frame |
 | **CINEMA** | `45e70231` | §295 S14-VISUAL-VERIFIED — UEBEREINSTIMMUNG GEFUNDEN insert |
 | **CINEMA** | `b8a4a083` | §295 S15-VISUAL-VERIFIED — INTEGRITAET 100% + cadeia diegetica |
+| **FORGE** | `9FAF31C6` | §297 Lei da Proveniência Inseparável — I19 · Atomic Provenance |
 
 > **Full receipts list:** `CLAUDE-HISTORY.md` § Produtos SEALED
 > **HD-MIRROR Reference:** `/opt/windi/docs/PROOF-SELF-CORRECTION-WITHOUT-REWRITE.md`

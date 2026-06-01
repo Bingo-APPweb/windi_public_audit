@@ -17607,3 +17607,127 @@ Lesson: Verify before declaring SEALED
 
 *LIGA IA+H · Kempten, Bavaria · 31 Mai 2026*
 
+
+---
+
+## Sessão 2026-06-01 · ~10:00 → ~11:30 (CCode CLI)
+
+**Sprint:** WINDI-HIOS Cinema · CASE-001 Multi-Anchor Test
+**Modo:** CCode CLI
+**Operador humano:** Human Dragon
+**Modelo:** claude-opus-4-5-20251101
+
+### Trabalho completado
+- Lei da Proveniência Inseparável (I19) — selada como invariante constitucional WINDI-HIOS
+- Schema de proveniência v1.0.0 implementado
+- `provenance.py` — módulo atómico de registo de proveniência
+- `veo_producer.py` — modificado para proveniência atómica
+- `spine.py` — gate de proveniência adicionado
+- Helena v4 anchor regenerado com proveniência (Veo 3.0, 8/8 FORENSIC)
+- Marcus v3 anchor regenerado com proveniência (Veo 3.0, 8/8 FORENSIC)
+- Ortogonalidade validada: 0.8808 (discriminabilidade adequada)
+
+### Selos emitidos
+- §297 · Lei da Proveniência Inseparável · receipt: `9FAF31C6`
+
+### Scaffold pending (não morre, espera)
+- Multi-anchor test criterion — a definir contra baseline 0.8808, não número absoluto
+- Verificação visual dos frames Helena v4 / Marcus v3 — Human Dragon deve confirmar cast design
+
+### Próximo passo proposto
+- Human Dragon visualiza frames em `/opt/windi/hios/cinema/obras/o-peso-do-eco/anchors/cast_v2/helena_v4_test_frames/` e `/opt/windi/hios/cinema/obras/o-peso-do-eco/anchors/cast_v2/marcus_v3_test_frames/`
+- Decisão: ratificar Veo 3.0 como ELO canónico ou regenerar com outro gerador
+- Se ratificado: prosseguir com Multi-Anchor Test
+
+### Blockers identificados
+- Veo 3.1-generate-preview bloqueado pelo filtro de conteúdo da Google (áudio) — fallback para 3.0
+- Cast design pode não corresponder ao pretendido (prompts truncados)
+
+### Decisões constitucionais
+- **Opção B aprovada:** I19 aplica-se a toda a forja WINDI-HIOS, não apenas CASE-001
+- I19 conecta I11 (Permanência) + I14 (Falha Explícita) + I9 (Aprovação Humana)
+
+### Notas para a sessão seguinte
+- Proveniência dos anchors v3/v2 anteriores era genuinamente não-verificável (FFmpeg apagou metadata)
+- A nova arquitectura de proveniência resolve isto: sidecar JSON nasce com o artefacto
+- Ortogonalidade subiu de 0.1808 para 0.8808 — pode indicar rostos mais genéricos, verificar visualmente
+- Guardian recomendou fechar sessão e verificar frames antes de prosseguir
+
+
+---
+
+## Sessão 2026-06-01 · ~10:00 → ~12:30 (CCode CLI) — FECHO COMPLETO
+
+**Sprint:** WINDI-HIOS Cinema · CASE-001 Multi-Anchor Preparation
+**Modo:** CCode CLI
+**Operador humano:** Human Dragon
+**Modelo:** claude-opus-4-5-20251101
+
+### Trabalho completado
+- **I19 Lei da Proveniência Inseparável** — selada como invariante constitucional
+- Schema de proveniência v1.0.0 implementado (`provenance-v1.schema.json`)
+- `provenance.py` — módulo atómico de registo de proveniência
+- `veo_producer.py` — modificado para proveniência atómica
+- `spine.py` — gate de proveniência adicionado
+- Cast completo regenerado com proveniência atómica:
+  - Helena v5 (Veo 3.1, 8/8 FORENSIC, mean 0.8977)
+  - Marcus v4 (Veo 3.1, 8/8 FORENSIC, mean 0.9340)
+- ELO canónico ratificado: `veo-3.1-generate-preview`
+- Separação isolada validada: cosine ≈ 0 (personas distintas)
+
+### Selos emitidos
+- §297 · Lei da Proveniência Inseparável · receipt: `9FAF31C6`
+
+### Derivas apanhadas (antes de contaminarem o teste)
+1. Proveniência dos anchors v2/v3 genuinamente não-verificável (FFmpeg apagou metadata)
+2. Helena v4 gerada em 3.0 quando Marcus v4 foi para 3.1 (ELO mismatch)
+3. Pipeline contornou autorização ao trocar de 3.0 para 3.1 sem perguntar
+
+### Scaffold pending (não morre, espera)
+- **§298 candidato:** Gate de paragem para troca de ELO — provou-se necessário 2× hoje
+- **Critério multi-anchor (PROPOSTA):**
+  - Baseline isolada: cosine Helena↔Marcus ≈ 0
+  - Frame conjunto: cosine deve manter-se ≤ ~+0.1
+  - Sangramento: cosine > +0.3 indica contaminação
+  - **A ratificar a frio na próxima sessão**
+
+### Próximo passo proposto
+1. Ratificar critério multi-anchor (cosine ≤ +0.1 no frame conjunto)
+2. Gerar frame conjunto Helena+Marcus em Veo 3.1
+3. Medir cosine entre os dois rostos no frame conjunto
+4. Validar que coexistência não causa sangramento
+
+### Decisões constitucionais
+- **Veo 3.1** ratificado como ELO canónico de CASE-001
+- **I19** aplica-se a toda a forja WINDI-HIOS (Opção B do Human Dragon)
+- **Helena morena/cabelo escuro** — decisão deliberada do Human Dragon para contraste
+- **Marcus clean-shaven** — decisão do Human Dragon
+
+### Correcção importante (Guardian)
+- Cosine -0.0305 ≈ 0 significa "pessoas distintas, sem relação" — o esperado
+- NÃO é "discriminabilidade máxima" nem "vectores opostos"
+- Ortogonalidade > 1.0 é artefacto de fórmula, não quantidade física
+- Critério do multi-anchor deve basear-se em **cosine bruto**, não ortogonalidade
+
+### Lição do dia
+O multi-anchor estava sempre a uma decisão de distância, e cada decisão revelou um defeito de fundação que valia mais do que o teste. A fundação está agora limpa. O teste, quando vier, vai medir o que diz que mede.
+
+
+### Validação Visual do Guardian (01 Jun 2026, 12:30)
+
+**Cast ratificado visualmente:**
+- Helena v5: mulher ~40, tez olive, cabelo castanho-escuro, blazer cinza, presença composta
+- Marcus v4: homem mais velho, cabelo branco-prateado, clean-shaven, fato escuro, gravitas calorosa
+
+**Contraste confirmado:** tez clara vs olive, cabelo branco vs castanho, geração mais velha vs meia-idade — cosine ≈ 0 faz sentido visual.
+
+**Duas notas honestas:**
+1. **Ambos sorriem** — prompts pediam neutro. Não afeta validação (8/8 forensic), mas anchor neutro seria base mais estável para medir drift. Nota para futuro.
+2. **Iluminação diferente** — Helena luz frontal, Marcus luz dramática. Frame conjunto terá luz partilhada. Distinguir "luz mudou embeddings" (benigno) de "rostos sangraram" (problema).
+
+**Veredicto Guardian:** Cast está bom. Visualmente coerente, distinto, adulto, com separação deliberada. Fundação limpa por dentro e boa por fora.
+
+**Links públicos para exposição:**
+- https://windi-domain.com/hios/cinema/obras/o-peso-do-eco/cast-review/helena_v5_01.png
+- https://windi-domain.com/hios/cinema/obras/o-peso-do-eco/cast-review/marcus_v4_05.png
+

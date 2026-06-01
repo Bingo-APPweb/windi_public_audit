@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://windi-domain.com/schemas/provenance-v1.schema.json",
+  "title": "WINDI-HIOS Provenance Schema v1.0.0",
+  "description": "Immutable provenance sidecar for synthetic artifacts. Lei da Proveniência Inseparável: a pele cresce com a carne.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "provenance_id",
+    "generator",
+    "model",
+    "elo",
+    "prompt_hash",
+    "output_hash_raw",
+    "created_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0",
+      "description": "Schema version for forward compatibility"
+    },
+    "provenance_id": {
+      "type": "string",
+      "pattern": "^WINDI-PROV-[0-9]{14}-[A-F0-9]{8}$",
+      "description": "Unique provenance ID: WINDI-PROV-YYYYMMDDHHMMSS-HASH8"
+    },
+    "generator": {
+      "type": "string",
+      "enum": ["veo", "runway", "sora", "kling", "midjourney", "dalle", "imagen", "local", "manual"],
+      "description": "DOOR that produced this artifact"
+    },
+    "model": {
+      "type": "string",
+      "description": "Specific model variant (e.g., veo-3.1-generate-preview)"
+    },
+    "elo": {
+      "type": "object",
+      "required": ["number", "type"],
+      "properties": {
+        "number": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Position in transformation chain (1=reference, 2=video, 3=frame, 4=embedding)"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["reference_image", "generated_video", "extracted_frame", "embedding", "composite", "transformed"],
+          "description": "Semantic type of this elo"
+        },
+        "parent_provenance_id": {
+          "type": "string",
+          "description": "Provenance ID of the input artifact (for elo > 1)"
+        }
+      }
+    },
+    "prompt": {
+      "type": "string",
+      "maxLength": 2000,
+      "description": "Generation prompt (truncated if > 2000 chars)"
+    },
+    "prompt_hash": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$",
+      "description": "SHA-256 of full prompt"
+    },
+    "reference_images": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["filename", "hash"],
+        "properties": {
+          "filename": { "type": "string" },
+          "hash": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+          "role": { "type": "string", "enum": ["character", "style", "scene", "asset"] }
+        }
+      },
+      "description": "Reference images used in generation"
+    },
+    "output_hash_raw": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$",
+      "description": "SHA-256 of raw output BEFORE any post-processing"
+    },
+    "output_filename": {
+      "type": "string",
+      "description": "Original output filename"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of generation"
+    },
+    "api_response": {
+      "type": "object",
+      "properties": {
+        "operation_id": { "type": "string" },
+        "duration_seconds": { "type": "number" },
+        "status": { "type": "string" }
+      },
+      "description": "API response metadata for audit trail"
+    },
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "aspect_ratio": { "type": "string" },
+        "duration_seconds": { "type": "number" },
+        "seed": { "type": "integer" },
+        "temperature": { "type": "number" }
+      },
+      "additionalProperties": true,
+      "description": "Generation parameters"
+    },
+    "transformations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["tool", "operation", "input_hash", "output_hash", "timestamp"],
+        "properties": {
+          "tool": { "type": "string", "description": "Tool used (ffmpeg, imagemagick, etc.)" },
+          "operation": { "type": "string", "description": "Operation type (trim, crop, resize, etc.)" },
+          "input_hash": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+          "output_hash": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+          "timestamp": { "type": "string", "format": "date-time" },
+          "command": { "type": "string", "description": "Full command for reproducibility" },
+          "output_filename": { "type": "string" }
+        }
+      },
+      "description": "Chain of transformations applied after raw generation"
+    },
+    "windi_metadata": {
+      "type": "object",
+      "properties": {
+        "project": { "type": "string" },
+        "scene": { "type": "string" },
+        "character": { "type": "string" },
+        "purpose": { "type": "string", "enum": ["anchor", "scene", "test", "reference"] }
+      },
+      "description": "WINDI-specific context"
+    }
+  },
+  "additionalProperties": false
+}

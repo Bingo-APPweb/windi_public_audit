@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "provenance_id": "WINDI-PROV-20260601100254-291EE95E",
+  "generator": "veo",
+  "model": "veo-3.0-generate-001",
+  "elo": {
+    "number": 2,
+    "type": "generated_video"
+  },
+  "prompt": "Portrait of an older man with gray hair. Neutral background. Professional lighting. Seated, looking at camera. 5 seconds.",
+  "prompt_hash": "sha256:1815e66bda98caa6adb7f7803707623ad7be5df72c2024ddb30fb67dc4dbe3be",
+  "output_hash_raw": "sha256:d50b0822993cf287edd70a394aa515d1b86b6d6c450e1329fbb102988e998b09",
+  "output_filename": "marcus_anchor_scene_v3.mp4",
+  "created_at": "2026-06-01T10:03:43.535605",
+  "transformations": [],
+  "parameters": {
+    "aspect_ratio": "16:9"
+  },
+  "api_response": {
+    "operation_id": "u2r8cdq20ywc",
+    "duration_seconds": 49.02793097496033,
+    "status": "completed"
+  },
+  "windi_metadata": {
+    "project": "o-peso-do-eco",
+    "character": "marcus",
+    "purpose": "anchor"
+  }
+}
