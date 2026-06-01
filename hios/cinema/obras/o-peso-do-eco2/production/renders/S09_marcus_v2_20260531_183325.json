@@ -1,0 +1,33 @@
+{
+  "scene": "S09",
+  "title": "Marcus Intoc\u00e1vel",
+  "version": "v2",
+  "method": "image-to-video (first-frame)",
+  "task_id": "73e491f4-92d2-4e8c-8731-f90ec7915308",
+  "status": "GENERATED",
+  "prompt": "Elegant upscale restaurant interior. Warm candlelight. Bokeh background.\n\nDistinguished man (Marcus, from reference) in dark pinstripe suit, white shirt. Silver watch on wrist. Holds wine glass confidently.\n\nHe takes a sip of red wine. Sets glass down. Signals to waiter with subtle gesture. Speaks briefly to waiter. Controlled, calm demeanor. Entitled air.\n\nOther diners in soft focus background. Crystal chandeliers. Rich dark wood and warm tones.\n\nCinematic thriller atmosphere. German high society. Confident and untouchable.",
+  "first_frame": "/opt/windi/hios/cinema/obras/o-peso-do-eco2/thumbs/Marcus_anchor_v2.jpg",
+  "output_file": "/opt/windi/hios/cinema/obras/o-peso-do-eco2/production/renders/S09_marcus_v2_20260531_183325.mp4",
+  "output_url": "https://dnznrvs05pmza.cloudfront.net/776a4bec-d2ed-44bf-a8ed-7bcb378722a8.mp4?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiYmE4ZjQzNTA0NDVjZjI5NiIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc4MDM4MzA1Nn0.y2AyRsvE7NtlP2IkWs-rRf7eMcVj-h7DcxpoFP5QwA0",
+  "timestamp": "20260531_183325",
+  "duration_seconds": 21.10931420326233,
+  "canonical_line_de": "Noch einen Wein, bitte",
+  "canonical_line_en": "Another wine, please",
+  "validation_required": [
+    "Marcus likeness preserved (anchor)",
+    "Restaurant setting (elegant, candles, chandeliers)",
+    "Dark pinstripe suit, white shirt",
+    "Silver watch visible",
+    "Wine glass interaction",
+    "Controlled, confident demeanor",
+    "Subtle mouth movement (for lip-sync)"
+  ],
+  "post_production_notes": [
+    "Add German voice-over: 'Noch einen Wein, bitte'",
+    "Lip-sync with Wav2Lip or similar",
+    "Colour grade for warm restaurant atmosphere",
+    "Verify silver watch visible (CONTINUITY-BIBLE)"
+  ],
+  "continuity_bible_ref": "MARCUS-\u00a7293",
+  "speech_register": "controlled, entitled"
+}

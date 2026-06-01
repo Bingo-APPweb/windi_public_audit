@@ -1,0 +1,37 @@
+{
+  "$schema": "windi-hios/scene-matrix/1.0.0",
+  "doc_type": "scene_matrix_schema",
+  "sealed_under": "§294",
+  "description": {
+    "de": "Generisches Schema für die Szenen-Matrix eines WINDI-HIOS-Films.",
+    "en": "Generic schema for the scene matrix of a WINDI-HIOS film.",
+    "pt": "Schema genérico para a matriz de cenas de um filme WINDI-HIOS."
+  },
+  "scene_contract": {
+    "scene": "string  // canonical scene id, e.g. S07",
+    "timecode": "string  // SRT in/out from source cut",
+    "world_state_ref": "string  // MUST reference a sealed WORLD-STATE id",
+    "location": "string  // named location token, consistent across scenes",
+    "characters": ["string  // anchor_ref ids from CONTINUITY-BIBLE / §293 only"],
+    "wardrobe": ["string  // wardrobe ids from CONTINUITY-BIBLE"],
+    "language": "enum[de,en,pt]  // spoken dialogue",
+    "subtitles": ["enum[de,en,pt]  // ordered"],
+    "time_of_day": "enum[dawn,day,dusk,night]",
+    "continuity_parent": "string|null  // previous scene id this must visually follow",
+    "windi_on_screen": "boolean  // does the WINDI Ledger UI appear in frame",
+    "notes": "string  // direction / fidelity constraints"
+  },
+  "validation_rules": [
+    "Every characters[] entry MUST exist in CONTINUITY-BIBLE-001 or §293 SPINE-CAST.",
+    "world_state_ref MUST point to a sealed WORLD-STATE instance.",
+    "continuity_parent MUST reference an earlier scene (no forward refs).",
+    "windi_on_screen=true scenes MUST render the integrity readout + receipt/hash.",
+    "No scene may introduce a location contradicting world_state jurisdiction."
+  ],
+  "ledger_contract": {
+    "receipt_required": true,
+    "hash_algo": "sha256",
+    "status_target": "Anchored",
+    "immutability": "Scene edits require §267 errata receipt."
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "scene": "S01",
+  "title": "O Registo da Vida",
+  "version": "v2-guardian",
+  "method": "image-to-video (first-frame)",
+  "task_id": "1cfecea2-3cf8-46ee-9be8-d98b1031e0dc",
+  "status": "GENERATED",
+  "prompt": "Allg\u00e4u Alps, Bavaria. Golden sunset through native spruce forest. Alpine valley visible in background, mountain silhouettes against orange sky.\n\nYoung blonde woman (from reference, Elisa, early 30s) records selfie vlog on smartphone. Holds phone at arm's length, talks warmly to camera with genuine smile. Content creator energy - vibrant, confident, gestures with free hand.\n\nAutumn leaves on forest trail. Warm golden light on her face. She turns slightly, showing the alpine view behind her.\n\nBackground detail: dark sedan parked on forest trail behind her, partially obscured by trees. Easy to miss.\n\nCinematic warmth. German alpine setting. Life and light.",
+  "first_frame": "/opt/windi/hios/cinema/obras/o-peso-do-eco2/thumbs/elisa_anchor_v2_1280x720.png",
+  "output_file": "/opt/windi/hios/cinema/obras/o-peso-do-eco2/production/renders/S01_guardian_v2_20260531_170653.mp4",
+  "output_url": "https://dnznrvs05pmza.cloudfront.net/2cbf4193-1159-4e3f-9e28-bd37497b967c.mp4?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiNDc4Yjc0MTk2YzVlOGU5YyIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc4MDQxMTE2MX0.8L8KVxDPMs2Zh65cDGYa5fpioyt4osrleD_UHFYpEdA",
+  "timestamp": "20260531_170653",
+  "duration_seconds": 21.105005502700806,
+  "canonical_line_de": "Hallo meine Lieben! Ich zeige euch heute einen atemberaubenden Blick auf die Alpen \u2014 hier in meiner Lieblingsregion, dem Allg\u00e4u.",
+  "validation_required": [
+    "Allg\u00e4u Alps setting (spruce forest, alpine valley)",
+    "Golden sunset light (warm, autumn)",
+    "Elisa content creator energy (vibrant, genuine)",
+    "Selfie-POV (phone at arm's length)",
+    "Marcus sedan visible on trail (proof chain)",
+    "NO tropical vegetation, NO eucalyptus"
+  ],
+  "post_production_notes": [
+    "Add German voice-over with canonical line (TTS/dubbing)",
+    "Add WINDI Ledger indicator to phone screen (\u00a7296 overlay)",
+    "Verify sedan visible for S16 continuity (proof chain)",
+    "Colour grade for golden hour warmth"
+  ]
+}

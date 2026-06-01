@@ -1,0 +1,64 @@
+# =============================================================================
+# WINDI-HIOS · WORLD-STATE-001  (INSTANCE)
+# -----------------------------------------------------------------------------
+# Film:  DE: "Das Gewicht des Echos" · EN: "The Weight of the Echo" · PT: "O Peso do Eco"
+# Instantiates: WINDI-HIOS-WORLD-STATE v1.0.0
+# Sealed under: §294 · WINDI-HIOS-LEDGER
+# =============================================================================
+
+instance:
+  id: WORLD-STATE-001
+  schema_ref: "WINDI-HIOS-WORLD-STATE@1.0.0"
+  film_title:
+    de: "Das Gewicht des Echos"
+    en: "The Weight of the Echo"
+    pt: "O Peso do Eco"
+  source_version: "v1 (24-scene subtitle cut)"
+
+jurisdiction:
+  country: "Germany / Deutschland / Alemanha"
+  state_region: "Bavaria / Bayern / Baviera"
+  city_region: "Kempten (Allgäu) region"
+  year: 2026
+  season: autumn
+
+law_enforcement:
+  organization: "Bayerische Kriminalpolizei (Bavarian Criminal Police)"
+  uniform: "dark blue duty uniform; plainclothes detective for Helena"
+  vehicles:
+    - "BMW Polizei (Bavaria livery, green/silver/blue)"
+    - "unmarked dark sedan (detective)"
+  insignia: "Bayern police star emblem"
+  language: de
+
+court:
+  court_type: "Landgericht (Regional Court)"
+  interior_wood: "dark oak panelling"
+  lighting: "natural daylight through tall windows, cool"
+  judge_robe: "black German judicial robe"
+  flags:
+    - "Germany / Bundesflagge"
+    - "Bavaria / Freistaat Bayern"
+
+technology:
+  consumer_device: "2025–2026 class smartphone (Elisa's recording device)"
+  forensic_lab: "modern digital forensics lab, clean, monitor-lit"
+  windi_platform: "WINDI Forensic Ledger UI — integrity readout 'INTEGRITÄT VERIFIZIERT 100%', receipt + hash visible"
+  rendering_style: realistic
+
+climate:
+  weather: "cold, damp"
+  sky: "overcast"
+  color_palette: "muted; desaturated blues and greys, warm interiors only"
+
+visual_language:
+  dialogue_language: de
+  subtitle_languages: [pt, en]   # PT primary subtitle, EN secondary (per source cut)
+  aspect_ratio: "2.39:1 (cinemascope)"
+  grade: "cold exterior / warm domestic; courtroom neutral-clinical"
+
+ledger_contract:
+  receipt_required: true
+  hash_algo: sha256
+  status_target: Anchored
+  immutability: "Field changes require §267 errata receipt."

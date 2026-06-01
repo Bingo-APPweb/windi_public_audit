@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O PESO DO ECO v2 — Production Editor | WINDI-HIOS Cinema</title>
+    <style>
+        :root {
+            --bg: #0A0A10;
+            --bg-card: #12121A;
+            --bg-hover: #1A1A24;
+            --gold: #C9A84C;
+            --gold-dim: #8B7424;
+            --text: #E8E6E1;
+            --text-dim: #888;
+            --border: #2A2A34;
+            --green: #4CAF50;
+            --yellow: #FFC107;
+            --red: #F44336;
+            --blue: #2196F3;
+            --purple: #9C27B0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1a1a24 0%, #0a0a10 100%);
+            border-bottom: 2px solid var(--gold);
+            padding: 1.5rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .title-block h1 {
+            font-size: 1.8rem;
+            color: var(--gold);
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        .v2-badge {
+            background: var(--gold);
+            color: var(--bg);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.6em;
+            vertical-align: middle;
+            margin-left: 0.5rem;
+        }
+
+        .title-block .subtitle {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+
+        .session-info {
+            text-align: right;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        .session-info strong { color: var(--gold); }
+
+        main {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .summary-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .summary-item {
+            text-align: center;
+            padding: 0.75rem;
+        }
+
+        .summary-item .count {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .summary-item .label {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .summary-item.herdar .count { color: var(--green); }
+        .summary-item.rerender .count { color: var(--red); }
+        .summary-item.verificar .count { color: var(--yellow); }
+        .summary-item.novo .count { color: var(--blue); }
+        .summary-item.sealed .count { color: var(--gold); }
+
+        .act-section { margin-bottom: 3rem; }
+
+        .act-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .act-number {
+            background: var(--gold);
+            color: var(--bg);
+            font-weight: 700;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        .act-title {
+            font-size: 1.3rem;
+            font-weight: 300;
+            color: var(--text);
+        }
+
+        .scene-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .scene-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .scene-card:hover {
+            border-color: var(--gold);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        }
+
+        .scene-card.status-rerender { border-left: 4px solid var(--red); }
+        .scene-card.status-sealed { border-left: 4px solid var(--gold); }
+        .scene-card.status-herdar { border-left: 4px solid var(--green); }
+        .scene-card.status-verificar { border-left: 4px solid var(--yellow); }
+
+        .scene-thumb {
+            width: 100%;
+            height: 180px;
+            background: var(--bg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scene-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .scene-card:hover .scene-thumb img {
+            transform: scale(1.05);
+        }
+
+        .scene-number {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: rgba(0,0,0,0.85);
+            color: var(--gold);
+            font-weight: 700;
+            padding: 0.3rem 0.7rem;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .scene-status {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            padding: 0.25rem 0.7rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-herdar { background: var(--green); color: #fff; }
+        .status-rerender { background: var(--red); color: #fff; }
+        .status-verificar { background: var(--yellow); color: #000; }
+        .status-novo { background: var(--blue); color: #fff; }
+        .status-sealed { background: var(--gold); color: #000; }
+
+        .scene-version {
+            position: absolute;
+            bottom: 8px;
+            left: 8px;
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            background: rgba(0,0,0,0.8);
+        }
+
+        .version-v1 { color: var(--text-dim); border: 1px solid var(--text-dim); }
+        .version-v2 { color: var(--gold); border: 1px solid var(--gold); }
+
+        .scene-info { padding: 1rem; }
+
+        .scene-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .scene-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .meta-tag {
+            font-size: 0.65rem;
+            padding: 0.15rem 0.45rem;
+            border-radius: 3px;
+            background: var(--bg);
+            color: var(--text-dim);
+            border: 1px solid var(--border);
+        }
+
+        .meta-tag.ok { border-color: var(--green); color: var(--green); }
+        .meta-tag.warn { border-color: var(--yellow); color: var(--yellow); }
+        .meta-tag.fail { border-color: var(--red); color: var(--red); }
+        .meta-tag.de { border-color: var(--green); color: var(--green); }
+        .meta-tag.en { border-color: var(--yellow); color: var(--yellow); }
+
+        .scene-notes {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            line-height: 1.4;
+        }
+
+        .scene-score {
+            display: inline-block;
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--gold);
+            font-family: monospace;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--border);
+            margin-top: 3rem;
+        }
+
+        footer .gold { color: var(--gold); }
+
+        /* Video Modal */
+        .video-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .video-modal.active { display: flex; }
+
+        .video-modal-content {
+            max-width: 90%;
+            max-height: 80vh;
+            position: relative;
+        }
+
+        .video-modal video {
+            max-width: 100%;
+            max-height: 70vh;
+            border-radius: 8px;
+            border: 2px solid var(--gold);
+        }
+
+        .video-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 900px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .video-modal-title {
+            color: var(--gold);
+            font-size: 1.5rem;
+        }
+
+        .video-modal-close {
+            background: var(--red);
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .video-modal-close:hover { background: #d32f2f; }
+
+        .play-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: rgba(201,168,76,0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            transition: all 0.3s;
+        }
+
+        .play-icon::after {
+            content: '';
+            width: 0;
+            height: 0;
+            border-left: 20px solid var(--bg);
+            border-top: 12px solid transparent;
+            border-bottom: 12px solid transparent;
+            margin-left: 4px;
+        }
+
+        .scene-card:hover .play-icon {
+            transform: translate(-50%, -50%) scale(1.1);
+            background: var(--gold);
+        }
+
+        .scene-thumb { cursor: pointer; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @media (max-width: 768px) {
+            header { padding: 1rem; }
+            main { padding: 1rem; }
+            .header-content { flex-direction: column; text-align: center; }
+            .session-info { text-align: center; }
+            .scene-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="title-block">
+                <h1>O PESO DO ECO <span class="v2-badge">v2</span></h1>
+                <div class="subtitle">WINDI-HIOS Cinema Production Editor — Liga IA+H</div>
+            </div>
+            <div class="session-info">
+                <div><strong>Actualizado:</strong> 01 Jun 2026 · S07+S09 renderizados</div>
+                <div><strong>Jurisdicao:</strong> Bayern 2026 · BMW Polizei</div>
+                <div><strong>Total:</strong> 24 Cenas · ~3:44 min</div>
+                <div style="margin-top: 0.3rem; color: var(--green);">✅ S07 · S09 renderizados | S01 em pós-produção</div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- STATUS PANEL — 31 Mai 2026 (noite) -->
+        <div class="alert-panel" style="background: linear-gradient(135deg, #0a1a15 0%, #0a0a10 100%); border: 2px solid var(--green); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                <span style="font-size: 2rem;">✅</span>
+                <div>
+                    <h3 style="color: var(--green); margin: 0; font-size: 1.2rem;">RENDERS ACEITES — PÓS-PRODUÇÃO PENDENTE</h3>
+                    <p style="color: var(--text-dim); margin: 0.3rem 0 0 0; font-size: 0.85rem;">S07 · S09 renderizados | S01 aceite (floresta em pós)</p>
+                </div>
+            </div>
+
+            <!-- S01 -->
+            <div style="background: var(--bg); border-radius: 8px; padding: 0.75rem; margin-bottom: 0.75rem; border-left: 3px solid var(--blue);">
+                <div style="font-weight: bold; color: var(--blue); margin-bottom: 0.3rem;">S01 — O Registo da Vida</div>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.4rem; font-size: 0.7rem;">
+                    <span style="background: #0a1a2a; padding: 0.2rem 0.5rem; border-radius: 3px; color: var(--green);">✓ Elisa likeness perfeita</span>
+                    <span style="background: #0a1a2a; padding: 0.2rem 0.5rem; border-radius: 3px; color: var(--blue);">⏳ Floresta densa em pós</span>
+                    <span style="background: #0a1a2a; padding: 0.2rem 0.5rem; border-radius: 3px; color: var(--blue);">⏳ German VO + Ledger</span>
+                </div>
+            </div>
+
+            <!-- S07 -->
+            <div style="background: var(--bg); border-radius: 8px; padding: 0.75rem; margin-bottom: 0.75rem; border-left: 3px solid var(--green);">
+                <div style="font-weight: bold; color: var(--green); margin-bottom: 0.3rem;">✓ S07 — Chegada da Polícia</div>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.4rem; font-size: 0.7rem;">
+                    <span style="background: #0a1a0a; padding: 0.2rem 0.5rem; border-radius: 3px; color: var(--green);">✓ BMW Polizei Bayern</span>
+                    <span style="background: #0a1a0a; padding: 0.2rem 0.5rem; border-radius: 3px; color: var(--green);">✓ POLIZEI legível</span>
+                    <span style="background: #0a1a2a; padding: 0.2rem 0.5rem; border-radius: 3px; color: var(--blue);">⏳ Fundo floresta em pós</span>
+                </div>
+            </div>
+
+            <!-- S09 -->
+            <div style="background: var(--bg); border-radius: 8px; padding: 0.75rem; border-left: 3px solid var(--green);">
+                <div style="font-weight: bold; color: var(--green); margin-bottom: 0.3rem;">✓ S09 — Marcus Intocável</div>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.4rem; font-size: 0.7rem;">
+                    <span style="background: #0a1a0a; padding: 0.2rem 0.5rem; border-radius: 3px; color: var(--green);">✓ Marcus likeness</span>
+                    <span style="background: #0a1a0a; padding: 0.2rem 0.5rem; border-radius: 3px; color: var(--green);">✓ Restaurante elegante</span>
+                    <span style="background: #0a1a2a; padding: 0.2rem 0.5rem; border-radius: 3px; color: var(--blue);">⏳ Lip-sync DE: "Noch einen Wein, bitte"</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- QUICK LINKS -->
+        <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.5rem;">
+            <a href="/hios/cinema/obras/o-peso-do-eco2/audit-pendentes/" style="background: var(--bg-card); color: var(--gold); padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; border: 1px solid var(--border); font-size: 0.8rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🔍</span> Auditoria (8)
+            </a>
+            <a href="/hios/cinema/obras/o-peso-do-eco/production/DECREE-§295.md" style="background: var(--bg-card); color: var(--gold); padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; border: 1px solid var(--border); font-size: 0.8rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>📜</span> §295 Render Decree
+            </a>
+            <a href="/hios/cinema/obras/o-peso-do-eco/production/CONTINUITY-BIBLE-001.yaml" style="background: var(--bg-card); color: var(--gold); padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; border: 1px solid var(--border); font-size: 0.8rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>📖</span> Continuity Bible
+            </a>
+            <a href="/hios/cinema/obras/o-peso-do-eco/canons/SETTING-DEUTSCHLAND.md" style="background: var(--bg-card); color: var(--gold); padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; border: 1px solid var(--border); font-size: 0.8rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🇩🇪</span> Setting Deutschland
+            </a>
+        </div>
+
+        <!-- RECEIPTS ANCHORED -->
+        <div style="background: var(--bg-card); border: 1px solid var(--gold); border-radius: 12px; padding: 1rem 1.5rem; margin-bottom: 1.5rem;">
+            <h4 style="color: var(--gold); margin: 0 0 0.75rem 0; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🔐</span> RECEIPTS ANCHORED (Ledger)
+            </h4>
+            <div style="display: flex; flex-wrap: wrap; gap: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem;">
+                <div style="background: var(--bg); padding: 0.5rem 0.8rem; border-radius: 4px;">
+                    <span style="color: var(--gold);">S14</span>
+                    <span style="color: var(--text-dim);"> · </span>
+                    <span style="color: var(--green);">45e70231</span>
+                </div>
+                <div style="background: var(--bg); padding: 0.5rem 0.8rem; border-radius: 4px;">
+                    <span style="color: var(--gold);">S15</span>
+                    <span style="color: var(--text-dim);"> · </span>
+                    <span style="color: var(--green);">b8a4a083</span>
+                </div>
+                <div style="background: var(--bg); padding: 0.5rem 0.8rem; border-radius: 4px;">
+                    <span style="color: var(--gold);">§294</span>
+                    <span style="color: var(--text-dim);"> · </span>
+                    <span style="color: var(--text-dim);">WORLD-STATE</span>
+                    <span style="color: var(--text-dim);"> · </span>
+                    <span style="color: var(--green);">9F003FF1</span>
+                </div>
+                <div style="background: var(--bg); padding: 0.5rem 0.8rem; border-radius: 4px;">
+                    <span style="color: var(--gold);">§296</span>
+                    <span style="color: var(--text-dim);"> · </span>
+                    <span style="color: var(--text-dim);">UI Compositing</span>
+                    <span style="color: var(--text-dim);"> · </span>
+                    <span style="color: var(--green);">SEALED</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- MATRIZ RECONCILIADA (31 Mai noite) -->
+        <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1rem 1.5rem; margin-bottom: 1.5rem;">
+            <h4 style="color: var(--text); margin: 0 0 1rem 0; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>📊</span> MATRIZ RECONCILIADA — 24 Cenas
+            </h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                <!-- Gaveta 1: Concluída -->
+                <div style="background: var(--bg); border-radius: 8px; padding: 0.75rem; border-left: 3px solid var(--green);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <span style="color: var(--green); font-weight: bold;">✅ Concluída</span>
+                        <span style="background: var(--green); color: #000; padding: 0.15rem 0.5rem; border-radius: 3px; font-size: 0.75rem; font-weight: bold;">13</span>
+                    </div>
+                    <div style="font-size: 0.7rem; color: var(--text-dim);">
+                        <div><strong style="color: var(--text);">Legacy:</strong> S02–S06 (5)</div>
+                        <div><strong style="color: var(--text);">Nativas v2:</strong> S11, S14, S15, S18–S22 (8)</div>
+                    </div>
+                </div>
+                <!-- Gaveta 2: Pós-produção -->
+                <div style="background: var(--bg); border-radius: 8px; padding: 0.75rem; border-left: 3px solid var(--blue);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <span style="color: var(--blue); font-weight: bold;">🎬 Pós-produção</span>
+                        <span style="background: var(--blue); color: #fff; padding: 0.15rem 0.5rem; border-radius: 3px; font-size: 0.75rem; font-weight: bold;">3</span>
+                    </div>
+                    <div style="font-size: 0.7rem; color: var(--text-dim);">
+                        <div><strong style="color: var(--green);">S01:</strong> ✓ Elisa render · floresta em pós</div>
+                        <div><strong style="color: var(--green);">S07:</strong> ✓ POLIZEI render · fundo em pós</div>
+                        <div><strong style="color: var(--green);">S09:</strong> ✓ Marcus render · lip-sync DE</div>
+                    </div>
+                </div>
+                <!-- Gaveta 3: Auditoria -->
+                <div style="background: var(--bg); border-radius: 8px; padding: 0.75rem; border-left: 3px solid var(--yellow);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <span style="color: var(--yellow); font-weight: bold;">🔍 Auditoria</span>
+                        <span style="background: var(--yellow); color: #000; padding: 0.15rem 0.5rem; border-radius: 3px; font-size: 0.75rem; font-weight: bold;">8</span>
+                    </div>
+                    <div style="font-size: 0.7rem; color: var(--text-dim);">
+                        <div><strong style="color: var(--green);">Desbloqueado:</strong> S08 (S07 pronto ✓)</div>
+                        <div><strong style="color: var(--gold);">CRÍTICA:</strong> <span style="color: var(--gold);">S16</span> (proof chain)</div>
+                        <div><strong style="color: var(--text);">Pendentes:</strong> S10, S12, S13, S17, S23, S24</div>
+                    </div>
+                </div>
+                <!-- Proof Chain -->
+                <div style="background: linear-gradient(135deg, #1a1a10 0%, var(--bg) 100%); border-radius: 8px; padding: 0.75rem; border-left: 3px solid var(--gold);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <span style="color: var(--gold); font-weight: bold;">🔗 Proof Chain</span>
+                        <span style="color: var(--gold); font-size: 0.7rem;">NON-NEGOTIABLE</span>
+                    </div>
+                    <div style="font-size: 0.7rem; color: var(--text-dim);">
+                        <div style="font-family: monospace; color: var(--gold);">S01 → S02 → S16</div>
+                        <div style="margin-top: 0.3rem;">Marcus sedan: mesmo carro em todas</div>
+                        <div style="color: var(--text-dim);">§294 CONTINUITY-BIBLE · FORENSIC tier</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="summary-panel">
+            <div class="summary-item herdar">
+                <div class="count">5</div>
+                <div class="label">Legacy v1</div>
+            </div>
+            <div class="summary-item sealed">
+                <div class="count">8</div>
+                <div class="label">Nativas v2</div>
+            </div>
+            <div class="summary-item rerender">
+                <div class="count">3</div>
+                <div class="label">Correção</div>
+            </div>
+            <div class="summary-item verificar">
+                <div class="count">8</div>
+                <div class="label">Auditoria</div>
+            </div>
+            <div class="summary-item" style="border-top: 2px solid var(--gold);">
+                <div class="count" style="color: var(--gold);">13</div>
+                <div class="label" style="color: var(--gold);">✅ Concluída</div>
+            </div>
+        </div>
+
+        <!-- ACTO I -->
+        <section class="act-section">
+            <div class="act-header">
+                <span class="act-number">ACTO I</span>
+                <span class="act-title">A Vida e a Escuridao (4 cenas)</span>
+            </div>
+            <div class="scene-grid">
+                <div class="scene-card status-rerender" style="border: 2px solid var(--red);">
+                    <div class="scene-thumb" onclick="playScene(this.querySelector('.scene-number').textContent)" style="position: relative;">
+                        <img src="/hios/cinema/obras/o-peso-do-eco2/thumbs/S01_v2.png" alt="S01" style="filter: grayscale(30%) brightness(0.8);">
+                        <span class="scene-number" style="background: var(--red);">S01</span>
+                        <span class="scene-status status-rerender">Re-render</span>
+                        <span class="scene-version version-v2" style="border-color: var(--red); color: var(--red);">v2 FALHOU</span>
+                        <span class="play-icon"></span>
+                    </div>
+                    <div class="scene-info" style="background: linear-gradient(135deg, #2a1515 0%, var(--bg-card) 100%);">
+                        <div class="scene-title" style="color: var(--red);">⚠️ O Registo da Vida</div>
+                        <div class="scene-meta">
+                            <span class="meta-tag">15s</span>
+                            <span class="meta-tag">Elisa v2</span>
+                            <span class="meta-tag fail">Casting/Direcção</span>
+                        </div>
+                        <div class="scene-notes" style="color: var(--text);">
+                            <strong>Problemas (casting):</strong><br>
+                            • Elisa não parece content creator vibrante<br>
+                            • Pose rígida ("vendendo jornal")<br>
+                            • Falta energia de quem fala com audiência<br>
+                            <strong style="color: var(--green);">Novo prompt:</strong> Allgäu, luz dourada, fala DE, Ledger diegético, sedan plantado
+                        </div>
+                    </div>
+                </div>
+
+                <div class="scene-card status-herdar">
+                    <div class="scene-thumb" onclick="playScene(this.querySelector('.scene-number').textContent)">
+                        <img src="/hios/cinema/obras/o-peso-do-eco2/thumbnails/S02_v1.jpg" alt="S02">
+                        <span class="scene-number">S02</span>
+                        <span class="scene-status status-herdar">Herdar</span>
+                        <span class="scene-version version-v1">v1</span>
+                        <span class="play-icon"></span>
+                    </div>
+                    <div class="scene-info">
+                        <div class="scene-title">A Estrada</div>
+                        <div class="scene-meta">
+                            <span class="meta-tag">10s</span>
+                            <span class="meta-tag ok">Sedan ambiguo</span>
+                            <span class="meta-tag de">Silencio</span>
+                        </div>
+                        <div class="scene-notes">Noite. Neblina. Farois. Impacto. Perfeito para heranca.</div>
+                    </div>
+                </div>
+
+                <div class="scene-card status-herdar">
+                    <div class="scene-thumb" onclick="playScene(this.querySelector('.scene-number').textContent)">
+                        <img src="/hios/cinema/obras/o-peso-do-eco2/thumbnails/S03_v1.jpg" alt="S03">
+                        <span class="scene-number">S03</span>
+                        <span class="scene-status status-herdar">Herdar</span>
+                        <span class="scene-version version-v1">v1</span>
+                        <span class="play-icon"></span>
+                    </div>
+                    <div class="scene-info">
+                        <div class="scene-title">O Vazio</div>
+                        <div class="scene-meta">
+                            <span class="meta-tag">8s</span>
+                            <span class="meta-tag de">DE: Wo bist du?</span>
+                        </div>
+                        <div class="scene-notes">Telemovel caido. Mensagem ja em alemao.</div>
+                    </div>
+                </div>
+
+                <div class="scene-card status-herdar">
+                    <div class="scene-thumb" onclick="playScene(this.querySelector('.scene-number').textContent)">
+                        <img src="/hios/cinema/obras/o-peso-do-eco2/thumbnails/S04_v1.jpg" alt="S04">
+                        <span class="scene-number">S04</span>
+                        <span class="scene-status status-herdar">Herdar</span>
+                        <span class="scene-version version-v1">v1</span>
+                        <span class="play-icon"></span>
+                    </div>
+                    <div class="scene-info">
+                        <div class="scene-title">A Noticia</div>
+                        <div class="scene-meta">
+                            <span class="meta-tag">8s</span>
+                            <span class="meta-tag">Thomas</span>
+                            <span class="meta-tag en">Voz DE pos</span>
+                        </div>
+                        <div class="scene-notes">Thomas atende telefone. Voz DE em pos-producao.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ACTO II -->
+        <section class="act-section">
+            <div class="act-header">
+                <span class="act-number">ACTO II</span>
+                <span class="act-title">O Tatort (5 cenas)</span>
+            </div>
+            <div class="scene-grid">
+                <div class="scene-card status-herdar">
+                    <div class="scene-thumb" onclick="playScene(this.querySelector('.scene-number').textContent)">
+                        <img src="/hios/cinema/obras/o-peso-do-eco2/thumbnails/S05_v1.jpg" alt="S05">
+                        <span class="scene-number">S05</span>
+                        <span class="scene-status status-herdar">Herdar</span>
+                        <span class="scene-version version-v1">v1</span>
+                        <span class="play-icon"></span>
+                    </div>
+                    <div class="scene-info">
+                        <div class="scene-title">Corte Temporal</div>
+                        <div class="scene-meta">
+                            <span class="meta-tag">4s</span>
+                            <span class="meta-tag de">DE: Sechs Monate</span>
+                        </div>
+                        <div class="scene-notes">Tela preta com texto alemao.</div>
+                    </div>
+                </div>
+
+                <div class="scene-card status-herdar">
+                    <div class="scene-thumb" onclick="playScene(this.querySelector('.scene-number').textContent)">
+                        <img src="/hios/cinema/obras/o-peso-do-eco2/thumbnails/S06_v1.jpg" alt="S06">
+                        <span class="scene-number">S06</span>
+                        <span class="scene-status status-herdar">Herdar</span>
+                        <span class="scene-version version-v1">v1</span>
+                        <span class="play-icon"></span>
+                    </div>
+                    <div class="scene-info">
+                        <div class="scene-title">A Descoberta</div>
+                        <div class="scene-meta">
+                            <span class="meta-tag">10s</span>
+                            <span class="meta-tag">Klaus</span>
+                            <span class="meta-tag ok">Jurisdicao OK</span>
+                        </div>
+                        <div class="scene-notes">Klaus encontra corpo. Sem viaturas. Continuidade wardrobe S01.</div>
+                    </div>
+                </div>
+
+                <div class="scene-card status-pos" style="border: 2px solid var(--blue); box-shadow: 0 0 15px rgba(33,150,243,0.2);">
+                    <div class="scene-thumb" onclick="playScene(this.querySelector('.scene-number').textContent)" style="position: relative;">
+                        <img src="/hios/cinema/obras/o-peso-do-eco2/thumbs/S07_v2_render.jpg" alt="S07">
+                        <span class="scene-number" style="background: var(--green);">S07</span>
+                        <span class="scene-status" style="background: var(--blue); color: #fff;">Pós-produção</span>
+                        <span class="scene-version version-v2">v2 render</span>
+                        <span class="play-icon"></span>
+                    </div>
+                    <div class="scene-info" style="background: linear-gradient(135deg, #0a1520 0%, var(--bg-card) 100%);">
+                        <div class="scene-title" style="color: var(--green);">✓ Chegada da Policia</div>
+                        <div class="scene-meta">
+                            <span class="meta-tag">12s</span>
+                            <span class="meta-tag">Helena</span>
+                            <span class="meta-tag" style="background: var(--green); color: #000; border: none;">BMW POLIZEI ✓</span>
+                        </div>
+                        <div class="scene-notes" style="color: var(--text);">
+                            <strong style="color: var(--green);">Render aceite:</strong> Viatura perfeita<br>
+                            <strong style="color: var(--blue);">Pós:</strong> Fundo floresta + Helena + luzes
+                        </div>
+                    </div>
+                </div>
+
+                <div class="scene-card status-verificar">
+                    <div class="scene-thumb" onclick="playScene(this.querySelector('.scene-number').textContent)">
+                        <img src="/hios/cinema/obras/o-peso-do-eco2/thumbnails/S08_v1.jpg" alt="S08">
+                        <span class="scene-number">S08</span>
+                        <span class="scene-status status-verificar">🔍 Verificar</span>
+                        <span class="scene-version version-v1">v1</span>
+                        <span class="play-icon"></span>
+                    </div>
+                    <div class="scene-info">
+                        <div class="scene-title">Colheita de Pistas</div>
+                        <div class="scene-meta">
+                            <span class="meta-tag">12s</span>
+                            <span class="meta-tag">Helena</span>
+                            <span class="meta-tag" style="background: var(--green); color: #000; border: none;">S07 ✓</span>
+                        </div>
+                        <div class="scene-notes">DESBLOQUEADO. Verificar viaturas — mesma localização que S07.</div>
+                    </div>
+                </div>
+
+                <div class="scene-card status-pos" style="border: 2px solid var(--blue); box-shadow: 0 0 15px rgba(33,150,243,0.2);">
+                    <div class="scene-thumb" onclick="playScene(this.querySelector('.scene-number').textContent)">
+                        <img src="/hios/cinema/obras/o-peso-do-eco2/thumbs/S09_v2_render.jpg" alt="S09">
+                        <span class="scene-number" style="background: var(--green);">S09</span>
+                        <span class="scene-status" style="background: var(--blue); color: #fff;">Pós-produção</span>
+                        <span class="scene-version version-v2">v2 render</span>
+                        <span class="play-icon"></span>
+                    </div>
+                    <div class="scene-info" style="background: linear-gradient(135deg, #0a1520 0%, var(--bg-card) 100%);">
+                        <div class="scene-title" style="color: var(--green);">✓ Marcus Intocavel</div>
+                        <div class="scene-meta">
+                            <span class="meta-tag">10s</span>
+                            <span class="meta-tag">Marcus</span>
+                            <span class="meta-tag" style="background: var(--green); color: #000; border: none;">LIKENESS ✓</span>
+                        </div>
+                        <div class="scene-notes" style="color: var(--text);">
+                            <strong style="color: var(--green);">Render aceite:</strong> Restaurante perfeito<br>
+                            <strong style="color: var(--blue);">Pós:</strong> Lip-sync DE "Noch einen Wein, bitte"
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ACTO III -->
+        <section class="act-section">
+            <div class="act-header">
+                <span class="act-number">ACTO III</span>
+                <span class="act-title">Investigacao Bloqueada (4 cenas)</span>
+            </div>
+            <div class="scene-grid">
+                <div class="scene-card">
+                    <div class="scene-thumb" onclick="playScene(this.querySelector('.scene-number').textContent)">
+                        <img src="/hios/cinema/obras/o-peso-do-eco2/thumbnails/S10_v1.jpg" alt="S10">
+                        <span class="scene-number">S10</span>
+                        <span class="scene-status" style="background:var(--purple);color:#fff;">Pendente</span>
+                        <span class="scene-version version-v1">v1</span>
+                        <span class="play-icon"></span>
+                    </div>
+                    <div class="scene-info">
+                        <div class="scene-title">A Frustracao</div>
+                        <div class="scene-meta">
+                            <span class="meta-tag">10s</span>
+                            <span class="meta-tag">Helena</span>
+                        </div>
+                        <div class="scene-notes">Helena tenta extrair dados do telemovel danificado.</div>
+                    </div>
+                </div>
+
+                <div class="scene-card status-sealed">
+                    <div class="scene-thumb" onclick="playScene(this.querySelector('.scene-number').textContent)">
+                        <img src="/hios/cinema/obras/o-peso-do-eco2/thumbs/S11_v2.png" alt="S11">
+                        <span class="scene-number">S11</span>
+                        <span class="scene-status status-sealed">Sealed</span>
+                        <span class="scene-version version-v2">v2</span>
+                        <span class="play-icon"></span>
+                    </div>
+                    <div class="scene-info">
+                        <div class="scene-title">A Defesa Ataca</div>
+                        <div class="scene-meta">
+                            <span class="meta-tag">8s</span>
+                            <span class="meta-tag">Hartmann</span>
+                            <span class="meta-tag de">DE</span>
+                        </div>
+                        <div class="scene-notes">Hartmann v2b anchor SEALED.</div>
+                        <div class="scene-score">SPINE-CAST: 0.9298 FORENSIC</div>
+                    </div>
+                </div>
+
+                <div class="scene-card">
+                    <div class="scene-thumb" onclick="playScene(this.querySelector('.scene-number').textContent)">
+                        <img src="/hios/cinema/obras/o-peso-do-eco2/thumbnails/S12_thomas_v1.jpg" alt="S12">
+                        <span class="scene-number">S12</span>
+                        <span class="scene-status" style="background:var(--purple);color:#fff;">Pendente</span>
+                        <span class="scene-version version-v1">v1</span>
+                        <span class="play-icon"></span>
+                    </div>
+                    <div class="scene-info">
+                        <div class="scene-title">Thomas Desesperado</div>
+                        <div class="scene-meta">
+                            <span class="meta-tag">10s</span>
+                            <span class="meta-tag">Thomas</span>
+                        </div>
+                        <div class="scene-notes">Thomas no quarto de Elisa. Lagrimas silenciosas.</div>
+                    </div>
+                </div>
+
+                <div class="scene-card">
+                    <div class="scene-thumb" onclick="playScene(this.querySelector('.scene-number').textContent)">
+                        <img src="/hios/cinema/obras/o-peso-do-eco2/thumbnails/S13_helena_v1.jpg" alt="S13">
+                        <span class="scene-number">S13</span>
+                        <span class="scene-status" style="background:var(--purple);color:#fff;">Pendente</span>
+                        <span class="scene-version version-v1">v1</span>
+                        <span class="play-icon"></span>
+                    </div>
+                    <div class="scene-info">
+                        <div class="scene-title">Helena Sozinha</div>
+                        <div class="scene-meta">
+                            <span class="meta-tag">8s</span>
+                            <span class="meta-tag">Helena</span>
+                        </div>
+                        <div class="scene-notes">Noite. Helena no carro. Uma intuicao.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ACTO IV -->
+        <section class="act-section">
+            <div class="act-header">
+                <span class="act-number">ACTO IV</span>
+                <span class="act-title">Revelacao do Ledger (4 cenas)</span>
+            </div>
+            <div class="scene-grid">
+                <div class="scene-card status-sealed" style="border-color: var(--gold);">
+                    <div class="scene-thumb" onclick="playScene(this.querySelector('.scene-number').textContent)">
+                        <img src="/hios/cinema/obras/o-peso-do-eco2/thumbs/S14_v2.jpg" alt="S14">
+                        <span class="scene-number" style="background: var(--gold); color: var(--bg);">S14</span>
+                        <span class="scene-status status-sealed">🔐 Anchored</span>
+                        <span class="scene-version version-v2">v2</span>
+                        <span class="play-icon"></span>
+                    </div>
+                    <div class="scene-info">
+                        <div class="scene-title">A Busca Diferente</div>
+                        <div class="scene-meta">
+                            <span class="meta-tag">10s</span>
+                            <span class="meta-tag">Helena</span>
+                            <span class="meta-tag de">UEBEREINSTIMMUNG</span>
+                        </div>
+                        <div class="scene-notes">Helena busca hash. UI WINDI em pos (§296).</div>
+                        <div class="scene-score">SPINE: 0.8110 FORENSIC · <span style="color: var(--green);">45e70231</span></div>
+                    </div>
+                </div>
+
+                <div class="scene-card status-sealed" style="border-color: var(--gold);">
+                    <div class="scene-thumb" onclick="playScene(this.querySelector('.scene-number').textContent)">
+                        <img src="/hios/cinema/obras/o-peso-do-eco2/thumbs/S15_v2.jpg" alt="S15">
+                        <span class="scene-number" style="background: var(--gold); color: var(--bg);">S15</span>
+                        <span class="scene-status status-sealed">🔐 Anchored</span>
+                        <span class="scene-version version-v2">v2</span>
+                        <span class="play-icon"></span>
+                    </div>
+                    <div class="scene-info">
+                        <div class="scene-title">O Eco Preservado</div>
+                        <div class="scene-meta">
+                            <span class="meta-tag">8s</span>
+                            <span class="meta-tag">Helena</span>
+                            <span class="meta-tag de">INTEGRITAET 100%</span>
+                        </div>
+                        <div class="scene-notes">Video de Elisa abre. Cadeia diegetica §296-bis.</div>
+                        <div class="scene-score">SPINE: 0.8690 FORENSIC · <span style="color: var(--green);">b8a4a083</span></div>
+                    </div>
+                </div>
+
+                <div class="scene-card status-verificar" style="border: 2px solid var(--gold); box-shadow: 0 0 15px rgba(201,168,76,0.3);">
+                    <div class="scene-thumb" onclick="playScene('S16')">
+                        <img src="/hios/cinema/obras/o-peso-do-eco2/thumbnails/S16_v2.jpg" alt="S16">
+                        <span class="scene-number" style="background: var(--gold); color: var(--bg);">S16</span>
+                        <span class="scene-status" style="background: var(--gold); color: var(--bg);">🔗 CRÍTICA</span>
+                        <span class="scene-version version-v2">v2 draft</span>
+                        <span class="play-icon"></span>
+                    </div>
+                    <div class="scene-info" style="background: linear-gradient(135deg, #1a1a10 0%, var(--bg-card) 100%);">
+                        <div class="scene-title" style="color: var(--gold);">🔗 Descoberta do Seculo (PROOF CHAIN)</div>
+                        <div class="scene-meta">
+                            <span class="meta-tag">12s</span>
+                            <span class="meta-tag" style="border-color: var(--gold); color: var(--gold);">Helena</span>
+                            <span class="meta-tag" style="border-color: var(--gold); color: var(--gold);">windi_on_screen</span>
+                            <span class="meta-tag warn">Aguarda S07</span>
+                        </div>
+                        <div class="scene-notes">
+                            <strong style="color: var(--gold);">"Da! Das Auto im Hintergrund!"</strong><br>
+                            Helena identifica sedan de Marcus no footage de Elisa.<br>
+                            <strong>PROOF CHAIN:</strong> S01 → S02 → <strong style="color: var(--gold);">S16</strong><br>
+                            Sedan DEVE corresponder a CONTINUITY-BIBLE Marcus vehicle.
+                        </div>
+                        <div class="scene-score" style="color: var(--gold);">SPINE: pendente · TIER: FORENSIC required</div>
+                    </div>
+                </div>
+
+                <div class="scene-card">
+                    <div class="scene-thumb" onclick="playScene(this.querySelector('.scene-number').textContent)">
+                        <img src="/hios/cinema/obras/o-peso-do-eco2/thumbnails/S17_v1.jpg" alt="S17">
+                        <span class="scene-number">S17</span>
+                        <span class="scene-status" style="background:var(--purple);color:#fff;">Pendente</span>
+                        <span class="scene-version version-v1">v1</span>
+                        <span class="play-icon"></span>
+                    </div>
+                    <div class="scene-info">
+                        <div class="scene-title">O Choque</div>
+                        <div class="scene-meta">
+                            <span class="meta-tag">8s</span>
+                            <span class="meta-tag">Helena</span>
+                        </div>
+                        <div class="scene-notes">Close no rosto de Helena. Reaccao a descoberta.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ACTO V -->
+        <section class="act-section">
+            <div class="act-header">
+                <span class="act-number">ACTO V</span>
+                <span class="act-title">O Tribunal (5 cenas)</span>
+            </div>
+            <div class="scene-grid">
+                <div class="scene-card status-sealed">
+                    <div class="scene-thumb" onclick="playScene(this.querySelector('.scene-number').textContent)">
+                        <img src="/hios/cinema/obras/o-peso-do-eco2/thumbs/S18_v2.jpg" alt="S18">
+                        <span class="scene-number">S18</span>
+                        <span class="scene-status status-novo">v2 Novo</span>
+                        <span class="scene-version version-v2">v2</span>
+                        <span class="play-icon"></span>
+                    </div>
+                    <div class="scene-info">
+                        <div class="scene-title">Tribunal Wide</div>
+                        <div class="scene-meta">
+                            <span class="meta-tag">8s</span>
+                            <span class="meta-tag de">DE</span>
+                        </div>
+                        <div class="scene-notes">Setup. Todos presentes. Ja em alemao.</div>
+                    </div>
+                </div>
+
+                <div class="scene-card status-sealed">
+                    <div class="scene-thumb" onclick="playScene(this.querySelector('.scene-number').textContent)">
+                        <img src="/hios/cinema/obras/o-peso-do-eco2/thumbs/S19_v2.png" alt="S19">
+                        <span class="scene-number">S19</span>
+                        <span class="scene-status status-sealed">Sealed</span>
+                        <span class="scene-version version-v2">v2</span>
+                        <span class="play-icon"></span>
+                    </div>
+                    <div class="scene-info">
+                        <div class="scene-title">A Objeccao</div>
+                        <div class="scene-meta">
+                            <span class="meta-tag">10s</span>
+                            <span class="meta-tag">Hartmann</span>
+                            <span class="meta-tag de">DE</span>
+                        </div>
+                        <div class="scene-notes">Hartmann v2b objeccao no tribunal.</div>
+                        <div class="scene-score">SPINE-CAST: 0.9298 FORENSIC</div>
+                    </div>
+                </div>
+
+                <div class="scene-card status-sealed">
+                    <div class="scene-thumb" onclick="playScene(this.querySelector('.scene-number').textContent)">
+                        <img src="/hios/cinema/obras/o-peso-do-eco2/thumbs/S20_v2.jpg" alt="S20">
+                        <span class="scene-number">S20</span>
+                        <span class="scene-status status-novo">Aceite</span>
+                        <span class="scene-version version-v2">v2</span>
+                        <span class="play-icon"></span>
+                    </div>
+                    <div class="scene-info">
+                        <div class="scene-title">O Dispositivo</div>
+                        <div class="scene-meta">
+                            <span class="meta-tag">12s</span>
+                            <span class="meta-tag">Helena</span>
+                        </div>
+                        <div class="scene-notes">Helena apresenta prova. Cascata de hashes.</div>
+                        <div class="scene-score">SPINE-CAST: 0.7298 OPERATIONAL</div>
+                    </div>
+                </div>
+
+                <div class="scene-card status-sealed">
+                    <div class="scene-thumb" onclick="playScene(this.querySelector('.scene-number').textContent)">
+                        <img src="/hios/cinema/obras/o-peso-do-eco2/thumbs/S21_v2.jpg" alt="S21">
+                        <span class="scene-number">S21</span>
+                        <span class="scene-status status-sealed">Sealed</span>
+                        <span class="scene-version version-v2">v2</span>
+                        <span class="play-icon"></span>
+                    </div>
+                    <div class="scene-info">
+                        <div class="scene-title">Duelo Silencioso</div>
+                        <div class="scene-meta">
+                            <span class="meta-tag">8s</span>
+                            <span class="meta-tag">Helena+Marcus</span>
+                            <span class="meta-tag de">DE</span>
+                        </div>
+                        <div class="scene-notes">Silencio. Juiz olha. Marcus sente medo.</div>
+                        <div class="scene-score">SPINE-CAST: 0.8638 FORENSIC</div>
+                    </div>
+                </div>
+
+                <div class="scene-card status-sealed">
+                    <div class="scene-thumb" onclick="playScene(this.querySelector('.scene-number').textContent)">
+                        <img src="/hios/cinema/obras/o-peso-do-eco2/thumbs/S22_v2.png" alt="S22">
+                        <span class="scene-number">S22</span>
+                        <span class="scene-status status-sealed">Sealed</span>
+                        <span class="scene-version version-v2">v2</span>
+                        <span class="play-icon"></span>
+                    </div>
+                    <div class="scene-info">
+                        <div class="scene-title">O Veredito</div>
+                        <div class="scene-meta">
+                            <span class="meta-tag">6s</span>
+                            <span class="meta-tag">Juiz</span>
+                            <span class="meta-tag de">DE</span>
+                        </div>
+                        <div class="scene-notes">"Die Beweise werden zugelassen." Martelo.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- EPILOGO -->
+        <section class="act-section">
+            <div class="act-header">
+                <span class="act-number">EPILOGO</span>
+                <span class="act-title">Justica e Silencio (2 cenas)</span>
+            </div>
+            <div class="scene-grid">
+                <div class="scene-card">
+                    <div class="scene-thumb" onclick="playScene(this.querySelector('.scene-number').textContent)">
+                        <img src="/hios/cinema/obras/o-peso-do-eco2/thumbnails/S23_v1.jpg" alt="S23">
+                        <span class="scene-number">S23</span>
+                        <span class="scene-status" style="background:var(--purple);color:#fff;">Pendente</span>
+                        <span class="scene-version version-v1">v1</span>
+                        <span class="play-icon"></span>
+                    </div>
+                    <div class="scene-info">
+                        <div class="scene-title">A Justica</div>
+                        <div class="scene-meta">
+                            <span class="meta-tag">8s</span>
+                            <span class="meta-tag">Marcus+Thomas</span>
+                        </div>
+                        <div class="scene-notes">Marcus algemado. Passa por Thomas. Silencio.</div>
+                    </div>
+                </div>
+
+                <div class="scene-card">
+                    <div class="scene-thumb" onclick="playScene(this.querySelector('.scene-number').textContent)">
+                        <img src="/hios/cinema/obras/o-peso-do-eco2/thumbnails/S24_v1.jpg" alt="S24">
+                        <span class="scene-number">S24</span>
+                        <span class="scene-status" style="background:var(--purple);color:#fff;">Pendente</span>
+                        <span class="scene-version version-v1">v1</span>
+                        <span class="play-icon"></span>
+                    </div>
+                    <div class="scene-info">
+                        <div class="scene-title">O Peso do Eco</div>
+                        <div class="scene-meta">
+                            <span class="meta-tag">8s</span>
+                            <span class="meta-tag">Helena</span>
+                        </div>
+                        <div class="scene-notes">Helena sozinha no tribunal vazio. Luz do entardecer.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p><span class="gold">Liga IA+H</span> · WINDI Publishing House · Kempten, Bavaria</p>
+        <p>Human Dragon + Guardian + Architect + Witness</p>
+        <p style="margin-top: 0.5rem; font-style: italic;">"A prova nao mente. A prova apenas espera."</p>
+    </footer>
+
+    <!-- Video Modal -->
+    <div class="video-modal" id="videoModal">
+        <div class="video-modal-header">
+            <span class="video-modal-title" id="modalTitle">S01 — O Registo da Vida</span>
+            <button class="video-modal-close" onclick="closeModal()">✕ Fechar</button>
+        </div>
+        <div class="video-modal-content">
+            <video id="modalVideo" controls>
+                <source id="modalSource" src="" type="video/mp4">
+            </video>
+        </div>
+    </div>
+
+    <script>
+        const videoBase = '/hios/cinema/obras/o-peso-do-eco2/videos/';
+
+        const sceneTitles = {
+            'S01': 'O Registo da Vida',
+            'S02': 'A Estrada',
+            'S03': 'O Vazio',
+            'S04': 'A Noticia',
+            'S05': 'Corte Temporal',
+            'S06': 'A Descoberta',
+            'S07': 'Chegada da Policia',
+            'S08': 'Colheita de Pistas',
+            'S09': 'Marcus Intocavel',
+            'S10': 'A Frustracao',
+            'S11': 'A Defesa Ataca',
+            'S12': 'Thomas Desesperado',
+            'S13': 'Helena Sozinha',
+            'S14': 'A Busca Diferente',
+            'S15': 'O Eco Preservado',
+            'S16': 'Descoberta do Seculo',
+            'S17': 'O Choque',
+            'S18': 'Tribunal Wide',
+            'S19': 'A Objeccao',
+            'S20': 'O Dispositivo',
+            'S21': 'Duelo Silencioso',
+            'S22': 'O Veredito',
+            'S23': 'A Justica',
+            'S24': 'O Peso do Eco'
+        };
+
+        function playScene(sceneId) {
+            const modal = document.getElementById('videoModal');
+            const video = document.getElementById('modalVideo');
+            const source = document.getElementById('modalSource');
+            const title = document.getElementById('modalTitle');
+
+            source.src = videoBase + sceneId + '.mp4';
+            title.textContent = sceneId + ' — ' + (sceneTitles[sceneId] || 'Cena');
+            video.load();
+            modal.classList.add('active');
+            video.play();
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('videoModal');
+            const video = document.getElementById('modalVideo');
+            video.pause();
+            modal.classList.remove('active');
+        }
+
+        // Close on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // Close on click outside video
+        document.getElementById('videoModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+    </script>
+</body>
+</html>

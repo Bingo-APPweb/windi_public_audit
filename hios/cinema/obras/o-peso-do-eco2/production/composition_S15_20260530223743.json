@@ -1,0 +1,10 @@
+{
+  "scene": "S15",
+  "timestamp": "2026-05-30T22:37:41.877948",
+  "plate": "/opt/windi/hios/cinema/obras/o-peso-do-eco/scenes/s295_renders/S15_20260530223724.mp4",
+  "status": "COMPOSED",
+  "receipt_id": "WINDI-S295-S14-COMPOSED-20260530223358",
+  "injected_hash": "27ccc4c514b6166a...",
+  "output_path": "/opt/windi/hios/cinema/obras/o-peso-do-eco/scenes/s295_renders/S15_composed_20260530223742.mp4",
+  "output_hash": "805496d3bbde203b34fe30d074565518ab006d1f9dc0e7a5b304c500c4878b05"
+}

@@ -1,0 +1,17 @@
+{
+  "scene": "S01",
+  "title": "O Registo da Vida",
+  "version": "v3-forest",
+  "task_id": "723c2eca-a13c-401d-a776-3f764a75268c",
+  "prompt": "Dense Bavarian forest. Tall dark spruce and fir trees surround the scene. Deep forest trail, shadows between tree trunks. Late afternoon golden light filtering through dense canopy.\n\nYoung blonde woman (from reference, Elisa, early 30s) records selfie vlog on smartphone. Warm genuine smile, talks to camera. Content creator energy.\n\nForest setting is key: thick conifer forest, narrow trail, trees close together. Moody atmosphere but warm light on her face. Autumn leaves on ground.\n\nBackground: dark sedan barely visible parked on forest trail behind her, obscured by tree trunks.\n\nCinematic forest atmosphere. German woodland. Dense trees, filtered light.",
+  "output_file": "/opt/windi/hios/cinema/obras/o-peso-do-eco2/production/renders/S01_forest_v3_20260531_181750.mp4",
+  "timestamp": "20260531_181750",
+  "validation_required": [
+    "DENSE FOREST (spruce/fir, trees close together)",
+    "Forest trail visible",
+    "Elisa warm smile, content creator energy",
+    "Golden light filtering through canopy",
+    "Moody atmosphere (setup for crime)",
+    "Sedan hint in background (proof chain)"
+  ]
+}
