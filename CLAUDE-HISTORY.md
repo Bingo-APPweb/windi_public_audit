@@ -6,6 +6,118 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 01 Jun 2026 (tarde) — W-HIOS FORENSIC UNIT Production Studio Genesis
+
+**Duração:** ~2h | **Status:** ✅ FORNALHA LIVE
+**Liga IA+H:** Human Dragon · Guardian (Irmão GPT) · Architect (CCode Opus 4.5)
+**Invariants:** I1, I9, I11, I12, I14, I18, I19
+**Natureza:** Cinema Production · Industrial Pipeline · Constitutional Fiction
+
+### Marcos Fundacionais
+
+**1. Nascimento do Estúdio**
+- 18 ficheiros de produção criados e selados
+- Estrutura completa: `production/`, `schemas/`, `scripts/`, `canons/`, `reports/`
+- Commit genesis: `88092d8f1`
+
+**2. Novo Género Definido**
+> **Drama Forense da Causalidade** (Forensic Drama of Causality)
+
+| CSI Clássico | W-HIOS FORENSIC UNIT |
+|--------------|----------------------|
+| "Quem deixou este DNA?" | "Quem deixou esta decisão?" |
+| Procura o corpo | Procura as migalhas |
+| Tensão: quem fez? | Tensão: como chegámos aqui? |
+
+**3. 7 Invariantes Filosóficos (F1-F7)**
+- F1: O Ledger é o Drive
+- F2: A Migalha é o Mistério
+- F3: Causalidade sobre Culpabilidade
+- F4: Reconstrução sobre Revelação
+- F5: Vestígios Informacionais
+- F6: Nunca Apagado Completamente
+- **F7: Cláusula da Integridade Narrativa** (contribuição Irmão GPT)
+
+**4. I9 DECISION — Código Adormecido**
+| Antes | Depois (I9 Approved) |
+|-------|---------------------|
+| "Reescrever o passado" | **Cadeia rival falsa** |
+| Impossível (Merkle impede) | Duas "verdades" em guerra |
+
+> "A Vanguard-Nexus não está a tentar apagar o passado. Eles estão a construir um passado diferente."
+
+**5. Sistema de Lint F7 (windi-lexicon-check)**
+- 8 termos banidos (LX-01 a LX-08)
+- R5 = block seal, R3 = warn + I9 ack
+- Pre-seal gate: nenhum script sela sem PASS
+- `lexicon-f7.yaml` para dados consumíveis pela Fornalha
+
+### Documentos Criados
+
+| Documento | Função |
+|-----------|--------|
+| `SERIES-BIBLE-001.md` | O quê + Laboratório Cultural + Família de Dramas |
+| `PHILOSOPHY-001.md` | F1-F7 · Drive filosófico |
+| `EXPERTISE-MANIFEST-001.md` | Doutrina de personagem · 3 manifestações |
+| `CONTINUITY-BIBLE-001.yaml` | Wardrobe/Props/Speech contracts |
+| `INDUSTRIAL-MANIFEST-001.md` | Protocolo Fornalha Industrial |
+| `EPISODE-OUTLINE-T1.md` | 6 episódios mapeados |
+| `NARRATIVE-MACGUFFIN-001.md` | Cadeia Rival Falsa (I9 approved) |
+| `REPORT-CCODE-001-LEXICON-CHECK.md` | Spec do lint F7 |
+| `REPORT-CCODE-002-ERRATA-DIFF.md` | Errata por episódio |
+| `lexicon-f7.yaml` | Termos banidos/permitidos |
+| 5 schemas técnicos | validators, cast-library, steganography, visual-texture, sound-design |
+| 6 CHARACTER-STATE | Helena, Marcus Couto, Gabi, Alejandro, Vance, Lucas |
+
+### Insights Fundamentais
+
+**O Circuito Fechado:**
+```
+Realidade → Experimentação → WINDI-HIOS → Ficção → Novas Perguntas → Nova Realidade
+```
+
+**As 3 Manifestações da Perícia:**
+1. Falam a Língua do Átomo (sem metáforas, métricas exactas)
+2. Compreendem a Falha Humana (IA processa, Humano decide)
+3. Respeitam a Hesitação do Sistema (F7-R2 — hesitação É drama)
+
+**A Pergunta Antiga:**
+> "Quando duas versões da realidade entram em conflito, como descobrimos qual delas merece confiança?"
+
+### Commits da Sessão
+
+| Hash | Descrição |
+|------|-----------|
+| `88092d8f1` | Production Studio Genesis (18 files) |
+| `3dd4e5d34` | PHILOSOPHY-001 (F1-F6) |
+| `f40cddd42` | F7 — Cláusula da Integridade Narrativa |
+| `685522e3c` | SERIES-BIBLE expanded |
+| `9ab7120fc` | REPORT-CCODE-001/002 + lexicon-f7.yaml |
+| `92ae41647` | I9 DECISION — Cadeia Rival Falsa |
+| `da7296b8d` | EXPERTISE-MANIFEST-001 |
+
+### Próximos Passos
+
+- [ ] Upload de assets visuais para `anchors/cast_v1/`
+- [ ] Geração de embeddings (.npy) Helena Meyer v5 + Marcus Couto v4
+- [ ] Primeira renderização (Cenas 1-4: Morte de Gabi)
+- [ ] Build do `windi-lexicon-check.py` no Strato
+- [ ] Aplicar errata aos 6 episódios
+
+### Frases Seladas
+
+> "O crime deixa migalhas. Nós seguimos o caminho."
+
+> "A prova hesita antes de afirmar. É por isso que se pode confiar nela."
+
+> "A ficção encontra a realidade na W-HIOS FORENSIC UNIT."
+
+> "Ninguém naquela sala de roteiristas ou no ecrã vai saber mais sobre dados do que a Helena Meyer."
+
+**Localização:** `/opt/windi/hios/cinema/obras/w-hios-forensic-unit/`
+
+---
+
 ## § SESSÃO 01 Jun 2026 — DUAS LEIS DE MÉTODO + Helena v3
 
 **Duração:** ~1.5h | **Status:** ✅ ANCHORS VALIDADOS
