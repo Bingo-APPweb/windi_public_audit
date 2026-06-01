@@ -132,6 +132,64 @@ Metadados, logs, versões, assinaturas — estas são as impressões digitais do
 ### F6 — Nunca Apagado Completamente
 Os criminosos tentam apagar as migalhas. Nunca conseguem apagar todas.
 
+### F7 — A Cláusula da Integridade Narrativa
+
+> **"A ficção pode dramatizar o que o sistema aspira a ser. Nunca pode afirmar como facto presente uma capacidade que o Ledger ainda não prova."**
+
+**Status:** FOUNDATIONAL · INVARIANTE FILOSÓFICO
+**Vínculo constitucional:** I9 (Autoria Humana Irremediável) · I11 (Permanência de Evidência) · I19 (Proveniência Inseparável)
+
+#### O Problema que esta cláusula resolve
+
+O WINDI-HIOS é real. Por isso a tentação é tratar a ficção como documentário do presente.
+Mas a narrativa comprime o que o sistema hesita em afirmar:
+
+| O sistema real | A ficção tende a mostrar |
+|----------------|--------------------------|
+| Thresholds duplos (0.65 operacional / 0.75 forense) | Certeza binária instantânea |
+| N=18 com 0% recall, documentado em §A.3.12 | Detecção infalível |
+| Ambiguidade do Marcus anchor (0.22, inválido) | Identificação sem dúvida |
+| Reconstrução que leva sessões e correcção humana | Helena resolve em segundos |
+
+Cada vez que a ficção apaga esta distância, cria uma **dívida de credibilidade**.
+E no dia em que alguém vier procurar o WINDI por causa de um episódio, essa dívida vence — e credibilidade é o único ativo que a Liga não pode gastar.
+
+#### As Três Regras
+
+**R1 — Aspiração vs Afirmação**
+A ficção pode mostrar o sistema a fazer o que ele foi desenhado para fazer.
+Não pode apresentar como rotina garantida o que o sistema ainda só prova sob condições.
+Helena pode reconstruir o caminho — mas a série honra o esforço, não o milagre.
+
+**R2 — A Hesitação é Dramaticamente Legítima**
+A dúvida do sistema não é uma fraqueza a esconder — é o coração do drama.
+Um anchor inválido a 0.22, um match que não fecha, uma cadeia que falta um elo: isto é a tensão.
+A ficção forense WINDI dramatiza a **honestidade da prova**, não a sua omnipotência.
+
+**R3 — O Erro Humano Permanece Soberano**
+Em nenhum episódio o Ledger decide. O Ledger revela; Helena (humano) interpreta e decide.
+Dramatizar a máquina a julgar viola I9 na ficção tão gravemente como o violaria na produção.
+**"AI processes. Human decides."** aplica-se ao guião com a mesma força que ao código.
+
+#### O Teste de Admissibilidade Narrativa
+
+Antes de selar qualquer guião, uma pergunta:
+
+> **"Se um perito do sistema real visse esta cena, reconheceria o WINDI — ou veria uma promessa que o Ledger não cumpre?"**
+
+Se a resposta for "uma promessa", a cena reescreve-se.
+Não para ser menos dramática — para que a tensão venha da prova verdadeira, não de uma capacidade inventada.
+
+#### A Inversão Estratégica
+
+A maior força narrativa do WINDI não é mostrar um sistema infalível.
+É mostrar um sistema que **admite o que não sabe** — e que, por admitir, é confiável.
+
+O público moderno está saturado de tecnologia mágica.
+O que comove é a **máquina honesta**.
+
+> **A hesitação do Ledger, na ficção, é o que vende o Ledger na realidade.**
+
 ---
 
 ## 9. A EVOLUÇÃO DA CIÊNCIA FORENSE
@@ -210,7 +268,9 @@ Toda decisão criativa que contradiga estes princípios deve ser rejeitada ou es
 ---
 
 *Liga IA+H · WINDI Publishing House · 01 Jun 2026*
+*With contribution from Irmão GPT (F7 — Cláusula da Integridade Narrativa)*
 
 > **"O crime deixa migalhas. Nós seguimos o caminho."**
+> **"A prova hesita antes de afirmar. É por isso que se pode confiar nela."**
 
 **OM SHANTI**
