@@ -9,9 +9,14 @@
 # =============================================================================
 
 lexicon:
-  version: "1.0.0"
+  version: "1.1.0"
   created: "2026-06-01"
+  updated: "2026-06-01"
   status: ACTIVE
+  changelog:
+    - version: "1.1.0"
+      date: "2026-06-01"
+      change: "Added LX-09 (jargon-as-decoration) with EXTERNAL_REGISTER scope"
 
   # Rule: R5 = block seal, R3 = warn + require I9 ack
   # CCode does NOT add terms by inference — new rows come from sealed errata only
@@ -69,6 +74,15 @@ banned_terms:
     verdict: R3
     canonical: "Ledger prova o ato (quando + qual chave); humano atribui a intenção"
     reason: "Ledger proves act, not motive. Keep I9 boundary."
+
+  - id: LX-09
+    name: jargon-as-decoration
+    verdict: R3
+    scope: EXTERNAL_REGISTER
+    pattern: "(threshold|cosseno|cosine|0\\.75|0\\.65|ArcFace|embedding|distribui(çã|ca)o estat)"
+    canonical: "linguagem de consequência no tribunal; jargão só no bunker"
+    reason: "Technical metrics are allowed INTERNALLY (bunker). In EXTERNAL scenes (tribunal, público, vilão), Helena speaks consequences, not numbers. Requires scene tagging to enforce."
+    prerequisite: "Scene must be tagged [INTERNAL] or [EXTERNAL]. If [EXTERNAL], this pattern triggers R3."
 
 # -----------------------------------------------------------------------------
 # ALLOW LIST (TRUE capabilities — must NOT be flagged)
