@@ -758,4 +758,10 @@ Primitive WINDI para estado mínimo, verificável e epistemicamente honesto em r
 
 Pipeline de produção cinematográfica com continuidade auditável. **Arquitectura I9:** CCode propõe (prompt+cast), Human Dragon gatilha, selo no Ledger requer gate humano. **SPINE-CAST:** continuidade multi-personagem. **Thresholds:** 0.65 operacional, 0.75 forense.
 
+**Generator Compatibility (01 Jun 2026):**
+| Generator | SPINE Status | Avg Similarity | Verdict |
+|-----------|--------------|----------------|---------|
+| SORA 2 | 🔴 INCOMPATIBLE | 0.4785 | Identity drift across frames |
+| Runway Gen-4 | 🟢 FORENSIC | 0.7850 | Primary generator for SPINE scenes |
+
 > **Full details:** `CLAUDE-HISTORY.md` § MIGRAÇÃO OVERFLOW 31 Mai 2026
