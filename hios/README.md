@@ -210,6 +210,42 @@ O token deve ter DOIS hashes distintos:
 | I9 | Proibição de Escalação | `confirmed=true` obrigatório |
 | I11 | Permanência de Evidência | Receipts imutáveis no Ledger |
 | I14 | Explicit Failure | Campos ausentes = erro, não default |
+| I19 | Proveniência Inseparável | Geração e receipt atómicos. Anchor sem proveniência = inválido. |
+
+---
+
+## §297 Lei da Proveniência Inseparável (I19)
+
+> *"A pele cresce com a carne; não se cose depois."*
+
+### Princípio
+
+Todo artefacto gerado nasce com o seu sidecar de proveniência no mesmo acto.
+Não há "ficheiro nu" seguido de "registo depois".
+
+### Três Camadas
+
+| # | Camada | Descrição |
+|---|--------|-----------|
+| 1 | **Atomicidade de Geração** | `(artifact.mp4, artifact.provenance.json)` nasce junto |
+| 2 | **Hash Antes de Transformação** | Hash ancora ANTES do FFmpeg tocar |
+| 3 | **Gate de Proveniência Obrigatório** | Anchor sem cadeia verificável = inválido |
+
+### Ficheiros de Implementação
+
+```
+/opt/windi/hios/visual/producer/
+├── provenance.py                   # ProvenanceWriter + TransformationRecorder
+├── schemas/
+│   └── provenance-v1.schema.json   # Schema JSON do sidecar
+└── hybrid-pipeline/b4/
+    ├── spine.py                    # ENFORCE_PROVENANCE_GATE
+    └── spine_cast.py               # Multi-character continuity
+```
+
+### Documento Constitucional
+
+`/opt/windi/docs/S297-LEI-DA-PROVENIENCIA-INSEPARAVEL.md`
 
 ---
 
