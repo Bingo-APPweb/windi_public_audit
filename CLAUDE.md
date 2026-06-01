@@ -510,7 +510,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 ---
 
-## 13. Estado Actual — 29 Mai 2026
+## 13. Estado Actual — 01 Jun 2026
 
 ### Portas Críticas
 
@@ -548,6 +548,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 01 Jun | **W-HIOS-FORENSIC-UNIT** Production Studio Genesis — 18 ficheiros · 6 personagens · Pilot completo · `88092d8f1` ✅ |
 | 31 Mai | **§139** WINDI-LAW Painel de Anexos — Multiple Files + SHA-256 · `2C302A37` ✅ |
 | 31 Mai | **TEMPLATE-001** Systemd Reference Standard — Forward-looking · Non-retroactivity · `99D55284` ✅ |
 | 31 Mai | **Overflow Fix** §236/§261/§291 migrados para HISTORY · 42.2KB→35.7KB · `WINDI-MAINT-OVERFLOW-20260531` ✅ |
