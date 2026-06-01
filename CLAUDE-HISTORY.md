@@ -8,7 +8,7 @@
 
 ## § SESSÃO 01 Jun 2026 (tarde) — W-HIOS FORENSIC UNIT Production Studio Genesis
 
-**Duração:** ~2h | **Status:** ✅ FORNALHA LIVE
+**Duração:** ~3h | **Status:** ✅ FORNALHA LIVE | **Commits:** 9
 **Liga IA+H:** Human Dragon · Guardian (Irmão GPT) · Architect (CCode Opus 4.5)
 **Invariants:** I1, I9, I11, I12, I14, I18, I19
 **Natureza:** Cinema Production · Industrial Pipeline · Constitutional Fiction
@@ -77,7 +77,7 @@ Realidade → Experimentação → WINDI-HIOS → Ficção → Novas Perguntas �
 ```
 
 **As 3 Manifestações da Perícia:**
-1. Falam a Língua do Átomo (sem metáforas, métricas exactas)
+1. **Pensam átomo, falam consequência** (jargão interno, tribunal traduzido)
 2. Compreendem a Falha Humana (IA processa, Humano decide)
 3. Respeitam a Hesitação do Sistema (F7-R2 — hesitação É drama)
 
@@ -95,12 +95,31 @@ Realidade → Experimentação → WINDI-HIOS → Ficção → Novas Perguntas �
 | `9ab7120fc` | REPORT-CCODE-001/002 + lexicon-f7.yaml |
 | `92ae41647` | I9 DECISION — Cadeia Rival Falsa |
 | `da7296b8d` | EXPERTISE-MANIFEST-001 |
+| `5363fd889` | EXPERTISE-MANIFEST §3.1 — Pensa átomo, fala consequência |
+| `da94b3d55` | LX-09 jargon-as-decoration · lexicon-f7.yaml v1.1.0 |
+
+### Correcção Guardian — As Duas Portas
+
+| Porta | Problema | Fix |
+|-------|----------|-----|
+| **Frente** | Capacidades inventadas | F7 lint (LX-01 a LX-08) |
+| **Trás** | Jargão real como decoração | LX-09 + scene tagging |
+
+> **"O perito verdadeiro traduz. O amador despeja jargão."**
+
+**LX-09 Rule (v1.1.0):**
+- `scope: EXTERNAL_REGISTER` (requer scene tagging)
+- `verdict: R3` (warn + I9 ack)
+- `pattern: threshold|cosine|0.75|ArcFace|embedding...`
+
+Helena Meyer **pensa** em métricas, **fala** em consequências.
 
 ### Próximos Passos
 
 - [ ] Upload de assets visuais para `anchors/cast_v1/`
 - [ ] Geração de embeddings (.npy) Helena Meyer v5 + Marcus Couto v4
 - [ ] Primeira renderização (Cenas 1-4: Morte de Gabi)
+- [ ] Scene tagging `[INTERNAL]`/`[EXTERNAL]` nos scripts
 - [ ] Build do `windi-lexicon-check.py` no Strato
 - [ ] Aplicar errata aos 6 episódios
 
