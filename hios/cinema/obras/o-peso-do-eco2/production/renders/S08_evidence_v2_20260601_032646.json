@@ -1,0 +1,37 @@
+{
+  "scene": "S08",
+  "title": "Colheita de Pistas",
+  "version": "v2",
+  "method": "image-to-video (first-frame)",
+  "task_id": "51f14e24-a095-4f5a-8aea-aec54e2d00f8",
+  "status": "GENERATED",
+  "prompt": "Cold misty Bavarian forest crime scene. Blue forensic atmosphere.\n\nWoman detective (Helena, from reference, dark navy coat, blonde hair pulled back) kneels carefully on muddy forest floor. Wears blue latex gloves.\n\nShe examines something on the ground. Picks up a broken smartphone carefully. Holds it up, examines it. Places it in clear evidence bag.\n\nForensic team in white suits visible in misty background. Autumn leaves on wet ground. Professional, methodical investigation.\n\nCinematic thriller. German police procedure. Cold blue tones.",
+  "first_frame": "/opt/windi/hios/cinema/obras/o-peso-do-eco2/thumbs/Helena_anchor_v2.png",
+  "output_file": "/opt/windi/hios/cinema/obras/o-peso-do-eco2/production/renders/S08_evidence_v2_20260601_032646.mp4",
+  "output_url": "https://dnznrvs05pmza.cloudfront.net/29177413-444c-4e7d-9196-e4a5814ebffb.mp4?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiMDkyZDJjNzUyZTFiNjdjMSIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc4MDQzNTQ0NX0.4s6nffy-L6Kp4lAEeRK5p7WILY5503a-IHD5MTQn4QM",
+  "timestamp": "20260601_032646",
+  "duration_seconds": 21.072022199630737,
+  "canonical_line_de": "Das Handy... vielleicht unsere einzige Chance",
+  "canonical_line_en": "The phone... maybe our only chance",
+  "validation_required": [
+    "Helena likeness preserved (anchor)",
+    "Dark navy wool coat visible",
+    "Blonde hair pulled back",
+    "Crime scene setting (misty forest)",
+    "Kneeling/evidence collection motion",
+    "Latex gloves visible (blue)",
+    "Phone/evidence interaction",
+    "Forensic team in background"
+  ],
+  "post_production_notes": [
+    "Add German voice-over: 'Das Handy... vielleicht unsere einzige Chance'",
+    "Verify continuity with S07 (same forest location)",
+    "Colour grade for cold blue forensic atmosphere",
+    "Add phone screen detail if needed (post overlay)"
+  ],
+  "continuity_bible_ref": "HELENA-\u00a7293",
+  "continuity_with": [
+    "S07"
+  ],
+  "speech_register": "calm, precise, low"
+}
