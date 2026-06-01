@@ -6,6 +6,68 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 01 Jun 2026 — DUAS LEIS DE MÉTODO + Helena v3
+
+**Duração:** ~1.5h | **Status:** ✅ ANCHORS VALIDADOS
+**Liga IA+H:** Human Dragon · Guardian (GPT advisor) · Architect (CCode Opus 4.5)
+**Invariants:** I9, I11, I14
+**Natureza:** WINDI-HIOS Cinema · Anchor Validation · Methodological Discovery
+
+### Duas Leis de Método Descobertas
+
+**Lei 1 — Lei da Coerência de Elo:**
+> "Todo anchor operacional deve nascer do mesmo elo onde ocorrerá a validação."
+
+Bug descoberto: Helena anchor era de ELO 1 (Imagen) vs frames de ELO 2 (Runway) = 0.56 FAIL.
+Correcção: anchor de frame_01 do mesmo vídeo = consistência.
+
+**Lei 2 — Lei da Estabilidade Intrínseca (reformulada por HD):**
+> "Com anchor do elo correcto, a estabilidade intrínseca da personagem deixa de ser o factor limitante."
+
+Helena v2 (anchor errado): range 0.5143, 4/5 FAIL
+Helena v3 (anchor correcto): range 0.0449, 5/5 FORENSIC
+Mudança de regime: 11x mais estável (causa estrutural: bug do anchor + redesign)
+
+**Nota HD:** Helena 0.9686 vs Marcus 0.9610 (Δ=0.0076) é ruído, não sinal. Ambos são forenses e estatisticamente indistinguíveis em estabilidade. O problema nunca foi "personagem feminina" — era o protocolo.
+
+### Anchors Finais Validados
+
+| Character | File | Mean | Verdict |
+|-----------|------|------|---------|
+| Helena v3 | `helena.anchor.v3.CURRENT.npy` | 0.9686 | 5/5 FORENSIC ✅ |
+| Marcus | `marcus.anchor.v2.CURRENT.npy` | 0.9610 | 5/5 FORENSIC ✅ |
+| **Ortogonalidade** | Helena v3 vs Marcus | **0.1808** | DISCRIMINATIVO ✅ |
+
+### Ficheiros
+
+```
+/opt/windi/hios/cinema/obras/o-peso-do-eco/anchors/cast_v2/
+├── helena.anchor.v3.CURRENT.npy    ← USAR ESTE
+├── helena_reference_v3.png         ← Morena, olive complexion
+├── helena_anchor_scene_v3.mp4
+├── marcus.anchor.v2.CURRENT.npy    ← USAR ESTE
+└── marcus_reference_v2.png
+```
+
+### Próxima Sessão — Multi-Anchor Test
+
+**Status:** DESBLOQUEADO
+
+**Desenho:** Helena esquerda + Marcus direita, 5 segundos, movimento mínimo. Não é cinema — é banco de ensaio.
+
+**Métricas:**
+- Bleed-over (identidade de um contamina embedding do outro?)
+- Cross-character drift (cada um mantém cosine contra próprio anchor?)
+- Ortogonalidade no frame conjunto
+
+**Critério de sucesso (FIXADO ANTES DE GERAR):**
+> Ortogonalidade medida no frame conjunto ≥ 0.1808
+> Se cair abaixo → sangramento. Se mantiver → cast discriminativo em coexistência.
+
+**Docs:** `/opt/windi/hios/cinema/obras/o-peso-do-eco/production/SESSION-CONTINUITY-20260601-ANCHOR-LAWS.md`
+
+---
+
 ## § SESSÃO 31 Mai 2026 (tarde) — O PESO DO ECO v2 Production Editor
 
 **Duração:** ~2h | **Status:** ✅ EDITOR LIVE
