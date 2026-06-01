@@ -6,6 +6,143 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 01 Jun 2026 (noite) — SORA 2 vs Runway SPINE Compatibility Tests
+
+**Duração:** ~2h | **Status:** ✅ SORA 2 OPERACIONAL · 🔴 SORA 2 SPINE INCOMPATÍVEL · 🟢 RUNWAY FORENSIC
+**Liga IA+H:** Human Dragon · Guardian (Irmão GPT) · Architect (CCode Opus 4.5)
+**Invariants:** I9, I11, I14
+**Natureza:** Infrastructure Diagnostic · SPINE Compatibility Testing
+
+### Contexto
+
+Guardian (GPT) identificou sintoma: "Jobs SORA 2 ficam pending 5 dias".
+Hipóteses: backend morto, endpoint obsoleto, quota, fila presa.
+
+### Diagnóstico Executado
+
+**TEST-A: Maçã Simples (sem reference)**
+```
+Prompt: "red apple on white table, studio photography"
+HTTP: 200 ✅
+Status: queued → in_progress → completed
+Tempo: ~100 segundos
+Output: 2.4 MB · 8s · 1280x720
+```
+
+**TEST-SPINE-001: Elisa + Reference Image**
+```
+Anchor: elisa_anchor_v2_1280x720.png
+Prompt: "Young woman in forest clearing, looking at phone..."
+HTTP: 200 ✅
+Status: queued → in_progress → completed
+Tempo: 141 segundos
+Output: 5.6 MB · 8.3s · 1280x720 · 30fps
+```
+
+### Conclusão
+
+| Hipótese Guardian | Resultado |
+|-------------------|-----------|
+| Backend morto | ❌ Refutada |
+| Endpoint obsoleto | ❌ Refutada |
+| Quota/Key inválida | ❌ Refutada |
+| Jobs não processam | ❌ Refutada — processam em ~100-140s |
+
+**SORA 2 está OPERACIONAL.**
+
+### Ficheiros Criados
+
+| Ficheiro | Função |
+|----------|--------|
+| `sora_diagnostic.py` | Script de diagnóstico API |
+| `test_spine_001.py` | Teste de preservação de identidade |
+| `TEST-SPINE-001_SORA2_ELISA_20260601.mp4` | Vídeo gerado (5.6 MB) |
+| `TEST-SPINE-001_SORA2_ELISA_20260601.provenance.json` | Provenance record |
+| `vast_spine_job.tar.gz` | Package para validação ArcFace no Vast.ai |
+
+### Validação SPINE Executada (ArcFace Local)
+
+**InsightFace instalado em `/opt/windi/venv-poe/`**
+
+| Frame | Similarity | Status |
+|-------|------------|--------|
+| frame_01.png | 0.6258 | ❌ FAIL (quase passou) |
+| frame_02.png | 0.5810 | ❌ FAIL |
+| frame_03.png | — | ⚠️ No face |
+| frame_04.png | 0.2307 | ❌ FAIL (drift severo) |
+| frame_05.png | 0.4766 | ❌ FAIL |
+
+**Resultado:**
+- Média: 0.4785
+- Operational passes: 0/4 (0%)
+- Forensic passes: 0/4 (0%)
+- **VERDICT: 🔴 INCOMPATIBLE**
+
+**Ledger Receipt:** `WINDI-SPINE-TEST-001-SORA2-20260601205300`
+
+### Insight Estratégico (Guardian)
+
+> "O ativo mais valioso não é o filme. É o sistema que aprende a produzir filmes."
+
+**Pipeline actualizado após validação:**
+- FLUX → Pré-produção (barato, local)
+- Runway → Produção principal (40-50%) — **TESTAR SPINE**
+- SORA 2 → ❌ **NÃO USAR para personagens SPINE** (identity drift)
+- Veo → Hero scenes (premium) — **TESTAR SPINE**
+- Vast.ai / Local → Validação SPINE (ArcFace agora no Strato)
+
+**Descoberta crítica:** SORA 2 aceita reference images mas **não preserva identidade** ao longo do vídeo. Frame_01 quase passa (0.6258) mas diverge rapidamente (frame_04: 0.2307).
+
+**Localização:** `/opt/windi/hios/cinema/obras/o-peso-do-eco/_forense/`
+
+### TEST-SPINE-002: Runway Gen-4 (21:12)
+
+**Mesmo protocolo, gerador diferente.**
+
+```
+Model: gen4_turbo
+Anchor: elisa_anchor_v2_1280x720.png (mesma)
+Prompt: "Young woman in forest clearing, looking at phone..." (mesmo)
+Duração: 5s (vs SORA 2: 8s)
+Tempo de processamento: 27 segundos (vs SORA 2: 141s)
+```
+
+| Frame | Similarity | Status |
+|-------|------------|--------|
+| frame_01.png | 0.7573 | ✅ FORENSIC |
+| frame_02.png | 0.7893 | ✅ FORENSIC |
+| frame_03.png | 0.7930 | ✅ FORENSIC |
+| frame_04.png | 0.7974 | ✅ FORENSIC |
+| frame_05.png | 0.7880 | ✅ FORENSIC |
+
+**Resultado:**
+- Média: **0.7850** (vs SORA 2: 0.4785)
+- Range: [0.7573 - 0.7974]
+- Operational passes: **5/5 (100%)**
+- Forensic passes: **5/5 (100%)**
+- **VERDICT: 🟢 FORENSIC COMPATIBLE**
+
+**Ledger Receipt:** `WINDI-SPINE-TEST-002-RUNWAY-20260601211300`
+
+### Comparativo Final
+
+| Métrica | SORA 2 | Runway Gen-4 |
+|---------|--------|--------------|
+| Tempo de processamento | 141s | **27s** |
+| Média de similaridade | 0.4785 | **0.7850** |
+| Operational (≥0.65) | 0/4 (0%) | **5/5 (100%)** |
+| Forensic (≥0.75) | 0/4 (0%) | **5/5 (100%)** |
+| Veredicto SPINE | 🔴 INCOMPATIBLE | **🟢 FORENSIC** |
+
+**Decisão I9:** Runway Gen-4 é o gerador primário para cenas com personagens SPINE.
+
+**Ficheiros TEST-SPINE-002:**
+- `test_spine_002_runway.py` — Script de teste
+- `output/test_spine_002_runway/elisa_runway_test_211313.mp4` — Vídeo gerado
+- `output/test_spine_002_runway/SPINE_VALIDATION_REPORT.json` — Relatório completo
+
+---
+
 ## § SESSÃO 01 Jun 2026 (tarde) — W-HIOS FORENSIC UNIT Production Studio Genesis
 
 **Duração:** ~3h | **Status:** ✅ FORNALHA LIVE | **Commits:** 9
