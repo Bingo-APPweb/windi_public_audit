@@ -57,22 +57,31 @@ A W-HIOS UNIT dramatiza a mesma pergunta através de personagens, crimes, tribun
 
 Para que a UNIT seja incontestavelmente a maior autoridade forense do planeta, a sua perícia manifesta-se no ecrã de **três formas brutais**:
 
-### 3.1 Eles Falam a Língua do Átomo (Sem Metáforas)
+### 3.1 Eles Pensam na Língua do Átomo, Falam na Língua da Consequência
 
-Quando Helena Meyer entra num tribunal ou interroga um executivo da Vanguard-Nexus:
+> **Correcção Guardian (01 Jun 2026):** O perito verdadeiro traduz. O amador despeja jargão.
 
-**PROIBIDO:**
-- "O sistema diz que é falso"
-- "A tecnologia detectou uma anomalia"
-- Termos vagos ou metafóricos
+Helena Meyer **pensa** em thresholds, embeddings e Merkle chains.
+Mas quando entra num tribunal ou interroga um executivo — ela **fala consequências**.
 
-**OBRIGATÓRIO:**
-- Falar em **thresholds forenses de similaridade de cosseno a 0.75**
-- Mencionar **distribuições estatísticas** específicas
-- Identificar **quebras mecânicas na genealogia de um embedding ArcFace**
-- Citar a **imutabilidade da Merkle chain** como prova
+**LINGUAGEM INTERNA (entre peritos, no bunker):**
+- "Cosine similarity a 0.78, acima do threshold forense"
+- "A Merkle chain quebra no bloco 4,217"
+- "O embedding ArcFace diverge 0.22 do anchor — inválido"
 
-**O efeito:** O público e os adversários sentem o peso da sua perícia porque a linguagem é fria, técnica e matematicamente inatacável. Ela não tenta convencer o juiz com retórica — ela apresenta a matemática.
+**LINGUAGEM EXTERNA (tribunal, vilão, público):**
+- "O recibo biométrico dele está carimbado no segundo exacto da queda — ele não pode ter estado onde jurou estar."
+- "Este documento nasceu depois daquele — a ordem está invertida."
+- "Das três versões, só uma existia antes da contaminação do servidor."
+
+**O princípio:** Um patologista não recita espectrometria de massa a um júri — diz "esta pessoa foi envenenada, e aqui está como sei". Helena faz o mesmo. O peso da perícia sente-se precisamente porque ela **não precisa de a exibir**. É a confiança de quem sabe tanto que pode falar simples.
+
+**PROIBIDO no tribunal:**
+- Despejar jargão técnico como decoração
+- Usar números fora de contexto (parece adereço, não ciência)
+- Exibir a perícia em vez de a aplicar
+
+**O efeito:** O público compreende. Os engenheiros reconhecem rigor, não decoração. O vilão sente o peso sem conseguir atacar a linguagem.
 
 ### 3.2 Eles Compreendem a Falha Humana (O Elo IA+H)
 
@@ -103,17 +112,29 @@ O Ledger prova o ato. Helena atribui a intenção.
 
 ---
 
-## 4. A LINGUAGEM TÉCNICA AUTORIZADA
+## 4. A LINGUAGEM TÉCNICA — INTERNA vs EXTERNA
 
-Termos que Helena e a UNIT **devem usar** para estabelecer autoridade:
+> **Regra:** Linguagem técnica no bunker. Linguagem de consequência no tribunal.
 
-| Contexto | Linguagem Autorizada |
-|----------|---------------------|
+### 4.1 Linguagem Interna (bunker, entre peritos)
+
+| Contexto | Linguagem Técnica |
+|----------|-------------------|
 | Identidade | "similaridade de cosseno", "embedding ArcFace", "threshold 0.75" |
-| Tempo | "cadeia de custódia", "anterioridade na Merkle chain", "timestamp selado" |
-| Alteração | "ordem temporal invertida", "recibo biométrico time-locked" |
-| Prova | "proveniência inseparável", "linhagem do ficheiro", "Selo Genesis" |
-| Hesitação | "resultado abaixo do threshold operacional", "re-ancoragem necessária" |
+| Tempo | "Merkle chain", "bloco genesis", "timestamp selado" |
+| Alteração | "ordem temporal invertida nos logs" |
+| Prova | "proveniência inseparável", "linhagem do ficheiro" |
+| Hesitação | "resultado a 0.68, abaixo do forense", "re-ancoragem necessária" |
+
+### 4.2 Linguagem Externa (tribunal, público, vilão)
+
+| O que Helena PENSA | O que Helena DIZ |
+|--------------------|------------------|
+| "Cosine 0.78, threshold pass" | "É a mesma pessoa. O sistema confirma." |
+| "Merkle quebra no bloco 4,217" | "O documento foi alterado depois da aprovação." |
+| "Timestamp invertido" | "Ele não pode ter estado onde jurou estar." |
+| "Anterioridade impossível de forjar" | "Das três versões, só uma existia antes da contaminação." |
+| "Threshold a 0.68, inconclusivo" | "O sistema hesita. Preciso de mais dados." |
 
 ---
 
