@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0.0",
+  "provenance_id": "WINDI-PROV-20260601130356-40447EBD",
+  "generator": "veo",
+  "model": "veo-3.1-generate-preview",
+  "elo": {"number": 2, "type": "generated_video"},
+  "prompt": "German courtroom interior. Dark oak paneling, natural daylight, German and Bavarian flags. Left: The woman from the reference stands at witness stand. Dark navy wool coat. Composed, professional. Right: An older distinguished man with silver-gray hair, clean-shaven, expensive dark suit, silver watch. Defendant's dock. Tense. Large display screen between them shows WINDI - INTEGRITÄT VERIFIZIERT 100%. Both face camera. Minimal movement. Professional lighting. 5 seconds.",
+  "output_hash_raw": "sha256:40447ebdce7c833fbb07ca14c1ae5ad4e354bf452ea63a72b6a0b3cc1113cfe1",
+  "output_filename": "S20b_v2.mp4",
+  "created_at": "2026-06-01T11:03:56.000000",
+  "reference_images": [
+    {
+      "filename": "helena_v5_test_frames/frame_01.png",
+      "character": "helena",
+      "type": "STYLE_REFERENCE"
+    }
+  ],
+  "windi_metadata": {
+    "project": "o-peso-do-eco",
+    "scene": "S20b",
+    "purpose": "scene",
+    "note": "Regeneration with Helena v5 visual reference after v1 failed identity preservation"
+  }
+}

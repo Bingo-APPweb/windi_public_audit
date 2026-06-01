@@ -17731,3 +17731,160 @@ O multi-anchor estava sempre a uma decisão de distância, e cada decisão revel
 - https://windi-domain.com/hios/cinema/obras/o-peso-do-eco/cast-review/helena_v5_01.png
 - https://windi-domain.com/hios/cinema/obras/o-peso-do-eco/cast-review/marcus_v4_05.png
 
+
+---
+
+## Sessão 2026-06-01 · ~14:00 → ~15:00 (CCode CLI) — Descoberta de Fundação
+
+**Sprint:** WINDI-HIOS Cinema · CASE-001 Multi-Anchor Test
+**Modo:** CCode CLI (Architect)
+**Operador humano:** Human Dragon
+**Modelo:** claude-opus-4-5-20251101
+
+### Trabalho completado
+
+- **Critério Multi-Anchor RATIFICADO** — cosine bruto ≤ +0.1 face ao baseline (≈ 0)
+  - Fundamentação selada: +0.05 é apertado demais (mede ruído), +0.15 é frouxo demais (come zona cinzenta)
+  - Régua fixada antes da geração, não depois de ver o número
+  - Ajustável só com evidência empírica, a frio, em sessão futura
+
+- **Prompt para frame conjunto** — proposto e aprovado estruturalmente (lado a lado, neutro, even lighting)
+
+- **DESCOBERTA DE FUNDAÇÃO** — tensão elo↔critério identificada antes de contaminar teste:
+  - Critério selado: preservação de identidade (Helena v5 + Marcus v4 específicos)
+  - Elo canónico: Veo 3.1 text-to-video
+  - Problema: Veo 3.1 t2v não condiciona em identidade — só re-amostra de descrição textual
+  - Consequência: o elo não suporta o teste que selámos
+
+### Selos emitidos
+
+Nenhum. Sessão de diagnóstico, não de produção.
+
+### Tensão registada — matéria do §298
+
+O critério +0.1 foi calibrado contra embeddings específicos (Helena v5 / Marcus v4).
+O elo (Veo 3.1 t2v) não preserva identidade — gera rostos novos que encaixam na descrição.
+Uma destas três coisas tem de ceder:
+
+| Opção | O que cede | Consequência |
+|-------|------------|--------------|
+| A | Elo | Mudar para mecanismo com condicionamento (Runway, Veo i2v) — requer §298 |
+| B | Critério | Aceitar que teste mede (1) coexistência, não (2) preservação — pergunta selada fica em aberto |
+| C | Pergunta | Reformular "preservação" como critério qualitativo, não embedding-based |
+
+### Scaffold pending — §298 com dentes
+
+**Status:** CANDIDATO → PRIMEIRO ACTO DA PRÓXIMA SESSÃO
+
+**Escopo proposto:**
+- Gate de paragem obrigatório para troca de elo/prompt mid-pipeline
+- Provou-se necessário 3× neste sprint (2× ontem, 1× hoje)
+- Deve existir ANTES de qualquer decisão de troca de mecanismo
+
+**Decisão a tomar a frio:**
+- Qual das três opções (A/B/C) adoptar
+- Se A: qual mecanismo alternativo, com que baseline
+- Se B: como reformular o teste honestamente
+- Se C: como definir "consistência caracterial" de forma mensurável
+
+### Próximo passo proposto
+
+1. Abrir §298 como primeiro acto
+2. Selar o gate de troca de elo
+3. Só então decidir A/B/C com cabeça fresca
+4. Executar o teste que a decisão permitir
+
+### Lição do dia
+
+A mesma de ontem, aplicada a um nível acima: parar antes de contaminar. Ontem parámos antes de gerar com ELO errado. Hoje parámos antes de testar com mecanismo incompatível. Cada paragem custa um turno; cada contaminação evitada vale mais do que o turno.
+
+> *"Selaste um critério de preservação de identidade contra um elo que não preserva identidade por construção."*
+> — Guardian · 01 Jun 2026
+
+---
+
+
+---
+
+## Sessão 2026-06-01 · ~14:00 → ~13:15 (CCode CLI) — S20b Tribunal + Via Rigorosa
+
+**Sprint:** WINDI-HIOS Cinema · CASE-001 Multi-Anchor Test
+**Modo:** CCode CLI (Architect) + Guardian (Claude.ai web transportado por HD)
+**Operador humano:** Human Dragon
+**Modelo:** claude-opus-4-5-20251101
+
+### Trabalho completado
+
+1. **Critério Multi-Anchor RATIFICADO** — cosine bruto ≤ +0.1 face ao baseline (≈ 0)
+   - Fundamentação selada pelo Human Dragon: +0.05 mede ruído, +0.15 come zona cinzenta
+   - Régua fixada ANTES da geração
+
+2. **S20b Tribunal gerada** — Helena + Marcus primeira coexistência
+   - v1: prompt textual sem referência → Helena errada (loira em vez de morena)
+   - v2: referência Helena v5 → Helena correcta, cast visualmente aprovado
+   - Veo bloqueou dual-reference (Helena + Marcus) como "celebrity likeness" (falso positivo)
+
+3. **DESCOBERTA: Tensão elo↔critério confirmada empiricamente**
+   - A cena de tribunal não isola variáveis (distância, luz, ângulo diferentes)
+   - Medir cosine aqui confundiria geometria de cena com bleed-over
+   - Guardian travou: "confundir cinema com banco de ensaio é erro metodológico"
+
+4. **VIA RIGOROSA ADOPTADA** (decisão Human Dragon)
+   - Frames do tribunal → `_experimental/narrative/S20b_tribunal_poc/`
+   - Status: POC visual, NÃO FORENSE
+   - Teste multi-anchor canónico requer banco de ensaio controlado
+
+5. **CONTINUITY-BIBLE corrigido** — Helena hair: blonde → brown/dark
+   - Decisão HD ratificada visualmente em Helena v5
+
+### Selos emitidos
+
+Nenhum. Artefactos experimentais não selados.
+
+### Scaffold pending — Banco de Ensaio Controlado
+
+**Design fixado:**
+- Fundo neutro cinza
+- Helena e Marcus lado a lado, mesmo plano
+- Mesma distância da câmara
+- Mesma iluminação difusa
+- Movimento mínimo, 5 segundos
+- Pipeline veo_producer.py blindado com proveniência atómica
+
+**Critério já ratificado:**
+- Baseline isolado: cosine ≈ 0 (medido como -0.0305)
+- Critério: cosine conjunto ≤ +0.1
+- Acima de +0.1 → zona de investigação
+
+**Problema técnico pendente:**
+- Veo bloqueia dual-reference como "celebrity"
+- Alternativa: gerar com uma referência, validar cada personagem separadamente
+
+### Próximo passo proposto
+
+1. Cabeça descansada
+2. Gerar banco de ensaio controlado (fundo neutro, mesma luz)
+3. Usar pipeline blindado (veo_producer.py)
+4. Medir cosine conjunto
+5. Comparar com baseline e critério
+
+### Lições do dia
+
+- **Hiperadrenalina é real:** 3 fechos que não fecharam, ímpeto de medir sobre fundação não-controlada
+- **Cinema ≠ banco de ensaio:** frame bonito não é frame válido para medição
+- **Guardian travou a tempo:** a fortaleza está intacta
+- **Dual-reference bloqueado:** Veo tem filtros que precisam de workaround
+
+### Notas técnicas
+
+| Artefacto | Status | Proveniência |
+|-----------|--------|--------------|
+| S20b_v1.mp4 | POC | Sim (veo_producer.py) |
+| S20b_v2.mp4 | POC | Manual (script ad-hoc) |
+| Ambos | NÃO FORENSE | Variáveis não isoladas |
+
+> *"O ímpeto da produção não vai atropelar a maturidade da engenharia da WINDI."*
+> — Human Dragon · 01 Jun 2026
+
+---
+

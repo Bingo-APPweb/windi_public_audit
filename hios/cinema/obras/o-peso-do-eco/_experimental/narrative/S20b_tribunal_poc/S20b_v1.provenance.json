@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "provenance_id": "WINDI-PROV-20260601125210-E4731CEC",
+  "generator": "veo",
+  "model": "veo-3.1-generate-preview",
+  "elo": {
+    "number": 2,
+    "type": "generated_video"
+  },
+  "prompt": "German courtroom interior. Dark oak paneling, natural daylight from tall windows, German and Bavarian flags visible. Left side: A woman detective in a dark navy wool coat stands at witness stand, composed, professional. Brown hair, olive complexion. Right side: An older man with gray hair, clean-shaven, in expensive dark suit, sits in defendant's dock. Silver watch on wrist. Tense, guarded expression. Between them, a large display screen shows WINDI - INTEGRITÄT VERIFIZIERT 100%. Both face forward. Minimal movement. Professional courtroom lighting. 5 seconds duration.",
+  "prompt_hash": "sha256:a94af445b4be196723dcf014047996841c6b9bf1597a4cf525dbfd8fe5b7da5c",
+  "output_hash_raw": "sha256:c4bdbaeea8c604d83634e207d1d26598658d7b35e3c72fbdf5c58f2c57de5e35",
+  "output_filename": "S20b_v1.mp4",
+  "created_at": "2026-06-01T12:53:10.278943",
+  "transformations": [],
+  "parameters": {
+    "aspect_ratio": "16:9"
+  },
+  "api_response": {
+    "operation_id": "9mp0oiykhr5k",
+    "duration_seconds": 59.73724865913391,
+    "status": "completed"
+  },
+  "windi_metadata": {
+    "project": "o-peso-do-eco",
+    "scene": "S20b",
+    "purpose": "scene"
+  }
+}
