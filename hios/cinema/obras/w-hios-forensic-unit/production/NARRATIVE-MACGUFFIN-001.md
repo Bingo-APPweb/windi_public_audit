@@ -48,22 +48,31 @@ Helena: "Meu Deus... o Código Adormecido não é uma ferramenta de lavagem de d
 
 ## 3. O QUE É O CÓDIGO ADORMECIDO
 
+> **I9 Decision:** Opção B — Cadeia rival falsa · Human Dragon · 01 Jun 2026
+
 ### Nível Superficial (O que o cartel pensa que é)
 Uma ferramenta avançada de "gestão de reputação digital" — capaz de:
 - Alterar metadados de documentos em massa
-- Reescrever históricos de transações bancárias
-- Manipular resultados de motores de busca
 - Fabricar provas digitais convincentes
+- Manipular resultados de motores de busca
+- Criar históricos alternativos plausíveis
 
 ### Nível Profundo (O que Gabi descobriu)
-Uma **inteligência artificial de reescrita histórica** capaz de:
-- Alterar arquivos governamentais retroativamente
-- Apagar a existência digital de pessoas
-- Criar memórias falsas através de documentos fabricados
-- Infiltrar-se em sistemas de verificação (incluindo Ledgers)
+Uma **cadeia de custódia RIVAL e FALSA** — um passado paralelo igualmente "provado":
+- Não reescreve o passado (a Merkle chain impede)
+- Constrói uma **segunda verdade** com a mesma arquitectura do WINDI
+- Cada documento falso tem o seu próprio "recibo" numa cadeia rival
+- Cria um mundo onde existem duas "provas" contraditórias
 
 ### O Terror Existencial
-Se o Código Adormecido for activado, não haverá mais "prova". A própria noção de verdade documental colapsa. O WINDI Forensic Ledger — a única defesa da humanidade contra a manipulação — será tornado obsoleto.
+O Código Adormecido não destrói a prova — **multiplica-a**.
+
+Se for activado, não haverá mais "a verdade". Haverá duas cadeias de custódia, ambas aparentemente válidas, ambas com recibos, timestamps e assinaturas. A batalha deixa de ser "o que é verdade?" e passa a ser **"qual cadeia é a verdadeira?"**
+
+O WINDI Forensic Ledger não será tornado obsoleto — será **duplicado por um impostor**. E a única forma de distinguir o original do falso é rastrear a genealogia até à génese — a corrida da série inteira.
+
+### A Ironia Central (F7-compliant)
+O WINDI existe precisamente para tornar a reescrita do passado impossível. A Vanguard-Nexus não tenta quebrar o WINDI — tenta **replicá-lo** com uma história diferente. O terror não é a destruição da verdade; é a sua multiplicação forjada.
 
 ---
 
@@ -141,9 +150,10 @@ A série transcende o thriller processual e entra no território da ficção esp
 
 No final da Temporada 1, quando Helena finalmente monta as peças:
 
-> **"A Vanguard-Nexus não quer apenas esconder os seus crimes.**
-> **Eles querem torná-los como se nunca tivessem existido.**
-> **E se conseguirem... nós também deixamos de existir."**
+> **"A Vanguard-Nexus não está a tentar apagar o passado.**
+> **Eles estão a construir um passado diferente.**
+> **Uma cadeia de custódia rival. Uma segunda verdade.**
+> **E se conseguirem... ninguém saberá qual das duas é real."**
 
 ---
 

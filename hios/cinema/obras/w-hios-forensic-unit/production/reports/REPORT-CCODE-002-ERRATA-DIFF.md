@@ -105,25 +105,24 @@ Each block: `[EPn]` → rule fired → `- old` / `+ new`. Plot unchanged. Only t
 
 ---
 
-## CÓDIGO ADORMECIDO — PENDING I9 DECISION
+## CÓDIGO ADORMECIDO — I9 APPROVED
 
-**⚠️ THIS BLOCK IS NOT APPLIED UNTIL HUMAN DRAGON RULES**
+**✅ DECISION: OPTION B — Cadeia rival falsa**
+**Approved by:** Human Dragon · 01 Jun 2026
+**Status:** READY-TO-APPLY
 
 ```diff
   [LX-07] Arco da temporada:
 - ...infraestrutura oculta capaz de reescrever retroativamente os registos históricos da humanidade.
-
-+ PROPOSTA (aguarda decisão Human Dragon):
 + ...uma cadeia de custódia RIVAL e FALSA — um passado paralelo igualmente "provado".
 + O terror não é reescrever o passado (Merkle impede); é forjar uma segunda verdade.
 + A batalha final = "qual cadeia é a verdadeira" — a pergunta central da série à escala civilizacional.
 ```
 
-**Status:** PENDING
-**Blocker:** I9 decision required
-**Options:**
-- A) Manter original ("reescrever passado") — aceitar violação F7-R2 como licença poética
-- B) Adoptar proposta ("cadeia rival") — mais WINDI, mais aterrorizante, tecnicamente correcto
+**Rationale:** A Merkle chain selada não pode ser reescrita silenciosamente — esse é o ponto central do WINDI. A ameaça real é a construção de uma cadeia rival que parece igualmente provada. Isto é:
+- Tecnicamente correcto (honra F7)
+- Mais aterrorizante (duas "verdades" em guerra)
+- A pergunta central da série elevada à escala civilizacional
 
 ---
 
