@@ -1,0 +1,55 @@
+{
+  "test_id": "TEST-SPINE-001",
+  "title": "SORA 2 × SPINE Identity Preservation Test",
+  "timestamp": "2026-06-01T20:21:58Z",
+  "generator": "sora-2",
+  "api_endpoint": "https://api.openai.com/v1/videos",
+  "job_id": "video_6a1dcdc7ec28819884c84efedff559e508dd069f4b39e595",
+  "input": {
+    "anchor": "elisa_anchor_v2_1280x720.png",
+    "anchor_embedding": "elisa.anchor.v2.CURRENT.npy",
+    "prompt": "Young woman standing in a forest clearing, looking at her mobile phone. Subtle head movement, soft natural lighting. She has dark hair, wears casual clothing. Cinematic composition, shallow depth of field. Calm, contemplative mood.",
+    "size": "1280x720",
+    "duration": 8
+  },
+  "output": {
+    "file": "TEST-SPINE-001_SORA2_ELISA_20260601.mp4",
+    "size_bytes": 5872640,
+    "duration_seconds": 8.3,
+    "resolution": "1280x720",
+    "fps": 30,
+    "codec": "h264"
+  },
+  "timing": {
+    "submitted_at": "2026-06-01T20:21:58Z",
+    "completed_at": "2026-06-01T20:24:19Z",
+    "processing_seconds": 141
+  },
+  "validation": {
+    "status": "COMPLETED",
+    "validated_at": "2026-06-01T20:52:51Z",
+    "method": "ArcFace buffalo_l (insightface)",
+    "environment": "Strato local (venv-poe)",
+    "frames_extracted": 5,
+    "frames_with_face": 4,
+    "arcface_results": {
+      "frame_01": 0.6258,
+      "frame_02": 0.5810,
+      "frame_03": null,
+      "frame_04": 0.2307,
+      "frame_05": 0.4766
+    },
+    "average_similarity": 0.4785,
+    "threshold_operational": 0.65,
+    "threshold_forensic": 0.75,
+    "operational_passes": 0,
+    "forensic_passes": 0,
+    "verdict": "INCOMPATIBLE",
+    "ledger_receipt": "WINDI-SPINE-TEST-001-SORA2-20260601205300"
+  },
+  "liga_iah": {
+    "human_dragon": "I9 approved diagnostic",
+    "guardian": "Proposed TEST-SPINE-001 protocol",
+    "architect": "Executed test on Strato"
+  }
+}

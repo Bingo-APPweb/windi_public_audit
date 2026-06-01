@@ -1,0 +1,58 @@
+{
+  "timestamp": "2026-06-01T20:52:59.150397",
+  "test_id": "TEST-SPINE-001",
+  "anchor_file": "elisa.anchor.v2.CURRENT.npy",
+  "thresholds": {
+    "operational": 0.65,
+    "forensic": 0.75
+  },
+  "frames": [
+    {
+      "file": "frame_01.png",
+      "face_detected": true,
+      "similarity": 0.6258,
+      "operational_pass": false,
+      "forensic_pass": false
+    },
+    {
+      "file": "frame_02.png",
+      "face_detected": true,
+      "similarity": 0.581,
+      "operational_pass": false,
+      "forensic_pass": false
+    },
+    {
+      "file": "frame_03.png",
+      "face_detected": false,
+      "similarity": null,
+      "operational_pass": false,
+      "forensic_pass": false
+    },
+    {
+      "file": "frame_04.png",
+      "face_detected": true,
+      "similarity": 0.2307,
+      "operational_pass": false,
+      "forensic_pass": false
+    },
+    {
+      "file": "frame_05.png",
+      "face_detected": true,
+      "similarity": 0.4766,
+      "operational_pass": false,
+      "forensic_pass": false
+    }
+  ],
+  "summary": {
+    "total_frames": 5,
+    "faces_detected": 4,
+    "average_similarity": 0.4785,
+    "min_similarity": 0.2307,
+    "max_similarity": 0.6258,
+    "operational_passes": 0,
+    "forensic_passes": 0,
+    "operational_rate": 0.0,
+    "forensic_rate": 0.0,
+    "verdict": "INCOMPATIBLE"
+  }
+}
