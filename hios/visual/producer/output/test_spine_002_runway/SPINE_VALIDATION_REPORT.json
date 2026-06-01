@@ -1,0 +1,41 @@
+{
+  "test_id": "TEST-SPINE-002",
+  "generator": "runway-gen4-turbo",
+  "timestamp": "2026-06-01T21:13:18.379369",
+  "video": "/opt/windi/hios/visual/producer/output/test_spine_002_runway/elisa_runway_test_211313.mp4",
+  "validation": {
+    "frames": [
+      {
+        "file": "frame_01.png",
+        "similarity": 0.7573,
+        "status": "\u2705 FORENSIC"
+      },
+      {
+        "file": "frame_02.png",
+        "similarity": 0.7893,
+        "status": "\u2705 FORENSIC"
+      },
+      {
+        "file": "frame_03.png",
+        "similarity": 0.793,
+        "status": "\u2705 FORENSIC"
+      },
+      {
+        "file": "frame_04.png",
+        "similarity": 0.7974,
+        "status": "\u2705 FORENSIC"
+      },
+      {
+        "file": "frame_05.png",
+        "similarity": 0.788,
+        "status": "\u2705 FORENSIC"
+      }
+    ],
+    "average": 0.785,
+    "min": 0.7573,
+    "max": 0.7974,
+    "operational_passes": 5,
+    "forensic_passes": 5,
+    "verdict": "FORENSIC_COMPATIBLE"
+  }
+}
