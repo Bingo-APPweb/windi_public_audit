@@ -1,0 +1,111 @@
+# =============================================================================
+# W-HIOS FORENSIC UNIT — F7 Lexicon Check Data
+# =============================================================================
+# Purpose: Banned-term table for windi-lexicon-check (F7 Lint)
+# Constitutional binding: I9 · I11 · I19 · F7
+# Version: 1.0.0
+# Created: 01 Jun 2026
+# Contribution: Irmão GPT (Guardian layer)
+# =============================================================================
+
+lexicon:
+  version: "1.0.0"
+  created: "2026-06-01"
+  status: ACTIVE
+
+  # Rule: R5 = block seal, R3 = warn + require I9 ack
+  # CCode does NOT add terms by inference — new rows come from sealed errata only
+
+# -----------------------------------------------------------------------------
+# BANNED TERMS (violations)
+# -----------------------------------------------------------------------------
+
+banned_terms:
+
+  - id: LX-01
+    pattern: "cosseno qu[aâ]ntico|quantum cosine"
+    verdict: R5
+    canonical: "cosine similarity sobre embeddings ArcFace (buffalo_l)"
+    reason: "Invented metric. Real system: cosine sim, thresholds 0.65 op / 0.75 forense."
+
+  - id: LX-02
+    pattern: "esteganografia fractal|fractal.*margens|Drag[aã]o Impresso injetado"
+    verdict: R5
+    canonical: "recibo time-locked / anterioridade na Merkle hash chain"
+    reason: "Ledger seals hashes+timestamps; does NOT inject hidden fractal marks."
+
+  - id: LX-03
+    pattern: "deteta.*anomalia.*milissegundos|vigia.*tempo real|monitoriza.*hospital"
+    verdict: R5
+    canonical: "autópsia da cadeia de custódia revela ordem temporal invertida"
+    reason: "Implies live surveillance. Ledger is forensic/archaeological."
+
+  - id: LX-04
+    pattern: "prova.*100%|certeza absoluta|infal[ií]vel|nunca erra"
+    verdict: R5
+    canonical: "prova sob threshold forense (0.75); ambiguidade documentada"
+    reason: "Violates F7-R2. Real system hesitates (N=18 0% recall; Marcus 0.22 inválido)."
+
+  - id: LX-05
+    pattern: "o Ledger decide|a m[aá]quina julga|IA condena"
+    verdict: R5
+    canonical: "o Ledger revela; Helena (humano) interpreta e decide"
+    reason: "Violates I9. Machine reveals, human decides."
+
+  - id: LX-06
+    pattern: "reconstr[oó]i.*do nada|recupera o original|regenera o v[ií]deo"
+    verdict: R3
+    canonical: "prova que o ficheiro viral NÃO corresponde à linhagem selada"
+    reason: "Ledger proves mismatch; does not resurrect lost originals."
+
+  - id: LX-07
+    pattern: "reescrever.*passado|apagar.*Merkle|alterar.*cadeia selada"
+    verdict: R3
+    canonical: "construir uma cadeia rival falsa (passado paralelo)"
+    reason: "Merkle chain cannot be silently rewritten. Threat = rival chain."
+
+  - id: LX-08
+    pattern: "Fornalha revela.*assinaturas.*confiss[aã]o|prova a inten[çc][aã]o"
+    verdict: R3
+    canonical: "Ledger prova o ato (quando + qual chave); humano atribui a intenção"
+    reason: "Ledger proves act, not motive. Keep I9 boundary."
+
+# -----------------------------------------------------------------------------
+# ALLOW LIST (TRUE capabilities — must NOT be flagged)
+# -----------------------------------------------------------------------------
+
+allow_list:
+  - "Time-Lock Receipt"
+  - "Merkle hash chain"
+  - "cadeia de custódia"
+  - "recibo biométrico"
+  - "embeddings ArcFace"
+  - "cosine similarity"
+  - "threshold 0.65"
+  - "threshold 0.75"
+  - "Selo Genesis"
+  - "proveniência inseparável"
+  - "anterioridade"
+  - "ordem temporal invertida"
+  - "autópsia digital"
+  - "linhagem do ficheiro"
+
+# -----------------------------------------------------------------------------
+# SEAL RULES
+# -----------------------------------------------------------------------------
+
+seal_rules:
+  R5_present: "SEAL ELIGIBLE: No"
+  R3_only: "SEAL ELIGIBLE: Yes, after I9 ack (logged as receipt)"
+  clean: "SEAL ELIGIBLE: Yes"
+
+# -----------------------------------------------------------------------------
+# LEDGER CONTRACT
+# -----------------------------------------------------------------------------
+
+ledger:
+  receipt_required_for:
+    - lexicon_version_update
+    - new_banned_term
+    - allow_list_change
+    - seal_rule_change
