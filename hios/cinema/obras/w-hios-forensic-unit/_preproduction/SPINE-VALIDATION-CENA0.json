@@ -17,8 +17,9 @@
     "type": "IDENTITY",
     "description": "Dedicated passport frame - neutral expression, flat lighting",
     "extraction_method": "dedicated_passport_protocol",
-    "self_validation_score": 1.0000,
-    "status": "LOCKED"
+    "self_validation_score": null,
+    "status": "MISSING",
+    "errata_298": "02 Jun 2026 - Assets não existem. Ficheiros .png/.npy/.mp4 ausentes do repositório. Scores documentados não são verificáveis."
   },
 
   "previous_anchor_deprecated": {
@@ -88,9 +89,9 @@
     "eixo_f": {
       "threshold": 0.7500,
       "shots": ["P04", "P05", "P02"],
-      "min_achieved": 0.7655,
-      "verdict": "PASSED",
-      "note": "All facial shots ≥0.75"
+      "min_achieved": null,
+      "verdict": "NOT_VERIFIABLE",
+      "note": "§298-ERRATA: Assets P02/P04/P05 não existem. Scores eram documentação sem ficheiros."
     },
     "eixo_d": {
       "shots": ["P06"],
@@ -142,8 +143,9 @@
     "invariants": ["I9", "I11", "I14", "I19"]
   },
 
-  "status": "PARTIAL_VALIDATION",
-  "next_action": "Measure P06 against VC-Matrix when assets available",
+  "status": "FOUNDATION_MISSING",
+  "errata_298": "02 Jun 2026 - Gabi anchor não existe. Toda a validação Cena 0 é órfã.",
+  "next_action": "REGENERAR anchor Gabi antes de qualquer outra produção",
   "constitutional_seal": {
     "eixo_f_decree": "DECRETO-PRODUCAO-001-DUPLA-REGUA",
     "eixo_d_decree": "DECRETO-PRODUCAO-001-ADITAMENTO",

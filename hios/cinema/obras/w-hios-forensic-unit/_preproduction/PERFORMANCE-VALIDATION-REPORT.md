@@ -1,22 +1,39 @@
 # PERFORMANCE VALIDATION REPORT
 ## Relatório de Validação de Performance — W-HIOS Forensic Unit
 
-**Status:** IN PROGRESS
+**Status:** 🔴 §298-ERRATA — DESIGN INTENT (NOT VERIFIED)
 **Created:** 02 Jun 2026
+**Updated:** 02 Jun 2026 — ERRATA: Scores documentados sem assets verificáveis
 **Liga IA+H:** Human Dragon (I9) · Guardian · Architect · Witness
 **Generator:** Runway Gen-4.5
 **Validator:** InsightFace ArcFace-R100 (buffalo_l)
 
 ---
 
-## SUMÁRIO EXECUTIVO
+## ⚠️ §298-ERRATA: AVISO CRÍTICO
+
+> **Este documento contém DESIGN INTENT, não validação verificada.**
+>
+> Os scores listados foram documentados em sessões anteriores, mas:
+> - **Os assets da Gabi (P02, P04, P05, P06) NÃO EXISTEM**
+> - **Os anchors de Couto, Helena, Vance têm detection_score, não Eixo F validado**
+> - **Nenhum shot-filho foi gerado e medido contra anchors**
+>
+> **Este relatório representa INTENÇÃO DE PRODUÇÃO, não prova forense.**
+> Quando os assets forem regenerados e revalidados, este documento será actualizado.
+
+---
+
+## SUMÁRIO EXECUTIVO (§298-ERRATA)
 
 | Acto | Lote | Planos | Eixo F | Eixo D | Status |
 |------|------|--------|--------|--------|--------|
-| I | hios_pilot_act1_runway_v4.5 | 6 | 5 PASSED | 1 HOMOLOGADO | ✅ SEALED |
-| II | hios_pilot_act2_bunker_v4.5 | 6 | 5 PASSED | 1 HOMOLOGADO | ✅ SEALED |
+| I | hios_pilot_act1_runway_v4.5 | 6 | — | — | 🔴 **NOT VERIFIED** |
+| II | hios_pilot_act2_bunker_v4.5 | 6 | — | — | 🔴 **NOT VERIFIED** |
 | III | — | 23 | — | — | ⏳ PENDING |
 | IV | — | 23 | — | — | ⏳ PENDING |
+
+**NOTA:** Os "Ledger Seal" blocks abaixo são EXEMPLOS DE FORMATO, não selos reais.
 
 ---
 

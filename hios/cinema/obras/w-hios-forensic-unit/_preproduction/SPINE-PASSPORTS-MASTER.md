@@ -1,9 +1,9 @@
 # SPINE PASSPORTS MASTER
 ## Character Identity Cards — W-HIOS Forensic Unit
 
-**Status:** COMPLETE (6/6)
+**Status:** ERRATA 02 Jun 2026 — Vocabulary Correction
 **Created:** 02 Jun 2026
-**Updated:** 02 Jun 2026 — Lucas + Alejandro finalizados
+**Updated:** 02 Jun 2026 — §298-ERRATA: LOCKED→EXTRACTED (detection ≠ validation)
 **Liga IA+H:** Human Dragon (I9) · Guardian · Architect · Witness
 **Constitutional Binding:** DECRETO-001 + ADITAMENTO (Eixo F / Eixo D)
 
@@ -23,11 +23,11 @@ Cada personagem recorrente recebe um **plano de identidade dedicado** que:
 
 ## PASSAPORTES SELADOS (6/6)
 
-### 1. GABI SANTOS ⏳ PARTIAL
+### 1. GABI SANTOS 🔴 FOUNDATION_MISSING
 
 **ID:** `gabi.santos.passport.v1`
 **Anchor:** `gabi.santos.anchor.v1`
-**Status:** EIXO F ✅ LOCKED · EIXO D ⏳ PENDING
+**Status:** 🔴 **ASSETS NÃO EXISTEM** — Fundação não verificável
 
 ```plaintext
 Photographic portrait for character reference, a 33-year-old Brazilian
@@ -40,32 +40,35 @@ identification shot, 50mm lens, sharp focus on facial structures,
 cinematic photorealistic texture, zero facial muscle distortion.
 ```
 
-**Validation (Eixo F):** ✅ PASSED
-| Plano | Score | Status |
-|-------|-------|--------|
-| P04 | 0.9314 | ✅ ≥0.75 |
-| P05 | 0.8420 | ✅ ≥0.75 |
-| P02 | 0.7655 | ✅ ≥0.75 |
+**§298-ERRATA (02 Jun 2026):**
+> Os scores 0.93/0.84/0.77 foram documentados em sessões anteriores mas
+> **os assets não foram persistidos**. Não existe `gabi.santos.anchor.v1.png`,
+> não existe embedding, não existem vídeos P02/P04/P05/P06.
+> **Estes números não são verificáveis.**
 
-**Validation (Eixo D):** ⏳ PENDING
-| Plano | Critério | Limiar | Medição | Status |
-|-------|----------|--------|---------|--------|
-| P06 | Vestuário | ±20% RGB | — | ⏳ |
-| P06 | Cabelo | ≥70% IoU | — | ⏳ |
-| P06 | Postura | ±15° | — | ⏳ |
-| P06 | Cenário | env_match | — | ⏳ |
-| P06 | Proporção | N.A. | — | N.A. (bending) |
-| P06 | Ancoragem | P05 adj | P05 | ✅ |
+**Validation (Eixo F):** ❌ **NOT VERIFIABLE**
+| Plano | Score Documentado | Asset Existe? | Status |
+|-------|-------------------|---------------|--------|
+| P04 | 0.9314 | ❌ NÃO | ❌ ORPHAN |
+| P05 | 0.8420 | ❌ NÃO | ❌ ORPHAN |
+| P02 | 0.7655 | ❌ NÃO | ❌ ORPHAN |
 
-**Nota:** Régua Eixo D selada 02 Jun 2026. Assets não persistidos. Medição pendente.
+**Validation (Eixo D):** ❌ **NOT VERIFIABLE**
+| Plano | Asset Existe? | Status |
+|-------|---------------|--------|
+| P06 | ❌ NÃO | ❌ ORPHAN |
+
+**ACÇÃO NECESSÁRIA:** Regenerar anchor da Gabi antes de qualquer produção.
+A fundação deve existir e ser validável antes de os 5 outros serem úteis.
 
 ---
 
-### 2. HELENA MEYER ✅ LOCKED
+### 2. HELENA MEYER 🟡 EXTRACTED
 
 **ID:** `helena.meyer.junior.passport.v1`
 **Anchor:** `helena.meyer.junior.anchor.v1`
-**Status:** LOCKED FOR PRODUCTION
+**Status:** ANCHOR EXTRACTED — Eixo F ⏳ PENDING
+**Detection Score:** 0.8636 (InsightFace viu rosto — **não é validação de identidade**)
 **Hash:** `sha256:5262ad1cf95fefd0176c4cc115dbfac5040b81627b3178efabcc3980ca0020a2`
 
 ```plaintext
@@ -90,11 +93,12 @@ photorealistic texture, zero facial muscle distortion.
 
 ---
 
-### 3. MARCUS VANCE ✅ LOCKED
+### 3. MARCUS VANCE 🟡 EXTRACTED
 
 **ID:** `marcus.vance.passport.v1`
 **Anchor:** `marcus.vance.anchor.v1`
-**Status:** LOCKED FOR PRODUCTION
+**Status:** ANCHOR EXTRACTED — Eixo F ⏳ PENDING
+**Detection Score:** 0.8638 (InsightFace viu rosto — **não é validação de identidade**)
 **Hash:** `sha256:3ec94552f85243fe5b4773b0128767d1898cd9690ec9a7a777ab21fb2ddb5c2e`
 **Source:** `anchor_marcus_brenner.png`
 
@@ -113,11 +117,12 @@ muscle distortion.
 
 ---
 
-### 4. MARCUS COUTO ✅ LOCKED
+### 4. MARCUS COUTO 🟡 EXTRACTED
 
 **ID:** `marcus.couto.passport.v1`
 **Anchor:** `marcus.couto.anchor.v1`
-**Status:** LOCKED FOR PRODUCTION
+**Status:** ANCHOR EXTRACTED — Eixo F ⏳ PENDING
+**Detection Score:** 0.8811 (InsightFace viu rosto — **não é validação de identidade**)
 **Hash:** `sha256:5083fd1c0cf64eab3b40dacab335adecdd125a643e9ca5e31b4acd9e068e515a`
 **Source:** Runway Gen-4.5 text-to-video (frame_01)
 
@@ -135,11 +140,12 @@ on facial anchors, cinematic photorealistic texture, zero facial distortion.
 
 ---
 
-### 5. LUCAS SILVA ✅ LOCKED
+### 5. LUCAS SILVA 🟡 EXTRACTED
 
 **ID:** `lucas.silva.passport.v1`
 **Anchor:** `lucas.silva.anchor.v1`
-**Status:** LOCKED FOR PRODUCTION
+**Status:** ANCHOR EXTRACTED — Eixo F ⏳ PENDING
+**Detection Score:** 0.8119 (InsightFace viu rosto — **não é validação de identidade**)
 **Hash:** `sha256:9bcbb6a4ef1bda2010e77bb522ef222efbf9ddac26ab461b09dcab70e42c3808`
 **Source:** Runway Gen-4.5 text-to-video (frame_01)
 
@@ -162,11 +168,12 @@ zero muscle distortion.
 
 ---
 
-### 6. ALEJANDRO VALENZUELA ✅ LOCKED
+### 6. ALEJANDRO VALENZUELA 🟡 EXTRACTED
 
 **ID:** `alejandro.valenzuela.passport.v1`
 **Anchor:** `alejandro.valenzuela.anchor.v1`
-**Status:** LOCKED FOR PRODUCTION
+**Status:** ANCHOR EXTRACTED — Eixo F ⏳ PENDING
+**Detection Score:** 0.8763 (InsightFace viu rosto — **não é validação de identidade**)
 **Hash:** `sha256:bcec886a46d78493601a663d204fd8b2b3e4c483176ef1ded18e5ddd57ef0189`
 **Source:** Runway Gen-4.5 text-to-video (frame_01)
 
@@ -201,18 +208,32 @@ zero muscle distortion.
 
 ---
 
-## CONTAGEM DE STATUS
+## CONTAGEM DE STATUS (§298-ERRATA)
 
 | Personagem | Passaporte | Anchor | Eixo F | Eixo D |
 |------------|------------|--------|--------|--------|
-| Gabi Santos | ✅ SPEC | ✅ GEN | ✅ PASSED | ⏳ PENDING |
-| Helena Meyer | ✅ SPEC | ✅ **LOCKED** | ⏳ PENDING | ⏳ PENDING |
-| Marcus Vance | ✅ SPEC | ✅ **LOCKED** | ⏳ PENDING | ⏳ PENDING |
-| Marcus Couto | ✅ SPEC | ✅ **LOCKED** | ⏳ PENDING | ⏳ PENDING |
-| Lucas Silva | ✅ SPEC | ✅ **LOCKED** | ⏳ PENDING | ⏳ PENDING |
-| Alejandro Valenzuela | ✅ SPEC | ✅ **LOCKED** | ⏳ PENDING | ⏳ PENDING |
+| Gabi Santos | ✅ SPEC | 🔴 **MISSING** | ❌ NOT VERIFIABLE | ❌ NOT VERIFIABLE |
+| Helena Meyer | ✅ SPEC | 🟡 EXTRACTED | ⏳ PENDING | ⏳ PENDING |
+| Marcus Vance | ✅ SPEC | 🟡 EXTRACTED | ⏳ PENDING | ⏳ PENDING |
+| Marcus Couto | ✅ SPEC | 🟡 EXTRACTED | ⏳ PENDING | ⏳ PENDING |
+| Lucas Silva | ✅ SPEC | 🟡 EXTRACTED | ⏳ PENDING | ⏳ PENDING |
+| Alejandro Valenzuela | ✅ SPEC | 🟡 EXTRACTED | ⏳ PENDING | ⏳ PENDING |
 
-**TOTAL:** 6/6 passaportes especificados · **6/6 anchors LOCKED** · 1/6 Eixo F validado · 0/6 Eixo D validado
+**TOTAL:** 6/6 passaportes especificados · **1/6 anchor MISSING** · **5/6 anchors EXTRACTED** · **0/6 Eixo F validado** · 0/6 Eixo D validado
+
+---
+
+## DEFINIÇÕES DE VOCABULÁRIO (§298-ERRATA)
+
+| Estado | Significado | Critério |
+|--------|-------------|----------|
+| **MISSING** | Asset não existe | Ficheiros ausentes do repositório |
+| **EXTRACTED** | Anchor extraído | detection_score ≥0.80, embedding existe |
+| **LOCKED** | Identidade validada | Eixo F ≥0.75 contra shot-filho real |
+
+> **Nota crítica:** Detection score mede "o InsightFace viu um rosto".
+> Eixo F mede "este rosto é a personagem e é reproduzível em performance".
+> São métricas diferentes. LOCKED requer Eixo F, não apenas detection.
 
 ---
 

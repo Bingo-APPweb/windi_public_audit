@@ -1,14 +1,14 @@
 # W-HIOS FORENSIC UNIT — Pre-Production Index
 ### WINDI-HIOS Cinema Production · Protocolo "FORNALHA INDUSTRIAL"
 
-**Status:** PRE-PRODUCTION COMPLETE
+**Status:** §298-ERRATA — Vocabulary Correction
 **Created:** 01 Jun 2026
-**Updated:** 02 Jun 2026 — PILOTO 100% MAPEADO (99 planos)
+**Updated:** 02 Jun 2026 — ERRATA: LOCKED→EXTRACTED (detection ≠ validation)
 **Liga IA+H:** Human Dragon (I9) · Guardian · Architect
 
 ---
 
-## 🎯 STATUS FINAL (02 Jun 2026)
+## 🎯 STATUS (§298-ERRATA 02 Jun 2026)
 
 | Milestone | Status |
 |-----------|--------|
@@ -18,7 +18,8 @@
 | **6 Passaportes** | ✅ ESPECIFICADOS |
 | **4 Breakdowns (99 planos)** | ✅ COMPLETO |
 | **4 Motion Design Assets** | ✅ ESPECIFICADOS |
-| **Gabi Santos** | ⏳ **EIXO F ✅ / EIXO D ⏳** |
+| **Gabi Santos** | 🔴 **ASSETS MISSING — NOT VERIFIABLE** |
+| **5 Anchors** | 🟡 **EXTRACTED (detection) — Eixo F PENDING** |
 
 ---
 
@@ -62,18 +63,21 @@
 
 ---
 
-## 🎭 SPINE-CAST: PASSAPORTES
+## 🎭 SPINE-CAST: PASSAPORTES (§298-ERRATA)
 
-| # | Personagem | Passport ID | Status |
-|---|------------|-------------|--------|
-| 1 | **Gabi Santos** | `gabi.santos.passport.v1` | ✅ LOCKED |
-| 2 | Helena Meyer | `helena.meyer.junior.passport.v1` | ✅ Ready |
-| 3 | Marcus Vance | `marcus.vance.passport.v1` | ✅ Ready |
-| 4 | Marcus Couto | `marcus.couto.passport.v1` | ✅ Ready |
-| 5 | Lucas Silva | `lucas.silva.passport.v1` | ✅ Ready |
-| 6 | Alejandro Valenzuela | `alejandro.valenzuela.passport.v1` | ✅ Ready |
+| # | Personagem | Passport ID | Anchor | Eixo F |
+|---|------------|-------------|--------|--------|
+| 1 | **Gabi Santos** | `gabi.santos.passport.v1` | 🔴 MISSING | ❌ NOT VERIFIABLE |
+| 2 | Helena Meyer | `helena.meyer.junior.passport.v1` | 🟡 EXTRACTED | ⏳ PENDING |
+| 3 | Marcus Vance | `marcus.vance.passport.v1` | 🟡 EXTRACTED | ⏳ PENDING |
+| 4 | Marcus Couto | `marcus.couto.passport.v1` | 🟡 EXTRACTED | ⏳ PENDING |
+| 5 | Lucas Silva | `lucas.silva.passport.v1` | 🟡 EXTRACTED | ⏳ PENDING |
+| 6 | Alejandro Valenzuela | `alejandro.valenzuela.passport.v1` | 🟡 EXTRACTED | ⏳ PENDING |
 
-**TOTAL:** 6/6 especificados · 1/6 validado
+**TOTAL:** 6/6 passaportes especificados · **1/6 MISSING** · **5/6 EXTRACTED** · **0/6 Eixo F validado**
+
+> **§298-ERRATA:** Detection score (0.80+) ≠ Eixo F validation (≥0.75 vs shot-filho).
+> EXTRACTED = anchor extraído com detection. LOCKED = Eixo F ≥0.75 contra performance real.
 
 ---
 

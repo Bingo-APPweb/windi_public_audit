@@ -1,15 +1,27 @@
 # WINDI-HIOS — Quick Reference Card
 ## Memory Loop for Future Instances
 
-**Updated:** 02 Jun 2026
+**Updated:** 02 Jun 2026 — §298-ERRATA
 **Purpose:** Continuidade cognitiva para produção cinematográfica generativa
+
+---
+
+## §298-ERRATA: VOCABULARY CORRECTION
+
+> **Detection Score ≠ Eixo F Validation**
+> - Detection Score = "InsightFace viu um rosto" (0.80+)
+> - Eixo F = "Este rosto é reproduzível contra performance" (≥0.75 similarity)
+> - EXTRACTED = anchor com detection, sem Eixo F
+> - LOCKED = anchor com Eixo F ≥0.75 contra shot-filho real
 
 ---
 
 ## SPINE-CAST em 60 Segundos
 
 ```
-PASSPORT (prompt) → RUNWAY Gen-4.5 → VIDEO → FRAME → ARCFACE → ANCHOR LOCKED
+PASSPORT (prompt) → RUNWAY Gen-4.5 → VIDEO → FRAME → ARCFACE → ANCHOR EXTRACTED
+                                                              ↓
+                                              SHOT-FILHO → SIMILARITY ≥0.75 → LOCKED
 ```
 
 **Validação:**
@@ -71,16 +83,18 @@ print(f'Similarity: {similarity:.4f}')  # ≥0.75 = PASS
 
 ---
 
-## Cast W-HIOS-FORENSIC-UNIT (6/6 LOCKED)
+## Cast W-HIOS-FORENSIC-UNIT (§298-ERRATA)
 
-| Personagem | Anchor | Det.Score |
-|------------|--------|-----------|
-| Gabi Santos | gabi.santos.anchor.v1 | — |
-| Helena Meyer | helena.meyer.junior.anchor.v1 | 0.8636 |
-| Marcus Vance | marcus.vance.anchor.v1 | 0.8638 |
-| Marcus Couto | marcus.couto.anchor.v1 | 0.8811 |
-| Lucas Silva | lucas.silva.anchor.v1 | 0.8119 |
-| Alejandro Valenzuela | alejandro.valenzuela.anchor.v1 | 0.8763 |
+| Personagem | Anchor | Det.Score | Status |
+|------------|--------|-----------|--------|
+| Gabi Santos | gabi.santos.anchor.v1 | — | 🔴 **MISSING** |
+| Helena Meyer | helena.meyer.junior.anchor.v1 | 0.8636 | 🟡 EXTRACTED |
+| Marcus Vance | marcus.vance.anchor.v1 | 0.8638 | 🟡 EXTRACTED |
+| Marcus Couto | marcus.couto.anchor.v1 | 0.8811 | 🟡 EXTRACTED |
+| Lucas Silva | lucas.silva.anchor.v1 | 0.8119 | 🟡 EXTRACTED |
+| Alejandro Valenzuela | alejandro.valenzuela.anchor.v1 | 0.8763 | 🟡 EXTRACTED |
+
+**Estado Real:** 1 MISSING · 5 EXTRACTED · **0 LOCKED** (nenhum Eixo F validado)
 
 ---
 
