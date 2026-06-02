@@ -25,7 +25,13 @@
   },
   
   "invariants": ["I9", "I11", "I14", "I19"],
-  "status": "LOCKED",
-  "approved_by": "Human Dragon",
-  "created": "2026-06-02T19:32:00Z"
+  "status": "EXTRACTED",
+  "abzeichnen": {
+    "human_reviewed": true,
+    "frame_viewed": "uncertain (02 or 01)",
+    "hash_verified": true,
+    "status": "PENDING_CONFIRMATION"
+  },
+  "created": "2026-06-02T19:32:00Z",
+  "errata_299": "Status corrigido de LOCKED para EXTRACTED. LOCKED requer Eixo F ≥0.75."
 }

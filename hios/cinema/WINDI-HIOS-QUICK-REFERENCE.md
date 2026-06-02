@@ -1,8 +1,19 @@
 # WINDI-HIOS — Quick Reference Card
 ## Memory Loop for Future Instances
 
-**Updated:** 02 Jun 2026 — §298-ERRATA
+**Updated:** 02 Jun 2026 — §299-LIMPEZA (após §298-ERRATA)
 **Purpose:** Continuidade cognitiva para produção cinematográfica generativa
+
+---
+
+## §299-LIMPEZA: VERDADE DOCUMENTAL
+
+> **Limpeza total de vocabulário. Nenhum documento afirma medição que não aconteceu.**
+>
+> - 6 anchors EXTRACTED (verdade)
+> - 0 Eixo F medidos (verdade)
+> - 0 Eixo D medidos (verdade)
+> - Scores anteriores eram PROJECÇÕES, não medições
 
 ---
 
@@ -83,18 +94,18 @@ print(f'Similarity: {similarity:.4f}')  # ≥0.75 = PASS
 
 ---
 
-## Cast W-HIOS-FORENSIC-UNIT (§298-ERRATA)
+## Cast W-HIOS-FORENSIC-UNIT (§299-LIMPEZA)
 
-| Personagem | Anchor | Det.Score | Status |
-|------------|--------|-----------|--------|
-| Gabi Santos | gabi.santos.anchor.v1 | 0.8755 | 🟡 EXTRACTED |
-| Helena Meyer | helena.meyer.junior.anchor.v1 | 0.8636 | 🟡 EXTRACTED |
-| Marcus Vance | marcus.vance.anchor.v1 | 0.8638 | 🟡 EXTRACTED |
-| Marcus Couto | marcus.couto.anchor.v1 | 0.8811 | 🟡 EXTRACTED |
-| Lucas Silva | lucas.silva.anchor.v1 | 0.8119 | 🟡 EXTRACTED |
-| Alejandro Valenzuela | alejandro.valenzuela.anchor.v1 | 0.8763 | 🟡 EXTRACTED |
+| Personagem | Anchor | Det.Score | Abzeichnen | Eixo F |
+|------------|--------|-----------|------------|--------|
+| Gabi Santos | gabi.santos.anchor.v1 | 0.8755 | ✅ APROVADO | ⏳ NOT MEASURED |
+| Helena Meyer | helena.meyer.junior.anchor.v1 | 0.8636 | ⏳ PENDENTE | ⏳ NOT MEASURED |
+| Marcus Vance | marcus.vance.anchor.v1 | 0.8638 | ⏳ PENDENTE | ⏳ NOT MEASURED |
+| Marcus Couto | marcus.couto.anchor.v1 | 0.8811 | ⚠️ HASH CHECK | ⏳ NOT MEASURED |
+| Lucas Silva | lucas.silva.anchor.v1 | 0.8119 | ⚠️ HASH CHECK | ⏳ NOT MEASURED |
+| Alejandro Valenzuela | alejandro.valenzuela.anchor.v1 | 0.8763 | ⚠️ HASH CHECK | ⏳ NOT MEASURED |
 
-**Estado Real:** **6/6 EXTRACTED** · **0 LOCKED** (Eixo F pendente para todos)
+**Estado Real:** **6/6 EXTRACTED** · **1/6 Abzeichnen limpo** · **0/6 Eixo F medido** · **0 LOCKED**
 
 ---
 

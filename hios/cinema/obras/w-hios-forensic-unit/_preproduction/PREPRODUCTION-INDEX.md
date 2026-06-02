@@ -177,22 +177,28 @@
 
 ## ✅ CHECKLIST DE PRODUÇÃO
 
-### Pré-Produção ✅ COMPLETO
+### Pré-Produção ✅ DOCUMENTAÇÃO COMPLETA
 
 - [x] Script v3 final
 - [x] 6 CHARACTER-STATE canons
-- [x] DECRETO-001 + Aditamento
-- [x] Metodologia Passaporte validada
+- [x] DECRETO-001 + Aditamento (réguas especificadas)
+- [x] Metodologia Passaporte especificada (não testada)
 - [x] 6 passaportes especificados
+- [x] 6 anchors EXTRACTED (com embedding e provenance)
 - [x] 4 breakdowns (99 planos)
-- [x] 4 Motion Design assets
-- [x] Gabi Santos Eixo F PASSED (P04/P05/P02 ≥0.75)
-- [ ] Gabi Santos Eixo D PENDING (P06 VC-Matrix medição)
+- [x] 4 Motion Design assets especificados
+- [x] Gabi Santos Abzeichnen APROVADO (Human Dragon viu anchor)
 
-### Produção ⏳ PRÓXIMO
+### Validação ⏳ NÃO INICIADA (§299-LIMPEZA)
 
-- [ ] Gerar 5 passaportes restantes
-- [ ] Validar 5 anchors
+- [ ] **Primeiro Eixo F real** — gerar P04, medir vs Gabi anchor
+- [ ] Eixo F restantes (P05, P02)
+- [ ] Eixo D primeira medição (P06 VC-Matrix)
+- [ ] Helena/Vance Abzeichnen pendente
+- [ ] Couto/Lucas/Alejandro hash verification pendente
+
+### Produção ⏳ AGUARDA VALIDAÇÃO
+
 - [ ] Gerar planos Type A (57)
 - [ ] Renderizar Motion Design (25)
 - [ ] Compositing Act I-IV

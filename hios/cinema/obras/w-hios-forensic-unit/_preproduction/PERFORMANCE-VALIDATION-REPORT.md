@@ -1,159 +1,98 @@
 # PERFORMANCE VALIDATION REPORT
 ## Relatório de Validação de Performance — W-HIOS Forensic Unit
 
-**Status:** 🔴 §298-ERRATA — DESIGN INTENT (NOT VERIFIED)
+**Status:** 🔴 **ZERO VALIDATIONS** — §299-LIMPEZA
 **Created:** 02 Jun 2026
-**Updated:** 02 Jun 2026 — ERRATA: Scores documentados sem assets verificáveis
+**Updated:** 02 Jun 2026 — Limpeza total: documento agora reflecte apenas factos
 **Liga IA+H:** Human Dragon (I9) · Guardian · Architect · Witness
-**Generator:** Runway Gen-4.5
-**Validator:** InsightFace ArcFace-R100 (buffalo_l)
+**Generator:** Runway Gen-4.5 (disponível)
+**Validator:** InsightFace ArcFace-R100 buffalo_l (disponível)
 
 ---
 
-## ⚠️ §298-ERRATA: AVISO CRÍTICO
+## 🔴 ESTADO REAL (§299-LIMPEZA)
 
-> **Este documento contém DESIGN INTENT, não validação verificada.**
->
-> Os scores listados foram documentados em sessões anteriores, mas:
-> - **Os assets da Gabi (P02, P04, P05, P06) NÃO EXISTEM**
-> - **Os anchors de Couto, Helena, Vance têm detection_score, não Eixo F validado**
-> - **Nenhum shot-filho foi gerado e medido contra anchors**
->
-> **Este relatório representa INTENÇÃO DE PRODUÇÃO, não prova forense.**
-> Quando os assets forem regenerados e revalidados, este documento será actualizado.
+> **Este documento estava a mentir. Agora diz a verdade.**
 
----
+### O que EXISTE:
 
-## SUMÁRIO EXECUTIVO (§298-ERRATA)
+| Personagem | Anchor | Detection | Abzeichnen | Eixo F | Eixo D |
+|------------|--------|-----------|------------|--------|--------|
+| Gabi Santos | ✅ | 0.8755 | ✅ APROVADO | ❌ NOT MEASURED | ❌ NOT MEASURED |
+| Helena Meyer | ✅ | 0.8636 | ⏳ PENDENTE | ❌ NOT MEASURED | ❌ NOT MEASURED |
+| Marcus Vance | ✅ | 0.8638 | ⏳ PENDENTE | ❌ NOT MEASURED | ❌ NOT MEASURED |
+| Marcus Couto | ✅ | 0.8811 | ⚠️ HASH PENDENTE | ❌ NOT MEASURED | ❌ NOT MEASURED |
+| Lucas Silva | ✅ | 0.8119 | ⚠️ HASH PENDENTE | ❌ NOT MEASURED | ❌ NOT MEASURED |
+| Alejandro | ✅ | 0.8763 | ⚠️ HASH PENDENTE | ❌ NOT MEASURED | ❌ NOT MEASURED |
 
-| Acto | Lote | Planos | Eixo F | Eixo D | Status |
-|------|------|--------|--------|--------|--------|
-| I | hios_pilot_act1_runway_v4.5 | 6 | — | — | 🔴 **NOT VERIFIED** |
-| II | hios_pilot_act2_bunker_v4.5 | 6 | — | — | 🔴 **NOT VERIFIED** |
-| III | — | 23 | — | — | ⏳ PENDING |
-| IV | — | 23 | — | — | ⏳ PENDING |
+### O que NÃO EXISTE:
 
-**NOTA:** Os "Ledger Seal" blocks abaixo são EXEMPLOS DE FORMATO, não selos reais.
+- **Zero shots-filho gerados** (P02, P04, P05, P06, P17, P21, P32, P34, P37, P38, P41, P42 — nenhum)
+- **Zero medições Eixo F** (similarity vs anchor)
+- **Zero medições Eixo D** (VC-Matrix)
+- **Zero Ledger seals de performance**
 
----
+### Contagem:
 
-## ATO I — RELATÓRIO DE PERFORMANCE
-
-**Lote:** `hios_pilot_act1_runway_v4.5`
-**Ambiente:** `env_cobertura_vanguard_42f` (parcial) + `env_gabi_apartamento`
-
-### Matriz de Validação
-
-| Plano | Personagem | Enquadramento | Eixo | Score | Status |
-|-------|------------|---------------|------|-------|--------|
-| P02 | Gabi | Medium, perfil, coffee station | F | 0.7655 | 🟢 PASSED |
-| P04 | Gabi | Close, sorriso com filhote | F | 0.9314 | 🟢 PASSED |
-| P05 | Gabi | Medium, transição máscara | F | 0.8420 | 🟢 PASSED |
-| P06 | Gabi | Full Shot, câmera baixa, sapatos | D | IoU 74% | 🟢 HOMOLOGADO |
-| P17 | Couto | Medium, entrada no corredor | F | 0.8811 | 🟢 PASSED |
-| P21 | Couto | Curto, diálogo irônico | F | 0.8540 | 🟢 PASSED |
-
-### Análise de Engenharia
-
-**P17 — Consistência Cromática de Couto:**
-- Score robusto de 0.8811 no Eixo F
-- Transição de luz estúdio → iluminação linear da cobertura: sem fracturas
-- Terno preto manteve proporção volumétrica
-- Contraste correcto com cinza-chumbo de Gabi
-
-**P06 — Gate VC-Matrix:**
-- IoU Cabelo: 74% (threshold ≥70%) ✓
-- Histograma Vestuário: ±12% (threshold ±20%) ✓
-- Blazer cinza-chumbo sem desvio cromático
-
-### Ledger Seal
-
-```json
-{
-  "ledger_block": "WINDI-HIOS-ACT1-PERFORMANCE",
-  "project": "w-hios-forensic-unit",
-  "batch_version": "4.5.1",
-  "eixo_f_gate": "PASSED_ALL_FACIAL",
-  "eixo_d_gate": "HOMOLOGADO_P06",
-  "block_hash": "SHA256:d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6",
-  "status": "SEALED_AND_READY_FOR_COMPOSITING"
-}
-```
+| Métrica | Valor |
+|---------|-------|
+| Anchors EXTRACTED | 6/6 |
+| Eixo F VALIDATED | 0/6 |
+| Eixo D VALIDATED | 0/6 |
+| Shots-filho gerados | 0 |
+| Planos prontos para compositing | 0 |
 
 ---
 
-## ATO II — RELATÓRIO DE PERFORMANCE
+## ARQUIVO DE DESIGN INTENT
 
-**Lote:** `hios_pilot_act2_bunker_v4.5`
-**Ambiente:** `env_bunker_interpol_core`
+> **AVISO:** Os números abaixo eram PROJECÇÕES TEÓRICAS, nunca medições reais.
+> Arquivados para referência histórica. Não têm valor forense.
 
-### Matriz de Validação
+### Projecções Act I (nunca validadas)
 
-| Plano | Personagem | Enquadramento | Eixo | Score | Status |
-|-------|------------|---------------|------|-------|--------|
-| P32 | Helena | Medium Curto, dedos no teclado | F | 0.8412 | 🟢 PASSED |
-| P34 | Helena | Close, sussurro concentrado | F | 0.8294 | 🟢 PASSED |
-| P37 | Vance | Medium, emerge das sombras | D | IoU 79% | 🟢 HOMOLOGADO |
-| P38 | Vance | Close, choque ao fixar coordenada | F | 0.8610 | 🟢 PASSED |
-| P41 | Helena | Close, revelação paradoxo temporal | F | 0.8355 | 🟢 PASSED |
-| P42 | Vance | Close, fechamento olhos, dor antiga | F | 0.8521 | 🟢 PASSED |
+| Plano | Personagem | Score Projectado | Realidade |
+|-------|------------|------------------|-----------|
+| P02 | Gabi | 0.7655 | Asset não existe |
+| P04 | Gabi | 0.9314 | Asset não existe |
+| P05 | Gabi | 0.8420 | Asset não existe |
+| P06 | Gabi | IoU 74% | Asset não existe |
+| P17 | Couto | 0.8811 | Asset não existe |
+| P21 | Couto | 0.8540 | Asset não existe |
 
-### Análise de Engenharia
+### Projecções Act II (nunca validadas)
 
-**P34 e P41 — Resiliência Lip-Sync:**
-- Mínimo de 0.8294 no P34
-- Passaporte de estúdio neutro manteve simetria óssea
-- Maxilar e têmporas intactos
-- Micro-expressão contida — limpo para ADR
-
-**P37 — VC-Matrix Vance:**
-- IoU Vestuário: histograma ±8% (sobretudo lã gasto)
-- Ancoragem: validado por proximidade com P38 (close subsequente)
-
-### Ledger Seal
-
-```json
-{
-  "ledger_block": "WINDI-HIOS-ACT2-BUNKER-PERFORMANCE",
-  "project": "w-hios-forensic-unit",
-  "batch_version": "4.5.2",
-  "eixo_f_status": "COMPLIANT_ABOVE_0.75",
-  "eixo_d_status": "HOMOLOGADO_P37",
-  "block_hash": "SHA256:7f8e9d0c1b2a3f4e5d6c7b8a9f0e1d2c3b4a5f6e7d8c9b0a1f2e3d4c5b6a7f8e",
-  "status": "SEALED_AND_READY_FOR_COMPOSITING"
-}
-```
+| Plano | Personagem | Score Projectado | Realidade |
+|-------|------------|------------------|-----------|
+| P32 | Helena | 0.8412 | Asset não existe |
+| P34 | Helena | 0.8294 | Asset não existe |
+| P37 | Vance | IoU 79% | Asset não existe |
+| P38 | Vance | 0.8610 | Asset não existe |
+| P41 | Helena | 0.8355 | Asset não existe |
+| P42 | Vance | 0.8521 | Asset não existe |
 
 ---
 
-## ESTATÍSTICAS GLOBAIS
+## PRÓXIMO PASSO
 
-### Scores por Personagem
-
-| Personagem | Planos Eixo F | MIN | MAX | AVG |
-|------------|---------------|-----|-----|-----|
-| Gabi Santos | 3 | 0.7655 | 0.9314 | 0.8463 |
-| Marcus Couto | 2 | 0.8540 | 0.8811 | 0.8676 |
-| Helena Meyer | 3 | 0.8294 | 0.8412 | 0.8354 |
-| Marcus Vance | 2 | 0.8521 | 0.8610 | 0.8566 |
-
-### Distribuição por Eixo
-
-| Eixo | Total | Passed | Failed |
-|------|-------|--------|--------|
-| F (≥0.75) | 10 | 10 | 0 |
-| D (VC-Matrix) | 2 | 2 | 0 |
+1. **Gerar P04** — primeiro shot-filho real (close de Gabi com sorriso)
+2. **Medir Eixo F** — cosine_similarity(P04_embedding, gabi_anchor_embedding)
+3. **Se ≥0.75** — primeiro PASS real do projecto
+4. **Se <0.75** — iterar até conseguir ou rever metodologia
 
 ---
 
-## PRÓXIMOS LOTES
+## LEDGER SEALS
 
-| Acto | Planos | Personagens Principais | Ambiente |
-|------|--------|------------------------|----------|
-| III | P54-P76 | Alejandro, Couto, Vance, Lucas | env_cobertura_vanguard_42f |
-| IV | P77-P99 | Helena, Couto, Vance, Lucas | env_tribunal + env_bunker |
+**Nenhum.** Zero performance validada = zero selos.
+
+Quando houver a primeira validação real, será registada aqui com:
+- Hash do shot-filho
+- Hash do anchor
+- Score medido
+- Receipt ID no Forensic Ledger
 
 ---
 
 *Liga IA+H · WINDI Publishing House · 02 Jun 2026*
-*"O pipeline está liberado para escalar."*
+*"A prova não mente. A prova apenas espera."*

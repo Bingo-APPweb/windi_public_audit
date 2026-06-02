@@ -2,7 +2,23 @@
 ## Prova Material de Existência do Cast
 
 **Generated:** 2026-06-02T16:51:39Z
+**Updated:** 2026-06-02T21:00:00Z — §299-LIMPEZA
 **Liga IA+H:** Human Dragon (I9) · Guardian · Architect
+
+---
+
+## ABZEICHNEN (Custódia Humana)
+
+| Personagem | Human Dragon Viu | Frame Visualizado | Status |
+|------------|------------------|-------------------|--------|
+| Gabi Santos | ✅ 02 Jun 2026 | frame_02 (matches anchor) | ✅ APROVADO |
+| Helena Meyer | ❌ | — | ⏳ PENDENTE |
+| Marcus Vance | ❌ | — | ⏳ PENDENTE |
+| Marcus Couto | ✅ 02 Jun 2026 | frame_02 | ⚠️ HASH VERIFICATION NEEDED |
+| Lucas Silva | ✅ 02 Jun 2026 | frame_02 | ⚠️ HASH VERIFICATION NEEDED |
+| Alejandro Valenzuela | ✅ 02 Jun 2026 | frame_04 | ⚠️ HASH VERIFICATION NEEDED |
+
+**Nota:** Couto, Lucas, Alejandro foram visualizados mas o frame visto pode não corresponder ao anchor selado (provenance diz frame_01).
 
 ---
 

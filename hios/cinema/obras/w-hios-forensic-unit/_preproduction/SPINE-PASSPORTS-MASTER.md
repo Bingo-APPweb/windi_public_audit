@@ -43,27 +43,25 @@ identification shot, 50mm lens, sharp focus on facial structures,
 cinematic photorealistic texture, zero facial muscle distortion.
 ```
 
-**§298-ERRATA-FIX (02 Jun 2026):**
-> Anchor regenerado via Runway Gen-4.5. Detection score 0.8755.
-> Assets agora existem: `.png`, `.mp4`, `.npy`, `.provenance.json`
-> **Eixo F pendente** — necessita shot-filho para validação de identidade.
-> não existe embedding, não existem vídeos P02/P04/P05/P06.
-> **Estes números não são verificáveis.**
+**§299-LIMPEZA (02 Jun 2026):**
+> Anchor EXISTE: `.png`, `.mp4`, `.npy`, `.provenance.json` ✅
+> Embedding EXISTE: `gabi.santos.anchor.v1.embedding.npy` ✅
+> Abzeichnen (custódia humana): **APROVADO** pelo Human Dragon ✅
+> **Eixo F:** ⏳ NOT MEASURED — aguarda primeiro shot-filho real
 
-**Validation (Eixo F):** ❌ **NOT VERIFIABLE**
-| Plano | Score Documentado | Asset Existe? | Status |
-|-------|-------------------|---------------|--------|
-| P04 | 0.9314 | ❌ NÃO | ❌ ORPHAN |
-| P05 | 0.8420 | ❌ NÃO | ❌ ORPHAN |
-| P02 | 0.7655 | ❌ NÃO | ❌ ORPHAN |
+**Shots-Filho (Eixo F):** ❌ **NOT GENERATED**
+| Plano | Descrição | Status |
+|-------|-----------|--------|
+| P04 | Close: sorriso | **NOT GENERATED** — aguarda produção |
+| P05 | Medium: transição | **NOT GENERATED** — aguarda produção |
+| P02 | Medium: perfil café | **NOT GENERATED** — aguarda produção |
 
-**Validation (Eixo D):** ❌ **NOT VERIFIABLE**
-| Plano | Asset Existe? | Status |
-|-------|---------------|--------|
-| P06 | ❌ NÃO | ❌ ORPHAN |
+**Shot-Filho (Eixo D):** ❌ **NOT GENERATED**
+| Plano | Descrição | Status |
+|-------|-----------|--------|
+| P06 | Full: calçando sapatos | **NOT GENERATED** — aguarda produção |
 
-**ACÇÃO NECESSÁRIA:** Regenerar anchor da Gabi antes de qualquer produção.
-A fundação deve existir e ser validável antes de os 5 outros serem úteis.
+**PRÓXIMO PASSO:** Gerar P04 e medir primeiro Eixo F real.
 
 ---
 

@@ -1,12 +1,19 @@
 {
   "validation_report": "SPINE-VALIDATION-CENA0",
-  "version": "2.1",
+  "version": "3.0",
   "project": "w-hios-forensic-unit",
   "episode": "pilot_o_peso_do_eco",
   "scene": "cena_0_a_ultima_coisa_normal",
   "created": "2026-06-02T15:30:00Z",
-  "updated": "2026-06-02T18:30:00Z",
+  "updated": "2026-06-02T21:00:00Z",
   "liga_iah": ["Human Dragon (I9)", "Guardian", "Architect", "Witness"],
+
+  "errata_299": {
+    "date": "2026-06-02",
+    "severity": "FOUNDATIONAL",
+    "description": "Limpeza total de vocabulário. Todas as medições fictícias removidas. Documento agora reflecte apenas factos verificados no disco.",
+    "guardian_directive": "Antes de gerar o primeiro shot-filho, fecha o chão atrás de ti."
+  },
 
   "constitutional_decree": "DECRETO-PRODUCAO-001-DUPLA-REGUA",
 
@@ -20,137 +27,127 @@
     "detection_score": 0.8755,
     "status": "EXTRACTED",
     "hash": "sha256:03784039a0aa4bd1306518d847aeae69915c566f1ef7e5a1e81822d82f2e1c82",
-    "errata_298_fix": "02 Jun 2026 - Anchor regenerado via Runway Gen-4.5. Assets existem: .png, .mp4, .npy, .provenance.json"
-  },
-
-  "previous_anchor_deprecated": {
-    "source": "P04",
-    "description": "Close: sorriso 'abraço de urso'",
-    "extraction_method": "neutral_transition_frame",
-    "problem": "Declared neutral but extracted from smile performance",
-    "min_score": 0.6521,
-    "margin": 0.0021,
-    "status": "DEPRECATED - epistemic contradiction"
-  },
-
-  "children_validation": [
-    {
-      "shot": "P04_performance",
-      "type": "A",
-      "role": "FILHO",
-      "description": "Close: sorriso desarmado, performance ativa",
-      "previous_score": 0.8942,
-      "similarity_vs_anchor": 0.9314,
-      "delta": "+0.0372",
-      "status": "PASSED"
+    "abzeichnen": {
+      "human_reviewed": true,
+      "reviewed_by": "Human Dragon",
+      "reviewed_at": "2026-06-02",
+      "verdict": "APPROVED"
     },
-    {
-      "shot": "P05",
-      "type": "A",
-      "role": "FILHO",
-      "description": "Plano Médio: transição para máscara sacrificial",
-      "previous_score": 0.7815,
-      "similarity_vs_anchor": 0.8420,
-      "delta": "+0.0605",
-      "status": "PASSED"
-    },
-    {
-      "shot": "P02",
-      "type": "A",
-      "role": "FILHO",
-      "description": "Plano Médio: Gabi de perfil esperando café",
-      "previous_score": 0.6930,
-      "similarity_vs_anchor": 0.7655,
-      "delta": "+0.0725",
-      "status": "PASSED",
-      "note": "Perfil agora acima do colchão 0.75"
-    },
-    {
-      "shot": "P06",
-      "type": "A",
-      "role": "FILHO",
-      "description": "Full Shot: Gabi distante na lente, calçando sapatos",
-      "validation_axis": "EIXO_D",
-      "arcface_score": 0.7188,
-      "arcface_note": "Informativo apenas - Eixo D não usa ArcFace como gate",
-      "vc_matrix": {
-        "vestuario": {"threshold": "±20% RGB in person mask", "measured": null, "status": "PENDING"},
-        "cabelo": {"threshold": "≥70% IoU silhouette", "measured": null, "status": "PENDING"},
-        "postura": {"threshold": "±15° vertical axis", "measured": null, "status": "PENDING"},
-        "cenario": {"threshold": "env_gabi_apartamento", "measured": null, "status": "PENDING"},
-        "proporcao": {"threshold": "N.A.", "measured": "N.A.", "status": "N.A.", "reason": "pose=bending"},
-        "ancoragem": {"threshold": "Adjacent Eixo F shot", "measured": "P05", "status": "PASSED"}
-      },
-      "status": "PENDING_EIXO_D",
-      "note": "Régua Eixo D SELADA. Medição pendente - assets não persistidos."
+    "assets_verified": {
+      "png": true,
+      "mp4": true,
+      "npy": true,
+      "provenance_json": true
     }
-  ],
+  },
+
+  "children_validation": {
+    "status": "NOT_STARTED",
+    "note": "Nenhum shot-filho foi gerado. Os planos P02/P04/P05/P06 são números do breakdown de produção, não ficheiros existentes.",
+    "planned_shots": [
+      {
+        "shot": "P04",
+        "type": "A",
+        "role": "FILHO",
+        "description": "Close: sorriso 'abraço de urso'",
+        "eixo": "F",
+        "asset_exists": false,
+        "measured": false,
+        "score": null,
+        "status": "NOT_GENERATED"
+      },
+      {
+        "shot": "P05",
+        "type": "A",
+        "role": "FILHO",
+        "description": "Plano Médio: transição para máscara sacrificial",
+        "eixo": "F",
+        "asset_exists": false,
+        "measured": false,
+        "score": null,
+        "status": "NOT_GENERATED"
+      },
+      {
+        "shot": "P02",
+        "type": "A",
+        "role": "FILHO",
+        "description": "Plano Médio: Gabi de perfil esperando café",
+        "eixo": "F",
+        "asset_exists": false,
+        "measured": false,
+        "score": null,
+        "status": "NOT_GENERATED"
+      },
+      {
+        "shot": "P06",
+        "type": "A",
+        "role": "FILHO",
+        "description": "Full Shot: Gabi distante na lente, calçando sapatos",
+        "eixo": "D",
+        "asset_exists": false,
+        "measured": false,
+        "vc_matrix": null,
+        "status": "NOT_GENERATED"
+      }
+    ]
+  },
 
   "gate_validation": {
     "eixo_f": {
       "threshold": 0.7500,
-      "shots": ["P04", "P05", "P02"],
+      "shots_measured": 0,
+      "shots_planned": 3,
       "min_achieved": null,
-      "verdict": "NOT_VERIFIABLE",
-      "note": "§298-ERRATA: Assets P02/P04/P05 não existem. Scores eram documentação sem ficheiros."
+      "verdict": "NOT_MEASURED",
+      "note": "Zero medições Eixo F. Aguarda geração de shot-filho."
     },
     "eixo_d": {
-      "shots": ["P06"],
-      "vc_matrix_status": "PENDING",
-      "verdict": "AWAITING_MEASUREMENT",
-      "note": "Régua selada 02 Jun 2026. Assets não persistidos. Medição pendente."
+      "shots_measured": 0,
+      "shots_planned": 1,
+      "vc_matrix_status": "NOT_MEASURED",
+      "verdict": "NOT_MEASURED",
+      "note": "Zero medições Eixo D. Régua especificada mas nunca aplicada."
     },
     "overall": {
-      "verdict": "PARTIAL",
-      "eixo_f": "PASSED",
-      "eixo_d": "PENDING"
+      "verdict": "AWAITING_FIRST_MEASUREMENT",
+      "eixo_f": "NOT_MEASURED",
+      "eixo_d": "NOT_MEASURED"
     }
   },
 
   "methodology_validation": {
-    "gradient_coherence": "CLEAN",
-    "gradient_pattern": "0.9314 → 0.8420 → 0.7655 → 0.7188",
-    "degradation_type": "distance_to_lens",
-    "verdict": "Pipeline behaves predictably - degradation is physical and controllable"
+    "status": "THEORETICAL",
+    "note": "Metodologia do passaporte dedicado está ESPECIFICADA mas não VALIDADA. Primeiro teste será P04 vs anchor.",
+    "gradient_coherence": null,
+    "gradient_pattern": null,
+    "verdict": "Pipeline não testado com dados reais."
   },
 
-  "production_recommendations": [
-    {
-      "type": "SUCCESS",
-      "scope": "passport_methodology",
-      "message": "Dedicated passport frame pulled entire gradient up by +0.05 to +0.07"
+  "design_intent_archive": {
+    "warning": "ESTES NÚMEROS ERAM PROJECÇÕES, NÃO MEDIÇÕES. Arquivados para referência histórica.",
+    "projected_scores": {
+      "P04": 0.9314,
+      "P05": 0.8420,
+      "P02": 0.7655,
+      "P06": 0.7188
     },
-    {
-      "type": "SUCCESS",
-      "scope": "close_shots",
-      "message": "Close shots now at 0.93+ - excellent margin"
-    },
-    {
-      "type": "SUCCESS",
-      "scope": "profile_shots",
-      "message": "Profile shots now at 0.76+ - above anchor threshold"
-    },
-    {
-      "type": "WARNING",
-      "scope": "full_body_shots",
-      "message": "Full shots at 0.72 - above shot threshold but below anchor threshold. Acceptable for performance, not for identity source."
-    }
-  ],
+    "source": "design speculation before assets existed",
+    "validity": "ZERO - nunca medido"
+  },
 
   "provenance": {
-    "passport_hash": "SHA256:8f4c92b1a3e5c7d6e8f2a1b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3",
-    "generator": "Runway Gen-4",
-    "validator": "InsightFace ArcFace-R100",
+    "anchor_hash": "sha256:03784039a0aa4bd1306518d847aeae69915c566f1ef7e5a1e81822d82f2e1c82",
+    "generator": "Runway Gen-4.5",
+    "validator": "InsightFace ArcFace-R100 (disponível, não usado)",
     "invariants": ["I9", "I11", "I14", "I19"]
   },
 
-  "status": "ANCHOR_EXTRACTED",
-  "errata_298_fix": "02 Jun 2026 - Gabi anchor regenerado. Detection 0.8755. Eixo F pendente.",
-  "next_action": "Gerar shot-filho e validar Eixo F ≥0.75",
+  "status": "ANCHOR_EXTRACTED_AWAITING_VALIDATION",
+  "next_action": "Gerar P04 (primeiro shot-filho) e medir Eixo F real",
   "constitutional_seal": {
     "eixo_f_decree": "DECRETO-PRODUCAO-001-DUPLA-REGUA",
     "eixo_d_decree": "DECRETO-PRODUCAO-001-ADITAMENTO",
-    "eixo_d_sealed": "2026-06-02",
-    "eixo_d_measured": null
+    "eixo_f_first_measurement": null,
+    "eixo_d_first_measurement": null
   }
 }
