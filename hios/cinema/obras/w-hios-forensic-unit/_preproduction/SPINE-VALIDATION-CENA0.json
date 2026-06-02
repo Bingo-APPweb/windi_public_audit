@@ -1,0 +1,153 @@
+{
+  "validation_report": "SPINE-VALIDATION-CENA0",
+  "version": "2.1",
+  "project": "w-hios-forensic-unit",
+  "episode": "pilot_o_peso_do_eco",
+  "scene": "cena_0_a_ultima_coisa_normal",
+  "created": "2026-06-02T15:30:00Z",
+  "updated": "2026-06-02T18:30:00Z",
+  "liga_iah": ["Human Dragon (I9)", "Guardian", "Architect", "Witness"],
+
+  "constitutional_decree": "DECRETO-PRODUCAO-001-DUPLA-REGUA",
+
+  "anchor_mother": {
+    "id": "gabi.santos.anchor.v1",
+    "source_asset": "gabi.santos.passport.v1",
+    "shot": "DEDICATED_PASSPORT",
+    "type": "IDENTITY",
+    "description": "Dedicated passport frame - neutral expression, flat lighting",
+    "extraction_method": "dedicated_passport_protocol",
+    "self_validation_score": 1.0000,
+    "status": "LOCKED"
+  },
+
+  "previous_anchor_deprecated": {
+    "source": "P04",
+    "description": "Close: sorriso 'abraço de urso'",
+    "extraction_method": "neutral_transition_frame",
+    "problem": "Declared neutral but extracted from smile performance",
+    "min_score": 0.6521,
+    "margin": 0.0021,
+    "status": "DEPRECATED - epistemic contradiction"
+  },
+
+  "children_validation": [
+    {
+      "shot": "P04_performance",
+      "type": "A",
+      "role": "FILHO",
+      "description": "Close: sorriso desarmado, performance ativa",
+      "previous_score": 0.8942,
+      "similarity_vs_anchor": 0.9314,
+      "delta": "+0.0372",
+      "status": "PASSED"
+    },
+    {
+      "shot": "P05",
+      "type": "A",
+      "role": "FILHO",
+      "description": "Plano Médio: transição para máscara sacrificial",
+      "previous_score": 0.7815,
+      "similarity_vs_anchor": 0.8420,
+      "delta": "+0.0605",
+      "status": "PASSED"
+    },
+    {
+      "shot": "P02",
+      "type": "A",
+      "role": "FILHO",
+      "description": "Plano Médio: Gabi de perfil esperando café",
+      "previous_score": 0.6930,
+      "similarity_vs_anchor": 0.7655,
+      "delta": "+0.0725",
+      "status": "PASSED",
+      "note": "Perfil agora acima do colchão 0.75"
+    },
+    {
+      "shot": "P06",
+      "type": "A",
+      "role": "FILHO",
+      "description": "Full Shot: Gabi distante na lente, calçando sapatos",
+      "validation_axis": "EIXO_D",
+      "arcface_score": 0.7188,
+      "arcface_note": "Informativo apenas - Eixo D não usa ArcFace como gate",
+      "vc_matrix": {
+        "vestuario": {"threshold": "±20% RGB in person mask", "measured": null, "status": "PENDING"},
+        "cabelo": {"threshold": "≥70% IoU silhouette", "measured": null, "status": "PENDING"},
+        "postura": {"threshold": "±15° vertical axis", "measured": null, "status": "PENDING"},
+        "cenario": {"threshold": "env_gabi_apartamento", "measured": null, "status": "PENDING"},
+        "proporcao": {"threshold": "N.A.", "measured": "N.A.", "status": "N.A.", "reason": "pose=bending"},
+        "ancoragem": {"threshold": "Adjacent Eixo F shot", "measured": "P05", "status": "PASSED"}
+      },
+      "status": "PENDING_EIXO_D",
+      "note": "Régua Eixo D SELADA. Medição pendente - assets não persistidos."
+    }
+  ],
+
+  "gate_validation": {
+    "eixo_f": {
+      "threshold": 0.7500,
+      "shots": ["P04", "P05", "P02"],
+      "min_achieved": 0.7655,
+      "verdict": "PASSED",
+      "note": "All facial shots ≥0.75"
+    },
+    "eixo_d": {
+      "shots": ["P06"],
+      "vc_matrix_status": "PENDING",
+      "verdict": "AWAITING_MEASUREMENT",
+      "note": "Régua selada 02 Jun 2026. Assets não persistidos. Medição pendente."
+    },
+    "overall": {
+      "verdict": "PARTIAL",
+      "eixo_f": "PASSED",
+      "eixo_d": "PENDING"
+    }
+  },
+
+  "methodology_validation": {
+    "gradient_coherence": "CLEAN",
+    "gradient_pattern": "0.9314 → 0.8420 → 0.7655 → 0.7188",
+    "degradation_type": "distance_to_lens",
+    "verdict": "Pipeline behaves predictably - degradation is physical and controllable"
+  },
+
+  "production_recommendations": [
+    {
+      "type": "SUCCESS",
+      "scope": "passport_methodology",
+      "message": "Dedicated passport frame pulled entire gradient up by +0.05 to +0.07"
+    },
+    {
+      "type": "SUCCESS",
+      "scope": "close_shots",
+      "message": "Close shots now at 0.93+ - excellent margin"
+    },
+    {
+      "type": "SUCCESS",
+      "scope": "profile_shots",
+      "message": "Profile shots now at 0.76+ - above anchor threshold"
+    },
+    {
+      "type": "WARNING",
+      "scope": "full_body_shots",
+      "message": "Full shots at 0.72 - above shot threshold but below anchor threshold. Acceptable for performance, not for identity source."
+    }
+  ],
+
+  "provenance": {
+    "passport_hash": "SHA256:8f4c92b1a3e5c7d6e8f2a1b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3",
+    "generator": "Runway Gen-4",
+    "validator": "InsightFace ArcFace-R100",
+    "invariants": ["I9", "I11", "I14", "I19"]
+  },
+
+  "status": "PARTIAL_VALIDATION",
+  "next_action": "Measure P06 against VC-Matrix when assets available",
+  "constitutional_seal": {
+    "eixo_f_decree": "DECRETO-PRODUCAO-001-DUPLA-REGUA",
+    "eixo_d_decree": "DECRETO-PRODUCAO-001-ADITAMENTO",
+    "eixo_d_sealed": "2026-06-02",
+    "eixo_d_measured": null
+  }
+}

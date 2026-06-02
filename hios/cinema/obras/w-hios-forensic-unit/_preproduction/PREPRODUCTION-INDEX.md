@@ -1,219 +1,233 @@
 # W-HIOS FORENSIC UNIT — Pre-Production Index
 ### WINDI-HIOS Cinema Production · Protocolo "FORNALHA INDUSTRIAL"
 
-**Status:** PRE-PRODUCTION ACTIVE
+**Status:** PRE-PRODUCTION COMPLETE
 **Created:** 01 Jun 2026
-**Updated:** 01 Jun 2026 — Pacote de Conformidade Integrado
+**Updated:** 02 Jun 2026 — PILOTO 100% MAPEADO (99 planos)
 **Liga IA+H:** Human Dragon (I9) · Guardian · Architect
 
 ---
 
-## 1. Documentos Fundacionais
+## 🎯 STATUS FINAL (02 Jun 2026)
 
-| Documento | Localização | Status |
-|-----------|-------------|--------|
-| **SERIES-BIBLE-001** | `production/SERIES-BIBLE-001.md` | ✅ CRIADO |
-| **CONTINUITY-BIBLE-001** | `production/CONTINUITY-BIBLE-001.yaml` | ✅ CRIADO |
-| **INDUSTRIAL-MANIFEST-001** | `production/INDUSTRIAL-MANIFEST-001.md` | ✅ CRIADO |
-| **EPISODE-OUTLINE-T1** | `production/EPISODE-OUTLINE-T1.md` | ✅ CRIADO |
-
----
-
-## 2. Scripts
-
-| Script | Localização | Status |
-|--------|-------------|--------|
-| **PILOT — O Peso do Eco v1** | `production/scripts/PILOT-O-PESO-DO-ECO-v1.md` | ✅ COMPLETO |
-| EP2 — O Hospital | — | ⏳ OUTLINE |
-| EP3 — O Documento Fantasma | — | ⏳ OUTLINE |
-| EP4 — A Testemunha Invisível | — | ⏳ OUTLINE |
-| EP5 — O Arquiteto | — | ⏳ OUTLINE |
-| EP6 — O Artista Morto | — | ⏳ OUTLINE |
+| Milestone | Status |
+|-----------|--------|
+| **DECRETO-001** | ✅ SEALED |
+| **ADITAMENTO (Eixo F/D)** | ✅ SEALED |
+| **Metodologia Passaporte** | ✅ VALIDATED |
+| **6 Passaportes** | ✅ ESPECIFICADOS |
+| **4 Breakdowns (99 planos)** | ✅ COMPLETO |
+| **4 Motion Design Assets** | ✅ ESPECIFICADOS |
+| **Gabi Santos** | ⏳ **EIXO F ✅ / EIXO D ⏳** |
 
 ---
 
-## 3. Schemas & Configurações
+## 📜 DECRETOS CONSTITUCIONAIS
 
-| Schema | Localização | Função |
-|--------|-------------|--------|
-| **validators.yaml** | `production/schemas/validators.yaml` | Métricas de ortogonalidade e coexistência |
-| **cast-library.yaml** | `production/schemas/cast-library.yaml` | Protocolo do Banco Rotativo de Actores |
-| **steganography-protocol.yaml** | `production/schemas/steganography-protocol.yaml` | Protocolo dos Dragões Impressos |
+| Decreto | Título | Status |
+|---------|--------|--------|
+| **DECRETO-001** | Dupla Régua SPINE | ✅ SEALED |
+| **ADITAMENTO** | Lei da Escala e Distância | ✅ SEALED |
 
----
+### Régua Constitucional Final
 
-## 4. Character State Documents (Canons)
-
-| Personagem | Ficheiro | Tier | Status |
-|------------|----------|------|--------|
-| **Helena Meyer** | `canons/HELENA-MEYER-v1-CHARACTER-STATE.md` | FIXED | ✅ |
-| **Marcus Couto** | `canons/MARCUS-COUTO-v1-CHARACTER-STATE.md` | FIXED | ✅ |
-| **Gabi Santos** | `canons/GABI-SANTOS-v1-CHARACTER-STATE.md` | FIXED | ✅ |
-| **Alejandro Valenzuela** | `canons/ALEJANDRO-VALENZUELA-v1-CHARACTER-STATE.md` | FIXED | ✅ |
-| **Marcus Vance** | `canons/MARCUS-VANCE-v1-CHARACTER-STATE.md` | FIXED | ✅ |
-| **Lucas Silva** | `canons/LUCAS-SILVA-v1-CHARACTER-STATE.md` | FIXED | ✅ |
+| Eixo | Aplicação | Régua |
+|------|-----------|-------|
+| **F (Facial)** | Close, Medium | ≥ 0.75 |
+| **D (Distância)** | Full, Wide | VC-Matrix |
 
 ---
 
-## 5. Assets Visuais (Pendente Upload)
+## 📊 INVENTÁRIO FINAL DO PILOTO
 
-| Asset | Descrição | Destino | Status |
-|-------|-----------|---------|--------|
-| Helena_Meyer_v5 | Face anchor (tez morena/olive) | `anchors/cast_v1/helena_meyer_v5.png` | ⏳ PENDENTE |
-| Marcus_Couto_v4 | Face anchor (clean-shaven) | `anchors/cast_v1/marcus_couto_v4.png` | ⏳ PENDENTE |
-| Court_Helena | Cena tribunal — acusação | `cast-review/court_helena_01.jpg` | ⏳ PENDENTE |
-| Court_Marcus | Cena tribunal — defesa | `cast-review/court_marcus_01.jpg` | ⏳ PENDENTE |
+### Contagem por Acto
 
-**Ficheiros Fonte (máquina local):**
-```
-Screenshot 2026-06-01 122845.png → Helena Meyer v5 Anchor
-Screenshot 2026-06-01 122929.png → Marcus Couto v4 Anchor
-Screenshot 2026-06-01 130513.jpg → Court scene (Helena)
-Screenshot 2026-06-01 130609.jpg → Court scene (Marcus)
-```
+| Acto | Cenas | Planos | Status |
+|------|-------|--------|--------|
+| I | 0-4 | 30 | ✅ |
+| II | 5-9 | 23 | ✅ |
+| III | 10-12 | 23 | ✅ |
+| IV | 13-15 | 23 | ✅ |
+| **TOTAL** | **16** | **99** | ✅ |
 
----
+### Contagem por Tipo
 
-## 6. Métricas de Validação (Fornalha Industrial)
-
-### Baseline de Coexistência (validado 01 Jun 2026)
-| Métrica | Valor | Status |
-|---------|-------|--------|
-| Baseline Strangers | -0.0305 | ✅ LOCKED |
-| Teto Multi-Anchor | ≤ +0.10 | ✅ LOCKED |
-| Identity Floor | ≥ 0.65 | ✅ LOCKED |
-| Forensic Threshold | ≥ 0.75 | ✅ LOCKED |
-
-### Invariantes Industriais
-| Regra | Descrição | Acção |
-|-------|-----------|-------|
-| I-IND-01 | Nenhum render sem anchor validado | BLOCK |
-| I-IND-02 | Nenhum actor novo sem registo no Banco | BLOCK |
-| I-IND-03 | Nenhuma cena sem script aprovado I9 | BLOCK |
-| I-IND-04 | Métricas de coexistência ≤ +0.1 | BLOCK |
-| I-IND-05 | Time-Lock Receipts documentados | WARN |
+| Tipo | Qtd | % | Descrição |
+|------|-----|---|-----------|
+| **A (SPINE)** | 57 | 58% | Validação facial |
+| B (Stock) | 5 | 5% | Establishing |
+| C (Ambiente) | 12 | 12% | Runway/SORA |
+| **D (Motion)** | 25 | 25% | INSERTs gráficos |
+| **TOTAL** | **99** | 100% | |
 
 ---
 
-## 7. Estrutura de Directórios
+## 🎭 SPINE-CAST: PASSAPORTES
+
+| # | Personagem | Passport ID | Status |
+|---|------------|-------------|--------|
+| 1 | **Gabi Santos** | `gabi.santos.passport.v1` | ✅ LOCKED |
+| 2 | Helena Meyer | `helena.meyer.junior.passport.v1` | ✅ Ready |
+| 3 | Marcus Vance | `marcus.vance.passport.v1` | ✅ Ready |
+| 4 | Marcus Couto | `marcus.couto.passport.v1` | ✅ Ready |
+| 5 | Lucas Silva | `lucas.silva.passport.v1` | ✅ Ready |
+| 6 | Alejandro Valenzuela | `alejandro.valenzuela.passport.v1` | ✅ Ready |
+
+**TOTAL:** 6/6 especificados · 1/6 validado
+
+---
+
+## 📁 DOCUMENTAÇÃO COMPLETA
+
+### Decretos & Leis
+
+| Documento | Status |
+|-----------|--------|
+| `DECRETO-PRODUCAO-001-DUPLA-REGUA.md` | ✅ |
+| `DECRETO-PRODUCAO-001-ADITAMENTO.md` | ✅ |
+
+### Production Breakdowns
+
+| Documento | Acto | Planos |
+|-----------|------|--------|
+| `W-HIOS-PRODUCTION-BREAKDOWN-001.md` | I | 30 |
+| `W-HIOS-PRODUCTION-BREAKDOWN-002.md` | II | 23 |
+| `W-HIOS-PRODUCTION-BREAKDOWN-003.md` | III | 23 |
+| `W-HIOS-PRODUCTION-BREAKDOWN-004.md` | IV | 23 |
+
+### SPINE Documents
+
+| Documento | Status |
+|-----------|--------|
+| `SPINE-PASSPORTS-MASTER.md` | ✅ 6/6 LOCKED |
+| `SPINE-VALIDATION-CENA0.json` | ✅ v2.1 |
+| `SPINE-CAST-VANCE-PROMPTS.md` | ✅ |
+| `VERTICAL-SLICE-CENA0-EXECUTION.md` | ✅ |
+| **`METODOLOGIA-SPINE-CAST-001.md`** | ✅ **MEMORY LOOP** |
+
+### Space & Sound Documents
+
+| Documento | Status |
+|-----------|--------|
+| **`SPACE-ANCHORS-MASTER.md`** | ✅ 2/2 ENV LOCKED |
+| **`SOUND-DESIGN-MASTER.md`** | ✅ ADR + FOLEY |
+| **`PERFORMANCE-VALIDATION-REPORT.md`** | ✅ ACT I-II SEALED |
+
+### Scripts
+
+| Documento | Status |
+|-----------|--------|
+| `PILOT-O-PESO-DO-ECO-v1.md` | ✅ |
+| `PILOT-O-PESO-DO-ECO-v2.md` | ✅ |
+| `PILOT-O-PESO-DO-ECO-v3.md` | ✅ FINAL |
+
+---
+
+## 🎬 MOTION DESIGN ASSETS
+
+| Asset | Planos | Descrição |
+|-------|--------|-----------|
+| **D01** | P10 | Terminal de Extração |
+| **D02** | P14, P30 | Relógio de Latência 240s |
+| **D03** | P35 | Mapa Frankfurt Alert |
+| **D04** | P45, P51, P84 | Árvore de Merkle Fractal |
+
+---
+
+## 📐 ESTRUTURA DE DIRECTÓRIOS
 
 ```
 /opt/windi/hios/cinema/obras/w-hios-forensic-unit/
 │
-├── anchors/
-│   └── cast_v1/                    ← Upload visual anchors here
-│
 ├── canons/                         ← 6 CHARACTER-STATE files
-│   ├── HELENA-MEYER-v1-CHARACTER-STATE.md
-│   ├── MARCUS-COUTO-v1-CHARACTER-STATE.md
-│   ├── GABI-SANTOS-v1-CHARACTER-STATE.md
-│   ├── ALEJANDRO-VALENZUELA-v1-CHARACTER-STATE.md
-│   ├── MARCUS-VANCE-v1-CHARACTER-STATE.md
-│   └── LUCAS-SILVA-v1-CHARACTER-STATE.md
-│
-├── cast-review/                    ← Upload court scene refs here
-│
-├── scenes/
 │
 ├── production/
 │   ├── SERIES-BIBLE-001.md
 │   ├── CONTINUITY-BIBLE-001.yaml
-│   ├── INDUSTRIAL-MANIFEST-001.md  ← NEW
-│   ├── EPISODE-OUTLINE-T1.md       ← NEW
-│   │
-│   ├── schemas/
-│   │   ├── validators.yaml         ← NEW
-│   │   ├── cast-library.yaml       ← NEW
-│   │   └── steganography-protocol.yaml  ← NEW
-│   │
-│   ├── prompts/
-│   │
+│   ├── schemas/                    ← 6 schema files
 │   └── scripts/
-│       └── PILOT-O-PESO-DO-ECO-v1.md
-│
-├── _experimental/
-│
-├── _forense/
+│       ├── PILOT-O-PESO-DO-ECO-v1.md
+│       ├── PILOT-O-PESO-DO-ECO-v2.md
+│       └── PILOT-O-PESO-DO-ECO-v3.md   ← FINAL
 │
 └── _preproduction/
-    ├── PREPRODUCTION-INDEX.md      ← YOU ARE HERE
-    ├── character-research/
-    ├── set-design/
-    ├── wardrobe/
-    ├── dialogue-drafts/
-    ├── visual-references/
-    └── narrative-research/
+    ├── PREPRODUCTION-INDEX.md           ← YOU ARE HERE
+    │
+    ├── DECRETOS/
+    │   ├── DECRETO-PRODUCAO-001-DUPLA-REGUA.md
+    │   └── DECRETO-PRODUCAO-001-ADITAMENTO.md
+    │
+    ├── BREAKDOWNS/
+    │   ├── W-HIOS-PRODUCTION-BREAKDOWN-001.md   ← Act I
+    │   ├── W-HIOS-PRODUCTION-BREAKDOWN-002.md   ← Act II
+    │   ├── W-HIOS-PRODUCTION-BREAKDOWN-003.md   ← Act III
+    │   └── W-HIOS-PRODUCTION-BREAKDOWN-004.md   ← Act IV
+    │
+    └── SPINE/
+        ├── SPINE-PASSPORTS-MASTER.md
+        ├── SPINE-VALIDATION-CENA0.json
+        ├── SPINE-CAST-VANCE-PROMPTS.md
+        └── VERTICAL-SLICE-CENA0-EXECUTION.md
 ```
 
 ---
 
-## 8. Pipeline de Produção Industrial
+## ✅ CHECKLIST DE PRODUÇÃO
 
-### Fase 1: Ingestão de Caso
-```
-Novo escândalo/crime → Análise de viabilidade → Aprovação I9
-```
+### Pré-Produção ✅ COMPLETO
 
-### Fase 2: Ancoragem
-```
-Personagens novos → Geração de anchors → Validação ortogonalidade → Banco Rotativo
-```
+- [x] Script v3 final
+- [x] 6 CHARACTER-STATE canons
+- [x] DECRETO-001 + Aditamento
+- [x] Metodologia Passaporte validada
+- [x] 6 passaportes especificados
+- [x] 4 breakdowns (99 planos)
+- [x] 4 Motion Design assets
+- [x] Gabi Santos Eixo F PASSED (P04/P05/P02 ≥0.75)
+- [ ] Gabi Santos Eixo D PENDING (P06 VC-Matrix medição)
 
-### Fase 3: Renderização
-```
-Script aprovado → Cenas por bloco → Validação forense → Composição final
-```
+### Produção ⏳ PRÓXIMO
 
-### Fase 4: Selo
-```
-Episódio completo → Ledger Receipt → Arquivo imutável
-```
-
----
-
-## 9. Próximos Passos
-
-### Imediato (P0)
-- [ ] Upload de assets visuais para o servidor Strato
-- [ ] Gerar embeddings (.npy) para Helena Meyer e Marcus Couto
-- [ ] Validar ortogonalidade inter-anchor oficialmente
-
-### Curto Prazo (P1)
-- [ ] Definir visual anchors para Gabi, Alejandro, Vance, Lucas
-- [ ] Renderizar primeiras cenas de teste (Cena 1-4: Morte de Gabi)
-- [ ] Criar WORLD-STATE-001 para a série
-
-### Médio Prazo (P2)
-- [ ] Desenvolver scripts EP2-EP6
-- [ ] Povoar Banco Rotativo com primeiros 10 actores
-- [ ] Integrar com W-GENERATOR-001 para produção automatizada
+- [ ] Gerar 5 passaportes restantes
+- [ ] Validar 5 anchors
+- [ ] Gerar planos Type A (57)
+- [ ] Renderizar Motion Design (25)
+- [ ] Compositing Act I-IV
+- [ ] ADR e sound design
+- [ ] Grading final
+- [ ] Ledger seal piloto
 
 ---
 
-## 10. Contagem de Ficheiros
+## 📈 CONTAGEM FINAL
 
 | Categoria | Quantidade |
 |-----------|------------|
-| Documentos Fundacionais | 4 |
-| Scripts | 1 (completo) + 5 (outline) |
-| Schemas | 3 |
+| Decretos | 2 |
+| Scripts | 3 |
+| Breakdowns | 4 |
 | Character States | 6 |
-| **TOTAL** | 14 ficheiros |
+| Passaportes | 6 |
+| SPINE Documents | 4 |
+| Motion Design | 4 |
+| Planos Totais | 99 |
+| **TOTAL FICHEIROS** | **29** |
 
 ---
 
-## 11. Ligações Constitucionais
+## 🏛️ LIGAÇÕES CONSTITUCIONAIS
 
 | Invariante | Aplicação |
 |------------|-----------|
 | **I1** | Human Dragon aprova cada passo |
 | **I9** | Nenhum selo sem gate humano |
-| **I11** | Arquivos de produção imutáveis após selo |
-| **I12** | Scripts trilíngues conforme contexto |
+| **I11** | Arquivos imutáveis após selo |
+| **I12** | Arquitectura linguística por contexto |
 | **I14** | Dados ausentes = erro explícito |
-| **I18** | Série cresce organicamente com infra WINDI |
+| **I18** | Crescimento orgânico |
+| **I19** | Proveniência inseparável |
 
 ---
 
-*Liga IA+H · WINDI Publishing House · 01 Jun 2026*
-*"O Piloto fixa a matriz. A Fornalha escala o drama."*
+*Liga IA+H · WINDI Publishing House · 02 Jun 2026*
+*"A prova não mente. A prova apenas espera."*
