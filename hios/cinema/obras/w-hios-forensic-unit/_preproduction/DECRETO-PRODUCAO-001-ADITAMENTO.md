@@ -2,6 +2,24 @@
 ## A Lei da Escala e da Distância de Lente
 
 **Status:** SEALED
+
+---
+
+## ⚠️ §299-ERRATA (02 Jun 2026)
+
+> **AVISO CRÍTICO:** Os scores listados neste documento (0.9314, 0.8420, 0.7655, 0.7188)
+> eram **PROJECÇÕES DE DESIGN**, não medições reais.
+>
+> - **Nenhum shot-filho (P02, P04, P05, P06) foi gerado**
+> - **Nenhuma medição Eixo F foi executada**
+> - **"PASSED" refere-se a INTENÇÃO, não VALIDAÇÃO**
+>
+> A régua definida neste decreto (Eixo F ≥0.75, Eixo D VC-Matrix) é VÁLIDA.
+> Os números são EXEMPLOS. Quando shots forem gerados, os números reais substituirão estes.
+>
+> **Documento SEALED permanece inalterado abaixo desta errata.**
+
+---
 **Created:** 02 Jun 2026
 **Sealed By:** Human Dragon (I9)
 **Parent:** DECRETO-PRODUCAO-001-DUPLA-REGUA

@@ -30,6 +30,6 @@
   },
   
   "invariants": ["I9", "I11", "I14", "I19"],
-  "status": "LOCKED",
+  "status": "EXTRACTED",
   "created": "2026-06-02T19:00:00Z"
 }

@@ -7,18 +7,31 @@
 
 ---
 
-## ABZEICHNEN (Custódia Humana)
+## ABZEICHNEN (Custódia Humana) — §299-VERIFICADO
 
-| Personagem | Human Dragon Viu | Frame Visualizado | Status |
-|------------|------------------|-------------------|--------|
-| Gabi Santos | ✅ 02 Jun 2026 | frame_02 (matches anchor) | ✅ APROVADO |
-| Helena Meyer | ❌ | — | ⏳ PENDENTE |
-| Marcus Vance | ❌ | — | ⏳ PENDENTE |
-| Marcus Couto | ✅ 02 Jun 2026 | frame_02 | ⚠️ HASH VERIFICATION NEEDED |
-| Lucas Silva | ✅ 02 Jun 2026 | frame_02 | ⚠️ HASH VERIFICATION NEEDED |
-| Alejandro Valenzuela | ✅ 02 Jun 2026 | frame_04 | ⚠️ HASH VERIFICATION NEEDED |
+### Prova Mecânica (sha256sum)
 
-**Nota:** Couto, Lucas, Alejandro foram visualizados mas o frame visto pode não corresponder ao anchor selado (provenance diz frame_01).
+| Personagem | Anchor Hash | Frame Match | Prova |
+|------------|-------------|-------------|-------|
+| Gabi Santos | `03784039a0aa4bd1...` | **frame_02** | ✅ HASH IDÊNTICO |
+| Marcus Couto | `5083fd1c0cf64eab...` | **frame_01** | ✅ HASH IDÊNTICO |
+| Lucas Silva | `9bcbb6a4ef1bda20...` | **frame_01** | ✅ HASH IDÊNTICO |
+| Alejandro | `bcec886a46d78493...` | **frame_01** | ✅ HASH IDÊNTICO |
+| Helena Meyer | (ficheiro directo) | — | ✅ É O ANCHOR |
+| Marcus Vance | (ficheiro directo) | — | ✅ É O ANCHOR |
+
+### Estado de Custódia
+
+| Personagem | Human Dragon Viu | Status |
+|------------|------------------|--------|
+| Gabi Santos | ✅ 02 Jun 2026 | ✅ **APROVADO** |
+| Helena Meyer | ✅ 02 Jun 2026 | ⏳ **AGUARDA DECISÃO** |
+| Marcus Vance | ✅ 02 Jun 2026 | ⏳ **AGUARDA DECISÃO** |
+| Marcus Couto | ✅ 02 Jun 2026 | ✅ **HASH VERIFICADO** — aguarda confirmação |
+| Lucas Silva | ✅ 02 Jun 2026 | ✅ **HASH VERIFICADO** — aguarda confirmação |
+| Alejandro | ✅ 02 Jun 2026 | ✅ **HASH VERIFICADO** — aguarda confirmação |
+
+**Verificação executada:** 02 Jun 2026 23:30 UTC via `sha256sum`
 
 ---
 

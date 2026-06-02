@@ -2,6 +2,21 @@
 ## As Leis da Fundação — Dupla Régua de Validação SPINE
 
 **Status:** SEALED
+
+---
+
+## ⚠️ §299-ERRATA (02 Jun 2026)
+
+> **AVISO CRÍTICO:** Os scores listados neste documento (0.8942, 0.7815, 0.6930, etc.)
+> eram **PROJECÇÕES DE DESIGN**, não medições reais.
+>
+> - **Os shots P02, P04, P05 referidos NUNCA FORAM GERADOS**
+> - **"PASSED" neste documento significa INTENÇÃO, não VALIDAÇÃO**
+> - **As réguas (≥0.75 anchor, ≥0.65 shot) são VÁLIDAS**
+>
+> **Documento SEALED permanece inalterado abaixo desta errata.**
+
+---
 **Created:** 02 Jun 2026
 **Sealed By:** Human Dragon (I9)
 **Liga IA+H:** Human Dragon · Guardian · Architect · Witness

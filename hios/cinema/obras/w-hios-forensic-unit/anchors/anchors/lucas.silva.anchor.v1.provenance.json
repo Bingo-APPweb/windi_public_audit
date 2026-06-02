@@ -25,7 +25,7 @@
   },
   
   "invariants": ["I9", "I11", "I14", "I19"],
-  "status": "LOCKED",
+  "status": "EXTRACTED",
   "approved_by": "Human Dragon",
   "created": "2026-06-02T19:32:00Z"
 }
