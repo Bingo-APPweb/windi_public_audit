@@ -87,14 +87,14 @@ print(f'Similarity: {similarity:.4f}')  # ≥0.75 = PASS
 
 | Personagem | Anchor | Det.Score | Status |
 |------------|--------|-----------|--------|
-| Gabi Santos | gabi.santos.anchor.v1 | — | 🔴 **MISSING** |
+| Gabi Santos | gabi.santos.anchor.v1 | 0.8755 | 🟡 EXTRACTED |
 | Helena Meyer | helena.meyer.junior.anchor.v1 | 0.8636 | 🟡 EXTRACTED |
 | Marcus Vance | marcus.vance.anchor.v1 | 0.8638 | 🟡 EXTRACTED |
 | Marcus Couto | marcus.couto.anchor.v1 | 0.8811 | 🟡 EXTRACTED |
 | Lucas Silva | lucas.silva.anchor.v1 | 0.8119 | 🟡 EXTRACTED |
 | Alejandro Valenzuela | alejandro.valenzuela.anchor.v1 | 0.8763 | 🟡 EXTRACTED |
 
-**Estado Real:** 1 MISSING · 5 EXTRACTED · **0 LOCKED** (nenhum Eixo F validado)
+**Estado Real:** **6/6 EXTRACTED** · **0 LOCKED** (Eixo F pendente para todos)
 
 ---
 

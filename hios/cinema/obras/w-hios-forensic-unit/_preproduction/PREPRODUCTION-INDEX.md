@@ -18,8 +18,7 @@
 | **6 Passaportes** | ✅ ESPECIFICADOS |
 | **4 Breakdowns (99 planos)** | ✅ COMPLETO |
 | **4 Motion Design Assets** | ✅ ESPECIFICADOS |
-| **Gabi Santos** | 🔴 **ASSETS MISSING — NOT VERIFIABLE** |
-| **5 Anchors** | 🟡 **EXTRACTED (detection) — Eixo F PENDING** |
+| **6 Anchors** | 🟡 **EXTRACTED (detection) — Eixo F PENDING** |
 
 ---
 
@@ -67,14 +66,14 @@
 
 | # | Personagem | Passport ID | Anchor | Eixo F |
 |---|------------|-------------|--------|--------|
-| 1 | **Gabi Santos** | `gabi.santos.passport.v1` | 🔴 MISSING | ❌ NOT VERIFIABLE |
+| 1 | **Gabi Santos** | `gabi.santos.passport.v1` | 🟡 EXTRACTED | ⏳ PENDING |
 | 2 | Helena Meyer | `helena.meyer.junior.passport.v1` | 🟡 EXTRACTED | ⏳ PENDING |
 | 3 | Marcus Vance | `marcus.vance.passport.v1` | 🟡 EXTRACTED | ⏳ PENDING |
 | 4 | Marcus Couto | `marcus.couto.passport.v1` | 🟡 EXTRACTED | ⏳ PENDING |
 | 5 | Lucas Silva | `lucas.silva.passport.v1` | 🟡 EXTRACTED | ⏳ PENDING |
 | 6 | Alejandro Valenzuela | `alejandro.valenzuela.passport.v1` | 🟡 EXTRACTED | ⏳ PENDING |
 
-**TOTAL:** 6/6 passaportes especificados · **1/6 MISSING** · **5/6 EXTRACTED** · **0/6 Eixo F validado**
+**TOTAL:** 6/6 passaportes especificados · **6/6 EXTRACTED** · **0/6 Eixo F validado**
 
 > **§298-ERRATA:** Detection score (0.80+) ≠ Eixo F validation (≥0.75 vs shot-filho).
 > EXTRACTED = anchor extraído com detection. LOCKED = Eixo F ≥0.75 contra performance real.

@@ -1,0 +1,15 @@
+{
+  "anchor_id": "gabi.santos.anchor.v1",
+  "character": "Gabi Santos",
+  "generator": "Runway Gen-4.5",
+  "prompt": "Photographic portrait for character reference, a 33-year-old Brazilian\nwoman with warm olive/morena skin tone, dark wavy hair falling to her\nshoulders. Calm neutral expression, symmetrical face, intense dark eyes\nlooking directly at camera. Wearing a dark professional blouse.\n\nFlat diffuse neutral studio lighting, no shadows, high-end professional\nidentification shot, 50mm lens, sharp focus on facial structures,\ncinematic photorealistic texture, zero facial muscle distortion.",
+  "created": "2026-06-02T16:42:09.782354Z",
+  "task_id": "d0becd37-6de6-4dfe-8b51-9d66e48a0b25",
+  "invariants": [
+    "I9",
+    "I11",
+    "I14",
+    "I19"
+  ],
+  "status": "EXTRACTED"
+}

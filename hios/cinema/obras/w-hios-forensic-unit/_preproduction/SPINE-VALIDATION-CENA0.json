@@ -16,10 +16,11 @@
     "shot": "DEDICATED_PASSPORT",
     "type": "IDENTITY",
     "description": "Dedicated passport frame - neutral expression, flat lighting",
-    "extraction_method": "dedicated_passport_protocol",
-    "self_validation_score": null,
-    "status": "MISSING",
-    "errata_298": "02 Jun 2026 - Assets não existem. Ficheiros .png/.npy/.mp4 ausentes do repositório. Scores documentados não são verificáveis."
+    "extraction_method": "runway_gen4.5_text_to_video",
+    "detection_score": 0.8755,
+    "status": "EXTRACTED",
+    "hash": "sha256:03784039a0aa4bd1306518d847aeae69915c566f1ef7e5a1e81822d82f2e1c82",
+    "errata_298_fix": "02 Jun 2026 - Anchor regenerado via Runway Gen-4.5. Assets existem: .png, .mp4, .npy, .provenance.json"
   },
 
   "previous_anchor_deprecated": {
@@ -143,9 +144,9 @@
     "invariants": ["I9", "I11", "I14", "I19"]
   },
 
-  "status": "FOUNDATION_MISSING",
-  "errata_298": "02 Jun 2026 - Gabi anchor não existe. Toda a validação Cena 0 é órfã.",
-  "next_action": "REGENERAR anchor Gabi antes de qualquer outra produção",
+  "status": "ANCHOR_EXTRACTED",
+  "errata_298_fix": "02 Jun 2026 - Gabi anchor regenerado. Detection 0.8755. Eixo F pendente.",
+  "next_action": "Gerar shot-filho e validar Eixo F ≥0.75",
   "constitutional_seal": {
     "eixo_f_decree": "DECRETO-PRODUCAO-001-DUPLA-REGUA",
     "eixo_d_decree": "DECRETO-PRODUCAO-001-ADITAMENTO",

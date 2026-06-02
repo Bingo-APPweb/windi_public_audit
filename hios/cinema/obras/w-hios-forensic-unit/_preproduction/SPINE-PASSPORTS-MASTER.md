@@ -23,11 +23,14 @@ Cada personagem recorrente recebe um **plano de identidade dedicado** que:
 
 ## PASSAPORTES SELADOS (6/6)
 
-### 1. GABI SANTOS 🔴 FOUNDATION_MISSING
+### 1. GABI SANTOS 🟡 EXTRACTED (FOUNDATION)
 
 **ID:** `gabi.santos.passport.v1`
 **Anchor:** `gabi.santos.anchor.v1`
-**Status:** 🔴 **ASSETS NÃO EXISTEM** — Fundação não verificável
+**Status:** ANCHOR EXTRACTED — Eixo F ⏳ PENDING
+**Detection Score:** 0.8755 (InsightFace viu rosto — **não é validação de identidade**)
+**Hash:** `sha256:03784039a0aa4bd1306518d847aeae69915c566f1ef7e5a1e81822d82f2e1c82`
+**Source:** Runway Gen-4.5 text-to-video (frame_02)
 
 ```plaintext
 Photographic portrait for character reference, a 33-year-old Brazilian
@@ -40,9 +43,10 @@ identification shot, 50mm lens, sharp focus on facial structures,
 cinematic photorealistic texture, zero facial muscle distortion.
 ```
 
-**§298-ERRATA (02 Jun 2026):**
-> Os scores 0.93/0.84/0.77 foram documentados em sessões anteriores mas
-> **os assets não foram persistidos**. Não existe `gabi.santos.anchor.v1.png`,
+**§298-ERRATA-FIX (02 Jun 2026):**
+> Anchor regenerado via Runway Gen-4.5. Detection score 0.8755.
+> Assets agora existem: `.png`, `.mp4`, `.npy`, `.provenance.json`
+> **Eixo F pendente** — necessita shot-filho para validação de identidade.
 > não existe embedding, não existem vídeos P02/P04/P05/P06.
 > **Estes números não são verificáveis.**
 
@@ -208,18 +212,18 @@ zero muscle distortion.
 
 ---
 
-## CONTAGEM DE STATUS (§298-ERRATA)
+## CONTAGEM DE STATUS (§298-ERRATA-FIX)
 
-| Personagem | Passaporte | Anchor | Eixo F | Eixo D |
-|------------|------------|--------|--------|--------|
-| Gabi Santos | ✅ SPEC | 🔴 **MISSING** | ❌ NOT VERIFIABLE | ❌ NOT VERIFIABLE |
-| Helena Meyer | ✅ SPEC | 🟡 EXTRACTED | ⏳ PENDING | ⏳ PENDING |
-| Marcus Vance | ✅ SPEC | 🟡 EXTRACTED | ⏳ PENDING | ⏳ PENDING |
-| Marcus Couto | ✅ SPEC | 🟡 EXTRACTED | ⏳ PENDING | ⏳ PENDING |
-| Lucas Silva | ✅ SPEC | 🟡 EXTRACTED | ⏳ PENDING | ⏳ PENDING |
-| Alejandro Valenzuela | ✅ SPEC | 🟡 EXTRACTED | ⏳ PENDING | ⏳ PENDING |
+| Personagem | Passaporte | Anchor | Det.Score | Eixo F | Eixo D |
+|------------|------------|--------|-----------|--------|--------|
+| Gabi Santos | ✅ SPEC | 🟡 EXTRACTED | 0.8755 | ⏳ PENDING | ⏳ PENDING |
+| Helena Meyer | ✅ SPEC | 🟡 EXTRACTED | 0.8636 | ⏳ PENDING | ⏳ PENDING |
+| Marcus Vance | ✅ SPEC | 🟡 EXTRACTED | 0.8638 | ⏳ PENDING | ⏳ PENDING |
+| Marcus Couto | ✅ SPEC | 🟡 EXTRACTED | 0.8811 | ⏳ PENDING | ⏳ PENDING |
+| Lucas Silva | ✅ SPEC | 🟡 EXTRACTED | 0.8119 | ⏳ PENDING | ⏳ PENDING |
+| Alejandro Valenzuela | ✅ SPEC | 🟡 EXTRACTED | 0.8763 | ⏳ PENDING | ⏳ PENDING |
 
-**TOTAL:** 6/6 passaportes especificados · **1/6 anchor MISSING** · **5/6 anchors EXTRACTED** · **0/6 Eixo F validado** · 0/6 Eixo D validado
+**TOTAL:** 6/6 passaportes especificados · **6/6 anchors EXTRACTED** · **0/6 Eixo F validado** · 0/6 Eixo D validado
 
 ---
 
