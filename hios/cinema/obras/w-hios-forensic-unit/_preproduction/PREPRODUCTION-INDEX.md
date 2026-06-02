@@ -102,7 +102,7 @@
 
 | Documento | Status |
 |-----------|--------|
-| `SPINE-PASSPORTS-MASTER.md` | ✅ 6/6 LOCKED |
+| `SPINE-PASSPORTS-MASTER.md` | ✅ 6/6 EXTRACTED |
 | `SPINE-VALIDATION-CENA0.json` | ✅ v2.1 |
 | `SPINE-CAST-VANCE-PROMPTS.md` | ✅ |
 | `VERTICAL-SLICE-CENA0-EXECUTION.md` | ✅ |

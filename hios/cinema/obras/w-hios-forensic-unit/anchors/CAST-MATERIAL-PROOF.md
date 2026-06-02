@@ -7,31 +7,31 @@
 
 ---
 
-## ABZEICHNEN (Custódia Humana) — §299-VERIFICADO
+## ABZEICHNEN (Custódia Humana) — §299-FINAL
 
-### Prova Mecânica (sha256sum)
+### 6/6 Anchors Vistos Directamente
 
-| Personagem | Anchor Hash | Frame Match | Prova |
-|------------|-------------|-------------|-------|
-| Gabi Santos | `03784039a0aa4bd1...` | **frame_02** | ✅ HASH IDÊNTICO |
-| Marcus Couto | `5083fd1c0cf64eab...` | **frame_01** | ✅ HASH IDÊNTICO |
-| Lucas Silva | `9bcbb6a4ef1bda20...` | **frame_01** | ✅ HASH IDÊNTICO |
-| Alejandro | `bcec886a46d78493...` | **frame_01** | ✅ HASH IDÊNTICO |
-| Helena Meyer | (ficheiro directo) | — | ✅ É O ANCHOR |
-| Marcus Vance | (ficheiro directo) | — | ✅ É O ANCHOR |
+> **Regra Guardian:** "O Abzeichnen faz-se sempre sobre o ficheiro-âncora, nunca sobre um frame candidato."
 
-### Estado de Custódia
+Todas as 6 caras foram mostradas ao Human Dragon como **ficheiro-âncora directo** (não frames de subpasta).
+Isto elimina a possibilidade de discrepância entre o que se vê e o que se sela.
 
-| Personagem | Human Dragon Viu | Status |
-|------------|------------------|--------|
-| Gabi Santos | ✅ 02 Jun 2026 | ✅ **APROVADO** |
-| Helena Meyer | ✅ 02 Jun 2026 | ⏳ **AGUARDA DECISÃO** |
-| Marcus Vance | ✅ 02 Jun 2026 | ⏳ **AGUARDA DECISÃO** |
-| Marcus Couto | ✅ 02 Jun 2026 | ✅ **HASH VERIFICADO** — aguarda confirmação |
-| Lucas Silva | ✅ 02 Jun 2026 | ✅ **HASH VERIFICADO** — aguarda confirmação |
-| Alejandro | ✅ 02 Jun 2026 | ✅ **HASH VERIFICADO** — aguarda confirmação |
+| Personagem | Ficheiro Visto | Human Dragon Viu | Status |
+|------------|----------------|------------------|--------|
+| Gabi Santos | `gabi.santos.anchor.v1.png` | ✅ 02 Jun 2026 | ✅ **APROVADO** |
+| Helena Meyer | `helena.meyer.junior.anchor.v1.png` | ✅ 02 Jun 2026 | ⏳ **AGUARDA "É ELA?"** |
+| Marcus Vance | `marcus.vance.anchor.v1.png` | ✅ 02 Jun 2026 | ⏳ **AGUARDA "É ELE?"** |
+| Marcus Couto | `marcus.couto.anchor.v1.png` | ✅ 02 Jun 2026 | ⏳ **AGUARDA "É ELE?"** |
+| Lucas Silva | `lucas.silva.anchor.v1.png` | ✅ 02 Jun 2026 | ⏳ **AGUARDA "É ELE?"** |
+| Alejandro | `alejandro.valenzuela.anchor.v1.png` | ✅ 02 Jun 2026 | ⏳ **AGUARDA "É ELE?"** |
 
-**Verificação executada:** 02 Jun 2026 23:30 UTC via `sha256sum`
+**Verificação:** 02 Jun 2026 ~23:45 UTC · Todos vistos como anchor directo (não frame)
+
+### Notas do Juiz (Guardian)
+
+- **Helena:** Blazer lê-se preto/carvão (spec dizia azul escuro mate). Não desqualifica — ArcFace mede geometria facial, não cor de roupa.
+- **Vance:** Iluminação lateral dramática (menos "passaporte" que os outros). Detection 0.8638 coerente com oclusão parcial.
+- **Couto/Lucas/Alejandro:** Inicialmente vistos como frames de subpasta. Corrigido ao mostrar anchors directos.
 
 ---
 
