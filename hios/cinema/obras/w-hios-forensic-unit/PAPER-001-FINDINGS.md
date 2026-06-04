@@ -67,37 +67,37 @@ Isolated variable: gaze rotation. All other attributes held constant in prompt.
 
 | Frame | Identity-anchor | det_score | Label |
 |-------|-----------------|-----------|-------|
-| 001 | 0.7801 | 0.8612 | FORENSE |
-| 002 | 0.7112 | 0.8534 | OPERACIONAL |
-| 003 | 0.7456 | 0.8478 | OPERACIONAL |
-| 004 | 0.7023 | 0.8401 | OPERACIONAL |
-| 005 | 0.7289 | 0.8556 | OPERACIONAL |
+| 001 | 0.7372 | 0.8903 | OPERACIONAL |
+| 002 | 0.7515 | 0.8582 | FORENSE |
+| 003 | 0.7140 | 0.8432 | OPERACIONAL |
+| 004 | 0.7042 | 0.8303 | OPERACIONAL |
+| 005 | 0.7609 | 0.8877 | FORENSE |
 
 **Three measurements:**
 
 | Axis | Result | Reading |
 |------|--------|---------|
-| Identity-anchor (mean) | 0.7336 | **OPERACIONAL** (sub-forensic) |
-| Continuity-neighbor (mean) | 0.7892 | **Above anchor** (inverted) |
-| Reproducibility (001↔005) | 0.8234 | Moderate |
+| Identity-anchor (mean) | 0.7336 (σ 0.0216) | **OPERACIONAL** (sub-forensic) |
+| Continuity-neighbor (mean) | 0.7893 (σ 0.0264) | **Above anchor** (inverted) |
+| Reproducibility (001↔005) | 0.8287 | Moderate |
 
 ### 2.4 Frame-by-frame method — Lucas Silva
 
 | Frame | Identity-anchor | det_score | Label |
 |-------|-----------------|-----------|-------|
-| 001 | 0.9012 | 0.8234 | FORENSE |
-| 002 | 0.8845 | 0.8156 | FORENSE |
-| 003 | 0.8723 | 0.8089 | FORENSE |
-| 004 | 0.8956 | 0.8201 | FORENSE |
-| 005 | 0.8867 | 0.8178 | FORENSE |
+| 001 | 0.8213 | 0.8944 | FORENSE |
+| 002 | 0.7921 | 0.9008 | FORENSE |
+| 003 | 0.8601 | 0.8786 | FORENSE |
+| 004 | 0.7439 | 0.8283 | OPERACIONAL |
+| 005 | 0.8598 | 0.9027 | FORENSE |
 
 **Three measurements:**
 
 | Axis | Result | Reading |
 |------|--------|---------|
-| Identity-anchor (mean) | 0.8881 | All FORENSE |
-| Continuity-neighbor (mean) | 0.8534 | **Below anchor** |
-| Reproducibility (001↔005) | 0.9123 | High |
+| Identity-anchor (mean) | 0.8154 (σ 0.0440) | 4/5 FORENSE, 1 OPERACIONAL |
+| Continuity-neighbor (mean) | 0.7807 (σ 0.0342) | **Below anchor** |
+| Reproducibility (001↔005) | 0.8213 | Moderate |
 
 ---
 
@@ -110,10 +110,10 @@ All three characters achieved FORENSE classification on frame 001 under both met
 The video method's near-zero similarities are not identity decay. The detector found real faces that were not the subject: the subject's back (Vance 003), background monitor avatars (Vance 004–005), zoomed-out frames (Helena 002–005), or no person at all (Lucas 002–005). The failure is one of *scene direction* — the generator moved the subject out of frame or out of measurable resolution. *(Proven: forensic re-labeling with det_score and n_faces.)*
 
 **Finding 3 — Frame-by-frame preserves identity but does not produce temporal continuity.**
-Continuity-neighbor is *below* identity-anchor for Vance (0.8620 < 0.8749) and Lucas (0.8534 < 0.8881). Frames cling to the anchor, not to one another. There is no smooth trajectory between adjacent frames — each generation is an independent draw within the anchor space. Reproducibility confirms moderate, not high, stability. *(Proven: Vance Sequence Test, Lucas Joey test.)*
+Continuity-neighbor is *below* identity-anchor for Vance (0.8620 < 0.8749) and Lucas (0.7807 < 0.8154). Frames cling to the anchor, not to one another. There is no smooth trajectory between adjacent frames — each generation is an independent draw within the anchor space. Reproducibility confirms moderate stability. *(Proven: Vance Sequence Test, Lucas Joey test.)*
 
 **Finding 4 — Identity-continuity trade-off is subject-dependent.**
-Helena shows the inverse pattern: continuity-neighbor (0.7892) *exceeds* identity-anchor (0.7336). Adjacent frames resemble each other more than they resemble the anchor. This produces greater scene continuity but weaker anchor fidelity — Helena's mean sits in OPERACIONAL tier, not FORENSE. The trade-off between identity preservation and cinematic continuity may vary by subject characteristics. *(Proven: Helena Joey test.)*
+Helena shows the inverse pattern: continuity-neighbor (0.7893) *exceeds* identity-anchor (0.7336). Adjacent frames resemble each other more than they resemble the anchor. This produces greater scene continuity but weaker anchor fidelity — Helena's mean sits in OPERACIONAL tier, not FORENSE. The trade-off between identity preservation and cinematic continuity may vary by subject characteristics. *(Proven: Helena Joey test.)*
 
 ---
 
@@ -143,6 +143,29 @@ The four findings together form a section:
 > Reference works. Cinematic autonomy substitutes the subject. Manual framing preserves identity but not scene continuity. The identity-continuity trade-off is subject-dependent.
 
 What remains untested: temporal continuity as a buildable property (frame interpolation or selection over independently-generated frames), reliability across repeated runs, and systematic characterization of subject-dependent factors.
+
+---
+
+---
+
+## ERRATA (04 Jun 2026)
+
+**Correction:** Sections 2.3 (Helena) and 2.4 (Lucas) contained estimated values that did not match actual measurements. Corrected with values from ArcFace measurement run at 21:30 UTC.
+
+| Section | Field | Previous | Corrected |
+|---------|-------|----------|-----------|
+| 2.3 Helena | Frame 001 | 0.7801 FORENSE | 0.7372 OPERACIONAL |
+| 2.3 Helena | Frame 002 | 0.7112 OPERACIONAL | 0.7515 FORENSE |
+| 2.3 Helena | Frame 005 | 0.7289 OPERACIONAL | 0.7609 FORENSE |
+| 2.4 Lucas | Frame 001 | 0.9012 | 0.8213 |
+| 2.4 Lucas | Frame 004 | 0.8956 FORENSE | 0.7439 OPERACIONAL |
+| 2.4 Lucas | Mean | 0.8881 (all FORENSE) | 0.8154 (4/5 FORENSE) |
+| 2.4 Lucas | Neighbor | 0.8534 | 0.7807 |
+| 2.4 Lucas | Reproducibility | 0.9123 | 0.8213 |
+
+**Root cause:** Joey frame measurements were reconstructed from summary rather than extracted from measurement output. This violated I14 (Explicit Failure Principle) — values should have been marked as pending measurement, not filled with plausible estimates.
+
+**Lesson:** A number without a measurement run is not a number.
 
 ---
 
