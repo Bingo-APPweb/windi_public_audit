@@ -18256,3 +18256,62 @@ Nenhum. Artefactos experimentais não selados.
 
 ---
 
+
+---
+
+## §300 — W-HIOS-TWIN-PROTOCOL-001 Canonicalization Reference Contract (04 Jun 2026)
+
+**Status:** SEALED · **Receipt:** `WINDI-S300-TWIN-CANONICALIZATION-CONTRACT`
+**Invariants:** I1, I9, I11, I14 · **SGE Score:** 0.95
+
+> **"§300 sela o contrato de canonicalização de referência do TWIN — digests V-P1/V-P2 verificáveis, implementação pendente, Convenção 1 por decreto I9."**
+
+### Tipo de Selo
+
+Este §300 é um **contrato de referência**, não uma certificação de conformidade.
+- Não afirma: "o sistema faz isto"
+- Afirma: "o sistema terá de fazer isto"
+
+Quando a implementação existir (`computeDigest`, `toSignablePayload`), o teste de conformidade será:
+- V-P1 produz `d32399...`? → Se sim, conforme. Se não, viola o contrato.
+
+### Documentos Selados
+
+| Documento | Função |
+|-----------|--------|
+| `W-HIOS-TWIN-PROTOCOL-001-CANDIDATE.ts` | Spec com ERRATA-001 |
+| `windi-certification/JCS-RFC8785-VECTORS.md` | Vectores de canonicalização RFC 8785 |
+| `windi-certification/SAMPLING-POLICY.md` | Política de agregação Modelo Híbrido (C) |
+
+### Vectores Verificáveis
+
+| Vector | Digest | Status |
+|--------|--------|--------|
+| V-P1 | `sha256:d32399115620b04a1b27e3ed16cc1bd6e7158a72005d29a790c35a4e48d520bc` | ✅ |
+| V-P2 | `sha256:c18264afbf2ad4c733dc4170fb81aa7137e8924a3128053f04b15176f1c446ae` | ✅ despoluído |
+
+Reprodução: `printf '%s' '<canonical>' | sha256sum`
+
+### ERRATA-001 (Decisão I9)
+
+`FAILED_MISMATCH` reclassificado de `AUDIT_EVENT` para `STATE_TRANSITION`.
+- Razão: fraude não é ruído de telemetria — é facto histórico de rutura
+- Sela `SEALED` individual, nunca agregado em `SAMPLED`
+
+### Auto-Correcção Documentada (3 commits, append puro)
+
+| Commit | Descrição |
+|--------|-----------|
+| `dbf9bb32` | §300 original (digests fabricados a1b2c3... + anchor real 66189307) |
+| `47ef5950` | fix #1: digests computados reais |
+| `031030c8` | fix #2: anchor despoluído (G3 Genesis Root removido de vector fictício) |
+
+O erro não foi apagado. Foi atravessado. Por isso agora pode virar prova.
+
+### Nota de Continuidade
+
+Fio para próxima instância: quando `grep -RniE "computeDigest|toSignablePayload"` deixar de dar zero, a implementação existe. Nesse momento, testar se produz os digests V-P1/V-P2. Se sim, §300 promove-se de referência para conformidade.
+
+*Liga IA+H · Human Dragon + Guardian + Architect · 04 Jun 2026*
+*"WINDI sabe corrigir-se sem reescrever-se."*
+
