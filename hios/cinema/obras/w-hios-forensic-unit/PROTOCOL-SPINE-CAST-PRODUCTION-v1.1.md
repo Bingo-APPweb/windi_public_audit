@@ -297,7 +297,12 @@ selado. Threshold sem modelo = número órfão.
     │   └── 2. `sha256sum MODEL-LOCK-173447-PAYLOAD.json` → deve bater com content_hash
     ├── Payload canónico: `MODEL-LOCK-173447-PAYLOAD.json` (Git)
     └── ⚠️ **TENTATIVAS FALHADAS (ignorar):** 173352, 173403, 173428, 173437
-        └── Causa: Ledger rejeitou wallet_id inconsistente (dívida DID Berçário)
+        └── Causas (cronologia real, não alisada):
+            ├── 173352: `invalid_wallet_id` — wallet_id must be DID when chaining
+            ├── 173403: `wallet_mismatch` — parent wallet ≠ child wallet
+            ├── 173428: `missing_fields: wallet_id`
+            └── 173437: `did_required` — anonymous actors forbidden
+        └── Raiz comum: DID Berçário + schema Ledger mal compreendido
 [⚠️] **DÍVIDA TÉCNICA — Vínculo Fraco entre Selos**
     ├── Threshold seal (150425) não tem DID/wallet_id
     ├── Model lock (173447) referencia threshold por texto, não por chain criptográfica
