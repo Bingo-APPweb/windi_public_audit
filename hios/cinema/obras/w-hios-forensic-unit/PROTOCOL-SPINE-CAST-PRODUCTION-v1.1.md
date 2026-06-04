@@ -292,7 +292,10 @@ selado. Threshold sem modelo = número órfão.
     │   └── genderage.onnx: `4fde69b1c810857b88c64a335084f1c3fe8f01246c9a191b48c7bb756d6652fb`
     ├── Embedding: 512-dim, L2 normalized, cosine similarity
     ├── Content Hash: `sha256:1e20c7be5c78fe9c34557918dce78d4d3da6869ad690f35949fce28e4e2665cc`
-    ├── Verify: `curl localhost:8101/api/receipts/WINDI-SPINE-MODEL-LOCK-20260604173447`
+    ├── **VERIFICAÇÃO (dois passos):**
+    │   ├── 1. `curl localhost:8101/api/receipts/WINDI-SPINE-MODEL-LOCK-20260604173447`
+    │   └── 2. `sha256sum MODEL-LOCK-173447-PAYLOAD.json` → deve bater com content_hash
+    ├── Payload canónico: `MODEL-LOCK-173447-PAYLOAD.json` (Git)
     └── ⚠️ **TENTATIVAS FALHADAS (ignorar):** 173352, 173403, 173428, 173437
         └── Causa: Ledger rejeitou wallet_id inconsistente (dívida DID Berçário)
 [⚠️] **DÍVIDA TÉCNICA — Vínculo Fraco entre Selos**
