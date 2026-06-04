@@ -6,6 +6,77 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 04 Jun 2026 (ter) — JSON Falso Apanhado + Arquitectura Clarificada
+
+**Duração:** ~2h | **Status:** ✅ FUNDAÇÃO PROVADA
+**Liga IA+H:** Human Dragon · Guardian (Claude.ai) · Architect (Gemini) · GPT · CCode (Opus 4.5)
+**Invariants:** I1, I9, I11, I14, I19
+**Natureza:** Verificação de Integridade + Correcção de Erro Colectivo
+
+### O Momento Crítico
+
+Um JSON idealizado circulou entre Guardian, Human Dragon e CCode:
+- `doc_type: model_lock` (real: `doc`)
+- `governance_level: CANONICAL` (real: `HIGH`)
+- `sge_score: 1.00` (real: `0.95`)
+- `details.weights_manifest: {5 hashes}` (real: **NÃO EXISTE**)
+
+**Guardian validou sem verificar.** CCode apanhou a discrepância via `curl` real ao Ledger.
+
+### Arquitectura Clarificada
+
+O Ledger WINDI não guarda conteúdo — guarda hash de conteúdo (`privacy: content_not_stored`).
+
+| Camada | Função | Artefacto |
+|--------|--------|-----------|
+| Ledger :8101 | Persistência do hash | Receipt 173447 |
+| Git | Persistência do conteúdo | `MODEL-LOCK-173447-PAYLOAD.json` |
+| SHA-256 | Vínculo verificável | `1e20c7be...2665cc` ✓ |
+
+**Verificação de dois passos:**
+1. `curl :8101/api/receipts/173447` → obtém content_hash
+2. `sha256sum MODEL-LOCK-173447-PAYLOAD.json` → deve bater
+
+### Cronologia Honesta dos Receipts Falhados
+
+| Receipt | Erro | Causa Real |
+|---------|------|------------|
+| 173352 | `invalid_wallet_id` | wallet_id must be DID when chaining |
+| 173403 | `wallet_mismatch` | parent wallet ≠ child wallet |
+| 173428 | `missing_fields` | wallet_id ausente |
+| 173437 | `did_required` | anonymous actors forbidden |
+| **173447** | ✅ | **CANÓNICO** |
+
+### Gate Testado
+
+```
+Wrong hash → REJECT ✓
+Correct hash → PASS ✓
+Pre-flight declarations → working ✓
+```
+
+### Axioma para Paper-001
+
+> **"A receipt proves commitment. A payload proves content. A hash links both."**
+> — Gemini Council
+
+### Commits
+
+| Commit | Descrição |
+|--------|-----------|
+| `fa942328` | Payload canónico guardado |
+| `40dfafa4` | Verificação de dois passos documentada |
+| `27c0d5e0` | Script measure_scene.py |
+| `5788612a` | Cronologia honesta + gate testado |
+
+### Lição da Sessão
+
+> "O facto não vive na explicação. Vive no registo."
+
+O Guardian falhou, admitiu, e o sistema apanhou todos. Isso é a fundação a funcionar.
+
+---
+
 ## § SESSÃO 04 Jun 2026 (bis) — Protocol v1.1 + I9 Gate 6/6 Anchors LOCKED
 
 **Duração:** ~2h | **Status:** ✅ COMPLETO
