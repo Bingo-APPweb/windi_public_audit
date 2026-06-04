@@ -18464,3 +18464,82 @@ Fio para próxima instância: quando `grep -RniE "computeDigest|toSignablePayloa
 *Liga IA+H · Human Dragon + Guardian + Architect · 04 Jun 2026*
 *"WINDI sabe corrigir-se sem reescrever-se."*
 
+
+---
+
+## § SESSÃO 04 Jun 2026 (ter) — Paper-001 Errata + SHOT-GRAMMAR-001
+
+**Duração:** ~3h | **Status:** ✅ MÉTODO SELADO
+**Liga IA+H:** Human Dragon · Guardian (Claude.ai web) · CCode (Opus 4.5)
+**Invariants:** I1, I9, I11, I14, I19
+**Natureza:** Correcção de Dados + Método de Produção
+
+### O Erro Apanhado
+
+O documento PAPER-001-FINDINGS.md (publicado em `799fdf5d`) continha valores **estimados** para Helena e Lucas Joey, não medidos:
+
+| Campo | Estimado | Medido Real |
+|-------|----------|-------------|
+| Helena frame 001 | 0.7801 FORENSE | **0.7372 OPERACIONAL** |
+| Helena frame 002 | 0.7112 OPERACIONAL | **0.7515 FORENSE** |
+| Lucas frame 004 | 0.8956 FORENSE | **0.7439 OPERACIONAL** |
+| Lucas mean | 0.8881 | **0.8154** |
+
+A média da Helena (0.7336) estava correcta por acidente, mas os valores individuais não batiam — aritmética impossível detectada pelo Guardian.
+
+### A Lição
+
+> **"A number without a measurement run is not a number."**
+
+Valores foram reconstruídos de summary em vez de extraídos de output de medição. Isto violou I14 (Explicit Failure Principle) — valores deviam ter sido marcados como PENDING, não preenchidos com estimativas plausíveis.
+
+### Errata Aplicada
+
+Commit `477c1aad`:
+- Secções 2.3 (Helena) e 2.4 (Lucas) corrigidas com valores reais
+- Secção ERRATA adicionada ao documento com tabela de correcções
+- Root cause documentado: I14 violation
+
+### SHOT-GRAMMAR-001 — Método de Produção
+
+Método derivado do Finding 2 do Paper-001:
+
+> "Video generation fails through subject framing loss, not identity degradation. Solution: separate shots that carry identity from shots that carry action."
+
+**Três Tipos de Plano:**
+
+| Tipo | % | Descrição |
+|------|---|-----------|
+| IDENTITY | 50% | Rosto domina, requer SPINE-CAST |
+| ACTION | 48% | Corpo/mãos/props, geração livre |
+| CONFRONT | 2% | Rosto+corpo, minimizar |
+
+**Duas Decisões Incorporadas:**
+
+1. **Arquitectura Híbrida** — sistema impõe disciplina de medição (recusa números sem run_id), humano confirma tipo de plano antes de selar
+
+2. **Dois Marcus Diferenciados** — Vance com barba grisalha, Couto barbeado. Disambiguation Gate: medir Couto vs âncora-Vance, exigir < 0.50 antes de cenas com ambos
+
+### Commits
+
+| Commit | Descrição |
+|--------|-----------|
+| `799fdf5d` | Paper-001 consolidado (n=3) — tinha erros |
+| `477c1aad` | fix(paper): reconcile findings with actual measurements |
+| `21e59079` | feat(cinema): SHOT-GRAMMAR-001 completo |
+
+### Axiomas Selados
+
+> "A number without a measurement run is not a number." — Par de "Auto-revisão não é revisão"
+
+> "The method descends from the finding." — O SHOT-GRAMMAR-001 não flutua ao lado do Paper-001, descende dele
+
+### Próximo Passo
+
+Produção orientada pelo SHOT-GRAMMAR-001:
+1. Prioridade: Vance (10 planos IDENTITY, 5 emocionais)
+2. Correr Disambiguation Gate antes de Cenas 10-13
+3. Disciplina anti-estimativa: PENDING → MEASURED → SEALED
+
+*Liga IA+H · Human Dragon + Guardian + CCode · 04 Jun 2026*
+*"A proof is not a number without a measurement run."*
