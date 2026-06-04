@@ -136,7 +136,8 @@ input (pré-imagem, signed_digest+signature excluídos):
 expected_canonical (ordenação lexicográfica):
 {"algorithm":"ed25519","canonicalization":"jcs-rfc8785","did":"did:windi:cinema:001","key_id":"wk-2026-001","tier":"FORENSIC"}
 
-expected_digest: sha256:e3f8a2c1d4b5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1
+expected_digest: sha256:d32399115620b04a1b27e3ed16cc1bd6e7158a72005d29a790c35a4e48d520bc
+(computado 04 Jun 2026 · Convenção 1 · verificável com: printf '%s' '<canonical>' | sha256sum)
 ```
 
 ### V-P2 — SignedProvenance com `receipt_ref` presente
@@ -157,7 +158,8 @@ input (pré-imagem):
 expected_canonical (ordenação lexicográfica, receipt_ref nested também ordenado):
 {"algorithm":"ecdsa-p256","canonicalization":"jcs-rfc8785","did":"did:windi:cinema:001","key_id":"wk-2026-002","receipt_ref":{"ledger_anchor":"sha256:66189307","receipt_id":"WINDI-S291"},"tier":"STANDARD"}
 
-expected_digest: sha256:a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2
+expected_digest: sha256:a29daaa12ca6ffd31530fc99133fbaf2e48a3840a9ab8134534667679e9e148c
+(computado 04 Jun 2026 · Convenção 1 · verificável com: printf '%s' '<canonical>' | sha256sum)
 ```
 
 ### V-P3 — Campo opcional ausente vs. presente
@@ -207,9 +209,16 @@ a forma está provada. Caso contrário, falha F2.
 
 | Bloqueio | Resolução | Status |
 |----------|-----------|--------|
-| B1 | Pré-imagem exclui `signed_digest` + `signature` (Convenção 1) | ✅ DECIDIDO |
+| B1 | Pré-imagem exclui `signed_digest` + `signature` (Convenção 1) | ✅ DECIDIDO (I9) |
 | B2 | `ReceiptRef` = `{receipt_id, ledger_anchor?}` | ✅ CONFIRMADO |
-| B3 | Digests computáveis após B1+B2 | ✅ FECHADO |
+| B3 | Digests computados e verificáveis (V-P1, V-P2) | ✅ VERIFICADO |
+
+### 6.1 Nota sobre B1 — Convenção 1
+
+A Convenção 1 é uma **decisão constitucional (I9)**, não uma verificação de código existente.
+A spec `CANDIDATE.ts` define o contrato; implementações futuras **DEVEM** seguir esta convenção.
+Os digests V-P1 e V-P2 são a referência de verificação — qualquer implementação que produza
+digests diferentes viola o contrato.
 
 ---
 
