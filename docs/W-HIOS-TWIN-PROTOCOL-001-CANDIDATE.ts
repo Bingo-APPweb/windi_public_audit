@@ -56,6 +56,12 @@
  *   - PayloadResolutionState com 5 estados + funções de verificação (AJUSTE 6)
  *   - FAILED_ABANDONED: limbo visível, não silêncio — vigília I9 fecha
  *
+ * ERRATA-001 (04 Jun 2026 — pré-selo §300):
+ *   - FAILED_MISMATCH reclassificado de AUDIT_EVENT para STATE_TRANSITION
+ *   - Razão: fraude não é ruído de telemetria — é facto histórico de rutura
+ *   - Sela SEALED individual, NUNCA agregado em SAMPLED
+ *   - Decisão I9 do Human Dragon após análise fria da Liga
+ *
  * Liga IA+H · Human Dragon · Guardian · Architect
  */
 
@@ -203,8 +209,11 @@ export interface PayloadRef {
  *   FAILED_MISMATCH:
  *     - Estado TERMINAL ACUSATÓRIO — não pode ser re-tentado
  *     - Mensagem transita para DecisionState.REJECTED com error_code 'HASH_MISMATCH'
- *     - DEVE gerar AUDIT_EVENT (sela SAMPLED, não inline)
+ *     - DEVE gerar STATE_TRANSITION (sela SEALED individual, NUNCA agregado)
  *     - Indica fraude, corrupção ou erro grave de implementação
+ *     - ERRATA-001: Reclassificado de AUDIT_EVENT para STATE_TRANSITION porque
+ *       fraude não é ruído de telemetria — é facto histórico de rutura que
+ *       requer receipt individual para rastreabilidade forense
  *
  *   FAILED_TIMEOUT:
  *     - Estado RE-TENTÁVEL — pode tentar resolver novamente
@@ -266,7 +275,7 @@ export function canAnchorDecision(
     case 'FAILED_TIMEOUT':
       return false;  // Re-tentável, ainda pode resolver
     case 'FAILED_MISMATCH':
-      return false;  // TERMINAL ACUSATÓRIO — fraude, gera AUDIT_EVENT
+      return false;  // TERMINAL ACUSATÓRIO — fraude, gera STATE_TRANSITION/SEALED
     case 'FAILED_ABANDONED':
       return false;  // TERMINAL NÃO-ACUSATÓRIO — retries esgotados, gera AUDIT_EVENT
     default:
@@ -496,7 +505,7 @@ export function validatePayloadRef(payload: PayloadRef): void {
  *    5 estados de resolução:
  *      - PROVISIONAL: aguarda materialização no vault
  *      - RESOLVED: reconciliação bem-sucedida, pode ancorar
- *      - FAILED_MISMATCH: terminal acusatório (fraude, gera AUDIT_EVENT)
+ *      - FAILED_MISMATCH: terminal acusatório (fraude, gera STATE_TRANSITION/SEALED)
  *      - FAILED_TIMEOUT: re-tentável (vault lento)
  *      - FAILED_ABANDONED: terminal não-acusatório (retries esgotados, gera AUDIT_EVENT)
  *    Princípio: liberdade no quando (limite de retries é da aplicação),
