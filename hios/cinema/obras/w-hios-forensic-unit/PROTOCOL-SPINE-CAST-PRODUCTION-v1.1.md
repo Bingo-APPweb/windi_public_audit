@@ -252,6 +252,15 @@ Isto não é um problema de produção. É um **achado empírico** sobre preserv
 identidade em cinema generativo. Transformar esta observação em investigação publicável
 é o exercício de soberania intelectual sobre a máquina.
 
+### 7.5 Axioma Metodológico (Paper-001)
+
+> **"A similarity threshold is only meaningful inside a locked embedding space."**
+> — Gemini Council, 04 Jun 2026
+
+Este axioma fundamenta toda a arquitectura SPINE: os limiares (0.65/0.75) só têm
+significado porque o espaço onde existem (buffalo_l, w600k_r50.onnx, 512-dim) está
+selado. Threshold sem modelo = número órfão.
+
 ---
 
 ## 8. CHECKLIST DE PRÉ-PRODUÇÃO
@@ -274,9 +283,15 @@ identidade em cinema generativo. Transformar esta observação em investigação
     └── Verify: `curl localhost:8101/api/receipts/WINDI-SPINE-THRESHOLD-20260604150425`
 [✅] **PESOS DO MODELO SELADOS** — `WINDI-SPINE-MODEL-LOCK-20260604173447` **(CANÓNICO)**
     ├── buffalo_l · insightface 1.0.1 · onnxruntime 1.26.0
-    ├── w600k_r50.onnx: `4c06341c33c2ca1f86781dab0e829f88ad5b64be9fba56e56bc9ebdefc619e43`
+    ├── **Recognition (mandatory):**
+    │   └── w600k_r50.onnx: `4c06341c33c2ca1f86781dab0e829f88ad5b64be9fba56e56bc9ebdefc619e43`
+    ├── **Pipeline dependencies (declared):**
+    │   ├── det_10g.onnx: `5838f7fe053675b1c7a08b633df49e7af5495cee0493c7dcf6697200b85b5b91`
+    │   ├── 1k3d68.onnx: `df5c06b8a0c12e422b2ed8947b8869faa4105387f199c477af038aa01f9a45cc`
+    │   ├── 2d106det.onnx: `f001b856447c413801ef5c42091ed0cd516fcd21f2d6b79635b1e733a7109dbf`
+    │   └── genderage.onnx: `4fde69b1c810857b88c64a335084f1c3fe8f01246c9a191b48c7bb756d6652fb`
     ├── Embedding: 512-dim, L2 normalized, cosine similarity
-    ├── Hash: `sha256:1e20c7be5c78fe9c34557918dce78d4d3da6869ad690f35949fce28e4e2665cc`
+    ├── Content Hash: `sha256:1e20c7be5c78fe9c34557918dce78d4d3da6869ad690f35949fce28e4e2665cc`
     ├── Verify: `curl localhost:8101/api/receipts/WINDI-SPINE-MODEL-LOCK-20260604173447`
     └── ⚠️ **TENTATIVAS FALHADAS (ignorar):** 173352, 173403, 173428, 173437
         └── Causa: Ledger rejeitou wallet_id inconsistente (dívida DID Berçário)
@@ -285,6 +300,12 @@ identidade em cinema generativo. Transformar esta observação em investigação
     ├── Model lock (173447) referencia threshold por texto, não por chain criptográfica
     └── Raiz: DID Berçário não resolvido — regista mas não bloqueia Cena 7
 [ ] Executar Cena 7 como piloto (gate operacional)
+    └── **PRE-FLIGHT CHECKLIST (Gemini):**
+        ├── [ ] Confirmar Model Lock inclui todos os 5 hashes .onnx ✅ (verificado 04 Jun)
+        ├── [ ] Script de medição carrega exactamente buffalo_l do .venv
+        ├── [ ] Output declara `model_lock_receipt: WINDI-SPINE-MODEL-LOCK-20260604173447`
+        ├── [ ] Output declara `threshold_receipt: WINDI-SPINE-THRESHOLD-20260604150425`
+        └── [ ] Rejeitar medição que não declare ambos os receipts
 [ ] Executar Cena 11 como stress test (gate adversarial)
 ```
 
