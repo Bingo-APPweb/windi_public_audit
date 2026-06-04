@@ -2,8 +2,8 @@
 ## Prova Material de Existência do Cast
 
 **Generated:** 2026-06-02T16:51:39Z
-**Updated:** 2026-06-02T21:00:00Z — §299-LIMPEZA
-**Liga IA+H:** Human Dragon (I9) · Guardian · Architect
+**Updated:** 2026-06-04T17:05:00Z — **6/6 APROVADOS (I9 GATE PASSED)**
+**Liga IA+H:** Human Dragon (I9) · Guardian · Architect · CCode (Witness)
 
 ---
 
@@ -19,19 +19,30 @@ Isto elimina a possibilidade de discrepância entre o que se vê e o que se sela
 | Personagem | Ficheiro Visto | Human Dragon Viu | Status |
 |------------|----------------|------------------|--------|
 | Gabi Santos | `gabi.santos.anchor.v1.png` | ✅ 02 Jun 2026 | ✅ **APROVADO** |
-| Helena Meyer | `helena.meyer.junior.anchor.v1.png` | ✅ 02 Jun 2026 | ⏳ **AGUARDA "É ELA?"** |
-| Marcus Vance | `marcus.vance.anchor.v1.png` | ✅ 02 Jun 2026 | ⏳ **AGUARDA "É ELE?"** |
-| Marcus Couto | `marcus.couto.anchor.v1.png` | ✅ 02 Jun 2026 | ⏳ **AGUARDA "É ELE?"** |
-| Lucas Silva | `lucas.silva.anchor.v1.png` | ✅ 02 Jun 2026 | ⏳ **AGUARDA "É ELE?"** |
-| Alejandro | `alejandro.valenzuela.anchor.v1.png` | ✅ 02 Jun 2026 | ⏳ **AGUARDA "É ELE?"** |
+| Helena Meyer | `helena.meyer.junior.anchor.v1.png` | ✅ 04 Jun 2026 | ✅ **APROVADO** |
+| Marcus Vance | `marcus.vance.anchor.v1.png` | ✅ 04 Jun 2026 | ✅ **APROVADO** |
+| Marcus Couto | `marcus.couto.anchor.v1.png` | ✅ 04 Jun 2026 | ✅ **APROVADO** |
+| Lucas Silva | `lucas.silva.anchor.v1.png` | ✅ 04 Jun 2026 | ✅ **APROVADO** |
+| Alejandro | `alejandro.valenzuela.anchor.v1.png` | ✅ 04 Jun 2026 | ✅ **APROVADO** |
 
-**Verificação:** 02 Jun 2026 ~23:45 UTC · Todos vistos como anchor directo (não frame)
+**Verificação I9:** 04 Jun 2026 ~17:00 UTC · Human Dragon confirmou "É ele/ela?" via GitHub
+**Método:** Visualização directa dos PNGs no repositório público windi_public_audit
 
-### Notas do Juiz (Guardian)
+### Notas do Juiz (Guardian) — Actualizadas 04 Jun 2026
 
-- **Helena:** Blazer lê-se preto/carvão (spec dizia azul escuro mate). Não desqualifica — ArcFace mede geometria facial, não cor de roupa.
-- **Vance:** Iluminação lateral dramática (menos "passaporte" que os outros). Detection 0.8638 coerente com oclusão parcial.
-- **Couto/Lucas/Alejandro:** Inicialmente vistos como frames de subpasta. Corrigido ao mostrar anchors directos.
+**Heterogeneidade de Fundo (Paper-001 — Declarar, não esconder):**
+- **Vance:** Fundo ESCURO (não cinza) — quebra Lição B do Joey. Detection sólida (0.8638), mas âncora nasceu em condições diferentes das outras cinco. **VARIÁVEL A DECLARAR.**
+- **Helena:** Fundo CLARO com algum brilho na testa/maçãs do rosto — afasta-se do ideal cinza-neutro. Funciona, mas é a que mais se afasta. **VARIÁVEL A DECLARAR.**
+
+**Observações técnicas:**
+- **Gabi:** Fundo cinza perfeito, luz lateral suave, zero gloss. Registo da Cena 0 (humano, desarmado) — correcto para stress-test viva-vs-arquivo.
+- **Couto × Vance:** Cosine 0.2057 — visualmente e numericamente são duas pessoas distintas. Espelho moral funciona.
+- **Lucas:** Barba stubble introduz variância no ArcFace. O 0.8119 mais baixo é esperado. É o personagem a vigiar na Cena 11.
+- **Alejandro:** Fundo cinza, limpo, frontal. Sólido.
+
+**Notas históricas (02 Jun):**
+- Helena: Blazer preto/carvão (spec dizia azul escuro). Não desqualifica — ArcFace mede geometria facial.
+- Couto/Lucas/Alejandro: Inicialmente vistos como frames de subpasta. Corrigido ao mostrar anchors directos.
 
 ---
 
@@ -48,16 +59,17 @@ Isto elimina a possibilidade de discrepância entre o que se vê e o que se sela
 
 ## DETECTION SCORES
 
-| Personagem | Det.Score | Status |
-|------------|-----------|--------|
-| Gabi Santos | 0.8755 | 🟡 EXTRACTED |
-| Helena Meyer | 0.8636 | 🟡 EXTRACTED |
-| Marcus Vance | 0.8638 | 🟡 EXTRACTED |
-| Marcus Couto | 0.8811 | 🟡 EXTRACTED |
-| Lucas Silva | 0.8119 | 🟡 EXTRACTED |
-| Alejandro Valenzuela | 0.8763 | 🟡 EXTRACTED |
+| Personagem | Det.Score | Fundo | Status |
+|------------|-----------|-------|--------|
+| Gabi Santos | 0.8755 | ✅ Cinza | 🟢 **LOCKED** |
+| Helena Meyer | 0.8636 | ⚠️ Claro | 🟢 **LOCKED** |
+| Marcus Vance | 0.8638 | ⚠️ Escuro | 🟢 **LOCKED** |
+| Marcus Couto | 0.8811 | ✅ Cinza | 🟢 **LOCKED** |
+| Lucas Silva | 0.8119 | ✅ Cinza | 🟢 **LOCKED** |
+| Alejandro Valenzuela | 0.8763 | ✅ Cinza | 🟢 **LOCKED** |
 
-**TOTAL:** 6/6 EXTRACTED · 0/6 LOCKED (Eixo F pending)
+**TOTAL:** 6/6 LOCKED · Human Dragon I9 Gate: 04 Jun 2026
+**Nota Paper-001:** 4/6 em fundo cinza ideal, 2/6 em fundos não-ideais (declarar como variável)
 
 ---
 
