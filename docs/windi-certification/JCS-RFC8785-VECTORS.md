@@ -43,8 +43,8 @@ export interface SignedProvenance {
 }
 
 export interface ReceiptRef {
-  receipt_id: string;       // ex. 'WINDI-S291', 'BE29C326'
-  ledger_anchor?: string;   // root/commit onde foi ancorado (ex. 'sha256:66189307...')
+  receipt_id: string;       // ex. 'WINDI-RCP-001', 'ABC12345'
+  ledger_anchor?: string;   // root/commit onde foi ancorado (ex. 'sha256:abc123...')
 }
 ```
 
@@ -149,16 +149,16 @@ input (pré-imagem):
   "did": "did:windi:cinema:001",
   "key_id": "wk-2026-002",
   "receipt_ref": {
-    "ledger_anchor": "sha256:66189307",
-    "receipt_id": "WINDI-S291"
+    "ledger_anchor": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "receipt_id": "WINDI-EXAMPLE-0001"
   },
   "tier": "STANDARD"
 }
 
 expected_canonical (ordenação lexicográfica, receipt_ref nested também ordenado):
-{"algorithm":"ecdsa-p256","canonicalization":"jcs-rfc8785","did":"did:windi:cinema:001","key_id":"wk-2026-002","receipt_ref":{"ledger_anchor":"sha256:66189307","receipt_id":"WINDI-S291"},"tier":"STANDARD"}
+{"algorithm":"ecdsa-p256","canonicalization":"jcs-rfc8785","did":"did:windi:cinema:001","key_id":"wk-2026-002","receipt_ref":{"ledger_anchor":"sha256:0000000000000000000000000000000000000000000000000000000000000000","receipt_id":"WINDI-EXAMPLE-0001"},"tier":"STANDARD"}
 
-expected_digest: sha256:a29daaa12ca6ffd31530fc99133fbaf2e48a3840a9ab8134534667679e9e148c
+expected_digest: sha256:c18264afbf2ad4c733dc4170fb81aa7137e8924a3128053f04b15176f1c446ae
 (computado 04 Jun 2026 · Convenção 1 · verificável com: printf '%s' '<canonical>' | sha256sum)
 ```
 
