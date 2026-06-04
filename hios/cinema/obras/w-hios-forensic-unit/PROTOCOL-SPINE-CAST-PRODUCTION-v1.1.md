@@ -307,6 +307,13 @@ selado. Threshold sem modelo = número órfão.
     ├── Threshold seal (150425) não tem DID/wallet_id
     ├── Model lock (173447) referencia threshold por texto, não por chain criptográfica
     └── Raiz: DID Berçário não resolvido — regista mas não bloqueia Cena 7
+[⚠️] **DECLARAÇÃO OBRIGATÓRIA (Paper-001) — Ordem Temporal Payload-vs-Receipt**
+    ├── Receipt 173447 selado: 04 Jun 2026 ~17:34 (sessão bis)
+    ├── Payload commitado: 04 Jun 2026 ~18:XX (sessão ter, commit fa942328)
+    ├── O payload nasceu APÓS o hash, não antes
+    ├── **Defesa:** Confiança assenta na resistência do SHA-256 a pré-imagem
+    │   └── É computacionalmente inviável forjar payload que bata em hash dado
+    └── **Para Paper-001:** Declarar esta ordem explicitamente, não escondê-la
 [ ] Executar Cena 7 como piloto (gate operacional)
     └── **PRE-FLIGHT CHECKLIST (Gemini):**
         ├── [ ] Confirmar Model Lock inclui todos os 5 hashes .onnx ✅ (verificado 04 Jun)
