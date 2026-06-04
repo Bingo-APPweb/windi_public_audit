@@ -1,0 +1,153 @@
+{
+  "validation_report": "SPINE-VALIDATION-CENA0",
+  "version": "3.0",
+  "project": "w-hios-forensic-unit",
+  "episode": "pilot_o_peso_do_eco",
+  "scene": "cena_0_a_ultima_coisa_normal",
+  "created": "2026-06-02T15:30:00Z",
+  "updated": "2026-06-02T21:00:00Z",
+  "liga_iah": ["Human Dragon (I9)", "Guardian", "Architect", "Witness"],
+
+  "errata_299": {
+    "date": "2026-06-02",
+    "severity": "FOUNDATIONAL",
+    "description": "Limpeza total de vocabulário. Todas as medições fictícias removidas. Documento agora reflecte apenas factos verificados no disco.",
+    "guardian_directive": "Antes de gerar o primeiro shot-filho, fecha o chão atrás de ti."
+  },
+
+  "constitutional_decree": "DECRETO-PRODUCAO-001-DUPLA-REGUA",
+
+  "anchor_mother": {
+    "id": "gabi.santos.anchor.v1",
+    "source_asset": "gabi.santos.passport.v1",
+    "shot": "DEDICATED_PASSPORT",
+    "type": "IDENTITY",
+    "description": "Dedicated passport frame - neutral expression, flat lighting",
+    "extraction_method": "runway_gen4.5_text_to_video",
+    "detection_score": 0.8755,
+    "status": "EXTRACTED",
+    "hash": "sha256:03784039a0aa4bd1306518d847aeae69915c566f1ef7e5a1e81822d82f2e1c82",
+    "abzeichnen": {
+      "human_reviewed": true,
+      "reviewed_by": "Human Dragon",
+      "reviewed_at": "2026-06-02",
+      "verdict": "APPROVED"
+    },
+    "assets_verified": {
+      "png": true,
+      "mp4": true,
+      "npy": true,
+      "provenance_json": true
+    }
+  },
+
+  "children_validation": {
+    "status": "NOT_STARTED",
+    "note": "Nenhum shot-filho foi gerado. Os planos P02/P04/P05/P06 são números do breakdown de produção, não ficheiros existentes.",
+    "planned_shots": [
+      {
+        "shot": "P04",
+        "type": "A",
+        "role": "FILHO",
+        "description": "Close: sorriso 'abraço de urso'",
+        "eixo": "F",
+        "asset_exists": false,
+        "measured": false,
+        "score": null,
+        "status": "NOT_GENERATED"
+      },
+      {
+        "shot": "P05",
+        "type": "A",
+        "role": "FILHO",
+        "description": "Plano Médio: transição para máscara sacrificial",
+        "eixo": "F",
+        "asset_exists": false,
+        "measured": false,
+        "score": null,
+        "status": "NOT_GENERATED"
+      },
+      {
+        "shot": "P02",
+        "type": "A",
+        "role": "FILHO",
+        "description": "Plano Médio: Gabi de perfil esperando café",
+        "eixo": "F",
+        "asset_exists": false,
+        "measured": false,
+        "score": null,
+        "status": "NOT_GENERATED"
+      },
+      {
+        "shot": "P06",
+        "type": "A",
+        "role": "FILHO",
+        "description": "Full Shot: Gabi distante na lente, calçando sapatos",
+        "eixo": "D",
+        "asset_exists": false,
+        "measured": false,
+        "vc_matrix": null,
+        "status": "NOT_GENERATED"
+      }
+    ]
+  },
+
+  "gate_validation": {
+    "eixo_f": {
+      "threshold": 0.7500,
+      "shots_measured": 0,
+      "shots_planned": 3,
+      "min_achieved": null,
+      "verdict": "NOT_MEASURED",
+      "note": "Zero medições Eixo F. Aguarda geração de shot-filho."
+    },
+    "eixo_d": {
+      "shots_measured": 0,
+      "shots_planned": 1,
+      "vc_matrix_status": "NOT_MEASURED",
+      "verdict": "NOT_MEASURED",
+      "note": "Zero medições Eixo D. Régua especificada mas nunca aplicada."
+    },
+    "overall": {
+      "verdict": "AWAITING_FIRST_MEASUREMENT",
+      "eixo_f": "NOT_MEASURED",
+      "eixo_d": "NOT_MEASURED"
+    }
+  },
+
+  "methodology_validation": {
+    "status": "THEORETICAL",
+    "note": "Metodologia do passaporte dedicado está ESPECIFICADA mas não VALIDADA. Primeiro teste será P04 vs anchor.",
+    "gradient_coherence": null,
+    "gradient_pattern": null,
+    "verdict": "Pipeline não testado com dados reais."
+  },
+
+  "design_intent_archive": {
+    "warning": "ESTES NÚMEROS ERAM PROJECÇÕES, NÃO MEDIÇÕES. Arquivados para referência histórica.",
+    "projected_scores": {
+      "P04": 0.9314,
+      "P05": 0.8420,
+      "P02": 0.7655,
+      "P06": 0.7188
+    },
+    "source": "design speculation before assets existed",
+    "validity": "ZERO - nunca medido"
+  },
+
+  "provenance": {
+    "anchor_hash": "sha256:03784039a0aa4bd1306518d847aeae69915c566f1ef7e5a1e81822d82f2e1c82",
+    "generator": "Runway Gen-4.5",
+    "validator": "InsightFace ArcFace-R100 (disponível, não usado)",
+    "invariants": ["I9", "I11", "I14", "I19"]
+  },
+
+  "status": "ANCHOR_EXTRACTED_AWAITING_VALIDATION",
+  "next_action": "Gerar P04 (primeiro shot-filho) e medir Eixo F real",
+  "constitutional_seal": {
+    "eixo_f_decree": "DECRETO-PRODUCAO-001-DUPLA-REGUA",
+    "eixo_d_decree": "DECRETO-PRODUCAO-001-ADITAMENTO",
+    "eixo_f_first_measurement": null,
+    "eixo_d_first_measurement": null
+  }
+}

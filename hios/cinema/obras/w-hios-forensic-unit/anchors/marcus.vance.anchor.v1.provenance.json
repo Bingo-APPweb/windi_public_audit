@@ -1,0 +1,33 @@
+{
+  "anchor_id": "marcus.vance.anchor.v1",
+  "passport_id": "marcus.vance.passport.v1",
+  "character": "Marcus Vance",
+  "project": "w-hios-forensic-unit",
+  "episode": "pilot_o_peso_do_eco",
+  
+  "source": {
+    "file": "anchor_marcus_brenner.png",
+    "original_path": "/opt/windi/hios/visual/producer/obras/o-peso-do-eco/anchors/anchor_marcus_brenner.png",
+    "generator": "Runway Gen-4",
+    "generation_date": "2026-06-01"
+  },
+  
+  "anchor": {
+    "file": "marcus.vance.anchor.v1.png",
+    "hash": "sha256:3ec94552f85243fe5b4773b0128767d1898cd9690ec9a7a777ab21fb2ddb5c2e",
+    "embedding_file": "marcus.vance.anchor.v1.embedding.npy",
+    "embedding_shape": [512],
+    "embedding_norm": 16.4891,
+    "detection_score": 0.8638,
+    "validator": "InsightFace ArcFace-R100 (buffalo_l)"
+  },
+  
+  "invariants": ["I9", "I11", "I14", "I19"],
+  "status": "EXTRACTED",
+  "abzeichnen": {
+    "human_reviewed": false,
+    "status": "PENDING"
+  },
+  "created": "2026-06-02T19:05:00Z",
+  "errata_299": "Status corrigido de LOCKED para EXTRACTED. Human Dragon ainda não viu este anchor."
+}

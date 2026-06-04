@@ -1,0 +1,37 @@
+{
+  "anchor_id": "marcus.couto.anchor.v1",
+  "passport_id": "marcus.couto.passport.v1",
+  "character": "Marcus Couto",
+  "project": "w-hios-forensic-unit",
+  "episode": "pilot_o_peso_do_eco",
+  
+  "source": {
+    "method": "text-to-video",
+    "generator": "Runway Gen-4.5",
+    "video_file": "marcus.couto.anchor.v1.mp4",
+    "frame_extracted": "frame_01.png",
+    "generation_date": "2026-06-02",
+    "task_id": "c08fa6b5-73ca-4854-9741-8070a4ae1dda"
+  },
+  
+  "anchor": {
+    "file": "marcus.couto.anchor.v1.png",
+    "hash": "sha256:5083fd1c0cf64eab3b40dacab335adecdd125a643e9ca5e31b4acd9e068e515a",
+    "embedding_file": "marcus.couto.anchor.v1.embedding.npy",
+    "embedding_shape": [512],
+    "embedding_norm": 16.8419,
+    "detection_score": 0.8811,
+    "validator": "InsightFace ArcFace-R100 (buffalo_l)"
+  },
+  
+  "invariants": ["I9", "I11", "I14", "I19"],
+  "status": "EXTRACTED",
+  "abzeichnen": {
+    "human_reviewed": true,
+    "frame_viewed": "uncertain (02 or 01)",
+    "hash_verified": true,
+    "status": "PENDING_CONFIRMATION"
+  },
+  "created": "2026-06-02T19:26:00Z",
+  "errata_299": "Status corrigido de LOCKED para EXTRACTED. LOCKED requer Eixo F ≥0.75."
+}

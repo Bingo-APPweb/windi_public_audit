@@ -1,0 +1,40 @@
+{
+  "anchor_id": "helena.meyer.junior.anchor.v1",
+  "passport_id": "helena.meyer.junior.passport.v1",
+  "character": "Helena Meyer",
+  "project": "w-hios-forensic-unit",
+  "episode": "pilot_o_peso_do_eco",
+  
+  "source": {
+    "file": "helena_reference_v3.png",
+    "original_path": "/opt/windi/hios/cinema/obras/o-peso-do-eco/anchors/cast_v2/helena_reference_v3.png",
+    "generator": "Runway Gen-4",
+    "generation_date": "2026-06-01"
+  },
+  
+  "anchor": {
+    "file": "helena.meyer.junior.anchor.v1.png",
+    "hash": "sha256:5262ad1cf95fefd0176c4cc115dbfac5040b81627b3178efabcc3980ca0020a2",
+    "embedding_file": "helena.meyer.junior.anchor.v1.embedding.npy",
+    "embedding_shape": [512],
+    "embedding_norm": 16.4789,
+    "detection_score": 0.8636,
+    "validator": "InsightFace ArcFace-R100 (buffalo_l)"
+  },
+  
+  "methodology": {
+    "principle": "Passport anchors identity via invariant facial features",
+    "note": "Hair styling, clothing are irrelevant to ArcFace validation",
+    "approved_by": "Human Dragon",
+    "approval_date": "2026-06-02"
+  },
+  
+  "invariants": ["I9", "I11", "I14", "I19"],
+  "status": "EXTRACTED",
+  "abzeichnen": {
+    "human_reviewed": false,
+    "status": "PENDING"
+  },
+  "created": "2026-06-02T19:00:00Z",
+  "errata_299": "Status corrigido de LOCKED para EXTRACTED. Human Dragon ainda não viu este anchor."
+}

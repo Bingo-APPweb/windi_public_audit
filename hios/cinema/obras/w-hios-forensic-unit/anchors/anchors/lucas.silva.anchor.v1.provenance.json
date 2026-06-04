@@ -1,0 +1,31 @@
+{
+  "anchor_id": "lucas.silva.anchor.v1",
+  "passport_id": "lucas.silva.passport.v1",
+  "character": "Lucas Silva",
+  "project": "w-hios-forensic-unit",
+  "episode": "pilot_o_peso_do_eco",
+  
+  "source": {
+    "method": "text-to-video",
+    "generator": "Runway Gen-4.5",
+    "video_file": "lucas.silva.anchor.v1.mp4",
+    "frame_extracted": "frame_01.png",
+    "generation_date": "2026-06-02",
+    "task_id": "f6fbd455-020b-404d-858b-fc245e584096"
+  },
+  
+  "anchor": {
+    "file": "lucas.silva.anchor.v1.png",
+    "hash": "sha256:9bcbb6a4ef1bda2010e77bb522ef222efbf9ddac26ab461b09dcab70e42c3808",
+    "embedding_file": "lucas.silva.anchor.v1.embedding.npy",
+    "embedding_shape": [512],
+    "embedding_norm": 17.2239,
+    "detection_score": 0.8119,
+    "validator": "InsightFace ArcFace-R100 (buffalo_l)"
+  },
+  
+  "invariants": ["I9", "I11", "I14", "I19"],
+  "status": "EXTRACTED",
+  "approved_by": "Human Dragon",
+  "created": "2026-06-02T19:32:00Z"
+}

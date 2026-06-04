@@ -1,0 +1,37 @@
+{
+  "anchor_id": "alejandro.valenzuela.anchor.v1",
+  "passport_id": "alejandro.valenzuela.passport.v1",
+  "character": "Alejandro Valenzuela",
+  "project": "w-hios-forensic-unit",
+  "episode": "pilot_o_peso_do_eco",
+  
+  "source": {
+    "method": "text-to-video",
+    "generator": "Runway Gen-4.5",
+    "video_file": "alejandro.valenzuela.anchor.v1.mp4",
+    "frame_extracted": "frame_01.png",
+    "generation_date": "2026-06-02",
+    "task_id": "f58a362a-3888-4e8d-85aa-01f6881f2a5f"
+  },
+  
+  "anchor": {
+    "file": "alejandro.valenzuela.anchor.v1.png",
+    "hash": "sha256:bcec886a46d78493601a663d204fd8b2b3e4c483176ef1ded18e5ddd57ef0189",
+    "embedding_file": "alejandro.valenzuela.anchor.v1.embedding.npy",
+    "embedding_shape": [512],
+    "embedding_norm": 15.3193,
+    "detection_score": 0.8763,
+    "validator": "InsightFace ArcFace-R100 (buffalo_l)"
+  },
+  
+  "invariants": ["I9", "I11", "I14", "I19"],
+  "status": "EXTRACTED",
+  "abzeichnen": {
+    "human_reviewed": true,
+    "frame_viewed": "uncertain (04 or 01)",
+    "hash_verified": true,
+    "status": "PENDING_CONFIRMATION"
+  },
+  "created": "2026-06-02T19:38:00Z",
+  "errata_299": "Status corrigido de LOCKED para EXTRACTED. LOCKED requer Eixo F ≥0.75."
+}
