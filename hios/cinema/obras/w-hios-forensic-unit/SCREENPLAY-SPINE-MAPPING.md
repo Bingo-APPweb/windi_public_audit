@@ -42,6 +42,20 @@
 | **Cena 12** | Alejandro + Couto | 0.45 | ⚠️ MÉDIO |
 | **Cena 13** | Couto + Helena + Lucas | Máx 0.50 | 🔴 **ADVERSARIAL** |
 
+### MATRIZ COMPLETA — CENA 11 (4 Homens) · Calculada 04 Jun 2026
+
+```
+                Vance    Couto    Alejandro  Lucas
+Vance           1.0000   0.2057   0.0341     0.1390
+Couto           0.2057   1.0000   0.4498⚠️    0.4965⚠️
+Alejandro       0.0341   0.4498⚠️  1.0000     0.4422⚠️
+Lucas           0.1390   0.4965⚠️  0.4422⚠️    1.0000
+```
+
+**Observação crítica:** Vance (protagonista) está MUITO bem separado de todos (máx 0.21).
+As colisões concentram-se no triângulo Couto-Alejandro-Lucas (vilões + infiltrado).
+O espelho moral Vance×Couto = 0.2057 — dramaticamente opostos, metricamente distintos.
+
 ### CENAS DE TRANSIÇÃO (Gabi + Vilões)
 
 | Cena | Personagens | Inter-Anchor Similarity | Classificação |
