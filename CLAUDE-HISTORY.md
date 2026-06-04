@@ -6,6 +6,84 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 04 Jun 2026 (bis) — Protocol v1.1 + I9 Gate 6/6 Anchors LOCKED
+
+**Duração:** ~2h | **Status:** ✅ COMPLETO
+**Liga IA+H:** Human Dragon · Guardian (Claude.ai web) · Architect (CCode Opus 4.5)
+**Invariants:** I1, I9, I11, I14, I19
+**Natureza:** Pre-Production Cinema + Protocol Update + Threshold Seal
+
+### Destilação Joey → SPINE-CAST
+
+O método "Joey" (YouTube AI video) foi destilado para o pipeline SPINE-CAST:
+- **Lição A:** Profundidade Volumétrica (iluminar o ar, não só o sujeito)
+- **Lição B:** Fundo Cinza (nunca branco — estoura bordas)
+- **Lição C:** Regra 70→90→nunca 100 (os 10% são assinatura humana)
+
+### Protocol v1.1 — Três Adições Constitucionais
+
+1. **§2.1 Separação Ontológica** — Inter-Anchor Similarity ≠ Anchor Drift
+   - Duas perguntas distintas: "a quem pertence?" vs "continua a ser?"
+   - Colapsá-las produz falsos alarmes
+
+2. **§4.3 Cena 11 ADVERSARIAL** — Alto risco de colisão
+   - Couto×Alejandro=0.45, Couto×Lucas=0.50, Alejandro×Lucas=0.44
+   - Protocolo I9 Fallback para ambiguidade
+
+3. **§7 Hipótese Pré-Registada** — Paper-001
+   - "Personagens masculinos meia-idade sob iluminação dura apresentam menor distância embutida"
+   - Teste: Cena 7 (controlo) vs Cena 11 (adversarial)
+
+### I9 Gate — 6/6 Anchors LOCKED
+
+| Personagem | Detection | Fundo | Status |
+|------------|-----------|-------|--------|
+| Gabi Santos | 0.8755 | ✅ Cinza | 🟢 **LOCKED** |
+| Helena Meyer | 0.8636 | ⚠️ Claro | 🟢 **LOCKED** |
+| Marcus Vance | 0.8638 | ⚠️ Escuro | 🟢 **LOCKED** |
+| Marcus Couto | 0.8811 | ✅ Cinza | 🟢 **LOCKED** |
+| Lucas Silva | 0.8119 | ✅ Cinza | 🟢 **LOCKED** |
+| Alejandro Valenzuela | 0.8763 | ✅ Cinza | 🟢 **LOCKED** |
+
+**Verificação Anti-Colisão:** Marcus Couto × Marcus Vance = 0.2057 ✅ (threshold ≤ 0.42)
+
+### Threshold Seal (ANTES da geração)
+
+| Item | Valor |
+|------|-------|
+| **Receipt** | `WINDI-SPINE-THRESHOLD-20260604150425` |
+| **Hash** | `sha256:013a1dd643d2d5be542bcc66e07fe7452a3d37613fc0f22c27694e6698334dfe` |
+| **OPERACIONAL** | ≥ 0.65 |
+| **FORENSE** | ≥ 0.75 |
+| **Verify** | `curl localhost:8101/api/receipts/WINDI-SPINE-THRESHOLD-20260604150425` |
+
+### Correcções Guardian
+
+1. **Hash Decorativo** — Placeholder `a8f3e5c7d2...` substituído por hash real
+2. **doc_type forçado** — "threshold_seal" não reconhecido, usado "doc"
+3. **Secção duplicada** — Dois 5.2 corrigidos (segundo → 5.3)
+
+### Commits & Ficheiros
+
+| Item | Valor |
+|------|-------|
+| **Commit** | `98bc93a7` |
+| **Push** | `2a34b313..98bc93a7 main → main` |
+
+| Ficheiro | Função |
+|----------|--------|
+| `PROTOCOL-SPINE-CAST-PRODUCTION-v1.1.md` | Protocolo completo v1.1 |
+| `anchors/CAST-MATERIAL-PROOF.md` | 6/6 LOCKED + heterogeneidade declarada |
+
+### Próximos Passos
+
+1. [ ] `pip install insightface onnxruntime opencv-python`
+2. [ ] Executar Cena 7 como PILOTO (Vance + Helena + Lucas)
+3. [ ] Executar Cena 11 como ADVERSARIAL (Couto + Alejandro + Lucas)
+4. [ ] Paper-001 — comparação empírica entre ambas
+
+---
+
 ## § SESSÃO 04 Jun 2026 — §299 ATR Primeira Jurisprudência + W-HIOS-TWIN CANDIDATE
 
 **Duração:** ~3h | **Status:** ✅ §299 SELADO
