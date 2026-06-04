@@ -6,6 +6,78 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 04 Jun 2026 — §299 ATR Primeira Jurisprudência + W-HIOS-TWIN CANDIDATE
+
+**Duração:** ~3h | **Status:** ✅ §299 SELADO
+**Liga IA+H:** Human Dragon · Guardian (Claude.ai web) · Architect (CCode Opus 4.5)
+**Invariants:** I1, I9, I11, I14
+**Natureza:** Constitutional Law + Protocol Design + Gate Calibration
+
+### Dois Implementos Absorvidos
+
+**1. ATR — Admissibilidade Travada pelo Roteiro (SELADO)**
+- Corolário da PAF (Lei VIII) — herda irremediabilidade
+- Frase canónica: "O roteiro tranca a admissibilidade, não a geração."
+- Threshold: `validation.identity ≥ 0.68`
+- Fórmula: `drift_max + 0.7 × gap = 0.3572 + 0.7 × 0.4568 = 0.6770 → 0.68`
+- Base: 63 frames, 2 personagens (Marcus + Helena), 3 tipos held-out (cross + drift v2/v3/v4)
+- Margens: 0.32 vs impostor (MAIOR), 0.13 vs genuíno (menor)
+- **Convergência:** Δ < 0.05 → threshold CANÓNICO (não por-personagem)
+
+**2. W-HIOS-TWIN-PROTOCOL-001 (CANDIDATE)**
+- 4 FIXes do Guardian sobre malha do Architect:
+  - FIX 1: Ledger fora do caminho crítico (só I9 bloqueia)
+  - FIX 2: SignedProvenance obrigatória (chave nunca viaja)
+  - FIX 3: chain_depth como sensor I9 (distância humana)
+  - FIX 4: Papéis explícitos (EXECUTOR/AUTHORITY/WITNESS/LEDGER)
+- 3 ajustes pendentes: payload_uri opcional, canonicalization, AUDIT_EVENT
+- **NÃO SELADO** — aguarda fecho dos ajustes
+
+### Lição da Sessão: Um Selo Verifica-se, Não se Afirma
+
+O threshold inicial (0.50) foi rejeitado:
+- Nasceu do meio do gap, não do dado
+- Helena não tinha sido testada contra drift
+- Era "conveniência a fazer-se passar por dado"
+
+Três fantasmas apanhados por verificação:
+1. **0.50 cómodo** — rejeitado por ser meio do gap, não fronteira forense
+2. **e3b0c442 (hash de string vazia)** — comando falhou em silêncio
+3. **Commit circular** — doc apontava para commit que continha versão diferente
+
+**Solução (Opção A do Guardian):** Commit vive no receipt, não no doc. O corpo é imutável; o cabeçalho é metadata. Elimina circularidade na raiz.
+
+### Receipts & Commits
+
+| Item | Valor |
+|------|-------|
+| **Receipt** | `WINDI-ATR-S299-20260604` |
+| **Commit** | `0787d834` |
+| **Content Hash** | `sha256:cb3b49fd60b48768bd4cedc08c3c9e2dca24c9b78fe884a98aeb6a4a5ee58e4f` |
+| **Doc** | `/home/windi/docs/ATR-ADMISSIBILIDADE-TRAVADA-PELO-ROTEIRO.md` |
+
+### Ficheiros Criados
+
+| Ficheiro | Função |
+|----------|--------|
+| `ATR-ADMISSIBILIDADE-TRAVADA-PELO-ROTEIRO.md` | Doc constitucional §299 |
+| `s22_gate_calibration.py` | Script S22 — threshold extraction |
+| `s22_helena_drift.py` | Helena drift test — simetria |
+| `S22_GATE_CALIBRATION_*.json` | Resultados Marcus |
+| `S22_HELENA_DRIFT_*.json` | Resultados Helena |
+
+### Próximos Passos
+
+- [ ] W-HIOS-TWIN-PROTOCOL-001: fechar 3 ajustes → selar
+- [ ] S22_o_veredito.mp4: primeiro caso sob ATR (já selada)
+- [ ] Actualizar CLAUDE.md com §299 nos Produtos SEALED
+
+### Frase Selada
+
+> "No WINDI, um selo verifica-se, não se afirma."
+
+---
+
 ## § SESSÃO 01 Jun 2026 (noite) — SORA 2 vs Runway SPINE Compatibility Tests
 
 **Duração:** ~2h | **Status:** ✅ SORA 2 OPERACIONAL · 🔴 SORA 2 SPINE INCOMPATÍVEL · 🟢 RUNWAY FORENSIC
