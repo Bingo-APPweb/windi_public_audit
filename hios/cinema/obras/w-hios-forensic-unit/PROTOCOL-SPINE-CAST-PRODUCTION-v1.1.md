@@ -266,11 +266,18 @@ identidade em cinema generativo. Transformar esta observação em investigação
 [✅] 6/6 âncoras LOCKED (I9 Gate passed 04 Jun 2026)
 [✅] Heterogeneidade de fundo documentada (Vance/Helena)
 
-[ ] Instalar insightface no ambiente de execução
+[✅] Instalar insightface no ambiente de execução
+    └── venv: `/home/windi/hios/visual/producer/hybrid-pipeline/.venv/`
 [✅] **LIMIARES SELADOS NO LEDGER** — `WINDI-SPINE-THRESHOLD-20260604150425`
     ├── 0.65 OPERACIONAL · 0.75 FORENSE · LOCKED (cegos aos resultados)
     ├── Hash: `sha256:013a1dd643d2d5be542bcc66e07fe7452a3d37613fc0f22c27694e6698334dfe`
     └── Verify: `curl localhost:8101/api/receipts/WINDI-SPINE-THRESHOLD-20260604150425`
+[✅] **PESOS DO MODELO SELADOS** — `WINDI-SPINE-MODEL-LOCK-20260604173447`
+    ├── buffalo_l · insightface 1.0.1 · onnxruntime 1.26.0
+    ├── w600k_r50.onnx: `4c06341c33c2ca1f86781dab0e829f88ad5b64be9fba56e56bc9ebdefc619e43`
+    ├── Embedding: 512-dim, L2 normalized, cosine similarity
+    ├── Hash: `sha256:1e20c7be5c78fe9c34557918dce78d4d3da6869ad690f35949fce28e4e2665cc`
+    └── Verify: `curl localhost:8101/api/receipts/WINDI-SPINE-MODEL-LOCK-20260604173447`
 [ ] Executar Cena 7 como piloto (gate operacional)
 [ ] Executar Cena 11 como stress test (gate adversarial)
 ```
