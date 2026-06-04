@@ -24,14 +24,27 @@
 - Margens: 0.32 vs impostor (MAIOR), 0.13 vs genuíno (menor)
 - **Convergência:** Δ < 0.05 → threshold CANÓNICO (não por-personagem)
 
-**2. W-HIOS-TWIN-PROTOCOL-001 (CANDIDATE)**
-- 4 FIXes do Guardian sobre malha do Architect:
+**2. W-HIOS-TWIN-PROTOCOL-001 (CANDIDATE — SPEC FECHADA)**
+- 4 FIXes do Guardian sobre malha inicial:
   - FIX 1: Ledger fora do caminho crítico (só I9 bloqueia)
   - FIX 2: SignedProvenance obrigatória (chave nunca viaja)
   - FIX 3: chain_depth como sensor I9 (distância humana)
   - FIX 4: Papéis explícitos (EXECUTOR/AUTHORITY/WITNESS/LEDGER)
-- 3 ajustes pendentes: payload_uri opcional, canonicalization, AUDIT_EVENT
-- **NÃO SELADO** — aguarda fecho dos ajustes
+- 6 Ajustes consolidados após 4 passagens Guardian:
+  1. payload_uri opcional (hash NUNCA opcional)
+  2. AUDIT_EVENT sela SAMPLED (evita enfarte por ruído)
+  3. Política de sampling CITADA (não embutida, não livre)
+  4. canonicalization: 'jcs-rfc8785' obrigatório
+  5. Cláusula de conformidade CITADA (tier FORENSIC requer prova)
+  6. Provisoriedade do inline_ref + 5 estados de resolução:
+     - PROVISIONAL / RESOLVED / FAILED_MISMATCH / FAILED_TIMEOUT / FAILED_ABANDONED
+     - Princípio: liberdade no quando, obrigação no facto
+- 4 fantasmas apanhados nas 4 passagens:
+  1. inline_ref sem reconciliação (hash sem conteúdo = selo de objeto ausente)
+  2. SAMPLED livre (densidades incomparáveis entre agentes)
+  3. FAILED órfão (símbolo sem comportamento)
+  4. Limbo sem vigília I9 (timeout infinito escapa auditoria)
+- **SPEC FECHADA** — aguarda selo com §300 + 2 docs de certificação
 
 ### Lição da Sessão: Um Selo Verifica-se, Não se Afirma
 
@@ -61,20 +74,35 @@ Três fantasmas apanhados por verificação:
 | Ficheiro | Função |
 |----------|--------|
 | `ATR-ADMISSIBILIDADE-TRAVADA-PELO-ROTEIRO.md` | Doc constitucional §299 |
+| `W-HIOS-TWIN-PROTOCOL-001-CANDIDATE.ts` | Spec protocolo (~515 linhas) — FECHADA, aguarda selo |
 | `s22_gate_calibration.py` | Script S22 — threshold extraction |
 | `s22_helena_drift.py` | Helena drift test — simetria |
 | `S22_GATE_CALIBRATION_*.json` | Resultados Marcus |
 | `S22_HELENA_DRIFT_*.json` | Resultados Helena |
 
-### Próximos Passos
+### Próximos Passos — Selo do TWIN
 
-- [ ] W-HIOS-TWIN-PROTOCOL-001: fechar 3 ajustes → selar
+**Pré-requisitos para §300 W-HIOS-TWIN-PROTOCOL-001:**
+1. [ ] Criar `/docs/windi-certification/JCS-RFC8785-VECTORS.md` — vetores de conformidade canonicalização
+2. [ ] Criar `/docs/windi-certification/SAMPLING-POLICY.md` — política de agregação canónica
+3. [ ] Confirmar § livre no Strato (espera-se §300)
+4. [ ] Selar TWIN com as citações a apontar para documentos que existem
+
+**Outros:**
 - [ ] S22_o_veredito.mp4: primeiro caso sob ATR (já selada)
 - [ ] Actualizar CLAUDE.md com §299 nos Produtos SEALED
 
-### Frase Selada
+### Frases Seladas
 
 > "No WINDI, um selo verifica-se, não se afirma."
+
+> "O hash protege a forma; a reconciliação protege a substância."
+
+> "Liberdade no quando (limite de retries é da aplicação), obrigação no facto (esgotamento gera AUDIT_EVENT)."
+
+### Lição da Revisão TWIN: A Estrutura Torna-se Auto-Vigilante
+
+O `_exhaustive: never` no switch de `canAnchorDecision` é a vara da ATR transformada em código — o compilador agora apanha fantasmas que antes só o Guardian apanhava. Quando a estrutura vigia a si mesma, a malha amadureceu.
 
 ---
 
