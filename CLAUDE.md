@@ -548,6 +548,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 05 Jun | **Vance v2 Canonical + I-LIKENESS (candidate)** — Likeness gate respected · 80% success (8/10 shots) · Cross-subject pattern · `c3f5e031` ✅ |
 | 04 Jun | **Paper-001 Errata + SHOT-GRAMMAR-001** — Valores Joey corrigidos · Método de produção por tipo de plano · Vance barba · `f5a4d192` ✅ |
 | 01 Jun | **W-HIOS-FORENSIC-UNIT** Production Studio Genesis — 18 ficheiros · 6 personagens · Pilot completo · `88092d8f1` ✅ |
 | 31 Mai | **§139** WINDI-LAW Painel de Anexos — Multiple Files + SHA-256 · `2C302A37` ✅ |

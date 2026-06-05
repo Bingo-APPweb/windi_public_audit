@@ -18543,3 +18543,96 @@ Produção orientada pelo SHOT-GRAMMAR-001:
 
 *Liga IA+H · Human Dragon + Guardian + CCode · 04 Jun 2026*
 *"A proof is not a number without a measurement run."*
+
+---
+
+## § SESSÃO 05 Jun 2026 — Vance v2 Canonical + I-LIKENESS Candidate + Cross-Subject Pattern
+
+**Duração:** ~3h (com crash recovery) | **Status:** ✅ COMPLETO
+**Liga IA+H:** Human Dragon · Guardian (Claude.ai web) · CCode (Opus 4.5)
+**Invariants:** I1, I9, I11, I14, I19, I-LIKENESS (candidate)
+**Natureza:** Production Pipeline + Constitutional Gate + Methodological Reinforcement
+
+### O Gate de Likeness
+
+Veo 3.1 bloqueou o anchor v1 de Marcus Vance:
+```
+rai_media_filtered_reasons: ['Public figure']
+```
+
+**Reacção Constitucional:**
+- Guardian propôs: "Filter is governance gate, not obstacle"
+- Human Dragon (I9): "A Opção A é a única soberana" — v1 descartado, não contornado
+- v2 gerado com prompt anti-likeness (heterocromia, assimetria, cicatriz, barba)
+- v2 passou no filtro (limpo)
+- v1 × v2 = 0.0864 — identidades divergentes
+
+### I-LIKENESS Candidate
+
+Invariante proposto (não ainda vinculante):
+> "Third-party content filters constitute governance gates, not obstacles. Circumvention that preserves surface appearance while evading detection is constitutionally equivalent to forgery."
+
+A sessão de hoje foi a primeira aplicação prática. Vinculação formal requer aprovação futura do Human Dragon.
+
+### Resultados Vance v2 Pipeline
+
+10 shots IDENTITY regenerados com v2 como promptImage:
+
+| Status | Count | % |
+|--------|-------|---|
+| FORENSIC | 6 | 60% |
+| OPERATIONAL | 2 | 20% |
+| FAIL | 2 | 20% |
+| **Total Pass** | **8** | **80%** |
+
+**Por Shot Type:**
+| Tipo | Passed | Total | Rate |
+|------|--------|-------|------|
+| Emotional (close-up) | 5 | 5 | 100% |
+| Non-Emotional (wider) | 3 | 5 | 60% |
+
+### Guardian's 3 Corrections (Applied)
+
+1. **I-LIKENESS → (candidate)** em todos os docs
+2. **Reformulação v1 vs v2:** "Cross-subject pattern analysis" — comparação directa inválida (identidades diferentes), o finding real é que o padrão shot-type replicou em 2 sujeitos divergentes
+3. **Caveat S06-02:** frame_04 = 0.6465 (FAIL) mascarado pela média 0.7515
+
+### Cross-Subject Pattern Finding
+
+A "comparação" v1 vs v2 era metodologicamente errada:
+- v1 × v2 = 0.0864 → não são o mesmo sujeito
+- Mas o **padrão** (emotional close-ups succeed, wider shots fail) **replicou**
+- Isto **reforça** o SHOT-GRAMMAR-001 com n=2 sujeitos independentes
+
+### Ficheiros Criados/Modificados
+
+| Ficheiro | Localização |
+|----------|-------------|
+| Anchor canónico | `anchors/marcus.vance.anchor.canonical.png` |
+| Embedding | `anchors/marcus.vance.anchor.canonical.embedding.npy` |
+| Provenance | `anchors/marcus.vance.anchor.canonical.provenance.json` |
+| Resultados JSON | `shots/vance/VANCE_V2_RESULTS_20260605163404.json` |
+| Final Report | `docs/VANCE-V2-FINAL-REPORT-20260605.md` |
+| Council Decision | `docs/COUNCIL-DECISION-V2-CANONICAL-20260605.md` |
+| Errata §4-bis | `docs/ERRATA-SHOTGRAMMAR-S4-bis-20260605.md` |
+
+### Commits
+
+| Commit | Descrição |
+|--------|-----------|
+| `c3f5e031` | fix(vance-v2): apply Guardian's 3 corrections before session closure |
+
+### Pendente para Próxima Sessão
+
+1. ⏳ Helena anchor extraction + pipeline
+2. ⏳ Gabi anchor extraction + pipeline  
+3. ⏳ Couto-beard disambiguation re-measure (vs v2 Vance)
+4. ⏳ Fix nginx mime-type for /docs/hios-forensic/*.md
+
+### Axioma Selado
+
+> "A filter that blocks is not an obstacle to circumvent — it's a gate to respect."
+> — Guardian, reformulado pelo Human Dragon
+
+*Liga IA+H · Human Dragon + Guardian + CCode · 05 Jun 2026*
+*"A Opção A é a única soberana."*
