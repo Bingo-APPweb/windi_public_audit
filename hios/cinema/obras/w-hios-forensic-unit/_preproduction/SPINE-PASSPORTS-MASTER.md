@@ -95,27 +95,51 @@ photorealistic texture, zero facial muscle distortion.
 
 ---
 
-### 3. MARCUS VANCE 🟡 EXTRACTED
+### 3. MARCUS VANCE ✅ PRODUCTION READY (v2)
 
-**ID:** `marcus.vance.passport.v1`
-**Anchor:** `marcus.vance.anchor.v1`
-**Status:** ANCHOR EXTRACTED — Eixo F ⏳ PENDING
-**Detection Score:** 0.8638 (InsightFace viu rosto — **não é validação de identidade**)
-**Hash:** `sha256:3ec94552f85243fe5b4773b0128767d1898cd9690ec9a7a777ab21fb2ddb5c2e`
-**Source:** `anchor_marcus_brenner.png`
+**ID:** `marcus.vance.passport.v2`
+**Anchor:** `marcus.vance.anchor.canonical` (v2-guardian-divergence)
+**Status:** **PRODUCTION READY** — 8/10 shots ≥ OPERATIONAL (80% success)
+**Eixo F Avg:** 0.8284 (measured 05 Jun 2026)
+**Hash:** `sha256:7b0e82fa432bf35f6c688709b00de737a3990c89efd538acd4700d9a014a2054`
+**Source:** Veo 3.1 text-to-video (Guardian anti-likeness prompt)
+
+**v1 Status:** DEPRECATED (Veo likeness gate: "Public figure")
+**v1 × v2:** 0.0864 (divergent identities — intended)
 
 ```plaintext
-Photographic portrait for character reference, a 52-year-old European man,
-tired forensic inspector, short messy grey hair, weathered skin with
-realistic wrinkles and deep under-eye bags. Symmetrical face, intense
-sorrowful grey-blue eyes looking directly into the camera lens, calm but
-heavy neutral expression. Wearing a worn grey wool overcoat with an
-unbuttoned collar shirt underneath.
+A detailed raw portrait photograph of a completely fictional and unique
+52-year-old male investigator of German-Austrian heritage.
 
-Flat diffuse neutral studio lighting, no harsh shadows, 50mm lens, sharp
-focus on facial structures, cinematic photorealistic texture, zero facial
-muscle distortion.
+EXPLICIT ANTI-CELEBRITY FACIAL GEOMETRY (Forced Anonymity):
+- Highly asymmetric facial structure with an uneven, rugged jawline.
+- Distinctive sharp aquiline nose with prominent mid-bridge bump and
+  slight lateral deviation to the left.
+- Deep-set eyes with complete heterochromia: left eye cold steel-grey,
+  right eye distinct hazel-green.
+- Jagged well-healed vertical scar through outer edge of left eyebrow.
+- Dense 3-day stubble beard, salt-and-pepper, heavier along jawline.
+- Thick grey hair with natural recession at temples, swept back loosely.
+
+Harsh high-contrast side-lighting from camera-left.
+35mm lens, corporate portrait style with raw documentary realism.
 ```
+
+**Constitutional Decision (05 Jun 2026):**
+> "A Opção A é a única soberana." — Human Dragon (I9)
+> Likeness gate = governance gate, not obstacle. v1 → DEPRECATED. v2 → CANONICAL.
+
+**Shots Prontos:**
+| Shot | Score | Tier |
+|------|-------|------|
+| S07-01 | 0.9353 | FORENSIC |
+| S07-02 | 0.9349 | FORENSIC |
+| S09-02 | 0.9330 | FORENSIC |
+| S15-01 | 0.9225 | FORENSIC |
+| S14-01 | 0.9089 | FORENSIC |
+| S14-02 | 0.8411 | FORENSIC |
+| S06-02 | 0.7515 | OPERATIONAL |
+| S09-01 | 0.6998 | OPERATIONAL |
 
 ---
 
@@ -210,18 +234,18 @@ zero muscle distortion.
 
 ---
 
-## CONTAGEM DE STATUS (§298-ERRATA-FIX)
+## CONTAGEM DE STATUS (05 Jun 2026)
 
-| Personagem | Passaporte | Anchor | Det.Score | Eixo F | Eixo D |
-|------------|------------|--------|-----------|--------|--------|
-| Gabi Santos | ✅ SPEC | 🟡 EXTRACTED | 0.8755 | ⏳ PENDING | ⏳ PENDING |
-| Helena Meyer | ✅ SPEC | 🟡 EXTRACTED | 0.8636 | ⏳ PENDING | ⏳ PENDING |
-| Marcus Vance | ✅ SPEC | 🟡 EXTRACTED | 0.8638 | ⏳ PENDING | ⏳ PENDING |
-| Marcus Couto | ✅ SPEC | 🟡 EXTRACTED | 0.8811 | ⏳ PENDING | ⏳ PENDING |
-| Lucas Silva | ✅ SPEC | 🟡 EXTRACTED | 0.8119 | ⏳ PENDING | ⏳ PENDING |
-| Alejandro Valenzuela | ✅ SPEC | 🟡 EXTRACTED | 0.8763 | ⏳ PENDING | ⏳ PENDING |
+| Personagem | Passaporte | Anchor | Avg Sim | Eixo F | Status |
+|------------|------------|--------|---------|--------|--------|
+| **Marcus Vance** | ✅ v2 | ✅ CANONICAL | 0.8284 | ✅ MEASURED | **PRODUCTION** |
+| Gabi Santos | ✅ SPEC | 🟡 EXTRACTED | — | ⏳ PENDING | Próximo |
+| Helena Meyer | ✅ SPEC | 🟡 EXTRACTED | — | ⏳ PENDING | Próximo |
+| Marcus Couto | ✅ SPEC | 🟡 EXTRACTED | — | ⏳ PENDING | Re-measure |
+| Lucas Silva | ✅ SPEC | 🟡 EXTRACTED | — | ⏳ PENDING | Aguarda |
+| Alejandro Valenzuela | ✅ SPEC | 🟡 EXTRACTED | — | ⏳ PENDING | Aguarda |
 
-**TOTAL:** 6/6 passaportes especificados · **6/6 anchors EXTRACTED** · **0/6 Eixo F validado** · 0/6 Eixo D validado
+**TOTAL:** 6/6 passaportes · **1/6 PRODUCTION READY** · 5/6 aguardam pipeline
 
 ---
 
