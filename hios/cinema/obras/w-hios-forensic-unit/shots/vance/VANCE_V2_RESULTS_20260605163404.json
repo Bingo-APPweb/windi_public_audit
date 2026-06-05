@@ -1,0 +1,523 @@
+{
+  "pipeline": "VANCE-V2-CANONICAL",
+  "run_id": "20260605163404",
+  "anchor": "marcus.vance.anchor.canonical.png",
+  "anchor_version": "v2-guardian-divergence",
+  "timestamp": "2026-06-05T14:39:58.816321Z",
+  "thresholds": {
+    "operational": 0.65,
+    "forensic": 0.75
+  },
+  "results": [
+    {
+      "shot_id": "S06-01",
+      "scene": 6,
+      "emotional": false,
+      "description": "Vance emerges from shadow",
+      "run_id": "20260605163404",
+      "task_id": "42fe5ced-8450-4ec3-9146-691104aa5aba",
+      "video": "/home/windi/hios/cinema/obras/w-hios-forensic-unit/shots/vance/S06-01_v2.mp4",
+      "measurements": [
+        {
+          "frame": "frame_01.png",
+          "similarity": 0.9407,
+          "det_score": 0.7918,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        },
+        {
+          "frame": "frame_02.png",
+          "similarity": 0.522,
+          "det_score": 0.7248,
+          "n_faces": 1,
+          "status": "FAIL"
+        },
+        {
+          "frame": "frame_03.png",
+          "similarity": 0.4295,
+          "det_score": 0.8095,
+          "n_faces": 1,
+          "status": "FAIL"
+        },
+        {
+          "frame": "frame_04.png",
+          "similarity": 0.2521,
+          "det_score": 0.8284,
+          "n_faces": 1,
+          "status": "FAIL"
+        },
+        {
+          "frame": "frame_05.png",
+          "similarity": 0.2995,
+          "det_score": 0.817,
+          "n_faces": 1,
+          "status": "FAIL"
+        }
+      ],
+      "summary": {
+        "avg_similarity": 0.4888,
+        "n_frames": 5,
+        "status": "FAIL"
+      }
+    },
+    {
+      "shot_id": "S06-02",
+      "scene": 6,
+      "emotional": true,
+      "description": "Vance's face loses color",
+      "run_id": "20260605163404",
+      "task_id": "39074c9b-77f7-447b-a51b-6a59ac5f4144",
+      "video": "/home/windi/hios/cinema/obras/w-hios-forensic-unit/shots/vance/S06-02_v2.mp4",
+      "measurements": [
+        {
+          "frame": "frame_01.png",
+          "similarity": 0.9688,
+          "det_score": 0.8018,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        },
+        {
+          "frame": "frame_02.png",
+          "similarity": 0.8061,
+          "det_score": 0.7791,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        },
+        {
+          "frame": "frame_03.png",
+          "similarity": 0.6832,
+          "det_score": 0.8451,
+          "n_faces": 1,
+          "status": "OPERATIONAL"
+        },
+        {
+          "frame": "frame_04.png",
+          "similarity": 0.6465,
+          "det_score": 0.8442,
+          "n_faces": 1,
+          "status": "FAIL"
+        },
+        {
+          "frame": "frame_05.png",
+          "similarity": 0.6529,
+          "det_score": 0.8461,
+          "n_faces": 1,
+          "status": "OPERATIONAL"
+        }
+      ],
+      "summary": {
+        "avg_similarity": 0.7515,
+        "n_frames": 5,
+        "status": "OPERATIONAL"
+      }
+    },
+    {
+      "shot_id": "S07-01",
+      "scene": 7,
+      "emotional": true,
+      "description": "Vance's face \u2014 ancient pain",
+      "run_id": "20260605163404",
+      "task_id": "e2c7a073-829a-478e-91c4-93871423c136",
+      "video": "/home/windi/hios/cinema/obras/w-hios-forensic-unit/shots/vance/S07-01_v2.mp4",
+      "measurements": [
+        {
+          "frame": "frame_01.png",
+          "similarity": 0.944,
+          "det_score": 0.7821,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        },
+        {
+          "frame": "frame_02.png",
+          "similarity": 0.9249,
+          "det_score": 0.7886,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        },
+        {
+          "frame": "frame_03.png",
+          "similarity": 0.9353,
+          "det_score": 0.7913,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        },
+        {
+          "frame": "frame_04.png",
+          "similarity": 0.9382,
+          "det_score": 0.8026,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        },
+        {
+          "frame": "frame_05.png",
+          "similarity": 0.9341,
+          "det_score": 0.7998,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        }
+      ],
+      "summary": {
+        "avg_similarity": 0.9353,
+        "n_frames": 5,
+        "status": "FORENSIC"
+      }
+    },
+    {
+      "shot_id": "S09-01",
+      "scene": 9,
+      "emotional": false,
+      "description": "Vance at screen with team",
+      "run_id": "20260605163404",
+      "task_id": "4235ad7c-a125-4a3e-92e1-83417e93dd96",
+      "video": "/home/windi/hios/cinema/obras/w-hios-forensic-unit/shots/vance/S09-01_v2.mp4",
+      "measurements": [
+        {
+          "frame": "frame_01.png",
+          "similarity": 0.9341,
+          "det_score": 0.7924,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        },
+        {
+          "frame": "frame_02.png",
+          "similarity": 0.9228,
+          "det_score": 0.8114,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        },
+        {
+          "frame": "frame_03.png",
+          "similarity": 0.7982,
+          "det_score": 0.7365,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        },
+        {
+          "frame": "frame_04.png",
+          "similarity": 0.3946,
+          "det_score": 0.7889,
+          "n_faces": 1,
+          "status": "FAIL"
+        },
+        {
+          "frame": "frame_05.png",
+          "similarity": 0.4493,
+          "det_score": 0.8051,
+          "n_faces": 1,
+          "status": "FAIL"
+        }
+      ],
+      "summary": {
+        "avg_similarity": 0.6998,
+        "n_frames": 5,
+        "status": "OPERATIONAL"
+      }
+    },
+    {
+      "shot_id": "S09-02",
+      "scene": 9,
+      "emotional": true,
+      "description": "Vance's non-response",
+      "run_id": "20260605163404",
+      "task_id": "40c68304-e54e-4c41-94a4-4aa1106c6740",
+      "video": "/home/windi/hios/cinema/obras/w-hios-forensic-unit/shots/vance/S09-02_v2.mp4",
+      "measurements": [
+        {
+          "frame": "frame_01.png",
+          "similarity": 0.9404,
+          "det_score": 0.7902,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        },
+        {
+          "frame": "frame_02.png",
+          "similarity": 0.9466,
+          "det_score": 0.7981,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        },
+        {
+          "frame": "frame_03.png",
+          "similarity": 0.9397,
+          "det_score": 0.8012,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        },
+        {
+          "frame": "frame_04.png",
+          "similarity": 0.9119,
+          "det_score": 0.8101,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        },
+        {
+          "frame": "frame_05.png",
+          "similarity": 0.9266,
+          "det_score": 0.8166,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        }
+      ],
+      "summary": {
+        "avg_similarity": 0.933,
+        "n_frames": 5,
+        "status": "FORENSIC"
+      }
+    },
+    {
+      "shot_id": "S11-01",
+      "scene": 11,
+      "emotional": false,
+      "description": "Vance enters confrontation",
+      "run_id": "20260605163404",
+      "task_id": "4a6d26e2-b185-4b7b-8a60-c886d8eb32c5",
+      "video": "/home/windi/hios/cinema/obras/w-hios-forensic-unit/shots/vance/S11-01_v2.mp4",
+      "measurements": [
+        {
+          "frame": "frame_01.png",
+          "similarity": 0.9389,
+          "det_score": 0.7903,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        },
+        {
+          "frame": "frame_02.png",
+          "similarity": 0.8732,
+          "det_score": 0.7089,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        },
+        {
+          "frame": "frame_03.png",
+          "similarity": 0.4758,
+          "det_score": 0.8249,
+          "n_faces": 1,
+          "status": "FAIL"
+        },
+        {
+          "frame": "frame_04.png",
+          "similarity": 0.4986,
+          "det_score": 0.8726,
+          "n_faces": 1,
+          "status": "FAIL"
+        },
+        {
+          "frame": "frame_05.png",
+          "similarity": 0.5166,
+          "det_score": 0.7335,
+          "n_faces": 1,
+          "status": "FAIL"
+        }
+      ],
+      "summary": {
+        "avg_similarity": 0.6606,
+        "n_frames": 5,
+        "status": "FAIL"
+      }
+    },
+    {
+      "shot_id": "S14-01",
+      "scene": 14,
+      "emotional": false,
+      "description": "Vance at window",
+      "run_id": "20260605163404",
+      "task_id": "fa46d90d-4c6b-41f8-ad5e-f3ea79649281",
+      "video": "/home/windi/hios/cinema/obras/w-hios-forensic-unit/shots/vance/S14-01_v2.mp4",
+      "measurements": [
+        {
+          "frame": "frame_01.png",
+          "similarity": 0.9713,
+          "det_score": 0.7835,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        },
+        {
+          "frame": "frame_02.png",
+          "similarity": 0.9471,
+          "det_score": 0.7887,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        },
+        {
+          "frame": "frame_03.png",
+          "similarity": 0.8083,
+          "det_score": 0.7695,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        },
+        {
+          "frame": "frame_04.png",
+          "similarity": null,
+          "det_score": null,
+          "n_faces": 0,
+          "status": "NO_FACE"
+        },
+        {
+          "frame": "frame_05.png",
+          "similarity": null,
+          "det_score": null,
+          "n_faces": 0,
+          "status": "NO_FACE"
+        }
+      ],
+      "summary": {
+        "avg_similarity": 0.9089,
+        "n_frames": 5,
+        "status": "FORENSIC"
+      }
+    },
+    {
+      "shot_id": "S14-02",
+      "scene": 14,
+      "emotional": true,
+      "description": "Vance's weighted answer",
+      "run_id": "20260605163404",
+      "task_id": "c811c0de-768e-48d8-a9fc-765333e48870",
+      "video": "/home/windi/hios/cinema/obras/w-hios-forensic-unit/shots/vance/S14-02_v2.mp4",
+      "measurements": [
+        {
+          "frame": "frame_01.png",
+          "similarity": 0.9301,
+          "det_score": 0.817,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        },
+        {
+          "frame": "frame_02.png",
+          "similarity": 0.8277,
+          "det_score": 0.8323,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        },
+        {
+          "frame": "frame_03.png",
+          "similarity": 0.8124,
+          "det_score": 0.8403,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        },
+        {
+          "frame": "frame_04.png",
+          "similarity": 0.8241,
+          "det_score": 0.8302,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        },
+        {
+          "frame": "frame_05.png",
+          "similarity": 0.8111,
+          "det_score": 0.8407,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        }
+      ],
+      "summary": {
+        "avg_similarity": 0.8411,
+        "n_frames": 5,
+        "status": "FORENSIC"
+      }
+    },
+    {
+      "shot_id": "S15-01",
+      "scene": 15,
+      "emotional": true,
+      "description": "Vance alone at monitor, red eyes",
+      "run_id": "20260605163404",
+      "task_id": "f9cd9ff2-ddf8-44e3-b007-de0aef6999d7",
+      "video": "/home/windi/hios/cinema/obras/w-hios-forensic-unit/shots/vance/S15-01_v2.mp4",
+      "measurements": [
+        {
+          "frame": "frame_01.png",
+          "similarity": 0.9478,
+          "det_score": 0.7923,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        },
+        {
+          "frame": "frame_02.png",
+          "similarity": 0.945,
+          "det_score": 0.8163,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        },
+        {
+          "frame": "frame_03.png",
+          "similarity": 0.9419,
+          "det_score": 0.8132,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        },
+        {
+          "frame": "frame_04.png",
+          "similarity": 0.9023,
+          "det_score": 0.8169,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        },
+        {
+          "frame": "frame_05.png",
+          "similarity": 0.8757,
+          "det_score": 0.8288,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        }
+      ],
+      "summary": {
+        "avg_similarity": 0.9225,
+        "n_frames": 5,
+        "status": "FORENSIC"
+      }
+    },
+    {
+      "shot_id": "S07-02",
+      "scene": 7,
+      "emotional": false,
+      "description": "Vance observing analysis",
+      "run_id": "20260605163404",
+      "task_id": "602857d9-4458-47fd-8f75-dea7b8ffc7ae",
+      "video": "/home/windi/hios/cinema/obras/w-hios-forensic-unit/shots/vance/S07-02_v2.mp4",
+      "measurements": [
+        {
+          "frame": "frame_01.png",
+          "similarity": 0.8718,
+          "det_score": 0.7889,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        },
+        {
+          "frame": "frame_02.png",
+          "similarity": 0.9526,
+          "det_score": 0.7813,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        },
+        {
+          "frame": "frame_03.png",
+          "similarity": 0.9541,
+          "det_score": 0.77,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        },
+        {
+          "frame": "frame_04.png",
+          "similarity": 0.9573,
+          "det_score": 0.79,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        },
+        {
+          "frame": "frame_05.png",
+          "similarity": 0.9385,
+          "det_score": 0.7943,
+          "n_faces": 1,
+          "status": "FORENSIC"
+        }
+      ],
+      "summary": {
+        "avg_similarity": 0.9349,
+        "n_frames": 5,
+        "status": "FORENSIC"
+      }
+    }
+  ]
+}
