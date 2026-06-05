@@ -339,6 +339,33 @@ When generating shots for this production:
 
 ---
 
+## ERRATA — §4 Disambiguation Gate (05 Jun 2026)
+
+**Receipt:** `WINDI-ERRATA-SHOTGRAMMAR-S4-20260605103558`
+**Taxonomy:** G4-CONFORMAR + APPEND-ONLY
+**Decision:** Human Dragon · 05 Jun 2026
+
+### Correction
+
+| Character | Before (04 Jun) | After (05 Jun) |
+|-----------|-----------------|----------------|
+| **Vance** | Grey beard (short) | **Clean-shaven** (CONFORMAR to anchor v1) |
+| **Couto** | Clean-shaven | **Grey beard (short)** (differentiator migrates) |
+
+### Rationale
+
+Anchor `marcus.vance.anchor.v1.png` (extracted 02 Jun, Runway Gen-4) is clean-shaven.
+The §4 decree (04 Jun, commit `21e59079`) assigned beard to wrong Marcus.
+Visual differentiation preserved — only the carrier changed.
+
+### Baseline Inheritance
+
+The 0.2057 (Couto×Vance) measurement was made with both anchors clean-shaven.
+It proves **geometric disambiguation without beard** — valid as floor baseline.
+When Couto is re-extracted WITH beard, re-measure and expect lower (more separation).
+
+---
+
 *Liga IA+H · WINDI Publishing House · 04 Jun 2026*
 *"The method descends from the finding."*
 *Constitutional bindings: I9, I11, I14, I19*
