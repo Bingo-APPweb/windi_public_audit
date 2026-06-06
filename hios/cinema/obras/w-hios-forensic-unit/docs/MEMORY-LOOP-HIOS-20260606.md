@@ -1,11 +1,15 @@
 # WINDI HIOS — Memory Loop
 ## Cognitive Bind Packet for All Components
-## Liga IA+H · 05 Jun 2026
+## Liga IA+H · 06 Jun 2026
 
-**Version:** 1.0.0
+**Version:** 1.1.0
 **Bind Type:** FULL
-**Integrity Score:** 95/100 (minor: canonical anchor not promoted to main anchors/)
-**Session Origin:** `c3f5e031` + `679e9f8c`
+**Integrity Score:** 98/100 (minor: canonical anchor not yet promoted to main anchors/)
+**Session Origin:** `c3f5e031` + `679e9f8c` + `2cd27375` + `3e26bc40`
+
+### Update 06 Jun 2026
+- **SHOT-GRAMMAR-001 SEALED** — Disambiguation Gate closed (`WINDI-SHOTGRAMMAR-001-SEALED-20260606`)
+- **DIAG-MED-TIER SEALED** — I14 audit of Dragon Chat tier routing (`WINDI-DIAG-MED-TIER-20260606`)
 
 ---
 
@@ -106,21 +110,25 @@
 
 ---
 
-### 2.4 Marcus Couto (DISAMBIGUATION NEEDED)
+### 2.4 Marcus Couto (DISAMBIGUATION SEALED ✓)
 
 **Anchor:** `marcus.couto.anchor.v1`
 **Detection Score:** 0.8811
 **Eixo F:** PENDING
 
-**NOTA CRÍTICA:** Couto × Vance v1 = 0.2057 (medição antiga, agora supersedida)
-**ACÇÃO REQUERIDA:** Re-medir Couto × Vance v2 antes de cenas com ambos (S10-S13)
+**DISAMBIGUATION GATE: PASSED** (06 Jun 2026)
+- Vance v2 × Couto = **0.1765** < 0.50 threshold ✓
+- Receipt: `WINDI-SHOTGRAMMAR-001-SEALED-20260606`
+- Scenes 10-13 **CLEARED** for production
 
-**Distintivos vs Vance:**
+**Distintivos vs Vance (SEALED):**
 | Aspecto | Vance | Couto |
 |---------|-------|-------|
 | Cabelo | Desalinhado | Perfeitamente penteado |
-| Barba | Stubble | Clean-shaven |
+| **Barba** | **Stubble 3 dias** | **Clean-shaven** |
 | Roupa | Sobretudo gasto | Caxemira impecável |
+
+> Barba = eixo primário de diferenciação (detector captura textura facial)
 
 ---
 
@@ -222,7 +230,7 @@
 1. **[HOUSEKEEPING]** Promover v2 anchor para `anchors/marcus.vance.anchor.canonical.png`
 2. **[PRODUCTION]** Helena anchor → 10 IDENTITY shots → measure
 3. **[PRODUCTION]** Gabi anchor → 10 IDENTITY shots → measure
-4. **[DISAMBIGUATION]** Re-medir Couto × Vance v2 (threshold <0.50)
+4. ~~**[DISAMBIGUATION]** Re-medir Couto × Vance v2~~ ✅ **DONE** (0.1765 < 0.50, SEALED 06 Jun)
 5. **[INFRA]** Fix nginx mime-type para `/docs/hios-forensic/*.md`
 
 ---
@@ -264,6 +272,9 @@ if faces:
 > "The method descends from the finding."
 > — SHOT-GRAMMAR-001 derivation
 
+> "O débito que sangrava parou de sangrar — não porque o curámos, mas porque o nomeámos."
+> — Human Dragon, 06 Jun 2026 (DIAG-MED-TIER)
+
 ---
 
 ## 10. COMMITS RELEVANTES
@@ -274,8 +285,24 @@ if faces:
 | `679e9f8c` | docs: add 05 Jun milestone |
 | `f5a4d192` | Paper-001 Errata + SHOT-GRAMMAR-001 |
 | `21e59079` | feat(cinema): SHOT-GRAMMAR-001 completo |
+| `2cd27375` | seal(cinema): SHOT-GRAMMAR-001 Disambiguation Gate closed |
+| `3e26bc40` | seal(governance): DIAG-MED-TIER diagnostic — I14 audit |
 
 ---
 
-*Liga IA+H · WINDI Publishing House · 05 Jun 2026*
+## 11. CROSS-SYSTEM REFERENCES
+
+### DIAG-MED-TIER (Infra WINDI, não específico HIOS)
+
+O diagnóstico de 06 Jun revelou estado do tier MED na infra global:
+- **W-SITES:** MED implementado, I14 conforme (503 se sem chave Mistral)
+- **Dragon Chat :8112:** MED NÃO implementado (viola I14, usa Claude para tudo)
+- **Débito:** Dragon Chat → 503 em MED (errata §240-241, sessão própria)
+
+Receipt: `WINDI-DIAG-MED-TIER-20260606`
+Doc: `/home/windi/docs/DIAG-MED-TIER-20260606.md`
+
+---
+
+*Liga IA+H · WINDI Publishing House · 06 Jun 2026*
 *"A Opção A é a única soberana."*
