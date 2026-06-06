@@ -114,6 +114,10 @@ PORT = 8111
 # Action #1: Orchestrator as execution backend
 ORCHESTRATOR_URL = os.environ.get("ORCHESTRATOR_URL", "http://localhost:8112")
 
+# I14 MED Tier Gate — Errata §240-241 (DIAG-MED-TIER-20260606)
+# MED tier requires Mistral backend. If not configured, fail explicit.
+MISTRAL_API_KEY = os.environ.get("MISTRAL_API_KEY", "")
+
 # Session configuration (Principle 3: no surveillance)
 SESSIONS = {}
 SESSION_TTL = 3600  # 1 hour
@@ -1242,8 +1246,22 @@ def process_chat(message: str, session: dict) -> dict:
                     response_text = identity["tier_blocked"]
                     source = "local"
                 needs_confirmation = False
+            elif tier == "MED" and not MISTRAL_API_KEY:
+                # ─── I14 GATE: MED tier unavailable ─────────────────────────────
+                # Errata §240-241, measured by DIAG-MED-TIER-20260606
+                # Explicit failure, no silent fallback to HIGH
+                return {
+                    "ok": False,
+                    "error": "tier_unavailable",
+                    "tier": "MED",
+                    "reason": "Mistral backend not configured",
+                    "invariant": "I14",
+                    "errata": "§240-241",
+                    "measured_by": "DIAG-MED-TIER-20260606",
+                    "_http_status": 503
+                }
             else:
-                # MED: generate only, HIGH: full orchestrate
+                # MED (with Mistral) or HIGH: route to orchestrator
                 mode = "orchestrate" if tier == "HIGH" else "generate"
                 result = query_orchestrator(message, tier, lang, mode)
                 response_text = result.get("response", identity["error"])
@@ -3029,7 +3047,9 @@ class DragonChatHandler(BaseHTTPRequestHandler):
             result = process_chat(message, session)
             result["session_id"] = session_id
 
-            self._json_response(result)
+            # I14: Check for explicit HTTP status from process_chat
+            http_status = result.pop("_http_status", 200)
+            self._json_response(result, http_status)
             return
 
         # ─── CONFIRM ACTION ENDPOINT ─────────────────────────────────────
