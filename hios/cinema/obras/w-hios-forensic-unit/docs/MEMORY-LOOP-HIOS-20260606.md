@@ -2,10 +2,11 @@
 ## Cognitive Bind Packet for All Components
 ## Liga IA+H · 06 Jun 2026
 
-**Version:** 1.1.0
+**Version:** 1.2.0
 **Bind Type:** FULL
-**Integrity Score:** 98/100 (minor: canonical anchor not yet promoted to main anchors/)
-**Session Origin:** `c3f5e031` + `679e9f8c` + `2cd27375` + `3e26bc40`
+**Integrity Score:** 99/100
+**Last Write:** 2026-06-06T16:20:00Z
+**Session Origin:** `c3f5e031` + `679e9f8c` + `2cd27375` + `3e26bc40` + `5f8b32290` + `18616c03` + `a9fab47b`
 
 ### Update 06 Jun 2026
 - **SHOT-GRAMMAR-001 SEALED** — Disambiguation Gate closed (`WINDI-SHOTGRAMMAR-001-SEALED-20260606`)
@@ -48,7 +49,7 @@
 | **Marcus Vance** | v1 SPEC | **v2 CANONICAL** | **MEASURED** | 10 v2 | **PRODUCTION READY** |
 | Helena Meyer | v1 SPEC | v1 EXTRACTED | PENDING | 0 | Próximo |
 | Gabi Santos | v1 SPEC | v1 EXTRACTED | PENDING | 0 | Próximo |
-| Marcus Couto | v1 SPEC | v1 EXTRACTED | PENDING | 0 | Re-measure vs Vance v2 |
+| Marcus Couto | v1 SPEC | v1 EXTRACTED | **DISAMBIGUATION SEALED** | 0 | Scenes 10-13 cleared |
 | Lucas Silva | v1 SPEC | v1 EXTRACTED | PENDING | 0 | Aguarda |
 | Alejandro Valenzuela | v1 SPEC | v1 EXTRACTED | PENDING | 0 | Aguarda |
 
@@ -195,11 +196,9 @@
 ```
 /home/windi/hios/cinema/obras/w-hios-forensic-unit/
 ├── anchors/
-│   ├── vance_v2_candidates/
-│   │   ├── vance_v2_20260605113255_anchor.png      ← CANONICAL
-│   │   ├── vance_v2_20260605113255_anchor.embedding.npy
-│   │   └── vance_v2_20260605113255.provenance.json
-│   ├── marcus.vance.anchor.v1.* (DEPRECATED)
+│   ├── marcus.vance.anchor.canonical.png           ← CANONICAL (v2)
+│   ├── marcus.vance.anchor.canonical.embedding.npy
+│   ├── marcus.vance.anchor.canonical.provenance.json
 │   ├── marcus.couto.anchor.v1.*
 │   ├── helena.meyer.junior.anchor.v1.*
 │   ├── gabi.santos.anchor.v1.*
@@ -213,7 +212,7 @@
     ├── VANCE-V2-FINAL-REPORT-20260605.md
     ├── COUNCIL-DECISION-V2-CANONICAL-20260605.md
     ├── ERRATA-SHOTGRAMMAR-S4-bis-20260605.md
-    └── MEMORY-LOOP-HIOS-20260605.md (este ficheiro)
+    └── MEMORY-LOOP-HIOS-20260606.md (este ficheiro)
 ```
 
 ### Preproduction
@@ -227,7 +226,7 @@
 
 ## 7. PRÓXIMOS PASSOS (PRIORIDADE)
 
-1. **[HOUSEKEEPING]** Promover v2 anchor para `anchors/marcus.vance.anchor.canonical.png`
+1. ~~**[HOUSEKEEPING]** Promover v2 anchor para canonical~~ ✅ **DONE** (`marcus.vance.anchor.canonical.*`)
 2. **[PRODUCTION]** Helena anchor → 10 IDENTITY shots → measure
 3. **[PRODUCTION]** Gabi anchor → 10 IDENTITY shots → measure
 4. ~~**[DISAMBIGUATION]** Re-medir Couto × Vance v2~~ ✅ **DONE** (0.1765 < 0.50, SEALED 06 Jun)
@@ -292,6 +291,7 @@ if faces:
 | `3e26bc40` | seal(governance): DIAG-MED-TIER diagnostic — I14 audit |
 | `5f8b32290` | fix(engine): I14 gate for MED tier — Errata §240-241 |
 | `18616c03` | docs(errata): MED tier I14 gate — §240-241 correction |
+| `a9fab47b` | docs(hios): Memory Loop v1.2.0 — ERRATA-MED-503 + axiom |
 
 ---
 
@@ -314,8 +314,14 @@ if faces:
 - Acção futura: quando Mistral entrar (500+ users), confirmar releitura em runtime
 - **Débito:** Dragon Chat → 503 em MED (errata §240-241, sessão própria)
 
-Receipt: `WINDI-DIAG-MED-TIER-20260606`
-Doc: `/home/windi/docs/DIAG-MED-TIER-20260606.md`
+**Receipts desta sessão:**
+- `WINDI-SHOTGRAMMAR-001-SEALED-20260606` — Disambiguation Gate
+- `WINDI-DIAG-MED-TIER-20260606` — I14 Diagnostic
+- `WINDI-ERRATA-MED-503-20260606` — Runtime Correction
+
+**Docs:**
+- `/home/windi/docs/DIAG-MED-TIER-20260606.md`
+- `/home/windi/docs/ERRATA-MED-503-20260606.md`
 
 ---
 
