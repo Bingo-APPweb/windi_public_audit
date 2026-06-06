@@ -366,6 +366,43 @@ When Couto is re-extracted WITH beard, re-measure and expect lower (more separat
 
 ---
 
-*Liga IA+H · WINDI Publishing House · 04 Jun 2026*
+## §4-bis — Disambiguation Gate SEALED (06 Jun 2026)
+
+**Decision:** Human Dragon · 06 Jun 2026 · "SIM"
+**Supersedes:** §4 ERRATA (05 Jun 2026)
+**Measurement Source:** `MEMORY-LOOP-HIOS-20260605.md`, linha 62
+
+### Final Assignment
+
+| Character | Visual | Anchor |
+|-----------|--------|--------|
+| **Marcus Vance** | Stubble 3 dias | v2 CANONICAL |
+| **Marcus Couto** | Clean-shaven | v1 |
+
+### Disambiguation Measurement
+
+```
+Source: MEMORY-LOOP-HIOS-20260605.md:62
+v2 × Couto | 0.1765 (distinto)
+```
+
+| Metric | Value | Threshold | Verdict |
+|--------|-------|-----------|---------|
+| Vance v2 × Couto | 0.1765 | <0.50 | ✅ PASS |
+
+### Rationale
+
+- **Primary axis:** Barba (stubble vs clean-shaven) — detector captura textura facial
+- **Secondary axis:** Paleta de luz (Vance: dura, Couto: suave)
+
+### Gate Status
+
+**DISAMBIGUATION GATE: PASSED**
+Scenes 10-13 cleared for production.
+
+---
+
+*Liga IA+H · WINDI Publishing House · 06 Jun 2026*
 *"The method descends from the finding."*
 *Constitutional bindings: I9, I11, I14, I19*
+*SHOT-GRAMMAR-001: **SEALED***
