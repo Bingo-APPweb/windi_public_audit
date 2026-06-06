@@ -275,6 +275,9 @@ if faces:
 > "O débito que sangrava parou de sangrar — não porque o curámos, mas porque o nomeámos."
 > — Human Dragon, 06 Jun 2026 (DIAG-MED-TIER)
 
+> "git stash, nunca rm -f. Um fluxo que apaga artefactos forenses para resolver conflito de git contradiz a doutrina que o sistema protege."
+> — Guardian, 06 Jun 2026 (post-ERRATA-MED-503)
+
 ---
 
 ## 10. COMMITS RELEVANTES
@@ -287,16 +290,28 @@ if faces:
 | `21e59079` | feat(cinema): SHOT-GRAMMAR-001 completo |
 | `2cd27375` | seal(cinema): SHOT-GRAMMAR-001 Disambiguation Gate closed |
 | `3e26bc40` | seal(governance): DIAG-MED-TIER diagnostic — I14 audit |
+| `5f8b32290` | fix(engine): I14 gate for MED tier — Errata §240-241 |
+| `18616c03` | docs(errata): MED tier I14 gate — §240-241 correction |
 
 ---
 
 ## 11. CROSS-SYSTEM REFERENCES
 
-### DIAG-MED-TIER (Infra WINDI, não específico HIOS)
+### DIAG-MED-TIER + ERRATA-MED-503 (Infra WINDI)
 
-O diagnóstico de 06 Jun revelou estado do tier MED na infra global:
-- **W-SITES:** MED implementado, I14 conforme (503 se sem chave Mistral)
-- **Dragon Chat :8112:** MED NÃO implementado (viola I14, usa Claude para tudo)
+**Diagnóstico (manhã):**
+- W-SITES: MED implementado, I14 conforme (503 se sem chave Mistral)
+- Dragon Chat :8112: MED NÃO implementado (viola I14, usa Claude para tudo)
+
+**Correcção (tarde):**
+- Dragon Chat agora retorna 503 quando MED pedido sem Mistral
+- Padrão alinhado com W-SITES
+- Receipt: `WINDI-ERRATA-MED-503-20260606`
+
+**Débito técnico (nomeado, não corrigido):**
+- MISTRAL_API_KEY lida uma vez no import (linha 119)
+- Se chave configurada sem reiniciar serviço, gate continua 503
+- Acção futura: quando Mistral entrar (500+ users), confirmar releitura em runtime
 - **Débito:** Dragon Chat → 503 em MED (errata §240-241, sessão própria)
 
 Receipt: `WINDI-DIAG-MED-TIER-20260606`
