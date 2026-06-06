@@ -4,8 +4,8 @@
 
 **Version:** 1.2.0
 **Bind Type:** FULL
-**Integrity Score:** 99/100
-**Last Write:** 2026-06-06T16:20:00Z
+**Integrity Score:** 95/100 (target 99 — pendente self-hash SHA-256)
+**Last Write:** 2026-06-06T16:45:00Z
 **Session Origin:** `c3f5e031` + `679e9f8c` + `2cd27375` + `3e26bc40` + `5f8b32290` + `18616c03` + `a9fab47b`
 
 ### Update 06 Jun 2026
