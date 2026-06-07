@@ -6,6 +6,113 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 07 Jun 2026 (sáb) — Vance Re-Renders + Anti-Movement Medicine + Doutrina Universal
+
+**Duração:** ~2.5h | **Status:** ✅ 10/10 SHOTS SELADOS
+**Liga IA+H:** Human Dragon · Guardian (GPT) · CCode (Opus 4.5)
+**Invariants:** I1, I9, I11, I14, I19
+**Natureza:** Auditoria Visual + Re-Render Pipeline + Lições Constitucionais
+
+### Contexto
+
+Auditoria visual de 10 shots do Marcus Vance para o episódio piloto "O Peso do Eco" do W-HIOS FORENSIC UNIT. 7 shots aprovados, 3 requeriam re-render (2 SPINE fail + 1 violação de jurisdição NYC).
+
+### Decisão Fundacional — Doutrina Universal
+
+**Decisão HD:** A história do piloto é UNIVERSAL — qualquer-lugar, qualquer-cidade.
+**Consequência:** Frankfurt removido dos prompts. Skyline genérica é escolha estética, não remendo.
+
+### Lição 1 — Threshold Operacional vs Threshold de Aceitação
+
+> **"O threshold operacional é do sistema; o threshold de aceitação pode ser do shot."**
+
+| Conceito | Valor | Função |
+|----------|-------|--------|
+| **Threshold Operacional** | 0.65 | Chão canónico do sistema. Intocável. |
+| **Threshold de Aceitação** | Variável | Decisão HD por shot, pode ser > operacional |
+
+**Aplicação:** S11-01 (Cena 11, adversarial) recebeu threshold ≥0.70 porque 0.66 passava o chão "por uma unha" — margem insuficiente para tensão dramática alta.
+
+**Precedente:** Cenas adversariais futuras herdam este raciocínio sem nova deliberação.
+
+### Lição 2 — Anti-Movement Medicine (Diagnóstico Guardian)
+
+Padrão de falha identificado:
+- **Perfil saudável:** 0.97→0.89→0.73→0.70→0.70 (degradação suave que estabiliza)
+- **Perfil colapsado:** 0.96→0.05 ou 0.95→0.30→0.21 (queda abrupta a meio)
+
+**Causa raiz:** Movimento de câmara OU movimento do sujeito a meio do plano.
+
+| Problema | Sintoma | Medicina |
+|----------|---------|----------|
+| "enters frame from left" | Rotação = colapso frame 2 | "Already in frame, does not enter" |
+| "profile/three-quarter view" | Perda de rosto frames 3-4 | "Near-frontal, head stays toward lens" |
+
+**Axioma:** O que ressuscitou S06-01 foi tirar o movimento do sujeito, não só travar a câmara.
+
+### Lição 3 — Universal na Ficção ≠ Ambíguo na Forense
+
+> **"A universalidade é propriedade do cenário diegético, não do pipeline de validação."**
+
+| Domínio | Regra |
+|---------|-------|
+| **Cenário narrativo** | Qualquer-cidade, qualquer-lugar. Skyline genérica OK. |
+| **Pipeline SPINE-CAST** | Rigor de sempre. Threshold 0.65/0.75. Sem relaxamento. |
+
+**Aplicação:** S14-01_v4 tem silhueta art-deco em soft focus. Sob doutrina antiga (Frankfurt), seria violação. Sob doutrina universal, lê como "cidade genérica grande" — ACEITE.
+
+### Lição 4 — Obsolescência de Guard-Rails
+
+Quando a doutrina muda, guard-rails antigos podem tornar-se obsoletos.
+
+**Exemplo:** Guard-rail "NOT American art-deco" era servo da doutrina Frankfurt. Sob doutrina universal, exigência reduz-se a "não-reconhecível como cidade real específica".
+
+**Regra:** Documentar obsolescência explicitamente para evitar confusão futura (§268 aplicado).
+
+### Lição 5 — "A Number Without a Measurement Run Is Not a Number"
+
+Nenhum shot é marcado como resolvido até `measure_scene.py` correr sobre o output real.
+O threshold contra o qual se mede também precisa de ser decidido ANTES, não depois de ver o resultado.
+
+### Resultado Final — 10/10 APROVADOS
+
+| Shot | Versão | Score | Threshold | Status |
+|------|--------|-------|-----------|--------|
+| S06-01 | **v3** | 0.7995 | ≥0.65 | ✅ Re-render (Light moves) |
+| S06-02 | v2 | 0.7515 | ≥0.65 | ✅ Original |
+| S07-01 | v2 | 0.9353 | ≥0.75 | ✅ FORENSIC |
+| S07-02 | v2 | 0.9349 | ≥0.75 | ✅ FORENSIC |
+| S09-01 | v2 | 0.6998 | ≥0.65 | ✅ OPERATIONAL |
+| S09-02 | v2 | 0.9330 | ≥0.75 | ✅ FORENSIC |
+| S11-01 | **v4** | 0.8312 | ≥0.70 | ✅ Re-render (Anti-movement) |
+| S14-01 | **v4** | 0.8868 | ≥0.75 | ✅ Re-render (Universal) |
+| S14-02 | v2 | 0.8411 | ≥0.75 | ✅ FORENSIC |
+| S15-01 | v2 | 0.9225 | ≥0.75 | ✅ FORENSIC |
+
+### Ficheiros Criados
+
+| Ficheiro | Conteúdo |
+|----------|----------|
+| `RE-RENDER-PROMPTS-20260607.md` | Prompts v1→v4 + lições seladas |
+| `AUDIT-STATUS-20260607.md` | Estado final da auditoria |
+| `rerender_vance_v3.py` | Pipeline prompts curtos |
+| `rerender_vance_v4.py` | Pipeline anti-movement |
+| `index.html` | Galeria 10/10 aprovados |
+
+### URL Galeria
+
+https://windi-domain.com/hios/cinema/obras/w-hios-forensic-unit/shots/vance/
+
+### Axiomas para Paper-001
+
+> **"O threshold operacional é do sistema; o threshold de aceitação pode ser do shot."**
+
+> **"Already in frame. Near-frontal. Camera locked. Light moves, not subject."**
+
+> **"Universal na ficção ≠ ambíguo na forense."**
+
+---
+
 ## § SESSÃO 04 Jun 2026 (ter) — JSON Falso Apanhado + Arquitectura Clarificada
 
 **Duração:** ~2h | **Status:** ✅ FUNDAÇÃO PROVADA

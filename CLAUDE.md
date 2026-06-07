@@ -548,6 +548,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 07 Jun | **Vance 10/10 SEALED + Anti-Movement Medicine** — 3 re-renders · Doutrina Universal · Threshold Aceitação · `SPINE-LESSONS-LEARNED.md` ✅ |
 | 05 Jun | **Vance v2 Canonical + I-LIKENESS (candidate)** — Likeness gate respected · 80% success (8/10 shots) · Cross-subject pattern · `c3f5e031` ✅ |
 | 04 Jun | **Paper-001 Errata + SHOT-GRAMMAR-001** — Valores Joey corrigidos · Método de produção por tipo de plano · Vance barba · `f5a4d192` ✅ |
 | 01 Jun | **W-HIOS-FORENSIC-UNIT** Production Studio Genesis — 18 ficheiros · 6 personagens · Pilot completo · `88092d8f1` ✅ |
@@ -765,5 +766,10 @@ Pipeline de produção cinematográfica com continuidade auditável. **Arquitect
 |-----------|--------------|----------------|---------|
 | SORA 2 | 🔴 INCOMPATIBLE | 0.4785 | Identity drift across frames |
 | Runway Gen-4 | 🟢 FORENSIC | 0.7850 | Primary generator for SPINE scenes |
+
+**Anti-Movement Medicine (07 Jun 2026):**
+> *"Already in frame. Near-frontal. Camera locked. Light moves, not subject."*
+
+**Doc:** `/opt/windi/hios/cinema/obras/w-hios-forensic-unit/SPINE-LESSONS-LEARNED.md`
 
 > **Full details:** `CLAUDE-HISTORY.md` § MIGRAÇÃO OVERFLOW 31 Mai 2026
