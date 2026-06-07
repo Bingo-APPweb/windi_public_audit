@@ -1,0 +1,109 @@
+{
+  "run_id": "20260607175131",
+  "character": "Gabi Santos",
+  "version": "v1",
+  "method": "Anti-Movement Medicine",
+  "anchor": "/home/windi/hios/cinema/obras/w-hios-forensic-unit/anchors/gabi.santos.anchor.v1.png",
+  "results": [
+    {
+      "shot": "S00-01_v1",
+      "scene": 0,
+      "description": "Sorriso para o filho",
+      "tier": "FORENSE",
+      "avg_similarity": 0.7009,
+      "threshold": 0.75,
+      "passed": false,
+      "margin": -0.0491,
+      "measurements": [
+        {
+          "frame": "frame_01.png",
+          "sim": 0.7512
+        },
+        {
+          "frame": "frame_02.png",
+          "sim": 0.6782
+        },
+        {
+          "frame": "frame_03.png",
+          "sim": 0.6866
+        },
+        {
+          "frame": "frame_04.png",
+          "sim": 0.696
+        },
+        {
+          "frame": "frame_05.png",
+          "sim": 0.6924
+        }
+      ]
+    },
+    {
+      "shot": "S01-01_v1",
+      "scene": 1,
+      "description": "Rosto determinado (reflexo)",
+      "tier": "OPERACIONAL",
+      "avg_similarity": 0.9717,
+      "threshold": 0.65,
+      "passed": true,
+      "margin": 0.3217,
+      "measurements": [
+        {
+          "frame": "frame_01.png",
+          "sim": 0.9825
+        },
+        {
+          "frame": "frame_02.png",
+          "sim": 0.9782
+        },
+        {
+          "frame": "frame_03.png",
+          "sim": 0.9702
+        },
+        {
+          "frame": "frame_04.png",
+          "sim": 0.9668
+        },
+        {
+          "frame": "frame_05.png",
+          "sim": 0.9608
+        }
+      ]
+    },
+    {
+      "shot": "S03-01_v1",
+      "scene": 3,
+      "description": "Dignidade soberana",
+      "tier": "FORENSE",
+      "avg_similarity": 0.9505,
+      "threshold": 0.75,
+      "passed": true,
+      "margin": 0.2005,
+      "measurements": [
+        {
+          "frame": "frame_01.png",
+          "sim": 0.9714
+        },
+        {
+          "frame": "frame_02.png",
+          "sim": 0.9606
+        },
+        {
+          "frame": "frame_03.png",
+          "sim": 0.9191
+        },
+        {
+          "frame": "frame_04.png",
+          "sim": 0.9433
+        },
+        {
+          "frame": "frame_05.png",
+          "sim": 0.9579
+        }
+      ]
+    },
+    {
+      "shot": "S04-01_v1",
+      "status": "GENERATION_FAILED"
+    }
+  ]
+}
