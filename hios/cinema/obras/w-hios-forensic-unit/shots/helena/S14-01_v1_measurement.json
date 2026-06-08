@@ -1,0 +1,28 @@
+{
+  "shot": "S14-01_v1",
+  "character": "Helena Meyer",
+  "scene": 14,
+  "description": "Helena approaches",
+  "anchor": "helena.meyer.junior.anchor.v1",
+  "approved_by": "Human Dragon",
+  "approval_date": "2026-06-08",
+  "frames": [
+    {"frame": "frame_01.png", "similarity": 0.9046, "status": "FORENSIC"},
+    {"frame": "frame_02.png", "similarity": 0.8903, "status": "FORENSIC"},
+    {"frame": "frame_03.png", "similarity": 0.8796, "status": "FORENSIC"},
+    {"frame": "frame_04.png", "similarity": 0.8018, "status": "FORENSIC"},
+    {"frame": "frame_05.png", "similarity": 0.6473, "status": "FAIL_EXPOSURE"}
+  ],
+  "avg_similarity": 0.8247,
+  "verdict": "FORENSIC",
+  "ressalva": {
+    "frame": "frame_05.png",
+    "score": 0.6473,
+    "taxonomy": "FAIL_DE_EXPOSICAO",
+    "doctrine": "SHOT-GRAMMAR-002",
+    "cause": "backlit dramatico intencional",
+    "verification": "identidade Helena inequivoca por HD",
+    "adjacent_support": "4 frames >= 0.80",
+    "admissibility": "PASSA sob SHOT-GRAMMAR-002 (score >= 0.55 piso)"
+  }
+}

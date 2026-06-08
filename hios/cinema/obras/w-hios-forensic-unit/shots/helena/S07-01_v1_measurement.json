@@ -1,0 +1,23 @@
+{
+  "shot": "S07-01_v1",
+  "character": "Helena Meyer",
+  "scene": 7,
+  "description": "Helena working at terminal",
+  "anchor": "helena.meyer.junior.anchor.v1",
+  "approved_by": "Human Dragon",
+  "approval_date": "2026-06-08",
+  "frames": [
+    {"frame": "frame_01.png", "similarity": 0.8651, "status": "FORENSIC"},
+    {"frame": "frame_02.png", "similarity": 0.8535, "status": "FORENSIC"},
+    {"frame": "frame_03.png", "similarity": 0.8553, "status": "FORENSIC"},
+    {"frame": "frame_04.png", "similarity": 0.8286, "status": "FORENSIC"},
+    {"frame": "frame_05.png", "similarity": 0.8602, "status": "FORENSIC"}
+  ],
+  "avg_similarity": 0.8525,
+  "verdict": "FORENSIC",
+  "paper_001_refinement": {
+    "observation": "Eye movement with fixed head preserves identity; head/camera movement destroys it",
+    "evidence": "Frames 1-4 eyes down, frame 5 eyes up — profile stable 0.87→0.86 instead of collapse",
+    "distinction": "Gabi axiom (expression forming = movement that degrades) vs Helena axiom (eye movement with fixed cranial structure = movement that preserves)"
+  }
+}

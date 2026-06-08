@@ -1,0 +1,18 @@
+{
+  "shot": "S08-01_v1",
+  "character": "Helena Meyer",
+  "scene": 8,
+  "description": "Helena surrounded by printouts (morning analysis)",
+  "anchor": "helena.meyer.junior.anchor.v1",
+  "approved_by": "Human Dragon",
+  "approval_date": "2026-06-08",
+  "frames": [
+    {"frame": "frame_01.png", "similarity": 0.9121, "status": "FORENSIC"},
+    {"frame": "frame_02.png", "similarity": 0.8541, "status": "FORENSIC"},
+    {"frame": "frame_03.png", "similarity": 0.9049, "status": "FORENSIC"},
+    {"frame": "frame_04.png", "similarity": 0.9009, "status": "FORENSIC"},
+    {"frame": "frame_05.png", "similarity": 0.9105, "status": "FORENSIC"}
+  ],
+  "avg_similarity": 0.8965,
+  "verdict": "FORENSIC"
+}

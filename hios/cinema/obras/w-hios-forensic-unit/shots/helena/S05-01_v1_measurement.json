@@ -1,0 +1,43 @@
+{
+  "shot": "S05-01_v1",
+  "anchor": "helena.meyer.junior.anchor.v1",
+  "frames": [
+    {
+      "frame": "frame_01.png",
+      "similarity": 0.9167,
+      "det_score": 0.8561,
+      "n_faces": 1,
+      "status": "FORENSIC"
+    },
+    {
+      "frame": "frame_02.png",
+      "similarity": 0.2716,
+      "det_score": 0.5901,
+      "n_faces": 1,
+      "status": "FAIL"
+    },
+    {
+      "frame": "frame_03.png",
+      "similarity": 0.2068,
+      "det_score": 0.7471,
+      "n_faces": 1,
+      "status": "FAIL"
+    },
+    {
+      "frame": "frame_04.png",
+      "similarity": 0.3005,
+      "det_score": 0.7526,
+      "n_faces": 1,
+      "status": "FAIL"
+    },
+    {
+      "frame": "frame_05.png",
+      "similarity": 0.2841,
+      "det_score": 0.7602,
+      "n_faces": 1,
+      "status": "FAIL"
+    }
+  ],
+  "avg_similarity": 0.3959,
+  "verdict": "FAIL"
+}

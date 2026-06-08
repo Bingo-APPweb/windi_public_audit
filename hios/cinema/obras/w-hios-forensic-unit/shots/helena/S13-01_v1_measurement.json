@@ -1,0 +1,18 @@
+{
+  "shot": "S13-01_v1",
+  "character": "Helena Meyer",
+  "scene": 13,
+  "description": "Helena at prosecution stand (Authority)",
+  "anchor": "helena.meyer.junior.anchor.v1",
+  "approved_by": "Human Dragon",
+  "approval_date": "2026-06-08",
+  "frames": [
+    {"frame": "frame_01.png", "similarity": 0.8274, "status": "FORENSIC"},
+    {"frame": "frame_02.png", "similarity": 0.9148, "status": "FORENSIC"},
+    {"frame": "frame_03.png", "similarity": 0.9095, "status": "FORENSIC"},
+    {"frame": "frame_04.png", "similarity": 0.9093, "status": "FORENSIC"},
+    {"frame": "frame_05.png", "similarity": 0.9002, "status": "FORENSIC"}
+  ],
+  "avg_similarity": 0.8922,
+  "verdict": "FORENSIC"
+}

@@ -1,0 +1,25 @@
+{
+  "shot": "S05-01_v4",
+  "character": "Helena Meyer",
+  "scene": 5,
+  "description": "Helena at monitors, surgical gaze (character introduction)",
+  "anchor": "helena.meyer.junior.anchor.v1",
+  "approved_by": "Human Dragon",
+  "approval_date": "2026-06-08",
+  "frames": [
+    {"frame": "frame_01.png", "similarity": 0.9248, "status": "FORENSIC"},
+    {"frame": "frame_02.png", "similarity": 0.9034, "status": "FORENSIC"},
+    {"frame": "frame_03.png", "similarity": 0.8829, "status": "FORENSIC"},
+    {"frame": "frame_04.png", "similarity": 0.8955, "status": "FORENSIC"},
+    {"frame": "frame_05.png", "similarity": 0.9073, "status": "FORENSIC"}
+  ],
+  "avg_similarity": 0.9028,
+  "verdict": "FORENSIC",
+  "lessons_learned": [
+    "v1: 'monitors' in prompt → camera orbits behind subject (0.92→0.27 collapse)",
+    "v2: explicit 'camera in front' not enough → still orbits",
+    "v3: remove all monitor context → stable but neon eyes from 'blue light reflection'",
+    "v4: 'natural eye color, soft even lighting, no colored light' → correct"
+  ],
+  "prompt_template": "Pure portrait, natural dark brown eyes, soft even studio lighting, no colored light on face, no glow. Static portrait with camera locked."
+}
