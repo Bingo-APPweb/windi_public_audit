@@ -18851,3 +18851,93 @@ A "comparação" v1 vs v2 era metodologicamente errada:
 
 *Liga IA+H · Human Dragon + Guardian + CCode · 05 Jun 2026*
 *"A Opção A é a única soberana."*
+
+---
+
+## § SESSÃO 08 Jun 2026 — Helena 8/8 + Lucas 5/5 SEALED + SHOT-GRAMMAR-002
+
+**Duração:** ~4h | **Status:** ✅ COMPLETO
+**Liga IA+H:** Human Dragon · Guardian (Claude.ai web) · CCode (Opus 4.5)
+**Invariants:** I1, I9, I11, I14, I19
+**Pilot Progress:** 27/37 (73%)
+
+### Personagens Selados
+
+| Personagem | Shots | Média | Iterações |
+|------------|-------|-------|-----------|
+| Helena Meyer | 8/8 | 0.8734 | 4 (S05-01) |
+| Lucas Silva | 5/5 | 0.9697 | 3 (S07-01) |
+
+### SHOT-GRAMMAR-002 — Taxonomia FAIL
+
+Nova doutrina selada: FAIL tem causa, não só score.
+
+| Tipo | Threshold | Admissível? |
+|------|-----------|-------------|
+| FAIL_IDENTIDADE | — | NUNCA (re-render obrigatório) |
+| FAIL_EXPOSIÇÃO | ≥0.55 | SIM (com HD + 4 critérios) |
+| FAIL_GEOMETRIA | ≥0.65 | SIM (ACTION shots + frame-âncora ≥0.75) |
+
+**Aplicação:** Helena S14-01 frame_05 (0.6473) admitido como FAIL_EXPOSIÇÃO (backlit dramático).
+
+### Axiomas Novos
+
+1. **Movimento Ocular vs Cabeça:**
+> "Movimento ocular com cabeça fixa preserva identidade; movimento de cabeça/câmara destrói."
+
+2. **Trade-off Performance:**
+> "0.053 de cosine por uma personagem viva é pechincha, não perda."
+
+3. **Anti-Movement Medicine Calibrado:**
+- ✅ olhos a varrer, piscar, foco a mudar
+- ✅ micro-expressão (tensão no maxilar)
+- ✅ respiração visível (ombros, peito)
+- ❌ head turn / virar para off-camera
+- ❌ shift weight / mudar postura
+
+### Iterações Críticas
+
+**Helena S05-01:**
+- v1: 0.40 ("monitors" → câmara orbita)
+- v2: 0.91* (NO_FACE frames 2-5)
+- v3: 0.85 ("blue light" → olhos néon)
+- v4: 0.90 ✅
+
+**Lucas S07-01:**
+- v1: 0.9727 (estático demais)
+- v2: 0.9513 (névoa no fundo)
+- v3: 0.9193 ✅ (movimento + limpo)
+
+### Correcção Memory Loop
+
+Commit 48084868 foi `--allow-empty` (caixa vazia).
+Corrigido com payload real: `MEMORY-LOOP-2026-06-08.md`
+
+### Commits
+
+| Commit | Descrição |
+|--------|-----------|
+| `a6bc17ce` | Helena 8/8 + Lucas 5/5 SEALED |
+| `2d927da1` | Lucas S07-01_v2 (fog) |
+| `73c8c66c` | Lucas S07-01_v3 (clean + movement) |
+| `9ac41058` | Lucas v3 SEALED, v1/v2 SUPERSEDED |
+| `48084868` | Memory Loop VAZIO (erro) |
+| (pending) | Memory Loop REAL com payload |
+
+### Pendente para Próxima Sessão
+
+1. ⏳ **Couto** (7 shots) — inclui confrontos, aplicar FAIL_GEOMETRIA
+2. ⏳ **Alejandro** (3 shots) — último personagem
+3. ⏳ Pilot 37/37 → 100%
+
+### Ficheiros Canónicos
+
+```
+/production/SHOT-GRAMMAR-002.md
+/production/MEMORY-LOOP-2026-06-08.md
+/shots/helena/HELENA-MEYER-SEALED.md
+/shots/lucas/LUCAS-SILVA-SEALED.md
+```
+
+*Liga IA+H · Human Dragon + Guardian + CCode · 08 Jun 2026*
+*"FAIL tem causa, não só score."*
