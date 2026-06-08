@@ -1,0 +1,23 @@
+{
+  "shot": "S07-01_v2",
+  "character": "Lucas Silva",
+  "scene": 7,
+  "description": "Lucas eyes dart sharply to sound, head fixed, alert expression",
+  "classification": "PERFORMANCE",
+  "supersedes": "S07-01_v1",
+  "supersede_reason": "HD decision: v1 too static, needed eye/expression movement",
+  "anchor": "lucas.silva.anchor.v1",
+  "approved_by": "Human Dragon",
+  "approval_date": "2026-06-08",
+  "frames": [
+    {"frame": "frame_01.png", "similarity": 0.9931, "status": "FORENSIC"},
+    {"frame": "frame_02.png", "similarity": 0.9597, "status": "FORENSIC"},
+    {"frame": "frame_03.png", "similarity": 0.8862, "status": "FORENSIC"},
+    {"frame": "frame_04.png", "similarity": 0.9563, "status": "FORENSIC"},
+    {"frame": "frame_05.png", "similarity": 0.9613, "status": "FORENSIC"}
+  ],
+  "avg_similarity": 0.9513,
+  "verdict": "FORENSIC",
+  "frame_ancora_count": 5,
+  "doctrine": "SHOT-GRAMMAR-002 — PERFORMANCE shot, threshold 0.75"
+}
