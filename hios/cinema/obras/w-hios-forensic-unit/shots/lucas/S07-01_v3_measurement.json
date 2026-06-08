@@ -7,7 +7,7 @@
   "supersedes": "S07-01_v2",
   "supersede_reason": "v2 had fog/haze, v3 clean background + more visible movement",
   "anchor": "lucas.silva.anchor.v1",
-  "approved_by": "pending",
+  "approved_by": "Human Dragon",
   "approval_date": "2026-06-08",
   "frames": [
     {"frame": "frame_01.png", "similarity": 0.9955, "status": "FORENSIC"},
