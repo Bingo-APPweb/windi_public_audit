@@ -28,9 +28,9 @@
   "status": "EXTRACTED",
   "abzeichnen": {
     "human_reviewed": true,
-    "frame_viewed": "uncertain (02 or 01)",
-    "hash_verified": true,
-    "status": "PENDING_CONFIRMATION"
+    "approved_by": "Human Dragon",
+    "approval_date": "2026-06-08",
+    "status": "APPROVED"
   },
   "created": "2026-06-02T19:32:00Z",
   "errata_299": "Status corrigido de LOCKED para EXTRACTED. LOCKED requer Eixo F ≥0.75."
