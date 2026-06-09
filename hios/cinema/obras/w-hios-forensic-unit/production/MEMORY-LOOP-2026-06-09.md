@@ -189,6 +189,105 @@ NÃO FAZER:
 |--------|----------|
 | `1c88b60f` | Couto 7/7 + METHOD-001 + SHOT-GRAMMAR-002 v2 (4 pernas) |
 | `0b76654b` | Alejandro 3/3 + SHOT-GRAMMAR-002 v3 (5 pernas) + 37/37 |
+| `81dbf41a` | JOEY-F2F-001 SEALED — F2F Continuity Metric Validated |
+| (pending) | S10-WIDE + DOCTRINE-CINEMA-FORENSIC-SEPARATION |
+
+---
+
+## SESSÃO TARDE — FASE 2 INICIADA
+
+### Conquista 1: JOEY-F2F-001 — Métrica de Continuidade Temporal
+
+```
+STATUS: DIAGNOSTICALLY VALIDATED
+COMMIT: 81dbf41a
+
+Achado Principal:
+F2F cosine revela informação que anchor-cosine mascara.
+- Anchor pergunta: "Este frame é o personagem?" (IDENTIDADE)
+- F2F pergunta: "Onde está a quebra temporal?" (CONTINUIDADE)
+
+Caso COLLAPSED (Helena S05-01_v1):
+  Anchor: 0.92 → 0.27 (colapso)
+  F2F:         0.29 → 0.61 → 0.74 → 0.97 (estabilização errada)
+
+Insight: "O gerador estabilizou na mentira" — consistência temporal
+         dentro do erro de identidade.
+
+Caso STABLE (Alejandro S10-01_v1):
+  F2F range: 0.0045 (ultra-estável)
+
+Uso: Diagnóstico de continuidade, não gate de identidade.
+Ficheiros: joey_f2f_measure.py, JOEY-F2F-001-SEALED.md
+```
+
+### Conquista 2: Wide+Close — Arquitectura de Relação
+
+```
+STATUS: VALIDATED
+PRIMEIRA CENA: S10 (Alejandro recebe relatório de Couto)
+
+Arquitectura:
+  WIDE  → geografia + relação corporal  → VISIBILITY
+  CLOSE → identidade                    → FORENSE (já selados)
+
+  A relação nasce no CORTE, não na composição.
+
+S10-WIDE_v1: PASS (Visual HD Gate)
+  - Couto de costas (foreground)
+  - Alejandro sentado (background, rosto pequeno)
+  - detector_exclude: true (protege Forense de parasita)
+```
+
+### Conquista 3: DOCTRINE-CINEMA-FORENSIC-SEPARATION
+
+```
+STATUS: SEALED
+AXIOMA FUNDADOR:
+
+"O Cinema decide o que serve a cena.
+ A Forense decide o que entra no Ledger.
+ O entretenimento prevalece na composição;
+ a Forense é inviolável na medição.
+ Coágulo ocorre quando o Cinema finge ser Forense.
+ Enquanto a classificação for honesta,
+ as duas camadas coabitam livremente."
+
+MECANISMO: detector_exclude: true
+  O olho humano vê. O ArcFace ignora.
+
+FICHEIRO: DOCTRINE-CINEMA-FORENSIC-SEPARATION.md
+```
+
+---
+
+## ESTADO ACTUALIZADO PARA PRÓXIMA SESSÃO
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+LEITURA OBRIGATÓRIA:
+  - Este MEMORY-LOOP-2026-06-09.md
+  - SHOT-GRAMMAR-002.md (5 pernas)
+  - JOEY-F2F-001-SEALED.md (diagnóstico temporal)
+  - DOCTRINE-CINEMA-FORENSIC-SEPARATION.md (duas camadas)
+
+ESTADO:
+  - Anchors: 37/37 ✅ FECHADOS
+  - Cenas: S10 WIDE ✅ (primeira relação)
+  - Joey F2F: ✅ VALIDADO como diagnóstico
+  - Wide+Close: ✅ ARQUITECTURA PROVADA
+
+PRÓXIMO TRABALHO:
+  - Montar sequência S10: WIDE → CLOSE Alejandro → CLOSE Couto → WIDE
+  - Disambiguation Gate (medir duas faces no mesmo frame)
+  - SHOT-GRAMMAR-003 (taxonomia de relação)
+
+NÃO FAZER:
+  - Medir shots VISIBILITY com cosine (usar Visual HD Gate)
+  - Confundir Cinema com Forense
+  - Esquecer detector_exclude em WIDEs com rostos distantes
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
 
 ---
 

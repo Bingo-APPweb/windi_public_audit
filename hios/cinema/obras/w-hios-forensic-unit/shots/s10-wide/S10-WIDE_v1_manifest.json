@@ -1,0 +1,19 @@
+{
+  "shot_id": "S10-WIDE_v1",
+  "classification": "VISIBILITY",
+  "gate": "VISUAL_HD",
+  "gate_status": "APPROVED",
+  "gate_date": "2026-06-09",
+  "gate_authority": "Human Dragon (I9)",
+  "approach": "A (silhouettes/backs)",
+  "detector_exclude": true,
+  "detector_exclude_reason": "Alejandro face visible but small/distant. Excluded from forensic measurement runs to prevent POVOAMENTO noise. Cinema layer approved; Forensic layer protected.",
+  "prompt": "Wide shot. Luxury corporate penthouse, floor-to-ceiling windows, daylight flooding in. City skyline behind.\n\nTwo men in dark suits:\n- FOREGROUND: Man in cashmere overcoat seen from BEHIND. Grey hair at back of head. Standing, holding tablet.\n- BACKGROUND: Seated figure in leather chair, silhouetted against window. Face in shadow or turned away.\n\nPower dynamic: subordinate standing, superior seated. Corporate thriller.\n\nCamera locked. Noir lighting. Bodies legible, faces NOT visible. Cinematic 4K.",
+  "video_path": "/home/windi/hios/cinema/obras/w-hios-forensic-unit/shots/s10-wide/S10-WIDE_v1.mp4",
+  "frames_dir": "/home/windi/hios/cinema/obras/w-hios-forensic-unit/shots/s10-wide/S10-WIDE_v1_frames",
+  "n_frames": 5,
+  "task_id": "00422d83-ad7d-4f97-8fc2-92d242ec1874",
+  "timestamp": "2026-06-09T17:56:47.976263",
+  "note": "NO COSINE MEASUREMENT - Visual HD gate only. First relation scene of Phase 2. Wide+Close architecture validated.",
+  "doctrine": "CINEMA-FORENSIC-SEPARATION"
+}
