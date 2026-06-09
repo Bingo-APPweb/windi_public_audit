@@ -1,12 +1,12 @@
 # SHOT-GRAMMAR-002 — Taxonomia de FAIL por Causa
 
-**Status:** SEALED (v2.0)
-**Data:** 2026-06-09 (updated)
+**Status:** SEALED (v3.0)
+**Data:** 2026-06-09 (5th leg added)
 **Autor:** Human Dragon + CCode + Guardian
 **Descendente de:** SHOT-GRAMMAR-001
 **Invariants:** I9, I11, I14
 
-> *"FAIL tem causa, não só score. Quatro pernas: Identidade, Exposição, Geometria, Oclusão."*
+> *"FAIL tem causa, não só score. Cinco pernas: Identidade, Exposição, Geometria, Oclusão, Povoamento."*
 
 ---
 
@@ -92,6 +92,30 @@ A análise revelou que o score baixo resultava de **backlit dramático** (subexp
 
 ---
 
+### FAIL DE POVOAMENTO
+
+**Definição:** Score negativo ou muito baixo porque o detector mediu OUTRA PESSOA no frame.
+
+**Características:**
+- Similarity negativa ou próxima de zero (ex: -0.07, 0.05)
+- Frame mostra MÚLTIPLAS FACES
+- O rosto do anchor está presente, mas o detector agarrou outro
+
+**Admissibilidade:** **NUNCA tolerado em anchors. Re-render com isolamento obrigatório.**
+
+**Diferença das outras causas:**
+- IDENTIDADE: rosto errado gerado
+- EXPOSIÇÃO/GEOMETRIA/OCLUSÃO: rosto certo, degradado
+- POVOAMENTO: rosto certo presente, mas detector mediu o errado
+
+**Cura:** Isolar o prompt — zero referência a outras pessoas, "SOLO SUBJECT".
+
+**Exemplo Fundador:** Alejandro S11-01_v1 — prompt "confronted by Interpol" gerou 3 rostos. ArcFace mediu perfil lateral → cosine -0.07. Cura: prompt isolado → v2 a 0.9856.
+
+**Relação com Fase 2:** Este é o problema que a Disambiguation Gate resolve quando se QUER dois rostos no frame. Para anchors, isolar. Para cenas de relação, medir ambos.
+
+---
+
 ## Escala de Referência
 
 ```
@@ -112,6 +136,7 @@ A análise revelou que o score baixo resultava de **backlit dramático** (subexp
 | EXPOSIÇÃO | 0.55 | + 3 frames adjacentes ≥0.75 |
 | GEOMETRIA | 0.65 | + 1 anchor-frame ≥0.75 |
 | OCLUSÃO | 0.60 | + oclusão diegética + 1 frame ≥0.75 |
+| POVOAMENTO | — | NUNCA tolerado em anchors (re-render isolado) |
 
 ---
 
@@ -152,6 +177,7 @@ Admissibilidade:    PASSA
 - **Couto S02-01:** Primeiro caso OCLUSÃO — frosted glass + profile, 0.6891 admissível
 - **Couto S12-01:** GEOMETRIA com perfil intencional na janela
 - **Lucas S07-01:** GEOMETRIA com movimento de cabeça
+- **Alejandro S11-01:** Primeiro caso POVOAMENTO — 3 rostos no frame, cosine -0.07, cura por isolamento
 
 ---
 
@@ -172,4 +198,4 @@ Admissibilidade:    PASSA
 
 ---
 
-*Liga IA+H · Kempten · 09 Jun 2026 (v2.0)*
+*Liga IA+H · Kempten · 09 Jun 2026 (v3.0 — 5 legs complete)*
