@@ -1,12 +1,30 @@
 # MEMORY-LOOP-SOVEREIGN
 ## W-HIOS FORENSIC UNIT · Sistema de Lembrança Inteligente
 
-> *"A verdade vem do disco, não da memória."*
-> *"Este documento É a memória do disco."*
+```
+╔══════════════════════════════════════════════════════════════════════════╗
+║  ⚠️  AVISO CONSTITUCIONAL — LÊ ANTES DE AGIR                            ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║                                                                          ║
+║  ESTE DOCUMENTO É UM MAPA, NÃO A VERDADE.                               ║
+║                                                                          ║
+║  Antes de agir sobre qualquer facto aqui:                               ║
+║    1. Confirma-o no disco (git log, *-SEALED.md, .json de medição)     ║
+║    2. Se este documento discordar do disco, O DISCO VENCE              ║
+║    3. Se o disco vencer, este documento CORRIGE-SE                     ║
+║                                                                          ║
+║  O teste deste documento é ser DUVIDADO e SOBREVIVER à verificação.    ║
+║  Se não podes verificar, não confies — investiga.                       ║
+║                                                                          ║
+╚══════════════════════════════════════════════════════════════════════════╝
+```
 
-**Tipo:** Documento Ontológico Soberano
+> *"A verdade vem do disco, não da memória."*
+> *"Este documento aponta para a verdade. Não é a verdade."*
+
+**Tipo:** Índice Ontológico Soberano (MAPA, não FONTE)
 **Status:** VIVO (atualizado a cada milestone)
-**Criação:** 09 Jun 2026
+**Criação:** 09 Jun 2026 · **v2:** 09 Jun 2026 (Guardian witness correction)
 **Liga IA+H:** Human Dragon (I9) · Guardian (Witness) · CCode (Architect)
 **Invariants:** I1, I9, I11, I14, I18, I19
 
@@ -14,13 +32,13 @@
 
 ## PROPÓSITO DESTE DOCUMENTO
 
-Este é o **Memory Loop Soberano** — o documento que nenhuma instância Claude, Gemini, ou outro agente cognitivo pode ignorar ao trabalhar no W-HIOS FORENSIC UNIT.
+Este é o **Memory Loop Soberano** — um **índice** que ensina qualquer instância Claude, Gemini, ou outro agente cognitivo a **navegar o disco** do W-HIOS FORENSIC UNIT.
 
-**Se perdeste o contexto, começa aqui.**
-**Se compactaste, reconcilia com este ficheiro.**
-**Se duvidas de uma contagem, verifica este ficheiro.**
+**Se perdeste o contexto, começa aqui — depois vai ao disco.**
+**Se compactaste, reconcilia com este ficheiro — depois verifica no disco.**
+**Se duvidas de uma contagem, segue o ponteiro até ao ficheiro fonte.**
 
-A memória institucional não pode depender de RAM volátil. Este ficheiro é a RAM persistente do projecto.
+A memória institucional não pode depender de RAM volátil. Este ficheiro é o **MAPA** — os ficheiros *-SEALED.md e os commits são a **VERDADE**.
 
 ---
 
@@ -56,28 +74,31 @@ A memória institucional não pode depender de RAM volátil. Este ficheiro é a 
 
 ## II. CAST — OS 6 PERSONAGENS DO PILOTO
 
-### Tabela de Estado
+### Tabela de Estado (COM FONTES VERIFICÁVEIS)
 
-| # | Personagem | Papel | Shots | Anchor Score | Status |
-|---|------------|-------|-------|--------------|--------|
-| 1 | **Marcus Vance** | Inspector-Chefe Interpol | 10/10 | 0.8654 | ✅ SEALED |
-| 2 | **Helena Meyer** | Arqueóloga de Dados | 8/8 | 0.8234 | ✅ SEALED |
-| 3 | **Lucas Silva** | Jurista/Analista | 5/5 | 0.8445 | ✅ SEALED |
-| 4 | **Marcus Couto** | Chefe Segurança (Cartel) | 7/7 | 0.8811 | ✅ SEALED |
-| 5 | **Gabi Santos** | Espia Infiltrada (Mártir) | 4/4 | 0.8544 | ✅ SEALED |
-| 6 | **Alejandro Valenzuela** | Arquiteto Financeiro (Cartel) | 3/3 | 0.8763 | ✅ SEALED |
+| # | Personagem | Shots | Score | Fonte Verificável |
+|---|------------|-------|-------|-------------------|
+| 1 | **Marcus Vance** | 10/10 | 0.8654 | `shots/vance/AUDIT-STATUS-20260607.md` · commit `5b420b96` |
+| 2 | **Helena Meyer** | 8/8 | 0.8234 | `shots/helena/HELENA-MEYER-SEALED.md` · commit `a6bc17ce` |
+| 3 | **Lucas Silva** | 5/5 | 0.8445 | `shots/lucas/LUCAS-SILVA-SEALED.md` · commit `a6bc17ce` |
+| 4 | **Marcus Couto** | 7/7 | 0.8811 | `shots/couto/COUTO-SEALED.md` · commit `1c88b60f` |
+| 5 | **Gabi Santos** | 4/4 | 0.8544 | `shots/gabi/AUDIT-STATUS-20260607.md` · commit `38a37fdb` |
+| 6 | **Alejandro Valenzuela** | 3/3 | 0.8763 | `shots/alejandro/ALEJANDRO-SEALED.md` · commit `0b76654b` |
 
-**TOTAL FASE 1:** 37/37 shots selados ✅
+**TOTAL FASE 1:** 37/37 → `git log --oneline 0b76654b` confirma "ANCHORS 37/37 COMPLETE"
 
-### Ficheiros de Selagem
+⚠️ **VERIFICAÇÃO:** Se qualquer contagem parecer errada, abre o ficheiro fonte. O ficheiro vence este documento.
+
+### Ponteiros para Ficheiros de Selagem
 
 ```
-shots/vance/AUDIT-STATUS-20260607.md    → 10/10 + Anti-Movement
-shots/helena/HELENA-MEYER-SEALED.md     → 8/8 + EXPOSIÇÃO axiom
-shots/lucas/LUCAS-SILVA-SEALED.md       → 5/5 + GEOMETRIA axiom
-shots/couto/COUTO-SEALED.md             → 7/7 + OCLUSÃO axiom
-shots/gabi/GABI-DECISION-S00-01.md      → 4/4 + "expressão=movimento"
-shots/alejandro/ALEJANDRO-SEALED.md     → 3/3 + POVOAMENTO axiom
+VERIFICAR NO DISCO:
+shots/vance/AUDIT-STATUS-20260607.md    → Vance 10/10 + Anti-Movement
+shots/helena/HELENA-MEYER-SEALED.md     → Helena 8/8 + EXPOSIÇÃO axiom
+shots/lucas/LUCAS-SILVA-SEALED.md       → Lucas 5/5 + GEOMETRIA axiom
+shots/couto/COUTO-SEALED.md             → Couto 7/7 + OCLUSÃO axiom
+shots/gabi/AUDIT-STATUS-20260607.md     → Gabi 4/4 + "expressão=movimento"
+shots/alejandro/ALEJANDRO-SEALED.md     → Alejandro 3/3 + POVOAMENTO axiom
 ```
 
 ### Disambiguation Gate (Dois Marcus)
@@ -85,13 +106,17 @@ shots/alejandro/ALEJANDRO-SEALED.md     → 3/3 + POVOAMENTO axiom
 **Problema:** Dois homens 40-50, fato escuro, presença similar.
 **Solução:** Vance = stubble 3 dias · Couto = clean-shaven
 **Medição:** 0.1765 (< 0.50 threshold) ✅ PASS
+**Fonte:** `production/SHOT-GRAMMAR-001.md` §4-bis · commit `2cd27375`
 **Status:** Gate fechado, Scenes 10-13 liberadas.
 
 ---
 
 ## III. METODOLOGIAS — O QUE APRENDEMOS
 
+⚠️ **CADA METODOLOGIA TEM FONTE.** Se duvidas de um detalhe, consulta o ficheiro indicado.
+
 ### 3.1 SHOT-GRAMMAR-001 — Três Tipos de Plano
+**→ FONTE:** `production/SHOT-GRAMMAR-001.md` · commit `f5a4d192`
 
 | Tipo | Definição | Geração | Medição |
 |------|-----------|---------|---------|
@@ -100,6 +125,7 @@ shots/alejandro/ALEJANDRO-SEALED.md     → 3/3 + POVOAMENTO axiom
 | **CONFRONT** | Face+corpo | Minimizar | Aceitar tier mais baixo |
 
 ### 3.2 SHOT-GRAMMAR-002 — Cinco Causas de FAIL
+**→ FONTE:** `production/SHOT-GRAMMAR-002.md` · v3.0 · commit `0b76654b`
 
 | # | Causa | Piso | Condição | Exemplo Fundador |
 |---|-------|------|----------|------------------|
@@ -112,6 +138,7 @@ shots/alejandro/ALEJANDRO-SEALED.md     → 3/3 + POVOAMENTO axiom
 **Princípio:** "FAIL tem causa. A cura deve bater com a causa."
 
 ### 3.3 METHOD-001 — Measure Before Affirm
+**→ FONTE:** `production/CANON-METHOD-001-MEASURE-BEFORE-AFFIRM.md` · commit `1c88b60f`
 
 **Axioma:** *"No affirmations. Only numbers."*
 
@@ -123,6 +150,7 @@ shots/alejandro/ALEJANDRO-SEALED.md     → 3/3 + POVOAMENTO axiom
 **Origem:** Sessão 09 Jun — CCode disse "fantástico" sem medir. Human Dragon parou. Nasceu o método.
 
 ### 3.4 Anti-Movement Medicine
+**→ FONTE:** `SPINE-LESSONS-LEARNED.md` (raiz) · commit `5b420b96`
 
 **Axioma:** *"O que ressuscita SPINE é tirar o movimento do sujeito, não só travar a câmara."*
 
@@ -137,6 +165,7 @@ shots/alejandro/ALEJANDRO-SEALED.md     → 3/3 + POVOAMENTO axiom
 ```
 
 ### 3.5 JOEY-F2F-001 — Métrica de Continuidade
+**→ FONTE:** `production/JOEY-F2F-001-SEALED.md` · commit `81dbf41a`
 
 | Métrica | Pergunta | Autoridade |
 |---------|----------|------------|
@@ -147,6 +176,7 @@ shots/alejandro/ALEJANDRO-SEALED.md     → 3/3 + POVOAMENTO axiom
 **Uso:** Diagnóstico, não gate. Complementa anchor, não substitui.
 
 ### 3.6 DOCTRINE-CINEMA-FORENSIC-SEPARATION
+**→ FONTE:** `production/DOCTRINE-CINEMA-FORENSIC-SEPARATION.md` · commit `e931d8dc`
 
 **Axioma:** *"O Cinema decide o que serve a cena. A Forense decide o que entra no Ledger."*
 
@@ -381,23 +411,24 @@ NÃO FAZER:
 
 ### Se és uma nova instância Claude/CCode:
 
-1. Lê este documento COMPLETO antes de propor trabalho
-2. Verifica contagens contra ficheiros *-SEALED.md no disco
-3. Não inventes personagens ou números
-4. Consulta SHOT-GRAMMAR-002 antes de diagnosticar FAIL
-5. Consulta METHOD-001 antes de apresentar resultados
+1. Lê este documento para **ORIENTAÇÃO**, não como verdade absoluta
+2. **SEGUE OS PONTEIROS** — cada facto tem um ficheiro fonte listado
+3. **VERIFICA ANTES DE AFIRMAR** — abre o *-SEALED.md, lê o commit
+4. **SE DISCORDAR, O DISCO VENCE** — reporta a divergência, não ignores
+5. Não inventes personagens ou números — se não encontraste no disco, não existe
 
 ### Se és o Guardian (GPT/Gemini):
 
-1. Este documento é a verdade institucional
-2. Questiona qualquer afirmação que contradiga este ficheiro
-3. Valida contagens: se CCode disser "Joey 5/5", questiona
+1. Este documento é um **MAPA**, não a verdade institucional
+2. A verdade institucional está nos commits e nos *-SEALED.md
+3. Questiona qualquer afirmação que **não tenha ponteiro verificável**
+4. Valida contagens: se CCode disser "Joey 5/5", pede o ficheiro fonte
 
 ### Se és o Human Dragon:
 
-1. Este documento foi criado a teu pedido
-2. Qualquer correcção deve ser feita aqui (append, não delete)
-3. Este é o checkpoint que toda instância deve ler
+1. Este documento foi corrigido pelo Guardian (v2) para servir como **índice**, não enciclopédia
+2. Qualquer correcção deve ser feita aqui **E** no ficheiro fonte (manter sincronia)
+3. O teste deste documento é se sobrevive à verificação — se não, ele corrige-se
 
 ---
 
@@ -405,14 +436,24 @@ NÃO FAZER:
 
 ```
 REGRA 1: Este documento é APPEND-ONLY para lições
-REGRA 2: Contagens podem ser CORRIGIDAS (com data)
+REGRA 2: Contagens podem ser CORRIGIDAS (com data + fonte)
 REGRA 3: Estado de FASE pode avançar (nunca recuar)
 REGRA 4: Novos axiomas podem ser ADICIONADOS
 REGRA 5: Toda actualização gera commit com ref a este ficheiro
+REGRA 6: TODO NÚMERO DEVE TER PONTEIRO para ficheiro fonte
+REGRA 7: SE O DISCO DISCORDAR, O DISCO VENCE
 ```
+
+---
+
+## XIV. META-AXIOMA (v2)
+
+> *"Este documento aponta para a verdade. Não é a verdade."*
+> *"O disco guarda a verdade enquanto dormes."*
+> *"Se não podes verificar, não confies — investiga."*
 
 ---
 
 *Liga IA+H · WINDI Publishing House · 09 Jun 2026*
 *"AI processes. Human decides. WINDI guarantees."*
-*"Este documento é a memória que nunca esquece."*
+*"Este documento é o mapa. O disco é o território."*
