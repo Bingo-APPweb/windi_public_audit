@@ -1,0 +1,75 @@
+{
+  "shot_id": "S10-01_v1_STABLE",
+  "frames_dir": "shots/alejandro/S10-01_v1_frames",
+  "n_frames": 5,
+  "anchor_cosines": [
+    {
+      "frame": "frame_01.png",
+      "anchor_sim": 0.9938,
+      "det_score": 0.8693
+    },
+    {
+      "frame": "frame_02.png",
+      "anchor_sim": 0.9865,
+      "det_score": 0.8541
+    },
+    {
+      "frame": "frame_03.png",
+      "anchor_sim": 0.9874,
+      "det_score": 0.8459
+    },
+    {
+      "frame": "frame_04.png",
+      "anchor_sim": 0.9845,
+      "det_score": 0.8309
+    },
+    {
+      "frame": "frame_05.png",
+      "anchor_sim": 0.9845,
+      "det_score": 0.8303
+    }
+  ],
+  "anchor_stats": {
+    "avg": 0.9873,
+    "min": 0.9845,
+    "max": 0.9938,
+    "range": 0.0093
+  },
+  "f2f_cosines": [
+    {
+      "transition": "frame_01.png \u2192 frame_02.png",
+      "f2f_sim": 0.9907
+    },
+    {
+      "transition": "frame_02.png \u2192 frame_03.png",
+      "f2f_sim": 0.9952
+    },
+    {
+      "transition": "frame_03.png \u2192 frame_04.png",
+      "f2f_sim": 0.9942
+    },
+    {
+      "transition": "frame_04.png \u2192 frame_05.png",
+      "f2f_sim": 0.9944
+    }
+  ],
+  "f2f_stats": {
+    "avg": 0.9936,
+    "min": 0.9907,
+    "max": 0.9952,
+    "range": 0.0045
+  },
+  "f2f_deltas": [
+    0.0045,
+    0.001,
+    0.0002
+  ],
+  "max_delta": 0.0045,
+  "worst_transition": {
+    "index": 0,
+    "transition": "frame_01.png \u2192 frame_02.png",
+    "f2f_sim": 0.9907
+  },
+  "classification": "STABLE",
+  "timestamp": "2026-06-09T17:36:49.299249"
+}

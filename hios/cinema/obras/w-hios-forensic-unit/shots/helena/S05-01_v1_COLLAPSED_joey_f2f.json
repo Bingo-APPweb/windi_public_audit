@@ -1,0 +1,75 @@
+{
+  "shot_id": "S05-01_v1_COLLAPSED",
+  "frames_dir": "shots/helena/S05-01_v1_frames",
+  "n_frames": 5,
+  "anchor_cosines": [
+    {
+      "frame": "frame_01.png",
+      "anchor_sim": 0.9167,
+      "det_score": 0.8561
+    },
+    {
+      "frame": "frame_02.png",
+      "anchor_sim": 0.2716,
+      "det_score": 0.5901
+    },
+    {
+      "frame": "frame_03.png",
+      "anchor_sim": 0.2068,
+      "det_score": 0.7471
+    },
+    {
+      "frame": "frame_04.png",
+      "anchor_sim": 0.3005,
+      "det_score": 0.7526
+    },
+    {
+      "frame": "frame_05.png",
+      "anchor_sim": 0.2841,
+      "det_score": 0.7602
+    }
+  ],
+  "anchor_stats": {
+    "avg": 0.3959,
+    "min": 0.2068,
+    "max": 0.9167,
+    "range": 0.7099
+  },
+  "f2f_cosines": [
+    {
+      "transition": "frame_01.png \u2192 frame_02.png",
+      "f2f_sim": 0.2921
+    },
+    {
+      "transition": "frame_02.png \u2192 frame_03.png",
+      "f2f_sim": 0.6129
+    },
+    {
+      "transition": "frame_03.png \u2192 frame_04.png",
+      "f2f_sim": 0.7383
+    },
+    {
+      "transition": "frame_04.png \u2192 frame_05.png",
+      "f2f_sim": 0.9657
+    }
+  ],
+  "f2f_stats": {
+    "avg": 0.6522,
+    "min": 0.2921,
+    "max": 0.9657,
+    "range": 0.6736
+  },
+  "f2f_deltas": [
+    0.3208,
+    0.1254,
+    0.2274
+  ],
+  "max_delta": 0.3208,
+  "worst_transition": {
+    "index": 0,
+    "transition": "frame_01.png \u2192 frame_02.png",
+    "f2f_sim": 0.2921
+  },
+  "classification": "COLLAPSE",
+  "timestamp": "2026-06-09T17:36:42.066763"
+}
