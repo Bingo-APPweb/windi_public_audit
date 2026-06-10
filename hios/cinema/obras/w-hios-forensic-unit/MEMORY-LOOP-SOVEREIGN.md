@@ -69,6 +69,7 @@ A memória institucional não pode depender de RAM volátil. Este ficheiro é o 
 | `production/PHILOSOPHY-001.md` | Tese ontológica |
 | `production/SHOT-GRAMMAR-001.md` | Método por tipo de plano |
 | `production/SHOT-GRAMMAR-002.md` | Taxonomia de FAIL (5 pernas) |
+| `production/SHOT-GRAMMAR-003.md` | Multi-face attribution + Wide+Close (DRAFT) |
 
 ---
 
@@ -266,7 +267,7 @@ Casting forense do piloto "O Peso do Eco" FECHADO
 | **Memory Loop v3 — Órgão DOUTRINA** | ✅ **INICIALIZADO** (ver §XV) |
 | **Disambiguation Gate** | ✅ **IMPLEMENTED** (ver §XV.3) |
 | **S10-CONFRONT Stress Test** | ✅ **FINDING SEALED** (validou Wide+Close) |
-| SHOT-GRAMMAR-003 | ⏳ Por criar |
+| **SHOT-GRAMMAR-003** | 📝 **DRAFT** (pending MARGIN calibration) |
 
 ### Wide+Close Architecture
 
@@ -552,11 +553,15 @@ Estes gates vivem dentro do D1 e aplicam-se a toda atestação HIOS:
 
 #### Thresholds
 
-| Threshold | Valor | Função |
-|-----------|-------|--------|
-| MATCH | ≥0.65 | Similaridade mínima para atribuição |
-| SEPARATION | <0.50 | Máxima similaridade à âncora errada |
-| MARGIN | ≥0.15 | Diferença mínima entre melhor e segundo match |
+| Threshold | Valor | Função | Status |
+|-----------|-------|--------|--------|
+| MATCH | ≥0.65 | Similaridade mínima para atribuição | ✅ MEDIDO |
+| SEPARATION | <0.50 | Máxima similaridade à âncora errada | ✅ MEDIDO |
+| MARGIN | ≥0.15 | Diferença mínima entre melhor e segundo match | ⚠️ **PROVISÓRIO** |
+
+> ⚠️ **MARGIN ≥0.15 NÃO ESTÁ CALIBRADO.** Este valor é intuição arquitectural, não medição.
+> Calibração requer: frame real com dois personagens de inter-anchor ~0.45, medir margem observada.
+> Ver SHOT-GRAMMAR-003 §7 para fluxo de calibração.
 
 #### S10-CONFRONT Stress Test (FINDING)
 
