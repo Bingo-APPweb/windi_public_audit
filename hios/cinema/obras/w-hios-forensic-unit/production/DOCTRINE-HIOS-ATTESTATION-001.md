@@ -207,13 +207,13 @@ como axiomas locais com ponteiros verificáveis para este documento.
 ## 8. Receipt de Selagem
 
 ```
-RECEIPT_ID:    WINDI-DOCTRINE-HIOS-ATT001-20260610105305-EDF928E5
-CONTENT_HASH:  sha256:edf928e5d5e4321b92dd97110761bff01228d902b10eace7e05435a7fe241a6e
+RECEIPT_ID:    WINDI-DOCTRINE-HIOS-ATTESTATION-001-{TIMESTAMP}
+CONTENT_HASH:  sha256:{PENDING}
 CHAIN_PARENT:  DOCTRINE-CINEMA-FORENSIC-SEPARATION
-SEALED_BY:     did:windi:dragon-001 (Human Dragon)
-SEALED_AT:     2026-06-10T10:53:05Z
+SEALED_BY:     human-dragon
+SEALED_AT:     2026-06-10T{TIMESTAMP}Z
 INVARIANTS:    I1, I9, I11, I14
-VERIFY_URL:    https://windi-domain.com/verify-public/?id=WINDI-DOCTRINE-HIOS-ATT001-20260610105305-EDF928E5
+VERIFY_URL:    https://windi-domain.com/verify-public/?id={RECEIPT_ID}
 ```
 
 ---
