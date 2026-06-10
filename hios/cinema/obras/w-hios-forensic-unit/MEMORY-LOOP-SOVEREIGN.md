@@ -264,7 +264,8 @@ Casting forense do piloto "O Peso do Eco" FECHADO
 | DOCTRINE-CINEMA-FORENSIC-SEPARATION | ✅ SEALED |
 | **DOCTRINE-HIOS-ATTESTATION-001** | ✅ **SEALED 10 Jun** (ver §XV.1) |
 | **Memory Loop v3 — Órgão DOUTRINA** | ✅ **INICIALIZADO** (ver §XV) |
-| Disambiguation Gate | ⏳ Pendente implementação |
+| **Disambiguation Gate** | ✅ **IMPLEMENTED** (ver §XV.3) |
+| **S10-CONFRONT Stress Test** | ✅ **FINDING SEALED** (validou Wide+Close) |
 | SHOT-GRAMMAR-003 | ⏳ Por criar |
 
 ### Wide+Close Architecture
@@ -540,6 +541,39 @@ Estes gates vivem dentro do D1 e aplicam-se a toda atestação HIOS:
 
 **Uso:** Antes de qualquer atestação, verificar G-ATT-1..5 contra esta tabela.
 **Ponteiro:** D1 (DOCTRINE-HIOS-ATTESTATION-001), §7.
+
+---
+
+### XV.3 Disambiguation Gate — Multi-Face Attribution (10 Jun 2026)
+
+**Função:** Atribuir múltiplas faces no mesmo frame às suas âncoras correctas.
+**Script:** `production/disambiguation_gate.py`
+**Status:** IMPLEMENTED + FIRST TEST COMPLETE
+
+#### Thresholds
+
+| Threshold | Valor | Função |
+|-----------|-------|--------|
+| MATCH | ≥0.65 | Similaridade mínima para atribuição |
+| SEPARATION | <0.50 | Máxima similaridade à âncora errada |
+| MARGIN | ≥0.15 | Diferença mínima entre melhor e segundo match |
+
+#### S10-CONFRONT Stress Test (FINDING)
+
+**→ FONTE:** `production/FINDING-S10-CONFRONT-20260610.md`
+
+| Resultado | Significado |
+|-----------|-------------|
+| Gate: FAIL_MATCH | Rostos gerados ≠ âncoras |
+| Causa: Gerador | Text-to-video cria identidades novas |
+| Validação: | **Wide+Close CONFIRMADO** |
+
+**Achado Principal:**
+> "O gerador cria identidade; não reproduz identidade."
+> "A relação nasce no CORTE, não na composição."
+
+**Uso do Gate:** Composição manual, frames reais, ou image-to-video.
+Não se aplica a text-to-video puro com múltiplos personagens descritos.
 
 ---
 
