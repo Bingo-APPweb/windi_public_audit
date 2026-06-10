@@ -267,7 +267,7 @@ Casting forense do piloto "O Peso do Eco" FECHADO
 | **Memory Loop v3 — Órgão DOUTRINA** | ✅ **INICIALIZADO** (ver §XV) |
 | **Disambiguation Gate** | ✅ **IMPLEMENTED** (ver §XV.3) |
 | **S10-CONFRONT Stress Test** | ✅ **FINDING SEALED** (validou Wide+Close) |
-| **SHOT-GRAMMAR-003** | ✅ **READY FOR SEAL** (MARGIN calibrated ≥0.37) |
+| **SHOT-GRAMMAR-003** | ✅ **SEALED 10 Jun** (3F6722C2 · MARGIN ≥0.37) |
 
 ### Wide+Close Architecture
 
@@ -500,6 +500,8 @@ Cada axioma neste órgão tem três campos obrigatórios:
 DOCTRINE-CINEMA-FORENSIC-SEPARATION (09 Jun 2026)
         ↓
 DOCTRINE-HIOS-ATTESTATION-001 (10 Jun 2026) ← PRIMEIRO HABITANTE v3
+        ↓
+SHOT-GRAMMAR-003 (10 Jun 2026, 3F6722C2) ← PRIMEIRA GRAMÁTICA CALIBRADA
 ```
 
 #### Axiomas do Órgão DOUTRINA
