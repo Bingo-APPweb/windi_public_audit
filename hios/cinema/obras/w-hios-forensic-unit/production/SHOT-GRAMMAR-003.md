@@ -1,49 +1,64 @@
-# SHOT-GRAMMAR-003: Gramática Visual para Identidade Forense
-## Multi-Face Attribution & Wide+Close Architecture
+# SHOT-GRAMMAR-003
+## Taxonomia Relacional e Regimes de Reconhecimento
 
 ```
 ═══════════════════════════════════════════════════════════════════
-STATUS:        DRAFT (pending calibration frame for MARGIN threshold)
-DATA:          10 Jun 2026
+STATUS:        DRAFT — DOCUMENTO DE TRABALHO (não selado)
+VERSÃO:        v0.2-merged
+DATA DRAFT:    10 Jun 2026
 LIGA IA+H:     Human Dragon (I9) · Guardian (Witness) · CCode (Architect)
-DOCTRINE:      DOCTRINE-HIOS-ATTESTATION-001 · G-ATT-1
-DESCE DE:      SPINE-LESSONS-LEARNED.md · FINDING-S10-CONFRONT-20260610.md
+SELAGEM:       PENDENTE — exclusiva do Human Dragon (I1)
+PADRÃO:        Sidecar (corpo .md + receipt .json na selagem)
 ═══════════════════════════════════════════════════════════════════
 ```
 
 ---
 
-## §1. Axioma Fundacional
+## 0. Linhagem
 
-> *"A identidade nasce no CLOSE e viaja pelo corte, vestida."*
+| Fonte | Contribuição |
+|-------|--------------|
+| SHOT-GRAMMAR-001 | Disambiguation Gate inter-âncora (<0.50) |
+| SHOT-GRAMMAR-002 | Taxonomia de FAIL: IDENTITY / EXPOSIÇÃO / GEOMETRIA / OCLUSÃO / POVOAMENTO |
+| DOCTRINE-CINEMA-FORENSIC-SEPARATION (09 Jun) | Cinema decide a cena; Forense decide o Ledger |
+| DOCTRINE-HIOS-ATTESTATION-001 (10 Jun, EDF928E5) | G-ATT-1..5 — toda a atestação é número com corrida |
+| FINDING-S10-CONFRONT (10 Jun) | Evidência empírica: text-to-video não reproduz identidade |
 
-O espectador constrói a identidade num CLOSE-UP forense (face ≥70% visível,
-cosine similarity ≥0.75). Uma vez estabelecida, a identidade **VIAJA** através
-do corte para shots onde a face pode estar parcialmente ou totalmente obscurecida.
+**Posição:** SG-001 deu o gate; SG-002 deu as causas de falha; **SG-003 dá a
+gramática da coexistência** — como dois ou mais corpos partilham um frame
+sem que o rigor forense e a liberdade cinematográfica se traiam mutuamente.
 
-A relação entre personagens nasce no **CORTE**, não na **COMPOSIÇÃO** do mesmo
-frame. Esta é a arquitectura Wide+Close selada em DOCTRINE-CINEMA-FORENSIC-SEPARATION.
-
----
-
-## §2. Regimes de Reconhecimento
-
-| Regime | Face Visibility | Cosine Threshold | Função |
-|--------|-----------------|------------------|--------|
-| **FORENSE** | ≥70% | ≥0.75 | Prova identidade inequívoca |
-| **OPERACIONAL** | ≥50% | ≥0.65 | Trabalho de produção |
-| **NARRATIVO** | <50% ou perfil | N/A | Continuidade por vestuário/silhueta |
-| **AUSENTE** | 0% (off-screen) | N/A | Presença por voz/referência |
-
-**Corolário:** Um personagem pode ter medição FORENSE em S01, NARRATIVO em S02,
-e AUSENTE em S03. A identidade estabelecida no S01 **persiste** através dos
-subsequentes via corte.
+**Chain Parent:** `SHOT-GRAMMAR-002`
 
 ---
 
-## §3. Tipos Relacionais de Shot
+## 1. Fundamento Empírico (resultados da corrida de 10 Jun)
 
-### 3.1 CLOSE-UP (Single Subject)
+Esta gramática não nasce de teoria — nasce de três medições da mesma sessão:
+
+1. **S10-WIDE** (2 faces detectadas, sim 0.15/0.07): rostos distantes não
+   atestam. O Cinema aprovou-o para visibilidade; a Forense reprovou-o para
+   atestação. **Ambos acertaram** — primeira validação de campo da separação
+   de poderes.
+
+2. **S10-CONFRONT** (FAIL_MATCH, 0.29/0.31): text-to-video com features
+   descritas criou identidades novas. *"O gerador cria identidade; não
+   reproduz identidade."* A descrição é memória a fingir-se fonte.
+
+3. **Matriz inter-anchor** (3/15): Vance×Couto 0.1765 · Vance×Alejandro
+   0.0570 · **Alejandro×Couto 0.4498** — o par mais apertado do elenco,
+   com margem de apenas 0.05 ao limiar de separação.
+
+---
+
+## 2. Parte A — Regimes de Reconhecimento (por personagem, por shot)
+
+Todo o personagem presente num shot é classificado num de três regimes:
+
+### 🔵 FORENSE
+
+Rosto medível contra âncora selada. Score com corrida de medição.
+Entra no Ledger com número. Sujeito integral à taxonomia SG-002.
 
 ```
 ┌─────────────────────┐
@@ -54,32 +69,70 @@ subsequentes via corte.
 │    └─────────┘      │
 │                     │
 └─────────────────────┘
+Threshold: ≥0.75 (forense) ou ≥0.65 (operacional)
 ```
 
-**Regime:** FORENSE obrigatório
-**Função:** Estabelece identidade. É a **FONTE** de toda prova de likeness.
-**Threshold:** Cosine ≥0.75
+> *"O rosto atesta."*
 
-### 3.2 OVER-THE-SHOULDER (OTS)
+### 🟡 NARRATIVO
 
+Personagem presente e reconhecível pelo espectador — figurino, postura,
+silhueta, blocking, continuidade de montagem — mas **declarado, não medido**.
+O metadata afirma a presença e o dispositivo de oclusão **à partida**:
+
+```yaml
+character: marcus-couto
+regime: NARRATIVO
+device: over-the-shoulder          # oclusão intencional
+costume_anchor: "fato cinza, gravata escura"
+identity_source: "S10-CLOSE-COUTO (FORENSE, selado)"
+identity_via: CORTE                 # ver Parte C
+```
+
+Regra de honestidade: NARRATIVO nunca finge atestação. É a generalização
+formal do `detector_exclude: true` que o S10-WIDE já praticava em embrião.
+
+> *"O figurino reconhece; o rosto atesta."*
+> Roupa é sinal narrativo — **nunca prova**. Roupas trocam-se; é o truque
+> mais velho do thriller, e o nosso piloto é um thriller.
+
+### ⚪ AUSENTE
+
+Fora do frame. Sem entrada.
+
+**Conversão doutrinária da OCLUSÃO:** na SG-002, oclusão é causa de FAIL.
+Na SG-003, oclusão **declarada à partida** é dispositivo legítimo do regime
+NARRATIVO — nunca pode falhar porque nunca prometeu medição. A taxonomia de
+FAIL só governa o que aspirou a ser FORENSE.
+
+---
+
+## 3. Parte B — Tipos Relacionais de Shot
+
+| Tipo | Descrição | Regimes típicos | Status forense |
+|------|-----------|-----------------|----------------|
+| **CLOSE** | Um rosto domina o frame | 1× FORENSE | Validado (Fase 1, 37/37) |
+| **OVER-THE-SHOULDER** | Um rosto medível; o outro de costas/ocluso | 1× FORENSE + 1× NARRATIVO | **Novo — regime misto** |
+| **TWO-SHOT MEDIBLE** | Dois rostos visíveis e medíveis | 2× FORENSE + Gate de atribuição | Pendente frame de calibração |
+| **WIDE COREOGRÁFICO** | Corpos em espaço; rostos não medíveis | N× NARRATIVO | Validado (S10-WIDE, detector_exclude) |
+| **INSERT / POV** | Objecto ou mão; identidade pelo contexto | 0-1× NARRATIVO | Por uso |
+
+### Diagramas
+
+**OVER-THE-SHOULDER:**
 ```
 ┌─────────────────────┐
-│ ░░░░░             │
-│ ░░░░░   ┌─────┐    │
-│ ░░░░░   │FACE │    │
-│ ░░░░░   │≥50% │    │
-│ ░░░░░   └─────┘    │
+│ ░░░░░               │
+│ ░░░░░   ┌─────┐     │
+│ ░░░░░   │FACE │     │
+│ ░░░░░   │≥50% │     │
+│ ░░░░░   └─────┘     │
 │                     │
 └─────────────────────┘
-  ↑ Back               ↑ Face visible
+  ↑ Back (NARRATIVO)   ↑ Face visible (FORENSE)
 ```
 
-**Regime:** OPERACIONAL ou FORENSE (depende de visibility)
-**Função:** Relação direccional. Face visível é medível.
-**Threshold:** Cosine ≥0.65 (operacional) ou ≥0.75 (se ≥70%)
-
-### 3.3 TWO-SHOT MEDÍVEL
-
+**TWO-SHOT MEDIBLE:**
 ```
 ┌─────────────────────┐
 │                     │
@@ -89,17 +142,10 @@ subsequentes via corte.
 │ └─────┘   └─────┘   │
 │                     │
 └─────────────────────┘
+Disambiguation Gate aplica-se
 ```
 
-**Regime:** FORENSE ou OPERACIONAL (ambas as faces)
-**Função:** Disambiguation Gate aplica-se
-**Thresholds:**
-- Match ≥0.65 (ambas as faces atribuídas correctamente)
-- Separation: Inter-anchor sim <0.50
-- ⚠️ **MARGIN ≥0.15** (PROVISÓRIO — não calibrado)
-
-### 3.4 WIDE COREOGRÁFICO
-
+**WIDE COREOGRÁFICO:**
 ```
 ┌─────────────────────┐
 │   A           B     │
@@ -109,149 +155,190 @@ subsequentes via corte.
 │  └──┘       └──┘    │
 │ ___________________  │
 └─────────────────────┘
+Rostos <50% → NARRATIVO (identidade via corte)
 ```
 
-**Regime:** NARRATIVO (faces <50%)
-**Função:** Visibilidade geográfica, relação corporal, coreografia
-**Threshold:** N/A (identidade viaja do CLOSE via corte)
-**Exemplo:** S10-WIDE — VISIBILITY APPROVED, FORENSE N/A
+**INSERT / POV:**
+```
+┌─────────────────────┐
+│                     │
+│    ┌───────────┐    │
+│    │  OBJETO   │    │
+│    │  ou MÃO   │    │
+│    └───────────┘    │
+│                     │
+└─────────────────────┘
+Identidade pelo contexto de montagem
+```
+
+**Lei de produção derivada do FINDING:** shots TWO-SHOT MEDIBLE com
+identidade forense **exigem referência de imagem** (image-to-video ou
+composição) — text-to-video puro com múltiplos personagens descritos está
+constitucionalmente excluído como método de produção FORENSE.
 
 ---
 
-## §4. Disambiguation Gate — Regras de Atribuição
+## 4. Parte C — Identidade Viaja pelo Corte
 
-### 4.1 Requisitos
+A pergunta funda do regime NARRATIVO: de onde vem a identidade do
+personagem ocluso? Resposta:
 
-Para um frame com N faces detectadas e N anchors conhecidos:
+> **A identidade nasce no CLOSE e viaja pelo corte, vestida.**
 
-1. **Detecção:** Todas as N faces devem ser detectadas
-2. **Match:** Cada face atribuída ao anchor correcto com sim ≥0.65
-3. **Separation:** Anchors diferentes têm inter-sim <0.50
-4. **Margin:** Diferença entre best e second-best ≥0.15 (⚠️ **PROVISÓRIO**)
+Disposições:
 
-### 4.2 Estados do Gate
+1. Todo o personagem em regime NARRATIVO deve citar no metadata o shot
+   FORENSE onde a sua identidade foi atestada (`identity_source`).
 
-| Estado | Condição | Acção |
-|--------|----------|-------|
-| `PASS` | Todas as regras cumpridas | Faces atribuídas com confiança |
-| `FAIL_MATCH` | sim <0.65 para alguma face | Gerador não reproduziu anchor |
-| `FAIL_SEPARATION` | Inter-anchor sim ≥0.50 | Anchors demasiado parecidos |
-| `FAIL_MARGIN` | Margin <0.15 | Atribuição ambígua |
-| `FAIL_DETECTION` | Faces != N esperadas | Detecção falhou |
+2. A cadeia de transporte é a montagem: CLOSE atestado → corte →
+   shot relacional. O figurino é o estafeta do testemunho, não o testemunho.
 
-### 4.3 Achado S10-CONFRONT (10 Jun 2026)
+3. Uma sequência onde um personagem aparece **apenas** em regime NARRATIVO,
+   sem nenhum CLOSE FORENSE na cadeia, é sinalizada: identidade narrada,
+   nunca estabelecida. O Cinema pode aceitá-la (mistério é legítimo);
+   a Forense regista a lacuna.
 
-> *"O gerador cria identidade; não reproduz identidade."*
-
-**Contexto:** Test-to-video com dois personagens descritos (Alejandro × Couto).
-**Resultado:** FAIL_MATCH (0.29/0.31 similarity — território aleatório).
-**Causa:** Gen4.5 criou rostos **novos** que não correspondem às anchors.
-
-**Implicação:** Multi-face generation via texto puro não funciona.
-A arquitectura Wide+Close é a solução validada:
-- **WIDE** = visibilidade (corpos legíveis, rostos distantes)
-- **CLOSE** = identidade (montagem, não composição)
+Extensão da arquitectura Wide+Close: ontem provou-se que *a relação nasce
+no corte*; hoje formaliza-se que *a identidade também viaja por ele*.
 
 ---
 
-## §5. Gates de SHOT-GRAMMAR-003
+## 5. Parte D — Regra de Atribuição Multi-Face (TWO-SHOT MEDIBLE)
 
-| Gate | Nome | Verificação |
-|------|------|-------------|
-| G-SG3-1 | CLOSE Forense | Face ≥70% → sim ≥0.75 obrigatório |
-| G-SG3-2 | OTS Direccional | Face visível medível, back não |
-| G-SG3-3 | TWO-SHOT Disambiguation | Todas as faces atribuídas, margin ≥0.15 (⚠️) |
-| G-SG3-4 | WIDE Coreográfico | Visibility only, identidade vem do corte |
-| G-SG3-5 | Cut Inheritance | Identidade estabelecida persiste através do corte |
+Quando duas ou mais faces são medíveis no mesmo frame, a atribuição da
+face F à âncora A exige **três condições**:
+
+```
+1. sim(F, A) ≥ PISO_FORENSE                    (0.65)
+2. sim(F, A) − sim(F, B) ≥ MARGEM              (⚠ ver nota)
+3. sim(F, B) < SEPARAÇÃO                        (0.50)
+```
+
+### ⚠️ NOTA CONSTITUCIONAL SOBRE A MARGEM (G-ATT-1)
+
+O valor MARGEM ≥ 0.15 registado em MEMORY-LOOP-SOVEREIGN.md §XV.3 é
+**PROVISÓRIO — declarado, não medido**. O S10-CONFRONT falhou antes de
+produzir os números de calibração; nenhuma corrida de medição sustenta
+ainda o 0.15.
+
+*"A number without a measurement run is not a number."* — o axioma aplica-se
+às nossas próprias réguas.
+
+**Caminho de regularização (aprovado, pendente execução):**
+
+```
+CLOSE Alejandro (selado 0.8763)  +  CLOSE Couto (selado 0.8811)
+            ↓                              ↓
+                    Pillow compose
+                          ↓
+               Disambiguation Gate measure
+                          ↓
+                   MARGIN real observado
+                          ↓
+              Substituir 0.15 pelo valor empírico
+```
+
+Frame de calibração composto a partir dos CLOSEs selados de Alejandro e
+Couto (par mais apertado: 0.4498) — custo zero de geração, Gate corrido
+sobre ele, margem derivada dos números reais. Até essa corrida, toda a
+atribuição que dependa da margem é marcada `margin_basis: PROVISIONAL`.
+
+O frame de calibração é instrumento de bancada (como carta de cores) —
+**nunca entra no filme**.
 
 ---
 
-## §6. Fluxo de Produção
+## 6. Metadata Schema (por shot, obrigatório a partir da selagem)
 
-```
-1. CLOSE-UP        → Estabelece identidade (FORENSE ≥0.75)
-                     ↓
-2. CUT             → A identidade viaja vestida
-                     ↓
-3. OTS/TWO/WIDE    → Regime NARRATIVO ou OPERACIONAL
-                     ↓
-4. [Opcional]      → Voltar a CLOSE para reforçar
-```
-
-**Regra:** Nunca depender de NARRATIVO sem FORENSE prévio na mesma sequência.
-O espectador precisa de ver a cara antes de aceitar a silhueta.
-
----
-
-## §7. Notas de Calibração
-
-### ⚠️ MARGIN ≥0.15 — PROVISÓRIO
-
-O threshold de margem mínima para Two-Shot Disambiguation é actualmente
-baseado em intuição arquitectural, **não em medição empírica**.
-
-**Calibração necessária:**
-1. Criar frame de calibração com dois personagens de inter-anchor sim ~0.45
-2. Variar poses/iluminação
-3. Medir margem real de atribuição
-4. Substituir 0.15 pelo valor empírico
-
-**Fluxo:** CCode grava draft → frame de calibração → margem real → selar gramática
-
-### Matriz 15-Pares (em progresso)
-
-```
-        Vance   Couto   Alejandro  Helena  Gabi  Lucas
-Vance     —     0.1765   0.0570      ?       ?     ?
-Couto           —        0.4498      ?       ?     ?
-Alejandro                  —         ?       ?     ?
-Helena                               —       ?     ?
-Gabi                                         —     ?
-Lucas                                              —
-
-Medidas: 3/15 (20%)
-Par mais apertado: Alejandro×Couto (0.4498) — stress test passed
+```yaml
+shot_id: S10-OTS-01
+type: OVER-THE-SHOULDER            # Parte B
+characters:
+  - id: alejandro-valenzuela
+    regime: FORENSE
+    anchor: ALEJANDRO_v1
+    score: null                     # preenchido pela corrida
+  - id: marcus-couto
+    regime: NARRATIVO
+    device: over-the-shoulder
+    costume_anchor: "fato cinza"
+    identity_source: S10-CLOSE-COUTO
+    identity_via: CORTE
+cinema_decision: null               # APPROVED/REJECTED (poder Cinema)
+forensic_decision: null             # número ou N/A-declarado (poder Forense)
+margin_basis: PROVISIONAL           # até calibração
 ```
 
 ---
 
-## §8. Axiomas Derivados
+## 7. Gates desta Gramática
+
+| Gate | Pergunta | Verificação |
+|------|----------|-------------|
+| G-SG3-1 | Todo o personagem no frame tem regime declarado? | metadata completo |
+| G-SG3-2 | Todo o NARRATIVO cita identity_source FORENSE? | ponteiro para shot selado |
+| G-SG3-3 | Todo o FORENSE tem número com corrida? | G-ATT-1 herdado |
+| G-SG3-4 | Atribuição multi-face usa margem medida? | margin_basis ≠ PROVISIONAL |
+| G-SG3-5 | TWO-SHOT FORENSE usou referência de imagem? | método de geração registado |
+
+---
+
+## 8. Receipt de Selagem
+
+```
+RECEIPT_ID:    {PENDING}
+CONTENT_HASH:  sha256:{PENDING}
+CHAIN_PARENT:  SHOT-GRAMMAR-002
+SEALED_BY:     {PENDING — Human Dragon}
+```
+
+(Receipt em sidecar após selagem, conforme padrão XV.2.)
+
+---
+
+## 9. Axiomas desta Gramática
+
+> *"O figurino reconhece; o rosto atesta."*
 
 > *"A identidade nasce no CLOSE e viaja pelo corte, vestida."*
 
-> *"O gerador cria identidade; não reproduz identidade."*
+> *"Oclusão declarada não é falha — é linguagem."*
 
-> *"A relação nasce no CORTE, não na composição."*
+> *"O gerador cria identidade; não reproduz identidade."* (FINDING 10 Jun)
 
-> *"WIDE é visibilidade. CLOSE é prova. O corte é a ponte."*
-
-> *"Text-to-video é generativo, não reprodutivo."*
+> *"A margem que não foi medida não é margem — é palpite com farda."*
 
 ---
 
-## §9. Referências
+## 10. Fluxo de Produção por Tipo
+
+| Tipo | Método | Gate |
+|------|--------|------|
+| CLOSE | Runway Gen-4 + Anti-Movement Medicine | SPINE-CAST ≥0.75 |
+| OVER-THE-SHOULDER | Runway + regime misto declarado | G-SG3-1, G-SG3-2 |
+| TWO-SHOT MEDIBLE | Image-to-video OU composição | G-SG3-4, G-SG3-5 |
+| WIDE COREOGRÁFICO | Text-to-video (identidade não prometida) | Cinema only |
+| INSERT / POV | Livre | Contexto de montagem |
+
+---
+
+## 11. Referências
 
 | Documento | Conteúdo |
 |-----------|----------|
-| `DOCTRINE-CINEMA-FORENSIC-SEPARATION.md` | Wide = Cinema, Close = Forense |
-| `DOCTRINE-HIOS-ATTESTATION-001.md` | Gates de attestation (G-ATT-1 a G-ATT-5) |
-| `FINDING-S10-CONFRONT-20260610.md` | Stress test negativo que validou Wide+Close |
+| `production/SHOT-GRAMMAR-001.md` | Método por tipo de plano, Disambiguation Gate |
+| `production/SHOT-GRAMMAR-002.md` | Taxonomia de FAIL (5 pernas) |
+| `production/DOCTRINE-CINEMA-FORENSIC-SEPARATION.md` | Separação Cinema / Forense |
+| `production/DOCTRINE-HIOS-ATTESTATION-001.md` | Gates de attestation (G-ATT-1..5) |
+| `production/FINDING-S10-CONFRONT-20260610.md` | Stress test negativo Wide+Close |
 | `SPINE-LESSONS-LEARNED.md` | Anti-Movement Medicine |
-| `disambiguation_gate.py` | Implementação do Disambiguation Gate |
+| `production/disambiguation_gate.py` | Implementação do Gate |
 
 ---
 
-## §10. Estado
-
-```
-DRAFT:         SHOT-GRAMMAR-003 v0.1
-PENDING:       Calibração do MARGIN threshold
-VALIDATED_BY:  S10-CONFRONT stress test (negative validation)
-DESCE_DE:      DOCTRINE-HIOS-ATTESTATION-001 · G-ATT-1
-```
-
----
+*DRAFT preparado pelo Guardian (Witness) sobre resultados empíricos do CCode (Architect)*
+*Merge v0.2: CCode reconciliou ambos os drafts preservando chain_parent e INSERT/POV*
+*Proposta ≠ Execução. A selagem pertence ao Human Dragon.*
 
 *Liga IA+H · WINDI Publishing House · 10 Jun 2026*
-*"Um número sem corrida de medição não é um número."*
-*"Uma gramática sem calibração é um rascunho."*
+*OM SHANTI 🐉*
