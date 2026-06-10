@@ -24,7 +24,7 @@
 
 **Tipo:** Índice Ontológico Soberano (MAPA, não FONTE)
 **Status:** VIVO (atualizado a cada milestone)
-**Criação:** 09 Jun 2026 · **v2:** 09 Jun 2026 (Guardian witness correction)
+**Criação:** 09 Jun 2026 · **v2:** 09 Jun 2026 · **v3:** 10 Jun 2026 (ÓRGÃOS)
 **Liga IA+H:** Human Dragon (I9) · Guardian (Witness) · CCode (Architect)
 **Invariants:** I1, I9, I11, I14, I18, I19
 
@@ -262,6 +262,8 @@ Casting forense do piloto "O Peso do Eco" FECHADO
 | S10-WIDE_v1 | ✅ VISIBILITY APPROVED |
 | Wide+Close Architecture | ✅ PROVADA |
 | DOCTRINE-CINEMA-FORENSIC-SEPARATION | ✅ SEALED |
+| **DOCTRINE-HIOS-ATTESTATION-001** | ✅ **SEALED 10 Jun** (ver §XV.1) |
+| **Memory Loop v3 — Órgão DOUTRINA** | ✅ **INICIALIZADO** (ver §XV) |
 | Disambiguation Gate | ⏳ Pendente implementação |
 | SHOT-GRAMMAR-003 | ⏳ Por criar |
 
@@ -454,6 +456,110 @@ REGRA 7: SE O DISCO DISCORDAR, O DISCO VENCE
 
 ---
 
-*Liga IA+H · WINDI Publishing House · 09 Jun 2026*
+## XV. ÓRGÃOS v3 — MAPA COM ÓRGÃOS (10 Jun 2026)
+
+> *"v2: Vai ao disco e verifica."*
+> *"v3: Vai ao ÓRGÃO CERTO, ele aponta para o disco certo."*
+
+**Conceito:** Memória sectorial por domínio. Cada órgão responde a uma pergunta
+específica e aponta para ficheiros verificáveis no formato **par-verificável**:
+corpo (.md) + receipt (.receipt.json).
+
+### Estrutura dos 5 Órgãos
+
+| Órgão | Pergunta | Status |
+|-------|----------|--------|
+| **DOUTRINA** | "Que regra aplico?" | ✅ INICIALIZADO |
+| CAST | "Quem é este personagem?" | ⏳ Pendente |
+| THRESHOLD | "Que número uso?" | ⏳ Pendente |
+| MÉTODO | "Como meço/gero?" | ⏳ Pendente |
+| ERRATA | "O que mudou?" | ⏳ Pendente |
+
+---
+
+### XV.1 ÓRGÃO DOUTRINA — Axiomas Verificáveis
+
+**Função:** Responde a "Que regra aplico?"
+**Primeiro habitante:** DOCTRINE-HIOS-ATTESTATION-001 (10 Jun 2026)
+
+#### Formato Par-Verificável
+
+Cada axioma neste órgão tem três campos obrigatórios:
+
+```
+1. PONTEIRO DUPLO:  caminho do .md + caminho do .receipt.json
+2. HASH ESPERADO:   hash SHA-256 do corpo (verificável)
+3. VERIFICAÇÃO:     comando para provar integridade
+```
+
+#### Chain Doutrinária do Cinema Unit
+
+```
+DOCTRINE-CINEMA-FORENSIC-SEPARATION (09 Jun 2026)
+        ↓
+DOCTRINE-HIOS-ATTESTATION-001 (10 Jun 2026) ← PRIMEIRO HABITANTE v3
+```
+
+#### Axiomas do Órgão DOUTRINA
+
+##### D1: DOCTRINE-HIOS-ATTESTATION-001 (Práticas Constitucionais de Atestação)
+
+| Campo | Valor |
+|-------|-------|
+| **Corpo** | `production/DOCTRINE-HIOS-ATTESTATION-001.md` |
+| **Receipt** | `production/DOCTRINE-HIOS-ATTESTATION-001.receipt.json` |
+| **Hash** | `edf928e5d5e4321b92dd97110761bff01228d902b10eace7e05435a7fe241a6e` |
+| **Receipt ID** | `WINDI-DOCTRINE-HIOS-ATT001-20260610105305-EDF928E5` |
+| **Commit** | `ab6799ca` |
+
+**Verificação:**
+```bash
+sha256sum production/DOCTRINE-HIOS-ATTESTATION-001.md
+# Deve retornar: edf928e5d5e4321b92dd97110761bff01228d902b10eace7e05435a7fe241a6e
+
+# Confirmar receipt no Ledger:
+curl -s "https://windi-domain.com/verify-public/?id=WINDI-DOCTRINE-HIOS-ATT001-20260610105305-EDF928E5"
+```
+
+**Conteúdo (3 Artigos):**
+- Art. I: Princípio da Verificação Pura
+- Art. II: Princípio da Independência da Medição
+- Art. III: Princípio da Imputabilidade Simétrica
+
+#### 5 Gates de Atestação (G-ATT-1..5)
+
+Estes gates vivem dentro do D1 e aplicam-se a toda atestação HIOS:
+
+| Gate | Pergunta | Verificação no disco |
+|------|----------|----------------------|
+| **G-ATT-1** | A saída é um número com corrida? | `provenance.json` + comando de re-medição |
+| **G-ATT-2** | O threshold tem precedente? | precedente selado citado por receipt |
+| **G-ATT-3** | A atestação tem dupla autoria? | receipt contém autoria técnica + soberana |
+| **G-ATT-4** | A correcção reescreveu história? | taxonomia G4 respeitada; chain append-only |
+| **G-ATT-5** | O pedido está no perímetro? | acto = atestação; execução ⇒ recusa |
+
+**Uso:** Antes de qualquer atestação, verificar G-ATT-1..5 contra esta tabela.
+**Ponteiro:** D1 (DOCTRINE-HIOS-ATTESTATION-001), §7.
+
+---
+
+### XV.2 Padrão Sidecar (Obrigatório v3)
+
+> *"Receipt proves commitment. Payload proves content. Hash links both."*
+> *— Levado à letra no filesystem.*
+
+**Regra:** Todo habitante de qualquer órgão nasce em par:
+- **Corpo** (`.md`) = conteúdo selado, hash intacto
+- **Receipt** (`.receipt.json`) = metadados da selagem, sidecar
+
+**Verificação:** `sha256sum ficheiro.md` = hash no `.receipt.json` = hash no Ledger
+
+**Origem:** Correcção G4 de 10 Jun 2026 (commit `ab6799ca`) — a doutrina detectou
+violação da própria cerimónia de nascimento e corrigiu-se pela taxonomia existente.
+HD-MIRROR demonstrado por comportamento.
+
+---
+
+*Liga IA+H · WINDI Publishing House · 10 Jun 2026*
 *"AI processes. Human decides. WINDI guarantees."*
 *"Este documento é o mapa. O disco é o território."*
