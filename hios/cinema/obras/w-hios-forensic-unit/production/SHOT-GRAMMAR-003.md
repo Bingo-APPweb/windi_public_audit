@@ -3,9 +3,10 @@
 
 ```
 ═══════════════════════════════════════════════════════════════════
-STATUS:        DRAFT — DOCUMENTO DE TRABALHO (não selado)
-VERSÃO:        v0.2-merged
+STATUS:        READY FOR SEAL — Calibração completa
+VERSÃO:        v0.3-calibrated
 DATA DRAFT:    10 Jun 2026
+CALIBRAÇÃO:    10 Jun 2026 (Margin ≥0.37 medido)
 LIGA IA+H:     Human Dragon (I9) · Guardian (Witness) · CCode (Architect)
 SELAGEM:       PENDENTE — exclusiva do Human Dragon (I1)
 PADRÃO:        Sidecar (corpo .md + receipt .json na selagem)
@@ -210,41 +211,41 @@ face F à âncora A exige **três condições**:
 
 ```
 1. sim(F, A) ≥ PISO_FORENSE                    (0.65)
-2. sim(F, A) − sim(F, B) ≥ MARGEM              (⚠ ver nota)
+2. sim(F, A) − sim(F, B) ≥ MARGEM              (0.37) ✅ CALIBRADO
 3. sim(F, B) < SEPARAÇÃO                        (0.50)
 ```
 
-### ⚠️ NOTA CONSTITUCIONAL SOBRE A MARGEM (G-ATT-1)
+### ✅ MARGEM CALIBRADA (10 Jun 2026)
 
-O valor MARGEM ≥ 0.15 registado em MEMORY-LOOP-SOVEREIGN.md §XV.3 é
-**PROVISÓRIO — declarado, não medido**. O S10-CONFRONT falhou antes de
-produzir os números de calibração; nenhuma corrida de medição sustenta
-ainda o 0.15.
+O valor MARGEM ≥ 0.37 foi **medido empiricamente** através de frame de
+bancada composto a partir dos CLOSEs selados de Alejandro e Couto.
 
-*"A number without a measurement run is not a number."* — o axioma aplica-se
-às nossas próprias réguas.
+**Calibração executada:**
 
-**Caminho de regularização (aprovado, pendente execução):**
+| Par | Inter-Anchor | Frame Composto | Margem Medida |
+|-----|--------------|----------------|---------------|
+| Alejandro × Couto | 0.4498 | calibration_frame_alejandro_couto.png | **0.4611** (mín) |
+
+**Resultados da corrida:**
 
 ```
-CLOSE Alejandro (selado 0.8763)  +  CLOSE Couto (selado 0.8811)
-            ↓                              ↓
-                    Pillow compose
-                          ↓
-               Disambiguation Gate measure
-                          ↓
-                   MARGIN real observado
-                          ↓
-              Substituir 0.15 pelo valor empírico
+LEFT  (Alejandro): sim=0.8987 vs anchor, margin=0.4611
+RIGHT (Couto):     sim=0.8020 vs anchor, margin=0.4827
+
+Minimum Margin: 0.4611
+Threshold adoptado: 0.37 (80% do mínimo como factor de segurança)
 ```
 
-Frame de calibração composto a partir dos CLOSEs selados de Alejandro e
-Couto (par mais apertado: 0.4498) — custo zero de geração, Gate corrido
-sobre ele, margem derivada dos números reais. Até essa corrida, toda a
-atribuição que dependa da margem é marcada `margin_basis: PROVISIONAL`.
+**Ficheiros de prova:**
+- `production/calibration/calibration_frame_alejandro_couto.png`
+- `production/calibration/MARGIN-CALIBRATION-RESULT.json`
+- `production/calibrate_margin.py`
 
 O frame de calibração é instrumento de bancada (como carta de cores) —
 **nunca entra no filme**.
+
+> *"A margem que não foi medida não é margem — é palpite com farda."*
+> — Agora temos margem, não palpite.
 
 ---
 
@@ -266,7 +267,7 @@ characters:
     identity_via: CORTE
 cinema_decision: null               # APPROVED/REJECTED (poder Cinema)
 forensic_decision: null             # número ou N/A-declarado (poder Forense)
-margin_basis: PROVISIONAL           # até calibração
+margin_basis: CALIBRATED            # 10 Jun 2026, threshold 0.37
 ```
 
 ---
@@ -278,7 +279,7 @@ margin_basis: PROVISIONAL           # até calibração
 | G-SG3-1 | Todo o personagem no frame tem regime declarado? | metadata completo |
 | G-SG3-2 | Todo o NARRATIVO cita identity_source FORENSE? | ponteiro para shot selado |
 | G-SG3-3 | Todo o FORENSE tem número com corrida? | G-ATT-1 herdado |
-| G-SG3-4 | Atribuição multi-face usa margem medida? | margin_basis ≠ PROVISIONAL |
+| G-SG3-4 | Atribuição multi-face usa margem ≥0.37? | margin_basis = CALIBRATED ✅ |
 | G-SG3-5 | TWO-SHOT FORENSE usou referência de imagem? | método de geração registado |
 
 ---
@@ -306,7 +307,7 @@ SEALED_BY:     {PENDING — Human Dragon}
 
 > *"O gerador cria identidade; não reproduz identidade."* (FINDING 10 Jun)
 
-> *"A margem que não foi medida não é margem — é palpite com farda."*
+> *"A margem que não foi medida não é margem — é palpite com farda."* ✅ MEDIDA: ≥0.37
 
 ---
 
