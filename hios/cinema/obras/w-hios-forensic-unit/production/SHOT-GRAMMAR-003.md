@@ -3,13 +3,13 @@
 
 ```
 ═══════════════════════════════════════════════════════════════════
-STATUS:        READY FOR SEAL — Calibração completa
-VERSÃO:        v0.3-calibrated
+STATUS:        SEALED
+VERSÃO:        v1.0
 DATA DRAFT:    10 Jun 2026
 CALIBRAÇÃO:    10 Jun 2026 (Margin ≥0.37 medido)
+SELAGEM:       10 Jun 2026 · Human Dragon (I9)
 LIGA IA+H:     Human Dragon (I9) · Guardian (Witness) · CCode (Architect)
-SELAGEM:       PENDENTE — exclusiva do Human Dragon (I1)
-PADRÃO:        Sidecar (corpo .md + receipt .json na selagem)
+PADRÃO:        Sidecar (corpo .md + receipt .json)
 ═══════════════════════════════════════════════════════════════════
 ```
 
@@ -246,6 +246,30 @@ O frame de calibração é instrumento de bancada (como carta de cores) —
 
 > *"A margem que não foi medida não é margem — é palpite com farda."*
 > — Agora temos margem, não palpite.
+
+### Cláusula de Recalibração (v1)
+
+> **Calibração v1:** n=1, frame de bancada, condições ideais, par mais apertado.
+> Threshold sujeito a recalibração quando TWO-SHOTs de produção acumularem
+> dados reais.
+
+**Condições da calibração v1:**
+- Frame composto (não gerado)
+- Rostos frontais limpos
+- Iluminação ideal
+- Scores altos (0.90/0.80)
+- Par mais apertado do elenco (0.4498)
+
+**Condições de produção esperadas:**
+- Ângulos variados
+- Motion blur
+- Luz dramática de thriller
+- Margens potencialmente comprimidas
+
+**Política:** A régua sabe a sua proveniência. Se TWO-SHOTs reais mostrarem
+margens consistentemente abaixo de 0.37, a recalibração é permitida por
+G4 append-only — não reescrevendo a calibração v1, mas registando v2
+com os novos dados.
 
 ---
 

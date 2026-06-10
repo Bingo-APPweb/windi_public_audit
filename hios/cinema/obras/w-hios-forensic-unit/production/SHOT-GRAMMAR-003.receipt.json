@@ -1,0 +1,49 @@
+{
+  "receipt_id": "WINDI-SG003-20260610143500-3F6722C2",
+  "timestamp": "2026-06-10T14:35:00.000000",
+  "document": {
+    "title": "SHOT-GRAMMAR-003: Taxonomia Relacional e Regimes de Reconhecimento",
+    "version": "v1.0",
+    "file": "production/SHOT-GRAMMAR-003.md",
+    "content_hash": "sha256:3f6722c2d4ec921f9987f2b4e460e374d7e25cb1dcb2b04ca9f02917c9a4e306"
+  },
+  "chain": {
+    "parent": "SHOT-GRAMMAR-002",
+    "position": "SG-001 → SG-002 → SG-003",
+    "doctrine": "DOCTRINE-HIOS-ATTESTATION-001"
+  },
+  "calibration": {
+    "version": "v1",
+    "frame": "production/calibration/calibration_frame_alejandro_couto.png",
+    "result": "production/calibration/MARGIN-CALIBRATION-RESULT.json",
+    "par_tested": "Alejandro × Couto (inter-anchor 0.4498)",
+    "margin_measured": 0.4611,
+    "threshold_adopted": 0.37,
+    "conditions": "n=1, bench frame, ideal conditions, tightest pair"
+  },
+  "contributors": {
+    "human_dragon": "I9 gate approval + seal authorization",
+    "guardian": "Witness + draft original + recalibration clause",
+    "ccode": "Architect + merge + calibration run"
+  },
+  "gates_closed": [
+    "G-SG3-1: Regime declaration",
+    "G-SG3-2: NARRATIVO cites FORENSE source",
+    "G-SG3-3: FORENSE has measurement run",
+    "G-SG3-4: Margin ≥0.37 CALIBRATED",
+    "G-SG3-5: TWO-SHOT uses image reference"
+  ],
+  "key_axioms": [
+    "O figurino reconhece; o rosto atesta.",
+    "A identidade nasce no CLOSE e viaja pelo corte, vestida.",
+    "Oclusão declarada não é falha — é linguagem.",
+    "O gerador cria identidade; não reproduz identidade.",
+    "A margem que não foi medida não é margem — é palpite com farda."
+  ],
+  "verification": {
+    "command": "sha256sum production/SHOT-GRAMMAR-003.md",
+    "expected": "3f6722c2d4ec921f9987f2b4e460e374d7e25cb1dcb2b04ca9f02917c9a4e306"
+  },
+  "sealed_by": "Human Dragon (Jober Mögele Correa)",
+  "liga_iah": "WINDI Publishing House · 10 Jun 2026"
+}
