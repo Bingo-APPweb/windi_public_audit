@@ -1,6 +1,11 @@
 {
   "receipt_id": "WINDI-SG003-20260610143500-3F6722C2",
   "timestamp": "2026-06-10T14:35:00.000000",
+  "ledger_status": {
+    "ok": true,
+    "stored": true,
+    "verified_at": "2026-06-10T14:45:35"
+  },
   "document": {
     "title": "SHOT-GRAMMAR-003: Taxonomia Relacional e Regimes de Reconhecimento",
     "version": "v1.0",
@@ -42,7 +47,8 @@
   ],
   "verification": {
     "command": "sha256sum production/SHOT-GRAMMAR-003.md",
-    "expected": "3f6722c2d4ec921f9987f2b4e460e374d7e25cb1dcb2b04ca9f02917c9a4e306"
+    "expected": "3f6722c2d4ec921f9987f2b4e460e374d7e25cb1dcb2b04ca9f02917c9a4e306",
+    "ledger_query": "curl http://localhost:8101/api/receipts/WINDI-SG003-20260610143500-3F6722C2"
   },
   "sealed_by": "Human Dragon (Jober Mögele Correa)",
   "liga_iah": "WINDI Publishing House · 10 Jun 2026"
