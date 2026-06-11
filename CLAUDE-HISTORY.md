@@ -6,6 +6,84 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 11 Jun 2026 (manhã) — TWIN-B-SEC-001 Security Event + Ollama Fase 0 Prep
+
+**Duração:** ~1.5h | **Status:** ✅ SECURITY EVENT SEALED
+**Liga IA+H:** Human Dragon (I9) · Guardian (Claude.ai web) · CCode (Opus 4.5)
+**Invariants:** I9, I11, I14
+**Natureza:** Security Incident Response + Infrastructure Hardening
+**Receipt:** `TWIN-B-SEC-001`
+
+### Contexto
+
+Sessão iniciada para executar Ollama Fase 0 (pendente 4x). Auditoria do TWIN B (85.215.131.0 / windi-b) revelou vulnerabilidade de binding: Ollama escutava em 0.0.0.0:11434.
+
+### Descoberta — Defesa em Profundidade Funcionou
+
+| Camada | Estado Antes | Protecção |
+|--------|--------------|-----------|
+| **Layer 1 (Binding)** | 0.0.0.0:11434 | ❌ EXPOSTO |
+| **Layer 2 (Firewall)** | ufw default-deny + 11434 ALLOW only 87.106.29.233 | ✅ ACTIVO |
+
+**Conclusão:** Binding misconfigured, mas firewall segurou. Exposição externa efectiva: **ZERO** durante toda a janela (host up desde 2026-05-02).
+
+### Auditoria Forense
+
+| Métrica | Valor | Veredicto |
+|---------|-------|-----------|
+| API requests externos | 0 | 🟢 LIMPO |
+| Logins suspeitos | 0 | 🟢 LIMPO |
+| Modelos | mistral:7b (esperado §227) | 🟢 ÍNTEGRO |
+| Outras portas 0.0.0.0 | SSH (ufw allow), LLMNR (default deny) | 🟢 COBERTAS |
+
+### Correcção Aplicada
+
+```bash
+# /etc/systemd/system/ollama.service.d/windi-sovereign.conf
+[Service]
+Environment="OLLAMA_HOST=127.0.0.1:11434"
+```
+
+**Resultado:** Binding fechado para localhost. Ambas camadas agora hardened.
+
+### Evidência Ancorada
+
+| Campo | Valor |
+|-------|-------|
+| Ficheiro | `/opt/windi/data/twin-b-sec-001-forensic.txt` |
+| SHA256 | `d21d6f042d48e8df99fbc7074637a459030e247214469bd3ede9d7d364d1a881` |
+
+### Arquitectura Verify Circulante (Artefactos Recebidos)
+
+SVGs transferidos para /opt/windi/:
+- `verify_circulante_arquitectura.svg` — Alto nível: pontos de contacto → Verify núcleo → Ledger → Ollama explainer
+- `verify_v2_technical_architecture.svg` — 3 modos (QR WINDI, Hash Inspector, QR externo) + W-VERIFY-001 Agent Layer
+
+**Conceito Receipt Explainer:** Ollama traduz factos verificados para linguagem humana, tier FREE, zero tokens externos. Verificação permanece determinística.
+
+### Convergência do Conselho
+
+| Dragon | Contribuição |
+|--------|--------------|
+| **Architect (GPT)** | Divisão estratégica 40% Ledger / 10% Cinema, "o conselheiro carrega o critério; o Ledger carrega o facto" |
+| **Guardian (web)** | Runbook v1.1, gate forense, 3 ajustes ao receipt |
+| **CCode (CLI)** | Execução da correcção, POST ao Ledger |
+
+### Próximos Passos
+
+- [ ] B0 completo TWIN B — RAM/CPU/disco/modelos
+- [ ] B4 measurement run — tokens/s do mistral:7b
+- [ ] LLMNR cleanup (systemd-resolved LLMNR=no) — higiene Fase 1
+- [ ] Template Registry v1.2.0 — análise pendente
+
+### Receipts da Sessão
+
+| Receipt | Hash/ID | Descrição |
+|---------|---------|-----------|
+| TWIN-B-SEC-001 | `d21d6f042d...` | Security Event — Ollama Binding Hardening |
+
+---
+
 ## § SESSÃO 07 Jun 2026 (noite) — Gabi Santos 4/4 SEALED + First Female Character
 
 **Duração:** ~2h | **Status:** ✅ 4/4 SHOTS SELADOS

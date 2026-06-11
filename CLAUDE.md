@@ -104,7 +104,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-CMS-001 | :8055 | I9,I11,I14 | **LIVE** · Directus 10 · Ledger Bridge :8056 · Sweeper Timer · §219 Baptism of Externality |
 | W-SITES-001 | :8192 | I1,I9,I11,I12,I14 | **LIVE** v1.2-sprint3 · windisites.de · §246 6/6+T7adv · Microlog · Communiqué · `4CE30817`+`4DD83B15` |
 | W-MAIL-001 | :25,:587,:993,:8888 | I1,I9,I11,I12,I14 | **LIVE** · Sovereign Email · DACP-v1 · Dual DKIM · SnappyMail · §224-226 |
-| W-OLLAMA-001 | B:11434 | I9,I10,I13 | **LIVE** · Server Gêmeo (85.215.131.0) · mistral:7b · Galho B · §227 |
+| W-OLLAMA-001 | B:11434 | I9,I10,I13 | **LIVE** · Server Gêmeo (85.215.131.0 / windi-b) · mistral:7b · Galho B · §227 · **HARDENED** 11 Jun `TWIN-B-SEC-001` |
 | W-LEXICON-001 | :8193 | I9,I10,I13,I14 | **LIVE** v0.3.0 · TWO-STAGE Model · Stage 2 Evaluator · Paper-001 A.3 SEALED |
 | W-CAP-001 | :8194 | I1,I9,I11,I14 | **LIVE** · Capability Tokens · Single-use · SaaS Gate · §229 |
 | W-BERCARIO-001 | :8195 | I1,I9,I11,I14 | **LIVE** · Plenitude Tracker · Service Maturity · §230 |
@@ -548,6 +548,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 11 Jun | **TWIN-B-SEC-001** Security Event — Ollama binding hardened · Defense-in-depth confirmed · `d21d6f04...` ✅ |
 | 07 Jun | **Vance 10/10 SEALED + Anti-Movement Medicine** — 3 re-renders · Doutrina Universal · Threshold Aceitação · `SPINE-LESSONS-LEARNED.md` ✅ |
 | 05 Jun | **Vance v2 Canonical + I-LIKENESS (candidate)** — Likeness gate respected · 80% success (8/10 shots) · Cross-subject pattern · `c3f5e031` ✅ |
 | 04 Jun | **Paper-001 Errata + SHOT-GRAMMAR-001** — Valores Joey corrigidos · Método de produção por tipo de plano · Vance barba · `f5a4d192` ✅ |
