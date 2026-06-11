@@ -44,6 +44,7 @@ from forensic_ledger import (
     upsert_receipt,
     list_receipts,
     get_receipt,
+    get_receipt_by_suffix,  # Gate 0 fix: short ID lookup
     reconcile_hashes,
     aggregate_warroom,
     count_receipts,
@@ -230,9 +231,13 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
             })
 
         # ── /api/receipts/<id> ──
+        # Gate 0 fix: supports both full IDs and short suffixes (e.g., DBED5A85)
         elif path.startswith("/api/receipts/") and path.count("/") == 3:
             receipt_id = path.split("/")[-1]
             r = get_receipt(receipt_id)
+            if not r:
+                # Gate 0 fix: try suffix lookup for short codes (QR, Verify links)
+                r = get_receipt_by_suffix(receipt_id)
             if r:
                 self._json(200, {"ok": True, "receipt": r})
             else:

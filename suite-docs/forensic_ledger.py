@@ -274,6 +274,37 @@ def get_receipt(
         con.close()
 
 
+def get_receipt_by_suffix(
+    suffix: str,
+    db_path: str = DEFAULT_DB_PATH,
+) -> Optional[Dict[str, Any]]:
+    """
+    Get a receipt by ID suffix (last N characters).
+    Used for short codes in QR codes and Verify links.
+    Gate 0 fix: enables lookup by 8-char suffix like 'DBED5A85'.
+    """
+    if not suffix or len(suffix) < 6:
+        return None  # Minimum 6 chars for uniqueness
+
+    con = _connect(db_path)
+    try:
+        # Search for ID ending with the suffix (case-insensitive)
+        row = con.execute(
+            "SELECT * FROM receipts WHERE id LIKE ? ORDER BY created_at DESC LIMIT 1",
+            (f"%{suffix}",)
+        ).fetchone()
+        if not row:
+            return None
+        d = dict(row)
+        d["tags"] = json.loads(d.pop("tags_json", "[]") or "[]")
+        d["flags"] = json.loads(d.pop("flags_json", "[]") or "[]")
+        d["metadata"] = json.loads(d.pop("metadata_json", "{}") or "{}")
+        d["_lookup_method"] = "suffix"  # Indicate how it was found
+        return d
+    finally:
+        con.close()
+
+
 def reconcile_hashes(
     hashes: List[str],
     actor: Optional[str] = None,

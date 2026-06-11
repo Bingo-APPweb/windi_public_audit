@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="pt" data-theme="noir">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>WINDI SEAL — Câmara de Proveniência</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--font:'Bricolage Grotesque',system-ui,sans-serif;--mono:'JetBrains Mono',monospace}
+[data-theme=noir]{--bg:#050508;--card:#0a0a10;--elevated:#101018;--border:#1a1a28;--text:#e8e6e1;--dim:#6a6a7a;--gold:#c9a84c;--gold-dim:#8b7424;--green:#00ff88;--green-bg:rgba(0,255,136,.08);--green-glow:0 0 30px rgba(0,255,136,.3);--blue:#00d4ff;--blue-bg:rgba(0,212,255,.08);--amber:#ffaa00;--amber-bg:rgba(255,170,0,.08);--red:#ff4444;--red-bg:rgba(255,68,68,.08);--purple:#a855f7;--purple-bg:rgba(168,85,247,.08);--scan:rgba(0,255,136,.12)}
+[data-theme=klar]{--bg:#fafaf8;--card:#fff;--elevated:#f5f5f3;--border:#e0ded8;--text:#1a1a1a;--dim:#888;--gold:#8b7424;--gold-dim:#c9a84c;--green:#00aa55;--green-bg:rgba(0,170,85,.08);--green-glow:0 0 20px rgba(0,170,85,.2);--blue:#0088cc;--blue-bg:rgba(0,136,204,.08);--amber:#cc7700;--amber-bg:rgba(204,119,0,.08);--red:#cc2222;--red-bg:rgba(204,34,34,.08);--purple:#7c3aed;--purple-bg:rgba(124,58,237,.08);--scan:rgba(0,170,85,.08)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+.app{max-width:560px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+
+/* Header */
+.hdr{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border)}
+.logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:14px;color:var(--gold)}
+.logo-box{width:26px;height:26px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--bg)}
+.ctrl{display:flex;gap:4px}
+.ctrl button{background:var(--elevated);border:1px solid var(--border);color:var(--dim);padding:5px 8px;font-size:10px;font-family:var(--font);font-weight:600;cursor:pointer;border-radius:4px;transition:.2s}
+.ctrl button.on,.ctrl button:hover{background:var(--gold);color:var(--bg);border-color:var(--gold)}
+
+/* Mode Tabs */
+.mode-tabs{display:flex;border-bottom:1px solid var(--border)}
+.mode-tab{flex:1;padding:12px;background:transparent;border:none;color:var(--dim);font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;transition:.2s}
+.mode-tab:hover{color:var(--text)}
+.mode-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+
+/* Main */
+.main{flex:1;display:flex;flex-direction:column;padding:12px}
+
+/* ========== CAPTURE MODE ========== */
+.capture-zone{flex:1;display:flex;flex-direction:column;gap:12px}
+.viewfinder{flex:1;min-height:280px;background:var(--card);border:1px solid var(--border);border-radius:12px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.viewfinder video,.viewfinder img{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;z-index:1}
+#cameraFeed.mirror{transform:scaleX(-1)}
+.viewfinder-overlay{position:absolute;inset:0;pointer-events:none;z-index:2}
+.corner{position:absolute;width:24px;height:24px;border:2px solid var(--gold)}
+.corner.tl{top:10px;left:10px;border-right:none;border-bottom:none}
+.corner.tr{top:10px;right:10px;border-left:none;border-bottom:none}
+.corner.bl{bottom:10px;left:10px;border-right:none;border-top:none}
+.corner.br{bottom:10px;right:10px;border-left:none;border-top:none}
+.viewfinder-empty{text-align:center;color:var(--dim);z-index:1}
+.viewfinder-empty-icon{font-size:40px;margin-bottom:8px;opacity:.5}
+.viewfinder-empty-text{font-size:12px}
+.rec-indicator{position:absolute;top:10px;left:50%;transform:translateX(-50%);display:none;align-items:center;gap:6px;background:rgba(0,0,0,.85);padding:6px 12px;border-radius:16px;z-index:10;border:1px solid var(--red)}
+.rec-indicator.show{display:flex}
+.rec-dot{width:10px;height:10px;background:var(--red);border-radius:50%;animation:recPulse 1s infinite}
+@keyframes recPulse{0%,100%{opacity:1}50%{opacity:.4}}
+.rec-timer{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--red)}
+.cam-flip{position:absolute;bottom:10px;right:10px;width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,.75);border:2px solid var(--gold);color:#fff;font-size:18px;cursor:pointer;z-index:10;display:none;align-items:center;justify-content:center;transition:.2s}
+.cam-flip:hover{background:var(--gold)}
+.cam-flip.show{display:flex}
+.capture-modes{display:flex;gap:6px}
+.cap-btn{flex:1;padding:10px 6px;background:var(--card);border:1px solid var(--border);border-radius:8px;cursor:pointer;text-align:center;transition:.2s;font-family:var(--font)}
+.cap-btn:hover{border-color:var(--gold)}
+.cap-btn.active{border-color:var(--gold);background:var(--gold);color:var(--bg)}
+.cap-btn-icon{font-size:20px}
+.cap-btn-label{font-size:10px;font-weight:600;color:var(--dim);margin-top:2px}
+.cap-btn.active .cap-btn-label{color:var(--bg)}
+.hash-input{display:none;padding:10px;background:var(--card);border:1px solid var(--border);border-radius:8px}
+.hash-input.show{display:block}
+.hash-input input{width:100%;background:transparent;border:none;color:var(--text);font-family:var(--mono);font-size:11px;outline:none}
+.action-btn{padding:14px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));border:none;border-radius:10px;font-family:var(--font);font-size:14px;font-weight:700;color:var(--bg);cursor:pointer;transition:.2s}
+.action-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,168,76,.3)}
+.action-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* ========== EDITOR MODE ========== */
+.editor-zone{display:none;flex:1;flex-direction:column;gap:12px}
+.editor-zone.show{display:flex}
+.canvas-container{flex:1;min-height:320px;background:var(--card);border:1px solid var(--border);border-radius:12px;position:relative;overflow:hidden}
+#editorCanvas{width:100%;height:100%;display:block}
+.pip-video{position:absolute;border:3px solid var(--gold);border-radius:8px;cursor:move;box-shadow:0 4px 20px rgba(0,0,0,.5);z-index:10;overflow:hidden}
+.pip-video video{width:100%;height:100%;object-fit:cover}
+.pip-resize{position:absolute;bottom:-4px;right:-4px;width:16px;height:16px;background:var(--gold);border-radius:50%;cursor:se-resize}
+.editor-toolbar{display:flex;gap:6px;flex-wrap:wrap}
+.tool-btn{padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-family:var(--font);font-size:11px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:6px;transition:.2s}
+.tool-btn:hover{border-color:var(--gold);background:var(--elevated)}
+.tool-btn.active{background:var(--gold);color:var(--bg);border-color:var(--gold)}
+.tool-btn-icon{font-size:16px}
+.position-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:8px;background:var(--elevated);border-radius:8px}
+.pos-btn{padding:8px;background:var(--card);border:1px solid var(--border);border-radius:4px;cursor:pointer;font-size:10px;text-align:center;transition:.2s}
+.pos-btn:hover,.pos-btn.active{background:var(--gold);color:var(--bg);border-color:var(--gold)}
+.text-overlay-input{padding:10px;background:var(--card);border:1px solid var(--border);border-radius:8px}
+.text-overlay-input input{width:100%;background:transparent;border:none;color:var(--text);font-family:var(--font);font-size:13px;font-weight:600;outline:none}
+.text-overlay-input input::placeholder{color:var(--dim)}
+.editor-actions{display:flex;gap:8px}
+.editor-actions button{flex:1}
+
+/* ========== SCAN & RESULT (shared) ========== */
+.scan-zone,.result-zone{display:none;flex:1;flex-direction:column;gap:12px}
+.scan-zone.show,.result-zone.show{display:flex}
+.scan-hud{flex:1;background:var(--card);border:1px solid var(--border);border-radius:12px;position:relative;overflow:hidden;min-height:280px}
+.scan-preview{width:100%;height:100%;object-fit:cover;z-index:1}
+.scan-overlay{position:absolute;inset:0;z-index:2;pointer-events:none}
+.scan-line{position:absolute;width:100%;height:3px;background:linear-gradient(90deg,transparent 5%,var(--green) 50%,transparent 95%);box-shadow:var(--green-glow);animation:scanline 2s ease-in-out infinite;z-index:4}
+@keyframes scanline{0%{top:0}50%{top:100%}100%{top:0}}
+.scan-grid{position:absolute;inset:0;background-image:linear-gradient(var(--scan) 1px,transparent 1px),linear-gradient(90deg,var(--scan) 1px,transparent 1px);background-size:25px 25px;opacity:.3}
+.scan-terminal{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(5,5,8,.9));padding:20px 14px 14px;z-index:5}
+.scan-log{font-family:var(--mono);font-size:10px;color:var(--green);margin-bottom:6px;min-height:50px}
+.scan-log-line{opacity:0;transform:translateY(8px);animation:logIn .3s ease forwards}
+@keyframes logIn{to{opacity:1;transform:translateY(0)}}
+.scan-progress{height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.scan-progress-bar{height:100%;background:var(--green);width:0;transition:width .3s}
+.verdict-card{background:var(--card);border-radius:14px;padding:20px;text-align:center;border:2px solid var(--border)}
+.verdict-card.verified{border-color:var(--green);background:var(--green-bg)}
+.verdict-card.missing{border-color:var(--amber);background:var(--amber-bg)}
+.verdict-card.demo{border-color:var(--blue);background:var(--blue-bg)}
+.verdict-card.composition{border-color:var(--gold);background:rgba(201,168,76,.08)}
+.verdict-card.narrative{border-color:var(--purple);background:rgba(168,85,247,.08)}
+.verdict-icon{font-size:40px;margin-bottom:8px}
+.verdict-title{font-size:16px;font-weight:800;margin-bottom:4px}
+.verdict-card.verified .verdict-title{color:var(--green)}
+.verdict-card.missing .verdict-title{color:var(--amber)}
+.verdict-card.demo .verdict-title{color:var(--blue)}
+.verdict-card.composition .verdict-title{color:var(--gold)}
+.verdict-card.narrative .verdict-title{color:var(--purple)}
+.verdict-subtitle{font-size:12px;color:var(--dim)}
+.bio-card{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.bio-row{display:flex;align-items:center;padding:10px 14px;border-bottom:1px solid var(--border)}
+.bio-row:last-child{border-bottom:none}
+.bio-icon{font-size:14px;width:28px}
+.bio-label{font-size:9px;font-weight:600;color:var(--dim);text-transform:uppercase}
+.bio-value{font-size:12px;font-weight:600;margin-top:1px}
+.disclaimer{background:var(--elevated);border-radius:8px;padding:10px 12px;font-size:10px;color:var(--dim);line-height:1.4;border-left:3px solid var(--gold)}
+.actions{display:flex;gap:6px}
+.act-btn{flex:1;padding:10px;background:var(--card);border:1px solid var(--border);border-radius:6px;font-family:var(--font);font-size:11px;font-weight:600;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;transition:.2s}
+.act-btn:hover{border-color:var(--gold)}
+.act-btn.primary{background:var(--gold);color:var(--bg);border-color:var(--gold)}
+
+/* Footer */
+.ftr{text-align:center;padding:12px;font-size:9px;color:var(--dim);border-top:1px solid var(--border)}
+.ftr a{color:var(--gold);text-decoration:none}
+
+.hidden{display:none!important}
+@media(max-width:400px){.capture-modes,.editor-toolbar{flex-wrap:wrap}.cap-btn,.tool-btn{flex:1 1 45%}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="hdr">
+    <div class="logo"><div class="logo-box">W</div><span>WINDI SEAL</span></div>
+    <div class="ctrl">
+      <button id="langPT" class="on">PT</button>
+      <button id="langDE">DE</button>
+      <button id="langEN">EN</button>
+      <button id="themeToggle">☀️</button>
+    </div>
+  </header>
+
+  <!-- Mode Tabs -->
+  <div class="mode-tabs">
+    <button class="mode-tab active" data-mode="capture" id="tabCapture">📷 Capturar</button>
+    <button class="mode-tab" data-mode="editor" id="tabEditor">🎬 Comentar</button>
+  </div>
+
+  <main class="main">
+    <!-- ========== CAPTURE MODE ========== -->
+    <section class="capture-zone" id="captureZone">
+      <div class="viewfinder" id="viewfinder">
+        <video id="cameraFeed" autoplay playsinline muted style="display:none"></video>
+        <video id="capturedVideo" playsinline controls style="display:none"></video>
+        <img id="capturedImage" style="display:none">
+        <div class="viewfinder-overlay">
+          <div class="corner tl"></div><div class="corner tr"></div>
+          <div class="corner bl"></div><div class="corner br"></div>
+        </div>
+        <div class="rec-indicator" id="recIndicator">
+          <span class="rec-dot"></span>
+          <span class="rec-timer" id="recTimer">00:00</span>
+        </div>
+        <button class="cam-flip" id="camFlip">🔄</button>
+        <div class="viewfinder-empty" id="viewfinderEmpty">
+          <div class="viewfinder-empty-icon">🜂</div>
+          <div class="viewfinder-empty-text">Seleciona um modo</div>
+        </div>
+      </div>
+      <div class="capture-modes">
+        <button class="cap-btn" data-mode="camera"><div class="cap-btn-icon">📷</div><div class="cap-btn-label">Foto</div></button>
+        <button class="cap-btn" data-mode="video"><div class="cap-btn-icon">🎬</div><div class="cap-btn-label">Vídeo</div></button>
+        <button class="cap-btn" data-mode="audio"><div class="cap-btn-icon">🎙️</div><div class="cap-btn-label">Áudio</div></button>
+        <button class="cap-btn" data-mode="upload"><div class="cap-btn-icon">📄</div><div class="cap-btn-label">Upload</div></button>
+        <button class="cap-btn" data-mode="hash"><div class="cap-btn-icon">#️⃣</div><div class="cap-btn-label">Hash</div></button>
+      </div>
+      <div class="hash-input" id="hashInput"><input type="text" id="hashField" placeholder="sha256:... ou WINDI-DOC-..."></div>
+      <input type="file" id="fileInput" accept="image/*,video/*,.pdf" style="display:none">
+      <button class="action-btn" id="actionBtn" disabled><span id="actionLabel">REVELAR ORIGEM</span></button>
+    </section>
+
+    <!-- ========== EDITOR MODE ========== -->
+    <section class="editor-zone" id="editorZone">
+      <div class="canvas-container" id="canvasContainer">
+        <canvas id="editorCanvas"></canvas>
+        <div class="pip-video" id="pipVideo" style="display:none;width:120px;height:160px;bottom:10px;right:10px">
+          <video id="pipFeed" autoplay playsinline muted></video>
+          <div class="pip-resize"></div>
+        </div>
+      </div>
+
+      <div class="editor-toolbar">
+        <button class="tool-btn" id="btnBgImage"><span class="tool-btn-icon">🖼️</span>Background</button>
+        <button class="tool-btn" id="btnBgVideo"><span class="tool-btn-icon">📺</span>Vídeo BG</button>
+        <button class="tool-btn" id="btnPipCam"><span class="tool-btn-icon">👤</span>Minha Câmara</button>
+        <button class="tool-btn" id="btnAddText"><span class="tool-btn-icon">✏️</span>Texto</button>
+      </div>
+
+      <div class="position-grid" id="positionGrid" style="display:none">
+        <button class="pos-btn" data-pos="tl">↖️ Topo-E</button>
+        <button class="pos-btn" data-pos="tc">⬆️ Topo</button>
+        <button class="pos-btn" data-pos="tr">↗️ Topo-D</button>
+        <button class="pos-btn" data-pos="ml">⬅️ Meio-E</button>
+        <button class="pos-btn" data-pos="mc">⏺️ Centro</button>
+        <button class="pos-btn" data-pos="mr">➡️ Meio-D</button>
+        <button class="pos-btn" data-pos="bl">↙️ Base-E</button>
+        <button class="pos-btn" data-pos="bc">⬇️ Base</button>
+        <button class="pos-btn active" data-pos="br">↘️ Base-D</button>
+      </div>
+
+      <div class="text-overlay-input" id="textOverlayInput" style="display:none">
+        <input type="text" id="overlayText" placeholder="Escreve o teu comentário...">
+      </div>
+
+      <div class="editor-actions">
+        <button class="action-btn" id="btnCompose">🎞️ COMPOR & SELAR</button>
+      </div>
+
+      <input type="file" id="bgImageInput" accept="image/*" style="display:none">
+      <input type="file" id="bgVideoInput" accept="video/*" style="display:none">
+    </section>
+
+    <!-- ========== SCAN ========== -->
+    <section class="scan-zone" id="scanZone">
+      <div class="scan-hud">
+        <img id="scanPreviewImg" class="scan-preview">
+        <video id="scanPreviewVid" class="scan-preview" autoplay muted loop playsinline></video>
+        <canvas id="scanPreviewCanvas" class="scan-preview" style="display:none"></canvas>
+        <div class="scan-overlay">
+          <div class="scan-line"></div>
+          <div class="scan-grid"></div>
+          <div class="scan-terminal">
+            <div class="scan-log" id="scanLog"></div>
+            <div class="scan-progress"><div class="scan-progress-bar" id="scanProgress"></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== RESULT ========== -->
+    <section class="result-zone" id="resultZone">
+      <div class="verdict-card" id="verdictCard">
+        <div class="verdict-icon" id="verdictIcon">✓</div>
+        <div class="verdict-title" id="verdictTitle">MOMENTO SELADO</div>
+        <div class="verdict-subtitle" id="verdictSubtitle">Composição verificável</div>
+      </div>
+      <div class="bio-card">
+        <div class="bio-row"><div class="bio-icon">📜</div><div><div class="bio-label">Génese</div><div class="bio-value" id="bioDate">---</div></div></div>
+        <div class="bio-row"><div class="bio-icon">👤</div><div><div class="bio-label">Autor</div><div class="bio-value" id="bioAuthor">did:windi:user</div></div></div>
+        <div class="bio-row"><div class="bio-icon">🔐</div><div><div class="bio-label">Integridade</div><div class="bio-value" id="bioIntegrity">100% BIT-PERFECT</div></div></div>
+        <div class="bio-row" id="bioLineageRow" style="display:none"><div class="bio-icon">🔗</div><div><div class="bio-label" id="bioLineageLabel">Linhagem</div><div class="bio-value" id="bioLineage">---</div></div></div>
+      </div>
+      <div class="disclaimer">O selo prova existência e integridade — não a veracidade do conteúdo.</div>
+      <div class="actions">
+        <button class="act-btn" id="btnShare">📤 Partilhar</button>
+        <button class="act-btn" id="btnDownload">📥 Download</button>
+        <button class="act-btn primary" id="btnNew">🜂 Novo</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="ftr">
+    <p>AI processes. Human decides. <a href="https://windi-domain.com">WINDI</a> guarantees.</p>
+    <p style="margin-top:3px;opacity:.6">WINDI SEAL v2.8 — Real Ledger Verify + Trilingual</p>
+  </footer>
+</div>
+
+<script>
+const API='https://windi-domain.com';
+let lang=localStorage.getItem('windi-lang')||'pt',theme=localStorage.getItem('windi-theme')||'noir';
+let currentMode=null,currentTab='capture',capturedFile=null,cameraStream=null,pipStream=null,fileSaved=false;
+let isRecording=false,mediaRecorder=null,recordedChunks=[],recordTimer=null,recordSeconds=0;
+let facingMode='environment';
+let bgImage=null,bgVideo=null,overlayTextValue='',pipPosition='br';
+// §4.4 Guardian Doctrine + Human Dragon Extension: Three Seal Types
+// 'capture' = origem primária, sem edição | 'composition' = obra derivada | 'narrative' = universo criativo
+let sealType='capture';
+let sourceHash=null,sourceFile=null; // Lineage reference for compositions
+let narrativeClass=null; // For narrative seals: 'fiction', 'documentary', 'foundation'
+
+const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);
+
+// === THEME & LANG ===
+const UI={
+  pt:{
+    // Capture mode buttons
+    photo:'Foto',video:'Vídeo',audio:'Áudio',upload:'Upload',hash:'Verificar',
+    // Actions
+    seal:'SELAR MOMENTO',reveal:'REVELAR ORIGEM',record:'🎙️ GRAVAR',stop:'⏹ PARAR',
+    capture:'CAPTURAR',recordVideo:'🔴 GRAVAR',composeAndSeal:'🎞️ COMPOR & SELAR',
+    // Viewfinder
+    audioReady:'Pronto para gravar áudio',audioRecording:'A gravar...',audioRecorded:'gravado',
+    micNotAvailable:'Microfone não disponível',camNotAvailable:'Câmara não disponível',
+    // Result buttons
+    share:'📤 Partilhar',download:'📥 Download',newBtn:'🜂 Novo',
+    // Bio labels
+    genesis:'Génese',author:'Autor',integrity:'Integridade',lineage:'Linhagem',
+    // Tabs
+    tabCapture:'CAPTURA',tabEditor:'COMPOSIÇÃO',tabVerify:'VERIFICAR',
+    // Editor
+    myCamera:'Minha Câmara',
+    // Verify states (3 states)
+    momentPreserved:'MOMENTO PRESERVADO',momentPreservedDesc:'Origem verificada no Ledger',
+    notFound:'NÃO ENCONTRADO',notFoundDesc:'Sem registo no Ledger',
+    demonstration:'DEMONSTRAÇÃO',demonstrationDesc:'Modo de simulação',
+    verifying:'A verificar no Ledger...',connectionError:'Erro de conexão',
+    notFoundDisclaimer:'Ausência de selo não prova falsidade. O conteúdo pode existir sem ter sido registado.',
+    disclaimerCapture:'O selo prova existência e integridade do momento — não a veracidade do conteúdo.',
+    // Exit warning
+    exitWarn:'Ficheiro não guardado! Tem a certeza?'
+  },
+  de:{
+    photo:'Foto',video:'Video',audio:'Audio',upload:'Upload',hash:'Prüfen',
+    seal:'MOMENT VERSIEGELN',reveal:'URSPRUNG PRÜFEN',record:'🎙️ AUFNEHMEN',stop:'⏹ STOPP',
+    capture:'AUFNEHMEN',recordVideo:'🔴 AUFNEHMEN',composeAndSeal:'🎞️ KOMPONIEREN',
+    audioReady:'Bereit für Audioaufnahme',audioRecording:'Aufnahme läuft...',audioRecorded:'aufgenommen',
+    micNotAvailable:'Mikrofon nicht verfügbar',camNotAvailable:'Kamera nicht verfügbar',
+    share:'📤 Teilen',download:'📥 Download',newBtn:'🜂 Neu',
+    genesis:'Entstehung',author:'Autor',integrity:'Integrität',lineage:'Herkunft',
+    tabCapture:'AUFNAHME',tabEditor:'KOMPOSITION',tabVerify:'PRÜFEN',
+    myCamera:'Meine Kamera',
+    momentPreserved:'MOMENT BEWAHRT',momentPreservedDesc:'Ursprung im Ledger verifiziert',
+    notFound:'NICHT GEFUNDEN',notFoundDesc:'Kein Eintrag im Ledger',
+    demonstration:'DEMONSTRATION',demonstrationDesc:'Simulationsmodus',
+    verifying:'Überprüfung im Ledger...',connectionError:'Verbindungsfehler',
+    notFoundDisclaimer:'Fehlendes Siegel beweist keine Fälschung. Der Inhalt kann existieren ohne registriert zu sein.',
+    disclaimerCapture:'Das Siegel beweist Existenz und Integrität des Moments — nicht die Richtigkeit des Inhalts.',
+    exitWarn:'Datei nicht gespeichert! Sind Sie sicher?'
+  },
+  en:{
+    photo:'Photo',video:'Video',audio:'Audio',upload:'Upload',hash:'Verify',
+    seal:'SEAL MOMENT',reveal:'REVEAL ORIGIN',record:'🎙️ RECORD',stop:'⏹ STOP',
+    capture:'CAPTURE',recordVideo:'🔴 RECORD',composeAndSeal:'🎞️ COMPOSE & SEAL',
+    audioReady:'Ready to record audio',audioRecording:'Recording...',audioRecorded:'recorded',
+    micNotAvailable:'Microphone not available',camNotAvailable:'Camera not available',
+    share:'📤 Share',download:'📥 Download',newBtn:'🜂 New',
+    genesis:'Genesis',author:'Author',integrity:'Integrity',lineage:'Lineage',
+    tabCapture:'CAPTURE',tabEditor:'COMPOSITION',tabVerify:'VERIFY',
+    myCamera:'My Camera',
+    momentPreserved:'MOMENT PRESERVED',momentPreservedDesc:'Origin verified in Ledger',
+    notFound:'NOT FOUND',notFoundDesc:'No record in Ledger',
+    demonstration:'DEMONSTRATION',demonstrationDesc:'Simulation mode',
+    verifying:'Verifying in Ledger...',connectionError:'Connection error',
+    notFoundDisclaimer:'Absence of seal does not prove falsity. Content may exist without being registered.',
+    disclaimerCapture:'The seal proves existence and integrity of the moment — not the truthfulness of the content.',
+    exitWarn:'File not saved! Are you sure?'
+  }
+};
+function t(key){return (UI[lang]||UI.pt)[key]||key}
+function setTheme(th){theme=th;document.documentElement.dataset.theme=th;localStorage.setItem('windi-theme',th);$('#themeToggle').textContent=th==='noir'?'☀️':'🌙'}
+function setLang(l){
+  lang=l;localStorage.setItem('windi-lang',l);
+  ['langPT','langDE','langEN'].forEach(id=>$('#'+id).classList.toggle('on',id==='lang'+l.toUpperCase()));
+  // Update all UI strings
+  $$('[data-i18n]').forEach(el=>el.textContent=t(el.dataset.i18n));
+  // Update capture mode labels
+  $$('.cap-btn').forEach(b=>{const mode=b.dataset.mode;const key=mode==='camera'?'photo':mode;b.querySelector('.cap-btn-label').textContent=t(key)});
+  // Update result buttons
+  if($('#btnShare'))$('#btnShare').textContent=t('share');
+  if($('#btnDownload'))$('#btnDownload').textContent=t('download');
+  if($('#btnNew'))$('#btnNew').textContent=t('newBtn');
+  // Update tabs
+  $$('.mode-tab').forEach(tab=>{const mode=tab.dataset.mode;if(mode==='capture')tab.textContent=t('tabCapture');else if(mode==='editor')tab.textContent=t('tabEditor');else if(mode==='verify')tab.textContent=t('tabVerify')});
+  // Update bio labels
+  $$('.bio-label').forEach((el,i)=>{const keys=['genesis','author','integrity'];if(keys[i])el.textContent=t(keys[i])});
+  // Update editor buttons
+  if($('#btnPipCam'))$('#btnPipCam').innerHTML=`<span class="tool-btn-icon">👤</span>${t('myCamera')}`;
+  if($('#btnCompose'))$('#btnCompose').textContent=t('composeAndSeal');
+}
+$('#themeToggle').onclick=()=>setTheme(theme==='noir'?'klar':'noir');
+$('#langPT').onclick=()=>setLang('pt');$('#langDE').onclick=()=>setLang('de');$('#langEN').onclick=()=>setLang('en');
+
+// === MODE TABS ===
+$$('.mode-tab').forEach(tab=>{
+  tab.onclick=()=>{
+    $$('.mode-tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    currentTab=tab.dataset.mode;
+    $('#captureZone').classList.toggle('show',currentTab==='capture');
+    $('#captureZone').style.display=currentTab==='capture'?'flex':'none';
+    $('#editorZone').classList.toggle('show',currentTab==='editor');
+    if(currentTab==='editor')initEditor();
+  }
+});
+
+// === CAPTURE MODE ===
+async function startCamera(withAudio=false){
+  try{
+    const constraints={video:{facingMode,width:{ideal:1280},height:{ideal:720}},audio:withAudio};
+    cameraStream=await navigator.mediaDevices.getUserMedia(constraints);
+    const feed=$('#cameraFeed');
+    feed.srcObject=cameraStream;feed.style.display='block';
+    feed.classList.toggle('mirror',facingMode==='user');
+    $('#viewfinderEmpty').style.display='none';$('#capturedImage').style.display='none';$('#capturedVideo').style.display='none';
+    $('#camFlip').classList.add('show');$('#actionBtn').disabled=false;
+    $('#actionLabel').textContent=currentMode==='video'?t('recordVideo'):t('capture');
+  }catch(e){alert(t('camNotAvailable'));setCapMode('upload')}
+}
+function stopCamera(){if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null}$('#cameraFeed').style.display='none';$('#camFlip').classList.remove('show')}
+$('#camFlip').onclick=async()=>{if(isRecording)return;facingMode=facingMode==='environment'?'user':'environment';stopCamera();await startCamera(currentMode==='video')}
+function capturePhoto(){
+  const video=$('#cameraFeed'),canvas=document.createElement('canvas');
+  canvas.width=video.videoWidth;canvas.height=video.videoHeight;
+  canvas.getContext('2d').drawImage(video,0,0);
+  canvas.toBlob(blob=>{capturedFile=new File([blob],'capture.jpg',{type:'image/jpeg'});showCaptured(URL.createObjectURL(blob),'image');stopCamera()},'image/jpeg',.92);
+}
+function formatTime(s){return`${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`}
+function startRecording(){
+  if(!cameraStream)return;recordedChunks=[];recordSeconds=0;
+  // Safari iOS fix: try webm, fall back to browser default (mp4 on Safari)
+  let mime=null;
+  if(MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus'))mime='video/webm;codecs=vp9,opus';
+  else if(MediaRecorder.isTypeSupported('video/webm'))mime='video/webm';
+  const opts={audioBitsPerSecond:128000,videoBitsPerSecond:2500000};if(mime)opts.mimeType=mime;
+  mediaRecorder=new MediaRecorder(cameraStream,opts);
+  mediaRecorder.ondataavailable=e=>{if(e.data.size>0)recordedChunks.push(e.data)};
+  mediaRecorder.onstop=()=>{const actualMime=mediaRecorder.mimeType||'video/mp4';const ext=actualMime.includes('webm')?'webm':'mp4';const blob=new Blob(recordedChunks,{type:actualMime});capturedFile=new File([blob],`video_${Date.now()}.${ext}`,{type:actualMime});showCaptured(URL.createObjectURL(blob),'video');stopCamera()};
+  mediaRecorder.start(100);isRecording=true;
+  $('#recIndicator').classList.add('show');$('#recTimer').textContent='00:00';
+  recordTimer=setInterval(()=>{recordSeconds++;$('#recTimer').textContent=formatTime(recordSeconds)},1000);
+  $('#actionLabel').textContent=t('stop');$('#actionBtn').style.background='linear-gradient(135deg,var(--red),#aa0000)';
+}
+function stopRecording(){if(mediaRecorder&&isRecording){mediaRecorder.stop();isRecording=false;clearInterval(recordTimer);$('#recIndicator').classList.remove('show');$('#actionBtn').style.background=''}}
+
+// === AUDIO RECORDING ===
+let audioRecorder=null,audioChunks=[],isAudioRecording=false,audioTimer=null,audioSeconds=0;
+async function startAudioRecording(){
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true,video:false});
+    audioChunks=[];audioSeconds=0;
+    // Try opus first, fall back to default
+    let mime=null;
+    if(MediaRecorder.isTypeSupported('audio/webm;codecs=opus'))mime='audio/webm;codecs=opus';
+    else if(MediaRecorder.isTypeSupported('audio/webm'))mime='audio/webm';
+    const opts={audioBitsPerSecond:128000};if(mime)opts.mimeType=mime;
+    audioRecorder=new MediaRecorder(stream,opts);
+    audioRecorder.ondataavailable=e=>{if(e.data.size>0)audioChunks.push(e.data)};
+    audioRecorder.onstop=()=>{
+      const actualMime=audioRecorder.mimeType||'audio/mp4';
+      const ext=actualMime.includes('webm')?'webm':actualMime.includes('ogg')?'ogg':'m4a';
+      const blob=new Blob(audioChunks,{type:actualMime});
+      capturedFile=new File([blob],`audio_${Date.now()}.${ext}`,{type:actualMime});
+      stream.getTracks().forEach(t=>t.stop());
+      $('#viewfinderEmpty').innerHTML=`<div class="viewfinder-empty-icon">🎵</div><div class="viewfinder-empty-text">${formatTime(audioSeconds)} ${t('audioRecorded')}</div>`;
+      $('#actionBtn').disabled=false;$('#actionLabel').textContent=t('seal');$('#actionBtn').style.background='';
+    };
+    audioRecorder.start(100);isAudioRecording=true;
+    $('#recIndicator').classList.add('show');$('#recTimer').textContent='00:00';
+    audioTimer=setInterval(()=>{audioSeconds++;$('#recTimer').textContent=formatTime(audioSeconds)},1000);
+    $('#actionLabel').textContent=t('stop');$('#actionBtn').style.background='linear-gradient(135deg,var(--red),#aa0000)';
+    $('#viewfinderEmpty').innerHTML=`<div class="viewfinder-empty-icon" style="animation:recPulse 1s infinite">🎙️</div><div class="viewfinder-empty-text">${t('audioRecording')}</div>`;
+  }catch(e){alert(t('micNotAvailable'));setCapMode('upload')}
+}
+function stopAudioRecording(){if(audioRecorder&&isAudioRecording){audioRecorder.stop();isAudioRecording=false;clearInterval(audioTimer);$('#recIndicator').classList.remove('show');$('#actionBtn').style.background=''}}
+
+function showCaptured(url,type){
+  if(type==='video'){$('#capturedVideo').src=url;$('#capturedVideo').style.display='block';$('#capturedImage').style.display='none'}
+  else{$('#capturedImage').src=url;$('#capturedImage').style.display='block';$('#capturedVideo').style.display='none'}
+  $('#cameraFeed').style.display='none';$('#viewfinderEmpty').style.display='none';
+  $('#actionBtn').disabled=false;$('#actionLabel').textContent=t('seal');$('#actionBtn').style.background='';
+}
+function setCapMode(mode){
+  currentMode=mode;capturedFile=null;stopCamera();stopRecording();stopAudioRecording();
+  $$('.cap-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));
+  $('#hashInput').classList.toggle('show',mode==='hash');
+  $('#capturedImage').style.display='none';$('#capturedVideo').style.display='none';$('#viewfinderEmpty').style.display='block';
+  $('#actionBtn').disabled=true;$('#actionBtn').style.background='';
+  if(mode==='camera')startCamera(false);
+  else if(mode==='video')startCamera(true);
+  else if(mode==='audio'){$('#actionBtn').disabled=false;$('#actionLabel').textContent=t('record');$('#viewfinderEmpty').innerHTML=`<div class="viewfinder-empty-icon">🎙️</div><div class="viewfinder-empty-text">${t('audioReady')}</div>`}
+  else if(mode==='upload')$('#fileInput').click();
+  else if(mode==='hash'){$('#hashField').focus();$('#actionBtn').disabled=false;$('#actionLabel').textContent=t('reveal')}
+}
+$$('.cap-btn').forEach(b=>b.onclick=()=>setCapMode(b.dataset.mode));
+$('#fileInput').onchange=e=>{const f=e.target.files[0];if(f){capturedFile=f;showCaptured(URL.createObjectURL(f),f.type.startsWith('video/')?'video':'image')}};
+$('#actionBtn').onclick=()=>{
+  if(currentMode==='camera'&&!capturedFile)capturePhoto();
+  else if(currentMode==='video'&&!capturedFile){if(isRecording)stopRecording();else startRecording()}
+  else if(currentMode==='audio'&&!capturedFile){if(isAudioRecording)stopAudioRecording();else startAudioRecording()}
+  else if(currentMode==='hash'){const input=$('#hashField').value.trim();if(input)runVerify(input)}
+  else executeVerify();
+};
+
+// === EDITOR MODE ===
+let editorCanvas,editorCtx;
+function initEditor(){
+  editorCanvas=$('#editorCanvas');editorCtx=editorCanvas.getContext('2d');
+  const container=$('#canvasContainer');
+  editorCanvas.width=container.clientWidth;editorCanvas.height=container.clientHeight;
+  drawEditor();
+}
+function drawEditor(){
+  if(!editorCtx)return;
+  const w=editorCanvas.width,h=editorCanvas.height;
+  editorCtx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--card').trim();
+  editorCtx.fillRect(0,0,w,h);
+
+  // Draw background
+  if(bgImage){
+    const scale=Math.max(w/bgImage.width,h/bgImage.height);
+    const sw=bgImage.width*scale,sh=bgImage.height*scale;
+    editorCtx.drawImage(bgImage,(w-sw)/2,(h-sh)/2,sw,sh);
+  }else if(bgVideo&&!bgVideo.paused){
+    const scale=Math.max(w/bgVideo.videoWidth,h/bgVideo.videoHeight);
+    const sw=bgVideo.videoWidth*scale,sh=bgVideo.videoHeight*scale;
+    editorCtx.drawImage(bgVideo,(w-sw)/2,(h-sh)/2,sw,sh);
+  }else{
+    editorCtx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--dim').trim();
+    editorCtx.font='14px Bricolage Grotesque';editorCtx.textAlign='center';
+    editorCtx.fillText('Carrega um background para começar',w/2,h/2);
+  }
+
+  // Draw text overlay
+  if(overlayTextValue){
+    editorCtx.fillStyle='rgba(0,0,0,0.7)';
+    editorCtx.fillRect(0,h-60,w,60);
+    editorCtx.fillStyle='#fff';editorCtx.font='bold 16px Bricolage Grotesque';editorCtx.textAlign='center';
+    editorCtx.fillText(overlayTextValue,w/2,h-25);
+  }
+
+  if(bgVideo&&!bgVideo.paused)requestAnimationFrame(drawEditor);
+}
+
+// Background Image — compute sourceHash for lineage (§4.4)
+$('#btnBgImage').onclick=()=>$('#bgImageInput').click();
+$('#bgImageInput').onchange=async e=>{
+  const file=e.target.files[0];if(!file)return;
+  sourceFile=file;sourceHash=await computeHash(file); // Lineage provenance
+  const img=new Image();img.onload=()=>{bgImage=img;bgVideo=null;drawEditor()};
+  img.src=URL.createObjectURL(file);
+};
+
+// Background Video — compute sourceHash for lineage (§4.4)
+$('#btnBgVideo').onclick=()=>$('#bgVideoInput').click();
+$('#bgVideoInput').onchange=async e=>{
+  const file=e.target.files[0];if(!file)return;
+  sourceFile=file;sourceHash=await computeHash(file); // Lineage provenance
+  const vid=document.createElement('video');
+  vid.src=URL.createObjectURL(file);vid.muted=true;vid.loop=true;
+  vid.onloadeddata=()=>{bgVideo=vid;bgImage=null;vid.play();drawEditor()};
+};
+
+// PiP Camera
+$('#btnPipCam').onclick=async()=>{
+  const pip=$('#pipVideo');
+  if(pipStream){pipStream.getTracks().forEach(t=>t.stop());pipStream=null;pip.style.display='none';$('#btnPipCam').classList.remove('active');$('#positionGrid').style.display='none';return}
+  try{
+    pipStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:640},height:{ideal:480}},audio:false});
+    $('#pipFeed').srcObject=pipStream;pip.style.display='block';$('#btnPipCam').classList.add('active');$('#positionGrid').style.display='grid';
+    updatePipPosition(pipPosition);
+  }catch(e){alert(t('camNotAvailable'))}
+};
+
+// PiP Position
+$$('.pos-btn').forEach(btn=>{
+  btn.onclick=()=>{$$('.pos-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');pipPosition=btn.dataset.pos;updatePipPosition(pipPosition)}
+});
+function updatePipPosition(pos){
+  const pip=$('#pipVideo'),cont=$('#canvasContainer');
+  const cw=cont.clientWidth,ch=cont.clientHeight,pw=120,ph=160;
+  const positions={tl:{left:'10px',top:'10px',right:'auto',bottom:'auto'},tc:{left:(cw/2-pw/2)+'px',top:'10px',right:'auto',bottom:'auto'},tr:{right:'10px',top:'10px',left:'auto',bottom:'auto'},ml:{left:'10px',top:(ch/2-ph/2)+'px',right:'auto',bottom:'auto'},mc:{left:(cw/2-pw/2)+'px',top:(ch/2-ph/2)+'px',right:'auto',bottom:'auto'},mr:{right:'10px',top:(ch/2-ph/2)+'px',left:'auto',bottom:'auto'},bl:{left:'10px',bottom:'10px',right:'auto',top:'auto'},bc:{left:(cw/2-pw/2)+'px',bottom:'10px',right:'auto',top:'auto'},br:{right:'10px',bottom:'10px',left:'auto',top:'auto'}};
+  const p=positions[pos]||positions.br;
+  pip.style.left=p.left;pip.style.top=p.top;pip.style.right=p.right;pip.style.bottom=p.bottom;
+}
+
+// Text Overlay
+$('#btnAddText').onclick=()=>{const input=$('#textOverlayInput');input.style.display=input.style.display==='none'?'block':'none';$('#overlayText').focus()};
+$('#overlayText').oninput=e=>{overlayTextValue=e.target.value;drawEditor()};
+
+// Compose & Seal — §4.4 SELO-COMPOSIÇÃO (different evidentiary weight, includes lineage)
+$('#btnCompose').onclick=async()=>{
+  sealType='composition'; // Mark as composition, not capture
+
+  // Create final composition canvas
+  const finalCanvas=document.createElement('canvas');
+  finalCanvas.width=editorCanvas.width;finalCanvas.height=editorCanvas.height;
+  const ctx=finalCanvas.getContext('2d');
+
+  // Draw background
+  ctx.drawImage(editorCanvas,0,0);
+
+  // Draw PiP if active
+  if(pipStream){
+    const pipVid=$('#pipFeed');
+    const pip=$('#pipVideo');
+    const rect={x:parseInt(pip.style.left)||editorCanvas.width-130,y:parseInt(pip.style.top)||(pip.style.bottom?editorCanvas.height-170:10),w:120,h:160};
+    if(pip.style.right&&pip.style.right!=='auto')rect.x=editorCanvas.width-130;
+    if(pip.style.bottom&&pip.style.bottom!=='auto')rect.y=editorCanvas.height-170;
+    ctx.strokeStyle='#c9a84c';ctx.lineWidth=3;
+    ctx.strokeRect(rect.x,rect.y,rect.w,rect.h);
+    ctx.drawImage(pipVid,rect.x,rect.y,rect.w,rect.h);
+  }
+
+  // Convert to blob
+  const blob=await new Promise(r=>finalCanvas.toBlob(r,'image/jpeg',.92));
+  capturedFile=new File([blob],`composition_${Date.now()}.jpg`,{type:'image/jpeg'});
+
+  // Show in scan preview
+  $('#scanPreviewCanvas').getContext('2d').drawImage(finalCanvas,0,0,$('#scanPreviewCanvas').width,$('#scanPreviewCanvas').height);
+
+  await runScan(URL.createObjectURL(blob),false,true);
+};
+
+// === VERIFY & SCAN ===
+async function computeHash(file){
+  const buffer=await file.arrayBuffer();
+  const hashBuffer=await crypto.subtle.digest('SHA-256',buffer);
+  return Array.from(new Uint8Array(hashBuffer)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+async function runScan(previewUrl,isVideo=false,isCanvas=false){
+  $('#captureZone').style.display='none';$('#editorZone').style.display='none';$('#scanZone').classList.add('show');
+  $('#scanPreviewImg').style.display='none';$('#scanPreviewVid').style.display='none';$('#scanPreviewCanvas').style.display='none';
+  if(isCanvas){$('#scanPreviewCanvas').style.display='block'}
+  else if(previewUrl){
+    if(isVideo){$('#scanPreviewVid').src=previewUrl;$('#scanPreviewVid').style.display='block'}
+    else{$('#scanPreviewImg').src=previewUrl;$('#scanPreviewImg').style.display='block'}
+  }
+  const logs=['📡 Captando composição...','🔍 Gerando hash SHA-256...','📜 Registando proveniência...','👤 Vinculando autoria...','✨ Selagem completa!'];
+  const logEl=$('#scanLog'),progEl=$('#scanProgress');logEl.innerHTML='';progEl.style.width='0%';
+  for(let i=0;i<logs.length;i++){
+    await new Promise(r=>setTimeout(r,400+Math.random()*200));
+    const line=document.createElement('div');line.className='scan-log-line';line.textContent=`[${String(i+1).padStart(2,'0')}] ${logs[i]}`;logEl.appendChild(line);
+    progEl.style.width=`${(i+1)*20}%`;
+    if(logEl.children.length>4)logEl.removeChild(logEl.firstChild);
+  }
+  await new Promise(r=>setTimeout(r,400));
+
+  // Compute hash and show result
+  const hash=capturedFile?await computeHash(capturedFile):'demo';
+  showResult({status:'capture',hash});
+}
+
+// === VERIFY IN LEDGER (Gate 0 Fix) ===
+async function verifyInLedger(input){
+  // Check for demo mode
+  if(input.toLowerCase()==='demo'){
+    return {status:'demo',hash:'demo'};
+  }
+
+  try{
+    // Call the API - supports both full IDs and short suffixes (Gate 0)
+    const res=await fetch(`https://windi-domain.com/api/receipts/${encodeURIComponent(input)}`);
+    const data=await res.json();
+
+    if(data.ok && data.receipt){
+      return {
+        status:'found',
+        receipt:data.receipt,
+        hash:data.receipt.content_hash
+      };
+    }else{
+      return {status:'not_found',input};
+    }
+  }catch(e){
+    console.error('Ledger verify error:',e);
+    return {status:'error',message:e.message};
+  }
+}
+
+async function runVerify(input){
+  $('#captureZone').style.display='none';$('#editorZone').style.display='none';$('#scanZone').classList.add('show');
+  $('#scanPreviewImg').style.display='none';$('#scanPreviewVid').style.display='none';$('#scanPreviewCanvas').style.display='none';
+
+  const logs=[
+    `🔍 ${t('verifying')}`,
+    `📡 ID: ${input.slice(0,20)}${input.length>20?'...':''}`,
+    '🔐 Consultando Ledger...',
+    '📜 Analisando resposta...'
+  ];
+  const logEl=$('#scanLog'),progEl=$('#scanProgress');logEl.innerHTML='';progEl.style.width='0%';
+
+  // Show first 2 logs immediately
+  for(let i=0;i<2;i++){
+    const line=document.createElement('div');line.className='scan-log-line';line.textContent=`[${String(i+1).padStart(2,'0')}] ${logs[i]}`;logEl.appendChild(line);
+    progEl.style.width=`${(i+1)*25}%`;
+  }
+
+  // Fetch from API
+  const result=await verifyInLedger(input);
+
+  // Show remaining logs
+  for(let i=2;i<logs.length;i++){
+    await new Promise(r=>setTimeout(r,300));
+    const line=document.createElement('div');line.className='scan-log-line';line.textContent=`[${String(i+1).padStart(2,'0')}] ${logs[i]}`;logEl.appendChild(line);
+    progEl.style.width=`${(i+1)*25}%`;
+    if(logEl.children.length>4)logEl.removeChild(logEl.firstChild);
+  }
+
+  // Final log based on result
+  await new Promise(r=>setTimeout(r,200));
+  const finalMsg=result.status==='found'?'✅ Origem encontrada!':result.status==='not_found'?'⚠️ Não encontrado no Ledger':'🔵 Modo demonstração';
+  const finalLine=document.createElement('div');finalLine.className='scan-log-line';finalLine.textContent=`[05] ${finalMsg}`;logEl.appendChild(finalLine);
+  progEl.style.width='100%';
+  if(logEl.children.length>4)logEl.removeChild(logEl.firstChild);
+
+  await new Promise(r=>setTimeout(r,400));
+  showResult(result);
+}
+
+async function executeVerify(){
+  sealType='capture'; // §4.4 SELO-CAPTURA — immediate hash, high evidentiary weight
+  sourceHash=null;sourceFile=null; // No lineage for direct captures
+
+  let inputHash='',previewUrl='',isVideo=false;
+  if(currentMode==='hash'){inputHash=$('#hashField').value.trim();if(!inputHash)return}
+  else if(capturedFile){inputHash=await computeHash(capturedFile);previewUrl=URL.createObjectURL(capturedFile);isVideo=capturedFile.type.startsWith('video/')}
+  if(!inputHash)return;
+  await runScan(previewUrl,isVideo);
+}
+
+function showResult(result){
+  $('#scanZone').classList.remove('show');$('#resultZone').classList.add('show');
+  const card=$('#verdictCard');card.className='verdict-card';
+  const disclaimerEl=document.querySelector('.disclaimer');
+  const lineageRow=$('#bioLineageRow');
+
+  // === VERIFY MODE: Handle found/not_found/demo from API ===
+  if(result.status==='found'){
+    card.classList.add('verified');
+    $('#verdictIcon').textContent='✓';
+    $('#verdictTitle').textContent=t('momentPreserved');
+    $('#verdictSubtitle').textContent=t('momentPreservedDesc');
+    disclaimerEl.textContent=UI[lang].disclaimerCapture||'The seal proves existence and integrity.';
+    lineageRow.style.display='none';
+    // Show real data from Ledger
+    const r=result.receipt;
+    $('#bioDate').textContent=r.created_at?new Date(r.created_at*1000).toLocaleString(lang==='de'?'de-DE':lang==='en'?'en-GB':'pt-PT'):'---';
+    $('#bioAuthor').textContent=r.actor||'did:windi:unknown';
+    $('#bioIntegrity').textContent=r.content_hash?`${r.content_hash.slice(0,24)}...`:'---';
+    return;
+  }
+  if(result.status==='not_found'){
+    card.classList.add('missing');
+    $('#verdictIcon').textContent='⚠';
+    $('#verdictTitle').textContent=t('notFound');
+    $('#verdictSubtitle').textContent=t('notFoundDesc');
+    disclaimerEl.textContent=t('notFoundDisclaimer');
+    lineageRow.style.display='none';
+    $('#bioDate').textContent='---';
+    $('#bioAuthor').textContent='---';
+    $('#bioIntegrity').textContent=result.input?result.input.slice(0,24)+'...':'---';
+    return;
+  }
+  if(result.status==='demo'){
+    card.classList.add('demo');
+    $('#verdictIcon').textContent='◐';
+    $('#verdictTitle').textContent=t('demonstration');
+    $('#verdictSubtitle').textContent=t('demonstrationDesc');
+    disclaimerEl.textContent='DEMO MODE — No actual verification performed.';
+    lineageRow.style.display='none';
+    $('#bioDate').textContent=new Date().toLocaleString(lang==='de'?'de-DE':lang==='en'?'en-GB':'pt-PT');
+    $('#bioAuthor').textContent='demo-user';
+    $('#bioIntegrity').textContent='demo-hash';
+    return;
+  }
+
+  // === SEAL MODE: Handle capture/composition/narrative ===
+  const sealI18n={
+    pt:{capture:'MOMENTO CAPTURADO',captureDesc:'Hash imediato, sem edição',
+        composition:'COMPOSIÇÃO SELADA',compositionDesc:'Obra criada com linhagem documentada',
+        narrative:'NARRATIVA PUBLICADA',narrativeDesc:'Universo criativo preservado',
+        lineageLabel:'Linhagem',classLabel:'Classe',
+        disclaimerCapture:'O selo prova existência e integridade do momento — não a veracidade do conteúdo.',
+        disclaimerComposition:'O selo prova que esta composição foi criada neste momento e está inalterada desde então.',
+        disclaimerNarrative:'O selo prova que esta narrativa foi publicada nesta forma. Não afirma existência real das entidades.'},
+    de:{capture:'MOMENT AUFGEZEICHNET',captureDesc:'Sofortiger Hash, unbearbeitet',
+        composition:'KOMPOSITION VERSIEGELT',compositionDesc:'Werk mit dokumentierter Herkunft',
+        narrative:'NARRATIV VERÖFFENTLICHT',narrativeDesc:'Kreatives Universum bewahrt',
+        lineageLabel:'Herkunft',classLabel:'Klasse',
+        disclaimerCapture:'Das Siegel beweist Existenz und Integrität des Moments — nicht die Richtigkeit des Inhalts.',
+        disclaimerComposition:'Das Siegel beweist, dass diese Komposition zu diesem Zeitpunkt erstellt wurde.',
+        disclaimerNarrative:'Das Siegel beweist, dass dieses Narrativ in dieser Form veröffentlicht wurde.'},
+    en:{capture:'MOMENT CAPTURED',captureDesc:'Immediate hash, unedited',
+        composition:'COMPOSITION SEALED',compositionDesc:'Work created with documented lineage',
+        narrative:'NARRATIVE PUBLISHED',narrativeDesc:'Creative universe preserved',
+        lineageLabel:'Lineage',classLabel:'Class',
+        disclaimerCapture:'The seal proves existence and integrity of the moment — not the truthfulness of the content.',
+        disclaimerComposition:'The seal proves this composition was created at this moment and is unchanged since.',
+        disclaimerNarrative:'The seal proves this narrative was published in this form.'}
+  };
+  const st=sealI18n[lang]||sealI18n.pt;
+
+  if(sealType==='capture'){
+    card.classList.add('verified');
+    $('#verdictIcon').textContent='✓';
+    $('#verdictTitle').textContent=st.capture;
+    $('#verdictSubtitle').textContent=st.captureDesc;
+    disclaimerEl.textContent=st.disclaimerCapture;
+    lineageRow.style.display='none';
+  }else if(sealType==='narrative'){
+    card.classList.add('narrative');
+    $('#verdictIcon').textContent='🎭';
+    $('#verdictTitle').textContent=st.narrative;
+    $('#verdictSubtitle').textContent=st.narrativeDesc;
+    disclaimerEl.textContent=st.disclaimerNarrative;
+    if(narrativeClass){lineageRow.style.display='flex';$('#bioLineageLabel').textContent=st.classLabel;$('#bioLineage').textContent=narrativeClass}
+    else{lineageRow.style.display='none'}
+  }else{
+    card.classList.add('composition');
+    $('#verdictIcon').textContent='🎬';
+    $('#verdictTitle').textContent=st.composition;
+    $('#verdictSubtitle').textContent=st.compositionDesc;
+    disclaimerEl.textContent=st.disclaimerComposition;
+    if(sourceHash){lineageRow.style.display='flex';$('#bioLineageLabel').textContent=st.lineageLabel;$('#bioLineage').textContent=`sha256:${sourceHash.slice(0,12)}...`}
+    else{lineageRow.style.display='none'}
+  }
+
+  $('#bioDate').textContent=new Date().toLocaleString(lang==='de'?'de-DE':lang==='en'?'en-GB':'pt-PT');
+  $('#bioAuthor').textContent='did:windi:user-local';
+  $('#bioIntegrity').textContent=result.hash?`sha256:${result.hash.slice(0,16)}...`:'---';
+
+  // AUTO-DOWNLOAD FIX: Trigger download after seal to prevent file loss
+  if(capturedFile && result.status==='capture'){
+    setTimeout(()=>{
+      const a=document.createElement('a');
+      a.href=URL.createObjectURL(capturedFile);
+      a.download=capturedFile.name;
+      a.click();
+      fileSaved=true;
+    },500);
+  }
+}
+
+function reset(){
+  $('#resultZone').classList.remove('show');$('#scanZone').classList.remove('show');
+  if(currentTab==='capture'){$('#captureZone').style.display='flex';setCapMode(null);$$('.cap-btn').forEach(b=>b.classList.remove('active'));$('#viewfinderEmpty').style.display='block'}
+  else{$('#editorZone').style.display='flex'}
+  capturedFile=null;fileSaved=false;stopCamera();stopRecording();
+  if(pipStream){pipStream.getTracks().forEach(t=>t.stop());pipStream=null;$('#pipVideo').style.display='none';$('#btnPipCam').classList.remove('active')}
+  bgImage=null;bgVideo=null;overlayTextValue='';$('#overlayText').value='';
+  sealType='capture';sourceHash=null;sourceFile=null;narrativeClass=null; // Reset §4.4 state
+  if(editorCtx)drawEditor();
+}
+$('#btnNew').onclick=reset;
+$('#btnShare').onclick=()=>{if(navigator.share)navigator.share({title:'WINDI SEAL',text:'Composição verificável'}).catch(()=>{})};
+$('#btnDownload').onclick=()=>{if(capturedFile){const a=document.createElement('a');a.href=URL.createObjectURL(capturedFile);a.download=capturedFile.name;a.click()}};
+
+// === INIT ===
+document.addEventListener('DOMContentLoaded',()=>{setTheme(theme);setLang(lang)});
+
+// EXIT WARNING: Prevent accidental file loss
+window.onbeforeunload=function(e){
+  if(capturedFile && !fileSaved){
+    const msg=t('exitWarn');
+    e.preventDefault();e.returnValue=msg;return msg;
+  }
+};
+</script>
+</body>
+</html>
