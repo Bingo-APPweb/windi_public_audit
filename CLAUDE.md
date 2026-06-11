@@ -548,6 +548,7 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
+| 11 Jun | **WINDI SEAL V2.8** Full Arc — Gate 0 Fix + Auto-Save + Trilingual + Real Verify · 5 receipts · `5A424A04` ✅ |
 | 11 Jun | **OLLAMA-FASE0-001** Measurement Run — mistral:7b @7.5 tok/s · PASS-CONDITIONAL · Receipt Explainer validated · `8751bb8f...` ✅ |
 | 11 Jun | **TWIN-B-SEC-001** Security Event — Ollama binding hardened · Defense-in-depth confirmed · `d21d6f04...` ✅ |
 | 07 Jun | **Vance 10/10 SEALED + Anti-Movement Medicine** — 3 re-renders · Doutrina Universal · Threshold Aceitação · `SPINE-LESSONS-LEARNED.md` ✅ |
@@ -709,6 +710,11 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 | **CINEMA** | `45e70231` | §295 S14-VISUAL-VERIFIED — UEBEREINSTIMMUNG GEFUNDEN insert |
 | **CINEMA** | `b8a4a083` | §295 S15-VISUAL-VERIFIED — INTEGRITAET 100% + cadeia diegetica |
 | **FORGE** | `9FAF31C6` | §297 Lei da Proveniência Inseparável — I19 · Atomic Provenance |
+| **SEAL** | `7A1A5282` | Gate 0 Server Fix — suffix lookup for short IDs |
+| **SEAL** | `28E0073B` | V2.6 Auto-Save + Audio Mode |
+| **SEAL** | `710243F1` | V2.7 Full Trilingual i18n (PT/DE/EN) |
+| **SEAL** | `FD9C54FB` | V2.8 Real Ledger Verify — 4 states |
+| **SEAL** | `5A424A04` | Verify Surface Arc SEALED — 11 Jun 2026 |
 
 > **Full receipts list:** `CLAUDE-HISTORY.md` § Produtos SEALED
 > **HD-MIRROR Reference:** `/opt/windi/docs/PROOF-SELF-CORRECTION-WITHOUT-REWRITE.md`
