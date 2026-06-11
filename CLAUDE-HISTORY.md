@@ -69,18 +69,45 @@ SVGs transferidos para /opt/windi/:
 | **Guardian (web)** | Runbook v1.1, gate forense, 3 ajustes ao receipt |
 | **CCode (CLI)** | Execução da correcção, POST ao Ledger |
 
+### Ollama Fase 0 — B0 Audit + B4 Measurement
+
+**Hardware TWIN B:**
+| Recurso | Valor |
+|---------|-------|
+| RAM | 31 GB total / 30 GB disponível |
+| CPU | 8 cores AMD EPYC-Milan |
+| Disco | 473 GB / 440 GB livre |
+| Modelo | mistral:7b (4.4 GB) |
+
+**Measurement Run (4 runs):**
+| Run | Tokens | gen_tok/s | Total |
+|-----|--------|-----------|-------|
+| 1 (cold) | 181 | 7.89 | 26.42s |
+| 2 (warm) | 230 | 6.96 | 33.26s |
+| 3 (warm) | 202 | 7.82 | 26.02s |
+| 4 (long) | 424 | 7.45 | 64.80s |
+
+**Média:** 7.53 tok/s | **RAM pós-run:** 25 GB disponível
+
+**Veredicto:** PASS-CONDITIONAL (AMARELO)
+- gen_tok/s 7.53 está no range 6-12 (amarelo)
+- Latência 26-33s aceitável para tier FREE institucional
+- **Cláusula:** Receipt Explainer validado. Chat interactivo requer Fase 1.
+
 ### Próximos Passos
 
-- [ ] B0 completo TWIN B — RAM/CPU/disco/modelos
-- [ ] B4 measurement run — tokens/s do mistral:7b
+- [x] ~~B0 completo TWIN B~~ ✅
+- [x] ~~B4 measurement run~~ ✅ 7.53 tok/s
 - [ ] LLMNR cleanup (systemd-resolved LLMNR=no) — higiene Fase 1
 - [ ] Template Registry v1.2.0 — análise pendente
+- [ ] Fase 1 — integração W-CORTEX routing FREE/MED
 
 ### Receipts da Sessão
 
 | Receipt | Hash/ID | Descrição |
 |---------|---------|-----------|
 | TWIN-B-SEC-001 | `d21d6f042d...` | Security Event — Ollama Binding Hardening |
+| OLLAMA-FASE0-001 | `8751bb8f...` | Measurement Run — mistral:7b @7.5 tok/s PASS-CONDITIONAL |
 
 ---
 
