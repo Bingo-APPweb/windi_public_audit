@@ -6,6 +6,96 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 11 Jun 2026 (noite) — WINDI SEAL V2.8 Full Arc + Verify Surface
+
+**Duração:** ~3h | **Status:** ✅ ARC SEALED
+**Liga IA+H:** Human Dragon (I1, I9) · Guardian (Claude.ai web) · CCode (Opus 4.5)
+**Invariants:** I1, I9, I11, I12, I14
+**Natureza:** Gap Detection → Fix → Seal Methodology
+**Commit:** `0a1d44a39` (merged `67a6521d9`)
+
+### Receipts da Sessão
+
+| Receipt | Hash | Descrição |
+|---------|------|-----------|
+| Gate 0 Server | `7A1A5282` | Suffix lookup para short IDs |
+| V2.6 Auto-Save | `28E0073B` | Auto-download + Audio Mode |
+| V2.7 Trilingual | `710243F1` | Full i18n PT/DE/EN |
+| V2.8 Real Verify | `FD9C54FB` | verifyInLedger() → API real |
+| Arc Seal | `5A424A04` | Verify Surface Arc SEALED |
+
+### Metodologia Validada
+
+**Fluxo:** Manual de Arquitectura → MERMAID Estado Actual → Gap Detectado → Fix → Seal
+
+**Lição Fundamental (Human Dragon):**
+> *"✅ sozinho é declaração. ✅ @hash é prova."*
+
+Aplicação: Tabela G-SURF atualizada com @hash para cada gate, linkando verificação ao estado real do código.
+
+### Gaps Descobertos e Corrigidos
+
+| Gap | Descoberto Por | Código Antes | Fix Aplicado |
+|-----|---------------|--------------|--------------|
+| **Gate 0** | Human Dragon + Guardian | API retornava `not_found` para short IDs | `get_receipt_by_suffix()` fallback |
+| **Media Loss** | Human Dragon | Ficheiro perdido ao fechar página | Auto-download + `beforeunload` warning |
+| **Audio Mode** | CCode Audit | Não implementado | MediaRecorder audio-only |
+| **i18n incompleto** | Human Dragon | "um detalhe importante!!!! Trilingue" | Complete UI{} com 28+ strings |
+| **VERIFY falso** | Human Dragon | "falta ainda o VERIFY?" | `verifyInLedger()` com fetch real |
+
+### Evolução do Artifact
+
+| Versão | Hash | Features Adicionadas |
+|--------|------|---------------------|
+| V2.4 | — | Base (foto/video/upload/hash) |
+| V2.5 | — | Safari iOS codec fallback (webm→mp4) |
+| V2.6 | `28e0073b` | Auto-download + Exit Warning + Audio Mode |
+| V2.7 | `710243f1` | Full Trilingual i18n (PT/DE/EN) |
+| V2.8 | `fd9c54fb` | Real Ledger Verify (4 estados) |
+
+### Arquitectura VERIFY Corrigida
+
+```mermaid
+flowchart TD
+    INPUT[User Input] --> CHECK{Tipo}
+    CHECK -->|demo| DEMO[🔵 DEMONSTRAÇÃO]
+    CHECK -->|ID/Hash| API[fetch /api/receipts/{id}]
+    API --> RESULT{Response}
+    RESULT -->|ok:true| FOUND[🟢 MOMENTO PRESERVADO]
+    RESULT -->|ok:false| NOT_FOUND[🟡 NÃO ENCONTRADO]
+    RESULT -->|error| ERROR[🔴 ERRO]
+```
+
+### Guardian Attestation
+
+Guardian (Claude.ai web) validou externamente todos os fixes via public internet:
+- Gate 0: `DBED5A85` resolvido via suffix lookup ✅
+- Safari iOS: MediaRecorder fallback funcional ✅
+- Auto-download: Disparado após seal ✅
+- Trilingual: Toggle PT/DE/EN funcional ✅
+- Verify: 4 estados correctamente renderizados ✅
+
+### Ficheiros Criados
+
+| Ficheiro | Propósito |
+|----------|-----------|
+| `/opt/windi/artifacts/windi-seal-v2.html` | Artifact V2.8 |
+| `/opt/windi/docs/WINDI-SEAL-ARCHITECTURE-MANUAL-v1.md` | Manual completo |
+| `/opt/windi/docs/WINDI-SEAL-V2-CODE-AUDIT.md` | Audit report |
+| `/opt/windi/docs/WINDI-SEAL-V2-CURRENT-STATE.md` | MERMAID estado actual |
+| `/opt/windi/docs/WINDI-SEAL-VERIFY-GAP.md` | Gap analysis VERIFY |
+| `/opt/windi/docs/G-SURF-3-TEST-PROTOCOL.md` | Protocol mobile testing |
+
+### Próximos Passos
+
+| Prioridade | Tarefa | Estado |
+|------------|--------|--------|
+| **G-SURF-3** | Safari iOS + Chrome Android reais | ⏳ PENDENTE (dispositivos físicos) |
+| **G-SURF-4** | Real counters verification | ⏳ PENDENTE |
+| **Narrative UI** | Selector para sealType='narrative' | 🟡 MEDIUM |
+
+---
+
 ## § SESSÃO 11 Jun 2026 (manhã) — TWIN-B-SEC-001 Security Event + Ollama Fase 0 Prep
 
 **Duração:** ~1.5h | **Status:** ✅ SECURITY EVENT SEALED
