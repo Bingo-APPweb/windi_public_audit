@@ -1,0 +1,351 @@
+{
+  "shot_id": "S10-WIDE_v1_DISAMBIGUATION",
+  "video_path": "shots/s10-wide/S10-WIDE_v1.mp4",
+  "frames_dir": "shots/s10-wide/S10-WIDE_v1_disambiguation_frames",
+  "n_frames": 5,
+  "timestamp": "2026-06-10T11:42:55.433836",
+  "inter_anchor_similarity": 0.4498,
+  "thresholds": {
+    "match": 0.65,
+    "separation": 0.5,
+    "ambiguity_margin": 0.15
+  },
+  "anchors": {
+    "A": "Alejandro",
+    "B": "Couto"
+  },
+  "summary": {
+    "overall_gate": "CONFLICT",
+    "gate_per_frame": [
+      "CONFLICT",
+      "FAIL_MATCH",
+      "FAIL_MATCH",
+      "FAIL_MATCH",
+      "FAIL_MATCH"
+    ],
+    "faces_per_frame": [
+      2,
+      2,
+      2,
+      2,
+      2
+    ],
+    "expected_faces": 2,
+    "frames_with_expected_faces": 5
+  },
+  "anchor_statistics": {
+    "Alejandro": {
+      "avg_confidence": 0.1512,
+      "min_confidence": 0.1304,
+      "max_confidence": 0.1744,
+      "avg_separation": 0.0693,
+      "n_attributions": 4
+    },
+    "Couto": {
+      "avg_confidence": 0.0678,
+      "min_confidence": 0.0483,
+      "max_confidence": 0.0766,
+      "avg_separation": 0.0056,
+      "n_attributions": 6
+    }
+  },
+  "frame_details": [
+    {
+      "frame": "frame_01.png",
+      "faces_detected": 2,
+      "gate_status": "CONFLICT",
+      "faces": [
+        {
+          "face_index": 0,
+          "position": {
+            "center_x": 462.8,
+            "center_y": 144.8
+          },
+          "bbox": [
+            436.3,
+            78.4,
+            489.3,
+            211.1
+          ],
+          "detection_score": 0.5759,
+          "sim_Alejandro": 0.0212,
+          "sim_Couto": 0.0766,
+          "attributed_to": "Couto",
+          "attribution_confidence": 0.0766,
+          "separation_from_other": 0.0212,
+          "margin": 0.0554
+        },
+        {
+          "face_index": 1,
+          "position": {
+            "center_x": 960.8,
+            "center_y": 334.0
+          },
+          "bbox": [
+            939.6,
+            305.2,
+            981.9,
+            362.8
+          ],
+          "detection_score": 0.8564,
+          "sim_Alejandro": 0.0357,
+          "sim_Couto": 0.0483,
+          "attributed_to": "Couto",
+          "attribution_confidence": 0.0483,
+          "separation_from_other": 0.0357,
+          "margin": 0.0126
+        }
+      ],
+      "attribution_matrix": [
+        {
+          "face": 0,
+          "Alejandro": 0.0212,
+          "Couto": 0.0766
+        },
+        {
+          "face": 1,
+          "Alejandro": 0.0357,
+          "Couto": 0.0483
+        }
+      ]
+    },
+    {
+      "frame": "frame_02.png",
+      "faces_detected": 2,
+      "gate_status": "FAIL_MATCH",
+      "faces": [
+        {
+          "face_index": 0,
+          "position": {
+            "center_x": 431.6,
+            "center_y": 142.6
+          },
+          "bbox": [
+            403.6,
+            77.7,
+            459.6,
+            207.4
+          ],
+          "detection_score": 0.6449,
+          "sim_Alejandro": 0.0253,
+          "sim_Couto": 0.0686,
+          "attributed_to": "Couto",
+          "attribution_confidence": 0.0686,
+          "separation_from_other": 0.0253,
+          "margin": 0.0433
+        },
+        {
+          "face_index": 1,
+          "position": {
+            "center_x": 944.0,
+            "center_y": 333.6
+          },
+          "bbox": [
+            921.5,
+            302.9,
+            966.6,
+            364.3
+          ],
+          "detection_score": 0.8693,
+          "sim_Alejandro": 0.1339,
+          "sim_Couto": 0.047,
+          "attributed_to": "Alejandro",
+          "attribution_confidence": 0.1339,
+          "separation_from_other": 0.047,
+          "margin": 0.0869
+        }
+      ],
+      "attribution_matrix": [
+        {
+          "face": 0,
+          "Alejandro": 0.0253,
+          "Couto": 0.0686
+        },
+        {
+          "face": 1,
+          "Alejandro": 0.1339,
+          "Couto": 0.047
+        }
+      ]
+    },
+    {
+      "frame": "frame_03.png",
+      "faces_detected": 2,
+      "gate_status": "FAIL_MATCH",
+      "faces": [
+        {
+          "face_index": 0,
+          "position": {
+            "center_x": 498.6,
+            "center_y": 141.2
+          },
+          "bbox": [
+            473.4,
+            79.4,
+            523.7,
+            202.9
+          ],
+          "detection_score": 0.5408,
+          "sim_Alejandro": -0.013,
+          "sim_Couto": 0.0669,
+          "attributed_to": "Couto",
+          "attribution_confidence": 0.0669,
+          "separation_from_other": -0.013,
+          "margin": 0.0799
+        },
+        {
+          "face_index": 1,
+          "position": {
+            "center_x": 932.1,
+            "center_y": 335.0
+          },
+          "bbox": [
+            907.2,
+            301.1,
+            957.0,
+            368.9
+          ],
+          "detection_score": 0.8525,
+          "sim_Alejandro": 0.1304,
+          "sim_Couto": 0.0553,
+          "attributed_to": "Alejandro",
+          "attribution_confidence": 0.1304,
+          "separation_from_other": 0.0553,
+          "margin": 0.0751
+        }
+      ],
+      "attribution_matrix": [
+        {
+          "face": 0,
+          "Alejandro": -0.013,
+          "Couto": 0.0669
+        },
+        {
+          "face": 1,
+          "Alejandro": 0.1304,
+          "Couto": 0.0553
+        }
+      ]
+    },
+    {
+      "frame": "frame_04.png",
+      "faces_detected": 2,
+      "gate_status": "FAIL_MATCH",
+      "faces": [
+        {
+          "face_index": 0,
+          "position": {
+            "center_x": 449.9,
+            "center_y": 141.1
+          },
+          "bbox": [
+            421.6,
+            77.6,
+            478.2,
+            204.6
+          ],
+          "detection_score": 0.6467,
+          "sim_Alejandro": -0.013,
+          "sim_Couto": 0.0725,
+          "attributed_to": "Couto",
+          "attribution_confidence": 0.0725,
+          "separation_from_other": -0.013,
+          "margin": 0.0855
+        },
+        {
+          "face_index": 1,
+          "position": {
+            "center_x": 909.7,
+            "center_y": 338.9
+          },
+          "bbox": [
+            882.7,
+            302.8,
+            936.7,
+            375.0
+          ],
+          "detection_score": 0.8701,
+          "sim_Alejandro": 0.1744,
+          "sim_Couto": 0.1195,
+          "attributed_to": "Alejandro",
+          "attribution_confidence": 0.1744,
+          "separation_from_other": 0.1195,
+          "margin": 0.0549
+        }
+      ],
+      "attribution_matrix": [
+        {
+          "face": 0,
+          "Alejandro": -0.013,
+          "Couto": 0.0725
+        },
+        {
+          "face": 1,
+          "Alejandro": 0.1744,
+          "Couto": 0.1195
+        }
+      ]
+    },
+    {
+      "frame": "frame_05.png",
+      "faces_detected": 2,
+      "gate_status": "FAIL_MATCH",
+      "faces": [
+        {
+          "face_index": 0,
+          "position": {
+            "center_x": 509.8,
+            "center_y": 143.1
+          },
+          "bbox": [
+            483.7,
+            79.2,
+            535.9,
+            207.1
+          ],
+          "detection_score": 0.6429,
+          "sim_Alejandro": -0.0226,
+          "sim_Couto": 0.0739,
+          "attributed_to": "Couto",
+          "attribution_confidence": 0.0739,
+          "separation_from_other": -0.0226,
+          "margin": 0.0965
+        },
+        {
+          "face_index": 1,
+          "position": {
+            "center_x": 892.7,
+            "center_y": 343.8
+          },
+          "bbox": [
+            863.2,
+            304.1,
+            922.2,
+            383.6
+          ],
+          "detection_score": 0.8379,
+          "sim_Alejandro": 0.1662,
+          "sim_Couto": 0.0552,
+          "attributed_to": "Alejandro",
+          "attribution_confidence": 0.1662,
+          "separation_from_other": 0.0552,
+          "margin": 0.111
+        }
+      ],
+      "attribution_matrix": [
+        {
+          "face": 0,
+          "Alejandro": -0.0226,
+          "Couto": 0.0739
+        },
+        {
+          "face": 1,
+          "Alejandro": 0.1662,
+          "Couto": 0.0552
+        }
+      ]
+    }
+  ],
+  "doctrine": "DOCTRINE-HIOS-ATTESTATION-001",
+  "gate": "G-ATT-1 (number with measurement run)"
+}

@@ -112,3 +112,11 @@ w-mail-001/snappymail-data/
 .cache/
 .local/lib/python*/
 .npm/_cacache/
+
+# === W-HIOS CINEMA BINARIES (added 09 Jun 2026) ===
+# Policy: "Ledger versiona a prova, não o peso"
+# .mp4 and frames stay in /static/ with public URLs
+# Git tracks only: SEALED.md, .json measurements, provenance
+hios/cinema/obras/*/shots/**/*.mp4
+hios/cinema/obras/*/shots/**/*_frames/
+hios/cinema/obras/*/_forense/**/*.mp4

@@ -1,0 +1,33 @@
+{
+  "shot_id": "S10-CONFRONT_v1",
+  "classification": "FORENSE",
+  "gate": "DISAMBIGUATION_GATE",
+  "par_tested": "Alejandro \u00d7 Couto",
+  "inter_anchor_similarity": 0.4498,
+  "prompt": "Medium shot, corporate boardroom. Two men in dark suits.\n\nLEFT SIDE \u2014 ALEJANDRO: 43-year-old European-Latin executive, sharp angular features, dark hair cleanly styled short with gel, piercing dark brown eyes, smooth clean-shaven skin, charcoal grey Italian suit with white shirt. ALREADY SEATED at table, facing camera 3/4 profile. He does NOT move. Face 70%+ visible.\n\nRIGHT SIDE \u2014 COUTO: 45-year-old European corporate man, slicked-back grey hair, sharp jawline, clean-shaven, cold dark brown eyes, black cashmere overcoat. ALREADY STANDING behind table, near-frontal to camera. He does NOT move. Face 70%+ visible.\n\nPower dynamic: Alejandro seated (principal), Couto standing (subordinate reporting).\n\nCamera LOCKED. No orbit. No angle change. Professional lighting. Cinematic 4K.",
+  "video_path": "/home/windi/hios/cinema/obras/w-hios-forensic-unit/shots/s10-confront/S10-CONFRONT_v1.mp4",
+  "frames_dir": "/home/windi/hios/cinema/obras/w-hios-forensic-unit/shots/s10-confront/S10-CONFRONT_v1_frames",
+  "n_frames": 5,
+  "task_id": "41121080-43ed-4d26-bf6c-701155b5928a",
+  "timestamp": "2026-06-10T13:52:37.524396",
+  "doctrine": "DOCTRINE-HIOS-ATTESTATION-001",
+  "anti_movement_medicine": [
+    "Already in frame",
+    "Camera locked",
+    "Near-frontal",
+    "Does NOT move",
+    "Face 70%+ visible"
+  ],
+  "expected_measurement": {
+    "faces": 2,
+    "left_face": {
+      "anchor": "Alejandro",
+      "min_sim": 0.65
+    },
+    "right_face": {
+      "anchor": "Couto",
+      "min_sim": 0.65
+    },
+    "separation_threshold": 0.5
+  }
+}

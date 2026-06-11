@@ -1,0 +1,46 @@
+{
+  "calibration_id": "MARGIN-CAL-20260610142006",
+  "timestamp": "2026-06-10T14:20:06.346087",
+  "par_tested": "Alejandro \u00d7 Couto",
+  "inter_anchor_similarity": 0.4498,
+  "source_frames": {
+    "left": "/home/windi/hios/cinema/obras/w-hios-forensic-unit/shots/alejandro/S10-01_v1_frames/frame_01.png",
+    "right": "/home/windi/hios/cinema/obras/w-hios-forensic-unit/shots/couto/S10-01_v2_frames/frame_01.png"
+  },
+  "composed_frame": "/home/windi/hios/cinema/obras/w-hios-forensic-unit/production/calibration/calibration_frame_alejandro_couto.png",
+  "faces_detected": 2,
+  "results": [
+    {
+      "position": "LEFT",
+      "face_index": 0,
+      "bbox_x": 496.1560974121094,
+      "sim_alejandro": 0.8987,
+      "sim_couto": 0.4376,
+      "attributed_to": "Alejandro",
+      "confidence": 0.8987,
+      "separation": 0.4376,
+      "margin": 0.4611
+    },
+    {
+      "position": "RIGHT",
+      "face_index": 1,
+      "bbox_x": 1861.83203125,
+      "sim_alejandro": 0.3193,
+      "sim_couto": 0.802,
+      "attributed_to": "Couto",
+      "confidence": 0.802,
+      "separation": 0.3193,
+      "margin": 0.4827
+    }
+  ],
+  "calibration": {
+    "provisional_margin": 0.15,
+    "measured_avg_margin": 0.4719,
+    "measured_min_margin": 0.4611,
+    "recommended_threshold": 0.3689,
+    "gate_status": "PASS",
+    "attribution_correct": true
+  },
+  "doctrine": "SHOT-GRAMMAR-003",
+  "gate": "G-SG3-4 (margin calibration)"
+}

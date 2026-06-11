@@ -1,0 +1,38 @@
+{
+  "shot": "S09-01_v1",
+  "character": "Lucas Silva",
+  "scene": 9,
+  "description": "Lucas in tense silence",
+  "anchor": "lucas.silva.anchor.v1",
+  "approved_by": "Human Dragon",
+  "approval_date": "2026-06-08",
+  "frames": [
+    {
+      "frame": "frame_01.png",
+      "similarity": 0.9888,
+      "status": "FORENSIC"
+    },
+    {
+      "frame": "frame_02.png",
+      "similarity": 0.9856,
+      "status": "FORENSIC"
+    },
+    {
+      "frame": "frame_03.png",
+      "similarity": 0.983,
+      "status": "FORENSIC"
+    },
+    {
+      "frame": "frame_04.png",
+      "similarity": 0.9831,
+      "status": "FORENSIC"
+    },
+    {
+      "frame": "frame_05.png",
+      "similarity": 0.9801,
+      "status": "FORENSIC"
+    }
+  ],
+  "avg_similarity": 0.9841,
+  "verdict": "FORENSIC"
+}

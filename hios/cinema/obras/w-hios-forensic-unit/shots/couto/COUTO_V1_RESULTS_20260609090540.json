@@ -1,0 +1,233 @@
+{
+  "run_id": "20260609090540",
+  "character": "Marcus Couto",
+  "version": "v1",
+  "method": "Anti-Movement Medicine",
+  "anchor": "/home/windi/hios/cinema/obras/w-hios-forensic-unit/anchors/marcus.couto.anchor.v1.png",
+  "results": [
+    {
+      "shot": "S02-01_v1",
+      "scene": 2,
+      "description": "Corridor - observes Gabi through glass",
+      "tier": "FORENSE",
+      "avg_similarity": 0.7943,
+      "threshold": 0.75,
+      "passed": true,
+      "margin": 0.0443,
+      "measurements": [
+        {
+          "frame": "frame_01.png",
+          "sim": 0.9849
+        },
+        {
+          "frame": "frame_02.png",
+          "sim": 0.8293
+        },
+        {
+          "frame": "frame_03.png",
+          "sim": 0.7426
+        },
+        {
+          "frame": "frame_04.png",
+          "sim": 0.7254
+        },
+        {
+          "frame": "frame_05.png",
+          "sim": 0.6891
+        }
+      ]
+    },
+    {
+      "shot": "S03-01_v1",
+      "scene": 3,
+      "description": "Confrontation - acabou a auditoria",
+      "tier": "FORENSE",
+      "avg_similarity": 0.9846,
+      "threshold": 0.75,
+      "passed": true,
+      "margin": 0.2346,
+      "measurements": [
+        {
+          "frame": "frame_01.png",
+          "sim": 0.9919
+        },
+        {
+          "frame": "frame_02.png",
+          "sim": 0.9871
+        },
+        {
+          "frame": "frame_03.png",
+          "sim": 0.9838
+        },
+        {
+          "frame": "frame_04.png",
+          "sim": 0.9736
+        },
+        {
+          "frame": "frame_05.png",
+          "sim": 0.9868
+        }
+      ]
+    },
+    {
+      "shot": "S03-02_v1",
+      "scene": 3,
+      "description": "Physical threat - advances",
+      "tier": "OPERACIONAL",
+      "avg_similarity": 0.9675,
+      "threshold": 0.65,
+      "passed": true,
+      "margin": 0.3175,
+      "measurements": [
+        {
+          "frame": "frame_01.png",
+          "sim": 0.987
+        },
+        {
+          "frame": "frame_02.png",
+          "sim": 0.9836
+        },
+        {
+          "frame": "frame_03.png",
+          "sim": 0.9662
+        },
+        {
+          "frame": "frame_04.png",
+          "sim": 0.9528
+        },
+        {
+          "frame": "frame_05.png",
+          "sim": 0.948
+        }
+      ]
+    },
+    {
+      "shot": "S10-01_v1",
+      "scene": 10,
+      "description": "Rooftop - reports to Alejandro",
+      "tier": "FORENSE",
+      "avg_similarity": 0.8808,
+      "threshold": 0.75,
+      "passed": true,
+      "margin": 0.1308,
+      "measurements": [
+        {
+          "frame": "frame_01.png",
+          "sim": 0.9079
+        },
+        {
+          "frame": "frame_02.png",
+          "sim": 0.8883
+        },
+        {
+          "frame": "frame_03.png",
+          "sim": 0.8763
+        },
+        {
+          "frame": "frame_04.png",
+          "sim": 0.8658
+        },
+        {
+          "frame": "frame_05.png",
+          "sim": 0.8658
+        }
+      ]
+    },
+    {
+      "shot": "S11-01_v1",
+      "scene": 11,
+      "description": "Confrontation with Interpol",
+      "tier": "OPERACIONAL",
+      "avg_similarity": 0.9764,
+      "threshold": 0.65,
+      "passed": true,
+      "margin": 0.3264,
+      "measurements": [
+        {
+          "frame": "frame_01.png",
+          "sim": 0.9901
+        },
+        {
+          "frame": "frame_02.png",
+          "sim": 0.9774
+        },
+        {
+          "frame": "frame_03.png",
+          "sim": 0.9733
+        },
+        {
+          "frame": "frame_04.png",
+          "sim": 0.9724
+        },
+        {
+          "frame": "frame_05.png",
+          "sim": 0.9686
+        }
+      ]
+    },
+    {
+      "shot": "S12-01_v1",
+      "scene": 12,
+      "description": "Window introspection - cinco anos",
+      "tier": "GEOMETRY",
+      "avg_similarity": 0.9637,
+      "threshold": 0.65,
+      "passed": true,
+      "margin": 0.3137,
+      "measurements": [
+        {
+          "frame": "frame_01.png",
+          "sim": 0.991
+        },
+        {
+          "frame": "frame_02.png",
+          "sim": 0.9745
+        },
+        {
+          "frame": "frame_03.png",
+          "sim": 0.9578
+        },
+        {
+          "frame": "frame_04.png",
+          "sim": 0.9511
+        },
+        {
+          "frame": "frame_05.png",
+          "sim": 0.9439
+        }
+      ]
+    },
+    {
+      "shot": "S13-01_v1",
+      "scene": 13,
+      "description": "Tribunal - fear in eyes",
+      "tier": "FORENSE",
+      "avg_similarity": 0.9589,
+      "threshold": 0.75,
+      "passed": true,
+      "margin": 0.2089,
+      "measurements": [
+        {
+          "frame": "frame_01.png",
+          "sim": 0.9789
+        },
+        {
+          "frame": "frame_02.png",
+          "sim": 0.9582
+        },
+        {
+          "frame": "frame_03.png",
+          "sim": 0.9555
+        },
+        {
+          "frame": "frame_04.png",
+          "sim": 0.9518
+        },
+        {
+          "frame": "frame_05.png",
+          "sim": 0.95
+        }
+      ]
+    }
+  ]
+}

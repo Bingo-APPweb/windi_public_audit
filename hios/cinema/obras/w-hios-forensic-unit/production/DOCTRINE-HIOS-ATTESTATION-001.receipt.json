@@ -1,0 +1,26 @@
+{
+  "receipt_id": "WINDI-DOCTRINE-HIOS-ATT001-20260610105305-EDF928E5",
+  "content_hash": "sha256:edf928e5d5e4321b92dd97110761bff01228d902b10eace7e05435a7fe241a6e",
+  "chain_parent": "DOCTRINE-CINEMA-FORENSIC-SEPARATION",
+  "sealed_by": "did:windi:dragon-001",
+  "sealed_at": "2026-06-10T10:53:05Z",
+  "invariants": ["I1", "I9", "I11", "I14"],
+  "verify_url": "https://windi-domain.com/verify-public/?id=WINDI-DOCTRINE-HIOS-ATT001-20260610105305-EDF928E5",
+  "ledger_response": {
+    "ok": true,
+    "stored": true,
+    "privacy": "content_not_stored"
+  },
+  "metadata": {
+    "articles": [
+      "Art. I — Princípio da Verificação Pura",
+      "Art. II — Princípio da Independência da Medição",
+      "Art. III — Princípio da Imputabilidade Simétrica"
+    ],
+    "gates": ["G-ATT-1", "G-ATT-2", "G-ATT-3", "G-ATT-4", "G-ATT-5"],
+    "axioms_count": 6,
+    "session": "S298",
+    "sidecar_pattern": "Receipt separado do corpo para garantir verificabilidade. Hash do .md = hash no Ledger.",
+    "g4_compliance": "Padrão estabelecido para todas as selagens futuras: corpo e receipt separados."
+  }
+}

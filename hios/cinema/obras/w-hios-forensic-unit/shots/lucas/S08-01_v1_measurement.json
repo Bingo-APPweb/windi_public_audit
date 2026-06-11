@@ -1,0 +1,38 @@
+{
+  "shot": "S08-01_v1",
+  "character": "Lucas Silva",
+  "scene": 8,
+  "description": "Lucas surrounded by printouts",
+  "anchor": "lucas.silva.anchor.v1",
+  "approved_by": "Human Dragon",
+  "approval_date": "2026-06-08",
+  "frames": [
+    {
+      "frame": "frame_01.png",
+      "similarity": 0.9913,
+      "status": "FORENSIC"
+    },
+    {
+      "frame": "frame_02.png",
+      "similarity": 0.9817,
+      "status": "FORENSIC"
+    },
+    {
+      "frame": "frame_03.png",
+      "similarity": 0.967,
+      "status": "FORENSIC"
+    },
+    {
+      "frame": "frame_04.png",
+      "similarity": 0.976,
+      "status": "FORENSIC"
+    },
+    {
+      "frame": "frame_05.png",
+      "similarity": 0.9757,
+      "status": "FORENSIC"
+    }
+  ],
+  "avg_similarity": 0.9783,
+  "verdict": "FORENSIC"
+}

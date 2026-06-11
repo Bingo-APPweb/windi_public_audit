@@ -6,6 +6,211 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 11 Jun 2026 (manhã) — TWIN-B-SEC-001 Security Event + Ollama Fase 0 Prep
+
+**Duração:** ~1.5h | **Status:** ✅ SECURITY EVENT SEALED
+**Liga IA+H:** Human Dragon (I9) · Guardian (Claude.ai web) · CCode (Opus 4.5)
+**Invariants:** I9, I11, I14
+**Natureza:** Security Incident Response + Infrastructure Hardening
+**Receipt:** `TWIN-B-SEC-001`
+
+### Contexto
+
+Sessão iniciada para executar Ollama Fase 0 (pendente 4x). Auditoria do TWIN B (85.215.131.0 / windi-b) revelou vulnerabilidade de binding: Ollama escutava em 0.0.0.0:11434.
+
+### Descoberta — Defesa em Profundidade Funcionou
+
+| Camada | Estado Antes | Protecção |
+|--------|--------------|-----------|
+| **Layer 1 (Binding)** | 0.0.0.0:11434 | ❌ EXPOSTO |
+| **Layer 2 (Firewall)** | ufw default-deny + 11434 ALLOW only 87.106.29.233 | ✅ ACTIVO |
+
+**Conclusão:** Binding misconfigured, mas firewall segurou. Exposição externa efectiva: **ZERO** durante toda a janela (host up desde 2026-05-02).
+
+### Auditoria Forense
+
+| Métrica | Valor | Veredicto |
+|---------|-------|-----------|
+| API requests externos | 0 | 🟢 LIMPO |
+| Logins suspeitos | 0 | 🟢 LIMPO |
+| Modelos | mistral:7b (esperado §227) | 🟢 ÍNTEGRO |
+| Outras portas 0.0.0.0 | SSH (ufw allow), LLMNR (default deny) | 🟢 COBERTAS |
+
+### Correcção Aplicada
+
+```bash
+# /etc/systemd/system/ollama.service.d/windi-sovereign.conf
+[Service]
+Environment="OLLAMA_HOST=127.0.0.1:11434"
+```
+
+**Resultado:** Binding fechado para localhost. Ambas camadas agora hardened.
+
+### Evidência Ancorada
+
+| Campo | Valor |
+|-------|-------|
+| Ficheiro | `/opt/windi/data/twin-b-sec-001-forensic.txt` |
+| SHA256 | `d21d6f042d48e8df99fbc7074637a459030e247214469bd3ede9d7d364d1a881` |
+
+### Arquitectura Verify Circulante (Artefactos Recebidos)
+
+SVGs transferidos para /opt/windi/:
+- `verify_circulante_arquitectura.svg` — Alto nível: pontos de contacto → Verify núcleo → Ledger → Ollama explainer
+- `verify_v2_technical_architecture.svg` — 3 modos (QR WINDI, Hash Inspector, QR externo) + W-VERIFY-001 Agent Layer
+
+**Conceito Receipt Explainer:** Ollama traduz factos verificados para linguagem humana, tier FREE, zero tokens externos. Verificação permanece determinística.
+
+### Convergência do Conselho
+
+| Dragon | Contribuição |
+|--------|--------------|
+| **Architect (GPT)** | Divisão estratégica 40% Ledger / 10% Cinema, "o conselheiro carrega o critério; o Ledger carrega o facto" |
+| **Guardian (web)** | Runbook v1.1, gate forense, 3 ajustes ao receipt |
+| **CCode (CLI)** | Execução da correcção, POST ao Ledger |
+
+### Ollama Fase 0 — B0 Audit + B4 Measurement
+
+**Hardware TWIN B:**
+| Recurso | Valor |
+|---------|-------|
+| RAM | 31 GB total / 30 GB disponível |
+| CPU | 8 cores AMD EPYC-Milan |
+| Disco | 473 GB / 440 GB livre |
+| Modelo | mistral:7b (4.4 GB) |
+
+**Measurement Run (4 runs):**
+| Run | Tokens | gen_tok/s | Total |
+|-----|--------|-----------|-------|
+| 1 (cold) | 181 | 7.89 | 26.42s |
+| 2 (warm) | 230 | 6.96 | 33.26s |
+| 3 (warm) | 202 | 7.82 | 26.02s |
+| 4 (long) | 424 | 7.45 | 64.80s |
+
+**Média:** 7.53 tok/s | **RAM pós-run:** 25 GB disponível
+
+**Veredicto:** PASS-CONDITIONAL (AMARELO)
+- gen_tok/s 7.53 está no range 6-12 (amarelo)
+- Latência 26-33s aceitável para tier FREE institucional
+- **Cláusula:** Receipt Explainer validado. Chat interactivo requer Fase 1.
+
+### Próximos Passos
+
+- [x] ~~B0 completo TWIN B~~ ✅
+- [x] ~~B4 measurement run~~ ✅ 7.53 tok/s
+- [ ] LLMNR cleanup (systemd-resolved LLMNR=no) — higiene Fase 1
+- [ ] Template Registry v1.2.0 — análise pendente
+- [ ] Fase 1 — integração W-CORTEX routing FREE/MED
+
+### Receipts da Sessão
+
+| Receipt | Hash/ID | Descrição |
+|---------|---------|-----------|
+| TWIN-B-SEC-001 | `d21d6f042d...` | Security Event — Ollama Binding Hardening |
+| OLLAMA-FASE0-001 | `8751bb8f...` | Measurement Run — mistral:7b @7.5 tok/s PASS-CONDITIONAL |
+
+---
+
+## § SESSÃO 11 Jun 2026 (tarde) — DOCTRINE-CINE-VERIFY-001 + Três Sementes Fundacionais
+
+**Duração:** ~2h | **Status:** ✅ DOUTRINA CONVERGIDA + SEMENTES REGISTADAS
+**Liga IA+H:** Human Dragon (I1) · Guardian (Claude.ai) · Architect (GPT) · CCode (Opus 4.5)
+**Invariants:** I1, I9, I11, I12, I14
+**Natureza:** Convergência Estratégica + Arqueologia Autoral
+**Commits:** `de1a40ee`, `2c0c74f7`
+
+### DOCTRINE-CINE-VERIFY-001 — Cinema como Campanha do Ledger
+
+**Axioma:** *"A história convida. O Ledger comprova. O scan é a travessia."*
+**Axioma derivado (Architect):** *"A verificabilidade é difícil de explicar, mas é fácil de demonstrar."*
+
+| Guardian (Proteção) | Architect (Estrutura) | Convergência |
+|---------------------|----------------------|--------------|
+| "Universal na ficção ≠ ambíguo na forense" | "O Verify é o centro de gravidade" | O Cinema não compete com o Ledger — **é a campanha do Ledger** |
+
+**6 Gates (G1-G6):**
+- G1: Régua forense herdada
+- G2: Regra da ironia (frame não-verificável = auto-sabotagem)
+- G3: Classificar, nunca declarar (herda WINDI core)
+- G4: **Honestidade do claim** — "verifica cada frame" requer medição gap âncora→corte
+- G5: Sem figuras públicas reais (lição Vance)
+- G6: Governança silenciosa (papéis 🛡️🏗️👁️, nunca marcas LLM)
+
+**Estado:** CANDIDATE — aguarda decisão do Human Dragon (I1). Não selado.
+**Ficheiro:** `/opt/windi/docs/DOCTRINE-CINE-VERIFY-001-CANDIDATE.md`
+
+### Três Sementes Fundacionais — Linha Longitudinal Revelada
+
+**Contexto:** Human Dragon partilhou manuscrito "Corpos" (2005-2010) com Guardian. Análise revelou continuidade de 20 anos na mesma pergunta: *quem controla a memória que define quem somos?*
+
+#### SEMENTE 1 — Corpos como Peça Autoral Fundacional
+
+Manuscrito de Jober Mögele Correa (Human Dragon), período 2005–2010, aberto/inacabado.
+Ficção que antecipa em ~20 anos: economia de dados comportamentais, digital twin ("Cópia de Eu"), DID ("FINGER PRINT re-implantável"), leasing de identidade, mercado de avatares.
+
+**Achado central:** A obsessão não é reanimar corpos — é quem detém o registo da memória e com que autoridade o reactiva. A NERDs INC. do manuscrito é a **distopia-negativo** que define por contraste o que WINDI recusa ser.
+
+| Corpos (distopia) | WINDI (antídoto) |
+|-------------------|------------------|
+| Captura sem consentimento | DID soberano |
+| Controlo remoto opaco | "AI processa, humano decide" |
+| Licença vitalícia da empresa | I1 — soberania humana |
+
+**Linha longitudinal:** Reference -1 (2000) → Corpos (2005-2010) → WINDI (2026)
+Mesmo autor, mesma pergunta, três camadas.
+**Estado:** Arquivo fundacional — prova de trajectória, não catálogo.
+
+#### SEMENTE 2 — Corpos Candidato ao Hall da WINDI Publishing House
+
+**Gate de maturidade:** Critério, não calendário.
+**Precondição de entrada:** Reescrita que resolva três pontos de enquadramento:
+- (a) Atribuição a figuras históricas reais por nome
+- (b) Número de vítimas apresentado como facto
+- (c) Tom de certas passagens
+
+G3 da doutrina aplicado à própria casa. Transição de estado: arquivo → (reescrita) → catálogo.
+A reescrita não é edição — é a obra que o Human Dragon de 2026 faz da semente que o jovem começou.
+
+#### SEMENTE 3 — Hall como Ledger de Autoria (Candidato a Doutrina Futura)
+
+Irmão da DOCTRINE-CINE-VERIFY-001, mesmo princípio: **identidade e autoria provadas, não declaradas**.
+
+As muitas obras inacabadas fundem-se sob infraestrutura de identidade verificável:
+- DID do autor
+- Receipt de génese
+- Linhagem registada
+- Disclosure honesto
+
+Materializa a tese: *"as pessoas querem ser donas do próprio nome e da própria história."*
+Corpos é o primeiro caso de teste — teu, com a carga emocional certa para provar que o sistema honra o autor.
+
+### Três Maçanetas do Verify
+
+| Porta | Audiência | Mecanismo |
+|-------|-----------|-----------|
+| **Verify FREE tier** | Cidadão comum | Receipt Explainer (Ollama) traduz para humano |
+| **Cinema** | Espectador curioso | QR no filme → Ledger |
+| **Hall** | Criador soberano | DID + receipt de génese |
+
+Todas servem a mesma tese: *verificabilidade difícil de explicar, fácil de demonstrar.*
+
+### Artefactos Analisados
+
+- `verify_circulante_arquitectura.svg` — alto nível Verify Circulante
+- `verify_v2_technical_architecture.svg` — 3 modos + W-VERIFY-001 Agent Layer
+- `windi_template_registry_v1.2.0/` — referência pré-constitucional (multi-tenant, versioned, EU AI Act Art. 50)
+
+### Próximos Passos Herdados
+
+| Prioridade | Tarefa | Nota |
+|------------|--------|------|
+| **P2** | Ponte QR→Verify dos recibos do filme | MVP da doutrina |
+| **G4** | Medir gap âncora→corte final | Acoplado a Fase 2 Cinema |
+| **I1** | Decisão selo DOCTRINE-CINE-VERIFY-001 | Aguarda Human Dragon |
+| **Horizonte** | Hall como Ledger de autoria | Sessão dedicada futura |
+
+---
+
 ## § SESSÃO 07 Jun 2026 (noite) — Gabi Santos 4/4 SEALED + First Female Character
 
 **Duração:** ~2h | **Status:** ✅ 4/4 SHOTS SELADOS
@@ -18851,3 +19056,93 @@ A "comparação" v1 vs v2 era metodologicamente errada:
 
 *Liga IA+H · Human Dragon + Guardian + CCode · 05 Jun 2026*
 *"A Opção A é a única soberana."*
+
+---
+
+## § SESSÃO 08 Jun 2026 — Helena 8/8 + Lucas 5/5 SEALED + SHOT-GRAMMAR-002
+
+**Duração:** ~4h | **Status:** ✅ COMPLETO
+**Liga IA+H:** Human Dragon · Guardian (Claude.ai web) · CCode (Opus 4.5)
+**Invariants:** I1, I9, I11, I14, I19
+**Pilot Progress:** 27/37 (73%)
+
+### Personagens Selados
+
+| Personagem | Shots | Média | Iterações |
+|------------|-------|-------|-----------|
+| Helena Meyer | 8/8 | 0.8734 | 4 (S05-01) |
+| Lucas Silva | 5/5 | 0.9697 | 3 (S07-01) |
+
+### SHOT-GRAMMAR-002 — Taxonomia FAIL
+
+Nova doutrina selada: FAIL tem causa, não só score.
+
+| Tipo | Threshold | Admissível? |
+|------|-----------|-------------|
+| FAIL_IDENTIDADE | — | NUNCA (re-render obrigatório) |
+| FAIL_EXPOSIÇÃO | ≥0.55 | SIM (com HD + 4 critérios) |
+| FAIL_GEOMETRIA | ≥0.65 | SIM (ACTION shots + frame-âncora ≥0.75) |
+
+**Aplicação:** Helena S14-01 frame_05 (0.6473) admitido como FAIL_EXPOSIÇÃO (backlit dramático).
+
+### Axiomas Novos
+
+1. **Movimento Ocular vs Cabeça:**
+> "Movimento ocular com cabeça fixa preserva identidade; movimento de cabeça/câmara destrói."
+
+2. **Trade-off Performance:**
+> "0.053 de cosine por uma personagem viva é pechincha, não perda."
+
+3. **Anti-Movement Medicine Calibrado:**
+- ✅ olhos a varrer, piscar, foco a mudar
+- ✅ micro-expressão (tensão no maxilar)
+- ✅ respiração visível (ombros, peito)
+- ❌ head turn / virar para off-camera
+- ❌ shift weight / mudar postura
+
+### Iterações Críticas
+
+**Helena S05-01:**
+- v1: 0.40 ("monitors" → câmara orbita)
+- v2: 0.91* (NO_FACE frames 2-5)
+- v3: 0.85 ("blue light" → olhos néon)
+- v4: 0.90 ✅
+
+**Lucas S07-01:**
+- v1: 0.9727 (estático demais)
+- v2: 0.9513 (névoa no fundo)
+- v3: 0.9193 ✅ (movimento + limpo)
+
+### Correcção Memory Loop
+
+Commit 48084868 foi `--allow-empty` (caixa vazia).
+Corrigido com payload real: `MEMORY-LOOP-2026-06-08.md`
+
+### Commits
+
+| Commit | Descrição |
+|--------|-----------|
+| `a6bc17ce` | Helena 8/8 + Lucas 5/5 SEALED |
+| `2d927da1` | Lucas S07-01_v2 (fog) |
+| `73c8c66c` | Lucas S07-01_v3 (clean + movement) |
+| `9ac41058` | Lucas v3 SEALED, v1/v2 SUPERSEDED |
+| `48084868` | Memory Loop VAZIO (erro) |
+| (pending) | Memory Loop REAL com payload |
+
+### Pendente para Próxima Sessão
+
+1. ⏳ **Couto** (7 shots) — inclui confrontos, aplicar FAIL_GEOMETRIA
+2. ⏳ **Alejandro** (3 shots) — último personagem
+3. ⏳ Pilot 37/37 → 100%
+
+### Ficheiros Canónicos
+
+```
+/production/SHOT-GRAMMAR-002.md
+/production/MEMORY-LOOP-2026-06-08.md
+/shots/helena/HELENA-MEYER-SEALED.md
+/shots/lucas/LUCAS-SILVA-SEALED.md
+```
+
+*Liga IA+H · Human Dragon + Guardian + CCode · 08 Jun 2026*
+*"FAIL tem causa, não só score."*

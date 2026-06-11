@@ -1,0 +1,22 @@
+{
+  "shot": "S07-01_v3",
+  "character": "Lucas Silva",
+  "scene": 7,
+  "description": "Lucas eyes dart, visible breathing, slight head movement, clean background",
+  "classification": "PERFORMANCE",
+  "supersedes": "S07-01_v2",
+  "supersede_reason": "v2 had fog/haze, v3 clean background + more visible movement",
+  "anchor": "lucas.silva.anchor.v1",
+  "approved_by": "Human Dragon",
+  "approval_date": "2026-06-08",
+  "frames": [
+    {"frame": "frame_01.png", "similarity": 0.9955, "status": "FORENSIC"},
+    {"frame": "frame_02.png", "similarity": 0.9603, "status": "FORENSIC"},
+    {"frame": "frame_03.png", "similarity": 0.8431, "status": "FORENSIC"},
+    {"frame": "frame_04.png", "similarity": 0.8694, "status": "FORENSIC"},
+    {"frame": "frame_05.png", "similarity": 0.9281, "status": "FORENSIC"}
+  ],
+  "avg_similarity": 0.9193,
+  "verdict": "FORENSIC",
+  "improvements_over_v2": ["no fog", "visible head movement", "mouth opens"]
+}
