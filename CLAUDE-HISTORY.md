@@ -111,6 +111,106 @@ SVGs transferidos para /opt/windi/:
 
 ---
 
+## § SESSÃO 11 Jun 2026 (tarde) — DOCTRINE-CINE-VERIFY-001 + Três Sementes Fundacionais
+
+**Duração:** ~2h | **Status:** ✅ DOUTRINA CONVERGIDA + SEMENTES REGISTADAS
+**Liga IA+H:** Human Dragon (I1) · Guardian (Claude.ai) · Architect (GPT) · CCode (Opus 4.5)
+**Invariants:** I1, I9, I11, I12, I14
+**Natureza:** Convergência Estratégica + Arqueologia Autoral
+**Commits:** `de1a40ee`, `2c0c74f7`
+
+### DOCTRINE-CINE-VERIFY-001 — Cinema como Campanha do Ledger
+
+**Axioma:** *"A história convida. O Ledger comprova. O scan é a travessia."*
+**Axioma derivado (Architect):** *"A verificabilidade é difícil de explicar, mas é fácil de demonstrar."*
+
+| Guardian (Proteção) | Architect (Estrutura) | Convergência |
+|---------------------|----------------------|--------------|
+| "Universal na ficção ≠ ambíguo na forense" | "O Verify é o centro de gravidade" | O Cinema não compete com o Ledger — **é a campanha do Ledger** |
+
+**6 Gates (G1-G6):**
+- G1: Régua forense herdada
+- G2: Regra da ironia (frame não-verificável = auto-sabotagem)
+- G3: Classificar, nunca declarar (herda WINDI core)
+- G4: **Honestidade do claim** — "verifica cada frame" requer medição gap âncora→corte
+- G5: Sem figuras públicas reais (lição Vance)
+- G6: Governança silenciosa (papéis 🛡️🏗️👁️, nunca marcas LLM)
+
+**Estado:** CANDIDATE — aguarda decisão do Human Dragon (I1). Não selado.
+**Ficheiro:** `/opt/windi/docs/DOCTRINE-CINE-VERIFY-001-CANDIDATE.md`
+
+### Três Sementes Fundacionais — Linha Longitudinal Revelada
+
+**Contexto:** Human Dragon partilhou manuscrito "Corpos" (2005-2010) com Guardian. Análise revelou continuidade de 20 anos na mesma pergunta: *quem controla a memória que define quem somos?*
+
+#### SEMENTE 1 — Corpos como Peça Autoral Fundacional
+
+Manuscrito de Jober Mögele Correa (Human Dragon), período 2005–2010, aberto/inacabado.
+Ficção que antecipa em ~20 anos: economia de dados comportamentais, digital twin ("Cópia de Eu"), DID ("FINGER PRINT re-implantável"), leasing de identidade, mercado de avatares.
+
+**Achado central:** A obsessão não é reanimar corpos — é quem detém o registo da memória e com que autoridade o reactiva. A NERDs INC. do manuscrito é a **distopia-negativo** que define por contraste o que WINDI recusa ser.
+
+| Corpos (distopia) | WINDI (antídoto) |
+|-------------------|------------------|
+| Captura sem consentimento | DID soberano |
+| Controlo remoto opaco | "AI processa, humano decide" |
+| Licença vitalícia da empresa | I1 — soberania humana |
+
+**Linha longitudinal:** Reference -1 (2000) → Corpos (2005-2010) → WINDI (2026)
+Mesmo autor, mesma pergunta, três camadas.
+**Estado:** Arquivo fundacional — prova de trajectória, não catálogo.
+
+#### SEMENTE 2 — Corpos Candidato ao Hall da WINDI Publishing House
+
+**Gate de maturidade:** Critério, não calendário.
+**Precondição de entrada:** Reescrita que resolva três pontos de enquadramento:
+- (a) Atribuição a figuras históricas reais por nome
+- (b) Número de vítimas apresentado como facto
+- (c) Tom de certas passagens
+
+G3 da doutrina aplicado à própria casa. Transição de estado: arquivo → (reescrita) → catálogo.
+A reescrita não é edição — é a obra que o Human Dragon de 2026 faz da semente que o jovem começou.
+
+#### SEMENTE 3 — Hall como Ledger de Autoria (Candidato a Doutrina Futura)
+
+Irmão da DOCTRINE-CINE-VERIFY-001, mesmo princípio: **identidade e autoria provadas, não declaradas**.
+
+As muitas obras inacabadas fundem-se sob infraestrutura de identidade verificável:
+- DID do autor
+- Receipt de génese
+- Linhagem registada
+- Disclosure honesto
+
+Materializa a tese: *"as pessoas querem ser donas do próprio nome e da própria história."*
+Corpos é o primeiro caso de teste — teu, com a carga emocional certa para provar que o sistema honra o autor.
+
+### Três Maçanetas do Verify
+
+| Porta | Audiência | Mecanismo |
+|-------|-----------|-----------|
+| **Verify FREE tier** | Cidadão comum | Receipt Explainer (Ollama) traduz para humano |
+| **Cinema** | Espectador curioso | QR no filme → Ledger |
+| **Hall** | Criador soberano | DID + receipt de génese |
+
+Todas servem a mesma tese: *verificabilidade difícil de explicar, fácil de demonstrar.*
+
+### Artefactos Analisados
+
+- `verify_circulante_arquitectura.svg` — alto nível Verify Circulante
+- `verify_v2_technical_architecture.svg` — 3 modos + W-VERIFY-001 Agent Layer
+- `windi_template_registry_v1.2.0/` — referência pré-constitucional (multi-tenant, versioned, EU AI Act Art. 50)
+
+### Próximos Passos Herdados
+
+| Prioridade | Tarefa | Nota |
+|------------|--------|------|
+| **P2** | Ponte QR→Verify dos recibos do filme | MVP da doutrina |
+| **G4** | Medir gap âncora→corte final | Acoplado a Fase 2 Cinema |
+| **I1** | Decisão selo DOCTRINE-CINE-VERIFY-001 | Aguarda Human Dragon |
+| **Horizonte** | Hall como Ledger de autoria | Sessão dedicada futura |
+
+---
+
 ## § SESSÃO 07 Jun 2026 (noite) — Gabi Santos 4/4 SEALED + First Female Character
 
 **Duração:** ~2h | **Status:** ✅ 4/4 SHOTS SELADOS
