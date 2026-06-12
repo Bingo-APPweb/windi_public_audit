@@ -159,13 +159,17 @@
 
 ## COLISÕES DE ÂNCORA (Matrix 15-pairs)
 
+> **Fonte:** `INTER-ANCHOR-MATRIX-15.json` (selado 12 Jun 2026 10:09:52)
+
 | Par | Similaridade | Risco |
 |-----|--------------|-------|
 | Couto × Lucas | 0.4965 | ⚠️ CRITICAL (0.0035 do threshold) |
-| Couto × Alejandro | 0.4489 | 🟡 ALTO |
-| Lucas × Alejandro | 0.4356 | 🟡 ALTO |
-| Vance × Couto | 0.3642 | 🟢 MÉDIO |
+| Couto × Alejandro | 0.4498 | 🟡 ALTO |
+| Lucas × Alejandro | 0.4422 | 🟡 ALTO |
+| Vance × Couto | 0.1765 | 🟢 BAIXO (Disambiguation Gate) |
 | Helena × Gabi | 0.2443 | 🟢 BAIXO |
+
+**Errata §267:** Valores corrigidos 12 Jun 2026 13:45 — versão anterior tinha drift de digitação.
 
 **Regra para cenas partilhadas:** Em close-ups com Couto+Lucas no mesmo frame,
 priorizar diferenciação por vestuário/posição antes do corte.

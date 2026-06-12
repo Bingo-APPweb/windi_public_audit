@@ -9,12 +9,14 @@
 
 | Personagem | Avg Score | Shots | Receipt |
 |------------|-----------|-------|---------|
-| **Marcus Vance** | ~0.85 | 10 | WINDI-PILOT-VANCE-* |
+| **Marcus Vance** | 0.8795 | 8/10 | WINDI-PILOT-VANCE-* |
 | **Gabi Santos** | 0.86 | 4 | WINDI-PILOT-GABI-* |
-| **Helena Meyer** | 0.87 | 10/11 | `WINDI-PILOT-HELENA-MEYER-20260612` |
-| **Lucas Silva** | 0.97 | 7/7 | `WINDI-PILOT-LUCAS-SILVA-20260612` |
-| **Marcus Couto** | 0.94 | 7/8 | `WINDI-PILOT-MARCUS-COUTO-20260612` |
-| **Alejandro Valenzuela** | 0.99 | 3/5 | `WINDI-PILOT-ALEJANDRO-VALENZUELA-20260612` |
+| **Helena Meyer** | 0.8745 | 10/11 | `WINDI-PILOT-HELENA-MEYER-20260612` |
+| **Lucas Silva** | 0.9675 | 7/7 | `WINDI-PILOT-LUCAS-SILVA-20260612` |
+| **Marcus Couto** | 0.9385 | 7/8 | `WINDI-PILOT-MARCUS-COUTO-20260612` |
+| **Alejandro Valenzuela** | 0.9887 | 3/5 | `WINDI-PILOT-ALEJANDRO-VALENZUELA-20260612` |
+
+> **Errata §267 (12 Jun 13:50):** Scores exactos calculados das medições. Vance ~0.85→0.8795.
 
 ---
 
@@ -24,9 +26,9 @@
 
 | Cena | Descrição | Personagens | Shots | Status |
 |------|-----------|-------------|-------|--------|
-| **00** | Abertura — Gabi sorriso para filho | Gabi | 2 | ✅ FORENSE |
+| **00** | Abertura — Gabi sorriso para filho | Gabi | 2 | 🟡 OPERATIONAL (0.73) — **I1 pendente** |
 | **01** | Gabi determinada | Gabi | 1 | ✅ FORENSE |
-| **02** | Couto observa | Couto | 1 | 🟡 OPERATIONAL (0.79) |
+| **02** | Couto observa | Couto | 1 | ✅ FORENSE (0.7943) |
 | **03** | Confronto Gabi/Couto | Gabi, Couto | 3 | ✅ FORENSE |
 | **04** | Morte de Gabi | Gabi | 1 | ✅ FORENSE |
 
