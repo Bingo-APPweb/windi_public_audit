@@ -1,0 +1,116 @@
+{
+  "timestamp": "2026-06-12T10:09:52.071808",
+  "n_anchors": 6,
+  "n_pairs": 15,
+  "matrix": {
+    "Vance": {
+      "Couto": 0.1765,
+      "Alejandro": 0.057,
+      "Helena": 0.1503,
+      "Gabi": 0.0111,
+      "Lucas": 0.1731
+    },
+    "Couto": {
+      "Vance": 0.1765,
+      "Alejandro": 0.4498,
+      "Helena": 0.0621,
+      "Gabi": 0.2104,
+      "Lucas": 0.4965
+    },
+    "Alejandro": {
+      "Vance": 0.057,
+      "Couto": 0.4498,
+      "Helena": 0.0837,
+      "Gabi": 0.3003,
+      "Lucas": 0.4422
+    },
+    "Helena": {
+      "Vance": 0.1503,
+      "Couto": 0.0621,
+      "Alejandro": 0.0837,
+      "Gabi": 0.2443,
+      "Lucas": 0.0504
+    },
+    "Gabi": {
+      "Vance": 0.0111,
+      "Couto": 0.2104,
+      "Alejandro": 0.3003,
+      "Helena": 0.2443,
+      "Lucas": 0.3086
+    },
+    "Lucas": {
+      "Vance": 0.1731,
+      "Couto": 0.4965,
+      "Alejandro": 0.4422,
+      "Helena": 0.0504,
+      "Gabi": 0.3086
+    }
+  },
+  "ranking": [
+    {
+      "pair": "Couto\u00d7Lucas",
+      "similarity": 0.4965
+    },
+    {
+      "pair": "Couto\u00d7Alejandro",
+      "similarity": 0.4498
+    },
+    {
+      "pair": "Alejandro\u00d7Lucas",
+      "similarity": 0.4422
+    },
+    {
+      "pair": "Gabi\u00d7Lucas",
+      "similarity": 0.3086
+    },
+    {
+      "pair": "Alejandro\u00d7Gabi",
+      "similarity": 0.3003
+    },
+    {
+      "pair": "Helena\u00d7Gabi",
+      "similarity": 0.2443
+    },
+    {
+      "pair": "Couto\u00d7Gabi",
+      "similarity": 0.2104
+    },
+    {
+      "pair": "Vance\u00d7Couto",
+      "similarity": 0.1765
+    },
+    {
+      "pair": "Vance\u00d7Lucas",
+      "similarity": 0.1731
+    },
+    {
+      "pair": "Vance\u00d7Helena",
+      "similarity": 0.1503
+    },
+    {
+      "pair": "Alejandro\u00d7Helena",
+      "similarity": 0.0837
+    },
+    {
+      "pair": "Couto\u00d7Helena",
+      "similarity": 0.0621
+    },
+    {
+      "pair": "Vance\u00d7Alejandro",
+      "similarity": 0.057
+    },
+    {
+      "pair": "Helena\u00d7Lucas",
+      "similarity": 0.0504
+    },
+    {
+      "pair": "Vance\u00d7Gabi",
+      "similarity": 0.0111
+    }
+  ],
+  "thresholds": {
+    "separation": 0.5,
+    "high_risk": 0.4,
+    "medium_risk": 0.25
+  }
+}
