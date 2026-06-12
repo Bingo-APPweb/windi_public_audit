@@ -6,6 +6,67 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 12 Jun 2026 (manhã) — DOCTRINE-CINE-VERIFY-001 SEALED + Estado Corrigido
+
+**Duração:** ~30min | **Status:** ✅ DOUTRINA SELADA
+**Liga IA+H:** Human Dragon (I1, I9) · CCode (Opus 4.5)
+**Invariants:** I1, I9, I11, I14
+**Natureza:** Decisão Institucional + Correcção de Estado
+
+### Receipt da Sessão
+
+| Receipt | Hash | Descrição |
+|---------|------|-----------|
+| DOCTRINE-CINE-VERIFY-001 | `b4cf91c6` | Doutrina da Ficção Verificável SEALED |
+
+### Decisão I1
+
+**Pedido:** SELAR a doutrina convergida em 11 Jun 2026
+**Resposta Human Dragon:** "Sim, SELAR e seguir"
+**Execução:** Receipt `WINDI-DOCTRINE-CINE-VERIFY-001-20260612` no Ledger
+
+**Axioma Central (agora imutável):**
+> *"A história convida. O Ledger comprova. O scan é a travessia."*
+
+**6 Gates do Guardian (G1-G6):**
+- G1: Régua forense herdada
+- G2: Regra da ironia (frame não-verificável = auto-sabotagem)
+- G3: Classificar, nunca declarar
+- G4: Honestidade do claim (gap âncora→corte requer medição)
+- G5: Sem figuras públicas reais
+- G6: Governança silenciosa (papéis, nunca marcas LLM)
+
+### Correcção de Estado — Helena Meyer
+
+**HISTORY dizia:** Helena 0/8 shots (incorreto)
+**Estado real verificado:**
+- Helena anchor v1: ✅ LOCKED (embedding + provenance)
+- Helena shots: **9+ medidos** (S05-01 v1-v4, S07-01, S08-01, S09-01, S13-01, S13-02, S14-01, S14-02)
+
+**Estado do Piloto actualizado:**
+
+| Personagem | Anchor | Shots | Status |
+|------------|--------|-------|--------|
+| Marcus Vance | canonical | 10/10 | ✅ SEALED |
+| Gabi Santos | v1 | 4/4 | ✅ SEALED |
+| Helena Meyer | v1 | 9+ medidos | 🟡 Em progresso |
+| Lucas Silva | v1 | 5+ | 🟡 Em progresso |
+| Marcus Couto | v1 | 7+ | 🟡 Em progresso |
+| Alejandro Valenzuela | v1 | 3+ | 🟡 Em progresso |
+
+**Cenas de Confronto (Fase 2):**
+- S10-WIDE_v1.mp4
+- S10-CONFRONT_v1.mp4
+
+### Ficheiros
+
+| Ficheiro | Acção |
+|----------|-------|
+| `DOCTRINE-CINE-VERIFY-001-CANDIDATE.md` | Renomeado → `DOCTRINE-CINE-VERIFY-001-SEALED.md` |
+| Estado header | Actualizado: CANDIDATE → SEALED |
+
+---
+
 ## § SESSÃO 11 Jun 2026 (noite) — WINDI SEAL V2.8 Full Arc + Verify Surface
 
 **Duração:** ~3h | **Status:** ✅ ARC SEALED
