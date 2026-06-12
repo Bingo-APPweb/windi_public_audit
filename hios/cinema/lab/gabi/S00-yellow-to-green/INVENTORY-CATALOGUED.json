@@ -1,0 +1,54 @@
+{
+  "inventory_id": "GABI-S00-LAB-INVENTORY-20260612",
+  "description": "Variantes catalogadas do laboratório Yellow→Green — nada morre, espera",
+  "variants": [
+    {
+      "id": "v2",
+      "file": "cena1_gabi/S00-CENA1_v2.mp4",
+      "avg": 0.7586,
+      "verdict": "FORENSE",
+      "use_case": "Diálogo presencial entusiasta",
+      "status": "INVENTORY"
+    },
+    {
+      "id": "v3",
+      "file": "cena1_gabi/S00-CENA1_v3.mp4",
+      "avg": 0.7867,
+      "verdict": "FORENSE",
+      "use_case": "Chamada de voz ao ouvido",
+      "status": "INVENTORY"
+    },
+    {
+      "id": "v4-preta",
+      "file": "cena1_gabi/S00-CENA1_v4.mp4",
+      "avg": 0.8240,
+      "verdict": "FORENSE",
+      "use_case": "Expressão-mãe do tríptico, props divergentes (telemóvel preto)",
+      "status": "INVENTORY",
+      "note": "Mesma expressão que v7-prata, apenas adereço diferente"
+    },
+    {
+      "id": "v5",
+      "file": "cena1_gabi/S00-CENA1_v5.mp4",
+      "avg": 0.7616,
+      "verdict": "FORENSE",
+      "use_case": "Alegria radiante, sem peso",
+      "status": "INVENTORY"
+    },
+    {
+      "id": "expF",
+      "file": "variante_F/S00-01_expF.mp4",
+      "avg": 0.8642,
+      "verdict": "FORENSE",
+      "use_case": "Mãe+filho presencial — possível cena de memória/flashback",
+      "status": "INVENTORY_ERRATA",
+      "errata": "Desqualificada como 'solo' — menino fisicamente no quadro. Ciência válida para Paper-001."
+    }
+  ],
+  "promoted_to_production": [
+    "v7-prata → S00-01",
+    "CENA2_v2 → S00-02",
+    "v6 → S00-03"
+  ],
+  "timestamp": "2026-06-12T15:47:00"
+}

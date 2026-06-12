@@ -26,7 +26,7 @@
 
 | Cena | Descrição | Personagens | Shots | Status |
 |------|-----------|-------------|-------|--------|
-| **00** | Abertura — Gabi sorriso para filho | Gabi | 2 | 🟡 OPERATIONAL (0.73) — **I1 pendente** |
+| **00** | A Mentira Amorosa — Tríptico | Gabi, (Filho) | 3 | ✅ **SEALED** `WINDI-PILOT-CENA00-TRIPTYCH-20260612` |
 | **01** | Gabi determinada | Gabi | 1 | ✅ FORENSE |
 | **02** | Couto observa | Couto | 1 | ✅ FORENSE (0.7943) |
 | **03** | Confronto Gabi/Couto | Gabi, Couto | 3 | ✅ FORENSE |

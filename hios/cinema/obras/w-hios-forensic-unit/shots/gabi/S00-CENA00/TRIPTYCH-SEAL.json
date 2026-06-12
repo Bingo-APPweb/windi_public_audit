@@ -1,0 +1,69 @@
+{
+  "receipt_id": "WINDI-PILOT-CENA00-TRIPTYCH-20260612",
+  "scene": "CENA 00 — A Mentira Amorosa",
+  "narrative": "O sorriso, o filho, a queda do sorriso. A emoção nasce no corte; a verdade nasce no corte seguinte.",
+  "shots": [
+    {
+      "id": "S00-01",
+      "file": "S00-01_v7_prata.mp4",
+      "source": "v7-prata",
+      "description": "Gabi durante chamada — sorriso caloroso, telemóvel prateado",
+      "stats": {
+        "avg": 0.8077,
+        "min": 0.7473,
+        "max": 0.9930,
+        "verdict": "FORENSE"
+      },
+      "props": {
+        "smartphone": "silver/white, light-colored frame"
+      }
+    },
+    {
+      "id": "S00-02",
+      "file": "S00-02_v2.mp4",
+      "source": "CENA2_v2",
+      "description": "Ecrã do telemóvel — filho eufórico na videochamada",
+      "stats": {
+        "verdict": "NO_DEBT",
+        "note": "Sem dívida forense — nenhum rosto anchored (texto→vídeo)"
+      },
+      "props": {
+        "smartphone": "silver/white, light-colored frame"
+      }
+    },
+    {
+      "id": "S00-03",
+      "file": "S00-03_v6.mp4",
+      "source": "v6",
+      "description": "Após chamada — sorriso cai, a máscara desfaz-se",
+      "stats": {
+        "avg": 0.8357,
+        "min": 0.8069,
+        "max": 0.9069,
+        "verdict": "FORENSE"
+      },
+      "props": {
+        "smartphone": "silver/white, light-colored frame"
+      }
+    }
+  ],
+  "props_canonical": {
+    "smartphone": "silver/white, light-colored frame",
+    "note": "Primeiro selo WINDI com eixo de continuidade de adereços"
+  },
+  "decision_i1": {
+    "approved_by": "Human Dragon",
+    "rationale": "Sorriso que abre um grau aprovado como dramaturgia (a criança vence o medo), não como deriva.",
+    "timestamp": "2026-06-12T15:45:00"
+  },
+  "doctrines_sealed": [
+    "SHOT-CARD obrigatório para direcção emocional",
+    "Secção PROPS permanente no SHOT-CARD",
+    "Valência como quinta variável isolada",
+    "A verdade nasce no corte seguinte"
+  ],
+  "lab_protocol": "LAB-PROTOCOL-001 — Yellow→Green",
+  "invariants": ["I1", "I9", "I11", "I14"],
+  "sealed_at": "2026-06-12T15:47:00",
+  "status": "SEALED"
+}

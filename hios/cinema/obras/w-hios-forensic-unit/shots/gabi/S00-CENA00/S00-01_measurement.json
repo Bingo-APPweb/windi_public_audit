@@ -1,0 +1,43 @@
+{
+  "shot_id": "S00-CENA1_v7_prata",
+  "description": "Sorriso caloroso, telem\u00f3vel prateado, durante chamada",
+  "props": {
+    "smartphone": "silver/white, light-colored frame"
+  },
+  "stats": {
+    "avg": 0.8077,
+    "min": 0.7473,
+    "max": 0.993,
+    "verdict": "FORENSE"
+  },
+  "passed": true,
+  "margin": 0.0577,
+  "measurements": [
+    {
+      "frame": "frame_01.png",
+      "similarity": 0.993,
+      "detection_score": 0.8733
+    },
+    {
+      "frame": "frame_02.png",
+      "similarity": 0.7807,
+      "detection_score": 0.8277
+    },
+    {
+      "frame": "frame_03.png",
+      "similarity": 0.7473,
+      "detection_score": 0.8546
+    },
+    {
+      "frame": "frame_04.png",
+      "similarity": 0.7533,
+      "detection_score": 0.8611
+    },
+    {
+      "frame": "frame_05.png",
+      "similarity": 0.7644,
+      "detection_score": 0.8886
+    }
+  ],
+  "timestamp": "2026-06-12T15:40:48.568519"
+}

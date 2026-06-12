@@ -1,0 +1,8 @@
+{
+  "errata": "WINDI-PILOT-CENA00-TRIPTYCH-20260612",
+  "issue": "doc_type improvisado",
+  "detail": "Ledger rejeitou 'cinema-scene' como doc_type inválido. Usado 'doc' como fallback.",
+  "action_required": "Criar doc_type nativo para cinema/HIOS no Ledger schema",
+  "candidate": "LEDGER-DOCTYPE-CINEMA-001",
+  "timestamp": "2026-06-12T15:50:00"
+}

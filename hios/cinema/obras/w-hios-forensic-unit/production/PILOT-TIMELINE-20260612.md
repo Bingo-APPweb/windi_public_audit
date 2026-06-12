@@ -18,11 +18,16 @@
 
 ## ACT I — A MORTE (00:00 - 02:30)
 
-### CENA 00 — Abertura: Gabi sorriso para filho
+### CENA 00 — A Mentira Amorosa (Tríptico SELADO)
 | # | Shot | Personagem | Score | Status | Nota |
 |---|------|------------|-------|--------|------|
-| 1 | S00-01_v1 | Gabi | 0.7009 | ❌ | Micro-movimento sorriso |
-| 2 | S00-01_v2 | Gabi | 0.7306 | 🟡 📋 | Melhor disponível — OPERATIONAL |
+| 1 | S00-01_v7_prata | Gabi | 0.8077 | ✅ 📋 | Sorriso caloroso durante chamada |
+| 2 | S00-02_v2 | (Filho) | — | ✅ 📋 | Ecrã telemóvel — sem dívida forense |
+| 3 | S00-03_v6 | Gabi | 0.8357 | ✅ 📋 | Sorriso cai após chamada |
+
+**Receipt:** `WINDI-PILOT-CENA00-TRIPTYCH-20260612`
+**Props canónicos:** Silver smartphone, light frame
+**Doutrina:** "A emoção nasce no corte; a verdade nasce no corte seguinte"
 
 ### CENA 01 — Gabi determinada
 | # | Shot | Personagem | Score | Status | Nota |

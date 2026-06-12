@@ -1,0 +1,40 @@
+{
+  "shot_id": "S00-CENA1_v6",
+  "description": "Ap\u00f3s chamada, sorriso cai, a m\u00e1scara desfaz-se",
+  "stats": {
+    "avg": 0.8357,
+    "min": 0.8069,
+    "max": 0.9069,
+    "verdict": "FORENSE"
+  },
+  "passed": true,
+  "margin": 0.0857,
+  "measurements": [
+    {
+      "frame": "frame_01.png",
+      "similarity": 0.9069,
+      "detection_score": 0.8828
+    },
+    {
+      "frame": "frame_02.png",
+      "similarity": 0.8496,
+      "detection_score": 0.8173
+    },
+    {
+      "frame": "frame_03.png",
+      "similarity": 0.8077,
+      "detection_score": 0.8626
+    },
+    {
+      "frame": "frame_04.png",
+      "similarity": 0.8075,
+      "detection_score": 0.8807
+    },
+    {
+      "frame": "frame_05.png",
+      "similarity": 0.8069,
+      "detection_score": 0.8655
+    }
+  ],
+  "timestamp": "2026-06-12T15:30:12.665884"
+}
