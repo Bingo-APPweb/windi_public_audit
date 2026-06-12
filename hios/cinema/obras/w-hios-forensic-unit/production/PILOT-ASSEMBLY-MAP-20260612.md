@@ -82,11 +82,11 @@
 
 ## PRÓXIMOS PASSOS
 
-1. [ ] Verificar shots Vance (measurements pendentes no sistema)
-2. [ ] Selecionar versões finais onde há múltiplas (v1 vs v2)
-3. [ ] Criar timeline de montagem
+1. [ ] Verificar shots Vance v3 pendentes (S06-01_v3)
+2. [x] ~~Selecionar versões finais onde há múltiplas (v1 vs v2)~~ — COMPLETO
+3. [x] ~~Criar timeline de montagem~~ — `PILOT-TIMELINE-20260612.md`
 4. [ ] Wide+Close para cenas 11, 12 (confrontos adicionais)
-5. [ ] Exportar sequência para edição
+5. [ ] Exportar sequência para edição (EDL)
 
 ---
 
