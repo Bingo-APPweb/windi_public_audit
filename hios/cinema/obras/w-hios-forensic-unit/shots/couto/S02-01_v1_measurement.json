@@ -1,0 +1,52 @@
+{
+  "shot_id": "S02-01_v1",
+  "video": "shots/couto/S02-01_v1.mp4",
+  "anchor": "anchors/marcus.couto.anchor.v1.embedding.npy",
+  "threshold": 0.75,
+  "measurements": [
+    {
+      "frame": "frame_01.png",
+      "similarity": 0.9849,
+      "detection_score": 0.8647
+    },
+    {
+      "frame": "frame_02.png",
+      "similarity": 0.8293,
+      "detection_score": 0.8544
+    },
+    {
+      "frame": "frame_03.png",
+      "similarity": 0.7426,
+      "detection_score": 0.8798
+    },
+    {
+      "frame": "frame_04.png",
+      "similarity": 0.7254,
+      "detection_score": 0.8252
+    },
+    {
+      "frame": "frame_05.png",
+      "similarity": 0.6891,
+      "detection_score": 0.8232
+    }
+  ],
+  "stats": {
+    "frames_measured": 5,
+    "avg": 0.7943,
+    "min": 0.6891,
+    "max": 0.9849,
+    "range": 0.2958,
+    "profile": [
+      0.9849,
+      0.8293,
+      0.7426,
+      0.7254,
+      0.6891
+    ],
+    "verdict": "OPERATIONAL",
+    "collapses": []
+  },
+  "passed": false,
+  "margin": -0.0609,
+  "timestamp": "2026-06-12T10:56:42.427083"
+}

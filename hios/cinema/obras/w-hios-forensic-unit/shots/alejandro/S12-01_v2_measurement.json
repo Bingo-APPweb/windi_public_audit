@@ -1,0 +1,52 @@
+{
+  "shot_id": "S12-01_v2",
+  "video": "shots/alejandro/S12-01_v2.mp4",
+  "anchor": "anchors/alejandro.valenzuela.anchor.v1.embedding.npy",
+  "threshold": 0.75,
+  "measurements": [
+    {
+      "frame": "frame_01.png",
+      "similarity": 0.9944,
+      "detection_score": 0.8758
+    },
+    {
+      "frame": "frame_02.png",
+      "similarity": 0.9891,
+      "detection_score": 0.8592
+    },
+    {
+      "frame": "frame_03.png",
+      "similarity": 0.9883,
+      "detection_score": 0.8597
+    },
+    {
+      "frame": "frame_04.png",
+      "similarity": 0.987,
+      "detection_score": 0.8502
+    },
+    {
+      "frame": "frame_05.png",
+      "similarity": 0.9869,
+      "detection_score": 0.8293
+    }
+  ],
+  "stats": {
+    "frames_measured": 5,
+    "avg": 0.9891,
+    "min": 0.9869,
+    "max": 0.9944,
+    "range": 0.0075,
+    "profile": [
+      0.9944,
+      0.9891,
+      0.9883,
+      0.987,
+      0.9869
+    ],
+    "verdict": "FORENSE",
+    "collapses": []
+  },
+  "passed": true,
+  "margin": 0.2369,
+  "timestamp": "2026-06-12T10:57:08.682584"
+}

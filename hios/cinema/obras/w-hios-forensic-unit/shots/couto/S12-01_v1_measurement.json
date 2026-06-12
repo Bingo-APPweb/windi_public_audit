@@ -1,0 +1,52 @@
+{
+  "shot_id": "S12-01_v1",
+  "video": "shots/couto/S12-01_v1.mp4",
+  "anchor": "anchors/marcus.couto.anchor.v1.embedding.npy",
+  "threshold": 0.75,
+  "measurements": [
+    {
+      "frame": "frame_01.png",
+      "similarity": 0.991,
+      "detection_score": 0.8744
+    },
+    {
+      "frame": "frame_02.png",
+      "similarity": 0.9745,
+      "detection_score": 0.8577
+    },
+    {
+      "frame": "frame_03.png",
+      "similarity": 0.9578,
+      "detection_score": 0.8498
+    },
+    {
+      "frame": "frame_04.png",
+      "similarity": 0.9511,
+      "detection_score": 0.8585
+    },
+    {
+      "frame": "frame_05.png",
+      "similarity": 0.9439,
+      "detection_score": 0.8697
+    }
+  ],
+  "stats": {
+    "frames_measured": 5,
+    "avg": 0.9637,
+    "min": 0.9439,
+    "max": 0.991,
+    "range": 0.0471,
+    "profile": [
+      0.991,
+      0.9745,
+      0.9578,
+      0.9511,
+      0.9439
+    ],
+    "verdict": "FORENSE",
+    "collapses": []
+  },
+  "passed": true,
+  "margin": 0.1939,
+  "timestamp": "2026-06-12T10:56:54.952975"
+}

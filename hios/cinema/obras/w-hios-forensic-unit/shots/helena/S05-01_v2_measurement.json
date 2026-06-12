@@ -1,0 +1,52 @@
+{
+  "shot_id": "S05-01_v2",
+  "video": "shots/helena/S05-01_v2.mp4",
+  "anchor": "anchors/helena.meyer.junior.anchor.v1.embedding.npy",
+  "threshold": 0.75,
+  "measurements": [
+    {
+      "frame": "frame_01.png",
+      "similarity": 0.9056,
+      "detection_score": 0.8537
+    },
+    {
+      "frame": "frame_02.png",
+      "similarity": null,
+      "detection_score": null,
+      "error": "NO_FACE"
+    },
+    {
+      "frame": "frame_03.png",
+      "similarity": null,
+      "detection_score": null,
+      "error": "NO_FACE"
+    },
+    {
+      "frame": "frame_04.png",
+      "similarity": null,
+      "detection_score": null,
+      "error": "NO_FACE"
+    },
+    {
+      "frame": "frame_05.png",
+      "similarity": null,
+      "detection_score": null,
+      "error": "NO_FACE"
+    }
+  ],
+  "stats": {
+    "frames_measured": 1,
+    "avg": 0.9056,
+    "min": 0.9056,
+    "max": 0.9056,
+    "range": 0.0,
+    "profile": [
+      0.9056
+    ],
+    "verdict": "FORENSE",
+    "collapses": []
+  },
+  "passed": true,
+  "margin": 0.1556,
+  "timestamp": "2026-06-12T10:56:37.436393"
+}

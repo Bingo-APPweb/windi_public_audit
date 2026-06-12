@@ -1,0 +1,37 @@
+{
+  "timestamp": "2026-06-12T10:58:56.360535",
+  "characters": [
+    {
+      "char_key": "helena",
+      "name": "Helena Meyer",
+      "total_shots": 11,
+      "passed_shots": 10,
+      "avg": 0.8745,
+      "anchor": "helena.meyer.junior.anchor.v1"
+    },
+    {
+      "char_key": "lucas",
+      "name": "Lucas Silva",
+      "total_shots": 7,
+      "passed_shots": 7,
+      "avg": 0.9675,
+      "anchor": "lucas.silva.anchor.v1"
+    },
+    {
+      "char_key": "couto",
+      "name": "Marcus Couto",
+      "total_shots": 8,
+      "passed_shots": 7,
+      "avg": 0.9385,
+      "anchor": "marcus.couto.anchor.v1"
+    },
+    {
+      "char_key": "alejandro",
+      "name": "Alejandro Valenzuela",
+      "total_shots": 5,
+      "passed_shots": 3,
+      "avg": 0.9887,
+      "anchor": "alejandro.valenzuela.anchor.v1"
+    }
+  ]
+}
