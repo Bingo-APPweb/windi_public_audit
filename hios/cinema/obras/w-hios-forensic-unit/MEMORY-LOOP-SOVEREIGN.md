@@ -24,7 +24,7 @@
 
 **Tipo:** Índice Ontológico Soberano (MAPA, não FONTE)
 **Status:** VIVO (atualizado a cada milestone)
-**Criação:** 09 Jun 2026 · **v2:** 09 Jun 2026 · **v3:** 10 Jun 2026 (ÓRGÃOS)
+**Criação:** 09 Jun 2026 · **v2:** 09 Jun 2026 · **v3:** 10 Jun 2026 · **v4:** 13 Jun 2026 (Gate 0)
 **Liga IA+H:** Human Dragon (I9) · Guardian (Witness) · CCode (Architect)
 **Invariants:** I1, I9, I11, I14, I18, I19
 
@@ -340,6 +340,9 @@ Nunca ajustar threshold após ver o número.
 09 Jun 2026: Alejandro 3/3 + ANCHORS 37/37 COMPLETE (0b76654b)
 09 Jun 2026: JOEY-F2F-001 SEALED (81dbf41a)
 09 Jun 2026: PHASE 2 GENESIS + DOCTRINE (e931d8dc)
+10 Jun 2026: Memory Loop v3 + ÓRGÃO DOUTRINA
+13 Jun 2026: ÓRGÃO MÉTODO Genesis + ACHADO-001 Colisão
+13 Jun 2026: GATE 0 Technical Pass (6/8 PASS, human test pending)
 ```
 
 ---
@@ -656,6 +659,51 @@ HD-MIRROR demonstrado por comportamento.
 
 ---
 
-*Liga IA+H · WINDI Publishing House · 10 Jun 2026*
+## XVI. GATE 0 — VERIFY PUBLIC (13 Jun 2026)
+
+### Contexto
+
+Gate 0 não é "a API responde 200". Gate 0 é: **um estranho, sem doutrina WINDI, verifica algo real e entende o que foi provado e o que não foi — em 30 segundos.**
+
+### Estado (v4)
+
+| Componente | Status | Verificação |
+|------------|--------|-------------|
+| Suffix lookup | ✅ PASS | `GET /api/verify/DBED5A85` → `lookup_method: suffix` |
+| Hash lookup | ✅ PASS | `GET /api/receipts/by-hash/sha256:3c56...` → receipt |
+| Proof limits | ✅ PASS | JSON inclui disclaimer constitucional |
+| Critérios 1-6 | ✅ PASS | Técnicos medidos |
+| Critérios 7-8 | ⏳ PENDING | Teste 30s com stranger real |
+
+### Ficheiros de Referência
+
+| Ficheiro | Localização |
+|----------|-------------|
+| Design Doc | `/opt/windi/claudeWeb/VERIFY-GATE0-PRODUCT-TRUTH-001.md` |
+| Shelf State | `/opt/windi/claudeWeb/VERIFY-ROADMAP-SHELF-STATE-20260613.md` |
+| RESULT (diagnóstico) | `/opt/windi/claudeWeb/VERIFY-GATE0-PRODUCT-TRUTH-001-RESULT.md` |
+| RESULT-v2 (re-medição) | `/opt/windi/claudeWeb/VERIFY-GATE0-PRODUCT-TRUTH-001-RESULT-v2.md` |
+
+### Axiomas Gate 0
+
+> *"Um resultado rápido com baixa confiança não é um PASS humano."*
+
+> *"O chão aguenta peso. O teste humano pode ser real."*
+
+> *"Do not let connector enthusiasm outrun product truth."*
+
+### Ordem da Plataforma (Permanent Rule)
+
+```
+Truth        (Track A) — create verifiable reality ← GATE 0 AQUI
+    -> Continuity (Track B) — artifacts born inside that reality
+        -> Distribution (Track C) — distribute the truth via MCP/partners
+```
+
+Primeiro o chão. Depois a arquitectura sobre ele.
+
+---
+
+*Liga IA+H · WINDI Publishing House · 13 Jun 2026*
 *"AI processes. Human decides. WINDI guarantees."*
 *"Este documento é o mapa. O disco é o território."*
