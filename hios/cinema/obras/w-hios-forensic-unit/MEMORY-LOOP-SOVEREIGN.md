@@ -474,7 +474,7 @@ corpo (.md) + receipt (.receipt.json).
 | **DOUTRINA** | "Que regra aplico?" | ✅ INICIALIZADO |
 | CAST | "Quem é este personagem?" | ⏳ Pendente |
 | THRESHOLD | "Que número uso?" | ⏳ Pendente |
-| MÉTODO | "Como meço/gero?" | ⏳ Pendente |
+| **MÉTODO** | "Como meço/gero?" | ✅ INICIALIZADO |
 | ERRATA | "O que mudou?" | ⏳ Pendente |
 
 ---
@@ -582,6 +582,60 @@ Estes gates vivem dentro do D1 e aplicam-se a toda atestação HIOS:
 
 **Uso do Gate:** Composição manual, frames reais, ou image-to-video.
 Não se aplica a text-to-video puro com múltiplos personagens descritos.
+
+---
+
+### XV.4 ÓRGÃO MÉTODO — Geração e Medição (13 Jun 2026)
+
+**Função:** Responde a "Como meço/gero?"
+**Primeiro habitante:** METHOD-HIOS-GENERATION-001 (13 Jun 2026)
+**Origem:** ERRATA-002-CONTINUIDADE-PLANO — correcção que gerou o método
+
+#### Formato Par-Verificável
+
+| Campo | Valor |
+|-------|-------|
+| **Corpo** | `production/METHOD-HIOS-GENERATION-001.md` |
+| **Receipt** | `WINDI-METHOD-HIOS-GEN001-20260613134407-86A4FCF7` |
+| **Hash** | `86a4fcf737037d6cc2b54e2e9580f42dc1f36a64afea77e75f7190fa97c6e749` |
+
+#### Conteúdo Principal
+
+**Protocolo de Geração Video-Native:**
+- Reference-locking: âncora SEALED como `image_1`, cenário como `image_2`
+- Gramática de prompt descritiva (não imperativa)
+- Gerar VÍDEO, extrair keyframes (não 5 imagens soltas)
+
+**As 3 Medições (JOEY-F2F-001 Completo):**
+
+| # | Medição | Pergunta | Tipo |
+|---|---------|----------|------|
+| M1 | Identidade-âncora | "É o personagem?" | Gate |
+| M2 | Continuidade-vizinha | "Frame N = N−1?" | Diagnóstico |
+| M3 | Reprodutibilidade | "005 = 001?" | Diagnóstico |
+
+#### Integração do Container produktion/
+
+O Container `/opt/windi/hios/cinema/produktion/` vive DENTRO deste órgão:
+- Este documento define o "como"
+- O Container regista cada execução individual
+- Não são estruturas paralelas
+
+#### Axioma Fundador
+
+> *"A continuidade não se mede depois — constrói-se na geração."*
+
+#### ACHADO-001 — Colisão Regime-Doutrina (13 Jun 2026)
+
+| Campo | Valor |
+|-------|-------|
+| **Corpo** | `production/ACHADO-001-COLISAO-REGIME-DOUTRINA.md` |
+| **Receipt** | `WINDI-ACHADO-001-COLISAO-20260613140229-4e22780b` |
+| **Hash** | `4e22780bc4ce16fcb05e35ba6372e002a8c885dac55cdc95a191bf9b8c064c48` |
+
+**Achado:** Geração estática e vídeo exigem blocking OPOSTO.
+**Implicação:** Blocking Nv2 marcado como REGIME-DEPENDENTE.
+**Status:** Pergunta aberta, decisão adiada.
 
 ---
 

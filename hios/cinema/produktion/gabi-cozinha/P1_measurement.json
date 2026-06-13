@@ -1,0 +1,19 @@
+{
+  "protocol": "WINDI-PROTOCOLO-RUN-SPINE-GABI-001-20260613",
+  "timestamp": "2026-06-13T11:20:08.272359",
+  "anchor": "/opt/windi/hios/cinema/obras/w-hios-forensic-unit/anchors/gabi.santos.anchor.v1.png",
+  "frames_dir": "/opt/windi/hios/cinema/produktion/gabi-cozinha/P1_frames",
+  "floor": 0.65,
+  "aggregation": "minimum_severe",
+  "frames_total": 5,
+  "frames_measured": 5,
+  "min_score": 0.7462272047996521,
+  "avg_score": 0.8103,
+  "max_score": 0.8466784954071045,
+  "final_verdict": "PASS",
+  "frame_results": [
+    {
+      "frame": "P1_frame_001.png",
+      "status": "OK",
+      "score": 0.7954,
+      "det_score": 
