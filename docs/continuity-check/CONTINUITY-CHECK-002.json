@@ -1,0 +1,238 @@
+{
+  "generated_at": "2026-06-13T09:52:53+00:00",
+  "docs_dir": "docs",
+  "files_checked": 19,
+  "known_statuses": [
+    "AWAITING I9",
+    "BLOCKED",
+    "CANDIDATE",
+    "DRAFT",
+    "MEASURED",
+    "REJECTED",
+    "SEALED",
+    "SUPERSEDED"
+  ],
+  "results": [
+    {
+      "path": "docs\\ACTION-0-WITNESS-ADMISSIBILITY-001.md",
+      "name": "ACTION-0-WITNESS-ADMISSIBILITY-001.md",
+      "sha256": "ac2e8c560007d769a55cdcf557a88342e4768ffe9055b22c900e541a35e6b129",
+      "line_count": 259,
+      "status": "CONSTITUTIONAL BLOCKING QUESTION",
+      "status_known": false,
+      "missing_headers": [
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "docs\\ALIAS-ADMISSION-DOCTRINE-001.md",
+      "name": "ALIAS-ADMISSION-DOCTRINE-001.md",
+      "sha256": "eb8aad54fce0ff94c5e665f0cf08d90c26512a0e506144d5eb82fd79b2ce8df9",
+      "line_count": 195,
+      "status": "SEALED",
+      "status_known": true,
+      "missing_headers": [],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "docs\\Alias-notes.md",
+      "name": "Alias-notes.md",
+      "sha256": "13fa91d3c5c9ebe4d6dcae50be7d23b05fef4e5fe06b0787a0eba9e078b6f890",
+      "line_count": 101,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "docs\\ALIAS-PROMOTE-001-v0.2.md",
+      "name": "ALIAS-PROMOTE-001-v0.2.md",
+      "sha256": "7ac279cc5a9c694a496da3a3448fe08319e8b4a585243d3b3e263be2ef3331ef",
+      "line_count": 254,
+      "status": "AWAITING I9",
+      "status_known": true,
+      "missing_headers": [],
+      "awaiting_i9_boxes": 15
+    },
+    {
+      "path": "docs\\ALIAS-PROMOTE-001-v0.3.md",
+      "name": "ALIAS-PROMOTE-001-v0.3.md",
+      "sha256": "42c8f60b1b8f52574a8a74803c1615373dfeb1965b0e76fa736cd316fa27ac14",
+      "line_count": 289,
+      "status": "AWAITING I9",
+      "status_known": true,
+      "missing_headers": [],
+      "awaiting_i9_boxes": 18
+    },
+    {
+      "path": "docs\\ALIAS-PROMOTE-001.md",
+      "name": "ALIAS-PROMOTE-001.md",
+      "sha256": "24d4e7c8ed2fd5721ed18bba63c7400d0f0ae1610b5cdb64c396baa73aeec9d0",
+      "line_count": 267,
+      "status": "AWAITING I9",
+      "status_known": true,
+      "missing_headers": [],
+      "awaiting_i9_boxes": 16
+    },
+    {
+      "path": "docs\\ALIAS-RESOLUTION-001.md",
+      "name": "ALIAS-RESOLUTION-001.md",
+      "sha256": "8033f4463349446d25663ed65175e44a4ae426578f38fb58190d01b6e87f96c9",
+      "line_count": 257,
+      "status": "SEALED",
+      "status_known": true,
+      "missing_headers": [
+        "Mission"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "docs\\ALIAS-RUN-001.md",
+      "name": "ALIAS-RUN-001.md",
+      "sha256": "9fdcb7f166383c9ae97312e6589919c0417caae219ed6c783f61891ead82b511",
+      "line_count": 46,
+      "status": "MEASURED",
+      "status_known": true,
+      "missing_headers": [
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "docs\\AUTHORITY-GATE-001.md",
+      "name": "AUTHORITY-GATE-001.md",
+      "sha256": "9966fc6cddd015d3cff93a6934aa7bb548ecf64f2393ea95734420b404429c31",
+      "line_count": 87,
+      "status": "CANDIDATE",
+      "status_known": true,
+      "missing_headers": [],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "docs\\CONTINUITY-OPS-001.md",
+      "name": "CONTINUITY-OPS-001.md",
+      "sha256": "4669bb208e0fee310efa49f3cee8819692de550c3f4ba462a32a68f19ae1ef5f",
+      "line_count": 114,
+      "status": "CANDIDATE",
+      "status_known": true,
+      "missing_headers": [],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "docs\\CONTRIBUTION-ALIAS-RESOLUTION-NEW.md",
+      "name": "CONTRIBUTION-ALIAS-RESOLUTION-NEW.md",
+      "sha256": "16a9fbbcf8a7527de6b1c0c9d4341c1db888b8d0068106bd37a21a5cd8b1762d",
+      "line_count": 195,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "docs\\CONTRIBUTION-GRAMMAR-001.md",
+      "name": "CONTRIBUTION-GRAMMAR-001.md",
+      "sha256": "56f59bafdb46235eb6c8fd1c3cb9f36b42417dda20bdf966b1edd964c831c4e8",
+      "line_count": 285,
+      "status": "CANDIDATE",
+      "status_known": true,
+      "missing_headers": [
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "docs\\correcoes-CODEX.md",
+      "name": "correcoes-CODEX.md",
+      "sha256": "fb2d12e83f2cd6bbcbe7dceb2721861a4de96fff13547b0563184d34bad03b0f",
+      "line_count": 40,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "docs\\DOCUMENT-SANITATION-MATRIX-001.md",
+      "name": "DOCUMENT-SANITATION-MATRIX-001.md",
+      "sha256": "e60bc13ee7a515a7d9b6d5880af7352498e15ae1cb4240fa9482a8ae01613030",
+      "line_count": 41,
+      "status": "MEASURED",
+      "status_known": true,
+      "missing_headers": [],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "docs\\DOCUMENT-STATUS-STANDARD-001.md",
+      "name": "DOCUMENT-STATUS-STANDARD-001.md",
+      "sha256": "b668e0bb3fef86e8345fcd984ef7c6209bed45f45f20ccae23ae8b72cefad776",
+      "line_count": 78,
+      "status": "CANDIDATE",
+      "status_known": true,
+      "missing_headers": [],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "docs\\MATRIZ-FATO-CONTRIBUICAO-001.md",
+      "name": "MATRIZ-FATO-CONTRIBUICAO-001.md",
+      "sha256": "15492792492639da1e14b3aab165b4c5945ea66c6677cd174442008dedf1d1ed",
+      "line_count": 107,
+      "status": "CANDIDATE",
+      "status_known": true,
+      "missing_headers": [
+        "Mission"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "docs\\ONBOARDING-MAP-001.md",
+      "name": "ONBOARDING-MAP-001.md",
+      "sha256": "3d0d37e74b3954f0d7ef731c1d458c6de494de436b07e1674240f654655c2847",
+      "line_count": 74,
+      "status": "CANDIDATE",
+      "status_known": true,
+      "missing_headers": [],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "docs\\PARTICIPATION-LAYER-INDEX-001.md",
+      "name": "PARTICIPATION-LAYER-INDEX-001.md",
+      "sha256": "0d700f46a906029961e8e905977cae508b919943493d2b512cb29b2a01c5f131",
+      "line_count": 69,
+      "status": "CANDIDATE",
+      "status_known": true,
+      "missing_headers": [],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "docs\\RESEARCH-RECEIPTS-001.md",
+      "name": "RESEARCH-RECEIPTS-001.md",
+      "sha256": "9505a2e1c5060a65e6fd99a5f557c940bd59f9230a0c6608fe88e0977e71e1c4",
+      "line_count": 78,
+      "status": "CANDIDATE",
+      "status_known": true,
+      "missing_headers": [],
+      "awaiting_i9_boxes": 0
+    }
+  ],
+  "summary": {
+    "files_checked": 19,
+    "files_with_header_or_status_issues": 8
+  }
+}

@@ -1,0 +1,151 @@
+{
+  "status": "MEASURED",
+  "generated_at": "2026-06-13T09:03:48+00:00",
+  "rule": "ALIAS-RESOLUTION-001 v0.1",
+  "authority_gate": "ACTION-0-WITNESS-ADMISSIBILITY-001",
+  "results": [
+    {
+      "actor_original": "dragon@windi-domain.com",
+      "receipts": 11,
+      "apps": [
+        "constitutional-process",
+        "w-lexicon-001",
+        "paper-001",
+        "libreiro",
+        "foundation-portals",
+        "windi-hios-cinema",
+        "ccode-opus"
+      ],
+      "canonical_did": null,
+      "resolution_status": "pending_review",
+      "resolution_class": "STRONG_CANDIDATE",
+      "admissibility_level": "LEVEL 2 REQUIRED if mapped to founder DID",
+      "review_required": true,
+      "evidence": "dragon/human-dragon textual pattern without formal alias"
+    },
+    {
+      "actor_original": "hios-forge-001",
+      "receipts": 10,
+      "apps": [
+        "windi-hios-production"
+      ],
+      "canonical_did": null,
+      "resolution_status": "system_executor",
+      "resolution_class": "SYSTEM_EXECUTOR",
+      "admissibility_level": "N/A",
+      "review_required": true,
+      "evidence": "system/lab/forge/production actor pattern"
+    },
+    {
+      "actor_original": "windi-hd-001",
+      "receipts": 7,
+      "apps": [
+        "claude-code"
+      ],
+      "canonical_did": null,
+      "resolution_status": "pending_review",
+      "resolution_class": "STRONG_CANDIDATE",
+      "admissibility_level": "LEVEL 2 REQUIRED if mapped to founder DID",
+      "review_required": true,
+      "evidence": "dragon/human-dragon textual pattern without formal alias"
+    },
+    {
+      "actor_original": "dragon-001",
+      "receipts": 6,
+      "apps": [
+        "claudeWeb-pingpong",
+        "genesis-ceremony-v1",
+        "constitutional-council-v1",
+        "claude-code",
+        "windi-hios-cinema"
+      ],
+      "canonical_did": "did:windi:dragon-001",
+      "resolution_status": "resolved",
+      "resolution_class": "SOVEREIGN_NAME_MATCH",
+      "admissibility_level": "LEVEL 1",
+      "review_required": true,
+      "evidence": "identities.sovereign_name exact active match"
+    },
+    {
+      "actor_original": "windi:hd:human-dragon",
+      "receipts": 6,
+      "apps": [
+        "windi-hios-cinema",
+        "w-generator-001"
+      ],
+      "canonical_did": null,
+      "resolution_status": "pending_review",
+      "resolution_class": "STRONG_CANDIDATE",
+      "admissibility_level": "LEVEL 2 REQUIRED if mapped to founder DID",
+      "review_required": true,
+      "evidence": "dragon/human-dragon textual pattern without formal alias"
+    },
+    {
+      "actor_original": "W-HUMANDRAGON-001",
+      "receipts": 4,
+      "apps": [
+        "windi-hios",
+        "claude-code"
+      ],
+      "canonical_did": null,
+      "resolution_status": "pending_review",
+      "resolution_class": "STRONG_CANDIDATE",
+      "admissibility_level": "LEVEL 2 REQUIRED if mapped to founder DID",
+      "review_required": true,
+      "evidence": "dragon/human-dragon textual pattern without formal alias"
+    },
+    {
+      "actor_original": "hios-cinema-production",
+      "receipts": 4,
+      "apps": [
+        "windi-hios-cinema"
+      ],
+      "canonical_did": null,
+      "resolution_status": "system_executor",
+      "resolution_class": "SYSTEM_EXECUTOR",
+      "admissibility_level": "N/A",
+      "review_required": true,
+      "evidence": "system/lab/forge/production actor pattern"
+    },
+    {
+      "actor_original": "WINDI-SYSTEM",
+      "receipts": 2,
+      "apps": [
+        "claude-code",
+        "ccode-cli"
+      ],
+      "canonical_did": null,
+      "resolution_status": "system_executor",
+      "resolution_class": "SYSTEM_EXECUTOR",
+      "admissibility_level": "N/A",
+      "review_required": true,
+      "evidence": "system/lab/forge/production actor pattern"
+    },
+    {
+      "actor_original": "windi-hios-cinema-lab",
+      "receipts": 2,
+      "apps": [
+        "windi-hios-cinema"
+      ],
+      "canonical_did": null,
+      "resolution_status": "system_executor",
+      "resolution_class": "SYSTEM_EXECUTOR",
+      "admissibility_level": "N/A",
+      "review_required": true,
+      "evidence": "system/lab/forge/production actor pattern"
+    },
+    {
+      "actor_original": "HD-DRAGON-001",
+      "receipts": 1,
+      "apps": [
+        "windi-hios"
+      ],
+      "canonical_did": null,
+      "resolution_status": "pending_review",
+      "resolution_class": "STRONG_CANDIDATE",
+      "admissibility_level": "LEVEL 2 REQUIRED if mapped to founder DID",
+      "review_required": true,
+      "evidence": "dragon/human-dragon textual pattern without formal alias"
+    }
+  ]
+}

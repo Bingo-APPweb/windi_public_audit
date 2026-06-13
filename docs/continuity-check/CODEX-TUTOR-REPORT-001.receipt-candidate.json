@@ -1,0 +1,16 @@
+{
+  "generated_at": "2026-06-13T10:29:58+00:00",
+  "candidates": [
+    {
+      "receipt_candidate_id": "RESEARCH-CANDIDATE-CODEX-TUTOR-REPORT-001-bc38d69de515",
+      "artifact_path": "docs\\continuity-check\\CODEX-TUTOR-REPORT-001.md",
+      "artifact_hash": "bc38d69de5155490574fdc9f70b3b6022b4c29bfe9e4d99b30ddf7296e36b92d",
+      "generated_at": "2026-06-13T10:29:58+00:00",
+      "actor": "codex-continuity-ops",
+      "source_decision": "no_i9_research_candidate_only",
+      "status": "CANDIDATE",
+      "witness_class": null,
+      "ledger_status": "not_submitted"
+    }
+  ]
+}

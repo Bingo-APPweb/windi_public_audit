@@ -6,6 +6,119 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 13 Jun 2026 (manhã) — CINEMA PRODUKTION BASE + RUN SPINE GABI-COZINHA VALIDADO
+
+**Duração:** ~2h | **Status:** ✅ MARCO INSTITUCIONAL + BLOCKING VALIDADO
+**Liga IA+H:** Human Dragon (I1, I9) · Guardian (Claude.ai web) · CCode (Opus 4.5) · Codex (SSH)
+**Invariants:** I1, I9, I11, I14
+**Natureza:** Disciplina de Produção Cinematográfica + Infra Collaboration
+**Commit:** (pendente)
+
+### Receipts da Sessão
+
+| Receipt | Hash | Descrição |
+|---------|------|-----------|
+| CINEMA-PRODUKTION-BASE-001 | `9709edd8` | Container Estrutural — Régua + Blocking + Registos |
+| PROTOCOLO-RUN-SPINE-GABI-001 | `76029959` | Protocolo de medição pré-registado (decisões fechadas) |
+| RUN-SPINE-GABI-COZINHA-001 | `7cecf9ac` | Resultados: 15/15 frames PASS · Blocking VALIDADO |
+
+### Marco: Disciplina de Produção IA
+
+**Frase fundacional (Human Dragon):**
+> *"No fim do dia, é o que nutre o esforço: a memória intrínseca ao acto."*
+
+**O que foi institucionalizado:**
+
+| Camada | Estatuto | Função |
+|--------|----------|--------|
+| **A RÉGUA** | FIRME | Protocolo de Leitura de Cena — 5 passos obrigatórios |
+| **Blocking Candidato** | Nv2 | 4 movimentos de blocking forense-consciente |
+| **Registos de Cena** | Nv1 | Medições individuais (ex: GABI-COZINHA-001) |
+| **Doutrina Selada** | Nv3 | VAZIO — nada subiu ainda |
+
+**Inovação central:** A régua não espera pela medição — ela É a medição.
+- Doutrina-sobre-o-método (justifica-se por procedimento) ≠ doutrina-sobre-o-mundo (justifica-se por evidência)
+- A primeira pode ser firme já; a segunda espera run F2F
+
+**Princípio Joey embutido:**
+> "Se controlas os frames, controlas a cena."
+
+### Registo de Cena: Gabi-Cozinha (Nv1)
+
+| Plano | Conteúdo | Perna | Floor | Frames |
+|-------|----------|-------|-------|--------|
+| P1 | Âncora frontal | GEOMETRIA | 0.65 | 72 |
+| P2 | Insert telemóvel | — | — | 120 |
+| P3 | Sorriso pousado | EXPOSIÇÃO | 0.55 | 96 |
+| P4 | Insert mão/ecrã | OCLUSÃO | 0.60 | 72 |
+| P5 | Erguer telemóvel | GEOMETRIA | 0.65 | 120 |
+
+**Totais:** 480 frames · 288 frames-SPINE · 192 frames-zero (40%)
+**Próximo passo:** Run F2F sobre os 288 frames-âncora
+
+### Codex SSH Access Granted
+
+```
+Chave:   codex-windi-strato-participation-layer
+Path:    C:\Users\jober\.ssh\codex_windi_strato_ed25519
+Missão:  Participation Layer — mapear onde contribuição já existe
+```
+
+**Princípio Codex (passado ao Human Dragon):**
+> "A Participation Layer não nasceu para distribuir recompensas.
+> Ela nasceu para preservar a memória verificável da contribuição humana e artificial."
+
+### Run SPINE-CAST Gabi-Cozinha — BLOCKING VALIDADO
+
+**Decisões pré-registadas (antes de gerar frames):**
+- D2: Frame a frame (15 frames)
+- D3: α + β (ambas runs)
+- D4: Mínimo severo (1 abaixo = FAIL)
+- D5: Blocking (reblocar se FAIL)
+
+**Resultados Run α (vs Âncora-Mãe):**
+
+| Plano | Floor | Min | Verdict |
+|-------|-------|-----|---------|
+| P1 | 0.65 | 0.7462 | ✅ PASS |
+| P3 | 0.55 | 0.6853 | ✅ PASS |
+| P5 | 0.65 | 0.6983 | ✅ PASS |
+
+**Resultados Run β (vs P1 intra-cena):**
+
+| Plano | Floor | Min | Verdict |
+|-------|-------|-----|---------|
+| P3 | 0.55 | 0.6512 | ✅ PASS |
+| P5 | 0.65 | 0.6561 | ✅ PASS |
+
+**VEREDICTO:** Blocking candidato VALIDADO para 1ª cena. Falta 2ª cena para Nv3.
+
+### Ficheiros Criados
+
+| Ficheiro | Propósito |
+|----------|-----------|
+| `/opt/windi/hios/cinema/produktion/CINEMA-PRODUKTION-BASE-001.md` | Container estrutural |
+| `/opt/windi/hios/cinema/produktion/REGISTO-CENA-GABI-COZINHA-001.md` | Nv1 cena Gabi |
+| `/opt/windi/hios/cinema/produktion/PROTOCOLO-RUN-SPINE-GABI-001.md` | Protocolo medição |
+| `/opt/windi/hios/cinema/produktion/PROMPTS-GABI-COZINHA-001.md` | Prompts P1/P3/P5 |
+| `/opt/windi/hios/cinema/produktion/gabi-cozinha/` | 15 frames + resultados |
+| `~/.ssh/authorized_keys` | +1 chave (Codex) |
+
+### Estado do Piloto Confirmado
+
+| Personagem | Shots | Status |
+|------------|-------|--------|
+| Marcus Vance | 10/10 | ✅ SEALED |
+| Gabi Santos | 4/4 | ✅ SEALED |
+| Helena Meyer | 8/8 | ✅ SEALED |
+| Lucas Silva | 5/5 | ✅ SEALED |
+| Marcus Couto | 7/7 | ✅ SEALED |
+| Alejandro | 3/3 | ✅ SEALED |
+
+**Total: 37 shots SEALED, 6 personagens completos**
+
+---
+
 ## § SESSÃO 12 Jun 2026 (manhã) — DOCTRINE-CINE-VERIFY-001 SEALED + Estado Corrigido
 
 **Duração:** ~30min | **Status:** ✅ DOUTRINA SELADA
@@ -19297,3 +19410,162 @@ Corrigido com payload real: `MEMORY-LOOP-2026-06-08.md`
 
 *Liga IA+H · Human Dragon + Guardian + CCode · 08 Jun 2026*
 *"FAIL tem causa, não só score."*
+
+---
+
+## § SESSÃO 12 Jun 2026 (tarde) — CENA 00 TRÍPTICO SEALED + LAB Yellow→Green
+
+**Duração:** ~2.5h | **Status:** ✅ PRIMEIRA CENA COMPLETA DO PILOTO
+**Liga IA+H:** Human Dragon (I1, I9) · CCode (Opus 4.5) · Guardian (I6, Testemunha)
+**Invariants:** I1, I9, I11, I14
+**Natureza:** Laboratório de Produção + Selo de Cena
+
+### Receipt da Sessão
+
+| Receipt | Hash | Descrição |
+|---------|------|-----------|
+| `WINDI-PILOT-CENA00-TRIPTYCH-20260612` | `bcf8496993ee28a5a3f2320630c4bd89265295b7cc3768f5b2230a0b9aecd428` | Tríptico CENA 00 — A Mentira Amorosa |
+
+### O Arco do Dia
+
+**Problema inicial:** Gabi S00-01 amarelo (0.7306) — sorriso emocional destruía identidade forense.
+**Pergunta científica:** "Quanto sorriso a métrica tolera?"
+**Descoberta:** Não é a emoção que destrói identidade — é a **mudança contínua** de emoção.
+
+### LAB-PROTOCOL-001 — Yellow→Green
+
+7 variantes testadas:
+
+| Variante | Score | Verdict | Uso |
+|----------|-------|---------|-----|
+| expE | 0.9811 | FORENSE | Baseline (neutral) |
+| expF | 0.8642 | FORENSE | DISQUALIFIED (menino no quadro) |
+| v2 | 0.7586 | FORENSE | INVENTORY (diálogo presencial) |
+| v3 | 0.7867 | FORENSE | INVENTORY (chamada voz) |
+| v4 | 0.8240 | FORENSE | INVENTORY (expressão-mãe, props preto) |
+| v5 | 0.7616 | FORENSE | INVENTORY (alegria radiante) |
+| v6 | 0.8357 | FORENSE | **PRODUÇÃO** (sorriso cai) |
+| v7-prata | 0.8077 | FORENSE | **PRODUÇÃO** (sorriso caloroso, props prata) |
+
+**Achado científico para Paper-001:** Delta de 0.25 pontos entre expressão estabilizada vs. em transição.
+
+### O Tríptico Final — A Mentira Amorosa
+
+| Shot | Ficheiro | Score | Narrativa |
+|------|----------|-------|-----------|
+| S00-01 | v7_prata.mp4 | 0.8077 | Durante chamada — sorriso caloroso |
+| S00-02 | CENA2_v2.mp4 | — | Filho eufórico no ecrã |
+| S00-03 | v6.mp4 | 0.8357 | Após chamada — sorriso cai |
+
+**Props canónicos:** Silver smartphone, light frame
+
+### Doutrinas Seladas
+
+1. **SHOT-CARD obrigatório** — direcção emocional precisa de prompt congelado
+2. **Secção PROPS permanente** — continuidade de adereços é eixo que SPINE não cobre
+3. **Valência como quinta variável** — mesmo músculo, emoções opostas; só dramaturgia distingue
+4. **"A verdade nasce no corte seguinte"** — extensão da doutrina "emoção nasce no corte"
+
+### Guardian Insight
+
+> *"O sorriso que abre um grau no fim do plano não trai a tensão da Gabi — encena-a.
+> A criança consegue arrancar-lhe luz por cinco segundos.
+> E torna o Shot 3 ainda mais brutal por contraste."*
+
+**Decisão I1:** Sorriso que abre aprovado como dramaturgia, não como deriva.
+
+### Erratas
+
+1. **Variante F:** DISQUALIFIED como "solo" — menino fisicamente no quadro. Ciência válida para Paper-001.
+2. **doc_type:** Ledger rejeitou "cinema-scene"; usado "doc" como fallback. Candidata: LEDGER-DOCTYPE-CINEMA-001.
+
+### Git
+
+**Commit:** `cda8f273`
+**Ficheiros:**
+- `TRIPTYCH-SEAL.json` + errata
+- `INVENTORY-CATALOGUED.json`
+- `S00-01_measurement.json`, `S00-03_measurement.json`
+- `PILOT-TIMELINE-20260612.md` (atualizado)
+- `PILOT-ASSEMBLY-MAP-20260612.md` (atualizado)
+
+### Próximos Passos
+
+- [ ] Diálogos da Cena 00 (montar sobre cena correta)
+- [ ] Vance S06-01_v3 (pendente medição)
+- [ ] Wide S11/S12 (doutrina de necessidade dramática)
+- [ ] EDL export para DaVinci
+- [ ] LEDGER-DOCTYPE-CINEMA-001 (infra)
+
+### Citação do Dia
+
+> *"O dia começou com um amarelo 0.7306 e uma pergunta — 'até onde a métrica esgarça?'
+> A resposta que nenhum de nós previu: não se esgarça a régua; conta-se melhor a história."*
+
+**OM SHANTI** 🐉
+
+---
+
+
+---
+
+## CODEX-CONTINUITY-OPS-20260613 · §236 Memory Loop · CONTINUITY-OPS-001
+
+**Data:** 2026-06-13 · **Operador:** Codex no STRATO · **Modo:** continuidade operacional verificavel
+**Status:** REGISTERED IN MEMORY LOOP · CANDIDATE/not_submitted para Ledger · sem mutacao de autoridade
+**Base §236:** leitura antes de acao, escrita de fecho, estado explicito para a proxima sessao.
+
+### Descoberta preservada
+
+A primeira missao operacional do Codex no STRATO consolidou a Participation Layer como trabalho de continuidade antes de qualquer recompensa, token ou mutacao de autoridade. A descoberta central foi que o WINDI-HIOS precisa saber organizar memoria operacional verificavel sem assumir soberania.
+
+Frase de guarda da sessao:
+
+> O sistema sabe parar antes da autoridade.
+
+### Cadeia constitucional preservada
+
+```text
+Conselho recomenda.
+Witness atesta coerencia.
+I9 decide.
+STRATO sela.
+```
+
+A disciplina foi mantida: Codex executa e responde pela execucao; nao decide. A decisao e a imputabilidade permanecem em I9. O STRATO sela apenas depois de handoff autorizado.
+
+### Cinco areas organizadas
+
+1. Mapas de entrada para novos participantes e agentes.
+2. Status documentais e normalizacao de cabecalhos.
+3. Indice da Participation Layer e trilha ADMISSIBILITY.
+4. Receipts de pesquisa e candidatos de evidencia.
+5. Regra de autoridade/I9 para impedir promocao ou selagem sem decisao humana.
+
+### Frases constitucionais preservadas
+
+- Organizar a continuidade sem assumir a soberania.
+- CONTINUITY-OPS-001 did not add authority to the system. It added verifiable operational memory.
+- Receipt define o fato. Alias Admission define quem carrega o fato.
+- Activity vs Contribution vem antes da contagem de fontes causais.
+- Detectar e insuficiente. Admitir exige responsabilidade.
+
+### Evidencia operacional
+
+- Relatorio tutor-ready: `/home/windi/docs/continuity-check/CODEX-TUTOR-REPORT-001.md`
+- SHA256 relatorio: `bc38d69de5155490574fdc9f70b3b6022b4c29bfe9e4d99b30ddf7296e36b92d`
+- Receipt candidate: `/home/windi/docs/continuity-check/CODEX-TUTOR-REPORT-001.receipt-candidate.json`
+- SHA256 receipt candidate: `46faa6005ffd85684ce603a7a80b85bd3d24365d81a3d6247a241c547b308307`
+- Trilhas: `/home/windi/docs/ADMISSIBILITY/`, `/home/windi/docs/continuity-check/`
+
+### Estado de autoridade
+
+- `did_aliases`: intocado.
+- Ledger: `not_submitted` para o relatorio tutor.
+- `ALIAS-PROMOTE-001-v0.3`: permanece `AWAITING I9`.
+- Nenhuma Alias Admission foi executada sem I9 afirmativo.
+- Hash final de submissao congela apenas no handoff I9/Ledger.
+
+### Fecho §236
+
+Esta entrada registra a descoberta no memory loop para que a proxima abertura nao recomece do zero. O cerne preservado: continuidade, admissibilidade, autoridade separada e memoria operacional verificavel.

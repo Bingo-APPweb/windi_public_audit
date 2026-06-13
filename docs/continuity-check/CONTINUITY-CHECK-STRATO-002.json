@@ -1,0 +1,101 @@
+{
+  "generated_at": "2026-06-13T10:02:29+00:00",
+  "docs_dir": "/home/windi/docs/continuity-check",
+  "files_checked": 8,
+  "known_statuses": [
+    "AWAITING I9",
+    "BLOCKED",
+    "CANDIDATE",
+    "DRAFT",
+    "MEASURED",
+    "REJECTED",
+    "SEALED",
+    "SUPERSEDED"
+  ],
+  "results": [
+    {
+      "path": "/home/windi/docs/continuity-check/AUTHORITY-GATE-001.md",
+      "name": "AUTHORITY-GATE-001.md",
+      "sha256": "9966fc6cddd015d3cff93a6934aa7bb548ecf64f2393ea95734420b404429c31",
+      "line_count": 87,
+      "status": "CANDIDATE",
+      "status_known": true,
+      "missing_headers": [],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/continuity-check/CONTINUITY-OPS-001.md",
+      "name": "CONTINUITY-OPS-001.md",
+      "sha256": "5f133cba6df5a0341b985342bdf230552000db3c49fb75917653d7e10c429f77",
+      "line_count": 123,
+      "status": "CANDIDATE",
+      "status_known": true,
+      "missing_headers": [],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/continuity-check/DOCUMENT-SANITATION-MATRIX-001.md",
+      "name": "DOCUMENT-SANITATION-MATRIX-001.md",
+      "sha256": "e60bc13ee7a515a7d9b6d5880af7352498e15ae1cb4240fa9482a8ae01613030",
+      "line_count": 41,
+      "status": "MEASURED",
+      "status_known": true,
+      "missing_headers": [],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/continuity-check/DOCUMENT-STATUS-STANDARD-001.md",
+      "name": "DOCUMENT-STATUS-STANDARD-001.md",
+      "sha256": "92822c9241c6376d347b79565a71aacf39f4a13df39c158e87148c9356ff1e4a",
+      "line_count": 107,
+      "status": "CANDIDATE",
+      "status_known": true,
+      "missing_headers": [],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/continuity-check/HEADER-PATCH-PROPOSALS-001.md",
+      "name": "HEADER-PATCH-PROPOSALS-001.md",
+      "sha256": "a58f15c82501dbab17e6b10b4b08144aec3af309502df9f77756a28e43321023",
+      "line_count": 66,
+      "status": "CANDIDATE",
+      "status_known": true,
+      "missing_headers": [],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/continuity-check/ONBOARDING-MAP-001.md",
+      "name": "ONBOARDING-MAP-001.md",
+      "sha256": "96477c5424cd830a501e45232bc048acbcfcce36723cfd8f509ada3f5710bef0",
+      "line_count": 81,
+      "status": "CANDIDATE",
+      "status_known": true,
+      "missing_headers": [],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/continuity-check/PARTICIPATION-LAYER-INDEX-001.md",
+      "name": "PARTICIPATION-LAYER-INDEX-001.md",
+      "sha256": "39fe01cf8b84ac1bcd5ba8c7d93123e2532dd5ab2413a1a1aad38c69a7612704",
+      "line_count": 75,
+      "status": "CANDIDATE",
+      "status_known": true,
+      "missing_headers": [],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/continuity-check/RESEARCH-RECEIPTS-001.md",
+      "name": "RESEARCH-RECEIPTS-001.md",
+      "sha256": "9505a2e1c5060a65e6fd99a5f557c940bd59f9230a0c6608fe88e0977e71e1c4",
+      "line_count": 78,
+      "status": "CANDIDATE",
+      "status_known": true,
+      "missing_headers": [],
+      "awaiting_i9_boxes": 0
+    }
+  ],
+  "summary": {
+    "files_checked": 8,
+    "files_with_header_or_status_issues": 0
+  }
+}

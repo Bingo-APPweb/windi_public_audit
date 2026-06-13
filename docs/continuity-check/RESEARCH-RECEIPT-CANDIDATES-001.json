@@ -1,0 +1,71 @@
+{
+  "generated_at": "2026-06-13T09:52:39+00:00",
+  "candidates": [
+    {
+      "receipt_candidate_id": "RESEARCH-CANDIDATE-CONTINUITY-OPS-001-a240843d47d1",
+      "artifact_path": "docs\\CONTINUITY-OPS-001.md",
+      "artifact_hash": "a240843d47d1f3f4f8cc919490878f696a2ceb3afa4776e9699f11ac59b4af95",
+      "generated_at": "2026-06-13T09:52:39+00:00",
+      "actor": "codex-continuity-ops",
+      "source_decision": "no_i9_research_candidate_only",
+      "status": "CANDIDATE",
+      "witness_class": null,
+      "ledger_status": "not_submitted"
+    },
+    {
+      "receipt_candidate_id": "RESEARCH-CANDIDATE-ONBOARDING-MAP-001-3d0d37e74b39",
+      "artifact_path": "docs\\ONBOARDING-MAP-001.md",
+      "artifact_hash": "3d0d37e74b3954f0d7ef731c1d458c6de494de436b07e1674240f654655c2847",
+      "generated_at": "2026-06-13T09:52:39+00:00",
+      "actor": "codex-continuity-ops",
+      "source_decision": "no_i9_research_candidate_only",
+      "status": "CANDIDATE",
+      "witness_class": null,
+      "ledger_status": "not_submitted"
+    },
+    {
+      "receipt_candidate_id": "RESEARCH-CANDIDATE-DOCUMENT-STATUS-STANDARD-001-b668e0bb3fef",
+      "artifact_path": "docs\\DOCUMENT-STATUS-STANDARD-001.md",
+      "artifact_hash": "b668e0bb3fef86e8345fcd984ef7c6209bed45f45f20ccae23ae8b72cefad776",
+      "generated_at": "2026-06-13T09:52:39+00:00",
+      "actor": "codex-continuity-ops",
+      "source_decision": "no_i9_research_candidate_only",
+      "status": "CANDIDATE",
+      "witness_class": null,
+      "ledger_status": "not_submitted"
+    },
+    {
+      "receipt_candidate_id": "RESEARCH-CANDIDATE-PARTICIPATION-LAYER-INDEX-001-0d700f46a906",
+      "artifact_path": "docs\\PARTICIPATION-LAYER-INDEX-001.md",
+      "artifact_hash": "0d700f46a906029961e8e905977cae508b919943493d2b512cb29b2a01c5f131",
+      "generated_at": "2026-06-13T09:52:39+00:00",
+      "actor": "codex-continuity-ops",
+      "source_decision": "no_i9_research_candidate_only",
+      "status": "CANDIDATE",
+      "witness_class": null,
+      "ledger_status": "not_submitted"
+    },
+    {
+      "receipt_candidate_id": "RESEARCH-CANDIDATE-RESEARCH-RECEIPTS-001-9505a2e1c506",
+      "artifact_path": "docs\\RESEARCH-RECEIPTS-001.md",
+      "artifact_hash": "9505a2e1c5060a65e6fd99a5f557c940bd59f9230a0c6608fe88e0977e71e1c4",
+      "generated_at": "2026-06-13T09:52:39+00:00",
+      "actor": "codex-continuity-ops",
+      "source_decision": "no_i9_research_candidate_only",
+      "status": "CANDIDATE",
+      "witness_class": null,
+      "ledger_status": "not_submitted"
+    },
+    {
+      "receipt_candidate_id": "RESEARCH-CANDIDATE-AUTHORITY-GATE-001-9966fc6cddd0",
+      "artifact_path": "docs\\AUTHORITY-GATE-001.md",
+      "artifact_hash": "9966fc6cddd015d3cff93a6934aa7bb548ecf64f2393ea95734420b404429c31",
+      "generated_at": "2026-06-13T09:52:39+00:00",
+      "actor": "codex-continuity-ops",
+      "source_decision": "no_i9_research_candidate_only",
+      "status": "CANDIDATE",
+      "witness_class": null,
+      "ledger_status": "not_submitted"
+    }
+  ]
+}

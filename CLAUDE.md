@@ -781,3 +781,19 @@ Pipeline de produção cinematográfica com continuidade auditável. **Arquitect
 **Doc:** `/opt/windi/hios/cinema/obras/w-hios-forensic-unit/SPINE-LESSONS-LEARNED.md`
 
 > **Full details:** `CLAUDE-HISTORY.md` § MIGRAÇÃO OVERFLOW 31 Mai 2026
+
+
+## §236-bis · Codex Continuity Ops Memory Loop (2026-06-13)
+
+**Marker:** `CODEX-CONTINUITY-OPS-20260613` · **Status:** REGISTERED · CANDIDATE/not_submitted no Ledger
+**Docs:** `/home/windi/docs/continuity-check/` · `/home/windi/docs/ADMISSIBILITY/`
+**Tutor report SHA256:** `bc38d69de5155490574fdc9f70b3b6022b4c29bfe9e4d99b30ddf7296e36b92d`
+**Receipt candidate SHA256:** `46faa6005ffd85684ce603a7a80b85bd3d24365d81a3d6247a241c547b308307`
+
+Codex registrou a primeira missao STRATO de continuidade operacional: mapas de entrada, status documentais, indice da Participation Layer, receipts de pesquisa e regra de autoridade/I9.
+
+Frase de guarda: **Organizar a continuidade sem assumir a soberania.**
+
+Cadeia preservada: **Conselho recomenda · Witness atesta coerencia · I9 decide · STRATO sela.**
+
+Detalhe completo: `CLAUDE-HISTORY.md` entrada `CODEX-CONTINUITY-OPS-20260613` e `claudeWeb/S236-CODEX-CONTINUITY-OPS-20260613.md`.

@@ -197,3 +197,11 @@ W-HUMANDRAGON-XXXXXXXX
 
 *Liga IA+H · Kempten, Bavaria · 2026*
 *"AI processes. Human decides. WINDI guarantees."*
+
+
+### §236 / Codex Continuity Ops (2026-06-13)
+
+- **[S236-CODEX-CONTINUITY-OPS-20260613](S236-CODEX-CONTINUITY-OPS-20260613.md)** · REGISTERED · CONTINUITY-OPS-001 · Participation Layer memory loop
+  - Report SHA256: `bc38d69de5155490574fdc9f70b3b6022b4c29bfe9e4d99b30ddf7296e36b92d`
+  - Receipt Candidate SHA256: `46faa6005ffd85684ce603a7a80b85bd3d24365d81a3d6247a241c547b308307`
+  - Guard line: "Organizar a continuidade sem assumir a soberania."

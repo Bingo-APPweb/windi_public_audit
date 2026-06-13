@@ -1,0 +1,136 @@
+{
+  "source": "docs\\ADMISSIBILITY\\ADMISSIBILITY-CHECK-001.json",
+  "files": 12,
+  "actions": {
+    "STATUS_NORMALIZE": 1,
+    "OK": 4,
+    "RAW_NOTE": 2,
+    "HEADER_PATCH": 4,
+    "NEEDS_TRIAGE": 1
+  },
+  "rows": [
+    {
+      "name": "ACTION-0-WITNESS-ADMISSIBILITY-001.md",
+      "status": "CONSTITUTIONAL BLOCKING QUESTION",
+      "missing_headers": [
+        "Purpose"
+      ],
+      "action": "STATUS_NORMALIZE",
+      "recommendation": "Map legacy/free-form status to DOCUMENT-STATUS-STANDARD-001.",
+      "sha256": "ac2e8c560007d769a55cdcf557a88342e4768ffe9055b22c900e541a35e6b129"
+    },
+    {
+      "name": "ALIAS-ADMISSION-DOCTRINE-001.md",
+      "status": "SEALED",
+      "missing_headers": [],
+      "action": "OK",
+      "recommendation": "No action required.",
+      "sha256": "eb8aad54fce0ff94c5e665f0cf08d90c26512a0e506144d5eb82fd79b2ce8df9"
+    },
+    {
+      "name": "Alias-notes.md",
+      "status": "MISSING",
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "action": "RAW_NOTE",
+      "recommendation": "Keep as source note or move to notes archive; do not normalize as doctrine.",
+      "sha256": "13fa91d3c5c9ebe4d6dcae50be7d23b05fef4e5fe06b0787a0eba9e078b6f890"
+    },
+    {
+      "name": "ALIAS-PROMOTE-001-v0.2.md",
+      "status": "AWAITING I9",
+      "missing_headers": [],
+      "action": "OK",
+      "recommendation": "No action required.",
+      "sha256": "7ac279cc5a9c694a496da3a3448fe08319e8b4a585243d3b3e263be2ef3331ef"
+    },
+    {
+      "name": "ALIAS-PROMOTE-001-v0.3.md",
+      "status": "AWAITING I9",
+      "missing_headers": [],
+      "action": "OK",
+      "recommendation": "No action required.",
+      "sha256": "42c8f60b1b8f52574a8a74803c1615373dfeb1965b0e76fa736cd316fa27ac14"
+    },
+    {
+      "name": "ALIAS-PROMOTE-001.md",
+      "status": "AWAITING I9",
+      "missing_headers": [],
+      "action": "OK",
+      "recommendation": "No action required.",
+      "sha256": "24d4e7c8ed2fd5721ed18bba63c7400d0f0ae1610b5cdb64c396baa73aeec9d0"
+    },
+    {
+      "name": "ALIAS-RESOLUTION-001.md",
+      "status": "SEALED",
+      "missing_headers": [
+        "Mission"
+      ],
+      "action": "HEADER_PATCH",
+      "recommendation": "Add missing required metadata without changing body.",
+      "sha256": "8033f4463349446d25663ed65175e44a4ae426578f38fb58190d01b6e87f96c9"
+    },
+    {
+      "name": "ALIAS-RUN-001.md",
+      "status": "MEASURED",
+      "missing_headers": [
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "action": "HEADER_PATCH",
+      "recommendation": "Add missing required metadata without changing body.",
+      "sha256": "9fdcb7f166383c9ae97312e6589919c0417caae219ed6c783f61891ead82b511"
+    },
+    {
+      "name": "CONTRIBUTION-ALIAS-RESOLUTION-NEW.md",
+      "status": "MISSING",
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "action": "NEEDS_TRIAGE",
+      "recommendation": "Missing status and required headers; classify before use.",
+      "sha256": "16a9fbbcf8a7527de6b1c0c9d4341c1db888b8d0068106bd37a21a5cd8b1762d"
+    },
+    {
+      "name": "CONTRIBUTION-GRAMMAR-001.md",
+      "status": "CANDIDATE",
+      "missing_headers": [
+        "Purpose"
+      ],
+      "action": "HEADER_PATCH",
+      "recommendation": "Add missing required metadata without changing body.",
+      "sha256": "56f59bafdb46235eb6c8fd1c3cb9f36b42417dda20bdf966b1edd964c831c4e8"
+    },
+    {
+      "name": "correcoes-CODEX.md",
+      "status": "MISSING",
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "action": "RAW_NOTE",
+      "recommendation": "Keep as source note or move to notes archive; do not normalize as doctrine.",
+      "sha256": "fb2d12e83f2cd6bbcbe7dceb2721861a4de96fff13547b0563184d34bad03b0f"
+    },
+    {
+      "name": "MATRIZ-FATO-CONTRIBUICAO-001.md",
+      "status": "CANDIDATE",
+      "missing_headers": [
+        "Mission"
+      ],
+      "action": "HEADER_PATCH",
+      "recommendation": "Add missing required metadata without changing body.",
+      "sha256": "15492792492639da1e14b3aab165b4c5945ea66c6677cd174442008dedf1d1ed"
+    }
+  ]
+}
