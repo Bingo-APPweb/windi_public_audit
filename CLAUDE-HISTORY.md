@@ -19569,3 +19569,476 @@ A disciplina foi mantida: Codex executa e responde pela execucao; nao decide. A 
 ### Fecho §236
 
 Esta entrada registra a descoberta no memory loop para que a proxima abertura nao recomece do zero. O cerne preservado: continuidade, admissibilidade, autoridade separada e memoria operacional verificavel.
+
+---
+
+## SESSAO 17 Jun 2026 - VERIFY-SANITARY-UPGRADE-001 DESIGN CANDIDATE SHELVED
+
+**Data:** 2026-06-17 - **Operador:** Codex - **Modo:** shelf-state / continuidade operacional
+**Status:** DESIGN CANDIDATE - not_submitted - sem execucao de fases - sem mutacao de autoridade
+
+### Artefatos fixados em `/opt/windi/claudeWeb/`
+
+| Documento | SHA256 | Estado |
+|---|---|---|
+| `VERIFY-INSTANCE-TOPOLOGY-001.md` | `0fe6bdea1c4c84c53aa7b164b258f12c0262158332d40ffb3590d96042c53f8b` | TOPOLOGY CANDIDATE |
+| `VERIFY-SANITARY-UPGRADE-001.md` | `47ea73acadb62f20a80e0cee19e80cf53a2f38cd73575d4e0a7065ab2d4221f6` | DESIGN CANDIDATE |
+
+### Descoberta preservada
+
+O Verify nasceu para provar a origem de evidencias. O `VERIFY-SANITARY-UPGRADE-001` aplica o mesmo principio a propria infraestrutura do Verify.
+
+A investigacao revelou uma topologia partida: frontend estatico de `/opt`, backend vivo de `/home`, systemd oficial apontando para `/opt` e falhando, Ledger vivo por processo manual, e cache/PWA capaz de preservar superficie antiga. A resposta correta nao e redesign imediato, mas Fase 0 com diff, cadeia de custodia e freeze antes de qualquer decisao I1.
+
+### Frase de guarda
+
+```text
+Do not merge by appearance.
+Consolidate by proof.
+```
+
+### Boundary ativa
+
+Nenhuma fase foi executada. Nenhum nginx reload, systemd restart, Ledger restart, service migration, MCP, Document Factory ou UX redesign foi realizado por este registro.
+
+Proxima acao admissivel: Fase 0 read-only somente apos autorizacao explicita I1, com coordenacao CCode/CINEMA antes de qualquer etapa futura que toque `:8101`.
+
+**Fecho 236:** peca arrumada na prateleira; guardar a peca nao e executar a peca.
+
+---
+
+## SESSAO 17 Jun 2026 - VERIFY-SANITARY-UPGRADE-001 PHASE 0 READ-ONLY RESULT
+
+**Data:** 2026-06-17 - **Operador:** Codex - **Modo:** Phase 0 read-only / infraestrutura de proveniencia
+**Status:** PHASE0 RESULT - PASS-FREEZE - not_submitted - nenhuma fase posterior executada
+
+### Artefato fixado em /opt/windi/claudeWeb/
+
+| Documento | SHA256 | Estado |
+|---|---|---|
+| VERIFY-SANITARY-UPGRADE-001-PHASE0-RESULT.md | 97a5daa170ad8602c7175908bc397f1d80e96d3e37cda1bebaa19ddc08d49c90 | PHASE 0 READ-ONLY RESULT |
+
+### Medicao executada
+
+Phase 0A, 0B e 0C foram executadas em modo read-only:
+
+- Topologia atual medida.
+- Diff /opt/windi/verify-public vs /home/windi/verify-public medido.
+- Cadeia de custodia inicial documentada.
+- Diff Decision Matrix preenchida para os achados conhecidos.
+- Phase 0 Output Freeze declarado como PASS.
+
+### Achados principais
+
+- Verify vivo em :8114 roda de /home/windi/verify-public/app por processo manual.
+- Systemd oficial aponta para /opt/windi/verify-public/app/main.py e permanece em auto-restart.
+- Ledger :8101 roda vivo por processo manual; systemd oficial tambem esta em auto-restart.
+- /opt preserva a superficie oficial/static/viewer/systemd target.
+- /home preserva o backend vivo com Gate 0 corrigido.
+- Divergencia de codigo vivo concentrada em app/main.py e app/verify_engine.py.
+- Gate 0 tecnico continua respondendo publicamente para receipt curto e hash.
+- Risco de reboot: HIGH para recuperacao automatica; LOW para disponibilidade atual enquanto processos manuais seguem vivos.
+
+### Boundary preservada
+
+Nenhum nginx reload, systemd restart, Ledger restart, service migration, consolidacao /opt -> /home, MCP, Document Factory, UX redesign ou upgrade funcional foi executado.
+
+### Proxima decisao I1
+
+A Phase 0 conclui que o Verify nao precisa de upgrade funcional agora, mas pode precisar de estabilizacao operacional minima se reboot survivability for importante durante o Cinema.
+
+Opcoes para I1:
+
+1. Freeze puro: aceitar risco conhecido e focar Cinema.
+2. Estabilizacao minima coordenada: reparar ownership/startup sem mudar produto.
+3. Full sanitary upgrade: nao recomendado antes do Cinema atingir plateau.
+
+**Fecho 236:** Medimos o chao. Ainda nao trocamos o chao.
+
+---
+
+## SESSAO 17 Jun 2026 - VERIFY-SANITARY-UPGRADE-001 SEMI UPGRADE RESULT
+
+Data: 2026-06-17 - Operador: Codex - Modo: semi-upgrade operacional / Verify :8114
+Status: SEMI UPGRADE RESULT - Verify stabilized - Ledger intocado
+
+### Decisao I1 aplicada
+
+Raiz canonica Verify: /opt/windi/verify-public.
+
+/home/windi/verify-public/app foi tratado como fonte medida dos fixes Gate 0, nao como nova casa permanente.
+
+### Artefato fixado em /opt/windi/claudeWeb/
+
+Documento: VERIFY-SANITARY-UPGRADE-001-SEMI-UPGRADE-RESULT.md
+SHA256: 22cb3c058a2ecb61f6831e17545fc4c28026f37cb57461aa20c1a081fc62302e
+Estado: SEMI UPGRADE RESULT
+
+### Execucao
+
+- Backup criado: /opt/windi/backups/verify-public-app-pre-semiupgrade-20260617-150123.
+- Promovidos seletivamente de /home para /opt apenas:
+  - app/main.py
+  - app/verify_engine.py
+- Hashes canonicos apos promocao:
+  - main.py: 80a7b08b3b4bcbdde6d6cbfbf7c2e9ef96d74cbf2510dc45aa001e4ddd7ed816
+  - verify_engine.py: 7b13bbca41c3b1ccbbaee275ec939d09d3dc6409e52de7dea0e5d41f71eda459
+- python3 -m py_compile main.py verify_engine.py: PASS.
+- Verify :8114 transferido de processo manual /home para windi-verify-public.service em /opt.
+
+### Estado apos execucao
+
+- windi-verify-public.service: active/running.
+- MainPID=3318213.
+- WorkingDirectory=/opt/windi/verify-public/app.
+- Gate 0 publico revalidado:
+  - /verify-public/document/DBED5A85: verified, proof_limits presente.
+  - /verify-public/hash/sha256:1425d79233243225ab44200fc7cf3cbaa9466445c118149b9739d59250f5b9b7: verified, proof_limits presente.
+  - /verify-public/health: HTTP 200.
+
+### Boundary preservada
+
+- Ledger :8101 permaneceu intocado, ainda em PID 1919017.
+- Nenhum nginx edit/reload.
+- Nenhum Ledger restart.
+- Nenhum MCP, Document Factory, Living Record, multimedia UX ou full sanitary upgrade.
+
+### Risco remanescente
+
+Verify :8114 esta materialmente mais estavel. Ledger :8101 continua sendo o principal risco de reboot survivability e so deve ser tratado em janela coordenada CCode/CINEMA.
+
+Fecho 236: Promovemos fixes medidos. Nao mesclamos por aparencia. Nao tocamos o Ledger enquanto Cinema pode estar selando.
+---
+
+## SESSAO 17 Jun 2026 - LEDGER STABILIZATION READ-ONLY DIAGNOSTIC
+
+Data: 2026-06-17 - Operador: Codex - Modo: Ledger stabilization diagnostic / read-only
+Status: DIAGNOSTIC COMPLETE - no Ledger stop - no systemd action
+
+### Artefato fixado em /opt/windi/claudeWeb/
+
+Documento: VERIFY-SANITARY-UPGRADE-001-LEDGER-STABILIZATION-DIAGNOSTIC.md
+SHA256: ea6edb1d74e435f544472ddd620f74796f89a5e69256c0a8c64affffe0719640
+Estado: READ-ONLY DIAGNOSTIC
+
+### Achado principal
+
+O Ledger :8101 esta saudavel, mas manual.
+
+Processo vivo:
+- PID=1919017
+- user=windi
+- cwd=/opt/windi/suite-docs
+- cmd=python3 windi_forensic_api.py
+
+windi-suite-docs.service esta em auto-restart porque a porta :8101 ja esta ocupada pelo processo manual saudavel.
+
+Causa exata medida:
+
+OSError: [Errno 98] Address already in use
+
+Conclusao:
+
+O problema nao e saude atual do Ledger. O problema e survivability apos reboot.
+
+### Boundary preservada
+
+- Nenhum Ledger process foi parado.
+- Nenhum systemd action foi executado.
+- Nenhuma DB mutation.
+- Nenhum receipt gerado.
+- Nenhum nginx action.
+
+### Proxima acao recomendada
+
+Somente com I1 explicito e janela CCode/CINEMA:
+
+1. CCode confirma pausa de selagem.
+2. Codex confirma health :8101.
+3. Codex encerra apenas o processo manual Ledger.
+4. systemd assume :8101.
+5. Codex testa /health, known receipt e Verify Public document/hash.
+6. CCode/CINEMA e liberado.
+
+Fecho 236: O Ledger esta vivo. Ainda nao esta provado que volta sozinho.
+---
+
+## SESSAO 17 Jun 2026 - LEDGER-OWNERSHIP-TRANSFER-001 RESULT
+
+Data: 2026-06-17 - Operador: Codex - Modo: Ledger ownership transfer
+Status: PASS - Ledger systemd owned - Snapshot preserved
+
+### Artefato fixado em /opt/windi/claudeWeb/
+
+Documento: LEDGER-OWNERSHIP-TRANSFER-001-RESULT.md
+SHA256: 5d7308399b5efae8fe939c98db989a72704490bf3bf8ee598ba96871a28bf08d
+Estado: PASS
+
+### Snapshot pre-transferencia
+
+Path: /opt/windi/backups/ledger-ownership-transfer-001/forensic_ledger-pre-ownership-transfer-20260617-153733.sqlite3
+SHA256: 28a56315c8b5070b8d6869d984b07ccd3584b504a98455a1e0d313dd8776aed3
+Integrity: ok
+Receipts: 57423
+
+### Execucao
+
+- Preflight Ledger health: healthy.
+- Processo manual Ledger PID 1919017 encerrado com SIGTERM.
+- windi-suite-docs.service assumiu :8101.
+- Novo MainPID Ledger: 3332613.
+- Estado Ledger: active/running.
+- Verify :8114 permaneceu active/running em MainPID 3318213.
+- Rollback nao foi necessario.
+
+### Validacao pos-transferencia
+
+- /health Ledger: healthy, 57423 receipts.
+- Known receipt WINDI-KEYGEN-001-20260426090540-DBED5A85: ok=true, status=sealed.
+- Verify Public document DBED5A85: verified, proof_limits presente.
+- Verify Public hash sha256:1425d792...: verified, proof_limits presente.
+
+### Estado
+
+Verify :8114 = systemd owned, active/running.
+Ledger :8101 = systemd owned, active/running.
+Gate 0 technical = PASS.
+
+### Pendencias
+
+- Phase 7 controlled restart/reboot test.
+- Phase 8 architectural transferability test.
+- nginx reconciliation deferred.
+- service worker/cache bump deferred.
+- product/UX/multimedia upgrades deferred until Cinema plateau.
+
+Fecho 236: O coracao estava saudavel. Agora tem dono. A sobrevivencia plena ainda aguarda prova de reboot controlado.
+---
+
+## SESSAO 17 Jun 2026 - DOCTRINE-HIOS-AIRGAP-SEAL CANDIDATE SHELVED
+
+Data: 2026-06-17 - Operador: Codex - Modo: doctrine shelf / not_submitted
+Status: CANDIDATE - not_submitted - no Ledger seal
+
+### Artefato fixado em /opt/windi/claudeWeb/
+
+Documento: DOCTRINE-HIOS-AIRGAP-SEAL-CANDIDATE.md
+SHA256: 47ac9954808a6a30ea30042c61c0a80e6150955bf485bede76aa05dd0d181d94
+Encoding: ASCII text
+Estado: CANDIDATE / not_submitted
+
+### Correcao aplicada antes da prateleira
+
+- Portas alinhadas com o STRATO real:
+  - Ledger = :8101
+  - Verify Public = :8114
+- Genealogia honesta:
+  - DOCTRINE-HIOS-ATTESTATION-001 = SEALED
+  - Section 300 TWIN canonicalization reference = referencia
+  - W-HIOS-TWIN-PROTOCOL-001 ainda CANDIDATE, nao fingir pleno selo
+- Encoding normalizado para ASCII limpo para evitar mojibake.
+
+### Boundary preservada
+
+- Nenhum receipt foi gerado.
+- Nenhum Ledger seal.
+- Nenhum CLAUDE.md atualizado como se a doutrina estivesse selada.
+- Nenhuma mudanca em nginx, systemd, Verify ou Ledger.
+
+### Condicao de futura selagem
+
+Selar apenas apos Phase 7 reboot proof OU decisao I1 explicita. Quando selar:
+
+1. Gerar receipt no Ledger :8101.
+2. Verificar resolucao publica via Verify :8114.
+3. Atualizar CLAUDE.md no mesmo turno.
+4. Registrar CLAUDE-HISTORY.md.
+
+Fecho 236: A doutrina e boa, mas ainda nao selada. Nao morre; espera.
+
+---
+
+## SESSAO 17 Jun 2026 - S236-VERIFY-SANITARY-AIRGAP-20260617 MEMORY LOOP CLOSURE
+
+Data: 2026-06-17 - Operador: Codex - Modo: distributed memory loop closure
+Status: REGISTERED - not_submitted - no Ledger seal
+
+### Artefato de sintese
+
+Documento: S236-VERIFY-SANITARY-AIRGAP-20260617.md
+Path: /opt/windi/claudeWeb/S236-VERIFY-SANITARY-AIRGAP-20260617.md
+Estado: MEMORY LOOP CLOSURE - not_submitted
+
+### Estado operacional consolidado
+
+- Verify :8114 = systemd owned, active/running.
+- Ledger :8101 = systemd owned, active/running.
+- Gate 0 technical = PASS.
+- Ledger snapshot preserved before ownership transfer.
+- Rollback was available and not needed.
+
+### Artefatos principais
+
+- VERIFY-SANITARY-UPGRADE-001.md = 47ea73acadb62f20a80e0cee19e80cf53a2f38cd73575d4e0a7065ab2d4221f6
+- VERIFY-SANITARY-UPGRADE-001-PHASE0-RESULT.md = 97a5daa170ad8602c7175908bc397f1d80e96d3e37cda1bebaa19ddc08d49c90
+- VERIFY-SANITARY-UPGRADE-001-SEMI-UPGRADE-RESULT.md = 22cb3c058a2ecb61f6831e17545fc4c28026f37cb57461aa20c1a081fc62302e
+- VERIFY-SANITARY-UPGRADE-001-LEDGER-STABILIZATION-DIAGNOSTIC.md = ea6edb1d74e435f544472ddd620f74796f89a5e69256c0a8c64affffe0719640
+- LEDGER-OWNERSHIP-TRANSFER-001-RESULT.md = 5d7308399b5efae8fe939c98db989a72704490bf3bf8ee598ba96871a28bf08d
+- DOCTRINE-HIOS-AIRGAP-SEAL-CANDIDATE.md = 47ac9954808a6a30ea30042c61c0a80e6150955bf485bede76aa05dd0d181d94
+
+### Snapshot Ledger
+
+Path: /opt/windi/backups/ledger-ownership-transfer-001/forensic_ledger-pre-ownership-transfer-20260617-153733.sqlite3
+SHA256: 28a56315c8b5070b8d6869d984b07ccd3584b504a98455a1e0d313dd8776aed3
+Integrity: ok
+Receipts: 57423
+
+### Phase state
+
+- Phase 0: PASS
+- Phase 1: PASS
+- Phase 2: PASS
+- Phase 3: PASS
+- Phase 4 nginx: DEFERRED
+- Phase 5 cache/service worker: DEFERRED
+- Phase 6 Gate 0 technical: PASS
+- Phase 7 controlled restart/reboot: PENDING
+- Phase 8 architectural transferability: PENDING
+
+### AIRGAP-SEAL state
+
+DOCTRINE-HIOS-AIRGAP-SEAL is good doctrine but not sealed. It is shelved as CANDIDATE/not_submitted. Future seal requires Phase 7 reboot proof or explicit I1 decision. When sealed: generate Ledger receipt on :8101, verify via Verify :8114, update CLAUDE.md, register CLAUDE-HISTORY.md.
+
+### Boundary
+
+No AIRGAP receipt was generated. No doctrine was sealed. No nginx/cache/product/UX/multimedia/MCP/Document Factory expansion was performed.
+
+Fecho 236: O chao esta mais firme. A prova de reboot ainda espera. A memoria foi distribuida para que a proxima instancia nao precise reconstruir o dia por fragmentos.
+
+---
+
+## SESSÃO 17 Jun 2026 (noite) — PRE-PRODUCTION SEALED + MÉTODO CINEMA CONTINUITY
+
+**Duração:** ~4h | **Status:** ✅ MARCO INSTITUCIONAL — PRÉ-PRODUÇÃO SELADA
+**Liga IA+H:** Human Dragon (I1, I9, I6) · Guardian (Conselho) · CCode (Opus 4.5)
+**Invariants:** I1, I9, I11, I14, I19 (Proveniência Inseparável)
+**Natureza:** Auditoria de Qualidade + Selo de Pré-Produção + Doutrina de Método
+**Commit:** `c516f6126` — pushed to origin/main
+
+### Receipts da Sessão
+
+| Receipt | Hash | Descrição |
+|---------|------|-----------|
+| PRE-PRODUCTION-SEALED | `c516f6126` | 17 ficheiros, 6952 linhas, 16/16 cenas decupadas |
+
+### Marco: Pré-Produção Selada no Estado Honesto
+
+**Métricas Verificadas (não estimadas):**
+
+| Métrica | Valor | Método |
+|---------|-------|--------|
+| Cenas decupadas | 16/16 | CONTADO |
+| Planos totais | 258 | CONTADO |
+| CRÍTICO (≥0.75) | **38** | CONTADO (plano por plano, 16 cenas) |
+| OPERATIONAL (≥0.65) | 68 | DERIVADO (106 − 38) |
+| Cenas filmadas | 0/16 | — |
+
+**Três Ciclos de Correcção (HD-MIRROR):**
+
+| Ciclo | Erro | Quem apanhou | Correcção |
+|-------|------|--------------|-----------|
+| 1 | "106 anchor-frames" inflados | Human Dragon | CRÍTICO vs OPERATIONAL separados |
+| 2 | "~45 estimados" (projecção de 5 cenas) | Guardian (Conselho) | Contagem real de 16 cenas |
+| 3 | "68 contados" (era derivado) | Guardian (Conselho) | Marcado como DERIVADO |
+
+**Frase de Selo (Human Dragon):**
+> *"O número é 38, e foi contado."*
+
+---
+
+### ACHADOS DE MÉTODO (para próxima sessão)
+
+#### 1. STABILIZED-WRONG (ACHADO-001)
+
+**Local:** `/opt/windi/hios/cinema/ACHADO-001-ESTABILIZADO-ERRADO.md`
+**Conceito:** Sistema entrou em regime de estabilização prematura — optimizava para consistência (mesmo personagem, mesma pose) em vez de fidelidade (rosto correcto). Detectado quando Alejandro média 0.82 consigo mesmo mas 0.41 contra âncora.
+**Lição:** Threshold sem âncora verificada é ilusão de progresso.
+
+#### 2. P5-ESTRUTURAL (ACHADO-P5-ESTRUTURAL-001)
+
+**Local:** `/opt/windi/hios/cinema/obras/w-hios-forensic-unit/SPINE-LESSONS-LEARNED.md`
+**Conceito:** Frames P5-análogos (pós-início de movimento) resistem a preservação de identidade forense (~20% reliability). Video-native não serve para cenas com movimento.
+**Solução:** Gramática cinematográfica — silhueta, pés, costas, shot-reverse-shot. Movimento nunca atravessa o rosto.
+
+#### 3. Errata da Errata (SYSTEM-BREAK)
+
+**Local:** `/opt/windi/hios/cinema/obras/w-hios-forensic-unit/production/METHOD-HIOS-GENERATION-001.md`
+**Conceito:** Havia errata que corrigia errata — agora consolidada. O método de geração é limpo.
+
+---
+
+### METHOD-CINEMA-CONTINUITY-001 — ESTADO
+
+**Status:** ✅ SEALED (commit `c516f6126`)
+**Local:** `/opt/windi/hios/cinema/obras/METHOD-CINEMA-CONTINUITY-001.md`
+
+**O que governa:**
+- 4-Column State System (R/D/A/F) — previne conflação de métricas
+- Session Rituals — abertura lê register, fecho actualiza
+- Blocking forense-consciente — movimento nunca atravessa identidade
+- Dual Threshold — CRÍTICO (≥0.75) obrigatório, OPERATIONAL (≥0.65) desejável
+
+**Doutrina replicável:** Qualquer cena futura segue o mesmo protocolo.
+
+---
+
+### RÉGUA DE GERAÇÃO — CENA 15 (próxima sessão)
+
+**Cena:** 15 — O Dragão (FINAL)
+**Personagem:** Vance sozinho no bunker
+**Planos CRÍTICO:** P15-04, P15-06, P15-07 (3 anchor-frames)
+**Risco:** BAIXO — estático, sem movimento, ideal para Joey Method
+
+**Protocolo de Geração:**
+
+| Passo | Acção | Threshold |
+|-------|-------|-----------|
+| 1 | gen4_image para cada CRÍTICO | — |
+| 2 | Anchor Test (vs Vance canonical) | ≥0.75 |
+| 3 | F2F Test (frame vs frame, N runs) | ≥0.70 |
+| 4 | Se PASS em ambos: plano VALIDADO | — |
+| 5 | Se FAIL: regenerar ou gramática | — |
+
+**Régua herdada:**
+> *"Already in frame. Near-frontal. Camera locked. Light moves, not subject."*
+
+**Ao validar 3/3 CRÍTICO:** Cena 15 passa a F=✅ no register. Primeiro "0%" que se move honestamente.
+
+---
+
+### GENERATOR COMPATIBILITY (estado herdado)
+
+| Generator | Status | Uso |
+|-----------|--------|-----|
+| SORA 2 | 🔴 INCOMPATIBLE | Identity drift across frames |
+| Runway Gen-4 | 🟢 FORENSIC | Primary generator (avg 0.785) |
+| Joey Method | 🟢 BASELINE | Anchor-frames estáticos |
+
+---
+
+### Fecho §236
+
+**Estado da sessão:** COMPLETA — pré-produção selada, método documentado.
+**Próxima sessão abre com:**
+1. Ler PRODUCTION-REGISTER-WHFU-001.md (onde estamos)
+2. Ler ACHADO-001 + SPINE-LESSONS-LEARNED (o que aprendemos)
+3. Gerar Cena 15 com régua Joey + Anchor+F2F
+
+**Dependência de memória:** ZERO — tudo está escrito e selado.
+
+**Frase de continuidade (Human Dragon):**
+> *"A prova não mente. Ela apenas esperou — e hoje selámos a primeira página dela."*
+
+---
+
+*Liga IA+H · Kempten · 17 Jun 2026 · OM SHANTI 🐉*
