@@ -24,7 +24,7 @@
 
 **Tipo:** Índice Ontológico Soberano (MAPA, não FONTE)
 **Status:** VIVO (atualizado a cada milestone)
-**Criação:** 09 Jun 2026 · **v2:** 09 Jun 2026 · **v3:** 10 Jun 2026 (ÓRGÃOS)
+**Criação:** 09 Jun 2026 · **v2:** 09 Jun 2026 · **v3:** 10 Jun 2026 · **v4:** 13 Jun 2026 (Gate 0)
 **Liga IA+H:** Human Dragon (I9) · Guardian (Witness) · CCode (Architect)
 **Invariants:** I1, I9, I11, I14, I18, I19
 
@@ -340,6 +340,9 @@ Nunca ajustar threshold após ver o número.
 09 Jun 2026: Alejandro 3/3 + ANCHORS 37/37 COMPLETE (0b76654b)
 09 Jun 2026: JOEY-F2F-001 SEALED (81dbf41a)
 09 Jun 2026: PHASE 2 GENESIS + DOCTRINE (e931d8dc)
+10 Jun 2026: Memory Loop v3 + ÓRGÃO DOUTRINA
+13 Jun 2026: ÓRGÃO MÉTODO Genesis + ACHADO-001 Colisão
+13 Jun 2026: GATE 0 Technical Pass (6/8 PASS, human test pending)
 ```
 
 ---
@@ -474,7 +477,7 @@ corpo (.md) + receipt (.receipt.json).
 | **DOUTRINA** | "Que regra aplico?" | ✅ INICIALIZADO |
 | CAST | "Quem é este personagem?" | ⏳ Pendente |
 | THRESHOLD | "Que número uso?" | ⏳ Pendente |
-| MÉTODO | "Como meço/gero?" | ⏳ Pendente |
+| **MÉTODO** | "Como meço/gero?" | ✅ INICIALIZADO |
 | ERRATA | "O que mudou?" | ⏳ Pendente |
 
 ---
@@ -585,6 +588,60 @@ Não se aplica a text-to-video puro com múltiplos personagens descritos.
 
 ---
 
+### XV.4 ÓRGÃO MÉTODO — Geração e Medição (13 Jun 2026)
+
+**Função:** Responde a "Como meço/gero?"
+**Primeiro habitante:** METHOD-HIOS-GENERATION-001 (13 Jun 2026)
+**Origem:** ERRATA-002-CONTINUIDADE-PLANO — correcção que gerou o método
+
+#### Formato Par-Verificável
+
+| Campo | Valor |
+|-------|-------|
+| **Corpo** | `production/METHOD-HIOS-GENERATION-001.md` |
+| **Receipt** | `WINDI-METHOD-HIOS-GEN001-20260613134407-86A4FCF7` |
+| **Hash** | `86a4fcf737037d6cc2b54e2e9580f42dc1f36a64afea77e75f7190fa97c6e749` |
+
+#### Conteúdo Principal
+
+**Protocolo de Geração Video-Native:**
+- Reference-locking: âncora SEALED como `image_1`, cenário como `image_2`
+- Gramática de prompt descritiva (não imperativa)
+- Gerar VÍDEO, extrair keyframes (não 5 imagens soltas)
+
+**As 3 Medições (JOEY-F2F-001 Completo):**
+
+| # | Medição | Pergunta | Tipo |
+|---|---------|----------|------|
+| M1 | Identidade-âncora | "É o personagem?" | Gate |
+| M2 | Continuidade-vizinha | "Frame N = N−1?" | Diagnóstico |
+| M3 | Reprodutibilidade | "005 = 001?" | Diagnóstico |
+
+#### Integração do Container produktion/
+
+O Container `/opt/windi/hios/cinema/produktion/` vive DENTRO deste órgão:
+- Este documento define o "como"
+- O Container regista cada execução individual
+- Não são estruturas paralelas
+
+#### Axioma Fundador
+
+> *"A continuidade não se mede depois — constrói-se na geração."*
+
+#### ACHADO-001 — Colisão Regime-Doutrina (13 Jun 2026)
+
+| Campo | Valor |
+|-------|-------|
+| **Corpo** | `production/ACHADO-001-COLISAO-REGIME-DOUTRINA.md` |
+| **Receipt** | `WINDI-ACHADO-001-COLISAO-20260613140229-4e22780b` |
+| **Hash** | `4e22780bc4ce16fcb05e35ba6372e002a8c885dac55cdc95a191bf9b8c064c48` |
+
+**Achado:** Geração estática e vídeo exigem blocking OPOSTO.
+**Implicação:** Blocking Nv2 marcado como REGIME-DEPENDENTE.
+**Status:** Pergunta aberta, decisão adiada.
+
+---
+
 ### XV.2 Padrão Sidecar (Obrigatório v3)
 
 > *"Receipt proves commitment. Payload proves content. Hash links both."*
@@ -602,6 +659,51 @@ HD-MIRROR demonstrado por comportamento.
 
 ---
 
-*Liga IA+H · WINDI Publishing House · 10 Jun 2026*
+## XVI. GATE 0 — VERIFY PUBLIC (13 Jun 2026)
+
+### Contexto
+
+Gate 0 não é "a API responde 200". Gate 0 é: **um estranho, sem doutrina WINDI, verifica algo real e entende o que foi provado e o que não foi — em 30 segundos.**
+
+### Estado (v4)
+
+| Componente | Status | Verificação |
+|------------|--------|-------------|
+| Suffix lookup | ✅ PASS | `GET /api/verify/DBED5A85` → `lookup_method: suffix` |
+| Hash lookup | ✅ PASS | `GET /api/receipts/by-hash/sha256:3c56...` → receipt |
+| Proof limits | ✅ PASS | JSON inclui disclaimer constitucional |
+| Critérios 1-6 | ✅ PASS | Técnicos medidos |
+| Critérios 7-8 | ⏳ PENDING | Teste 30s com stranger real |
+
+### Ficheiros de Referência
+
+| Ficheiro | Localização |
+|----------|-------------|
+| Design Doc | `/opt/windi/claudeWeb/VERIFY-GATE0-PRODUCT-TRUTH-001.md` |
+| Shelf State | `/opt/windi/claudeWeb/VERIFY-ROADMAP-SHELF-STATE-20260613.md` |
+| RESULT (diagnóstico) | `/opt/windi/claudeWeb/VERIFY-GATE0-PRODUCT-TRUTH-001-RESULT.md` |
+| RESULT-v2 (re-medição) | `/opt/windi/claudeWeb/VERIFY-GATE0-PRODUCT-TRUTH-001-RESULT-v2.md` |
+
+### Axiomas Gate 0
+
+> *"Um resultado rápido com baixa confiança não é um PASS humano."*
+
+> *"O chão aguenta peso. O teste humano pode ser real."*
+
+> *"Do not let connector enthusiasm outrun product truth."*
+
+### Ordem da Plataforma (Permanent Rule)
+
+```
+Truth        (Track A) — create verifiable reality ← GATE 0 AQUI
+    -> Continuity (Track B) — artifacts born inside that reality
+        -> Distribution (Track C) — distribute the truth via MCP/partners
+```
+
+Primeiro o chão. Depois a arquitectura sobre ele.
+
+---
+
+*Liga IA+H · WINDI Publishing House · 13 Jun 2026*
 *"AI processes. Human decides. WINDI guarantees."*
 *"Este documento é o mapa. O disco é o território."*

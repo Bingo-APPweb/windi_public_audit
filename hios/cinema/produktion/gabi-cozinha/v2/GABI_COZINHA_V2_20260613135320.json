@@ -1,0 +1,28 @@
+{
+  "run_id": "20260613135320",
+  "protocol": "METHOD-HIOS-GENERATION-001",
+  "pre_registro": "WINDI-PREREGISTO-M2M3-20260613134915-f4b3b5f3",
+  "natureza": "CALIBRA\u00c7\u00c3O + CORREC\u00c7\u00c3O DE REGIME",
+  "character": "Gabi Santos",
+  "scene": "Cozinha",
+  "results": [
+    {
+      "shot": "P1_v2",
+      "name": "\u00c2ncora Frontal",
+      "tier": "GEOMETRIA",
+      "floor": 0.65,
+      "video": "/opt/windi/hios/cinema/produktion/gabi-cozinha/v2/P1_v2.mp4",
+      "frames_count": 5,
+      "M1": {
+        "metric": "M1_identidade_ancora",
+        "type": "GATE",
+        "floor": 0.65,
+        "min": 16.3697,
+        "avg": 16.5702,
+        "max": 16.7963,
+        "passed": true,
+        "measurements": [
+          {
+            "frame": "frame_01.png",
+            "sim": 16.7963,
+            "det": 
