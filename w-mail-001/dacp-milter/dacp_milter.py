@@ -58,6 +58,19 @@ def generate_proof_id() -> str:
     return f"WINDI-MAIL-PROOF-{ts}-{rand}"
 
 
+def _valid_upstream_proof_id(value: str) -> bool:
+    """Accept only WINDI proof namespaces that may be sealed by DACP."""
+    if not value:
+        return False
+    allowed_prefixes = (
+        'WINDI-SITES-PROOFMAIL-',
+        'WINDI-MAIL-PROOF-',
+    )
+    return value.startswith(allowed_prefixes) and all(
+        c.isalnum() or c in '-_' for c in value
+    )
+
+
 class DACPMilter(Milter.Base):
     """
     DACP Milter implementation.
@@ -163,8 +176,12 @@ class DACPMilter(Milter.Base):
 
         # === BYPASS CHECKS (§227 Section 8) ===
 
-        # 1. Already sealed (our seal) - idempotent
-        if 'x-windi-dacp-proof-id' in self.headers:
+        # 1. Already sealed (our seal) - idempotent.
+        # A requested proof id from an upstream app is not a seal yet.
+        if (
+            'x-windi-dacp-proof-id' in self.headers
+            and 'x-windi-dacp-body-hash' in self.headers
+        ):
             logger.info(f"[{self.id}] Bypass: already sealed")
             increment('bypassed_already_sealed_total')
             return Milter.ACCEPT
@@ -212,8 +229,18 @@ class DACPMilter(Milter.Base):
             logger.info(f"[{self.id}] Re-sealing forwarded mail with existing DACP footer")
             increment('resealed_forwarded_total')
 
-        # === GENERATE PROOF ===
-        proof_id = generate_proof_id()
+        # === GENERATE OR INHERIT PROOF ===
+        requested_proof_id = (
+            self.headers.get('x-windi-dacp-requested-proof-id', '').strip()
+            or self.headers.get('x-windi-proof-id', '').strip()
+        )
+        if _valid_upstream_proof_id(requested_proof_id):
+            proof_id = requested_proof_id
+            logger.info(f"[{self.id}] Inherited upstream proof id: {proof_id}")
+        else:
+            if requested_proof_id:
+                logger.warning(f"[{self.id}] Ignoring invalid upstream proof id: {requested_proof_id}")
+            proof_id = generate_proof_id()
         sealed_at = datetime.utcnow()
 
         # Compute canonical hash BEFORE injecting footer

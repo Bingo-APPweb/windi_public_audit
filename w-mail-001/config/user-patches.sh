@@ -23,27 +23,35 @@ if [ ! -d "$MILTER_DIR" ]; then
     exit 0
 fi
 
-# Start the milter in background
-echo "[DACP] Starting DACP milter service..."
-cd "$MILTER_DIR"
-DOMAIN=windisites.de \
-# Use public nginx proxy (container can't reach host ports directly)
-LEDGER_URL=https://windi-domain.com \
-LEDGER_TIMEOUT=10 \
-RATE_LIMIT_PER_MIN=100 \
-LOG_PATH=/var/log/mail/dacp-milter.log \
-LOG_LEVEL=INFO \
-MILTER_SOCKET=inet:8890@127.0.0.1 \
-HTTP_ADMIN_PORT=8895 \
-DKIM_KEYS_PATH=/tmp/docker-mailserver/opendkim/keys \
-python3 dacp_milter.py &
+# Supervisor will auto-start the milter using the wrapper script
+# The wrapper waits for pymilter to be available (installed above)
+echo "[DACP] Supervisor will auto-start milter after deps are ready..."
+# Give supervisor time to start the milter via wrapper
+sleep 10
 
-# Wait for milter to start
-sleep 3
-
-# Verify milter is running
+# Verify milter is running (either via supervisor or legacy process)
 if ss -tlnp | grep -q ':8890'; then
     echo "[DACP] Milter is running on port 8890"
+else
+    # Fallback: start manually if supervisor didn't work
+    echo "[DACP] Starting DACP milter manually as fallback..."
+    cd "$MILTER_DIR"
+    DOMAIN=windisites.de \
+    LEDGER_URL=https://windi-domain.com \
+    LEDGER_TIMEOUT=10 \
+    RATE_LIMIT_PER_MIN=100 \
+    LOG_PATH=/var/log/mail/dacp-milter.log \
+    LOG_LEVEL=INFO \
+    MILTER_SOCKET=inet:8890@127.0.0.1 \
+    HTTP_ADMIN_PORT=8895 \
+    DKIM_KEYS_PATH=/tmp/docker-mailserver/opendkim/keys \
+    python3 dacp_milter.py &
+    sleep 3
+fi
+
+# Final check
+if ss -tlnp | grep -q ':8890'; then
+    echo "[DACP] Milter confirmed running on port 8890"
 else
     echo "[DACP] WARNING: Milter failed to start"
     exit 0

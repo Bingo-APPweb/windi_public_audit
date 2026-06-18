@@ -1,0 +1,16 @@
+[Unit]
+Description=WINDI DACP Milter Watchdog
+Documentation=https://windi-domain.com/docs/w-mail-001
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/opt/windi/w-mail-001/scripts/dacp-milter-watchdog.sh
+ExecReload=/opt/windi/w-mail-001/scripts/dacp-milter-watchdog.sh
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

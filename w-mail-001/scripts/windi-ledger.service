@@ -1,0 +1,22 @@
+[Unit]
+Description=WINDI Forensic Ledger API v1.0.0
+Documentation=https://windi-domain.com/ledger/health
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=windi
+Group=windi
+WorkingDirectory=/opt/windi/suite-docs
+ExecStart=/usr/bin/python3 /opt/windi/suite-docs/windi_forensic_api.py
+Restart=always
+RestartSec=5
+StandardOutput=append:/opt/windi/logs/forensic-ledger.log
+StandardError=append:/opt/windi/logs/forensic-ledger.log
+NoNewPrivileges=yes
+ProtectSystem=strict
+ReadWritePaths=/opt/windi/logs /opt/windi/data /opt/windi/suite-docs
+
+[Install]
+WantedBy=multi-user.target

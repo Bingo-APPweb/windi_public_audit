@@ -18,6 +18,7 @@ services:
       - ./mail-state/:/var/mail-state/
       - ./mail-logs/:/var/log/mail/
       - ./config/:/tmp/docker-mailserver/
+      - ./config/supervisor/dacp-milter.conf:/etc/supervisor/conf.d/dacp-milter.conf:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
     environment:
       - ENABLE_RSPAMD=1
@@ -38,7 +39,7 @@ services:
     cap_add:
       - NET_ADMIN
     healthcheck:
-      test: "ss -lntp | grep -E ':25|:587|:993' || exit 1"
+      test: "ss -lntp | grep -E ':25|:587|:993|:8890' || exit 1"
       timeout: 3s
       retries: 0
 

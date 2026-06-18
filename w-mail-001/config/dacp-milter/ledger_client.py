@@ -69,6 +69,8 @@ class LedgerClient:
             "doc_type": "doc",  # Email proofs are generic documents
             "app": "w-mail-001-dacp",
             "actor": actor,
+            "wallet_id": "did:windi:w-mail-001",
+            "schema_version": "1.0",
             "governance_level": "LOW",
             "sge_score": 10,
             "content_hash": f"sha256:{body_hash}",

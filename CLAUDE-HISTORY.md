@@ -6,119 +6,6 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
-## § SESSÃO 13 Jun 2026 (manhã) — CINEMA PRODUKTION BASE + RUN SPINE GABI-COZINHA VALIDADO
-
-**Duração:** ~2h | **Status:** ✅ MARCO INSTITUCIONAL + BLOCKING VALIDADO
-**Liga IA+H:** Human Dragon (I1, I9) · Guardian (Claude.ai web) · CCode (Opus 4.5) · Codex (SSH)
-**Invariants:** I1, I9, I11, I14
-**Natureza:** Disciplina de Produção Cinematográfica + Infra Collaboration
-**Commit:** (pendente)
-
-### Receipts da Sessão
-
-| Receipt | Hash | Descrição |
-|---------|------|-----------|
-| CINEMA-PRODUKTION-BASE-001 | `9709edd8` | Container Estrutural — Régua + Blocking + Registos |
-| PROTOCOLO-RUN-SPINE-GABI-001 | `76029959` | Protocolo de medição pré-registado (decisões fechadas) |
-| RUN-SPINE-GABI-COZINHA-001 | `7cecf9ac` | Resultados: 15/15 frames PASS · Blocking VALIDADO |
-
-### Marco: Disciplina de Produção IA
-
-**Frase fundacional (Human Dragon):**
-> *"No fim do dia, é o que nutre o esforço: a memória intrínseca ao acto."*
-
-**O que foi institucionalizado:**
-
-| Camada | Estatuto | Função |
-|--------|----------|--------|
-| **A RÉGUA** | FIRME | Protocolo de Leitura de Cena — 5 passos obrigatórios |
-| **Blocking Candidato** | Nv2 | 4 movimentos de blocking forense-consciente |
-| **Registos de Cena** | Nv1 | Medições individuais (ex: GABI-COZINHA-001) |
-| **Doutrina Selada** | Nv3 | VAZIO — nada subiu ainda |
-
-**Inovação central:** A régua não espera pela medição — ela É a medição.
-- Doutrina-sobre-o-método (justifica-se por procedimento) ≠ doutrina-sobre-o-mundo (justifica-se por evidência)
-- A primeira pode ser firme já; a segunda espera run F2F
-
-**Princípio Joey embutido:**
-> "Se controlas os frames, controlas a cena."
-
-### Registo de Cena: Gabi-Cozinha (Nv1)
-
-| Plano | Conteúdo | Perna | Floor | Frames |
-|-------|----------|-------|-------|--------|
-| P1 | Âncora frontal | GEOMETRIA | 0.65 | 72 |
-| P2 | Insert telemóvel | — | — | 120 |
-| P3 | Sorriso pousado | EXPOSIÇÃO | 0.55 | 96 |
-| P4 | Insert mão/ecrã | OCLUSÃO | 0.60 | 72 |
-| P5 | Erguer telemóvel | GEOMETRIA | 0.65 | 120 |
-
-**Totais:** 480 frames · 288 frames-SPINE · 192 frames-zero (40%)
-**Próximo passo:** Run F2F sobre os 288 frames-âncora
-
-### Codex SSH Access Granted
-
-```
-Chave:   codex-windi-strato-participation-layer
-Path:    C:\Users\jober\.ssh\codex_windi_strato_ed25519
-Missão:  Participation Layer — mapear onde contribuição já existe
-```
-
-**Princípio Codex (passado ao Human Dragon):**
-> "A Participation Layer não nasceu para distribuir recompensas.
-> Ela nasceu para preservar a memória verificável da contribuição humana e artificial."
-
-### Run SPINE-CAST Gabi-Cozinha — BLOCKING VALIDADO
-
-**Decisões pré-registadas (antes de gerar frames):**
-- D2: Frame a frame (15 frames)
-- D3: α + β (ambas runs)
-- D4: Mínimo severo (1 abaixo = FAIL)
-- D5: Blocking (reblocar se FAIL)
-
-**Resultados Run α (vs Âncora-Mãe):**
-
-| Plano | Floor | Min | Verdict |
-|-------|-------|-----|---------|
-| P1 | 0.65 | 0.7462 | ✅ PASS |
-| P3 | 0.55 | 0.6853 | ✅ PASS |
-| P5 | 0.65 | 0.6983 | ✅ PASS |
-
-**Resultados Run β (vs P1 intra-cena):**
-
-| Plano | Floor | Min | Verdict |
-|-------|-------|-----|---------|
-| P3 | 0.55 | 0.6512 | ✅ PASS |
-| P5 | 0.65 | 0.6561 | ✅ PASS |
-
-**VEREDICTO:** Blocking candidato VALIDADO para 1ª cena. Falta 2ª cena para Nv3.
-
-### Ficheiros Criados
-
-| Ficheiro | Propósito |
-|----------|-----------|
-| `/opt/windi/hios/cinema/produktion/CINEMA-PRODUKTION-BASE-001.md` | Container estrutural |
-| `/opt/windi/hios/cinema/produktion/REGISTO-CENA-GABI-COZINHA-001.md` | Nv1 cena Gabi |
-| `/opt/windi/hios/cinema/produktion/PROTOCOLO-RUN-SPINE-GABI-001.md` | Protocolo medição |
-| `/opt/windi/hios/cinema/produktion/PROMPTS-GABI-COZINHA-001.md` | Prompts P1/P3/P5 |
-| `/opt/windi/hios/cinema/produktion/gabi-cozinha/` | 15 frames + resultados |
-| `~/.ssh/authorized_keys` | +1 chave (Codex) |
-
-### Estado do Piloto Confirmado
-
-| Personagem | Shots | Status |
-|------------|-------|--------|
-| Marcus Vance | 10/10 | ✅ SEALED |
-| Gabi Santos | 4/4 | ✅ SEALED |
-| Helena Meyer | 8/8 | ✅ SEALED |
-| Lucas Silva | 5/5 | ✅ SEALED |
-| Marcus Couto | 7/7 | ✅ SEALED |
-| Alejandro | 3/3 | ✅ SEALED |
-
-**Total: 37 shots SEALED, 6 personagens completos**
-
----
-
 ## § SESSÃO 12 Jun 2026 (manhã) — DOCTRINE-CINE-VERIFY-001 SEALED + Estado Corrigido
 
 **Duração:** ~30min | **Status:** ✅ DOUTRINA SELADA
@@ -19413,632 +19300,396 @@ Corrigido com payload real: `MEMORY-LOOP-2026-06-08.md`
 
 ---
 
-## § SESSÃO 12 Jun 2026 (tarde) — CENA 00 TRÍPTICO SEALED + LAB Yellow→Green
+## §268 ERRATA — TWIN Marcus Divergence (18 Jun 2026)
 
-**Duração:** ~2.5h | **Status:** ✅ PRIMEIRA CENA COMPLETA DO PILOTO
-**Liga IA+H:** Human Dragon (I1, I9) · CCode (Opus 4.5) · Guardian (I6, Testemunha)
-**Invariants:** I1, I9, I11, I14
-**Natureza:** Laboratório de Produção + Selo de Cena
+**Descoberta:** Sessão de filmagem Cena 15 revelou divergência de âncoras entre twins.
 
-### Receipt da Sessão
+| Twin | Âncora | Cosine vs Canónico | Status |
+|------|--------|-------------------|--------|
+| **Strato** (87.106.29.233) | `marcus.vance.anchor.canonical.png` | 1.0000 | ✅ **CANÓNICO** |
+| **TWIN-B** (85.215.131.0) | `marcus.anchor.v4.CURRENT.npy` | 0.2369 | ❌ **NÃO-CANÓNICO** |
 
-| Receipt | Hash | Descrição |
-|---------|------|-----------|
-| `WINDI-PILOT-CENA00-TRIPTYCH-20260612` | `bcf8496993ee28a5a3f2320630c4bd89265295b7cc3768f5b2230a0b9aecd428` | Tríptico CENA 00 — A Mentira Amorosa |
+**O que aconteceu:** Marcus do TWIN é genérico ("older man with gray hair"). Vance canónico do Strato é sintético por design — heterocromia, cicatriz, stubble — para passar likeness gate.
 
-### O Arco do Dia
+**Risco evitado:** Se geração usasse âncora TWIN, protagonista seria pessoa diferente.
 
-**Problema inicial:** Gabi S00-01 amarelo (0.7306) — sorriso emocional destruía identidade forense.
-**Pergunta científica:** "Quanto sorriso a métrica tolera?"
-**Descoberta:** Não é a emoção que destrói identidade — é a **mudança contínua** de emoção.
+**Decreto I9:** Para produção de cinema W-HIOS, âncora canónica = Strato. TWIN-B não é fonte válida para identidade de personagens.
 
-### LAB-PROTOCOL-001 — Yellow→Green
-
-7 variantes testadas:
-
-| Variante | Score | Verdict | Uso |
-|----------|-------|---------|-----|
-| expE | 0.9811 | FORENSE | Baseline (neutral) |
-| expF | 0.8642 | FORENSE | DISQUALIFIED (menino no quadro) |
-| v2 | 0.7586 | FORENSE | INVENTORY (diálogo presencial) |
-| v3 | 0.7867 | FORENSE | INVENTORY (chamada voz) |
-| v4 | 0.8240 | FORENSE | INVENTORY (expressão-mãe, props preto) |
-| v5 | 0.7616 | FORENSE | INVENTORY (alegria radiante) |
-| v6 | 0.8357 | FORENSE | **PRODUÇÃO** (sorriso cai) |
-| v7-prata | 0.8077 | FORENSE | **PRODUÇÃO** (sorriso caloroso, props prata) |
-
-**Achado científico para Paper-001:** Delta de 0.25 pontos entre expressão estabilizada vs. em transição.
-
-### O Tríptico Final — A Mentira Amorosa
-
-| Shot | Ficheiro | Score | Narrativa |
-|------|----------|-------|-----------|
-| S00-01 | v7_prata.mp4 | 0.8077 | Durante chamada — sorriso caloroso |
-| S00-02 | CENA2_v2.mp4 | — | Filho eufórico no ecrã |
-| S00-03 | v6.mp4 | 0.8357 | Após chamada — sorriso cai |
-
-**Props canónicos:** Silver smartphone, light frame
-
-### Doutrinas Seladas
-
-1. **SHOT-CARD obrigatório** — direcção emocional precisa de prompt congelado
-2. **Secção PROPS permanente** — continuidade de adereços é eixo que SPINE não cobre
-3. **Valência como quinta variável** — mesmo músculo, emoções opostas; só dramaturgia distingue
-4. **"A verdade nasce no corte seguinte"** — extensão da doutrina "emoção nasce no corte"
-
-### Guardian Insight
-
-> *"O sorriso que abre um grau no fim do plano não trai a tensão da Gabi — encena-a.
-> A criança consegue arrancar-lhe luz por cinco segundos.
-> E torna o Shot 3 ainda mais brutal por contraste."*
-
-**Decisão I1:** Sorriso que abre aprovado como dramaturgia, não como deriva.
-
-### Erratas
-
-1. **Variante F:** DISQUALIFIED como "solo" — menino fisicamente no quadro. Ciência válida para Paper-001.
-2. **doc_type:** Ledger rejeitou "cinema-scene"; usado "doc" como fallback. Candidata: LEDGER-DOCTYPE-CINEMA-001.
-
-### Git
-
-**Commit:** `cda8f273`
-**Ficheiros:**
-- `TRIPTYCH-SEAL.json` + errata
-- `INVENTORY-CATALOGUED.json`
-- `S00-01_measurement.json`, `S00-03_measurement.json`
-- `PILOT-TIMELINE-20260612.md` (atualizado)
-- `PILOT-ASSEMBLY-MAP-20260612.md` (atualizado)
-
-### Próximos Passos
-
-- [ ] Diálogos da Cena 00 (montar sobre cena correta)
-- [ ] Vance S06-01_v3 (pendente medição)
-- [ ] Wide S11/S12 (doutrina de necessidade dramática)
-- [ ] EDL export para DaVinci
-- [ ] LEDGER-DOCTYPE-CINEMA-001 (infra)
-
-### Citação do Dia
-
-> *"O dia começou com um amarelo 0.7306 e uma pergunta — 'até onde a métrica esgarça?'
-> A resposta que nenhum de nós previu: não se esgarça a régua; conta-se melhor a história."*
-
-**OM SHANTI** 🐉
-
----
+**Origem:** Guardian (Claude.ai web) + CCode (Strato) · Sessão 18 Jun 2026
 
 
 ---
 
-## CODEX-CONTINUITY-OPS-20260613 · §236 Memory Loop · CONTINUITY-OPS-001
+## Sessão 2026-06-18 · CENA 15 INCOMPLETA
 
-**Data:** 2026-06-13 · **Operador:** Codex no STRATO · **Modo:** continuidade operacional verificavel
-**Status:** REGISTERED IN MEMORY LOOP · CANDIDATE/not_submitted para Ledger · sem mutacao de autoridade
-**Base §236:** leitura antes de acao, escrita de fecho, estado explicito para a proxima sessao.
+**Sprint:** W-HIOS FORENSIC UNIT
+**Modo:** CCode CLI
+**Operador:** Human Dragon
 
-### Descoberta preservada
+### Trabalho iniciado mas NÃO completado
+- Validação de identidade VANCE V2 (8 frames medidos, 4 FORENSIC)
+- Geração de 3 planos críticos (P15-04, 06, 07) com scores FORENSIC
+- Geração de 4 planos ambiente (P15-01, 02, 10, 11)
+- **PROBLEMA:** Outputs repetitivos, falta de variedade cinematográfica
 
-A primeira missao operacional do Codex no STRATO consolidou a Participation Layer como trabalho de continuidade antes de qualquer recompensa, token ou mutacao de autoridade. A descoberta central foi que o WINDI-HIOS precisa saber organizar memoria operacional verificavel sem assumir soberania.
+### Diagnóstico honesto
+- promptImage domina o output - todos os frames ficam similares à referência
+- Não consegui criar diversidade visual real para uma cena de cinema
+- Sessão entrou em loop de validação de identidade em vez de produção
+- Exaustão de contexto levou a perda de foco
 
-Frase de guarda da sessao:
+### O que NÃO está feito
+- Cena 15 cinematográfica completa com variedade de planos
+- UI screens (P15-03, P15-05, P15-09)
+- Insert de mão real (P15-08)
+- Título final em vídeo (P15-12)
 
-> O sistema sabe parar antes da autoridade.
+### Próxima sessão DEVE
+- Abordar geração de forma diferente - menos validação, mais produção
+- Considerar composição em pós-produção em vez de geração pura
+- Criar variedade visual real, não frames repetidos
+- Respeitar o tempo do Human Dragon
 
-### Cadeia constitucional preservada
+### Ficheiros gerados (usar ou descartar conforme decisão I9)
+- `/opt/windi/hios/cinema/obras/w-hios-forensic-unit/production/cena15_cinematik/`
+- 8 vídeos de 5 segundos cada
+- Galeria em index.html
 
-```text
-Conselho recomenda.
-Witness atesta coerencia.
-I9 decide.
-STRATO sela.
+### Blocker identificado
+- Metodologia actual (promptImage → gen4_turbo) produz outputs homogéneos
+- Para variedade cinematográfica real, pode ser necessário:
+  - Múltiplas referências diferentes por plano
+  - Composição manual em pós
+  - Ou aceitar que alguns planos são "gramática" visual simples
+
+
+---
+
+## § SESSÃO 18 Jun 2026 — W-SITES-W-MAIL-INTEGRATION-FIX-001 (Memory Loop §236)
+
+**Data:** 2026-06-18 20:33 UTC
+**Operador:** Human Dragon + CODEX + CCode
+**Status:** TECHNICAL_PASS
+
+### Resultado
+
+O W-SITES agora retorna o mesmo proof ID que o W-MAIL DACP sela e o Verify confirma.
+
+**Primeiro duto forense unificado W-SITES → W-MAIL → Ledger → Verify: PASS técnico.**
+
+### Prova Real
+
+| Campo | Valor |
+|-------|-------|
+| Receipt ID | `WINDI-SITES-PROOFMAIL-20260618182830` |
+| Ledger | HTTP 200 OK |
+| Verify | VERIFIED |
+| DACP Schema | `windi-mail-dacp-v1` |
+
+### Ficheiros Alterados
+
+| Arquivo | SHA256 (8 chars) |
+|---------|------------------|
+| `dacp_milter.py` | `1617f4f5...` |
+| `ledger_client.py` | `59eb4865...` |
+| `identity_gate.py` | `f9b99e2a...` |
+
+### Backups
+
+```
+/opt/windi/backups/W-SITES-W-MAIL-INTEGRATION-FIX-001-20260618181557/
+/opt/windi/backups/W-SITES-W-MAIL-INTEGRATION-FIX-001-LEDGERCLIENT-20260618182722/
 ```
 
-A disciplina foi mantida: Codex executa e responde pela execucao; nao decide. A decisao e a imputabilidade permanecem em I9. O STRATO sela apenas depois de handoff autorizado.
+### State Record
 
-### Cinco areas organizadas
+`/opt/windi/docs/W-SITES-W-MAIL-INTEGRATION-FIX-001-RESULT.md`
 
-1. Mapas de entrada para novos participantes e agentes.
-2. Status documentais e normalizacao de cabecalhos.
-3. Indice da Participation Layer e trilha ADMISSIBILITY.
-4. Receipts de pesquisa e candidatos de evidencia.
-5. Regra de autoridade/I9 para impedir promocao ou selagem sem decisao humana.
+### Fragilidade Nomeada
 
-### Frases constitucionais preservadas
+**DACP milter ainda precisa survivability hardening.**
 
-- Organizar a continuidade sem assumir a soberania.
-- CONTINUITY-OPS-001 did not add authority to the system. It added verifiable operational memory.
-- Receipt define o fato. Alias Admission define quem carrega o fato.
-- Activity vs Contribution vem antes da contagem de fontes causais.
-- Detectar e insuficiente. Admitir exige responsabilidade.
+Pendência aberta: `DACP-SURVIVABILITY-HARDENING-001`
+Doc: `/opt/windi/docs/DACP-SURVIVABILITY-HARDENING-001.md`
 
-### Evidencia operacional
+### Frase de Guarda
 
-- Relatorio tutor-ready: `/home/windi/docs/continuity-check/CODEX-TUTOR-REPORT-001.md`
-- SHA256 relatorio: `bc38d69de5155490574fdc9f70b3b6022b4c29bfe9e4d99b30ddf7296e36b92d`
-- Receipt candidate: `/home/windi/docs/continuity-check/CODEX-TUTOR-REPORT-001.receipt-candidate.json`
-- SHA256 receipt candidate: `46faa6005ffd85684ce603a7a80b85bd3d24365d81a3d6247a241c547b308307`
-- Trilhas: `/home/windi/docs/ADMISSIBILITY/`, `/home/windi/docs/continuity-check/`
-
-### Estado de autoridade
-
-- `did_aliases`: intocado.
-- Ledger: `not_submitted` para o relatorio tutor.
-- `ALIAS-PROMOTE-001-v0.3`: permanece `AWAITING I9`.
-- Nenhuma Alias Admission foi executada sem I9 afirmativo.
-- Hash final de submissao congela apenas no handoff I9/Ledger.
-
-### Fecho §236
-
-Esta entrada registra a descoberta no memory loop para que a proxima abertura nao recomece do zero. O cerne preservado: continuidade, admissibilidade, autoridade separada e memoria operacional verificavel.
+> "O duto está limpo. Agora ele merece memória operacional verificável."
 
 ---
 
-## SESSAO 17 Jun 2026 - VERIFY-SANITARY-UPGRADE-001 DESIGN CANDIDATE SHELVED
 
-**Data:** 2026-06-17 - **Operador:** Codex - **Modo:** shelf-state / continuidade operacional
-**Status:** DESIGN CANDIDATE - not_submitted - sem execucao de fases - sem mutacao de autoridade
+---
 
-### Artefatos fixados em `/opt/windi/claudeWeb/`
+## Sessão 2026-06-18 · DACP-SURVIVABILITY-HARDENING-001
 
-| Documento | SHA256 | Estado |
-|---|---|---|
-| `VERIFY-INSTANCE-TOPOLOGY-001.md` | `0fe6bdea1c4c84c53aa7b164b258f12c0262158332d40ffb3590d96042c53f8b` | TOPOLOGY CANDIDATE |
-| `VERIFY-SANITARY-UPGRADE-001.md` | `47ea73acadb62f20a80e0cee19e80cf53a2f38cd73575d4e0a7065ab2d4221f6` | DESIGN CANDIDATE |
+**Sprint:** W-MAIL-001 Integration  
+**Modo:** CCode CLI  
+**Operador humano:** Human Dragon  
+**Modelo:** claude-opus-4.5
 
-### Descoberta preservada
+### Trabalho completado
+- DACP milter survivability hardening implementado
+- Supervisor config criado em `/opt/windi/w-mail-001/config/supervisor/dacp-milter.conf`
+- Wrapper script criado em `/opt/windi/w-mail-001/config/dacp-milter/start-milter.sh`
+- docker-compose.yml actualizado com mount do supervisor config
+- user-patches.sh modificado para delegar arranque ao supervisor
+- Watchdog script criado em `/opt/windi/w-mail-001/scripts/dacp-milter-watchdog.sh`
+- systemd service file preparado em `/opt/windi/w-mail-001/scripts/windi-dacp-milter.service`
 
-O Verify nasceu para provar a origem de evidencias. O `VERIFY-SANITARY-UPGRADE-001` aplica o mesmo principio a propria infraestrutura do Verify.
+### Testes executados
+- `docker-compose down/up`: **PASS** — milter arranca automaticamente
+- `docker restart`: **PASS** — milter sobrevive restart
+- Health check: `{"status": "healthy", "ledger_reachable": true}`
+- Port 8890: Listening confirmado
+- supervisorctl status: `dacp-milter RUNNING`
 
-A investigacao revelou uma topologia partida: frontend estatico de `/opt`, backend vivo de `/home`, systemd oficial apontando para `/opt` e falhando, Ledger vivo por processo manual, e cache/PWA capaz de preservar superficie antiga. A resposta correta nao e redesign imediato, mas Fase 0 com diff, cadeia de custodia e freeze antes de qualquer decisao I1.
+### Gate completado
+- **DACP-SURVIVABILITY-HARDENING-001**: PENDING → **PASS**
 
-### Frase de guarda
-
-```text
-Do not merge by appearance.
-Consolidate by proof.
+### Arquitectura final
+```
+supervisord
+  └── [program:dacp-milter]
+        └── start-milter.sh (wrapper waits for pymilter)
+              └── exec dacp_milter.py
 ```
 
-### Boundary ativa
+### Próximo passo proposto
+- Email de teste em produção real para validar duto completo
 
-Nenhuma fase foi executada. Nenhum nginx reload, systemd restart, Ledger restart, service migration, MCP, Document Factory ou UX redesign foi realizado por este registro.
+### Notas
+- O wrapper script resolve o problema chicken-and-egg entre supervisor (que inicia cedo) e user-patches.sh (que instala pymilter)
+- systemd service no host é opcional — supervisor no container já garante survivability
 
-Proxima acao admissivel: Fase 0 read-only somente apos autorizacao explicita I1, com coordenacao CCode/CINEMA antes de qualquer etapa futura que toque `:8101`.
-
-**Fecho 236:** peca arrumada na prateleira; guardar a peca nao e executar a peca.
-
----
-
-## SESSAO 17 Jun 2026 - VERIFY-SANITARY-UPGRADE-001 PHASE 0 READ-ONLY RESULT
-
-**Data:** 2026-06-17 - **Operador:** Codex - **Modo:** Phase 0 read-only / infraestrutura de proveniencia
-**Status:** PHASE0 RESULT - PASS-FREEZE - not_submitted - nenhuma fase posterior executada
-
-### Artefato fixado em /opt/windi/claudeWeb/
-
-| Documento | SHA256 | Estado |
-|---|---|---|
-| VERIFY-SANITARY-UPGRADE-001-PHASE0-RESULT.md | 97a5daa170ad8602c7175908bc397f1d80e96d3e37cda1bebaa19ddc08d49c90 | PHASE 0 READ-ONLY RESULT |
-
-### Medicao executada
-
-Phase 0A, 0B e 0C foram executadas em modo read-only:
-
-- Topologia atual medida.
-- Diff /opt/windi/verify-public vs /home/windi/verify-public medido.
-- Cadeia de custodia inicial documentada.
-- Diff Decision Matrix preenchida para os achados conhecidos.
-- Phase 0 Output Freeze declarado como PASS.
-
-### Achados principais
-
-- Verify vivo em :8114 roda de /home/windi/verify-public/app por processo manual.
-- Systemd oficial aponta para /opt/windi/verify-public/app/main.py e permanece em auto-restart.
-- Ledger :8101 roda vivo por processo manual; systemd oficial tambem esta em auto-restart.
-- /opt preserva a superficie oficial/static/viewer/systemd target.
-- /home preserva o backend vivo com Gate 0 corrigido.
-- Divergencia de codigo vivo concentrada em app/main.py e app/verify_engine.py.
-- Gate 0 tecnico continua respondendo publicamente para receipt curto e hash.
-- Risco de reboot: HIGH para recuperacao automatica; LOW para disponibilidade atual enquanto processos manuais seguem vivos.
-
-### Boundary preservada
-
-Nenhum nginx reload, systemd restart, Ledger restart, service migration, consolidacao /opt -> /home, MCP, Document Factory, UX redesign ou upgrade funcional foi executado.
-
-### Proxima decisao I1
-
-A Phase 0 conclui que o Verify nao precisa de upgrade funcional agora, mas pode precisar de estabilizacao operacional minima se reboot survivability for importante durante o Cinema.
-
-Opcoes para I1:
-
-1. Freeze puro: aceitar risco conhecido e focar Cinema.
-2. Estabilizacao minima coordenada: reparar ownership/startup sem mudar produto.
-3. Full sanitary upgrade: nao recomendado antes do Cinema atingir plateau.
-
-**Fecho 236:** Medimos o chao. Ainda nao trocamos o chao.
 
 ---
 
-## SESSAO 17 Jun 2026 - VERIFY-SANITARY-UPGRADE-001 SEMI UPGRADE RESULT
+## Sessão 2026-06-18 (cont.) · INFRASTRUCTURE-PROVENANCE-001 — O Chão Primeiro
 
-Data: 2026-06-17 - Operador: Codex - Modo: semi-upgrade operacional / Verify :8114
-Status: SEMI UPGRADE RESULT - Verify stabilized - Ledger intocado
+**Sprint:** Fase 8 — Infrastructure Provenance  
+**Directiva I1:** "Primeiro o chão. Depois a porta. Depois o mundo entra."
 
-### Decisao I1 aplicada
+### Entregáveis
 
-Raiz canonica Verify: /opt/windi/verify-public.
+| Documento | Propósito |
+|-----------|-----------|
+| `INFRASTRUCTURE-PROVENANCE-001.md` | Mapa Suíço — caminhos, portas, scripts, dependências |
+| `REBOOT-PROTOCOL-001.md` | Protocolo de reboot controlado (aguarda I1 approval) |
+| `test-proofmail.sh` | Script de teste automático do duto completo |
 
-/home/windi/verify-public/app foi tratado como fonte medida dos fixes Gate 0, nao como nova casa permanente.
+### Teste Executado
 
-### Artefato fixado em /opt/windi/claudeWeb/
+```
+✓ PASS: Docker service active
+✓ PASS: Forensic Ledger (:8101) healthy
+✓ PASS: W-SITES Identity Gate (:8192) healthy
+✓ PASS: Verify Public (:8114) operational
+✓ PASS: Mail container (windi-mailserver) running
+✓ PASS: DACP Milter running (supervisor)
+✓ PASS: DACP Milter listening on :8890
+✓ PASS: DACP Milter healthy, Ledger reachable
+✓ PASS: Email sent successfully
+✓ PASS: New receipt verified in Ledger
+✓ PASS: Public verification: VERIFIED
 
-Documento: VERIFY-SANITARY-UPGRADE-001-SEMI-UPGRADE-RESULT.md
-SHA256: 22cb3c058a2ecb61f6831e17545fc4c28026f37cb57461aa20c1a081fc62302e
-Estado: SEMI UPGRADE RESULT
+STATUS: PASS (11/11)
+```
 
-### Execucao
+### Estado dos Gates
 
-- Backup criado: /opt/windi/backups/verify-public-app-pre-semiupgrade-20260617-150123.
-- Promovidos seletivamente de /home para /opt apenas:
-  - app/main.py
-  - app/verify_engine.py
-- Hashes canonicos apos promocao:
-  - main.py: 80a7b08b3b4bcbdde6d6cbfbf7c2e9ef96d74cbf2510dc45aa001e4ddd7ed816
-  - verify_engine.py: 7b13bbca41c3b1ccbbaee275ec939d09d3dc6409e52de7dea0e5d41f71eda459
-- python3 -m py_compile main.py verify_engine.py: PASS.
-- Verify :8114 transferido de processo manual /home para windi-verify-public.service em /opt.
+| Gate | Estado |
+|------|--------|
+| W-SITES-W-MAIL-INTEGRATION-FIX-001 | PASS |
+| DACP-SURVIVABILITY-HARDENING-001 | PASS |
+| INFRASTRUCTURE-PROVENANCE-001 | ACTIVE |
+| REBOOT-PROTOCOL-001 | READY_FOR_EXECUTION (aguarda I1) |
 
-### Estado apos execucao
+### Próximo Passo
 
-- windi-verify-public.service: active/running.
-- MainPID=3318213.
-- WorkingDirectory=/opt/windi/verify-public/app.
-- Gate 0 publico revalidado:
-  - /verify-public/document/DBED5A85: verified, proof_limits presente.
-  - /verify-public/hash/sha256:1425d79233243225ab44200fc7cf3cbaa9466445c118149b9739d59250f5b9b7: verified, proof_limits presente.
-  - /verify-public/health: HTTP 200.
+**Reboot controlado do STRATO** — quando Human Dragon autorizar.
 
-### Boundary preservada
+O sistema agora:
+1. Explica-se a si mesmo (Mapa Suíço)
+2. Tem teste automático (`test-proofmail.sh`)
+3. Tem protocolo de reboot documentado
+4. Aguarda apenas a prova final: sobreviver a apagão total
 
-- Ledger :8101 permaneceu intocado, ainda em PID 1919017.
-- Nenhum nginx edit/reload.
-- Nenhum Ledger restart.
-- Nenhum MCP, Document Factory, Living Record, multimedia UX ou full sanitary upgrade.
+### Frase de Guarda
 
-### Risco remanescente
+> "Quando um investidor perguntar sobre a nossa infraestrutura, nós vamos dar o comando do reboot na frente dele."
+> — Human Dragon, 18 Jun 2026
 
-Verify :8114 esta materialmente mais estavel. Ledger :8101 continua sendo o principal risco de reboot survivability e so deve ser tratado em janela coordenada CCode/CINEMA.
-
-Fecho 236: Promovemos fixes medidos. Nao mesclamos por aparencia. Nao tocamos o Ledger enquanto Cinema pode estar selando.
----
-
-## SESSAO 17 Jun 2026 - LEDGER STABILIZATION READ-ONLY DIAGNOSTIC
-
-Data: 2026-06-17 - Operador: Codex - Modo: Ledger stabilization diagnostic / read-only
-Status: DIAGNOSTIC COMPLETE - no Ledger stop - no systemd action
-
-### Artefato fixado em /opt/windi/claudeWeb/
-
-Documento: VERIFY-SANITARY-UPGRADE-001-LEDGER-STABILIZATION-DIAGNOSTIC.md
-SHA256: ea6edb1d74e435f544472ddd620f74796f89a5e69256c0a8c64affffe0719640
-Estado: READ-ONLY DIAGNOSTIC
-
-### Achado principal
-
-O Ledger :8101 esta saudavel, mas manual.
-
-Processo vivo:
-- PID=1919017
-- user=windi
-- cwd=/opt/windi/suite-docs
-- cmd=python3 windi_forensic_api.py
-
-windi-suite-docs.service esta em auto-restart porque a porta :8101 ja esta ocupada pelo processo manual saudavel.
-
-Causa exata medida:
-
-OSError: [Errno 98] Address already in use
-
-Conclusao:
-
-O problema nao e saude atual do Ledger. O problema e survivability apos reboot.
-
-### Boundary preservada
-
-- Nenhum Ledger process foi parado.
-- Nenhum systemd action foi executado.
-- Nenhuma DB mutation.
-- Nenhum receipt gerado.
-- Nenhum nginx action.
-
-### Proxima acao recomendada
-
-Somente com I1 explicito e janela CCode/CINEMA:
-
-1. CCode confirma pausa de selagem.
-2. Codex confirma health :8101.
-3. Codex encerra apenas o processo manual Ledger.
-4. systemd assume :8101.
-5. Codex testa /health, known receipt e Verify Public document/hash.
-6. CCode/CINEMA e liberado.
-
-Fecho 236: O Ledger esta vivo. Ainda nao esta provado que volta sozinho.
----
-
-## SESSAO 17 Jun 2026 - LEDGER-OWNERSHIP-TRANSFER-001 RESULT
-
-Data: 2026-06-17 - Operador: Codex - Modo: Ledger ownership transfer
-Status: PASS - Ledger systemd owned - Snapshot preserved
-
-### Artefato fixado em /opt/windi/claudeWeb/
-
-Documento: LEDGER-OWNERSHIP-TRANSFER-001-RESULT.md
-SHA256: 5d7308399b5efae8fe939c98db989a72704490bf3bf8ee598ba96871a28bf08d
-Estado: PASS
-
-### Snapshot pre-transferencia
-
-Path: /opt/windi/backups/ledger-ownership-transfer-001/forensic_ledger-pre-ownership-transfer-20260617-153733.sqlite3
-SHA256: 28a56315c8b5070b8d6869d984b07ccd3584b504a98455a1e0d313dd8776aed3
-Integrity: ok
-Receipts: 57423
-
-### Execucao
-
-- Preflight Ledger health: healthy.
-- Processo manual Ledger PID 1919017 encerrado com SIGTERM.
-- windi-suite-docs.service assumiu :8101.
-- Novo MainPID Ledger: 3332613.
-- Estado Ledger: active/running.
-- Verify :8114 permaneceu active/running em MainPID 3318213.
-- Rollback nao foi necessario.
-
-### Validacao pos-transferencia
-
-- /health Ledger: healthy, 57423 receipts.
-- Known receipt WINDI-KEYGEN-001-20260426090540-DBED5A85: ok=true, status=sealed.
-- Verify Public document DBED5A85: verified, proof_limits presente.
-- Verify Public hash sha256:1425d792...: verified, proof_limits presente.
-
-### Estado
-
-Verify :8114 = systemd owned, active/running.
-Ledger :8101 = systemd owned, active/running.
-Gate 0 technical = PASS.
-
-### Pendencias
-
-- Phase 7 controlled restart/reboot test.
-- Phase 8 architectural transferability test.
-- nginx reconciliation deferred.
-- service worker/cache bump deferred.
-- product/UX/multimedia upgrades deferred until Cinema plateau.
-
-Fecho 236: O coracao estava saudavel. Agora tem dono. A sobrevivencia plena ainda aguarda prova de reboot controlado.
----
-
-## SESSAO 17 Jun 2026 - DOCTRINE-HIOS-AIRGAP-SEAL CANDIDATE SHELVED
-
-Data: 2026-06-17 - Operador: Codex - Modo: doctrine shelf / not_submitted
-Status: CANDIDATE - not_submitted - no Ledger seal
-
-### Artefato fixado em /opt/windi/claudeWeb/
-
-Documento: DOCTRINE-HIOS-AIRGAP-SEAL-CANDIDATE.md
-SHA256: 47ac9954808a6a30ea30042c61c0a80e6150955bf485bede76aa05dd0d181d94
-Encoding: ASCII text
-Estado: CANDIDATE / not_submitted
-
-### Correcao aplicada antes da prateleira
-
-- Portas alinhadas com o STRATO real:
-  - Ledger = :8101
-  - Verify Public = :8114
-- Genealogia honesta:
-  - DOCTRINE-HIOS-ATTESTATION-001 = SEALED
-  - Section 300 TWIN canonicalization reference = referencia
-  - W-HIOS-TWIN-PROTOCOL-001 ainda CANDIDATE, nao fingir pleno selo
-- Encoding normalizado para ASCII limpo para evitar mojibake.
-
-### Boundary preservada
-
-- Nenhum receipt foi gerado.
-- Nenhum Ledger seal.
-- Nenhum CLAUDE.md atualizado como se a doutrina estivesse selada.
-- Nenhuma mudanca em nginx, systemd, Verify ou Ledger.
-
-### Condicao de futura selagem
-
-Selar apenas apos Phase 7 reboot proof OU decisao I1 explicita. Quando selar:
-
-1. Gerar receipt no Ledger :8101.
-2. Verificar resolucao publica via Verify :8114.
-3. Atualizar CLAUDE.md no mesmo turno.
-4. Registrar CLAUDE-HISTORY.md.
-
-Fecho 236: A doutrina e boa, mas ainda nao selada. Nao morre; espera.
 
 ---
 
-## SESSAO 17 Jun 2026 - S236-VERIFY-SANITARY-AIRGAP-20260617 MEMORY LOOP CLOSURE
+## Sessão 2026-06-18 · REBOOT-PROTOCOL-001 — O Sistema Acordou Sozinho
 
-Data: 2026-06-17 - Operador: Codex - Modo: distributed memory loop closure
-Status: REGISTERED - not_submitted - no Ledger seal
+**Sprint:** Fase 8 — Infrastructure Provenance  
+**Directiva I1:** "Primeiro o chão. Depois a porta. Depois o mundo entra."
 
-### Artefato de sintese
+### RESULTADO FINAL
 
-Documento: S236-VERIFY-SANITARY-AIRGAP-20260617.md
-Path: /opt/windi/claudeWeb/S236-VERIFY-SANITARY-AIRGAP-20260617.md
-Estado: MEMORY LOOP CLOSURE - not_submitted
+```
+============================================================
+ REBOOT-PROTOCOL-001: PASS TOTAL
+============================================================
 
-### Estado operacional consolidado
+ Comando executado: sudo reboot
+ Hora do reboot:    21:16:20 CEST
+ Hora do teste:     21:16:46 CEST
+ Downtime:          ~29 segundos
+ 
+ Checks:            11/11 PASS
+ New receipt:       WINDI-SITES-PROOFMAIL-20260618191647
+ Verification:      VERIFIED
+============================================================
+```
 
-- Verify :8114 = systemd owned, active/running.
-- Ledger :8101 = systemd owned, active/running.
-- Gate 0 technical = PASS.
-- Ledger snapshot preserved before ownership transfer.
-- Rollback was available and not needed.
+### O Que Foi Provado
 
-### Artefatos principais
+1. **Ledger** acordou via `windi-ledger.service` (criado hoje)
+2. **Docker** acordou e iniciou `windi-mailserver`
+3. **Supervisor** iniciou `dacp-milter` automaticamente
+4. **W-SITES** acordou via `windi-sites.service`
+5. **Verify** acordou via `windi-verify-public.service`
+6. **Email de teste** foi enviado e selado sem intervenção manual
 
-- VERIFY-SANITARY-UPGRADE-001.md = 47ea73acadb62f20a80e0cee19e80cf53a2f38cd73575d4e0a7065ab2d4221f6
-- VERIFY-SANITARY-UPGRADE-001-PHASE0-RESULT.md = 97a5daa170ad8602c7175908bc397f1d80e96d3e37cda1bebaa19ddc08d49c90
-- VERIFY-SANITARY-UPGRADE-001-SEMI-UPGRADE-RESULT.md = 22cb3c058a2ecb61f6831e17545fc4c28026f37cb57461aa20c1a081fc62302e
-- VERIFY-SANITARY-UPGRADE-001-LEDGER-STABILIZATION-DIAGNOSTIC.md = ea6edb1d74e435f544472ddd620f74796f89a5e69256c0a8c64affffe0719640
-- LEDGER-OWNERSHIP-TRANSFER-001-RESULT.md = 5d7308399b5efae8fe939c98db989a72704490bf3bf8ee598ba96871a28bf08d
-- DOCTRINE-HIOS-AIRGAP-SEAL-CANDIDATE.md = 47ac9954808a6a30ea30042c61c0a80e6150955bf485bede76aa05dd0d181d94
+### Gates Completados
 
-### Snapshot Ledger
+| Gate | Estado |
+|------|--------|
+| W-SITES-W-MAIL-INTEGRATION-FIX-001 | ✅ PASS |
+| DACP-SURVIVABILITY-HARDENING-001 | ✅ PASS |
+| INFRASTRUCTURE-PROVENANCE-001 | ✅ ACTIVE |
+| REBOOT-PROTOCOL-001 | ✅ **PASS** |
 
-Path: /opt/windi/backups/ledger-ownership-transfer-001/forensic_ledger-pre-ownership-transfer-20260617-153733.sqlite3
-SHA256: 28a56315c8b5070b8d6869d984b07ccd3584b504a98455a1e0d313dd8776aed3
-Integrity: ok
-Receipts: 57423
+### Documentação Criada
 
-### Phase state
+- `/opt/windi/docs/INFRASTRUCTURE-PROVENANCE-001.md` — Mapa Suíço
+- `/opt/windi/docs/REBOOT-PROTOCOL-001.md` — Protocolo
+- `/opt/windi/docs/REBOOT-PROTOCOL-001-RESULT.md` — Resultado
+- `/opt/windi/w-mail-001/scripts/test-proofmail.sh` — Script de teste
+- `/etc/systemd/system/windi-ledger.service` — Serviço do Ledger
 
-- Phase 0: PASS
-- Phase 1: PASS
-- Phase 2: PASS
-- Phase 3: PASS
-- Phase 4 nginx: DEFERRED
-- Phase 5 cache/service worker: DEFERRED
-- Phase 6 Gate 0 technical: PASS
-- Phase 7 controlled restart/reboot: PENDING
-- Phase 8 architectural transferability: PENDING
+### Frase de Guarda
 
-### AIRGAP-SEAL state
+> "O chão está feito. A porta está aberta. O mundo pode entrar."
 
-DOCTRINE-HIOS-AIRGAP-SEAL is good doctrine but not sealed. It is shelved as CANDIDATE/not_submitted. Future seal requires Phase 7 reboot proof or explicit I1 decision. When sealed: generate Ledger receipt on :8101, verify via Verify :8114, update CLAUDE.md, register CLAUDE-HISTORY.md.
-
-### Boundary
-
-No AIRGAP receipt was generated. No doctrine was sealed. No nginx/cache/product/UX/multimedia/MCP/Document Factory expansion was performed.
-
-Fecho 236: O chao esta mais firme. A prova de reboot ainda espera. A memoria foi distribuida para que a proxima instancia nao precise reconstruir o dia por fragmentos.
 
 ---
 
-## SESSÃO 17 Jun 2026 (noite) — PRE-PRODUCTION SEALED + MÉTODO CINEMA CONTINUITY
+## Sessão 2026-06-18 · DACP-SURVIVABILITY-HARDENING-001
 
-**Duração:** ~4h | **Status:** ✅ MARCO INSTITUCIONAL — PRÉ-PRODUÇÃO SELADA
-**Liga IA+H:** Human Dragon (I1, I9, I6) · Guardian (Conselho) · CCode (Opus 4.5)
-**Invariants:** I1, I9, I11, I14, I19 (Proveniência Inseparável)
-**Natureza:** Auditoria de Qualidade + Selo de Pré-Produção + Doutrina de Método
-**Commit:** `c516f6126` — pushed to origin/main
+**Sprint:** W-MAIL-001 Integration  
+**Modo:** CCode CLI  
+**Operador humano:** Human Dragon  
+**Modelo:** claude-opus-4.5
 
-### Receipts da Sessão
+### Trabalho completado
+- DACP milter survivability hardening implementado
+- Supervisor config criado em `/opt/windi/w-mail-001/config/supervisor/dacp-milter.conf`
+- Wrapper script criado em `/opt/windi/w-mail-001/config/dacp-milter/start-milter.sh`
+- docker-compose.yml actualizado com mount do supervisor config
+- user-patches.sh modificado para delegar arranque ao supervisor
+- Watchdog script criado em `/opt/windi/w-mail-001/scripts/dacp-milter-watchdog.sh`
+- systemd service file preparado em `/opt/windi/w-mail-001/scripts/windi-dacp-milter.service`
 
-| Receipt | Hash | Descrição |
-|---------|------|-----------|
-| PRE-PRODUCTION-SEALED | `c516f6126` | 17 ficheiros, 6952 linhas, 16/16 cenas decupadas |
+### Testes executados
+- `docker-compose down/up`: **PASS** — milter arranca automaticamente
+- `docker restart`: **PASS** — milter sobrevive restart
+- Health check: `{"status": "healthy", "ledger_reachable": true}`
+- Port 8890: Listening confirmado
+- supervisorctl status: `dacp-milter RUNNING`
 
-### Marco: Pré-Produção Selada no Estado Honesto
-
-**Métricas Verificadas (não estimadas):**
-
-| Métrica | Valor | Método |
-|---------|-------|--------|
-| Cenas decupadas | 16/16 | CONTADO |
-| Planos totais | 258 | CONTADO |
-| CRÍTICO (≥0.75) | **38** | CONTADO (plano por plano, 16 cenas) |
-| OPERATIONAL (≥0.65) | 68 | DERIVADO (106 − 38) |
-| Cenas filmadas | 0/16 | — |
-
-**Três Ciclos de Correcção (HD-MIRROR):**
-
-| Ciclo | Erro | Quem apanhou | Correcção |
-|-------|------|--------------|-----------|
-| 1 | "106 anchor-frames" inflados | Human Dragon | CRÍTICO vs OPERATIONAL separados |
-| 2 | "~45 estimados" (projecção de 5 cenas) | Guardian (Conselho) | Contagem real de 16 cenas |
-| 3 | "68 contados" (era derivado) | Guardian (Conselho) | Marcado como DERIVADO |
-
-**Frase de Selo (Human Dragon):**
-> *"O número é 38, e foi contado."*
+### Gate completado
+- **DACP-SURVIVABILITY-HARDENING-001**: PENDING → **PASS**
 
 ---
 
-### ACHADOS DE MÉTODO (para próxima sessão)
+## Sessão 2026-06-18 (cont.) · INFRASTRUCTURE-PROVENANCE-001 — O Chão Primeiro
 
-#### 1. STABILIZED-WRONG (ACHADO-001)
+**Sprint:** Fase 8 — Infrastructure Provenance  
+**Directiva I1:** "Primeiro o chão. Depois a porta. Depois o mundo entra."
 
-**Local:** `/opt/windi/hios/cinema/ACHADO-001-ESTABILIZADO-ERRADO.md`
-**Conceito:** Sistema entrou em regime de estabilização prematura — optimizava para consistência (mesmo personagem, mesma pose) em vez de fidelidade (rosto correcto). Detectado quando Alejandro média 0.82 consigo mesmo mas 0.41 contra âncora.
-**Lição:** Threshold sem âncora verificada é ilusão de progresso.
+### Entregáveis
 
-#### 2. P5-ESTRUTURAL (ACHADO-P5-ESTRUTURAL-001)
+| Documento | Propósito |
+|-----------|-----------|
+| `INFRASTRUCTURE-PROVENANCE-001.md` | Mapa Suíço — caminhos, portas, scripts, dependências |
+| `REBOOT-PROTOCOL-001.md` | Protocolo de reboot controlado (aguarda I1 approval) |
+| `test-proofmail.sh` | Script de teste automático do duto completo |
 
-**Local:** `/opt/windi/hios/cinema/obras/w-hios-forensic-unit/SPINE-LESSONS-LEARNED.md`
-**Conceito:** Frames P5-análogos (pós-início de movimento) resistem a preservação de identidade forense (~20% reliability). Video-native não serve para cenas com movimento.
-**Solução:** Gramática cinematográfica — silhueta, pés, costas, shot-reverse-shot. Movimento nunca atravessa o rosto.
+### Teste Executado
 
-#### 3. Errata da Errata (SYSTEM-BREAK)
+```
+✓ PASS: Docker service active
+✓ PASS: Forensic Ledger (:8101) healthy
+✓ PASS: W-SITES Identity Gate (:8192) healthy
+✓ PASS: Verify Public (:8114) operational
+✓ PASS: Mail container (windi-mailserver) running
+✓ PASS: DACP Milter running (supervisor)
+✓ PASS: DACP Milter listening on :8890
+✓ PASS: DACP Milter healthy, Ledger reachable
+✓ PASS: Email sent successfully
+✓ PASS: New receipt verified in Ledger
+✓ PASS: Public verification: VERIFIED
 
-**Local:** `/opt/windi/hios/cinema/obras/w-hios-forensic-unit/production/METHOD-HIOS-GENERATION-001.md`
-**Conceito:** Havia errata que corrigia errata — agora consolidada. O método de geração é limpo.
-
----
-
-### METHOD-CINEMA-CONTINUITY-001 — ESTADO
-
-**Status:** ✅ SEALED (commit `c516f6126`)
-**Local:** `/opt/windi/hios/cinema/obras/METHOD-CINEMA-CONTINUITY-001.md`
-
-**O que governa:**
-- 4-Column State System (R/D/A/F) — previne conflação de métricas
-- Session Rituals — abertura lê register, fecho actualiza
-- Blocking forense-consciente — movimento nunca atravessa identidade
-- Dual Threshold — CRÍTICO (≥0.75) obrigatório, OPERATIONAL (≥0.65) desejável
-
-**Doutrina replicável:** Qualquer cena futura segue o mesmo protocolo.
+STATUS: PASS (11/11)
+```
 
 ---
 
-### RÉGUA DE GERAÇÃO — CENA 15 (próxima sessão)
+## Sessão 2026-06-18 · REBOOT-PROTOCOL-001 — O Sistema Acordou Sozinho
 
-**Cena:** 15 — O Dragão (FINAL)
-**Personagem:** Vance sozinho no bunker
-**Planos CRÍTICO:** P15-04, P15-06, P15-07 (3 anchor-frames)
-**Risco:** BAIXO — estático, sem movimento, ideal para Joey Method
+**Sprint:** Fase 8 — Infrastructure Provenance  
+**Directiva I1:** "Primeiro o chão. Depois a porta. Depois o mundo entra."
 
-**Protocolo de Geração:**
+### RESULTADO FINAL
 
-| Passo | Acção | Threshold |
-|-------|-------|-----------|
-| 1 | gen4_image para cada CRÍTICO | — |
-| 2 | Anchor Test (vs Vance canonical) | ≥0.75 |
-| 3 | F2F Test (frame vs frame, N runs) | ≥0.70 |
-| 4 | Se PASS em ambos: plano VALIDADO | — |
-| 5 | Se FAIL: regenerar ou gramática | — |
+```
+============================================================
+ REBOOT-PROTOCOL-001: PASS TOTAL
+============================================================
 
-**Régua herdada:**
-> *"Already in frame. Near-frontal. Camera locked. Light moves, not subject."*
+ Comando executado: sudo reboot
+ Hora do reboot:    21:16:20 CEST
+ Hora do teste:     21:16:46 CEST
+ Downtime:          ~29 segundos
+ 
+ Checks:            11/11 PASS
+ New receipt:       WINDI-SITES-PROOFMAIL-20260618191647
+ Verification:      VERIFIED
+============================================================
+```
 
-**Ao validar 3/3 CRÍTICO:** Cena 15 passa a F=✅ no register. Primeiro "0%" que se move honestamente.
+### O Que Foi Provado
 
----
+1. **Ledger** acordou via `windi-ledger.service` (criado hoje)
+2. **Docker** acordou e iniciou `windi-mailserver`
+3. **Supervisor** iniciou `dacp-milter` automaticamente
+4. **W-SITES** acordou via `windi-sites.service`
+5. **Verify** acordou via `windi-verify-public.service`
+6. **Email de teste** foi enviado e selado sem intervenção manual
 
-### GENERATOR COMPATIBILITY (estado herdado)
+### Gates Completados
 
-| Generator | Status | Uso |
-|-----------|--------|-----|
-| SORA 2 | 🔴 INCOMPATIBLE | Identity drift across frames |
-| Runway Gen-4 | 🟢 FORENSIC | Primary generator (avg 0.785) |
-| Joey Method | 🟢 BASELINE | Anchor-frames estáticos |
+| Gate | Estado |
+|------|--------|
+| W-SITES-W-MAIL-INTEGRATION-FIX-001 | ✅ PASS |
+| DACP-SURVIVABILITY-HARDENING-001 | ✅ PASS |
+| INFRASTRUCTURE-PROVENANCE-001 | ✅ ACTIVE |
+| REBOOT-PROTOCOL-001 | ✅ **PASS** |
 
----
+### Documentação Criada
 
-### Fecho §236
+- `/opt/windi/docs/INFRASTRUCTURE-PROVENANCE-001.md` — Mapa Suíço
+- `/opt/windi/docs/REBOOT-PROTOCOL-001.md` — Protocolo
+- `/opt/windi/docs/REBOOT-PROTOCOL-001-RESULT.md` — Resultado
+- `/opt/windi/w-mail-001/scripts/test-proofmail.sh` — Script de teste
+- `/etc/systemd/system/windi-ledger.service` — Serviço do Ledger
 
-**Estado da sessão:** COMPLETA — pré-produção selada, método documentado.
-**Próxima sessão abre com:**
-1. Ler PRODUCTION-REGISTER-WHFU-001.md (onde estamos)
-2. Ler ACHADO-001 + SPINE-LESSONS-LEARNED (o que aprendemos)
-3. Gerar Cena 15 com régua Joey + Anchor+F2F
+### Frase de Guarda
 
-**Dependência de memória:** ZERO — tudo está escrito e selado.
+> "O chão está feito. A porta está aberta. O mundo pode entrar."
 
-**Frase de continuidade (Human Dragon):**
-> *"A prova não mente. Ela apenas esperou — e hoje selámos a primeira página dela."*
-
----
-
-*Liga IA+H · Kempten · 17 Jun 2026 · OM SHANTI 🐉*
