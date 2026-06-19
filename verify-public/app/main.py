@@ -131,7 +131,6 @@ def emit_propagation_event(receipt_id: str, request: Request, verified: bool = T
 app = FastAPI(title="WINDI Verify Public Agent", version="1.0.2", docs_url="/verify-public/docs", redoc_url=None)
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["GET","POST"], allow_headers=["*"])
 engine = VerifyEngine(ledger_url=LEDGER_URL, agents_url=AGENTS_URL, timeout=5.0)
-init_metrics_db()  # Initialize download metrics on startup
 
 WEB_DIR = os.path.join(os.path.dirname(__file__), "..", "web")
 if os.path.isdir(WEB_DIR):
@@ -213,6 +212,9 @@ def init_metrics_db():
             db.commit()
         finally:
             db.close()
+
+
+init_metrics_db()  # Initialize download metrics on startup
 
 
 def _client_fp(request: Request) -> str:
@@ -298,6 +300,7 @@ class VerifyResult(BaseModel):
     timestamp: Optional[str] = None
     checked_at: str
     message: str
+    proof_limits: Optional[str] = None
     cached: bool = False
     jmpg_proof: Optional[JmpgProof] = None  # .jmpg sovereign proof metadata
 

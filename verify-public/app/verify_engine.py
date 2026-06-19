@@ -161,7 +161,7 @@ class VerifyEngine:
         else:
             return self._error(None, checked_at, "Invalid QR format.")
         status = "verified" if ledger_ok else "not_found"
-        return {"status":status,"document_id":receipt_id,"hash":qr_hash,"integrity":"valid" if ledger_ok else "unknown","signature":"unknown","ledger_anchor":ledger_ok,"timestamp":None,"checked_at":checked_at,"message":self._status_message(status),"cached":False}
+        return {"status":status,"document_id":receipt_id,"hash":qr_hash,"integrity":"valid" if ledger_ok else "unknown","signature":"unknown","ledger_anchor":ledger_ok,"timestamp":None,"checked_at":checked_at,"message":self._status_message(status),"proof_limits":self._proof_limits(status),"cached":False}
 
     async def verify_document_id(self, document_id):
         checked_at = now_iso()
@@ -175,14 +175,14 @@ class VerifyEngine:
         # _check_ledger by hash as secondary confirmation (best-effort)
         ledger_ok = await self._check_ledger_by_id(document_id) or await self._check_ledger(doc_hash)
         status = "verified" if ledger_ok else "not_found"
-        return {"status":status,"document_id":document_id,"hash":doc_hash,"integrity":"valid" if ledger_ok else "unknown","signature":"unknown","ledger_anchor":ledger_ok,"timestamp":meta.get("created_at") or meta.get("timestamp"),"checked_at":checked_at,"message":self._status_message(status),"cached":False}
+        return {"status":status,"document_id":meta.get("document_id") or document_id,"hash":doc_hash,"integrity":"valid" if ledger_ok else "unknown","signature":"unknown","ledger_anchor":ledger_ok,"timestamp":meta.get("created_at") or meta.get("timestamp"),"checked_at":checked_at,"message":self._status_message(status),"proof_limits":self._proof_limits(status),"cached":False}
 
     async def verify_hash(self, sha256_hash):
         checked_at = now_iso()
         ledger_ok = await self._check_ledger(sha256_hash)
         meta = await self._ledger_hash_meta(sha256_hash) if ledger_ok else None
         status = "verified" if ledger_ok else "not_found"
-        return {"status":status,"document_id":meta.get("document_id") if meta else None,"hash":sha256_hash,"integrity":"valid" if ledger_ok else "unknown","signature":"unknown","ledger_anchor":ledger_ok,"timestamp":meta.get("created_at") if meta else None,"checked_at":checked_at,"message":self._status_message(status),"cached":False}
+        return {"status":status,"document_id":meta.get("document_id") if meta else None,"hash":sha256_hash,"integrity":"valid" if ledger_ok else "unknown","signature":"unknown","ledger_anchor":ledger_ok,"timestamp":meta.get("created_at") if meta else None,"checked_at":checked_at,"message":self._status_message(status),"proof_limits":self._proof_limits(status),"cached":False}
 
     async def get_timeline(self, document_id):
         checked_at = now_iso()
@@ -236,7 +236,7 @@ class VerifyEngine:
     async def _check_ledger(self, sha256_hash):
         if not sha256_hash:
             return False
-        urls = [f"{self.ledger_url}/api/verify/{sha256_hash}",f"{self.ledger_url}/api/receipts/{sha256_hash}",f"{self.ledger_url}/ledger/hash/{sha256_hash}"]
+        urls = [f"{self.ledger_url}/api/receipts/by-hash/{sha256_hash}",f"{self.ledger_url}/api/verify/{sha256_hash}",f"{self.ledger_url}/api/receipts/{sha256_hash}",f"{self.ledger_url}/ledger/hash/{sha256_hash}"]
         async with httpx.AsyncClient(timeout=self.timeout) as client:
             for url in urls:
                 try:
@@ -251,20 +251,36 @@ class VerifyEngine:
 
     async def _ledger_hash_meta(self, sha256_hash):
         async with httpx.AsyncClient(timeout=self.timeout) as client:
-            for url in [f"{self.ledger_url}/api/verify/{sha256_hash}",f"{self.ledger_url}/api/receipts/{sha256_hash}"]:
+            for url in [f"{self.ledger_url}/api/receipts/by-hash/{sha256_hash}",f"{self.ledger_url}/api/verify/{sha256_hash}",f"{self.ledger_url}/api/receipts/{sha256_hash}"]:
                 try:
                     r = await client.get(url)
                     if r.status_code == 200:
-                        return r.json()
+                        d = r.json()
+                        rec = d.get("receipt") or d
+                        ts = rec.get("created_at") or rec.get("registered_at")
+                        if isinstance(ts, (int, float)):
+                            ts = datetime.utcfromtimestamp(ts).isoformat()+"Z"
+                        return {
+                            "document_id": rec.get("id") or rec.get("receipt_id"),
+                            "created_at": ts,
+                            "content_hash": rec.get("content_hash"),
+                        }
                 except Exception:
                     pass
         return None
 
     def _not_found(self, document_id, checked_at):
-        return {"status":"not_found","document_id":document_id,"hash":None,"integrity":"unknown","signature":"unknown","ledger_anchor":False,"timestamp":None,"checked_at":checked_at,"message":"Document not found in WINDI system.","cached":False}
+        return {"status":"not_found","document_id":document_id,"hash":None,"integrity":"unknown","signature":"unknown","ledger_anchor":False,"timestamp":None,"checked_at":checked_at,"message":"Document not found in WINDI system.","proof_limits":self._proof_limits("not_found"),"cached":False}
 
     def _error(self, document_id, checked_at, message):
-        return {"status":"error","document_id":document_id,"hash":None,"integrity":"unknown","signature":"unknown","ledger_anchor":False,"timestamp":None,"checked_at":checked_at,"message":message,"cached":False}
+        return {"status":"error","document_id":document_id,"hash":None,"integrity":"unknown","signature":"unknown","ledger_anchor":False,"timestamp":None,"checked_at":checked_at,"message":message,"proof_limits":self._proof_limits("error"),"cached":False}
 
     def _status_message(self, status):
-        return {"verified":"Document authentic. Integrity confirmed by WINDI Forensic Ledger.","not_found":"Document not found in WINDI system.","tampered":"WARNING: Signature invalid. Possible tampering.","error":"Verification could not be completed."}.get(status,"Unknown status.")
+        return {"verified":"Integrity confirmed by WINDI Forensic Ledger.","not_found":"Document not found in WINDI system.","tampered":"WARNING: Signature invalid. Possible tampering.","error":"Verification could not be completed."}.get(status,"Unknown status.")
+
+    def _proof_limits(self, status):
+        if status == "verified":
+            return "WINDI proves existence, integrity, and recorded path; it does not prove the truthfulness of the content."
+        if status == "not_found":
+            return "Not found means no WINDI record was located here; it does not prove the artifact is false."
+        return "Verification status is limited to the available WINDI records and technical checks."
