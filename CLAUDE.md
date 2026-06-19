@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 2.60.0
-**Sealed:** 2026-05-31 · Overflow Fix + merge §296
+**Version:** 2.61.0
+**Sealed:** 2026-06-19 · Overflow Fix 41.7KB→<40KB
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -9,7 +9,7 @@
 > **Documentos Fundacionais:** `WINDI-MANIFESTO.md` · `FOUNDATION-AS-WINDI-MEANS-IT.md` · `NOTEBOOK-001-HYBRID-COGNITIVE-SYSTEMS.md`
 
 ## 📚 Overflow Policy (17 Mar 2026)
-Hard limit: **40KB**. Último fix: 17 Mai 2026 (42.1KB → 36.4KB).
+Hard limit: **40KB**. Último fix: 19 Jun 2026 (41.7KB → 36KB).
 - **CLAUDE.md** = presente + futuro + regras (≤ 32KB)
 - **CLAUDE-HISTORY.md** = passado selado (ilimitado, append-only)
 - **REGRA:** sessão encerrada → documentação detalhada migra para HISTORY
@@ -111,6 +111,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-CORTEX-001 | — | I1,I9,I10,I14 | **SEALED** · Canal Único Soberano · 3-Tier Routing · §241 `04C67B81` |
 | W-BIND-001 | script | I1,I9,I11,I13,I14 | **SEALED** · Cognitive Bind Module · Admissible Re-entry · §261 `7FDA926F` |
 | W-GENERATOR-001 | :8198 | I9,I9-G,I11,I14 | **SEALED** v0.1.0 · §292 · 6 DOORs (2 active stubs) · SORA+Runway · Gate: C6+auth+teto antes de real |
+| W-FARM-001 | :8201 | I1,I9,I11,I14 | **LIVE** · Casa Digital Soberana · /farm/claim · validate∪lookup · `5F124853` |
 | WINDI-PORTAL | static | — | **LIVE** · Internal Control Center · 35 Services · 7 Categories |
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
@@ -544,33 +545,17 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 **Agents (37):** CIA · WSG · GATE · NGINX · CANVAS · COMM · PROVE · DETECT-MEDIA · VERIFY · INTENT · COUNSEL · SESSION · NOMAD · VD-CUT · VD-MASS · JOE · DIST · JMPG · UDB · COMPOSER · CLASSIFY · VISION · OBS-GATE · INTENT-CMD · NOMAD-VOICE · FEDIVERSE · BRIDGE · SEC · DRAGON · DEV-API · ENTERPRISE · CACHE · **LAB** · **ACADEMY** · **SITES** · **MAIL**
 **Products:** Triangle of Power · WINDI FIELD · WINDI TRAVEL · FVE Protocol · RFC-001 DNA · **DACP-v1**
 
-### Histórico Recente
+### Histórico Recente (últimos 5)
 
 | Data | Milestone |
 |------|-----------|
-| 11 Jun | **WINDI SEAL V2.8** Full Arc — Gate 0 Fix + Auto-Save + Trilingual + Real Verify · 5 receipts · `5A424A04` ✅ |
-| 11 Jun | **OLLAMA-FASE0-001** Measurement Run — mistral:7b @7.5 tok/s · PASS-CONDITIONAL · Receipt Explainer validated · `8751bb8f...` ✅ |
-| 11 Jun | **TWIN-B-SEC-001** Security Event — Ollama binding hardened · Defense-in-depth confirmed · `d21d6f04...` ✅ |
-| 07 Jun | **Vance 10/10 SEALED + Anti-Movement Medicine** — 3 re-renders · Doutrina Universal · Threshold Aceitação · `SPINE-LESSONS-LEARNED.md` ✅ |
-| 05 Jun | **Vance v2 Canonical + I-LIKENESS (candidate)** — Likeness gate respected · 80% success (8/10 shots) · Cross-subject pattern · `c3f5e031` ✅ |
-| 04 Jun | **Paper-001 Errata + SHOT-GRAMMAR-001** — Valores Joey corrigidos · Método de produção por tipo de plano · Vance barba · `f5a4d192` ✅ |
-| 01 Jun | **W-HIOS-FORENSIC-UNIT** Production Studio Genesis — 18 ficheiros · 6 personagens · Pilot completo · `88092d8f1` ✅ |
-| 31 Mai | **§139** WINDI-LAW Painel de Anexos — Multiple Files + SHA-256 · `2C302A37` ✅ |
-| 31 Mai | **TEMPLATE-001** Systemd Reference Standard — Forward-looking · Non-retroactivity · `99D55284` ✅ |
-| 31 Mai | **Overflow Fix** §236/§261/§291 migrados para HISTORY · 42.2KB→35.7KB · `WINDI-MAINT-OVERFLOW-20260531` ✅ |
-| 30 Mai | **§295/§296/§296-bis** S14+S15 Anchored com cadeia diegética · UI Compositing Invariant · Errata I11 · `45e70231`+`b8a4a083` ✅ |
-| 30 Mai | **§294** Constituição do Mundo — 5 selos (World-State+Scene-Matrix+Continuity-Bible) · `9F003FF1`+`A0E4BF6B`+`D97E61BC`+`C32E61B6`+`5935A3A4` ✅ |
-| 29 Mai | **§292** W-GENERATOR-001 + SPINE-CAST 6/6 + I9-G Doctrine · Gate registado ✅ |
-| 23 Mai | **§282** WINDI-HIOS Cognitive Surface Architecture · `F5F12A71` · 5L + 6P + HG ✅ |
-| 15 Mai | **§246-IMPL-bis** G3 Merkle Transparency Log GENESIS · `66189307` ✅ |
-| 14 Mai | **§262-§263** WINDI-HIOS + PingPong Protocol · `6F053E65`+`87AAF5BA` ✅ |
-| 12 Mai | **§250** Lei VII I18 Organic Growth + .wcap v0.1.0 Schema · `D00095E0`+`C52AA629` ✅ |
-| 12 Mai | **§255-§257** Foundation Ontology · I12 Trilingual + Notebook 001 + Cognitive Continuity Axiom |
-| 10 Mai | **§249** SESSÃO FUNDACIONAL · MANIFESTO + FOUNDATION · Tese Ontológica IA+H |
-| 07 Mai | **§246** W-SITES × W-MAIL Bridge · 6/6 selos + T7 adversarial · `4CE30817`+`4DD83B15` ✅ |
-| 05 Mai | **§245** Editorial Doctrine · `3C5638F9` ✅ |
+| 19 Jun | **W-FARM DRAGON-001 RATIFICADA PLENA** — Primeira casa digital · 5/5 achados · Tríade mapeada · `5F124853` ✅ |
+| 17 Jun | **§236-ter** Verify Sanitary + Airgap — systemd Verify/Ledger · Gate 0 PASS |
+| 13 Jun | **§236-bis** Codex Continuity Ops — Participation Layer · STRATO |
+| 11 Jun | **SEAL V2.8** Full Arc — 5 receipts · `5A424A04` ✅ |
+| 07 Jun | **Vance 10/10** Anti-Movement Medicine · SPINE-LESSONS-LEARNED ✅ |
 
-> **Full history:** `CLAUDE-HISTORY.md`
+> **Full history:** `CLAUDE-HISTORY.md` § SESSION-20260619-FARM-DRAGON-001-PLENA
 
 ---
 
@@ -668,55 +653,17 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 ---
 
-## Produtos SEALED (Key Receipts)
+## Produtos SEALED (Key Receipts — Resumo)
 
-| Category | Receipt | Description |
-|----------|---------|-------------|
-| **ROOT KEY** | `DBED5A85` | §205 KEYGEN-001 Sovereign Key Ceremony |
-| **CORE** | `C445AFF9` | WINDI-LAW AI Draft |
-| **CORE** | `04C67B81` | §241 W-CORTEX-001 3-Tier Routing |
-| **SITES** | `1BE93BB4` | §235 windisites.de LIVE |
-| **SITES** | `C6C2CA0B` | §242 First AI-generated site |
-| **MICROLOG** | `430CD285` | §243 SaaS Is Evidence |
-| **MAIL** | `D7398F3C` | §224-226 DACP-v1 First Proof |
-| **PAPER** | `CDC760DD` | §233 Paper-001 A.3 Core |
-| **DOCTRINE** | `3C5638F9` | §245 W-EDITORIAL-DOCTRINE-001 |
-| **ARCH** | `D32AFF47` | §246-D1 Federated Delegation Light (γ-light) |
-| **ARCH** | `59497380` | §246-D2 Workbench + Pedagogia Visual da Soberania |
-| **ARCH** | `FCF917FE` | §246-D2-bis Institutional Demo Send + Slug Reservation |
-| **ARCH** | `F8881FCA` | §246-D3 Mailbox Provisioning Soberano (DID-bound) |
-| **ARCH** | `5D8513D7` | §246-D4 Rate Limiting + per-DID Quotas |
-| **ARCH** | `4CE30817` | §246-D5 Receipt Symmetry — Chain Architecture |
-| **ARCH** | `4DD83B15` | §246-D5-T7 Adversarial Protocol — Gate Constitucional |
-| **FOUNDATION** | `007bd9f1e` | §255 I12 Trilingual Compliance — Foundation Portals |
-| **FOUNDATION** | `82d2425c5` | §255-bis Linguistic Systems Engineering |
-| **FOUNDATION** | `39a332252` | §256 Notebook 001 — Field Notes on Hybrid Cognitive Systems |
-| **AXIOM** | `853da1515` | §257 Cognitive Continuity Axiom |
-| **MERKLE** | `66189307` | §246-IMPL-bis G3 Merkle Genesis — 57,281 leaves (superseded) |
-| **MERKLE** | `5ee83b95` | G3 Merkle Current Root — 57,288 leaves (17 Mai) |
-| **PROOF** | `80A13B17` | §267 + Session 17 Mai — Self-Correction Without Rewrite |
-| **HIOS** | `08805713` | §265 Drift Monitor Metrics — M1/M2/M3 Trinca |
-| **HIOS** | `F5F12A71` | §282 Cognitive Surface Architecture — 5 Layers + 6 Principles + Human Gates |
-| **CINEMA** | `d31aae48` | §290 PROOF 2 Baseline — BROKEN measurements frozen |
-| **CINEMA** | `S291-V2` | §291 O Peso do Eco v2 — 5/5 Type-B scenes, 4 forensic + 1 operational |
-| **GENERATOR** | `§292` | W-GENERATOR-001 — 6 DOORs (stubs), SORA+Runway keys, Gate registado |
-| **CINEMA** | `9F003FF1` | §294 WORLD-STATE.schema.yaml — Generic Schema v1.0.0 |
-| **CINEMA** | `A0E4BF6B` | §294 WORLD-STATE-001.instance.yaml — O Peso do Eco World |
-| **CINEMA** | `D97E61BC` | §294 CONTINUITY-BIBLE-001 — Wardrobe/Props × §293 SPINE-CAST |
-| **CINEMA** | `C32E61B6` | §294 SCENE-MATRIX.schema.json — Generic Scene Contract v1.0.0 |
-| **CINEMA** | `5935A3A4` | §294 SCENE-MATRIX-001 — 24 Scenes Mapped (windi_on_screen: S14,S15,S16,S20) |
-| **CINEMA** | `§296` | §296 UI Compositing Invariant — Generator faz mundo, prova em pos |
-| **CINEMA** | `§296-bis` | §296-bis Diegetic Proof Integrity — Proibido hash orfao em frame |
-| **CINEMA** | `45e70231` | §295 S14-VISUAL-VERIFIED — UEBEREINSTIMMUNG GEFUNDEN insert |
-| **CINEMA** | `b8a4a083` | §295 S15-VISUAL-VERIFIED — INTEGRITAET 100% + cadeia diegetica |
-| **FORGE** | `9FAF31C6` | §297 Lei da Proveniência Inseparável — I19 · Atomic Provenance |
-| **SEAL** | `7A1A5282` | Gate 0 Server Fix — suffix lookup for short IDs |
-| **SEAL** | `28E0073B` | V2.6 Auto-Save + Audio Mode |
-| **SEAL** | `710243F1` | V2.7 Full Trilingual i18n (PT/DE/EN) |
-| **SEAL** | `FD9C54FB` | V2.8 Real Ledger Verify — 4 states |
-| **SEAL** | `5A424A04` | Verify Surface Arc SEALED — 11 Jun 2026 |
+| Category | Key Receipts | Count |
+|----------|-------------|-------|
+| **ROOT/CORE** | `DBED5A85` `C445AFF9` `04C67B81` | 3 |
+| **SITES/MAIL** | `1BE93BB4` `D7398F3C` | 4 |
+| **ARCH (§246)** | `D32AFF47`→`4DD83B15` | 7 |
+| **FOUNDATION** | `007bd9f1e` `39a332252` `853da1515` | 4 |
+| **HIOS/CINEMA** | `08805713`→`5A424A04` | 18 |
 
-> **Full receipts list:** `CLAUDE-HISTORY.md` § Produtos SEALED
+> **Full receipts table (44 entries):** `CLAUDE-HISTORY.md` § MIGRAÇÃO OVERFLOW 19 Jun 2026
 > **HD-MIRROR Reference:** `/opt/windi/docs/PROOF-SELF-CORRECTION-WITHOUT-REWRITE.md`
 
 ---
@@ -783,17 +730,14 @@ Pipeline de produção cinematográfica com continuidade auditável. **Arquitect
 > **Full details:** `CLAUDE-HISTORY.md` § MIGRAÇÃO OVERFLOW 31 Mai 2026
 
 
-## §236-bis · Codex Continuity Ops Memory Loop (2026-06-13)
+## §236-bis/ter · Memory Loops Jun 2026 (Condensado)
 
-**Marker:** `CODEX-CONTINUITY-OPS-20260613` · **Status:** REGISTERED · CANDIDATE/not_submitted no Ledger
-**Docs:** `/home/windi/docs/continuity-check/` · `/home/windi/docs/ADMISSIBILITY/`
-**Tutor report SHA256:** `bc38d69de5155490574fdc9f70b3b6022b4c29bfe9e4d99b30ddf7296e36b92d`
-**Receipt candidate SHA256:** `46faa6005ffd85684ce603a7a80b85bd3d24365d81a3d6247a241c547b308307`
+| § | Marker | Status | Frase de Guarda |
+|---|--------|--------|-----------------|
+| §236-bis | `CODEX-CONTINUITY-OPS-20260613` | CANDIDATE | Organizar a continuidade sem assumir a soberania |
+| §236-ter | `S236-VERIFY-SANITARY-AIRGAP-20260617` | CANDIDATE | O coração estava saudável. Agora tem dono |
 
-Codex registrou a primeira missao STRATO de continuidade operacional: mapas de entrada, status documentais, indice da Participation Layer, receipts de pesquisa e regra de autoridade/I9.
+**Current Infra:** Verify `:8114` systemd · Ledger `:8101` systemd · Gate 0 PASS
+**Pending:** Phase 7 reboot proof · Phase 8 transferability
 
-Frase de guarda: **Organizar a continuidade sem assumir a soberania.**
-
-Cadeia preservada: **Conselho recomenda · Witness atesta coerencia · I9 decide · STRATO sela.**
-
-Detalhe completo: `CLAUDE-HISTORY.md` entrada `CODEX-CONTINUITY-OPS-20260613` e `claudeWeb/S236-CODEX-CONTINUITY-OPS-20260613.md`.
+> **Full details:** `CLAUDE-HISTORY.md` § MIGRAÇÃO OVERFLOW 19 Jun 2026
