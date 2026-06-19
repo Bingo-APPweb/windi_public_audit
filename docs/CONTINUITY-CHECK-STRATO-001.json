@@ -1,0 +1,1179 @@
+{
+  "generated_at": "2026-06-13T09:50:19+00:00",
+  "docs_dir": "/home/windi/docs",
+  "files_checked": 83,
+  "known_statuses": [
+    "AWAITING I9",
+    "BLOCKED",
+    "CANDIDATE",
+    "DRAFT",
+    "MEASURED",
+    "REJECTED",
+    "SEALED",
+    "SUPERSEDED"
+  ],
+  "results": [
+    {
+      "path": "/home/windi/docs/ACTION-0-WITNESS-ADMISSIBILITY-001.md",
+      "name": "ACTION-0-WITNESS-ADMISSIBILITY-001.md",
+      "sha256": "ac2e8c560007d769a55cdcf557a88342e4768ffe9055b22c900e541a35e6b129",
+      "line_count": 259,
+      "status": "CONSTITUTIONAL BLOCKING QUESTION",
+      "status_known": false,
+      "missing_headers": [
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/ALIAS-ADMISSION-DOCTRINE-001.md",
+      "name": "ALIAS-ADMISSION-DOCTRINE-001.md",
+      "sha256": "eb8aad54fce0ff94c5e665f0cf08d90c26512a0e506144d5eb82fd79b2ce8df9",
+      "line_count": 195,
+      "status": "SEALED",
+      "status_known": true,
+      "missing_headers": [],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/ALIAS-PROMOTE-001-v0.2.md",
+      "name": "ALIAS-PROMOTE-001-v0.2.md",
+      "sha256": "7ac279cc5a9c694a496da3a3448fe08319e8b4a585243d3b3e263be2ef3331ef",
+      "line_count": 254,
+      "status": "AWAITING I9",
+      "status_known": true,
+      "missing_headers": [],
+      "awaiting_i9_boxes": 15
+    },
+    {
+      "path": "/home/windi/docs/ALIAS-PROMOTE-001-v0.3.md",
+      "name": "ALIAS-PROMOTE-001-v0.3.md",
+      "sha256": "42c8f60b1b8f52574a8a74803c1615373dfeb1965b0e76fa736cd316fa27ac14",
+      "line_count": 289,
+      "status": "AWAITING I9",
+      "status_known": true,
+      "missing_headers": [],
+      "awaiting_i9_boxes": 18
+    },
+    {
+      "path": "/home/windi/docs/ALIAS-RESOLUTION-001.md",
+      "name": "ALIAS-RESOLUTION-001.md",
+      "sha256": "8033f4463349446d25663ed65175e44a4ae426578f38fb58190d01b6e87f96c9",
+      "line_count": 257,
+      "status": "SEALED",
+      "status_known": true,
+      "missing_headers": [
+        "Mission"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/ALIAS-RUN-001.md",
+      "name": "ALIAS-RUN-001.md",
+      "sha256": "9fdcb7f166383c9ae97312e6589919c0417caae219ed6c783f61891ead82b511",
+      "line_count": 46,
+      "status": "MEASURED",
+      "status_known": true,
+      "missing_headers": [
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/ATR-ADMISSIBILIDADE-TRAVADA-PELO-ROTEIRO.md",
+      "name": "ATR-ADMISSIBILIDADE-TRAVADA-PELO-ROTEIRO.md",
+      "sha256": "cb3b49fd60b48768bd4cedc08c3c9e2dca24c9b78fe884a98aeb6a4a5ee58e4f",
+      "line_count": 180,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/AUTHORITY-GATE-001.md",
+      "name": "AUTHORITY-GATE-001.md",
+      "sha256": "9966fc6cddd015d3cff93a6934aa7bb548ecf64f2393ea95734420b404429c31",
+      "line_count": 87,
+      "status": "CANDIDATE",
+      "status_known": true,
+      "missing_headers": [],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/CONTINUITY-OPS-001.md",
+      "name": "CONTINUITY-OPS-001.md",
+      "sha256": "a240843d47d1f3f4f8cc919490878f696a2ceb3afa4776e9699f11ac59b4af95",
+      "line_count": 87,
+      "status": "CANDIDATE",
+      "status_known": true,
+      "missing_headers": [],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/CONTRIBUTION-GRAMMAR-001.md",
+      "name": "CONTRIBUTION-GRAMMAR-001.md",
+      "sha256": "56f59bafdb46235eb6c8fd1c3cb9f36b42417dda20bdf966b1edd964c831c4e8",
+      "line_count": 285,
+      "status": "CANDIDATE",
+      "status_known": true,
+      "missing_headers": [
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/DEPLOY_GUIDE.md",
+      "name": "DEPLOY_GUIDE.md",
+      "sha256": "c306076e99cce9a112905c02de81aeea0add3c7c157652758eb0aed7eb0ba366",
+      "line_count": 116,
+      "status": "READY FOR DEPLOY",
+      "status_known": false,
+      "missing_headers": [
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/DIAG-MED-TIER-20260606.md",
+      "name": "DIAG-MED-TIER-20260606.md",
+      "sha256": "bdce83943bd78c855134042a23c65c741d89b3f90ce58907178af1331285786c",
+      "line_count": 143,
+      "status": "SEALED",
+      "status_known": true,
+      "missing_headers": [
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/DID-AUDIT-2026-04-15.md",
+      "name": "DID-AUDIT-2026-04-15.md",
+      "sha256": "7a64d0e62d54869203189024755f17123d9d99038be7ba06be982f3e436c6f25",
+      "line_count": 355,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/DID-RELATORIO-COMPLETO-20260402.md",
+      "name": "DID-RELATORIO-COMPLETO-20260402.md",
+      "sha256": "c6362564f39c9cbb2ecf6399dd60db1859907d71705ec11e2d1e59ca4be73ebb",
+      "line_count": 323,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/DID-USER-JOURNEY.md",
+      "name": "DID-USER-JOURNEY.md",
+      "sha256": "e0f405dcebd3702f3273b090ee5baf0fc395c5055b2bd1772e4bb66484e4bc1f",
+      "line_count": 628,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/DOCUMENT-STATUS-STANDARD-001.md",
+      "name": "DOCUMENT-STATUS-STANDARD-001.md",
+      "sha256": "b668e0bb3fef86e8345fcd984ef7c6209bed45f45f20ccae23ae8b72cefad776",
+      "line_count": 78,
+      "status": "CANDIDATE",
+      "status_known": true,
+      "missing_headers": [],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/DRIFT-INVENTORY-20260420.md",
+      "name": "DRIFT-INVENTORY-20260420.md",
+      "sha256": "580b6a6cee062e6c46caae7e50643440da61c41ca97beac2698da8947303e70f",
+      "line_count": 131,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/ERRATA-MED-503-20260606.md",
+      "name": "ERRATA-MED-503-20260606.md",
+      "sha256": "5c06e6e26b660dc7333e37b14a4289abbb9c576eaaf310a2905f947467ec309a",
+      "line_count": 107,
+      "status": "SEALED",
+      "status_known": true,
+      "missing_headers": [
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/EVIDENCE_PACKAGE_SCHEMA_v1.1.md",
+      "name": "EVIDENCE_PACKAGE_SCHEMA_v1.1.md",
+      "sha256": "451db8d2c86812a31e6bae718cd53024b8b18c25bedfb1ae68d9f8e5779a4908",
+      "line_count": 332,
+      "status": "ACTIVE",
+      "status_known": false,
+      "missing_headers": [
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/FORENSIC_TENANT_ISOLATION_LEGACY_POLICY.md",
+      "name": "FORENSIC_TENANT_ISOLATION_LEGACY_POLICY.md",
+      "sha256": "0db238b0d3f3723790553b2d07f07c5ee28db212f2e1394e8d46777de8135bbf",
+      "line_count": 161,
+      "status": "ACTIVE",
+      "status_known": false,
+      "missing_headers": [
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/FOUNDATION-AS-WINDI-MEANS-IT.md",
+      "name": "FOUNDATION-AS-WINDI-MEANS-IT.md",
+      "sha256": "b4921e77af33ffffb02a86302b8ec2aa9560b611e6a6b3f04dfdc3749e137d55",
+      "line_count": 183,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/FUNDACAO_B2_20260215.md",
+      "name": "FUNDACAO_B2_20260215.md",
+      "sha256": "c44488539100561bf1fdfec21557831ab8bd1f11e49a262fc34733f3edf8410a",
+      "line_count": 70,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/G-SURF-3-TEST-PROTOCOL.md",
+      "name": "G-SURF-3-TEST-PROTOCOL.md",
+      "sha256": "f3582589d2f85cf7beacb907825688fbe31bb86bd342c4febb31b19395203ef5",
+      "line_count": 123,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/GUARDIAN-BRIEF-S261.md",
+      "name": "GUARDIAN-BRIEF-S261.md",
+      "sha256": "094f095c60ba52b7f895aaed84f447c4a9a8a00d6a200fd29faeb8cc55b30227",
+      "line_count": 145,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/INVARIANTS.md",
+      "name": "INVARIANTS.md",
+      "sha256": "eaf77101239dd5408417d604af2e30f4c839134e8c02b697d45d2f140cb0e165",
+      "line_count": 219,
+      "status": "Active (until C5)",
+      "status_known": false,
+      "missing_headers": [
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/KNOWN_BUGS_AND_FIXES.md",
+      "name": "KNOWN_BUGS_AND_FIXES.md",
+      "sha256": "fdc7d8c93f9348a1134ea66b03c66ef395d99feda61d57f29c7f35c2784e6af6",
+      "line_count": 35,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/MATRIZ-FATO-CONTRIBUICAO-001.md",
+      "name": "MATRIZ-FATO-CONTRIBUICAO-001.md",
+      "sha256": "15492792492639da1e14b3aab165b4c5945ea66c6677cd174442008dedf1d1ed",
+      "line_count": 107,
+      "status": "CANDIDATE",
+      "status_known": true,
+      "missing_headers": [
+        "Mission"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/MOBILE-AUDIT-REPORT-2026-03-13.md",
+      "name": "MOBILE-AUDIT-REPORT-2026-03-13.md",
+      "sha256": "a0de63dd928b05d9fcd4801c9c495a07fd1f974d3e6ec943ff3eb07051a3a7ad",
+      "line_count": 389,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/NOTEBOOK-001-HYBRID-COGNITIVE-SYSTEMS.md",
+      "name": "NOTEBOOK-001-HYBRID-COGNITIVE-SYSTEMS.md",
+      "sha256": "5a5a13c89b442c8732da2e5edc677b6d569091d7659ceac4466776ec08b28fa0",
+      "line_count": 292,
+      "status": "FOUNDATIONAL DOCUMENT",
+      "status_known": false,
+      "missing_headers": [
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/ONBOARDING-MAP-001.md",
+      "name": "ONBOARDING-MAP-001.md",
+      "sha256": "3d0d37e74b3954f0d7ef731c1d458c6de494de436b07e1674240f654655c2847",
+      "line_count": 74,
+      "status": "CANDIDATE",
+      "status_known": true,
+      "missing_headers": [],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/PARTICIPATION-LAYER-INDEX-001.md",
+      "name": "PARTICIPATION-LAYER-INDEX-001.md",
+      "sha256": "0d700f46a906029961e8e905977cae508b919943493d2b512cb29b2a01c5f131",
+      "line_count": 69,
+      "status": "CANDIDATE",
+      "status_known": true,
+      "missing_headers": [],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/PROOF-SELF-CORRECTION-WITHOUT-REWRITE.md",
+      "name": "PROOF-SELF-CORRECTION-WITHOUT-REWRITE.md",
+      "sha256": "ceb957215632a59e3f8a308855e36de581b316bbb506fd72deb8f754762fc325",
+      "line_count": 223,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/PUBLIC-WINDI-HIOS-ARCHITECTURE-20260518.md",
+      "name": "PUBLIC-WINDI-HIOS-ARCHITECTURE-20260518.md",
+      "sha256": "e30c165925881260a3515f6f2cac023997f3c6b077866308ca1757e3b24dfd00",
+      "line_count": 464,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/RESEARCH-RECEIPTS-001.md",
+      "name": "RESEARCH-RECEIPTS-001.md",
+      "sha256": "9505a2e1c5060a65e6fd99a5f557c940bd59f9230a0c6608fe88e0977e71e1c4",
+      "line_count": 78,
+      "status": "CANDIDATE",
+      "status_known": true,
+      "missing_headers": [],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/S129-NOMAD-SEAL-ANATOMY.md",
+      "name": "S129-NOMAD-SEAL-ANATOMY.md",
+      "sha256": "02742080833da1fea9a393388a6c632967751b79cfc4044677a29ddd83328892",
+      "line_count": 146,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/S247-NOMENCLATURA-CANONICA-WINDI.md",
+      "name": "S247-NOMENCLATURA-CANONICA-WINDI.md",
+      "sha256": "303caa0f3782f0bbd547b7138a2a030212a5226839201b0fb54504a26da533ac",
+      "line_count": 132,
+      "status": "SEALED \u00b7 Receipt `WINDI-S247-NOMENCLATURA-20260507201003-A3B99EA6` \u00b7 2026-05-07",
+      "status_known": false,
+      "missing_headers": [
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/S248-LEI-V-FOUNDATION-DIRECTION.md",
+      "name": "S248-LEI-V-FOUNDATION-DIRECTION.md",
+      "sha256": "c4f7e02aaa7c50be2e79d15619d30d6b8eb5e2a9aae5c726353f0c3d93d36fd7",
+      "line_count": 54,
+      "status": "SEALED",
+      "status_known": true,
+      "missing_headers": [
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/S250-LEI-VII-ORGANIC-GROWTH.md",
+      "name": "S250-LEI-VII-ORGANIC-GROWTH.md",
+      "sha256": "d00095e0857ba5cea6302cbaa582406ce598a4b5e1003caf401aadcb4772818f",
+      "line_count": 134,
+      "status": "STRUCTURAL (REMEDIABLE)",
+      "status_known": false,
+      "missing_headers": [
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/S266-KERNEL-HIGH-QUESTIONS-RESOLUTION.md",
+      "name": "S266-KERNEL-HIGH-QUESTIONS-RESOLUTION.md",
+      "sha256": "7218397b331e2e0536cbe44cad172878f7b1aec500f6ebed6cfe948d40397c04",
+      "line_count": 130,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/S269-PINGPONG-GENESIS-FIRST-RUNTIME.md",
+      "name": "S269-PINGPONG-GENESIS-FIRST-RUNTIME.md",
+      "sha256": "d31281d74c36d1973a4c2a6610e3be04d12af6c7855dfabd5be4823fcb9b7bad",
+      "line_count": 141,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/S297-LEI-DA-PROVENIENCIA-INSEPARAVEL.md",
+      "name": "S297-LEI-DA-PROVENIENCIA-INSEPARAVEL.md",
+      "sha256": "9faf31c6b5eba5baa0309097780f6b7486e20c1bbc46e48c8d35782062f9deda",
+      "line_count": 178,
+      "status": "SEALED \u00b7 **Invariant:** I19 \u00b7 **Date:** 2026-06-01",
+      "status_known": false,
+      "missing_headers": [
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/SESSION-2026-04-16-SERVICE-CONTROL.md",
+      "name": "SESSION-2026-04-16-SERVICE-CONTROL.md",
+      "sha256": "f24661fc81f55a05eecf14cc3be61f9bed41606605f449fc56fc0de737b733ea",
+      "line_count": 150,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/SESSION-SEAL-20260517-PINGPONG-GENESIS.md",
+      "name": "SESSION-SEAL-20260517-PINGPONG-GENESIS.md",
+      "sha256": "99054b110004a4b3b28a32ebad6c44d480f8027a6fa0db27be1576af65d8e0b0",
+      "line_count": 235,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/SKILL-ghost-exorcism.md",
+      "name": "SKILL-ghost-exorcism.md",
+      "sha256": "58fa1dcd1ebd42b2f95d2cea88eaab5fd5f27d8ac75641a91aec07b0da098f00",
+      "line_count": 237,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/SKILL-windi-agent-palette.md",
+      "name": "SKILL-windi-agent-palette.md",
+      "sha256": "e70e3e5192d70b3383dcb02209e829d4832b4c05dcc86d8c94c6f38a9cd633d8",
+      "line_count": 185,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/SKILL_PALETTE_FREEMIUM.md",
+      "name": "SKILL_PALETTE_FREEMIUM.md",
+      "sha256": "520f25c004741d1c5e9167bb0f3426921a8228258c0e82624673ead4545f49bf",
+      "line_count": 18,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/SKILL_agent_palette_v2.md",
+      "name": "SKILL_agent_palette_v2.md",
+      "sha256": "a41d1092e5798fd4af1302981b7524ce5799236c38076f26ca80ab1eb459ed58",
+      "line_count": 201,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/SYSTEM-ABSORPTION-AUDIT-20260420.md",
+      "name": "SYSTEM-ABSORPTION-AUDIT-20260420.md",
+      "sha256": "ec059f6c9b79f0b63833cbab47e53f25ac3f6b3e8d0a5c84fc6a994c1334ea56",
+      "line_count": 309,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Mission"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/TASK_DIRECTOR_v1.0.md",
+      "name": "TASK_DIRECTOR_v1.0.md",
+      "sha256": "b7214389bc97359aa9640c7e9533db7cb16d940fc2d2f1cd9beb7c089d075e5e",
+      "line_count": 1351,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/TEST_PROMPTS.md",
+      "name": "TEST_PROMPTS.md",
+      "sha256": "00186c27a1dd12d29f04abf54122eaae507f0916058d34b91322c33ba9f9543d",
+      "line_count": 45,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/TIER-RESOLUTION-CANON.md",
+      "name": "TIER-RESOLUTION-CANON.md",
+      "sha256": "26c390cea2efebc2ac2465b4f53a3c0b7e937ceffd1210ed3e04df18786abb03",
+      "line_count": 258,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/TUTORIAL-CANVAS.md",
+      "name": "TUTORIAL-CANVAS.md",
+      "sha256": "814c6b32beceda1e459ce86adad2c65073799252babacf7cfbee2bf4362e8016",
+      "line_count": 441,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/W-COGSPACE-001-IMPLEMENTATION-ROADMAP.md",
+      "name": "W-COGSPACE-001-IMPLEMENTATION-ROADMAP.md",
+      "sha256": "1712a17768e67596235d0a0d5cede3b57bdebd81779207b6cee222ef812f305a",
+      "line_count": 811,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/W-COGSPACE-001-SOLO-SPEC.md",
+      "name": "W-COGSPACE-001-SOLO-SPEC.md",
+      "sha256": "8ea645c8786ba177ee010a9b2ef886ac4cb51ce2ad2c61eefc8451c412ff0b06",
+      "line_count": 481,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/W-DRAGON-001-ROADMAP.md",
+      "name": "W-DRAGON-001-ROADMAP.md",
+      "sha256": "b9fc85c9bea9a8a7b854a8211a4a7860ec5eed02c293c812c17e8baa9d027511",
+      "line_count": 678,
+      "status": "APPROVED by Council \u00b7 I9 Gate Passed",
+      "status_known": false,
+      "missing_headers": [
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/WINDI-EVIDENCE-BLUEPRINT-V1.md",
+      "name": "WINDI-EVIDENCE-BLUEPRINT-V1.md",
+      "sha256": "cdd9fa3a7e5a1a84df90eba7af1d422b4497e3049e42cc39f37d1c84cb3fbafa",
+      "line_count": 358,
+      "status": "BLUEPRINT | AWAITING SEAL",
+      "status_known": false,
+      "missing_headers": [
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/WINDI-FIELD-BLUEPRINT-V1.md",
+      "name": "WINDI-FIELD-BLUEPRINT-V1.md",
+      "sha256": "c39ecae2f01daf3dc87b7ee97b28df130ffa3a997d1da176fe489ca4b8e09f7a",
+      "line_count": 388,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/WINDI-LEXICON-STUB.md",
+      "name": "WINDI-LEXICON-STUB.md",
+      "sha256": "e18e8511b9cc746666aee898b7bca2f74fa100c14ca2c61c4d75d2ad2dc55b0d",
+      "line_count": 76,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/WINDI-MANIFESTO.md",
+      "name": "WINDI-MANIFESTO.md",
+      "sha256": "de4debbfa82117bd959e226d37ea601db02862a9c5fa1e1633cfdd7e9e53ba83",
+      "line_count": 302,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/WINDI-POLICY-DATA-CANONICAL-V1.0.md",
+      "name": "WINDI-POLICY-DATA-CANONICAL-V1.0.md",
+      "sha256": "ca8c7e94b379da273612185883b5b1aa503e0df19d3b8338f436434afd26abf3",
+      "line_count": 226,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/WINDI-PRODUCT-BLUEPRINT-v1.0.md",
+      "name": "WINDI-PRODUCT-BLUEPRINT-v1.0.md",
+      "sha256": "55db87eceb38c810b25b05f154323e08838cf8b2b51a294f5e123195911e89d5",
+      "line_count": 492,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/WINDI-PRODUCT-SITES-001-DRAFT.md",
+      "name": "WINDI-PRODUCT-SITES-001-DRAFT.md",
+      "sha256": "493421e6c50ebaea2221689b531de0e8d62f98c2e0190740ec404b3d1eb4276e",
+      "line_count": 380,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/WINDI-SEAL-ARCHITECTURE-MANUAL-v1.md",
+      "name": "WINDI-SEAL-ARCHITECTURE-MANUAL-v1.md",
+      "sha256": "ab3aba8ebd82747286a0021a34b55f454eec6e04ec312115b02d3fc83c0d22e5",
+      "line_count": 743,
+      "status": "SEALED \u00b7 Receipt `WINDI-ARC-VERIFY-SURFACE-20260611`",
+      "status_known": false,
+      "missing_headers": [
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/WINDI-SEAL-V2-CODE-AUDIT.md",
+      "name": "WINDI-SEAL-V2-CODE-AUDIT.md",
+      "sha256": "2b80d243f4e7854289e88b73f1c563dda707c3a4943bea5b5d1532dd931935ad",
+      "line_count": 208,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/WINDI-SEAL-V2-CURRENT-STATE.md",
+      "name": "WINDI-SEAL-V2-CURRENT-STATE.md",
+      "sha256": "c3b2049f1a0bf0f0a32314349e077086b46836575e1866cef1cbd8e75b4978a9",
+      "line_count": 319,
+      "status": "\ud83d\udfe2 GAPS CR\u00cdTICOS CORRIGIDOS",
+      "status_known": false,
+      "missing_headers": [
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/WINDI-SEAL-VERIFY-GAP.md",
+      "name": "WINDI-SEAL-VERIFY-GAP.md",
+      "sha256": "604225454c6f66d510f32233c3423cc9e04f63539468fef75f76fe58728de17e",
+      "line_count": 244,
+      "status": "\u2705 CORRIGIDO em V2.8 (`FD9C54FB`)",
+      "status_known": false,
+      "missing_headers": [
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/WINDI-SYSTEMD-TEMPLATE-001.md",
+      "name": "WINDI-SYSTEMD-TEMPLATE-001.md",
+      "sha256": "879dfb8f0930745c5968438168e98afc45d504de474b8705e8cf3588422736bd",
+      "line_count": 127,
+      "status": "SEALED",
+      "status_known": true,
+      "missing_headers": [
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/WINDI_Architecture_Complete_17Feb2026.md",
+      "name": "WINDI_Architecture_Complete_17Feb2026.md",
+      "sha256": "9425ccc925d3c4454e9e103c413c7bfc67c018dcef206c1d839dad0e3fa9e0e6",
+      "line_count": 350,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/WINDI_Engine_Communique_Architecture_v1.0.md",
+      "name": "WINDI_Engine_Communique_Architecture_v1.0.md",
+      "sha256": "f87f81e985bdef6dd585f687d28d113bb507ca5940f018d1f25a07e0545863c1",
+      "line_count": 655,
+      "status": "DRAFT \u2192 Aprova\u00e7\u00e3o Humana Pendente",
+      "status_known": false,
+      "missing_headers": [
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/WINDI_GEMEO_PLAYBOOK.md",
+      "name": "WINDI_GEMEO_PLAYBOOK.md",
+      "sha256": "2bcaa9f3f7f36980f4133c60b07c40b34d178520cbf293779c9fd4d9fd0fbd3e",
+      "line_count": 467,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/WINDI_PLAYBOOK.md",
+      "name": "WINDI_PLAYBOOK.md",
+      "sha256": "8a1ff36cb0c30fd0b571c6f35e8f2720b6bc7f2f184c20e39f277a373be096a6",
+      "line_count": 591,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/WINDI_PLAYBOOK_20260224.md",
+      "name": "WINDI_PLAYBOOK_20260224.md",
+      "sha256": "5ebf8bafb187993e5dd22fc9bd6d7aa5969fa78f1c90783c485a810b983577fc",
+      "line_count": 165,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/WINDI_PLAYBOOK_20260224_COGOBS.md",
+      "name": "WINDI_PLAYBOOK_20260224_COGOBS.md",
+      "sha256": "e9bc2e8a064a419235f5f377402e36f6268a8f4c980e2235c6d98fdca28c29c5",
+      "line_count": 113,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/WINDI_PLAYBOOK_20260224_RESPIRADOURO.md",
+      "name": "WINDI_PLAYBOOK_20260224_RESPIRADOURO.md",
+      "sha256": "2cf58af4472020e62d488176536df8bb65f94e28f1fe3881151959be739717b8",
+      "line_count": 152,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/WINDI_SESSION_PROTOCOL.md",
+      "name": "WINDI_SESSION_PROTOCOL.md",
+      "sha256": "17420db2d131704de9de25034663a6f7e60300ecc1f23f778b1aa4043aaa70dd",
+      "line_count": 88,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/WINDI_Session_17Feb2026_Complete.md",
+      "name": "WINDI_Session_17Feb2026_Complete.md",
+      "sha256": "6b98bd3f5125ce7a856f41f90fa77666f22a188cd32d9f94e7871977bb8c963f",
+      "line_count": 369,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/WINDI_WISDOM_SEAL_20260221.md",
+      "name": "WINDI_WISDOM_SEAL_20260221.md",
+      "sha256": "1fff2403e8e9ea1e1d58598fbf37a329e90e1ed05ac906db83f510ae60c11a03",
+      "line_count": 184,
+      "status": "Memory UPDATED \u2705 | Strato PENDING (requires SSH)",
+      "status_known": false,
+      "missing_headers": [
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/WPIL-REPORT-20260416.md",
+      "name": "WPIL-REPORT-20260416.md",
+      "sha256": "6925c14bf4b77ae12ba99b6ebe779506fb1fa8f48bf04a4252a773143ca569d0",
+      "line_count": 719,
+      "status": "\u2705 LIVE em Produ\u00e7\u00e3o",
+      "status_known": false,
+      "missing_headers": [
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/agentes-windi.md",
+      "name": "agentes-windi.md",
+      "sha256": "a776758b4fe2cba19d20c856d2e0f4405e35577f805d9d6fb5caede6a6b63280",
+      "line_count": 591,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/registry_v2.10.0.md",
+      "name": "registry_v2.10.0.md",
+      "sha256": "37ef6159a1240d748d6632b3b266c7e2d8c96a967f373bb99dc7531674717f3e",
+      "line_count": 111,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/registry_v2.7.0.md",
+      "name": "registry_v2.7.0.md",
+      "sha256": "2adb2bfebd6eee81125d873df1db12a923f5437ca3fbc1bdf767d9b6f2ae27f7",
+      "line_count": 51,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/registry_v2.8.0.md",
+      "name": "registry_v2.8.0.md",
+      "sha256": "41ab9c476f504809ad8c672aae8029f8a5c8324c6f2c2d604a97c62a0e24768f",
+      "line_count": 74,
+      "status": "",
+      "status_known": false,
+      "missing_headers": [
+        "Status",
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    },
+    {
+      "path": "/home/windi/docs/windi_isp_builder_report_v1.0.md",
+      "name": "windi_isp_builder_report_v1.0.md",
+      "sha256": "2b3327f49be27be55d5c98d2c39c72ef44bee22d2a5acbabd91775b5350fb822",
+      "line_count": 263,
+      "status": "FORJADO \u2705",
+      "status_known": false,
+      "missing_headers": [
+        "Date",
+        "Mission",
+        "Purpose"
+      ],
+      "awaiting_i9_boxes": 0
+    }
+  ],
+  "summary": {
+    "files_checked": 83,
+    "files_with_header_or_status_issues": 74
+  }
+}
