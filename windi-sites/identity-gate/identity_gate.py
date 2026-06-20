@@ -2266,6 +2266,8 @@ async def send_proof_to_email(receipt_id: str, req: EmailProofRequest, request: 
         msg["Message-ID"] = f"<{proof_receipt_id}@windisites.de>"
         msg["X-WINDI-Proof-ID"] = proof_receipt_id
         msg["X-WINDI-Receipt-ID"] = receipt_id
+        msg["X-WINDI-DACP-Requested-Proof-ID"] = proof_receipt_id
+        msg["X-WINDI-DACP-Source-Receipt-ID"] = receipt_id
 
         # Attach HTML
         html_part = MIMEText(email_body, "html", "utf-8")

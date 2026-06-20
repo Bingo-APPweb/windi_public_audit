@@ -1,14 +1,15 @@
-# METHOD-HIOS-GENERATION-001 — Protocolo de Geração Video-Native
+# METHOD-HIOS-GENERATION-001 — Protocolo de Geração Forense
 
 ```
 doc_type:        method
 estatuto:        PRIMEIRO HABITANTE DO ÓRGÃO MÉTODO
 órgão:           MÉTODO ("Como meço/gero?")
 data:            2026-06-13 · Kempten, Bavaria
+versão:          v2.0 · Actualizado 2026-06-17
 autor:           Guardian (Human Dragon) + CCode (Strato)
 aprovação:       Human Dragon (I9)
 invariants:      I9, I11, I14, I19, §268
-origem:          ERRATA-002-CONTINUIDADE-PLANO (correcção que gerou este método)
+origem:          ERRATA-002-CONTINUIDADE-PLANO + ACHADO-HELENA-FOREST-20260617
 ```
 
 > **Órgão MÉTODO responde a:** "Como meço/gero?"
@@ -16,74 +17,168 @@ origem:          ERRATA-002-CONTINUIDADE-PLANO (correcção que gerou este méto
 
 ---
 
-## I. CONTEXTO — O QUE FALHOU
+## ERRATA v2.0 (17 Jun 2026)
 
-Em 13 Jun 2026, revisão visual frame-a-frame da cena Gabi-Cozinha revelou:
-- 5 frames de P1 não eram um plano contínuo
-- Chávena mudava de cor, saltos trocavam de lado, telemóvel saltava
-- Geração por 5 imagens independentes, não video-native
+> **§268:** Esta errata ADICIONA conhecimento empírico. Não apaga o contexto original.
 
-**Causa raiz:** Usámos Runway Gen-4 Image (5 prompts soltos) em vez de Runway Gen-4 Video com reference-locking.
+### O Que Mudou
 
-**Documentação que já existia e não aplicámos:**
-- MEMORY-LOOP-SOVEREIGN.md §V: "1. Gerar vídeo via Runway API"
-- MEMORY-LOOP-20260612 R3: "Continuidade de props é eixo invisível ao SPINE"
+A sessão Helena-Forest (17 Jun 2026) testou empiricamente dois métodos de geração:
+
+| Método | Modelo | Endpoint | Resultado |
+|--------|--------|----------|-----------|
+| Video-Native | gen4_turbo | image_to_video | **INADMISSÍVEL** |
+| Joey Method | gen4_image | text_to_image | **ADMISSÍVEL** |
+
+### Dados Empíricos
+
+**Video-Native (gen4_turbo) — mesmo com `referenceImages`:**
+
+| Shot | FORENSE | PASS | BREAK | Runs |
+|------|---------|------|-------|------|
+| P1 | 0% | 0% | 80% | 5 |
+| P5 | 33% | 100% | 67% | 3 |
+
+**Joey Method (gen4_image) — frames estáticos:**
+
+| Shot | FORENSE | PASS | BREAK | Frames |
+|------|---------|------|-------|--------|
+| P1 | **100%** | **100%** | N/A | 5 |
+| P5 | 20% | 80% | N/A | 5 |
+
+### Conclusão
+
+**Para anchor-frames (P1):** Usar Joey Method (gen4_image). Taxa FORENSE: 100%.
+
+**Para shots com movimento:** Video-native é inadmissível para identidade forense. O padrão STABILIZED-WRONG (BREAK em f02→f03) ocorre em 67-80% das runs, mesmo com `referenceImages`.
 
 ---
 
-## II. PROTOCOLO DE GERAÇÃO — VIDEO-NATIVE + REFERENCE-LOCKING
+## I. CONTEXTO HISTÓRICO
 
-### Princípio MAPA-não-FONTE
+### Fase 1 (13 Jun 2026) — Problema Original
 
-> *"O frame aponta para a âncora no disco. Não a reproduz por prompt."*
+Revisão visual da cena Gabi-Cozinha revelou:
+- 5 frames de P1 não eram um plano contínuo
+- Props mudavam entre frames (chávena, telemóvel)
+- Geração por 5 imagens independentes sem reference-locking
 
-O frame gerado não "é" o personagem por sorte do prompt — ele **referencia** a âncora SEALED como `image_1`, e o disco (a âncora selada) testemunha.
+### Fase 2 (17 Jun 2026) — Teste Video-Native
 
-### Três Referências Obrigatórias
+Tentativa de usar video-native (gen4_turbo) com `referenceImages`:
+- Descoberto padrão **STABILIZED-WRONG**: identidade quebra em f02→f03
+- O modelo "estabiliza na mentira" — F2F alta, mas Anchor baixo
+- `referenceImages` reduz probabilidade mas não elimina BREAK
 
-| Slot | Conteúdo | Função |
-|------|----------|--------|
-| `image_1` | Âncora SEALED do personagem | Identity lock |
-| `image_2` | Referência de cena/cenário | Scene anchoring |
-| `image_3` | (opcional) Prop crítico | Object continuity |
+### Fase 3 (17 Jun 2026) — Joey Method Validado
 
-### Gramática de Prompt (Runway Gen-4)
+Teste de gen4_image (frames estáticos):
+- P1: 5/5 FORENSE (100%)
+- Sem conceito de BREAK (frames independentes)
+- **Anchor-frame fiável para autorizar floor**
 
-**OBRIGATÓRIO:**
+---
+
+## II. DOIS PROTOCOLOS DE GERAÇÃO
+
+### A) JOEY METHOD — Para Anchor-Frames (RECOMENDADO)
+
+> *"Cada frame é uma fotografia. Não há temporal drift."*
+
+**Usar para:** P1 (anchor-frame), shots estáticos, qualquer frame que precise de ≥0.75 FORENSE.
+
+**API:**
+```python
+payload = {
+    "model": "gen4_image",
+    "ratio": "1280:720",
+    "referenceImages": [
+        {"uri": anchor_base64, "tag": "character"}
+    ],
+    "promptText": prompt
+}
+
+response = requests.post(
+    "https://api.dev.runwayml.com/v1/text_to_image",
+    headers=headers,
+    json=payload
+)
 ```
-- Descritivo, não imperativo ("She stands" não "Make her stand")
-- Sujeito genérico para movimento ("The subject turns" não "Gabi turns")
-- Sem elementos conversacionais ("Can you..." proibido)
-- Descrever como elementos aparecem, não comandar adição
+
+**Taxa empírica:** 100% FORENSE no P1 (5/5 frames).
+
+**Custo:** ~$0.08 por frame.
+
+### B) VIDEO-NATIVE — Para Continuidade de Props (COM RESSALVAS)
+
+> *"O vídeo garante continuidade de props, mas não de identidade."*
+
+**Usar para:** Shots onde a continuidade de objectos (chávena, telemóvel) é crítica E a identidade pode ser verificada por outros meios.
+
+**API:**
+```python
+payload = {
+    "model": "gen4_turbo",
+    "promptImage": anchor_base64,
+    "referenceImages": [
+        {"uri": anchor_base64, "tag": "character"}
+    ],
+    "promptText": prompt,
+    "duration": 5,
+    "ratio": "1280:720"
+}
+
+response = requests.post(
+    "https://api.dev.runwayml.com/v1/image_to_video",
+    headers=headers,
+    json=payload
+)
 ```
 
-**EXEMPLO CORRECTO:**
+**ATENÇÃO:** 67-80% das runs mostram BREAK em f02→f03. Não usar para anchor-frames.
+
+**Taxa empírica:** 0% FORENSE fiável no P1.
+
+---
+
+## III. WORKFLOW RECOMENDADO
+
+### Para Cenas com Identidade Forense
+
 ```
-A 33-year-old Brazilian woman with warm olive skin stands in a kitchen,
-near-frontal. She watches coffee drip into a ceramic cup. Expression
-tired but calm. Eyes forward. Camera locked. Only the light breathes.
-```
+1. ANCHOR-FRAME via Joey Method (gen4_image)
+   - Gerar P1 com referenceImages tag="character"
+   - Verificar ≥0.75 FORENSE
+   - Este frame AUTORIZA o floor para os restantes
 
-### Workflow Video-Native
+2. SHOTS DE MOVIMENTO — Escolher:
 
-```
-1. GERAR VÍDEO via Runway Gen-4 Video (não Image)
-   - image_1 = âncora SEALED do personagem
-   - image_2 = referência de cenário
-   - Prompt descritivo (gramática acima)
+   Opção A: Joey Method (frame-a-frame)
+   - Gerar cada keyframe independentemente
+   - Sem continuidade de props
+   - Identidade fiável (80%+ PASS)
 
-2. EXTRAIR KEYFRAMES do vídeo
-   - ffmpeg -i video.mp4 -vf "select='eq(n\,0)+eq(n\,24)+eq(n\,48)+eq(n\,72)+eq(n\,96)'" -vsync 0 frame_%02d.png
-   - Keyframes são o MESMO MOMENTO (continuidade garantida pelo generator)
+   Opção B: Video-Native (se props críticos)
+   - Aceitar risco de BREAK (67-80%)
+   - Medir F2F para detectar quebras
+   - Re-gerar se BREAK detectado
 
-3. MEDIR com as 3 medições (ver §III)
+3. MEDIÇÃO com M1 + M2 + M3
 
 4. SELAR no Ledger após gate I9
 ```
 
+### Decisão de Método
+
+| Prioridade | Método | Quando |
+|------------|--------|--------|
+| Identidade ≥0.75 | Joey Method | Anchor-frames, provas forenses |
+| Continuidade props | Video-Native | Chávena, telemóvel, objectos |
+| Identidade + Props | Híbrido | Anchor via Joey, props via Video |
+
 ---
 
-## III. AS TRÊS MEDIÇÕES — JOEY-F2F-001 COMPLETO
+## IV. AS TRÊS MEDIÇÕES — JOEY-F2F-001
 
 | # | Medição | Pergunta | Âncora | Detecta |
 |---|---------|----------|--------|---------|
@@ -91,31 +186,32 @@ tired but calm. Eyes forward. Camera locked. Only the light breathes.
 | M2 | **Continuidade-vizinha** | "Frame N coerente com N−1?" | Frame anterior | Temporal breaks |
 | M3 | **Reprodutibilidade** | "Frame 005 = Frame 001?" | Primeiro frame | Generation variance |
 
-### M1 — Identidade-Âncora (JÁ USÁVAMOS)
+### M1 — Identidade-Âncora (GATE)
 
 ```python
-# Cada frame vs âncora SEALED
 score = cosine_similarity(anchor_embedding, frame_embedding)
 # Threshold: SHOT-GRAMMAR-002 (0.55-0.65 conforme tier)
+# FORENSE: ≥0.75
 ```
 
-### M2 — Continuidade-Vizinha (FALTAVA)
+### M2 — Continuidade-Vizinha (DIAGNÓSTICO)
 
 ```python
-# Frame N vs Frame N-1
 for i in range(1, len(frames)):
     score = cosine_similarity(frames[i-1].embedding, frames[i].embedding)
-    # Se score < 0.90: possível quebra temporal
-    # Diagnóstico, não gate (pode haver corte intencional)
+    if score < 0.70:
+        print("BREAK detectado")  # Identidade trocou
+    elif score < 0.85:
+        print("JITTER")  # Variância aceitável
+    else:
+        print("STABLE")  # Continuidade perfeita
 ```
 
-### M3 — Reprodutibilidade (FALTAVA)
+### M3 — Reprodutibilidade (DIAGNÓSTICO)
 
 ```python
-# Frame 005 vs Frame 001 (mesma pose, chamadas diferentes)
 score = cosine_similarity(frame_001.embedding, frame_005.embedding)
 # Se score < 0.85: alta variância de geração
-# Indica generator instável para este prompt
 ```
 
 ### Agregação
@@ -123,39 +219,46 @@ score = cosine_similarity(frame_001.embedding, frame_005.embedding)
 | Medição | Tipo | Threshold | Acção se FAIL |
 |---------|------|-----------|---------------|
 | M1 | **Gate** | SHOT-GRAMMAR-002 | Re-gerar obrigatório |
-| M2 | **Diagnóstico** | 0.90 | Anotar quebras |
+| M2 | **Diagnóstico** | 0.70 (BREAK) | Anotar, considerar re-gerar |
 | M3 | **Diagnóstico** | 0.85 | Avaliar estabilidade |
 
 ---
 
-## IV. INTEGRAÇÃO — CONTAINER PRODUKTION/
+## V. PADRÃO STABILIZED-WRONG
 
-O Container `produktion/` criado em 13 Jun 2026 vive **dentro** deste Órgão MÉTODO.
+Descoberto em 17 Jun 2026 durante testes Helena-Forest.
 
-### Hierarquia
+### Definição
+
+O gerador video-native:
+1. Usa a referência nos primeiros 1-2 segundos (frames 1-2)
+2. **Desacopla-se** da referência em f02→f03
+3. Estabiliza num rosto diferente para o resto do vídeo
+4. Mantém F2F alta (consistência temporal) após o desacoplamento
+
+### Diagnóstico
 
 ```
-ÓRGÃO MÉTODO (Este documento)
-    │
-    ├── METHOD-HIOS-GENERATION-001.md (protocolo de geração)
-    │
-    └── /produktion/ (Container de execução)
-            ├── CINEMA-PRODUKTION-BASE-001.md (3 níveis)
-            ├── REGISTO-CENA-*.md (registos de cena)
-            ├── PROTOCOLO-RUN-*.md (protocolos de medição)
-            ├── PROMPTS-*.md (prompts de geração)
-            └── <personagem>/
-                    ├── RESULTADOS-*.md
-                    └── ERRATA-*.md
+Frame   Anchor    F2F→next    Estado
+f01     0.91      0.96        ✅ Personagem correcto
+f02     0.90      0.49        ❌ BREAK LOCALIZADO
+f03     0.41      0.96        ❌ Rosto errado, estabilizado
+f04     0.42      0.97        ❌ Rosto errado, estabilizado
 ```
 
-### O Container NÃO é Paralelo
+**Assinatura:** F2F alta (>0.90) APÓS o BREAK + Anchor baixo (<0.50).
 
-O Container `produktion/` não substitui este documento — **executa-o**. Este documento define o "como"; o Container regista cada execução individual.
+### Implicação
+
+> *"F2F sozinho pode certificar uma MENTIRA."*
+
+A continuidade temporal NÃO prova identidade. Um gerador que troca de rosto e estabiliza passa o F2F. Só o Anchor apanha que o rosto está errado.
+
+**Promoção Nv3 exige AMBOS os gates:** Anchor ≥ floor E F2F ≥ 0.70.
 
 ---
 
-## V. AXIOMAS DO ÓRGÃO MÉTODO
+## VI. AXIOMAS DO ÓRGÃO MÉTODO
 
 > *"O SPINE-CAST mede se É a pessoa. Não mede se É o mesmo momento."*
 
@@ -167,35 +270,112 @@ O Container `produktion/` não substitui este documento — **executa-o**. Este 
 
 > *"A continuidade não se mede depois — constrói-se na geração."*
 
+> *"Um achado de 'impossibilidade' é sempre suspeito até esgotares a configuração."* (Adicionado v2.0)
+
+> *"Antes de selar uma limitação de gerador, esgotar a documentação do gerador."* (Adicionado v2.0)
+
 ---
 
-## VI. CHECKLIST PRÉ-GERAÇÃO
+## VII. CHECKLIST PRÉ-GERAÇÃO
 
 Antes de gerar qualquer plano para HIOS:
 
-- [ ] Âncora SEALED do personagem disponível como `image_1`?
-- [ ] Referência de cenário disponível como `image_2`?
-- [ ] Prompt segue gramática descritiva (não imperativa)?
-- [ ] Generator configurado para VIDEO (não Image)?
-- [ ] Workflow inclui extracção de keyframes do vídeo?
+**Anchor-Frame (P1):**
+- [ ] Usar Joey Method (gen4_image)?
+- [ ] `referenceImages` com `tag: "character"`?
+- [ ] Prompt descritivo (não imperativo)?
+- [ ] Target ≥0.75 FORENSE?
+
+**Shots de Movimento:**
+- [ ] Decidir: Joey Method ou Video-Native?
+- [ ] Se Video-Native: aceitar risco de BREAK (67-80%)?
 - [ ] Protocolo de medição inclui M1 + M2 + M3?
+- [ ] Estratégia de re-geração se BREAK detectado?
+
+**Geral:**
+- [ ] Âncora SEALED disponível?
+- [ ] Floor autorizado por anchor-frame ≥0.75?
 
 Se qualquer item falhar → PARAR e corrigir antes de gerar.
 
 ---
 
-## VII. VERIFICAÇÃO
+## VIII. REFERÊNCIA DE API
+
+### Joey Method (gen4_image)
 
 ```bash
-# Hash deste documento (para receipt)
-sha256sum production/METHOD-HIOS-GENERATION-001.md
+# Endpoint
+POST https://api.dev.runwayml.com/v1/text_to_image
 
-# Confirmar que Container produktion/ existe
-ls -la /opt/windi/hios/cinema/produktion/
+# Headers
+Authorization: Bearer {RUNWAY_API_KEY}
+X-Runway-Version: 2024-11-06
+Content-Type: application/json
+
+# Payload
+{
+  "model": "gen4_image",
+  "ratio": "1280:720",
+  "referenceImages": [
+    {"uri": "data:image/png;base64,...", "tag": "character"}
+  ],
+  "promptText": "..."
+}
+```
+
+### Video-Native (gen4_turbo)
+
+```bash
+# Endpoint
+POST https://api.dev.runwayml.com/v1/image_to_video
+
+# Payload
+{
+  "model": "gen4_turbo",
+  "promptImage": "data:image/png;base64,...",
+  "referenceImages": [
+    {"uri": "data:image/png;base64,...", "tag": "character"}
+  ],
+  "promptText": "...",
+  "duration": 5,
+  "ratio": "1280:720"
+}
 ```
 
 ---
 
-*Liga IA+H · WINDI Publishing House · 13 Jun 2026*
+## IX. DADOS EMPÍRICOS (17 Jun 2026)
+
+### Fonte
+
+Sessão Helena-Forest, S08-FOREST_v1, personagem Helena Meyer.
+
+### Video-Native (gen4_turbo)
+
+| Test | Runs | Config | FORENSE | PASS | BREAK |
+|------|------|--------|---------|------|-------|
+| P1 reliability | 5 | +referenceImages | 0% | 0% | 80% |
+| P5 reliability | 3 | +referenceImages | 33% | 100% | 67% |
+
+### Joey Method (gen4_image)
+
+| Test | Runs | Frames | Config | FORENSE | PASS | Nota |
+|------|------|--------|--------|---------|------|------|
+| P1 joey | 1 | 5 | +referenceImages | **5/5** | **5/5** | min 0.76 |
+| P5 joey | 1 | 5 | +referenceImages | 1/5 | 4/5 | **1 frame abaixo floor (0.6145)** |
+
+**ATENÇÃO:** P5 Joey é resultado de 1 run, não taxa. Taxa pendente (5 runs).
+
+### Conclusão Empírica
+
+- Joey Method: **fiável** para anchor-frames (100% FORENSE)
+- Video-Native: **não fiável** para identidade (0-33% FORENSE)
+- `referenceImages`: **obrigatório** mas não suficiente para video-native
+
+---
+
+*Liga IA+H · WINDI Publishing House · 17 Jun 2026*
 *"AI processes. Human decides. WINDI guarantees."*
-*Órgão MÉTODO — Primeiro Habitante*
+*Órgão MÉTODO — v2.0 com dados empíricos*
+

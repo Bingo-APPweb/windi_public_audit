@@ -232,6 +232,27 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
 
         # ── /api/receipts/<id> ──
         # Gate 0 fix: supports both full IDs and short suffixes (e.g., DBED5A85)
+        # ?????? /api/receipts/by-hash/<sha256> ??????
+        # Gate0-FIX-001: public bridge for file/hash verification.
+        elif path.startswith("/api/receipts/by-hash/") and path.count("/") == 4:
+            raw_hash = path.split("/")[-1]
+            candidates = [raw_hash]
+            if raw_hash.startswith("sha256:"):
+                candidates.append(raw_hash.replace("sha256:", "", 1))
+            else:
+                candidates.append(f"sha256:{raw_hash}")
+            matches = reconcile_hashes(candidates)
+            if matches:
+                self._json(200, {
+                    "ok": True,
+                    "receipt": matches[0],
+                    "match_count": len(matches),
+                    "lookup_method": "content_hash",
+                    "privacy": "content_not_stored",
+                })
+            else:
+                self._json(404, {"ok": False, "error": "not_found", "hash": raw_hash})
+
         elif path.startswith("/api/receipts/") and path.count("/") == 3:
             receipt_id = path.split("/")[-1]
             r = get_receipt(receipt_id)
@@ -521,6 +542,8 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
         elif path.startswith("/api/verify/") and path.count("/") == 3:
             receipt_id = path.split("/")[-1]
             r = get_receipt(receipt_id)
+            if not r:
+                r = get_receipt_by_suffix(receipt_id)
             if r:
                 self._json(200, {
                     "ok": True,
@@ -534,6 +557,8 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
                     "status": r.get("status", "sealed"),
                     "algorithm": "SHA-256",
                     "privacy": "content_not_stored",
+                    "lookup_method": r.get("_lookup_method", "id"),
+                    "proof_limits": "WINDI proves existence, integrity, and recorded path; it does not prove the truthfulness of the content.",
                 })
             else:
                 self._json(404, {

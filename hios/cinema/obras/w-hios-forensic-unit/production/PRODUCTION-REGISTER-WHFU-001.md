@@ -316,7 +316,7 @@ metodo:          METHOD-CINEMA-CONTINUITY-001
 
 | R | D | A | F | Estado |
 |---|---|---|---|--------|
-| ✅ | ✅ | ✅ | ❌ | **DECUPAGEM COMPLETA · GERAÇÃO PENDENTE** |
+| ✅ | ✅ | ✅ | 🟡 | **IDENTIDADE VALIDADA (13/13 FORENSIC) · CURADORIA ESTÉTICA PENDENTE** |
 
 | Campo | Valor |
 |-------|-------|
@@ -327,8 +327,15 @@ metodo:          METHOD-CINEMA-CONTINUITY-001
 | **Âncoras** | Vance ✅ EXTRACTED |
 | **Decupagem** | ✅ **12 planos** · 5 anchor-frames |
 | **Documento** | `decupagem/DECUPAGEM-CENA-15.md` |
-| **Próximo passo** | Gerar P15-04, P15-06, P15-07 (críticos ≥0.75) |
-| **Nota** | Cena IDEAL — estática, emocional, prioridade para geração |
+| **P15-04** | ✅ **5/5 FORENSIC** (0.9522-0.9774, mean 0.9606, M3 0.0090) |
+| **P15-06** | ✅ **3/3 FORENSIC** (0.9625-0.9814, mean 0.9738, M3 0.0081) |
+| **P15-07** | ✅ **5/5 FORENSIC** (0.9565-0.9837, mean 0.9710, M3 0.0112) |
+| **Próximo** | P15-10 (perfil, ≥0.65 OPERATIONAL) — opcional |
+| **Nota** | Identidade 13/13 FORENSIC. Curadoria estética pendente (HD + Witness).
+| **ERRATA 18 Jun** | Os 13 frames são RETRATOS DE ESTÚDIO (fundo neutro), não frames de CENA (bunker). |
+| **DESCOBERTA** | `vance_002.png` de Cena 7 tem IDENTIDADE (0.7484) + AMBIENTE (bunker + monitores). |
+| **PRÓXIMO** | Regenerar P15-04/06/07 usando `vance_002.png` como promptImage (não o anchor canónico). |
+| **Galeria** | `test_p1507_video/SCENE-ASSETS-GALLERY.html` — comparação de assets
 
 ---
 
@@ -341,7 +348,7 @@ metodo:          METHOD-CINEMA-CONTINUITY-001
 | **ROTEIRO** | v3 completo, 16 cenas, 4 atos | **100%** |
 | **ÂNCORAS** | 6 personagens principais extraídos | **~85%** |
 | **DECUPAGEM** | **16/16 cenas decupadas (COMPLETA)** | **100%** |
-| **CENAS FILMADAS** | Nenhuma cena gerada e validada | **~0%** |
+| **CENAS FILMADAS** | Cena 15 **IDENTIDADE OK** (13/13 FORENSIC) · curadoria pendente | **~3%** (parcial) |
 
 ### Estado Real por Cena
 
@@ -362,9 +369,10 @@ metodo:          METHOD-CINEMA-CONTINUITY-001
 | 12 | ✅ | ✅ | ✅ | ❌ | ❌ |
 | 13 | ✅ | ✅ | ✅ | ❌ | ❌ |
 | 14 | ✅ | ✅ | ✅ | ❌ | ❌ |
-| 15 | ✅ | ✅ | ✅ | ❌ | ❌ |
+| 15 | ✅ | ✅ | ✅ | 🟡 | ❌ |
 
 **Cenas COMPLETAS (R+D+A+F verdes): 0/16 (0%)**
+**Cena 15: Identidade 13/13 FORENSIC · Curadoria estética pendente**
 
 ---
 

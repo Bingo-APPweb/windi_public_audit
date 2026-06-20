@@ -205,3 +205,18 @@ W-HUMANDRAGON-XXXXXXXX
   - Report SHA256: `bc38d69de5155490574fdc9f70b3b6022b4c29bfe9e4d99b30ddf7296e36b92d`
   - Receipt Candidate SHA256: `46faa6005ffd85684ce603a7a80b85bd3d24365d81a3d6247a241c547b308307`
   - Guard line: "Organizar a continuidade sem assumir a soberania."
+
+### 2026-06-17 - S236 VERIFY Sanitary + Airgap Candidate
+
+- `S236-VERIFY-SANITARY-AIRGAP-20260617.md` - distributed memory loop closure for VERIFY sanitary stabilization, Ledger ownership transfer, pending Phase 7/8, and AIRGAP-SEAL candidate.
+- `LEDGER-OWNERSHIP-TRANSFER-001-RESULT.md` - Ledger `:8101` ownership transfer PASS.
+- `VERIFY-SANITARY-UPGRADE-001-SEMI-UPGRADE-RESULT.md` - Verify `:8114` semi-upgrade PASS.
+- `DOCTRINE-HIOS-AIRGAP-SEAL-CANDIDATE.md` - doctrine candidate only, not_submitted.
+
+### 2026-06-18 - S236 CINEMA Cena 15 P15-03 Emocao Deslocada
+
+- `S236-CINEMA-CENA15-P15-03-EMOCAO-DESLOCADA-20260618.md` - memory loop closure for the P15-03 paper dragon/drop insert.
+- Status: `MEMORY LOOP CLOSURE - not_submitted`.
+- Preferred candidate: `P15-03_insert_dragao_lagrima_take03_slow2_candidate.mp4`.
+- SHA256: `372a8a2df52de3d2e6858d394dbccda0c09cb83fbbf9806f448457234d1a6bbe`.
+- Boundary: grammar shot, no ArcFace, no receipt, no Ledger seal, final approval waits for fine cut with soundtrack.
