@@ -19693,3 +19693,58 @@ STATUS: PASS (11/11)
 
 > "O chão está feito. A porta está aberta. O mundo pode entrar."
 
+
+---
+
+## SESSION-20260620-WINDI-HIOS-AUDIT-ORDER-001
+
+**Data:** 20 Jun 2026
+**Duração:** Dia completo
+**Executor:** CCODE (extracção) + CODEX (classificação)
+**Ratificador:** Human Dragon
+
+### Sumário
+
+Auditoria WINDI-HIOS-AUDIT-ORDER-001 executada. CCODE extraiu 56 serviços, CODEX classificou (formato 12 campos). Primeiro mapa anatómico verificado do WINDI-HIOS.
+
+### Anatomia
+
+| body_part | Qtd |
+|-----------|-----|
+| OSSO | 6 |
+| NERVO | 10 |
+| MÚSCULO | 28 |
+| CÓRTEX | 7 |
+| ANDAIME | 3 |
+| ? | 2 |
+
+### Selo Final
+
+```
+Hash:     09170531b3eba2eb774fb3cbd9afb23dffe7e89e4989ff01484c81e3b6404179
+Medido:   Mão do Human Dragon
+Método:   sha256sum (inline invalidado, sidecar externo)
+```
+
+### 4 Achados P0
+
+1. **MAPA MENTE:** CLAUDE.md declara LIVE 4 serviços que estão MORTOS (:8140, :8151, :8160, :8180)
+2. **CURAS SEM RECEIPT:** 8 portas passaram de 404→VIVO sem selo no Ledger (:8096 é âncora)
+3. **FRAGMENTAÇÃO DE IDENTIDADE:** :8096, :8099, :8122, :8126 — 4 gates sem contrato de publicação
+4. **SELO PARTIDO:** O acto de selar estava partido (quem edita selava) — corrigido por separação
+
+### Contêiner
+
+`/opt/windi/docs/audit/WINDI-HIOS-INVENTORY.md`
+
+**Estado:** CONGELADO — não tocar até ratificação
+
+### Pendente Próxima Sessão
+
+- Relatório de ratificação das 12 bandeiras
+- DOUTRINA-MAPA-VERDADE-001 (como impedir o mapa de mentir)
+- DOUTRINA-SELO-ATÓMICO-001 (quem edita não sela; quem sela não edita)
+
+### Frase de Guarda
+
+> "AI processa. Humano decide. WINDI garante."
