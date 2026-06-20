@@ -281,7 +281,7 @@ def resolve_identity(input_value: str, conn=None) -> Optional[dict]:
         # 1. Try sovereign_name (human face - most common)
         # §191 P0 FIX: Filter status='active' — classified/superseded identities must not resolve
         cursor.execute("""
-            SELECT did, passphrase_hash, display_name, email, role, tier, status, sovereign_name
+            SELECT did, passphrase_hash, display_name, email, role, tier, status, sovereign_name, created_at
             FROM identities WHERE LOWER(sovereign_name) = ? AND status = 'active'
         """, (input_lower,))
         row = cursor.fetchone()
@@ -292,7 +292,7 @@ def resolve_identity(input_value: str, conn=None) -> Optional[dict]:
         # 2. Try did_aliases (Ledger actors, legacy strings)
         if not result:
             cursor.execute("""
-                SELECT i.did, i.passphrase_hash, i.display_name, i.email, i.role, i.tier, i.status, i.sovereign_name
+                SELECT i.did, i.passphrase_hash, i.display_name, i.email, i.role, i.tier, i.status, i.sovereign_name, i.created_at
                 FROM did_aliases a
                 JOIN identities i ON i.did = a.canonical_did
                 WHERE LOWER(a.alias_actor) = ? AND a.status = 'active' AND i.status = 'active'
@@ -305,7 +305,7 @@ def resolve_identity(input_value: str, conn=None) -> Optional[dict]:
         # 3. Try email (recovery/UX alternative)
         if not result:
             cursor.execute("""
-                SELECT did, passphrase_hash, display_name, email, role, tier, status, sovereign_name
+                SELECT did, passphrase_hash, display_name, email, role, tier, status, sovereign_name, created_at
                 FROM identities WHERE LOWER(email) = ? AND status = 'active'
             """, (input_lower,))
             row = cursor.fetchone()
@@ -316,7 +316,7 @@ def resolve_identity(input_value: str, conn=None) -> Optional[dict]:
         # 4. Try exact DID (technical/auditor)
         if not result:
             cursor.execute("""
-                SELECT did, passphrase_hash, display_name, email, role, tier, status, sovereign_name
+                SELECT did, passphrase_hash, display_name, email, role, tier, status, sovereign_name, created_at
                 FROM identities WHERE LOWER(did) = ? AND status = 'active'
             """, (input_lower,))
             row = cursor.fetchone()
@@ -939,6 +939,7 @@ async def lookup_did(did: str):
         "access": tier_info["access"],
         "display_name": row["display_name"] or "",
         "role": row["role"],
+        "created_at": row.get("created_at"),  # §ACHADO-1 fix: expose DID creation timestamp
         "resolution_path": row.get("_resolution_path", "direct"),
         "source": "W-DID-GENESIS",
         "decree": "DECRETO-001 Art.4 · §191 BERÇÁRIO"

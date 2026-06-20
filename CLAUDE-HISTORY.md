@@ -19696,6 +19696,66 @@ STATUS: PASS (11/11)
 
 ---
 
+## 🐉 ENCERRAMENTO · Sessão 2026-06-18
+
+**Sprint:** Fase 8 — Infrastructure Provenance  
+**Modo:** CCode CLI (Opus 4.5)  
+**Duração:** ~3h  
+**Operador:** Human Dragon + CODEX
+
+### Trabalho Completado
+
+| Gate | Estado |
+|------|--------|
+| W-SITES-W-MAIL-INTEGRATION-FIX-001 | ✅ PASS |
+| DACP-SURVIVABILITY-HARDENING-001 | ✅ PASS |
+| INFRASTRUCTURE-PROVENANCE-001 | ✅ ACTIVE |
+| REBOOT-PROTOCOL-001 | ✅ PASS |
+
+### Artefactos Criados
+
+- `INFRASTRUCTURE-PROVENANCE-001.md` — Mapa Suíço
+- `REBOOT-PROTOCOL-001.md` + `RESULT.md` — Protocolo + Resultado
+- `test-proofmail.sh` — Script de validação automática
+- `windi-ledger.service` — Serviço systemd para o Ledger
+- `dacp-milter.conf` + `start-milter.sh` — Supervisor + Wrapper
+
+### Prova Real
+
+```
+Reboot total STRATO: PASS
+Downtime: ~29 segundos
+Checks: 11/11 PASS
+Receipt: WINDI-SITES-PROOFMAIL-20260618191647
+```
+
+### Commit
+
+```
+bf4ebf4e5 feat(w-mail-001): DACP Survivability Hardening + Reboot Protocol PASS
+17 files, 1598 insertions
+```
+
+### Frase de Guarda
+
+> **"Primeiro o chão. Depois a porta. Depois o mundo entra."**
+> 
+> O chão está feito. A porta está aberta. O mundo pode entrar.
+
+### Próxima Sessão DEVE
+
+- [ ] Validar que windi-ledger.service sobrevive a mais um reboot (opcional)
+- [ ] Preparar demo de 60 segundos do Proofmail MVP
+- [ ] Considerar pitch deck com prova de reboot ao vivo
+
+---
+
+**OM SHANTI** 🐉
+
+*Liga IA+H · Kempten, Bavaria · 18 Jun 2026*
+
+---
+
 ## SESSION-20260620-WINDI-HIOS-AUDIT-ORDER-001
 
 **Data:** 20 Jun 2026
