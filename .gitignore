@@ -211,9 +211,21 @@ hios/cinema/obras/w-hios-forensic-unit/production/*_gallery/
 # Cinema produktion directory
 hios/cinema/produktion/
 
-# HIOS Visual (complete visual pipeline - obra viva)
-# State: HIOS em producao inicial, pipeline madura
-hios/visual/
+# HIOS Visual (obra viva em producao inicial)
+# DOUTRINA-NADA-DESPERDICIO-001: ignorar peso, nao documentacao
+# Binarios ignorados:
+hios/visual/**/*.mp4
+hios/visual/**/*.png
+hios/visual/**/*.jpg
+hios/visual/**/*.wav
+hios/visual/**/*.mp3
+hios/visual/**/*_frames/
+hios/visual/**/assets/
+hios/visual/**/audio/
+hios/visual/**/images/
+hios/visual/**/output/
+hios/visual/**/.venv/
+# Documentacao NAO ignorada (guioes, schemas, doutrinas permanecem no git)
 
 # HIOS Output
 hios/output/
