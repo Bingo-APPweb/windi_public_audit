@@ -1,5 +1,11 @@
-# Ambiente e secrets
+# Ambiente e secrets — SECURITY-INCIDENT-001 hardening (21 Jun 2026)
 .env
+.env.*
+.env.local
+.env.keys*
+**/.env
+**/.env.*
+**/.env.local
 venv/
 __pycache__/
 *.pyc
