@@ -673,10 +673,11 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
                 # §191: Added service-control types for W-SERVICE-CONTROL restart audit trail
                 # §248: Added constitutional for governance laws (Lei V+)
                 # §261: Added cognitive_handoff for W-BIND-001 session continuity primitive
+                # §299: Added birth_receipt/birth_failure for P0 DID Genesis birth certification
                 VALID_DOC_TYPES = (
                     "doc", "xlsx", "pptx", "jmpg", "communique", "compliance_passport", "cartaz", "canvas",
                     "service-restart-initiated", "service-restart-completed", "audit-bundle", "constitutional",
-                    "cognitive_handoff"
+                    "cognitive_handoff", "birth_receipt", "birth_failure"
                 )
                 if r["doc_type"] not in VALID_DOC_TYPES:
                     self._json(400, {
@@ -788,16 +789,27 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
                 # if r.get("ed25519_sig") and r.get("ed25519_pub"):
                 #     verify_ed25519(canonical_receipt_payload(r), r["ed25519_sig"], r["ed25519_pub"])
 
-                upsert_receipt(r)
+                created = upsert_receipt(r)
 
-                print(f"[FORENSIC] ◆ Receipt: {r['id']} | {r['doc_name']} | {r['governance_level']} | SGE {r['sge_score']}")
-                self._json(201, {
-                    "ok": True,
-                    "stored": True,
-                    "id": r["id"],
-                    "privacy": "content_not_stored",
-                    "message": f"Virtue Receipt '{r['id']}' sealed in Forensic Ledger",
-                })
+                if created:
+                    print(f"[FORENSIC] ◆ Receipt: {r['id']} | {r['doc_name']} | {r['governance_level']} | SGE {r['sge_score']}")
+                    self._json(201, {
+                        "ok": True,
+                        "stored": True,
+                        "id": r["id"],
+                        "privacy": "content_not_stored",
+                        "message": f"Virtue Receipt '{r['id']}' sealed in Forensic Ledger",
+                    })
+                else:
+                    # §299 FIX: 200 for idempotent (already exists), not 201
+                    print(f"[FORENSIC] ○ Receipt exists (idempotent): {r['id']}")
+                    self._json(200, {
+                        "ok": True,
+                        "stored": False,
+                        "id": r["id"],
+                        "privacy": "content_not_stored",
+                        "message": f"Virtue Receipt '{r['id']}' already exists (immutable)",
+                    })
 
             except json.JSONDecodeError:
                 self._json(400, {"ok": False, "error": "invalid_json"})
@@ -858,14 +870,22 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
                     self._json(400, {"ok": False, "error": "id and name required"})
                     return
 
-                upsert_receipt(receipt)
+                created = upsert_receipt(receipt)
 
-                print(f"[FORENSIC] ◆ Suite Receipt: {receipt['id']} | {receipt['doc_name']}")
-                self._json(201, {
-                    "status": "registered",
-                    "document_id": receipt["id"],
-                    "message": f"Document '{receipt['doc_name']}' registered in Forensic Ledger",
-                })
+                if created:
+                    print(f"[FORENSIC] ◆ Suite Receipt: {receipt['id']} | {receipt['doc_name']}")
+                    self._json(201, {
+                        "status": "registered",
+                        "document_id": receipt["id"],
+                        "message": f"Document '{receipt['doc_name']}' registered in Forensic Ledger",
+                    })
+                else:
+                    print(f"[FORENSIC] ○ Suite Receipt exists: {receipt['id']}")
+                    self._json(200, {
+                        "status": "exists",
+                        "document_id": receipt["id"],
+                        "message": f"Document '{receipt['doc_name']}' already exists (immutable)",
+                    })
 
             except json.JSONDecodeError:
                 self._json(400, {"ok": False, "error": "invalid_json"})

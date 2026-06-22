@@ -136,10 +136,33 @@ def canonical_receipt_payload(r: Dict[str, Any]) -> bytes:
 # CRUD Operations
 # ═══════════════════════════════════════════════════
 
-def upsert_receipt(r: Dict[str, Any], db_path: str = DEFAULT_DB_PATH) -> None:
-    """Insert or update a Virtue Receipt."""
+def upsert_receipt(r: Dict[str, Any], db_path: str = DEFAULT_DB_PATH) -> bool:
+    """
+    Insert a Virtue Receipt (append-only).
+
+    §299 P0 FIX: Changed from upsert to insert-only.
+    LedgerTamper invariant: receipts are IMMUTABLE once written.
+    Duplicate IDs are silently ignored (idempotent), but content
+    is NEVER overwritten.
+
+    Returns:
+        True if receipt was newly inserted
+        False if receipt already existed (idempotent, no change)
+    """
     con = _connect(db_path)
     try:
+        # §299 FIX: Check if receipt already exists
+        existing = con.execute(
+            "SELECT id, content_hash FROM receipts WHERE id = ?",
+            (r["id"],)
+        ).fetchone()
+
+        if existing:
+            # Receipt already exists - idempotent success, NO overwrite
+            # This protects LedgerTamper invariant
+            return False  # Not created, already existed
+
+        # Insert new receipt (append-only)
         con.execute("""
             INSERT INTO receipts(
                 id, created_at, actor, device_id, app, doc_name, doc_type,
@@ -148,29 +171,6 @@ def upsert_receipt(r: Dict[str, Any], db_path: str = DEFAULT_DB_PATH) -> None:
                 ed25519_pub, ed25519_sig, merkle_root, status, metadata_json,
                 jurisdiction, declaration, parent_receipt_id
             ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-            ON CONFLICT(id) DO UPDATE SET
-                actor=excluded.actor,
-                device_id=excluded.device_id,
-                app=excluded.app,
-                doc_name=excluded.doc_name,
-                doc_type=excluded.doc_type,
-                local_filename=excluded.local_filename,
-                content_hash=excluded.content_hash,
-                bytes=excluded.bytes,
-                governance_level=excluded.governance_level,
-                sge_score=excluded.sge_score,
-                isp_context=excluded.isp_context,
-                template_id=excluded.template_id,
-                tags_json=excluded.tags_json,
-                flags_json=excluded.flags_json,
-                ed25519_pub=excluded.ed25519_pub,
-                ed25519_sig=excluded.ed25519_sig,
-                merkle_root=excluded.merkle_root,
-                status=excluded.status,
-                metadata_json=excluded.metadata_json,
-                jurisdiction=excluded.jurisdiction,
-                declaration=excluded.declaration,
-                parent_receipt_id=excluded.parent_receipt_id
         """, (
             r["id"],
             r["created_at"],
@@ -198,6 +198,7 @@ def upsert_receipt(r: Dict[str, Any], db_path: str = DEFAULT_DB_PATH) -> None:
             r.get("parent_receipt_id"),
         ))
         con.commit()
+        return True  # Newly created
     finally:
         con.close()
 

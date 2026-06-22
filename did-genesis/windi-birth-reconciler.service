@@ -1,0 +1,20 @@
+[Unit]
+Description=WINDI Birth Reconciler — P0 §299
+Documentation=https://windi-domain.com/docs/did-genesis
+After=windi-did-genesis.service windi-ledger.service
+
+[Service]
+Type=oneshot
+User=windi
+Group=windi
+WorkingDirectory=/opt/windi/did-genesis
+ExecStart=/usr/bin/python3 /opt/windi/did-genesis/birth_reconciler.py
+StandardOutput=journal
+StandardError=journal
+
+# Security
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

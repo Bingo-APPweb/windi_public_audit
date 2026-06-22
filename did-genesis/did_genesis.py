@@ -30,6 +30,16 @@ from fastapi.responses import JSONResponse, RedirectResponse, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
+# P0 §299 — Ledger client for birth_receipt emission
+try:
+    from ledger_client import seal_birth, check_receipt_exists, generate_birth_receipt_id
+    LEDGER_ENABLED = True
+except ImportError:
+    LEDGER_ENABLED = False
+    seal_birth = None
+    check_receipt_exists = None
+    generate_birth_receipt_id = None
+
 # ══════════════════════════════════════════════════════════════════════════════
 # CONFIGURATION
 # ══════════════════════════════════════════════════════════════════════════════
@@ -1257,14 +1267,22 @@ async def birth(body: BirthRequest, request: Request, response: Response):
         now = datetime.now(timezone.utc).isoformat()
         passphrase_hash = hash_passphrase(body.passphrase)
 
-        # 7. Insert identity
+        # 7. Generate expected receipt ID (deterministic)
+        expected_receipt_id = None
+        if LEDGER_ENABLED:
+            expected_receipt_id = generate_birth_receipt_id(canonical_did)
+
+        # 8. Insert identity with birth_receipt_status='pending'
+        # G2: SQLite commits first, Ledger POST after (no orphan receipts)
         cursor.execute("""
             INSERT INTO identities
-            (did, passphrase_hash, display_name, email, role, tier, sovereign_name, created_at, status)
-            VALUES (?, ?, ?, ?, 'user', 'SEED', ?, ?, 'active')
-        """, (canonical_did, passphrase_hash, body.name.strip(), body.email.lower(), sovereign, now))
+            (did, passphrase_hash, display_name, email, role, tier, sovereign_name,
+             created_at, status, birth_receipt_status, birth_receipt_id)
+            VALUES (?, ?, ?, ?, 'user', 'SEED', ?, ?, 'active', 'pending', ?)
+        """, (canonical_did, passphrase_hash, body.name.strip(), body.email.lower(),
+              sovereign, now, expected_receipt_id))
 
-        # 8. Create session
+        # 9. Create session
         token = create_session_token(
             did=canonical_did,
             role="user",
@@ -1280,15 +1298,134 @@ async def birth(body: BirthRequest, request: Request, response: Response):
         """, (hash_token(token), canonical_did, now, expires,
               request.client.host, request.headers.get("user-agent", "")[:200], now))
 
-        # 9. Log birth event
+        # 10. Log birth event
         cursor.execute("""
             INSERT INTO login_events (did, event_type, ip, user_agent, timestamp, success)
             VALUES (?, 'birth', ?, ?, ?, 1)
         """, (canonical_did, request.client.host, request.headers.get("user-agent", "")[:200], now))
 
+        # 11. COMMIT SQLite — DID exists, receipt pending
         conn.commit()
+        log.info(f"🌱 BIRTH (pending): {sovereign} → {canonical_did}")
 
-        log.info(f"🌱 BIRTH: {sovereign} → {canonical_did} · tier=SEED")
+        # 12. P0 §299: POST to Ledger (outside SQLite transaction)
+        birth_receipt_status = "pending"
+        if LEDGER_ENABLED:
+            try:
+                import httpx
+                status, receipt_id = seal_birth(
+                    canonical_did=canonical_did,
+                    sovereign_name=sovereign,
+                    email=body.email.lower(),
+                    birth_timestamp=now
+                )
+                birth_receipt_status = status
+
+                if status == "sealed":
+                    # Update status in DB
+                    cursor.execute("""
+                        UPDATE identities
+                        SET birth_receipt_status = 'sealed'
+                        WHERE did = ? AND birth_receipt_status = 'pending'
+                    """, (canonical_did,))
+                    conn.commit()
+                    log.info(f"🌱 BIRTH (sealed): {sovereign} → {canonical_did} · receipt={receipt_id}")
+
+                elif status == "pending":
+                    # Ledger unreachable — strict mode: check if receipt exists
+                    try:
+                        exists, _ = check_receipt_exists(expected_receipt_id)
+                        if exists:
+                            # Reconciled
+                            cursor.execute("""
+                                UPDATE identities
+                                SET birth_receipt_status = 'sealed'
+                                WHERE did = ? AND birth_receipt_status = 'pending'
+                            """, (canonical_did,))
+                            conn.commit()
+                            birth_receipt_status = "sealed"
+                            log.info(f"🌱 BIRTH (reconciled): {sovereign} → {canonical_did}")
+                        else:
+                            # Ledger confirmed 404 — strict mode: DELETE
+                            cursor.execute("DELETE FROM identities WHERE did = ?", (canonical_did,))
+                            cursor.execute("DELETE FROM sessions WHERE did = ?", (canonical_did,))
+                            cursor.execute("""
+                                UPDATE login_events SET event_type = 'birth_failure',
+                                       failure_cause = 'ledger_confirmed_404'
+                                WHERE did = ? AND event_type = 'birth'
+                            """, (canonical_did,))
+                            conn.commit()
+                            log.warning(f"🌱 BIRTH FAILED (404): {sovereign} → {canonical_did}")
+                            raise HTTPException(status_code=503, detail={
+                                "error_code": "BIRTH_LEDGER_FAILED",
+                                "error": {
+                                    "de": "Geburt fehlgeschlagen: Ledger konnte nicht bestätigen",
+                                    "en": "Birth failed: Ledger could not confirm",
+                                    "pt": "Nascimento falhou: Ledger não conseguiu confirmar"
+                                }
+                            })
+                    except httpx.RequestError:
+                        # Ledger truly unreachable — leave pending for reconciler
+                        log.warning(f"🌱 BIRTH (pending, Ledger down): {sovereign} → {canonical_did}")
+                        # In strict mode v0, we fail if Ledger is down
+                        cursor.execute("DELETE FROM identities WHERE did = ?", (canonical_did,))
+                        cursor.execute("DELETE FROM sessions WHERE did = ?", (canonical_did,))
+                        cursor.execute("""
+                            UPDATE login_events SET event_type = 'birth_failure',
+                                   failure_cause = 'ledger_unreachable'
+                            WHERE did = ? AND event_type = 'birth'
+                        """, (canonical_did,))
+                        conn.commit()
+                        raise HTTPException(status_code=503, detail={
+                            "error_code": "BIRTH_LEDGER_UNREACHABLE",
+                            "error": {
+                                "de": "Geburt fehlgeschlagen: Ledger nicht erreichbar",
+                                "en": "Birth failed: Ledger unreachable",
+                                "pt": "Nascimento falhou: Ledger inacessível"
+                            }
+                        })
+
+            except HTTPException:
+                raise
+            except Exception as ledger_err:
+                log.error(f"Ledger error during birth: {ledger_err}")
+                # Strict mode: fail birth if Ledger has any error
+                cursor.execute("DELETE FROM identities WHERE did = ?", (canonical_did,))
+                cursor.execute("DELETE FROM sessions WHERE did = ?", (canonical_did,))
+                cursor.execute("""
+                    UPDATE login_events SET event_type = 'birth_failure',
+                           failure_cause = 'ledger_unreachable'
+                    WHERE did = ? AND event_type = 'birth'
+                """, (canonical_did,))
+                conn.commit()
+                raise HTTPException(status_code=503, detail={
+                    "error_code": "BIRTH_LEDGER_ERROR",
+                    "error": {
+                        "de": "Geburt fehlgeschlagen: Ledger-Fehler",
+                        "en": "Birth failed: Ledger error",
+                        "pt": "Nascimento falhou: erro no Ledger"
+                    }
+                })
+        else:
+            # P0 §299 STRICT MODE: Ledger not enabled = birth FAILS
+            # Legacy mode removed by Guardian review (backdoor vulnerability)
+            log.error(f"🌱 BIRTH BLOCKED: Ledger not enabled (LEDGER_ENABLED=False)")
+            cursor.execute("DELETE FROM identities WHERE did = ?", (canonical_did,))
+            cursor.execute("DELETE FROM sessions WHERE did = ?", (canonical_did,))
+            cursor.execute("""
+                UPDATE login_events SET event_type = 'birth_failure',
+                       failure_cause = 'ledger_not_enabled'
+                WHERE did = ? AND event_type = 'birth'
+            """, (canonical_did,))
+            conn.commit()
+            raise HTTPException(status_code=503, detail={
+                "error_code": "BIRTH_LEDGER_NOT_ENABLED",
+                "error": {
+                    "de": "Geburt fehlgeschlagen: Ledger-Client nicht verfügbar",
+                    "en": "Birth failed: Ledger client not available",
+                    "pt": "Nascimento falhou: cliente Ledger não disponível"
+                }
+            })
 
         # 10. Set session cookie
         response.set_cookie(
@@ -1305,6 +1442,7 @@ async def birth(body: BirthRequest, request: Request, response: Response):
         tier_info = DID_TIERS["SEED"]
 
         # §191-F1.C: backup_required flag (I14 - explicit requirement)
+        # P0 §299: Include birth_receipt in response
         return {
             "success": True,
             "canonical_did": canonical_did,
@@ -1312,6 +1450,11 @@ async def birth(body: BirthRequest, request: Request, response: Response):
             "display_name": body.name.strip(),
             "tier": "SEED",
             "tier_emoji": tier_info["emoji"],
+            "birth_receipt": {
+                "status": birth_receipt_status,
+                "receipt_id": expected_receipt_id,
+                "verify_url": f"https://windi-domain.com/verify-public/?id={expected_receipt_id}" if expected_receipt_id else None
+            },
             "backup_required": True,  # §191-F1.C: I14 explicit
             "backup": {
                 "key": backup_key,

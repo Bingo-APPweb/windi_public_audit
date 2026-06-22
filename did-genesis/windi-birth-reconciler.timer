@@ -1,0 +1,11 @@
+[Unit]
+Description=WINDI Birth Reconciler Timer — P0 §299 (every 5 minutes)
+Documentation=https://windi-domain.com/docs/did-genesis
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=5min
+Persistent=true
+
+[Install]
+WantedBy=timers.target

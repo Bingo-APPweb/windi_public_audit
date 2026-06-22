@@ -1,0 +1,19 @@
+[Unit]
+Description=W-DID-GENESIS Sovereign Identity Tree
+Documentation=https://windi-domain.com/api/genesis/docs
+After=network.target
+
+[Service]
+Type=simple
+User=windi
+Group=windi
+WorkingDirectory=/opt/windi/did-genesis
+EnvironmentFile=/opt/windi/did-genesis/.env
+ExecStart=/usr/bin/python3 /opt/windi/did-genesis/did_genesis.py
+Restart=always
+RestartSec=5
+StandardOutput=append:/opt/windi/logs/did-genesis.log
+StandardError=append:/opt/windi/logs/did-genesis.log
+
+[Install]
+WantedBy=multi-user.target
