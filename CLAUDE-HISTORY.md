@@ -6,6 +6,124 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 23 Jun 2026 — W-PLAYGROUND-001 + Canons Constitucionais
+
+**Duração:** ~4h | **Status:** ✅ CONSTITUTIONAL LAYER ESTABLISHED
+**Liga IA+H:** Human Dragon (I1, I9) · CCode (Opus 4.5)
+**Invariants:** I1, I9, I11, I12, I14, I17, §194, §247, §248
+**Natureza:** Playground Launch + Frontend/DID Canon + Global Audit
+
+### Artefactos Criados
+
+| Artefacto | Status | Descrição |
+|-----------|--------|-----------|
+| W-PLAYGROUND-001 | ✅ LIVE | Campo de provas soberano |
+| W-FRONTEND-CANON-001 | CANDIDATE | Trilingual + Theme constitucional |
+| W-DID-CANON-001 | CANDIDATE | DID Gate constitucional |
+| LIVING-PAPER.md | ✅ CREATED | Hipótese de pesquisa Playground |
+
+### Playground (Campo de Provas)
+
+**Hipótese fundadora:**
+> *"Do people create when given a space to create before identity is required?"*
+
+**Arquitectura:**
+```
+Landing → Workbench → Proof Field → Claim → DID Genesis
+```
+
+**Ficheiros:**
+- `/opt/windi/playground.html` (landing trilíngue)
+- `/opt/windi/w-workbench-001/editor.html` (editor trilíngue)
+- `/opt/windi/w-workbench-001/WORKBENCH-CONSTITUTION.md`
+- `/opt/windi/w-workbench-001/proof-field-events.json` (10 eventos)
+
+### W-FRONTEND-CANON-001
+
+**Regras canónicas:**
+- Idiomas: `pt` / `en` / `de` (obrigatórios)
+- Storage: `localStorage('windi-lang')` + `localStorage('windi-theme')`
+- Themes: `noir` / `klar`
+- Anti-patterns: underscore, sessionStorage, hardcode
+
+**Páginas migradas:**
+| Página | Antes | Depois |
+|--------|-------|--------|
+| Enterprise | sessionStorage | localStorage ✅ |
+| Governance | windi_theme | windi-theme ✅ |
+| Identity | sessionStorage | localStorage ✅ |
+| Memory | sessionStorage | localStorage ✅ |
+
+### W-DID-CANON-001
+
+**Princípio fundador:**
+> *"A identidade soberana é única. Os portões podem ser muitos."*
+
+**Evolução constitucional:**
+> *"WINDI é para todos. Criar: livre. Possuir: com DID."*
+
+**Auditoria Global DID Gates:**
+| Gate | Score | Conformidade |
+|------|-------|--------------|
+| W-TRAVEL-001 | A | ✅ Canon |
+| W-SITES-001 | A | ✅ Canon |
+| Desktop GEN7 | A | ✅ Canon |
+| W-Wallet | B | ⚠️ Key migrada |
+
+### Desktop GEN7 Trilingual
+
+**P1-A COMPLETE:**
+- Adicionadas traduções DID Wallet Modal (DE/EN/PT)
+- Sistema i18n já existente utilizado
+- Keys: `wm_seal`, `wm_identificacao`, `wm_entrar`, etc.
+
+### Wallet Session Key Migration
+
+**P1-B COMPLETE (Fase 1):**
+```
+Strategy: Dual-read / Dual-write / Dual-delete
+
+Canon:    windi-did-session
+Legacy:   windi_token (mantido)
+
+Login:    SET ambos
+Logout:   REMOVE ambos
+Check:    READ canon || legacy + silent migration
+```
+
+**Legacy removal:** Deferred to next audit cycle.
+
+### Descoberta Constitucional
+
+> *"A Constituição não inventou regras novas. Codificou o padrão que os gates maduros já seguiam."*
+
+**WindiDID.js** emerge como módulo unificador:
+```
+Desktop GEN7  ─┬─→  WindiDID.js  ─→  DID Genesis
+Travel        ─┤    (fonte única)
+Sites         ─┤
+Wallet        ─┘
+```
+
+### Próxima Fronteira
+
+```
+PLAYGROUND
+    ↓
+Claim Bridge
+    ↓
+DID Genesis
+```
+
+Território de inovação real (vs. harmonização de legado).
+
+### Frase de Guarda
+
+> *"Uma mesma casa, com quartos diferentes."*
+> — Guardian, 23 Jun 2026
+
+---
+
 ## § SESSÃO 12 Jun 2026 (manhã) — DOCTRINE-CINE-VERIFY-001 SEALED + Estado Corrigido
 
 **Duração:** ~30min | **Status:** ✅ DOUTRINA SELADA
@@ -19808,3 +19926,218 @@ Método:   sha256sum (inline invalidado, sidecar externo)
 ### Frase de Guarda
 
 > "AI processa. Humano decide. WINDI garante."
+
+## § SESSÃO 22 Jun 2026 — §299 P0 PLAYGROUND-MUSTER-001 FECHADO
+
+**Duração:** ~4h | **Status:** ✅ P0 FECHADO COM HONRA
+**Liga IA+H:** Human Dragon (I1, I9) · Guardian (GPT) · CCode (Opus 4.5)
+**Invariants:** I1, I9, I11, I14, I19
+**Natureza:** Implementação Constitucional + Teste de Imutabilidade
+
+### Receipts da Sessão
+
+| Receipt | Hash | Descrição |
+|---------|------|-----------|
+| S298-DOUTRINA | `15FB461B` | DOUTRINA-INGREDIENTE-VS-PRODUTO-001 |
+| S299-PLAYGROUND | `5B31E7A1` | PLAYGROUND-MUSTER-001 |
+
+### Commit
+
+```
+ce4e3228d feat(did-genesis): §299 P0 — birth_receipt emission to Forensic Ledger
+```
+
+### Implementação P0 Completa
+
+| Componente | Status |
+|------------|--------|
+| birth_receipt → Ledger :8101 | ✅ |
+| G2 Atomicity (SQLite → Ledger) | ✅ |
+| Reconciler (24h TTL, 5min timer) | ✅ |
+| LedgerTamper fix (imutabilidade) | ✅ demonstrada |
+| Legacy backdoor removido | ✅ |
+| HTTP semântica (201/200) | ✅ |
+
+### Ficheiros Criados/Modificados
+
+- `did-genesis/ledger_client.py` (NEW)
+- `did-genesis/birth_reconciler.py` (NEW)
+- `did-genesis/did_genesis.py` (MODIFIED)
+- `suite-docs/forensic_ledger.py` (MODIFIED)
+- `suite-docs/windi_forensic_api.py` (MODIFIED)
+- `docs/constitutional/S298-*.md` (NEW)
+- `docs/constitutional/S299-*.md` (NEW)
+
+### Teste de Imutabilidade (Guardian's Scenario E)
+
+```
+POST duplicado com actor válido → Ledger aceita (200)
+content_hash original → PRESERVADO
+metadata original → PRESERVADO
+✅ LedgerTamper: if existing: return False
+```
+
+### P1 Debt (Aceite)
+
+- P1-SERVICE-DID: criar did:windi:w-did-genesis-001
+- P1-AUTH: autenticação de emitters no Ledger
+
+### Frase de Fecho (Human Dragon)
+
+> "Fechamos com honra. Não 'sucesso', não 'concluído'. Honra — porque foi feito 
+> do modo certo: nada assumido, tudo demonstrado, cada pedra testada incluindo 
+> a que parecia que ia ceder."
+
+### Próxima Sessão
+
+1. Métrica do Playground — "o que conta como sinal?"
+2. wallet_id schema enhancement (P1)
+
+---
+
+## § SESSÃO 23 Jun 2026 — W-WORKBENCH-001 GENESIS + Playground Landing v0
+
+**Duração:** ~3h | **Status:** ✅ WORKBENCH GENESIS + FLUXO COMPLETO
+**Liga IA+H:** Human Dragon (I1, I9) · Architect (GPT) · CCode (Opus 4.5)
+**Invariants:** I1, I9, I11, I14
+**Natureza:** Arquitectura Constitucional + Implementação v0
+
+### Artefactos Criados
+
+| Ficheiro | Propósito |
+|----------|-----------|
+| `/opt/windi/artifacts/playground.html` | Landing v0 pública |
+| `/opt/windi/artifacts/editor.html` | Editor mínimo público |
+| `/opt/windi/schemas/workbench-v0.1.0.json` | Schema canónico |
+| `/opt/windi/w-workbench-001/WORKBENCH-CONSTITUTION.md` | Regras constitucionais |
+| `/opt/windi/w-workbench-001/workbench.py` | Runtime Python |
+
+### URLs Públicos
+
+- **Landing:** https://windi-domain.com/artifacts/playground.html
+- **Editor:** https://windi-domain.com/artifacts/editor.html
+
+### Decisões Constitucionais
+
+**1. Playground ≠ Catálogo de Serviços**
+> "O Playground não ensina ferramentas. Ensina padrões de construção."
+
+**2. Workbench = Ambiente Efémero Governado**
+> "Um viveiro de futuros espaços soberanos." — Architect
+
+**3. §300-candidate: Doutrina da Transferência de Autoria**
+> "A maior tentação será simplificar e oferecer directamente o serviço. Isso mudará a natureza do que estamos a construir."
+
+Regra: A plataforma transfere autoria, nunca absorve.
+
+### Validações I9 — Workbench v0
+
+| Regra | Valor |
+|-------|-------|
+| TTL inactividade | 72h |
+| TTL absoluto | pendente v1 |
+| Artefactos v0 | apenas `document` |
+| Patterns | legal, financial, creative, research, organization, general |
+| Convocação | capacidades, não agentes |
+| Intervenção | opt-in explícito, silêncio antes de valor |
+| Claim | só com 3+ edições ou 1+ export |
+
+### Editor v0 — Funcionalidades
+
+- ✅ Criar documento com `workbench_id` + `artifact_id`
+- ✅ Auto-save (debounce 800ms → localStorage)
+- ✅ Contador de palavras/edições
+- ✅ Hash SHA-256
+- ✅ Exportar (.md com metadados)
+- ✅ TTL 72h com sinal de retorno
+- ✅ Banner de claim quando elegível
+- ✅ Tema KLAR/NOIR
+- ✅ Título via URL (`?title=...`)
+
+### O que NÃO foi implementado (v0)
+
+- ❌ W-FARM-001 (claim é placeholder)
+- ❌ Ledger / receipts
+- ❌ DID Genesis
+- ❌ Agentes / capacidades
+- ❌ Upload de ficheiros
+- ❌ API backend Flask
+
+### Inspiração Vintage
+
+Screenshot SiteGround 2008 analisado. Ossos absorvidos:
+- Campo de acção imediato (não só botão)
+- Punch list visual (🔑 Identidade · 📜 Provas · 🏠 Espaço · 🛡️ Sem rastreio)
+
+### Frase de Fecho (Architect)
+
+> "A próxima fonte de verdade já não é mais a teoria. É o comportamento real dos primeiros humanos dentro do Workbench."
+
+### Próxima Fase
+
+**Objetivo:** Testar Workbench exaustivamente antes de qualquer outro nível
+
+**Perguntas a responder com uso real:**
+1. O utilizador escreve?
+2. O título ajuda ou prefere entrar directo?
+3. 3 edições é threshold correcto?
+4. 72h TTL é adequado?
+5. As capacidades (quando existirem) serão úteis?
+
+**Bloqueio:** Nenhum avanço para Claim/DID/HDUser até validar Workbench.
+
+---
+
+
+### Adenda: W-PROOF-FIELD-001 (mesmo dia)
+
+**Campo de Provas v0 estabelecido.**
+
+#### Catálogo Trilingue
+
+| ID | Evento | Categoria | PT | EN | DE |
+|----|--------|-----------|----|----|----| 
+| E001 | enter | construction | Entrou no Workbench | Entered Workbench | Workbench betreten |
+| E002 | create | construction | Criou documento | Created document | Dokument erstellt |
+| E003 | first_content | construction | Primeiro conteúdo | First content | Erster Inhalt |
+| E004 | edit | construction | Editou | Edited | Bearbeitet |
+| E005 | return | construction | Retornou | Returned | Zurückgekehrt |
+| E006 | export | construction | Exportou documento | Exported document | Dokument exportiert |
+| E007 | claim_eligible | **readiness** | Elegível para claim | Claim eligible | Anspruchsberechtigt |
+| E008 | claim_started | ownership | Iniciou claim | Started claim | Claim gestartet |
+| E009 | claim_completed | ownership | Completou claim | Completed claim | Claim abgeschlossen |
+| E010 | expired | ownership | Expirou | Expired | Abgelaufen |
+
+#### Três Categorias
+
+```
+construction (E001-E006)
+  "As pessoas criam?"
+
+readiness (E007)
+  "Quando a criação está pronta para ser reclamada?"
+  (limiar entre criar e possuir)
+
+ownership (E008-E010)
+  "Quando a criação se transforma em posse?"
+```
+
+#### Regra v0 (Invariante)
+
+> **"Emitir eventos, não interpretar."**
+> Recolher → Armazenar → Exportar.
+> A observação precede a interpretação.
+
+#### Ficheiros
+
+| Ficheiro | Propósito |
+|----------|-----------|
+| `/opt/windi/w-workbench-001/proof-field-events.json` | Catálogo trilingue |
+| `/opt/windi/artifacts/editor.html` | Editor com emissão de eventos |
+
+#### Frase de Fecho (Architect)
+
+> "W-PROOF-FIELD-001 estabeleceu a primeira linguagem observável do Playground. O sistema passa a recolher factos de construção trilingues antes de qualquer inferência. A observação precede a interpretação."
+
+---
+
