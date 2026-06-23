@@ -20141,3 +20141,88 @@ ownership (E008-E010)
 
 ---
 
+
+## §300 — Observação antes de Abstracção (23 Jun 2026)
+
+**Status:** GUIDANCE · **Autor:** Human Dragon · **Natureza:** Estratégia de Fase
+**Invariants:** I1, I9, I18 (Organic Growth)
+
+> *"O próximo conhecimento importante do WINDI-HIOS provavelmente não está no código que falta escrever. Está no comportamento que ainda falta ver."*
+
+### Transição de Fase
+
+O WINDI-HIOS completou:
+```
+Arquitectura → Constituição → Convergência
+```
+
+Agora entra em:
+```
+Observação → Comportamento → Aprendizagem
+```
+
+### O Que Evitar (Risco de Abstracção Prematura)
+
+❌ W-PLAYGROUND-002
+❌ Mais Canons
+❌ Mais camadas de agentes
+❌ Mais categorias de artefactos
+❌ Mais heurísticas de claim
+
+**Razão:** O Playground acabou de nascer. Ainda não teve oportunidade de surpreender os próprios criadores.
+
+### Os 4 Níveis de Observação
+
+| Nível | Pergunta | Transição |
+|-------|----------|-----------|
+| 1 | Existe criação? | Landing → Editor → Primeira frase |
+| 2 | Existe continuidade? | Primeira frase → Retorno |
+| 3 | Existe apego? | Retorno → Export |
+| 4 | Existe posse? | Export → Claim |
+
+**Regra:** Só olhar seriamente para DID Genesis após validar Nível 4.
+
+### O Marco Procurado
+
+Não é:
+- 1000 utilizadores
+- 100 claims
+
+É:
+```
+10 humanos reais
+```
+
+Com relatório honesto:
+```
+Entraram: X
+Escreveram: Y
+Voltaram: Z
+Exportaram: W
+Reclamaram: N
+```
+
+**Sem interpretação excessiva. Sem marketing. Sem narrativa. Apenas observação.**
+
+### Hipótese Rara
+
+> "Um ambiente onde a plataforma tenta deliberadamente transferir autoria para o utilizador em vez de absorvê-la."
+
+Esta é a hipótese que pode interessar Anthropic, OpenAI, universidades e investigadores. Não pela tecnologia — pelo comportamento humano observado.
+
+### Living Paper
+
+O Living Paper pode tornar-se mais importante que documentos constitucionais porque responde:
+```
+O que pensávamos?
+↓
+O que aconteceu?
+↓
+O que aprendemos?
+```
+
+### Frase de Guarda (Human Dragon)
+
+> *"O Playground acabou de nascer. Ele ainda não teve oportunidade de surpreender os próprios criadores."*
+
+---
