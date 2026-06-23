@@ -194,6 +194,7 @@ function exitToolMode() {
 }
 
 // === i18n Translations ===
+// W-FRONTEND-CANON-001 compliant (PT-BR / EN / DE)
 const I18N = {
     de: {
         placeholder: "Was möchten Sie erstellen?",
@@ -215,7 +216,18 @@ const I18N = {
         canvas_placeholder: "Beschreibe, was du visualisieren möchtest...",
         canvas_type: "Typ",
         canvas_theme: "Thema",
-        canvas_generate: "Visualisierung generieren"
+        canvas_generate: "Visualisierung generieren",
+        // DID Wallet Modal (W-DID-CANON-001)
+        wm_seal: "✓ Souverän",
+        wm_identificacao: "IDENTIFIKATION",
+        wm_info_text: "Gib deine Wallet-ID ein, um auf deine souveräne Identität zuzugreifen.",
+        wm_entrar: "Eintreten",
+        wm_no_wallet: "→ Noch keine Wallet? Hier erstellen",
+        wm_dignity_id: "DIGNITY ID",
+        wm_receipts_label: "BELEGE",
+        wm_receipts_fase2: "PHASE 2",
+        wm_receipts_msg: "Ledger↔Wallet-Verknüpfung verfügbar in PHASE 2",
+        wm_sair: "← Wallet verlassen"
     },
     en: {
         placeholder: "What do you want to create?",
@@ -237,7 +249,18 @@ const I18N = {
         canvas_placeholder: "Describe what you want to visualize...",
         canvas_type: "Type",
         canvas_theme: "Theme",
-        canvas_generate: "Generate visualization"
+        canvas_generate: "Generate visualization",
+        // DID Wallet Modal (W-DID-CANON-001)
+        wm_seal: "✓ Sovereign",
+        wm_identificacao: "IDENTIFICATION",
+        wm_info_text: "Enter your Wallet ID to access your sovereign identity.",
+        wm_entrar: "Enter",
+        wm_no_wallet: "→ No Wallet yet? Create here",
+        wm_dignity_id: "DIGNITY ID",
+        wm_receipts_label: "RECEIPTS",
+        wm_receipts_fase2: "PHASE 2",
+        wm_receipts_msg: "Ledger↔Wallet association available in PHASE 2",
+        wm_sair: "← Exit Wallet"
     },
     pt: {
         placeholder: "O que deseja criar?",
@@ -259,7 +282,18 @@ const I18N = {
         canvas_placeholder: "Descreve o que queres visualizar...",
         canvas_type: "Tipo",
         canvas_theme: "Tema",
-        canvas_generate: "Gerar visualização"
+        canvas_generate: "Gerar visualização",
+        // DID Wallet Modal (W-DID-CANON-001)
+        wm_seal: "✓ Soberano",
+        wm_identificacao: "IDENTIFICAÇÃO",
+        wm_info_text: "Introduz o teu Wallet ID para aceder à tua identidade soberana.",
+        wm_entrar: "Entrar",
+        wm_no_wallet: "→ Ainda não tens Wallet? Criar aqui",
+        wm_dignity_id: "DIGNITY ID",
+        wm_receipts_label: "RECEIPTS",
+        wm_receipts_fase2: "FASE 2",
+        wm_receipts_msg: "Associação Ledger↔Wallet disponível na FASE 2",
+        wm_sair: "← Sair da Wallet"
     }
 };
 

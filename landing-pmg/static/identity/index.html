@@ -763,28 +763,39 @@
   </footer>
 
   <script>
-    /* Theme toggle */
+    /* ─── W-FRONTEND-CANON-001 Compliant ─── */
+
+    /* Theme toggle (localStorage per Canon §4.2) */
     (function(){
       var root=document.documentElement, btn=document.getElementById('theme-toggle');
-      try{var s=sessionStorage.getItem('windi-theme');if(s==='noir'){root.dataset.theme='noir';document.querySelector('meta[name="theme-color"]').content='#0A0A08';}}catch(e){}
+      try{var s=localStorage.getItem('windi-theme');if(s==='noir'){root.dataset.theme='noir';document.querySelector('meta[name="theme-color"]').content='#0A0A08';}}catch(e){}
       btn.onclick=function(){
         var n=root.dataset.theme==='noir';
         root.dataset.theme=n?'klar':'noir';
         document.querySelector('meta[name="theme-color"]').content=n?'#FAFAF8':'#0A0A08';
-        try{sessionStorage.setItem('windi-theme',root.dataset.theme);}catch(e){}
+        try{localStorage.setItem('windi-theme',root.dataset.theme);}catch(e){}
       };
     })();
 
-    /* Lang toggle */
+    /* Lang toggle (localStorage per Canon §3) */
     (function(){
-      var btn=document.getElementById('lang-toggle'), langs=['pt','de','en'], cur='pt';
+      var btn=document.getElementById('lang-toggle'), langs=['pt','de','en'];
+      var saved=null;
+      try{saved=localStorage.getItem('windi-lang');}catch(e){}
+      var browserLang=navigator.language.slice(0,2);
+      var cur=saved||(langs.indexOf(browserLang)>=0?browserLang:'en');
+
       function set(l){
-        cur=l; document.documentElement.lang=l;
+        cur=l;
+        document.documentElement.lang=l==='pt'?'pt-BR':l;
+        document.documentElement.setAttribute('data-lang',l);
         document.querySelectorAll('[data-i18n]').forEach(function(e){
           e.querySelectorAll('[lang]').forEach(function(a){a.classList.toggle('active',a.lang===l);});
         });
         btn.querySelectorAll('.lang-opt').forEach(function(o){o.setAttribute('aria-current',o.dataset.lang===l?'true':'false');});
+        try{localStorage.setItem('windi-lang',l);}catch(e){}
       }
+      set(cur); // Apply on load
       btn.onclick=function(){set(langs[(langs.indexOf(cur)+1)%3]);};
     })();
   </script>

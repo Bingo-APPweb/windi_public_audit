@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="noir">
+<html lang="en" data-theme="noir" data-lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -120,6 +120,23 @@ body {
   transition: all var(--transition);
 }
 .nav-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+/* Lang toggle */
+.lang-toggle { display: flex; gap: 4px; }
+.lang-btn {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 5px 8px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.lang-btn:hover { border-color: var(--gold); color: var(--gold); }
+.lang-btn.active { background: var(--gold); color: var(--bg-primary); border-color: var(--gold); }
 
 /* HERO */
 .hero {
@@ -288,6 +305,11 @@ body {
     <span class="nav-name">WINDI</span>
   </a>
   <div class="nav-controls">
+    <div class="lang-toggle">
+      <button class="lang-btn" data-lang="de">DE</button>
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="pt">PT</button>
+    </div>
     <a href="/ecosystem/" class="nav-link">Ecosystem</a>
     <a href="/governance" class="nav-link">Dashboard</a>
     <button class="nav-btn" onclick="toggleTheme()">◐</button>
@@ -295,11 +317,11 @@ body {
 </nav>
 
 <section class="hero">
-  <div class="tier-badge">Enterprise</div>
-  <h1 class="hero-title">
-    Full <span class="highlight">Institutional</span> Control
+  <div class="tier-badge" id="tierBadge">Enterprise</div>
+  <h1 class="hero-title" id="heroTitle">
+    Full <span class="highlight" id="heroHighlight">Institutional</span> Control
   </h1>
-  <p class="hero-subtitle">
+  <p class="hero-subtitle" id="heroSubtitle">
     Sentinel monitoring. Multi-layer semantic risk detection.
     Zero-Knowledge architecture. EU AI Act aligned.
   </p>
@@ -368,16 +390,78 @@ body {
 </footer>
 
 <script>
+/* ─── W-FRONTEND-CANON-001 Compliant ─── */
+
+// Translations
+const UI = {
+  en: {
+    tierBadge: 'Enterprise',
+    heroTitle: 'Full <span class="highlight">Institutional</span> Control',
+    heroSubtitle: 'Sentinel monitoring. Multi-layer semantic risk detection. Zero-Knowledge architecture. EU AI Act aligned.'
+  },
+  de: {
+    tierBadge: 'Enterprise',
+    heroTitle: 'Vollständige <span class="highlight">institutionelle</span> Kontrolle',
+    heroSubtitle: 'Sentinel-Überwachung. Mehrstufige semantische Risikoerkennung. Zero-Knowledge-Architektur. EU AI Act konform.'
+  },
+  pt: {
+    tierBadge: 'Empresarial',
+    heroTitle: 'Controle <span class="highlight">Institucional</span> Completo',
+    heroSubtitle: 'Monitoramento Sentinel. Detecção semântica de risco multicamadas. Arquitetura Zero-Knowledge. Alinhado com EU AI Act.'
+  }
+};
+
+let currentLang = 'en';
+
+function t(key) { return UI[currentLang][key] || UI['en'][key] || key; }
+
+function updateLanguage() {
+  const root = document.documentElement;
+  root.setAttribute('data-lang', currentLang);
+  root.lang = currentLang === 'pt' ? 'pt-BR' : currentLang;
+
+  const el = (id) => document.getElementById(id);
+  if (el('tierBadge')) el('tierBadge').textContent = t('tierBadge');
+  if (el('heroTitle')) el('heroTitle').innerHTML = t('heroTitle');
+  if (el('heroSubtitle')) el('heroSubtitle').textContent = t('heroSubtitle');
+
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === currentLang);
+  });
+}
+
 function toggleTheme() {
   const html = document.documentElement;
   const current = html.getAttribute('data-theme');
   const next = current === 'noir' ? 'klar' : 'noir';
   html.setAttribute('data-theme', next);
-  localStorage.setItem('windi_theme', next);
+  localStorage.setItem('windi-theme', next);
 }
+
+// Canonical initialization
 (function() {
-  const saved = localStorage.getItem('windi_theme');
-  if (saved) document.documentElement.setAttribute('data-theme', saved);
+  const root = document.documentElement;
+
+  // Theme (localStorage per Canon §4.2)
+  const savedTheme = localStorage.getItem('windi-theme');
+  if (savedTheme) root.setAttribute('data-theme', savedTheme);
+
+  // Language (localStorage per Canon §3)
+  const savedLang = localStorage.getItem('windi-lang');
+  const browserLang = navigator.language.slice(0, 2);
+  const supportedLangs = ['pt', 'en', 'de'];
+  currentLang = savedLang || (supportedLangs.includes(browserLang) ? browserLang : 'en');
+  if (!savedLang) localStorage.setItem('windi-lang', currentLang);
+  updateLanguage();
+
+  // Language toggle listeners
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentLang = btn.dataset.lang;
+      localStorage.setItem('windi-lang', currentLang);
+      updateLanguage();
+    });
+  });
 })();
 </script>
 

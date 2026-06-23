@@ -343,26 +343,26 @@
           <div class="wm-title">
             <span class="wm-icon">🪪</span>
             <span>DID Wallet</span>
-            <span class="wm-seal" id="wm-seal-badge" style="display:none">✓ Soberano</span>
+            <span class="wm-seal" id="wm-seal-badge" style="display:none" data-i18n="wm_seal">✓ Soberano</span>
           </div>
           <button class="wm-close" onclick="closeWalletModal()">✕</button>
         </div>
 
         <!-- ESTADO A: Login (sem wallet) -->
         <div id="wm-state-login" class="wm-section">
-          <div class="wm-label">IDENTIFICAÇÃO</div>
-          <p class="wm-info-text">
+          <div class="wm-label" data-i18n="wm_identificacao">IDENTIFICAÇÃO</div>
+          <p class="wm-info-text" data-i18n="wm_info_text">
             Introduz o teu Wallet ID para aceder à tua identidade soberana.
           </p>
           <div class="wm-sign-row">
             <input type="text" id="wm-login-input"
                    class="wm-input"
                    placeholder="WALLET-20260317-0001">
-            <button class="wm-btn-gold" onclick="walletLogin()">Entrar</button>
+            <button class="wm-btn-gold" onclick="walletLogin()" data-i18n="wm_entrar">Entrar</button>
           </div>
           <div class="wm-sign-status" id="wm-login-status"></div>
           <div style="margin-top:12px">
-            <a href="/wallet/" target="_blank" class="wm-link">
+            <a href="/wallet/" target="_blank" class="wm-link" data-i18n="wm_no_wallet">
               → Ainda não tens Wallet? Criar aqui
             </a>
           </div>
@@ -373,7 +373,7 @@
 
           <!-- DID Identity -->
           <div class="wm-section">
-            <div class="wm-label">DIGNITY ID</div>
+            <div class="wm-label" data-i18n="wm_dignity_id">DIGNITY ID</div>
             <div class="wm-did" id="wm-did-value">—</div>
             <div class="wm-did-sub" id="wm-did-sub"></div>
           </div>
@@ -402,8 +402,8 @@
 
           <!-- Receipts — FASE 2 placeholder -->
           <div class="wm-section">
-            <div class="wm-label">RECEIPTS <span style="color:#5A4510;font-size:0.55rem">→ FASE 2</span></div>
-            <div class="wm-receipts-loading" id="wm-receipts-msg">
+            <div class="wm-label"><span data-i18n="wm_receipts_label">RECEIPTS</span> <span style="color:#5A4510;font-size:0.55rem">→ <span data-i18n="wm_receipts_fase2">FASE 2</span></span></div>
+            <div class="wm-receipts-loading" id="wm-receipts-msg" data-i18n="wm_receipts_msg">
               Associação Ledger↔Wallet disponível na FASE 2
             </div>
           </div>
@@ -411,7 +411,7 @@
           <!-- Logout -->
           <div class="wm-footer">
             <button class="wm-link" onclick="walletLogout()"
-                    style="background:none;border:none;cursor:pointer;">
+                    style="background:none;border:none;cursor:pointer;" data-i18n="wm_sair">
               ← Sair da Wallet
             </button>
             <span class="wm-principle">AI processes. Human decides.</span>

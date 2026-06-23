@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI Playground — Constrói. Reclama quando importar.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* KLAR — pergaminho (default) */
+    --bg: #F5F0E0;
+    --bg-elev: #FBF8EF;
+    --ink: #1C1A14;
+    --ink-soft: #4A4636;
+    --ink-faint: #837C66;
+    --line: #DED7C2;
+    --accent: #B5481F;        /* terracota — o "laranja CTA" reinterpretado, sem brilho */
+    --accent-ink: #FBF8EF;
+    --seal: #3A5A40;          /* verde selo */
+    --code-bg: #ECE6D4;
+  }
+  html[data-theme="noir"] {
+    --bg: #14130F;
+    --bg-elev: #1D1B15;
+    --ink: #F1ECDC;
+    --ink-soft: #C3BCA6;
+    --ink-faint: #8B856F;
+    --line: #2C2A22;
+    --accent: #D9622E;
+    --accent-ink: #14130F;
+    --seal: #7FA689;
+    --code-bg: #211F18;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    transition: background .35s ease, color .35s ease;
+  }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 28px; }
+
+  /* ---- top bar : governança silenciosa ---- */
+  header {
+    border-bottom: 1px solid var(--line);
+    position: sticky; top: 0; z-index: 20;
+    backdrop-filter: blur(8px);
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+  }
+  .bar { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .brand { display: flex; align-items: center; gap: 11px; font-weight: 700; letter-spacing: -.01em; font-size: 1.05rem; }
+  .brand .glyph { font-size: 1.3rem; }
+  .brand .sub { font-weight: 500; color: var(--ink-faint); font-size: .82rem; letter-spacing: .04em; text-transform: uppercase; }
+  .about-link {
+    font-family: 'JetBrains Mono', monospace; font-size: .75rem; letter-spacing: .04em;
+    color: var(--ink-soft); text-decoration: none; padding: 6px 12px;
+    border: 1px solid var(--line); border-radius: 999px; transition: all .15s ease;
+  }
+  .about-link:hover { border-color: var(--accent); color: var(--accent); }
+  .lang-toggle {
+    display: flex; gap: 2px; border: 1px solid var(--line); border-radius: 999px; padding: 2px;
+  }
+  .lang-btn {
+    font-family: 'JetBrains Mono', monospace; font-size: .65rem; letter-spacing: .04em;
+    background: transparent; color: var(--ink-faint); border: none;
+    padding: 4px 8px; border-radius: 999px; cursor: pointer; transition: all .15s ease;
+  }
+  .lang-btn:hover { color: var(--ink-soft); }
+  .lang-btn.active { background: var(--accent); color: var(--accent-ink); }
+  .theme-toggle {
+    font-family: 'JetBrains Mono', monospace; font-size: .72rem; letter-spacing: .08em;
+    border: 1px solid var(--line); background: transparent; color: var(--ink-soft);
+    padding: 7px 13px; border-radius: 999px; cursor: pointer; text-transform: uppercase;
+    transition: all .2s ease;
+  }
+  .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ---- hero : UMA promessa, não um panfleto ---- */
+  .hero { padding: 96px 0 64px; }
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: .76rem; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--ink-faint); margin-bottom: 26px;
+  }
+  h1 {
+    font-size: clamp(2.6rem, 6vw, 4.4rem); line-height: 1.02; letter-spacing: -.03em;
+    font-weight: 800; max-width: 16ch;
+  }
+  h1 .em { color: var(--accent); }
+  .lede {
+    font-size: clamp(1.1rem, 2.2vw, 1.4rem); color: var(--ink-soft);
+    max-width: 44ch; margin-top: 28px; font-weight: 400;
+  }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin-top: 40px; }
+  .btn {
+    font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 1.02rem;
+    padding: 15px 30px; border-radius: 10px; cursor: pointer; border: 1px solid transparent;
+    text-decoration: none; display: inline-flex; align-items: center; gap: 9px;
+    transition: transform .12s ease, background .2s ease;
+  }
+  .btn-primary { background: var(--accent); color: var(--accent-ink); }
+  .btn-primary:hover { transform: translateY(-2px); }
+  .btn-ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+  .btn-ghost:hover { border-color: var(--ink-soft); }
+  .cta-note { font-family: 'JetBrains Mono', monospace; font-size: .78rem; color: var(--ink-faint); }
+
+  /* ---- action field (vintage bone) ---- */
+  .action-field {
+    margin-top: 36px; width: 100%; max-width: 540px;
+  }
+  .action-field form {
+    display: flex; gap: 0; border: 2px solid var(--line); border-radius: 12px;
+    overflow: hidden; background: var(--bg-elev);
+    transition: border-color .2s ease;
+  }
+  .action-field form:focus-within { border-color: var(--accent); }
+  .action-field input {
+    flex: 1; border: none; background: transparent; padding: 18px 22px;
+    font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.08rem;
+    color: var(--ink); outline: none;
+  }
+  .action-field input::placeholder { color: var(--ink-faint); }
+  .action-field button {
+    background: var(--accent); color: var(--accent-ink); border: none;
+    padding: 18px 28px; font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 600; font-size: 1rem; cursor: pointer;
+    transition: background .2s ease;
+  }
+  .action-field button:hover { filter: brightness(1.08); }
+  .action-or {
+    font-family: 'JetBrains Mono', monospace; font-size: .76rem;
+    color: var(--ink-faint); margin-top: 16px; letter-spacing: .06em;
+  }
+  .action-or a { color: var(--ink-soft); text-decoration: underline; text-underline-offset: 3px; }
+  .action-or a:hover { color: var(--accent); }
+
+  /* ---- punch list (vintage clarity) ---- */
+  .punch-list {
+    display: flex; flex-wrap: wrap; gap: 12px 24px; margin-top: 32px;
+  }
+  .punch-item {
+    display: flex; align-items: center; gap: 8px;
+    font-family: 'JetBrains Mono', monospace; font-size: .82rem;
+    color: var(--ink-soft); letter-spacing: .02em;
+  }
+  .punch-item .icon { font-size: 1rem; }
+
+  /* ---- the inversion strip ---- */
+  .strip { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 64px 0; }
+  .strip h2 { font-size: clamp(1.6rem, 3.5vw, 2.3rem); letter-spacing: -.02em; font-weight: 700; max-width: 20ch; }
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin-top: 40px; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+  .col { padding: 30px 28px; }
+  .col + .col { border-left: 1px solid var(--line); }
+  .col .tag { font-family: 'JetBrains Mono', monospace; font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 16px; display: block; }
+  .col.them { background: transparent; }
+  .col.us { background: var(--bg-elev); }
+  .col p { font-size: 1.05rem; color: var(--ink-soft); }
+  .col.us p { color: var(--ink); }
+  .col .punch { font-weight: 700; color: var(--ink); margin-top: 14px; font-size: 1.15rem; letter-spacing: -.01em; }
+  .col.us .punch { color: var(--accent); }
+
+  /* ---- what you keep ---- */
+  .keep { padding: 80px 0; }
+  .keep .eyebrow { margin-bottom: 18px; }
+  .keep h2 { font-size: clamp(1.7rem, 3.6vw, 2.4rem); letter-spacing: -.02em; font-weight: 700; max-width: 18ch; }
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; margin-top: 40px; }
+  .cell { background: var(--bg); padding: 30px 28px; }
+  .cell h3 { font-size: 1.15rem; font-weight: 700; letter-spacing: -.01em; display: flex; align-items: baseline; gap: 10px; }
+  .cell h3 .n { font-family: 'JetBrains Mono', monospace; font-size: .8rem; color: var(--ink-faint); font-weight: 500; }
+  .cell p { color: var(--ink-soft); margin-top: 10px; font-size: .98rem; }
+
+  /* ---- the gate (Lei I, silenciosa) ---- */
+  .gate { border-top: 1px solid var(--line); padding: 80px 0; }
+  .gate-box { background: var(--bg-elev); border: 1px solid var(--line); border-radius: 16px; padding: 44px 40px; }
+  .gate h2 { font-size: clamp(1.6rem, 3.4vw, 2.2rem); letter-spacing: -.02em; font-weight: 700; }
+  .gate p { color: var(--ink-soft); margin-top: 16px; font-size: 1.08rem; max-width: 52ch; }
+  .gate .flow { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 30px; font-family: 'JetBrains Mono', monospace; font-size: .9rem; }
+  .gate .step { padding: 9px 16px; border: 1px solid var(--line); border-radius: 8px; color: var(--ink-soft); }
+  .gate .step.live { border-color: var(--accent); color: var(--accent); }
+  .gate .arrow { color: var(--ink-faint); }
+
+  /* ---- closing ---- */
+  .close { padding: 96px 0; text-align: center; }
+  .close h2 { font-size: clamp(2rem, 4.5vw, 3rem); letter-spacing: -.03em; font-weight: 800; max-width: 18ch; margin: 0 auto; }
+  .close h2 .em { color: var(--accent); }
+  .close .btn { margin-top: 36px; }
+
+  footer { border-top: 1px solid var(--line); padding: 34px 0; }
+  .foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; align-items: center; }
+  .foot .roles { font-family: 'JetBrains Mono', monospace; font-size: .76rem; color: var(--ink-faint); letter-spacing: .04em; }
+  .foot .meta { font-family: 'JetBrains Mono', monospace; font-size: .76rem; color: var(--ink-faint); }
+
+  @media (max-width: 720px) {
+    .compare, .grid { grid-template-columns: 1fr; }
+    .col + .col { border-left: none; border-top: 1px solid var(--line); }
+    .hero { padding: 64px 0 48px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap bar">
+    <div class="brand">
+      <span class="glyph">🐉</span>
+      <span>WINDI&nbsp;<span class="sub">Playground</span></span>
+    </div>
+    <a href="/about/" class="about-link" id="aboutLink">Sobre</a>
+    <div class="lang-toggle" id="langToggle">
+      <button class="lang-btn active" data-lang="pt">PT</button>
+      <button class="lang-btn" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="de">DE</button>
+    </div>
+    <button class="theme-toggle" id="themeBtn">NOIR</button>
+  </div>
+</header>
+
+<main>
+
+  <!-- HERO : uma promessa + campo de acção (osso vintage) -->
+  <section class="hero wrap">
+    <div class="eyebrow">Infraestrutura para construtores soberanos</div>
+    <h1>Constrói algo que é <span class="em">teu</span>.</h1>
+    <p class="lede">Começa a criar agora. Sem conta, sem cadastro, sem fricção. Reclamas o que é teu quando importar — e a partir daí, fica teu.</p>
+
+    <div class="action-field">
+      <form id="startForm" action="/artifacts/editor.html" method="get">
+        <input type="text" name="title" id="intentInput" placeholder="Título do teu primeiro documento" autocomplete="off">
+        <button type="submit">Criar</button>
+      </form>
+      <p class="action-or">ou <a href="#como">vê como funciona</a> · <a href="/artifacts/editor.html">entra sem descrever</a></p>
+    </div>
+
+    <p class="cta-note" style="margin-top:28px;">Cria primeiro. Regista quando fizer sentido.</p>
+
+    <div class="punch-list">
+      <div class="punch-item"><span class="icon">🔑</span> Identidade tua</div>
+      <div class="punch-item"><span class="icon">📜</span> Provas tuas</div>
+      <div class="punch-item"><span class="icon">🏠</span> Espaço teu</div>
+      <div class="punch-item"><span class="icon">🛡️</span> Sem rastreio</div>
+    </div>
+  </section>
+
+  <!-- A INVERSÃO : 2008 vs 2026 vs WINDI -->
+  <section class="strip">
+    <div class="wrap">
+      <h2>A internet trocou o construtor pelo produto. Nós trocamos de volta.</h2>
+      <div class="compare">
+        <div class="col them">
+          <span class="tag">A internet de hoje</span>
+          <p>Cria conta. Consome o feed. Produz para terceiros. Nunca és dono da infraestrutura.</p>
+          <p class="punch">Usa a nossa plataforma.</p>
+        </div>
+        <div class="col us">
+          <span class="tag">WINDI Playground</span>
+          <p>Entra. Constrói. O trabalho é teu desde o primeiro gesto. A identidade vem contigo e vai contigo.</p>
+          <p class="punch">Constrói a tua.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- O QUE FICA TEU -->
+  <section class="keep wrap" id="como">
+    <div class="eyebrow">O que hospedamos não são páginas</div>
+    <h2>Hospedamos a tua capacidade de construir.</h2>
+    <div class="grid">
+      <div class="cell">
+        <h3><span class="n">01</span> A tua identidade</h3>
+        <p>Uma só, contínua, que abre todas as portas do ecossistema. Trazes a tua. Levas a tua.</p>
+      </div>
+      <div class="cell">
+        <h3><span class="n">02</span> O teu trabalho</h3>
+        <p>Documentos, criações, decisões. Vivem contigo — não num feed de outra pessoa.</p>
+      </div>
+      <div class="cell">
+        <h3><span class="n">03</span> As tuas provas</h3>
+        <p>Tudo o que fazes deixa um rasto verificável que te pertence. Podes prová-lo, em qualquer lado.</p>
+      </div>
+      <div class="cell">
+        <h3><span class="n">04</span> O teu espaço</h3>
+        <p>Companheiros que aprendes a usar com o tempo. Aparecem quando precisas, não antes.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- O PORTÃO (Lei I, sem jargão) -->
+  <section class="gate">
+    <div class="wrap">
+      <div class="gate-box">
+        <h2>Podes começar sem reclamar nada.</h2>
+        <p>Explora à vontade, em modo leitura, sem deixar nada para trás. No momento em que algo passa a importar — uma criação, uma decisão, uma prova — reclamas. E nesse instante, nasce a tua raiz.</p>
+        <div class="flow">
+          <span class="step">Explorar</span>
+          <span class="arrow">→</span>
+          <span class="step">Construir</span>
+          <span class="arrow">→</span>
+          <span class="step live">Reclamar quando importar</span>
+          <span class="arrow">→</span>
+          <span class="step live">Fica teu</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FECHO -->
+  <section class="close wrap">
+    <h2>Não acordas a pensar numa ferramenta. Acordas a pensar: <span class="em">"quero construir algo que seja meu."</span></h2>
+    <a href="#" class="btn btn-primary">Começar no Playground →</a>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div class="roles">Liga IA+H &nbsp;·&nbsp; Human Dragon &nbsp;+&nbsp; Guardian &nbsp;+&nbsp; Architect &nbsp;+&nbsp; Witness</div>
+    <div class="meta">AI processa. Humano decide. WINDI garante.</div>
+  </div>
+</footer>
+
+<script>
+(function() {
+  // ============================================================
+  // I18N — TRILINGUAL LANDING (PT-BR / EN / DE)
+  // ============================================================
+
+  const UI = {
+    pt: {
+      // Hero
+      eyebrow: 'Infraestrutura para construtores soberanos',
+      heroTitle: 'Construa algo que é',
+      heroTitleEm: 'seu',
+      heroLede: 'Comece a criar agora. Sem conta, sem cadastro, sem fricção. Reivindique o que é seu quando importar — e a partir daí, fica seu.',
+      inputPlaceholder: 'Título do seu primeiro documento',
+      createBtn: 'Criar',
+      seeHow: 'veja como funciona',
+      enterDirect: 'entre sem descrever',
+      ctaNote: 'Crie primeiro. Registre quando fizer sentido.',
+      // Punch list
+      punchIdentity: 'Identidade sua',
+      punchProofs: 'Provas suas',
+      punchSpace: 'Espaço seu',
+      punchNoTrack: 'Sem rastreio',
+      // Strip
+      stripTitle: 'A internet trocou o construtor pelo produto. Nós trocamos de volta.',
+      themTag: 'A internet de hoje',
+      themText: 'Cria conta. Consome o feed. Produz para terceiros. Nunca é dono da infraestrutura.',
+      themPunch: 'Use a nossa plataforma.',
+      usTag: 'WINDI Playground',
+      usText: 'Entre. Construa. O trabalho é seu desde o primeiro gesto. A identidade vem com você e vai com você.',
+      usPunch: 'Construa a sua.',
+      // Keep
+      keepEyebrow: 'O que hospedamos não são páginas',
+      keepTitle: 'Hospedamos a sua capacidade de construir.',
+      keep1Title: 'A sua identidade',
+      keep1Text: 'Uma só, contínua, que abre todas as portas do ecossistema. Você traz a sua. Você leva a sua.',
+      keep2Title: 'O seu trabalho',
+      keep2Text: 'Documentos, criações, decisões. Vivem com você — não num feed de outra pessoa.',
+      keep3Title: 'As suas provas',
+      keep3Text: 'Tudo o que você faz deixa um rastro verificável que lhe pertence. Pode prová-lo, em qualquer lugar.',
+      keep4Title: 'O seu espaço',
+      keep4Text: 'Companheiros que você aprende a usar com o tempo. Aparecem quando você precisa, não antes.',
+      // Gate
+      gateTitle: 'Você pode começar sem reivindicar nada.',
+      gateText: 'Explore à vontade, em modo leitura, sem deixar nada para trás. No momento em que algo passa a importar — uma criação, uma decisão, uma prova — reivindique. E nesse instante, nasce a sua raiz.',
+      flowExplore: 'Explorar',
+      flowBuild: 'Construir',
+      flowClaim: 'Reivindicar quando importar',
+      flowYours: 'Fica seu',
+      // Close
+      closeTitle: 'Você não acorda pensando numa ferramenta. Acorda pensando:',
+      closeTitleEm: '"quero construir algo que seja meu."',
+      closeBtn: 'Começar no Playground →',
+      // Footer
+      footerMeta: 'IA processa. Humano decide. WINDI garante.',
+      // Header
+      aboutLink: 'Sobre'
+    },
+    en: {
+      // Hero
+      eyebrow: 'Infrastructure for sovereign builders',
+      heroTitle: 'Build something that is',
+      heroTitleEm: 'yours',
+      heroLede: 'Start creating now. No account, no registration, no friction. Claim what is yours when it matters — and from then on, it stays yours.',
+      inputPlaceholder: 'Title of your first document',
+      createBtn: 'Create',
+      seeHow: 'see how it works',
+      enterDirect: 'enter without describing',
+      ctaNote: 'Create first. Register when it makes sense.',
+      // Punch list
+      punchIdentity: 'Your identity',
+      punchProofs: 'Your proofs',
+      punchSpace: 'Your space',
+      punchNoTrack: 'No tracking',
+      // Strip
+      stripTitle: 'The internet traded the builder for the product. We trade back.',
+      themTag: 'Today\'s internet',
+      themText: 'Create account. Consume the feed. Produce for others. Never own the infrastructure.',
+      themPunch: 'Use our platform.',
+      usTag: 'WINDI Playground',
+      usText: 'Enter. Build. Your work is yours from the first gesture. Identity comes with you and goes with you.',
+      usPunch: 'Build your own.',
+      // Keep
+      keepEyebrow: 'What we host are not pages',
+      keepTitle: 'We host your ability to build.',
+      keep1Title: 'Your identity',
+      keep1Text: 'One, continuous, that opens all doors of the ecosystem. You bring yours. You take yours.',
+      keep2Title: 'Your work',
+      keep2Text: 'Documents, creations, decisions. They live with you — not in someone else\'s feed.',
+      keep3Title: 'Your proofs',
+      keep3Text: 'Everything you do leaves a verifiable trail that belongs to you. You can prove it, anywhere.',
+      keep4Title: 'Your space',
+      keep4Text: 'Companions you learn to use over time. They appear when you need them, not before.',
+      // Gate
+      gateTitle: 'You can start without claiming anything.',
+      gateText: 'Explore freely, in read mode, without leaving anything behind. The moment something starts to matter — a creation, a decision, a proof — claim it. And in that instant, your root is born.',
+      flowExplore: 'Explore',
+      flowBuild: 'Build',
+      flowClaim: 'Claim when it matters',
+      flowYours: 'It\'s yours',
+      // Close
+      closeTitle: 'You don\'t wake up thinking about a tool. You wake up thinking:',
+      closeTitleEm: '"I want to build something that is mine."',
+      closeBtn: 'Start in the Playground →',
+      // Footer
+      footerMeta: 'AI processes. Human decides. WINDI guarantees.',
+      // Header
+      aboutLink: 'About'
+    },
+    de: {
+      // Hero
+      eyebrow: 'Infrastruktur für souveräne Erbauer',
+      heroTitle: 'Bauen Sie etwas, das',
+      heroTitleEm: 'Ihnen gehört',
+      heroLede: 'Beginnen Sie jetzt zu erstellen. Kein Konto, keine Registrierung, keine Reibung. Beanspruchen Sie, was Ihnen gehört, wenn es wichtig wird — und von da an bleibt es Ihres.',
+      inputPlaceholder: 'Titel Ihres ersten Dokuments',
+      createBtn: 'Erstellen',
+      seeHow: 'sehen Sie, wie es funktioniert',
+      enterDirect: 'ohne Beschreibung eintreten',
+      ctaNote: 'Erst erstellen. Registrieren, wenn es Sinn macht.',
+      // Punch list
+      punchIdentity: 'Ihre Identität',
+      punchProofs: 'Ihre Beweise',
+      punchSpace: 'Ihr Raum',
+      punchNoTrack: 'Keine Verfolgung',
+      // Strip
+      stripTitle: 'Das Internet hat den Erbauer gegen das Produkt eingetauscht. Wir tauschen zurück.',
+      themTag: 'Das heutige Internet',
+      themText: 'Konto erstellen. Feed konsumieren. Für andere produzieren. Niemals die Infrastruktur besitzen.',
+      themPunch: 'Nutzen Sie unsere Plattform.',
+      usTag: 'WINDI Playground',
+      usText: 'Eintreten. Bauen. Ihre Arbeit gehört Ihnen ab der ersten Geste. Die Identität kommt mit Ihnen und geht mit Ihnen.',
+      usPunch: 'Bauen Sie Ihre eigene.',
+      // Keep
+      keepEyebrow: 'Was wir hosten, sind keine Seiten',
+      keepTitle: 'Wir hosten Ihre Fähigkeit zu bauen.',
+      keep1Title: 'Ihre Identität',
+      keep1Text: 'Eine einzige, kontinuierliche, die alle Türen des Ökosystems öffnet. Sie bringen Ihre mit. Sie nehmen Ihre mit.',
+      keep2Title: 'Ihre Arbeit',
+      keep2Text: 'Dokumente, Kreationen, Entscheidungen. Sie leben mit Ihnen — nicht im Feed eines anderen.',
+      keep3Title: 'Ihre Beweise',
+      keep3Text: 'Alles, was Sie tun, hinterlässt eine überprüfbare Spur, die Ihnen gehört. Sie können es überall beweisen.',
+      keep4Title: 'Ihr Raum',
+      keep4Text: 'Begleiter, die Sie im Laufe der Zeit zu nutzen lernen. Sie erscheinen, wenn Sie sie brauchen, nicht vorher.',
+      // Gate
+      gateTitle: 'Sie können beginnen, ohne etwas zu beanspruchen.',
+      gateText: 'Erkunden Sie frei, im Lesemodus, ohne etwas zurückzulassen. In dem Moment, in dem etwas wichtig wird — eine Kreation, eine Entscheidung, ein Beweis — beanspruchen Sie es. Und in diesem Augenblick wird Ihre Wurzel geboren.',
+      flowExplore: 'Erkunden',
+      flowBuild: 'Bauen',
+      flowClaim: 'Beanspruchen wenn wichtig',
+      flowYours: 'Es gehört Ihnen',
+      // Close
+      closeTitle: 'Sie wachen nicht auf und denken an ein Werkzeug. Sie wachen auf und denken:',
+      closeTitleEm: '"Ich will etwas bauen, das mir gehört."',
+      closeBtn: 'Im Playground beginnen →',
+      // Footer
+      footerMeta: 'KI verarbeitet. Mensch entscheidet. WINDI garantiert.',
+      // Header
+      aboutLink: 'Über uns'
+    }
+  };
+
+  let currentLang = localStorage.getItem('windi_lang') || 'pt';
+
+  function t(key) {
+    return UI[currentLang]?.[key] || UI.pt[key] || key;
+  }
+
+  function updateLandingLanguage() {
+    // Hero
+    document.querySelector('.eyebrow').textContent = t('eyebrow');
+    document.querySelector('.hero h1').innerHTML = `${t('heroTitle')} <span class="em">${t('heroTitleEm')}</span>.`;
+    document.querySelector('.lede').textContent = t('heroLede');
+    document.getElementById('intentInput').placeholder = t('inputPlaceholder');
+    document.querySelector('.action-field button').textContent = t('createBtn');
+    document.querySelector('.action-or').innerHTML = `ou <a href="#como">${t('seeHow')}</a> · <a href="/artifacts/editor.html">${t('enterDirect')}</a>`;
+    document.querySelector('.cta-note').textContent = t('ctaNote');
+
+    // Punch list
+    const punchItems = document.querySelectorAll('.punch-item');
+    punchItems[0].innerHTML = `<span class="icon">🔑</span> ${t('punchIdentity')}`;
+    punchItems[1].innerHTML = `<span class="icon">📜</span> ${t('punchProofs')}`;
+    punchItems[2].innerHTML = `<span class="icon">🏠</span> ${t('punchSpace')}`;
+    punchItems[3].innerHTML = `<span class="icon">🛡️</span> ${t('punchNoTrack')}`;
+
+    // Strip
+    document.querySelector('.strip h2').textContent = t('stripTitle');
+    document.querySelector('.col.them .tag').textContent = t('themTag');
+    document.querySelector('.col.them p:not(.punch)').textContent = t('themText');
+    document.querySelector('.col.them .punch').textContent = t('themPunch');
+    document.querySelector('.col.us .tag').textContent = t('usTag');
+    document.querySelector('.col.us p:not(.punch)').textContent = t('usText');
+    document.querySelector('.col.us .punch').textContent = t('usPunch');
+
+    // Keep
+    document.querySelector('.keep .eyebrow').textContent = t('keepEyebrow');
+    document.querySelector('.keep h2').textContent = t('keepTitle');
+    const cells = document.querySelectorAll('.cell');
+    cells[0].querySelector('h3').innerHTML = `<span class="n">01</span> ${t('keep1Title')}`;
+    cells[0].querySelector('p').textContent = t('keep1Text');
+    cells[1].querySelector('h3').innerHTML = `<span class="n">02</span> ${t('keep2Title')}`;
+    cells[1].querySelector('p').textContent = t('keep2Text');
+    cells[2].querySelector('h3').innerHTML = `<span class="n">03</span> ${t('keep3Title')}`;
+    cells[2].querySelector('p').textContent = t('keep3Text');
+    cells[3].querySelector('h3').innerHTML = `<span class="n">04</span> ${t('keep4Title')}`;
+    cells[3].querySelector('p').textContent = t('keep4Text');
+
+    // Gate
+    document.querySelector('.gate h2').textContent = t('gateTitle');
+    document.querySelector('.gate p').textContent = t('gateText');
+    const steps = document.querySelectorAll('.step');
+    steps[0].textContent = t('flowExplore');
+    steps[1].textContent = t('flowBuild');
+    steps[2].textContent = t('flowClaim');
+    steps[3].textContent = t('flowYours');
+
+    // Close
+    document.querySelector('.close h2').innerHTML = `${t('closeTitle')} <span class="em">${t('closeTitleEm')}</span>`;
+    document.querySelector('.close .btn').textContent = t('closeBtn');
+
+    // Footer
+    document.querySelector('.meta').textContent = t('footerMeta');
+
+    // About link
+    document.getElementById('aboutLink').textContent = t('aboutLink');
+
+    // Update HTML lang attribute
+    document.documentElement.lang = currentLang === 'pt' ? 'pt-BR' : currentLang;
+  }
+
+  // Theme toggle
+  const btn = document.getElementById('themeBtn');
+  const root = document.documentElement;
+  btn.addEventListener('click', () => {
+    const noir = root.getAttribute('data-theme') === 'noir';
+    root.setAttribute('data-theme', noir ? 'klar' : 'noir');
+    btn.textContent = noir ? 'NOIR' : 'KLAR';
+    localStorage.setItem('windi_theme', noir ? 'klar' : 'noir');
+  });
+
+  // Restore theme
+  const savedTheme = localStorage.getItem('windi_theme');
+  if (savedTheme === 'noir') {
+    root.setAttribute('data-theme', 'noir');
+    btn.textContent = 'KLAR';
+  }
+
+  // Language toggle
+  const langBtns = document.querySelectorAll('.lang-btn');
+  langBtns.forEach(b => {
+    b.addEventListener('click', () => {
+      currentLang = b.dataset.lang;
+      localStorage.setItem('windi_lang', currentLang);
+      langBtns.forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      updateLandingLanguage();
+    });
+  });
+
+  // Restore language
+  const savedLang = localStorage.getItem('windi_lang') || 'pt';
+  currentLang = savedLang;
+  document.querySelector(`.lang-btn[data-lang="${savedLang}"]`)?.classList.add('active');
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    if (b.dataset.lang !== savedLang) b.classList.remove('active');
+  });
+
+  // Apply language on load
+  updateLandingLanguage();
+
+  // CTA button
+  document.querySelector('.close .btn').addEventListener('click', (e) => {
+    e.preventDefault();
+    window.location.href = '/artifacts/editor.html';
+  });
+
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,174 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://windi-domain.com/schemas/proof-field-events-v0.1.0.json",
+  "title": "W-PROOF-FIELD-001 — Catálogo de Eventos v0.1.0",
+  "description": "Eventos canónicos do Campo de Provas. Trilingue, mínimo, legível por humanos. v0: emitir, não interpretar.",
+
+  "categories": {
+    "construction": {
+      "description": "Factos de construção — respondem: 'As pessoas criam?'",
+      "events": ["WB-E001", "WB-E002", "WB-E003", "WB-E004", "WB-E005", "WB-E006"]
+    },
+    "readiness": {
+      "description": "Factos de prontidão — respondem: 'Quando a criação está pronta para ser reclamada?'",
+      "events": ["WB-E007"],
+      "note": "Não é construção pura nem posse. É o limiar entre criar e possuir."
+    },
+    "ownership": {
+      "description": "Factos de posse — respondem: 'Quando a criação se transforma em posse?'",
+      "events": ["WB-E008", "WB-E009", "WB-E010"]
+    }
+  },
+
+  "events": {
+    "WB-E001": {
+      "event": "enter",
+      "labels": {
+        "pt": "Entrou no Workbench",
+        "en": "Entered Workbench",
+        "de": "Workbench betreten"
+      },
+      "category": "construction",
+      "description": "Utilizador abriu o editor pela primeira vez nesta sessão"
+    },
+    "WB-E002": {
+      "event": "create",
+      "labels": {
+        "pt": "Criou documento",
+        "en": "Created document",
+        "de": "Dokument erstellt"
+      },
+      "category": "construction",
+      "description": "Workbench e artefacto inicializados"
+    },
+    "WB-E003": {
+      "event": "first_content",
+      "labels": {
+        "pt": "Primeiro conteúdo",
+        "en": "First content",
+        "de": "Erster Inhalt"
+      },
+      "category": "construction",
+      "description": "Primeira frase escrita — salto psicológico de entrada para criação"
+    },
+    "WB-E004": {
+      "event": "edit",
+      "labels": {
+        "pt": "Editou",
+        "en": "Edited",
+        "de": "Bearbeitet"
+      },
+      "category": "construction",
+      "description": "Edição subsequente (após first_content)"
+    },
+    "WB-E005": {
+      "event": "return",
+      "labels": {
+        "pt": "Retornou",
+        "en": "Returned",
+        "de": "Zurückgekehrt"
+      },
+      "category": "construction",
+      "description": "Reabriu workbench existente (não expirado)"
+    },
+    "WB-E006": {
+      "event": "export",
+      "labels": {
+        "pt": "Exportou documento",
+        "en": "Exported document",
+        "de": "Dokument exportiert"
+      },
+      "category": "construction",
+      "description": "Descarregou artefacto como ficheiro"
+    },
+    "WB-E007": {
+      "event": "claim_eligible",
+      "labels": {
+        "pt": "Elegível para claim",
+        "en": "Claim eligible",
+        "de": "Anspruchsberechtigt"
+      },
+      "category": "readiness",
+      "description": "Threshold atingido (heurística v0: 3+ edições ou 1+ export). Limiar entre criar e possuir."
+    },
+    "WB-E008": {
+      "event": "claim_started",
+      "labels": {
+        "pt": "Iniciou claim",
+        "en": "Started claim",
+        "de": "Claim gestartet"
+      },
+      "category": "ownership",
+      "description": "Utilizador clicou para iniciar reivindicação"
+    },
+    "WB-E009": {
+      "event": "claim_completed",
+      "labels": {
+        "pt": "Completou claim",
+        "en": "Completed claim",
+        "de": "Claim abgeschlossen"
+      },
+      "category": "ownership",
+      "description": "DID atribuído, artefacto transferido para identidade soberana"
+    },
+    "WB-E010": {
+      "event": "expired",
+      "labels": {
+        "pt": "Expirou",
+        "en": "Expired",
+        "de": "Abgelaufen"
+      },
+      "category": "ownership",
+      "description": "TTL excedido sem claim — workbench removido"
+    }
+  },
+
+  "event_schema": {
+    "type": "object",
+    "required": ["event_id", "event", "timestamp", "workbench_id"],
+    "properties": {
+      "event_id": {
+        "type": "string",
+        "pattern": "^WB-E[0-9]{3}$",
+        "description": "ID canónico do evento"
+      },
+      "event": {
+        "type": "string",
+        "description": "Nome do evento em snake_case"
+      },
+      "labels": {
+        "type": "object",
+        "properties": {
+          "pt": { "type": "string" },
+          "en": { "type": "string" },
+          "de": { "type": "string" }
+        },
+        "description": "Labels trilingues para leitura humana"
+      },
+      "timestamp": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "workbench_id": {
+        "type": "string",
+        "pattern": "^wb_[a-f0-9]{32}$"
+      },
+      "artifact_id": {
+        "type": "string",
+        "pattern": "^art_[a-f0-9]{16}$",
+        "description": "Opcional — presente em eventos de artefacto"
+      },
+      "metadata": {
+        "type": "object",
+        "description": "Dados adicionais do evento (nunca PII)"
+      }
+    }
+  },
+
+  "rules": {
+    "v0_discipline": "Emitir eventos, não interpretar. Recolher → Armazenar → Exportar. Sem dashboards sofisticados nem inferências automáticas.",
+    "no_pii": "Nunca identidade pessoal. Apenas workbench_id e artifact_id.",
+    "trilingual": "Cada evento tem labels em PT, EN, DE.",
+    "human_readable": "Um humano lê o log sem precisar de decoder."
+  }
+}

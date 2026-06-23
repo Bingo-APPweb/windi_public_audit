@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI Workbench — Editor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F5F0E0;
+    --bg-elev: #FBF8EF;
+    --ink: #1C1A14;
+    --ink-soft: #4A4636;
+    --ink-faint: #837C66;
+    --line: #DED7C2;
+    --accent: #B5481F;
+    --accent-ink: #FBF8EF;
+    --seal: #3A5A40;
+    --seal-soft: #5A7A60;
+  }
+  html[data-theme="noir"] {
+    --bg: #14130F;
+    --bg-elev: #1D1B15;
+    --ink: #F1ECDC;
+    --ink-soft: #C3BCA6;
+    --ink-faint: #8B856F;
+    --line: #2C2A22;
+    --accent: #D9622E;
+    --accent-ink: #14130F;
+    --seal: #7FA689;
+    --seal-soft: #5A7A60;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+    display: flex;
+    flex-direction: column;
+    transition: background .3s ease, color .3s ease;
+  }
+
+  /* ---- Header ---- */
+  header {
+    border-bottom: 1px solid var(--line);
+    padding: 0 24px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: .95rem;
+  }
+  .brand .glyph { font-size: 1.2rem; }
+  .brand .sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .72rem;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .lang-toggle {
+    display: flex;
+    gap: 2px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 2px;
+  }
+  .lang-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .65rem;
+    letter-spacing: .04em;
+    background: transparent;
+    color: var(--ink-faint);
+    border: none;
+    padding: 4px 8px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all .15s ease;
+  }
+  .lang-btn:hover { color: var(--ink-soft); }
+  .lang-btn.active {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+  .theme-toggle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .68rem;
+    letter-spacing: .08em;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink-soft);
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+  .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ---- Main ---- */
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 32px 24px;
+    overflow: auto;
+  }
+
+  /* ---- Title ---- */
+  .title-input {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: -.02em;
+    border: none;
+    background: transparent;
+    color: var(--ink);
+    width: 100%;
+    outline: none;
+    padding: 0 0 16px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .title-input::placeholder { color: var(--ink-faint); }
+
+  /* ---- Content ---- */
+  .content-area {
+    flex: 1;
+    margin-top: 20px;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    border: none;
+    background: transparent;
+    color: var(--ink);
+    resize: none;
+    outline: none;
+  }
+  .content-area::placeholder { color: var(--ink-faint); }
+
+  /* ---- Status Bar ---- */
+  .status-bar {
+    border-top: 1px solid var(--line);
+    padding: 12px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-shrink: 0;
+    background: var(--bg-elev);
+  }
+  .status-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .75rem;
+    color: var(--ink-faint);
+  }
+  .status-item { display: flex; align-items: center; gap: 6px; }
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--ink-faint);
+  }
+  .status-dot.active { background: var(--seal); }
+  .status-dot.warn { background: var(--accent); }
+
+  .status-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* ---- Buttons ---- */
+  .btn {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 600;
+    font-size: .9rem;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all .15s ease;
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink);
+    border-color: var(--line);
+  }
+  .btn-ghost:hover { border-color: var(--ink-soft); }
+  .btn-primary {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+  .btn-primary:hover { filter: brightness(1.1); }
+  .btn-claim {
+    background: var(--seal);
+    color: #fff;
+  }
+  .btn-claim:hover { background: var(--seal-soft); }
+  .btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  /* ---- Claim Banner ---- */
+  .claim-banner {
+    display: none;
+    background: var(--seal);
+    color: #fff;
+    padding: 14px 24px;
+    text-align: center;
+    font-size: .95rem;
+  }
+  .claim-banner.visible { display: block; }
+  .claim-banner a {
+    color: #fff;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* ---- Toast ---- */
+  .toast {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--ink);
+    color: var(--bg);
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: .9rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: all .3s ease;
+    z-index: 100;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 600px) {
+    main { padding: 20px 16px; }
+    .title-input { font-size: 1.4rem; }
+    .status-bar { padding: 10px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <span class="glyph">🐉</span>
+    <span>WINDI <span class="sub">Workbench</span></span>
+  </div>
+  <div class="header-actions">
+    <div class="lang-toggle" id="langToggle">
+      <button class="lang-btn active" data-lang="pt">PT</button>
+      <button class="lang-btn" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="de">DE</button>
+    </div>
+    <button class="theme-toggle" id="themeBtn">NOIR</button>
+  </div>
+</header>
+
+<div class="claim-banner" id="claimBanner">
+  <!-- Updated by updateUILanguage() -->
+</div>
+
+<main>
+  <input
+    type="text"
+    class="title-input"
+    id="titleInput"
+    placeholder=""
+    autocomplete="off"
+  >
+  <textarea
+    class="content-area"
+    id="contentArea"
+    placeholder=""
+  ></textarea>
+</main>
+
+<footer class="status-bar">
+  <div class="status-left">
+    <div class="status-item">
+      <span class="status-dot" id="savedDot"></span>
+      <span id="savedStatus"></span>
+    </div>
+    <div class="status-item">
+      <span id="wordCount">0 palavras</span>
+    </div>
+    <div class="status-item">
+      <span id="editCount">0 edições</span>
+    </div>
+  </div>
+  <div class="status-right">
+    <button class="btn btn-ghost" id="exportBtn" disabled></button>
+    <button class="btn btn-claim" id="claimBtn" disabled></button>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function() {
+  // ============================================================
+  // I18N — TRILINGUAL SYSTEM (PT-BR / EN / DE)
+  // ============================================================
+
+  const UI = {
+    pt: {
+      // Header
+      workbench: 'Workbench',
+      // Placeholders
+      titlePlaceholder: 'Título do seu documento',
+      contentPlaceholder: 'Comece a escrever...',
+      // Status
+      notSaved: 'Não salvo',
+      saving: 'Salvando...',
+      saved: 'Salvo',
+      // Counts
+      word: 'palavra',
+      words: 'palavras',
+      edit: 'edição',
+      edits: 'edições',
+      // Buttons
+      export: 'Exportar',
+      claim: 'Reivindicar',
+      // Banner
+      claimBanner: 'Você tem algo que vale a pena manter.',
+      claimNow: 'Reivindicar agora →',
+      // Toasts
+      exported: 'Documento exportado',
+      claimSoon: 'Em breve: conexão com W-FARM-001',
+      // Export file
+      exportedFrom: 'Exportado do WINDI Workbench',
+      hash: 'Hash',
+      date: 'Data'
+    },
+    en: {
+      // Header
+      workbench: 'Workbench',
+      // Placeholders
+      titlePlaceholder: 'Title of your document',
+      contentPlaceholder: 'Start writing...',
+      // Status
+      notSaved: 'Not saved',
+      saving: 'Saving...',
+      saved: 'Saved',
+      // Counts
+      word: 'word',
+      words: 'words',
+      edit: 'edit',
+      edits: 'edits',
+      // Buttons
+      export: 'Export',
+      claim: 'Claim',
+      // Banner
+      claimBanner: 'You have something worth keeping.',
+      claimNow: 'Claim now →',
+      // Toasts
+      exported: 'Document exported',
+      claimSoon: 'Coming soon: W-FARM-001 connection',
+      // Export file
+      exportedFrom: 'Exported from WINDI Workbench',
+      hash: 'Hash',
+      date: 'Date'
+    },
+    de: {
+      // Header
+      workbench: 'Werkbank',
+      // Placeholders
+      titlePlaceholder: 'Titel Ihres Dokuments',
+      contentPlaceholder: 'Beginnen Sie zu schreiben...',
+      // Status
+      notSaved: 'Nicht gespeichert',
+      saving: 'Speichern...',
+      saved: 'Gespeichert',
+      // Counts
+      word: 'Wort',
+      words: 'Wörter',
+      edit: 'Bearbeitung',
+      edits: 'Bearbeitungen',
+      // Buttons
+      export: 'Exportieren',
+      claim: 'Beanspruchen',
+      // Banner
+      claimBanner: 'Sie haben etwas, das es wert ist, behalten zu werden.',
+      claimNow: 'Jetzt beanspruchen →',
+      // Toasts
+      exported: 'Dokument exportiert',
+      claimSoon: 'Demnächst: W-FARM-001 Verbindung',
+      // Export file
+      exportedFrom: 'Exportiert aus WINDI Workbench',
+      hash: 'Hash',
+      date: 'Datum'
+    }
+  };
+
+  let currentLang = localStorage.getItem('windi_lang') || 'pt';
+
+  function t(key) {
+    return UI[currentLang]?.[key] || UI.pt[key] || key;
+  }
+
+  function updateUILanguage() {
+    // Placeholders
+    document.getElementById('titleInput').placeholder = t('titlePlaceholder');
+    document.getElementById('contentArea').placeholder = t('contentPlaceholder');
+
+    // Buttons
+    document.getElementById('exportBtn').textContent = t('export');
+    document.getElementById('claimBtn').textContent = t('claim');
+
+    // Banner
+    document.getElementById('claimBanner').innerHTML =
+      `${t('claimBanner')} <a href="#" id="claimLink">${t('claimNow')}</a>`;
+
+    // Re-attach claim link handler
+    document.getElementById('claimLink').addEventListener('click', (e) => {
+      e.preventDefault();
+      document.getElementById('claimBtn').click();
+    });
+
+    // Update dynamic text
+    updateUI();
+  }
+
+  // ============================================================
+  // WORKBENCH STATE (mirrors workbench.py)
+  // ============================================================
+
+  const STORAGE_KEY = 'windi_workbench';
+  const TTL_HOURS = 72;
+  const EDIT_THRESHOLD = 3;
+
+  let state = {
+    workbench_id: null,
+    created_at: null,
+    last_activity: null,
+    expires_at: null,
+    artifact: {
+      artifact_id: null,
+      title: '',
+      content: '',
+      content_hash: null,
+      created_at: null,
+      updated_at: null,
+      word_count: 0
+    },
+    proof_field: [],  // W-PROOF-FIELD-001 events
+    signals: [],      // Legacy (kept for compatibility)
+    edit_count: 0,
+    export_count: 0,
+    has_first_content: false,  // Track first content milestone
+    claim_eligible: false,
+    claim_prompted: false
+  };
+
+  // ============================================================
+  // W-PROOF-FIELD-001 — Event Catalog
+  // ============================================================
+
+  const PROOF_EVENTS = {
+    'WB-E001': { event: 'enter', labels: { pt: 'Entrou no Workbench', en: 'Entered Workbench', de: 'Workbench betreten' }},
+    'WB-E002': { event: 'create', labels: { pt: 'Criou documento', en: 'Created document', de: 'Dokument erstellt' }},
+    'WB-E003': { event: 'first_content', labels: { pt: 'Primeiro conteúdo', en: 'First content', de: 'Erster Inhalt' }},
+    'WB-E004': { event: 'edit', labels: { pt: 'Editou', en: 'Edited', de: 'Bearbeitet' }},
+    'WB-E005': { event: 'return', labels: { pt: 'Retornou', en: 'Returned', de: 'Zurückgekehrt' }},
+    'WB-E006': { event: 'export', labels: { pt: 'Exportou documento', en: 'Exported document', de: 'Dokument exportiert' }},
+    'WB-E007': { event: 'claim_eligible', labels: { pt: 'Elegível para claim', en: 'Claim eligible', de: 'Anspruchsberechtigt' }},
+    'WB-E008': { event: 'claim_started', labels: { pt: 'Iniciou claim', en: 'Started claim', de: 'Claim gestartet' }},
+    'WB-E009': { event: 'claim_completed', labels: { pt: 'Completou claim', en: 'Completed claim', de: 'Claim abgeschlossen' }},
+    'WB-E010': { event: 'expired', labels: { pt: 'Expirou', en: 'Expired', de: 'Abgelaufen' }}
+  };
+
+  // ============================================================
+  // UTILITIES
+  // ============================================================
+
+  function generateId(prefix, length = 16) {
+    const chars = 'abcdef0123456789';
+    let id = prefix + '_';
+    for (let i = 0; i < length; i++) {
+      id += chars[Math.floor(Math.random() * chars.length)];
+    }
+    return id;
+  }
+
+  async function computeHash(content) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(content);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return 'sha256:' + hashHex;
+  }
+
+  function countWords(text) {
+    return text.trim() ? text.trim().split(/\s+/).length : 0;
+  }
+
+  function now() {
+    return new Date().toISOString();
+  }
+
+  function addHours(date, hours) {
+    return new Date(new Date(date).getTime() + hours * 60 * 60 * 1000).toISOString();
+  }
+
+  function isExpired() {
+    if (!state.expires_at) return false;
+    return new Date() > new Date(state.expires_at);
+  }
+
+  // ============================================================
+  // STATE MANAGEMENT
+  // ============================================================
+
+  function initWorkbench() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+
+    if (saved) {
+      try {
+        state = JSON.parse(saved);
+
+        // Check expiration
+        if (isExpired()) {
+          console.log('Workbench expired, creating new');
+          createNewWorkbench();
+          return;
+        }
+
+        // Log return signal
+        emitProofEvent('WB-E005');  // return
+        logSignal('return');
+
+        // Restore UI
+        titleInput.value = state.artifact.title || '';
+        contentArea.value = state.artifact.content || '';
+
+        console.log('Workbench restored:', state.workbench_id);
+      } catch (e) {
+        console.error('Failed to parse saved state:', e);
+        createNewWorkbench();
+      }
+    } else {
+      createNewWorkbench();
+    }
+
+    updateUI();
+  }
+
+  function createNewWorkbench() {
+    const timestamp = now();
+    state = {
+      workbench_id: generateId('wb', 32),
+      created_at: timestamp,
+      last_activity: timestamp,
+      expires_at: addHours(timestamp, TTL_HOURS),
+      artifact: {
+        artifact_id: generateId('art', 16),
+        title: '',
+        content: '',
+        content_hash: null,
+        created_at: timestamp,
+        updated_at: timestamp,
+        word_count: 0
+      },
+      signals: [],
+      edit_count: 0,
+      export_count: 0,
+      claim_eligible: false,
+      claim_prompted: false
+    };
+
+    emitProofEvent('WB-E001');  // enter
+    emitProofEvent('WB-E002');  // create
+    logSignal('create');
+    saveState();
+    console.log('New workbench created:', state.workbench_id);
+  }
+
+  function logSignal(action, metadata = {}) {
+    // Legacy signal (kept for compatibility)
+    state.signals.push({
+      timestamp: now(),
+      action: action,
+      artifact_id: state.artifact.artifact_id,
+      metadata: metadata
+    });
+
+    state.last_activity = now();
+    state.expires_at = addHours(state.last_activity, TTL_HOURS);
+  }
+
+  // W-PROOF-FIELD-001: Emit canonical event
+  function emitProofEvent(eventId, metadata = {}) {
+    const eventDef = PROOF_EVENTS[eventId];
+    if (!eventDef) {
+      console.warn('Unknown proof event:', eventId);
+      return;
+    }
+
+    const event = {
+      event_id: eventId,
+      event: eventDef.event,
+      labels: eventDef.labels,
+      timestamp: now(),
+      workbench_id: state.workbench_id,
+      artifact_id: state.artifact?.artifact_id || null,
+      metadata: metadata
+    };
+
+    state.proof_field.push(event);
+    console.log(`[PROOF] ${eventId} ${eventDef.event}`, metadata);
+
+    // Update activity
+    state.last_activity = now();
+    state.expires_at = addHours(state.last_activity, TTL_HOURS);
+  }
+
+  async function saveState() {
+    // Update hash and word count
+    state.artifact.content_hash = await computeHash(state.artifact.content);
+    state.artifact.word_count = countWords(state.artifact.content);
+    state.artifact.updated_at = now();
+
+    // Check claim eligibility
+    const hasContent = state.artifact.content.trim().length > 0;
+    state.claim_eligible = hasContent && (state.edit_count >= EDIT_THRESHOLD || state.export_count > 0);
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  // ============================================================
+  // UI
+  // ============================================================
+
+  const titleInput = document.getElementById('titleInput');
+  const contentArea = document.getElementById('contentArea');
+  const savedDot = document.getElementById('savedDot');
+  const savedStatus = document.getElementById('savedStatus');
+  const wordCountEl = document.getElementById('wordCount');
+  const editCountEl = document.getElementById('editCount');
+  const exportBtn = document.getElementById('exportBtn');
+  const claimBtn = document.getElementById('claimBtn');
+  const claimBanner = document.getElementById('claimBanner');
+  const claimLink = document.getElementById('claimLink');
+  const toast = document.getElementById('toast');
+  const themeBtn = document.getElementById('themeBtn');
+
+  let saveTimeout = null;
+  let hasUnsavedChanges = false;
+
+  function updateUI() {
+    // Word count (i18n)
+    const words = countWords(contentArea.value);
+    const wordLabel = words === 1 ? t('word') : t('words');
+    wordCountEl.textContent = `${words} ${wordLabel}`;
+
+    // Edit count (i18n)
+    const editLabel = state.edit_count === 1 ? t('edit') : t('edits');
+    editCountEl.textContent = `${state.edit_count} ${editLabel}`;
+
+    // Saved status (i18n)
+    if (hasUnsavedChanges) {
+      savedDot.classList.remove('active');
+      savedDot.classList.add('warn');
+      savedStatus.textContent = t('saving');
+    } else {
+      savedDot.classList.remove('warn');
+      savedDot.classList.add('active');
+      savedStatus.textContent = t('saved');
+    }
+
+    // Export button
+    const hasContent = contentArea.value.trim().length > 0;
+    exportBtn.disabled = !hasContent;
+
+    // Claim eligibility
+    const canClaim = hasContent && (state.edit_count >= EDIT_THRESHOLD || state.export_count > 0);
+    claimBtn.disabled = !canClaim;
+
+    // Claim banner (show once eligible and not yet prompted)
+    if (canClaim && !state.claim_prompted) {
+      claimBanner.classList.add('visible');
+    }
+  }
+
+  function showToast(message) {
+    toast.textContent = message;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+
+  // ============================================================
+  // EVENT HANDLERS
+  // ============================================================
+
+  function onEdit() {
+    hasUnsavedChanges = true;
+    updateUI();
+
+    // Debounce save
+    if (saveTimeout) clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(async () => {
+      const previousContent = state.artifact.content;
+      state.artifact.title = titleInput.value;
+      state.artifact.content = contentArea.value;
+
+      const wordCount = countWords(contentArea.value);
+      const hadContent = previousContent.trim().length > 0;
+      const hasContent = contentArea.value.trim().length > 0;
+
+      // WB-E003: First content (milestone)
+      if (!state.has_first_content && hasContent) {
+        state.has_first_content = true;
+        emitProofEvent('WB-E003', { word_count: wordCount });
+      }
+      // WB-E004: Subsequent edits
+      else if (hadContent && hasContent) {
+        emitProofEvent('WB-E004', { word_count: wordCount });
+      }
+
+      state.edit_count++;
+      logSignal('edit', { word_count: wordCount });
+
+      // Check claim eligibility and emit event once
+      const wasEligible = state.claim_eligible;
+      await saveState();
+
+      if (!wasEligible && state.claim_eligible) {
+        emitProofEvent('WB-E007');  // claim_eligible
+      }
+
+      hasUnsavedChanges = false;
+      updateUI();
+    }, 800);
+  }
+
+  titleInput.addEventListener('input', onEdit);
+  contentArea.addEventListener('input', onEdit);
+
+  exportBtn.addEventListener('click', async () => {
+    const defaultTitle = currentLang === 'de' ? 'dokument' : (currentLang === 'en' ? 'document' : 'documento');
+    const title = titleInput.value.trim() || defaultTitle;
+    const content = contentArea.value;
+    const hash = await computeHash(content);
+
+    // Locale for date formatting
+    const locales = { pt: 'pt-BR', en: 'en-US', de: 'de-DE' };
+    const locale = locales[currentLang] || 'pt-BR';
+
+    // Create export with metadata
+    const exportData = {
+      title: title,
+      content: content,
+      content_hash: hash,
+      word_count: countWords(content),
+      workbench_id: state.workbench_id,
+      exported_at: now()
+    };
+
+    // Download as markdown (i18n)
+    const blob = new Blob([
+      `# ${title}\n\n`,
+      content,
+      `\n\n---\n`,
+      `_${t('exportedFrom')}_\n`,
+      `_${t('hash')}: ${hash}_\n`,
+      `_${t('date')}: ${new Date().toLocaleString(locale)}_\n`
+    ], { type: 'text/markdown' });
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${title.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.md`;
+    a.click();
+    URL.revokeObjectURL(url);
+
+    // Update state
+    state.export_count++;
+    emitProofEvent('WB-E006', { hash: hash, word_count: countWords(content) });
+    logSignal('export', { hash: hash });
+
+    // Check claim eligibility after export
+    const wasEligible = state.claim_eligible;
+    await saveState();
+
+    if (!wasEligible && state.claim_eligible) {
+      emitProofEvent('WB-E007');  // claim_eligible
+    }
+
+    updateUI();
+    showToast(t('exported'));
+  });
+
+  claimBtn.addEventListener('click', () => {
+    state.claim_prompted = true;
+    emitProofEvent('WB-E008');  // claim_started
+    saveState();
+    claimBanner.classList.remove('visible');
+
+    // TODO: Link to W-FARM-001 → WB-E009 (claim_completed) when DID assigned
+    showToast(t('claimSoon'));
+  });
+
+  claimLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    claimBtn.click();
+  });
+
+  // Theme toggle
+  themeBtn.addEventListener('click', () => {
+    const root = document.documentElement;
+    const isNoir = root.getAttribute('data-theme') === 'noir';
+    root.setAttribute('data-theme', isNoir ? 'klar' : 'noir');
+    themeBtn.textContent = isNoir ? 'NOIR' : 'KLAR';
+    localStorage.setItem('windi_theme', isNoir ? 'klar' : 'noir');
+  });
+
+  // Restore theme
+  const savedTheme = localStorage.getItem('windi_theme');
+  if (savedTheme === 'noir') {
+    document.documentElement.setAttribute('data-theme', 'noir');
+    themeBtn.textContent = 'KLAR';
+  }
+
+  // Language toggle
+  const langBtns = document.querySelectorAll('.lang-btn');
+  langBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const lang = btn.dataset.lang;
+      currentLang = lang;
+      localStorage.setItem('windi_lang', lang);
+
+      // Update active state
+      langBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      // Update UI language
+      updateUILanguage();
+    });
+  });
+
+  // Restore language
+  const savedLang = localStorage.getItem('windi_lang') || 'pt';
+  currentLang = savedLang;
+  document.querySelector(`.lang-btn[data-lang="${savedLang}"]`)?.classList.add('active');
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    if (b.dataset.lang !== savedLang) b.classList.remove('active');
+  });
+
+  // URL param for title
+  const urlParams = new URLSearchParams(window.location.search);
+  const intentTitle = urlParams.get('title') || urlParams.get('intent');
+  if (intentTitle && !titleInput.value) {
+    titleInput.value = intentTitle;
+    state.artifact.title = intentTitle;
+    saveState();
+  }
+
+  // Init
+  initWorkbench();
+
+  // Apply language
+  updateUILanguage();
+
+  // Focus content if title exists
+  if (titleInput.value) {
+    contentArea.focus();
+  } else {
+    titleInput.focus();
+  }
+
+})();
+</script>
+
+</body>
+</html>
