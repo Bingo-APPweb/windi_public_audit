@@ -1,0 +1,155 @@
+{
+  "schema_version": "0.1.0",
+  "name": "ACADEMY-MEASUREMENT-001 Prompts",
+  "created_at": "2026-06-24T18:00:00Z",
+  "total_prompts": 20,
+  "categories": [
+    {
+      "id": "C0",
+      "name": "Intuição / Descoberta",
+      "name_en": "Intuition / Discovery",
+      "name_de": "Intuition / Entdeckung",
+      "purpose": "Testar M0 — transformação de pressentimento em hipótese",
+      "prompts": [
+        {
+          "id": 1,
+          "text": "Tenho a sensação de que estamos a resolver o problema errado no meu projecto, mas não consigo explicar porquê.",
+          "tests": "Pressentimento sem argumentos"
+        },
+        {
+          "id": 2,
+          "text": "Há meses sinto que uma oportunidade está escondida nos nossos documentos, mas ainda não consigo vê-la claramente.",
+          "tests": "Padrão percebido não articulado"
+        },
+        {
+          "id": 3,
+          "text": "Algo nesta arquitectura parece errado, mas não tenho provas nem argumentos ainda.",
+          "tests": "Incómodo cognitivo"
+        },
+        {
+          "id": 4,
+          "text": "Tenho uma forte convicção de que esta ideia pode funcionar, mas não sei distinguir intuição de entusiasmo.",
+          "tests": "Auto-calibração epistémica"
+        }
+      ]
+    },
+    {
+      "id": "C1",
+      "name": "Ideação",
+      "name_en": "Ideation",
+      "name_de": "Ideenfindung",
+      "purpose": "Testar transformação de ideia vaga em estrutura",
+      "prompts": [
+        {
+          "id": 5,
+          "text": "Quero criar uma comunidade local de verificação documental."
+        },
+        {
+          "id": 6,
+          "text": "Tenho uma ideia para um produto que ajude pessoas a organizar herança digital."
+        },
+        {
+          "id": 7,
+          "text": "Quero transformar meu conhecimento de jardinagem em algo útil para outros."
+        }
+      ]
+    },
+    {
+      "id": "C2",
+      "name": "Governança",
+      "name_en": "Governance",
+      "name_de": "Governance",
+      "purpose": "Testar estruturação de decisões colectivas",
+      "prompts": [
+        {
+          "id": 8,
+          "text": "Como devo decidir entre duas propostas conflitantes na minha associação?"
+        },
+        {
+          "id": 9,
+          "text": "Preciso criar regras para um grupo de voluntários. Por onde começo?"
+        },
+        {
+          "id": 10,
+          "text": "Como evitar que uma pessoa concentre poder demais num projecto colectivo?"
+        }
+      ]
+    },
+    {
+      "id": "C3",
+      "name": "Verify / Ledger",
+      "name_en": "Verify / Ledger",
+      "name_de": "Verify / Ledger",
+      "purpose": "Testar pensamento sobre verificabilidade",
+      "prompts": [
+        {
+          "id": 11,
+          "text": "Como tornar o Verify mais útil para um estranho que nunca viu o sistema?"
+        },
+        {
+          "id": 12,
+          "text": "Como provar que um ficheiro não foi alterado sem depender de uma empresa?"
+        },
+        {
+          "id": 13,
+          "text": "Quero criar um sistema de recibos para a minha cooperativa."
+        }
+      ]
+    },
+    {
+      "id": "C4",
+      "name": "Cinema / Criativo",
+      "name_en": "Cinema / Creative",
+      "name_de": "Kino / Kreativ",
+      "purpose": "Testar transformação de intuição visual em plano",
+      "prompts": [
+        {
+          "id": 14,
+          "text": "Tenho uma cena emocional mas não sei estruturá-la para produção."
+        },
+        {
+          "id": 15,
+          "text": "Como transformar uma intuição visual num plano de produção cinematográfica?"
+        },
+        {
+          "id": 16,
+          "text": "Tenho 5 minutos de footage bruto. Como decidir o que manter?"
+        }
+      ]
+    },
+    {
+      "id": "C5",
+      "name": "Enterprise / Técnico",
+      "name_en": "Enterprise / Technical",
+      "name_de": "Unternehmen / Technisch",
+      "purpose": "Testar estruturação de decisões técnicas",
+      "prompts": [
+        {
+          "id": 17,
+          "text": "Como priorizar funcionalidades quando tudo parece urgente?"
+        },
+        {
+          "id": 18,
+          "text": "Como reduzir dívida técnica sem parar o desenvolvimento?"
+        },
+        {
+          "id": 19,
+          "text": "Preciso migrar um sistema legado. Qual o primeiro passo seguro?"
+        },
+        {
+          "id": 20,
+          "text": "Como saber se uma API está pronta para produção?"
+        }
+      ]
+    }
+  ],
+  "distribution": {
+    "C0_intuition": 4,
+    "C1_ideation": 3,
+    "C2_governance": 3,
+    "C3_verify": 3,
+    "C4_cinema": 3,
+    "C5_enterprise": 4
+  },
+  "note": "Categoria C0 (Intuição) é a mais importante para validar M0. Se a gramática não melhorar C0, a hipótese central falha."
+}

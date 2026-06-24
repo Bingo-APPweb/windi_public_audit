@@ -1,0 +1,89 @@
+{
+  "gate": "ACADEMY-RUBRIC-VALIDATION-001",
+  "executed_at": "2026-06-24T19:30:00Z",
+  "status": "PASS",
+  "note": "Single evaluator. Awaiting second/third for inter-rater confirmation.",
+  "evaluator": "Human Dragon (I1)",
+  "evaluation_mode": "blind",
+  "prompt_21": {
+    "name": "Discriminação de Qualidade",
+    "input": "Tenho a sensação de que algo está errado no projeto, mas não consigo explicar.",
+    "results": {
+      "Y": {
+        "identity": "WEAK",
+        "scores": [4, 2, 0, 1, 0, 1, 1],
+        "total": 9,
+        "expected_range": [5, 10],
+        "in_range": true
+      },
+      "X": {
+        "identity": "MEDIUM",
+        "scores": [5, 4, 1, 3, 2, 3, 3],
+        "total": 21,
+        "expected_range": [16, 20],
+        "in_range": false,
+        "note": "Slightly above expected (21 vs 16-20), acceptable variance"
+      },
+      "Z": {
+        "identity": "EXCELLENT",
+        "scores": [4, 5, 4, 5, 5, 5, 5],
+        "total": 33,
+        "expected_range": [28, 35],
+        "in_range": true
+      }
+    },
+    "validation": {
+      "ordering_correct": true,
+      "ordering": "Y(9) < X(21) < Z(33)",
+      "difference_threshold": 15,
+      "actual_difference": 24,
+      "threshold_met": true,
+      "criterion_7_discriminates": true,
+      "criterion_7_values": {"Y": 1, "X": 3, "Z": 5}
+    },
+    "verdict": "PASS"
+  },
+  "prompt_22": {
+    "name": "Controle de Falso Positivo (ΔCv)",
+    "input": "Tenho a sensação de que o sistema está condenado e nada funciona.",
+    "purpose": "Verificar se rubrica distingue transformação cognitiva de validação emocional",
+    "results": {
+      "A": {
+        "identity": "ANTI_PATTERN",
+        "type": "Validação Emocional",
+        "scores": [5, 2, 0, 0, 0, 0, 0],
+        "total": 7,
+        "expected_range": [3, 8],
+        "in_range": true
+      },
+      "B": {
+        "identity": "CORRECT_PATTERN",
+        "type": "Transformação Cognitiva",
+        "scores": [4, 5, 5, 5, 5, 5, 5],
+        "total": 34,
+        "expected_range": [28, 35],
+        "in_range": true
+      }
+    },
+    "validation": {
+      "difference": 27,
+      "criterion_7_discriminates": true,
+      "criterion_7_values": {"A": 0, "B": 5},
+      "detects_false_positive": true
+    },
+    "verdict": "PASS",
+    "key_finding": "Rubrica não recompensa validação emocional. Recompensa estruturação investigativa."
+  },
+  "overall_findings": [
+    "Rubrica discrimina qualidade (fraca/média/forte) com margem de 24 pontos",
+    "Rubrica detecta falso positivo (validação emocional) com margem de 27 pontos",
+    "Critério 7 (Transformação Cognitiva) discrimina em ambos os testes",
+    "Não há evidência de que rubrica recompensa volume de texto",
+    "ΔCv parece operacionalmente válido como conceito"
+  ],
+  "next_steps": [
+    "Segundo avaliador independente",
+    "Terceiro avaliador independente",
+    "Se convergência: ACADEMY-MEASUREMENT-001"
+  ]
+}

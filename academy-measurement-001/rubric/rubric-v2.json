@@ -1,0 +1,139 @@
+{
+  "schema_version": "0.1.0",
+  "name": "WINDI Cognitive Benchmark Rubric",
+  "short_name": "WCB-RUBRIC-v2",
+  "created_at": "2026-06-24T18:00:00Z",
+  "purpose": "Avaliar qualidade de transformação cognitiva em respostas IA ou humanas",
+  "total_possible_score": 35,
+  "criteria": [
+    {
+      "id": 1,
+      "name": "Clareza",
+      "name_en": "Clarity",
+      "name_de": "Klarheit",
+      "question": "O resultado é legível sem jargão técnico?",
+      "question_en": "Is the result readable without technical jargon?",
+      "question_de": "Ist das Ergebnis ohne Fachjargon lesbar?",
+      "scale": {
+        "0": "Incompreensível",
+        "1": "Muito confuso",
+        "2": "Parcialmente claro",
+        "3": "Claro com esforço",
+        "4": "Claro",
+        "5": "Cristalino"
+      }
+    },
+    {
+      "id": 2,
+      "name": "Acção",
+      "name_en": "Action",
+      "name_de": "Handlung",
+      "question": "Existe um próximo passo executável?",
+      "question_en": "Is there an actionable next step?",
+      "question_de": "Gibt es einen ausführbaren nächsten Schritt?",
+      "scale": {
+        "0": "Nenhum passo",
+        "1": "Vago demais",
+        "2": "Direcção geral",
+        "3": "Passos genéricos",
+        "4": "Passos concretos",
+        "5": "Próximo passo imediato e claro"
+      }
+    },
+    {
+      "id": 3,
+      "name": "Riscos",
+      "name_en": "Risks",
+      "name_de": "Risiken",
+      "question": "Os riscos foram nomeados explicitamente?",
+      "question_en": "Were risks explicitly named?",
+      "question_de": "Wurden Risiken explizit benannt?",
+      "scale": {
+        "0": "Ignorados completamente",
+        "1": "Menção vaga",
+        "2": "Alguns riscos genéricos",
+        "3": "Riscos relevantes listados",
+        "4": "Riscos priorizados",
+        "5": "Riscos explícitos com mitigação"
+      }
+    },
+    {
+      "id": 4,
+      "name": "Lacunas",
+      "name_en": "Gaps",
+      "name_de": "Lücken",
+      "question": "As informações faltantes foram identificadas?",
+      "question_en": "Were missing information gaps identified?",
+      "question_de": "Wurden fehlende Informationen identifiziert?",
+      "scale": {
+        "0": "Não mencionadas",
+        "1": "Ignoradas",
+        "2": "Implícitas",
+        "3": "Algumas listadas",
+        "4": "Listadas claramente",
+        "5": "Listadas com perguntas específicas"
+      }
+    },
+    {
+      "id": 5,
+      "name": "Verificabilidade",
+      "name_en": "Verifiability",
+      "name_de": "Überprüfbarkeit",
+      "question": "O resultado pode gerar receipt/prova?",
+      "question_en": "Can the result generate a receipt/proof?",
+      "question_de": "Kann das Ergebnis einen Beleg/Nachweis generieren?",
+      "scale": {
+        "0": "Impossível verificar",
+        "1": "Muito difícil",
+        "2": "Parcialmente verificável",
+        "3": "Verificável com esforço",
+        "4": "Facilmente verificável",
+        "5": "Directamente verificável / receipt-ready"
+      }
+    },
+    {
+      "id": 6,
+      "name": "Reutilização",
+      "name_en": "Reusability",
+      "name_de": "Wiederverwendbarkeit",
+      "question": "O artefato pode ser reusado noutro contexto?",
+      "question_en": "Can the artifact be reused in another context?",
+      "question_de": "Kann das Artefakt in einem anderen Kontext wiederverwendet werden?",
+      "scale": {
+        "0": "Descartável / único",
+        "1": "Muito específico",
+        "2": "Parcialmente adaptável",
+        "3": "Adaptável com trabalho",
+        "4": "Facilmente adaptável",
+        "5": "Universal / template"
+      }
+    },
+    {
+      "id": 7,
+      "name": "Transformação Cognitiva",
+      "name_en": "Cognitive Transformation",
+      "name_de": "Kognitive Transformation",
+      "question": "Algo vago, intuitivo ou confuso tornou-se observável e operacional?",
+      "question_en": "Did something vague, intuitive or confused become observable and operational?",
+      "question_de": "Wurde etwas Vages, Intuitives oder Verwirrendes beobachtbar und operationalisierbar?",
+      "scale": {
+        "0": "Nenhuma transformação (repetiu o problema)",
+        "1": "Reformulação superficial (outras palavras, mesma confusão)",
+        "2": "Alguma organização (categorias, mas sem direcção)",
+        "3": "Estrutura útil (passos visíveis, mas genéricos)",
+        "4": "Clareza significativa (hipótese testável emerge)",
+        "5": "Transformação evidente (de vago para operacional)"
+      },
+      "note": "Este critério pode ser o mais importante do experimento. Mede a essência da Academy."
+    }
+  ],
+  "interpretation": {
+    "0-10": "Resposta inútil",
+    "11-17": "Resposta fraca",
+    "18-24": "Resposta mediana",
+    "25-30": "Resposta boa",
+    "31-35": "Resposta excelente"
+  },
+  "blind_evaluation_rule": "O avaliador NÃO deve saber se a resposta veio do Grupo A (control), B (module-a) ou C (full-traverse).",
+  "constitutional_alignment": ["I1", "I9", "I11", "I14"]
+}

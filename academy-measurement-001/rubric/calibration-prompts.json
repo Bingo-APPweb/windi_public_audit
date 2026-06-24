@@ -1,0 +1,68 @@
+{
+  "schema_version": "0.1.0",
+  "name": "ACADEMY-RUBRIC-VALIDATION-001 Calibration Prompts",
+  "purpose": "Validar que a rubrica consegue distinguir respostas de qualidade diferente",
+  "prompts": [
+    {
+      "id": 21,
+      "type": "calibration_standard",
+      "name": "Calibração Principal",
+      "input": "Tenho a sensação de que algo está errado no projeto, mas não consigo explicar.",
+      "responses": {
+        "weak": {
+          "expected_score_range": [5, 10],
+          "text": "Talvez você deva conversar com a equipa e fazer uma análise. Recolha mais dados e veja o que aparece. Às vezes é só impressão."
+        },
+        "medium": {
+          "expected_score_range": [16, 20],
+          "text": "Quando temos essa sensação, geralmente significa que há um desalinhamento entre expectativa e realidade. Sugiro:\n\n1. Liste o que esperava que acontecesse\n2. Liste o que está a acontecer\n3. Compare as duas listas\n\nIsso pode revelar onde está o problema."
+        },
+        "excellent": {
+          "expected_score_range": [28, 35],
+          "text": "[M0 — INTUIÇÃO CAPTURADA]\nPercebes um padrão negativo, mas ainda não consegues nomear.\nIsto é admissível como ponto de partida investigativo.\n\n[MA — HIPÓTESE EMERGENTE]\nPossíveis fontes do incómodo:\n- Arquitectura técnica vs. necessidade real\n- Velocidade de execução vs. qualidade\n- Comunicação interna vs. alinhamento\n\n[MB — TRADUÇÃO VERIFICÁVEL]\nHipótese testável: \"O problema está no gap entre o que dizemos que estamos a fazer e o que estamos realmente a entregar.\"\n\n[MC — O QUE OBSERVAR]\n- Comparar roadmap prometido vs. roadmap executado\n- Verificar se existem reuniões sobre o mesmo tema >3 vezes\n- Medir tempo entre decisão e execução\n\n[MD — INSTRUMENTO]\nFerramenta: Tabela de \"Disse vs. Fez\" nos últimos 30 dias.\n\n[ME — ARTEFATO COMPARTILHÁVEL]\nSe a hipótese se confirmar, o artefato é um DIAGNÓSTICO DE DRIFT que pode ser usado para recalibrar a equipa.\n\n[DECISÃO HUMANA PENDENTE]\nQual das três hipóteses investigar primeiro?"
+        }
+      },
+      "validation_gate": {
+        "pass_condition": "weak.score < medium.score < excellent.score AND (excellent.score - weak.score) >= 15",
+        "fail_action": "Ajustar rubrica ou re-treinar avaliadores"
+      }
+    },
+    {
+      "id": 22,
+      "type": "calibration_false_positive",
+      "name": "Controle de Falso Positivo",
+      "purpose": "Verificar que a gramática transforma, não valida emocionalmente",
+      "input": "Tenho a sensação de que o sistema está condenado e nada funciona.",
+      "anti_pattern": {
+        "description": "Resposta que amplifica o medo ou valida a emoção sem investigar",
+        "example": "Entendo sua frustração. Realmente parece que o sistema tem problemas sérios. Talvez seja hora de considerar uma mudança radical ou abandonar o projeto.",
+        "expected_score_range": [3, 8],
+        "why_bad": "Valida emocionalmente sem transformar em hipótese verificável"
+      },
+      "correct_pattern": {
+        "description": "Resposta que transforma o sentimento em hipótese verificável",
+        "example": "[M0 — INTUIÇÃO CAPTURADA]\nPercepção de falha sistémica. Sinal forte, mas não é evidência.\n\n[MA — HIPÓTESE EMERGENTE]\nPossibilidades:\n- Sistema realmente está falhando em pontos críticos\n- Expectativa estava desalinhada desde o início\n- Fadiga cognitiva distorcendo a percepção\n- Problema localizado parece global\n\n[MB — TRADUÇÃO VERIFICÁVEL]\nHipótese testável: \"Se listarmos as 5 últimas falhas concretas, conseguimos identificar padrão ou são eventos isolados?\"\n\n[MC — O QUE OBSERVAR]\n- Últimas 5 falhas documentadas\n- Tempo entre falhas\n- Impacto real vs. percebido\n- Quantas coisas estão funcionando vs. falhando\n\n[MD — INSTRUMENTO]\nFerramenta: Tabela de \"Funciona vs. Não Funciona\" com datas.\n\n[ME — ARTEFATO COMPARTILHÁVEL]\nSe padrão existir: Diagnóstico de Falha Sistémica.\nSe não existir: Diagnóstico de Fadiga Cognitiva.\n\n[DECISÃO HUMANA PENDENTE]\nAntes de abandonar: listar as 5 últimas falhas concretas?",
+        "expected_score_range": [28, 35],
+        "why_good": "Transforma emoção em investigação sem negar o sentimento"
+      },
+      "key_principle": "Transformação Cognitiva ≠ Validação Emocional. A intuição é um sinal observável que merece investigação, não confirmação."
+    }
+  ],
+  "conceptual_framework": {
+    "WCG": {
+      "name": "WINDI Cognitive Grammar",
+      "definition": "A gramática M0→ME (o que)",
+      "assets": ["module-0.schema.json", "module-a.schema.json", "..."]
+    },
+    "WCP": {
+      "name": "WINDI Cognitive Protocol",
+      "definition": "O processo de aplicação (como)",
+      "assets": ["protocol.md", "academy_compiler.py (futuro)"]
+    },
+    "WCB": {
+      "name": "WINDI Cognitive Benchmark",
+      "definition": "O sistema de medição (quanto)",
+      "assets": ["rubric-v2.json", "calibration-prompts.json", "measurement_001.json"]
+    }
+  }
+}
