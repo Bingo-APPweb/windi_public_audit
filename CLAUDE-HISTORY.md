@@ -6,6 +6,104 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 24 Jun 2026 — W-HIOS Forensic Unit · Cena 15 "O Dragão"
+
+**Duração:** ~3h | **Status:** ✅ BLOCO A + BLOCO B SELADOS
+**Liga IA+H:** Human Dragon (I1, I9) · Guardian (Claude.ai) · CCode (Opus 4.5)
+**Projecto:** W-HIOS Forensic Unit (piloto)
+**Cena:** Cena 15 "O Dragão" — cena final do piloto
+
+### Conquistado Hoje
+
+| Bloco | Status | Planos |
+|-------|--------|--------|
+| **Bloco A** | ✅ SELADO | P15-01 (bunker noir), P15-02 (silhueta Vance costas), P15-03 (Gabi viva no ecrã) |
+| **Bloco B emocional** | ✅ SELADO | Ordem montagem: 07b → 04 → 07a → 07c |
+| **P15-06** | ✅ VOZ OFF | Convertido em áudio (não plano visual) |
+
+### Bloco B — Ordem de Montagem (I9)
+
+| # | Plano | Descrição | VOZ OFF |
+|---|-------|-----------|---------|
+| 1 | P15-07b | Close olhos, contenção | "Vou guardar o teu dragão" |
+| 2 | P15-04 | Close-up luto (régua anti-BAD_OUTPUT) | — |
+| 3 | P15-07a | Órbita perfil (movimento, olho I9) | — |
+| 4 | P15-07c | Lágrima Paper Dragon (slow4) | "A caçada começou" |
+
+### Decisões I9 Registadas
+
+| Decisão | Valor | Razão |
+|---------|-------|-------|
+| P15-03 calor | INTENÇÃO | Objeto-memória guarda luz de origem |
+| Lágrima velocidade | slow4 (4x) | "Ver a lágrima cair devagar" |
+| P15-06 | VOZ OFF | Vance em TRAUER, tudo no pensamento |
+| P15-07a/b | Olho I9 | Movimento não mede cosine |
+
+### Reconciliação G4 (CONFORMAR)
+
+| Asset Original | Função Anterior | Função Actual |
+|----------------|-----------------|---------------|
+| `P15-03_insert_dragao_lagrima_take03_slow4` | P15-03 | **P15-07c** |
+
+### Nota Técnica (SUPERSEDED)
+
+`gen4_turbo` descontinuado pelo Runway. **Motor canónico agora: `gen4.5`**
+
+### Arquivado (Prateleira · NADA-DESPERDÍCIO-001)
+
+| Asset | Razão | Nota |
+|-------|-------|------|
+| P15-07_v1 | Drift temporal (min 0.6335) | frame_01 a 0.8973 guardado como still |
+
+### Três Doutrinas Candidatas
+
+| # | Doutrina | Essência |
+|---|----------|----------|
+| 1 | **EMOÇÃO-DESLOCADA-001** | Confirmada em produção — emoção no objeto, não no rosto |
+| 2 | **OBJETO-MEMÓRIA-001** | O objeto guarda a sua luz de origem no espaço frio; contraste = dor |
+| 3 | **VOZ-INTERIOR-001** | Em luto solitário, fala vive OFF — tudo no pensamento |
+
+### Herdado para Próxima Sessão — Bloco C/D
+
+| Plano | Tipo | Casta | Nota |
+|-------|------|-------|------|
+| P15-08 | Insert mão | GRAMÁTICA | Composição |
+| P15-09 | Insert UI lista 347 | COMPOSIÇÃO-PÓS | Design |
+| P15-10 | Medium perfil | IDENTIDADE ≥0.65 | Único que pode medir |
+| P15-11 | Wide espelho | GRAMÁTICA | Considerar reuso P15-01 |
+| P15-12 | Título final | DESIGN | "A prova não mente..." |
+
+### Regras Anti-Loop Activas
+
+- Âncora canónica: `shots/vance/` (Strato, nunca TWIN §268)
+- Não medir movimento/gramática por cosine
+- Não regenerar identidade Vance (resolvida)
+
+### Ficheiros Criados
+
+```
+/home/windi/hios/cinema/obras/w-hios-forensic-unit/shots/cena15/
+├── P15-01_v1.mp4 (bunker noir)
+├── P15-02_v2.mp4 (silhueta Vance)
+├── P15-03_v1.mp4 (Gabi ecrã)
+├── P15-04_v1.mp4 (close luto)
+├── P15-07a_v1.mp4 (órbita perfil)
+├── P15-07b_v1.mp4 (close olhos)
+├── P15-07c_v1.mp4 (lágrima slow4)
+└── index.html (galeria)
+```
+
+### Marca de Honestidade (MÉTODO-MEMORIA-001)
+
+> Este handoff é o mapa da sessão. A FONTE é o disco.
+> A próxima sessão deve confirmar este estado contra os ficheiros reais
+> e o CLAUDE-HISTORY.md antes de propor trabalho — Lei I.
+
+**Frase de fecho:**
+> *"O coração da Cena 15 bate. O que falta é cobertura, não coragem."*
+
+---
+
 ## § SESSÃO 23 Jun 2026 — W-PLAYGROUND-001 + Canons Constitucionais
 
 **Duração:** ~4h | **Status:** ✅ CONSTITUTIONAL LAYER ESTABLISHED
@@ -20224,5 +20322,145 @@ O que aprendemos?
 ### Frase de Guarda (Human Dragon)
 
 > *"O Playground acabou de nascer. Ele ainda não teve oportunidade de surpreender os próprios criadores."*
+
+---
+
+## § SESSÃO 24 Jun 2026 — WINDI-HIOS Structural Academy v0.1 · Porta Cognitiva
+
+**Duração:** ~3h | **Status:** ✅ ACADEMY-BUILD-001 PASS
+**Liga IA+H:** Human Dragon (I1, I9) · CCode (Opus 4.5)
+**Projecto:** WINDI-HIOS Structural Academy
+**Milestone:** Sistema de treino estrutural com 6 módulos navegáveis
+
+### Estado Selado
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  ACADEMY-BUILD-001                                      │
+├─────────────────────────────────────────────────────────┤
+│  Status:    PASS                                        │
+│  Evidence:  M0→ME navegáveis + INT-009 self-applied     │
+│  Boundary:  não prova eficácia pedagógica ainda         │
+│  Next:      ACADEMY-MEASUREMENT-001                     │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Arquitectura Educacional (5 Camadas)
+
+| Camada | Função | Módulo |
+|--------|--------|--------|
+| **1. Perceber** | O que merece investigação? | M0 |
+| **2. Estruturar** | O que quero? Como expressar? | MA, MB |
+| **3. Validar** | Como provar? | MC |
+| **4. Materializar** | Como construir? | MD |
+| **5. Transmitir** | Como preservar e partilhar? | ME |
+
+### MODULE-0 — Human Intuition as a Cognitive Instrument
+
+**Status:** CANDIDATE
+**Pergunta Central:** "O que merece ser investigado?"
+**Regra Canónica:** "Intuition is admissible as an investigative trigger, not as a truth claim."
+
+**Invariantes I-INT-1→5:**
+- I-INT-1: Intuição não é evidência
+- I-INT-2: Intuição pode gerar hipóteses
+- I-INT-3: Hipóteses requerem medição
+- I-INT-4: Evidência observada prevalece sobre intuição
+- I-INT-5: Intuição repetidamente confirmada torna-se sinal, não autoridade
+
+**Fundamentação Científica:**
+- Gary Klein (Recognition-Primed Decision)
+- Michael Polanyi (Tacit Knowledge)
+- Predictive Processing (Cognitive Neuroscience)
+
+### INT-009 — Primeiro Ciclo Real M0→ME (Self-Applied)
+
+```
+M0 → "Algo parece errado" (404 apesar de config correcta)
+MA → O problema real é acesso à Academy
+MB → Traduzir "não funciona" → hipóteses verificáveis
+MC → Medir: ps -o lstart= → Jun 20 (nginx não recarregou)
+MD → Transformar em exemplo reutilizável (INT-009)
+ME → Preservar para futuros operadores
+```
+
+**Resultado:** Academy usou Academy para construir Academy.
+
+### Ecossistema Clarificado
+
+| Peça | Função |
+|------|--------|
+| **Academy** | ensina |
+| **Playground** | experimenta |
+| **W-Sites** | publica |
+| **Verify** | prova |
+
+### Ficheiros Criados
+
+```
+/opt/windi/playground/academy/
+├── index.html              (19KB) — 6 Módulos, pipeline inclui "intuição"
+├── module-0.html           (45KB) — Intuição Humana [CANDIDATE]
+├── module-a.html           (23KB) — Detecção de Intenção [LIVE]
+├── module-b.html           (23KB) — Tradução Soberana [LIVE]
+├── module-c.html           (25KB) — Prova e Fórmula [LIVE]
+├── module-d.html           (26KB) — Instrumentalização [LIVE]
+├── module-e.html           (28KB) — Liga IA+H [LIVE]
+├── schemas/
+│   ├── module-0.schema.json (8KB) — 5 I-INT invariants + scientific grounding
+│   ├── module-a.schema.json
+│   ├── module-b.schema.json
+│   ├── module-c.schema.json
+│   ├── module-d.schema.json
+│   └── module-e.schema.json
+└── exercises/
+    ├── module-0-examples.json (19KB) — 9 examples incl. INT-009 + meta-example
+    ├── module-a-examples.json
+    ├── module-b-examples.json
+    ├── module-c-examples.json
+    ├── module-d-examples.json
+    └── module-e-examples.json
+```
+
+### nginx Config
+
+```nginx
+location /playground/academy/ {
+    alias /opt/windi/playground/academy/;
+    index index.html;
+    try_files $uri $uri/ =404;
+    add_header X-WINDI-Service "W-ACADEMY-STRUCTURAL" always;
+}
+```
+
+### Critério de Medição (Próxima Fase)
+
+**3 utilizadores reais · Transformação cognitiva observável:**
+
+| Antes | Depois |
+|-------|--------|
+| ideia bruta | hipótese formulada |
+| | lacunas identificadas |
+| | intuição ≠ evidência compreendida |
+| | artefato candidato |
+| | próximo passo verificável |
+
+**Regra de ouro:** Não medir beleza. Não medir entusiasmo. Medir transformação cognitiva observável.
+
+### Frases Canónicas Seladas
+
+> *"A intuição é admissível como gatilho de investigação, não como alegação de verdade."*
+
+> *"A Academy ensina um método geral de investigação aplicável a qualquer domínio — o primeiro lugar onde alguém aprende a operar dentro do ecossistema sem precisar conhecer o ecossistema."*
+
+### Próxima Verdade a Buscar
+
+> *"Um humano sai pensando melhor do que entrou?"*
+
+### Marca de Honestidade
+
+A vitória é limpa porque não foi inflada.
+A Academy existe. Ela ainda não provou eficácia em usuários reais.
+E exactamente por isso está saudável.
 
 ---
