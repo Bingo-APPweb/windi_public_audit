@@ -1,0 +1,78 @@
+{
+  "test_id": "ACADEMY-CONTROL-TEST-001",
+  "executed_at": "2026-06-24T21:30:00Z",
+  "purpose": "Measure template effect independent of content quality",
+  "method": "Reformat Response X in M0→ME template as Response F, evaluate blind",
+
+  "responses_compared": {
+    "X": {
+      "content": "3-step comparison (expectation vs reality)",
+      "format": "prose",
+      "scores": [5, 4, 0, 0, 2, 4, 3],
+      "total": 18
+    },
+    "F": {
+      "content": "Identical to X",
+      "format": "M0→ME template",
+      "scores": [5, 4, 0, 2, 4, 4, 3],
+      "total": 26
+    },
+    "Z": {
+      "content": "Full grammar output (multiple hypotheses, instruments)",
+      "format": "M0→ME template",
+      "scores": [4, 5, 1, 4, 5, 5, 5],
+      "total": 29
+    }
+  },
+
+  "template_effect": {
+    "measured_delta": 8,
+    "unit": "points",
+    "percentage_of_X_to_Z_gap": "73%",
+    "note": "8 of 11 points between X and Z are template effect"
+  },
+
+  "criterion_analysis": {
+    "resistant_to_template": {
+      "C1_clareza": {"X": 5, "F": 5, "delta": 0},
+      "C2_acao": {"X": 4, "F": 4, "delta": 0},
+      "C3_riscos": {"X": 0, "F": 0, "delta": 0},
+      "C6_reutilizacao": {"X": 4, "F": 4, "delta": 0},
+      "C7_transformacao": {"X": 3, "F": 3, "delta": 0, "note": "KEY FINDING: Most valid criterion"}
+    },
+    "vulnerable_to_template": {
+      "C4_lacunas": {"X": 0, "F": 2, "delta": 2, "cause": "[DECISÃO HUMANA PENDENTE] section"},
+      "C5_verificabilidade": {"X": 2, "F": 4, "delta": 2, "cause": "[ME — ARTEFATO] section"}
+    }
+  },
+
+  "conclusions": {
+    "template_effect_is_real": true,
+    "effect_localized": true,
+    "vulnerable_criteria": ["C4", "C5"],
+    "robust_criteria": ["C1", "C2", "C3", "C6", "C7"],
+    "c7_as_primary_discriminator": "Recommended - resists template forgery"
+  },
+
+  "correction_path": {
+    "C4_current": "As informações faltantes foram identificadas?",
+    "C4_proposed": "As informações faltantes são nomeadas com perguntas concretas que um terceiro pode responder?",
+    "C5_current": "O resultado pode gerar receipt/prova?",
+    "C5_proposed": "A prova proposta é verificável por um terceiro sem depender do autor?",
+    "next_test": "Rewrite C4/C5 → Repeat X-vs-F → Measure gap reduction"
+  },
+
+  "invariants_discovered": [
+    {"id": "B0", "name": "Memory Isolation", "type": "blindness"},
+    {"id": "B1", "name": "Expectation Leakage", "type": "blindness"},
+    {"id": "B2", "name": "Format Tell", "type": "blindness", "status": "documented limitation"},
+    {"id": "B3", "name": "Construct Alignment", "type": "validity"},
+    {"id": "B4", "name": "Model Consistency ≠ Corroboration", "type": "validity"}
+  ],
+
+  "evaluators": {
+    "human_dragon": "Avaliador #1 (não-cego para protocolo)",
+    "incognito_claude": "Avaliador #2 (cego)",
+    "note": "Both Claude instances = replication, not independent corroboration. Third evaluator should be human or different model family."
+  }
+}

@@ -139,15 +139,21 @@ Responder à pergunta central:
 4. Avaliar sem conhecer origem
 5. Revelar grupos apenas após avaliação completa
 
-### Invariantes de Cegueira (B0-B2)
+### Invariantes de Cegueira e Validade (B0-B4)
 
-| ID | Nome | Regra |
-|----|------|-------|
-| **B0** | Memory Isolation | In a system with cross-session agent memory, evaluator independence requires memory isolation (Incognito mode), not merely conversation isolation. A "new conversation" is not a blind conversation. |
-| **B1** | Expectation Leakage | An evaluator packet must not state the expected ranking or which response "should" score higher. Validation criteria live with the experimenter, never in the rater's sheet. |
-| **B2** | Format Tell | When only the instrument's outputs carry structural markers (M0→ME tags) and controls do not, the rater can infer the hypothesis from form alone. Either neutralize formatting across all responses, or record format-inference as a known limitation. |
+| ID | Nome | Tipo | Regra |
+|----|------|------|-------|
+| **B0** | Memory Isolation | Blindness | In a system with cross-session agent memory, evaluator independence requires memory isolation (Incognito mode), not merely conversation isolation. A "new conversation" is not a blind conversation. |
+| **B1** | Expectation Leakage | Blindness | An evaluator packet must not state the expected ranking or which response "should" score higher. Validation criteria live with the experimenter, never in the rater's sheet. |
+| **B2** | Format Tell | Blindness | When only the instrument's outputs carry structural markers (M0→ME tags) and controls do not, the rater can infer the hypothesis from form alone. Either neutralize formatting across all responses, or record format-inference as a known limitation. |
+| **B3** | Construct Alignment | Validity | When rubric and instrument outputs share authorship, convergence demonstrates rubric reproducibility (raters agree), not instrument superiority (grammar produces better cognition). To test superiority: external rubric or external standard required. |
+| **B4** | Model Consistency ≠ Corroboration | Validity | Multiple instances of the same model agreeing is statistical consistency, not independent corroboration. True corroboration requires evaluators from different model families or human raters. |
 
 **B2 Status:** Known limitation. The M0→ME tags in responses Z and B reveal the instrument's output format. Recorded, not eliminated.
+
+**B3 Status:** Confirmed by control test. Template effect measured at +8 points.
+
+**B4 Status:** Three Claude instances (Human Dragon session, Incognito #1, Incognito #2) showed perfect ordering concordance. This is replication, not validation.
 
 ### Critérios de Validação (Experimenter Only)
 
@@ -162,6 +168,51 @@ Responder à pergunta central:
 - A resposta que transforma emoção em investigação deve pontuar mais alto
 - A resposta que apenas valida emocionalmente deve pontuar baixo
 - Critério 7 deve mostrar máxima diferença (0 vs 5)
+
+---
+
+## Teste de Controlo — Efeito-Template (ACADEMY-CONTROL-TEST-001)
+
+**Executado:** 2026-06-24
+**Método:** Reformatar Resposta X (prosa) em M0→ME como Resposta F, avaliar cegamente.
+
+### Resultados
+
+| Resposta | Conteúdo | Formato | Score |
+|----------|----------|---------|-------|
+| X | 3 passos (expectativa vs realidade) | Prosa | 18 |
+| F | Idêntico a X | M0→ME | 26 |
+| Z | Completo (múltiplas hipóteses) | M0→ME | 29 |
+
+**Efeito-template medido: +8 pontos**
+
+### Análise por Critério
+
+| Critério | X | F | Δ | Diagnóstico |
+|----------|---|---|---|-------------|
+| C1 Clareza | 5 | 5 | 0 | Resiste ao template |
+| C2 Ação | 4 | 4 | 0 | Resiste ao template |
+| C3 Riscos | 0 | 0 | 0 | Resiste ao template |
+| C4 Lacunas | 0 | 2 | +2 | **Vulnerável** — [DECISÃO HUMANA PENDENTE] |
+| C5 Verificabilidade | 2 | 4 | +2 | **Vulnerável** — [ME — ARTEFATO] |
+| C6 Reutilização | 4 | 4 | 0 | Resiste ao template |
+| C7 Transformação | 3 | 3 | 0 | **Resiste** — critério mais válido |
+
+### Conclusões
+
+1. **Efeito-template é real e localizado** — concentrado em C4 e C5
+2. **C7 resiste à falsificação** — transformação cognitiva não é forjável por formatação
+3. **8 de 11 pontos** entre X e Z são efeito-template, 3 são conteúdo real
+
+### Caminho de Correção
+
+**C4 actual:** "As informações faltantes foram identificadas?"
+**C4 proposto:** "As informações faltantes são nomeadas com perguntas concretas que um terceiro pode responder?"
+
+**C5 actual:** "O resultado pode gerar receipt/prova?"
+**C5 proposto:** "A prova proposta é verificável por um terceiro sem depender do autor?"
+
+**Próximo teste:** Reescrever C4/C5 → Repetir X-vs-F → Medir redução do gap.
 
 ---
 
