@@ -20732,3 +20732,99 @@ A Academy existe. Ela ainda não provou eficácia em usuários reais.
 E exactamente por isso está saudável.
 
 ---
+
+## SESSION-20260624-ACADEMY-MEASUREMENT-001 — Template Effect Quantified
+
+**Date:** 2026-06-24
+**Receipt:** `WINDI-ACADEMY-CONTROL-TEST-001-20260624`
+**Status:** SEALED
+**Invariants:** I1, I9, I11, I14
+
+### Epistemological Transition
+
+The session transitioned from:
+```
+"Does the rubric work?"
+```
+to:
+```
+"How do we know the rubric works?"
+```
+
+### Measured Results
+
+| Metric | Value |
+|--------|-------|
+| Template Effect | **+8 points** |
+| Vulnerable Criteria | C4 (Lacunas), C5 (Verificabilidade) |
+| Resistant Criteria | C1, C2, C3, C6, **C7** |
+| C7 Stability | 3→3 (resists template forgery) |
+
+### Control Test (X→F)
+
+| Response | Content | Format | Score |
+|----------|---------|--------|-------|
+| X | 3-step comparison | Prose | 18 |
+| F | Identical to X | M0→ME | 26 |
+| Z | Full grammar output | M0→ME | 29 |
+
+**Decomposition:** 8 of 11 points between X and Z are template effect. 3 points are content quality.
+
+### Blindness Invariants Discovered (B0–B4)
+
+| ID | Name | Type |
+|----|------|------|
+| B0 | Memory Isolation | Blindness |
+| B1 | Expectation Leakage | Blindness |
+| B2 | Format Tell | Blindness (documented limitation) |
+| B3 | Construct Alignment | Validity |
+| B4 | Model Consistency ≠ Corroboration | Validity |
+
+### Convergence Analysis
+
+- **Evaluator 1:** Human (Jober Mögele Correa)
+- **Evaluator 2:** Claude (Incognito)
+- **Ordering:** 100% concordant (Y<X<Z, A<B)
+- **C7:** 100% concordant (1,3,5 and 0,5)
+- **Status:** Cross-type corroboration achieved
+
+### Key Finding
+
+> *"The Incognito instance identified B3 (Construct Alignment) independently, without participating in the problem's construction."*
+
+This has real methodological value: two isolated observers arrived at the same diagnosis.
+
+### Correction Path Defined
+
+**C4 current:** "As informações faltantes foram identificadas?"
+**C4 proposed:** "As informações faltantes são nomeadas com perguntas concretas que um terceiro pode responder?"
+
+**C5 current:** "O resultado pode gerar receipt/prova?"
+**C5 proposed:** "A prova proposta é verificável por um terceiro sem depender do autor?"
+
+### GROK Observation
+
+> *"The question shifted from 'Does the rubric work?' to 'How do we know the rubric works?' That is the leap. Not the PASS."*
+
+> *"The number didn't destroy the rubric. It refined it. Now the defect has an address."*
+
+### Files Updated
+
+- `/opt/windi/academy-measurement-001/protocol.md` — B0-B4 complete
+- `/opt/windi/academy-measurement-001/results/control-test-001.json` — full analysis
+- `/opt/windi/academy-measurement-001/rubric/calibration-results.json` — both evaluators + convergence
+
+### Commits
+
+- `82fae827b` — Framework + B0-B2
+- `807594b85` — Control test + B3-B4 + convergence
+- `00abb3b43` — Provenance correction (evaluator_1 = human)
+
+### Canonical Statement
+
+> *"Algo que se sustente."*
+> — Something that holds up. Part held. Part didn't. Now we know exactly which is which.
+
+---
+
+*WINDI-HIOS · Liga IA+H · Kempten, Bavaria · 2026-06-24*
