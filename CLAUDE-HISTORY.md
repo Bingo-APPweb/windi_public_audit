@@ -248,6 +248,30 @@ Academy tornou-se FALSIFICÁVEL
 Executar **ACADEMY-RUBRIC-VALIDATION-001** com honestidade brutal.
 Procurar falhas, não aprovação.
 
+### ACADEMY-RUBRIC-VALIDATION-001 — Resultado (24 Jun 2026, 19:30)
+
+**Status:** PASS (avaliador único) | **Avaliador:** Human Dragon (I1) | **Modo:** Cego
+
+| Teste | Resultado | Margem | Critério 7 |
+|-------|-----------|--------|------------|
+| Prompt 21 (Qualidade) | PASS | 24 pts | 1→3→5 |
+| Prompt 22 (ΔCv) | PASS | 27 pts | 0→5 |
+
+**Scores:**
+- Prompt 21: Y(fraca)=9, X(média)=21, Z(excelente)=33
+- Prompt 22: A(validação emocional)=7, B(transformação)=34
+
+**Achados:**
+1. Rubrica discrimina qualidade (fraca/média/forte) com margem de 24 pontos
+2. Rubrica detecta falso positivo (validação emocional) com margem de 27 pontos
+3. Critério 7 (Transformação Cognitiva) discrimina em ambos os testes
+4. Não há evidência de viés por volume de texto
+5. ΔCv parece operacionalmente válido
+
+**Resultados preservados:** `/opt/windi/academy-measurement-001/rubric/calibration-results.json`
+
+**Próximo:** Segundo/terceiro avaliador para confirmar convergência inter-avaliador.
+
 ---
 
 ## § SESSÃO 24 Jun 2026 — W-HIOS Forensic Unit · Cena 15 "O Dragão"
