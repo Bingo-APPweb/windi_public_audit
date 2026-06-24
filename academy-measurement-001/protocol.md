@@ -153,7 +153,7 @@ Responder à pergunta central:
 
 **B3 Status:** Confirmed by control test. Template effect measured at +8 points.
 
-**B4 Status:** Three Claude instances (Human Dragon session, Incognito #1, Incognito #2) showed perfect ordering concordance. This is replication, not validation.
+**B4 Status:** Evaluator #1 = Human (Jober), Evaluator #2 = Claude (Incognito). Cross-type corroboration achieved. For stronger validation: add second human or different model family (GPT, Gemini).
 
 ### Critérios de Validação (Experimenter Only)
 

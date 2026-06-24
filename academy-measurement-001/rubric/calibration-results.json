@@ -10,12 +10,14 @@
       "id": "evaluator_1",
       "name": "Human Dragon (I1)",
       "mode": "blind",
-      "model": "Claude (via CCode session)"
+      "type": "human",
+      "note": "Jober Mögele Correa — scores given before seeing any other evaluation"
     },
     {
       "id": "evaluator_2",
       "name": "Incognito Claude",
       "mode": "blind",
+      "type": "model",
       "model": "Claude (Incognito session)",
       "note": "Memory-isolated per B0"
     }
@@ -114,7 +116,7 @@
     {"id": "B1", "name": "Expectation Leakage", "type": "blindness"},
     {"id": "B2", "name": "Format Tell", "type": "blindness", "status": "documented limitation"},
     {"id": "B3", "name": "Construct Alignment", "type": "validity", "status": "confirmed by control test"},
-    {"id": "B4", "name": "Model Consistency ≠ Corroboration", "type": "validity"}
+    {"id": "B4", "name": "Model Consistency ≠ Corroboration", "type": "validity", "note": "Evaluator 1 = human, Evaluator 2 = Claude. Cross-type corroboration achieved. For stronger validation: add second human or different model family."}
   ],
 
   "overall_findings": [
@@ -123,7 +125,7 @@
     "C7 (Transformação Cognitiva) resiste ao template — critério mais válido",
     "C4 e C5 são vulneráveis a falsificação por formato",
     "Convergência prova reprodutibilidade, não superioridade (B3)",
-    "Dois Claude = consistência, não corroboração independente (B4)"
+    "Humano + Claude = corroboração cross-type (B4 parcialmente satisfeito)"
   ],
 
   "correction_path": {
