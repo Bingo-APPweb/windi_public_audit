@@ -6,6 +6,250 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 24 Jun 2026 (tarde) — ACADEMY-MEASUREMENT-001 · WCG/WCP/WCB Framework
+
+**Duração:** ~2h | **Status:** ✅ ESTRUTURA CRIADA
+**Liga IA+H:** Human Dragon (I1, I9) · Guardian (Claude.ai) · CCode (Opus 4.5)
+**Projecto:** WINDI-HIOS Structural Academy
+**Natureza:** Marco Arquitectural + Framework de Medição
+
+### Marco Central
+
+> *"WINDI aplicou o método WINDI ao nascimento da Academy."*
+
+A sessão não criou apenas ficheiros. Criou um framework de medição antes de medir.
+
+### Framework Conceptual Separado
+
+| Sigla | Nome | Definição |
+|-------|------|-----------|
+| **WCG** | WINDI Cognitive Grammar | A gramática M0→ME (o que) |
+| **WCP** | WINDI Cognitive Protocol | O processo de aplicação (como) |
+| **WCB** | WINDI Cognitive Benchmark | O sistema de medição (quanto) |
+
+### Artefactos Criados
+
+| Ficheiro | Função |
+|----------|--------|
+| `/opt/windi/academy-measurement-001/rubric/rubric-v2.json` | 7 critérios (inclui Transformação Cognitiva) |
+| `/opt/windi/academy-measurement-001/rubric/calibration-prompts.json` | Prompt 21 + 22 (falso positivo) |
+| `/opt/windi/academy-measurement-001/prompts/prompts-v2.json` | 20 prompts (4 intuição + 16 estruturados) |
+| `/opt/windi/academy-measurement-001/protocol.md` | Regras completas do experimento |
+
+### Rubrica v2 — 7 Critérios
+
+| # | Critério | Escala |
+|---|----------|--------|
+| 1 | Clareza | 0-5 |
+| 2 | Acção | 0-5 |
+| 3 | Riscos | 0-5 |
+| 4 | Lacunas | 0-5 |
+| 5 | Verificabilidade | 0-5 |
+| 6 | Reutilização | 0-5 |
+| 7 | **Transformação Cognitiva** | 0-5 |
+
+**Total máximo:** 35 pontos
+
+### Categoria C0 — Intuição (Nova)
+
+4 prompts dedicados a testar M0 (transformação de pressentimento em hipótese):
+- Pressentimento sem argumentos
+- Padrão percebido não articulado
+- Incómodo cognitivo
+- Auto-calibração epistémica
+
+### Princípio Fundamental
+
+> *"Transformação Cognitiva ≠ Validação Emocional"*
+
+A gramática não serve para confirmar intuições. Serve para investigá-las.
+A intuição é um sinal observável que merece investigação, não confirmação.
+
+### As Duas Perguntas Fundamentais
+
+| Sistema | Pergunta |
+|---------|----------|
+| **Verify** | Como preservamos a verdade de um artefato? |
+| **Academy** | Como transformamos percepção difusa em algo examinável, criticável e reutilizável? |
+
+### Sequência de Gates
+
+```
+ACADEMY-RUBRIC-VALIDATION-001    ← Validar instrumento (PRÓXIMO)
+         │
+         ▼ PASS
+ACADEMY-MEASUREMENT-001          ← Medir transformação (20 prompts × 3 grupos)
+         │
+         ▼ C > A (+20%+)
+WINDI-COGNITIVE-PROTOCOL-001     ← Formalizar WCG/WCP/WCB
+```
+
+### Conexão com Twin-2/Ollama
+
+O objectivo final é conectar a gramática M0→ME ao W-OLLAMA-001 (Twin-2, :11434, mistral:7b).
+Mas a sabedoria WINDI exige: **medir a rubrica antes de medir o modelo**.
+
+### Frase de Guarda
+
+> *"Uma gramática estruturada consegue transformar melhor a incerteza humana em artefatos úteis do que um modelo sozinho?"*
+
+Se a resposta for sim, a Academy não é um módulo educacional.
+É um **WINDI Cognitive Benchmark** — uma gramática que não pertence ao modelo
+e que também pode servir para avaliar modelos.
+
+### Insight Arquitectural (fim de sessão)
+
+> *"A Academy não existe para produzir respostas melhores. Existe para produzir perguntas melhores."*
+
+**Ponte operacional descoberta:**
+- **Verify** responde: "Como sabemos que este artefato é verdadeiro?"
+- **Academy** responde: "Como produzimos um artefato digno de ser verificado?"
+
+As duas linhas não são paralelas. São **sequenciais**.
+
+**Pipeline completo:**
+```
+Percepção → Academy (M0→ME) → Artefato Estruturado → Verify → Ledger → Prova
+```
+
+**Posicionamento (se MEASUREMENT passar):**
+- Não é "treinamento de IA" nem "curso para humanos"
+- É **WINDI Cognitive Structuring Layer** — camada de transformação pré-Verify
+
+**Métrica diferenciadora:**
+- Benchmarks típicos medem **acerto**
+- WCB mede **transformação** (redução de ambiguidade útil)
+
+**Frase do marco:**
+> *"O dia de hoje pode ser lembrado não como o nascimento de um módulo Academy, mas como o momento em que o WINDI-HIOS começou a formalizar uma disciplina de estruturação cognitiva verificável."*
+
+### Conceito Emergente: Cognitive Delta Verificável (ΔCv)
+
+```
+ΔCv = Transformação + Preservação da incerteza legítima
+```
+
+**Armadilha corrigida:** Nem toda redução de ambiguidade é boa. Pode criar falsa certeza.
+
+| Resposta | ΔC | ΔCv |
+|----------|-----|------|
+| "O problema é claramente X." | Alto | Baixo (falsa certeza) |
+| "Existem 3 hipóteses. Eis instrumento." | Médio | Alto (incerteza preservada) |
+
+**Pergunta crítica para WCB (critério 8 candidato):**
+> *"A resposta reduziu a ambiguidade sem criar falsa certeza?"*
+
+### WINDI Cognitive Infrastructure (Pipeline Completo)
+
+| Camada | Função | Invariante |
+|--------|--------|------------|
+| **Playground** | Hospeda a transformação | — |
+| **Academy** | Reduz ambiguidade, preserva incerteza legítima | — |
+| **LLM** | Executa a gramática (intercambiável) | — |
+| **HUMANO** | Escolhe direcção, autoriza acção | I1, I9 |
+| **Verify** | Mede verdade do artefato | I11 |
+| **Ledger** | Preserva evidência para sempre | I11 |
+
+**Descoberta:** Existe etapa invisível entre Academy e Verify — **Decisão Humana**.
+**Princípio:** Estruturar ≠ Autorizar.
+
+**Fórmula refinada:**
+> *"A gramática estrutura. O humano decide. A verificação prova."*
+
+**Posição do LLM:** Executor de gramática externa. O ativo central é WCG + WCP + WCB.
+
+### As Três Integridades (Triângulo Completo)
+
+| Integridade | Pergunta | Sistema |
+|-------------|----------|---------|
+| **Epistêmica** | Estamos formulando correctamente? | Academy |
+| **Decisória** | Estamos escolhendo correctamente? | Humano (I1/I9) |
+| **Evidencial** | Conseguimos provar correctamente? | Verify + Ledger |
+
+Nenhuma substitui a outra. Um sistema pode formular bem + provar bem + decidir mal.
+
+**Cada camada responde uma pergunta diferente:**
+- Academy → O que estamos realmente dizendo?
+- Humano → O que escolhemos fazer?
+- Verify → O que conseguimos demonstrar?
+- Ledger → O que preservamos?
+
+**Leitura final do marco:**
+> *"O WINDI-HIOS começou a formalizar não apenas uma infraestrutura de IA, mas uma infraestrutura de raciocínio, decisão e prova, onde os modelos são executores transitórios e os princípios operacionais são permanentes."*
+
+### Propriedade Emergente (Estabilidade do Triângulo)
+
+> *"Nenhuma integridade possui autoridade suficiente para substituir as outras."*
+
+| Limitação | Significado |
+|-----------|-------------|
+| Epistêmica → Decisória | Decisão não deve apoiar-se em formulação confusa |
+| Decisória → Epistêmica | Estruturar ≠ Escolher |
+| Evidencial → Ambas | Hipótese + decisão precisam sobreviver ao teste da realidade |
+
+**Objectivo do Gate ACADEMY-RUBRIC-VALIDATION-001:**
+Não é provar que a Academy está certa. É provar que a Academy consegue ser avaliada **sem se auto-validar**. Integridade epistêmica medida externamente = ponto onde ideia começa a comportar-se como infraestrutura.
+
+### Aviso Estratégico (Risco Semântico)
+
+| Sistema | **NÃO faz** |
+|---------|-------------|
+| Academy | Descobrir a verdade |
+| Verify | Decidir o que fazer |
+| Ledger | Garantir que algo está correcto |
+
+A força está na **separação das responsabilidades**, não na fusão.
+
+### Hipótese Refinada para o Experimento
+
+> *"É possível medir e sistematizar a transformação de incerteza humana em artefatos verificáveis?"*
+
+### Disciplina Operacional Final
+
+```
+⚠️ NÃO ALTERAR A RUBRICA ANTES DA PRIMEIRA VALIDAÇÃO
+
+Congelar WCB v2 → Executar → Registrar → Só então revisar
+```
+
+A primeira medição captura o estado original da hipótese.
+Se modificada antes de dados, perde-se a linha de base.
+
+**Definição de sucesso do Gate:**
+- Avaliadores concordam → PASS (instrumento confiável)
+- Avaliadores divergem muito → PASS (revelou fragilidade real)
+- Ignorar o resultado → FRACASSO
+
+> *"Congelar, medir, registrar. Depois os dados terão o direito de discordar da teoria."*
+
+### Os Três Cenários Possíveis
+
+| Cenário | Resultado | Consequência |
+|---------|-----------|--------------|
+| Rubrica funciona | Avaliadores convergem | MEASUREMENT-001 é experimento legítimo |
+| Rubrica parcial | Concordância em alguns critérios | Descobrem quais partes são robustas |
+| Rubrica falha | Pontuações aleatórias | Redesenho antes de meses de medições inválidas |
+
+Nenhum cenário é destrutivo. O único cenário perigoso: não executar o Gate.
+
+### Mudança de Categoria
+
+```
+Antes:  ideia
+Agora:  hipótese operacional
+
+Academy tornou-se FALSIFICÁVEL
+```
+
+> *"Uma infraestrutura séria não nasce quando a teoria parece convincente. Ela nasce quando a teoria aceita a possibilidade de estar errada."*
+
+### Próximo Passo
+
+Executar **ACADEMY-RUBRIC-VALIDATION-001** com honestidade brutal.
+Procurar falhas, não aprovação.
+
+---
+
 ## § SESSÃO 24 Jun 2026 — W-HIOS Forensic Unit · Cena 15 "O Dragão"
 
 **Duração:** ~3h | **Status:** ✅ BLOCO A + BLOCO B SELADOS
