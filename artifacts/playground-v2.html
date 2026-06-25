@@ -1017,41 +1017,49 @@
   // ============================================================
 
   async function compileIntent(intent) {
-    // For now, simulate API call with mock data
-    // TODO: Connect to /api/decompose endpoint
+    // Call real /api/decompose endpoint via Dragon Hub
+    // I10: If engine unavailable, returns explicit error (no silent fallback)
+    // I14: No placeholders — if it fails, it fails explicitly
 
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          success: true,
-          graph: {
-            graph_id: 'pg_mock_' + Date.now(),
-            project_name: extractProjectName(intent),
-            project_type: 'software',
-            inferred_mission: 'healthcare_management',  // Fase 2 hook
-            suggested_capabilities: [],  // Vazio em v1
-            confidence: 0.72,
-            dimensions: [
-              { id: 'product', label: 'Produto', applicable: 'true', content: 'Aplicação para gestão de agendamentos e prontuários médicos.', confidence: 0.8 },
-              { id: 'regulatory', label: 'Regulatório', applicable: 'true', content: 'LGPD/GDPR para dados de saúde, normas do sector médico.', confidence: 0.7 },
-              { id: 'users', label: 'Utilizadores', applicable: 'true', content: 'Médicos, pacientes, recepcionistas.', confidence: 0.85 },
-              { id: 'technology', label: 'Tecnologia', applicable: 'uncertain', content: 'Web ou mobile? Integrações com sistemas existentes?', confidence: 0.5 },
-              { id: 'costs', label: 'Custos', applicable: 'uncertain', content: 'Desenvolvimento, hosting, manutenção.', confidence: 0.4 }
-            ],
-            gaps: [
-              { question: 'Qual é a jurisdição principal? (Brasil, Portugal, Alemanha?)', dimension_id: 'regulatory', priority: 'high' },
-              { question: 'Existe algum sistema legado para integrar?', dimension_id: 'technology', priority: 'high' },
-              { question: 'Qual é o orçamento disponível?', dimension_id: 'costs', priority: 'medium' }
-            ],
-            assumptions: [
-              { statement: 'Os utilizadores têm acesso a smartphone ou computador.', dimension_id: 'users', confidence: 'assumed' },
-              { statement: 'Dados de saúde requerem encriptação.', dimension_id: 'regulatory', confidence: 'confirmed' }
-            ]
-          },
-          status: 'estimated'
-        });
-      }, 1500);
-    });
+    try {
+      const response = await fetch('/api/decompose', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          intent: intent,
+          engine: 'MISTRAL_DIRECT',
+          lang: currentLang
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        console.error('Decomposition failed:', data.error);
+        return {
+          success: false,
+          error: data.error || 'Unknown error',
+          error_code: data.error_code || 'UNKNOWN'
+        };
+      }
+
+      return {
+        success: true,
+        graph: data.graph,
+        status: data.status,
+        metadata: data.metadata
+      };
+
+    } catch (e) {
+      console.error('API call failed:', e);
+      return {
+        success: false,
+        error: e.message,
+        error_code: 'NETWORK_ERROR'
+      };
+    }
   }
 
   function extractProjectName(intent) {

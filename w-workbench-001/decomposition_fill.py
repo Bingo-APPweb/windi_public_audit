@@ -45,13 +45,23 @@ class EngineConfig:
     timeout: int = 30
 
 
+# Mistral API Key (loaded from environment or config)
+import os
+MISTRAL_API_KEY = os.environ.get("MISTRAL_API_KEY", "qpSubOv2M5oKoiF4NhQzaObUYQGWAYkp")
+
 # Available engines
 ENGINES = {
+    "MISTRAL_DIRECT": EngineConfig(
+        name="Mistral Direct",
+        endpoint="https://api.mistral.ai/v1/chat/completions",
+        model="mistral-large-latest",
+        tier="MED"
+    ),
     "DRAGON_HUB": EngineConfig(
         name="Dragon Hub",
         endpoint="http://localhost:8108/api/dragon/chat",
         model=None,  # Dragon Hub selects based on tier
-        tier="FREE"
+        tier="MED"  # MED uses Mistral API for real LLM calls
     ),
     "DRAGON_HUB_HIGH": EngineConfig(
         name="Dragon Hub (HIGH)",
@@ -67,8 +77,8 @@ ENGINES = {
     )
 }
 
-# Default engine
-DEFAULT_ENGINE = "DRAGON_HUB"
+# Default engine - MISTRAL_DIRECT bypasses Dragon Hub's routing
+DEFAULT_ENGINE = "MISTRAL_DIRECT"
 
 
 # ============================================================================
@@ -200,12 +210,61 @@ def _call_engine(engine_config: EngineConfig, intent: str, lang: str) -> dict:
     """
     Chama o motor de preenchimento.
     """
-    if "dragon" in engine_config.endpoint.lower():
+    if "mistral.ai" in engine_config.endpoint.lower():
+        return _call_mistral_direct(engine_config, intent, lang)
+    elif "dragon" in engine_config.endpoint.lower():
         return _call_dragon_hub(engine_config, intent, lang)
     elif "ollama" in engine_config.endpoint.lower():
         return _call_ollama(engine_config, intent, lang)
     else:
         raise ValueError(f"Unknown engine type: {engine_config.endpoint}")
+
+
+def _call_mistral_direct(engine_config: EngineConfig, intent: str, lang: str) -> dict:
+    """
+    Chama Mistral API directamente (bypassa Dragon Hub routing).
+    Mais rápido e confiável para Project Compilation.
+    """
+    grammar = get_grammar_contract(lang)
+
+    messages = [
+        {
+            "role": "system",
+            "content": SYSTEM_PROMPT + f"\n\nGrammar Contract:\n{json.dumps(grammar, indent=2)}\n\nOutput language: {lang}"
+        },
+        {
+            "role": "user",
+            "content": f"Decompose this intent into a Project Graph:\n\n{intent}"
+        }
+    ]
+
+    payload = {
+        "model": engine_config.model,
+        "messages": messages,
+        "temperature": 0.3,  # Lower temperature for structured output
+        "max_tokens": 2000
+    }
+
+    headers = {
+        "Authorization": f"Bearer {MISTRAL_API_KEY}",
+        "Content-Type": "application/json"
+    }
+
+    response = requests.post(
+        engine_config.endpoint,
+        json=payload,
+        headers=headers,
+        timeout=engine_config.timeout
+    )
+
+    if response.status_code != 200:
+        raise Exception(f"Mistral API error: {response.status_code} - {response.text}")
+
+    data = response.json()
+
+    # Mistral returns response in choices[0].message.content
+    response_text = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+    return _extract_json(response_text)
 
 
 def _call_dragon_hub(engine_config: EngineConfig, intent: str, lang: str) -> dict:
@@ -236,8 +295,8 @@ def _call_dragon_hub(engine_config: EngineConfig, intent: str, lang: str) -> dic
 
     data = response.json()
 
-    # Extract JSON from response
-    response_text = data.get("response", "")
+    # Dragon Hub returns response in 'message' field (not 'response')
+    response_text = data.get("message", "") or data.get("response", "")
     return _extract_json(response_text)
 
 
