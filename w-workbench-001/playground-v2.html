@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI Playground — Project Compiler</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F5F0E0;
+    --bg-elev: #FBF8EF;
+    --bg-elev2: #FFFFFF;
+    --ink: #1C1A14;
+    --ink-soft: #4A4636;
+    --ink-faint: #837C66;
+    --line: #DED7C2;
+    --accent: #B5481F;
+    --accent-ink: #FBF8EF;
+    --seal: #3A5A40;
+    --seal-soft: #5A7A60;
+    --warn: #C4841D;
+    --dim-product: #4A7C59;
+    --dim-regulatory: #8B4513;
+    --dim-users: #2E6B8A;
+    --dim-technology: #6B4E8A;
+    --dim-costs: #8A6B4E;
+  }
+  html[data-theme="noir"] {
+    --bg: #14130F;
+    --bg-elev: #1D1B15;
+    --bg-elev2: #252319;
+    --ink: #F1ECDC;
+    --ink-soft: #C3BCA6;
+    --ink-faint: #8B856F;
+    --line: #2C2A22;
+    --accent: #D9622E;
+    --accent-ink: #14130F;
+    --seal: #7FA689;
+    --seal-soft: #5A7A60;
+    --warn: #E5A52D;
+    --dim-product: #7FA689;
+    --dim-regulatory: #C4956A;
+    --dim-users: #6A9BB5;
+    --dim-technology: #9B7EB5;
+    --dim-costs: #B59B7E;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+    display: flex;
+    flex-direction: column;
+    transition: background .3s ease, color .3s ease;
+  }
+
+  /* ---- Header ---- */
+  header {
+    border-bottom: 1px solid var(--line);
+    padding: 0 24px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: .95rem;
+  }
+  .brand .glyph { font-size: 1.2rem; }
+  .brand .sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .72rem;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .lang-toggle {
+    display: flex;
+    gap: 2px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 2px;
+  }
+  .lang-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .65rem;
+    letter-spacing: .04em;
+    background: transparent;
+    color: var(--ink-faint);
+    border: none;
+    padding: 4px 8px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all .15s ease;
+  }
+  .lang-btn:hover { color: var(--ink-soft); }
+  .lang-btn.active {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+  .theme-toggle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .68rem;
+    letter-spacing: .08em;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink-soft);
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+  .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ---- Main Container ---- */
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 32px 24px;
+    overflow: auto;
+  }
+
+  /* ---- Phase Indicator ---- */
+  .phase-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .75rem;
+    color: var(--ink-faint);
+  }
+  .phase-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--ink-faint);
+  }
+  .phase-dot.active { background: var(--accent); }
+  .phase-dot.complete { background: var(--seal); }
+
+  /* ---- PHASE 1: Intent Input ---- */
+  .phase-intent {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .phase-intent.hidden { display: none; }
+
+  .intent-header {
+    text-align: center;
+  }
+  .intent-header h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .intent-header p {
+    color: var(--ink-soft);
+    font-size: 1rem;
+  }
+
+  .intent-input-wrapper {
+    position: relative;
+  }
+  .intent-input {
+    width: 100%;
+    padding: 20px 24px;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 1.1rem;
+    border: 2px solid var(--line);
+    border-radius: 12px;
+    background: var(--bg-elev);
+    color: var(--ink);
+    outline: none;
+    resize: none;
+    min-height: 120px;
+    transition: border-color .2s ease;
+  }
+  .intent-input:focus {
+    border-color: var(--accent);
+  }
+  .intent-input::placeholder {
+    color: var(--ink-faint);
+  }
+
+  .intent-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  /* ---- PHASE 2: Project Graph (The Mirror) ---- */
+  .phase-graph {
+    display: none;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .phase-graph.active { display: flex; }
+
+  .graph-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .graph-title {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .graph-title h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+  }
+  .graph-title .project-type {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .72rem;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+  }
+  .graph-confidence {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .confidence-bar {
+    width: 80px;
+    height: 6px;
+    background: var(--line);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .confidence-fill {
+    height: 100%;
+    background: var(--seal);
+    border-radius: 3px;
+    transition: width .3s ease;
+  }
+  .confidence-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .72rem;
+    color: var(--ink-faint);
+  }
+
+  /* Status Badge */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .68rem;
+    text-transform: uppercase;
+  }
+  .status-badge.estimated {
+    background: rgba(196, 132, 29, 0.15);
+    color: var(--warn);
+    border: 1px solid var(--warn);
+  }
+  .status-badge.confirmed {
+    background: rgba(58, 90, 64, 0.15);
+    color: var(--seal);
+    border: 1px solid var(--seal);
+  }
+
+  /* Dimensions Grid */
+  .dimensions-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .dimensions-section h3 {
+    font-size: .9rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+  .dimensions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+  }
+  .dimension-card {
+    padding: 16px;
+    background: var(--bg-elev);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all .2s ease;
+  }
+  .dimension-card:hover {
+    border-color: var(--ink-soft);
+  }
+  .dimension-card.not-applicable {
+    opacity: 0.5;
+  }
+  .dimension-card.uncertain {
+    border-style: dashed;
+  }
+  .dimension-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .dimension-label {
+    font-weight: 600;
+    font-size: .85rem;
+  }
+  .dimension-applicable {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .7rem;
+  }
+  .dimension-applicable.true { background: var(--seal); color: white; }
+  .dimension-applicable.false { background: var(--ink-faint); color: white; }
+  .dimension-applicable.uncertain { background: var(--warn); color: white; }
+  .dimension-content {
+    font-size: .85rem;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+
+  /* Dimension colors */
+  .dimension-card[data-dim="product"] { border-left: 3px solid var(--dim-product); }
+  .dimension-card[data-dim="regulatory"] { border-left: 3px solid var(--dim-regulatory); }
+  .dimension-card[data-dim="users"] { border-left: 3px solid var(--dim-users); }
+  .dimension-card[data-dim="technology"] { border-left: 3px solid var(--dim-technology); }
+  .dimension-card[data-dim="costs"] { border-left: 3px solid var(--dim-costs); }
+
+  /* Gaps Section */
+  .gaps-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .gaps-section h3 {
+    font-size: .9rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+  .gap-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--bg-elev);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+  }
+  .gap-icon {
+    font-size: 1.1rem;
+    color: var(--warn);
+  }
+  .gap-content {
+    flex: 1;
+  }
+  .gap-question {
+    font-size: .95rem;
+    margin-bottom: 4px;
+  }
+  .gap-meta {
+    display: flex;
+    gap: 8px;
+  }
+  .gap-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .65rem;
+    padding: 2px 6px;
+    background: var(--line);
+    border-radius: 4px;
+    color: var(--ink-soft);
+  }
+  .gap-tag.high { background: rgba(181, 72, 31, 0.15); color: var(--accent); }
+
+  /* Assumptions Section */
+  .assumptions-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .assumptions-section h3 {
+    font-size: .9rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+  .assumption-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--bg-elev);
+    border: 1px dashed var(--line);
+    border-radius: 10px;
+  }
+  .assumption-icon {
+    font-size: 1rem;
+    color: var(--ink-faint);
+  }
+  .assumption-text {
+    font-size: .9rem;
+    color: var(--ink-soft);
+  }
+
+  /* Graph Actions */
+  .graph-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+  }
+
+  /* ---- PHASE 3: Workbench ---- */
+  .phase-workbench {
+    display: none;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .phase-workbench.active { display: flex; }
+
+  .workbench-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  .workbench-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+
+  .title-input {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    border: none;
+    background: transparent;
+    color: var(--ink);
+    width: 100%;
+    outline: none;
+    padding: 0 0 12px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .content-area {
+    flex: 1;
+    min-height: 300px;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    border: none;
+    background: transparent;
+    color: var(--ink);
+    resize: none;
+    outline: none;
+  }
+
+  /* ---- Buttons ---- */
+  .btn {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 600;
+    font-size: .9rem;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all .15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink);
+    border-color: var(--line);
+  }
+  .btn-ghost:hover { border-color: var(--ink-soft); }
+  .btn-primary {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+  .btn-primary:hover { filter: brightness(1.1); }
+  .btn-seal {
+    background: var(--seal);
+    color: #fff;
+  }
+  .btn-seal:hover { background: var(--seal-soft); }
+  .btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  /* ---- Loading ---- */
+  .loading {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 48px;
+  }
+  .loading.active { display: flex; }
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--line);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  .loading-text {
+    font-size: .9rem;
+    color: var(--ink-soft);
+  }
+
+  /* ---- Toast ---- */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--ink);
+    color: var(--bg);
+    padding: 14px 24px;
+    border-radius: 10px;
+    font-size: .9rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: all .3s ease;
+    z-index: 100;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 600px) {
+    main { padding: 20px 16px; }
+    .intent-header h1 { font-size: 1.3rem; }
+    .dimensions-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <span class="glyph">&#128194;</span>
+    <span>WINDI <span class="sub" id="brandSub">Playground</span></span>
+  </div>
+  <div class="header-actions">
+    <div class="lang-toggle" id="langToggle">
+      <button class="lang-btn active" data-lang="pt">PT</button>
+      <button class="lang-btn" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="de">DE</button>
+    </div>
+    <button class="theme-toggle" id="themeBtn">NOIR</button>
+  </div>
+</header>
+
+<main>
+  <!-- Phase Indicator -->
+  <div class="phase-indicator">
+    <span class="phase-dot active" id="dot1"></span>
+    <span id="phaseLabel1">Intenção</span>
+    <span>→</span>
+    <span class="phase-dot" id="dot2"></span>
+    <span id="phaseLabel2">Projecto</span>
+    <span>→</span>
+    <span class="phase-dot" id="dot3"></span>
+    <span id="phaseLabel3">Construção</span>
+  </div>
+
+  <!-- PHASE 1: Intent Input -->
+  <section class="phase-intent" id="phaseIntent">
+    <div class="intent-header">
+      <h1 id="intentTitle">O que queres criar?</h1>
+      <p id="intentSubtitle">Descreve a tua ideia em poucas palavras</p>
+    </div>
+
+    <div class="intent-input-wrapper">
+      <textarea
+        class="intent-input"
+        id="intentInput"
+        placeholder="Ex: Quero criar um aplicativo para agendamento de consultas médicas..."
+        rows="4"
+      ></textarea>
+    </div>
+
+    <div class="intent-actions">
+      <button class="btn btn-primary" id="compileBtn" disabled>
+        <span id="compileBtnText">Ver meu projecto</span>
+        <span>→</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Loading State -->
+  <div class="loading" id="loadingState">
+    <div class="spinner"></div>
+    <span class="loading-text" id="loadingText">A estruturar o teu projecto...</span>
+  </div>
+
+  <!-- PHASE 2: Project Graph (The Mirror) -->
+  <section class="phase-graph" id="phaseGraph">
+    <div class="graph-header">
+      <div class="graph-title">
+        <h2 id="projectName">Carregando...</h2>
+        <span class="project-type" id="projectType">software</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <span class="status-badge estimated" id="statusBadge">
+          <span>&#9888;</span>
+          <span id="statusText">Estimado</span>
+        </span>
+        <div class="graph-confidence">
+          <div class="confidence-bar">
+            <div class="confidence-fill" id="confidenceFill" style="width: 0%"></div>
+          </div>
+          <span class="confidence-label" id="confidenceLabel">0%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dimensions -->
+    <div class="dimensions-section">
+      <h3 id="dimensionsTitle">Dimensões</h3>
+      <div class="dimensions-grid" id="dimensionsGrid">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- Gaps -->
+    <div class="gaps-section" id="gapsSection">
+      <h3 id="gapsTitle">Lacunas a Responder</h3>
+      <div id="gapsList">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- Assumptions -->
+    <div class="assumptions-section" id="assumptionsSection">
+      <h3 id="assumptionsTitle">Pressupostos</h3>
+      <div id="assumptionsList">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="graph-actions">
+      <button class="btn btn-ghost" id="adjustBtn">
+        <span id="adjustBtnText">Ajustar</span>
+      </button>
+      <button class="btn btn-seal" id="confirmBtn">
+        <span id="confirmBtnText">Confirmar e Construir</span>
+        <span>→</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- PHASE 3: Workbench -->
+  <section class="phase-workbench" id="phaseWorkbench">
+    <div class="workbench-header">
+      <span class="workbench-title" id="workbenchTitle">Construção</span>
+      <span class="status-badge confirmed">
+        <span>&#10003;</span>
+        <span id="confirmedText">Confirmado</span>
+      </span>
+    </div>
+
+    <input
+      type="text"
+      class="title-input"
+      id="docTitle"
+      placeholder="Título do documento..."
+    >
+    <textarea
+      class="content-area"
+      id="docContent"
+      placeholder="Começa a escrever..."
+    ></textarea>
+  </section>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function() {
+  // ============================================================
+  // I18N
+  // ============================================================
+
+  const UI = {
+    pt: {
+      playground: 'Playground',
+      phase1: 'Intenção',
+      phase2: 'Projecto',
+      phase3: 'Construção',
+      intentTitle: 'O que queres criar?',
+      intentSubtitle: 'Descreve a tua ideia em poucas palavras',
+      intentPlaceholder: 'Ex: Quero criar um aplicativo para agendamento de consultas médicas...',
+      seeProject: 'Ver meu projecto',
+      loading: 'A estruturar o teu projecto...',
+      dimensions: 'Dimensões',
+      gaps: 'Lacunas a Responder',
+      assumptions: 'Pressupostos',
+      estimated: 'Estimado',
+      confirmed: 'Confirmado',
+      adjust: 'Ajustar',
+      confirmBuild: 'Confirmar e Construir',
+      construction: 'Construção',
+      titlePlaceholder: 'Título do documento...',
+      contentPlaceholder: 'Começa a escrever...',
+      applicable: { true: 'Sim', false: 'Não', uncertain: '?' },
+      priority: { high: 'Alta', medium: 'Média', low: 'Baixa' },
+      dimLabels: {
+        product: 'Produto',
+        regulatory: 'Regulatório',
+        users: 'Utilizadores',
+        technology: 'Tecnologia',
+        costs: 'Custos'
+      }
+    },
+    en: {
+      playground: 'Playground',
+      phase1: 'Intent',
+      phase2: 'Project',
+      phase3: 'Build',
+      intentTitle: 'What do you want to create?',
+      intentSubtitle: 'Describe your idea in a few words',
+      intentPlaceholder: 'E.g.: I want to create an app for scheduling medical appointments...',
+      seeProject: 'See my project',
+      loading: 'Structuring your project...',
+      dimensions: 'Dimensions',
+      gaps: 'Gaps to Answer',
+      assumptions: 'Assumptions',
+      estimated: 'Estimated',
+      confirmed: 'Confirmed',
+      adjust: 'Adjust',
+      confirmBuild: 'Confirm and Build',
+      construction: 'Construction',
+      titlePlaceholder: 'Document title...',
+      contentPlaceholder: 'Start writing...',
+      applicable: { true: 'Yes', false: 'No', uncertain: '?' },
+      priority: { high: 'High', medium: 'Medium', low: 'Low' },
+      dimLabels: {
+        product: 'Product',
+        regulatory: 'Regulatory',
+        users: 'Users',
+        technology: 'Technology',
+        costs: 'Costs'
+      }
+    },
+    de: {
+      playground: 'Spielplatz',
+      phase1: 'Absicht',
+      phase2: 'Projekt',
+      phase3: 'Aufbau',
+      intentTitle: 'Was möchtest du erstellen?',
+      intentSubtitle: 'Beschreibe deine Idee in wenigen Worten',
+      intentPlaceholder: 'Z.B.: Ich möchte eine App für Arzttermine erstellen...',
+      seeProject: 'Mein Projekt sehen',
+      loading: 'Strukturiere dein Projekt...',
+      dimensions: 'Dimensionen',
+      gaps: 'Offene Fragen',
+      assumptions: 'Annahmen',
+      estimated: 'Geschätzt',
+      confirmed: 'Bestätigt',
+      adjust: 'Anpassen',
+      confirmBuild: 'Bestätigen und Bauen',
+      construction: 'Konstruktion',
+      titlePlaceholder: 'Dokumenttitel...',
+      contentPlaceholder: 'Beginne zu schreiben...',
+      applicable: { true: 'Ja', false: 'Nein', uncertain: '?' },
+      priority: { high: 'Hoch', medium: 'Mittel', low: 'Niedrig' },
+      dimLabels: {
+        product: 'Produkt',
+        regulatory: 'Regulatorisch',
+        users: 'Benutzer',
+        technology: 'Technologie',
+        costs: 'Kosten'
+      }
+    }
+  };
+
+  let currentLang = localStorage.getItem('windi_lang') || 'pt';
+  let currentGraph = null;
+
+  function t(key) {
+    const keys = key.split('.');
+    let val = UI[currentLang];
+    for (const k of keys) {
+      val = val?.[k];
+    }
+    return val || UI.pt[key] || key;
+  }
+
+  // ============================================================
+  // DOM Elements
+  // ============================================================
+
+  const phaseIntent = document.getElementById('phaseIntent');
+  const phaseGraph = document.getElementById('phaseGraph');
+  const phaseWorkbench = document.getElementById('phaseWorkbench');
+  const loadingState = document.getElementById('loadingState');
+
+  const intentInput = document.getElementById('intentInput');
+  const compileBtn = document.getElementById('compileBtn');
+  const adjustBtn = document.getElementById('adjustBtn');
+  const confirmBtn = document.getElementById('confirmBtn');
+
+  const dot1 = document.getElementById('dot1');
+  const dot2 = document.getElementById('dot2');
+  const dot3 = document.getElementById('dot3');
+
+  const themeBtn = document.getElementById('themeBtn');
+  const toast = document.getElementById('toast');
+
+  // ============================================================
+  // UI Updates
+  // ============================================================
+
+  function updateUILanguage() {
+    document.getElementById('brandSub').textContent = t('playground');
+    document.getElementById('phaseLabel1').textContent = t('phase1');
+    document.getElementById('phaseLabel2').textContent = t('phase2');
+    document.getElementById('phaseLabel3').textContent = t('phase3');
+    document.getElementById('intentTitle').textContent = t('intentTitle');
+    document.getElementById('intentSubtitle').textContent = t('intentSubtitle');
+    intentInput.placeholder = t('intentPlaceholder');
+    document.getElementById('compileBtnText').textContent = t('seeProject');
+    document.getElementById('loadingText').textContent = t('loading');
+    document.getElementById('dimensionsTitle').textContent = t('dimensions');
+    document.getElementById('gapsTitle').textContent = t('gaps');
+    document.getElementById('assumptionsTitle').textContent = t('assumptions');
+    document.getElementById('statusText').textContent = t('estimated');
+    document.getElementById('adjustBtnText').textContent = t('adjust');
+    document.getElementById('confirmBtnText').textContent = t('confirmBuild');
+    document.getElementById('workbenchTitle').textContent = t('construction');
+    document.getElementById('confirmedText').textContent = t('confirmed');
+    document.getElementById('docTitle').placeholder = t('titlePlaceholder');
+    document.getElementById('docContent').placeholder = t('contentPlaceholder');
+
+    // Re-render graph if exists
+    if (currentGraph) {
+      renderGraph(currentGraph);
+    }
+  }
+
+  function showPhase(phase) {
+    phaseIntent.classList.add('hidden');
+    phaseGraph.classList.remove('active');
+    phaseWorkbench.classList.remove('active');
+    loadingState.classList.remove('active');
+
+    dot1.classList.remove('active', 'complete');
+    dot2.classList.remove('active', 'complete');
+    dot3.classList.remove('active', 'complete');
+
+    if (phase === 1) {
+      phaseIntent.classList.remove('hidden');
+      dot1.classList.add('active');
+    } else if (phase === 'loading') {
+      loadingState.classList.add('active');
+      dot1.classList.add('complete');
+      dot2.classList.add('active');
+    } else if (phase === 2) {
+      phaseGraph.classList.add('active');
+      dot1.classList.add('complete');
+      dot2.classList.add('active');
+    } else if (phase === 3) {
+      phaseWorkbench.classList.add('active');
+      dot1.classList.add('complete');
+      dot2.classList.add('complete');
+      dot3.classList.add('active');
+    }
+  }
+
+  function showToast(message) {
+    toast.textContent = message;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+
+  // ============================================================
+  // Graph Rendering
+  // ============================================================
+
+  function renderGraph(graph) {
+    currentGraph = graph;
+
+    // Header
+    document.getElementById('projectName').textContent = graph.project_name || 'Projeto';
+    const mission = graph.inferred_mission || graph.project_type || 'general';
+    document.getElementById('projectType').textContent = mission;
+
+    // Confidence
+    const conf = Math.round((graph.confidence || 0.5) * 100);
+    document.getElementById('confidenceFill').style.width = conf + '%';
+    document.getElementById('confidenceLabel').textContent = conf + '%';
+
+    // Dimensions
+    const dimGrid = document.getElementById('dimensionsGrid');
+    dimGrid.innerHTML = '';
+
+    for (const dim of graph.dimensions || []) {
+      const card = document.createElement('div');
+      card.className = 'dimension-card';
+      card.dataset.dim = dim.id;
+
+      if (dim.applicable === 'false') card.classList.add('not-applicable');
+      if (dim.applicable === 'uncertain') card.classList.add('uncertain');
+
+      const appSymbol = dim.applicable === 'true' ? '✓' :
+                        dim.applicable === 'false' ? '✗' : '?';
+
+      card.innerHTML = `
+        <div class="dimension-header">
+          <span class="dimension-label">${t('dimLabels.' + dim.id) || dim.label}</span>
+          <span class="dimension-applicable ${dim.applicable}">${appSymbol}</span>
+        </div>
+        <div class="dimension-content">${dim.content || '—'}</div>
+      `;
+
+      dimGrid.appendChild(card);
+    }
+
+    // Gaps
+    const gapsList = document.getElementById('gapsList');
+    gapsList.innerHTML = '';
+
+    const gaps = graph.gaps || [];
+    if (gaps.length === 0) {
+      document.getElementById('gapsSection').style.display = 'none';
+    } else {
+      document.getElementById('gapsSection').style.display = 'flex';
+      for (const gap of gaps) {
+        const item = document.createElement('div');
+        item.className = 'gap-item';
+
+        const priorityClass = gap.priority === 'high' ? 'high' : '';
+
+        item.innerHTML = `
+          <span class="gap-icon">?</span>
+          <div class="gap-content">
+            <div class="gap-question">${gap.question}</div>
+            <div class="gap-meta">
+              ${gap.dimension_id ? `<span class="gap-tag">${t('dimLabels.' + gap.dimension_id) || gap.dimension_id}</span>` : ''}
+              <span class="gap-tag ${priorityClass}">${t('priority.' + gap.priority)}</span>
+            </div>
+          </div>
+        `;
+
+        gapsList.appendChild(item);
+      }
+    }
+
+    // Assumptions
+    const assumptionsList = document.getElementById('assumptionsList');
+    assumptionsList.innerHTML = '';
+
+    const assumptions = graph.assumptions || [];
+    if (assumptions.length === 0) {
+      document.getElementById('assumptionsSection').style.display = 'none';
+    } else {
+      document.getElementById('assumptionsSection').style.display = 'flex';
+      for (const ass of assumptions) {
+        const item = document.createElement('div');
+        item.className = 'assumption-item';
+
+        item.innerHTML = `
+          <span class="assumption-icon">&#9679;</span>
+          <span class="assumption-text">${ass.statement}</span>
+        `;
+
+        assumptionsList.appendChild(item);
+      }
+    }
+  }
+
+  // ============================================================
+  // API Call
+  // ============================================================
+
+  async function compileIntent(intent) {
+    // For now, simulate API call with mock data
+    // TODO: Connect to /api/decompose endpoint
+
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({
+          success: true,
+          graph: {
+            graph_id: 'pg_mock_' + Date.now(),
+            project_name: extractProjectName(intent),
+            project_type: 'software',
+            inferred_mission: 'healthcare_management',  // Fase 2 hook
+            suggested_capabilities: [],  // Vazio em v1
+            confidence: 0.72,
+            dimensions: [
+              { id: 'product', label: 'Produto', applicable: 'true', content: 'Aplicação para gestão de agendamentos e prontuários médicos.', confidence: 0.8 },
+              { id: 'regulatory', label: 'Regulatório', applicable: 'true', content: 'LGPD/GDPR para dados de saúde, normas do sector médico.', confidence: 0.7 },
+              { id: 'users', label: 'Utilizadores', applicable: 'true', content: 'Médicos, pacientes, recepcionistas.', confidence: 0.85 },
+              { id: 'technology', label: 'Tecnologia', applicable: 'uncertain', content: 'Web ou mobile? Integrações com sistemas existentes?', confidence: 0.5 },
+              { id: 'costs', label: 'Custos', applicable: 'uncertain', content: 'Desenvolvimento, hosting, manutenção.', confidence: 0.4 }
+            ],
+            gaps: [
+              { question: 'Qual é a jurisdição principal? (Brasil, Portugal, Alemanha?)', dimension_id: 'regulatory', priority: 'high' },
+              { question: 'Existe algum sistema legado para integrar?', dimension_id: 'technology', priority: 'high' },
+              { question: 'Qual é o orçamento disponível?', dimension_id: 'costs', priority: 'medium' }
+            ],
+            assumptions: [
+              { statement: 'Os utilizadores têm acesso a smartphone ou computador.', dimension_id: 'users', confidence: 'assumed' },
+              { statement: 'Dados de saúde requerem encriptação.', dimension_id: 'regulatory', confidence: 'confirmed' }
+            ]
+          },
+          status: 'estimated'
+        });
+      }, 1500);
+    });
+  }
+
+  function extractProjectName(intent) {
+    // Simple extraction - take first meaningful words
+    const words = intent.trim().split(/\s+/).slice(0, 6);
+    let name = words.join(' ');
+    if (name.length > 40) name = name.substring(0, 40) + '...';
+    return name || 'Novo Projecto';
+  }
+
+  // ============================================================
+  // Event Handlers
+  // ============================================================
+
+  intentInput.addEventListener('input', () => {
+    compileBtn.disabled = intentInput.value.trim().length < 10;
+  });
+
+  compileBtn.addEventListener('click', async () => {
+    const intent = intentInput.value.trim();
+    if (!intent) return;
+
+    showPhase('loading');
+
+    try {
+      const result = await compileIntent(intent);
+
+      if (result.success) {
+        renderGraph(result.graph);
+        showPhase(2);
+      } else {
+        showToast('Erro ao estruturar projecto');
+        showPhase(1);
+      }
+    } catch (e) {
+      console.error(e);
+      showToast('Erro de conexão');
+      showPhase(1);
+    }
+  });
+
+  adjustBtn.addEventListener('click', () => {
+    // Go back to intent phase
+    showPhase(1);
+    intentInput.focus();
+  });
+
+  confirmBtn.addEventListener('click', () => {
+    if (!currentGraph) return;
+
+    // Update status to confirmed
+    const badge = document.getElementById('statusBadge');
+    badge.classList.remove('estimated');
+    badge.classList.add('confirmed');
+    badge.innerHTML = '<span>&#10003;</span><span>' + t('confirmed') + '</span>';
+
+    // Move to workbench
+    document.getElementById('docTitle').value = currentGraph.project_name || '';
+    showPhase(3);
+
+    showToast(t('confirmed'));
+  });
+
+  // Theme
+  themeBtn.addEventListener('click', () => {
+    const root = document.documentElement;
+    const isNoir = root.getAttribute('data-theme') === 'noir';
+    root.setAttribute('data-theme', isNoir ? 'klar' : 'noir');
+    themeBtn.textContent = isNoir ? 'NOIR' : 'KLAR';
+    localStorage.setItem('windi_theme', isNoir ? 'klar' : 'noir');
+  });
+
+  // Restore theme
+  const savedTheme = localStorage.getItem('windi_theme');
+  if (savedTheme === 'noir') {
+    document.documentElement.setAttribute('data-theme', 'noir');
+    themeBtn.textContent = 'KLAR';
+  }
+
+  // Language
+  const langBtns = document.querySelectorAll('.lang-btn');
+  langBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const lang = btn.dataset.lang;
+      currentLang = lang;
+      localStorage.setItem('windi_lang', lang);
+
+      langBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      updateUILanguage();
+    });
+  });
+
+  // Restore language
+  const savedLang = localStorage.getItem('windi_lang') || 'pt';
+  currentLang = savedLang;
+  document.querySelector(`.lang-btn[data-lang="${savedLang}"]`)?.classList.add('active');
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    if (b.dataset.lang !== savedLang) b.classList.remove('active');
+  });
+
+  // ============================================================
+  // Init
+  // ============================================================
+
+  updateUILanguage();
+  showPhase(1);
+  intentInput.focus();
+
+})();
+</script>
+
+</body>
+</html>

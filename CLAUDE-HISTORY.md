@@ -6,6 +6,79 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 25 Jun 2026 (Noite) — W-PLAYGROUND-001 v2 · Project Compiler
+
+**Duração:** ~3h | **Status:** ✅ ESTRUTURA CONSTRUÍDA · BACKEND PENDENTE
+**Liga IA+H:** Human Dragon (I1, I9) · Guardian (GPT) · Witness (Gemini) · CCode (Opus 4.5)
+**Projecto:** W-PLAYGROUND-001 — Project Compiler para porta da frente WINDI-HIOS
+**Natureza:** Arquitectura de decompositor de intenção com gramática soberana
+**Commit:** `9aaa885c3`
+
+### Marco Central
+
+> *"O user não escolhe a ferramenta; escolhe a missão. O ProjectGraph compila a intenção."*
+
+Construção das **três peças** do Project Compiler:
+1. **Peça 1:** `decomposition_grammar.py` — Gramática soberana (5 dimensões fixas)
+2. **Peça 2:** `decomposition_fill.py` — Engine plugável (Dragon Hub / Ollama futuro)
+3. **Peça 3:** `playground-v2.html` — O Espelho (UI do Project Graph)
+
+### Princípio Constitucional §300 (SEALED)
+
+> **"A compilação da intenção é responsabilidade do núcleo soberano; modelos externos apenas enriquecem um ProjectGraph já compilado."**
+
+### Estado Honesto
+
+| Componente | Estado | Nota |
+|------------|--------|------|
+| `decomposition_grammar.py` | ✅ LIVE | ProjectGraph + 5 dimensões + hooks fase 2 |
+| `decomposition_fill.py` | ✅ SINTAXE OK | Engine plugável, não testado com Dragon Hub |
+| `playground-v2.html` | ⚠️ MOCK | Frontend LIVE mas responde com dados mockados |
+| `/api/decompose` | ❌ PENDENTE | Endpoint não existe ainda |
+| Teste com utilizadores | ❌ PENDENTE | Zero testes reais |
+
+**URL Frontend (MOCK):** `https://windi-domain.com/artifacts/playground-v2.html`
+
+### Decisões CANDIDATE (Aguardam Teste)
+
+| Decisão | Status | Condição para Seal |
+|---------|--------|-------------------|
+| Gramática fixa (5 dimensões) | CANDIDATE | Testar 50+ intenções |
+| Campo `applicable` por dimensão | CANDIDATE | Validar poemas/criativos |
+| Query minimization (PII → [REDACTED]) | CANDIDATE | Testar edge cases |
+
+### Ficheiros Criados
+
+```
+/opt/windi/w-workbench-001/
+├── decomposition_grammar.py   (Gramática Soberana)
+├── decomposition_fill.py      (Engine Plugável)
+└── playground-v2.html         (O Espelho)
+
+/opt/windi/artifacts/
+└── playground-v2.html         (Cópia pública - MOCK)
+```
+
+### Próxima Sessão — P0
+
+1. Criar endpoint `/api/decompose` → Dragon Hub
+2. Bateria de 20-50 intenções (Compiler Evaluation Kit)
+3. Promover CANDIDATE → SEALED se passar
+
+### Candidatos Adormecidos (Fase 2)
+
+- **DOUTRINA-CAPABILITY-REGISTRY-001** — Capability = TOOL, nunca SOURCE
+- **ProjectGraph Manifest** — Metadados de versão/proveniência
+- **playground_status.yaml** — Estado machine-readable
+
+### Insight do Witness
+
+> *"A mudança de pergunta: de 'Como integrar modelos de IA?' para 'Como representar um projeto humano antes de qualquer modelo?'"*
+
+> *"O ProjectGraph não é uma resposta produzida por um modelo; é um artefato do sistema."*
+
+---
+
 ## § SESSÃO 25 Jun 2026 — Cena 15 "O Peso do Eco" · Montagem Soberana
 
 **Duração:** ~3h | **Status:** ✅ MONTAGEM FINAL SELADA
