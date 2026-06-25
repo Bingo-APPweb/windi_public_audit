@@ -45,9 +45,10 @@ class EngineConfig:
     timeout: int = 30
 
 
-# Mistral API Key (loaded from environment or config)
+# Mistral API Key (loaded from environment ONLY — I14: no fallback, fail explicit)
 import os
-MISTRAL_API_KEY = os.environ.get("MISTRAL_API_KEY", "qpSubOv2M5oKoiF4NhQzaObUYQGWAYkp")
+MISTRAL_API_KEY = os.environ.get("MISTRAL_API_KEY")
+# SECURITY: Key MUST come from environment. Never hardcode. See SECURITY-INCIDENT-002.
 
 # Available engines
 ENGINES = {
@@ -225,6 +226,10 @@ def _call_mistral_direct(engine_config: EngineConfig, intent: str, lang: str) ->
     Chama Mistral API directamente (bypassa Dragon Hub routing).
     Mais rápido e confiável para Project Compilation.
     """
+    # I14: Fail explicit if key not configured
+    if not MISTRAL_API_KEY:
+        raise Exception("MISTRAL_API_KEY not configured. Set environment variable.")
+
     grammar = get_grammar_contract(lang)
 
     messages = [
