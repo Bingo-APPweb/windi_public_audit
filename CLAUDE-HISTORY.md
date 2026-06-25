@@ -6,6 +6,98 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 25 Jun 2026 — Cena 15 "O Peso do Eco" · Montagem Soberana
+
+**Duração:** ~3h | **Status:** ✅ MONTAGEM FINAL SELADA
+**Liga IA+H:** Human Dragon (I1, I9) · Guardian (Claude.ai) · CCode (Opus 4.5)
+**Projecto:** W-HIOS Forensic Unit — Cena 15 "O Dragão"
+**Natureza:** Montagem cinematográfica com gramática de transições
+
+### Marco Central
+
+> *"O corte é do Human Dragon. A gramática é da Liga. O método é soberano."*
+
+Primeira montagem completa usando o workflow EDL→CCode→Originais com dissolves calibrados.
+
+### Workflow Estabelecido (DOUTRINA-MONTAGEM-SOBERANA-001 CANDIDATE)
+
+```
+1. HD monta no editor (FCP/Resolve) → exporta EDL
+2. Guardian analisa EDL → propõe gramática de transições
+3. HD confirma/ajusta gramática
+4. CCode reconstrói dos clips ORIGINAIS (não do copião)
+5. HD revê → aprova ou pede ajustes
+6. Selo no Ledger após aprovação
+```
+
+### Gramática de Transições (Confirmada)
+
+| Transição | Tipo | Duração | Razão |
+|-----------|------|---------|-------|
+| Abertura→Preto | fade | 0.1s | respiração |
+| Preto→P15-04 | fade-in | 0.2s | emergir |
+| P15-04→P15-08 | dissolve curto | 0.167s | quase-seco (acção física) |
+| P15-08→P15-04 | dissolve | 0.133s | volta à contemplação |
+| P15-04→P15-02 | dissolve | 0.267s | transição emocional |
+| P15-02→P15-07b | dissolve | 0.2s | entrada série final |
+| P15-07b→P15-07a | dissolve | 0.033s | continuidade (1 frame EDL) |
+| P15-07a→P15-07c | dissolve | 0.133s | entrada plano sagrado |
+| Fim P15-07c | fade-out | 0.8s | a lágrima toca o Dragão |
+
+### Problemas Resolvidos
+
+| Problema | Causa | Solução |
+|----------|-------|---------|
+| Frames corrompidos (11KB) V1 | Timebase incompatível | Filtergraph único com format=yuv420p |
+| Imagem interposta (V2) | Offset desalinhado | Recálculo baseado em EDL record timecodes |
+
+### Artefactos Finais
+
+| Ficheiro | Duração | SHA256 (primeiros 8) |
+|----------|---------|----------------------|
+| `O-peso-do-Eco-cena15-FINAL-v3.mp4` | 47.33s | `e97ac414` |
+
+**Path:** `/opt/windi/hios/cinema/obras/w-hios-forensic-unit/shots/cena15/`
+
+### Editor de Frames (Actualizado)
+
+```
+/opt/windi/hios/cinema/editor/
+├── index.html          ← 5 takes de VANCE
+└── frames/
+    ├── P15-03/         ← Dragão de Papel (3f)
+    ├── P15-04/         ← Close-up Luto (5f)
+    ├── P15-07a/        ← Órbita Perfil (5f)
+    ├── P15-07c/        ← Lágrima slow4 (20f)
+    └── P15-08/         ← Mão no Teclado (5f)
+```
+
+**URL:** `https://windi-domain.com/hios/cinema/editor/`
+
+### Nota de Honestidade
+
+Pequena falha residual nos segundos 22-23 (transição P15-07b→P15-07a). Aceite como limite prático — 95%+ dos objectivos atingidos. O perfeccionismo tem fronteira.
+
+### Pendente — Próximas Cenas
+
+| Cena | Status | Nota |
+|------|--------|------|
+| Cena 15 | ✅ SELADA | V3 final |
+| Cenas 1-14 | PENDENTE | Aguarda filmagem/geração |
+| Color Grading | PENDENTE | Casar planos de gerações diferentes |
+
+### Doutrina Emergente
+
+> *"A montagem não cria qualidade que o raw não tem; ela revela e organiza a que já lá está."*
+
+**DOUTRINA-MONTAGEM-SOBERANA-001:** O workflow EDL→CCode→Originais garante qualidade técnica. Mas a verificação de identidade (SPINE-CAST ≥0.65) e o color grading são etapas anteriores.
+
+### Frase de Fecho
+
+> *"O coração da Cena 15 bate. O que falta são as outras cenas."*
+
+---
+
 ## § SESSÃO 24 Jun 2026 (tarde) — ACADEMY-MEASUREMENT-001 · WCG/WCP/WCB Framework
 
 **Duração:** ~2h | **Status:** ✅ ESTRUTURA CRIADA
