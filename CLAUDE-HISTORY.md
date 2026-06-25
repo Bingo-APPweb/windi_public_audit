@@ -20828,3 +20828,77 @@ This has real methodological value: two isolated observers arrived at the same d
 ---
 
 *WINDI-HIOS · Liga IA+H · Kempten, Bavaria · 2026-06-24*
+
+---
+
+## SESSION-20260625-VPSE-P0-STRATO-DEPLOY — Viability Pre-Screen Engine
+
+**Date:** 2026-06-25
+**Status:** CLOSED (CANDIDATE provado, em repouso)
+**Port:** :8120 (confirmed, released after test)
+**Invariants:** I1, I9, I11, I14
+
+### Context
+
+VPSE (Viability Pre-Screen Engine) built in Claude.ai web session, validated locally (15/15 PASS).
+Handoff to CCode for Strato deployment with explicit I9 gate boundaries.
+
+### Gate Executed (§VPSE-P0)
+
+| Step | Result |
+|------|--------|
+| 1. location-matrix | ss -tlnp verified |
+| 2. Port proposal | :8120 FREE (Human OK) |
+| 3. Controlled bind | venv + smoke test |
+| 4. /health + /prescreen | 15/15 PASS |
+| 5. Evidence JSON | Generated |
+
+### Locked Gates (NOT crossed)
+
+```
+✗ /farm/claim
+✗ Ledger write (:8101)
+✗ selo §VPSE-001
+✗ nginx público (127.0.0.1 only)
+```
+
+### Evidence Files
+
+```
+/opt/windi/vpse/evidence/
+├── VPSE-P0-MVP-LOCAL-TEST-001.json    ← container, 15/15
+├── VPSE-STRATO-TEST-001.json          ← Strato real, 15/15
+└── VPSE-PROVENANCE-NOTE-001.json      ← epistemic counterweight
+```
+
+### Epistemic Counterweight
+
+External evaluation (Gemini) assessed with MÉTODO-MEMORIA-001:
+- "Inédito na internet" → [nao_verificado]
+- "Combinação coerente e rara" → [estimado] (defensável)
+- "Retrieval semântico" → [nao_verificado] (VPSE v0.1.0 = léxico determinístico)
+- "Inversão do vetor de busca" → [lido] (correct)
+
+### Canonical Distinction
+
+> *"O VPSE faz matching léxico, não retrieval semântico. Esta distinção mantém-se até embeddings serem ligados."*
+
+### Pending (no urgency)
+
+- [ ] systemd permanente (:8120)
+- [ ] nginx público
+- [ ] /farm/claim ligação
+
+### Hash Verification
+
+```
+vpse_mvp.tar.gz: b84299a446b51c74abce2fa81cecfe6cf74680a2b19ca52631de88194591f494 ✓
+```
+
+### Canonical Statement
+
+> *"O trabalho não precisa de hipérbole. Ele sustenta-se."*
+
+---
+
+*WINDI-HIOS · Liga IA+H · Kempten, Bavaria · 2026-06-25*
