@@ -1,0 +1,84 @@
+{
+  "evidence_id": "VPSE-STRATO-TEST-001",
+  "status": "PASS",
+  "kind": "strato_deployment_evidence",
+  "NOT_A_SEAL": true,
+  "doctrine_guards": {
+    "is_ledger_write": false,
+    "is_product_seal": false,
+    "presumes_did": false,
+    "is_compliance_clearance": false,
+    "authority": "I9 parcial — Human Dragon autorizou gate P0: porta 8120, smoke test, evidência JSON"
+  },
+  "scope": "Deploy controlado no Strato, porta 8120, 127.0.0.1 only, sem nginx público, sem Ledger write",
+  "engine": "VPSE — Viability Pre-Screen Engine",
+  "engine_version": "0.1.0-mvp",
+  "environment": {
+    "host": "windi@87.106.29.233 (Strato)",
+    "port": 8120,
+    "binding": "127.0.0.1 (local only)",
+    "path": "/opt/windi/vpse/",
+    "venv": "/opt/windi/vpse/.venv/"
+  },
+  "gate_authorization": {
+    "date": "2026-06-25",
+    "authorizer": "Human Dragon",
+    "invariant": "I9",
+    "scope": "location-matrix → porta livre → serviço controlado → /health + /prescreen → evidência JSON"
+  },
+  "locked_gates": [
+    "/farm/claim",
+    "Ledger write (:8101)",
+    "selo §VPSE-001",
+    "nginx público"
+  ],
+  "test_results": {
+    "health_endpoint": {
+      "url": "http://127.0.0.1:8120/health",
+      "status": "PASS",
+      "response": {
+        "status": "ok",
+        "engine": "VPSE",
+        "version": "0.1.0-mvp",
+        "pre_did_pre_hios": true,
+        "writes_to_ledger": false,
+        "presumes_did": false
+      }
+    },
+    "prescreen_endpoint": {
+      "url": "http://127.0.0.1:8120/prescreen",
+      "status": "PASS",
+      "fixture": "Bingo/Podcast"
+    },
+    "test_suite": {
+      "file": "tests/test_bingo_podcast.py",
+      "checks_total": 15,
+      "checks_passed": 15,
+      "checks": [
+        "domínio live_streaming",
+        "domínio audience_engagement",
+        "domínio promotional_mechanics",
+        "risco gambling/lottery detetado",
+        "risco com proveniência [estimado]",
+        "risco NÃO sai como verdade nua (tem confidence)",
+        "safer framing presente",
+        "compliance question é [nao_verificado]",
+        "artefacto = Pre-Screen Report",
+        "hios_readiness = candidate",
+        "receipt unsealed=true",
+        "receipt ledger_eligible=false",
+        "receipt did_present=false",
+        "receipt tem hash local",
+        "não gera código de produção"
+      ]
+    }
+  },
+  "integrity": {
+    "tarball_sha256": "b84299a446b51c74abce2fa81cecfe6cf74680a2b19ca52631de88194591f494",
+    "matches_local_evidence": true,
+    "local_evidence_ref": "VPSE-P0-MVP-LOCAL-TEST-001"
+  },
+  "created_at": "2026-06-25T12:55:00+00:00",
+  "next_step_gate": "Aguarda decisão Human Dragon: systemd permanente? nginx público? Ligação a /farm/claim?",
+  "provenance_of_this_evidence": "[observado] — execução real no servidor Strato, não simulação"
+}

@@ -1,0 +1,52 @@
+{
+  "note_id": "VPSE-PROVENANCE-NOTE-001",
+  "kind": "epistemic_counterweight",
+  "purpose": "Contrapeso honesto a avaliações externas entusiastas. Protege o VPSE de ser sobrevendido.",
+  "NOT_A_SEAL": true,
+  "authority": "Human Dragon (I9) + leitura crítica Claude.ai web, 25 Jun 2026",
+  "method": "MÉTODO-MEMORIA-001 — a memória propõe, a fonte dispõe, o Humano decide. Vale para qualquer fonte, incluindo outros modelos.",
+  "external_evaluation": {
+    "source": "Gemini",
+    "date": "2026-06-25",
+    "provenance": "[nao_verificado]",
+    "claims_assessed": [
+      {
+        "claim": "VPSE/SVE é 'algo inédito na internet'",
+        "verdict": "[nao_verificado]",
+        "honest_assessment": "Provavelmente NÃO inédito em componentes. Precedentes existem: assinaturas test:true, staging vs production, certificados auto-assinados não-confiáveis, attestations negativas em supply-chain security (SLSA, in-toto), literatura forense de proveniência. Não selar ineditismo como facto.",
+        "confidence": "low"
+      },
+      {
+        "claim": "A combinação de guardas é coerente e rara",
+        "verdict": "[estimado]",
+        "honest_assessment": "Defensável. A COMPOSIÇÃO — guardas anti-selo + proveniência por-item + receipt morto + autoridade humana em metadado, dentro de doutrina constitucional coerente — é rara e própria do WINDI. Não precisa de ser inédita no mundo para ter valor; precisa de ser honesta e coerente, e é.",
+        "confidence": "medium"
+      },
+      {
+        "claim": "O motor faz 'análise semântica avançada / retrieval / ontologias'",
+        "verdict": "[nao_verificado]",
+        "honest_assessment": "CORREÇÃO FACTUAL: VPSE v0.1.0 faz MATCHING LÉXICO DETERMINÍSTICO (procura termos em listas). NÃO há embeddings, vetores semânticos nem ontologia. Chamar-lhe 'retrieval semântico' veste o MVP com roupa que ainda não tem. A palavra 'semântico' passa a [lido] apenas quando embeddings forem ligados ao Risk Scanner (scaffold pendente).",
+        "confidence": "high"
+      },
+      {
+        "claim": "Inversão do vetor de busca: do 'encontrar lá fora' para 'expor perguntas cá dentro'",
+        "verdict": "[lido]",
+        "honest_assessment": "Correto. O internal_retriever não toca a web; varre o léxico WINDI local (knowledge_base.py). Esta descrição é fiel ao código.",
+        "confidence": "high"
+      }
+    ]
+  },
+  "canonical_distinction": "O VPSE faz matching léxico, não retrieval semântico. Esta distinção mantém-se até embeddings serem ligados.",
+  "principle": "O trabalho não precisa de hipérbole. Ele sustenta-se. 'Algo que se sustente.'",
+  "linked_evidence": [
+    "VPSE-P0-MVP-LOCAL-TEST-001 (container, 15/15 PASS)",
+    "VPSE-STRATO-TEST-001 (Strato real, 15/15 PASS, :8120)"
+  ],
+  "doctrine_guards": {
+    "is_ledger_write": false,
+    "is_product_seal": false,
+    "presumes_did": false,
+    "is_compliance_clearance": false
+  },
+  "created_at": "2026-06-25T13:10:00+00:00"
+}

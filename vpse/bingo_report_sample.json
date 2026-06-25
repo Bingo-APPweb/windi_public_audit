@@ -1,0 +1,206 @@
+{
+  "engine": "VPSE — Viability Pre-Screen Engine",
+  "version": "0.1.0-mvp",
+  "doctrine": {
+    "principle": "Pre-Screen, não veredicto. A memória propõe, a fonte dispõe, o Humano decide.",
+    "i9": "Autoridade de decisão é humana. VPSE organiza hipóteses, não certifica.",
+    "pre_did_pre_hios": true
+  },
+  "intent_summary": {
+    "content": "O utilizador parece querer construir: A system where podcast livestream interaction, view count and watch time generate bingo numbers during a show. Winners receive sponsor gifts, not money.",
+    "provenance": "[estimado]",
+    "confidence": "medium",
+    "source_hint": "input.idea",
+    "notes": "Resumo reformulado do input; não adiciona intenção não declarada."
+  },
+  "semantic_blocks": [
+    {
+      "content": "bloco funcional: a system where podcast livestream interaction",
+      "provenance": "[estimado]",
+      "confidence": "low",
+      "source_hint": "semantic_decomposition"
+    },
+    {
+      "content": "bloco funcional: view count",
+      "provenance": "[estimado]",
+      "confidence": "low",
+      "source_hint": "semantic_decomposition"
+    },
+    {
+      "content": "bloco funcional: watch time generate bingo numbers during a show",
+      "provenance": "[estimado]",
+      "confidence": "low",
+      "source_hint": "semantic_decomposition"
+    },
+    {
+      "content": "bloco funcional: winners receive sponsor gifts",
+      "provenance": "[estimado]",
+      "confidence": "low",
+      "source_hint": "semantic_decomposition"
+    },
+    {
+      "content": "bloco funcional: not money",
+      "provenance": "[estimado]",
+      "confidence": "low",
+      "source_hint": "semantic_decomposition"
+    },
+    {
+      "content": "bloco funcional: early-stage promotional engagement idea",
+      "provenance": "[estimado]",
+      "confidence": "low",
+      "source_hint": "semantic_decomposition"
+    },
+    {
+      "content": "bloco funcional: historical bbf lineage",
+      "provenance": "[estimado]",
+      "confidence": "low",
+      "source_hint": "semantic_decomposition"
+    }
+  ],
+  "detected_domains": [
+    {
+      "content": "live_streaming",
+      "provenance": "[estimado]",
+      "confidence": "medium",
+      "source_hint": "léxico: livestream, stream, podcast, watch time"
+    },
+    {
+      "content": "audience_engagement",
+      "provenance": "[estimado]",
+      "confidence": "medium",
+      "source_hint": "léxico: interaction, engagement"
+    },
+    {
+      "content": "promotional_mechanics",
+      "provenance": "[estimado]",
+      "confidence": "medium",
+      "source_hint": "léxico: bingo, gift, sponsor"
+    },
+    {
+      "content": "fintech_payments",
+      "provenance": "[estimado]",
+      "confidence": "low",
+      "source_hint": "léxico: money"
+    }
+  ],
+  "possible_windi_modules": [
+    {
+      "content": "Governance / LAW (Sentinel)",
+      "provenance": "[estimado]",
+      "confidence": "low",
+      "source_hint": "mecânica promocional/financeira exige guarda LAW",
+      "notes": "guarda constitucional e monitorização LAW (:8102)"
+    },
+    {
+      "content": "Payment Sovereignty Bridge",
+      "provenance": "[estimado]",
+      "confidence": "low",
+      "source_hint": "ideia toca em pagamento/valor",
+      "notes": "pagamento sem tocar dados financeiros (IP1)"
+    },
+    {
+      "content": "Verify Public",
+      "provenance": "[estimado]",
+      "confidence": "low",
+      "source_hint": "qualquer artefacto WINDI precisa de admissibilidade pública",
+      "notes": "admissibilidade pública de afirmações"
+    },
+    {
+      "content": "Forensic Ledger",
+      "provenance": "[estimado]",
+      "confidence": "low",
+      "source_hint": "registo imutável da viabilidade quando consumada",
+      "notes": "selo e cadeia de prova (:8101 — verificar)"
+    },
+    {
+      "content": "Receipts",
+      "provenance": "[estimado]",
+      "confidence": "low",
+      "source_hint": "comprovativo de eventos quando houver DID",
+      "notes": "comprovativo emitido e verificável"
+    }
+  ],
+  "early_risks": [
+    {
+      "content": "[gambling_lottery] possível enquadramento regulatório detetado",
+      "provenance": "[estimado]",
+      "confidence": "low",
+      "source_hint": "sinais léxicos: bingo",
+      "notes": "Sistema promocional de engagement: sem entrada paga, sem prémio em dinheiro, regras transparentes, verificar jurisdição. · sensível à jurisdição (jurisdição não especificada)"
+    },
+    {
+      "content": "[financial_regulation] possível enquadramento regulatório detetado",
+      "provenance": "[estimado]",
+      "confidence": "low",
+      "source_hint": "sinais léxicos: money",
+      "notes": "Não custodiar valor; usar processador externo certificado; separação financeira IP1 (Payment Sovereignty). · sensível à jurisdição (jurisdição não especificada)"
+    }
+  ],
+  "compliance_questions": [
+    {
+      "content": "Pode ser interpretado como lotaria/jogo regulado? Há entrada paga (consideration)? Há prémio em dinheiro? Há elemento de azar (chance)?",
+      "provenance": "[nao_verificado]",
+      "confidence": "none",
+      "source_hint": "sinal: gambling_lottery",
+      "notes": "Pergunta a esclarecer com humano/jurista. VPSE não dá parecer legal."
+    },
+    {
+      "content": "Move ou custodia valor? Pode cair em regulação financeira (PSD2, e-money, KYC/AML)?",
+      "provenance": "[nao_verificado]",
+      "confidence": "none",
+      "source_hint": "sinal: financial_regulation",
+      "notes": "Pergunta a esclarecer com humano/jurista. VPSE não dá parecer legal."
+    }
+  ],
+  "technical_complexity": {
+    "content": "alta",
+    "provenance": "[estimado]",
+    "confidence": "low"
+  },
+  "evidence_needed": [
+    {
+      "content": "Confirmação jurídica do enquadramento regulatório por jurisdição.",
+      "provenance": "[nao_verificado]",
+      "confidence": "none"
+    },
+    {
+      "content": "Definição clara de utilizador, valor trocado e fluxo de identidade (DID).",
+      "provenance": "[estimado]",
+      "confidence": "low"
+    }
+  ],
+  "recommended_next_artifact": {
+    "content": "Viability & Compliance Pre-Screen Report",
+    "provenance": "[estimado]",
+    "confidence": "medium",
+    "notes": "Riscos regulatórios presentes — relatório antes de qualquer build."
+  },
+  "hios_readiness": {
+    "content": "candidate",
+    "provenance": "[estimado]",
+    "confidence": "medium",
+    "notes": "Só vira 'ready' após perguntas de compliance esclarecidas por humano. VPSE nunca declara 'ready' sozinho."
+  },
+  "notes": [
+    {
+      "content": "VPSE não é parecer legal nem clearance de compliance.",
+      "provenance": "[nao_verificado]",
+      "confidence": "none"
+    },
+    {
+      "content": "Ausência de sinal de risco não significa ausência de risco.",
+      "provenance": "[estimado]",
+      "confidence": "low"
+    }
+  ],
+  "receipt_candidate": {
+    "kind": "vpse_receipt_candidate",
+    "unsealed": true,
+    "ledger_eligible": false,
+    "did_present": false,
+    "local_hash_sha256": "72693fff129eeee4fd97b2cf6e707f8c870ef601fbbd045e9d33a214c1b2c2c6",
+    "created_at": "2026-06-25T01:15:16.068542+00:00",
+    "promotion_gate": "/farm/claim — consome DID válido antes de qualquer selo",
+    "warning": "Artefacto morto. Não enviar ao Ledger. Não selar. Não presumir DID."
+  }
+}
