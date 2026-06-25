@@ -121,6 +121,16 @@ QUANDO: Da próxima vez que a Cena 15 reabrir por outro motivo
 
 Esta é a assinatura de montador do Human Dragon. Qualquer agente que monte para HD no futuro aplica esta regra.
 
+### DOUTRINA-FONTE-COMUM-001 (SEALED)
+
+**Receipt:** `WINDI-DOUTRINA-FONTE-COMUM-001-20260625212317`
+**Hash:** `sha256:8670ec9939400a4cba0d74a4624a9c7fdb8b6879eeacbc2ca43866a4387cbf3a`
+**Contexto:** Discussão sobre Seedance 2.5 e soberania WINDI-HIOS
+
+> *"Os motores de geração derivam de fontes partilhadas. O que nos distingue não é o motor — é a prova. WINDI-HIOS não compete em geração; soberaniza a IDENTIDADE e a VERIFICAÇÃO, que nascem e vivem no Strato."*
+
+**Regra:** Motor externo é ferramenta substituível. SPINE-CAST + Ledger são a fonte própria, irremediável.
+
 ### Frase de Fecho
 
 > *"O coração da Cena 15 bate. O que falta são as outras cenas."*
