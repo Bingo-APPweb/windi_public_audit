@@ -6,22 +6,24 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
-## § SESSÃO 25 Jun 2026 (Noite) — W-PLAYGROUND-001 v2 · Project Compiler
+## § SESSÃO 25 Jun 2026 (Noite+Madrugada) — W-PLAYGROUND-001 v2 · Project Compiler LIVE
 
-**Duração:** ~3h | **Status:** ✅ ESTRUTURA CONSTRUÍDA · BACKEND PENDENTE
+**Duração:** ~4h | **Status:** ✅ API LIVE · MISTRAL DIRECT CONECTADO
 **Liga IA+H:** Human Dragon (I1, I9) · Guardian (GPT) · Witness (Gemini) · CCode (Opus 4.5)
 **Projecto:** W-PLAYGROUND-001 — Project Compiler para porta da frente WINDI-HIOS
 **Natureza:** Arquitectura de decompositor de intenção com gramática soberana
-**Commit:** `9aaa885c3`
+**Commits:** `9aaa885c3` → `58db5b157` → `5c8ff0f82`
+**Port:** :8203
 
 ### Marco Central
 
 > *"O user não escolhe a ferramenta; escolhe a missão. O ProjectGraph compila a intenção."*
 
-Construção das **três peças** do Project Compiler:
+Construção das **quatro peças** do Project Compiler:
 1. **Peça 1:** `decomposition_grammar.py` — Gramática soberana (5 dimensões fixas)
-2. **Peça 2:** `decomposition_fill.py` — Engine plugável (Dragon Hub / Ollama futuro)
+2. **Peça 2:** `decomposition_fill.py` — Engine plugável (MISTRAL_DIRECT / Dragon Hub / Ollama)
 3. **Peça 3:** `playground-v2.html` — O Espelho (UI do Project Graph)
+4. **Peça 4:** `playground_server.py` — Flask server :8203 (o vidro)
 
 ### Princípio Constitucional §300 (SEALED)
 
@@ -32,12 +34,22 @@ Construção das **três peças** do Project Compiler:
 | Componente | Estado | Nota |
 |------------|--------|------|
 | `decomposition_grammar.py` | ✅ LIVE | ProjectGraph + 5 dimensões + hooks fase 2 |
-| `decomposition_fill.py` | ✅ SINTAXE OK | Engine plugável, não testado com Dragon Hub |
-| `playground-v2.html` | ⚠️ MOCK | Frontend LIVE mas responde com dados mockados |
-| `/api/decompose` | ❌ PENDENTE | Endpoint não existe ainda |
-| Teste com utilizadores | ❌ PENDENTE | Zero testes reais |
+| `decomposition_fill.py` | ✅ LIVE | MISTRAL_DIRECT bypassa Dragon Hub routing |
+| `playground_server.py` | ✅ LIVE | Flask :8203 + nginx /workbench/ |
+| `playground-v2.html` | ✅ LIVE | Frontend conectado ao API real |
+| `/api/decompose` | ✅ LIVE | Retorna ProjectGraph estruturado |
+| Teste com utilizadores | ⚠️ PENDENTE | Funciona mas zero testes formais |
 
-**URL Frontend (MOCK):** `https://windi-domain.com/artifacts/playground-v2.html`
+**URL Pública:** `https://windi-domain.com/workbench/`
+**API Endpoint:** `https://windi-domain.com/workbench/api/decompose`
+
+### Arquitectura de Engines
+
+| Engine | Endpoint | Status | Uso |
+|--------|----------|--------|-----|
+| MISTRAL_DIRECT | api.mistral.ai | ✅ DEFAULT | Bypassa Dragon Hub, chamada directa |
+| DRAGON_HUB | localhost:8108 | ⚠️ Routing complexo | Routing por intent (não ideal para JSON) |
+| OLLAMA_LOCAL | windi-b:11434 | ❌ Futuro | Quando rota para windi-b disponível |
 
 ### Decisões CANDIDATE (Aguardam Teste)
 
@@ -46,30 +58,46 @@ Construção das **três peças** do Project Compiler:
 | Gramática fixa (5 dimensões) | CANDIDATE | Testar 50+ intenções |
 | Campo `applicable` por dimensão | CANDIDATE | Validar poemas/criativos |
 | Query minimization (PII → [REDACTED]) | CANDIDATE | Testar edge cases |
+| MISTRAL_DIRECT como default | CANDIDATE | Validar latência/custo |
 
-### Ficheiros Criados
+### Ficheiros Criados/Modificados
 
 ```
 /opt/windi/w-workbench-001/
 ├── decomposition_grammar.py   (Gramática Soberana)
-├── decomposition_fill.py      (Engine Plugável)
-└── playground-v2.html         (O Espelho)
+├── decomposition_fill.py      (Engine Plugável + MISTRAL_DIRECT)
+├── playground_server.py       (Flask :8203) ← NOVO
+└── playground-v2.html         (O Espelho - conectado)
 
 /opt/windi/artifacts/
-└── playground-v2.html         (Cópia pública - MOCK)
+└── playground-v2.html         (Cópia pública)
+
+/etc/nginx/sites-enabled/windi-domain.com
+└── upstream windi_workbench + location /workbench/ ← ADICIONADO
 ```
 
-### Próxima Sessão — P0
+### Teste de API (Confirmado 25 Jun 22:49 UTC)
 
-1. Criar endpoint `/api/decompose` → Dragon Hub
-2. Bateria de 20-50 intenções (Compiler Evaluation Kit)
-3. Promover CANDIDATE → SEALED se passar
+```bash
+curl -X POST https://windi-domain.com/workbench/api/decompose \
+  -H "Content-Type: application/json" \
+  -d '{"intent": "Criar uma loja online de artesanato", "lang": "pt"}'
+```
+
+**Resposta:** ProjectGraph com 5 dimensões, 5 gaps, 3 assumptions, confidence 0.8
+
+### Próxima Sessão — P1
+
+1. Bateria de 20-50 intenções (Compiler Evaluation Kit)
+2. Promover CANDIDATE → SEALED se passar
+3. Medir latência/custo MISTRAL_DIRECT vs alternatives
 
 ### Candidatos Adormecidos (Fase 2)
 
 - **DOUTRINA-CAPABILITY-REGISTRY-001** — Capability = TOOL, nunca SOURCE
 - **ProjectGraph Manifest** — Metadados de versão/proveniência
 - **playground_status.yaml** — Estado machine-readable
+- **inferred_mission → Capability Planner** — Hook preparado, não implementado
 
 ### Insight do Witness
 
