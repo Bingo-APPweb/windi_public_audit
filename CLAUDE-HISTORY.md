@@ -19,7 +19,13 @@
 
 Primeira montagem completa usando o workflow EDL→CCode→Originais com dissolves calibrados.
 
-### Workflow Estabelecido (DOUTRINA-MONTAGEM-SOBERANA-001 CANDIDATE)
+### Workflow Estabelecido (DOUTRINA-MONTAGEM-SOBERANA-001 SEALED)
+
+**Receipt:** `WINDI-DOUTRINA-MONTAGEM-001-20260625212056`
+**Hash:** `sha256:cf9eded5f1c213e2e5491c168d972bda1a8e636ce0e0ea2f42bd6f72db283cd3`
+**Doc Type:** `constitutional` (governance law)
+
+> *"Dissolve é regra, corte seco é excepção para acção física."*
 
 ```
 1. HD monta no editor (FCP/Resolve) → exporta EDL
@@ -78,11 +84,29 @@ Primeira montagem completa usando o workflow EDL→CCode→Originais com dissolv
 
 Pequena falha residual nos segundos 22-23 (transição P15-07b→P15-07a). Aceite como limite prático — 95%+ dos objectivos atingidos. O perfeccionismo tem fronteira.
 
+### Cura Registada — Transição P15-07b→P15-07a (~22-23s)
+
+```
+PROBLEMA: 1 frame de overlap no EDL. Dissolve precisa 6-8f mínimo.
+
+DECISÃO HD: Opção B — alongar clip.
+            NUNCA corte seco (preferência editorial HD:
+            corte seco APENAS para acção física).
+
+COMO CURAR (próximo re-export, NÃO agora):
+  No editor, alongar P15-07b OU P15-07a em +6 a +8 frames
+  no ponto de junção, criando margem para dissolve de 6-8f.
+  Re-exportar EDL. CCode reconstrói só essa transição.
+
+QUANDO: Da próxima vez que a Cena 15 reabrir por outro motivo
+        (color grading / som). Não vale um ciclo isolado.
+```
+
 ### Pendente — Próximas Cenas
 
 | Cena | Status | Nota |
 |------|--------|------|
-| Cena 15 | ✅ SELADA | V3 final |
+| Cena 15 | ✅ SELADA | V3 final · Receipt: `WINDI-DOUTRINA-MONTAGEM-001-20260625212056` |
 | Cenas 1-14 | PENDENTE | Aguarda filmagem/geração |
 | Color Grading | PENDENTE | Casar planos de gerações diferentes |
 
@@ -91,6 +115,11 @@ Pequena falha residual nos segundos 22-23 (transição P15-07b→P15-07a). Aceit
 > *"A montagem não cria qualidade que o raw não tem; ela revela e organiza a que já lá está."*
 
 **DOUTRINA-MONTAGEM-SOBERANA-001:** O workflow EDL→CCode→Originais garante qualidade técnica. Mas a verificação de identidade (SPINE-CAST ≥0.65) e o color grading são etapas anteriores.
+
+**Anexo — Preferência Editorial HD:**
+> *"Corte seco é excepção, não regra. Reservado para impacto físico. A linguagem padrão é dissolve."*
+
+Esta é a assinatura de montador do Human Dragon. Qualquer agente que monte para HD no futuro aplica esta regra.
 
 ### Frase de Fecho
 
