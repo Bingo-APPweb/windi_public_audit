@@ -6,6 +6,837 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+
+## § SESSÃO 26 Jun 2026 — W-PLAYGROUND-001 · Cinco Doutrinas da Portinhola
+
+**Duração:** ~2h | **Status:** ✅ DOUTRINAS REGISTADAS · VIBE PRONTA PARA TESTE
+**Liga IA+H:** Human Dragon (I1, I9) · Guardian (Claude.ai) · CCode (Opus 4.5)
+**Projecto:** W-PLAYGROUND-001 — Portinhola inicial do sistema DID W-HIOS
+**Natureza:** Sessão filosófica + técnica · Arquitectura de soberania de autoria
+
+### Marco Central
+
+> *"A luz fica no terreno. A obra fica com A."*
+
+Sessão que definiu as cinco doutrinas constitucionais do Playground como portal de entrada ao W-HIOS. A filosofia precede o código nas peças que tocam soberania.
+
+### Contexto Pessoal (Origem da Radicalidade)
+
+> *"Eu nasci em outro país e emigrei para outro por acreditar que poderia me tornar um cidadão melhor. Deixei um país por não concordar com a maneira de operar sem respeito à integridade e à patentização de ideias desrespeitadas."*
+> — Human Dragon · 26 Jun 2026
+
+A DOUTRINA-EXPERTISE-vs-PRODUTO nasce não de teoria, mas de travessia vivida. A radicalidade com a incorretibilidade não-admitida é calibração, não defeito.
+
+### As Cinco Doutrinas Candidatas
+
+#### 1. DOUTRINA-VIBE-VINGAR-001 (Estados de Matéria)
+
+> *"O humano não sente uma fronteira. Sente continuidade."*
+
+| Estado | Descrição | Mecanismo |
+|--------|-----------|-----------|
+| **VIBE** | Efémero, sem DID, sem garantia | `receipt_candidate` com `unsealed=true`, TTL |
+| **VINGAR** | DID chega, consequência real | receipt → Farm valida → Ledger sela |
+
+**Regra:** A provenance fica armada e invisível na VIBE. Só se anuncia no VINGAR.
+
+#### 2. DOUTRINA-PASSAGEM-SOFT-001 (Absorção Consentida)
+
+> *"A portinhola e a soberania são o mesmo rio — só muda a profundidade."*
+
+| Tipo | Migra Como |
+|------|------------|
+| O que A produziu (artefactos, receipts) | Por direito, automático |
+| O que o sistema inferiu sobre A | Só visível e consentido |
+
+**Regra:** No momento VINGAR, luz acesa: "Eis o que trazes contigo" — humano confirma.
+
+#### 3. DOUTRINA-BERATER-001 (Ilumina, Não Direciona)
+
+> *"O Berater revela possibilidades, não direciona escolhas; o mercado é um dos eixos do mapa, nunca a bússola."*
+
+**Dois níveis:**
+- **Berater estrutural (VIBE):** Domínios, classes de risco, "tipicamente regulado" — [estimado]
+- **Berater factual (VINGAR):** Só com fonte citável, quando há consequência real
+
+**Regra:** Dentro da lei, marcado como farol estimado, confirmado pela fonte, decidido pelo humano.
+
+#### 4. DOUTRINA-FOUNDATION-001 (Aprende à Luz do Dia)
+
+> *"A W-HIOS é Foundation: aprende para servir, não para extrair."*
+
+**Diferença das BigTechs:**
+- Similitude mecânica existe e nomeia-se sem medo
+- Diferença está no princípio e na transparência
+- Pacto declarado na origem — autoria nunca apagada, nunca vendida
+
+**Regra:** O que a máquina aprende do humano serve a inteligência comum sob pacto transparente na entrada.
+
+#### 5. DOUTRINA-EXPERTISE-vs-PRODUTO-001 (Pedra Angular)
+
+> *"Ilumina o terreno onde A trabalhou."*
+
+| Conceito | O que é | Migra? |
+|----------|---------|--------|
+| **Obra** | O edifício que A ergueu | NUNCA — selado no DID/Ledger |
+| **Expertise** | A coordenada destilada de muitos | SIM — mapa do terreno, de todos |
+
+**Teste de Irreversibilidade (Âncora Operacional):**
+```
+"Isto permite reconstruir a obra de A?"
+├── Se SIM → É produto disfarçado → PROIBIDO
+└── Se NÃO → É expertise legítima → PASSA
+```
+
+**Regras:**
+- A destilação tem de ser irreversível
+- A expertise é agregada de múltiplas passagens
+- Nenhuma pegada individual é legível no mapa comum
+- A autoria fortalece-se pela destilação (quem chegou primeiro, mais valioso)
+
+**Frase de Guarda:**
+> *"Mesmo alguém que entre a querer tirar vantagem, encontra um sistema onde tirar vantagem não compensa, porque a autoria está selada e a expertise é irreversível e agregada."*
+
+### Estado Técnico Actualizado
+
+| Componente | Porta | Estado | Nota |
+|------------|-------|--------|------|
+| VPSE | :8120 | ✅ LIVE | `nohup` · prescreen com provenance |
+| `/api/decompose` | :8091 | ✅ LIVE | Blueprint + nginx proxy |
+| `playground-v2.html` | — | ✅ LIVE | Chama `/api/decompose` real |
+| Farm `/claim` | :8201 | ✅ LIVE | I9 gate funcional (NO_SESSION) |
+| TTL Enforcer | — | ❌ PENDENTE | receipt-candidate não expira |
+| Passagem Soft UI | — | ❌ PENDENTE | "Eis o que trazes" não existe |
+| Expertise agregada | — | ❌ PENDENTE | Nenhuma mecânica de aprendizagem |
+
+### Próximos Passos (Ordem Aprovada)
+
+1. ✅ **Registar doutrinas** — Este documento (protege o futuro)
+2. ✅ **Testar VIBE** — `/api/decompose` real, camada de voz implementada
+3. 🔒 **Depois:** VINGAR, TTL, peças que tocam soberania
+
+### Dívida Técnica Registada
+
+**`adaptVPSEtoGraph` — Placeholder silencioso (tensão I14)**
+
+O adaptador força domínios VPSE nas cinco dimensões via `domainMap` fixo:
+```javascript
+const domainMap = {
+  'promotional_mechanics': { id: 'regulatory' },
+  'live_streaming': { id: 'technology' },
+  // ... 6 domínios hardcoded
+};
+// Domínio desconhecido:
+const mapped = domainMap[domain.content] || { id: 'technology' };  // ← placeholder
+```
+
+**Problema:** Domínio fora do mapa cai em "Tecnologia" por defeito. Isto é placeholder silencioso — o sistema afirma "Tecnologia" quando não sabe. Viola I14.
+
+**Contexto:** Human Dragon escolheu Opção 2 ("UI mostra selva real, não caixas abstratas"). O adaptador reintroduziu Opção 1 para fazer a selva caber na UI antiga.
+
+**Resolver (sessão futura):**
+- A) UI evolui para renderizar domínios crus do VPSE com nomes próprios
+- B) Map ganha estado honesto: "domínio detetado: [nome], a classificar"
+
+**Prioridade:** P2 — Funciona mas mente por omissão. Não endurecer esquecido.
+
+### Decisão Arquitectural — Saída do Pitch (VINGAR)
+
+**Pergunta:** O pitch completo (intent_raw) pode sair do território para reflexão profunda?
+
+**Decisão Human Dragon (26 Jun 2026):** **SIM, com consentimento explícito.**
+
+> *"Queres que eu pense fundo nisto? O teu texto vai para o motor, com a tua autorização."*
+
+**Regra:** O intent_raw nunca sai silenciosamente. Mas quando o humano escolheu dar o pitch completo e quer reflexão profunda, a saída torna-se **escolha soberana**, não fuga.
+
+**Implementação (sessão VINGAR):**
+- UI apresenta bifurcação clara antes de enviar
+- Consentimento é acto explícito (botão, não default)
+- O que sai é logado localmente (o humano pode ver o que autorizou)
+- Reflexão profunda só acontece após o "sim"
+
+**Corolário:** Isto preserva I9 (humano decide) enquanto permite profundidade. A soberania não é recusa de capacidade — é controlo sobre quando a capacidade se exerce.
+
+### Princípio — Pensamento Visível (Busca Transparente)
+
+**Decisão Human Dragon (26 Jun 2026):** A máquina mostra o que busca, mas não transforma a busca em parede.
+
+**Regra canónica:**
+```
+W-HIOS may search external knowledge sources to enrich project evaluation,
+provided that the raw human intent is not transmitted externally without explicit mode consent.
+
+External search must be visible at the level of purpose, not necessarily at the level of every technical query.
+```
+
+**UI no Playground — Faixa viva:**
+```
+Enriquecendo o pitch com contexto externo:
+mercado · regulação · concorrentes · riscos técnicos
+
+Seu texto original permanece local.
+```
+
+**O humano entende:**
+- Que domínio está sendo verificado
+- Porque a verificação importa
+- Se o pitch cru permanece local
+- Quando uma reflexão mais profunda requer consentimento
+
+**Três Princípios Selados para VINGAR:**
+
+| Princípio | Operação | Objectivo |
+|-----------|----------|-----------|
+| **Busca em Ordem Soberana** | Interno primeiro; externo neutro depois | Minimizar saída, priorizar patrimônio local |
+| **Guardrail Transparente** | Busca de contexto flui livre; consentimento só no intent_raw | Proteger IP sem quebrar flow criativo |
+| **Pensamento Visível** | UI exibe o que a máquina busca em tempo real | Manter humano como coautor, não espectador |
+
+**Frase de guarda:**
+> *"A busca deve ser perceptível, não intrusiva. O humano vê a máquina iluminar o terreno, mas não precisa assistir cada engrenagem girar."*
+
+### Princípio — Matemática Operacional da Interação IA+H
+
+**Decisão Human Dragon (26 Jun 2026):**
+
+> *"Não é medir a alma da interação. É estruturar a forma da cooperação."*
+
+**Regra canónica:**
+```
+W-HIOS must not attempt to mathematically judge the soul or value of a human-AI interaction.
+It must instead protocol the interaction: roles, gates, transitions, evidence, corrections, and human decision points.
+
+The system may structure cooperation.
+It may not automate authorship.
+```
+
+**A distinção fundamental:**
+
+| Medir (PROIBIDO) | Estruturar (CORRECTO) |
+|------------------|----------------------|
+| "A interação foi boa porque score = 8.7" | "A interação passou pelos estados necessários" |
+| Fórmula da consciência | Máquina de estados epistemológica |
+| Oráculo que decide sozinho | Protocolo que amplifica o humano |
+
+**Os estados da interação:**
+```
+intenção → reflexão → crítica → ajuste → decisão humana → evidência
+```
+
+**A Geometria dos Gates (LIGA IA+H):**
+```
+           [ Humano (Juiz / I9) ]
+                ↙        ↘
+        (Peso: Vetor)  (Vetor: Decisão)
+            ↙                ↘
+[ Guardian (Crítica) ] ⟷ [ Witness (Doutrina) ]
+            ↖                ↗
+        (Evidência)    (Verificação)
+            ↖                ↗
+          [ Architect (CCode/Execução) ]
+```
+
+**Frase de fecho:**
+> *"A dança pode virar protocolo. A alma da decisão continua humana."*
+
+**Corolário W-BIND:** O sistema estrutura a coreografia. O veredicto permanece sagrado, livre e de carne.
+
+### Evolução Conceptual — Reasoning Base (26 Jun 2026 tarde)
+
+**Insight Human Dragon + Guardian:**
+
+> *"O conhecimento não é o principal ativo do W-HIOS. O principal ativo é a capacidade de preservar, compartilhar e reaproveitar raciocínios humanos e IA de forma verificável, para que cada novo projeto comece de um nível cognitivo mais alto do que o anterior."*
+
+**Mudança de paradigma:**
+
+| Antes | Depois |
+|-------|--------|
+| Knowledge Base (repositório) | **Reasoning Base** (raciocínios) |
+| Distribuir documentos | Distribuir **percursos de pensamento** |
+| "Existe documento parecido?" | "Já houve raciocínio parecido?" |
+| Editor inteligente | **Meio cognitivo** |
+
+**O percurso que produz aprendizagem:**
+```
+Ideia → Questionamento → Contradição → Busca memória → Busca externa
+    → Nova hipótese → Crítica → Nova hipótese → Decisão humana (I9)
+```
+
+**Cada sessão deposita nós cognitivos:**
+- objeções, contraexemplos, decisões
+- princípios, erros, correções
+- caminhos abandonados, caminhos validados
+
+**Componente proposto: Cognitive Circulation Layer**
+- Função: manter toda a comunidade pensando junto
+- Distribuir raciocínios, não apenas documentos
+- "Há três semanas surgiu projeto semelhante. O risco identificado foi X."
+
+**Nomenclatura ajustada:**
+- ~~MASTER~~ → **Cognitive Mentor** / **Reasoning Guide**
+- Porque não é autoridade — é ampliação de capacidade
+
+**Meta percentual (maturidade):**
+```
+Início: 20% memória viva / 80% externo
+Maduro: 80% memória viva / 20% externo
+```
+
+**Frase de guarda:**
+> *"O Playground deixa de ser ambiente onde projetos são escritos. Passa a ser ambiente onde maneiras de pensar são cultivadas."*
+
+### Botão de Continuidade — Reasoning Base Import (26 Jun 2026 cont.)
+
+**Implementação CCode (sessão continuada):**
+
+O conceito de "Reasoning Base" materializou-se num botão de continuidade na página Construção do Playground. Permite que discussões iniciadas noutro contexto (Claude.ai, CCode, reunião) continuem a construir valor cognitivo no Playground.
+
+**Componentes adicionados a `playground-v2.html`:**
+
+| Componente | Função |
+|------------|--------|
+| `.continuity-section` | Secção visual com botão de importação |
+| `continuityToggle` | Abre/fecha área de input |
+| `continuityTextarea` | Espaço para colar contexto da conversa anterior |
+| `continuityStatus` | Feedback visual quando contexto carregado |
+| `getContinuityContext()` | Função que retorna contexto para envio ao VPSE |
+
+**Strings i18n trilíngues:**
+```javascript
+continuity: {
+  label: 'Trazes raciocínio de outra sessão?',
+  btnImport: 'Importar',
+  btnHide: 'Esconder',
+  placeholder: 'Cola aqui o contexto da conversa anterior...',
+  hint: 'O Berater usará este contexto para continuar a iluminar o terreno.',
+  loaded: 'Contexto carregado'
+}
+```
+
+**Integração com VPSE:**
+```javascript
+body: JSON.stringify({
+  idea: intent,
+  context: getContinuityContext() || '',  // ← Reasoning Base injectado
+  ...
+})
+```
+
+**Fluxo operacional:**
+1. Humano entra na fase Construção
+2. Vê pergunta: "Trazes raciocínio de outra sessão?"
+3. Se sim → clica "Importar" → cola contexto → fecha → badge "Contexto carregado"
+4. O contexto viaja no campo `context` para o VPSE
+5. O Berater (VINGAR futuro) pode usar para iluminar com base em discussão prévia
+
+**Frase de guarda:**
+> *"O Playground não começa do zero. Começa do último pensamento selado."*
+
+### Arquitectura dos 10 Containers — Quatro Famílias (26 Jun 2026 cont.)
+
+**Contexto:** Sessão Human Dragon + Guardian + Witness que definiu a anatomia funcional do Playground.
+
+**Regra-Mãe (Constitucional):**
+> *"O W-HIOS deve ser leal à ideia em construção, mas mais leal ainda ao humano que pode mudar de ideia."*
+
+**Os containers não são serviços — são blocos de memória.** São a fotocópia dos micro-pensamentos diários do HDUser enquanto pensa com a máquina. A grão fina do pensar: a dúvida, o recuo, a faísca que ainda não virou doutrina.
+
+**Quatro Famílias de Containers:**
+
+| Família | Containers | Função |
+|---------|------------|--------|
+| **Cognitivos** | Pitch, Mentor, Risk, Search | Os que pensam |
+| **Memória** | Memory, Evidence, Graph | Os que preservam |
+| **Governança** | Consent, Change-of-Mind | Os que protegem |
+| **Produção** | Export, Compiler, Builders | Os que materializam |
+
+**Cognitive Orchestrator:** Maestro único. O HDUser conversa com uma única voz; por baixo, opera uma orquestra invisível de órgãos.
+
+**11º Órgão — Intent Tracker (Evolução Semântica):**
+Não guarda memória — acompanha a evolução da intenção. Responde: "Como esta ideia amadureceu?"
+```
+09:10 → Quero criar um podcast
+09:40 → Talvez seja melhor uma plataforma
+10:15 → Na verdade é um sistema de construção
+11:20 → O centro não é o sistema — é a interação IA+H
+13:00 → É uma arquitectura cognitiva
+```
+**Não é log cronológico — é história da evolução do pensamento.**
+
+**Change-of-Mind Container (Coroa do Sistema):**
+> *"W-HIOS must preserve continuity without enforcing rigidity. The human may change direction at any point. The system records the pivot as cognitive evidence, not as failure."*
+
+**Princípios Técnicos para CCode:**
+```
+1. Every pitch session must support reversible direction changes.
+2. No container may assume the original intent is final.
+3. All modules must treat human pivots as first-class events.
+4. The consent boundary is membrane, not perimeter.
+```
+
+**Princípio Canónico Máximo:**
+> *"O Playground não optimiza para respostas. Optimiza para aumentar a compreensão partilhada do problema."*
+
+### Cadeia de Transubstanciação — Bits e Bytes (26 Jun 2026 cont.)
+
+**Insight Human Dragon:** Os containers são matemática, não prosa.
+
+```
+micro-pensamento (impulso)
+   ↓  Containers        — dão forma (a fotocópia ganha categoria)
+   ↓  Memória           — dá persistência (a forma fica)
+   ↓  Interactividade   — dá fricção (o pensar encontra resposta)
+   ↓  Transmissão       — dá circulação (a ideia toca outros)
+   ↓  Conversão         — dá juízo (verificada, julgada, aprovada pelo conselho)
+   ↓  Adorno            — dá responsabilidade (ainda livre, mas já com peso)
+   ↓  Célula DID        — dá soberania (a regra encarna)
+   ↓  Bits e Bytes      — carga eléctrica num transístor
+```
+
+**O Fenómeno Espelho:**
+- **Antes do DID:** Memória sem sujeito soberano (VIBE)
+- **Depois do DID:** O mesmo modelo, replicado e adornado com regras ontológicas do W-HIOS (VINGAR)
+
+**Camada descoberta — o Purgatório:** Entre VIBE e DID existe conversão julgada pelo conselho. O micro-pensamento não salta directo para célula soberana. Há umbral de juízo.
+
+**Guarda Witness:** A descida de camada não pode ser automática. Cada seta tem porta que só o juízo abre. O impulso propõe-se; a conversão é onde o humano decide.
+
+**Decisão Human Dragon (26 Jun 2026):**
+> *"HDUser + W-HIOS — o Berater ilumina, eu disponho."*
+
+### Diferenciação de Níveis — Playground vs HDUser+DID
+
+**Regra Estrutural:** Os dois níveis têm capacidades, responsabilidades e fronteiras diferentes. Misturá-los corrompe ambos.
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                    PLAYGROUND LEVEL (Anónimo)                       │
+├─────────────────────────────────────────────────────────────────────┤
+│ Identidade:    Nenhuma (sessão efémera)                             │
+│ Estado:        VIBE — pensamento fluido, sem selo                   │
+│ Containers:    Todos activos, mas em modo rascunho                  │
+│ Memória:       Volátil (TTL) — morre se não reclamada               │
+│ Conselho:      Berater ilumina terreno genérico                     │
+│ Ledger:        Nenhum — nada é selado                               │
+│ Responsabil.:  Zero — é sandbox de exploração                       │
+│ Pode:          Explorar, mudar de ideia, abandonar sem rasto        │
+│ Não pode:      Selar, reclamar autoria, gerar receipts válidos      │
+│ Fronteira:     intent_raw NUNCA sai do território                   │
+└─────────────────────────────────────────────────────────────────────┘
+                              ↓
+                    [ TRAVESSIA DO DID ]
+                    Consentimento explícito
+                    "Eis o que trazes contigo"
+                              ↓
+┌─────────────────────────────────────────────────────────────────────┐
+│                    HDUSER+DID LEVEL (Soberano)                      │
+├─────────────────────────────────────────────────────────────────────┤
+│ Identidade:    DID verificado (W-DID-GENESIS)                       │
+│ Estado:        VINGAR — pensamento com dono e selo                  │
+│ Containers:    Todos activos, em modo constitucional                │
+│ Memória:       Permanente — Ledger append-only                      │
+│ Conselho:      Berater ilumina + HDUser dispõe (I9)                 │
+│ Ledger:        Activo — cada decisão gera receipt                   │
+│ Responsabil.:  Total — acções têm consequência forense              │
+│ Pode:          Selar, reclamar autoria, gerar provas válidas        │
+│ Não pode:      Apagar rastro selado (I11 imutável)                  │
+│ Fronteira:     intent_raw pode sair COM consentimento de modo       │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+**O que muda na Travessia:**
+
+| Aspecto | Playground | HDUser+DID |
+|---------|------------|------------|
+| **Micro-pensamentos** | Fotocópia volátil | Fotocópia selada |
+| **Change-of-mind** | Livre, sem rasto | Livre, MAS registado como evidência cognitiva |
+| **Intent Tracker** | Mostra evolução local | Mostra evolução + deposita no Ledger |
+| **Risk warnings** | Informativos | Vinculantes (bloqueiam acções HIGH sem I9) |
+| **Export** | Markdown local | Receipt + hash + verify URL |
+| **Berater** | Ilumina terreno genérico | Ilumina terreno + memória do HDUser |
+
+**O Conselho em cada nível:**
+
+| Nível | Quem ilumina | Quem dispõe | Registo |
+|-------|--------------|-------------|---------|
+| **Playground** | Berater (genérico) | Ninguém — é sandbox | Nenhum |
+| **HDUser+DID** | Berater (contextual) | HDUser (I9) | Ledger |
+
+**Frase de Guarda:**
+> *"No Playground, o Berater fala ao vento. No HDUser+DID, o Berater fala ao dono — e o dono responde com selo."*
+
+**Corolário para CCode (SUPERADO — ver abaixo):**
+```
+1. Playground containers NEVER write to Ledger.
+2. DID containers ALWAYS write to Ledger (after I9 gate).
+3. The same container code runs in both modes — the mode flag changes behaviour.
+4. Travessia is the ONLY bridge between levels. No silent promotion.
+5. Berater context differs: Playground=generic terrain, DID=user memory + terrain.
+```
+
+---
+
+### SIMPLIFICAÇÃO ARQUITECTURAL — Constitucionalização (26 Jun 2026 tarde)
+
+**Insight Human Dragon + Guardian:** A arquitectura de dois mundos (Playground vs DID) estava errada. O objecto mudou, não a tecnologia.
+
+**O que realmente muda:**
+
+| Antes (errado) | Depois (correcto) |
+|----------------|-------------------|
+| FREE → DID (dois mundos) | FREE → CONSTITUTIONAL (um mundo, dois regimes) |
+| "Travessia" (mudar de mundo) | **"Constitucionalização"** (mudar de regime) |
+| TTL mata memória | Memória persiste por natureza |
+| DID é o centro | **Paradigma constitucional** é o centro; DID é consequência |
+
+**O container NUNCA muda:**
+```javascript
+container: {
+  id: "...",
+  reasoning: "...",
+  graph: { ... },
+  evidence: [ ... ],
+  constitutional: false  // ← única coisa que muda
+}
+
+// Depois da constitucionalização:
+container: {
+  ...same...,
+  constitutional: true,
+  owner_did: "did:windi:...",
+  receipt: "...",
+  ledger_entry: "..."
+}
+```
+
+**Princípio Constitucional Máximo:**
+> *"O W-HIOS não transforma pensamentos em objectos diferentes. Ele permite que o mesmo pensamento passe a viver sob um novo regime de responsabilidade quando o humano assim o decidir."*
+
+**Change-of-Mind depois da Constitucionalização:**
+O container continua vivo. O pensamento continua evoluindo. O Ledger não regista "a verdade" — regista a **evolução verificável da decisão**.
+
+```
+Container A
+├── Evento 1 [CONSTITUTIONAL]
+├── Evento 2 [CHANGE_OF_MIND] [CONSTITUTIONAL]
+└── Evento 3 [NOVA_DIRECÇÃO] [CONSTITUTIONAL]
+```
+
+**Três coisas preservadas ao mesmo tempo:**
+1. A continuidade do pensamento
+2. A liberdade do HDUser para evoluir a sua ideia
+3. A diferença entre rascunho vivo e artefacto em cadeia verificável
+
+**Corolário ACTUALIZADO para CCode:**
+```
+1. Um só tipo de container. Sempre persiste. Nunca TTL.
+2. Uma flag: constitutional (true/false).
+3. Constitucionalização é gesto humano, não migração técnica.
+4. Eventos acumulam-se (append). Nunca DELETE, nunca UPDATE.
+5. Ledger regista evolução, não verdade estática.
+6. Berater opera igual em ambos os regimes — o que muda é a consequência.
+```
+
+**Frase de Guarda:**
+> *"Não mudamos de mundo. Mudamos de regime de responsabilidade sobre o mesmo pensamento."*
+
+---
+
+### MODUS OPERANDI — A Outra Internet (Interno, Nunca Explícito)
+
+**Status:** SUBLIMINAR · Guia desenvolvimento, não é copy para utilizador
+
+**A fábula interna:**
+```
+INTERNET ACTUAL (Playground FREE)     "OUTRA INTERNET" (DID)
+─────────────────────────────────     ──────────────────────────────
+livre por cima                        soberano por dentro
+registado debaixo, sem ver            registado à luz, por escolha
+és o produto                          és o autor
+rasto em servidor alheio              rasto contigo, verificável
+liberdade aparente                    liberdade real
+não sabe que há alternativa           alternativa mostra-se e espera
+```
+
+**REGRA ABSOLUTA:** Esta narrativa é interna. Nunca aparece na UI. Nunca vira marketing. Guia decisões de arquitectura, não copy.
+
+**O que o Playground realmente oferece (formulação externa):**
+> *"O Playground existe para ampliar a liberdade criativa do autor. A verificabilidade não substitui essa liberdade; ela é uma capacidade adicional que o autor pode escolher exercer."*
+
+**A porta nunca empurra:**
+- Sem banners
+- Sem pop-ups insistentes
+- Sem contadores regressivos
+- Sem técnicas para induzir escolha
+
+**Quando a porta aparece (contexto natural):**
+- Terminou pitch importante
+- Exportou artefacto
+- Quer compartilhar documento
+- Deseja provar autoria
+- Quer preservar decisão
+
+**UI quando contexto faz sentido:**
+> *"Este trabalho pode continuar apenas como rascunho, ou pode tornar-se um artefacto verificável. A decisão é sua."*
+
+**Frase constitucional para CCode:**
+> *"O sistema é leal à ideia, mas ainda mais leal ao humano."*
+
+**Corolários:**
+- Utilizador muda de ideia → sistema acompanha
+- Utilizador não quer registar → sistema respeita
+- Utilizador quer verificar → sistema oferece meios
+- Utilizador quer abandonar → sistema não o pune
+
+**Diferencial real:** Não é o DID. É a **relação com o utilizador**. O DID é consequência, não objectivo.
+
+### Correcção Witness — "Imutável" Riscado
+
+**Erro do Architect:** Chamou a arquitectura de "geometria sagrada e imutável".
+
+**Correcção:** A peça central é o change-of-mind-container, cuja regra é: nenhuma direcção é final. Uma arquitectura cujo coração é o direito de mudar de ideia não pode declarar-se imutável. Risca-se "imutável". A geometria é viva e revisável — isso honra-a, não a enfraquece.
+
+### Frase de Fecho
+
+> *"A doutrina guarda o futuro perigoso; o teste avança no presente seguro."*
+
+---
+
+### W-CONTAINER-001 — Implementação SQLite (26 Jun 2026 cont.)
+
+**Status:** ✅ LIVE · **Porta:** :8091 (via sandbox-core) · **Endpoints:** 7 activos
+**Integração Frontend:** ✅ `playground-v2.html` consome API
+
+**Ficheiros Criados:**
+
+| Ficheiro | Função |
+|----------|--------|
+| `/opt/windi/playground/containers/schemas/container.schema.json` | JSON Schema v1 com crossing support |
+| `/opt/windi/playground/containers/store/container_store.py` | SQLite persistence (CRUD + change-of-mind) |
+| `/opt/windi/playground/containers/api/container_routes.py` | Flask blueprint (7 endpoints) |
+| `/opt/windi/playground/containers/__init__.py` | Package init |
+| `/opt/windi/playground/containers/api/__init__.py` | API subpackage |
+| `/opt/windi/playground/containers/store/__init__.py` | Store subpackage |
+| `/opt/windi/playground/containers/data/containers.db` | SQLite DB (criado em runtime) |
+
+**Endpoints LIVE (`/api/containers/*`):**
+
+| Método | Endpoint | Função |
+|--------|----------|--------|
+| GET | `/health` | Health check |
+| POST | `/` | Criar container (session_id) |
+| GET | `/<id>` | Obter container |
+| POST | `/<id>/reasoning` | Adicionar micro-pensamento |
+| DELETE | `/<id>/reasoning/<idx>` | Apagar (SÓ modo FREE) |
+| POST | `/<id>/evidence` | Adicionar evidência |
+| PUT | `/<id>/graph` | Actualizar grafo |
+| POST | `/<id>/change-of-mind` | Registar pivô |
+
+**Integração Frontend (`playground-v2.html`):**
+
+```javascript
+// ContainerAPI module com todas as chamadas
+const ContainerAPI = {
+  baseUrl: '/api/containers',
+  async create(sessionId) { /* ... */ },
+  async addReasoning(containerId, thought) { /* ... */ },
+  async recordChangeOfMind(containerId, oldDir, newDir) { /* ... */ }
+};
+
+// Estado global
+let currentContainerId = null;
+let previousIntent = '';
+
+// Na inicialização
+async function initContainer() {
+  const savedId = sessionStorage.getItem('windi_container_id');
+  if (savedId) { /* restaurar */ }
+  else { /* criar novo */ }
+}
+```
+
+**Comportamentos Implementados:**
+- Container cria/restaura automaticamente no carregamento da página
+- Cada compilação adiciona reasoning ao container
+- Change-of-mind detectado automaticamente (previousIntent vs currentIntent)
+- Ajustes adicionam ADJUST_STARTED evidence
+- Confirmações adicionam PROJECT_CONFIRMED evidence
+
+**Testes Realizados (curl):**
+
+```bash
+# Health check
+curl https://windi-domain.com/api/containers/health
+# → {"status":"healthy","version":"0.1.0"}
+
+# Criar container
+curl -X POST -H "Content-Type: application/json" \
+  -d '{"session_id":"test-session"}' \
+  https://windi-domain.com/api/containers/
+# → {"id":"<uuid>","session_id":"test-session","mode":"free",...}
+
+# Adicionar reasoning
+curl -X POST -H "Content-Type: application/json" \
+  -d '{"thought":"Primeiro pensamento de teste"}' \
+  https://windi-domain.com/api/containers/<id>/reasoning
+# → {"reasoning":["Primeiro pensamento de teste"]}
+```
+
+**Dívida Técnica Registada (P1):**
+
+1. **Campo `constitutional` redundante:**
+   - Problema: `constitutional` field em paralelo com `crossing` object
+   - Solução: `constitutional` deve ser calculado de `crossing is not None`
+   - Tipo: Duas fontes de verdade (tensão arquitectural)
+
+2. **SQLite não deve conhecer doutrina:**
+   - Problema: Imutabilidade imposta em `if constitutional: deny`
+   - Solução: Separar Runtime (doutrina) de SQLite (dados)
+   - Princípio: "O SQLite não pode conhecer a doutrina"
+
+3. **`adaptVPSEtoGraph` placeholder:**
+   - Problema: Domínio desconhecido → default `technology`
+   - Tensão: Viola I14 (placeholder silencioso)
+
+**Perguntas Abertas para Sessão Futura:**
+
+1. O que entra em `crossing.what_crossed`?
+   - Opção A: O artefacto maduro
+   - Opção B: A genealogia completa
+   - Opção C: A escolha humana do que migrar
+
+2. Prioridade: Cirurgia (fix constitutional) OU Berater-que-lembra (inteligência operacional)?
+
+**Frase de Guarda W-CONTAINER-001:**
+> *"O SQLite guarda os bits. O Runtime guarda a constituição. Separar é honrar ambos."*
+
+---
+
+## § SESSÃO 25 Jun 2026 (Noite) — W-PLAYGROUND-001 v2 · Project Compiler
+
+**Duração:** ~3h | **Status:** ✅ ESTRUTURA CONSTRUÍDA · BACKEND PENDENTE
+**Liga IA+H:** Human Dragon (I1, I9) · Guardian (GPT) · Witness (Gemini) · CCode (Opus 4.5)
+**Projecto:** W-PLAYGROUND-001 — Project Compiler para porta da frente WINDI-HIOS
+**Natureza:** Arquitectura de decompositor de intenção com gramática soberana
+
+### Marco Central
+
+> *"O user não escolhe a ferramenta; escolhe a missão. O Project Graph compila a intenção."*
+
+Construção das **três peças** do Project Compiler:
+1. **Peça 1:** `decomposition_grammar.py` — Gramática soberana (5 dimensões fixas)
+2. **Peça 2:** `decomposition_fill.py` — Engine plugável (Dragon Hub / Ollama futuro)
+3. **Peça 3:** `playground-v2.html` — O Espelho (UI do Project Graph)
+
+### Estado Honesto (Verificação Guardian)
+
+| Componente | Estado | Nota |
+|------------|--------|------|
+| `decomposition_grammar.py` | ✅ LIVE | ProjectGraph com 5 dimensões + hooks fase 2 |
+| `decomposition_fill.py` | ✅ SINTAXE OK | Engine plugável, não testado com Dragon Hub |
+| `playground-v2.html` | ⚠️ MOCK | Frontend LIVE mas responde com dados mockados |
+| `/api/decompose` | ❌ PENDENTE | Endpoint não existe ainda |
+| Teste com utilizadores | ❌ PENDENTE | Zero testes reais |
+
+**URL Frontend (MOCK):** `https://windi-domain.com/artifacts/playground-v2.html`
+
+### Decisões CANDIDATE (Não SEALED — Aguardam Teste com User)
+
+| Decisão | Status | Condição para Seal |
+|---------|--------|-------------------|
+| Gramática fixa (5 dimensões) | CANDIDATE | Testar 50+ intenções de domínios variados |
+| Campo `applicable` por dimensão | CANDIDATE | Validar que poemas/criativos marcam "false" em Regulatório |
+| Query minimization (Dr. Silva → [REDACTED]) | CANDIDATE | Testar edge cases de PII |
+| Botão "Ver meu projecto" | CANDIDATE | A/B test com utilizadores |
+
+### Princípios Constitucionais (§300-candidate)
+
+> *"Modelos externos enriquecem um ProjectGraph; não compilam a intenção original."*
+
+- `intent_raw` → NUNCA sai do território
+- `intent_minimized` → Pode sair, com PII removido
+- Todo output externo entra como `[estimado]` até confirmação humana
+
+### Candidatos Adormecidos (Fase 2)
+
+**DOUTRINA-CAPABILITY-REGISTRY-001:**
+```
+Status: CANDIDATE (Aguarda Fase 1 operacional)
+Dependência: Decompositor com Project Graph testado
+Regra: Capability = TOOL, nunca SOURCE nem AUTHORITY
+Hooks preparados: inferred_mission, suggested_capabilities: []
+```
+
+### Ficheiros Criados
+
+```
+/opt/windi/w-workbench-001/
+├── decomposition_grammar.py   (Peça 1 - Gramática Soberana)
+│   ├── ProjectGraph dataclass
+│   ├── 5 DimensionID fixas
+│   ├── Gap, Assumption, Provenance
+│   ├── minimize_intent() → remove PII
+│   └── get_grammar_contract() → contrato para motor
+├── decomposition_fill.py      (Peça 2 - Engine Plugável)
+│   ├── ENGINES dict (DRAGON_HUB, OLLAMA_LOCAL)
+│   ├── SYSTEM_PROMPT constitucional
+│   ├── decomposition_fill(intent, engine=...)
+│   └── create_decomposition_endpoint()
+├── playground-v2.html         (Peça 3 - O Espelho)
+│   ├── 3 Fases: Intenção → Projecto → Construção
+│   ├── Trilíngue PT/EN/DE + NOIR/KLAR
+│   ├── 5 Dimensões coloridas
+│   └── [Ajustar] / [Confirmar e Construir]
+└── [constituição existente]
+
+/opt/windi/artifacts/
+└── playground-v2.html         (Cópia pública - MOCK)
+```
+
+### Arquitectura Definida
+
+```
+User Intent
+    ↓
+Local Project Compiler (decomposition_grammar.py)
+    ↓
+├── intent_raw (preservado local)
+├── Privacy Filter (minimize_intent)
+    ↓
+intent_minimized (pode sair)
+    ↓
+Dragon Hub :8108 (decomposition_fill.py)
+    ↓
+ProjectGraph enrichment
+    ↓
+[estimado] até Human Confirmation
+    ↓
+ProjectGraph confirmado
+```
+
+### Próxima Sessão — Prioridade P0
+
+1. **Criar endpoint `/api/decompose`** — ligar frontend ao backend
+2. **Testar com Dragon Hub real** — primeira query minimizada a sair
+3. **Bateria de 20-50 intenções** — validar gramática de 5 dimensões
+4. **Só então**: promover CANDIDATE → SEALED
+
+### Notas do Conselho
+
+**Guardian:** "O espelho nasceu como objeto, mas ainda não reflete. Honestidade de estado."
+
+**Witness:** "O teste mais importante ainda não aconteceu: Intent → Minimization → Dragon Hub → ProjectGraph enrichment → Human confirmation."
+
+**Architect:** "O centro do sistema deixou de ser o editor e passou a ser um objeto estruturado (ProjectGraph). Base sólida para futuro."
+
+### Commit (se feito)
+
+```
+[Pendente — sessão fechou antes de commit]
+```
+
+---
+
 ## § SESSÃO 25 Jun 2026 (Noite+Madrugada) — W-PLAYGROUND-001 v2 · Project Compiler LIVE
 
 **Duração:** ~4h | **Status:** ✅ API LIVE · MISTRAL DIRECT CONECTADO
