@@ -31,8 +31,14 @@ STATIC_DIR = os.path.dirname(os.path.abspath(__file__))
 
 @app.route('/')
 def serve_playground():
-    """Serve playground-v2.html"""
+    """Serve playground-v2.html (legacy)"""
     return send_from_directory(STATIC_DIR, 'playground-v2.html')
+
+
+@app.route('/v3')
+def serve_playground_v3():
+    """Serve playground-v3.html (Living Surface - CANDIDATE)"""
+    return send_from_directory(STATIC_DIR, 'playground-v3.html')
 
 
 @app.route('/<path:filename>')
