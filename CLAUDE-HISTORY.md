@@ -21965,3 +21965,110 @@ vpse_mvp.tar.gz: b84299a446b51c74abce2fa81cecfe6cf74680a2b19ca52631de88194591f49
 ---
 
 *WINDI-HIOS · Liga IA+H · Kempten, Bavaria · 2026-06-25*
+
+
+---
+
+## SESSION-20260626-PLAYGROUND-V3-LIVING-SURFACE — Cinco Fantasmas Caçados
+
+**Data:** 26 Jun 2026
+**Produto:** W-PLAYGROUND-001 / Living Surface v3
+**Estado:** CANDIDATE — parcialmente funcional
+
+### Conquista do Dia
+A superfície contínua renderizou um **grafo real** com 5 dimensões (Produto, Regulatório, Utilizadores, Tecnologia, Custos) — primeira medição de S1-S5.
+
+### Cinco Fantasmas Caçados (READ FIRST)
+| # | Bug | Causa | Fix |
+|---|-----|-------|-----|
+| 1 | Capítulo Berater fabricado | v2 criava voz sem voice_layer | S3: só criar se voice_layer real |
+| 2 | "63 min" mentiroso | intent_evolution[0] era system | type field + filtro DIFF |
+| 3 | API Key exposta | Mistral key em linha de comando | Rotação + .env |
+| 4 | MISSING_IDEA | Endpoint errado (/api/decompose → :8091) | Mudar para /workbench/api/decompose |
+| 5 | "Parou ali" | reconstructFromContainer sem try-catch → setupEventListeners nunca corre | try-catch na init() |
+
+### Dívidas Nomeadas (Próxima Sessão)
+1. **nohup → systemd** com EnvironmentFile= — mata bugs de key no restart
+2. **Container :8091** inacessível do browser — S6/S7 mortos sem ele
+3. **Dois endpoints decompose** com contratos diferentes (idea vs intent) — aposentar um
+
+### Estado dos Invariantes
+| Invariante | Status |
+|------------|--------|
+| S1: Input Perene | ✅ |
+| S2: Capítulos Append-Only | ⏳ (testar #2 após fix) |
+| S3: Berater Só Com Voz Real | ✅ |
+| S4: Painéis São Projecções | ✅ |
+| S5: Indicador Mostra Não Navega | ✅ |
+| S6: Container É a Verdade | ❌ (Container :8091 morto) |
+| S7: Reentrada É Reconstituição | ❌ (depende de S6) |
+
+### Próximo Passo
+Ctrl+Shift+R em /workbench/v3, enviar segunda mensagem, verificar se Capítulo #2 acumula.
+
+---
+
+## SESSION-20260627-PLAYGROUND-V3-CHAPTER2-SEALED — Capítulo #2 Funciona
+
+**Data:** 27 Jun 2026
+**Commit:** `445cbbdc6`
+**Status:** SEALED
+**Invariants:** I9, I14, S2, S6, S7
+
+### Fixes Selados
+
+| Ficheiro | Bug | Fix |
+|----------|-----|-----|
+| `playground-v3.html:633` | `localhost:8091` hardcoded | `→ /api/containers` (proxy nginx) |
+| `container_routes.py:82` | `type` ignorado no reasoning | `→ entry_type = data.get('type', 'human')` |
+
+### Primeira Entrada de containers/ no Git
+
+O directório `playground/containers/` nunca tinha sido tracked. Este commit adiciona:
+- `container_routes.py` — API Flask para containers
+- `container_store.py` — persistência SQLite
+- `container.schema.json` — schema JSON
+- `__init__.py` (×3) — módulos Python
+- `.gitignore` — blinda `*.db` e `__pycache__/`
+
+### Teste Capítulo #2 — PASS
+
+```
+intent_evolution entries: 3
+  #1: type=human | trigger=reasoning_added    ← Capítulo #1
+  #2: type=system | trigger=reasoning_added   ← Berater (filtrado)
+  #3: type=human | trigger=reasoning_added    ← Capítulo #2 ✓
+```
+
+### Invariantes Validados
+
+| Inv | Nome | Estado |
+|-----|------|--------|
+| S2 | Capítulos Append-Only | ✅ Acumulam |
+| S6 | Container É Verdade | ✅ Via proxy nginx |
+| S7 | Reconstituição | ✅ Com `type` preservado |
+
+### Dívidas Nomeadas (Próxima Sessão)
+
+1. **`agents/constitutional-agent/agent.py`** — modificado mas não selado (reinício do Sandbox Core). Inventariar antes de selar.
+2. **nohup → systemd** — dívida da sessão anterior, ainda pendente.
+3. **Dois endpoints decompose** — `/workbench/api/decompose` vs `:8091` — aposentar um.
+
+### Processo Constitucional Aplicado
+
+1. READ FIRST (`git status --porcelain`)
+2. Inventário de `playground/` antes de add
+3. Gate `git check-ignore` para confirmar blindagem de `.db`
+4. Add explícito (8 ficheiros nomeados, não `git add .`)
+5. Gate `git status --short` antes de commit
+
+### Frase Canónica
+
+> *"O 5º Dragão sela só o que foi decidido. O resto fica nomeado como dívida, não esquecido."*
+
+---
+
+*WINDI-HIOS · Liga IA+H · Kempten, Bavaria · 2026-06-27*
+
+---
+
