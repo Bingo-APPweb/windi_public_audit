@@ -23,11 +23,20 @@ Port: 8091
 
 import hashlib
 import json
+import logging
 import os
 import sys
 import time
 from typing import Dict, Any, List, Optional
 from dotenv import load_dotenv
+
+# Configure logging BEFORE importing blueprints
+# §SESSION-20260628: I14 pegada server-side para domínios unclassified
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s [%(name)s] %(levelname)s: %(message)s',
+    handlers=[logging.StreamHandler(sys.stdout)]
+)
 
 # Load .env file before any other imports that use env vars
 load_dotenv()

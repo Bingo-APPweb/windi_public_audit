@@ -7,12 +7,55 @@ Endpoint: /api/decompose
 Proxy to: VPSE :8120/prescreen
 
 Invariants: I9 (proxy não escala autonomia), I14 (erro explícito se VPSE down)
+
+§SESSION-20260628: I14 fix — domínio desconhecido → 'unclassified' + log server-side
 """
 
+import logging
 import requests
 from flask import Blueprint, request, jsonify
 
 playground_bp = Blueprint('playground', __name__)
+
+# Logger para domínios não classificados (detector de lacunas)
+logger = logging.getLogger('windi.playground.unclassified')
+
+# ---------------------------------------------------------------------------
+# Mapa de domínios VPSE → dimensões UI
+# Quando um domínio não está aqui, é marcado 'unclassified' e logado.
+# Este log é o detector de lacunas — revela onde o mapa precisa crescer.
+# ---------------------------------------------------------------------------
+DOMAIN_TO_DIMENSION = {
+    'live_streaming': 'technology',
+    'promotional_mechanics': 'regulatory',
+    'document_governance': 'regulatory',
+    'finance': 'costs',
+    'health': 'regulatory',
+    'education': 'users',
+}
+
+
+def _enrich_domains_with_dimension(vpse_result: dict) -> dict:
+    """
+    Enriquece detected_domains com dimension_id.
+    Se domínio não está no mapa → dimension_id='unclassified' + log.
+
+    I14: Não mascara. Não finge saber. Admite e regista.
+    """
+    domains = vpse_result.get('detected_domains', [])
+
+    for domain in domains:
+        content = domain.get('content', '')
+
+        if content in DOMAIN_TO_DIMENSION:
+            domain['dimension_id'] = DOMAIN_TO_DIMENSION[content]
+        else:
+            domain['dimension_id'] = 'unclassified'
+            domain['raw'] = True
+            # Pegada server-side: detector de lacunas
+            logger.info(f"UNCLASSIFIED_DOMAIN: '{content}' — candidato a entrada no mapa")
+
+    return vpse_result
 
 VPSE_URL = "http://127.0.0.1:8120"
 
@@ -57,11 +100,16 @@ def decompose():
 
         if response.status_code == 200:
             vpse_result = response.json()
+
+            # I14 fix: enriquecer domínios com dimension_id (ou unclassified + log)
+            vpse_result = _enrich_domains_with_dimension(vpse_result)
+
             # Add proxy metadata
             vpse_result['_proxy'] = {
                 "via": "sandbox-core:8091/api/decompose",
                 "upstream": "vpse:8120/prescreen",
-                "i9": "proxy_only_no_autonomy"
+                "i9": "proxy_only_no_autonomy",
+                "i14": "domains_enriched_with_dimension_id"
             }
             return jsonify(vpse_result), 200
         else:

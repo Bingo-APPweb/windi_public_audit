@@ -26,6 +26,7 @@
     --dim-users: #2E6B8A;
     --dim-technology: #6B4E8A;
     --dim-costs: #8A6B4E;
+    --dim-unclassified: #7A7A6A;
   }
   html[data-theme="noir"] {
     --bg: #14130F;
@@ -45,6 +46,7 @@
     --dim-users: #6A9BB5;
     --dim-technology: #9B7EB5;
     --dim-costs: #B59B7E;
+    --dim-unclassified: #9A9A8A;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -353,6 +355,10 @@
   .dimension-card[data-dim="users"] { border-left: 3px solid var(--dim-users); }
   .dimension-card[data-dim="technology"] { border-left: 3px solid var(--dim-technology); }
   .dimension-card[data-dim="costs"] { border-left: 3px solid var(--dim-costs); }
+  .dimension-card[data-dim="unclassified"] {
+    border-left: 3px dashed var(--dim-unclassified);
+    opacity: 0.85;
+  }
 
   /* Gaps Section */
   .gaps-section {
@@ -430,6 +436,467 @@
   .assumption-text {
     font-size: .9rem;
     color: var(--ink-soft);
+  }
+
+  /* Evolution Chain - Genealogy of Thought */
+  .evolution-chain {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 24px;
+  }
+  .evolution-chapter {
+    background: var(--bg-elev);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .chapter-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--bg-elev2);
+    border-bottom: 1px solid var(--line);
+    cursor: pointer;
+  }
+  .chapter-header:hover {
+    background: var(--line);
+  }
+  .chapter-title {
+    font-size: .85rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+  }
+  .chapter-toggle {
+    font-size: .75rem;
+    color: var(--ink-faint);
+    transition: transform .2s ease;
+  }
+  .chapter-toggle.collapsed {
+    transform: rotate(-90deg);
+  }
+  .chapter-content {
+    padding: 16px;
+    font-size: .9rem;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+  .chapter-content.hidden {
+    display: none;
+  }
+  .chapter-meta {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--line);
+  }
+  .chapter-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .65rem;
+    padding: 2px 6px;
+    background: var(--line);
+    border-radius: 4px;
+    color: var(--ink-faint);
+  }
+  .chapter-tag.human { background: rgba(58, 90, 64, 0.15); color: var(--seal); }
+  .chapter-tag.berater { background: rgba(181, 72, 31, 0.15); color: var(--accent); }
+
+  /* Reply Panel */
+  .reply-panel {
+    margin-top: 24px;
+    padding: 20px;
+    background: var(--bg-elev);
+    border: 2px solid var(--accent);
+    border-radius: 12px;
+  }
+  .reply-panel h3 {
+    font-size: .85rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .reply-textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 12px 16px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+    font-size: .9rem;
+    line-height: 1.5;
+    resize: vertical;
+  }
+  .reply-textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .reply-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .reply-hint {
+    font-size: .75rem;
+    color: var(--ink-faint);
+    margin-top: 8px;
+  }
+
+  /* DIFF Visual - Genealogy of Thought */
+  .diff-panel {
+    margin-top: 24px;
+    padding: 20px;
+    background: var(--bg-elev);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+  .diff-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .diff-title {
+    font-size: .9rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .diff-toggle {
+    font-size: .75rem;
+    padding: 4px 10px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--bg);
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+  .diff-toggle:hover {
+    background: var(--line);
+  }
+  .diff-timeline {
+    position: relative;
+    padding-left: 24px;
+  }
+  .diff-timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--line);
+  }
+  .diff-entry {
+    position: relative;
+    margin-bottom: 16px;
+    padding: 12px 16px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+  }
+  .diff-entry:last-child {
+    margin-bottom: 0;
+  }
+  .diff-entry::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 16px;
+    width: 10px;
+    height: 10px;
+    background: var(--seal);
+    border-radius: 50%;
+    border: 2px solid var(--bg-elev);
+  }
+  .diff-entry.pivot::before {
+    background: var(--accent);
+  }
+  .diff-entry.initial::before {
+    background: var(--dim-technology);
+  }
+  .diff-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .7rem;
+    color: var(--ink-faint);
+    margin-bottom: 6px;
+  }
+  .diff-state {
+    font-size: .9rem;
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  .diff-trigger {
+    display: inline-block;
+    margin-top: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .65rem;
+    padding: 2px 6px;
+    background: var(--line);
+    border-radius: 4px;
+    color: var(--ink-faint);
+  }
+  .diff-trigger.pivot {
+    background: rgba(181, 72, 31, 0.15);
+    color: var(--accent);
+  }
+  .diff-empty {
+    font-size: .85rem;
+    color: var(--ink-faint);
+    font-style: italic;
+    text-align: center;
+    padding: 20px;
+  }
+  .diff-summary {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--line);
+    font-size: .8rem;
+    color: var(--ink-soft);
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .diff-stat {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .diff-stat-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  /* Invariant 2: Gaps as Facts of Terrain */
+  .diff-gaps {
+    margin-top: 16px;
+    padding: 16px;
+    background: rgba(181, 72, 31, 0.05);
+    border: 1px dashed var(--accent);
+    border-radius: 8px;
+  }
+  .diff-gaps-title {
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .diff-gap-item {
+    font-size: .85rem;
+    color: var(--ink-soft);
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line);
+    line-height: 1.5;
+  }
+  .diff-gap-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  /* Invariant 3: Steering Question */
+  .diff-steer {
+    margin-top: 16px;
+    padding: 16px;
+    background: var(--bg);
+    border: 2px solid var(--seal);
+    border-radius: 8px;
+  }
+  .diff-steer-question {
+    font-size: .9rem;
+    color: var(--ink);
+    line-height: 1.6;
+    font-style: italic;
+  }
+  .diff-steer-question::before {
+    content: '🧭 ';
+  }
+
+  /* HANDOFF Panel - Package for Delivery */
+  .handoff-panel {
+    margin-top: 24px;
+    padding: 24px;
+    background: linear-gradient(135deg, var(--bg-elev) 0%, var(--bg-elev2) 100%);
+    border: 2px solid var(--seal);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+  .handoff-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--seal);
+  }
+  .handoff-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--seal);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .handoff-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .65rem;
+    padding: 4px 8px;
+    background: var(--seal);
+    color: var(--bg);
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+  }
+  .handoff-badge.ready {
+    background: var(--seal);
+  }
+  .handoff-badge.partial {
+    background: var(--accent);
+  }
+  .handoff-badge.incomplete {
+    background: var(--ink-faint);
+    color: var(--ink);
+  }
+  .handoff-content {
+    margin-top: 16px;
+  }
+  .handoff-dim-status {
+    font-size: .7rem;
+    color: var(--ink-faint);
+    margin-left: auto;
+    font-style: italic;
+  }
+  .handoff-project {
+    margin-bottom: 20px;
+  }
+  .handoff-project-name {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .handoff-project-mission {
+    font-size: .9rem;
+    color: var(--ink-soft);
+    font-style: italic;
+  }
+  .handoff-section {
+    margin-bottom: 16px;
+  }
+  .handoff-section-title {
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    margin-bottom: 10px;
+  }
+  .handoff-dims {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .handoff-dim {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    font-size: .8rem;
+  }
+  .handoff-dim.covered {
+    border-color: var(--seal);
+    background: rgba(58, 90, 64, 0.1);
+  }
+  .handoff-dim.gap {
+    border-color: var(--accent);
+    background: rgba(181, 72, 31, 0.1);
+    border-style: dashed;
+  }
+  .handoff-dim-icon {
+    font-size: .9rem;
+  }
+  .handoff-evidence {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .handoff-evidence-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: .8rem;
+    color: var(--ink-soft);
+  }
+  .handoff-evidence-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .handoff-message {
+    margin-top: 16px;
+    padding: 16px;
+    background: var(--bg);
+    border-left: 4px solid var(--seal);
+    border-radius: 0 8px 8px 0;
+    font-size: .9rem;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+  .handoff-message.ready {
+    border-left-color: var(--seal);
+  }
+  .handoff-message.partial {
+    border-left-color: var(--accent);
+  }
+  .handoff-message.incomplete {
+    border-left-color: var(--ink-faint);
+  }
+  .handoff-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+  }
+  .btn-handoff {
+    flex: 1;
+    padding: 14px 20px;
+    font-size: .9rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all .2s ease;
+  }
+  .btn-handoff.export {
+    background: var(--bg);
+    border: 2px solid var(--line);
+    color: var(--ink);
+  }
+  .btn-handoff.export:hover {
+    border-color: var(--ink-soft);
+  }
+  .btn-handoff.crossing {
+    background: var(--seal);
+    border: 2px solid var(--seal);
+    color: var(--bg);
+  }
+  .btn-handoff.crossing:hover {
+    background: var(--seal-soft);
+    border-color: var(--seal-soft);
   }
 
   /* Graph Actions */
@@ -567,6 +1034,168 @@
     transform: translateX(-50%) translateY(0);
   }
 
+  /* ---- Conversation (Voice Layer) ---- */
+  .conversation-container {
+    margin-top: 24px;
+  }
+  .conversation-box {
+    background: var(--bg-elev);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .conversation-heard {
+    margin-bottom: 16px;
+  }
+  .conversation-label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--ink-faint);
+    margin-bottom: 4px;
+  }
+  .conversation-content {
+    display: block;
+    font-size: 1.1rem;
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .conversation-needs {
+    margin-bottom: 20px;
+  }
+  .conversation-questions {
+    margin: 8px 0 0 20px;
+    color: var(--ink-soft);
+  }
+  .conversation-questions li {
+    margin-bottom: 8px;
+  }
+  .conversation-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+  }
+  .btn-secondary {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink-soft);
+    font-family: inherit;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover {
+    background: var(--bg-elev2);
+    color: var(--ink);
+  }
+  .btn-primary {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover {
+    filter: brightness(1.1);
+  }
+
+  /* ---- Continuity Section ---- */
+  .continuity-section {
+    margin-bottom: 20px;
+    padding: 16px;
+    background: var(--bg-elev);
+    border: 1px dashed var(--line);
+    border-radius: 12px;
+  }
+  .continuity-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .continuity-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+  }
+  .continuity-label .icon {
+    font-size: 1.1rem;
+  }
+  .continuity-toggle {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--accent);
+    background: transparent;
+    color: var(--accent);
+    font-family: inherit;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .continuity-toggle:hover {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+  .continuity-toggle.active {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+  .continuity-input {
+    display: none;
+    margin-top: 12px;
+  }
+  .continuity-input.visible {
+    display: block;
+  }
+  .continuity-textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--ink);
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .continuity-textarea:focus {
+    border-color: var(--accent);
+  }
+  .continuity-textarea::placeholder {
+    color: var(--ink-faint);
+  }
+  .continuity-hint {
+    margin-top: 8px;
+    font-size: 0.75rem;
+    color: var(--ink-faint);
+    font-style: italic;
+  }
+  .continuity-status {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: rgba(var(--seal-rgb), 0.1);
+    border-radius: 6px;
+    font-size: 0.8rem;
+    color: var(--seal);
+  }
+  .continuity-status.visible {
+    display: flex;
+  }
+
   /* ---- Responsive ---- */
   @media (max-width: 600px) {
     main { padding: 20px 16px; }
@@ -680,6 +1309,124 @@
       </div>
     </div>
 
+    <!-- DIFF Panel - Genealogy of Thought -->
+    <div class="diff-panel" id="diffPanel" style="display: none;">
+      <div class="diff-header">
+        <span class="diff-title">
+          <span>📜</span>
+          <span id="diffTitle">Percurso do Pensar</span>
+        </span>
+        <button class="diff-toggle" id="diffToggle">
+          <span id="diffToggleText">Recolher</span>
+        </button>
+      </div>
+      <div class="diff-timeline" id="diffTimeline">
+        <!-- Populated by JS -->
+      </div>
+      <div class="diff-summary" id="diffSummary">
+        <!-- Populated by JS -->
+      </div>
+      <!-- Invariant 2: Gaps as Facts of Terrain -->
+      <div class="diff-gaps" id="diffGaps" style="display: none;">
+        <div class="diff-gaps-title">
+          <span>⚠️</span>
+          <span id="diffGapsTitle">Não identificado no terreno</span>
+        </div>
+        <div id="diffGapsList">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+      <!-- Invariant 3: Steering Question -->
+      <div class="diff-steer" id="diffSteer" style="display: none;">
+        <div class="diff-steer-question" id="diffSteerQuestion">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Evolution Chain - Genealogy of Thought -->
+    <div class="evolution-chain" id="evolutionChain">
+      <!-- Chapters are appended dynamically -->
+    </div>
+
+    <!-- Reply Panel -->
+    <div class="reply-panel" id="replyPanel" style="display: none;">
+      <h3>
+        <span>💬</span>
+        <span id="replyTitle">Responde ao Berater</span>
+      </h3>
+      <textarea
+        class="reply-textarea"
+        id="replyInput"
+        placeholder="Responde ao Berater ou muda a direção..."
+      ></textarea>
+      <div class="reply-hint" id="replyHint">
+        A tua resposta será guardada no container e o Berater continuará a iluminar.
+      </div>
+      <div class="reply-actions">
+        <button class="btn btn-primary" id="continueBtn">
+          <span id="continueBtnText">Continuar</span>
+          <span>↓</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- HANDOFF Panel - Delivery Package -->
+    <div class="handoff-panel" id="handoffPanel" style="display: none;">
+      <div class="handoff-header">
+        <span class="handoff-title">
+          <span>📦</span>
+          <span id="handoffTitle">Pacote de Entrega</span>
+        </span>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span class="handoff-badge" id="handoffBadge">PRONTO</span>
+          <button class="diff-toggle" id="handoffToggle">
+            <span id="handoffToggleText">Recolher</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="handoff-content" id="handoffContent">
+      <div class="handoff-project">
+        <div class="handoff-project-name" id="handoffProjectName">
+          <!-- Populated by JS -->
+        </div>
+        <div class="handoff-project-mission" id="handoffProjectMission">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <div class="handoff-section">
+        <div class="handoff-section-title" id="handoffDimsTitle">Dimensões Mapeadas</div>
+        <div class="handoff-dims" id="handoffDims">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <div class="handoff-section" id="handoffEvidenceSection" style="display: none;">
+        <div class="handoff-section-title" id="handoffEvidenceTitle">Rastro de Evidência</div>
+        <div class="handoff-evidence" id="handoffEvidence">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <div class="handoff-message" id="handoffMessage">
+        <!-- Populated by JS: readiness assessment -->
+      </div>
+
+      <div class="handoff-actions">
+        <button class="btn-handoff export" id="handoffExportBtn">
+          <span>📋</span>
+          <span id="handoffExportText">Copiar Resumo</span>
+        </button>
+        <button class="btn-handoff crossing" id="handoffCrossingBtn">
+          <span>🚀</span>
+          <span id="handoffCrossingText">Travessia</span>
+        </button>
+      </div>
+      </div><!-- /handoff-content -->
+    </div>
+
     <!-- Actions -->
     <div class="graph-actions">
       <button class="btn btn-ghost" id="adjustBtn">
@@ -700,6 +1447,33 @@
         <span>&#10003;</span>
         <span id="confirmedText">Confirmado</span>
       </span>
+    </div>
+
+    <!-- Continuity Section -->
+    <div class="continuity-section" id="continuitySection">
+      <div class="continuity-header">
+        <span class="continuity-label">
+          <span class="icon">🔗</span>
+          <span id="continuityLabel">Trazes raciocínio de outra sessão?</span>
+        </span>
+        <button class="continuity-toggle" id="continuityToggle">
+          <span id="continuityBtnText">Importar</span>
+        </button>
+      </div>
+      <div class="continuity-input" id="continuityInput">
+        <textarea
+          class="continuity-textarea"
+          id="continuityTextarea"
+          placeholder="Cola aqui o contexto da conversa anterior..."
+        ></textarea>
+        <div class="continuity-hint" id="continuityHint">
+          O Berater usará este contexto para continuar a iluminar o terreno.
+        </div>
+      </div>
+      <div class="continuity-status" id="continuityStatus">
+        <span>✓</span>
+        <span id="continuityStatusText">Contexto carregado</span>
+      </div>
     </div>
 
     <input
@@ -752,7 +1526,79 @@
         regulatory: 'Regulatório',
         users: 'Utilizadores',
         technology: 'Tecnologia',
-        costs: 'Custos'
+        costs: 'Custos',
+        unclassified: 'a classificar'
+      },
+      voice: {
+        heard: 'Ouvi isto:',
+        needMore: 'Para te iluminar melhor o terreno:',
+        whoUses: 'Quem vai usar isto?',
+        valueExchange: 'Há algo a ser trocado — dinheiro, tempo, atenção?',
+        howIdentify: 'Como a pessoa se identifica?',
+        continueAnyway: 'Seguir mesmo assim',
+        giveMoreContext: 'Dar mais contexto',
+        tryAgain: 'Não consegui processar — tenta de novo.',
+        keepIdea: 'A tua ideia está guardada.',
+        terrainsFound: 'Terrenos identificados:',
+        risksFound: 'Avisos do Berater:',
+        questionsToAnswer: 'Perguntas a esclarecer:'
+      },
+      continuity: {
+        label: 'Trazes raciocínio de outra sessão?',
+        btnImport: 'Importar',
+        btnHide: 'Esconder',
+        placeholder: 'Cola aqui o contexto da conversa anterior...',
+        hint: 'O Berater usará este contexto para continuar a iluminar o terreno.',
+        loaded: 'Contexto carregado'
+      },
+      reply: {
+        title: 'Responde ao Berater',
+        placeholder: 'Responde ao Berater ou muda a direção...',
+        hint: 'A tua resposta será guardada no container e o Berater continuará a iluminar.',
+        btnContinue: 'Continuar',
+        btnChangeDirection: 'Mudar direção',
+        chapterBerater: 'Capítulo do Berater',
+        chapterHuman: 'Resposta Humana',
+        processing: 'A processar...'
+      },
+      diff: {
+        title: 'Percurso do Pensar',
+        collapse: 'Recolher',
+        expand: 'Expandir',
+        empty: 'A genealogia do pensar aparecerá aqui à medida que a ideia evolui.',
+        initial: 'Início',
+        pivot: 'Pivot',
+        reasoning: 'Raciocínio',
+        steps: 'passos',
+        pivots: 'pivots',
+        duration: 'duração',
+        gapsTitle: 'Não identificado no terreno',
+        gapProduct: 'A natureza concreta do produto não foi identificada.',
+        gapRevenue: 'O modelo de receita não foi identificado.',
+        gapUsers: 'Os utilizadores-alvo não foram identificados.',
+        gapRegulatory: 'O enquadramento regulatório não foi identificado.',
+        gapTechnology: 'A abordagem tecnológica não foi identificada.',
+        steerWithGaps: 'Estes aspectos não estão no terreno. Qual iluminar primeiro — ou nenhum?',
+        steerNoGaps: 'O terreno está coberto. Aprofundar alguma dimensão, ou seguir para entrega?',
+        steerAfterPivot: 'A ideia pivotou recentemente. Consolidar o novo rumo, ou ainda em aberto?',
+        steerGeneric: 'O leme está contigo.'
+      },
+      handoff: {
+        title: 'Pacote de Entrega',
+        badge: 'PRONTO',
+        badgePartial: 'PARCIAL',
+        badgeIncomplete: 'INCOMPLETO',
+        dimsTitle: 'Dimensões Mapeadas',
+        evidenceTitle: 'Rastro de Evidência',
+        evidenceEntry: 'Entrada',
+        messageReady: 'O terreno está mapeado. Todas as dimensões cobertas. Pronto para travessia.',
+        messagePartial: 'Algumas lacunas permanecem. Podes continuar a iluminar ou avançar com o parcial.',
+        messageIncomplete: 'O terreno ainda está em formação. Recomendamos mais exploração antes da travessia.',
+        exportBtn: 'Copiar Resumo',
+        crossingBtn: 'Travessia',
+        copied: 'Resumo copiado!',
+        covered: 'coberto',
+        gap: 'lacuna'
       }
     },
     en: {
@@ -782,7 +1628,79 @@
         regulatory: 'Regulatory',
         users: 'Users',
         technology: 'Technology',
-        costs: 'Costs'
+        costs: 'Costs',
+        unclassified: 'to classify'
+      },
+      voice: {
+        heard: 'I heard:',
+        needMore: 'To better illuminate the terrain:',
+        whoUses: 'Who will use this?',
+        valueExchange: 'Is there something being exchanged — money, time, attention?',
+        howIdentify: 'How does the person identify themselves?',
+        continueAnyway: 'Continue anyway',
+        giveMoreContext: 'Give more context',
+        tryAgain: 'Could not process — try again.',
+        keepIdea: 'Your idea is saved.',
+        terrainsFound: 'Terrains identified:',
+        risksFound: 'Berater warnings:',
+        questionsToAnswer: 'Questions to clarify:'
+      },
+      continuity: {
+        label: 'Bringing reasoning from another session?',
+        btnImport: 'Import',
+        btnHide: 'Hide',
+        placeholder: 'Paste the context from your previous conversation here...',
+        hint: 'The Berater will use this context to continue illuminating the terrain.',
+        loaded: 'Context loaded'
+      },
+      reply: {
+        title: 'Reply to Berater',
+        placeholder: 'Reply to Berater or change direction...',
+        hint: 'Your reply will be saved to the container and the Berater will continue illuminating.',
+        btnContinue: 'Continue',
+        btnChangeDirection: 'Change direction',
+        chapterBerater: 'Berater Chapter',
+        chapterHuman: 'Human Reply',
+        processing: 'Processing...'
+      },
+      diff: {
+        title: 'Journey of Thought',
+        collapse: 'Collapse',
+        expand: 'Expand',
+        empty: 'The genealogy of thought will appear here as your idea evolves.',
+        initial: 'Start',
+        pivot: 'Pivot',
+        reasoning: 'Reasoning',
+        steps: 'steps',
+        pivots: 'pivots',
+        duration: 'duration',
+        gapsTitle: 'Not identified in terrain',
+        gapProduct: 'The concrete nature of the product was not identified.',
+        gapRevenue: 'The revenue model was not identified.',
+        gapUsers: 'The target users were not identified.',
+        gapRegulatory: 'The regulatory framework was not identified.',
+        gapTechnology: 'The technological approach was not identified.',
+        steerWithGaps: 'These aspects are not in the terrain. Which to illuminate first — or none?',
+        steerNoGaps: 'The terrain is covered. Deepen any dimension, or proceed to delivery?',
+        steerAfterPivot: 'The idea pivoted recently. Consolidate the new direction, or still open?',
+        steerGeneric: 'The helm is yours.'
+      },
+      handoff: {
+        title: 'Delivery Package',
+        badge: 'READY',
+        badgePartial: 'PARTIAL',
+        badgeIncomplete: 'INCOMPLETE',
+        dimsTitle: 'Mapped Dimensions',
+        evidenceTitle: 'Evidence Trail',
+        evidenceEntry: 'Entry',
+        messageReady: 'The terrain is mapped. All dimensions covered. Ready for crossing.',
+        messagePartial: 'Some gaps remain. You can continue illuminating or proceed with partial.',
+        messageIncomplete: 'The terrain is still forming. We recommend more exploration before crossing.',
+        exportBtn: 'Copy Summary',
+        crossingBtn: 'Crossing',
+        copied: 'Summary copied!',
+        covered: 'covered',
+        gap: 'gap'
       }
     },
     de: {
@@ -812,13 +1730,87 @@
         regulatory: 'Regulatorisch',
         users: 'Benutzer',
         technology: 'Technologie',
-        costs: 'Kosten'
+        costs: 'Kosten',
+        unclassified: 'zu klassifizieren'
+      },
+      voice: {
+        heard: 'Ich habe gehört:',
+        needMore: 'Um das Terrain besser zu beleuchten:',
+        whoUses: 'Wer wird das nutzen?',
+        valueExchange: 'Wird etwas ausgetauscht — Geld, Zeit, Aufmerksamkeit?',
+        howIdentify: 'Wie identifiziert sich die Person?',
+        continueAnyway: 'Trotzdem fortfahren',
+        giveMoreContext: 'Mehr Kontext geben',
+        tryAgain: 'Konnte nicht verarbeiten — versuche es erneut.',
+        keepIdea: 'Deine Idee ist gespeichert.',
+        terrainsFound: 'Erkannte Terrains:',
+        risksFound: 'Berater-Warnungen:',
+        questionsToAnswer: 'Zu klärende Fragen:'
+      },
+      continuity: {
+        label: 'Bringst du Überlegungen aus einer anderen Sitzung mit?',
+        btnImport: 'Importieren',
+        btnHide: 'Ausblenden',
+        placeholder: 'Füge hier den Kontext des vorherigen Gesprächs ein...',
+        hint: 'Der Berater wird diesen Kontext nutzen, um das Terrain weiter zu beleuchten.',
+        loaded: 'Kontext geladen'
+      },
+      reply: {
+        title: 'Antworte dem Berater',
+        placeholder: 'Antworte dem Berater oder ändere die Richtung...',
+        hint: 'Deine Antwort wird im Container gespeichert und der Berater wird weiter beleuchten.',
+        btnContinue: 'Fortfahren',
+        btnChangeDirection: 'Richtung ändern',
+        chapterBerater: 'Berater-Kapitel',
+        chapterHuman: 'Menschliche Antwort',
+        processing: 'Verarbeite...'
+      },
+      diff: {
+        title: 'Denkweg',
+        collapse: 'Einklappen',
+        expand: 'Ausklappen',
+        empty: 'Die Genealogie des Denkens erscheint hier, während sich deine Idee entwickelt.',
+        initial: 'Anfang',
+        pivot: 'Pivot',
+        reasoning: 'Überlegung',
+        steps: 'Schritte',
+        pivots: 'Pivots',
+        duration: 'Dauer',
+        gapsTitle: 'Im Terrain nicht identifiziert',
+        gapProduct: 'Die konkrete Natur des Produkts wurde nicht identifiziert.',
+        gapRevenue: 'Das Erlösmodell wurde nicht identifiziert.',
+        gapUsers: 'Die Zielbenutzer wurden nicht identifiziert.',
+        gapRegulatory: 'Der regulatorische Rahmen wurde nicht identifiziert.',
+        gapTechnology: 'Der technologische Ansatz wurde nicht identifiziert.',
+        steerWithGaps: 'Diese Aspekte sind nicht im Terrain. Welchen zuerst beleuchten — oder keinen?',
+        steerNoGaps: 'Das Terrain ist abgedeckt. Eine Dimension vertiefen, oder zur Übergabe gehen?',
+        steerAfterPivot: 'Die Idee hat kürzlich gedreht. Die neue Richtung festigen, oder noch offen?',
+        steerGeneric: 'Das Steuer liegt bei dir.'
+      },
+      handoff: {
+        title: 'Übergabepaket',
+        badge: 'BEREIT',
+        badgePartial: 'TEILWEISE',
+        badgeIncomplete: 'UNVOLLSTÄNDIG',
+        dimsTitle: 'Kartierte Dimensionen',
+        evidenceTitle: 'Beweisspur',
+        evidenceEntry: 'Eintrag',
+        messageReady: 'Das Terrain ist kartiert. Alle Dimensionen abgedeckt. Bereit zur Überquerung.',
+        messagePartial: 'Einige Lücken bleiben. Du kannst weiter beleuchten oder mit dem Teilweisen fortfahren.',
+        messageIncomplete: 'Das Terrain formt sich noch. Wir empfehlen mehr Erkundung vor der Überquerung.',
+        exportBtn: 'Zusammenfassung kopieren',
+        crossingBtn: 'Überquerung',
+        copied: 'Zusammenfassung kopiert!',
+        covered: 'abgedeckt',
+        gap: 'Lücke'
       }
     }
   };
 
   let currentLang = localStorage.getItem('windi_lang') || 'pt';
   let currentGraph = null;
+  let currentContainerId = null;
+  let previousIntent = null;  // For change-of-mind tracking
 
   function t(key) {
     const keys = key.split('.');
@@ -827,6 +1819,145 @@
       val = val?.[k];
     }
     return val || UI.pt[key] || key;
+  }
+
+  // ============================================================
+  // Container API — Memória Viva
+  // ============================================================
+
+  const ContainerAPI = {
+    baseUrl: '/api/containers',
+
+    async create(sessionId) {
+      try {
+        const resp = await fetch(this.baseUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ session_id: sessionId })
+        });
+        const data = await resp.json();
+        if (data.success) {
+          console.log('[Container] Created:', data.container.id);
+          return data.container;
+        }
+      } catch (e) {
+        console.error('[Container] Create failed:', e);
+      }
+      return null;
+    },
+
+    async get(containerId) {
+      try {
+        const resp = await fetch(`${this.baseUrl}/${containerId}`);
+        const data = await resp.json();
+        return data.success ? data.container : null;
+      } catch (e) {
+        console.error('[Container] Get failed:', e);
+        return null;
+      }
+    },
+
+    async addReasoning(containerId, thought) {
+      try {
+        const resp = await fetch(`${this.baseUrl}/${containerId}/reasoning`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ thought })
+        });
+        const data = await resp.json();
+        if (data.success) {
+          console.log('[Container] Reasoning added');
+        }
+        return data.success;
+      } catch (e) {
+        console.error('[Container] Add reasoning failed:', e);
+        return false;
+      }
+    },
+
+    async updateGraph(containerId, graph) {
+      try {
+        const resp = await fetch(`${this.baseUrl}/${containerId}/graph`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ graph })
+        });
+        const data = await resp.json();
+        if (data.success) {
+          console.log('[Container] Graph updated');
+        }
+        return data.success;
+      } catch (e) {
+        console.error('[Container] Update graph failed:', e);
+        return false;
+      }
+    },
+
+    async addEvidence(containerId, eventType, eventData) {
+      try {
+        const resp = await fetch(`${this.baseUrl}/${containerId}/evidence`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ event_type: eventType, data: eventData })
+        });
+        const data = await resp.json();
+        if (data.success) {
+          console.log('[Container] Evidence added:', eventType);
+        }
+        return data.success;
+      } catch (e) {
+        console.error('[Container] Add evidence failed:', e);
+        return false;
+      }
+    },
+
+    async recordChangeOfMind(containerId, oldDirection, newDirection) {
+      try {
+        const resp = await fetch(`${this.baseUrl}/${containerId}/change-of-mind`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ old_direction: oldDirection, new_direction: newDirection })
+        });
+        const data = await resp.json();
+        if (data.success) {
+          console.log('[Container] Change of mind recorded');
+        }
+        return data.success;
+      } catch (e) {
+        console.error('[Container] Change of mind failed:', e);
+        return false;
+      }
+    }
+  };
+
+  async function initContainer() {
+    // Check for existing container in session
+    const savedId = sessionStorage.getItem('windi_container_id');
+
+    if (savedId) {
+      // Try to restore existing container
+      const container = await ContainerAPI.get(savedId);
+      if (container) {
+        currentContainerId = container.id;
+        console.log('[Container] Restored:', currentContainerId);
+
+        // Restore previous intent if any
+        if (container.reasoning.length > 0) {
+          previousIntent = container.reasoning[container.reasoning.length - 1];
+        }
+        return;
+      }
+    }
+
+    // Create new container
+    const sessionId = 'playground-' + Date.now();
+    const container = await ContainerAPI.create(sessionId);
+
+    if (container) {
+      currentContainerId = container.id;
+      sessionStorage.setItem('windi_container_id', container.id);
+      console.log('[Container] New session:', currentContainerId);
+    }
   }
 
   // ============================================================
@@ -849,6 +1980,15 @@
 
   const themeBtn = document.getElementById('themeBtn');
   const toast = document.getElementById('toast');
+
+  // Continuity elements
+  const continuityToggle = document.getElementById('continuityToggle');
+  const continuityInput = document.getElementById('continuityInput');
+  const continuityTextarea = document.getElementById('continuityTextarea');
+  const continuityStatus = document.getElementById('continuityStatus');
+
+  // Continuity state
+  let continuityContext = null;
 
   // ============================================================
   // UI Updates
@@ -874,6 +2014,46 @@
     document.getElementById('confirmedText').textContent = t('confirmed');
     document.getElementById('docTitle').placeholder = t('titlePlaceholder');
     document.getElementById('docContent').placeholder = t('contentPlaceholder');
+
+    // Continuity section
+    document.getElementById('continuityLabel').textContent = t('continuity.label');
+    document.getElementById('continuityBtnText').textContent =
+      continuityInput.classList.contains('visible') ? t('continuity.btnHide') : t('continuity.btnImport');
+    document.getElementById('continuityTextarea').placeholder = t('continuity.placeholder');
+    document.getElementById('continuityHint').textContent = t('continuity.hint');
+    document.getElementById('continuityStatusText').textContent = t('continuity.loaded');
+
+    // Reply panel
+    document.getElementById('replyTitle').textContent = t('reply.title');
+    document.getElementById('replyInput').placeholder = t('reply.placeholder');
+    document.getElementById('replyHint').textContent = t('reply.hint');
+    document.getElementById('continueBtnText').textContent = t('reply.btnContinue');
+
+    // DIFF panel
+    document.getElementById('diffTitle').textContent = t('diff.title');
+    const diffTimelineEl = document.getElementById('diffTimeline');
+    const isDiffExpanded = diffTimelineEl && diffTimelineEl.style.display !== 'none';
+    document.getElementById('diffToggleText').textContent =
+      isDiffExpanded ? t('diff.collapse') : t('diff.expand');
+    document.getElementById('diffGapsTitle').textContent = t('diff.gapsTitle');
+    // steerQuestion is now derived dynamically in renderDiff() based on actual state
+
+    // HANDOFF panel
+    document.getElementById('handoffTitle').textContent = t('handoff.title');
+    const handoffContentEl = document.getElementById('handoffContent');
+    const isHandoffExpanded = handoffContentEl && handoffContentEl.style.display !== 'none';
+    document.getElementById('handoffToggleText').textContent =
+      isHandoffExpanded ? t('diff.collapse') : t('diff.expand');
+    document.getElementById('handoffDimsTitle').textContent = t('handoff.dimsTitle');
+    document.getElementById('handoffEvidenceTitle').textContent = t('handoff.evidenceTitle');
+    document.getElementById('handoffExportText').textContent = t('handoff.exportBtn');
+    document.getElementById('handoffCrossingText').textContent = t('handoff.crossingBtn');
+
+    // Re-render DIFF and HANDOFF if container exists (to update gap messages and steering question)
+    if (currentContainerId) {
+      renderDiff();
+      renderHandoff();
+    }
 
     // Re-render graph if exists
     if (currentGraph) {
@@ -914,6 +2094,111 @@
     toast.textContent = message;
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+
+  // ============================================================
+  // Continuity — Reasoning Base Import
+  // ============================================================
+
+  function initContinuity() {
+    continuityToggle.addEventListener('click', () => {
+      const isVisible = continuityInput.classList.contains('visible');
+
+      if (isVisible) {
+        // Hide and save context if there's content
+        continuityInput.classList.remove('visible');
+        continuityToggle.classList.remove('active');
+        document.getElementById('continuityBtnText').textContent = t('continuity.btnImport');
+
+        if (continuityTextarea.value.trim()) {
+          continuityContext = continuityTextarea.value.trim();
+          continuityStatus.classList.add('visible');
+        }
+      } else {
+        // Show input area
+        continuityInput.classList.add('visible');
+        continuityToggle.classList.add('active');
+        document.getElementById('continuityBtnText').textContent = t('continuity.btnHide');
+        continuityTextarea.focus();
+      }
+    });
+
+    // Auto-save on blur
+    continuityTextarea.addEventListener('blur', () => {
+      if (continuityTextarea.value.trim()) {
+        continuityContext = continuityTextarea.value.trim();
+        continuityStatus.classList.add('visible');
+      } else {
+        continuityContext = null;
+        continuityStatus.classList.remove('visible');
+      }
+    });
+  }
+
+  function getContinuityContext() {
+    return continuityContext;
+  }
+
+  // Show conversation when idea needs more context
+  function showConversation(result) {
+    const graph = result.graph;
+    const evidence = result.evidenceNeeded || [];
+
+    // Build conversation HTML
+    let html = `
+      <div class="conversation-box">
+        <div class="conversation-heard">
+          <span class="conversation-label">${t('voice.heard')}</span>
+          <span class="conversation-content">${graph.intent_heard}</span>
+        </div>
+        <div class="conversation-needs">
+          <span class="conversation-label">${t('voice.needMore')}</span>
+          <ul class="conversation-questions">
+    `;
+
+    // Add translated evidence questions
+    for (const e of evidence.slice(0, 3)) {
+      html += `<li>${translateEvidence(e)}</li>`;
+    }
+
+    html += `
+          </ul>
+        </div>
+        <div class="conversation-actions">
+          <button class="btn-secondary" id="btnContinueAnyway">${t('voice.continueAnyway')}</button>
+          <button class="btn-primary" id="btnGiveContext">${t('voice.giveMoreContext')}</button>
+        </div>
+      </div>
+    `;
+
+    // Show in phase 1 area
+    const container = document.createElement('div');
+    container.className = 'conversation-container';
+    container.innerHTML = html;
+
+    // Insert after intent input
+    const intentSection = document.querySelector('.intent-section');
+    const existing = document.querySelector('.conversation-container');
+    if (existing) existing.remove();
+    intentSection.appendChild(container);
+
+    // Handle buttons
+    document.getElementById('btnContinueAnyway').addEventListener('click', () => {
+      container.remove();
+      renderGraph(graph);
+      showPhase(2);
+      renderDiff();
+      renderHandoff();
+    });
+
+    document.getElementById('btnGiveContext').addEventListener('click', () => {
+      container.remove();
+      intentInput.focus();
+      // Scroll to input
+      intentInput.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    showPhase(1);
   }
 
   // ============================================================
@@ -1017,7 +2302,7 @@
   // ============================================================
 
   async function compileIntent(intent) {
-    // Call real /api/decompose endpoint via Dragon Hub
+    // Call real /api/decompose endpoint via VPSE
     // I10: If engine unavailable, returns explicit error (no silent fallback)
     // I14: No placeholders — if it fails, it fails explicitly
 
@@ -1028,28 +2313,35 @@
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          intent: intent,
-          engine: 'MISTRAL_DIRECT',
-          lang: currentLang
+          idea: intent,  // VPSE expects 'idea', not 'intent'
+          context: getContinuityContext() || '',  // Reasoning Base from previous session
+          jurisdiction: '',
+          desired_output: 'unknown'
         })
       });
 
       const data = await response.json();
 
-      if (!response.ok || !data.success) {
+      // Check for explicit errors from backend
+      if (!response.ok || data.error) {
         console.error('Decomposition failed:', data.error);
         return {
           success: false,
           error: data.error || 'Unknown error',
-          error_code: data.error_code || 'UNKNOWN'
+          error_code: data.error || 'UNKNOWN',
+          isNetworkError: false
         };
       }
 
+      // Adapt VPSE response to graph format
+      const graph = adaptVPSEtoGraph(data, intent);
+
       return {
         success: true,
-        graph: data.graph,
-        status: data.status,
-        metadata: data.metadata
+        graph: graph,
+        vpse_raw: data,  // Keep raw for debugging
+        needsMoreContext: graph.confidence < 0.5,
+        evidenceNeeded: data.evidence_needed || []
       };
 
     } catch (e) {
@@ -1057,9 +2349,141 @@
       return {
         success: false,
         error: e.message,
-        error_code: 'NETWORK_ERROR'
+        error_code: 'NETWORK_ERROR',
+        isNetworkError: true
       };
     }
+  }
+
+  // Translate evidence_needed to human language (no jargon)
+  function translateEvidence(evidence) {
+    const translations = {
+      'utilizador': t('voice.whoUses'),
+      'valor trocado': t('voice.valueExchange'),
+      'fluxo de identidade': t('voice.howIdentify'),
+      'DID': t('voice.howIdentify')
+    };
+
+    let text = evidence.content || evidence;
+    for (const [jargon, human] of Object.entries(translations)) {
+      if (text.toLowerCase().includes(jargon.toLowerCase())) {
+        return human;
+      }
+    }
+    // If no jargon found, return simplified version
+    return text.replace(/\([^)]*\)/g, '').trim();
+  }
+
+  // Adapt VPSE response to the graph format the UI expects
+  function adaptVPSEtoGraph(vpse, originalIntent) {
+    const intentSummary = vpse.intent_summary || {};
+    const domains = vpse.detected_domains || [];
+    const risks = vpse.early_risks || [];
+    const compliance = vpse.compliance_questions || [];
+    const evidence = vpse.evidence_needed || [];
+    const readiness = vpse.hios_readiness || {};
+
+    // Calculate confidence from VPSE signals
+    const confMap = { high: 0.9, medium: 0.7, low: 0.4, none: 0.2 };
+    const baseConf = confMap[intentSummary.confidence] || 0.5;
+
+    // Build dimensions from detected domains
+    const dimensions = [];
+
+    // Map domains to dimension cards
+    const domainMap = {
+      'live_streaming': { id: 'technology', label: 'Tecnologia' },
+      'promotional_mechanics': { id: 'regulatory', label: 'Regulatório' },
+      'document_governance': { id: 'regulatory', label: 'Regulatório' },
+      'finance': { id: 'costs', label: 'Custos' },
+      'health': { id: 'regulatory', label: 'Regulatório' },
+      'education': { id: 'users', label: 'Utilizadores' }
+    };
+
+    // Always add Product dimension with intent summary
+    dimensions.push({
+      id: 'product',
+      label: t('dimLabels.product'),
+      content: intentSummary.content?.replace('O utilizador parece querer construir: ', '') || originalIntent,
+      applicable: 'true'
+    });
+
+    // Add dimensions from detected domains
+    // I14 fix: usar dimension_id do servidor se presente, senão fallback local, senão unclassified
+    for (const domain of domains) {
+      let dimId, dimLabel, isRaw = false;
+
+      if (domain.dimension_id) {
+        // Servidor já enriqueceu (§SESSION-20260628)
+        dimId = domain.dimension_id;
+        if (dimId === 'unclassified') {
+          dimLabel = domain.content + ' [' + t('dimLabels.unclassified') + ']';
+          isRaw = true;
+        } else {
+          dimLabel = t('dimLabels.' + dimId);
+        }
+      } else {
+        // Fallback local (backwards compatibility)
+        const mapped = domainMap[domain.content];
+        if (mapped) {
+          dimId = mapped.id;
+          dimLabel = t('dimLabels.' + dimId);
+        } else {
+          dimId = 'unclassified';
+          dimLabel = domain.content + ' [' + t('dimLabels.unclassified') + ']';
+          isRaw = true;
+        }
+      }
+
+      if (!dimensions.find(d => d.id === dimId)) {
+        dimensions.push({
+          id: dimId,
+          label: dimLabel,
+          content: domain.notes || domain.content,
+          applicable: domain.confidence === 'low' ? 'uncertain' : 'true',
+          raw: isRaw
+        });
+      }
+    }
+
+    // Build gaps from compliance questions and evidence needed
+    const gaps = [];
+
+    for (const q of compliance) {
+      gaps.push({
+        question: q.content,
+        dimension_id: 'regulatory',
+        priority: 'high'
+      });
+    }
+
+    for (const e of evidence) {
+      gaps.push({
+        question: translateEvidence(e),
+        dimension_id: 'product',
+        priority: 'medium'
+      });
+    }
+
+    // Build assumptions from risks
+    const assumptions = risks.map(r => ({
+      statement: r.content,
+      confidence: r.confidence,
+      notes: r.notes
+    }));
+
+    return {
+      project_name: extractProjectName(originalIntent),
+      inferred_mission: readiness.content || 'candidate',
+      confidence: baseConf,
+      dimensions: dimensions,
+      gaps: gaps,
+      assumptions: assumptions,
+      // Extra fields for voice layer
+      intent_heard: intentSummary.content || originalIntent,
+      risks_count: risks.length,
+      compliance_count: compliance.length
+    };
   }
 
   function extractProjectName(intent) {
@@ -1069,6 +2493,412 @@
     if (name.length > 40) name = name.substring(0, 40) + '...';
     return name || 'Novo Projecto';
   }
+
+  // ============================================================
+  // Evolution Chain - Chapter Management
+  // ============================================================
+
+  const evolutionChain = document.getElementById('evolutionChain');
+  const replyPanel = document.getElementById('replyPanel');
+  const replyInput = document.getElementById('replyInput');
+  const continueBtn = document.getElementById('continueBtn');
+  let chapterCount = 0;
+
+  // Create a chapter in the evolution chain
+  function createChapter(content, type, title) {
+    chapterCount++;
+    const chapter = document.createElement('div');
+    chapter.className = 'evolution-chapter';
+    const chapterTitle = title || (type === 'berater' ? t('reply.chapterBerater') : t('reply.chapterHuman'));
+    chapter.innerHTML = `
+      <div class="chapter-header" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('.chapter-toggle').classList.toggle('collapsed');">
+        <span class="chapter-title">${chapterTitle} #${chapterCount}</span>
+        <span class="chapter-toggle">▼</span>
+      </div>
+      <div class="chapter-content">
+        ${content}
+        <div class="chapter-meta">
+          <span class="chapter-tag ${type}">${type === 'berater' ? 'BERATER' : 'HUMAN'}</span>
+          <span class="chapter-tag">${new Date().toLocaleTimeString()}</span>
+        </div>
+      </div>
+    `;
+    evolutionChain.appendChild(chapter);
+    chapter.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }
+
+  // ============================================================
+  // DIFF Panel - Visual Genealogy of Thought
+  // ============================================================
+
+  const diffPanel = document.getElementById('diffPanel');
+  const diffTimeline = document.getElementById('diffTimeline');
+  const diffSummary = document.getElementById('diffSummary');
+  const diffToggle = document.getElementById('diffToggle');
+  let diffExpanded = true;
+
+  // Render the DIFF timeline from intent_evolution
+  async function renderDiff() {
+    if (!currentContainerId) {
+      diffPanel.style.display = 'none';
+      return;
+    }
+
+    try {
+      const container = await ContainerAPI.get(currentContainerId);
+      if (!container) return;
+
+      const evolutionRaw = container.intent_evolution || [];
+      const evidence = container.evidence || [];
+
+      // I14 FIX: Filter only HUMAN entries for DIFF timeline
+      // System entries (type: "system") are noise, not intent
+      // Entries without type are legacy - treat as human for backwards compatibility
+      const evolution = evolutionRaw.filter(e => !e.type || e.type === 'human');
+
+      if (evolution.length === 0) {
+        diffPanel.style.display = 'none';
+        return;
+      }
+
+      diffPanel.style.display = 'block';
+      diffTimeline.innerHTML = '';
+
+      // Count pivots (only in human entries)
+      let pivotCount = 0;
+      let firstTime = null;
+      let lastTime = null;
+
+      evolution.forEach((entry, index) => {
+        const entryDiv = document.createElement('div');
+        const isPivot = entry.trigger === 'change_of_mind';
+        const isInitial = index === 0;
+
+        if (isPivot) pivotCount++;
+        if (index === 0) firstTime = new Date(entry.timestamp);
+        lastTime = new Date(entry.timestamp);
+
+        entryDiv.className = `diff-entry ${isPivot ? 'pivot' : ''} ${isInitial ? 'initial' : ''}`;
+
+        const time = new Date(entry.timestamp);
+        const timeStr = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        let triggerLabel = t('diff.reasoning');
+        let triggerClass = '';
+        if (isPivot) {
+          triggerLabel = t('diff.pivot');
+          triggerClass = 'pivot';
+        } else if (isInitial) {
+          triggerLabel = t('diff.initial');
+        }
+
+        entryDiv.innerHTML = `
+          <div class="diff-time">${timeStr}</div>
+          <div class="diff-state">${entry.state || '—'}</div>
+          <span class="diff-trigger ${triggerClass}">${triggerLabel}</span>
+        `;
+
+        diffTimeline.appendChild(entryDiv);
+      });
+
+      // Render summary
+      const durationMs = lastTime - firstTime;
+      const durationMins = Math.floor(durationMs / 60000);
+      const durationStr = durationMins > 0 ? `${durationMins} min` : '< 1 min';
+
+      diffSummary.innerHTML = `
+        <span class="diff-stat">
+          <span class="diff-stat-num">${evolution.length}</span>
+          <span>${t('diff.steps')}</span>
+        </span>
+        <span class="diff-stat">
+          <span class="diff-stat-num">${pivotCount}</span>
+          <span>${t('diff.pivots')}</span>
+        </span>
+        <span class="diff-stat">
+          <span class="diff-stat-num">${durationStr}</span>
+          <span>${t('diff.duration')}</span>
+        </span>
+      `;
+
+      // ============================================================
+      // INVARIANT 2: Gaps as Facts of Terrain (Passive Voice)
+      // "Not identified" — not "you didn't explore"
+      // ============================================================
+      const diffGaps = document.getElementById('diffGaps');
+      const diffGapsList = document.getElementById('diffGapsList');
+      const graph = container.graph || currentGraph || {};
+      const dimensions = graph.dimensions || [];
+
+      // Map dimension IDs to gap messages
+      const gapMessages = {
+        product: t('diff.gapProduct'),
+        regulatory: t('diff.gapRegulatory'),
+        users: t('diff.gapUsers'),
+        technology: t('diff.gapTechnology'),
+        costs: t('diff.gapRevenue')
+      };
+
+      // Find gaps: dimensions marked as not applicable or missing content
+      const gaps = [];
+      const dimIds = ['product', 'regulatory', 'users', 'technology', 'costs'];
+
+      dimIds.forEach(dimId => {
+        const dim = dimensions.find(d => d.id === dimId);
+        if (!dim || dim.applicable === false || !dim.content || dim.content.trim() === '') {
+          gaps.push(gapMessages[dimId] || `${dimId} was not identified.`);
+        }
+      });
+
+      if (gaps.length > 0) {
+        diffGaps.style.display = 'block';
+        document.getElementById('diffGapsTitle').textContent = t('diff.gapsTitle');
+        diffGapsList.innerHTML = gaps.map(gap =>
+          `<div class="diff-gap-item">${gap}</div>`
+        ).join('');
+      } else {
+        diffGaps.style.display = 'none';
+      }
+
+      // ============================================================
+      // INVARIANT 3: Steering Question (Decision returned to human)
+      // I3_real(graph, gaps, pivots) = steer derived from actual state
+      // NOT a constant string — that would be a placeholder pretending to reflect
+      // ============================================================
+      const diffSteer = document.getElementById('diffSteer');
+      const diffSteerQuestion = document.getElementById('diffSteerQuestion');
+
+      // Derive steering question from actual state
+      let steerText = '';
+
+      // Check for recent pivot (last entry was change_of_mind)
+      const lastEntry = evolution[evolution.length - 1];
+      const hadRecentPivot = lastEntry && lastEntry.trigger === 'change_of_mind';
+
+      if (hadRecentPivot) {
+        // After a pivot: consolidate or still open?
+        steerText = t('diff.steerAfterPivot');
+      } else if (gaps.length > 0) {
+        // There are gaps: which to illuminate first?
+        steerText = t('diff.steerWithGaps');
+      } else if (gaps.length === 0 && evolution.length >= 2) {
+        // No gaps, terrain covered: deepen or proceed?
+        steerText = t('diff.steerNoGaps');
+      } else {
+        // Fallback (should rarely happen)
+        steerText = t('diff.steerGeneric');
+      }
+
+      diffSteer.style.display = 'block';
+      diffSteerQuestion.textContent = steerText;
+
+    } catch (e) {
+      console.error('[DIFF] Error rendering:', e);
+    }
+  }
+
+  // Toggle DIFF panel collapse
+  diffToggle.addEventListener('click', () => {
+    diffExpanded = !diffExpanded;
+    diffTimeline.style.display = diffExpanded ? 'block' : 'none';
+    diffSummary.style.display = diffExpanded ? 'flex' : 'none';
+    document.getElementById('diffToggleText').textContent =
+      diffExpanded ? t('diff.collapse') : t('diff.expand');
+  });
+
+  // ============================================================
+  // HANDOFF: Delivery Package Renderer
+  // "Eis o que construíste, pronto para o próximo passo."
+  // ============================================================
+
+  const handoffPanel = document.getElementById('handoffPanel');
+  const handoffBadge = document.getElementById('handoffBadge');
+  const handoffProjectName = document.getElementById('handoffProjectName');
+  const handoffProjectMission = document.getElementById('handoffProjectMission');
+  const handoffDims = document.getElementById('handoffDims');
+  const handoffEvidence = document.getElementById('handoffEvidence');
+  const handoffEvidenceSection = document.getElementById('handoffEvidenceSection');
+  const handoffMessage = document.getElementById('handoffMessage');
+  const handoffExportBtn = document.getElementById('handoffExportBtn');
+  const handoffCrossingBtn = document.getElementById('handoffCrossingBtn');
+
+  async function renderHandoff() {
+    if (!currentContainerId) {
+      handoffPanel.style.display = 'none';
+      return;
+    }
+
+    try {
+      const container = await ContainerAPI.getContainer(currentContainerId);
+      if (!container) {
+        handoffPanel.style.display = 'none';
+        return;
+      }
+
+      // Extract data
+      const graph = container.graph || {};
+      const dimensions = graph.dimensions || [];
+      const evolution = container.intent_evolution || [];
+      const evidence = container.evidence || [];
+      const projectName = graph.inferred_mission || t('intentPlaceholder');
+
+      // Calculate coverage
+      const dimIds = ['product', 'regulatory', 'users', 'technology', 'costs'];
+      let coveredCount = 0;
+      const dimsHtml = [];
+
+      dimIds.forEach(dimId => {
+        const dim = dimensions.find(d => d.id === dimId);
+        const isCovered = dim && dim.applicable !== false && dim.content && dim.content.trim() !== '';
+
+        if (isCovered) coveredCount++;
+
+        const dimLabel = t(`dims.${dimId}`);
+        const statusClass = isCovered ? 'covered' : 'gap';
+        const statusIcon = isCovered ? '✓' : '○';
+        const statusText = isCovered ? t('handoff.covered') : t('handoff.gap');
+
+        dimsHtml.push(`
+          <div class="handoff-dim ${statusClass}">
+            <span class="handoff-dim-icon">${statusIcon}</span>
+            <span>${dimLabel}</span>
+            <span class="handoff-dim-status">${statusText}</span>
+          </div>
+        `);
+      });
+
+      // Determine readiness state
+      const coverage = coveredCount / dimIds.length;
+      let badge, badgeClass, message;
+
+      if (coverage >= 1) {
+        badge = t('handoff.badge');
+        badgeClass = 'ready';
+        message = t('handoff.messageReady');
+      } else if (coverage >= 0.6) {
+        badge = t('handoff.badgePartial');
+        badgeClass = 'partial';
+        message = t('handoff.messagePartial');
+      } else {
+        badge = t('handoff.badgeIncomplete');
+        badgeClass = 'incomplete';
+        message = t('handoff.messageIncomplete');
+      }
+
+      // Render project info
+      handoffProjectName.textContent = projectName;
+      handoffProjectMission.textContent = `${coveredCount}/${dimIds.length} ${t('handoff.dimsTitle').toLowerCase()}`;
+
+      // Render badge
+      handoffBadge.textContent = badge;
+      handoffBadge.className = `handoff-badge ${badgeClass}`;
+
+      // Render dimensions
+      handoffDims.innerHTML = dimsHtml.join('');
+
+      // Render evidence trail (if any)
+      if (evidence.length > 0) {
+        handoffEvidenceSection.style.display = 'block';
+        handoffEvidence.innerHTML = evidence.map((ev, i) => `
+          <div class="handoff-evidence-item">
+            <span class="handoff-evidence-num">${t('handoff.evidenceEntry')} ${i + 1}</span>
+            <span>${ev.type || 'input'}: ${ev.summary || ev.content?.substring(0, 50) || '...'}</span>
+          </div>
+        `).join('');
+      } else if (evolution.length > 1) {
+        // Use evolution as evidence trail
+        handoffEvidenceSection.style.display = 'block';
+        handoffEvidence.innerHTML = evolution.map((ev, i) => `
+          <div class="handoff-evidence-item">
+            <span class="handoff-evidence-num">${t('handoff.evidenceEntry')} ${i + 1}</span>
+            <span>${ev.trigger || 'initial'}: ${new Date(ev.timestamp).toLocaleTimeString()}</span>
+          </div>
+        `).join('');
+      } else {
+        handoffEvidenceSection.style.display = 'none';
+      }
+
+      // Render message
+      handoffMessage.textContent = message;
+      handoffMessage.className = `handoff-message ${badgeClass}`;
+
+      // Update i18n labels
+      document.getElementById('handoffTitle').textContent = t('handoff.title');
+      document.getElementById('handoffDimsTitle').textContent = t('handoff.dimsTitle');
+      document.getElementById('handoffEvidenceTitle').textContent = t('handoff.evidenceTitle');
+      document.getElementById('handoffExportText').textContent = t('handoff.exportBtn');
+      document.getElementById('handoffCrossingText').textContent = t('handoff.crossingBtn');
+
+      handoffPanel.style.display = 'block';
+
+    } catch (e) {
+      console.error('[HANDOFF] Error rendering:', e);
+      handoffPanel.style.display = 'none';
+    }
+  }
+
+  // Export handler - copy summary to clipboard
+  handoffExportBtn.addEventListener('click', async () => {
+    if (!currentContainerId) return;
+
+    try {
+      const container = await ContainerAPI.getContainer(currentContainerId);
+      const graph = container?.graph || {};
+      const dimensions = graph.dimensions || [];
+      const projectName = graph.inferred_mission || 'Projeto';
+
+      // Build summary text
+      let summary = `📦 ${t('handoff.title').toUpperCase()}\n`;
+      summary += `═══════════════════════════════\n\n`;
+      summary += `📋 ${projectName}\n\n`;
+      summary += `${t('handoff.dimsTitle')}:\n`;
+
+      const dimIds = ['product', 'regulatory', 'users', 'technology', 'costs'];
+      dimIds.forEach(dimId => {
+        const dim = dimensions.find(d => d.id === dimId);
+        const isCovered = dim && dim.applicable !== false && dim.content;
+        const icon = isCovered ? '✓' : '○';
+        const label = t(`dims.${dimId}`);
+        summary += `  ${icon} ${label}: ${isCovered ? dim.content.substring(0, 80) : t('handoff.gap')}\n`;
+      });
+
+      summary += `\n───────────────────────────────\n`;
+      summary += `Container: ${currentContainerId}\n`;
+      summary += `Generated: ${new Date().toISOString()}\n`;
+      summary += `WINDI Playground v2\n`;
+
+      await navigator.clipboard.writeText(summary);
+
+      // Visual feedback
+      const originalText = document.getElementById('handoffExportText').textContent;
+      document.getElementById('handoffExportText').textContent = t('handoff.copied');
+      setTimeout(() => {
+        document.getElementById('handoffExportText').textContent = originalText;
+      }, 2000);
+
+    } catch (e) {
+      console.error('[HANDOFF] Copy failed:', e);
+    }
+  });
+
+  // Crossing handler - proceed to next phase
+  handoffCrossingBtn.addEventListener('click', () => {
+    // DEBT: Crossing leads to Phase 3 (Workbench) or external DID system
+    // For now, trigger confirm flow
+    confirmBtn.click();
+  });
+
+  // Toggle HANDOFF panel collapse
+  const handoffToggle = document.getElementById('handoffToggle');
+  const handoffContent = document.getElementById('handoffContent');
+  let handoffExpanded = true;
+
+  handoffToggle.addEventListener('click', () => {
+    handoffExpanded = !handoffExpanded;
+    handoffContent.style.display = handoffExpanded ? 'block' : 'none';
+    document.getElementById('handoffToggleText').textContent =
+      handoffExpanded ? t('diff.collapse') : t('diff.expand');
+  });
 
   // ============================================================
   // Event Handlers
@@ -1084,31 +2914,93 @@
 
     showPhase('loading');
 
+    // Check for change-of-mind (different intent than before)
+    if (currentContainerId && previousIntent && previousIntent !== intent) {
+      await ContainerAPI.recordChangeOfMind(currentContainerId, previousIntent, intent);
+    }
+
+    // Record reasoning in container (micro-thought)
+    if (currentContainerId) {
+      await ContainerAPI.addReasoning(currentContainerId, intent);
+    }
+
     try {
       const result = await compileIntent(intent);
 
       if (result.success) {
-        renderGraph(result.graph);
-        showPhase(2);
+        // Update container graph
+        if (currentContainerId && result.graph) {
+          await ContainerAPI.updateGraph(currentContainerId, result.graph);
+        }
+
+        // Check if we need more context (vague idea)
+        if (result.needsMoreContext && result.evidenceNeeded.length > 0) {
+          showConversation(result);
+        } else {
+          renderGraph(result.graph);
+          showPhase(2);
+
+          // Show reply panel and render DIFF + HANDOFF
+          document.getElementById('replyPanel').style.display = 'block';
+          renderDiff();    // Show the genealogy of thought
+          renderHandoff(); // Show the delivery package
+
+          // BERATER chapter ONLY if real voice_layer exists (I14: no fabricated voice)
+          // The graph already renders via renderGraph() - that is the honest terrain view
+          // A for-loop over dimensions is NOT the Berater reflecting - it's formatting
+          if (result.voice_layer) {
+            createChapter(result.voice_layer, 'berater', t('reply.chapterBerater'));
+          }
+          // If no voice_layer, the rendered graph IS the Berater's illumination
+          // No fake chapter needed - the terrain speaks for itself
+        }
+
+        // Track for change-of-mind
+        previousIntent = intent;
+
+      } else if (result.isNetworkError) {
+        // Network error - keep the idea, invite retry
+        showToast(t('voice.tryAgain') + ' ' + t('voice.keepIdea'));
+        showPhase(1);
+        // Don't clear the input - keep their idea
       } else {
-        showToast('Erro ao estruturar projecto');
+        // Backend error - show what we heard if available
+        showToast(t('voice.tryAgain'));
         showPhase(1);
       }
     } catch (e) {
       console.error(e);
-      showToast('Erro de conexão');
+      showToast(t('voice.tryAgain'));
       showPhase(1);
     }
   });
 
-  adjustBtn.addEventListener('click', () => {
+  adjustBtn.addEventListener('click', async () => {
+    // Record that user is adjusting (potential change-of-mind)
+    if (currentContainerId && previousIntent) {
+      await ContainerAPI.addEvidence(currentContainerId, 'ADJUST_STARTED', {
+        previous_intent: previousIntent,
+        timestamp: new Date().toISOString()
+      });
+    }
+
     // Go back to intent phase
     showPhase(1);
     intentInput.focus();
   });
 
-  confirmBtn.addEventListener('click', () => {
+  confirmBtn.addEventListener('click', async () => {
     if (!currentGraph) return;
+
+    // Record confirmation as evidence
+    if (currentContainerId) {
+      await ContainerAPI.addEvidence(currentContainerId, 'PROJECT_CONFIRMED', {
+        project_name: currentGraph.project_name,
+        confidence: currentGraph.confidence,
+        intent: previousIntent,
+        timestamp: new Date().toISOString()
+      });
+    }
 
     // Update status to confirmed
     const badge = document.getElementById('statusBadge');
@@ -1121,6 +3013,94 @@
     showPhase(3);
 
     showToast(t('confirmed'));
+  });
+
+  // Continue Button - Handle human reply to Berater
+  continueBtn.addEventListener('click', async () => {
+    const replyText = replyInput.value.trim();
+    if (!replyText) return;
+
+    const continueBtnText = document.getElementById('continueBtnText');
+    const originalText = continueBtnText.textContent;
+    continueBtnText.textContent = t('reply.processing');
+    continueBtn.disabled = true;
+
+    try {
+      // 1. Save reasoning to container
+      if (currentContainerId) {
+        await ContainerAPI.addReasoning(currentContainerId, replyText);
+      }
+
+      // 2. Record HUMAN_REPLY event
+      if (currentContainerId) {
+        await ContainerAPI.addEvidence(currentContainerId, 'HUMAN_REPLY', {
+          content: replyText,
+          chapter: chapterCount + 1,
+          timestamp: new Date().toISOString()
+        });
+      }
+
+      // 3. Create human chapter in evolution chain
+      createChapter(replyText.replace(/\n/g, '<br>'), 'human');
+
+      // 4. Check for change-of-mind (DEBT: keyword detection is placeholder - real pivot detects semantic divergence)
+      // Fixed operator precedence: parentheses ensure previousIntent guards all conditions
+      const replyLower = replyText.toLowerCase();
+      if (previousIntent && (replyLower.includes('mudar') || replyLower.includes('change') || replyLower.includes('ändern'))) {
+        if (currentContainerId) {
+          await ContainerAPI.recordChangeOfMind(currentContainerId, previousIntent, replyText);
+        }
+      }
+
+      // 5. Call decompose again with full context
+      // DEBT: reply exits without consent-gate - reconcile before serving HDUsers
+      const fullContext = getContinuityContext() + '\n\n[PREVIOUS REPLY]: ' + replyText;
+      const res = await fetch('/api/decompose', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          idea: previousIntent,
+          context: fullContext,
+          graph_version: 'v2'
+        })
+      });
+
+      if (res.ok) {
+        const result = await res.json();
+        if (result.success && result.graph) {
+          // Update the graph
+          currentGraph = result.graph;
+          if (currentContainerId) {
+            await ContainerAPI.updateGraph(currentContainerId, result.graph);
+          }
+
+          // BERATER chapter ONLY if real voice_layer exists (I14: no fabricated voice)
+          if (result.voice_layer) {
+            createChapter(result.voice_layer, 'berater');
+          }
+          // If no voice_layer, the graph speaks for itself via renderGraph
+          // No fake "berater" chapter - that would violate I14 (no placeholders that lie)
+
+          // Update UI with new graph data
+          renderGraph(result.graph);
+
+          // Update DIFF and HANDOFF with new evolution step
+          renderDiff();
+          renderHandoff();
+        }
+      }
+
+      // Clear reply input
+      replyInput.value = '';
+      previousIntent = replyText; // Update for next change-of-mind check
+
+    } catch (e) {
+      console.error('[Continue] Error:', e);
+      showToast(t('voice.tryAgain'));
+    } finally {
+      continueBtnText.textContent = originalText;
+      continueBtn.disabled = false;
+    }
   });
 
   // Theme
@@ -1167,6 +3147,8 @@
   // ============================================================
 
   updateUILanguage();
+  initContinuity();
+  initContainer();  // Initialize container memory
   showPhase(1);
   intentInput.focus();
 
