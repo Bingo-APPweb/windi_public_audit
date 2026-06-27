@@ -17,8 +17,9 @@ from flask import Blueprint, request, jsonify
 
 playground_bp = Blueprint('playground', __name__)
 
-# Logger para domínios não classificados (detector de lacunas)
-logger = logging.getLogger('windi.playground.unclassified')
+# Detector de lacunas — print directo para stdout (systemd captura)
+# Logger hierárquico não propaga correctamente quando blueprint é importado tarde
+import sys
 
 # ---------------------------------------------------------------------------
 # Mapa de domínios VPSE → dimensões UI
@@ -52,8 +53,8 @@ def _enrich_domains_with_dimension(vpse_result: dict) -> dict:
         else:
             domain['dimension_id'] = 'unclassified'
             domain['raw'] = True
-            # Pegada server-side: detector de lacunas
-            logger.info(f"UNCLASSIFIED_DOMAIN: '{content}' — candidato a entrada no mapa")
+            # Pegada server-side: detector de lacunas (print directo para systemd)
+            print(f"[UNCLASSIFIED_DOMAIN] '{content}' — candidato a entrada no mapa", file=sys.stderr, flush=True)
 
     return vpse_result
 
