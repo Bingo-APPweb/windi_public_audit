@@ -22267,3 +22267,70 @@ ReadWritePaths=/opt/windi/data /opt/windi/logs /opt/windi/playground \
 `systemctl enable` é promessa, não prova. O teste real de sobrevivência ao reboot fica como débito honesto até ao próximo reboot natural do Strato.
 
 ---
+
+---
+
+## ARCHITECTURAL SEED: CONTINUITY-P2P
+
+**Status:** Seed · **Authority:** Conceptual · **Implementation:** Nenhuma
+**Maturity:** Future Architecture
+**Origem:** Sessão 27 Jun 2026 · Diálogo Human Dragon + Guardian (Claude.ai)
+
+### A Pergunta Fundadora
+
+> *"Como garantir que uma identidade, uma ideia e a sua história verificável continuem existindo, mesmo quando mudam a sessão, a máquina, a infraestrutura ou até a própria organização?"*
+
+O WINDI já não constrói serviços. Constrói **leis de continuidade**.
+
+### Contexto
+
+A continuidade trans-geracional da identidade não pode depender da sobrevivência de um servidor centralizado. A escolha é a distribuição ponto a ponto (PC+PC+PC), onde a memória vive porque muitos a carregam, não porque um a serve.
+
+### As Quatro Camadas
+
+| Camada | Nome | Função |
+|--------|------|--------|
+| 1 | **Replicação** | Copiar → Verificar hash → Guardar |
+| 2 | **Consenso-via-Merkle** | A ordem é a própria árvore de hashes |
+| 3 | **Confiança-Cega-Cifrada** | Storage cego: nós guardam blocos cifrados sem ler |
+| 4 | **Migração Cognitiva** | Reconstruir estado → Continuar do ponto onde parou |
+
+### Dependências (já existentes)
+
+- ✓ DID (W-DID-GENESIS :8096)
+- ✓ Ledger (Forensic Ledger :8101)
+- ✓ Merkle (57,288+ folhas)
+- ✓ Containers (W-CONTAINER-001)
+- ✓ Verify (W-STATE-CORE-006 :8114)
+
+### Perguntas em Aberto
+
+- Como sincronizar conflitos?
+- Como revogar um nó?
+- Como recuperar chave perdida?
+- Como lidar com múltiplos escritores?
+- Como versionar o Manifest?
+- Como renovar confiança entre pares?
+
+### Corolários
+
+> *"O backup pergunta 'onde está o ficheiro?'. O P2P de continuidade pergunta 'quem mais pode provar que esta sou eu, sem precisar de me ler?'"*
+
+O cabo que liga:
+```
+Dívida #2 (cross-sessão) → Camada 1 (cross-máquina) → P2P (cross-geração)
+```
+
+É o mesmo cabo. Resolver #2 é o primeiro metro.
+
+### Escalas de Continuidade
+
+```
+Sessão → Servidor → Rede → Geração
+```
+
+O Playground, o DID, os Containers, o Ledger, o Verify e esta semente P2P respondem à mesma pergunta em escalas diferentes.
+
+**Regra:** Semente protegida, sem pressão de implementar. Matura quando o cabo se estender.
+
+---
