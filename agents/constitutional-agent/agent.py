@@ -746,6 +746,23 @@ def create_agent_api(agent: WindiAgent):
     except ImportError as e:
         print(f"  [SITES] W-SITES-001 not loaded: {e}")
 
+    # W-PLAYGROUND-001: Project Compiler — VPSE Proxy
+    try:
+        from blueprints.playground_blueprint import playground_bp
+        app.register_blueprint(playground_bp)
+        print("  [PLAYGROUND] W-PLAYGROUND-001 v1.0 loaded on /api/decompose")
+    except ImportError as e:
+        print(f"  [PLAYGROUND] W-PLAYGROUND-001 not loaded: {e}")
+
+    # W-CONTAINER-001: Container Memory Store
+    try:
+        sys.path.insert(0, '/opt/windi/playground/containers')
+        from api.container_routes import container_bp
+        app.register_blueprint(container_bp)
+        print("  [CONTAINER] W-CONTAINER-001 v0.1.0 loaded on /api/containers/*")
+    except ImportError as e:
+        print(f"  [CONTAINER] W-CONTAINER-001 not loaded: {e}")
+
     @app.route("/agent/health", methods=["GET"])
     def health():
         return jsonify({
