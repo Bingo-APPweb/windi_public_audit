@@ -22072,3 +22072,97 @@ intent_evolution entries: 3
 
 ---
 
+## SESSION-20260627-DNA-CRIATIVO-001 — O Playground Revela a Sua Natureza
+
+**Data:** 27 Jun 2026
+**Commit:** `445cbbdc6` (fix técnico) + `36841b13` (history)
+**Status:** CANDIDATE (doutrina) + S7 PARCIAL (superfície)
+**Invariants:** I1, I9, I11, I14, S2, S6, S7
+
+### Validação Browser — Não Há Bug
+
+O teste no browser revelou que **não há bug de injeção automática**. Os Capítulos #2-#5 foram inputs humanos — o utilizador copiou dimensões e colou como novas mensagens. O sistema cumpriu o contrato: `input humano → capítulo humano`.
+
+| Invariante | Estado | Prova |
+|------------|--------|-------|
+| S2 (Append-Only) | ✅ LIVE | Capítulos acumulam |
+| S6 (Container é Verdade) | ✅ LIVE | Via proxy nginx |
+| S7 (Reconstituição) | ⚠️ PARCIAL | API funciona, UI ausente |
+
+### S7 Parcial — A Descoberta
+
+> *"O servidor sabe exactamente onde estás. O Humano não faz ideia onde está."*
+
+O `container_id` existe no localStorage, a API reconstitui, mas o Humano não tem como ver qual sessão está viva nem como retomar uma anterior. A continuidade existe na máquina e está **invisível** para quem decide.
+
+**Dívida nomeada:** Falta superfície de retoma/indicador de container vivo para o Humano.
+
+### O Vazio Após a Decomposição
+
+| Tab | Conteúdo | Estado |
+|-----|----------|--------|
+| 📊 Dimensões | Grid com 5 dimensões | ✅ LIVE |
+| 📜 Percurso | Stub vazio | ❌ NÃO IMPLEMENTADO |
+| 📦 Pacote | Stub vazio | ❌ NÃO IMPLEMENTADO |
+
+> *"O Playground decompõe mas não converge. Sem convergência, é exercício académico."*
+
+### DOUTRINA-DNA-CRIATIVO-001 (CANDIDATE)
+
+> *"Quando as inteligências tornarem as criações tão próximas que a originalidade deixe de ser visível no objecto, a autoria migra para a génese. O WINDI não prova que uma criação é diferente — prova que nasceu por este percurso, sob esta mão, átomo a átomo, registado desde o instante zero. Por isso a primeira voz sobre a intenção é sempre soberana: cada átomo gerado fora do Ledger é um átomo sem linhagem, e num mundo de artefactos indistinguíveis, o átomo sem linhagem é o ponto onde a cópia se disfarça de génese. A inspiração é universal e comum; o canal e o gesto são irrepetíveis. O Verify mede o canal, não a inspiração."*
+
+**Corolários:**
+- A derivação universal não justifica deixar o LLM tocar primeiro — justifica o contrário
+- O S2 (append-only) selado esta manhã ERA a espinha do DNA o tempo todo
+- Cada capítulo acumulado é um átomo de génese com linhagem
+
+### Próxima Grande Frente — Convergência com Proveniência
+
+**Visão:** O Playground não converge gerando protótipo. Converge gerando **nascimento registado**.
+
+| Tab | Função WINDI |
+|-----|--------------|
+| 📜 Percurso | **DNA visível** — génese átomo a átomo, change-of-mind incluído |
+| 📦 Pacote | **Certidão de nascimento** — artefacto com DNA selado no Ledger |
+
+**Pipeline futuro:**
+```
+IDEIA → Capítulo → Dimensões → Escolha Humana → Pré-Protótipo
+                                      ↓
+                              📜 Percurso (linhagem)
+                                      ↓
+                              📦 Pacote (certidão)
+                                      ↓
+                              Verify :8114
+```
+
+**Regra:** Não abrir cansado — sprint dedicado com doutrina a guiar.
+
+### O Arco da Sessão
+
+```
+MANHÃ:   selámos S2 (append-only) + entry_type
+              ↓ (parecia infraestrutura)
+ENTRADA: "quem toca o input primeiro?"
+              ↓ (parecia engenharia)
+VISÃO:   DNA criativo — autoria migra para a génese
+              ↓ (parecia filosofia)
+AGORA:   Playground converge gerando NASCIMENTO REGISTADO
+         o S2 da manhã ERA a espinha do DNA o tempo todo
+```
+
+### Frases Canónicas
+
+> *"Toda ideia é derivativa; a soberania não está no material mas no gesto que o adapta e no selo que o assina."*
+
+> *"O Playground nunca foi montar protótipos. Era ser o útero soberano onde a intenção humana nasce com proveniência desde o instante zero."*
+
+> *"A inspiração é universal e partilhada. O que individualiza não é a fonte — é o canal e o gesto."*
+
+---
+
+*WINDI-HIOS · Liga IA+H · Kempten, Bavaria · 2026-06-27*
+*Conselho completo: Human Dragon + Guardian + Architect + Witness*
+
+---
+
