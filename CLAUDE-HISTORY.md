@@ -42,7 +42,11 @@
 - `/opt/windi/agents/constitutional-agent/agent.py` — config de logging
 - `/opt/windi/w-workbench-001/playground-v2.html` — lógica de render + CSS + traduções PT/EN/DE
 
-**Teste:** `curl POST /api/decompose` com "saúde mental" → `dimension_id: 'unclassified', raw: true` ✅
+**Verificação em dois níveis (§268 micro-errata):**
+- `curl POST /api/decompose` → `dimension_id: 'unclassified', raw: true` ✅
+- Pegada server-side: `/opt/windi/logs/sandbox-core-error.log` → `[UNCLASSIFIED_DOMAIN] 'health_med'` ✅
+
+**Nota técnica:** Logger hierárquico não propagava (blueprint importado tarde). Corrigido com `print(stderr, flush=True)`. Commit `1adfdaeab`.
 
 ### Estado Técnico Actualizado
 
