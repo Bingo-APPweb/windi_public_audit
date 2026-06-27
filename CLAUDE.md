@@ -457,7 +457,7 @@ Touch:        mínimo 44px · Breakpoints: ≥1200 Desktop · 768-1199 Tablet ·
 7. git add + commit + push no fim de cada sessão
 8. .env NUNCA em commits
 9. Bridges = blueprints em /opt/windi/agents/constitutional-agent/blueprints/
-10. Sandbox Core (:8091) = nohup, NUNCA systemd
+10. Sandbox Core (:8091) = systemd COM EnvironmentFile= (§300 emenda 27 Jun 2026)
 ```
 
 ---

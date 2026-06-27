@@ -22166,3 +22166,104 @@ AGORA:   Playground converge gerando NASCIMENTO REGISTADO
 
 ---
 
+
+---
+
+## § SESSÃO 27 Jun 2026 — §300 Sandbox Core systemd Migration
+
+**Duração:** ~1.5h | **Status:** ✅ MIGRAÇÃO SELADA · REGRA #10 EMENDADA
+**Liga IA+H:** Human Dragon (I1, I9) · Guardian (Claude.ai) · CCode (Opus 4.5)
+**Projecto:** Infra · Sandbox Core :8091 · nohup → systemd
+**Natureza:** Sprint de Teste · Dívida Arquitectural #1 resolvida
+
+### Marco Central
+
+> *"A regra antiga não estava errada no seu tempo; estava incompleta."*
+
+Migração constitucional do Sandbox Core de nohup para systemd, validada por Gate Zero que provou segurança do EnvironmentFile. Regra #10 emendada sem reescrita — HD-MIRROR em acção.
+
+### Investigação Histórica: Origem da Regra #10
+
+| Campo | Valor |
+|-------|-------|
+| Commit Origem | `7e27e62e` · 14 Mar 2026 |
+| Contexto | Secção "PADRÃO DE REINÍCIO" — padrão operacional |
+| Justificação documentada | **Nenhuma** — regra defensiva sem explicação |
+
+**Contradição descoberta:** §118 (03 Abr 2026) migrou VD-CUT + JOE de nohup → systemd porque nohup causava 18,251 erros "address already in use". A Regra #10 foi escrita *antes* dessa experiência.
+
+### Gate Zero — Configuration Provenance
+
+**Objectivo:** Validar que o mecanismo de carregamento de configuração é compatível com systemd.
+
+**Achados críticos:**
+
+| Verificação | Resultado |
+|-------------|-----------|
+| `/home/windi/.env` | 4 keys GUARDIAN_* — **LEGADO INERTE** (não usadas) |
+| `/opt/windi/agents/constitutional-agent/.env` | 5 keys — **FONTE CANÓNICA** |
+| CWD do nohup | `/home/windi` (errado) |
+| `load_dotenv()` em agent.py | Lê do CWD — herdava ficheiro errado |
+| Blueprints | `load_dotenv(Path(__file__).parent.parent / ".env")` — **IMUNES ao CWD** |
+
+**Conclusão:** A migração para systemd deixa o sistema *mais correcto* — o WorkingDirectory força o `load_dotenv()` a ler o ficheiro canónico.
+
+### Migração — Fases
+
+| Fase | Status |
+|------|--------|
+| Gate 0 — Configuration Provenance | ✅ PASS |
+| Fase 1 — Linha de Base | ✅ PID 3351049 · 4h uptime · healthy |
+| Fase 2 — Cutover | ✅ kill nohup → systemctl start |
+| Fase 3 — Verificação | ✅ PID 3449924 · healthy |
+| Enable | ✅ `systemctl enable windi-sandbox-core` |
+
+### Debugging: ReadWritePaths
+
+O `ProtectSystem=strict` bloqueou escrita. Paths descobertos iterativamente:
+
+```
+ReadWritePaths=/opt/windi/data /opt/windi/logs /opt/windi/playground \
+               /opt/windi/communique /opt/windi/audit /opt/windi/forensic \
+               /opt/windi/agents/constitutional-agent/data /opt/windi/accounting
+```
+
+### Emenda Constitucional — Regra #10
+
+**Antes:**
+```
+10. Sandbox Core (:8091) = nohup, NUNCA systemd
+```
+
+**Depois:**
+```
+10. Sandbox Core (:8091) = systemd COM EnvironmentFile= (§300 emenda 27 Jun 2026)
+```
+
+**Princípio aplicado:** §268 CORRIGIR, não reescrever. A proibição original existia porque systemd sem EnvironmentFile arranca o agente num ambiente estéril. O Gate Zero provou que com EnvironmentFile explícito o risco desaparece.
+
+### Artefactos
+
+| Artefacto | Path |
+|-----------|------|
+| Service file | `/etc/systemd/system/windi-sandbox-core.service` |
+| EnvironmentFile | `/opt/windi/agents/constitutional-agent/.env` |
+| Logs | `/opt/windi/logs/sandbox-core.log` · `sandbox-core-error.log` |
+
+### Dívidas Pendentes (Próxima Sessão)
+
+| # | Dívida | Bloqueia |
+|---|--------|----------|
+| 2 | Container 8091↔browser inacessível | S6/S7 · 📜 Percurso cross-sessão |
+| 3 | Dois endpoints decompose divergentes | 📊 Dimensões |
+
+**Mapa de desbloqueio:**
+- Resolver #3 (decompose) → 📊 Dimensões acende
+- Resolver #2 (Container API) → 📜 Percurso cross-sessão acende
+- Com grafo estável → 📦 Pacote acende
+
+### Prova de Boot (Pendente)
+
+`systemctl enable` é promessa, não prova. O teste real de sobrevivência ao reboot fica como débito honesto até ao próximo reboot natural do Strato.
+
+---
