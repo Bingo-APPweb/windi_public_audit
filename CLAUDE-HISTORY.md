@@ -56,6 +56,21 @@
 | #2 I14 Placeholder | ✅ IMPLEMENTADO | Opção A-PEGADA · Log server-side |
 | #3 Dois decompose | ❌ PENDENTE | Próximo na fila |
 
+### Próximo Passo — #3 Dois Decompose (Mapa para próxima sessão)
+
+**Problema:** Dois endpoints `/api/decompose` com contratos divergentes.
+
+| Ficheiro | Serviço | Campo | Proxy |
+|----------|---------|-------|-------|
+| `blueprints/playground_blueprint.py` | :8091 Sandbox | `idea` | VPSE :8120 |
+| `w-workbench-001/playground_server.py` | Workbench | `intent` | Dragon Hub |
+
+**Decisão pendente:** Qual sobrevive? Alinhar contratos ou aposentar um.
+
+**Risco:** Endpoint vivo — regressão possível se migração incompleta.
+
+**Recomendação:** Abrir fresco, não cansado.
+
 ### Frase de Guarda
 
 > *"Arrumar a casa às vezes é descobrir que uma das caixas que pensavas estar cheia estava vazia."*
