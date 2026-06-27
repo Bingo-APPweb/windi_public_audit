@@ -264,3 +264,5 @@ verify-public/static/cinema/
 verify-public/static/*.png
 verify-public/static/*.mp4
 verify-public/viewer/*.pdf
+playground/containers/store/*.db
+playground/**/__pycache__/

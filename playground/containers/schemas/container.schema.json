@@ -1,0 +1,102 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "windi-container-v1",
+  "title": "WINDI Container Schema",
+  "description": "Container unificado do Playground. FREE e CONSTITUTIONAL são o mesmo objecto, muda apenas o regime.",
+  "type": "object",
+  "required": ["id", "mode", "constitutional", "created_at"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Identificador único do container"
+    },
+    "session_id": {
+      "type": ["string", "null"],
+      "description": "ID da sessão do Playground (opcional)"
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["free", "constitutional"],
+      "default": "free",
+      "description": "Regime actual do container"
+    },
+    "constitutional": {
+      "type": "boolean",
+      "default": false,
+      "description": "Flag de regime. Muda apenas por crossing explícito."
+    },
+    "crossing": {
+      "type": ["object", "null"],
+      "description": "Registo do acto de constitucionalização (null se FREE)",
+      "properties": {
+        "consented_at": { "type": "string", "format": "date-time" },
+        "did": { "type": "string" },
+        "what_crossed": { "type": "array", "items": { "type": "string" } },
+        "receipt": { "type": "string" }
+      }
+    },
+    "reasoning": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": [],
+      "description": "Micro-pensamentos acumulados"
+    },
+    "intent_evolution": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "timestamp": { "type": "string", "format": "date-time" },
+          "state": { "type": "string" },
+          "trigger": { "type": "string" }
+        }
+      },
+      "default": [],
+      "description": "Intent Tracker - evolução semântica da ideia"
+    },
+    "graph": {
+      "type": "object",
+      "default": {},
+      "description": "ProjectGraph / CognitiveGraph actual"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "timestamp": { "type": "string", "format": "date-time" },
+          "event_type": { "type": "string" },
+          "data": { "type": "object" }
+        }
+      },
+      "default": [],
+      "description": "Eventos acumulados (change-of-mind, exports, decisões)"
+    },
+    "owner_did": {
+      "type": ["string", "null"],
+      "default": null,
+      "description": "DID do dono (null enquanto FREE)"
+    },
+    "receipts": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": [],
+      "description": "Receipts gerados (vazio enquanto FREE)"
+    },
+    "ledger_entries": {
+      "type": "array",
+      "items": { "type": "object" },
+      "default": [],
+      "description": "Entradas no Ledger (vazio enquanto FREE)"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}
