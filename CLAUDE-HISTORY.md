@@ -7,6 +7,58 @@
 # ---
 
 
+## § SESSÃO 28 Jun 2026 — Fila de Fundação · #1 Fantasma + #2 I14 Fix
+
+**Duração:** ~45min | **Status:** ✅ DOIS ITENS FECHADOS
+**Liga IA+H:** Human Dragon (I1, I9) · Guardian (Claude.ai) · CCode (Opus 4.5)
+**Projecto:** Consolidação de fundação Playground
+**Natureza:** Sessão técnica · Arrumação constitucional
+
+### Marco Central
+
+> *"O VIBE morre no refresh — isso é a liberdade, não o bug."*
+
+### Decisões Seladas
+
+#### #1 TTL Enforcer — FECHADO POR DOUTRINA
+
+**Veredicto:** Dívida fantasma. Não há store de candidates — o candidate nasce na resposta e morre na resposta. O próprio código chama-lhe "MORTO" (`pipeline.py:278`).
+
+**Fundamento:** O Playground é instância livre como a Internet actual. A ausência de persistência É a liberdade do VIBE. Se o utilizador quer persistência, faz a passagem para DID (`/farm/claim`). Enquanto está na VIBE, refresh apaga — feature, não bug.
+
+**Acção:** Nenhum código. Nenhum TTL. Nenhum enforcer. Doutrina já cobria o caso.
+
+#### #2 I14 Placeholder Fix — IMPLEMENTADO
+
+**Problema:** `adaptVPSEtoGraph` fazia fallback silencioso para "Tecnologia" quando domínio não estava no mapa de 6 entradas. Violava I14 (Explicit Failure Principle).
+
+**Solução:** Opção A-PEGADA (escolha Human Dragon)
+- Domínio desconhecido → `dimension_id: 'unclassified'` + `raw: true`
+- Log server-side: `UNCLASSIFIED_DOMAIN: '{domain}'` — detector de lacunas
+- UI mostra nome cru + "[a classificar]" em vez de mentir "Tecnologia"
+
+**Ficheiros alterados:**
+- `/opt/windi/agents/constitutional-agent/blueprints/playground_blueprint.py` — mapa + enriquecimento + log
+- `/opt/windi/agents/constitutional-agent/agent.py` — config de logging
+- `/opt/windi/w-workbench-001/playground-v2.html` — lógica de render + CSS + traduções PT/EN/DE
+
+**Teste:** `curl POST /api/decompose` com "saúde mental" → `dimension_id: 'unclassified', raw: true` ✅
+
+### Estado Técnico Actualizado
+
+| Item | Estado | Nota |
+|------|--------|------|
+| #1 TTL Enforcer | ✅ FECHADO | Doutrina (candidate efémero por design) |
+| #2 I14 Placeholder | ✅ IMPLEMENTADO | Opção A-PEGADA · Log server-side |
+| #3 Dois decompose | ❌ PENDENTE | Próximo na fila |
+
+### Frase de Guarda
+
+> *"Arrumar a casa às vezes é descobrir que uma das caixas que pensavas estar cheia estava vazia."*
+> — Guardian (Claude.ai) · 28 Jun 2026
+
+---
+
 ## § SESSÃO 26 Jun 2026 — W-PLAYGROUND-001 · Cinco Doutrinas da Portinhola
 
 **Duração:** ~2h | **Status:** ✅ DOUTRINAS REGISTADAS · VIBE PRONTA PARA TESTE
