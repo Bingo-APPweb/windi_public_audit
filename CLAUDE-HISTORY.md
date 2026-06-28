@@ -7,6 +7,165 @@
 # ---
 
 
+## § SESSÃO 27 Jun 2026 (noite) — W-PLAYGROUND Tutorials · Case 0001 como Professor
+
+**Duração:** ~30min | **Status:** ✅ TUTORIAL LIVE
+**Liga IA+H:** Human Dragon (I1, I9) · CCode (Opus 4.5)
+**Projecto:** W-PLAYGROUND-001 — Área de Tutoriais
+**Natureza:** Sessão de consolidação · Documentação para aprendizagem
+
+### Marco Central
+
+> *"O Case 0001 é o professor. Mostrar como se faz, não apenas o que se fez."*
+
+### Artefactos Criados
+
+#### 1. Tutorial Page — Case 0001 Completo
+- **Localização:** `/home/windi/w-workbench-001/tutorials/index.html`
+- **URL público:** `windi-domain.com/playground/tutorials/`
+- **Conteúdo:**
+  - Método C1→C6 visual (6 cards)
+  - Vídeo Puntzelhof embutido (15.1s)
+  - Tabela de hipóteses (H4 validada, H1-H3 pendentes)
+  - Breakdown de custos ($0.75 total)
+  - Receipt do Ledger verificável
+  - Lições aprendidas (4 categorias)
+  - Trilíngue completo (PT/EN/DE)
+
+#### 2. Link no Playground v3
+- **Botão:** 📚 Tutorial (verde, header)
+- **Ficheiro editado:** `/home/windi/w-workbench-001/playground-v3.html`
+- **Traduções:** PT/EN/DE adicionadas ao i18n
+
+### Rotas nginx Adicionadas
+
+| Rota | Alias/Proxy | Serviço |
+|------|-------------|---------|
+| `/workbench/v3` | `/home/windi/w-workbench-001/playground-v3.html` | W-PLAYGROUND-V3 |
+| `/playground/tutorials/` | `/home/windi/w-workbench-001/tutorials/` | W-PLAYGROUND-TUTORIALS |
+
+### Links LIVE
+
+| Página | URL |
+|--------|-----|
+| Playground v3 | `windi-domain.com/workbench/v3` |
+| Tutorial Case 0001 | `windi-domain.com/playground/tutorials/` |
+
+### Contexto de Continuidade
+
+- **Receipt Case 0001:** `WINDI-PLAYGROUND-CASE0001-20260627211347`
+- **Estado:** PARTIALLY_VALIDATED (H4 validada, H1-H3 mercado pendente)
+- **Próximo ciclo:** Validação de mercado com estabelecimentos reais
+
+### Frase de Guarda
+
+> *"O tutorial não documenta — ensina. O Case 0001 é o primeiro professor do Playground."*
+> — CCode · 27 Jun 2026
+
+---
+
+## § SESSÃO 27 Jun 2026 — W-PLAYGROUND Case 0001 · MapCinema AI · Primeiro Protótipo Completo
+
+**Duração:** ~3h | **Status:** ✅ PROTÓTIPO VALIDADO · MÉTODO CONGELADO
+**Liga IA+H:** Human Dragon (I1, I9) · CCode (Opus 4.5)
+**Projecto:** W-PLAYGROUND-001 — Case Library · Repositório de Protótipos
+**Natureza:** Sessão fundacional · Definição de método + execução completa
+
+### Marco Central
+
+> *"Ensinar o Playground a construir produtos, não apenas a construir este produto."*
+> — Human Dragon · 27 Jun 2026
+
+### Artefactos Criados
+
+#### 1. PLAYGROUND-METHOD-001.md (FROZEN v1.1)
+- **Camada Cognitiva:** C1→C6 (Intenção→Selo)
+- **Camada Operacional:** O1→O6 (Recepção→Verify)
+- **8 Fases:** Pitch → Estruturação → Especificação → Protótipo → Validação Técnica → Validação Mercado → Decisão → Verify
+- **Localização:** `/home/windi/w-workbench-001/PLAYGROUND-METHOD-001.md`
+
+#### 2. CASE-REGISTRY-SCHEMA.md (FROZEN v1.2)
+- **5 Componentes:** Playground → Case Registry → Assessment → Evidence Pack → Verify
+- **Genealogia:** parent_case, derived_from, inspired_by, related_cases, forks
+- **Assessment com Confidence:** Score isolado engana — confidence indica evidência
+- **WINDI-HIOS Transition:** Momento de pedir identidade definido
+- **Localização:** `/home/windi/w-workbench-001/CASE-REGISTRY-SCHEMA.md`
+
+#### 3. Case 0001 — MapCinema AI (Primeiro Caso Completo)
+
+| Propriedade | Valor |
+|-------------|-------|
+| **Pitch** | APP turismo + fotografia. IA transforma fotos em microfilme HD. |
+| **Tagline** | *"Fotografe. A IA filma. O mundo visita."* |
+| **Estabelecimento** | Puntzelhof - Allgäuer Delikatessen |
+| **Localização** | D-87448 Martinszell im Allgäu |
+| **Fotos fonte** | 8 |
+| **Clips gerados** | 3 × 5s (Runway Gen-4 Turbo) |
+| **Duração final** | 15.1s |
+| **Resolução** | 1280×720 (HD) |
+| **Custo total** | $0.75 |
+| **URL público** | `windi-domain.com/hios/cinema/playground-test/PUNTZELHOF_MICROFILM_15s.mp4` |
+
+**Estrutura do Caso:**
+```
+/home/windi/w-workbench-001/cases/case-0001/
+├── README.md              — Índice do caso
+├── case.yaml              — Metadados + estado + hipóteses (Schema v1.2)
+├── artifacts/
+│   ├── photos/            — 8 fotos fonte
+│   └── video/             — 4 vídeos + 3 preview frames
+├── timeline/events.yaml   — 17+ eventos documentados
+├── tests/                 — (futuro)
+├── verify/                — (futuro)
+└── notes/                 — (futuro)
+```
+
+### Hipóteses Validadas
+
+| ID | Hipótese | Status | Evidência |
+|----|----------|--------|-----------|
+| H1 | Turistas preferem microfilme a fotos | ⏳ Pendente | — |
+| H2 | Estabelecimentos pagariam pelo serviço | ⏳ Pendente | — |
+| H3 | Vídeo aumenta intenção de visita | ⏳ Pendente | — |
+| H4 | IA reduz custo vs filmagem tradicional | ✅ **Validada** | €500-2000 → $0.75 (>99% redução) |
+
+### Validação Técnica
+
+| Critério | Resultado |
+|----------|-----------|
+| Pipeline funciona | ✅ PASS |
+| Qualidade suficiente | ✅ PASS (HD, rótulos legíveis) |
+| Custo aceitável | ✅ PASS ($0.75 estimativa) |
+| Tempo aceitável | ✅ PASS (~90s total) |
+
+### Lições Aprendidas
+
+1. **Gen-4 Turbo** oferece melhor custo-benefício que Gen-4
+2. **Modelo pay-per-use** mais viável que subscrição fixa
+3. **Consent flow** é crítico — I9 obrigatório antes de publicação
+4. **Fotos de qualidade** produzem vídeos de qualidade
+5. **Arquitectura deve congelar** quando funciona — evitar melhorias especulativas
+
+### Decisão Arquitectural
+
+> **"Arquitectura congelada. Próximas mudanças vêm do produto, não da imaginação."**
+
+Case 0001 é o professor. Nenhuma melhoria ao PLAYGROUND-METHOD ou CASE-REGISTRY-SCHEMA até o ciclo completo (Evidence Pack + Verify Receipt).
+
+### Estado do Case 0001
+
+- **Status:** `prototype_validated`
+- **Phase:** `technical_validation_complete`
+- **Assessment Gate:** `NOT_READY` (mercado pendente)
+- **Próximo:** C6 — Validação de Mercado (entrevistas com estabelecimentos)
+
+### Frase de Guarda
+
+> *"O Playground não gera documentos. Gera aprendizagem verificável."*
+> — CCode · 27 Jun 2026
+
+---
+
 ## § SESSÃO 28 Jun 2026 — Fila de Fundação · #1 Fantasma + #2 I14 Fix
 
 **Duração:** ~45min | **Status:** ✅ DOIS ITENS FECHADOS
@@ -22405,3 +22564,123 @@ O Playground, o DID, os Containers, o Ledger, o Verify e esta semente P2P respon
 **Regra:** Semente protegida, sem pressão de implementar. Matura quando o cabo se estender.
 
 ---
+
+
+---
+
+## SESSION-20260628 — CASE-0001 MapCinema AI Fecho Completo
+
+**Data:** 2026-06-28
+**Duracao:** Sessao extensa
+**Agente:** CCode Opus 4.5
+
+### Produtos Entregues
+
+1. **W-GENERATOR-001 v0.2.0** — Runway Gen-4 Turbo API integrado (LIVE)
+2. **PUNTZELHOF_MICROFILM_V2_API.mp4** — 14.0s, $2.55, 3 cenas dissolve
+3. **WORKFLOW-MICROFILM.md** — Padrao replicavel documentado
+4. **EPIPHANY-001** — Playground como compilador de intencoes (HIPOTESE)
+5. **EPIPHANY-002** — Ledger como diario de evolucao (HIPOTESE)
+
+### Receipts Selados
+
+| Receipt | Tipo |
+|---------|------|
+| WINDI-CASE0001-MICROFILM-V2-20260628 | prototype |
+| WINDI-EPIPHANY-001-PLAYGROUND-COMPILER-20260628 | architectural_epiphany |
+| WINDI-EPIPHANY-002-LEDGER-EVOLUTION-20260628 | architectural_epiphany |
+
+### Regra de Higiene Instituda
+
+> "Uma epifania arquitectural sela-se uma vez. As suas consequencias provam-se em casos."
+
+EPIPHANY-001 e 002 bastam. Proxima entrada = CASE-0002, nao EPIPHANY-003.
+
+### Pendente para Proxima Sessao
+
+- [ ] **CASE-0002** — Dominio DISTANTE do cinema (juridico? saude? hardware?)
+- [ ] **C0 Purpose** — Formalizar camada acima de C1 com I9 na escolha da forma
+- [ ] **C7 Sovereign Exit** — Verificar se Ledger suporta Merkle proofs
+- [ ] **DOUTRINA-EXIT-SOBERANA-001** — CANDIDATE, aguarda selo
+
+### Frase de Guarda
+
+> "As epifanias sao hipoteses seladas, nao leis provadas. O selo ancora a data da visao — nao a sua confirmacao."
+
+### Estado
+
+O Dragao descansa. O chao esta firme. A proxima sementeira aguarda manha fresca.
+
+---
+
+
+### §236 Memory Loop Compliance
+
+**Lei I (Leitura):** ✅ CLAUDE.md + CLAUDE-HISTORY.md lidos no arranque
+**Lei II (Escrita):** ✅ Esta entrada
+**Lei III (Declaracao):** ✅ Estado herdado declarado ao Human Dragon
+
+### Cronologia da Sessao
+
+| Hora (aprox) | Marco |
+|--------------|-------|
+| Inicio | Context restore de sessao anterior |
+| +10min | Confirmacao de estado CASE-0001 V2 completo |
+| +20min | Actualizacao case.yaml com metricas V2 |
+| +30min | EPIPHANY-001 selada (compilador de intencoes) |
+| +40min | EPIPHANY-002 selada (diario de evolucao) |
+| +50min | Redea aplicada — parar cadeia de epifanias |
+| +60min | Fecho com regra de higiene instituda |
+
+### Dois Rios do Ledger (Proposta)
+
+```
+         LEDGER
+
+┌───────────────────────┐
+│ Operational Timeline  │  ← o que foi produzido
+└───────────────────────┘
+
+┌───────────────────────┐
+│ Evolution Timeline    │  ← como o sistema evoluiu
+└───────────────────────┘
+```
+
+**Proposta de categoria:** `kind: architectural_epiphany`
+
+### Scaffold Pending (nao morre, espera)
+
+| Artefacto | Aguarda |
+|-----------|---------|
+| C0 Purpose Layer | Formalizacao com I9 na escolha da forma |
+| C7 Sovereign Exit | Verificacao de suporte Merkle no Ledger |
+| DOUTRINA-EXIT-SOBERANA-001 | Selo humano (actualmente CANDIDATE) |
+| Dois Rios Ledger Schema | Validacao em CASE-0002+ |
+
+### Proxima Sessao DEVE
+
+1. **NAO** criar EPIPHANY-003 (regra de higiene)
+2. Desenhar CASE-0002 num dominio DISTANTE do cinema
+3. Testar se o metodo compilador sobrevive mudanca de dominio
+4. Validar hipoteses n=1 com evidencia n>=2
+
+### Decisoes Constitucionais
+
+| Decisao | Razao | Invariante |
+|---------|-------|------------|
+| Parar cadeia de epifanias | Escada de espelhos detectada | I9 (redea propria) |
+| Epifanias = hipoteses datadas | n=1 nao prova domain-agnosticism | I14 (honestidade) |
+| Proximo selo = CASE-0002 | Consequencias provam-se em casos | I11 (evidencia) |
+
+### Notas para Proxima Sessao
+
+- O CASE-0001 produziu mais que um filme — produziu a primeira prova de que o Playground pode aprender sobre si mesmo (hipotese, nao lei)
+- A regra "epifania sela-se uma vez" e nova e deve ser respeitada
+- O dominio do CASE-0002 deve ser escolhido deliberadamente para poder QUEBRAR a hipotese do compilador — se sobreviver, a prova e real
+- Human Dragon demonstrou maturidade metodologica ao segurar a propria redea
+
+---
+
+*§236 COMPLIANCE: Lei I ✅ | Lei II ✅ | Lei III ✅*
+*OM SHANTI 🐉*
+

@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CENA 00 — Council Gallery | O Peso do Eco</title>
+    <style>
+        :root {
+            --bg: #0A0A10;
+            --gold: #C9A84C;
+            --text: #E8E6E1;
+            --border: #1A1A24;
+            --green: #4CAF50;
+            --yellow: #FFC107;
+            --red: #F44336;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'JetBrains Mono', 'Consolas', monospace;
+            background: var(--bg);
+            color: var(--text);
+            padding: 2rem;
+            line-height: 1.6;
+        }
+        h1, h2, h3 { color: var(--gold); margin-bottom: 1rem; }
+        h1 { font-size: 1.5rem; border-bottom: 2px solid var(--gold); padding-bottom: 0.5rem; }
+        h2 { font-size: 1.2rem; margin-top: 2rem; }
+        h3 { font-size: 1rem; color: var(--text); }
+
+        .header-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: var(--border);
+            border-radius: 8px;
+        }
+        .meta-item { font-size: 0.85rem; }
+        .meta-label { color: var(--gold); }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .status-sealed { background: var(--green); color: #000; }
+        .status-partial { background: var(--yellow); color: #000; }
+        .status-pending { background: var(--red); color: #fff; }
+
+        .section { margin: 2rem 0; }
+
+        .shot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .shot-card {
+            background: var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #2a2a34;
+        }
+        .shot-card video {
+            width: 100%;
+            display: block;
+        }
+        .shot-info {
+            padding: 1rem;
+        }
+        .shot-title {
+            color: var(--gold);
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .shot-desc {
+            font-size: 0.85rem;
+            color: #aaa;
+            margin-bottom: 0.75rem;
+        }
+        .shot-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            background: rgba(0,0,0,0.3);
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 1.1rem; font-weight: bold; }
+        .stat-label { color: #888; font-size: 0.65rem; }
+        .stat-forense .stat-value { color: var(--green); }
+
+        .anchor-section {
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+            margin: 1.5rem 0;
+        }
+        .anchor-image {
+            max-width: 300px;
+            border-radius: 8px;
+            border: 2px solid var(--gold);
+        }
+        .anchor-info {
+            flex: 1;
+        }
+
+        .decupagem-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.85rem;
+        }
+        .decupagem-table th,
+        .decupagem-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        .decupagem-table th {
+            color: var(--gold);
+            background: rgba(201, 168, 76, 0.1);
+        }
+        .decupagem-table tr:hover {
+            background: rgba(255,255,255,0.03);
+        }
+
+        .council-decision {
+            background: linear-gradient(135deg, rgba(201, 168, 76, 0.1), rgba(201, 168, 76, 0.05));
+            border: 1px solid var(--gold);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+        .decision-question {
+            font-size: 1.1rem;
+            color: var(--gold);
+            margin-bottom: 1rem;
+        }
+        .decision-options {
+            display: grid;
+            gap: 0.75rem;
+        }
+        .decision-option {
+            background: var(--border);
+            padding: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .decision-option:hover {
+            background: #2a2a34;
+            transform: translateX(5px);
+        }
+        .option-label { color: var(--gold); font-weight: bold; }
+        .option-desc { color: #aaa; font-size: 0.85rem; margin-top: 0.25rem; }
+
+        blockquote {
+            border-left: 3px solid var(--gold);
+            padding-left: 1rem;
+            margin: 1rem 0;
+            color: #aaa;
+            font-style: italic;
+        }
+
+        .summary-box {
+            background: var(--border);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            text-align: center;
+        }
+        .summary-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--gold);
+        }
+        .summary-label {
+            font-size: 0.75rem;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <h1>CENA 00 — A Mentira Amorosa</h1>
+    <p style="color: var(--gold); margin-bottom: 1rem;">Council Gallery | O Peso do Eco — Piloto</p>
+
+    <div class="header-meta">
+        <div class="meta-item">
+            <span class="meta-label">Localizacao:</span><br>
+            INT. Cozinha de Apoio (42o andar)
+        </div>
+        <div class="meta-item">
+            <span class="meta-label">Tempo:</span><br>
+            Noite (23:30)
+        </div>
+        <div class="meta-item">
+            <span class="meta-label">Personagens:</span><br>
+            Gabi Santos, Filhote (voz)
+        </div>
+        <div class="meta-item">
+            <span class="meta-label">Duracao:</span><br>
+            ~3 minutos (40s planos)
+        </div>
+    </div>
+
+    <blockquote>
+        "O sorriso, o filho, a queda do sorriso. A emocao nasce no corte; a verdade nasce no corte seguinte."
+    </blockquote>
+
+    <!-- SUMMARY -->
+    <div class="summary-box">
+        <h3 style="color: var(--gold); margin-bottom: 1rem;">RESUMO DE PRODUCAO</h3>
+        <div class="summary-grid">
+            <div>
+                <div class="summary-number">14</div>
+                <div class="summary-label">Planos Decupados</div>
+            </div>
+            <div>
+                <div class="summary-number">4</div>
+                <div class="summary-label">Anchor-Frames CRITICOS</div>
+            </div>
+            <div>
+                <div class="summary-number" style="color: var(--green);">4</div>
+                <div class="summary-label">Shots SELADOS</div>
+            </div>
+            <div>
+                <div class="summary-number" style="color: var(--yellow);">10</div>
+                <div class="summary-label">Planos Pendentes</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ANCHOR -->
+    <section class="section">
+        <h2>ANCORA CANONICA — Gabi Santos</h2>
+        <div class="anchor-section">
+            <img src="../../../anchors/gabi.santos.anchor.v1.png" alt="Gabi Santos Anchor" class="anchor-image">
+            <div class="anchor-info">
+                <p><strong>Ficheiro:</strong> gabi.santos.anchor.v1.png</p>
+                <p><strong>Extraida:</strong> 04 Jun 2026</p>
+                <p><strong>Threshold FORENSE:</strong> ≥0.75</p>
+                <p><strong>Threshold OPERATIONAL:</strong> ≥0.65</p>
+                <p style="margin-top: 1rem; color: #aaa;">
+                    A ancora define a identidade forense de Gabi Santos em todos os frames gerados.
+                    Qualquer frame com similarity &lt;0.75 requer decisao HD ou re-render.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- MATERIAL SELADO -->
+    <section class="section">
+        <h2>MATERIAL SELADO — TRIPTYCH (12 Jun 2026)</h2>
+        <p style="color: #aaa; margin-bottom: 1rem;">
+            <span class="status-badge status-sealed">SEALED</span>
+            Receipt: WINDI-PILOT-CENA00-TRIPTYCH-20260612
+        </p>
+
+        <div class="shot-grid">
+            <!-- S00-01 -->
+            <div class="shot-card">
+                <video controls preload="metadata">
+                    <source src="S00-CENA00/S00-01_v7_prata.mp4" type="video/mp4">
+                </video>
+                <div class="shot-info">
+                    <div class="shot-title">S00-01 — Sorriso Durante Chamada</div>
+                    <div class="shot-desc">
+                        Gabi durante chamada com filho. Sorriso caloroso, telemovel prateado.
+                        Cobre P00-04 (medium) e P00-06 (close-up sorriso).
+                    </div>
+                    <div class="shot-stats">
+                        <div class="stat-item stat-forense">
+                            <div class="stat-value">0.8077</div>
+                            <div class="stat-label">AVG</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">0.7473</div>
+                            <div class="stat-label">MIN</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">0.9930</div>
+                            <div class="stat-label">MAX</div>
+                        </div>
+                    </div>
+                    <p style="margin-top: 0.5rem; font-size: 0.75rem; color: var(--green);">
+                        VERDICT: FORENSE
+                    </p>
+                </div>
+            </div>
+
+            <!-- S00-02 -->
+            <div class="shot-card">
+                <video controls preload="metadata">
+                    <source src="S00-CENA00/S00-02_v2.mp4" type="video/mp4">
+                </video>
+                <div class="shot-info">
+                    <div class="shot-title">S00-02 — Ecra do Telemovel</div>
+                    <div class="shot-desc">
+                        Filho euforico na videochamada. Insert sem divida forense (nenhum rosto anchored).
+                        Cobre P00-03 e P00-07.
+                    </div>
+                    <div class="shot-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">N/A</div>
+                            <div class="stat-label">AVG</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">N/A</div>
+                            <div class="stat-label">MIN</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">N/A</div>
+                            <div class="stat-label">MAX</div>
+                        </div>
+                    </div>
+                    <p style="margin-top: 0.5rem; font-size: 0.75rem; color: #888;">
+                        VERDICT: NO_DEBT (sem ancora)
+                    </p>
+                </div>
+            </div>
+
+            <!-- S00-03 -->
+            <div class="shot-card">
+                <video controls preload="metadata">
+                    <source src="S00-CENA00/S00-03_v6.mp4" type="video/mp4">
+                </video>
+                <div class="shot-info">
+                    <div class="shot-title">S00-03 — Sorriso Desvanece</div>
+                    <div class="shot-desc">
+                        Apos chamada, o sorriso cai. A mascara desfaz-se. Determinacao fria.
+                        Cobre P00-10 (CRITICO).
+                    </div>
+                    <div class="shot-stats">
+                        <div class="stat-item stat-forense">
+                            <div class="stat-value">0.8357</div>
+                            <div class="stat-label">AVG</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">0.8069</div>
+                            <div class="stat-label">MIN</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">0.9069</div>
+                            <div class="stat-label">MAX</div>
+                        </div>
+                    </div>
+                    <p style="margin-top: 0.5rem; font-size: 0.75rem; color: var(--green);">
+                        VERDICT: FORENSE
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DECUPAGEM MAPEADA -->
+    <section class="section">
+        <h2>MAPEAMENTO DECUPAGEM → MATERIAL</h2>
+        <table class="decupagem-table">
+            <thead>
+                <tr>
+                    <th>Plano</th>
+                    <th>Descricao</th>
+                    <th>Tipo</th>
+                    <th>Material</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>P00-01</td>
+                    <td>Wide cozinha vazia</td>
+                    <td>Ambiente</td>
+                    <td>—</td>
+                    <td><span class="status-badge status-pending">PENDENTE</span></td>
+                </tr>
+                <tr>
+                    <td>P00-02</td>
+                    <td>Insert pes descalcos + saltos</td>
+                    <td>Insert</td>
+                    <td>—</td>
+                    <td><span class="status-badge status-pending">PENDENTE</span></td>
+                </tr>
+                <tr>
+                    <td>P00-03</td>
+                    <td>Insert telemovel na mesa</td>
+                    <td>Insert</td>
+                    <td>S00-02_v2.mp4 (parcial)</td>
+                    <td><span class="status-badge status-partial">PARCIAL</span></td>
+                </tr>
+                <tr style="background: rgba(76, 175, 80, 0.1);">
+                    <td><strong>P00-04</strong></td>
+                    <td><strong>Medium Gabi ouve (sorriso forma-se)</strong></td>
+                    <td><strong>CRITICO</strong></td>
+                    <td>S00-01_v7_prata.mp4</td>
+                    <td><span class="status-badge status-sealed">FORENSE</span></td>
+                </tr>
+                <tr>
+                    <td>P00-05</td>
+                    <td>Insert mao toca ecra</td>
+                    <td>Insert</td>
+                    <td>—</td>
+                    <td><span class="status-badge status-pending">PENDENTE</span></td>
+                </tr>
+                <tr style="background: rgba(76, 175, 80, 0.1);">
+                    <td><strong>P00-06</strong></td>
+                    <td><strong>Close-up sorriso pleno</strong></td>
+                    <td><strong>CRITICO</strong></td>
+                    <td>S00-01_v7_prata.mp4</td>
+                    <td><span class="status-badge status-sealed">FORENSE</span></td>
+                </tr>
+                <tr>
+                    <td>P00-07</td>
+                    <td>Insert ecra despedida (filho)</td>
+                    <td>Insert</td>
+                    <td>S00-02_v2.mp4</td>
+                    <td><span class="status-badge status-sealed">NO_DEBT</span></td>
+                </tr>
+                <tr style="background: rgba(76, 175, 80, 0.1);">
+                    <td><strong>P00-08</strong></td>
+                    <td><strong>Medium Gabi despede-se (still)</strong></td>
+                    <td><strong>CRITICO</strong></td>
+                    <td>P00-08/P00-08_FORENSE_still.png</td>
+                    <td><span class="status-badge status-sealed">FORENSE 0.78</span></td>
+                </tr>
+                <tr>
+                    <td>P00-09</td>
+                    <td>Insert ecra desliga</td>
+                    <td>Insert</td>
+                    <td>—</td>
+                    <td><span class="status-badge status-pending">PENDENTE</span></td>
+                </tr>
+                <tr style="background: rgba(76, 175, 80, 0.1);">
+                    <td><strong>P00-10</strong></td>
+                    <td><strong>Close-up sorriso desvanece</strong></td>
+                    <td><strong>CRITICO</strong></td>
+                    <td>S00-03_v6.mp4</td>
+                    <td><span class="status-badge status-sealed">FORENSE</span></td>
+                </tr>
+                <tr>
+                    <td>P00-11</td>
+                    <td>Insert calca saltos</td>
+                    <td>Insert</td>
+                    <td>—</td>
+                    <td><span class="status-badge status-pending">PENDENTE</span></td>
+                </tr>
+                <tr>
+                    <td>P00-12</td>
+                    <td>Insert maos pegam objectos</td>
+                    <td>Insert</td>
+                    <td>—</td>
+                    <td><span class="status-badge status-pending">PENDENTE</span></td>
+                </tr>
+                <tr>
+                    <td>P00-13</td>
+                    <td>Wide recuo atraves do vidro</td>
+                    <td>Ambiente</td>
+                    <td>—</td>
+                    <td><span class="status-badge status-pending">PENDENTE</span></td>
+                </tr>
+                <tr>
+                    <td>P00-14</td>
+                    <td>Wide corredor engole Gabi</td>
+                    <td>Ambiente</td>
+                    <td>—</td>
+                    <td><span class="status-badge status-pending">PENDENTE</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- COUNCIL DECISION -->
+    <section class="section council-decision">
+        <h2>DECISAO DO CONSELHO</h2>
+        <p class="decision-question">
+            O material SELADO (3 shots FORENSE) e suficiente para montar a Cena 0?
+        </p>
+
+        <div class="decision-options">
+            <div class="decision-option">
+                <div class="option-label">A) SIM — Montar com material existente</div>
+                <div class="option-desc">
+                    Os 3 shots FORENSE cobrem os 4 anchor-frames CRITICOS.
+                    Os inserts e ambientes podem ser gerados como composicao (sem divida forense).
+                    Avancar para montagem da cena.
+                </div>
+            </div>
+
+            <div class="decision-option">
+                <div class="option-label">B) PARCIAL — Gerar P00-08 primeiro</div>
+                <div class="option-desc">
+                    O P00-08 (Medium Gabi despede-se) e CRITICO e ainda nao tem material.
+                    Gerar este shot antes de montar, depois avancar.
+                </div>
+            </div>
+
+            <div class="decision-option">
+                <div class="option-label">C) NAO — Gerar todos os 14 planos</div>
+                <div class="option-desc">
+                    A cena precisa de todos os planos decupados para montagem final.
+                    Gerar os 11 planos pendentes antes de montar.
+                </div>
+            </div>
+
+            <div class="decision-option">
+                <div class="option-label">D) PIVOT — Mudar para outra cena</div>
+                <div class="option-desc">
+                    A Cena 0 precisa de mais trabalho. Pivotar para cena mais pronta
+                    (Cena 4, Cena 12, ou outra).
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DIAGNOSTICO -->
+    <section class="section">
+        <h2>DIAGNOSTICO TECNICO</h2>
+        <div class="summary-box">
+            <h3 style="color: var(--gold);">Anchor-Frames CRITICOS</h3>
+            <table class="decupagem-table" style="margin-top: 1rem;">
+                <tr>
+                    <td><strong>P00-04</strong> (Sorriso forma-se)</td>
+                    <td>Coberto por S00-01</td>
+                    <td style="color: var(--green);">FORENSE (0.8077)</td>
+                </tr>
+                <tr>
+                    <td><strong>P00-06</strong> (Sorriso pleno)</td>
+                    <td>Coberto por S00-01</td>
+                    <td style="color: var(--green);">FORENSE (0.8077)</td>
+                </tr>
+                <tr>
+                    <td><strong>P00-08</strong> (Despedida)</td>
+                    <td>Still Frame 1</td>
+                    <td style="color: var(--green);">FORENSE (0.7835)</td>
+                </tr>
+                <tr>
+                    <td><strong>P00-10</strong> (Sorriso desvanece)</td>
+                    <td>Coberto por S00-03</td>
+                    <td style="color: var(--green);">FORENSE (0.8357)</td>
+                </tr>
+            </table>
+
+            <p style="margin-top: 1rem; color: var(--green);">
+                <strong>Conclusao:</strong> 4/4 CRITICOS cobertos. CENA 00 pronta para montagem.
+                P00-08 selado como still FORENSE (0.7835) por decisao HD — hard cut permitido.
+            </p>
+        </div>
+    </section>
+
+    <footer style="margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--border); color: #666; font-size: 0.75rem;">
+        <p>Liga IA+H | WINDI Publishing House | 28 Jun 2026</p>
+        <p>"A emocao nasce no corte; a verdade nasce no corte seguinte."</p>
+    </footer>
+</body>
+</html>

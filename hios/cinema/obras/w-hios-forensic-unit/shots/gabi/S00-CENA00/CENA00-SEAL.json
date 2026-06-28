@@ -1,0 +1,109 @@
+{
+  "receipt_id": "WINDI-PILOT-CENA00-4CRITICOS-20260628",
+  "scene": "CENA 00 — A Mentira Amorosa",
+  "narrative": "O sorriso, o filho, a despedida, a queda do sorriso. A emoção nasce no corte; a verdade nasce no corte seguinte.",
+  "anchor_frames_critical": {
+    "required": 4,
+    "sealed": 4,
+    "coverage": "100%"
+  },
+  "anchor_environment": {
+    "file": "CENA00_AMBIENTE_ANCHOR_v1.png",
+    "receipt_id": "WINDI-CENA00-AMBIENTE-ANCHOR-20260628",
+    "method": "PLACA_FIXA",
+    "source": "cozinha_frame_01.png",
+    "hash": "sha256:e9761a28d2e0612467d2493c42d86ea9fd3e69435e7b13a4a94c8dc8f2bcf91a",
+    "specification": {
+      "location": "Cozinha de apoio, 42º andar",
+      "time": "Noite (23:30)",
+      "lighting": "Artificial interior, quente, indirecta",
+      "city": "Frankfurt"
+    },
+    "composition": "METHOD_A: Rosto canónico recortado sobre placa fixa",
+    "governs": ["P00-04", "P00-06", "P00-08", "P00-10"]
+  },
+  "shots": [
+    {
+      "plano": "P00-04",
+      "description": "Medium Gabi ouve — sorriso forma-se",
+      "file": "S00-01_v7_prata.mp4",
+      "type": "video",
+      "stats": {
+        "avg": 0.8077,
+        "min": 0.7473,
+        "max": 0.9930,
+        "verdict": "FORENSE"
+      }
+    },
+    {
+      "plano": "P00-06",
+      "description": "Close-up sorriso pleno",
+      "file": "S00-01_v7_prata.mp4",
+      "type": "video",
+      "stats": {
+        "avg": 0.8077,
+        "min": 0.7473,
+        "max": 0.9930,
+        "verdict": "FORENSE"
+      },
+      "note": "Mesmo shot que P00-04 — continuidade de eixo"
+    },
+    {
+      "plano": "P00-08",
+      "description": "Medium Gabi despede-se — ternura maternal",
+      "file": "../P00-08/P00-08_FORENSE_still.png",
+      "type": "still",
+      "stats": {
+        "similarity": 0.7835,
+        "det_score": 0.7850,
+        "verdict": "FORENSE"
+      },
+      "decision": "Still extraction — Frame 1 passa FORENSE, hard cut permitido para beat físico"
+    },
+    {
+      "plano": "P00-10",
+      "description": "Close-up sorriso desvanece — determinação fria",
+      "file": "S00-03_v6.mp4",
+      "type": "video",
+      "stats": {
+        "avg": 0.8357,
+        "min": 0.8069,
+        "max": 0.9069,
+        "verdict": "FORENSE"
+      }
+    }
+  ],
+  "arco_emocional": [
+    "P00-04: Ouve o filho → sorriso nasce",
+    "P00-06: Sorriso pleno → amor puro",
+    "P00-08: Despede-se → ternura (beat físico)",
+    "P00-10: Desliga → máscara cai"
+  ],
+  "inserts_pendentes": {
+    "count": 10,
+    "list": ["P00-01", "P00-02", "P00-03", "P00-05", "P00-07", "P00-09", "P00-11", "P00-12", "P00-13", "P00-14"],
+    "note": "Resolvíveis em COMPOSIÇÃO-PÓS sem geração Runway"
+  },
+  "doctrines_applied": [
+    "Anti-Movement Medicine — Light moves, not subject",
+    "DOUTRINA-MONTAGEM-SOBERANA-001 — Hard cut para ação física",
+    "Threshold não se baixa para acomodar material",
+    "Two-Anchor Architecture — Identity + Environment",
+    "METHOD_A: Projecção Pós — rosto recortado sobre placa fixa"
+  ],
+  "costs": {
+    "S00-01_v7_prata": "~$0.85",
+    "S00-02_v2": "~$0.85",
+    "S00-03_v6": "~$0.85",
+    "P00-08_v1": "$0.85",
+    "cozinha_ambiente": "$0.85",
+    "total_estimated": "~$4.25"
+  },
+  "invariants": ["I1", "I9", "I11", "I14"],
+  "decision_i9": {
+    "approved_by": "Human Dragon",
+    "timestamp": "2026-06-28T12:20:00"
+  },
+  "sealed_at": "2026-06-28T12:28:00",
+  "status": "SEALED — 4/4 CRÍTICOS FORENSE"
+}

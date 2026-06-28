@@ -1,0 +1,40 @@
+{
+  "shot_id": "P00-08",
+  "scene": "CENA 00 — A Mentira Amorosa",
+  "description": "Medium Gabi despede-se do filho — ternura maternal",
+  "plano_decupagem": "P00-08",
+  "threshold_required": 0.75,
+  "threshold_tier": "FORENSE",
+  "source": {
+    "video": "P00-08_v1.mp4",
+    "workflow_id": "P00-08_despedida_v2_20260628",
+    "generator": "Runway Gen-4 Turbo",
+    "cost": "$0.85"
+  },
+  "measurements": [
+    {"frame": "frame_01.png", "similarity": 0.7835, "det_score": 0.7850, "verdict": "FORENSE"},
+    {"frame": "frame_02.png", "similarity": 0.6930, "det_score": 0.8389, "verdict": "OPERATIONAL"},
+    {"frame": "frame_03.png", "similarity": 0.6885, "det_score": 0.8314, "verdict": "OPERATIONAL"},
+    {"frame": "frame_04.png", "similarity": 0.6763, "det_score": 0.8130, "verdict": "FAILED"},
+    {"frame": "frame_05.png", "similarity": 0.6772, "det_score": 0.8340, "verdict": "FAILED"}
+  ],
+  "stats": {
+    "avg": 0.7037,
+    "min": 0.6763,
+    "max": 0.7835
+  },
+  "decision": {
+    "type": "STILL_EXTRACTION",
+    "rationale": "Frame 1 passa FORENSE (0.7835 > 0.75). Frames seguintes colapsam por micro-movimento facial na expressão maternal. Doutrina permite hard cut para ação física (despedida). Still cortado seco serve o beat.",
+    "selected_frame": "frame_01.png",
+    "selected_output": "P00-08_FORENSE_still.png",
+    "selected_similarity": 0.7835,
+    "approved_by": "Human Dragon (I9)",
+    "guardian_parecer": "Threshold não se baixa para acomodar material. Frame 1 FORENSE limpo, sem exceções.",
+    "timestamp": "2026-06-28T12:20:00"
+  },
+  "verdict": "FORENSE",
+  "invariants": ["I1", "I9", "I11", "I14"],
+  "sealed_at": "2026-06-28T12:20:00",
+  "status": "SEALED"
+}

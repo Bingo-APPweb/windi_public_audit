@@ -1,0 +1,48 @@
+{
+  "receipt_id": "WINDI-CENA00-AMBIENTE-ANCHOR-20260628",
+  "anchor_type": "ENVIRONMENT",
+  "scene": "CENA 00 — A Mentira Amorosa",
+  "file": "CENA00_AMBIENTE_ANCHOR_v1.png",
+  "source_frame": "cozinha_frame_01.png",
+  "source_video": "cozinha_42andar_v1.mp4",
+  "method": "PLACA_FIXA",
+  "hash": "sha256:e9761a28d2e0612467d2493c42d86ea9fd3e69435e7b13a4a94c8dc8f2bcf91a",
+  "specification": {
+    "location": "Cozinha de apoio, 42º andar",
+    "time": "Noite (23:30)",
+    "lighting": "Artificial interior, quente, indirecta",
+    "elements": ["Máquina de café", "Bancada mármore escuro", "Skyline nocturno"],
+    "city": "Frankfurt",
+    "atmosphere": "Oásis doméstico no topo corporativo"
+  },
+  "composition_method": {
+    "code": "METHOD_A",
+    "name": "Projecção Pós",
+    "description": "Rosto canónico Gabi recortado, composto sobre placa fixa de ambiente"
+  },
+  "selection_criteria": {
+    "guardian_analysis": "Frame 01 oferece espaço centro-esquerda para composição facial, máquina de café fora do eixo, downlights quentes compatíveis com luz facial selada",
+    "rejected_frames": {
+      "03": "Máquina de café demasiado centrada, competiria com rosto",
+      "04": "Máquina centrada",
+      "05": "Máquina centrada"
+    }
+  },
+  "governs": [
+    "P00-04 — Medium Gabi ouve",
+    "P00-06 — Close-up sorriso pleno",
+    "P00-08 — Medium Gabi despede-se",
+    "P00-10 — Close-up sorriso desvanece"
+  ],
+  "invariants": ["I9", "I11", "I14", "I19"],
+  "doctrines": [
+    "Two-Anchor Architecture: Identity + Environment",
+    "Method A: Projecção Pós",
+    "PLACA FIXA para controlo de continuidade total"
+  ],
+  "witness_note": "CIDADE separada como decisão pendente — não entrou por porta dos fundos. Ambiente sela independente de metadado narrativo.",
+  "cost": "$0.85",
+  "sealed_at": "2026-06-28T13:45:00Z",
+  "sealed_by": "Human Dragon",
+  "status": "SEALED"
+}
