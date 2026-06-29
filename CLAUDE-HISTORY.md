@@ -7,6 +7,275 @@
 # ---
 
 
+## § SESSÃO 29 Jun 2026 (tarde) — W-CONV-001 LIVE · Conversation Engine Deploy
+
+**Duração:** ~2h | **Status:** ✅ DEPLOYED · SECURITY VERIFIED
+**Liga IA+H:** Human Dragon (I1, I9) · CCode (Opus 4.5)
+**Projecto:** W-CONV-001 — Conversation Engine
+**Natureza:** Deploy de produção · Integração W-EMAIL Stack
+**Invariantes:** I9, I11, I14, I19
+
+### Marco Central
+
+> *"O email deixa de ser uma linha de tempo. Passa a ser um grafo de decisões."*
+
+### Contexto
+
+Sessão de consolidação do trabalho W-EMAIL iniciado com Guardian GPT/Claude.ai.
+Convergência de especificações DACP-v1.1, W-CONV-001, W-ARTIFACT-001 e integração
+com stack VKE (Verified Knowledge Evolution) selado em §301.
+
+### Artefactos Criados
+
+#### 1. W-CONV-001 Stack Docker
+- **Localização:** `/opt/windi/w-conv-001/`
+- **Componentes:**
+  - `docker-compose.yml` — Neo4j 5.18 + Conversation Engine
+  - `Dockerfile` — Python 3.11 + Flask
+  - `src/conv_engine.py` — Motor de transformação (~520 linhas)
+  - `scripts/init-db.cypher` — Schema Neo4j (constraints + indexes)
+
+#### 2. Documentação Formal
+- **Documento:** `/opt/windi/docs/W-CONV-001.md`
+- **Conteúdo:**
+  - Arquitectura e modelo de dados
+  - API HTTP (4 endpoints)
+  - Reconstrução de threads RFC 5322
+  - Ciclo de vida de artefactos
+  - Integração DACP-v1.1
+  - Comandos de operação
+
+### Portas Activadas
+
+| Porta | Serviço | Status |
+|-------|---------|--------|
+| :8145 | W-CONV-001 API | 🟢 LIVE |
+| :7474 | Neo4j Browser | 🟢 LIVE |
+| :7687 | Neo4j Bolt | 🟢 LIVE |
+
+### Modelo de Grafo
+
+```
+Nós: Actor, MessageEvent, Context, Artifact, Participant, InteractionEvent, LifecycleEvent
+Arestas: AUTHORED, PART_OF, RESPONDS_TO, SENT_TO, CONTAINER_FOR, TRIGGERED, INTERACTED_WITH
+```
+
+### Testes Executados
+
+| Teste | Resultado |
+|-------|-----------|
+| Health check | ✅ PASS |
+| Ingestão de email | ✅ PASS |
+| Reconstrução de thread | ✅ PASS (2 mensagens na mesma thread) |
+| Query de thread | ✅ PASS |
+| Stats do grafo | ✅ PASS |
+
+### Especificações Consolidadas (Guardian Council)
+
+Esta sessão integrou especificações discutidas em conselho IA+H:
+
+1. **DACP-v1.1** — Milter Postfix com extracção RFC 5322 e TEMPFAIL
+2. **W-CONV-001** — Conversation Engine (este deploy)
+3. **W-ARTIFACT-001** — Ciclo de vida de artefactos multimédia
+4. **VKE-CORE-001** — Framework de evolução do conhecimento (§301 SEALED)
+
+### Correcções Pós-Deploy (Witness Review)
+
+#### 1. Vulnerabilidade de Firewall — CORRIGIDA ✅ VERIFICADA
+```
+ANTES: 0.0.0.0:7474/7687/8145 (EXPOSTO À INTERNET ~15min)
+DEPOIS: 127.0.0.1:7474/7687/8145 (LOCALHOST ONLY)
+```
+**Acção:** docker-compose.yml actualizado com `127.0.0.1:` prefix em todas as portas.
+
+**FALHA NOMEADA (§268 honestidade):** A violação foi de **READ FIRST**, não de velocidade
+de resposta. Executei `docker compose up` com `ports: "7474:7474"` sem verificar que
+isso expunha 0.0.0.0 à internet pública. Neo4j com password semi-previsível ficou
+acessível por ~15 minutos. Numa doutrina onde I9 é IRREMEDIÁVEL, isto é grave.
+
+**Verificação Completa (29 Jun 2026):**
+
+| Camada | Mecanismo | Status |
+|--------|-----------|--------|
+| L1 | Docker bind 127.0.0.1 | ✅ docker-compose.yml |
+| L2 | ufw deny-by-default | ✅ ports not in allow list |
+| L3 | Teste externo | ✅ Connection refused ×3 |
+
+```bash
+# Teste externo do portátil Human Dragon (não do VPS):
+curl -v --connect-timeout 5 http://87.106.29.233:7474  # Connection refused
+curl -v --connect-timeout 5 http://87.106.29.233:7687  # Connection refused
+curl -v --connect-timeout 5 http://87.106.29.233:8145  # Connection refused
+```
+
+**ufw status:** Active, default deny incoming, ports 7474/7687/8145 NOT in allow list.
+**Inspecção de Logs (janela 14:30:49–14:43:46 UTC):**
+- `security.log`: 0 bytes — nenhuma tentativa de autenticação registada
+- `neo4j.log`: apenas startup/shutdown, sem eventos de conexão
+- `debug.log`: warnings de plugins, sem connection attempts
+
+**Conclusão:** Defense-in-depth verificada. Janela de exposição (~13 min) fechada.
+Logs inspeccionados: não foi detectada evidência de conexão externa ou tentativa
+de autenticação durante o período de exposição.
+
+#### 2. Reciclagem Consciente da Porta :8145
+A porta :8145 foi originalmente reservada para Verify Public mas a errata §267
+(15 Mai 2026, receipt `80A13B17`) corrigiu para :8114. A porta :8145 ficou livre.
+
+**Receipt verificado:** `WINDI-ERRATA-S267-20260515180759-80A13B17` existe em
+`/opt/windi/docs/PROOF-SELF-CORRECTION-WITHOUT-REWRITE.md` (grep confirmado).
+
+**Decisão:** Reciclar :8145 para W-CONV-001 é **legítimo** porque:
+- §267 documenta explicitamente que :8114 é a porta canónica do Verify Public
+- :8145 não tem serviço systemd/nginx associado
+- SYSTEM-ABSORPTION-AUDIT confirma: ":8145 (was expected for Verify Public, now free)"
+
+#### 3. Docker como Excepção Arquitectural
+W-CONV-001 é o primeiro serviço WINDI a usar Docker (vs 30+ serviços systemd).
+**Justificação:** Neo4j requer JVM + heap tuning; Docker isola esta complexidade.
+**Mitigação:** Stack mínima (só Neo4j + Engine, sem Redis desnecessário).
+
+**NOTA:** Docker manipula iptables directamente, por baixo do ufw. O bind a 127.0.0.1
+resolve o problema. ufw verificado: active, deny incoming, ports não expostos.
+Teste externo confirma inacessibilidade — defense-in-depth completa.
+
+### Integração DACP ↔ W-CONV-001 (29 Jun 2026, tarde)
+
+**Status:** ✅ LIVE
+
+**Artefactos criados:**
+- `/opt/windi/w-mail-001/dacp-milter/conv_client.py` — Cliente HTTP para W-CONV-001
+
+**Alterações ao DACP Milter:**
+- Import de `conv_client` com funções de integração
+- Captura de headers RFC 5322: `Message-ID`, `In-Reply-To`, `References`
+- Chamada `send_knowledge_event()` após seal bem sucedido
+- Falhas NÃO bloqueiam entrega (log warning only)
+- Métricas: `conv_events_sent_total`, `conv_events_failed_total`
+
+**Testes executados:**
+| Teste | Resultado |
+|-------|-----------|
+| Sintaxe Python | ✅ PASS |
+| Conectividade W-CONV-001 | ✅ PASS |
+| References parser | ✅ PASS |
+| Thread linking (2 mensagens) | ✅ PASS (mesmo Context ID) |
+| Subject normalização | ✅ PASS (Re:/Fwd: removidos) |
+
+**Teste End-to-End com Email Real (via Python smtplib):**
+
+| Email | De | Para | Anexo | Receipt |
+|-------|----|----|-------|---------|
+| Original | test@windisites.de | postmaster | dragon-architect.png (5.6KB) | `WINDI-MAIL-PROOF-20260629155053-215F3E7A` |
+| Reply | noreply@windisites.de | postmaster | beep.wav (8KB) | `WINDI-MAIL-PROOF-20260629155246-3949713E` |
+
+**Resultado:** Ambos emails na mesma thread (`CTX-0dd36539f7b1`).
+Thread linking via `In-Reply-To` + `References` RFC 5322 funciona correctamente.
+
+**Configuração Docker adicional:**
+- W-CONV-001 exposta em `172.17.0.1:8145` para acesso inter-container
+- Supervisor environment: `CONV_ENGINE_URL="http://host.docker.internal:8145"`
+
+**Fluxo completo:**
+```
+Email → DACP Milter → Ledger (blocking) → W-CONV-001 (non-blocking) → Neo4j
+```
+
+### Próximos Passos
+
+- [x] ~~Integrar `conv_client.py` no DACP Milter real~~ ✅ DONE
+- [ ] Adicionar extracção semântica (NLP para entidades/compromissos)
+- [ ] Promover threads para VKE Records
+- [ ] W-MAIL-001 systemd migration
+
+### ARA — Academic Rigor Analysis (Conclusão Selada)
+
+**Status:** FECHADO | **Resultado:** Redução completa (H6 confirmada)
+**Intervenientes:** Human Dragon (I1, I9) · CCode · Guardian (GPT-4.5) · Architect (Claude.ai)
+
+#### Contexto
+
+Investigação metodológica para determinar se WINDI-HIOS constitui uma categoria computacional nova ou se reduz a composições de arquitecturas existentes. Metodologia falsificacionista com denominador selado de propriedades observáveis.
+
+#### Propriedades Testadas (Denominador Selado)
+
+| ID | Propriedade | Status |
+|----|-------------|--------|
+| **L** | Ledger — append-only, hash-chain, receipts | ✅ Reduz |
+| **I** | Identity — DID, PKI, sessions | ✅ Reduz |
+| **G** | Governance — policy engine, state machine | ✅ Reduz |
+| **E** | Evolution — comportamento muda com inputs acumulados | ✅ Reduz |
+
+#### Decomposição de E (Evolução do Conhecimento)
+
+| Componente | Descrição | Reduz a |
+|------------|-----------|---------|
+| E1 | Storage estruturado | Knowledge Graph |
+| E2 | Rastreabilidade de mudança | Event Store |
+| E3 | Inputs intactos | Append-only log |
+| E4a | Extracção de lição | Event Store + KG + **curadoria humana** |
+| E4b | Aplicação verificável | Policy Engine + Query |
+| E4c | Ligação estrutural | Schema constraints |
+
+#### Premissas Empíricas Confirmadas (Human Dragon)
+
+1. **Cristalização de Lessons:** Humana (não automática)
+2. **Enforcement bloqueante:** Não existe no sistema actual
+
+#### Erro Metodológico Identificado e Corrigido
+
+Durante análise de E4, CCode fabricou propriedade não selada:
+> *"Lesson A bloqueia publicação de documento B até demonstrar aplicação"*
+
+**Guardian identificou:** Esta propriedade nunca foi selada no denominador e não existe no sistema. Era "deus das lacunas" arquitectural — feature inventada para resistir à redução.
+
+**Correcção:** Propriedade-fantasma expurgada. Análise retomada com denominador original.
+
+#### Veredicto Final
+
+```
+Hipótese H6 (Redução por Composição): CONFIRMADA
+
+Núcleo computacional irredutível: NÃO ENCONTRADO
+
+Composição que explica WINDI-HIOS:
+├── Ledger (append-only log)
+├── DID (identidade soberana)
+├── Policy Engine (governança declarativa)
+├── Knowledge Graph (estrutura)
+└── Curadoria Humana (cristalização de conhecimento)
+
+O que distingue WINDI:
+├── Não é capacidade que categorias existentes não possam ter
+├── É DISCIPLINA de composição:
+│   ├── Proveniência inseparável (I19)
+│   ├── Governança declarativa (I9)
+│   └── Aprovação humana em cada transição (I1)
+└── Valor prova-se por adopção, não por declaração
+```
+
+#### Lição Metodológica
+
+> *"O ARA quase fabricou um resíduo por redefinição. O Guardian apanhou a derrapagem exactamente quando ela acontecia. O método funcionou porque se corrigiu antes de selar conclusão falsa."*
+> — Conclusão do Witness review
+
+#### Implicação
+
+O WINDI-HIOS não precisa de reivindicar categoria nova para justificar valor. O valor está na disciplina de composição — a regra de que Ledger, DID, Policy Engine, Knowledge Graph e curadoria humana coexistem sob proveniência verificável e aprovação humana em cada transição.
+
+Se a comunidade concluir que esta disciplina merece nome próprio, o reconhecimento surgirá de implementações e adopção — não de declaração antecipada.
+
+### Frase de Guarda
+
+> *"Como usar toda essa complexidade adquirida pelo WINDI-HIOS no projeto W-EMAIL?"*
+> — Human Dragon, início da sessão
+
+> *"O WINDI não precisa de reivindicar magia para justificar a sua existência."*
+> — Architect, conclusão do ARA
+
+---
+
+
 ## § SESSÃO 27 Jun 2026 (noite) — W-PLAYGROUND Tutorials · Case 0001 como Professor
 
 **Duração:** ~30min | **Status:** ✅ TUTORIAL LIVE
@@ -22683,4 +22952,361 @@ O Dragao descansa. O chao esta firme. A proxima sementeira aguarda manha fresca.
 
 *§236 COMPLIANCE: Lei I ✅ | Lei II ✅ | Lei III ✅*
 *OM SHANTI 🐉*
+
+
+---
+
+## § SESSÃO 28 Jun 2026 — META 000 DID Revocation Hardening · D5 Fix · ERRATA Protocol
+
+**Duração:** ~4h | **Status:** ✅ META 000 VERDE (com asterisco documentado)
+**Liga IA+H:** Human Dragon (I1, I9) · CCode (Opus 4.5)
+**Projecto:** W-DID-GENESIS — Sovereign Identity Tree
+**Natureza:** Sessão de hardening crítico · Fundações de segurança
+
+### Marco Central
+
+> *"Selar é necessário; ser verdadeiro é suficiente. Um selo sobre uma inverdade empresta-lhe autoridade."*
+> — Human Dragon · 28 Jun 2026
+
+### Contexto de Entrada
+
+Pergunta sobre integração W-RAG destapou que o DID não tinha mecanismo de revogação implementado. Desenho existia, implementação não. META 000 definido para fechar o buraco antes de qualquer piloto.
+
+### META 000 — Itens Completos
+
+| Item | Descrição | Status |
+|------|-----------|--------|
+| 1-10 | Mitigações: TTL 15min, validation cache 60s, mass-suspend alert | ✅ |
+| 11 | actor = w-did-genesis@windi-domain.com para auto-operações | ✅ |
+| 12 | Persistir suspended_by / suspended_by_tier / suspended_at na DB | ✅ |
+| D5 | Correcção Ledger: actor ≠ wallet_id para did_suspend/did_restore | ✅ |
+| ERRATA | 16 receipts históricos corrigidos por referência | ✅ |
+
+### Artefactos Criados/Modificados
+
+#### 1. Endpoints de Revogação (did_genesis.py v1.5.0)
+- `POST /api/genesis/{did}/suspend` — Suspensão com hierarquia de tiers
+- `POST /api/genesis/{did}/restore` — Restauração assimétrica (ORACLE-only)
+- `GET /api/genesis/{did}/status` — Status com metadata de suspensão
+
+#### 2. Ledger Client (ledger_client.py)
+- `seal_suspend()` — Receipt com is_self_suspension flag
+- `seal_restore()` — Receipt de restauração
+- Lógica de actor: service para self-ops, DID para hierarchical
+
+#### 3. Correcção D5 (windi_forensic_api.py)
+```python
+D5_ACTOR_PRESERVED_TYPES = {"did_suspend", "did_restore"}
+
+if wallet_id and r.get("doc_type") not in D5_ACTOR_PRESERVED_TYPES:
+    r["actor"] = wallet_id
+```
+
+#### 4. Schema DB (did_genesis.db)
+- `suspended_by TEXT` — Quem suspendeu
+- `suspended_by_tier TEXT` — Tier de quem suspendeu  
+- `suspended_at TEXT` — Timestamp ISO
+
+#### 5. ERRATA Receipt
+- **ID:** `WINDI-ERRATA-D5-20260628192647`
+- **Propósito:** Corrige 16 receipts históricos com actor incorreto
+- **Padrão:** Append-only, nunca reescrever
+
+### Testes Verificados
+
+| Cenário | Resultado |
+|---------|-----------|
+| SEED auto-suspensão | ✅ actor = w-did-genesis@windi-domain.com |
+| ORACLE→SEED suspend | ✅ actor = did:windi:dragon-001 |
+| SEED→SOVEREIGN suspend | ✅ 403 Forbidden |
+| Self-restore | ✅ 401/403 Denied |
+| Non-ORACLE restore | ✅ 403 Forbidden |
+| ORACLE restore | ✅ Sealed com metadata |
+
+### Lições Seladas (para DOUTRINA-DID-REVOGACAO-001)
+
+> **Cláusula 1:** Todo teste de governança verifica veracidade, não apenas sucesso.
+> 
+> **Cláusula 2:** Toda correcção de lógica que afete receipts passados gera ERRATA, nunca reescrita.
+> 
+> **Cláusula 3:** Toda dívida conhecida fica visível no verde, nunca calada por baixo dele.
+
+### Asterisco Documentado
+
+O Ledger corre via nohup, não systemd. Se Strato reinicia, o Ledger não volta sozinho. Suspensões durante downtime ficam em estado "pending" (honesto, não falso). Verde com asterisco até migrar para systemd.
+
+### Dívida Técnica
+
+| Item | Prioridade | Notas |
+|------|------------|-------|
+| Ledger → systemd | P1 | Remove asterisco do verde |
+| Quórum ORACLE 2-de-3 | P2 | Único item hierárquico pendente |
+| DOUTRINA-DID-REVOGACAO-001 | P1 | 3 cláusulas prontas para selar |
+
+### Ficheiros Tocados
+
+| Ficheiro | Alteração |
+|----------|-----------|
+| `/opt/windi/did-genesis/did_genesis.py` | v1.5.0 · Endpoints + Items 11/12 |
+| `/opt/windi/did-genesis/ledger_client.py` | seal_suspend/restore + service actor |
+| `/opt/windi/suite-docs/windi_forensic_api.py` | D5_ACTOR_PRESERVED_TYPES |
+| `/opt/windi/did-genesis/did_genesis.db` | 3 colunas suspensão |
+| `/opt/windi/did-genesis/test_suspend_scenarios.py` | 3 cenários |
+| `/opt/windi/did-genesis/test_restore_scenarios.py` | 3 cenários assimétricos |
+
+### Receipts Selados
+
+| Receipt | Tipo |
+|---------|------|
+| `WINDI-DID-SUSPEND-20260628192127-*` | Testes pós-D5 |
+| `WINDI-DID-RESTORE-20260628192127-*` | Testes pós-D5 |
+| `WINDI-ERRATA-D5-20260628192647` | Correcção histórica |
+
+### Próxima Sessão
+
+1. **Selar DOUTRINA-DID-REVOGACAO-001** — 3 cláusulas + invariantes
+2. **Migrar Ledger para systemd** — Remove asterisco
+3. **Implementar quórum ORACLE 2-de-3** — Opcional, hierarquia completa
+
+### Frase de Guarda
+
+> *"Três vezes o verde escondeu uma inverdade no rodapé. Três vezes foi preciso ler o rodapé para a achar. A quarta vez, não houve rodapé — a verdade foi perseguida em vez de gerida."*
+> — CCode · 28 Jun 2026
+
+---
+
+---
+
+## §301 — VKE-CORE-001: Lei da Evolução de Conhecimento Verificável (29 Jun 2026)
+
+**Status:** SEALED · **Receipt:** `WINDI-VKE-CORE-001-v0.3-20260629114213-F4C6C62A`
+**Invariants:** I1, I9, I11, I13, I14, I19
+**Hash:** `f4c6c62abd727bc4aa11f4f111ecdc31b521e676aa86b5902dcbf5a16d635373`
+**Path:** `/opt/windi/docs/S301-VKE-CORE-001.md`
+**Liga IA+H:** Human Dragon (I1, I9) · Guardian (GPT + Claude.ai) · CCode (Opus 4.5)
+
+> *"O WINDI-HIOS é um sistema de evolução de conhecimento governado.*
+> *Modelos generativos produzem linguagem.*
+> *O WINDI-HIOS produz memória verificável."*
+
+### Conteúdo Fundacional
+
+| Componente | Descrição |
+|------------|-----------|
+| **Ontologia** | Observation → Record → Lesson → Operational Policy → Doctrine |
+| **Estados Terminais** | Archived Evidence, Consolidation, deprecated, revoked |
+| **Invariantes** | INV-001..INV-009 (9 invariantes operacionais) |
+| **K-DID** | Knowledge Decentralized Identifier — identidade de Knowledge Thread |
+| **Quorum** | ORACLE 2-of-3 como Default Constitutional |
+| **Arquitectura** | L0-L9 (Data → LLM Orchestration) |
+
+### Distinção Nuclear
+
+| LLM | WINDI-HIOS VKE |
+|-----|----------------|
+| Atualiza pesos | Atualiza conhecimento governado |
+| Token/sequência | Record verificável |
+| Reward | Lesson |
+| Prediz próximo token | Preserva continuidade e prova |
+
+### Família de Documentos VKE-*
+
+- **VKE-CORE-001** ← Este documento (SEALED)
+- VKE-SCHEMA-001 (pendente)
+- VKE-GOVERNANCE-001 (pendente)
+- VKE-RUNTIME-001 (pendente)
+- VKE-LEDGER-001 (pendente)
+- VKE-RETRIEVAL-001 (pendente)
+
+### Processo de Selagem
+
+Convergência de 3 instâncias (CCode, Guardian GPT, Guardian Claude.ai) confirmou:
+1. §300 ocupado → §301 reclamado
+2. I17, I18, I19 confirmados em CLAUDE.md
+3. §268 confirmado como ERRATA pattern
+4. Hash gerado antes de POST
+5. Ledger receipt emitido com `did:windi:dragon-001`
+
+**Próximo:** VKE-SCHEMA-001 (JSON-LD/RDF)
+
+
+---
+
+## § SESSÃO 29 Jun 2026 — VKE Genesis: §301 SEALED + Manifesto CANDIDATE
+
+**Duração:** ~3h | **Status:** ✅ CONSTITUTIONAL MILESTONE
+**Liga IA+H:** Human Dragon (I1, I9) · Guardian GPT · Guardian Claude.ai · CCode Strato (Opus 4.5) · Perplexity
+**Invariants:** I1, I9, I11, I13, I14, I19
+**Natureza:** Convergência Multi-Instância · Especificação Fundacional · Posicionamento Estratégico
+
+### Contexto
+
+Sessão de design arquitectural que produziu o sistema **Verified Knowledge Evolution (VKE)** — a camada de evolução de conhecimento governado do WINDI-HIOS. Convergência de 4 instâncias IA independentes (CCode, Guardian GPT, Guardian Claude.ai, Perplexity) sobre o mesmo design, demonstrando **Architectural Convergence** (HD-MIRROR).
+
+### Artefactos Produzidos
+
+| Artefacto | Status | Receipt/Path |
+|-----------|--------|--------------|
+| **VKE-CORE-001 v0.3** | ✅ SEALED §301 | `WINDI-VKE-CORE-001-v0.3-20260629114213-F4C6C62A` |
+| **VKE-MANIFESTO-001 v0.1** | CANDIDATE | `/opt/windi/docs/VKE-MANIFESTO-001-v0.1-CANDIDATE.md` |
+
+### §301 — Lei da Evolução de Conhecimento Verificável
+
+**Hash:** `f4c6c62abd727bc4aa11f4f111ecdc31b521e676aa86b5902dcbf5a16d635373`
+**Path:** `/opt/windi/docs/S301-VKE-CORE-001.md`
+
+#### Conteúdo Fundacional
+
+| Componente | Descrição |
+|------------|-----------|
+| **Ontologia** | Observation → Record → Lesson → Operational Policy → Doctrine |
+| **Estados Terminais** | Archived Evidence, Consolidation, deprecated, revoked |
+| **9 Invariantes** | INV-001..INV-009 (operacionais, mapeados a I1-I19) |
+| **K-DID** | Knowledge Decentralized Identifier — identidade de Knowledge Thread |
+| **Quorum** | ORACLE 2-of-3 como Default Constitutional |
+| **Arquitectura** | L0-L9 (Data → Entities → Identity → Embeddings → KG → Governance → Continuity → VKE → Retrieval → LLM) |
+
+#### Máquina de Estados
+
+```
+Observation → Record → Validation
+  ├── rejected → Archived Evidence
+  → Verified Record
+  ├── no cognitive gain → Consolidation
+  → Lesson Candidate → Verified Lesson ← K-DID emitido (I9 gate)
+  → Operational Policy (draft→candidate→active→deprecated)
+  → Doctrine (proposal→ratified→deprecated/revoked)
+```
+
+#### Distinção Nuclear
+
+| LLM | WINDI-HIOS VKE |
+|-----|----------------|
+| Atualiza pesos | Atualiza conhecimento governado |
+| Token/sequência | Record verificável |
+| Reward | Lesson |
+| Prediz próximo token | Preserva continuidade e prova |
+
+### VKE-MANIFESTO-001 — A Camada que Permanece
+
+**Status:** CANDIDATE (não selado — faz afirmações de mercado que envelhecem)
+
+#### Frases Adoptadas
+
+**Frase Fundadora (MANIFESTO):**
+> *"Os modelos evoluem pela atualização dos seus parâmetros. O conhecimento evolui pela acumulação de evidências. O WINDI-HIOS existe para governar essa evolução — sem transferir essa governança ao modelo. Os motores podem mudar; o controlo do conhecimento permanece humano."*
+
+**Frase Constitucional (CORE):**
+> *"Modelos generativos produzem linguagem. O WINDI-HIOS produz conhecimento verificável, preserva a sua linhagem e governa a sua evolução — sem transferir essa governança ao modelo. Os motores podem mudar; a continuidade e o controlo do conhecimento permanecem humanos."*
+
+#### Conceitos Estratégicos
+
+- **Terceira Pergunta:** "Como fazer o conhecimento amadurecer de forma verificável?"
+- **Analogia do Arquivo:** LLM = orador; WINDI-HIOS = cartório/arquivo nacional
+- **Analogia da Internet:** Navegadores mudam, protocolos permanecem — mas WINDI tem dono humano (I9)
+- **Eixo Estratégico:** Competir na camada estável (memória governada), não no ciclo rápido dos modelos
+
+### Processo de Convergência
+
+**4 instâncias independentes convergiram para o mesmo design:**
+
+| Instância | Contribuição Principal |
+|-----------|------------------------|
+| **CCode Strato** | Verificação canónica (§301 livre, I19 existe), selagem Ledger |
+| **Guardian GPT** | "Terceira pergunta", analogia arquivo, refinamentos |
+| **Guardian Claude.ai** | Lei I enforcement, separação CORE/MANIFESTO, travou selagem sem verificação |
+| **Perplexity** | Correção "permanece" → paralelo evolutivo (modelos por parâmetros, conhecimento por evidências) |
+
+**Observação Guardian:** As "Quellen" da Perplexity eram eco do próprio conselho (upload devolvido como fonte). Ideias válidas por mérito, mas não corroboração externa.
+
+### Verificações Executadas (Fase 0)
+
+| Verificação | Resultado |
+|-------------|-----------|
+| §301 livre? | ✅ Confirmado (§300 = Observação antes de Abstracção) |
+| I19 existe? | ✅ CLAUDE.md linha 142, 228 |
+| I17, I18 existem? | ✅ CLAUDE.md linhas 140-141 |
+| §268 = ERRATA pattern? | ✅ TWIN Marcus Divergence |
+| Ledger POST | ✅ `did:windi:dragon-001` |
+
+### Backlog VKE-*
+
+| Doc | Status | Conteúdo |
+|-----|--------|----------|
+| **VKE-CORE-001** | ✅ SEALED | Ontologia, estados, invariantes, K-DID |
+| **VKE-MANIFESTO-001** | CANDIDATE | Posicionamento, analogias, "terceira pergunta" |
+| **VKE-SCHEMA-001** | PENDENTE | JSON-LD/RDF, formato K-DID, campos |
+| **VKE-GOVERNANCE-001** | PENDENTE | ORACLE quorum, supersession, revocation |
+| **VKE-RUNTIME-001** | PENDENTE | APIs, Evidence Package, feedback loop |
+| **VKE-RETRIEVAL-001** | PENDENTE | Governed Retrieval para LLMs |
+
+### Insight Arquitectural
+
+> *"No início: Como construir um sistema em torno de IA?*
+> *Agora: Como construir infraestrutura onde diferentes IAs trabalham sobre conhecimento governado?"*
+
+O WINDI-HIOS desloca o centro da arquitectura do modelo para o conhecimento. Os modelos são motores substituíveis; a continuidade e a governança permanecem.
+
+### Commits
+
+```
+(sessão não incluiu commits git — trabalho documental)
+```
+
+### Ficheiros Criados/Modificados
+
+- `/opt/windi/docs/S301-VKE-CORE-001.md` — SEALED
+- `/opt/windi/docs/VKE-MANIFESTO-001-v0.1-CANDIDATE.md` — CANDIDATE
+- `/home/windi/CLAUDE-HISTORY.md` — entrada §301 + esta entrada de fecho
+
+---
+
+*Liga IA+H — Kempten, Bavaria · 29 Jun 2026*
+*"AI processes. Human decides. WINDI guarantees."*
+
+
+---
+
+## § SESSÃO 29 Jun 2026 — Fecho Final
+
+**Adenda ao fecho anterior**
+
+### Matéria Conceptual Guardada
+
+Durante a sessão, o conselho convergiu em matéria conceptual adicional sobre a arquitectura do ecossistema WINDI. Esta matéria **não foi selada** mas foi guardada como draft para sessão futura:
+
+**Ficheiro:** `/opt/windi/docs/WINDI-ECOSYSTEM-DRAFT-001.md`
+
+**Conteúdo:**
+- Quatro blocos: Actores, Garantia Constitucional, Fronteira Económica, Condição de Incapturabilidade
+- Arquitectura: HIOS → VKE → Apps → Enterprise
+- Teste de pertença para componentes
+- Frase-mãe: "O mínimo soberano não é gratuito por caridade; é sustentável por arquitetura"
+
+### Decisão de Não Selar
+
+O conselho decidiu não selar WINDI-ECOSYSTEM-001 nesta sessão porque:
+1. §301 VKE-CORE-001 já tinha sido selado
+2. O conceito de "Condição de Incapturabilidade" precisa de maturação
+3. Sessão demasiado longa (~5h) para decisões de fundo
+
+### Estado Final
+
+| Artefacto | Status |
+|-----------|--------|
+| VKE-CORE-001 §301 | ✅ SEALED `F4C6C62A` |
+| VKE-MANIFESTO-001 | ✅ CANDIDATE |
+| WINDI-ECOSYSTEM-DRAFT-001 | ✅ DRAFT (para próxima sessão) |
+
+### Próxima Sessão (Backlog)
+
+- [ ] WINDI-ECOSYSTEM-001 (quatro blocos)
+- [ ] VKE-SCHEMA-001 (JSON-LD/RDF)
+- [ ] Mapeamento W-* agents vs teste de pertença
+
+---
+
+*Sessão fechada: 29 Jun 2026*
+*Liga IA+H — Kempten, Bavaria*
+*"AI processes. Human decides. WINDI guarantees."*
 
