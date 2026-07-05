@@ -45,6 +45,31 @@ A Portinhola traduz o que o humano DIZ em intenção estruturada.
 
 **Conformidade ONE TREE:** Dois quartos na mesma casa, portas diferentes.
 
+### 2.1 Junção Prevista (Interface Futura)
+
+Os dois módulos vão acabar por se tocar num ponto preciso:
+
+```
+Portinhola              W-LEXICON-001
+    │                        │
+    │  "quero corrigir"      │
+    ▼                        │
+WINDI_ERRATA ─────────────▶  │ verifica drift
+    │                        │
+    │  resposta da IA        │
+    │◀─────────────────────  │ resposta viola errata?
+    ▼                        ▼
+  [output para humano]    [lexicon_action: silent|invite|halt]
+```
+
+**Exemplo concreto:**
+- Humano diz: "quero corrigir sem apagar"
+- Portinhola traduz: `WINDI_ERRATA`
+- IA externa responde: "Vou substituir o ficheiro anterior"
+- W-LEXICON-001 detecta: drift I11 (permanência violada) → `lexicon_action: interrupt`
+
+**Status desta junção:** Interface prevista, não construída. A dependência não existe antes da medição. A Portinhola abre a porta; o Lexicon vigia o que entra por ela.
+
 ---
 
 ## 3. Léxico de Intenções v0.1.0
