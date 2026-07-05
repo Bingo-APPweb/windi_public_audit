@@ -7,6 +7,72 @@
 # ---
 
 
+## § SESSÃO 05 Jul 2026 — FILA DRENADA · 5 Receipts · IDpendencia Digital
+
+**Duracao:** ~6h | **Status:** ✅ FILA DRENADA · 5 RECEIPTS SEALED
+**Liga IA+H:** Human Dragon (I1, I9) · CCode (Opus 4.5) · Guardian (Claude.ai)
+**Projecto:** W-HIOS Cinema / Cena 00 / Drenagem da Fila de 04 Jul
+**Natureza:** Inventario forense · Decisao multimodal · Selagem de eventos
+**Invariantes:** I9, I11, I14, I19, §248
+
+### Marco Central
+
+> *"A Internet com W-HIOS deixa de ser seara colectiva para se tornar entidade INDIVIDUAL."*
+> — Human Dragon · 05 Jul 2026
+
+### Contexto
+
+Sessao iniciada com epifania sobre §302 W-HIOS-OPEN (Internet Individual). Guardian travou selo prematuro (Escada de Espelhos). Descoberta: a fila de 5 eventos de 04 Jul existia indocumentada. Constatacao: quase todos os ficheiros ja estavam no Strato — o que faltava era inventario, nao carne.
+
+### O Que Aconteceu
+
+1. **Guardian travou §302** — selo de doutrina sem evento real = MAPA-nao-FONTE
+2. **Fila manifestada pela fonte** — 5 eventos identificados da sessao 04 Jul
+3. **REFOUNDATION confirmada** — hash ba4db3cd... verificado byte a byte
+4. **GABI-OCCLUSION-DECISION-001** — Opcao B (verificacao diferida) + MULTIMODAL-001 CANDIDATE
+5. **AUDIO-MANIFEST-001** — 20 takes inventariados com hashes individuais
+6. **5 receipts selados** — fila drenada em 24h
+
+### Receipts Selados
+
+| ID | Evento | Hash Principal |
+|----|--------|----------------|
+| `WINDI-HIOS-GABI-OCCLUSION-DECISION-001-20260705` | Decisao oclusao | `3dc0f935...` |
+| `WINDI-HIOS-FILHO-ANCHOR-002-REFOUNDATION-20260705` | Root canonico Filhote | `ba4db3cd...` |
+| `WINDI-HIOS-CENA00-MUSIC-PIXABAY-471376-20260705` | Musica Noite da Bruxa | `cc058be6...` |
+| `WINDI-HIOS-CENA00-PIXABAY-LICENSE-471376-20260705` | Licenca Pixabay | `7083d1f1...` |
+| `WINDI-HIOS-CENA00-AUDIO-MANIFEST-001-20260705` | 20 takes ElevenLabs | `ef0d0f97...` |
+
+**Total Ledger apos sessao:** 57,492 receipts
+
+### Documentos Criados
+
+- `/opt/windi/hios/cinema/obras/w-hios-forensic-unit/production/decisions/GABI-OCCLUSION-DECISION-001.md`
+- `/opt/windi/hios/cinema/cena00/audio/voices/AUDIO-MANIFEST-001.md`
+- `/home/windi/docs/S302-W-HIOS-OPEN-INTERNET-INDIVIDUAL.md` (CANDIDATE — nao selado)
+
+### Metodo Novo (CANDIDATE)
+
+**METODO-ANCORA-MULTIMODAL-001** — Nivel 2 CANDIDATE
+- Principio: A identidade nao tem modalidade canonica unica — tem ancoras por evidencia disponivel
+- Facial + Vocal como eixos independentes verificaveis
+- Convergencia de duas ancoras vale mais que uma isolada
+- Status: Citavel, orientador, nao-vinculante, a espera do primeiro evento medido
+
+### Licoes do Dia
+
+1. **HD-MIRROR aplica-se a todos** — Guardian corrigido duas vezes pela fonte
+2. **A carne ja estava em casa** — o que faltava era ver, nao transferir
+3. **Escada de Espelhos travada** — duas IAs validando-se ≠ constatacao real
+4. **Documento de decisao sela-se assinado** — hash pre-assinatura nao serve
+
+### Proximo Passo (Acto 2)
+
+- §302 aguarda primeiro evento real: rota `/hios-open/{ba4db3cd...}` + teste em IA externa
+- Protótipo minimo antes de selo constitucional
+
+---
+
 ## § SESSÃO 29 Jun 2026 (tarde) — W-CONV-001 LIVE · Conversation Engine Deploy
 
 **Duração:** ~2h | **Status:** ✅ DEPLOYED · SECURITY VERIFIED
@@ -23309,4 +23375,69 @@ O conselho decidiu não selar WINDI-ECOSYSTEM-001 nesta sessão porque:
 *Sessão fechada: 29 Jun 2026*
 *Liga IA+H — Kempten, Bavaria*
 *"AI processes. Human decides. WINDI guarantees."*
+
+
+
+## § SESSÃO 02 Jul 2026 — CENA00 ADENDO-D · Composite Filho-Laptop
+
+**Duração:** ~3h | **Status:** 🟡 EM PROGRESSO (continua 03 Jul)
+**Liga IA+H:** Human Dragon (I1, I9) · CCode (Opus 4.5)
+**Projecto:** W-HIOS-FORENSIC-UNIT — O Peso do Eco
+**Natureza:** Produção cinematográfica · VFX Composite
+**Invariantes:** I9, I11, I14, I19
+
+### Marco Central
+
+> *"Telemóvel é íntimo. Laptop é cinematográfico. Frankfurt merece escala."*
+> — Human Dragon, decisão I9, 02 Jul 2026
+
+### Contexto
+
+Após 29+ iterações falhadas com composite em telemóvel, pivotámos para laptop.
+Esta sessão gerou assets VEO, adaptou roteiro, e preparou pipeline de composite.
+
+### Decisões I9 (Human Dragon)
+
+1. **Pivot telemóvel → laptop** — Mais cinematográfico para Frankfurt noir
+2. **FILHO_LAPTOP_SCREEN_v1.mp4 APROVADO** — Via link público
+3. **Diálogos PT-BR confirmados** — Inalterados na adaptação
+
+### Artefactos Criados
+
+| Ficheiro | Tipo | Status |
+|----------|------|--------|
+| `LAPTOP_VEO_FRONTAL.mp4` | Plate VEO 3.1 (8s, 1280x720) | ✅ Gerado |
+| `FILHO_LAPTOP_SCREEN_v1.mp4` | Master VEO 3.1-fast (8s, 1280x720) | ✅ **APROVADO** |
+| `quad_preview.py` | Ferramenta validação cantos | ✅ Criado |
+| `compose_video_to_video.py` | Compositor video-to-video | ✅ Criado |
+| `ESTADO-WIP-EVT-0002.md` | Estado persistente | ✅ Actualizado |
+| `DECUPAGEM-CENA-00.md` | Roteiro adaptado (ADENDO-D) | ✅ Editado |
+
+### Planos Actualizados no Roteiro
+
+| Plano | Antes | Depois |
+|-------|-------|--------|
+| P00-03 | Telemóvel na Mesa | Laptop na Bancada |
+| P00-05 | Mão toca telemóvel | Mão toca laptop |
+| P00-07 | Telemóvel Despedida | Laptop Despedida |
+| P00-09 | Ecrã desliga | Laptop fecha |
+| P00-12 | Mãos pegam telemóvel | Laptop fica |
+
+### Pendente (03 Jul)
+
+- [ ] Validar cantos do quad (último: demasiado grande)
+- [ ] Compor 1 frame de teste
+- [ ] Se PASS → compor video final (8s, ambos já match)
+
+### Ficheiro de Estado
+
+```
+/opt/windi/hios/cinema/filho-gabi-review/ESTADO-WIP-EVT-0002.md
+```
+
+### Links Públicos
+
+- Filho aprovado: `https://windi-domain.com/shared/FILHO_LAPTOP_SCREEN_v1.mp4`
+
+---
 
