@@ -71,6 +71,27 @@ Sessao iniciada com epifania sobre §302 W-HIOS-OPEN (Internet Individual). Guar
 - §302 aguarda primeiro evento real: rota `/hios-open/{ba4db3cd...}` + teste em IA externa
 - Protótipo minimo antes de selo constitucional
 
+### Extensao: §303 Portinhola Lexicon (mesma sessao)
+
+**Documento:** `/home/windi/docs/S303-PORTINHOLA-LEXICON-001.md` (CANDIDATE)
+
+> *"O Playground não ensina o humano a falar WINDI. Ele ensina o WINDI a reconhecer o que o humano já queria dizer."*
+
+**Contexto:** Guardian mordeu com três dentes:
+1. **W-LEXICON-001 já existe** — READ FIRST obrigatório
+2. **Palavras genéricas não invocam** — descoberta é pelo hash, não pela palavra
+3. **Terceira coluna obrigatória** — o que a IA externa PODE fazer
+
+**Descoberta:** W-LEXICON-001 (:8193) é Semantic Drift Detection, não léxico de vocabulário. São módulos complementares:
+- W-LEXICON-001 = mede se sistema viola invariantes (validação ←)
+- Portinhola = traduz intenção humana em comando (entrada →)
+
+**15 Comandos mapeados:** WINDI_CREATE, WINDI_PRESERVE, WINDI_PROVE, WINDI_VERIFY, WINDI_SIGN, WINDI_ERRATA, WINDI_CONTINUITY, WINDI_CLAIM, WINDI_PUBLISH, WINDI_SEND, WINDI_MEMORY, WINDI_ORIGIN, WINDI_DID, WINDI_HOME, WINDI_ARTIFACT
+
+**Guarda:** Comandos que tocam `strato_i9` resultam em convite ao portão, nunca simulação do acto.
+
+**Teste:** Acto 2 mede §302 + §303 simultaneamente.
+
 ---
 
 ## § SESSÃO 29 Jun 2026 (tarde) — W-CONV-001 LIVE · Conversation Engine Deploy
