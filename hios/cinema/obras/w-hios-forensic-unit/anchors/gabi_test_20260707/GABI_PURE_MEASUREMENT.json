@@ -1,0 +1,36 @@
+{
+  "test": "GABI_OPENART_PURE",
+  "anchor": "gabi.santos.anchor.v1.png",
+  "anchor_sha256": "03784039a0aa4bd1306518d847aeae69915c566f1ef7e5a1e81822d82f2e1c82",
+  "avg_score": 0.2201,
+  "min_score": 0.1724,
+  "max_score": 0.2652,
+  "verdict": "GABI_OPENART_PURE_FAIL",
+  "results": [
+    {
+      "frame": "frame_001.png",
+      "score": 0.1724259853363037,
+      "verdict": "FAIL"
+    },
+    {
+      "frame": "frame_002.png",
+      "score": 0.1858963966369629,
+      "verdict": "FAIL"
+    },
+    {
+      "frame": "frame_003.png",
+      "score": 0.2267271876335144,
+      "verdict": "FAIL"
+    },
+    {
+      "frame": "frame_004.png",
+      "score": 0.2500936985015869,
+      "verdict": "FAIL"
+    },
+    {
+      "frame": "frame_005.png",
+      "score": 0.26521778106689453,
+      "verdict": "FAIL"
+    }
+  ]
+}

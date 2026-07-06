@@ -1,0 +1,152 @@
+{
+  "scene": "CENA-00",
+  "title": "Videochamada Dragon-Filho",
+  "status": "G2-VISUAL-I9-PENDING",
+  "created": "2026-07-06T20:30:00Z",
+  "created_by": "CCode + Human Dragon",
+
+  "anchor": {
+    "authority": "WINDI-HIOS-FILHO-ANCHOR-002-REFOUNDATION-20260705",
+    "root_file": "filho.gabi.anchor.retarget.v1.candidate.png",
+    "root_sha256": "ba4db3cda9b9efbd0f0bc78af31a8dd8a82a673b2d9fb7105e0e7c9deba47fab"
+  },
+
+  "assets": [
+    {
+      "id": "RF01",
+      "title": "Close Phone Glow",
+      "desc": "Menino com telemóvel, luz de ecrã no rosto",
+      "type": "video",
+      "source_video": "openart-video_1783257823479_e77df7bf_1783257825302_c9f26ba0.mp4",
+      "swapped_frame": "filho.gabi.openart.rf01.phone-glow.swapped.png",
+      "pre_swap_score": 0.3627,
+      "post_swap_score": 0.8948,
+      "verdict": "FORENSIC_PASS",
+      "hash": "2202faff6df534a5728d1ecfcb5e7ac222fa824394d65b78189b06f183a6006f",
+      "status": "LIBERADO"
+    },
+    {
+      "id": "V3",
+      "title": "Talking Head",
+      "desc": "Fundo neutro, olhos abertos, boca aberta",
+      "type": "video",
+      "source_video": "openart-video_1783347504319_e3a37903_1783347504505_0341aa18.mp4",
+      "swapped_frame": "video3_t1.0s_swapped.png",
+      "pre_swap_score": 0.5699,
+      "post_swap_score": 0.9052,
+      "verdict": "FORENSIC_PASS",
+      "hash": "f1cacefe3d0fdd3a3c7ce427b1d3bb9f19126ee81a35589e3f35903837c38209",
+      "status": "LIBERADO"
+    },
+    {
+      "id": "V5",
+      "title": "POV Noturna",
+      "desc": "Perspectiva Dragon, videochamada noturna",
+      "type": "video",
+      "source_video": "openart-video_1783348986769_712d4db4_1783348986972_4e590c3e.mp4",
+      "swapped_frame": "video5_t4.0s_swapped.png",
+      "pre_swap_score": 0.4306,
+      "post_swap_score": 0.8694,
+      "verdict": "FORENSIC_PASS",
+      "hash": "0d5d91b119719c5c9f5fb38f061abbb05568723a8cca89d7c20f5490187be0d7",
+      "status": "LIBERADO"
+    },
+    {
+      "id": "V6",
+      "title": "POV Diurna",
+      "desc": "Perspectiva Dragon, videochamada diurna",
+      "type": "video",
+      "source_video": "openart-video_1783350201202_ea9a06b3_1783350201439_1c9937d6.mp4",
+      "swapped_frame": "video6_t4.0s_swapped.png",
+      "pre_swap_score": 0.4731,
+      "post_swap_score": 0.8976,
+      "verdict": "FORENSIC_PASS",
+      "hash": "4fe7902f521d24c795150f27a00c3d167079e09771d7c6fae01b33d263be301c",
+      "status": "LIBERADO"
+    }
+  ],
+
+  "gates_pending": {
+    "G1_authority_check": {
+      "status": "PASS",
+      "note": "Todos os JSONs citam authority + root_file + root_sha256 correctamente"
+    },
+    "G2_visual_artifact_review": {
+      "G2_numeric_temporal": {
+        "status": "PASS",
+        "f2f_min_global": 0.9443,
+        "f2f_max_global": 0.9910,
+        "note": "Identidade numericamente estável em todos os frames"
+      },
+      "G2_visual_i9": {
+        "status": "PENDING",
+        "note": "Aguarda playback completo dos vídeos swapped para revisão humana"
+      }
+    },
+    "G3_temporal_stability": {
+      "status": "PASS",
+      "tested": "2026-07-06T20:45:00Z",
+      "results": {
+        "RF01": {"anchor_avg": 0.8943, "f2f_avg": 0.9869, "verdict": "PASS"},
+        "V3":   {"anchor_avg": 0.8963, "f2f_avg": 0.9684, "verdict": "PASS"},
+        "V5":   {"anchor_avg": 0.8671, "f2f_avg": 0.9683, "verdict": "PASS"},
+        "V6":   {"anchor_avg": 0.8969, "f2f_avg": 0.9808, "verdict": "PASS"}
+      },
+      "note": "Todos os vídeos mantêm identidade estável frame-a-frame, sem flicker"
+    }
+  },
+
+  "metrics": {
+    "total_assets": 4,
+    "all_forensic_pass": true,
+    "avg_score": 0.8918,
+    "min_score": 0.8694,
+    "max_score": 0.9052
+  },
+
+  "boundary": {
+    "receipt_generated": false,
+    "sealed": false,
+    "final_approved": false,
+    "max_status": "MONTAGEM-CANDIDATO"
+  },
+
+  "next_steps": [
+    "I9 visual review de cada frame swapped",
+    "Teste temporal: swap frame-a-frame em clip de 2-3s",
+    "Se ambos PASS: promover para PRODUCTION-READY",
+    "Só então considerar receipt formal"
+  ],
+
+  "principle_validated": "O motor pinta o mundo; a identidade nunca é delegada ao motor.",
+
+  "gabi_pipeline_diagnostic": {
+    "tested": "2026-07-07T01:00:00Z",
+    "anchor": {
+      "authority": "GABI-ANCHOR-V1",
+      "file": "gabi.santos.anchor.v1.png",
+      "sha256": "03784039a0aa4bd1306518d847aeae69915c566f1ef7e5a1e81822d82f2e1c82"
+    },
+    "test_video": "openart-video_1783375514447_e8212c3d_1783375514668_d63b9439.mp4",
+    "pure_openart": {
+      "avg_score": 0.2201,
+      "verdict": "PURE_FAIL"
+    },
+    "post_inswapper": {
+      "avg_score": 0.8887,
+      "min_score": 0.8721,
+      "max_score": 0.9097,
+      "verdict": "FORENSIC_PASS"
+    },
+    "g3_temporal": {
+      "f2f_min": 0.9786,
+      "f2f_avg": 0.9846,
+      "anchor_avg": 0.8879,
+      "verdict": "PASS"
+    },
+    "final_verdict": "GABI_OPENART_PURE_FAIL_BUT_TRANSFER_SALVAGEABLE",
+    "pipeline_ready": true,
+    "prompts_generated": "OPENART-PROMPTS-GABI-CENA00.md",
+    "public_review": "https://windi-domain.com/hios-review/gabi-test-20260707/"
+  }
+}

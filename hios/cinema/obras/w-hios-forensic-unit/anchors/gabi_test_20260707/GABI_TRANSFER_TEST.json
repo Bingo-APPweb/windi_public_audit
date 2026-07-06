@@ -1,0 +1,48 @@
+{
+  "test": "GABI_INSWAPPER_TRANSFER",
+  "anchor": "gabi.santos.anchor.v1.png",
+  "anchor_sha256": "03784039a0aa4bd1306518d847aeae69915c566f1ef7e5a1e81822d82f2e1c82",
+  "pure_avg": 0.2201,
+  "post_swap_avg": 0.8881,
+  "post_swap_min": 0.8728,
+  "post_swap_max": 0.9027,
+  "verdict": "GABI_OPENART_PURE_FAIL_BUT_TRANSFER_SALVAGEABLE",
+  "forensic_ready": true,
+  "results": [
+    {
+      "frame": "frame_001.png",
+      "pre_score": 0.1724,
+      "post_score": 0.8984,
+      "delta": 0.726,
+      "verdict": "FORENSIC_PASS"
+    },
+    {
+      "frame": "frame_002.png",
+      "pre_score": 0.1859,
+      "post_score": 0.9027,
+      "delta": 0.7168,
+      "verdict": "FORENSIC_PASS"
+    },
+    {
+      "frame": "frame_003.png",
+      "pre_score": 0.2267,
+      "post_score": 0.8809,
+      "delta": 0.6542,
+      "verdict": "FORENSIC_PASS"
+    },
+    {
+      "frame": "frame_004.png",
+      "pre_score": 0.2501,
+      "post_score": 0.8857,
+      "delta": 0.6356,
+      "verdict": "FORENSIC_PASS"
+    },
+    {
+      "frame": "frame_005.png",
+      "pre_score": 0.2652,
+      "post_score": 0.8728,
+      "delta": 0.6076,
+      "verdict": "FORENSIC_PASS"
+    }
+  ]
+}

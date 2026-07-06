@@ -1,0 +1,46 @@
+{
+  "diagnostic": "GABI-OPENART-TEST-20260707",
+  "timestamp": "2026-07-07T00:35:00Z",
+  
+  "source": {
+    "video": "openart-video_1783375514447_e8212c3d_1783375514668_d63b9439.mp4",
+    "sha256": "4964f6480d1e1dd955cc8e7752455cdb4819242adf762a43b86db1c561e447c4",
+    "resolution": "1254x720",
+    "frames": 150,
+    "duration_s": 5.0
+  },
+  
+  "anchor": {
+    "authority": "GABI-ANCHOR-V1",
+    "file": "gabi.santos.anchor.v1.png",
+    "sha256": "03784039a0aa4bd1306518d847aeae69915c566f1ef7e5a1e81822d82f2e1c82"
+  },
+  
+  "phase1_pure_openart": {
+    "avg_score": 0.2201,
+    "min_score": 0.1724,
+    "max_score": 0.2652,
+    "verdict": "PURE_FAIL",
+    "note": "OpenArt generated woman does not resemble Gabi anchor"
+  },
+  
+  "phase2_inswapper_transfer": {
+    "avg_score": 0.8881,
+    "min_score": 0.8728,
+    "max_score": 0.9027,
+    "avg_delta": 0.6680,
+    "verdict": "FORENSIC_PASS",
+    "note": "Inswapper successfully transfers Gabi identity to OpenArt body"
+  },
+  
+  "final_verdict": "GABI_OPENART_PURE_FAIL_BUT_TRANSFER_SALVAGEABLE",
+  "forensic_ready": true,
+  
+  "recommendation": {
+    "approach": "Use same pipeline as Filho: OpenArt generates body/world/light, Inswapper transfers Gabi identity, ArcFace verifies",
+    "threshold": "Maintain 0.75 FORENSIC requirement for all Gabi frames",
+    "caution": "This video POV shows hands holding phone - may not be suitable for Cena 00 corporate kitchen setting. Generate new videos with correct setting and apply same Inswapper pipeline."
+  },
+  
+  "doctrine": "O motor pinta o mundo; a identidade nunca é delegada ao motor."
+}

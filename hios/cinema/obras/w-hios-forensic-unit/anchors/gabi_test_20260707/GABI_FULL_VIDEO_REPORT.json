@@ -1,0 +1,17 @@
+{
+  "operation": "GABI-FULL-VIDEO-INSWAPPER",
+  "timestamp": "2026-07-06T22:50:32.870992+00:00",
+  "anchor": {
+    "authority": "GABI-ANCHOR-V1",
+    "file": "gabi.santos.anchor.v1.png",
+    "sha256": "03784039a0aa4bd1306518d847aeae69915c566f1ef7e5a1e81822d82f2e1c82"
+  },
+  "source_video": "openart-video_1783375514447_e8212c3d_1783375514668_d63b9439.mp4",
+  "frames_total": 150,
+  "frames_with_face": 150,
+  "avg_score": 0.8887,
+  "min_score": 0.8721,
+  "max_score": 0.9097,
+  "all_forensic_pass": true,
+  "verdict": "FORENSIC_PASS"
+}
