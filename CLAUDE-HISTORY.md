@@ -22544,3 +22544,87 @@ O INSERT (plano de detalhe como telemóvel com rosto) é componente substituíve
 *"Parar não é desistir — é a Lei II do §236 a operar."*
 *— Human Dragon, 01 Jul 2026*
 
+
+---
+
+## § SESSÃO 09 Jul 2026 — W-MOTOR-001 Multi-Provider + IONOS LIVE
+
+**Duração:** ~4h | **Status:** ✅ COMPLETO + COMMIT
+**Liga IA+H:** Human Dragon (I1, I9) · Guardian/Testemunha (CCode Opus 4.5)
+**Projecto:** W-MOTOR-001 · W-HIOS Generation Motor
+**Commit:** `6a8f2f23d` · 18 files · +3702 -1131
+
+### Marco Central
+
+> *"O motor coordena em casa. O músculo gráfico pode ser alugado ou comprado."*
+
+### Trabalho Completado
+
+#### 1. IONOS AI Model Hub — Integração LIVE
+- Configuração de `.env` com credenciais (JWT, endpoint)
+- Resolvidos 4 erros de autenticação (endpoint errado, token ID vs valor, typo em variável)
+- Primeira imagem gerada com sucesso via FLUX.1-schnell
+
+#### 2. Descoberta Crítica — Limitações FLUX
+- **FLUX não mantém identidade facial** entre gerações
+- Teste de 3 frames: 3 pessoas diferentes
+- **Conclusão:** IONOS serve para backgrounds, props, concept art — não para personagens SPINE
+
+#### 3. Arquitectura Multi-Provider Implementada
+```
+PROVIDER_REGISTRY = {
+    "ionos":     IonosImageProvider,   # 🟢 LIVE
+    "runway":    RunwayVideoProvider,  # 🔴 STUB
+    "openart":   OpenArtProvider,      # 🔴 STUB
+    "local-gpu": LocalGPUProvider,     # 🔴 STUB
+    "dry-run":   DryRunProvider,       # 🟢 LIVE
+}
+```
+
+#### 4. Documentação Criada
+- `W-MOTOR-CAPABILITIES.md` — O que IONOS pode/não pode
+- `TUTORIAL-MULTI-PROVIDER.md` — Guia DIFF para irmãos CCode
+- `GPU-OPTIONS-ANALYSIS.md` — Hetzner, RunPod, Lambda Labs
+
+### Decisão Arquitectural SELADA
+
+| Função | Provider | Localização |
+|--------|----------|-------------|
+| **Face Consistency** | OpenArt | Externo (API) |
+| **Image-to-Video** | Runway Gen-4 | Externo (API) |
+| **Text-to-Image** | IONOS/FLUX | Externo (API) |
+| **Autonomia Futura** | Local GPU | STRATO (Hetzner GEX44/130) |
+
+### Scaffold Pending (não morre, espera)
+
+- [ ] **RunwayVideoProvider** — Implementar `generate()` quando API key disponível
+- [ ] **OpenArtProvider** — Implementar `generate()` quando API key disponível
+- [ ] **LocalGPUProvider** — Requer GPU hardware (Hetzner GEX44 €184/mês)
+- [ ] **W-GENERATOR-001 Bridge** — Integrar W-MOTOR-001 com generator existente
+
+### Próximo Passo Proposto
+
+Quando necessário gerar media para SPINE:
+1. **Personagem existente** → OpenArt/Runway (face consistency)
+2. **Background/Prop novo** → IONOS via W-MOTOR-001
+3. **Autonomia total** → Encomendar Hetzner GEX44 + instalar FLUX local
+
+### Ficheiros Críticos
+
+```
+/opt/windi/hios/motor/.env                    # Credenciais IONOS
+/opt/windi/hios/motor/w_hios_motor/providers.py  # Multi-provider registry
+/opt/windi/hios/motor/w_hios_motor/engine.py     # Motor principal
+/opt/windi/hios/motor/W-MOTOR-CAPABILITIES.md    # Limitações IONOS
+/opt/windi/hios/motor/GPU-OPTIONS-ANALYSIS.md    # Opções GPU futuras
+```
+
+### Notas para Sessão Seguinte
+
+- JWT IONOS expira ~1h — usar botão "Generate Code" no console IONOS
+- FLUX.1-schnell só aceita tamanhos específicos (1024x1024, etc)
+- Para SPINE-CAST, usar SEMPRE OpenArt/Runway, NUNCA IONOS
+- Nginx audit report mostra 52 orphan routes — limpeza pendente
+
+---
+
