@@ -31,6 +31,12 @@ from metrics import get_metrics, increment, record_processing_time
 from ratelimit import is_allowed
 from selector_loader import load_dkim_selector, get_dkim_selector
 from http_server import start_http_server
+from conv_client import (
+    send_knowledge_event,
+    is_conv_engine_reachable,
+    parse_references_header,
+    ConvClientError
+)
 
 # Configure logging
 LOG_PATH = os.environ.get('LOG_PATH', '/logs/dacp-milter.log')
@@ -97,6 +103,10 @@ class DACPMilter(Milter.Base):
         self.date = None
         self.content_type = None
         self.is_multipart = False
+        # RFC 5322 threading headers para W-CONV-001
+        self.message_id = None
+        self.in_reply_to = None
+        self.references = None
 
     @Milter.noreply
     def connect(self, hostname, family, hostaddr):
@@ -115,6 +125,10 @@ class DACPMilter(Milter.Base):
         self.date = None
         self.content_type = None
         self.is_multipart = False
+        # RFC 5322 threading headers para W-CONV-001
+        self.message_id = None
+        self.in_reply_to = None
+        self.references = None
         logger.debug(f"[{self.id}] MAIL FROM: {f}")
         return Milter.CONTINUE
 
@@ -138,6 +152,13 @@ class DACPMilter(Milter.Base):
         elif name_lower == 'content-type':
             self.content_type = value
             self.is_multipart = 'multipart' in value.lower()
+        # RFC 5322 threading headers para W-CONV-001
+        elif name_lower == 'message-id':
+            self.message_id = value
+        elif name_lower == 'in-reply-to':
+            self.in_reply_to = value
+        elif name_lower == 'references':
+            self.references = value
 
         return Milter.CONTINUE
 
@@ -291,6 +312,32 @@ class DACPMilter(Milter.Base):
             increment('tempfail_ledger_total')
             return Milter.TEMPFAIL
 
+        # === SEND TO W-CONV-001 (non-blocking) ===
+        # Falha aqui NÃO bloqueia email - o seal já foi feito
+        try:
+            send_knowledge_event(
+                proof_id=proof_id,
+                from_addr=from_addr,
+                from_hash=from_hash,
+                to_addrs=to_addrs,
+                subject=self.subject or '',
+                subject_hash=subject_hash,
+                body_hash=body_hash,
+                canonical_hash=body_hash,  # Usar body_hash como canonical
+                sealed_at=sealed_at,
+                message_id=self.message_id,
+                in_reply_to=self.in_reply_to,
+                references=parse_references_header(self.references)
+            )
+            increment('conv_events_sent_total')
+        except ConvClientError as e:
+            # Log mas NÃO falha - grafo é enriquecimento, não gate
+            logger.warning(f"[{self.id}] W-CONV-001 event failed (non-blocking): {e}")
+            increment('conv_events_failed_total')
+        except Exception as e:
+            logger.warning(f"[{self.id}] W-CONV-001 unexpected error (non-blocking): {e}")
+            increment('conv_events_failed_total')
+
         # Record processing time
         elapsed = time.time() - self.start_time
         record_processing_time(elapsed)
@@ -366,6 +413,12 @@ def main():
         logger.info("Ledger is reachable")
     else:
         logger.warning("Ledger not reachable at startup - will retry on each message")
+
+    # Check W-CONV-001 connectivity (informational)
+    if is_conv_engine_reachable():
+        logger.info("W-CONV-001 is reachable - Knowledge Events enabled")
+    else:
+        logger.warning("W-CONV-001 not reachable - Knowledge Events will be skipped")
 
     # Start HTTP admin server in background thread
     http_thread = threading.Thread(target=start_http_server, daemon=True)

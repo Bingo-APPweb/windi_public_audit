@@ -3,8 +3,8 @@
 W-GENERATOR-001 — Sovereign Content Generation Abstraction
 ===========================================================
 Port: 8198
-Version: 0.1.0
-Sealed: 2026-05-29
+Version: 0.2.0
+Updated: 2026-06-28
 Invariants: I9, I9-G, I11, I14
 
 "A invocacao de geradores de conteudo e ferramenta tecnica.
@@ -14,12 +14,21 @@ Architecture:
     USER REQUEST --> W-GENERATOR-001 --> ADAPTER (SORA/Runway/...) --> B4 GATE --> I9 GATE --> LEDGER
 
 DOORs (Adapters):
-    - DOOR_SORA: OpenAI SORA video generation
-    - DOOR_RUNWAY: Runway Gen-3 video generation
+    - DOOR_RUNWAY: Runway Gen-4 Turbo (LIVE - Real API)
+    - DOOR_SORA: OpenAI SORA video generation (stub)
     - DOOR_KLING: (future) Kling AI
     - DOOR_GROK: (future) GROK Images
     - DOOR_MIDJOURNEY: (future) Midjourney
     - DOOR_LOCAL: (future) Self-hosted Stable Diffusion
+
+Endpoints:
+    POST /generate        - Start generation job (async)
+    POST /generate-sync   - Start and wait for completion (blocking)
+    GET  /status/{job_id} - Check job status
+    GET  /wait/{job_id}   - Wait for completion (blocking)
+    GET  /download/{job_id} - Download output file
+    GET  /doors           - List all adapters
+    GET  /health          - Health check
 """
 
 import os
@@ -27,6 +36,8 @@ import sys
 import json
 import hashlib
 import logging
+import time
+import requests
 from datetime import datetime
 from flask import Flask, request, jsonify
 from abc import ABC, abstractmethod
@@ -38,7 +49,7 @@ from enum import Enum
 # ============================================================
 
 PORT = 8198
-VERSION = "0.1.0"
+VERSION = "0.2.0"  # Real Runway API integration
 SERVICE_NAME = "W-GENERATOR-001"
 
 logging.basicConfig(
@@ -160,40 +171,268 @@ class SoraAdapter(GeneratorAdapter):
         return bool(self.api_key)
 
 # ============================================================
-# DOOR: RUNWAY ADAPTER
+# DOOR: RUNWAY ADAPTER — REAL API IMPLEMENTATION
 # ============================================================
+
+# Job storage for tracking Runway tasks
+_runway_jobs: Dict[str, Dict[str, Any]] = {}
 
 class RunwayAdapter(GeneratorAdapter):
     """
-    DOOR_RUNWAY: Runway Gen-3 video generation
+    DOOR_RUNWAY: Runway Gen-4 Turbo video generation
     Status: ACTIVE (key: WINDIHIOS-001)
+    API: https://api.dev.runwayml.com/v1
+    Docs: https://docs.dev.runwayml.com/
+
+    Supports:
+    - Image-to-Video: Animate a source image with motion
+    - Text-to-Video: Generate video from text prompt (no source image)
     """
 
     def __init__(self, api_key: str):
         super().__init__(api_key)
         self.name = "runway"
         self.supports = [ContentType.VIDEO, ContentType.IMAGE]
-        self.cost_per_second = 0.17  # ~$10/min
+        self.cost_per_second = 0.17  # ~$10/min (5 credits/sec for Turbo)
         self.quality_tier = 4
         self.base_url = "https://api.dev.runwayml.com/v1"
+        self.api_version = "2024-11-06"
+        self.default_model = "gen4.5"  # gen4.5 (as of Jun 2026)
+        self.default_duration = 5  # seconds
+        self.default_ratio = "1280:720"  # 16:9 landscape
 
-    def generate(self, prompt: str, params: Dict[str, Any]) -> Dict[str, Any]:
-        logger.info(f"[DOOR_RUNWAY] Generate request: {prompt[:50]}...")
+    def _get_headers(self) -> Dict[str, str]:
+        """Build request headers with authentication."""
         return {
-            "job_id": f"runway_{datetime.now().strftime('%Y%m%d%H%M%S')}",
-            "status": GenerationStatus.PENDING.value,
-            "adapter": self.name,
-            "message": "Runway generation queued"
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.api_key}",
+            "X-Runway-Version": self.api_version
         }
 
+    def generate(self, prompt: str, params: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Generate video from image+prompt or text-only.
+
+        params:
+            - source_image_url: Public URL to source image (required for image-to-video)
+            - duration: Video length in seconds (5 or 10)
+            - ratio: Video dimensions ("1280:720", "720:1280", "1024:1024")
+            - model: "gen4_turbo" or "gen4"
+            - motion: Camera motion hint (informational, encoded in prompt)
+        """
+        logger.info(f"[DOOR_RUNWAY] Generate request: {prompt[:50]}...")
+
+        source_image_url = params.get("source_image_url")
+        duration = params.get("duration", self.default_duration)
+        ratio = params.get("ratio", self.default_ratio)
+        model = params.get("model", self.default_model)
+
+        # Build request body
+        body = {
+            "promptText": prompt,
+            "model": model,
+            "duration": duration,
+            "ratio": ratio
+        }
+
+        # Image-to-Video requires promptImage
+        if source_image_url:
+            body["promptImage"] = source_image_url
+            endpoint = f"{self.base_url}/image_to_video"
+            logger.info(f"[DOOR_RUNWAY] Image-to-Video: {source_image_url}")
+        else:
+            endpoint = f"{self.base_url}/text_to_video"
+            logger.info(f"[DOOR_RUNWAY] Text-to-Video (no source image)")
+
+        try:
+            response = requests.post(
+                endpoint,
+                headers=self._get_headers(),
+                json=body,
+                timeout=30
+            )
+
+            if response.status_code == 200 or response.status_code == 201:
+                data = response.json()
+                task_id = data.get("id")
+
+                # Store job for tracking
+                job_id = f"runway_{task_id}"
+                _runway_jobs[job_id] = {
+                    "task_id": task_id,
+                    "status": "PENDING",
+                    "created_at": datetime.now().isoformat(),
+                    "prompt": prompt[:100],
+                    "source_image": source_image_url,
+                    "output_url": None,
+                    "error": None
+                }
+
+                logger.info(f"[DOOR_RUNWAY] Job created: {job_id}")
+
+                return {
+                    "job_id": job_id,
+                    "task_id": task_id,
+                    "status": GenerationStatus.PENDING.value,
+                    "adapter": self.name,
+                    "message": "Runway generation started",
+                    "model": model,
+                    "duration": duration,
+                    "estimated_cost": f"${duration * self.cost_per_second:.2f}"
+                }
+            else:
+                error_msg = response.text
+                logger.error(f"[DOOR_RUNWAY] API error: {response.status_code} - {error_msg}")
+                return {
+                    "job_id": None,
+                    "status": GenerationStatus.FAILED.value,
+                    "adapter": self.name,
+                    "error": f"API error {response.status_code}: {error_msg}"
+                }
+
+        except requests.exceptions.Timeout:
+            logger.error("[DOOR_RUNWAY] Request timeout")
+            return {
+                "job_id": None,
+                "status": GenerationStatus.FAILED.value,
+                "adapter": self.name,
+                "error": "Request timeout"
+            }
+        except Exception as e:
+            logger.error(f"[DOOR_RUNWAY] Exception: {str(e)}")
+            return {
+                "job_id": None,
+                "status": GenerationStatus.FAILED.value,
+                "adapter": self.name,
+                "error": str(e)
+            }
+
     def check_status(self, job_id: str) -> Dict[str, Any]:
-        return {"job_id": job_id, "status": "pending", "adapter": self.name}
+        """Poll Runway API for task status."""
+
+        # Get stored job info
+        job = _runway_jobs.get(job_id)
+        if not job:
+            return {"job_id": job_id, "status": "unknown", "error": "Job not found in local registry"}
+
+        task_id = job.get("task_id")
+        if not task_id:
+            return {"job_id": job_id, "status": "error", "error": "No task_id stored"}
+
+        try:
+            response = requests.get(
+                f"{self.base_url}/tasks/{task_id}",
+                headers=self._get_headers(),
+                timeout=15
+            )
+
+            if response.status_code == 200:
+                data = response.json()
+                status = data.get("status", "UNKNOWN")
+
+                # Update stored job
+                job["status"] = status
+
+                result = {
+                    "job_id": job_id,
+                    "task_id": task_id,
+                    "status": status.lower(),
+                    "adapter": self.name,
+                    "progress": data.get("progress", 0),
+                    "created_at": job.get("created_at")
+                }
+
+                # If completed, extract output URL
+                if status == "SUCCEEDED":
+                    output = data.get("output", [])
+                    if output and len(output) > 0:
+                        output_url = output[0] if isinstance(output[0], str) else output[0].get("url")
+                        job["output_url"] = output_url
+                        result["output_url"] = output_url
+                        result["status"] = "completed"
+                        logger.info(f"[DOOR_RUNWAY] Job completed: {job_id} -> {output_url}")
+
+                elif status == "FAILED":
+                    error = data.get("failure", data.get("error", "Unknown error"))
+                    job["error"] = error
+                    result["error"] = error
+                    result["status"] = "failed"
+                    logger.error(f"[DOOR_RUNWAY] Job failed: {job_id} - {error}")
+
+                elif status == "RUNNING":
+                    result["status"] = "generating"
+
+                return result
+            else:
+                return {
+                    "job_id": job_id,
+                    "status": "error",
+                    "error": f"API returned {response.status_code}"
+                }
+
+        except Exception as e:
+            logger.error(f"[DOOR_RUNWAY] Status check error: {str(e)}")
+            return {
+                "job_id": job_id,
+                "status": "error",
+                "error": str(e)
+            }
 
     def download(self, job_id: str) -> bytes:
-        return b""
+        """Download generated video content."""
+        job = _runway_jobs.get(job_id)
+        if not job:
+            logger.error(f"[DOOR_RUNWAY] Download failed: job not found {job_id}")
+            return b""
+
+        output_url = job.get("output_url")
+        if not output_url:
+            # Try to refresh status first
+            status = self.check_status(job_id)
+            output_url = status.get("output_url")
+
+        if not output_url:
+            logger.error(f"[DOOR_RUNWAY] Download failed: no output URL for {job_id}")
+            return b""
+
+        try:
+            response = requests.get(output_url, timeout=120)
+            if response.status_code == 200:
+                logger.info(f"[DOOR_RUNWAY] Downloaded {len(response.content)} bytes for {job_id}")
+                return response.content
+            else:
+                logger.error(f"[DOOR_RUNWAY] Download failed: {response.status_code}")
+                return b""
+        except Exception as e:
+            logger.error(f"[DOOR_RUNWAY] Download exception: {str(e)}")
+            return b""
+
+    def wait_for_completion(self, job_id: str, timeout: int = 300, poll_interval: int = 5) -> Dict[str, Any]:
+        """
+        Poll until job completes or times out.
+        Returns final status with output_url if successful.
+        """
+        start_time = time.time()
+
+        while time.time() - start_time < timeout:
+            status = self.check_status(job_id)
+            current_status = status.get("status", "unknown")
+
+            if current_status in ["completed", "failed", "error"]:
+                return status
+
+            logger.info(f"[DOOR_RUNWAY] Waiting... {job_id} is {current_status}")
+            time.sleep(poll_interval)
+
+        return {
+            "job_id": job_id,
+            "status": "timeout",
+            "error": f"Job did not complete within {timeout} seconds"
+        }
 
     def health_check(self) -> bool:
-        return bool(self.api_key)
+        """Verify API key is configured."""
+        return bool(self.api_key) and len(self.api_key) > 10
 
 # ============================================================
 # DOOR: FUTURE ADAPTERS (Stubs)
@@ -459,6 +698,151 @@ def check_status(job_id: str):
         return jsonify({"error": f"DOOR not found: {door_name}"}), 404
 
     return jsonify(adapter.check_status(job_id))
+
+
+@app.route("/wait/<job_id>", methods=["GET"])
+def wait_for_job(job_id: str):
+    """
+    Wait for job completion (blocking).
+    Query params:
+        - timeout: Max wait time in seconds (default 300)
+        - poll: Poll interval in seconds (default 5)
+    """
+    parts = job_id.split("_")
+    if len(parts) < 2:
+        return jsonify({"error": "Invalid job_id format"}), 400
+
+    door_name = parts[0]
+    adapter = registry.get_adapter(door_name)
+    if not adapter:
+        return jsonify({"error": f"DOOR not found: {door_name}"}), 404
+
+    timeout = request.args.get("timeout", 300, type=int)
+    poll_interval = request.args.get("poll", 5, type=int)
+
+    # Only RunwayAdapter has wait_for_completion
+    if hasattr(adapter, "wait_for_completion"):
+        result = adapter.wait_for_completion(job_id, timeout, poll_interval)
+        return jsonify(result)
+    else:
+        return jsonify(adapter.check_status(job_id))
+
+
+@app.route("/download/<job_id>", methods=["GET"])
+def download_job(job_id: str):
+    """
+    Download generated content.
+    Returns the video/image bytes with appropriate content type.
+    """
+    from flask import Response
+
+    parts = job_id.split("_")
+    if len(parts) < 2:
+        return jsonify({"error": "Invalid job_id format"}), 400
+
+    door_name = parts[0]
+    adapter = registry.get_adapter(door_name)
+    if not adapter:
+        return jsonify({"error": f"DOOR not found: {door_name}"}), 404
+
+    content = adapter.download(job_id)
+    if not content:
+        return jsonify({"error": "Download failed or content not ready"}), 404
+
+    # Determine content type (video for runway)
+    content_type = "video/mp4"
+    filename = f"{job_id}.mp4"
+
+    return Response(
+        content,
+        mimetype=content_type,
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
+    )
+
+
+@app.route("/generate-sync", methods=["POST"])
+def generate_sync():
+    """
+    Generate and wait for completion (synchronous).
+    Useful for single-call workflows.
+
+    Body: Same as /generate plus:
+        - timeout: Max wait time in seconds (default 300)
+        - save_to: Optional local path to save output
+
+    WARNING: This endpoint blocks until completion or timeout.
+    For long videos, prefer /generate + polling /status.
+    """
+    data = request.get_json()
+
+    if not data or "prompt" not in data:
+        return jsonify({"error": "prompt required", "invariant": "I14"}), 400
+
+    prompt = data["prompt"]
+    door_name = data.get("door", "auto")
+    content_type_str = data.get("content_type", "video")
+    params = data.get("params", {})
+    workflow_id = data.get("workflow_id", f"wf_{datetime.now().strftime('%Y%m%d%H%M%S')}")
+    timeout = data.get("timeout", 300)
+    save_to = data.get("save_to")
+
+    try:
+        content_type = ContentType(content_type_str)
+    except ValueError:
+        return jsonify({"error": f"Invalid content_type: {content_type_str}"}), 400
+
+    # Select adapter
+    if door_name == "auto":
+        door_name = registry.auto_select(content_type)
+        if not door_name:
+            return jsonify({
+                "error": "No suitable DOOR available",
+                "active_doors": registry.get_active_adapters()
+            }), 503
+
+    adapter = registry.get_adapter(door_name)
+    if not adapter or not adapter.health_check():
+        return jsonify({"error": f"DOOR not available: {door_name}"}), 503
+
+    # Step 1: Generate
+    gen_result = adapter.generate(prompt, params)
+    if gen_result.get("status") == "failed":
+        return jsonify(gen_result), 500
+
+    job_id = gen_result.get("job_id")
+    if not job_id:
+        return jsonify({"error": "No job_id returned", "result": gen_result}), 500
+
+    logger.info(f"[GENERATE-SYNC] Started {job_id}, waiting up to {timeout}s...")
+
+    # Step 2: Wait for completion
+    if hasattr(adapter, "wait_for_completion"):
+        final_status = adapter.wait_for_completion(job_id, timeout=timeout)
+    else:
+        final_status = adapter.check_status(job_id)
+
+    final_status["workflow_id"] = workflow_id
+    final_status["door_used"] = door_name
+
+    # Step 3: Optionally save to local file
+    if save_to and final_status.get("status") == "completed":
+        try:
+            content = adapter.download(job_id)
+            if content:
+                # Ensure directory exists
+                os.makedirs(os.path.dirname(save_to), exist_ok=True)
+                with open(save_to, "wb") as f:
+                    f.write(content)
+                final_status["saved_to"] = save_to
+                final_status["file_size"] = len(content)
+                logger.info(f"[GENERATE-SYNC] Saved to {save_to}")
+        except Exception as e:
+            final_status["save_error"] = str(e)
+            logger.error(f"[GENERATE-SYNC] Save failed: {e}")
+
+    final_status["i9_note"] = "Result awaits human approval before Ledger seal"
+
+    return jsonify(final_status)
 
 @app.route("/i9-g", methods=["GET"])
 def i9g_doctrine():

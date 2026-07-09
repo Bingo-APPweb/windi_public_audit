@@ -261,3 +261,285 @@ def seal_birth(
         # Truly unreachable — return pending
         log.warning(f"Birth pending (Ledger unreachable): {canonical_did}")
         return ("pending", receipt_id)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# §W-RAG-MITIGATION-001 — SUSPEND/RESTORE RECEIPTS
+# DOUTRINA-DID-REVOGACAO-001 (pending seal)
+# ══════════════════════════════════════════════════════════════════════════════
+
+def generate_suspend_receipt_id(target_did: str, timestamp: str) -> str:
+    """
+    Generate unique receipt ID for a suspension.
+    Format: WINDI-DID-SUSPEND-{timestamp}-{did_hash}
+    """
+    ts_short = timestamp.replace("-", "").replace(":", "").replace("T", "")[:14]
+    did_hash = hashlib.sha256(target_did.encode()).hexdigest()[:8].upper()
+    return f"WINDI-DID-SUSPEND-{ts_short}-{did_hash}"
+
+
+def generate_restore_receipt_id(target_did: str, timestamp: str) -> str:
+    """
+    Generate unique receipt ID for a restoration.
+    Format: WINDI-DID-RESTORE-{timestamp}-{did_hash}
+    """
+    ts_short = timestamp.replace("-", "").replace(":", "").replace("T", "")[:14]
+    did_hash = hashlib.sha256(target_did.encode()).hexdigest()[:8].upper()
+    return f"WINDI-DID-RESTORE-{ts_short}-{did_hash}"
+
+
+def build_suspend_receipt(
+    target_did: str,
+    target_tier: str,
+    suspended_by: str,
+    suspended_by_tier: str,
+    reason: str,
+    authorization: str,
+    suspended_at: str,
+    sessions_invalidated: int,
+    is_self_suspension: bool = False
+) -> Dict[str, Any]:
+    """
+    Build the suspend_receipt payload for the Ledger.
+
+    doc_type: did_suspend — proves DID was suspended.
+
+    §W-RAG-MITIGATION-001 Self-Suspension Rule:
+    - When is_self_suspension=True, actor becomes "w-did-genesis"
+    - The actual requester goes in on_behalf_of
+    - This ensures SEED self-suspensions get sealed (SEED DIDs aren't in Ledger registry)
+
+    Constitutional principle:
+    "When the holder is not a recognized actor in the Ledger,
+     the service seals as technical actor and preserves the human in on_behalf_of."
+    """
+    receipt_id = generate_suspend_receipt_id(target_did, suspended_at)
+
+    # Determine actor based on self-suspension
+    # §W-RAG-MITIGATION-001: Self-suspension tracking
+    # Note: Ledger D5 semantic (wallet_id→actor) means actor column shows target_did
+    # The human requester is preserved in metadata.on_behalf_of for full audit trail
+    if is_self_suspension:
+        ledger_actor = "w-did-genesis@windi-domain.com"  # For actor validation (D5 overwrites)
+        on_behalf_of = suspended_by  # The human who requested (preserved for audit)
+        operation = "self_suspend"
+    else:
+        ledger_actor = suspended_by
+        on_behalf_of = None
+        operation = "suspend"
+
+    # Content for hash (deterministic, auditable)
+    content_for_hash = json.dumps({
+        "target_did": target_did,
+        "target_tier": target_tier,
+        "suspended_by": suspended_by,
+        "suspended_by_tier": suspended_by_tier,
+        "on_behalf_of": on_behalf_of,
+        "reason": reason,
+        "authorization": authorization,
+        "suspended_at": suspended_at,
+        "sessions_invalidated": sessions_invalidated,
+        "is_self_suspension": is_self_suspension
+    }, sort_keys=True)
+
+    content_hash = f"sha256:{hashlib.sha256(content_for_hash.encode()).hexdigest()}"
+
+    metadata = {
+        "operation": operation,
+        "target_did": target_did,
+        "target_tier": target_tier,
+        "suspended_by": suspended_by,
+        "suspended_by_tier": suspended_by_tier,
+        "reason": reason,
+        "authorization": authorization,
+        "sessions_invalidated": sessions_invalidated
+    }
+
+    # Add on_behalf_of only for self-suspensions (never null when present)
+    if is_self_suspension:
+        metadata["on_behalf_of"] = on_behalf_of
+        metadata["requested_by"] = on_behalf_of
+
+    return {
+        "id": receipt_id,
+        "doc_type": "did_suspend",
+        "wallet_id": target_did,
+        "actor": ledger_actor,
+        "schema_version": "1.0",
+        "app": "w-did-genesis",
+        "doc_name": f"DID {'Self-' if is_self_suspension else ''}Suspension: {target_did}",
+        "governance_level": "HIGH",
+        "content_hash": content_hash,
+        "sge_score": 0.95,
+        "metadata": metadata
+    }
+
+
+def build_restore_receipt(
+    target_did: str,
+    target_tier: str,
+    restored_by: str,
+    restored_by_tier: str,
+    reason: str,
+    evidence: Optional[str],
+    authorization: str,
+    restored_at: str
+) -> Dict[str, Any]:
+    """
+    Build the restore_receipt payload for the Ledger.
+
+    doc_type: did_restore — proves DID was restored.
+    """
+    receipt_id = generate_restore_receipt_id(target_did, restored_at)
+
+    # Content for hash (deterministic, auditable)
+    content_for_hash = json.dumps({
+        "target_did": target_did,
+        "target_tier": target_tier,
+        "restored_by": restored_by,
+        "restored_by_tier": restored_by_tier,
+        "reason": reason,
+        "evidence": evidence,
+        "authorization": authorization,
+        "restored_at": restored_at
+    }, sort_keys=True)
+
+    content_hash = f"sha256:{hashlib.sha256(content_for_hash.encode()).hexdigest()}"
+
+    return {
+        "id": receipt_id,
+        "doc_type": "did_restore",
+        "wallet_id": target_did,
+        "actor": restored_by,
+        "schema_version": "1.0",
+        "app": "w-did-genesis",
+        "doc_name": f"DID Restoration: {target_did}",
+        "governance_level": "HIGH",
+        "content_hash": content_hash,
+        "sge_score": 0.95,
+        "metadata": {
+            "operation": "restore",
+            "target_did": target_did,
+            "target_tier": target_tier,
+            "restored_by": restored_by,
+            "restored_by_tier": restored_by_tier,
+            "reason": reason,
+            "evidence": evidence,
+            "authorization": authorization,
+            "asymmetry_note": "Restoration requires ORACLE authority. Self-restore is forbidden."
+        }
+    }
+
+
+def seal_suspend(
+    target_did: str,
+    target_tier: str,
+    suspended_by: str,
+    suspended_by_tier: str,
+    reason: str,
+    authorization: str,
+    suspended_at: str,
+    sessions_invalidated: int,
+    is_self_suspension: bool = False
+) -> Tuple[str, str]:
+    """
+    Seal a DID suspension in the Ledger.
+
+    Returns:
+        (status: str, receipt_id: str)
+        status: 'sealed' | 'pending' | 'failed'
+
+    §W-RAG-MITIGATION-001:
+    When is_self_suspension=True, uses w-did-genesis as actor
+    to ensure SEED self-suspensions get sealed in the Ledger.
+    """
+    receipt = build_suspend_receipt(
+        target_did, target_tier, suspended_by, suspended_by_tier,
+        reason, authorization, suspended_at, sessions_invalidated,
+        is_self_suspension=is_self_suspension
+    )
+    receipt_id = receipt["id"]
+    # Note: Ledger D5 semantic maps wallet_id→actor, so actor column shows target_did
+    # The actual requester is preserved in metadata.on_behalf_of for self-suspensions
+
+    try:
+        success, returned_id = post_receipt(receipt)
+
+        if success:
+            log.info(f"Suspend sealed: {target_did} by {suspended_by} -> {receipt_id}")
+            return ("sealed", receipt_id)
+        else:
+            # Check if already exists (idempotency)
+            try:
+                exists, _ = check_receipt_exists(receipt_id)
+                if exists:
+                    log.info(f"Suspend already sealed (idempotent): {target_did}")
+                    return ("sealed", receipt_id)
+            except httpx.RequestError:
+                pass
+            return ("failed", receipt_id)
+
+    except httpx.RequestError:
+        # Ledger unreachable — check if exists
+        try:
+            exists, _ = check_receipt_exists(receipt_id)
+            if exists:
+                log.info(f"Suspend reconciled (POST lost, receipt exists): {target_did}")
+                return ("sealed", receipt_id)
+        except httpx.RequestError:
+            pass
+
+        log.warning(f"Suspend pending (Ledger unreachable): {target_did}")
+        return ("pending", receipt_id)
+
+
+def seal_restore(
+    target_did: str,
+    target_tier: str,
+    restored_by: str,
+    restored_by_tier: str,
+    reason: str,
+    evidence: Optional[str],
+    authorization: str,
+    restored_at: str
+) -> Tuple[str, str]:
+    """
+    Seal a DID restoration in the Ledger.
+
+    Returns:
+        (status: str, receipt_id: str)
+        status: 'sealed' | 'pending' | 'failed'
+    """
+    receipt = build_restore_receipt(
+        target_did, target_tier, restored_by, restored_by_tier,
+        reason, evidence, authorization, restored_at
+    )
+    receipt_id = receipt["id"]
+
+    try:
+        success, returned_id = post_receipt(receipt)
+
+        if success:
+            log.info(f"Restore sealed: {target_did} by {restored_by} -> {receipt_id}")
+            return ("sealed", receipt_id)
+        else:
+            try:
+                exists, _ = check_receipt_exists(receipt_id)
+                if exists:
+                    log.info(f"Restore already sealed (idempotent): {target_did}")
+                    return ("sealed", receipt_id)
+            except httpx.RequestError:
+                pass
+            return ("failed", receipt_id)
+
+    except httpx.RequestError:
+        try:
+            exists, _ = check_receipt_exists(receipt_id)
+            if exists:
+                log.info(f"Restore reconciled (POST lost, receipt exists): {target_did}")
+                return ("sealed", receipt_id)
+        except httpx.RequestError:
+            pass
+
+        log.warning(f"Restore pending (Ledger unreachable): {target_did}")
+        return ("pending", receipt_id)

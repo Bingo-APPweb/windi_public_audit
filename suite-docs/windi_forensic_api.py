@@ -674,10 +674,11 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
                 # §248: Added constitutional for governance laws (Lei V+)
                 # §261: Added cognitive_handoff for W-BIND-001 session continuity primitive
                 # §299: Added birth_receipt/birth_failure for P0 DID Genesis birth certification
+                # §W-RAG-MITIGATION-001: Added did_suspend/did_restore for DID revocation
                 VALID_DOC_TYPES = (
                     "doc", "xlsx", "pptx", "jmpg", "communique", "compliance_passport", "cartaz", "canvas",
                     "service-restart-initiated", "service-restart-completed", "audit-bundle", "constitutional",
-                    "cognitive_handoff", "birth_receipt", "birth_failure"
+                    "cognitive_handoff", "birth_receipt", "birth_failure", "did_suspend", "did_restore"
                 )
                 if r["doc_type"] not in VALID_DOC_TYPES:
                     self._json(400, {
@@ -737,7 +738,12 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
 
                 # Map wallet_id to actor (D5 semantic: wallet_id is the canonical identity)
                 # This preserves backward compat: actor column stores wallet_id
-                if wallet_id:
+                # §W-RAG-MITIGATION-001: Exception for operations where agent ≠ subject
+                # For did_suspend/did_restore, the actor (who suspends/restores) differs
+                # from wallet_id (who is suspended/restored). Preserve the original actor.
+                D5_ACTOR_PRESERVED_TYPES = {"did_suspend", "did_restore"}
+
+                if wallet_id and r.get("doc_type") not in D5_ACTOR_PRESERVED_TYPES:
                     r["actor"] = wallet_id
 
                 # Defaults

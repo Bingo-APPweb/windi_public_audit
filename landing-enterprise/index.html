@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="noir" data-lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,7 +11,8 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
+  /* ─── NOIR THEME (Default) ─── */
+  :root, [data-theme="noir"] {
     --black:    #080808;
     --surface:  #0f0f0f;
     --border:   #1e1e1e;
@@ -23,6 +24,20 @@
     --gold-glow:rgba(200,169,110,0.06);
     --green:    #3d9970;
     --r:        3px;
+  }
+
+  /* ─── KLAR THEME (Light) ─── */
+  [data-theme="klar"] {
+    --black:    #FAFAF8;
+    --surface:  #F0EFED;
+    --border:   #E0DED8;
+    --border2:  #D0CEC8;
+    --white:    #1A1A1A;
+    --muted:    #6B6965;
+    --gold:     #8B7424;
+    --gold-dim: rgba(139,116,36,0.12);
+    --gold-glow:rgba(139,116,36,0.06);
+    --green:    #2E8B57;
   }
 
   html { scroll-behavior: smooth; }
@@ -610,6 +625,60 @@
     transition: transform 0.15s ease;
     mix-blend-mode: difference;
   }
+
+  /* ─── TOGGLES ─── */
+  .nav-toggles {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .lang-toggle {
+    display: flex;
+    gap: 4px;
+  }
+  .lang-btn {
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--muted);
+    padding: 6px 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    border-radius: var(--r);
+    transition: all 0.2s;
+  }
+  .lang-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .lang-btn.active {
+    background: var(--gold);
+    color: var(--black);
+    border-color: var(--gold);
+  }
+  .theme-btn {
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--muted);
+    padding: 6px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    border-radius: var(--r);
+    transition: all 0.2s;
+  }
+  .theme-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* Smooth theme transitions */
+  body, header, .gap-card, .step, .receipt, .pos-card, footer {
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.2s ease;
+  }
+
+  /* Language-specific sections */
+  [data-lang="en"] .lang-de-only,
+  [data-lang="pt"] .lang-de-only { display: none !important; }
+  [data-lang="de"] .lang-en-only { display: none !important; }
 </style>
 </head>
 <body>
@@ -623,10 +692,18 @@
         <div class="brand-mark">W1</div>
         <div>
           <div class="brand-name">WINDI Enterprise</div>
-          <div class="brand-sub">Verifiable Decision Infrastructure</div>
+          <div class="brand-sub" id="brandSub">Verifiable Decision Infrastructure</div>
         </div>
       </div>
-      <a href="#contact" class="nav-cta">Schedule Session</a>
+      <div class="nav-toggles">
+        <div class="lang-toggle">
+          <button class="lang-btn" data-lang="de">DE</button>
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="pt">PT</button>
+        </div>
+        <button class="theme-btn" id="themeBtn">KLAR</button>
+        <a href="#contact" class="nav-cta" id="navCta">Schedule Session</a>
+      </div>
     </nav>
   </div>
 </header>
@@ -634,17 +711,17 @@
 <main>
 <section class="hero">
   <div class="shell">
-    <div class="hero-eyebrow">W-Enterprise-001 · EU AI Act Art.14 Aligned</div>
-    <h1>
+    <div class="hero-eyebrow" id="heroEyebrow">W-Enterprise-001 · EU AI Act Art.14 Aligned</div>
+    <h1 id="heroTitle">
       Can you prove<br>
-      <em>who decided this?</em>
+      <em id="heroTitleEm">who decided this?</em>
     </h1>
-    <p class="hero-sub">
+    <p class="hero-sub" id="heroSub">
       Every critical decision your organisation makes — approved by AI, signed by humans — now becomes independently verifiable. Not logged. Proved.
     </p>
     <div class="hero-actions">
-      <a href="#demo" class="btn-primary">See a decision being proved</a>
-      <a href="/verify/WINDI-DSF-20260410094726-289EE95D" class="btn-ghost" target="_blank">Open live verification</a>
+      <a href="#demo" class="btn-primary" id="heroBtn1">See a decision being proved</a>
+      <a href="/verify/WINDI-DSF-20260410094726-289EE95D" class="btn-ghost" id="heroBtn2" target="_blank">Open live verification</a>
     </div>
   </div>
 </section>
@@ -653,28 +730,28 @@
   <div class="stat-row fade-up">
     <div class="stat-item">
       <div class="stat-num">EU</div>
-      <div class="stat-label">AI Act Article 14 · Human Oversight</div>
+      <div class="stat-label" id="stat1">AI Act Article 14 · Human Oversight</div>
     </div>
     <div class="stat-item" style="padding-left:48px;">
       <div class="stat-num">1</div>
-      <div class="stat-label">Verification endpoint. Public. Independent.</div>
+      <div class="stat-label" id="stat2">Verification endpoint. Public. Independent.</div>
     </div>
     <div class="stat-item" style="padding-left:48px;">
       <div class="stat-num">0</div>
-      <div class="stat-label">Alterations possible after seal</div>
+      <div class="stat-label" id="stat3">Alterations possible after seal</div>
     </div>
   </div>
 </div>
 
 <section id="problem">
   <div class="shell">
-    <div class="section-label">The Problem</div>
+    <div class="section-label" id="problemLabel">The Problem</div>
     <div class="fade-up">
-      <h2 class="section-h2">
+      <h2 class="section-h2" id="problemTitle">
         Organisations don't fail<br>because they lack decisions.<br>
         They fail because they cannot<br><em>prove them.</em>
       </h2>
-      <p class="section-body">
+      <p class="section-body" id="problemBody">
         Audit logs can be altered. Reports can be rewritten. Accountability is assumed — never verified. Under the EU AI Act and DORA, that assumption is no longer acceptable.
       </p>
     </div>
@@ -827,8 +904,8 @@
   </div>
 </section>
 
-<!-- German Manifesto Section -->
-<section id="manifesto-de" style="background: linear-gradient(180deg, var(--surface) 0%, var(--black) 100%);">
+<!-- German Manifesto Section (DE only) -->
+<section id="manifesto-de" class="lang-de-only" style="background: linear-gradient(180deg, var(--surface) 0%, var(--black) 100%);">
   <div class="shell">
     <div class="section-label">Governance Operating Layer</div>
     <div class="fade-up">
@@ -872,19 +949,19 @@
 
 <section id="contact" class="cta-block">
   <div class="shell">
-    <div class="cta-eyebrow">Next Step</div>
-    <h2>
+    <div class="cta-eyebrow" id="ctaEyebrow">Next Step</div>
+    <h2 id="ctaTitle">
       Bring one decision.<br>
-      <em>We'll prove it.</em>
+      <em id="ctaTitleEm">We'll prove it.</em>
     </h2>
-    <p>Schedule a 30-minute verification session. We run a live decision through the full WINDI cycle — in your context, with your use case.</p>
-    <a href="mailto:enterprise@windi-domain.com?subject=Verification%20Session%20Request" class="btn-primary">Schedule a verification session</a>
+    <p id="ctaBody">Schedule a 30-minute verification session. We run a live decision through the full WINDI cycle — in your context, with your use case.</p>
+    <a href="mailto:enterprise@windi-domain.com?subject=Verification%20Session%20Request" class="btn-primary" id="ctaBtn">Schedule a verification session</a>
     <p class="cta-note">enterprise@windi-domain.com</p>
   </div>
 </section>
 
-<!-- German CTA Section -->
-<section id="contact-de" class="cta-block" style="background: var(--surface); border-top: 1px solid var(--border);">
+<!-- German CTA Section (DE only) -->
+<section id="contact-de" class="cta-block lang-de-only" style="background: var(--surface); border-top: 1px solid var(--border);">
   <div class="shell">
     <div class="cta-eyebrow" style="color: var(--gold);">Für den deutschen Markt</div>
     <h2>
@@ -923,6 +1000,144 @@
 </footer>
 
 <script>
+  // ─── W-FRONTEND-CANON-001 Compliant ───
+
+  // Translations (PT-BR / EN / DE)
+  const UI = {
+    en: {
+      brandSub: 'Verifiable Decision Infrastructure',
+      navCta: 'Schedule Session',
+      heroEyebrow: 'W-Enterprise-001 · EU AI Act Art.14 Aligned',
+      heroTitle: 'Can you prove<br><em>who decided this?</em>',
+      heroSub: 'Every critical decision your organisation makes — approved by AI, signed by humans — now becomes independently verifiable. Not logged. Proved.',
+      heroBtn1: 'See a decision being proved',
+      heroBtn2: 'Open live verification',
+      stat1: 'AI Act Article 14 · Human Oversight',
+      stat2: 'Verification endpoint. Public. Independent.',
+      stat3: 'Alterations possible after seal',
+      problemLabel: 'The Problem',
+      problemTitle: 'Organisations don\'t fail<br>because they lack decisions.<br>They fail because they cannot<br><em>prove them.</em>',
+      problemBody: 'Audit logs can be altered. Reports can be rewritten. Accountability is assumed — never verified. Under the EU AI Act and DORA, that assumption is no longer acceptable.',
+      ctaEyebrow: 'Next Step',
+      ctaTitle: 'Bring one decision.<br><em>We\'ll prove it.</em>',
+      ctaBody: 'Schedule a 30-minute verification session. We run a live decision through the full WINDI cycle — in your context, with your use case.',
+      ctaBtn: 'Schedule a verification session'
+    },
+    de: {
+      brandSub: 'Verifizierbare Entscheidungsinfrastruktur',
+      navCta: 'Session vereinbaren',
+      heroEyebrow: 'W-Enterprise-001 · EU AI Act Art.14 konform',
+      heroTitle: 'Können Sie beweisen,<br><em>wer das entschieden hat?</em>',
+      heroSub: 'Jede kritische Entscheidung Ihrer Organisation — von KI vorgeschlagen, von Menschen unterzeichnet — wird unabhängig verifizierbar. Nicht protokolliert. Bewiesen.',
+      heroBtn1: 'Sehen Sie eine Entscheidung als Beweis',
+      heroBtn2: 'Live-Verifikation öffnen',
+      stat1: 'AI Act Artikel 14 · Menschliche Aufsicht',
+      stat2: 'Verifikationsendpunkt. Öffentlich. Unabhängig.',
+      stat3: 'Änderungen nach Versiegelung möglich',
+      problemLabel: 'Das Problem',
+      problemTitle: 'Organisationen scheitern nicht,<br>weil Entscheidungen fehlen.<br>Sie scheitern, weil sie diese<br><em>nicht beweisen können.</em>',
+      problemBody: 'Audit-Logs können verändert werden. Berichte können umgeschrieben werden. Verantwortlichkeit wird angenommen — nie verifiziert. Unter dem EU AI Act und DORA ist diese Annahme nicht mehr akzeptabel.',
+      ctaEyebrow: 'Nächster Schritt',
+      ctaTitle: 'Bringen Sie eine Entscheidung.<br><em>Wir beweisen sie.</em>',
+      ctaBody: 'Vereinbaren Sie eine 30-minütige Verifikationssession. Wir führen eine echte Entscheidung durch den kompletten WINDI-Zyklus — in Ihrem Kontext, mit Ihrem Anwendungsfall.',
+      ctaBtn: 'Verifikationssession vereinbaren'
+    },
+    pt: {
+      brandSub: 'Infraestrutura de Decisões Verificáveis',
+      navCta: 'Agendar Sessão',
+      heroEyebrow: 'W-Enterprise-001 · EU AI Act Art.14 Alinhado',
+      heroTitle: 'Você consegue provar<br><em>quem decidiu isso?</em>',
+      heroSub: 'Cada decisão crítica da sua organização — proposta por IA, assinada por humanos — agora é verificável de forma independente. Não registrada. Provada.',
+      heroBtn1: 'Veja uma decisão sendo provada',
+      heroBtn2: 'Abrir verificação ao vivo',
+      stat1: 'AI Act Artigo 14 · Supervisão Humana',
+      stat2: 'Endpoint de verificação. Público. Independente.',
+      stat3: 'Alterações possíveis após selo',
+      problemLabel: 'O Problema',
+      problemTitle: 'Organizações não falham<br>por falta de decisões.<br>Elas falham porque não conseguem<br><em>prová-las.</em>',
+      problemBody: 'Logs de auditoria podem ser alterados. Relatórios podem ser reescritos. A responsabilidade é presumida — nunca verificada. Sob o EU AI Act e DORA, essa presunção não é mais aceitável.',
+      ctaEyebrow: 'Próximo Passo',
+      ctaTitle: 'Traga uma decisão.<br><em>Nós a provamos.</em>',
+      ctaBody: 'Agende uma sessão de verificação de 30 minutos. Executamos uma decisão real através do ciclo WINDI completo — no seu contexto, com seu caso de uso.',
+      ctaBtn: 'Agendar sessão de verificação'
+    }
+  };
+
+  let currentLang = 'en';
+
+  function t(key) {
+    return UI[currentLang][key] || UI['en'][key] || key;
+  }
+
+  function updateLanguage() {
+    const root = document.documentElement;
+    root.setAttribute('data-lang', currentLang);
+    root.lang = currentLang === 'pt' ? 'pt-BR' : currentLang;
+
+    // Update text content
+    const el = (id) => document.getElementById(id);
+    if (el('brandSub')) el('brandSub').textContent = t('brandSub');
+    if (el('navCta')) el('navCta').textContent = t('navCta');
+    if (el('heroEyebrow')) el('heroEyebrow').textContent = t('heroEyebrow');
+    if (el('heroTitle')) el('heroTitle').innerHTML = t('heroTitle');
+    if (el('heroSub')) el('heroSub').textContent = t('heroSub');
+    if (el('heroBtn1')) el('heroBtn1').textContent = t('heroBtn1');
+    if (el('heroBtn2')) el('heroBtn2').textContent = t('heroBtn2');
+    if (el('stat1')) el('stat1').textContent = t('stat1');
+    if (el('stat2')) el('stat2').textContent = t('stat2');
+    if (el('stat3')) el('stat3').textContent = t('stat3');
+    if (el('problemLabel')) el('problemLabel').textContent = t('problemLabel');
+    if (el('problemTitle')) el('problemTitle').innerHTML = t('problemTitle');
+    if (el('problemBody')) el('problemBody').textContent = t('problemBody');
+    if (el('ctaEyebrow')) el('ctaEyebrow').textContent = t('ctaEyebrow');
+    if (el('ctaTitle')) el('ctaTitle').innerHTML = t('ctaTitle');
+    if (el('ctaBody')) el('ctaBody').textContent = t('ctaBody');
+    if (el('ctaBtn')) el('ctaBtn').textContent = t('ctaBtn');
+
+    // Update lang buttons
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.lang === currentLang);
+    });
+  }
+
+  // ─── Canonical Initialization (W-FRONTEND-CANON-001 §7) ───
+  document.addEventListener('DOMContentLoaded', () => {
+    const root = document.documentElement;
+
+    // Theme
+    const savedTheme = localStorage.getItem('windi-theme') || 'noir';
+    root.setAttribute('data-theme', savedTheme);
+    const themeBtn = document.getElementById('themeBtn');
+    themeBtn.textContent = savedTheme === 'noir' ? 'KLAR' : 'NOIR';
+
+    // Language
+    const savedLang = localStorage.getItem('windi-lang');
+    const browserLang = navigator.language.slice(0, 2);
+    const supportedLangs = ['pt', 'en', 'de'];
+    currentLang = savedLang || (supportedLangs.includes(browserLang) ? browserLang : 'en');
+    if (!savedLang) localStorage.setItem('windi-lang', currentLang);
+    updateLanguage();
+
+    // Theme toggle
+    themeBtn.addEventListener('click', () => {
+      const isNoir = root.getAttribute('data-theme') === 'noir';
+      const newTheme = isNoir ? 'klar' : 'noir';
+      root.setAttribute('data-theme', newTheme);
+      themeBtn.textContent = newTheme === 'noir' ? 'KLAR' : 'NOIR';
+      localStorage.setItem('windi-theme', newTheme);
+    });
+
+    // Language toggle
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentLang = btn.dataset.lang;
+        localStorage.setItem('windi-lang', currentLang);
+        updateLanguage();
+      });
+    });
+  });
+
+  // Cursor
   const cursor = document.getElementById('cursor');
   document.addEventListener('mousemove', e => {
     cursor.style.left = e.clientX - 3 + 'px';
@@ -931,6 +1146,7 @@
   document.addEventListener('mousedown', () => cursor.style.transform = 'scale(2.5)');
   document.addEventListener('mouseup',   () => cursor.style.transform = 'scale(1)');
 
+  // Fade-up observer
   const observer = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
   }, { threshold: 0.12 });

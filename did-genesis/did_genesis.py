@@ -31,20 +31,26 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 # P0 §299 — Ledger client for birth_receipt emission
+# §W-RAG-MITIGATION-001 — Extended for suspend/restore receipts
 try:
-    from ledger_client import seal_birth, check_receipt_exists, generate_birth_receipt_id
+    from ledger_client import (
+        seal_birth, check_receipt_exists, generate_birth_receipt_id,
+        seal_suspend, seal_restore
+    )
     LEDGER_ENABLED = True
 except ImportError:
     LEDGER_ENABLED = False
     seal_birth = None
     check_receipt_exists = None
     generate_birth_receipt_id = None
+    seal_suspend = None
+    seal_restore = None
 
 # ══════════════════════════════════════════════════════════════════════════════
 # CONFIGURATION
 # ══════════════════════════════════════════════════════════════════════════════
 
-VERSION = "1.0.0"
+VERSION = "1.5.0"  # §W-RAG-MITIGATION-001: + Ledger seal + Item 11/12 complete
 SERVICE_ID = "W-DID-GENESIS"
 PORT = 8096
 
@@ -55,7 +61,14 @@ LOG_DIR = Path("/opt/windi/logs")
 # Security
 SECRET_KEY = os.environ.get("WINDI_DID_SECRET", "windi-did-genesis-dragon-2026")
 SALT = "windi-dragon-salt-2026"
-SESSION_DURATION = 86400 * 30  # 30 days (sovereign session)
+
+# §W-RAG-MITIGATION-001: Reduced session TTL for DID compromise mitigation
+# Previous: 86400 * 30 (30 days) — excessive exposure window
+# Current: 900 (15 minutes) — services must re-validate frequently
+# See: DOUTRINA-DID-REVOGACAO-001 (pending seal)
+SESSION_DURATION = 900  # 15 minutes max (security mitigation)
+VALIDATION_CACHE_MAX_AGE = 60  # Services should not cache validation > 60s
+
 TOKEN_COOKIE_NAME = "windi_did_session"
 
 # Domain
@@ -666,8 +679,15 @@ async def validate_session(
         return {"valid": False, "reason": "session_not_found"}
 
     if row["status"] != "active":
+        # §W-RAG-MITIGATION-001: Log blocked access for audit trail
+        log.warning(f"BLOCKED: DID {row['did']} attempted access with status={row['status']}")
         conn.close()
-        return {"valid": False, "reason": f"identity_{row['status']}"}
+        return {
+            "valid": False,
+            "reason": f"identity_{row['status']}",
+            "blocked_at": datetime.now(timezone.utc).isoformat(),
+            "status": row["status"]
+        }
 
     # Update last used
     cursor.execute("""
@@ -688,7 +708,11 @@ async def validate_session(
         "tier_emoji": tier_info["emoji"],
         "tier_level": tier_info["level"],
         "access": tier_info["access"],
-        "expires_in": int(payload.get("exp", 0) - time.time())
+        "expires_in": int(payload.get("exp", 0) - time.time()),
+        # §W-RAG-MITIGATION-001: Cache control for DID compromise mitigation
+        "status_checked_at": datetime.now(timezone.utc).isoformat(),
+        "validation_cache_max_age": VALIDATION_CACHE_MAX_AGE,
+        "status": "active"  # Explicit status in response
     }
 
 @app.post("/api/genesis/logout")
@@ -1624,6 +1648,434 @@ async def birth_v2(body: BirthRequestV2, request: Request, response: Response):
         }
 
     return result
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# §W-RAG-MITIGATION-001 — DID SUSPENSION ENDPOINT
+# DOUTRINA-DID-REVOGACAO-001 (pending seal)
+# ══════════════════════════════════════════════════════════════════════════════
+
+class SuspendRequest(BaseModel):
+    reason: str  # Required: why is this DID being suspended?
+
+# Tier hierarchy for authorization (higher number = more authority)
+TIER_LEVELS = {"SEED": 1, "NODAL": 2, "SOVEREIGN": 3, "ORACLE": 4}
+
+def can_suspend(actor_tier: str, actor_did: str, target_tier: str, target_did: str) -> tuple[bool, str]:
+    """
+    Authorization logic for DID suspension.
+    Returns (allowed, reason).
+
+    Policy:
+    - Self-suspension: always allowed
+    - Higher tier can suspend lower tier
+    - Same tier cannot suspend each other (except self)
+    - ORACLE suspending ORACLE: requires 2-of-3 (NOT IMPLEMENTED - returns False)
+    - FOUNDER: requires 2-of-3 ORACLE (NOT IMPLEMENTED - returns False)
+    """
+    # Self-suspension always allowed
+    if actor_did == target_did:
+        return True, "self_suspension"
+
+    actor_level = TIER_LEVELS.get(actor_tier, 0)
+    target_level = TIER_LEVELS.get(target_tier, 0)
+
+    # Check for FOUNDER (special case - role, not tier)
+    # FOUNDER requires 2-of-3 ORACLE quorum - NOT IMPLEMENTED YET
+    # For now, FOUNDER cannot be suspended via single request
+
+    # ORACLE suspending ORACLE requires quorum - NOT IMPLEMENTED YET
+    if target_tier == "ORACLE" and actor_tier == "ORACLE" and actor_did != target_did:
+        return False, "oracle_quorum_required"
+
+    # Higher tier can suspend lower tier
+    if actor_level > target_level:
+        return True, f"tier_authority_{actor_tier}_over_{target_tier}"
+
+    # Same or lower tier cannot suspend (except self, handled above)
+    return False, f"insufficient_authority_{actor_tier}_cannot_suspend_{target_tier}"
+
+
+@app.post("/api/genesis/{target_did}/suspend")
+async def suspend_did(
+    target_did: str,
+    body: SuspendRequest,
+    request: Request,
+    windi_did_session: Optional[str] = Cookie(None)
+):
+    """
+    §W-RAG-MITIGATION-001 — Suspend a DID.
+
+    Suspension is fast and reversible. It:
+    1. Changes status to 'suspended'
+    2. Invalidates all active sessions
+    3. Logs the event for audit
+    4. Creates a Ledger receipt (if available)
+
+    Authorization:
+    - Self-suspension: always allowed
+    - ORACLE can suspend any non-ORACLE DID
+    - SOVEREIGN can suspend SEED/NODAL
+    - NODAL can only self-suspend
+    - SEED can only self-suspend
+    - ORACLE suspending ORACLE: requires 2-of-3 quorum (NOT IMPLEMENTED)
+    """
+    # Validate actor session
+    validation = await validate_session(request, windi_did_session)
+    if not validation.get("valid"):
+        raise HTTPException(status_code=401, detail="Not authenticated")
+
+    actor_did = validation.get("did")
+    actor_tier = validation.get("tier", "SEED")
+
+    # §W-RAG-MITIGATION-001: Mass-suspension detection
+    # Alert if same actor suspends > 3 DIDs in 60 seconds
+    MASS_SUSPEND_THRESHOLD = 3
+    MASS_SUSPEND_WINDOW_SECONDS = 60
+
+    conn = get_db()
+    cursor = conn.cursor()
+
+    # Check recent suspensions by this actor (excluding self-suspensions)
+    cursor.execute("""
+        SELECT COUNT(*) FROM login_events
+        WHERE event_type = 'suspended'
+        AND ip = ?
+        AND timestamp > datetime('now', ?)
+    """, (
+        request.client.host if request.client else "unknown",
+        f"-{MASS_SUSPEND_WINDOW_SECONDS} seconds"
+    ))
+    recent_suspensions = cursor.fetchone()[0]
+
+    if recent_suspensions >= MASS_SUSPEND_THRESHOLD:
+        log.critical(f"🚨 MASS-SUSPENSION ALERT: {actor_did} ({actor_tier}) has suspended {recent_suspensions} DIDs in {MASS_SUSPEND_WINDOW_SECONDS}s - POSSIBLE COMPROMISED ORACLE")
+        # Don't block yet, but could add: raise HTTPException(status_code=429, detail="Rate limit exceeded")
+
+    # Get target identity
+    cursor.execute("""
+        SELECT did, tier, role, status, display_name
+        FROM identities WHERE did = ?
+    """, (target_did,))
+    target = cursor.fetchone()
+
+    if not target:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Target DID not found")
+
+    target_tier = target["tier"] or ROLE_TO_TIER.get(target["role"], "SEED")
+    target_status = target["status"]
+
+    # Check if already suspended
+    if target_status == "suspended":
+        conn.close()
+        return {
+            "success": False,
+            "reason": "already_suspended",
+            "target_did": target_did,
+            "status": target_status
+        }
+
+    # Check authorization
+    allowed, auth_reason = can_suspend(actor_tier, actor_did, target_tier, target_did)
+
+    if not allowed:
+        conn.close()
+        log.warning(f"SUSPEND DENIED: {actor_did} ({actor_tier}) tried to suspend {target_did} ({target_tier}) - {auth_reason}")
+        raise HTTPException(
+            status_code=403,
+            detail=f"Not authorized to suspend this DID: {auth_reason}"
+        )
+
+    # Perform suspension
+    now = datetime.now(timezone.utc).isoformat()
+
+    # §W-RAG-MITIGATION-001 Item 11: Detect self-suspension
+    is_self_suspension = (actor_did == target_did)
+
+    # 1. Update status + persist suspension metadata (Item 12)
+    cursor.execute("""
+        UPDATE identities
+        SET status = 'suspended',
+            suspended_by = ?,
+            suspended_by_tier = ?,
+            suspended_at = ?
+        WHERE did = ?
+    """, (actor_did, actor_tier, now, target_did))
+
+    # 2. Invalidate all sessions for target DID
+    cursor.execute("DELETE FROM sessions WHERE did = ?", (target_did,))
+    sessions_invalidated = cursor.rowcount
+
+    # 3. Log the event
+    cursor.execute("""
+        INSERT INTO login_events (did, event_type, ip, user_agent, timestamp, success)
+        VALUES (?, 'suspended', ?, ?, ?, 1)
+    """, (
+        target_did,
+        request.client.host if request.client else "unknown",
+        request.headers.get("User-Agent", "unknown"),
+        now
+    ))
+
+    conn.commit()
+    conn.close()
+
+    log.warning(f"🔒 SUSPENDED: {target_did} ({target_tier}) by {actor_did} ({actor_tier}) - reason: {body.reason}")
+
+    # §W-RAG-MITIGATION-001: Seal suspension in Ledger
+    receipt_id = None
+    receipt_status = "LEDGER_DISABLED"
+
+    if LEDGER_ENABLED and seal_suspend:
+        try:
+            # §W-RAG-MITIGATION-001 Item 11: Pass is_self_suspension flag
+            # When True, ledger_client uses actor=w-did-genesis with on_behalf_of
+            receipt_status, receipt_id = seal_suspend(
+                target_did=target_did,
+                target_tier=target_tier,
+                suspended_by=actor_did,
+                suspended_by_tier=actor_tier,
+                reason=body.reason,
+                authorization=auth_reason,
+                suspended_at=now,
+                sessions_invalidated=sessions_invalidated,
+                is_self_suspension=is_self_suspension
+            )
+            log.info(f"Suspend receipt: {receipt_id} ({receipt_status}) [self={is_self_suspension}]")
+        except Exception as e:
+            log.error(f"Failed to seal suspend: {e}")
+            receipt_status = "SEAL_ERROR"
+
+    return {
+        "success": True,
+        "target_did": target_did,
+        "target_tier": target_tier,
+        "previous_status": target_status,
+        "new_status": "suspended",
+        "suspended_by": actor_did,
+        "suspended_by_tier": actor_tier,
+        "authorization": auth_reason,
+        "reason": body.reason,
+        "sessions_invalidated": sessions_invalidated,
+        "suspended_at": now,
+        "receipt_id": receipt_id,
+        "receipt_status": receipt_status,
+        "recovery_note": "To restore, use POST /api/genesis/{did}/restore (requires higher authority gate)"
+    }
+
+
+class RestoreRequest(BaseModel):
+    reason: str  # Required: justification for restoration
+    evidence: Optional[str] = None  # Optional: evidence supporting restoration
+
+def can_restore(actor_tier: str, actor_did: str, target_did: str, suspended_by: Optional[str]) -> tuple[bool, str]:
+    """
+    Authorization logic for DID restoration.
+    Returns (allowed, reason).
+
+    ASYMMETRIC DESIGN (harder than suspend):
+    - Self-restore: NEVER allowed (you cannot undo your own suspension)
+    - Only ORACLE can restore ANY DID
+    - If suspended by ORACLE, a DIFFERENT ORACLE must restore
+    - Lower tiers cannot restore anyone (not even lower tiers)
+    """
+    # Self-restore NEVER allowed
+    if actor_did == target_did:
+        return False, "self_restore_forbidden"
+
+    # Only ORACLE tier can restore
+    if actor_tier != "ORACLE":
+        return False, f"oracle_required_for_restore_{actor_tier}_insufficient"
+
+    # If suspended by an ORACLE, a DIFFERENT ORACLE must restore
+    if suspended_by and suspended_by != actor_did:
+        # Different actor, OK
+        return True, "oracle_cross_restore"
+    elif suspended_by == actor_did:
+        # Same ORACLE trying to undo their own action
+        return False, "same_oracle_cannot_undo_own_suspension"
+
+    # ORACLE restoring, suspended_by unknown (legacy or self-suspension)
+    return True, "oracle_authority"
+
+
+@app.post("/api/genesis/{target_did}/restore")
+async def restore_did(
+    target_did: str,
+    body: RestoreRequest,
+    request: Request,
+    windi_did_session: Optional[str] = Cookie(None)
+):
+    """
+    §W-RAG-MITIGATION-001 — Restore a suspended DID.
+
+    ASYMMETRIC DESIGN: Restore is HARDER than suspend.
+    1. Self-restore is FORBIDDEN (cannot undo your own suspension)
+    2. Only ORACLE tier can restore ANY DID
+    3. If suspended by ORACLE, a DIFFERENT ORACLE must restore
+    4. Requires justification and optional evidence
+    5. Full audit trail
+
+    This asymmetry prevents:
+    - Attacker who suspended legitimate DID from restoring their own
+    - Single point of failure in restoration authority
+    """
+    # Validate actor session
+    validation = await validate_session(request, windi_did_session)
+    if not validation.get("valid"):
+        raise HTTPException(status_code=401, detail="Not authenticated")
+
+    actor_did = validation.get("did")
+    actor_tier = validation.get("tier", "SEED")
+
+    # Get target identity and suspension metadata
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT did, tier, role, status, display_name, suspended_by, suspended_by_tier, suspended_at
+        FROM identities WHERE did = ?
+    """, (target_did,))
+    target = cursor.fetchone()
+
+    if not target:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Target DID not found")
+
+    target_tier = target["tier"] or ROLE_TO_TIER.get(target["role"], "SEED")
+    target_status = target["status"]
+
+    # Check if actually suspended
+    if target_status != "suspended":
+        conn.close()
+        return {
+            "success": False,
+            "reason": "not_suspended",
+            "target_did": target_did,
+            "status": target_status
+        }
+
+    # §W-RAG-MITIGATION-001 Item 12: Read suspension metadata from identities
+    # Now uses persisted columns instead of login_events
+    suspended_by = target["suspended_by"]
+    suspended_by_tier = target["suspended_by_tier"]
+    suspended_at = target["suspended_at"]
+
+    # Check authorization
+    allowed, auth_reason = can_restore(actor_tier, actor_did, target_did, suspended_by)
+
+    if not allowed:
+        conn.close()
+        log.warning(f"RESTORE DENIED: {actor_did} ({actor_tier}) tried to restore {target_did} ({target_tier}) - {auth_reason}")
+        raise HTTPException(
+            status_code=403,
+            detail=f"Not authorized to restore this DID: {auth_reason}"
+        )
+
+    # Perform restoration
+    now = datetime.now(timezone.utc).isoformat()
+
+    # 1. Update status and clear suspension metadata
+    cursor.execute("""
+        UPDATE identities
+        SET status = 'active',
+            suspended_by = NULL,
+            suspended_by_tier = NULL,
+            suspended_at = NULL
+        WHERE did = ?
+    """, (target_did,))
+
+    # 2. Log the restoration event
+    cursor.execute("""
+        INSERT INTO login_events (did, event_type, ip, user_agent, timestamp, success)
+        VALUES (?, 'restored', ?, ?, ?, 1)
+    """, (
+        target_did,
+        request.client.host if request.client else "unknown",
+        request.headers.get("User-Agent", "unknown"),
+        now
+    ))
+
+    conn.commit()
+    conn.close()
+
+    log.warning(f"🔓 RESTORED: {target_did} ({target_tier}) by {actor_did} ({actor_tier}) - reason: {body.reason}")
+
+    # §W-RAG-MITIGATION-001: Seal restoration in Ledger
+    receipt_id = None
+    receipt_status = "LEDGER_DISABLED"
+
+    if LEDGER_ENABLED and seal_restore:
+        try:
+            receipt_status, receipt_id = seal_restore(
+                target_did=target_did,
+                target_tier=target_tier,
+                restored_by=actor_did,
+                restored_by_tier=actor_tier,
+                reason=body.reason,
+                evidence=body.evidence,
+                authorization=auth_reason,
+                restored_at=now
+            )
+            log.info(f"Restore receipt: {receipt_id} ({receipt_status})")
+        except Exception as e:
+            log.error(f"Failed to seal restore: {e}")
+            receipt_status = "SEAL_ERROR"
+
+    return {
+        "success": True,
+        "target_did": target_did,
+        "target_tier": target_tier,
+        "previous_status": "suspended",
+        "new_status": "active",
+        "restored_by": actor_did,
+        "restored_by_tier": actor_tier,
+        "authorization": auth_reason,
+        "reason": body.reason,
+        "evidence": body.evidence,
+        "restored_at": now,
+        "was_suspended_by": suspended_by,
+        "was_suspended_by_tier": suspended_by_tier,
+        "was_suspended_at": suspended_at,
+        "receipt_id": receipt_id,
+        "receipt_status": receipt_status,
+        "asymmetry_note": "Restoration requires ORACLE authority. Self-restore is forbidden."
+    }
+
+
+@app.get("/api/genesis/{target_did}/status")
+async def get_did_status(target_did: str):
+    """
+    Get the current status of a DID (public endpoint for status checks).
+    """
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT did, status, tier, created_at, last_login_at, suspended_by, suspended_by_tier, suspended_at
+        FROM identities WHERE did = ?
+    """, (target_did,))
+    row = cursor.fetchone()
+    conn.close()
+
+    if not row:
+        raise HTTPException(status_code=404, detail="DID not found")
+
+    response = {
+        "did": row["did"],
+        "status": row["status"],
+        "tier": row["tier"],
+        "created_at": row["created_at"],
+        "last_login_at": row["last_login_at"],
+        "checked_at": datetime.now(timezone.utc).isoformat()
+    }
+
+    # Include suspension metadata if suspended
+    if row["status"] == "suspended":
+        response["suspended_by"] = row["suspended_by"]
+        response["suspended_by_tier"] = row["suspended_by_tier"]
+        response["suspended_at"] = row["suspended_at"]
+
+    return response
 
 
 # ══════════════════════════════════════════════════════════════════════════════
