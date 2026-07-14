@@ -401,6 +401,35 @@ Bridges: /opt/windi/agents/constitutional-agent/blueprints/
 }
 ```
 
+### §POST — Ledger POST Schema Canónico (12 Jul 2026)
+
+> **"Fim da arqueologia. O schema vive aqui."**
+
+```json
+{
+  "schema_version": "1.0",
+  "id": "WINDI-[SERVICE]-[YYYYMMDDHHMMSS]-[HASH8]",
+  "actor": "did:windi:[user-did]",
+  "issuer": "did:windi:[service-did]",
+  "wallet_id": "[user-wallet-id]",
+  "app": "[service-name]",
+  "doc_name": "Título do documento",
+  "doc_type": "doc",
+  "governance_level": "HIGH|MED|LOW",
+  "content_hash": "sha256:[64-char-hex]",
+  "sge_score": 0.95,
+  "declaration": "operator",
+  "human_approved": true,
+  "tags": ["tag1", "tag2"],
+  "metadata": {}
+}
+```
+
+**Campos obrigatórios:** `schema_version`, `id`, `actor`, `wallet_id`, `doc_type`, `sge_score`
+**Actor:** DID do utilizador (Berçário) — prova contribuição humana (Art. 50 EU AI Act)
+**Issuer:** DID do serviço que facilitou — separado do actor
+**Fallback:** Se DID indisponível, `actor: "human-operator"` + `metadata.human_operator_note`
+
 **Seal:** `POST http://localhost:8101/api/receipts` · **Verify:** `GET /verify-public/?id={receipt_id}`
 
 ---
@@ -549,11 +578,11 @@ Toggle: `DE | EN | PT` · Auto-detect: `localStorage('windi-lang')` → browser 
 
 | Data | Milestone |
 |------|-----------|
-| 19 Jun | **W-FARM DRAGON-001 RATIFICADA PLENA** — Primeira casa digital · 5/5 achados · Tríade mapeada · `5F124853` ✅ |
+| 14 Jul | **LLMS-CONTENT-DRIFT-001 RESOLVIDO** — nginx /llms.txt fix · dual routes · Cloud↔CCode cowork |
+| 05 Jul | **FILA DRENADA** — 5 receipts · §302/§303 CANDIDATE · 57,492 Ledger total |
+| 19 Jun | **W-FARM DRAGON-001 RATIFICADA PLENA** — Primeira casa digital · 5/5 achados · `5F124853` ✅ |
 | 17 Jun | **§236-ter** Verify Sanitary + Airgap — systemd Verify/Ledger · Gate 0 PASS |
 | 13 Jun | **§236-bis** Codex Continuity Ops — Participation Layer · STRATO |
-| 11 Jun | **SEAL V2.8** Full Arc — 5 receipts · `5A424A04` ✅ |
-| 07 Jun | **Vance 10/10** Anti-Movement Medicine · SPINE-LESSONS-LEARNED ✅ |
 
 > **Full history:** `CLAUDE-HISTORY.md` § SESSION-20260619-FARM-DRAGON-001-PLENA
 

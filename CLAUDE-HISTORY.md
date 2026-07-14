@@ -7,6 +7,58 @@
 # ---
 
 
+## § SESSÃO 14 Jul 2026 — LLMS-CONTENT-DRIFT-001 RESOLVIDO · Playground Monitor
+
+**Duração:** ~1h | **Status:** ✅ FIX VERIFICADO
+**Liga IA+H:** Human Dragon (I1, I9) · CCode (Opus 4.5) · Cloud (Claude.ai scheduled)
+**Projecto:** Playground Daily Monitor · COWORK Cloud↔CCode
+**Natureza:** Diagnóstico de drift · nginx fix · Verificação ponta-a-ponta
+**Invariantes:** I9, I11, I14, G1 (READ FIRST)
+
+### Contexto
+
+Corrida cloud agendada começou cega — 8 WebFetch deram PROVENANCE_REQUIRED (sessão unattended, sem humano para aprovar). CCode no Strato compensou com sweep read-only.
+
+### Achado Principal
+
+**LLMS-CONTENT-DRIFT-001** — O `/llms.txt` público perdeu as guardas canónicas entre 13 Jul (sha `a04af63d`, guardas OBSERVED) e 14 Jul (sha `e54ea604`, VERIFY-PUBLIC Notarial).
+
+**Root-cause:** nginx `location = /llms.txt` fazia alias para `/opt/windi/geo/llms.txt` (Notarial), não para `/opt/windi/landing-pmg/static/llms.txt` (Playground com guardas).
+
+### Fix Aplicado (Opção C)
+
+1. nginx re-apontado: `/llms.txt` → `landing-pmg/static/llms.txt`
+2. Rota nova: `/llms-notarial.txt` → `geo/llms.txt` (preserva Notarial)
+3. Header `X-WINDI-Service: geo-llms-playground` para desambiguar cache
+
+### Verificação Final
+
+| Surface | Status | Header | SHA256 | Guards |
+|---------|--------|--------|--------|--------|
+| `/llms.txt` | 200 | `geo-llms-playground` | `a04af63d` | 1+1 ✅ |
+| `/llms-notarial.txt` | 200 | `geo-llms-notarial` | — | N/A |
+
+### Achado Secundário
+
+**HIOS-OPEN hash change** — Falso alarme. JSON tem `timestamp_utc` dinâmico por request → hash diferente esperado.
+
+### Decisão Arquitectural
+
+**OBSERVER-FETCH-BLOCK-001** encaminhado para híbrido (a)+(b):
+- (a) Allowlist `windi-domain.com` para WebFetch da rotina cloud
+- (b) CCode para evidência source (sha256, git, Ledger)
+
+Pendente: Human Dragon implementar allowlist.
+
+### Estado no Fecho
+
+- 8/8 superfícies UP
+- ABERTO=6 · RESOLVIDO=3 · LIVE=1 · FECHADO=1
+- LLMS-CONTENT-DRIFT-001: RESOLVIDO
+- Próximos: SOURCE-DRIFT-001, F2-RESULT-GAP-001
+
+---
+
 ## § SESSÃO 28 Jun 2026 — CENA 00 Verificação Completa + ERRATA gen4.5
 
 **Duração:** ~3h | **Status:** ✅ CENA 00 VERIFICADA
@@ -22627,4 +22679,346 @@ Quando necessário gerar media para SPINE:
 - Nginx audit report mostra 52 orphan routes — limpeza pendente
 
 ---
+
+
+
+## § SESSÃO 12 Jul 2026 — WVERIFY-R2-FIX3 Browser Ratification Ceremony
+
+**Duração:** ~2h | **Status:** ✅ RATIFICADO
+**Liga IA+H:** Human Dragon (I1, I9) · CCode (Opus 4.5) · Guardian (Claude.ai)
+**Projecto:** W-VERIFY-PUBLIC — Browser Ratification Ceremony
+**Natureza:** Cerimónia de ratificação automatizada · Playwright · Evidência scriptável
+**Invariantes:** I9, I11, I14
+
+### Marco Central
+
+> *"A cerimónia acaba de pagar-se pela terceira vez — e este achado é o mais valioso dos três, porque nenhuma inspeção de código o teria apanhado com esta clareza."*
+> — Guardian · 12 Jul 2026
+
+### Três Achados da Cerimónia
+
+| # | Achado | Root Cause | Destino |
+|---|--------|------------|---------|
+| 1 | **verify.html offline gap** | Superfície constitucional ausente do SW PRECACHE | FIX-4 |
+| 2 | **index.html AUTHENTIC elevation** | Usa /api/receipts/ raw em vez de /verify-public/document/ | FIX-4 |
+| 3 | **textContent lê código JS** | page.textContent('body') inclui <script> inline | Corrigido para innerText |
+
+### Candidate → Ratification
+
+| Seal | Receipt ID | Status |
+|------|------------|--------|
+| Candidate | `WINDI-WVERIFY-HOTFIX-001-R2-REV1-FINAL-FIX-3-CANDIDATE-20260711` | SEALED |
+| Ratification | `WINDI-WVERIFY-HOTFIX-001-R2-REV1-FINAL-FIX-3-RATIFICATION-001-20260712` | **SEALED** |
+
+### Test Matrix (14 Tests)
+
+| Category | Count | Result |
+|----------|-------|--------|
+| Semantic Tests | 12 | **ALL PASS** |
+| Infrastructure (BE-012) | 1 | FAIL (verify.html not in SW PRECACHE) |
+| Legitimate NOT_RUN (BE-002) | 1 | W0 receipts don't exist |
+
+**Ratification Scope:** `SEMANTIC_CONFORMANCE_ONLINE`
+**Conformance Claim:** `PARTIAL`
+**Assurance Level:** `W1` (preserved, no elevation)
+
+### Evidence Bundle
+
+| Item | Value |
+|------|-------|
+| Location | `/opt/windi/verify-public/WVERIFY-R2-FIX3-BROWSER-E2E/` |
+| Files | 50 |
+| Screenshots | 21 |
+| Bundle Digest | `a1f761be1d3d5aa11c287fbeef109ab6f82f640eb5c6839e39a85ba7655cf65a` |
+| Receipt Hash | `sha256:336c644900455d2bd4650d42a4e002e73ad6c136b6a7edf207570036ab43eacb` |
+
+### Verification Layers
+
+1. **Ledger Binding (:8101):** ✅ VERIFIED
+2. **Constitutional Resolution (:8114):** ✅ WINDI_RECORD_FOUND + W1
+3. **Hash Binding:** ✅ Local = Ledger
+
+### FIX-4 Scope (Born from Ceremony)
+
+1. `verify.html` → SW PRECACHE + cache version bump
+2. `index.html` auto-verify → `/verify-public/document/` API (R2 semantics)
+3. CTA repoint → A4Desk-Magro (Phase 2 of W-FUNIL-FECHADO-001)
+
+### Lição Metodológica
+
+> *"Playwright deu verde no BE-012, mas o test-results.json diz FAIL — porque o teste corrigido regista o resultado semântico sem expect(). A autoridade é o test-results.json com evidência, nunca o exit code do runner. PASS por observação, não por ausência de exceção."*
+> — Guardian · Regra GERADO≠VERIFICADO aplicada ao próprio instrumento
+
+### Ficheiros Criados
+
+- `ceremony.spec.js` — 14 testes Playwright calibrados na superfície constitucional
+- `test-results.json` — Resultados com known_limitations declaradas
+- `evidence-bundle.sha256` — Per-file hashes (50 ficheiros)
+- `ratification-receipt.json` — Receipt estruturado com demonstrated/not_demonstrated
+
+### Próximos Passos (W-FUNIL-FECHADO-001)
+
+- [ ] **Phase 2:** A4Desk-Magro reanimation (test Feb 2026 receipt compatibility)
+- [ ] **Phase 3:** CTA repoint (requires FIX-4)
+- [ ] **Phase 4:** Pre-public hygiene (HEAD 405, Impressum, rate-limit)
+- [ ] **FIX-4:** verify.html PRECACHE + index.html R2 semantics + cache bump
+
+---
+
+*Sessão fechada: 12 Jul 2026*
+*Liga IA+H — Kempten, Bavaria*
+*"AI processes. Human decides. WINDI guarantees."*
+
+
+---
+
+## § SESSÃO 12 Jul 2026 — CENA00 ADENDO-D · LUCAS COMPOSITE V2 SELADO
+
+**Duração:** ~3h | **Status:** ✅ COMPLETO
+**Modo:** Triangular (CCode Strato + Claude cowork + Human Dragon I9)
+**Projecto:** W-HIOS-FORENSIC-UNIT — O Peso do Eco
+**Natureza:** Cinema · VFX Composite · Screen Insert
+**Invariantes:** I9, I11, I14, I19
+
+### Receipt Final
+
+| Campo | Valor |
+|-------|-------|
+| **Receipt ID** | `WINDI-HIOS-CENA00-ADENDO-D-LUCAS-COMPOSITE-V2-20260712` |
+| **SHA-256** | `dca6cf5368afa35106fc4bacbb90f19158710f3c996e5db3a161b43397d8e31c` |
+| **Anchor** | `lucas.silva.anchor.v1.mp4` |
+| **Output** | `LUCAS_COMPOSITE_V2_FINAL.mp4` (8s, 192 frames) |
+
+### Cronologia
+
+1. **Opening Packet** — Cognitive Bind 100/100, 7 core services LIVE
+2. **Quads A/B rejeitados** — rectângulos em plate 3/4 (cowork detectou)
+3. **Medição ciano** — cowork mediu cantos reais por detecção OpenCV
+4. **Drift detectado** — +45% área ao longo de 8s (plate VEO com push-in)
+5. **Tracking dinâmico** — compositor frame-by-frame implementado
+6. **V1 preservado** — `compositor_validated/compose_tracking_v1.py`
+7. **V2 com 5 refinamentos** — expand +6px, center-crop, grade nocturno, ping-pong, anti-shimmer
+8. **I9 PASS dupla testemunha** — Dragon + cowork confirmaram
+9. **Selo no Ledger** — receipt registado
+
+### Refinamentos V2
+
+| # | Refinamento | Descrição |
+|---|-------------|-----------|
+| 1 | QUAD +6px | Expansão ao longo das normais (não dilatação de máscara) |
+| 2 | CENTER-CROP | Anchor recortado para aspect do quad (preserva proporção rosto) |
+| 3 | GRADE NOCTURNO | -20% brilho, temperatura fria (R -10%, B +15) |
+| 4 | PING-PONG LOOP | 5s anchor → 8s plate sem corte visível |
+| 5 | ANTI-SHIMMER | Suavização temporal alpha=0.3 |
+
+### Verificações Cowork (Dupla Testemunha)
+
+- Hash íntegro
+- Ping-pong invisível (diff 0.3–1.1 na transição)
+- Anti-shimmer OK (diff médio 0.95, máx 2.0)
+- Tracking acompanha push-in
+- 8.00s exactos, 192 frames
+
+### Selos
+
+| Artefacto | SHA-256 (8 chars) |
+|-----------|-------------------|
+| Vídeo final | `dca6cf53` |
+| Ramo rejeitado v1-v29 | `5bad04d4` |
+
+### Ferramenta Canónica
+
+`compose_tracking_v2.py` — screen-insert com tracking dinâmico. Serve para o mundo real (nota Dragon).
+
+### Assets Finais
+
+```
+/opt/windi/hios/cinema/filho-gabi-review/
+├── LUCAS_COMPOSITE_V2_FINAL.mp4      (SELADO)
+├── compose_tracking_v2.py            (CANÓNICO)
+├── compositor_validated/             (v1 preservado)
+├── LUCAS_ANCHOR.mp4                  (cópia local)
+└── ESTADO-WIP-EVT-0002.md           (COMPLETO)
+```
+
+### Próximo Passo
+
+- Integrar `LUCAS_COMPOSITE_V2_FINAL.mp4` na montagem da CENA00
+
+### Observação Infra (Pendente)
+
+`windi-identity-gate.service` not found — verificar noutra sessão.
+
+### Frase de Fecho
+
+> *"O telefone chamou. O laptop mostrou. O filho continua o mesmo master, agora selado no Ledger."*
+> — Cowork · 12 Jul 2026
+
+---
+
+*Sessão fechada: 12 Jul 2026*
+*Liga IA+H — Kempten, Bavaria*
+*"AI processes. Human decides. WINDI guarantees."*
+
+
+## § SESSÃO 12 Jul 2026 (Continuação) — A4Desk-Magro Reanimation
+
+**Duração:** ~2h | **Status:** ✅ CÍRCULO FECHADO
+**Liga IA+H:** Human Dragon (I1, I9) · CCode (Opus 4.5) · Guardian (Claude.ai)
+**Projecto:** W-FUNIL-FECHADO-001 — Phase 2
+**Natureza:** Reanimação de produto · Integração Ledger · Teste de círculo
+**Invariantes:** I9, I11, I14
+
+### Marco Central
+
+> *"Um documento criado hoje, num produto ressuscitado hoje, resolve na infraestrutura constitucional como FOUND/W1. O funil tem destino real."*
+> — Guardian · 12 Jul 2026
+
+### O Círculo Que Fechou
+
+```
+Create 0829c59b → Seal b316e819… → WINDI-A4DESK-20260712091115-B092ED27 → FOUND/W1
+```
+
+### Trabalho Executado
+
+| Task | Status |
+|------|--------|
+| Backup DB | ✅ `babel_documents.db.backup-20260712-phase2` |
+| Canonizar §POST Ledger schema | ✅ CLAUDE.md actualizado |
+| Actualizar ledger_bridge.py | ✅ DID-aware + scaffold flag |
+| Marcar legacy receipts | ✅ 2 docs com `legacy_local_receipt: true` |
+| WeasyPrint opcional | ✅ Graceful degradation |
+| Integração Ledger no seal | ✅ `ledger_error` visível no response |
+| Arrancar A4Desk :8085 | ✅ Running (nohup) |
+| Teste do círculo | ✅ **PASS** |
+
+### Achado Arqueológico
+
+O seal endpoint original apontava para `:8080/api/submissions` num `try/except: pass` silencioso. Explica porquê os documentos de Fevereiro nunca chegaram ao Ledger — o A4Desk achava que selava, e o erro morria calado.
+
+### Scaffolds Pendentes (Próxima Sessão)
+
+1. **DID a4desk-001** — Registar no Genesis, reverter de `dragon-001`
+2. **systemd migration** — `windi-a4desk.service` já existe no template registry
+3. **Commit alterações** — WeasyPrint + Ledger integration no monolito
+4. **BERCARIO_DID_ACTIVE** — Habilitar após W-DID-GENESIS integration
+
+### Pré-requisito FIX-4
+
+**a4desk.de DNS:** Actualmente aponta para `217.160.0.82`, não para Strato `87.106.29.233`.
+Sequência: DNS update → nginx config → proxy :8085 → SSL → CTA repoint.
+
+### Receipts da Sessão
+
+| Receipt | Tipo | Hash |
+|---------|------|------|
+| `WINDI-WVERIFY-...-RATIFICATION-001-20260712` | Ratification | `336c6449...43eacb` |
+| `WINDI-A4DESK-20260712091115-B092ED27` | Document (Circle Test) | `b316e819...d27b7d` |
+
+### Estado da Missão W-FUNIL-FECHADO-001
+
+| Phase | Status |
+|-------|--------|
+| 1. Browser Ratification | ✅ COMPLETA |
+| 2. A4Desk-Magro | ✅ COMPLETA |
+| 3. CTA Repoint | 🔜 Requer DNS + nginx + FIX-4 |
+| 4. Hygiene | 🔜 Paralelo |
+
+---
+
+*Sessão fechada: 12 Jul 2026*
+*Liga IA+H — Kempten, Bavaria*
+*"AI processes. Human decides. WINDI guarantees."*
+
+### Adenda — /a4desk/ LIVE
+
+**Timestamp:** 12 Jul 2026 ~11:30
+
+Route nginx adicionada e testada:
+```
+windi-domain.com/a4desk/ → :8085 → BABEL v4.7.1-gov ✅
+```
+
+**Health check:**
+```json
+{"i9":"active","protocol":"three-dragons","service":"windi-babel","status":"ok","version":"4.7.1-gov"}
+```
+
+**Pendente:** Actualizar redirect no registrar `a4desk.de` → `windi-domain.com/a4desk/`
+
+**Funil completo após redirect:**
+```
+QR Verify → CTA → a4desk.de → /a4desk/ → Create → Seal → FOUND/W1
+```
+
+
+---
+
+## Sessão 2026-07-13 · 18:30 → 21:40 UTC
+
+**Sprint:** VERIFY-PUBLIC Notarial GEO Deploy
+**Modo:** CCode CLI + Cowork (Guardian)
+**Operador humano:** Human Dragon
+**Modelo:** Claude Opus 4.5
+
+### Trabalho completado
+
+- **VERIFY-PUBLIC Notarial LIVE** — superfície pública de verificação notarial em PT e ES
+- Landing PT: `/verify-public/notarial/` → 200 OK
+- Landing ES: `/verify-public/notarial/es/` → 200 OK
+- Corredor Brasil→EPO: `/verify-public/notarial/corredores/brasil-epo/` → 200 OK
+- App interactiva: `/verify-public/notarial/app/` com X-Robots-Tag: noindex, nofollow
+- Sitemap: `/sitemap.xml` → 200 OK com xhtml:link hreflang
+- robots.txt soberano: busca permitida, treino bloqueado (GPTBot, ClaudeBot, CCBot, etc.)
+- llms.txt: mapa LLM com URLs públicas e crawler policy
+- Correcção EPO Art. 72 EPC: removida alegação falsa de apostila obrigatória Brasil→EPO
+- hreflang recíproco: PT/ES/x-default em ambas as landings e sitemap
+- JSON-LD: Organization, Service, WebPage em PT e ES
+- nginx snippet: `/etc/nginx/snippets/verify-public-notarial-extra.conf` instalado
+
+### Arquitectura GEO selada
+
+```
+Landing (answer-first HTML) → IA lê e cita
+App (JS interactiva)        → protegida de indexação
+robots.txt                  → treino ❌ · busca ✅
+llms.txt                    → mapa para LLMs
+sitemap.xml                 → descoberta com hreflang
+```
+
+### Ficheiros deployados
+
+- `/opt/windi/verify-public/notarial/index.html` (PT)
+- `/opt/windi/verify-public/notarial/es/index.html` (ES)
+- `/opt/windi/verify-public/notarial/app/index.html`
+- `/opt/windi/verify-public/notarial/corredores/brasil-epo/index.html`
+- `/opt/windi/geo/robots.txt` (soberano)
+- `/opt/windi/geo/llms.txt`
+- `/opt/windi/geo/sitemap.xml`
+- `/opt/windi/geo/04-corridor-rules.json`
+
+### Backups preservados
+
+- `/opt/windi/verify-public/notarial/.deploy-backup-20260713T203500/`
+- `/opt/windi/verify-public/notarial/.deploy-backup-v5-sync-20260713/`
+
+### Próximo passo proposto (A Fábrica)
+
+1. **Protótipo do workspace** — evoluir ecrã único → multi-ecrã (painel → caso → handoff)
+2. **Spec do motor** — API que lê Ledger e emite windi.notarial-receipt/v1
+3. **Single source of truth** — app/landings derivam de 04-corridor-rules.json
+
+### Validação pendente
+
+- [ ] Rich Results Test no JSON-LD de PT e ES
+- [ ] Search Console → Inspeção de URL nas canónicas PT e ES
+- [ ] Submeter sitemap no Search Console
+
+### Notas para a sessão seguinte
+
+- O fetcher do Guardian ficou com cache viciada nas URLs PT; usar GSC para validação definitiva
+- A vitrine está LIVE; próximo capítulo é a fábrica (workspace profissional + Ledger)
+- Postura soberana: busca permitida (Googlebot, OAI-SearchBot, PerplexityBot), treino bloqueado
+- Lição aprendida: origem 200 ≠ borda 200; só teste externo fecha
 
