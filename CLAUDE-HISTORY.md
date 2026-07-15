@@ -23022,3 +23022,218 @@ sitemap.xml                 → descoberta com hreflang
 - Postura soberana: busca permitida (Googlebot, OAI-SearchBot, PerplexityBot), treino bloqueado
 - Lição aprendida: origem 200 ≠ borda 200; só teste externo fecha
 
+
+---
+
+## Sessao 2026-07-15 · 10:30 -> 12:00 UTC
+
+**Sprint:** QR Soberano + IP-LATAM v0.6.0
+**Modo:** CCode CLI (Opus 4.5) + Cowork (Guardian Claude.ai)
+**Operador humano:** Human Dragon
+**Invariantes:** I9, I11, I14, S236, S268
+
+### Trabalho completado
+
+#### QR Generator Soberano
+- Ficheiro: `/opt/windi/verify-public/web/qr-generator.html`
+- Tema: KLAR (match com qr-decoder.html existente)
+- Biblioteca: qrcode.js (Kazuhiko Arase, MIT) embutida inline
+- Zero dependencias externas — funciona offline
+- Rota nginx: `/verify-public/web/qr-generator.html` (ja existia location block)
+- Exporta: SVG (vector), PNG (1024px), copia URL
+- Correcao de erro: M/Q/H seleccionavel
+- URL target: `windi-domain.com/verify-public/?id={receipt}`
+- **Status:** LIVE
+
+#### IP-LATAM v0.6.0 — Extensao Notarial Brasileira
+- Pack: `/opt/windi/hios-knowledge/ip-readiness/`
+- Manifest: 0.5.0 -> 0.6.0
+
+| Ficheiro | Hash (8 chars) | Local |
+|----------|----------------|-------|
+| `WINDI-HIOS-IP-LATAM-001-CANDIDATE.md` | `731e1c15` | root |
+| `inpi-notarial.yaml` | `470523c1` | regions/br/ |
+| `verify-9-notarial-br.yaml` | `8e17b96d` | verify-rules/ |
+| `escada-nove-portoes.html` | `5bec225b` | ui/ |
+
+- S268 respeitado: `inpi-notarial.yaml` com `extends: BR-INPI` (append, nao reescrita)
+- Hash receipt: `receipts/WINDI-HIOS-IP-READINESS-001-v0.6.hashes.txt` (68 ficheiros)
+- **ledger_write: false** — CANDIDATE ate ratificacao I9
+- **Status:** INSTALADO, aguarda ratificacao
+
+### Inovacao estrutural
+
+**VERIFY-9 bifurcado em duas pernas humanas:**
+- Testemunha: tabeliao / No-Cartorio (atesta existencia, identidade, hash+data)
+- Counsel: advogado / agente PI (revisa merito, rota, reivindicacoes)
+- DIDs distintos obrigatorios (Escada de Espelhos guard)
+- Novo status: `anteriority_witnessed` (W1-equivalente, verificabilidade nao merito)
+
+### Selos emitidos
+
+Nenhum — pack em modo CANDIDATE, ledger_write: false
+
+### Scaffold pending (nao morre, espera)
+
+1. **Ratificacao I9 IP-LATAM:**
+   - [ ] Verificar factos `[estimado]` contra gov.br/inpi e WIPO
+   - [ ] Decisao: piloto LatAm antes ou depois Notarkammer DE?
+   - [ ] Apos ratificacao: `ledger_write: true` + selo no Ledger
+
+2. **Routing Escada:** `ui/escada-nove-portoes.html` sem rota nginx — decisao S267-style pendente
+
+3. **QR Soberano no ecossistema:** replicar Modus QR em A4Desk, W-DRAGON, Wallet (bloco portavel)
+
+### Proximo passo proposto
+
+- Validar QR Generator com receipt real (smoke test telemovel -> Verify Public -> FOUND)
+- Continuar Phase 3 W-FUNIL-FECHADO-001 (a4desk.de DNS -> CTA repoint)
+
+### Decisoes constitucionais
+
+- S268 aplicado em tempo real: Gemeo detectou inpi.yaml v0.4.0 existente e criou extends em vez de sobrescrever
+- Hashes de transporte (Guardian) morreram na entrega; hashes v0.6 sao agora referencia
+
+### Notas para a sessao seguinte
+
+- Auditoria Guardian: PASS em todos os pontos constitucionais
+- Pack IP-LATAM pronto para leitura do Human Dragon
+- Ratificacao e decisao de ordem dos pilotos (LatAm vs Notarkammer) sao I9 pendentes
+
+
+---
+
+## Sessao 2026-07-15 · 10:xx -> 11:xx (continuacao)
+
+**Sprint:** G3 Merkle + Foundation Portals
+**Modo:** CCode CLI (Strato)
+**Operador humano:** Human Dragon
+**Modelo:** claude-opus-4-5-20251101
+
+### Trabalho completado
+
+#### 1. buildURL() micro-improvement (QR Generator)
+
+```javascript
+// Antes: domain sem scheme → tratado como receipt ID
+// Depois: detecta padrao de dominio e auto-prepende https://
+if(/^[\w.-]+\.\w{2,}\//.test(raw)) return 'https://' + raw;
+```
+
+- Ficheiro: `/opt/windi/verify-public/web/qr-generator.html`
+- Comportamento actual honesto preservado (Guardian nota: "cosmetico, nao urgente")
+
+#### 2. Cross-links simetricos instalados
+
+| Direcao | Link | Texto |
+|---------|------|-------|
+| Decoder → Generator | `qr-generator.html` | PT/DE/EN via pipeline i18n |
+| Generator → Decoder | `qr-decoder.html` | PT fixo (i18n no segundo passe) |
+
+**Alteracoes (S268 exemplar):**
+- CSS: 2 linhas append (`.cross-nav`, `.back-link`)
+- HTML: 2 linhas inseridas (links)
+- i18n: 3 entradas (`gen_qr_link` em PT/DE/EN)
+- JS: 1 linha render (`t('gen_qr_link')`)
+- Diff total minimo, cada mudanca reversivel
+
+### Tres achados Guardian (selaveis)
+
+**1. Doutrina do Espelho QR:**
+> "Entrada interpreta compromisso alheio sem usurpar autoridade; saida cria compromisso verificavel sem vazar para Fremde."
+
+- Decoder: "nunca valida em lugar do sistema oficial"
+- Gerador: "nenhum dado sai desta pagina"
+- Duas expressoes da mesma soberania, direccionadas em espelho
+
+**2. Assimetria cosmetica residual:**
+- Link reverso do gerador em PT fixo
+- Resolve no passe i18n completo do gerador (S268 append)
+
+**3. I9 pendente — Modus QR:**
+- Gerador rotulado "Modus QR" informalmente
+- Decisao Human Dragon: Modus proprio (Guardian recomenda) ou sub-funcao do 3?
+- Sistema funciona igual enquanto pensa
+
+### Circulo operacional
+
+```
+A4Desk → selo → Gerador → QR → telemovel → Decoder → Verify → verdade
+```
+
+### Selos emitidos
+
+Nenhum — trabalho de refinamento e encaixe
+
+### Scaffold pending
+
+1. **I9 Modus QR:** ratificar numeracao no registro de Modi
+2. **i18n Gerador:** toggle PT/DE/EN + link reverso trilingue
+3. **IP-LATAM ratificacao:** factos [estimado] vs WIPO/INPI
+
+### Proximo passo proposto
+
+- Ratificar Modus QR (uma linha no header + registro)
+- Continuar refinamentos Verify ou pivotar para outra frente
+
+### Decisoes constitucionais
+
+- S268 aplicado: append em vez de reescrita em todos os ficheiros
+- Links relativos (sobrevivem mudanca de dominio)
+- Pipeline i18n reutilizado (nao hardcoded)
+
+### Notas para a sessao seguinte
+
+- Auditoria Guardian: PASS limpo
+- Espelho QR fechado e documentado
+- Formulacao doutrinaria pronta para selo quando Modus for ratificado
+
+
+---
+
+## Sessao 2026-07-15 · Addendum Memory Loop
+
+**Continuacao da sessao anterior**
+
+### W-HIOS-MEMORY-LOOP-001 criado
+
+**Ficheiro:** `/opt/windi/hios-knowledge/ip-readiness/W-HIOS-MEMORY-LOOP-001.md`
+**Hash:** `20d4cf61`
+**Status:** CANDIDATE
+
+#### Padroes cristalizados
+
+| Categoria | Padroes |
+|-----------|---------|
+| **Epistemicos** | GERADO!=VERIFICADO · PESQUISADO!=EXAUSTIVO · INTAKE!=AUTENTICACAO |
+| **Arquitecturais** | VERIFY-9 Bifurcado · Escada de Espelhos · S268 Extends · Tres Camadas |
+| **Interface** | Espelho QR · Escada de Nove Portoes |
+
+#### Invocacao em sessoes futuras
+
+```
+"Aplica GERADO!=VERIFICADO a este output."
+"Este fluxo respeita Escada de Espelhos?"
+"Verifica S268 antes de editar o YAML."
+```
+
+O agente reconhece o padrao por nome, aplica a regra, cita o documento.
+
+### Manifest actualizado
+
+- `new_in_0_6_0`: adicionado Memory Loop
+- `memory_loop`: novo bloco com hash, padroes, e flag `invocable: true`
+- Hash receipt regenerado: 68 → 69 ficheiros
+
+### Estado final v0.6.0
+
+| Componente | Hash | Status |
+|------------|------|--------|
+| IP-LATAM-001 | `731e1c15` | CANDIDATE |
+| inpi-notarial.yaml | `470523c1` | CANDIDATE |
+| verify-9-notarial-br.yaml | `8e17b96d` | CANDIDATE |
+| escada-nove-portoes.html | `5bec225b` | CANDIDATE |
+| **W-HIOS-MEMORY-LOOP-001.md** | `20d4cf61` | CANDIDATE |
+
+> **"A sabedoria cristalizada sobrevive ao reset de contexto."**
+
