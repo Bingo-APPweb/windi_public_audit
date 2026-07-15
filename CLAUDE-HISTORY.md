@@ -23237,3 +23237,59 @@ O agente reconhece o padrao por nome, aplica a regra, cita o documento.
 
 > **"A sabedoria cristalizada sobrevive ao reset de contexto."**
 
+
+---
+
+## Sessao 2026-07-15 · Addendum Backup Soberano
+
+**Continuacao da sessao Memory Loop**
+
+### Achado Guardian: /opt/windi sem remote
+
+**Diagnostico:**
+- .git: 2.6 GB de historia
+- Remote: NENHUM
+- Risco: Strato falha = historia perdida
+
+**Decisao:** Opcao D (backup simples) em vez de remote Fremde
+
+### Infraestrutura criada
+
+| Componente | Local | Status |
+|------------|-------|--------|
+| Script | `/opt/windi/scripts/backup-git-local.sh` | ✅ |
+| Timer | `~/.config/systemd/user/windi-git-backup.timer` | ✅ |
+| Service | `~/.config/systemd/user/windi-git-backup.service` | ✅ |
+| Linger | `loginctl enable-linger windi` | ✅ |
+| Primeiro backup | `windi-git-20260715-140826.tar.gz` (2.6G) | ✅ |
+
+### Configuracao
+
+```
+Frequencia:  Domingos 03:00
+Destino:     /home/windi/backups/windi-git/
+Rotacao:     30 dias automatico
+Linger:      yes (timer dispara sem login)
+```
+
+### HD-MIRROR (fecha o ciclo)
+
+Backup sai do Strato para Kempten:
+```bash
+scp windi@87.106.29.233:/home/windi/backups/windi-git/windi-git-*.tar.gz ~/windi-mirror/
+```
+
+Manual pos-domingo ou automatizado do lado local.
+
+### Commits
+
+| Repo | Hash | Mensagem |
+|------|------|----------|
+| `/opt/windi` | `d70931858` | feat(infra): add sovereign git backup script |
+
+### Arquitectura Memory Loop (proxima sessao)
+
+Guardian nota: W-HIOS-MEMORY-LOOP-001 como fonte, wisdom blocks como distribuicao via Bibliotecario. Decisao I9 na ratificacao v0.6.0.
+
+> **"Zero Fremde. Backup soberano."**
+
