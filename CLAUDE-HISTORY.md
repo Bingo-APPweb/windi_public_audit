@@ -23515,3 +23515,111 @@ Clip original em `/opt/windi/GABI-CENA00-CENA5.mp4` copiado para estrutura HIOS 
 - **I14:** Descrições explícitas, sem placeholders
 - **I19:** Proveniência atómica (geração + receipt)
 
+
+---
+
+## § SESSÃO 16 Jul 2026 — W-INTAKE · Verify Public Landing + i18n
+
+**Duração:** ~2h | **Status:** ✅ COMPLETO
+**Liga IA+H:** Human Dragon (I1, I9) · CCode Gêmeo (Opus 4.5) · Cloud Guardian (Claude.ai)
+**Projecto:** W-INTAKE · Verify Public · Onboarding Portal
+**Natureza:** Landing page · i18n auto-detect · Legal translations · nginx routing
+**Invariantes:** I9, I11, I14, I12
+
+### Contexto
+
+Ideia do Human Dragon: permitir que utilizadores registem "frações de WINDI-HIOS verify" em documentos criados fora do ecossistema. Generalização do padrão VD-CUT. Guardian identificou como "potentially the strongest growth lever" — low-friction DID onboarding + viral seal mechanism.
+
+### Trabalho Executado
+
+1. **Nova Landing Page** — `/opt/windi/verify-public/web/index.html`
+   - Substituiu landing técnica por portal orientado ao utilizador
+   - Hash calculado client-side (ficheiro nunca sai do dispositivo)
+   - Painel "O que NÃO é provado" (forbidden_claims) — honestidade constitucional
+   - Redirect flash-free para `?id=` queries (compatibilidade com URLs existentes)
+   - Banner PREVIEW (intake backend ainda não implementado)
+
+2. **i18n Auto-Detect** — PT/DE/EN
+   - Detecta `navigator.language` → fallback localStorage → default EN
+   - Language switcher no header
+   - Todas as strings traduzidas incluindo tooltips
+
+3. **Refinamento Terminológico Jurídico**
+   - EN: "factual accuracy" (não "truthfulness"), "provenance prior", "notarial authentication"
+   - DE: "inhaltliche Richtigkeit" (não "Wahrheit"), "Herkunft vor der Einreichung"
+
+4. **Sub-páginas Actualizadas**
+   - `verify.html`: renomeado de index.html original + noindex meta
+   - `qr-generator.html`: BETA banner + back button + i18n
+   - `qr-decoder.html`: BETA banner + back button + i18n
+   - `hash-inspector.html`: BETA banner + back button + i18n
+
+5. **Schema Criado** — `/opt/windi/schemas/windi-intake-receipt.schema.json`
+   - Tipo: `windi.intake-receipt/v1`
+   - Campos: `sealed_claims` + `forbidden_claims` obrigatórios
+   - Vincula I14 (proibição de placeholders) ao formato
+
+6. **nginx Routing**
+   ```nginx
+   location = /verify-public/verify.html {
+       return 302 /verify-public/web/verify.html$is_args$args;
+   }
+   ```
+   - Corrigido duplicado em linhas 602-605 (sed + edit manual)
+
+### Commits
+
+- `[pending]` — sessão encerrada antes de commit formal
+
+### Verificações Finais
+
+```bash
+# nginx reload OK
+sudo nginx -t  # syntax ok
+sudo systemctl reload nginx
+
+# Redirect funcional
+curl -sI "https://windi-domain.com/verify-public/verify.html?id=test" | grep location
+# → location: https://windi-domain.com/verify-public/web/verify.html?id=test
+
+# Service health
+curl -s localhost:8114/health | jq
+# → {"service":"windi-verify-public","version":"1.0.2","status":"operational"}
+```
+
+### Ficheiros Alterados
+
+```
+/opt/windi/verify-public/web/
+├── index.html          # NOVO — Intake Landing com i18n
+├── verify.html         # RENOMEADO — era index.html
+├── qr-generator.html   # EDITADO — BETA + back + i18n
+├── qr-decoder.html     # EDITADO — BETA + back + i18n
+└── hash-inspector.html # EDITADO — BETA + back + i18n
+
+/opt/windi/schemas/
+└── windi-intake-receipt.schema.json  # NOVO
+
+/etc/nginx/sites-enabled/windi-domain.com  # EDITADO — redirect route
+```
+
+### Phase 2 Pendente
+
+- [ ] Backend `POST /api/intake-receipt` endpoint
+- [ ] Real DID via Berçário (actualmente simulado)
+- [ ] Real QR no selo (actualmente faux-QR)
+- [ ] Flag `PREVIEW=false` quando backend pronto
+- [ ] View de verificação para `windi.intake-receipt/v1`
+
+### Padrão Descoberto
+
+> O padrão W-INTAKE já estava 80% construído, disperso em:
+> - VD-CUT (hash forense)
+> - Notarial (selo de testemunho)
+> - Intake Attestation (declaração de entrada)
+> - W-VERIFY v0.1 (verificação pública)
+
+### Frase de Guarda
+
+> "O selo WINDI não prova verdade. Prova existência num momento. A verdade é problema do humano."
+
