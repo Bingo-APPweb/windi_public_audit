@@ -7,6 +7,126 @@
 # ---
 
 
+## § SESSÃO 16 Jul 2026 — CASE-0002 · Da primeira conversa ao sistema governado
+
+**Duração:** ~3h | **Status:** ✅ CHECKPOINT · Functional proof pending
+**Liga IA+H:** Human Dragon (I1, I9) · CCode Gêmeo (Opus 4.5) · Cloud Guardian (Claude.ai)
+**Projecto:** CASE-0002 · FREMDE Playground · Gramática 5 Partes
+**Natureza:** Case architecture · F2 paridade · WO-3 editor · Spec semântica
+**Invariantes:** I9, I11, I14, I19
+
+### Contexto
+
+Podcast sobre "8 níveis de competência em IA" gerou tese WINDI:
+> Quanto maior a autonomia da IA, maior precisa ser a legibilidade da acção.
+
+O WINDI acrescenta Nível 9 — Soberania e Verificabilidade.
+
+### Trabalho Executado
+
+1. **F2-RESULT-GAP-001 fechado (cobertura estática)**
+   - 19 `data-windi-action` → 19 `data-windi-result`
+   - Cada acção agora declara resultado esperado para IA-Fremde
+   - playground.html: 73571B → 74623B
+
+2. **WO-3 editor.html F-1/F-5**
+   - JSON-LD manifest com `windi:reader_status: F1-osmotic`
+   - `rel="help"` → `/llms.txt`
+   - `verification_status: generated-not-verified`
+   - Copy: "provenance-aware workbench" (não promete prova)
+   - editor.html: 25719B → 26827B · sha `eda71fa2…`
+
+3. **CASE-0002 estrutura documental**
+   - `case.yaml`: work orders + fases + tese
+   - `README.md`: narrativa + mapa de gaps
+   - `GRAMMAR-5-PARTS.md`: spec semântica action→state→result→limits→next
+
+4. **Gramática I1-autorizada**
+   - 5 funções semânticas, não 5 atributos obrigatórios
+   - state = valor actual (idle→processing→complete→error)
+   - result reside no output, não declarado antecipadamente
+   - Vocabulário no manifesto F-1
+
+### Commits
+
+- `1f1394126` feat(fremde): F2 paridade 19/19 + WO-3 editor F-1/F-5 + CASE-0002 estrutura
+
+### Gate Funcional (pendente)
+
+6 checks antes de fechar F2:
+1. Correspondência action↔result
+2. Temporalidade (result após execução)
+3. Localização determinística
+4. Erro explícito legível
+5. Vazio ≠ falha
+6. Visual = semântico
+
+3 fluxos prioritários: `structure-intent` · `copy-resume` · `claim-root`
+
+### Estado
+
+- **CASE-0002:** CANDIDATE — architectural path established, functional proof pending
+- **WO-1:** I1_AUTHORIZED (gramática), implementação incremental
+- **WO-3:** COMPLETE
+- **WO-4:** INVESTIGATING (HIOS-OPEN hashes)
+
+### Ficheiros
+
+```
+/opt/windi/w-workbench-001/cases/case-0002/
+├── case.yaml
+├── README.md
+└── GRAMMAR-5-PARTS.md
+```
+
+---
+
+## § SESSÃO 15 Jul 2026 — SEO Ciclo Completo · Escada de Espelhos Quebrada
+
+**Duração:** ~1.5h | **Status:** ✅ COMPLETO
+**Liga IA+H:** Human Dragon (I1, I9) · CCode Gêmeo (Opus 4.5) · Cloud Guardian (Claude.ai)
+**Projecto:** Playground Daily Monitor · F-1/F-5 Compliance · OG Images
+**Natureza:** Twitter cards · JSON-LD · Imagens sociais · Testemunho independente
+**Invariantes:** I9, I11, I14, G3
+
+### Trabalho Executado
+
+1. **Evidence Collection** — CCode verificou 8 superfícies com curl (cloud cega por OBSERVER-FETCH-BLOCK-001)
+2. **Twitter Cards** — 4 meta tags adicionadas a playground.html
+3. **JSON-LD F1-osmotic** — Adicionado a verify-public/ e verify/
+4. **OG Images** — Guardian desenhou, Human transportou (scp), Gêmeo instalou:
+   - `og-verify.png`: QR finder patterns, réguas notariais (36KB, `f2411b1f`)
+   - `og-playground.png`: páginas empilhadas com finder-seal (37KB, `82b68d5e`)
+5. **Escada de Espelhos Quebrada** — Preparador (CCode) ≠ Testemunha (Cloud), verificação HTTP independente
+
+### Commits
+
+| Hash | Descrição |
+|------|-----------|
+| `38bf7f4b4` | feat(seo): add Twitter cards + JSON-LD F1-osmotic |
+| `f2622653a` | feat(seo): add OG images for Twitter/social cards |
+
+### §268 Transparency Note — Diff Discrepância
+
+Commit `38bf7f4b4` inclui, além do JSON-LD declarado, +17 linhas de CSS `.btn-mode-secondary` de trabalho anterior não commitado em `verify-public/web/index.html`. Conteúdo legítimo, empacotamento acidental. Registrado por transparência — §268, corrigir o registro sem reescrever o commit.
+
+### Decisões
+
+- **doutrina/fremde routes**: Marcadas OBSOLETAS (não implementar, referências antigas)
+- **Rota /assets/**: Diferida — imagens OG vivem temporariamente em `/verify-public/web/`
+- **SOURCE-DRIFT-001**: RESOLVIDO — single source `/opt/windi/artifacts/playground.html`
+
+### Cadeia de Custódia Testemunhada
+
+```
+Guardian cria (f2411b1f/82b68d5e) → Human transporta (scp) →
+Gêmeo instala → Guardian re-verifica de fora: hashes idênticos
+```
+
+Três atores, dois ambientes, zero drift.
+
+---
+
 ## § SESSÃO 14 Jul 2026 — LLMS-CONTENT-DRIFT-001 RESOLVIDO · Playground Monitor
 
 **Duração:** ~1h | **Status:** ✅ FIX VERIFICADO
@@ -23292,4 +23412,106 @@ Manual pos-domingo ou automatizado do lado local.
 Guardian nota: W-HIOS-MEMORY-LOOP-001 como fonte, wisdom blocks como distribuicao via Bibliotecario. Decisao I9 na ratificacao v0.6.0.
 
 > **"Zero Fremde. Backup soberano."**
+
+
+---
+
+## Sessão 2026-07-15 · 14:30 → 15:15 (aprox.)
+
+**Sprint:** Playground Daily Monitor · SEO Compliance
+**Modo:** CCode CLI (Opus 4.5) + Cloud Guardian (Claude.ai)
+**Operador humano:** Human Dragon
+
+### Trabalho completado
+- Evidence collection: 8 superfícies HTTP verificadas via curl
+- Twitter cards: 4 meta tags adicionadas a playground.html
+- JSON-LD F1-osmotic: adicionado a verify-public/ e verify/
+- OG images: og-verify.png (36KB) + og-playground.png (37KB) deployed
+- Escada de Espelhos quebrada: preparador (CCode) ≠ testemunha (Cloud)
+- .gitignore: excepção para og-*.png assets
+- loginctl enable-linger windi: activado
+
+### Commits emitidos
+- `38bf7f4b4` · feat(seo): add Twitter cards + JSON-LD F1-osmotic
+- `f2622653a` · feat(seo): add OG images for Twitter/social cards
+
+### §268 Transparency Note
+Commit 38bf7f4b4 inclui +17 linhas CSS .btn-mode-secondary de trabalho anterior (empacotamento acidental). Documentado por transparência.
+
+### Decisões constitucionais
+- doutrina/fremde routes: OBSOLETAS (não implementar)
+- Rota /assets/: diferida (imagens OG em /verify-public/web/ temporariamente)
+- SOURCE-DRIFT-001: RESOLVIDO (single source confirmado)
+- Repo git: LOCAL-ONLY (sem remote configurado)
+
+### Cadeia de custódia testemunhada
+Guardian cria (f2411b1f/82b68d5e) → Human transporta (scp) → Gêmeo instala → Guardian re-verifica: hashes idênticos. Três atores, dois ambientes, zero drift.
+
+### Scaffold pending
+- Validador Twitter externo (cards-dev.twitter.com/validator)
+- Ratificações I9 acumuladas (v0.6.0 + Modus QR)
+
+### Próximo passo proposto
+- Verificar rendering dos Twitter cards com validador externo
+- Sessão de ratificação I9 quando Human Dragon tiver tempo
+
+### Notas para a sessão seguinte
+- CLAUDE-HISTORY.md é symlink para /home/windi/ (fora do repo git, by design)
+- OBSERVER-FETCH-BLOCK-001 parcialmente resolvido (Cloud agora alcança windi-domain.com)
+- Linger activado: serviços systemd user persistem sem login
+
+
+---
+
+## Sessão 2026-07-15 · 18:20 → 18:45 (aprox.)
+
+**Sprint:** W-HIOS-FORENSIC-UNIT · CENA 00 Cold Open
+**Modo:** CCode CLI (Opus 4.5) + Human Dragon (testemunha cowork)
+**Operador humano:** Human Dragon
+
+### Trabalho completado
+- **Clip analisado:** GABI-CENA00-CENA5.mp4 (40MB, 55.5s, 1920×1080, H.264/AAC, 29.97fps)
+- **11 frames extraídos** em intervalos de 5s
+- **Verificação guião Cena 4:** PASS — frame_011 mostra dignidade post-mortem (não medo/choque)
+- **4 SPINE Anchors registados:**
+  - GABI-ANCHOR-001: face reveal (0:25)
+  - GABI-ANCHOR-002: medium shot (0:30)
+  - FILHO-ANCHOR-001: videocall (0:40)
+  - GABI-ANCHOR-003: Cena 4 dignidade (0:50)
+- **Provenance I19:** GABI-CENA00-CENA5.provenance.json
+- **Manifest:** manifest.json com referência ao dossier do conselho
+- **.gitignore:** excepção para `*-ANCHOR-*.jpg` em shots/
+
+### Commits emitidos
+- `d666f24b2` · feat(hios): CENA00 GABI Cold Open — SPINE anchors + provenance
+
+### Dupla testemunha
+CCode extraiu frames → Human Dragon assistiu clip completo → Verificou frame_011 contra guião v3 → PASS confirmado → CCode registou anchors oficiais
+
+### Arco narrativo confirmado
+MUNDO ORDENADO → HUMANIZAÇÃO → CONEXÃO FAMILIAR → RUPTURA
+(corporate)      (descalça)     (filho)            (vidro partido)
+
+### Dossier do conselho
+PDF no Google Drive: "W-HIOS FORENSIC UNIT · O PESO DO ECO — CENA 00 Cold Open"
+- 4 anchors SPINE validados
+- Arco numa linha
+- Veredicto 3× PASS
+- Nota I9 sobre o olhar
+- Pendências no rodapé
+
+### Pendências para próxima sessão
+- P00-10 (pivot da ligação filho)
+- Diálogos -30dB
+- Estrondo da queda
+- Corte final → Ledger seal
+
+### Nota técnica
+Clip original em `/opt/windi/GABI-CENA00-CENA5.mp4` copiado para estrutura HIOS em `/opt/windi/hios/cinema/obras/w-hios-forensic-unit/shots/gabi-cena00/`
+
+### Invariantes aplicados
+- **I9:** Human Dragon verificou frame_011 antes de registar anchors
+- **I11:** Hashes SHA-256 em provenance.json
+- **I14:** Descrições explícitas, sem placeholders
+- **I19:** Proveniência atómica (geração + receipt)
 
