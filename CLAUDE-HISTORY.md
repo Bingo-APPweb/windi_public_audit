@@ -7,6 +7,86 @@
 # ---
 
 
+## § SESSÃO 19 Jul 2026 — VERIFY-PUBLIC Notarial · WCAG AA + I9 Canonical
+
+**Duração:** ~3h | **Status:** ✅ SELADO
+**Liga IA+H:** Human Dragon (I1, I9) · CCode Gêmeo (Opus 4.5)
+**Projecto:** VERIFY-PUBLIC · Superfície Notarial
+**Natureza:** UI/UX audit · Constitutional alignment · i18n fix
+**Invariantes:** I9, I11, I12, I14
+
+### Contexto
+
+Revisão completa da superfície VERIFY-PUBLIC Notarial com 4 lentes:
+1. UI/UX Mobile (WCAG AA, touch targets, responsive)
+2. FREMDE Clarity (W-HIOS gloss, limites de prova visíveis)
+3. Constitutional Rigor (I9 gate, proof_limits obrigatório)
+4. GEO/Technical (hreflang, Schema.org)
+
+### Trabalho Executado
+
+**Ronda 1 — 14 Guias PT/ES:**
+- Contraste: `--muted:#6b7a90` → `#647287` (4.89:1)
+- Contraste: `--teal-d:#0b8a80` → `#0a8178` (4.75:1)
+- Responsive: `.tablewrap` + `min-width:480px`
+- Header: `flex-wrap:wrap`
+- Touch: `.lang a{padding:5px 4px}` (~44px)
+- W-HIOS gloss: "(infraestrutura de verificação)" / "(infraestructura de verificación)"
+
+**Ronda 2 — App + Landings:**
+- `/registo/index.html`: WCAG AA + flex-wrap + gloss
+- `/notarial/app/index.html`: WCAG AA + flex-wrap + **i18n gloss fix**
+- `/notarial/index.html` + `/notarial/es/index.html`: contrast + flex-wrap + gloss
+
+**Ronda 3 — I9 Canonical Alignment:**
+- `/web/index.html`: PT i9_checkbox → texto canónico selado
+- Bloco ES inteiro adicionado (faltava completamente)
+- detectLang() actualizada para ES
+- Hash verification:
+  - PT: `bc34f11290e8cb5d96942432...` PASS ✅
+  - ES: `7473364cc4d32b9b616fd76d...` PASS ✅
+
+**i18n W-HIOS Gloss Fix:**
+- Adicionada key `hios_gloss:{pt:"...",es:"..."}` ao i18n da app
+- Footer usa `<span data-i="hios_gloss">` (não hardcoded)
+
+### Ficheiros Modificados (19)
+
+```
+verify-public/web/index.html                           # I9 canonical + ES block
+verify-public/registo/index.html                       # WCAG AA + gloss
+verify-public/notarial/app/index.html                  # WCAG AA + i18n gloss
+verify-public/notarial/index.html                      # WCAG AA + gloss
+verify-public/notarial/es/index.html                   # WCAG AA + gloss
+verify-public/notarial/guia/*.html (7 ficheiros)       # WCAG AA + responsive + gloss
+verify-public/notarial/es/guia/*.html (7 ficheiros)    # WCAG AA + responsive + gloss
+verify-public/i9-confirmation-v1.json                  # Reference (já existia)
+```
+
+### Commits
+
+```
+f46de467 feat(verify-public): WCAG AA + I9 canonical + i18n · 19 pages polished
+```
+
+### Pendente (próxima sessão)
+
+- **I9 DE/EN canonical:** Human Dragon redige texto → CCode substitui → target 4/4 PASS
+- DE/EN actuais têm declaração mais fraca (faltam cláusulas: autenticação, fé pública, aconselhamento)
+
+### Verificação Final
+
+```
+PT: bc34f11290e8cb5d96942432... PASS ✅
+ES: 7473364cc4d32b9b616fd76d... PASS ✅
+DE: (não selado)
+EN: (não selado)
+```
+
+**Status:** 2/2 línguas canónicas hash-locked · Superfície notarial 0/0/0
+
+---
+
 ## § SESSÃO 16 Jul 2026 — CASE-0002 · Da primeira conversa ao sistema governado
 
 **Duração:** ~3h | **Status:** ✅ CHECKPOINT · Functional proof pending
@@ -23622,4 +23702,84 @@ curl -s localhost:8114/health | jq
 ### Frase de Guarda
 
 > "O selo WINDI não prova verdade. Prova existência num momento. A verdade é problema do humano."
+
+
+---
+
+## § SESSÃO 17 Jul 2026 — F2 Functional Gate + WO-4 HIOS-OPEN
+
+**Duração:** ~2h | **Status:** ✅ COMPLETO
+**Liga IA+H:** Human Dragon (I1, I9) · CCode Gêmeo (Opus 4.5)
+**Projecto:** CASE-0002 · FREMDE Playground · Harness Funcional
+**Natureza:** Gate F2 (6/6) · WO-4 hash verification · Playwright harness
+**Invariantes:** I9, I11, I14
+
+### Contexto
+
+Sessão continuada de 16 Jul. F2-RESULT-GAP-001 fechou cobertura estática (19/19 `data-windi-result`). Esta sessão fecha F2 funcionalmente: provar que os fluxos **fazem** o que declaram.
+
+### Trabalho Executado
+
+1. **Playwright Harness Criado**
+   - `/home/windi/w-workbench-001/harness/playwright.config.js`
+   - `/home/windi/w-workbench-001/harness/playground-functional.spec.js`
+   - 15 testes funcionais: 2 fluxos × 6 checks + terminal state + 2 forced error
+
+2. **F2 Gate 6/6 FECHADO**
+   - C1 (action↔result): ✅ Botões produzem resultado esperado
+   - C2 (temporality): ✅ Estado final diferente do inicial
+   - C3 (deterministic location): ✅ Output no `#llmResponseBox`
+   - C4 (explicit error): ✅ 500 error + `success:false` mostram toast explícito
+   - C5 (empty≠failure): ✅ Input "abc" habilita botão, input vazio desabilita
+   - C6 (visual=semantic): ✅ `data-windi-result` corresponde ao comportamento
+
+3. **SURFACE-URL-CANON-001 Guard Estabelecido**
+   - Canonical URL: `https://windi-domain.com/artifacts/playground.html`
+   - Guard: testes usam URLs canónicas do handoff, nunca URLs improvisadas
+   - Corrigiu falsos 404s (URLs inventadas ≠ erros de sistema)
+
+4. **WO-4 HIOS-OPEN Hash Verification COMPLETO**
+   - Registered hash: 200 OK com `existence_status: acknowledged`
+   - Non-existent hash: 404 com `invariant: I14` (erro explícito)
+   - Endpoint: `https://windi-domain.com/hios/obras/api/open/{hash}`
+
+### Commits
+
+- `[harness]` — Playwright config + 15 testes funcionais
+
+### Scaffold Pending
+
+- **CLAIM-ROOT-GESTURE-001** — Pilha B · Gesto de transição identitária
+  - Aguarda: arquitectura DID Berçário → Identity completa
+  - Não é bug, é deferimento deliberado
+
+### Próximo Passo Proposto
+
+- **Sprint 2 W-SITES-001** — Query API + UI Berçário desbloqueado
+- **DE ortografia sweep** — ae→ä, oe→ö, ue→ß nos 4 portais
+
+### Decisões Constitucionais
+
+- **SURFACE-URL-CANON-001**: URLs canónicas são lei, não sugestão
+- **C4 não se amolece**: Erro forçado é requisito, não opcional
+
+### Verificações Finais
+
+```bash
+# Playwright tests
+npx playwright test
+# → 15 passed
+
+# WO-4 hash registered
+curl -s "https://windi-domain.com/hios/obras/api/open/9e3cb19ffed34d5e6c1b3a0e7f28a9c1d5b4e2f8" | jq .existence_status
+# → "acknowledged"
+
+# WO-4 hash non-existent (I14)
+curl -s "https://windi-domain.com/hios/obras/api/open/0000000000000000000000000000000000000000" | jq .invariant
+# → "I14"
+```
+
+### Frase de Guarda
+
+> "Os 13/13 verdes não valem todos o mesmo. O verde do C4 vale a prova que existe."
 
