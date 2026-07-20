@@ -23783,3 +23783,113 @@ curl -s "https://windi-domain.com/hios/obras/api/open/00000000000000000000000000
 
 > "Os 13/13 verdes não valem todos o mesmo. O verde do C4 vale a prova que existe."
 
+
+
+## § SESSÃO 20 Jul 2026 — EDITOR-FREMDE-ROLLOUT-001 · Conformidade F-2..F-8
+
+**Duração:** ~50min | **Status:** ✅ SELADO
+**Liga IA+H:** Human Dragon (I1, I9) · CCode Gêmeo (Opus 4.5)
+**Projecto:** WINDI Workbench Editor · Superfície Fremde
+**Natureza:** Conformidade FREMDE-SURFACE-001 · Runtime fixes
+**Invariantes:** I9, I11, I12, I14
+
+### Contexto
+
+Rollout completo de conformidade Fremde para o Editor canónico (`/opt/windi/artifacts/editor.html`).
+Sequência: F-2 → F-3 → F-4A → F-7 → F-8, com fixes emergentes durante testes funcionais.
+
+### Trabalho Executado
+
+**Canonicalização:**
+- `/opt/windi/artifacts/editor.html` declarado fonte canónica (26,827→32,122 bytes)
+- `/home/windi/w-workbench-001/editor.html` → `.RETIRED`
+- `playground-v3.html` formalmente removido
+- `EDITOR-SURFACE-DIVERGENCE-001` e `SOURCE-DRIFT-001` fechados
+
+**F-2 — Action/Result Semantics:**
+- 8→9 elementos `data-windi-action` + `data-windi-result`
+- Botões: lang PT/EN/DE, theme, title, content, export, claim, packet
+
+**F-3 — Save-State Announcement:**
+- `role="status" aria-live="polite"` em `#savedStatus`
+- wordCount/editCount sem live-region (evita verbosidade)
+
+**F-4A — Instructive Error (mínimo):**
+- `sessionRestoreFailed` trilíngue com formato canónico:
+  `[o que falhou] · [porquê provável] · [acção possível]`
+- F-4B (storage/crypto/download) diferido
+
+**F-7 — noscript Fallback:**
+- Shell hiding: `display: none !important` em header/main/footer/toast
+- Fallback centrado com identidade, explicação JS, próximo passo, /llms.txt
+- `lang="en"` no parágrafo inglês
+
+**F-8 — Fremde-Packet:**
+- 6 secções canónicas (Quem és / Estado / Acções / Não sabes / Proibições / Âncoras)
+- Privacidade: `document_title: present|absent`, `content_included: false`
+- Acções derivadas do DOM via `[data-windi-action][data-windi-result]`
+- Deduplicação por par completo (Set), não por action (Map)
+- Clipboard success/failure com toasts trilíngues F-4
+
+**Fixes Emergentes:**
+- `EDITOR-CLAIMLINK-NULL-001`: getElementById antes de elemento existir
+- `EDITOR-PROOF-FIELD-INIT-001`: proof_field não inicializado em createNewWorkbench()
+
+### Commits (9 total, 2 repos)
+
+| Repo | Hash | Descrição |
+|------|------|-----------|
+| `/home/windi` | `9f954a24` | chore: canonicalize Editor + retire playground-v3 |
+| `/opt/windi` | `29bc8a219` | feat(editor): add F-2 action-result semantics |
+| `/opt/windi` | `648872d98` | feat(editor): add F-3 save-state announcement |
+| `/opt/windi` | `7daf789fd` | feat(editor): add F-4A instructive error |
+| `/opt/windi` | `f7573626a` | feat(editor): add F-7 noscript fallback |
+| `/opt/windi` | `1f76c0455` | fix(editor): remove stale claimLink handler |
+| `/opt/windi` | `3074bb46f` | fix(editor): initialize proof_field |
+| `/opt/windi` | `d99258d59` | feat(editor): add F-8 Fremde-Packet |
+| `/opt/windi` | `e875332fd` | fix(editor): preserve distinct F-2 pairs |
+
+**Push:**
+- `windi_public_audit`: `d9be4f33..9f954a24`
+- `playground`: `f46de4670..e875332fd`
+
+### Estado Final do Editor
+
+| Métrica | Valor |
+|---------|-------|
+| Bytes | 32,122 |
+| SHA-256 | `c75473fdcf73e715bef2d92a97f40724b27b7533a50330891a74ae9dd34a9032` |
+| F-2 ações | 9/9 |
+| i18n toasts | 12 (4 keys × 3 langs) |
+| Fremde-Packet | 6 secções |
+| noscript | shell hiding + fallback |
+
+### Itens Fechados
+
+- `EDITOR-SURFACE-DIVERGENCE-001` ✅
+- `SOURCE-DRIFT-001` ✅
+- `EDITOR-CLAIMLINK-NULL-001` ✅
+- `EDITOR-PROOF-FIELD-INIT-001` ✅
+- `EDITOR-FREMDE-ROLLOUT-001` (F-2/F-3/F-4A/F-7/F-8) ✅
+
+### Diferidos (deliberados, não bugs)
+
+- **F-4B** — storage/crypto/download error handling
+- **BYOAI-KEY-SLOT-001** — BYOK client-side key (spec própria)
+
+### Próximo Passo Proposto
+
+- **BYOAI-KEY-SLOT-001** — quando spec estiver pronta
+- **F-4B** — quando houver casos reais de falha storage/crypto
+
+### Decisões Constitucionais
+
+- **Privacidade no Packet**: título e conteúdo NUNCA vazam; apenas indicadores `present|absent`
+- **Deduplicação por par**: `Set` com `action → result` completo preserva 9 linhas distintas
+- **Clipboard failure honesto**: toast de erro só após writeText() rejeitar
+- **Shell hiding em noscript**: utilizador vê apenas fallback, nunca UI quebrada
+
+---
+
+*"O Packet é uma ponte, não uma cópia. A IA-Fremde recebe contexto, nunca conteúdo."*
+
