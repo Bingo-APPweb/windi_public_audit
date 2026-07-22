@@ -23893,3 +23893,99 @@ Sequência: F-2 → F-3 → F-4A → F-7 → F-8, com fixes emergentes durante t
 
 *"O Packet é uma ponte, não uma cópia. A IA-Fremde recebe contexto, nunca conteúdo."*
 
+---
+
+## § SESSÃO 22 Jul 2026 — Auditoria Raiz · Verificação Forense + Novo Closure Sidecar
+
+**Duração:** ~30min | **Status:** ✅ SELADO
+**Liga IA+H:** Human Dragon (I1, I9) · Codex · ClaudeCode (Opus 4.5)
+**Host:** STRATO
+**Modo Inicial:** READ-ONLY
+**Escritas Posteriores:** Explicitamente autorizadas pelo humano
+**Invariantes:** I1, I9, I11, I14
+
+### Contexto
+
+Verificação forense directa no STRATO das afirmações documentais da auditoria raiz
+`WINDI-HIOS-AUDIT-ORDER-001`. Cadeia de custódia preservada. Duas provas distintas:
+integridade histórica (inventário congelado) vs estado operacional actual (fotografia 22 Jul).
+
+### Medições Executadas
+
+**Prefixo Congelado (linhas 1–490):**
+```
+SHA256: 4c219002e60a5ea587a810d1058c6067dabf1eb970b6d1a9f7dce5441072215b
+Status: MATCH — prefixo intacto
+```
+
+**Inventário Actual (521 linhas):**
+```
+SHA256: 09170531b3eba2eb774fb3cbd9afb23dffe7e89e4989ff01484c81e3b6404179
+Lines: 521
+Bytes: 43531
+Mtime: 2026-06-20 21:39:20 +0200
+```
+
+**Análise de Mutação:**
+- Mutação confirmada: `PURE_APPEND`
+- Delta: linhas 491–521 (31 linhas)
+- 112 linhas CODEX já existiam no prefixo congelado (56 pares × 2)
+- 56 pares únicos service+port
+- Duplicação 2× pré-existente no fechamento original
+
+**Estado Operacional Actual (2026-07-22T08:57:39Z):**
+- Portas em escuta: 56/56
+- Health medido: 5/6 pass
+- `:8096/health` retornou 404 (porta live, rota inexistente)
+- 59 unidades `windi-*` systemd activas
+
+### Closure
+
+**Sidecar Anterior Preservado:**
+```
+Path: docs/audit/AUDITORIA-RAIZ-INVENTORY-CLOSURE-20260620.md
+SHA256: 556ecae8a684958c4332ac9abec6a53f3a36f40207b8ca96fe2cbcb360e9debd
+Scope: LINES 1–490 ONLY
+```
+
+**Novo Sidecar Criado:**
+```
+Path: docs/audit/AUDITORIA-RAIZ-INVENTORY-CLOSURE-20260722.md
+SHA256: 246b6206c2d2995dc26fc2229e90926075af5f1d4b00c823a54bb49bb9902203
+Scope: byte-integrity closure (521 linhas) — não é selo Ledger
+```
+
+**Flags:**
+- `appended_errata_ratification`: `[dúvida: HUMANO]`
+- Integridade dos bytes fechada; semântica da errata pendente decisão humana
+
+### Git
+
+| Campo | Valor |
+|-------|-------|
+| Commit | `dc47a6617` |
+| Subject | `audit: close 521-line inventory state` |
+| Push | `origin/main` concluído |
+| Sync | Local e remoto sincronizados |
+
+### Higiene
+
+- `/tmp/inventory_prefix_490.txt` criado durante medição e removido
+- Inventário não foi reescrito
+- Sidecar anterior não foi alterado
+
+### Vereditos Finais
+
+```
+[lido] frozen_prefix_integrity: MATCH
+[lido] mutation_mode: PURE_APPEND
+[lido] duplicate_codex_rows_preexisted_freeze: SIM
+[lido] previous_sidecar_scope: LINES 1–490 ONLY
+[dúvida: HUMANO] appended_errata_ratification: PENDING
+[lido] current_521_line_inventory_closure: CLOSED
+```
+
+---
+
+*"AI mede. Humano decide. WINDI garante."*
+
