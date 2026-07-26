@@ -23989,3 +23989,324 @@ Scope: byte-integrity closure (521 linhas) — não é selo Ledger
 
 *"AI mede. Humano decide. WINDI garante."*
 
+
+---
+
+## Sessão 2026-07-22 · 12:50 → 20:15 UTC
+
+**Sprint:** VERIFY-PUBLIC Phase 2 Constitucional
+**Modo:** CCode CLI + Cloud Guardian (Cowork)
+**Operador humano:** Human Dragon
+**Modelo:** Claude Opus 4.5
+
+### Trabalho completado
+
+- **#1** ARIA accessibility — focus-visible, sr-only, aria-live, drop zone role=button
+- **#2** Security headers — HSTS, X-Frame-Options, Referrer-Policy, Permissions-Policy, CSP Report-Only
+- **#3** NOIR/KLAR theme toggle — CSS variables, localStorage, mobile responsive
+- **#4** Notarial i18n — expandido para 4 línguas (PT/ES/DE/EN)
+- **#5** Phase 2 intake endpoint — `POST /api/intake-receipt` com G8-hard enforcement
+- **#6** ES language button — acesso ao consentimento I9 em espanhol
+
+### Selos emitidos (commits)
+
+- `de314b663` · feat(intake): Phase 2 LIVE — G8-hard enforcement + Ledger seal
+- `ce3fa80ae` · feat(intake): add ES language button
+- `23ec16bdd` · feat(intake): add NOIR/KLAR theme toggle
+- `43c2246f1` · feat(notarial): expand i18n to 4 languages
+
+### Gates Adversariais — 8/8 PASS
+
+| Gate | Esperado | Obtido |
+|------|----------|--------|
+| P0 controlo válido | 2xx | 200 ✅ |
+| G8-hard hash ERRADO | 4xx | 400 ✅ |
+| G8-hard lang≠hash | 4xx | 400 ✅ |
+| i9_version desconhecida | 4xx | 400 ✅ |
+| i9_confirmed=false | 4xx | 400 ✅ |
+| hash em falta | 4xx | 422 ✅ |
+| DID em falta | 4xx | 422 ✅ |
+| G1 multipart | 4xx | 422 ✅ |
+
+### Lição Constitucional Selada
+
+> **"O valor não está no caminho feliz — está nas rejeições."**
+> O teste Playwright 16/18 passou. O endpoint aceitava hashes I9 errados com 200.
+> Os gates adversariais apanharam o que o caminho feliz escondeu.
+> G8-hard não é declarado, é enforced: hash errado → 400, ficheiro anexado → 422.
+
+### Fios pendentes (próxima sessão)
+
+1. **Monitor por inverter** (alto) — CHECK esperava banner PREVIEW; agora deve alertar se reaparecer + sondar P0/G8-hard
+2. **DID real no fluxo vivo** (alto) — testes usaram placeholders; confirmar que register() usa DID do Genesis
+3. **Rate-limiting** (médio) — POST público que escreve no Ledger precisa de limite
+4. **Headers — confirmar** (médio) — verificar que #2 foi aplicado como na spec
+5. **aria-live timing** (baixo) — teste esperar pelo elemento em vez de timeout fixo
+
+### Decisões constitucionais
+
+- G8-hard: i9_version + i9_lang + i9_text_sha256 são campos obrigatórios, servidor valida contra canonical
+- Service account pattern: actor=intake-public, submitter_did em metadata
+- sealed_claims + forbidden_claims explícitos no recibo
+
+### Notas para a sessão seguinte
+
+- Sprint VERIFY-PUBLIC fechado: 6/6 tickets, 8/8 gates, 17/18 UX
+- Relatório COWORK actualizado com estado "Fase 2 LIVE"
+- O arco "analisar conceito WINDILAW" → "Fase 2 constitucional" está completo
+
+
+---
+
+## Sessão 2026-07-22 · 20:50 UTC
+
+**Sprint:** FIO 1 + FIO 2 Security Threads
+**Modo:** CCode CLI (continuação)
+**Operador humano:** Human Dragon
+**Modelo:** Claude Opus 4.5
+
+### Trabalho completado
+
+- **FIO 1 COMPLETO**: Monitor `windi-verify-monitor.py` — 7/7 checks PASS em produção
+  - Inverted PREVIEW flag check (alertar se `const PREVIEW = true` regressar)
+  - G8-hard probe: wrong hash → 400 (write-free)
+  - G8-lang probe: lang/hash mismatch → 400
+  - G1 probe: multipart upload → 422
+  - Robots sovereign: 5/5 training bots blocked
+  - EPO content: no false claims
+
+- **FIO 2 COMPLETO**: Genesis DID birth integrado no fluxo vivo
+  - Endpoint `/api/genesis/birth` testado via nginx
+  - Receipt não expõe PII (email/passphrase)
+  - i18n completo: PT "auto-asserida" / DE "selbst erklärt" / EN "self-asserted" / ES "autodeclarada"
+  - Tier SEED correctamente identificado
+
+### Verificações constitucionais
+
+| Gate | Teste | Resultado |
+|------|-------|-----------|
+| G8-hard | wrong i9_text_sha256 | 400 REJECTED |
+| G8-lang | pt + hash EN | 400 REJECTED |
+| G1 | multipart file upload | 422 REJECTED |
+| I9 | Genesis birth PII | NOT EXPOSED |
+
+### Ficheiros modificados
+
+- `/opt/windi/scripts/windi-verify-monitor.py` — Monitor constitucional FIO 1
+- `/opt/windi/verify-public/app/main.py` — Dual routes (local + nginx)
+- `/opt/windi/verify-public/web/index.html` — Genesis birth form + i18n
+
+### Próximo passo proposto
+
+- [ ] README_FOR_OTHER_IAs.md candidate-2026.5 — documentar gates para auditores externos
+- [ ] Mandato §XXX para selar FIO 1 + FIO 2 como bloco constitucional
+
+### Notas para a sessão seguinte
+
+O monitor NÃO escreve no Ledger — só testa rejeições. O valor está nas rejeições.
+Genesis birth testado: `did:windi:7a8015d1-11d2` (FioProbe) + `did:windi:34902a39-ecba` (TestProbe).
+
+
+### Emenda — Gates A-1 e A-2 (22 Jul 2026 · 20:54 UTC)
+
+**Contexto:** Human Dragon identificou dois gates adicionais que faltavam para fechar Missão A.
+
+| Gate | Problema | Correcção | Estado |
+|------|----------|-----------|--------|
+| A-1 | `createFakeDid()` existia (código morto) | Removido — só comentário resta | ✅ |
+| A-2 | `0.0.0.0:8114` acessível de fora | Alterado para `127.0.0.1:8114` | ✅ |
+
+**Verificações:**
+- `curl http://87.106.29.233:8114/...` → CONNECTION REFUSED
+- `grep "createFakeDid\|fake.*did\|did:windi:test"` → só comentário
+- Monitor 7/7 checks pass após alterações
+
+**Ficheiros modificados:**
+- `/opt/windi/verify-public/app/main.py:1379` — `host="127.0.0.1"`
+- `/opt/windi/verify-public/web/index.html:779` — função removida
+
+**Serviço reiniciado:** windi-verify-public (kill + auto-restart via systemd)
+
+
+---
+
+## Sessão 2026-07-22 · 23:30 → 23:55
+
+**Sprint:** Cognitive Alliance Phase 0
+**Modo:** CCode CLI (continuação de sessão compactada)
+**Operador humano:** Human Dragon
+**Modelo:** Claude Opus 4.5
+
+### Trabalho completado
+- **Phase 0 CLOSED** — Matriz final aceite (36 blocos, 7 colunas, E0-E6)
+- Push de 2 commits para origin/main (/opt/windi):
+  - `b2a9a6448` fix(verify-public): A-1 + A-2 security gates
+  - `00f132cfb` docs(alliance): materialize README_FOR_OTHER_IAs candidate-2026.5
+
+### Achado constitucional
+```
+No executable translation of the Charter was found on STRATO.
+Adjacent infrastructure exists (Verify, Ledger, DID, I9 gates) but serves different purposes.
+0 IMPLEMENTED · 0 PARTIAL · 34 ABSENT · 0 CONFLICT · 1 UNKNOWN · 1 N/A
+```
+
+### Estado dos artefatos
+- **Carta:** candidate-2026.5 · MATERIALIZED · SOURCE IDENTITY VERIFIED · ELIGIBLE FOR HUMAN DRAGON SEAL · NOT SEALED
+- **Fase 0:** FORMALLY CLOSED · ALL GATES PASS
+- **Repositório:** /opt/windi pushed to origin
+
+### Decisões pendentes (Human Dragon)
+1. **Selo da Carta** — repousa, sem prazo
+2. **Fase 1** — nasce ou não (HANDSHAKE, schemas, canonical_text_v1)
+
+### Notas para a sessão seguinte
+- Repositório principal é `/opt/windi` (não `/home/windi`)
+- Nota técnica: i9_confirmed E2 vs E4 — dois eixos (evidência para cláusula vs evidência do elemento) — a formalizar se níveis E virarem spec
+- Corolários (C-21, C-25, C-33) são vetores de teste distintos na futura Fase 1
+
+
+
+---
+
+## Sessao 2026-07-26 · 08:00 → 08:20 UTC
+
+**Sprint:** Launch Gate + Art. 50 Compliance
+**Modo:** CCode CLI
+**Operador humano:** Human Dragon
+**Modelo:** Claude Opus 4.5
+
+### Trabalho completado
+
+**1. G-LEGAL.2 FECHADO (urgente — 6 dias antes do prazo)**
+- Documento: `POSICIONAMENTO-EU-AI-ACT-ART50-001.md`
+- Receipt: `WINDI-ART50-POSITIONING-001-20260726080904-140263D7`
+- Prazo: 01 Ago 2026 · Selado: 26 Jul 2026
+- Disclosure quadrilingue (PT/DE/EN/ES)
+- Verify Public incluido na lista de produtos
+
+**2. W-LAUNCH-GATE-001 DEPOSITADO**
+- Doutrina selada: `WINDI-DOUTRINA-LAUNCH-GATE-001-20260726081433-00296B4D`
+- conditions.json: `/opt/windi/engine/launch-gate/`
+- launch_gate_check.sh: LIVE, primeira avaliacao baseline
+- Baseline: INCOMPLETE 0/5 (I14 a funcionar)
+
+**3. DOUTRINA-INTAKE-FREMDE-001 criada**
+- Classes W1 (nascido WINDI) vs W2 (Fremde declarado)
+- Declaracao de Custodia quadrilingue
+- Mecanismos: prioridade hash, contestacao on-ledger, escada de elevacao
+- Status: CANDIDATE
+
+**4. Memory Loop actualizado**
+- Statement Fremde Condutora (fases 1-7)
+- Observacoes Guardian sobre IP Readiness
+- Padroes W1/W2 documentados
+
+### Selos emitidos
+
+| Receipt | Documento | Hash |
+|---------|-----------|------|
+| `WINDI-ART50-POSITIONING-001-20260726080904-140263D7` | Art. 50 Compliance | `140263D7` |
+| `WINDI-DOUTRINA-LAUNCH-GATE-001-20260726081433-00296B4D` | Launch Gate | `00296B4D` |
+
+### Estrutura criada
+
+```
+/opt/windi/engine/launch-gate/
+├── conditions.json      # 5 condicoes G definidas
+├── launch_gate_check.sh # avaliador (estilo §265)
+└── receipts/            # avaliacoes locais
+    └── LG-EVAL-20260726-081321.json
+```
+
+### Estado do Launch Gate
+
+| Condicao | Estado | Nota |
+|----------|--------|------|
+| G-TEC | INCOMPLETE | Motor Soberano + F1-F5 pendentes |
+| G-FORENSE | INCOMPLETE | Pipeline "O Peso do Eco" pendente |
+| G-LEGAL | INCOMPLETE | Art. 50 PASS, IP Pack v0.6 < v1.0 |
+| G-NARRATIVA | INCOMPLETE | Filme + Politica Dados pendentes |
+| G-ECONOMICO | INCOMPLETE | WINDI_HEALTH fonte por definir |
+
+### Proximos passos
+
+1. [ ] Selar DOUTRINA-INTAKE-FREMDE-001 (decisao I9)
+2. [ ] IP Readiness Pack v0.7.0 (campos verification no schema)
+3. [ ] Ligar avaliadores reais no launch_gate_check.sh
+4. [ ] systemd timer apos 3 corridas manuais validadas
+
+### Notas para a sessao seguinte
+
+- Launch Gate baseline: 0/5 — progresso real requer receipts
+- G-LEGAL.2 unico com prazo externo duro (01 Ago) — FECHADO
+- Memory Loop invocavel por nome: "GERADO!=VERIFICADO", "Escada de Espelhos", etc.
+
+
+
+### Emenda — UX/UI Audit Fix (26 Jul 2026 · 10:24 UTC)
+
+**Contexto:** Análise de gaps entre promessa visual e realidade técnica do Verify Public.
+
+**Gaps identificados e corrigidos:**
+
+| GAP | Problema | Fix |
+|-----|----------|-----|
+| GAP-1 | Banner "Pré-lançamento" visível em sistema LIVE | Removido do HTML |
+| GAP-2 | Título receipt dizia "(demonstração)" | Corrigido para texto real |
+
+**Títulos corrigidos (quadrilingue):**
+
+| Língua | Antes | Depois |
+|--------|-------|--------|
+| PT | Recibo de intake (demonstração) | Recibo de integridade |
+| DE | Intake-Quittung (Demonstration) | Integritätsquittung |
+| EN | Intake receipt (demonstration) | Integrity receipt |
+| ES | Recibo de intake (demostración) | Recibo de integridad |
+
+**Verificação de alinhamento UX ↔ Backend:**
+
+| Aspecto | Estado |
+|---------|--------|
+| sealed_claims vs UI "O que fica provado" | ✅ Alinhado |
+| forbidden_claims vs UI "O que NÃO fica provado" | ✅ Alinhado |
+| Promessa de privacidade (hash client-side) | ✅ Alinhado |
+| Gates I9/G8-hard | ✅ Funcionais |
+
+**Commit:** `9a567705d` fix(verify-public): remove demo labels from LIVE UI
+
+**Princípio validado:** UX corresponde à realidade — sistema LIVE, labels LIVE.
+
+
+
+### Emenda — UX/UI Audit Fix (26 Jul 2026 · 10:24 UTC)
+
+**Contexto:** Análise de gaps entre promessa visual e realidade técnica do Verify Public.
+
+**Gaps identificados e corrigidos:**
+
+| GAP | Problema | Fix |
+|-----|----------|-----|
+| GAP-1 | Banner "Pré-lançamento" visível em sistema LIVE | Removido do HTML |
+| GAP-2 | Título receipt dizia "(demonstração)" | Corrigido para texto real |
+
+**Títulos corrigidos (quadrilingue):**
+
+| Língua | Antes | Depois |
+|--------|-------|--------|
+| PT | Recibo de intake (demonstração) | Recibo de integridade |
+| DE | Intake-Quittung (Demonstration) | Integritätsquittung |
+| EN | Intake receipt (demonstration) | Integrity receipt |
+| ES | Recibo de intake (demostración) | Recibo de integridad |
+
+**Verificação de alinhamento UX ↔ Backend:**
+
+| Aspecto | Estado |
+|---------|--------|
+| sealed_claims vs UI "O que fica provado" | ✅ Alinhado |
+| forbidden_claims vs UI "O que NÃO fica provado" | ✅ Alinhado |
+| Promessa de privacidade (hash client-side) | ✅ Alinhado |
+| Gates I9/G8-hard | ✅ Funcionais |
+
+**Commit:** `9a567705d` fix(verify-public): remove demo labels from LIVE UI
+
+**Princípio validado:** UX corresponde à realidade — sistema LIVE, labels LIVE.
