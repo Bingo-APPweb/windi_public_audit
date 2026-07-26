@@ -24357,3 +24357,33 @@ Adjacent infrastructure exists (Verify, Ledger, DID, I9 gates) but serves differ
 
 OM SHANTI
 
+
+### §26Jul — Gate D Executed: forensic_blueprint I14 Fix
+
+**Status:** LIVE
+**Commit:** `2cc4d1783`
+**Timestamp:** 2026-07-26 12:47 UTC
+**Authorized by:** Human Dragon (I9)
+
+**Change Applied:**
+```python
+# Before (S1 SILENT):
+except Exception:
+    pass
+return jsonify({"ok": True, "ledger_exists": ledger_ok, ...})
+
+# After (I14 EXPLICIT):
+except Exception as e:
+    ledger_error = str(e)
+return jsonify({
+    "ok": ledger_error is None,
+    "ledger_exists": ledger_ok,
+    "ledger_error": ledger_error,
+    ...
+})
+```
+
+**Service Restart:** `windi-sandbox-core.service` restarted, health confirmed.
+
+**Audit Closed:** CLAIM-CONTAINMENT-001 Phase 0 complete. No further findings require action.
+
