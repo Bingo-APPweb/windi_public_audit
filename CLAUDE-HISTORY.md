@@ -7,6 +7,82 @@
 # ---
 
 
+## § SESSÃO 26 Jul 2026 — DRAGONPRINT G0-A R8.1 Staging Installation
+
+**Duração:** ~4h | **Status:** ✅ STAGING_INSTALLED
+**Liga IA+H:** Human Dragon (I1, I9) · CCode Gêmeo (Opus 4.5)
+**Projecto:** WINDI Dragonprint — Visual Provenance Carrier
+**Natureza:** Codex Review Cycle (R7→R8→R8.1) · Staging Installation · Tutorial
+**Invariantes:** I9, I11, I14
+
+### Contexto
+
+Ciclo completo de revisão Codex para o baseline G0-A do Dragonprint:
+- R7: Findings sobre port/round-trip validation
+- R8: Findings sobre node budget/EXIT-CODE
+- R8.1: Todos os P0/P1 resolvidos → APPROVED_G0A_CANDIDATE_BASELINE
+
+### Trabalho Executado
+
+**R8.1 Key Fix — Encoder Invariant Final:**
+```python
+# Final decoder-backed invariant
+from dragonprint.dragonprint_decoder import decode_dragonprint
+result = decode_dragonprint(payload)
+if result.structure != "valid" or result.payload_hash != "matching":
+    raise EncoderValidationError(...)
+```
+
+**Staging Installation (I9 Authorized):**
+- Source: `/tmp/dragonprint-g0a-r8.1/` (SHA256 verified)
+- Target: `/opt/windi/dragonprint/dragonprint/`
+- Backup: `/opt/windi/backups/dragonprint-pre-r8.1-20260726203740`
+- Tests: 106/106 PASS
+- Smoke: structure=valid, payload_hash=matching
+
+**Tutorial Transfer:**
+- Windows → GitHub (commit 73f7232) → Strato (SCP)
+- SHA256: `db05940349334b1aacfd4e53ed4a9d3a6822a38221da4ff786a5236a7e75ce4a`
+- Location: `/opt/windi/docs/WINDI-DRAGONPRINT-HUMAN-TUTORIAL-G0A-R8.1.md`
+
+**Security Incident:**
+- SSH private key accidentally shared in chat
+- New key generated: `codex-windi-strato-participation-layer`
+- `/home/windi/.ssh/authorized_keys` updated
+- Compromised key revoked
+
+### Ficheiros
+
+```
+/opt/windi/dragonprint/dragonprint/__init__.py
+/opt/windi/dragonprint/dragonprint/dragonprint_c14n.py
+/opt/windi/dragonprint/dragonprint/dragonprint_decoder.py
+/opt/windi/dragonprint/dragonprint/dragonprint_encoder.py
+/opt/windi/dragonprint/dragonprint/test_dragonprint_g0a.py
+/opt/windi/dragonprint/dragonprint/fixtures/vector1_ascii.json
+/opt/windi/dragonprint/dragonprint/fixtures/vector2_unicode.json
+/opt/windi/docs/WINDI-DRAGONPRINT-HUMAN-TUTORIAL-G0A-R8.1.md
+/opt/windi/docs/README.md (índice actualizado)
+```
+
+### Constraints G0-A
+
+```yaml
+state: candidate
+profile: screen_pdf
+issuance: disabled
+signing: disabled
+ledger_writes: none
+receipt: none
+seal: none
+```
+
+### Próximo Passo
+
+G1/production advancement aguarda autorização I9 separada.
+
+---
+
 ## § SESSÃO 19 Jul 2026 — VERIFY-PUBLIC Notarial · WCAG AA + I9 Canonical
 
 **Duração:** ~3h | **Status:** ✅ SELADO
@@ -24387,3 +24463,147 @@ return jsonify({
 
 **Audit Closed:** CLAIM-CONTAINMENT-001 Phase 0 complete. No further findings require action.
 
+
+
+---
+
+### §26Jul — WINDI-DRAGONPRINT-001 Local Prototype
+
+```yaml
+event: WINDI-DRAGONPRINT-001-LOCAL-PROTOTYPE
+date: 2026-07-26
+status: PARTIAL_LOCAL_PROTOTYPE
+authority:
+  approved_by: Human Dragon I9
+  approved:
+    - working name WINDI Dragonprint
+    - first scope screen_pdf only
+    - non-production local encoder/decoder prototype
+  not_approved:
+    - production activation
+    - JMPG integration
+    - VERIFY integration
+    - controlled_print
+    - secure_uv
+    - production signing keys
+    - receipt
+    - Ledger write
+    - seal
+
+measured:
+  package_hashes: MATCH
+  encoder_candidate_mode: RUNS
+  decoder_candidate_mode: RUNS
+  ed25519_signing: NOT_OPERATIONAL
+  ed25519_verification: DISABLED_PYNACL_MISSING
+  qr_carrier: NOT_IMPLEMENTED
+  dragon_vector: NOT_IMPLEMENTED
+  pdf_embedding: NOT_IMPLEMENTED
+  live_service_change: none
+  ledger_write: none
+  receipt: none
+  seal: none
+
+open_gates:
+  - Dragonprint-specific canonical signed bytes unresolved
+  - signing-key policy unresolved: wallet reuse vs dedicated key
+  - proof_limits enforcement in VERIFY not implemented
+  - no visual carrier or PDF survival test
+  - no tamper test vectors
+  - no controlled print infrastructure
+
+governance_note:
+  - /opt/windi/docs/candidates and /opt/windi/dragonprint were created
+  - candidate/schema were copied into /opt/windi
+  - this filesystem placement was not explicitly included in the I9 sentence
+  - mark placement as [dúvida: HUMANO], not canonical ratification
+  - all artifacts remain CANDIDATE / NON-PRODUCTION
+```
+
+**Handoff Source:** Guardian (Claude.ai web) → CCode (STRATO)
+**Package SHA-256:** `a2616608c0bc99daf5774f2f97edff06141d52333a1251b3e4610dba1fffbf91`
+
+**Files Created [dúvida: HUMANO]:**
+
+| File | Path | Status |
+|------|------|--------|
+| Candidate Doc | `/opt/windi/docs/candidates/WINDI-DRAGONPRINT-001-CANDIDATE.md` | CANDIDATE |
+| Schema | `/opt/windi/schemas/windi.dragonprint-v0.1-candidate.json` | CANDIDATE |
+| Encoder | `/opt/windi/dragonprint/dragonprint_encoder.py` | NON-PRODUCTION |
+| Decoder | `/opt/windi/dragonprint/dragonprint_decoder.py` | NON-PRODUCTION |
+| Module | `/opt/windi/dragonprint/__init__.py` | NON-PRODUCTION |
+| Manifest | `/opt/windi/dragonprint/MANIFEST.md` | NON-PRODUCTION |
+
+**Gap Report Summary (G0-G7):**
+
+| Gate | Status | Finding |
+|------|--------|---------|
+| G0 Canonicalization | PARTIAL | General windi_c14n.py exists; Dragonprint-specific bytes unresolved |
+| G1 Cryptography | EXISTS | wallet_provisioning.py has Ed25519; key policy unresolved |
+| G2 Receipt compatibility | SYNTACTIC | additionalProperties:true allows extension; semantic approval pending |
+| G3 PDF surface | EXISTS | jmpg_export_engine.py identified |
+| G4 VERIFY surface | EXISTS | verify_engine.py identified |
+| G5 Controlled print | MISSING | No print gateway infrastructure |
+| G6 Proof language | PARTIAL | intake-receipt has forbidden_claims; Dragonprint enforcement pending |
+| G7 Placement | CREATED | /opt/windi/dragonprint/ [dúvida: HUMANO] |
+
+**Invariants Respected:** I9 (prototype authorized), I11 (no Ledger write), G3 (no production change)
+
+**Next:** Human Dragon decides canonical placement and production activation path.
+
+### §26Jul — WINDI Dragonprint G0-A R8.1 Baseline, Staging and Human Tutorial
+
+event: WINDI-DRAGONPRINT-G0A-R8.1-STAGING-AND-HUMAN-TUTORIAL
+date: 2026-07-26
+status: STAGING_ACCEPTED
+authority:
+  approved_by: Human Dragon I9
+  approved:
+    - G0-A R8.1 candidate baseline
+    - nonproduction staging installation at /opt/windi/dragonprint
+    - screen_pdf profile
+    - document_export mode
+    - candidate-state integrity validation
+    - human tutorial for staging use
+  not_approved:
+    - production activation
+    - issued or revoked states
+    - Ed25519 signing or G1 activation
+    - production keys
+    - Ledger writes
+    - receipts
+    - seals
+    - PDF embedding
+    - physical carrier or authenticity claims
+measured:
+  approved_package: dragonprint-g0a-r8.1-review.tar.gz
+  approved_package_sha256: 2b41ac542db410834435f164dfc8a8d26422d96899573d2d683713aba106b0ab
+  strato_tests: 106/106 PASS
+  windows_tests: 106/106 PASS
+  test_exit_code: 0
+  package_internal_hashes: 11/11 MATCH
+  staging_final_hashes: 8/8 MATCH
+  staging_smoke_test: PASS
+  staging_location: /opt/windi/dragonprint
+  pre_install_backup: /opt/windi/backups/dragonprint-pre-r8.1-20260726203740
+installation_note:
+  - initial flattened Python package layout produced ModuleNotFoundError
+  - nested /opt/windi/dragonprint/dragonprint layout was restored
+  - corrected final state passed hashes, 106 tests and smoke verification
+tutorial:
+  file: WINDI-DRAGONPRINT-HUMAN-TUTORIAL-G0A-R8.1.md
+  sha256: db05940349334b1aacfd4e53ed4a9d3a6822a38221da4ff786a5236a7e75ce4a
+  status: CANDIDATE_TUTORIAL
+  scope: educational staging use
+  indexed: true
+governance:
+  candidate_integrity_is_not_authenticity: true
+  runtime_services_changed: false
+  production_activation: false
+  ledger_writes: none
+  receipt: none
+  seal: none
+  next_gate: separate explicit Human Dragon I9 authorization
+
+História preserva o baseline aprovado, a instalação de staging verificada e a
+documentação humana sem ampliar o escopo para produção ou G1.
