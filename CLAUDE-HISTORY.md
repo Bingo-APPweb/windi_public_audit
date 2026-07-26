@@ -24310,3 +24310,50 @@ Adjacent infrastructure exists (Verify, Ledger, DID, I9 gates) but serves differ
 **Commit:** `9a567705d` fix(verify-public): remove demo labels from LIVE UI
 
 **Princípio validado:** UX corresponde à realidade — sistema LIVE, labels LIVE.
+
+---
+
+### §26Jul — CLAIM-CONTAINMENT-001 Audit (Phase 0)
+
+**Status:** INVENTORY COMPLETE · READ-ONLY
+**Executor:** Claude Code (Guardian) · CCode CLI
+**Authority:** Human Dragon (I9)
+**Timestamp:** 2026-07-26 12:30 UTC
+
+**Mission:** Find every place in STRATO where dependency failure can produce false claim.
+
+**Key Findings:**
+
+| Category | Count | Severity |
+|----------|-------|----------|
+| CRITICAL | 0 | — |
+| HIGH | 1 | forensic_blueprint.py:852 |
+| MEDIUM | 3 | Various S2/S3 patterns |
+| LOW | 5 | I14 compliant handlers |
+
+**Task A — Ledger Idempotency:** ✅ PASS
+- `id TEXT PRIMARY KEY` in schema
+- Duplicates return 200 + "already exists (immutable)"
+- Safe to retry
+
+**Task B — Silent-Except Sweep:** 9 files scanned, 5 findings
+- B-01 (MEDIUM): `forensic_blueprint.py:852` — returns `"ok": True` when ledger unreachable
+
+**Task C — Claim-Language:** 7 claim words audited, all guarded except B-01
+
+**Task D — §265 M2 Overlap:** Sentinel LAW v2.0 already covers service health
+- LAW1 (latency) + LAW2 (unsynced) + LAW3 (drift) + LAW4 (reconciliation)
+- Future work should CONSUME Sentinel, not duplicate
+
+**Task E — Live Ports:** All critical dependencies LIVE
+- :8101 Ledger ✓ · :8114 Verify ✓ · :8120 VPSE ✓ · :8096 DID ✓
+
+**Proposed Fix (Gate D):**
+- `forensic_blueprint.py:852-860`: Add `ledger_error` field to distinguish "not found" vs "unreachable"
+
+**Report:** `/opt/windi/reports/CLAIM-CONTAINMENT-001-INVENTORY.md`
+
+**Invariants Respected:** I9 (all proposals), I14 (UNKNOWN explicit), I11 (no writes), G1, G3
+
+OM SHANTI
+
