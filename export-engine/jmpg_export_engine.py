@@ -47,6 +47,20 @@ try:
 except ImportError:
     PDF_EXPORT_AVAILABLE = False
 
+# Import Dragonprint (G3 JMPG Integration)
+try:
+    import sys
+    sys.path.insert(0, "/opt/windi/dragonprint")
+    from dragonprint import (
+        encode_dragonprint,
+        DragonprintSigner,
+        render_dragonprint_json,
+        render_pdf_metadata,
+    )
+    DRAGONPRINT_AVAILABLE = True
+except ImportError:
+    DRAGONPRINT_AVAILABLE = False
+
 # ─── CONFIG ──────────────────────────────────────────────────
 PORT = 8103
 LEDGER_URL = "http://127.0.0.1:8101"
@@ -235,10 +249,23 @@ def create_jmpg_package(
     content_blocks: list,
     metadata: dict,
     media_refs: list = None,
-    source_info: dict = None
+    source_info: dict = None,
+    human_id: str = None,
+    human_approved: bool = False
 ) -> tuple:
     """
     Create a .jmpg package.
+
+    Args:
+        title: Document title
+        author: Author name
+        template: Template ID
+        content_blocks: List of content blocks
+        metadata: Document metadata
+        media_refs: Optional media references
+        source_info: Optional source information
+        human_id: Optional wallet ID for Dragonprint signing
+        human_approved: I9 gate - must be True for signing
 
     Returns: (zip_bytes, manifest_dict, receipt_dict)
     """
@@ -332,6 +359,45 @@ def create_jmpg_package(
         preview_lines.append(f"... +{len(content_blocks) - 10} more blocks")
     preview_txt = "\n".join(preview_lines)
 
+    # 8.5 Generate Dragonprint payload (if available and human_approved)
+    dragonprint_payload = None
+    dragonprint_json = None
+    if DRAGONPRINT_AVAILABLE and manifest["governance"].get("receipt_id"):
+        try:
+            receipt_id = manifest["governance"]["receipt_id"]
+
+            # Create signer if human_id provided and human_approved
+            signer = None
+            if human_id and human_approved:
+                try:
+                    signer = DragonprintSigner(human_id)
+                    signer.load_key()
+                    log(f"[Dragonprint] Signer loaded: {signer.key_id}")
+                except Exception as signer_err:
+                    log(f"[Dragonprint] Signer load failed: {signer_err}")
+                    signer = None
+
+            # Encode Dragonprint
+            dragonprint_payload = encode_dragonprint(
+                receipt_id=receipt_id,
+                document_id=manifest["package_id"],
+                content_sha256=content_hash,
+                ledger_seal=receipt_id,
+                signer=signer,
+                human_approved=human_approved
+            )
+            dragonprint_json = render_dragonprint_json(dragonprint_payload)
+            log(f"[Dragonprint] Generated: state={dragonprint_payload['state']}")
+
+            # Add to manifest
+            manifest["dragonprint"] = {
+                "state": dragonprint_payload["state"],
+                "pattern_id": dragonprint_payload["pattern_id"],
+                "payload_sha256": dragonprint_payload["crypto"]["payload_sha256"]
+            }
+        except Exception as dp_err:
+            log(f"[Dragonprint] Generation failed (non-fatal): {dp_err}")
+
     # 9. Package into ZIP (.jmpg)
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
@@ -341,6 +407,11 @@ def create_jmpg_package(
         zf.writestr("receipt.json", json.dumps(receipt_data, indent=2, ensure_ascii=False))
         zf.writestr("hash.txt", hash_txt)
         zf.writestr("preview.txt", preview_txt)
+
+        # Dragonprint payload (if generated)
+        if dragonprint_json:
+            zf.writestr("dragonprint.json", dragonprint_json)
+            log(f"[Dragonprint] Added to package")
 
         # Media files
         for fname, fdata in media_files:
@@ -1083,6 +1154,7 @@ if __name__ == "__main__":
     log(f"JMPG Spec: {JMPG_SPEC}")
     log(f"Ledger: {LEDGER_URL}")
     log(f"Trigger Builder: {'AVAILABLE' if TRIGGER_AVAILABLE else 'NOT AVAILABLE'}")
+    log(f"Dragonprint: {'AVAILABLE' if DRAGONPRINT_AVAILABLE else 'NOT AVAILABLE'}")
     log(f"Triggers Dir: {TRIGGERS_DIR}")
 
     server = ThreadingHTTPServer(("0.0.0.0", PORT), JMPGExportHandler)
