@@ -24607,3 +24607,98 @@ governance:
 
 História preserva o baseline aprovado, a instalação de staging verificada e a
 documentação humana sem ampliar o escopo para produção ou G1.
+
+---
+
+## § SESSÃO 28 Jul 2026 — W-HIOS FORENSIC UNIT · Cena 00 Lip Sync Analysis + Voice-Off Solution
+
+**Duração:** ~2h | **Status:** ✅ DOCUMENTADO
+**Liga IA+H:** Human Dragon (I1, I9) · CCode Gêmeo (Opus 4.5)
+**Projecto:** W-HIOS FORENSIC UNIT — "O Peso do Eco"
+**Natureza:** Análise forense de lip sync · Decisão artística · Documentação de montagem
+**Invariantes:** I9, I11, I14
+
+### Contexto
+
+Continuação da produção da Cena 00 (videochamada Gabi/Filho). Análise crítica de lip sync identificou problemas técnicos que foram resolvidos através de escolha artística.
+
+### Trabalho Executado
+
+**1. Análise Frame-by-Frame de GABI-CENA00-2.mp4:**
+
+Extracção e análise de 106 frames (1fps) + 75 frames de diálogo (3fps):
+- `analysis_v2/frame_XXX.jpg` — Overview completo
+- `analysis_v2/dialogue_XXX.jpg` — Secção de diálogo 25-50s
+
+**2. Diagnóstico de Lip Sync:**
+
+| Personagem | Problema | Severidade |
+|------------|----------|------------|
+| **GABI** | Boca permanece fechada durante todas as falas. Zero articulação. | 🔴 CRÍTICO |
+| **FILHO** | Expressões exageradas ("cara excitada") mas sem formação de palavras. | 🟠 ALTO |
+
+**3. Decisão I9 — Opção C Voice-Off Dramático:**
+
+Human Dragon escolheu transformar limitação técnica em escolha artística:
+> *"A última conversa com o filho. Ela não sabe que é a última. Nós sabemos."*
+
+Regra de ouro:
+```
+QUANDO GABI FALA → NÃO MOSTRAR O ROSTO DELA (usar inserts)
+QUANDO GABI ESTÁ EM SILÊNCIO → PODE MOSTRAR CLOSE-UP (ela ouve)
+```
+
+**4. Documentação de Montagem:**
+
+Criado `MONTAGEM-VOICE-OFF-GABI-CENA00.md` com:
+- Tabela de cortes por quem fala
+- Frames de referência seguros (timestamps)
+- Estrutura sugerida da cena
+- Checklist de validação
+- Referências cinematográficas (Arrival, Interstellar, Roma)
+
+### Ficheiros Criados/Modificados
+
+```
+/opt/windi/hios/cinema/obras/w-hios-forensic-unit/shots/gabi-cena00/
+├── MONTAGEM-VOICE-OFF-GABI-CENA00.md    # Diretriz de montagem (NOVO)
+├── analysis_v2/                          # 181 frames extraídos para análise
+├── generate_death_scene.py               # Cena morte v1 (breathing)
+├── generate_death_scene_v2.py            # Cena morte v2 (olhos fecham)
+└── frames/
+    ├── GABI-no-chao-vidros.png           # Morte olhos abertos
+    └── Gabi-no-chao-vidros-blusa-olhos-fechados.png  # Morte olhos fechados
+
+/opt/windi/shared/static/.incoming/cena00-v2-20260727/
+├── MONTAGEM-VOICE-OFF-GABI-CENA00.md     # Cópia para transferência
+├── OPENING_O_PESO_DO_ECO_v1.mp4          # Abertura 12s (sessão anterior)
+├── GABI-MORTE-OLHOS-FECHAM-v1.mp4        # Morte olhos fecham (sessão anterior)
+└── CENA00-FINAL-V2-COWORK-CCODE-HANDOFF-20260727.md
+```
+
+### Decisões Dramatúrgicas Confirmadas
+
+| Decisão | Status | Nota |
+|---------|--------|------|
+| Gabi de blusa (não blazer) | ✅ | Atacada durante chamada |
+| Chamada via laptop (não phone) | ✅ | Phone = ÂNCORA separado |
+| Olhos fecham no final da morte | ✅ | Crossfade 2.5-4.0s |
+| Voice-off para lip sync | ✅ I9 | Escolha artística documentada |
+
+### Sessão Anterior (mesmo dia, contexto resumido)
+
+- Opening title "O PESO DO ECO" gerado (12s, fractal + echo convergence)
+- Death scene v2 com olhos a fechar (5s, crossfade)
+- Continuidade de vestuário corrigida (blusa vs blazer)
+- Transferência de assets para `/opt/windi/shared/static/.incoming/`
+
+### Próximo Passo
+
+Human Dragon executa edição seguindo `MONTAGEM-VOICE-OFF-GABI-CENA00.md`.
+Aguarda-se resultado editado para revisão.
+
+### Frase de Guarda
+
+> *"O silêncio visual amplifica a escuta. A mãe absorve cada palavra sem saber que é a última."*
+
+---
