@@ -7,14 +7,16 @@
 # ---
 
 
-## § SESSÃO 28 Jul 2026 — W-HIOS CENA00 Final Seal
+## § SESSÃO 28 Jul 2026 — W-HIOS CENA00 V2 + CENA01 System-First
 
-**Duração:** ~2h | **Status:** ✅ SELADO
-**Liga IA+H:** Human Dragon (I1, I9) · CCode Gêmeo (Opus 4.5)
+**Duração:** ~4h | **Status:** ✅ SELADO
+**Liga IA+H:** Human Dragon (I1, I9) · CCode Gêmeo (Opus 4.5) · Codex (projecção)
 **Projecto:** W-HIOS FORENSIC UNIT — O Peso do Eco
-**Natureza:** Análise cinematográfica · Correcções finais · Selo Ledger
+**Natureza:** Abertura cinematográfica V2 · Kit System-First CENA01 · Selo Ledger
 **Invariantes:** I9, I11, I14, I19
-**Receipt:** `WINDI-HIOS-CENA00-FINAL-20260728130153-8C9905AE`
+**Receipts:**
+- `WINDI-HIOS-CENA00-FINAL-20260728130153-8C9905AE` (V1)
+- `WINDI-HIOS-CENA00-FINAL-V2-20260728173300-19FD4CDD` (V2 DEFINITIVA)
 
 ### Contexto
 
@@ -87,9 +89,87 @@ ffmpeg -y -i GABI-CENA00-3-final.mp4 -c:v copy \
 
 > *"A mãe prometeu guardar o dragão. O Ledger guarda a promessa."*
 
-### Verify
+### Verify V1
 
 `https://windi-domain.com/verify-public/?id=WINDI-HIOS-CENA00-FINAL-20260728130153-8C9905AE`
+
+---
+
+### CENA00 V2 — Fachada Integrada (17:33 UTC)
+
+Human Dragon integrou a fachada contra-picado do edifício Vanguard-Nexus na abertura.
+
+**Nova estrutura narrativa (80.18s):**
+```
+00:00-02s  │ FADE IN (preto)
+00:02-04s  │ FACHADA BASE — janela iluminada, chão molhado
+00:04-06s  │ FACHADA ALTA — edifício a perder-se no céu
+00:06-12s  │ SILHUETA GABI — corredor → cozinha luxuosa
+00:12-28s  │ CASA NOITE — pernas/saltos → máquina café
+00:28-48s  │ VIDEOCHAMADA — filho sorrindo
+00:48-68s  │ FADE TO BLACK — ataque em off (20s)
+00:68-80s  │ TÍTULOS — "O PESO DO ECO" + árvore fractal
+```
+
+**Gramática visual:** Prédio de fora → Prédio de dentro → Mulher → Filho → Preto → Título
+
+**Metadados V2:**
+| Campo | Valor |
+|-------|-------|
+| Duração | 80.18s |
+| Resolução | 1920x1080 |
+| Codec | H.264 + AAC 320kbps |
+| Bitrate | 5.2 Mbps |
+| max_volume | -0.6 dB |
+| SHA-256 | `19fd4cddb03cb25cc5475e37ec577d73c2940fe4bc166d435e8c845daaed0ed6` |
+
+**Verify V2:** `https://windi-domain.com/verify-public/?id=WINDI-HIOS-CENA00-FINAL-V2-20260728173300-19FD4CDD`
+
+---
+
+### CENA01 — Kit System-First (Codex + CCode)
+
+Preparação da CENA01 com abordagem "system-first": a audiência conhece o W-HIOS
+como sistema antes de ver rostos humanos.
+
+**Assets recebidos do Codex:**
+```
+/shots/gabi-cena01/
+├── screens/
+│   ├── SCREEN_BUNKER_MAPA_NO_VERMELHO.png
+│   ├── SCREEN_CONSOLE_PACOTE_ANCORA.png
+│   ├── SCREEN_DEVICE_ALVO_X.png
+│   ├── SCREEN_PHONE_ANCORA_ARMADO.png      # 23:42
+│   ├── SCREEN_PHONE_TRANSMISSAO_240.png    # 23:50
+│   ├── SCREEN_TERMINAL_EXTRACAO.png        # 23:41
+│   └── WHIOS_OPS_DASHBOARD.html
+├── takes/
+│   ├── FACHADA_CAPITAL_PREDIO.mp4          # P01-02 (5s)
+│   ├── WHIOS_DASHBOARD_LIVE.mp4            # 53s
+│   └── WHIOS_DOC_PIPELINE_LIVE.mp4         # 57s, #R-0447
+└── docs/
+    ├── CENA01-TRANSPONDER-APAGA-SE-COWORK-CCODE-HANDOFF-20260728.md
+    ├── CENA01-VANCE-ANCHOR-AUTHORITY-ERRATA-20260728.md
+    └── CENA01-WHIOS-SYSTEM-FIRST-DECUPAGEM-20260728.md
+```
+
+**Sequência dramática:**
+```
+CAUSA   → SCREEN_TERMINAL_EXTRACAO (23:41)
+GATILHO → SCREEN_PHONE_ANCORA_ARMADO (23:42)
+EVENTO  → SCREEN_PHONE_TRANSMISSAO_240 (23:50)
+RIPPLE  → MAPA + DEVICE + CONSOLE
+ANÁLISE → DASHBOARD (03:14) — W-HIOS processa sozinho
+ACHADO  → PIPELINE #R-0447 — geometria nas margens
+ÂNCORA  → FACHADA — onde tudo aconteceu
+```
+
+**WHIOS_DOC_PIPELINE pedagógico:** Dois documentos normais passam (factura ✓, swap ✓),
+depois #R-0447 falha na etapa 6: "padrão estruturado nas margens — NÃO é erro de compressão".
+Audiência aprende o normal, depois vê a anomalia.
+
+**Fachada validada:** Contra-picado perfeito, janela iluminada, vidro/aço, chão molhado.
+Corresponde ao P01-02 da decupagem CENA-01.
 
 ---
 
