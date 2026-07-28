@@ -7,6 +7,92 @@
 # ---
 
 
+## § SESSÃO 28 Jul 2026 — W-HIOS CENA00 Final Seal
+
+**Duração:** ~2h | **Status:** ✅ SELADO
+**Liga IA+H:** Human Dragon (I1, I9) · CCode Gêmeo (Opus 4.5)
+**Projecto:** W-HIOS FORENSIC UNIT — O Peso do Eco
+**Natureza:** Análise cinematográfica · Correcções finais · Selo Ledger
+**Invariantes:** I9, I11, I14, I19
+**Receipt:** `WINDI-HIOS-CENA00-FINAL-20260728130153-8C9905AE`
+
+### Contexto
+
+Revisão final da Cena 00 (Videochamada Mãe/Filho) — abertura do filme "O Peso do Eco".
+Três versões analisadas até ao selo final.
+
+### Trabalho Executado
+
+**Análise V1 (GABI-CENA00.mp4 — 78.7s):**
+- 39 frames extraídos a cada 2s
+- Estrutura narrativa: Fade in → Escritório (dia) → Casa (noite) → Chamada → Títulos
+- Detectada cena do filho a mostrar desenho do dragão (~37s)
+- Áudio: True Peak +0.6 dBTP (clipping provável)
+
+**Decisão Narrativa I9 — Dragão Simbólico:**
+> O desenho do dragão foi **removido intencionalmente** da CENA00.
+> O menino agora **pergunta** se a mãe recebeu o dragão.
+> Payoff: dragão aparece como prova física nas cenas de investigação.
+> Simbolismo: inocência infantil → prova forense.
+
+**Análise V3 (GABI-CENA00-3-final.mp4 — 76.5s):**
+- 19 planos, estrutura simplificada
+- Figurino corrigido: blusa preta de botões (raccord perfeito)
+- Telemóvel ANSWER integrado
+- Ataque em off (5.5s preto + som)
+- Título dourado com fractal radial (~15s)
+
+**Correcção Áudio — Limiter:**
+```bash
+ffmpeg -y -i GABI-CENA00-3-final.mp4 -c:v copy \
+  -af "alimiter=limit=0.891:attack=5:release=50:level=false" \
+  -c:a aac -b:a 320k CENA00_FINAL_SEALED.mp4
+```
+- Antes: max_volume 0.0 dB (clipping)
+- Depois: max_volume **-0.5 dB** ✅
+
+**Instruções OpenART PT-BR (geradas para sincronização):**
+- Bloco 1 (34.8s): "Mamãe! Mamãe!"
+- Bloco 2 (37.0s): "Olha o que eu fiz! É um dragão!"
+- Voz: criança masculina ~7 anos, tom excitado
+
+### Ficheiros
+
+```
+/opt/windi/hios/cinema/obras/w-hios-forensic-unit/shots/gabi-cena00/
+├── CENA00_FINAL_SEALED.mp4          # SELADO
+├── GABI-CENA00.mp4                  # v1
+├── GABI-CENA00-3-final.mp4          # v3 (antes limiter)
+├── MONTAGEM-VOICE-OFF-GABI-CENA00.md
+└── frames/                          # análise
+```
+
+### Metadados Finais
+
+| Campo | Valor |
+|-------|-------|
+| Duração | 76.477s |
+| Planos | 19 |
+| Resolução | 1920x1080 |
+| Codec | AV1 + AAC 320kbps |
+| max_volume | -0.5 dB |
+| SHA-256 | `8c9905ae41c589d624f75fc205f450c65e1fecbd041a8edf4231e651401a7589` |
+
+### Nota de Continuidade
+
+**ELEMENTO:** Dragão de papel (desenho infantil)
+**INTRODUÇÃO:** CENA00 (mencionado, não mostrado)
+**APARIÇÃO FÍSICA:** Cenas de investigação (a produzir)
+**SIGNIFICADO:** Espião simbólico / Última memória do filho
+
+> *"A mãe prometeu guardar o dragão. O Ledger guarda a promessa."*
+
+### Verify
+
+`https://windi-domain.com/verify-public/?id=WINDI-HIOS-CENA00-FINAL-20260728130153-8C9905AE`
+
+---
+
 ## § SESSÃO 26 Jul 2026 — DRAGONPRINT G0-A R8.1 Staging Installation
 
 **Duração:** ~4h | **Status:** ✅ STAGING_INSTALLED
