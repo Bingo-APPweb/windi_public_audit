@@ -7,6 +7,148 @@
 # ---
 
 
+## § SESSÃO 29 Jul 2026 — VERIFY-PUBLIC Quality Audit · P0+P1 Constitutional Repair
+
+**Duração:** ~1.5h | **Status:** ✅ P0+P1 COMPLETOS
+**Liga IA+H:** Human Dragon (I1, I9) · CCode Gêmeo (Opus 4.5) · CODEX/Cowork (Auditoria)
+**Serviço:** W-STATE-CORE-006 · VERIFY-PUBLIC · :8114
+**Natureza:** Auditoria de qualidade + reparação constitucional
+**Invariantes:** I9, I11, I14
+
+### Contexto
+
+Auditoria externa do CODEX/Cowork identificou over-claims na interface VERIFY-PUBLIC.
+O motor backend distinguia correctamente real/falso (200/404), mas a UI afirmava mais
+do que a evidência suportava.
+
+### Achado Crítico — Over-claim Constitucional
+
+**Evidência do Ledger (recibo real):**
+```
+content_hash:  PRESENTE (sha256:ab3aba8e...)
+ed25519_pub:   AUSENTE (null)
+ed25519_sig:   AUSENTE (null)
+merkle_root:   AUSENTE (null)
+bundle_hash:   AUSENTE (null)
+```
+
+**Mas a UI afirmava:**
+- "Documento Autêntico" / "Authentic Document"
+- "Ed25519 signature verified"
+- "Integridade válida" / "Integrity valid"
+- "WINDI garante" / "WINDI guarantees"
+
+**Problema:** `status === 'sealed'` era traduzido para "autêntico" sem verificar campos criptográficos.
+Violação do proof-limit: `assurance: VERIFIED` quando evidência só suporta `assurance: DECLARED`.
+
+### P0 — Contenção de Linguagem (COMPLETO ✅)
+
+**Ficheiro:** `/opt/windi/verify-public/web/verify.html`
+
+| Antes | Depois |
+|-------|--------|
+| "Documento Autêntico" | "Recibo Selado Encontrado" |
+| "Ed25519 signature verified" | "SHA-256 hash registered" |
+| "INTEGRIDADE" | "HASH REGISTADO" |
+| "WINDI garante" | "recibo selado" |
+| "Garante autenticidade via Ledger" | "Confirma existência de recibo selado" |
+| `integrity: 'valid'` | `integrity: 'hash_registered'` |
+
+**Proof_limits actualizado (trilíngue):**
+> "WINDI confirma que um recibo selado com este hash existe no Ledger. NÃO recalculou
+> o documento, NÃO verificou assinatura Ed25519 (ausente). Recibo registado ≠ documento autêntico."
+
+**Portão de prova P0:**
+- ✅ Nenhum "Ed25519 verified" no caminho positivo
+- ✅ Nenhum "integridade válida" / "integrity valid"
+- ✅ "autêntico" só aparece no disclaimer negativo
+- ✅ JS sintacticamente correcto
+
+### P1 — Veredicto Server-Side (COMPLETO ✅)
+
+**Problema:** `/verify-public/?id=` entregava shell HTML idêntico para IDs reais e falsos.
+O veredicto nascia só via JavaScript — crawlers não viam a rejeição.
+
+**Solução:** Nova rota `/verify-public/r/{id}` com veredicto no HTTP status.
+
+**Ficheiros modificados:**
+- `/opt/windi/verify-public/app/main.py` — Nova rota FastAPI
+- `/etc/nginx/sites-enabled/windi-domain.com` — Proxy para `/verify-public/r/`
+
+**Comportamento:**
+```
+GET /verify-public/r/{real-id}  → 200 + HTML "Sealed Receipt Found"
+GET /verify-public/r/{fake-id}  → 404 + HTML "Receipt Not Found"
+```
+
+**HTML server-side inclui:**
+- Título honesto ("Sealed Receipt Found" / "Receipt Not Found")
+- PROOF LIMITS visível com linguagem P0-compliant
+- No 404: "does NOT prove the artifact is false"
+- Trilíngue (PT/DE/EN via Accept-Language)
+
+**Portão de prova P1:**
+```bash
+curl -s -o /dev/null -w "%{http_code}" \
+  "https://windi-domain.com/verify-public/r/WINDI-ARCHITECTURE-MANUAL-V1-20260611160111"
+# → 200
+
+curl -s -o /dev/null -w "%{http_code}" \
+  "https://windi-domain.com/verify-public/r/FAKE-ID-12345"
+# → 404
+```
+- ✅ Ambos os testes passam via localhost:8114 e via nginx público
+
+### Outros Achados (P2 — Pendentes)
+
+| ID | Achado | Prioridade | Status |
+|----|--------|------------|--------|
+| P2.1 | Deep-link `?c=` divergente | P2 | Pendente |
+| P2.2 | Offline incompleto (verify.html fora PRECACHE) | P2 | Pendente |
+| P2.3 | HEAD inconsistente (405/501) | P2 | Pendente |
+| P2.4 | Headers de segurança desiguais | P2 | Pendente |
+| P2.5 | Minimização de metadados públicos | P2 | Decisão HD |
+| P2.6 | QR do PDF 4-idiomas | P2 | Verificar |
+
+**Nota:** Headers confirmados:
+- nginx/main: HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, CSP ✅
+- :8114 directo: nenhum header de segurança ❌
+
+### Triagem Constitucional
+
+Documento de triagem entregue pelo Cowork:
+`HANDOFF-CCODE-VERIFY-PUBLIC-REMEDIATION-TRIAGE-2026-07-29.md`
+
+**Princípio que atravessa tudo:**
+> "O sistema prepara, verifica e preserva — nunca autentica, valida legalmente,
+> notariza nem aconselha. A vitrine promete exactamente o que a evidência
+> demonstra, nem uma palavra a mais. Verifica, não confia. O valor está nas rejeições."
+
+### Implicação para Handshake Fremde
+
+Com P0+P1 verdes, o teste Fremde pode agora medir a honestidade das outras IAs,
+e não a ambiguidade da própria interface WINDI. Uma vitrine que prometia a mais
+contaminaria o teste antes de ele começar — esse risco está agora contido.
+
+### Ficheiros Modificados
+
+```
+/opt/windi/verify-public/web/verify.html          # P0: contenção de linguagem
+/opt/windi/verify-public/app/main.py              # P1: rota /r/{id}
+/etc/nginx/sites-enabled/windi-domain.com         # P1: proxy nginx
+```
+
+### Próximo Passo
+
+- P2.1-P2.6: Higiene técnica (deep-link, offline, HEAD, headers, minimização)
+- Handshake Fremde: agora pode ser executado sem contaminação da interface
+
+### Frase de Guarda
+
+> *"A vitrine promete só o que prova. A rejeição é a prova. O valor está nos 404."*
+
+---
+
 ## § SESSÃO 28 Jul 2026 — W-HIOS CENA00 V2 + CENA01 System-First
 
 **Duração:** ~4h | **Status:** ✅ SELADO
