@@ -99,6 +99,44 @@ curl -s -o /dev/null -w "%{http_code}" \
 ```
 - ✅ Ambos os testes passam via localhost:8114 e via nginx público
 
+### HOTFIX — Passagem Adversarial do Cowork
+
+Após o commit inicial, o Cowork (Claude.ai) fez leitura adversarial do código e identificou
+três problemas que o happy-path não apanhou:
+
+**1. CRÍTICO — XSS Refletido na rota `/r/{id}`:**
+O `receipt_id` vinha do URL (controlado pelo atacante) e era interpolado sem escape no HTML.
+No 404, directamente explorável: `/verify-public/r/"><script>alert(1)</script>` era reflectido cru.
+No 200, o `doc_name` (escolhido pelo utilizador) também entrava sem escape — XSS armazenado.
+
+**Fix:** `import html` + `html.escape(..., quote=True)` em todos os valores interpolados:
+`receipt_id`, `content_hash`, `created_at`, `doc_name`.
+
+**Prova adversarial:**
+```
+INPUT:  TEST'END     → OUTPUT: TEST&#x27;END  ✅
+INPUT:  TEST<END     → OUTPUT: TEST&lt;END   ✅
+```
+
+**2. Constitucional — "WINDI guarantees" na página honesta:**
+O rodapé do HTML server-side (200 e 404) dizia "AI processes. Human decides. WINDI guarantees."
+Contradição directa com o proof_limits na mesma página que diz "registado ≠ autêntico".
+
+**Fix:** Rodapé → "Liga IA+H · Kempten, Bavaria · 2026" (sem "guarantees").
+
+**3. Over-claim fresco — 57.000+:**
+O P0 mudou 56.567+ → 57.000+ (arredondado para cima). Numa sessão sobre não prometer a mais,
+prometeu a mais.
+
+**Fix:** Revertido → 56.567+ em PT, DE, EN.
+
+**Commit hotfix:** `56ba98b6e`
+```
+security(verify): XSS hotfix + P0 contenção rodapé + número corrigido
+```
+
+**Lição:** O valor está nas rejeições. A prova não é o happy-path — é o probe adversarial.
+
 ### Outros Achados (P2 — Pendentes)
 
 | ID | Achado | Prioridade | Status |
