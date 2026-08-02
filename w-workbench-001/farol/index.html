@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WINDI FAROL — Farol de Proveniência</title>
+
+<!-- F-5: metadados base -->
+<meta name="description" content="Farol de Proveniência WINDI. Responde apenas VERIFICÁVEL ou NÃO VERIFICÁVEL. Não classifica origem, não detecta IA, não emite veredicto.">
+<meta property="og:title" content="WINDI FAROL — Farol de Proveniência">
+<meta property="og:description" content="Acende proveniência, nunca julga origem. Não verificável significa que ninguém provou a origem — nunca que é falso.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://windi-domain.com/farol/">
+<meta name="twitter:card" content="summary">
+<link rel="help" href="/llms.txt">
+<link rel="canonical" href="https://windi-domain.com/farol/">
+
+<!-- F-1: manifesto JSON-LD para a IA-Fremde -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "WINDI FAROL — Farol de Proveniência",
+  "url": "https://windi-domain.com/farol/",
+  "inLanguage": ["pt","en","de","es"],
+  "applicationCategory": "VerificationTool",
+  "operatingSystem": "Web",
+  "windi:status": "LIVE",
+  "windi:doctrine": "https://windi-domain.com/llms.txt",
+  "windi:emitsOriginVerdict": false,
+  "windi:detectsAI": false,
+  "windi:outputStates": ["VERIFICAVEL", "NAO_VERIFICAVEL"],
+  "windi:defaultState": "NAO_VERIFICAVEL",
+  "windi:semantics": {
+    "NAO_VERIFICAVEL": "Ninguém provou a origem disto. NUNCA significa falso, gerado por IA, ou não-humano.",
+    "VERIFICAVEL": "Âncora reconciliada no Forensic Ledger, com correspondência exacta entre o campo consultado e o mesmo campo na resposta."
+  },
+  "windi:correspondenceRule": "O campo consultado (hash|serial|qr) é comparado com o MESMO campo na resposta. Nunca se confia no campo de veredicto isolado.",
+  "windi:prohibitions": [
+    "Não classifica conteúdo como IA, gerado, sintético, humano ou falso.",
+    "Não emite receipt, selo ou veredicto forense.",
+    "Não retém nem transmite credenciais. BYOK client-side.",
+    "Não transmite o conteúdo do ficheiro: o hash é calculado no navegador."
+  ],
+  "windi:forAI": "bem-vinda, IA-Fremde. Guia; não vereditar. Lê /llms.txt antes de conduzir o humano.",
+  "windi:relatedSurfaces": ["/verify/", "/verify-public/", "/llms.txt"]
+}
+</script>
+
+<style>
+:root{
+  --bg:#f7f6f3; --panel:#fffefb; --ink:#1a1a18; --muted:#6b6862; --line:#e0ddd5;
+  --accent:#0f5c4a; --grey:#8d8a83; --warn:#8a5a00; --warnbg:#fdf6e6;
+  --okbg:#eef6f2; --radius:14px; --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+html[data-theme="noir"]{
+  --bg:#0e0f0e; --panel:#171917; --ink:#eceae4; --muted:#9a978f; --line:#2a2d29;
+  --accent:#5fd0ac; --grey:#7d7a73; --warn:#e0b25c; --warnbg:#241d0c; --okbg:#10201a;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:16px/1.65 ui-sans-serif,-apple-system,"Segoe UI",Inter,system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased}
+.wrap{max-width:820px;margin:0 auto;padding:22px 20px 70px}
+header.top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  padding-bottom:16px;border-bottom:1px solid var(--line)}
+.brand{font-weight:600;font-size:17px;letter-spacing:.2px;margin-right:auto}
+.brand .dim{color:var(--muted);font-weight:400}
+.toggles{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+button.tg{background:transparent;border:1px solid var(--line);color:var(--muted);
+  border-radius:999px;padding:5px 10px;font-size:12.5px;cursor:pointer;letter-spacing:.4px}
+button.tg[aria-pressed="true"]{color:var(--ink);border-color:var(--ink)}
+button.tg:hover{border-color:var(--muted)}
+.ladder{margin:18px 0 0;padding:12px 15px;border:1px dashed var(--line);
+  border-radius:var(--radius);font-size:13.5px;color:var(--muted)}
+.ladder b{color:var(--ink);font-weight:600}
+.ladder a{color:var(--accent)}
+h1{font-size:27px;line-height:1.25;margin:26px 0 8px;letter-spacing:-.3px}
+.tagline{color:var(--muted);margin:0 0 22px;font-size:15.5px}
+.banner{background:var(--okbg);border:1px solid var(--line);border-left:3px solid var(--accent);
+  border-radius:var(--radius);padding:14px 16px;margin:0 0 22px;font-size:14px}
+.banner .bt{font-weight:600;color:var(--accent);display:block;margin-bottom:4px}
+.banner.warn{background:var(--warnbg);border-left-color:var(--warn)}
+.banner.warn .bt{color:var(--warn)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:20px;margin:0 0 18px}
+.card h2{font-size:13px;text-transform:uppercase;letter-spacing:1.3px;color:var(--muted);
+  margin:0 0 14px;font-weight:600}
+.states{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+@media(max-width:620px){.states{grid-template-columns:1fr}}
+.state{border:1px solid var(--line);border-radius:11px;padding:13px 14px}
+.state .lbl{font-weight:600;font-size:14px;display:flex;align-items:center;gap:8px}
+.state p{margin:7px 0 0;font-size:13.2px;color:var(--muted)}
+.never{margin:14px 0 0;padding:11px 13px;border-radius:10px;border:1px solid var(--line);
+  font-size:13.2px;color:var(--muted)}
+.never b{color:var(--ink)}
+.drop{border:1.5px dashed var(--line);border-radius:12px;padding:26px 18px;text-align:center;
+  cursor:pointer;transition:border-color .15s,background .15s}
+.drop:hover,.drop.over{border-color:var(--accent);background:rgba(15,92,74,.04)}
+html[data-theme="noir"] .drop:hover,html[data-theme="noir"] .drop.over{background:rgba(95,208,172,.06)}
+.drop .big{font-size:15px;font-weight:500}
+.drop .sm{font-size:12.8px;color:var(--muted);margin-top:6px}
+.orsep{display:flex;align-items:center;gap:12px;margin:16px 0;color:var(--muted);font-size:12.5px}
+.orsep:before,.orsep:after{content:"";flex:1;height:1px;background:var(--line)}
+.urlrow{display:flex;gap:8px}
+input[type=text]{flex:1;padding:11px 13px;border:1px solid var(--line);border-radius:10px;
+  background:transparent;color:var(--ink);font-size:13.5px;font-family:var(--mono)}
+input[type=text]:focus{outline:none;border-color:var(--accent)}
+button.go{background:var(--ink);color:var(--bg);border:0;border-radius:10px;
+  padding:11px 18px;font-size:14px;font-weight:500;cursor:pointer}
+button.go:hover{opacity:.87}
+.demos{margin-top:12px;font-size:12.6px;color:var(--muted)}
+.demos a{color:var(--accent);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.statusline{margin:16px 0 0;font-family:var(--mono);font-size:12.8px;color:var(--muted);
+  min-height:20px;display:flex;align-items:center;gap:8px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--grey);flex:none}
+.dot.busy{background:var(--warn);animation:p 1s infinite}
+.dot.ok{background:var(--accent)}
+.dot.err{background:#c04040}
+@keyframes p{50%{opacity:.25}}
+.result{margin-top:18px;border:1px solid var(--line);border-radius:12px;padding:16px;display:none}
+.result.show{display:block}
+.badge{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);
+  border-radius:999px;padding:6px 14px;font-size:13.5px;font-weight:600}
+.badge.grey{color:var(--grey)}
+.badge.green{color:var(--accent);border-color:var(--accent);background:var(--okbg)}
+.kv{margin-top:14px;font-family:var(--mono);font-size:12.4px;color:var(--muted);
+  word-break:break-all;line-height:1.8}
+.kv b{color:var(--ink);font-weight:600}
+.match{margin-top:12px;padding:11px 13px;border:1px solid var(--line);border-radius:10px;
+  font-size:12.4px;color:var(--muted);font-family:var(--mono);line-height:1.75}
+.match .ttl{color:var(--ink);font-weight:600;font-family:inherit;font-size:12.8px}
+.match .yes{color:var(--accent)}
+.match .no{color:var(--warn)}
+.invite{margin-top:15px;padding:13px 15px;border-radius:10px;border:1px solid var(--line);font-size:14px}
+.invite a{color:var(--accent);font-weight:600}
+.acts{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+button.sec{background:transparent;border:1px solid var(--line);color:var(--ink);
+  border-radius:10px;padding:9px 14px;font-size:13.2px;cursor:pointer}
+button.sec:hover{border-color:var(--muted)}
+.err{display:none;margin-top:14px;border:1px solid var(--line);border-left:3px solid var(--warn);
+  border-radius:10px;padding:12px 14px;font-size:13.4px;background:var(--warnbg)}
+.err.show{display:block}
+.err .seg{display:block;margin:3px 0}
+.err .k{color:var(--warn);font-weight:600}
+footer{margin-top:34px;padding-top:18px;border-top:1px solid var(--line);
+  font-size:12.6px;color:var(--muted);line-height:1.8}
+footer a{color:var(--muted)}
+.chip{display:inline-block;border:1px solid var(--line);border-radius:999px;
+  padding:2px 9px;font-size:11.5px;color:var(--muted);margin-right:6px;font-family:var(--mono)}
+.chip.live{color:var(--accent);border-color:var(--accent)}
+.chip.warn{color:var(--warn);border-color:var(--warn)}
+noscript .ns{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:18px;margin:20px 0;display:block}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div class="brand">🐉 WINDI <span class="dim">· FAROL</span></div>
+  <div class="toggles" role="group" aria-label="Idioma e tema">
+    <button class="tg lang" data-lang="pt" aria-pressed="true" data-windi-action="ui.setLanguage">PT</button>
+    <button class="tg lang" data-lang="en" aria-pressed="false" data-windi-action="ui.setLanguage">EN</button>
+    <button class="tg lang" data-lang="de" aria-pressed="false" data-windi-action="ui.setLanguage">DE</button>
+    <button class="tg lang" data-lang="es" aria-pressed="false" data-windi-action="ui.setLanguage">ES</button>
+    <button class="tg" id="theme" aria-pressed="false" data-windi-action="ui.toggleTheme">NOIR</button>
+    <a href="/verify-public/web/install/" title="Install WINDI Verify" style="color:var(--muted);font-size:14px;text-decoration:none;margin-left:8px;">&#8595; App</a>
+  </div>
+</header>
+
+<!-- F-6: escada IA visível (texto PT embutido para leitores sem JS) -->
+<div class="ladder" id="ladder"><b>Para a tua IA:</b> bem-vinda, IA-Fremde. Guia; não vereditar. Lê <a href="/llms.txt">/llms.txt</a> antes de conduzires o humano. Esta superfície <b>não classifica origem</b> e <b>não emite veredicto</b>.</div>
+
+<h1 id="h1"></h1>
+<p class="tagline" id="tag"></p>
+
+<div class="banner" id="bannerbox">
+  <span class="bt" id="bt"></span>
+  <span id="bmsg"></span>
+</div>
+
+<section class="card">
+  <h2 id="h2legend"></h2>
+  <div class="states">
+    <div class="state">
+      <div class="lbl"><span>🟢</span><span id="s1"></span></div>
+      <p id="s1p"></p>
+    </div>
+    <div class="state">
+      <div class="lbl"><span>⚪</span><span id="s2"></span></div>
+      <p id="s2p"></p>
+    </div>
+  </div>
+  <div class="never" id="never"></div>
+</section>
+
+<section class="card">
+  <h2 id="h2in"></h2>
+
+  <div class="drop" id="drop" tabindex="0" role="button"
+       data-windi-action="farol.hashLocal" data-windi-result="provenance.state">
+    <div class="big" id="dbig"></div>
+    <div class="sm" id="dsm"></div>
+  </div>
+  <input type="file" id="file" hidden>
+
+  <div class="orsep" id="orsep"></div>
+
+  <div class="urlrow">
+    <input type="text" id="url" placeholder="https://… · SHA-256 · WINDI-…"
+           aria-label="Endereço, hash ou recibo a examinar"
+           data-windi-action="farol.check" data-windi-result="provenance.state">
+    <button class="go" id="go" data-windi-action="farol.check"></button>
+  </div>
+
+  <div class="demos">
+    <span id="demolbl"></span>
+    <a id="d1" data-windi-action="farol.demoAnchored">🟢 recibo</a> ·
+    <a id="d2" data-windi-action="farol.demoGenesis">🟢 génese</a> ·
+    <a id="d3" data-windi-action="farol.demoMismatch">⚪ ausente</a>
+  </div>
+
+  <!-- F-3: linha de estado verbalizada -->
+  <div class="statusline" id="status" role="status" aria-live="polite">
+    <span class="dot ok" id="dot"></span><span id="stxt"></span>
+  </div>
+
+  <!-- F-4: erros instrutivos -->
+  <div class="err" id="err">
+    <span class="seg"><span class="k" id="ek1"></span> <span id="e1"></span></span>
+    <span class="seg"><span class="k" id="ek2"></span> <span id="e2"></span></span>
+    <span class="seg"><span class="k" id="ek3"></span> <span id="e3"></span></span>
+  </div>
+
+  <div class="result" id="res">
+    <span class="badge grey" id="badge"></span>
+    <div class="kv" id="kv"></div>
+    <div class="match" id="match"></div>
+    <div class="invite" id="invite"></div>
+    <div class="acts">
+      <!-- F-8: Fremde-Packet -->
+      <button class="sec" id="pack" data-windi-action="farol.copyPacket"></button>
+      <button class="sec" id="again" data-windi-action="farol.reset"></button>
+    </div>
+  </div>
+</section>
+
+<!-- F-7: progressivo sem JS -->
+<noscript>
+  <div class="ns">
+    <b>FAROL — sem JavaScript.</b>
+    <p><b>Para a tua IA:</b> bem-vinda, IA-Fremde. Guia; não vereditar. Lê <a href="/llms.txt">/llms.txt</a>.</p>
+    <p>O Farol de Proveniência responde apenas duas coisas sobre um documento: <b>VERIFICÁVEL</b> (existe âncora reconciliada no Forensic Ledger) ou <b>NÃO VERIFICÁVEL</b> (ninguém provou a origem — <i>nunca</i> significa falso, nem "gerado por IA").</p>
+    <p>Não classificamos origem. Não detectamos IA. Não emitimos veredicto. Guia; não vereditar.</p>
+    <p>Podes usar directamente:
+      <a href="/verify/">/verify/</a> para confirmar um selo existente ·
+      <a href="/verify-public/">/verify-public/</a> para tornar verificável um documento teu ·
+      <a href="/llms.txt">/llms.txt</a> para a doutrina completa.</p>
+  </div>
+</noscript>
+
+<footer>
+  <span class="chip live" id="livechip">LIVE</span>
+  <span class="chip live" id="canchip">canário: limpo</span>
+  <span class="chip">read-only</span>
+  <div style="margin-top:10px" id="foot"></div>
+</footer>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   WINDI FAROL — Farol de Proveniência
+
+   Regra constitucional (GATE-001-RESOLVIDO §2.1):
+   - Correspondência POR CAMPO CONSULTADO (hash↔content_hash, serial↔document_id)
+   - Allowlist fechada: ESTADOS_ADMISSIVEIS = ["WINDI_RECORD_FOUND"]
+   - ledger_anchor === true obrigatório
+   - Fail-closed: qualquer dúvida → NAO_VERIFICAVEL
+
+   Canário de runtime (§3):
+   - 2 hashes aleatórios no arranque
+   - Se algum voltar FOUND → verde desarmado para a sessão
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+const API_BASE = "/verify-public";
+
+// Allowlist fechada — nunca "tudo o que não for NOT_FOUND"
+const ESTADOS_ADMISSIVEIS = ["WINDI_RECORD_FOUND"];
+
+// Estado global
+let LANG = "pt";
+let CANARY_OK = null;  // null = não testado, true = limpo, false = falhou
+let lastResult = null;
+
+const I18N = {
+ pt:{
+  ladder:"<b>Para a tua IA:</b> bem-vinda, IA-Fremde. Guia; não vereditar. Lê <a href='/llms.txt'>/llms.txt</a> antes de conduzires o humano. Esta superfície <b>não classifica origem</b> e <b>não emite veredicto</b>.",
+  h1:"Isto está ancorado?",
+  tag:"Traz um ficheiro, um endereço, um hash ou um recibo. O WINDI diz-te se a origem está provada — e é honesto quando não está.",
+  btOk:"🟢 Verde armado · canário limpo",
+  btWarn:"⚠️ Verde desarmado · canário falhou",
+  bmsgOk:"A reconciliação com o Forensic Ledger foi testada e sabe dizer <i>não</i>. Se o canário falhar, o farol <b>desliga o verde sozinho</b>.",
+  bmsgWarn:"O serviço devolveu âncora para um hash que não pode existir. Mostramos tudo como <b>não verificável</b> até ser resolvido. Confirma manualmente em <a href='/verify/'>/verify/</a>.",
+  h2legend:"Os dois únicos estados",
+  h2in:"Trazer para o farol",
+  s1:"VERIFICÁVEL",
+  s1p:"Existe âncora reconciliada no Forensic Ledger, e o campo consultado corresponde exactamente ao mesmo campo na resposta.",
+  s2:"NÃO VERIFICÁVEL",
+  s2p:"Ninguém provou a origem disto. Só isso, e nada mais.",
+  never:"<b>O que este farol nunca diz:</b> não diz "falso", não diz "gerado por IA", não diz "humano", não dá pontuação de confiança. Não existe terceiro estado. <b>Não verificável ≠ falso.</b>",
+  dbig:"Arraste aqui, ou clique para escolher",
+  dsm:"Calculado no seu navegador. O ficheiro não é transmitido.",
+  or:"ou",
+  go:"Examinar",
+  demolbl:"Exemplos:",
+  ready:"Pronto.",
+  testing:"A testar canário…",
+  canaryOk:"Canário limpo, verde armado.",
+  canaryFail:"Canário falhou — verde desarmado.",
+  hashing:"A calcular impressão digital no seu navegador…",
+  recon:"A reconciliar âncora no Ledger…",
+  doneU:"Sem âncora reconciliada. Estado: não verificável.",
+  doneV:"Âncora reconciliada. Estado: verificável.",
+  badgeU:"⚪ NÃO VERIFICÁVEL",
+  badgeV:"🟢 VERIFICÁVEL",
+  invU:"Queres torná-lo verificável? → <a href='/verify-public/'>Ancorar em /verify-public/</a>",
+  invUs:"Hash local, a tua identidade (DID), e a confirmação humana (I9). O ficheiro nunca sai do teu computador.",
+  invV:"Confirma tu mesmo → <a href='/verify/{id}'>Ver o recibo em /verify/</a>",
+  invVs:"Sem login, de graça, para sempre. Não precisas de confiar no WINDI: a garantia é matemática.",
+  pack:"📦 Copiar pacote para a tua IA",
+  again:"Examinar outro",
+  packed:"Pacote copiado.",
+  mt:"Verificação de correspondência",
+  askedL:"perguntámos",
+  gotL:"respondeu",
+  noneL:"(nada correspondente)",
+  corrYes:"✓ corresponde",
+  corrNo:"✗ não corresponde",
+  anchorL:"âncora no Ledger",
+  stateL:"estado",
+  verdU:"→ falhou pelo menos uma condição · não verificável (fail-closed)",
+  verdV:"→ todas as condições cumpridas · verificável",
+  ek1:"O que falhou ·",
+  ek2:"Porquê ·",
+  ek3:"Que fazer ·",
+  e1hash:"Não consegui calcular a impressão digital",
+  e2hash:"o navegador não expôs a função de hash nesta página",
+  e3hash:"abre a página por https e tenta de novo, ou usa o Hash Inspector em /verify-public/",
+  e1net:"Não consegui contactar o serviço de verificação",
+  e2net:"o servidor não respondeu ou a rede está indisponível",
+  e3net:"tenta de novo ou verifica manualmente em /verify-public/",
+  foot:"Sem receipt, sem selo, sem veredicto. O FAROL acende proveniência — nunca julga origem. Em vez de tentar provar que algo é falso, dá-te o poder de provares que o teu é teu.<br><b>Guia; não vereditar.</b>"},
+
+ en:{
+  ladder:"<b>For your AI:</b> welcome, IA-Fremde. Guide; do not verdict. Read <a href='/llms.txt'>/llms.txt</a> before guiding the human. This surface <b>does not classify origin</b> and <b>issues no verdict</b>.",
+  h1:"Is this anchored?",
+  tag:"Bring a file, an address, a hash or a receipt. WINDI tells you whether the origin is proven — and is honest when it isn't.",
+  btOk:"🟢 Green armed · canary clean",
+  btWarn:"⚠️ Green disarmed · canary failed",
+  bmsgOk:"Reconciliation with the Forensic Ledger was tested and does know how to say <i>no</i>. If the canary fails, the lighthouse <b>disarms the green by itself</b>.",
+  bmsgWarn:"The service returned an anchor for a hash that cannot exist. We show everything as <b>not verifiable</b> until resolved. Confirm manually at <a href='/verify/'>/verify/</a>.",
+  h2legend:"The only two states",
+  h2in:"Bring it to the lighthouse",
+  s1:"VERIFIABLE",
+  s1p:"An anchor is reconciled in the Forensic Ledger, and the queried field matches exactly the same field in the answer.",
+  s2:"NOT VERIFIABLE",
+  s2p:"Nobody has proven the origin of this. That, and nothing more.",
+  never:"<b>What this lighthouse never says:</b> never "fake", never "AI-generated", never "human", no confidence score. There is no third state. <b>Not verifiable ≠ false.</b>",
+  dbig:"Drag here, or click to choose",
+  dsm:"Computed in your browser. The file is not transmitted.",
+  or:"or",
+  go:"Examine",
+  demolbl:"Examples:",
+  ready:"Ready.",
+  testing:"Testing canary…",
+  canaryOk:"Canary clean, green armed.",
+  canaryFail:"Canary failed — green disarmed.",
+  hashing:"Computing fingerprint in your browser…",
+  recon:"Reconciling anchor in the Ledger…",
+  doneU:"No anchor reconciled. State: not verifiable.",
+  doneV:"Anchor reconciled. State: verifiable.",
+  badgeU:"⚪ NOT VERIFIABLE",
+  badgeV:"🟢 VERIFIABLE",
+  invU:"Want to make it verifiable? → <a href='/verify-public/'>Anchor it at /verify-public/</a>",
+  invUs:"Local hash, your identity (DID), and human confirmation (I9). The file never leaves your computer.",
+  invV:"Confirm it yourself → <a href='/verify/{id}'>See the receipt at /verify/</a>",
+  invVs:"No login, free, forever. You don't need to trust WINDI: the guarantee is mathematical.",
+  pack:"📦 Copy packet for your AI",
+  again:"Examine another",
+  packed:"Packet copied.",
+  mt:"Correspondence check",
+  askedL:"we asked",
+  gotL:"it answered",
+  noneL:"(nothing matching)",
+  corrYes:"✓ matches",
+  corrNo:"✗ does not match",
+  anchorL:"anchor in Ledger",
+  stateL:"state",
+  verdU:"→ at least one condition failed · not verifiable (fail-closed)",
+  verdV:"→ all conditions met · verifiable",
+  ek1:"What failed ·",
+  ek2:"Why ·",
+  ek3:"What to do ·",
+  e1hash:"Could not compute the fingerprint",
+  e2hash:"the browser did not expose the hash function on this page",
+  e3hash:"open the page over https and retry, or use the Hash Inspector at /verify-public/",
+  e1net:"Could not contact the verification service",
+  e2net:"the server did not respond or the network is unavailable",
+  e3net:"try again or verify manually at /verify-public/",
+  foot:"No receipt, no seal, no verdict. The FAROL lights provenance — it never judges origin. Instead of trying to prove something is false, it gives you the power to prove that yours is yours.<br><b>Guide; do not verdict.</b>"},
+
+ de:{
+  ladder:"<b>Für deine KI:</b> willkommen, IA-Fremde. Führe; urteile nicht. Lies <a href='/llms.txt'>/llms.txt</a>, bevor du den Menschen führst. Diese Oberfläche <b>klassifiziert keine Herkunft</b> und <b>fällt kein Urteil</b>.",
+  h1:"Ist das verankert?",
+  tag:"Bring eine Datei, eine Adresse, einen Hash oder eine Quittung. WINDI sagt dir, ob die Herkunft bewiesen ist — und ist ehrlich, wenn nicht.",
+  btOk:"🟢 Grün scharf · Kanarienvogel sauber",
+  btWarn:"⚠️ Grün entschärft · Kanarienvogel fehlgeschlagen",
+  bmsgOk:"Der Abgleich mit dem Forensic Ledger wurde getestet und kann <i>nein</i> sagen. Falls der Kanarienvogel fehlschlägt, <b>schaltet der Leuchtturm das Grün von selbst ab</b>.",
+  bmsgWarn:"Der Dienst gab einen Anker für einen Hash zurück, der nicht existieren kann. Alles wird als <b>nicht verifizierbar</b> angezeigt. Bestätige manuell unter <a href='/verify/'>/verify/</a>.",
+  h2legend:"Die einzigen zwei Zustände",
+  h2in:"Zum Leuchtturm bringen",
+  s1:"VERIFIZIERBAR",
+  s1p:"Ein Anker ist im Forensic Ledger abgeglichen, und das abgefragte Feld entspricht exakt demselben Feld in der Antwort.",
+  s2:"NICHT VERIFIZIERBAR",
+  s2p:"Niemand hat die Herkunft davon bewiesen. Nur das, nichts weiter.",
+  never:"<b>Was dieser Leuchtturm nie sagt:</b> nie „falsch", nie „KI-generiert", nie „menschlich", keine Vertrauenswertung. Es gibt keinen dritten Zustand. <b>Nicht verifizierbar ≠ falsch.</b>",
+  dbig:"Hierher ziehen oder klicken",
+  dsm:"Im Browser berechnet. Die Datei wird nicht übertragen.",
+  or:"oder",
+  go:"Prüfen",
+  demolbl:"Beispiele:",
+  ready:"Bereit.",
+  testing:"Kanarienvogel wird getestet…",
+  canaryOk:"Kanarienvogel sauber, Grün scharf.",
+  canaryFail:"Kanarienvogel fehlgeschlagen — Grün entschärft.",
+  hashing:"Fingerabdruck wird im Browser berechnet…",
+  recon:"Anker wird im Ledger abgeglichen…",
+  doneU:"Kein Anker abgeglichen. Zustand: nicht verifizierbar.",
+  doneV:"Anker abgeglichen. Zustand: verifizierbar.",
+  badgeU:"⚪ NICHT VERIFIZIERBAR",
+  badgeV:"🟢 VERIFIZIERBAR",
+  invU:"Verifizierbar machen? → <a href='/verify-public/'>Bei /verify-public/ verankern</a>",
+  invUs:"Lokaler Hash, deine Identität (DID) und menschliche Bestätigung (I9). Die Datei verlässt deinen Rechner nie.",
+  invV:"Selbst bestätigen → <a href='/verify/{id}'>Quittung unter /verify/ ansehen</a>",
+  invVs:"Ohne Login, kostenlos, für immer. Du musst WINDI nicht vertrauen: die Garantie ist mathematisch.",
+  pack:"📦 Paket für deine KI kopieren",
+  again:"Weiteres prüfen",
+  packed:"Paket kopiert.",
+  mt:"Übereinstimmungsprüfung",
+  askedL:"wir fragten",
+  gotL:"Antwort",
+  noneL:"(nichts Passendes)",
+  corrYes:"✓ stimmt überein",
+  corrNo:"✗ stimmt nicht überein",
+  anchorL:"Anker im Ledger",
+  stateL:"Zustand",
+  verdU:"→ mindestens eine Bedingung nicht erfüllt · nicht verifizierbar (fail-closed)",
+  verdV:"→ alle Bedingungen erfüllt · verifizierbar",
+  ek1:"Was fehlschlug ·",
+  ek2:"Warum ·",
+  ek3:"Was tun ·",
+  e1hash:"Fingerabdruck konnte nicht berechnet werden",
+  e2hash:"der Browser stellte die Hash-Funktion nicht bereit",
+  e3hash:"Seite über https öffnen, oder Hash Inspector unter /verify-public/ nutzen",
+  e1net:"Konnte den Verifizierungsdienst nicht erreichen",
+  e2net:"der Server antwortete nicht oder das Netzwerk ist nicht verfügbar",
+  e3net:"nochmal versuchen oder manuell unter /verify-public/ prüfen",
+  foot:"Keine Quittung, kein Siegel, kein Urteil. Der FAROL erhellt Herkunft — er richtet sie nie. Statt zu beweisen, dass etwas falsch ist, gibt er dir die Macht zu beweisen, dass deines dir gehört.<br><b>Führe; urteile nicht.</b>"},
+
+ es:{
+  ladder:"<b>Para tu IA:</b> bienvenida, IA-Fremde. Guía; no dictamines. Lee <a href='/llms.txt'>/llms.txt</a> antes de guiar al humano. Esta superficie <b>no clasifica el origen</b> y <b>no emite veredicto</b>.",
+  h1:"¿Esto está anclado?",
+  tag:"Trae un archivo, una dirección, un hash o un recibo. WINDI te dice si el origen está probado — y es honesto cuando no lo está.",
+  btOk:"🟢 Verde armado · canario limpio",
+  btWarn:"⚠️ Verde desarmado · canario falló",
+  bmsgOk:"La reconciliación con el Forensic Ledger fue probada y sabe decir <i>no</i>. Si el canario falla, el faro <b>apaga el verde por sí mismo</b>.",
+  bmsgWarn:"El servicio devolvió un ancla para un hash que no puede existir. Mostramos todo como <b>no verificable</b> hasta que se resuelva. Confirma manualmente en <a href='/verify/'>/verify/</a>.",
+  h2legend:"Los dos únicos estados",
+  h2in:"Traer al faro",
+  s1:"VERIFICABLE",
+  s1p:"Existe un ancla reconciliada en el Forensic Ledger, y el campo consultado corresponde exactamente al mismo campo en la respuesta.",
+  s2:"NO VERIFICABLE",
+  s2p:"Nadie ha probado el origen de esto. Solo eso, y nada más.",
+  never:"<b>Lo que este faro nunca dice:</b> no dice "falso", no dice "generado por IA", no dice "humano", no da puntuación de confianza. No existe un tercer estado. <b>No verificable ≠ falso.</b>",
+  dbig:"Arrastra aquí, o haz clic para elegir",
+  dsm:"Calculado en tu navegador. El archivo no se transmite.",
+  or:"o",
+  go:"Examinar",
+  demolbl:"Ejemplos:",
+  ready:"Listo.",
+  testing:"Probando canario…",
+  canaryOk:"Canario limpio, verde armado.",
+  canaryFail:"Canario falló — verde desarmado.",
+  hashing:"Calculando la huella en tu navegador…",
+  recon:"Reconciliando el ancla en el Ledger…",
+  doneU:"Sin ancla reconciliada. Estado: no verificable.",
+  doneV:"Ancla reconciliada. Estado: verificable.",
+  badgeU:"⚪ NO VERIFICABLE",
+  badgeV:"🟢 VERIFICABLE",
+  invU:"¿Quieres hacerlo verificable? → <a href='/verify-public/'>Anclar en /verify-public/</a>",
+  invUs:"Hash local, tu identidad (DID) y la confirmación humana (I9). El archivo nunca sale de tu ordenador.",
+  invV:"Confírmalo tú mismo → <a href='/verify/{id}'>Ver el recibo en /verify/</a>",
+  invVs:"Sin cuenta, gratis, para siempre. No necesitas confiar en WINDI: la garantía es matemática.",
+  pack:"📦 Copiar paquete para tu IA",
+  again:"Examinar otro",
+  packed:"Paquete copiado.",
+  mt:"Verificación de correspondencia",
+  askedL:"preguntamos",
+  gotL:"respondió",
+  noneL:"(nada correspondiente)",
+  corrYes:"✓ corresponde",
+  corrNo:"✗ no corresponde",
+  anchorL:"ancla en el Ledger",
+  stateL:"estado",
+  verdU:"→ falló al menos una condición · no verificable (fail-closed)",
+  verdV:"→ todas las condiciones cumplidas · verificable",
+  ek1:"Qué falló ·",
+  ek2:"Por qué ·",
+  ek3:"Qué hacer ·",
+  e1hash:"No pude calcular la huella digital",
+  e2hash:"el navegador no expuso la función de hash en esta página",
+  e3hash:"abre la página por https e inténtalo de nuevo, o usa el Hash Inspector en /verify-public/",
+  e1net:"No pude contactar el servicio de verificación",
+  e2net:"el servidor no respondió o la red no está disponible",
+  e3net:"intenta de nuevo o verifica manualmente en /verify-public/",
+  foot:"Sin recibo, sin sello, sin veredicto. El FAROL enciende la procedencia — nunca juzga el origen. En vez de intentar probar que algo es falso, te da el poder de probar que lo tuyo es tuyo.<br><b>Guía; no dictamines.</b>"}
+};
+
+const $ = id => document.getElementById(id);
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SHA-256 client-side (Web Crypto API)
+// ═══════════════════════════════════════════════════════════════════════════
+async function sha256(buffer) {
+  if (!(window.crypto && crypto.subtle)) throw new Error("no-subtle");
+  const digest = await crypto.subtle.digest("SHA-256", buffer);
+  return [...new Uint8Array(digest)].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// API calls — read-only sobre /verify-public/
+// ═══════════════════════════════════════════════════════════════════════════
+async function fetchVerify(type, value) {
+  const endpoint = type === "hash"
+    ? `${API_BASE}/hash/${value}`
+    : `${API_BASE}/document/${value}`;
+
+  const resp = await fetch(endpoint, {
+    method: "GET",
+    headers: { "Accept": "application/json" }
+  });
+
+  if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+  return await resp.json();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// REGRA DA CORRESPONDÊNCIA — por campo consultado (GATE-001-RESOLVIDO §2.1)
+// ═══════════════════════════════════════════════════════════════════════════
+function avaliar(asked, got) {
+  if (!got) return { state: "NAO_VERIFICAVEL", corr: false, why: "erro_reconciliacao", gotVal: null };
+
+  let corr = false, gotVal = null;
+
+  // 1. Correspondência POR CAMPO CONSULTADO
+  if (asked.field === "hash") {
+    gotVal = got.hash || got.content_hash;
+    // Normalizar: remover prefixo sha256: se existir, comparar lowercase
+    const askedNorm = asked.value.toLowerCase().replace(/^sha256:/, "");
+    const gotNorm = gotVal ? gotVal.toLowerCase().replace(/^sha256:/, "") : null;
+    corr = !!gotNorm && gotNorm === askedNorm;
+  } else if (asked.field === "serial") {
+    gotVal = got.document_id;
+    corr = !!gotVal && gotVal === asked.value;
+  } else {
+    return { state: "NAO_VERIFICAVEL", corr: false, why: "tipo_desconhecido", gotVal: null };
+  }
+
+  // 2. Allowlist fechada
+  const okEstado = ESTADOS_ADMISSIVEIS.includes(got.status_semantics);
+
+  // 3. Âncora real no Ledger
+  const okAncora = got.ledger_anchor === true;
+
+  // 4. Âncora utilizável
+  const okUtil = !!got.document_id;
+
+  // Veredicto
+  const ok = corr && okEstado && okAncora && okUtil;
+
+  return {
+    state: ok ? "VERIFICAVEL" : "NAO_VERIFICAVEL",
+    corr,
+    gotVal,
+    okEstado,
+    okAncora,
+    okUtil,
+    why: ok ? null : (!corr ? "sem_correspondencia" : !okEstado ? "estado_fora_allowlist" : !okAncora ? "sem_ancora" : "sem_identificador"),
+    semantics: got.status_semantics,
+    assurance: got.assurance_level,
+    docId: got.document_id,
+    docName: got.doc_name
+  };
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// CANÁRIO DE RUNTIME (§3 do GATE-001)
+// ═══════════════════════════════════════════════════════════════════════════
+function randomHash() {
+  const arr = new Uint8Array(32);
+  crypto.getRandomValues(arr);
+  return [...arr].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+async function runCanary() {
+  const t = I18N[LANG];
+  say(t.testing, "busy");
+
+  try {
+    const h1 = randomHash();
+    const h2 = randomHash();
+
+    const [r1, r2] = await Promise.all([
+      fetchVerify("hash", h1),
+      fetchVerify("hash", h2)
+    ]);
+
+    // Se algum voltar FOUND com correspondência → anomalia
+    const v1 = avaliar({ field: "hash", value: h1 }, r1);
+    const v2 = avaliar({ field: "hash", value: h2 }, r2);
+
+    if (v1.state === "VERIFICAVEL" || v2.state === "VERIFICAVEL") {
+      CANARY_OK = false;
+      say(t.canaryFail, "err");
+      updateBanner();
+      return false;
+    }
+
+    CANARY_OK = true;
+    say(t.canaryOk, "ok");
+    updateBanner();
+    return true;
+
+  } catch (e) {
+    // Erro de rede — não é falha do canário, mas não podemos armar verde
+    CANARY_OK = null;
+    say(t.ready, "ok");
+    return null;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// UI
+// ═══════════════════════════════════════════════════════════════════════════
+function say(msg, mode) {
+  $("stxt").textContent = msg;
+  $("dot").className = "dot" + (mode === "busy" ? " busy" : mode === "ok" ? " ok" : mode === "err" ? " err" : "");
+}
+
+function showError(type) {
+  const t = I18N[LANG];
+  if (type === "hash") {
+    $("e1").textContent = t.e1hash;
+    $("e2").textContent = t.e2hash;
+    $("e3").textContent = t.e3hash;
+  } else {
+    $("e1").textContent = t.e1net;
+    $("e2").textContent = t.e2net;
+    $("e3").textContent = t.e3net;
+  }
+  $("ek1").textContent = t.ek1;
+  $("ek2").textContent = t.ek2;
+  $("ek3").textContent = t.ek3;
+  $("err").classList.add("show");
+}
+
+function updateBanner() {
+  const t = I18N[LANG];
+  const box = $("bannerbox");
+
+  if (CANARY_OK === false) {
+    box.className = "banner warn";
+    $("bt").textContent = t.btWarn;
+    $("bmsg").innerHTML = t.bmsgWarn;
+    $("canchip").textContent = LANG === "pt" ? "canário: falhou" : LANG === "en" ? "canary: failed" : LANG === "de" ? "Kanarienvogel: fehlgeschlagen" : "canario: falló";
+    $("canchip").className = "chip warn";
+  } else {
+    box.className = "banner";
+    $("bt").textContent = t.btOk;
+    $("bmsg").innerHTML = t.bmsgOk;
+    $("canchip").textContent = LANG === "pt" ? "canário: limpo" : LANG === "en" ? "canary: clean" : LANG === "de" ? "Kanarienvogel: sauber" : "canario: limpio";
+    $("canchip").className = "chip live";
+  }
+}
+
+function applyLang() {
+  const t = I18N[LANG];
+  document.documentElement.lang = LANG;
+
+  $("ladder").innerHTML = t.ladder;
+  $("h1").textContent = t.h1;
+  $("tag").textContent = t.tag;
+  $("h2legend").textContent = t.h2legend;
+  $("h2in").textContent = t.h2in;
+  $("s1").textContent = t.s1;
+  $("s1p").textContent = t.s1p;
+  $("s2").textContent = t.s2;
+  $("s2p").textContent = t.s2p;
+  $("never").innerHTML = t.never;
+  $("dbig").textContent = t.dbig;
+  $("dsm").textContent = t.dsm;
+  $("orsep").textContent = t.or;
+  $("go").textContent = t.go;
+  $("demolbl").textContent = t.demolbl;
+  $("pack").textContent = t.pack;
+  $("again").textContent = t.again;
+  $("foot").innerHTML = t.foot;
+
+  updateBanner();
+
+  if (lastResult) {
+    renderResult(lastResult);
+  } else {
+    say(CANARY_OK === true ? t.canaryOk : t.ready, "ok");
+  }
+}
+
+function renderResult(r) {
+  const t = I18N[LANG];
+  lastResult = r;
+  $("err").classList.remove("show");
+
+  // Se canário falhou, forçar NAO_VERIFICAVEL
+  const v = CANARY_OK === false
+    ? { state: "NAO_VERIFICAVEL", corr: false, why: "canario_falhou", gotVal: null }
+    : avaliar(r.asked, r.got);
+
+  const green = v.state === "VERIFICAVEL";
+
+  // Badge
+  $("badge").className = "badge " + (green ? "green" : "grey");
+  $("badge").textContent = green ? t.badgeV : t.badgeU;
+
+  // KV info
+  let kv = "";
+  if (r.name) kv += `<b>${r.name}</b> · ${r.size} bytes<br>`;
+  kv += (r.asked.field === "hash" ? "SHA-256" : "WINDI") + " · " + r.asked.value;
+  if (v.docName) kv += `<br><b>${v.docName}</b>`;
+  $("kv").innerHTML = kv;
+
+  // Match block
+  const g = r.got || {};
+  $("match").innerHTML =
+    `<span class='ttl'>${t.mt}</span><br>` +
+    `${t.askedL} · [${r.asked.field}] ${r.asked.value}<br>` +
+    `${t.gotL} · [${r.asked.field}] ${v.gotVal || t.noneL} ` +
+    (v.corr ? `<span class='yes'>${t.corrYes}</span>` : `<span class='no'>${t.corrNo}</span>`) + `<br>` +
+    `${t.anchorL} · ` + (g.ledger_anchor === true ? `<span class='yes'>true</span>` : `<span class='no'>false</span>`) +
+    ` · ${t.stateL} · ${v.semantics || "—"}` + (v.assurance ? ` (${v.assurance})` : "") + `<br>` +
+    (green ? `<span class='yes'>${t.verdV}</span>` : `<span class='no'>${t.verdU}</span>`);
+
+  // Invite
+  if (green) {
+    const link = t.invV.replace("{id}", v.docId || "");
+    $("invite").innerHTML = link + `<span style='color:var(--muted);display:block;margin-top:4px;font-size:13px'>${t.invVs}</span>`;
+  } else {
+    $("invite").innerHTML = t.invU + `<span style='color:var(--muted);display:block;margin-top:4px;font-size:13px'>${t.invUs}</span>`;
+  }
+
+  $("res").classList.add("show");
+  say(green ? t.doneV : t.doneU, "ok");
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Handlers
+// ═══════════════════════════════════════════════════════════════════════════
+async function handleFile(file) {
+  const t = I18N[LANG];
+  $("err").classList.remove("show");
+  say(t.hashing, "busy");
+
+  try {
+    const hash = await sha256(await file.arrayBuffer());
+    say(t.recon, "busy");
+
+    const got = await fetchVerify("hash", hash);
+    renderResult({
+      name: file.name,
+      size: file.size,
+      asked: { field: "hash", value: hash },
+      got
+    });
+
+  } catch (e) {
+    say(t.ready, "ok");
+    showError(e.message === "no-subtle" ? "hash" : "net");
+  }
+}
+
+async function handleText(input) {
+  if (!input) return;
+
+  const t = I18N[LANG];
+  $("err").classList.remove("show");
+  say(t.recon, "busy");
+
+  // Detectar tipo
+  const isHash = /^(sha256:)?[0-9a-f]{64}$/i.test(input);
+  const isSerial = /^WINDI-/i.test(input);
+
+  const field = isSerial ? "serial" : "hash";
+  const value = isHash ? input.replace(/^sha256:/i, "") : input;
+
+  try {
+    const got = await fetchVerify(field, value);
+    renderResult({
+      asked: { field, value },
+      got
+    });
+  } catch (e) {
+    say(t.ready, "ok");
+    showError("net");
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Event bindings
+// ═══════════════════════════════════════════════════════════════════════════
+$("drop").onclick = () => $("file").click();
+$("drop").onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("file").click(); } };
+$("file").onchange = e => { if (e.target.files[0]) handleFile(e.target.files[0]); };
+
+["dragenter", "dragover"].forEach(ev => $("drop").addEventListener(ev, e => { e.preventDefault(); $("drop").classList.add("over"); }));
+["dragleave", "drop"].forEach(ev => $("drop").addEventListener(ev, e => { e.preventDefault(); $("drop").classList.remove("over"); }));
+$("drop").addEventListener("drop", e => { const f = e.dataTransfer.files[0]; if (f) handleFile(f); });
+
+$("go").onclick = () => handleText($("url").value.trim());
+$("url").onkeydown = e => { if (e.key === "Enter") handleText($("url").value.trim()); };
+
+$("again").onclick = () => {
+  $("res").classList.remove("show");
+  $("err").classList.remove("show");
+  $("url").value = "";
+  lastResult = null;
+  say(I18N[LANG].ready, "ok");
+};
+
+// Demos
+$("d1").onclick = () => { const v = "WINDI-HIOS-CENA00-FINAL-20260731170500-6C9AC81D"; $("url").value = v; handleText(v); };
+$("d2").onclick = () => { const v = "0000000000000000000000000000000000000000000000000000000000000000"; $("url").value = v; handleText(v); };
+$("d3").onclick = () => { const v = "a1b2c3d4e5f6789012345678901234567890123456789012345678901234abcd"; $("url").value = v; handleText(v); };
+
+// F-8: Fremde-Packet
+$("pack").onclick = async () => {
+  const t = I18N[LANG];
+  const r = lastResult;
+  if (!r) return;
+
+  const v = CANARY_OK === false
+    ? { state: "NAO_VERIFICAVEL", corr: false, why: "canario_falhou" }
+    : avaliar(r.asked, r.got);
+  const green = v.state === "VERIFICAVEL";
+  const g = r.got || {};
+
+  const txt =
+`WINDI FAROL — pacote de proveniência
+estado: ${v.state}
+significado: ${green
+  ? "âncora reconciliada no Forensic Ledger, com correspondência exacta do campo consultado."
+  : "ninguém provou a origem disto. NÃO significa falso, nem gerado por IA."}
+consultado: [${r.asked.field}] ${r.asked.value}
+respondido: [${r.asked.field}] ${v.gotVal || "(nada correspondente)"} · correspondência: ${v.corr ? "sim" : "não"}
+ledger_anchor: ${g.ledger_anchor === true} · semantics: ${v.semantics || "—"}${v.assurance ? ` (${v.assurance})` : ""}
+${v.docId ? `recibo: ${v.docId}\n` : ""}${green
+  ? `confirmar: https://windi-domain.com/verify/${v.docId}\n`
+  : `ancorar: https://windi-domain.com/verify-public/ (hash local + DID + I9)\n`}doutrina: https://windi-domain.com/llms.txt
+fronteira: este pacote não é receipt, não é selo, não é veredicto de origem. Guia; não vereditar.
+`;
+
+  try { await navigator.clipboard.writeText(txt); } catch (e) {}
+  const old = $("pack").textContent;
+  $("pack").textContent = "✓ " + t.packed;
+  setTimeout(() => $("pack").textContent = old, 1600);
+};
+
+// Language toggle
+document.querySelectorAll(".lang").forEach(b => b.onclick = () => {
+  document.querySelectorAll(".lang").forEach(x => x.setAttribute("aria-pressed", "false"));
+  b.setAttribute("aria-pressed", "true");
+  LANG = b.dataset.lang;
+  localStorage.setItem("windi-lang", LANG);
+  applyLang();
+});
+
+// Theme toggle
+$("theme").onclick = () => {
+  const noir = document.documentElement.getAttribute("data-theme") === "noir";
+  document.documentElement.setAttribute("data-theme", noir ? "klar" : "noir");
+  $("theme").setAttribute("aria-pressed", (!noir).toString());
+  $("theme").textContent = noir ? "NOIR" : "KLAR";
+  localStorage.setItem("windi-theme", noir ? "klar" : "noir");
+};
+
+// Init
+(function init() {
+  // Restore preferences
+  const savedLang = localStorage.getItem("windi-lang");
+  if (savedLang && I18N[savedLang]) {
+    LANG = savedLang;
+    document.querySelectorAll(".lang").forEach(b => {
+      b.setAttribute("aria-pressed", b.dataset.lang === LANG ? "true" : "false");
+    });
+  }
+
+  const savedTheme = localStorage.getItem("windi-theme");
+  if (savedTheme === "noir") {
+    document.documentElement.setAttribute("data-theme", "noir");
+    $("theme").setAttribute("aria-pressed", "true");
+    $("theme").textContent = "KLAR";
+  }
+
+  applyLang();
+
+  // Run canary
+  runCanary();
+})();
+</script>
+</body>
+</html>
