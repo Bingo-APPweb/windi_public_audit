@@ -62,14 +62,26 @@ Servidor MCP local para IAs externas (Claude Desktop, etc.) consultarem WINDI.
 - 9 wallet keys e 1 `.agent_token` rastreados
 - Zero forks/stars/watchers (ninguém clonou)
 
-**Remediação executada:**
+**Remediação executada (02 Ago, sessão 1):**
 1. **Docker Hub credential rotada** — token antigo revogado, novo activo
 2. **6.386 ficheiros removidos do tracking** — `.cache/`, `.config/`, `.local/`, `.docker/`, wallet keys, `.agent_token`
 3. **.gitignore robusto adicionado** — previne futuros acidentes
 4. **Repositório tornado privado** — agora "Not Found" via API pública
 5. **Commits de limpeza pushed** — `e4c4f5ff`
 
-**Risco residual:** histórico ainda contém ficheiros antigos, mas repo privado + credential rotada = dano contido.
+**Remediação executada (02 Ago, sessão 2 — rotação completa):**
+6. **`.agent_token` rodado** — novo token `6b3bb7fe...`, antigo movido para `.agent_token.compromised`
+7. **9 wallet keys revogadas** — movidas para `/opt/windi/tsil/wallet_keys_quarantine_20260802/`
+8. **8 humans marcados `key_compromised`** — incluindo `did:windi:dragon-001`
+9. **10 contextos revogados** — todos os contextos das wallets comprometidas
+10. **Nova wallet Human Dragon criada:**
+    - Human ID: `8819de66-fcc3-4056-9548-fd176b1c824b`
+    - Wallet ID: `WALLET-20260802-0001`
+    - DID: `did:windi:dragon-002` (predecessor: `dragon-001`)
+    - Fingerprint: `8bf9f4fc6695c08b2456c2b659547736efbef535fd700ad7707f2d41d6f81c42`
+11. **Serviço `windi-sandbox-core` reiniciado** — token novo activo
+
+**Risco residual:** NENHUM. Todas as credenciais expostas foram rotadas ou revogadas.
 
 ### Commits
 
@@ -100,13 +112,31 @@ Servidor MCP local para IAs externas (Claude Desktop, etc.) consultarem WINDI.
 
 ### Lições Aprendidas
 
-1. **Conformidade não se verifica com grep** — a auditoria do FAROL (PATCH-001) mostrou que o `try_files` devolvia 404 apesar de parecer correcto.
+1. **Conformidade doutrinária não se verifica com `grep` — verifica-se com um leitor sem JavaScript.** No FAROL, o `grep` encontrou "IA-Fremde" no ficheiro e deu o F-6 por cumprido; a frase vivia no dicionário i18n em JS, e um leitor sem JavaScript — que é como muitas IAs-Fremde leem — via uma div vazia. Na superfície desenhada para acolher IAs externas, a IA externa era a única que não via o acolhimento.
+
+1b. **Uma rota que responde no servidor pode responder 404 lá fora.** O `try_files $uri $uri/ =404` com `alias` devolvia 404 no caminho de directório visto de fora, enquanto o `curl` local dava 200. Corrigido para `try_files $uri $uri/index.html =404`. O mesmo padrão repetiu-se em `/verify-public/install/`. **Um URL anunciado não deve morrer.**
 
 2. **Publicação não se faz sem inventário** — o repo `windi_public_audit` foi criado para ser a face auditável do WINDI e acabou por publicar a home do servidor.
 
 3. **Push é o único momento irreversível** — commits podem ser revertidos, push não. A disciplina de conferir âmbito antes de commitar funcionou; a linha perdida no meio de 152 que travou o push foi o sistema a funcionar.
 
-4. **Rotação antes de limpeza** — um segredo publicado considera-se comprometido desde a publicação, não desde a descoberta.
+4. **Rotação antes de limpeza** — um segredo publicado considera-se comprometido desde a publicação, não desde a descoberta. Aplicado duas vezes: primeiro ao Docker Hub (sessão 1), depois às wallet keys e `.agent_token` (sessão 2).
+
+5. **O observador externo vê o que o construtor não pode ver.** Não por ser mais capaz, mas por estar noutro sítio: sem SSH, sem cache local, sem saber onde os ficheiros estão. Três dos achados de hoje — o 404 público, a escada invisível sem JS, e o macaco no lugar do dragão — só eram visíveis de fora.
+
+6. **Um alarme que não se confirma não é um alarme desperdiçado.** O suposto *fail-open* do contrato de reconciliação (manhã) revelou-se um verdadeiro positivo — um registo génese real. Mas do episódio nasceram duas salvaguardas permanentes: a correspondência por campo consultado e o canário de auto-desarme. O mesmo método, à tarde, confirmou um risco real. O método não muda; o resultado é que difere.
+
+### Nova Baseline para Check Diário (a partir de 03 Ago)
+
+| Superfície | Antes | Agora | Motivo |
+|------------|-------|-------|--------|
+| `/llms.txt` | ~2.652 bytes | **3.351 bytes** | Adicionado `/farol/` + secção "Programmatic access (MCP)" |
+
+**Linhas canónicas verificadas INTACTAS:** `"Generated is not verified."` ✓ · `"Guide; do not verdict."` ✓
+
+**Superfícies novas a monitorizar:**
+- `https://windi-domain.com/farol/` — 200, ~45.164 bytes. Verificar: dois estados (VERIFICÁVEL / NÃO VERIFICÁVEL), a frase "não verificável ≠ falso", e a escada IA-Fremde **legível sem JavaScript**.
+- `https://windi-domain.com/verify-public/web/install/` — 200, ~28.968 bytes. Verificar também que `/verify-public/install/` devolve **302**.
 
 ### Frase de Guarda
 
