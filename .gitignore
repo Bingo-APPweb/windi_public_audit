@@ -266,3 +266,26 @@ verify-public/static/*.mp4
 verify-public/viewer/*.pdf
 playground/containers/store/*.db
 playground/**/__pycache__/
+.docker/
+
+# === PROTECÇÃO ADICIONADA 2026-08-02 (W-INCIDENTE-001) ===
+.docker/
+.ssh/
+.gnupg/
+.aws/
+.netrc
+.env
+.env.*
+!.env.example
+.bash_history
+.cache/
+.config/
+.local/
+backups/
+*.pem
+*.key
+!*.pub
+**/node_modules/
+**/site-packages/
+**/.agent_token
+**/tokens.json

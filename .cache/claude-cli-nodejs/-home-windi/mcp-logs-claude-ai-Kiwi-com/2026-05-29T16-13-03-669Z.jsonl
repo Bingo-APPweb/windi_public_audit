@@ -1,6 +1,0 @@
-{"debug":"Initializing claude.ai proxy transport for server mcpsrv_01JtXJe5PLy9AwXhr7iEWzDY","timestamp":"2026-05-29T16:13:08.946Z","sessionId":"ea1406e4-ce97-4ac7-bc00-ee6151628c77","cwd":"/home/windi"}
-{"debug":"Using claude.ai proxy at https://mcp-proxy.anthropic.com/v1/mcp/mcpsrv_01JtXJe5PLy9AwXhr7iEWzDY","timestamp":"2026-05-29T16:13:08.946Z","sessionId":"ea1406e4-ce97-4ac7-bc00-ee6151628c77","cwd":"/home/windi"}
-{"debug":"claude.ai proxy transport created successfully","timestamp":"2026-05-29T16:13:08.947Z","sessionId":"ea1406e4-ce97-4ac7-bc00-ee6151628c77","cwd":"/home/windi"}
-{"debug":"Starting connection with timeout of 30000ms","timestamp":"2026-05-29T16:13:08.952Z","sessionId":"ea1406e4-ce97-4ac7-bc00-ee6151628c77","cwd":"/home/windi"}
-{"debug":"Successfully connected to claudeai-proxy server in 884ms","timestamp":"2026-05-29T16:13:09.830Z","sessionId":"ea1406e4-ce97-4ac7-bc00-ee6151628c77","cwd":"/home/windi"}
-{"debug":"Connection established with capabilities: {\"hasTools\":true,\"hasPrompts\":false,\"hasResources\":false,\"serverVersion\":{\"name\":\"kiwi-mcp-server\",\"version\":\"0.0.1\"}}","timestamp":"2026-05-29T16:13:09.830Z","sessionId":"ea1406e4-ce97-4ac7-bc00-ee6151628c77","cwd":"/home/windi"}
