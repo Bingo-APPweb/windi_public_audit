@@ -81,7 +81,7 @@ Servidor MCP local para IAs externas (Claude Desktop, etc.) consultarem WINDI.
     - Fingerprint: `8bf9f4fc6695c08b2456c2b659547736efbef535fd700ad7707f2d41d6f81c42`
 11. **Serviço `windi-sandbox-core` reiniciado** — token novo activo
 
-**Risco residual:** NENHUM. Todas as credenciais expostas foram rotadas ou revogadas.
+**Risco residual:** contido. Todas as credenciais expostas foram rotadas ou revogadas, e verificou-se que os recibos anteriores continuam a verificar. Permanece em aberto: (a) o histórico do repositório ainda contém os ficheiros antigos — inertes, porque as credenciais já não servem; (b) não existe forma de distinguir assinaturas legítimas de `dragon-001` de eventuais assinaturas de terceiros no intervalo Abril→Agosto.
 
 ### Commits
 
