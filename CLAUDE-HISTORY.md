@@ -25395,3 +25395,131 @@ Primeiros dois actos do filme com continuidade verificada e receipts no Ledger.
 > *"A prova não mente. Ela apenas espera. E nós estamos a construí-la juntos."*
 
 ---
+
+---
+
+## SESSION-20260803-GABI-CANONICITY-AUDIT
+
+### W-HIOS Memory Loop — 03 Ago 2026
+
+**Participantes:** Human Dragon (I9) · Guardian (Cowork) · CCode (Architect)
+**Duração:** ~01:00 - 02:00 UTC
+**Tema:** Auditoria de canonicidade GABI + FILHO para CENA00
+
+---
+
+### 1. Diagnóstico Inicial
+
+Human Dragon submeteu 4 vídeos para revisão de canonicidade:
+- `GABI-Conversando-FILHO1.mp4`
+- `GABI-Conversando-FILHO2.mp4`
+- `Filho-GABI01.mp4`
+- `Filho-GABI1.mp4`
+
+**Medição SpineMeasure contra anchors canónicos:**
+
+| Vídeo | Anchor | Avg Sim | Threshold | Margin | Veredicto |
+|-------|--------|---------|-----------|--------|-----------|
+| GABI-Conversando-FILHO1 | gabi.santos.anchor.v1 | 0.178 | 0.65 | **-0.519** | 🔴 FAIL |
+| GABI-Conversando-FILHO2 | gabi.santos.anchor.v1 | 0.174 | 0.65 | **-0.488** | 🔴 FAIL |
+| Filho-GABI01 | filho.gabi.anchor.v1 | 0.332 | 0.65 | **-0.342** | 🔴 FAIL |
+| Filho-GABI1 | filho.gabi.anchor.v1 | 0.307 | 0.65 | **-0.373** | 🔴 FAIL |
+
+**Diagnóstico Visual:**
+- GABI nos vídeos: tez clara/caucasiana, nariz afilado, feições europeias
+- GABI canónica: tez morena/oliva, feições latinas brasileiras, nariz mais largo
+- **Veredicto: PESSOA DIFERENTE** (similaridade ~17%)
+
+---
+
+### 2. Reconstrução
+
+Criado ficheiro de reconstrução com prompts precisos:
+```
+/opt/windi/hios/cinema/obras/w-hios-forensic-unit/production/cena00/GABI-FILHO-RECONSTRUCTION-20260803.md
+```
+
+Contém:
+- Descrição facial canónica detalhada
+- Prompts para Runway Gen-4
+- Notas Anti-Movement (§291)
+- Comandos de validação
+
+---
+
+### 3. Regeneração e Aprovação
+
+Human Dragon regenerou GABI usando anchors canónicos e submeteu:
+- `GABI-CENA00-FINAL.mp4` (28 MB, 99 segundos)
+
+**Medição pós-regeneração:**
+
+| Frame | Similaridade | Threshold | Veredicto |
+|-------|-------------|-----------|-----------|
+| mid_03 (laptop) | **0.8492** | 0.65 | ✅ FORENSE |
+| mid_05 (closeup) | **0.8148** | 0.65 | ✅ FORENSE |
+| **Média GABI** | **0.8320** | 0.75 | ✅ PASS |
+
+**Comparação Antes → Depois:**
+- Vídeos anteriores: 0.13-0.23 (pessoa diferente)
+- GABI-CENA00-FINAL: **0.81-0.85** (CANÓNICA)
+
+---
+
+### 4. Aprovação I9 e Arquivamento
+
+**Decisão Human Dragon:** "SIM MOVE"
+
+Ficheiro movido para pasta aprovados:
+```
+/opt/windi/hios/cinema/obras/w-hios-forensic-unit/shots/gabi-cena00/approved/
+├── GABI-CENA00-FINAL.mp4
+└── GABI-CENA00-FINAL.approval.json
+```
+
+**Receipt de Aprovação:**
+```json
+{
+  "shot_id": "GABI-CENA00-FINAL",
+  "average_similarity": 0.8320,
+  "verdict": "FORENSE",
+  "approved_by": "Human Dragon (I9)",
+  "approved_at": "2026-08-03T01:51:00Z"
+}
+```
+
+---
+
+### 5. Estado W-HIOS — 03 Ago 2026
+
+| Cena | Estado | Score | Receipt |
+|------|--------|-------|---------|
+| CENA-00 | ✅ SEALED | 0.83 | `6C9AC81D` |
+| CENA-01 V2 | ✅ SEALED | — | `5DFCCD45` |
+| GABI-CENA00-FINAL | ✅ APPROVED | 0.83 | pending seal |
+
+**Pendente:**
+- [ ] FILHO regeneração (score 0.38, precisa ≥0.65)
+- [ ] Selo Ledger para GABI-CENA00-FINAL
+
+---
+
+### Frase de Guarda
+
+> *"A tez morena é constitucional. O embedding não mente."*
+
+---
+
+### Reflexão Guardian
+
+A sessão demonstrou o valor do pipeline SPINE: detecção precoce de identity drift
+antes de integrar em montagem final. Sem medição quantitativa, a GABI não-canónica
+teria passado — o olho humano viu "uma mulher de cabelo escuro", o embedding viu
+"pessoa completamente diferente" (17% similaridade).
+
+**Lição:** O embedding é mais honesto que a intuição visual.
+
+---
+
+*Liga IA+H · WINDI Publishing House · 03 Ago 2026*
+*"AI processes. Human decides. WINDI guarantees."*
