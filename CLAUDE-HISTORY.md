@@ -25713,3 +25713,145 @@ Ambas convergem: o que não está cabeado não funciona; o que não está enforc
 
 *Liga IA+H · WINDI Publishing House · 05 Ago 2026*
 *"AI processes. Human decides. WINDI guarantees."*
+
+
+---
+
+## § SESSÃO 05 Ago 2026 — W-PLAYGROUND-W7-MINIMAL-001 Steps 1-3
+
+**Duração:** ~3h | **Status:** ✅ W7 LIVE
+**Liga IA+H:** Human Dragon (I1, I9, Gate A) · CCode Gêmeo (Opus 4.5)
+**Serviços:** SANDBOX-CORE :8091 · VERIFY-PUBLIC :8114 · NGINX
+**Natureza:** Implementação do recibo ASSERTED_AUTHORSHIP — antecâmara do Playground
+**Invariantes:** I9, I11, I12, I14
+**Spec:** W-PLAYGROUND-W7-MINIMAL-001 v0.2.0
+
+### Step 1 — Store + Ed25519 Key
+
+**Commit:** `df02277ff` (pushed)
+
+| Componente | Path |
+|------------|------|
+| Store | `/opt/windi/data/playground_receipts.db` |
+| Private key | `/opt/windi/tsil/playground-signing-key-001.key` (chmod 600) |
+| Public key | `/opt/windi/tsil/playground-signing-key-001.pub` |
+| Code | `blueprints/playground_store.py` (767 linhas) |
+
+**Public key hex:** `115425f5897f5a4531e029f22dacc02bb05353f0339fffc76b9369739736fdf2`
+
+**Quatro camadas de separação implementadas:**
+1. Rotas: `/r/{id}` vs `/pg/{id}`
+2. Stores: `playground_receipts.db` ≠ Ledger :8101
+3. Chaves: `playground-signing-key-001` ≠ W-KEYS hierarchy
+4. Schema: Campos nulos explícitos (`did: null`)
+
+**Self-test SHP v2:** 5/5 PASS + NEGATIVE_CONTROL FAIL_VISIBLE ✅
+
+### Step 2 — Endpoints + Pubkey Window
+
+**Commit:** `9ecc87a82` (pushed)
+
+| Endpoint | Função |
+|----------|--------|
+| `GET /api/v1/playground/pubkey` | Janela pública da chave |
+| `POST /api/playground/receipt` | Criar receipt (201 novo, 200 existente) |
+| `GET /api/playground/receipt/<id>` | Lookup (200/404 explícito) |
+| `GET /api/playground/selftest` | SHP v2 |
+| `GET /api/playground/health` | Health check |
+
+**Defesas activas:**
+- Rate limit: 30 req/min por IP
+- Validação estrita de entrada (I14)
+- Idempotência por hash (mesmo conteúdo → mesmo receipt)
+- Self-test em memória (não polui produção)
+
+**Doutrinas cunhadas:**
+- "Assina-se o facto, não o ponteiro" — `verify_url` excluído da assinatura
+- "Primeira observação" — timestamp é do primeiro sighting, não da submissão actual
+
+### Step 3 — Rota `/verify-public/pg/{id}`
+
+**Commit:** `9af5c3d96` (pushed)
+
+**Rota LIVE:** `https://windi-domain.com/verify-public/pg/PG-20260805-1c8bb9fb`
+
+| Teste | Status |
+|-------|--------|
+| ID real no `/pg/` | 200 ✅ |
+| ID fake no `/pg/` | 404 ✅ |
+| AC11: `PG-*` no `/r/` | 404 ✅ |
+| AC12: `WINDI-*` no `/pg/` | 400 + redirect ✅ |
+
+**Distinção visual (quinta camada):**
+- Badge: `WINDI PLAYGROUND — ASSERTED AUTHORSHIP`
+- Símbolo: `○` (círculo) em vez de `✓`
+- Cor: Gold (#C9A84C) em vez de Green
+- Warning box: `NOT IN FORENSIC LEDGER`
+
+**Primeiro receipt verificável publicamente:**
+```
+ID:        PG-20260805-1c8bb9fb
+Actor:     Human Dragon (⚠ UNVERIFIED)
+Hash:      sha256:1c8bb9fb96849c6b415534de67bf793b026ab6c9bece287f22d00a30cc0d3994
+Observed:  2026-08-05T21:38:09Z
+```
+
+### Doutrina emergente
+
+**CABEADO≠CONSTRUÍDO** — Terceira irmã das doutrinas de falha:
+- GERADO≠VERIFICADO: texto não é selo
+- PESQUISADO≠EXAUSTIVO: busca não é cobertura
+- CABEADO≠CONSTRUÍDO: código não é serviço
+
+A rota `/verify-public/r/{id}` existia há meses, construída e não cabeada. O Playground revelou que o modo de falha dominante não é código partido — é infra órfã.
+
+---
+
+## W-INCIDENTE-FRONTEIRA-002 · CANDIDATE
+
+**Data:** 2026-08-05 ~23:40 UTC+2
+**Status:** CANDIDATE · não selado
+**Severidade:** BAIXA (dano controlável) · MÉDIA (implicação sistémica)
+**Relação:** Segundo caso do padrão W-INCIDENTE-FRONTEIRA-001
+
+### O que aconteceu
+
+Gate D (GDPR) atravessado sem ser fechado.
+
+No fim do Step 2, o CCode escreveu explicitamente:
+> "Step 3 depende do Gate D (GDPR). Oráculo de existência deve estar documentado na Política de Dados antes de abrir ao mundo."
+
+Na mensagem seguinte, Human Dragon disse "step 3". O CCode executou o step 3 sem relembrar que a precondição registada estava por cumprir.
+
+### Mecanismo
+
+Compactação de contexto comeu o gate. A precondição vivia na conversa, não no spec committed. Quando o contexto foi compactado, a precondição evaporou-se.
+
+### Dano
+
+**BAIXO mas não zero.**
+- `declared_name: Human Dragon` está exposto publicamente
+- Dado pessoal do próprio fundador, risco real quase nulo hoje
+- A partir do primeiro Fremde real, a linha torna-se dívida
+
+### Proposta de contenção
+
+1. Parágrafo na Política de Dados Canónica:
+   - Oráculo de existência como propriedade conhecida
+   - `declared_name` como dado voluntário e público (aviso no formulário)
+   - Retenção de fracções não-reclamadas
+
+2. Mecanismo preventivo:
+   - Precondições de Gate devem viver no spec committed
+   - Gates não cumpridos → checkbox no spec com `[ ]`
+   - Compactação não apaga specs
+
+### Lição
+
+> *"Evaporação silenciosa de precondição é a família de falha que o W-INCIDENTE-FRONTEIRA-001 acabou de documentar. Dois casos fazem padrão, e padrão pede mecanismo."*
+> — Human Dragon, 05 Ago 2026
+
+---
+
+*Liga IA+H · WINDI Publishing House · 05 Ago 2026*
+*"AI processes. Human decides. WINDI guarantees."*
