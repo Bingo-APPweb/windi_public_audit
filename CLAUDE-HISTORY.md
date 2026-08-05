@@ -25523,3 +25523,120 @@ teria passado — o olho humano viu "uma mulher de cabelo escuro", o embedding v
 
 *Liga IA+H · WINDI Publishing House · 03 Ago 2026*
 *"AI processes. Human decides. WINDI guarantees."*
+
+---
+
+## SESSION-20260805-PLAYGROUND-FASE0-FALSIFICACAO
+
+### Sessão 2026-08-05 · ~14:00 → ~15:30 UTC
+
+**Sprint:** G3 Merkle + Foundation Portals
+**Modo:** CCode CLI (Opus 4.5)
+**Operador humano:** Human Dragon
+
+---
+
+### 1. Achado de Método — Precedente Registado
+
+> **"Uma hipótese não verificada não deve dar nome a um artefacto."**
+
+A hipótese "motor LLM devolve JSON com cercas markdown, JSON.parse falha silenciosamente"
+**nunca foi verificada**. Endureceu em premissa por repetição:
+
+| Momento | Formulação |
+|---------|------------|
+| Sessão inicial | "aposta provável" (hipótese rotulada) |
+| FREMDE-WALK-001 | "suspeito primário em W5" (hipótese não rotulada) |
+| Work order | Nome: `W5-SILENT-JSONPARSE` (facto assumido) |
+
+**Origem:** Human Dragon. Cadeia: Guardian → FREMDE-WALK-001 → Work order → Cowork → CCode.
+
+**A Fase 0 read-only falsificou a hipótese com evidência:**
+- Linha 209 `playground_blueprint.py`: `# Sem LLM, sem provider, sem .env, sem receipt/seal`
+- `JSON.parse` não existe no frontend canónico
+- O Playground actual é **100% determinístico** — não há motor para emitir cercas
+
+**Lição:** Este é exactamente o mecanismo que a semana criticou nas Fremdes — claims que
+endurecem por repetição. Aconteceu dentro de casa. A arquitectura funcionou. A disciplina
+humana falhou antes dela.
+
+---
+
+### 2. Trabalho Completado
+
+- [x] Banner FAROL adicionado a `/verify-public/` e `/playground/` (commit `41d18476d`)
+- [x] T0: Resolução de rota — canónico confirmado contra resposta viva (marcador farol-banner)
+- [x] T0: Divergência detectada — 12 ficheiros playground em 6 versões distintas
+- [x] T2: Hipótese FALSIFICADA — não há motor LLM no Playground
+- [x] T3: Inventário I14 — backend expõe erros, sem excepções engolidas
+- [x] T4: Verify Public — `?id=` não honrado (hashes idênticos para real/fake)
+- [x] T5: HIOS-OPEN — estático (só timestamp dinâmico), item fechável
+- [x] T6: Divergência explica screenshot mobile — outras versões não têm texto "Em breve"
+- [x] Relatório escrito: `/opt/windi/reports/PLAYGROUND-FASE0-DIAGNOSTIC-001.md`
+
+---
+
+### 3. Achados Principais
+
+| ID | Achado | Severidade |
+|----|--------|------------|
+| §0 | Hipótese de cercas JSON **FALSIFICADA** | MÉTODO |
+| T0 | 12 ficheiros playground em 6 versões — risco CLAIM-CONTAINMENT | CRÍTICO |
+| T4 | Verify Public `?id=` ignorado — página estática, viola F-7 | DEFEITO |
+| T6 | Screenshot mobile vazia explicada pela divergência de ficheiros | RESOLVIDO |
+| §8 | W5/W6/W7 do Fremde Walk nunca foram construídos | ARQUITECTURA |
+
+---
+
+### 4. Estado Real do Fremde Walk
+
+| Passo | Estado |
+|-------|--------|
+| W5 Percurso | Não implementado ("em breve") |
+| W6 Pacote | Sem motor, não gera |
+| W7 Recibo | Não existe em código |
+
+**Conclusão:** O laço não está partido — nunca foi fechado.
+
+---
+
+### 5. UNKNOWN Por Resolver
+
+Ledger `:8101` responde `healthy` mas `/api/receipts` devolve corpo vazio.
+Registado, não investigado. Pode ser endpoint path errado.
+
+---
+
+### 6. Scaffold Pending
+
+- [ ] Corrigir FREMDE-WALK-001 §5 — remover "suspeito primário: cercas JSON"
+- [ ] Consolidar 12 ficheiros playground → 1 canónico
+- [ ] T4 Verify Public: honrar `?id=` no servidor
+- [ ] Investigar §7 Ledger `/api/receipts`
+- [ ] Definir arquitectura W5/W6/W7 para fechar o laço
+
+---
+
+### 7. Próximo Passo Proposto
+
+A pergunta mudou de natureza:
+- ~~"Porque é que está partido?"~~ (hipótese falsificada)
+- **"O que falta construir para o estranho sair com um recibo?"**
+
+Próxima sessão deve:
+1. Corrigir FREMDE-WALK-001 §5 (falsificação documentada)
+2. Decidir arquitectura W5/W6/W7
+3. Resolver divergência dos 12 ficheiros playground
+
+---
+
+### Frase de Guarda
+
+> *"Não perdeste dez dias a caçar um bug. Perdeste-os a caçar um bug que não existia,
+> enquanto a resposta estava num comentário de código à espera de ser lida."*
+> — Human Dragon, 05 Ago 2026
+
+---
+
+*Liga IA+H · WINDI Publishing House · 05 Ago 2026*
+*"AI processes. Human decides. WINDI guarantees."*
