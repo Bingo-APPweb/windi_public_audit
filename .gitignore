@@ -64,6 +64,7 @@ staging/
 
 # === CLAUDE CONFIG ===
 .claude/
+.claude.json
 
 # === AGENT DATA (runtime generated) ===
 agents/constitutional-agent/manifests/
