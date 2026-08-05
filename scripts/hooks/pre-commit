@@ -19,8 +19,10 @@
 # Born: 2026-08-06 · Kempten, Bavaria
 # =============================================================================
 
-# Note: set -e disabled to allow self-test to run completely
-# set -e
+# FAIL CLOSED: A hook that fails open is worse than no hook.
+# I14 applied to the guard itself — internal errors must block, not pass.
+set -e
+trap 'echo -e "\n\033[0;31m═══ HOOK INTERNAL ERROR ═══\033[0m"; echo "Commit blocked by precaution (I14: fail closed)"; echo "Debug: check scripts/hooks/pre-commit"; exit 1' ERR
 
 # Colors for output
 RED='\033[0;31m'
@@ -181,6 +183,10 @@ run_hook() {
 # HOOK-AC2: Self-test with §PG as negative control
 # =============================================================================
 selftest() {
+    # Disable strict mode for self-test (we expect some checks to fail)
+    set +e
+    trap - ERR
+
     echo "WINDI Pre-Commit Hook — Self-Test"
     echo "=================================="
     echo ""
