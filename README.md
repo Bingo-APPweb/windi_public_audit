@@ -3,6 +3,22 @@
 
 > **AI processes. Human decides. WINDI guarantees.**
 
+---
+
+## ⚠️ REPOSITORY PRECONDITION — IRREVOGÁVEL
+
+> **Este repositório NÃO pode ser tornado público antes de sanitização de histórico.**
+
+**Razão:** Dado pessoal (email) presente em `.claude.json` em commits até `50f52a60` inclusive.
+**Método de sanitização:** `git filter-repo` ou BFG Repo-Cleaner.
+**Referência:** W-INCIDENTE-FRONTEIRA-002 — precondições que vivem em conversas evaporam na compactação.
+
+*O repositório chamado `public_audit` é privado porque ainda não passou pela sua própria auditoria. O nome é a aspiração; a sanitização é o rito de passagem; esta linha é a testemunha de que o rito ainda não aconteceu.*
+
+**Quando esta secção for removida:** após sanitização completa, com commit que documente o método usado e confirme remoção do dado.
+
+---
+
 WINDI is a production-grade governance framework for AI-assisted institutional documents. It combines sovereign identity (DID), a multi-agent constellation, cryptographic integrity, and public verification — built and operated from Kempten, Bavaria, Germany.
 
 ---
