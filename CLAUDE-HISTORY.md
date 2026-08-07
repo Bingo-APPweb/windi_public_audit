@@ -25855,3 +25855,86 @@ Compactação de contexto comeu o gate. A precondição vivia na conversa, não 
 
 *Liga IA+H · WINDI Publishing House · 05 Ago 2026*
 *"AI processes. Human decides. WINDI guarantees."*
+
+---
+
+## SESSION-20260807-W-TUBE-001 — MCP Gateway First Implementation
+
+**Data:** 2026-08-07
+**Duração:** ~12 horas
+**Participantes:** Human Dragon, Guardian, Architect (CCode)
+**Branch:** `feature/w-tube-mcp`
+**Status:** Gate B PASS · Gate C PENDING
+
+### Commits (9)
+
+| Hash | Descrição |
+|------|-----------|
+| `cec65aaf1` | Schemas v0.1.1 |
+| `e6fd0e46d` | Transport proof (hello_mcp.py) |
+| `a91694983` | Lane 1 implementation (6 tools) |
+| `01b036a85` | Gate B adversarial (15/15) |
+| `f4480fee1` | Deploy configs (systemd + nginx) |
+| `346e835c8` | Gate B Verify-dead (4/4) |
+| `cbd9e235c` | Fronteira Verify-only (LEDGER_URL removido) |
+| `827ee6a09` | Expiração duas camadas (runtime + timer) |
+| `b3877ac5d` | Fix ledger_status |
+
+### Gates
+
+| Gate | Estado | Evidência |
+|------|--------|-----------|
+| Gate 0 (Setup) | PASS | worktree isolado, venv, FastMCP |
+| Gate A (Transport) | PASS | hello_mcp.py stateless |
+| Gate B (Adversarial) | PASS | 15/15 + 4/4 testes |
+| Gate C (First Contact) | AUTHORIZED / RESULT PENDING | Aguarda execução Human Dragon |
+
+### Infraestrutura Deployed
+
+- **windi-tube.service:** ACTIVE :8210 localhost
+- **windi-tube-expire.timer:** ACTIVE (NEXT: 2026-09-06 00:00 CEST, 29 dias)
+- **nginx /mcp:** ACTIVE com EXCEPTION-TUBE-AUTH-001
+- **Rate limiting:** 30r/m burst=5
+- **CORS:** claude.ai only
+- **Fronteira Verify-only:** zero conexões a :8101
+
+### Decisões Humanas
+
+| Hora (UTC+2) | Decisão |
+|--------------|---------|
+| 17:36 | Opção B ratificada (exceção beta 30 dias) |
+| ~18:10 | Timer enable |
+| ~18:15 | Timer start |
+| ~18:20 | First Contact autorizado |
+
+### Claims Não Exercitados
+
+- Script `tube-expire.sh` execução real
+- nginx -t + reload em 29 dias
+- Persistent=true sobrevive reboot
+
+### Lição do Dia
+
+> "Os 6/6 do runtime expiry provam a lógica, não a execução."
+> — Guardian, 18:16
+
+### Frase de Guarda
+
+> "A infraestrutura está pronta e com morte programada."
+> — Architect, 18:08
+> (Corrigido para: "Expiração agendada; eficácia do mecanismo de fecho ainda não exercitada.")
+
+### Pendente Próxima Sessão
+
+1. Dry-run `tube-expire.sh`
+2. First Contact (8 passos)
+3. Gate C ratificação
+
+### Artefactos
+
+- `/home/windi/windi-worktrees/w-tube-mcp/` — worktree completo
+- 6 ferramentas Lane 1 read-only
+- Timer fail-closed com 2 camadas
+
+---
+
