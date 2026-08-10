@@ -25938,3 +25938,120 @@ Compactação de contexto comeu o gate. A precondição vivia na conversa, não 
 
 ---
 
+## SESSION-20260809-HANDOFF-CCODE-CONSOLIDADO
+
+**Data:** 2026-08-09  
+**Autoridade:** Human Dragon (I9)  
+**Modo:** READ-ONLY; writes limitados ao relatório e a esta continuidade  
+**Relatório:** `/opt/windi/reports/HANDOFF-CCODE-20260809-CONSOLIDADO-RESULT.md`  
+**Status:** CANDIDATE · sem receipt · sem selo
+
+### Frentes executadas
+
+1. **PLAYGROUND-SIZE-DELTA-001** — crescimento 28.499→79.621 explicado pelo histórico Git de 09Jul–05Ago. `583ec333e` só adicionou a spec W7 v0.2.0 e não alterou o HTML; hipótese “deploy claim UI causou ~3x” REFUTADA.
+2. **EDITOR-F5-GAP** — fonte canónica e deploy `/artifacts/editor.html` são byte a byte idênticos e ambos carecem de canonical, og:title e og:description. Patch mínimo incluído apenas como proposta.
+3. **CLAIM-CONTAINMENT-001 revalidation** — Fase 0 já constava como concluída em 26Jul; estado revalidado e escopo integral ampliou os achados.
+
+### Achados principais
+
+- Ledger: 57.550 linhas = 57.550 IDs distintos; PK e retry idempotente observados; zero writes.
+- Silent-except: 2 inline + 317 multiline `except/pass`; 199 ocorrências multiline em 95 ficheiros activos após excluir snapshots. Grep não equivale a veredito; triagem por sink público pendente.
+- Claims públicas: certificados standalone `cert-v2/v3/v4.html` expõem “VERIFIED & IMMUTABLE” com placeholders e sem MUSTER; living surfaces antigas convertem falha em mock mantendo headline afirmativa; `verify.html` usa absolutos e contagem hardcoded.
+- §265 M2: equivalência com Sentinel LAW REFUTADA. M2 exige matriz LIVE ∩ systemctl/ss; Sentinel mede laws adjacentes. `/api/truth` implementa apenas lista simplificada.
+- Portas: `:8120` LIVE mas omitida da matriz; sem listener no snapshot para `:8140`, `:8143`, `:8151`, `:8160`, `:8180`, `:8191` apesar de claims LIVE.
+- Mobile 09Jul: divergência de versões explica o vazio, mas causalidade exacta NOT CONFIRMABLE; provável S3 stale/defaulted surface.
+- FREMDE-SURFACE `.md`/`.txt` já não são mirrors exactos no disco actual; DOUTRINA continua exacta.
+
+### Fronteira preservada
+
+Nenhum código alterado. Nenhum patch F-5 aplicado. Nenhum nginx/systemd/port/endpoint tocado. Nenhum receipt criado. Nenhum veredito de conformidade. Gate D permanece exclusivo do Human Dragon.
+
+**Frase de guarda:** *“O delta explica-se por lineage; o claim só vale onde a evidência alcança.”*
+
+---
+
+---
+
+## SESSION-20260810-S236-TRILOGY — §304 ERRATA + §236-bis + §236-ter
+
+**Data:** 2026-08-10 ~18:00 → ~20:30 UTC
+**Modo:** CCode CLI (Opus 4.5) + Cloud Testemunha
+**Operador:** Human Dragon
+
+### Contexto de Entrada
+
+Sessão iniciada para trabalhar §236-bis/ter. Cloud tinha executado 4 dias de runs agendadas cegas (WebFetch bloqueado por PROVENANCE_REQUIRED). Esta sessão atendida desbloqueou a verificação.
+
+### Trabalho Completado
+
+1. **LEDGER-DELTA-ORIGIN-001 RESOLVIDO**
+   - WAL checkpointed (normal)
+   - Ledger activo: último receipt 02 Ago, não 11 Jun como ORDER BY sugeria
+   - Bug identificado: 7 receipts com `created_at` em ISO text vs 57,543 em Unix integer
+   - Causa: SQLite TEXT > INTEGER em comparação mista → 7 receipts "flutuam" para o topo
+
+2. **§304 ERRATA — created_at type mismatch**
+   - Receipt: `WINDI-ERRATA-S304-20260810-13D7ED6D`
+   - Opção B escolhida (§268 "corrigir sem reescrever")
+   - VIEW `receipts_ordered` criada com `created_at_epoch` normalizado
+   - Código actual já usa `int(time.time())` — bug foi one-off de `ccode-session-20260611`
+   - Merkle intacto (created_at não entra em leaf_hash)
+   - Ed25519 N/A (7 receipts sem assinatura)
+
+3. **§236-bis — CODEX-CONTINUITY-OPS**
+   - Receipt: `WINDI-S236-BIS-CONTINUITY-OPS-20260810-0FD9A8C8`
+   - Hash artefactos: `0e1c5e152074492c3eae38335c60e91f729ea76e0a2001e572751c90cf31f771`
+   - Escopo honesto: Fases 1-4 SEALED; Fase 5 CANDIDATE (Ledger integration gated by design)
+   - Artefactos: 5 docs + 6 scripts em `/opt/windi/docs/continuity-check/`
+   - Frase de guarda: "Organizar a continuidade sem assumir a soberania"
+
+4. **§236-ter — VERIFY-SANITARY-AIRGAP**
+   - Receipt: `WINDI-S236-TER-VERIFY-SANITARY-AIRGAP-20260810-44F2E97D`
+   - Migração: nohup orphan (PID 1771346) → systemd (PID 50074)
+   - Unit: `/etc/systemd/system/windi-verify.service`
+   - Dependencies: `After=windi-ledger.service`
+   - Phase 7 (reboot survivability): COMPLETE
+   - Phase 8 (transferability): PENDING
+   - Frase de guarda: "O coração estava saudável. Agora tem dono."
+   - Testemunha externa (Cloud) confirmou: 4 rotas byte-idênticas PRÉ/PÓS
+
+### Selos Emitidos
+
+| § | Receipt | Hash (primeiros 16) |
+|---|---------|---------------------|
+| §304 | `WINDI-ERRATA-S304-20260810-13D7ED6D` | `46e312219a534845` |
+| §236-bis | `WINDI-S236-BIS-CONTINUITY-OPS-20260810-0FD9A8C8` | `0e1c5e15207449` |
+| §236-ter | `WINDI-S236-TER-VERIFY-SANITARY-AIRGAP-20260810-44F2E97D` | (content hash) |
+
+### Ledger
+
+- Total: 57,553 receipts (+3 esta sessão)
+- VIEW `receipts_ordered` disponível para queries normalizadas
+
+### Decisões Constitucionais
+
+- **§268 honrado:** ERRATA §304 corrigiu sem reescrever (VIEW em vez de UPDATE)
+- **Escopo explícito:** §236-bis declara Fase 5 como CANDIDATE, não SEALED
+- **Dependência systemd:** Verify depende do Ledger (`After=windi-ledger.service`)
+
+### Pendente (Próxima Sessão)
+
+- [ ] §236-bis Phase 5: Ledger Integration dos research receipt candidates
+- [ ] §236-ter Phase 8: transferability
+- [ ] HANDOFF-CLAIM-CONTAINMENT-001 (3 sinais a justificá-lo)
+- [ ] `grep -rn "ORDER BY created_at"` — inventário de consumidores
+- [ ] ERRATA-S304 doc canónico em /opt/windi/docs/
+
+### Notas para Próxima Sessão
+
+- Query canónica: `SELECT * FROM receipts_ordered ORDER BY created_at_epoch DESC`
+- Query antiga (bug): `SELECT * FROM receipts ORDER BY created_at DESC`
+- windi-verify.service: enabled, surviving reboots
+
+---
+
+*"O coração estava saudável. Agora tem dono — e uma testemunha viu a transferência."*
+*— Cloud Testemunha, 10 Ago 2026*
+
+**OM SHANTI 🐉**
+
