@@ -26667,5 +26667,53 @@ serão propostos como diff separado, avaliados quanto a duplicação e overclaim
 > O próximo trabalho não é expandir a visão, mas tornar cada palavra
 > publicamente demonstrável."*
 
+---
+
+### windi-hios.json v1.0.2 — Intervenção Cirúrgica self_url (VERIFICADA LIVE)
+
+**Commit:** `0732fd82f`
+**URL:** `https://windi-domain.com/.well-known/windi-hios`
+**Estado:** LIVE · DRAFT
+**Deploy por:** CCode (Strato) · **Verificação independente:** Claude.ai web (curl direto)
+
+**Cadeia de proveniência (hash chain íntegra):**
+
+| Versão | SHA-256 (24 chars) | Papel |
+|--------|--------------------|-------|
+| v1.0.0 | `9a2eb191a7cca98f615ddd4e` | raiz, em previous_hash de v1.0.1 |
+| v1.0.1 | `9d21a8d27655b6e0ed0a891e` | em previous_hash de v1.0.2 |
+| v1.0.2 | `ba898d519d1846a7b9f4cecb` | **LIVE** (observado, não relatado) |
+
+**Alteração autorizada (única mudança estrutural):**
+- `self_url` — NOVO campo autoritativo para o nó local da web
+- `canonical_url` — PRESERVADO (não removido), agora marcado `canonical_url_deprecated: true`
+- `url_note` — NOVO, auto-documenta a migração para Fremde (versão auto-documentada aprovada por Human Dragon)
+- `previous_version`/`previous_hash` — actualizados para apontar v1.0.1
+
+**Motivo da deprecação:** eliminar colisão conceitual entre o campo `canonical_url`
+e o termo CANONICAL do ecossistema WINDI. Deprecação com preservação por uma iteração
+(§268 — corrigir sem reescrever; não quebrar parsers externos).
+
+**Prova de invariância (8/8 campos doutrinários intactos byte a byte):**
+what_is_verified · evidence_observed · what_is_not_verified · claim_states ·
+diplomatic_posture · receipt_status_note · capsule_warning · proof_limits
+
+**Decisões de contenção registadas nesta sessão (análise READ FIRST):**
+- Sugestão externa (Gemini) de refactor semântico amplo REDUZIDA a 1 ajuste real após leitura byte-a-byte do ficheiro LIVE.
+- `UNAVAILABLE` — pedido externo teria INVERTIDO o sentido ("Record exists but cannot be accessed now"). REJEITADO. Texto original mantido.
+- `NOT_FOUND` — já continha salvaguarda "does NOT mean false". Zero ação.
+- "fissura absolutista" alegada em evidence_observed/what_is_verified — NÃO confirmada; ambos já continham contenção ("Nada mais.").
+- "soberanias" — PRESERVADO literal para manter sincronia estrita com W-DIPLOMAT-001-CANDIDATE. Nenhuma alteração lexical doutrinária sem coordenação dos dois artefactos.
+- Reordenação de prioridades P1→P6 (Gemini) — REJEITADA; hierarquia do SCAFFOLD aprovado mantida.
+
+**Lição epistémica:** proposta externa bem-escrita ≠ proposta empiricamente correta.
+READ FIRST desfez uma "fissura" de 6 pontos numa intervenção de 1 ponto.
+
+**Pendentes inalterados (SCAFFOLD-NEXT-SESSION-20260813):**
+1. ☐ Fremde Diplomatic Comprehension Test D1-D6 (ALTA)
+2. ☐ Credencial externa / sidecar assinada (MÉDIA)
+3. ☐ Promoção canónica — requer palavra Human Dragon (BAIXA)
+4. ☐ Sync Mission Manifest MD → v1.0.2 (BAIXA)
+
 OM SHANTI 🐉
 
