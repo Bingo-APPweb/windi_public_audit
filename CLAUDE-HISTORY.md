@@ -26580,5 +26580,92 @@ x-windi-service: HIOS-Mission
 **Manifesto público NÃO enriquecido automaticamente** — campos diplomáticos
 serão propostos como diff separado, avaliados quanto a duplicação e overclaim.
 
+---
+
+### Análise REFINE do Conselheiro — Contenção de Entusiasmos
+
+**Veredito:** REFINE
+
+> "Estamos no caminho certo precisamente porque o sistema ainda consegue
+> corrigir seus próprios entusiasmos."
+
+**4 Ajustes Semânticos Identificados:**
+
+| # | Problema | Correcção |
+|---|----------|-----------|
+| 1 | "WINDI guarantees" sem escopo | Adicionar `guarantee_scope` |
+| 2 | "Only live Verify confirms" absolutista | Suavizar para "within declared limits" |
+| 3 | Contradição receipt/assinatura | Adicionar `receipt_status_note` |
+| 4 | "is public utility" = estatuto | Mudar para "is designed as" = vocação |
+
+**Escopo da autorização registado:**
+> Human Dragon autorizou depósito controlado. A autorização NÃO constitui
+> selo, ratificação canónica nem aprovação de todas as alegações.
+
+---
+
+### windi-hios.json v1.0.1 — Ajustes Aprovados
+
+**Commit:** `746d09421`
+**URL:** `https://windi-domain.com/.well-known/windi-hios`
+
+| Versão | SHA-256 |
+|--------|---------|
+| v1.0.0 | `9a2eb191a7cca98f615ddd4e6cbf1f2a665949405851e36b96acb3d9e3b4ac29` |
+| v1.0.1 | `9d21a8d27655b6e0ed0a891e13359d77967aab6ad803510003e3555c81614191` |
+
+**Campos adicionados em v1.0.1:**
+- `previous_version` + `previous_hash` (rastreabilidade)
+- `mission.guarantee_scope` (escopo das garantias)
+- `receipt_status_note` (apresentação ≠ verificação)
+- `diplomatic_posture` (embaixada aberta)
+
+**Campos modificados:**
+- `what_this_is`: "is" → "is designed as"
+- `capsule_warning`: removido absolutismo "Only live Verify confirms"
+
+---
+
+### Estado Probatório Final (13 Ago 2026)
+
+| Artefacto | SHA-256 (16 chars) | Estado |
+|-----------|-------------------|--------|
+| W-DIPLOMAT-001-CANDIDATE.md | `d44807be45d10a6d` | CANDIDATE |
+| WINDI-HIOS-MISSION-MANIFEST-001-DRAFT.md | `9007b41f12b23532` | DRAFT |
+| HANDOFF-FREMDE-MISSION-001.md | `4c9cc65c87fc9d53` | DRAFT |
+| windi-hios.json v1.0.1 | `9d21a8d27655b6e0` | **LIVE** |
+| FREMDE-MISSION-STATE-20260813.md | — | Documento de estado |
+
+---
+
+### Git Push
+
+```
+9d9f725cb..746d09421  main -> main
+```
+
+**Commits enviados:**
+- `746d09421` feat(fremde): windi-hios.json v1.0.1 — ajustes semânticos REFINE
+- `a5d0fb5ec` docs(fremde): FREMDE-MISSION-STATE-20260813
+- `6862801bb` docs(fremde): W-DIPLOMAT-001 + Mission Manifest + /.well-known/windi-hios
+- `58fabdaec` docs(fremde): HANDOFF-FREMDE-MISSION-001
+- `51b98fd8f` docs(fremde): preserve Batch 001 FR-001..003
+
+---
+
+### Próximos Passos Pendentes
+
+1. ☐ Fremde Diplomatic Comprehension Test D1-D6
+2. ☐ Credencial externa ou sidecar assinada
+3. ☐ Promoção canónica (requer palavra Human Dragon)
+
+---
+
+### Frase de Guarda
+
+> *"A Embaixada está materializada. O candidato a Diplomata possui linhagem.
+> O próximo trabalho não é expandir a visão, mas tornar cada palavra
+> publicamente demonstrável."*
+
 OM SHANTI 🐉
 
