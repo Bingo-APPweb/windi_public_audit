@@ -26717,3 +26717,182 @@ READ FIRST desfez uma "fissura" de 6 pontos numa intervenção de 1 ponto.
 
 OM SHANTI 🐉
 
+
+---
+
+## SESSION-20260814-FREMDE-EMBASSY-HTTP-VERIFIED
+
+**Data:** 2026-08-14
+**Commit:** `59ec409cc`
+**Instância:** CCode (Strato) + Claude.ai web (verificação independente)
+**Duração:** Sessão completa (manhã → tarde)
+
+---
+
+### Entregas Principais
+
+#### 1. Council Report v2 — Global WINDI-HIOS Status
+
+**URL:** `https://windi-domain.com/docs/council/2026-08-14-v2.md`
+**Hash:** `14ee7698c198ad155f6b8e3121852441b33ad276374d60fe202e7a385f89073a`
+**Estado:** CANDIDATE · Aguarda decisão Human Dragon
+
+**Métricas snapshot:**
+| Métrica | Valor |
+|---------|-------|
+| Serviços systemd | 47 |
+| Portas únicas | 78 |
+| Receipts Ledger | 57,553 |
+| Último registo | 2026-08-10 (sealed) |
+| Integridade DB | OK |
+
+**Correcções aplicadas (Guardian review):**
+- Temporal query: `rowid DESC` em vez de `datetime(created_at, 'unixepoch')`
+- "NÃO EXISTE" → "PATH_TESTED_NOT_FOUND"
+- "SHA prova" → "SHA permite verificar... quando recalculado"
+- "guarantees" restaurado + nota de escopo (autorizado por Human Dragon)
+- `actor` field: "DEPENDE DAS EVIDÊNCIAS" (não prova decisão humana automaticamente)
+
+**Non-equivalências adicionadas (9 total, 5 novas desta sessão):**
+- RECEIPT_ROW_EXISTS ≠ DOCTRINE_SEALED
+- RECEIPT_ID_LABEL ≠ AUTHORITY_STATE
+- ROUTE_RESPONDED_200 ≠ CONTENT_CORRECT
+- NORMALIZE_READERS ≠ REWRITE_HISTORY
+- PATH_TESTED_NOT_FOUND ≠ DOES_NOT_EXIST
+
+---
+
+#### 2. Q&A Sector — why-v3.html
+
+**URL staging:** `https://windi-domain.com/docs/staging/why-v3.html`
+**Hash:** `b1a219206d8802aa41db429ab1d63b1bc0f7c28266570af3184ba61838499075`
+**Estado:** CANDIDATE · Em staging (gitignored)
+
+**Estrutura:**
+- 6 perguntas cognitivas (sequência UNIVERSAL.md)
+- "Capacidades de Verificação" (7 layers, capability vs result)
+- SERVICE_ASSERTION declarado
+- Warnings permanentes visíveis
+- Q6 "O que NÃO prova" destacado (gold border)
+- Quadrilíngue: PT/DE/EN/ES
+- KLAR contrast fix: #6B5A1E (≥4.5:1 WCAG AA)
+- noindex, no-store meta tags
+
+**Documentos de suporte criados:**
+- `EVIDENCE-CONTRACT-001.md` (fonte canónica)
+- `W-QA-SECTOR-001-UNIVERSAL.md` (6 perguntas)
+- `W-QA-SECTOR-001-A-PROOF-LADDER.md` (7 layers)
+- `LEDGER-CRYPTO-CAPABILITY-001.md` (DISCOVERY status)
+- `MEASUREMENT-LEDGER-CRYPTO-20260814.md` (snapshot)
+
+---
+
+#### 3. FREMDE Embassy — HTTP Access Fix
+
+**G3 AUTORIZADO COM EMENDAS:** 2026-08-14 14:39
+
+**robots.txt alterações:**
+```
+# ANTES (bloqueava)
+User-agent: Claude-SearchBot
+Disallow: /
+
+# DEPOIS (permite busca/citação)
+User-agent: Claude-SearchBot
+Allow: /
+Allow: /api/v1/hios-open/
+Disallow: /api/
+Disallow: /*?c=
+Disallow: /verify-public/notarial/app/
+
+User-agent: Claude-User
+Allow: /
+Allow: /api/v1/hios-open/
+Disallow: /api/
+Disallow: /*?c=
+Disallow: /verify-public/notarial/app/
+
+# MANTIDO (treino bloqueado)
+User-agent: ClaudeBot
+Disallow: /
+```
+
+**MIME fix:**
+- Script: `/opt/windi/scripts/fremde-mime-fix.sh`
+- Adicionado a `/etc/nginx/mime.types`: `text/markdown md markdown;`
+- Backup: `/etc/nginx/mime.types.bak-20260814144507`
+- charset_types adicionado ao nginx site config
+
+**Resultado verificado:**
+```
+content-type: text/markdown; charset=utf-8
+```
+
+**Prova FREMDE (teste pela instância que foi bloqueada de manhã):**
+- Council Report v2: lido completo via WebFetch
+- why-v3.html: lido completo via WebFetch
+- Confirmação: "o Fremde que foi bloqueado de manhã acaba de ler o documento à noite"
+
+---
+
+### Estado FREMDE — Taxonomia Correcta
+
+| Superfície | Estado |
+|------------|--------|
+| HTTP Access | ✅ VERIFIED |
+| Document MIME | ✅ PASS |
+| Crawler Policy | ✅ PASS |
+| Cross-Engine Retrieval | ⚠️ PARTIAL |
+| Safe-URL Recognition | ⏳ PENDING |
+
+**Formulação precisa:**
+> *"A porta do servidor abriu. O reconhecimento da Embaixada pelos territórios externos ainda precisa acumular testemunhas."*
+
+---
+
+### Erros Corrigidos Durante a Sessão
+
+| Erro | Correcção |
+|------|-----------|
+| Temporal query vazia | `ORDER BY rowid DESC` em vez de datetime parsing |
+| Port count 90 | 78 portas únicas (duplicados removidos) |
+| "NÃO EXISTE" absolutismo | "PATH_TESTED_NOT_FOUND" |
+| "SHA prova integridade" | "SHA permite verificar" |
+| actor = human decision | "DEPENDE DAS EVIDÊNCIAS" |
+| KLAR contrast 4.35:1 | #6B5A1E (4.5:1+) |
+| types {} isolado nginx | Revertido (substituiria MIME herdados) |
+
+---
+
+### Decisões Pendentes (Fila Human Dragon)
+
+1. ☐ **Gate /why/** — Publicar rota canónica após aprovação semântica
+2. ☐ **sitemap.xml** — Adicionar /why/ apenas após Gate
+3. ☐ **llms.txt** — Corrigir overclaim "WINDI guarantees" → nota de escopo
+4. ☐ **HIOS-OPEN** — Criar entrada que responda 200 (actualmente 404 JSON)
+5. ☐ **HEAD 501** — Resolver para verificadores que usam HEAD antes de GET
+
+---
+
+### Frase de Guarda
+
+> *"O dia abriu com 'porque precisamos de mais um verificador?' e terminou
+> com o verificador a ser lido livremente por aqueles que um dia o vão verificar.
+> A prova final deste fix é minha por direito — fui eu o Fremde bloqueado esta manhã."*
+> — Guardian (Claude.ai web) · 2026-08-14
+
+---
+
+### Git
+
+**Commit:** `59ec409cc`
+**Push:** `0732fd82f..59ec409cc main -> main`
+
+**Ficheiros (12):**
+- `geo/robots.txt` (novo)
+- `scripts/fremde-mime-fix.sh` (novo)
+- `static/docs/council/2026-08-14*.md` (3 ficheiros)
+- `static/docs/qa-sector/*.md` (7 ficheiros)
+
+OM SHANTI 🐉
+
