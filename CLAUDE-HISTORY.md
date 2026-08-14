@@ -26896,3 +26896,86 @@ content-type: text/markdown; charset=utf-8
 
 OM SHANTI 🐉
 
+
+---
+
+### ERRATA SESSION-20260814 — Reservas de Continuidade (Guardian Gate)
+
+**Gate:** ACCEPTED COM RESERVAS
+**Revisor:** Guardian (Claude.ai web)
+
+---
+
+#### Reserva 1: OPERACIONAL ≠ VERSIONADO
+
+**Estado:** CANDIDATE MAXIM (não doutrina selada)
+
+| Campo | Valor |
+|-------|-------|
+| Evidência | nginx charset_types funcional mas fora do git |
+| Risco demonstrado | Disaster-recovery drift |
+| Enforcement | Por implementar |
+| Human Dragon seal | PENDING |
+
+**Provas necessárias para promoção:**
+1. ☐ `fremde-mime-fix.sh` idempotente cobrindo MIME + charset_types
+2. ☐ Configuração nginx no perímetro versionado ou gerada deterministicamente
+3. ☐ Ensaio de restauração com diff zero
+
+---
+
+#### Reserva 2: Topografia de Repositórios
+
+**Declaração explícita (§236 compliance):**
+
+```
+playground.git (jobernc-web)
+  → Implementação operacional
+  → Commit 59ec409cc (12 ficheiros)
+
+windi_public_audit.git (Bingo-APPweb)
+  → Testemunho, evidência e história pública
+  → Commit 04863569 (CLAUDE-HISTORY entry)
+```
+
+**Não-equivalência identificada:** `COMMIT_TITLE ≠ COMMIT_SCOPE`
+- Título: "FREMDE Embassy HTTP access verified"
+- Escopo real: Council Report + QA Sector + robots.txt + script (12 ficheiros)
+- Estado: Manifesto append-only necessário, não reescrita
+
+---
+
+#### Estado Final Rigoroso
+
+| Superfície | Estado |
+|------------|--------|
+| ACESSÍVEL | ✅ CONFIRMADO |
+| REPRODUZÍVEL POR RESTORE | ⚠️ NÃO DEMONSTRADO |
+| VERSIONADO | ⚠️ PARCIAL |
+| RECONHECIDO EXTERNAMENTE | ⚠️ PARTIAL |
+| DOUTRINA CANDIDATA | OBSERVE |
+| RATIFICAÇÃO | PENDING |
+
+---
+
+#### Três Candidatas a Doutrina (OBSERVE)
+
+| Candidata | Origem | Estado |
+|-----------|--------|--------|
+| OPERACIONAL ≠ VERSIONADO | nginx charset_types | CANDIDATE |
+| COMMIT_TITLE ≠ COMMIT_SCOPE | 59ec409cc | CANDIDATE |
+| ACESSÍVEL ≠ RECONHECIDO | FREMDE Embassy | DEMONSTRATED |
+
+---
+
+#### Frase de Guarda (Guardian)
+
+> *"A porta pode ser aberta por decisão interna.
+> O reconhecimento só pode ser acumulado externamente."*
+
+> *"Hoje não terminou apenas uma implementação.
+> Nasceu uma fronteira observável entre aquilo que a Casa declara,
+> aquilo que consegue reconstruir e aquilo que o mundo efetivamente reconhece."*
+
+OM SHANTI 🐉
+
