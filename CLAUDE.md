@@ -84,7 +84,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-INTENT-CMD | :8141 | I9,I11,I13 | **LIVE** · Director-as-a-Service · Intent Orchestration |
 | W-NOMAD-VOICE | :8127 | I9,I12 | **LIVE** · Human Translation Layer · No-Jargon Filter |
 | W-FEDIVERSE-001 | :8142 | I9,I11 | **LIVE** · Glass Embassy · Mastodon + BlueSky · Parallel Broadcast |
-| W-BRIDGE-001 | :8143 | I9,I11 | **LIVE** · BIG-BRIDGE Gateway · /watch/{id} · HLS Streaming |
+| W-BRIDGE-001 | :8143 | I9,I11 | **DOCUMENTED≠IMPLEMENTED** · BIG-BRIDGE Gateway design · `/watch/{id}` · HLS Streaming · :8143 NOT LISTENING (verified 2026-08-16) |
 | W-SEC-001 | :8144 | I9,I11 | **SEALED** · Security Sentinel · Dual Correlation · Telegram · systemd |
 | W-DRAGON-001 | :8122 | I9,I11,I14 | **LIVE** · Dragon Shadow Forest · 16×16 SHA-256 Glyph Grid · PDF Overlay |
 | W-DEV-API-001 | :8200 | I9,I11 | **LIVE** · Developer API · /dev-api/ · 4 Tiers · Verify Bridge |
@@ -113,6 +113,15 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | W-GENERATOR-001 | :8198 | I9,I9-G,I11,I14 | **SEALED** v0.1.0 · §292 · 6 DOORs (2 active stubs) · SORA+Runway · Gate: C6+auth+teto antes de real |
 | W-FARM-001 | :8201 | I1,I9,I11,I14 | **LIVE** · Casa Digital Soberana · /farm/claim · validate∪lookup · `5F124853` |
 | WINDI-PORTAL | static | — | **LIVE** · Internal Control Center · 35 Services · 7 Categories |
+
+### ERRATA §268 — W-BRIDGE-001 registry correction (2026-08-16)
+
+**Rule:** APPEND, never rewrite. The prior value remains readable and is superseded by observed evidence.
+
+- **Previous value — historical, superseded:** `| W-BRIDGE-001 | :8143 | I9,I11 | **LIVE** · BIG-BRIDGE Gateway · /watch/{id} · HLS Streaming |`
+- **Observed evidence:** Fase 0 and the 2026-08-16 recheck found no listener on `:8143` and no BIG-BRIDGE/HLS implementation. The active `windi-bridge.service` is the distinct WINDI Command Bridge v1.0.0 and is not evidence for W-BRIDGE-001.
+- **Current authoritative value:** `| W-BRIDGE-001 | :8143 | I9,I11 | **DOCUMENTED≠IMPLEMENTED** · BIG-BRIDGE Gateway design · /watch/{id} · HLS Streaming · :8143 NOT LISTENING (verified 2026-08-16) |`
+- **Scope:** this errata corrects the registry claim only; it does not retire the documented design or authorize implementation.
 
 **WINDI Precision Pattern:** USER → INTENT → COUNSEL → DOMAIN → LEDGER → VERIFY
 
