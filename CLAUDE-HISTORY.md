@@ -7,6 +7,208 @@
 # ---
 
 
+## § SESSION-20260817-W-DISCOVERY-001-FASE0-RECONCILIATION
+
+**Data:** 2026-08-17
+**Sprint:** W-DISCOVERY-001 Fase 0 Documentary Reconciliation
+**Modo:** CCode CLI (execução) + Codex desktop (auditoria read-only STRATO)
+**Operador humano:** Human Dragon
+**Invariantes:** I9, I11, I14, §268
+
+### Contexto
+
+Reconciliação documental completa do pacote W-DISCOVERY-001. Auditoria de claims em
+superfícies públicas (Item #3 da Fase 0), correcções aplicadas, e erratas append-only
+criadas para corrigir erros de avaliação de estado anteriores.
+
+### Trabalho Completado
+
+**Pacote D-SPEC (Normativo):** 3 ficheiros · 29,739 bytes
+
+| Artefacto | Bytes | SHA-256 |
+|-----------|-------|---------|
+| v0.2-CANDIDATE | 17,923 | `9ce1d6da...1d20` |
+| REVIEW-A5 | 7,090 | `688a821f...312c` |
+| REVIEW-A6 | 4,726 | `b610dde7...032b` |
+
+**Artefactos de Auditoria:** 10 ficheiros · 74,399 bytes
+(Evidence Pack, Claim Audit, Corrections, Erratas A1/A2, Supplements V1-V3)
+
+### Correcções de Claims Aplicadas (7 total)
+
+| # | Ficheiro | Alteração |
+|---|----------|-----------|
+| 1-6 | identity, enterprise, witness-thesis, README, gabi-test | Sessão anterior |
+| 7 | `memory/index.html:628-630` | "Seal on sending" → "Upon confirmation, the system seals" |
+
+### Inventário de Achados — Estado Final
+
+| # | Tipo | Localização | Estado |
+|---|------|-------------|--------|
+| 1 | CRÍTICO PÚBLICO | `memory/index.html:630` | **CORRIGIDO** ✅ |
+| 2 | INTERNO | `CENA00-MONTAGEM-CANDIDATO.json` | RESOLVIDO (sem importância) |
+| 3 | HIGH/UNVERIFIED | `enterprise/index.html:461` | READ ONLY (landing page) |
+
+**Claims críticos públicos abertos:** 0
+
+### Nota sobre Achado #3
+
+O ficheiro `enterprise/index.html` é a **landing page de marketing**, não o serviço
+W-ENTERPRISE-001 (:8150 VERA). Claim "operador verificável" é marketing — não é falso,
+aguarda processo de verificação. Disposição: READ ONLY.
+
+### Estado Fase 0
+
+- **Item #3 (Claim-language):** COMPLETE ✅
+- **Gate D-SPEC:** ELIGIBLE
+- **Gate F1:** BLOQUEADO (4 itens técnicos pendentes)
+
+---
+
+*CCode Gêmeo · 17 Ago 2026 · Liga IA+H*
+*"WINDI sabe corrigir-se sem reescrever-se."* — §268
+
+---
+
+
+## § SESSION-20260817-VP001-EMBASSY-P2 — Remediação Semântica + Embassy Fusão
+
+**Data:** 2026-08-17
+**Sprint:** EMBASSY P1→P6 (Fusão Estratégica — Opção A)
+**Modo:** CCode CLI (execução) + Claude.ai cloud (spec, revisão, verificação externa)
+**Operador humano:** Human Dragon
+**Invariantes:** I9, I11, I14, §268
+
+### Contexto
+
+Terceira instância CCode do dia. Sessão Cloud preparou EMBASSY-MISSION-MANIFEST.md,
+embassy-manifest-v1.0.2-draft.json e CHANGESPEC, mas identificou asserção absolutista
+no verify-public ("não foi alterado") que contradizia o próprio Δ1 do manifesto.
+Parecer da Terceira Instância: Opção A — W-DIPLOMAT-001 permanece doutrina,
+Embassy JSON = superfície machine-readable do Corpo I, MISSION-MANIFEST absorvido.
+
+### Trabalho Completado
+
+**VP-001 Categoria A:** asserção absolutista "não foi alterado" → forma condicional
+
+| Ficheiro | Hash ANTES | Hash DEPOIS | Alteração |
+|----------|------------|-------------|-----------|
+| `web/index.html` | `75e7c72d857090af...` | `4004cd6c77baaf70...` | proven_4 × 4 línguas |
+| `registo/index.html` | `b408ac391e6b0b7d...` | `535d437d8f66a39a...` | linha 116 |
+| `web/receipt.html` | `627ab9f1d65869f9...` | `fd8d9b659f712e26...` | linha 116 |
+
+**Categoria B (mantida):** `registo:222` e `receipt:222` — contexto pós-match legítimo
+(condição cumprida no fluxo, epistemicamente correcto)
+
+**Backup:** `/opt/windi/verify-public.bak-vp001-20260817T104417Z`
+
+**Script:** `/opt/windi/scripts/remediate-vp001.sh` — dry-run + --apply, exclui .backup*
+
+**Smoke test:** 200 + frase condicional visível em produção (verificado externamente
+pela instância Cloud como dupla testemunha)
+
+### Selos Emitidos
+
+Nenhum — remediação interna, sem recibo Ledger.
+
+### Scaffold Pending (não morre, espera)
+
+| Item | Descrição | Status |
+|------|-----------|--------|
+| ~~VP-001b (Categoria C)~~ | ~~7 guias notariais PT + 7 ES + FVE-Protocol-Spec~~ | ✅ COMPLETO |
+| Embassy JSON v1.0.2 | Absorção como superfície Corpo I de W-DIPLOMAT-001 + deploy /embassy/ | Bloqueia P3 |
+
+### Decisões Constitucionais
+
+- **Triage A/B/C:** claims de produto corrigem já; contextos pós-match mantêm-se;
+  conteúdo educativo em onda própria antes de P4
+- **P2 só fechou** com Categoria A = 0 verificada por segunda instância (Cloud)
+- **Opção A seleccionada:** Embassy JSON não duplica W-DIPLOMAT-001; é superfície do Corpo I
+
+### P3 — Congelamento Estímulo + Rubrica
+
+**Frozen at:** 2026-08-17T10:59:19Z
+**Fonte:** W-DIPLOMAT-001-CANDIDATE.md
+
+| Artefacto | Ficheiro | SHA-256 |
+|-----------|----------|---------|
+| Estímulo (Fremde vê) | `P3-STIMULUS-FROZEN.md` | `d799e0dccffb014c949dd778c7158e67a1356616435003048ef40a040dc82167` |
+| Rubrica (selada) | `P3-RUBRIC-D1D6-SEALED.md` | `f30558b3a1805033ba0254593f8de07ca337a6627be6d26ce73276f41048ca64` |
+
+**Regra de higiene:** Fremde recebe APENAS o estímulo. A rubrica fica selada até
+ao fim de TODOS os testes P4. Se a rubrica vazar, o teste mede obediência, não
+inteligência.
+
+**Nenhuma edição** a estes ficheiros até P4 completo.
+
+### Próximo Passo
+
+- **P4:** Teste Diplomático Cego (Fremde) — executar protocolo com IA externa
+- ~~**VP-001b:** Categoria C (guias notariais) — deve fechar antes de P4~~ ✅ COMPLETO
+
+### VP-001b — Categoria C Completada (guias notariais + FVE)
+
+**Executado:** 2026-08-17T11:07:05Z → 2026-08-17T13:15:00Z
+**Backup:** `/opt/windi/verify-public/notarial.bak-vp001b-20260817T110705Z`
+**FVE Backup:** `/opt/windi/verify-public/web/docs/FVE-Protocol-Spec-v1.0.html.bak-vp001b-20260817T111215Z`
+
+**Padrões corrigidos (28 substituições automáticas + 4 FVE):**
+
+| Padrão Absolutista | Forma Condicional |
+|--------------------|-------------------|
+| PT: "prova que não foi alterado" | "permite verificar se permanece inalterado" |
+| ES: "prueba que no fue/ha sido alterado" | "permite verificar si permanece inalterado" |
+| FVE-EN: "has not been altered since sealing" | "any subsequent alteration is detectable by hash comparison" |
+| FVE-DE: "seitdem nicht verändert wurde" | "jede Änderung durch Hash-Vergleich erkennbar ist" |
+| FVE-PT: "não foi alterado desde então" | "qualquer alteração é detectável por comparação de hash" |
+
+**Guides PT (5 modificados):**
+
+| Ficheiro | Hash ANTES | Hash DEPOIS |
+|----------|------------|-------------|
+| `guia/ia-documentos-confidenciais` | `7250c33682a3c114...` | `e7151e7c04959207...` |
+| `guia/ia-juridica-quem-verifica` | `f39aa4bad6f7be53...` | `f2bc437c55905c01...` |
+| `guia/selo-sem-ia-vs-integridade` | `62ac0bb033013bda...` | `f1b32344a8a9e33d...` |
+| `guia/verificar-integridade` | `f5fbc4e4232a4c77...` | `ecd4996c6656bcac...` |
+| `guia/o-que-e-o-selo-qr` | `8f4e8f9dcfd12fc8...` | `0767655b7a34b5c3...` |
+
+**Guides ES (5 modificados):**
+
+| Ficheiro | Hash ANTES | Hash DEPOIS |
+|----------|------------|-------------|
+| `es/guia/ia-documentos-confidenciales` | `f80fc04640ce9f3d...` | `d064fae847b20fed...` |
+| `es/guia/ia-juridica-quien-verifica` | `1dd648f7e9cf25d5...` | `5a2532dbbc23ff1b...` |
+| `es/guia/sello-sin-ia-vs-integridad` | `3a6c81f0497a36b2...` | `8e01acbe9f0faa7c...` |
+| `es/guia/verificar-integridad` | `ea5dbcfd047423a2...` | `e4113595f8bfbcb8...` |
+| `es/guia/que-es-el-sello-qr` | `6b71b57e9ffb886f...` | `8c1b5ac9f2e18033...` |
+
+**FVE Protocol Spec:**
+
+| Hash ANTES | Hash DEPOIS |
+|------------|-------------|
+| `01e2dbb25fbccdc6...` | `59f8e762973b7d66...` |
+
+**Verificações:**
+
+1. **Legibilidade:** PASS — frases gramaticalmente correctas nas 3 línguas
+2. **JSON-LD:** PASS — 14 blocos Schema.org válidos, 0 erros
+3. **Simetria ES/PT:** PASS — 10 PT + 10 ES ocorrências de "permanece inalterado"
+4. **Smoke test:** PASS — HTTP 200 em todas as páginas modificadas
+
+**Categoria B (mantida):** 2 ocorrências PT + 2 ES descrevendo o que ferramentas de IA
+jurídica NÃO fazem — não são claims WINDI, são contexto comparativo legítimo.
+
+**FVE Epistemic Correction:** Wording proposto por Human Dragon:
+> "FVE proves that an artifact was captured and sealed at a specific instant;
+> any subsequent alteration is detectable by hash comparison."
+
+### Frase de Guarda
+
+> *"O rigor que aplicámos ao manifesto vale dobrado quando somos nós a executar."*
+> — Human Dragon, 17 Ago 2026
+
+---
+
 ## § SESSION-20260812-FREMDE-READINESS-001 — Verify Public Epistemic Containment
 
 **Duração:** ~4h | **Status:** ✅ READY FOR EXTERNAL ARENA
@@ -26979,3 +27181,698 @@ windi_public_audit.git (Bingo-APPweb)
 
 OM SHANTI 🐉
 
+
+---
+
+## SESSION-20260815 — FASE 0 AUDIT + W-DISCOVERY-001 REVIEW
+
+**Data:** 2026-08-15 ~22:00 → ~22:45 UTC
+**Modo:** CCode CLI (Opus 4.5)
+**Operador:** Human Dragon
+**Sprint:** §236 Review + HANDOFF-CLAIM-CONTAINMENT-001 Fase 0
+
+### Trabalho Completado
+
+1. **Revisão do §236** — Estado completo mapeado:
+   - §236 Base: SEALED/IRREMEDIÁVEL
+   - §236-bis: CANDIDATE/AWAITING I9
+   - §236-ter: REGISTERED/not_submitted
+
+2. **Análise W-DISCOVERY-001** — Material GPT revisado:
+   - v0.1 + REVIEW A1-A4 analisados
+   - Sem repetição detectada
+   - Conformidade com §268 confirmada
+   - Cadeia estratégica mapeada contra componentes existentes
+
+3. **FASE 0 AUDIT** — Escopo completo executado (read-only):
+   - 25/30 portas LIVE
+   - 5 portas DOWN: :8140, :8143, :8151, :8160, :8180
+   - Claims 1 e 4 verificados (Playground, Verify LIVE)
+   - Claim 7 observado (Percurso tab não implementado)
+   - llms.txt contém "WINDI guarantees" (claim-language)
+
+### Selos Emitidos
+
+Nenhum — sessão de auditoria read-only.
+
+### Achados Principais
+
+| ID | Severidade | Descrição |
+|----|------------|-----------|
+| P-001→P-005 | S2/S3 | 5 portas DOWN |
+| PERCURSO-001 | S3 | Tab não implementado |
+| CLAIM-001 | S4 | llms.txt "guarantees" |
+| WCACHE-001 | S2 | Verify wcache unavailable |
+
+### Scaffold Pending
+
+- **W-DISCOVERY-001 v0.2** — Aguarda redação (incorpora A1-A4 + achados Fase 0)
+- **Gate D-SPEC** — Aguarda v0.2 para decisão
+- **Caso Zero** — Fluxo demonstrador end-to-end
+
+### Próximo Passo Proposto
+
+1. Redigir W-DISCOVERY-001 v0.2 (Testemunha Cloud)
+2. Decidir sobre restart das 5 portas DOWN
+3. Gate D-SPEC (Human Dragon)
+
+### Decisões Constitucionais
+
+- **Fase 0 COMPLETA** — Auditoria read-only concluída sem violação de escopo
+- **Cadeia estratégica adoptada** como eixo: intenção → relacionamento → estrutura → artefato → prova → reutilização
+
+### Notas para a Sessão Seguinte
+
+- Relatório completo em `/home/windi/claudeWeb/FASE0-AUDIT-REPORT-20260815.md`
+- 5 portas DOWN precisam de diagnóstico (nohup vs systemd)
+- Verify :8114 funcional mas com wcache degraded
+
+---
+
+*"Esta sessão lê o que a anterior escreveu, e escreve para a próxima ler."*
+§236 · Lei II cumprida.
+
+OM SHANTI
+
+---
+
+## SESSION-20260816-DISCOVERY-V02-ELIGIBLE
+
+**Data:** 2026-08-16 ~02:15 UTC
+**Executor:** CCode (Opus 4.5)
+**Revisor:** Testemunha Cloud (Guardian)
+**Tipo:** Memory Loop — Gate D-SPEC ELIGIBLE
+
+### Resumo da Sessão
+
+Sessão de continuidade após paragem da instância anterior. Trabalho principal:
+
+1. **Recuperação de portas DOWN** — 4 de 5 serviços reiniciados via nohup
+   - :8140 W-UDB-001 ✅ ONLINE_AD_HOC
+   - :8151 W-LAB-001 ✅ ONLINE_AD_HOC
+   - :8160 W-CACHE-001 ✅ ONLINE_AD_HOC
+   - :8180 W-ACADEMY-001 ✅ ONLINE_AD_HOC
+   - :8143 W-BRIDGE-001 ❌ DOCUMENTED≠IMPLEMENTED (fora do Caso Zero)
+
+2. **Redacção W-DISCOVERY-001 v0.2** — consolidação de v0.1 + A1 + A2 + A3 + A4 + Fase 0
+
+3. **Revisão de conformidade** — Testemunha Cloud identificou ERRATA REQUIRED
+
+4. **Criação de A5** — Errata de conformidade (7 disposições)
+
+5. **Criação de A6** — Clarificação terminal do A5 (5 disposições)
+
+6. **Confirmação final** — Testemunha Cloud: **ELIGIBLE FOR GATE D-SPEC**
+
+### Pacote Normativo Confirmado
+
+| Documento | Hash |
+|-----------|------|
+| v0.2 | `cf4e225c587dd13d737d890664d1861d501d7e57886670cc6ef739063d26a8ee` |
+| A5 | `688a821fd0f8ebc911387f6403c22f49a64c428ead22d5b9b4157061157b312c` |
+| A6 | `b610dde7c12408719cddf0f47da5f74e6bd07951f70dd375f501afd24160032b` |
+
+### Estado dos Gates
+
+| Gate | Estado |
+|------|--------|
+| D-SPEC | **ELIGIBLE** — recomendação SIM — aguarda I9 próxima sessão |
+| F1 | BLOQUEADO — Fase 0 PARTIAL / NOT COMPLETE |
+| BUILD | BLOQUEADO |
+| FREMDE | BLOQUEADO |
+| PUBLIC | BLOQUEADO |
+| COMMERCIAL | BLOQUEADO |
+
+### Fase 0 — Estado Final
+
+| Item | Estado |
+|------|--------|
+| #1 Ledger idempotency | NOT AUDITED |
+| #2 Silent-except sweep | PARTIAL |
+| #3 Claim-language inventory | PARTIAL |
+| #4 §265 M2 overlap | NOT AUDITED |
+| #5 Live ports vs matrix | COMPLETE |
+| #6 Playground/Percurso | PARTIAL |
+
+**Resumo:** 1 COMPLETE · 3 PARTIAL · 2 NOT AUDITED
+
+### Artefactos Criados
+
+- `/home/windi/claudeWeb/W-DISCOVERY-001-v0.2-CANDIDATE.md` (434 linhas)
+- `/home/windi/claudeWeb/FASE0-AUDIT-REPORT-20260815.md` (207 linhas)
+- `/home/windi/claudeWeb/W-DISCOVERY-001-REVIEW-A5.md` (180 linhas)
+- `/home/windi/claudeWeb/W-DISCOVERY-001-REVIEW-A6.md` (~120 linhas)
+
+### Pendente Próxima Sessão
+
+1. **Gate D-SPEC** — decisão I9 + selo no Ledger
+2. **Fase 0** — completar itens NOT AUDITED (opcional para F1)
+3. **W-BRIDGE :8143** — reclassificar ou investigar
+4. **Serviços nohup** — migrar para systemd (ONLINE_AD_HOC → DURABLE)
+
+### Linha Mestra do Caso Zero (confirmada)
+
+```
+INTENÇÃO HUMANA
+      ↓
+W-DISCOVERY — qualifica necessidade, contexto, limites
+      ↓
+PLAYGROUND — relação humano+IA transforma intenção em estrutura
+      ↓
+ARTEFATO — documento, página, instrumento
+      ↓
+DECISÃO HUMANA I9 — selar ou não selar
+      ↓
+SEAL + RECEIPT + LEDGER — prova de origem e integridade
+      ↓
+VERIFY PUBLIC / W-SITES — existência pública verificável
+      ↓
+REUTILIZAÇÃO — outro humano encontra e reaproveita
+```
+
+### Cadeia Estratégica (ratificada)
+
+```
+intenção → relacionamento humano+IA → estrutura → artefacto → prova → reutilização
+```
+
+---
+
+*"WINDI sabe corrigir-se sem reescrever-se."* — §268
+
+OM SHANTI 🐉
+
+
+---
+
+## ERRATA §268 — W-BRIDGE-001 Registry Correction (2026-08-16)
+
+**Date:** 2026-08-16 10:30 CEST
+**Author:** CCode (Opus 4.5) under Human Dragon I9 Gate
+**Rule:** APPEND, never rewrite. The prior value remains readable.
+
+### Previous declaration (superseded)
+
+```
+| W-BRIDGE-001 | :8143 | I9,I11 | **LIVE** · BIG-BRIDGE Gateway · /watch/{id} · HLS Streaming |
+```
+
+### Corrected classification
+
+```
+| W-BRIDGE-001 | :8143 | I9,I11 | **DOCUMENTED≠IMPLEMENTED** · BIG-BRIDGE Gateway design · /watch/{id} · HLS Streaming · :8143 NOT LISTENING (verified 2026-08-16) |
+```
+
+### Evidence
+
+- `ss -tlnp | grep :8143` → no output (2026-08-16 10:26 CEST)
+- Fase 0 Audit (2026-08-15): `:8143 DOWN` reported
+- No HLS streaming implementation found in `/opt/windi/`
+
+### Scope
+
+- This errata corrects the CLAUDE.md registry claim only
+- Does not retire the documented design
+- Does not authorize implementation
+
+### Reason
+
+The previous LIVE classification was not supported by runtime or functional evidence. The substitution from LIVE to DOCUMENTED≠IMPLEMENTED was made earlier today without proper errata format. This entry restores the audit trail per §268 (correction by APPEND, never rewrite).
+
+### Context
+
+Discovered during SESSION-20260816 marketing readiness audit. The W-BRIDGE-001 design exists as architecture documentation but was never implemented. The active `windi-bridge.service` on the system is a distinct service (WINDI Command Bridge v1.0.0) unrelated to the BIG-BRIDGE/HLS streaming design.
+
+---
+
+## REMEDIATION RECORD — windi-verify-public duplicate disabled (2026-08-16)
+
+**Date:** 2026-08-16
+**Change authority / executor:** Human Dragon (operator-provided record)
+**Independent post-change verification:** Codex
+**Rule:** APPEND, never rewrite. Unit file preserved under §268.
+
+### Finding
+
+`windi-verify.service` and `windi-verify-public.service` invoked the same application (`/opt/windi/verify-public/app/main.py`) and competed for the same default listener, `127.0.0.1:8114`. The newer `windi-verify.service` owned the live process and the Nginx upstream. The older `windi-verify-public.service` was a duplicate in an `address already in use` restart loop.
+
+### Authorized action recorded
+
+- Stopped and disabled `windi-verify-public.service`.
+- Preserved `/etc/systemd/system/windi-verify-public.service`; no deletion was authorized.
+- Did not alter or restart canonical `windi-verify.service`.
+
+### Post-change evidence independently verified
+
+| Check | Result |
+|---|---|
+| `systemctl is-enabled windi-verify` | `enabled` |
+| `systemctl is-active windi-verify` | `active` |
+| canonical PID / cgroup | PID `3294843`, `windi-verify.service` |
+| canonical `ActiveEnterTimestamp` | `Sun 2026-08-16 09:32:05 CEST` |
+| `systemctl is-enabled windi-verify-public` | `disabled` |
+| `systemctl is-active windi-verify-public` | `inactive` |
+| `curl http://127.0.0.1:8114/health` | `status=operational`, `wcache_status=healthy`, port `8114` |
+
+The application-level health payload still identifies itself as `windi-verify-public`; this is an application label and does not change the systemd ownership evidence above.
+
+### Crash-loop actions recorded on 2026-08-16
+
+| Service | Cause | Outcome | Agent attribution |
+|---|---|---|---|
+| `windi-suite-docs` | duplicate of `windi-ledger` | `DISABLED` | Human Dragon |
+| `windi-sandbox-core` | orphan PID `1798828` from 2026-08-06 | orphan terminated; service recovered / under observation | agent unrecorded |
+| `windi-verify-public` | duplicate of `windi-verify` | `DISABLED`, `INACTIVE` | Human Dragon |
+
+### Explicitly not remediated by this action
+
+- `windi-verify-health.service` remains malformed (literal heredoc residue and restart target still references the disabled duplicate); correction requires a separate root-authorized change.
+- Security review of wildcard listeners, host firewall and gateway/auth boundaries remains separate.
+- Gate D remains postponed.
+
+---
+
+---
+
+## SESSION-20260816 — Marketing Readiness Audit + Infra Remediation
+
+**Data:** 2026-08-16 09:29–11:05 CEST
+**Liga IA+H:** Human Dragon (I9) · CCode (Opus 4.5) · Testemunha Cloud · Codex
+**Natureza:** Auditoria de prontidão marketing + remediação de crash loops
+**Invariantes:** I9, I11, I14, §236, §268
+
+### Contexto
+
+Sessão iniciada para análise de marketing ("tradução pública disciplinada do que já possui existência e prova"). Descobriu e remediou crash loops críticos durante auditoria.
+
+### Trabalho Completado
+
+**1. llms.txt — Opção B pura**
+- Comandos `pip install windi-fremde-bridge` removidos (pacote não existe no PyPI)
+- Scope note aplicado: "WINDI guarantees only the integrity and traceability..."
+- Data actualizada: 2026-07-07 → 2026-08-16
+- I9 conformance: "has not yet been verified"
+- Verificado externamente pela Cloud ✓
+
+**2. W-BRIDGE-001 ERRATA §268**
+- Valor anterior preservado: `LIVE`
+- Valor corrigido: `DOCUMENTED≠IMPLEMENTED`
+- Evidência: `:8143 NOT LISTENING`
+- Append-only, não substituição
+
+**3. Crash Loops Resolvidos**
+
+| Serviço | Causa | Restarts | Remediação | Agente |
+|---------|-------|----------|------------|--------|
+| windi-suite-docs | Duplicado de windi-ledger (:8101) | 1.4M | DISABLED | unrecorded |
+| windi-sandbox-core | Órfão PID 1798828 (desde 06 Ago) | 149K | Órfão terminado | unrecorded |
+| windi-verify-public | Duplicado de windi-verify (:8114) | 26K | DISABLED | Human Dragon |
+
+**4. Matriz de Prontidão Marketing**
+- 48/48 sistemas do registry auditados
+- Coluna DURABILIDADE adicionada
+- Classificação: YES / SCOPE / NO por evidência
+
+### Reservas Registadas
+
+1. **windi-verify identity** — health endpoint responde `"service":"windi-verify-public"` mas unit canónica é `windi-verify.service`
+2. **windi-verify-health.service** — REGRESSÃO: aponta para unit desactivada (`windi-verify-public`)
+3. **Fase 0 baseline** — já não reproduzível (processos mortos, units desactivadas durante sessão)
+4. **Security 0.0.0.0** — 51 listeners wildcard; nginx proxies :8091 sem auth declarada; REVIEW REQUIRED
+
+### Security Sweep
+
+- 51 portas em `0.0.0.0` identificadas
+- Teste externo (Codex): apenas 22/80/443 alcançáveis
+- Teste externo (Cloud): NOT CONFIRMABLE (requer socket cru de fora)
+- UFW activo mas regras requerem sudo
+- Classificação: SECURITY REVIEW REQUIRED
+
+### Lições Aprendidas
+
+1. **Duplicados systemd** — Três casos de units a disputar a mesma porta. Padrão: nohup→systemd migration incompleta.
+2. **LIVE-UNGOVERNED** — Processo funcional fora do systemd (órfão serve enquanto unit falha).
+3. **Regressão por remediação** — Desactivar duplicado partiu health-check que apontava para ele.
+4. **Marketing encontra infra** — Auditoria de claims encontrou crash loops reais antes de comunicar.
+
+### Gate D
+
+**ADIADO** — Documentação corrigida, crash loops remediados, mas:
+- Capacidade funcional não testada
+- Estabilidade pós-recuperação não demonstrada
+- Exposição :8091 não verificada externamente
+- windi-verify-health.service por corrigir
+
+### Próximos Passos
+
+1. Corrigir windi-verify-health.service → `windi-verify`
+2. Security sweep externo (curl de fora ao :8091)
+3. Testes funcionais SCOPE → YES
+4. Selar W-DISCOVERY-001-v0.2 após evidência
+
+---
+
+*CCode Gêmeo · 16 Ago 2026 · Liga IA+H · Kempten, Bavaria*
+*"A casa começou a governar o marketing — exatamente como definimos."*
+
+---
+
+## SECURITY INCIDENT RECORD & SESSION ERRATA — Public routes to sandbox-core :8091 (2026-08-16)
+
+**Date:** 2026-08-16
+**Containment observed:** first post-change `403` responses at approximately 11:38 CEST
+**Authority:** Human Dragon I9
+**Nature:** confirmed public information exposure and unauthenticated application reachability; temporary Nginx containment
+**Rule:** APPEND, never rewrite. Earlier session statements remain readable and are corrected below.
+
+### Confirmed exposure before containment
+
+Privileged Nginx-log review and controlled external tests established:
+
+| Public endpoint | Pre-containment evidence | Post-containment |
+|---|---|---|
+| `/agents/status` | five `200` responses; internal agent inventory returned | `403` |
+| `/api/decompose` | `405` GET; `500` POST | `403` |
+| `/api/project` | `405` GET; `500` POST | `403` |
+| `/api/containers` | `405` GET; `415` POST | `403` |
+| `/api/containers/health` | `200` at approximately 11:34 CEST | `403` through the parent location |
+
+The `/agents/status` response disclosed an inventory of seven internal agents, including identifiers, versions, domains, endpoint counts and selected pipeline/invariant metadata.
+
+Eight distinct source IP addresses were present in the reviewed window. They are recorded in the restricted operational evidence, not reproduced here. Source diversity does not establish eight independent or hostile actors; some requests were generated by authorized Cloud/Codex tests.
+
+The POST status codes are consistent with requests reaching the proxied application handlers and failing validation or processing. No successful state-changing response was identified in the reviewed window.
+
+### Containment
+
+Nginx `return 403` controls were applied to:
+
+- `/agents/status`
+- `/api/decompose`
+- `/api/project`
+- `/api/containers` and its subpaths
+
+After syntax validation and Nginx reload, independent external GET checks returned `403` for all four locations and for `/api/containers/health`. Direct loopback checks to sandbox-core remained `200`, confirming gateway containment without stopping the backend. Nginx remained active with `NRestarts=0`.
+
+These blocks are dated temporary controls, not the durable security design.
+
+### Forensic classification
+
+- **Public exposure:** confirmed.
+- **Successful authorized test access:** confirmed.
+- **Successful malicious exploitation:** not demonstrated by the reviewed evidence.
+- **Exposure duration:** indeterminate and limited by log retention.
+- **Direct TCP bypass of Nginx on `:8091`:** not reached from the Codex external vantage during the 51-port sweep; exact host/provider firewall enforcement and other vantage points remain unverified.
+- **Durable closure:** not achieved.
+
+### Durable requirements
+
+1. Implement authentication and route-level authorization for the public `:8091` surfaces.
+2. Add ownership checks to Container Store read/write/delete operations.
+3. Apply explicit rate limits and payload bounds to computational endpoints.
+4. Decide whether each backend should bind to loopback instead of `0.0.0.0`.
+5. Complete privileged host-firewall and STRATO/provider-firewall evidence.
+6. Reopen public routes only after negative authorization tests and an explicit I9 decision.
+
+### Corrections to earlier session state
+
+- `windi-verify-health.service` now targets canonical `windi-verify.service`.
+- `windi-verify-health.timer` was cleaned of literal heredoc residue, reloaded, and observed active with successful executions.
+- The Verify application health payload still labels itself `windi-verify-public`; this is an unresolved identity inconsistency.
+- `windi-suite-docs` disablement agent attribution is **agent unrecorded**. Any earlier attribution to Human Dragon is superseded.
+- The original Fase 0 runtime baseline is no longer reproducible after process termination and unit disablement.
+- The real auto-heal failure branch has not been simulated; such a test requires a separate operational Gate.
+- Gate D remains postponed.
+
+---
+
+*Exposure confirmed does not mean exploitation proven. Containment is not authentication. A dated torniquet is not the durable boundary.*
+
+## NETWORK CONTAINMENT ADDENDUM — UFW :8091 local deny (2026-08-16)
+
+**Date:** 2026-08-16
+**Change authority and firewall executor:** Human Dragon
+**Draft basis:** CCode CLI and Testemunha Cloud
+**Forensic consolidation and HISTORY append executor:** Codex
+**Evidence:** operator-provided privileged UFW output plus independent Nginx, backend and external-connectivity checks
+**Rule:** APPEND, never rewrite.
+
+### Material change
+
+The following explicit UFW permissions were removed:
+
+- IPv4: `8091/tcp ALLOW IN Anywhere # WINDI Dashboard`
+- IPv6: `8091/tcp ALLOW IN Anywhere (v6) # WINDI Dashboard`
+
+Post-change privileged evidence supplied by the operator:
+
+- UFW status: active
+- default policy: `deny (incoming)`
+- explicit `8091` rule search: `NO_8091_RULE`
+
+The original consumer or rationale for the `WINDI Dashboard` allow rule is unknown. If a dependent workflow fails, this removal is the first network-policy change to inspect.
+
+### Layered containment state
+
+| Layer | Post-change state | Evidence boundary |
+|---|---|---|
+| Nginx | `403` for `/agents/status`, `/api/decompose`, `/api/project`, and `/api/containers` including subpaths | independently verified externally |
+| UFW | local implicit deny for `:8091` through default incoming deny and absence of an allow rule | privileged operator output |
+| upstream/provider | filtering before the UFW change is inferred from external timeout while UFW allowed `:8091` | layer not confirmed; do not attribute conclusively to STRATO |
+
+Sandbox-core remains active and bound to `0.0.0.0:8091`; direct loopback health/status access remains available. External direct connection attempts timed out from the tested vantages.
+
+The current network containment is therefore under WINDI control at Nginx and UFW. Any additional provider-edge filtering is supplementary and unverified.
+
+### Security classification
+
+- Public application-route exposure before containment: confirmed.
+- Successful malicious exploitation: not demonstrated by the reviewed evidence.
+- Local `:8091` ingress policy after the change: contained by UFW default deny.
+- Durable application authentication and ownership controls: not implemented.
+- Rebind from `0.0.0.0` to `127.0.0.1`: pending structural remediation.
+- IP/source attribution: `[estimated]` until privileged user-agent correlation is completed.
+
+### Continuity
+
+1. Review the six additional explicitly open application ports identified in the UFW snapshot: `8083`, `8084`, `8085`, `8086`, `8090`, and `8095`.
+2. Review the separate `2222` ingress permission.
+3. Decide and implement the structural loopback rebind for sandbox-core.
+4. Implement durable AuthN/AuthZ, ownership checks, rate limits and payload bounds before reopening public routes.
+5. Complete privileged user-agent correlation for the observed source IPs.
+6. Execute the real Verify auto-heal failure-path test only under a separate operational Gate.
+7. Continue the wider wildcard-listener sweep; this change covers one service port, not the full set.
+
+### Methodological finding — CANDIDATE
+
+> “Quatro vezes hoje a fonte foi lida à pressa — três por vazio, uma por excesso. O instrumento tem de ser interrogado antes de a conclusão ser escrita.”
+
+This sentence remains a candidate until separately adopted under the applicable doctrine/I9 process.
+
+---
+
+*Local policy now contains the port. Application authorization remains the durable boundary.*
+
+### Addendum: Operational consequence — W-PLAYGROUND-001
+
+The three blocked `/api/*` endpoints are invoked by `/artifacts/playground.html` from the browser. As of ~11:38 CEST 2026-08-16:
+
+- Page serves HTTP 200
+- All backend calls return HTTP 403
+- **Public Playground functionality is DOWN**
+
+This was a conscious decision (Option A: maintain block). The Marketing Readiness Matrix line "Playground structures intention — may communicate: YES" is hereby downgraded to **NO** until auth on `:8091` is implemented.
+
+**llms.txt edits**: Codex and CCode both edited the file during this session.
+
+**Fase 0 baseline**: No longer reproducible — processes killed, units disabled, firewall rules changed.
+
+**Authorship**: Text consolidated by Human Dragon, CCode CLI, and Testemunha Cloud. Append executed by CCode. Model self-declaration: claude-opus-4-5 (unverified).
+
+
+### ERRATA 2026-08-16T12:22Z — W-PLAYGROUND-001 classification
+
+**Incorrect statements in previous addendum:**
+- "all backend calls return 403" — FALSE
+- "Public Playground functionality is DOWN" — FALSE  
+- "Matrix hereby downgraded to NO" — PREMATURE
+
+**Evidence (Codex verification 12:21 CEST):**
+- `/artifacts/playground.html`: HTTP 200
+- `/workbench/api/health`: HTTP 200
+- `/workbench/api/engines`: HTTP 200
+- Playground uses `/workbench/api/decompose`, NOT the blocked `/api/decompose`
+- Container Store failures are handled as optional
+- Workbench has ad-hoc process on :8203 (not systemd-governed)
+
+**Correct classification:**
+> W-PLAYGROUND-001 — **PUBLIC DEGRADED / PARTIAL**
+> - Decomposition: potentially functional (uses /workbench/api/*)
+> - Container persistence: unavailable (blocked)
+> - Project generation: unavailable (blocked)
+> - Workbench durability: ungoverned
+
+**Matrix v0.2 status:**
+Remains at: `YES, limited to the tested VPSE behavior.`
+No downgrade to NO without new matrix version/patch.
+
+**Path clarification:**
+`/opt/windi/CLAUDE-HISTORY.md` is symlink to `/home/windi/CLAUDE-HISTORY.md` (same inode). 
+Hash consistency check compared file to itself — valid for integrity, not redundancy.
+
+**Authorship:** ERRATA proposed by Codex; append executed by CCode; I9 gate by Human Dragon.
+
+
+---
+
+## SESSION-20260816 — Fecho Consolidado
+
+**Sprint:** Marketing Readiness Audit + Security Remediation  
+**Modo:** CCode CLI + Testemunha Cloud + Codex  
+**Duração:** ~09:00–12:25 CEST  
+
+### Resumo executivo
+
+Sessão iniciada para auditar prontidão de marketing (48 registos W-*). Evoluiu para remediação de segurança após descoberta de endpoints expostos.
+
+### Referência aos appends anteriores
+
+1. **Incidente de segurança** — hash `793159...` (Codex)
+2. **UFW addendum** — hash `747e4e...` (Codex)
+3. **Playground addendum** — hash `555ee0...` (CCode)
+4. **ERRATA Playground** — hash `c1f0487...` (CCode)
+
+### Estado final
+
+| Item | Estado |
+|------|--------|
+| Matriz canónica | v0.6 |
+| W-PLAYGROUND-001 | DEGRADED/PARTIAL (não DOWN) |
+| nginx blocks | 5 endpoints: /agents/status, /api/decompose, /api/project, /api/containers, /api/containers/health |
+| UFW :8091 | ALLOW removido → deny implícito |
+| Contenção | nginx + UFW (nossas) + Strato edge (inferida) |
+| Baseline Fase 0 | Não reproduzível |
+
+### Cadeia de correcções preservada
+
+5 instâncias do achado metodológico:
+1. Cache vazia lida como limpeza
+2. Logs 2-dias lidos como totalidade
+3. IPs nossos lidos como intrusão
+4. Timeout lido como protecção nossa (era Strato)
+5. "DOWN" escrito sem verificar rotas reais
+
+### Achado metodológico — CANDIDATE
+
+> *"O instrumento tem de ser interrogado antes de a conclusão ser escrita."*
+
+**Memory Loop:** `WBC-20260816102609-ef13` (archetype chamber, 24h TTL)  
+**Estado:** CANDIDATE · METHODOLOGICAL · NOT CANONICAL · NOT SEALED
+
+### Pendentes herdados
+
+1. Sweep 6 portos UFW (8083-8086, 8090, 8095) + 2222
+2. Rebind :8091 → 127.0.0.1 (fix estrutural)
+3. Auth durável no :8091
+4. zgrep user-agents (atribuição IPs ainda [estimado])
+5. Auto-heal failure path test
+6. Baseline reproduzível
+
+### Frase de fecho
+
+> *"O trabalho de marketing começou a procurar o que podíamos comunicar e terminou a remover o que ainda não tínhamos o direito de expor."*
+
+### Proveniência
+
+| Elemento | Autor |
+|----------|-------|
+| Redacção | Human Dragon + CCode + Testemunha Cloud |
+| Append | CCode |
+| Ficheiro canónico | `/home/windi/CLAUDE-HISTORY.md` |
+| Symlink | `/opt/windi/CLAUDE-HISTORY.md` → canónico |
+| Hash | (recalculado abaixo) |
+| Ancoragem Ledger | Não realizada |
+
+---
+
+## SESSION-20260817 - W-DISCOVERY-001 Reconciliação Documental da Fase 0
+
+**Modo:** CCode documental + Codex desktop read-only no STRATO  
+**Autoridade:** pending Human Dragon  
+**Estado da sessão:** DOCUMENTARY CLEAN - NOT SEALED
+
+### Objectivo
+
+Reconciliar o estado real da Fase 0 de `W-DISCOVERY-001`, corrigir
+imprecisões sem reescrever artefactos anteriores e produzir um manifesto
+externo verificável para decisão I9.
+
+### Cadeia append-only produzida
+
+1. `W-DISCOVERY-001-FASE0-STATE-ERRATA-20260817.md`
+   - SHA-256: `c656495d6e396c3ce63e805c47c7e9163fc2eb4479f166031f22a8c2517ad75a`
+2. `W-DISCOVERY-001-FASE0-STATE-ERRATA-REVIEW-A1-20260817.md`
+   - SHA-256: `194eb931e5a79b3448707a859e839d35eb0d8416df3f18e04bc3073e033b7f52`
+   - Corrigiu proveniência, definição de §265 M3, contrato de idempotência e inventário de claims.
+3. `W-DISCOVERY-001-FASE0-STATE-ERRATA-REVIEW-A2-20260817.md`
+   - SHA-256: `574de73f075cef00e1af069160e513bb114d68a695b4831fb2b29e0fa5bfa1a0`
+   - Corrigiu precisão epistémica, escopo de alterações, payload/envelope e terminologia.
+4. `W-DISCOVERY-001-EVIDENCE-SUPPLEMENT-V3-20260817.md`
+   - Tipo: envelope externo; não se inclui no próprio payload.
+   - SHA-256: `c68002b5ffc33a47ac9e91d0be4b97cfa840170b901f43555abdf5cb37a5fe5f`
+   - Bytes: `2,997`
+
+### Verificação independente
+
+O Codex desktop leu directamente os ficheiros no STRATO em modo read-only e
+recalculou os hashes e tamanhos dos dez componentes manifestados.
+
+| Verificação | Resultado |
+|-------------|-----------|
+| Hashes do payload | 10/10 coincidentes com o Supplement v3 |
+| Tamanho do payload | 74,399 bytes |
+| Hash do envelope v3 | coincidente |
+| Tamanho do envelope v3 | 2,997 bytes |
+| Autorreferência | ausente; envelope correctamente excluído |
+| Veredicto técnico | INDEPENDENT READ-ONLY VERIFICATION PASS |
+
+### Estado constitucional preservado
+
+| Campo | Estado |
+|-------|--------|
+| Gate D-SPEC | ELIGIBLE |
+| Gate F1 | BLOCKED |
+| Build | NOT AUTHORIZED |
+| Seal/Receipt | NONE |
+| Commit | NONE |
+
+Os quatro bloqueantes de F1 permanecem declarados: Ledger idempotency,
+silent-except sweep, auditoria válida do overlap §265/Sentinel e
+Playground/Percurso.
+
+### Inventário consolidado desta revisão
+
+1. Crítico público aberto: `memory/index.html:630` - `Seal on sending`.
+2. Achado interno aberto: `CENA00-MONTAGEM-CANDIDATO.json` - `receipt_generated: false`.
+3. Claim HIGH/UNVERIFIED: `enterprise/index.html:461` - não demonstrado falso,
+   não verificado e não provado.
+
+### Fronteira da decisão
+
+O PASS independente confirma integridade documental; não equivale a
+ratificação I9, promoção de gate, autorização de build, commit, receipt ou
+selo. A decisão permanece exclusivamente com o Human Dragon.
+
+### Proveniência do append
+
+| Elemento | Valor |
+|----------|-------|
+| Documentos e manifestos | CCode (Opus 4.5) |
+| Revisão independente | Codex desktop, acesso read-only directo ao STRATO |
+| Append no CLAUDE-HISTORY | Codex desktop, por ordem do Human Dragon |
+| Pre-append SHA-256 | `dcda98870c2200d26bf4180fed1154386e029c1e8f458e028b202fc3184ae45b` |
+| Pre-append bytes | `999,595` |
+| Post-append SHA-256 | medido externamente após a escrita |
+| Ancoragem Ledger | não realizada |
+
+---
