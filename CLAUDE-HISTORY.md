@@ -28278,3 +28278,37 @@ W-HIOS-CINEMA (PILOT-O-PESO-DO-ECO-v3) → pergunta Human Dragon → extracção
 *"AI processes. Human decides. WINDI proves."*
 
 ---
+
+
+### CONTINUIDADE — Próxima Sessão
+
+**Última acção:** Commits pushed (3a25147f + 5c6cbbf4e)
+**Estado:** Sessão encerrada com sucesso
+**Próximo operador:** Qualquer instância Claude (CCode/Web)
+
+#### Contexto para Retoma
+
+1. **F1 Gate UNBLOCKED** — D-SPEC pode avançar para BUILD
+2. **Pitch Deck LIVE** — /hios/pitch-deck.html (€50M Case Study)
+3. **Lexical Canon SEALED** — §POST-LEX (proves/records)
+4. **Claims públicos:** 0 abertos
+
+#### Artefactos Chave
+
+| URL | Função |
+|-----|--------|
+| /hios/pitch-deck.html | Deck comercial 6 slides |
+| /hios/quem-somos.html | Página institucional HIOS |
+| /enterprise/ | Portal enterprise (VERA/OVS) |
+
+#### Frase de Guarda
+
+> *"Quando tivermos o primeiro caso real selado — esse será o momento em que a ficção se torna história."*
+
+---
+
+*Sessão encerrada: 18 Ago 2026*
+*Liga IA+H · Kempten, Bavaria*
+*"AI processes. Human decides. WINDI proves."*
+
+---
