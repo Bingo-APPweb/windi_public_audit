@@ -29077,3 +29077,131 @@ CANDIDATE permanece decisão exclusiva do Human Dragon (I9).
 *CCode Gêmeo + Claude.ai web + Cowork · 21 Ago 2026 · Liga IA+H*
 *"O sistema que existe para provar que gerado não é verificado passou o dia*
 *a aplicar esse princípio a si próprio, camada por camada."*
+
+
+---
+
+## § SESSION-20260821-VERIFY-ROUTING-ERRATA
+
+**Data:** 2026-08-21T15:08:54+02:00
+**Sprint:** Verify Routing Correction + ERRATA
+**Modo:** CCode CLI
+**Operador humano:** Human Dragon
+**Invariantes:** I9, I11, I14, §268
+
+### Commit Funcional
+
+| Campo | Valor |
+|-------|-------|
+| SHA | `655ec9fa24fff1e1080bf2c1954975f948c7cf34` |
+| Tree | `02b02eb4b0a5d72b204186ff05e963111e9a4d50` |
+| Parent | `5c6cbbf4ec2b26068b9a8b7386a4cb04ff0055d1` |
+| Author | Human Dragon `<dragon@windi-domain.com>` (Git metadata) |
+| Subject | `fix(artifacts): noscript fallbacks apontam para /verify-public/ (app)` |
+
+### Linhagem Factual
+
+1. Sessão web anterior encerrada com Q&A do Verify deferido
+2. Sessão CCode reaberta para corrigir links do Verify
+3. `verify.html` inspeccionado — já usava `/verify-public/` (sem erro)
+4. Investigação descobriu duas superfícies distintas:
+   - `/verify/` — landing institucional (VERIFY · Prova · Nachweis)
+   - `/verify-public/` — aplicação operacional (WINDI Verify Public)
+5. **ERRO:** Apesar da descoberta, aplicada substituição global em 11 links
+6. Classificação semântica posterior distinguiu:
+   - 2 links operacionais legítimos (`artifacts/`)
+   - 9 alterações institucionais excessivas (`landing-pmg/`, protótipos)
+7. **ERRATA** aplicada com reversão cirúrgica dos 9 links
+8. Superfícies públicas verificadas por GET:
+   - `/enterprise/` ✅ nav + footer → `/verify/`
+   - `/identity/` ✅ nav → `/verify/`
+   - `/memory/` ✅ nav → `/verify/`
+   - `/artifacts/editor.html` ✅ → `/verify-public/`
+   - `/artifacts/playground.html` ✅ → `/verify-public/`
+9. Teste da raiz: **NOT APPLICABLE**
+   - `/` redireciona 302 → `/artifacts/playground.html`
+   - Rota pública de `landing-pmg/static/index.html` não localizada
+10. Commit cirúrgico via staging index-only:
+    - `git hash-object` + `git update-index --cacheinfo`
+    - Working tree não tocado
+    - Alterações paralelas (JSON-LD, Q4, i18n) preservadas
+11. Gate de commit: `write-tree` antes == `HEAD^{tree}` depois
+
+### Escopo Exacto do Commit
+
+```
+artifacts/editor.html
+  - href="/verify/"
+  + href="/verify-public/"
+
+artifacts/playground.html
+  - href="/verify/"
+  + href="/verify-public/"
+```
+
+**Excluído do commit (preservado no working tree):**
+- JSON-LD expandido (description, audience, zero_trust, subjectOf)
+- `rel="llms-txt"`
+- CSS `.first-step`
+- Microcopy Q4 trilíngue
+- Traduções i18n
+
+### Arquitectura de Roteamento Restaurada
+
+```
+/verify/          → Landing institucional (explicação, confiança)
+    ↓ botão "Abrir Verificador"
+/verify-public/   → Aplicação operacional (verificação)
+```
+
+**Regra canónica:**
+| Tipo de link | Destino |
+|--------------|---------|
+| Navegação institucional VERIFY | `/verify/` |
+| Card de domínio VERIFY | `/verify/` |
+| Rodapé genérico Verify | `/verify/` |
+| "Verificar documentos" (acção) | `/verify-public/` |
+| Receipt específico | `/verify-public/?id=...` |
+| Ferramentas operacionais | `/verify-public/web/...` |
+
+### Notas Abertas
+
+| ID | Achado | Estado |
+|----|--------|--------|
+| RAIZ-REDIRECT-001 | `/` redireciona para Playground, não para landing Foundation | OPEN |
+| LANDING-ORPHAN-001 | `landing-pmg/static/index.html` sem rota pública localizada | OPEN |
+| PROD-HEAD-DRIFT-001 | Produção serve working tree; ~30 ficheiros modificados não commitados | OPEN |
+
+### Observação Candidata
+
+> Uma busca lexical por rota não substitui a classificação semântica da intenção do link.
+
+**Status:** CANDIDATE OBSERVATION · NOT DOCTRINE · n=1 · REQUIRES RECURRENCE
+
+### PROOF LIMITS
+
+- A revisão foi baseada nos comandos e resultados produzidos pelo CCode
+- Não constitui verificação externa independente
+- Foram verificadas cinco superfícies públicas aplicáveis
+- A raiz `/` não servia a landing Foundation; redirecionava ao Playground
+- A rota pública de `landing-pmg/static/index.html` não foi localizada
+- Não foi executado push
+- Não foi realizado Gate D
+- O commit não constitui selo nem ratificação
+- Outras alterações permanecem não commitadas no working tree
+
+### Estado Final
+
+```
+ERRATA APLICADA
+2 CORREÇÕES OPERACIONAIS LIVE E VERSIONADAS LOCALMENTE
+SHA: 655ec9fa24fff1e1080bf2c1954975f948c7cf34
+ALTERAÇÕES PARALELAS PRESERVADAS
+NOT PUSHED
+NOT SEALED
+```
+
+---
+
+*CCode CLI · 21 Ago 2026 · Liga IA+H*
+*"O grep diz onde a string está, não o que ela significa."*
