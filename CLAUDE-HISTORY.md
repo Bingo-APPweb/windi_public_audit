@@ -29205,3 +29205,130 @@ NOT SEALED
 
 *CCode CLI · 21 Ago 2026 · Liga IA+H*
 *"O grep diz onde a string está, não o que ela significa."*
+
+
+---
+
+## § SESSION-20260821-VERIFY-ROUTING-ERRATA — ADDENDUM A1
+
+**Aplica-se a:** HISTORY commit `75c46518418b6d2d07416c2b31fd768033a7071e`
+**Referencia:** Functional commit `655ec9fa24fff1e1080bf2c1954975f948c7cf34`
+**Estado:** APPEND-ONLY · NOT PUSHED · NOT SEALED
+
+### 1. Arquitectura Cross-Repo Descoberta Após Redacção
+
+A entrada original foi commitada antes de se descobrir que:
+
+```
+/opt/windi/CLAUDE-HISTORY.md
+    → symlink (criado 2026-07-12) para
+/home/windi/CLAUDE-HISTORY.md
+```
+
+Os dois repositórios têm funções distintas:
+
+| Path | Remote | Função |
+|------|--------|--------|
+| `/opt/windi` | `playground.git` | Código |
+| `/home/windi` | `windi_public_audit.git` | Documentação/Auditoria |
+
+**Consequência:** O código pode ser rebased, squashed ou reescrito; a linhagem append-only
+vive fora dele, imune a essas operações. A história não depende do repositório que ela audita.
+
+**Nota para sessões futuras:** Commits de linhagem fazem-se em `/home/windi`, não em `/opt/windi`.
+O primeiro `git add` em `/opt/windi` devolveu vazio porque o symlink não mudou — só o
+conteúdo do ficheiro-alvo em `/home/windi` mudou.
+
+### 2. Correcção Terminológica: "Regra canónica" → "Regra operacional"
+
+A entrada original usou a rubrica:
+
+> **Regra canónica de roteamento**
+
+Essa formulação excede a evidência. A regra foi:
+- decidida para este ato
+- implementada
+- observada no runtime
+- documentada
+
+Mas **não foi promovida a norma canónica constitucional** por ato exclusivo do Human Dragon.
+
+**Correcção:** Onde se lê "Regra canónica", leia-se:
+
+> **Regra operacional de roteamento aplicada nesta ERRATA**
+> Estado: IMPLEMENTED · RUNTIME-OBSERVED · NOT CANONICAL · NOT SEALED
+
+### 3. Precisão: "Working tree não tocado"
+
+A entrada original afirma:
+
+> `git hash-object` + `git update-index --cacheinfo`
+> Working tree não tocado
+
+**Precisão:** A afirmação é verdadeira apenas sobre o **ato de staging index-only**.
+
+O working tree havia sido tocado anteriormente:
+- os dois HTML foram editados
+- as alterações ficaram visíveis no runtime
+- só depois foram cirurgicamente materializadas no índice e no commit
+
+**Redacção correcta:**
+> O staging index-only não alterou adicionalmente o working tree.
+> As edições já existentes — incluindo os dois links operacionais live — permaneceram intactas.
+
+### 4. Refinamento dos Achados Abertos
+
+#### LANDING-ORPHAN-001 → LANDING-ROUTE-UNLOCATED-001
+
+A descrição factual é:
+
+> `landing-pmg/static/index.html` sem rota pública localizada
+
+O identificador `ORPHAN` é uma conclusão mais forte que a evidência.
+Não localizar uma rota não prova orfandade; pode existir:
+- outro alias ou virtual host
+- uma rota não interrogada
+- uma publicação futura ou condicional
+
+**Correcção:**
+```
+LANDING-ROUTE-UNLOCATED-001
+Estado: OBSERVED · PUBLIC ROUTE NOT LOCATED · ORPHAN STATUS NOT ESTABLISHED
+```
+
+#### PROD-HEAD-DRIFT-001
+
+A entrada original afirma:
+
+> Produção serve working tree; ~30 ficheiros modificados não commitados
+
+O que foi efectivamente demonstrado é mais estreito:
+
+> As superfícies públicas Editor e Playground refletiram conteúdo que ainda não estava commitado.
+
+Isso é evidência de runtime reflectindo conteúdo não versionado nesses paths, mas não prova:
+- que toda a produção serve directamente o working tree
+- que os ~30 ficheiros modificados estão todos expostos
+- que não existe symlink, bind mount, cópia automática ou outro mecanismo intermédio
+
+**Redacção restrita:**
+```
+PROD-HEAD-DRIFT-001
+Runtime público reflectiu alterações ainda não commitadas em
+artifacts/editor.html e artifacts/playground.html.
+Mecanismo de publicação e extensão a outros ficheiros: NOT DETERMINED.
+```
+
+### Estado
+
+```
+ADDENDUM A1 APPEND-ONLY
+APPLIES TO HISTORY COMMIT 75c46518418b6d2d07416c2b31fd768033a7071e
+NOT PUSHED
+NOT SEALED
+```
+
+---
+
+*CCode CLI · 21 Ago 2026 · Liga IA+H*
+*"A entrada não se reescreve; corrige-se por adenda."*
