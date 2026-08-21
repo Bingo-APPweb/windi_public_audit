@@ -29332,3 +29332,63 @@ NOT SEALED
 
 *CCode CLI · 21 Ago 2026 · Liga IA+H*
 *"A entrada não se reescreve; corrige-se por adenda."*
+
+
+---
+
+## § SESSION-20260821-VERIFY-ROUTING-ERRATA — ADDENDUM A2
+
+**Aplica-se a:** ADDENDUM A1 commit `ee3b4432cb9b9b9413ae1311731e65a9268b1ec6`
+**Estado:** APPEND-ONLY · NOT PUSHED · NOT SEALED
+
+### 1. Data de Criação do Symlink
+
+Onde A1 diz:
+
+> symlink (criado 2026-07-12)
+
+**Correcção:** O timestamp `Jul 12 10:41` observado em `ls -la` demonstra o tempo de
+modificação dos metadados do symlink, não necessariamente a sua criação.
+
+**Leia-se:**
+> symlink observado com timestamp de filesystem em 12 Jul 2026;
+> data exacta de criação não estabelecida pela evidência apresentada.
+
+### 2. "Imune" e "Não Depende"
+
+Onde A1 diz:
+
+> "a linhagem append-only vive fora dele, imune a essas operações.
+> A história não depende do repositório que ela audita."
+
+**Correcção:** A separação entre repositórios é uma propriedade arquitectural, não imunidade.
+O repositório de auditoria ainda pode ser rebased, force-pushed, resetado ou reescrito.
+Além disso, o significado probatório do HISTORY continua parcialmente dependente do
+repositório de código: a entrada cita o SHA funcional `655ec9fa...`. Se esse commit for
+reescrito ou não preservado, a referência histórica continua textual mas deixa de ser
+facilmente resolvível no remote.
+
+**Leia-se:**
+> A separação cross-repo desacopla o armazenamento e o versionamento da história
+> das operações realizadas exclusivamente no repositório de código.
+> Não estabelece imutabilidade.
+> O valor evidencial de referências a commits de código continua dependente
+> da preservação e resolubilidade desses commits.
+
+### Estado
+
+```
+ADDENDUM A2 APPEND-ONLY
+APPLIES TO A1 COMMIT ee3b4432cb9b9b9413ae1311731e65a9268b1ec6
+CROSS-REPO SEPARATION OBSERVED
+STORAGE AND VERSIONING DECOUPLED
+IMMUTABILITY NOT ESTABLISHED
+REFERENTIAL DEPENDENCY REMAINS
+NOT PUSHED
+NOT SEALED
+```
+
+---
+
+*CCode CLI · 21 Ago 2026 · Liga IA+H*
+*"A evidência diz o que observou, não o que concluiu."*
