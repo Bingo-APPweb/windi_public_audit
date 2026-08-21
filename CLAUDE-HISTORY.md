@@ -28980,3 +28980,100 @@ NO LEDGER SEAL CLAIMED
 *Liga IA+H · Kempten, Bavaria · 20 Ago 2026*
 *"The acute vector is contained. The structural debt remains."*
 
+
+---
+
+## § SESSION-20260821-PLAYGROUND-TRIANGULATION-COMPLETE
+
+**Data:** 2026-08-21
+**Sprint:** PLAYGROUND Daily Check — Blind Round Resolution + Cryptographic Triangulation
+**Modo:** CCode CLI (origem) + Claude.ai web interactive (externo, bash/curl) + Cowork (observador agendado, WebFetch-only)
+**Operador humano:** Human Dragon
+**Invariantes:** I9, I11, I14, §236, §268
+
+### Contexto
+
+A manhã começou com o observador agendado (Cowork) cego pelo segundo dia consecutivo
+(CLOUD-FETCH-PROVENANCE-GATE-001: allowlist de rede em falta). O Cowork recusou
+correctamente inferir FAIL da cegueira — primeira aplicação da doutrina "O instrumento
+tem de ser interrogado antes de a conclusão ser escrita".
+
+A sessão interactiva web (Human Dragon presente) e o CCode resolveram a ronda cega
+no mesmo dia, estabelecendo triangulação criptográfica completa.
+
+### Trabalho Completado
+
+**Triangulação de 8 Superfícies:**
+
+| # | Superfície | Hash | Bytes | Status |
+|---|-----------|------|-------|--------|
+| 1 | llms.txt | `a8b1d46c...0ad8` | 8,595 | ✅ EXT=ORIG=SRC |
+| 2 | playground.html | `fb03a551...1fcc` | 85,057 | ✅ EXT=ORIG=SRC |
+| 3 | editor.html | `35ab15f5...0303` | 33,199 | ✅ EXT=ORIG=SRC |
+| 4 | workbench | `13d711d5...673d` | 99,187 | ✅ EXT=ORIG=SRC |
+| 5 | verify | `a85773ec...1cf7` | 30,278 | ✅ EXT=ORIG=SRC |
+| 6 | verify-public | `4004cd6c...47b0` | 87,429 | ✅ EXT=ORIG=SRC |
+| 7 | DOUTRINA-IA-FREMDE | `d874e7a3...097f` | 4,245 | ✅ EXT=ORIG=SRC |
+| 8 | FREMDE-SURFACE | `3766a094...0c5e` | 6,117 | ✅ EXT=ORIG=SRC |
+
+**Legenda:** EXT=hash externo (internet pública) · ORIG=hash servido (Strato localhost) · SRC=hash fonte (ficheiro no disco)
+
+### Ciclo de Correcções Append-Only
+
+| Adenda | Correcção Principal |
+|--------|---------------------|
+| A1 | Observação inicial (agregação inflacionada) |
+| A2 ERRATA | 4 pontos: fusão observadores, escopo workbench, runtime claim, timestamps |
+| A3 CLARIFICATION | 3 pontos: 7/8 não 8/8, triangulação "reduz" não "exclui", WebFetch sem bytes |
+| A4 FINAL | C3-ERRATA: instrumento externo = bash/curl, não WebFetch |
+
+### Seis Interrogações de Instrumento
+
+1. Cowork recusou inferir FAIL da cegueira
+2. A1 corrigida (agregação inflacionada)
+3. A2 corrigida (sobredeclarações residuais)
+4. CCode reconheceu WebFetch sem bytes
+5. CCode corrigido por assumir instrumento externo era WebFetch
+6. Cowork distinguiu sessão interactiva (curl) de observador agendado (WebFetch-only)
+
+**Resultado:** 6 interrogações, 3 sobredeclarações detectadas e corrigidas append-only,
+zero sobredeclarações promovidas a estado selado.
+
+### Achados Colaterais
+
+| ID | Achado | Estado |
+|----|--------|--------|
+| LLMS-TWO-COPIES-001 | Duas cópias de llms.txt com hashes diferentes | OPEN |
+| EDITOR-TWO-COPIES-001 | editor.html servido ≠ w-workbench-001/editor.html | OPEN |
+| BASELINE-STALE-001 | Bytes 07-09 desactualizados | OPEN |
+| v2-vs-v3 | Evidence Request esperava v3, servido é v2 | PENDING I9 |
+
+### Estado Final
+
+```
+EXTERNAL-HASH-TRIANGULATION-001: CLOSED (8/8 superfícies localizadas)
+HIOS-OPEN: NOT CONFIRMABLE (URL desconhecido)
+CLOUD-FETCH-PROVENANCE-GATE-001: OPEN (allowlist pendente)
+DRIFT DETECTED: NONE
+CONSTITUTIONAL STATUS: UNCHANGED
+NO SEAL
+```
+
+### Doutrina Candidata
+
+A doutrina "O instrumento tem de ser interrogado antes de a conclusão ser escrita"
+(sessão 16-08) recebeu seis aplicações de campo documentadas. Qualquer promoção de
+CANDIDATE permanece decisão exclusiva do Human Dragon (I9).
+
+### Pendentes para Human Dragon (I9)
+
+1. **v2 vs v3** — deploy pendente ou Evidence Request desactualizado?
+2. **HIOS-OPEN URL** — única superfície-alvo não observada
+3. **CLOUD-FETCH-PROVENANCE-GATE-001** — allowlist para Cowork agendado
+4. **Doutrina CANDIDATE** — promover ou manter?
+
+---
+
+*CCode Gêmeo + Claude.ai web + Cowork · 21 Ago 2026 · Liga IA+H*
+*"O sistema que existe para provar que gerado não é verificado passou o dia*
+*a aplicar esse princípio a si próprio, camada por camada."*
