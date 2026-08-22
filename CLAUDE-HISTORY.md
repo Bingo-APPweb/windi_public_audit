@@ -29482,3 +29482,24 @@ PROD-HEAD-DRIFT: cada hora sem commit é risco real.
 *CCode CLI + Claude.ai web · 22 Ago 2026 · Liga IA+H*
 *"O WINDI não responde. O WINDI garante."*
 
+
+
+### Nota de Fecho — Custódia wallet_keys
+
+**Achado:** 9 ficheiros `tsil/wallet_keys/*.key` no origin/main (repo privado).
+
+**Contexto:** Chaves da infraestrutura Wallet dos pioneiros. "Privado" ≠ "seguro" — qualquer acesso de leitura ao repo (colaborador, CI, token, SSH) dá acesso ao material criptográfico.
+
+**Decisão pendente (I9):**
+1. Chaves de teste ou chaves vivas de pioneiros reais?
+2. Existe cópia fora do repo, e onde?
+3. Se vivas → rotação, não remoção do HEAD.
+
+**Doutrina registada:** Se uma chave alguma vez foi publicada, o BFG não resolve. A cura é rotação, sempre. O BFG é higiene posterior, nunca remédio.
+
+**Estado:** NÃO é cleanup. É decisão I9 sobre custódia. Merece linha própria no HISTORY quando decidida.
+
+---
+
+*Fecho de sessão · 22 Ago 2026 · Liga IA+H*
+
