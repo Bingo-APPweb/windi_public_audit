@@ -29392,3 +29392,93 @@ NOT SEALED
 
 *CCode CLI · 21 Ago 2026 · Liga IA+H*
 *"A evidência diz o que observou, não o que concluiu."*
+
+
+---
+
+## § SESSION-20260822-FREMDE-FIRST-GESTURE-001
+
+**Data:** 2026-08-22
+**Sprint:** FREMDE-FIRST-GESTURE-001 (CAP1-3 + 3bis)
+**Modo:** CCode CLI
+**Operador humano:** Human Dragon
+**Invariantes:** I9, I11, I14
+**Commit:** `65d853b12`
+
+### Trabalho Completado
+
+**CAP1:** SHA-256 client-side hash (reutilizado de verify-public)
+**CAP2:** Botão Provar + cartão de prova (hash, timestamp, linha honesta, passo I9)
+**CAP3:** Esconder cemitério "em breve", linha única de roadmap
+**CAP3-bis:** Neutralizar fluxo antigo (hideWelcome, showPanels, handlePromptFirstSubmit)
+
+### Definition of Done
+
+- Colar texto → Provar → hash + cartão em ~3s ✓
+- Zero "em breve" no caminho ✓
+- Próximo passo I9 visível ✓
+
+### Achado Aberto — FREMDE-UX-001
+
+**Descrição:** O fremder escreve um pedido ("organiza isso pra mim") e recebe uma prova (hash).
+A moldura verbal da página promete resposta ("Escreve a tua ideia", "Estruturar intenção").
+O motor cumpre o que o WINDI é; a moldura promete o que o WINDI (ainda) não é.
+
+**Estado:** ABERTO
+**Solução Layer 1:** Alinhar moldura verbal com gesto real (CAP3-ter, só palavras)
+**Solução Layer 2:** Motor de resposta (VERA/MARIA) — decisão I9 pós-gate, NÃO iniciada
+
+### Decisão I9
+
+Commit agora (não segurar vitória técnica à espera de arquitectura de motor).
+O achado vira o capítulo seguinte, não bloqueia o fecho do actual.
+PROD-HEAD-DRIFT: cada hora sem commit é risco real.
+
+---
+
+*CCode CLI · 22 Ago 2026 · Liga IA+H*
+*"O teste passou. O que falhou foi a promessa da página."*
+
+
+
+### FREMDE-UX-001 · EMENDA 22 Ago 2026
+
+**Decisão I9:** Camada 2 NÃO é motor próprio (VERA/MARIA descartado).
+
+**Arquitectura aprovada:** Connector BYO-AI — o motor é do fremder, com as chaves dele.
+
+| Ponto | Estado |
+|-------|--------|
+| Motor é do fremder | ASSENTE |
+| Connector nunca é o primeiro gesto | ASSENTE |
+| Moldura verbal segue a arquitectura | ASSENTE |
+| Postura de prova (passante vs testemunha) | **ABERTO** · I9 pendente |
+
+**Passante:** prova pedido→resposta, viola política de dados
+**Testemunha:** prova integridade do trazido, política intacta
+
+**Bloqueio:** Nenhum código de connector antes da decisão de postura.
+
+**Doutrina:** skill `windi-motor-fremde` (candidata, não selada)
+
+**Fundações existentes:** W-TUBE-001, windi-certification, W-DID-001, windi-payment-sovereignty
+
+**Lições do dia:**
+1. grep de strings ≠ verificação de execução (node --check é gate obrigatório)
+2. gate canónico é sobre o ficheiro SERVIDO, não sobre o disco local
+
+---
+
+### Commits da Sessão
+
+| Commit | Hash | Conteúdo |
+|--------|------|----------|
+| CAP1-3 + 3bis | `65d853b12` | Motor de prova técnico |
+| CAP3-ter | `46fbe2a20` | Moldura verbal alinhada |
+| CAP3-quater | `31ff6f8e7` | Hotfix escape JS fatal |
+
+---
+
+*CCode CLI + Claude.ai web · 22 Ago 2026 · Liga IA+H*
+*"O WINDI não responde. O WINDI garante."*
+
