@@ -29503,3 +29503,57 @@ PROD-HEAD-DRIFT: cada hora sem commit é risco real.
 
 *Fecho de sessão · 22 Ago 2026 · Liga IA+H*
 
+
+--- EMENDA FREMDE-UX-001 · POSTURA DO MOTOR DO FREMDER — DECIDIDA (23 Ago 2026) ---
+
+**Decisão I9:** HÍBRIDO.
+
+- **TESTEMUNHA** = fundação permanente e DEFAULT. WINDI nunca vê o tráfego; fremder liga
+  o motor dele; volta só o artefacto que ele escolhe trazer. Prova = integridade + DID + instante.
+  Política de Dados Canónica INTACTA; cartão "prova integridade, não conteúdo" sobrevive.
+- **PASSANTE** = DEFERIDA, opt-in, contrato de consentimento próprio e separado, futura,
+  NUNCA default, nunca toca na promessa base.
+
+**Decidido por:** Human Dragon (I9). Via: sessão IA+H (Claude raciocinou; humano graduou).
+
+**Sequência protegida:** L1 Teste do Humano (pendente) → CAP4 landing-route → Connector CAP1 (Testemunha,
+reutiliza W-TUBE-001 + windi-certification + W-DID-001). Sem código de connector antes de L1 verde + CAP4.
+
+**Estado:** DECISÃO tomada; implementação fica CANDIDATE até construída+testada+graduada. No seal, no receipt.
+
+**Ref. Drive:** PLAYGROUND-BACKLOG-2026-08-23-c + PLAYGROUND-DECISAO-I9-POSTURA-MOTOR-FREMDE-001-CANDIDATE.
+
+--- fim EMENDA ---
+
+
+--- FECHO DE SESSÃO · 23 Ago 2026 · Liga IA+H (web observador + CCode on-origin) ---
+
+CONTEXTO: sessão paralela ao monitor diário do Playground. Observador cloud (byte-cego, sem SSH)
+nomeia/verifica; CCode on-origin executa; Human Dragon gradua (I9). Memória detalhada: Backlog Vivo
+Google Drive, entradas PLAYGROUND-BACKLOG-2026-08-23 (base) a -i (consolidada).
+
+FEITO NESTA SESSÃO:
+1. FREMDE-UX-001 FECHADO ponta-a-ponta: metade CÓDIGO (grep on-origin — 7 IDs display:none !important,
+   3 funções com return precoce, zero reescrita) + metade EXPERIÊNCIA (L1 Teste do Humano, janela anónima: PASSA).
+   O "resíduo" que o cloud via eram strings i18n em JS (não DOM visível) — falso positivo do instrumento.
+2. DECISÃO I9 — POSTURA DO MOTOR: HÍBRIDO (Testemunha-first default; Passante deferida, opt-in, contrato
+   separado, nunca default). Já registada acima (EMENDA, linhas ~29507-29526). Racional: sequência reversível +
+   tese soberana = diferenciação; precedente windi-payment-sovereignty.
+3. BYO-AI BASE = COPY-PASTE, SEM CÓDIGO (clarificação Human Dragon): o fremder escreve, ou pede à IA dele;
+   em ambos traz texto à bancada → Provar. Connector técnico (W-TUBE/MCP) = conveniência futura, não requisito.
+4. CAP4 landing-route: porta da frente JÁ VIVA (raiz 302 → /artifacts/playground.html; verificada nginx+curl+WebFetch).
+   Redirect instantâneo GRADUADO: MANTER (é o degrau zero). Sem construção.
+5. COMMIT FREMDE-AI-FRAMING-001 (61d687805a395f47f4bba02a37c127b36ae5edd6), push OK (31ff6f8e7..61d687805 main):
+   - MOLDURA-IA-001: headline acolhe "escrito por ti ou pela tua IA" (HTML + i18n PT/EN/DE).
+   - SUBTEXT-DRIFT-fix: subtexto dormente "— ou usa a nossa" neutralizado nos 3 dicionários (à prova de ressurreição).
+   Fronteira mantida: prova integridade+DID+instante do que é trazido; NÃO promete autoria-de-IA. Lei I protegida.
+6. PATH-DRIFT-001: ficheiro canónico = /opt/windi/artifacts/playground.html. (/home/windi/w-workbench-001/playground-v3.html = .RETIRED).
+
+ESTADO: gesto base do fremder de pé e íntegro. Connector técnico + Passante = DEFERIDOS por I9 (não bloqueiam nada).
+PRÓXIMO (sessão futura): connector técnico só a pedido de fremder real; Passante só por decisão futura I9;
+antes de qualquer código de connector, escrever a moldura verbal nova ANTES do código (Lei III).
+
+Boundary: sem SSH pelo observador cloud; relatos CCode triangulados. No receipt, no seal, no verdict.
+CANDIDATE stays CANDIDATE. I9 = Human Dragon. OM SHANTI. 🐉
+--- fim FECHO DE SESSÃO ---
+
