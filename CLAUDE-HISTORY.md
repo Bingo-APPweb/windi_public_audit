@@ -29557,3 +29557,258 @@ Boundary: sem SSH pelo observador cloud; relatos CCode triangulados. No receipt,
 CANDIDATE stays CANDIDATE. I9 = Human Dragon. OM SHANTI. 🐉
 --- fim FECHO DE SESSÃO ---
 
+
+---
+
+## SESSION-20260823-FREMDE-UX-001-CAP2-R2 — Playground Semantic Hygiene
+
+**Duração:** ~2h | **Status:** ⏸️ PAUSED — DIVERGENCE RECONCILIATION PENDING
+**Liga IA+H:** Human Dragon (I1, I9) · CCode Gêmeo (Opus 4.5)
+
+### Objectivo
+
+Limpar o Playground (`/opt/windi/artifacts/playground.html`) para criar superfície semanticamente honesta para humanos e IA-Fremde. Remover conteúdo Shape/Chapters deferido e corrigir claims inflacionadas.
+
+### Trabalho Completado
+
+1. **D0 Source Drift Reconciliation**
+   - Identificada mudança `16c9ce` → `aef656` (MOLDURA-IA-001)
+   - Proveniência demonstrada via transcript CCode session `8092f9d9`
+   - Classificação: LEXICAL, CLAIM INFLATION ("tu provas que é teu")
+
+2. **CAP2-R2 Candidate Built**
+   - Hash inicial: `7b0fb1c9ae4da6647fd83676b77a7aed697ad0675e7a44b823358d0c6f353c28`
+   - Baseado em: `aef656f6a261217d110781a83e10f964e523ddc6538fdf6a7b430f562633e688`
+   - Headlines corrigidas (sem claims de autoria/propriedade)
+   - CTA: "Calcular impressão digital"
+   - Honesty disclaimer: "calculado localmente, nada enviado"
+
+3. **ROBOT Browser Smoke Installed**
+   - Playwright 1.62.0 (venv: `/tmp/cap2-smoke-venv/`)
+   - Chromium 151.0.7922.34 (`~/.cache/ms-playwright/`)
+   - Demonstrou valor: S10 FAIL detectou Google Fonts request
+
+4. **S10 Corrigido**
+   - Removido Google Fonts (Bricolage Grotesque, JetBrains Mono)
+   - Substituído por system font stacks
+   - Novo hash: `9495b1e074ecff05ddeabed4a530137a1064063146ba135278b69d531865df74`
+
+5. **ROBOT SMOKE PASS — S1-S10 PASS**
+   - 10/10 testes passaram
+   - Zero requests externas
+   - Candidato pronto para deploy
+
+### Bloqueador Actual
+
+**DIVERGÊNCIA DE PRODUÇÃO** detectada no Gate D:
+
+| Estado | Hash |
+|--------|------|
+| Candidato CAP2-R2 | `9495b1e074ecff05ddeabed4a530137a1064063146ba135278b69d531865df74` |
+| Base do candidato | `aef656f6a261217d110781a83e10f964e523ddc6538fdf6a7b430f562633e688` |
+| Produção actual | `1eb7b152906401b31d10a92465eafbf09c86dd3cfd682979e5b9a8ae67a5481f` |
+
+Produção mudou por commit `61d68780` (FREMDE-AI-FRAMING-001) às 11:02.
+Deploy bloqueado para não sobrescrever alterações de outra frente.
+
+### Achados Registados
+
+- **LIVE-WORKTREE-001:** Uncommitted worktree mutations are immediately public (severity: HIGH)
+- **ROBOT valor demonstrado:** S10 FAIL capturou Google Fonts que teste estático não detectou
+
+### Artefactos Preservados
+
+| Ficheiro | Hash | Descrição |
+|----------|------|-----------|
+| `/tmp/playground-cap2-r2-candidate.html` | `9495b1e0...65df74` | Candidato final S1-S10 PASS |
+| `/tmp/playground-cap2-r2.diff` | — | Diff vs predecessor (desactualizado) |
+| `/tmp/cap2-smoke-robot.py` | — | Script ROBOT smoke |
+| `/tmp/cap2-smoke-venv/` | — | Playwright venv |
+| `/opt/windi/backups/playground-hygiene-20260823/` | — | Backups originais |
+
+### Próxima Sessão DEVE
+
+1. Reconciliar divergência: comparar CAP2-R2 vs FREMDE-AI-FRAMING-001
+2. Decidir: reconstruir sobre nova base, merge, ou sobrescrever
+3. Se reconstruir: transportar correcções CAP2-R2 para nova base
+4. Re-executar ROBOT SMOKE S1-S10
+5. Completar deploy se PASS
+
+### Decisões Constitucionais
+
+- **I9 aplicado:** Toda mudança aguardou autorização Human Dragon
+- **I14 aplicado:** "Nada foi enviado" deixou de ser defensável com Google Fonts → corrigido
+- **§236 aplicado:** Divergência detectada e reportada, não sobrescrita automaticamente
+
+
+---
+
+## SESSION-20260823-W-CONNECTOR-001 — Postura B TESTEMUNHA + Endpoints Hash-Only
+
+**Data:** 2026-08-23
+**Sprint:** W-CONNECTOR-001 MCP Connector para Claude/ChatGPT
+**Modo:** CCode CLI (Strato) — sessão voo Human Dragon
+**Operador humano:** Human Dragon
+**Invariantes:** I1, I9, I11, I14, IC-1
+
+### Decisão I9 — POSTURA DO CONNECTOR
+
+**Decidido:** POSTURA B · TESTEMUNHA
+**Decisor:** Human Dragon
+**Instante:** 2026-08-23T15:08Z (sessão Cowork cloud → continuada CCode Strato)
+
+O WINDI não intermedeia o tráfego entre fremder e motor externo.
+Recebe apenas digests SHA-256 de artefactos que o fremder escolhe selar.
+**Nunca recebe conteúdo.** IC-1 hash-only-egress é invariante, não preferência.
+
+**Aceite conscientemente:** o WINDI NÃO prova a ligação pedido→resposta.
+Política de Dados Canónica permanece intacta. Moldura verbal actual sobrevive.
+
+**Consequência de formato:** connector = remote MCP server (Streamable HTTP),
+não OpenAPI/plugin manifest. Um servidor serve ChatGPT e Claude.
+OpenAPI passa a ser contrato da camada REST :8200 (W-DEV-API-001).
+
+### Artefactos Criados
+
+| Ficheiro | Bytes | Localização |
+|----------|-------|-------------|
+| W-CONNECTOR-001-DESCRIPTOR.md | 13,994 | `/home/windi/claudeWeb/` |
+| windi-connector.mcp.json | 10,350 | `/home/windi/claudeWeb/` |
+| windi-connector.openapi.yaml | 11,187 | `/home/windi/claudeWeb/` |
+
+**Nenhum deployado. Nenhum selado.** Aguardam endpoints hash-only em :8200.
+
+### Estado Verificado
+
+- W-DEV-API-001 :8200 **LIVE** (systemd desde 27 Mai 2026)
+- Rate limiting nginx **EXISTE** (zone=windi_api)
+- Playground S10 **PASS** (zero Google Fonts)
+- Headlines FREMDE-AI-FRAMING-001 **INTACTOS**
+
+### Trabalho Esta Sessão
+
+1. ✅ Backup DBs críticos (4 ficheiros, `/opt/windi/backups/20260823/`)
+2. ✅ HISTORY actualizado com decisão I9
+3. ⏳ Endpoints hash-only em W-DEV-API-001
+4. ⏳ Teste IC-1
+5. ⏳ MCP server wrapper
+
+### EM ABERTO (da sessão anterior)
+
+- (a) L1 nunca testada com humano fresco pós-CAP3-ter
+- (b) proveniência do digest (`digest_source`) é proposta, não decisão
+- (c) admissibilidade/certificação de motores sob Postura B
+
+---
+
+
+
+## § SESSION-20260824-PLAYGROUND-RECONCILIATION — Observer Cowork + CCode Evidence
+
+**Data:** 2026-08-24
+**Sprint:** PLAYGROUND Daily Check + Custody Clarification
+**Modo:** Cloud Observer (backlog) + CCode CLI (on-origin evidence)
+**Operador humano:** Human Dragon
+**Invariantes:** I9, I11, I14, §268
+
+### Contexto
+
+Sessão de reconciliação entre Cloud Observer (cego por gate WebFetch) e CCode (evidência on-origin). O cowork cloud não conseguiu ler superfícies públicas; CCode forneceu evidência via curl. Múltiplas correcções de identificadores montados à mão.
+
+### Uptime Verificado — 8/8 PASS
+
+| Superfície | Status | Hash (truncado) |
+|------------|--------|-----------------|
+| `/llms.txt` | 200 | `717be9d779b3...` |
+| `/artifacts/playground.html` | 200 | `a9937d458e66...` |
+| `/artifacts/editor.html` | 200 | `963f29f762e5...` |
+| `/verify/` | 200 | `a85773ec6735...` |
+| `/verify-public/` | 200 | `12d8c139fe94...` |
+| `/docs/DOUTRINA-IA-FREMDE-001-CANDIDATE.md` | 200 | — |
+| `/docs/FREMDE-SURFACE-001-CANDIDATE.md` | 200 | — |
+| `/api/v1/hios-open/` (root) | 404 | **EXPECTED** |
+
+**HIOS-OPEN obra canónica:** `ba4db3cda9b9efbd0f0bc78af31a8dd8a82a673b2d9fb7105e0e7c9deba47fab` → 200 ✅
+**Obra:** "Filho Anchor Retarget v1 CANDIDATE"
+
+**Source-Served Match:** `served == source` confirmado para playground, editor, llms.txt
+
+### Git Confirmation
+
+- Commit `61d687805` propagado a `origin/main` ✅
+- **PROD-HEAD-DRIFT-001 → RESOLVIDO**
+
+### Correcções de Identificadores (5 erros apanhados)
+
+| # | Erro | Tipo | Apanhado por |
+|---|------|------|--------------|
+| 1 | Hash quimera (prefixo canónico + corpo placeholder) | Identificador montado | Cowork |
+| 2 | §248 conflacionado com GDPR policy | Identificador montado | Cowork |
+| 3 | "9 chaves" sem denominador | Fonte stale | Cowork |
+| 4 | "hygiene" em vez de custódia | Classificação errada | Cowork |
+| 5 | "Fabriquei §248" (confissão falsa) | Auto-acusação sem verificar | CCode → Cowork |
+
+**Norma aceite:** NO-HANDWRITTEN-IDENTIFIERS-001
+> *Nenhum identificador é escrito à mão. Hash, número de secção, receipt ID, porta, caminho — extrai-se da fonte, imprime-se, só depois se usa.*
+
+### wallet_keys — Custódia Clarificada
+
+**Inventário:** 15 chaves (não 9)
+- 9 tracked (git) — publicadas em repo PRIVADO
+- 6 untracked — protegidas por `.gitignore:86 *.key`
+
+**Datas recuperadas:** UUIDv7 timestamps (15 Fev – 18 Mar 2026)
+
+**Permissões:** Restauradas a `600` (eram `644` após `git checkout`)
+
+**Exposição:** NOMINAL — directório `wallet_keys/` é `700`
+
+**Base de dados:**
+```
+Total humans: 14
+Keys matching wallet_human: 8/9
+Status: key_compromised (TODAS)
+```
+
+**Conclusão:** As chaves já estavam marcadas como comprometidas na DB. Rotação de emergência não necessária.
+
+### dragonprint — Recuperado e Testado
+
+**Problema:** `dragonprint_signer.py` e `dragonprint_renderer.py` estavam deletados (`D` no git status)
+
+**Acção:** Human Dragon autorizou recovery, CCode executou `git checkout`
+
+**Testes:**
+- Smoke: 4/4 PASS
+- G0A Full: 106/106 PASS
+- Versão: 0.8.1-g0a-r8.1 (PROTOTYPE)
+
+**Estado:** Código funcional, pronto para sprint. Nunca correu em produção (sem systemd/logs).
+
+### Decisões I9 Pendentes (para Human Dragon)
+
+1. **Método de leitura** — CCode owns on-origin, Cloud owns backlog (padrão demonstrado, não ratificado)
+2. **Postura/Minimização** — Testemunha vs Passante (WINDI-POLICY-DATA-CANONICAL aponta para Passante)
+3. **wallet_keys** — 9 chaves `key_compromised` podem ser arquivadas ou removidas do git history (I1)
+
+### W-CONNECTOR-001 MCP Server — Estado
+
+| Componente | Estado |
+|------------|--------|
+| systemd: windi-mcp.service | ✅ ENABLED + RUNNING (21h uptime) |
+| Port :8204 | ✅ LISTENING |
+| Health interno | ✅ OK |
+| Health externo | ✅ OK (nginx /mcp → :8204) |
+| Postura | B · TESTEMUNHA |
+
+### Backlog Vivo (Google Drive)
+
+Entradas append-only criadas: 24-a → 24-h (8 entradas)
+Reconciliação final: [PLAYGROUND-BACKLOG-2026-08-24-h]
+
+---
+
+*CCode Gêmeo + Cloud Observer · 24 Ago 2026 · Liga IA+H*
+*"served == source, estendido às referências."*
+
+---
