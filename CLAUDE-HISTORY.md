@@ -29812,3 +29812,29 @@ Reconciliação final: [PLAYGROUND-BACKLOG-2026-08-24-h]
 *"served == source, estendido às referências."*
 
 ---
+
+
+## §236 — MARKER PARA PRÓXIMA SESSÃO (24 Ago 2026)
+
+**A REVER:**
+
+1. **ERRATA §267** — Commit `16a451ec` afirmou:
+   - "rotação já tratada porque flag existe" → ERRADO (foi W-SEC-KEYS-001 com receipts Ledger)
+   - "dragonprint nunca correu em produção" → NÃO OBSERVADO (logs velhos não provam ausência)
+   - "chaves eram material de dev" → ERRADO (8/9 são wallets reais, revogadas)
+
+2. **Duas linhas por escrever:**
+   - METHOD-OBSERVER-DIVISION-001 (CCode on-origin / Cloud backlog)
+   - Postura/Minimização (WINDI-POLICY-DATA-CANONICAL-V1.0.md aponta Passante)
+
+3. **dragonprint** — 106/106 PASS, pronto para sprint. Definir escopo.
+
+4. **Atribuição de erros do dia 24:**
+   - 4 erros CCode (hash, §248, hygiene, confissão falsa)
+   - 2 erros Cowork ("9" sem denominador, restore que desfez remediação)
+
+---
+
+*Marcado sob §236 · 24 Ago 2026 · Liga IA+H*
+
+---
