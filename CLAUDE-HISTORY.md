@@ -29838,3 +29838,91 @@ Reconciliação final: [PLAYGROUND-BACKLOG-2026-08-24-h]
 *Marcado sob §236 · 24 Ago 2026 · Liga IA+H*
 
 ---
+## SESSION 2026-08-27 — C0-CONTAINMENT-SEAL-DIGEST
+
+**Sprint:** W-CONNECTOR-001 Governance Containment
+**Mode:** CCode CLI
+**Operator:** Human Dragon
+**Model:** claude-opus-4-5-20251101
+
+### Discovery
+
+During Gate 0 read-only inspection of W-CONNECTOR-001, a P0 governance vulnerability was discovered:
+
+1. **Public mutation without authentication** — `/dev-api/v1/digest/seal` endpoint publicly accessible
+2. **`human_approved=True` hardcoded** — `digest.py:155` asserts human approval without verification
+3. **Three exposure paths identified:**
+   - L1: MCP tool `windi_seal_digest` (port 8204)
+   - L2: nginx route `/dev-api/v1/digest/seal`
+   - L3: Direct port access to 8200 (bound to 0.0.0.0)
+
+### Accidental Receipt
+
+During verification (POST instead of GET), receipt accidentally created:
+
+```
+Receipt ID: WINDI-DIGEST-20260827114026-E07806C3
+Digest: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Status: TEST-INDUCED · HUMAN_APPROVED NOT DEMONSTRATED
+```
+
+Per I11 (IRREMEDIÁVEL): preserved with adenda annotation, not deleted.
+See: `/opt/windi/docs/ADENDA-268-RECEIPT-E07806C3.md`
+
+### Three-Layer Containment Applied
+
+| Layer | Target | Action | Status |
+|-------|--------|--------|--------|
+| L1 MCP | `windi_seal_digest` | Removed from tools/list, handler returns TOOL_CONTAINED | ✓ DEPLOYED |
+| L2 nginx | `/dev-api/v1/digest/seal` | Exact-match returns 403 ENDPOINT_CONTAINED | ✓ DEPLOYED |
+| L3 systemd | Port 8200 | Rebound from 0.0.0.0 to 127.0.0.1 | ✓ DEPLOYED |
+
+### Evidence Snapshot (Post-Deploy)
+
+```
+T5 wdev_api.db:     9 receipts (unchanged)
+T6 Forensic Ledger: 50 receipts
+Port 8200:          127.0.0.1 (not 0.0.0.0)
+Port 8204:          0.0.0.0 (MCP server, read-only tools only)
+Legitimate path:    windi_verify_digest returns NOT_VERIFIABLE ✓
+```
+
+**Deployed file hashes:**
+```
+mcp_server.py:           e12b129fa504e94cfe979ee157c95edb7d023556f319d7b0800b579f2a27f495
+windi-dev-api.service:   d83636bef4ea268c888b463cf95b0a8d7ca32de277f3dfe2a004ff60a5e7e21f
+```
+
+### State
+
+```
+DEPLOYED · OPERATIONALLY VERIFIED · DOCUMENTATION PENDING COMMIT · NOT SEALED
+```
+
+### Open Threads (Not For This Session)
+
+1. **WCONNECTOR-HUMANAPPROVED-001** — Correct `human_approved=True` to require verifiable gesture
+2. **windi-tube-expire.timer** — Expires 2026-09-06, will 403 all /mcp including read-only tools
+3. **Bloco 0 L1 toggle test** — PT→EN→DE browser test still pending
+
+### Constitutional Notes
+
+- I9: Mutation paths closed pending authentication implementation
+- I11: Accidental receipt preserved (append-only), annotated via §268
+- DoD not recalculated: containment fixes risk, does not promote requirement
+
+### Reference
+
+```
+Ref: C0-CONTAINMENT-SEAL-DIGEST-20260827
+Backups: /opt/windi/w-connector-001/mcp_server.py.pre-c0-20260827134828
+         /tmp/windi-dev-api.service.pre-c0-20260827134828
+         /tmp/windi-domain.com.pre-c0-20260827134828
+```
+
+---
+
+*CCode Gêmeo · 27 Ago 2026 · Liga IA+H*
+*"PUBLIC MUTATION PATHS CONTAINED · READ-ONLY MCP PRESERVED"*
+
+---
