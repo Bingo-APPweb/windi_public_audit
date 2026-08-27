@@ -7,6 +7,118 @@
 # ---
 
 
+## § SESSION-20260826-CAP-L1-KEYWORDS-PLAYGROUND
+
+**Data:** 2026-08-26
+**Sprint:** CAP-L1-KEYWORDS — Mapa de Valor por Audiência + Camada de Descoberta
+**Modo:** CCode CLI (execução) + Claude.ai web (observador, capítulo, verificação externa)
+**Operador humano:** Human Dragon
+**Invariantes:** I9, I11, I12, I14
+
+### Contexto
+
+Sessão focada em resolver o FREMDE-UX-001: fremder externo não percebia em segundos o quê/porquê/primeiro-gesto do playground. Problema de moldura verbal (L1), não de arquitectura.
+
+### Trabalho Completado
+
+**1. SERVED-VS-WORKTREE-DEPLOY-PATH — FECHADO COM EVIDÊNCIA**
+
+Teste empírico de deploy-path com 3 medições (baseline → edição com marker → reversão):
+
+| Teste | Timestamp | Hash Disco | Hash Servido | Match |
+|-------|-----------|------------|--------------|-------|
+| Baseline | 22:35:40 | `0a99d958...` | `0a99d958...` | ✅ |
+| Post-edit | 22:36:28 | `8c5c1446...` | `8c5c1446...` | ✅ |
+| Post-revert | 22:36:45 | `0a99d958...` | `0a99d958...` | ✅ |
+
+**Conclusão:** No servidor, editar = live (nginx serve alias directo, sem proxy_cache).
+Cache de 5 min (`max-age=300`) existe apenas no browser do cliente.
+Item fechado com prova — não suposição.
+
+**2. A2 — COMMITADO**
+
+| Commit | Hash | Conteúdo |
+|--------|------|----------|
+| `2410e7099` | — | Hero "âncora" já live desde 25 Ago; packet F8 continua stub |
+
+Mensagem honesta: não implica F8 feito, apenas regista estado já servido.
+
+**3. L1 — APLICADO, NÃO COMMITADO (aguarda teste toggle)**
+
+Strings aplicadas conforme capítulo CAP-L1-KEYWORDS:
+
+| Elemento | Estado |
+|----------|--------|
+| Meta description PT/EN/DE | ✅ Aplicado |
+| OG/Twitter description | ✅ Aplicado |
+| JSON-LD (description, keywords, audience) | ✅ Aplicado |
+| Hero H1 (o quê/porquê/linha honesta) | ✅ Aplicado |
+| Duas faixas (profissional/pessoal) PT/EN/DE | ✅ Aplicado |
+| llms.txt bloco L1 keywords | ✅ Aplicado |
+| Fix i18n data-lang toggle | ✅ Aplicado |
+
+**Hash actual:** `d9428eca80eb50ff41c88f0c4cd14114e37312475d4e247fd4690b2821a2188a`
+
+**Bug apanhado:** O mecanismo `data-lang` não tinha código de toggle — hero e faixas iam prender em PT. Corrigido com loop em `updateUILanguage()`:
+```javascript
+document.querySelectorAll('[data-lang]').forEach(el => {
+  el.style.display = el.dataset.lang === currentLang ? '' : 'none';
+});
+```
+
+**Pendente:** Teste do Humano em tab fresca (PT → EN → DE) para validar toggle antes de commit.
+
+### Frente Aberta — Cartório/Notário ISP
+
+**Visão:** WINDI como extensão digital para cartórios — white-label institucional com núcleo genérico e bandeira por jurisdição.
+
+**Três camadas (cerca de honestidade):**
+1. Existência e estado do conteúdo (WINDI faz)
+2. Integridade técnica do registo (WINDI faz)
+3. Fé pública notarial (só o cartório confere — WINDI nunca substitui)
+
+**Cunha:** "O ficheiro nunca sai do lado do utilizador" — soberania de dados sob LGPD/RGPD.
+
+**Ordem aprovada:**
+1. Verificação legal comparada BR + DE (observador cloud)
+2. Arquitectura ISP genérica
+3. One-pager honesto de venda
+
+**Estado:** Pendente — observador cloud inicia verificação legal na próxima sessão.
+
+**4. CARTÓRIO ABC — PROTÓTIPO CRIADO**
+
+| Ficheiro | URL |
+|----------|-----|
+| `/opt/windi/artifacts/cartorioABC/index.html` | `windi-domain.com/artifacts/cartorioABC/` |
+
+Protótipo conceptual com:
+- Ribbon de protótipo + noindex/nofollow
+- Bandeira local como placeholder (ABC fictício)
+- Cerca das 3 camadas visível (integridade/o que não guarda/notário)
+- Comprovante MOCK cercado a vermelho
+- Legenda arquitectura ISP (bandeira troca, núcleo fixo)
+- Afirmações legais genéricas (pré-verificação BR+DE)
+
+### Próxima Sessão
+
+1. **L1 PASS:** Teste toggle PT → EN → DE em tab fresca → commit se passar
+2. **Cartório:** Verificação legal BR + DE (observador cloud)
+3. **Próximo capítulo playground:** Mostrar prova a nascer mais depressa (flag do fremder)
+
+### Ficheiros Modificados (não commitados)
+
+- `/opt/windi/artifacts/playground.html` — L1 strings + fix i18n
+- `/opt/windi/landing-pmg/static/llms.txt` — bloco L1 keywords
+
+---
+
+*CCode Gêmeo · 26 Ago 2026 · Liga IA+H*
+*"Verificar antes de construir. Mecanismo antes de marketing."*
+
+---
+
+
 ## § SESSION-20260817-W-DISCOVERY-001-FASE0-RECONCILIATION
 
 **Data:** 2026-08-17
@@ -29838,6 +29950,114 @@ Reconciliação final: [PLAYGROUND-BACKLOG-2026-08-24-h]
 *Marcado sob §236 · 24 Ago 2026 · Liga IA+H*
 
 ---
+
+
+## § SESSION-20260825-F8-PLAYGROUND-STUB-001-A2
+
+**Data:** 2026-08-25
+**Sprint:** F8-PLAYGROUND-STUB-001 · Fremde-Packet Implementation
+**Modo:** CCode CLI (Strato)
+**Operador humano:** Human Dragon
+**Invariantes:** I9, I11, I12, I14
+
+### Contexto
+
+Continuação da sessão anterior (MONITOR-TRISTATE-001 selado). Capítulo A2 aberto para
+implementar F8 (Fremde-Packet) no Playground — funcionalidade que permite ao utilizador
+copiar um "packet" estruturado para colar na sua IA externa (BYOAI).
+
+### Baseline PRE-A2
+
+```
+Ficheiro: /opt/windi/artifacts/playground.html
+SHA-256:  a9937d458e66f3889290c058d42bc59c437e498394a16916c9f42642121d3cdd
+Commit:   5eb3a1d22 (âncora language alignment)
+```
+
+### Trabalho Completado
+
+**Alterações implementadas (170 inserções, 3 remoções):**
+
+| Componente | Alteração |
+|------------|-----------|
+| CSS | `.fremde-packet-ui` (16 linhas) |
+| HTML | `panelHandoff` content → botão `btnCopyPacket` |
+| i18n PT | 4 strings (btnCopyPacket, packetCopied, packetEmpty, packetReady) |
+| i18n EN | 4 strings |
+| i18n DE | 4 strings |
+| JS | `generateFremdePacket()` (~50 linhas) |
+| JS | `revealHandoffCapability()` + `checkHandoffReadiness()` |
+| JS | Handler `btnCopyPacket` |
+| JS | Event wiring: promptTextarea input, projectGenerated |
+| JS | `updateUILanguage()` actualizado |
+
+**Estrutura do Fremde-Packet:**
+
+```text
+─── WINDI FREMDE-PACKET ───
+packet_type: fremde_handoff
+surface: playground
+generated_at: <ISO-8601>
+human_intent: <conteúdo>
+artifact_sha256: <hash | none>
+anchor_status: <NOT_DEMONSTRATED | NONE | PRESENT>
+evidence_status: HANDOFF_ONLY
+verification: NONE
+receipt: NONE
+seal: NONE
+For the receiving AI:
+Welcome, IA-Fremde.
+This packet came from the WINDI Playground.
+Guide; do not verdict.
+The human decides.
+─── END WINDI FREMDE-PACKET ───
+```
+
+**Correcções aplicadas por Human Dragon:**
+
+1. **btnCopyResume intocado** — não repurposar botão existente
+2. **Hash ≠ âncora** — packet distingue `artifact_sha256` de `anchor_status`
+3. **Fórmula canónica preservada** — "Guide; do not verdict." exacto
+
+### Hash POST-A2
+
+```
+SHA-256: 0a99d9582a6d96a30bbd4d6f2ec51d74be9812a664412ab28e3e18a788cabd27
+```
+
+### Estado Git
+
+```
+Repo:     /opt/windi
+Branch:   main (3 commits ahead of origin)
+Ficheiro: artifacts/playground.html
+Estado:   MODIFIED · NOT STAGED · NOT COMMITTED
+```
+
+### DoD Pendente (Próxima Sessão)
+
+| # | Teste | Estado |
+|---|-------|--------|
+| 1 | Browser test PT — tab Pacote + clipboard | PENDENTE |
+| 2 | Browser test EN — i18n correcta | PENDENTE |
+| 3 | Browser test DE — i18n correcta | PENDENTE |
+| 4 | Semântica: `currentProjectHash` → `anchor_status: NONE` | PENDENTE |
+| 5 | Não-regressão: `btnCopyResume` funciona | PENDENTE |
+| 6 | Gate I9 → commit | PENDENTE |
+
+### Ponto de Reentrada
+
+**Trigger:** `"A2 teste browser"` ou `"continua F8"`
+
+**Ordem:** Browser test primeiro → Se passa → Gate I9 → Commit → Push (se autorizado)
+
+---
+
+*CCode Gêmeo · 25 Ago 2026 · Liga IA+H*
+*"hash ≠ âncora. Guide; do not verdict."*
+
+---
+
 ## SESSION 2026-08-27 — C0-CONTAINMENT-SEAL-DIGEST
 
 **Sprint:** W-CONNECTOR-001 Governance Containment
