@@ -7,6 +7,70 @@
 # ---
 
 
+## § SESSION-20260828-I9-OPCAO2-MOTOR-FREMDE
+
+**Data:** 2026-08-28
+**Sprint:** Decisão I9 motor-fremde Opção 2 (cadeia de hashes) + de-risk CAP1-3
+**Modo:** CCode CLI (execução) + Claude.ai web (observador, capítulo, verificação)
+**Operador humano:** Human Dragon
+**Invariantes:** I1, I9, I11, I12, I14
+
+### Decisão I9 (Human Dragon, IRREMEDIÁVEL)
+
+A postura do connector-dentro-do-motor é a **OPÇÃO 2 — CADEIA DE HASHES**.
+O motor do fremder carimba cada passo do lado dele e envia ao WINDI só hashes + DID + instante + assinatura.
+O WINDI prova sequência + integridade da troca inteira SEM ver o conteúdo. Quem responde é o motor do fremder;
+o WINDI testemunha. É a Postura B (Testemunha) na forma cadeia — apanha o benefício de provar a ligação
+pedido→resposta sem o custo de o WINDI ver o conteúdo. Doutrina motor-fremde permanece CANDIDATA (não selada).
+
+### Arco do Dia
+
+- **Corrida de monitor da manhã:** cega (INSTRUMENT_BLOCKED/PROVENANCE_REQUIRED), NÃO outage. À tarde, com humano
+  presente, playground.html observável e alinhado.
+- **Teste do Humano do L1 (Bloco 0):** motor de prova verificado honesto (SHA-256 recomputado bate). Achado
+  FREMDE-UX-002: humano fresco defaultou para chat apesar da cópia alinhada → a caixa larga ainda convida chat;
+  L1 (palavras) necessário mas não suficiente. Cura tem 2 metades: (a) separar provar/ajudar no web; (b) motor por trás via connector.
+- **Raciocínio arquitectural (Human Dragon)** → Opção 2 → decisão I9.
+- **Moldura verbal v2 (PT/EN/DE)** aprovada (Lei III: palavras antes do código). Slogans /llms.txt confirmados nas 3 línguas.
+  "motor/engine" não está no §247; glossado na 1ª ocorrência (opcional futuro: §247-adenda).
+
+### De-risk em Protótipos Isolados
+
+Directório: `w-workbench-001/prototypes/opcao2-chain/`
+
+| CAP | Ficheiro | Prova | Verificação Observador |
+|-----|----------|-------|------------------------|
+| CAP1 | chain_derisk.py | Cadeia + fronteira de conteúdo (leaf/genesis/chain hex-concat; tamper detectado; zero conteúdo no pacote) | ✅ PASS |
+| CAP2 | auth_derisk.py | Auth Ed25519 (assina chain_N; verifica pela pública; forja falha; registo signed_by_did_holder / caller_initiated / NUNCA human_approved=True) — mecanismo da cura WCONNECTOR-HUMANAPPROVED-001, isolado | ✅ PASS |
+| CAP3 | transport_derisk.py | Transporte isolado (127.0.0.1): contrato de entrada SEM campo de conteúdo (additionalProperties:false), recusa limpa (forjada/adulterada/sem assinatura), resposta CANDIDATE (não receipt/selo), nada no Ledger | ✅ PASS |
+
+**Nada vivo, nada acessível ao fremder, nenhum selo. CANDIDATE.**
+
+### Mapa do que Resta
+
+R1 lado do motor (isolado) → R2 custódia real de chaves DID (W-DID-001) → R3 certificação de motor →
+**[bloco vivo, gate cuidado]** R4 aplicar cura C0 ao mcp_server vivo → R5 W-TUBE vivo (atenção ao timer 06 Set) →
+R6 moldura na UI → R7 verify-public persistência → R8 graduação (só humano). **Pausa acordada após CAP3.**
+
+### Abertos Paralelos
+
+- FREMDE-UX-002 metade (a) no playground web
+- "Copiar pacote" real vs stub (F8-PLAYGROUND-STUB-001)
+- Decisão timer W-TUBE 06 Set (preservar read-only?)
+
+### Boundary
+
+Sem SSH pelo observador cloud; protótipos/runtime = evidência CCode. No receipt, no seal, no verdict.
+CANDIDATE stays CANDIDATE. Push deferido (I9). Registo curado no Backlog Vivo (Drive) 2026-08-28 base..l.
+
+---
+
+*CCode Gêmeo · 28 Ago 2026 · Liga IA+H*
+*"OPÇÃO 2 DE-RISCADA · CADEIA + AUTH + TRANSPORTE · CANDIDATE"*
+
+---
+
+
 ## § SESSION-20260826-CAP-L1-KEYWORDS-PLAYGROUND
 
 **Data:** 2026-08-26
