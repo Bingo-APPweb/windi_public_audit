@@ -30438,3 +30438,32 @@ Sempre usar cache-buster para re-verificação de superfícies públicas.
 *"LOCAL HASH SOVEREIGNTY · REAL RECEIPT VERIFICATION · NO EXTRAPOLATION"*
 
 ---
+
+### ERRATA TO 27a9c98b — D2 Correction
+
+**D2 was TRACKED, not untracked.** Commit `27a9c98b` recorded session history only
+and did not materialize the authorized artifact commit. The effective artifact commits are:
+
+```
+Repository: /opt/windi
+
+Commit 1:   91e807689
+Message:    feat(contabilidade): add honest local-hash and receipt verification prototype
+Content:    Functional implementation (F1/F2/VERDICT fixes, sha256js canonical)
+
+Commit 2:   6738387f2
+Message:    fix(contabilidade): scope verification claims to existing receipt
+Content:    Lexical containment (zero "documento real", zero "realmente ancorado")
+```
+
+Together these constitute the effective materialization of D2 = TRACKED.
+
+The session entry in `27a9c98b` stated "UNTRACKED BY I9 DECISION" — this was an error.
+The Human Dragon's decision was D2 = TRACKED. This errata corrects the record append-only.
+
+**Final artifact state:**
+- SHA-256: `bb9038a8f6442090f5a1d49626c9f13af3de5e02b010e9c5aecf592aa58191c9`
+- Receipt ID preserved: `WINDI-ARCHITECTURE-MANUAL-V1-20260611160111`
+- Public URL: `https://windi-domain.com/artifacts/contabilidadeABC/` (trailing slash required)
+
+---
