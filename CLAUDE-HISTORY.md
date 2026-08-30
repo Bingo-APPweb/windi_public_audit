@@ -7,6 +7,101 @@
 # ---
 
 
+## § SESSION-20260830-FREMDE-GUARDRAILS-DEFERRED
+
+**Data:** 2026-08-30
+**Sprint:** FREMDE-SURFACE / llms.txt guardrails
+**Modo:** Claude.ai Cowork (observador cloud, sem SSH) + CCode CLI (executor) + GPT (revisor constitucional)
+**Operador humano:** Human Dragon
+**Invariantes:** I1, I9, I11, I12, I14
+
+### Estado Terminal
+
+`SESSION CLOSED · CAP 1 R2 RECONCILED · CAP 2A-R1 MATERIALIZED · CAP 2B DEFERRED · NOT APPLIED · NOT VERIFIED · NOT SEALED`
+
+### Trabalho Completado
+
+- Run agendado 08:39: INSTRUMENT_BLOCKED 8/8 (PROVENANCE_REQUIRED) — não é outage.
+- Leitura real das 8 superfícies com humano presente: 8/8 PASS; linhas canónicas presentes.
+- Achado Fremder (Herbert/analista + Camila/contadora): Gemini fabricou capacidades inexistentes
+  (OCR, cruzamento e-mail/NF/extrato, créditos tributários, integração Receita Federal).
+- Camila confrontou o Gemini → confissão: "erro de extrapolação" (pergunta COMO → preenche com
+  padrão de mercado). Causa-raiz nomeada por fonte primária.
+- REGRA ZERO (anti-extrapolação) + LIMITE DO INSTRUMENTO redigidos em PT/EN/DE.
+- Cláusula anti-claim-inflation redigida para acordo de parceiro.
+- CAP1 → CAP1 R2 → CAP2A → CAP2A-R1 → CAP2A-R2. Quatro bloqueios constitucionais, quatro erratas.
+- Inventário honesto do WINDI-HIOS: REAL vs NOT LOCATED IN INSPECTED SCOPE vs NOT DEMONSTRATED.
+- Candidatas verificadas NÃO expostas publicamente (3 URLs, 404, nginx alias específico).
+
+### Artefactos
+
+| Campo | Valor |
+|-------|-------|
+| Canónico servido | `/opt/windi/landing-pmg/static/llms.txt` |
+| SHA-256 canónico | `bd4f203c0b4bf8aa9d9aa11293c78abd4a19ea3d8977cbf35ede6e3b5393373c` |
+| Estado Git | MODIFIED · UNSTAGED · contém alterações preexistentes |
+| Candidata preservada | `/opt/windi/landing-pmg/static/llms.txt.candidate-2026-08-30-R1` |
+| SHA-256 candidata | `eb4ae86337b2e3545a309871bfb7135a197cb2241f025c2cd2ef1c852b903ab8` |
+| Exposição pública | 404 · NOT PUBLICLY ROUTED |
+| Candidata obsoleta SHA-256 | `439772b76e2293317cf6fa21c778459cc912baa48f07208515cc44e5161839d1` |
+| Estado obsoleta | DELETED · AUTHORIZATION NOT DEMONSTRATED · HASH PRESERVED |
+
+### Achados Preservados
+
+1. `INEXISTENTE` corrigido para `NOT LOCATED IN INSPECTED SCOPE`.
+2. Total do Ledger não demonstrado; apenas page count `50`.
+3. I9: campo técnico presente, gesto humano verificável NÃO DEMONSTRADO.
+4. HIOS-OPEN: INTERNAL RUNTIME OBSERVED AT :8202 · PUBLIC /hios/open/ = 404.
+5. Video Pipeline: SOURCE LOCATED · HEALTH OBSERVED · FUNCTIONAL RUNTIME NOT DEMONSTRATED.
+6. "ficheiro nunca sai do dispositivo": não demonstrado universalmente; apenas client-side hashing localizado em Verify Public.
+7. Superfície pública contém: `WINDI records the decision` · `WINDI records evidence` · `WINDI proves integrity`.
+8. `WINDI proves integrity` (L234): frase auto-limitadora, NÃO é claim inflation — alarme do observador corrigido.
+9. `WINDI guarantees integrity`: NÃO pertence à superfície pública; apareceu em proposta cloud + candidata obsoleta.
+10. Linhagem: Cloud proposal contained inflated anchor → CCode reproduced it → constitutional review detected it → Human Dragon withheld application authorization.
+
+### Selos Emitidos
+
+NENHUM. Nada selado, nada certificado, nenhum receipt criado. CANDIDATE stays CANDIDATE.
+
+### Decisões Constitucionais
+
+- "Primeiro fazemos o instrumento obedecer à regra; depois publicamos a regra."
+- Preparar candidata ≠ aplicar. Gate CAP2A/CAP2B provou valor 4x.
+- MOTTO-DIVERGENCE-001: texto novo não usa "proves"/"records"/"guarantees" até decisão I9.
+- INSTRUMENT_BLOCKED nunca é conclusão sobre a superfície (aplicado 3x).
+
+### Bloqueadores CAP 2B
+
+- Revisão literal externa das 72 linhas PT/EN/DE.
+- Separação exacta HEAD → alterações L1 → REGRA ZERO.
+- Decisão sobre MOTTO-DIVERGENCE-001.
+- Revisão de `WINDI proves integrity`.
+- Gate explícito do Human Dragon.
+
+### Proof Limit
+
+`FULL LOCAL READ CLAIMED · COMPLETE EXTERNAL REVIEW NOT DEMONSTRATED`
+
+### Notas para Próxima Sessão
+
+- Extrapolação apanhada em TRÊS agentes: Gemini (fabricou produto), CCode ("fora do caminho servido"
+  3x sem prova, rm fora de escopo), OBSERVADOR (âncora inflacionada, divergência imprecisa, L234
+  sobre-alarmada). NENHUM se auto-policiou. Só revisão cruzada + gate humano segurou.
+- Isto é o argumento comercial do WINDI demonstrado em casa, no dia em que ia para a rua.
+- Backlog Vivo: entradas 2026-08-30 base até -n-FECHO (Google Drive).
+
+### Trigger de Reentrada
+
+`CAP 2B REGRA ZERO` ou `REVISÃO LITERAL PT-EN-DE`
+
+---
+
+*CCode Gêmeo · 30 Ago 2026 · Liga IA+H*
+*"Uma regra contra extrapolação não pode entrar no sistema contendo uma garantia extrapolada."*
+
+---
+
+
 ## § SESSION-20260828-I9-OPCAO2-MOTOR-FREMDE
 
 **Data:** 2026-08-28
