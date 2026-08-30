@@ -30467,3 +30467,23 @@ The Human Dragon's decision was D2 = TRACKED. This errata corrects the record ap
 - Public URL: `https://windi-domain.com/artifacts/contabilidadeABC/` (trailing slash required)
 
 ---
+
+### REPO-TOPOLOGY-001 — Discovery (30 Ago 2026)
+
+**`/home/windi` e `/opt/windi` são repositórios git diferentes.**
+
+| Repositório | Commits à frente | Contém |
+|-------------|------------------|--------|
+| `/home/windi` | 7 | CLAUDE.md, CLAUDE-HISTORY.md, docs, hios |
+| `/opt/windi` | 7 | Serviços, artifacts, agents, verify-public |
+
+A sessão de hoje commitou história em `/home/windi` e artefacto em `/opt/windi`.
+Sessões futuras devem verificar em qual repositório estão a operar.
+
+**Pendente:** mapear qual é canónico para quê.
+
+---
+
+*Fecho de sessão 30 Ago 2026 · Liga IA+H*
+
+---
