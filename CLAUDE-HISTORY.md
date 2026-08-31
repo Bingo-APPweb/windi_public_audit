@@ -30487,3 +30487,393 @@ Sessões futuras devem verificar em qual repositório estão a operar.
 *Fecho de sessão 30 Ago 2026 · Liga IA+H*
 
 ---
+
+
+## § SESSION-20260831-CONTABILIDADEABC-A4DESK-GOVERNANCE
+
+**Data:** 2026-08-31
+**Sprint:** ContabilidadeABC + A4 Desk BABEL reactivation + Governance
+**Modo:** CCode CLI
+**Operador humano:** Human Dragon
+**Invariantes:** I1, I9, I11, I12, I14
+
+### Estado Terminal
+
+`SESSION CLOSED · CODE COMMITTED · PUSHED TO PLAYGROUND.GIT · GOVERNANCE LIVE · INFRA PENDING SYSTEMD`
+
+### Trabalho Completado
+
+**A4 Desk BABEL Reactivation:**
+- Serviço verificado em :8085, database em `/opt/windi/data/babel_documents.db`
+- Criado utilizador teste `CABC-TEST-001` com password hash para ContabilidadeABC
+- Testado: login, criação de documento, exportação PDF, selo Ledger
+- Receipt criado: `WINDI-A4DESK-20260830222153-CD6B94B3`
+
+**ISP Profiles Fix:**
+- Causa-raiz: frontend usava paths absolutos `/api/...` mas página servida em `/desk/`
+- Browser resolvia `/api/templates/available` → 404 (root)
+- Fix: substituir `fetch('/api/` por `fetch('api/` (20 ocorrências)
+- 18 ISP Profiles agora carregam correctamente
+
+**i18n Trilíngue Completo:**
+- Expandido `translations.json` de ~30 para 75 keys por língua (DE/EN/PT)
+- Actualizado `_doTranslate()` para cobertura completa de UI
+- Substituídos ~20+ strings hardcoded alemão por chamadas `t('key')`
+- Persistência via `localStorage('windi-lang')`
+
+**Governance Reactivation:**
+- `/governance` retornava 404 via nginx
+- nginx proxiava para `:8080` (API) mas frontend vive em A4 Desk `:8085`
+- Fix: alterado nginx para `proxy_pass http://windi_hub/governance;`
+- Após sudo reload: `/governance` e `/governance/hub` retornam 200
+- Governance Command Center e Hub de 8 agentes LIVE
+
+### Commits Pushed
+
+| Hash | Mensagem |
+|------|----------|
+| `51eed1715` | feat(a4desk): trilingual i18n + ISP profiles fix |
+| `c0d2731dc` | feat(contabilidadeABC): add A4 Desk BABEL to crossover |
+| `c31be7f05` | feat(contabilidadeABC): honest WINDI ecosystem crossover |
+
+**Destino:** `playground.git` (privado) — verificado 404 público
+
+### Pendentes para Durabilidade
+
+| Item | Estado | Acção Necessária |
+|------|--------|------------------|
+| systemd `:8080` | ⚠️ nohup runtime | windi-governance.service não está a segurar o bind |
+| nginx config | ⚠️ fora do repo | backup `/etc/nginx/sites-enabled/windi-domain.com` |
+| cert communique.windia4desk.online | ⚠️ warning em nginx -t | verificar/renovar certificado |
+
+### Artefactos
+
+| Campo | Valor |
+|-------|-------|
+| A4 Desk URL | `https://windi-domain.com/desk/` |
+| Governance URL | `https://windi-domain.com/governance` |
+| Governance Hub | `https://windi-domain.com/governance/hub` |
+| Test User | `CABC-TEST-001` / ContabilidadeABC Tester |
+| translations.json | 75 keys × 3 línguas (DE/EN/PT) |
+| Git remote | `git@github.com-jobernc:jobernc-web/playground.git` |
+
+### Lição do Dia
+
+> "O commit sela o código, não a infra — e a alma ainda não está durável."
+> — Human Dragon, 2026-08-31
+
+Runtime observed ≠ sealed. `/governance` responde 200 agora, mas sem systemd a segurar `:8080`,
+um reboot mata o serviço. O selo verdadeiro é migração nohup→systemd.
+
+---
+
+---
+
+## § SESSION-20260831 — WCPS-001 · I9CURA · COMMERCIAL CONSTITUTION
+
+**Data:** 2026-08-31
+**Autoridade:** Human Dragon / I9
+**Modo:** discovery READ-ONLY → containment autorizado → audit READ-ONLY
+**Estado de fecho:** SESSION CLOSED · NO HIDDEN OPERATIONAL PENDING
+**Constituição:** WCPS-001 v0.1 permanece CANDIDATE · NOT SEALED
+
+### 1. WCPS-001 — Constituição Comercial
+
+WCPS-001 foi estabelecida como candidata a Constituição Comercial do WINDI-HIOS.
+
+**Princípios centrais preservados:**
+
+- nenhum produto comercial pode prometer mais do que a plataforma consegue demonstrar;
+- Generated ≠ Verified;
+- classes de capacidade exigem evidência on-origin;
+- IA pode propor classificação; somente I9 atribui;
+- a vertical pode especializar o processo, não a verdade;
+- CANDIDATE ≠ SEALED;
+- somente Human Dragon possui autoridade constitucional de selo.
+
+Revisão externa identificou pontos de ERRATA/REFINE ainda pendentes antes de eventual elegibilidade constitucional, incluindo coerência do Product Gate, perímetro de dados e universalidade do workflow I9.
+
+### 2. Inventário de Capacidades — CAP1/CAP2
+
+Auditoria on-origin confirmou:
+
+- Forensic Ledger :8101 operacional;
+- database `/opt/windi/data/forensic_ledger.sqlite3`;
+- COUNT(*) receipts = **57.559**;
+- Verify Public :8114 operacional;
+- round-trip de receipt demonstrado via `/r/{receipt_id}`;
+- receipt conhecido devolveu ID + content hash;
+- DID Genesis e demais componentes foram inventariados com diferentes níveis de evidência.
+
+**Correção factual importante:**
+50 receipts observado inicialmente era limite/página da API, não total do Ledger.
+Total real observado: **57.559 receipts**.
+
+### 3. Achado I9 — FALSE POSITIVE
+
+Foi demonstrado que o campo `human_approved` não correspondia a um gesto humano observado.
+
+**Achados:**
+
+- nenhum gesto UI de aprovação humana encontrado;
+- `governance_audit` contém ações SEAL, nenhuma APPROVE;
+- `human_approved` não é coluna estrutural do Ledger; aparece em `metadata_json`;
+- 57.509 receipts sem `human_approved`;
+- 50 receipts com `human_approved=true`, provenientes de `windi-intake`;
+- 0 receipts com `human_approved=false`;
+- `a4desk_tiptap_babel.py` possuía 1 caller com `human_approved=True`;
+- outros 2 callers omitiam o argumento e herdavam True por default.
+
+**Conclusão:**
+I9 não estava enforced. `human_approved=True` era self-attestation do caller, não evidência de decisão humana.
+
+### 4. I9CURA — C0 MINIMAL CURE
+
+Human Dragon autorizou cura mínima.
+
+**Aplicado em `/opt/windi/a4desk-editor/ledger_bridge.py`:**
+- `human_approved: bool = True` passou para `human_approved: Optional[bool] = None`;
+- campo deixa de integrar o payload quando valor é `None`.
+
+**Aplicado em `/opt/windi/a4desk-editor/a4desk_tiptap_babel.py`:**
+- removido `human_approved=True` explícito do caller identificado.
+
+**Verificações reportadas:**
+- `human_approved=True`: 0 ocorrências;
+- `human_approved: bool = True`: 0 ocorrências;
+- syntax check dos dois ficheiros: PASS;
+- callers que já omitiam o argumento permaneceram sem aprovação explícita;
+- receipts históricos não foram modificados.
+
+**Semântica resultante:**
+ausência de evidência de aprovação = ausência do claim `human_approved`.
+
+**Estado correto:**
+`I9 = NOT ENFORCED · FALSE POSITIVE CONTAINED`
+
+A cura NÃO implementa ainda um gesto humano real e NÃO autoriza claim de I9 ENFORCED.
+
+### 5. Commit
+
+**Commit criado e pushed:**
+```
+b19c054bb63d49a3848365795eaf5ee2d0bb61ce
+```
+
+**Mensagem:**
+```
+fix(i9): human_approved deixa de ser default — WCPS-001 I9CURA
+```
+
+**Remote:**
+```
+github.com-jobernc:jobernc-web/playground.git
+main
+```
+
+### 6. CAP5 — COMMIT SCOPE AUDIT
+
+Auditoria posterior revelou que o commit não foi cirúrgico em lineage.
+
+**Stat:**
+- `a4desk_tiptap_babel.py`: 3 linhas — correspondentes à I9CURA;
+- `ledger_bridge.py`: 156 linhas modificadas;
+- total do commit: 131 inserções / 28 remoções.
+
+**Classificação:**
+
+**A — I9CURA autorizada:** ~8 linhas.
+
+**B — trabalho preexistente legítimo:** ~120+ linhas provenientes de Phase 2 W-FUNIL-FECHADO-001, datadas de 2026-07-12 e já presentes na worktree antes do CAP4.
+
+Incluem, entre outros:
+- `schema_version`;
+- actor DID;
+- `wallet_id`;
+- `SERVICE_DID` / `SERVICE_WALLET`;
+- `BERCARIO_DID_ACTIVE`;
+- nova convenção de receipt ID;
+- `identity_mode`/fallback;
+- prefixo `sha256:`;
+- metadata scaffold;
+- `verify_constitutional()`;
+- propagação de parâmetros Phase 2.
+
+**C — origem desconhecida:** 0.
+
+**Conclusão de lineage:**
+O commit `b19c054bb` contém uma cura I9 correta juntamente com trabalho legítimo Phase 2 preexistente que foi incluído acidentalmente pelo `git add` integral do ficheiro.
+
+A mensagem do commit descreve apenas I9CURA e portanto não representa completamente o conteúdo material do commit.
+
+Nenhum reset, amend, force-push ou reescrita histórica foi autorizado ou executado.
+
+### 7. Worktree
+
+A worktree `/opt/windi` permanece substancialmente suja com múltiplos ficheiros modified/untracked preexistentes.
+
+Esse estado NÃO foi normalizado nesta sessão.
+
+Nenhuma conclusão de WORKTREE CLEAN é autorizada.
+
+### 8. Próximos atos — NÃO EXECUTADOS
+
+Pendentes para sessão futura, sem autorização implícita:
+
+- WCPS-001 continua v0.1 CANDIDATE · NOT SEALED.
+- Resolver ERRATA constitucional antes de qualquer consideração de selo.
+- Normalizar Anexo A.1 somente mediante decisões I9 explícitas.
+- Desenhar gesto humano real para I9.
+- Futuro enforcement deve derivar aprovação de evidência humana observável, não de parâmetro declarado pelo caller.
+- Registrar lineage correto do commit `b19c054bb`; não reescrever história.
+- Tratar worktree preexistente como escopo separado.
+
+### 9. Estado terminal
+
+| Item | Estado |
+|------|--------|
+| WCPS-001 | CANDIDATE · NOT SEALED |
+| I9 false positive | CONTAINED |
+| I9 enforcement | NOT IMPLEMENTED / NOT ENFORCED |
+| Historical receipts | UNCHANGED |
+| Commit b19c054bb | PUSHED · MIXED-LINEAGE IDENTIFIED |
+| Unknown provenance inside commit | NONE FOUND |
+| Worktree | DIRTY · PREEXISTING · NOT NORMALIZED |
+| Session | CLOSED |
+
+**Regra preservada:**
+
+> **Human approval must be evidence, not a parameter.**
+
+Nenhuma IA graduou, ratificou ou selou o WCPS-001.
+
+Somente Human Dragon possui autoridade para tal ato.
+
+---
+
+*CCode Gêmeo · 31 Ago 2026 · Liga IA+H*
+*"WCPS-001 CANDIDATE · I9 FALSE POSITIVE CONTAINED · I9 NOT ENFORCED · b19c054bb MIXED-LINEAGE IDENTIFIED"*
+
+---
+
+## SESSION-20260901 — WCPS-001 CURA + llms.txt v1.1 UNIVERSAL
+
+**Data:** 2026-09-01
+**Modo:** recuperação de lineage + verificação criptográfica + correção semântica + deploy
+**Autoridade constitucional:** Human Dragon / I9
+**Executor técnico:** CCode / Strato
+**Doutrina:** Generated ≠ Verified · Guide; do not verdict · preservar lineage · Evidence Boundary
+
+---
+
+### 1. WCPS-001 — Recuperação do Governing Set
+
+O Governing Set WCPS-001 v0.1 havia sido selado anteriormente:
+
+```
+Receipt: WINDI-WCPS-001-SEAL-20260831-EA1E7818
+Package Manifest SHA-256: ea1e781864dca595350209c7c119a597f9398ec9b0615bf293fd0cc322c6785a
+```
+
+**Diagnóstico inicial (prematuro):** "SELO SEM CORPO" — ficheiros não encontrados no servidor.
+
+**Diagnóstico corrigido:** Os originais estavam preservados na máquina do Human Dragon. O problema era de arquivo no servidor, não perda. Faltou perguntar ao humano se tinha os ficheiros.
+
+**Recuperação:** Via SCP (canal bit-preserving).
+
+| # | Artefato | Bytes | SHA-256 |
+|---|----------|-------|---------|
+| 01 | WCPS-001-v0.1-CANDIDATE.md | 19065 | `9c60f60da2755600...` ✅ |
+| 02 | ERRATA-A1-v0.1-CANDIDATE.md | 9534 | `6258e132a0593cce...` ✅ |
+| 03 | ERRATA-A2-v0.1-CANDIDATE.md | 8540 | `9b1bd614c3bd7bc1...` ✅ |
+| 04 | ERRATA-A3-v0.1-CANDIDATE.md | 7096 | `eaaf5fb6ab6ffd31...` ✅ |
+| 05 | ERRATA-A4-v0.1-CANDIDATE.md | 8730 | `c65c5ae2be486f96...` ✅ |
+
+**Resultado:** 5/5 FILE HASHES = MATCH · MANIFEST HASH == SEAL CONTENT HASH: PASS
+
+**Errata renomeada:** `§267-ERRATA-SELO-SEM-CORPO.md` → `WCPS-001-ERRATA-RECOVERY-267.md` (ASCII-safe)
+
+**Commits:** `abe1f0c04` (arquivo) · `776f7e4d2` (rename + correção diagnóstico)
+
+---
+
+### 2. llms.txt v1.0 → v1.1 — Deploy + Correção Doutrinária
+
+**v1.0 deployado** com curas semânticas:
+- `COMPLETE` → `UNIVERSAL` ✅
+- `WINDI guarantees` → `WINDI records` ❌ **ERRO - alteração indevida de doutrina**
+
+**v1.1 corrigido** após revisão do Human Dragon:
+- Lema canónico restaurado: "AI processes. Human decides. WINDI guarantees."
+- Nota delimitadora adicionada: "(Guarantees the gate, not the content.)"
+- Diagrama corrigido: "garante" restaurado
+
+**Verificação canon:**
+```
+grep -rn "WINDI guarantees" /opt/windi/docs/
+# 12 ocorrências em documentos selados
+```
+
+**Hashes:**
+- v1.0 (errado): `d6473df33c73290c0accfc1562adadd71beb62239dd8f6caa664446d23208946`
+- v1.1 (correcto): `52627bcfd3c7a5be6be3ad81441b9d8af838ad25c76728d11889e2f671438ac5`
+
+**SERVED == SOURCE:** PASS (verificado em comandos separados após falha de sintaxe inicial)
+
+**Arquivo:** `llms-v0.1-20260831.txt` hash `bd4f203c...`
+⚠️ **NOTA:** Este hash difere do registado em sessão anterior (`717be9d7...`). O ficheiro PROD mudou entre verificações.
+
+**Commits:** `4f078add0` (v1.0 deploy) · `8634b6807` (v1.1 doctrine restored)
+
+---
+
+### 3. Erros Identificados Nesta Sessão
+
+| # | Erro | Correcção |
+|---|------|-----------|
+| 1 | Diagnóstico "selo sem corpo" prematuro | Pergunta certa: "o humano tem os originais?" |
+| 2 | `guarantees→records` sem I9 | Doutrina restaurada em v1.1 |
+| 3 | `§267` no nome de ficheiro (non-ASCII) | Renomeado para `WCPS-001-ERRATA-RECOVERY-267.md` |
+| 4 | Placeholder "calculada após seal" commitado | Substituído por nota de versão |
+| 5 | Probes curl com sintaxe incorrecta | Verificação refeita com comandos separados |
+
+---
+
+### 4. Lições Aprendidas
+
+1. **Paste/chat altera bytes.** SCP preserva identidade bit-for-byte.
+2. **Perguntar ao humano antes de concluir perda.** Os originais podem estar noutro local.
+3. **Alterar doutrina selada requer I9 explícito.** "guarantees" não era absolutismo - era lema fundador.
+4. **§ em nomes de ficheiro viola NO-HANDWRITTEN-IDENTIFIERS-001** e pode causar problemas em caminhos cross-platform.
+
+---
+
+### 5. Pendentes I9 (não resolvidos)
+
+| Item | Estado |
+|------|--------|
+| W-SEC-KEYS-001 | Remediação executada mas **NÃO COMMITADA** desde 2 Ago |
+| Método de leitura | Decisão pendente |
+| Postura (Passante vs Testemunha) | Decisão pendente |
+
+**W-SEC-KEYS-001 ALERTA:** Qualquer `git checkout` volta a desfazer a remediação enquanto não for commitada.
+
+---
+
+### 6. Estado Terminal
+
+| Item | Estado |
+|------|--------|
+| WCPS-001 Governing Set | RECOVERED · 5/5 VERIFIED |
+| Seal EA1E7818 | VALID · BODY RECOVERED |
+| llms.txt | v1.1 · LIVE · `52627bcf...` |
+| SERVED == SOURCE | PASS |
+| Doutrina | RESTORED |
+| Commits pushed | `abe1f0c04..8634b6807` |
+
+---
+
+*CCode Gêmeo · 01 Set 2026 · Liga IA+H*
+*"AI processes. Human decides. WINDI guarantees."*
+
+---
