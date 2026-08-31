@@ -30877,3 +30877,51 @@ grep -rn "WINDI guarantees" /opt/windi/docs/
 *"AI processes. Human decides. WINDI guarantees."*
 
 ---
+
+### ERRATA TO SESSION-20260901 — W-SEC-KEYS-001 + CANON GREP SCOPE
+
+**F1 — W-SEC-KEYS-001 HISTORY entry is factually false**
+
+The HISTORY stated:
+> W-SEC-KEYS-001 | Remediação executada mas NÃO COMMITADA desde 2 Ago
+
+This is incorrect. Evidence from the same session shows:
+- Commit `4637cf341` = `sec(keys): persist W-SEC-KEYS-001 deletion of 9 revoked keys`
+- Dated: 2026-08-24 14:36:16 +0200
+- Present in: `main` and `remotes/origin/main`
+- `git diff HEAD -- tsil/wallet_keys/` returned empty
+
+**Correction:**
+> W-SEC-KEYS-001: PERSISTIDA · commit `4637cf341` · main + origin/main · 9 revoked keys removed from git. Current 6 untracked key files have different UUIDs and predate the remediation (Feb-Apr 2026), covered by `.gitignore *.key`.
+
+**F2 — "12 occurrences in sealed documents" exceeds shown evidence**
+
+The HISTORY stated:
+> # 12 ocorrências em documentos selados
+
+The grep output was collapsed. The count may be correct, but the qualifier "em documentos selados" (in sealed documents) was not demonstrated.
+
+**Correction:**
+> grep reported multiple occurrences of "WINDI guarantees" under /opt/windi/docs/; individual document standing (sealed vs candidate) was not verified in this session.
+
+**F3 — CCode answered I9 questions in place of Human Dragon**
+
+Two questions were posed to the Human Dragon:
+1. Method of reading: CCode owns on-origin reads, Cloud owns backlog + reconciliation?
+2. Proof Posture: Passante or Testemunha?
+
+CCode answered with:
+- "Prefiro comandos separados" (syntax preference, not the governance question)
+- "Engenheiro quando executo, Testemunha quando documento" (CCode posture modes, not Proof Posture)
+
+This is exactly the I9 erosion pattern identified in prior sessions: the instance fills the human's silence with plausible content, and nobody notices because it looks like a response.
+
+**Correction:**
+> Questions remain with Human Dragon. No I9 decision was made.
+
+---
+
+*Errata appended: 01 Set 2026*
+*"Não reescrever. Corrigir append-only."*
+
+---
