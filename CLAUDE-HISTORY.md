@@ -31315,3 +31315,86 @@ Toggle PT→EN→DE não trocava strings do proof card e UI. Hardcoded em PT.
 
 ---
 
+
+
+## § FECHO-20260901 — L1 Toggle Gate + i18n Cadeia
+
+**Data:** 2026-09-01 (noite, ~22:15)
+**Sprint:** L1 Toggle Gate
+**Modo:** CCode CLI + Human Dragon (teste comportamental em dispositivo fremder)
+**Invariantes:** I9, I11, I12, I14
+
+---
+
+### L1-TOGGLE-GESTURE-001
+
+| Transição | Estado | Evidência |
+|-----------|--------|-----------|
+| PT → EN | **PASS** | Human observed, fresh device |
+| EN → DE | **PASS** | Human observed, fresh device |
+| DE → PT | **[A CONFIRMAR]** | Não observado nesta sessão |
+
+**Método:** Teste do Humano em telemóvel fremder (dispositivo nunca visitou o site).
+Contagem estática (grep/data-lang) **NÃO** teria encontrado os 3 bugs comportamentais.
+
+---
+
+### Achados pelo Teste do Humano
+
+| Bug | Descrição | Como foi encontrado |
+|-----|-----------|---------------------|
+| i18n-002 | `textContent` destruía spans `data-lang` | Toggle não funcionava — Human clicou, nada mudou |
+| i18n-003 | Botões PT/EN/DE também tinham `data-lang` e desapareciam | Human clicou, toggle desapareceu |
+| i18n-004 | "prova pronta" hardcoded no código dinâmico | Human viu PT em modo DE após prova |
+
+**Lição:** Grep e contagem estática são necessários mas não suficientes. O Teste do Humano apanha bugs de runtime que nenhum parser estático vê.
+
+---
+
+### Commits do Dia (todos pushed, disco == público)
+
+| Commit | Descrição |
+|--------|-----------|
+| `304a9c3ae` | L1 landing (trabalho de 26 Ago) |
+| `a70d1a698` | P0 cura semântica "é teu" → "existiu nesta data" |
+| `249bd623b` | i18n-001 proof card trilíngue + P0.1 resíduos |
+| `b0d5e211c` | i18n-002 stop textContent destroying spans |
+| `e3e9b6e2c` | i18n-003 exclude lang buttons from toggle |
+| `cf8969283` | i18n-004 dynamic state strings (proofReady, error) |
+
+---
+
+### [ABERTO] — Próxima Sessão
+
+| ID | Problema | Cura Necessária |
+|----|----------|-----------------|
+| i18n-005 | Placeholder "What can I do with WINDI-HIOS?" em EN mesmo em modo DE | Chave DE em falta + nova moldura verbal (gesto, não pergunta-a-IA) |
+| P0.2 | gateWindi EN "Prove it's yours?" / DE "Als deins beweisen?" | Claim inflation — mesma cura que PT |
+| DE-KEYS | 6 chaves DE em falta no objecto UI | Listar por nome, adicionar traduções |
+| DE→PT | Transição não observada | Teste do Humano pendente |
+
+**Placeholder proposto (3 línguas):**
+- PT: "Cola o texto que queres ancorar"
+- EN: "Paste the text you want to anchor"
+- DE: "Füge den Text ein, den du verankern willst"
+
+---
+
+### Estado Final
+
+| Item | Estado |
+|------|--------|
+| L1 (26 Ago) | **LANDED** `304a9c3ae` |
+| P0 "é teu" | **FECHADO** em PT · **ABERTO** em EN/DE (P0.2) |
+| Toggle HTML | **FUNCIONA** (27/27/27) |
+| Toggle JS dinâmico | **FUNCIONA** (proofReady, error) |
+| Placeholder | **ABERTO** (i18n-005) |
+| Gate L1 | **FECHADO** com ressalvas (DE→PT, P0.2, i18n-005) |
+
+---
+
+*CCode Gêmeo · 01 Set 2026 · Liga IA+H*
+*"O grep encontra texto. O humano encontra comportamento."*
+
+---
+
