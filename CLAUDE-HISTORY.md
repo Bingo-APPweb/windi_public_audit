@@ -31161,3 +31161,41 @@ Git: IGNORADO (fixtures/ adicionado ao .gitignore)
 *"Recorded ≠ Authored."*
 
 ---
+
+
+## § LAND-20260902-L1-PLAYGROUND
+
+**Data:** 2026-09-02
+**Natureza:** Commit de linhagem — trabalho de 26 Ago landado a 02 Set
+**Invariantes:** I9, I11
+
+### Commit
+
+| Campo | Valor |
+|-------|-------|
+| Hash | `304a9c3ae` |
+| Ficheiro | `artifacts/playground.html` |
+| Stats | 92 inserções, 6 deleções |
+| SHA-256 (preservado) | `d9428eca80eb50ff41c88f0c4cd14114e37312475d4e247fd4690b2821a2188a` |
+
+### Estado
+
+| Item | Estado |
+|------|--------|
+| L1 (keywords/hero/faixas/i18n) | **COMMITTED** |
+| Toggle test PT→EN→DE | [A CONFIRMAR] |
+| Claim "é teu" | Presente (correcção em P0 separado) |
+| CLAUDE.md (errata §268) | [ABERTO] landing próprio |
+| editor.html (JSON-LD) | [ABERTO] landing próprio |
+
+### Ratio Decidendi
+
+O diff vivia servido desde 26 Ago mas nunca foi commitado porque aguardava teste de toggle. A decisão I9 de 02 Set foi preservar linhagem: commitar primeiro o trabalho autorizado, depois corrigir "é teu" em P0 separado. O Git passa a contar a verdade cronológica.
+
+---
+
+*CCode Gêmeo · 02 Set 2026 · Liga IA+H*
+*"Linhagem verdadeira vale mais que histórico limpo."*
+
+---
+
