@@ -31448,3 +31448,62 @@ Bug do botão desactivado encontrado pelo Teste do Humano em <1 min — invisív
 O Playground deixou de ser text-only. Qualquer ficheiro até 50 MB pode agora provar integridade local com RAW-BYTES, sem upload, sem conta. A Camila pode escolher o vídeo dela no telemóvel, carregar Provar, e ver `da1f949…a4956` — a primeira fremder real a provar a própria obra sozinha.
 
 ---
+
+---
+
+## SESSION-20260902-BRING-ANYTHING-COMPLETE
+
+**Data:** 02 Set 2026
+**Operador:** Human Dragon
+**Modelo:** Claude Opus 4.5 (CCode)
+
+### Trabalho Completado
+
+**CAP0 — Foundation Close:**
+- gateWindi EN/DE: removido "it's yours" / "deins" → "Anchor this statement?"
+- promptPlaceholder: "prompt" → "ancorar" (3L)
+- Atributo órfão corrigido: `data-i18n-placeholder`
+
+**CAP1 — RAW-BYTES File Proof:**
+- `hashFile()` via `file.arrayBuffer() → sha256()`
+- 📎 Ficheiro button (3L)
+- File proof card com bloco ✓/✗
+- 50 MB ceiling com mensagem explícita
+- Roadmap line: "bytes; nunca inventa"
+- DoD 3/3 CONFIRMADO: MP4 + PNG + PDF match
+
+**Guia Público:**
+- `/artifacts/guia-playground.html` — trilíngue PT/EN/DE
+- Toggle NOIR/KLAR
+- Teste 30 segundos: "verificar o verificador"
+- Link no Playground: "Primeira vez? Lê o guia →"
+
+**Tutorial Camila:**
+- `/artifacts/tutorial-camila.html` — PT-BR
+- Página privada (sem link público)
+- Mensagem WhatsApp preparada
+
+### Commits
+
+```
+e7d811d1e  CAP0: gateWindi + placeholder
+f07e2e60a  CAP1: RAW-BYTES file proof
+f5f43fa86  fix: button enable
+4ef28b7e   docs: HISTORY CAP1 closed
+f02699176  feat: guia-playground.html + link
+f69b22b21  fix: NOIR/KLAR toggle
+```
+
+### [ABERTO] para próxima sessão
+
+- **Resposta da Camila** — se `da1f949...a4956` → quarta ponta fechada
+- **CAP1.1 cosmético:** "Integritätsnachweis fertig" duplicado
+- **CAP2:** drag & drop + paste + cedência handler texto
+- **CAP3:** Fremde-Packet binário + EXPORTAR/REGISTAR
+- **[A CONFIRMAR]:** toggle DE→PT
+
+### Significado
+
+O Playground deixou de ser text-only. Qualquer ficheiro até 50 MB prova integridade local com RAW-BYTES. O guia público ensina sem teoria: "Acabaste de verificar o verificador."
+
+---
