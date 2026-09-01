@@ -31398,3 +31398,53 @@ Contagem estática (grep/data-lang) **NÃO** teria encontrado os 3 bugs comporta
 
 ---
 
+
+---
+
+## CAP1-20260901-BRING-ANYTHING — Multi-Artefact Input FECHADO
+
+**Data:** 01 Set 2026, 22:30–22:50
+**Operador:** Human Dragon (telemóvel fremder, janela anónima, DE)
+**Modelo:** Claude Opus 4.5
+
+### DoD 3/3 CONFIRMADO
+
+| Tipo | Ficheiro | Bytes | Browser Hash | Status |
+|------|----------|-------|--------------|--------|
+| MP4 | Camila-PROMO-VD.mp4 | 2498147 | `da1f94918e779c38c813ee81d240a67f01757b523da54f60cff281e86a0a4956` | ✓ MATCH (4 pontas) |
+| PNG | Screenshot 2026-05-29... | 490241 | `16c41b37afe9f22fd5c3a1ff2464716833d60b92971ba94bf33d945ae3417edd` | ✓ MATCH (PowerShell) |
+| PDF | *documento pessoal* | 547961 | `5b40bfbfe0d393365e37b886710149c12621cb71fe180adf8aaa846b4905c337` | ✓ MATCH (PowerShell) |
+
+**Veredicto:** `CAP1 OK · TEXT PASS · MP4 MATCH · PNG MATCH · PDF MATCH · RAW-BYTES · NO UPLOAD · 3L PASS · HUMAN VERIFIED`
+
+### Commits
+
+- `e7d811d1e` — CAP0: gateWindi + placeholder fix
+- `f07e2e60a` — CAP1: RAW-BYTES file proof implementation
+- `f5f43fa86` — fix: enable Provar button when file selected
+
+### Implementação Entregue
+
+- `📎 Ficheiro` button (3L)
+- File info display (nome, tipo declarado, tamanho)
+- `hashFile()` via `file.arrayBuffer() → sha256()` — ZERO transformação
+- File proof card com bloco ✓/✗ explícito
+- 50 MB ceiling com mensagem declarativa
+- Sem whitelist MIME — aceita qualquer ficheiro
+- Roadmap line actualizada: "bytes; nunca inventa"
+
+### [ABERTO] para CAP seguinte
+
+- **CAP1.1 cosmético:** "Integritätsnachweis fertig" duplicado (título card + estado F-3)
+- **[VIGIAR]** ordem de listeners btnProvar — handler texto deve ceder quando `selectedFile` existe
+- **[A CONFIRMAR]** toggle DE→PT (transporte de ontem)
+
+### Achado de Método
+
+Bug do botão desactivado encontrado pelo Teste do Humano em <1 min — invisível a grep e `node --check`. O fremder test é insubstituível.
+
+### Significado
+
+O Playground deixou de ser text-only. Qualquer ficheiro até 50 MB pode agora provar integridade local com RAW-BYTES, sem upload, sem conta. A Camila pode escolher o vídeo dela no telemóvel, carregar Provar, e ver `da1f949…a4956` — a primeira fremder real a provar a própria obra sozinha.
+
+---
