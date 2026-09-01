@@ -31199,3 +31199,65 @@ O diff vivia servido desde 26 Ago mas nunca foi commitado porque aguardava teste
 
 ---
 
+
+
+## § P0-20260902-SEMANTIC-CURE-ETEU
+
+**Data:** 2026-09-02
+**Natureza:** Correcção semântica — claim inflation removido
+**Invariantes:** I9, I11, I14
+
+### Problema
+
+"é teu" / "is yours" / "dir gehört" implica propriedade jurídica.
+O WINDI prova existência + integridade, não autoria nem propriedade.
+
+### Cura Semântica
+
+| Antes | Depois |
+|-------|--------|
+| Prova que algo **é teu** | Prova que **existiu nesta data** |
+| Prove something **is yours** | Prove **it existed on this date** |
+| Beweise, dass etwas **dir gehört** | Beweise, dass **es an diesem Datum existierte** |
+
+### Commit
+
+| Campo | Valor |
+|-------|-------|
+| Hash | `a70d1a698` |
+| Ficheiro | `artifacts/playground.html` |
+| Stats | 13 linhas corrigidas |
+| SHA-256 (novo) | `61e4124c4a31faa78be379548e46a662f5f8d28ecd692e0232df2d99e39cfaaf` |
+| Push | `304a9c3ae..a70d1a698` |
+
+### Localizações Corrigidas
+
+- Meta description (PT/EN/DE)
+- og:description
+- twitter:description
+- JSON-LD description
+- Hero H1 (PT/EN/DE)
+- Faixa pessoal (PT/EN/DE)
+- gateWindi i18n
+
+### Excepção Justificada
+
+"the anchor is yours" (L1289) mantido — refere-se à âncora (registo), não ao conteúdo.
+A âncora pertence ao DID que a criou. Semanticamente correcto.
+
+### Linhagem
+
+| Commit | Data | Conteúdo |
+|--------|------|----------|
+| `304a9c3ae` | 02 Set | L1 landing (trabalho de 26 Ago) |
+| `a70d1a698` | 02 Set | P0 cura semântica |
+
+Dois commits separados preservam a verdade cronológica.
+
+---
+
+*CCode Gêmeo · 02 Set 2026 · Liga IA+H*
+*"O WINDI prova que existiu — não que é teu."*
+
+---
+
