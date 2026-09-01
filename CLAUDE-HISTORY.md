@@ -31261,3 +31261,57 @@ Dois commits separados preservam a verdade cronológica.
 
 ---
 
+
+
+## § i18n-001-20260902 — Proof Card Trilingual Fix
+
+**Data:** 2026-09-02
+**Sprint:** L1 Toggle Gate
+**Invariantes:** I12 (Language Sovereign)
+
+### Problema
+
+Toggle PT→EN→DE não trocava strings do proof card e UI. Hardcoded em PT.
+
+### Cura Aplicada
+
+| Elemento | Antes | Depois |
+|----------|-------|--------|
+| btnProvar | Hardcoded PT | data-lang PT/EN/DE |
+| roadmapLine | Hardcoded PT | data-lang PT/EN/DE |
+| stateText | Hardcoded PT | data-lang PT/EN/DE |
+| Instante label | Hardcoded PT | data-lang PT/EN/DE |
+| Linha honesta | Hardcoded PT | data-lang PT/EN/DE |
+| Tu decides block | Hardcoded PT | data-lang PT/EN/DE |
+| verify-public link | Hardcoded PT | data-lang PT/EN/DE |
+
+### P0.1 Resíduos Corrigidos
+
+| Linha | Antes | Depois |
+|-------|-------|--------|
+| 38 (JSON-LD) | "prove a work is mine" | "prove it existed on this date" |
+| 1230 (noscript) | "Cria. Ancora no tempo." | "Prova que existiu. Ancora no tempo." |
+
+### Commit
+
+| Campo | Valor |
+|-------|-------|
+| Hash | `249bd623b` |
+| Stats | +36/-10 |
+| data-lang | 27/27/27 (era 20/20/20) |
+| SHA-256 | `6f090fde6e3ba2d56c561c0f99c5a1b45034899ae4ac3d402098783511860078` |
+
+### Gate Pendente
+
+**L1-TOGGLE-GESTURE-001** aguarda teste humano em janela anónima:
+- PT → EN: ?
+- EN → DE: ?
+- DE → PT: ?
+
+---
+
+*CCode Gêmeo · 02 Set 2026 · Liga IA+H*
+*"O toggle agora troca todas as strings visíveis."*
+
+---
+
