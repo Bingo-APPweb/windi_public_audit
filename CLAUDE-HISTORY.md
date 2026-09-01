@@ -31007,3 +31007,102 @@ Pega um documento de teste — pode ser fictício. Eu passo pelo fluxo com você
 *"AI processes. Human decides. WINDI guarantees."*
 
 ---
+
+## § SESSION-20260901-PLAYGROUND-EVIDENCE-SWEEP
+
+**Data:** 2026-09-01 (14:25 → ~17:30 CEST)
+**Sprint:** FREMDE-SURFACE / Playground Evidence Sweep
+**Modo:** CCode CLI (executor on-origin) + Claude.ai web (observador cloud, backlog vivo)
+**Operador humano:** Human Dragon
+**Modelo:** claude-opus-4-5-20251101
+**Invariantes:** I1, I9, I11, I12, I14
+
+### Trabalho Completado
+
+**Fase de Evidência — 5 CAPs fechados:**
+
+| CAP | Tema | Estado | Evidência |
+|-----|------|--------|-----------|
+| 0 | PLAYGROUND-HASH-SEMANTICS-001 | ✅ RESOLVIDO | Pipeline: `.trim()` → UTF-8 → SHA-256. Determinístico. 4 instrumentos concordam. |
+| — | FREMDE-GESTO-REAL-001 (Teste do Humano) | ✅ PASS | Janela anónima → texto → hash → instante → decisão I9 → próximo passo. Sem conta. |
+| 1 | F8-BYOK-SLOT | ✅ STUB CONFIRMADO | Documentado como "futuro" (L144). Fremde-Packet = REAL. |
+| 2 | HEAD/JSON-LD (F-1/F-5) | ✅ OBSERVED | playground: F-1 + F-5 completos. editor: F-1 OK, F-5 PARTIAL (falta canonical/OG/Twitter). |
+| 3 | W-MAIL-DOMAIN-SPLIT-001 | ✅ CONFORME | windisites.de = sender/envelope. windi-domain.com = links verificação. Decisão A respeitada. |
+| 4 | RECONCILIAÇÃO | ✅ COMPLETE | 13 itens tabulados. P0/P1/P2 definidos. 6 decisões I9 tomadas. |
+
+**Drift servido-vs-fonte:** NÃO (todos os ficheiros: hash servido == hash fonte)
+
+### Decisões I9 Registadas
+
+| ID | Decisão | Estado |
+|----|---------|--------|
+| I9-A | Corrigir "é teu" (claim inflation) | BUILD P0 |
+| I9-B | Política de hash = CANONICAL-TEXT (trim) + RAW-BYTES para binários | P0 (documentar) |
+| I9-C | VERIFICATION-PROMPT / MULTI-ARTEFACT | CANDIDATE (spec v0.1 gravada) |
+| I9-D | BYOK slot | DEFERRED |
+| I9-E | Editor metadata gap (canonical/OG/Twitter) | P1 autorizado após P0 |
+| I9-F | DKIM-DNS-GAP-001 | Track separado, fora da sprint |
+
+### Selos Emitidos
+
+NENHUM. Fase de evidência — nada selado, nada certificado.
+
+### Artefactos Gravados (Observador Cloud)
+
+- `PLAYGROUND-BACKLOG-2026-09-01-01-a` a `-01-k` (11 adendas append-only)
+- `VERIFICATION-PROMPT-001-CANDIDATE-v0.1` (spec draft, 6 estados, 4 perguntas abertas)
+
+### Scaffold Pending (não morre, espera)
+
+| Item | Condição para activar |
+|------|----------------------|
+| BUILD P0: corrigir "é teu" | Decisão I9-A tomada, aguarda execução |
+| BUILD P0: documentar política de hash | Decisão I9-B tomada, aguarda execução |
+| BUILD P1: editor metadata | Aguarda P0 completo |
+| Spec v0.1 → v0.2 | Aguarda respostas às 4 perguntas da spec |
+| DKIM-DNS-GAP-001 | Investigação própria, sessão separada |
+
+### Próximo Passo Proposto
+
+1. **Responder às 4 perguntas da spec** (destinos MVP, DID-gate, ordem tipos, nome público)
+2. **Arrancar BUILD P0** — dois gestos pequenos e fechados:
+   - Corrigir copy "é teu" + og:description
+   - Documentar política de hash publicamente
+3. **Depois:** BUILD P1 (editor metadata) + evoluir spec v0.2
+
+### Blockers Identificados
+
+NENHUM. Fase de evidência fechou limpa.
+
+### Decisões Constitucionais
+
+- **Taxonomia F-1/F-5:** Definição governante = `FREMDE-SURFACE-001-CANDIDATE.md` (F-1 = JSON-LD, F-5 = metadados base)
+- **Separação de instrumentos:** CCode lê on-origin, Cloud lê superfícies públicas + mantém backlog — não colapsam
+- **Claim inflation:** SHA-256 + instante + actor não demonstram propriedade jurídica — frase "é teu" é claim inflation
+- **Diferenciador do produto:** "WINDI prova o que consegue demonstrar — e declara o que não consegue"
+
+### Notas para a Sessão Seguinte
+
+- **Vitória maior:** O Playground provou que consegue ser porta de entrada de um produto de verificação, não apenas demonstração técnica.
+- **Gesto base funciona:** texto → hash → instante → decisão I9 → próximo passo — sem conta, sem login.
+- **BYOK não é incerteza:** É STUB confirmado. Human Dragon pode decidir conscientemente se merece BUILD ou sai da promessa.
+- **Spec VERIFICATION-PROMPT-001-CANDIDATE v0.1:** Draft gravado pelo observador cloud, com 6 estados (BROUGHT → MEASURED → LOCAL_HASHED → HUMAN_DECIDED → {DISCARDED | EXPORTED | REGISTERED} → VERIFY_PUBLIC), bloco PROOF LIMITS obrigatório, e 4 perguntas abertas para I9.
+- **W-MAIL:** CONFORME com decisão A, mas DKIM-DNS-GAP merece investigação própria (selector `rsa._domainkey.windisites.de` não resolve publicamente).
+
+### Estado Terminal
+
+| Item | Estado |
+|------|--------|
+| Fase de evidência | ENCERRADA |
+| CAPs 0-4 | FECHADOS |
+| Decisões I9 | 6 REGISTADAS |
+| Spec v0.1 | GRAVADA (draft) |
+| BUILD P0 | PRONTO A ARRANCAR |
+| Worktree | DIRTY (preexistente, escopo separado) |
+
+---
+
+*CCode Gêmeo · 01 Set 2026 · Liga IA+H*
+*"WINDI prova o que consegue demonstrar — e declara o que não consegue."*
+
+---
