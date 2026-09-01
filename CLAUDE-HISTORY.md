@@ -30925,3 +30925,85 @@ This is exactly the I9 erosion pattern identified in prior sessions: the instanc
 *"Não reescrever. Corrigir append-only."*
 
 ---
+
+## § SESSION-20260901-CONT — Camila Response + W-MAIL DNS Audit
+
+**Data:** 2026-09-01 (continuação após context compaction)
+**Operador humano:** Human Dragon
+**Invariantes:** I1, I9, I11, I12, I14
+**Modo:** CCode CLI + Cloud (conselheiros) + Guardian (revisão constitucional)
+
+### 1. Trabalho Completado
+
+- **Resposta à Camila (contabilista):** Mensagem WhatsApp preparada para dois casos de uso:
+  - Recebimento de documentos (carimbo bilateral vs integridade WINDI)
+  - Contrato de prestação de serviço (encaixe mais limpo)
+- **W-Mail mencionado como próximo passo:** "A infraestrutura de envio já está de pé e assina as mensagens criptograficamente. O que falta é o envelope carregar a prova."
+- **Achado W-MAIL-DOMAIN-SPLIT-001:** Domínio de transporte (windisites.de) distinto do domínio de produto (windi-domain.com).
+
+### 2. Auditoria DNS W-MAIL
+
+| Domínio | SPF | DKIM | DMARC | Função |
+|---------|-----|------|-------|--------|
+| windisites.de | ✅ | ✅ (teste Gmail 30 Abr) | ✅ `p=quarantine; fo=1` | Transporte/Autenticação |
+| windi-domain.com | ❌ | ❓ (selector não verificado) | ✅ `p=quarantine` (via alias) | Produto/Verificação |
+
+**Nota técnica:** `_dmarc.windisites.de` servido via alias para apex; `fo=1` significa relatórios forenses em qualquer falha.
+
+### 3. Gate Refinado
+
+**W-MAIL-DOMAIN-SPLIT-001:** Antes de usar windi-domain.com como domínio de identidade de e-mail (From, envelope-from, DKIM d=), verificar e completar SPF/DKIM/DMARC com alinhamento. O uso como hostname de links de verificação não depende desses registos.
+
+**Trigger comercial:** Caso Camila/contabilidade — requisito "evidence travels with email" expôs a necessidade de separar domínio de transporte, domínio de prova e identidade remetente.
+
+**Decisão I9 (aberta):**
+- (A) windisites.de continua transporte; windi-domain.com fica produto/verificação (recomendado)
+- (B) Publicar SPF/DKIM em windi-domain.com antes de o usar como From
+
+### 4. Triangulação
+
+Dez ou onze conclusões prematuras apanhadas antes do Ledger nesta sessão, duas do próprio CCode:
+1. Matriz DNS dizia windi-domain.com "❌ DMARC" quando terminal já tinha mostrado `_dmarc.windi-domain.com` publicado
+2. Confusão entre "domínio que aparece no e-mail" e "domínio que autentica o e-mail"
+
+Guardian corrigiu ambas. Triangulação a funcionar.
+
+### 5. Mensagem Final Aprovada (Camila)
+
+```
+Camila, boa noite.
+
+Respondendo aos dois casos que você trouxe.
+
+**Recebimento de documentos**
+O carimbo prova que alguém reconheceu a entrega — duas partes. O WINDI prova outra coisa: que aquele arquivo exato existia naquele instante, e qualquer alteração posterior é detectável comparando o hash. São evidências diferentes, uma bilateral, outra de integridade.
+
+**Contrato de prestação de serviço**
+Esse é o encaixe mais limpo: um documento, duas partes, cada uma precisando ter certeza de que segura exatamente o mesmo arquivo. Não substitui ICP-Brasil — é outra camada.
+
+**O que não existe ainda**
+Não tem kit de contabilidade pronto. Não tem leitura automática de e-mail. Prefiro não vender o que não está de pé.
+
+**Proposta**
+Pega um documento de teste — pode ser fictício. Eu passo pelo fluxo com você: documento → hash → registro → receipt → verificação. Depois a gente muda uma vírgula no documento e você vê o hash deixar de bater. Aí fica claro o que o sistema faz e o que ele não faz.
+
+**E o próximo passo que estou construindo é justamente isso:** fazer a prova viajar junto com o e-mail. Você anexa o documento e o próprio envelope pode carregar o hash, o receipt e o link de verificação — para o cliente conferir a evidência associada sem precisar reconstruir todo o caminho fora da mensagem. Chama-se W-Mail. A infraestrutura de envio já está de pé e assina as mensagens criptograficamente. O que falta é o envelope carregar a prova. E o seu caso é exatamente o que orienta esse trabalho.
+
+🐉
+```
+
+### 6. Estado Terminal
+
+| Item | Estado |
+|------|--------|
+| Resposta Camila | APROVADA · aguarda envio pelo Human Dragon |
+| W-MAIL-DOMAIN-SPLIT-001 | OPEN · backlog |
+| Matriz DNS | CORRIGIDA |
+| I9 pendentes (sessão anterior) | Método de leitura + Postura — continuam com Human Dragon |
+
+---
+
+*CCode Gêmeo · 01 Set 2026 · Liga IA+H*
+*"AI processes. Human decides. WINDI guarantees."*
+
+---
