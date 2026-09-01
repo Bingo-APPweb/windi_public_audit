@@ -31106,3 +31106,58 @@ NENHUM. Fase de evidência fechou limpa.
 *"WINDI prova o que consegue demonstrar — e declara o que não consegue."*
 
 ---
+
+## § FIXTURE-20260901-CAMILA-VIDEO
+
+**Data:** 2026-09-01 (adenda ao §236)
+**Natureza:** Primeiro artefacto binário real de fremder real
+**Autora:** Camila M. (medo declarado: "criar e não conseguir provar que foi minha criação")
+**Invariantes:** I9, I11, I14
+
+### Medição — Três Pontas
+
+| Ponta | Bytes | SHA-256 | MD5 | Estado |
+|-------|-------|---------|-----|--------|
+| Cloud (sandbox) | 2498147 | `da1f94918e779c38c813ee81d240a67f01757b523da54f60cff281e86a0a4956` | `ba2c462f8495ca661813ab9f3ca7bd28` | MEDIDO |
+| On-origin (Strato) | 2498147 | `da1f94918e779c38c813ee81d240a67f01757b523da54f60cff281e86a0a4956` | `ba2c462f8495ca661813ab9f3ca7bd28` | **BATE** |
+| Camila (original) | — | — | — | PENDENTE |
+
+**Comparação:** ✅ **BATE** — Cloud == On-origin (2/3 pontas)
+
+### FFprobe
+
+```
+format: mp4 (isom/iso2/avc1/mp41)
+duration: 8.0s
+video: h264, 720x1280, 24fps
+audio: aac, 48kHz, stereo
+TAG:encoder=Google
+TAG:author=NÃO PRESENTE
+TAG:creation_time=NÃO PRESENTE
+```
+
+### Achado
+
+O container **não carrega nenhuma identidade de autor**. Apenas `TAG:encoder=Google` (provavelmente Google Photos export). Isto reforça o caso de uso da Camila: o ficheiro por si não prova nada sobre quem o criou.
+
+### Fixture
+
+```
+Caminho: /opt/windi/fixtures/fremde/Camila-PROMO-VD.mp4
+Git: IGNORADO (fixtures/ adicionado ao .gitignore)
+```
+
+### Estado
+
+**[BLOQUEADO até P0 verde]** — Teste do Humano do CAP "Bring anything" usa ESTE ficheiro como primeiro binário.
+
+### Fronteira
+
+**Recorded ≠ Authored.** Nenhuma linha deste registo afirma que o ficheiro é da Camila. A quarta ponta (sha256sum da Camila no ficheiro original dela) fica pendente até instrução ser enviada. Se os quatro baterem: primeira vez que o WINDI tem "mesmos bytes em quatro máquinas" com autora real do outro lado.
+
+---
+
+*CCode Gêmeo · 01 Set 2026 · Liga IA+H*
+*"Recorded ≠ Authored."*
+
+---
