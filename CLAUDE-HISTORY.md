@@ -31507,3 +31507,114 @@ f69b22b21  fix: NOIR/KLAR toggle
 O Playground deixou de ser text-only. Qualquer ficheiro até 50 MB prova integridade local com RAW-BYTES. O guia público ensina sem teoria: "Acabaste de verificar o verificador."
 
 ---
+
+---
+
+## SESSION-20260902-DID-REG-R1-AUDIT
+
+**Date:** 2026-09-02
+**Marker:** `DID-REG-R1-AUDIT-GUIA-DID-ERRATA`
+**Commit:** `8802c6142` (pushed to origin/main)
+**Artefact:** `/opt/windi/artifacts/guia-did.html`
+**SHA-256:** `93264b7205d27821b6493f2ca4c0d52d089a8e3899c97e68952761e982a57ffb`
+
+### Context
+
+Marketing evolution session: guia-did.html extension with DID→Project→B2B narrative.
+Before commit, READ-ONLY audit of DID enrollment capability was mandated (DID-REG-R1).
+
+### DID-REG-R1 Audit Findings
+
+#### Two Separate Identity Systems Discovered
+
+| System | Port | Status | Population |
+|--------|------|--------|------------|
+| **DID Genesis** | :8096 | LIVE v1.5.0 | 40 DIDs (19 active) |
+| **Wallet Service** | :8099 | HEALTHY | 14 pioneers |
+
+#### DID Genesis Runtime
+
+- Process: `python3 did_genesis.py` (PID 4022686)
+- Uptime: 66 days (since Jun 28)
+- Binding: 127.0.0.1 (localhost only)
+- Management: nohup (NOT systemd)
+- Kill-switch: `birth_enabled: true`
+- Last birth: 2026-07-22 (sovereign_name: fioprova)
+- Birth receipts: sealed to Ledger
+
+#### Critical Finding: UI Misalignment
+
+```
+guia-did.html CTA → /identity/ → /desktop/ → Wallet Service (:8099)
+                                    ↓
+                          NOT → DID Genesis (:8096)
+```
+
+The marketing narrative described DID creation, but actual flow creates a **wallet**, not a DID in Genesis registry.
+
+#### Proof of Control
+
+- DID/public-key consistency: NOT DEMONSTRATED
+- Challenge-response: NOT DEMONSTRATED
+- Signature proof: NOT DEMONSTRATED
+- Current model: passphrase-based authentication post-birth
+
+### Corrections Applied to guia-did.html
+
+| Item | Before | After |
+|------|--------|-------|
+| Título | "Porqu um DID?" | "Porquê um DID?" |
+| Footer | "Kempten, Bavaria" | "Kempten, Baviera" |
+| Tabela: DID | "Criação de DID local" ✓ Hoje | "Criação de DID" ◐ Em integração |
+| CTA | "Criar o meu DID →" | "Explorar a identidade WINDI →" |
+| Subtítulo | "Grátis. Sem conta. Sem email. Leva 10 segundos." | "Conhece como funciona a identidade WINDI e o que ela pode permitir." |
+
+### Open Design Questions (NOT RESOLVED)
+
+1. **Wallet ↔ DID Genesis Relationship**
+   - Should Wallet request birth from Genesis?
+   - Should Wallet receive/store an existing DID?
+   - Are they separate identity categories?
+
+2. **UI → Genesis Integration**
+   - No public UI path to `/api/genesis/birth` exists
+   - Current `/identity/` is informational portal only
+
+3. **Proof of Control at Birth**
+   - Current: simplified SHA256-based "key" (not true Ed25519)
+   - Required: cryptographic proof-of-control
+
+### State
+
+```
+COMMITTED + PUSHED EDUCATIONAL/MARKETING ARTIFACT
+BROWSER OBSERVED
+CLAIMS REFINED
+NOT SEALED
+NOT CANONICAL
+```
+
+### Lineage
+
+| Artefact | Status |
+|----------|--------|
+| LEDGER-WRITE-AUTHORITY-SPLIT-001 | PRESERVED (previous session) |
+| LEDGER-WRITE-AUTHORITY-SPLIT-001-A1 | PRESERVED (previous session) |
+| I9-R1-HUMAN-DECISION-AUTHORITY | PRESERVED (previous session) |
+| guia-did.html | COMMITTED `8802c6142` |
+
+### Pending for Next Session
+
+- [ ] Wallet ↔ DID Genesis design decision
+- [ ] UI integration for public DID birth (if authorized)
+- [ ] Canary test R2 (requires authorization)
+- [ ] CAP3 resolution (blocked by I9 + SGE + contract)
+
+### Verdict
+
+**OBSERVE** — Marketing artifact refined. DID Genesis LIVE but UI integration pending. No seal, no ratification.
+
+---
+
+*Liga IA+H · Kempten, Bavaria · 2026-09-02*
+
