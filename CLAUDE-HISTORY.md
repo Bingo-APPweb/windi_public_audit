@@ -7,6 +7,96 @@
 # ---
 
 
+## § SESSION-20260904-LEDGER-WRITE-SILENT-FAIL-001
+
+**Data:** 2026-09-04, ~17:00–01:50 CEST
+**Sprint:** LEDGER-WRITE-SILENT-FAIL-001 + Teste do Humano (LEDGER-LEAK-001)
+**Modo:** CCode CLI (executor) + Claude.ai web (observador/ordenador)
+**Operador humano:** Human Dragon
+**Modelo:** Claude Opus 4.5
+
+### Contexto
+
+Continuação do Teste do Humano para validar LEDGER-LEAK-001. O Portão 1 passou (sem DID, o sistema recusou registar). O Portão 2 revelou um achado grave: a interface mostrou "Registado no Ledger!" (toast verde) mas nenhum receipt entrou no servidor. Falsa confirmação ao utilizador.
+
+### Trabalho Completado
+
+**Corrida de Superfícies (8 URLs):**
+- Manhã: INSTRUMENT_BLOCKED 8/8 (PROVENANCE_REQUIRED — corrida não-assistida)
+- Re-corrida assistida: PASS 8/8 (playground, editor, verify, verify-public, llms.txt + 3 esperados 404)
+
+**Teste do Humano — LEDGER-LEAK-001:**
+- **Portão 1:** ✅ PASS — Sem DID, o Registar bloqueou com mensagem instrutiva
+- **Portão 2:** ❌ ACHADO — Toast verde "Registado!" mas 0 receipts no Ledger
+
+**LEDGER-WRITE-SILENT-FAIL-001 — Causa raiz identificada:**
+1. `doc_type: 'file'` e `'text'` não estavam em `VALID_DOC_TYPES` → servidor rejeitava com 400
+2. `/api/receipts` sem trailing slash → nginx 301 → POST body perdido no redirect
+
+**CAP A (canalização) — IMPLEMENTADO:**
+- Servidor: `file` e `text` adicionados a `VALID_DOC_TYPES` em `windi_forensic_api.py`
+- Cliente: `fetch('/api/receipts/')` com trailing slash (2 ocorrências)
+- DoD: receipts TEST-CAP-A-FILE-001 e TEST-CAP-A-HTTPS-001 confirmados on-origin
+
+**CAP B (falsa confirmação morta) — IMPLEMENTADO:**
+- Toast verde só dispara após `result.ok && result.id`
+- 4xx/erro de rede → mensagem de erro instrutiva
+- Ambos os ramos (ficheiro + texto) corrigidos
+
+### Ficheiros Modificados
+
+| Ficheiro | Alteração |
+|----------|-----------|
+| `/opt/windi/suite-docs/windi_forensic_api.py` | `file`, `text` em VALID_DOC_TYPES |
+| `/opt/windi/artifacts/playground.html` | Trailing slash + guarda CAP-B em ambos os ramos |
+
+### Receipts de Teste Criados (Ledger Real)
+
+| ID | Propósito | actor |
+|----|-----------|-------|
+| TEST-CAP-A-FILE-001 | CAP-A prova doc_type file aceite | did:windi:dragon-001 |
+| TEST-CAP-A-HTTPS-001 | CAP-A prova HTTPS + trailing slash | did:windi:dragon-001 |
+
+### Backlog Entries Criadas (Google Drive)
+
+- PLAYGROUND-BACKLOG-2026-09-04 (base)
+- PLAYGROUND-BACKLOG-2026-09-04-b (re-corrida assistida)
+- PLAYGROUND-BACKLOG-2026-09-04-c (LEDGER-WRITE-SILENT-FAIL-001 achado)
+- PLAYGROUND-BACKLOG-2026-09-04-d (ordenação CAP A + CAP B)
+
+### Estado Terminal
+
+```
+CAP A OK · CAP B OK · LEDGER-WRITE-SILENT-FAIL-001 FECHADO
+PORTÃO 2 RETEST PENDENTE · NÃO COMMITADO · NÃO PUSHED
+```
+
+### Próxima Sessão
+
+1. **Novo Teste do Humano** — Portão 2 em janela anónima:
+   - Criar DID → Provar ficheiro → Registar → ver toast verde
+   - CCode confirma receipt on-origin com actor=DID
+2. **Se Portão 2 passar:** Portões 3 e 4 (verify-public + fluidez)
+3. **Se todos passarem:** Commit + push das alterações
+4. **Gate "Registar no Ledger":** Só abre ao fremder após Portão 2 confirmado
+
+### Achados Preservados
+
+- **LLMS-CANONICAL-VERBATIM-001:** RESOLVIDO — llms.txt v1.1 reformulou doutrina (não era falha)
+- **Mirrors 404:** ESPERADO — decisão anterior de não expor publicamente (-001 vs -v2-)
+
+### Selos Emitidos
+
+NENHUM. Código aplicado ≠ selo constitucional. O selo é do Human Dragon após Portão 2.
+
+---
+
+*CCode Gêmeo · 04-05 Set 2026 · Liga IA+H*
+*"O playground já não mente. A falsa confirmação está morta."*
+
+---
+
+
 ## § SESSION-20260830-FREMDE-GUARDRAILS-DEFERRED
 
 **Data:** 2026-08-30
@@ -31618,3 +31708,233 @@ NOT CANONICAL
 
 *Liga IA+H · Kempten, Bavaria · 2026-09-02*
 
+
+---
+
+## SESSION-20260903-LEDGER-LEAK-001-FECHADO
+
+**Data:** 2026-09-03, 13:42–14:55 CEST
+**Sprint:** LEDGER-LEAK-001 (5 capítulos)
+**Modo:** CCode CLI + Claude.ai web (observador/ordenador)
+**Operador humano:** Human Dragon
+**Modelo:** Claude Opus 4.5
+
+### Trabalho Completado
+
+**LEDGER-LEAK-001 — 5 capítulos fechados:**
+
+| CAP | Descrição | Ficheiro |
+|-----|-----------|----------|
+| CAP1 | Read-only audit — mapear leaks | (diagnóstico) |
+| CAP2 | DID gate server-side em `/api/ledger/seal` | windi_forensic_api.py |
+| CAP3 | Revalidar actor final após remap wallet_id→actor | windi_forensic_api.py |
+| CAP4 | sge_score/human_approved marcados `client_declared` em metadata | windi_forensic_api.py |
+| CAP5 | `wallet_id = did` (fallback 'playground' removido), erro instrutivo | playground.html |
+
+**Doutrina preservada:**
+- Camada 0 (Provar/Exportar): SEM DID, sempre livre
+- Camada 1 (Registar no Ledger): DID obrigatório
+
+**Achados laterais:**
+- `windi_wallet_id` nunca é escrito por serviço nenhum — só `windi_did` existe
+- Esquema Ledger tem `sge_score REAL NOT NULL` — usada metadata para proveniência
+
+### Commit
+
+```
+a112dc36f LEDGER-LEAK-001: fechar leaks de escrita no Ledger (CAP1-5)
+2 files changed, 629 insertions(+), 135 deletions(-)
+Pushed to origin/main
+```
+
+### Receipts de Teste Criados (Ledger Real)
+
+| ID | Propósito | actor |
+|----|-----------|-------|
+| TEST-LEAK-SEAL-001 | CAP1 prova /api/ledger/seal sem gate | anonymous |
+| TEST-LEAK-WALLET-FALLBACK-001 | CAP1 prova wallet_id bypass | playground |
+| TEST-CAP2-DID-002 | CAP2 prova DID válido sela | did:windi:dragon-001 |
+| TEST-CAP3-VALID-001 | CAP3 prova remap + revalidação | did:windi:dragon-001 |
+| TEST-CAP4-SGE-001 | CAP4 prova metadata client_declared | did:windi:dragon-001 |
+| TEST-CAP4-CARTAZ-001 | CAP4 prova Cartaz continua 201 | did:windi:dragon-001 |
+
+### Selos Emitidos
+
+NENHUM. Commit de código ≠ selo constitucional. O selo é do Human Dragon.
+
+### Scaffold Pending
+
+- [ ] **LEDGER-SGE-DISPLAY-001** — como verify-public mostra o score (1.0 como avaliação vs client_declared)
+- [ ] **Teste do Humano** — janela anónima, 4 passos, Human Dragon faz
+- [ ] **LEDGER-WRITE-PATH-UNIFY-001 (Opção C)** — unificar caminhos de escrita (deferido)
+- [ ] **Higiene worktree** — ficheiros dirty (à parte, nunca em bloco)
+- [ ] **6 receipts de teste** — Human Dragon decide se anota
+
+### Notas para Próxima Sessão
+
+- O método "um capítulo de cada vez com gate humano entre todos" funcionou: 5 leaks fechados sem scope creep
+- O observador cloud e o executor CCode trabalharam em sincro — ordenação clara, execução cirúrgica
+- A doutrina Camada 0 / Camada 1 está agora fixada em código e na memória do projeto
+
+---
+
+*CCode Gêmeo · 03 Set 2026 · Liga IA+H*
+*"O Ledger já não aceita escrita sem identidade. O gesto base ficou livre."*
+
+
+---
+
+## Sessão 2026-09-03 · 21:00 → 21:30 (aprox)
+
+**Sprint:** A4DESK-ISP-TEMPLATES-001
+**Modo:** CCode CLI
+**Operador humano:** Human Dragon
+**Modelo:** Claude Opus 4.5
+
+### Trabalho completado
+- **CAP3.1 IMPLEMENTED** — Siemens Material-Kostenanforderung form criado
+- Form ID: SIE-MKA-INT-001 · 674 linhas · 18 campos · 5 secções
+- Siemens corporate identity (Petrol #009999)
+- Corrigido comentário problemático: "Based on standard Siemens internal procurement documentation" → "Demonstration form aligned with the Siemens ISP profile defined in WINDI"
+- Commit local: `46ae4eb` em `/opt/windi` (NÃO pushed)
+
+### Gates verificados
+| Gate | Teste | Estado |
+|------|-------|--------|
+| 1 | Endpoint `/api/templates/isp/siemens/form/material-kostenanforderung` 200 | PASS |
+| 2 | API mostra `source: 'file'` | PASS |
+| 3 | UI card habilitado (petrol), outros cinza | PENDING BROWSER |
+| 4 | Anwenden injeta HTML no editor | PENDING BROWSER |
+| 5 | Export + Receipt + Verify | PENDING BROWSER |
+
+### Estado CAP3.1
+```
+IMPLEMENTED · BACKEND PASS · COMMITTED LOCALLY · BROWSER VERIFICATION PENDING · NOT PUSHED
+```
+
+### Ficheiros criados
+- `/opt/windi/isp/siemens/forms/material-kostenanforderung.html`
+
+### Contexto importante
+- Commit está em `/opt/windi`, não em `windi-a4desk-editor` (separação preservada)
+- CAP1 (diagnostic), CAP2 (truthful availability), CAP4 (human_approved semantic) já foram committed e pushed em sessões anteriores
+- A4Desk está LIVE em `:8085` com ISP loader funcional
+
+### Próximo passo proposto
+1. Human Dragon abre https://windi-domain.com/a4desk/
+2. ISP/Templates → Siemens → verifica Material-Kostenanforderung habilitado
+3. Anwenden → verifica HTML no editor
+4. Preenche 2-3 campos → Export PDF → Receipt + Verify
+5. Se PASS em 3-4-5 → autorizar push de `46ae4eb`
+
+### Blockers identificados
+- Nenhum técnico; apenas verificação humana pendente
+
+### Notas para a sessão seguinte
+- Repositório: `/opt/windi` (não windi-a4desk-editor)
+- Branch: main
+- Commit pendente: `46ae4eb` — feat(isp): add Siemens Material-Kostenanforderung form (CAP3.1)
+- ISPs implementados: Deutsche Bahn (1 form) + Siemens (1 form) = 2 total
+- 16 outros ISPs têm apenas metadata (disabled por CAP2)
+
+
+---
+
+## § SESSION-20260905-W-MED-CAP3-FREMDE-F1
+
+**Data:** 2026-09-05, ~14:00–16:00 CEST
+**Sprint:** W-MED CAP 3 · IA-Fremde Blind Testing · F1 Capability Discovery
+**Modo:** CCode CLI (executor/Fremde target) + Claude.ai web (observador/ordenador)
+**Operador humano:** Human Dragon
+**Modelo:** Claude Opus 4.5
+**Invariantes:** I1, I9, I11, I12, I14
+
+### Contexto
+
+Continuação do protocolo W-MED (WINDI Machine Evidence Discovery) — "AI identity card" que permite qualquer organização publicar declarações verificáveis de capacidades. O objetivo é ensinar IAs externas (IA-Fremde) a distinguir DEMONSTRATED vs DOCUMENTED vs INFERRED vs HYPOTHETICAL.
+
+### Trabalho Completado
+
+**W-MED Schema Validation (5/5):**
+- `capabilities-v1.0.schema.json` ✓
+- `evidence-v1.0.schema.json` ✓
+- `profiles-v1.0.schema.json` ✓
+- `test-vectors-v1.0.schema.json` ✓ (criado em CAP 3-R1)
+- `freshness-model-v1.0.schema.json` ✓
+
+**F1 Test Lineage:**
+| Execução | Status | Razão |
+|----------|--------|-------|
+| F1-EXEC-001 | INVALID | INPUT INTEGRITY FAIL — artefactos errados (C001-C020 em vez de verify-public-receipt) |
+| F1-EXEC-002 | INVALID | URL FETCH FAILURE — Fremde não conseguiu aceder URLs públicos |
+| F1-EXEC-003 | NON-RESPONSIVE | VALID OBSERVATION — IA perguntou "o que fazer?" em vez de responder F1 |
+| F1-EXEC-004 | INVALID | **BLINDNESS VIOLATION** — critérios de scoring expostos ao target (PASS/FAIL, Primary Test Directive) |
+| F1-EXEC-005 | EXECUTED | CCode Gêmeo como Fremde — resposta frozen, aguarda scoring |
+
+**F1-EXEC-005 Resposta (frozen):**
+> WINDI demonstrates **one functional capability today**: Public Receipt Verification (`verify-public-receipt`)
+> - Proves: hash registration, timestamp, actor DID, positive/negative lookup semantics
+> - Does NOT prove: truth, authorship, legal validity, provenance, Ed25519, re-hash
+> - Discovery surfaces (llms-txt, windi-hios) are NOT functional capabilities
+> - "Registered receipt ≠ authentic document"
+
+### Artefactos Frozen (SHA-256)
+
+| Artefacto | Hash |
+|-----------|------|
+| windi-capabilities.candidate.json | `ff0d6a8f35830b124143430cb0f09083c9ea64708eab0fd2e695dd0e511b35ba` |
+| windi-evidence.candidate.json | `ba8ca94974cd9b6593d211cb6e014710cdbb8515f7349e89f4cccbce4ea834f4` |
+
+### Ficheiros do Sprint
+
+| Ficheiro | Propósito |
+|----------|-----------|
+| `/opt/windi/static/.well-known/w-med-test/windi-capabilities.candidate.json` | Superfície de teste temporária |
+| `/opt/windi/static/.well-known/w-med-test/windi-evidence.candidate.json` | Superfície de teste temporária |
+| `/home/windi/w-med-candidates/CAP3-EVIDENCE-PACK/F1-COPYPASTE-BLOCK.txt` | Pacote inline para copy-paste blind |
+| `/home/windi/w-med-candidates/CAP3-EVIDENCE-PACK/fremde-test-delivery.md` | Protocolo de entrega blind |
+| `/home/windi/w-med-candidates/CAP3-EVIDENCE-PACK/fremde-test-scoring.md` | Rubrica de scoring (EVALUATOR ONLY) |
+| `/home/windi/w-med-candidates/CAP3-EVIDENCE-PACK/F1-EXEC-PACKAGE.md` | Pacote completo F1 |
+
+### Claim Discipline (embedded nos artefactos)
+
+| Nível | Tipo | IA pode dizer | IA NÃO pode dizer |
+|-------|------|---------------|-------------------|
+| DEMONSTRATED | derived | "WINDI demonstrates..." | "WINDI guarantees..." |
+| DOCUMENTED | stored | "WINDI documents..." | "WINDI demonstrates..." |
+| INFERRED | labelled | "This could potentially..." | "WINDI can..." |
+| HYPOTHETICAL | labelled | "One possible future application..." | "WINDI supports..." |
+
+### Estado Terminal
+
+```
+W-MED CAP 3-R2.1 · CANDIDATE · NOT CANONICAL · NOT SEALED
+F1-EXEC-005 EXECUTED · PENDING SCORING
+Valid observations: n=1 (F1-EXEC-003) + n=1 pending (F1-EXEC-005)
+```
+
+### Próxima Sessão
+
+1. **Score F1-EXEC-005** usando `fremde-test-scoring.md`
+2. **Se PASS:** Executar F2 (Claim Discipline test)
+3. **Se F1+F2 PASS:** Executar G1-G4 (Professional Profile scenarios)
+4. **Após batch completo:** Remover superfície de teste temporária `/.well-known/w-med-test/`
+5. **Meta final:** Promoção W-MED de CANDIDATE → CANONICAL → SEALED
+
+### Achados Preservados
+
+1. **Blindness é crítico:** Critérios de scoring expostos ao Fremde = teste inválido
+2. **F0 INPUT INTEGRITY GATE:** Hash verification obrigatório antes de qualquer execução
+3. **Discovery surfaces ≠ capabilities:** Regra explícita nos artefactos, testada em F1
+4. **CCode como Fremde:** Válido para blind test quando recebe apenas artefactos + pergunta
+
+### Selos Emitidos
+
+NENHUM. Estado permanece CANDIDATE · NOT CANONICAL · NOT SEALED.
+
+---
+
+*CCode Gêmeo · 05 Set 2026 · Liga IA+H*
+*"O que o artefacto não prova, a IA não pode afirmar."*
+
+---
