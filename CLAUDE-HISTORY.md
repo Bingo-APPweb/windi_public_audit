@@ -7,6 +7,140 @@
 # ---
 
 
+## § SESSION-20260907-SEMANTIC-CONTRACT-V1-RATIFICATION
+
+**Data:** 2026-09-07
+**Sprint:** WINDI-HIOS Semantic Contract v1.0 — Congelamento e Ratificação
+**Modo:** CCode CLI (executor) + Claude.ai web (observador/varredura)
+**Operador humano:** Human Dragon
+**Modelo:** Claude Opus 4.5
+**Invariantes:** I1, I9, I11, I14
+
+### Decisão I9 — HIOS-CONNECTOR-POSTURA-001 (âncora fora do documento)
+
+**Data original:** 2026-09-06
+**Âncora:** Esta entrada (a decisão vivia apenas no documento que a citava)
+
+```
+DECIDIDO: Postura B (Testemunha).
+
+O WINDI nunca vê tráfego entre o fremder e o motor dele;
+prova a integridade do artefacto trazido.
+Política de dados intacta.
+
+Human Dragon.
+```
+
+**Consequências:** P-1 (ingresso só por hash) é a forma da decisão. Nunca existirá
+componente de passthrough de conteúdo.
+
+---
+
+### Decisão I9 — WINDI-HIOS-PROTOCOL-001-SEMANTIC-CONTRACT-v1.0
+
+**Data:** 2026-09-07
+
+```
+DECIDIDO: RATIFICADO no escopo SEMANTIC CONTRACT.
+
+Objecto:
+  /opt/windi/docs/WINDI-HIOS-PROTOCOL-001-SEMANTIC-CONTRACT-v1.0.md
+
+SHA-256:
+  d32804ad0b17073f60f77ae9faded8757c4be14c4b65153b2fc583592145c142
+
+Bytes:
+  12685
+
+A ratificação confirma o contrato semântico v1.0 e a sua linhagem
+WINDI-HIOS-PROTOCOL-001.
+
+Não ratifica nem declara demonstrados:
+- Wire Protocol
+- Authentication profile
+- Independent interoperability
+- Public production readiness
+- Canonical/SEALED status
+
+O v0.4 permanece preservado como SUPERSEDED.
+O v0.9 permanece preservado como artefacto de linhagem.
+
+Generated ≠ Verified.
+Semantic Contract ≠ Wire Protocol.
+Ratified ≠ Sealed.
+
+Human Dragon.
+```
+
+### Estado Resultante
+
+```
+WINDI-HIOS-PROTOCOL-001
+└── Semantic Contract v1.0
+    ├── Content: FROZEN
+    ├── Human I9: RATIFIED
+    ├── SHA-256: d32804ad0b17073f60f77ae9faded8757c4be14c4b65153b2fc583592145c142
+    ├── Wire: NOT DEFINED
+    ├── Auth: OUT OF SCOPE
+    ├── Interoperability: NOT DEMONSTRATED
+    └── Seal: NONE
+```
+
+### Linhagem Preservada (I11)
+
+| Versão | Path | SHA-256 | Estado |
+|--------|------|---------|--------|
+| v1.0 | `/opt/windi/docs/WINDI-HIOS-PROTOCOL-001-SEMANTIC-CONTRACT-v1.0.md` | `d32804ad...45c142` | RATIFIED |
+| v0.9 | `/home/windi/inbox/WINDI-HIOS-PROTOCOL-001-CANDIDATE.md` | `449f644b...3470e1f` | Artefacto de linhagem |
+| v0.4 | `/opt/windi/docs/WINDI-HIOS-PROTOCOL-001-CANDIDATE.md` | — | SUPERSEDED |
+
+### Verificação de Transmissão
+
+Hash calculado por dois instrumentos independentes:
+- Claude.ai web (sandbox): `d32804ad0b17073f60f77ae9faded8757c4be14c4b65153b2fc583592145c142`
+- CCode (Strato): `d32804ad0b17073f60f77ae9faded8757c4be14c4b65153b2fc583592145c142`
+
+**MATCH** — transmissão byte-identical apesar de paste.
+
+### Varredura Anti-Absolutista (resumo)
+
+6 achados corrigidos no v0.9 → v1.0:
+- A1: P-4 impossibilidade → não-fabricação + detetabilidade
+- A2: Colisão "WINDI guarantees" registada como I9 aberto
+- A3: P-1 limite declarado para objectos estruturados
+- A4: Dois eixos de versão separados (Contract v1.0 / Capability v0.1)
+- A5: Critério de distribuição retirado da promoção
+- A6: Âncora Postura B escrita (esta entrada)
+
+### W-TUBE-001 CAP A1 (evidência verbatim)
+
+Serviço LIVE em :8210, branch `feature/w-tube-mcp` @ `d385ce8a2`.
+
+| Verificação | Output |
+|-------------|--------|
+| protocolVersion | `2025-06-18` aceite |
+| tools/list | 10 tools (6 windi_* + 4 hios_*) |
+| tools/call | `EXCEPTION_EXPIRED` — gate funciona |
+
+Tools listadas:
+```
+windi_capabilities, windi_verify_receipt, windi_check_artifact_hash,
+windi_get_public_manifest, windi_get_handoff, windi_explain_status,
+hios_verify, hios_receipt, hios_conduct, hios_intents
+```
+
+EXCEPTION-TUBE-AUTH-001 expirou 2026-09-05T22:00Z conforme desenhado.
+Gate em linha 88 do código, não no marker nginx.
+
+### Próximos Passos (não autorizados nesta sessão)
+
+- [ ] Commit/push dos ficheiros (gate separado)
+- [ ] W-TUBE-OBSERVED-001 (corpo pronto)
+- [ ] EXCEPTION-TUBE-AUTH-002 (decisão I9 pendente)
+- [ ] Mover v0.9 de inbox para local durável
+
+---
+
 ## § SESSION-20260906-LLMS-V2-MULTILINGUAL-ARCHITECTURE
 
 **Data:** 2026-09-06
