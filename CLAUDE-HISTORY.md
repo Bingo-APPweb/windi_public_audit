@@ -32208,3 +32208,75 @@ NENHUM. Estado permanece CANDIDATE · NOT CANONICAL · NOT SEALED.
 
 
 2026-09-06 · I9 · HIOS-CONNECTOR-POSTURA-001 · DECIDIDO: Postura B (Testemunha). O WINDI nunca vê tráfego entre o fremder e o motor dele; prova a integridade do artefacto trazido. Política de dados intacta. Human Dragon.
+
+---
+
+## SESSION-20260906 · HIOS-CONNECTOR · CAP 0 → CAP 4 FECHO
+
+**Início:** ~09:00 CEST · **Fim:** ~22:35 CEST
+**Modo:** CCode CLI · **Modelo:** claude-opus-4-5-20251101
+**Operador:** Human Dragon
+
+### Trabalho Completado
+
+- **CAP 0:** Reconhecimento inicial W-TUBE-001 Lane 1 (:8210)
+- **CAP 1:** Postura B Testemunha selada (ad50a390)
+- **CAP 2a:** Reconnaissance W-TUBE vs W-CONNECTOR-001
+- **CAP 2b:** hios_verify + hios_receipt implementados
+- **CAP 3a:** §4 contract fixes (envelope-gated NOT_FOUND, remove input echo)
+- **CAP 3b:** Ativação no serviço vivo, proof of non-exposure
+- **CAP 4:** hios_conduct + hios_intents + instructions + structuredContent
+- **CAP 4 FECHO:** Verificação pós-restart, push
+
+### Estado Vivo
+
+- **W-TUBE-001 Lane 1:** :8210 (windi-tube.service, restart 22:32:02 CEST)
+- **Tools:** 10 = 6 windi_* + hios_verify, hios_receipt, hios_conduct, hios_intents
+- **Gate:** EXCEPTION-TUBE-AUTH-001 expirada (2026-09-05T22:00Z) — TODAS tools gated
+- **Branch:** feature/w-tube-mcp @ d385ce8a2 pushed; main intocada; SEM merge
+
+### Decisões do Dia (Human Dragon)
+
+- Postura B Testemunha (ad50a390)
+- Host = estender Lane 1 (não W-CONNECTOR-001)
+- Restart I1 ×2
+
+### Contrato
+
+- `/opt/windi/docs/WINDI-HIOS-PROTOCOL-001-CANDIDATE.md` — v0.9 esperado
+- sha256: 449f644bbe22883681d37d9fcc8015db73fb1f4c67259ef749739402e3470e1f
+- Handoff v0.8 em /home/windi/inbox/
+
+### Correções Registadas
+
+- Executor errou 2×: W-TUBE "não é serviço"; "3 pontos" = 1 instrumento
+- Observador errou 2×: /playground/ link partido; W-CONNECTOR "buraco" (contido 27/08)
+
+### Gates Pendentes (Humano)
+
+1. EXCEPTION-TUBE-AUTH-001 — modelo de auth (matriz no Backlog Vivo -l) — **CAMINHO CRÍTICO**
+2. "contrato OK" v0.9
+3. merge → main
+4. LLMS-TXT-THIRD-POINT-001 (certutil no Windows)
+5. HIOS-OPEN-NOHUP-001 (I1) · HIOS-OPEN-SCHEMA-404-001 · LLMS-TXT-TIGHTEN-001
+
+### Próximos Capítulos
+
+- **CAP 5:** palavras (Lei III) + manifesto — DEPOIS da auth
+- **Técnico:** HIOS-INPUT-ECHO-002 · SERVERINFO-VERSION-001 · STRUCTUREDCONTENT-FOUND-001 · LEXICON-ENDPOINT-001
+
+### A Confirmar (read-only)
+
+- W-TUBE-PUBLIC-ROUTE-001 · TUBE-LOCALHOST-COMMENT-001 · MCP-PROTOCOL-MAX-001
+- OPENAI-CONNECTOR-AUTH-001 · LLMS-TXT-WORKTREE-COPY-001
+
+### Inalterados
+
+- Portão 2 (LEDGER-WRITE-SILENT-FAIL-001) · F8/F4
+- MONITOR-BLIND-RECORRENTE (run ~06:25 UTC será cego — esperado)
+- DoD W-CONNECTOR-SOVEREIGN: 5/9
+
+### Boundary
+
+Relato ≠ observação; no receipt, no seal, no verdict; CANDIDATE stays CANDIDATE; I9 = humano.
+
