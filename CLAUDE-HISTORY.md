@@ -32206,3 +32206,5 @@ NENHUM. Estado permanece CANDIDATE · NOT CANONICAL · NOT SEALED.
 *CCode Gêmeo · 06 Set 2026 · Liga IA+H*
 *"Evidência antes de código. Três sha256 a bater é melhor que um."*
 
+
+2026-09-06 · I9 · HIOS-CONNECTOR-POSTURA-001 · DECIDIDO: Postura B (Testemunha). O WINDI nunca vê tráfego entre o fremder e o motor dele; prova a integridade do artefacto trazido. Política de dados intacta. Human Dragon.
