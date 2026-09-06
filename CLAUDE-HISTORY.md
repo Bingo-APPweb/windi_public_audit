@@ -7,6 +7,160 @@
 # ---
 
 
+## § SESSION-20260906-LLMS-V2-MULTILINGUAL-ARCHITECTURE
+
+**Data:** 2026-09-06
+**Sprint:** llms.txt v2.0 — Arquitectura Multilíngue Canónica
+**Modo:** CCode CLI (executor)
+**Operador humano:** Human Dragon
+**Modelo:** Claude Opus 4.5
+**Invariantes:** I1, I9, I11, I12, I14
+
+### Contexto
+
+Continuação do trabalho llms.txt. CAP 2B (REGRA ZERO) estava DEFERRED desde 30 Ago 2026.
+Discussão sobre internacionalização revelou risco semântico: ficheiro v1.1 maioritariamente
+em português, o que forçava IAs não-lusófonas a traduzir termos constitucionais, introduzindo
+deriva semântica.
+
+### Decisões I9 (Human Dragon confirmou as três)
+
+1. **Língua canónica = EN** — inglês como pivô de protocolo (não cultural)
+2. **Tokens normativos fixos** — FOUND/NOT_FOUND/UNAVAILABLE/DEMONSTRATED/etc. nunca traduzidos
+3. **Estrutura de ficheiros** — `/llms.txt` (EN canónico) + mirrors `.pt.txt`, `.de.txt`
+
+### Arquitectura Implementada
+
+```
+/llms.txt       → Canónico EN (machine-facing, fonte de verdade)
+/llms.pt.txt    → Mirror PT (derivado, tokens preservados)
+/llms.de.txt    → Mirror DE (derivado, tokens preservados)
+```
+
+**Tokens normativos (nunca traduzidos):**
+- Estados de consulta: `FOUND | NOT_FOUND | UNAVAILABLE`
+- Estados epistémicos: `DEMONSTRATED | DOCUMENTED | INFERRED | HYPOTHETICAL | NOT_DEMONSTRATED`
+- Estados de maturidade: `CANDIDATE | SEALED | NOT_CANONICAL | NOT_SEALED`
+
+### Ficheiros Criados/Modificados
+
+| Ficheiro | Operação | Bytes | SHA-256 (truncado) |
+|----------|----------|-------|-------------------|
+| `/opt/windi/landing-pmg/static/llms.txt` | REPLACED (v1.1→v2.0 EN) | 14,534 | `cd90a164a57a292e...` |
+| `/opt/windi/landing-pmg/static/llms.pt.txt` | CREATED | 15,336 | `78c9750dd8ad1c86...` |
+| `/opt/windi/landing-pmg/static/llms.de.txt` | CREATED | 16,594 | `37a0361e3ca63271...` |
+| `/opt/windi/landing-pmg/static/archive/llms-v1.1-20260906.txt` | BACKUP | 15,350 | — |
+| `/etc/nginx/sites-enabled/windi-domain.com` | EDITED | — | +12 linhas rotas PT/DE |
+
+### Rotas nginx Adicionadas
+
+```nginx
+location = /llms.pt.txt {
+    alias /opt/windi/landing-pmg/static/llms.pt.txt;
+    default_type text/plain;
+    add_header X-WINDI-Service "geo-llms-pt" always;
+}
+
+location = /llms.de.txt {
+    alias /opt/windi/landing-pmg/static/llms.de.txt;
+    default_type text/plain;
+    add_header X-WINDI-Service "geo-llms-de" always;
+}
+```
+
+### Verificação Final
+
+| Rota | Status | Header |
+|------|--------|--------|
+| `windi-domain.com/llms.txt` | 200 ✅ | `X-WINDI-Service: geo-llms-playground` |
+| `windi-domain.com/llms.pt.txt` | 200 ✅ | `X-WINDI-Service: geo-llms-pt` |
+| `windi-domain.com/llms.de.txt` | 200 ✅ | `X-WINDI-Service: geo-llms-de` |
+
+Tokens `FOUND`, `NOT_FOUND`, `UNAVAILABLE` verificados presentes e não traduzidos em todas as versões.
+
+### Bloqueadores Resolvidos
+
+- ✅ **CAP 2B (REGRA ZERO)** — integrada no v2.0 (PART 3, Rule 0)
+- ✅ **Arquitectura multilíngue** — canónico EN + mirrors derivados
+- ✅ **Tokens normativos** — política de não-tradução documentada em PART 0
+
+### Threads Pendentes Herdados
+
+- MOTTO-DIVERGENCE-001 — aguarda decisão Human Dragon (não abordado nesta sessão)
+- R4 (C0 cure - human_approved hardcoded) — pendente
+
+---
+
+### Preparação Visita Analista Bancário (07 Set 2026)
+
+**Contexto:** Analista de sistemas com 20+ anos IT e 15+ anos em bancos brasileiros.
+**Estratégia:** Demonstrar, não convencer. Deixar interrogar. Registar objecções.
+
+**Artefactos preparados:**
+
+| Ficheiro | Descrição |
+|----------|-----------|
+| `01_WINDI_LLMs_Evidence_Discovery_Handout.pdf` | Handout llms.txt + tokens + Rule Zero |
+| `02_WINDI_Proof_Boundary_One_Page.pdf` | O que prova / não prova |
+| `03_WINDI_Receipt_Demo_PreSeal_Package.pdf` | Package de demonstração |
+| `03A_BANKING_ANALYST_DEMO_DOCUMENT.txt` | Documento fictício para selo |
+| `04_Banking_Analyst_Review_Worksheet.pdf` | 4 colunas + 10 perguntas |
+
+**Localização:** `/home/windi/inbox/visita-analista-20260907/`
+
+### Receipt Demo SELADO
+
+| Campo | Valor |
+|-------|-------|
+| Receipt ID | `WINDI-DEMO-20260906024803-85006C3A` |
+| Content Hash | `sha256:a1ac418df9afc642f4c6fc77c1ef461f157d9b798df258b12f0a30b5be29dfb0` |
+| Actor | `did:windi:dragon-001` |
+| Status | `sealed` |
+| Verify URL | `https://windi-domain.com/verify-public/?id=WINDI-DEMO-20260906024803-85006C3A` |
+
+### HANDOFF Legacy Capability Recovery
+
+**Documento criado:** `/opt/windi/docs/HANDOFF-W-HIOS-LEGACY-CAPABILITY-RECOVERY-001.md`
+**Status:** `DRAFT · READ-ONLY MANDATE · NOT CANONICAL · NOT SEALED`
+
+**Missão:** Recuperar e classificar capabilities históricas WINDI-HIOS (9 meses) com foco em:
+- FORENSIC (chain of custody, provenance, evidence lineage)
+- BANKING (institutional audit, interbank evidence, segregation of duties)
+- CORE PRIMITIVES (DID, I9, Ledger, Hash, Receipt, Verify, Provenance)
+- SOVEREIGN/OFFLINE (offline-first, signed packages)
+- MEMORY/RECONSTRUCTION (historical state recovery)
+- VERTICALS (Forensic, Notarial, Accounting, Banking, Cinema, Justice, Author)
+
+**Regra central:** `Memory is a lead, not evidence. Disk/runtime/receipt/commit wins memory.`
+
+### FREMDE-REVIEW Protocol
+
+**Trigger:** `FREMDE-REVIEW`
+**Registo:** `HUMAN-FREMDE-001`
+
+**Comportamento activado:**
+- Interlocutor técnico, não vendedor
+- FACT → EVIDENCE → LIMIT → INFERENCE
+- NOT_DEMONSTRATED quando evidência insuficiente
+- Objecções viram achados, não argumentos a derrotar
+- Memória gera hipóteses, disco/receipt/commit decide
+- Sem claim inflation, sem promoção automática
+
+### Estado Final
+
+```
+IMPLEMENTED · VERIFIED · COMMITTED · continuity preserved
+```
+
+---
+
+*CCode Gêmeo · 06 Set 2026 · Liga IA+H*
+*"O protocolo é inglês. A explicação é soberana."*
+*"Memory is a lead, not evidence."*
+
+---
+
+
 ## § SESSION-20260904-LEDGER-WRITE-SILENT-FAIL-001
 
 **Data:** 2026-09-04, ~17:00–01:50 CEST

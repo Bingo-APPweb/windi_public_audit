@@ -1,0 +1,16 @@
+WINDI-HIOS BANKING ANALYST DEMO DOCUMENT
+
+Purpose: neutral fictitious document for integrity demonstration.
+Date prepared: 2026-09-06
+Classification: DEMO / NO CUSTOMER DATA / NO BANK DATA
+
+Statement:
+A technical reviewer is asked to inspect how WINDI-HIOS separates document integrity evidence, human approval, and external verification. This document contains no operational banking instruction and no claim of legal or regulatory validity.
+
+Expected demonstration path:
+1. Calculate the file hash locally.
+2. Human Dragon reviews and, if desired, performs the real WINDI sealing act.
+3. WINDI issues the actual receipt.
+4. The reviewer verifies the resulting receipt through Verify Public.
+
+This preparation document is NOT itself a WINDI receipt and is NOT sealed.
