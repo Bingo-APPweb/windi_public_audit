@@ -154,6 +154,52 @@ IMPLEMENTED · VERIFIED · COMMITTED · continuity preserved
 
 ---
 
+### SESSION-20260906 CLOSURE RESERVATIONS (append-only)
+
+**1. "COMMIT TUDO"**
+```
+Result observed:
+Authorized target files committed and pushed.
+Full working-tree cleanliness NOT demonstrated in supplied log.
+Status: PARTIAL — specific files committed, not full tree.
+```
+
+**2. MEMORYLOOP**
+```
+Requested by Human Dragon.
+Update/materialization NOT demonstrated in supplied log.
+Status: TO VERIFY.
+```
+
+**3. RECEIPT DEMO**
+```
+Reported state: SEALED
+Receipt ID: WINDI-DEMO-20260906024803-85006C3A
+
+MECHANICAL VERIFICATION (02:58 UTC):
+curl https://windi-domain.com/api/receipts/WINDI-DEMO-20260906024803-85006C3A
+→ ok: true
+→ status: "sealed"
+→ actor: "did:windi:dragon-001"
+→ content_hash: "sha256:a1ac418df9afc642f4c6fc77c1ef461f157d9b798df258b12f0a30b5be29dfb0"
+
+Status: MECHANICALLY VERIFIED SEALED.
+```
+
+**Claimed state:** sessão completamente preservada em §236, history e memoryloop.
+
+**Observed state:**
+- Git/History/Handoff/FREMDE-REVIEW: DEMONSTRATED
+- Receipt Demo: MECHANICALLY VERIFIED
+- Memoryloop: NOT DEMONSTRATED
+- Full working-tree cleanliness: NOT DEMONSTRATED
+
+**Lineage action:** preservar tudo e acrescentar apenas estas reservas; não reescrever o fecho.
+
+**Veredicto:** OBSERVE
+
+---
+
 *CCode Gêmeo · 06 Set 2026 · Liga IA+H*
 *"O protocolo é inglês. A explicação é soberana."*
 *"Memory is a lead, not evidence."*
