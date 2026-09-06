@@ -32138,3 +32138,71 @@ NENHUM. Estado permanece CANDIDATE · NOT CANONICAL · NOT SEALED.
 *"O que o artefacto não prova, a IA não pode afirmar."*
 
 ---
+
+---
+
+## SESSION-20260906-HIOS-CONNECTOR-CAP0-CAP1
+
+**Data:** 2026-09-06, ~10:00–17:30 CEST
+**Sprint:** WINDI-HIOS-PROTOCOL-001 · Connector Contract
+**Modo:** CCode CLI (executor) + Claude.ai web (observador/ordenador)
+**Operador humano:** Human Dragon
+**Modelo:** Claude Opus 4.5
+**Invariantes:** I1, I9, I11, I14
+
+### Trabalho Completado
+
+**CAP 0 — Evidence Request (read-only):**
+- `/api/v1/hios-open/<sha256>`: 200 JSON (W-HIOS-OPEN-SPEC-001 v0.1.0) / 404 JSON (I14)
+- `/verify-public/`: HTML + POST API (escrita) — corrigido mapeamento errado no draft
+- `/llms.txt` + espelhos: 3 ficheiros confirmados com sha256
+- `/playground/`: funcional, redireciona correctamente
+- W-TUBE-001: LIVE em :8199 (corrigido erro de observação)
+
+**CAP 1 — Evidence Residual:**
+- anchor_info completo (15 campos, sem timestamp de registo)
+- 15 intents com layer (playground/strato_i9) e ai_can
+- Timestamp de registo: dois saltos via `/api/receipts/{id}.created_at`
+- `$schema` referenciado: 404 NOT FOUND
+- Módulo: `/opt/windi/w-hios-open-001/hios_open_api.py` · porta 8202 · nohup
+
+**Contrato v0.3 colocado:**
+- `/opt/windi/docs/WINDI-HIOS-PROTOCOL-001-CANDIDATE.md` (26,361 bytes)
+- SHA256: `0704f744a739ba3cd13b44fee03fef6807d87e90c51bdfa5560cfdd6e3dc23bb`
+
+### Commits
+
+| Repo | Commit | Descrição |
+|------|--------|-----------|
+| `/home/windi` | `75daf920` | docs(§236): SESSION-20260906 HIOS-CONNECTOR CAP0+CAP1 |
+| `/opt/windi` | `ea94efebb` | feat(hios): WINDI-HIOS-PROTOCOL-001-CANDIDATE v0.3 |
+
+### Gates Pendentes (3)
+
+1. **HIOS-CONNECTOR-POSTURA-001** — Postura A (Passante) ou B (Testemunha). Linha no HISTORY antes de CAP 2.
+2. **"Contrato OK" v0.3** — Human Dragon confirma ou indica alterações.
+3. **EXCEPTION-TUBE-AUTH-001** — OAuth A/B/C, prazo era hoje (verificar estado).
+
+### Achados Operacionais (fora do connector)
+
+- **HIOS-OPEN-SCHEMA-404-001** — `$schema` referenciado devolve 404. Publicar ou retirar campo.
+- **HIOS-OPEN-NOHUP-001** — Serviço :8202 corre via nohup, sem systemd. Reboot apaga-o.
+- **763 ficheiros dirty** em /opt/windi — HIGIENE como capítulo próprio (segredos, .gitignore, wallet_keys).
+
+### Lineage
+
+- Continua W-CONNECTOR-SOVEREIGN-001 (27 Ago 2026) — não citado nos docs v0.1-v0.3, entra na v0.4.
+- RELATORIO-W-CONNECTOR-001-20260823.md preservado.
+
+### Próxima Sessão
+
+1. Human Dragon decide Postura A/B → linha no HISTORY
+2. "Contrato OK" ou alterações v0.4
+3. CAP 2: código do adaptador (`hios.verify` + `hios.receipt`)
+4. HIGIENE git em capítulo próprio
+
+---
+
+*CCode Gêmeo · 06 Set 2026 · Liga IA+H*
+*"Evidência antes de código. Três sha256 a bater é melhor que um."*
+
