@@ -7,6 +7,80 @@
 # ---
 
 
+## § SESSION-20260908-W-TUBE-CONNECTION-MANIFEST-CAP5
+
+**Data:** 2026-09-08
+**Sprint:** W-TUBE Connection Manifest + llms.txt Installation Pointer
+**Modo:** CCode CLI (executor) + Claude.ai GPT-5.6 Sol (observador/advisory)
+**Operador humano:** Human Dragon
+**Modelo:** Claude Opus 4.5
+**Invariantes:** I1, I9, I11, I14
+
+### CAP 5 — W-TUBE CONNECTION MANIFEST — COMPLETE
+
+#### Trabalho Completado
+
+- **AUTH-002 BUILD:** StaticTokenVerifier implementado em w_tube_lane1.py
+- **AUTH-002 PERSIST:** systemd drop-in + /etc/windi/w-tube.env (root:root 600)
+- **CAP 5/A:** Connection Manifest v0.1 CANDIDATE redigido (20 secções)
+- **CAP 5/A REVIEW:** 5 correcções anti-absolutistas aplicadas
+- **CAP 5/B1:** Manifest copiado para /opt/windi/static/docs/, público verificado
+- **CAP 5/B2:** llms.txt pointer adicionado, canonical lines preservadas (exactly once)
+- **CAP 5/B2 ERRATA:** Duplicação de linhas canónicas corrigida (Opção 2)
+- **COMMIT:** b039175f8 — 3 ficheiros, proveniência fixada
+
+#### Artifacts PUBLIC
+
+```
+W-TUBE Connection Manifest:
+  URL:     https://windi-domain.com/docs/W-TUBE-CONNECTION-MANIFEST-v0.1-CANDIDATE.md
+  SHA-256: 45905ced5ad2f1597b1a7a29085f1396c02492a366a3156696a435ca80775797
+  Bytes:   15664
+
+llms.txt (with W-TUBE pointer):
+  URL:     https://windi-domain.com/llms.txt
+  SHA-256: be83e1b32caa2160c953428cd62fe7ee6017a8b3415dfcd8aedacd3db7417e90
+  Bytes:   15192
+```
+
+#### Findings Metodológicos
+
+- **AUTH-CREDENTIAL-OPAQUE-001:** Credentials são valores opacos. Nunca reparsar por delimitadores internos. Base64 pode conter `=` padding — split em `=` corrompe o credential.
+- **PUBLIC-BEFORE-COMMIT-001:** A superfície pública mudou por mutação do ficheiro servido antes da persistência em Git. served state ≠ committed state durante a janela de mutação.
+
+#### Estado Observado
+
+```
+W-TUBE :8210 LOCAL AUTHENTICATED — DEMONSTRATED
+W-TUBE PUBLIC MCP               — NOT DEMONSTRATED (by design)
+Manifest PUBLIC + COMMITTED     — PASS
+llms.txt pointer PUBLIC + COMMITTED — PASS
+Canonical epistemic boundary    — PRESERVED (single occurrence)
+```
+
+#### Gates Pendentes (Humano)
+
+1. **CAP 6:** PUBLIC MCP EXPOSURE / CLIENT INTEROPERABILITY
+   - nginx route + TLS + auth forwarding
+   - negative auth test through public path
+   - positive auth test through public path
+   - FREMDE client real connection
+
+#### Princípio para CAP 6
+
+> **Public route observed first. Client interoperability claimed only after a real external client succeeds.**
+
+#### Boundary
+
+Relato ≠ observação; no receipt, no seal, no verdict; CANDIDATE stays CANDIDATE; I9 = humano.
+
+---
+
+*CCode Gêmeo · 08 Set 2026 · Liga IA+H*
+*"Connection Manifest ≠ Semantic Contract. Authentication ≠ authorization to write."*
+
+---
+
 ## § SESSION-20260907-SEMANTIC-CONTRACT-V1-RATIFICATION
 
 **Data:** 2026-09-07
