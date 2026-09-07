@@ -139,6 +139,51 @@ Gate em linha 88 do código, não no marker nginx.
 - [ ] EXCEPTION-TUBE-AUTH-002 (decisão I9 pendente)
 - [ ] Mover v0.9 de inbox para local durável
 
+### SESSION CLOSE — 2026-09-07 (append, não edição)
+
+**O que ficou feito (referência à lista acima):**
+
+- Commit/push: ✅ COMPLETO — `8b4c470c5` (`/opt/windi`) + `bbe934cf` (`/home/windi`)
+- W-TUBE-OBSERVED-001: ✅ MATERIALIZADO, verificado, deliberadamente não commitado
+- EXCEPTION-TUBE-AUTH-002: ⏸ I9 pendente — próxima sessão
+- v0.9 inbox: ⏸ por mover
+
+**Commits executados:**
+
+| Repo | Hash | Remote | Conteúdo |
+|------|------|--------|----------|
+| `/opt/windi` | `8b4c470c5` | `playground` | SEMANTIC-CONTRACT-v1.0 + v0.4 SUPERSEDED |
+| `/home/windi` | `bbe934cf` | `windi_public_audit` | Ratificação I9 |
+
+**W-TUBE-OBSERVED-001:**
+
+```
+Path:     /opt/windi/docs/W-TUBE-OBSERVED-001.md
+SHA-256:  e73d403007c408ab4e3456f15b2f40016ce2300f6dad7a33dd72982409b89ba7
+Bytes:    13201
+Status:   MATERIALIZED · TRANSFER VERIFIED · NOT COMMITTED (deliberado)
+Autoria:  Observador cloud (Claude.ai web) — W-PROVENANCE-EXTERNAL-001 aplicado
+```
+
+**Hash obsoleto (não usar):** `e053c49e...` — valor anterior ao cabeçalho de autoria, nunca chegou a ficheiro.
+
+**Erros apanhados e registados:**
+
+1. **Inferência CCode** — tools/call declarado bloqueado sem chamada real; corrigido por CAP A1
+2. **Hipótese cloud errada** — gate dependente de marker; refutado por leitura de código
+3. **Proveniência invertida** — documento GPT atribuído ao cloud; apanhado por Human Dragon
+
+**Achados de topologia:**
+
+- `W-REPO-SPLIT-001` — `/home/windi` e `/opt/windi` são repos separados, sem transação
+- `W-PROVENANCE-EXTERNAL-001` — todo documento de instância externa declara autor no cabeçalho
+
+**Gate I9 fechado por:** Reconhecimento humano posterior, após compactação ter interrompido a cadeia de testemunho.
+
+**Próxima sessão, primeiro gate:** `EXCEPTION-TUBE-AUTH-002`
+
+> O que fica de hoje não é o contrato. É que o método aguentou — inclusive quando o erro foi do observador.
+
 ---
 
 ## § SESSION-20260906-LLMS-V2-MULTILINGUAL-ARCHITECTURE
