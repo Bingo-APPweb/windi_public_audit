@@ -32533,3 +32533,71 @@ NENHUM. Estado permanece CANDIDATE · NOT CANONICAL · NOT SEALED.
 
 Relato ≠ observação; no receipt, no seal, no verdict; CANDIDATE stays CANDIDATE; I9 = humano.
 
+
+---
+
+## SESSION-20260908 · A4DESK-FREMDE · CAP 1 → CAP 8 FECHO
+
+**Início:** ~15:30 CEST · **Fim:** ~18:50 CEST
+**Modo:** CCode CLI · **Modelo:** claude-opus-4-5-20251101
+**Operador:** Human Dragon
+
+### Trabalho Completado
+
+- **CAP 1:** Root cause = `/api/document/{id}/finalize` não chamava Ledger
+- **CAP 2:** Bloco LEDGER INTEGRATION adicionado ao finalize (backup: pre_cap2_20260908_154451)
+- **CAP 3:** Verificação read-only: botão Abschließen → `/api/document/{id}/finalize` → código de /opt/windi/
+- **CAP 4:** BLOQUEADO — Ledger não aceitava "UNASSESSED" → gate I9
+- **CAP 5:** Ledger aprende "UNASSESSED" (decisão I9 Human Dragon) — tupla expandida
+- **CAP 6:** Commit cirúrgico: 3daf74b (a4desk) + ba1dc17f6 (ledger)
+- **CAP 7:** JS mostra `ledger_receipt_id` (verificável) em vez de `receipt_id` (local, 404)
+- **CAP 8:** Commit: a134cdf
+
+### Commits do Dia
+
+| Repo | SHA | Descrição |
+|------|-----|-----------|
+| /opt/windi/a4desk-editor | 3daf74b | Ledger no finalize + governança real/UNASSESSED |
+| /opt/windi | ba1dc17f6 | Ledger aceita UNASSESSED |
+| /opt/windi/a4desk-editor | a134cdf | JS mostra recibo verificável |
+
+### Recibos Verificados Publicamente
+
+- `WINDI-A4DESK-20260908134625-219C5C90` — CAP 2
+- `WINDI-A4DESK-20260908163334-93BFBA3A` — CAP 5 (governance_level=UNASSESSED)
+- `WINDI-A4DESK-20260908164456-373DC10B` — CAP 7 (conteúdo real, hash 077e0201...)
+
+### Decisões I9 do Dia
+
+- **Ledger aprende "UNASSESSED"** — um ledger forense tem de poder registar que não avaliou
+
+### Itens Abertos (não corrigidos)
+
+- **A4DESK-HASH-DISPLAY-MISMATCH-001** — caixa mostra hash local (12 hex) ≠ content_hash do Ledger
+- **A4DESK-V2-EMPTY-CONTENT-001** — API v2 cria documentos com content="" (hash do vazio)
+- **LEDGER-SYSTEMD-DOWNGRADE-001** — Ledger passou de systemd para nohup (reboot = conflito)
+- **A4DESK-RECEIPT-MISMATCH-001** — RESOLVIDO no CAP 7
+
+### Backups
+
+- `/opt/windi/backups/pre_cap2_20260908_154451`
+- `/opt/windi/backups/pre_cap4_20260908_173522`
+- `/opt/windi/backups/pre_cap5_ledger_20260908_182945`
+- `/opt/windi/backups/pre_cap7_20260908_184318`
+
+### Teste do Humano (PENDENTE)
+
+Janela anónima → hard refresh → escrever conteúdo → Abschließen → copiar número da caixa → /verify-public/r/{id}
+Se resolver: gesto do fremder fecha ponta-a-ponta pela primeira vez.
+
+### Próxima Sessão
+
+1. **Teste do Humano** — validar o gesto completo
+2. **CAP 9** — A4DESK-HASH-DISPLAY-MISMATCH-001 (dois canons de hash)
+3. **HIGIENE** — LEDGER-SYSTEMD-DOWNGRADE-001 (restaurar systemd)
+4. **HIGIENE** — A4DESK-V2-EMPTY-CONTENT-001 (API v2 content vazio)
+
+---
+
+*CCode Gêmeo · 08 Set 2026 · Liga IA+H*
+*"O número que o utilizador vê é o número que verifica."*
