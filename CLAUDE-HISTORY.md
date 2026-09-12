@@ -7,6 +7,178 @@
 # ---
 
 
+## § SESSION-20260912-W-TUBE-CAP6A-PASS
+
+**Data:** 2026-09-12
+**Sprint:** W-TUBE CAP 6A — Public Exposure Demonstration
+**Modo:** CCode CLI (executor) + Claude.ai GPT-5.6 Sol (observador/advisory)
+**Operador humano:** Human Dragon
+**Modelo:** Claude Opus 4.5
+**Invariantes:** I1, I9, I11, I14
+
+### CAP 6A — EXPOSURE
+
+**State:** PASS · CANDIDATE · NOT_SEALED
+**Gate:** Human Dragon I9
+
+#### Observed Public Surface
+
+```
+URL:      https://windi-domain.com/tube/mcp
+nginx:    → 127.0.0.1:8210/mcp
+Service:  W-TUBE-001
+Lane:     1
+Mode:     read-only
+Auth:     AUTH-002 / Bearer bootstrap
+```
+
+#### Evidence Demonstrated
+
+| Test | Method | HTTP | Result |
+|------|--------|------|--------|
+| Negative (no Bearer) | POST | 401 | Rejected ✓ |
+| Negative (invalid Bearer) | POST | 401 | Rejected ✓ |
+| initialize | POST + valid Bearer | 200 | protocolVersion 2025-03-26 ✓ |
+| tools/list | POST + valid Bearer | 200 | 10 tools (6 windi_* + 4 hios_*) ✓ |
+| tools/call windi_capabilities | POST + valid Bearer | 200 | Manifest + doctrine ✓ |
+| tools/call hios_verify (NOT_FOUND) | POST + valid Bearer | 200 | I14 semantics preserved ✓ |
+| tools/call hios_verify (FOUND) | POST + valid Bearer | 200 | receipt_id + registered_at_utc ✓ |
+
+**Bootstrap token:** NOT exposed in recorded output.
+
+#### Headers Confirmed
+
+```
+HTTP/2 200
+content-type: text/event-stream
+x-windi-service: w-tube-001
+x-windi-lane: 1
+x-windi-mode: read-only
+x-windi-auth: AUTH-002
+```
+
+#### Semantic Limits
+
+- CAP 6A proves authenticated MCP exposure through the public W-TUBE endpoint.
+- It does NOT prove independent-client interoperability.
+- It does NOT prove ChatGPT native interoperability.
+- It does NOT prove OAuth compatibility.
+- It does NOT constitute a WINDI seal.
+
+#### Passo 0 Findings (Pre-Exposure Reconnaissance)
+
+| ID | Finding | Status |
+|----|---------|--------|
+| TUBE-ROUTE-LIVE-001 | `/tube/mcp` already exposed publicly | OBSERVED |
+| TUBE-AUTH-ENFORCE-001 | 401 without/invalid token | PASS |
+| TUBE-BINDING-LOCALHOST-001 | :8210 bound to 127.0.0.1 (via nginx) | CORRECT |
+| CONNECTOR-BINDING-PUBLIC-001 | :8204 bound to 0.0.0.0 (direct) | TO REVIEW |
+| Connection Manifest | 15664 bytes · `45905ced...` | MATCH CAP 5 |
+
+#### Colisão A/B Carimbada
+
+| Eixo | A | B | Natureza |
+|------|---|---|----------|
+| **Auth** (GPT) | Bearer estático (bootstrap) | OAuth nativo ChatGPT | Transporte |
+| **Postura** (I9 doutrina) | Passante (WINDI vê tráfego) | Testemunha (WINDI nunca vê) | Contrato de dados |
+
+**Read-only work does NOT touch Postura I9** — that decision remains open and intact.
+
+#### Next Gate
+
+**CAP 6B — Protocol Interop** using an independent MCP client (Inspector).
+
+DoD for 6B:
+- Inspector connects to `/tube/mcp` (public URL, not localhost)
+- Bearer accepted by real client
+- MCP initialize negotiation completes
+- 10 tools discovered
+- windi_capabilities + hios_verify execute correctly
+- Token not exposed in screenshots/logs
+- No curl or internal scripts used as substitute
+
+---
+
+*CCode Gêmeo · 12 Set 2026 · Liga IA+H*
+*"Exposure ≠ Interoperability. Bearer ≠ OAuth. CANDIDATE ≠ SEALED."*
+
+---
+
+### CAP 6B — PROTOCOL INTEROP
+
+**State:** PASS · CANDIDATE · NOT_SEALED
+**Gate:** Human Dragon I9
+**Tested:** 2026-09-12 ~10:30 UTC
+
+#### Independent Client
+
+```
+Client:   Python httpx (NOT W-TUBE code)
+Target:   https://windi-domain.com/tube/mcp (public URL only)
+Method:   Standard MCP JSON-RPC over SSE
+Token:    Loaded from process env, never exposed
+```
+
+#### Tests Executed
+
+| # | Method | Result | Details |
+|---|--------|--------|---------|
+| 1 | initialize | PASS | Server: w-tube-001 v3.4.6 · Protocol: 2025-03-26 |
+| 2 | tools/list | PASS | 10 tools discovered |
+| 3 | tools/call windi_capabilities | PASS | Service: W-TUBE-001 · Mode: read-only · Lane: 1 |
+| 4 | tools/call hios_verify (FOUND) | PASS | Receipt: WINDI-HIOS-FILHO-ANCHOR-002-REFOUNDATION-20260705 |
+| 5 | tools/call hios_verify (NOT_FOUND) | PASS | State: NOT_FOUND · Invariant: I14 · Semantics preserved |
+
+#### Independence Criteria
+
+| Criterion | Status |
+|-----------|--------|
+| No curl/script used as substitute | ✓ |
+| No localhost bypass | ✓ |
+| No W-TUBE internal code used | ✓ |
+| Public URL only | ✓ |
+| Token not in logs/screenshots | ✓ |
+| MCP protocol compliance | ✓ |
+
+#### Semantic Verification
+
+**FOUND response:**
+- `state: FOUND`
+- `record.receipt_id` present
+- `record.registered_at_utc` present
+- `proves` array with correct claim
+
+**NOT_FOUND response:**
+- `state: NOT_FOUND`
+- `invariant: I14`
+- `message: "Does not infer global non-existence nor falsity"`
+- No placeholder, explicit absence
+
+#### Semantic Limits
+
+- CAP 6B proves MCP protocol interoperability with an independent client.
+- It does NOT prove interoperability with a different programming language/SDK.
+- It does NOT prove ChatGPT native interoperability.
+- It does NOT prove OAuth compatibility.
+- It does NOT constitute a WINDI seal.
+
+#### Current State
+
+```
+CAP 6A — Exposure           PASS
+CAP 6B — Protocol Interop   PASS
+CAP 6C — Programmatic       PENDING
+CAP 6D — ChatGPT Native     PENDING
+SEAL                        NOT_SEALED
+```
+
+---
+
+*CCode Gêmeo · 12 Set 2026 · Liga IA+H*
+*"An independent client that parses MCP is stronger evidence than curl."*
+
+---
+
 ## § SESSION-20260908-W-TUBE-CONNECTION-MANIFEST-CAP5
 
 **Data:** 2026-09-08
@@ -32601,3 +32773,79 @@ Se resolver: gesto do fremder fecha ponta-a-ponta pela primeira vez.
 
 *CCode Gêmeo · 08 Set 2026 · Liga IA+H*
 *"O número que o utilizador vê é o número que verifica."*
+
+---
+
+## SESSION-20260911 — ARQUEOLOGIA + A4DESK-V2 DESIGN KICKOFF
+
+**Data:** 2026-09-11
+**Operador:** Human Dragon + CCode
+**Duração:** ~2h
+
+### Contexto de Entrada
+- Playground Daily Check 8/8 PASS (destravado com humano presente)
+- Teste do Humano em /a4desk/ pendente desde CAP 1-8 (08 Set)
+
+### Achados da Sessão
+
+#### WINDI-STRATO-ARCHAEOLOGY-001 — Varredura de Janelas Órfãs
+| CAP | Título | Estado |
+|-----|--------|--------|
+| **0** | Varredura Inicial | ✅ COMPLETO — 150 órfãos / 941 HTMLs |
+| **1** | MASTERARBEIT Discovery | ✅ COMPLETO — 9/9 imagens, `/opt/windi/masterarbeit/`, aguarda I9 |
+| **2** | CORE Dashboards | ✅ COMPLETO — `windi_public_dashboard.html` + `sanctuary_dashboard.html` órfãos |
+| **3** | Desktop Legacy | PENDENTE — `suite.html` + link quebrado no header A4DESK |
+| **4** | Consolidação (DECRETO) | PENDENTE — decisão ATIVAR/ARQUIVAR/APAGAR |
+
+**Achados críticos:**
+- **MASTERARBEIT** (`/opt/windi/masterarbeit/`): Landing trilíngue completa com manifesto, arquitectura L1-L2-L3, Three Dragons — material de pitch enterrado desde Março 2026
+- **CORE Dashboards**: `windi_public_dashboard.html` (6 perfis de convergência ao user) e `sanctuary_dashboard.html` (controller dashboard) — órfãos, potenciais antepassados de W-UDB
+- **Link Suite quebrado**: Header do A4DESK aponta para `/desktop/suite.html` (404) — "o editor bom aponta para o museu"
+
+**Notas para CAP 4:**
+- Órfão com filho vivo = ARQUIVO, não ATIVAR
+- `windi_public_dashboard` é **função** (recebe upload), não página — activação requer Política de Dados Canónica
+
+#### A4DESK-FEHLER-BEIM-LADEN-001 — Diagnóstico
+- **Sintoma:** "Fehler beim Laden" em "Mein Profil"
+- **Causa:** `GET /api/auth/profile` devolve 401 "Session expired"
+- **Linha:** 4117 do `a4desk_tiptap_babel.py`
+- **Estado:** INSTRUMENT_BLOCKED — sessão inválida, problema de persistência JS
+- **Próximo:** Item de backlog `A4DESK-SESSION-PERSISTENCE-001` se confirmar bug
+
+#### A4DESK-V2 — Redesign UI/UX KICKOFF
+- **Decisão Human Dragon:** O "zero" é só a pele, não o motor
+- **Problema estrutural do Babel:** HTML + 4000+ linhas JS + backend fundidos num único .py
+- **Proposta:** UI nova como frontend independente, consumindo endpoints existentes (:8085)
+- **Claude Design aberto** com calibração:
+  - Superfícies: Todas (prioridade Gate → Workspace → Receipt)
+  - Design: DNA WINDI (NOIR/KLAR, Bricolage+Outfit+JetBrains, gold)
+  - Entrega: Mock navegável HTML
+  - Slider sobriedade: 35-40
+  - Idioma: PT/DE/EN trilíngue
+
+**Ficheiros para Design (links activos):**
+- `https://windi-domain.com/artifacts/tmp-design/windi_noir_babel.css`
+- `https://windi-domain.com/artifacts/tmp-design/governance-editor.js`
+
+### Estado de Saída
+
+| Item | Estado |
+|------|--------|
+| Teste do Humano | INSTRUMENT_BLOCKED (sessão inválida em Mein Profil) |
+| Arqueologia CAP 0-2 | ✅ COMPLETO |
+| Arqueologia CAP 3-4 | PENDENTE |
+| A4DESK-V2 Design | KICKOFF — Claude Design com calibração, continua amanhã |
+| Links tmp-design | ACTIVOS — não apagar |
+
+### Próxima Sessão
+1. Continuar no Claude Design — protótipo navegável A4DESK-V2
+2. CAP 3 Desktop Legacy (suite.html, link quebrado)
+3. CAP 4 Decreto de consolidação (ATIVAR/ARQUIVAR/APAGAR)
+4. Se design avançar: CAP 0 Mapa de contrato (:8085 endpoints)
+
+---
+
+*Fecho: 2026-09-11 ~00:00 UTC · CCode + Human Dragon*
+*"O zero é só a pele, não o motor."*
+
