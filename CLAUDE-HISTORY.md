@@ -262,6 +262,88 @@ SEAL                        NOT_SEALED
 
 ---
 
+### CAP 6D — AI-NATIVE INTEROP
+
+**State:** BLOCKED · DIAGNOSTIC COMPLETE · I9 DECISION REQUIRED
+**Gate:** Human Dragon I9
+**Tested:** 2026-09-12 ~12:15 UTC
+
+#### Discovery Attempt: Claude.ai Remote MCP
+
+```
+Target:   https://windi-domain.com/tube/mcp
+Client:   Claude.ai (Remote MCP Connector)
+Method:   OAuth 2.0 Dynamic Client Registration (RFC 7591)
+Result:   FAILED — "Couldn't register with WINDI-HIOS's sign-in service"
+```
+
+#### W-TUBE-OAUTH-001 Diagnostic Evidence
+
+| Test | Endpoint | HTTP | x-windi-service |
+|------|----------|------|-----------------|
+| POST /tube/mcp (no auth) | /tube/mcp | `401` + `WWW-Authenticate: Bearer` | w-tube-001 |
+| /.well-known/oauth-protected-resource | domain root | `404` | landing-pmg |
+| /.well-known/oauth-protected-resource/tube/mcp | domain root | `404` | landing-pmg |
+| /.well-known/oauth-authorization-server | domain root | `404` | landing-pmg |
+| /.well-known/openid-configuration | domain root | `404` | landing-pmg |
+
+#### Root Cause Analysis
+
+```
+CONFIRMED: Hypothesis H1
+
+W-TUBE returns 401 + WWW-Authenticate: Bearer
+but NO OAuth Authorization Server (AS) exists.
+
+Claude.ai follows MCP 2025-11-05 OAuth spec:
+  1. POST → gets 401 Bearer challenge
+  2. Looks for AS at /.well-known/oauth-authorization-server
+  3. Gets 404 → "Couldn't register with sign-in service"
+
+StaticTokenVerifier (AUTH-002) is valid for
+manual Bearer provisioning but does NOT satisfy
+MCP OAuth DCR flow required by native AI clients.
+```
+
+#### Options (I9 Decision Required)
+
+| Option | Description | Effort | I9 Implication |
+|--------|-------------|--------|----------------|
+| **A** | Build W-AUTH-001 OAuth AS (DCR + PKCE + token endpoint) | HIGH | Full client autonomy |
+| **B** | Keep Bearer for provisioned clients, document manual flow | LOW | Operator-mediated access |
+| **C** | Open Lane 1 read-only without auth | MINIMAL | Public read sovereignty |
+
+#### Constitutional Question
+
+> *"A decisão que está por baixo (I9, tua): o /tube/mcp deve exigir*
+> *identidade no portão, ou abrir em modo leitura?"*
+> — GPT-5.6 Sol Observer
+
+**Lane 1 is read-only by design.** The I9 question is whether
+read-only observation of public receipts requires authentication.
+
+#### Current State
+
+```
+CAP 6A — Exposure           PASS ✓
+CAP 6B — Protocol Interop   PASS ✓
+CAP 6C — SDK-Native Interop PASS ✓
+CAP 6D — AI-Native Interop  BLOCKED (OAuth AS missing)
+SEAL                        NOT_SEALED
+```
+
+#### ChatGPT Note
+
+ChatGPT MCP feature not available in user's account at test time.
+CAP 6D attempted with Claude.ai first.
+
+---
+
+*CCode Gêmeo · 12 Set 2026 · Liga IA+H*
+*"The gap is the finding. OAuth absence ≠ failure. It's an I9 decision point."*
+
+---
+
 ## § SESSION-20260908-W-TUBE-CONNECTION-MANIFEST-CAP5
 
 **Data:** 2026-09-08
