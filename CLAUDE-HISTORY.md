@@ -838,6 +838,92 @@ Human Dragon · 12 Set 2026
 
 ---
 
+### §236 I9 — CAP 6D / Porta Pública W-TUBE — EMENDA 8 (CORRECÇÃO)
+
+**Date:** 2026-09-12 (mesmo dia, após EMENDA 7)
+**Gate:** Human Dragon I9
+
+#### Correcção de Segurança
+
+```
+(8a) ROTAÇÃO OBRIGATÓRIA:
+     - W_TUBE_BOOTSTRAP_TOKEN exposto em texto limpo em transcrições
+       e histórico de shell. Rodar hoje.
+     - ANTHROPIC_API_KEY do windi-gateway com prefixo impresso em
+       terminal — rodar por higiene.
+```
+
+#### Correcção de Classificação
+
+```
+(8b) EMENDA 7 sobredeclara. O teste usou tools=[] da Messages API com
+     relay pelo próprio script; o parâmetro mcp_servers não foi usado
+     e a infraestrutura Anthropic nunca contactou /tube/mcp.
+
+     Reclassificar:
+       CAP 6D-A1a  PASS PARCIAL — schemas do W-TUBE legíveis e
+                   correctamente invocáveis por modelo; elo connector
+                   NÃO exercitado.
+       CAP 6D-A1b  PENDING — chamada real com mcp_servers +
+                   authorization_token, beta mcp-client, sem relay local.
+
+(8c) Retirar do registo a frase de marco "IA externa sabe encontrar":
+     quem descobriu as tools foi o script de teste, não Claude.
+     Frase correcta: "O cliente MCP descobriu. Claude seleccionou e
+     invocou semanticamente. O relay chamou W-TUBE. WINDI respondeu."
+
+(8d) Achado técnico útil: servidor exige Accept com application/json E
+     text/event-stream. Verificar compatibilidade com o connector nativo.
+
+(8e) HÁBITO a corrigir: script de prova vai para o repo ANTES do output
+     entrar na história. O script foi apagado (rm -rf /tmp/cap6d-test)
+     e a alegação ficou não-auditável.
+
+(8f) Contradição do (7d): CLAUDE-HISTORY.md está em repo público
+     (Bingo-APPweb/windi_public_audit). O ofid_* já é público.
+     Aceitar ou mover para ficheiro realmente interno.
+```
+
+#### Estado Corrigido CAP 6D
+
+| Sub-CAP | Estado | O que prova |
+|---------|--------|-------------|
+| 6D-A1a — Tool-Use via Custom Relay | ✅ PASS PARCIAL | Schemas legíveis, modelo selecciona correctamente |
+| 6D-A1b — Anthropic MCP Connector | 🟡 PENDING | Chamada com mcp_servers, sem relay local |
+| 6D-A2 — Claude UI Connector | 🔴 BLOCKED | AUTH-OAUTH-001 |
+
+#### Teste Correcto para 6D-A1b (após rotação)
+
+```python
+response = client.beta.messages.create(
+    model="...",
+    max_tokens=1024,
+    messages=[{"role": "user", "content": "..."}],
+    mcp_servers=[{
+        "type": "url",
+        "url": "https://windi-domain.com/tube/mcp",
+        "name": "windi-hios",
+        "authorization_token": NEW_PILOT_TOKEN,
+    }],
+    tools=[{"type": "mcp_toolset", "mcp_server_name": "windi-hios"}],
+    betas=["mcp-client-2025-11-20"],
+)
+```
+
+Critério: `mcp_tool_use` e `mcp_tool_result` na resposta, sem relay local.
+
+```
+Human Dragon · 12 Set 2026
+```
+
+---
+
+*Human Dragon + CCode Gêmeo · 12 Set 2026 · Liga IA+H*
+*"O resultado foi bom, mas a evidência não recebe um significado maior
+do que aquilo que o instrumento realmente demonstrou."*
+
+---
+
 ## § SESSION-20260908-W-TUBE-CONNECTION-MANIFEST-CAP5
 
 **Data:** 2026-09-08
