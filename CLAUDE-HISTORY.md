@@ -179,6 +179,89 @@ SEAL                        NOT_SEALED
 
 ---
 
+### CAP 6C — SDK-NATIVE INTEROP
+
+**State:** PASS · CANDIDATE · NOT_SEALED
+**Gate:** Human Dragon I9
+**Tested:** 2026-09-12 ~12:45 UTC
+
+#### Client
+
+```
+SDK:      MCP Python SDK v1.29.0
+Origin:   Official Model Context Protocol Python SDK
+          (MCP project / Agentic AI Foundation stewardship, under Linux Foundation)
+Classes:  ClientSession + streamablehttp_client
+Code:     No W-TUBE internal code used
+```
+
+#### Target
+
+```
+URL:      https://windi-domain.com/tube/mcp
+Surface:  Public only (no localhost)
+Auth:     Bearer bootstrap credential
+Token:    Not exposed in output
+```
+
+#### Evidence
+
+| # | Test | Result |
+|---|------|--------|
+| 1 | initialize | PASS · Server: w-tube-001 v3.4.6 |
+| 2 | list_tools | PASS · 10 tools discovered |
+| 3 | call_tool windi_capabilities | PASS · W-TUBE-001 · read-only · Lane 1 |
+| 4 | call_tool hios_verify FOUND | PASS · receipt_id present |
+| 5 | call_tool hios_verify NOT_FOUND | PASS · I14 semantics preserved |
+| 6 | Mutative tools check | PASS · 0 mutative tools discovered |
+
+#### Protocol Version Observation
+
+```
+CAP 6A / 6B (manual client):  protocolVersion 2025-03-26
+CAP 6C (MCP SDK native):      protocolVersion 2025-11-25
+```
+
+**Finding:** SDK negotiates newer protocol version; server accepts both.
+This demonstrates backwards and forwards compatibility, not inconsistency.
+
+#### Semantic Limits
+
+CAP 6C demonstrates SDK-native interoperability using the official
+Model Context Protocol Python SDK against the public W-TUBE endpoint.
+
+It does NOT demonstrate:
+- ChatGPT native interoperability
+- OAuth compatibility
+- User-facing connector registration
+- WINDI seal
+
+#### Gate Distinction
+
+| Gate | Client | Nature |
+|------|--------|--------|
+| 6A | curl controlled | Public exposure |
+| 6B | Python httpx (manual HTTP+JSON-RPC) | Independent manual protocol |
+| **6C** | **MCP SDK v1.29.0 (ClientSession)** | **SDK-native protocol** |
+| 6D | ChatGPT | User-facing interoperability |
+
+#### Current State
+
+```
+CAP 6A — Exposure           PASS ✓
+CAP 6B — Protocol Interop   PASS ✓
+CAP 6C — SDK-Native Interop PASS ✓
+CAP 6D — ChatGPT Native     PENDING (discovery first)
+SEAL                        NOT_SEALED
+```
+
+---
+
+*CCode Gêmeo · 12 Set 2026 · Liga IA+H*
+*"SDK-native negotiation is the strongest protocol evidence below the real client."*
+
+---
+
 ## § SESSION-20260908-W-TUBE-CONNECTION-MANIFEST-CAP5
 
 **Data:** 2026-09-08
