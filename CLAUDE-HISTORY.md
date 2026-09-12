@@ -573,6 +573,62 @@ location = /api/receipts/ {
 
 ---
 
+### §236 I9 — CAP 6D / Porta Pública W-TUBE — EMENDA 4
+
+**Date:** 2026-09-12 (mesmo dia, após EMENDA 3)
+**Gate:** Human Dragon I9
+
+#### Decision
+
+```
+(6a) CAP LEDGER-1: remediação confirmada por observação directa do Human
+Dragon no browser móvel:
+  - GET https://windi-domain.com/api/receipts/ → "Forbidden" (403) ✓
+  - GET https://windi-domain.com/api/receipts/WINDI-A4DESK-20260908164456-373DC10B
+    → 200 + JSON completo do recibo ✓
+Prova de primeira mão. Relato de segunda mão (resumo de sessão) substituído
+por evidência directa.
+
+(6b) NOMENCLATURA: a decisão de hoje é "OPÇÃO D — LIMITAÇÃO ACEITE",
+não "C". O C anterior (C-SCOPED, porta pública de leitura com allowlist)
+mantém-se congelado em (4d) e não foi revogado. Duas letras distintas
+para duas decisões distintas.
+
+(6c) OPÇÃO D: Claude.ai web UI não conecta ao W-TUBE via botão CONNECT.
+OAuth AS diferido até poder ser emitido pela DID Wallet. Sem prazo.
+
+(6d) CORRECÇÃO: CAP 6D não fica BLOCKED. Fecha por via Messages API com
+authorization_token — interop AI-nativa provada sem OAuth. O botão
+CONNECT do web é distribuição, e essa é que fica diferida.
+
+Human Dragon · 12 Set 2026
+```
+
+#### CAP 6D Final Status
+
+| Gate | Status | Evidence |
+|------|--------|----------|
+| CAP 6A | ✅ PASS | curl + valid Bearer, 10 tools discovered |
+| CAP 6B | ⏸️ DEFERRED | Inspector interop (nice-to-have) |
+| CAP 6C | ⏸️ DEFERRED | OAuth for Claude.ai CONNECT button |
+| CAP 6D | ✅ PASS | Messages API interop works (CCode → remote MCPs) |
+
+**Interoperability proven via:**
+- CCode calls Kiwi.com MCP, Google Drive MCP (LIVE in this session)
+- Messages API with authorization_token, no OAuth required
+
+**Distribution deferred:**
+- Claude.ai CONNECT button requires OAuth Dynamic Client Registration
+- W-TUBE uses Bearer static token (AUTH-002)
+- Implementing OAuth AS: deferred (OPÇÃO D)
+
+---
+
+*Human Dragon + CCode Gêmeo · 12 Set 2026 · Liga IA+H*
+*"Interop por API. Distribuição por OAuth. Prioridades diferentes."*
+
+---
+
 ## § SESSION-20260908-W-TUBE-CONNECTION-MANIFEST-CAP5
 
 **Data:** 2026-09-08
