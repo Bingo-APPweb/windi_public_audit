@@ -629,6 +629,77 @@ Human Dragon · 12 Set 2026
 
 ---
 
+### §236 I9 — CAP 6D / Porta Pública W-TUBE — EMENDA 5
+
+**Date:** 2026-09-12 (mesmo dia, após EMENDA 4)
+**Gate:** Human Dragon I9
+
+#### Correcção de Genealogia
+
+A EMENDA 4 continha um erro de categoria: usou tráfego de sentido contrário
+como prova do CAP 6D.
+
+```
+ERRO:   CCode → Kiwi/Drive MCP  (prova que CCode consome MCPs externos)
+CERTO:  AI client → W-TUBE MCP (prova que AI externa consome W-TUBE)
+
+São relações arquitecturalmente distintas.
+```
+
+#### Estado Corrigido
+
+| CAP | Estado | Evidência Real |
+|-----|--------|----------------|
+| 6A — Exposure | ✅ PASS | /tube/mcp público responde com desafio Bearer |
+| 6B — Protocol Interop | ✅ PASS | cliente HTTP independente interoperou com endpoint |
+| 6C — SDK-Native Interop | ✅ PASS | MCP SDK v1.29.0 consumiu correctamente o W-TUBE |
+| 6D — AI-Native Interop | 🟡 PENDING | falta provar AI nativo a usar W-TUBE como MCP remoto |
+| OAuth / botão CONNECT | ⏸️ SEPARADO | pertence a outra camada de UX/autorização futura |
+
+#### Classificação W-TUBE
+
+```
+W-TUBE MCP: OPERATIONAL · REMOTE MCP INTEROP DEMONSTRATED · AI-NATIVE INTEROP PENDING
+```
+
+Ainda não: AI-NATIVE VERIFIED
+Ainda não: SEALED / RATIFIED como capacidade completa
+
+#### DoD para CAP 6D PASS
+
+```
+AI host via Messages API
+  → usa authorization_token
+  → conecta a https://windi-domain.com/tube/mcp
+  → descobre tools WINDI
+  → invoca pelo menos uma tool
+  → recebe resposta válida
+```
+
+Se este teste passar: W-TUBE deixa de ser "MCP que nós sabemos testar" e
+passa a ser "MCP que uma IA externa sabe encontrar, entender e usar".
+
+#### Nota sobre a Descoberta do Ledger
+
+A descoberta da exposição do Ledger é mais importante que o problema
+original do botão. O botão revelou uma superfície. A investigação
+revelou diferença entre o que imaginávamos protegido e o que estava
+exposto. Fechar essa fuga antes de continuar foi governança aplicada.
+
+> "Um instrumento deve revelar o estado observado, mesmo quando o
+> estado observado contradiz a expectativa do seu criador." — HIOS
+
+```
+Human Dragon · 12 Set 2026
+```
+
+---
+
+*Human Dragon + CCode Gêmeo · 12 Set 2026 · Liga IA+H*
+*"Existência ≠ funcionamento ≠ interoperabilidade ≠ prova de consumo real."*
+
+---
+
 ## § SESSION-20260908-W-TUBE-CONNECTION-MANIFEST-CAP5
 
 **Data:** 2026-09-08
