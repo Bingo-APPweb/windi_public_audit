@@ -700,6 +700,61 @@ Human Dragon · 12 Set 2026
 
 ---
 
+### §236 I9 — CAP 6D / Porta Pública W-TUBE — EMENDA 6
+
+**Date:** 2026-09-12 (mesmo dia, após EMENDA 5)
+**Gate:** Human Dragon I9
+
+#### Evidência Claude UI Connector
+
+```
+Error: "Couldn't register with WINDI-HIOS's sign-in service.
+        You can try again, or add an OAuth Client ID in the connector settings."
+Reference: ofid_897f1eb5ce601d4b (internal diagnostic only)
+```
+
+Confirma: Claude UI Connector exige OAuth Dynamic Client Registration.
+W-TUBE usa Bearer estático (AUTH-002). Incompatibilidade de camada de auth.
+
+#### Dependência Registada
+
+```
+AUTH-OAUTH-001: OAuth Authorization Server para Claude UI Connector
+Status: NOT IMPLEMENTED
+Blocking: CAP 6D-A2 (Claude UI path)
+NOT Blocking: CAP 6D-A1 (Claude API path)
+```
+
+#### Split CAP 6D
+
+| Sub-CAP | Caminho | Auth | Estado |
+|---------|---------|------|--------|
+| **6D-A1** | Claude Messages API MCP Connector | Bearer authorization_token | 🟢 EXECUTABLE NOW |
+| **6D-A2** | Claude UI Custom Connector | OAuth/client registration | 🔴 BLOCKED → AUTH-OAUTH-001 |
+
+#### Decisão I9
+
+```
+(7a) Não alterar W-TUBE para satisfazer OAuth da UI.
+(7b) Registar erro Claude UI como AUTH-OAUTH-001 dependency.
+(7c) Avançar para CAP 6D-A1 via Claude Messages API MCP Connector com Bearer.
+(7d) ofid_* guardado apenas em HISTORY interno, não documentação pública.
+
+Human Dragon · 12 Set 2026
+```
+
+#### Cadeia a Provar (6D-A1)
+
+```
+Claude model → Anthropic MCP Connector → public W-TUBE → WINDI tools
+              (authorization_token)      (/tube/mcp)    (resposta válida)
+```
+
+Se passar: Fremder real consumiu W-TUBE sem OAuth.
+Só depois: decidir se vale construir OAuth para UI clicável.
+
+---
+
 ## § SESSION-20260908-W-TUBE-CONNECTION-MANIFEST-CAP5
 
 **Data:** 2026-09-08
