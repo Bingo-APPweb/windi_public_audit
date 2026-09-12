@@ -6,6 +6,78 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## 🐉 MEMÓRIA PRIORITÁRIA — SESSION-20260912 FECHO
+
+**Última actualização:** 2026-09-12 ~17:00 CEST
+**Próxima sessão deve ler isto primeiro.**
+
+### Estado Crítico
+
+| Item | Estado | Notas |
+|------|--------|-------|
+| W-TUBE token | ✅ RODADO | Novo token em /etc/windi/w-tube.env |
+| Anthropic key | ✅ RODADA | Actualizada nos .env do gateway |
+| CAP 6D-A1b | 🟡 PENDING | Teste real com mcp_servers + mcp_toolset |
+
+### Lição de Segurança (NUNCA ESQUECER)
+
+```
+❌ NUNCA colar secrets em chat/terminal visível
+✅ SEMPRE actualizar ficheiros directamente (nano/vim)
+✅ SEMPRE dizer apenas "Rodado" — nunca mostrar valor
+```
+
+### CAP 6D — Estado Actual
+
+| Sub-CAP | Estado | O que prova |
+|---------|--------|-------------|
+| 6A Exposure | ✅ PASS | /tube/mcp público |
+| 6B Protocol | ✅ PASS | HTTP client independente |
+| 6C SDK | ✅ PASS | MCP SDK v1.29.0 |
+| 6D-A1a Custom Relay | ✅ PASS PARCIAL | Schemas legíveis, modelo selecciona |
+| **6D-A1b Anthropic Connector** | 🟡 **PENDING** | mcp_servers nativo, sem relay |
+| 6D-A2 UI Connector | 🔴 BLOCKED | AUTH-OAUTH-001 |
+
+### Teste Pendente (6D-A1b)
+
+```python
+# Usar beta mcp-client, NÃO tools=[] com relay
+response = client.beta.messages.create(
+    model="...",
+    mcp_servers=[{
+        "type": "url",
+        "url": "https://windi-domain.com/tube/mcp",
+        "name": "windi-hios",
+        "authorization_token": TOKEN_FROM_FILE,  # ler de ficheiro, não hardcode
+    }],
+    tools=[{"type": "mcp_toolset", "mcp_server_name": "windi-hios"}],
+    betas=["mcp-client-2025-11-20"],
+)
+# Critério: mcp_tool_use + mcp_tool_result na resposta
+```
+
+### Hábitos a Corrigir
+
+1. **Script de prova → repo ANTES do output ir para história**
+2. **Secrets nunca em chat** — actualizar ficheiros directamente
+3. **CLAUDE-HISTORY.md é público** — aceitar ou criar ficheiro interno
+
+### Commits da Sessão
+
+| SHA | Descrição |
+|-----|-----------|
+| `3396947c` | EMENDA 6 — AUTH-OAUTH-001 + split 6D |
+| `79fea947` | EMENDA 5 — correcção genealogia |
+| `618055a5` | EMENDA 7 — (sobredeclarou, corrigido em 8) |
+| `2867d904` | EMENDA 8 — correcção segurança + classificação |
+
+---
+
+*Human Dragon + CCode Gêmeo · 12 Set 2026 · Liga IA+H*
+*"O resultado foi bom, mas a evidência não recebe um significado maior
+do que aquilo que o instrumento realmente demonstrou."*
+
+---
 
 ## § SESSION-20260912-W-TUBE-CAP6A-PASS
 
