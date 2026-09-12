@@ -344,6 +344,235 @@ CAP 6D attempted with Claude.ai first.
 
 ---
 
+### §236 I9 — CAP 6D / Porta Pública W-TUBE
+
+**State:** DECISION REGISTERED · PRECONDITIONS PENDING
+**Gate:** Human Dragon I9
+**Date:** 2026-09-12
+
+#### Decision
+
+```
+DECISÃO: (1) CAP 6D fecha por via Messages API com authorization_token —
+interop AI-nativa provada; o CONNECT do claude.ai web é distribuição, não
+interop, e passa a capítulo próprio.
+(2) Porta pública C-SCOPED aprovada EM PRINCÍPIO: novo mount
+/tube/mcp/public, sem auth, lista branca de lookup-por-id apenas
+(verify, get_receipt, health, get_manifest); /tube/mcp mantém auth
+inalterada; rate limit obrigatório na porta pública.
+(3) Precondições, ambas por evidência, antes de qualquer código:
+    (a) payload exacto devolvido por get_receipt e verify — campo a campo;
+    (b) confirmar que /api/receipts (:8101) não é alcançável do exterior.
+(4) W-AUTH-001 adiado até poder ser emitido pela DID Wallet.
+Human Dragon · 12 Set 2026
+```
+
+#### Rationale
+
+- **Interop vs Distribution**: CAP 6D tests AI-native interoperability.
+  Messages API with `authorization_token` satisfies this. The CONNECT
+  button on Claude.ai web is distribution UX, not protocol interop.
+
+- **C-SCOPED not C-FULL**: Public gate only exposes lookup-by-id tools.
+  No list/search/recent tools. Rate limit mandatory. This prevents
+  enumeration while enabling public receipt verification.
+
+- **Enumeration Risk**: 54% of receipt IDs (timestamp-only + test) are
+  potentially enumerable. Risk depends on payload contents, not IDs.
+  If payload is slim (hash, timestamp, seal), enumeration reveals little.
+  If payload includes author/org/title, enumeration reconstructs usage.
+
+- **Ledger Exposure Check**: GET /api/receipts on :8101 must NOT be
+  reachable from exterior. If it is, public gate debate is academic.
+
+#### Preconditions Status
+
+| ID | Precondition | Status |
+|----|--------------|--------|
+| (a) | Payload audit: get_receipt, verify field-by-field | **RESOLVED** via Emenda 1 |
+| (b) | Ledger :8101 exterior reachability check | PENDING (nginx/443 not tested) |
+
+---
+
+### §236 I9 — CAP 6D / Porta Pública W-TUBE — EMENDA 1
+
+**Date:** 2026-09-12 (mesmo dia)
+**Gate:** Human Dragon I9
+
+#### Amendment
+
+```
+(3a) RESOLVIDA: porta pública responde por esquema próprio, allowlist
+explícita, nunca pass-through do backend. Campo `upstream` não existe
+na porta pública. Corte por prova de posse:
+  - verify(sha256): auto-autorizante (exige posse do conteúdo) →
+    resposta completa, DID do selante incluído.
+  - get_receipt(receipt_id): id adivinhável → só existência, estado de
+    selo, timestamp e governance_level. Sem actor, did_self_asserted,
+    app, doc_name, tags, metadata, content_hash.
+(3b) NÃO RESOLVIDA: teste anterior cobriu apenas porta 8101 directa.
+Falta verificar alcance do Ledger via nginx/443. Mantém-se PENDING.
+Human Dragon · 12 Set 2026
+```
+
+#### Rationale for Proof-of-Possession Cut
+
+| Tool | Authorization | Response Scope |
+|------|---------------|----------------|
+| `verify(sha256)` | Self-authorizing (must possess content to compute hash) | **FULL** including DID |
+| `get_receipt(id)` | NOT self-authorizing (54% IDs guessable) | **MINIMAL** existence + sealed + timestamp + governance |
+
+**Form Rule:** Public gate schema is explicit allowlist, never filtered pass-through.
+
+**Why X1/X2/X3 failed:**
+- X1 (remove upstream): `did_self_asserted` also in record
+- X2 (filter upstream): Denylist = future fields leak by default
+- X3 (accept exposure): Sample was dev data; real receipts have real titles
+
+#### Pending Evidence
+
+Test Ledger reachability via nginx/443:
+```
+curl -sS -i https://windi-domain.com/api/receipts
+curl -sS -i https://windi-domain.com/ledger/api/receipts
+curl -sS -i https://windi-domain.com/tube/api/receipts
+```
+
+If any returns Ledger data → (3b) FAILS → remediate before public gate.
+
+---
+
+*Human Dragon · 12 Set 2026 · Liga IA+H*
+*"Prova de posse autoriza. Adivinhação não."*
+
+---
+
+### §236 I9 — CAP 6D / Porta Pública W-TUBE — EMENDA 2
+
+**Date:** 2026-09-12 (mesmo dia)
+**Gate:** Human Dragon I9
+
+#### Finding
+
+```
+ACHADO: location ^~ /api/receipts/ faz proxy directo para o Ledger
+(:8101) sem auth. GET da colecção devolve 50 recibos completos
+(actor, app, doc_name, content_hash). robots.txt não é protecção.
+```
+
+#### Decision
+
+```
+(4a) A fuga é a COLECÇÃO, não a rota. Remediação alvo: bloquear
+GET /api/receipts/ sem id; manter /api/receipts/<id>.
+(4b) NENHUMA alteração a nginx antes de duas evidências:
+     (i) que consumidores chamam /api/receipts/ e /api/receipts/<id>
+         (verify-public :8114 em primeiro lugar);
+     (ii) lista de actors distintos nos 50 recibos.
+(4c) /api/merkle/ avaliado separadamente: raiz é âncora pública,
+     folhas podem enumerar. Não herda este verdicto.
+(4d) Porta pública MCP /tube/mcp/public congelada até (4a) fechar.
+Human Dragon · 12 Set 2026
+```
+
+#### Rationale
+
+| Path | Nature | Verdict |
+|------|--------|---------|
+| `/api/receipts/` (collection) | Enumeration in one request | **BLOCK** |
+| `/api/receipts/<id>` (item) | Lookup by known ID | **KEEP** (verify-public needs it) |
+| `/api/merkle/` (root) | Public trust anchor | **SEPARATE EVALUATION** |
+| `/api/merkle/` (leaves) | May enumerate | **SEPARATE EVALUATION** |
+
+#### Evidence Required (4b)
+
+| ID | Question | Status |
+|----|----------|--------|
+| (i) | What consumers call /api/receipts/ vs /api/receipts/<id>? | PENDING |
+| (ii) | Distinct actors in 50 receipts? | PENDING |
+
+**If all actors are `did:windi:dragon-001`** → config defect, remediate with method.
+**If any third-party actor exists** → changes nature, non-technical obligations.
+
+#### Nginx Change Protocol (when time comes)
+
+```
+1. backup
+2. edit
+3. nginx -t
+4. reload
+5. re-test
+6. rollback ready before starting
+```
+
+---
+
+*Human Dragon · 12 Set 2026 · Liga IA+H*
+*"A fuga é a colecção, não a rota."*
+
+---
+
+### §236 I9 — CAP 6D / Porta Pública W-TUBE — EMENDA 3
+
+**Date:** 2026-09-12 (mesmo dia)
+**Gate:** Human Dragon I9
+
+#### Decision
+
+```
+(4b) SATISFEITA: nenhum consumidor faz GET da colecção; POST de selagem
+e lookup por id são os únicos usos. Actors: 37 dragon-001 + 13
+sistema/teste + 1 "anonymous" por esclarecer.
+(5a) CAP LEDGER-1 autorizado: bloqueio por método (GET) em match exacto
+da colecção, com e sem barra. Bloco ^~ inalterado. Rollback obrigatório.
+(5b) BACKLOG novo, não reabre este capítulo:
+     - esclarecer origem do recibo com actor "anonymous";
+     - resolver política divergente do mesmo dado em duas portas
+       (HTTP /api/receipts/<id> completo vs MCP get_receipt magro);
+     - rate limit na porta pública;
+     - avaliação separada de /api/merkle/.
+Human Dragon · 12 Set 2026
+```
+
+#### CAP LEDGER-1 Execution
+
+**Backup:** `/home/windi/nginx-backup-ledger1-20260912-145330.conf`
+
+**Blocks added to nginx (before existing ^~ block):**
+```nginx
+location = /api/receipts {
+    if ($request_method = GET) { return 403; }
+    proxy_pass http://windi_ledger/api/receipts;
+    proxy_http_version 1.1;
+}
+
+location = /api/receipts/ {
+    if ($request_method = GET) { return 403; }
+    proxy_pass http://windi_ledger/api/receipts/;
+    proxy_http_version 1.1;
+}
+```
+
+#### DoD Results
+
+| Test | Expected | Result |
+|------|----------|--------|
+| (a) GET /api/receipts/ | 403 | ✅ |
+| (b) GET /api/receipts | 403 | ✅ |
+| (c) GET /api/receipts/?limit=5 | 403 | ✅ |
+| (d) GET /api/receipts/{id} | 200 | ✅ |
+| (e) verify-public fetch | 200 | ✅ |
+| (f) POST seal | non-403 | ✅ (400 validation) |
+
+**Status:** CAP LEDGER-1 COMPLETE
+
+---
+
+*CCode Gêmeo · 12 Set 2026 · Liga IA+H*
+*"Colecção fechada. Item aberto. POST intacto."*
+
+---
+
 ## § SESSION-20260908-W-TUBE-CONNECTION-MANIFEST-CAP5
 
 **Data:** 2026-09-08
