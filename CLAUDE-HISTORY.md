@@ -755,6 +755,89 @@ Só depois: decidir se vale construir OAuth para UI clicável.
 
 ---
 
+### §236 I9 — CAP 6D / Porta Pública W-TUBE — EMENDA 7 (FECHO)
+
+**Date:** 2026-09-12 (mesmo dia, após EMENDA 6)
+**Gate:** Human Dragon I9
+
+#### CAP 6D-A1 PASS — AI-Native Interoperability Proven
+
+**Test Script:** `/tmp/cap6d-test/test_6d_a1.py`
+**Model:** Claude Opus 4.5 (`claude-opus-4-5-20251101`)
+**Auth:** Bearer token (AUTH-002)
+
+```
+============================================================
+CAP 6D-A1: Claude Messages API → W-TUBE MCP
+============================================================
+
+[1] Connecting to W-TUBE...
+    Protocol: 2025-03-26
+
+[2] Discovering tools...
+    Found 10 tools
+    - windi_capabilities
+    - windi_verify_receipt
+    - windi_check_artifact_hash
+    - windi_get_public_manifest
+    - windi_get_handoff
+    ... and 5 more
+
+[3] Calling Claude Messages API with W-TUBE tools...
+    Stop reason: tool_use
+
+[4] Claude invoked: windi_capabilities
+    Input: {}
+
+[5] Relaying to W-TUBE...
+    Response: valid JSON manifest (W-TUBE-001 v0.1.0, 10 tools)
+
+============================================================
+PASS: Claude discovered and invoked W-TUBE tool
+============================================================
+```
+
+#### Cadeia Provada
+
+```
+Claude (Opus 4.5) → Messages API → W-TUBE MCP → windi_capabilities → Response
+                    (authorization_token)  (Bearer AUTH-002)    (valid JSON)
+```
+
+#### Estado Final CAP 6A-6D
+
+| CAP | Estado | Evidência |
+|-----|--------|-----------|
+| 6A — Exposure | ✅ PASS | /tube/mcp público, Bearer challenge |
+| 6B — Protocol Interop | ✅ PASS | HTTP client independente |
+| 6C — SDK-Native Interop | ✅ PASS | MCP SDK v1.29.0 |
+| 6D-A1 — AI-Native (API) | ✅ **PASS** | Claude Opus invocou windi_capabilities |
+| 6D-A2 — AI-Native (UI) | 🔴 BLOCKED | AUTH-OAUTH-001 dependency |
+
+#### Classificação W-TUBE Actualizada
+
+```
+W-TUBE MCP: OPERATIONAL · AI-NATIVE INTEROP VERIFIED (API PATH)
+            REMOTE MCP INTEROP DEMONSTRATED
+            UI PATH BLOCKED (OAuth required)
+```
+
+#### Marco Atingido
+
+> Pela primeira vez, o W-TUBE deixou de ser "MCP que nós sabemos testar"
+> e passou a ser "MCP que uma IA externa sabe encontrar, entender e usar".
+
+```
+Human Dragon · 12 Set 2026
+```
+
+---
+
+*Human Dragon + CCode Gêmeo · 12 Set 2026 · Liga IA+H*
+*"Claude descobriu. Claude invocou. WINDI respondeu."*
+
+---
+
 ## § SESSION-20260908-W-TUBE-CONNECTION-MANIFEST-CAP5
 
 **Data:** 2026-09-08
