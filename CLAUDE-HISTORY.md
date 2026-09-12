@@ -8,8 +8,36 @@
 
 ## 🐉 MEMÓRIA PRIORITÁRIA — SESSION-20260912 FECHO
 
-**Última actualização:** 2026-09-12 ~17:00 CEST
+**Última actualização:** 2026-09-12 ~18:30 CEST
 **Próxima sessão deve ler isto primeiro.**
+
+### §236 I9 — EMENDA 9 (fecho de rotação)
+
+```
+(9a) Chaves Anthropic: nova criada, instalada nos .env do Strato,
+     antigas revogadas na consola. Usage das últimas horas: LIMPO.
+
+(9b) W-TUBE: rotação PROVADA. POST com token antigo → 401 observado.
+
+(9c) Repositório varrido:
+     - git log --all -- '*.env' → 1 ficheiro (w-mail-001/setup.env,
+       só referência a ficheiro, não valor)
+     - git grep '1hHtbpAni' → VAZIO (token W-TUBE nunca em commit)
+     - git grep 'iRef7mluf' → VAZIO (fragmento Anthropic nunca em commit)
+     RESULTADO: LIMPO
+
+(9d) Achado de método — REGRA PERMANENTE:
+     "401 sem Authorization" não prova rotação — prova apenas que o
+     portão existe. A prova é 401 COM o segredo antigo.
+
+     Irmã da lição do mcp_servers: duas vezes no mesmo dia um teste
+     foi dado como prova sem exercitar o elo que importava.
+
+     PERGUNTA OBRIGATÓRIA antes de qualquer teste:
+     "O que é que isto REALMENTE testou?"
+
+Human Dragon · 12 Set 2026
+```
 
 ### Estado Crítico
 
