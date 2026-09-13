@@ -6,10 +6,85 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
-## 🐉 MEMÓRIA PRIORITÁRIA — SESSION-20260913 W-AUTH-001-CAP1
+## 🐉 MEMÓRIA PRIORITÁRIA — SESSION-20260913 FECHO COMPLETO
 
-**Última actualização:** 2026-09-13 ~18:00 CEST
+**Última actualização:** 2026-09-13 ~23:30 CEST
 **Próxima sessão deve ler isto primeiro.**
+
+---
+
+### 🔴 PRIORIDADE MÁXIMA — WINDI-HUMAN-ENTRY-001
+
+```
+FREMDE Identity & Account Model v0.1 — CANDIDATE
+
+Origem: Experiência real com Herbert (FREMDE-001), 13 Set 2026
+
+ESTADOS:
+  VISITOR → FREMDE → IDENTIFIED → AUTHENTICATED → PARTICIPANT → PARTNER
+
+DISTINÇÕES FUNDAMENTAIS:
+  FREMDE ≠ USER           (pode operar sem DID)
+  SERVICE DID ≠ HUMAN DID (did:windi:intake-public vs did:windi:<uuid>)
+  INTAKE ≠ AUTHENTICATION (acção de serviço vs prova de identidade)
+  PLAYGROUND ≠ GOVERNED   (anónimo permitido vs DID obrigatório)
+
+REGRA DE FIXAÇÃO:
+  Nenhum fluxo antigo pode criar identidade/login/sessão
+  com semântica diferente sem justificativa explícita.
+
+PRÓXIMOS PASSOS:
+  1. Testar com 3-5 FREMDE adicionais
+  2. Se consistente → promover a standard practice
+  3. Inventariar fluxos antigos: KEEP | ADAPT | SUPERSEDE | DEPRECATE
+  4. Migrar progressivamente
+
+DOCUMENTO:
+  /opt/windi/docs/WINDI-HUMAN-ENTRY-001-FREMDE-MODEL-v0.1.md
+
+CONEXÃO COM W-AUTH-001:
+  CAP 2 (identidade real) deve implementar este modelo
+  W-DID-GENESIS é o backend, FREMDE Model é a semântica
+```
+
+---
+
+### Itens Resolvidos Fim de Sessão
+
+```
+AUDIT-REPO-VISIBILITY-001 — RESOLVIDO
+  windi_public_audit → PÚBLICO (gh repo edit --visibility public)
+  playground → PRIVADO (aguarda maturidade)
+  Verificado: curl github.com/Bingo-APPweb/windi_public_audit → 200 ✅
+
+CAP1-EVIDENCE-REPRODUCIBLE-001 — RESOLVIDO
+  test_cap1_dod.py commitado (deee1602a)
+  .gitignore exclui .venv/ e *.db
+  Claim auditável e reproduzível
+
+gh CLI — INSTALADO
+  v2.100.0 · autenticado como Bingo-APPweb
+```
+
+---
+
+### Pendente para Próxima Sessão
+
+```
+W-HIOS-AI-DISCOVERY-001 — CANDIDATE (aguarda I9)
+  Stack proposta: DISCOVER → UNDERSTAND → VERIFY → ACT → PROVE
+  - hios.windi-domain.com/llms.txt (índice HIOS)
+  - *.md alternates para páginas principais
+  - rel="alternate" + rel="describedby" no HTML
+  - Secção "Read before making claims" (contrato epistemológico)
+  DoD deve incluir sync automático HTML↔MD↔llms.txt (evitar drift)
+
+CROSSREF-AUDIT-EVIDENCE-001 — ABERTO
+  Claim (windi_public_audit) e prova (playground) em repos diferentes
+  Resolve quando playground abrir ou quando linkar explicitamente
+```
+
+---
 
 ### Fecho de Sessão — W-AUTH-001 CAP 1 PASS
 
