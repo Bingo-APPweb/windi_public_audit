@@ -6,10 +6,63 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
-## 🐉 MEMÓRIA PRIORITÁRIA — SESSION-20260913 ERRATA 6D-A1b
+## 🐉 MEMÓRIA PRIORITÁRIA — SESSION-20260913 W-AUTH-001-CAP1
 
-**Última actualização:** 2026-09-13 ~12:45 CEST
+**Última actualização:** 2026-09-13 ~18:00 CEST
 **Próxima sessão deve ler isto primeiro.**
+
+### Fecho de Sessão — W-AUTH-001 CAP 1 PASS
+
+```
+RESUMO:
+- ERRATA 6D-A1b aplicada (drift de critério corrigido)
+- Permissões w-tube.env revertidas (-rw------- root root)
+- W-AUTH-001 CAP 0 (scaffold) completado
+- W-AUTH-001 CAP 1 (OAuth core) completado — 9/9 testes PASS
+
+CAP 1 DoD (9 testes reproduzíveis):
+  T1: Happy-path S256 → code → token     ✅
+  T2: Wrong verifier rejected            ✅
+  T3: method=plain rejected              ✅
+  T4: Non-exact redirect_uri rejected    ✅
+  T5: Code replayed rejected             ✅
+  T6: Expired code rejected              ✅
+  T7: Refresh rotation + reuse detection ✅
+  T8: :8211 bound to 127.0.0.1 only      ✅
+  T9: DB stores hashes only              ✅
+
+FICHEIROS:
+  /opt/windi/w-auth-001/w_auth_001.py      # 30KB, OAuth core
+  /opt/windi/w-auth-001/test_cap1_dod.py   # Script de prova
+  /opt/windi/w-auth-001/oauth.db           # SQLite (tokens hasheados)
+
+SEGURANÇA:
+  - PKCE S256 obrigatório (plain rejeitado)
+  - Tokens hasheados na DB, nunca raw
+  - Refresh rotation com reuse detection
+  - :8211 NÃO EXPOSTO (127.0.0.1 only, sem nginx route)
+  - systemd unit NÃO INSTALADO (aguarda CAP 2)
+
+ESCOPO CAP 1:
+  Prova que o mecanismo OAuth funciona sobre sujeito stub.
+  NÃO prova login real (CAP 2) nem consent (CAP 3).
+
+PRÓXIMOS PASSOS:
+  - CAP 2: Integração W-DID-GENESIS (identidade real)
+  - CAP 3: Consent UI
+  - CAP 4: W-TUBE valida tokens via introspect
+  - Só então: nginx route + systemd
+
+DECISÕES I9 CONFIRMADAS:
+  - DID-first (não email fallback)
+  - Token expiry 1h + refresh
+  - Audit no Ledger (quando integrar)
+  - Serviço separado (:8211)
+```
+
+Human Dragon (observador) + CCode (executor) · 13 Set 2026
+
+---
 
 ### ⚠️ ERRATA §236 EMENDA 10 — Drift de Critério 6D-A1b (CRÍTICO)
 
