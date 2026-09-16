@@ -34356,3 +34356,207 @@ não pelo humano. A interpretação de "registo constitucional" como autorizaç�
 
 *Fecho: 2026-09-14 ~22:00 UTC · CCode + Human Dragon + Guardian (cloud)*
 *"A disciplina semântica começou a auditar a própria infraestrutura — e apanhou-nos a nós quatro vezes, incluindo a mim."*
+
+---
+
+## 🐉 W-VOICE-001 · CAP0 FECHADO + ENQUADRAMENTO ARQUITECTÓNICO
+
+**Data:** 2026-09-16
+**Autoridade:** Human Dragon
+**Commit:** ea86bc38fc32018fb508c53d2500980f9a08d345
+**Push:** 55d4f7491..ea86bc38f main -> main
+
+---
+
+### I9 · W-VOICE-001 · ENQUADRAMENTO ARQUITECTÓNICO — HUMAN DRAGON
+
+W-VOICE-001 é reconhecido como fatia vertical do WINDI-HIOS, não como produto autónomo.
+Telefonia = primeiro adaptador de entrada. Núcleo lógico reutilizável = CASE + Human Lifecycle + Events + Identity/Authority + Hash/Receipt + Evidence + Ledger/Verify.
+Uma organização integra-se ao núcleo lógico HIOS; novos canais e aplicações entram por adaptadores, sem novo núcleo por superfície. Topologia de deployment (local / IONOS / híbrido / multi-tenant) não é doutrina.
+
+**Arquitectura de expansão reconhecida:**
+```
+ADAPTER → INTAKE/NORMALIZE → HIOS CASE CORE → GOVERNANCE → EVIDENCE → INSTITUTIONAL OUTPUT
+```
+
+**Princípio de separação:**
+- Adapter Layer — de onde entrou
+- Case Core — o que está a acontecer, independente do canal
+- Governance Layer — quem decide, sob que regras, com que gates humanos
+- Evidence Layer — integridade, eventos, limites de prova
+- Institutional Output Layer — como a organização formaliza a sua resposta (ISP/a4desk)
+
+A camada de governança aplica os invariantes constitucionais WINDI-HIOS independentemente da superfície: autoridade humana, estado declarado ≠ estado demonstrado, limites explícitos de prova, e proibição de transformar geração ou automação em autoridade implícita.
+
+**Expansion Map registado exclusivamente como VISÃO/BACKLOG:**
+```
+VOICE → ANTWORT via a4desk/ISP → KANÄLE → CONTROLLING → VERWALTUNG
+```
+Não altera nem amplia o DoD de CAP1–CAP5; não autoriza implementação antecipada de qualquer adaptador.
+
+**Obrigação arquitectónica para CAP2:** o CASE nasce surface-agnostic. Proveniência via envelope de origem versionado — mínimo: adapter_type, channel, source_ref, schema_version. No piloto só o adaptador voice é activo; outros tipos schema-ready, não implementados.
+
+**Contexto:** postura investor-seed de hoje = exercício de preparação, não captação.
+
+---
+
+### Estado CAP0
+
+| Gate | Resultado |
+|------|-----------|
+| I9 presente | PASS |
+| Discovery alemão | PASS |
+| Internal Design | PASS |
+| README | PASS |
+| Hashes | PASS |
+| Sem código | PASS |
+| Sem serviços — artifacts | PASS |
+| Sem serviços — runtime | NOT DEMONSTRATED (falha baseline PRE) |
+| Commit | PASS |
+| Push | PASS |
+| Namespace | PASS (Human Dragon accepted lowercase) |
+| I9-DECISION-RECORD | PASS (Human Dragon confirmed) |
+
+**Runtime service delta:** NOT DEMONSTRATED (falha do baseline PRE; sem evidência de mutação de serviço pelos artefactos CAP0).
+
+**Namespace:** /opt/windi/w-voice-001/ aceite pelo Human Dragon.
+
+**CAP1:** NOT OPEN — abre só após retorno da discovery Puntzelhof e I9 explícito.
+
+---
+
+### Ficheiros Materializados
+
+```
+/opt/windi/w-voice-001/
+├── I9-DECISION-RECORD.md      7f969ad950d0a4b6843374aaf7e1dcc79184be6d86d594580e3bc69b9a24255e
+├── DISCOVERY-PUNTZELHOF.md    2dbed20608e2f81cfd0c2f548afcff03e6ef4873aff652c4ab55d9fb2fa0d9da
+├── INTERNAL-DESIGN.md         108ec2205aae141fb0134b127015a413d1be7e00de168fb48dbf559f4a9ec5b2
+├── README.md                  5664efc9ba790bcfaeb66e32623e30205775d8f87b48e1488b4cdc752a362c3d
+└── HASHES.txt
+```
+
+---
+
+*"O primeiro cavalo de Troia legítimo do HIOS dentro de uma empresa. Entra resolvendo chamadas perdidas — deixa instalado o padrão."*
+
+*Fecho: 2026-09-16 · CCode + Human Dragon + Guardian + Architect*
+
+---
+
+## SESSION-20260916 — HIOS-DISCOVERY-001 + GPT-NATIVE-001 CAP0 + CAP2b
+
+**Data:** 2026-09-16
+**Agentes:** CCode (Opus 4.5) + Human Dragon + Guardian (cloud)
+**Duração:** Sessão completa
+
+---
+
+### MEMÓRIA PRIORITÁRIA
+
+```
+HIOS-DISCOVERY-001 CAP 1 FECHADO — llms.txt v2.0.1 CANDIDATE
+  commit: eccec2e8b
+  sha256: 8b1018eb062845a1f884711e435bf2692dfd047b11675781e32cecb87709770f
+  Statement EN byte-idêntico ao tool (hashes 2dcb91d4… / fc87530d…)
+  URL canónico: mcp.windi-domain.com/mcp
+  W-TUBE removido do llms.txt
+  Confirmado por telemóvel 4G
+
+HIOS-CONTENT-001 CAP 2a FECHADO — content.json tracked
+  commit: ccb5f881c
+  sha256: 6ff3b4da60bd51195d71228688ed67e085d97c1553b0dd5b058c875ed0ed032a
+  Nota: inclui edição 2026-09-16 (connectors candidate→production) feita sem I9 prévio
+
+HIOS-CONTENT-001 CAP 2b FECHADO — connectors fremder-friendly (trilingue)
+  commit: 55d4f7491
+  Texto: "Works with Claude... Not yet in Anthropic directory — add as custom connector: URL"
+  status: production (I9)
+  Não diz "any MCP client" — GPT não provado
+
+GPT-NATIVE-001 CAP 0 FECHADO — diagnóstico completo
+  DCR: NOT SUPPORTED (só CLI)
+  Redirect allowlist: só claude.ai/api/mcp/auth_callback
+  Resource: MISMATCH (windi-domain.com/mcp/ vs mcp.windi-domain.com/mcp)
+  Refresh: SUPPORTED
+  RFC 9207 iss: NOT SUPPORTED
+  Previsão: ChatGPT falha em redirect allowlist
+
+GPT-NATIVE-001 CAP 1 BLOCKED (account tier)
+  ChatGPT custom MCP apps requer plano Team/Enterprise/Edu
+  Adiado para próximo mês
+
+Herbert — Teste do Humano agendado 17-Set-2026
+  WCPS-001 CAP 2: fremder fresco testa DID → Registar → verify-public
+```
+
+---
+
+### DECISÕES I9 (2026-09-16)
+
+| Decisão | Valor | Contexto |
+|---------|-------|----------|
+| W-TUBE no llms.txt | **REMOVER** | Beco sem saída documentado; arquitectura interna vive em /docs |
+| EMENDA 10a/10b | **SIM** | 10a LIVE custom (fechado) + 10b registry (aberto) |
+| connectors=PRODUCTION | **SIM** | Com proof_limit "OAuth clients; not yet in registry" |
+| URL canónico MCP | **mcp.windi-domain.com/mcp** | Provado pelo screenshot directory |
+
+---
+
+### ACHADOS
+
+1. **HIOS-CONTENT-UNTRACKED-001** — content.json vivia fora do git até hoje
+   - Resolução: CAP 2a (commit ccb5f881c)
+
+2. **Statement origin** — "at this instant" → "at the recorded moment"
+   - Commit d11f34977 (15-Set-2026) com I9 ratified
+   - Irregularidade de processo notada no próprio commit
+
+3. **Dois ficheiros v2.0** — landing-pmg vs w-hios-001
+   - landing-pmg/static/llms.txt (be83e1b3) = versão antiga "CANDIDATE · 2026-09-06"
+   - w-hios-001/static/llms.txt (8b1018eb) = versão actual v2.0.1
+
+4. **Cloud INSTRUMENT_BLOCKED** — Guardian cache durante todo o dia
+   - Desempatado por telemóvel 4G
+   - Fetch do cloud continuou a ver v1.1 após commit
+
+5. **OAuth Claude-bound** — servidor configurado para um cliente específico
+   - Só existe 1 cliente registado: Anthropic Claude
+   - "Qualquer cliente MCP" só verdadeiro após provar GPT
+
+---
+
+### COMMITS (4)
+
+| Hash | Mensagem |
+|------|----------|
+| eccec2e8b | fix(hios): llms.txt v2.0.1 — CAP 1d claim corrections |
+| ccb5f881c | chore(hios): track content.json as served |
+| 55d4f7491 | feat(hios): CAP 2b — connectors fremder-friendly text (trilingual) |
+
+---
+
+### BACKLOG ABERTO
+
+| ID | Descrição | Prioridade |
+|----|-----------|------------|
+| W-CONNECTOR-001 CAP 11 | URL canónico nos metadados OAuth | P1 (após GPT test) |
+| GPT-NATIVE-001 CAP 1 | First contact ChatGPT | BLOCKED (tier) |
+| WCPS-001 CAP 2 | Teste do Humano (Herbert 17-Set) | P0 |
+| NGINX-SEM-GIT-001 | mcp.windi-domain.com.conf untracked | P2 |
+
+---
+
+### ESTADO SUPERFÍCIES
+
+| Superfície | Estado | Verificado |
+|------------|--------|------------|
+| hios.windi-domain.com/llms.txt | v2.0.1 CANDIDATE | telemóvel 4G ✓ |
+| hios.windi-domain.com/platform | trilingue + URL canónico | curl ✓ |
+| mcp.windi-domain.com/mcp | LIVE | connector Claude ✓ |
+
+---
+
+*"O código sugere. O fremder observa. A evidência decide."*
+
+*Fecho: 2026-09-16 20:45 · CCode + Human Dragon · Guardian INSTRUMENT_BLOCKED*
