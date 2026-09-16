@@ -21,14 +21,23 @@
 - :8204 só sob systemd (windi-mcp.service) — journal provou crash-loop [Errno 98]
   desde ~27 Ago: dois donos da porta (systemd vs nohup). Resolvido. Registado no W-SERVICE-CONTROL.
 
-### 🔴 ABERTO — antes do CAP 10 (submissão, Human Dragon)
-1. dragon2026 (did:windi:dragon-001) CONTINUA em texto claro — ontem #1, hoje não tocado.
-   CAP 0 rodou o reviewer, não o Dragon.
-2. /docs/mcp/ URL limpo: cloud vê 404 persistente (5×), telemóvel viu 404, ?nocache=1 dá 200
-   de ambos. Servidor serve 200. Classificado INSTRUMENT_BLOCKED(cache cliente) —
-   fecha com janela privada no telemóvel, URL limpo. Sem isto o reviewer pode ver 404.
-3. Decisão I9 pendente: `initialize` aberto vs protegido por Bearer (cliente Claude
-   descobre OAuth no 1º 401). Só o teste com Claude real confirma.
+### 🟢 FECHADO — W-CONNECTOR-001 CAP 10 COMPLETO (16 Set 2026)
+
+**Prova:** Claude.ai chamou `windi_explain_scope` e devolveu statement trilíngue.
+**Teste:** "Use the WINDI connector to explain what WINDI proves" → PASS
+
+Bloqueadores resolvidos nesta sessão:
+1. ~~dragon2026 texto claro~~ → passphrase rodada pelo Human Dragon
+2. ~~/docs/mcp/ cache~~ → RESOLVIDO (200 OK)
+3. ~~`initialize` aberto vs Bearer~~ → Decisão I9: Opção A (aberto)
+4. ~~DID-UI-REDIRECT-001~~ → Corrigido (commit fe0403d35)
+
+**W-CONNECTOR-001 Estado Final:**
+- Server URL: `https://windi-domain.com/mcp/`
+- Tools: `windi_verify_digest`, `windi_get_receipt`, `windi_explain_scope`
+- Auth: OAuth 2.0 + PKCE (S256)
+- Docs: `https://windi-domain.com/docs/mcp/`
+- Status: **LIVE no Claude.ai**
 
 ### 🟡 Ainda de ontem (não tocados): .strip() em 22 identidades · "Selado"→"Registado"
 em /account/ · política de dados GDPR inexistente · file drop não diagnosticado.
