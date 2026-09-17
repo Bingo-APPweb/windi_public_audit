@@ -92,6 +92,39 @@ directory status: NOT YET CONFIRMED
 
 **Content model:** v0.3.7-CANDIDATE
 
+### 🟢 W-SACvoice Puntzelhof Pilot Pack v0.1 — COMMITTED
+
+**Commit:** `547045df` · `docs(§236): W-SACvoice Puntzelhof Pilot Pack v0.1 — INTERNAL DRAFT`
+
+**6 ficheiros em alemão (PILOT-ARCH-002 baseline):**
+
+| Doc | Ficheiro | Conteúdo |
+|-----|----------|----------|
+| 01 | `01-Freundliche-Einfuehrung.md` | Por que fazemos isto |
+| 02 | `02-Was-wird-getestet.md` | O fluxo em 6 passos |
+| 03 | `03-Was-bleibt-unangetastet.md` | O que NÃO tocamos |
+| 04 | `04-Zehn-Fragen-fuer-den-Pilot.md` | 10 perguntas operacionais |
+| 05 | `05-Erfolg-Abbruch-Human-Handoff.md` | Sucesso, aborto, responsabilidade |
+| — | `README.md` | Índice do pack |
+
+**Correcções editoriais Human Dragon (aplicadas):**
+- "versteht" → "versucht zu erkennen" (suavização de claims)
+- "nur für den Pilotversuch aktiv" → "für den Pilotversuch vorgesehen"
+- "Kein Risiko" → "Kein Eingriff in euren bestehenden Telefonbetrieb"
+- "Sofort Mensch" → "Rückruf / menschliche Übernahme" (capacidade ainda não demonstrada)
+- "Preise nennen" → "Preise verbindlich festlegen oder verhandeln"
+- Nota epistemológica: "Erfassung ≠ Bestätigung"
+
+**Princípios arquitecturais preservados:**
+- Número separado (Easybell) — infraestrutura cliente intocada
+- Human remains responsible — sistema apenas assiste
+- Piloto reversível — aborto sem justificação
+- captured request ≠ verified truth
+
+**Status:** INTERNAL · DRAFT · HUMAN REVIEWED
+**Visibility:** Nenhuma referência pública a Puntzelhof sem aprovação stakeholder
+**Próximo passo:** Conversa real com a família + respostas às 10 perguntas
+
 ---
 
 ## 🐉 MEMÓRIA PRIORITÁRIA — SESSION-20260915 FECHO
