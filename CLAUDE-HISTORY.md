@@ -6,6 +6,61 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## 🐉 MEMÓRIA PRIORITÁRIA — SESSION-20260917 FECHO
+
+### 🟢 W-HIOS-001 B2B Portal — Content Model + Visual Template CANDIDATE
+
+**Commits desta sessão:** content-b2b-v0.3.6 + index-v3.html + app.py /home-v3
+
+**Trilha 1 — Content Model (C1.1 → C1.1.1):**
+- Multi-dimensional status schema (5 dimensões independentes)
+- Editorial contract com 10 regras (inclui "Status dimensions are orthogonal")
+- Distinction visibility vs public_availability (quem pode ver ≠ quem pode usar)
+- Private shelves para incubação comercial (7 objectos INTERNAL)
+
+**Trilha 2 — Visual Template (C2):**
+- `templates/index-v3.html` CANDIDATE com 10 secções
+- noindex/nofollow activo · banner CANDIDATE
+- Governance notes em application cards (PENDING_GATE visível)
+- Footer corrigido: "AI assists. Human confirms. Evidence remains."
+
+**Trilha 3 — Estrutura Comercial Interna:**
+- W-SACvoice-002 (managed_service) enriquecido
+- BUSINESS-PACK-01 "Natural Reception" com workflow 6 passos
+- tagline: "Einfach anrufen. Einfach sagen, worum es geht."
+- infrastructure_candidate: telecom_provider=TBD, runtime_host=STRATO
+- first_case: PUNTZELHOF-PILOT-001
+
+**W-CONNECTOR-001 — Semântica Final:**
+```
+operational:      LIVE
+evidence:         DEMONSTRATED (custom connector)
+availability:     LIMITED
+governance:       PENDING_GATE
+directory status: NOT YET CONFIRMED
+```
+- Frase pública: "Works as a custom Claude connector. Public directory status not yet confirmed."
+- Distinção chave: "Directory listing is a distribution channel, not a condition of technical validity."
+
+**Objectos INTERNAL (não visíveis em nav/sitemap/llms.txt):**
+- W-VOICE-001, W-SACvoice-002, BUSINESS-PACK-01/02/03
+- ORGANIZATIONAL-W-DID, PUNTZELHOF-PILOT-001
+
+**Ficheiros modificados:**
+- `/opt/windi/w-hios-001/content-b2b-v0.3.json` → v0.3.6-CANDIDATE
+- `/opt/windi/w-hios-001/templates/index-v3.html` → CANDIDATE
+- `/opt/windi/w-hios-001/app.py` → rota /home-v3 adicionada
+
+**Preview disponível:** https://hios.windi-domain.com/home-v3?lang=en|de|pt
+
+**Estado:**
+- content v0.3.6: PASS
+- visual template: PASS
+- claim discipline: PASS
+- production deployment: HOLD
+
+---
+
 ## 🐉 MEMÓRIA PRIORITÁRIA — SESSION-20260915 FECHO
 
 ### 🟢 O que foi construído (3 commits: df18668c0 · b01ce232b · 7b9ecc7a1)
