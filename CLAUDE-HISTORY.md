@@ -34560,3 +34560,219 @@ Herbert — Teste do Humano agendado 17-Set-2026
 *"O código sugere. O fremder observa. A evidência decide."*
 
 *Fecho: 2026-09-16 20:45 · CCode + Human Dragon · Guardian INSTRUMENT_BLOCKED*
+
+---
+
+## 🐉 SESSION-20260916 · W-VOICE-001 NASCIMENTO
+
+**Fecho:** 2026-09-16 ~21:30 CEST
+**Sessão:** Secundária (apresentação de projecto)
+
+### O que nasceu hoje
+
+| Commit | Conteúdo |
+|--------|----------|
+| `ea86bc38f` | CAP0 — 5 ficheiros documentais, zero código |
+| `4351e122f` | RATIONALE.md — Communication-to-Evidence Pipeline |
+| `1772c269b` | ERKLAERUNG-EINFACH.md — versão para leigos |
+
+### Ficheiros em /opt/windi/w-voice-001/
+
+```
+I9-DECISION-RECORD.md      7f969ad9...
+DISCOVERY-PUNTZELHOF.md    2dbed206...
+INTERNAL-DESIGN.md         108ec220...
+README.md                  5664efc9...
+HASHES.txt
+RATIONALE.md               5c5193ca...
+ERKLAERUNG-EINFACH.md      05584b27...
+W-VOICE-001-Einfach-Erklaert.docx (não versionado)
+```
+
+### Arquitectura registada
+
+```
+ADAPTER → INTAKE/NORMALIZE → HIOS CASE CORE → GOVERNANCE → EVIDENCE → INSTITUTIONAL OUTPUT
+```
+
+**Expansion Map (VISÃO/BACKLOG):**
+```
+VOICE → ANTWORT via a4desk/ISP → KANÄLE → CONTROLLING → VERWALTUNG
+```
+
+### Princípios preservados
+
+> *"Gesendet ≠ gesehen ≠ übernommen ≠ bearbeitet ≠ abgeschlossen"*
+
+> *"A comunicação não desaparece quando termina. Ela amadurece."*
+
+### Estado
+
+```
+CAP0:      FECHADO (ea86bc38f)
+RATIONALE: MATERIALIZED (4351e122f)
+CAP1:      NOT OPEN
+NEXT:      Puntzelhof discovery response (IT = filho do Human Dragon)
+```
+
+### Nota de método
+
+- CCode corrigiu relatório de "PRE/POST idênticos" para "NOT DEMONSTRATED" quando baseline PRE falhou
+- Namespace w-voice-001 (minúsculas) aceite por Human Dragon
+- RATIONALE.md nasceu em commit próprio, sem contaminar CAP0
+- DOC estilizado entregue via inbox
+
+---
+
+*Fecho: 2026-09-16 · CCode + Human Dragon + Guardian + Architect*
+*"O primeiro cavalo de Troia legítimo do HIOS dentro de uma empresa."*
+
+---
+
+## SESSION-20260917 — W-VOICE-001 CAP 0A Physical Discovery + Consent Gate
+
+**Data:** 2026-09-17
+**Agentes:** CCode (Opus 4.5) + Human Dragon + GPT (cloud context)
+**Duração:** Sessão completa
+**Status:** STANDBY — aguarda HUMAN AUTHORIZATION GATE 001
+
+---
+
+### MEMÓRIA PRIORITÁRIA
+
+```
+W-VOICE-001 CAP 0A — PHYSICAL DISCOVERY COMPLETO
+  Status: FROZEN
+  Frozen: 2026-09-17
+  Next: Puntzelhof stakeholder meeting (Human Authorization Gate 001)
+
+CONSENT GATE ACTIVO
+  Access to FRITZ!Box read-only surfaces requires prior conversation
+  and authorization from Puntzelhof stakeholders.
+  No login, inspection, screenshot or mutation authorized before consent.
+
+CAP 0 / Q1 DECISION — OPEN
+  "Is a local edge gateway technically necessary for the Puntzelhof W-VOICE pilot,
+   or can the complete pilot be demonstrated using SIP/VoIP routing and the remote
+   STRATO backend while leaving Puntzelhof IONOS and client devices untouched?"
+  Architecture A/B/C comparison: PENDING authorized evidence
+```
+
+---
+
+### INVENTÁRIO FÍSICO OBSERVADO (Fotos 2026-09-17)
+
+| Equipamento | Status | Relevância W-VOICE |
+|-------------|--------|-------------------|
+| **FRITZ!Box 7590 AX** | ✅ ACTIVO (LEDs verdes) | **CENTRAL** — SIP nativo, DECT integrado |
+| **FRITZ!Fon "Xuxu Küche privat"** | ✅ ACTIVO (17.09.2026 14:12) | **CENTRAL** — DECT conectado |
+| FRITZ!Repeater 6000 | Presente | Mesh Wi-Fi — não central |
+| TP-Link Omada EAP225-Outdoor | Presente | AP exterior — não central |
+| Synology NAS | Activo | Armazenamento — fora do scope |
+| UPS UPSLM1200 | Presente | 2000VA/1200W — disponibilidade |
+| Speedport W724V | **APENAS MANUAL** | Nenhum activo observado |
+
+**Fotos arquivadas:** `/home/windi/inbox/1000015855.jpg` → `1000015872.jpg` (10 ficheiros)
+
+---
+
+### EVIDÊNCIA CATEGORIZADA (Correcção de Rigor)
+
+```
+OBSERVED:
+- FRITZ!Box 7590 AX physically present and operational
+- FRITZ!Fon/DECT active and synchronized (screen: 17.09.2026 14:12)
+- No observed evidence forcing local W-VOICE gateway
+- Puntzelhof address confirmed: Greuth 6, 87448 Waltenhofen
+
+NOT YET OBSERVED (requires consent):
+- Telefonie → Eigene Rufnummern (numbers, provider)
+- Telefonie → Telefoniegeräte (registered devices)
+- Telefonie → Rufbehandlung (routing rules)
+- System → FRITZ!Box-Informationen (FRITZ!OS version)
+- Anrufbeantworter configuration state
+- Speedport W724V active/historical confirmation
+
+CANDIDATE STATUS:
+- Architecture A (cloud/SIP, no local gateway) remains candidate
+- Architecture B (edge gateway) not yet required by evidence
+- Architecture C (hybrid) not yet evaluated
+- Final decision OPEN until authorized evidence available
+```
+
+---
+
+### CORRECÇÕES DE GOVERNANÇA (GPT + CCode)
+
+| Afirmação inflada | Correcção aplicada |
+|-------------------|-------------------|
+| "Anrufbeantworter configurado" | **INDÍCIO** — ícone observado, não confirmação |
+| "Speedport W724V histórico — ignorar" | **Nenhum Speedport activo observado** — status a confirmar |
+| "SIP nativo completo" | **Model capability** — não configuração observada |
+
+**Princípio reforçado:** `observado ≠ inferido ≠ confirmado`
+
+---
+
+### HUMAN AUTHORIZATION GATE 001
+
+```
+Type: Non-technical
+Participants: Human Dragon + Stakeholders (esposa + Korbinian)
+Location: Puntzelhof
+Status: PENDING
+
+Três Objectivos (sem burocracia):
+1. Entender se o problema realmente incomoda
+2. Descobrir os dados do Fragebogen de forma natural
+3. Pedir autorização explícita para inspecção read-only
+
+Três Saídas Legítimas:
+A) Autorização completa → CAP 0A continua → 4 telas → decisão A/B/C
+B) Autorização parcial → CAP 0A continua com scope reduzido
+C) Nenhuma autorização → Piloto continua sem mudança técnica
+
+Frase de fecho proposta:
+"Wäre es für euch in Ordnung, wenn wir uns danach gemeinsam diese vier
+ Seiten in der FRITZ!Box anschauen? Wir verändern nichts — wir schauen nur."
+```
+
+---
+
+### PROTECÇÃO ACTIVA
+
+> *"Vocês mexeram na infraestrutura antes de autorização?"*
+> **Resposta documentada:** Não. Até aqui: observação física externa + coleta de contexto.
+
+---
+
+### ARQUITECTURA (Contexto GPT)
+
+```
+Puntzelhof local: FRITZ!Box 7590 AX + FRITZ!Fon DECT
+Puntzelhof cloud: IONOS (não tocado)
+WINDI-HIOS: STRATO (separação cliente/plataforma)
+W-VOICE-001: ponte a definir após consent + evidence
+
+Princípio: WINDI-HIOS não depende da infraestrutura do Puntzelhof;
+           o Puntzelhof apenas se conecta a ele.
+```
+
+---
+
+### ESTADO FINAL
+
+```
+CAP 0A:        FROZEN (Physical Discovery completo)
+CONSENT GATE:  PENDING (Human Authorization Gate 001)
+CAP 0 / Q1:    OPEN (A/B/C decision awaits authorized evidence)
+NEXT ACTION:   Stakeholder meeting → consent → continue or hold
+```
+
+---
+
+*"Governança antes do código."*
+
+*Fecho: 2026-09-17 · CCode + Human Dragon + GPT*
+*"O primeiro Human Authorization Gate real do W-VOICE."*
+
