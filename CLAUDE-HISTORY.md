@@ -59,6 +59,39 @@ directory status: NOT YET CONFIRMED
 - claim discipline: PASS
 - production deployment: HOLD
 
+### 🟢 PILOT-ARCH-002 — Separate Number / No-Touch Customer Infrastructure
+
+**Decisão:** O piloto Puntzelhof usa número Easybell dedicado. Infraestrutura existente do cliente intocada.
+
+**Princípio central (DE):**
+> "Für diesen Test verändern wir weder eure bestehende Telefonnummer noch eure FRITZ!Box oder eure Server. Der Pilot läuft über eine separate Servicenummer."
+
+**O que NÃO tocamos:**
+- FRITZ!Box
+- IONOS
+- Número de telefone existente
+- VPN
+- Infraestrutura local
+
+**Documentos superseded:**
+- `W-VOICE_Puntzelhof_Freundliche-Anleitung.docx`
+- `W-VOICE_Puntzelhof_Zwoelf-Fragen.docx`
+
+**Novo documento set:** W-SACvoice Puntzelhof Pilot Pack v0.1
+1. Freundliche Einführung
+2. Was wird getestet?
+3. Was bleibt unangetastet?
+4. Zehn Fragen für den Pilot
+5. Erfolg / Abbruch / Human Handoff
+
+**Human Authorization Gate (simplificado):**
+> "Vocês autorizam testar um número separado de atendimento, sem alterar nada da infraestrutura atual?"
+
+**Core question do piloto:**
+> "Wenn gerade niemand ans Telefon gehen kann: Geht der Kundenwunsch trotzdem nicht verloren?"
+
+**Content model:** v0.3.7-CANDIDATE
+
 ---
 
 ## 🐉 MEMÓRIA PRIORITÁRIA — SESSION-20260915 FECHO
