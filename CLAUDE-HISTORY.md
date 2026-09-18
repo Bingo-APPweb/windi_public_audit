@@ -6,6 +6,76 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## 🐉 SESSION-20260918 — NGINX STABILITY + RESTORE
+
+### Contexto
+- Playground caiu 2x na semana (404 em /artifacts/playground.html e editor.html)
+- HIOS-OPEN /api/v1/hios-open/ também em 404
+- Reescrita massiva nginx entre 12-14 Set removeu 61 locations (1413→766 linhas)
+- Certificado mail.windisites.de expirado desde Jul 2026
+
+### Cap 1 — Rota /artifacts/ + W-GUARD-001
+- ✅ Adicionada rota `/artifacts/` para playground.html e editor.html
+- ✅ Criado W-GUARD-001 com timer systemd (5 min) + alertas Telegram
+- ✅ Monitor `playground_surface_monitor.py` com tri-state (PASS/FAIL/BLOCKED)
+
+### Cap 2 — Git em /etc/nginx
+- ✅ Inicializado repositório git em /etc/nginx
+- ✅ Commit "Ponto zero" como baseline
+- ✅ Backup de 12 Set identificado com 1413 linhas (todas rotas intactas)
+
+### Cap 3a — HIOS-OPEN restaurado
+- ✅ Restaurado upstream `windi_hiosopen` e location `/api/v1/hios-open/`
+- ✅ Smoke test com probe real: 200 OK com JSON válido
+- ✅ Removida /mail/ errada (apontava 8200, mail vive em mail.windisites.de)
+
+### Cap 3b — Restauro massivo (4 lotes)
+**Lote 1 — HIOS + GEO + FAROL:**
+- /hios/, /hios/cinema/, /hios/video-studio/
+- /llms-notarial.txt, /llms.pt.txt, /llms.de.txt
+- /verify-public/verify.html, /farol/
+
+**Lote 2 — VERIFY-PUBLIC família:**
+- /verify-public/notarial/, /verify-public/install/, /verify-public/web/sw.js
+
+**Lote 3 — FAMÍLIA 8091:**
+- /reality-check/, /detect-media/
+- /api/decompose, /api/project, /api/containers (bloqueados)
+- /api/lexicon/ (8193), /api/hios/ (8196)
+
+**Lote 4 — PLAYGROUND + WORKBENCH + TUBE:**
+- /tube/mcp (8210), /workbench/ (8203), /workbench/v3 (redirect)
+- /playground, /playground/, /playground/claim
+- /api/playground/, /api/v1/playground/
+- /playground/academy/, /templates/, /cases/, /tutorials/
+- / (redirect para playground), /about, /about/
+
+**Upstreams adicionados:** windi_workbench (8203), windi_tube (8210)
+
+### Certificado mail.windisites.de
+- ✅ Renovado com `certbot --nginx`
+- ✅ Válido até 17 Dez 2026
+- ⚠️ Configuração de renovação actualizada para usar nginx em vez de standalone
+
+### Commits
+| Hash | Descrição |
+|------|-----------|
+| `511d893` | Cap 3a-bis: Remove /mail/ errada |
+| `cf24c60` | Cap 3b Lote 1-4: Restauro 30+ rotas |
+
+### Estado Final
+- 📊 8/8 superfícies PASS
+- 📁 nginx 908→1257 linhas (+349)
+- 🔒 W-GUARD-001 activo (timer 5min)
+- 📋 TRIAGEM-NGINX-61-LOCATIONS.md actualizado
+
+### Regras Estabelecidas
+- G7: `curl` nunca com `-k` em smoke tests (esconde TLS expirado)
+- G8: Probe específico por rota (HEAD na raiz aceita falsos positivos)
+- G9: Rota só se restaura se alvo existe (directório ou porta)
+
+---
+
 ## 🐉 MEMÓRIA PRIORITÁRIA — SESSION-20260917 FECHO
 
 ### 🟢 W-HIOS-001 B2B Portal — Content Model + Visual Template CANDIDATE
@@ -34897,3 +34967,153 @@ NEXT ACTION:   Stakeholder meeting → consent → continue or hold
 *Fecho: 2026-09-17 · CCode + Human Dragon + GPT*
 *"O primeiro Human Authorization Gate real do W-VOICE."*
 
+
+---
+
+## §236-bis · 2026-09-18 · LOGIN-UNIFY-001 + HIOS quem-somos
+
+Commits (main, pushed 677890fe9..9976bb8a6):
+- f4390d91b  Fase B  verify-public: return= B-LITE (3 ocorrências, validação mesma-origem)      LIVE · Teste do Humano OK
+- b599ca3cc  Fase C  enterprise: did_gate valida cookie Genesis, header só de 127.0.0.1         PREPARADO — NÃO EFETIVO (nenhum endpoint usa o gate)
+- a14dcd536  Fase D  windi-law: login próprio -> 410 F-4; /gate,/workspace validam via Genesis   LIVE · Teste do Humano OK (com e sem sessão)
+- 69afaca5b  Mini-E  links /wallet/ -> /verify-public/?login=1&return=…                          LIVE · Teste do Humano OK
+- 9976bb8a6  hios: quem-somos nav genérica (nav{fixed}) -> .main-nav; hios-global gradiente sob @supports
+
+Estado real do login por serviço:
+- VERIFY-PUBLIC: nascimento + entrada + return=              ✅ unificado
+- WINDILAW:      valida cookie windi_did_session via Genesis  ✅ unificado (windi_law_identity.db intocada; utilizadores antigos ignorados por decisão HD)
+- ENTERPRISE:    casca reconhece sessão (JS); endpoints SEM autenticação de chamador  ⚠️ NÃO unificado
+
+ABERTO (próxima sessão, por esta ordem):
+- ENTERPRISE-ROUTE-GATE-001 [S1]  ligar Depends(did_gate) às rotas por DID (mín. /vera/did/context/{did}); caller==did ou tier ORACLE/SOVEREIGN.
+                                  Hoje qualquer pessoa lê o contexto VERA de qualquer DID real. Teste: DID real, sem cookie, de fora -> 401.
+- ENTERPRISE-HEADER-AUTH-001      header X-Officer-DID só interno; depreciar 2027-01-01 (só tem efeito após ROUTE-GATE).
+- ENTERPRISE-DEMO-DATA-001 [I9]   /enterprise/ público com dados fictícios como reais ("Allianz Partners", "court-admissible" client-side). Rotular DEMO / marca fictícia.
+- WALLET-ROUTE-001                location /wallet/ deferida; links já apontam ao verify-public.
+- WORKTREE-DIRTY-001              885 ficheiros modificados não commitados em /opt/windi.
+- SECRETS-GITIGNORE-001           ✅ RESOLVIDO — .admin-password, keys/, opendkim/keys/ adicionados ao .gitignore
+
+Regras de método reafirmadas: snapshot .bak fora do web root; units verificadas antes de restart; smoke por probe, nunca HEAD na raiz nem -k;
+Teste do Humano entre fases; cada fase = commit próprio.
+
+---
+
+*"Três portas fechadas, um guarda de sentinela, um login unificado em dois de três, e a honestidade de dizer 'dois de três'."*
+
+*Fecho: 2026-09-18 · CCode + Human Dragon*
+
+---
+
+## SESSION-20260918 — W-VOICE-001 CAP1 CLOSED + D1-D16 SEALED
+
+**Data:** 2026-09-18
+**Participantes:** CCode (executor) + Human Dragon (I9) + Observador Cloud (Guardian)
+**Projecto:** W-VOICE-001 (Puntzelhof Voice Edge Pilot)
+**Estado:** CAP1 FECHADO · 16 decisões seladas · linha de partida
+
+---
+
+### INVENTÁRIO TWIN (CAP1 DoD)
+
+| Campo | Valor |
+|-------|-------|
+| Host | windi-b (85.215.131.0) |
+| CPU | AMD EPYC-Milan, 4 cores × 2 threads (8 vCPUs), AVX2 |
+| RAM | 31 GiB total, 30 GiB livres |
+| Disco | 473 GiB total, 440 GiB livres |
+| GPU | Nenhuma |
+| LLM local | mistral:7b Q4_K_M (Ollama), localhost-only |
+| Python | 3.11.2 |
+| FFmpeg | 5.1.9 (instalado por I9 em 18.09) |
+| Superfície | SSH (22), LLMNR (5355) |
+| Uptime | 139 dias |
+
+**Conclusão:** TWIN pode ser casa do voice edge.
+
+---
+
+### DECISÕES SELADAS (D1-D16)
+
+**Repo:** `git@github.com:Bingo-APPweb/w-voice-001.git` (PRIVADO ✓)
+**Ficheiro:** `/home/windi/w-voice-001/decisions/2026-09-18-I9-D1-D16.md`
+**Hash D1-D13:** `d115ba59946fddc205f46762c5ec70083e848f6a631ea39a7135bc387e6f5814`
+**Hash D1-D16:** `f4202b4fab2bc9c2cf9e1fa32d74a32ea0e9411cfccd49c88dfec7194fca09ee`
+
+| D# | Decisão |
+|----|---------|
+| D1 | FRITZ!Box fora do CAP0 |
+| D3 | STT local default, áudio só em RAM, sem diálogo IA até CAP5 |
+| D7 | Voice edge no TWIN; Ledger/core no Strato |
+| D8 | Edge → core só via /intake autenticado |
+| D13 | Docs/decisões no Strato; TWIN = só runtime |
+| D14 | ElevenLabs só para cache offline de frases fixas não-pessoais |
+| D15 | Sem clonagem de voz de pessoas reais |
+| D16 | Edge TTS excluído (serviço Microsoft sem contrato) |
+
+**Errata:** Commit 6468b46 datado "2026-09-19" → real é 2026-09-18 (erro do observador)
+**Errata file:** `2026-09-18-ERRATA-data-D14-D16.md` · Hash: `c9bc433065a7f0cba9d191892323a93ecd24bebdce6a52d3e33ce4390a797990`
+
+---
+
+### COMMITS W-VOICE-001
+
+```
+2836d1a  CAP1 fechado + decisões I9 D1-D13
+6468b46  D14-D16 ElevenLabs boundaries
+bcfb7c1  errata de data D14-D16 (append-only)
+```
+
+---
+
+### ACHADOS DE SERVIÇOS EXISTENTES
+
+| Serviço | Ficheiro | Achado |
+|---------|----------|--------|
+| MARIA Voice | `maria_voice.py` l.8 | "100% sovereign" FALSO; usa edge_tts l.25 (Microsoft online) |
+| ElevenLabs | `.env` → `ELEVEN_API_KEY` | tier=creator, 300k chars/mês |
+| Whisper | `transcribe_service.py` | STT local, word timestamps |
+
+**Item aberto:** WINDI-TRAVEL · MARIA-VOICE-LABEL — corrigir etiqueta "sovereign"
+
+---
+
+### ESPECIFICAÇÕES ADORMECIDAS
+
+| Nome | Estado |
+|------|--------|
+| W-VOICE-CONVERSATIONAL-PRESENCE-001 | DEFERIDO até CAP4 verde |
+| Kommune / BYO-trunk | REGISTADO, decisão pós-piloto |
+
+---
+
+### REGRAS DE MÉTODO REAFIRMADAS
+
+1. **Key handling:** mostrar comprimento, NUNCA caracteres
+2. **Append-only:** emendas = ficheiro novo datado; ficheiros verificados não se editam
+3. **Papéis:** Git = CCode; Drive = observador; decisão = Human Dragon
+4. **Evidence:** etiqueta em ficheiro ≠ evidência
+
+---
+
+### BACKLOG VIVO
+
+**Drive:** `W-VOICE-001 — Backlog Vivo`
+**Git:** `/home/windi/w-voice-001/backlog/`
+
+---
+
+### CAMINHO CRÍTICO
+
+```
+gravações (5) → CAP2 (benchmark STT DE) → I9: "TWIN aguenta?"
+  → endurecer TWIN (pré-SIP) → ativar Easybell
+  → CAP1 real: gateway + STT local, sem diálogo
+  → Teste do Humano (chamada→Vorgang legível)
+  → 30 dias → família decide
+```
+
+---
+
+*"Linha de partida. Terreno preparado, corrida por começar."*
+
+*Fecho: 2026-09-18 · CCode + Human Dragon + Observador Cloud 🐉*
