@@ -6,6 +6,119 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## 🐉 SESSION-20260919 — BALANÇO SAÚDE + PENDÊNCIAS ZERO
+
+### Contexto
+- Reboot limpou sessão anterior
+- Balanço de saúde completo dos dois servidores WINDI-HIOS
+- Resolução de todas as pendências P0/P1/P2 acumuladas
+
+### Cap 1 — Diagnóstico Servidor A (87.106.29.233)
+```
+Uptime:      145 dias → 3 min (pós-reboot)
+Disco:       91G / 473G (20%) ✅
+Memória:     5.8G / 31G ✅
+Serviços:    52 WINDI activos via systemd
+Failed:      0 (após correções)
+```
+
+### Cap 2 — Diagnóstico Servidor B (85.215.131.0 / windi-b)
+```
+Uptime:      139 dias
+Disco:       15G / 473G (4%) ✅
+Memória:     852Mi / 31G ✅
+W-OLLAMA-001: active (mistral:7b)
+```
+- ✅ SSH alias `windi-b` criado em ~/.ssh/config
+
+### Cap 3 — Serviços Corrigidos
+| Serviço | Problema | Solução |
+|---------|----------|---------|
+| windi-verify | Processo órfão bloqueava :8114 | `kill 3693887` + systemd restart |
+| logrotate | Config duplicada windi-travel | Ficheiro removido |
+| windi-tube-expire | ProtectSystem=full + obsoleto | Timer desactivado |
+
+### Cap 4 — SSL/Certbot
+- ✅ 11 certificados renovam automaticamente
+- ✅ mcp.windi-domain.com corrigido (rota ACME adicionada ao nginx)
+- Expiração windi-domain.com: 23 Out 2026 (34 dias)
+
+### Cap 5 — LEDGER-ACTOR-ATTRIBUTION-001 (Arquitectura)
+**Problema:** Executor (CCode) indistinguível do autorizador (Human Dragon) no Ledger.
+
+**Solução implementada:**
+```sql
+ALTER TABLE receipts ADD COLUMN issuer TEXT;
+```
+
+**Semântica:**
+- `actor` = DID de quem AUTORIZA (humano, `did:windi:dragon-001`)
+- `issuer` = DID de quem EXECUTA (serviço, `did:windi:ccode-session-*`)
+
+**Ficheiro:** `/opt/windi/suite-docs/forensic_ledger.py` (INSERT actualizado)
+
+### Cap 6 — .strip() Audit
+- 44 identidades verificadas
+- 0 DIDs com espaços leading/trailing
+- 0 hashes afectados
+- ✅ LIMPO
+
+### Cap 7 — W-HIOS-001 index-v3 Promovido
+**Antes:** v2 em produção, v3 CANDIDATE com noindex
+**Depois:** v3 em produção, v1/v2 arquivados
+
+**Mudanças:**
+- `app.py`: `/` agora serve `index-v3.html` com `content-b2b-v0.3.json`
+- `/home-v3` redireciona para `/` (301)
+- `/home-v2` arquivado com noindex
+- Banner CANDIDATE removido
+- Meta noindex removido
+
+**Teste trilíngue:**
+- 🇧🇷 PT: "Infraestrutura verificável para trabalho assistido por IA."
+- 🇬🇧 EN: "Verifiable infrastructure for AI-assisted work."
+- 🇩🇪 DE: "Verifizierbare Infrastruktur für KI-gestützte Arbeit."
+
+### Cap 8 — Unit Files Criados
+| Serviço | Porta | Unit File |
+|---------|-------|-----------|
+| VPSE | :8120 | `/etc/systemd/system/windi-vpse.service` |
+| W-CACHE-001 | :8160 | `/etc/systemd/system/windi-cache.service` |
+
+Ambos `enabled` para arranque automático.
+
+### Cap 9 — Reboot Validação
+```
+Reboot:              12:00:00 CEST
+Serviços activos:    52 WINDI
+Serviços failed:     0
+Processos órfãos:    0 (todos agora systemd)
+```
+
+**Superfícies testadas:**
+- windi-domain.com: 302 ✅
+- hios.windi-domain.com: 200 ✅ (index-v3 LIVE)
+- windisites.de: 200 ✅
+
+### Pendências Fechadas
+| ID | Tema | Resolução |
+|----|------|-----------|
+| P0 | PASSPHRASE dragon2026 | Rotacionada pelo Human Dragon |
+| P0 | LEDGER-ACTOR-ATTRIBUTION-001 | Campo `issuer` implementado |
+| P1 | logrotate failed | Config duplicada removida |
+| P1 | tube-expire failed | Timer obsoleto desactivado |
+| P1 | .strip() audit | 44 identidades limpas |
+| P1 | W-HIOS-001 index-v3 | Promovido para produção |
+| P2 | SSH alias windi-b | Criado e testado |
+| P2 | Unit file :8120 VPSE | Criado e enabled |
+| P2 | Unit file :8160 W-CACHE | Criado e enabled |
+
+### Regras Confirmadas
+- G10: Após reboot, verificar `systemctl list-units --state=failed`
+- G11: Unit files novos requerem `daemon-reload` + `enable` + teste pós-reboot
+
+---
+
 ## 🐉 SESSION-20260918 — NGINX STABILITY + RESTORE
 
 ### Contexto
