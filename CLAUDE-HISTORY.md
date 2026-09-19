@@ -208,6 +208,19 @@ R1–R5 → metadados + SHA → human_reference → FREEZE → STT local → ben
 
 *Fecho: 2026-09-19 · Human Dragon + CCode 🐉*
 
+### Anexo SESSION-20260919-B (2026-09-19)
+
+IONOS-BENCHMARK-001 fechado com errata E1–E4 (commits 9900395 → 73e78fb → d2cf70b → 99f912c):
+- Transcrição = STT do Xiaomi 14 Pro (engine/local não confirmado)
+- Latência da recaptura = exploratória, não canónica
+- .m4a = recaptura (SHA eb7236...), MP3 primário do CDN IONOS capturado (SHA 161f35...)
+- Contexto competitivo IONOS (39/69/99 €, claims de assincronia e soberania) registado como snapshot público datado
+- Fonte para futuro COMMERCIAL-THESIS
+- Regras BR1–BR4 renomeadas para não colidir com gravações R1–R5
+- Nenhuma contaminação do CAP2
+
+**Próximo gesto:** R1–R5 (humano grava).
+
 ---
 
 ## 🐉 SESSION-20260918 — NGINX STABILITY + RESTORE
