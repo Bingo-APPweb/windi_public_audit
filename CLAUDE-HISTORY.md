@@ -143,10 +143,12 @@ Processos órfãos:    0 (todos agora systemd)
 - `benchmarks/source/WVoice-ionos-Muster.m4a` — áudio preservado (gitignored)
 
 **Behavioral Rules (CANDIDATE · POST-PILOT):**
-- R1 Context Reuse
-- R2 Clarify Before Answer
-- R3 Short Voice Response Budget
-- R4 Explicit Conversational Close
+- BR1 Context Reuse
+- BR2 Clarify Before Answer
+- BR3 Short Voice Response Budget
+- BR4 Explicit Conversational Close
+
+**Naming convention:** BR = Behavioral Rule (CAP5+), R = Recording (CAP2)
 
 **Latency Classes (HYPOTHESIS · NOT RATIFIED):**
 - GREEN < 0.8s
