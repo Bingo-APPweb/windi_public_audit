@@ -119,6 +119,95 @@ Processos órfãos:    0 (todos agora systemd)
 
 ---
 
+## 🐉 SESSION-20260919-B — W-VOICE-001 BENCHMARK + CAP2 SPEC
+
+**Data:** 2026-09-19
+**Projecto:** W-VOICE-001 (Puntzelhof Voice Edge Pilot)
+**Participantes:** Human Dragon + CCode
+
+---
+
+### IONOS-VOICE-BENCHMARK-001 — Preservado
+
+**Áudio externo:** `WVoice-ionos-Muster.m4a`
+**SHA-256:** `eb7236413ae42f34241e11cda9bf38eab2d778029a62f8df83e0e356dd1a9bcc`
+**Duração:** 00:02:05.89 (125.89s)
+**Codec:** AAC LC @ 48kHz stereo 128kb/s
+
+**Status:** EXTERNAL BENCHMARK · NOT WINDI EVIDENCE · NOT SEALED
+**Scope:** CAP5+ / post-first-gesture evaluation
+
+**Ficheiros criados:**
+- `benchmarks/W-VOICE-BENCHMARK-IONOS-001.md` — dados acústicos, transcrição, padrões
+- `benchmarks/W-VOICE-IONOS-ADVERSARIAL-TESTS-001.md` — testes A1-A8
+- `benchmarks/source/WVoice-ionos-Muster.m4a` — áudio preservado (gitignored)
+
+**Behavioral Rules (CANDIDATE · POST-PILOT):**
+- R1 Context Reuse
+- R2 Clarify Before Answer
+- R3 Short Voice Response Budget
+- R4 Explicit Conversational Close
+
+**Latency Classes (HYPOTHESIS · NOT RATIFIED):**
+- GREEN < 0.8s
+- YELLOW 0.8–1.8s
+- RED > 1.8s
+
+**Commits:**
+- `531587a` — IONOS benchmark documentation
+- `4e78ea4` — Audio preserved + SHA-256 recorded
+
+---
+
+### CAP2-RECORDING-SPEC-001 — Documentado
+
+**Objectivo CAP2:** Determinar se STT local no TWIN é operacionalmente suficiente para o primeiro gesto W-VOICE-001.
+
+**5 Gravações Especificadas:**
+
+| ID | Nome | Objectivo |
+|----|------|-----------|
+| R1 | Standard German | Baseline limpo |
+| R2 | Numbers | Stress-test numérico |
+| R3 | Allgäu/Bavarian | Sotaque regional real |
+| R4 | Messy speech | Autocorrecção/hesitação |
+| R5 | Vorgang | Mensagem operacional completa |
+
+**Regras de gravação:**
+- Voz natural (não laboratório)
+- Telemóvel normal
+- Aceitar imperfeições
+- Descobrir realidade, não produzir demo
+
+**Sequência CAP2:**
+```
+R1–R5 → metadados + SHA → human_reference → FREEZE → STT local → benchmark → I9
+```
+
+**Commit:** `da51e6f` — CAP2-RECORDING-SPEC-001
+
+---
+
+### Estado W-VOICE-001
+
+| CAP | Estado |
+|-----|--------|
+| CAP1 | FECHADO/DOCUMENTADO (D1-D16) |
+| CAP2 | PENDENTE (aguarda R1-R5) |
+
+**Próximo trabalho:** Humano produz R1-R5. CCode em espera.
+
+**Disciplina confirmada:**
+- Não instalar Whisper antes de congelar inputs
+- Não optimizar TWIN antes de medir baseline
+- Não contaminar teste com referências geradas por IA
+
+---
+
+*Fecho: 2026-09-19 · Human Dragon + CCode 🐉*
+
+---
+
 ## 🐉 SESSION-20260918 — NGINX STABILITY + RESTORE
 
 ### Contexto
