@@ -210,16 +210,47 @@ R1–R5 → metadados + SHA → human_reference → FREEZE → STT local → ben
 
 ### Anexo SESSION-20260919-B (2026-09-19)
 
-IONOS-BENCHMARK-001 fechado com errata E1–E4 (commits 9900395 → 73e78fb → d2cf70b → 99f912c):
+IONOS-BENCHMARK-001 fechado com errata E1–E5 (commits 9900395 → 73e78fb → d2cf70b → 99f912c → 2c8e6b3):
 - Transcrição = STT do Xiaomi 14 Pro (engine/local não confirmado)
-- Latência da recaptura = exploratória, não canónica
+- Latência da recaptura = ~~exploratória~~ **VALIDATED ±0.10s** (E5)
 - .m4a = recaptura (SHA eb7236...), MP3 primário do CDN IONOS capturado (SHA 161f35...)
 - Contexto competitivo IONOS (39/69/99 €, claims de assincronia e soberania) registado como snapshot público datado
 - Fonte para futuro COMMERCIAL-THESIS
 - Regras BR1–BR4 renomeadas para não colidir com gravações R1–R5
 - Nenhuma contaminação do CAP2
 
-**Próximo gesto:** R1–R5 (humano grava).
+### E5 — Guardian Third Observation (2026-09-19)
+
+**Provenance Chain — Three Observers:**
+
+| Artefacto | SHA-256 | Verificador | Status |
+|-----------|---------|-------------|--------|
+| Primary MP3 | `161f35da3df08986f6009c5fafb8343913f1545e6b54f616950a6556c74d39fc` | Executor (Strato) | ✅ |
+| Primary MP3 | (mesmo) | Human Dragon (Windows) | ✅ |
+| Primary MP3 | (mesmo) | Guardian (sandbox) | ✅ |
+| Archive .tar.gz | `ef207b101652b3a9b7978265aabacd1575fce2bb1b65e55ce8eebece82ec12b3` | Guardian | ✅ |
+| Recapture .m4a | `eb7236413ae42f34241e11cda9bf38eab2d778029a62f8df83e0e356dd1a9bcc` | Executor (Strato) | ✅ |
+
+**Análise comparativa (Primary vs Recapture):**
+
+| Métrica | Primary (MP3) | Recapture (m4a) |
+|---------|---------------|-----------------|
+| Formato | MP3 48 kHz stereo 128 kb/s | AAC 48 kHz stereo 128 kb/s |
+| Duração | 130.54s (10.3s silêncio final) | 125.89s (3.1s final) |
+| Peak / RMS | −0.49 / −24.3 dB | −0.79 / −21.6 dB |
+| Offset temporal | — | +2.27s (constante) |
+
+**Correcções E5:**
+- 48 kHz stereo é propriedade da fonte IONOS (não capacidade do telemóvel)
+- Latências assistant no primário: 1.60/1.67/1.80/1.89/1.64/1.84s (mean 1.74)
+- Desvio máximo recaptura: 0.10s (timing VALIDATED)
+- Customer pauses: menos fiáveis na recaptura (mic perdeu "Ah ja" baixinho)
+
+**Princípio aplicado:** "Se hoje deixamos passar 'Guardian' onde foi 'Human Dragon', amanhã deixamos passar 'SEALED' onde foi 'documentado'."
+
+**Status final:** E1-E5 CLOSED · Benchmark sem asteriscos · Três verificadores, três caminhos, um hash.
+
+**Próximo gesto:** R1–R5 (humano grava). Aguarda notícias EASYBELL para SIP path.
 
 ---
 
